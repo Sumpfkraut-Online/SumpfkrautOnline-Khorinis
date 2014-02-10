@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{27FA7C52-3C80-4B72-8FBB-BCAC0328236E}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GMP_Server</RootNamespace>
+    <AssemblyName>GMP_Server</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\GothicII\gothic_multiplayer\Server\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Mono.Data.Sqlite, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Release\Mono.Data.Sqlite.dll</HintPath>
+    </Reference>
+    <Reference Include="RakNetSwig, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\GothicII\System\RakNetSwig.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DB\SQLLite.cs" />
+    <Compile Include="DB\WorldSave.cs" />
+    <Compile Include="Helper\Kick.cs" />
+    <Compile Include="Log\Logger.cs" />
+    <Compile Include="Modules\LoadModule.cs" />
+    <Compile Include="Modules\ModuleLoader.cs" />
+    <Compile Include="Modules\UpdateModule.cs" />
+    <Compile Include="Net\Message\AllPlayerSynchMessage.cs" />
+    <Compile Include="Net\Message\AnimationMessage.cs" />
+    <Compile Include="Net\Message\AssessPlayerMessage.cs" />
+    <Compile Include="Net\Message\AssessTalkMessage.cs" />
+    <Compile Include="Net\Message\AttackSynchMessage.cs" />
+    <Compile Include="Net\Message\ChatMessage.cs" />
+    <Compile Include="Net\Message\CommandoMessage.cs" />
+    <Compile Include="Net\Message\ConnectionRequest.cs" />
+    <Compile Include="Net\Message\DisconnectedMessage.cs" />
+    <Compile Include="Net\Message\DownloadModulesMessage.cs" />
+    <Compile Include="Net\Message\FriendMessage.cs" />
+    <Compile Include="Net\Message\InventorySynch.cs" />
+    <Compile Include="Net\Message\ItemStealMessage.cs" />
+    <Compile Include="Net\Message\ItemSynchro_DoDrop.cs" />
+    <Compile Include="Net\Message\AnimationOverlayMessage.cs" />
+    <Compile Include="Net\Message\UseItemMessage.cs" />
+    <Compile Include="Net\Message\LevelDataMessage.cs" />
+    <Compile Include="Net\Message\MagSetupMessage.cs" />
+    <Compile Include="Net\Message\LevelChangeMessage.cs" />
+    <Compile Include="Net\Message\Message.cs" />
+    <Compile Include="Net\Message\MobInteractDiffMessage.cs" />
+    <Compile Include="Net\Message\MobSynch.cs" />
+    <Compile Include="Net\Message\NewPlayerMessage.cs" />
+    <Compile Include="Net\Message\NPCControllerMessage.cs" />
+    <Compile Include="Net\Message\OutputSynchMessage.cs" />
+    <Compile Include="Net\Message\PassivePerceptionMessage.cs" />
+    <Compile Include="Net\Message\PlayerKeyMessage.cs" />
+    <Compile Include="Net\Message\PlayerListRequest.cs" />
+    <Compile Include="Net\Message\PlayerStatusMessage.cs" />
+    <Compile Include="Net\Message\PlayerStatusMessage2.cs" />
+    <Compile Include="Net\Message\SpawnNPCMessage.cs" />
+    <Compile Include="Net\Message\StartLevelChangeMessage.cs" />
+    <Compile Include="Net\Message\StaticNPCMessage.cs" />
+    <Compile Include="Net\Message\StatusMessage.cs" />
+    <Compile Include="Net\Message\TextBoxSendMessage.cs" />
+    <Compile Include="Net\Message\TimeMessage.cs" />
+    <Compile Include="Net\Message\VisualSynchro_SetAsPlayer.cs" />
+    <Compile Include="Net\Message\WeaponModeMessage.cs" />
+    <Compile Include="Net\Server.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Scripting\Item.cs" />
+    <Compile Include="Scripting\ItemEntity.cs" />
+    <Compile Include="Scripting\Listener\IUseItemListener.cs" />
+    <Compile Include="Scripting\MessagesBox.cs" />
+    <Compile Include="Scripting\Listener\IEquipmentListener.cs" />
+    <Compile Include="Scripting\Listener\ISlotListener.cs" />
+    <Compile Include="Scripting\Listener\ITextBoxListener.cs" />
+    <Compile Include="Scripting\Listener\ITriggerListener.cs" />
+    <Compile Include="Scripting\TextBox.cs" />
+    <Compile Include="Scripting\Listener\IKeyListener.cs" />
+    <Compile Include="Scripting\Text.cs" />
+    <Compile Include="Scripting\Listener\IChatListener.cs" />
+    <Compile Include="Scripting\Listener\IConnectionListener.cs" />
+    <Compile Include="Scripting\Listener\IDamageListener.cs" />
+    <Compile Include="Scripting\Listener\ILevelChangeListener.cs" />
+    <Compile Include="Scripting\Listener\IServerStartup.cs" />
+    <Compile Include="Scripting\Listener\ITakeDropListener.cs" />
+    <Compile Include="Scripting\Listener\ITimerListener.cs" />
+    <Compile Include="Scripting\Player.cs" />
+    <Compile Include="Scripting\ScriptManager.cs" />
+    <Compile Include="Scripting\Texture.cs" />
+    <Compile Include="Scripting\Timer.cs" />
+    <Compile Include="Scripting\View.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Network\Network.csproj">
+      <Project>{A896EADC-459C-4F6D-8B16-86B0A0F0F6A8}</Project>
+      <Name>Network</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="app.manifest" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.SQL.Server.Compact.3.5">
+      <Visible>False</Visible>
+      <ProductName>SQL Server Compact 3.5 SP2</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Savings\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

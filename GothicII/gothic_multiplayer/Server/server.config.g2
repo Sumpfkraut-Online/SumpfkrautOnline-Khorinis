@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<ServerConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ServerName>Test-Server</ServerName>
+  <Port>57005</Port>
+  <Slots>20</Slots>
+  <hour>12</hour>
+  <minute>12</minute>
+  <day>12</day>
+  <World>NewWorld/NewWorld.zen</World>
+  <password />
+  <Spawn>
+    <anyType xsi:type="xsd:string">START</anyType>
+  </Spawn>
+  <Modules>
+<Module><name>ClassChooserModule.dll</name></Module>
+
+<Module><name>CharakterCreatorModule.dll</name></Module>
+<Module><name>ListModule.dll</name></Module>
+</Modules>
+</ServerConfig>

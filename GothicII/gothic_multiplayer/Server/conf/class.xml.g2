@@ -1,0 +1,292 @@
+﻿<?xml version="1.0"?>
+<GothicClasses xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<respawnTime>30</respawnTime>
+  <classes>
+    <GothicClass>
+      <name>Miliz</name>
+      <hp>400</hp>
+      <mp>10</mp>
+      <str>125</str>
+      <dex>125</dex>
+
+      <Spawn>
+        <anyType xsi:type="xsd:string">NW_CITY_HABOUR_KASERN_MAIN_ENTRY</anyType>
+      </Spawn>
+      <Respawn>
+        <anyType xsi:type="xsd:string">NW_CITY_HABOUR_KASERN_MAIN_ENTRY</anyType>
+      </Respawn>
+
+
+      <weapon>ItMw_1h_Mil_Sword</weapon>
+      <armor>ITAR_MIL_M</armor>
+      <talents>
+        <talent><id>1</id><value>60</value></talent>
+        <talent>
+          <id>4</id>
+          <value>60</value>
+        </talent>
+        <talent><id>5</id><value>1</value></talent>
+        <talent><id>8</id><value>1</value></talent>
+        <talent>
+          <id>11</id>
+          <value>0</value>
+        </talent>
+      </talents>
+
+      <items>
+        <item>
+          <code>ItFoMutton</code>
+          <amount>3</amount>
+        </item>
+        <item>
+          <code>ItPl_Mushroom_01</code>
+          <amount>1</amount>
+        </item>
+        <item>
+          <code>ItFo_Stew</code>
+          <amount>1</amount>
+        </item>
+        <item>
+          <code>ItMi_gold</code>
+          <amount>30</amount>
+        </item>
+        <item>
+          <code>ItPl_Health_Herb_01</code>
+          <amount>3</amount>
+        </item>
+        <item>
+          <code>ItPo_Health_01</code>
+          <amount>1</amount>
+        </item>
+      </items>
+    </GothicClass>
+
+    <GothicClass>
+      <name>Söldner</name>
+      <hp>400</hp>
+      <mp>10</mp>
+      <str>125</str>
+      <dex>125</dex>
+<Spawn>
+        <anyType xsi:type="xsd:string">START</anyType>
+      </Spawn>
+      <Respawn>
+        <anyType xsi:type="xsd:string">NW_BIGFARM_HOUSE</anyType>
+      </Respawn>
+
+      <weapon>ItMw_1h_Sld_Sword</weapon>
+      <rangeweapon>ItRw_Sld_Bow</rangeweapon>
+      <armor>ITAR_SLD_M</armor>
+      <talents>
+        <talent>
+          <id>1</id>
+          <value>50</value>
+        </talent>
+        <talent>
+          <id>2</id>
+          <value>50</value>
+        </talent>
+        <talent>
+          <id>3</id>
+          <value>50</value>
+        </talent>
+        <talent>
+          <id>5</id>
+          <value>1</value>
+        </talent>
+        <talent>
+          <id>8</id>
+          <value>1</value>
+        </talent>
+        <talent>
+          <id>11</id>
+          <value>0</value>
+        </talent>
+      </talents>
+
+      <items>
+        <item>
+          <code>ItFoMutton</code>
+          <amount>3</amount>
+        </item>
+        <item>
+          <code>ItPl_Mushroom_01</code>
+          <amount>1</amount>
+        </item>
+        <item>
+          <code>ItFo_Stew</code>
+          <amount>1</amount>
+        </item>
+        <item>
+          <code>ItMi_gold</code>
+          <amount>30</amount>
+        </item>
+        <item>
+          <code>ItPl_Health_Herb_01</code>
+          <amount>3</amount>
+        </item>
+        <item>
+          <code>ItPo_Health_01</code>
+          <amount>1</amount>
+        </item>
+      </items>
+    </GothicClass>
+
+    <GothicClass>
+      <name>Bandit</name>
+      <hp>400</hp>
+      <mp>10</mp>
+      <str>62</str>
+      <dex>250</dex>
+
+      <Spawn>
+        <anyType xsi:type="xsd:string">NW_CASTLEMINE_PATH_02</anyType>
+      </Spawn>
+      
+      <weapon>ItMw_1h_Bau_Mace</weapon>
+      <rangeweapon>ItRw_Sld_Bow</rangeweapon>
+      <armor>ITAR_BDT_H</armor>
+      <talents>
+        <talent>
+          <id>1</id>
+          <value>30</value>
+        </talent>
+        <talent>
+          <id>2</id>
+          <value>10</value>
+        </talent>
+        <talent>
+          <id>3</id>
+          <value>80</value>
+        </talent>
+        <talent>
+          <id>5</id>
+          <value>1</value>
+        </talent>
+        <talent>
+          <id>6</id>
+          <value>90</value>
+        </talent>
+        <talent>
+          <id>11</id>
+          <value>1</value>
+        </talent>
+        <talent>
+          <id>8</id>
+          <value>1</value>
+        </talent>
+      </talents>
+
+      <items>
+        <item>
+          <code>ItFoMutton</code>
+          <amount>3</amount>
+        </item>
+        <item>
+          <code>ItPl_Mushroom_01</code>
+          <amount>1</amount>
+        </item>
+        <item>
+          <code>ItFo_Stew</code>
+          <amount>1</amount>
+        </item>
+        <item>
+          <code>ItMi_gold</code>
+          <amount>30</amount>
+        </item>
+        <item>
+          <code>ItPl_Health_Herb_01</code>
+          <amount>3</amount>
+        </item>
+        <item>
+          <code>ItPo_Health_01</code>
+          <amount>1</amount>
+        </item>
+      </items>
+    </GothicClass>
+
+
+    <GothicClass>
+      <name>Feuermagier</name>
+      <hp>300</hp>
+      <mp>500</mp>
+      <str>50</str>
+      <dex>10</dex>
+
+      <Spawn>
+        <anyType xsi:type="xsd:string">NW_MONASTERY_ENTRY_01</anyType>
+      </Spawn>
+
+      <armor>ITAR_KDF_H</armor>
+      <talents>
+        <talent>
+          <id>11</id>
+          <value>0</value>
+        </talent>
+        <talent>
+          <id>7</id>
+          <value>6</value>
+        </talent>
+      </talents>
+
+      <items>
+        <item>
+          <code>ItSc_Sleep</code>
+          <amount>30</amount>
+        </item>
+        <item>
+          <code>ItSc_MediumHeal</code>
+          <amount>10</amount>
+        </item>
+        <item>
+          <code>ItSc_ChargeFireball</code>
+          <amount>10</amount>
+        </item>
+        <item>
+          <code>ItRu_TeleportSeaport</code>
+          <amount>2</amount>
+        </item>
+        <item>
+          <code>ItRu_Windfist</code>
+          <amount>1</amount>
+        </item>
+        <item>
+          <code>ItRu_Sleep</code>
+          <amount>1</amount>
+        </item>
+        <item>
+          <code>ItRu_SumGobSkel</code>
+          <amount>1</amount>
+        </item>
+        <item>
+          <code>ItPo_Health_01</code>
+          <amount>1</amount>
+        </item>
+        <item>
+          <code>ItRu_IceCube</code>
+          <amount>1</amount>
+        </item>
+        <item>
+          <code>ItRu_IceWave</code>
+          <amount>1</amount>
+        </item>
+      </items>
+    </GothicClass>
+    
+    
+    <GothicClass>
+      <name>Wolf</name>
+
+      <Spawn>
+        <anyType xsi:type="xsd:string">NW_FOREST_PATH_04_9</anyType>
+      </Spawn>
+
+      <instance>wolf</instance>
+      <hp>100</hp>
+      <mp>10000</mp>
+      <str>100</str>
+      <dex>100</dex>
+    </GothicClass>
+    
+  </classes>
+</GothicClasses>

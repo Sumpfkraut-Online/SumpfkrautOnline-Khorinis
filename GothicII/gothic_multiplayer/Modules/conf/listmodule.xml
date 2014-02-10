@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<ClientOptions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <playerListKey>112</playerListKey>
+  <animationKey>113</animationKey>
+  <soundKey>114</soundKey>
+  <AnimationList>
+    <Animations><animation>t_Stand_2_Sit</animation><name>Auf den Boden setzen</name></Animations>
+    <Animations><animation>t_Stand_2_SleepGround</animation><name>Auf dem Boden schlafen</name></Animations>
+    <Animations><animation>s_Idol_S1</animation><name>Schlaefer anbeten</name></Animations>
+    <Animations><animation>s_Pray</animation><name>Innos anbeten</name></Animations>
+    <Animations><animation>t_ComeOverHere</animation><SVM>$ComeOverHere</SVM><name>'Komm mal rueber!'</name></Animations>
+    <Animations><animation>t_ForgetIt</animation><SVM>$ForgetIt</SVM><name>'Ach, vergiss es!'</name></Animations>
+    <Animations><animation>t_1hSFree</animation><name>Schwertkampf trainieren</name></Animations>
+    <Animations><animation>t_stand_2_Pee</animation><SVM>$WEATHER</SVM><name>Pinkeln</name></Animations>
+    <Animations><animation>t_Plunder</animation><name>Pluendern</name></Animations>
+    <Animations><animation>t_Stand_2_HGuard</animation><name>Wache in schwerer Ruestung</name></Animations>
+    <Animations><animation>t_Stand_2_LGuard</animation><name>Wache in leichter Ruestung</name></Animations>
+    <Animations><animation>t_Stand_2_WatchFight</animation><SVM>$TheresAFight</SVM><name>Anfeuern</name></Animations>
+    <Animations><animation>t_GetLost2</animation><SVM>$SpareMe</SVM><name>'Verschwinde!'</name></Animations>
+    <Animations><animation>t_iGetYou</animation><SVM>$YouDareHitMe</SVM><name>'Dich krieg ich!'</name></Animations>
+    <Animations><animation>t_Search</animation><name>Umschauen</name></Animations>
+    <Animations><animation>t_1hSInspect</animation><name>Waffe begutachten</name></Animations>
+  </AnimationList>
+ 
+<SoundList>
+<Animations><SVM>$IGETYOUSTILL</SVM><name>'Krieg ich dich DOCH noch!'</name></Animations>
+<Animations><SVM>$ADDON_DIEBANDIT</SVM><name>'Stirb, du dreckiger Bandit!'</name></Animations>
+<Animations><SVM>$ADDON_DIRTYPIRATE</SVM><name>'Piratenpack!'</name></Animations>
+<Animations><SVM>$DIEENEMY</SVM><name>'Jetzt bist du dran!'</name></Animations>
+<Animations><SVM>$DIEMONSTER</SVM><name>'Wieder eins von diesen Viechern!'</name></Animations>
+<Animations><SVM>$DIRTYTHIEF</SVM><name>'Dreckiger Dieb!'</name></Animations>
+<Animations><SVM>$HANDSOFF</SVM><name>'Finger weg da!'</name></Animations>
+<Animations><SVM>$SHEEPKILLER</SVM><name>'Der Mistkerl schlachtet unsere Schafe!'</name></Animations>
+<Animations><SVM>$SHEEPKILLERMONSTER</SVM><name>'Das Vieh frisst unsere Schafe!'</name></Animations>
+<Animations><SVM>$YOUMURDERER</SVM><name>'Moerder!'</name></Animations>
+<Animations><SVM>$DIESTUPIDBEAST</SVM><name>'Daemliches Mistvieh!'</name></Animations>
+<Animations><SVM>$YOUASKEDFORIT</SVM><name>'Du wolltest es so haben!'</name></Animations>
+<Animations><SVM>$YOUDAREHITME</SVM><name>'Du greifst mich an?!'</name></Animations>
+<Animations><SVM>$THENIBEATYOUOUTOFHERE</SVM><name>'Dann muss ich dich rauspruegeln!'</name></Animations>
+<Animations><SVM>$WHATDIDYOUDOINTHERE</SVM><name>'Was suchst du hier drin?'</name></Animations>
+<Animations><SVM>$WILLYOUSTOPFIGHTING</SVM><name>'Wollt ihr wohl damit aufhoeren!'</name></Animations>
+<Animations><SVM>$MILGREETINGS</SVM><name>'Fuer den Koenig!'</name></Animations>
+<Animations><SVM>$PALGREETINGS</SVM><name>'Fuer Innos!'</name></Animations>
+<Animations><SVM>$WEATHER</SVM><name>'Scheiss Wetter!'</name></Animations>
+<Animations><SVM>$ALARM</SVM><name>'Alarm!'</name></Animations>
+<Animations><SVM>$GUARDS</SVM><name>'Wachen! Hier her!'</name></Animations>
+<Animations><SVM>$KILLENEMY</SVM><name>'Jetzt stirbst du!'</name></Animations>
+<Animations><SVM>$ENEMYKILLED</SVM><name>'Das wars mit dir!'</name></Animations>
+<Animations><SVM>$GOODKILL</SVM><name>'Das Schwein hat's verdient!'</name></Animations>
+<Animations><SVM>$MONSTERKILLED</SVM><name>'Das wars mit dem Mistvieh!'</name></Animations>
+<Animations><SVM>$GOODMONSTERKILL</SVM><name>'Gib' den Viechern ordentlich Saures!'</name></Animations>
+<Animations><SVM>$THIEFDOWN</SVM><name>'Versuch das nicht noch einmal, Dieb!'</name></Animations>
+<Animations><SVM>$SHEEPATTACKERDOWN</SVM><name>'Du wirst keine Schafe mehr schlachten!'</name></Animations>
+<Animations><SVM>$RUMFUMMLERDOWN</SVM><name>'Du haettest die Finger davon lassen sollen!'</name></Animations>
+<Animations><SVM>$KILLMURDERER</SVM><name>'Stirb, Moerder!'</name></Animations>
+<Animations><SVM>$STUPIDBEASTKILLED</SVM><name>'Das wars fuer das bloede Vieh!'</name></Animations>
+<Animations><SVM>$NEVERHITMEAGAIN</SVM><name>'Greif mich nie wieder an!'</name></Animations>
+<Animations><SVM>$YOUBETTERSHOULDHAVELISTENED</SVM><name>'Du haettest auf mich hoeren sollen!'</name></Animations>
+<Animations><SVM>$GETUPANDBEGONE</SVM><name>'Steh auf und raus hier!'</name></Animations>
+<Animations><SVM>$NEVERENTERROOMAGAIN</SVM><name>'Und jetzt bleib draussen!'</name></Animations>
+<Animations><SVM>$THEREISNOFIGHTINGHERE</SVM><name>'Hier wird nicht gekaempft!'</name></Animations>
+<Animations><SVM>$NOTNOW</SVM><name>'Nicht jetzt!'</name></Animations>
+<Animations><SVM>$SHEEPKILLER_CRIME</SVM><name>'Schafsmoerder! Mit dir rede nicht nicht!'</name></Animations>
+<Animations><SVM>$ATTACK_CRIME</SVM><name>'Mieser Schlaeger!'</name></Animations>
+<Animations><SVM>$THEFT_CRIME</SVM><name>'Mit Dieben rede ich nicht!'</name></Animations>
+<Animations><SVM>$GetOutOfMyBed</SVM><name>'Raus aus meinem Bett!'</name></Animations>
+<Animations><SVM>$WhatWasThat</SVM><name>'Was war denn das?'</name></Animations>
+<Animations><SVM>$TheresAFight</SVM><name>'Ein Kampf!'</name></Animations>
+<Animations><SVM>$GoodVictory</SVM><name>'Schoener Kampf!'</name></Animations>
+<Animations><SVM>$NotBad</SVM><name>'Nicht schlecht!'</name></Animations>
+<Animations><SVM>$WeaponDown</SVM><name>'Waffe runter!'</name><key>103</key></Animations>
+<Animations><SVM>$ISaidWeaponDown</SVM><name>'Steck endlich die scheiss Waffe weg!'</name><key>105</key></Animations>
+<Animations><SVM>$StopMagic</SVM><name>'Steck die Magie weg!'</name><key>99</key></Animations>
+<Animations><SVM>$ISaidStopMagic</SVM><name>'Steck die Scheiss Magie weg!'</name><key>98</key></Animations>
+<Animations><SVM>$WiseMove</SVM><name>'Schlaue Entscheidung!'</name><key>97</key></Animations>
+<Animations><SVM>$NextTimeYoureInForIt</SVM><name>'Das naechste mal werden wir ja sehen!'</name></Animations>
+<Animations><SVM>$LookingForTroubleAgain</SVM><name>'Suchst du wieder Streit?!'</name></Animations>
+<Animations><SVM>$WhatAreYouDoing</SVM><name>'Was machst du denn da?'</name></Animations>
+<Animations><SVM>$ITookYourGold</SVM><name>'Danke fuer das Gold!'</name></Animations>
+<Animations><SVM>$ShitNoGold</SVM><name>'Der hat ja nicht mal Gold dabei!'</name></Animations>
+<Animations><SVM>$ITakeYourWeapon</SVM><name>'Deine Waffe gehoert mir!'</name></Animations>
+<Animations><SVM>$WhatsThisSupposedToBe</SVM><name>'Was soll das denn werden?!'</name></Animations>
+<Animations><SVM>$RunCoward</SVM><name>'Bleib stehen du Lump!'</name></Animations>
+<Animations><SVM>$RunAway</SVM><name>'Scheisse! Nichts wie weg!'</name></Animations>
+<Animations><SVM>$SpareMe</SVM><name>'Ich will keinen Aerger!'</name></Animations>
+<Animations><SVM>$ALARM</SVM><name>'Alarm!'</name></Animations>
+<Animations><SVM>$TOUGHGUY_ATTACKLOST</SVM><name>'Schon gut, du hast gewonnen!'</name></Animations>
+<Animations><SVM>$TOUGHGUY_ATTACKWON</SVM><name>'Und? Noch Fragen?'</name></Animations>
+<Animations><SVM>$TOUGHGUY_PLAYERATTACK</SVM><name>'Willst du dich nochmal mit mir anlegen?'</name></Animations>
+<Animations><SVM>$ADDON_NOARMOR_BDT</SVM><name>'Zieh dir erstmal was an!'</name></Animations>
+<Animations><SVM>$NOLEARNYOUREBETTER</SVM><name>'Du bist jetzt schon besser!'</name></Animations>
+<Animations><SVM>$NOLEARNOVERPERSONALMAX</SVM><name>'Ich kann dir nichts mehr beibringen!'</name></Animations>
+<Animations><SVM>$NOLEARNNOPOINTS</SVM><name>'Du hast nicht genug Erfahrung!'</name></Animations>
+</SoundList>
+</ClientOptions>

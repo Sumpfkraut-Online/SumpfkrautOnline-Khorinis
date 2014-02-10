@@ -1,0 +1,162 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{82655F73-CF7C-4416-9313-BD657AD8F05F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Gothic</RootNamespace>
+    <AssemblyName>Gothic</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\GothicII\System\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CRC32.cs" />
+    <Compile Include="mClasses\Bar.cs" />
+    <Compile Include="mClasses\Button.cs" />
+    <Compile Include="mClasses\Cursor.cs" />
+    <Compile Include="mClasses\Elements\mEButton.cs" />
+    <Compile Include="mClasses\Elements\mEItem.cs" />
+    <Compile Include="mClasses\Elements\mETextBox.cs" />
+    <Compile Include="mClasses\InputHooked.cs" />
+    <Compile Include="mClasses\listBox.cs" />
+    <Compile Include="mClasses\LoadingScreen.cs" />
+    <Compile Include="mClasses\ManagedListBox.cs" />
+    <Compile Include="mClasses\StealContainer.cs" />
+    <Compile Include="mClasses\textBox.cs" />
+    <Compile Include="zClasses\CGameManager.cs" />
+    <Compile Include="zClasses\zCFontMan.cs" />
+    <Compile Include="zClasses\oCAIHuman.cs" />
+    <Compile Include="zClasses\oCAIVobMove.cs" />
+    <Compile Include="zClasses\oCAniCtrl_Human.cs" />
+    <Compile Include="zClasses\oCBarrier.cs" />
+    <Compile Include="zClasses\oCDocumentManager.cs" />
+    <Compile Include="zClasses\oCInformationManager.cs" />
+    <Compile Include="zClasses\oCMag_Book.cs" />
+    <Compile Include="zClasses\oCMob.cs" />
+    <Compile Include="zClasses\oCMobContainer.cs" />
+    <Compile Include="zClasses\oCMobDoor.cs" />
+    <Compile Include="zClasses\oCMobInter.cs" />
+    <Compile Include="zClasses\oCMobLockable.cs" />
+    <Compile Include="zClasses\oCNpc_States.cs" />
+    <Compile Include="zClasses\oCObjectFactory.cs" />
+    <Compile Include="zClasses\oCRtnManager.cs" />
+    <Compile Include="zClasses\oCSkyControler_Barrier.cs" />
+    <Compile Include="zClasses\oCSpawnManager.cs" />
+    <Compile Include="zClasses\oCSpell.cs" />
+    <Compile Include="zClasses\oCStealContainer.cs" />
+    <Compile Include="zClasses\oCWorldTimer.cs" />
+    <Compile Include="zClasses\zCAIBase.cs" />
+    <Compile Include="zClasses\zCAICamera.cs" />
+    <Compile Include="zClasses\zCClassDef.cs" />
+    <Compile Include="zClasses\zCConsole.cs" />
+    <Compile Include="zClasses\zCCSManager.cs" />
+    <Compile Include="zClasses\zCEventManager.cs" />
+    <Compile Include="zClasses\zCFont.cs" />
+    <Compile Include="zClasses\zCInput.cs" />
+    <Compile Include="zClasses\zCInputCallback.cs" />
+    <Compile Include="zClasses\zCInput_Win32.cs" />
+    <Compile Include="zClasses\zCMaterial.cs" />
+    <Compile Include="zClasses\zCMenu.cs" />
+    <Compile Include="zClasses\zCMenuItem.cs" />
+    <Compile Include="zClasses\zCMesh.cs" />
+    <Compile Include="zClasses\zCModel.cs" />
+    <Compile Include="zClasses\zCModelAni.cs" />
+    <Compile Include="zClasses\zCModelAniActive.cs" />
+    <Compile Include="zClasses\zCModelPrototype.cs" />
+    <Compile Include="zClasses\zCOption.cs" />
+    <Compile Include="zClasses\zCOptionEntry.cs" />
+    <Compile Include="zClasses\zCOptionSection.cs" />
+    <Compile Include="zClasses\zCParser.cs" />
+    <Compile Include="zClasses\zCPar_DataStack.cs" />
+    <Compile Include="zClasses\zCPar_Stack.cs" />
+    <Compile Include="zClasses\zCPar_Symbol.cs" />
+    <Compile Include="zClasses\zCPlayerInfo.cs" />
+    <Compile Include="zClasses\zCSession.cs" />
+    <Compile Include="zClasses\zCSkyControler.cs" />
+    <Compile Include="zClasses\zCSkyControler_Outdoor.cs" />
+    <Compile Include="zClasses\zCSkyLayer.cs" />
+    <Compile Include="zClasses\zCSkyLayerData.cs" />
+    <Compile Include="zClasses\zCSkyState.cs" />
+    <Compile Include="zClasses\zCSoundSystem.cs" />
+    <Compile Include="zClasses\zCView.cs" />
+    <Compile Include="zClasses\zCViewProgressBar.cs" />
+    <Compile Include="zClasses\zCViewText.cs" />
+    <Compile Include="zClasses\zCVisual.cs" />
+    <Compile Include="zClasses\zCVobSpot.cs" />
+    <Compile Include="zClasses\zCWay.cs" />
+    <Compile Include="zClasses\zCWayNet.cs" />
+    <Compile Include="zClasses\zCWaypoint.cs" />
+    <Compile Include="zClasses\zERROR.cs" />
+    <Compile Include="zStruct\NPCAiVar.cs" />
+    <Compile Include="zStruct\oCMsgConversation.cs" />
+    <Compile Include="zStruct\oSDamageDescriptor.cs" />
+    <Compile Include="zStruct\TNpcAIState.cs" />
+    <Compile Include="zTypes\zMat4.cs" />
+    <Compile Include="zTypes\zTBBox3D.cs" />
+    <Compile Include="zTypes\zPoint3.cs" />
+    <Compile Include="zTypes\Matrix4.cs" />
+    <Compile Include="zClasses\oCGame.cs" />
+    <Compile Include="zClasses\oCItem.cs" />
+    <Compile Include="zClasses\oCItemContainer.cs" />
+    <Compile Include="zClasses\oCNpc.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="zClasses\oCNpcInventory.cs" />
+    <Compile Include="zClasses\oCNpcTalent.cs" />
+    <Compile Include="zClasses\zClass.cs" />
+    <Compile Include="zClasses\zCObject.cs" />
+    <Compile Include="zClasses\zCVob.cs" />
+    <Compile Include="zClasses\zCWorld.cs" />
+    <Compile Include="zTypes\zCArray.cs" />
+    <Compile Include="zTypes\zCList.cs" />
+    <Compile Include="zTypes\zColor.cs" />
+    <Compile Include="zTypes\zString.cs" />
+    <Compile Include="zTypes\zStringRetn.cs" />
+    <Compile Include="zTypes\zTOptionPaths.cs" />
+    <Compile Include="zTypes\zCTree.cs" />
+    <Compile Include="zTypes\zVec3.cs" />
+    <Compile Include="zTypes\zCListSort.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WinApi\WinApi.csproj">
+      <Project>{52793B3F-130C-4B05-8333-1529981DE780}</Project>
+      <Name>WinApi</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

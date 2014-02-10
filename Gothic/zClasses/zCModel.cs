@@ -1,0 +1,183 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using WinApi;
+using Gothic.zTypes;
+
+namespace Gothic.zClasses
+{
+    public class zCModel : zCVisual, IDisposable
+    {
+        #region OffsetLists
+        public enum Offsets : uint 
+        {
+            Owner = 0x60,
+            ModelPrototype = 0x64
+        }
+
+        public enum FuncOffsets : uint
+        {
+            ShowAniList = 0x00582770,
+            StartAni_ModelInt = 0x0057B0C0,
+            StartAni_IntInt = 0x0057B070,
+            StartAni_StrInt = 0x0057AF70,
+            StopAni_Int = 0x0057ABE0,
+            StopAni_AktivAni = 0x0057ACB0,
+            StopAni_Ani = 0x0057AC60,
+            GetActiveAni = 0x0057ABA0,
+            GetActiveAni_ID = 0x0057AB60,
+            GetAniFromAniID = 0x00472F50,
+            FadeOutAni_AktivAni = 0x0057F020,
+            FadeOutAnisLayerRange = 0x0057F1F0,
+            StopAnisLayerRange = 0x0057F240,
+            FadeOutAni_Int = 0x0057EF50,
+            GetVisualName = 0x0057DF60,
+            AdvanceAnis = 0x0057CA90,
+            StartAnimation = 0x005765E0,
+            StopAnimation = 0x005765F0,
+            IsAnimationActive = 0x00576690
+        }
+
+        public enum FuncSize : uint
+        {
+            ShowAniList = 9,
+            StartAni_ModelInt = 5,
+            StartAni_IntInt = 6,
+            StopAni_Int = 6,
+            StopAni_AktivAni = 6,
+            StopAni_Ani = 5,
+            GetActiveAni = 5,
+            GetActiveAni_ID = 5,
+            GetAniFromAniID= 7,
+            FadeOutAni_AktivAni = 5,
+            FadeOutAni_Int = 6,
+            FadeOutAnisLayerRange = 7,
+            StopAnisLayerRange = 7,
+            GetVisualName=5,
+            AdvanceAnis=6
+        }
+        #endregion
+
+
+        public zCModel()
+        {
+
+        }
+
+        public zCModel(Process process, int address)
+            : base(process, address)
+        {
+
+        }
+
+        private bool disposed = false;
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!this.disposed)
+            {
+                Process.THISCALL<NullReturnCall>((uint)Address, (uint)0x00577CC0, new CallValue[] { });
+                disposed = true;
+            }
+        }
+
+        public zCVob Owner
+        {
+            get { return new zCVob(Process, Process.ReadInt(Address + (int)Offsets.Owner)); }
+        }
+
+
+        public void StartAnimation(zString str)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.StartAnimation, new CallValue[] { str });
+        }
+
+        public void StopAnimation(zString str)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.StopAnimation, new CallValue[] { str });
+        }
+
+        public void ShowAniList( int id )
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.ShowAniList, new CallValue[] { new IntArg(id) });
+        }
+
+        public void AdvanceAnis()
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.AdvanceAnis, new CallValue[] {  });
+        }
+
+        public void StartAni(zString ani, int id)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.StartAni_StrInt, new CallValue[] { ani, new IntArg(id) });
+        }
+
+        public void StartAni(zCModelAni ani, int id)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.StartAni_ModelInt, new CallValue[] { ani, new IntArg(id) });
+        }
+
+        public void StopAnisLayerRange(int ani, int id)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.StopAnisLayerRange, new CallValue[] { new IntArg(ani), new IntArg(id) });
+        }
+        public void FadeOutAnisLayerRange(int ani, int id)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.FadeOutAnisLayerRange, new CallValue[] { new IntArg(ani), new IntArg(id) });
+        }
+
+        public void StartAni(int ani, int id)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.StartAni_IntInt, new CallValue[] { new IntArg(ani), new IntArg(id) });
+        }
+
+        public void StopAni(int ani)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.StopAni_Int, new CallValue[] { new IntArg(ani) });
+        }
+
+        public void FadeOutAni(int ani)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.FadeOutAni_Int, new CallValue[] { new IntArg(ani) });
+        }
+
+        public int IsAnimationActive(zString animname)
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.IsAnimationActive, new CallValue[] { animname });
+        }
+
+        public zCModelAniActive GetActiveAni(zCModelAni ani)
+        {
+            return Process.THISCALL<zCModelAniActive>((uint)Address, (uint)FuncOffsets.GetActiveAni, new CallValue[] { ani });
+        }
+
+        public zCModelAniActive GetActiveAni(int id)
+        {
+            return Process.THISCALL<zCModelAniActive>((uint)Address, (uint)FuncOffsets.GetActiveAni_ID, new CallValue[] { new IntArg(id) });
+        }
+
+        public zCModelAni GetAniFromAniID(int id)
+        {
+            return Process.THISCALL<zCModelAni>((uint)Address, (uint)FuncOffsets.GetAniFromAniID, new CallValue[] { new IntArg(id) });
+        }
+
+        public zString GetVisualName()
+        {
+            int str = Process.Alloc(20).ToInt32();
+            IntArg arg = Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.GetVisualName, new CallValue[] { new IntArg(str) });
+            return new zString(Process, arg.Address);
+        }
+
+        
+
+        public override uint ValueLength()
+        {
+            return 4;
+        }
+    }
+}

@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{52793B3F-130C-4B05-8333-1529981DE780}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>WinApi</RootNamespace>
+    <AssemblyName>WinApi</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\..\..\..\..\..\..\Dokumente\Projekte\C#\Gothic\Gothic Untold Chapter 2\Gothic_bin\System\UntoldChapter\DLL\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Args\BoolArg.cs" />
+    <Compile Include="Args\CallValue.cs" />
+    <Compile Include="Args\FloatRefArg.cs" />
+    <Compile Include="Args\FloatArg.cs" />
+    <Compile Include="Args\CharArg.cs" />
+    <Compile Include="FileFormat\IniFile.cs" />
+    <Compile Include="HIDDevice.cs" />
+    <Compile Include="Win32\HID\HID.cs" />
+    <Compile Include="Win32\HID\Structures\HidCaps.cs" />
+    <Compile Include="Win32\HID\Structures\HID_Device.cs" />
+    <Compile Include="HookInfos.cs" />
+    <Compile Include="InputReport.cs" />
+    <Compile Include="Args\IntArg.cs" />
+    <Compile Include="Win32\Kernel\DeviceIoControls.cs" />
+    <Compile Include="Win32\Kernel\Error.cs" />
+    <Compile Include="Win32\Kernel\Exception\AccessDenied.cs" />
+    <Compile Include="Win32\Kernel\Exception\Win32Exception.cs" />
+    <Compile Include="Win32\Kernel\Exception\WindowNotFoundException.cs" />
+    <Compile Include="Win32\Kernel\File.cs" />
+    <Compile Include="Win32\Kernel\Process.cs" />
+    <Compile Include="NETINJECTPARAMS.cs" />
+    <Compile Include="OutputReport.cs" />
+    <Compile Include="Report.cs" />
+    <Compile Include="Win32\SetupApi\ClassDev.cs" />
+    <Compile Include="Win32\SetupApi\Structures\DeviceInterfaceData.cs" />
+    <Compile Include="Win32\User\Enumeration\RawInputCommand.cs" />
+    <Compile Include="Win32\User\Enumeration\RawKeyboardFlags.cs" />
+    <Compile Include="Win32\User\Enumeration\RawMouseButtons.cs" />
+    <Compile Include="Win32\User\Enumeration\RawMouseFlags.cs" />
+    <Compile Include="Win32\User\Enumeration\VirtualKeys.cs" />
+    <Compile Include="Win32\User\Enumeration\WindowsMessages.cs" />
+    <Compile Include="Win32\User\Hook.cs" />
+    <Compile Include="Win32\User\Input.cs" />
+    <Compile Include="Win32\User\Enumeration\RawInputType.cs" />
+    <Compile Include="Win32\User\Structures\RawHID.cs" />
+    <Compile Include="Win32\User\Structures\RawInput.cs" />
+    <Compile Include="Win32\User\Structures\RawInputHeader.cs" />
+    <Compile Include="Win32\User\Structures\RawKeyboard.cs" />
+    <Compile Include="Win32\User\Structures\RawMouse.cs" />
+    <Compile Include="Win32\User\Structures\RECT.cs" />
+    <Compile Include="Win32\User\Window.cs" />
+    <Compile Include="Process.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Win32\Kernel\Structures\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,152 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C670CA0D-F27B-4745-9B76-B06882052E6B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GMP</RootNamespace>
+    <AssemblyName>GUC</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\GothicII\System\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="RakNetSwig, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\GothicII\System\RakNetSwig.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="GUI\Chatbox.cs" />
+    <Compile Include="GUI\MessageBox.cs" />
+    <Compile Include="GUI\TextBox.cs" />
+    <Compile Include="GUI\Text.cs" />
+    <Compile Include="GUI\Texture.cs" />
+    <Compile Include="GUI\View.cs" />
+    <Compile Include="Helper\DateTime.cs" />
+    <Compile Include="Helper\Externals.cs" />
+    <Compile Include="Helper\External_Helper.cs" />
+    <Compile Include="Helper\InventoryHelper.cs" />
+    <Compile Include="Helper\MathHelper.cs" />
+    <Compile Include="Helper\NPCHelper.cs" />
+    <Compile Include="Helper\ObjectHelper.cs" />
+    <Compile Include="Injection\Hooks\AI.cs" />
+    <Compile Include="Injection\Hooks\Game.cs" />
+    <Compile Include="Injection\Hooks\HookEvents.cs" />
+    <Compile Include="Injection\Hooks\MagSynch.cs" />
+    <Compile Include="Injection\Hooks\SpawnManager.cs" />
+    <Compile Include="Injection\MessageFunc.cs" />
+    <Compile Include="Injection\Program.cs" />
+    <Compile Include="Injection\Hooks\Animation.cs" />
+    <Compile Include="Injection\Hooks\ItemSynchro.cs" />
+    <Compile Include="Injection\Hooks\MobSynch.cs" />
+    <Compile Include="Injection\Hooks\VisualSynchro.cs" />
+    <Compile Include="Injection\Hooks\WeaponMode.cs" />
+    <Compile Include="Injection\Stamina.cs" />
+    <Compile Include="Injection\World.cs" />
+    <Compile Include="Logger\ErrorHandler.cs" />
+    <Compile Include="Logger\ErrorLog.cs" />
+    <Compile Include="Modules\Commandos\Commando.cs" />
+    <Compile Include="Modules\LoadModule.cs" />
+    <Compile Include="Modules\ModuleLoader.cs" />
+    <Compile Include="Modules\StartState.cs" />
+    <Compile Include="Modules\StaticVars.cs" />
+    <Compile Include="Modules\UpdateModule.cs" />
+    <Compile Include="Network\Client.cs" />
+    <Compile Include="Network\Messages\AssessPlayerMessage.cs" />
+    <Compile Include="Network\Messages\AssessTalkMessage.cs" />
+    <Compile Include="Network\Messages\AttackSynchMessage.cs" />
+    <Compile Include="Network\Messages\AutoPlayerMessage.cs" />
+    <Compile Include="Network\Messages\CommandoMessage.cs" />
+    <Compile Include="Network\Messages\FriendMessage.cs" />
+    <Compile Include="Network\Messages\ItemStealMessage.cs" />
+    <Compile Include="Network\Messages\UseItemMessage.cs" />
+    <Compile Include="Network\Messages\LevelDataMessage.cs" />
+    <Compile Include="Network\Messages\OutputSynchMessage.cs" />
+    <Compile Include="Network\Messages\PlayerKeyMessage.cs" />
+    <Compile Include="Network\Messages\StartLevelChangeMessage.cs" />
+    <Compile Include="Network\Messages\update\AllPlayerSynchMessage.cs" />
+    <Compile Include="Network\Messages\AnimationMessage.cs" />
+    <Compile Include="Network\Messages\ChatMessage.cs" />
+    <Compile Include="Network\Messages\ConnectionRequest.cs" />
+    <Compile Include="Network\Messages\DisconnectedMessage.cs" />
+    <Compile Include="Network\Messages\DownloadModulesMessage.cs" />
+    <Compile Include="Network\Messages\update\InventorySynch.cs" />
+    <Compile Include="Network\Messages\ItemSynchro_DoDrop.cs" />
+    <Compile Include="Network\Messages\AnimationOverlayMessage.cs" />
+    <Compile Include="Network\Messages\update\AllPlayerSynchMessage2.cs" />
+    <Compile Include="Network\Messages\LevelChangeMessage.cs" />
+    <Compile Include="Network\Messages\MagSetupMessage.cs" />
+    <Compile Include="Network\Messages\Message.cs" />
+    <Compile Include="Network\Messages\MobSynch.cs" />
+    <Compile Include="Network\Messages\NewPlayerMessage.cs" />
+    <Compile Include="Network\Messages\NPCControllerMessage.cs" />
+    <Compile Include="Network\Messages\PassivePerceptionMessage.cs" />
+    <Compile Include="Network\Messages\PlayerListRequest.cs" />
+    <Compile Include="Network\Messages\update\MobInteractDiffMessage.cs" />
+    <Compile Include="Network\Messages\update\PlayerStatusMessage.cs" />
+    <Compile Include="Network\Messages\update\PlayerStatusMessage2.cs" />
+    <Compile Include="Network\Messages\SpawnNPCMessage.cs" />
+    <Compile Include="Network\Messages\StaticNPCMessage.cs" />
+    <Compile Include="Network\Messages\StatusMessage.cs" />
+    <Compile Include="Network\Messages\TimeMessage.cs" />
+    <Compile Include="Network\Messages\VisualSynchro_SetAsPlayer.cs" />
+    <Compile Include="Network\Messages\WeaponModeMessage.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RenderTasks\MobSynch_InsertItem.cs" />
+    <Compile Include="RenderTasks\RenderTask.cs" />
+    <Compile Include="RenderTasks\RenderTaskModel.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Gothic\Gothic.csproj">
+      <Project>{82655F73-CF7C-4416-9313-BD657AD8F05F}</Project>
+      <Name>Gothic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Network\Network.csproj">
+      <Project>{A896EADC-459C-4F6D-8B16-86B0A0F0F6A8}</Project>
+      <Name>Network</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WinApi\WinApi.csproj">
+      <Project>{52793B3F-130C-4B05-8333-1529981DE780}</Project>
+      <Name>WinApi</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

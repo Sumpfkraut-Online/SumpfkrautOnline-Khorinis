@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<Options xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <maxTries>10</maxTries>
+  <MasterPassword>riomain</MasterPassword>
+  <PlayerListAvailable>true</PlayerListAvailable>
+  <AdminAvailable>true</AdminAvailable>
+  <animationListAvailable>true</animationListAvailable>
+  <speakListAvailable>true</speakListAvailable>
+  <animationListWhiteList>false</animationListWhiteList>
+  <AvailableAnimations />
+</Options>
