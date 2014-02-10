@@ -22,11 +22,13 @@ namespace GMP_Server.Net.Message
 
             
             int id = 0;
+            int focusid = 0;
             stream_2.Read(out id);
+            stream_2.Read(out focusid);
             Player player = Player.getPlayerSort(id, Program.playerList);
             if (player == null)
                 return;
-
+            player.focusID = focusid;
             if (player.newPlayer && !player.isNPC)
             {
                 Scripting.View.SendToPlayer(new Scripting.Player(player));

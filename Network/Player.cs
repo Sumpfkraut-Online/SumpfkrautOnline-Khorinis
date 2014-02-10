@@ -188,6 +188,7 @@ namespace Network
         public MobInteract mobInteract = null;
 
         public int id;
+        public int focusID;
         public int NPCAddress;
         public float[] pos = new float[3];
         public float[] dir = new float[3];

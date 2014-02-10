@@ -74,7 +74,7 @@ namespace GMP.Net.Messages
         private static bool updatePlayerDir(Player pl)
         {
             if (!StaticVars.Ingame)
-                return false;
+                return true;
 
             if (!pl.isSpawned || pl.NPCAddress == oCNpc.Player(Process.ThisProcess()).Address)
                 return true;
@@ -84,6 +84,12 @@ namespace GMP.Net.Messages
             Matrix4 trafo = npc.TrafoObjToWorld;
             double angle = (Math.Atan2(pl.dir[0], pl.dir[2]) * (180.0 / Math.PI));
 
+            npc.ResetRotationsWorld();
+            npc.RotateWorldY((float)angle);
+
+            return true;
+
+            //TODO: Winkel langsam verändern:
             
             if (new Vec3f(Program.Player.pos).getDistance((Vec3f)pl.pos) > 4000)//Wenn Spieler weiter als 40m Entfernt, braucht er nicht zu aktualisieren
             {
@@ -229,6 +235,15 @@ namespace GMP.Net.Messages
 
             stream.Write(pl.id);
 
+            if (player.FocusVob.Address == 0 || !StaticVars.spawnedPlayerDict.ContainsKey(player.FocusVob.Address))
+            {
+                stream.Write((int)0);
+            }
+            else
+            {
+                stream.Write(StaticVars.spawnedPlayerDict[player.FocusVob.Address].id);
+            }
+
             
             if (type == 1)
             {
@@ -249,8 +264,10 @@ namespace GMP.Net.Messages
         {
             byte type ;
             int id = 0;
+            int focusID = 0;
 
             stream.Read(out type);
+            
 
 
             int posLen = 3;
@@ -263,6 +280,7 @@ namespace GMP.Net.Messages
             short animation = 0;
 
             stream.Read(out id);
+            stream.Read(out focusID);
             for (int i = 0; i < posLen; i++)
                 stream.Read(out pos[i]);
 

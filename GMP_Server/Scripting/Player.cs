@@ -52,6 +52,21 @@ namespace GMP_Server.Scripting
             return new Player(npc.npcPlayer);
         }
 
+        public void DeleteNPC()
+        {
+            if (!player.isNPC || player.NPC == null)
+                return;
+            new CommandoMessage().Write(Program.server.receiveBitStream, Program.server, -1, (byte)CommandoType.RemoveNPC, null, new int[] { player.id }, null);
+
+            NPC npc = player.NPC;
+            if (Program.playerDict.ContainsKey(npc.npcPlayer.id))
+                Program.playerDict.Remove(npc.npcPlayer.id);
+            if (Program.playerList.Contains(npc.npcPlayer))
+                Program.playerList.Remove(npc.npcPlayer);
+            if (Program.npcList.Contains(npc))
+                Program.npcList.Remove(npc);
+        }
+
         public int getID()
         {
             return player.id;
@@ -65,6 +80,15 @@ namespace GMP_Server.Scripting
         public String getName()
         {
             return player.name;
+        }
+
+        public Player getFocusedPlayer()
+        {
+            if (player.focusID == 0)
+                return null;
+            if (!Program.playerDict.ContainsKey(player.focusID))
+                return null;
+            return new Scripting.Player(Program.playerDict[player.focusID]);
         }
 
         public Object getPlayerData(String str)
@@ -359,6 +383,35 @@ namespace GMP_Server.Scripting
         {
             player.lastDex = dex;
             new CommandoMessage().Write(Program.server.receiveBitStream, Program.server, -1, (byte)CommandoType.SetDexterity, null, new int[] { player.id, player.lastDex }, null);
+        }
+
+
+        public static bool operator ==(Player c1, Player c2)
+        {
+            if (c1.getID() == c2.getID())
+                return true;
+            return false;
+        }
+
+        public static bool operator !=(Player c1, Player c2)
+        {
+            if (c1.getID() != c2.getID())
+                return true;
+            return false;
+        }
+
+        public bool Equals(Player pl)
+        {
+            if (this.getID() == pl.getID())
+                return true;
+            return false;
+        }
+
+        public static explicit operator Player(int id)
+        {
+            if (!Program.playerDict.ContainsKey(id))
+                return null;
+            return new Player(Program.playerDict[id]);
         }
     }
 }
