@@ -302,7 +302,8 @@ namespace GMP.Helper
 
                 for (int i = 0; i < pl.lastTalentSkills.Length; i++)
                     npc.SetTalentSkill(i, pl.lastTalentSkills[i]);
-
+                for (int i = 0; i < pl.lastTalentValues.Length; i++)
+                    npc.SetTalentValue(i, pl.lastTalentValues[i]);
                 for (int i = 1; i < 5; i++)
                     npc.SetHitChances(i, pl.lastHitChances[i - 1]);
 

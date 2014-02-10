@@ -124,11 +124,17 @@ namespace GMP.Network.Messages
             Process Process = Process.ThisProcess();
             if (type == (byte)CommandoType.SetTalents)
             {
-                new oCNpc(Process, Program.Player.NPCAddress).SetTalentSkill(arguments2[0], arguments2[2]);
-                new oCNpc(Process, Program.Player.NPCAddress).SetTalentValue(arguments2[0], arguments2[1]);
-            }
+                oCNpc npc = new oCNpc(Process, Program.Player.NPCAddress);
+                npc.SetTalentSkill(arguments2[0], arguments2[2]);
+                npc.SetTalentValue(arguments2[0], arguments2[1]);
 
-            if (type == (byte)CommandoType.GiveItems)
+                //npc.Hitchance_h1
+            } if (type == (byte)CommandoType.SetPlayerHitChance)
+            {
+                oCNpc npc = new oCNpc(Process, Program.Player.NPCAddress);
+                npc.SetHitChances(arguments2[0], arguments2[1]);
+            }
+            else if (type == (byte)CommandoType.GiveItems)
             {
                 zString str = zString.Create(Process, arguments1[0]);
                 int index = zCParser.getParser(Process).GetIndex(str);
@@ -150,9 +156,7 @@ namespace GMP.Network.Messages
                     npc.RemoveFromInv(itm, itm.Amount);
                     npc.PutInInv(itm);
                 }
-            }
-
-            if (type == (byte)CommandoType.SetInventory)
+            }else if (type == (byte)CommandoType.SetInventory)
             {
                 if (!StaticVars.AllPlayerDict.ContainsKey(arguments2[0]))
                     return;

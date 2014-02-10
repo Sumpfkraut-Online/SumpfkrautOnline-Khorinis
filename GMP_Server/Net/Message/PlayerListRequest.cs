@@ -31,7 +31,8 @@ namespace GMP_Server.Net.Message
 
             for (int i = 0; i < player.lastTalentSkills.Length; i++)
                 stream.Read(out player.lastTalentSkills[i]);
-
+            for (int i = 0; i < player.lastTalentValues.Length; i++)
+                stream.Read(out player.lastTalentValues[i]);
             for (int i = 1; i < 5; i++)
                 stream.Read(out player.lastHitChances[i - 1]);
 
@@ -98,6 +99,8 @@ namespace GMP_Server.Net.Message
 
                 for (int iTal = 0; iTal < pl.lastTalentSkills.Length; iTal++)
                     stream.Write(pl.lastTalentSkills[iTal]);
+                for (int iTal = 0; iTal < pl.lastTalentValues.Length; iTal++)
+                    stream.Write(pl.lastTalentValues[iTal]);
                 for (int iHit = 1; iHit < 5; iHit++)
                     stream.Write(pl.lastHitChances[iHit - 1]);
                 stream.Write(pl.itemList.Count);

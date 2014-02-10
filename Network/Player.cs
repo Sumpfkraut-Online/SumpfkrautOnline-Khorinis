@@ -203,6 +203,7 @@ namespace Network
         public int lastDex = -1;
         public int[] lastHitChances = new int[4];
         public int[] lastTalentSkills = new int[22];
+        public int[] lastTalentValues = new int[22];
         public bool knowName;
 
         public int lastAniID = -1;

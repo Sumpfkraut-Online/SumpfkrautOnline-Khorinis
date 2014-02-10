@@ -540,6 +540,7 @@ namespace AdminAndListModule.Lists
 
             talButton = new mEButton();
             talButton.Data = StaticVars.Languages.getValue(Program.PrimLangList, "Set_Talent");
+            talButton.ButtonPressed += new EventHandler<mEButton.ButtonPressedEventArg>(SetTalents_Execute);
             talButton.actionID = ((mEButton)sender).actionID;
             Data.Add(talButton);
 

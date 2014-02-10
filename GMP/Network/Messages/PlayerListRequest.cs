@@ -74,6 +74,8 @@ namespace GMP.Net.Messages
 
                 for (int iTal = 0; iTal < pl.lastTalentSkills.Length; iTal++)
                     stream.Read(out pl.lastTalentSkills[iTal]);
+                for (int iTal = 0; iTal < pl.lastTalentValues.Length; iTal++)
+                    stream.Read(out pl.lastTalentValues[iTal]);
                 for (int iHit = 1; iHit < 5; iHit++)
                     stream.Read(out pl.lastHitChances[iHit - 1]);
 
@@ -266,7 +268,8 @@ namespace GMP.Net.Messages
             Player nullpl = new Player("");
             for (int i = 0; i < nullpl.lastTalentSkills.Length; i++)
                 stream.Write(player.GetTalentSkill(i));
-
+            for (int i = 0; i < nullpl.lastTalentValues.Length; i++)
+                stream.Write(player.GetTalentValue(i));
             for (int i = 1; i < 5; i++)
                 stream.Write(player.GetHitChances(i));
 

@@ -84,6 +84,17 @@ namespace GMP.Net.Messages
             
 
             int talentsize = 22;
+
+            bool sameTalentValue = true;
+            for (int talentIndex = 0; talentIndex < talentsize; talentIndex++)
+            {
+                if (npc.GetTalentValue(talentIndex) != pl.lastTalentValues[talentIndex])
+                {
+                    sameTalentValue = false;
+                    break;
+                }
+            }
+
             bool sameTalent = true;
             for (int talentIndex = 0; talentIndex < talentsize; talentIndex++)
             {
@@ -93,6 +104,9 @@ namespace GMP.Net.Messages
                     break;
                 }
             }
+
+
+
 
             bool sameHitChances = true;
             for (int hcIndex = 1; hcIndex < 5; hcIndex++)
@@ -108,7 +122,7 @@ namespace GMP.Net.Messages
 
 
             if (npc.HPMax == pl.lastHP_Max && npc.MP == pl.lastMP && npc.MPMax == pl.lastMP_Max
-                && npc.Strength == pl.lastStr && npc.Dexterity == pl.lastDex && sameTalent && sameHitChances)
+                && npc.Strength == pl.lastStr && npc.Dexterity == pl.lastDex && sameTalent && sameHitChances && sameTalentValue)
                 return false;
 
             return true;
@@ -176,6 +190,7 @@ namespace GMP.Net.Messages
                     }
                 }
 
+                bool sameSkillValues = true;
 
                 if (sameHitChances)
                 {
@@ -184,6 +199,24 @@ namespace GMP.Net.Messages
                         if (npc.GetTalentSkill(talentIndex) != pl.lastTalentSkills[talentIndex])
                         {
                             byte type = (byte)((int)AllPlayerSynchMessageTypes.last + 4 + talentIndex);
+                            stream.Write(type);
+                            stream.Write(npc.GetTalentValue(talentIndex));
+
+                            pl.lastTalentValues[talentIndex] = npc.GetTalentValue(talentIndex);
+                            sameSkillValues = false;
+                            break;
+                        }
+                    }
+                }
+
+
+                if (sameHitChances && sameSkillValues)
+                {
+                    for (int talentIndex = 0; talentIndex < pl.lastTalentSkills.Length; talentIndex++)
+                    {
+                        if (npc.GetTalentSkill(talentIndex) != pl.lastTalentSkills[talentIndex])
+                        {
+                            byte type = (byte)((int)AllPlayerSynchMessageTypes.last + 4 + 22 + talentIndex);
                             stream.Write(type);
                             stream.Write(npc.GetTalentSkill(talentIndex));
 

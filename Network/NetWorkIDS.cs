@@ -156,7 +156,8 @@ namespace Network
         MessagesBoxCreate = 49,
         MessagesBoxSetFont = 50,
         MessagesBoxSetLine = 51,
-        SetPlayerScale = 52
+        SetPlayerScale = 52,
+        SetPlayerHitChance = 53
     }
 
     [Flags]

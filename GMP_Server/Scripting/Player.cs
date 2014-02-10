@@ -141,7 +141,15 @@ namespace GMP_Server.Scripting
             new CommandoMessage().Write(Program.server.receiveBitStream, Program.server, -1, (byte)CommandoType.SetPlayerScale, null, new int[] { player.id }, new float[]{x, y, z});
         }
 
+        public void SetTalents(int talent, int skill, int value)
+        {
+            new CommandoMessage().Write(Program.server.receiveBitStream, Program.server, player.id, (byte)CommandoType.SetTalents, null, new int[] { talent, value, skill }, null);
+        }
 
+        public void SetHitChance(int talent, int hitchance)
+        {
+            new CommandoMessage().Write(Program.server.receiveBitStream, Program.server, player.id, (byte)CommandoType.SetPlayerHitChance, null, new int[] { talent, hitchance }, null);
+        }
 
         public void Freeze()
         {

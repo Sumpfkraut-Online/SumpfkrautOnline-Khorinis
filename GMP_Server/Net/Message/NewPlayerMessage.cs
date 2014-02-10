@@ -32,7 +32,9 @@ namespace GMP_Server.Net.Message
             stream.Write(pl.lastDex);
 
             for (int iTal = 0; iTal < pl.lastTalentSkills.Length; iTal++)
-                stream.Write(pl.lastTalentSkills[iTal]);
+                stream.Write(pl.lastTalentValues[iTal]);
+            for (int iTal = 0; iTal < pl.lastTalentSkills.Length; iTal++)
+                stream.Write(pl.lastTalentValues[iTal]);
             for (int iHit = 1; iHit < 5; iHit++)
                 stream.Write(pl.lastHitChances[iHit - 1]);
 

@@ -157,11 +157,17 @@ namespace GMP.Net.Messages
                 }
                 else if (type >= (byte)AllPlayerSynchMessageTypes.last)
                 {
-                    if (type >= (byte)AllPlayerSynchMessageTypes.last + 4)
+                    if (type >= (byte)AllPlayerSynchMessageTypes.last + 4 + 22)
+                    {
+                        //talents
+                        int type2 = type - ((int)AllPlayerSynchMessageTypes.last + 4+22);
+                        pl.lastTalentSkills[type2] = value;
+                    }
+                    else if (type >= (byte)AllPlayerSynchMessageTypes.last + 4)
                     {
                         //talents
                         int type2 = type - ((int)AllPlayerSynchMessageTypes.last + 4);
-                        pl.lastTalentSkills[type2] = value;
+                        pl.lastTalentValues[type2] = value;
                     }
                     else
                     {
@@ -209,11 +215,18 @@ namespace GMP.Net.Messages
                     npc.Dexterity = value;
                 else if (type >= (byte)AllPlayerSynchMessageTypes.last)
                 {
-                    if (type >= (byte)AllPlayerSynchMessageTypes.last + 4)
+                    if (type >= (byte)AllPlayerSynchMessageTypes.last + 4 + 22)
+                    {
+                        //talents
+                        int type2 = type - ((int)AllPlayerSynchMessageTypes.last + 4 + 22);
+                        npc.SetTalentSkill(type2, value);
+
+                    }
+                    else if (type >= (byte)AllPlayerSynchMessageTypes.last + 4)
                     {
                         //talents
                         int type2 = type - ((int)AllPlayerSynchMessageTypes.last + 4);
-                        npc.SetTalentSkill(type2, value);
+                        npc.SetTalentValue(type2, value);
 
                     }
                     else
