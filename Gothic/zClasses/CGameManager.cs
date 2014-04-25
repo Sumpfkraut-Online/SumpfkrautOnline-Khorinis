@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using WinApi;
+using Gothic.zTypes;
 
 namespace Gothic.zClasses
 {
@@ -19,7 +20,8 @@ namespace Gothic.zClasses
         public enum FuncOffsets : uint
         {
             ExitGame = 0x00425780,
-            Done = 0x004254E0
+            Done = 0x004254E0,
+            PlayVideo = 0x0042B940
         }
 
         public enum HookSize : uint
@@ -74,6 +76,15 @@ namespace Gothic.zClasses
         public void Done()
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (int)FuncOffsets.Done, new CallValue[] { });
+        }
+
+        public int PlayVideo(String video)
+        {
+            zString str = zString.Create(Process, video);
+            int rVal = Process.THISCALL<IntArg>((uint)Address, (int)FuncOffsets.PlayVideo, new CallValue[] { (IntArg)str.VTBL, (IntArg)str.ALLOCATER, (IntArg)str.PTR, (IntArg)str.Length, (IntArg)str.Res });
+            Process.Free(new IntPtr(str.Address), 20);
+
+            return rVal;
         }
 
         public static void ExitGameFunc(Process Process)

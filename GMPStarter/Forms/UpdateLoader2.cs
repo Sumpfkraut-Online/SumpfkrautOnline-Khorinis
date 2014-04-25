@@ -9,9 +9,9 @@ using System.Net;
 using System.IO;
 using WinApi;
 using System.Reflection;
-using Network;
 using GMPStarter.Forms;
 using GMPStarter;
+using GUC.Updater;
 
 namespace Gothic_Untold_Chapter.Forms
 {

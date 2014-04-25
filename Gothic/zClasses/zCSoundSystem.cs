@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using WinApi;
+using Gothic.zTypes;
 
 namespace Gothic.zClasses
 {
@@ -13,6 +14,7 @@ namespace Gothic.zClasses
         }
         public enum FuncOffsets : uint
         {
+            
         }
 
         public enum HookSize : uint

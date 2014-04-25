@@ -67,7 +67,8 @@ namespace Gothic.zClasses
         public enum FuncOffsets
         {
             MultiSlot = 0x007125A0,
-            ThisVobAddedToWorld = 0x00712DF0
+            ThisVobAddedToWorld = 0x00712DF0,
+            CreateVisual = 0x00711930
         }
 
         public enum MainFlags
@@ -126,9 +127,87 @@ namespace Gothic.zClasses
 
         }
 
+
         public override uint ValueLength()
         {
             return 4;
+        }
+
+
+        public zString[] Text
+        {
+            get {
+                return new zString[]{
+                    new zString(this.Process, Address+(int)Offsets.text),
+                    new zString(this.Process, Address+(int)Offsets.text + 4),
+                    new zString(this.Process, Address+(int)Offsets.text + 4*2),
+                    new zString(this.Process, Address+(int)Offsets.text + 4*3),
+                    new zString(this.Process, Address+(int)Offsets.text + 4*4),
+                    new zString(this.Process, Address+(int)Offsets.text + 4*5)
+                };
+            }
+        }
+
+        public int[] Count
+        {
+            get
+            {
+                return new int[]{
+                    this.Process.ReadInt(Address+(int)Offsets.count),
+                    this.Process.ReadInt(Address+(int)Offsets.count + 4),
+                    this.Process.ReadInt(Address+(int)Offsets.count + 4*2),
+                    this.Process.ReadInt(Address+(int)Offsets.count + 4*3),
+                    this.Process.ReadInt(Address+(int)Offsets.count + 4*4),
+                    this.Process.ReadInt(Address+(int)Offsets.count + 4*5)
+                };
+            }
+        }
+
+        public void setCount(int id, int value)
+        {
+            if (id >= 6)
+                throw new ArgumentException("id => 0-5");
+            Process.Write(value, Address + (int)Offsets.count + 4 * id);
+        }
+
+        public void setText(int id, String value)
+        {
+            if (id >= 6)
+                throw new ArgumentException("id => 0-5");
+            Text[id].Set(value);
+        }
+
+        public void setDamage(int id, int value)
+        {
+            if (id >= 8)
+                throw new ArgumentException("id => 0-7");
+            Process.Write(value, Address + (int)Offsets.damage + 4 * id);
+        }
+
+        public void setProtection(int id, int value)
+        {
+            if (id >= 8)
+                throw new ArgumentException("id => 0-7");
+            Process.Write(value, Address+(int)Offsets.protection + 4 * id);
+        }
+
+        public void setConditionalAttribute(int id, int value)
+        {
+            if (id >= 3)
+                throw new ArgumentException("id => 0-2");
+            Process.Write(value, Address + (int)Offsets.cond_atr + 4 * id);
+        }
+
+        public void setConditionalValue(int id, int value)
+        {
+            if (id >= 3)
+                throw new ArgumentException("id => 0-2");
+            Process.Write(value, Address + (int)Offsets.cond_value + 4 * id);
+        }
+
+        public void CreateVisual()
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.CreateVisual, new CallValue[] {  });
         }
 
         public void ThisVobAddedToWorld(zCWorld slot)
@@ -165,6 +244,22 @@ namespace Gothic.zClasses
             get { return new zString(Process, Address + (int)Offsets.visual); }
         }
 
+        public zString VisualChange
+        {
+            get { return new zString(Process, Address + (int)Offsets.visual_change); }
+        }
+
+        public zString Effect
+        {
+            get { return new zString(Process, Address + (int)Offsets.visual_effect); }
+        }
+
+        public int VisualSkin
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.visual_skin); }
+            set { Process.Write(value, Address + (int)Offsets.visual_skin); }
+        }
+
         public int HP
         {
             get { return Process.ReadInt(Address + (int)Offsets.hp); }
@@ -175,6 +270,36 @@ namespace Gothic.zClasses
         {
             get { return Process.ReadInt(Address + (int)Offsets.hp_max); }
             set { Process.Write(value, Address + (int)Offsets.hp_max); }
+        }
+
+        public int Wear
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.wear); }
+            set { Process.Write(value, Address + (int)Offsets.wear); }
+        }
+
+        public int Material
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.material); }
+            set { Process.Write(value, Address + (int)Offsets.material); }
+        }
+
+        public int Munition
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.munition); }
+            set { Process.Write(value, Address + (int)Offsets.munition); }
+        }
+
+        public int DamageType
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.damageType); }
+            set { Process.Write(value, Address + (int)Offsets.damageType); }
+        }
+
+        public int DamageTotal
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.damageTotal); }
+            set { Process.Write(value, Address + (int)Offsets.damageTotal); }
         }
 
         public int Value
@@ -201,6 +326,11 @@ namespace Gothic.zClasses
             set { Process.Write(value, Address + (int)Offsets.flags); }
         }
 
+        public int Range
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.range); }
+            set { Process.Write(value, Address + (int)Offsets.range); }
+        }
 
         public int CondAtr1
         {
@@ -258,6 +388,22 @@ namespace Gothic.zClasses
             }
         }
 
+        public int[] Protection
+        {
+            get
+            {
+                return new int[] { 
+                    Process.ReadInt(Address + (int)Offsets.protection),
+                    Process.ReadInt(Address + (int)Offsets.protection + 4),
+                    Process.ReadInt(Address + (int)Offsets.protection + 4*2),
+                    Process.ReadInt(Address + (int)Offsets.protection + 4*3),
+                    Process.ReadInt(Address + (int)Offsets.protection + 4*4),
+                    Process.ReadInt(Address + (int)Offsets.protection + 4*5),
+                    Process.ReadInt(Address + (int)Offsets.protection + 4*6),
+                    Process.ReadInt(Address + (int)Offsets.protection + 4*7),
+                };
+            }
+        }
 
         public int Instanz
         {

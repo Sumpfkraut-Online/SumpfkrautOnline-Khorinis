@@ -7,7 +7,11 @@ namespace Gothic.zClasses
 {
     public class zCSkyControler : zClass
     {
+        public enum Offsets
+        {
+            WeatherType = 0x30,
 
+        }
         public zCSkyControler(Process process, int address)
             : base(process, address)
         {

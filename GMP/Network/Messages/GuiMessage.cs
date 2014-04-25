@@ -1,0 +1,438 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using GUC.GUI;
+using GUC.Enumeration;
+using GUC.Types;
+using GUC.Network;
+
+namespace GUC.Network.Messages
+{
+    class GuiMessage : IMessage
+    {
+        protected Dictionary<int, View> viewList = new Dictionary<int, View>();
+
+        protected View getViewFromList(int id)
+        {
+            if (!viewList.ContainsKey(id))
+                throw new Exception("The key: " + id + " was not found in the viewlist!");
+            return viewList[id];
+        }
+
+        protected Texture getTextureParentFromList(int id)
+        {
+            if (!viewList.ContainsKey(id))
+                return null;
+            View v = viewList[id];
+            if (v is Texture)
+                return (Texture)v;
+            throw new Exception("Parent was not a texture! :"+id+" "+v);
+        }
+
+        public void Read(RakNet.BitStream stream, RakNet.Packet packet, Client client)
+        {
+            byte type = 0;
+            stream.Read(out type);
+            GuiMessageType gmT = (GuiMessageType)type;
+
+            int viewID = 0;
+
+            if (gmT == GuiMessageType.Show)
+            {
+                stream.Read(out viewID);
+                View v = getViewFromList(viewID);
+
+                v.show();
+            }
+            else if (gmT == GuiMessageType.Hide)
+            {
+                stream.Read(out viewID);
+                View v = getViewFromList(viewID);
+
+                v.hide();
+            }
+            else if (gmT == GuiMessageType.SetPosition)
+            {
+                Vec2i position;
+                stream.Read(out viewID);
+                stream.Read(out position);
+                View v = getViewFromList(viewID);
+
+                v.setPosition(position);
+            }
+            else if (gmT == GuiMessageType.Destroy)
+            {
+                stream.Read(out viewID);
+                View v = getViewFromList(viewID);
+
+                v.Destroy();
+            }//Creation:
+            else if (gmT == GuiMessageType.CreateTexture)
+            {
+                Vec2i position, size;
+                string texture;
+                int parentID = 0;
+
+                stream.Read(out viewID);
+                stream.Read(out position);
+                stream.Read(out size);
+                stream.Read(out texture);
+                stream.Read(out parentID);
+
+                Texture tex = new Texture(viewID, texture, position, size);
+                viewList.Add(viewID, tex);
+            }
+            else if (gmT == GuiMessageType.CreateText)
+            {
+                Vec2i position;
+                string text, font;
+                ColorRGBA color;
+                int parentID = 0;
+
+                stream.Read(out viewID);
+                stream.Read(out position);
+                stream.Read(out text);
+                stream.Read(out font);
+                stream.Read(out color);
+                stream.Read(out parentID);
+
+                Text textView = new Text(viewID, text, font, position, getTextureParentFromList(parentID), color);
+                viewList.Add(viewID, textView);
+            }
+            else if (gmT == GuiMessageType.CreateTextBox)
+            {
+                Vec2i position;
+                string text, font;
+                ColorRGBA color;
+                int parentID = 0, sendKey, startWriteKey, resetKey;
+
+                stream.Read(out viewID);
+                stream.Read(out position);
+                stream.Read(out text);
+                stream.Read(out font);
+                stream.Read(out color);
+                stream.Read(out sendKey);
+                stream.Read(out startWriteKey);
+                stream.Read(out resetKey);
+                stream.Read(out parentID);
+
+                TextBox textView = new TextBox(viewID, text, font, position, getTextureParentFromList(parentID), color, resetKey, startWriteKey, sendKey);
+                viewList.Add(viewID, textView);
+            }
+            else if (gmT == GuiMessageType.CreateTextArea)
+            {
+                Vec2i position, size;
+                string text, font;
+                ColorRGBA color;
+                int parentID = 0, sendKey, startWriteKey, resetKey;
+
+                stream.Read(out viewID);
+                stream.Read(out position);
+                stream.Read(out size);
+                stream.Read(out text);
+                stream.Read(out font);
+                stream.Read(out color);
+                stream.Read(out sendKey);
+                stream.Read(out startWriteKey);
+                stream.Read(out resetKey);
+                stream.Read(out parentID);
+
+                TextArea textView = new TextArea(viewID, text, font, position, size, getTextureParentFromList(parentID), color, resetKey, startWriteKey, sendKey);
+                viewList.Add(viewID, textView);
+            }
+            else if (gmT == GuiMessageType.CreateMessageBox)
+            {
+                Vec2i position;
+                int parentID = 0;
+                String font;
+                byte lines;
+
+                stream.Read(out viewID);
+                stream.Read(out position);
+                stream.Read(out parentID);
+                stream.Read(out font);
+                stream.Read(out lines);
+
+                MessageBox messageBox = new MessageBox(viewID, lines, font, position, getTextureParentFromList(parentID));
+                viewList.Add(viewID, messageBox);
+            }
+            else if (gmT == GuiMessageType.CreateCursor)
+            {
+                Vec2i position, size;
+                string texture;
+                int parentID = 0;
+
+                stream.Read(out viewID);
+                stream.Read(out position);
+                stream.Read(out size);
+                stream.Read(out texture);
+                stream.Read(out parentID);
+
+                
+
+                Cursor tex = new Cursor(viewID, texture, position, size);
+                viewList.Add(viewID, tex);
+
+            }
+            else if (gmT == GuiMessageType.CreateButton)
+            {
+                Vec2i position, size;
+                string texture, text;
+                int parentID = 0;
+
+                stream.Read(out viewID);
+                stream.Read(out position);
+                stream.Read(out size);
+                stream.Read(out text);
+                stream.Read(out texture);
+               
+                stream.Read(out parentID);
+
+
+
+                Button tex = new Button(viewID, text, texture, position, size);
+                viewList.Add(viewID, tex);
+
+            }//Texture:
+            else if (gmT == GuiMessageType.SetTexture)
+            {
+                String texture = "";
+
+                stream.Read(out viewID);
+                stream.Read(out texture);
+                View v = getViewFromList(viewID);
+
+                if (!(v is Texture) && !(v is Button))
+                    throw new Exception("SetTexture works only with a texture or buttons!: "+v);
+                Texture tex = (Texture)v;
+                tex.setTexture(texture);
+            }
+            else if (gmT == GuiMessageType.SetSize)
+            {
+                Vec2i position;
+
+                stream.Read(out viewID);
+                stream.Read(out position);
+                View v = getViewFromList(viewID);
+
+                if (!(v is Texture) && !(v is Button))
+                    throw new Exception("SetSize works only with a texture or buttons!: " + v);
+                Texture tex = (Texture)v;
+                tex.setSize(position);
+            }//Text&TextBox:
+            else if (gmT == GuiMessageType.SetText)
+            {
+                String text = "";
+
+                stream.Read(out viewID);
+                stream.Read(out text);
+                View v = getViewFromList(viewID);
+
+                if (!(v is Text) && !(v is TextBox) && !(v is TextArea))
+                    throw new Exception("SetText works only with a text and textbox!: " + v);
+
+                if (v is Text)
+                {
+                    Text tex = (Text)v;
+                    tex.setText(text);
+                }
+                else if(v is TextBox)
+                {
+                    TextBox tex = (TextBox)v;
+                    tex.setText(text);
+                }
+                else if (v is TextArea)
+                {
+                    TextArea tex = (TextArea)v;
+                    tex.setText(text);
+                }
+            }
+            else if (gmT == GuiMessageType.SetTextFont)
+            {
+                String font = "";
+
+                stream.Read(out viewID);
+                stream.Read(out font);
+                View v = getViewFromList(viewID);
+
+                if (!(v is Text) && !(v is TextBox))
+                    throw new Exception("SetFont works only with a text and textbox!: " + v);
+
+                if (v is Text)
+                {
+                    Text tex = (Text)v;
+                    tex.setFont(font);
+                }
+                else if (v is TextBox)
+                {
+                    TextBox tex = (TextBox)v;
+                    tex.setFont(font);
+                }
+            }
+            else if (gmT == GuiMessageType.SetTextColor)
+            {
+                ColorRGBA color;
+
+                stream.Read(out viewID);
+                stream.Read(out color);
+                View v = getViewFromList(viewID);
+
+                if (!(v is Text) && !(v is TextBox) && !(v is TextArea))
+                    throw new Exception("SetColor works only with a text and textbox!: " + v);
+
+                if (v is Text)
+                {
+                    Text tex = (Text)v;
+                    tex.setColor(color);
+                }
+                else if (v is TextBox)
+                {
+                    TextBox tex = (TextBox)v;
+                    tex.setColor(color);
+                }
+                else if (v is TextArea)
+                {
+                    TextArea tex = (TextArea)v;
+                    tex.setColor(color);
+                }
+            }//TextBox!
+            else if (gmT == GuiMessageType.TextBoxStartWriting)
+            {
+                stream.Read(out viewID);
+                View v = getViewFromList(viewID);
+
+                if (!(v is TextBox) && !(v is TextArea))
+                    throw new Exception("TextBoxStartWriting works only with a textbox!: " + v);
+
+                if (v is TextBox)
+                {
+                    TextBox tex = (TextBox)v;
+                    tex.startWriting();
+                }
+                else if (v is TextArea)
+                {
+                    TextArea tex = (TextArea)v;
+                    tex.startWriting();
+                }
+            }
+            else if (gmT == GuiMessageType.TextBoxStopWriting)
+            {
+                stream.Read(out viewID);
+                View v = getViewFromList(viewID);
+
+                if (!(v is TextBox) && !(v is TextArea))
+                    throw new Exception("TextBoxStartWriting works only with a textbox!: " + v);
+
+                if (v is TextBox)
+                {
+                    TextBox tex = (TextBox)v;
+                    tex.stopWriting();
+                }
+                else if (v is TextArea)
+                {
+                    TextArea tex = (TextArea)v;
+                    tex.stopWriting();
+                }
+            }
+            else if (gmT == GuiMessageType.TextBoxCallSend)
+            {
+                stream.Read(out viewID);
+                View v = getViewFromList(viewID);
+
+                if (!(v is TextBox) && !(v is TextArea))
+                    throw new Exception("TextBoxStartWriting works only with a textbox!: " + v);
+
+                if (v is TextBox)
+                {
+                    TextBox tex = (TextBox)v;
+                    tex.callSendText();
+                }
+                else if (v is TextArea)
+                {
+                    TextArea tex = (TextArea)v;
+                    tex.callSendText();
+                }
+            }
+            else if (gmT == GuiMessageType.TextBoxSetStartWritingKey)
+            {
+                int key = 0;
+                stream.Read(out viewID);
+                stream.Read(out key);
+                View v = getViewFromList(viewID);
+
+                if (!(v is TextBox) && !(v is TextArea))
+                    throw new Exception("TextBoxStartWriting works only with a textbox!: " + v);
+
+                if (v is TextBox)
+                {
+                    TextBox tex = (TextBox)v;
+                    tex.setEnableKey(key);
+                }
+                else if (v is TextArea)
+                {
+                    TextArea tex = (TextArea)v;
+                    tex.setEnableKey(key);
+                }
+            }
+            else if (gmT == GuiMessageType.TextBoxSetSendKey)
+            {
+                int key = 0;
+                stream.Read(out viewID);
+                stream.Read(out key);
+                View v = getViewFromList(viewID);
+
+                if (!(v is TextBox) && !(v is TextArea))
+                    throw new Exception("TextBoxStartWriting works only with a textbox!: " + v);
+
+                if (v is TextBox)
+                {
+                    TextBox tex = (TextBox)v;
+                    tex.setSendKey(key);
+                }
+                else if (v is TextArea)
+                {
+                    TextArea tex = (TextArea)v;
+                    tex.setSendKey(key);
+                }
+            }
+            else if (gmT == GuiMessageType.TextBoxSetResetKey)
+            {
+                int key = 0;
+                stream.Read(out viewID);
+                stream.Read(out key);
+                View v = getViewFromList(viewID);
+
+                if (!(v is TextBox) && !(v is TextArea))
+                    throw new Exception("TextBoxStartWriting works only with a textbox!: " + v);
+
+
+                if (v is TextBox)
+                {
+                    TextBox tex = (TextBox)v;
+                    tex.setResetKey(key);
+                }
+                else if (v is TextArea)
+                {
+                    TextArea tex = (TextArea)v;
+                    tex.setResetKey(key);
+                }
+            }//MessageBox:
+            else if (gmT == GuiMessageType.MessageBoxAddLine)
+            {
+                String message;
+                ColorRGBA color;
+                stream.Read(out viewID);
+                stream.Read(out color);
+                stream.Read(out message);
+                View v = getViewFromList(viewID);
+
+                if (!(v is MessageBox))
+                    throw new Exception("TextBoxStartWriting works only with a textbox!: " + v);
+
+                MessageBox tex = (MessageBox)v;
+                tex.addMessage(message, color);
+            }
+        }
+    }
+}

@@ -42,11 +42,11 @@ namespace Gothic.mClasses
                 oCAniCtrl_Human aniCtrl = player.AniCtrl;
                 if (aniCtrl.Address == 0)
                     return;
-                zString str = aniCtrl.GetWalkModeString();
-                if (str == null || str.Address == 0)
+                String str = aniCtrl.GetWalkModeString();
+                if (str == null)
                     return;
                 
-                if (str.Value.Trim().ToLower() != "SNEAK".ToLower() || player.GetTalentSkill(6) == 0 ||  player.Enemy.Address == 0 ||
+                if (str.Trim().ToLower() != "SNEAK".ToLower() || player.GetTalentSkill(6) == 0 ||  player.Enemy.Address == 0 ||
                     player.Enemy.CanSee(new zCVob(process, player.Address), 0) == 1 || process.ReadInt(0x00AB27D0) == 2)
                     return;
 

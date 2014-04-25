@@ -22,12 +22,20 @@ namespace Gothic.zClasses
 
         public enum FuncOffsets
         {
-            Remove = 0x0070BA30
+            //Remove = 0x0070BA30,
+            Remove_Int_Int = 0x0070D080,
+            Remove_Item = 0x0070CBE0,
+            Remove_Item_Int = 0x0070CE20,
+            Remove_zString_Int = 0x0070D170
         }
 
         public enum HookSize
         {
-            Remove = 0x6
+            //Remove = 0x6,
+            Remove_Int_Int = 7,
+            Remove_Item = 6,
+            Remove_Item_Int = 7,
+            Remove_zString_Int = 5
         }
 
         public zCListSort<oCItem> ItemList

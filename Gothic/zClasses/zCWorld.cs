@@ -115,6 +115,9 @@ namespace Gothic.zClasses
             return vobs;
         }
 
+
+
+
         private void getAllVobObjects(ref Dictionary<zCVob.VobTypes, List<zCVob>> list, zCTree<zCVob> tree, params zCVob.VobTypes[] types)
         {
             do
@@ -152,6 +155,33 @@ namespace Gothic.zClasses
         }
 
 
+        public List<zCVob> getVobList()
+        {
+            List<zCVob> rDic = new List<zCVob>();
+
+            getAllVobObjects(ref rDic, this.GlobalVobTree);
+
+            return rDic;
+        }
+        private void getAllVobObjects(ref List<zCVob> list, zCTree<zCVob> tree)
+        {
+            do
+            {
+
+                if (tree.Data != null && tree.Data.Address != 0)
+                {
+                        list.Add(tree.Data);
+                }
+
+                if (tree.FirstChild != null && tree.FirstChild.Address != 0)
+                {
+                    getAllVobObjects(ref list, tree.FirstChild);
+                }
+
+
+            } while ((tree = tree.Next).Address != 0);
+        }
+
 
         public int Raytrace_FoundHit
         {
@@ -179,9 +209,9 @@ namespace Gothic.zClasses
             set { Process.Write(value.Address, Address + (int)Offsets.activeSkyControler); }
         }
 
-        public zCSkyControler SkyControlerOutdoor
+        public zCSkyControler_Outdoor SkyControlerOutdoor
         {
-            get { return new zCSkyControler(Process, Process.ReadInt(Address + (int)Offsets.skyControlerOutdoor)); }
+            get { return new zCSkyControler_Outdoor(Process, Process.ReadInt(Address + (int)Offsets.skyControlerOutdoor)); }
             set { Process.Write(value.Address, Address + (int)Offsets.skyControlerOutdoor); }
         }
 

@@ -7,30 +7,46 @@ using System.Text;
 using System.Windows.Forms;
 using WinApi;
 using WinApi.Kernel;
-using RakNet;
-using GMP.Net.Messages;
-using Network;
 using System.IO;
 using Gothic_Untold_Chapter.Forms;
 using WinApi.FileFormat;
+using GUC.Options;
 
 namespace GMPStarter
 {
     public partial class Form1 : Form
     {
         public ClientOptions co;
+
+        public void initDefaultFolders()
+        {
+            if(!Directory.Exists("./conf"))
+                Directory.CreateDirectory("./conf");
+            if (!Directory.Exists("./DLL"))
+                Directory.CreateDirectory("./DLL");
+            if (!Directory.Exists("./Log"))
+                Directory.CreateDirectory("./Log");
+            if (!Directory.Exists("./tempScripts"))
+                Directory.CreateDirectory("./tempScripts");
+            if (!Directory.Exists("./temp_guc"))
+                Directory.CreateDirectory("./temp_guc");
+            if (!Directory.Exists("./Data"))
+                Directory.CreateDirectory("./Data");
+        }
         public Form1()
         {
             InitializeComponent();
 
+            initDefaultFolders();
+
             try
             {
-                co = ClientOptions.Load();
+                co = ClientOptions.Load("./conf/gmp.xml");
             }
             catch (Exception ex)
             {
                 co = new ClientOptions();
-                co.Save();
+                co.Save("./conf/gmp.xml");
             }
             textBox1.Text = co.name;
             textBox2.Text = co.ip;
@@ -46,8 +62,7 @@ namespace GMPStarter
         
         private void mBStart_Click(object sender, EventArgs e)
         {
-            if (!Datei2MD5("Gothic2.exe", "3c436bd199caaaa64e9736e3cc1c9c32") && 
-                !Datei2MD5("Gothic2.exe", "b75d03422af54286f1f4ed846b8fd4b8"))
+            if (!Datei2MD5("../Gothic2.exe", "3c436bd199caaaa64e9736e3cc1c9c32"))// &&  !Datei2MD5("../Gothic2.exe", "b75d03422af54286f1f4ed846b8fd4b8")
             {
                 MessageBox.Show("Falsche Gothic Version !");
                 return;
@@ -73,41 +88,45 @@ namespace GMPStarter
                     catch (Exception ex) { }
                 }
                 co.startWindowed = checkBox2.Checked;
-                co.Save();
+                co.Save("./conf/gmp.xml");
 
 
-            String dll =  "NetInject.dll";
-            String RakNetDLL = "RakNet.dll";
+            String dll =  "UntoldChapter/DLL/NetInject.dll";
+            String RakNetDLL = "UntoldChapter/DLL/RakNet.dll";
             
-            if (!System.IO.File.Exists(dll))
+            if (!System.IO.File.Exists("../"+dll))
                 throw new Exception(dll+" nicht gefunden");
-            if (!System.IO.File.Exists(RakNetDLL))
+            if (!System.IO.File.Exists("../"+RakNetDLL))
                 throw new Exception(RakNetDLL + " nicht gefunden");
 
-
+            System.Diagnostics.ProcessStartInfo psi = null;
             //zSpy starten
-            if (zLogLevel.Value != -1 && System.IO.File.Exists("..\\_work\\tools\\zSpy\\zSpy.exe"))
+            if (zLogLevel.Value != -1 && System.IO.File.Exists("..\\..\\_work\\tools\\zSpy\\zSpy.exe"))
             {
-                WinApi.Process.Start("..\\_work\\tools\\zSpy\\zSpy.exe");
+                psi = new System.Diagnostics.ProcessStartInfo();
+                psi.UseShellExecute = true;
+                psi.WorkingDirectory = Environment.CurrentDirectory+"\\Log";
+
+                psi.FileName = "..\\..\\..\\_work\\tools\\zSpy\\zSpy.exe";
+                WinApi.Process.Start(psi);
             }
 
 
-
             //Starten...
-            System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo();
-            psi.WorkingDirectory = Environment.CurrentDirectory;
+            psi = new System.Diagnostics.ProcessStartInfo();
+            psi.WorkingDirectory = Path.GetDirectoryName(Environment.CurrentDirectory);
             psi.Arguments = "-nomenu";
 
-            if (checkBox1.Checked)
-                psi.Arguments += " -zreparse";
+            //if (checkBox1.Checked)
+            //    psi.Arguments += " -zreparse";
             if (checkBox2.Checked)
                 psi.Arguments += " -zwindow";
             
             if (zLogLevel.Value != -1)
                 psi.Arguments += " -zlog:" + zLogLevel.Value + ",s";
 
-            if (checkBox4.Checked)
-                psi.Arguments += " -vdfs:physicalfirst";
+            //if (checkBox4.Checked)
+            //    psi.Arguments += " -vdfs:physicalfirst";
             if (textBox5.TextLength >= 2 && textBox5.TextLength <= 3)
                 psi.Arguments += " -zMaxFrameRate:" + textBox4.Text;
             else

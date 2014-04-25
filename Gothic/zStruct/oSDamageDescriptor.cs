@@ -90,6 +90,21 @@ namespace Gothic.zStruct
             get { return Process.ReadInt(Address + (int)Offsets.DamageTotal); }
         }
 
+        public int DamageEffective
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.DamageEffective); }
+        }
+
+        public int DamageReal
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.DamageReal); }
+        }
+
+        public int Damage
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.Damage); }
+        }
+
         public int SpellID
         {
             get { return Process.ReadInt(Address + (int)Offsets.spellID); }
@@ -99,6 +114,12 @@ namespace Gothic.zStruct
         {
             get { return Process.ReadInt(Address + (int)Offsets.ModeDamage); }
             set { Process.Write(value, Address + (int)Offsets.ModeDamage); }
+        }
+
+        public DamageTypes DamageType
+        {
+            get { return (DamageTypes)Process.ReadInt(Address + (int)Offsets.ModeDamage); }
+            set { Process.Write((int)value, Address + (int)Offsets.ModeDamage); }
         }
 
         public int ModeWeapon

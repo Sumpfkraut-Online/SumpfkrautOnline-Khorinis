@@ -94,14 +94,15 @@ namespace Gothic.zClasses
         #endregion
 
         #region methods
-        public void Save(string file)
+        public int Save(string file)
         {
             zString str = zString.Create(Process, file);
             //Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.Save, new CallValue[] { (IntArg)str.Res, (IntArg)str.Length, (IntArg)str.PTR, (IntArg)str.ALLOCATER, (IntArg)str.VTBL });
-            Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.Save, new CallValue[] { (IntArg)str.VTBL, (IntArg)str.ALLOCATER, (IntArg)str.PTR, (IntArg)str.Length, (IntArg)str.Res });
+            int rval = Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.Save, new CallValue[] { (IntArg)str.VTBL, (IntArg)str.ALLOCATER, (IntArg)str.PTR, (IntArg)str.Length, (IntArg)str.Res });
 
             Process.Free(new IntPtr(str.Address), 20);
             //str.Dispose();
+            return rval;
         }
         #endregion
     }

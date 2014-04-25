@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
-using Network;
-using Gothic.zClasses;
 using WinApi;
+using Gothic.zClasses;
 using Gothic.zTypes;
+using GUC.Types;
 using Gothic.mClasses;
-using Injection;
 using RakNet;
+using GUC.Enumeration;
+using GUC.WorldObjects.Character;
 
 namespace GUC.GUI
 {
@@ -20,22 +22,18 @@ namespace GUC.GUI
         Texture parent;
         String font;
 
-        int colorR = 255;
-        int colorG = 255;
-        int colorB = 255;
-        int colorA = 255;
+        ColorRGBA color = ColorRGBA.White;
 
-        public TextBox(int id, String text, String font, int x, int y, Texture parent, int r, int g, int b, int a, int resetKey, int startKey, int sendKey)
-            : base(id)
+        public TextBox(int id, String text, String font, Vec2i position, Texture parent, ColorRGBA color, int resetKey, int startKey, int sendKey)
+            : base(id, position)
         {
-            this.x = x;
-            this.y = y;
+            
             this.parent = parent;
             this.font = font;
 
             //Creation:
             Process process = Process.ThisProcess();
-            
+
             thisView = zCView.Create(Process.ThisProcess(), 0, 0, 0x2000, 0x2000);
             setFont(font);
             tB = new textBox(thisView, process);
@@ -44,15 +42,15 @@ namespace GUC.GUI
             tB.startWritingKey = startKey;
             tB.sendKey = sendKey;
 
-            tB.vt.PosX = x;
-            tB.vt.PosY = y;
+            tB.vt.PosX = this.position.X;
+            tB.vt.PosY = this.position.Y;
             tB.SendInput += new EventHandler<EventArgs>(tbSended);
 
 
             tB.Inputenabled = false;
 
 
-            setColor(r,g,b,a);
+            setColor(color);
         }
 
         private void tbSended(object obj, EventArgs args)
@@ -60,9 +58,10 @@ namespace GUC.GUI
             RakNet.BitStream stream = Program.client.sentBitStream;
             stream.Reset();
             stream.Write((byte)DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetWorkIDS.TextBoxSendMessage);
+            stream.Write((byte)NetworkIDS.GuiMessage);
+            stream.Write((byte)GuiMessageType.TextBoxCallSend);
 
-            stream.Write(Program.Player.id);
+            stream.Write(Player.Hero.ID);
             stream.Write(this.id);
 
             stream.Write(tB.getText());
@@ -70,6 +69,7 @@ namespace GUC.GUI
             Program.client.client.Send(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
 
             tB.setText("");
+            this.tB.KeyDisable();
         }
 
         public void startWriting()
@@ -85,6 +85,7 @@ namespace GUC.GUI
         public void callSendText()
         {
             tbSended(this, new EventArgs());
+
         }
 
 
@@ -108,28 +109,25 @@ namespace GUC.GUI
             String text = tB.getText();
             Process process = Process.ThisProcess();
             zString str = zString.Create(process, text);
-            tB.vt = thisView.CreateText(x, y, str);
+            tB.vt = thisView.CreateText(position.X, position.Y, str);
             str.Dispose();
 
             tB.vt.Timed = 0;
             tB.vt.Timer = -1;
         }
 
-        public void setColor(int r, int g, int b, int a)
+        public void setColor(ColorRGBA color)
         {
-            colorR = r;
-            colorG = g;
-            colorB = b;
-            colorA = a;
+            this.color.set(color);
 
 
             if (tB == null)
                 return;
 
-            tB.vt.Color.R = (byte)this.colorR;
-            tB.vt.Color.G = (byte)this.colorG;
-            tB.vt.Color.B = (byte)this.colorB;
-            tB.vt.Color.A = (byte)this.colorA;
+            tB.vt.Color.R = (byte)this.color.R;
+            tB.vt.Color.G = (byte)this.color.G;
+            tB.vt.Color.B = (byte)this.color.B;
+            tB.vt.Color.A = (byte)this.color.A;
         }
 
         public void setText(String tex)
@@ -149,8 +147,8 @@ namespace GUC.GUI
             if (oldfont.Trim().ToUpper() == font.Trim().ToUpper())
                 return;
 
-            
-            
+
+
 
             Process process = Process.ThisProcess();
             zString str = zString.Create(process, this.font);
@@ -162,17 +160,16 @@ namespace GUC.GUI
                 tB.vt.Timed = 1;
                 tB.vt.Timer = 0;
                 createText();
-                setColor(colorR, colorG, colorB, colorA);
+                setColor(this.color);
             }
         }
-        
-        public override void setPosition(int x, int y)
-        {
-            this.x = x;
-            this.y = y;
 
-            tB.vt.PosX = x;
-            tB.vt.PosY = y;
+        public override void setPosition(Vec2i pos)
+        {
+            this.position.set(pos);
+
+            tB.vt.PosX = position.X;
+            tB.vt.PosY = position.Y;
         }
 
         public override void hide()
@@ -182,6 +179,7 @@ namespace GUC.GUI
             Process process = Process.ThisProcess();
 
             tB.Inputenabled = false;
+            tB.KeyDisable();
 
             if (parent == null)
                 zCView.GetStartscreen(process).RemoveItem(this.thisView);
@@ -189,7 +187,7 @@ namespace GUC.GUI
                 parent.getView().RemoveItem(this.thisView);
 
             isShown = false;
-            
+
         }
         public override void show()
         {

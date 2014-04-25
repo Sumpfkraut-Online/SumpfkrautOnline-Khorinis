@@ -39,6 +39,16 @@ namespace Gothic.zClasses
             return CreateItem(id);
         }
 
+        public oCNpc CreateNPC(string instance)
+        {
+            zString str = zString.Create(Process, instance);
+            oCNpc npc = null;
+            npc = CreateNPC(zCParser.getParser(Process).GetIndex(str));
+            str.Dispose();
+
+            return npc;
+        }
+
         public oCNpc CreateNPC(int id)
         {
             return Process.THISCALL<oCNpc>((uint)Address, (uint)0x0076FD20, new CallValue[] { new IntArg(id) });

@@ -13,7 +13,7 @@ namespace Gothic.mClasses
     public static class Cursor
     {
         private static Boolean pShow;
-        private static zCView pView;
+        public static zCView pView;
 
 
         static float cursor_fX = 0;
@@ -25,10 +25,13 @@ namespace Gothic.mClasses
         //Cursor Y = 0x89A14C
 
         static Process Process;
+        static HookInfos hookInfo = null;
         public static void Init(Process process)
         {
+            if (hookInfo != null)
+                return;
             Process = process;
-            process.Hook("Gothic.dll", typeof(Cursor).GetMethod("Update"), 5062907, 5, 0);
+            hookInfo = process.Hook("UntoldChapter\\DLL\\Gothic.dll", typeof(Cursor).GetMethod("Update"), 5062907, 5, 0);
         }
 
 
@@ -85,10 +88,13 @@ namespace Gothic.mClasses
 
         static float[] keystats = new float[3];
         static bool wasHooked;
+        
         public static Int32 Update(String message)
         {
-            cursor_fX += Process.ReadInt(9246300) * (float)Process.ReadFloat(9019720) * 10;
-            cursor_fY += Process.ReadInt(9246300 + 4) * (float)Process.ReadFloat(9019724) * 10;
+            cursor_fX += Process.ReadInt(9246300) * 40f * Process.ReadFloat(9019720);
+            cursor_fY += Process.ReadInt(9246304) * 40f * Process.ReadFloat(9019724);
+
+
 
             if (cursor_fX < 0)
                 cursor_fX = 0;
@@ -120,6 +126,7 @@ namespace Gothic.mClasses
             if (pView == null)
                 return 0;
 
+            pView.Top();
             pView.SetPos((int)cursor_fX, (int)cursor_fY);
             return 0;
         }

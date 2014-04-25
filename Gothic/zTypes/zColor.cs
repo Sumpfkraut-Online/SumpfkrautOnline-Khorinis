@@ -6,7 +6,7 @@ using WinApi;
 
 namespace Gothic.zTypes
 {
-    public class zColor : zClass
+    public class zColor : zClass, IDisposable
     {
         public zColor()
         {
@@ -55,6 +55,21 @@ namespace Gothic.zTypes
         public override uint ValueLength()
         {
             return 4;
+        }
+
+        private bool disposed = false;
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!this.disposed)
+            {
+                Process.Free(new IntPtr(Address), 4);
+                disposed = true;
+            }
         }
     }
 }

@@ -12,8 +12,8 @@ namespace Gothic.zClasses
         public enum Offsets
         {
             IsLocked = 0x234,
-            keyInstance = 0x568,
-            PickLockStr = 0x588
+            keyInstance = 0x238,
+            PickLockStr = 0x24C
         }
         public enum FuncOffsets : uint
         {
@@ -55,6 +55,40 @@ namespace Gothic.zClasses
         public void SetLocked(int locked)
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetLocked, new CallValue[] { new IntArg(locked) });
+        }
+
+        public void SetPickLockStr(String lockString)
+        {
+            zString zS = zString.Create(Process, lockString);
+            SetPickLockStr(zS);
+            zS.Dispose();
+        }
+
+        public void SetPickLockStr(zString lockString)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetPickLockStr, new CallValue[] { lockString });
+        }
+
+        public void SetKeyInstance(String lockString)
+        {
+            zString zS = zString.Create(Process, lockString);
+            SetKeyInstance(zS);
+            zS.Dispose();
+        }
+        public void SetKeyInstance(zString lockString)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetKeyInstance, new CallValue[] { lockString });
+        }
+
+        public bool isLocked
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.IsLocked) >= 1; }
+            set {
+                if (value == true)
+                    Process.Write(1, Address + (int)Offsets.IsLocked);
+                else
+                    Process.Write(0, Address + (int)Offsets.IsLocked);
+            }
         }
 
         public zString keyInstance

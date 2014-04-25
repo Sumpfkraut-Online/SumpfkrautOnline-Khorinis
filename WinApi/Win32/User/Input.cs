@@ -33,6 +33,12 @@ namespace WinApi.User
         [DllImport("user32.dll", CharSet = CharSet.Auto)] // used for button-down & button-up
         private static extern int PostMessage(int hWnd, int msg, int wParam, IntPtr lParam);
 
+        [DllImport("user32.dll")]
+        public static extern int ToUnicode(uint virtualKeyCode, uint scanCode,
+            byte[] keyboardState,
+            [Out, MarshalAs(UnmanagedType.LPWStr, SizeConst = 64)]
+    StringBuilder receivingBuffer,
+            int bufferSize, uint flags);
 
 
 

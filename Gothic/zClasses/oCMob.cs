@@ -57,6 +57,12 @@ namespace Gothic.zClasses
             return Process.THISCALL<zString>((uint)Address, (uint)FuncOffsets.GetScemeName, new CallValue[] { });
         }
 
+        public void SetName(String name)
+        {
+            zString str = zString.Create(Process, name);
+            SetName(str);
+            str.Dispose();
+        }
         public void SetName(zString name)
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetName, new CallValue[] { name });

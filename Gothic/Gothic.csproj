@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Gothic</RootNamespace>
     <AssemblyName>Gothic</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\GothicII\System\</OutputPath>
+    <OutputPath>..\GothicII\System\UntoldChapter\DLL\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -47,12 +47,18 @@
     <Compile Include="mClasses\Elements\mEItem.cs" />
     <Compile Include="mClasses\Elements\mETextBox.cs" />
     <Compile Include="mClasses\InputHooked.cs" />
+    <Compile Include="mClasses\textArea.cs" />
     <Compile Include="mClasses\listBox.cs" />
     <Compile Include="mClasses\LoadingScreen.cs" />
     <Compile Include="mClasses\ManagedListBox.cs" />
     <Compile Include="mClasses\StealContainer.cs" />
     <Compile Include="mClasses\textBox.cs" />
     <Compile Include="zClasses\CGameManager.cs" />
+    <Compile Include="zClasses\zCCamera.cs" />
+    <Compile Include="zClasses\oCMobBed.cs" />
+    <Compile Include="zClasses\oCMobSwitch.cs" />
+    <Compile Include="zClasses\oCPortalRoomManager.cs" />
+    <Compile Include="zClasses\oCViewStatusBar.cs" />
     <Compile Include="zClasses\zCFontMan.cs" />
     <Compile Include="zClasses\oCAIHuman.cs" />
     <Compile Include="zClasses\oCAIVobMove.cs" />
@@ -99,6 +105,7 @@
     <Compile Include="zClasses\zCPar_DataStack.cs" />
     <Compile Include="zClasses\zCPar_Stack.cs" />
     <Compile Include="zClasses\zCPar_Symbol.cs" />
+    <Compile Include="zClasses\zCPar_SymbolTable.cs" />
     <Compile Include="zClasses\zCPlayerInfo.cs" />
     <Compile Include="zClasses\zCSession.cs" />
     <Compile Include="zClasses\zCSkyControler.cs" />
@@ -106,9 +113,12 @@
     <Compile Include="zClasses\zCSkyLayer.cs" />
     <Compile Include="zClasses\zCSkyLayerData.cs" />
     <Compile Include="zClasses\zCSkyState.cs" />
+    <Compile Include="zClasses\zCSndSys_MSS.cs" />
+    <Compile Include="zClasses\zCSoundFX.cs" />
     <Compile Include="zClasses\zCSoundSystem.cs" />
     <Compile Include="zClasses\zCView.cs" />
     <Compile Include="zClasses\zCViewProgressBar.cs" />
+    <Compile Include="zClasses\zCViewStatusBar.cs" />
     <Compile Include="zClasses\zCViewText.cs" />
     <Compile Include="zClasses\zCVisual.cs" />
     <Compile Include="zClasses\zCVobSpot.cs" />
@@ -116,10 +126,13 @@
     <Compile Include="zClasses\zCWayNet.cs" />
     <Compile Include="zClasses\zCWaypoint.cs" />
     <Compile Include="zClasses\zERROR.cs" />
+    <Compile Include="zClasses\zFile.cs" />
     <Compile Include="zStruct\NPCAiVar.cs" />
     <Compile Include="zStruct\oCMsgConversation.cs" />
+    <Compile Include="zStruct\oCMsgManipulate.cs" />
     <Compile Include="zStruct\oSDamageDescriptor.cs" />
     <Compile Include="zStruct\TNpcAIState.cs" />
+    <Compile Include="zStruct\zTSound3DParams.cs" />
     <Compile Include="zTypes\zMat4.cs" />
     <Compile Include="zTypes\zTBBox3D.cs" />
     <Compile Include="zTypes\zPoint3.cs" />

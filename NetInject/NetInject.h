@@ -4,6 +4,8 @@
 #include <mscoree.h>
 #include <corerror.h>
 
+#include <metahost.h>
+
 struct NETINJECTPARAMS
 {
 	char* dllName;
@@ -11,6 +13,10 @@ struct NETINJECTPARAMS
 	char* methodName;
 	char* ptrAddress;
 };
+
+void test(){
+	MessageBox(NULL,"Error!","Error!", MB_ICONWARNING | MB_CANCELTRYCONTINUE | MB_DEFBUTTON2 );
+}
 
 wchar_t * convertToChar(char * c)
 {
@@ -27,53 +33,83 @@ wchar_t * convertToChar(char * c)
 
 EXTERN_C __declspec(dllexport) void LoadNetDllEx(NETINJECTPARAMS* params)
 {
-	ICLRRuntimeHost* pCLR = NULL;
+	static ICLRMetaHost *pMetaHost = NULL;
+    static ICLRRuntimeInfo *pRuntimeInfo = NULL;
+    static ICLRRuntimeHost *pClrRuntimeHost = NULL;
+	HRESULT hr;
 	DWORD result;
-
+	
 
 	wchar_t* dllName = convertToChar(params->dllName);
 	wchar_t* typeName = convertToChar(params->typeName);
 	wchar_t* methodName = convertToChar(params->methodName);
 	wchar_t* ptrAddress = convertToChar(params->ptrAddress);
-	wchar_t* x = L"wks";
-	// start the .NET Runtime in the current native process
-	HRESULT hr = CorBindToRuntimeEx(NULL, x, 0, CLSID_CLRRuntimeHost, IID_ICLRRuntimeHost, (PVOID*)&pCLR);
-	hr = pCLR->Start();
+	
 
+	// start the .NET Runtime in the current native process
+	if(pMetaHost == NULL){
+		hr = CLRCreateInstance(CLSID_CLRMetaHost, IID_ICLRMetaHost, (LPVOID*)&pMetaHost);
+		hr = pMetaHost->GetRuntime(L"v4.0.30319", IID_ICLRRuntimeInfo, (LPVOID*)&pRuntimeInfo);
+		hr = pRuntimeInfo->GetInterface(CLSID_CLRRuntimeHost, IID_ICLRRuntimeHost, (LPVOID*)&pClrRuntimeHost);
+		hr = pClrRuntimeHost->Start();
+
+		test();
+	}
 	// execute the method "Int32 Test.Program.InjectedMain(String arg)"
 
-	hr = pCLR->ExecuteInDefaultAppDomain(dllName, typeName, methodName, ptrAddress, &result);
-	pCLR->Stop();
-	pCLR->Release();
-
+	hr = pClrRuntimeHost->ExecuteInDefaultAppDomain(dllName, typeName, methodName, ptrAddress, &result);
+	/*pClrRuntimeHost->Stop();
+	pRuntimeInfo->Release();
+	pMetaHost->Release();
+	pClrRuntimeHost->Release();*/
 	
-	free(dllName);
-	free(typeName);
-	free(methodName);
-	free(ptrAddress);
-	free(x);
-	//free(pCLR);
-}
 
+	if(hr != S_OK){
+		test();
+	}
+	
+	delete[] dllName;
+	delete[] typeName;
+	delete[] methodName;
+	delete[] ptrAddress;
+
+	/*delete pMetaHost;
+	delete pRuntimeInfo;*/
+}
 void LoadNETDLL()
 {
-	ICLRRuntimeHost* pCLR = NULL;
+	ICLRMetaHost *pMetaHost = NULL;
+    ICLRRuntimeInfo *pRuntimeInfo = NULL;
+    ICLRRuntimeHost *pClrRuntimeHost = NULL;
+	HRESULT hr;
 	DWORD result;
 
 	// start the .NET Runtime in the current native process
-	HRESULT hr = CorBindToRuntimeEx(NULL, L"wks", 0, CLSID_CLRRuntimeHost, IID_ICLRRuntimeHost, (PVOID*)&pCLR);
-	hr = pCLR->Start();
+	hr = CLRCreateInstance(CLSID_CLRMetaHost, IID_ICLRMetaHost, (LPVOID*)&pMetaHost);
+    hr = pMetaHost->GetRuntime(L"v4.0.30319", IID_ICLRRuntimeInfo, (LPVOID*)&pRuntimeInfo);
+    hr = pRuntimeInfo->GetInterface(CLSID_CLRRuntimeHost, IID_ICLRRuntimeHost, (LPVOID*)&pClrRuntimeHost);
+    hr = pClrRuntimeHost->Start();
 
 	// execute the method "Int32 Test.Program.InjectedMain(String arg)"
-	hr = pCLR->ExecuteInDefaultAppDomain(L"GUC.dll", L"Injection.Program", L"InjectedMain", L"injected.txt", &result);
-	pCLR->Stop();
-	pCLR->Release();
-	//free(pCLR);
+	hr = pClrRuntimeHost->ExecuteInDefaultAppDomain(L"UntoldChapter\\DLL\\GUC.dll", L"GUC.Program", L"InjectedMain", L"injected.txt", &result);
+	pClrRuntimeHost->Stop();
+
+	pRuntimeInfo->Release();
+	pMetaHost->Release();
+	pClrRuntimeHost->Release();
+
+	delete pMetaHost;
+	delete pRuntimeInfo;
+
+	if(hr != S_OK){
+		test();
+	}
+
+	
 }
 
-int WINAPI DllMain(HINSTANCE hInst,DWORD reason,LPVOID reserved)
+int WINAPI DllMain(HINSTANCE hInst, DWORD reason, LPVOID reserved)
 {
-	
 	if(reason==DLL_PROCESS_ATTACH)
 	{
 		CreateThread(0, 0, (LPTHREAD_START_ROUTINE) LoadNETDLL, 0, 0, 0);

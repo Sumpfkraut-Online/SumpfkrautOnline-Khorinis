@@ -14,6 +14,14 @@ namespace Gothic.zClasses
             offset = 0x1C,
             content = 0x18
         }
+
+        public enum FuncOffsets
+        {
+            SetClassOffset = 0x007A2F40,
+            LoadFull = 0x007A2BA0
+        }
+
+
         public zCPar_Symbol(Process process, int address)
             : base(process, address)
         {
@@ -23,6 +31,16 @@ namespace Gothic.zClasses
         public zCPar_Symbol()
         {
 
+        }
+
+        public void LoadFull(zFile file)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.LoadFull, new CallValue[] { file });
+        }
+
+        public void SetClassOffset(int offset)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetClassOffset, new CallValue[] { new IntArg(offset) });
         }
 
         public zString Name

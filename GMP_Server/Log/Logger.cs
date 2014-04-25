@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.IO;
 
-namespace GMP_Server.Log
+namespace GUC.Server.Log
 {
     public class Logger
     {
@@ -17,7 +18,6 @@ namespace GMP_Server.Log
             if (File.Exists("serverlog.html"))
                 File.Delete("serverlog.html");
             File.Create("serverlog.html").Close();
-            //myWriter = new StreamWriter(File.Open(@"serverlog.html", FileMode.Append, FileAccess.ReadWrite));
         }
 
         public static void log(int level, String Message)
@@ -29,7 +29,14 @@ namespace GMP_Server.Log
                 myWriter.Close();
                 myWriter.Dispose();
 
-                Console.WriteLine(Message);
+                String consoleMessage = Message;
+                String[] Messages = consoleMessage.Split(new string[]{"<br>", "<BR>", "</BR>", "</br>", "<br/>", "<BR/>"}, StringSplitOptions.None);
+
+                foreach (String message in Messages)
+                {
+                    Console.WriteLine(message);
+                }
+                //Console.WriteLine(Message);
             }
             catch (Exception ex)
             { }

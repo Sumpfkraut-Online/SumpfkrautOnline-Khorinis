@@ -95,6 +95,10 @@ namespace Gothic.mClasses
 
         public static bool IsPressed(int key)
         {
+            Process process = Process.ThisProcess();
+            //if (WinApi.User.Window.GetWindowThreadProcessId(WinApi.User.Window.GetForegroundWindow()) != process.ProcessID
+            // || zCConsole.Console(process).IsVisible() == 1)
+            //    return false;
             //if ((Input.GetAsyncKeyState((int)key) & 0x8001) == 0x8001)
             if ((Input.GetAsyncKeyState((int)key) & 0x8001) == 0x8001 || (Input.GetAsyncKeyState((int)key) & 0x8000) == 0x8000)
                 return true;
@@ -103,6 +107,11 @@ namespace Gothic.mClasses
 
         public static void SendKeyPressed(byte key)
         {
+            //Process process = Process.ThisProcess();
+            //if (WinApi.User.Window.GetWindowThreadProcessId(WinApi.User.Window.GetForegroundWindow()) != process.ProcessID
+            // || zCConsole.Console(process).IsVisible() == 1)
+            //    return;
+
             if (keys[key] == 0x01)
                 return;
             InputReceiver[] rec = receivers.ToArray();
@@ -115,6 +124,12 @@ namespace Gothic.mClasses
 
         public static void SendKeyReleased(byte key)
         {
+            //Process process = Process.ThisProcess();
+            //if (WinApi.User.Window.GetWindowThreadProcessId(WinApi.User.Window.GetForegroundWindow()) != process.ProcessID
+            // || zCConsole.Console(process).IsVisible() == 1)
+            //    return;
+
+
             if (keys[key] == 0x00)
                 return;
             InputReceiver[] rec = receivers.ToArray();
@@ -136,6 +151,13 @@ namespace Gothic.mClasses
             //    receiver.wheelChanged(value - wheel);
             //}
             //zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "WheelValue: " + value, 0, "InputHooked.cs", 117);
+
+            Process process = Process.ThisProcess();
+            //if (WinApi.User.Window.GetWindowThreadProcessId(WinApi.User.Window.GetForegroundWindow()) != process.ProcessID
+            // || zCConsole.Console(process).IsVisible() == 1)
+            //    return;
+
+
             if (value == 0)
                 return;
 
@@ -148,6 +170,11 @@ namespace Gothic.mClasses
 
         public static void Update()
         {
+            Process process = Process.ThisProcess();
+            //if (WinApi.User.Window.GetWindowThreadProcessId(WinApi.User.Window.GetForegroundWindow()) != process.ProcessID
+            // || zCConsole.Console(process).IsVisible() == 1)
+            //    return;
+
             //if ((Input.GetAsyncKeyState((int)VirtualKeys.F11) & 0x8001) == 0x8001)
             for (byte i = 1; i <= 0xFE; i++)
             {

@@ -73,11 +73,24 @@ namespace Gothic.zClasses
 
 
 
-        public zString GetWalkModeString()
+        public zString GetWalkModeZString()
         {
             int str = Process.Alloc(20).ToInt32();
             IntArg arg = Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.GetWalkModeString, new CallValue[]{new IntArg(str)});
             return new zString(Process, arg.Address);
+        }
+
+        public String GetWalkModeString()
+        {
+            int str = Process.Alloc(20).ToInt32();
+            IntArg arg = Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.GetWalkModeString, new CallValue[] { new IntArg(str) });
+            zString zString = new zString(Process, arg.Address);
+            String v = null;
+            if(zString.Length < 500)
+                v = zString.Value.Trim();
+            zString.Dispose();
+
+            return v;
         }
 
     }

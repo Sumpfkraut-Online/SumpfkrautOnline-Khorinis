@@ -35,7 +35,9 @@ namespace Gothic.zClasses
             AdvanceAnis = 0x0057CA90,
             StartAnimation = 0x005765E0,
             StopAnimation = 0x005765F0,
-            IsAnimationActive = 0x00576690
+            IsAnimationActive = 0x00576690,
+            LoadVisualVirtual = 0x00578760,
+            GetAniIDFromAniName = 0x00612070
         }
 
         public enum FuncSize : uint
@@ -86,12 +88,29 @@ namespace Gothic.zClasses
             }
         }
 
+        public zCModelPrototype ModelPrototype
+        {
+            get { return new zCModelPrototype(Process, Process.ReadInt(Process.ReadInt(Address + (int)Offsets.ModelPrototype))); }
+            set { Process.Write(value.Address, Address + (int)Offsets.ModelPrototype); }
+        }
+
         public zCVob Owner
         {
             get { return new zCVob(Process, Process.ReadInt(Address + (int)Offsets.Owner)); }
         }
 
+        public void LoadVisualVirtual(zString str)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.LoadVisualVirtual, new CallValue[] { str });
+        }
 
+
+        public void StartAnimation(String str)
+        {
+            zString zStr = zString.Create(Process, str);
+            StartAnimation(zStr);
+            zStr.Dispose();
+        }
         public void StartAnimation(zString str)
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.StartAnimation, new CallValue[] { str });
@@ -145,10 +164,32 @@ namespace Gothic.zClasses
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.FadeOutAni_Int, new CallValue[] { new IntArg(ani) });
         }
+        public int IsAnimationActive(String animname)
+        {
+            int result = 0;
 
+            zString str = zString.Create(Process, animname);
+            result = IsAnimationActive(str);
+            str.Dispose();
+
+            return result;
+        }
         public int IsAnimationActive(zString animname)
         {
             return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.IsAnimationActive, new CallValue[] { animname });
+        }
+
+        public int GetAniIDFromAniName(String animname)
+        {
+            zString str = zString.Create(Process, animname);
+            int x = GetAniIDFromAniName(str);
+            str.Dispose();
+            return x;
+        }
+
+        public int GetAniIDFromAniName(zString animname)
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.GetAniIDFromAniName, new CallValue[] { animname });
         }
 
         public zCModelAniActive GetActiveAni(zCModelAni ani)
@@ -166,11 +207,25 @@ namespace Gothic.zClasses
             return Process.THISCALL<zCModelAni>((uint)Address, (uint)FuncOffsets.GetAniFromAniID, new CallValue[] { new IntArg(id) });
         }
 
-        public zString GetVisualName()
+        public zString GetVisualNameZString()
         {
             int str = Process.Alloc(20).ToInt32();
             IntArg arg = Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.GetVisualName, new CallValue[] { new IntArg(str) });
             return new zString(Process, arg.Address);
+        }
+
+        public String GetVisualName()
+        {
+            int str = Process.Alloc(20).ToInt32();
+            IntArg arg = Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.GetVisualName, new CallValue[] { new IntArg(str) });
+            zString zString = new zString(Process, arg.Address);
+
+            String v = null;
+            if (zString.Length < 500)
+                v = zString.Value.Trim();
+            zString.Dispose();
+
+            return v;
         }
 
         

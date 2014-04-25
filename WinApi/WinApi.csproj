@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>WinApi</RootNamespace>
     <AssemblyName>WinApi</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\..\..\..\..\..\Dokumente\Projekte\C#\Gothic\Gothic Untold Chapter 2\Gothic_bin\System\UntoldChapter\DLL\</OutputPath>
+    <OutputPath>..\GothicII\System\UntoldChapter\DLL\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -44,6 +44,7 @@
     <Compile Include="Args\FloatRefArg.cs" />
     <Compile Include="Args\FloatArg.cs" />
     <Compile Include="Args\CharArg.cs" />
+    <Compile Include="Args\UIntArg.cs" />
     <Compile Include="FileFormat\IniFile.cs" />
     <Compile Include="HIDDevice.cs" />
     <Compile Include="Win32\HID\HID.cs" />

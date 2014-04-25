@@ -49,6 +49,15 @@ namespace Gothic.zClasses
         {
         }
 
+        public static oCMobContainer Create(Process process)
+        {
+            IntPtr ptr = process.Alloc(0x284);
+            zCClassDef.ObjectCreated(process, ptr.ToInt32(), 0x00AB18B0);//0x00AB1518) => MobDoor;
+            process.THISCALL<NullReturnCall>((uint)ptr.ToInt32(), (uint)0x0071D010, new CallValue[] { });
+
+            return new oCMobContainer(process, ptr.ToInt32());
+        }
+
         public List<oCItem> getItemList()
         {
             List<oCItem> items = new List<oCItem>();

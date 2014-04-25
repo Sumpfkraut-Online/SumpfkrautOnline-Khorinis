@@ -13,7 +13,11 @@ namespace Gothic.zClasses
             table = 0x0018,
             array = 0x003C,
             Stack = 0x0048,
-            DataStack = 0x0058
+            DataStack = 0x0058,
+
+            fileName = 8288,
+            MainFileName = 8308
+
         }
 
         public enum FuncOffsets
@@ -23,7 +27,20 @@ namespace Gothic.zClasses
             GetInstance = 0x007A08F0,
             GetParameter_Int = 0x007A0760,
             GetParameter_String = 0x007A07B0,
-            ParseFile = 0x0078F660
+            ParseFile = 0x0078F660,
+            ParseSource = 0x0078EE20,
+            Parse = 0x0078EBA0,
+            EnableTreeLoad = 0x00793460,
+            EnableTreeSave = 0x00793440,
+            Reset = 0x00793100,
+            AddClassOffset = 0x00794730,
+            CreatePCode = 0x007900E0,
+            Error = 0x0078E730
+        }
+
+        public enum HookSize
+        {
+            Parse = 7
         }
 
         public zCParser(Process process, int address) : base(process, address)
@@ -38,6 +55,21 @@ namespace Gothic.zClasses
 
 
         #region Fields
+
+        public zCPar_SymbolTable SymbolTable
+        {
+            get { return new zCPar_SymbolTable(Process, Address + 16); }
+        }
+
+        public zString MainFileName
+        {
+            get { return new zString(Process, Address + (int)Offsets.MainFileName); }
+        }
+
+        public zString FileName
+        {
+            get { return new zString(Process, Address + (int)Offsets.fileName); }
+        }
 
         public zCArray<zCPar_Symbol> Table
         {
@@ -60,6 +92,41 @@ namespace Gothic.zClasses
         }
         #endregion
 
+
+        public void AddClassOffset(zString ptr, int offset)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.AddClassOffset, new CallValue[] { ptr, new IntArg(offset) });
+        }
+
+        public void CreatePCode()
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.CreatePCode, new CallValue[] { });
+        }
+
+        public int Error()
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.Error, new CallValue[] { });
+        }
+
+        public void Reset()
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.Reset, new CallValue[] {  });
+        }
+
+        public void EnableTreeLoad(int ptr)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.EnableTreeLoad, new CallValue[] { new IntArg(ptr) });
+        }
+
+        public void EnableTreeSave(int ptr)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.EnableTreeSave, new CallValue[] { new IntArg(ptr) });
+        }
+
+        public void ParseSource(zString ptr)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.ParseSource, new CallValue[] { ptr });
+        }
 
         public void ParseFile(zString ptr)
         {
@@ -124,6 +191,15 @@ namespace Gothic.zClasses
 
         }
 
+        public int GetIndex(String str)
+        {
+            zString zS = zString.Create(Process, str);
+            int i = GetIndex(zS);
+            zS.Dispose();
+
+            return i;
+        }
+
         public int GetIndex(zString str)
         {
             return Process.THISCALL<IntArg>((uint)Address, 0x00793470, new CallValue[] { str }).Address;
@@ -173,10 +249,32 @@ namespace Gothic.zClasses
             return Process.THISCALL<zCPar_Symbol>((uint)Address, 0x007938C0, new CallValue[] { new IntArg(id) });
         }
 
+        public static void setEnableParsing(Process process, bool b)
+        {
+            if(b)
+                process.Write(1, 0x00AB6284);
+            else
+                process.Write(0, 0x00AB6284);
+        }
+
         public static zCParser getParser(Process process)
         {
             return new zCParser(process, 0xAB40C0);
         }
+
+        
+        public static zCParser getMenuParser(Process process)
+        {
+            return new zCParser(process, 0x008D1E68);
+        }
+
+        public static zCParser getFXParser(Process process)
+        {
+            return new zCParser(process, 0x008CE6EC);
+        }
+        
+
+
 
         public static void CallFunc(Process process, CallValue[] cv )
         {

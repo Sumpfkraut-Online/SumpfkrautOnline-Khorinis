@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
-using Network;
-using Gothic.zClasses;
 using WinApi;
-using Gothic.zTypes;
+using Gothic.zClasses;
+using GUC.Types;
 using Gothic.mClasses;
+using Gothic.zTypes;
 
 namespace GUC.GUI
 {
     public class MessageBox : View
     {
-        
+
         Texture parent;
         zCView thisView = null;
         String font = "";
@@ -24,21 +25,19 @@ namespace GUC.GUI
         class Row
         {
             public String message;
-            public int r, g, b, a;
+            public ColorRGBA color = ColorRGBA.White;
         }
 
-        public MessageBox(int id, int lines, String font, int x, int y, Texture parent)
-            : base(id)
+        public MessageBox(int id, int lines, String font, Vec2i pos, Texture parent)
+            : base(id, pos)
         {
-            this.x = x;
-            this.y = y;
 
             this.parent = parent;
             this.font = font;
 
             //Creation:
             Process process = Process.ThisProcess();
-            
+
             thisView = zCView.Create(Process.ThisProcess(), 0, 0, 0x2000, 0x2000);
             setFont(font);
 
@@ -62,7 +61,7 @@ namespace GUC.GUI
             for (int i = 0; i < lines; i++)
             {
 
-                textarr[i] = thisView.CreateText(this.x, this.y + i * (InputHooked.PixelToVirtualY(Process.ThisProcess(), thisView.Font.GetFontY())), emptyString);
+                textarr[i] = thisView.CreateText(this.position.X, this.position.Y + i * (InputHooked.PixelToVirtualY(Process.ThisProcess(), thisView.Font.GetFontY())), emptyString);
             }
         }
 
@@ -77,21 +76,18 @@ namespace GUC.GUI
                 if (startPos + i >= rows.Count)
                     return;
                 textarr[i].Text.Set(rows[startPos + i].message);
-                textarr[i].Color.R = (byte)rows[startPos + i].r;
-                textarr[i].Color.G = (byte)rows[startPos + i].g;
-                textarr[i].Color.B = (byte)rows[startPos + i].b;
-                textarr[i].Color.A = (byte)rows[startPos + i].a;
+                textarr[i].Color.R = (byte)rows[startPos + i].color.R;
+                textarr[i].Color.G = (byte)rows[startPos + i].color.G;
+                textarr[i].Color.B = (byte)rows[startPos + i].color.B;
+                textarr[i].Color.A = (byte)rows[startPos + i].color.A;
             }
         }
 
-        public void addMessage(String message, int r, int g, int b, int a)
+        public void addMessage(String message, ColorRGBA color)
         {
             Row row = new Row();
             row.message = message;
-            row.r = r;
-            row.g = g;
-            row.b = b;
-            row.a = a;
+            row.color.set(color);
 
             this.rows.Add(row);
             this.updateTextes();
@@ -108,19 +104,22 @@ namespace GUC.GUI
             if (oldfont.Trim().ToUpper() == font.Trim().ToUpper())
                 return;
 
-
+            Process process = Process.ThisProcess();
+            zString str = zString.Create(process, this.font);
+            thisView.SetFont(str);
+            str.Dispose();
         }
-        
-        public override void setPosition(int x, int y)
-        {
-            this.x = x;
-            this.y = y;
 
-            for (int i = 0; i < textarr.Length; i++){
-                textarr[i].PosX = x;
-                textarr[i].PosY = this.y + i * (InputHooked.PixelToVirtualY(Process.ThisProcess(), thisView.Font.GetFontY() + 5));
+        public override void setPosition(Vec2i pos)
+        {
+            this.position.set(pos);
+
+            for (int i = 0; i < textarr.Length; i++)
+            {
+                textarr[i].PosX = this.position.X;
+                textarr[i].PosY = this.position.Y + i * (InputHooked.PixelToVirtualY(Process.ThisProcess(), thisView.Font.GetFontY() + 5));
             }
-               
+
         }
 
         public override void hide()
@@ -135,7 +134,7 @@ namespace GUC.GUI
                 parent.getView().RemoveItem(this.thisView);
 
             isShown = false;
-            
+
         }
         public override void show()
         {

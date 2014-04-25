@@ -1,21 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
-namespace Network.Types
+namespace GUC.Types
 {
     public class Vec3f
     {
-        public float[] data;
+        protected float[] data;
 
         public Vec3f(float x, float y, float z)
+            : this()
         {
-            data = new float[] { x, y, z };
+            this.set(x, y, z);
         }
 
         public Vec3f(float[] data)
+            : this()
         {
-            this.data = data;
+            this.set(data);
         }
 
         public Vec3f()
@@ -23,9 +26,44 @@ namespace Network.Types
             this.data = new float[] { 0, 0, 0 };
         }
 
+        public void set(float x, float y, float z)
+        {
+            this.data[0] = x;
+            this.data[1] = y;
+            this.data[2] = z;
+        }
+
+        public void set(Vec3f vec)
+        {
+            if (vec == null)
+                throw new ArgumentNullException("Paramter vec can't be null!");
+
+            set(vec.X, vec.Y, vec.Z);
+        }
+
+        public void set(float[] vec)
+        {
+            if (vec == null || vec.Length != 3)
+                throw new ArgumentException("Paramter vec can't be null and needs a length of 3");
+
+            set(vec[0], vec[1], vec[2]);
+        }
+
+        public float[] Data { get { return this.data; } }
+
         public float getDistance(Vec3f value)
         {
-            return (this - value).Length();
+            return (this - value).Length;
+        }
+
+        public bool isNull()
+        {
+            if (data[0] - 0.000001f < 0 && data[0] + 0.000001f > 0 &&
+                data[1] - 0.000001f < 0 && data[1] + 0.000001f > 0 &&
+                data[2] - 0.000001f < 0 && data[2] + 0.000001f > 0)
+                return true;
+            else
+                return false;
         }
 
         public Vec3f cross(Vec3f vec2)
@@ -37,15 +75,17 @@ namespace Network.Types
             return rtn;
         }
 
-        public float Length()
+        public float length()
         {
-            return (float)Math.Sqrt(X * X + Y * Y + Z * Z);
+            return (float)Math.Sqrt((double)X * (double)X + (double)Y * (double)Y + (double)Z * (double)Z);
         }
+
+        public float Length { get { return this.length(); } }
 
         public Vec3f normalise()
         {
-            float len = Length();
-            return new Vec3f(X * len, Y * len, Z * len);
+            float len = Length;
+            return new Vec3f(X / len, Y / len, Z / len);
         }
 
         public static Vec3f operator +(Vec3f a, Vec3f b)
@@ -57,7 +97,7 @@ namespace Network.Types
             if (b == null)
                 return a;
 
-            return new Vec3f(a.X + b.X, a.Y + b.Y, a.Z+b.Z);
+            return new Vec3f(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
         }
 
         public static float operator *(Vec3f a, Vec3f b)
@@ -69,7 +109,17 @@ namespace Network.Types
             if (b == null)
                 return 0;
 
-            return (a.X * b.X +  a.Y * b.Y + a.Z * b.Z);
+            return (a.X * b.X + a.Y * b.Y + a.Z * b.Z);
+        }
+
+        public static Vec3f operator *(Vec3f a, float factor)
+        {
+            if (a == null)
+                return a;
+            if (a == null)
+                return a;
+
+            return new Vec3f(a.X * factor, a.Y * factor, a.Z * factor);
         }
 
         public static Vec3f operator -(Vec3f a, Vec3f b)
@@ -82,6 +132,17 @@ namespace Network.Types
                 return a;
 
             return new Vec3f(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
+        }
+
+        public bool Equal(Vec3f b)
+        {
+            if (this == b)
+                return true;
+
+            if ((this - b).isNull())
+                return true;
+
+            return false;
         }
 
         public float X
@@ -106,6 +167,11 @@ namespace Network.Types
         public static explicit operator Vec3f(float[] data)
         {
             return new Vec3f(data);
+        }
+
+        public override string ToString()
+        {
+            return " Vec3f("+X+", "+Y+", "+Z+") ";
         }
     }
 }

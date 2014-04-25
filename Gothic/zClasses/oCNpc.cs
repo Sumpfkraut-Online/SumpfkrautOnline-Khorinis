@@ -13,6 +13,7 @@ namespace Gothic.zClasses
         #region OffsetLists
         public enum Offsets : uint
         {
+            guild = 0x0230,
             hp_current = 0x1B8,
             hp_max = 0x1BC,
             mp_current = 0x1C0,
@@ -59,6 +60,7 @@ namespace Gothic.zClasses
             flags = 0x01B4,
             fatness = 0x07BC,
             model_scale = 0x07B0,
+            weaponMode = 0x250
         }
 
         public enum NPC_Talents
@@ -93,6 +95,7 @@ namespace Gothic.zClasses
         }
         public enum FuncOffsets : uint
         {
+            Disable = 0x00745A20,
             OpenInventory = 0x00762250,
             PutInInv_Str = 0x00749570,
             PutInInv_Int = 0x007494B5,
@@ -180,7 +183,16 @@ namespace Gothic.zClasses
             UseItem = 0x0073BC10,
             EV_UseItem = 0x00755620,
             EV_UseItemToState = 0x007558F0,
-            SetInteractItem = 0x0074ACC0
+            SetInteractItem = 0x0074ACC0,
+            SetTrueGuild = 0x00730780,
+            GetTrueGuild = 0x00730770,
+            SetAdditionalVisuals = 0x00738350,
+            IsUnconscious = 0x00736750,
+            IsDead = 0x00736740,
+            EV_AttackFinish = 0x00751AF0,
+            DoDie = 0x00736760,
+            GetFullBodyState = 0x0075EAF0,
+            IsBodyStateInterruptable = 0x0075EFA0
         }
 
         public enum HookSize : uint
@@ -208,6 +220,7 @@ namespace Gothic.zClasses
             GetEquippedMeleeWeapon = 9,
             GetEquippedRangedWeapon = 9,
             GetSlotItem = 5,
+            Equip = 5,
             EquipArmor = 7,
             EquipWeapon = 5,
             EquipFarWeapon = 5,
@@ -240,7 +253,10 @@ namespace Gothic.zClasses
             UseItem = 7,
             EV_UseItem = 6,
             EV_UseItemToState = 6,
-            SetInteractItem = 6
+            SetInteractItem = 6,
+            IsUnconscious = 8,
+            EV_AttackFinish = 7,
+            DoDie = 7
         }
         #endregion
 
@@ -275,6 +291,33 @@ namespace Gothic.zClasses
         public static oCStealContainer StealContainer(Process process)
         {
             return new oCStealContainer(process, process.ReadInt(0x00AB27DC));
+        }
+
+        public static zString getSlotString(Process process, int id)
+        {
+            if (id >= 9)
+                throw new ArgumentException("ID can't be greater than 9!");
+
+            if (id == 0)
+                return SLOT_RIGHTHAND(process);
+            if (id == 1)
+                return SLOT_LEFTHAND(process);
+            if (id == 2)
+                return SLOT_SWORD(process);
+            if (id == 3)
+                return SLOT_LONGSWORD(process);
+            if (id == 4)
+                return SLOT_BOW(process);
+            if (id == 5)
+                return SLOT_CROSSBOW(process);
+            if (id == 6)
+                return SLOT_TORSO(process);
+            if (id == 7)
+                return SLOT_HELMET(process);
+            if (id == 8)
+                return SLOT_SHIELD(process);
+
+            return null;
         }
 
         public static zString SLOT_RIGHTHAND(Process process)
@@ -332,6 +375,16 @@ namespace Gothic.zClasses
             set { Process.Write(value, Address + (int)Offsets.flags); }
         }
 
+        public int Guild
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.guild); }
+            set { Process.Write(value, Address + (int)Offsets.guild); }
+        }
+
+        public int WeaponMode
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.weaponMode); }
+        }
 
         public int FallDownDamage
         {
@@ -370,6 +423,43 @@ namespace Gothic.zClasses
             get { return Process.ReadInt(Address + (int)Offsets.BitFieldNPC); }
             set { Process.Write(value, Address + (int)Offsets.BitFieldNPC); }
         }
+
+        public int BitfieldNPC1
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.BitFieldNPC+4); }
+            set { Process.Write(value, Address + (int)Offsets.BitFieldNPC+4); }
+        }
+
+        public int BitfieldNPC2
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.BitFieldNPC + 8); }
+            set { Process.Write(value, Address + (int)Offsets.BitFieldNPC + 8); }
+        }
+
+        public int BitfieldNPC3
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.BitFieldNPC + 12); }
+            set { Process.Write(value, Address + (int)Offsets.BitFieldNPC + 12); }
+        }
+
+        public int BitfieldNPC4
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.BitFieldNPC + 16); }
+            set { Process.Write(value, Address + (int)Offsets.BitFieldNPC + 16); }
+        }
+
+        public int BodyState { 
+            get {
+                int v = ((1 << 19) - 1);
+                return (ushort)((BitfieldNPC4 & v));
+            }
+            set { 
+                int v = ((1 << 19) - 1);
+                BitfieldNPC4 &= ~v;
+                BitfieldNPC4 |= (int)value;
+            }
+        }
+
         public ushort BodyTex
         {
             //get { return Process.ReadUShort(Address + (int)Offsets.BitFieldNPC + 2); }
@@ -386,6 +476,8 @@ namespace Gothic.zClasses
                 BitfieldNPC0 |= (int)value << 14;
             }
         }
+
+
         public ushort HeadTex
         {
             get { return Process.ReadUShort(Address + (int)Offsets.BitFieldNPC + 4 + 2);  }
@@ -580,7 +672,10 @@ namespace Gothic.zClasses
         #region ownMethods
 
 
-        
+        public void setAttributes(byte type, int value)
+        {
+            Process.Write(value, Address + (int)Offsets.hp_current + type*4);
+        }
 
         public void SetHitChances(int talent, int percent)
         {
@@ -618,15 +713,7 @@ namespace Gothic.zClasses
         }
 
 
-        public zVec3 GetPosition()
-        {
-            Matrix4 traf = this.TrafoObjToWorld;
-            zVec3 pos = zVec3.Create(Process);
-            pos.X = Process.ReadFloat(traf.Address + 3 * 4);
-            pos.Y = Process.ReadFloat(traf.Address + 7 * 4);
-            pos.Z = Process.ReadFloat(traf.Address + 11 * 4);
-            return pos;
-        }
+        
 
         public void SetLookAt(zVec3 lookAt)
         {
@@ -703,6 +790,17 @@ namespace Gothic.zClasses
         #endregion
 
         #region methods
+
+        public void Disable()
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.Disable, new CallValue[] {  });
+        }
+
+        public void SetTrueGuild(int val)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetTrueGuild, new CallValue[] { new IntArg(val) });
+        }
+
         public void Turn(zVec3 pos)
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.Turn, new CallValue[] { pos });
@@ -746,9 +844,34 @@ namespace Gothic.zClasses
             return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.CanBeTalkedTo, new CallValue[] {  });
         }
 
+        public int GetTrueGuild()
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.GetTrueGuild, new CallValue[] { });
+        }
+
+        public int IsBodyStateInterruptable()
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.IsBodyStateInterruptable, new CallValue[] { });
+        }
+
         public int CanSense(zCVob npc)
         {
             return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.CanSense, new CallValue[] { npc });
+        }
+
+        public int IsUnconscious()
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.IsUnconscious, new CallValue[] {  });
+        }
+
+        public int IsDead()
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.IsDead, new CallValue[] { });
+        }
+
+        public int GetFullBodyState()
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.GetFullBodyState, new CallValue[] { });
         }
 
         public int CanSee(zCVob vob, int arg)
@@ -803,6 +926,20 @@ namespace Gothic.zClasses
         public void Equip(oCItem slot)
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.Equip, new CallValue[] { slot });
+        }
+
+        public void SetAdditionalVisuals(zString bodyMesh, int bodyTex, int skinColor, zString headMesh, int headTex, int TeethTex, int Armor)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetAdditionalVisuals, new CallValue[] { bodyMesh, new IntArg(bodyTex), new IntArg(skinColor), headMesh, new IntArg(headTex), new IntArg(TeethTex), new IntArg(Armor) });
+        }
+
+        public void SetAdditionalVisuals(String bodyMesh, int bodyTex, int skinColor, String headMesh, int headTex, int TeethTex, int Armor)
+        {
+            zString zBodyMesh = zString.Create(Process, bodyMesh);
+            zString zHeadMesh = zString.Create(Process, headMesh);
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetAdditionalVisuals, new CallValue[] { zBodyMesh, new IntArg(bodyTex), new IntArg(skinColor), zHeadMesh, new IntArg(headTex), new IntArg(TeethTex), new IntArg(Armor) });
+            zBodyMesh.Dispose();
+            zHeadMesh.Dispose();
         }
        
         public void RemoveFromSlot(zString slot, int vob, int i)
@@ -911,6 +1048,17 @@ namespace Gothic.zClasses
         public void Enable(zVec3 vec)
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.Enable, new CallValue[] { vec });
+        }
+
+        public void Enable(float x, float y, float z)
+        {
+            zVec3 vec = zVec3.Create(Process);
+            vec.X = x;
+            vec.Y = y;
+            vec.Z = z;
+
+            Enable(vec);
+            vec.Dispose();
         }
 
         public void ApplyOverlay(zString str)
@@ -1064,9 +1212,9 @@ namespace Gothic.zClasses
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.UnequipItem, new CallValue[] { item });
         }
 
-        public void DropUnconscious(int arg, oCNpc npc)
+        public void DropUnconscious(float arg, oCNpc npc)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.DropUnconscious, new CallValue[] { new IntArg(arg), npc });
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.DropUnconscious, new CallValue[] { new FloatArg(arg), npc });
         }
 
         public void CheckUnconscious()

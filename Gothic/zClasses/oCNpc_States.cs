@@ -23,7 +23,9 @@ namespace Gothic.zClasses
             DoAIState = 0x0076D1A0,
             StartRtnState = 0x0076C2E0,
             InitAIStateDriven = 0x0076E8E0,
-            ActivateRtnState = 0x0076C330
+            ActivateRtnState = 0x0076C330,
+            StartAIState = 0x0076C840,
+            IsInState = 0x0076C040
         }
 
         public enum HookSize : uint
@@ -56,6 +58,16 @@ namespace Gothic.zClasses
         public TNpcAIState NextState
         {
             get { return new TNpcAIState(Process, Address + (int)Offsets.next_state); }
+        }
+
+        public int StartAIState(uint type, int x, int y, float f, int z)
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.StartAIState, new CallValue[] { new UIntArg(type), new IntArg(x), new IntArg(y), new FloatArg(f), new IntArg(z) });
+        }
+
+        public int IsInState(uint type)
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.IsInState, new CallValue[] { new UIntArg(type) });
         }
 
         public void StartRtnState(int day)

@@ -1,0 +1,107 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using GUC.Types;
+using GUC.Network;
+using GUC.WorldObjects.Character;
+using GUC.WorldObjects;
+using RakNet;
+using GUC.Enumeration;
+
+namespace GUC.Server.Network.Messages.PlayerCommands
+{
+    class OnDamageMessage : IMessage
+    {
+
+        public void Read(RakNet.BitStream stream, RakNet.Packet packet, Server server)
+        {
+            Vec3f locHit = null, flydir = null;
+            int victim = 0, attacker = 0, weaponMode = 0, spellID = 0, weapon = 0;
+            
+            byte sendFlags, damageMode;
+
+            stream.Read(out victim);
+            stream.Read(out damageMode);
+            stream.Read(out sendFlags);
+
+            if ((sendFlags & 1) == 1)
+                stream.Read(out locHit);
+            if ((sendFlags & 2) == 2)
+                stream.Read(out flydir);
+            if ((sendFlags & 4) == 4)
+                stream.Read(out attacker);
+            if ((sendFlags & 8) == 8)
+                stream.Read(out weaponMode);
+            if ((sendFlags & 16) == 16)
+                stream.Read(out spellID);
+            if ((sendFlags & 32) == 32)
+                stream.Read(out weapon);
+            
+            NPCProto vicProto = (NPCProto)sWorld.VobDict[victim];
+            NPCProto attProto = null;
+
+            Scripting.Objects.Character.NPCProto attackerScriptProto = null;
+
+            if (attacker != 0)
+            {
+                attProto = (NPCProto)sWorld.VobDict[attacker];
+                attackerScriptProto = attProto.ScriptingNPC;
+            }
+
+            Item weaponIt = null;
+            Scripting.Objects.Item weaponScriptItem = null;
+            if (weapon != 0)
+            {
+                weaponIt = (Item)sWorld.VobDict[weapon];
+                weaponScriptItem = weaponIt.ScriptingProto;
+            }
+            Scripting.Objects.Character.NPCProto.OnPlayerDamages(vicProto.ScriptingNPC, (DamageType)damageMode, locHit, flydir, attackerScriptProto, weaponMode, spellID, weaponScriptItem);
+            Write(vicProto, (DamageType)damageMode, locHit, flydir, attProto, weaponMode, spellID, weaponIt, packet.guid);
+        }
+
+        public static void Write(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, NPCProto attacker, int weaponMode, int spellID, Item weapon, AddressOrGUID guidExclude)
+        {
+            BitStream stream = Program.server.sendBitStream;
+            stream.Reset();
+            stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
+            stream.Write((byte)NetworkIDS.OnDamageMessage);
+
+            byte sendFlags = 0;
+            if (hitLoc != null)
+                sendFlags |= 1;
+            if (flyDir != null)
+                sendFlags |= 2;
+            if (attacker != null)
+                sendFlags |= 4;
+            if (weaponMode != 0)
+                sendFlags |= 8;
+            if (spellID != 0)
+                sendFlags |= 16;
+            if (weapon != null)
+                sendFlags |= 32;
+
+
+            stream.Write(victim.ID);
+            stream.Write((byte)damageMode);
+            stream.Write(sendFlags);
+
+            if (hitLoc != null)
+                stream.Write(hitLoc);
+            if (flyDir != null)
+                stream.Write(flyDir);
+            if (attacker != null)
+                stream.Write(attacker.ID);
+            if (weaponMode != 0)
+                stream.Write(weaponMode);
+            if (spellID != 0)
+                stream.Write(spellID);
+            if (weapon != null)
+                stream.Write(weapon.ID);
+
+            if (guidExclude == null)
+                guidExclude = RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS;
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guidExclude, true);
+        }
+    }
+}

@@ -70,7 +70,10 @@ namespace Gothic.zClasses
         {
             get { return new zCListSort<oCItem>(Process, Process.ReadInt(Address + (int)Offsets.Contents)); }
         }
-
+        public void Remove(oCItem item)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (int)FuncOffsets.Remove, new CallValue[] { item });
+        }
         public void Remove(oCItem item, int amount)
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (int)FuncOffsets.Remove_2, new CallValue[] { item, new IntArg(amount) });

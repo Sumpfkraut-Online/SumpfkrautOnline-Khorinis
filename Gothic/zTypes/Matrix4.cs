@@ -44,15 +44,15 @@ namespace Gothic.zClasses
         public void setDirection(float[] dir)
         {
             set(2, dir[0]);
-            set(6, dir[0]);
-            set(10, dir[0]);
+            set(6, dir[1]);
+            set(10, dir[2]);
         }
 
         public void setPosition(float[] dir)
         {
             set(3, dir[0]);
-            set(7, dir[0]);
-            set(11, dir[0]);
+            set(7, dir[1]);
+            set(11, dir[2]);
         }
 
         public float get(int pos)

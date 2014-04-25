@@ -60,12 +60,18 @@ namespace Gothic.zClasses
             SetHeadingAtLocal = 0x0061C860,
             SetHeadingAtWorld = 0x0061CBC0,
             ResetXZRotationsWorld = 0x0061C090,
-            BeginMovement = 0x0061DA80
+            BeginMovement = 0x0061DA80,
+            RotateWorldX = 0x0061B800,
+            RotateWorldZ = 0x0061B860,
+            RotateLocalX = 0x0061B6B0,
+            RotateLocalZ = 0x0061B790,
+            GetSectorNameVobIsIn = 0x00600AE0
         }
 
         public enum HookSize
         {
-            RemoveVobFromWorld = 6
+            RemoveVobFromWorld = 6,
+            SetVisual = 6
         }
 
         public enum VobTypes
@@ -86,10 +92,21 @@ namespace Gothic.zClasses
             Vob = 8624508,
             Freepoint = 8643636,
             Camera = 8624508,
-            TriggerScript = 8643756 //really? dunno
+            TriggerScript = 8643756, //really? dunno
+            MobSwitch = 8636988,
+            MobBed = 8636692,
+            ZoneMusic = 8629644,
+            zCCSCamera = 8587500,
+            TouchDamage = 8642700,
+            MessageFilter = 8627196,
+            zCVobSound = 8629484,
+            zCVobAnimate = 8626668
+            //8624756? (MYLIGHT, LIGHT)
+            //8626188 pfx
+            
         }
 
-        enum zTVobType
+        public enum zTVobType
         {
             VOB,
             LIGHT = 1,
@@ -101,6 +118,21 @@ namespace Gothic.zClasses
             NPC = 130
         }
 
+        public enum BitFlag0
+        {
+            showVisual = 1,
+            drawBBox3D = 1 << 1,
+            visualAlphaEnabled = 1 << 2,
+            physicsEnabled = 1 << 3,
+            staticVob = 1 << 4,
+            ignoredByTraceRay = 1 << 5,
+            collDetectionStatic = 1 << 6,
+            collDetectionDynamic = 1 << 7,
+            castDynShadow = 1 << 8,
+            lightColorStatDirty = 1 << 9,
+            lightColorDynDirty = 1 << 10
+        }
+
         public zCVob(Process process, int address)
             : base(process, address)
         { 
@@ -110,6 +142,17 @@ namespace Gothic.zClasses
         {
 
         }
+
+        public static zCVob Create(Process process)
+        {
+            IntPtr ptr = process.Alloc(0x120);
+            zCClassDef.ObjectCreated(process, ptr.ToInt32(), 0x009A34D8);//0x00AB1518) => MobDoor;
+            process.THISCALL<NullReturnCall>((uint)ptr.ToInt32(), (uint)0x005FE1E0, new CallValue[] { });
+
+            return new zCVob(process, ptr.ToInt32());
+        }
+
+
 
         public int Type
         {
@@ -134,6 +177,12 @@ namespace Gothic.zClasses
         public zTBBox3D BBox3D
         {
             get { return new zTBBox3D(Process, Address + (int)Offsets.bbox3D); }
+        }
+
+        public zCVisual Visual
+        {
+            get { return new zCVisual(Process, Process.ReadInt(Address + (int)Offsets.visual)); }
+            set { Process.Write(value.Address ,Address + (int)Offsets.visual); }
         }
 
         public int BitField1
@@ -177,6 +226,16 @@ namespace Gothic.zClasses
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.RotateWorldY, new CallValue[] { new FloatArg(angle) });
         }
 
+        public void RotateWorldX(float angle)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.RotateWorldX, new CallValue[] { new FloatArg(angle) });
+        }
+
+        public void RotateWorldZ(float angle)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.RotateWorldZ, new CallValue[] { new FloatArg(angle) });
+        }
+
         public void SetHeadingAtLocal(zVec3 target)
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetHeadingAtLocal, new CallValue[] { target });
@@ -187,15 +246,27 @@ namespace Gothic.zClasses
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetHeadingAtWorld, new CallValue[] { target });
         }
 
+        
 
         public void RemoveVobFromWorld()
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.RemoveVobFromWorld, new CallValue[] { });
         }
 
+        public void SetVisual(String visual)
+        {
+            zString str = zString.Create(Process, visual);
+            SetVisual(str);
+            str.Dispose();
+        }
         public void SetVisual(zString str)
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetVisual, new CallValue[] { str });
+        }
+
+        public zString GetSectorNameVobIsIn()
+        {
+            return Process.THISCALL<zString>((uint)Address, (uint)FuncOffsets.GetSectorNameVobIsIn, new CallValue[] {  });
         }
 
         public zCEventManager GetEM(int x)
@@ -203,6 +274,27 @@ namespace Gothic.zClasses
             return Process.FASTCALL<zCEventManager>((uint)Address, (uint)x, (uint)FuncOffsets.GetEM, new CallValue[] { });
         }
 
+        public zVec3 GetPosition()
+        {
+            Matrix4 traf = this.TrafoObjToWorld;
+            zVec3 pos = zVec3.Create(Process);
+            pos.X = Process.ReadFloat(traf.Address + 3 * 4);
+            pos.Y = Process.ReadFloat(traf.Address + 7 * 4);
+            pos.Z = Process.ReadFloat(traf.Address + 11 * 4);
+            return pos;
+        }
+
+        public void SetPositionWorld(float[] pos)
+        {
+            zVec3 p = zVec3.Create(Process);
+            p.X = pos[0];
+            p.Y = pos[1];
+            p.Z = pos[2];
+
+            SetPositionWorld(p);
+
+            p.Dispose();
+        }
         public void SetPositionWorld(zVec3 pos)
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetPositionWorld, new CallValue[] { pos });
@@ -217,15 +309,14 @@ namespace Gothic.zClasses
         public void setShowVisual(bool b)
         {
             if(!b)
-                BitField1 &= ~(1 << 0);
+                BitField1 &= ~(int)BitFlag0.showVisual;
             else
-                BitField1 |= 1 << 0;
+                BitField1 |= (int)BitFlag0.showVisual;
         }
 
         public bool getShowVisual()
         {
-            int zCVob_bitfield0_showVisual = ((1 << 1) - 1) << 0;
-            return ((BitField1 & zCVob_bitfield0_showVisual) == 1);
+            return ((BitField1 & (int)BitFlag0.showVisual) == (int)BitFlag0.showVisual);
         }
 
 

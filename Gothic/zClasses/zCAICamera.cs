@@ -23,7 +23,8 @@ namespace Gothic.zClasses
             AI_FirstPerson = 0x004A40E0,
             AI_Normal = 0x004A4370,
             CheckKeys = 0x004A45C0,
-            SetMode = 0x004A09C0
+            SetMode = 0x004A09C0,
+            SetTarget = 0x004A1120
         }
 
         public enum HookSize : uint
@@ -135,6 +136,11 @@ namespace Gothic.zClasses
         public void SetMode(zString str)
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetMode, new CallValue[] { str, new IntArg(0) });
+        }
+
+        public void SetTarget(zCVob vob)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetTarget, new CallValue[] { vob });
         }
         #endregion
     }

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
-using Network;
 using Gothic.zClasses;
+using GUC.Types;
 using WinApi;
 using Gothic.zTypes;
 
@@ -10,21 +11,17 @@ namespace GUC.GUI
 {
     public class Texture : View
     {
-        zCView view;
+        protected zCView view;
 
-        protected int width;
-        protected int height;
+        protected Vec2i size = new Vec2i();
 
-        public Texture(int id, String tex, int x, int y, int width, int height)
-            : base(id)
+        public Texture(int id, String tex, Vec2i position, Vec2i size)
+            : base(id, position)
         {
-            this.x = x;
-            this.y = y;
-            this.width = width;
-            this.height = height;
+            this.size.set(size);
 
             Process process = Process.ThisProcess();
-            view = zCView.Create(process, x, y, width, height);
+            view = zCView.Create(process, position.X, position.Y, position.X + this.size.X, position.Y+this.size.Y);
 
             if (tex != null && tex != "")
             {
@@ -49,18 +46,17 @@ namespace GUC.GUI
             text.Dispose();
         }
 
-        public void setSize(int x, int y)
+        public void setSize(Vec2i size)
         {
-            view.SetSize(x, y);
-            width = x;
-            height = y;
+            this.size.set(size.X, size.Y);
+            view.SetSize(size.X, size.Y);
         }
-        
-        public override void setPosition(int x, int y)
+
+        public override void setPosition(Vec2i pos)
         {
-            view.SetPos(x, y);
-            this.x = x;
-            this.y = y;
+            this.position.set(pos);
+            view.SetPos(this.position.X, this.position.Y);
+            
         }
 
         public override void hide()
@@ -70,14 +66,14 @@ namespace GUC.GUI
             Process process = Process.ThisProcess();
             zCView.GetStartscreen(process).RemoveItem(this.view);
             isShown = false;
-            
+
         }
         public override void show()
         {
             if (isShown)
                 return;
             Process process = Process.ThisProcess();
-            
+
             zCView.GetStartscreen(process).InsertItem(this.view, 0);
 
             isShown = true;

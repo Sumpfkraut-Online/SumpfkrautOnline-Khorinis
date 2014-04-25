@@ -38,7 +38,8 @@ namespace Gothic.zClasses
             SetFont_Str = 0x007A9920,
             SetPos = 0x007A75B0,
             Move = 0x007A76E0,
-            SetSize = 0x007A77A0
+            SetSize = 0x007A77A0,
+            Top = 0x007A6790
         }
 
         public enum HookSizes
@@ -83,7 +84,10 @@ namespace Gothic.zClasses
 
 
 
-
+        public void Top()
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.Top, new CallValue[] { });
+        }
 
         public zCView Next
         {
@@ -155,6 +159,13 @@ namespace Gothic.zClasses
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.insertBack_str, new CallValue[] { texture });
         }
 
+        public void SetFont(String font)
+        {
+            zString f = zString.Create(Process, font);
+            SetFont(f);
+            f.Dispose();
+        }
+
         public void SetFont(zString font)
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetFont_Str, new CallValue[] { font });
@@ -193,6 +204,15 @@ namespace Gothic.zClasses
         public void Move(int x, int y)
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.Move, new CallValue[] { new IntArg(x), new IntArg(y) });
+        }
+
+        public void PrintTimedCXY(String str, float time, byte r, byte g, byte b, byte a)
+        {
+            zColor colr = zColor.Create(Process, r, g, b, a);
+            zString zstr = zString.Create(Process, str);
+            PrintTimedCXY(zstr, time, colr);
+            colr.Dispose();
+            zstr.Dispose();
         }
 
         public void PrintTimedCXY(zString str, float time, zColor color)

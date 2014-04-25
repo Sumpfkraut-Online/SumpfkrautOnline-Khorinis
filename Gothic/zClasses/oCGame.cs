@@ -17,8 +17,11 @@ namespace Gothic.zClasses
             LoadScreen = 128,
             SaveScreen = 132,
             PauseScreen = 136,
-            WorldTimer = 0x114//oder 244???
+            WorldTimer = 0x114,//oder 244???
             
+            DiveBar = 144,
+
+            PortalRoomManager = 0x134
         }
 
         public enum FuncOffsets : uint
@@ -33,7 +36,8 @@ namespace Gothic.zClasses
             ChangeLevel = 0x006C7290,
             HandleEvent = 0x006FC170,//Nur für b m n usw. nicht für spielersteuerung
             SetTime = 0x006C4DE0,
-            SetObjectRoutineTimeChange = 0x006CACB0
+            SetObjectRoutineTimeChange = 0x006CACB0,
+            DefineExternals_Ulfi = 0x006D4780
         }
 
         public enum HookSize : uint
@@ -54,12 +58,23 @@ namespace Gothic.zClasses
         { }
 
 
-        public zCWorld World { get { return new zCWorld(Process, Process.ReadInt(this.Address + 0x8)); } }
+        
 
         public zCView GameText { get { return new zCView(Process, Process.ReadInt(this.Address + (int)Offsets.Game_Text)); } }
 
+        public oCPortalRoomManager PortalRoomManager
+        {
+            get { return new oCPortalRoomManager(Process, Process.ReadInt(this.Address + (int)Offsets.PortalRoomManager)); }
+        }
+
         public zCViewProgressBar Progressbar { 
             get { return new zCViewProgressBar(Process, Process.ReadInt(this.Address + (int)Offsets.Progressbar)); }
+            set { Process.Write(value.Address, this.Address + (int)Offsets.Progressbar); }
+        }
+
+        public oCViewStatusBar DiveBar
+        {
+            get { return new oCViewStatusBar(Process, Process.ReadInt(this.Address + (int)Offsets.DiveBar)); }
             set { Process.Write(value.Address, this.Address + (int)Offsets.Progressbar); }
         }
 
@@ -95,6 +110,11 @@ namespace Gothic.zClasses
                 return viewList;
             }
 
+        }
+
+        public void DefineExternals_Ulfi(zCParser parser)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.DefineExternals_Ulfi, new CallValue[] { parser });
         }
 
         public void OpenLoadscreen(bool t, zString str)

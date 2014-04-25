@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Net;
 using System.IO;
-using Gothic_Untold_Chapter;
 using System.Diagnostics;
 
-namespace Network
+namespace GUC.Updater
 {
     public class Updater
     {
@@ -29,7 +29,7 @@ namespace Network
         {
             wc = new WebClient();
             //wc.Headers.Add(HttpRequestHeader.Authorization, "Basic " + EncodeTo64("mainclain:WHzhqZsUwNMuuqzy"));
-            if(linux)
+            if (linux)
             {
                 batfile = "update.sh";
             }
@@ -37,14 +37,14 @@ namespace Network
             //Alte-Temporäre Daten löschen
             if (Directory.Exists(tempFolder))
                 Directory.Delete(tempFolder, true);
-            
+
 
             if (File.Exists(batfile))
                 File.Delete(batfile);
 
             //Neue Ordnerstruktur aufbauen.
             Directory.CreateDirectory(tempFolder);
-            Directory.CreateDirectory(tempFolder+"files/");
+            Directory.CreateDirectory(tempFolder + "files/");
 
 
             myWriter = File.CreateText("update.bat");
@@ -66,7 +66,7 @@ namespace Network
             return null;
         }
 
-        public WebException dlFile( int id )
+        public WebException dlFile(int id)
         {
             String tempFile = tempFolder + "files/" + hasToUpdated[id].filename;
             try
@@ -83,12 +83,12 @@ namespace Network
                 throw new Exception("Fehler: Datei \"" + tempFile + "\" hatte nicht den gleichen MD5-Hash! Download fehlgeschlagen, oder falsche Update-Konfiguration!");
             }
 
-            for (int i = 0; i < hasToUpdated[id].filePath.Length; i++ )
+            for (int i = 0; i < hasToUpdated[id].filePath.Length; i++)
             {
                 myWriter.WriteLine(":schleife_" + id + "_" + i);
-                myWriter.WriteLine("del \"" + Path.GetFullPath(basePath+hasToUpdated[id].filePath[i]) + "\"");
-                myWriter.WriteLine("if exist \"" + Path.GetFullPath(basePath+hasToUpdated[id].filePath[i]) + "\" goto schleife_" + id + "_" + i);
-                myWriter.WriteLine("copy \"" + Path.GetFullPath(tempFile) + "\" \"" + Path.GetFullPath(basePath+hasToUpdated[id].filePath[i]) + "\"");
+                myWriter.WriteLine("del \"" + Path.GetFullPath(basePath + hasToUpdated[id].filePath[i]) + "\"");
+                myWriter.WriteLine("if exist \"" + Path.GetFullPath(basePath + hasToUpdated[id].filePath[i]) + "\" goto schleife_" + id + "_" + i);
+                myWriter.WriteLine("copy \"" + Path.GetFullPath(tempFile) + "\" \"" + Path.GetFullPath(basePath + hasToUpdated[id].filePath[i]) + "\"");
             }
             myWriter.WriteLine("del \"" + Path.GetFullPath(tempFile) + "\"");
             return null;
@@ -147,7 +147,7 @@ namespace Network
         {
             if (hasToUpdated.Count <= id)
                 return true;
-            else 
+            else
                 return false;
         }
 

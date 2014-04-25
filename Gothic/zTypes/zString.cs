@@ -4,6 +4,7 @@ using System.Text;
 using WinApi;
 using Gothic.zClasses;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 
 namespace Gothic.zTypes
 {
@@ -25,6 +26,11 @@ namespace Gothic.zTypes
             Dispose(true);
         }
 
+        public override uint ValueLength()
+        {
+            return 4;
+        }
+
         public static zString strVirtualPath(Process process)
         {
             return new zString(process, 0x008C3494);
@@ -42,6 +48,26 @@ namespace Gothic.zTypes
                 Process.Free(new IntPtr(Address), 20);
                 disposed = true;
             }
+        }
+
+        public String getCheckedValue()
+        {
+            if (this.Address == 0)
+                return null;
+            if (this.VTBL != 8578800)
+                return null;
+            //if (this.Value.Length <= 0 || this.Value.Length > 500)
+            //    return null;
+            String val = this.Value.Trim();
+            if (val.Length == 0)
+                return null;
+
+            
+
+            //bool found = Regex.IsMatch(val, "^[a-zA-Z0-9_\\-.:;!\\\"§$%&/()=?`´\\\\}\\]\\[ ß{³²<>|,@€ÄÖÜäöü#''*+~]+$");
+            //if (!found)
+            //    return null;
+            return val;
         }
 
         //public static zString Create(Process process, String value)
@@ -65,6 +91,10 @@ namespace Gothic.zTypes
         //}
         public static zString Create(Process process, String value)
         {
+            if (process == null)
+                throw new ArgumentNullException("Process can't be null!");
+            if (value == null)
+                throw new ArgumentNullException("Value can't be null!");
             //IntPtr charArr = process.Alloc((uint)value.Length + 2);
             //IntPtr stringArr = process.Alloc(20);
 
@@ -100,16 +130,22 @@ namespace Gothic.zTypes
 
         public void Clear()
         {
+            if (Address == 0)
+                throw new Exception("The zString-Address can't be 0!");
             Process.THISCALL<NullReturnCall>((uint)Address, 0x0059D010, new CallValue[] { });
         }
 
         public void Insert(int pos, zString str)
         {
+            if (Address == 0)
+                throw new Exception("The zString-Address can't be 0!");
             Process.THISCALL<NullReturnCall>((uint)Address, 0x0046B400, new CallValue[] { new IntArg(pos), str });
         }
 
         public void Add(String str)
         {
+            if (Address == 0)
+                throw new Exception("The zString-Address can't be 0!");
             //if (memorySave)
             //{
                 Set(Value + str);
@@ -131,6 +167,8 @@ namespace Gothic.zTypes
 
         public void Set(String str)
         {
+            if (Address == 0)
+                throw new Exception("The zString-Address can't be 0!");
             //if (memorySave)
             //{
                 //IntPtr charArr = Process.Alloc((uint)str.Length + 2);
@@ -147,12 +185,14 @@ namespace Gothic.zTypes
             //}
             //else
             //{
-            IntPtr charArr = Process.Alloc((uint)str.Length + 1);
             System.Text.Encoding enc = System.Text.Encoding.Default;
             byte[] arr = enc.GetBytes(str);
+            IntPtr charArr = Process.Alloc((uint)arr.Length + 1);
+            
+            
             if (arr.Length > 0)
                 Process.Write(arr, charArr.ToInt32());
-
+            Process.Write(new byte[] { 0 }, charArr.ToInt32() + arr.Length);
             Process.THISCALL<zString>((uint)Address, (uint)0x004CFAF0, new CallValue[] { new IntArg(charArr.ToInt32()) });
 
             Process.Free(charArr, (uint)str.Length + 1);
@@ -162,6 +202,9 @@ namespace Gothic.zTypes
 
         public void Set(zString str)
         {
+            if (Address == 0)
+                throw new Exception("The zString-Address can't be 0!");
+
             Process.THISCALL<zString>((uint)Address, (uint)0x0059CEB0, new CallValue[] { str });
         }
 
@@ -217,6 +260,8 @@ namespace Gothic.zTypes
         {
             get
             {
+                if (Address == 0)
+                    throw new Exception("The zString-Address can't be 0!");
                 try
                 {
                     byte[] arr = Process.ReadBytes(this.PTR, (uint)this.Length);

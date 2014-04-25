@@ -86,22 +86,41 @@ namespace Gothic.mClasses
         }
         public void wheelChanged(int steps) { }
 
-        
+        public  static textBox activeTB = null;
         public void KeyEnable()
         {
             InputHooked.deaktivateFullControl(process);
             WriteEnabled = true;
+
+            activeTB = this;
         }
 
         public void KeyDisable()
         {
             InputHooked.activateFullControl(process);
             WriteEnabled = false;
+
+            activeTB = null;
+        }
+
+        public static string GetCharsFromKeys(VirtualKeys keys, bool shift, bool altGr)
+        {
+            var buf = new StringBuilder(256);
+            var keyboardState = new byte[256];
+            if (shift)
+                keyboardState[(int)VirtualKeys.Shift] = 0xff;
+            if (altGr)
+            {
+                keyboardState[(int)VirtualKeys.Control] = 0xff;
+                keyboardState[(int)VirtualKeys.Menu] = 0xff;
+            }
+            WinApi.User.Input.ToUnicode((uint)keys, 0, keyboardState, buf, 256, 0);
+            return buf.ToString();
         }
 
         public void KeyPressed(int key)
         {
-            if (!Inputenabled)
+            if (!Inputenabled || (activeTB != null && activeTB != this) || (textArea.activeTB != null))
                 return;
             if (WinApi.User.Window.GetWindowThreadProcessId(WinApi.User.Window.GetForegroundWindow()) != process.ProcessID
              || zCConsole.Console(process).IsVisible() == 1)
@@ -123,65 +142,66 @@ namespace Gothic.mClasses
                 vt.Text.Set(text);
                 return;
             }
-            if (((int)key < 0x30 || (int)key > 0x5A) && (int)key != 0x20 && (int)key != 222 && (int)key != 192
-                && (int)key != 186 && (int)key != 219 && (int)key != (int)VirtualKeys.OEMPeriod
-                && (int)key != (int)VirtualKeys.OEMComma && (int)key != (int)VirtualKeys.OEMMinus)
-                return;
+            //if (((int)key < 0x30 || (int)key > 0x5A) && (int)key != 0x20 && (int)key != 222 && (int)key != 192
+            //    && (int)key != 186 && (int)key != 219 && (int)key != (int)VirtualKeys.OEMPeriod
+            //    && (int)key != (int)VirtualKeys.OEMComma && (int)key != (int)VirtualKeys.OEMMinus)
+            //    return;
 
 
             String keyVal = Convert.ToString((char)key);
-            if ((int)key == 222)
-                keyVal = "Ä";
-            if ((int)key == 192)
-                keyVal = "Ö";
-            if ((int)key == 186)
-                keyVal = "Ü";
-            if ((int)key == 219)
-                keyVal = "ß";
+            keyVal = GetCharsFromKeys((VirtualKeys)key, InputHooked.IsPressed((int)VirtualKeys.Shift), InputHooked.IsPressed((int)VirtualKeys.Control) && InputHooked.IsPressed((int)VirtualKeys.Menu));
+            //if ((int)key == 222)
+            //    keyVal = "Ä";
+            //if ((int)key == 192)
+            //    keyVal = "Ö";
+            //if ((int)key == 186)
+            //    keyVal = "Ü";
+            //if ((int)key == 219)
+            //    keyVal = "ß";
 
-            if ((int)key == (int)VirtualKeys.N1 && InputHooked.IsPressed((int)VirtualKeys.Shift))
-                keyVal = "!";
-            if ((int)key == (int)VirtualKeys.N2 && InputHooked.IsPressed((int)VirtualKeys.Shift))
-                keyVal = "\"";
-            if ((int)key == (int)VirtualKeys.N3 && InputHooked.IsPressed((int)VirtualKeys.Shift))
-                keyVal = "§";
-            if ((int)key == (int)VirtualKeys.N4 && InputHooked.IsPressed((int)VirtualKeys.Shift))
-                keyVal = "$";
-            if ((int)key == (int)VirtualKeys.N5 && InputHooked.IsPressed((int)VirtualKeys.Shift))
-                keyVal = "%";
-            if ((int)key == (int)VirtualKeys.N7 && InputHooked.IsPressed((int)VirtualKeys.Shift))
-                keyVal = "/";
-            if ((int)key == (int)VirtualKeys.N8 && InputHooked.IsPressed((int)VirtualKeys.Shift))
-                keyVal = "(";
-            if ((int)key == (int)VirtualKeys.N9 && InputHooked.IsPressed((int)VirtualKeys.Shift))
-                keyVal = ")";
-            if ((int)key == (int)VirtualKeys.N0 && InputHooked.IsPressed((int)VirtualKeys.Shift))
-                keyVal = "=";
-            if ((int)key == 219 && InputHooked.IsPressed((int)VirtualKeys.Shift))
-                keyVal = "?";
+            //if ((int)key == (int)VirtualKeys.N1 && InputHooked.IsPressed((int)VirtualKeys.Shift))
+            //    keyVal = "!";
+            //if ((int)key == (int)VirtualKeys.N2 && InputHooked.IsPressed((int)VirtualKeys.Shift))
+            //    keyVal = "\"";
+            //if ((int)key == (int)VirtualKeys.N3 && InputHooked.IsPressed((int)VirtualKeys.Shift))
+            //    keyVal = "§";
+            //if ((int)key == (int)VirtualKeys.N4 && InputHooked.IsPressed((int)VirtualKeys.Shift))
+            //    keyVal = "$";
+            //if ((int)key == (int)VirtualKeys.N5 && InputHooked.IsPressed((int)VirtualKeys.Shift))
+            //    keyVal = "%";
+            //if ((int)key == (int)VirtualKeys.N7 && InputHooked.IsPressed((int)VirtualKeys.Shift))
+            //    keyVal = "/";
+            //if ((int)key == (int)VirtualKeys.N8 && InputHooked.IsPressed((int)VirtualKeys.Shift))
+            //    keyVal = "(";
+            //if ((int)key == (int)VirtualKeys.N9 && InputHooked.IsPressed((int)VirtualKeys.Shift))
+            //    keyVal = ")";
+            //if ((int)key == (int)VirtualKeys.N0 && InputHooked.IsPressed((int)VirtualKeys.Shift))
+            //    keyVal = "=";
+            //if ((int)key == 219 && InputHooked.IsPressed((int)VirtualKeys.Shift))
+            //    keyVal = "?";
 
 
-            if ((int)key == (int)VirtualKeys.N7 && InputHooked.IsPressed((int)VirtualKeys.RightMenu))
-                keyVal = "{";
-            if ((int)key == (int)VirtualKeys.N0 && InputHooked.IsPressed((int)VirtualKeys.RightMenu))
-                keyVal = "}";
-            if ((int)key == 219 && InputHooked.IsPressed((int)VirtualKeys.RightMenu))
-                keyVal = "\\";
+            //if ((int)key == (int)VirtualKeys.N7 && InputHooked.IsPressed((int)VirtualKeys.RightMenu))
+            //    keyVal = "{";
+            //if ((int)key == (int)VirtualKeys.N0 && InputHooked.IsPressed((int)VirtualKeys.RightMenu))
+            //    keyVal = "}";
+            //if ((int)key == 219 && InputHooked.IsPressed((int)VirtualKeys.RightMenu))
+            //    keyVal = "\\";
             
-            if ((int)key == (int)VirtualKeys.OEMPeriod)
-                keyVal = ".";
-            if ((int)key == (int)VirtualKeys.OEMPeriod && InputHooked.IsPressed((int)VirtualKeys.Shift))
-                keyVal = ":";
-            if ((int)key == (int)VirtualKeys.OEMComma)
-                keyVal = ",";
-            if ((int)key == (int)VirtualKeys.OEMComma && InputHooked.IsPressed((int)VirtualKeys.Shift))
-                keyVal = ";";
-            if ((int)key == (int)VirtualKeys.OEMMinus)
-                keyVal = "-";
-            if ((int)key == (int)VirtualKeys.OEMMinus && InputHooked.IsPressed((int)VirtualKeys.Shift))
-                keyVal = "_";
-            if (!InputHooked.IsPressed((int)VirtualKeys.Shift))
-                keyVal = keyVal.ToLower();
+            //if ((int)key == (int)VirtualKeys.OEMPeriod)
+            //    keyVal = ".";
+            //if ((int)key == (int)VirtualKeys.OEMPeriod && InputHooked.IsPressed((int)VirtualKeys.Shift))
+            //    keyVal = ":";
+            //if ((int)key == (int)VirtualKeys.OEMComma)
+            //    keyVal = ",";
+            //if ((int)key == (int)VirtualKeys.OEMComma && InputHooked.IsPressed((int)VirtualKeys.Shift))
+            //    keyVal = ";";
+            //if ((int)key == (int)VirtualKeys.OEMMinus)
+            //    keyVal = "-";
+            //if ((int)key == (int)VirtualKeys.OEMMinus && InputHooked.IsPressed((int)VirtualKeys.Shift))
+            //    keyVal = "_";
+            //if (!InputHooked.IsPressed((int)VirtualKeys.Shift))
+            //    keyVal = keyVal.ToLower();
             
             text += keyVal;
             vt.Text.Add(keyVal);

@@ -33,5 +33,14 @@ namespace Gothic.zClasses
             : base(process, address)
         {
         }
+
+        public static oCMobDoor Create(Process process)
+        {
+            IntPtr ptr = process.Alloc(0x274);
+            zCClassDef.ObjectCreated(process, ptr.ToInt32(), 0x00AB1518);
+            process.THISCALL<NullReturnCall>((uint)ptr.ToInt32(), (uint)0x0071D010, new CallValue[] { });
+
+            return new oCMobDoor(process, ptr.ToInt32());
+        }
     }
 }
