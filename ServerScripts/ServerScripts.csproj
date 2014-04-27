@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{477C9B57-AD36-4CAC-998F-800C5A693C35}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GUC.Server.Scripts</RootNamespace>
+    <AssemblyName>ServerScripts</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\GothicII\System\UntoldChapter\Server\scripts\_compiled\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="GMP_Server">
+      <HintPath>..\..\..\..\..\..\..\Programme\Spiele\Gothic\GothicII\Gothic II GuC 2\System\UntoldChapter\Server\GMP_Server.exe</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Mono.Data.Sqlite">
+      <HintPath>..\..\..\..\..\..\..\Programme\Spiele\Gothic\GothicII\Gothic II GuC 2\System\UntoldChapter\Server\Mono.Data.Sqlite.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Accounts\Account.cs" />
+    <Compile Include="Accounts\AccountStartModule.cs" />
+    <Compile Include="Accounts\AccountSystem.cs" />
+    <Compile Include="Accounts\PlayerAccountExtension.cs" />
+    <Compile Include="AI\AIExtensions.cs" />
+    <Compile Include="AI\AIStates\AIState.cs" />
+    <Compile Include="AI\AIStates\AI_GOTOWP.cs" />
+    <Compile Include="AI\AIStates\AI_ALIGNTOWP.cs" />
+    <Compile Include="AI\AIStates\AI_PLAYANIMATION.cs" />
+    <Compile Include="AI\AIStates\AI_SETWALKTYPE.cs" />
+    <Compile Include="AI\Enumeration\WalkTypes.cs" />
+    <Compile Include="AI\NPCAI.cs" />
+    <Compile Include="AI\AISystem.cs" />
+    <Compile Include="AI\Routines\Routine.cs" />
+    <Compile Include="AI\Waypoints\FreePoint.cs" />
+    <Compile Include="AI\Waypoints\PriorityQueue.cs" />
+    <Compile Include="AI\Waypoints\WayNet.cs" />
+    <Compile Include="AI\Waypoints\WayPoint.cs" />
+    <Compile Include="AI\Waypoints\WayRoute.cs" />
+    <Compile Include="Chat.cs" />
+    <Compile Include="Daedalus\DaedalusStatics.cs" />
+    <Compile Include="Daedalus\Items\ITKE_ORLAN_TELEPORTSTATION.cs" />
+    <Compile Include="DamageScript.cs" />
+    <Compile Include="DayTime.cs" />
+    <Compile Include="DefaultItems.cs" />
+    <Compile Include="DefaultVobs.cs" />
+    <Compile Include="DefaultWorldItem.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sqlite.cs" />
+    <Compile Include="StartModules\AbstractModule.cs" />
+    <Compile Include="StartModules\Modules.cs" />
+    <Compile Include="Startup.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
