@@ -187,7 +187,7 @@ namespace GUC.Server.Scripting.Objects
 
         public int Visual_skin { get { return itemInstances.Visual_skin; } protected set { itemInstances.Visual_skin = value; } }
 
-
+        public String Description { get { return itemInstances.Description; } protected set { itemInstances.Description = value; } }
 
         #region OnEquip
         public event GUC.Server.Scripting.Events.NPCEquipEventHandler OnEquip;
