@@ -42,7 +42,6 @@ namespace GUC.Server.Scripts.AI.AIStates
 
         protected virtual void stopState()
         {
-            mNPC.standAnim();
             mNPC.getAI().removeFirstState();
         }
     }

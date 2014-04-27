@@ -31,10 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GMP_Server">
-      <HintPath>..\..\..\..\..\..\..\Programme\Spiele\Gothic\GothicII\Gothic II GuC 2\System\UntoldChapter\Server\GMP_Server.exe</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Mono.Data.Sqlite">
       <HintPath>..\..\..\..\..\..\..\Programme\Spiele\Gothic\GothicII\Gothic II GuC 2\System\UntoldChapter\Server\Mono.Data.Sqlite.dll</HintPath>
       <Private>False</Private>
@@ -81,7 +77,12 @@
     <Compile Include="StartModules\Modules.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\GMP_Server\GMP_Server.csproj">
+      <Project>{27FA7C52-3C80-4B72-8FBB-BCAC0328236E}</Project>
+      <Name>GMP_Server</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

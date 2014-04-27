@@ -96,10 +96,7 @@ namespace Gothic.mClasses
         public static bool IsPressed(int key)
         {
             Process process = Process.ThisProcess();
-            //if (WinApi.User.Window.GetWindowThreadProcessId(WinApi.User.Window.GetForegroundWindow()) != process.ProcessID
-            // || zCConsole.Console(process).IsVisible() == 1)
-            //    return false;
-            //if ((Input.GetAsyncKeyState((int)key) & 0x8001) == 0x8001)
+
             if ((Input.GetAsyncKeyState((int)key) & 0x8001) == 0x8001 || (Input.GetAsyncKeyState((int)key) & 0x8000) == 0x8000)
                 return true;
             return false;
@@ -107,11 +104,6 @@ namespace Gothic.mClasses
 
         public static void SendKeyPressed(byte key)
         {
-            //Process process = Process.ThisProcess();
-            //if (WinApi.User.Window.GetWindowThreadProcessId(WinApi.User.Window.GetForegroundWindow()) != process.ProcessID
-            // || zCConsole.Console(process).IsVisible() == 1)
-            //    return;
-
             if (keys[key] == 0x01)
                 return;
             InputReceiver[] rec = receivers.ToArray();
@@ -124,12 +116,6 @@ namespace Gothic.mClasses
 
         public static void SendKeyReleased(byte key)
         {
-            //Process process = Process.ThisProcess();
-            //if (WinApi.User.Window.GetWindowThreadProcessId(WinApi.User.Window.GetForegroundWindow()) != process.ProcessID
-            // || zCConsole.Console(process).IsVisible() == 1)
-            //    return;
-
-
             if (keys[key] == 0x00)
                 return;
             InputReceiver[] rec = receivers.ToArray();
@@ -142,24 +128,10 @@ namespace Gothic.mClasses
 
         public static void WheelChanged(int value)
         {
-            //if (wheel == value)
-            //    return;
-            //wheel = value;
-            //InputReceiver[] rec = receivers.ToArray();
-            //foreach (InputReceiver receiver in rec)
-            //{
-            //    receiver.wheelChanged(value - wheel);
-            //}
-            //zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "WheelValue: " + value, 0, "InputHooked.cs", 117);
-
-            Process process = Process.ThisProcess();
-            //if (WinApi.User.Window.GetWindowThreadProcessId(WinApi.User.Window.GetForegroundWindow()) != process.ProcessID
-            // || zCConsole.Console(process).IsVisible() == 1)
-            //    return;
-
-
             if (value == 0)
                 return;
+
+            Process process = Process.ThisProcess();
 
             InputReceiver[] rec = receivers.ToArray();
             foreach (InputReceiver receiver in rec)
