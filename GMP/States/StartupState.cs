@@ -48,11 +48,13 @@ namespace GUC.States
             Process.Write(new byte[] { 0xE9, 0x77, 0x0D, 0x00, 0x00 }, 0x006FC669);//Blocking F-Keys
 
             //Disable NPC-AI:
-            Process.VirtualProtect(0x00745A20, 0x31A);
-            byte[] arr = new byte[0x31A];
-            for (int i = 0; i < arr.Length; i++)
-                arr[i] = 0x90;
-            Process.Write(arr, 0x00745A20);
+            //Process.VirtualProtect(0x00745A20, 0x31A);
+            //byte[] arr = new byte[0x31A];
+            //for (int i = 0; i < arr.Length; i++)
+            //    arr[i] = 0x90;
+            //Process.Write(arr, 0x00745A20);
+
+
 
             //Disable Marvin-Mode:
             //Process.VirtualProtect(0x006CBF60, 25);

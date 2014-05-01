@@ -32,6 +32,7 @@ namespace GUC.Server.Scripting.Objects.Character
 
         public bool IsSpawned()
         {
+            
             return isSpawned;
         }
 
@@ -78,6 +79,24 @@ namespace GUC.Server.Scripting.Objects.Character
                 using(RakNet.RakNetGUID guid = Proto.GUID){
                     return Program.server.server.GetSystemAddressFromGuid(guid).ToString();
                 }
+            }
+        }
+
+
+
+        public static void EnableAllPlayerKeys(bool x)
+        {
+            WorldObjects.Character.Player.sSendAllKeys = x;
+        }
+
+        public static void EnablePlayerKey(bool activate, params byte[] keys)
+        {
+            foreach (byte key in keys)
+            {
+                if (activate && !WorldObjects.Character.Player.sSendKeys.Contains(key))
+                    WorldObjects.Character.Player.sSendKeys.Add(key);
+                else if(!activate && WorldObjects.Character.Player.sSendKeys.Contains(key))
+                    WorldObjects.Character.Player.sSendKeys.Remove(key);
             }
         }
 
@@ -213,6 +232,24 @@ namespace GUC.Server.Scripting.Objects.Character
             using (RakNetGUID guid = this.Proto.GUID)
                 Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
         }
+
+        #region PlayerKeyEvent
+        public static event Events.PlayerKeyEventHandler sPlayerKeyEvent;
+        public event Events.PlayerKeyEventHandler PlayerKeyEvent;
+        
+        internal static void sOnPlayerKey(Player pl, Dictionary<byte, byte> keys)
+        {
+            pl.OnPlayerKey(pl, keys);
+            if (sPlayerKeyEvent != null)
+                sPlayerKeyEvent(pl, keys);
+        }
+
+        internal void OnPlayerKey(Player pl, Dictionary<byte, byte> keys)
+        {
+            if (pl.PlayerKeyEvent != null)
+                pl.PlayerKeyEvent(pl, keys);
+        }
+        #endregion
 
         #region Events
 

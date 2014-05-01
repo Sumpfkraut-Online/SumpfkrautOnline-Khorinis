@@ -54,6 +54,14 @@ namespace GUC.WorldObjects.Character
             stream.Read(out this.talentValues, this.TalentValues.Length);
             stream.Read(out this.hitchances, this.Hitchances.Length);
 
+
+            Vec3f vec = new Vec3f();
+            stream.Read(out vec);
+            Scale = vec;
+
+            stream.Read(out Fatness);
+
+
             int itemCount = 0;
             stream.Read(out itemCount);
             for (int i = 0; i < itemCount; i++)
@@ -98,6 +106,8 @@ namespace GUC.WorldObjects.Character
 
             stream.Read(out this.IsInvisible);
             stream.Read(out this.hideName);
+
+            stream.Read(out this.weaponMode);
 
             return sendInfo;
         }
@@ -154,8 +164,8 @@ namespace GUC.WorldObjects.Character
 
             npc.SetVisual(this.Visual);
             npc.SetAdditionalVisuals(BodyMesh, bodyTex, skinColor, HeadMesh, headTex, teethTex, -1);
-            npc.SetWeaponMode(this.WeaponMode);
-            npc.SetWeaponMode2(this.WeaponMode);
+            
+
 
             npc.HumanAI = new oCAiHuman(process, 0);
             npc.AniCtrl = new oCAniCtrl_Human(process, 0);
@@ -202,6 +212,80 @@ namespace GUC.WorldObjects.Character
 
             npc.setShowVisual(!this.IsInvisible);
 
+            setScale(this.Scale);
+            setFatness(this.Fatness);
+            setWeaponMode(this.WeaponMode);
+        }
+
+        public void Disable()
+        {
+            if (this.Address != 0)
+            {
+                Process process = Process.ThisProcess();
+                oCNpc npc = new oCNpc(process, this.Address);
+
+                npc.Disable();
+            }
+        }
+
+        public void Enable(Vec3f pos)
+        {
+            if (this.Address != 0)
+            {
+                Process process = Process.ThisProcess();
+                oCNpc npc = new oCNpc(process, this.Address);
+
+                npc.Enable(pos.X, pos.Y, pos.Z);
+            }
+        }
+
+        public void setWeaponMode(int wpMode)
+        {
+            this.weaponMode = wpMode;
+
+            if (this.Address != 0)
+            {
+                Process process = Process.ThisProcess();
+                oCNpc npc = new oCNpc(process, this.Address);
+
+                npc.SetWeaponMode(this.weaponMode);
+                npc.SetWeaponMode2(this.weaponMode);
+
+                //zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "WeaponMode: "+weaponMode, 0, "Client.cs", 0);
+                    
+            }
+        }
+
+
+        public void setScale(Vec3f scale)
+        {
+            this.Scale = scale;
+
+            if (this.Address != 0)
+            {
+                Process process = Process.ThisProcess();
+                oCNpc npc = new oCNpc(process, this.Address);
+
+                zVec3 v = zVec3.Create(process);
+                v.X = scale.X;
+                v.Y = scale.Y;
+                v.Z = scale.Z;
+                npc.SetModelScale(v);
+                v.Dispose();
+            }
+        }
+
+        public void setFatness(float fatness)
+        {
+            this.Fatness = fatness;
+
+            if (this.Address != 0)
+            {
+                Process process = Process.ThisProcess();
+                oCNpc npc = new oCNpc(process, this.Address);
+
+                npc.SetFatness(this.Fatness);
+            }
         }
 
 
@@ -280,17 +364,6 @@ namespace GUC.WorldObjects.Character
             }
         }
 
-        public void setWeaponMode(int weaponMode)
-        {
-            WeaponMode = weaponMode;
-
-            if (this.Address != 0)
-            {
-                Process process = Process.ThisProcess();
-                oCNpc npc = new oCNpc(process, this.Address);
-                npc.SetWeaponMode(weaponMode);
-            }
-        }
 
         public void setSlotItem(int slot, Item item)
         {

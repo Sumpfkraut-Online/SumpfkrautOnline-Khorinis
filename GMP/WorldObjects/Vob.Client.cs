@@ -171,7 +171,6 @@ namespace GUC.WorldObjects
                 stream.Read(out _CDDyn);
             if (sendInfoFlag.HasFlag(VobSendFlags.CDStatic))
                 stream.Read(out _CDStatic);
-
             return sendInfoFlag;
         }
     }

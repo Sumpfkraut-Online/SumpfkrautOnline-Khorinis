@@ -72,6 +72,7 @@ namespace GUC.WorldObjects
                 addVob(v);
 
                 v.Spawn(this.Map, v.Position, v.Direction);
+                ((NPCProto)v).Disable();
             }
         }
 
@@ -103,6 +104,7 @@ namespace GUC.WorldObjects
 
                 
                 proto.Spawn(proto.Map, proto.Position, proto.Direction);
+                proto.Disable();
             }
         }
 

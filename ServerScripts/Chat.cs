@@ -48,9 +48,9 @@ namespace GUC.Server.Scripts
             lastNPC = new NPC("Test");
             lastNPC.Spawn("NEWWORLD\\NEWWORLD.ZEN", new Vec3f(0, 0, 0), new Vec3f(0, 0, 0));
 
-            lastNPC.addItem(DefaultItems.ItemInstances["ITAT_SHEEPFUR"], 12);
-            lastNPC.addItem(DefaultItems.ItemInstances["ITAT_WOLFFUR"], 11);
-            lastNPC.addItem(DefaultItems.ItemInstances["ITMW_1H_VLK_MACE"], 1);
+            lastNPC.addItem(ItemInstance.getItemInstance("ITAT_SHEEPFUR"), 12);
+            lastNPC.addItem(ItemInstance.getItemInstance("ITAT_WOLFFUR"), 11);
+            lastNPC.addItem(ItemInstance.getItemInstance("ITMW_1H_VLK_MACE"), 1);
 
             lastNPC.InitNPCAI();
 
@@ -149,7 +149,7 @@ namespace GUC.Server.Scripts
             }
             else if (upperMessage.StartsWith("/SPAWNMOBINTER"))
             {
-                MobInter v = new MobInter("BSFIRE_OC.MDS", DefaultItems.ItemInstances["ITMISWORDRAW"]);
+                MobInter v = new MobInter("BSFIRE_OC.MDS", ItemInstance.getItemInstance("ITMISWORDRAW"));
                 v.Spawn(pl.Map, new Vec3f(0, -160, 0), new Vec3f(0, 0, 1));
             }
             else if (upperMessage.StartsWith("/SPAWNVOB"))
@@ -159,20 +159,20 @@ namespace GUC.Server.Scripts
             }
             else if (upperMessage.StartsWith("/SPAWNITEM "))
             {
-                pl.World.addItem(DefaultItems.ItemInstances[upperMessage.Substring("/SPAWNITEM ".Length).Trim()], 1, pl.Position);
+                pl.World.addItem(ItemInstance.getItemInstance(upperMessage.Substring("/SPAWNITEM ".Length).Trim()), 1, pl.Position);
             }
             else if (upperMessage.StartsWith("/GIVEITEM "))
             {
-                pl.addItem(DefaultItems.ItemInstances[upperMessage.Substring("/GIVEITEM ".Length).Trim()], 1);
+                pl.addItem(ItemInstance.getItemInstance(upperMessage.Substring("/GIVEITEM ".Length).Trim()), 1);
             }
             else if (upperMessage.StartsWith("/SPAWNNPC"))
             {
                 lastNPC = new NPC("Test");
                 lastNPC.Spawn(pl.Map, new Vec3f(0, 0, 0), new Vec3f(0, 0, 0));
 
-                lastNPC.addItem(DefaultItems.ItemInstances["ITAT_SHEEPFUR"], 12);
-                lastNPC.addItem(DefaultItems.ItemInstances["ITAT_WOLFFUR"], 11);
-                lastNPC.addItem(DefaultItems.ItemInstances["ITMW_1H_VLK_MACE"], 1);
+                lastNPC.addItem(ItemInstance.getItemInstance("ITAT_SHEEPFUR"), 12);
+                lastNPC.addItem(ItemInstance.getItemInstance("ITAT_WOLFFUR"), 11);
+                lastNPC.addItem(ItemInstance.getItemInstance("ITMW_1H_VLK_MACE"), 1);
 
                 lastNPC.InitNPCAI();
 

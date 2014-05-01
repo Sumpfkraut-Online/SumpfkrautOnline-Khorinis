@@ -54,12 +54,27 @@
     <Compile Include="AI\AIStates\AI_ALIGNTOWP.cs" />
     <Compile Include="AI\AIStates\AI_PLAYANIMATION.cs" />
     <Compile Include="AI\AIStates\AI_SETWALKTYPE.cs" />
+    <Compile Include="AI\AI_Events.cs" />
+    <Compile Include="AI\AssessFuncs\AssessBody.cs" />
+    <Compile Include="AI\AssessFuncs\AssessDamage.cs" />
+    <Compile Include="AI\AssessFuncs\AssessEnemy.cs" />
+    <Compile Include="AI\AssessFuncs\AssessNPC.cs" />
+    <Compile Include="AI\AssessFuncs\AssessOtherDamage.cs" />
+    <Compile Include="AI\AssessFuncs\AssessTarget.cs" />
+    <Compile Include="AI\AssessFuncs\AssessWarn.cs" />
+    <Compile Include="AI\AssessFuncs\Update.cs" />
+    <Compile Include="AI\DataTypes\PriorityQueueExtended.cs" />
+    <Compile Include="AI\Enumeration\Guilds.cs" />
+    <Compile Include="AI\Enumeration\GuildsAttitude.cs" />
     <Compile Include="AI\Enumeration\WalkTypes.cs" />
+    <Compile Include="AI\FightFuncs\MonsterFightRoutine.cs" />
     <Compile Include="AI\NPCAI.cs" />
     <Compile Include="AI\AISystem.cs" />
+    <Compile Include="AI\NPC_Def\OrcWarrior.cs" />
+    <Compile Include="AI\NPC_Def\Wolf.cs" />
     <Compile Include="AI\Routines\Routine.cs" />
     <Compile Include="AI\Waypoints\FreePoint.cs" />
-    <Compile Include="AI\Waypoints\PriorityQueue.cs" />
+    <Compile Include="AI\DataTypes\PriorityQueue.cs" />
     <Compile Include="AI\Waypoints\WayNet.cs" />
     <Compile Include="AI\Waypoints\WayPoint.cs" />
     <Compile Include="AI\Waypoints\WayRoute.cs" />
@@ -82,6 +97,7 @@
     <ProjectReference Include="..\GMP_Server\GMP_Server.csproj">
       <Project>{27FA7C52-3C80-4B72-8FBB-BCAC0328236E}</Project>
       <Name>GMP_Server</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

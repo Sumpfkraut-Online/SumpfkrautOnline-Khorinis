@@ -56,6 +56,8 @@ namespace GUC.Server.Network
             messageListener.Add((byte)NetworkIDS.EquipItemMessage, new EquipItemMessage());
 
             messageListener.Add((byte)NetworkIDS.ChangeWorldMessage, new ChangeWorldMessage());
+
+            messageListener.Add((byte)NetworkIDS.PlayerKeyMessage, new PlayerKeyMessage());
         }
 
         public void Start(ushort port, ushort maxConnections, String pw)

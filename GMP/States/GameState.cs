@@ -16,13 +16,14 @@ using Gothic.mClasses;
 using WinApi.User.Enumeration;
 using Gothic.zTypes;
 using Gothic.zStruct;
+using GUC.Network.Messages.PlayerCommands;
 
 namespace GUC.States
 {
     class GameState : AbstractState
     {
         protected long lastPlayerPosUpdate = 0;
-        
+        protected PlayerKeyMessage pkm;
         public override void Init()
         {
             if (_init)
@@ -32,6 +33,9 @@ namespace GUC.States
 
             StealContainer sc = new StealContainer(Process.ThisProcess());
             sc.Enable();
+
+            pkm = new PlayerKeyMessage();
+            pkm.Init();
 
             _init = true;
         }
@@ -63,6 +67,8 @@ namespace GUC.States
                 }
                 lastPlayerPosUpdate = now;
             }
+
+            pkm.update();
 
             Program.client.Update();
         }

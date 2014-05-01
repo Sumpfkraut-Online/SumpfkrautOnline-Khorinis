@@ -59,7 +59,14 @@ namespace GUC.Enumeration
         NPCSetInvisibleMessage,
         NPCSetInvisibleName,
         PlayVideo,
-        NPCControllerMessage
+        NPCControllerMessage,
+        ScaleMessage,
+        NPCFatnessMessage,
+        
+        PlayerKeyMessage,
+
+        NPCProtoSetWeaponMode,
+        NPCEnableMessage
     }
 
     public enum ChangeSkillType : byte

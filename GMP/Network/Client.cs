@@ -102,6 +102,12 @@ namespace GUC.Network
             messageListener.Add((byte)NetworkIDS.PlayVideo, new PlayVideo());
 
             messageListener.Add((byte)NetworkIDS.NPCControllerMessage, new NPCControllerMessage());
+
+            messageListener.Add((byte)NetworkIDS.ScaleMessage, new ScaleMessage());
+            messageListener.Add((byte)NetworkIDS.NPCFatnessMessage, new NPCFatnessMessage());
+
+
+            messageListener.Add((byte)NetworkIDS.NPCEnableMessage, new NPCEnableMessage());
         }
 
         public void Startup()

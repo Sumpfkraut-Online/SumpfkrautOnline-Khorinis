@@ -91,9 +91,13 @@
     <Compile Include="Network\Messages\NpcCommands\AnimationUpdateMessage.cs" />
     <Compile Include="Network\Messages\NpcCommands\ClearInventory.cs" />
     <Compile Include="Network\Messages\NpcCommands\NPCControllerMessage.cs" />
+    <Compile Include="Network\Messages\NpcCommands\NPCEnableMessage.cs" />
+    <Compile Include="Network\Messages\NpcCommands\NPCFatnessMessage.cs" />
+    <Compile Include="Network\Messages\NpcCommands\NPCProtoSetWeaponMode.cs" />
     <Compile Include="Network\Messages\NpcCommands\NPCSetInvisibleMessage.cs" />
     <Compile Include="Network\Messages\NpcCommands\NPCSetInvisibleName.cs" />
     <Compile Include="Network\Messages\NpcCommands\NPCUpdateMessage.cs" />
+    <Compile Include="Network\Messages\NpcCommands\ScaleMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\AnimationMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\ChangeNameMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\CreateItemInstanceMessage.cs" />
@@ -104,6 +108,7 @@
     <Compile Include="Network\Messages\PlayerCommands\NPCChangeSkillMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\OnDamageMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\PlayerFreezeMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\PlayerKeyMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\PlayVideo.cs" />
     <Compile Include="Network\Messages\PlayerCommands\ReviveMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\SetVisualMessage.cs" />

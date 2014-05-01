@@ -19,6 +19,7 @@ namespace GUC.Server.Scripting
         public delegate void TextBoxMessageEventHandler(TextBox sender, Player player, String message);
         public delegate void ButtonEventHandler(Button sender, Player player);
 
+        public delegate void PlayerKeyEventHandler(Player sender, Dictionary<byte, byte> keys);
 
         public delegate void MobInterEventHandler(MobInter sender, NPCProto npc);
         public delegate void MobContainerPickEventHandler(MobInter sender, NPCProto npc, char pick);

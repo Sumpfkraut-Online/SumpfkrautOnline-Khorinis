@@ -121,7 +121,9 @@ namespace GUC
             removeItemUsed = process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hItemContainer).GetMethod("oCItemContainer_Remove"), (int)oCNpcInventory.FuncOffsets.Remove_Int_Int, (int)oCNpcInventory.HookSize.Remove_Int_Int, 2);//Will be called when using item!
 
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("oCNpc_UseItem"), (int)oCNpc.FuncOffsets.UseItem, (int)oCNpc.HookSize.UseItem, 1);
-            //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("oCNpc_EV_UseItem"), (int)oCNpc.FuncOffsets.EV_UseItemToState, (int)oCNpc.HookSize.EV_UseItemToState, 1);
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("oCNpc_EV_UseItemToState"), (int)oCNpc.FuncOffsets.EV_UseItemToState, (int)oCNpc.HookSize.EV_UseItemToState, 1);
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("oCNpc_EV_UseItem"), (int)oCNpc.FuncOffsets.EV_UseItem, (int)oCNpc.HookSize.EV_UseItem, 1);
+            
             
             //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("EV_CreateInteractItem"), (int)0x00754890, (int)7, 1);
             //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("EV_CreateInteractItem"), (int)0x007546F0, (int)5, 1);
@@ -242,8 +244,9 @@ namespace GUC
                             muni = munit.ObjectName.Value.Trim().ToUpper();
                         }
 
-                        sb.Append("ItemInstances.Add(\"" + symbolName + "\", new ItemInstance(");
+                        sb.Append("new ItemInstance(");
                         //DamageType dmgType, int totalDamage, int range,
+                        sb.Append("\"" + symbolName + "\", ");
                         sb.Append("\"" + item.Name + "\", ");
                         sb.Append("\"" + item.ScemeName + "\", ");
                         sb.Append("new int[]{" + item.Protection[0] + ", " + item.Protection[1] + ", " + item.Protection[2] + ", " + item.Protection[3] + ", " + item.Protection[4] + ", " + item.Protection[5] + ", " + item.Protection[6] + ", " + item.Protection[7] + "},");
@@ -261,10 +264,10 @@ namespace GUC
                         sb.Append(item.VisualSkin + ", ");
                         sb.Append("(MaterialTypes)(" + item.Material + "), ");
                         if(muni != null)
-                            sb.Append("ItemInstances[\"" + muni + "\"] ");
+                            sb.Append("ItemInstance.getItemInstance(\"" + muni + "\") ");
                         else
                             sb.Append("null");
-                        sb.Append("));\r\n");
+                        sb.Append(");\r\n");
                     }
                 }
 
@@ -301,7 +304,7 @@ namespace GUC
                             //sb.Append("" + mi.Rewind.ToString().ToLower() + ", ");
                             //sb.Append("" + mi.StateNum + ", ");
                             if (mi.UseWithItem.Address != 0 && mi.UseWithItem.getCheckedValue() != null)
-                                sb.Append("DefaultItems.ItemInstances[\"" + mi.UseWithItem.Value.Trim().ToUpper() + "\"], ");
+                                sb.Append("ItemInstance.getItemInstance(\"" + mi.UseWithItem.Value.Trim().ToUpper() + "\"), ");
                             else
                                 sb.Append("null, ");
 
@@ -321,7 +324,7 @@ namespace GUC
                             sb.Append("\"" + mi.Name.Value.Trim() + "\", ");
                             sb.Append("" + mi.isLocked.ToString().ToLower() + ", ");
                             if (mi.keyInstance.Address != 0 && mi.keyInstance.getCheckedValue() != null)
-                                sb.Append("DefaultItems.ItemInstances[\"" + mi.keyInstance.Value.Trim().ToUpper() + "\"], ");
+                                sb.Append("ItemInstance.getItemInstance(\"" + mi.keyInstance.Value.Trim().ToUpper() + "\"), ");
                             else
                                 sb.Append("null, ");
 
@@ -331,7 +334,7 @@ namespace GUC
                                 sb.Append("null, ");
 
                             if (mi.UseWithItem.Address != 0 && mi.UseWithItem.getCheckedValue() != null)
-                                sb.Append("DefaultItems.ItemInstances[\"" + mi.UseWithItem.Value.Trim().ToUpper() + "\"], ");
+                                sb.Append("ItemInstance.getItemInstance(\"" + mi.UseWithItem.Value.Trim().ToUpper() + "\"), ");
                             else
                                 sb.Append("null, ");
 
@@ -356,7 +359,7 @@ namespace GUC
                             for (int i = 0; i < itemList.Count; i++)
                             {
                                 oCItem item = itemList[i];
-                                sb.Append("DefaultItems.ItemInstances[\"" + item.ObjectName.Value.Trim().ToUpper() + "\"]");
+                                sb.Append("ItemInstance.getItemInstance(\"" + item.ObjectName.Value.Trim().ToUpper() + "\")");
                                 if (i + 1 < itemList.Count)
                                     sb.Append(", ");
                             }
@@ -374,7 +377,7 @@ namespace GUC
 
                             sb.Append("" + mi.isLocked.ToString().ToLower() + ", ");
                             if (mi.keyInstance.Address != 0 && mi.keyInstance.getCheckedValue() != null)
-                                sb.Append("DefaultItems.ItemInstances[\"" + mi.keyInstance.Value.Trim().ToUpper() + "\"], ");
+                                sb.Append("ItemInstance.getItemInstance(\"" + mi.keyInstance.Value.Trim().ToUpper() + "\"), ");
                             else
                                 sb.Append("null, ");
 
@@ -384,7 +387,7 @@ namespace GUC
                                 sb.Append("null, ");
 
                             if (mi.UseWithItem.Address != 0 && mi.UseWithItem.getCheckedValue() != null)
-                                sb.Append("DefaultItems.ItemInstances[\"" + mi.UseWithItem.Value.Trim().ToUpper() + "\"], ");
+                                sb.Append("ItemInstance.getItemInstance(\"" + mi.UseWithItem.Value.Trim().ToUpper() + "\"), ");
                             else
                                 sb.Append("null, ");
 
@@ -427,7 +430,7 @@ namespace GUC
                             oCItem mi = new oCItem(process, vob.Address);
 
                             sb.Append("mi = new Item(");
-                            sb.Append("DefaultItems.ItemInstances[\"" + mi.ObjectName.Value.Trim().ToUpper() + "\"], ");
+                            sb.Append("ItemInstance.getItemInstance(\"" + mi.ObjectName.Value.Trim().ToUpper() + "\"), ");
                             sb.Append("" + mi.Amount + ");\r\n");
 
                         }

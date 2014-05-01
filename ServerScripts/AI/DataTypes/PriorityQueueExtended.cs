@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Collections;
 
-namespace GUC.Server.Scripts.AI.Waypoints
+namespace GUC.Server.Scripts.AI.DataTypes
 {
-    public class PriorityQueue<E> where E : IComparable, IEquatable<E>
+    public class PriorityQueueExtended<E> where E : IEquatable<E>
     {
         private const int DEFAULT_CAPACITY = 32;
 
@@ -17,13 +18,25 @@ namespace GUC.Server.Scripts.AI.Waypoints
 
         protected int mSize = 0;
 
-        public PriorityQueue()
+        protected Dictionary<E, int> mIndexDict = new Dictionary<E, int>();
+
+        protected Comparer<E> mComparer = null;
+
+        public PriorityQueueExtended()
             : this(DEFAULT_CAPACITY)
         {
             
         }
 
-        public PriorityQueue(int capacity)
+        public PriorityQueueExtended(Comparer<E> comparer)
+            : this(DEFAULT_CAPACITY)
+        {
+            mComparer = comparer;
+        }
+
+        
+
+        public PriorityQueueExtended(int capacity)
         {
             mList = new E[capacity];
         }
@@ -91,12 +104,9 @@ namespace GUC.Server.Scripts.AI.Waypoints
 
         public int getIndexOf(E obj)
         {
-            for(int i = 0; i  < mSize; i++)
-            {
-                if (obj.Equals( mList[i]))
-                    return i;
-            }
-            return -1;
+            int index = 0;
+            mIndexDict.TryGetValue(obj, out index);
+            return index;
         }
 
         public E getAt(int i)
@@ -106,7 +116,7 @@ namespace GUC.Server.Scripts.AI.Waypoints
 
         public bool contains(E obj)
         {
-            return getIndexOf(obj) != -1;
+            return mIndexDict.ContainsKey(obj);
         }
         public E removeAt(int i)
         {
@@ -114,7 +124,10 @@ namespace GUC.Server.Scripts.AI.Waypoints
                 throw new ArgumentNullException();
             int size = mSize;
             mSize -= 1;
-            E result = mList[0];
+
+            E result = mList[i];
+            
+
             if (mSize == 0)
             {
                 mList[0] = default(E);
@@ -130,12 +143,21 @@ namespace GUC.Server.Scripts.AI.Waypoints
                     shiftUp(i, obj);
                 }
             }
+            mIndexDict.Remove(result);
 
             return result;
 
         }
 
         protected void shiftUp(int i, E obj)
+        {
+            if (mComparer == null)
+                shiftUpCompareable(i, obj);
+            else
+                shiftUpComparer(i, obj);
+        }
+
+        protected void shiftUpCompareable(int i, E obj)
         {
             while (i > 0)
             {
@@ -144,12 +166,42 @@ namespace GUC.Server.Scripts.AI.Waypoints
                 if (((IComparable)obj).CompareTo(e) >= 0)
                     break;
                 mList[i] = e;
+                mIndexDict.Remove(e);
+                mIndexDict.Add(e, i);
                 i = previous;
             }
             mList[i] = obj;
+            mIndexDict.Remove(obj);
+            mIndexDict.Add(obj, i);
         }
 
-        protected void siftDown(int i, E obj)//https://de.wikipedia.org/wiki/Bin%C3%A4rer_Heap
+        protected void shiftUpComparer(int i, E obj)
+        {
+            while (i > 0)
+            {
+                int previous = (i - 1) >> 1;
+                E e = mList[previous];
+                if (mComparer.Compare(obj, e) >= 0)
+                    break;
+                mList[i] = e;
+                mIndexDict.Remove(e);
+                mIndexDict.Add(e, i);
+                i = previous;
+            }
+            mList[i] = obj;
+            mIndexDict.Remove(obj);
+            mIndexDict.Add(obj, i);
+        }
+
+        protected void siftDown(int i, E obj)
+        {
+            if (mComparer == null)
+                siftDownCompareable(i, obj);
+            else
+                siftDownComparer(i, obj);
+        }
+
+        protected void siftDownCompareable(int i, E obj)//https://de.wikipedia.org/wiki/Bin%C3%A4rer_Heap
         {
             int halfSize = mSize >> 1;
             while (i < halfSize)
@@ -168,11 +220,46 @@ namespace GUC.Server.Scripts.AI.Waypoints
                     break;
 
                 mList[i] = n;
+                mIndexDict.Remove(n);
+                mIndexDict.Add(n, i);
                 i = next;
             }
 
             mList[i] = obj;
+            mIndexDict.Remove(obj);
+            mIndexDict.Add(obj, i);
         }
+
+
+        protected void siftDownComparer(int i, E obj)
+        {
+            int halfSize = mSize >> 1;
+            while (i < halfSize)
+            {
+                int next = (i << 1) + 1;
+                int right = next + 1;
+
+                E n = mList[next];
+
+                if (right < mSize && (mComparer.Compare(n, mList[right]) > 0))
+                {
+                    n = mList[right];
+                    next = right;
+                }
+                if (mComparer.Compare(obj, n) <= 0)
+                    break;
+
+                mList[i] = n;
+                mIndexDict.Remove(n);
+                mIndexDict.Add(n, i);
+                i = next;
+            }
+
+            mList[i] = obj;
+            mIndexDict.Remove(obj);
+            mIndexDict.Add(obj, i);
+        }
+
 
         public void printValues()
         {

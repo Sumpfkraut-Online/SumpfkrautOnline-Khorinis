@@ -31,6 +31,12 @@ namespace GUC.Server.Scripts.AI
             ai.init();
         }
 
+        public static void InitNPCAI(this Player proto)
+        {
+            NPCAI ai = new NPCAI(proto);
+            proto.setUserObject("AI", ai);
+        }
+
         public static void AI_GOTOWP(this NPCProto proto, String waypoint)
         {
             AIStates.AI_GOTOWP g = new AIStates.AI_GOTOWP(proto, waypoint);
@@ -109,6 +115,21 @@ namespace GUC.Server.Scripts.AI
             }
         }
 
+        public static void setGuild(this NPCProto proto, Guilds guild)
+        {
+            proto.getAI().Guild = guild;
+        }
+
+        public static Guilds getGuild(this NPCProto proto)
+        {
+            return proto.getAI().Guild;
+        }
+
+        public static GuildsAttitude getAttitudeToGuild(this NPCProto proto, Guilds guild)
+        {
+            return AISystem.getGuildAttitude(proto.getGuild(), guild);
+        }
+
         public static bool turnToPosition(this NPCProto proto, Vec3f position)
         {
             Vec3f direction = position - proto.Position;
@@ -132,10 +153,15 @@ namespace GUC.Server.Scripts.AI
         {
             String anim = "S_WALKL";
 
-            if (proto.getAI().WalkType == Enumeration.WalkTypes.Run)
-                anim = "S_RUNL";
+            if (proto.getAI().Guild > Guilds.HUM_SPERATOR)
+                anim = "S_FISTWALKL";
 
-
+            if (proto.getAI().WalkType == Enumeration.WalkTypes.Run){
+                if (proto.getAI().Guild < Guilds.HUM_SPERATOR)
+                    anim = "S_RUNL";
+                else
+                    anim = "S_FISTRUNL";
+            }
             return anim;
         }
 

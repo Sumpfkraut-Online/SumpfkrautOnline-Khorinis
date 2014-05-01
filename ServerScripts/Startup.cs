@@ -15,6 +15,8 @@ using GUC.Types;
 using GUC.Server.Scripts.StartModules;
 using GUC.Server.Scripts.Accounts;
 using GUC.Server.Scripts.AI.Waypoints;
+using GUC.Server.Scripts.AI.NPC_Def;
+using GUC.Server.Scripts.AI.DataTypes;
 namespace GUC.Server.Scripts
 {
 	public class Startup : IServerStartup
@@ -24,6 +26,8 @@ namespace GUC.Server.Scripts
 		public Button connection;
 		public void OnServerInit()
 		{
+            Player.EnableAllPlayerKeys(true);
+
             Console.WriteLine("#################### Initalise ############################");
             DefaultItems.Init();
             DefaultVobs.Init();
@@ -33,8 +37,7 @@ namespace GUC.Server.Scripts
             dt.Init();
             dt.setTime(0, 12, 0);
 
-            DamageScript ds = new DamageScript();
-            ds.Init();
+            DamageScript.Init();
 
             chat = new Chat();
             chat.Init();
@@ -47,7 +50,14 @@ namespace GUC.Server.Scripts
 
             AI.AISystem.Init();
 
-            
+            //Player.sPlayerKeyEvent += new Events.PlayerKeyEventHandler(keyEvent);
+
+            for (int i = 0; i < 700; i++)
+            {
+                WayPoint wp = AI.AISystem.WayNets[@"NEWWORLD\NEWWORLD.ZEN"].getRandomWaypoint();
+                OrcWarrior wolf = new OrcWarrior();
+                wolf.Spawn(@"NEWWORLD\NEWWORLD.ZEN", wp.Position, null);
+            }
 		}
     }
 }

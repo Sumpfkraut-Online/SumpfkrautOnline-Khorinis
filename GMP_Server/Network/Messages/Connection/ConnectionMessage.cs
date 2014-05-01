@@ -46,6 +46,15 @@ namespace GUC.Server.Network.Messages.Connection
             //Writing Player-Informations:
             //stream.Write(player.ID);
 
+
+            stream.Write(Player.sSendAllKeys);
+            stream.Write(Player.sSendKeys.Count);
+            foreach (int k in Player.sSendKeys)
+            {
+                stream.Write(k);
+            }
+
+
             stream.Write(sWorld.Day);
             stream.Write(sWorld.Hour);
             stream.Write(sWorld.Minute);

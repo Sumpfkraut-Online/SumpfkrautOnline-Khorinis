@@ -85,11 +85,14 @@ namespace GUC.Server
 
                 while (true)
                 {
+                    long ticks = DateTime.Now.Ticks;
+                    Player.sUpdateNPCList(ticks);
 
                     //ModuleLoader.updateAllModules();
                     scriptManager.update();
                     server.Update();
-                    updateNPCController();
+                    updateNPCController(ticks);
+                    
                 }
             }
             catch (System.Exception ex)
@@ -101,18 +104,19 @@ namespace GUC.Server
             Console.Read();
         }
 
+
         static int index = 0;
         static long lastNPC = 0;
-        static void updateNPCController()
+        static void updateNPCController(long now)
         {
             if (sWorld.NpcList.Count == 0)
                 return;
                     
             int x = (sWorld.NpcList.Count / 250 == 0) ? 1 : (sWorld.NpcList.Count / 250);
-            
-                    
-            
-            if (lastNPC + 10000 * (250 / (sWorld.NpcList.Count / x)) > DateTime.Now.Ticks)
+
+
+
+            if (lastNPC + 10000 * (250 / (sWorld.NpcList.Count / x)) > now)
                 return;
 
             if (index >= sWorld.NpcList.Count)
@@ -158,7 +162,7 @@ namespace GUC.Server
                 }
             }
 
-            lastNPC = DateTime.Now.Ticks;
+            lastNPC = now;
 
         }
     }

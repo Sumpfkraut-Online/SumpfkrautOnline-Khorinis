@@ -109,9 +109,9 @@ namespace GUC.Server.Scripting.Objects
 
             List<Player> playerList = new List<Player>();
 
-            String[] keys = WorldObjects.World.getImportantKeysByPosition(this.Position.Data);
+            uint[] keys = WorldObjects.World.getImportantKeysByPosition(this.Position.Data, distance);
 
-            foreach (String key in keys)
+            foreach (uint key in keys)
             {
                 if (!sWorld.getWorld(this.vob.Map).PlayerPositionList.ContainsKey(key))
                     continue;
@@ -141,9 +141,9 @@ namespace GUC.Server.Scripting.Objects
             Player lastPlayer = null;
             float lastDistance = 0;
 
-            String[] keys = WorldObjects.World.getImportantKeysByPosition(this.Position.Data);
+            uint[] keys = WorldObjects.World.getImportantKeysByPosition(this.Position.Data, distance);
 
-            foreach (String key in keys)
+            foreach (uint key in keys)
             {
                 if (!sWorld.getWorld(this.vob.Map).PlayerPositionList.ContainsKey(key))
                     continue;
@@ -173,15 +173,50 @@ namespace GUC.Server.Scripting.Objects
 
             return lastPlayer;
         }
-        
+
+        public NPCProto[] getNearNPC(float distance)
+        {
+            if (this.vob.Map == null || this.vob.Map.Length == 0)
+                throw new Exception("The Player has not been spawned! Use Spawn() command first!");
+
+            List<NPCProto> playerList = new List<NPCProto>();
+
+            uint[] keys = WorldObjects.World.getImportantKeysByPosition(this.Position.Data, distance);
+
+            foreach (uint key in keys)
+            {
+                if (!sWorld.getWorld(this.vob.Map).NPCPositionList.ContainsKey(key))
+                    continue;
+
+                List<WorldObjects.Character.NPCProto> mobs = sWorld.getWorld(this.vob.Map).NPCPositionList[key];
+                foreach (WorldObjects.Character.NPCProto m in mobs)
+                {
+                    if (m == this.vob)
+                        continue;
+                    if (m.ScriptingNPC is Player && !((Player)m.ScriptingVob).IsSpawned())
+                        continue;
+                    float mD = (m.Position - this.Position).Length;
+
+                    if (mD <= distance)
+                    {
+                        playerList.Add((NPCProto)m.ScriptingNPC);
+                    }
+                }
+            }
+
+            return playerList.ToArray();
+        }
+
+
+
         public MobInter getNearestMobInteract()
         {
             MobInter mi = null;
 
-            String[] keys = WorldObjects.World.getImportantKeysByPosition(this.Position.Data);
+            uint[] keys = WorldObjects.World.getImportantKeysByPosition(this.Position.Data, 4000);
             float minDistance = float.MaxValue;
             
-            foreach (String key in keys)
+            foreach (uint key in keys)
             {
                 if (!sWorld.getWorld(this.vob.Map).MobInterPositionList.ContainsKey(key))
                     continue;
@@ -214,10 +249,10 @@ namespace GUC.Server.Scripting.Objects
         {
             NPCProto mi = null;
 
-            String[] keys = WorldObjects.World.getImportantKeysByPosition(this.Position.Data);
+            uint[] keys = WorldObjects.World.getImportantKeysByPosition(this.Position.Data, 4000);
             float minDistance = float.MaxValue;
             
-            foreach (String key in keys)
+            foreach (uint key in keys)
             {
                 if (!sWorld.getWorld(this.vob.Map).MobInterPositionList.ContainsKey(key))
                     continue;

@@ -6,6 +6,7 @@ using RakNet;
 using GUC.Enumeration;
 using GUC.Types;
 using GUC.WorldObjects;
+using GUC.Network;
 
 namespace GUC.Server.Scripting.Objects.Character
 {
@@ -125,13 +126,136 @@ namespace GUC.Server.Scripting.Objects.Character
             return proto.Slots[index].ScriptingProto;
         }
 
-        public int WeaponMode { get { return proto.WeaponMode; } }
+        public int WeaponMode { get { return proto.WeaponMode; } set { setWeaponMode(value); } }
 
 
         
         #endregion
 
         #region Methods
+
+        public void setWeaponMode(int weaponMode)
+        {
+            proto.WeaponMode = weaponMode;
+
+            if (!created)
+                return;
+
+            BitStream stream = Program.server.sendBitStream;
+            stream.Reset();
+            stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
+            stream.Write((byte)NetworkIDS.NPCProtoSetWeaponMode);
+            stream.Write(vob.ID);
+            stream.Write(proto.WeaponMode);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+        }
+
+        public int getProtection(DamageType index)
+        {
+            if (EquippedArmor != null)
+            {
+                return EquippedArmor.getProtection(index.getDamageTypeIndex());
+            }
+            else
+            {
+                return proto.protection[(int)index.getDamageTypeIndex()];
+            }
+        }
+
+        public int getProtection(DamageTypeIndex index)
+        {
+            if (EquippedArmor != null)
+            {
+                return EquippedArmor.getProtection(index);
+            }
+            else
+            {
+                return proto.protection[(int)index];
+            }
+        }
+
+        public void setProtection(DamageTypeIndex index, int value)
+        {
+            proto.protection[(int)index] = value;
+        }
+
+        public int getTotalDamage()
+        {
+            if (EquippedWeapon != null)
+                return EquippedWeapon.TotalDamage;
+            else if (EquippedRangeWeapon != null)
+                return EquippedRangeWeapon.TotalDamage;
+            else
+                return proto.totalDamage;
+        }
+
+        public DamageType getDamageType()
+        {
+            if (EquippedWeapon != null)
+                return EquippedWeapon.DamageType;
+            else if (EquippedRangeWeapon != null)
+                return EquippedRangeWeapon.DamageType;
+            else
+                return proto.damageType;
+        }
+
+        public void setTotalDamage(int damage)
+        {
+            proto.totalDamage = damage;
+        }
+
+        public void setDamageType(DamageType type)
+        {
+            proto.damageType = type;
+        }
+
+        public void setDamage(DamageTypeIndex dti, int value)
+        {
+            proto.damages[(int)dti] = value;
+        }
+
+        public int getDamage(DamageTypeIndex dti)
+        {
+            if (EquippedWeapon != null)
+                return EquippedWeapon.getDamage(dti);
+            else if (EquippedRangeWeapon != null)
+                return EquippedRangeWeapon.getDamage(dti);
+            else
+                return proto.damages[(int)dti];
+        }
+
+
+        public virtual void setScale(Vec3f scale)
+        {
+            proto.Scale = scale;
+
+            if (!created)
+                return;
+
+            BitStream stream = Program.server.sendBitStream;
+            stream.Reset();
+            stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
+            stream.Write((byte)NetworkIDS.ScaleMessage);
+            stream.Write(vob.ID);
+            stream.Write(proto.Scale);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+        }
+
+        public virtual void setFatness(float Fatness)
+        {
+            proto.Fatness = Fatness;
+
+            if (!created)
+                return;
+
+            BitStream stream = Program.server.sendBitStream;
+            stream.Reset();
+            stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
+            stream.Write((byte)NetworkIDS.NPCFatnessMessage);
+            stream.Write(vob.ID);
+            stream.Write(proto.Fatness);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+        }
 
         public void setName(String name)
         {

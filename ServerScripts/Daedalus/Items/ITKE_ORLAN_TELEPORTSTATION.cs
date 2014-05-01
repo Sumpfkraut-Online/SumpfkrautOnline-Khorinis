@@ -9,7 +9,7 @@ namespace GUC.Server.Scripts.Daedalus.Items
     public class ITKE_ORLAN_TELEPORTSTATION : ItemInstance
     {
         public ITKE_ORLAN_TELEPORTSTATION()
-            : base()
+            : base("ITKE_ORLAN_TELEPORTSTATION")
         {
             
             

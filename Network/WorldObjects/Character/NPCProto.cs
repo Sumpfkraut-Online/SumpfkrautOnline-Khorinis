@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using GUC.Enumeration;
 using GUC.WorldObjects.Mobs;
+using GUC.Types;
 
 namespace GUC.WorldObjects.Character
 {
@@ -21,6 +22,10 @@ namespace GUC.WorldObjects.Character
 
         public String PortalRoom = "";
 
+        public int TrueGuild = 0;
+
+
+
         #region Animation
         public List<String> Overlays = new List<string>();
         protected short animation = short.MaxValue;
@@ -29,10 +34,41 @@ namespace GUC.WorldObjects.Character
         #endregion
 
 
-        #region Position
+        public float Fatness = 1.0f;
+        #region Scale
+        protected float[] scale = new float[] { 1f, 1f, 1f };
 
+        public Vec3f Scale
+        {
+            get { return (Vec3f)this.scale; }
+            set
+            {
+                this._Scale = value.Data;
+            }
+        }
+        public float[] _Scale
+        {
+            get { return this.scale; }
+            set
+            {
+                if (value == null || value.Length < 3)
+                {
+                    this.scale[0] = 1;
+                    this.scale[1] = 1;
+                    this.scale[2] = 1;
+
+                    return;
+                }
+                this.scale[0] = value[0];
+                this.scale[1] = value[1];
+                this.scale[2] = value[2];
+            }
+        }
 
         #endregion
+
+
+
 
 
         #region Appearance

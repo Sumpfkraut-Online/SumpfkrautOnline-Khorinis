@@ -17,7 +17,6 @@ namespace GUC.WorldObjects
             Visual = 1 << 0,
             CDDyn = Visual << 1,
             CDStatic = CDDyn << 1,
-
             VobEnd = CDStatic,
 
             //Vob=>NPCProto:
@@ -84,6 +83,8 @@ namespace GUC.WorldObjects
             }
         }
 
+
+        
         #region Position
         protected float[] pos = null;
         protected float[] dir = new float[3] { 0, 0, 1};
