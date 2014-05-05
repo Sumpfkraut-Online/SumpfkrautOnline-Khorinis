@@ -10,7 +10,7 @@ namespace GUC.Server.Scripts.AI
     {
         public delegate void RoutineFunction(NPCProto proto);
         
-        public delegate void AssessDamageFunction(NPCProto victim, NPCProto attacker, int damage, bool dropUnconscious, bool dropDead);
+        public delegate void AssessDamageFunction(NPCProto npc, NPCProto victim, NPCProto attacker, int damage, bool dropUnconscious, bool dropDead);
         public delegate void AssessTargetFunction(NPCProto npc, NPCProto target);
 
         public delegate void FightRoutine(NPCProto npc);
@@ -26,7 +26,7 @@ namespace GUC.Server.Scripts.AI
             int damage, bool dropUnconscious, bool dropDead)
         {
             if (victim.getAI().AssessDamageRoutine != null)
-                victim.getAI().AssessDamageRoutine(victim, attacker, damage,
+                victim.getAI().AssessDamageRoutine(victim, victim, attacker, damage,
                     dropUnconscious, dropDead);
 
             
@@ -35,7 +35,7 @@ namespace GUC.Server.Scripts.AI
                 NPCProto npc = npcPair.Key;
 
                 if (npc.getAI().AssessOtherDamageRoutine != null)
-                    npc.getAI().AssessOtherDamageRoutine(victim, attacker, damage,
+                    npc.getAI().AssessOtherDamageRoutine(npc, victim, attacker, damage,
                         dropUnconscious, dropDead);
             }
 

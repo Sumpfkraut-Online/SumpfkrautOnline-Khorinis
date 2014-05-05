@@ -146,6 +146,13 @@ namespace GUC.WorldObjects.Character
                 return;
             Process process = Process.ThisProcess();
             oCNpc npc = oCObjectFactory.GetFactory(process).CreateNPC("OTHERS_NPC");
+            
+            this.Address = npc.Address;
+            sWorld.SpawnedVobDict.Add(npc.Address, this);
+
+            
+
+
 
             if(hideName)
                 npc.Name.Set("");
@@ -167,20 +174,18 @@ namespace GUC.WorldObjects.Character
             
 
 
-            npc.HumanAI = new oCAiHuman(process, 0);
-            npc.AniCtrl = new oCAniCtrl_Human(process, 0);
+            //npc.HumanAI = new oCAiHuman(process, 0);
+            //npc.AniCtrl = new oCAniCtrl_Human(process, 0);
 
 
 
 
-
-
-            this.setDirection(direction);
-            npc.Enable(Position.X, Position.Y, Position.Z);
             
 
-            this.Address = npc.Address;
-            sWorld.SpawnedVobDict.Add(npc.Address, this);
+            this.setDirection(direction);
+            //Enable(Position);
+
+            
 
             foreach (Item it in itemList)
                 this.addItemToContainer(it);
@@ -188,8 +193,8 @@ namespace GUC.WorldObjects.Character
                 if( !it.ItemInstance.MainFlags.HasFlag(MainFlags.ITEM_KAT_ARMOR) && !it.ItemInstance.MainFlags.HasFlag(MainFlags.ITEM_KAT_FF) && !it.ItemInstance.MainFlags.HasFlag(MainFlags.ITEM_KAT_NF))
                     npc.Equip(new oCItem(process, it.Address));
 
-            if (this.Armor != null)
-                setArmor(this.Armor);
+            //if (this.Armor != null)
+            //    setArmor(this.Armor);
             if (this.Weapon != null)
                 setWeapon(this.Weapon);
             if (this.RangeWeapon != null)
@@ -224,6 +229,8 @@ namespace GUC.WorldObjects.Character
                 Process process = Process.ThisProcess();
                 oCNpc npc = new oCNpc(process, this.Address);
 
+                if (this.Armor != null)
+                    npc.UnequipItem(new oCItem(process, this.Armor.Address));
                 npc.Disable();
             }
         }
@@ -235,7 +242,10 @@ namespace GUC.WorldObjects.Character
                 Process process = Process.ThisProcess();
                 oCNpc npc = new oCNpc(process, this.Address);
 
+                
                 npc.Enable(pos.X, pos.Y, pos.Z);
+                setWeaponMode(weaponMode);
+                setArmor(armor);
             }
         }
 
@@ -250,9 +260,6 @@ namespace GUC.WorldObjects.Character
 
                 npc.SetWeaponMode(this.weaponMode);
                 npc.SetWeaponMode2(this.weaponMode);
-
-                //zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "WeaponMode: "+weaponMode, 0, "Client.cs", 0);
-                    
             }
         }
 
@@ -300,14 +307,14 @@ namespace GUC.WorldObjects.Character
                 oCNpc npc = new oCNpc(process, this.Address);
                 if (Armor == null)
                 {
-                    zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "UnequipArmor: ", 0, "Client.cs", 0);
+                    hNpc.blockSendUnEquip = true;
                     npc.UnequipItem(npc.GetEquippedArmor());
                 }
                 else
                 {
                     if (Armor.Address == 0)
                         throw new Exception("Armor Adress can't be null if player using it is spawned!");
-                    zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "EquipArmor: ", 0, "Client.cs", 0);
+                    hNpc.blockSendEquip = true;
                     npc.EquipArmor(new oCItem(process, Armor.Address));
                 }
             }
@@ -351,14 +358,14 @@ namespace GUC.WorldObjects.Character
                 oCNpc npc = new oCNpc(process, this.Address);
                 if (RangeWeapon == null)
                 {
-                    zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Unequip RangeWeapon: ", 0, "Client.cs", 0);
+                    hNpc.blockSendUnEquip = true;
                     npc.UnequipItem(npc.GetEquippedRangedWeapon());
                 }
                 else
                 {
                     if (RangeWeapon.Address == 0)
                         throw new Exception("RangeWeapon Adress can't be null if player using it is spawned!");
-                    zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Equip RangeWeapon: ", 0, "Client.cs", 0);
+                    hNpc.blockSendEquip = true;
                     npc.EquipFarWeapon(new oCItem(process, RangeWeapon.Address));
                 }
             }

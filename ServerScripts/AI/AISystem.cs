@@ -18,6 +18,8 @@ namespace GUC.Server.Scripts.AI
             WayNets.Add("NEWWORLD\\NEWWORLD.ZEN", WayNet.loadFromFile("newworld.wp"));
 
             Player.playerConnects += new Events.PlayerEventHandler(playerConnects);
+
+            AI_Events.Init();
         }
 
         public static void playerConnects(Player player)
@@ -34,9 +36,19 @@ namespace GUC.Server.Scripts.AI
             setGuildAttitude(Guilds.HUM_NONE, Guilds.MON_WOLF, GuildsAttitude.HOSTILE);
             setGuildAttitude(Guilds.HUM_NONE, Guilds.ORC_NONE, GuildsAttitude.HOSTILE);
             setGuildAttitude(Guilds.MON_NONE, Guilds.HUM_NONE, GuildsAttitude.HOSTILE);
-            setGuildAttitude(Guilds.MON_WOLF, Guilds.HUM_NONE, GuildsAttitude.HOSTILE);
+            
             setGuildAttitude(Guilds.ORC_NONE, Guilds.HUM_NONE, GuildsAttitude.HOSTILE);
 
+            //WOLF:
+            setGuildAttitude(Guilds.MON_WOLF, Guilds.HUM_NONE, GuildsAttitude.HOSTILE);
+            setGuildAttitude(Guilds.MON_WOLF, Guilds.MON_SCAVANGER, GuildsAttitude.HOSTILE);
+
+            //Scavanger:
+            setGuildAttitude(Guilds.MON_SCAVANGER, Guilds.MON_WOLF, GuildsAttitude.NEUTRAL);
+
+            //Bloodfly:
+            setGuildAttitude(Guilds.MON_BLOODFLY, Guilds.MON_WOLF, GuildsAttitude.HOSTILE);
+            setGuildAttitude(Guilds.MON_BLOODFLY, Guilds.MON_SCAVANGER, GuildsAttitude.HOSTILE);
         }
 
         public static GuildsAttitude getGuildAttitude(Guilds g1, Guilds g2)

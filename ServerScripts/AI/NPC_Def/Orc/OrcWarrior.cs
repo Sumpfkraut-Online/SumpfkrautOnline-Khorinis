@@ -6,7 +6,7 @@ using GUC.Server.Scripting.Objects.Character;
 using GUC.Enumeration;
 using GUC.Server.Scripts.AI.Enumeration;
 
-namespace GUC.Server.Scripts.AI.NPC_Def
+namespace GUC.Server.Scripts.AI.NPC_Def.Orc
 {
     class OrcWarrior : NPC
     {

@@ -34,6 +34,9 @@ instance PC_Hero (NPC_DEFAULT)
 	
 	// ------ Kampf-Talente ------
 	//B_SetFightSkills 	(self, 10); 
+
+
+	
 };
 
 instance OTHERS_NPC (NPC_DEFAULT)
@@ -65,6 +68,8 @@ instance OTHERS_NPC (NPC_DEFAULT)
 	
 	// ------ Kampf-Talente ------
 	//B_SetFightSkills 	(self, 10); 
+
+
 };
 
 

@@ -18,6 +18,7 @@ namespace GUC.Server.Network.Messages.PlayerCommands
         {
             Vec3f locHit = null, flydir = null;
             int victim = 0, attacker = 0, weaponMode = 0, spellID = 0, weapon = 0;
+            float fallDownDistanceY = 0.0f;
             
             byte sendFlags, damageMode;
 
@@ -37,6 +38,8 @@ namespace GUC.Server.Network.Messages.PlayerCommands
                 stream.Read(out spellID);
             if ((sendFlags & 32) == 32)
                 stream.Read(out weapon);
+            if ((sendFlags & 64) == 64)
+                stream.Read(out fallDownDistanceY);
             
             NPCProto vicProto = (NPCProto)sWorld.VobDict[victim];
             NPCProto attProto = null;
@@ -56,11 +59,11 @@ namespace GUC.Server.Network.Messages.PlayerCommands
                 weaponIt = (Item)sWorld.VobDict[weapon];
                 weaponScriptItem = weaponIt.ScriptingProto;
             }
-            Scripting.Objects.Character.NPCProto.OnPlayerDamages(vicProto.ScriptingNPC, (DamageType)damageMode, locHit, flydir, attackerScriptProto, weaponMode, spellID, weaponScriptItem);
-            Write(vicProto, (DamageType)damageMode, locHit, flydir, attProto, weaponMode, spellID, weaponIt, packet.guid);
+            Scripting.Objects.Character.NPCProto.OnPlayerDamages(vicProto.ScriptingNPC, (DamageType)damageMode, locHit, flydir, attackerScriptProto, weaponMode, spellID, weaponScriptItem, fallDownDistanceY);
+            Write(vicProto, (DamageType)damageMode, locHit, flydir, attProto, weaponMode, spellID, weaponIt, fallDownDistanceY, packet.guid);
         }
 
-        public static void Write(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, NPCProto attacker, int weaponMode, int spellID, Item weapon, AddressOrGUID guidExclude)
+        public static void Write(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, NPCProto attacker, int weaponMode, int spellID, Item weapon, float fallDownDistanceY, AddressOrGUID guidExclude)
         {
             BitStream stream = Program.server.sendBitStream;
             stream.Reset();
@@ -80,7 +83,8 @@ namespace GUC.Server.Network.Messages.PlayerCommands
                 sendFlags |= 16;
             if (weapon != null)
                 sendFlags |= 32;
-
+            if (fallDownDistanceY >= -float.Epsilon && fallDownDistanceY <= float.Epsilon)
+                sendFlags |= 64;
 
             stream.Write(victim.ID);
             stream.Write((byte)damageMode);
@@ -98,6 +102,8 @@ namespace GUC.Server.Network.Messages.PlayerCommands
                 stream.Write(spellID);
             if (weapon != null)
                 stream.Write(weapon.ID);
+            if ((sendFlags & 64) == 64)
+                stream.Write(fallDownDistanceY);
 
             if (guidExclude == null)
                 guidExclude = RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS;

@@ -17,6 +17,8 @@ using GUC.Server.Scripts.Accounts;
 using GUC.Server.Scripts.AI.Waypoints;
 using GUC.Server.Scripts.AI.NPC_Def;
 using GUC.Server.Scripts.AI.DataTypes;
+using GUC.Server.Scripts.AI.NPC_Def.Monster;
+using GUC.Server.Scripts.AI.NPC_Def.Human;
 namespace GUC.Server.Scripts
 {
 	public class Startup : IServerStartup
@@ -55,7 +57,7 @@ namespace GUC.Server.Scripts
             for (int i = 0; i < 700; i++)
             {
                 WayPoint wp = AI.AISystem.WayNets[@"NEWWORLD\NEWWORLD.ZEN"].getRandomWaypoint();
-                OrcWarrior wolf = new OrcWarrior();
+                Young_Gobbo_Green wolf = new Young_Gobbo_Green();
                 wolf.Spawn(@"NEWWORLD\NEWWORLD.ZEN", wp.Position, null);
             }
 		}

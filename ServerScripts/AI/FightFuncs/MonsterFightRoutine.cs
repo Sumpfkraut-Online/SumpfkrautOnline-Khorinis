@@ -16,8 +16,16 @@ namespace GUC.Server.Scripts.AI.FightFuncs
             if (enemy.HP == 0)
             {
                 ai.EnemyList.Remove(enemy);
+                npc.standAnim();
                 return;
             }
+            else if ((enemy.Position - npc.Position).Length > 2500)//Stop running!
+            {
+                ai.EnemyList.Remove(enemy);
+                npc.standAnim();
+                return;
+            }
+
             npc.turnToPosition(enemy.Position);
             npc.gotoPosition(enemy.Position, 400);
         }

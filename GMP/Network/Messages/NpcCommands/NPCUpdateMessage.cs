@@ -21,6 +21,10 @@ namespace GUC.Network.Messages.NpcCommands
                 return;
             Process process = Process.ThisProcess();
             oCNpc npc = new oCNpc(process, proto.Address);
+
+            if (npc.AniCtrl.Address == 0)
+                return;
+
             NPCChangedFlags changeFlags = 0;
 
             oCItem iArmor = npc.GetEquippedArmor();
@@ -115,7 +119,7 @@ namespace GUC.Network.Messages.NpcCommands
 
             if (changeFlags == 0)
                 return;
-            zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "ChangeFlags: " + changeFlags, 0, "Client.cs", 0);
+            //zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "ChangeFlags: " + changeFlags, 0, "Client.cs", 0);
             //Writing Data:
             BitStream stream = Program.client.sentBitStream;
             stream.Reset();

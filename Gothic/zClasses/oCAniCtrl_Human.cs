@@ -11,6 +11,7 @@ namespace Gothic.zClasses
         #region OffsetLists
         public enum Offsets
         {
+            
         }
         public enum FuncOffsets : uint
         {
@@ -20,12 +21,14 @@ namespace Gothic.zClasses
             _Stand = 0x006B7490,
             SetWalkMode = 0x006A9820,
             SetAlwaysWalk = 0x006ABDB0,
-            ToggleWalkMode = 0x006AD500
+            ToggleWalkMode = 0x006AD500,
+
+            InitAnimations = 0x006A4010
         }
 
         public enum HookSize : uint
         {
-
+            InitAnimations = 6
         }
 
         #endregion
@@ -39,6 +42,9 @@ namespace Gothic.zClasses
             : base(process, address)
         {
         }
+
+
+        
 
         public void SetAlwaysWalk(int x)
         {

@@ -77,4 +77,13 @@ namespace GUC.Enumeration
         Foreignlanguage,
         MaxTalents
     }
+
+    public enum FightModes
+    {
+        None = 0,
+        Fist = 1,
+        Meele = 2,
+        Far = 5,
+        Magic = 7,
+    }
 }

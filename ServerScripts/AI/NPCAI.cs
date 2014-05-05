@@ -34,6 +34,8 @@ namespace GUC.Server.Scripts.AI
 
         public Dictionary<NPCProto, NPCProto> TargetList = new Dictionary<NPCProto, NPCProto>();
         public LinkedList<NPCProto> EnemyList = new LinkedList<NPCProto>();
+        public List<NPCProto> WarnList = new List<NPCProto>();
+
 
         public AI_Events.RoutineFunction DailyRoutine = null;
         public AI_Events.FightRoutine FightRoutine = null;
@@ -43,6 +45,7 @@ namespace GUC.Server.Scripts.AI
         public AI_Events.AssessDamageFunction AssessOtherDamageRoutine = null;
         public AI_Events.AssessTargetFunction AssessTargetRoutine = null;
         public AI_Events.AssessTargetFunction AssessEnemyRoutine = null;
+        public AI_Events.AssessTargetFunction AssessWarnRoutine = null;
         public AI_Events.AssessTargetFunction AssessBodyRoutine = null;
         public AI_Events.UpdateRoutine UpdateRoutine = null;
 
@@ -69,7 +72,8 @@ namespace GUC.Server.Scripts.AI
 
             AssessTargetRoutine = new AI_Events.AssessTargetFunction(AssessTarget.OnAssessTarget);
             AssessEnemyRoutine = new AI_Events.AssessTargetFunction(AssessEnemy.OnAssessEnemy);
-
+            AssessDamageRoutine = new AI_Events.AssessDamageFunction(AssessDamage.OnDamage);
+            AssessOtherDamageRoutine = new AI_Events.AssessDamageFunction(AssessOtherDamage.OnDamage);
             
             UpdateRoutine = new AI_Events.UpdateRoutine(Update.OnUpdate);
             FightRoutine = new AI_Events.FightRoutine(MonsterFightRoutine.FightRoutine);
@@ -103,7 +107,7 @@ namespace GUC.Server.Scripts.AI
 
         public void updateTargetList()
         {
-            NPCProto[] newTargetList = this.mNPC.getNearNPC(4000);
+            NPCProto[] newTargetList = this.mNPC.getNearNPC(2000);
             Dictionary<NPCProto, NPCProto> nTL = new Dictionary<NPCProto, NPCProto>();
 
             foreach (NPCProto proto in newTargetList)
@@ -128,7 +132,7 @@ namespace GUC.Server.Scripts.AI
         {
             if (mNPC is NPC)
             {
-                if (((NPC)mNPC).NPCController == null)
+                if (((NPC)mNPC).NPCController == null || mNPC.HP == 0)
                     setTimer( 10000 * 2000 );
                 else
                     setTimer( 10000 * 250  );

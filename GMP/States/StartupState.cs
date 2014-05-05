@@ -47,6 +47,9 @@ namespace GUC.States
             Process.Write(new byte[] { 0x33, 0xC0, 0xC2, 0x04, 0x00 }, 0x007792E0);//Block deleting of dead characters!
             Process.Write(new byte[] { 0xE9, 0x77, 0x0D, 0x00, 0x00 }, 0x006FC669);//Blocking F-Keys
 
+
+            
+
             //Disable NPC-AI:
             //Process.VirtualProtect(0x00745A20, 0x31A);
             //byte[] arr = new byte[0x31A];

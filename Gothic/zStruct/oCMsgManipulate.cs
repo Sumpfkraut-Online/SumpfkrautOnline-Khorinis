@@ -29,6 +29,8 @@ namespace Gothic.zStruct
 
         }
 
+        
+
         public oCItem Item { get { return new oCItem(Process, Process.ReadInt(Address + (int)Offsets.Item)); } }
         public zString InstanceName { get { return new zString(Process, Address + (int)Offsets.InstanceName); } }
         public zString SlotName { get { return new zString(Process, Address + (int)Offsets.SlotName); } }

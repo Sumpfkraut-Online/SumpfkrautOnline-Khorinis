@@ -60,7 +60,10 @@ namespace Gothic.zClasses
             flags = 0x01B4,
             fatness = 0x07BC,
             model_scale = 0x07B0,
-            weaponMode = 0x250
+            weaponMode = 0x250,
+
+            InteractItem = 0x968,
+            InteractItemState = 0x96C,
         }
 
         public enum NPC_Talents
@@ -192,7 +195,8 @@ namespace Gothic.zClasses
             EV_AttackFinish = 0x00751AF0,
             DoDie = 0x00736760,
             GetFullBodyState = 0x0075EAF0,
-            IsBodyStateInterruptable = 0x0075EFA0
+            IsBodyStateInterruptable = 0x0075EFA0,
+            SetToFistMode = 0x0073A940
         }
 
         public enum HookSize : uint
@@ -369,6 +373,18 @@ namespace Gothic.zClasses
 
         #region Fields
 
+        public int InteractItemState
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.InteractItemState); }
+            set { Process.Write(value, Address + (int)Offsets.InteractItemState); }
+        }
+
+        public oCItem InteractItem
+        {
+            get { return new oCItem(Process, Process.ReadInt(Address + (int)Offsets.InteractItem)); }
+        }
+
+
         public int Flags
         {
             get { return Process.ReadInt(Address + (int)Offsets.flags); }
@@ -384,6 +400,7 @@ namespace Gothic.zClasses
         public int WeaponMode
         {
             get { return Process.ReadInt(Address + (int)Offsets.weaponMode); }
+            set { Process.Write(value, Address + (int)Offsets.weaponMode); }
         }
 
         public int FallDownDamage
@@ -1084,6 +1101,11 @@ namespace Gothic.zClasses
         public void OpenDeadNPC()
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.OpenDeadNPC, new CallValue[] { });
+        }
+
+        public void SetToFistMode()
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetToFistMode, new CallValue[] { });
         }
 
         public oCItem PutInInv(oCItem code)

@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Windows.Forms;
 using System.IO;
 using Gothic.zClasses;
 using WinApi;
@@ -17,6 +16,7 @@ using GUC.Hooks;
 using GUC.WorldObjects.Character;
 using GUC.Network.Messages.Connection;
 using Gothic.zStruct;
+using GUC.Tests;
 
 namespace GUC
 {
@@ -80,7 +80,10 @@ namespace GUC
 
         public static void addHooks(Process process)
         {
-            
+            //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("AniCtrl_InitAnimations"), (int)oCAniCtrl_Human.FuncOffsets.InitAnimations, (int)oCAniCtrl_Human.HookSize.InitAnimations, 0);
+
+
+
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hGame).GetMethod("ExitGame"), (int)CGameManager.FuncOffsets.Done, (int)CGameManager.HookSize.Done, 0);
 
 
@@ -120,9 +123,9 @@ namespace GUC
 
             removeItemUsed = process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hItemContainer).GetMethod("oCItemContainer_Remove"), (int)oCNpcInventory.FuncOffsets.Remove_Int_Int, (int)oCNpcInventory.HookSize.Remove_Int_Int, 2);//Will be called when using item!
 
-            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("oCNpc_UseItem"), (int)oCNpc.FuncOffsets.UseItem, (int)oCNpc.HookSize.UseItem, 1);
-            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("oCNpc_EV_UseItemToState"), (int)oCNpc.FuncOffsets.EV_UseItemToState, (int)oCNpc.HookSize.EV_UseItemToState, 1);
-            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("oCNpc_EV_UseItem"), (int)oCNpc.FuncOffsets.EV_UseItem, (int)oCNpc.HookSize.EV_UseItem, 1);
+            //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("oCNpc_UseItem"), (int)oCNpc.FuncOffsets.UseItem, (int)oCNpc.HookSize.UseItem, 1);
+            //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("oCNpc_EV_UseItemToState"), (int)oCNpc.FuncOffsets.EV_UseItemToState, (int)oCNpc.HookSize.EV_UseItemToState, 1);
+            //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("oCNpc_EV_UseItem"), (int)oCNpc.FuncOffsets.EV_UseItem, (int)oCNpc.HookSize.EV_UseItem, 1);
             
             
             //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("EV_CreateInteractItem"), (int)0x00754890, (int)7, 1);
@@ -183,22 +186,28 @@ namespace GUC
         public static Dictionary<int, String> VobVisual = new Dictionary<int, string>();
         public static Int32 setVisual_SaveMode(String message)
         {
-            int address = Convert.ToInt32(message);
-            Process process = Process.ThisProcess();
-            zString str = new zString(process, process.ReadInt(address + 4));
-            String stri = str.Value.Trim();
-
-
-            if (stri.Length != 0)
+            try
             {
-                int addr = process.ReadInt(address);
-                if (VobVisual.ContainsKey(addr))
-                    VobVisual[addr] = stri;
-                else
-                    VobVisual.Add(addr, stri);
+                int address = Convert.ToInt32(message);
+                Process process = Process.ThisProcess();
+                zString str = new zString(process, process.ReadInt(address + 4));
+                String stri = str.Value.Trim();
+
+
+                if (stri.Length != 0)
+                {
+                    int addr = process.ReadInt(address);
+                    if (VobVisual.ContainsKey(addr))
+                        VobVisual[addr] = stri;
+                    else
+                        VobVisual.Add(addr, stri);
+                }
+
             }
-
-
+            catch (Exception ex)
+            {
+                zERROR.GetZErr(Process.ThisProcess()).Report(4, 'G', ex.ToString(), 0, "Program.cs", 0);
+            }
             return 0;
         }
         static bool saveItemInstances = false;
@@ -207,11 +216,17 @@ namespace GUC
         public static Int32 hook_Render_SaveMode(String message)
         {
             Process process = Process.ThisProcess();
-            InputHooked.Update();
 
-            if (InputHooked.IsPressed((int)VirtualKeys.O))
+            
+            InputHooked.Update(process);
+
+
+            
+            
+            if (InputHooked.IsPressed((int)DIK_Keys.DIK_O))
             {
-                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', new oCMobLockable(process, oCNpc.Player(process).FocusVob.Address).keyInstance.Value + ";" + new oCMobLockable(process, oCNpc.Player(process).FocusVob.Address).PickLockStr.Value, 0, "Program.cs", 0);
+                InputHooked.receivers.Add(new Keytest());
+                //zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', new oCMobLockable(process, oCNpc.Player(process).FocusVob.Address).keyInstance.Value + ";" + new oCMobLockable(process, oCNpc.Player(process).FocusVob.Address).PickLockStr.Value, 0, "Program.cs", 0);
                 //new oCMobInter(process, oCNpc.Player(process).FocusVob.Address).StartInteraction(oCNpc.Player(process));
                 //oCGame.Game(process).DiveBar.SetPos(-0x2000, -0x2000);
                 first = false;
@@ -219,7 +234,7 @@ namespace GUC
             }
 
 
-            if (InputHooked.IsPressed((int)VirtualKeys.F1) && !saveItemInstances)
+            if (InputHooked.IsPressed((int)DIK_Keys.DIK_F1) && !saveItemInstances)
             {
                 StringBuilder sb = new StringBuilder();
                 zCArray<zCPar_Symbol> symbolArray = zCParser.getParser(process).Table;
@@ -277,7 +292,7 @@ namespace GUC
                 saveItemInstances = true;
             }
 
-            if (InputHooked.IsPressed((int)VirtualKeys.F2) && !saveMapVobs)
+            if (InputHooked.IsPressed((int)DIK_Keys.DIK_F2) && !saveMapVobs)
             {
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine("MobInter mi = null;");
@@ -413,7 +428,7 @@ namespace GUC
             }
 
 
-            if (InputHooked.IsPressed((int)VirtualKeys.F3) && !saveMapItems)
+            if (InputHooked.IsPressed((int)DIK_Keys.DIK_F3) && !saveMapItems)
             {
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine("Item mi = null;");
@@ -460,7 +475,7 @@ namespace GUC
                 Process process = Process.ThisProcess();
 
 
-                InputHooked.Update();
+                InputHooked.Update(process);
 
                 
                 _state.Init();

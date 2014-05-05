@@ -59,7 +59,7 @@ namespace GUC.WorldObjects
         #endregion
 
         protected String visual = "HUMANS.MDS";
-        public String Visual { get { return visual; } set { visual = value; } }
+        public String Visual { get { return visual; } set { visual = value.ToUpper(); } }
 
         public int ID { get { return this._id; } set { if (_id != 0) throw new Exception("ID can be only set if 0"); _id = value; } }
 

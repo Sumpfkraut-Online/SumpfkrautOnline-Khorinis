@@ -15,7 +15,7 @@ namespace GUC.Server.Scripting
     {
         public delegate void PlayerEventHandler(Player sender);
         public delegate void PlayerItemEventHandler(NPCProto player, Item item, int amount);
-        public delegate void PlayerDamageEventHandler(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, NPCProto attacker, int weaponMode, int spellID, Item weapon);
+        public delegate void PlayerDamageEventHandler(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, NPCProto attacker, int weaponMode, int spellID, Item weapon, float fallDownDistanceY);
         public delegate void TextBoxMessageEventHandler(TextBox sender, Player player, String message);
         public delegate void ButtonEventHandler(Button sender, Player player);
 

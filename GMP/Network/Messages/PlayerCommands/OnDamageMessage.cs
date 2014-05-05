@@ -64,6 +64,8 @@ namespace GUC.Network.Messages.PlayerCommands
                 weaponVob = sWorld.SpawnedVobDict[oDD.Weapon.Address];
                 sendFlags |= 32;
             }
+            if (oDD.DamageType == oSDamageDescriptor.DamageTypes.DAM_FALL)
+                sendFlags |= 64;
 
             stream.Write(vicProto.ID);
             stream.Write((byte)oDD.ModeDamage);
@@ -81,6 +83,8 @@ namespace GUC.Network.Messages.PlayerCommands
                 stream.Write(spellID);
             if (oDD.Weapon.Address != 0)
                 stream.Write(weaponVob.ID);
+            if ((sendFlags & 64) == 64)
+                stream.Write(victim.HumanAI.FallDownDistanceY);
             
             Program.client.client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }

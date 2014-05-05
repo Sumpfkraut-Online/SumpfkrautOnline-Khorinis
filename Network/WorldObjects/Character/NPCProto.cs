@@ -82,8 +82,8 @@ namespace GUC.WorldObjects.Character
         public int HeadTex { get { return headTex; } set { headTex = value; } }
         public int TeethTex { get { return teethTex; } set { teethTex = value; } }
 
-        public String BodyMesh { get { return this.bodyMesh; } set { this.bodyMesh = value; } }
-        public String HeadMesh { get { return this.headMesh; } set { this.headMesh = value; } }
+        public String BodyMesh { get { return this.bodyMesh; } set { this.bodyMesh = value.ToUpper(); } }
+        public String HeadMesh { get { return this.headMesh; } set { this.headMesh = value.ToUpper(); } }
         #endregion
 
         #region Fíght

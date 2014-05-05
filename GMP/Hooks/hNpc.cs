@@ -38,7 +38,7 @@ namespace GUC.Hooks
 
                 OnDamageMessage.Write(oDD, npc);
 
-                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "OnDamage: TotalDamage:" + oDD.DamageTotal + " | Damage-Mode: " + oDD.ModeDamage + " | Mode-Weapon: " + oDD.ModeWeapon + " | " + oDD.Damage + " | " + oDD.DamageEffective + " | " + oDD.DamageReal, 0, "Program.cs", 0);
+                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "OnDamage: TotalDamage:" + oDD.DamageTotal + " | Damage-Mode: " + oDD.ModeDamage + " | Mode-Weapon: " + oDD.ModeWeapon + " | " + oDD.Damage + " | " + oDD.DamageEffective + " | " + oDD.DamageReal + " | "+npc.HumanAI.FallDownDistanceY, 0, "Program.cs", 0);
             }
             catch (Exception ex)
             {
@@ -342,15 +342,16 @@ namespace GUC.Hooks
 
                 int ItemMessage = process.ReadInt(address + 4);
 
-
+                oCNpc npc = new oCNpc(process, process.ReadInt(address));
                 oCItem item = new oCItem(process, process.ReadInt(ItemMessage + 0x6C));
                 oCMsgManipulate manipulation = new oCMsgManipulate(process, ItemMessage);
 
-                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Item UseItemToState: " + item.Name + " " + manipulation.InstanceName, 0, "ItemSynchro.cs", 0);
+
+                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Item UseItemToState: " + item.Name + " " + manipulation.InstanceName+" | "+npc.InteractItemState+" | "+npc.InteractItem.ObjectName.Value, 0, "ItemSynchro.cs", 0);
 
                 if (item.Address != 0 && item.ObjectName.Address != 0 && item.ObjectName.Value.Trim().Length != 0)
                 {
-                    manipulation.testValues(1024);
+                    //manipulation.testValues(1024);
                 }
 
 
@@ -393,6 +394,36 @@ namespace GUC.Hooks
                     Program.client.client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
                 }
                 
+            }
+            catch (Exception ex)
+            {
+                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Exception: " + ex.Message + " " + ex.StackTrace + " " + ex.Source, 0, "Program.cs", 0);
+            }
+            return 0;
+        }
+
+
+
+        public static Int32 AniCtrl_InitAnimations(String message)
+        {
+            Process Process = Process.ThisProcess();
+            try
+            {
+                int address = Convert.ToInt32(message);
+
+                oCAniCtrl_Human aniCtrl = new oCAniCtrl_Human(Process, Process.ReadInt(address));
+
+                int npcAddress = aniCtrl.NPC.Address;
+
+                Vob vob = null;
+                sWorld.SpawnedVobDict.TryGetValue(npcAddress, out vob);
+
+                if (vob == null)
+                    return 0;
+
+                aniCtrl.WMode = ((NPCProto)vob).WeaponMode;
+                
+
             }
             catch (Exception ex)
             {

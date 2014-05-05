@@ -89,8 +89,14 @@ namespace GUC.Server.Scripts
 				
 			}else if(upperMessage.StartsWith("/RAIN")) {
                 World.setRainTime(World.WeatherType.Rain, 12, 0, 11, 59);
-            
-            }else if(upperMessage.StartsWith("/EXITGAME")) {
+
+            }
+            else if (upperMessage.StartsWith("/GOTO"))
+            {
+                pl.Position = lastNPC.Position;
+            }
+            else if (upperMessage.StartsWith("/EXITGAME"))
+            {
                 pl.exitGame();
             }
             else if (upperMessage.StartsWith("/SETTIME "))

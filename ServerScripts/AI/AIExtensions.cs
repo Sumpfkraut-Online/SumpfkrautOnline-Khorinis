@@ -7,6 +7,7 @@ using GUC.Server.Scripts.AI.Waypoints;
 using GUC.Types;
 using GUC.Server.Scripting.Objects;
 using GUC.Server.Scripts.AI.Enumeration;
+using GUC.Enumeration;
 
 namespace GUC.Server.Scripts.AI
 {
@@ -22,6 +23,24 @@ namespace GUC.Server.Scripts.AI
         public static NPCAI getAI(this NPCProto proto)
         {
             return (NPCAI)proto.getUserObjects("AI");
+        }
+
+        public static void setFightTalent(this NPCProto proto, NPCTalents talent, int percent){
+            proto.setHitchances(talent, percent);
+            
+            if (percent >= 60)
+            {
+                proto.setTalentSkills(talent, 2);
+            }
+            else if (percent >= 30)
+            {
+                proto.setTalentSkills(talent, 1);
+            }
+            else
+            {
+                proto.setTalentSkills(talent, 0);
+            }
+            
         }
 
         public static void InitNPCAI(this NPCProto proto)

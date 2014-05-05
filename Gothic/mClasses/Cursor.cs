@@ -91,43 +91,50 @@ namespace Gothic.mClasses
         
         public static Int32 Update(String message)
         {
-            cursor_fX += Process.ReadInt(9246300) * 40f * Process.ReadFloat(9019720);
-            cursor_fY += Process.ReadInt(9246304) * 40f * Process.ReadFloat(9019724);
-
-
-
-            if (cursor_fX < 0)
-                cursor_fX = 0;
-            if (cursor_fX > 7950)
-                cursor_fX = 7950;
-            if (cursor_fY > 7950)
-                cursor_fY = 7950;
-            if (cursor_fY < 0)
-                cursor_fY = 0;
-
-            InputHooked.WheelChanged(Process.ReadInt(9246300 + 8));
-
-            int keyLeft = Process.ReadInt(9246300 + 12);
-            int keyMid = Process.ReadInt(9246300 + 16);
-            int keyRight = Process.ReadInt(9246300 + 20);
-
-            if (keystats[0] == 1 && keyLeft == 0)
-                InputHooked.SendKeyReleased((byte)VirtualKeys.LeftButton);
-            if (keystats[0] == 0 && keyLeft == 1)
-                InputHooked.SendKeyPressed((byte)VirtualKeys.LeftButton);
-            keystats[0] = keyLeft;
-
-
-            if (noHandle)
+            try
             {
-                Process.Write(new byte[24], 9246300);
+                cursor_fX += Process.ReadInt(9246300) * 40f * Process.ReadFloat(9019720);
+                cursor_fY += Process.ReadInt(9246304) * 40f * Process.ReadFloat(9019724);
+
+
+
+                if (cursor_fX < 0)
+                    cursor_fX = 0;
+                if (cursor_fX > 7950)
+                    cursor_fX = 7950;
+                if (cursor_fY > 7950)
+                    cursor_fY = 7950;
+                if (cursor_fY < 0)
+                    cursor_fY = 0;
+
+                InputHooked.WheelChanged(Process.ReadInt(9246300 + 8));
+
+                int keyLeft = Process.ReadInt(9246300 + 12);
+                int keyMid = Process.ReadInt(9246300 + 16);
+                int keyRight = Process.ReadInt(9246300 + 20);
+
+                if (keystats[0] == 1 && keyLeft == 0)
+                    InputHooked.SendKeyReleased((byte)VirtualKeys.LeftButton);
+                if (keystats[0] == 0 && keyLeft == 1)
+                    InputHooked.SendKeyPressed((byte)VirtualKeys.LeftButton);
+                keystats[0] = keyLeft;
+
+
+                if (noHandle)
+                {
+                    Process.Write(new byte[24], 9246300);
+                }
+
+                if (pView == null)
+                    return 0;
+
+                pView.Top();
+                pView.SetPos((int)cursor_fX, (int)cursor_fY);
             }
-
-            if (pView == null)
-                return 0;
-
-            pView.Top();
-            pView.SetPos((int)cursor_fX, (int)cursor_fY);
+            catch (Exception ex)
+            {
+                zERROR.GetZErr(Process.ThisProcess()).Report(4, 'G', ex.ToString(), 0, "Program.cs", 0);
+            }
             return 0;
         }
 

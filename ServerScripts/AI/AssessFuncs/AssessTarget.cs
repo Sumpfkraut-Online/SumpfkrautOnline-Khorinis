@@ -16,14 +16,22 @@ namespace GUC.Server.Scripts.AI.AssessFuncs
                 && target.HP != 0 && 
                 !target.isUnconscious && ai.AssessEnemyRoutine != null)
             {
-                ai.AssessEnemyRoutine(npc, target);
-                Console.WriteLine("Enemy found!");
+                if (ai.AssessWarnRoutine != null)
+                {
+
+                }
+                else
+                {
+                    ai.AssessEnemyRoutine(npc, target);
+                }
             }
 
             if (target.HP == 0 && ai.AssessBodyRoutine != null)
             {
                 ai.AssessBodyRoutine(npc, target);
             }
+
+            
         }
     }
 }

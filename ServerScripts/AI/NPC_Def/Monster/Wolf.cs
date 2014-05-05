@@ -8,7 +8,7 @@ using GUC.Server.Scripts.AI.Enumeration;
 using GUC.Server.Scripts.AI;
 
 
-namespace GUC.Server.Scripts.AI.NPC_Def
+namespace GUC.Server.Scripts.AI.NPC_Def.Monster
 {
     public class Wolf : NPC
     {
@@ -40,7 +40,46 @@ namespace GUC.Server.Scripts.AI.NPC_Def
             this.InitNPCAI();
 
             this.setGuild(Guilds.MON_WOLF);
-            
+
+            this.addItem("ItFoMuttonRaw", 1);
+
+            CreateVob();
+        }
+    }
+
+    public class YoungWolf : NPC
+    {
+        public YoungWolf()
+            : base()
+        {
+            Name = "Junger Wolf";
+
+            Strength = 10;
+            Dexterity = 10;
+            HPMax = 20;
+            HP = 20;
+
+
+            setProtection(DamageTypeIndex.DAM_INDEX_BLUNT, 10);
+            setProtection(DamageTypeIndex.DAM_INDEX_EDGE, 10);
+            setProtection(DamageTypeIndex.DAM_INDEX_FIRE, 10);
+            setProtection(DamageTypeIndex.DAM_INDEX_FLY, 10);
+
+            setDamageType(DamageType.DAM_EDGE);
+
+            WeaponMode = 1;
+
+
+
+
+            this.setVisual("Wolf.mds", "Wol_Body", 0, 0, "", 0, 0);
+
+            this.InitNPCAI();
+
+            this.setGuild(Guilds.MON_WOLF);
+
+            this.addItem("ItFoMuttonRaw", 1);
+
             CreateVob();
         }
     }

@@ -70,8 +70,14 @@
     <Compile Include="AI\FightFuncs\MonsterFightRoutine.cs" />
     <Compile Include="AI\NPCAI.cs" />
     <Compile Include="AI\AISystem.cs" />
-    <Compile Include="AI\NPC_Def\OrcWarrior.cs" />
-    <Compile Include="AI\NPC_Def\Wolf.cs" />
+    <Compile Include="AI\NPC_Def\Human\MILZ_01.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Alligator.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Bloodfly.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Gobbo_Green.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Waran.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Scavanger.cs" />
+    <Compile Include="AI\NPC_Def\Orc\OrcWarrior.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Wolf.cs" />
     <Compile Include="AI\Routines\Routine.cs" />
     <Compile Include="AI\Waypoints\FreePoint.cs" />
     <Compile Include="AI\DataTypes\PriorityQueue.cs" />
