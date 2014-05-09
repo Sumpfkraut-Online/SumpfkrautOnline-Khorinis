@@ -41,5 +41,28 @@ namespace GUC.Server.Scripts.AI.NPC_Def.Human
             
             CreateVob();
         }
+
+
+        public void ta_Miliz_01(NPCProto proto)
+        {
+            if (proto.RTN_ACTIVE(0, 0, 23, 59))
+            {
+                proto.AI_GOTOWP("NW_CITY_ENTRANCE_GUARD_01");
+                proto.AI_ALIGNTOWP("NW_CITY_ENTRANCE_GUARD_01");
+                proto.AI_PLAYANIMATION("S_LGUARD");
+            }
+        }
+
+        public void ta_Miliz_02(NPCProto proto)
+        {
+            if (proto.RTN_ACTIVE(0, 0, 23, 59))
+            {
+                proto.AI_GOTOWP("NW_CITY_ENTRANCE_BACK_GUARD_02");
+                proto.AI_ALIGNTOWP("NW_CITY_ENTRANCE_BACK_GUARD_02");
+                proto.AI_PLAYANIMATION("S_LGUARD");
+            }
+        }
+
+
     }
 }

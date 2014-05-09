@@ -18,8 +18,12 @@ namespace GUC.Server.Scripts.AI.Enumeration
         MON_ALLIGATOR = MON_BLOODFLY + 1,
         MON_WARAN = MON_ALLIGATOR + 1,
         MON_GOBBO = MON_WARAN + 1,
-
-        MON_SEPERATOR = MON_GOBBO + 1,
+        MON_BLATTCRAWLER = MON_GOBBO + 1,
+        MON_SHADOWBEAST = MON_BLATTCRAWLER + 1,
+        MON_GIANT_RAT = MON_SHADOWBEAST + 1,
+        MON_SNAPPER = MON_GIANT_RAT + 1,
+        MON_STONEGUARDIAN = MON_SNAPPER + 1,
+        MON_SEPERATOR = MON_STONEGUARDIAN + 1,
 
         
 

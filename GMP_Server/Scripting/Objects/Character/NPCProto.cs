@@ -740,23 +740,24 @@ namespace GUC.Server.Scripting.Objects.Character
                 }
             }
 
-            WorldObjects.Item itm = new WorldObjects.Item(instance.itemInstances, amount);
-            sWorld.addVob(itm);
-            proto.addItem(itm);
+            Item itm = new Item(instance, amount);
+            //sWorld.addVob(itm);
+            proto.addItem(itm.ProtoItem);
 
             if (!created)
-                return itm.ScriptingProto;
+                return itm;
 
             BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
             stream.Write((byte)NetworkIDS.AddItemMessage);
             stream.Write(proto.ID);
-            itm.Write(stream);
+            stream.Write(itm.ID);
+            //itm.Write(stream);
             Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
 
 
-            return itm.ScriptingProto;
+            return itm;
         }
 
         public void hit(NPCProto victim)

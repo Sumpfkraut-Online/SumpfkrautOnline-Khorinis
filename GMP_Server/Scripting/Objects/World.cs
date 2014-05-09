@@ -31,20 +31,76 @@ namespace GUC.Server.Scripting.Objects
             return sWorld.getWorld(name).ScriptingWorld;
         }
 
+        /// <summary>
+        /// Returns a list of all near items in the world
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="distance"></param>
+        /// <returns></returns>
         public List<Item> getNearItems(Vec3f position, int distance)
         {
             List<Item> itemList = new List<Item>();
 
-            throw new NotImplementedException("this function was not implemented yet!");
+            uint[] keys = WorldObjects.World.getImportantKeysByPosition(position.Data, distance);
+
+            foreach (uint key in keys)
+            {
+                if (!sWorld.getWorld(this.world.Map).ItemPositionList.ContainsKey(key))
+                    continue;
+
+                List<WorldObjects.Item> mobs = sWorld.getWorld(this.world.Map).ItemPositionList[key];
+                foreach (WorldObjects.Item m in mobs)
+                {
+                    float mD = (m.Position - position).Length;
+
+                    if (mD <= distance)
+                    {
+                        itemList.Add(m.ScriptingProto);
+                    }
+                }
+            }
 
             return itemList;
         }
 
+        /// <summary>
+        /// this function is not implemented yet
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="distance"></param>
+        /// <returns></returns>
         public List<NPCProto> getNearNPC(Vec3f position, int distance)
         {
-            throw new NotImplementedException("this function was not implemented yet!");
+            List<NPCProto> playerList = new List<NPCProto>();
+
+            uint[] keys = WorldObjects.World.getImportantKeysByPosition(position.Data, distance);
+
+            foreach (uint key in keys)
+            {
+                if (!sWorld.getWorld(this.world.Map).NPCPositionList.ContainsKey(key))
+                    continue;
+
+                List<WorldObjects.Character.NPCProto> mobs = sWorld.getWorld(this.world.Map).NPCPositionList[key];
+                foreach (WorldObjects.Character.NPCProto m in mobs)
+                {
+                    if (m.ScriptingNPC is Player && !((Player)m.ScriptingVob).IsSpawned())
+                        continue;
+                    float mD = (m.Position - position).Length;
+
+                    if (mD <= distance)
+                    {
+                        playerList.Add((NPCProto)m.ScriptingNPC);
+                    }
+                }
+            }
+
+            return playerList;
         }
 
+        /// <summary>
+        /// Returns an array of all npcs and player.
+        /// </summary>
+        /// <returns></returns>
         public NPCProto[] getNPCList()
         {
             NPCProto[] arrayList = new NPCProto[world.NPCList.Count];
@@ -56,22 +112,45 @@ namespace GUC.Server.Scripting.Objects
             return arrayList;
         }
 
+        /// <summary>
+        /// Adds an Item to the world
+        /// </summary>
+        /// <param name="instance">The item instance whick will be spawned</param>
+        /// <param name="amount">The amount of the item to spawn at that location</param>
+        /// <param name="position">The position where you want to spawn the item</param>
+        /// <returns>returns the generated item</returns>
         public Item addItem(ItemInstance instance, int amount, Vec3f position)
         {
             return this.addItem(instance, amount, position, new Vec3f(0.0f, 0.0f, 1.0f));
         }
+
+        /// <summary>
+        /// Adds an Item to the world
+        /// </summary>
+        /// <param name="instance">The item instance whick will be spawned</param>
+        /// <param name="amount">The amount of the item to spawn at that location</param>
+        /// <param name="position">The position where you want to spawn the item</param>
+        /// <param name="direction">The direction of the item</param>
+        /// <returns>returns the generated item</returns>
         public Item addItem(ItemInstance instance, int amount, Vec3f position, Vec3f direction)
         {
             Item rITem = new Item(instance, amount);
             rITem.Spawn(this.world.Map, position, direction);
-
-
-
-
             return rITem;
         }
 
 
+        /// <summary>
+        /// Sets the rain time. 12:00 can not lie between start and endtime
+        /// 12:00-11:59 should work.
+        /// 
+        /// This function is static and all worlds will have the weather.
+        /// </summary>
+        /// <param name="wt">The weathertype, define if you want it to rain or snow. If you want to use the default parameters, use Undefined</param>
+        /// <param name="startHour">the start hour from 0 - 23</param>
+        /// <param name="startMinute">the start minute from 0 - 59</param>
+        /// <param name="endHour">the end Hour from 0 - 23</param>
+        /// <param name="endMinute">the end minute from 0 - 59</param>
         public static void setRainTime(WeatherType wt, byte startHour, byte startMinute, byte endHour, byte endMinute)
         {
             sWorld.WeatherType = (byte)wt;
@@ -94,11 +173,29 @@ namespace GUC.Server.Scripting.Objects
             Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
+        /// <summary>
+        /// Sets the actual time.
+        /// It will be send insecure, so it can be that the client does not get the message.
+        /// 
+        /// This function is static and all worlds will have the same time.
+        /// </summary>
+        /// <param name="day">The new day</param>
+        /// <param name="hour">The new hour</param>
+        /// <param name="minute">The new minute</param>
         public static void setTimeFast(int day, byte hour, byte minute)
         {
             iSetTime(day, hour, minute, true);
         }
 
+        /// <summary>
+        /// Sets the actual time.
+        /// It will be send secure, The clients get definetly the message, but it can be slower.
+        /// 
+        /// This function is static and all worlds will have the same time.
+        /// </summary>
+        /// <param name="day">The new day</param>
+        /// <param name="hour">The new hour</param>
+        /// <param name="minute">The new minute</param>
         public static void setTime(int day, byte hour, byte minute)
         {
             iSetTime(day, hour, minute, false);
@@ -126,6 +223,14 @@ namespace GUC.Server.Scripting.Objects
         }
 
 
+        /// <summary>
+        /// Returns the time.
+        /// 
+        /// This function is static and all worlds will have the same time.
+        /// </summary>
+        /// <param name="day"></param>
+        /// <param name="hour"></param>
+        /// <param name="minute"></param>
         public static void getTime(out int day, out int hour, out int minute)
         {
             day = sWorld.Day;

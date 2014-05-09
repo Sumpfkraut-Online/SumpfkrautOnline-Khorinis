@@ -100,7 +100,7 @@ namespace GUC.Server.Scripting.Objects
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="distance">Max-Distance: 4000. You can use bigger distances until 8000 but there won't be all players in the list!</param>
+        /// <param name="distance"></param>
         /// <returns></returns>
         public Player[] getNearPlayers(float distance)
         {

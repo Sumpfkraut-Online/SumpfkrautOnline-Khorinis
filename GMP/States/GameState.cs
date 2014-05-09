@@ -23,6 +23,8 @@ namespace GUC.States
     class GameState : AbstractState
     {
         protected long lastPlayerPosUpdate = 0;
+        protected long lastNPCPosUpdate = 0;
+
         protected PlayerKeyMessage pkm;
         public override void Init()
         {
@@ -60,12 +62,25 @@ namespace GUC.States
                 SendPlayerPosition(process, Player.Hero);
                 NPCUpdateMessage.Write(Player.Hero);
 
+                //foreach (NPC iNPC in Player.Hero.NPCControlledList)
+                //{
+                //    SendPlayerPosition(process, iNPC);
+                //    NPCUpdateMessage.Write(iNPC);
+                //}
+                lastPlayerPosUpdate = now;
+            }
+
+            if (lastNPCPosUpdate + 10000 * 2000 < now)
+            {
+                //SendPlayerPosition(process, Player.Hero);
+                //NPCUpdateMessage.Write(Player.Hero);
+
                 foreach (NPC iNPC in Player.Hero.NPCControlledList)
                 {
                     SendPlayerPosition(process, iNPC);
                     NPCUpdateMessage.Write(iNPC);
                 }
-                lastPlayerPosUpdate = now;
+                lastNPCPosUpdate = now;
             }
 
             pkm.update();

@@ -72,8 +72,17 @@
     <Compile Include="AI\AISystem.cs" />
     <Compile Include="AI\NPC_Def\Human\MILZ_01.cs" />
     <Compile Include="AI\NPC_Def\Monster\Alligator.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Blattcrawler.cs" />
     <Compile Include="AI\NPC_Def\Monster\Bloodfly.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Bloodhound.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Giant_DesertRat.cs" />
     <Compile Include="AI\NPC_Def\Monster\Gobbo_Green.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Gobbo_Warrior.cs" />
+    <Compile Include="AI\NPC_Def\Monster\IceWolf.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Keiler.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Stoneguardian.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Razor.cs" />
+    <Compile Include="AI\NPC_Def\Monster\OrcBiter.cs" />
     <Compile Include="AI\NPC_Def\Monster\Waran.cs" />
     <Compile Include="AI\NPC_Def\Monster\Scavanger.cs" />
     <Compile Include="AI\NPC_Def\Orc\OrcWarrior.cs" />

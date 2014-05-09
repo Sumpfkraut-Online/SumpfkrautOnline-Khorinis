@@ -54,12 +54,12 @@ namespace GUC.Server.Scripts
 
             //Player.sPlayerKeyEvent += new Events.PlayerKeyEventHandler(keyEvent);
 
-            for (int i = 0; i < 700; i++)
-            {
-                WayPoint wp = AI.AISystem.WayNets[@"NEWWORLD\NEWWORLD.ZEN"].getRandomWaypoint();
-                Young_Gobbo_Green wolf = new Young_Gobbo_Green();
-                wolf.Spawn(@"NEWWORLD\NEWWORLD.ZEN", wp.Position, null);
-            }
+            //for (int i = 0; i < 100; i++)
+            //{
+            //    WayPoint wp = AI.AISystem.WayNets[@"NEWWORLD\NEWWORLD.ZEN"].getRandomWaypoint();
+            //    Young_Gobbo_Green wolf = new Young_Gobbo_Green();
+            //    wolf.Spawn(@"NEWWORLD\NEWWORLD.ZEN", wp.Position, null);
+            //}
 		}
     }
 }

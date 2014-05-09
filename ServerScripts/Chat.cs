@@ -13,6 +13,8 @@ using GUC.Server.Scripting.GUI;
 using GUC.Types;
 
 using GUC.Server.Scripts.AI;
+using GUC.Server.Scripts.AI.Waypoints;
+using GUC.Server.Scripts.AI.NPC_Def.Monster;
 
 namespace GUC.Server.Scripts
 {
@@ -89,6 +91,26 @@ namespace GUC.Server.Scripts
 				
 			}else if(upperMessage.StartsWith("/RAIN")) {
                 World.setRainTime(World.WeatherType.Rain, 12, 0, 11, 59);
+
+            }
+            else if (upperMessage.StartsWith("/SPAWN "))
+            {
+                String second = upperMessage.Substring("/SPAWN ".Length).Trim().ToLower();
+
+                WayPoint wp = AI.AISystem.WayNets[@"NEWWORLD\NEWWORLD.ZEN"].getNearestWaypoint(pl.Position);
+                NPC npc = null;
+                if(second == "goblin")
+                    npc = new Young_Gobbo_Green();
+                else if (second == "wolf")
+                    npc = new YoungWolf();
+                else if (second == "bloodfly")
+                    npc = new Bloodfly();
+                else if (second == "waran")
+                    npc = new Waran();
+                else if (second == "keiler")
+                    npc = new Keiler();
+                if(npc != null)
+                    npc.Spawn(@"NEWWORLD\NEWWORLD.ZEN", wp.Position, null);
 
             }
             else if (upperMessage.StartsWith("/GOTO"))

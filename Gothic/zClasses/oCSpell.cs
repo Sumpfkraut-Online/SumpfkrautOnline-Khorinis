@@ -6,7 +6,7 @@ using Gothic.zTypes;
 
 namespace Gothic.zClasses
 {
-    public class oCSpell : zClass
+    public class oCSpell : zCObject
     {
         #region OffsetLists
         public enum Offsets
@@ -49,11 +49,20 @@ namespace Gothic.zClasses
             return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.GetSpellID, new CallValue[] {  }).Address;
         }
 
+        /// <summary>
+        /// Call Dispose after Usage!
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public zString GetSpellInstanceName(int id)
         {
             return Process.THISCALL<zString>((uint)Address, (uint)FuncOffsets.GetSpellInstanceName, new CallValue[] { new IntArg(id) });
         }
 
+        /// <summary>
+        /// Needs Dispose() after use!
+        /// </summary>
+        /// <returns></returns>
         public zString GetName()
         {
             return Process.THISCALL<zString>((uint)Address, (uint)FuncOffsets.GetName, new CallValue[] { });
