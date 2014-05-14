@@ -624,6 +624,8 @@ namespace GUC.Server.Scripting.Objects.Character
                 throw new ArgumentException("attribute is not valid!");
             if (value < 0)
                 value = 0;
+            if (value > HPMax)
+                value = HPMax;
             proto.Attributes[(byte)attrib] = value;
 
             if (!created)

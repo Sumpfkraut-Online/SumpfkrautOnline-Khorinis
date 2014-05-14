@@ -77,7 +77,7 @@ namespace GUC.Server.Scripts.Accounts
 				command.CommandText = "CREATE TABLE IF NOT EXISTS `account_items` (";
 				command.CommandText += "  `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,";
 				command.CommandText += "  `accountID` INTEGER NOT NULL,";
-				command.CommandText += "  `instanceID` INTEGER NOT NULL,";
+				command.CommandText += "  `instanceID` text NOT NULL,";
 				command.CommandText += "  `amount` INTEGER NOT NULL";
 				command.CommandText += ")";
 				command.ExecuteNonQuery();

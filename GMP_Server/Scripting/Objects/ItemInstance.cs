@@ -179,6 +179,12 @@ namespace GUC.Server.Scripting.Objects
         public String Name { get { return itemInstances.Name; } protected set { itemInstances.Name = value; } }
         public int ID { get { return itemInstances.ID; } }
 
+
+        public String InstanceName
+        {
+            get { return mItemInstance;  }
+        }
+
         public int getDamage(DamageTypeIndex index)
         {
             if (index == DamageTypeIndex.DAM_INDEX_BARRIER)
@@ -208,6 +214,9 @@ namespace GUC.Server.Scripting.Objects
         public String Visual { get { return itemInstances.Visual; } protected set { itemInstances.Visual = value; } }
         public String Visual_Change { get { return itemInstances.Visual_Change; } protected set { itemInstances.Visual_Change = value; } }
         public String Effect { get { return itemInstances.Effect; } protected set { itemInstances.Effect = value; } }
+
+        public String ScemeName { get { return itemInstances.ScemeName; } protected set { itemInstances.ScemeName = value; } }
+
 
         public int Visual_skin { get { return itemInstances.Visual_skin; } protected set { itemInstances.Visual_skin = value; } }
 

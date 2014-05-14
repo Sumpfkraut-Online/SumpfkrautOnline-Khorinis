@@ -112,7 +112,7 @@ namespace GUC.Server.Scripts
 				using(SQLiteDataReader sdrITM = command.ExecuteReader()) {
 					if(sdrITM.HasRows) {
 						while(sdrITM.Read()) {
-							player.addItem(ItemInstance.getItemInstance(Convert.ToInt32(sdrITM["instanceID"])), Convert.ToInt32(sdrITM["amount"]));
+							player.addItem(ItemInstance.getItemInstance(Convert.ToString(sdrITM["instanceID"])), Convert.ToInt32(sdrITM["amount"]));
 						}
 					}
 				}
@@ -254,7 +254,7 @@ namespace GUC.Server.Scripts
 					command.CommandText = "INSERT INTO `account_items` (";
 					command.CommandText += "  `id`, `accountID`, `instanceID`, `amount`)";
 					command.CommandText += "VALUES( NULL, @accountID, @instanceID, @amount)";
-					command.Parameters.AddWithValue("@instanceID", item.ItemInstance.ID);
+					command.Parameters.AddWithValue("@instanceID", item.ItemInstance.InstanceName);
 					command.Parameters.AddWithValue("@accountID", accountID);
 					command.Parameters.AddWithValue("@amount", item.Amount);
 					command.ExecuteNonQuery();

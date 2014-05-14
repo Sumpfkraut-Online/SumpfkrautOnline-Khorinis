@@ -99,9 +99,23 @@
     <Compile Include="DefaultItems.cs" />
     <Compile Include="DefaultVobs.cs" />
     <Compile Include="DefaultWorldItem.cs" />
-    <Compile Include="Items\ITPO_HEALTH_01.cs" />
-    <Compile Include="Items\ITSC_SHRINK.cs" />
-    <Compile Include="Items\ITSC_TRFSHEEP.cs" />
+    <Compile Include="Items\ItemInit.cs" />
+    <Compile Include="Items\Potions\Health\ITPO_HEALTH_01.cs" />
+    <Compile Include="Items\Potions\Health\ITPO_HEALTH_02.cs" />
+    <Compile Include="Items\Potions\Health\ITPO_HEALTH_03.cs" />
+    <Compile Include="Items\Potions\Health\ITPO_HEALTH_ADDON_04.cs" />
+    <Compile Include="Items\Potions\ITPO_SPEED.cs" />
+    <Compile Include="Items\Potions\Mana\ITPO_MANA_01.cs" />
+    <Compile Include="Items\Potions\Mana\ITPO_MANA_02.cs" />
+    <Compile Include="Items\Potions\Mana\ITPO_MANA_03.cs" />
+    <Compile Include="Items\Potions\Mana\ITPO_MANA_ADDON_04.cs" />
+    <Compile Include="Items\Potions\Perm\ITPO_PERM_STR.cs" />
+    <Compile Include="Items\Potions\Perm\ITPO_PERM_DEX.cs" />
+    <Compile Include="Items\Potions\Perm\ITPO_PERM_HEALTH.cs" />
+    <Compile Include="Items\Potions\Perm\ITPO_PERM_MANA.cs" />
+    <Compile Include="Items\Potions\Perm\ITPO_MEGADRINK.cs" />
+    <Compile Include="Items\Scrolls\ITSC_SHRINK.cs" />
+    <Compile Include="Items\Scrolls\ITSC_TRFSHEEP.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sqlite.cs" />
     <Compile Include="StartModules\AbstractModule.cs" />
@@ -114,6 +128,11 @@
       <Name>GMP_Server</Name>
       <Private>False</Private>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Items\Armors\" />
+    <Folder Include="Items\Runes\" />
+    <Folder Include="Items\Weapons\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

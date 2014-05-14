@@ -29,9 +29,10 @@ namespace GUC.Server.Scripts
 		public Button connection;
 		public void OnServerInit()
 		{
-            Player.EnableAllPlayerKeys(true);
+            Console.WriteLine("######################## Initalise ########################");
 
-            Console.WriteLine("#################### Initalise ############################");
+            
+            ItemInit.Init();
             DefaultItems.Init();
             DefaultVobs.Init();
             DefaultWorldItem.Init();
@@ -53,17 +54,11 @@ namespace GUC.Server.Scripts
             AI.AISystem.Init();
 
 
-            ITSC_SHRINK.get();
-            ITSC_TRFSHEEP.get();
+            
 
-            //Player.sPlayerKeyEvent += new Events.PlayerKeyEventHandler(keyEvent);
-
-            //for (int i = 0; i < 100; i++)
-            //{
-            //    WayPoint wp = AI.AISystem.WayNets[@"NEWWORLD\NEWWORLD.ZEN"].getRandomWaypoint();
-            //    Young_Gobbo_Green wolf = new Young_Gobbo_Green();
-            //    wolf.Spawn(@"NEWWORLD\NEWWORLD.ZEN", wp.Position, null);
-            //}
+            
+            
+            Console.WriteLine("###################### End Initalise ######################");
 		}
     }
 }
