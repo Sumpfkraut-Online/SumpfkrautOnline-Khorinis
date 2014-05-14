@@ -15,7 +15,7 @@ namespace GUC.Server.Scripting
         private bool startuped = false;
         private bool initalised = false;
 
-        public List<Timer> TimerList = new List<Timer>();
+        internal List<Timer> TimerList = new List<Timer>();
 
         private static ScriptManager _self;
 

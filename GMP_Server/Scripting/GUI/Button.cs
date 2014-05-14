@@ -18,6 +18,7 @@ namespace GUC.Server.Scripting.GUI
         public Button()
             : this("")
         { }
+
         public Button(String text)
             : this(text, "buttons_03.tga")
         { }

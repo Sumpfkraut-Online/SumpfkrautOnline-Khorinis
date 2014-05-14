@@ -42,7 +42,6 @@
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -65,6 +64,7 @@
     <Compile Include="GUI\TextBox.cs" />
     <Compile Include="GUI\Texture.cs" />
     <Compile Include="GUI\View.cs" />
+    <Compile Include="Hooks\Externals.cs" />
     <Compile Include="Hooks\hGame.cs" />
     <Compile Include="Hooks\hItem.cs" />
     <Compile Include="Hooks\hItemContainer.cs" />
@@ -72,6 +72,7 @@
     <Compile Include="Hooks\hModelAni.cs" />
     <Compile Include="Hooks\hNpc.cs" />
     <Compile Include="Hooks\hParser.cs" />
+    <Compile Include="Hooks\hSpell.cs" />
     <Compile Include="Network\Client.cs" />
     <Compile Include="Network\IMessage.cs" />
     <Compile Include="Network\Messages\Callbacks\CallbackNPCCanSee.cs" />
@@ -91,19 +92,25 @@
     <Compile Include="Network\Messages\NpcCommands\AnimationUpdateMessage.cs" />
     <Compile Include="Network\Messages\NpcCommands\ClearInventory.cs" />
     <Compile Include="Network\Messages\NpcCommands\NPCControllerMessage.cs" />
+    <Compile Include="Network\Messages\NpcCommands\NPCEnableMessage.cs" />
+    <Compile Include="Network\Messages\NpcCommands\NPCFatnessMessage.cs" />
+    <Compile Include="Network\Messages\NpcCommands\NPCProtoSetWeaponMode.cs" />
     <Compile Include="Network\Messages\NpcCommands\NPCSetInvisibleMessage.cs" />
     <Compile Include="Network\Messages\NpcCommands\NPCSetInvisibleName.cs" />
     <Compile Include="Network\Messages\NpcCommands\NPCUpdateMessage.cs" />
+    <Compile Include="Network\Messages\NpcCommands\ScaleMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\AnimationMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\ChangeNameMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\CreateItemInstanceMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\DropItemMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\DropUnconsciousMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\EquipItemMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\CreateSpellMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\NPCChangeAttributeMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\NPCChangeSkillMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\OnDamageMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\PlayerFreezeMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\PlayerKeyMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\PlayVideo.cs" />
     <Compile Include="Network\Messages\PlayerCommands\ReviveMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\SetVisualMessage.cs" />
@@ -111,6 +118,7 @@
     <Compile Include="Network\Messages\PlayerCommands\TakeItemMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\ChangeWorldMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\CreateVobMessage.cs" />
+    <Compile Include="Network\Messages\VobCommands\SetVobListPosDirMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\SetVobDirectionMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\SetVobPosDirMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\SetVobPositionMessage.cs" />
@@ -124,6 +132,7 @@
     </Compile>
     <Compile Include="States\AbstractState.cs" />
     <Compile Include="States\GameState.cs" />
+    <Compile Include="Tests\Keytest.cs" />
     <Compile Include="WorldObjects\Character\NPC.Client.cs" />
     <Compile Include="WorldObjects\Character\NPCProto.Client.cs" />
     <Compile Include="WorldObjects\Character\Player.Client.cs" />
@@ -135,6 +144,7 @@
     <Compile Include="WorldObjects\Mobs\MobInter.Client.cs" />
     <Compile Include="WorldObjects\Mobs\MobLockable.Client.cs" />
     <Compile Include="WorldObjects\Mobs\MobSwitch.Client.cs" />
+    <Compile Include="WorldObjects\Spell.Client.cs" />
     <Compile Include="WorldObjects\sWorld.Client.cs" />
     <Compile Include="WorldObjects\Vob.Client.cs" />
     <Compile Include="WorldObjects\World.Client.cs" />

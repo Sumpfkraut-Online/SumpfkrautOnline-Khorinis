@@ -43,10 +43,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enumeration\GothicKeys.cs" />
     <Compile Include="Enumeration\Item_Flags.cs" />
     <Compile Include="Enumeration\NetworkIDS.cs" />
     <Compile Include="Enumeration\NPCFlags.cs" />
     <Compile Include="Enumeration\PlayerStatus.cs" />
+    <Compile Include="Enumeration\SpellFlags.cs" />
     <Compile Include="Enumeration\VobFlags.cs" />
     <Compile Include="Network\BitStreamExtension.cs" />
     <Compile Include="Options\ClientOptions.cs" />
@@ -74,6 +76,7 @@
     <Compile Include="WorldObjects\Mobs\MobInter.cs" />
     <Compile Include="WorldObjects\Mobs\MobLockable.cs" />
     <Compile Include="WorldObjects\Mobs\MobSwitch.cs" />
+    <Compile Include="WorldObjects\Spell.cs" />
     <Compile Include="WorldObjects\sWorld.cs" />
     <Compile Include="WorldObjects\Vob.cs" />
     <Compile Include="WorldObjects\World.cs" />

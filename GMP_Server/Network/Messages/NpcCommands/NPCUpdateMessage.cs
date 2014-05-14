@@ -159,6 +159,17 @@ namespace GUC.Server.Network.Messages.NpcCommands
                 proto.PortalRoom = portalRoom;
             }
 
+            if (changeFlags.HasFlag(NPCChangedFlags.ACTIVE_SPELL))
+            {
+                int vobID = 0;
+                stream.Read(out vobID);
+
+                if (vobID == 0)
+                    proto.ActiveSpell = null;
+                else
+                    proto.ActiveSpell = (Item)sWorld.VobDict[vobID];
+            }
+
             //Sending back:
             stream.ResetReadPointer();
 

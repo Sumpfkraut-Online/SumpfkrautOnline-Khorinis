@@ -7,6 +7,7 @@ using GUC.Server.Scripts.AI.Waypoints;
 using GUC.Types;
 using GUC.Server.Scripting.Objects;
 using GUC.Server.Scripts.AI.Enumeration;
+using GUC.Enumeration;
 
 namespace GUC.Server.Scripts.AI
 {
@@ -24,11 +25,35 @@ namespace GUC.Server.Scripts.AI
             return (NPCAI)proto.getUserObjects("AI");
         }
 
+        public static void setFightTalent(this NPCProto proto, NPCTalents talent, int percent){
+            proto.setHitchances(talent, percent);
+            
+            if (percent >= 60)
+            {
+                proto.setTalentSkills(talent, 2);
+            }
+            else if (percent >= 30)
+            {
+                proto.setTalentSkills(talent, 1);
+            }
+            else
+            {
+                proto.setTalentSkills(talent, 0);
+            }
+            
+        }
+
         public static void InitNPCAI(this NPCProto proto)
         {
             NPCAI ai = new NPCAI(proto);
             proto.setUserObject("AI", ai);
             ai.init();
+        }
+
+        public static void InitNPCAI(this Player proto)
+        {
+            NPCAI ai = new NPCAI(proto);
+            proto.setUserObject("AI", ai);
         }
 
         public static void AI_GOTOWP(this NPCProto proto, String waypoint)
@@ -109,6 +134,21 @@ namespace GUC.Server.Scripts.AI
             }
         }
 
+        public static void setGuild(this NPCProto proto, Guilds guild)
+        {
+            proto.getAI().Guild = guild;
+        }
+
+        public static Guilds getGuild(this NPCProto proto)
+        {
+            return proto.getAI().Guild;
+        }
+
+        public static GuildsAttitude getAttitudeToGuild(this NPCProto proto, Guilds guild)
+        {
+            return AISystem.getGuildAttitude(proto.getGuild(), guild);
+        }
+
         public static bool turnToPosition(this NPCProto proto, Vec3f position)
         {
             Vec3f direction = position - proto.Position;
@@ -132,10 +172,15 @@ namespace GUC.Server.Scripts.AI
         {
             String anim = "S_WALKL";
 
-            if (proto.getAI().WalkType == Enumeration.WalkTypes.Run)
-                anim = "S_RUNL";
+            if (proto.getAI().Guild > Guilds.HUM_SPERATOR)
+                anim = "S_FISTWALKL";
 
-
+            if (proto.getAI().WalkType == Enumeration.WalkTypes.Run){
+                if (proto.getAI().Guild < Guilds.HUM_SPERATOR)
+                    anim = "S_RUNL";
+                else
+                    anim = "S_FISTRUNL";
+            }
             return anim;
         }
 

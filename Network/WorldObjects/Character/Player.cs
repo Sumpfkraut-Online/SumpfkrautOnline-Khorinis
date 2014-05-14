@@ -11,6 +11,15 @@ namespace GUC.WorldObjects.Character
 
         public List<NPCProto> NPCControlledList = new List<NPCProto>();
 
+
+        public static bool sSendAllKeys = false;
+        public static List<byte> sSendKeys = new List<byte>();
+        
+
+        
+
+
+
         public Player()
             : base()
         {

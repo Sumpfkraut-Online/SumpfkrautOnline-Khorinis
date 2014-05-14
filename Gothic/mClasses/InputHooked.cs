@@ -93,13 +93,24 @@ namespace Gothic.mClasses
             return pos;
         }
 
-        public static bool IsPressed(int key)
+        public static bool IsPressed(Process process, int key)
         {
-            Process process = Process.ThisProcess();
+            //if (( process.ReadInt(0x8D1678 + key) & 255 ) >= 1)
+            //    return true;
+            //else
+            //    return false;
+            //Process process = Process.ThisProcess();
 
             if ((Input.GetAsyncKeyState((int)key) & 0x8001) == 0x8001 || (Input.GetAsyncKeyState((int)key) & 0x8000) == 0x8000)
                 return true;
             return false;
+        }
+
+        public static bool IsPressed(int key)
+        {
+            Process process = Process.ThisProcess();
+
+            return IsPressed(process, key);
         }
 
         public static void SendKeyPressed(byte key)
@@ -142,7 +153,11 @@ namespace Gothic.mClasses
 
         public static void Update()
         {
-            Process process = Process.ThisProcess();
+            Update(Process.ThisProcess());
+        }
+
+        public static void Update(Process process)
+        {
             //if (WinApi.User.Window.GetWindowThreadProcessId(WinApi.User.Window.GetForegroundWindow()) != process.ProcessID
             // || zCConsole.Console(process).IsVisible() == 1)
             //    return;
@@ -150,7 +165,7 @@ namespace Gothic.mClasses
             //if ((Input.GetAsyncKeyState((int)VirtualKeys.F11) & 0x8001) == 0x8001)
             for (byte i = 1; i <= 0xFE; i++)
             {
-                if (IsPressed(i))
+                if (IsPressed(process, i))
                 {
                     if (keys[i] == 0x00)
                     {

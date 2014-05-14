@@ -10,6 +10,7 @@ using GUC.Types;
 using Gothic.zTypes;
 using GUC.Hooks;
 using GUC.Enumeration;
+using Gothic.zStruct;
 
 namespace GUC.WorldObjects.Character
 {
@@ -53,6 +54,14 @@ namespace GUC.WorldObjects.Character
             stream.Read(out this.talentSkills, this.TalentSkills.Length);
             stream.Read(out this.talentValues, this.TalentValues.Length);
             stream.Read(out this.hitchances, this.Hitchances.Length);
+
+
+            Vec3f vec = new Vec3f();
+            stream.Read(out vec);
+            Scale = vec;
+
+            stream.Read(out Fatness);
+
 
             int itemCount = 0;
             stream.Read(out itemCount);
@@ -99,6 +108,8 @@ namespace GUC.WorldObjects.Character
             stream.Read(out this.IsInvisible);
             stream.Read(out this.hideName);
 
+            stream.Read(out this.weaponMode);
+
             return sendInfo;
         }
 
@@ -136,6 +147,16 @@ namespace GUC.WorldObjects.Character
                 return;
             Process process = Process.ThisProcess();
             oCNpc npc = oCObjectFactory.GetFactory(process).CreateNPC("OTHERS_NPC");
+            
+            this.Address = npc.Address;
+            sWorld.SpawnedVobDict.Add(npc.Address, this);
+
+            if (npc.MagBook == null || npc.MagBook.Address == 0)
+            {
+                npc.MagBook = oCMag_Book.Create(process);
+                npc.MagBook.SetOwner(npc);
+            }
+
 
             if(hideName)
                 npc.Name.Set("");
@@ -154,32 +175,34 @@ namespace GUC.WorldObjects.Character
 
             npc.SetVisual(this.Visual);
             npc.SetAdditionalVisuals(BodyMesh, bodyTex, skinColor, HeadMesh, headTex, teethTex, -1);
-            npc.SetWeaponMode(this.WeaponMode);
-            npc.SetWeaponMode2(this.WeaponMode);
-
-            npc.HumanAI = new oCAiHuman(process, 0);
-            npc.AniCtrl = new oCAniCtrl_Human(process, 0);
-
-
-
-
-
-
-            this.setDirection(direction);
-            npc.Enable(Position.X, Position.Y, Position.Z);
             
 
-            this.Address = npc.Address;
-            sWorld.SpawnedVobDict.Add(npc.Address, this);
+
+            //npc.HumanAI = new oCAiHuman(process, 0);
+            //npc.AniCtrl = new oCAniCtrl_Human(process, 0);
+
+
+
+
+            
+
+            this.setDirection(direction);
+            //Enable(Position);
+
+            
 
             foreach (Item it in itemList)
                 this.addItemToContainer(it);
             foreach (Item it in EquippedList)
-                if( !it.ItemInstance.MainFlags.HasFlag(MainFlags.ITEM_KAT_ARMOR) && !it.ItemInstance.MainFlags.HasFlag(MainFlags.ITEM_KAT_FF) && !it.ItemInstance.MainFlags.HasFlag(MainFlags.ITEM_KAT_NF))
+            {
+                if (!it.ItemInstance.MainFlags.HasFlag(MainFlags.ITEM_KAT_ARMOR) && !it.ItemInstance.MainFlags.HasFlag(MainFlags.ITEM_KAT_FF) && !it.ItemInstance.MainFlags.HasFlag(MainFlags.ITEM_KAT_NF))
+                {
+                    hNpc.blockSendEquip = true;
                     npc.Equip(new oCItem(process, it.Address));
-
-            if (this.Armor != null)
-                setArmor(this.Armor);
+                }
+            }
+            //if (this.Armor != null)
+            //    setArmor(this.Armor);
             if (this.Weapon != null)
                 setWeapon(this.Weapon);
             if (this.RangeWeapon != null)
@@ -202,6 +225,183 @@ namespace GUC.WorldObjects.Character
 
             npc.setShowVisual(!this.IsInvisible);
 
+            setScale(this.Scale);
+            setFatness(this.Fatness);
+            setWeaponMode(this.WeaponMode);
+
+            if (enabled)
+                Enable(this.Position);
+        }
+
+        private bool enabled = false;
+
+        public void Disable()
+        {
+            enabled = false;
+            if (this.Address != 0)
+            {
+                Process process = Process.ThisProcess();
+                oCNpc npc = new oCNpc(process, this.Address);
+
+                if (this.Armor != null)
+                    npc.UnequipItem(new oCItem(process, this.Armor.Address));
+                npc.Disable();
+            }
+        }
+
+        public void Enable(Vec3f pos)
+        {
+            enabled = true;
+            if (this.Address != 0)
+            {
+                Process process = Process.ThisProcess();
+                oCNpc npc = new oCNpc(process, this.Address);
+
+                
+                npc.Enable(pos.X, pos.Y, pos.Z);
+                setWeaponMode(weaponMode);
+                setArmor(armor);
+            }
+        }
+
+
+
+        public void RemoveWeapon()
+        {
+            if (this.Address == 0)
+                return;
+
+            Process process = Process.ThisProcess();
+
+            zString str = zString.Create(process, "MOD_RemoveWeapon");
+            int id = zCParser.getParser(process).GetIndex(str);
+            str.Dispose();
+
+            zCParser.getParser(process).SetInstance(zString.Create(process, "SELF"), this.Address);
+            
+
+            zCParser.CallFunc(process, new CallValue[] {
+                    new IntArg(zCParser.getParser(process).Address),
+                    new IntArg(id)
+                });
+        }
+
+        public void Output(String output)
+        {
+            if (this.Address == 0)
+                return;
+
+            Process process = Process.ThisProcess();
+
+            zString str = zString.Create(process, "guc_string_helper");
+            zCPar_Symbol sym = zCParser.getParser(process).GetSymbol(str);
+            str.Dispose();
+
+            str = zString.Create(process, output);
+            sym.SetValue(str, 0);
+            str.Dispose();
+
+
+            str = zString.Create(process, "MOD_Output");
+            int id = zCParser.getParser(process).GetIndex(str);
+            str.Dispose();
+
+            zCParser.getParser(process).SetInstance(zString.Create(process, "SELF"), this.Address);
+            zCParser.getParser(process).SetInstance(zString.Create(process, "OTHER"), this.Address);
+
+            zCParser.CallFunc(process, new CallValue[] {
+                    new IntArg(zCParser.getParser(process).Address),
+                    new IntArg(id)
+                });
+        }
+
+        public void OutputSVM_Overlay(String output)
+        {
+            if (this.Address == 0)
+                return;
+
+            Process process = Process.ThisProcess();
+
+            zString str = zString.Create(process, "guc_string_helper");
+            zCPar_Symbol sym = zCParser.getParser(process).GetSymbol(str);
+            str.Dispose();
+
+            str = zString.Create(process, output);
+            sym.SetValue(str, 0);
+            str.Dispose();
+
+
+            str = zString.Create(process, "MOD_OutputSVM_Overlay");
+            int id = zCParser.getParser(process).GetIndex(str);
+            str.Dispose();
+
+            zCParser.getParser(process).SetInstance(zString.Create(process, "SELF"), this.Address);
+            zCParser.getParser(process).SetInstance(zString.Create(process, "OTHER"), this.Address);
+
+            zCParser.CallFunc(process, new CallValue[] {
+                    new IntArg(zCParser.getParser(process).Address),
+                    new IntArg(id)
+                });
+        }
+
+        public void setWeaponMode(int wpMode)
+        {
+            int oldWeaponMode = this.weaponMode;
+
+            this.weaponMode = wpMode;
+
+            if (this.Address != 0)
+            {
+                Process process = Process.ThisProcess();
+                oCNpc npc = new oCNpc(process, this.Address);
+
+                npc.SetWeaponMode(this.weaponMode);
+                npc.SetWeaponMode2(this.weaponMode);
+
+                if (this.weaponMode == 7 && oldWeaponMode != 7)
+                {
+                    npc.UnreadySpell();
+                    npc.ReadySpell(ActiveSpell.ItemInstance.Spell.ID, ActiveSpell.ItemInstance.Spell.ID);
+                }
+                else if (oldWeaponMode == 7 && this.weaponMode != 7)
+                {
+                    npc.UnreadySpell();
+                }
+
+                
+            }
+        }
+
+
+        public void setScale(Vec3f scale)
+        {
+            this.Scale = scale;
+
+            if (this.Address != 0)
+            {
+                Process process = Process.ThisProcess();
+                oCNpc npc = new oCNpc(process, this.Address);
+
+                zVec3 v = zVec3.Create(process);
+                v.X = scale.X;
+                v.Y = scale.Y;
+                v.Z = scale.Z;
+                npc.SetModelScale(v);
+                v.Dispose();
+            }
+        }
+
+        public void setFatness(float fatness)
+        {
+            this.Fatness = fatness;
+
+            if (this.Address != 0)
+            {
+                Process process = Process.ThisProcess();
+                oCNpc npc = new oCNpc(process, this.Address);
+
+                npc.SetFatness(this.Fatness);
+            }
         }
 
 
@@ -216,14 +416,14 @@ namespace GUC.WorldObjects.Character
                 oCNpc npc = new oCNpc(process, this.Address);
                 if (Armor == null)
                 {
-                    zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "UnequipArmor: ", 0, "Client.cs", 0);
+                    hNpc.blockSendUnEquip = true;
                     npc.UnequipItem(npc.GetEquippedArmor());
                 }
                 else
                 {
                     if (Armor.Address == 0)
                         throw new Exception("Armor Adress can't be null if player using it is spawned!");
-                    zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "EquipArmor: ", 0, "Client.cs", 0);
+                    hNpc.blockSendEquip = true;
                     npc.EquipArmor(new oCItem(process, Armor.Address));
                 }
             }
@@ -267,30 +467,19 @@ namespace GUC.WorldObjects.Character
                 oCNpc npc = new oCNpc(process, this.Address);
                 if (RangeWeapon == null)
                 {
-                    zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Unequip RangeWeapon: ", 0, "Client.cs", 0);
+                    hNpc.blockSendUnEquip = true;
                     npc.UnequipItem(npc.GetEquippedRangedWeapon());
                 }
                 else
                 {
                     if (RangeWeapon.Address == 0)
                         throw new Exception("RangeWeapon Adress can't be null if player using it is spawned!");
-                    zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Equip RangeWeapon: ", 0, "Client.cs", 0);
+                    hNpc.blockSendEquip = true;
                     npc.EquipFarWeapon(new oCItem(process, RangeWeapon.Address));
                 }
             }
         }
 
-        public void setWeaponMode(int weaponMode)
-        {
-            WeaponMode = weaponMode;
-
-            if (this.Address != 0)
-            {
-                Process process = Process.ThisProcess();
-                oCNpc npc = new oCNpc(process, this.Address);
-                npc.SetWeaponMode(weaponMode);
-            }
-        }
 
         public void setSlotItem(int slot, Item item)
         {

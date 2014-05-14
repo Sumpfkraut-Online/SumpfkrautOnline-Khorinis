@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Windows.Forms;
 using System.IO;
 using Gothic.zClasses;
 using WinApi;
@@ -17,6 +16,7 @@ using GUC.Hooks;
 using GUC.WorldObjects.Character;
 using GUC.Network.Messages.Connection;
 using Gothic.zStruct;
+using GUC.Tests;
 
 namespace GUC
 {
@@ -32,6 +32,8 @@ namespace GUC
         public static HookInfos removeItemUsed;
 
         public static HookInfos IsUnconsciousHook;
+
+        public static HookInfos ParSymbol_GetValueHook;
 
         public static Int32 InjectedMain(String message)
         {
@@ -80,7 +82,13 @@ namespace GUC
 
         public static void addHooks(Process process)
         {
-            
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(Externals).GetMethod("AddExternals"), (int)0x006D4780, (int)7, 1);
+
+
+            //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("AniCtrl_InitAnimations"), (int)oCAniCtrl_Human.FuncOffsets.InitAnimations, (int)oCAniCtrl_Human.HookSize.InitAnimations, 0);
+
+
+
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hGame).GetMethod("ExitGame"), (int)CGameManager.FuncOffsets.Done, (int)CGameManager.HookSize.Done, 0);
 
 
@@ -120,8 +128,11 @@ namespace GUC
 
             removeItemUsed = process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hItemContainer).GetMethod("oCItemContainer_Remove"), (int)oCNpcInventory.FuncOffsets.Remove_Int_Int, (int)oCNpcInventory.HookSize.Remove_Int_Int, 2);//Will be called when using item!
 
-            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("oCNpc_UseItem"), (int)oCNpc.FuncOffsets.UseItem, (int)oCNpc.HookSize.UseItem, 1);
-            //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("oCNpc_EV_UseItem"), (int)oCNpc.FuncOffsets.EV_UseItemToState, (int)oCNpc.HookSize.EV_UseItemToState, 1);
+            //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("oCNpc_UseItem"), (int)oCNpc.FuncOffsets.UseItem, (int)oCNpc.HookSize.UseItem, 1);
+            //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("oCNpc_EV_UseItemToState"), (int)oCNpc.FuncOffsets.EV_UseItemToState, (int)oCNpc.HookSize.EV_UseItemToState, 1);
+            //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("oCNpc_EV_UseItem"), (int)oCNpc.FuncOffsets.EV_UseItem, (int)oCNpc.HookSize.EV_UseItem, 1);
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("oCNpc_EV_UseItemToState"), (int)oCNpc.FuncOffsets.EV_UseItemToState, (int)oCNpc.HookSize.EV_UseItemToState, 1);
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("oCNpc_EV_UseItemToState_CALLFUNC"), (int)oCNpc.FuncOffsets.EV_UseItemToState + 0x48D, 6, 0);
             
             //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("EV_CreateInteractItem"), (int)0x00754890, (int)7, 1);
             //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("EV_CreateInteractItem"), (int)0x007546F0, (int)5, 1);
@@ -130,6 +141,30 @@ namespace GUC
 
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hItemContainer).GetMethod("StealContainer_setOwner"), (int)oCStealContainer.FuncOffsets.SetOwner, (int)oCStealContainer.HookSizes.SetOwner, 1);
             //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hItemContainer).GetMethod("StealContainer_setOwner"), (int)0x0070B6CE, (int)5, 0);
+
+
+
+            //Spells:
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hSpell).GetMethod("InitByScript_End"), 0x00484550 + 0x290, 7, 0);
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hSpell).GetMethod("InitByScript"), 0x00484550, 7, 1);
+            //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hSpell).GetMethod("Constructor"), 0x00483DD0, 7, 1);
+
+
+            process.FillWithNull(0x00484150, 0x004842DE);
+            process.Write(new byte[]{0xC2, 0x08, 0x00}, 0x00484150 + 0x18E - 3);
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hSpell).GetMethod("GetSpellInstanceName"), 0x00484150, 7, 2);
+
+            process.FillWithNull(0x004864B0, 0x0048661F);
+            process.Write(new byte[] { 0xC2, 0x04, 0x00 }, 0x0048661F - 3);
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hSpell).GetMethod("GetName"), 0x004864B0, 7, 1);
+
+            ParSymbol_GetValueHook = process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hParser).GetMethod("hook_Symbol_GetValue"), 0x007A2040, 7, 2);
+
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hSpell).GetMethod("MagBook_Spell_Cast"), 0x004767A0, 7, 0);
+
+
+
+
 
 
             process.Write(new byte[] { 0x33, 0xC0, 0xC2, 0x08, 0x00 }, removeItemFromList.oldFuncInNewFunc.ToInt32());
@@ -181,22 +216,28 @@ namespace GUC
         public static Dictionary<int, String> VobVisual = new Dictionary<int, string>();
         public static Int32 setVisual_SaveMode(String message)
         {
-            int address = Convert.ToInt32(message);
-            Process process = Process.ThisProcess();
-            zString str = new zString(process, process.ReadInt(address + 4));
-            String stri = str.Value.Trim();
-
-
-            if (stri.Length != 0)
+            try
             {
-                int addr = process.ReadInt(address);
-                if (VobVisual.ContainsKey(addr))
-                    VobVisual[addr] = stri;
-                else
-                    VobVisual.Add(addr, stri);
+                int address = Convert.ToInt32(message);
+                Process process = Process.ThisProcess();
+                zString str = new zString(process, process.ReadInt(address + 4));
+                String stri = str.Value.Trim();
+
+
+                if (stri.Length != 0)
+                {
+                    int addr = process.ReadInt(address);
+                    if (VobVisual.ContainsKey(addr))
+                        VobVisual[addr] = stri;
+                    else
+                        VobVisual.Add(addr, stri);
+                }
+
             }
-
-
+            catch (Exception ex)
+            {
+                zERROR.GetZErr(Process.ThisProcess()).Report(4, 'G', ex.ToString(), 0, "Program.cs", 0);
+            }
             return 0;
         }
         static bool saveItemInstances = false;
@@ -205,11 +246,17 @@ namespace GUC
         public static Int32 hook_Render_SaveMode(String message)
         {
             Process process = Process.ThisProcess();
-            InputHooked.Update();
 
-            if (InputHooked.IsPressed((int)VirtualKeys.O))
+            
+            InputHooked.Update(process);
+
+
+            
+            
+            if (InputHooked.IsPressed((int)DIK_Keys.DIK_O))
             {
-                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', new oCMobLockable(process, oCNpc.Player(process).FocusVob.Address).keyInstance.Value + ";" + new oCMobLockable(process, oCNpc.Player(process).FocusVob.Address).PickLockStr.Value, 0, "Program.cs", 0);
+                InputHooked.receivers.Add(new Keytest());
+                //zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', new oCMobLockable(process, oCNpc.Player(process).FocusVob.Address).keyInstance.Value + ";" + new oCMobLockable(process, oCNpc.Player(process).FocusVob.Address).PickLockStr.Value, 0, "Program.cs", 0);
                 //new oCMobInter(process, oCNpc.Player(process).FocusVob.Address).StartInteraction(oCNpc.Player(process));
                 //oCGame.Game(process).DiveBar.SetPos(-0x2000, -0x2000);
                 first = false;
@@ -217,7 +264,7 @@ namespace GUC
             }
 
 
-            if (InputHooked.IsPressed((int)VirtualKeys.F1) && !saveItemInstances)
+            if (InputHooked.IsPressed((int)DIK_Keys.DIK_F1) && !saveItemInstances)
             {
                 StringBuilder sb = new StringBuilder();
                 zCArray<zCPar_Symbol> symbolArray = zCParser.getParser(process).Table;
@@ -242,8 +289,9 @@ namespace GUC
                             muni = munit.ObjectName.Value.Trim().ToUpper();
                         }
 
-                        sb.Append("ItemInstances.Add(\"" + symbolName + "\", new ItemInstance(");
+                        sb.Append("new ItemInstance(");
                         //DamageType dmgType, int totalDamage, int range,
+                        sb.Append("\"" + symbolName + "\", ");
                         sb.Append("\"" + item.Name + "\", ");
                         sb.Append("\"" + item.ScemeName + "\", ");
                         sb.Append("new int[]{" + item.Protection[0] + ", " + item.Protection[1] + ", " + item.Protection[2] + ", " + item.Protection[3] + ", " + item.Protection[4] + ", " + item.Protection[5] + ", " + item.Protection[6] + ", " + item.Protection[7] + "},");
@@ -261,10 +309,10 @@ namespace GUC
                         sb.Append(item.VisualSkin + ", ");
                         sb.Append("(MaterialTypes)(" + item.Material + "), ");
                         if(muni != null)
-                            sb.Append("ItemInstances[\"" + muni + "\"] ");
+                            sb.Append("ItemInstance.getItemInstance(\"" + muni + "\") ");
                         else
                             sb.Append("null");
-                        sb.Append("));\r\n");
+                        sb.Append(");\r\n");
                     }
                 }
 
@@ -274,7 +322,7 @@ namespace GUC
                 saveItemInstances = true;
             }
 
-            if (InputHooked.IsPressed((int)VirtualKeys.F2) && !saveMapVobs)
+            if (InputHooked.IsPressed((int)DIK_Keys.DIK_F2) && !saveMapVobs)
             {
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine("MobInter mi = null;");
@@ -301,7 +349,7 @@ namespace GUC
                             //sb.Append("" + mi.Rewind.ToString().ToLower() + ", ");
                             //sb.Append("" + mi.StateNum + ", ");
                             if (mi.UseWithItem.Address != 0 && mi.UseWithItem.getCheckedValue() != null)
-                                sb.Append("DefaultItems.ItemInstances[\"" + mi.UseWithItem.Value.Trim().ToUpper() + "\"], ");
+                                sb.Append("ItemInstance.getItemInstance(\"" + mi.UseWithItem.Value.Trim().ToUpper() + "\"), ");
                             else
                                 sb.Append("null, ");
 
@@ -321,7 +369,7 @@ namespace GUC
                             sb.Append("\"" + mi.Name.Value.Trim() + "\", ");
                             sb.Append("" + mi.isLocked.ToString().ToLower() + ", ");
                             if (mi.keyInstance.Address != 0 && mi.keyInstance.getCheckedValue() != null)
-                                sb.Append("DefaultItems.ItemInstances[\"" + mi.keyInstance.Value.Trim().ToUpper() + "\"], ");
+                                sb.Append("ItemInstance.getItemInstance(\"" + mi.keyInstance.Value.Trim().ToUpper() + "\"), ");
                             else
                                 sb.Append("null, ");
 
@@ -331,7 +379,7 @@ namespace GUC
                                 sb.Append("null, ");
 
                             if (mi.UseWithItem.Address != 0 && mi.UseWithItem.getCheckedValue() != null)
-                                sb.Append("DefaultItems.ItemInstances[\"" + mi.UseWithItem.Value.Trim().ToUpper() + "\"], ");
+                                sb.Append("ItemInstance.getItemInstance(\"" + mi.UseWithItem.Value.Trim().ToUpper() + "\"), ");
                             else
                                 sb.Append("null, ");
 
@@ -356,7 +404,7 @@ namespace GUC
                             for (int i = 0; i < itemList.Count; i++)
                             {
                                 oCItem item = itemList[i];
-                                sb.Append("DefaultItems.ItemInstances[\"" + item.ObjectName.Value.Trim().ToUpper() + "\"]");
+                                sb.Append("ItemInstance.getItemInstance(\"" + item.ObjectName.Value.Trim().ToUpper() + "\")");
                                 if (i + 1 < itemList.Count)
                                     sb.Append(", ");
                             }
@@ -374,7 +422,7 @@ namespace GUC
 
                             sb.Append("" + mi.isLocked.ToString().ToLower() + ", ");
                             if (mi.keyInstance.Address != 0 && mi.keyInstance.getCheckedValue() != null)
-                                sb.Append("DefaultItems.ItemInstances[\"" + mi.keyInstance.Value.Trim().ToUpper() + "\"], ");
+                                sb.Append("ItemInstance.getItemInstance(\"" + mi.keyInstance.Value.Trim().ToUpper() + "\"), ");
                             else
                                 sb.Append("null, ");
 
@@ -384,7 +432,7 @@ namespace GUC
                                 sb.Append("null, ");
 
                             if (mi.UseWithItem.Address != 0 && mi.UseWithItem.getCheckedValue() != null)
-                                sb.Append("DefaultItems.ItemInstances[\"" + mi.UseWithItem.Value.Trim().ToUpper() + "\"], ");
+                                sb.Append("ItemInstance.getItemInstance(\"" + mi.UseWithItem.Value.Trim().ToUpper() + "\"), ");
                             else
                                 sb.Append("null, ");
 
@@ -410,7 +458,7 @@ namespace GUC
             }
 
 
-            if (InputHooked.IsPressed((int)VirtualKeys.F3) && !saveMapItems)
+            if (InputHooked.IsPressed((int)DIK_Keys.DIK_F3) && !saveMapItems)
             {
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine("Item mi = null;");
@@ -427,7 +475,7 @@ namespace GUC
                             oCItem mi = new oCItem(process, vob.Address);
 
                             sb.Append("mi = new Item(");
-                            sb.Append("DefaultItems.ItemInstances[\"" + mi.ObjectName.Value.Trim().ToUpper() + "\"], ");
+                            sb.Append("ItemInstance.getItemInstance(\"" + mi.ObjectName.Value.Trim().ToUpper() + "\"), ");
                             sb.Append("" + mi.Amount + ");\r\n");
 
                         }
@@ -457,7 +505,7 @@ namespace GUC
                 Process process = Process.ThisProcess();
 
 
-                InputHooked.Update();
+                InputHooked.Update(process);
 
                 
                 _state.Init();

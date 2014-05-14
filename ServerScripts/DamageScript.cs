@@ -12,45 +12,49 @@ using GUC.Enumeration;
 using GUC.Server.Scripting.GUI;
 using GUC.Types;
 
+using GUC.Server.Scripts.AI;
+using GUC.Server.Scripts.AI.Enumeration;
+
 namespace GUC.Server.Scripts
 {
-	public class DamageScript
+    /// <summary>
+    /// The npc ai needs this class.
+    /// But you can change the damage-function.
+    /// </summary>
+	public static class DamageScript
 	{
-		public void Init()
+		public static void Init()
 		{
 			Console.WriteLine("############## Initalise DamageScript #####################");
 
 			NPCProto.OnDamages += new Events.PlayerDamageEventHandler(OnDamage);
 		}
 
-		public int getProtection(NPCProto victim, DamageType damageMode)
-		{
-			int protection = 0;
-			if(victim.EquippedArmor != null) {
-				protection += victim.EquippedArmor.getProtection(damageMode);
-			}
-			return 0;
-		}
+		
+        public delegate void NPCDamgeHandler(NPCProto victim, NPCProto attacker, int damage, bool dropUnconscious, bool dropDead);
+        public static event NPCDamgeHandler Damages;
 
-		public void OnDamage(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, NPCProto attacker, int weaponMode, int spellID, Item weapon) {
+		public static void OnDamage(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, NPCProto attacker, int weaponMode, Spell spell, Item weapon, float fallDownDistanceY) {
 			if(victim.getUserObjects("IMMORTAL") != null && (bool)victim.getUserObjects("IMMORTAL"))//Victim is immortal!
 				return;
 			if(attacker != null && attacker.getUserObjects("FRIENDS") != null && ((List<NPCProto>)attacker.getUserObjects("FRIENDS")).Contains(victim))//Victim is a friend!
 				return;
             
+           
+
 			int damage = 0;
 
-			Console.WriteLine("OnDamage: "+damageMode+" | "+weaponMode+" | "+spellID+" | "+weapon+" | "+attacker);
+			Console.WriteLine("OnDamage: "+damageMode+" | "+weaponMode+" | "+spell+" | "+weapon+" | "+attacker);
 
 			if(damageMode == DamageType.DAM_FALL) {
-				damage = victim.HP;
+                damage = (int)(fallDownDistanceY-500)/100 * 20;
 			}
 
 			if(attacker != null) {
 				if(weapon == null && weaponMode == 1) {//1 is fist!, 2 => 1h
-					damage = attacker.Strength - getProtection(victim, damageMode);
+					damage = attacker.Strength - victim.getProtection(damageMode);
 				}else if(weapon != null) {
-					damage = attacker.Strength + weapon.TotalDamage - getProtection(victim, weapon.DamageType);
+					damage = attacker.Strength + weapon.TotalDamage - victim.getProtection(weapon.DamageType);
 				}
 			}
 
@@ -58,7 +62,7 @@ namespace GUC.Server.Scripts
 
 			bool toUnconscious = false;
 			bool canKill = true;
-			if(attacker != null && victim.HP != 1) {
+			if(attacker != null && victim.HP - damage <= 1) {
 				if(damageMode == DamageType.DAM_BLUNT) {
 					canKill = false;
 				}
@@ -67,13 +71,31 @@ namespace GUC.Server.Scripts
 					toUnconscious = true;
 			}
 
+            if (victim.getGuild() > Guilds.HUM_SPERATOR)
+            {
+                toUnconscious = false;
+            }
+
             if (toUnconscious && !victim.isUnconscious)
             {
+                damage = victim.HP - 1;
 				victim.dropUnconscious(0.0f);
+
+                if (Damages != null)
+                    Damages(victim, attacker, damage, true, false);
+
 			}else if(!canKill && victim.HP - damage <= 1) {
 				victim.HP = 1;
+
+                if (Damages != null)
+                    Damages(victim, attacker, damage, false, false);
 			}else{
 				victim.HP -= damage;
+
+                if (Damages != null && victim.HP <= 0)
+                    Damages(victim, attacker, damage, false, true);
+                else if(Damages != null)
+                    Damages(victim, attacker, damage, true, false);
 			}
 		}
 

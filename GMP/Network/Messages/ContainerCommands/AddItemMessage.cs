@@ -30,10 +30,14 @@ namespace GUC.Network.Messages.ContainerCommands
             }
             else
             {
-                item = new Item();
-                item.Read(stream);
-                sWorld.addVob(item);
+                //item = new Item();
+                //item.Read(stream);
+                //sWorld.addVob(item);
+                int itemID = 0;
+                stream.Read(out itemID);
+                item = (Item)sWorld.VobDict[itemID];
             }
+
             
 
             

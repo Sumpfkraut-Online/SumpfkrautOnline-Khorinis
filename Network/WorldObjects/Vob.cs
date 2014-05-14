@@ -17,7 +17,6 @@ namespace GUC.WorldObjects
             Visual = 1 << 0,
             CDDyn = Visual << 1,
             CDStatic = CDDyn << 1,
-
             VobEnd = CDStatic,
 
             //Vob=>NPCProto:
@@ -60,7 +59,7 @@ namespace GUC.WorldObjects
         #endregion
 
         protected String visual = "HUMANS.MDS";
-        public String Visual { get { return visual; } set { visual = value; } }
+        public String Visual { get { return visual; } set { visual = value.ToUpper(); } }
 
         public int ID { get { return this._id; } set { if (_id != 0) throw new Exception("ID can be only set if 0"); _id = value; } }
 
@@ -84,6 +83,8 @@ namespace GUC.WorldObjects
             }
         }
 
+
+        
         #region Position
         protected float[] pos = null;
         protected float[] dir = new float[3] { 0, 0, 1};

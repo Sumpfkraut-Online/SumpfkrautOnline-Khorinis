@@ -6,12 +6,218 @@ using RakNet;
 using GUC.Enumeration;
 using GUC.Types;
 using GUC.WorldObjects;
+using GUC.Network;
 
 namespace GUC.Server.Scripting.Objects.Character
 {
     public class NPCProto : Vob
     {
+        #region constants
+        public const String BODYMESH_MALE = "hum_body_Naked0";
+        public const String BODYMESH_FEMALE = "Hum_Body_Babe0";
+
+        public const int BODYTEX_MALE_PALE = 0;
+        public const int BODYTEX_MALE_NORMAL = 1;
+        public const int BODYTEX_MALE_LATINO = 2;
+        public const int BODYTEX_MALE_BLACK = 3;
+        public const int BODYTEX_MALE_PLAYER = 8;
+        public const int BODYTEX_MALE_TAETOWIERT = 10;
         
+
+        public const int BODYTEX_FEMALE_PALE = 4;
+        public const int BODYTEX_FEMALE_NORMAL = 5;
+        public const int BODYTEX_FEMALE_LATINO = 6;
+        public const int BODYTEX_FEMALE_BLACK = 7;
+        public const int BODYTEX_FEMALE_FELLKRAGEN = 11;
+        public const int BODYTEX_FEMALE_SCHWARZKLEIN = 12;
+
+
+        #region Gesichter
+        // ------- Gesichter für Männer ------
+        public const int Face_N_Gomez = 0;
+        public const int Face_N_Scar = 1;
+        public const int Face_N_Raven = 2;
+        public const int Face_N_Bullit = 3;	//zu lieb!
+        public const int Face_B_Thorus = 4;
+        public const int Face_N_Corristo = 5;
+        public const int Face_N_Milten = 6;
+        public const int Face_N_Bloodwyn = 7;	//zu lieb!
+        public const int Face_L_Scatty = 8;
+        public const int Face_N_YBerion = 9;
+        public const int Face_N_CoolPock = 10;
+        public const int Face_B_CorAngar = 11;
+        public const int Face_B_Saturas = 12;
+        public const int Face_N_Xardas = 13;
+        public const int Face_N_Lares = 14;
+        public const int Face_L_Ratford = 15;
+        public const int Face_N_Drax = 16;	//Buster
+        public const int Face_B_Gorn = 17;
+        public const int Face_N_Player = 18;
+        public const int Face_P_Lester = 19;
+        public const int Face_N_Lee = 20;
+        public const int Face_N_Torlof = 21;
+        public const int Face_N_Mud = 22;
+        public const int Face_N_Ricelord = 23;
+        public const int Face_N_Horatio = 24;
+        public const int Face_N_Richter = 25;
+        public const int Face_N_Cipher_neu = 26;
+        public const int Face_N_Homer = 27;	//Headmesh thief
+        public const int Face_B_Cavalorn = 28;
+        public const int Face_L_Ian = 29;
+        public const int Face_L_Diego = 30;
+        public const int Face_N_MadPsi = 31;
+        public const int Face_N_Bartholo = 32;
+        public const int Face_N_Snaf = 33;
+        public const int Face_N_Mordrag = 34;
+        public const int Face_N_Lefty = 35;
+        public const int Face_N_Wolf = 36;
+        public const int Face_N_Fingers = 37;
+        public const int Face_N_Whistler = 38;
+        public const int Face_P_Gilbert = 39;
+        public const int Face_L_Jackal = 40;
+
+        //Pale
+        public const int Face_P_ToughBald = 41;
+        public const int Face_P_Tough_Drago = 42;
+        public const int Face_P_Tough_Torrez = 43;
+        public const int Face_P_Tough_Rodriguez = 44;
+        public const int Face_P_ToughBald_Nek = 45;
+        public const int Face_P_NormalBald = 46;
+        public const int Face_P_Normal01 = 47;
+        public const int Face_P_Normal02 = 48;
+        public const int Face_P_Normal_Fletcher = 49;
+        public const int Face_P_Normal03 = 50;
+        public const int Face_P_NormalBart01 = 51;
+        public const int Face_P_NormalBart_Cronos = 52;
+        public const int Face_P_NormalBart_Nefarius = 53;
+        public const int Face_P_NormalBart_Riordian = 54;
+        public const int Face_P_OldMan_Gravo = 55;
+        public const int Face_P_Weak_Cutter = 56;
+        public const int Face_P_Weak_Ulf_Wohlers = 57;
+
+        //Normal
+        public const int Face_N_Important_Arto = 58;
+        public const int Face_N_ImportantGrey = 59;
+        public const int Face_N_ImportantOld = 60;
+        public const int Face_N_Tough_Lee_ähnlich = 61;
+        public const int Face_N_Tough_Skip = 62;
+        public const int Face_N_ToughBart01 = 63;
+        public const int Face_N_Tough_Okyl = 64;
+        public const int Face_N_Normal01 = 65;
+        public const int Face_N_Normal_Cord = 66;
+        public const int Face_N_Normal_Olli_Kahn = 67;
+        public const int Face_N_Normal02 = 68;
+        public const int Face_N_Normal_Spassvogel = 69;
+        public const int Face_N_Normal03 = 70;
+        public const int Face_N_Normal04 = 71;
+        public const int Face_N_Normal05 = 72;
+        public const int Face_N_Normal_Stone = 73;
+        public const int Face_N_Normal06 = 74;
+        public const int Face_N_Normal_Erpresser = 75;
+        public const int Face_N_Normal07 = 76;
+        public const int Face_N_Normal_Blade = 77;
+        public const int Face_N_Normal08 = 78;
+        public const int Face_N_Normal14 = 79;
+        public const int Face_N_Normal_Sly = 80;
+        public const int Face_N_Normal16 = 81;
+        public const int Face_N_Normal17 = 82;
+        public const int Face_N_Normal18 = 83;
+        public const int Face_N_Normal19 = 84;
+        public const int Face_N_Normal20 = 85;
+        public const int Face_N_NormalBart01 = 86;
+        public const int Face_N_NormalBart02 = 87;
+        public const int Face_N_NormalBart03 = 88;
+        public const int Face_N_NormalBart04 = 89;
+        public const int Face_N_NormalBart05 = 90;
+        public const int Face_N_NormalBart06 = 91;
+        public const int Face_N_NormalBart_Senyan = 92;
+        public const int Face_N_NormalBart08 = 93;
+        public const int Face_N_NormalBart09 = 94;
+        public const int Face_N_NormalBart10 = 95;
+        public const int Face_N_NormalBart11 = 96;
+        public const int Face_N_NormalBart12 = 97;
+        public const int Face_N_NormalBart_Dexter = 98;
+        public const int Face_N_NormalBart_Graham = 99;
+        public const int Face_N_NormalBart_Dusty = 100;
+        public const int Face_N_NormalBart16 = 101;
+        public const int Face_N_NormalBart17 = 102;
+        public const int Face_N_NormalBart_Huno = 103;
+        public const int Face_N_NormalBart_Grim = 104;
+        public const int Face_N_NormalBart20 = 105;
+        public const int Face_N_NormalBart21 = 106;
+        public const int Face_N_NormalBart22 = 107;
+        public const int Face_N_OldBald_Jeremiah = 108;
+        public const int Face_N_Weak_Ulbert = 109;
+        public const int Face_N_Weak_BaalNetbek = 110;
+        public const int Face_N_Weak_Herek = 111;
+        public const int Face_N_Weak04 = 112;
+        public const int Face_N_Weak05 = 113;
+        public const int Face_N_Weak_Orry = 114;
+        public const int Face_N_Weak_Asghan = 115;
+        public const int Face_N_Weak_Markus_Kark = 116;
+        public const int Face_N_Weak_Cipher_alt = 117;
+        public const int Face_N_NormalBart_Swiney = 118;
+        public const int Face_N_Weak12 = 119;
+
+        //Latinos
+        public const int Face_L_ToughBald01 = 120;
+        public const int Face_L_Tough01 = 121;
+        public const int Face_L_Tough02 = 122;
+        public const int Face_L_Tough_Santino = 123;
+        public const int Face_L_ToughBart_Quentin = 124;
+        public const int Face_L_Normal_GorNaBar = 125;
+        public const int Face_L_NormalBart01 = 126;
+        public const int Face_L_NormalBart02 = 127;
+        public const int Face_L_NormalBart_Rufus = 128;
+
+        //Black
+        public const int Face_B_ToughBald = 129;
+        public const int Face_B_Tough_Pacho = 130;
+        public const int Face_B_Tough_Silas = 131;
+        public const int Face_B_Normal01 = 132;
+        public const int Face_B_Normal_Kirgo = 133;
+        public const int Face_B_Normal_Sharky = 134;
+        public const int Face_B_Normal_Orik = 135;
+        public const int Face_B_Normal_Kharim = 136;
+
+        // ------ Gesichter für Frauen ------
+
+        public const int FaceBabe_N_BlackHair = 137;
+        public const int FaceBabe_N_Blondie = 138;
+        public const int FaceBabe_N_BlondTattoo = 139;
+        public const int FaceBabe_N_PinkHair = 140;
+        public const int FaceBabe_L_Charlotte = 141;
+        public const int FaceBabe_B_RedLocks = 142;
+        public const int FaceBabe_N_HairAndCloth = 143;
+        //
+        public const int FaceBabe_N_WhiteCloth = 144;
+        public const int FaceBabe_N_GreyCloth = 145;
+        public const int FaceBabe_N_Brown = 146;
+        public const int FaceBabe_N_VlkBlonde = 147;
+        public const int FaceBabe_N_BauBlonde = 148;
+        public const int FaceBabe_N_YoungBlonde = 149;
+        public const int FaceBabe_N_OldBlonde = 150;
+        public const int FaceBabe_P_MidBlonde = 151;
+        public const int FaceBabe_N_MidBauBlonde = 152;
+        public const int FaceBabe_N_OldBrown = 153;
+        public const int FaceBabe_N_Lilo = 154;
+        public const int FaceBabe_N_Hure = 155;
+        public const int FaceBabe_N_Anne = 156;
+        public const int FaceBabe_B_RedLocks2 = 157;
+        public const int FaceBabe_L_Charlotte2 = 158;
+
+
+        //-----------------ADD ON---------------------------------
+        public const int Face_N_Fortuno = 159;
+
+        //Piraten
+        public const int Face_P_Greg = 160;
+        public const int Face_N_Pirat01 = 161;
+        public const int Face_N_ZombieMud = 162;
+        #endregion
+
+        #endregion
+
 
         internal NPCProto(GUC.WorldObjects.Character.NPCProto proto)
             : base(proto)
@@ -23,7 +229,12 @@ namespace GUC.Server.Scripting.Objects.Character
 
 
         #region Fields
+
         public String Name { get { return proto.Name; } set { setName(value); } }
+
+        public Vec3f Scale { get { return proto.Scale; } set { setScale(value); } }
+        
+
 
         public int Strength {
             get { return proto.Attributes[(byte)NPCAttributeFlags.ATR_STRENGTH]; }
@@ -60,35 +271,7 @@ namespace GUC.Server.Scripting.Objects.Character
             set { setAttribute(NPCAttributeFlags.ATR_MANA_MAX, value); }
         }
 
-        /// <summary>
-        /// Returns an Integer with the callback ID!
-        /// </summary>
-        /// <returns></returns>
-        public int CanSee(Vob vob)
-        {
-            Player plToCheck = null;
-            if (this is NPC)
-            {
-                if(((WorldObjects.Character.NPC)proto).NpcController == null)
-                    return -1;
-            }else{
-                plToCheck = (Player)this;
-            }
-
-            int callBackID = sWorld.getNewCallBackID();
-
-            BitStream stream = Program.server.sendBitStream;
-            stream.Reset();
-            stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.CallbackNPCCanSee);
-            stream.Write(callBackID);
-            stream.Write(proto.ID);
-            stream.Write(vob.ID);
-            using(RakNet.RakNetGUID guid = new RakNetGUID(plToCheck.proto.Guid))
-                Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
-
-            return callBackID;
-        }
+        
 
         public Item EquippedArmor { 
             get {
@@ -117,7 +300,50 @@ namespace GUC.Server.Scripting.Objects.Character
             }
         }
 
-        public Item getSlotItem( int index ){
+        
+
+        public int WeaponMode { get { return proto.WeaponMode; } set { setWeaponMode(value); } }
+
+
+        
+        #endregion
+
+        #region Methods
+        /// <summary>
+        /// Returns an Integer with the callback ID!
+        /// </summary>
+        /// <returns></returns>
+        public int CanSee(Vob vob)
+        {
+            Player plToCheck = null;
+            if (this is NPC)
+            {
+                if (((WorldObjects.Character.NPC)proto).NpcController == null)
+                    return -1;
+            }
+            else
+            {
+                plToCheck = (Player)this;
+            }
+
+            int callBackID = sWorld.getNewCallBackID();
+
+            BitStream stream = Program.server.sendBitStream;
+            stream.Reset();
+            stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
+            stream.Write((byte)NetworkIDS.CallbackNPCCanSee);
+            stream.Write(callBackID);
+            stream.Write(proto.ID);
+            stream.Write(vob.ID);
+            using (RakNet.RakNetGUID guid = new RakNetGUID(plToCheck.proto.Guid))
+                Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+
+            return callBackID;
+        }
+
+
+        public Item getSlotItem(int index)
+        {
             if (index >= 9)
                 throw new ArgumentException("Index can't be greater than 8!");
             if (proto.Slots[index] == null)
@@ -125,13 +351,128 @@ namespace GUC.Server.Scripting.Objects.Character
             return proto.Slots[index].ScriptingProto;
         }
 
-        public int WeaponMode { get { return proto.WeaponMode; } }
+        public void setWeaponMode(int weaponMode)
+        {
+            proto.WeaponMode = weaponMode;
+
+            if (!created)
+                return;
+
+            BitStream stream = Program.server.sendBitStream;
+            stream.Reset();
+            stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
+            stream.Write((byte)NetworkIDS.NPCProtoSetWeaponMode);
+            stream.Write(vob.ID);
+            stream.Write(proto.WeaponMode);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+        }
+
+        public int getProtection(DamageType index)
+        {
+            if (EquippedArmor != null)
+            {
+                return EquippedArmor.getProtection(index.getDamageTypeIndex());
+            }
+            else
+            {
+                return proto.protection[(int)index.getDamageTypeIndex()];
+            }
+        }
+
+        public int getProtection(DamageTypeIndex index)
+        {
+            if (EquippedArmor != null)
+            {
+                return EquippedArmor.getProtection(index);
+            }
+            else
+            {
+                return proto.protection[(int)index];
+            }
+        }
+
+        public void setProtection(DamageTypeIndex index, int value)
+        {
+            proto.protection[(int)index] = value;
+        }
+
+        public int getTotalDamage()
+        {
+            if (EquippedWeapon != null)
+                return EquippedWeapon.TotalDamage;
+            else if (EquippedRangeWeapon != null)
+                return EquippedRangeWeapon.TotalDamage;
+            else
+                return proto.totalDamage;
+        }
+
+        public DamageType getDamageType()
+        {
+            if (EquippedWeapon != null)
+                return EquippedWeapon.DamageType;
+            else if (EquippedRangeWeapon != null)
+                return EquippedRangeWeapon.DamageType;
+            else
+                return proto.damageType;
+        }
+
+        public void setTotalDamage(int damage)
+        {
+            proto.totalDamage = damage;
+        }
+
+        public void setDamageType(DamageType type)
+        {
+            proto.damageType = type;
+        }
+
+        public void setDamage(DamageTypeIndex dti, int value)
+        {
+            proto.damages[(int)dti] = value;
+        }
+
+        public int getDamage(DamageTypeIndex dti)
+        {
+            if (EquippedWeapon != null)
+                return EquippedWeapon.getDamage(dti);
+            else if (EquippedRangeWeapon != null)
+                return EquippedRangeWeapon.getDamage(dti);
+            else
+                return proto.damages[(int)dti];
+        }
 
 
-        
-        #endregion
+        public virtual void setScale(Vec3f scale)
+        {
+            proto.Scale = scale;
 
-        #region Methods
+            if (!created)
+                return;
+
+            BitStream stream = Program.server.sendBitStream;
+            stream.Reset();
+            stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
+            stream.Write((byte)NetworkIDS.ScaleMessage);
+            stream.Write(vob.ID);
+            stream.Write(proto.Scale);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+        }
+
+        public virtual void setFatness(float Fatness)
+        {
+            proto.Fatness = Fatness;
+
+            if (!created)
+                return;
+
+            BitStream stream = Program.server.sendBitStream;
+            stream.Reset();
+            stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
+            stream.Write((byte)NetworkIDS.NPCFatnessMessage);
+            stream.Write(vob.ID);
+            stream.Write(proto.Fatness);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+        }
 
         public void setName(String name)
         {
@@ -281,6 +622,8 @@ namespace GUC.Server.Scripting.Objects.Character
         {
             if (attrib >= NPCAttributeFlags.ATR_MAX)
                 throw new ArgumentException("attribute is not valid!");
+            if (value < 0)
+                value = 0;
             proto.Attributes[(byte)attrib] = value;
 
             if (!created)
@@ -371,9 +714,12 @@ namespace GUC.Server.Scripting.Objects.Character
             return itemList;
         }
 
-        
 
 
+        public Item addItem(String instance, int amount)
+        {
+            return addItem(ItemInstance.getItemInstance(instance), amount);
+        }
 
         public Item addItem(ItemInstance instance, int amount)
         {
@@ -399,58 +745,60 @@ namespace GUC.Server.Scripting.Objects.Character
                 }
             }
 
-            WorldObjects.Item itm = new WorldObjects.Item(instance.itemInstances, amount);
-            sWorld.addVob(itm);
-            proto.addItem(itm);
+            Item itm = new Item(instance, amount);
+            //sWorld.addVob(itm);
+            proto.addItem(itm.ProtoItem);
 
             if (!created)
-                return itm.ScriptingProto;
+                return itm;
 
             BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
             stream.Write((byte)NetworkIDS.AddItemMessage);
             stream.Write(proto.ID);
-            itm.Write(stream);
+            stream.Write(itm.ID);
+            //itm.Write(stream);
             Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
 
 
-            return itm.ScriptingProto;
+            return itm;
         }
 
         public void hit(NPCProto victim)
         {
-            hit(victim, DamageType.DAM_BLUNT, 0, this.proto.Weapon.ScriptingProto, 0, null, null);
+            hit(victim, DamageType.DAM_BLUNT, 0, this.proto.Weapon.ScriptingProto, null, null, null, 0.0f);
         }
 
         public void hit(NPCProto victim, DamageType damageMode)
         {
-            hit(victim, damageMode, 0, this.proto.Weapon.ScriptingProto, 0, null, null);
+            hit(victim, damageMode, 0, this.proto.Weapon.ScriptingProto, null, null, null, 0.0f);
         }
 
         public void hit(NPCProto victim, DamageType damageMode, int weaponMode)
         {
-            hit(victim, damageMode, weaponMode, this.proto.Weapon.ScriptingProto, 0, null, null);
+            hit(victim, damageMode, weaponMode, this.proto.Weapon.ScriptingProto, null, null, null, 0.0f);
         }
 
         public void hit(NPCProto victim, DamageType damageMode, int weaponMode, Vec3f hitLoc)
         {
-            hit(victim, damageMode, weaponMode, this.proto.Weapon.ScriptingProto, 0, hitLoc, null);
+            hit(victim, damageMode, weaponMode, this.proto.Weapon.ScriptingProto, null, hitLoc, null, 0.0f);
         }
 
         public void hit(NPCProto victim, DamageType damageMode, int weaponMode, Item weapon, Vec3f hitLoc)
         {
-            hit(victim, damageMode, weaponMode, weapon, 0, hitLoc, null);
+            hit(victim, damageMode, weaponMode, weapon, null, hitLoc, null, 0.0f);
         }
 
-        public void hit(NPCProto victim, DamageType damageMode, int weaponMode, Item weapon, int spellID, Vec3f hitLoc)
+        public void hit(NPCProto victim, DamageType damageMode, int weaponMode, Item weapon, Spell spell, Vec3f hitLoc)
         {
-            hit(victim, damageMode, weaponMode, weapon, spellID, hitLoc, null);
+            hit(victim, damageMode, weaponMode, weapon, spell, hitLoc, null, 0.0f);
         }
 
-        public void hit(NPCProto victim, DamageType damageMode, int weaponMode, Item weapon, int spellID, Vec3f hitLoc, Vec3f flyDir)
+        public void hit(NPCProto victim, DamageType damageMode, int weaponMode, Item weapon, Spell spell, Vec3f hitLoc, Vec3f flyDir, float fallDownDistanceY)
         {
-            GUC.Server.Network.Messages.PlayerCommands.OnDamageMessage.Write(victim.proto, damageMode, hitLoc, flyDir, this.proto, weaponMode, spellID, weapon.ProtoItem, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS);
+            WorldObjects.Spell objSpell = (spell == null) ? null : spell.spell;
+            GUC.Server.Network.Messages.PlayerCommands.OnDamageMessage.Write(victim.proto, damageMode, hitLoc, flyDir, this.proto, weaponMode, objSpell, weapon.ProtoItem, fallDownDistanceY, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS);
         }
 
         /// <summary>
@@ -572,8 +920,6 @@ namespace GUC.Server.Scripting.Objects.Character
 
         public void Equip(Item item)
         {
-            if (!created)
-                throw new Exception("The Player was not created! You can't use this function!");
             if (item == null)
                 throw new Exception("Item was null!");
             if (item.ProtoItem.Container != this.proto)
@@ -597,6 +943,19 @@ namespace GUC.Server.Scripting.Objects.Character
                 }
             }
 
+            if(!proto.EquippedList.Contains(item.ProtoItem))
+                proto.EquippedList.Add(item.ProtoItem);
+
+            if (item.ItemInstance.MainFlags.HasFlag(MainFlags.ITEM_KAT_NF))
+                proto.Weapon = item.ProtoItem;
+            else if (item.ItemInstance.MainFlags.HasFlag(MainFlags.ITEM_KAT_FF))
+                proto.RangeWeapon = item.ProtoItem;
+            else if (item.ItemInstance.MainFlags.HasFlag(MainFlags.ITEM_KAT_ARMOR))
+                proto.Armor = item.ProtoItem;
+
+            if (!created)
+                return;
+
             BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
@@ -609,13 +968,17 @@ namespace GUC.Server.Scripting.Objects.Character
 
         public void UnEquip(Item item)
         {
-            if (!created)
-                throw new Exception("The Player was not created! You can't use this function!");
             if (item == null)
                 throw new Exception("Item was null!");
             if (item.ProtoItem.Container != this.proto)
                 throw new Exception("Item must be in the inventory of the player!");
 
+            if (proto.EquippedList.Contains(item.ProtoItem))
+                proto.EquippedList.Remove(item.ProtoItem);
+
+
+            if (!created)
+                return;
 
             BitStream stream = Program.server.sendBitStream;
             stream.Reset();
@@ -653,7 +1016,9 @@ namespace GUC.Server.Scripting.Objects.Character
             stream.Write(proto.ID);
             stream.Write(anim);
             stream.Write((byte)1);
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+
+            this.proto.SendToAreaPlayers(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED);
+            //Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
         public void stopAnimation(String anim)
@@ -667,19 +1032,23 @@ namespace GUC.Server.Scripting.Objects.Character
             stream.Write(proto.ID);
             stream.Write(anim);
             stream.Write((byte)0);
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+
+            this.proto.SendToAreaPlayers(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED);
+            //Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
         public void ApplyOverlay(String anim)
         {
-            if (!created)
-                throw new Exception("The Player was not created! You can't use this function!");
+            //if (!created)
+            //    throw new Exception("The Player was not created! You can't use this function!");
 
             if (!this.proto.Overlays.Contains(anim))
             {
                 this.proto.Overlays.Add(anim);
             }
 
+            if (!created)
+                return;
             BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
@@ -692,13 +1061,13 @@ namespace GUC.Server.Scripting.Objects.Character
 
         public void RemoveOverlay(String anim)
         {
-            if (!created)
-                throw new Exception("The Player was not created! You can't use this function!");
-
             if (this.proto.Overlays.Contains(anim))
             {
                 this.proto.Overlays.Remove(anim);
             }
+
+            if (!created)
+                return;
 
             BitStream stream = Program.server.sendBitStream;
             stream.Reset();
@@ -801,14 +1170,53 @@ namespace GUC.Server.Scripting.Objects.Character
 
         #endregion
 
+        #region OnUseItem
+        public event GUC.Server.Scripting.Events.UseItemEventHandler OnUseItem;
+        internal void iOnUseItem(NPCProto proto, Item item, short state, short targetState)
+        {
+            if (OnUseItem != null)
+                OnUseItem(proto, item, state, targetState);
+        }
+
+        public static event GUC.Server.Scripting.Events.UseItemEventHandler sOnUseItem;
+        internal static void isOnUseItem(NPCProto proto, Item item, short state, short targetState)
+        {
+            proto.iOnUseItem(proto, item, state, targetState);
+            item.ItemInstance.iOnUse(proto, item, state, targetState);
+            if (sOnUseItem != null)
+                sOnUseItem(proto, item, state, targetState);
+        }
+
+        #endregion
+
+        #region Spells
+        public event GUC.Server.Scripting.Events.CastSpell OnCastSpell;
+        internal void iOnCastSpell(NPCProto caster, Spell spell, Vob target)
+        {
+            if (OnCastSpell != null)
+                OnCastSpell(caster, spell, target);
+        }
+
+        public static event GUC.Server.Scripting.Events.CastSpell sOnCastSpell;
+        internal static void isOnCastSpell(NPCProto caster, Spell spell, Vob target)
+        {
+            caster.iOnCastSpell(caster, spell, target);
+            spell.iOnCastSpell(caster, spell, target);
+            if (sOnCastSpell != null)
+                sOnCastSpell(caster, spell, target);
+        }
+
+        #endregion
+
+
 
 
 
         public event GUC.Server.Scripting.Events.PlayerDamageEventHandler OnDamaged;
-        internal void OnDamage(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, NPCProto attacker, int weaponMode, int spellID, Item weapon)
+        internal void OnDamage(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, NPCProto attacker, int weaponMode, Spell spellID, Item weapon, float fallDownDistanceY)
         {
             if (OnDamaged != null)
-                OnDamaged(victim, damageMode, hitLoc, flyDir, attacker, weaponMode, spellID, weapon);
+                OnDamaged(victim, damageMode, hitLoc, flyDir, attacker, weaponMode, spellID, weapon, fallDownDistanceY);
         }
 
         public event GUC.Server.Scripting.Events.PlayerItemEventHandler OnTakeItem;
@@ -830,11 +1238,11 @@ namespace GUC.Server.Scripting.Objects.Character
 
         public static event Events.PlayerDamageEventHandler OnDamages;
 
-        internal static void OnPlayerDamages(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, NPCProto attacker, int weaponMode, int spellID, Item weapon)
+        internal static void OnPlayerDamages(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, NPCProto attacker, int weaponMode, Spell spellID, Item weapon, float fallDownDistanceY)
         {
-            victim.OnDamage(victim, damageMode, hitLoc, flyDir, attacker, weaponMode, spellID, weapon);
+            victim.OnDamage(victim, damageMode, hitLoc, flyDir, attacker, weaponMode, spellID, weapon,  fallDownDistanceY);
             if (OnDamages != null)
-                OnDamages(victim, damageMode, hitLoc, flyDir, attacker, weaponMode, spellID, weapon);
+                OnDamages(victim, damageMode, hitLoc, flyDir, attacker, weaponMode, spellID, weapon, fallDownDistanceY);
         }
 
 

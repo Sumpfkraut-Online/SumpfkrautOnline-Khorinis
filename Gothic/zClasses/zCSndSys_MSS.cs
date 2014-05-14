@@ -17,7 +17,8 @@ namespace Gothic.zClasses
         {
             PlaySound3D_Str = 0x004F1060,
             PlaySound3D = 0x004F10F0,
-            LoadSoundFX = 0x004ED960
+            LoadSoundFX = 0x004ED960,
+            UpdateSound3D = 0x004F2410,
         }
 
         public enum HookSize : uint
@@ -35,6 +36,18 @@ namespace Gothic.zClasses
         public zCSndSys_MSS(Process process, int address)
             : base(process, address)
         {
+        }
+
+        public int UpdateSound3D(ref int arg, zStruct.zTSound3DParams param)
+        {
+            IntPtr arg1 = Process.Alloc(4);
+            Process.Write(arg, arg1.ToInt32());
+            int rArg = Process.THISCALL<IntArg>((uint)Address, (int)FuncOffsets.UpdateSound3D, new CallValue[] { (IntArg)arg1.ToInt32(), param });
+
+            
+            Process.Free(arg1, 4);
+
+            return rArg;
         }
 
         public int PlaySound3D(zString sound, zCVob vob, int arg, zStruct.zTSound3DParams param)

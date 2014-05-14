@@ -46,6 +46,15 @@ namespace GUC.Server.Network.Messages.Connection
             //Writing Player-Informations:
             //stream.Write(player.ID);
 
+
+            stream.Write(Player.sSendAllKeys);
+            stream.Write(Player.sSendKeys.Count);
+            foreach (int k in Player.sSendKeys)
+            {
+                stream.Write(k);
+            }
+
+
             stream.Write(sWorld.Day);
             stream.Write(sWorld.Hour);
             stream.Write(sWorld.Minute);
@@ -57,6 +66,12 @@ namespace GUC.Server.Network.Messages.Connection
             stream.Write(sWorld.EndRainMinute);
 
 
+            //Writing Spells:
+            stream.Write((short)Spell.SpellList.Count);
+            foreach (Spell spell in Spell.SpellList)
+            {
+                spell.Write(stream);
+            }
 
             //Writing created item instances:
             stream.Write((short)ItemInstance.ItemInstanceList.Count);

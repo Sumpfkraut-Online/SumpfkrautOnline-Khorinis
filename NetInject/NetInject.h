@@ -5,6 +5,7 @@
 #include <corerror.h>
 
 #include <metahost.h>
+#include <string>
 
 struct NETINJECTPARAMS
 {
@@ -14,8 +15,16 @@ struct NETINJECTPARAMS
 	char* ptrAddress;
 };
 
-void test(){
-	MessageBox(NULL,"Error!","Error!", MB_ICONWARNING | MB_CANCELTRYCONTINUE | MB_DEFBUTTON2 );
+void test(wchar_t* t1, wchar_t* t2, wchar_t* t3){
+	std::wstring str;
+	str.append(L"Error: DLL: ");
+	str.append(t1);
+	str.append(L" , Class: ");
+	str.append(t2);
+	str.append(L" , Method: ");
+	str.append(t3);
+	str.append(L" !");
+	MessageBoxW(NULL,(LPCWSTR)str.c_str(),L"Error!", MB_ICONWARNING | MB_CANCELTRYCONTINUE | MB_DEFBUTTON2 );
 }
 
 wchar_t * convertToChar(char * c)
@@ -53,7 +62,7 @@ EXTERN_C __declspec(dllexport) void LoadNetDllEx(NETINJECTPARAMS* params)
 		hr = pRuntimeInfo->GetInterface(CLSID_CLRRuntimeHost, IID_ICLRRuntimeHost, (LPVOID*)&pClrRuntimeHost);
 		hr = pClrRuntimeHost->Start();
 
-		test();
+		//test(dllName, typeName, methodName);
 	}
 	// execute the method "Int32 Test.Program.InjectedMain(String arg)"
 
@@ -65,7 +74,7 @@ EXTERN_C __declspec(dllexport) void LoadNetDllEx(NETINJECTPARAMS* params)
 	
 
 	if(hr != S_OK){
-		test();
+		test(dllName, typeName, methodName);
 	}
 	
 	delete[] dllName;
@@ -102,7 +111,7 @@ void LoadNETDLL()
 	delete pRuntimeInfo;
 
 	if(hr != S_OK){
-		test();
+		test(L"UntoldChapter\DLL\GUC.dll", L"GUC.Program", L"InjectedMain");
 	}
 
 	

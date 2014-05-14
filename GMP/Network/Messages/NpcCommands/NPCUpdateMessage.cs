@@ -21,6 +21,10 @@ namespace GUC.Network.Messages.NpcCommands
                 return;
             Process process = Process.ThisProcess();
             oCNpc npc = new oCNpc(process, proto.Address);
+
+            if (npc.AniCtrl.Address == 0)
+                return;
+
             NPCChangedFlags changeFlags = 0;
 
             oCItem iArmor = npc.GetEquippedArmor();
@@ -44,6 +48,18 @@ namespace GUC.Network.Messages.NpcCommands
             if (mobInterAddress != 0 && sWorld.SpawnedVobDict.ContainsKey(mobInterAddress))
                 MobInterID = (MobInter)sWorld.SpawnedVobDict[mobInterAddress];
 
+
+            Item selectedSpell = null;
+            if (npc.MagBook != null && npc.MagBook.Address != 0)
+            {
+                oCItem spellItem = npc.MagBook.GetSpellItem(npc.MagBook.GetSelectedSpellNr());
+                if (spellItem != null && spellItem.Address != 0)
+                {
+                    Vob spellVob = null;
+                    sWorld.SpawnedVobDict.TryGetValue(spellItem.Address, out spellVob);
+                    selectedSpell = (Item)spellVob;
+                }
+            }
 
             if (iArmor.Address != 0)
                 armor = (Item)sWorld.SpawnedVobDict[iArmor.Address];
@@ -112,10 +128,12 @@ namespace GUC.Network.Messages.NpcCommands
 
             if(!proto.PortalRoom.Equals(portalRoom))
                 changeFlags |= NPCChangedFlags.PORTALROOM;
+            if (selectedSpell != proto.ActiveSpell)
+                changeFlags |= NPCChangedFlags.ACTIVE_SPELL;
 
             if (changeFlags == 0)
                 return;
-            zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "ChangeFlags: " + changeFlags, 0, "Client.cs", 0);
+            //zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "ChangeFlags: " + changeFlags, 0, "Client.cs", 0);
             //Writing Data:
             BitStream stream = Program.client.sentBitStream;
             stream.Reset();
@@ -221,6 +239,15 @@ namespace GUC.Network.Messages.NpcCommands
                 stream.Write(proto.PortalRoom);
             }
 
+            if (changeFlags.HasFlag(NPCChangedFlags.ACTIVE_SPELL))
+            {
+                proto.ActiveSpell = selectedSpell;
+                if (proto.ActiveSpell == null)
+                    stream.Write(0);
+                else
+                    stream.Write(proto.ActiveSpell.ID);
+            }
+            zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Getted ChangeFlags: " + changeFlags, 0, "Client.cs", 0);
             Program.client.client.Send(stream, PacketPriority.MEDIUM_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
@@ -290,7 +317,7 @@ namespace GUC.Network.Messages.NpcCommands
             {
                 int weaponMode = 0;
                 stream.Read(out weaponMode);
-                proto.WeaponMode = weaponMode;
+
                 proto.setWeaponMode(weaponMode);
             }
 
@@ -313,6 +340,85 @@ namespace GUC.Network.Messages.NpcCommands
                     proto.setSlotItem(i, proto.Slots[i]);
                 }
             }
+
+
+
+
+            if (changeFlags.HasFlag(NPCChangedFlags.VOBFOCUS))
+            {
+                int vobID = 0;
+                stream.Read(out vobID);
+
+                if (vobID == 0)
+                    proto.FocusVob = null;
+                else
+                    proto.FocusVob = sWorld.VobDict[vobID];
+            }
+
+            if (changeFlags.HasFlag(NPCChangedFlags.ENEMYFOCUS))
+            {
+                int vobID = 0;
+                stream.Read(out vobID);
+
+                if (vobID == 0)
+                    proto.Enemy = null;
+                else
+                    proto.Enemy = (NPCProto)sWorld.VobDict[vobID];
+            }
+
+            if (changeFlags.HasFlag(NPCChangedFlags.MOBINTERACT))
+            {
+                int vobID = 0;
+                stream.Read(out vobID);
+
+                if (vobID == 0)
+                    proto.MobInter = null;
+                else
+                    proto.MobInter = (MobInter)sWorld.VobDict[vobID];
+            }
+
+            if (changeFlags.HasFlag(NPCChangedFlags.ISDEAD))
+            {
+                bool isdead = false;
+                stream.Read(out isdead);
+                proto.IsDead = isdead;
+            }
+
+            if (changeFlags.HasFlag(NPCChangedFlags.ISUNCONSCIOUS))
+            {
+                bool isuncon = false;
+                stream.Read(out isuncon);
+                proto.IsUnconcious = isuncon;
+            }
+
+            if (changeFlags.HasFlag(NPCChangedFlags.ISSWIMMING))
+            {
+                bool isswimming = false;
+                stream.Read(out isswimming);
+                proto.IsSwimming = isswimming;
+            }
+
+            if (changeFlags.HasFlag(NPCChangedFlags.PORTALROOM))
+            {
+                String portalRoom = "";
+                stream.Read(out portalRoom);
+                proto.PortalRoom = portalRoom;
+            }
+
+            if (changeFlags.HasFlag(NPCChangedFlags.ACTIVE_SPELL))
+            {
+                int vobID = 0;
+                stream.Read(out vobID);
+
+                if (vobID == 0)
+                    proto.ActiveSpell = null;
+                else
+                    proto.ActiveSpell = (Item)sWorld.VobDict[vobID];
+            }
+
+
+
+
         }
     }
 }

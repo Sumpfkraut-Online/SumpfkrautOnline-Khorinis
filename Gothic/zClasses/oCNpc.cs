@@ -60,7 +60,11 @@ namespace Gothic.zClasses
             flags = 0x01B4,
             fatness = 0x07BC,
             model_scale = 0x07B0,
-            weaponMode = 0x250
+            weaponMode = 0x250,
+
+            InteractItem = 0x968,
+            InteractItemState = 0x96C,
+            InteractItemTargetState = 0x0970
         }
 
         public enum NPC_Talents
@@ -157,6 +161,7 @@ namespace Gothic.zClasses
             Equip = 0x00739C90,
             GetSpellBook = 0x0073EA00,
             GetActiveSpellNr = 0x0073CF60,
+            GetActiveSpellLevel = 0x0073CFE0,
             CloseDeadNpc = 0x00762B40,
             OpenSteal = 0x00762430,
             CloseSteal = 0x00762950,
@@ -192,7 +197,12 @@ namespace Gothic.zClasses
             EV_AttackFinish = 0x00751AF0,
             DoDie = 0x00736760,
             GetFullBodyState = 0x0075EAF0,
-            IsBodyStateInterruptable = 0x0075EFA0
+            IsBodyStateInterruptable = 0x0075EFA0,
+            SetToFistMode = 0x0073A940,
+
+            ReadySpell = 0x006802E0,
+            UnreadySpell = 0x00680480,
+            EV_RemoveWeapon = 0x0074DB20,
         }
 
         public enum HookSize : uint
@@ -369,6 +379,24 @@ namespace Gothic.zClasses
 
         #region Fields
 
+        public int InteractItemState
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.InteractItemState); }
+            set { Process.Write(value, Address + (int)Offsets.InteractItemState); }
+        }
+
+        public int InteractItemTargetState
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.InteractItemTargetState); }
+            set { Process.Write(value, Address + (int)Offsets.InteractItemTargetState); }
+        }
+
+        public oCItem InteractItem
+        {
+            get { return new oCItem(Process, Process.ReadInt(Address + (int)Offsets.InteractItem)); }
+        }
+
+
         public int Flags
         {
             get { return Process.ReadInt(Address + (int)Offsets.flags); }
@@ -384,6 +412,7 @@ namespace Gothic.zClasses
         public int WeaponMode
         {
             get { return Process.ReadInt(Address + (int)Offsets.weaponMode); }
+            set { Process.Write(value, Address + (int)Offsets.weaponMode); }
         }
 
         public int FallDownDamage
@@ -796,6 +825,16 @@ namespace Gothic.zClasses
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.Disable, new CallValue[] {  });
         }
 
+        public int ReadySpell(int val, int val2)
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.ReadySpell, new CallValue[] { new IntArg(val), new IntArg(val2) });
+        }
+
+        public int UnreadySpell()
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.UnreadySpell, new CallValue[] { });
+        }
+
         public void SetTrueGuild(int val)
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetTrueGuild, new CallValue[] { new IntArg(val) });
@@ -879,6 +918,11 @@ namespace Gothic.zClasses
             return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.CanSee, new CallValue[] { vob, new IntArg(arg) }).Address;
         }
 
+        public int EV_RemoveWeapon(oCMsgWeapon msg)
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.EV_RemoveWeapon, new CallValue[] { msg }).Address;
+        }
+
         public void CreatePassivePerception(int arg, zCVob vob, zCVob vob2)
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.CreatePassivePerception, new CallValue[] { new IntArg(arg), vob, vob2 });
@@ -923,6 +967,12 @@ namespace Gothic.zClasses
         {
             return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.GetActiveSpellNr, new CallValue[] { }).Address;
         }
+
+        public int GetActiveSpellLevel()
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.GetActiveSpellLevel, new CallValue[] { }).Address;
+        }
+
         public void Equip(oCItem slot)
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.Equip, new CallValue[] { slot });
@@ -1084,6 +1134,11 @@ namespace Gothic.zClasses
         public void OpenDeadNPC()
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.OpenDeadNPC, new CallValue[] { });
+        }
+
+        public void SetToFistMode()
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetToFistMode, new CallValue[] { });
         }
 
         public oCItem PutInInv(oCItem code)

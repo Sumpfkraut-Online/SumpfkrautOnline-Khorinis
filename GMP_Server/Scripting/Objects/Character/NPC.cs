@@ -51,6 +51,12 @@ namespace GUC.Server.Scripting.Objects.Character
                 CreateVob();
         }
 
+        protected NPC()
+            : base(new GUC.WorldObjects.Character.NPC())
+        {
+            this.proto.ScriptingNPC = this;
+        }
+
         internal WorldObjects.Character.NPC ProtoNPC { get { return (WorldObjects.Character.NPC)proto; } }
 
         public Player NPCController { get { return (ProtoNPC.NpcController == null) ? null : (Player)ProtoNPC.NpcController.ScriptingNPC; } }

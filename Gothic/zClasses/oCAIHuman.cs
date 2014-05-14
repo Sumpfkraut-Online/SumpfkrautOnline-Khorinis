@@ -10,7 +10,10 @@ namespace Gothic.zClasses
         #region OffsetLists
         public enum Offsets
         {
-            NPC = 0x12C
+            NPC = 0x12C,
+            fallDownDistanceY = 156,
+            waterLevel = 136,
+            wmode = 336
         }
         public enum FuncOffsets : uint
         {
@@ -46,6 +49,19 @@ namespace Gothic.zClasses
             get { return new oCNpc(Process, Process.ReadInt(Address + (int)Offsets.NPC)); }
             set { Process.Write(value.Address, Address + (int)Offsets.NPC); }
         }
+
+        public int WMode
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.wmode); }
+            set { Process.Write(value, Address + (int)Offsets.wmode); }
+        }
+
+        public float FallDownDistanceY
+        {
+            get { return Process.ReadFloat(Address + (int)Offsets.fallDownDistanceY); }
+            set { Process.Write(value, Address + (int)Offsets.fallDownDistanceY); }
+        }
+
 
         public void Init(oCNpc npc)
         {

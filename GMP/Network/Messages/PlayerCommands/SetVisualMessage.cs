@@ -28,6 +28,7 @@ namespace GUC.Network.Messages.PlayerCommands
 
             if (vob is NPCProto)
             {
+                NPCProto npcP = (NPCProto)vob;
                 stream.Read(out visual);
                 stream.Read(out BodyMesh);
                 stream.Read(out bodyTex);
@@ -47,44 +48,39 @@ namespace GUC.Network.Messages.PlayerCommands
                     visualSame = true;
                 vob.Visual = visual;
 
+                npcP.BodyMesh = BodyMesh;
+                npcP.BodyTex = bodyTex;
+                npcP.SkinColor = skinColor;
+                npcP.HeadMesh = HeadMesh;
+                npcP.HeadTex = headTex;
+                npcP.TeethTex = teethTex;
+                npcP.setWeaponMode(1);
+
                 if (vob.Address == 0)
                     return;
+
+                if (!visualSame)
+                {
+                    npcP.Despawn();
+                    npcP.Spawn(npcP.Map, npcP.Position, npcP.Direction);
+                    if (Player.Hero == npcP)
+                    {
+                        new oCNpc(Process.ThisProcess(), npcP.Address).SetAsPlayer();
+                    }
+                    npcP.Enable(npcP.Position);
+                    return;
+                }
+
+                
+
+
+
                 Process process = Process.ThisProcess();
                 zCVob zVob = new zCVob(Process.ThisProcess(), vob.Address);
 
-                oCNpc npc = new oCNpc(process, vob.Address);//oCObjectFactory.GetFactory(Process.ThisProcess()).CreateNPC(zCParser.getParser(process).GetIndex(zString.Create(process, "OTHERS_NPC")));
-                if (!visualSame)
-                    npc.Disable();
-
-
-                if (!visualSame)
-                {
-                    zString visualStr = zString.Create(Process.ThisProcess(), visual);
-                    npc.SetVisual(visualStr);
-                    visualStr.Dispose();
-                }
+                oCNpc npc = new oCNpc(process, vob.Address);
 
                 npc.SetAdditionalVisuals(BodyMesh, bodyTex, skinColor, HeadMesh, headTex, teethTex, -1);
-                npc.SetWeaponMode(1);
-                npc.SetWeaponMode2(1);
-                //npc.Guild = 59;
-                //npc.SetTrueGuild(59);
-
-                if (!visualSame)
-                {
-                    //npc.HumanAI.refCtr -= 1;
-                    //npc.AniCtrl.refCtr -= 1;
-                    //if(npc.HumanAI.refCtr == 0)
-                    //    npc.HumanAI.Destroy();
-                    npc.HumanAI = new oCAiHuman(process, 0);
-                    npc.AniCtrl = new oCAniCtrl_Human(process, 0);
-
-                    zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Orc: " + npc.IsOrc(), 0, "Program.cs", 0);
-
-                    zVec3 pos = npc.GetPosition();
-                    npc.Enable(pos);
-                    pos.Dispose();
-                }
             }
         }
     }

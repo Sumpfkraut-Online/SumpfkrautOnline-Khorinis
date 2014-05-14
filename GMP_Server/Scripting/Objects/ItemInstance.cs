@@ -10,9 +10,24 @@ namespace GUC.Server.Scripting.Objects
 {
     public class ItemInstance
     {
+        public static Dictionary<String, ItemInstance> ItemInstances = new Dictionary<string, ItemInstance>();
+
+
         internal GUC.WorldObjects.ItemInstance itemInstances;
         protected bool created;
 
+        protected String mItemInstance = "";
+
+
+        public static ItemInstance getItemInstance(String name)
+        {
+            
+            ItemInstance ii = null;
+            ItemInstances.TryGetValue(name.ToUpper().Trim(), out ii);
+            if(ii == null)
+                Console.WriteLine(name);
+            return ii;
+        }
 
         public static ItemInstance getItemInstance(int id)
         {
@@ -23,68 +38,80 @@ namespace GUC.Server.Scripting.Objects
             itemInstances = ii;
         }
 
-        protected ItemInstance()
+        protected ItemInstance(String instanceName)
         {
+            instanceName = instanceName.Trim().ToUpper();
+            if (instanceName == null)
+                throw new ArgumentNullException("instanceName can not be null");
+            if (instanceName.Length == 0)
+                throw new ArgumentException("Instancename can not has a length of 0");
+            if (ItemInstances.ContainsKey(instanceName))
+                throw new ArgumentException("InstanceName is already in use!");
+
+
             itemInstances = new GUC.WorldObjects.ItemInstance();
             itemInstances.ScriptingProto = this;
+
+            mItemInstance = instanceName;
+            ItemInstances.Add(instanceName, this);
         }
 
-        public ItemInstance(String name, String scemeName, int value, String visual, String effect)///Potions
-            : this(name, scemeName, value, MainFlags.ITEM_KAT_POTIONS, Flags.ITEM_MULTI, visual, null, effect)
+        public ItemInstance(String instanceName, String name, String scemeName, int value, String visual, String effect)///Potions
+            : this(instanceName, name, scemeName, value, MainFlags.ITEM_KAT_POTIONS, Flags.ITEM_MULTI, visual, null, effect)
         { }
-        public ItemInstance(String name, DamageType dmgType, MainFlags mainFlags, Flags flags, int totalDamage, int range, int value, String visual)///Weapons
-            : this(name, null, null, null, value, mainFlags, flags, 0, dmgType, totalDamage, range, visual, null, null, 0)
+        public ItemInstance(String instanceName, String name, DamageType dmgType, MainFlags mainFlags, Flags flags, int totalDamage, int range, int value, String visual)///Weapons
+            : this(instanceName, name, null, null, null, value, mainFlags, flags, 0, dmgType, totalDamage, range, visual, null, null, 0)
         { }
-        public ItemInstance(String name, int[] protection, int value, String visual, String visual_Change)//Armors!
-            : this(name, null, protection, null, value, MainFlags.ITEM_KAT_ARMOR, 0, ArmorFlags.WEAR_TORSO, 0, 0, 0, visual, visual_Change, null, 0)
-        { }
-
-
-
-        public ItemInstance(String name, String scemeName, int value, MainFlags mainFlags, Flags flags, String visual)
-            : this(name, scemeName, null, null, value, mainFlags, flags, 0, 0, 0, 0, visual, null)
+        public ItemInstance(String instanceName, String name, int[] protection, int value, String visual, String visual_Change)//Armors!
+            : this(instanceName, name, null, protection, null, value, MainFlags.ITEM_KAT_ARMOR, 0, ArmorFlags.WEAR_TORSO, 0, 0, 0, visual, visual_Change, null, 0)
         { }
 
-        public ItemInstance(String name, String scemeName, int value, MainFlags mainFlags, Flags flags, String visual, String visual_Change, String effect)
-            : this(name, scemeName, null, null, value, mainFlags, flags, 0, 0, 0, 0, visual, visual_Change, effect)
+
+
+        public ItemInstance(String instanceName, String name, String scemeName, int value, MainFlags mainFlags, Flags flags, String visual)
+            : this(instanceName, name, scemeName, null, null, value, mainFlags, flags, 0, 0, 0, 0, visual, null)
         { }
 
-        public ItemInstance(String name, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual)
-            : this(name, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, null)
+        public ItemInstance(String instanceName, String name, String scemeName, int value, MainFlags mainFlags, Flags flags, String visual, String visual_Change, String effect)
+            : this(instanceName, name, scemeName, null, null, value, mainFlags, flags, 0, 0, 0, 0, visual, visual_Change, effect)
         { }
-        public ItemInstance(String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual)
-            : this(name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, null)
+
+        public ItemInstance(String instanceName, String name, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual)
+            : this(instanceName, name, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, null)
         { }
-        public ItemInstance(String name, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change)
-            : this(name, null, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, null, 0)
+        public ItemInstance(String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual)
+            : this(instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, null)
+        { }
+        public ItemInstance(String instanceName, String name, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change)
+            : this(instanceName, name, null, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, null, 0)
         {}
 
-        public ItemInstance(String name, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change, String effect)
-            : this(name, null, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, 0)
+        public ItemInstance(String instanceName, String name, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change, String effect)
+            : this(instanceName, name, null, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, 0)
         {}
 
-        public ItemInstance(String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change)
-            : this(name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, "", 0)
+        public ItemInstance(String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change)
+            : this(instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, "", 0)
         { }
 
-        public ItemInstance(String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change, String effect)
-            : this(name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, 0, 0, null)
+        public ItemInstance(String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change, String effect)
+            : this(instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, 0, 0, null)
         { }
 
-        public ItemInstance(String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, MaterialTypes types)
-            : this(name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, 0, types, null)
+        public ItemInstance(String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, MaterialTypes types)
+            : this(instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, 0, types, null)
         { }
 
-        public ItemInstance(String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, MaterialTypes types, ItemInstance munition)
-            : this(name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, 0, types, munition)
+        public ItemInstance(String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, MaterialTypes types, ItemInstance munition)
+            : this(instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, 0, types, munition)
         { }
 
-        public ItemInstance(String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, int visualSkin, MaterialTypes types, ItemInstance munition)
-            : this(name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, visualSkin, types, munition, false)
+        public ItemInstance(String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, int visualSkin, MaterialTypes types, ItemInstance munition)
+            : this(instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, visualSkin, types, munition, false)
         { }
-        public ItemInstance(String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, int visualSkin, MaterialTypes types, ItemInstance munition, bool keyInstance)
+        public ItemInstance(String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, int visualSkin, MaterialTypes types, ItemInstance munition, bool keyInstance)
+            : this(instanceName)
         {
-            itemInstances = new GUC.WorldObjects.ItemInstance();
             itemInstances.Name = name;
             itemInstances.Protection = protection;
             itemInstances.Damages = damages;
@@ -105,8 +132,6 @@ namespace GUC.Server.Scripting.Objects
             itemInstances.TotalDamage = totalDamage;
             itemInstances.isKeyInstance = keyInstance;
 
-            itemInstances.ScriptingProto = this;
-
             CreateItemInstance();
             
         }
@@ -116,9 +141,9 @@ namespace GUC.Server.Scripting.Objects
         /// <summary>
         /// For Potions:
         /// </summary>
-        public ItemInstance(String name, int value, String visual, String effect)
+        public ItemInstance(String instanceName, String name, int value, String visual, String effect)
+            : this(instanceName)
         {
-            itemInstances = new GUC.WorldObjects.ItemInstance();
             itemInstances.Name = name;
             itemInstances.Value = value;
             itemInstances.Visual = visual;
@@ -128,7 +153,6 @@ namespace GUC.Server.Scripting.Objects
             itemInstances.Materials = MaterialTypes.MAT_GLAS;
             itemInstances.Description = itemInstances.Name;
 
-            itemInstances.ScriptingProto = this;
             CreateItemInstance();
         }
 
@@ -189,6 +213,9 @@ namespace GUC.Server.Scripting.Objects
 
         public String Description { get { return itemInstances.Description; } protected set { itemInstances.Description = value; } }
 
+
+        public Spell Spell { get { return itemInstances.Spell.ScriptingProto; } protected set { itemInstances.Spell = value.spell; } }
+
         #region OnEquip
         public event GUC.Server.Scripting.Events.NPCEquipEventHandler OnEquip;
         internal void iOnEquip(NPCProto proto, Item item)
@@ -207,6 +234,15 @@ namespace GUC.Server.Scripting.Objects
         #endregion
 
 
+        #region OnUse
+        public event GUC.Server.Scripting.Events.UseItemEventHandler OnUse;
+        internal void iOnUse(NPCProto proto, Item item, short state, short targetState)
+        {
+            if (OnUse != null)
+                OnUse(proto, item, state, targetState);
+        }
+
+        #endregion
 
 
     }

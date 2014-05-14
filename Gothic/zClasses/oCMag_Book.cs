@@ -12,7 +12,9 @@ namespace Gothic.zClasses
         public enum Offsets
         {
             Spells = 0x00,
-            SpellItems = 12
+            SpellItems = 12,
+            Owner = 28,
+            SpellNr = 0x24
         }
         public enum FuncOffsets : uint
         {
@@ -32,7 +34,13 @@ namespace Gothic.zClasses
             StartInvestEffect = 0x004766B0,
 
             SetOwner = 0x00475A50,
-            oCMag_Book = 0x004753F0
+            oCMag_Book = 0x004753F0,
+            GetSelectedSpell = 0x00477780,
+
+            GetSelectedSpellNr = 0x004777D0,
+            KillSelectedSpell = 0x00477A90,
+            Spell_Stop = 0x00477D50,
+            StopSelectedSpell = 0x00477910
         }
 
         public enum HookSize : uint
@@ -43,7 +51,8 @@ namespace Gothic.zClasses
             Close = 7,
             StartCastEffect = 7,
             Spell_Invest = 7,
-            StartInvestEffect = 7
+            StartInvestEffect = 7,
+
         }
 
         #endregion
@@ -58,6 +67,20 @@ namespace Gothic.zClasses
         {
         }
 
+        public oCSpell GetSelectedSpell()
+        {
+            return Process.THISCALL<oCSpell>((uint)Address, (uint)FuncOffsets.GetSelectedSpell, new CallValue[] {  });
+        }
+
+        public void StopSelectedSpell()
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.StopSelectedSpell, new CallValue[] { });
+        }
+
+        public void Spell_Stop(int arg)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.Spell_Stop, new CallValue[] { (IntArg)arg });
+        }
 
         public static oCMag_Book Create(Process process)
         {
@@ -92,7 +115,25 @@ namespace Gothic.zClasses
             return -1;
         }
 
+        public int DoClose()
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.DoClose, new CallValue[] { });
+        }
 
+        public int GetSelectedSpellNr()
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.GetSelectedSpellNr, new CallValue[] { });
+        }
+
+        public oCItem GetSpellItem( int itemNr )
+        {
+            return Process.THISCALL<oCItem>((uint)Address, (uint)FuncOffsets.GetSpellItem, new CallValue[] { new IntArg(itemNr) });
+        }
+
+        public zCVob Owner
+        {
+            get { return new zCVob(Process, Address + (int)Offsets.Owner); }
+        }
 
         public zCArray<oCSpell> Spells
         {
@@ -107,6 +148,11 @@ namespace Gothic.zClasses
         public void SetOwner(zCVob vob)
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetOwner, new CallValue[] { vob });
+        }
+
+        public void KillSelectedSpell()
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.KillSelectedSpell, new CallValue[] { });
         }
 
         public void DoOpen()

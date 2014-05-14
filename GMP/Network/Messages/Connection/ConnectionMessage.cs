@@ -37,6 +37,17 @@ namespace GUC.Network.Messages.Connection
 
 
 
+                stream.Read(out Player.sSendAllKeys);
+                int playerKeyCount = 0;
+                stream.Read(out playerKeyCount);
+                for (int i = 0; i < playerKeyCount; i++)
+                {
+                    byte key = 0;
+                    stream.Read(out key);
+                    Player.sSendKeys.Add(key);
+                }
+
+
                 int day = 0;
                 byte hour = 0, minute = 0;
                 stream.Read(out day);
@@ -63,7 +74,14 @@ namespace GUC.Network.Messages.Connection
                 sWorld.EndRainMinute = endminute;
 
 
-
+                short spellCount = 0;
+                stream.Read(out spellCount);
+                for (int i = 0; i < spellCount; i++)
+                {
+                    Spell spell = new Spell();
+                    spell.Read(stream);
+                    Spell.addItemInstance(spell);
+                }
 
                 short itemInstancesCount = 0;
                 stream.Read(out itemInstancesCount);

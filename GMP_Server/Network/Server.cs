@@ -56,6 +56,11 @@ namespace GUC.Server.Network
             messageListener.Add((byte)NetworkIDS.EquipItemMessage, new EquipItemMessage());
 
             messageListener.Add((byte)NetworkIDS.ChangeWorldMessage, new ChangeWorldMessage());
+
+            messageListener.Add((byte)NetworkIDS.PlayerKeyMessage, new PlayerKeyMessage());
+            messageListener.Add((byte)NetworkIDS.UseItemMessage, new UseItemMessage());
+
+            messageListener.Add((byte)NetworkIDS.CastSpell, new CastSpell());
         }
 
         public void Start(ushort port, ushort maxConnections, String pw)
@@ -103,6 +108,8 @@ namespace GUC.Server.Network
                             else
                             {
                                 Player pl = sWorld.GUIDToPlayer[p.guid.g];
+                                pl.IsConnected = false;
+
                                 foreach (NPC npc in pl.NPCControlledList)
                                 {
                                     npc.NpcController = null;

@@ -10,7 +10,7 @@ namespace GUC.Server.Scripts.Items
     public class ITPO_HEALTH_01 : ItemInstance
     {
         public ITPO_HEALTH_01()
-            : base()
+            : base("ITPO_HEALTH_01")
         {
             Name = "Trank";
             Value = 25;

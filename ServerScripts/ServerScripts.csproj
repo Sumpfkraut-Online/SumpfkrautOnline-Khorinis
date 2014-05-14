@@ -54,12 +54,42 @@
     <Compile Include="AI\AIStates\AI_ALIGNTOWP.cs" />
     <Compile Include="AI\AIStates\AI_PLAYANIMATION.cs" />
     <Compile Include="AI\AIStates\AI_SETWALKTYPE.cs" />
+    <Compile Include="AI\AI_Events.cs" />
+    <Compile Include="AI\AssessFuncs\AssessBody.cs" />
+    <Compile Include="AI\AssessFuncs\AssessDamage.cs" />
+    <Compile Include="AI\AssessFuncs\AssessEnemy.cs" />
+    <Compile Include="AI\AssessFuncs\AssessNPC.cs" />
+    <Compile Include="AI\AssessFuncs\AssessOtherDamage.cs" />
+    <Compile Include="AI\AssessFuncs\AssessTarget.cs" />
+    <Compile Include="AI\AssessFuncs\AssessWarn.cs" />
+    <Compile Include="AI\AssessFuncs\Update.cs" />
+    <Compile Include="AI\DataTypes\PriorityQueueExtended.cs" />
+    <Compile Include="AI\Enumeration\Guilds.cs" />
+    <Compile Include="AI\Enumeration\GuildsAttitude.cs" />
     <Compile Include="AI\Enumeration\WalkTypes.cs" />
+    <Compile Include="AI\FightFuncs\MonsterFightRoutine.cs" />
     <Compile Include="AI\NPCAI.cs" />
     <Compile Include="AI\AISystem.cs" />
+    <Compile Include="AI\NPC_Def\Human\MILZ_01.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Alligator.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Blattcrawler.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Bloodfly.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Bloodhound.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Giant_DesertRat.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Gobbo_Green.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Gobbo_Warrior.cs" />
+    <Compile Include="AI\NPC_Def\Monster\IceWolf.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Keiler.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Stoneguardian.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Razor.cs" />
+    <Compile Include="AI\NPC_Def\Monster\OrcBiter.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Waran.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Scavanger.cs" />
+    <Compile Include="AI\NPC_Def\Orc\OrcWarrior.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Wolf.cs" />
     <Compile Include="AI\Routines\Routine.cs" />
     <Compile Include="AI\Waypoints\FreePoint.cs" />
-    <Compile Include="AI\Waypoints\PriorityQueue.cs" />
+    <Compile Include="AI\DataTypes\PriorityQueue.cs" />
     <Compile Include="AI\Waypoints\WayNet.cs" />
     <Compile Include="AI\Waypoints\WayPoint.cs" />
     <Compile Include="AI\Waypoints\WayRoute.cs" />
@@ -72,6 +102,8 @@
     <Compile Include="DefaultVobs.cs" />
     <Compile Include="DefaultWorldItem.cs" />
     <Compile Include="Items\ITPO_HEALTH_01.cs" />
+    <Compile Include="Items\ITSC_SHRINK.cs" />
+    <Compile Include="Items\ITSC_TRFSHEEP.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sqlite.cs" />
     <Compile Include="StartModules\AbstractModule.cs" />
@@ -82,6 +114,7 @@
     <ProjectReference Include="..\GMP_Server\GMP_Server.csproj">
       <Project>{27FA7C52-3C80-4B72-8FBB-BCAC0328236E}</Project>
       <Name>GMP_Server</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

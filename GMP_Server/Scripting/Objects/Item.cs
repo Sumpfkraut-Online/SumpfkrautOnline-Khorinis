@@ -121,6 +121,11 @@ namespace GUC.Server.Scripting.Objects
             return getProtection(index.getDamageTypeIndex());
         }
 
+        public int getDamage(DamageTypeIndex index)
+        {
+            return ItemInstance.getDamage(index);
+        }
+
         public DamageType DamageType { get { return ItemInstance.DamageType; } }
         public int TotalDamage { get { return ItemInstance.TotalDamage; } }
 

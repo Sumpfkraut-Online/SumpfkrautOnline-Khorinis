@@ -15,6 +15,11 @@ using GUC.Types;
 using GUC.Server.Scripts.StartModules;
 using GUC.Server.Scripts.Accounts;
 using GUC.Server.Scripts.AI.Waypoints;
+using GUC.Server.Scripts.AI.NPC_Def;
+using GUC.Server.Scripts.AI.DataTypes;
+using GUC.Server.Scripts.AI.NPC_Def.Monster;
+using GUC.Server.Scripts.AI.NPC_Def.Human;
+using GUC.Server.Scripts.Items;
 namespace GUC.Server.Scripts
 {
 	public class Startup : IServerStartup
@@ -24,17 +29,17 @@ namespace GUC.Server.Scripts
 		public Button connection;
 		public void OnServerInit()
 		{
+            Player.EnableAllPlayerKeys(true);
+
             Console.WriteLine("#################### Initalise ############################");
             DefaultItems.Init();
             DefaultVobs.Init();
             DefaultWorldItem.Init();
 
-            DayTime dt = new DayTime();
-            dt.Init();
-            dt.setTime(0, 12, 0);
+            DayTime.Init();
+            DayTime.setTime(0, 12, 0);
 
-            DamageScript ds = new DamageScript();
-            ds.Init();
+            DamageScript.Init();
 
             chat = new Chat();
             chat.Init();
@@ -47,7 +52,18 @@ namespace GUC.Server.Scripts
 
             AI.AISystem.Init();
 
-            
+
+            ITSC_SHRINK.get();
+            ITSC_TRFSHEEP.get();
+
+            //Player.sPlayerKeyEvent += new Events.PlayerKeyEventHandler(keyEvent);
+
+            //for (int i = 0; i < 100; i++)
+            //{
+            //    WayPoint wp = AI.AISystem.WayNets[@"NEWWORLD\NEWWORLD.ZEN"].getRandomWaypoint();
+            //    Young_Gobbo_Green wolf = new Young_Gobbo_Green();
+            //    wolf.Spawn(@"NEWWORLD\NEWWORLD.ZEN", wp.Position, null);
+            //}
 		}
     }
 }

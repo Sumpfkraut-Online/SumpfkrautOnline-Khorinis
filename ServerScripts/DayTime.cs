@@ -7,10 +7,11 @@ using GUC.Server.Scripting.Objects;
 
 namespace GUC.Server.Scripts
 {
-    class DayTime
+    public static class DayTime
     {
-        protected long timeStart = 0;
-        public void Init()
+        static long timeStart = 0;
+        static int day = -1;
+        public static void Init()
         {
             timeStart = DateTime.Now.Ticks;
 
@@ -20,9 +21,9 @@ namespace GUC.Server.Scripts
             timer.Start();
         }
 
-        int day = -1;
 
-        public void setTime(int day, int hour, int minute)
+
+        public static void setTime(int day, int hour, int minute)
         {
             TimeSpan ts = new TimeSpan(day, hour, minute, 0);
             long l = ts.Ticks;
@@ -32,12 +33,12 @@ namespace GUC.Server.Scripts
             onTick();
         }
 
-        public void setTime(int hour, int minute)
+        public static void setTime(int hour, int minute)
         {
             setTime(day, hour, minute);
         }
 
-        public void onTick()
+        public static void onTick()
         {
             long time = DateTime.Now.Ticks - (timeStart);
             time *= 24*2;//*1 => Echt-Zeit! *24 => 1Stunde => 1 Tag

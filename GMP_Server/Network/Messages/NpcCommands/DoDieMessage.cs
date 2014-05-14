@@ -27,7 +27,9 @@ namespace GUC.Server.Network.Messages.NpcCommands
                 weapon = attacker.Weapon.ScriptingProto;
             }
 
-            Scripting.Objects.Character.NPCProto.OnPlayerDamages(victim.ScriptingNPC, DamageType.DAM_POINT, new Vec3f(), null, attacker.ScriptingNPC, attacker.WeaponMode, 0, weapon);
+            victim.ScriptingNPC.HP = 0;
+
+            Scripting.Objects.Character.NPCProto.OnPlayerDamages(victim.ScriptingNPC, DamageType.DAM_POINT, new Vec3f(), null, attacker.ScriptingNPC, attacker.WeaponMode, null, weapon, 0);
         }
     }
 }

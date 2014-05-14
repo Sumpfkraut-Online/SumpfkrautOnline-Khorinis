@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.Types;
 using System.IO;
+using GUC.Server.Scripts.AI.DataTypes;
 
 namespace GUC.Server.Scripts.AI.Waypoints
 {
@@ -103,14 +104,14 @@ namespace GUC.Server.Scripts.AI.Waypoints
                 return mWayPointDict[wp2];
             return null;
         }
-
+        static Random sRand = new Random();
         public WayPoint getRandomWaypoint()
         {
             if(mWayPointList.Count == 0)
                 return null;
 
-            Random rand = new Random();
-            return mWayPointList[rand.Next(mWayPointList.Count)];
+            
+            return mWayPointList[sRand.Next(mWayPointList.Count)];
         }
 
         public int Count { get { return mWayPointList.Count; } }
