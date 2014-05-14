@@ -94,8 +94,6 @@
     <Compile Include="AI\Waypoints\WayPoint.cs" />
     <Compile Include="AI\Waypoints\WayRoute.cs" />
     <Compile Include="Chat.cs" />
-    <Compile Include="Daedalus\DaedalusStatics.cs" />
-    <Compile Include="Daedalus\Items\ITKE_ORLAN_TELEPORTSTATION.cs" />
     <Compile Include="DamageScript.cs" />
     <Compile Include="DayTime.cs" />
     <Compile Include="DefaultItems.cs" />

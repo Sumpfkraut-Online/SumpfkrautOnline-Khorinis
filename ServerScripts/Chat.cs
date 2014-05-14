@@ -242,7 +242,7 @@ namespace GUC.Server.Scripts
                 WayPoint wayp = AISystem.getWaypoint(pl.Map, wp);
                 if (wayp == null)
                 {
-                    mB.addLine(pl, 255, 0, 0, 255, "Waypoint not found!: " + wp);
+                    mB.addLine(pl, 255, 0, 0, 255, "Waypoint was not found!: " + wp);
                     return;
                 }
                 pl.setPosition(wayp.Position);
@@ -253,7 +253,7 @@ namespace GUC.Server.Scripts
             }
             else
             {
-                mB.addLine(pl, 255, 255, 255, 255, "Command not found: " + message);
+                mB.addLine(pl, 255, 255, 255, 255, "Command was not found: " + message);
             }
 
 		}
