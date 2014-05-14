@@ -434,6 +434,14 @@ namespace WinApi
             return (uint)byteWritten;
         }
 
+        public uint FillWithNull(int startPosition, int EndPosition)
+        {
+            byte[] arr = new byte[EndPosition - startPosition];
+            for (int i = 0; i < arr.Length; i++)
+                arr[i] = 0x90;
+            return Write(arr, startPosition);
+        }
+
         public int ReadInt(int position)
         {
             IntPtr rw = IntPtr.Zero;

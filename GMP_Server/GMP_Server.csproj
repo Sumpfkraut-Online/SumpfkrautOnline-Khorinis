@@ -79,6 +79,8 @@
     <Compile Include="Network\Messages\NpcCommands\ItemRemovedByUsing.cs" />
     <Compile Include="Network\Messages\NpcCommands\NPCControllerMessage.cs" />
     <Compile Include="Network\Messages\NpcCommands\NPCUpdateMessage.cs" />
+    <Compile Include="Network\Messages\NpcCommands\UseItemMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\CastSpell.cs" />
     <Compile Include="Network\Messages\PlayerCommands\DropItemMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\EquipItemMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\OnDamageMessage.cs" />
@@ -86,6 +88,7 @@
     <Compile Include="Network\Messages\PlayerCommands\TakeItemMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\ChangeWorldMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\CreateVobMessage.cs" />
+    <Compile Include="Network\Messages\VobCommands\SetVobListPosDirMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\SetVobPosDirMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\SpawnVobMessage.cs" />
     <Compile Include="Scripting\Events.cs" />
@@ -109,6 +112,7 @@
     <Compile Include="Scripting\Objects\Mob\MobInter.cs" />
     <Compile Include="Scripting\Objects\Mob\MobLockable.cs" />
     <Compile Include="Scripting\Objects\Mob\MobSwitch.cs" />
+    <Compile Include="Scripting\Objects\Spell.cs" />
     <Compile Include="Scripting\Objects\Vob.cs" />
     <Compile Include="Scripting\Objects\World.cs" />
     <Compile Include="Scripting\ScriptManager.cs" />
@@ -121,6 +125,7 @@
     <Compile Include="WorldObjects\Mobs\MobContainer.Server.cs" />
     <Compile Include="WorldObjects\Mobs\MobInter.Server.cs" />
     <Compile Include="WorldObjects\Mobs\MobLockable.Server.cs" />
+    <Compile Include="WorldObjects\Spell.Server.cs" />
     <Compile Include="WorldObjects\sWorld.Server.cs" />
     <Compile Include="WorldObjects\Vob.Server.cs" />
     <Compile Include="WorldObjects\World.Server.cs" />

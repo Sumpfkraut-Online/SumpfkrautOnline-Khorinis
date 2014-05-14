@@ -46,7 +46,7 @@ namespace GUC.WorldObjects
 
 
             BitStreamExtension.Write(stream, (ulong)getParams());
-            //stream.Write((long)getParams());
+            
             if (ScemeName.Length > 0)
                 stream.Write(ScemeName);
 
@@ -110,6 +110,8 @@ namespace GUC.WorldObjects
                 stream.Write(munition.ID);
             if (isKeyInstance)
                 stream.Write(isKeyInstance);
+            if (Spell != null)
+                stream.Write(Spell.ID);
         }
     }
 }

@@ -405,6 +405,12 @@ namespace Gothic.zClasses
             }
         }
 
+        public int Spell
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.spell); }
+            set { Process.Write(value, Address + (int)Offsets.spell); }
+        }
+
         public int Instanz
         {
             get { return Process.ReadInt(Address + (int)Offsets.instance); }

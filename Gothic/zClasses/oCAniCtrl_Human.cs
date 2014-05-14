@@ -23,7 +23,10 @@ namespace Gothic.zClasses
             SetAlwaysWalk = 0x006ABDB0,
             ToggleWalkMode = 0x006AD500,
 
-            InitAnimations = 0x006A4010
+            InitAnimations = 0x006A4010,
+            Reset = 0x006A5080,
+
+            RemoveWeapon2 = 0x006B33B0,
         }
 
         public enum HookSize : uint
@@ -43,8 +46,16 @@ namespace Gothic.zClasses
         {
         }
 
+        public int RemoveWeapon2()
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.RemoveWeapon2, new CallValue[] { });
+        }
 
-        
+
+        public void Reset()
+        {
+            Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.Reset, new CallValue[] { });
+        }
 
         public void SetAlwaysWalk(int x)
         {

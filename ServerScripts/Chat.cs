@@ -15,6 +15,7 @@ using GUC.Types;
 using GUC.Server.Scripts.AI;
 using GUC.Server.Scripts.AI.Waypoints;
 using GUC.Server.Scripts.AI.NPC_Def.Monster;
+using GUC.Server.Scripts.Items;
 
 namespace GUC.Server.Scripts
 {
@@ -60,6 +61,7 @@ namespace GUC.Server.Scripts
 		}
 
 		public void spawn(Player player) {
+            Console.WriteLine("Spieler: "+player.ID+" "+player.Name);
 			mB.addLine(255, 255, 255, 255, player.Name+" betritt das Spiel");
             Logger.log(Logger.LOG_INFO, player.Name + " betritt das Spiel");
 
@@ -81,73 +83,107 @@ namespace GUC.Server.Scripts
             }
         }
 
-		public void textBoxMessageReceived(TextBox tb, Player pl, String message) {
+        #region CommandFunctions
+        public bool IsCommand(String commString)
+        {
+            if (commString.StartsWith("/"))
+                return true;
+            return false;
+        }
+        public bool IsCommand(String command, String commString)
+        {
+            if (commString.ToLower().StartsWith("/"+command.ToLower()))
+                return true;
+            return false;
+        }
+
+        public void getParameters(String commString, out String param){
+            commString = commString.Trim();
+            int indexOf = commString.IndexOf(" ");
+            if (indexOf == -1)
+            {
+                param = null;
+                return;
+            }
+
+            String parameters = commString.Substring(indexOf + 1).Trim();
+            param = parameters;
+            
+        }
+
+        public void getParameters(String commString, out String param, out int param2)
+        {
+            String[] parameters = null;
+            getParameters(commString, out parameters);
+
+            if (parameters == null || parameters.Length == 0)
+            {
+                param = null;
+                param2 = 0;
+                return;
+            }
+            param = parameters[0];
+            if (parameters.Length == 1)
+                param2 = 0;
+            else
+                Int32.TryParse(parameters[1], out param2);
+        }
+
+        public void getParameters(String commString, out String[] param)
+        {
+            String parameterString = null;
+            getParameters(commString, out parameterString);
+
+            if (parameterString == null)
+            {
+                param = null;
+                return;
+            }
+            param = parameterString.Split(new char[]{' '});
+        }
+
+        public void getParameters(String commString, out int[] param)
+        {
+            String[] parameters = null;
+            getParameters(commString, out parameters);
+
+            if (parameters == null)
+            {
+                param = null;
+                return;
+            }
+            param = new int[parameters.Length];
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                Int32.TryParse(parameters[i], out param[i]);
+            }
+        }
+
+        #endregion
+
+        public void textBoxMessageReceived(TextBox tb, Player pl, String message) {
 			if(message.Trim().Length == 0)
 				return;
 			message = message.Trim();
-			String upperMessage = message.ToUpper();
-			if(upperMessage.StartsWith("/TTNMI")) {
-				pl.Position = pl.getNearestMobInteract().Position;
-				
-			}else if(upperMessage.StartsWith("/RAIN")) {
-                World.setRainTime(World.WeatherType.Rain, 12, 0, 11, 59);
 
-            }
-            else if (upperMessage.StartsWith("/SPAWN "))
+            //Wenn es kein Kommando ist, wird die Nachricht direkt ausgegeben!
+            if (!IsCommand(message))
             {
-                String second = upperMessage.Substring("/SPAWN ".Length).Trim().ToLower();
+                mB.addLine(255, 255, 255, 255, pl.Name + ": " + message);
+                return;
+            }
 
-                WayPoint wp = AI.AISystem.WayNets[@"NEWWORLD\NEWWORLD.ZEN"].getNearestWaypoint(pl.Position);
-                NPC npc = null;
-                if(second == "goblin")
-                    npc = new Young_Gobbo_Green();
-                else if (second == "wolf")
-                    npc = new YoungWolf();
-                else if (second == "bloodfly")
-                    npc = new Bloodfly();
-                else if (second == "waran")
-                    npc = new Waran();
-                else if (second == "keiler")
-                    npc = new Keiler();
-                if(npc != null)
-                    npc.Spawn(@"NEWWORLD\NEWWORLD.ZEN", wp.Position, null);
-
-            }
-            else if (upperMessage.StartsWith("/GOTO"))
+            if (IsCommand("giveitem", message))
             {
-                pl.Position = lastNPC.Position;
+                String instance = ""; int amount = 0;
+                getParameters(message, out instance, out amount);
+                if (instance == null || ItemInstance.getItemInstance(instance) == null)
+                    return;
+                if (amount == 0)
+                    amount = 1;
+                pl.addItem(ItemInstance.getItemInstance(instance), amount);
             }
-            else if (upperMessage.StartsWith("/EXITGAME"))
-            {
-                pl.exitGame();
-            }
-            else if (upperMessage.StartsWith("/SETTIME "))
-            {
-
-            }
-            else if (upperMessage.StartsWith("/drawSize"))
-            {
-
-            }
-            else if (upperMessage.StartsWith("/EQUIPITEM"))
-            {
-                foreach (Item item in pl.getItemList())
-                {
-                    if (item.ItemInstance.MainFlags.HasFlag(MainFlags.ITEM_KAT_NF))
-                    {
-                        pl.Equip(item);
-                    }
-                }
-            }
-            else if (upperMessage.StartsWith("/UNEQUIPITEM"))
-            {
-                pl.UnEquip(pl.EquippedWeapon);
-            }
-            else if (upperMessage.StartsWith("/SNOW"))
-            {
-                World.setRainTime(World.WeatherType.Snow, 12, 0, 11, 59);
-            }
-            else if (upperMessage.StartsWith("/GMP"))
+            else if (IsCommand("giveSkills", message))
             {
                 for (int i = 0; i < (int)NPCAttributeFlags.ATR_MAX; i++)
                 {
@@ -162,118 +198,64 @@ namespace GUC.Server.Scripts
 
                 for (int i = (int)NPCTalents.H1; i <= (int)NPCTalents.CrossBow; i++)
                 {
-                    pl.setHitchances((NPCTalents)i, 100 + i);
+                    pl.setTalentSkills((NPCTalents)i, 3);
+                    pl.setTalentValues((NPCTalents)i, 3);
+                    pl.setHitchances((NPCTalents)i, 100);
                 }
             }
-            else if (upperMessage.StartsWith("/SPAWNMOBDOOR"))
+            else if (IsCommand("giveAttribute", message))
             {
-                MobDoor v = new MobDoor("DOOR_WOODEN.MDS");
-                v.Spawn(pl.Map, new Vec3f(0, -160, 0), new Vec3f(0, 0, 1));
+                int[] arg = null;
+                getParameters(message, out arg);
+                if (arg.Length != 2)
+                    return;
+                pl.setAttribute((NPCAttributeFlags)arg[0], arg[1]);
             }
-            else if (upperMessage.StartsWith("/SPAWNMOBBED"))
+            else if (IsCommand("giveTalent", message))
             {
-                MobBed v = new MobBed("BEDHIGH_NW_MASTER_01.ASC");
-                v.Spawn(pl.Map, new Vec3f(0, -160, 0), new Vec3f(0, 0, 1));
+                int[] arg = null;
+                getParameters(message, out arg);
+                if (arg.Length != 3)
+                    return;
+                pl.setTalentSkills((NPCTalents)arg[0], arg[1]);
+                pl.setTalentValues((NPCTalents)arg[0], arg[2]);
             }
-            else if (upperMessage.StartsWith("/SPAWNMOBINTER"))
+            else if (IsCommand("giveSpell"))
             {
-                MobInter v = new MobInter("BSFIRE_OC.MDS", ItemInstance.getItemInstance("ITMISWORDRAW"));
-                v.Spawn(pl.Map, new Vec3f(0, -160, 0), new Vec3f(0, 0, 1));
+                pl.addItem(ITSC_SHRINK.get(), 90);
+                pl.addItem(ITSC_TRFSHEEP.get(), 90);
             }
-            else if (upperMessage.StartsWith("/SPAWNVOB"))
+            else if (IsCommand("setTime", message))
             {
-                Vob v = new Vob("dt_bookshelf_v1.3DS", true, true);
-                v.Spawn(pl.Map, new Vec3f(0, 0, 0), new Vec3f(0, 0, 1));
+                int[] arg = null;
+                getParameters(message, out arg);
+                if (arg.Length != 2)
+                    return;
+                DayTime.setTime(arg[0], arg[1]);
             }
-            else if (upperMessage.StartsWith("/SPAWNITEM "))
+            else if (IsCommand("toWP", message))
             {
-                pl.World.addItem(ItemInstance.getItemInstance(upperMessage.Substring("/SPAWNITEM ".Length).Trim()), 1, pl.Position);
+                String wp = null;
+                getParameters(message, out wp);
+                if (wp == null)
+                    return;
+                WayPoint wayp = AISystem.getWaypoint(pl.Map, wp);
+                if (wayp == null)
+                {
+                    mB.addLine(pl, 255, 0, 0, 255, "Waypoint not found!: " + wp);
+                    return;
+                }
+                pl.setPosition(wayp.Position);
             }
-            else if (upperMessage.StartsWith("/GIVEITEM "))
-            {
-                pl.addItem(ItemInstance.getItemInstance(upperMessage.Substring("/GIVEITEM ".Length).Trim()), 1);
-            }
-            else if (upperMessage.StartsWith("/SPAWNNPC"))
-            {
-                lastNPC = new NPC("Test");
-                lastNPC.Spawn(pl.Map, new Vec3f(0, 0, 0), new Vec3f(0, 0, 0));
-
-                lastNPC.addItem(ItemInstance.getItemInstance("ITAT_SHEEPFUR"), 12);
-                lastNPC.addItem(ItemInstance.getItemInstance("ITAT_WOLFFUR"), 11);
-                lastNPC.addItem(ItemInstance.getItemInstance("ITMW_1H_VLK_MACE"), 1);
-
-                lastNPC.InitNPCAI();
-
-                lastPlayer = pl;
-            }
-            else if (upperMessage.StartsWith("/GOTOWP"))
-            {
-                lastNPC.AI_GOTOWP("NW_TO_PASS_02");
-            }
-            else if (upperMessage.StartsWith("/SA "))
-            {
-                lastNPC.playAnimation(message.Substring("/SA ".Length).Trim());
-            }
-            else if (upperMessage.StartsWith("/STA "))
-            {
-                lastNPC.stopAnimation(message.Substring("/STA ".Length).Trim());
-            }
-            else if (upperMessage.StartsWith("/CHNPC"))
-            {
-                lastNPC.setVisual("Orc.mds", "Orc_BodyElite", 0, 0, "Orc_HeadWarrior", 0, 0);
-            }
-            else if (message == "/kill")
-            {
-                pl.HP = 0;
-            }
-            else if (message.StartsWith("/uncon "))
-            {
-                pl.dropUnconscious(Convert.ToSingle(message.Substring("/uncon ".Length).Trim()));
-            }
-            else if (message.StartsWith("/setHP "))
-            {
-                pl.HP = Convert.ToInt32(message.Substring("/setHP ".Length).Trim());
-            }
-            else if (message == "/revive")
+            else if (IsCommand("revive", message))
             {
                 pl.revive();
             }
-            else if (message == "/freeze")
-            {
-                pl.freeze();
-            }
-            else if (message == "/unfreeze")
-            {
-                pl.unfreeze();
-            }
-            else if (message.StartsWith("/startAnim "))
-            {
-                pl.playAnimation(message.Substring("/startAnim ".Length).Trim());
-            }
-            else if (message.StartsWith("/stopAnim "))
-            {
-                pl.stopAnimation(message.Substring("/stopAnim ".Length).Trim());
-            }
-            else if (message.StartsWith("/alli"))
-            {
-                pl.setVisual("Alligator.mds", "KRO_BODY", 0, 0, "", 0, 0);
-            }
-            else if (message.StartsWith("/orcelite"))
-            {
-                pl.setVisual("Orc.mds", "Orc_BodyElite", 0, 0, "Orc_HeadWarrior", 0, 0);
-            }
-            else if (message.StartsWith("/orcelite"))
-            {
-                pl.setVisual("Razor.mds", "Raz_Body", 0, 0, "", 0, 0);
-            }
-            else if (message.StartsWith("/human"))
-            {
-                pl.setVisual("HUMANS.mds", "hum_body_Naked0", 9, 0, "Hum_Head_Pony", 0, 0);
-            }
             else
             {
-                mB.addLine(255, 255, 255, 255, pl.Name + ": " + message);
+                mB.addLine(pl, 255, 255, 255, 255, "Command not found: " + message);
             }
+
 		}
 
 

@@ -74,7 +74,14 @@ namespace GUC.Network.Messages.Connection
                 sWorld.EndRainMinute = endminute;
 
 
-
+                short spellCount = 0;
+                stream.Read(out spellCount);
+                for (int i = 0; i < spellCount; i++)
+                {
+                    Spell spell = new Spell();
+                    spell.Read(stream);
+                    Spell.addItemInstance(spell);
+                }
 
                 short itemInstancesCount = 0;
                 stream.Read(out itemInstancesCount);

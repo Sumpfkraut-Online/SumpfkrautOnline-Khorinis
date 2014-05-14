@@ -37,7 +37,8 @@ namespace Gothic.zClasses
             StopAnimation = 0x005765F0,
             IsAnimationActive = 0x00576690,
             LoadVisualVirtual = 0x00578760,
-            GetAniIDFromAniName = 0x00612070
+            GetAniIDFromAniName = 0x00612070,
+            RemoveMeshLibAll = 0x0057E3D0
         }
 
         public enum FuncSize : uint
@@ -114,6 +115,11 @@ namespace Gothic.zClasses
         public void StartAnimation(zString str)
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.StartAnimation, new CallValue[] { str });
+        }
+
+        public void RemoveMeshLibAll()
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.RemoveMeshLibAll, new CallValue[] {  });
         }
 
         public void StopAnimation(zString str)

@@ -23,6 +23,7 @@ namespace GUC.WorldObjects.Character
         public String PortalRoom = "";
 
         public int TrueGuild = 0;
+        public Item ActiveSpell = null;
 
 
 

@@ -137,6 +137,19 @@ namespace GUC.WorldObjects
                 }
 
             }
+
+            if (paramI.HasFlag(ItemInstanceParameters.Spell))
+            {
+                int spellID = 0;
+                stream.Read(out spellID);
+
+                Spell spell = null;
+                Spell.SpellDict.TryGetValue(spellID, out spell);
+
+                if (spell == null)
+                    throw new Exception("Spell was not found: "+spellID);
+                this.Spell = spell;
+            }
         }
 
 
@@ -224,6 +237,9 @@ namespace GUC.WorldObjects
                 item.Munition = zCParser.getParser(process).GetIndex("ITGUC_" + munition.ID);////item.Munition =
                 //zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Set munition: " + munition.ID + " | " + item.Munition + "||" + munition.Visual + " " + this.Visual, 0, "Program.cs", 0);
             }
+
+            if (p.HasFlag(ItemInstanceParameters.Spell))
+                item.Spell = Spell.ID;
             item.CreateVisual();
         }
     }

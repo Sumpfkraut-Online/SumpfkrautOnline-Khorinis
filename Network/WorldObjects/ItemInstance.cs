@@ -48,7 +48,7 @@ namespace GUC.WorldObjects
 
         public bool isKeyInstance = false;
 
-        
+        public Spell Spell = null;
 
 
         public int ID { get { return id; } }
@@ -288,6 +288,8 @@ namespace GUC.WorldObjects
                 param |= ItemInstanceParameters.munition;
             if (isKeyInstance)
                 param |= ItemInstanceParameters.isKeyInstance;
+            if (Spell != null)
+                param |= ItemInstanceParameters.Spell;
             return param;
         }
 
@@ -360,7 +362,8 @@ namespace GUC.WorldObjects
             effect = visual_Change << 1,
             visual_skin = effect << 1,
             munition = visual_skin << 1,
-            isKeyInstance = munition << 1
+            isKeyInstance = munition << 1,
+            Spell = isKeyInstance << 1
         }
     }
 }

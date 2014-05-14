@@ -5,6 +5,7 @@ using System.Text;
 using Gothic.zClasses;
 using WinApi;
 using Gothic.zTypes;
+using GUC.WorldObjects;
 
 namespace GUC.Hooks
 {
@@ -109,6 +110,71 @@ namespace GUC.Hooks
             catch (Exception ex)
             {
                 zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', ex.ToString(), 0, "Program.cs", 0);
+            }
+            return 0;
+        }
+
+
+
+
+        static int symbol_GetValue_P_Type = 0;
+        public static Int32 hook_Symbol_GetValue(String message)
+        {
+            try
+            {
+                Process process = Process.ThisProcess();
+                int address = Convert.ToInt32(message);
+
+                zCPar_Symbol symbol = new zCPar_Symbol(process, process.ReadInt(address));
+
+                String name = symbol.Name.Value.Trim().ToLower();
+                if (name.Equals("spellfxaniletters"))
+                {
+                    zString str = new zString(process, process.ReadInt(address + 4));
+                    int id = process.ReadInt(address + 8);
+
+                    String value = "FBT";
+                    Spell spell = null;
+                    Spell.SpellDict.TryGetValue(id, out spell);
+                    if (spell == null)
+                        spell = new Spell();
+                    value = spell.AniName;
+
+                    //Generating Buffer with String:
+                    
+                    System.Text.Encoding enc = System.Text.Encoding.Default;
+                    byte[] arr = enc.GetBytes(value);
+
+                    //Creating Pointer to char*
+                    IntPtr charArr = process.Alloc((uint)arr.Length + 1);
+                    if (arr.Length > 0)
+                        process.Write(arr, charArr.ToInt32());
+
+                    //Calling constructor and free char*
+                    process.THISCALL<NullReturnCall>((uint)str.Address, (uint)0x004010C0, new CallValue[] { new IntArg(charArr.ToInt32()) });
+                    process.Free(charArr, (uint)arr.Length + 1);
+
+
+                    if (symbol_GetValue_P_Type != 1)
+                    {
+                        process.Write(new byte[]{0xC2, 0x08, 0x00}, Program.ParSymbol_GetValueHook.oldFuncInNewFunc.ToInt32());
+                    
+                        symbol_GetValue_P_Type = 1;
+                    }
+
+                }
+                else
+                {
+                    if (symbol_GetValue_P_Type == 0)
+                        return 0;
+                    process.Write(Program.ParSymbol_GetValueHook.oldFunc, Program.ParSymbol_GetValueHook.oldFuncInNewFunc.ToInt32());
+                    symbol_GetValue_P_Type = 0;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                zERROR.GetZErr(Process.ThisProcess()).Report(4, 'G', ex.ToString(), 0, "Program.cs", 0);
             }
             return 0;
         }

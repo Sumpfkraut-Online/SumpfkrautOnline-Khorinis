@@ -213,6 +213,9 @@ namespace GUC.Server.Scripting.Objects
 
         public String Description { get { return itemInstances.Description; } protected set { itemInstances.Description = value; } }
 
+
+        public Spell Spell { get { return itemInstances.Spell.ScriptingProto; } protected set { itemInstances.Spell = value.spell; } }
+
         #region OnEquip
         public event GUC.Server.Scripting.Events.NPCEquipEventHandler OnEquip;
         internal void iOnEquip(NPCProto proto, Item item)
@@ -231,6 +234,15 @@ namespace GUC.Server.Scripting.Objects
         #endregion
 
 
+        #region OnUse
+        public event GUC.Server.Scripting.Events.UseItemEventHandler OnUse;
+        internal void iOnUse(NPCProto proto, Item item, short state, short targetState)
+        {
+            if (OnUse != null)
+                OnUse(proto, item, state, targetState);
+        }
+
+        #endregion
 
 
     }

@@ -19,6 +19,7 @@ using GUC.Server.Scripts.AI.NPC_Def;
 using GUC.Server.Scripts.AI.DataTypes;
 using GUC.Server.Scripts.AI.NPC_Def.Monster;
 using GUC.Server.Scripts.AI.NPC_Def.Human;
+using GUC.Server.Scripts.Items;
 namespace GUC.Server.Scripts
 {
 	public class Startup : IServerStartup
@@ -35,9 +36,8 @@ namespace GUC.Server.Scripts
             DefaultVobs.Init();
             DefaultWorldItem.Init();
 
-            DayTime dt = new DayTime();
-            dt.Init();
-            dt.setTime(0, 12, 0);
+            DayTime.Init();
+            DayTime.setTime(0, 12, 0);
 
             DamageScript.Init();
 
@@ -51,6 +51,10 @@ namespace GUC.Server.Scripts
             accSystem.Init();
 
             AI.AISystem.Init();
+
+
+            ITSC_SHRINK.get();
+            ITSC_TRFSHEEP.get();
 
             //Player.sPlayerKeyEvent += new Events.PlayerKeyEventHandler(keyEvent);
 

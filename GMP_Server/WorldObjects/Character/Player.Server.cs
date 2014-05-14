@@ -20,6 +20,8 @@ namespace GUC.WorldObjects.Character
         #endregion
 
 
+        public bool IsConnected = true;
+
         public Player(RakNet.RakNetGUID guid, String name)
             : this()
         {

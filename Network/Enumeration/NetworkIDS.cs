@@ -11,6 +11,8 @@ namespace GUC.Enumeration
         DisconnectMessage,
 
         CreateItemInstanceMessage,
+        CreateSpellMessage,
+
         PlayerFreezeMessage,
         AddItemMessage,
         StartDialogAnimMessage,
@@ -33,6 +35,7 @@ namespace GUC.Enumeration
         SetVobDirectionMessage,
 
         SetVobPosDirMessage,
+        SetVobListPosDirMessage,
 
         PlayerUpdateMessage,
         AnimationUpdateMessage,
@@ -66,7 +69,10 @@ namespace GUC.Enumeration
         PlayerKeyMessage,
 
         NPCProtoSetWeaponMode,
-        NPCEnableMessage
+        NPCEnableMessage,
+
+        UseItemMessage,
+        CastSpell
     }
 
     public enum ChangeSkillType : byte

@@ -101,6 +101,12 @@ namespace GUC.Network
             val = BitConverter.ToUInt64(arr, 0);
         }
 
+        public static void Write(this BitStream stream, ushort val)
+        {
+            byte[] arr = BitConverter.GetBytes(val);
+            stream.Write(arr, 2);
+        }
+
         public static void Read(this BitStream stream, out ushort val)
         {
             byte[] arr = new byte[2];

@@ -59,11 +59,23 @@ namespace GUC.Server.Network.Messages.PlayerCommands
                 weaponIt = (Item)sWorld.VobDict[weapon];
                 weaponScriptItem = weaponIt.ScriptingProto;
             }
-            Scripting.Objects.Character.NPCProto.OnPlayerDamages(vicProto.ScriptingNPC, (DamageType)damageMode, locHit, flydir, attackerScriptProto, weaponMode, spellID, weaponScriptItem, fallDownDistanceY);
-            Write(vicProto, (DamageType)damageMode, locHit, flydir, attProto, weaponMode, spellID, weaponIt, fallDownDistanceY, packet.guid);
+
+
+            Spell spell = null;
+            Scripting.Objects.Spell scriptSpell = null;
+            if (spellID > 100)
+            {
+                Spell.SpellDict.TryGetValue(spellID, out spell);
+                if (spell != null)
+                    scriptSpell = spell.ScriptingProto;
+
+            }
+
+            Scripting.Objects.Character.NPCProto.OnPlayerDamages(vicProto.ScriptingNPC, (DamageType)damageMode, locHit, flydir, attackerScriptProto, weaponMode, scriptSpell, weaponScriptItem, fallDownDistanceY);
+            Write(vicProto, (DamageType)damageMode, locHit, flydir, attProto, weaponMode, spell, weaponIt, fallDownDistanceY, packet.guid);
         }
 
-        public static void Write(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, NPCProto attacker, int weaponMode, int spellID, Item weapon, float fallDownDistanceY, AddressOrGUID guidExclude)
+        public static void Write(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, NPCProto attacker, int weaponMode, Spell spellID, Item weapon, float fallDownDistanceY, AddressOrGUID guidExclude)
         {
             BitStream stream = Program.server.sendBitStream;
             stream.Reset();
@@ -79,7 +91,7 @@ namespace GUC.Server.Network.Messages.PlayerCommands
                 sendFlags |= 4;
             if (weaponMode != 0)
                 sendFlags |= 8;
-            if (spellID != 0)
+            if (spellID != null)
                 sendFlags |= 16;
             if (weapon != null)
                 sendFlags |= 32;
@@ -98,8 +110,8 @@ namespace GUC.Server.Network.Messages.PlayerCommands
                 stream.Write(attacker.ID);
             if (weaponMode != 0)
                 stream.Write(weaponMode);
-            if (spellID != 0)
-                stream.Write(spellID);
+            if (spellID != null)
+                stream.Write(spellID.ID);
             if (weapon != null)
                 stream.Write(weapon.ID);
             if ((sendFlags & 64) == 64)

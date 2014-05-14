@@ -229,7 +229,12 @@ namespace GUC.Server.Scripting.Objects.Character
 
 
         #region Fields
+
         public String Name { get { return proto.Name; } set { setName(value); } }
+
+        public Vec3f Scale { get { return proto.Scale; } set { setScale(value); } }
+        
+
 
         public int Strength {
             get { return proto.Attributes[(byte)NPCAttributeFlags.ATR_STRENGTH]; }
@@ -762,37 +767,38 @@ namespace GUC.Server.Scripting.Objects.Character
 
         public void hit(NPCProto victim)
         {
-            hit(victim, DamageType.DAM_BLUNT, 0, this.proto.Weapon.ScriptingProto, 0, null, null, 0.0f);
+            hit(victim, DamageType.DAM_BLUNT, 0, this.proto.Weapon.ScriptingProto, null, null, null, 0.0f);
         }
 
         public void hit(NPCProto victim, DamageType damageMode)
         {
-            hit(victim, damageMode, 0, this.proto.Weapon.ScriptingProto, 0, null, null, 0.0f);
+            hit(victim, damageMode, 0, this.proto.Weapon.ScriptingProto, null, null, null, 0.0f);
         }
 
         public void hit(NPCProto victim, DamageType damageMode, int weaponMode)
         {
-            hit(victim, damageMode, weaponMode, this.proto.Weapon.ScriptingProto, 0, null, null, 0.0f);
+            hit(victim, damageMode, weaponMode, this.proto.Weapon.ScriptingProto, null, null, null, 0.0f);
         }
 
         public void hit(NPCProto victim, DamageType damageMode, int weaponMode, Vec3f hitLoc)
         {
-            hit(victim, damageMode, weaponMode, this.proto.Weapon.ScriptingProto, 0, hitLoc, null, 0.0f);
+            hit(victim, damageMode, weaponMode, this.proto.Weapon.ScriptingProto, null, hitLoc, null, 0.0f);
         }
 
         public void hit(NPCProto victim, DamageType damageMode, int weaponMode, Item weapon, Vec3f hitLoc)
         {
-            hit(victim, damageMode, weaponMode, weapon, 0, hitLoc, null, 0.0f);
+            hit(victim, damageMode, weaponMode, weapon, null, hitLoc, null, 0.0f);
         }
 
-        public void hit(NPCProto victim, DamageType damageMode, int weaponMode, Item weapon, int spellID, Vec3f hitLoc)
+        public void hit(NPCProto victim, DamageType damageMode, int weaponMode, Item weapon, Spell spell, Vec3f hitLoc)
         {
-            hit(victim, damageMode, weaponMode, weapon, spellID, hitLoc, null, 0.0f);
+            hit(victim, damageMode, weaponMode, weapon, spell, hitLoc, null, 0.0f);
         }
 
-        public void hit(NPCProto victim, DamageType damageMode, int weaponMode, Item weapon, int spellID, Vec3f hitLoc, Vec3f flyDir, float fallDownDistanceY)
+        public void hit(NPCProto victim, DamageType damageMode, int weaponMode, Item weapon, Spell spell, Vec3f hitLoc, Vec3f flyDir, float fallDownDistanceY)
         {
-            GUC.Server.Network.Messages.PlayerCommands.OnDamageMessage.Write(victim.proto, damageMode, hitLoc, flyDir, this.proto, weaponMode, spellID, weapon.ProtoItem, fallDownDistanceY, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS);
+            WorldObjects.Spell objSpell = (spell == null) ? null : spell.spell;
+            GUC.Server.Network.Messages.PlayerCommands.OnDamageMessage.Write(victim.proto, damageMode, hitLoc, flyDir, this.proto, weaponMode, objSpell, weapon.ProtoItem, fallDownDistanceY, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS);
         }
 
         /// <summary>
@@ -1164,11 +1170,50 @@ namespace GUC.Server.Scripting.Objects.Character
 
         #endregion
 
+        #region OnUseItem
+        public event GUC.Server.Scripting.Events.UseItemEventHandler OnUseItem;
+        internal void iOnUseItem(NPCProto proto, Item item, short state, short targetState)
+        {
+            if (OnUseItem != null)
+                OnUseItem(proto, item, state, targetState);
+        }
+
+        public static event GUC.Server.Scripting.Events.UseItemEventHandler sOnUseItem;
+        internal static void isOnUseItem(NPCProto proto, Item item, short state, short targetState)
+        {
+            proto.iOnUseItem(proto, item, state, targetState);
+            item.ItemInstance.iOnUse(proto, item, state, targetState);
+            if (sOnUseItem != null)
+                sOnUseItem(proto, item, state, targetState);
+        }
+
+        #endregion
+
+        #region Spells
+        public event GUC.Server.Scripting.Events.CastSpell OnCastSpell;
+        internal void iOnCastSpell(NPCProto caster, Spell spell, Vob target)
+        {
+            if (OnCastSpell != null)
+                OnCastSpell(caster, spell, target);
+        }
+
+        public static event GUC.Server.Scripting.Events.CastSpell sOnCastSpell;
+        internal static void isOnCastSpell(NPCProto caster, Spell spell, Vob target)
+        {
+            caster.iOnCastSpell(caster, spell, target);
+            spell.iOnCastSpell(caster, spell, target);
+            if (sOnCastSpell != null)
+                sOnCastSpell(caster, spell, target);
+        }
+
+        #endregion
+
+
 
 
 
         public event GUC.Server.Scripting.Events.PlayerDamageEventHandler OnDamaged;
-        internal void OnDamage(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, NPCProto attacker, int weaponMode, int spellID, Item weapon, float fallDownDistanceY)
+        internal void OnDamage(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, NPCProto attacker, int weaponMode, Spell spellID, Item weapon, float fallDownDistanceY)
         {
             if (OnDamaged != null)
                 OnDamaged(victim, damageMode, hitLoc, flyDir, attacker, weaponMode, spellID, weapon, fallDownDistanceY);
@@ -1193,7 +1238,7 @@ namespace GUC.Server.Scripting.Objects.Character
 
         public static event Events.PlayerDamageEventHandler OnDamages;
 
-        internal static void OnPlayerDamages(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, NPCProto attacker, int weaponMode, int spellID, Item weapon, float fallDownDistanceY)
+        internal static void OnPlayerDamages(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, NPCProto attacker, int weaponMode, Spell spellID, Item weapon, float fallDownDistanceY)
         {
             victim.OnDamage(victim, damageMode, hitLoc, flyDir, attacker, weaponMode, spellID, weapon,  fallDownDistanceY);
             if (OnDamages != null)

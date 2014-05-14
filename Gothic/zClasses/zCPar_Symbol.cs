@@ -18,7 +18,8 @@ namespace Gothic.zClasses
         public enum FuncOffsets
         {
             SetClassOffset = 0x007A2F40,
-            LoadFull = 0x007A2BA0
+            LoadFull = 0x007A2BA0,
+            SetValue_Str = 0x007A1E90,
         }
 
 
@@ -31,6 +32,11 @@ namespace Gothic.zClasses
         public zCPar_Symbol()
         {
 
+        }
+
+        public void SetValue(zString str, int id)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetValue_Str, new CallValue[] { str, new IntArg(id) });
         }
 
         public void LoadFull(zFile file)

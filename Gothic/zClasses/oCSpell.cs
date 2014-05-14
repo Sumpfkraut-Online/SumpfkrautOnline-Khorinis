@@ -11,7 +11,23 @@ namespace Gothic.zClasses
         #region OffsetLists
         public enum Offsets
         {
-            SpellID = 0x54
+            TimePerMana = 128,
+            DamagePerLevel = 132,
+            DamageType = 136,
+            SpellType = 140,
+            CanTurnDuringInvest = 144,
+            CanChangeTargetDuringInvest = 148,
+            IsMultiEffect = 152,
+            TargetCollectionAlgo = 156,
+            TargetCollectType = 160,
+            TargetCollectRange = 164,
+            TargetCollectAzi = 168,
+            TargetCollectElev = 172,
+            SpellID = 0x54,//84
+            SpellInfo = 0x58,//88
+
+            Caster = 0x34,
+            Target = 0x3C
         }
         public enum FuncOffsets : uint
         {
@@ -21,7 +37,9 @@ namespace Gothic.zClasses
             Cast = 0x00485360,
             CastSpecificSpell = 0x00486960,
             CreateEffect = 0x004842E0,
-            Invest = 0x004850D0
+            Invest = 0x004850D0,
+            SetSpellInfo = 0x00486940,
+            Stop = 0x00485510
         }
 
         public enum HookSize : uint
@@ -44,9 +62,108 @@ namespace Gothic.zClasses
         {
         }
 
+
+        #region Fields
+
+        public float TimePerMana
+        {
+            get { return Process.ReadFloat(Address + (int)Offsets.TimePerMana); }
+            set { Process.Write(value, Address + (int)Offsets.TimePerMana); }
+        }
+
+        public int DamagePerLevel
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.DamagePerLevel); }
+            set { Process.Write(value, Address + (int)Offsets.DamagePerLevel); }
+        }
+
+        public int DamageType
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.DamageType); }
+            set { Process.Write(value, Address + (int)Offsets.DamageType); }
+        }
+
+        public int CanTurnDuringInvest
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.CanTurnDuringInvest); }
+            set { Process.Write(value, Address + (int)Offsets.CanTurnDuringInvest); }
+        }
+
+        public int CanChangeTargetDuringInvest
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.CanChangeTargetDuringInvest); }
+            set { Process.Write(value, Address + (int)Offsets.CanChangeTargetDuringInvest); }
+        }
+
+        public int IsMultiEffect
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.IsMultiEffect); }
+            set { Process.Write(value, Address + (int)Offsets.IsMultiEffect); }
+        }
+
+        public int TargetCollectionAlgo
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.TargetCollectionAlgo); }
+            set { Process.Write(value, Address + (int)Offsets.TargetCollectionAlgo); }
+        }
+
+        public int TargetCollectType
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.TargetCollectType); }
+            set { Process.Write(value, Address + (int)Offsets.TargetCollectType); }
+        }
+
+        public int TargetCollectRange
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.TargetCollectRange); }
+            set { Process.Write(value, Address + (int)Offsets.TargetCollectRange); }
+        }
+
+        public int TargetCollectAzi
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.TargetCollectAzi); }
+            set { Process.Write(value, Address + (int)Offsets.TargetCollectAzi); }
+        }
+
+        public int TargetCollectElev
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.TargetCollectElev); }
+            set { Process.Write(value, Address + (int)Offsets.TargetCollectElev); }
+        }
+
+        public int SpellType
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.SpellType); }
+            set { Process.Write(value, Address + (int)Offsets.SpellType); }
+        }
+
+        public int SpellID
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.SpellID); }
+        }
+
+        public oCNpc Caster
+        {
+            get { return new oCNpc(Process, Process.ReadInt(Address + (int)Offsets.Caster)); }
+        }
+
+        public zCVob Target
+        {
+            get { return new zCVob(Process, Process.ReadInt(Address + (int)Offsets.Target)); }
+        }
+        #endregion
+
+
+
+
         public int GetSpellID()
         {
             return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.GetSpellID, new CallValue[] {  }).Address;
+        }
+
+        public int Stop()
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.Stop, new CallValue[] { }).Address;
         }
 
         /// <summary>
@@ -76,6 +193,12 @@ namespace Gothic.zClasses
         public void CastSpecificSpell()
         {
             Process.THISCALL<zString>((uint)Address, (uint)FuncOffsets.CastSpecificSpell, new CallValue[] { });
+        }
+
+
+        public override uint ValueLength()
+        {
+            return 4;
         }
     }
 }

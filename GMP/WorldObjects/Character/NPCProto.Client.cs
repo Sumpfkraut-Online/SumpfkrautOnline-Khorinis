@@ -10,6 +10,7 @@ using GUC.Types;
 using Gothic.zTypes;
 using GUC.Hooks;
 using GUC.Enumeration;
+using Gothic.zStruct;
 
 namespace GUC.WorldObjects.Character
 {
@@ -150,8 +151,11 @@ namespace GUC.WorldObjects.Character
             this.Address = npc.Address;
             sWorld.SpawnedVobDict.Add(npc.Address, this);
 
-            
-
+            if (npc.MagBook == null || npc.MagBook.Address == 0)
+            {
+                npc.MagBook = oCMag_Book.Create(process);
+                npc.MagBook.SetOwner(npc);
+            }
 
 
             if(hideName)
@@ -190,9 +194,13 @@ namespace GUC.WorldObjects.Character
             foreach (Item it in itemList)
                 this.addItemToContainer(it);
             foreach (Item it in EquippedList)
-                if( !it.ItemInstance.MainFlags.HasFlag(MainFlags.ITEM_KAT_ARMOR) && !it.ItemInstance.MainFlags.HasFlag(MainFlags.ITEM_KAT_FF) && !it.ItemInstance.MainFlags.HasFlag(MainFlags.ITEM_KAT_NF))
+            {
+                if (!it.ItemInstance.MainFlags.HasFlag(MainFlags.ITEM_KAT_ARMOR) && !it.ItemInstance.MainFlags.HasFlag(MainFlags.ITEM_KAT_FF) && !it.ItemInstance.MainFlags.HasFlag(MainFlags.ITEM_KAT_NF))
+                {
+                    hNpc.blockSendEquip = true;
                     npc.Equip(new oCItem(process, it.Address));
-
+                }
+            }
             //if (this.Armor != null)
             //    setArmor(this.Armor);
             if (this.Weapon != null)
@@ -220,10 +228,16 @@ namespace GUC.WorldObjects.Character
             setScale(this.Scale);
             setFatness(this.Fatness);
             setWeaponMode(this.WeaponMode);
+
+            if (enabled)
+                Enable(this.Position);
         }
+
+        private bool enabled = false;
 
         public void Disable()
         {
+            enabled = false;
             if (this.Address != 0)
             {
                 Process process = Process.ThisProcess();
@@ -237,6 +251,7 @@ namespace GUC.WorldObjects.Character
 
         public void Enable(Vec3f pos)
         {
+            enabled = true;
             if (this.Address != 0)
             {
                 Process process = Process.ThisProcess();
@@ -249,8 +264,90 @@ namespace GUC.WorldObjects.Character
             }
         }
 
+
+
+        public void RemoveWeapon()
+        {
+            if (this.Address == 0)
+                return;
+
+            Process process = Process.ThisProcess();
+
+            zString str = zString.Create(process, "MOD_RemoveWeapon");
+            int id = zCParser.getParser(process).GetIndex(str);
+            str.Dispose();
+
+            zCParser.getParser(process).SetInstance(zString.Create(process, "SELF"), this.Address);
+            
+
+            zCParser.CallFunc(process, new CallValue[] {
+                    new IntArg(zCParser.getParser(process).Address),
+                    new IntArg(id)
+                });
+        }
+
+        public void Output(String output)
+        {
+            if (this.Address == 0)
+                return;
+
+            Process process = Process.ThisProcess();
+
+            zString str = zString.Create(process, "guc_string_helper");
+            zCPar_Symbol sym = zCParser.getParser(process).GetSymbol(str);
+            str.Dispose();
+
+            str = zString.Create(process, output);
+            sym.SetValue(str, 0);
+            str.Dispose();
+
+
+            str = zString.Create(process, "MOD_Output");
+            int id = zCParser.getParser(process).GetIndex(str);
+            str.Dispose();
+
+            zCParser.getParser(process).SetInstance(zString.Create(process, "SELF"), this.Address);
+            zCParser.getParser(process).SetInstance(zString.Create(process, "OTHER"), this.Address);
+
+            zCParser.CallFunc(process, new CallValue[] {
+                    new IntArg(zCParser.getParser(process).Address),
+                    new IntArg(id)
+                });
+        }
+
+        public void OutputSVM_Overlay(String output)
+        {
+            if (this.Address == 0)
+                return;
+
+            Process process = Process.ThisProcess();
+
+            zString str = zString.Create(process, "guc_string_helper");
+            zCPar_Symbol sym = zCParser.getParser(process).GetSymbol(str);
+            str.Dispose();
+
+            str = zString.Create(process, output);
+            sym.SetValue(str, 0);
+            str.Dispose();
+
+
+            str = zString.Create(process, "MOD_OutputSVM_Overlay");
+            int id = zCParser.getParser(process).GetIndex(str);
+            str.Dispose();
+
+            zCParser.getParser(process).SetInstance(zString.Create(process, "SELF"), this.Address);
+            zCParser.getParser(process).SetInstance(zString.Create(process, "OTHER"), this.Address);
+
+            zCParser.CallFunc(process, new CallValue[] {
+                    new IntArg(zCParser.getParser(process).Address),
+                    new IntArg(id)
+                });
+        }
+
         public void setWeaponMode(int wpMode)
         {
+            int oldWeaponMode = this.weaponMode;
+
             this.weaponMode = wpMode;
 
             if (this.Address != 0)
@@ -260,6 +357,18 @@ namespace GUC.WorldObjects.Character
 
                 npc.SetWeaponMode(this.weaponMode);
                 npc.SetWeaponMode2(this.weaponMode);
+
+                if (this.weaponMode == 7 && oldWeaponMode != 7)
+                {
+                    npc.UnreadySpell();
+                    npc.ReadySpell(ActiveSpell.ItemInstance.Spell.ID, ActiveSpell.ItemInstance.Spell.ID);
+                }
+                else if (oldWeaponMode == 7 && this.weaponMode != 7)
+                {
+                    npc.UnreadySpell();
+                }
+
+                
             }
         }
 

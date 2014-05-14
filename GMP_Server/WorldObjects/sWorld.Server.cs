@@ -27,6 +27,7 @@ namespace GUC.WorldObjects
             if (vob.ID == 0)
                 throw new ArgumentException("Vob.ID can't be null!");
 
+            
             VobDict.Remove(vob.ID);
 
             if (vob is NPCProto)

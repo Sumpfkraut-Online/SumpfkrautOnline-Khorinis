@@ -33,6 +33,8 @@ namespace GUC
 
         public static HookInfos IsUnconsciousHook;
 
+        public static HookInfos ParSymbol_GetValueHook;
+
         public static Int32 InjectedMain(String message)
         {
             try
@@ -80,6 +82,9 @@ namespace GUC
 
         public static void addHooks(Process process)
         {
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(Externals).GetMethod("AddExternals"), (int)0x006D4780, (int)7, 1);
+
+
             //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("AniCtrl_InitAnimations"), (int)oCAniCtrl_Human.FuncOffsets.InitAnimations, (int)oCAniCtrl_Human.HookSize.InitAnimations, 0);
 
 
@@ -126,7 +131,8 @@ namespace GUC
             //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("oCNpc_UseItem"), (int)oCNpc.FuncOffsets.UseItem, (int)oCNpc.HookSize.UseItem, 1);
             //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("oCNpc_EV_UseItemToState"), (int)oCNpc.FuncOffsets.EV_UseItemToState, (int)oCNpc.HookSize.EV_UseItemToState, 1);
             //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("oCNpc_EV_UseItem"), (int)oCNpc.FuncOffsets.EV_UseItem, (int)oCNpc.HookSize.EV_UseItem, 1);
-            
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("oCNpc_EV_UseItemToState"), (int)oCNpc.FuncOffsets.EV_UseItemToState, (int)oCNpc.HookSize.EV_UseItemToState, 1);
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("oCNpc_EV_UseItemToState_CALLFUNC"), (int)oCNpc.FuncOffsets.EV_UseItemToState + 0x48D, 6, 0);
             
             //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("EV_CreateInteractItem"), (int)0x00754890, (int)7, 1);
             //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("EV_CreateInteractItem"), (int)0x007546F0, (int)5, 1);
@@ -135,6 +141,30 @@ namespace GUC
 
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hItemContainer).GetMethod("StealContainer_setOwner"), (int)oCStealContainer.FuncOffsets.SetOwner, (int)oCStealContainer.HookSizes.SetOwner, 1);
             //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hItemContainer).GetMethod("StealContainer_setOwner"), (int)0x0070B6CE, (int)5, 0);
+
+
+
+            //Spells:
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hSpell).GetMethod("InitByScript_End"), 0x00484550 + 0x290, 7, 0);
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hSpell).GetMethod("InitByScript"), 0x00484550, 7, 1);
+            //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hSpell).GetMethod("Constructor"), 0x00483DD0, 7, 1);
+
+
+            process.FillWithNull(0x00484150, 0x004842DE);
+            process.Write(new byte[]{0xC2, 0x08, 0x00}, 0x00484150 + 0x18E - 3);
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hSpell).GetMethod("GetSpellInstanceName"), 0x00484150, 7, 2);
+
+            process.FillWithNull(0x004864B0, 0x0048661F);
+            process.Write(new byte[] { 0xC2, 0x04, 0x00 }, 0x0048661F - 3);
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hSpell).GetMethod("GetName"), 0x004864B0, 7, 1);
+
+            ParSymbol_GetValueHook = process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hParser).GetMethod("hook_Symbol_GetValue"), 0x007A2040, 7, 2);
+
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hSpell).GetMethod("MagBook_Spell_Cast"), 0x004767A0, 7, 0);
+
+
+
+
 
 
             process.Write(new byte[] { 0x33, 0xC0, 0xC2, 0x08, 0x00 }, removeItemFromList.oldFuncInNewFunc.ToInt32());

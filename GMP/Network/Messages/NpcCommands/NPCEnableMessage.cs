@@ -24,7 +24,7 @@ namespace GUC.Network.Messages.NpcCommands
 
 
             if (plID == 0 || !sWorld.VobDict.ContainsKey(plID))
-                throw new Exception("Vob not found!");
+                throw new Exception("Vob not found! " + plID);
             Vob vob = sWorld.VobDict[plID];
             if (!(vob is NPCProto))
                 throw new Exception("Vob is not an NPC!");

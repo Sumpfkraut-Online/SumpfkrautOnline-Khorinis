@@ -311,7 +311,7 @@ namespace GUC.Server.Scripting.Objects
             stream.Write(vob.ID);
             stream.Write(vob.Position);
 
-            if(this is NPCProto)
+            if(this is NPC)
                 ((NPCProto)this).proto.SendToAreaPlayers(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED);
             else
                 Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);

@@ -34,7 +34,7 @@ namespace GUC.Server.Scripts
         public delegate void NPCDamgeHandler(NPCProto victim, NPCProto attacker, int damage, bool dropUnconscious, bool dropDead);
         public static event NPCDamgeHandler Damages;
 
-		public static void OnDamage(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, NPCProto attacker, int weaponMode, int spellID, Item weapon, float fallDownDistanceY) {
+		public static void OnDamage(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, NPCProto attacker, int weaponMode, Spell spell, Item weapon, float fallDownDistanceY) {
 			if(victim.getUserObjects("IMMORTAL") != null && (bool)victim.getUserObjects("IMMORTAL"))//Victim is immortal!
 				return;
 			if(attacker != null && attacker.getUserObjects("FRIENDS") != null && ((List<NPCProto>)attacker.getUserObjects("FRIENDS")).Contains(victim))//Victim is a friend!
@@ -44,7 +44,7 @@ namespace GUC.Server.Scripts
 
 			int damage = 0;
 
-			Console.WriteLine("OnDamage: "+damageMode+" | "+weaponMode+" | "+spellID+" | "+weapon+" | "+attacker);
+			Console.WriteLine("OnDamage: "+damageMode+" | "+weaponMode+" | "+spell+" | "+weapon+" | "+attacker);
 
 			if(damageMode == DamageType.DAM_FALL) {
                 damage = (int)(fallDownDistanceY-500)/100 * 20;

@@ -22,6 +22,16 @@ namespace GUC.Server.Scripts.AI
             AI_Events.Init();
         }
 
+        public static WayPoint getWaypoint(String map, String wp){
+            WayNet wn = null;
+            WayNets.TryGetValue(map.ToUpper(), out wn);
+
+            if (wn == null)
+                return null;
+
+            return wn.getWaypoint(wp);
+        }
+
         public static void playerConnects(Player player)
         {
             player.InitNPCAI();

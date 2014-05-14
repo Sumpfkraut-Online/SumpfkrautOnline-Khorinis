@@ -38,7 +38,7 @@ namespace GUC.Hooks
 
                 OnDamageMessage.Write(oDD, npc);
 
-                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "OnDamage: TotalDamage:" + oDD.DamageTotal + " | Damage-Mode: " + oDD.ModeDamage + " | Mode-Weapon: " + oDD.ModeWeapon + " | " + oDD.Damage + " | " + oDD.DamageEffective + " | " + oDD.DamageReal + " | "+npc.HumanAI.FallDownDistanceY, 0, "Program.cs", 0);
+                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "OnDamage: TotalDamage:" + oDD.DamageTotal + " | Damage-Mode: " + oDD.ModeDamage + " | Mode-Weapon: " + oDD.ModeWeapon + " | " + oDD.Damage + " | " + oDD.DamageEffective + " | " + oDD.DamageReal + " | "+npc.HumanAI.FallDownDistanceY+ " | "+oDD.SpellID, 0, "Program.cs", 0);
             }
             catch (Exception ex)
             {
@@ -331,7 +331,7 @@ namespace GUC.Hooks
             return 0;
         }
 
-
+        static oCNpc UseItemNPC = null;
         public static Int32 oCNpc_EV_UseItemToState(String message)
         {
             try
@@ -347,14 +347,59 @@ namespace GUC.Hooks
                 oCMsgManipulate manipulation = new oCMsgManipulate(process, ItemMessage);
 
 
-                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Item UseItemToState: " + item.Name + " " + manipulation.InstanceName+" | "+npc.InteractItemState+" | "+npc.InteractItem.ObjectName.Value, 0, "ItemSynchro.cs", 0);
+                UseItemNPC = npc;
+            }
+            catch (Exception ex)
+            {
+                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Use Item failure:" + ex.ToString(), 0, "ItemSynchro.cs", 0);
+            }
+            return 0;
+        }
 
-                if (item.Address != 0 && item.ObjectName.Address != 0 && item.ObjectName.Value.Trim().Length != 0)
-                {
-                    //manipulation.testValues(1024);
-                }
+        public static Int32 oCNpc_EV_UseItemToState_CALLFUNC(String message)
+        {
+            try
+            {
+                Process process = Process.ThisProcess();
+
+                //bool start = (UseItemNPC.InteractItemState == -1 && UseItemNPC.InteractItemTargetState == 0);
+                //bool end = (UseItemNPC.InteractItemState == 0 && UseItemNPC.InteractItemTargetState == -1);
+
+                //if (!start && !end)
+                //    return 0;
+
+                if (UseItemNPC.Address != Player.Hero.Address)
+                    return 0;
+                if (UseItemNPC.InteractItem.Address == 0 || !sWorld.SpawnedVobDict.ContainsKey(UseItemNPC.InteractItem.Address))
+                    return 0;
+                if (UseItemNPC.Address == 0 || !sWorld.SpawnedVobDict.ContainsKey(UseItemNPC.Address))
+                    return 0;
+
+                NPCProto npcP = (NPCProto)sWorld.SpawnedVobDict[UseItemNPC.Address];
+                Item itemP = (Item)sWorld.SpawnedVobDict[UseItemNPC.InteractItem.Address];
+
+                BitStream stream = Program.client.sentBitStream;
+                stream.Reset();
+                stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
+                stream.Write((byte)NetworkIDS.UseItemMessage);
+                stream.Write(npcP.ID);
+                stream.Write(itemP.ID);
+                stream.Write((short)UseItemNPC.InteractItemState);
+                stream.Write((short)UseItemNPC.InteractItemTargetState);
+                Program.client.client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
 
 
+
+
+                //zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Start-UseItem: " + UseItemNPC.ObjectName.Value + ": " + UseItemNPC.InteractItem.Name.Value + " | " + UseItemNPC.InteractItemState+" | "+UseItemNPC.InteractItemTargetState, 0, "ItemSynchro.cs", 0);
+                //if (UseItemNPC.InteractItemState == 1)
+                //{
+                //    zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Start-UseItem: "+UseItemNPC.ObjectName.Value+": "+UseItemNPC.InteractItem.Name.Value, 0, "ItemSynchro.cs", 0);
+                //}
+                //else if (UseItemNPC.InteractItemState == 2)
+                //{
+                //    zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "End-UseItem: " + UseItemNPC.ObjectName.Value + ": " + UseItemNPC.InteractItem.Name.Value, 0, "ItemSynchro.cs", 0);
+                //}
             }
             catch (Exception ex)
             {

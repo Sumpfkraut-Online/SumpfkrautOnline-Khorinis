@@ -64,6 +64,7 @@
     <Compile Include="GUI\TextBox.cs" />
     <Compile Include="GUI\Texture.cs" />
     <Compile Include="GUI\View.cs" />
+    <Compile Include="Hooks\Externals.cs" />
     <Compile Include="Hooks\hGame.cs" />
     <Compile Include="Hooks\hItem.cs" />
     <Compile Include="Hooks\hItemContainer.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="Hooks\hModelAni.cs" />
     <Compile Include="Hooks\hNpc.cs" />
     <Compile Include="Hooks\hParser.cs" />
+    <Compile Include="Hooks\hSpell.cs" />
     <Compile Include="Network\Client.cs" />
     <Compile Include="Network\IMessage.cs" />
     <Compile Include="Network\Messages\Callbacks\CallbackNPCCanSee.cs" />
@@ -103,6 +105,7 @@
     <Compile Include="Network\Messages\PlayerCommands\DropItemMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\DropUnconsciousMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\EquipItemMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\CreateSpellMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\NPCChangeAttributeMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\NPCChangeSkillMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\OnDamageMessage.cs" />
@@ -115,6 +118,7 @@
     <Compile Include="Network\Messages\PlayerCommands\TakeItemMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\ChangeWorldMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\CreateVobMessage.cs" />
+    <Compile Include="Network\Messages\VobCommands\SetVobListPosDirMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\SetVobDirectionMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\SetVobPosDirMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\SetVobPositionMessage.cs" />
@@ -140,6 +144,7 @@
     <Compile Include="WorldObjects\Mobs\MobInter.Client.cs" />
     <Compile Include="WorldObjects\Mobs\MobLockable.Client.cs" />
     <Compile Include="WorldObjects\Mobs\MobSwitch.Client.cs" />
+    <Compile Include="WorldObjects\Spell.Client.cs" />
     <Compile Include="WorldObjects\sWorld.Client.cs" />
     <Compile Include="WorldObjects\Vob.Client.cs" />
     <Compile Include="WorldObjects\World.Client.cs" />

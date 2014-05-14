@@ -85,11 +85,11 @@ namespace GUC.WorldObjects
             uint oldKey = getKeyByPosition(oldPos);
             uint newKey = getKeyByPosition(newPos);
 
-            if (oldKey == newKey)
+            if (oldKey == newKey && newPos != null)
                 return;
 
 
-            if (oldKey != null && VobPositionList.ContainsKey(oldKey) && VobPositionList[oldKey].Contains(vob))//Needs to delete!
+            if (oldPos != null && VobPositionList.ContainsKey(oldKey) && VobPositionList[oldKey].Contains(vob))//Needs to delete!
             {
                 VobPositionList[oldKey].Remove(vob);
                 if (VobPositionList[oldKey].Count == 0)
@@ -121,7 +121,7 @@ namespace GUC.WorldObjects
                 }
             }
 
-            if (newKey != null)
+            if (newPos != null)
             {
                 if (!VobPositionList.ContainsKey(newKey))
                     VobPositionList.Add(newKey, new List<Vob>());

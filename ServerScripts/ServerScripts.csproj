@@ -102,6 +102,8 @@
     <Compile Include="DefaultVobs.cs" />
     <Compile Include="DefaultWorldItem.cs" />
     <Compile Include="Items\ITPO_HEALTH_01.cs" />
+    <Compile Include="Items\ITSC_SHRINK.cs" />
+    <Compile Include="Items\ITSC_TRFSHEEP.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sqlite.cs" />
     <Compile Include="StartModules\AbstractModule.cs" />

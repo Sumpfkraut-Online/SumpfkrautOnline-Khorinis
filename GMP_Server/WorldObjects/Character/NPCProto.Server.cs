@@ -199,6 +199,8 @@ namespace GUC.WorldObjects.Character
             {
                 NearNPCList.Remove(proto);
 
+                if (proto is Player && !((Player)proto).IsConnected)
+                    continue;
                 
                 //Todo: Send DespawnMessage to Player!
                 BitStream stream = Program.server.sendBitStream;

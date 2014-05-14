@@ -55,7 +55,7 @@ namespace GUC.Network.Messages.PlayerCommands
             }
             if (weaponMode != 0)
                 sendFlags |= 8;
-            if (spellID != 0)
+            if (spellID > 100)
                 sendFlags |= 16;
             if (oDD.Weapon.Address != 0)
             {
@@ -79,12 +79,13 @@ namespace GUC.Network.Messages.PlayerCommands
                 stream.Write(attProto.ID);
             if (weaponMode != 0)
                 stream.Write(weaponMode);
-            if (spellID != 0)
+            if (spellID > 100)
                 stream.Write(spellID);
             if (oDD.Weapon.Address != 0)
                 stream.Write(weaponVob.ID);
             if ((sendFlags & 64) == 64)
                 stream.Write(victim.HumanAI.FallDownDistanceY);
+            
             
             Program.client.client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }

@@ -143,3 +143,63 @@ INSTANCE ItMi_Gold (C_Item)
 	
 	INV_ZBIAS				= 250;
 };
+
+
+PROTOTYPE C_Spell_Proto(C_Spell) 
+{
+	time_per_mana				=	500;			// Zeit pro investierten Manapunkt (ms)
+	damage_per_level			=	1;				// Schaden pro Level
+	damageType					=	DAM_MAGIC;		// CAN BE ONLY ONE DAMAGE TYPE
+	spellType					=	SPELL_BAD;		// Good, Neutral or Bad
+	canTurnDuringInvest			=	1;
+	canChangeTargetDuringInvest	=	1;
+	isMultiEffect				=	0;				// Effect Class is oCVisFX_MultiTarget if set to 1 (e.g. the effect can have multiple trajectorys (massdeath)
+	targetCollectAlgo			=	TARGET_COLLECT_FOCUS_FALLBACK_NONE;
+	targetCollectType			=	TARGET_TYPE_NPCS;
+	targetCollectRange			=	10000;		
+	targetCollectAzi			=	60;
+	targetCollectElev			=	60;
+};
+
+INSTANCE Spell_Teleport (C_Spell_Proto)
+{
+	time_per_mana			= 123;
+	spelltype 				= 456;
+	targetCollectAlgo		= 789;
+	canTurnDuringInvest		= 987;
+	targetCollectRange		= 654;
+	targetCollectAzi		= 321;
+	targetCollectElev		= 111;
+};
+
+func INT Spell_ProcessMana (VAR INT manaInvested)
+{
+	return GUC_SPELL_PROCESSMANA(manaInvested, self);
+};
+
+
+var string guc_string_helper;
+func void MOD_Print()
+{
+	PrintScreen (guc_string_helper, -1, -1, FONT_ScreenSmall, 2);
+};
+
+func void MOD_Output()
+{
+	AI_Output(self, other, guc_string_helper);
+};
+
+func void MOD_OutputSVM()
+{
+	AI_OutputSVM(self, other, guc_string_helper);
+};
+
+func void MOD_OutputSVM_Overlay()
+{
+	AI_OutputSVM_Overlay(self, other, guc_string_helper);
+};
+
+func void MOD_RemoveWeapon()
+{
+	AI_RemoveWeapon(self);
+};

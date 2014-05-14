@@ -66,6 +66,12 @@ namespace GUC.Server.Network.Messages.Connection
             stream.Write(sWorld.EndRainMinute);
 
 
+            //Writing Spells:
+            stream.Write((short)Spell.SpellList.Count);
+            foreach (Spell spell in Spell.SpellList)
+            {
+                spell.Write(stream);
+            }
 
             //Writing created item instances:
             stream.Write((short)ItemInstance.ItemInstanceList.Count);

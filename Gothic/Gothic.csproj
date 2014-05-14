@@ -130,6 +130,7 @@
     <Compile Include="zStruct\NPCAiVar.cs" />
     <Compile Include="zStruct\oCMsgConversation.cs" />
     <Compile Include="zStruct\oCMsgManipulate.cs" />
+    <Compile Include="zStruct\oCMsgWeapon.cs" />
     <Compile Include="zStruct\oSDamageDescriptor.cs" />
     <Compile Include="zStruct\TNpcAIState.cs" />
     <Compile Include="zStruct\zTSound3DParams.cs" />
