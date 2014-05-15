@@ -280,6 +280,46 @@ namespace GUC.Server.Scripting.Objects
             return mi;
         }
 
+        public virtual void PlayEffect(String effect, Vob targetVob, int effectLevel, int damage, int damagetype, bool isprojectile)
+        {
+            PlayPlayerEffect(null, effect, targetVob, effectLevel, damage, damagetype, isprojectile);
+        }
+
+        public virtual void PlayPlayerEffect(Player player, String effect, Vob targetVob, int effectLevel, int damage, int damagetype, bool isprojectile)
+        {
+            if (!created)
+                return;
+            if (effect == null || effect.Length == 0)
+                return;
+            if (targetVob.Map != this.Map)
+                throw new Exception("Target-Vob is not in the same map!");
+
+
+            int targetID = 0;
+            if (targetVob != null)
+                targetID = targetVob.ID;
+            
+
+            if (!created)
+                return;
+
+            BitStream stream = Program.server.sendBitStream;
+            stream.Reset();
+            stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
+            stream.Write((byte)NetworkIDS.PlayEffectMessage);
+            stream.Write(vob.ID);
+            stream.Write(effect);
+            stream.Write(targetID);
+            stream.Write(effectLevel);
+            stream.Write(damage);
+            stream.Write(damagetype);
+            stream.Write(isprojectile);
+            if(player == null)
+                Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            else
+                using(RakNetGUID guid = player.proto.GUID)
+                    Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+        }
 
         public virtual void setVisual(String visual)
         {

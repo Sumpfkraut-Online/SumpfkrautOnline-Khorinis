@@ -46,7 +46,7 @@ namespace GUC.Server.Scripting.Objects
             if (instanceName.Length == 0)
                 throw new ArgumentException("Instancename can not has a length of 0");
             if (ItemInstances.ContainsKey(instanceName))
-                throw new ArgumentException("InstanceName is already in use!");
+                throw new ArgumentException("InstanceName is already in use! "+instanceName);
 
 
             itemInstances = new GUC.WorldObjects.ItemInstance();

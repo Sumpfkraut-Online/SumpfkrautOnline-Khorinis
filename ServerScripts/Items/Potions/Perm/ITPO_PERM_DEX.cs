@@ -42,7 +42,7 @@ namespace GUC.Server.Scripts.Items.Potions.Health
 
         protected void useItem(NPCProto npc, Item item, short state, short targetState)
         {
-            if (!(state == 0 && targetState == -1))
+            if (!(state == -1 && targetState == 0))
                 return;
 
             npc.Dexterity += 3;

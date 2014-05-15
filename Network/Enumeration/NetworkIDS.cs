@@ -72,7 +72,8 @@ namespace GUC.Enumeration
         NPCEnableMessage,
 
         UseItemMessage,
-        CastSpell
+        CastSpell,
+        PlayEffectMessage,
     }
 
     public enum ChangeSkillType : byte

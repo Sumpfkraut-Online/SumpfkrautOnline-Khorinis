@@ -99,12 +99,32 @@
     <Compile Include="DefaultItems.cs" />
     <Compile Include="DefaultVobs.cs" />
     <Compile Include="DefaultWorldItem.cs" />
+    <Compile Include="Items\Plants\AbstractPlants.cs" />
+    <Compile Include="Items\Plants\ITPL_WEED.cs" />
+    <Compile Include="Items\Plants\ITPL_BEET.cs" />
+    <Compile Include="Items\Plants\ITPL_SWAMPHERB.cs" />
+    <Compile Include="Items\Plants\ITPL_MANA_HERB_01.cs" />
+    <Compile Include="Items\Plants\ITPL_MANA_HERB_02.cs" />
+    <Compile Include="Items\Plants\ITPL_MANA_HERB_03.cs" />
+    <Compile Include="Items\Plants\ITPL_HEALTH_HERB_01.cs" />
+    <Compile Include="Items\Plants\ITPL_HEALTH_HERB_02.cs" />
+    <Compile Include="Items\Plants\ITPL_HEALTH_HERB_03.cs" />
+    <Compile Include="Items\Plants\ITPL_SPEED_HERB_01.cs" />
+    <Compile Include="Items\Plants\ITPL_MUSHROOM_01.cs" />
+    <Compile Include="Items\Plants\ITPL_MUSHROOM_02.cs" />
+    <Compile Include="Items\Plants\ITPL_BLUEPLANT.cs" />
+    <Compile Include="Items\Plants\ITPL_FORESTBERRY.cs" />
+    <Compile Include="Items\Plants\ITPL_PLANEBERRY.cs" />
+    <Compile Include="Items\Plants\ITPL_TEMP_HERB.cs" />
+    <Compile Include="Items\Plants\ITPL_PERM_HERB.cs" />
     <Compile Include="Items\ItemInit.cs" />
     <Compile Include="Items\Potions\Health\ITPO_HEALTH_01.cs" />
     <Compile Include="Items\Potions\Health\ITPO_HEALTH_02.cs" />
     <Compile Include="Items\Potions\Health\ITPO_HEALTH_03.cs" />
     <Compile Include="Items\Potions\Health\ITPO_HEALTH_ADDON_04.cs" />
     <Compile Include="Items\Potions\ITPO_SPEED.cs" />
+    <Compile Include="Items\Potions\ITPO_ADDON_GEIST_01.cs" />
+    <Compile Include="Items\Potions\ITPO_ADDON_GEIST_02.cs" />
     <Compile Include="Items\Potions\Mana\ITPO_MANA_01.cs" />
     <Compile Include="Items\Potions\Mana\ITPO_MANA_02.cs" />
     <Compile Include="Items\Potions\Mana\ITPO_MANA_03.cs" />
@@ -131,6 +151,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Items\Armors\" />
+    <Folder Include="Items\Food\" />
     <Folder Include="Items\Runes\" />
     <Folder Include="Items\Weapons\" />
   </ItemGroup>

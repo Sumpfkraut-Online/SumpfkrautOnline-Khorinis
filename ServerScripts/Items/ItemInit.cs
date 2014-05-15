@@ -5,6 +5,7 @@ using System.Text;
 using GUC.Server.Scripts.Items.Potions;
 using GUC.Server.Scripts.Items.Potions.Health;
 using GUC.Server.Scripts.Items.Potions.Mana;
+using GUC.Server.Scripts.Items.Plants;
 
 namespace GUC.Server.Scripts.Items
 {
@@ -37,10 +38,31 @@ namespace GUC.Server.Scripts.Items
             ITPO_MEGADRINK.get();
 
             ITPO_SPEED.get();
+            ITPO_ADDON_GEIST_01.get();
+            ITPO_ADDON_GEIST_02.get();
 
             //Scrolls:
             ITSC_SHRINK.get();
             ITSC_TRFSHEEP.get();
+
+            //Plants:
+            ITPL_BEET.get();
+            ITPL_BLUEPLANT.get();
+            ITPL_FORESTBERRY.get();
+            ITPL_HEALTH_HERB_01.get();
+            ITPL_HEALTH_HERB_02.get();
+            ITPL_HEALTH_HERB_03.get();
+            ITPL_MANA_HERB_01.get();
+            ITPL_MANA_HERB_02.get();
+            ITPL_MANA_HERB_03.get();
+            ITPL_MUSHROOM_01.get();
+            ITPL_MUSHROOM_02.get();
+            ITPL_PERM_HERB.get();
+            ITPL_PLANEBERRY.get();
+            ITPL_SPEED_HERB_01.get();
+            ITPL_SWAMPHERB.get();
+            ITPL_TERMP_HERB.get();
+            ITPL_WEED.get();
         }
     }
 }

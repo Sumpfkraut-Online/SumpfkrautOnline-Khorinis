@@ -118,6 +118,7 @@
     <Compile Include="Network\Messages\PlayerCommands\TakeItemMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\ChangeWorldMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\CreateVobMessage.cs" />
+    <Compile Include="Network\Messages\VobCommands\PlayEffectMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\SetVobListPosDirMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\SetVobDirectionMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\SetVobPosDirMessage.cs" />

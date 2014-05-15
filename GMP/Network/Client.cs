@@ -109,6 +109,8 @@ namespace GUC.Network
 
             messageListener.Add((byte)NetworkIDS.NPCEnableMessage, new NPCEnableMessage());
             messageListener.Add((byte)NetworkIDS.CreateSpellMessage, new CreateSpellMessage());
+
+            messageListener.Add((byte)NetworkIDS.PlayEffectMessage, new PlayEffectMessage());
         }
 
         public void Startup()

@@ -54,6 +54,7 @@
     <Compile Include="mClasses\StealContainer.cs" />
     <Compile Include="mClasses\textBox.cs" />
     <Compile Include="zClasses\CGameManager.cs" />
+    <Compile Include="zClasses\oCVisualFX.cs" />
     <Compile Include="zClasses\zCCamera.cs" />
     <Compile Include="zClasses\oCMobBed.cs" />
     <Compile Include="zClasses\oCMobSwitch.cs" />

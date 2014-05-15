@@ -624,8 +624,10 @@ namespace GUC.Server.Scripting.Objects.Character
                 throw new ArgumentException("attribute is not valid!");
             if (value < 0)
                 value = 0;
-            if (value > HPMax)
+            if (attrib == NPCAttributeFlags.ATR_HITPOINTS && value > HPMax)
                 value = HPMax;
+            else if (attrib == NPCAttributeFlags.ATR_MANA && value > MPMax)
+                value = MPMax;
             proto.Attributes[(byte)attrib] = value;
 
             if (!created)
