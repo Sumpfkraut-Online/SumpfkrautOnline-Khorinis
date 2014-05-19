@@ -29,8 +29,8 @@ namespace GUC.Server.Scripts
 		public Button connection;
 		public void OnServerInit()
 		{
-            Console.WriteLine("######################## Initalise ########################");
-
+            Logger.log(Logger.LogLevel.INFO, "######################## Initalise ########################");
+			
             
             ItemInit.Init();
             DefaultItems.Init();
@@ -54,11 +54,10 @@ namespace GUC.Server.Scripts
             AI.AISystem.Init();
 
 
-            
 
-            
-            
-            Console.WriteLine("###################### End Initalise ######################");
+
+
+            Logger.log(Logger.LogLevel.INFO, "###################### End Initalise ######################");
 		}
     }
 }

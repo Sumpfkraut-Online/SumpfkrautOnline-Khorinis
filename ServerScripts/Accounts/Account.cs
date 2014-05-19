@@ -73,7 +73,7 @@ namespace GUC.Server.Scripts
 				}
 
 				//Attributes:
-				command.CommandText = "SELECT * FROM `account_attributes` WHERE `accountID`=@accountID";
+                command.CommandText = "SELECT * FROM `account_attributes` WHERE `accountID`=@accountID ORDER BY `type` DESC";
 				command.Parameters.AddWithValue("@accountID", accountID);
 				using(SQLiteDataReader sdrITM = command.ExecuteReader()) {
 					if(sdrITM.HasRows) {
@@ -116,9 +116,11 @@ namespace GUC.Server.Scripts
 						}
 					}
 				}
-
+                
 				return true;
 			}
+
+            
 		}
 
 		public bool register(String name, String password)
@@ -126,7 +128,7 @@ namespace GUC.Server.Scripts
 			if(existsName(name))
 				return false;
 
-			//Setting default parameter! Can be overwritten by other modules, after registering!
+			//Setting default parameter! Can be overwritten by other modules, after registration!
 			player.setSpawnInfos(@"NEWWORLD\NEWWORLD.ZEN", null, null);
 			player.HPMax = 10;
 			player.HP = 10;
@@ -166,7 +168,7 @@ namespace GUC.Server.Scripts
 		protected void disconnect(Player player) {
 			if(!player.IsSpawned())
 				return;
-
+            
 			using(SQLiteCommand command = new SQLiteCommand(Sqlite.getSqlite().connection)) {
 				command.CommandText = "UPDATE `account` ";
 				command.CommandText += " SET `posx`=@posx, `posy`=@posy, `posz`=@posz, `world`=@world";

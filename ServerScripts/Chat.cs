@@ -26,8 +26,9 @@ namespace GUC.Server.Scripts
 		protected Player lastPlayer = null;
 		public void Init()
 		{
-			Console.WriteLine("############### Initalise Chatsystem ######################");
-
+            Logger.log(Logger.LogLevel.INFO, "################### Initalise Chatsystem ##################");
+            
+			
 			TextBox tB = new TextBox("", "Font_Old_20_White.TGA", 0, 0x800, 0x0D, 0x54, 0x1B);
 			tB.show();
 
@@ -250,6 +251,7 @@ namespace GUC.Server.Scripts
             else if (IsCommand("revive", message))
             {
                 pl.revive();
+                Console.WriteLine("HP: "+pl.HP+"; "+pl.HPMax);
             }
             else if (IsCommand("sppedup", message))
             {

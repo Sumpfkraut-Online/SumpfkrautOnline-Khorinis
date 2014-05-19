@@ -562,6 +562,8 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 throw new Exception("The Player was not created! You can't use this function!");
             HP = HPMax;
+            MP = MPMax;
+
             BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);

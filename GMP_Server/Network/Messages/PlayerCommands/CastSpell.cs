@@ -13,13 +13,13 @@ namespace GUC.Server.Network.Messages.PlayerCommands
     {
         public void Read(RakNet.BitStream stream, RakNet.Packet packet, Server server)
         {
-            int casterID = 0, targetID = 0, spellID = 0, itemID = 0;
+            int casterID = 0, targetID = 0, spellID = 0, itemID = 0, castLevel = 0;
 
             stream.Read(out itemID);
             stream.Read(out casterID);
             stream.Read(out targetID);
             stream.Read(out spellID);
-
+            stream.Read(out castLevel);
 
             Vob itemVob = null;
             Item item = null;
@@ -58,7 +58,11 @@ namespace GUC.Server.Network.Messages.PlayerCommands
                     item.Amount -= 1;
             }
 
-
+            int manaInvested = 0;
+            int realLevel = (spell.processMana.Length > castLevel + 1) ? castLevel : spell.processMana.Length - 1;
+            for (int i = 0; i <= realLevel; i++)
+                manaInvested += spell.processMana[i];
+            caster.ScriptingNPC.MP -= manaInvested;
             
             Scripting.Objects.Character.NPCProto.isOnCastSpell(
                 caster.ScriptingNPC, spell.ScriptingProto, sT);

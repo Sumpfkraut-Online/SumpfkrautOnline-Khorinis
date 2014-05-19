@@ -24,7 +24,9 @@ namespace GUC.Server.Scripts.Accounts
 	{
 		public void Init()
 		{
-			Console.WriteLine("############## Initalise Account-System ###################");
+            Logger.log(Logger.LogLevel.INFO, "################# Initalise Account-System ################");
+            
+			
 			Open();
 
 			Modules.addModule(new AccountStartModule());

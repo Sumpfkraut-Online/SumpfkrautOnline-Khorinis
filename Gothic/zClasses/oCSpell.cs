@@ -31,6 +31,9 @@ namespace Gothic.zClasses
             Target = 0x3C,
 
             Visual = 0x28,
+
+
+            Level = 0x4C,
             
         }
         public enum FuncOffsets : uint
@@ -92,6 +95,12 @@ namespace Gothic.zClasses
         {
             get { return Process.ReadFloat(Address + (int)Offsets.TimePerMana); }
             set { Process.Write(value, Address + (int)Offsets.TimePerMana); }
+        }
+
+        public int Level
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.Level); }
+            set { Process.Write(value, Address + (int)Offsets.Level); }
         }
 
         public int DamagePerLevel

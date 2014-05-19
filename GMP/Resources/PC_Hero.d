@@ -177,6 +177,10 @@ func INT Spell_ProcessMana (VAR INT manaInvested)
 	return GUC_SPELL_PROCESSMANA(manaInvested, self);
 };
 
+func INT Spell_ProcessMana_Release (VAR INT manaInvested)
+{
+	return GUC_SPELL_PROCESSMANA_RELEASE(manaInvested, self);
+};
 
 var string guc_string_helper;
 func void MOD_Print()

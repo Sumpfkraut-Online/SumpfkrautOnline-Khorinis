@@ -74,7 +74,7 @@ namespace GUC.Server.Scripts.Accounts
 
 		public override void start(Player player) {
 			player.freeze();
-            player.setAttribute(NPCAttributeFlags.ATR_HITPOINTS, 123);
+            
 			background.show(player);
 			register.show(player);
 			login.show(player);
@@ -182,7 +182,7 @@ namespace GUC.Server.Scripts.Accounts
 					{
 						reset(pl);
 						return;
-					}
+                    }
 				}
 
 				end(pl);
