@@ -11,6 +11,7 @@ using Gothic.zTypes;
 using GUC.Hooks;
 using GUC.Enumeration;
 using Gothic.zStruct;
+using GUC.timer;
 
 namespace GUC.WorldObjects.Character
 {
@@ -96,6 +97,14 @@ namespace GUC.WorldObjects.Character
             if (rangeWeaponID > 0)
                 RangeWeapon = (Item)sWorld.VobDict[rangeWeaponID];
 
+            int activeSpellIDid = 0;
+            stream.Read(out activeSpellIDid);
+            if (activeSpellIDid > 0)
+            {
+                this.ActiveSpell = (Item)sWorld.VobDict[activeSpellIDid];
+            }
+
+
             int overlayCount = 0;
             stream.Read(out overlayCount);
             for (int i = 0; i < overlayCount; i++)
@@ -121,7 +130,15 @@ namespace GUC.WorldObjects.Character
             Process process = Process.ThisProcess();
 
             oCNpc npc = new oCNpc(process, this.Address);
-            oCGame.Game(process).GetSpawnManager().DeleteNPC(npc);
+            
+            npc.Disable();
+
+            int WeaponMode = weaponMode;
+            setWeaponMode(0);
+            weaponMode = WeaponMode;
+
+            //oCGame.Game(process).GetSpawnManager().DeleteNPC(npc);//Bei verwandlung wird bedmempointer aufgerufen :/
+            //new DespawnTimer(this.Address);
             this.Address = 0;
 
             sWorld.SpawnedVobDict.Remove(npc.Address);
@@ -360,15 +377,38 @@ namespace GUC.WorldObjects.Character
 
                 if (this.weaponMode == 7 && oldWeaponMode != 7)
                 {
-                    npc.UnreadySpell();
-                    npc.ReadySpell(ActiveSpell.ItemInstance.Spell.ID, ActiveSpell.ItemInstance.Spell.ID);
+                    int spellID = npc.MagBook.GetKeyByItem(new oCItem(process, ActiveSpell.Address));
+                    npc.MagBook.SpellNr = spellID - 1;
+                    npc.MagBook.Open(0);
                 }
                 else if (oldWeaponMode == 7 && this.weaponMode != 7)
                 {
-                    npc.UnreadySpell();
+                    npc.MagBook.Close(1);
                 }
-
                 
+                
+            }
+        }
+
+        public void setActiveSpell(Item spell)
+        {
+            if (ActiveSpell == spell)
+                return;
+
+            Item oldSpell = ActiveSpell;
+            ActiveSpell = spell;
+
+            if(this.Address == 0)
+                return;
+
+            Process process = Process.ThisProcess();
+            oCNpc npc = new oCNpc(process, this.Address);
+            if (this.weaponMode == 7)
+            {
+                npc.MagBook.Close(1);
+                int spellID = npc.MagBook.GetKeyByItem(new oCItem(process, ActiveSpell.Address));
+                npc.MagBook.SpellNr = spellID - 1;
+                npc.MagBook.Open(0);
             }
         }
 

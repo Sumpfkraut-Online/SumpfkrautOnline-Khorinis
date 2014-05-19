@@ -68,6 +68,7 @@
     <Compile Include="Hooks\hGame.cs" />
     <Compile Include="Hooks\hItem.cs" />
     <Compile Include="Hooks\hItemContainer.cs" />
+    <Compile Include="Hooks\hMagBook.cs" />
     <Compile Include="Hooks\hMobInter.cs" />
     <Compile Include="Hooks\hModelAni.cs" />
     <Compile Include="Hooks\hNpc.cs" />
@@ -106,6 +107,7 @@
     <Compile Include="Network\Messages\PlayerCommands\DropUnconsciousMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\EquipItemMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\CreateSpellMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\CastSpellMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\NPCChangeAttributeMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\NPCChangeSkillMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\OnDamageMessage.cs" />
@@ -114,6 +116,7 @@
     <Compile Include="Network\Messages\PlayerCommands\PlayVideo.cs" />
     <Compile Include="Network\Messages\PlayerCommands\ReviveMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\SetVisualMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\SpellInvestMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\StartDialogAnimMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\TakeItemMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\ChangeWorldMessage.cs" />
@@ -133,6 +136,8 @@
     </Compile>
     <Compile Include="States\AbstractState.cs" />
     <Compile Include="States\GameState.cs" />
+    <Compile Include="timer\DespawnTimer.cs" />
+    <Compile Include="timer\Timer.cs" />
     <Compile Include="Tests\Keytest.cs" />
     <Compile Include="WorldObjects\Character\NPC.Client.cs" />
     <Compile Include="WorldObjects\Character\NPCProto.Client.cs" />

@@ -20,22 +20,28 @@ namespace GUC.Server.Scripts.Items.Plants
 
 
         protected ITPL_SPEED_HERB_01()
-            : base("Snapperkraut")
+            : base("ITPL_SPEED_HERB_01")
         {
-            Name = "Sumpfkraut";
+            Name = "Snapperkraut";
             Visual = "ItPl_Speed_Herb_01.3ds";
             Description = Name;
 
             OnUse += new Scripting.Events.UseItemEventHandler(useItem);
+
+            Text3 = "Dauer";
+            Count3 = 15;
+
+            Text5 = "Wert";
+            Count5 = 25;
 
             CreateItemInstance();
         }
 
         protected void useItem(NPCProto npc, Item item, short state, short targetState)
         {
-            if (!(state == -1 && targetState == 0))
+            if (!(state == -1 && targetState == -2))
                 return;
-
+            
             npc.ApplyOverlay("HUMANS_SPRINT.MDS");
 
             ITPO_SPEED_TIMER timer = (ITPO_SPEED_TIMER)npc.getUserObjects("itpo_speed_timer");

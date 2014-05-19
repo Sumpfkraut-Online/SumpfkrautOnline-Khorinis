@@ -251,6 +251,10 @@ namespace GUC.Server.Scripts
             {
                 pl.revive();
             }
+            else if (IsCommand("sppedup", message))
+            {
+                pl.ApplyOverlay("HUMANS_SPRINT.MDS");
+            }
             else
             {
                 mB.addLine(pl, 255, 255, 255, 255, "Command was not found: " + message);

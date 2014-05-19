@@ -139,11 +139,11 @@ namespace Gothic.zClasses
             get {
                 return new zString[]{
                     new zString(this.Process, Address+(int)Offsets.text),
-                    new zString(this.Process, Address+(int)Offsets.text + 4),
-                    new zString(this.Process, Address+(int)Offsets.text + 4*2),
-                    new zString(this.Process, Address+(int)Offsets.text + 4*3),
-                    new zString(this.Process, Address+(int)Offsets.text + 4*4),
-                    new zString(this.Process, Address+(int)Offsets.text + 4*5)
+                    new zString(this.Process, Address+(int)Offsets.text + 20),
+                    new zString(this.Process, Address+(int)Offsets.text + 20*2),
+                    new zString(this.Process, Address+(int)Offsets.text + 20*3),
+                    new zString(this.Process, Address+(int)Offsets.text + 20*4),
+                    new zString(this.Process, Address+(int)Offsets.text + 20*5)
                 };
             }
         }

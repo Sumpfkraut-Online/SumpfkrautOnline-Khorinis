@@ -39,6 +39,7 @@ namespace GUC.Server.Scripts.Items
 
         protected void cast(NPCProto caster, Spell spell, Vob target)
         {
+            caster.setWeaponMode(1);
             caster.setVisual("Sheep.mds", "Sheep_Body", 0, 0, "", 0, 0);
             //caster.setVisual("Sheep.mds", "Sheep_Body", 0, 0, "", 0, 0);
         }
@@ -55,7 +56,7 @@ namespace GUC.Server.Scripts.Items
 
 
         protected ITSC_TRFSHEEP()
-            : base("ITSC_TRFSHEEP_2")
+            : base("ITSC_TRFSHEEP")
         {
             Name = "Spruchrolle";
             MainFlags = Enumeration.MainFlags.ITEM_KAT_RUNE;

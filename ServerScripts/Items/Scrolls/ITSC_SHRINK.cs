@@ -108,7 +108,7 @@ namespace GUC.Server.Scripts.Items
 
 
         protected ITSC_SHRINK()
-            : base("ITSC_SHRINK_2")
+            : base("ITSC_SHRINK")
         {
             Name = "Spruchrolle";
             MainFlags = Enumeration.MainFlags.ITEM_KAT_RUNE;

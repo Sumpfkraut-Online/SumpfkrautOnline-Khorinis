@@ -304,8 +304,55 @@ namespace GUC.Server.Scripting.Objects.Character
 
         public int WeaponMode { get { return proto.WeaponMode; } set { setWeaponMode(value); } }
 
+        #region Protection
+        public int ProtectionFire
+        {
+            get { return getProtection(DamageTypeIndex.DAM_INDEX_FIRE); }
+            set { setProtection(DamageTypeIndex.DAM_INDEX_FIRE, value); }
+        }
 
-        
+        public int ProtectionEdge
+        {
+            get { return getProtection(DamageTypeIndex.DAM_INDEX_EDGE); }
+            set { setProtection(DamageTypeIndex.DAM_INDEX_EDGE, value); }
+        }
+
+        public int ProtectionBarrier
+        {
+            get { return getProtection(DamageTypeIndex.DAM_INDEX_BARRIER); }
+            set { setProtection(DamageTypeIndex.DAM_INDEX_BARRIER, value); }
+        }
+
+        public int ProtectionBlunt
+        {
+            get { return getProtection(DamageTypeIndex.DAM_INDEX_BLUNT); }
+            set { setProtection(DamageTypeIndex.DAM_INDEX_BLUNT, value); }
+        }
+
+        public int ProtectionFall
+        {
+            get { return getProtection(DamageTypeIndex.DAM_INDEX_FALL); }
+            set { setProtection(DamageTypeIndex.DAM_INDEX_FALL, value); }
+        }
+
+        public int ProtectionFly
+        {
+            get { return getProtection(DamageTypeIndex.DAM_INDEX_FLY); }
+            set { setProtection(DamageTypeIndex.DAM_INDEX_FLY, value); }
+        }
+
+        public int ProtectionMagic
+        {
+            get { return getProtection(DamageTypeIndex.DAM_INDEX_MAGIC); }
+            set { setProtection(DamageTypeIndex.DAM_INDEX_MAGIC, value); }
+        }
+
+        public int ProtectionPoint
+        {
+            get { return getProtection(DamageTypeIndex.DAM_INDEX_POINT); }
+            set { setProtection(DamageTypeIndex.DAM_INDEX_POINT, value); }
+        }
+        #endregion
         #endregion
 
         #region Methods
@@ -383,7 +430,7 @@ namespace GUC.Server.Scripting.Objects.Character
         {
             if (EquippedArmor != null)
             {
-                return EquippedArmor.getProtection(index);
+                return EquippedArmor.getProtection(index) + proto.protection[(int)index];
             }
             else
             {
@@ -1043,9 +1090,6 @@ namespace GUC.Server.Scripting.Objects.Character
 
         public void ApplyOverlay(String anim)
         {
-            //if (!created)
-            //    throw new Exception("The Player was not created! You can't use this function!");
-
             if (!this.proto.Overlays.Contains(anim))
             {
                 this.proto.Overlays.Add(anim);

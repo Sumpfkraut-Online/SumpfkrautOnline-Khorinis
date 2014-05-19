@@ -44,7 +44,7 @@ namespace GUC.Server.Scripts.Items.Potions
 
         protected void useItem(NPCProto npc, Item item, short state, short targetState)
         {
-            if (!(state == -1 && targetState == 0))
+            if (!(state == -1 && targetState == -2))
                 return;
 
             npc.ApplyOverlay("HUMANS_SPRINT.MDS");
@@ -83,7 +83,7 @@ namespace GUC.Server.Scripts.Items.Potions
             this.End();
             npc.setUserObject("itpo_speed_timer", null);
 
-            npc.RemoveOverlay("itpo_speed_timer");
+            npc.RemoveOverlay("HUMANS_SPRINT.MDS");
         }
     }
 

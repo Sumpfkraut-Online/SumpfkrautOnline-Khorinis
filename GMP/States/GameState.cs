@@ -57,6 +57,8 @@ namespace GUC.States
         static zString SoundStr = null;
         static zTSound3DParams SoundParam = null;
         static int soundInt = 0;
+
+        static bool startGS = false;
         public override void update()
         {
             Process process = Process.ThisProcess();
@@ -70,26 +72,6 @@ namespace GUC.States
             }
 
 
-            if (InputHooked.IsPressed(process, (int)VirtualKeys.Numpad5))
-            {
-                if (SoundStr == null)
-                {
-                    SoundStr = zString.Create(process, "DIA_DRAGONTALK_MAIN_4_20_04.WAV");
-                    SoundParam = zTSound3DParams.Create(process);
-
-                    soundInt = zCSndSys_MSS.SoundSystem(process).PlaySound3D(SoundStr, oCNpc.Player(process).Enemy, soundInt, SoundParam);
-                }
-                process.Write(process.ReadInt(SoundParam.Address) + 0x158, SoundParam.Address); 
-                //+0x158
-                int si2 = zCSndSys_MSS.SoundSystem(process).UpdateSound3D(ref soundInt, SoundParam);
-                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Play-Sound: " + soundInt + ", " + si2, 0, "Program.cs", 0);
-            }
-
-            if (InputHooked.IsPressed(process, (int)VirtualKeys.Numpad7))
-            {
-                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Mag-Book-: " + oCNpc.Player(process).Enemy.MagBook.SpellItems.Size, 0, "Program.cs", 0);
-                
-            }
 
 
             if (lastPlayerPosUpdate + 10000 * 200 < now )
@@ -97,26 +79,26 @@ namespace GUC.States
                 SendPlayerPosition(process, Player.Hero);
                 NPCUpdateMessage.Write(Player.Hero);
 
-                //foreach (NPC iNPC in Player.Hero.NPCControlledList)
-                //{
-                //    SendPlayerPosition(process, iNPC);
-                //    NPCUpdateMessage.Write(iNPC);
-                //}
-                lastPlayerPosUpdate = now;
-            }
-
-            if (lastNPCPosUpdate + 10000 * 500 < now)
-            {
-                //SendPlayerPosition(process, Player.Hero);
-                //NPCUpdateMessage.Write(Player.Hero);
-
                 foreach (NPC iNPC in Player.Hero.NPCControlledList)
                 {
                     SendPlayerPosition(process, iNPC);
                     NPCUpdateMessage.Write(iNPC);
                 }
-                lastNPCPosUpdate = now;
+                lastPlayerPosUpdate = now;
             }
+
+            //if (lastNPCPosUpdate + 10000 * 500 < now)
+            //{
+            //    //SendPlayerPosition(process, Player.Hero);
+            //    //NPCUpdateMessage.Write(Player.Hero);
+
+            //    foreach (NPC iNPC in Player.Hero.NPCControlledList)
+            //    {
+            //        SendPlayerPosition(process, iNPC);
+            //        NPCUpdateMessage.Write(iNPC);
+            //    }
+            //    lastNPCPosUpdate = now;
+            //}
 
             pkm.update();
 

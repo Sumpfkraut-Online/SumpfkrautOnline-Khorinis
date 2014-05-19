@@ -24,6 +24,7 @@ namespace Gothic.zClasses
             SpellCast = 0x004767A0,
             GetSpellByKey = 0x00479C60,
             GetSpellItem = 0x00479BE0,
+            GetKeyByItem = 0x00479D30,
             CreateNewSpell = 0x00475E50,
             Spell_Setup = 0x004763A0,
             SetShowHandSymbol = 0x00478FD0,
@@ -40,7 +41,8 @@ namespace Gothic.zClasses
             GetSelectedSpellNr = 0x004777D0,
             KillSelectedSpell = 0x00477A90,
             Spell_Stop = 0x00477D50,
-            StopSelectedSpell = 0x00477910
+            StopSelectedSpell = 0x00477910,
+            SetFrontSpell = 0x004789C0
         }
 
         public enum HookSize : uint
@@ -65,6 +67,18 @@ namespace Gothic.zClasses
         public oCMag_Book(Process process, int address)
             : base(process, address)
         {
+        }
+
+        public int SpellNr
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.SpellNr); }
+            set { Process.Write(value, Address + (int)Offsets.SpellNr); }
+        }
+
+
+        public void SetFrontSpell(int spell)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetFrontSpell, new CallValue[] { (IntArg)spell });
         }
 
         public oCSpell GetSelectedSpell()
@@ -128,6 +142,11 @@ namespace Gothic.zClasses
         public oCItem GetSpellItem( int itemNr )
         {
             return Process.THISCALL<oCItem>((uint)Address, (uint)FuncOffsets.GetSpellItem, new CallValue[] { new IntArg(itemNr) });
+        }
+
+        public int GetKeyByItem(oCItem itm)
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.GetKeyByItem, new CallValue[] { itm });
         }
 
         public zCVob Owner

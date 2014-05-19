@@ -332,6 +332,7 @@ namespace GUC.Hooks
         }
 
         static oCNpc UseItemNPC = null;
+        static oCItem UsedItem = null;
         public static Int32 oCNpc_EV_UseItemToState(String message)
         {
             try
@@ -361,6 +362,12 @@ namespace GUC.Hooks
             try
             {
                 Process process = Process.ThisProcess();
+                //zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Start-UseItem: " + UseItemNPC.ObjectName.Value + ": " + UseItemNPC.InteractItem.Name.Value + " | " + UseItemNPC.InteractItemState + " | " + UseItemNPC.InteractItemTargetState +
+                //": " + (UseItemNPC.Address != Player.Hero.Address) + " | " + (!sWorld.SpawnedVobDict.ContainsKey(UseItemNPC.InteractItem.Address))+
+                //" | " + (!sWorld.SpawnedVobDict.ContainsKey(UseItemNPC.Address)) + " | " + UseItemNPC.Address + " | " + Player.Hero.Address + " | " + UseItemNPC.InteractItem.Address, 0, "ItemSynchro.cs", 0);
+
+                if (UseItemNPC.InteractItemState == -1 && UseItemNPC.InteractItemTargetState == 0)
+                    UsedItem = UseItemNPC.InteractItem;
 
                 //bool start = (UseItemNPC.InteractItemState == -1 && UseItemNPC.InteractItemTargetState == 0);
                 //bool end = (UseItemNPC.InteractItemState == 0 && UseItemNPC.InteractItemTargetState == -1);
@@ -368,15 +375,18 @@ namespace GUC.Hooks
                 //if (!start && !end)
                 //    return 0;
 
+                if (UsedItem == null)
+                    UsedItem = UseItemNPC.InteractItem;
+
                 if (UseItemNPC.Address != Player.Hero.Address)
                     return 0;
-                if (UseItemNPC.InteractItem.Address == 0 || !sWorld.SpawnedVobDict.ContainsKey(UseItemNPC.InteractItem.Address))
+                if (UsedItem.Address == 0 || !sWorld.SpawnedVobDict.ContainsKey(UsedItem.Address))
                     return 0;
                 if (UseItemNPC.Address == 0 || !sWorld.SpawnedVobDict.ContainsKey(UseItemNPC.Address))
                     return 0;
 
                 NPCProto npcP = (NPCProto)sWorld.SpawnedVobDict[UseItemNPC.Address];
-                Item itemP = (Item)sWorld.SpawnedVobDict[UseItemNPC.InteractItem.Address];
+                Item itemP = (Item)sWorld.SpawnedVobDict[UsedItem.Address];
 
                 BitStream stream = Program.client.sentBitStream;
                 stream.Reset();
@@ -389,6 +399,7 @@ namespace GUC.Hooks
                 Program.client.client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
 
 
+                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Start-UseItem 2: " + UseItemNPC.ObjectName.Value + ": " + UseItemNPC.InteractItem.Name.Value + " | " + UseItemNPC.InteractItemState + " | " + UseItemNPC.InteractItemTargetState, 0, "ItemSynchro.cs", 0);
 
 
                 //zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Start-UseItem: " + UseItemNPC.ObjectName.Value + ": " + UseItemNPC.InteractItem.Name.Value + " | " + UseItemNPC.InteractItemState+" | "+UseItemNPC.InteractItemTargetState, 0, "ItemSynchro.cs", 0);

@@ -7,19 +7,19 @@ using GUC.Server.Scripting.Objects.Character;
 
 namespace GUC.Server.Scripts.Items.Plants
 {
-    public class ITPL_TERMP_HERB : AbstractPlants
+    public class ITPL_TEMP_HERB : AbstractPlants
     {
-        static ITPL_TERMP_HERB ii;
-        public static ITPL_TERMP_HERB get()
+        static ITPL_TEMP_HERB ii;
+        public static ITPL_TEMP_HERB get()
         {
             if (ii == null)
-                ii = new ITPL_TERMP_HERB();
+                ii = new ITPL_TEMP_HERB();
             return ii;
         }
 
 
-        protected ITPL_TERMP_HERB()
-            : base("ITPL_TERMP_HERB")
+        protected ITPL_TEMP_HERB()
+            : base("ITPL_TEMP_HERB")
         {
             Name = "Feldknöterich";
             Visual = "ItPl_Temp_Herb.3ds";
