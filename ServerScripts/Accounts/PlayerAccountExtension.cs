@@ -1,3 +1,5 @@
+#if SSM_ACCOUNT
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,7 +15,7 @@ using GUC.Server.Scripting.GUI;
 using GUC.Types;
 
 
-namespace GUC.Server.Scripts
+namespace GUC.Server.Scripts.Accounts
 {
 	public static class PlayerAccountExtension
 	{
@@ -23,3 +25,6 @@ namespace GUC.Server.Scripts
         }
     }
 }
+
+
+#endif

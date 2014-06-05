@@ -8,9 +8,9 @@ using GUC.Server.Scripts.AI.Enumeration;
 
 namespace GUC.Server.Scripts.AI.NPC_Def.Monster
 {
-    class Scavanger: NPC
+    public class Scavenger: NPC
     {
-        public Scavanger()
+        public Scavenger()
             : base()
         {
             Name = "Scavanger";

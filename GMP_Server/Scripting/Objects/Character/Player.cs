@@ -82,6 +82,28 @@ namespace GUC.Server.Scripting.Objects.Character
             }
         }
 
+        public int LastPing
+        {
+            get
+            {
+                using (RakNet.RakNetGUID guid = Proto.GUID)
+                {
+                    return Program.server.server.GetLastPing(guid);
+                }
+            }
+        }
+
+        public int AveragePing
+        {
+            get
+            {
+                using (RakNet.RakNetGUID guid = Proto.GUID)
+                {
+                    return Program.server.server.GetAveragePing(guid);
+                }
+            }
+        }
+
 
 
         public static void EnableAllPlayerKeys(bool x)
@@ -294,52 +316,73 @@ namespace GUC.Server.Scripting.Objects.Character
 
         #endregion
 
-
-
-
-
-
-
-
-
-        public event GUC.Server.Scripting.Events.PlayerEventHandler Disconnected;
-        public event GUC.Server.Scripting.Events.PlayerEventHandler Spawned;
-        internal void OnDisconnect(Player pl)
+        #region Spawn
+        public event GUC.Server.Scripting.Events.PlayerEventHandler OnSpawned;
+        internal void iOnSpawned(Player pl)
         {
-            if(Disconnected != null)
-                Disconnected(pl);
+            if (OnSpawned != null)
+                OnSpawned(pl);
         }
 
-        internal void OnSpawned(Player pl)
+        public static event Events.PlayerEventHandler sOnPlayerSpawns;
+        internal static void isOnPlayerSpawn(Player pl)
         {
-            if (Spawned != null)
-                Spawned(pl);
+            pl.iOnSpawned(pl);
+            if (sOnPlayerSpawns != null)
+                sOnPlayerSpawns(pl);
+        }
+
+        #endregion
+
+        #region Connection
+        public static event Events.PlayerEventHandler sOnPlayerConnects;
+        internal static void isOnPlayerConnect(Player pl)
+        {
+            if (sOnPlayerConnects != null)
+                sOnPlayerConnects(pl);
         }
         #endregion
-        #region Static Events:
 
-        public static event Events.PlayerEventHandler playerConnects;
-        public static event Events.PlayerEventHandler playerDisconnects;
-        public static event Events.PlayerEventHandler playerSpawns;
-        internal static void OnPlayerConnect(Player pl)
+        #region Disconnect
+
+        public event GUC.Server.Scripting.Events.PlayerEventHandler OnDisconnected;
+        internal void iOnDisconnect(Player pl)
         {
-            if (playerConnects != null)
-                playerConnects(pl);
+            if (OnDisconnected != null)
+                OnDisconnected(pl);
         }
 
-        internal static void OnPlayerDisconnect(Player pl)
+
+        public static event Events.PlayerEventHandler sOnPlayerDisconnects;
+        internal static void isOnPlayerDisconnect(Player pl)
         {
-            pl.OnDisconnect(pl);
-            if (playerDisconnects != null)
-                playerDisconnects(pl);
+            pl.iOnDisconnect(pl);
+            if (sOnPlayerDisconnects != null)
+                sOnPlayerDisconnects(pl);
         }
 
-        internal static void OnPlayerSpawn(Player pl)
+        #endregion
+
+        #region LostConnection
+
+        public event GUC.Server.Scripting.Events.PlayerEventHandler OnConnectionLost;
+        internal void iOnConnectionLost(Player pl)
         {
-            pl.OnSpawned(pl);
-            if (playerSpawns != null)
-                playerSpawns(pl);
+            if (OnConnectionLost != null)
+                OnConnectionLost(pl);
         }
+
+
+        public static event Events.PlayerEventHandler sOnConnectionLost;
+        internal static void isOnConnectionLost(Player pl)
+        {
+            pl.iOnConnectionLost(pl);
+            if (sOnConnectionLost != null)
+                sOnConnectionLost(pl);
+        }
+
+        #endregion
+
 
         #endregion
 

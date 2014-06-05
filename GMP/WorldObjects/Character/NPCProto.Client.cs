@@ -250,7 +250,7 @@ namespace GUC.WorldObjects.Character
                 Enable(this.Position);
         }
 
-        private bool enabled = false;
+        public bool enabled = false;
 
         public void Disable()
         {
@@ -523,23 +523,31 @@ namespace GUC.WorldObjects.Character
 
         public void setSlotItem(int slot, Item item)
         {
+            //zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Set Slot Item 1: " + Slots[slot] + "; NewItem: "+item + " ", 0, "NPCProto.Client.cs", 0);
+            Item oldItem = Slots[slot];
             Slots[slot] = item;
+
+            if (oldItem == item)
+                return;
 
             if (this.Address != 0)
             {
                 Process process = Process.ThisProcess();
                 oCNpc npc = new oCNpc(process, this.Address);
-                if (Slots[slot] == null)
+
+                if (Slots[slot] == null || oldItem != null)
                 {
                     zString slotString = oCNpc.getSlotString(process, slot);
                     oCItem oldITem = npc.GetSlotItem(slotString);
                     if(oldITem.Address != 0)
                         npc.RemoveFromSlot(slotString, oldITem.Instanz, oldITem.Amount);
                 }
-                else
+
+                if(Slots[slot] != null)
                 {
                     if (Slots[slot].Address == 0)
-                        throw new Exception("RangeWeapon Adress can't be null if player using it is spawned!");
+                        throw new Exception("Adress can't be null if player using it is spawned!");
+                    //zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Set Slot Item: "+Slots[slot]+" "+Slots[slot].ItemInstance.Name, 0, "NPCProto.Client.cs", 0);
                     npc.PutInSlot(oCNpc.getSlotString(process, slot), new oCItem(process, Slots[slot].Address), 1);
                 }
             }

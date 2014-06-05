@@ -15,21 +15,21 @@ namespace GUC.Server.Scripts.AI
         public static Dictionary<Guilds, Dictionary<Guilds, GuildsAttitude>> GuildAttitudes = new Dictionary<Guilds, Dictionary<Guilds, GuildsAttitude>>();
         public static void Init()
         {
-            WayNets.Add("NEWWORLD\\NEWWORLD.ZEN", WayNet.loadFromFile("newworld.wp"));
+            WayNets.Add("NEWWORLD\\NEWWORLD.ZEN", WayNet.loadFromFile("newworld"));
 
-            Player.playerConnects += new Events.PlayerEventHandler(playerConnects);
+            Player.sOnPlayerConnects += new Events.PlayerEventHandler(playerConnects);
 
             AI_Events.Init();
         }
 
-        public static WayPoint getWaypoint(String map, String wp){
+        public static FreeOrWayPoint getWaypoint(String map, String wp){
             WayNet wn = null;
             WayNets.TryGetValue(map.ToUpper(), out wn);
 
             if (wn == null)
                 return null;
 
-            return wn.getWaypoint(wp);
+            return wn[wp];
         }
 
         public static void playerConnects(Player player)

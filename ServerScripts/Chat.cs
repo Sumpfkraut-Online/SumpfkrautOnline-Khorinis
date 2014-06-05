@@ -17,13 +17,46 @@ using GUC.Server.Scripts.AI.Waypoints;
 using GUC.Server.Scripts.AI.NPC_Def.Monster;
 using GUC.Server.Scripts.Items;
 
+#if SSM_ACCOUNT_LOGGING
+using GUC.Server.Scripts.Accounts.Logs;
+#endif
+#if SSM_ACCOUNT
+using GUC.Server.Scripts.Accounts;
+#endif
+
 namespace GUC.Server.Scripts
 {
 	public class Chat
 	{
+        public class SLMessage
+        {
+            static int id = 0;
+            public SLMessage()
+            {
+                id++;
+                ID = id;
+            }
+
+            public int ID;
+            public int playerID;
+            public long accountID;
+            public String name;
+            public String msg;
+
+            public bool IsAnswered = false;
+        }
+
+        public List<SLMessage> messageList = new List<SLMessage>();
+
+
+
+
 		protected MessagesBox mB;
 		protected NPC lastNPC = null;
 		protected Player lastPlayer = null;
+
+        public MessagesBox MessageBox { get { return mB; } }
+
 		public void Init()
 		{
             Logger.log(Logger.LogLevel.INFO, "################### Initalise Chatsystem ##################");
@@ -37,8 +70,8 @@ namespace GUC.Server.Scripts
 			mB = new MessagesBox("Font_Old_20_White.TGA", 8, 0, 0);
 			mB.show();
 
-			Player.playerSpawns += new Events.PlayerEventHandler(spawn);
-			Player.playerDisconnects += new Events.PlayerEventHandler(disconnect);
+			Player.sOnPlayerSpawns += new Events.PlayerEventHandler(spawn);
+			Player.sOnPlayerDisconnects += new Events.PlayerEventHandler(disconnect);
             
 
             MobInter.OnStartInteractions += new Events.MobInterEventHandler(startInteract);
@@ -171,6 +204,10 @@ namespace GUC.Server.Scripts
             if (!IsCommand(message))
             {
                 mB.addLine(255, 255, 255, 255, pl.Name + ": " + message);
+
+#if SSM_ACCOUNT_LOGGING
+                SQLiteLogger.log_Chat(pl, message);
+#endif
                 return;
             }
 
@@ -199,8 +236,8 @@ namespace GUC.Server.Scripts
 
                 for (int i = (int)NPCTalents.H1; i <= (int)NPCTalents.CrossBow; i++)
                 {
-                    pl.setTalentSkills((NPCTalents)i, 3);
-                    pl.setTalentValues((NPCTalents)i, 3);
+                    pl.setTalentSkills((NPCTalents)i, 2);
+                    pl.setTalentValues((NPCTalents)i, 2);
                     pl.setHitchances((NPCTalents)i, 100);
                 }
             }
@@ -240,7 +277,7 @@ namespace GUC.Server.Scripts
                 getParameters(message, out wp);
                 if (wp == null)
                     return;
-                WayPoint wayp = AISystem.getWaypoint(pl.Map, wp);
+                FreeOrWayPoint wayp = AISystem.getWaypoint(pl.Map, wp);
                 if (wayp == null)
                 {
                     mB.addLine(pl, 255, 0, 0, 255, "Waypoint was not found!: " + wp);
@@ -253,10 +290,22 @@ namespace GUC.Server.Scripts
                 pl.revive();
                 Console.WriteLine("HP: "+pl.HP+"; "+pl.HPMax);
             }
-            else if (IsCommand("sppedup", message))
+            else if (IsCommand("speedup", message))
             {
                 pl.ApplyOverlay("HUMANS_SPRINT.MDS");
             }
+#if (SSM_ACCOUNT && SSM_WEB)
+            else if (IsCommand("sn", message))
+            {
+                String msg = null;
+                getParameters(message, out msg);
+
+                lock (messageList)
+                {
+                    messageList.Add(new SLMessage() { playerID = pl.ID, accountID = pl.getAccount().accountID, name = pl.Name, msg = System.Net.WebUtility.HtmlDecode(msg) });
+                }
+            }
+#endif
             else
             {
                 mB.addLine(pl, 255, 255, 255, 255, "Command was not found: " + message);

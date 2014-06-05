@@ -6,6 +6,7 @@ using RakNet;
 using GUC.Network;
 using GUC.Enumeration;
 using Gothic.zClasses;
+using WinApi;
 
 namespace GUC.WorldObjects
 {

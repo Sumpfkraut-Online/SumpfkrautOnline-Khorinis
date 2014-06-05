@@ -114,6 +114,9 @@ namespace GUC.Network
 
             messageListener.Add((byte)NetworkIDS.CastSpell, new CastSpellMessage());
             messageListener.Add((byte)NetworkIDS.SpellInvestMessage, new SpellInvestMessage());
+
+            messageListener.Add((byte)NetworkIDS.NPCProtoSetWeaponMode, new NPCProtoSetWeaponMode());
+            messageListener.Add((byte)NetworkIDS.SetSlotMessage, new SetSlotMessage());
         }
 
         public void Startup()

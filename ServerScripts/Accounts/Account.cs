@@ -1,3 +1,7 @@
+
+#if SSM_ACCOUNT
+
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,10 +20,14 @@ using Mono.Data.Sqlite;
 using SQLiteDataReader = Mono.Data.Sqlite.SqliteDataReader;
 using SQLiteCommand = Mono.Data.Sqlite.SqliteCommand;
 
-namespace GUC.Server.Scripts
+namespace GUC.Server.Scripts.Accounts
 {
 	public class Account
 	{
+        public static Dictionary<long, Account> AccountDict = new Dictionary<long, Account>();
+
+
+
 		public enum State {
 			Nothing = 0,
 			Login = 1,
@@ -37,7 +45,7 @@ namespace GUC.Server.Scripts
 		{
 			this.player = player;
 
-			this.player.Disconnected += new Events.PlayerEventHandler(disconnect);
+			this.player.OnDisconnected += new Events.PlayerEventHandler(disconnect);
 		}
 
 		public static bool existsName(String name) {
@@ -268,3 +276,4 @@ namespace GUC.Server.Scripts
 		
     }
 }
+#endif

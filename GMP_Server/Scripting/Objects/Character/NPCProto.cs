@@ -414,6 +414,29 @@ namespace GUC.Server.Scripting.Objects.Character
             Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
+        public void setSlotItem(int slot, Item item)
+        {
+            if (item != null)
+                proto.Slots[slot] = item.ProtoItem;
+            else
+                proto.Slots[slot] = null;
+            if (!created)
+                return;
+
+            BitStream stream = Program.server.sendBitStream;
+            stream.Reset();
+            stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
+            stream.Write((byte)NetworkIDS.SetSlotMessage);
+            stream.Write(vob.ID);
+            stream.Write(slot);
+            if (item == null)
+                stream.Write(0);
+            else
+                stream.Write(item.ID);
+
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+        }
+
         public int getProtection(DamageType index)
         {
             if (EquippedArmor != null)
@@ -677,7 +700,15 @@ namespace GUC.Server.Scripting.Objects.Character
                 value = HPMax;
             else if (attrib == NPCAttributeFlags.ATR_MANA && value > MPMax)
                 value = MPMax;
+
+            if (proto.Attributes[(byte)attrib] == value)
+                return;
+            int oV = proto.Attributes[(byte)attrib];
+
             proto.Attributes[(byte)attrib] = value;
+
+            NPCProto.isOnAttributeChanged(this, attrib, oV, value);
+
 
             if (!created)
                 return;
@@ -696,8 +727,13 @@ namespace GUC.Server.Scripting.Objects.Character
         {
             if (talents != NPCTalents.H1 && talents != NPCTalents.H2 && talents != NPCTalents.Bow && talents != NPCTalents.CrossBow)
                 throw new ArgumentException("Talents have to be fighting skills Like H1, H2, Bow or CrossBow!");
+            if (proto.Hitchances[(byte)talents] == value)
+                return;
 
+            int oV = proto.Hitchances[(byte)talents];
             proto.Hitchances[(byte)talents] = value;
+
+            NPCProto.isOnHitchancesChanged(this, talents, oV, value);
 
             if (!created)
                 return;
@@ -718,7 +754,12 @@ namespace GUC.Server.Scripting.Objects.Character
             if (talent == NPCTalents.Unknown || talent == NPCTalents.MaxTalents)
                 throw new ArgumentException("Invalid Talent: "+talent);
 
+            if (proto.TalentValues[(byte)talent] == value)
+                return;
+            int oV = proto.TalentValues[(byte)talent];
             proto.TalentValues[(byte)talent] = value;
+
+            NPCProto.isOnTalentValueChanged(this, talent, oV, value);
 
             if (!created)
                 return;
@@ -739,7 +780,12 @@ namespace GUC.Server.Scripting.Objects.Character
             if (talent == NPCTalents.Unknown || talent == NPCTalents.MaxTalents)
                 throw new ArgumentException("Invalid Talent: " + talent);
 
+            if (proto.TalentSkills[(byte)talent] == value)
+                return;
+            int oV = proto.TalentSkills[(byte)talent];
             proto.TalentSkills[(byte)talent] = value;
+
+            NPCProto.isOnTalentSkillChanged(this, talent, oV, value);
 
             if (!created)
                 return;
@@ -851,7 +897,11 @@ namespace GUC.Server.Scripting.Objects.Character
         public void hit(NPCProto victim, DamageType damageMode, int weaponMode, Item weapon, Spell spell, Vec3f hitLoc, Vec3f flyDir, float fallDownDistanceY)
         {
             WorldObjects.Spell objSpell = (spell == null) ? null : spell.spell;
-            GUC.Server.Network.Messages.PlayerCommands.OnDamageMessage.Write(victim.proto, damageMode, hitLoc, flyDir, this.proto, weaponMode, objSpell, weapon.ProtoItem, fallDownDistanceY, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS);
+            WorldObjects.Item objItem = (weapon == null) ? null : weapon.ProtoItem;
+            GUC.Server.Network.Messages.PlayerCommands.OnDamageMessage.Write(victim.proto, damageMode, hitLoc, flyDir, this.proto, weaponMode, objSpell, objItem, fallDownDistanceY, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS);
+
+            NPCProto.OnPlayerDamages(victim, (DamageType)damageMode, hitLoc, flyDir, this, weaponMode, spell, weapon, fallDownDistanceY);
+
         }
 
         /// <summary>
@@ -1258,6 +1308,81 @@ namespace GUC.Server.Scripting.Objects.Character
 
         #endregion
 
+        #region Attributes
+        public event GUC.Server.Scripting.Events.AttributeChangedEventHandler OnAttributeChanged;
+        internal void iOnAttributeChanged(NPCProto proto, NPCAttributeFlags attrib, int oldValue, int newValue)
+        {
+            if (OnAttributeChanged != null)
+                OnAttributeChanged(proto, attrib, oldValue, newValue);
+        }
+
+        public static event GUC.Server.Scripting.Events.AttributeChangedEventHandler sOnAttributeChanged;
+        internal static void isOnAttributeChanged(NPCProto proto, NPCAttributeFlags attrib, int oldValue, int newValue)
+        {
+            proto.iOnAttributeChanged(proto, attrib, oldValue, newValue);
+
+            if (sOnAttributeChanged != null)
+                sOnAttributeChanged(proto, attrib, oldValue, newValue);
+        }
+
+        #endregion
+
+        #region Talent_Values
+        public event GUC.Server.Scripting.Events.TalentChangedEventHandler OnTalentValueChanged;
+        internal void iOnTalentValueChanged(NPCProto proto, NPCTalents talent, int oldValue, int newValue)
+        {
+            if (OnTalentValueChanged != null)
+                OnTalentValueChanged(proto, talent, oldValue, newValue);
+        }
+
+        public static event GUC.Server.Scripting.Events.TalentChangedEventHandler sOnTalentValueChanged;
+        internal static void isOnTalentValueChanged(NPCProto proto, NPCTalents talent, int oldValue, int newValue)
+        {
+            proto.iOnTalentValueChanged(proto, talent, oldValue, newValue);
+
+            if (sOnTalentValueChanged != null)
+                sOnTalentValueChanged(proto, talent, oldValue, newValue);
+        }
+
+        #endregion
+
+        #region Talent_Skills
+        public event GUC.Server.Scripting.Events.TalentChangedEventHandler OnTalentSkillChanged;
+        internal void iOnTalentSkillChanged(NPCProto proto, NPCTalents talent, int oldValue, int newValue)
+        {
+            if (OnTalentSkillChanged != null)
+                OnTalentSkillChanged(proto, talent, oldValue, newValue);
+        }
+
+        public static event GUC.Server.Scripting.Events.TalentChangedEventHandler sOnTalentSkillChanged;
+        internal static void isOnTalentSkillChanged(NPCProto proto, NPCTalents talent, int oldValue, int newValue)
+        {
+            proto.iOnTalentSkillChanged(proto, talent, oldValue, newValue);
+
+            if (sOnTalentSkillChanged != null)
+                sOnTalentSkillChanged(proto, talent, oldValue, newValue);
+        }
+
+        #endregion
+
+        #region Hitchances
+        public event GUC.Server.Scripting.Events.TalentChangedEventHandler OnHitchancesChanged;
+        internal void iOnHitchancesChanged(NPCProto proto, NPCTalents talent, int oldValue, int newValue)
+        {
+            if (OnHitchancesChanged != null)
+                OnHitchancesChanged(proto, talent, oldValue, newValue);
+        }
+
+        public static event GUC.Server.Scripting.Events.TalentChangedEventHandler sOnHitchancesChanged;
+        internal static void isOnHitchancesChanged(NPCProto proto, NPCTalents talent, int oldValue, int newValue)
+        {
+            proto.iOnHitchancesChanged(proto, talent, oldValue, newValue);
+
+            if (sOnHitchancesChanged != null)
+                sOnHitchancesChanged(proto, talent, oldValue, newValue);
+        }
+
+        #endregion
 
 
 

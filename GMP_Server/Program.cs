@@ -111,6 +111,8 @@ namespace GUC.Server
         {
             if (sWorld.NpcList.Count == 0)
                 return;
+            if (sWorld.PlayerList.Count == 0)
+                return;
                     
             int x = (sWorld.NpcList.Count / 250 == 0) ? 1 : (sWorld.NpcList.Count / 250);
 
@@ -131,6 +133,9 @@ namespace GUC.Server
                 
                 //Checking NPC-Ranges!
                 NPC npc = sWorld.NpcList[index];
+
+                if (!npc.IsSpawned)
+                    continue;
                 if (npc.NpcController != null)
                 {
                     //Check if npc is in range of controller:

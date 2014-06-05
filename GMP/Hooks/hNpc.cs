@@ -35,10 +35,10 @@ namespace GUC.Hooks
 
                 if (oDD.DamageType == oSDamageDescriptor.DamageTypes.DAM_FALL && oCNpc.Player(Process).Address != npc.Address)
                     return 0;
-
+                
                 OnDamageMessage.Write(oDD, npc);
 
-                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "OnDamage: TotalDamage:" + oDD.DamageTotal + " | Damage-Mode: " + oDD.ModeDamage + " | Mode-Weapon: " + oDD.ModeWeapon + " | " + oDD.Damage + " | " + oDD.DamageEffective + " | " + oDD.DamageReal + " | "+npc.HumanAI.FallDownDistanceY+ " | "+oDD.SpellID, 0, "Program.cs", 0);
+                //zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "OnDamage: TotalDamage:" + oDD.DamageTotal + " | Damage-Mode: " + oDD.ModeDamage + " | Mode-Weapon: " + oDD.ModeWeapon + " | " + oDD.Damage + " | " + oDD.DamageEffective + " | " + oDD.DamageReal + " | "+npc.HumanAI.FallDownDistanceY+ " | "+oDD.SpellID+" | "+oDD.DamageType, 0, "Program.cs", 0);
             }
             catch (Exception ex)
             {

@@ -76,6 +76,8 @@ namespace GUC.Enumeration
         PlayEffectMessage,
 
         SpellInvestMessage,
+
+        SetSlotMessage,
     }
 
     public enum ChangeSkillType : byte

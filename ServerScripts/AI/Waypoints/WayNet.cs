@@ -51,52 +51,157 @@ namespace GUC.Server.Scripts.AI.Waypoints
                     return false;
             }
         }
+        
         protected List<WayPoint> mWayPointList = new List<WayPoint>();
         protected Dictionary<String, WayPoint> mWayPointDict = new Dictionary<string, WayPoint>();
+       
+        protected List<FreePoint> mFreePointList = new List<FreePoint>();
+        protected Dictionary<String, FreePoint> mFreePointDict = new Dictionary<string, FreePoint>();
 
+
+
+        /// <summary>
+        /// Loads the files file[.wp/.fp]
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
         public static WayNet loadFromFile(String file)
         {
             WayNet wnet = new WayNet();
-            String[] lines = File.ReadAllLines(file);
-            foreach (String line in lines)
+
+            if (File.Exists(file + ".wp"))
             {
-                String[] values = line.Split(new char[]{';'}, StringSplitOptions.RemoveEmptyEntries);
-                if (values.Length < 5)
-                    continue;
-                
-                String name = values[0].Trim().ToLower();
-                float x = float.Parse(values[1].Trim(), System.Globalization.CultureInfo.InvariantCulture);
-                float y = float.Parse(values[2].Trim(), System.Globalization.CultureInfo.InvariantCulture);
-                float z = float.Parse(values[3].Trim(), System.Globalization.CultureInfo.InvariantCulture);
-
-                float dirX = float.Parse(values[4].Trim(), System.Globalization.CultureInfo.InvariantCulture);
-                float dirY = float.Parse(values[5].Trim(), System.Globalization.CultureInfo.InvariantCulture);
-
-                String[] list = new String[values.Length - 6];
-                Array.Copy(values, 6, list, 0, list.Length);
-
-                WayPoint wp = new WayPoint(name, new Vec3f(x, y, z), new Vec3f(dirX, 0, dirY), list);
-                wnet.mWayPointList.Add(wp);
-                wnet.mWayPointDict.Add(wp.Name, wp);
-            }
-
-            foreach (WayPoint wp in wnet.mWayPointList)
-            {
-                WayPoint[] wpList = new WayPoint[wp.ConnectedWPString.Length];
-                int i = 0; 
-                foreach (String wpName in wp.ConnectedWPString)
+                String[] lines = File.ReadAllLines(file+".wp");
+                foreach (String line in lines)
                 {
-                    wpList[i] = wnet.mWayPointDict[wpName];
-                    i += 1;
+                    String[] values = line.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (values.Length < 5)
+                        continue;
+
+                    String name = values[0].Trim().ToLower();
+                    float x = float.Parse(values[1].Trim(), System.Globalization.CultureInfo.InvariantCulture);
+                    float y = float.Parse(values[2].Trim(), System.Globalization.CultureInfo.InvariantCulture);
+                    float z = float.Parse(values[3].Trim(), System.Globalization.CultureInfo.InvariantCulture);
+
+                    float dirX = float.Parse(values[4].Trim(), System.Globalization.CultureInfo.InvariantCulture);
+                    float dirY = float.Parse(values[5].Trim(), System.Globalization.CultureInfo.InvariantCulture);
+
+                    String[] list = new String[values.Length - 6];
+                    Array.Copy(values, 6, list, 0, list.Length);
+
+                    WayPoint wp = new WayPoint(name, new Vec3f(x, y, z), new Vec3f(dirX, 0, dirY), list);
+                    wnet.mWayPointList.Add(wp);
+                    wnet.mWayPointDict.Add(wp.Name, wp);
                 }
-                wp.ConnectedWP = wpList;
+
+                foreach (WayPoint wp in wnet.mWayPointList)
+                {
+                    WayPoint[] wpList = new WayPoint[wp.ConnectedWPString.Length];
+                    int i = 0;
+                    foreach (String wpName in wp.ConnectedWPString)
+                    {
+                        wpList[i] = wnet.mWayPointDict[wpName];
+                        i += 1;
+                    }
+                    wp.ConnectedWP = wpList;
+                }
+            }
+            
+            if (File.Exists(file + ".fp"))
+            {
+                String[] lines = File.ReadAllLines(file+".fp");
+                foreach (String line in lines)
+                {
+                    
+                    String[] values = line.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (values.Length < 5)
+                        continue;
+
+                    String name = values[0].Trim().ToLower();
+                    
+                    float x = float.Parse(values[1].Trim(), System.Globalization.CultureInfo.InvariantCulture);
+                    float y = float.Parse(values[2].Trim(), System.Globalization.CultureInfo.InvariantCulture);
+                    float z = float.Parse(values[3].Trim(), System.Globalization.CultureInfo.InvariantCulture);
+
+                    float dirX = float.Parse(values[4].Trim(), System.Globalization.CultureInfo.InvariantCulture);
+                    float dirZ = float.Parse(values[5].Trim(), System.Globalization.CultureInfo.InvariantCulture);
+                    //float dirZ = float.Parse(values[6].Trim(), System.Globalization.CultureInfo.InvariantCulture);
+
+
+                    FreePoint fp = new FreePoint(name, new Vec3f(x, y, z), new Vec3f(dirX, 0.0f, dirZ));
+                    wnet.mFreePointList.Add(fp);
+                    wnet.mFreePointDict.Add(fp.Name, fp);
+                }
             }
 
             return wnet;
         }
 
 
+        public FreeOrWayPoint this[String wpName]
+        {
+            get {
+                wpName = wpName.Trim().ToLower();
+                WayPoint wp = null;
+                FreePoint fp = null;
+                mWayPointDict.TryGetValue(wpName, out wp);
+                if (wp == null)
+                    mFreePointDict.TryGetValue(wpName, out fp);
 
+                if (wp != null)
+                    return wp;
+                else if (fp != null)
+                    return fp;
+                else
+                    return null;
+            }
+        }
+
+        #region Freepoint
+        public FreePoint getFreepoint(String wp)
+        {
+            String wp2 = wp.ToLower().Trim();
+            if (mFreePointDict.ContainsKey(wp2))
+                return mFreePointDict[wp2];
+            return null;
+        }
+
+        public FreePoint getRandomFreepoint()
+        {
+            if (mFreePointList.Count == 0)
+                return null;
+
+
+            return mFreePointList[sRand.Next(mFreePointList.Count)];
+        }
+
+        public FreePoint getNearestFreepoint(Vec3f position)
+        {
+            float nearestDistance = 0;
+            FreePoint foundWP = null;
+            foreach (FreePoint wp in mFreePointList)
+            {
+                float distance = wp.Position.getDistance(position);
+                if (foundWP == null)
+                {
+                    foundWP = wp;
+                    nearestDistance = distance;
+                    continue;
+                }
+                if (distance < nearestDistance)
+                {
+                    foundWP = wp;
+                    nearestDistance = distance;
+                }
+            }
+
+            return foundWP;
+        }
+
+        #endregion
+
+
+        #region Waypoints
         public WayPoint getWaypoint(String wp)
         {
             String wp2 = wp.ToLower().Trim();
@@ -116,10 +221,7 @@ namespace GUC.Server.Scripts.AI.Waypoints
 
         public int Count { get { return mWayPointList.Count; } }
 
-        public WayPoint this[String wpName]
-        {
-            get { return mWayPointDict.ContainsKey(wpName) ? mWayPointDict[wpName] : null; }
-        }
+        
 
         public WayPoint this[int index]
         {
@@ -147,7 +249,10 @@ namespace GUC.Server.Scripts.AI.Waypoints
 
             return foundWP;
         }
+        #endregion
 
+
+        #region WayRoute
         public WayRoute getWayRoute(WayPoint start, WayPoint end){
 
             WayPointPriority wpp = _wayRouteIntern(start, end);
@@ -222,8 +327,8 @@ namespace GUC.Server.Scripts.AI.Waypoints
 
             }
         }
+        #endregion
 
-        
 
     }
 }

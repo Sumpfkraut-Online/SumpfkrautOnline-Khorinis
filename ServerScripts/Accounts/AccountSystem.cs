@@ -1,3 +1,5 @@
+#if SSM_ACCOUNT
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -90,3 +92,6 @@ namespace GUC.Server.Scripts.Accounts
 		
     }
 }
+
+
+#endif

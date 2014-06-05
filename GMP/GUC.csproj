@@ -92,6 +92,7 @@
     <Compile Include="Network\Messages\MobInterCommands\MobInterMessage.cs" />
     <Compile Include="Network\Messages\NpcCommands\AnimationUpdateMessage.cs" />
     <Compile Include="Network\Messages\NpcCommands\ClearInventory.cs" />
+    <Compile Include="Network\Messages\NpcCommands\SetSlotMessage.cs" />
     <Compile Include="Network\Messages\NpcCommands\NPCControllerMessage.cs" />
     <Compile Include="Network\Messages\NpcCommands\NPCEnableMessage.cs" />
     <Compile Include="Network\Messages\NpcCommands\NPCFatnessMessage.cs" />

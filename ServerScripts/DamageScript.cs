@@ -71,9 +71,10 @@ namespace GUC.Server.Scripts
 					toUnconscious = true;
 			}
 
-            if (victim.getGuild() > Guilds.HUM_SPERATOR)
+            if (!victim.IsHuman() || !attacker.IsHuman())
             {
                 toUnconscious = false;
+                canKill = true;
             }
 
             if (toUnconscious && !victim.isUnconscious)

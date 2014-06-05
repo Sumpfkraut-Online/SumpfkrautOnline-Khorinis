@@ -32,7 +32,7 @@ namespace GUC.Server.Network.Messages.Connection
             CreateVobMessage.Write(player, packet.guid);
 
             Scripting.GUI.View.SendToPlayer(player);
-            Scripting.Objects.Character.Player.OnPlayerConnect((GUC.Server.Scripting.Objects.Character.Player)player.ScriptingNPC);
+            Scripting.Objects.Character.Player.isOnPlayerConnect((GUC.Server.Scripting.Objects.Character.Player)player.ScriptingNPC);
         }
 
         public void Write(Player player)

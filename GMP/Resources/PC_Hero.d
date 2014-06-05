@@ -161,17 +161,6 @@ PROTOTYPE C_Spell_Proto(C_Spell)
 	targetCollectElev			=	60;
 };
 
-INSTANCE Spell_Teleport (C_Spell_Proto)
-{
-	time_per_mana			= 123;
-	spelltype 				= 456;
-	targetCollectAlgo		= 789;
-	canTurnDuringInvest		= 987;
-	targetCollectRange		= 654;
-	targetCollectAzi		= 321;
-	targetCollectElev		= 111;
-};
-
 func INT Spell_ProcessMana (VAR INT manaInvested)
 {
 	return GUC_SPELL_PROCESSMANA(manaInvested, self);
@@ -181,6 +170,13 @@ func INT Spell_ProcessMana_Release (VAR INT manaInvested)
 {
 	return GUC_SPELL_PROCESSMANA_RELEASE(manaInvested, self);
 };
+
+func int C_CanNpcCollideWithSpell(var int spellType)
+{
+	return 1;
+};
+
+
 
 var string guc_string_helper;
 func void MOD_Print()
@@ -207,3 +203,8 @@ func void MOD_RemoveWeapon()
 {
 	AI_RemoveWeapon(self);
 };
+
+
+
+
+

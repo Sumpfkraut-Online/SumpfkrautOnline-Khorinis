@@ -21,6 +21,12 @@ namespace GUC.Types
             this.set(data);
         }
 
+        public Vec3f(Vec3f data)
+            : this()
+        {
+            this.set(data);
+        }
+
         public Vec3f()
         {
             this.data = new float[] { 0, 0, 0 };

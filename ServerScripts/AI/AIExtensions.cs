@@ -82,7 +82,10 @@ namespace GUC.Server.Scripts.AI
 
         public static void standAnim(this NPCProto proto)
         {
-            proto.playAnimation("S_RUN");
+            if (proto.WeaponMode == 1)
+                proto.playAnimation("S_FISTRUN");
+            else
+                proto.playAnimation("S_RUN");
         }
 
         public static bool gotoPosition(this NPCProto proto, Vec3f position, float minDistance)
@@ -134,6 +137,11 @@ namespace GUC.Server.Scripts.AI
             }
         }
 
+        public static int getAttackRange(this NPCProto proto)
+        {
+            return 300;
+        }
+
         public static void setGuild(this NPCProto proto, Guilds guild)
         {
             proto.getAI().Guild = guild;
@@ -172,16 +180,165 @@ namespace GUC.Server.Scripts.AI
         {
             String anim = "S_WALKL";
 
-            if (proto.getAI().Guild > Guilds.HUM_SPERATOR)
+            if (proto.WeaponMode == 1)
                 anim = "S_FISTWALKL";
 
             if (proto.getAI().WalkType == Enumeration.WalkTypes.Run){
-                if (proto.getAI().Guild < Guilds.HUM_SPERATOR)
+                if (proto.WeaponMode == 0)
                     anim = "S_RUNL";
-                else
+                else if (proto.WeaponMode == 1)
                     anim = "S_FISTRUNL";
+                else if(proto.WeaponMode == 2)
+                    anim = "S_1HRUNL";
             }
             return anim;
+        }
+
+        public static String getFightAnimation(this NPCProto proto)
+        {
+            String anim = "S_RUN";
+
+            if (proto.WeaponMode == 1)
+                anim = "T_FISTATTACKMOVE";
+            else if (proto.WeaponMode == 2)
+                anim = "T_1HATTACKMOVE";
+            
+            return anim;
+        }
+
+        public static String getFightRunAnimation(this NPCProto proto)
+        {
+            String anim = "S_RUN";
+
+            if (proto.WeaponMode == 1)
+                anim = "S_FISTATTACK";
+            else if (proto.WeaponMode == 2)
+                anim = "S_1HATTACK";
+
+            return anim;
+        }
+
+        public static void hitEnemy(this NPCProto proto, NPCProto enemy)
+        {
+            DamageType dt = DamageType.DAM_BLUNT;
+            Item weaponItem = null;
+
+            if(proto.WeaponMode == 1){
+                dt = DamageType.DAM_BLUNT;
+            }else if(proto.WeaponMode == 2){
+                dt = proto.EquippedWeapon.DamageType;
+                weaponItem = proto.EquippedWeapon;
+            }else if(proto.WeaponMode == (int)FightModes.Far){
+                dt = proto.EquippedRangeWeapon.DamageType;
+                weaponItem = proto.EquippedRangeWeapon;
+            }
+
+            proto.hit(enemy, dt, proto.WeaponMode, weaponItem, null);
+        }
+
+        public static bool IsHuman(this NPCProto proto)
+        {
+            if (proto.getGuild() <= Guilds.HUM_SPERATOR)
+                return true;
+            return false;
+        }
+
+        public static bool IsMonster(this NPCProto proto)
+        {
+            if (proto.getGuild() > Guilds.HUM_SPERATOR && proto.getGuild() <= Guilds.MON_SEPERATOR)
+                return true;
+            return false;
+        }
+
+        public static bool IsOrc(this NPCProto proto)
+        {
+            if (proto.getGuild() > Guilds.MON_SEPERATOR && proto.getGuild() <= Guilds.ORC_SEPERATOR)
+                return true;
+            return false;
+        }
+
+        public static void unreadyWeapon(this NPCProto proto)
+        {
+            if (proto.IsMonster())
+                return;
+            if (proto.WeaponMode == 0)
+                return;
+
+            if (proto.WeaponMode == (int)FightModes.Fist)//Fist
+                proto.WeaponMode = 0;
+            else if (proto.WeaponMode == (int)FightModes.Meele)//Sword
+            {
+                proto.WeaponMode = 0;
+                Item i = proto.getSlotItem((int)SlotFlags.SLOT_RIGHTHAND);
+                if ((i.ItemInstance.Flags & (Flags.ITEM_2HD_SWD | Flags.ITEM_2HD_AXE)) > 0)
+                {
+                    proto.setSlotItem((int)SlotFlags.SLOT_RIGHTHAND, null);
+                    proto.setSlotItem((int)SlotFlags.SLOT_LONGSWORD, i);
+                }
+                else
+                {
+                    proto.setSlotItem((int)SlotFlags.SLOT_RIGHTHAND, null);
+                    proto.setSlotItem((int)SlotFlags.SLOT_SWORD, i);
+                }
+            }
+            else if (proto.WeaponMode == (int)FightModes.Far)
+            {
+                proto.WeaponMode = 0;
+                Item i = proto.getSlotItem((int)SlotFlags.SLOT_LEFTHAND);
+                if ((i.ItemInstance.Flags & Flags.ITEM_BOW) > 0)
+                {
+                    proto.setSlotItem((int)SlotFlags.SLOT_LEFTHAND, null);
+                    proto.setSlotItem((int)SlotFlags.SLOT_BOW, i);
+                }
+                else
+                {
+                    proto.setSlotItem((int)SlotFlags.SLOT_LEFTHAND, null);
+                    proto.setSlotItem((int)SlotFlags.SLOT_CROSSBOW, i);
+                }
+            }
+
+        }
+
+        public static void readyBestWeapon(this NPCProto proto, NPCProto enemy)
+        {
+            if (proto.IsMonster())//Monsters are always in FIST-Mode.
+                return;
+            if (proto.WeaponMode != 0)
+                return;
+
+            //Draw Range-Weapon when Equiped and Distance is over 12 Meters
+            if (proto.EquippedRangeWeapon != null && enemy.Position.getDistance(proto.Position) > 1200)
+            {
+                proto.setWeaponMode((int)FightModes.Far);
+                if ((proto.EquippedRangeWeapon.ItemInstance.Flags & Flags.ITEM_BOW) > 0)
+                {
+                    proto.setSlotItem((int)SlotFlags.SLOT_BOW, null);
+                    proto.setSlotItem((int)SlotFlags.SLOT_LEFTHAND, proto.EquippedRangeWeapon);
+                }
+                else
+                {
+                    proto.setSlotItem((int)SlotFlags.SLOT_CROSSBOW, null);
+                    proto.setSlotItem((int)SlotFlags.SLOT_LEFTHAND, proto.EquippedRangeWeapon);
+                }
+            }
+            else if (proto.EquippedWeapon != null)
+            {
+                proto.setWeaponMode((int)FightModes.Meele);
+                if ((proto.EquippedWeapon.ItemInstance.Flags & (Flags.ITEM_2HD_SWD | Flags.ITEM_2HD_AXE)) > 0)
+                {
+                    proto.setSlotItem((int)SlotFlags.SLOT_LONGSWORD, null);
+                    proto.setSlotItem((int)SlotFlags.SLOT_RIGHTHAND, proto.EquippedWeapon);
+                }
+                else
+                {
+                    proto.setSlotItem((int)SlotFlags.SLOT_SWORD, null);
+                    proto.setSlotItem((int)SlotFlags.SLOT_RIGHTHAND, proto.EquippedWeapon);
+                }
+            }
+            else
+            {
+                proto.setWeaponMode((int)FightModes.Fist);
+            }
         }
 
 

@@ -18,7 +18,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\GothicII\System\UntoldChapter\Server\scripts\_compiled\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;SSM_ACCOUNT;SSM_ACCOUNT_LOGGING;SSM_WEB;SSM_AI;SSM_CHAT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -37,6 +37,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -67,6 +68,11 @@
     <Compile Include="AI\Enumeration\Guilds.cs" />
     <Compile Include="AI\Enumeration\GuildsAttitude.cs" />
     <Compile Include="AI\Enumeration\WalkTypes.cs" />
+    <Compile Include="AI\FightFuncs\fightStates\AnimState.cs" />
+    <Compile Include="AI\FightFuncs\fightStates\DamageState.cs" />
+    <Compile Include="AI\FightFuncs\fightStates\FightState.cs" />
+    <Compile Include="AI\FightFuncs\fightStates\GotoState.cs" />
+    <Compile Include="AI\FightFuncs\fightStates\WaitState.cs" />
     <Compile Include="AI\FightFuncs\MonsterFightRoutine.cs" />
     <Compile Include="AI\NPCAI.cs" />
     <Compile Include="AI\AISystem.cs" />
@@ -80,14 +86,39 @@
     <Compile Include="AI\NPC_Def\Monster\Gobbo_Warrior.cs" />
     <Compile Include="AI\NPC_Def\Monster\IceWolf.cs" />
     <Compile Include="AI\NPC_Def\Monster\Keiler.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Giant_Bug.cs" />
+    <Compile Include="AI\NPC_Def\Monster\GiantRat.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Gobbo_Black.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Gobbo_Skeleton.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Shattered_Golem.cs" />
+    <Compile Include="AI\NPC_Def\Monster\SkeletonMage.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Wisp.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Troll_Black.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Troll.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Zombie1.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Warg.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Snapper.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Shadowbeast.cs" />
+    <Compile Include="AI\NPC_Def\Monster\MinecrawlerWarrior.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Minecrawler.cs" />
+    <Compile Include="AI\NPC_Def\Monster\SkeletonLord.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Skeleton.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Lesser_Skeleton.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Lurker.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Molerat.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Meatbug.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Sheep.cs" />
     <Compile Include="AI\NPC_Def\Monster\Stoneguardian.cs" />
     <Compile Include="AI\NPC_Def\Monster\Razor.cs" />
     <Compile Include="AI\NPC_Def\Monster\OrcBiter.cs" />
     <Compile Include="AI\NPC_Def\Monster\Waran.cs" />
-    <Compile Include="AI\NPC_Def\Monster\Scavanger.cs" />
+    <Compile Include="AI\NPC_Def\Monster\Scavenger.cs" />
+    <Compile Include="AI\NPC_Def\Orc\OrcElite.cs" />
+    <Compile Include="AI\NPC_Def\Orc\OrcShaman.cs" />
     <Compile Include="AI\NPC_Def\Orc\OrcWarrior.cs" />
     <Compile Include="AI\NPC_Def\Monster\Wolf.cs" />
     <Compile Include="AI\Routines\Routine.cs" />
+    <Compile Include="AI\Waypoints\FreeOrWayPoint.cs" />
     <Compile Include="AI\Waypoints\FreePoint.cs" />
     <Compile Include="AI\DataTypes\PriorityQueue.cs" />
     <Compile Include="AI\Waypoints\WayNet.cs" />
@@ -97,8 +128,7 @@
     <Compile Include="DamageScript.cs" />
     <Compile Include="DayTime.cs" />
     <Compile Include="DefaultItems.cs" />
-    <Compile Include="DefaultVobs.cs" />
-    <Compile Include="DefaultWorldItem.cs" />
+    <Compile Include="DefaultWorld.cs" />
     <Compile Include="Items\Amulet\AbstractAmulets.cs" />
     <Compile Include="Items\Amulet\ITAM_ADDON_FRANCO.cs" />
     <Compile Include="Items\Amulet\ITAM_ADDON_HEALTH.cs" />
@@ -355,11 +385,27 @@
     <Compile Include="Items\Scrolls\ITSC_WINDFIST.cs" />
     <Compile Include="Items\Weapons\Melee\AbstractMelee.cs" />
     <Compile Include="Items\Weapons\Melee\ITMW_1H_BAU_MACE.cs" />
+    <Compile Include="Accounts\Logs\SQLiteLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sqlite.cs" />
     <Compile Include="StartModules\AbstractModule.cs" />
     <Compile Include="StartModules\Modules.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Web\Actions\Action.cs" />
+    <Compile Include="Web\Actions\GetPlayerListAction.cs" />
+    <Compile Include="Web\Actions\GetAccountListAction.cs" />
+    <Compile Include="Web\Actions\GetAccountLogAction.cs" />
+    <Compile Include="Web\Actions\WriteMessageAction.cs" />
+    <Compile Include="Web\ActionTimer.cs" />
+    <Compile Include="Web\http_server.cs" />
+    <Compile Include="Web\Permissions.cs" />
+    <Compile Include="Web\Sites\Accounts.cs" />
+    <Compile Include="Web\Sites\Accounts_Log.cs" />
+    <Compile Include="Web\Sites\Messages.cs" />
+    <Compile Include="Web\Sites\Log.cs" />
+    <Compile Include="Web\Sites\Map.cs" />
+    <Compile Include="Web\Sites\Site.cs" />
+    <Compile Include="Web\User.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GMP_Server\GMP_Server.csproj">

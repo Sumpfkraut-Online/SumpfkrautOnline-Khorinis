@@ -120,7 +120,11 @@ namespace GUC.Server.Network
                                 sWorld.removeVob(pl);
                                 if(pl.IsSpawned)
                                     sWorld.getWorld(pl.Map).removeVob(pl);
-                                
+
+                                if (p.data[0] == (byte)DefaultMessageIDTypes.ID_CONNECTION_LOST)
+                                {
+                                    Scripting.Objects.Character.Player.isOnConnectionLost((Scripting.Objects.Character.Player)pl.ScriptingNPC);
+                                }
                             }
 
                             break;

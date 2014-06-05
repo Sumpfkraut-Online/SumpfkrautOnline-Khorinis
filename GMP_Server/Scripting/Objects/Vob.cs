@@ -20,6 +20,18 @@ namespace GUC.Server.Scripting.Objects
 
         protected Dictionary<String, Object> userObjects = new Dictionary<string,object>();
 
+        public static Vob getVob(int id){
+            WorldObjects.Vob v = null;
+            sWorld.VobDict.TryGetValue(id, out v);
+
+            if (v == null)
+                return null;
+
+            return v.ScriptingVob;
+
+        }
+
+
         internal Vob(GUC.WorldObjects.Vob vob)
         {
             this.vob = vob;

@@ -81,6 +81,10 @@ namespace GUC.States
 
                 foreach (NPC iNPC in Player.Hero.NPCControlledList)
                 {
+                    if (!iNPC.enabled)
+                        continue;
+                    if (!iNPC.IsSpawned)
+                        continue;
                     SendPlayerPosition(process, iNPC);
                     NPCUpdateMessage.Write(iNPC);
                 }
