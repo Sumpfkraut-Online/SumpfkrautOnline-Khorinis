@@ -69,7 +69,6 @@ namespace GUC.WorldObjects.Character
             stream.Write(this.Fatness);
 
 
-
             stream.Write(itemList.Count);
             foreach (Item it in itemList)
             {
@@ -97,6 +96,10 @@ namespace GUC.WorldObjects.Character
             else
                 stream.Write(RangeWeapon.ID);
 
+            if (this.ActiveSpell == null)
+                stream.Write(0);
+            else
+                stream.Write(this.ActiveSpell.ID);
 
             stream.Write(Overlays.Count);
             foreach (String str in Overlays)

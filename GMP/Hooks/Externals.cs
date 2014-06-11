@@ -75,6 +75,7 @@ namespace GUC.Hooks
 
 
                 CreateExternalFunction(new zCParser(process, process.ReadInt(address + 4)), "GUC_SPELL_PROCESSMANA".ToUpper(), typeof(Externals).GetMethod("GUC_PROCESSMANA"), "UntoldChapter\\DLL\\GUC.dll", Value_Types.Int, new Value_Types[] { Value_Types.Int, Value_Types.NPC });
+                CreateExternalFunction(new zCParser(process, process.ReadInt(address + 4)), "GUC_SPELL_PROCESSMANA_RELEASE".ToUpper(), typeof(Externals).GetMethod("GUC_PROCESSMANA_RELEASE"), "UntoldChapter\\DLL\\GUC.dll", Value_Types.Int, new Value_Types[] { Value_Types.Int, Value_Types.NPC });
             }
             catch (Exception ex)
             {
@@ -87,15 +88,30 @@ namespace GUC.Hooks
 
         #region Inputs
 
-        public static Int32 GUC_PROCESSMANA(String message)
+        public static void getLevel(int mana, ref int actLevel, ref int actValue, int[] levels)
+        {
+            if (levels.Length - 1 == actLevel)
+                return;
+
+            if (mana < actValue + levels[actLevel])
+                return;
+
+            actValue += levels[actLevel];
+            actLevel += 1;
+
+            getLevel(mana, ref actLevel, ref actValue, levels);
+        }
+
+        public static Int32 GUC_PROCESSMANA_RELEASE(String message)
         {
             Process process = Process.ThisProcess();
             try
             {
+                #region oV
                 int npc_ptr = zCParser.getParser(process).GetInstance();
                 int manaInvested = zCParser.getParser(process).getIntParameter();
-                
-                
+
+
 
                 oCNpc npc = new oCNpc(process, npc_ptr);
                 int spellID = npc.GetActiveSpellNr();
@@ -103,48 +119,213 @@ namespace GUC.Hooks
                 Spell spell = null;
                 Spell.SpellDict.TryGetValue(spellID, out spell);
 
-                if (spell == null)//Stop the spell!
+                if (spell == null || spell.processMana.Length <= 1)//Stop the spell!
                 {
+                    zCParser.getParser(process).SetReturn(3);
+                    
+                }
+                else
+                {
+                    zCParser.getParser(process).SetReturn(2);
+                }
+                #endregion
+
+            }
+            catch (Exception ex)
+            {
+                zERROR.GetZErr(process).Report(2, 'G', ex.ToString(), 0, "Externals.cs", 0);
+            }
+            return 0;
+        }
+
+
+        public static Dictionary<int, int> npcProcessManaList = new Dictionary<int, int>();
+        public static Int32 GUC_PROCESSMANA(String message)
+        {
+            Process process = Process.ThisProcess();
+            try
+            {
+                #region oV
+                //int npc_ptr = zCParser.getParser(process).GetInstance();
+                //int manaInvested = zCParser.getParser(process).getIntParameter();
+
+
+
+                //oCNpc npc = new oCNpc(process, npc_ptr);
+                //int spellID = npc.GetActiveSpellNr();
+
+                //Spell spell = null;
+                //Spell.SpellDict.TryGetValue(spellID, out spell);
+
+                //if (spell == null)//Stop the spell!
+                //{
+                //    zCParser.getParser(process).SetReturn(3);
+                //    return 0;
+                //}
+
+
+                //if (spell.processMana.Length == 0)
+                //{
+                //    zCParser.getParser(process).SetReturn(3);//Stop
+                //    return 0;
+                //}
+
+                //if (spell.processMana.Length == 1)
+                //{
+                //    if (npc.MP >= spell.processMana[0])
+                //        zCParser.getParser(process).SetReturn(2);//Start
+                //    else
+                //        zCParser.getParser(process).SetReturn(3);//Stop
+                //    return 0;
+                //}
+
+
+                
+                //int level = npc.GetActiveSpellLevel();
+                //zERROR.GetZErr(process).Report(2, 'G', "Spell-Level: " + level, 0, "Externals.cs", 0);
+                //if (npc.MP < spell.processMana[level])
+                //{
+                //    zCParser.getParser(process).SetReturn(0);
+                //    return 0;
+                //}
+
+                //if (level + 1 == spell.processMana.Length)//Dont Invest anymore
+                //{
+                //    zCParser.getParser(process).SetReturn(0);
+                //    return 0;
+                //}
+
+                
+                //npc.MP -= (npc.MP >= spell.processMana[level]) ? spell.processMana[level] : npc.MP;
+                //zCParser.getParser(process).SetReturn(4);
+                //return 0;
+                #endregion
+
+
+
+                #region oV
+                //int npc_ptr = zCParser.getParser(process).GetInstance();
+                //int manaInvested = zCParser.getParser(process).getIntParameter();
+
+
+
+                //oCNpc npc = new oCNpc(process, npc_ptr);
+                //int spellID = npc.GetActiveSpellNr();
+
+                //Spell spell = null;
+                //Spell.SpellDict.TryGetValue(spellID, out spell);
+
+                //if (spell == null)//Stop the spell!
+                //{
+                //    zCParser.getParser(process).SetReturn(3);
+                //    return 0;
+                //}
+
+
+                //if (spell.processMana.Length == 0)
+                //{
+                //    zCParser.getParser(process).SetReturn(3);//Stop
+                //    return 0;
+                //}
+
+                //if (spell.processMana.Length == 1)
+                //{
+                //    if (npc.MP >= spell.processMana[0])
+                //        zCParser.getParser(process).SetReturn(2);//Start
+                //    else
+                //        zCParser.getParser(process).SetReturn(3);//Stop
+                //    return 0;
+                //}
+
+
+
+                //int level = npc.GetActiveSpellLevel();
+                //if (npc.MP < spell.processMana[level])
+                //{
+                //    zCParser.getParser(process).SetReturn(0);
+                //    return 0;
+                //}
+
+                //if (level + 1 == spell.processMana.Length)//Dont Invest anymore
+                //{
+                //    zCParser.getParser(process).SetReturn(0);
+                //    return 0;
+                //}
+
+                //npc.MP -= (npc.MP >= spell.processMana[level]) ? spell.processMana[level] : npc.MP;
+                //zCParser.getParser(process).SetReturn(4);
+                //return 0;
+                #endregion
+
+                #region SN
+                int npc_ptr = zCParser.getParser(process).GetInstance();
+                int manaInvested = zCParser.getParser(process).getIntParameter();
+
+
+
+                oCNpc npc = new oCNpc(process, npc_ptr);
+                int spellID = npc.GetActiveSpellNr();
+
+                if (!npcProcessManaList.ContainsKey(npc_ptr))
+                    npcProcessManaList.Add(npc_ptr, 0);
+
+                Spell spell = null;
+                Spell.SpellDict.TryGetValue(spellID, out spell);
+
+                if (spell == null || spell.processMana == null || spell.processMana.Length == 0)
+                {
+                    npcProcessManaList[npc_ptr] = 0;
                     zCParser.getParser(process).SetReturn(3);
                     return 0;
                 }
-                
-                
-                if (spell.processMana.Length == 0)
-                {
-                    zCParser.getParser(process).SetReturn(3);//Stop
-                    return 0;
-                }
-                
+
                 if (spell.processMana.Length == 1)
                 {
-                    if(npc.MP >= spell.processMana[0])
+                    npcProcessManaList[npc_ptr] = 0;
+                    if (npc.MP >= spell.processMana[0])
                         zCParser.getParser(process).SetReturn(2);//Start
                     else
                         zCParser.getParser(process).SetReturn(3);//Stop
                     return 0;
                 }
-                
-                
 
-                int level = npc.GetActiveSpellLevel();
-                if (npc.MP < spell.processMana[level])
+
+
+                int level = 0;
+                int levelVal = 0;
+
+                getLevel(manaInvested, ref level, ref levelVal, spell.processMana);
+                
+                if (level == 0)
+                {
+                    npcProcessManaList[npc_ptr] = 0;
+                    zCParser.getParser(process).SetReturn(4);
+                    return 0;
+                }
+                else if (level == spell.processMana.Length - 1)
                 {
                     zCParser.getParser(process).SetReturn(0);
                     return 0;
                 }
-
-                if (level + 1 == spell.processMana.Length)//Dont Invest anymore
+                else if(level != npcProcessManaList[npc_ptr])
                 {
-                    zCParser.getParser(process).SetReturn(0);
-                    return 0;
+                    npc.MP -= (npc.MP >= spell.processMana[level - 1]) ? spell.processMana[level - 1] : npc.MP;
+                    if (npc.MP == 0)
+                        zCParser.getParser(process).SetReturn(0);
+                    else
+                    {
+                        zCParser.getParser(process).SetReturn(4);
+                        npcProcessManaList[npc_ptr]++;
+                    }
                 }
 
-                npc.MP -= (npc.MP >= spell.processMana[level]) ? spell.processMana[level] : npc.MP;
-                zCParser.getParser(process).SetReturn(0);
-                return 4;//Next Level!
-                
-                //zERROR.GetZErr(process).Report(2, 'G', "GUC: PROCESS MANA "+ npc_ptr+" | "+npc.ObjectName.Value + " | "+oCNpc.Player(process).Address, 0, "Externals.cs", 0);
+                //npc.MP -= (npc.MP >= spell.processMana[level]) ? spell.processMana[level] : npc.MP;
+                zCParser.getParser(process).SetReturn(4);
+                return 0;
+
+                #endregion
+
+
 
                 //0 => Dont Invest
                 //1 => ReceiveInvest

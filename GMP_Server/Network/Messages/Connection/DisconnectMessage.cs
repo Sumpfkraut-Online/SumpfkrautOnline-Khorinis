@@ -21,7 +21,7 @@ namespace GUC.Server.Network.Messages.Connection
 
             Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
 
-            Scripting.Objects.Character.Player.OnPlayerDisconnect((GUC.Server.Scripting.Objects.Character.Player)pl.ScriptingNPC);
+            Scripting.Objects.Character.Player.isOnPlayerDisconnect((GUC.Server.Scripting.Objects.Character.Player)pl.ScriptingNPC);
         }
     }
 }

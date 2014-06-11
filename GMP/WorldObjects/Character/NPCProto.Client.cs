@@ -11,6 +11,7 @@ using Gothic.zTypes;
 using GUC.Hooks;
 using GUC.Enumeration;
 using Gothic.zStruct;
+using GUC.timer;
 
 namespace GUC.WorldObjects.Character
 {
@@ -96,6 +97,14 @@ namespace GUC.WorldObjects.Character
             if (rangeWeaponID > 0)
                 RangeWeapon = (Item)sWorld.VobDict[rangeWeaponID];
 
+            int activeSpellIDid = 0;
+            stream.Read(out activeSpellIDid);
+            if (activeSpellIDid > 0)
+            {
+                this.ActiveSpell = (Item)sWorld.VobDict[activeSpellIDid];
+            }
+
+
             int overlayCount = 0;
             stream.Read(out overlayCount);
             for (int i = 0; i < overlayCount; i++)
@@ -121,7 +130,15 @@ namespace GUC.WorldObjects.Character
             Process process = Process.ThisProcess();
 
             oCNpc npc = new oCNpc(process, this.Address);
-            oCGame.Game(process).GetSpawnManager().DeleteNPC(npc);
+            
+            npc.Disable();
+
+            int WeaponMode = weaponMode;
+            setWeaponMode(0);
+            weaponMode = WeaponMode;
+
+            //oCGame.Game(process).GetSpawnManager().DeleteNPC(npc);//Bei verwandlung wird bedmempointer aufgerufen :/
+            //new DespawnTimer(this.Address);
             this.Address = 0;
 
             sWorld.SpawnedVobDict.Remove(npc.Address);
@@ -233,7 +250,7 @@ namespace GUC.WorldObjects.Character
                 Enable(this.Position);
         }
 
-        private bool enabled = false;
+        public bool enabled = false;
 
         public void Disable()
         {
@@ -360,15 +377,38 @@ namespace GUC.WorldObjects.Character
 
                 if (this.weaponMode == 7 && oldWeaponMode != 7)
                 {
-                    npc.UnreadySpell();
-                    npc.ReadySpell(ActiveSpell.ItemInstance.Spell.ID, ActiveSpell.ItemInstance.Spell.ID);
+                    int spellID = npc.MagBook.GetKeyByItem(new oCItem(process, ActiveSpell.Address));
+                    npc.MagBook.SpellNr = spellID - 1;
+                    npc.MagBook.Open(0);
                 }
                 else if (oldWeaponMode == 7 && this.weaponMode != 7)
                 {
-                    npc.UnreadySpell();
+                    npc.MagBook.Close(1);
                 }
-
                 
+                
+            }
+        }
+
+        public void setActiveSpell(Item spell)
+        {
+            if (ActiveSpell == spell)
+                return;
+
+            Item oldSpell = ActiveSpell;
+            ActiveSpell = spell;
+
+            if(this.Address == 0)
+                return;
+
+            Process process = Process.ThisProcess();
+            oCNpc npc = new oCNpc(process, this.Address);
+            if (this.weaponMode == 7)
+            {
+                npc.MagBook.Close(1);
+                int spellID = npc.MagBook.GetKeyByItem(new oCItem(process, ActiveSpell.Address));
+                npc.MagBook.SpellNr = spellID - 1;
+                npc.MagBook.Open(0);
             }
         }
 
@@ -483,23 +523,31 @@ namespace GUC.WorldObjects.Character
 
         public void setSlotItem(int slot, Item item)
         {
+            //zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Set Slot Item 1: " + Slots[slot] + "; NewItem: "+item + " ", 0, "NPCProto.Client.cs", 0);
+            Item oldItem = Slots[slot];
             Slots[slot] = item;
+
+            if (oldItem == item)
+                return;
 
             if (this.Address != 0)
             {
                 Process process = Process.ThisProcess();
                 oCNpc npc = new oCNpc(process, this.Address);
-                if (Slots[slot] == null)
+
+                if (Slots[slot] == null || oldItem != null)
                 {
                     zString slotString = oCNpc.getSlotString(process, slot);
                     oCItem oldITem = npc.GetSlotItem(slotString);
                     if(oldITem.Address != 0)
                         npc.RemoveFromSlot(slotString, oldITem.Instanz, oldITem.Amount);
                 }
-                else
+
+                if(Slots[slot] != null)
                 {
                     if (Slots[slot].Address == 0)
-                        throw new Exception("RangeWeapon Adress can't be null if player using it is spawned!");
+                        throw new Exception("Adress can't be null if player using it is spawned!");
+                    //zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Set Slot Item: "+Slots[slot]+" "+Slots[slot].ItemInstance.Name, 0, "NPCProto.Client.cs", 0);
                     npc.PutInSlot(oCNpc.getSlotString(process, slot), new oCItem(process, Slots[slot].Address), 1);
                 }
             }

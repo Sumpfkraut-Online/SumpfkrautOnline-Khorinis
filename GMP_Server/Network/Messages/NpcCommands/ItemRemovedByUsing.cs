@@ -33,6 +33,8 @@ namespace GUC.Server.Network.Messages.NpcCommands
             {
                 NPCProto proto = (NPCProto)item.Container;
                 proto.removeItem(item, amount);
+
+                Scripting.Objects.Character.NPCProto.isOnUseItem(proto.ScriptingNPC, item.ScriptingProto, -1, -2);
             }
 
             Write(item, packet.systemAddress);

@@ -1,3 +1,7 @@
+
+#if SSM_ACCOUNT
+
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,10 +20,14 @@ using Mono.Data.Sqlite;
 using SQLiteDataReader = Mono.Data.Sqlite.SqliteDataReader;
 using SQLiteCommand = Mono.Data.Sqlite.SqliteCommand;
 
-namespace GUC.Server.Scripts
+namespace GUC.Server.Scripts.Accounts
 {
 	public class Account
 	{
+        public static Dictionary<long, Account> AccountDict = new Dictionary<long, Account>();
+
+
+
 		public enum State {
 			Nothing = 0,
 			Login = 1,
@@ -37,7 +45,7 @@ namespace GUC.Server.Scripts
 		{
 			this.player = player;
 
-			this.player.Disconnected += new Events.PlayerEventHandler(disconnect);
+			this.player.OnDisconnected += new Events.PlayerEventHandler(disconnect);
 		}
 
 		public static bool existsName(String name) {
@@ -73,7 +81,7 @@ namespace GUC.Server.Scripts
 				}
 
 				//Attributes:
-				command.CommandText = "SELECT * FROM `account_attributes` WHERE `accountID`=@accountID";
+                command.CommandText = "SELECT * FROM `account_attributes` WHERE `accountID`=@accountID ORDER BY `type` DESC";
 				command.Parameters.AddWithValue("@accountID", accountID);
 				using(SQLiteDataReader sdrITM = command.ExecuteReader()) {
 					if(sdrITM.HasRows) {
@@ -112,13 +120,15 @@ namespace GUC.Server.Scripts
 				using(SQLiteDataReader sdrITM = command.ExecuteReader()) {
 					if(sdrITM.HasRows) {
 						while(sdrITM.Read()) {
-							player.addItem(ItemInstance.getItemInstance(Convert.ToInt32(sdrITM["instanceID"])), Convert.ToInt32(sdrITM["amount"]));
+							player.addItem(ItemInstance.getItemInstance(Convert.ToString(sdrITM["instanceID"])), Convert.ToInt32(sdrITM["amount"]));
 						}
 					}
 				}
-
+                
 				return true;
 			}
+
+            
 		}
 
 		public bool register(String name, String password)
@@ -126,7 +136,7 @@ namespace GUC.Server.Scripts
 			if(existsName(name))
 				return false;
 
-			//Setting default parameter! Can be overwritten by other modules, after registering!
+			//Setting default parameter! Can be overwritten by other modules, after registration!
 			player.setSpawnInfos(@"NEWWORLD\NEWWORLD.ZEN", null, null);
 			player.HPMax = 10;
 			player.HP = 10;
@@ -166,7 +176,7 @@ namespace GUC.Server.Scripts
 		protected void disconnect(Player player) {
 			if(!player.IsSpawned())
 				return;
-
+            
 			using(SQLiteCommand command = new SQLiteCommand(Sqlite.getSqlite().connection)) {
 				command.CommandText = "UPDATE `account` ";
 				command.CommandText += " SET `posx`=@posx, `posy`=@posy, `posz`=@posz, `world`=@world";
@@ -254,7 +264,7 @@ namespace GUC.Server.Scripts
 					command.CommandText = "INSERT INTO `account_items` (";
 					command.CommandText += "  `id`, `accountID`, `instanceID`, `amount`)";
 					command.CommandText += "VALUES( NULL, @accountID, @instanceID, @amount)";
-					command.Parameters.AddWithValue("@instanceID", item.ItemInstance.ID);
+					command.Parameters.AddWithValue("@instanceID", item.ItemInstance.InstanceName);
 					command.Parameters.AddWithValue("@accountID", accountID);
 					command.Parameters.AddWithValue("@amount", item.Amount);
 					command.ExecuteNonQuery();
@@ -266,3 +276,4 @@ namespace GUC.Server.Scripts
 		
     }
 }
+#endif

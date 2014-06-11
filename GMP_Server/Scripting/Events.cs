@@ -13,6 +13,8 @@ namespace GUC.Server.Scripting
 {
     public static class Events
     {
+        public delegate void AttributeChangedEventHandler(NPCProto proto, NPCAttributeFlags attrib, int oldValue, int newValue);
+        public delegate void TalentChangedEventHandler(NPCProto proto, NPCTalents talent, int oldValue, int newValue);
         public delegate void CastSpell(NPCProto caster, Spell spell, Vob target );
 
 

@@ -27,7 +27,7 @@ namespace GUC.Server.Network.Messages.Connection
             sWorld.getWorld(pl.Map).addVob(pl);
 
             SpawnVobMessage.Write(pl, packet.guid);
-            Scripting.Objects.Character.Player.OnPlayerSpawn((Scripting.Objects.Character.Player)pl.ScriptingNPC);
+            Scripting.Objects.Character.Player.isOnPlayerSpawn((Scripting.Objects.Character.Player)pl.ScriptingNPC);
 
            
         }

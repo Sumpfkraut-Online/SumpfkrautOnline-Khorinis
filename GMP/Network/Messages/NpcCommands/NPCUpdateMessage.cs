@@ -411,9 +411,9 @@ namespace GUC.Network.Messages.NpcCommands
                 stream.Read(out vobID);
 
                 if (vobID == 0)
-                    proto.ActiveSpell = null;
+                    proto.setActiveSpell( null );
                 else
-                    proto.ActiveSpell = (Item)sWorld.VobDict[vobID];
+                    proto.setActiveSpell( (Item)sWorld.VobDict[vobID] );
             }
 
 

@@ -125,4 +125,17 @@ namespace GUC.Enumeration
         MAT_CLAY										= 4,
         MAT_GLAS										= 5		// ??
     }
+
+    public enum SlotFlags : byte
+    {
+        SLOT_RIGHTHAND = 0,
+        SLOT_LEFTHAND = 1,
+        SLOT_SWORD = 2,
+        SLOT_LONGSWORD = 3,
+        SLOT_BOW = 4,
+        SLOT_CROSSBOW = 5,
+        SLOT_TORSO = 6,
+        SLOT_HELMET = 7,
+        SLOT_SHIELD = 8
+    }
 }

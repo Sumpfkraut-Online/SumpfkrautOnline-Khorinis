@@ -265,8 +265,10 @@ namespace WinApi
                 throw new Exception("Add Hook : Handle or Function not Found");
 
             HookInfos rValue = new HookInfos();
-            IntPtr varPtr = Alloc(4 + (uint)sizeParam*4);
+            IntPtr varPtr = Alloc(4 + (uint)sizeParam*4 + 4 + 4);
             IntPtr ecxPtr = varPtr;
+            IntPtr eaxPtr = varPtr + 4 + sizeParam * 4;
+            IntPtr ebxPtr = varPtr + 4 + sizeParam * 4 + 4;
             int length = 0;
 
             if(varPtr == IntPtr.Zero)
@@ -286,6 +288,12 @@ namespace WinApi
             //This pointer (ecx) in Speicher schreiben
             list.Add(0x89); list.Add(0x0D);// mov [Address], ecx
             list.AddRange(BitConverter.GetBytes(ecxPtr.ToInt32()));
+
+            list.Add(0xA3); // mov [Address], eax
+            list.AddRange(BitConverter.GetBytes(eaxPtr.ToInt32()));
+
+            list.Add(0x89); list.Add(0x1D); // mov [Address], ebx
+            list.AddRange(BitConverter.GetBytes(ebxPtr.ToInt32()));
 
             //Statt die Parameter an den dafür vorgesehenen Platz zu schreiben, könnten auch die Register-Werte eingespeichert werden.
             for (int i = 1; i <= sizeParam; i++)

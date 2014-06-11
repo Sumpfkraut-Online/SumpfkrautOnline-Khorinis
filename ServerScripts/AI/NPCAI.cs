@@ -8,6 +8,7 @@ using GUC.Server.Scripts.AI.Enumeration;
 using GUC.Server.Scripts.AI.AssessFuncs;
 using GUC.Server.Scripts.AI.DataTypes;
 using GUC.Server.Scripts.AI.FightFuncs;
+using GUC.Server.Scripts.AI.FightFuncs.fightStates;
 
 namespace GUC.Server.Scripts.AI
 {
@@ -35,6 +36,8 @@ namespace GUC.Server.Scripts.AI
         public Dictionary<NPCProto, NPCProto> TargetList = new Dictionary<NPCProto, NPCProto>();
         public LinkedList<NPCProto> EnemyList = new LinkedList<NPCProto>();
         public List<NPCProto> WarnList = new List<NPCProto>();
+
+        public LinkedList<FightState> FightStates = new LinkedList<FightState>();
 
 
         public AI_Events.RoutineFunction DailyRoutine = null;

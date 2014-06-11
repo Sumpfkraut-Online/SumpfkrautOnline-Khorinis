@@ -13,7 +13,10 @@ using GUC.Server.Scripting.GUI;
 using GUC.Types;
 
 using GUC.Server.Scripts.StartModules;
+#if SSM_ACCOUNT
 using GUC.Server.Scripts.Accounts;
+#endif
+
 using GUC.Server.Scripts.AI.Waypoints;
 using GUC.Server.Scripts.AI.NPC_Def;
 using GUC.Server.Scripts.AI.DataTypes;
@@ -24,46 +27,64 @@ namespace GUC.Server.Scripts
 {
 	public class Startup : IServerStartup
 	{
-		Chat chat = null;
+		public static Chat chat = null;
 		public static Cursor cursor;
 		public Button connection;
 		public void OnServerInit()
 		{
-            Player.EnableAllPlayerKeys(true);
+            Logger.log(Logger.LogLevel.INFO, "######################## Initalise ########################");
+            cursor = Cursor.getCursor();
 
-            Console.WriteLine("#################### Initalise ############################");
+
+
+            
+            ItemInit.Init();
             DefaultItems.Init();
-            DefaultVobs.Init();
-            DefaultWorldItem.Init();
+            
 
             DayTime.Init();
             DayTime.setTime(0, 12, 0);
 
+
+#if SSM_AI
+            AI.AISystem.Init();
+#endif
+            DefaultWorld.Init();
+
+
+
+            
+
             DamageScript.Init();
 
+
+
+#if SSM_CHAT
             chat = new Chat();
             chat.Init();
+#endif
 
-            cursor = Cursor.getCursor();
+            
 
             Modules.Init();
+            
+
+            
+
+
+
+#if SSM_ACCOUNT
             AccountSystem accSystem = new AccountSystem();
             accSystem.Init();
+#endif
+            
+#if SSM_WEB
+            Web.http_server.Init();
+#endif
 
-            AI.AISystem.Init();
 
 
-            ITSC_SHRINK.get();
-            ITSC_TRFSHEEP.get();
-
-            //Player.sPlayerKeyEvent += new Events.PlayerKeyEventHandler(keyEvent);
-
-            //for (int i = 0; i < 100; i++)
-            //{
-            //    WayPoint wp = AI.AISystem.WayNets[@"NEWWORLD\NEWWORLD.ZEN"].getRandomWaypoint();
-            //    Young_Gobbo_Green wolf = new Young_Gobbo_Green();
-            //    wolf.Spawn(@"NEWWORLD\NEWWORLD.ZEN", wp.Position, null);
-            //}
+            Logger.log(Logger.LogLevel.INFO, "###################### End Initalise ######################");
 		}
     }
 }

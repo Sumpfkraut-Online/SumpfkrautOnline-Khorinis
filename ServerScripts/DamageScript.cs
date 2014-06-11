@@ -25,7 +25,7 @@ namespace GUC.Server.Scripts
 	{
 		public static void Init()
 		{
-			Console.WriteLine("############## Initalise DamageScript #####################");
+            Logger.log(Logger.LogLevel.INFO, "################## Initalise DamageScript #################");
 
 			NPCProto.OnDamages += new Events.PlayerDamageEventHandler(OnDamage);
 		}
@@ -71,9 +71,10 @@ namespace GUC.Server.Scripts
 					toUnconscious = true;
 			}
 
-            if (victim.getGuild() > Guilds.HUM_SPERATOR)
+            if (!victim.IsHuman() || !attacker.IsHuman())
             {
                 toUnconscious = false;
+                canKill = true;
             }
 
             if (toUnconscious && !victim.isUnconscious)

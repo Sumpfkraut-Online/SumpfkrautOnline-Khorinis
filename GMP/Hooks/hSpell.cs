@@ -199,6 +199,10 @@ namespace GUC.Hooks
                     
                 }
 
+
+                int castLevel = 0;
+                Externals.npcProcessManaList.TryGetValue(player.Address, out castLevel);
+
                 //Item:
                 oCItem spellItem = magBook.GetSpellItem(magBook.GetSelectedSpellNr());
                 Vob spellI = null;
@@ -218,6 +222,7 @@ namespace GUC.Hooks
                 else
                     stream.Write(target.ID);
                 stream.Write(gSpell.GetSpellID());
+                stream.Write(castLevel);
                 
                 Program.client.client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
 

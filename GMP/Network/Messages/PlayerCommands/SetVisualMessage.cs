@@ -61,13 +61,22 @@ namespace GUC.Network.Messages.PlayerCommands
 
                 if (!visualSame)
                 {
+                    int oldAdress = npcP.Address;
                     npcP.Despawn();
                     npcP.Spawn(npcP.Map, npcP.Position, npcP.Direction);
                     if (Player.Hero == npcP)
                     {
                         new oCNpc(Process.ThisProcess(), npcP.Address).SetAsPlayer();
+
+                        if (oldAdress != 0)
+                        {
+                            new oCNpc(Process.ThisProcess(), oldAdress).Disable();
+                        }
                     }
                     npcP.Enable(npcP.Position);
+
+                    
+
                     return;
                 }
 

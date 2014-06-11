@@ -1,3 +1,5 @@
+#if SSM_ACCOUNT
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -24,7 +26,9 @@ namespace GUC.Server.Scripts.Accounts
 	{
 		public void Init()
 		{
-			Console.WriteLine("############## Initalise Account-System ###################");
+            Logger.log(Logger.LogLevel.INFO, "################# Initalise Account-System ################");
+            
+			
 			Open();
 
 			Modules.addModule(new AccountStartModule());
@@ -77,7 +81,7 @@ namespace GUC.Server.Scripts.Accounts
 				command.CommandText = "CREATE TABLE IF NOT EXISTS `account_items` (";
 				command.CommandText += "  `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,";
 				command.CommandText += "  `accountID` INTEGER NOT NULL,";
-				command.CommandText += "  `instanceID` INTEGER NOT NULL,";
+				command.CommandText += "  `instanceID` text NOT NULL,";
 				command.CommandText += "  `amount` INTEGER NOT NULL";
 				command.CommandText += ")";
 				command.ExecuteNonQuery();
@@ -88,3 +92,6 @@ namespace GUC.Server.Scripts.Accounts
 		
     }
 }
+
+
+#endif

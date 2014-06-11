@@ -6,6 +6,7 @@ using RakNet;
 using GUC.Network;
 using GUC.Enumeration;
 using Gothic.zClasses;
+using WinApi;
 
 namespace GUC.WorldObjects
 {
@@ -17,6 +18,12 @@ namespace GUC.WorldObjects
             stream.Read(out this.Name);
             stream.Read(out this.FXName);
             stream.Read(out this.AniName);
+
+            int chargeCount = 0;
+            stream.Read(out chargeCount);
+            this.processMana = new int[chargeCount];
+            for (int i = 0; i < chargeCount; i++)
+                stream.Read(out processMana[i]);
 
             ushort param = 0;
             BitStreamExtension.Read(stream, out param);

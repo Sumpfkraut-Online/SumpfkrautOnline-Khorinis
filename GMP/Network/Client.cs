@@ -109,6 +109,14 @@ namespace GUC.Network
 
             messageListener.Add((byte)NetworkIDS.NPCEnableMessage, new NPCEnableMessage());
             messageListener.Add((byte)NetworkIDS.CreateSpellMessage, new CreateSpellMessage());
+
+            messageListener.Add((byte)NetworkIDS.PlayEffectMessage, new PlayEffectMessage());
+
+            messageListener.Add((byte)NetworkIDS.CastSpell, new CastSpellMessage());
+            messageListener.Add((byte)NetworkIDS.SpellInvestMessage, new SpellInvestMessage());
+
+            messageListener.Add((byte)NetworkIDS.NPCProtoSetWeaponMode, new NPCProtoSetWeaponMode());
+            messageListener.Add((byte)NetworkIDS.SetSlotMessage, new SetSlotMessage());
         }
 
         public void Startup()
@@ -133,7 +141,7 @@ namespace GUC.Network
                 zERROR.GetZErr(Process.ThisProcess()).Report(4, 'G', "Verbindung nicht möglich!", 0, "Client.cs", 0);
             this.ip = ip; this.port = port; this.pw = pw;
             bool b;
-            pw = "ver0.17" + pw;
+            pw = "ver2.02" + pw;
             b = client.Connect(ip, port, pw, pw.Length) == ConnectionAttemptResult.CONNECTION_ATTEMPT_STARTED;
             client.SetOccasionalPing(true);
             if (!b)

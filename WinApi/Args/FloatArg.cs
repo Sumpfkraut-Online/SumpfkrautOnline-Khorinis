@@ -28,5 +28,15 @@ namespace WinApi
         {
             return 4;
         }
+
+        public static implicit operator FloatArg(float value)
+        {
+            return new FloatArg(value);
+        }
+
+        public static implicit operator float(FloatArg value)
+        {
+            return value.Address;
+        }
     }
 }

@@ -26,8 +26,15 @@ namespace Gothic.zClasses
             SpellID = 0x54,//84
             SpellInfo = 0x58,//88
 
+            NPC = 0x30,
             Caster = 0x34,
-            Target = 0x3C
+            Target = 0x3C,
+
+            Visual = 0x28,
+
+
+            Level = 0x4C,
+            
         }
         public enum FuncOffsets : uint
         {
@@ -39,7 +46,8 @@ namespace Gothic.zClasses
             CreateEffect = 0x004842E0,
             Invest = 0x004850D0,
             SetSpellInfo = 0x00486940,
-            Stop = 0x00485510
+            Stop = 0x00485510,
+            Reset = 0x00485B00
         }
 
         public enum HookSize : uint
@@ -65,10 +73,34 @@ namespace Gothic.zClasses
 
         #region Fields
 
+        public oCNpc NPC
+        {
+            get { return new oCNpc(Process, Process.ReadInt(Address + (int)Offsets.NPC) ); }
+            set { Process.Write(value.Address, Address + (int)Offsets.NPC); }
+        }
+
+        public oCNpc Caster
+        {
+            get { return new oCNpc(Process, Process.ReadInt(Address + (int)Offsets.Caster)); }
+            set { Process.Write(value.Address, Address + (int)Offsets.Caster); }
+        }
+
+        public zCVob Target
+        {
+            get { return new zCVob(Process, Process.ReadInt(Address + (int)Offsets.Target)); }
+            set { Process.Write(value.Address, Address + (int)Offsets.Target); }
+        }
+
         public float TimePerMana
         {
             get { return Process.ReadFloat(Address + (int)Offsets.TimePerMana); }
             set { Process.Write(value, Address + (int)Offsets.TimePerMana); }
+        }
+
+        public int Level
+        {
+            get { return Process.ReadInt(Address + (int)Offsets.Level); }
+            set { Process.Write(value, Address + (int)Offsets.Level); }
         }
 
         public int DamagePerLevel
@@ -142,19 +174,27 @@ namespace Gothic.zClasses
             get { return Process.ReadInt(Address + (int)Offsets.SpellID); }
         }
 
-        public oCNpc Caster
+        public oCVisualFX VisualFX
         {
-            get { return new oCNpc(Process, Process.ReadInt(Address + (int)Offsets.Caster)); }
+            get { return new oCVisualFX(Process, Process.ReadInt(Address + (int)Offsets.Visual)); }
         }
 
-        public zCVob Target
-        {
-            get { return new zCVob(Process, Process.ReadInt(Address + (int)Offsets.Target)); }
-        }
+        //public oCNpc Caster
+        //{
+        //    get { return new oCNpc(Process, Process.ReadInt(Address + (int)Offsets.Caster)); }
+        //}
+
+        //public zCVob Target
+        //{
+        //    get { return new zCVob(Process, Process.ReadInt(Address + (int)Offsets.Target)); }
+        //}
         #endregion
 
 
-
+        public void Reset()
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.Reset, new CallValue[] { });
+        }
 
         public int GetSpellID()
         {

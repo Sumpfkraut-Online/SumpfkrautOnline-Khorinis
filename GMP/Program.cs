@@ -35,6 +35,9 @@ namespace GUC
 
         public static HookInfos ParSymbol_GetValueHook;
 
+        public static List<timer.Timer> TimerList = new List<timer.Timer>();
+
+
         public static Int32 InjectedMain(String message)
         {
             try
@@ -161,6 +164,7 @@ namespace GUC
             ParSymbol_GetValueHook = process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hParser).GetMethod("hook_Symbol_GetValue"), 0x007A2040, 7, 2);
 
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hSpell).GetMethod("MagBook_Spell_Cast"), 0x004767A0, 7, 0);
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hMagBook).GetMethod("Spell_Invest"), (int)oCMag_Book.FuncOffsets.Spell_Invest, (int)oCMag_Book.HookSize.Spell_Invest, 0);
 
 
 
@@ -510,6 +514,16 @@ namespace GUC
                 
                 _state.Init();
                 _state.update();
+
+
+                long time = DateTime.Now.Ticks;
+                timer.Timer[] arr = TimerList.ToArray();
+                foreach (timer.Timer timer in arr)
+                {
+                    timer.iUpdate(time);
+                }
+
+
 
             }
             catch (Exception ex)

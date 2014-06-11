@@ -38,6 +38,7 @@ namespace GUC.Server.Scripts.AI.NPC_Def.Human
 
             this.Equip(this.addItem("ItMw_1h_Mil_Sword", 1));
             this.Equip(this.addItem("ITAR_MIL_L", 1));
+
             
             CreateVob();
         }

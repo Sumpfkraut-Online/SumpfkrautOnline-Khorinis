@@ -46,7 +46,7 @@ namespace GUC.Server.Scripting.Objects
             if (instanceName.Length == 0)
                 throw new ArgumentException("Instancename can not has a length of 0");
             if (ItemInstances.ContainsKey(instanceName))
-                throw new ArgumentException("InstanceName is already in use!");
+                throw new ArgumentException("InstanceName is already in use! "+instanceName);
 
 
             itemInstances = new GUC.WorldObjects.ItemInstance();
@@ -179,6 +179,12 @@ namespace GUC.Server.Scripting.Objects
         public String Name { get { return itemInstances.Name; } protected set { itemInstances.Name = value; } }
         public int ID { get { return itemInstances.ID; } }
 
+
+        public String InstanceName
+        {
+            get { return mItemInstance;  }
+        }
+
         public int getDamage(DamageTypeIndex index)
         {
             if (index == DamageTypeIndex.DAM_INDEX_BARRIER)
@@ -195,6 +201,16 @@ namespace GUC.Server.Scripting.Objects
             
         }
 
+        public void setProtection(DamageTypeIndex index, int value)
+        {
+            if (index == DamageTypeIndex.DAM_INDEX_BARRIER)
+                throw new Exception("Don't use Protectiontype Barrier!");
+            itemInstances.Protection[(int)index - 1] = value;
+
+        }
+
+        public int Range { get { return itemInstances.Range; } protected set { itemInstances.Range = value; } }
+
         public DamageType DamageType { get { return itemInstances.DamageType; } protected set { itemInstances.DamageType = value; } }
         public int TotalDamage { get { return itemInstances.TotalDamage; } protected set { itemInstances.TotalDamage = value; } }
 
@@ -209,12 +225,82 @@ namespace GUC.Server.Scripting.Objects
         public String Visual_Change { get { return itemInstances.Visual_Change; } protected set { itemInstances.Visual_Change = value; } }
         public String Effect { get { return itemInstances.Effect; } protected set { itemInstances.Effect = value; } }
 
+        public String ScemeName { get { return itemInstances.ScemeName; } protected set { itemInstances.ScemeName = value; } }
+
+
         public int Visual_skin { get { return itemInstances.Visual_skin; } protected set { itemInstances.Visual_skin = value; } }
 
         public String Description { get { return itemInstances.Description; } protected set { itemInstances.Description = value; } }
 
 
         public Spell Spell { get { return itemInstances.Spell.ScriptingProto; } protected set { itemInstances.Spell = value.spell; } }
+
+        public String Text0 { get { return itemInstances.Text[0]; } protected set { itemInstances.Text[0] = value; } }
+        public String Text1 { get { return itemInstances.Text[1]; } protected set { itemInstances.Text[1] = value; } }
+        public String Text2 { get { return itemInstances.Text[2]; } protected set { itemInstances.Text[2] = value; } }
+        public String Text3 { get { return itemInstances.Text[3]; } protected set { itemInstances.Text[3] = value; } }
+        public String Text4 { get { return itemInstances.Text[4]; } protected set { itemInstances.Text[4] = value; } }
+        public String Text5 { get { return itemInstances.Text[5]; } protected set { itemInstances.Text[5] = value; } }
+
+        public int Count0 { get { return itemInstances.Count[0]; } protected set { itemInstances.Count[0] = value; } }
+        public int Count1 { get { return itemInstances.Count[1]; } protected set { itemInstances.Count[1] = value; } }
+        public int Count2 { get { return itemInstances.Count[2]; } protected set { itemInstances.Count[2] = value; } }
+        public int Count3 { get { return itemInstances.Count[3]; } protected set { itemInstances.Count[3] = value; } }
+        public int Count4 { get { return itemInstances.Count[4]; } protected set { itemInstances.Count[4] = value; } }
+        public int Count5 { get { return itemInstances.Count[5]; } protected set { itemInstances.Count[5] = value; } }
+
+        #region Protection
+        public int ProtectionFire
+        {
+            get { return getProtection(DamageTypeIndex.DAM_INDEX_FIRE); }
+            protected set { setProtection(DamageTypeIndex.DAM_INDEX_FIRE, value); }
+        }
+
+        public int ProtectionEdge
+        {
+            get { return getProtection(DamageTypeIndex.DAM_INDEX_EDGE); }
+            protected set { setProtection(DamageTypeIndex.DAM_INDEX_EDGE, value); }
+        }
+
+        public int ProtectionBarrier
+        {
+            get { return getProtection(DamageTypeIndex.DAM_INDEX_BARRIER); }
+            protected set { setProtection(DamageTypeIndex.DAM_INDEX_BARRIER, value); }
+        }
+
+        public int ProtectionBlunt
+        {
+            get { return getProtection(DamageTypeIndex.DAM_INDEX_BLUNT); }
+            protected set { setProtection(DamageTypeIndex.DAM_INDEX_BLUNT, value); }
+        }
+
+        public int ProtectionFall
+        {
+            get { return getProtection(DamageTypeIndex.DAM_INDEX_FALL); }
+            protected set { setProtection(DamageTypeIndex.DAM_INDEX_FALL, value); }
+        }
+
+        public int ProtectionFly
+        {
+            get { return getProtection(DamageTypeIndex.DAM_INDEX_FLY); }
+            protected set { setProtection(DamageTypeIndex.DAM_INDEX_FLY, value); }
+        }
+
+        public int ProtectionMagic
+        {
+            get { return getProtection(DamageTypeIndex.DAM_INDEX_MAGIC); }
+            protected set { setProtection(DamageTypeIndex.DAM_INDEX_MAGIC, value); }
+        }
+
+        public int ProtectionPoint
+        {
+            get { return getProtection(DamageTypeIndex.DAM_INDEX_POINT); }
+            protected set { setProtection(DamageTypeIndex.DAM_INDEX_POINT, value); }
+        }
+        #endregion
+
+
+
 
         #region OnEquip
         public event GUC.Server.Scripting.Events.NPCEquipEventHandler OnEquip;

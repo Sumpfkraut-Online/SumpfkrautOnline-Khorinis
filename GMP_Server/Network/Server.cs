@@ -61,11 +61,12 @@ namespace GUC.Server.Network
             messageListener.Add((byte)NetworkIDS.UseItemMessage, new UseItemMessage());
 
             messageListener.Add((byte)NetworkIDS.CastSpell, new CastSpell());
+            messageListener.Add((byte)NetworkIDS.SpellInvestMessage, new SpellInvestMessage());
         }
 
         public void Start(ushort port, ushort maxConnections, String pw)
         {
-            pw = "ver0.17" + pw;
+            pw = "ver2.02" + pw;
             SocketDescriptor socketDescriptor = new SocketDescriptor();
             socketDescriptor.port = port;
 
@@ -119,7 +120,11 @@ namespace GUC.Server.Network
                                 sWorld.removeVob(pl);
                                 if(pl.IsSpawned)
                                     sWorld.getWorld(pl.Map).removeVob(pl);
-                                
+
+                                if (p.data[0] == (byte)DefaultMessageIDTypes.ID_CONNECTION_LOST)
+                                {
+                                    Scripting.Objects.Character.Player.isOnConnectionLost((Scripting.Objects.Character.Player)pl.ScriptingNPC);
+                                }
                             }
 
                             break;

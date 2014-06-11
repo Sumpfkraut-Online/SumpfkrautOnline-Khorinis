@@ -12,6 +12,14 @@ namespace GUC.Server.Log
         public static int LOG_WARNING = 1;
         public static int LOG_ERROR = 2;
 
+        public enum LogLevel{
+            INFO = 0,
+            WARNING = 1,
+            ERROR = 2
+        }
+
+
+
         static StreamWriter myWriter = null;
         static Logger()
         {
@@ -20,12 +28,17 @@ namespace GUC.Server.Log
             File.Create("serverlog.html").Close();
         }
 
+        public static void log(LogLevel ll, String Message)
+        {
+            log((int)ll, Message);
+        }
+
         public static void log(int level, String Message)
         {
             try
             {
                 StreamWriter myWriter = new StreamWriter(File.Open(@"serverlog.html", FileMode.Append));
-                myWriter.WriteLine(Message + "<br>");
+                myWriter.WriteLine("<span class=\"level_" + level + "\">" + Message + "</span><br>");
                 myWriter.Close();
                 myWriter.Dispose();
 

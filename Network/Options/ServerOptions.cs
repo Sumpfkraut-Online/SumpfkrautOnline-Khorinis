@@ -38,7 +38,7 @@ namespace GUC.Options
 
         public List<Module> Modules = new List<Module>();
         public List<String> AdditionalLibs = new List<string>();
-
+        public List<String> AdditionalSymbols = new List<string>();
 
         public bool useScriptedFile = false;
         public bool generateScriptedFile = false;

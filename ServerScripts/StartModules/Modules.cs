@@ -29,7 +29,7 @@ namespace GUC.Server.Scripts.StartModules
 		}
 
 		public static void Init() {
-			Player.playerConnects += new Events.PlayerEventHandler(playerConnected);
+			Player.sOnPlayerConnects += new Events.PlayerEventHandler(playerConnected);
 		}
 
 		public static void playerConnected(Player pl) {

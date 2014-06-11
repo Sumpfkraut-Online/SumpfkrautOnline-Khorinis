@@ -62,9 +62,20 @@ namespace GUC.Server.Scripting
             {
                 CompilerParameters.ReferencedAssemblies.Add(str);
             }
-            
 
+            
+            
             CompilerParameters.CompilerOptions = "/t:library";///debug:full
+            for(int i = 0; i < Program.serverOptions.AdditionalSymbols.Count; i++)
+            {
+                String str = Program.serverOptions.AdditionalSymbols[i];
+                if (i == 0)
+                    CompilerParameters.CompilerOptions += "/define: ";
+                CompilerParameters.CompilerOptions += str;
+                if(i != Program.serverOptions.AdditionalLibs.Count - 1)
+                    CompilerParameters.CompilerOptions += ";";
+            }                                                
+
             CompilerParameters.IncludeDebugInformation = true;
             
             if (!file)

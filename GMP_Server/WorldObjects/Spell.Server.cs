@@ -44,6 +44,10 @@ namespace GUC.WorldObjects
             stream.Write( this.FXName);
             stream.Write( this.AniName);
 
+            stream.Write(processMana.Length);
+            for (int i = 0; i < processMana.Length; i++)
+                stream.Write(processMana[i]);
+
             SpellParameters paramI = getParams();
             BitStreamExtension.Write(stream, (ushort)paramI);
 
