@@ -130,7 +130,8 @@ namespace GUC.WorldObjects.Character
             Process process = Process.ThisProcess();
 
             oCNpc npc = new oCNpc(process, this.Address);
-            
+            npc.HP = 0;
+            npc.SetPosition(-1000, -100000, -100000);
             npc.Disable();
 
             int WeaponMode = weaponMode;
@@ -175,10 +176,7 @@ namespace GUC.WorldObjects.Character
             }
 
 
-            if(hideName)
-                npc.Name.Set("");
-            else
-                npc.Name.Set(Name);
+            setHideNames(this.hideName);
 
             for (int i = 0; i < this.Attributes.Length; i++)
                 npc.setAttributes((byte)i, this.Attributes[i]);
@@ -240,7 +238,7 @@ namespace GUC.WorldObjects.Character
                 overlayStr.Dispose();
             }
 
-            npc.setShowVisual(!this.IsInvisible);
+            
 
             setScale(this.Scale);
             setFatness(this.Fatness);
@@ -248,6 +246,8 @@ namespace GUC.WorldObjects.Character
 
             if (enabled)
                 Enable(this.Position);
+
+            this.setInvisible(this.IsInvisible);
         }
 
         public bool enabled = false;
@@ -281,6 +281,32 @@ namespace GUC.WorldObjects.Character
             }
         }
 
+        public void setHideNames(bool hidenames)
+        {
+            this.hideName = hidenames;
+
+            if(this.Address != 0){
+                Process process = Process.ThisProcess();
+                oCNpc npc = new oCNpc(process, this.Address);
+                if (this.hideName)
+                    npc.Name.Set("");
+                else
+                    npc.Name.Set(this.Name);
+            }
+
+        }
+
+        public void setInvisible(bool invisible)
+        {
+            this.IsInvisible = invisible;
+
+            if (this.Address != 0)
+            {
+                Process process = Process.ThisProcess();
+                oCNpc npc = new oCNpc(process, this.Address);
+                npc.setShowVisual(!invisible);
+            }
+        }
 
 
         public void RemoveWeapon()
@@ -527,8 +553,8 @@ namespace GUC.WorldObjects.Character
             Item oldItem = Slots[slot];
             Slots[slot] = item;
 
-            if (oldItem == item)
-                return;
+            //if (oldItem == item)
+            //    return;
 
             if (this.Address != 0)
             {
