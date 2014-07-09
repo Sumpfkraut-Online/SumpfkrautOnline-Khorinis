@@ -82,12 +82,14 @@ namespace GUC.WorldObjects
 
         public void setVobPosition(float[] oldPos, float[] newPos, Vob vob)
         {
+            if (!vob.IsSpawned)
+                newPos = null;
+
             uint oldKey = getKeyByPosition(oldPos);
             uint newKey = getKeyByPosition(newPos);
 
-            if (oldKey == newKey && newPos != null)
-                return;
-
+            
+            
 
             if (oldPos != null && VobPositionList.ContainsKey(oldKey) && VobPositionList[oldKey].Contains(vob))//Needs to delete!
             {

@@ -43,7 +43,14 @@ namespace GUC.Server.Scripting
 
         private void load()
         {
-            assembly = System.Reflection.Assembly.LoadFile(Path.GetFullPath("scripts/_compiled/ServerScripts.dll"));
+            try
+            {
+                assembly = System.Reflection.Assembly.LoadFile(Path.GetFullPath("scripts/_compiled/ServerScripts.dll"));
+            }
+            catch (Exception ex)
+            {
+                Log.Logger.log(Log.Logger.LogLevel.ERROR, "ServerScripts.dll could not be found! It has to be in the scripts/_compiled/ folder <br>"+ex.ToString());
+            }
         }
 
         private void compile(bool file)
@@ -145,7 +152,7 @@ namespace GUC.Server.Scripting
             }
             catch (Exception ex)
             {
-                Log.Logger.log(Log.Logger.LOG_ERROR, ex.Source + "<br>" + ex.Message + "<br>" + ex.StackTrace);
+                Log.Logger.log(Log.Logger.LOG_ERROR, "GUC.Server.Scripts.Startup-Class could not be found!" + "<br>" + ex.Source + "<br>" + ex.Message + "<br>" + ex.StackTrace);
             }
         }
 

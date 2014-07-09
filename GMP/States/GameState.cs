@@ -30,7 +30,7 @@ namespace GUC.States
         {
             if (_init)
                 return;
-
+            
             Process process = Process.ThisProcess();
             if (oCNpc.Player(process).MagBook.Address == 0)
             {
@@ -59,6 +59,9 @@ namespace GUC.States
         static int soundInt = 0;
 
         static bool startGS = false;
+
+
+        static bool x = false;
         public override void update()
         {
             Process process = Process.ThisProcess();
@@ -71,6 +74,20 @@ namespace GUC.States
                 Program.newWorld = false;
             }
 
+            if(InputHooked.IsPressed(process, (int)VirtualKeys.F9) && !x){
+                x = true;
+
+                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Print spawned: ", 0, "Program.cs", 0);
+                foreach (KeyValuePair<int, Vob> pair in sWorld.VobDict)
+                {
+                    Vob v = pair.Value;
+                    if (!(v is NPCProto))
+                        continue;
+                    NPCProto npcproto = (NPCProto)v;
+                    String s = npcproto.Name+" is Spawned: " + v.IsSpawned + " Enabled: " + npcproto.enabled;
+                    
+                }
+            }
 
 
 

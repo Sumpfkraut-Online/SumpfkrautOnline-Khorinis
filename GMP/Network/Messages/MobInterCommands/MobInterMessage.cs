@@ -59,13 +59,13 @@ namespace GUC.Network.Messages.MobInterCommands
                 {
                     oCMobInter mI = new oCMobInter(process, mob.Address);
 
-                    mI.GetModel().StartAnimation("T_S1_2_S0");
+                    mI.GetModel().StartAnimation("T_S0_2_S1");
 
                     mI.OnTrigger(new zCVob(process, 0), new zCVob(process, player.Address));
                     mI.State = 1;
                     
                     
-                    mI.StateAniID = mI.GetModel().GetAniIDFromAniName("S_S1");
+                    //mI.StateAniID = mI.GetModel().GetAniIDFromAniName("S_S1");
 
 
                 }
@@ -76,12 +76,12 @@ namespace GUC.Network.Messages.MobInterCommands
                 if (mob.Address != 0)
                 {
                     oCMobInter mI = new oCMobInter(process, mob.Address);
-                    mI.GetModel().StartAnimation("T_S0_2_S1");
+                    mI.GetModel().StartAnimation("T_S1_2_S0");
                     mI.OnUnTrigger(new zCVob(process, 0), new zCVob(process, player.Address));
                     mI.State = 0;
                     
                     
-                    mI.StateAniID = mI.GetModel().GetAniIDFromAniName("S_S0");
+                    //mI.StateAniID = mI.GetModel().GetAniIDFromAniName("S_S0");
                     //mI.StateAniID = mI.GetModel().
                 }
             }

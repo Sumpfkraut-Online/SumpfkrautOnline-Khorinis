@@ -47,6 +47,10 @@ namespace GUC.WorldObjects
         protected ItemInstance munition = null;
 
         public bool isKeyInstance = false;
+        public bool isTorch = false;
+        public bool isTorchBurned = false;
+        public bool isTorchBurning = false;
+        public bool isGold = false;
 
         public Spell Spell = null;
 
@@ -290,6 +294,14 @@ namespace GUC.WorldObjects
                 param |= ItemInstanceParameters.isKeyInstance;
             if (Spell != null)
                 param |= ItemInstanceParameters.Spell;
+            if (isTorch)
+                param |= ItemInstanceParameters.isTorch;
+            if (isTorchBurning)
+                param |= ItemInstanceParameters.isTorchBurning;
+            if (isTorchBurned)
+                param |= ItemInstanceParameters.isTorchBurned;
+            if (isGold)
+                param |= ItemInstanceParameters.isGold;
             return param;
         }
 
@@ -363,7 +375,11 @@ namespace GUC.WorldObjects
             visual_skin = effect << 1,
             munition = visual_skin << 1,
             isKeyInstance = munition << 1,
-            Spell = isKeyInstance << 1
+            Spell = isKeyInstance << 1,
+            isTorch = Spell << 1,
+            isTorchBurning = isTorch << 1,
+            isTorchBurned = isTorchBurning << 1,
+            isGold = isTorchBurned << 1,
         }
     }
 }

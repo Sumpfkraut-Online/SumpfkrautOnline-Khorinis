@@ -107,9 +107,9 @@ namespace GUC.Server.Scripting.Objects
         { }
 
         public ItemInstance(String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, int visualSkin, MaterialTypes types, ItemInstance munition)
-            : this(instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, visualSkin, types, munition, false)
+            : this(instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, visualSkin, types, munition, false, false, false, false, false)
         { }
-        public ItemInstance(String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, int visualSkin, MaterialTypes types, ItemInstance munition, bool keyInstance)
+        public ItemInstance(String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, int visualSkin, MaterialTypes types, ItemInstance munition, bool keyInstance, bool torch, bool torchBurning, bool torchBurned, bool gold)
             : this(instanceName)
         {
             itemInstances.Name = name;
@@ -131,6 +131,10 @@ namespace GUC.Server.Scripting.Objects
             itemInstances.Range = range;
             itemInstances.TotalDamage = totalDamage;
             itemInstances.isKeyInstance = keyInstance;
+            IsTorch = torch;
+            IsTorchBurned = torchBurned;
+            IsTorchBurning = torchBurning;
+            IsGold = gold;
 
             CreateItemInstance();
             
@@ -248,6 +252,14 @@ namespace GUC.Server.Scripting.Objects
         public int Count3 { get { return itemInstances.Count[3]; } protected set { itemInstances.Count[3] = value; } }
         public int Count4 { get { return itemInstances.Count[4]; } protected set { itemInstances.Count[4] = value; } }
         public int Count5 { get { return itemInstances.Count[5]; } protected set { itemInstances.Count[5] = value; } }
+
+
+
+        public bool IsLockPick { get { return itemInstances.isKeyInstance; } protected set { itemInstances.isKeyInstance = value; } }
+        public bool IsTorch { get { return itemInstances.isTorch; } protected set { itemInstances.isTorch = value; } }
+        public bool IsTorchBurning { get { return itemInstances.isTorchBurning; } protected set { itemInstances.isTorchBurning = value; } }
+        public bool IsTorchBurned { get { return itemInstances.isTorchBurned; } protected set { itemInstances.isTorchBurned = value; } }
+        public bool IsGold { get { return itemInstances.isGold; } protected set { itemInstances.isGold = value; } }
 
         #region Protection
         public int ProtectionFire

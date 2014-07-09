@@ -278,6 +278,14 @@ namespace GUC.WorldObjects.Character
                 npc.Enable(pos.X, pos.Y, pos.Z);
                 setWeaponMode(weaponMode);
                 setArmor(armor);
+
+                for (int i = 0; i < Slots.Length; i++)
+                {
+                    if (Slots[i] != null)
+                    {
+                        setSlotItem(i, Slots[i]);
+                    }
+                }
             }
         }
 

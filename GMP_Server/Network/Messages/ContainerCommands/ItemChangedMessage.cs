@@ -29,6 +29,8 @@ namespace GUC.Server.Network.Messages.ContainerCommands
 
 
             ContainerItemChanged cic = (ContainerItemChanged)type;
+
+            Console.WriteLine("ContainerItemChanged: "+cic+" Player: "+npc+" MobContainer: "+mobContainer+" Item: "+itemID);
             if (cic == ContainerItemChanged.itemRemoved)
             {
                 stream.Read(out amount);
@@ -86,9 +88,13 @@ namespace GUC.Server.Network.Messages.ContainerCommands
                     Item gI = null;
                     List<Item> imList = null;
                     if (mobContainer is MobContainer)
+                    {
                         imList = ((MobContainer)mobContainer).itemList;
+                    }
                     else
+                    {
                         imList = ((NPCProto)mobContainer).ItemList;
+                    }
                     foreach (Item i in imList)
                     {
                         if (i.ItemInstance == item.ItemInstance)
@@ -98,10 +104,16 @@ namespace GUC.Server.Network.Messages.ContainerCommands
                         }
                     }
                     if (gI == null)
-                        if(mobContainer is MobContainer)
+                    {
+                        if (mobContainer is MobContainer)
+                        {
                             item.ScriptingProto.toContainer((Scripting.Objects.Mob.MobContainer)((MobContainer)mobContainer).ScriptingVob);
+                        }
                         else if (mobContainer is NPCProto)
+                        {
                             item.ScriptingProto.toContainer(((NPCProto)mobContainer).ScriptingNPC);
+                        }
+                    }
                     else
                     {
                         gI.ScriptingProto.Amount += item.Amount;
@@ -119,17 +131,16 @@ namespace GUC.Server.Network.Messages.ContainerCommands
             }
             else if (cic == ContainerItemChanged.itemInsertedNew)
             {
-                Console.WriteLine(cic);
+                
                 if (!ItemInstance.ItemInstanceDict.ContainsKey(itemID))
                     throw new Exception("Iteminstance ID was not found: " + itemID);
                 ItemInstance item = (ItemInstance)ItemInstance.ItemInstanceDict[itemID];
-                Console.WriteLine(item);
-                Console.WriteLine(mobContainer);
+                
                 if(mobContainer is MobContainer)
                     ((Scripting.Objects.Mob.MobContainer)((MobContainer)mobContainer).ScriptingVob).addItem(item.ScriptingProto, 1);
                 else if (mobContainer is NPCProto)
                     (((NPCProto)mobContainer).ScriptingNPC).addItem(item.ScriptingProto, 1);
-                Console.WriteLine(npc);
+                
                 Item i = npc.getItemByInstance(item);
                 if (i == null)
                     throw new Exception("NPC has not the item: "+item.ID);

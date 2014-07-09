@@ -112,6 +112,14 @@ namespace GUC.WorldObjects
                 stream.Write(isKeyInstance);
             if (Spell != null)
                 stream.Write(Spell.ID);
+            if (isTorch)
+                stream.Write(isTorch);
+            if (isTorchBurning)
+                stream.Write(isTorchBurning);
+            if (isTorchBurned)
+                stream.Write(isTorchBurned);
+            if (isGold)
+                stream.Write(isGold);
         }
     }
 }

@@ -104,6 +104,10 @@ namespace GUC.Server.Scripting.Objects.Character
             }
         }
 
+        public bool IsConnected
+        {
+            get { return Proto.IsConnected; }
+        }
 
 
         public static void EnableAllPlayerKeys(bool x)

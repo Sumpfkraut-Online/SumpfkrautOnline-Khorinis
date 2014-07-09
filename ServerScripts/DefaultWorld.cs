@@ -10402,7 +10402,7 @@ namespace GUC.Server.Scripts
             //NewWorld
             initNewWorldItems();
             initNewWorldVobs();
-            initNewWorldNPC();
+            //initNewWorldNPC();
 
 
 		}

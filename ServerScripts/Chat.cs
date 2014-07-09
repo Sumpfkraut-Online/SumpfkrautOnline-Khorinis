@@ -82,16 +82,16 @@ namespace GUC.Server.Scripts
 
 
 
-            lastNPC = new NPC("Test");
-            lastNPC.Spawn("NEWWORLD\\NEWWORLD.ZEN", new Vec3f(0, 0, 0), new Vec3f(0, 0, 0));
+            //lastNPC = new NPC("Test");
+            //lastNPC.Spawn("NEWWORLD\\NEWWORLD.ZEN", new Vec3f(0, 0, 0), new Vec3f(0, 0, 0));
 
-            lastNPC.addItem(ItemInstance.getItemInstance("ITAT_SHEEPFUR"), 12);
-            lastNPC.addItem(ItemInstance.getItemInstance("ITAT_WOLFFUR"), 11);
-            lastNPC.addItem(ItemInstance.getItemInstance("ITMW_1H_VLK_MACE"), 1);
+            //lastNPC.addItem(ItemInstance.getItemInstance("ITAT_SHEEPFUR"), 12);
+            //lastNPC.addItem(ItemInstance.getItemInstance("ITAT_WOLFFUR"), 11);
+            //lastNPC.addItem(ItemInstance.getItemInstance("ITMW_1H_VLK_MACE"), 1);
 
-            lastNPC.InitNPCAI();
+            //lastNPC.InitNPCAI();
 
-            lastNPC.getAI().DailyRoutine = tagesablauf;
+            //lastNPC.getAI().DailyRoutine = tagesablauf;
 		}
 
 		public void spawn(Player player) {
