@@ -45,6 +45,7 @@ namespace GUC.Enumeration
         OnUnTrigger,
         StartInteraction,
         StopInteraction,
+        StartStateChange,
 
         PickLock
     }

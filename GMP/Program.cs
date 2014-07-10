@@ -125,6 +125,10 @@ namespace GUC
 
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hMobInter).GetMethod("PickLock"), (int)oCMobLockable.FuncOffsets.PickLock, (int)oCMobLockable.HookSize.PickLock, 2);
 
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hMobInter).GetMethod("StartStateChange"), (int)oCMobInter.FuncOffsets.StartStateChange, (int)oCMobInter.HookSize.StartStateChange, 3);
+
+
+
             //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hItemContainer).GetMethod("oCItemContainer_Remove_2"), (int)oCNpcInventory.FuncOffsets.Remove_Item, (int)oCNpcInventory.HookSize.Remove_Item, 1);
             removeItemFromList = process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hItemContainer).GetMethod("oCItemContainer_Remove_2"), (int)oCItemContainer.FuncOffsets.Remove_2, (int)oCItemContainer.HookSizes.Remove_2, 2);
             insertItemToList = process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hItemContainer).GetMethod("oCItemContainer_Insert"), (int)oCItemContainer.FuncOffsets.Insert, (int)oCItemContainer.HookSizes.Insert, 1);

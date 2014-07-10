@@ -43,6 +43,7 @@ namespace GUC.Server.Scripts.Accounts
 
 		public Account(Player player)
 		{
+            
 			this.player = player;
 			this.player.OnDisconnected += new Events.PlayerEventHandler(disconnect);
 		}
@@ -56,7 +57,7 @@ namespace GUC.Server.Scripts.Accounts
 					if (!sdrITM.HasRows) {
 						return false;
 					}
-
+                    
 					return true;
 				}
 			}
