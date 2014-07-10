@@ -51,12 +51,12 @@ namespace GUC.Server
 
         static void initFolders()
         {
-            if (!Directory.Exists("AvailableServerModules"))
-                Directory.CreateDirectory("AvailableServerModules");
-            if (!Directory.Exists("ServerModules"))
-                Directory.CreateDirectory("ServerModules");
-            if (!Directory.Exists("Modules"))
-                Directory.CreateDirectory("Modules");
+            //if (!Directory.Exists("AvailableServerModules"))
+            //    Directory.CreateDirectory("AvailableServerModules");
+            //if (!Directory.Exists("ServerModules"))
+            //    Directory.CreateDirectory("ServerModules");
+            //if (!Directory.Exists("Modules"))
+            //    Directory.CreateDirectory("Modules");
             if (!Directory.Exists("Config"))
                 Directory.CreateDirectory("Config");
 
@@ -64,6 +64,8 @@ namespace GUC.Server
                 Directory.CreateDirectory("scripts");
             if (!Directory.Exists("scripts/server"))
                 Directory.CreateDirectory("scripts/server");
+            if (!Directory.Exists("scripts/_compiled"))
+                Directory.CreateDirectory("scripts/_compiled");
         }
 
 

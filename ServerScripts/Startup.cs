@@ -83,7 +83,7 @@ namespace GUC.Server.Scripts
 #endif
 
 
-
+            
             Logger.log(Logger.LogLevel.INFO, "###################### End Initalise ######################");
 		}
     }

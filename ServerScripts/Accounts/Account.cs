@@ -43,12 +43,13 @@ namespace GUC.Server.Scripts.Accounts
 
 		public Account(Player player)
 		{
+            
 			this.player = player;
-
 			this.player.OnDisconnected += new Events.PlayerEventHandler(disconnect);
 		}
 
 		public static bool existsName(String name) {
+            
 			using(SQLiteCommand command = new SQLiteCommand(Sqlite.getSqlite().connection)) {
 				command.CommandText = "SELECT name FROM `account` WHERE `name`=@name";
 				command.Parameters.AddWithValue("@name", name);
@@ -56,10 +57,12 @@ namespace GUC.Server.Scripts.Accounts
 					if (!sdrITM.HasRows) {
 						return false;
 					}
-
+                    
 					return true;
 				}
 			}
+
+            
 		}
 
 		public bool login(String name, String password) {

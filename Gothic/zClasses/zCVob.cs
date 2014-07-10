@@ -324,5 +324,11 @@ namespace Gothic.zClasses
         {
             return 4;
         }
+
+
+        public override string ToString()
+        {
+            return this.VobType + " " + this.ObjectName.getCheckedValue();
+        }
     }
 }

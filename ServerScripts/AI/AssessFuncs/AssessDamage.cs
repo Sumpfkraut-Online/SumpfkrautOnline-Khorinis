@@ -18,6 +18,8 @@ namespace GUC.Server.Scripts.AI.AssessFuncs
                 return;
             }
 
+            if (attacker == null)
+                return;
             ai.addEnemy(attacker);
         }
     }

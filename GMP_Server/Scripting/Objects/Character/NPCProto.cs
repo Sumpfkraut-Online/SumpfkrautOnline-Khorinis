@@ -1388,7 +1388,7 @@ namespace GUC.Server.Scripting.Objects.Character
 
 
         public event GUC.Server.Scripting.Events.PlayerDamageEventHandler OnDamaged;
-        internal void OnDamage(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, NPCProto attacker, int weaponMode, Spell spellID, Item weapon, float fallDownDistanceY)
+        internal void OnDamage(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, Vob attacker, int weaponMode, Spell spellID, Item weapon, float fallDownDistanceY)
         {
             if (OnDamaged != null)
                 OnDamaged(victim, damageMode, hitLoc, flyDir, attacker, weaponMode, spellID, weapon, fallDownDistanceY);
@@ -1413,7 +1413,7 @@ namespace GUC.Server.Scripting.Objects.Character
 
         public static event Events.PlayerDamageEventHandler OnDamages;
 
-        internal static void OnPlayerDamages(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, NPCProto attacker, int weaponMode, Spell spellID, Item weapon, float fallDownDistanceY)
+        internal static void OnPlayerDamages(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, Vob attacker, int weaponMode, Spell spellID, Item weapon, float fallDownDistanceY)
         {
             victim.OnDamage(victim, damageMode, hitLoc, flyDir, attacker, weaponMode, spellID, weapon,  fallDownDistanceY);
             if (OnDamages != null)

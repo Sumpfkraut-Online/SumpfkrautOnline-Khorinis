@@ -63,7 +63,7 @@ namespace GUC.Hooks
 
                 if (oCNpc.Player(process).Address == str2.Address)
                 {
-                    zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "UnTrigger: " + mobInter.State + " | StateNum: " + mobInter.StateNum + " | " + mobInter.Rewind, 0, "Program.cs", 0);
+                    zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "UnTrigger: " + mobInter.State + " | StateNum: " + mobInter.StateNum + " | " + mobInter.Rewind + " | " + str.Address + " | " + str2.Address + " | " + str + " | " + str2 + " | " + oCNpc.Player(process).FocusVob.Address, 0, "Program.cs", 0);
 
                     if (!sWorld.SpawnedVobDict.ContainsKey(mobInter.Address))
                         return 0;
@@ -190,6 +190,50 @@ namespace GUC.Hooks
                     stream.Write((char)ch);
                     Program.client.client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
 
+                }
+            }
+            catch (Exception ex)
+            {
+                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', ex.ToString(), 0, "hMobInter.cs", 0);
+            }
+            return 0;
+        }
+
+
+
+
+        public static Int32 StartStateChange(String message)
+        {
+            int address = Convert.ToInt32(message);
+            Process process = Process.ThisProcess();
+            try
+            {
+                oCNpc str = new oCNpc(process, process.ReadInt(address + 4));
+                int x = process.ReadInt(address + 8);
+                int y = process.ReadInt(address + 12);
+                oCMobInter mobInter = new oCMobInter(process, process.ReadInt(address));
+
+                if (oCNpc.Player(process).Address == str.Address)
+                {
+                    zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "StartStateChange: "+str+" "+x+" "+y, 0, "Program.cs", 0);
+
+
+                    if (!sWorld.SpawnedVobDict.ContainsKey(mobInter.Address))
+                        return 0;
+                    MobInter mI = (MobInter)sWorld.SpawnedVobDict[mobInter.Address];
+
+                    BitStream stream = Program.client.sentBitStream;
+                    stream.Reset();
+                    stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
+                    stream.Write((byte)NetworkIDS.MobInterMessage);
+                    stream.Write((byte)MobInterNetworkFlags.StartStateChange);
+                    stream.Write(Player.Hero.ID);
+                    stream.Write(mI.ID);
+                    stream.Write((short)x);
+                    stream.Write((short)y);
+                    Program.client.client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+
+                    
                 }
             }
             catch (Exception ex)

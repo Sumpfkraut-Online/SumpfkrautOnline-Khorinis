@@ -63,6 +63,8 @@ namespace GUC.States
             Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, 0x00712618);
             #endregion
 
+            //Disable First-Person:
+            //Process.Write(new byte[] { 0x83, 0xC4, 0x6C, 0xC3 }, 0x004A40E0);
 
             //Disable NPC-AI:
             //Process.VirtualProtect(0x00745A20, 0x31A);
@@ -74,15 +76,15 @@ namespace GUC.States
 
 
             //Disable Marvin-Mode:
-            //Process.VirtualProtect(0x006CBF60, 25);
-            //arr = new byte[25];
-            //for (int i = 0; i < arr.Length; i++)
-            //    arr[i] = 0x90;
-            //Process.Write(arr, 0x006CBF60);
+            Process.VirtualProtect(0x006CBF60, 25);
+            byte[] arr = new byte[25];
+            for (int i = 0; i < arr.Length; i++)
+                arr[i] = 0x90;
+            Process.Write(arr, 0x006CBF60);
 
 
-            //arr = new byte[] { 0xC3 };
-            //Process.Write(arr, 0x00432EC0);
+            arr = new byte[] { 0xC3 };
+            Process.Write(arr, 0x00432EC0);
 
 
         }
@@ -149,20 +151,20 @@ namespace GUC.States
         public static void SetUpConfig()
         {
             String pfad = getConfigPath() + @"\gmp.xml";
-            zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Path: "+pfad, 0, "Program.cs", 0);
+            //zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Path: "+pfad, 0, "Program.cs", 0);
             if (!File.Exists(pfad))
-                zERROR.GetZErr(Process.ThisProcess()).Report(4, 'G', pfad, 0, "Program.cs", 0);
+                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "File does not exists: "+pfad, 0, "Program.cs", 0);
             clientOptions = ClientOptions.Load(pfad);
         }
 
         public static String getConfigPath()
         {
-            return getSystemPath() + "/UntoldChapter/conf/";
+            return getSystemPath() + "\\UntoldChapter\\conf\\";
         }
 
         public static String getDaedalusPath()
         {
-            String path = getSystemPath() + "/UntoldChapter/tempScripts/";
+            String path = getSystemPath() + "\\UntoldChapter\\tempScripts\\";
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
             return path;
@@ -174,14 +176,14 @@ namespace GUC.States
                 return Path.GetFullPath(Environment.CurrentDirectory);
             else if (Path.GetFileName(Environment.CurrentDirectory).ToUpper().Trim() == "UntoldChapter" && 
                 Path.GetFileName(Path.GetDirectoryName(Environment.CurrentDirectory)).ToUpper().Trim() == "SYSTEM" &&
-                File.Exists(Path.GetFullPath(Path.GetDirectoryName(Environment.CurrentDirectory))+"/Gothic2.exe"))
+                File.Exists(Path.GetFullPath(Path.GetDirectoryName(Environment.CurrentDirectory))+"\\Gothic2.exe"))
                 return Path.GetFullPath(Path.GetDirectoryName(Environment.CurrentDirectory));
-            else if(Directory.Exists("./System") && File.Exists("./System/Gothic2.exe"))
-                return Path.GetFullPath("./System");
-            else if (Directory.Exists("./system") && File.Exists("./system/Gothic2.exe"))
-                return Path.GetFullPath("./system");
+            else if(Directory.Exists(".\\System") && File.Exists(".\\System\\Gothic2.exe"))
+                return Path.GetFullPath(".\\System");
+            else if (Directory.Exists(".\\system") && File.Exists(".\\system\\Gothic2.exe"))
+                return Path.GetFullPath(".\\system");
 
-            return Path.GetFullPath("./");
+            return Path.GetFullPath(".\\");
         }
 
 

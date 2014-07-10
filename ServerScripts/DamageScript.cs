@@ -34,9 +34,14 @@ namespace GUC.Server.Scripts
         public delegate void NPCDamgeHandler(NPCProto victim, NPCProto attacker, int damage, bool dropUnconscious, bool dropDead);
         public static event NPCDamgeHandler Damages;
 
-		public static void OnDamage(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, NPCProto attacker, int weaponMode, Spell spell, Item weapon, float fallDownDistanceY) {
+		public static void OnDamage(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, Vob aggressor, int weaponMode, Spell spell, Item weapon, float fallDownDistanceY) {
 			if(victim.getUserObjects("IMMORTAL") != null && (bool)victim.getUserObjects("IMMORTAL"))//Victim is immortal!
 				return;
+            NPCProto attacker = null;
+            if (aggressor is NPCProto)
+                attacker = (NPCProto)aggressor;
+
+
 			if(attacker != null && attacker.getUserObjects("FRIENDS") != null && ((List<NPCProto>)attacker.getUserObjects("FRIENDS")).Contains(victim))//Victim is a friend!
 				return;
             
@@ -71,7 +76,7 @@ namespace GUC.Server.Scripts
 					toUnconscious = true;
 			}
 
-            if (!victim.IsHuman() || !attacker.IsHuman())
+            if (!victim.IsHuman() || !(attacker != null && attacker.IsHuman()))
             {
                 toUnconscious = false;
                 canKill = true;

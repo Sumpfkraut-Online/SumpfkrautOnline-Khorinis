@@ -125,6 +125,11 @@ namespace GUC.Server.Scripting.GUI
             show(player.ID);
         }
 
+        public bool isVisibleByAll()
+        {
+            return allShown;
+        }
+
         public void show(int plID)
         {
             BitStream stream = Program.server.sendBitStream;

@@ -150,6 +150,97 @@ namespace GUC.WorldObjects
                     throw new Exception("Spell was not found: "+spellID);
                 this.Spell = spell;
             }
+
+            if (paramI.HasFlag(ItemInstanceParameters.isTorch))
+            {
+                stream.Read(out isTorch);
+
+                if (isTorch)
+                {
+                    String instanceString = "ITGUC_" + ID;
+
+                    if ("ITLSTORCH".Length < instanceString.Length)
+                        throw new Exception("Instance-String is to long: " + instanceString);
+
+                    char[] cArr = instanceString.ToCharArray();
+                    byte[] i = new byte["ITLSTORCH".Length];
+                    Process.ThisProcess().Write(i, 0x008B7144);
+
+                    System.Text.Encoding enc = System.Text.Encoding.Default;
+                    byte[] arr = enc.GetBytes(instanceString);
+                    Process.ThisProcess().Write(arr, 0x008B7144);
+
+                }
+
+            }
+
+            if (paramI.HasFlag(ItemInstanceParameters.isTorchBurning))
+            {
+                stream.Read(out isTorchBurning);
+
+                if (isTorchBurning)
+                {
+                    String instanceString = "ITGUC_" + ID;
+
+                    if ("ITLSTORCHBURNING".Length < instanceString.Length)
+                        throw new Exception("Instance-String is to long: "+instanceString);
+                    char[] cArr = instanceString.ToCharArray();
+                    byte[] i = new byte["ITLSTORCHBURNING".Length];
+                    Process.ThisProcess().Write(i, 0x008B2AD8);
+
+                    System.Text.Encoding enc = System.Text.Encoding.Default;
+                    byte[] arr = enc.GetBytes(instanceString);
+                    Process.ThisProcess().Write(arr, 0x008B2AD8);
+
+                }
+
+            }
+
+            if (paramI.HasFlag(ItemInstanceParameters.isTorchBurned))
+            {
+                stream.Read(out isTorchBurned);
+
+                if (isTorchBurned)
+                {
+                    String instanceString = "ITGUC_" + ID;
+
+                    if ("ITLSTORCHBURNED".Length < instanceString.Length)
+                        throw new Exception("Instance-String is to long: " + instanceString);
+
+                    char[] cArr = instanceString.ToCharArray();
+                    byte[] i = new byte["ITLSTORCHBURNED".Length];
+                    Process.ThisProcess().Write(i, 0x008B1228);
+
+                    System.Text.Encoding enc = System.Text.Encoding.Default;
+                    byte[] arr = enc.GetBytes(instanceString);
+                    Process.ThisProcess().Write(arr, 0x008B1228);
+
+                }
+
+            }
+
+            if (paramI.HasFlag(ItemInstanceParameters.isGold))
+            {
+                stream.Read(out isGold);
+
+                if (isGold)
+                {
+                    String instanceString = "ITGUC_" + ID;
+
+                    if ("ITMI_GOLD".Length < instanceString.Length)
+                        throw new Exception("Instance-String is to long: " + instanceString);
+
+                    char[] cArr = instanceString.ToCharArray();
+                    byte[] i = new byte["ITMI_GOLD".Length];
+                    Process.ThisProcess().Write(i, 0x008B6D84);
+
+                    System.Text.Encoding enc = System.Text.Encoding.Default;
+                    byte[] arr = enc.GetBytes(instanceString);
+                    Process.ThisProcess().Write(arr, 0x008B6D84);
+
+                }
+
+            }
         }
 
 

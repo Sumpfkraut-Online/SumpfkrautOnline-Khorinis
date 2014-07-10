@@ -55,11 +55,7 @@ namespace GUC.Server.Scripting.Objects
 
         public void setAmount(int amount)
         {
-            ProtoItem.Amount = amount;
-            if (ProtoItem.Amount < 0)
-            {
-                ProtoItem.Amount = 0;
-            }
+            ProtoItem.Amount = (amount > 0) ? amount : 0;
 
             if (ProtoItem.Amount == 0)
             {

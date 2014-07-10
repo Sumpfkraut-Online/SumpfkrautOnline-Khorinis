@@ -25,6 +25,8 @@ namespace GUC.Server.Scripts.Items.Keys
             Visual = "ItKe_Lockpick.3ds";
             Description = Name;
 
+            IsLockPick = true;
+
             CreateItemInstance();
         }
     }

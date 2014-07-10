@@ -48,14 +48,14 @@ namespace GUC.Options
 
         public static ClientOptions Load(String name)
         {
-            ClientOptions Kunde1 = null;
+            ClientOptions co = null;
             using(Stream fileStream = new FileStream(name, FileMode.Open))
             {
                 XmlSerializer ser = new XmlSerializer(typeof(ClientOptions));
-                Kunde1 = (ClientOptions)ser.Deserialize(fileStream);
+                co = (ClientOptions)ser.Deserialize(fileStream);
             }
 
-            return Kunde1;
+            return co;
         }
 
         public static ClientOptions Load()

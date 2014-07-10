@@ -73,13 +73,38 @@ namespace GUC.WorldObjects
             {
                 if (value == null)
                 {
+#if D_SERVER
+                    if (this.Map != null)
+                    {
+                        sWorld.getWorld(this.Map).setVobPosition(this.pos, null, this);
+                    }
+#endif
                     this.map = null;
                     return;
                 }
+
+                
+
                 String t = sWorld.getMapName(value);
                 if (t.Length == 0)
                     throw new ArgumentException("The map is not valid!");
+                if (t == this.Map)
+                    return;
+
+#if D_SERVER
+                if (this.Map != null)
+                {
+                    sWorld.getWorld(this.Map).setVobPosition(this.pos, null, this);
+                }
+#endif
                 map = t;
+
+#if D_SERVER
+                if (this.Map != null)
+                {
+                    sWorld.getWorld(this.Map).setVobPosition(null, this.pos, this);
+                }
+#endif
             }
         }
 

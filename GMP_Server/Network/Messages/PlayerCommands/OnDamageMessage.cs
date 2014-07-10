@@ -42,14 +42,14 @@ namespace GUC.Server.Network.Messages.PlayerCommands
                 stream.Read(out fallDownDistanceY);
             
             NPCProto vicProto = (NPCProto)sWorld.VobDict[victim];
-            NPCProto attProto = null;
+            Vob attProto = null;
 
-            Scripting.Objects.Character.NPCProto attackerScriptProto = null;
+            Scripting.Objects.Vob attackerScriptProto = null;
 
             if (attacker != 0)
             {
-                attProto = (NPCProto)sWorld.VobDict[attacker];
-                attackerScriptProto = attProto.ScriptingNPC;
+                attProto = sWorld.VobDict[attacker];
+                attackerScriptProto = attProto.ScriptingVob;
             }
 
             Item weaponIt = null;
@@ -75,7 +75,7 @@ namespace GUC.Server.Network.Messages.PlayerCommands
             Write(vicProto, (DamageType)damageMode, locHit, flydir, attProto, weaponMode, spell, weaponIt, fallDownDistanceY, packet.guid);
         }
 
-        public static void Write(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, NPCProto attacker, int weaponMode, Spell spellID, Item weapon, float fallDownDistanceY, AddressOrGUID guidExclude)
+        public static void Write(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, Vob attacker, int weaponMode, Spell spellID, Item weapon, float fallDownDistanceY, AddressOrGUID guidExclude)
         {
             BitStream stream = Program.server.sendBitStream;
             stream.Reset();

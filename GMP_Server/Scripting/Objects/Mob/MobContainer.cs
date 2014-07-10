@@ -56,6 +56,11 @@ namespace GUC.Server.Scripting.Objects.Mob
 
         public Item addItem(ItemInstance iteminstance, int amount)
         {
+            if (iteminstance == null)
+                throw new ArgumentNullException("Instance can't be null!");
+            if (amount <= 0)
+                throw new ArgumentException("amount can't be 0 or lower!");
+
             if (iteminstance.itemInstances.Flags.HasFlag(Flags.ITEM_MULTI))
             {
                 Item wIT = null;

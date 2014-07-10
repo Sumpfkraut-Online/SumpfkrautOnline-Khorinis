@@ -43,6 +43,7 @@ namespace GUC.Server.Network.Messages
             }
             else if (gmT == GuiMessageType.ButtonPressed)
             {
+                
                 stream.Read(out viewID);
 
                 View v = getViewFromList(viewID);

@@ -19,6 +19,8 @@ namespace GUC.Network.Messages.MobInterCommands
             byte mobInterTypeInt = 0;
             char mobInterKey = '0';
 
+            short startChangeState0 = 0, startChangeState1 = 1;
+
             stream.Read(out mobInterTypeInt);
             stream.Read(out playerID);
             stream.Read(out vobID);
@@ -28,6 +30,10 @@ namespace GUC.Network.Messages.MobInterCommands
             if (mobInterFlags.HasFlag(MobInterNetworkFlags.PickLock))
                 stream.Read(out mobInterKey);
 
+            if (mobInterFlags.HasFlag(MobInterNetworkFlags.StartStateChange)){
+                stream.Read(out startChangeState0);
+                stream.Read(out startChangeState1);
+            }
 
             if (playerID == 0 || !sWorld.VobDict.ContainsKey(playerID))
                 throw new Exception("Player not found!");
@@ -59,13 +65,13 @@ namespace GUC.Network.Messages.MobInterCommands
                 {
                     oCMobInter mI = new oCMobInter(process, mob.Address);
 
-                    mI.GetModel().StartAnimation("T_S1_2_S0");
+                    //mI.GetModel().StartAnimation("T_S0_2_S1");
 
-                    mI.OnTrigger(new zCVob(process, 0), new zCVob(process, player.Address));
-                    mI.State = 1;
+                    mI.OnTrigger(new zCVob(process, mI.Address), new zCVob(process, player.Address));
+                    //mI.State = 1;
                     
                     
-                    mI.StateAniID = mI.GetModel().GetAniIDFromAniName("S_S1");
+                    //mI.StateAniID = mI.GetModel().GetAniIDFromAniName("S_S1");
 
 
                 }
@@ -76,12 +82,12 @@ namespace GUC.Network.Messages.MobInterCommands
                 if (mob.Address != 0)
                 {
                     oCMobInter mI = new oCMobInter(process, mob.Address);
-                    mI.GetModel().StartAnimation("T_S0_2_S1");
-                    mI.OnUnTrigger(new zCVob(process, 0), new zCVob(process, player.Address));
-                    mI.State = 0;
+                    //mI.GetModel().StartAnimation("T_S1_2_S0");
+                    mI.OnUnTrigger(new zCVob(process, mI.Address), new zCVob(process, player.Address));
+                    //mI.State = 0;
                     
                     
-                    mI.StateAniID = mI.GetModel().GetAniIDFromAniName("S_S0");
+                    //mI.StateAniID = mI.GetModel().GetAniIDFromAniName("S_S0");
                     //mI.StateAniID = mI.GetModel().
                 }
             }
@@ -97,6 +103,14 @@ namespace GUC.Network.Messages.MobInterCommands
                 if (mob.Address != 0)
                 {
                     new oCMobInter(process, mob.Address).StopInteraction(new oCNpc(process, player.Address));
+                }
+            }
+            else if (mobInterFlags == MobInterNetworkFlags.StartStateChange)
+            {
+                if (mob.Address != 0)
+                {
+                    oCMobInter mI = new oCMobInter(process, mob.Address);
+                    mI.StartStateChange(new oCNpc(process, player.Address), startChangeState0, startChangeState1);
                 }
             }
         }

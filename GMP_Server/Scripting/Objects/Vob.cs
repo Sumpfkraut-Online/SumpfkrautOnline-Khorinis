@@ -81,7 +81,7 @@ namespace GUC.Server.Scripting.Objects
             if (direction == null)
                 direction = new Vec3f();
             GUC.WorldObjects.sWorld.getWorld(world).addVob(this.vob);
-            vob.IsSpawned = true;
+            //vob.IsSpawned = true;
             this.vob.Position = position;
             this.vob.Direction = direction;
 

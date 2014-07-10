@@ -23,16 +23,7 @@ namespace GUC.Network.Messages.NpcCommands
             if (!(vob is NPCProto))
                 throw new Exception("Vob is not an NPCProto!");
 
-            ((NPCProto)vob).hideName = invisible;
-
-            if (vob.Address != 0)
-            {
-                oCNpc npc = new oCNpc(Process.ThisProcess(), vob.Address);
-                if (invisible)
-                    npc.Name.Set("");
-                else
-                    npc.Name.Set(((NPCProto)vob).Name);
-            }
+            ((NPCProto)vob).setInvisible( invisible );
         }
     }
 }
