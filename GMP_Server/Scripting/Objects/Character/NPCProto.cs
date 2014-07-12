@@ -7,10 +7,11 @@ using GUC.Enumeration;
 using GUC.Types;
 using GUC.WorldObjects;
 using GUC.Network;
+using System.Collections;
 
 namespace GUC.Server.Scripting.Objects.Character
 {
-    public class NPCProto : Vob
+    public class NPCProto : Vob, IEnumerable
     {
         #region constants
         public const String BODYMESH_MALE = "hum_body_Naked0";
@@ -813,6 +814,21 @@ namespace GUC.Server.Scripting.Objects.Character
             return itemList;
         }
 
+        public IEnumerator GetEnumerator()
+        {
+            foreach (GUC.WorldObjects.Item item in proto.ItemList)
+            {
+                yield return item.ScriptingProto;
+            }
+        }
+
+        public int ItemCount { get { return proto.ItemList.Count; } }
+
+        public Item this[int i]
+        {
+            get { return proto.ItemList[i].ScriptingProto; }
+        }
+
 
 
         public Item addItem(String instance, int amount)
@@ -900,7 +916,7 @@ namespace GUC.Server.Scripting.Objects.Character
             WorldObjects.Item objItem = (weapon == null) ? null : weapon.ProtoItem;
             GUC.Server.Network.Messages.PlayerCommands.OnDamageMessage.Write(victim.proto, damageMode, hitLoc, flyDir, this.proto, weaponMode, objSpell, objItem, fallDownDistanceY, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS);
 
-            NPCProto.OnPlayerDamages(victim, (DamageType)damageMode, hitLoc, flyDir, this, weaponMode, spell, weapon, fallDownDistanceY);
+            NPCProto.isOnDamage(victim, (DamageType)damageMode, hitLoc, flyDir, this, weaponMode, spell, weapon, fallDownDistanceY);
 
         }
 
@@ -1385,61 +1401,63 @@ namespace GUC.Server.Scripting.Objects.Character
         #endregion
 
 
-
-
-        public event GUC.Server.Scripting.Events.PlayerDamageEventHandler OnDamaged;
-        internal void OnDamage(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, Vob attacker, int weaponMode, Spell spellID, Item weapon, float fallDownDistanceY)
+        #region Damage
+        public event GUC.Server.Scripting.Events.PlayerDamageEventHandler OnDamage;
+        internal void iOnDamage(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, Vob attacker, int weaponMode, Spell spellID, Item weapon, float fallDownDistanceY)
         {
-            if (OnDamaged != null)
-                OnDamaged(victim, damageMode, hitLoc, flyDir, attacker, weaponMode, spellID, weapon, fallDownDistanceY);
+            if (OnDamage != null)
+                OnDamage(victim, damageMode, hitLoc, flyDir, attacker, weaponMode, spellID, weapon, fallDownDistanceY);
         }
 
+        public static event Events.PlayerDamageEventHandler sOnDamage;
+        internal static void isOnDamage(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, Vob attacker, int weaponMode, Spell spellID, Item weapon, float fallDownDistanceY)
+        {
+            victim.iOnDamage(victim, damageMode, hitLoc, flyDir, attacker, weaponMode, spellID, weapon, fallDownDistanceY);
+            if (sOnDamage != null)
+                sOnDamage(victim, damageMode, hitLoc, flyDir, attacker, weaponMode, spellID, weapon, fallDownDistanceY);
+        }
+
+
+        #endregion
+
+        #region TakeItem
         public event GUC.Server.Scripting.Events.PlayerItemEventHandler OnTakeItem;
-        internal void OnItemTaked(NPCProto npc, Item item, int amount)
+        internal void iOnTakeItem(NPCProto npc, Item item, int amount)
         {
             if (OnTakeItem != null)
                 OnTakeItem(npc, item, amount);
         }
 
+        public static event GUC.Server.Scripting.Events.PlayerItemEventHandler sOnTakeItem;
+        internal static void OnItemTakes(NPCProto npc, Item item, int amount)
+        {
+            npc.iOnTakeItem(npc, item, amount);
+            if (sOnTakeItem != null)
+                sOnTakeItem(npc, item, amount);
+        }
+        #endregion
+
+        #region DropItem
         public event GUC.Server.Scripting.Events.PlayerItemEventHandler OnDropItem;
-        internal void OnItemDroped(NPCProto npc, Item item, int amount)
+        internal void iOnDropItem(NPCProto npc, Item item, int amount)
         {
             if (OnDropItem != null)
                 OnDropItem(npc, item, amount);
         }
 
+        public static event GUC.Server.Scripting.Events.PlayerItemEventHandler sOnDropItem;
+        internal static void isOnDropItem(NPCProto npc, Item item, int amount)
+        {
+            npc.iOnDropItem(npc, item, amount);
+            if (sOnDropItem != null)
+                sOnDropItem(npc, item, amount);
+        }
         #endregion
-        #region Static Events:
-
-        public static event Events.PlayerDamageEventHandler OnDamages;
-
-        internal static void OnPlayerDamages(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, Vob attacker, int weaponMode, Spell spellID, Item weapon, float fallDownDistanceY)
-        {
-            victim.OnDamage(victim, damageMode, hitLoc, flyDir, attacker, weaponMode, spellID, weapon,  fallDownDistanceY);
-            if (OnDamages != null)
-                OnDamages(victim, damageMode, hitLoc, flyDir, attacker, weaponMode, spellID, weapon, fallDownDistanceY);
-        }
 
 
-        public static event GUC.Server.Scripting.Events.PlayerItemEventHandler OnTakesItem;
-        internal static void OnItemTakes(NPCProto npc, Item item, int amount)
-        {
-            npc.OnItemTaked(npc, item, amount);
-            if (OnTakesItem != null)
-                OnTakesItem(npc, item, amount);
-        }
-
-        public static event GUC.Server.Scripting.Events.PlayerItemEventHandler OnDropsItem;
-        internal static void OnItemDrops(NPCProto npc, Item item, int amount)
-        {
-            npc.OnItemDroped(npc, item, amount);
-            if (OnDropsItem != null)
-                OnDropsItem(npc, item, amount);
-        }
 
 
         
-
 
         #endregion
 

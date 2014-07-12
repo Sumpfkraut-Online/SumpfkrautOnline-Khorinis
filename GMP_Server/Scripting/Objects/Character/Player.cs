@@ -259,6 +259,23 @@ namespace GUC.Server.Scripting.Objects.Character
                 Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
         }
 
+
+        public void setWorld(String world)
+        {
+            world = WorldObjects.sWorld.getMapName(world);            
+
+            BitStream stream = Program.server.sendBitStream;
+            stream.Reset();
+
+            stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
+            stream.Write((byte)NetworkIDS.ChangeWorldMessage);
+            stream.Write(proto.ID);
+            stream.Write(world);
+
+            using (RakNetGUID guid = this.Proto.GUID)
+                Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+        }
+
         #region PlayerKeyEvent
         public static event Events.PlayerKeyEventHandler sPlayerKeyEvent;
         public event Events.PlayerKeyEventHandler PlayerKeyEvent;

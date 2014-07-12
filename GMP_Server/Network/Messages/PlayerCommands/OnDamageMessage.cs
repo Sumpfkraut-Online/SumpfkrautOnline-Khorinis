@@ -71,7 +71,7 @@ namespace GUC.Server.Network.Messages.PlayerCommands
 
             }
 
-            Scripting.Objects.Character.NPCProto.OnPlayerDamages(vicProto.ScriptingNPC, (DamageType)damageMode, locHit, flydir, attackerScriptProto, weaponMode, scriptSpell, weaponScriptItem, fallDownDistanceY);
+            Scripting.Objects.Character.NPCProto.isOnDamage(vicProto.ScriptingNPC, (DamageType)damageMode, locHit, flydir, attackerScriptProto, weaponMode, scriptSpell, weaponScriptItem, fallDownDistanceY);
             Write(vicProto, (DamageType)damageMode, locHit, flydir, attProto, weaponMode, spell, weaponIt, fallDownDistanceY, packet.guid);
         }
 

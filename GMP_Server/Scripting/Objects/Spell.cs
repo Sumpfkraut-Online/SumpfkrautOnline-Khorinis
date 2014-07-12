@@ -120,6 +120,8 @@ namespace GUC.Server.Scripting.Objects
         public int[] ChargeMana { get { return spell.processMana; } protected set { spell.processMana = value; } }
         public int Mana { get { return spell.processMana[0]; } protected set { spell.processMana = new int[]{value}; } }
 
+
+        #region Events
         #region OnCastSpell
         public event GUC.Server.Scripting.Events.CastSpell OnCastSpell;
         internal void iOnCastSpell(NPCProto caster, Spell spell, Vob target)
@@ -128,6 +130,7 @@ namespace GUC.Server.Scripting.Objects
                 OnCastSpell(caster, spell, target);
         }
 
+        #endregion
         #endregion
     }
 }

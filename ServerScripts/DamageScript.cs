@@ -26,8 +26,8 @@ namespace GUC.Server.Scripts
 		public static void Init()
 		{
             Logger.log(Logger.LogLevel.INFO, "################## Initalise DamageScript #################");
-
-			NPCProto.OnDamages += new Events.PlayerDamageEventHandler(OnDamage);
+            
+			NPCProto.sOnDamage += new Events.PlayerDamageEventHandler(OnDamage);
 		}
 
 		

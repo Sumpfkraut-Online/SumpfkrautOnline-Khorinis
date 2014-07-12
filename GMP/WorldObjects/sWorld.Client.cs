@@ -64,6 +64,9 @@ namespace GUC.WorldObjects
         public static Int32 hook_StartChangeLevel(String message)
         {
             try{
+                if (!Player.Hero.IsSpawned)
+                    return 0;
+
 
                 lastWorldName = sWorld.getMapName(oCGame.Game(Process.ThisProcess()).World.WorldFileName.Value); ;
                 sWorld.getWorld(lastWorldName).RemoveAllObjects();
@@ -79,6 +82,10 @@ namespace GUC.WorldObjects
         {
             try
             {
+                if (!Player.Hero.IsSpawned)
+                    return 0;
+
+
                 Process process = Process.ThisProcess();
                 String levelname = sWorld.getMapName(oCGame.Game(process).World.WorldFileName.Value);
 

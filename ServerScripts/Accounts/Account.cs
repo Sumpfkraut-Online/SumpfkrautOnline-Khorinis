@@ -74,7 +74,7 @@ namespace GUC.Server.Scripts.Accounts
 					if (!sdrITM.HasRows) {
 						return false;
 					}
-
+                    
 					sdrITM.Read();
 					accountID = Convert.ToInt32(sdrITM["id"]);
 

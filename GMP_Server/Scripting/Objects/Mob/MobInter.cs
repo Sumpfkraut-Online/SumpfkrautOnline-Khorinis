@@ -55,70 +55,76 @@ namespace GUC.Server.Scripting.Objects.Mob
 
 
         #region Events
-        public event GUC.Server.Scripting.Events.MobInterEventHandler OnTriggered;
-        internal void OnTrigger(MobInter mobInter, NPCProto npc)
+
+        #region OnTrigger
+        public event GUC.Server.Scripting.Events.MobInterEventHandler OnTrigger;
+        internal void iOnTrigger(MobInter mobInter, NPCProto npc)
         {
-            if (OnTriggered != null)
-                OnTriggered(mobInter, npc);
+            if (OnTrigger != null)
+                OnTrigger(mobInter, npc);
         }
 
-        public event GUC.Server.Scripting.Events.MobInterEventHandler OnUnTriggered;
-        internal void OnUnTrigger(MobInter mobInter, NPCProto npc)
+        public static event Events.MobInterEventHandler sOnTrigger;
+        internal static void isOnTrigger(MobInter mobInter, NPCProto npc)
         {
-            if (OnUnTriggered != null)
-                OnUnTriggered(mobInter, npc);
+            mobInter.iOnTrigger(mobInter, npc);
+            if (sOnTrigger != null)
+                sOnTrigger(mobInter, npc);
+        }
+        #endregion
+
+        #region OnUnTrigger
+        public event GUC.Server.Scripting.Events.MobInterEventHandler OnUnTrigger;
+        internal void iOnUnTrigger(MobInter mobInter, NPCProto npc)
+        {
+            if (OnUnTrigger != null)
+                OnUnTrigger(mobInter, npc);
         }
 
+        public static event Events.MobInterEventHandler sOnUnTrigger;
+        internal static void isOnUnTrigger(MobInter mobInter, NPCProto npc)
+        {
+            mobInter.iOnUnTrigger(mobInter, npc);
+            if (sOnUnTrigger != null)
+                sOnUnTrigger(mobInter, npc);
+        }
+        #endregion
+
+        #region OnStartInteraction
         public event GUC.Server.Scripting.Events.MobInterEventHandler OnStartInteraction;
-        internal void OnMobStartInteraction(MobInter mobInter, NPCProto npc)
+        internal void iOnStartInteraction(MobInter mobInter, NPCProto npc)
         {
             if (OnStartInteraction != null)
                 OnStartInteraction(mobInter, npc);
         }
 
+        public static event Events.MobInterEventHandler sOnStartInteraction;
+        internal static void isOnStartInteraction(MobInter mobInter, NPCProto npc)
+        {
+            mobInter.iOnStartInteraction(mobInter, npc);
+            if (sOnStartInteraction != null)
+                sOnStartInteraction(mobInter, npc);
+        }
+        #endregion
+
+        #region OnStopInteraction
         public event GUC.Server.Scripting.Events.MobInterEventHandler OnStopInteraction;
-        internal void OnMobStopInteraction(MobInter mobInter, NPCProto npc)
+        internal void iOnStopInteraction(MobInter mobInter, NPCProto npc)
         {
             if (OnStopInteraction != null)
                 OnStopInteraction(mobInter, npc);
         }
 
+        public static event Events.MobInterEventHandler sOnStopInteraction;
+        internal static void isOnStopInteraction(MobInter mobInter, NPCProto npc)
+        {
+            mobInter.iOnStopInteraction(mobInter, npc);
+            if (sOnStopInteraction != null)
+                sOnStopInteraction(mobInter, npc);
+        }
         #endregion
-        #region Static Events:
 
-        public static event Events.MobInterEventHandler OnTriggers;
-        internal static void OnMobInterTriggers(MobInter mobInter, NPCProto npc)
-        {
-            mobInter.OnTrigger(mobInter, npc);
-            if (OnTriggers != null)
-                OnTriggers(mobInter, npc);
-        }
-
-        public static event Events.MobInterEventHandler OnUnTriggers;
-        internal static void OnMobInterUnTriggers(MobInter mobInter, NPCProto npc)
-        {
-            mobInter.OnUnTrigger(mobInter, npc);
-            if (OnTriggers != null)
-                OnUnTriggers(mobInter, npc);
-        }
-
-
-        public static event Events.MobInterEventHandler OnStartInteractions;
-        internal static void OnMobStartInteractions(MobInter mobInter, NPCProto npc)
-        {
-            mobInter.OnMobStartInteraction(mobInter, npc);
-            if (OnStartInteractions != null)
-                OnStartInteractions(mobInter, npc);
-        }
-
-        public static event Events.MobInterEventHandler OnStopInteractions;
-        internal static void OnMobStopInteractions(MobInter mobInter, NPCProto npc)
-        {
-            mobInter.OnMobStopInteraction(mobInter, npc);
-            if (OnStopInteractions != null)
-                OnStopInteractions(mobInter, npc);
-        }
-
+        
 
         #endregion
 

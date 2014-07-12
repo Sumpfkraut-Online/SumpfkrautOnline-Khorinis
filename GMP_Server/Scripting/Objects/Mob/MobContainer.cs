@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using RakNet;
 using GUC.Enumeration;
+using System.Collections;
 
 namespace GUC.Server.Scripting.Objects.Mob
 {
-    public class MobContainer : MobLockable
+    public class MobContainer : MobLockable, IEnumerable
     {
         internal MobContainer(GUC.WorldObjects.Mobs.MobContainer vob)
             : base(vob)
@@ -99,6 +100,30 @@ namespace GUC.Server.Scripting.Objects.Mob
 
             
             return i;
+        }
+
+        public void removeItem(Item item)
+        {
+            if (item.ProtoItem.Container != this.Proto)
+                throw new ArgumentException("Item is not in the container");
+
+            item.Amount = 0;
+        }
+
+
+
+        public IEnumerator GetEnumerator()
+        {
+            foreach(GUC.WorldObjects.Item item in Proto.itemList){
+                yield return item.ScriptingProto;
+            }
+        }
+
+        public int ItemCount { get { return Proto.itemList.Count; } }
+
+        public Item this[int i]
+        {
+            get { return Proto.itemList[i].ScriptingProto; }
         }
     }
 }

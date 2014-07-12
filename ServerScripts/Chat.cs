@@ -74,11 +74,11 @@ namespace GUC.Server.Scripts
 			Player.sOnPlayerDisconnects += new Events.PlayerEventHandler(disconnect);
             
 
-            MobInter.OnStartInteractions += new Events.MobInterEventHandler(startInteract);
-            MobInter.OnStopInteractions += new Events.MobInterEventHandler(stopInteract);
+            MobInter.sOnStartInteraction += new Events.MobInterEventHandler(startInteract);
+            MobInter.sOnStopInteraction += new Events.MobInterEventHandler(stopInteract);
 
-            MobInter.OnTriggers += new Events.MobInterEventHandler(trigger);
-            MobInter.OnUnTriggers += new Events.MobInterEventHandler(untrigger);
+            MobInter.sOnTrigger += new Events.MobInterEventHandler(trigger);
+            MobInter.sOnUnTrigger += new Events.MobInterEventHandler(untrigger);
 
 
 

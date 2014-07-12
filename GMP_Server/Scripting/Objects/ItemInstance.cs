@@ -313,6 +313,7 @@ namespace GUC.Server.Scripting.Objects
 
 
 
+        #region Events
 
         #region OnEquip
         public event GUC.Server.Scripting.Events.NPCEquipEventHandler OnEquip;
@@ -342,6 +343,7 @@ namespace GUC.Server.Scripting.Objects
 
         #endregion
 
+        #endregion
 
     }
 }
