@@ -14,9 +14,6 @@ namespace GUC.Options
         public String name = "Spieler 1";
         public String lang = "de";
         public ushort port = 9054;
-        public byte keyToogleChat = 0x73;
-        public byte killSummoned = 0x4B;
-        public byte keySprint = 0x12;
 
 
         public bool autoupdate = false;
@@ -26,8 +23,6 @@ namespace GUC.Options
         public int fps = 30;
 
         public bool startWindowed = false;
-
-        public bool allowModules = true;
 
         public bool SaveMode = false;
 

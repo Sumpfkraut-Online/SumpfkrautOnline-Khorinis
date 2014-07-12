@@ -57,20 +57,20 @@ namespace GUC.Server.Network.Messages.MobInterCommands
             else if (mobInterFlags == MobInterNetworkFlags.OnTrigger)
             {
                 mob.State = 1;
-                Scripting.Objects.Mob.MobInter.OnMobInterTriggers((Scripting.Objects.Mob.MobInter)mob.ScriptingVob, player.ScriptingNPC);
+                Scripting.Objects.Mob.MobInter.isOnTrigger((Scripting.Objects.Mob.MobInter)mob.ScriptingVob, player.ScriptingNPC);
             }
             else if (mobInterFlags == MobInterNetworkFlags.OnUnTrigger)
             {
                 mob.State = 0;
-                Scripting.Objects.Mob.MobInter.OnMobInterUnTriggers((Scripting.Objects.Mob.MobInter)mob.ScriptingVob, player.ScriptingNPC);
+                Scripting.Objects.Mob.MobInter.isOnUnTrigger((Scripting.Objects.Mob.MobInter)mob.ScriptingVob, player.ScriptingNPC);
             }
             else if (mobInterFlags == MobInterNetworkFlags.StartInteraction)
             {
-                Scripting.Objects.Mob.MobInter.OnMobStartInteractions((Scripting.Objects.Mob.MobInter)mob.ScriptingVob, player.ScriptingNPC);
+                Scripting.Objects.Mob.MobInter.isOnStartInteraction((Scripting.Objects.Mob.MobInter)mob.ScriptingVob, player.ScriptingNPC);
             }
             else if (mobInterFlags == MobInterNetworkFlags.StopInteraction)
             {
-                Scripting.Objects.Mob.MobInter.OnMobStopInteractions((Scripting.Objects.Mob.MobInter)mob.ScriptingVob, player.ScriptingNPC);
+                Scripting.Objects.Mob.MobInter.isOnStopInteraction((Scripting.Objects.Mob.MobInter)mob.ScriptingVob, player.ScriptingNPC);
             }
 
             

@@ -33,7 +33,7 @@ namespace GUC.Server.Network.Messages.PlayerCommands
             Item itm = (Item)item;
             proto.DropItem(itm);
 
-            Scripting.Objects.Character.NPCProto.OnItemDrops(proto.ScriptingNPC, (Scripting.Objects.Item)itm.ScriptingProto, itm.Amount);
+            Scripting.Objects.Character.NPCProto.isOnDropItem(proto.ScriptingNPC, (Scripting.Objects.Item)itm.ScriptingProto, itm.Amount);
 
             Write(proto, itm, packet.guid);
         }

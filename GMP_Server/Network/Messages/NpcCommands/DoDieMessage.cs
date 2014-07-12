@@ -29,7 +29,7 @@ namespace GUC.Server.Network.Messages.NpcCommands
 
             victim.ScriptingNPC.HP = 0;
 
-            Scripting.Objects.Character.NPCProto.OnPlayerDamages(victim.ScriptingNPC, DamageType.DAM_POINT, new Vec3f(), null, attacker.ScriptingNPC, attacker.WeaponMode, null, weapon, 0);
+            Scripting.Objects.Character.NPCProto.isOnDamage(victim.ScriptingNPC, DamageType.DAM_POINT, new Vec3f(), null, attacker.ScriptingNPC, attacker.WeaponMode, null, weapon, 0);
         }
     }
 }

@@ -7,10 +7,11 @@ using GUC.WorldObjects;
 using GUC.Types;
 using RakNet;
 using GUC.Enumeration;
+using System.Collections;
 
 namespace GUC.Server.Scripting.Objects
 {
-    public class World
+    public class World : IEnumerable
     {
         public enum WeatherType
         {
@@ -111,6 +112,67 @@ namespace GUC.Server.Scripting.Objects
             }
             return arrayList;
         }
+
+
+        public IEnumerator GetEnumerator()
+        {
+            foreach (GUC.WorldObjects.Vob item in world.VobList)
+            {
+                yield return item.ScriptingVob;
+            }
+        }
+        public System.Collections.IEnumerable VobIterator()
+        {
+            return VobIterator(0, VobCount);
+        }
+
+        public System.Collections.IEnumerable VobIterator(int start, int end)
+        {
+            for (int i = start; i < end; i++)
+            {
+                WorldObjects.Vob vob = world.VobList[i];
+                yield return vob.ScriptingVob;
+            }
+        }
+
+        public System.Collections.IEnumerable NPCIterator()
+        {
+            return NPCIterator(0, NPCCount);
+        }
+        public System.Collections.IEnumerable NPCIterator(int start, int end)
+        {
+            for (int i = start; i < end; i++)
+            {
+                WorldObjects.Character.NPCProto vob = world.NPCList[i];
+                yield return vob.ScriptingNPC;
+            }
+        }
+
+        public System.Collections.IEnumerable ItemIterator()
+        {
+            return ItemIterator(0, ItemCount);
+        }
+        public System.Collections.IEnumerable ItemIterator(int start, int end)
+        {
+            for (int i = start; i < end; i++)
+            {
+                WorldObjects.Item vob = world.ItemList[i];
+                yield return vob.ScriptingProto;
+            }
+        }
+
+        public int ItemCount { get { return world.ItemList.Count; } }
+        public int VobCount { get { return world.VobList.Count; } }
+        public int NPCCount { get { return world.NPCList.Count; } }
+
+        public Vob this[int i]
+        {
+            get { return world.VobList[i].ScriptingVob; }
+        }
+
+
+
+
 
         /// <summary>
         /// Adds an Item to the world
