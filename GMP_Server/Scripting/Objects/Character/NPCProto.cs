@@ -1152,7 +1152,7 @@ namespace GUC.Server.Scripting.Objects.Character
             stream.Write(anim);
             stream.Write((byte)0);
 
-            this.proto.SendToAreaPlayers(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED);
+            this.proto.SendToAreaPlayersAndPlayer(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED);
             //Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
