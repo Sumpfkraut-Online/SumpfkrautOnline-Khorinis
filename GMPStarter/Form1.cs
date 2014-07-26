@@ -60,7 +60,7 @@ namespace GMPStarter
                 zLogLevel.Value = co.loglevel;
         }
         
-        private void mBStart_Click(object sender, EventArgs e)
+        public void mBStart_Click(object sender, EventArgs e)
         {
             if (!Datei2MD5("../Gothic2.exe", "3c436bd199caaaa64e9736e3cc1c9c32"))// &&  !Datei2MD5("../Gothic2.exe", "b75d03422af54286f1f4ed846b8fd4b8")
             {

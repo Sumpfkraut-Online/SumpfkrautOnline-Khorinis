@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enumeration\GothicKeys.cs" />
+    <Compile Include="Enumeration\GuiFlags.cs" />
     <Compile Include="Enumeration\Item_Flags.cs" />
     <Compile Include="Enumeration\NetworkIDS.cs" />
     <Compile Include="Enumeration\NPCFlags.cs" />

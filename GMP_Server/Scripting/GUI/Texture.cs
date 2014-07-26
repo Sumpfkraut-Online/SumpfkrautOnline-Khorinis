@@ -7,6 +7,7 @@ using RakNet;
 using GUC.Enumeration;
 using GUC.Network;
 using GUC.WorldObjects;
+using GUC.Server.Scripting.Objects.Character;
 
 namespace GUC.Server.Scripting.GUI
 {
@@ -14,6 +15,8 @@ namespace GUC.Server.Scripting.GUI
     {
         protected String tex = null;
         protected Vec2i size = new Vec2i();
+
+        protected GUIEvents enabledEvents = GUIEvents.None;
 
         public Texture(String tex)
             : this(tex, 0, 0, 0x2000, 0x2000)
@@ -32,16 +35,18 @@ namespace GUC.Server.Scripting.GUI
         { }
 
         public Texture(String tex, Vec2i pos, Vec2i size, Texture parent, bool isSingleUser, int singleUserID)
-            : this(tex, pos, size, parent, isSingleUser, singleUserID, true)
+            : this(tex, pos, size, parent, isSingleUser, singleUserID, GUIEvents.None, true)
         { }
 
-        protected Texture(String tex, Vec2i pos, Vec2i size, Texture parent, bool isSingleUser, int singleUserID, bool useCreate)
+        protected Texture(String tex, Vec2i pos, Vec2i size, Texture parent, bool isSingleUser, int singleUserID, GUIEvents evts, bool useCreate)
             : base(pos, isSingleUser, singleUserID, parent)
         {
             if (tex == null)
                 tex = "";
             this.tex = tex;
             this.size.set(size);
+
+            this.enabledEvents = evts;
 
             if(useCreate)
                 create(-1);
@@ -61,6 +66,8 @@ namespace GUC.Server.Scripting.GUI
             stream.Write(this.size);
             stream.Write(tex);
             stream.Write(ParentID);
+
+            stream.Write((int)enabledEvents);
 
             sendStream(to, stream);
 
@@ -110,5 +117,73 @@ namespace GUC.Server.Scripting.GUI
 
             sendStream(0, stream);
         }
+
+
+        #region Events
+
+        #region LeftClick
+        public event Events.TextureEventHandler OnLeftClick;
+        internal void iOnLeftClick(Texture sender, Player player)
+        {
+            if (OnLeftClick != null)
+            {
+                OnLeftClick(sender, player);
+            }
+        }
+
+        public static event Events.TextureEventHandler sOnLeftClick;
+        internal static void isOnLeftClick(Texture sender, Player player)
+        {
+            sender.iOnLeftClick(sender, player);
+            if (sOnLeftClick != null)
+            {
+                sOnLeftClick(sender, player);
+            }
+        }
+        #endregion
+
+        #region RightClick
+        public event Events.TextureEventHandler OnRightClick;
+        internal void iOnRightClick(Texture sender, Player player)
+        {
+            if (OnRightClick != null)
+            {
+                OnRightClick(sender, player);
+            }
+        }
+
+        public static event Events.TextureEventHandler sOnRightClick;
+        internal static void isOnRightClick(Texture sender, Player player)
+        {
+            sender.iOnRightClick(sender, player);
+            if (sOnRightClick != null)
+            {
+                sOnRightClick(sender, player);
+            }
+        }
+        #endregion
+
+        #region Hover
+        public event Events.TextureHoverEventHandler OnHover;
+        internal void iOnHover(Texture sender, Player player, bool hover)
+        {
+            if (OnHover != null)
+            {
+                OnHover(sender, player, hover);
+            }
+        }
+
+        public static event Events.TextureHoverEventHandler sOnHover;
+        internal static void isOnHover(Texture sender, Player player, bool hover)
+        {
+            sender.iOnHover(sender, player, hover);
+            if (sOnHover != null)
+            {
+                sOnHover(sender, player, hover);
+            }
+        }
+        #endregion
+
+        #endregion
     }
 }

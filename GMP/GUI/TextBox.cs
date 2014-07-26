@@ -20,7 +20,7 @@ namespace GUC.GUI
         textBox tB;
 
         Texture parent;
-        String font;
+        String font = "";
 
         ColorRGBA color = ColorRGBA.White;
 
@@ -29,13 +29,13 @@ namespace GUC.GUI
         {
             
             this.parent = parent;
-            this.font = font;
 
             //Creation:
             Process process = Process.ThisProcess();
 
             thisView = zCView.Create(Process.ThisProcess(), 0, 0, 0x2000, 0x2000);
             setFont(font);
+
             tB = new textBox(thisView, process);
             tB.setText(text);
             tB.resetKey = resetKey;
@@ -110,6 +110,7 @@ namespace GUC.GUI
             Process process = Process.ThisProcess();
             zString str = zString.Create(process, text);
             tB.vt = thisView.CreateText(position.X, position.Y, str);
+            
             str.Dispose();
 
             tB.vt.Timed = 0;
@@ -151,7 +152,7 @@ namespace GUC.GUI
 
 
             Process process = Process.ThisProcess();
-            zString str = zString.Create(process, this.font);
+            zString str = zString.Create(process, this.font.Trim().ToUpper());
             thisView.SetFont(str);
             str.Dispose();
 

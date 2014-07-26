@@ -24,6 +24,9 @@ namespace GUC.Server.Scripting
         public delegate void TextBoxMessageEventHandler(TextBox sender, Player player, String message);
         public delegate void ButtonEventHandler(Button sender, Player player);
 
+        public delegate void TextureEventHandler(Texture sender, Player player);
+        public delegate void TextureHoverEventHandler(Texture sender, Player player, bool hover);
+
 
         public delegate void UseItemEventHandler(NPCProto player, Item item, short state, short targetState);
 

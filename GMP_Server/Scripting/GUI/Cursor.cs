@@ -51,7 +51,7 @@ namespace GUC.Server.Scripting.GUI
         { }
 
         public Cursor(String tex, Vec2i pos, Vec2i size, Texture parent, bool isSingleUser, int singleUserID)
-            : base(tex, pos, size, parent, isSingleUser, singleUserID, false)
+            : base(tex, pos, size, parent, isSingleUser, singleUserID, GUIEvents.None, false)
         {
             create(-1);
         }

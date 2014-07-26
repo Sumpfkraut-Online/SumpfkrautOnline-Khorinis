@@ -102,6 +102,12 @@ namespace GUC.Enumeration
         CreateCursor,
         CreateButton,
 
+        /*List-Items:*/
+        CreateList,
+        CreateListText,
+        CreateListButton,
+        CreateListTextBox,
+
         SetTexture,
         SetSize,
 
@@ -119,7 +125,7 @@ namespace GUC.Enumeration
         MessageBoxAddLine,
 
         ButtonPressed,
-
+        GuiEvent,
     }
 
     public enum ContainerItemChanged : byte

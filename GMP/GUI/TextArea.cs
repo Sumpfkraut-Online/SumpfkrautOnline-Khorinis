@@ -20,8 +20,7 @@ namespace GUC.GUI
         textArea tA;
 
         Texture parent;
-        String font;
-
+        String font = "";
         ColorRGBA color = ColorRGBA.White;
 
         public TextArea(int id, String text, String font, Vec2i position, Vec2i size, Texture parent, ColorRGBA color, int resetKey, int startKey, int sendKey)
@@ -30,7 +29,6 @@ namespace GUC.GUI
             
             this.parent = parent;
             this.font = font;
-
             //Creation:
             Process process = Process.ThisProcess();
 

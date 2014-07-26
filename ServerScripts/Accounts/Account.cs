@@ -110,6 +110,7 @@ namespace GUC.Server.Scripts.Accounts
 				command.CommandText = "SELECT * FROM `account_hitchances` WHERE `accountID`=@accountID";
 				command.Parameters.AddWithValue("@accountID", accountID);
 				using(SQLiteDataReader sdrITM = command.ExecuteReader()) {
+                    
 					if(sdrITM.HasRows) {
 						while(sdrITM.Read()) {
 							player.setHitchances((NPCTalents)Convert.ToInt32(sdrITM["type"]), Convert.ToInt32(sdrITM["value"]));
@@ -134,6 +135,8 @@ namespace GUC.Server.Scripts.Accounts
             
 		}
 
+        
+        
 		public bool register(String name, String password)
 		{
 			if(existsName(name))
@@ -143,8 +146,7 @@ namespace GUC.Server.Scripts.Accounts
 			player.setSpawnInfos(@"NEWWORLD\NEWWORLD.ZEN", null, null);
 			player.HPMax = 10;
 			player.HP = 10;
-			
-			
+
 
 			using(SQLiteCommand command = new SQLiteCommand(Sqlite.getSqlite().connection)) {
 				command.CommandText = "INSERT INTO `account` (";

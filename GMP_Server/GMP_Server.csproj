@@ -95,6 +95,11 @@
     <Compile Include="Scripting\Events.cs" />
     <Compile Include="Scripting\GUI\Button.cs" />
     <Compile Include="Scripting\GUI\Cursor.cs" />
+    <Compile Include="Scripting\GUI\GuiList\List.cs" />
+    <Compile Include="Scripting\GUI\GuiList\ListButton.cs" />
+    <Compile Include="Scripting\GUI\GuiList\ListRow.cs" />
+    <Compile Include="Scripting\GUI\GuiList\ListText.cs" />
+    <Compile Include="Scripting\GUI\GuiList\ListTextBox.cs" />
     <Compile Include="Scripting\GUI\TextArea.cs" />
     <Compile Include="Scripting\GUI\MessagesBox.cs" />
     <Compile Include="Scripting\GUI\Text.cs" />

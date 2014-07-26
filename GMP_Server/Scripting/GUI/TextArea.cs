@@ -19,11 +19,11 @@ namespace GUC.Server.Scripting.GUI
         int resetButton = 0;
 
         public TextArea(String tex, int x, int y)
-            : this(tex, "Font_Old_20_White.TGA", x, y, 0x2000, 0x2000, 0, 0, 0, null, false, 0)
+            : this(tex, "FONT_DEFAULT.TGA", x, y, 0x2000, 0x2000, 0, 0, 0, null, false, 0)
         { }
 
         public TextArea(int x, int y, int width, int height)
-            : this("", "Font_Old_20_White.TGA", x, y, width, height, 0, 0, 0, null, false, 0)
+            : this("", "FONT_DEFAULT.TGA", x, y, width, height, 0, 0, 0, null, false, 0)
         { }
 
         public TextArea(String tex, String font, int x, int y)
@@ -43,7 +43,7 @@ namespace GUC.Server.Scripting.GUI
         { }
 
         public TextArea(int x, int y, int width, int height, int sendButton, int startWritingButton, int resetButton)
-            : this("", "Font_Old_20_White.TGA", x, y, width, height, sendButton, startWritingButton, resetButton, null, false, 0)
+            : this("", "FONT_DEFAULT.TGA", x, y, width, height, sendButton, startWritingButton, resetButton, null, false, 0)
         { }
 
         public TextArea(String tex, String font, int x, int y, int width, int height, int sendButton, int startWritingButton, int resetButton)

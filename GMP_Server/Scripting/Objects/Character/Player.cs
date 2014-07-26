@@ -400,6 +400,8 @@ namespace GUC.Server.Scripting.Objects.Character
             pl.iOnConnectionLost(pl);
             if (sOnConnectionLost != null)
                 sOnConnectionLost(pl);
+
+            
         }
 
         #endregion

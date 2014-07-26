@@ -66,7 +66,7 @@ namespace GUC.Server.Network
 
         public void Start(ushort port, ushort maxConnections, String pw)
         {
-            pw = "ver2.05" + pw;
+            pw = "ver2.06" + pw;
             SocketDescriptor socketDescriptor = new SocketDescriptor();
             socketDescriptor.port = port;
 

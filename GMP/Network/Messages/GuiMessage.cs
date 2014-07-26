@@ -73,14 +73,16 @@ namespace GUC.Network.Messages
                 Vec2i position, size;
                 string texture;
                 int parentID = 0;
+                int guiEvents = 0;
 
                 stream.Read(out viewID);
                 stream.Read(out position);
                 stream.Read(out size);
                 stream.Read(out texture);
                 stream.Read(out parentID);
+                stream.Read(out guiEvents);
 
-                Texture tex = new Texture(viewID, texture, position, size);
+                Texture tex = new Texture(viewID, texture, position, size, getTextureParentFromList(parentID), (GUIEvents)guiEvents);
                 viewList.Add(viewID, tex);
             }
             else if (gmT == GuiMessageType.CreateText)
@@ -178,20 +180,25 @@ namespace GUC.Network.Messages
             else if (gmT == GuiMessageType.CreateButton)
             {
                 Vec2i position, size;
-                string texture, text;
+                string texture, text, font;
                 int parentID = 0;
+                ColorRGBA color;
+                int guiEvents = 0;
 
                 stream.Read(out viewID);
                 stream.Read(out position);
                 stream.Read(out size);
                 stream.Read(out text);
                 stream.Read(out texture);
+                stream.Read(out font);
+                stream.Read(out color);
+                
                
                 stream.Read(out parentID);
+                stream.Read(out guiEvents);
 
 
-
-                Button tex = new Button(viewID, text, texture, position, size);
+                Button tex = new Button(viewID, text, texture, font, color, position, size, getTextureParentFromList(parentID), (GUIEvents)guiEvents);
                 viewList.Add(viewID, tex);
 
             }//Texture:
@@ -229,7 +236,7 @@ namespace GUC.Network.Messages
                 stream.Read(out text);
                 View v = getViewFromList(viewID);
 
-                if (!(v is Text) && !(v is TextBox) && !(v is TextArea))
+                if (!(v is Text) && !(v is TextBox) && !(v is TextArea) && !(v is Button))
                     throw new Exception("SetText works only with a text and textbox!: " + v);
 
                 if (v is Text)
@@ -246,6 +253,11 @@ namespace GUC.Network.Messages
                 {
                     TextArea tex = (TextArea)v;
                     tex.setText(text);
+                }
+                else if (v is Button)
+                {
+                    Button button = (Button)v;
+                    button.setText(text);
                 }
             }
             else if (gmT == GuiMessageType.SetTextFont)
