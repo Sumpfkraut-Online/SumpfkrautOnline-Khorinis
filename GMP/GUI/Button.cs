@@ -10,75 +10,90 @@ using WinApi;
 using GUC.Enumeration;
 using RakNet;
 using GUC.WorldObjects.Character;
+using Gothic.zClasses;
 
 namespace GUC.GUI
 {
-    public class Button : Texture, InputReceiver
+    public class Button : Texture
     {
-        protected String text;
-        public Button(int id, String text, String tex, Vec2i position, Vec2i size)
-            : base(id, tex, position, size)
+        String text = "";
+        String font = "";
+
+        zCViewText textView = null;
+        ColorRGBA color = ColorRGBA.White;
+
+
+        public Button(int id, String text, String tex, String font, ColorRGBA color, Vec2i position, Vec2i size, Texture parent, GUIEvents evts)
+            : base(id, tex, position, size, parent, evts)
+        {
+            setFont(font);
+            setText(text);
+            setColor(color);
+        }
+
+        public void setText(String text)
         {
             this.text = text;
 
-            if (this.text != null && this.text.Trim().Length != 0)
+            if (this.textView != null)
             {
-                zString str = zString.Create(Process.ThisProcess(), this.text);
-                zColor color = zColor.Create(Process.ThisProcess(), 255, 255, 255, 255);
-                view.PrintTimedCXY(str, -1, color);
-                str.Dispose();
-                color.Dispose();
-                
+                textView.Timed = 1;
+                textView.Timer = 0;
             }
+            createText();
         }
 
-        public override void show()
+        public void setColor(ColorRGBA color)
         {
-            base.show();
-            InputHooked.receivers.Add(this);
+            this.color.set(color);
 
-            
+            textView.Color.R = (byte)this.color.R;
+            textView.Color.G = (byte)this.color.G;
+            textView.Color.B = (byte)this.color.B;
+            textView.Color.A = (byte)this.color.A;
         }
 
-        public override void hide()
+        public void setFont(String font)
         {
-            base.hide();
-            InputHooked.receivers.Remove(this);
-        }
+            if (font == null)
+                return;
+            String oldfont = this.font;
+            this.font = font;
 
-
-
-
-
-        public void KeyReleased(int key)
-        {
-            
-        }
-
-        public void KeyPressed(int key)
-        {
-            if (key != (int)VirtualKeys.LeftButton)
+            if (oldfont.Trim().ToUpper() == font.Trim().ToUpper())
                 return;
 
-            if (this.position.X < Gothic.mClasses.Cursor.CursorX() && this.position.X + this.size.X > Gothic.mClasses.Cursor.CursorX()
-                && this.position.Y < Gothic.mClasses.Cursor.CursorY() && this.position.Y + this.size.Y > Gothic.mClasses.Cursor.CursorY())
-            {
-                RakNet.BitStream stream = Program.client.sentBitStream;
-                stream.Reset();
-                stream.Write((byte)DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                stream.Write((byte)NetworkIDS.GuiMessage);
-                stream.Write((byte)GuiMessageType.ButtonPressed);
 
-                stream.Write(Player.Hero.ID);
-                stream.Write(this.id);
 
-                Program.client.client.Send(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
-            }
-        }
 
-        public void wheelChanged(int steps)
-        {
+            Process process = Process.ThisProcess();
+            zString str = zString.Create(process, this.font);
+            view.SetFont(str);
+            str.Dispose();
+
+            
+            setText(text);
+            setColor(this.color);
             
         }
+
+        private void createText()
+        {
+            Process process = Process.ThisProcess();
+            zString str = zString.Create(process, this.text);
+            zColor c = zColor.Create(process, color.R, color.G, color.B, color.A);
+            textView = view.PrintTimedCXY_TV(str, -1, c);
+            str.Dispose();
+            c.Dispose();
+
+            textView.Timed = 0;
+            textView.Timer = -1;
+        }
+
+
+
+
+
+        
     }
 }

@@ -52,6 +52,38 @@ namespace GUC.Server.Network.Messages
                 Button button = (Button)v;
                 Button.OnButtonPress(button, (Scripting.Objects.Character.Player)pl.ScriptingNPC);
             }
+            else if (gmT == GuiMessageType.GuiEvent)
+            {
+                int guiEvent = 0;
+                stream.Read(out viewID);
+                stream.Read(out guiEvent);
+
+                GUIEvents evt = (GUIEvents)guiEvent;
+
+                View v = getViewFromList(viewID);
+
+
+                if (evt.HasFlag(GUIEvents.LeftClicked))
+                {
+                    if ((v is Button))
+                    {
+                        Button button = (Button)v;
+                        Button.OnButtonPress(button, (Scripting.Objects.Character.Player)pl.ScriptingNPC);
+                    }
+                    Texture tex = (Texture)v;
+                    Texture.isOnLeftClick(tex, (Scripting.Objects.Character.Player)pl.ScriptingNPC);
+                }
+                else if (evt.HasFlag(GUIEvents.RightClicked))
+                {
+                    Texture.isOnRightClick((Texture)v, (Scripting.Objects.Character.Player)pl.ScriptingNPC);
+                }
+                else if (evt.HasFlag(GUIEvents.Hover))
+                {
+                    bool hover = false;
+                    stream.Read(out hover);
+                    Texture.isOnHover((Texture)v, (Scripting.Objects.Character.Player)pl.ScriptingNPC, hover);
+                }
+            }
         }
     }
 }

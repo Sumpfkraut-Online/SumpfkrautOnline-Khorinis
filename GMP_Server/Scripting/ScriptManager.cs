@@ -65,6 +65,7 @@ namespace GUC.Server.Scripting
             CompilerParameters.ReferencedAssemblies.Add("RakNetSwig.dll");
             CompilerParameters.ReferencedAssemblies.Add("GMP_Server.exe");
 
+
             foreach (String str in Program.serverOptions.AdditionalLibs)
             {
                 CompilerParameters.ReferencedAssemblies.Add(str);

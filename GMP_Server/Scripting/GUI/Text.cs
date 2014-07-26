@@ -40,15 +40,15 @@ namespace GUC.Server.Scripting.GUI
         { }
 
         public Text(String tex, int x, int y)
-            : this(tex, "Font_Old_20_White.TGA", x, y, null, false, 0)
+            : this(tex, "FONT_DEFAULT.TGA", x, y, null, false, 0)
         { }
 
         public Text(String tex, Vec2i position)
-            : this(tex, "Font_Old_20_White.TGA", position, null, false, 0)
+            : this(tex, "FONT_DEFAULT.TGA", position, null, false, 0)
         { }
 
         public Text(String text)
-            : this(text, "Font_Old_20_White.TGA", 0, 0, null, false, 0)
+            : this(text, "FONT_DEFAULT.TGA", 0, 0, null, false, 0)
         { }
 
         public Text(String tex, String font, int x, int y)

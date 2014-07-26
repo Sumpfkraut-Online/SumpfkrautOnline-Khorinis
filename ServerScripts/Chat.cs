@@ -62,12 +62,12 @@ namespace GUC.Server.Scripts
             Logger.log(Logger.LogLevel.INFO, "################### Initalise Chatsystem ##################");
             
 			
-			TextBox tB = new TextBox("", "Font_Old_20_White.TGA", 0, 0x800, 0x0D, 0x54, 0x1B);
+			TextBox tB = new TextBox("", "FONT_DEFAULT.TGA", 0, 0x800, 0x0D, 0x54, 0x1B);
 			tB.show();
 
 			tB.TextSended += new Events.TextBoxMessageEventHandler(textBoxMessageReceived);
 
-			mB = new MessagesBox("Font_Old_20_White.TGA", 8, 0, 0);
+            mB = new MessagesBox("FONT_DEFAULT.TGA", 8, 0, 0);
 			mB.show();
 
 			Player.sOnPlayerSpawns += new Events.PlayerEventHandler(spawn);
@@ -220,6 +220,23 @@ namespace GUC.Server.Scripts
                 if (amount == 0)
                     amount = 1;
                 pl.addItem(ItemInstance.getItemInstance(instance), amount);
+            }
+            else if (IsCommand("playAni", message))
+            {
+                String instance = "";
+                getParameters(message, out instance);
+                if (instance == null)
+                    return;
+
+                pl.playAnimation(instance);
+            }
+            else if (IsCommand("freeze", message))
+            {
+                pl.freeze();
+            }
+            else if (IsCommand("unfreeze", message))
+            {
+                pl.unfreeze();
             }
             else if (IsCommand("giveSkills", message))
             {

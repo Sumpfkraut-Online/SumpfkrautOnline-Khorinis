@@ -220,6 +220,18 @@ namespace Gothic.zClasses
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.PrintTimedCXY, new CallValue[] { str, new IntArg((int)time), color });
         }
 
+        /// <summary>
+        /// The PrintTimedCXY_TV-function does not clear eax so even if it does not official returns a zCViewText it should do it.
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="time"></param>
+        /// <param name="color"></param>
+        /// <returns></returns>
+        public zCViewText PrintTimedCXY_TV(zString str, float time, zColor color)
+        {
+            return Process.THISCALL<zCViewText>((uint)Address, (uint)FuncOffsets.PrintTimedCXY, new CallValue[] { str, new IntArg((int)time), color });
+        }
+
         public void Open()
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.Open, new CallValue[] { });

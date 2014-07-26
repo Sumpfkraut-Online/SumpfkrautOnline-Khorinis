@@ -30,7 +30,7 @@ namespace GUC.Server.Network.Messages.ContainerCommands
 
             ContainerItemChanged cic = (ContainerItemChanged)type;
 
-            Console.WriteLine("ContainerItemChanged: "+cic+" Player: "+npc+" MobContainer: "+mobContainer+" Item: "+itemID);
+            
             if (cic == ContainerItemChanged.itemRemoved)
             {
                 stream.Read(out amount);

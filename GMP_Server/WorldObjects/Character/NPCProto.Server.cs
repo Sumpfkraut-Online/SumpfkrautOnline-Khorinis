@@ -117,7 +117,7 @@ namespace GUC.WorldObjects.Character
 
 
 
-        public void SendToAreaPlayers(BitStream stream, PacketPriority pp, PacketReliability pr)
+        internal void SendToAreaPlayers(BitStream stream, PacketPriority pp, PacketReliability pr)
         {
             uint[] keys = WorldObjects.World.getImportantKeysByPosition(this.Position.Data, 8000);
 
@@ -143,6 +143,32 @@ namespace GUC.WorldObjects.Character
                 }
             }
             
+        }
+
+        internal void SendToAreaPlayersAndPlayer(BitStream stream, PacketPriority pp, PacketReliability pr)
+        {
+            uint[] keys = WorldObjects.World.getImportantKeysByPosition(this.Position.Data, 8000);
+
+            foreach (uint key in keys)
+            {
+                if (!sWorld.getWorld(this.Map).PlayerPositionList.ContainsKey(key))
+                    continue;
+
+                List<WorldObjects.Character.Player> mobs = sWorld.getWorld(this.Map).PlayerPositionList[key];
+                foreach (WorldObjects.Character.Player m in mobs)
+                {
+                    float mD = (m.Position - this.Position).Length;
+
+                    if (mD <= 8000)
+                    {
+                        using (RakNetGUID guid = m.GUID)
+                        {
+                            Program.server.server.Send(stream, pp, pr, (char)0, guid, false);
+                        }
+                    }
+                }
+            }
+
         }
 
 

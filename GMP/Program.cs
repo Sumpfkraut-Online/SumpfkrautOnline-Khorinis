@@ -51,6 +51,14 @@ namespace GUC
                     //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hMobInter).GetMethod("OnUnTrigger"), (int)oCMobInter.FuncOffsets.OnUnTrigger, (int)oCMobInter.HookSize.OnUnTrigger, 2);
                     //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hMobInter).GetMethod("OnTrigger"), (int)oCMobInter.FuncOffsets.OnTrigger, (int)oCMobInter.HookSize.OnTrigger, 2);
 
+                    if(StartupState.clientOptions.SaveModeMapName.Trim().ToUpper().Length > @"NewWorld\NewWorld.zen".Length){
+                        throw new Exception("SaveModeMapName-Name can not be longer than " + @"NewWorld\NewWorld.zen".Length);
+                    }
+                    
+                    ASCIIEncoding enc = new ASCIIEncoding();
+                    process.Write(enc.GetBytes(StartupState.clientOptions.SaveModeMapName.Trim().ToUpper()), 0x008907B0);
+                    process.Write(new byte[] { 0 }, 0x008907B0 + StartupState.clientOptions.SaveModeMapName.Trim().ToUpper().Length);
+
                     process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(Program).GetMethod("hook_Render_SaveMode"), 0x006C8AB2, 5, 0);
                     process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(Program).GetMethod("setVisual_SaveMode"), (int)zCVob.FuncOffsets.SetVisual, (int)zCVob.HookSize.SetVisual, 1);
                     process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(Program).GetMethod("hook_Sound"), (int)0x4F10F0, 7, 4);
@@ -272,7 +280,7 @@ namespace GUC
             }
 
 
-            if (InputHooked.IsPressed((int)DIK_Keys.DIK_F1) && !saveItemInstances)
+            if (InputHooked.IsPressed((int)VirtualKeys.F1) && !saveItemInstances)
             {
                 StringBuilder sb = new StringBuilder();
                 zCArray<zCPar_Symbol> symbolArray = zCParser.getParser(process).Table;
@@ -330,7 +338,7 @@ namespace GUC
                 saveItemInstances = true;
             }
 
-            if (InputHooked.IsPressed((int)DIK_Keys.DIK_F2) && !saveMapVobs)
+            if (InputHooked.IsPressed((int)VirtualKeys.F2) && !saveMapVobs)
             {
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine("MobInter mi = null;");
@@ -456,7 +464,7 @@ namespace GUC
                         sb.Append("mi.Spawn(mapName, new Vec3f(");
                         sb.Append(vob.TrafoObjToWorld.getPosition()[0].ToString().Replace(",", ".") + "f, " + vob.TrafoObjToWorld.getPosition()[1].ToString().Replace(",", ".") + "f, " + vob.TrafoObjToWorld.getPosition()[2].ToString().Replace(",", ".") + "f), new Vec3f(");
                         sb.Append(vob.TrafoObjToWorld.getDirection()[0].ToString().Replace(",", ".") + "f, " + vob.TrafoObjToWorld.getDirection()[1].ToString().Replace(",", ".") + "f, " + vob.TrafoObjToWorld.getDirection()[2].ToString().Replace(",", ".") + "f));\r\n\r\n");
-
+                        
                     }
                 }
 
@@ -466,7 +474,7 @@ namespace GUC
             }
 
 
-            if (InputHooked.IsPressed((int)DIK_Keys.DIK_F3) && !saveMapItems)
+            if (InputHooked.IsPressed((int)VirtualKeys.F3) && !saveMapItems)
             {
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine("Item mi = null;");

@@ -24,12 +24,12 @@ namespace GUC.GUI
         {
             this.text = text;
             this.parent = parent;
-            this.font = font;
 
             //Creation:
             Process process = Process.ThisProcess();
 
             thisView = zCView.Create(Process.ThisProcess(), 0, 0, 0x2000, 0x2000);
+
             setFont(font);
             createText();
 
@@ -66,9 +66,7 @@ namespace GUC.GUI
             this.text = tex;
 
             Process process = Process.ThisProcess();
-            zString str = zString.Create(process, tex);
-            textView.Text = str;
-            str.Dispose();
+            textView.Text.Set(tex);
         }
 
         public void setFont(String font)

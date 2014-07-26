@@ -35,12 +35,12 @@ namespace GUC.Server.Scripts.Accounts
 		Button continueButton;
 
 		public AccountStartModule() {
-			textChoose = new Text("Wähle:", 0x1000-120, 0x1000);
-			textName = new Text("Bitte gebe deinen Namen ein:", 1433, 0x500);
-			textPassword = new Text("Bitte gebe dein Password ein:", 1433, 0x500);
+            textChoose = new Text("Wähle:", "FONT_DEFAULT.TGA", 0x1000 - 120, 0x1000);
+            textName = new Text("Bitte gebe deinen Namen ein:", "FONT_DEFAULT.TGA", 1433, 0x500);
+            textPassword = new Text("Bitte gebe dein Password ein:", "FONT_DEFAULT.TGA", 1433, 0x500);
 
-			tbName = new TextBox("", "Font_Old_20_White.TGA", 1433, 0x600, 0, 0, 0);
-			tbPassword = new TextBox("", "Font_Old_20_White.TGA", 1433, 0x600, 0, 0, 0);
+			tbName = new TextBox("", "FONT_DEFAULT.TGA", 1433, 0x600, 0, 0, 0);
+            tbPassword = new TextBox("", "FONT_DEFAULT.TGA", 1433, 0x600, 0, 0, 0);
 
 			background = new Texture("LOG_PAPER.tga");
 			register = new Button("Registrieren", 1433, 6432);

@@ -31,5 +31,13 @@ namespace GUC.GUI
 
 
         public abstract void Destroy();
+
+
+
+
+
+
+
+
     }
 }

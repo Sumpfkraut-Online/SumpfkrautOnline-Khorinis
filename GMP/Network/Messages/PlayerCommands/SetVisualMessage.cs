@@ -54,7 +54,9 @@ namespace GUC.Network.Messages.PlayerCommands
                 npcP.HeadMesh = HeadMesh;
                 npcP.HeadTex = headTex;
                 npcP.TeethTex = teethTex;
-                npcP.setWeaponMode(1);
+
+                if (!visualSame && visual.ToUpper().Trim() != "HUMANS.MDS")
+                    npcP.setWeaponMode(1);
 
                 if (vob.Address == 0)
                     return;

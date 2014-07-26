@@ -140,6 +140,7 @@
     <Compile Include="timer\DespawnTimer.cs" />
     <Compile Include="timer\Timer.cs" />
     <Compile Include="Tests\Keytest.cs" />
+    <Compile Include="UpdateListener.cs" />
     <Compile Include="WorldObjects\Character\NPC.Client.cs" />
     <Compile Include="WorldObjects\Character\NPCProto.Client.cs" />
     <Compile Include="WorldObjects\Character\Player.Client.cs" />

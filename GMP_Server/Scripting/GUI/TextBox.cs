@@ -30,7 +30,7 @@ namespace GUC.Server.Scripting.GUI
         { }
 
         public TextBox(int x, int y, int sendButton, int startWritingButton, int resetButton)
-            : this("", "Font_Old_20_White.TGA", x, y, sendButton, startWritingButton, resetButton, null, false, 0)
+            : this("", "FONT_DEFAULT.TGA", x, y, sendButton, startWritingButton, resetButton, null, false, 0)
         { }
 
         public TextBox(String tex, String font, int x, int y, int sendButton, int startWritingButton, int resetButton)

@@ -10,7 +10,7 @@ namespace GUC.GUI
     class Cursor : Texture
     {
         public Cursor(int id, String tex, Vec2i position, Vec2i size)
-            : base(id, tex, position, size)
+            : base(id, tex, position, size, null, Enumeration.GUIEvents.None)
         {
             Gothic.mClasses.Cursor.Init(Process.ThisProcess());
             

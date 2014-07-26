@@ -25,6 +25,7 @@ namespace GUC.Options
         public bool startWindowed = false;
 
         public bool SaveMode = false;
+        public String SaveModeMapName = @"NewWorld\NewWorld.zen";
 
 
         public void Save()

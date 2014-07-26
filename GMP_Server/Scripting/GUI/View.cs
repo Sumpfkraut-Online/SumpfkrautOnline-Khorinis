@@ -172,7 +172,7 @@ namespace GUC.Server.Scripting.GUI
             sendStream(plID, stream);
         }
 
-        public void destroy()
+        public virtual void destroy()
         {
             BitStream stream = Program.server.sendBitStream;
             stream.Reset();

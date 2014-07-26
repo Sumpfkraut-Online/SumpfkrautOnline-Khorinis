@@ -32,6 +32,12 @@ namespace GUC.Server.Scripting.Objects
             return sWorld.getWorld(name).ScriptingWorld;
         }
 
+
+        public String Name { get { return this.world.Map; } }
+        public override string ToString()
+        {
+            return Name;
+        }
         /// <summary>
         /// Returns a list of all near items in the world
         /// </summary>

@@ -33,7 +33,6 @@ namespace GUC.GUI
         {
 
             this.parent = parent;
-            this.font = font;
 
             //Creation:
             Process process = Process.ThisProcess();
