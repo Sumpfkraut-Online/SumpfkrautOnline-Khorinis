@@ -117,6 +117,8 @@ namespace GUC.Network
 
             messageListener.Add((byte)NetworkIDS.NPCProtoSetWeaponMode, new NPCProtoSetWeaponMode());
             messageListener.Add((byte)NetworkIDS.SetSlotMessage, new SetSlotMessage());
+
+            messageListener.Add((byte)NetworkIDS.CamToPlayerFront, new CamToPlayerFront());
         }
 
         public void Startup()

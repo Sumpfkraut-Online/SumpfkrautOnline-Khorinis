@@ -275,7 +275,7 @@ namespace GUC.Server.Scripts
                 pl.setTalentSkills((NPCTalents)arg[0], arg[1]);
                 pl.setTalentValues((NPCTalents)arg[0], arg[2]);
             }
-            else if (IsCommand("giveSpell"))
+            else if (IsCommand("giveSpell", message))
             {
                 pl.addItem(ITSC_SHRINK.get(), 90);
                 pl.addItem(ITSC_TRFSHEEP.get(), 90);

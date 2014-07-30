@@ -50,6 +50,7 @@
     <Compile Include="Enumeration\NPCFlags.cs" />
     <Compile Include="Enumeration\PlayerStatus.cs" />
     <Compile Include="Enumeration\SpellFlags.cs" />
+    <Compile Include="Enumeration\VirtualKeys.cs" />
     <Compile Include="Enumeration\VobFlags.cs" />
     <Compile Include="Network\BitStreamExtension.cs" />
     <Compile Include="Options\ClientOptions.cs" />

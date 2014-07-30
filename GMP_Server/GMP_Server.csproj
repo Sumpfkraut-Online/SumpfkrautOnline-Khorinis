@@ -52,6 +52,12 @@
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>Internet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>false</GenerateManifests>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="RakNetSwig">
       <HintPath>..\GothicII\System\UntoldChapter\DLL\RakNetSwig.dll</HintPath>
@@ -123,6 +129,7 @@
     <Compile Include="Scripting\Objects\World.cs" />
     <Compile Include="Scripting\ScriptManager.cs" />
     <Compile Include="Scripting\Timer.cs" />
+    <Compile Include="TCPStatus.cs" />
     <Compile Include="WorldObjects\Character\NPC.Server.cs" />
     <Compile Include="WorldObjects\Character\NPCProto.Server.cs" />
     <Compile Include="WorldObjects\Character\Player.Server.cs" />
@@ -151,8 +158,6 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="app.manifest" />
-    <None Include="ClassDiagram1.cd" />
-    <None Include="ClassDiagram2.cd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

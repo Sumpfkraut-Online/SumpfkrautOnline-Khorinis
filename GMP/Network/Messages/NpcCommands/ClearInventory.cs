@@ -6,6 +6,7 @@ using GUC.WorldObjects;
 using GUC.WorldObjects.Character;
 using WinApi;
 using Gothic.zClasses;
+using GUC.Hooks;
 
 namespace GUC.Network.Messages.NpcCommands
 {
@@ -17,10 +18,10 @@ namespace GUC.Network.Messages.NpcCommands
             stream.Read(out playerID);
 
             if (playerID == 0 || !sWorld.VobDict.ContainsKey(playerID))
-                throw new Exception("Vob not found!");
+                throw new Exception("Vob not found! "+playerID);
             Vob vob = sWorld.VobDict[playerID];
             if (!(vob is NPCProto))
-                throw new Exception("Vob is not an NPCProto!");
+                throw new Exception("Vob is not an NPCProto! "+playerID);
 
             NPCProto npc = (NPCProto)vob;
 
@@ -31,8 +32,10 @@ namespace GUC.Network.Messages.NpcCommands
                     Process process = Process.ThisProcess();
                     oCItem gI = new oCItem(process, item.Address);
 
-
-                    new oCNpc(process, npc.Address).RemoveFromInv(gI, gI.Amount);
+                    oCNpc n = new oCNpc(process, npc.Address);
+                    hNpc.blockSendUnEquip = true;
+                    n.UnequipItem(gI);
+                    n.RemoveFromInv(gI, gI.Amount);
                     
 
                     gI.Amount = 0;
@@ -43,6 +46,7 @@ namespace GUC.Network.Messages.NpcCommands
             {
                 sWorld.removeVob(item);
             }
+            npc.ItemList.Clear();
         }
     }
 }

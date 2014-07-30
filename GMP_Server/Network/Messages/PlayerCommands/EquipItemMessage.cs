@@ -19,6 +19,12 @@ namespace GUC.Server.Network.Messages.PlayerCommands
             stream.Read(out itemID);
             stream.Read(out equip);
 
+            if (!sWorld.VobDict.ContainsKey(playerID))
+                throw new Exception("Player-ID was not found: "+playerID+" Equipped: "+equip);
+            if (!sWorld.VobDict.ContainsKey(itemID))
+                throw new Exception("Item-ID was not found: " + itemID + " Equipped: " + equip + " playerID: "+playerID);
+
+
             NPCProto player = (NPCProto)sWorld.VobDict[playerID];
             Item item = (Item)sWorld.VobDict[itemID];
 

@@ -79,6 +79,7 @@
     <Compile Include="Network\Messages\Callbacks\CallbackNPCCanSee.cs" />
     <Compile Include="Network\Messages\Callbacks\ReadMD5Message.cs" />
     <Compile Include="Network\Messages\Callbacks\ReadIniEntryMessage.cs" />
+    <Compile Include="Network\Messages\CameraCommands\CamToPlayerFront.cs" />
     <Compile Include="Network\Messages\CameraCommands\CamToVobMessage.cs" />
     <Compile Include="Network\Messages\Connection\ConnectionMessage.cs" />
     <Compile Include="Network\Messages\Connection\DisconnectMessage.cs" />

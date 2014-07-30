@@ -38,6 +38,31 @@ namespace GUC.Server.Scripting.GUI
             : this(tex, pos, size, parent, isSingleUser, singleUserID, GUIEvents.None, true)
         { }
 
+
+
+
+
+
+        public Texture(String tex, GUIEvents evts)
+            : this(tex, 0, 0, 0x2000, 0x2000, evts)
+        { }
+
+        public Texture(String tex, int x, int y, int width, int height, GUIEvents evts)
+            : this(tex, x, y, width, height, null, false, 0, evts)
+        { }
+
+        public Texture(String tex, int x, int y, int width, int height, Texture parent, GUIEvents evts)
+            : this(tex, x, y, width, height, parent, false, 0, evts)
+        { }
+
+        public Texture(String tex, int x, int y, int width, int height, Texture parent, bool isSingleUser, int singleUserID, GUIEvents evts)
+            : this(tex, new Vec2i(x, y), new Vec2i(width, height), parent, isSingleUser, singleUserID, evts)
+        { }
+
+        public Texture(String tex, Vec2i pos, Vec2i size, Texture parent, bool isSingleUser, int singleUserID, GUIEvents evts)
+            : this(tex, pos, size, parent, isSingleUser, singleUserID, evts, true)
+        { }
+
         protected Texture(String tex, Vec2i pos, Vec2i size, Texture parent, bool isSingleUser, int singleUserID, GUIEvents evts, bool useCreate)
             : base(pos, isSingleUser, singleUserID, parent)
         {

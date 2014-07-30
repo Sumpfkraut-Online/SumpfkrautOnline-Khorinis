@@ -124,7 +124,7 @@ namespace GUC.WorldObjects.Character
         #endregion
 
         #region Talents
-        protected int[] attributes = new int[(byte)NPCAttributeFlags.ATR_MAX];
+        protected int[] attributes = new int[(byte)NPCAttributeFlags.ATR_MAX]{1, 1, 0, 0, 0, 0, 0, 0};
         protected int[] hitchances = new int[5];
         protected int[] talentSkills = new int[(byte)NPCTalents.MaxTalents];
         protected int[] talentValues = new int[(byte)NPCTalents.MaxTalents];

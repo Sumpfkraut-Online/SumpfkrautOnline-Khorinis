@@ -31,7 +31,7 @@ namespace GUC.WorldObjects.Character
             isSpawned = true;
         }
 
-        public bool IsSpawned { get { return isSpawned; } }
+        public bool IsSpawnedPlayer { get { return isSpawned; } }
         
         public override void StealItem(Vob other, String item, int amount) { }
         public override void StealItem(Vob other, Item item, int amount) { }

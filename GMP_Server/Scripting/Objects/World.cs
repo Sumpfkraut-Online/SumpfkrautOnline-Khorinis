@@ -27,13 +27,29 @@ namespace GUC.Server.Scripting.Objects
             this.world = world;
         }
 
+
+        /// <summary>
+        /// Returns the world with the specified name.
+        /// </summary>
+        /// <param name="name">The name of the World 
+        /// in example: "NewWorld/NewWorld.zen". This is case insensitive.</param>
+        /// <returns></returns>
         public static World getWorld(String name)
         {
             return sWorld.getWorld(name).ScriptingWorld;
         }
 
-
+        /// <summary>
+        /// The name of the world.
+        /// The name is always written with uppercase letters and the seperator is always \
+        /// Example: NEWWORLD\NEWWORLD.ZEN
+        /// </summary>
         public String Name { get { return this.world.Map; } }
+
+        /// <summary>
+        /// Returns the name of the world
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return Name;
@@ -71,7 +87,7 @@ namespace GUC.Server.Scripting.Objects
         }
 
         /// <summary>
-        /// this function is not implemented yet
+        /// Returns a list of all Near Npcs
         /// </summary>
         /// <param name="position"></param>
         /// <param name="distance"></param>
@@ -120,6 +136,12 @@ namespace GUC.Server.Scripting.Objects
         }
 
 
+        /// <summary>
+        /// This enumerator is used, so you can iterate through the World to iterate trough all vobs.
+        /// Example:
+        /// foreach(Vob vob in world){}
+        /// </summary>
+        /// <returns></returns>
         public IEnumerator GetEnumerator()
         {
             foreach (GUC.WorldObjects.Vob item in world.VobList)
@@ -127,11 +149,23 @@ namespace GUC.Server.Scripting.Objects
                 yield return item.ScriptingVob;
             }
         }
+        /// <summary>
+        /// This function does the same like GetEnumerator.
+        /// </summary>
+        /// <returns></returns>
         public System.Collections.IEnumerable VobIterator()
         {
             return VobIterator(0, VobCount);
         }
 
+        /// <summary>
+        /// With this function you can iterate trough a specified amount of vobs.
+        /// Example:
+        /// foreach(Vob vob in world.VobIterator(0, 125)){}
+        /// </summary>
+        /// <param name="start">The start index for iteration</param>
+        /// <param name="end">The end index for iteration.</param>
+        /// <returns></returns>
         public System.Collections.IEnumerable VobIterator(int start, int end)
         {
             for (int i = start; i < end; i++)
@@ -141,10 +175,25 @@ namespace GUC.Server.Scripting.Objects
             }
         }
 
+        /// <summary>
+        /// Iterate through each object of NPCProto (Players and NPC).
+        /// Example:
+        /// foreach(NPCProto proto in world.NPCIterator()){}
+        /// </summary>
+        /// <returns></returns>
         public System.Collections.IEnumerable NPCIterator()
         {
             return NPCIterator(0, NPCCount);
         }
+
+        /// <summary>
+        /// Iterate through each object of NPCProto (Players and NPC) between the start and end Index.
+        /// Example:
+        /// foreach(NPCProto proto in world.NPCIterator(0, 10)){}
+        /// </summary>
+        /// <param name="start">The start index for iteration</param>
+        /// <param name="end">The end index for iteration.</param>
+        /// <returns></returns>
         public System.Collections.IEnumerable NPCIterator(int start, int end)
         {
             for (int i = start; i < end; i++)
@@ -154,10 +203,25 @@ namespace GUC.Server.Scripting.Objects
             }
         }
 
+        /// <summary>
+        /// Iterate through each object of the itemtype.
+        /// Example:
+        /// foreach(Item item in world.ItemIterator()){}
+        /// </summary>
+        /// <returns></returns>
         public System.Collections.IEnumerable ItemIterator()
         {
             return ItemIterator(0, ItemCount);
         }
+
+        /// <summary>
+        /// Iterate through each object of the item-type between the start and end Index.
+        /// Example:
+        /// foreach(Item item in world.ItemIterator(0, 10)){}
+        /// </summary>
+        /// <param name="start">The start index for iteration</param>
+        /// <param name="end">The end index for iteration.</param>
+        /// <returns></returns>
         public System.Collections.IEnumerable ItemIterator(int start, int end)
         {
             for (int i = start; i < end; i++)
@@ -167,10 +231,28 @@ namespace GUC.Server.Scripting.Objects
             }
         }
 
+        /// <summary>
+        /// Returns the count of items spawned in the world.
+        /// </summary>
         public int ItemCount { get { return world.ItemList.Count; } }
+
+        /// <summary>
+        /// Returns the count of vobs spawned in the world.
+        /// Items and NPC are vobs too.
+        /// </summary>
         public int VobCount { get { return world.VobList.Count; } }
+
+        /// <summary>
+        /// Returns the count of npcprotos (NPC and Players) spawned in the world.
+        /// </summary>
         public int NPCCount { get { return world.NPCList.Count; } }
 
+        /// <summary>
+        /// You can iterate trough all Vobs with an index too.
+        /// Use world[0] to get the first Vob.
+        /// </summary>
+        /// <param name="i">The vob-index.</param>
+        /// <returns></returns>
         public Vob this[int i]
         {
             get { return world.VobList[i].ScriptingVob; }

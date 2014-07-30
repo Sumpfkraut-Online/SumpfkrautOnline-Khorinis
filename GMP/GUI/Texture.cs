@@ -8,7 +8,6 @@ using WinApi;
 using Gothic.zTypes;
 using GUC.Enumeration;
 using Gothic.mClasses;
-using WinApi.User.Enumeration;
 using RakNet;
 using GUC.WorldObjects.Character;
 using GUC.timer;

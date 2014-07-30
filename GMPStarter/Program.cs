@@ -30,8 +30,8 @@ namespace GMPStarter
                 }
 
                 Form1 f = new Form1();
-                f.textBox2.Text = ip;//IP
-                f.textBox3.Text = ""+port;//Port
+                f.tB_IP.Text = ip;//IP
+                f.tB_Port.Text = ""+port;//Port
                 f.mBStart_Click(null, null);
             }
         }

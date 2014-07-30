@@ -13,7 +13,6 @@ using GUC.Types;
 using GUC.WorldObjects;
 using GUC.Network.Messages.NpcCommands;
 using Gothic.mClasses;
-using WinApi.User.Enumeration;
 using Gothic.zTypes;
 using Gothic.zStruct;
 using GUC.Network.Messages.PlayerCommands;
@@ -45,8 +44,7 @@ namespace GUC.States
             StealContainer sc = new StealContainer(Process.ThisProcess());
             sc.Enable();
 
-            pkm = new PlayerKeyMessage();
-            pkm.Init();
+            pkm = PlayerKeyMessage.getPlayerKeyMessage();
 
 
             

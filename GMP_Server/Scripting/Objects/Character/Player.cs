@@ -211,6 +211,18 @@ namespace GUC.Server.Scripting.Objects.Character
                 Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
         }
 
+        public void camToPlayerFront()
+        {
+            BitStream stream = Program.server.sendBitStream;
+            stream.Reset();
+
+            stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
+            stream.Write((byte)NetworkIDS.CamToPlayerFront);
+            
+            using (RakNetGUID guid = this.Proto.GUID)
+                Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+        }
+
         public void camToPlayer()
         {
             camToVob(this);

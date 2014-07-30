@@ -24,6 +24,9 @@ namespace GUC.Network.Messages.CameraCommands
 
             Process process = Process.ThisProcess();
             oCGame.Game(process).AICamera.SetTarget(new zCVob(process, vob.Address));
+
+
+            CamToPlayerFront.destroyPlayerVob();
         }
     }
 }

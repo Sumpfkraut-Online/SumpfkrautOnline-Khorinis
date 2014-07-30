@@ -49,7 +49,7 @@ namespace GUC.WorldObjects
             if (vob.Map != null && vob.Map.Length != 0)
                 sWorld.getWorld(vob.Map).removeVob(vob);
 
-
+            
 
             vob.Map = this.Map;
             vob.IsSpawned = true;

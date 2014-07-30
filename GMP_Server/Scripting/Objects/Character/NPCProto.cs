@@ -833,6 +833,10 @@ namespace GUC.Server.Scripting.Objects.Character
 
         public Item addItem(String instance, int amount)
         {
+            if (instance == null)
+                throw new ArgumentNullException("Instance-String can not be null!");
+            if (ItemInstance.getItemInstance(instance) == null)
+                throw new ArgumentException("Instance: "+instance+" can not be found!");
             return addItem(ItemInstance.getItemInstance(instance), amount);
         }
 
@@ -1094,7 +1098,12 @@ namespace GUC.Server.Scripting.Objects.Character
 
             if (proto.EquippedList.Contains(item.ProtoItem))
                 proto.EquippedList.Remove(item.ProtoItem);
-
+            if (this.EquippedArmor == item)
+                this.proto.Armor = null;
+            if (this.EquippedWeapon == item)
+                this.proto.Weapon = null;
+            if (this.EquippedRangeWeapon == item)
+                this.proto.RangeWeapon = null;
 
             if (!created)
                 return;

@@ -75,6 +75,11 @@ namespace GUC.Server
             loadServerConfig();
             initClientModule();
 
+            TCPStatus.getTCPStatus();
+            TCPStatus.getTCPStatus().addInfo("servername", serverOptions.ServerName);
+            TCPStatus.getTCPStatus().addInfo("serverlanguage", "");
+            TCPStatus.getTCPStatus().addInfo("maxslots", ""+serverOptions.Slots);
+
             try
             {
                 server = new Network.Server();
@@ -84,11 +89,18 @@ namespace GUC.Server
                 scriptManager = new Scripting.ScriptManager();
                 scriptManager.init();
                 scriptManager.Startup();
-
+                long lastInfoUpdates = 0;
                 while (true)
                 {
                     long ticks = DateTime.Now.Ticks;
                     Player.sUpdateNPCList(ticks);
+
+                    if (lastInfoUpdates < ticks)
+                    {
+                        TCPStatus.getTCPStatus().addInfo("players", "" + sWorld.PlayerList.Count);
+                        lastInfoUpdates = ticks + 10000 * 1000 * 5;
+                    }
+
 
                     //ModuleLoader.updateAllModules();
                     scriptManager.update();

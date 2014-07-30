@@ -262,251 +262,271 @@ namespace GUC
         public static Int32 hook_Render_SaveMode(String message)
         {
             Process process = Process.ThisProcess();
-
-            
-            InputHooked.Update(process);
-
-
-            
-            
-            if (InputHooked.IsPressed((int)DIK_Keys.DIK_O))
+            try
             {
-                InputHooked.receivers.Add(new Keytest());
-                //zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', new oCMobLockable(process, oCNpc.Player(process).FocusVob.Address).keyInstance.Value + ";" + new oCMobLockable(process, oCNpc.Player(process).FocusVob.Address).PickLockStr.Value, 0, "Program.cs", 0);
-                //new oCMobInter(process, oCNpc.Player(process).FocusVob.Address).StartInteraction(oCNpc.Player(process));
-                //oCGame.Game(process).DiveBar.SetPos(-0x2000, -0x2000);
-                first = false;
-
-            }
 
 
-            if (InputHooked.IsPressed((int)VirtualKeys.F1) && !saveItemInstances)
-            {
-                StringBuilder sb = new StringBuilder();
-                zCArray<zCPar_Symbol> symbolArray = zCParser.getParser(process).Table;
-                int len = symbolArray.Size;
-                //zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Symbols: " + len, 0, "Program.cs", 0);
-                for (int i = 0; i < len; i++)
+                InputHooked.Update(process);
+
+
+
+
+                if (InputHooked.IsPressed((int)DIK_Keys.DIK_O))
                 {
-                    zCPar_Symbol symbol = symbolArray.get(i);
-                    String symbolName = symbol.Name.Value.Trim().ToUpper();
+                    InputHooked.receivers.Add(new Keytest());
+                    //zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', new oCMobLockable(process, oCNpc.Player(process).FocusVob.Address).keyInstance.Value + ";" + new oCMobLockable(process, oCNpc.Player(process).FocusVob.Address).PickLockStr.Value, 0, "Program.cs", 0);
+                    //new oCMobInter(process, oCNpc.Player(process).FocusVob.Address).StartInteraction(oCNpc.Player(process));
+                    //oCGame.Game(process).DiveBar.SetPos(-0x2000, -0x2000);
+                    first = false;
 
-                    //zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Symbol found: "+symbolName+" | "+symbol.Offset, 0, "Program.cs", 0);
-                    if (symbolName.StartsWith("IT"))
-                    {
-                        oCItem item = oCObjectFactory.GetFactory(process).CreateItem(symbolName);
-                        if (item.Address == 0 || item.VobType != zCVob.VobTypes.Item || item.Visual.Value.Trim().Length == 0)
-                            continue;
-
-                        String muni = null;
-                        if (item.Munition != 0)
-                        {
-                            oCItem munit = oCObjectFactory.GetFactory(process).CreateItem(item.Munition);
-                            muni = munit.ObjectName.Value.Trim().ToUpper();
-                        }
-
-                        sb.Append("new ItemInstance(");
-                        //DamageType dmgType, int totalDamage, int range,
-                        sb.Append("\"" + symbolName + "\", ");
-                        sb.Append("\"" + item.Name + "\", ");
-                        sb.Append("\"" + item.ScemeName + "\", ");
-                        sb.Append("new int[]{" + item.Protection[0] + ", " + item.Protection[1] + ", " + item.Protection[2] + ", " + item.Protection[3] + ", " + item.Protection[4] + ", " + item.Protection[5] + ", " + item.Protection[6] + ", " + item.Protection[7] + "},");
-                        sb.Append("new int[]{" + item.Damage[0] + ", " + item.Damage[1] + ", " + item.Damage[2] + ", " + item.Damage[3] + ", " + item.Damage[4] + ", " + item.Damage[5] + ", " + item.Damage[6] + ", " + item.Damage[7] + "},");
-                        sb.Append(item.Value + ", ");
-                        sb.Append("(MainFlags)(" + item.MainFlag + "), ");
-                        sb.Append("(Flags)(" + item.Flags + "), ");
-                        sb.Append("(ArmorFlags)(" + item.Wear + "), ");
-                        sb.Append("(DamageType)(" + item.DamageType + "), ");
-                        sb.Append(item.DamageTotal + ", ");
-                        sb.Append(item.Range + ", ");
-                        sb.Append("\"" + item.Visual.Value.Trim() + "\", ");
-                        sb.Append("\"" + item.VisualChange.Value.Trim() + "\", ");
-                        sb.Append("\"" + item.Effect.Value.Trim() + "\", ");
-                        sb.Append(item.VisualSkin + ", ");
-                        sb.Append("(MaterialTypes)(" + item.Material + "), ");
-                        if(muni != null)
-                            sb.Append("ItemInstance.getItemInstance(\"" + muni + "\") ");
-                        else
-                            sb.Append("null");
-                        sb.Append(");\r\n");
-                    }
                 }
 
 
-                File.WriteAllText("cinstances.cs", sb.ToString());
-
-                saveItemInstances = true;
-            }
-
-            if (InputHooked.IsPressed((int)VirtualKeys.F2) && !saveMapVobs)
-            {
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine("MobInter mi = null;");
-                sb.AppendLine("String mapName = @\""+oCGame.Game(process).World.WorldFileName.Value.Trim()+"\";");
-                Dictionary<zCVob.VobTypes, List<zCVob>> vobDict = oCGame.Game(process).World.getVobLists(zCVob.VobTypes.MobInter, zCVob.VobTypes.MobBed, zCVob.VobTypes.MobSwitch, zCVob.VobTypes.MobDoor, zCVob.VobTypes.MobContainer);
-
-
-                foreach (KeyValuePair<zCVob.VobTypes, List<zCVob>> vobList in vobDict)
+                if (InputHooked.IsPressed((int)VirtualKeys.F1) && !saveItemInstances)
                 {
-                    foreach (zCVob vob in vobList.Value)
+                    StringBuilder sb = new StringBuilder();
+                    zCArray<zCPar_Symbol> symbolArray = zCParser.getParser(process).Table;
+                    int len = symbolArray.Size;
+                    //zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Symbols: " + len, 0, "Program.cs", 0);
+                    for (int i = 0; i < len; i++)
                     {
+                        zCPar_Symbol symbol = symbolArray.get(i);
+                        String symbolName = symbol.Name.Value.Trim().ToUpper();
 
-                        if (vob.VobType == zCVob.VobTypes.MobInter || vob.VobType == zCVob.VobTypes.MobBed || vob.VobType == zCVob.VobTypes.MobSwitch)
+                        //zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Symbol found: "+symbolName+" | "+symbol.Offset, 0, "Program.cs", 0);
+                        if (symbolName.StartsWith("IT"))
                         {
-                            oCMobInter mi = new oCMobInter(process, vob.Address);
-                            if(vob.VobType == zCVob.VobTypes.MobInter)
-                                sb.Append("mi = new MobInter(");
-                            else if (vob.VobType == zCVob.VobTypes.MobBed)
-                                sb.Append("mi = new MobBed(");
-                            else if (vob.VobType == zCVob.VobTypes.MobSwitch)
-                                sb.Append("mi = new MobSwitch(");
-                            sb.Append("\"" + VobVisual[vob.Address] + "\", ");
-                            sb.Append("\"" + mi.Name.Value.Trim() + "\", ");
-                            //sb.Append("" + mi.Rewind.ToString().ToLower() + ", ");
-                            //sb.Append("" + mi.StateNum + ", ");
-                            if (mi.UseWithItem.Address != 0 && mi.UseWithItem.getCheckedValue() != null)
-                                sb.Append("ItemInstance.getItemInstance(\"" + mi.UseWithItem.Value.Trim().ToUpper() + "\"), ");
-                            else
-                                sb.Append("null, ");
+                            oCItem item = oCObjectFactory.GetFactory(process).CreateItem(symbolName);
+                            if (item.Address == 0 || item.VobType != zCVob.VobTypes.Item || item.Visual.Value.Trim().Length == 0)
+                                continue;
 
-                            if (mi.TriggerTarget.Address != 0 && mi.TriggerTarget.getCheckedValue() != null)
-                                sb.Append("\"" + mi.TriggerTarget.Value.Trim() + "\", ");
-                            else
-                                sb.Append("null, ");
-                            sb.Append(((mi.BitField1 & (int)zCVob.BitFlag0.collDetectionDynamic) == (int)zCVob.BitFlag0.collDetectionDynamic).ToString().ToLower() + ", ");
-                            sb.Append(((mi.BitField1 & (int)zCVob.BitFlag0.collDetectionStatic) == (int)zCVob.BitFlag0.collDetectionStatic).ToString().ToLower() + "); \r\n");
-                        }
-
-                        if (vob.VobType == zCVob.VobTypes.MobDoor)
-                        {
-                            oCMobDoor mi = new oCMobDoor(process, vob.Address);
-                            sb.Append("mi = new MobDoor(");
-                            sb.Append("\"" + VobVisual[vob.Address] + "\", ");
-                            sb.Append("\"" + mi.Name.Value.Trim() + "\", ");
-                            sb.Append("" + mi.isLocked.ToString().ToLower() + ", ");
-                            if (mi.keyInstance.Address != 0 && mi.keyInstance.getCheckedValue() != null)
-                                sb.Append("ItemInstance.getItemInstance(\"" + mi.keyInstance.Value.Trim().ToUpper() + "\"), ");
-                            else
-                                sb.Append("null, ");
-
-                            if (mi.PickLockStr.Address != 0 && mi.PickLockStr.getCheckedValue() != null)
-                                sb.Append("\"" + mi.PickLockStr.Value.Trim() + "\", ");
-                            else
-                                sb.Append("null, ");
-
-                            if (mi.UseWithItem.Address != 0 && mi.UseWithItem.getCheckedValue() != null)
-                                sb.Append("ItemInstance.getItemInstance(\"" + mi.UseWithItem.Value.Trim().ToUpper() + "\"), ");
-                            else
-                                sb.Append("null, ");
-
-                            if (mi.TriggerTarget.Address != 0 && mi.TriggerTarget.getCheckedValue() != null)
-                                sb.Append("\"" + mi.TriggerTarget.Value.Trim() + "\", ");
-                            else
-                                sb.Append("null, ");
-                            sb.Append(((mi.BitField1 & (int)zCVob.BitFlag0.collDetectionDynamic) == (int)zCVob.BitFlag0.collDetectionDynamic).ToString().ToLower() + ", ");
-                            sb.Append(((mi.BitField1 & (int)zCVob.BitFlag0.collDetectionStatic) == (int)zCVob.BitFlag0.collDetectionStatic).ToString().ToLower() + "); \r\n");
-                        }
-
-                        if (vob.VobType == zCVob.VobTypes.MobContainer)
-                        {
-                            oCMobContainer mi = new oCMobContainer(process, vob.Address);
-                            sb.Append("mi = new MobContainer(");
-                            sb.Append("\"" + VobVisual[vob.Address] + "\", ");
-                            sb.Append("\"" + mi.Name.Value.Trim() + "\", ");
-
-                            //ItemLists:
-                            sb.Append("new ItemInstance[]{");
-                            List<oCItem> itemList = mi.getItemList();
-                            for (int i = 0; i < itemList.Count; i++)
+                            String muni = null;
+                            if (item.Munition != 0)
                             {
-                                oCItem item = itemList[i];
-                                sb.Append("ItemInstance.getItemInstance(\"" + item.ObjectName.Value.Trim().ToUpper() + "\")");
-                                if (i + 1 < itemList.Count)
-                                    sb.Append(", ");
+                                oCItem munit = oCObjectFactory.GetFactory(process).CreateItem(item.Munition);
+                                muni = munit.ObjectName.Value.Trim().ToUpper();
                             }
-                            sb.Append("},");
-                            sb.Append("new int[]{");
-                            for (int i = 0; i < itemList.Count; i++)
-                            {
-                                oCItem item = itemList[i];
-                                sb.Append(""+item.Amount);
-                                if (i + 1 < itemList.Count)
-                                    sb.Append(", ");
-                            }
-                            sb.Append("},");
 
-
-                            sb.Append("" + mi.isLocked.ToString().ToLower() + ", ");
-                            if (mi.keyInstance.Address != 0 && mi.keyInstance.getCheckedValue() != null)
-                                sb.Append("ItemInstance.getItemInstance(\"" + mi.keyInstance.Value.Trim().ToUpper() + "\"), ");
+                            sb.Append("new ItemInstance(");
+                            //DamageType dmgType, int totalDamage, int range,
+                            sb.Append("\"" + symbolName + "\", ");
+                            sb.Append("\"" + item.Name + "\", ");
+                            sb.Append("\"" + item.ScemeName + "\", ");
+                            sb.Append("new int[]{" + item.Protection[0] + ", " + item.Protection[1] + ", " + item.Protection[2] + ", " + item.Protection[3] + ", " + item.Protection[4] + ", " + item.Protection[5] + ", " + item.Protection[6] + ", " + item.Protection[7] + "},");
+                            sb.Append("new int[]{" + item.Damage[0] + ", " + item.Damage[1] + ", " + item.Damage[2] + ", " + item.Damage[3] + ", " + item.Damage[4] + ", " + item.Damage[5] + ", " + item.Damage[6] + ", " + item.Damage[7] + "},");
+                            sb.Append(item.Value + ", ");
+                            sb.Append("(MainFlags)(" + item.MainFlag + "), ");
+                            sb.Append("(Flags)(" + item.Flags + "), ");
+                            sb.Append("(ArmorFlags)(" + item.Wear + "), ");
+                            sb.Append("(DamageType)(" + item.DamageType + "), ");
+                            sb.Append(item.DamageTotal + ", ");
+                            sb.Append(item.Range + ", ");
+                            sb.Append("\"" + item.Visual.Value.Trim() + "\", ");
+                            sb.Append("\"" + item.VisualChange.Value.Trim() + "\", ");
+                            sb.Append("\"" + item.Effect.Value.Trim() + "\", ");
+                            sb.Append(item.VisualSkin + ", ");
+                            sb.Append("(MaterialTypes)(" + item.Material + "), ");
+                            if (muni != null)
+                                sb.Append("ItemInstance.getItemInstance(\"" + muni + "\") ");
                             else
-                                sb.Append("null, ");
-
-                            if (mi.PickLockStr.Address != 0 && mi.PickLockStr.getCheckedValue() != null)
-                                sb.Append("\"" + mi.PickLockStr.Value.Trim() + "\", ");
-                            else
-                                sb.Append("null, ");
-
-                            if (mi.UseWithItem.Address != 0 && mi.UseWithItem.getCheckedValue() != null)
-                                sb.Append("ItemInstance.getItemInstance(\"" + mi.UseWithItem.Value.Trim().ToUpper() + "\"), ");
-                            else
-                                sb.Append("null, ");
-
-                            if (mi.TriggerTarget.Address != 0 && mi.TriggerTarget.getCheckedValue() != null)
-                                sb.Append("\"" + mi.TriggerTarget.Value.Trim() + "\", ");
-                            else
-                                sb.Append("null, ");
-                            sb.Append(((mi.BitField1 & (int)zCVob.BitFlag0.collDetectionDynamic) == (int)zCVob.BitFlag0.collDetectionDynamic).ToString().ToLower() + ", ");
-                            sb.Append(((mi.BitField1 & (int)zCVob.BitFlag0.collDetectionStatic) == (int)zCVob.BitFlag0.collDetectionStatic).ToString().ToLower() + "); \r\n");
+                                sb.Append("null");
+                            sb.Append(");\r\n");
                         }
-
-
-                        sb.Append("mi.Spawn(mapName, new Vec3f(");
-                        sb.Append(vob.TrafoObjToWorld.getPosition()[0].ToString().Replace(",", ".") + "f, " + vob.TrafoObjToWorld.getPosition()[1].ToString().Replace(",", ".") + "f, " + vob.TrafoObjToWorld.getPosition()[2].ToString().Replace(",", ".") + "f), new Vec3f(");
-                        sb.Append(vob.TrafoObjToWorld.getDirection()[0].ToString().Replace(",", ".") + "f, " + vob.TrafoObjToWorld.getDirection()[1].ToString().Replace(",", ".") + "f, " + vob.TrafoObjToWorld.getDirection()[2].ToString().Replace(",", ".") + "f));\r\n\r\n");
-                        
                     }
+
+
+                    File.WriteAllText("cinstances.cs", sb.ToString());
+
+                    saveItemInstances = true;
                 }
 
-
-                File.WriteAllText("cVobs.cs", sb.ToString());
-                saveMapVobs = true;
-            }
-
-
-            if (InputHooked.IsPressed((int)VirtualKeys.F3) && !saveMapItems)
-            {
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine("Item mi = null;");
-                sb.AppendLine("String mapName = @\"" + oCGame.Game(process).World.WorldFileName.Value.Trim() + "\";");
-                Dictionary<zCVob.VobTypes, List<zCVob>> vobDict = oCGame.Game(process).World.getVobLists(zCVob.VobTypes.Item);
-
-
-                foreach (KeyValuePair<zCVob.VobTypes, List<zCVob>> vobList in vobDict)
+                if (InputHooked.IsPressed((int)VirtualKeys.F2) && !saveMapVobs)
                 {
-                    foreach (zCVob vob in vobList.Value)
-                    {
-                        if (vob.VobType == zCVob.VobTypes.Item)
-                        {
-                            oCItem mi = new oCItem(process, vob.Address);
+                    StringBuilder sb = new StringBuilder();
+                    sb.AppendLine("MobInter mi = null;");
+                    sb.AppendLine("String mapName = @\"" + oCGame.Game(process).World.WorldFileName.Value.Trim() + "\";");
+                    Dictionary<zCVob.VobTypes, List<zCVob>> vobDict = oCGame.Game(process).World.getVobLists(zCVob.VobTypes.MobInter, zCVob.VobTypes.MobBed, zCVob.VobTypes.MobSwitch, zCVob.VobTypes.MobDoor, zCVob.VobTypes.MobContainer);
 
-                            sb.Append("mi = new Item(");
-                            sb.Append("ItemInstance.getItemInstance(\"" + mi.ObjectName.Value.Trim().ToUpper() + "\"), ");
-                            sb.Append("" + mi.Amount + ");\r\n");
+
+                    foreach (KeyValuePair<zCVob.VobTypes, List<zCVob>> vobList in vobDict)
+                    {
+                        foreach (zCVob vob in vobList.Value)
+                        {
+                            if (!VobVisual.ContainsKey(vob.Address))
+                            {
+                                sb.Append("//");
+                            }
+                            if (vob.VobType == zCVob.VobTypes.MobInter || vob.VobType == zCVob.VobTypes.MobBed || vob.VobType == zCVob.VobTypes.MobSwitch)
+                            {
+                                oCMobInter mi = new oCMobInter(process, vob.Address);
+                                if (vob.VobType == zCVob.VobTypes.MobInter)
+                                    sb.Append("mi = new MobInter(");
+                                else if (vob.VobType == zCVob.VobTypes.MobBed)
+                                    sb.Append("mi = new MobBed(");
+                                else if (vob.VobType == zCVob.VobTypes.MobSwitch)
+                                    sb.Append("mi = new MobSwitch(");
+                                if (VobVisual.ContainsKey(vob.Address))
+                                    sb.Append("\"" + VobVisual[vob.Address] + "\", ");
+                                else
+                                    sb.Append("\"\", ");
+                                sb.Append("\"" + mi.Name.Value.Trim() + "\", ");
+                                //sb.Append("" + mi.Rewind.ToString().ToLower() + ", ");
+                                //sb.Append("" + mi.StateNum + ", ");
+                                if (mi.UseWithItem.Address != 0 && mi.UseWithItem.getCheckedValue() != null)
+                                    sb.Append("ItemInstance.getItemInstance(\"" + mi.UseWithItem.Value.Trim().ToUpper() + "\"), ");
+                                else
+                                    sb.Append("null, ");
+
+                                if (mi.TriggerTarget.Address != 0 && mi.TriggerTarget.getCheckedValue() != null)
+                                    sb.Append("\"" + mi.TriggerTarget.Value.Trim() + "\", ");
+                                else
+                                    sb.Append("null, ");
+                                sb.Append(((mi.BitField1 & (int)zCVob.BitFlag0.collDetectionDynamic) == (int)zCVob.BitFlag0.collDetectionDynamic).ToString().ToLower() + ", ");
+                                sb.Append(((mi.BitField1 & (int)zCVob.BitFlag0.collDetectionStatic) == (int)zCVob.BitFlag0.collDetectionStatic).ToString().ToLower() + "); \r\n");
+                            }
+
+                            if (vob.VobType == zCVob.VobTypes.MobDoor)
+                            {
+                                oCMobDoor mi = new oCMobDoor(process, vob.Address);
+                                sb.Append("mi = new MobDoor(");
+                                if (VobVisual.ContainsKey(vob.Address))
+                                    sb.Append("\"" + VobVisual[vob.Address] + "\", ");
+                                else
+                                    sb.Append("\"\", ");
+                                sb.Append("\"" + mi.Name.Value.Trim() + "\", ");
+                                sb.Append("" + mi.isLocked.ToString().ToLower() + ", ");
+                                if (mi.keyInstance.Address != 0 && mi.keyInstance.getCheckedValue() != null)
+                                    sb.Append("ItemInstance.getItemInstance(\"" + mi.keyInstance.Value.Trim().ToUpper() + "\"), ");
+                                else
+                                    sb.Append("null, ");
+
+                                if (mi.PickLockStr.Address != 0 && mi.PickLockStr.getCheckedValue() != null)
+                                    sb.Append("\"" + mi.PickLockStr.Value.Trim() + "\", ");
+                                else
+                                    sb.Append("null, ");
+
+                                if (mi.UseWithItem.Address != 0 && mi.UseWithItem.getCheckedValue() != null)
+                                    sb.Append("ItemInstance.getItemInstance(\"" + mi.UseWithItem.Value.Trim().ToUpper() + "\"), ");
+                                else
+                                    sb.Append("null, ");
+
+                                if (mi.TriggerTarget.Address != 0 && mi.TriggerTarget.getCheckedValue() != null)
+                                    sb.Append("\"" + mi.TriggerTarget.Value.Trim() + "\", ");
+                                else
+                                    sb.Append("null, ");
+                                sb.Append(((mi.BitField1 & (int)zCVob.BitFlag0.collDetectionDynamic) == (int)zCVob.BitFlag0.collDetectionDynamic).ToString().ToLower() + ", ");
+                                sb.Append(((mi.BitField1 & (int)zCVob.BitFlag0.collDetectionStatic) == (int)zCVob.BitFlag0.collDetectionStatic).ToString().ToLower() + "); \r\n");
+                            }
+
+                            if (vob.VobType == zCVob.VobTypes.MobContainer)
+                            {
+                                oCMobContainer mi = new oCMobContainer(process, vob.Address);
+                                sb.Append("mi = new MobContainer(");
+                                if (VobVisual.ContainsKey(vob.Address))
+                                    sb.Append("\"" + VobVisual[vob.Address] + "\", ");
+                                else
+                                    sb.Append("\"\", ");
+                                sb.Append("\"" + mi.Name.Value.Trim() + "\", ");
+
+                                //ItemLists:
+                                sb.Append("new ItemInstance[]{");
+                                List<oCItem> itemList = mi.getItemList();
+                                for (int i = 0; i < itemList.Count; i++)
+                                {
+                                    oCItem item = itemList[i];
+                                    sb.Append("ItemInstance.getItemInstance(\"" + item.ObjectName.Value.Trim().ToUpper() + "\")");
+                                    if (i + 1 < itemList.Count)
+                                        sb.Append(", ");
+                                }
+                                sb.Append("},");
+                                sb.Append("new int[]{");
+                                for (int i = 0; i < itemList.Count; i++)
+                                {
+                                    oCItem item = itemList[i];
+                                    sb.Append("" + item.Amount);
+                                    if (i + 1 < itemList.Count)
+                                        sb.Append(", ");
+                                }
+                                sb.Append("},");
+
+
+                                sb.Append("" + mi.isLocked.ToString().ToLower() + ", ");
+                                if (mi.keyInstance.Address != 0 && mi.keyInstance.getCheckedValue() != null)
+                                    sb.Append("ItemInstance.getItemInstance(\"" + mi.keyInstance.Value.Trim().ToUpper() + "\"), ");
+                                else
+                                    sb.Append("null, ");
+
+                                if (mi.PickLockStr.Address != 0 && mi.PickLockStr.getCheckedValue() != null)
+                                    sb.Append("\"" + mi.PickLockStr.Value.Trim() + "\", ");
+                                else
+                                    sb.Append("null, ");
+
+                                if (mi.UseWithItem.Address != 0 && mi.UseWithItem.getCheckedValue() != null)
+                                    sb.Append("ItemInstance.getItemInstance(\"" + mi.UseWithItem.Value.Trim().ToUpper() + "\"), ");
+                                else
+                                    sb.Append("null, ");
+
+                                if (mi.TriggerTarget.Address != 0 && mi.TriggerTarget.getCheckedValue() != null)
+                                    sb.Append("\"" + mi.TriggerTarget.Value.Trim() + "\", ");
+                                else
+                                    sb.Append("null, ");
+                                sb.Append(((mi.BitField1 & (int)zCVob.BitFlag0.collDetectionDynamic) == (int)zCVob.BitFlag0.collDetectionDynamic).ToString().ToLower() + ", ");
+                                sb.Append(((mi.BitField1 & (int)zCVob.BitFlag0.collDetectionStatic) == (int)zCVob.BitFlag0.collDetectionStatic).ToString().ToLower() + "); \r\n");
+                            }
+
+
+                            sb.Append("mi.Spawn(mapName, new Vec3f(");
+                            sb.Append(vob.TrafoObjToWorld.getPosition()[0].ToString().Replace(",", ".") + "f, " + vob.TrafoObjToWorld.getPosition()[1].ToString().Replace(",", ".") + "f, " + vob.TrafoObjToWorld.getPosition()[2].ToString().Replace(",", ".") + "f), new Vec3f(");
+                            sb.Append(vob.TrafoObjToWorld.getDirection()[0].ToString().Replace(",", ".") + "f, " + vob.TrafoObjToWorld.getDirection()[1].ToString().Replace(",", ".") + "f, " + vob.TrafoObjToWorld.getDirection()[2].ToString().Replace(",", ".") + "f));\r\n\r\n");
 
                         }
-
-
-                        sb.Append("mi.Spawn(mapName, new Vec3f(");
-                        sb.Append(vob.TrafoObjToWorld.getPosition()[0].ToString().Replace(",", ".") + "f, " + vob.TrafoObjToWorld.getPosition()[1].ToString().Replace(",", ".") + "f, " + vob.TrafoObjToWorld.getPosition()[2].ToString().Replace(",", ".") + "f), new Vec3f(");
-                        sb.Append(vob.TrafoObjToWorld.getDirection()[0].ToString().Replace(",", ".") + "f, " + vob.TrafoObjToWorld.getDirection()[1].ToString().Replace(",", ".") + "f, " + vob.TrafoObjToWorld.getDirection()[2].ToString().Replace(",", ".") + "f));\r\n\r\n");
-
                     }
+
+
+                    File.WriteAllText("cVobs.cs", sb.ToString());
+                    saveMapVobs = true;
+
                 }
 
 
-                File.WriteAllText("cItems.cs", sb.ToString());
-                saveMapItems = true;
+                if (InputHooked.IsPressed((int)VirtualKeys.F3) && !saveMapItems)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    sb.AppendLine("Item mi = null;");
+                    sb.AppendLine("String mapName = @\"" + oCGame.Game(process).World.WorldFileName.Value.Trim() + "\";");
+                    Dictionary<zCVob.VobTypes, List<zCVob>> vobDict = oCGame.Game(process).World.getVobLists(zCVob.VobTypes.Item);
+
+
+                    foreach (KeyValuePair<zCVob.VobTypes, List<zCVob>> vobList in vobDict)
+                    {
+                        foreach (zCVob vob in vobList.Value)
+                        {
+                            if (vob.VobType == zCVob.VobTypes.Item)
+                            {
+                                oCItem mi = new oCItem(process, vob.Address);
+
+                                sb.Append("mi = new Item(");
+                                sb.Append("ItemInstance.getItemInstance(\"" + mi.ObjectName.Value.Trim().ToUpper() + "\"), ");
+                                sb.Append("" + mi.Amount + ");\r\n");
+
+                            }
+
+
+                            sb.Append("mi.Spawn(mapName, new Vec3f(");
+                            sb.Append(vob.TrafoObjToWorld.getPosition()[0].ToString().Replace(",", ".") + "f, " + vob.TrafoObjToWorld.getPosition()[1].ToString().Replace(",", ".") + "f, " + vob.TrafoObjToWorld.getPosition()[2].ToString().Replace(",", ".") + "f), new Vec3f(");
+                            sb.Append(vob.TrafoObjToWorld.getDirection()[0].ToString().Replace(",", ".") + "f, " + vob.TrafoObjToWorld.getDirection()[1].ToString().Replace(",", ".") + "f, " + vob.TrafoObjToWorld.getDirection()[2].ToString().Replace(",", ".") + "f));\r\n\r\n");
+
+                        }
+                    }
+
+
+                    File.WriteAllText("cItems.cs", sb.ToString());
+                    saveMapItems = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', ex.ToString(), 0, "Program.cs", 0);
             }
             
             return 0;
