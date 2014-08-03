@@ -7,6 +7,9 @@ using GUC.WorldObjects;
 using GUC.Enumeration;
 using RakNet;
 using GUC.Server.Network.Messages.VobCommands;
+using GUC.Types;
+
+using GUC.Network;
 
 namespace GUC.Server.Network.Messages.Connection
 {
@@ -18,14 +21,19 @@ namespace GUC.Server.Network.Messages.Connection
             String driveString = "";
             String macString = "";
 
+
+            Vec3f pos = new Vec3f();
+
             stream.Read(out heroName);
             stream.Read(out driveString);
             stream.Read(out macString);
+            stream.Read(out pos);
 
 
             Player player = new Player(packet.guid, heroName);
             player.DriveString = driveString;
             player.MacString = macString;
+            player.Position = pos;
             sWorld.addVob(player);
 
             Write(player);

@@ -189,6 +189,7 @@ namespace GUC.Network.Messages.Connection
             stream.Write(Player.Hero.Name);
             stream.Write(connString);
             stream.Write(macString);
+            stream.Write(Player.Hero.Position);
 
             Program.client.client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }

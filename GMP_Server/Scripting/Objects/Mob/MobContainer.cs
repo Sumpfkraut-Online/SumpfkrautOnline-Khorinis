@@ -5,6 +5,7 @@ using System.Text;
 using RakNet;
 using GUC.Enumeration;
 using System.Collections;
+using GUC.Server.Scripting.Objects.Character;
 
 namespace GUC.Server.Scripting.Objects.Mob
 {
@@ -125,5 +126,40 @@ namespace GUC.Server.Scripting.Objects.Mob
         {
             get { return Proto.itemList[i].ScriptingProto; }
         }
+
+
+        #region Events
+        public event GUC.Server.Scripting.Events.ContainerItemMessage OnPutItemToContainer;
+        internal void iOnPutItemToContainer(MobContainer container, Player pl, Item item, int amount)
+        {
+            if (OnPutItemToContainer != null)
+                OnPutItemToContainer(container, pl, item, amount);
+        }
+
+
+        public static event Events.ContainerItemMessage sOnPutItemToContainer;
+        internal static void isOnPutItemToContainer(MobContainer container, Player pl, Item item, int amount)
+        {
+            container.iOnPutItemToContainer(container, pl, item, amount);
+            if (sOnPutItemToContainer != null)
+                sOnPutItemToContainer(container, pl, item, amount);
+        }
+
+        public event GUC.Server.Scripting.Events.ContainerItemMessage OnTakeItemFromContainer;
+        internal void iOnTakeItemFromContainer(MobContainer container, Player pl, Item item, int amount)
+        {
+            if (OnTakeItemFromContainer != null)
+                OnTakeItemFromContainer(container, pl, item, amount);
+        }
+
+
+        public static event Events.ContainerItemMessage sOnTakeItemFromContainer;
+        internal static void isOnTakeItemMessage(MobContainer container, Player pl, Item item, int amount)
+        {
+            container.iOnTakeItemFromContainer(container, pl, item, amount);
+            if (sOnTakeItemFromContainer != null)
+                sOnTakeItemFromContainer(container, pl, item, amount);
+        }
+        #endregion
     }
 }

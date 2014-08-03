@@ -17,6 +17,7 @@ namespace GUC.Server.Scripting
         public delegate void TalentChangedEventHandler(NPCProto proto, NPCTalents talent, int oldValue, int newValue);
         public delegate void CastSpell(NPCProto caster, Spell spell, Vob target );
 
+        public delegate void ContainerItemMessage(MobContainer container, Player pl, Item item, int amount);
 
         public delegate void PlayerEventHandler(Player sender);
         public delegate void PlayerItemEventHandler(NPCProto player, Item item, int amount);

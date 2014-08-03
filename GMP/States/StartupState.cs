@@ -12,6 +12,7 @@ using GUC.Network.Messages.Connection;
 using Gothic.zTypes;
 using System.Reflection;
 using GUC.Network.Messages.PlayerCommands;
+using GUC.Types;
 
 namespace GUC.States
 {
@@ -224,6 +225,7 @@ namespace GUC.States
             Player player = new Player(true, StartupState.clientOptions.name);
             player.Address = oCNpc.Player(Process.ThisProcess()).Address;
             player.IsSpawned = true;
+            player.Position = (Vec3f)oCNpc.Player(Process.ThisProcess()).GetPositionArray();
 
             Player.Hero = player;
         }
@@ -231,6 +233,7 @@ namespace GUC.States
 
         public override void update()
         {
+            Player.Hero.setPosition(Player.Hero.Position);
             PlayerKeyMessage.getPlayerKeyMessage().update();
             Program.client.Update();
         }

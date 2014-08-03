@@ -126,5 +126,11 @@ namespace GUC.Server.Scripting.Objects
         public int TotalDamage { get { return ItemInstance.TotalDamage; } }
 
         #endregion
+
+
+        public override string ToString()
+        {
+            return "ID: "+this.ID+" | "+ItemInstance.InstanceName+" | Amount: "+this.Amount;
+        }
     }
 }

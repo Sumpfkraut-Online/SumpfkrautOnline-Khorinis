@@ -311,6 +311,10 @@ namespace GUC.Server.Scripting.Objects
         #endregion
 
 
+        public override string ToString()
+        {
+            return InstanceName;
+        }
 
         #region Events
 

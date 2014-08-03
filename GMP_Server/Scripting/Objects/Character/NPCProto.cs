@@ -1144,8 +1144,18 @@ namespace GUC.Server.Scripting.Objects.Character
             stream.Write(proto.ID);
             stream.Write(anim);
             stream.Write((byte)1);
-
-            this.proto.SendToAreaPlayersAndPlayer(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED);
+            if (this is Player && !vob.IsSpawned)
+            {
+                using (RakNetGUID guid = ((WorldObjects.Character.Player)this.proto).GUID)
+                {
+                    Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+                }
+            }
+            else
+            {
+                this.proto.SendToAreaPlayersAndPlayer(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED);
+            }
+            
             //Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
@@ -1160,8 +1170,17 @@ namespace GUC.Server.Scripting.Objects.Character
             stream.Write(proto.ID);
             stream.Write(anim);
             stream.Write((byte)0);
-
-            this.proto.SendToAreaPlayersAndPlayer(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED);
+            if (this is Player && !vob.IsSpawned)
+            {
+                using (RakNetGUID guid = ((WorldObjects.Character.Player)this.proto).GUID)
+                {
+                    Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+                }
+            }
+            else
+            {
+                this.proto.SendToAreaPlayersAndPlayer(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED);
+            }
             //Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
