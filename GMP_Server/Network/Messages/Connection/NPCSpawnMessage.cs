@@ -17,7 +17,7 @@ namespace GUC.Server.Network.Messages.Connection
 
             if (!sWorld.VobDict.ContainsKey(plId))
             {
-                Console.WriteLine("No Playerid found! "+plId);
+                Log.Logger.log(Log.Logger.LOG_WARNING, "No Playerid found! "+plId);
                 return;
             }
 

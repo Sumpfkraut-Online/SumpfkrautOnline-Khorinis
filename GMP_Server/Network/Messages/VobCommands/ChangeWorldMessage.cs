@@ -23,7 +23,6 @@ namespace GUC.Server.Network.Messages.VobCommands
             Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, packet.guid, true);
 
 
-            Console.WriteLine(plID+" Move to World: "+levelName);
         }
     }
 }

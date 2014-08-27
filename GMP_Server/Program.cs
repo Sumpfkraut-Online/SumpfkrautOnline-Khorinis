@@ -111,9 +111,9 @@ namespace GUC.Server
             }
             catch (System.Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                Console.WriteLine(ex.Source);
-                Console.WriteLine(ex.StackTrace);
+                Log.Logger.log(Log.Logger.LOG_ERROR, ex.Message);
+                Log.Logger.log(Log.Logger.LOG_ERROR, ex.Source);
+                Log.Logger.log(Log.Logger.LOG_ERROR, ex.StackTrace);
             }
             Console.Read();
         }

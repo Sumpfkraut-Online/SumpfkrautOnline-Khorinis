@@ -72,78 +72,78 @@ namespace GUC.States
                 Program.newWorld = false;
             }
 
-            if (lastKeyPressed + 10000*1000*2 < now)
-            {
-                if (InputHooked.IsPressed(process, (int)VirtualKeys.F7))
-                {
-                    oCNpc npc = oCNpc.Player(process);
-                    oCMobInter mI = new oCMobInter(process, npc.FocusVob.Address);
-                    mI.StartStateChange(npc, 0, 1);
+            //if (lastKeyPressed + 10000*1000*2 < now)
+            //{
+            //    if (InputHooked.IsPressed(process, (int)VirtualKeys.F7))
+            //    {
+            //        oCNpc npc = oCNpc.Player(process);
+            //        oCMobInter mI = new oCMobInter(process, npc.FocusVob.Address);
+            //        mI.StartStateChange(npc, 0, 1);
                     
-                    zERROR.GetZErr(process).Report(2, 'G', "Start-Ani -1", 0, "Program.cs", 0);
+            //        zERROR.GetZErr(process).Report(2, 'G', "Start-Ani -1", 0, "Program.cs", 0);
 
 
-                    lastKeyPressed = now;
-                }
+            //        lastKeyPressed = now;
+            //    }
 
-                if (InputHooked.IsPressed(process, (int)VirtualKeys.F8))
-                {
-                    oCNpc npc = oCNpc.Player(process);
-                    oCMobInter mI = new oCMobInter(process, npc.FocusVob.Address);
-                    mI.StartStateChange(npc, 1, 0);
+            //    if (InputHooked.IsPressed(process, (int)VirtualKeys.F8))
+            //    {
+            //        oCNpc npc = oCNpc.Player(process);
+            //        oCMobInter mI = new oCMobInter(process, npc.FocusVob.Address);
+            //        mI.StartStateChange(npc, 1, 0);
 
-                    zERROR.GetZErr(process).Report(2, 'G', "Start-Ani -2", 0, "Program.cs", 0);
+            //        zERROR.GetZErr(process).Report(2, 'G', "Start-Ani -2", 0, "Program.cs", 0);
 
 
-                    lastKeyPressed = now;
-                }
+            //        lastKeyPressed = now;
+            //    }
 
-                if (InputHooked.IsPressed(process, (int)VirtualKeys.F9))
-                {
-                    oCNpc npc = oCNpc.Player(process);
-                    oCMobInter mI = new oCMobInter(process, npc.FocusVob.Address);
-                    mI.GetModel().StartAnimation("T_S0_2_S1");
+            //    if (InputHooked.IsPressed(process, (int)VirtualKeys.F9))
+            //    {
+            //        oCNpc npc = oCNpc.Player(process);
+            //        oCMobInter mI = new oCMobInter(process, npc.FocusVob.Address);
+            //        mI.GetModel().StartAnimation("T_S0_2_S1");
 
-                    zERROR.GetZErr(process).Report(2, 'G', "Start-Ani 1", 0, "Program.cs", 0);
+            //        zERROR.GetZErr(process).Report(2, 'G', "Start-Ani 1", 0, "Program.cs", 0);
                     
 
-                    lastKeyPressed = now;
-                }
+            //        lastKeyPressed = now;
+            //    }
 
-                if (InputHooked.IsPressed(process, (int)VirtualKeys.F10))
-                {
-                    oCNpc npc = oCNpc.Player(process);
-                    oCMobInter mI = new oCMobInter(process, npc.FocusVob.Address);
-                    mI.GetModel().StartAnimation("S_S1");
+            //    if (InputHooked.IsPressed(process, (int)VirtualKeys.F10))
+            //    {
+            //        oCNpc npc = oCNpc.Player(process);
+            //        oCMobInter mI = new oCMobInter(process, npc.FocusVob.Address);
+            //        mI.GetModel().StartAnimation("S_S1");
 
-                    zERROR.GetZErr(process).Report(2, 'G', "Start-Ani 2", 0, "Program.cs", 0);
+            //        zERROR.GetZErr(process).Report(2, 'G', "Start-Ani 2", 0, "Program.cs", 0);
                     
-                    lastKeyPressed = now;
-                }
+            //        lastKeyPressed = now;
+            //    }
 
-                if (InputHooked.IsPressed(process, (int)VirtualKeys.F11))
-                {
-                    oCNpc npc = oCNpc.Player(process);
-                    oCMobInter mI = new oCMobInter(process, npc.FocusVob.Address);
-                    mI.GetModel().StartAnimation("T_S1_2_S0");
+            //    if (InputHooked.IsPressed(process, (int)VirtualKeys.F11))
+            //    {
+            //        oCNpc npc = oCNpc.Player(process);
+            //        oCMobInter mI = new oCMobInter(process, npc.FocusVob.Address);
+            //        mI.GetModel().StartAnimation("T_S1_2_S0");
 
-                    zERROR.GetZErr(process).Report(2, 'G', "Start-Ani 3", 0, "Program.cs", 0);
+            //        zERROR.GetZErr(process).Report(2, 'G', "Start-Ani 3", 0, "Program.cs", 0);
                     
-                    lastKeyPressed = now;
-                }
+            //        lastKeyPressed = now;
+            //    }
 
-                if (InputHooked.IsPressed(process, (int)VirtualKeys.F12))
-                {
-                    oCNpc npc = oCNpc.Player(process);
-                    oCMobInter mI = new oCMobInter(process, npc.FocusVob.Address);
-                    mI.GetModel().StartAnimation("S_S0");
+            //    if (InputHooked.IsPressed(process, (int)VirtualKeys.F12))
+            //    {
+            //        oCNpc npc = oCNpc.Player(process);
+            //        oCMobInter mI = new oCMobInter(process, npc.FocusVob.Address);
+            //        mI.GetModel().StartAnimation("S_S0");
 
-                    zERROR.GetZErr(process).Report(2, 'G', "Start-Ani 4", 0, "Program.cs", 0);
+            //        zERROR.GetZErr(process).Report(2, 'G', "Start-Ani 4", 0, "Program.cs", 0);
                     
-                    lastKeyPressed = now;
-                }
+            //        lastKeyPressed = now;
+            //    }
                 
-            }
+            //}
 
 
 

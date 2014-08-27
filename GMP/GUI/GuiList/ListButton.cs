@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using WinApi.User.Enumeration;
+using RakNet;
+using GUC.Enumeration;
+using GUC.WorldObjects.Character;
+using GUC.Types;
 
 namespace GUC.GUI.GuiList
 {
@@ -19,8 +22,8 @@ namespace GUC.GUI.GuiList
 
 
 
-        public ListButton(String text, List list)
-            : base(text, list)
+        public ListButton(int id, String text, List list, ColorRGBA aActiveRowColor, ColorRGBA aInactiveRowColor)
+            : base(id, text, list, aActiveRowColor, aInactiveRowColor)
         {
 
         }
@@ -29,9 +32,25 @@ namespace GUC.GUI.GuiList
         {
             base.updateActive(key);
 
-            if (key == VirtualKeys.Return && ButtonPressed != null)
-                ButtonPressed(this, new ButtonPressedEventArg() { Key = key, Data = this, list = this.mList });
+            if (key == VirtualKeys.Return)
+            {
+                //ButtonPressed(this, new ButtonPressedEventArg() { Key = key, Data = this, list = this.mList });
 
+
+                RakNet.BitStream stream = Program.client.sentBitStream;
+                stream.Reset();
+                stream.Write((byte)DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
+                stream.Write((byte)NetworkIDS.GuiMessage);
+                stream.Write((byte)GuiMessageType.GuiEvent);
+                stream.Write(Player.Hero.ID);
+                stream.Write(this.id);
+
+
+                //int evt = (key == (int)VirtualKeys.LeftButton) ? (int)GUIEvents.LeftClicked : (int)GUIEvents.RightClicked;
+                stream.Write((int)GUIEvents.ListButtonClicked);
+
+                Program.client.client.Send(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            }
         }
     }
 }

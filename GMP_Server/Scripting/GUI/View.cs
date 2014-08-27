@@ -92,7 +92,7 @@ namespace GUC.Server.Scripting.GUI
 
         public int getSingleUserID()
         {
-            return this.id;
+            return this.singleUserID;
         }
 
         public void setPosition(int x, int y)
@@ -100,7 +100,7 @@ namespace GUC.Server.Scripting.GUI
             this.setPosition(new Vec2i(x, y));
         }
 
-        public void setPosition(Vec2i pos)
+        public virtual void setPosition(Vec2i pos)
         {
             BitStream stream = Program.server.sendBitStream;
             stream.Reset();
@@ -130,7 +130,7 @@ namespace GUC.Server.Scripting.GUI
             return allShown;
         }
 
-        public void show(int plID)
+        public virtual void show(int plID)
         {
             BitStream stream = Program.server.sendBitStream;
             stream.Reset();
@@ -159,7 +159,7 @@ namespace GUC.Server.Scripting.GUI
             hide(pl.ID);
         }
 
-        public void hide(int plID)
+        public virtual void hide(int plID)
         {
             BitStream stream = Program.server.sendBitStream;
             stream.Reset();

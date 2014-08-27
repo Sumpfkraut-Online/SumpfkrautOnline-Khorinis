@@ -33,6 +33,13 @@ namespace GUC.States
         {
             Process Process = Process.ThisProcess();
 
+            //First disable all:
+            Gothic.mClasses.InputHooked.deactivateStatusScreen(Process, false);
+            Gothic.mClasses.InputHooked.deactivateLogScreen(Process, false);
+            //Gothic.mClasses.InputHooked.deactivateInventory(Process, false);
+
+
+
             //Block gothic.dat loading:
             //Process.Write(new byte[] { 0x33, 0xC0, 0xC2, 0x04, 0x00 }, 0x0078E900);
             Process.Write(new byte[] { 0xC3 }, 0x006C1C70);//Blocking Call Startup Scripts!

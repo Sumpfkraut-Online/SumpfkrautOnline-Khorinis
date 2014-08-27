@@ -37,6 +37,18 @@ namespace GUC.Network.Messages.Connection
 
 
 
+                stream.Read(out Player.EnableStatusMenu);
+                stream.Read(out Player.EnableLogMenu);
+
+                //Player-Defaults:
+                if(Player.EnableStatusMenu)
+                    Gothic.mClasses.InputHooked.deactivateStatusScreen(Process.ThisProcess(), true);
+                if (Player.EnableLogMenu)
+                    Gothic.mClasses.InputHooked.deactivateLogScreen(Process.ThisProcess(), true);
+
+
+
+
                 stream.Read(out Player.sSendAllKeys);
                 int playerKeyCount = 0;
                 stream.Read(out playerKeyCount);

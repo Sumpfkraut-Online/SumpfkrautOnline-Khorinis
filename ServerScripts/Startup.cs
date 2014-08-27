@@ -67,10 +67,10 @@ namespace GUC.Server.Scripts
             
 
             Modules.Init();
-            
 
-            
 
+
+            //Modules.addModule(new Test.ListTestModule());
 
 
 #if SSM_ACCOUNT

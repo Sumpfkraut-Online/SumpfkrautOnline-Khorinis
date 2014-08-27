@@ -6,6 +6,11 @@ namespace GUC.WorldObjects.Character
 {
     internal partial class Player : NPCProto
     {
+        public static bool EnableStatusMenu = true;
+        public static bool EnableLogMenu = true;
+        public static bool EnableInventory = true;
+
+
         public Dictionary<World, List<String>> knownArea = new Dictionary<World, List<string>>();
         protected bool isSpawned = false;
 

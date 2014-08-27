@@ -163,6 +163,30 @@ namespace GUC.Server.Scripts
                 Int32.TryParse(parameters[1], out param2);
         }
 
+        public void getParameters(String commString, out String param, out int param2, out int param3)
+        {
+            String[] parameters = null;
+            getParameters(commString, out parameters);
+
+            if (parameters == null || parameters.Length == 0)
+            {
+                param = null;
+                param2 = 0;
+                param3 = 0;
+                return;
+            }
+            param = parameters[0];
+            if (parameters.Length == 1)
+                param2 = 0;
+            else
+                Int32.TryParse(parameters[1], out param2);
+
+            if (parameters.Length <= 2)
+                param3 = 0;
+            else
+                Int32.TryParse(parameters[2], out param3);
+        }
+
         public void getParameters(String commString, out String[] param)
         {
             String parameterString = null;

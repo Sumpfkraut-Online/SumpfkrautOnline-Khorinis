@@ -399,6 +399,7 @@
     <Compile Include="StartModules\AbstractModule.cs" />
     <Compile Include="StartModules\Modules.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Test\ListTestModule.cs" />
     <Compile Include="Web\Actions\Action.cs" />
     <Compile Include="Web\Actions\GetPlayerListAction.cs" />
     <Compile Include="Web\Actions\GetAccountListAction.cs" />

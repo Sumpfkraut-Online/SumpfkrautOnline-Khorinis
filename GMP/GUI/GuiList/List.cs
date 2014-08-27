@@ -8,13 +8,12 @@ using Gothic.zClasses;
 using WinApi;
 using Gothic.mClasses;
 using Gothic.zTypes;
+using GUC.Enumeration;
 
 namespace GUC.GUI.GuiList
 {
-    public class List : View
+    public class List : Texture
     {
-        Texture parent;
-        zCView thisView = null;
         String font = "";
 
 
@@ -24,17 +23,17 @@ namespace GUC.GUI.GuiList
         protected zString emptyString = null;
         protected int activeRow = 0;
 
-        public List(int id, int lines, String font, Vec2i pos, Texture parent)
-            : base(id, pos)
-        {
 
-            this.parent = parent;
-            this.font = font;
+
+        protected int startRowIndex = 0;
+        protected int endRowIndex = 0;
+
+        public List(int id, int lines, String font, Vec2i pos, Vec2i size, String texture, Texture parent, GUIEvents evts)
+            : base(id, texture, pos, size, parent, evts)
+        {
 
             //Creation:
             Process process = Process.ThisProcess();
-
-            thisView = zCView.Create(Process.ThisProcess(), 0, 0, 0x2000, 0x2000);
             setFont(font);
 
 
@@ -47,13 +46,20 @@ namespace GUC.GUI.GuiList
         {
             rowList.Add(row);
 
+            if (rowList.Count <= textarr.Length)
+            {
+                endRowIndex = rowList.Count;
+            }
+
             updateTextBoxes();
         }
 
         public void clearRows()
         {
             rowList.Clear();
+            endRowIndex = 0;
             ActiveID = 0;
+            
 
             updateTextBoxes();
         }
@@ -64,13 +70,16 @@ namespace GUC.GUI.GuiList
             {
                 if (value == this.activeRow)
                     return;
+
+                if (value < 0)
+                    value = rowList.Count - 1;
+                else if (value >= rowList.Count)
+                    value = 0;
+
                 this.activeRow = value;
 
-                if (rowList.Count > textarr.Length)
-                {
-                    setInputActive(this.activeRow);
-                    return;
-                }
+                updateTextBoxes();
+                setInputActive(this.activeRow);
             }
         }
 
@@ -95,6 +104,7 @@ namespace GUC.GUI.GuiList
                 end = activeRow + 1;
             }
 
+
             for (int i = 0; start < end; start++, i++)
             {
                 rowList[start].setControl(textarr[i]);
@@ -104,10 +114,14 @@ namespace GUC.GUI.GuiList
         }
         protected void setInputActive( int id )
         {
+            if (rowList.Count == 0)
+                return;
+
             foreach (ListRow row in rowList)
             {
                 row.IsInputActive = false;
             }
+
             rowList[id].IsInputActive = true;
         }
 
@@ -124,7 +138,7 @@ namespace GUC.GUI.GuiList
 
             Process process = Process.ThisProcess();
             zString str = zString.Create(process, this.font);
-            thisView.SetFont(str);
+            this.getView().SetFont(str);
             str.Dispose();
         }
 
@@ -142,18 +156,15 @@ namespace GUC.GUI.GuiList
             for (int i = 0; i < lines; i++)
             {
 
-                textarr[i] = thisView.CreateText(this.position.X, this.position.Y + i * (InputHooked.PixelToVirtualY(Process.ThisProcess(), thisView.Font.GetFontY())), emptyString);
+                textarr[i] = this.getView().CreateText(this.position.X, this.position.Y + i * (InputHooked.PixelToVirtualY(Process.ThisProcess(), this.getView().Font.GetFontY())), emptyString);
             }
         }
 
         public override void Destroy()
         {
-            hide();
-
+            base.Destroy();
             emptyString.Dispose();
 
-
-            thisView.Dispose();
         }
 
         public override void setPosition(Vec2i position)
@@ -163,36 +174,8 @@ namespace GUC.GUI.GuiList
             for (int i = 0; i < textarr.Length; i++)
             {
                 textarr[i].PosX = this.position.X;
-                textarr[i].PosY = this.position.Y + i * (InputHooked.PixelToVirtualY(Process.ThisProcess(), thisView.Font.GetFontY() + 5));
+                textarr[i].PosY = this.position.Y + i * (InputHooked.PixelToVirtualY(Process.ThisProcess(), getView().Font.GetFontY() + 5));
             }
-        }
-
-        public override void hide()
-        {
-            if (!isShown)
-                return;
-            Process process = Process.ThisProcess();
-
-            if (parent == null)
-                zCView.GetStartscreen(process).RemoveItem(this.thisView);
-            else
-                parent.getView().RemoveItem(this.thisView);
-
-            isShown = false;
-
-        }
-        public override void show()
-        {
-            if (isShown)
-                return;
-            Process process = Process.ThisProcess();
-
-            if (parent == null)
-                zCView.GetStartscreen(process).InsertItem(this.thisView, 0);
-            else
-                parent.getView().InsertItem(this.thisView, 0);
-
-            isShown = true;
         }
     }
 }

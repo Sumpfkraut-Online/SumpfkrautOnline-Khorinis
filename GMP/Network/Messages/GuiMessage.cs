@@ -30,6 +30,16 @@ namespace GUC.Network.Messages
             throw new Exception("Parent was not a texture! :"+id+" "+v);
         }
 
+        protected GUI.GuiList.List getListParentFromList(int id)
+        {
+            if (!viewList.ContainsKey(id))
+                return null;
+            View v = viewList[id];
+            if (v is GUI.GuiList.List)
+                return (GUI.GuiList.List)v;
+            throw new Exception("Parent was not a GUI.GuiList.List! :" + id + " " + v);
+        }
+
         public void Read(RakNet.BitStream stream, RakNet.Packet packet, Client client)
         {
             byte type = 0;
@@ -201,7 +211,91 @@ namespace GUC.Network.Messages
                 Button tex = new Button(viewID, text, texture, font, color, position, size, getTextureParentFromList(parentID), (GUIEvents)guiEvents);
                 viewList.Add(viewID, tex);
 
-            }//Texture:
+            }
+            else if (gmT == GuiMessageType.CreateList)
+            {
+                Vec2i position, size;
+                string texture, font;
+                int parentID = 0;
+                int guiEvents = 0;
+                byte lines = 0;
+                
+
+                stream.Read(out viewID);
+                stream.Read(out position);
+                stream.Read(out size);
+                stream.Read(out texture);
+                stream.Read(out parentID);
+                //stream.Read(out guiEvents);
+                stream.Read(out lines);
+                stream.Read(out font);
+
+                GUI.GuiList.List tex = new GUI.GuiList.List(viewID, lines, font, position, size, texture, getTextureParentFromList(parentID), (GUIEvents)guiEvents);
+                viewList.Add(viewID, tex);
+            }
+            else if (gmT == GuiMessageType.CreateListText)
+            {
+                String text = "";
+                int parentID = 0;
+                ColorRGBA activeColor, inactiveColor;
+
+
+                stream.Read(out viewID);
+                stream.Read(out text);
+                stream.Read(out parentID);
+                stream.Read(out activeColor);
+                stream.Read(out inactiveColor);
+                
+
+                GUI.GuiList.List list = getListParentFromList(parentID);
+                GUI.GuiList.ListText listelement = new GUI.GuiList.ListText(viewID, text, list, activeColor, inactiveColor);
+                list.addRow(listelement);
+                viewList.Add(viewID, listelement);
+            }
+            else if (gmT == GuiMessageType.CreateListButton)
+            {
+                String text = "";
+                int parentID = 0;
+                ColorRGBA activeColor, inactiveColor;
+
+                stream.Read(out viewID);
+                stream.Read(out text);
+                stream.Read(out parentID);
+
+                stream.Read(out activeColor);
+                stream.Read(out inactiveColor);
+
+
+                GUI.GuiList.List list = getListParentFromList(parentID);
+                GUI.GuiList.ListButton listelement = new GUI.GuiList.ListButton(viewID, text, list, activeColor, inactiveColor);
+                list.addRow(listelement);
+                viewList.Add(viewID, listelement);
+            }
+            else if (gmT == GuiMessageType.CreateListTextBox)
+            {
+                String text = "";
+                String hardText = "";
+                int parentID = 0;
+                ColorRGBA activeColor, inactiveColor;
+
+
+                stream.Read(out viewID);
+
+                stream.Read(out hardText);
+                stream.Read(out text);
+                
+                stream.Read(out parentID);
+
+                stream.Read(out activeColor);
+                stream.Read(out inactiveColor);
+
+
+                GUI.GuiList.List list = getListParentFromList(parentID);
+                GUI.GuiList.ListTextBox listelement = new GUI.GuiList.ListTextBox(viewID, hardText, text, list, activeColor, inactiveColor);
+                list.addRow(listelement);
+                viewList.Add(viewID, listelement);
+            }
+                //Texture:
             else if (gmT == GuiMessageType.SetTexture)
             {
                 String texture = "";

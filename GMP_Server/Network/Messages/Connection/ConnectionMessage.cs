@@ -55,6 +55,11 @@ namespace GUC.Server.Network.Messages.Connection
             //stream.Write(player.ID);
 
 
+            stream.Write(Player.EnableStatusMenu);
+            stream.Write(Player.EnableLogMenu);
+
+
+
             stream.Write(Player.sSendAllKeys);
             stream.Write(Player.sSendKeys.Count);
             foreach (byte k in Player.sSendKeys)

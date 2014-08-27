@@ -110,6 +110,7 @@
     <Compile Include="Network\Messages\PlayerCommands\EquipItemMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\CreateSpellMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\CastSpellMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\InterfaceOptionsMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\NPCChangeAttributeMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\NPCChangeSkillMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\OnDamageMessage.cs" />
