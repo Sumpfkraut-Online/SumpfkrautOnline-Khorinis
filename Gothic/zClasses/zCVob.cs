@@ -284,6 +284,18 @@ namespace Gothic.zClasses
             return pos;
         }
 
+        public float[] GetPositionArray()
+        {
+            float[] posArray = new float[3];
+
+            Matrix4 traf = this.TrafoObjToWorld;
+
+            posArray[0] = Process.ReadFloat(traf.Address + 3 * 4);
+            posArray[1] = Process.ReadFloat(traf.Address + 7 * 4);
+            posArray[2] = Process.ReadFloat(traf.Address + 11 * 4);
+            return posArray;
+        }
+
         public void SetPositionWorld(float[] pos)
         {
             zVec3 p = zVec3.Create(Process);

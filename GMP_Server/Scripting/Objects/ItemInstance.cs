@@ -24,8 +24,7 @@ namespace GUC.Server.Scripting.Objects
             
             ItemInstance ii = null;
             ItemInstances.TryGetValue(name.ToUpper().Trim(), out ii);
-            if(ii == null)
-                Console.WriteLine(name);
+            
             return ii;
         }
 
@@ -312,6 +311,10 @@ namespace GUC.Server.Scripting.Objects
         #endregion
 
 
+        public override string ToString()
+        {
+            return InstanceName;
+        }
 
         #region Events
 

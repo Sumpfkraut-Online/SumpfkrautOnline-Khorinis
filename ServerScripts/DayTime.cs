@@ -71,7 +71,7 @@ namespace GUC.Server.Scripts
                 byte endHour = (byte)endRain;
                 byte endMinute = (byte)((endRain - endHour) * 60);
                 Console.WriteLine(startHour+":"+startMinute+" | "+endHour+":"+endMinute);
-                World.setRainTime(World.WeatherType.Snow, startHour, startMinute, endHour, endMinute);
+                World.setRainTime(World.WeatherType.Undefined, startHour, startMinute, endHour, endMinute);
             }
         }
     }

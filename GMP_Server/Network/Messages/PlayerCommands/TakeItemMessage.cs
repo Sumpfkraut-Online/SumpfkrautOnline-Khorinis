@@ -57,7 +57,6 @@ namespace GUC.Server.Network.Messages.PlayerCommands
                 guidExclude = RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS;
             Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guidExclude, true);
 
-            Console.WriteLine("TakeItemMessage sended!");
         }
     }
 }

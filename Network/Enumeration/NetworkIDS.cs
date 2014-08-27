@@ -78,6 +78,10 @@ namespace GUC.Enumeration
         SpellInvestMessage,
 
         SetSlotMessage,
+        CamToPlayerFront,
+
+        InterfaceOptionsMessage
+
     }
 
     public enum ChangeSkillType : byte

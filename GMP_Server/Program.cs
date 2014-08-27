@@ -75,6 +75,11 @@ namespace GUC.Server
             loadServerConfig();
             initClientModule();
 
+            TCPStatus.getTCPStatus();
+            TCPStatus.getTCPStatus().addInfo("servername", serverOptions.ServerName);
+            TCPStatus.getTCPStatus().addInfo("serverlanguage", "");
+            TCPStatus.getTCPStatus().addInfo("maxslots", ""+serverOptions.Slots);
+
             try
             {
                 server = new Network.Server();
@@ -84,11 +89,18 @@ namespace GUC.Server
                 scriptManager = new Scripting.ScriptManager();
                 scriptManager.init();
                 scriptManager.Startup();
-
+                long lastInfoUpdates = 0;
                 while (true)
                 {
                     long ticks = DateTime.Now.Ticks;
                     Player.sUpdateNPCList(ticks);
+
+                    if (lastInfoUpdates < ticks)
+                    {
+                        TCPStatus.getTCPStatus().addInfo("players", "" + sWorld.PlayerList.Count);
+                        lastInfoUpdates = ticks + 10000 * 1000 * 5;
+                    }
+
 
                     //ModuleLoader.updateAllModules();
                     scriptManager.update();
@@ -99,9 +111,9 @@ namespace GUC.Server
             }
             catch (System.Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                Console.WriteLine(ex.Source);
-                Console.WriteLine(ex.StackTrace);
+                Log.Logger.log(Log.Logger.LOG_ERROR, ex.Message);
+                Log.Logger.log(Log.Logger.LOG_ERROR, ex.Source);
+                Log.Logger.log(Log.Logger.LOG_ERROR, ex.StackTrace);
             }
             Console.Read();
         }

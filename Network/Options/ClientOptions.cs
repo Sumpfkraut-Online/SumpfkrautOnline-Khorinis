@@ -20,7 +20,7 @@ namespace GUC.Options
         public String updateUser = "";
         public String updatePassword = "";
         public int loglevel = 0;
-        public int fps = 30;
+        public int fps = 0;
 
         public bool startWindowed = false;
 

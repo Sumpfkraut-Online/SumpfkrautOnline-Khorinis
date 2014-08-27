@@ -8,6 +8,7 @@ using GUC.Types;
 using GUC.Server.Scripting.Objects;
 using GUC.Server.Scripting.Objects.Mob;
 using GUC.Enumeration;
+using GUC.Server.Scripting.GUI.GuiList;
 
 namespace GUC.Server.Scripting
 {
@@ -17,6 +18,7 @@ namespace GUC.Server.Scripting
         public delegate void TalentChangedEventHandler(NPCProto proto, NPCTalents talent, int oldValue, int newValue);
         public delegate void CastSpell(NPCProto caster, Spell spell, Vob target );
 
+        public delegate void ContainerItemMessage(MobContainer container, Player pl, Item item, int amount);
 
         public delegate void PlayerEventHandler(Player sender);
         public delegate void PlayerItemEventHandler(NPCProto player, Item item, int amount);
@@ -26,6 +28,8 @@ namespace GUC.Server.Scripting
 
         public delegate void TextureEventHandler(Texture sender, Player player);
         public delegate void TextureHoverEventHandler(Texture sender, Player player, bool hover);
+        public delegate void ListButtonEventHandler(ListButton sender, Player player);
+        public delegate void ListTextboxEventHandler(ListTextBox sender, Player player, String text);
 
 
         public delegate void UseItemEventHandler(NPCProto player, Item item, short state, short targetState);

@@ -130,6 +130,10 @@ namespace GUC.WorldObjects.Character
             Process process = Process.ThisProcess();
 
             oCNpc npc = new oCNpc(process, this.Address);
+            using (zVec3 vec = npc.GetPosition())
+            {
+                Position = (Vec3f)(new float[]{vec.X, vec.Y, vec.Z});
+            }
             npc.HP = 0;
             npc.SetPosition(-1000, -100000, -100000);
             npc.Disable();
@@ -260,6 +264,7 @@ namespace GUC.WorldObjects.Character
                 Process process = Process.ThisProcess();
                 oCNpc npc = new oCNpc(process, this.Address);
 
+                hNpc.blockSendUnEquip = true;
                 if (this.Armor != null)
                     npc.UnequipItem(new oCItem(process, this.Armor.Address));
                 npc.Disable();

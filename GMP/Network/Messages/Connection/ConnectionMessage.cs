@@ -37,6 +37,18 @@ namespace GUC.Network.Messages.Connection
 
 
 
+                stream.Read(out Player.EnableStatusMenu);
+                stream.Read(out Player.EnableLogMenu);
+
+                //Player-Defaults:
+                if(Player.EnableStatusMenu)
+                    Gothic.mClasses.InputHooked.deactivateStatusScreen(Process.ThisProcess(), true);
+                if (Player.EnableLogMenu)
+                    Gothic.mClasses.InputHooked.deactivateLogScreen(Process.ThisProcess(), true);
+
+
+
+
                 stream.Read(out Player.sSendAllKeys);
                 int playerKeyCount = 0;
                 stream.Read(out playerKeyCount);
@@ -189,6 +201,7 @@ namespace GUC.Network.Messages.Connection
             stream.Write(Player.Hero.Name);
             stream.Write(connString);
             stream.Write(macString);
+            stream.Write(Player.Hero.Position);
 
             Program.client.client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }

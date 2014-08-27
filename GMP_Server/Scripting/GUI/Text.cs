@@ -107,6 +107,9 @@ namespace GUC.Server.Scripting.GUI
 
         public void setText(String text)
         {
+            this.text = text;
+
+
             BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);

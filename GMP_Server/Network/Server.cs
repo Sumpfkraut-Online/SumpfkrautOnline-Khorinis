@@ -66,7 +66,7 @@ namespace GUC.Server.Network
 
         public void Start(ushort port, ushort maxConnections, String pw)
         {
-            pw = "ver2.06" + pw;
+            pw = "ver2.07" + pw;
             SocketDescriptor socketDescriptor = new SocketDescriptor();
             socketDescriptor.port = port;
 
@@ -104,7 +104,7 @@ namespace GUC.Server.Network
                         {
                             if (!sWorld.GUIDToPlayer.ContainsKey(p.guid.g))
                             {
-                                Console.WriteLine("Disconnected: " + ConnectionCount() + " " + p.guid);
+                                Log.Logger.log(Log.Logger.LOG_INFO, "Disconnected: " + ConnectionCount() + " " + p.guid);
                             }
                             else
                             {
@@ -131,7 +131,7 @@ namespace GUC.Server.Network
                         }
                     case (byte)DefaultMessageIDTypes.ID_NEW_INCOMING_CONNECTION:
                         {
-                            Console.WriteLine("New Connections: " + ConnectionCount() + " " + p.guid+" "+p.systemAddress);
+                            Log.Logger.log(Log.Logger.LOG_INFO, "New Connections: " + ConnectionCount() + " " + p.guid+" "+p.systemAddress);
                             break;
                         }
                     case (byte)DefaultMessageIDTypes.ID_USER_PACKET_ENUM:

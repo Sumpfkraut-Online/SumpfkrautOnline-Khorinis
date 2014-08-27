@@ -2,8 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using WinApi.User.Enumeration;
 using Gothic.mClasses;
+using GUC.Enumeration;
+using Gothic.zClasses;
+using RakNet;
+using GUC.WorldObjects.Character;
+using GUC.Types;
 
 namespace GUC.GUI.GuiList
 {
@@ -12,14 +16,42 @@ namespace GUC.GUI.GuiList
         public String hardText = "";
         public bool Password;
 
-        protected String textData = "";
 
-
-        public ListTextBox(String hardText, String text, List list)
-            : base( list )
+        public ListTextBox(int id, String hardText, String text, List list, ColorRGBA aActiveRowColor, ColorRGBA aInactiveRowColor)
+            : base(id, text, list, aActiveRowColor, aInactiveRowColor)
         {
             this.hardText = hardText;
-            this.textData = text;
+        }
+
+        public override void setControl(zCViewText text)
+        {
+            if (text == null)
+            {
+                isActive = false;
+                mTextView = null;
+                return;
+            }
+            mTextView = text;
+            isActive = true;
+
+            mTextView.Text.Set(hardText + mText);
+
+        }
+
+        public override bool IsInputActive
+        {
+            get
+            {
+                return base.IsInputActive;
+            }
+            set
+            {
+                base.IsInputActive = value;
+                if(isInputActive)
+                    InputHooked.deaktivateFullControl(WinApi.Process.ThisProcess());
+                else
+                    InputHooked.activateFullControl(WinApi.Process.ThisProcess());
+            }
         }
 
         protected override void updateActive(VirtualKeys key)
@@ -29,22 +61,40 @@ namespace GUC.GUI.GuiList
             if (key == VirtualKeys.Down || key == VirtualKeys.Return)
                 mList.ActiveID++;
 
+            if (key == VirtualKeys.Up || key == VirtualKeys.Down || key == VirtualKeys.Return)
+            {
+                RakNet.BitStream stream = Program.client.sentBitStream;
+                stream.Reset();
+                stream.Write((byte)DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
+                stream.Write((byte)NetworkIDS.GuiMessage);
+                stream.Write((byte)GuiMessageType.GuiEvent);
+                stream.Write(Player.Hero.ID);
+                stream.Write(this.id);
+                stream.Write((int)GUIEvents.ListTextBoxSend);
+                stream.Write(mText);
+
+                Program.client.client.Send(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+                return;
+            }
+
 
             if ((int)key == 8)
             {
-                if (textData.Length == 0)
+                if (mText.Length == 0)
                     return;
-                textData = textData.Substring(0, textData.Length - 1);
-                mTextView.Text.Set(hardText + textData);
+                mText = mText.Substring(0, mText.Length - 1);
+                mTextView.Text.Set(hardText + mText);
                 return;
             }
 
             String keyVal = Convert.ToString((char)key);
-            keyVal = Gothic.mClasses.textBox.GetCharsFromKeys((VirtualKeys)key, InputHooked.IsPressed((int)VirtualKeys.Shift), InputHooked.IsPressed((int)VirtualKeys.Control) && InputHooked.IsPressed((int)VirtualKeys.Menu));
+            keyVal = Gothic.mClasses.textBox.GetCharsFromKeys((WinApi.User.Enumeration.VirtualKeys)key, InputHooked.IsPressed((int)VirtualKeys.Shift), InputHooked.IsPressed((int)VirtualKeys.Control) && InputHooked.IsPressed((int)VirtualKeys.Menu));
 
-
-            textData += keyVal;
-            mTextView.Text.Add(keyVal);
+            if (keyVal != "")
+            {
+                mText += keyVal;
+                mTextView.Text.Add(keyVal);
+            }
         }
     }
 }

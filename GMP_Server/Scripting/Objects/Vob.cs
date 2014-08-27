@@ -20,6 +20,12 @@ namespace GUC.Server.Scripting.Objects
 
         protected Dictionary<String, Object> userObjects = new Dictionary<string,object>();
 
+        /// <summary>
+        /// Returns the Vob with the specified ID.
+        /// You can get the id of all vobs (Players, NPCs, mobinters and items) with vob.ID
+        /// </summary>
+        /// <param name="id">The specified vobid</param>
+        /// <returns>returns the vob with the specfied vob-id or null</returns>
         public static Vob getVob(int id){
             WorldObjects.Vob v = null;
             sWorld.VobDict.TryGetValue(id, out v);
@@ -37,10 +43,22 @@ namespace GUC.Server.Scripting.Objects
             this.vob = vob;
         }
 
+        /// <summary>
+        /// Creates a new vob.
+        /// Do not forget to use the spawn function.
+        /// </summary>
+        /// <param name="Visual">The visual your vob will get</param>
         public Vob(String Visual)
             : this(Visual, true, true, true)
         { }
 
+        /// <summary>
+        /// Creates a new vob.
+        /// Do not forget to use the spawn function.
+        /// </summary>
+        /// <param name="Visual">The visual your vob will get</param>
+        /// <param name="cdDyn">Dynamic Collisions</param>
+        /// <param name="cdStatic">Static Collisions</param>
         public Vob(String Visual, bool cdDyn, bool cdStatic)
             : this(Visual, cdDyn, cdStatic, true)
         { }
@@ -63,11 +81,24 @@ namespace GUC.Server.Scripting.Objects
                 CreateVob();
         }
 
+        /// <summary>
+        /// Returns the ID of the vob.
+        /// </summary>
         public int ID { get { return vob.ID; } }
 
+        /// <summary>
+        /// Returns or set the Position of the vob.
+        /// </summary>
         public Vec3f Position { get { return vob.Position; } set { setPosition(value); } }
+        /// <summary>
+        /// Returns or set the Direction of the vob.
+        /// </summary>
         public Vec3f Direction { get { return vob.Direction; } set { setDirection(value); } }
 
+        /// <summary>
+        /// Spawn your vob into the world.
+        /// It will use NewWorld\NewWorld.zen and the setted Position/ Direction as the spawnpoint.
+        /// </summary>
         public void Spawn()
         {
             if (this.Map == null)
@@ -75,6 +106,12 @@ namespace GUC.Server.Scripting.Objects
             Spawn(this.Map, this.Position, this.Direction);
         }
 
+        /// <summary>
+        /// Spawn the vob into the world
+        /// </summary>
+        /// <param name="world">the world name. Example: NewWorld\NewWorld.zen</param>
+        /// <param name="position">The position of the vob in the world</param>
+        /// <param name="direction">The direction of the vob.</param>
         public virtual void Spawn(String world, Vec3f position, Vec3f direction)
         {
             
@@ -100,6 +137,9 @@ namespace GUC.Server.Scripting.Objects
             created = true;
         }
 
+        /// <summary>
+        /// Returns the world or null if the vob is not spawned
+        /// </summary>
         public virtual World World { 
             get {
                 if (this.vob.Map == null)
@@ -110,9 +150,9 @@ namespace GUC.Server.Scripting.Objects
 
 
         /// <summary>
-        /// 
+        /// Returns an array with all near Players in the specified distance
         /// </summary>
-        /// <param name="distance"></param>
+        /// <param name="distance">the maximum distance of the player</param>
         /// <returns></returns>
         public Player[] getNearPlayers(float distance)
         {
@@ -145,6 +185,11 @@ namespace GUC.Server.Scripting.Objects
             return playerList.ToArray();
         }
 
+        /// <summary>
+        /// Returns the nearest player to this vob in a specified distance.
+        /// </summary>
+        /// <param name="distance">Maximum distance of the player.</param>
+        /// <returns>Returns the Player or null</returns>
         public Player getNearestPlayers(float distance)
         {
             if (this.vob.Map == null || this.vob.Map.Length == 0)
@@ -186,6 +231,11 @@ namespace GUC.Server.Scripting.Objects
             return lastPlayer;
         }
 
+        /// <summary>
+        /// Returns an array of all Near NPC and Player in a specified distance
+        /// </summary>
+        /// <param name="distance">The maximum distance the NPCProto can be</param>
+        /// <returns></returns>
         public NPCProto[] getNearNPC(float distance)
         {
             if (this.vob.Map == null || this.vob.Map.Length == 0)
@@ -257,6 +307,10 @@ namespace GUC.Server.Scripting.Objects
             return mi;
         }
 
+        /// <summary>
+        /// Returns the nearest npc
+        /// </summary>
+        /// <returns></returns>
         public NPCProto getNearestNPC()
         {
             NPCProto mi = null;

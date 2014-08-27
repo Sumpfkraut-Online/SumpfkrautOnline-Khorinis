@@ -15,6 +15,19 @@ namespace GUC.Network.Messages.PlayerCommands
     {
         Dictionary<byte, byte> keys = new Dictionary<byte, byte>();
 
+        private PlayerKeyMessage()
+        {
+
+        }
+
+        private static PlayerKeyMessage _self = null;
+        public static PlayerKeyMessage getPlayerKeyMessage()
+        {
+            if (_self == null)
+                _self = new PlayerKeyMessage();
+            return _self;
+        }
+
         public void Init()
         {
             InputHooked.receivers.Add(this);

@@ -63,6 +63,48 @@ namespace Gothic.mClasses
             return pos;
         }
 
+        public static void deactivateLogScreen(Process process, bool enable)
+        {
+            if (!enable)
+            {
+                int jmpAddress = 0x006FD47D - 0x006FC2A9 - 5;//JUMPTO - JUMPFROM - 5
+                process.Write(new byte[] { 0xE9 }, 0x006FC2A9);//Jump
+                process.Write(jmpAddress, 0x006FC2A9 + 1);//To End!
+            }
+            else
+            {
+                process.Write(new byte[] { 0x8B, 0x0D, 0x84, 0x26, 0xAB }, 0x006FC2A9);
+            }
+        }
+
+        public static void deactivateStatusScreen(Process process, bool enable)
+        {
+            if (!enable)
+            {
+                int jmpAddress = 0x006FD47D - 0x006FC270 - 5;//JUMPTO - JUMPFROM - 5
+                process.Write(new byte[] { 0xE9 }, 0x006FC270);//Jump
+                process.Write(jmpAddress, 0x006FC270 + 1);//To End!
+            }
+            else
+            {
+                process.Write(new byte[] { 0x8B, 0x0D, 0x84, 0x26, 0xAB }, 0x006FC270);
+            }
+        }
+
+        public static void deactivateInventory(Process process, bool enable)
+        {
+            if (!enable)
+            {
+                int jmpAddress = 0x006FD47D - 0x006FC575 - 5;//JUMPTO - JUMPFROM - 5
+                process.Write(new byte[] { 0xE9 }, 0x006FC575);//Jump
+                process.Write(jmpAddress, 0x006FC575 + 1);//To End!
+            }
+            else
+            {
+                process.Write(new byte[] { 0xD9, 0x05, 0xD8, 0xB3, 0x99 }, 0x006FC575);
+            }
+        }
+        
         public static void deaktivateFullControl(Process Process)
         {
             Cursor.noHandle = true;

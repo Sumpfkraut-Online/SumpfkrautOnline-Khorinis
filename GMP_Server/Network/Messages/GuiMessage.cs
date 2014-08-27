@@ -83,6 +83,18 @@ namespace GUC.Server.Network.Messages
                     stream.Read(out hover);
                     Texture.isOnHover((Texture)v, (Scripting.Objects.Character.Player)pl.ScriptingNPC, hover);
                 }
+                else if (evt.HasFlag(GUIEvents.ListButtonClicked))
+                {
+                    Scripting.GUI.GuiList.ListButton.isOnClick((Scripting.GUI.GuiList.ListButton)v, (Scripting.Objects.Character.Player)pl.ScriptingNPC);
+                    //Texture.isOnHover((Texture)v, (Scripting.Objects.Character.Player)pl.ScriptingNPC, hover);
+                }
+                else if (evt.HasFlag(GUIEvents.ListTextBoxSend))
+                {
+                    String text = "";
+                    stream.Read(out text);
+                    Scripting.GUI.GuiList.ListTextBox.isOnTextSend((Scripting.GUI.GuiList.ListTextBox)v, (Scripting.Objects.Character.Player)pl.ScriptingNPC, text);
+                    //Texture.isOnHover((Texture)v, (Scripting.Objects.Character.Player)pl.ScriptingNPC, hover);
+                }
             }
         }
     }

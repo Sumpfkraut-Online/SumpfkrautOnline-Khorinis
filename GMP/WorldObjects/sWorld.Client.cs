@@ -41,7 +41,7 @@ namespace GUC.WorldObjects
                 throw new ArgumentException("AddVob: Vob.ID is not in the list: " + vob.ID + " " + vob.VobType + " " + vob);
             
 #if D_CLIENT
-            if (vob.Address == 0)
+            if (vob.Address != 0)
             {
                 sWorld.SpawnedVobDict.Remove(vob.Address);
                 vob.Address = 0;
@@ -64,7 +64,7 @@ namespace GUC.WorldObjects
         public static Int32 hook_StartChangeLevel(String message)
         {
             try{
-                if (!Player.Hero.IsSpawned)
+                if (!Player.Hero.IsSpawnedPlayer)
                     return 0;
 
 
@@ -82,7 +82,7 @@ namespace GUC.WorldObjects
         {
             try
             {
-                if (!Player.Hero.IsSpawned)
+                if (!Player.Hero.IsSpawnedPlayer)
                     return 0;
 
 

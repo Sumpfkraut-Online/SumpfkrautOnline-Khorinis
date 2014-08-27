@@ -53,6 +53,9 @@
     <Compile Include="..\Network\**\*.cs">
       <Link>%(RecursiveDir)%(FileName)%(Extension)</Link>
     </Compile>
+    <Compile Include="Options\FavoritesOptions.cs" />
+    <Compile Include="StarterFunctions.cs" />
+    <Compile Include="StatusMessage.cs" />
     <Compile Include="WorldObjects\sWorld.Starter.cs" />
   </ItemGroup>
   <ItemGroup>

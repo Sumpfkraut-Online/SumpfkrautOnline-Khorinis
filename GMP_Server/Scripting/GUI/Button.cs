@@ -69,12 +69,72 @@ namespace GUC.Server.Scripting.GUI
             : this(text, tex, "FONT_DEFAULT.TGA", ColorRGBA.White, pos, size, parent, GUIEvents.LeftClicked, isSingleUser, singleUserID)
         { }
 
+
+
+
+
+
+
+
+
+        public Button(String text, GUIEvents evts)
+            : this(text, "buttons_03.tga", evts)
+        { }
+
+        public Button(String text, Vec2i pos, GUIEvents evts)
+            : this(text, pos.X, pos.Y, evts)
+        { }
+
+        public Button(String text, int x, int y, GUIEvents evts)
+            : this(text, "buttons_03.tga", x, y, 1700, 600, evts)
+        { }
+
+        public Button(String text, String tex, GUIEvents evts)
+            : this(text, tex, 0, 0, 1700, 600, evts)
+        { }
+
+        public Button(String text, String tex, int x, int y, int width, int height, GUIEvents evts)
+            : this(text, tex, x, y, width, height, null, false, 0, evts)
+        { }
+
+        public Button(String text, String tex, int x, int y, int width, int height, Texture parent, GUIEvents evts)
+            : this(text, tex, x, y, width, height, parent, false, 0, evts)
+        { }
+
+        public Button(String text, String tex, String font, GUIEvents evts)
+            : this(text, tex, font, 0, 0, 1700, 600, evts)
+        { }
+
+        public Button(String text, String tex, String font, int x, int y, int width, int height, GUIEvents evts)
+            : this(text, tex, font, x, y, width, height, null, false, 0, evts)
+        { }
+
+        public Button(String text, String tex, String font, int x, int y, int width, int height, Texture parent, GUIEvents evts)
+            : this(text, tex, font, x, y, width, height, parent, false, 0, evts)
+        { }
+
+        public Button(String text, String tex, String font, int x, int y, int width, int height, Texture parent, bool isSingleUser, int singleUserID, GUIEvents evts)
+            : this(text, tex, font, ColorRGBA.White, new Vec2i(x, y), new Vec2i(width, height), parent, isSingleUser, singleUserID, evts)
+        { }
+
+        public Button(String text, String tex, int x, int y, int width, int height, Texture parent, bool isSingleUser, int singleUserID, GUIEvents evts)
+            : this(text, tex, "FONT_DEFAULT.TGA", ColorRGBA.White, new Vec2i(x, y), new Vec2i(width, height), parent, isSingleUser, singleUserID, evts)
+        { }
+
+        public Button(String text, String tex, String font, ColorRGBA color, Vec2i pos, Vec2i size, Texture parent, bool isSingleUser, int singleUserID, GUIEvents evts)
+            : this(text, tex, "FONT_DEFAULT.TGA", ColorRGBA.White, pos, size, parent, evts, isSingleUser, singleUserID)
+        { }
+
+
+
+
         public Button(String text, String tex, String font, ColorRGBA color, Vec2i pos, Vec2i size, Texture parent, GUIEvents evts, bool isSingleUser, int singleUserID)
             : base(tex, pos, size, parent, isSingleUser, singleUserID, evts, false)
         {
             this.text = text;
             this.font = font;
             this.color = color;
+            
             create(-1);
         }
 

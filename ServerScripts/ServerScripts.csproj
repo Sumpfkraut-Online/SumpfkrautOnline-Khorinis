@@ -31,6 +31,13 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Data.Sqlite">
       <HintPath>..\..\..\..\..\..\..\Programme\Spiele\Gothic\GothicII\Gothic II GuC 2\System\UntoldChapter\Server\Mono.Data.Sqlite.dll</HintPath>
@@ -392,6 +399,7 @@
     <Compile Include="StartModules\AbstractModule.cs" />
     <Compile Include="StartModules\Modules.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Test\ListTestModule.cs" />
     <Compile Include="Web\Actions\Action.cs" />
     <Compile Include="Web\Actions\GetPlayerListAction.cs" />
     <Compile Include="Web\Actions\GetAccountListAction.cs" />

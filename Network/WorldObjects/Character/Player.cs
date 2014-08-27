@@ -6,6 +6,11 @@ namespace GUC.WorldObjects.Character
 {
     internal partial class Player : NPCProto
     {
+        public static bool EnableStatusMenu = true;
+        public static bool EnableLogMenu = true;
+        public static bool EnableInventory = true;
+
+
         public Dictionary<World, List<String>> knownArea = new Dictionary<World, List<string>>();
         protected bool isSpawned = false;
 
@@ -31,7 +36,7 @@ namespace GUC.WorldObjects.Character
             isSpawned = true;
         }
 
-        public bool IsSpawned { get { return isSpawned; } }
+        public bool IsSpawnedPlayer { get { return isSpawned; } }
         
         public override void StealItem(Vob other, String item, int amount) { }
         public override void StealItem(Vob other, Item item, int amount) { }

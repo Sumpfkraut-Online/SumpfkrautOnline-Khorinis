@@ -26,6 +26,62 @@ namespace GUC.Server.Scripting.Objects.Character
         }
 
 
+        public static void ShowStatusMenu(bool show)
+        {
+            WorldObjects.Character.Player.EnableStatusMenu = show;
+            BitStream stream = Program.server.sendBitStream;
+            stream.Reset();
+
+            stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
+            stream.Write((byte)NetworkIDS.InterfaceOptionsMessage);
+            stream.Write((byte)0);
+            stream.Write(show);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+        }
+
+        public static void ShowLogMenu(bool show)
+        {
+            WorldObjects.Character.Player.EnableLogMenu = show;
+
+
+            BitStream stream = Program.server.sendBitStream;
+            stream.Reset();
+
+            stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
+            stream.Write((byte)NetworkIDS.InterfaceOptionsMessage);
+            stream.Write((byte)1);
+            stream.Write(show);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+        }
+
+        public void showStatusMenu(bool show)
+        {
+            BitStream stream = Program.server.sendBitStream;
+            stream.Reset();
+
+            stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
+            stream.Write((byte)NetworkIDS.InterfaceOptionsMessage);
+            stream.Write((byte)0);
+            stream.Write(show);
+            using (RakNetGUID guid = this.Proto.GUID)
+                Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+        }
+
+        public void showLogMenu(bool show)
+        {
+            BitStream stream = Program.server.sendBitStream;
+            stream.Reset();
+
+            stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
+            stream.Write((byte)NetworkIDS.InterfaceOptionsMessage);
+            stream.Write((byte)1);
+            stream.Write(show);
+            using (RakNetGUID guid = this.Proto.GUID)
+                Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+        }
+
+
+
         public Vob FocusVob { get { return (proto.FocusVob == null) ? null : proto.FocusVob.ScriptingVob; } }
         public NPCProto Enemy { get { return (proto.Enemy == null) ? null : proto.Enemy.ScriptingNPC; } }
 
@@ -207,6 +263,18 @@ namespace GUC.Server.Scripting.Objects.Character
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
             stream.Write((byte)NetworkIDS.CamToVobMessage);
             stream.Write(vob.vob.ID);
+            using (RakNetGUID guid = this.Proto.GUID)
+                Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+        }
+
+        public void camToPlayerFront()
+        {
+            BitStream stream = Program.server.sendBitStream;
+            stream.Reset();
+
+            stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
+            stream.Write((byte)NetworkIDS.CamToPlayerFront);
+            
             using (RakNetGUID guid = this.Proto.GUID)
                 Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
         }

@@ -79,6 +79,7 @@
     <Compile Include="Network\Messages\Callbacks\CallbackNPCCanSee.cs" />
     <Compile Include="Network\Messages\Callbacks\ReadMD5Message.cs" />
     <Compile Include="Network\Messages\Callbacks\ReadIniEntryMessage.cs" />
+    <Compile Include="Network\Messages\CameraCommands\CamToPlayerFront.cs" />
     <Compile Include="Network\Messages\CameraCommands\CamToVobMessage.cs" />
     <Compile Include="Network\Messages\Connection\ConnectionMessage.cs" />
     <Compile Include="Network\Messages\Connection\DisconnectMessage.cs" />
@@ -109,6 +110,7 @@
     <Compile Include="Network\Messages\PlayerCommands\EquipItemMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\CreateSpellMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\CastSpellMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\InterfaceOptionsMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\NPCChangeAttributeMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\NPCChangeSkillMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\OnDamageMessage.cs" />

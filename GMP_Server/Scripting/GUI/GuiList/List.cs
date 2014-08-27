@@ -14,18 +14,50 @@ namespace GUC.Server.Scripting.GUI.GuiList
     public class List : Texture
     {
         protected List<ListRow> rows = new List<ListRow>();
+        protected byte lines = 0;
+        protected String font = "FONT_DEFAULT.TGA";
+
+        protected ColorRGBA m_ActiveRowColor = ColorRGBA.Red;
+        protected ColorRGBA m_InactiveRowColor = ColorRGBA.White;
 
 
-        public List(Player player, String texture, Vec2i pos, Vec2i size, Texture parent)
-            : this(texture, pos, size, parent, player.ID, true)
+
+        public List(Player player, byte lines, Vec2i pos, Vec2i size)
+            : this(lines, "FONT_DEFAULT.TGA", ColorRGBA.Red, ColorRGBA.White, null, pos, size, null, player.ID, true)
         {
 
         }
 
-        protected List(String tex, Vec2i pos, Vec2i size, Texture parent, int singleUserID, bool useCreate)
-            : base(tex, pos, size, parent, true, singleUserID, GUIEvents.None, false)
+        public List(Player player, byte lines, String font, ColorRGBA aActiveRowColor, ColorRGBA aInactiveRowColor, Vec2i pos, Vec2i size, Texture parent)
+            : this(lines, font, aActiveRowColor, aInactiveRowColor, null, pos, size, parent, player.ID, true)
         {
 
+        }
+
+        public List(Player player, byte lines, String font, Vec2i pos, Vec2i size, Texture parent)
+            : this(lines, font, ColorRGBA.Red, ColorRGBA.White, null, pos, size, parent, player.ID, true)
+        {
+
+        }
+
+        public List(Player player, byte lines, String font, String texture, Vec2i pos, Vec2i size, Texture parent)
+            : this(lines, font, ColorRGBA.Red, ColorRGBA.White, texture, pos, size, parent, player.ID, true)
+        {
+
+        }
+
+        public List(Player player, byte lines, String font, ColorRGBA aActiveRowColor, ColorRGBA aInactiveRowColor, String texture, Vec2i pos, Vec2i size, Texture parent)
+            : this(lines, font, aActiveRowColor, aInactiveRowColor, texture, pos, size, parent, player.ID, true)
+        {
+            
+        }
+
+        protected List(byte lines, String font, ColorRGBA aActiveRowColor, ColorRGBA aInactiveRowColor, String tex, Vec2i pos, Vec2i size, Texture parent, int singleUserID, bool useCreate)
+            : base(tex, pos, size, parent, true, singleUserID, GUIEvents.None, false)
+        {
+            this.lines = lines;
+            m_ActiveRowColor = aActiveRowColor;
+            m_InactiveRowColor = aInactiveRowColor;
 
             if(useCreate)
                 create(-1);
@@ -46,6 +78,10 @@ namespace GUC.Server.Scripting.GUI.GuiList
             stream.Write(tex);
             stream.Write(ParentID);
 
+
+            stream.Write(lines);
+            stream.Write(font);
+
             sendStream(to, stream);
 
 
@@ -56,20 +92,61 @@ namespace GUC.Server.Scripting.GUI.GuiList
         }
 
 
+        #region Text
+
         public ListText addText(String text)
         {
-            throw new NotImplementedException("");
+            return addText(text, m_ActiveRowColor, m_InactiveRowColor);
         }
 
+        public ListText addText(String text, ColorRGBA aActiveRowColor, ColorRGBA aInactiveRowColor)
+        {
+            ListText lt = new ListText(this, text, aActiveRowColor, aInactiveRowColor);
+
+            rows.Add(lt);
+
+            return lt;
+        }
+        #endregion
+
+        #region Button
         public ListButton addButton(String text)
         {
-            throw new NotImplementedException("");
+            return addButton(text, m_ActiveRowColor, m_InactiveRowColor);
+        }
+        public ListButton addButton(String text, ColorRGBA aActiveRowColor, ColorRGBA aInactiveRowColor)
+        {
+            ListButton lt = new ListButton(this, text, aActiveRowColor, aInactiveRowColor);
+
+            rows.Add(lt);
+
+            return lt;
+        }
+        #endregion
+
+        #region TextBox
+        public ListTextBox addTextBox()
+        {
+            return addTextBox("", "", m_ActiveRowColor, m_InactiveRowColor);
         }
 
-        public ListTextBox addTextBox(String text)
+        public ListTextBox addTextBox(String hardText)
         {
-            throw new NotImplementedException("");
+            return addTextBox(hardText, "", m_ActiveRowColor, m_InactiveRowColor);
         }
+        public ListTextBox addTextBox(String hardText, String text)
+        {
+            return addTextBox(hardText, text, m_ActiveRowColor, m_InactiveRowColor);
+        }
+        public ListTextBox addTextBox(String hardText, String text, ColorRGBA aActiveRowColor, ColorRGBA aInactiveRowColor)
+        {
+            ListTextBox lt = new ListTextBox(this, hardText, text, aActiveRowColor, aInactiveRowColor);
+
+            rows.Add(lt);
+
+            return lt;
+        }
+        #endregion
 
         public void remove(ListRow element)
         {
