@@ -225,7 +225,7 @@ namespace GUC.WorldObjects.Character
             if (oldItem != null && item.ItemInstance.Flags.HasFlag(Flags.ITEM_MULTI))//Delete Old Item
             {
                 item.Map = null;
-                sWorld.removeVob(item);
+                sWorld.getWorld(this.Map).removeVob(item);
 
                 oldItem.Amount += item.Amount;
             }
