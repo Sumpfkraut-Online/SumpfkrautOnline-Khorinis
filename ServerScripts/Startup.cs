@@ -23,18 +23,20 @@ using GUC.Server.Scripts.AI.DataTypes;
 using GUC.Server.Scripts.AI.NPC_Def.Monster;
 using GUC.Server.Scripts.AI.NPC_Def.Human;
 using GUC.Server.Scripts.Items;
+using GUC.Server.Scripts.Communication;
+using GUC.Server.Scripts.Utils;
 namespace GUC.Server.Scripts
 {
 	public class Startup : IServerStartup
 	{
-		public static Chat chat = null;
+		//public static Chat chat = null;
 		public static Cursor cursor;
 		public Button connection;
 		public void OnServerInit()
 		{
             Logger.log(Logger.LogLevel.INFO, "######################## Initalise ########################");
             cursor = Cursor.getCursor();
-
+            RandomManager.GetRandom();
 
 
             
@@ -60,8 +62,15 @@ namespace GUC.Server.Scripts
 
 
 #if SSM_CHAT
-            chat = new Chat();
-            chat.Init();
+            //chat = new Chat();
+            //chat.Init();
+            NotificationManager.GetNotificationManager().AddNotificationArea(100, 100, 50, 8,
+              new NotificationType[] {NotificationType.ChatMessage,NotificationType.ServerMessage });
+            CommandInterpreter.GetCommandInterpreter();
+            Chat.GetChat();
+            EventNotifier.GetEventNotifier();
+      
+
 #endif
 
             

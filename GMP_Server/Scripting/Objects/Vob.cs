@@ -185,6 +185,12 @@ namespace GUC.Server.Scripting.Objects
             return playerList.ToArray();
         }
 
+        public float GetDistanceTo(Vob other)
+        {
+          return (other.Position - this.Position).Length;
+          
+        }
+
         /// <summary>
         /// Returns the nearest player to this vob in a specified distance.
         /// </summary>

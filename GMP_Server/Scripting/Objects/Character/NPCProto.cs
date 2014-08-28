@@ -234,8 +234,8 @@ namespace GUC.Server.Scripting.Objects.Character
         public String Name { get { return proto.Name; } set { setName(value); } }
 
         public Vec3f Scale { get { return proto.Scale; } set { setScale(value); } }
-        
 
+        public ColorRGBA Color { get; set; }
 
         public int Strength {
             get { return proto.Attributes[(byte)NPCAttributeFlags.ATR_STRENGTH]; }
