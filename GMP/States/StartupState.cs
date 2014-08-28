@@ -110,11 +110,11 @@ namespace GUC.States
             foreach (String internalFile in arr)
             {
                 zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Parse: "+internalFile, 0, "Program.cs", 0);
-                using (StreamReader sr = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream(internalFile)))
+                using (StreamReader sr = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream(internalFile), System.Text.Encoding.Default))
                 {
 
                     String file = getRandomScriptString(".d");
-                    File.WriteAllText(file, sr.ReadToEnd());
+                    File.WriteAllText(file, sr.ReadToEnd(), System.Text.Encoding.Default);
                     fileList += Path.GetFileName(file.ToUpper()) + "\r\n";
                     
                     //str = zString.Create(Process.ThisProcess(), file.ToUpper());
