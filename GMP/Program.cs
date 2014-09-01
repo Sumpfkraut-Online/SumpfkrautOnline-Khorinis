@@ -106,7 +106,7 @@ namespace GUC
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(sWorld).GetMethod("hook_StartChangeLevel"), (int)oCGame.FuncOffsets.ChangeLevel, (int)oCGame.HookSize.ChangeLevel, 2);
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(sWorld).GetMethod("hook_EndChangeLevel"), 0x006C7AD5, 7, 0);
 
-            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(Program).GetMethod("hook_Render"), 0x006C8AB2, 5, 0);
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(Program).GetMethod("hook_Render"), 0x006C86A0, 7, 0);//Alt: End of Game::Render => 0x006C8AB2, 5
 
 
 

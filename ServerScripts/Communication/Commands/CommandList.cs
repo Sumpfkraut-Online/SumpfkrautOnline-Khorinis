@@ -6,12 +6,10 @@ using GUC.Server.Scripts.AI.Waypoints;
 using GUC.Server.Scripts.Items;
 using System;
 using System.Collections.Generic;
-
-#if SSM_ACCOUNT
-
-using GUC.Server.Scripts.Accounts;
 using GUC.Server.Scripts.Communication.Notifications;
 
+#if SSM_ACCOUNT
+using GUC.Server.Scripts.Accounts;
 #endif
 
 namespace GUC.Server.Scripts.Communication

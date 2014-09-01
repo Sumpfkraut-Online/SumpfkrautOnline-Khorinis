@@ -1,17 +1,14 @@
 using GUC.Server.Scripting;
 using GUC.Server.Scripting.Objects.Character;
 using GUC.Server.Scripting.GUI;
+using GUC.Server.Scripts.Communication.Notifications;
 
 #if SSM_ACCOUNT_LOGGING
 
 using GUC.Server.Scripts.Accounts.Logs;
 
 #endif
-#if SSM_ACCOUNT
 
-using GUC.Server.Scripts.Communication.Notifications;
-
-#endif
 
 namespace GUC.Server.Scripts.Communication
 {
