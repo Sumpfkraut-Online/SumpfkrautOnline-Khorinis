@@ -27,7 +27,7 @@ namespace GUC.Server.Scripts.AI.NPC_Def.Monster
             setProtection(DamageTypeIndex.DAM_INDEX_FIRE, 25);
             setProtection(DamageTypeIndex.DAM_INDEX_FLY, 25);
 
-            setDamageType(DamageType.DAM_EDGE);
+            setDamageType(DamageTypes.DAM_EDGE);
 
             WeaponMode = 1;
 

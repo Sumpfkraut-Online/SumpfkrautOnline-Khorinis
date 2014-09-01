@@ -28,7 +28,7 @@ namespace GUC.Network.Messages.PlayerCommands
             if (!sWorld.VobDict.ContainsKey(playerID))
                 throw new Exception("PlayerID: "+playerID+" was not found!");
             NPCProto proto = (NPCProto)sWorld.VobDict[playerID];
-            proto.Attributes[(int)NPCAttributeFlags.ATR_HITPOINTS] = 1;
+            proto.Attributes[(int)NPCAttribute.ATR_HITPOINTS] = 1;
 
             if (proto.IsSpawned)
             {

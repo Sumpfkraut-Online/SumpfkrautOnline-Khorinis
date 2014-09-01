@@ -20,13 +20,13 @@ namespace GUC.Server.Scripts.AI.NPC_Def.Human
             HPMax = 400;
             HP = 400;
 
-            setDamageType(DamageType.DAM_EDGE);
+            setDamageType(DamageTypes.DAM_EDGE);
 
 
-            this.setFightTalent(NPCTalents.H1, 50);
-            this.setFightTalent(NPCTalents.H2, 50);
-            this.setFightTalent(NPCTalents.Bow, 50);
-            this.setFightTalent(NPCTalents.CrossBow, 50);
+            this.setFightTalent(NPCTalent.H1, 50);
+            this.setFightTalent(NPCTalent.H2, 50);
+            this.setFightTalent(NPCTalent.Bow, 50);
+            this.setFightTalent(NPCTalent.CrossBow, 50);
 
 
             this.setVisual("HUMANS.MDS", NPCProto.BODYMESH_MALE, NPCProto.BODYTEX_MALE_BLACK, 0, "Hum_Head_FatBald", NPCProto.Face_B_Tough_Silas, 0);

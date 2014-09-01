@@ -20,7 +20,7 @@ namespace GUC.Server.Scripts.Items.Keys
             MainFlags = Enumeration.MainFlags.ITEM_KAT_NONE;
             Flags = Enumeration.Flags.ITEM_MISSION;
 
-            Materials = Enumeration.MaterialTypes.MAT_METAL;
+            Materials = Enumeration.MaterialType.MAT_METAL;
 
         }
     }

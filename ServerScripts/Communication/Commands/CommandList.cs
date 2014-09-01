@@ -86,22 +86,22 @@ namespace GUC.Server.Scripts.Communication
 
       command = new Command("giveSkills", 0, delegate(Player player, string[] parameters)
       {
-        for (int i = 0; i < (int)NPCAttributeFlags.ATR_MAX; i++)
+        for (int i = 0; i < (int)NPCAttribute.ATR_MAX; i++)
         {
-          player.setAttribute((NPCAttributeFlags)i, 100 + i);
+          player.setAttribute((NPCAttribute)i, 100 + i);
         }
 
-        for (int i = (int)NPCTalents.H1; i < (int)NPCTalents.MaxTalents; i++)
+        for (int i = (int)NPCTalent.H1; i < (int)NPCTalent.MaxTalents; i++)
         {
-          player.setTalentSkills((NPCTalents)i, 100 + i);
-          player.setTalentValues((NPCTalents)i, 100 + i);
+          player.setTalentSkills((NPCTalent)i, 100 + i);
+          player.setTalentValues((NPCTalent)i, 100 + i);
         }
 
-        for (int i = (int)NPCTalents.H1; i <= (int)NPCTalents.CrossBow; i++)
+        for (int i = (int)NPCTalent.H1; i <= (int)NPCTalent.CrossBow; i++)
         {
-          player.setTalentSkills((NPCTalents)i, 2);
-          player.setTalentValues((NPCTalents)i, 2);
-          player.setHitchances((NPCTalents)i, 100);
+          player.setTalentSkills((NPCTalent)i, 2);
+          player.setTalentValues((NPCTalent)i, 2);
+          player.setHitchances((NPCTalent)i, 100);
         }
         return true;
       });
@@ -116,7 +116,7 @@ namespace GUC.Server.Scripts.Communication
         if (!Int32.TryParse(parameters[1], out value))
           return false;
 
-        player.setAttribute((NPCAttributeFlags)attribute, value);
+        player.setAttribute((NPCAttribute)attribute, value);
         return true;
       });
       Commands.Add(command);
@@ -133,8 +133,8 @@ namespace GUC.Server.Scripts.Communication
         if (!Int32.TryParse(parameters[2], out value2))
           return false;
 
-        player.setTalentSkills((NPCTalents)talent, value1);
-        player.setTalentValues((NPCTalents)talent, value2);
+        player.setTalentSkills((NPCTalent)talent, value1);
+        player.setTalentValues((NPCTalent)talent, value2);
 
         return true;
       });

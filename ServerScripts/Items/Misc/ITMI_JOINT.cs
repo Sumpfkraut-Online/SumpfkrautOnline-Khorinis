@@ -25,7 +25,7 @@ namespace GUC.Server.Scripts.Items.Misc
             Visual = "ItMi_Joint_US.3ds";
             Description = Name;
 
-            Materials = Enumeration.MaterialTypes.MAT_LEATHER;
+            Materials = Enumeration.MaterialType.MAT_LEATHER;
             ScemeName = "JOINT";
 
             CreateItemInstance();

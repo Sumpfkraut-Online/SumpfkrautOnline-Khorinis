@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GUC.Enumeration
 {
-    public enum NetworkIDS : byte
+    public enum NetworkID : byte
     {
         ConnectionMessage,
         DisconnectMessage,

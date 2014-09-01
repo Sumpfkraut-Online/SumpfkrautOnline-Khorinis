@@ -35,7 +35,7 @@ namespace GUC.Network.Messages.Callbacks
 
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.CallbackNPCCanSee);
+            stream.Write((byte)NetworkID.CallbackNPCCanSee);
             stream.Write(callBackID);
             stream.Write(proto.ID);
             stream.Write(vob.ID);

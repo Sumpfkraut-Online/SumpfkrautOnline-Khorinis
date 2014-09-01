@@ -14,15 +14,15 @@ namespace GUC.Server.Scripting
 {
     public static class Events
     {
-        public delegate void AttributeChangedEventHandler(NPCProto proto, NPCAttributeFlags attrib, int oldValue, int newValue);
-        public delegate void TalentChangedEventHandler(NPCProto proto, NPCTalents talent, int oldValue, int newValue);
+        public delegate void AttributeChangedEventHandler(NPCProto proto, NPCAttribute attrib, int oldValue, int newValue);
+        public delegate void TalentChangedEventHandler(NPCProto proto, NPCTalent talent, int oldValue, int newValue);
         public delegate void CastSpell(NPCProto caster, Spell spell, Vob target );
 
         public delegate void ContainerItemMessage(MobContainer container, Player pl, Item item, int amount);
 
         public delegate void PlayerEventHandler(Player sender);
         public delegate void PlayerItemEventHandler(NPCProto player, Item item, int amount);
-        public delegate void PlayerDamageEventHandler(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, Vob attacker, int weaponMode, Spell spellID, Item weapon, float fallDownDistanceY);
+        public delegate void PlayerDamageEventHandler(NPCProto victim, DamageTypes damageMode, Vec3f hitLoc, Vec3f flyDir, Vob attacker, int weaponMode, Spell spellID, Item weapon, float fallDownDistanceY);
         public delegate void TextBoxMessageEventHandler(TextBox sender, Player player, String message);
         public delegate void ButtonEventHandler(Button sender, Player player);
 

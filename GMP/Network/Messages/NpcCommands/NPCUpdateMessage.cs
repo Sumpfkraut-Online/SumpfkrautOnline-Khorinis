@@ -138,7 +138,7 @@ namespace GUC.Network.Messages.NpcCommands
             BitStream stream = Program.client.sentBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.NPCUpdateMessage);
+            stream.Write((byte)NetworkID.NPCUpdateMessage);
             stream.Write(proto.ID);
             stream.Write((int)changeFlags);
 

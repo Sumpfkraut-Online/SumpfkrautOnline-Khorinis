@@ -116,7 +116,7 @@ namespace GUC.Server.Network.Messages.NpcCommands
             //Sending back:
             stream.ResetReadPointer();
 
-            Program.server.server.Send(stream, PacketPriority.MEDIUM_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, packet.guid, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.MEDIUM_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, packet.guid, true);
 
         }
 

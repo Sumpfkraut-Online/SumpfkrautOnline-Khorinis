@@ -238,38 +238,38 @@ namespace GUC.Server.Scripting.Objects.Character
         public ColorRGBA Color { get; set; }
 
         public int Strength {
-            get { return proto.Attributes[(byte)NPCAttributeFlags.ATR_STRENGTH]; }
-            set { setAttribute(NPCAttributeFlags.ATR_STRENGTH, value); }
+            get { return proto.Attributes[(byte)NPCAttribute.ATR_STRENGTH]; }
+            set { setAttribute(NPCAttribute.ATR_STRENGTH, value); }
         }
 
         public int Dexterity
         {
-            get { return proto.Attributes[(byte)NPCAttributeFlags.ATR_DEXTERITY]; }
-            set { setAttribute(NPCAttributeFlags.ATR_DEXTERITY, value); }
+            get { return proto.Attributes[(byte)NPCAttribute.ATR_DEXTERITY]; }
+            set { setAttribute(NPCAttribute.ATR_DEXTERITY, value); }
         }
 
         public int HP
         {
-            get { return proto.Attributes[(byte)NPCAttributeFlags.ATR_HITPOINTS]; }
-            set { setAttribute(NPCAttributeFlags.ATR_HITPOINTS, value); }
+            get { return proto.Attributes[(byte)NPCAttribute.ATR_HITPOINTS]; }
+            set { setAttribute(NPCAttribute.ATR_HITPOINTS, value); }
         }
 
         public int HPMax
         {
-            get { return proto.Attributes[(byte)NPCAttributeFlags.ATR_HITPOINTS_MAX]; }
-            set { setAttribute(NPCAttributeFlags.ATR_HITPOINTS_MAX, value); }
+            get { return proto.Attributes[(byte)NPCAttribute.ATR_HITPOINTS_MAX]; }
+            set { setAttribute(NPCAttribute.ATR_HITPOINTS_MAX, value); }
         }
 
         public int MP
         {
-            get { return proto.Attributes[(byte)NPCAttributeFlags.ATR_MANA]; }
-            set { setAttribute(NPCAttributeFlags.ATR_MANA, value); }
+            get { return proto.Attributes[(byte)NPCAttribute.ATR_MANA]; }
+            set { setAttribute(NPCAttribute.ATR_MANA, value); }
         }
 
         public int MPMax
         {
-            get { return proto.Attributes[(byte)NPCAttributeFlags.ATR_MANA_MAX]; }
-            set { setAttribute(NPCAttributeFlags.ATR_MANA_MAX, value); }
+            get { return proto.Attributes[(byte)NPCAttribute.ATR_MANA_MAX]; }
+            set { setAttribute(NPCAttribute.ATR_MANA_MAX, value); }
         }
 
         
@@ -376,15 +376,15 @@ namespace GUC.Server.Scripting.Objects.Character
 
             int callBackID = sWorld.getNewCallBackID();
             
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.CallbackNPCCanSee);
+            stream.Write((byte)NetworkID.CallbackNPCCanSee);
             stream.Write(callBackID);
             stream.Write(proto.ID);
             stream.Write(vob.ID);
             using (RakNet.RakNetGUID guid = new RakNetGUID(plToCheck.proto.Guid))
-                Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
 
             return callBackID;
         }
@@ -406,13 +406,13 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return;
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.NPCProtoSetWeaponMode);
+            stream.Write((byte)NetworkID.NPCProtoSetWeaponMode);
             stream.Write(vob.ID);
             stream.Write(proto.WeaponMode);
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
         public void setSlotItem(int slot, Item item)
@@ -424,10 +424,10 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return;
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.SetSlotMessage);
+            stream.Write((byte)NetworkID.SetSlotMessage);
             stream.Write(vob.ID);
             stream.Write(slot);
             if (item == null)
@@ -435,10 +435,10 @@ namespace GUC.Server.Scripting.Objects.Character
             else
                 stream.Write(item.ID);
 
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
-        public int getProtection(DamageType index)
+        public int getProtection(DamageTypes index)
         {
             if (EquippedArmor != null)
             {
@@ -477,7 +477,7 @@ namespace GUC.Server.Scripting.Objects.Character
                 return proto.totalDamage;
         }
 
-        public DamageType getDamageType()
+        public DamageTypes getDamageType()
         {
             if (EquippedWeapon != null)
                 return EquippedWeapon.DamageType;
@@ -492,7 +492,7 @@ namespace GUC.Server.Scripting.Objects.Character
             proto.totalDamage = damage;
         }
 
-        public void setDamageType(DamageType type)
+        public void setDamageType(DamageTypes type)
         {
             proto.damageType = type;
         }
@@ -520,13 +520,13 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return;
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.ScaleMessage);
+            stream.Write((byte)NetworkID.ScaleMessage);
             stream.Write(vob.ID);
             stream.Write(proto.Scale);
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
         public virtual void setFatness(float Fatness)
@@ -536,13 +536,13 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return;
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.NPCFatnessMessage);
+            stream.Write((byte)NetworkID.NPCFatnessMessage);
             stream.Write(vob.ID);
             stream.Write(proto.Fatness);
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
         public void setName(String name)
@@ -555,13 +555,13 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return;
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.ChangeNameMessage);
+            stream.Write((byte)NetworkID.ChangeNameMessage);
             stream.Write(proto.ID);
             stream.Write(name);
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
         public void dropUnconscious(float time)
@@ -572,13 +572,13 @@ namespace GUC.Server.Scripting.Objects.Character
                 return;
             HP = 1;
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.DropUnconsciousMessage);
+            stream.Write((byte)NetworkID.DropUnconsciousMessage);
             stream.Write(this.ID);
             stream.Write(time);
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
         public void revive()
@@ -588,41 +588,41 @@ namespace GUC.Server.Scripting.Objects.Character
             HP = HPMax;
             MP = MPMax;
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.ReviveMessage);
+            stream.Write((byte)NetworkID.ReviveMessage);
             stream.Write(this.proto.ID);
             
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
-        public int getAttribute(NPCAttributeFlags attrib)
+        public int getAttribute(NPCAttribute attrib)
         {
-            if (attrib >= NPCAttributeFlags.ATR_MAX)
+            if (attrib >= NPCAttribute.ATR_MAX)
                 throw new ArgumentException("attribute is not valid!");
             return proto.Attributes[(byte)attrib];
         }
 
-        public int getHitChances(NPCTalents talents)
+        public int getHitChances(NPCTalent talents)
         {
-            if (talents != NPCTalents.H1 && talents != NPCTalents.H2 && talents != NPCTalents.Bow && talents != NPCTalents.CrossBow)
+            if (talents != NPCTalent.H1 && talents != NPCTalent.H2 && talents != NPCTalent.Bow && talents != NPCTalent.CrossBow)
                 throw new ArgumentException("Talents have to be fighting skills Like H1, H2, Bow or CrossBow!");
 
             return proto.Hitchances[(byte)talents];
         }
 
-        public int getTalentValues(NPCTalents talent)
+        public int getTalentValues(NPCTalent talent)
         {
-            if (talent == NPCTalents.Unknown || talent == NPCTalents.MaxTalents)
+            if (talent == NPCTalent.Unknown || talent == NPCTalent.MaxTalents)
                 throw new ArgumentException("Invalid Talent: " + talent);
 
             return proto.TalentValues[(byte)talent];
         }
 
-        public int getTalentSkills(NPCTalents talent)
+        public int getTalentSkills(NPCTalent talent)
         {
-            if (talent == NPCTalents.Unknown || talent == NPCTalents.MaxTalents)
+            if (talent == NPCTalent.Unknown || talent == NPCTalent.MaxTalents)
                 throw new ArgumentException("Invalid Talent: " + talent);
 
             return proto.TalentSkills[(byte)talent];
@@ -636,13 +636,13 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return;
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.NPCSetInvisibleMessage);
+            stream.Write((byte)NetworkID.NPCSetInvisibleMessage);
             stream.Write(proto.ID);
             stream.Write(invisible);
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
         public void setInvisible(Player player, bool invisible)
@@ -650,14 +650,14 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return;
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.NPCSetInvisibleMessage);
+            stream.Write((byte)NetworkID.NPCSetInvisibleMessage);
             stream.Write(proto.ID);
             stream.Write(invisible);
             using(RakNetGUID guid = player.proto.GUID)
-                Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
         }
 
         public void hideName(bool invisible)
@@ -667,13 +667,13 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return;
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.NPCSetInvisibleName);
+            stream.Write((byte)NetworkID.NPCSetInvisibleName);
             stream.Write(proto.ID);
             stream.Write(invisible);
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
         public void hideNameFrom(Player player, bool invisible)
@@ -681,25 +681,25 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return;
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.NPCSetInvisibleName);
+            stream.Write((byte)NetworkID.NPCSetInvisibleName);
             stream.Write(proto.ID);
             stream.Write(invisible);
             using (RakNetGUID guid = player.proto.GUID)
-                Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
         }
 
-        public void setAttribute(NPCAttributeFlags attrib, int value)
+        public void setAttribute(NPCAttribute attrib, int value)
         {
-            if (attrib >= NPCAttributeFlags.ATR_MAX)
+            if (attrib >= NPCAttribute.ATR_MAX)
                 throw new ArgumentException("attribute is not valid!");
             if (value < 0)
                 value = 0;
-            if (attrib == NPCAttributeFlags.ATR_HITPOINTS && value > HPMax)
+            if (attrib == NPCAttribute.ATR_HITPOINTS && value > HPMax)
                 value = HPMax;
-            else if (attrib == NPCAttributeFlags.ATR_MANA && value > MPMax)
+            else if (attrib == NPCAttribute.ATR_MANA && value > MPMax)
                 value = MPMax;
 
             if (proto.Attributes[(byte)attrib] == value)
@@ -714,19 +714,19 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return;
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.NPCChangeAttributeMessage);
+            stream.Write((byte)NetworkID.NPCChangeAttributeMessage);
             stream.Write(proto.ID);
             stream.Write((byte)attrib);
             stream.Write(value);
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
-        public void setHitchances(NPCTalents talents, int value)
+        public void setHitchances(NPCTalent talents, int value)
         {
-            if (talents != NPCTalents.H1 && talents != NPCTalents.H2 && talents != NPCTalents.Bow && talents != NPCTalents.CrossBow)
+            if (talents != NPCTalent.H1 && talents != NPCTalent.H2 && talents != NPCTalent.Bow && talents != NPCTalent.CrossBow)
                 throw new ArgumentException("Talents have to be fighting skills Like H1, H2, Bow or CrossBow!");
             if (proto.Hitchances[(byte)talents] == value)
                 return;
@@ -739,20 +739,20 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return;
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.NPCChangeSkillMessage);
+            stream.Write((byte)NetworkID.NPCChangeSkillMessage);
             stream.Write(proto.ID);
             stream.Write((byte)ChangeSkillType.Hitchances);
             stream.Write((byte)talents);
             stream.Write(value);
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
-        public void setTalentValues(NPCTalents talent, int value)
+        public void setTalentValues(NPCTalent talent, int value)
         {
-            if (talent == NPCTalents.Unknown || talent == NPCTalents.MaxTalents)
+            if (talent == NPCTalent.Unknown || talent == NPCTalent.MaxTalents)
                 throw new ArgumentException("Invalid Talent: "+talent);
 
             if (proto.TalentValues[(byte)talent] == value)
@@ -765,20 +765,20 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return;
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.NPCChangeSkillMessage);
+            stream.Write((byte)NetworkID.NPCChangeSkillMessage);
             stream.Write(proto.ID);
             stream.Write((byte)ChangeSkillType.Value);
             stream.Write((byte)talent);
             stream.Write(value);
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
-        public void setTalentSkills(NPCTalents talent, int value)
+        public void setTalentSkills(NPCTalent talent, int value)
         {
-            if (talent == NPCTalents.Unknown || talent == NPCTalents.MaxTalents)
+            if (talent == NPCTalent.Unknown || talent == NPCTalent.MaxTalents)
                 throw new ArgumentException("Invalid Talent: " + talent);
 
             if (proto.TalentSkills[(byte)talent] == value)
@@ -791,15 +791,15 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return;
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.NPCChangeSkillMessage);
+            stream.Write((byte)NetworkID.NPCChangeSkillMessage);
             stream.Write(proto.ID);
             stream.Write((byte)ChangeSkillType.Skill);
             stream.Write((byte)talent);
             stream.Write(value);
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
         public Item[] getItemList()
@@ -871,14 +871,14 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return itm;
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.AddItemMessage);
+            stream.Write((byte)NetworkID.AddItemMessage);
             stream.Write(proto.ID);
             stream.Write(itm.ID);
             //itm.Write(stream);
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
 
 
             return itm;
@@ -886,41 +886,41 @@ namespace GUC.Server.Scripting.Objects.Character
 
         public void hit(NPCProto victim)
         {
-            hit(victim, DamageType.DAM_BLUNT, 0, this.proto.Weapon.ScriptingProto, null, null, null, 0.0f);
+            hit(victim, DamageTypes.DAM_BLUNT, 0, this.proto.Weapon.ScriptingProto, null, null, null, 0.0f);
         }
 
-        public void hit(NPCProto victim, DamageType damageMode)
+        public void hit(NPCProto victim, DamageTypes damageMode)
         {
             hit(victim, damageMode, 0, this.proto.Weapon.ScriptingProto, null, null, null, 0.0f);
         }
 
-        public void hit(NPCProto victim, DamageType damageMode, int weaponMode)
+        public void hit(NPCProto victim, DamageTypes damageMode, int weaponMode)
         {
             hit(victim, damageMode, weaponMode, this.proto.Weapon.ScriptingProto, null, null, null, 0.0f);
         }
 
-        public void hit(NPCProto victim, DamageType damageMode, int weaponMode, Vec3f hitLoc)
+        public void hit(NPCProto victim, DamageTypes damageMode, int weaponMode, Vec3f hitLoc)
         {
             hit(victim, damageMode, weaponMode, this.proto.Weapon.ScriptingProto, null, hitLoc, null, 0.0f);
         }
 
-        public void hit(NPCProto victim, DamageType damageMode, int weaponMode, Item weapon, Vec3f hitLoc)
+        public void hit(NPCProto victim, DamageTypes damageMode, int weaponMode, Item weapon, Vec3f hitLoc)
         {
             hit(victim, damageMode, weaponMode, weapon, null, hitLoc, null, 0.0f);
         }
 
-        public void hit(NPCProto victim, DamageType damageMode, int weaponMode, Item weapon, Spell spell, Vec3f hitLoc)
+        public void hit(NPCProto victim, DamageTypes damageMode, int weaponMode, Item weapon, Spell spell, Vec3f hitLoc)
         {
             hit(victim, damageMode, weaponMode, weapon, spell, hitLoc, null, 0.0f);
         }
 
-        public void hit(NPCProto victim, DamageType damageMode, int weaponMode, Item weapon, Spell spell, Vec3f hitLoc, Vec3f flyDir, float fallDownDistanceY)
+        public void hit(NPCProto victim, DamageTypes damageMode, int weaponMode, Item weapon, Spell spell, Vec3f hitLoc, Vec3f flyDir, float fallDownDistanceY)
         {
             WorldObjects.Spell objSpell = (spell == null) ? null : spell.spell;
             WorldObjects.Item objItem = (weapon == null) ? null : weapon.ProtoItem;
             GUC.Server.Network.Messages.PlayerCommands.OnDamageMessage.Write(victim.proto, damageMode, hitLoc, flyDir, this.proto, weaponMode, objSpell, objItem, fallDownDistanceY, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS);
 
-            NPCProto.isOnDamage(victim, (DamageType)damageMode, hitLoc, flyDir, this, weaponMode, spell, weapon, fallDownDistanceY);
+            NPCProto.isOnDamage(victim, (DamageTypes)damageMode, hitLoc, flyDir, this, weaponMode, spell, weapon, fallDownDistanceY);
 
         }
 
@@ -936,13 +936,13 @@ namespace GUC.Server.Scripting.Objects.Character
                 throw new Exception("Item does not belong to NPC!");
             proto.DropItem(item.ProtoItem);
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.DropItemMessage);
+            stream.Write((byte)NetworkID.DropItemMessage);
             stream.Write(proto.ID);
             stream.Write(item.ProtoItem.ID);
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
         /// <summary>
@@ -960,13 +960,13 @@ namespace GUC.Server.Scripting.Objects.Character
 
             proto.TakeItem(item.ProtoItem);
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.TakeItemMessage);
+            stream.Write((byte)NetworkID.TakeItemMessage);
             stream.Write(proto.ID);
             stream.Write(item.ProtoItem.ID);
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
         /// <summary>
@@ -1009,10 +1009,10 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return;
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.SetVisualMessage);
+            stream.Write((byte)NetworkID.SetVisualMessage);
             stream.Write(vob.ID);
             stream.Write(visual);
             stream.Write(bodyMesh);
@@ -1022,7 +1022,7 @@ namespace GUC.Server.Scripting.Objects.Character
             stream.Write(headTex);
             stream.Write(TeethTex);
             
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
         public void clearInventory()
@@ -1032,13 +1032,13 @@ namespace GUC.Server.Scripting.Objects.Character
                 sWorld.removeVob(item);
             }
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.ClearInventory);
+            stream.Write((byte)NetworkID.ClearInventory);
             stream.Write(this.ID);
 
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
         public void Equip(Item item)
@@ -1079,14 +1079,14 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return;
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.EquipItemMessage);
+            stream.Write((byte)NetworkID.EquipItemMessage);
             stream.Write(proto.ID);
             stream.Write(item.ID);
             stream.Write(true);
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
         public void UnEquip(Item item)
@@ -1108,14 +1108,14 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return;
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.EquipItemMessage);
+            stream.Write((byte)NetworkID.EquipItemMessage);
             stream.Write(proto.ID);
             stream.Write(item.ID);
             stream.Write(false);
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
 
@@ -1123,24 +1123,24 @@ namespace GUC.Server.Scripting.Objects.Character
         {
             if (!created)
                 throw new Exception("The Player was not created! You can't use this function!");
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.AnimationMessage);
+            stream.Write((byte)NetworkID.AnimationMessage);
             stream.Write(proto.ID);
             stream.Write("");
             stream.Write((byte)5);
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
         public void playAnimation( String anim )
         {
             if (!created)
                 throw new Exception("The Player was not created! You can't use this function!");
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.AnimationMessage);
+            stream.Write((byte)NetworkID.AnimationMessage);
             stream.Write(proto.ID);
             stream.Write(anim);
             stream.Write((byte)1);
@@ -1148,7 +1148,7 @@ namespace GUC.Server.Scripting.Objects.Character
             {
                 using (RakNetGUID guid = ((WorldObjects.Character.Player)this.proto).GUID)
                 {
-                    Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+                    Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
                 }
             }
             else
@@ -1163,10 +1163,10 @@ namespace GUC.Server.Scripting.Objects.Character
         {
             if (!created)
                 throw new Exception("The Player was not created! You can't use this function!");
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.AnimationMessage);
+            stream.Write((byte)NetworkID.AnimationMessage);
             stream.Write(proto.ID);
             stream.Write(anim);
             stream.Write((byte)0);
@@ -1174,7 +1174,7 @@ namespace GUC.Server.Scripting.Objects.Character
             {
                 using (RakNetGUID guid = ((WorldObjects.Character.Player)this.proto).GUID)
                 {
-                    Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+                    Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
                 }
             }
             else
@@ -1193,14 +1193,14 @@ namespace GUC.Server.Scripting.Objects.Character
 
             if (!created)
                 return;
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.AnimationMessage);
+            stream.Write((byte)NetworkID.AnimationMessage);
             stream.Write(proto.ID);
             stream.Write(anim);
             stream.Write((byte)2);
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
         public void RemoveOverlay(String anim)
@@ -1213,14 +1213,14 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return;
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.AnimationMessage);
+            stream.Write((byte)NetworkID.AnimationMessage);
             stream.Write(proto.ID);
             stream.Write(anim);
             stream.Write((byte)3);
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
         public void ClearOverlays()
@@ -1230,14 +1230,14 @@ namespace GUC.Server.Scripting.Objects.Character
 
             this.proto.Overlays.Clear();
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.AnimationMessage);
+            stream.Write((byte)NetworkID.AnimationMessage);
             stream.Write(proto.ID);
             stream.Write("");
             stream.Write((byte)4);
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
 
@@ -1245,12 +1245,12 @@ namespace GUC.Server.Scripting.Objects.Character
         {
             if (!created)
                 throw new Exception("The Player was not created! You can't use this function!");
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.StartDialogAnimMessage);
+            stream.Write((byte)NetworkID.StartDialogAnimMessage);
             stream.Write(proto.ID);
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
         #endregion
 
@@ -1354,14 +1354,14 @@ namespace GUC.Server.Scripting.Objects.Character
 
         #region Attributes
         public event GUC.Server.Scripting.Events.AttributeChangedEventHandler OnAttributeChanged;
-        internal void iOnAttributeChanged(NPCProto proto, NPCAttributeFlags attrib, int oldValue, int newValue)
+        internal void iOnAttributeChanged(NPCProto proto, NPCAttribute attrib, int oldValue, int newValue)
         {
             if (OnAttributeChanged != null)
                 OnAttributeChanged(proto, attrib, oldValue, newValue);
         }
 
         public static event GUC.Server.Scripting.Events.AttributeChangedEventHandler sOnAttributeChanged;
-        internal static void isOnAttributeChanged(NPCProto proto, NPCAttributeFlags attrib, int oldValue, int newValue)
+        internal static void isOnAttributeChanged(NPCProto proto, NPCAttribute attrib, int oldValue, int newValue)
         {
             proto.iOnAttributeChanged(proto, attrib, oldValue, newValue);
 
@@ -1373,14 +1373,14 @@ namespace GUC.Server.Scripting.Objects.Character
 
         #region Talent_Values
         public event GUC.Server.Scripting.Events.TalentChangedEventHandler OnTalentValueChanged;
-        internal void iOnTalentValueChanged(NPCProto proto, NPCTalents talent, int oldValue, int newValue)
+        internal void iOnTalentValueChanged(NPCProto proto, NPCTalent talent, int oldValue, int newValue)
         {
             if (OnTalentValueChanged != null)
                 OnTalentValueChanged(proto, talent, oldValue, newValue);
         }
 
         public static event GUC.Server.Scripting.Events.TalentChangedEventHandler sOnTalentValueChanged;
-        internal static void isOnTalentValueChanged(NPCProto proto, NPCTalents talent, int oldValue, int newValue)
+        internal static void isOnTalentValueChanged(NPCProto proto, NPCTalent talent, int oldValue, int newValue)
         {
             proto.iOnTalentValueChanged(proto, talent, oldValue, newValue);
 
@@ -1392,14 +1392,14 @@ namespace GUC.Server.Scripting.Objects.Character
 
         #region Talent_Skills
         public event GUC.Server.Scripting.Events.TalentChangedEventHandler OnTalentSkillChanged;
-        internal void iOnTalentSkillChanged(NPCProto proto, NPCTalents talent, int oldValue, int newValue)
+        internal void iOnTalentSkillChanged(NPCProto proto, NPCTalent talent, int oldValue, int newValue)
         {
             if (OnTalentSkillChanged != null)
                 OnTalentSkillChanged(proto, talent, oldValue, newValue);
         }
 
         public static event GUC.Server.Scripting.Events.TalentChangedEventHandler sOnTalentSkillChanged;
-        internal static void isOnTalentSkillChanged(NPCProto proto, NPCTalents talent, int oldValue, int newValue)
+        internal static void isOnTalentSkillChanged(NPCProto proto, NPCTalent talent, int oldValue, int newValue)
         {
             proto.iOnTalentSkillChanged(proto, talent, oldValue, newValue);
 
@@ -1411,14 +1411,14 @@ namespace GUC.Server.Scripting.Objects.Character
 
         #region Hitchances
         public event GUC.Server.Scripting.Events.TalentChangedEventHandler OnHitchancesChanged;
-        internal void iOnHitchancesChanged(NPCProto proto, NPCTalents talent, int oldValue, int newValue)
+        internal void iOnHitchancesChanged(NPCProto proto, NPCTalent talent, int oldValue, int newValue)
         {
             if (OnHitchancesChanged != null)
                 OnHitchancesChanged(proto, talent, oldValue, newValue);
         }
 
         public static event GUC.Server.Scripting.Events.TalentChangedEventHandler sOnHitchancesChanged;
-        internal static void isOnHitchancesChanged(NPCProto proto, NPCTalents talent, int oldValue, int newValue)
+        internal static void isOnHitchancesChanged(NPCProto proto, NPCTalent talent, int oldValue, int newValue)
         {
             proto.iOnHitchancesChanged(proto, talent, oldValue, newValue);
 
@@ -1431,14 +1431,14 @@ namespace GUC.Server.Scripting.Objects.Character
 
         #region Damage
         public event GUC.Server.Scripting.Events.PlayerDamageEventHandler OnDamage;
-        internal void iOnDamage(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, Vob attacker, int weaponMode, Spell spellID, Item weapon, float fallDownDistanceY)
+        internal void iOnDamage(NPCProto victim, DamageTypes damageMode, Vec3f hitLoc, Vec3f flyDir, Vob attacker, int weaponMode, Spell spellID, Item weapon, float fallDownDistanceY)
         {
             if (OnDamage != null)
                 OnDamage(victim, damageMode, hitLoc, flyDir, attacker, weaponMode, spellID, weapon, fallDownDistanceY);
         }
 
         public static event Events.PlayerDamageEventHandler sOnDamage;
-        internal static void isOnDamage(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, Vob attacker, int weaponMode, Spell spellID, Item weapon, float fallDownDistanceY)
+        internal static void isOnDamage(NPCProto victim, DamageTypes damageMode, Vec3f hitLoc, Vec3f flyDir, Vob attacker, int weaponMode, Spell spellID, Item weapon, float fallDownDistanceY)
         {
             victim.iOnDamage(victim, damageMode, hitLoc, flyDir, attacker, weaponMode, spellID, weapon, fallDownDistanceY);
             if (sOnDamage != null)

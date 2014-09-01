@@ -88,7 +88,7 @@ namespace GUC.Server
                 //ModuleLoader.loadAllModules();
 
                 scriptManager = new Scripting.ScriptManager();
-                scriptManager.init();
+                scriptManager.Init();
                 scriptManager.Startup();
                 long lastInfoUpdates = 0;
 
@@ -108,7 +108,7 @@ namespace GUC.Server
 
 
                     //ModuleLoader.updateAllModules();
-                    scriptManager.update();
+                    scriptManager.Update();
                     server.Update();
                     updateNPCController(ticks);
 

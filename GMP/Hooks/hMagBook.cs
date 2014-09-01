@@ -25,7 +25,7 @@ namespace GUC.Hooks
                     BitStream stream = Program.client.sentBitStream;
                     stream.Reset();
                     stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                    stream.Write((byte)NetworkIDS.SpellInvestMessage);
+                    stream.Write((byte)NetworkID.SpellInvestMessage);
                     stream.Write(Player.Hero.ID);
                     Program.client.client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
 

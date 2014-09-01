@@ -58,7 +58,7 @@ namespace GUC.Server.Scripting.Objects
         public ItemInstance(String instanceName, String name, String scemeName, int value, String visual, String effect)///Potions
             : this(instanceName, name, scemeName, value, MainFlags.ITEM_KAT_POTIONS, Flags.ITEM_MULTI, visual, null, effect)
         { }
-        public ItemInstance(String instanceName, String name, DamageType dmgType, MainFlags mainFlags, Flags flags, int totalDamage, int range, int value, String visual)///Weapons
+        public ItemInstance(String instanceName, String name, DamageTypes dmgType, MainFlags mainFlags, Flags flags, int totalDamage, int range, int value, String visual)///Weapons
             : this(instanceName, name, null, null, null, value, mainFlags, flags, 0, dmgType, totalDamage, range, visual, null, null, 0)
         { }
         public ItemInstance(String instanceName, String name, int[] protection, int value, String visual, String visual_Change)//Armors!
@@ -75,40 +75,40 @@ namespace GUC.Server.Scripting.Objects
             : this(instanceName, name, scemeName, null, null, value, mainFlags, flags, 0, 0, 0, 0, visual, visual_Change, effect)
         { }
 
-        public ItemInstance(String instanceName, String name, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual)
+        public ItemInstance(String instanceName, String name, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual)
             : this(instanceName, name, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, null)
         { }
-        public ItemInstance(String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual)
+        public ItemInstance(String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual)
             : this(instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, null)
         { }
-        public ItemInstance(String instanceName, String name, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change)
+        public ItemInstance(String instanceName, String name, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change)
             : this(instanceName, name, null, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, null, 0)
         {}
 
-        public ItemInstance(String instanceName, String name, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change, String effect)
+        public ItemInstance(String instanceName, String name, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change, String effect)
             : this(instanceName, name, null, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, 0)
         {}
 
-        public ItemInstance(String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change)
+        public ItemInstance(String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change)
             : this(instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, "", 0)
         { }
 
-        public ItemInstance(String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change, String effect)
+        public ItemInstance(String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change, String effect)
             : this(instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, 0, 0, null)
         { }
 
-        public ItemInstance(String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, MaterialTypes types)
+        public ItemInstance(String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, MaterialType types)
             : this(instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, 0, types, null)
         { }
 
-        public ItemInstance(String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, MaterialTypes types, ItemInstance munition)
+        public ItemInstance(String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, MaterialType types, ItemInstance munition)
             : this(instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, 0, types, munition)
         { }
 
-        public ItemInstance(String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, int visualSkin, MaterialTypes types, ItemInstance munition)
+        public ItemInstance(String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, int visualSkin, MaterialType types, ItemInstance munition)
             : this(instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, visualSkin, types, munition, false, false, false, false, false)
         { }
-        public ItemInstance(String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, int visualSkin, MaterialTypes types, ItemInstance munition, bool keyInstance, bool torch, bool torchBurning, bool torchBurned, bool gold)
+        public ItemInstance(String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, int visualSkin, MaterialType types, ItemInstance munition, bool keyInstance, bool torch, bool torchBurning, bool torchBurned, bool gold)
             : this(instanceName)
         {
             itemInstances.Name = name;
@@ -153,7 +153,7 @@ namespace GUC.Server.Scripting.Objects
             itemInstances.MainFlags = MainFlags.ITEM_KAT_POTIONS;
             itemInstances.Flags = Flags.ITEM_MULTI;
 
-            itemInstances.Materials = MaterialTypes.MAT_GLAS;
+            itemInstances.Materials = MaterialType.MAT_GLAS;
             itemInstances.Description = itemInstances.Name;
 
             CreateItemInstance();
@@ -167,13 +167,13 @@ namespace GUC.Server.Scripting.Objects
             GUC.WorldObjects.ItemInstance.addItemInstance(itemInstances);
 
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
 
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.CreateItemInstanceMessage);
+            stream.Write((byte)NetworkID.CreateItemInstanceMessage);
             itemInstances.Write(stream);
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
 
             created = true;
         }
@@ -214,7 +214,7 @@ namespace GUC.Server.Scripting.Objects
 
         public int Range { get { return itemInstances.Range; } protected set { itemInstances.Range = value; } }
 
-        public DamageType DamageType { get { return itemInstances.DamageType; } protected set { itemInstances.DamageType = value; } }
+        public DamageTypes DamageType { get { return itemInstances.DamageType; } protected set { itemInstances.DamageType = value; } }
         public int TotalDamage { get { return itemInstances.TotalDamage; } protected set { itemInstances.TotalDamage = value; } }
 
         public Flags Flags { get { return itemInstances.Flags; } protected set { itemInstances.Flags = value; } }
@@ -222,7 +222,7 @@ namespace GUC.Server.Scripting.Objects
 
         public int Value { get { return itemInstances.Value; } protected set { itemInstances.Value = value; } }
         public ArmorFlags Wear { get { return itemInstances.Wear; } protected set { itemInstances.Wear = value; } }
-        public MaterialTypes Materials { get { return itemInstances.Materials; } protected set { itemInstances.Materials = value; } }
+        public MaterialType Materials { get { return itemInstances.Materials; } protected set { itemInstances.Materials = value; } }
 
         public String Visual { get { return itemInstances.Visual; } protected set { itemInstances.Visual = value; } }
         public String Visual_Change { get { return itemInstances.Visual_Change; } protected set { itemInstances.Visual_Change = value; } }

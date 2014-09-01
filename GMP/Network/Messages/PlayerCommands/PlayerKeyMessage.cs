@@ -55,7 +55,7 @@ namespace GUC.Network.Messages.PlayerCommands
                 BitStream stream = Program.client.sentBitStream;
                 stream.Reset();
                 stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                stream.Write((byte)NetworkIDS.PlayerKeyMessage);
+                stream.Write((byte)NetworkID.PlayerKeyMessage);
                 stream.Write(Player.Hero.ID);
                 stream.Write((byte)keys.Count);
                 foreach (KeyValuePair<byte, byte> pair in keys)

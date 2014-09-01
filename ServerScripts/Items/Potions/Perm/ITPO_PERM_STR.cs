@@ -27,7 +27,7 @@ namespace GUC.Server.Scripts.Items.Potions.Health
             MainFlags = MainFlags.ITEM_KAT_POTIONS;
             Flags = Flags.ITEM_MULTI;
 
-            Materials = MaterialTypes.MAT_GLAS;
+            Materials = MaterialType.MAT_GLAS;
             Description = "Elixier der Stärke";
 
             Effect = "SPELLFX_ITEMGLIMMER";

@@ -11,10 +11,15 @@ namespace GUC.Server.Scripting
     /// </summary>
     public class Timer
     {
-        protected long timeSpan = 0;
+        /// <summary>
+        /// Get or Set the used TimeSpan for this timer.
+        /// The timespan uses ticks ( 10000 ticks are 1 ms )
+        /// </summary>
+        public long TimeSpan { get; set; }
 
-        protected bool isStarted = false;
-        protected long time = 0;
+        public bool IsStarted { get; protected set; }
+
+        protected long m_Time = 0;
 
         public event Events.TimerEvent OnTick;
 
@@ -25,14 +30,8 @@ namespace GUC.Server.Scripting
         /// <param name="timespan">Timespan, how long the timer waits until it calls the OnTick event. The timespan uses ticks (10000 ticks are 1 millisecond)</param>
         public Timer(long timespan)
         {
-            this.timeSpan = timespan;
+            this.TimeSpan = timespan;
         }
-
-        /// <summary>
-        /// Get or Set the used TimeSpan for this timer.
-        /// The timespan uses ticks ( 10000 ticks are 1 ms )
-        /// </summary>
-        public long TimeSpan { get { return timeSpan; } set { timeSpan = value; } }
 
         /// <summary>
         /// Start the timer.
@@ -41,12 +40,12 @@ namespace GUC.Server.Scripting
         /// </summary>
         public virtual void Start()
         {
-            if (isStarted)
+            if (IsStarted)
                 return;
-            this.time = DateTime.Now.Ticks;
-            isStarted = true;
+            this.m_Time = DateTime.Now.Ticks;
+            IsStarted = true;
 
-            Program.ScriptManager.TimerList.Add(this);
+            Program.ScriptManager.m_TimerList.Add(this);
         }
 
         /// <summary>
@@ -56,11 +55,11 @@ namespace GUC.Server.Scripting
         /// </summary>
         public virtual void End()
         {
-            if (!isStarted)
+            if (!IsStarted)
                 return;
 
-            Program.ScriptManager.TimerList.Remove(this);
-            isStarted = false;
+            Program.ScriptManager.m_TimerList.Remove(this);
+            IsStarted = false;
         }
 
         /// <summary>
@@ -78,11 +77,11 @@ namespace GUC.Server.Scripting
         /// <param name="now">DateTime.Now.Ticks, the generation of the timestamp seems to be slow, so we gernerate it before</param>
         protected virtual void update(long now)
         {
-            if ( time + timeSpan< now)
+            if ( m_Time + TimeSpan< now)
             {
                 if (OnTick != null)
                     OnTick();
-                this.time = now;
+                this.m_Time = now;
             }
         }
 

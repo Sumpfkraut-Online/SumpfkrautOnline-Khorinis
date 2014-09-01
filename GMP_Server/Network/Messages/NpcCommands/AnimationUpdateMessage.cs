@@ -37,13 +37,13 @@ namespace GUC.Server.Network.Messages.NpcCommands
         }
         public static void Write(NPCProto proto, AddressOrGUID addGuid)
         {
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.AnimationUpdateMessage);
+            stream.Write((byte)NetworkID.AnimationUpdateMessage);
             stream.Write(proto.ID);
             stream.Write(proto.Animation);
-            Program.server.server.Send(stream, PacketPriority.MEDIUM_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, addGuid, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.MEDIUM_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, addGuid, true);
         }
     }
 }

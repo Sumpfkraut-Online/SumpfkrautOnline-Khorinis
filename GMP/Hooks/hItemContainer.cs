@@ -77,7 +77,7 @@ namespace GUC.Hooks
                 BitStream stream = Program.client.sentBitStream;
                 stream.Reset();
                 stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                stream.Write((byte)NetworkIDS.ContainerItemChangedMessage);
+                stream.Write((byte)NetworkID.ContainerItemChangedMessage);
                 stream.Write((byte)ContainerItemChanged.itemRemoved);
                 stream.Write(Player.Hero.ID);
                 stream.Write(containerID);
@@ -144,7 +144,7 @@ namespace GUC.Hooks
                     BitStream stream = Program.client.sentBitStream;
                     stream.Reset();
                     stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                    stream.Write((byte)NetworkIDS.ContainerItemChangedMessage);
+                    stream.Write((byte)NetworkID.ContainerItemChangedMessage);
                     stream.Write((byte)ContainerItemChanged.itemInsertedNew);
                     stream.Write(Player.Hero.ID);
                     stream.Write(mobContainerVob.ID);
@@ -159,7 +159,7 @@ namespace GUC.Hooks
                     BitStream stream = Program.client.sentBitStream;
                     stream.Reset();
                     stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                    stream.Write((byte)NetworkIDS.ContainerItemChangedMessage);
+                    stream.Write((byte)NetworkID.ContainerItemChangedMessage);
                     stream.Write((byte)ContainerItemChanged.itemInsertedOld);
                     stream.Write(Player.Hero.ID);
                     stream.Write(mobContainerVob.ID);
@@ -247,7 +247,7 @@ namespace GUC.Hooks
                 BitStream stream = Program.client.sentBitStream;
                 stream.Reset();
                 stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                stream.Write((byte)NetworkIDS.ItemRemovedByUsing);
+                stream.Write((byte)NetworkID.ItemRemovedByUsing);
                 stream.Write(it.ID);
                 stream.Write(amount);
                 Program.client.client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);

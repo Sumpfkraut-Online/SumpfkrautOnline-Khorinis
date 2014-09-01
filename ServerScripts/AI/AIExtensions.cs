@@ -25,7 +25,7 @@ namespace GUC.Server.Scripts.AI
             return (NPCAI)proto.getUserObjects("AI");
         }
 
-        public static void setFightTalent(this NPCProto proto, NPCTalents talent, int percent){
+        public static void setFightTalent(this NPCProto proto, NPCTalent talent, int percent){
             proto.setHitchances(talent, percent);
             
             if (percent >= 60)
@@ -220,15 +220,15 @@ namespace GUC.Server.Scripts.AI
 
         public static void hitEnemy(this NPCProto proto, NPCProto enemy)
         {
-            DamageType dt = DamageType.DAM_BLUNT;
+            DamageTypes dt = DamageTypes.DAM_BLUNT;
             Item weaponItem = null;
 
             if(proto.WeaponMode == 1){
-                dt = DamageType.DAM_BLUNT;
+                dt = DamageTypes.DAM_BLUNT;
             }else if(proto.WeaponMode == 2){
                 dt = proto.EquippedWeapon.DamageType;
                 weaponItem = proto.EquippedWeapon;
-            }else if(proto.WeaponMode == (int)FightModes.Far){
+            }else if(proto.WeaponMode == (int)FightMode.Far){
                 dt = proto.EquippedRangeWeapon.DamageType;
                 weaponItem = proto.EquippedRangeWeapon;
             }
@@ -264,36 +264,36 @@ namespace GUC.Server.Scripts.AI
             if (proto.WeaponMode == 0)
                 return;
 
-            if (proto.WeaponMode == (int)FightModes.Fist)//Fist
+            if (proto.WeaponMode == (int)FightMode.Fist)//Fist
                 proto.WeaponMode = 0;
-            else if (proto.WeaponMode == (int)FightModes.Meele)//Sword
+            else if (proto.WeaponMode == (int)FightMode.Meele)//Sword
             {
                 proto.WeaponMode = 0;
-                Item i = proto.getSlotItem((int)SlotFlags.SLOT_RIGHTHAND);
+                Item i = proto.getSlotItem((int)SlotFlag.SLOT_RIGHTHAND);
                 if ((i.ItemInstance.Flags & (Flags.ITEM_2HD_SWD | Flags.ITEM_2HD_AXE)) > 0)
                 {
-                    proto.setSlotItem((int)SlotFlags.SLOT_RIGHTHAND, null);
-                    proto.setSlotItem((int)SlotFlags.SLOT_LONGSWORD, i);
+                    proto.setSlotItem((int)SlotFlag.SLOT_RIGHTHAND, null);
+                    proto.setSlotItem((int)SlotFlag.SLOT_LONGSWORD, i);
                 }
                 else
                 {
-                    proto.setSlotItem((int)SlotFlags.SLOT_RIGHTHAND, null);
-                    proto.setSlotItem((int)SlotFlags.SLOT_SWORD, i);
+                    proto.setSlotItem((int)SlotFlag.SLOT_RIGHTHAND, null);
+                    proto.setSlotItem((int)SlotFlag.SLOT_SWORD, i);
                 }
             }
-            else if (proto.WeaponMode == (int)FightModes.Far)
+            else if (proto.WeaponMode == (int)FightMode.Far)
             {
                 proto.WeaponMode = 0;
-                Item i = proto.getSlotItem((int)SlotFlags.SLOT_LEFTHAND);
+                Item i = proto.getSlotItem((int)SlotFlag.SLOT_LEFTHAND);
                 if ((i.ItemInstance.Flags & Flags.ITEM_BOW) > 0)
                 {
-                    proto.setSlotItem((int)SlotFlags.SLOT_LEFTHAND, null);
-                    proto.setSlotItem((int)SlotFlags.SLOT_BOW, i);
+                    proto.setSlotItem((int)SlotFlag.SLOT_LEFTHAND, null);
+                    proto.setSlotItem((int)SlotFlag.SLOT_BOW, i);
                 }
                 else
                 {
-                    proto.setSlotItem((int)SlotFlags.SLOT_LEFTHAND, null);
-                    proto.setSlotItem((int)SlotFlags.SLOT_CROSSBOW, i);
+                    proto.setSlotItem((int)SlotFlag.SLOT_LEFTHAND, null);
+                    proto.setSlotItem((int)SlotFlag.SLOT_CROSSBOW, i);
                 }
             }
 
@@ -309,35 +309,35 @@ namespace GUC.Server.Scripts.AI
             //Draw Range-Weapon when Equiped and Distance is over 12 Meters
             if (proto.EquippedRangeWeapon != null && enemy.Position.getDistance(proto.Position) > 1200)
             {
-                proto.setWeaponMode((int)FightModes.Far);
+                proto.setWeaponMode((int)FightMode.Far);
                 if ((proto.EquippedRangeWeapon.ItemInstance.Flags & Flags.ITEM_BOW) > 0)
                 {
-                    proto.setSlotItem((int)SlotFlags.SLOT_BOW, null);
-                    proto.setSlotItem((int)SlotFlags.SLOT_LEFTHAND, proto.EquippedRangeWeapon);
+                    proto.setSlotItem((int)SlotFlag.SLOT_BOW, null);
+                    proto.setSlotItem((int)SlotFlag.SLOT_LEFTHAND, proto.EquippedRangeWeapon);
                 }
                 else
                 {
-                    proto.setSlotItem((int)SlotFlags.SLOT_CROSSBOW, null);
-                    proto.setSlotItem((int)SlotFlags.SLOT_LEFTHAND, proto.EquippedRangeWeapon);
+                    proto.setSlotItem((int)SlotFlag.SLOT_CROSSBOW, null);
+                    proto.setSlotItem((int)SlotFlag.SLOT_LEFTHAND, proto.EquippedRangeWeapon);
                 }
             }
             else if (proto.EquippedWeapon != null)
             {
-                proto.setWeaponMode((int)FightModes.Meele);
+                proto.setWeaponMode((int)FightMode.Meele);
                 if ((proto.EquippedWeapon.ItemInstance.Flags & (Flags.ITEM_2HD_SWD | Flags.ITEM_2HD_AXE)) > 0)
                 {
-                    proto.setSlotItem((int)SlotFlags.SLOT_LONGSWORD, null);
-                    proto.setSlotItem((int)SlotFlags.SLOT_RIGHTHAND, proto.EquippedWeapon);
+                    proto.setSlotItem((int)SlotFlag.SLOT_LONGSWORD, null);
+                    proto.setSlotItem((int)SlotFlag.SLOT_RIGHTHAND, proto.EquippedWeapon);
                 }
                 else
                 {
-                    proto.setSlotItem((int)SlotFlags.SLOT_SWORD, null);
-                    proto.setSlotItem((int)SlotFlags.SLOT_RIGHTHAND, proto.EquippedWeapon);
+                    proto.setSlotItem((int)SlotFlag.SLOT_SWORD, null);
+                    proto.setSlotItem((int)SlotFlag.SLOT_RIGHTHAND, proto.EquippedWeapon);
                 }
             }
             else
             {
-                proto.setWeaponMode((int)FightModes.Fist);
+                proto.setWeaponMode((int)FightMode.Fist);
             }
         }
 

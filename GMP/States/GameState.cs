@@ -193,7 +193,7 @@ namespace GUC.States
             BitStream stream = Program.client.sentBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.SetVobPosDirMessage);
+            stream.Write((byte)NetworkID.SetVobPosDirMessage);
             stream.Write(proto.ID);
 
             stream.Write(proto.Position);

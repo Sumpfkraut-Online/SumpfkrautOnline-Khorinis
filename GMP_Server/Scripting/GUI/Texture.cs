@@ -80,10 +80,10 @@ namespace GUC.Server.Scripting.GUI
 
         protected override void create(int to)
         {
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.GuiMessage);
+            stream.Write((byte)NetworkID.GuiMessage);
             stream.Write((byte)GuiMessageType.CreateTexture);
 
             stream.Write(this.id);
@@ -109,10 +109,10 @@ namespace GUC.Server.Scripting.GUI
                 tex = "";
             this.tex = tex;
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.GuiMessage);
+            stream.Write((byte)NetworkID.GuiMessage);
             stream.Write((byte)GuiMessageType.SetTexture);
 
             stream.Write(this.ID);
@@ -131,10 +131,10 @@ namespace GUC.Server.Scripting.GUI
             if (size == null)
                 throw new ArgumentNullException("The size can't be null!");
             this.size.set(size);
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.GuiMessage);
+            stream.Write((byte)NetworkID.GuiMessage);
             stream.Write((byte)GuiMessageType.SetSize);
 
             stream.Write(this.ID);

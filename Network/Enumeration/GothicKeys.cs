@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GUC.Enumeration
 {
-    public enum GothicKeys
+    public enum GothicKey
     {
         DIK_ESCAPE =0x01,
         DIK_1 =     0x02,
