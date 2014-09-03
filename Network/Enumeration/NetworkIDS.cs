@@ -112,6 +112,14 @@ namespace GUC.Enumeration
         CreateListButton,
         CreateListTextBox,
 
+        CreateText3D,
+        CreateTextPlayer,
+
+
+        Text3DPosition,
+        Text3DAddRow,
+        Text3DClear,
+
         SetTexture,
         SetSize,
 

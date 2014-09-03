@@ -38,6 +38,7 @@ namespace GUC.Server.Scripts
             cursor = Cursor.getCursor();
             RandomManager.GetRandom();
 
+            Test.Text3DTest.Init();
 
             
             ItemInit.Init();

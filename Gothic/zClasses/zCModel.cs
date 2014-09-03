@@ -12,8 +12,9 @@ namespace Gothic.zClasses
         public enum Offsets : uint 
         {
             Owner = 0x60,
-            ModelPrototype = 0x64
-
+            ModelPrototype = 0x64,
+            BBox3D = 216,
+            BBox3DLocal = 240
         }
 
         public enum FuncOffsets : uint
@@ -101,6 +102,18 @@ namespace Gothic.zClasses
         {
             get { return new zCVob(Process, Process.ReadInt(Address + (int)Offsets.Owner)); }
         }
+
+        public zTBBox3D BBox3D
+        {
+            get { return new zTBBox3D(Process, Address + (int)Offsets.BBox3D); }
+        }
+
+        public zTBBox3D BBox3DLocal
+        {
+            get { return new zTBBox3D(Process, Address + (int)Offsets.BBox3DLocal); }
+        }
+
+
 
         public void SetModelScale(float[] scale)
         {

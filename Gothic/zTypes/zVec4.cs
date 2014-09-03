@@ -6,22 +6,22 @@ using Gothic.zClasses;
 
 namespace Gothic.zTypes
 {
-    public class zVec3 : zClass, IDisposable
+    public class zVec4 : zClass, IDisposable
     {
-        public zVec3(Process process, int address)
+        public zVec4(Process process, int address)
             : base(process, address)
         {
             
         }
 
-        public zVec3()
+        public zVec4()
         {
 
         }
 
-        public static zVec3 Create(Process process)
+        public static zVec4 Create(Process process)
         {
-            zVec3 rV = new zVec3();
+            zVec4 rV = new zVec4();
             IntPtr addr = process.Alloc((uint)rV.SizeOf());
             rV.Initialize(process, addr.ToInt32());
             return rV;
@@ -44,13 +44,12 @@ namespace Gothic.zTypes
 
         public float get(int index)
         {
-            if (index > 2)
+            if (index > 3)
                 throw new ArgumentException("Index can not be larger that 3");
 
 
             return Process.ReadFloat(Address + index * 4);
         }
-
 
         public float X 
         {
@@ -70,6 +69,12 @@ namespace Gothic.zTypes
             set { Process.Write(value, Address + 8); }
         }
 
+        public float W
+        {
+            get { return Process.ReadFloat(Address + 12); }
+            set { Process.Write(value, Address + 12); }
+        }
+
         public override uint ValueLength()
         {
             return 4;
@@ -77,7 +82,7 @@ namespace Gothic.zTypes
 
         public override int SizeOf()
         {
-            return 12;
+            return 16;
         }
     }
 }

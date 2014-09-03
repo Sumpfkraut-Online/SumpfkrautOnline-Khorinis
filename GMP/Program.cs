@@ -111,7 +111,7 @@ namespace GUC
 
 
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hItem).GetMethod("InitByScript_End"), 0x007120D1, 6, 0);
-            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hItem).GetMethod("InitByScript"), 0x00711BD0, 6, 0);
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hItem).GetMethod("InitByScript"), 0x00711BD0, 6, 2);
 
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("OnDamage_DD"), (int)oCNpc.FuncOffsets.OnDamage_DD, (int)oCNpc.HookSize.OnDamage_DD, 1);
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("DoDie"), (int)oCNpc.FuncOffsets.DoDie, (int)oCNpc.HookSize.DoDie, 1);
@@ -534,6 +534,12 @@ namespace GUC
 
         static bool first = true;
         static bool spawned = false;
+
+        public delegate void hook_RenderEvent(Process process, long now);
+        public static hook_RenderEvent OnRender;
+        public static hook_RenderEvent OnRenderTimedSecond;//Each second 1 call!
+
+        public static long s_OnRenderCalledLastSecond = 0;
         public static Int32 hook_Render(String message)
         {
             try
@@ -554,9 +560,14 @@ namespace GUC
                 {
                     timer.iUpdate(time);
                 }
+                if(OnRender != null)
+                    OnRender(process, time);
 
-
-
+                if (OnRenderTimedSecond != null && s_OnRenderCalledLastSecond < time)
+                {
+                    OnRenderTimedSecond(process, time);
+                    s_OnRenderCalledLastSecond = time + 10000000;
+                }
             }
             catch (Exception ex)
             {
