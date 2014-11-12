@@ -5,7 +5,7 @@ maintance = 0;
 
 ClassItems = {};
 ClassItemCount = 0;
-
+-- copyright bei mir.
 bodyMeshes =
 {
 	[1] = "Hum_Body_Naked0",
