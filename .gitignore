@@ -215,3 +215,33 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+
+
+
+###############
+## GMPA
+###############
+
+Tools
+zeditor
+Account.txt
+account-system.txt
+Administration.lua
+Administration.txt
+class.txt
+Database.sql
+DBConnection.txt
+GC.txt
+GlobalChat.txt
+libmysql.dll
+msvcp100.dll
+msvcp100d.dll
+msvcr100.dll
+msvcr100d.dll
+OOC.txt
+readme.txt
+Report.txt
+server_gmp.exe
+server_log.txt
+SimpleRP.db
+test.vm
