@@ -12,7 +12,7 @@ local debugMode = 1;
 instance_LoginSystem=nil;
 
 
-LogoutMessage = CreateDraw(700, 4400, "Du verlaesst den Server in 10 Sekunden.", "Font_Default.tga", 255, 255, 255);
+LogoutMessage = CreateDraw(700, 4400, "Du trennst die Verbindung in 10 Sekunden.", "Font_Default.tga", 255, 255, 255);
 --Draws Definition
 
 function LoginSystem:new()
@@ -96,7 +96,7 @@ end
 
 function LoginSystem:OnPlayerDisconnect(playerid, reason)
 	if self.userOnline[playerid] then
-		print(self.userOnline[playerid].." was logged out on disconnect")
+		print(self.userOnline[playerid].." ..hat SumpfkrautOnline Verlassen.")
 		self.userOnline[playerid]=nil;
 		self.IsLauncherLogin[playerid]=nil;
 	end
@@ -198,7 +198,7 @@ function LoginSystem:loginUser(playerid,username)
 		
 		if GetPlayerHealth(playerid) == 0 then
 			print("player " .. playerid .. " logged in dead")
-			deathPlayers[playerid] = 1;
+			deathPlayers[playerid] = 0;
 		end
 		
 		self:showLogin(playerid, 0, 1);

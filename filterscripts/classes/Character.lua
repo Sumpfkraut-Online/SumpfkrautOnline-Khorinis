@@ -465,7 +465,7 @@ function Character:updateDayOnlineTime(newDay, interval)
 	
 	if self.dayOnlineTime >= DAY_ONLINE_TIME_FOR_TEACH then
 		self.canTeach = true;
-		SendPlayerMessage(self.playerid, COLOR_SUCCESS.r, COLOR_SUCCESS.g, COLOR_SUCCESS.b, "Du bist jetzt ausgeruht und kannst trainieren gehen.");
+		SendPlayerMessage(self.playerid, COLOR_SUCCESS.r, COLOR_SUCCESS.g, COLOR_SUCCESS.b, "Du bist jetzt lange genug Online und kannst Trainieren.");
 	end
 	
 	runSQL(string.format("REPLACE INTO char_onlinetime (account_id, day, time, hadTeach) VALUES (%s, %s, %s, 0);", self.accountID, os.date("%d"), self.dayOnlineTime));

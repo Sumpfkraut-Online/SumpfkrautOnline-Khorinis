@@ -7,7 +7,7 @@ ElementPlunder.__index = ElementPlunder;
 function ElementPlunder.new()
 	local newElementPlunder = {};
 	
-	newElementPlunder.caption = "Pluendern";
+	newElementPlunder.caption = "Ausrauben";
 	
 	setmetatable(newElementPlunder, ElementPlunder);
 	
@@ -34,7 +34,7 @@ function ElementPlunder:exec(playerid)
 	
 	--check if plunder time interval is exceeded
 	if os.difftime(os.time(), victim.lastPlunderTime) < MIN_PLUNDER_SAFETY_TIME then
-		SendPlayerMessage(playerid, COLOR_FAILURE.r, COLOR_FAILURE.g, COLOR_FAILURE.b, string.format("%s wurde kuerzlich erst gepluendert und es gibt noch nichts zu pluendern.", instance_NameSystem:getPlayerNameFromViewOf(playerid, focusID)));
+		SendPlayerMessage(playerid, COLOR_FAILURE.r, COLOR_FAILURE.g, COLOR_FAILURE.b, string.format("%s wurde vor kurzem Ausgeraubt.", instance_NameSystem:getPlayerNameFromViewOf(playerid, focusID)));
 		return;
 	end
 	
@@ -54,8 +54,8 @@ function ElementPlunder:exec(playerid)
 	--play plunder animation
 	PlayAnimation(playerid, "T_PLUNDER");
 	
-	SendPlayerMessage(focusID, COLOR_FAILURE.r, COLOR_FAILURE.g, COLOR_FAILURE.b, string.format("%s hat dir %d Goldstuecke gestohlen.", instance_NameSystem:getPlayerNameFromViewOf(focusID, playerid), robbedGold));
-	SendPlayerMessage(playerid, COLOR_SUCCESS.r, COLOR_SUCCESS.g, COLOR_SUCCESS.b, string.format("Du hast %s %d Goldstuecke gestohlen.", instance_NameSystem:getPlayerNameFromViewOf(playerid, focusID), robbedGold));
+	SendPlayerMessage(focusID, COLOR_FAILURE.r, COLOR_FAILURE.g, COLOR_FAILURE.b, string.format("%s hat dir %d Gold gestohlen.", instance_NameSystem:getPlayerNameFromViewOf(focusID, playerid), robbedGold));
+	SendPlayerMessage(playerid, COLOR_SUCCESS.r, COLOR_SUCCESS.g, COLOR_SUCCESS.b, string.format("Du hast %s %d Gold gestohlen.", instance_NameSystem:getPlayerNameFromViewOf(playerid, focusID), robbedGold));
 	
 	--set last plundered time
 	victim.lastPlunderTime = os.time();

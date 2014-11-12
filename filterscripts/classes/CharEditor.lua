@@ -171,7 +171,7 @@ function CharEditor:new(playerid)
 		self.spawnroomnumber=4;
 		print("new CharEditor for playerid: "..playerid.." Room 4")
 	else
-		SendPlayerMessage(playerid,0,0,255,"Sorry alle Charakter Erstellungsslots sind belegt. Du wirst so schnell wie möglich weitergeleitet.");
+		SendPlayerMessage(playerid,0,0,255,"Alle Plaetze sind derzeit Belegt. Bitte Warten...");
 		SendPlayerMessage(playerid,0,0,255,"Not Implemented Yet.");
 		return;
 	end
@@ -212,7 +212,7 @@ function CharEditor:new(playerid)
 	
 	
 	--Create Helper NPC
-	tempSelf.MyNpc = CreateNPC("CharacterHelper")
+	tempSelf.MyNpc = CreateNPC("CH")
 	--Spawn Helper Npc
 	SpawnPlayer(tempSelf.MyNpc);
 	--Telerport Helper NPC into the Chareditroom

@@ -4,7 +4,7 @@ require "filterscripts/classes/Menu/Color"
 ---GENERAL
 --------
 --the server name
-GENERAL_HOSTNAME = "Minental-Online.net";
+GENERAL_HOSTNAME = "SumpfKrautOnline 1.0a";
 print("GENERAL_HOSTNAME = " .. tostring(GENERAL_HOSTNAME));
 
 --the server gamemode name
@@ -12,7 +12,7 @@ GENERAL_GAMEMODE_NAME = "Roleplay";
 print("GENERAL_GAMEMODE_NAME = " .. tostring(GENERAL_GAMEMODE_NAME));
 
 --the server description
-GENERAL_DESCRIPTION = "Das Minental, EINZIGARTIGE FEATURES!";
+GENERAL_DESCRIPTION = "SumpfkrautOnline jetzt in der Closed Alpha!";
 print("GENERAL_DESCRIPTION = " .. tostring(GENERAL_DESCRIPTION));
 
 --debug mode
