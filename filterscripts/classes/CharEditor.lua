@@ -225,9 +225,9 @@ function CharEditor:new(playerid)
 	SetPlayerFatness(tempSelf.MyNpc,tempSelf.Fatnes)
 	tempSelf.HelperAngle=GetPlayerAngle(tempSelf.MyNpc);
 	--Teleport Player into the Chareditroom and freeze him/her
-	FreezePlayer(playerid,1)
+	FreezePlayer(playerid,0)
 	TeleportPlayerToWayPoint(playerid,CharEditRooms_Player[self.spawnroomnumber]);
-	FreezePlayer(playerid,1)
+	FreezePlayer(playerid,0)
 	
 	--Create PlayerDraws
 	tempSelf.Message  = 	 CreatePlayerDraw(playerid,400,4000,"Erstelle deinen Charakter, bestaedige mit der Leertaste / Bitte druecke F!","Font_Old_10_White_Hi.TGA",255,255,0);
@@ -501,7 +501,7 @@ function CharEditor:Close()
 		SetPlayerSkillWeapon(self.playID, 3, ClassCrossbow[self.Class])
 		--Delete this char editor from the global list
 		CharEditorList[self.playID]=nil;
-		--TeleportPlayerToWayPoint(self.playID,"spawn_hafen");
+		TeleportPlayerToWayPoint(self.playID,"spawn_hafen");
 		SetPlayerWorld(self.playID, "NEWWORLD\\NEWWORLD.ZEN", "SHIP");
 		
 		--Unfreeze the Player	
@@ -524,7 +524,7 @@ function CharEditor:OnPlayerKey(playerid, press, release)
 		if CharEditorList[playerid]  then	
 
 			local temEdit = CharEditorList[playerid] 
-			FreezePlayer(playerid,1)
+			FreezePlayer(playerid,0)
 			TeleportPlayerToWayPoint(playerid,CharEditRooms_Player[temEdit.spawnroomnumber]);
 			--Up
 			if(press==91) then
@@ -628,7 +628,7 @@ end
 function CharEditor:OnPlayerUpdate(playerid)
 		if CharEditorList[playerid]  then	
 			local temEdit = CharEditorList[playerid] 
-			FreezePlayer(playerid,1)
+			FreezePlayer(playerid,0)
 			TeleportPlayerToWayPoint(playerid,CharEditRooms_Player[temEdit.spawnroomnumber]);
 		end
 end
