@@ -1,1 +1,0 @@
-http://www.wiki.gmpa.com.pl

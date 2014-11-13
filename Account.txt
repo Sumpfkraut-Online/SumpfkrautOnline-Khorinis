@@ -3,3 +3,6 @@
 [23:56:22]: Loaded character data for playerID: 631, accountID: 17
 [23:58:05]: Creating new account for playerID: 0, accountID: 22
 [23:58:14]: Creating new account for playerID: 1, accountID: 23
+[00:06:27]: Loaded character data for playerID: 631, accountID: 17
+[00:07:46]: Creating new account for playerID: 0, accountID: 24
+[00:11:48]: Loaded character data for playerID: 631, accountID: 17
