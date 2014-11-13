@@ -28,8 +28,8 @@ function ElementTellName:exec(playerid)
 		
 		instance_NameSystem:OnPlayerFocus(focusID, playerid);
 		
-		SendPlayerMessage(playerid, COLOR_SUCCESS.r, COLOR_SUCCESS.g, COLOR_SUCCESS.b, string.format("%s kennt jetzt deinen Namen.", instance_NameSystem:getPlayerNameFromViewOf(playerid, focusID)));
-		SendPlayerMessage(focusID, COLOR_SUCCESS.r, COLOR_SUCCESS.g, COLOR_SUCCESS.b, string.format("Du kennst jetzt von %s den Namen.", instance_NameSystem:getPlayerNameFromViewOf(focusID, playerid)));
+		SendPlayerMessage(playerid, COLOR_SUCCESS.r, COLOR_SUCCESS.g, COLOR_SUCCESS.b, string.format("Du hast %s deinen Namen genannt.", instance_NameSystem:getPlayerNameFromViewOf(playerid, focusID)));
+		SendPlayerMessage(focusID, COLOR_SUCCESS.r, COLOR_SUCCESS.g, COLOR_SUCCESS.b, string.format("%s hat dir seinen Namen genannt.", instance_NameSystem:getPlayerNameFromViewOf(focusID, playerid)));
 	end
 end
 

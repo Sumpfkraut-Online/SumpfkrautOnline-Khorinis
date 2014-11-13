@@ -2,9 +2,9 @@ local LoginSystem = {};
 LoginSystem.__index = LoginSystem;
 
 --Login Location
-local spawnRoomX = 65967;
-local spawnRoomY = 6829
-local spawnRoomZ = 46270;
+local spawnRoomX = 29796.;
+local spawnRoomY = 4938;
+local spawnRoomZ = -15411.;
 local spawnAngel = 225;
 
 local charedit = -1;
@@ -60,6 +60,16 @@ end
 --		Event Handling
 ----------------------------------------------------------------------
 function LoginSystem:OnPlayerConnect(playerid)
+
+
+		
+
+
+
+
+
+
+
 	playerid = tonumber(playerid);
 	if self then
 		local token = escapeString(GetPlayerName(playerid))	
@@ -310,7 +320,7 @@ function LoginSystem:showLogin(playerid,enabled,typ)
 				FreezePlayer(playerid, 1);		
 				TeleportPlayerToWayPoint(playerid,"login");
 				FreezePlayer(playerid, 1);
-				PlayAnimation(playerid, "S_HEASHOOT")
+				PlayAnimation(playerid, "S_IDOL_S1")
 				ShowDraw(playerid,  self.Login_Message);
 				ShowDraw(playerid,  self.Login_Login);
 				ShowDraw(playerid,  self.Login_Register);
@@ -319,7 +329,7 @@ function LoginSystem:showLogin(playerid,enabled,typ)
 				FreezePlayer(playerid, 1)		
 				TeleportPlayerToWayPoint(playerid,"login");
 				FreezePlayer(playerid, 1)		
-				PlayAnimation(playerid, "S_HEASHOOT")
+				PlayAnimation(playerid, "S_IDOL_S1")
 			end
 		else
 			HideDraw(playerid,  self.Login_Message);

@@ -4,15 +4,15 @@ require "filterscripts/classes/Menu/Color"
 ---GENERAL
 --------
 --the server name
-GENERAL_HOSTNAME = "SumpfKrautOnline 1.0a";
+GENERAL_HOSTNAME = "SumpfKrautOnline-Khorinis";
 print("GENERAL_HOSTNAME = " .. tostring(GENERAL_HOSTNAME));
 
 --the server gamemode name
-GENERAL_GAMEMODE_NAME = "Roleplay";
+GENERAL_GAMEMODE_NAME = "Rollenspiel 10.a";
 print("GENERAL_GAMEMODE_NAME = " .. tostring(GENERAL_GAMEMODE_NAME));
 
 --the server description
-GENERAL_DESCRIPTION = "SumpfkrautOnline jetzt in der Closed Alpha!";
+GENERAL_DESCRIPTION = "Lorem Ipsum SumpfKrautOnline";
 print("GENERAL_DESCRIPTION = " .. tostring(GENERAL_DESCRIPTION));
 
 --debug mode
@@ -136,11 +136,11 @@ print("COLOR_FAILURE = " .. tostring(COLOR_FAILURE));
 --------
 
 --the time that a character has to be online per day to be able to teach
-DAY_ONLINE_TIME_FOR_TEACH = 600; -- IN SECONDS
+DAY_ONLINE_TIME_FOR_TEACH = 1200; -- IN SECONDS
 print("DAY_ONLINE_TIME_FOR_TEACH = " .. tostring(DAY_ONLINE_TIME_FOR_TEACH));
 
 --the maximum skill value a player can reach by reading a book (without a special teach)
-MAXIMUM_TEACH_SKILL_IN_BOOK = 100;
+MAXIMUM_TEACH_SKILL_IN_BOOK = 20;
 print("MAXIMUM_TEACH_SKILL_IN_BOOK = " .. tostring(MAXIMUM_TEACH_SKILL_IN_BOOK));
 
 --------
@@ -152,7 +152,7 @@ MIN_PLUNDER_SAFETY_TIME = 1800; -- IN SECONDS
 print("MIN_PLUNDER_SAFETY_TIME = " .. tostring(MIN_PLUNDER_SAFETY_TIME));
 
 --the amount of gold (in percent / 100) that is stolen when a player is plundered
-PLUNDER_PERCENT = 0.25; -- BETWEEN 0 AND 1
+PLUNDER_PERCENT = 0.10; -- BETWEEN 0 AND 1
 print("PLUNDER_PERCENT = " .. tostring(PLUNDER_PERCENT));
 
 --------

@@ -1,0 +1,9 @@
+[BEGINVDF]
+Comment=
+BaseDir=D:\Steam\SteamApps\common\Gothic II
+VDFName=C:\Users\Chenentano\Desktop\test.mod
+[FILES]
+_work\data\Textures\NPCs\Armor\Armor_SLD_H.tga -r
+[EXCLUDE]
+[INCLUDE]
+[ENDVDF]

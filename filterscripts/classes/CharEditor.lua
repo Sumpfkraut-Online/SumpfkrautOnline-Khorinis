@@ -1,3 +1,5 @@
+
+
 CharEditor = {} -- the table representing the class, which will double as the metatable for the instances
 CharEditor.__index = CharEditor -- failed table lookups on the instances should fallback to the class table, to get methods
 CharEditorList={}
@@ -171,7 +173,7 @@ function CharEditor:new(playerid)
 		self.spawnroomnumber=4;
 		print("new CharEditor for playerid: "..playerid.." Room 4")
 	else
-		SendPlayerMessage(playerid,0,0,255,"Alle Plaetze sind derzeit Belegt. Bitte Warten...");
+		SendPlayerMessage(playerid,0,0,255,"Sorry alle Charakter Erstellungsslots sind belegt. Du wirst so schnell wie möglich weitergeleitet.");
 		SendPlayerMessage(playerid,0,0,255,"Not Implemented Yet.");
 		return;
 	end
@@ -212,7 +214,7 @@ function CharEditor:new(playerid)
 	
 	
 	--Create Helper NPC
-	tempSelf.MyNpc = CreateNPC("CH")
+	tempSelf.MyNpc = CreateNPC("CharacterHelper")
 	--Spawn Helper Npc
 	SpawnPlayer(tempSelf.MyNpc);
 	--Telerport Helper NPC into the Chareditroom
@@ -225,9 +227,9 @@ function CharEditor:new(playerid)
 	SetPlayerFatness(tempSelf.MyNpc,tempSelf.Fatnes)
 	tempSelf.HelperAngle=GetPlayerAngle(tempSelf.MyNpc);
 	--Teleport Player into the Chareditroom and freeze him/her
-	FreezePlayer(playerid,0)
+	FreezePlayer(playerid,1)
 	TeleportPlayerToWayPoint(playerid,CharEditRooms_Player[self.spawnroomnumber]);
-	FreezePlayer(playerid,0)
+	FreezePlayer(playerid,1)
 	
 	--Create PlayerDraws
 	tempSelf.Message  = 	 CreatePlayerDraw(playerid,400,4000,"Erstelle deinen Charakter, bestaedige mit der Leertaste / Bitte druecke F!","Font_Old_10_White_Hi.TGA",255,255,0);
@@ -502,11 +504,10 @@ function CharEditor:Close()
 		--Delete this char editor from the global list
 		CharEditorList[self.playID]=nil;
 		TeleportPlayerToWayPoint(self.playID,"spawn_hafen");
-		SetPlayerWorld(self.playID, "NEWWORLD\\NEWWORLD.ZEN", "SHIP");
-		
 		--Unfreeze the Player	
 		CharEditUsedRooms[self.spawnroomnumber]=-1;
 		FreezePlayer(self.playID, 0)
+		SendMessageToAll(39,199,130,"[INFO] : Ein Segelschiff vom Festland legt soeben am Hafen von Khorinis an!");
 		self=nil;
 	else
 		print("CharEditor:Close() is a member function and cannot be called without a instance-object");
@@ -524,7 +525,7 @@ function CharEditor:OnPlayerKey(playerid, press, release)
 		if CharEditorList[playerid]  then	
 
 			local temEdit = CharEditorList[playerid] 
-			FreezePlayer(playerid,0)
+			FreezePlayer(playerid,1)
 			TeleportPlayerToWayPoint(playerid,CharEditRooms_Player[temEdit.spawnroomnumber]);
 			--Up
 			if(press==91) then
@@ -628,7 +629,7 @@ end
 function CharEditor:OnPlayerUpdate(playerid)
 		if CharEditorList[playerid]  then	
 			local temEdit = CharEditorList[playerid] 
-			FreezePlayer(playerid,0)
+			FreezePlayer(playerid,1)
 			TeleportPlayerToWayPoint(playerid,CharEditRooms_Player[temEdit.spawnroomnumber]);
 		end
 end

@@ -20,7 +20,7 @@ require("filterscripts.systems.ChatSystem");
 require("filterscripts.systems.NameSystem");
 require("filterscripts.systems.HungerSystem");
 require("filterscripts.systems.InteractionSystem");
-require("filterscripts.systems.ResurrectionSystem");
+--require("filterscripts.systems.ResurrectionSystem");
 require("filterscripts.classes.Timerecorder");
 require("filterscripts.classes.GarbageCollector");
 require("filterscripts.classes.Waypoints.WaypointSystem");
@@ -49,8 +49,8 @@ function OnFilterscriptInit()
 	SetServerHostname(GENERAL_HOSTNAME);
 	SetGamemodeName(GENERAL_GAMEMODE_NAME);
 	SetServerDescription(GENERAL_DESCRIPTION);
-	OpenLocks(1);
-	-- EnableExitGame(0);
+	OpenLocks(0);
+	EnableExitGame(0);
 	EnableDropAfterDeath(0);
 	EnableNicknameID(0);
 	--EnableNickname(0);
@@ -61,17 +61,19 @@ function OnFilterscriptInit()
 	loadGarbageCollector(); --[[in GarbageCollector.lua]]
 	loadHungerSystem(); --[[in HungerSystem.lua]]
 	
-	local tmp_id = CreateNPC("Anti-Cheat");
-	createAccount("Anti-Cheat", "Anti-Cheat");
+	local tmp_id = CreateNPC("Sklave");
+	createAccount("Sklave", "Sklave");
 	
-	Character:new(tmp_id,getAccountIdByName("Anti-Cheat"));
+	Character:new(tmp_id,getAccountIdByName("Sklave"));
 	SpawnPlayer(tmp_id);
-	SetPlayerPos(tmp_id, 0, 0, 0);
+	SetPlayerPos(tmp_id, 321312412, 4124123123, 3213123213);
 	SetPlayerHealth(tmp_id, 80);
 	PlayAnimation(tmp_id,"S_RUN");
 		
 	--enable teach and crafting menu check
 	SetTimer("checkPlayerAnim", ANIM_CHECK_INTERVAL, 1);
+	SetTimer("EXPBONUS", 600000, 1);
+	
 end
  
 --Unloading of this script free resources here
@@ -134,9 +136,9 @@ end
 
 ---Callback for player death
 function OnPlayerDeath(playerid, p_classid, killerid, k_classid)
-	instance_ResurrectionSystem:OnPlayerDeath(playerid, p_classid, killerid, k_classid);
+--	instance_ResurrectionSystem:OnPlayerDeath(playerid, p_classid, killerid, k_classid);
 	
-	SendMessageToAll(39,199,130, GetPlayerName(playerid) .. " unterlag im Kampf gegen " .. GetPlayerName(killerid) .. ".");
+--	SendMessageToAll(39,199,130, GetPlayerName(playerid) .. " unterlag im Kampf gegen " .. GetPlayerName(killerid) .. ".");
 end
 
 ---Callback for OnPlayerKey
@@ -145,39 +147,6 @@ function OnPlayerKey(playerid, keyDown, keyUp)
 		playerUpdateTime[playerid] = os.clock();
 		return;
 	end;
-	
-
-	if keyDown == KEY_F7 then
-		local x,y,z = GetPlayerPos(playerid);
-		local angle = tonumber(GetPlayerAngle(playerid));
-		local x_dir = math.sin((angle * 3.141592653589793) / 180);
-		local z_dir = math.cos((angle * 3.141592653589793) / 180);
-		x			= x + (x_dir * 300);
-		z			= z + (z_dir * 300);
-		SetPlayerPos(playerid, x, y, z);
-		
-	elseif keyDown == KEY_F8 then
-		local x,y,z = GetPlayerPos(playerid);
-		y = y + 300;
-		SetPlayerPos(playerid, x, y, z);
-		
-	elseif keyDown == KEY_F9 then
-		if (GetPlayerHealth(playerid) <= 0) then
-			SpawnPlayer(playerid);
-		end
-		local x,y,z = GetPlayerPos(playerid);
-		local angle = tonumber(GetPlayerAngle(playerid));
-		local x_dir = math.sin((angle * 3.141592653589793) / 180);
-		local z_dir = math.cos((angle * 3.141592653589793) / 180);
-		x			= x + (x_dir * 300);
-		y			= y + 300;
-		z			= z + (z_dir * 300);
-		SetPlayerPos(playerid, x, y, z);
-	elseif keyDown == KEY_F10 then
-		PlayAnimation(playerid, "S_SNEAKL");
-	elseif keyUp == KEY_F11 then
-		PlayAnimation(playerid, "S_RUN");
-	end
 	
 	
 	--delay: 0.2 seconds
@@ -193,7 +162,7 @@ function OnPlayerKey(playerid, keyDown, keyUp)
 			instance_ChatSystem:OnPlayerKey(playerid, keyDown);
 			instance_InventorySystem:OnPlayerKey(playerid, keyDown);
 			instance_InteractionSystem:OnPlayerKey(playerid, keyDown);
-			instance_ResurrectionSystem:OnPlayerKey(playerid, keyDown);
+--			instance_ResurrectionSystem:OnPlayerKey(playerid, keyDown);
 			instance_FarmingSystem:OnPlayerKey(playerid, keyDown);
 			
 			if playersInKeybinder[playerid] then
@@ -224,30 +193,13 @@ end
 
 ---Callback for player using an item
 function OnPlayerUseItem(playerid, item_instance, amount, hand)
-	if item_instance == "NULL" then return; end;
-    
-  local item = instance_InventorySystem.inventoryMan:getItemForInstanceName(item_instance);
-  
-  if not item then
-	print(string.format("ITEM_INSTANCE: %s is UNKNOWN", item_instance));
-  end
-  
-  --ignore all item uses that are not from one of the following categories:
-  ---Lebensmittel
-  ---Pflanzen
-  ---Traenke und Heilung
-  if item.categoryID ~= 2 and item.categoryID ~= 3 and item.categoryID ~= 11 then
-      return;
-  end
-    
-	
 	local inv = getPlayerInventory(playerid);
 	if not inv then return; end;
     
 	inv:OnPlayerUseItem(playerid, item_instance, amount, hand);
 	
 	instance_HungerSystem:OnPlayerUseItem(playerid, item_instance, amount, hand);
-  --instance_FarmingSystem:OnPlayerUseItem(playerid, item_instance, amount, hand);
+	instance_FarmingSystem:OnPlayerUseItem(playerid, item_instance, amount, hand);
 end
 
 ---Callback for player take item
@@ -304,3 +256,19 @@ function checkPlayerAnim()
 		end
 	end
 end
+
+    function EXPBONUS()
+            local i = 0;
+            for i = 0, GetMaxPlayers() -1 do
+                    if IsPlayerConnected(i) == 1 then
+                            local bonuswert = GetPlayerMaxHealth(i) -10;
+                            if GetPlayerHealth(i) >= bonuswert then
+                                    SetPlayerExperience(i, GetPlayerExperience(i) +10);
+                                    SendPlayerMessage(i, 0, 255, 0, "Ich bin gesund! (+10EXP)");
+                            else
+                                    SendPlayerMessage(i, 255, 0, 0, "Ich sollte etwas essen.");
+                            end
+                    end
+            end
+    end
+	

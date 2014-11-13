@@ -1,0 +1,13 @@
+--Generated with ZEditor by Midas
+CreateTexture(3100, 2450, 5100, 7400, "DLG_CONVERSATION.TGA")
+CreateTexture(3250, 2650, 4950, 3650, "Menu_Choice_Back.TGA")
+CreateTexture(3250, 3850, 4950, 4850, "Menu_Choice_Back.TGA")
+CreateTexture(3250, 5050, 4950, 6050, "Menu_Choice_Back.TGA")
+CreateTexture(3250, 6250, 4950, 7250, "Menu_Choice_Back.TGA")
+CreateDraw(3450, 3000, "Utwórz postaæ", "Font_Old_20_White_Hi.TGA", 255, 255, 255)
+CreateDraw(3450, 4200, "Utwórz postaæ", "Font_Old_20_White_Hi.TGA", 255, 255, 255)
+CreateDraw(3400, 5400, "Utwórz postaæ", "Font_Old_20_White_Hi.TGA", 255, 255, 255)
+CreateDraw(3350, 6550, "Utwórz postaæ", "Font_Old_20_White_Hi.TGA", 255, 255, 255)
+CreateDraw(6850, 400, "version: alpha 1", "Font_Old_10_White_Hi.TGA", 0, 60, 255)
+CreateDraw(6500, 150, "Mordan MMORPG", "Font_Old_20_White_Hi.TGA", 0, 60, 255)
+CreateDraw(6800, 550, "www.mordan.com.pl", "Font_Old_10_White_Hi.TGA", 255, 255, 0)
