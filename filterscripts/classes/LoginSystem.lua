@@ -16,6 +16,7 @@ LogoutMessage = CreateDraw(700, 4400, "Du verlaesst den Server in 10 Sekunden.",
 --Draws Definition
 
 function LoginSystem:new()
+
     local newLoginSystem = {};
 	
 	setmetatable(newLoginSystem,LoginSystem);
@@ -62,13 +63,6 @@ end
 function LoginSystem:OnPlayerConnect(playerid)
 
 
-		
-
-
-
-
-
-
 
 	playerid = tonumber(playerid);
 	if self then
@@ -113,6 +107,8 @@ function LoginSystem:OnPlayerDisconnect(playerid, reason)
 end
 
 function LoginSystem:OnPlayerSpawn(playerid)
+
+	SpawnPlayer(playerid, 29796. , 4938, -15411);
 	if self:isPlayerLoggedIn(playerid)==0 then
 		FreezePlayer(playerid, 1);
 	end

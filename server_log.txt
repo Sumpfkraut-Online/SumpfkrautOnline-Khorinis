@@ -1,0 +1,1422 @@
+[23:51:45] 
+[23:51:45] Gothic Multiplayer Dedicated Server
+[23:51:45] -----------------------------------
+[23:51:45] Accrescere Core 0.1a R-9
+[23:51:45] -----------------------------------
+[23:51:45] GMP Team 2011-2013
+[23:51:45] 
+[23:51:45] Loading server configuration...
+[23:51:45] hostname:         Test Server by Lancia
+[23:51:45] max players:      50
+[23:51:45] max bots:         900
+[23:51:45] max timers:       1000
+[23:51:45] max items:        400
+[23:51:45] max sounds:       1000
+[23:51:45] max global draws: 10000
+[23:51:45] max textures:     200
+[23:51:45] stream distance:  6000 meters
+[23:51:45] stream rate:      4000 miliseconds
+[23:51:45] position rate:    800 miliseconds
+[23:51:45] key rate:         110 miliseconds
+[23:51:45] unsynch items:    false
+[23:51:45] Configuration successfull loaded.
+[23:51:45] 
+[23:51:45] Gamemode 'gamemodes//s.lua' has been loaded.
+[23:51:45] [bot] [ID: 949] [join] Junger Wolf has joined the server
+[23:51:45] [bot] [ID: 948] [join] Junger Wolf has joined the server
+[23:51:45] [bot] [ID: 947] [join] Junger Wolf has joined the server
+[23:51:45] [bot] [ID: 946] [join] Junger Wolf has joined the server
+[23:51:45] [bot] [ID: 945] [join] Junger Wolf has joined the server
+[23:51:45] [bot] [ID: 944] [join] Junger Wolf has joined the server
+[23:51:45] [bot] [ID: 943] [join] Junger Wolf has joined the server
+[23:51:45] [bot] [ID: 942] [join] Junger Wolf has joined the server
+[23:51:45] [bot] [ID: 941] [join] Junger Wolf has joined the server
+[23:51:45] [bot] [ID: 940] [join] Junger Wolf has joined the server
+[23:51:45] [bot] [ID: 939] [join] Junger Wolf has joined the server
+[23:51:45] [bot] [ID: 938] [join] Junger Wolf has joined the server
+[23:51:45] [bot] [ID: 937] [join] Junger Wolf has joined the server
+[23:51:45] [bot] [ID: 936] [join] Junger Wolf has joined the server
+[23:51:45] [bot] [ID: 935] [join] Junger Wolf has joined the server
+[23:51:45] [bot] [ID: 934] [join] Junger Wolf has joined the server
+[23:51:45] [bot] [ID: 933] [join] Junger Wolf has joined the server
+[23:51:45] [bot] [ID: 932] [join] Junger Wolf has joined the server
+[23:51:45] [bot] [ID: 931] [join] Junger Wolf has joined the server
+[23:51:45] [bot] [ID: 930] [join] Junger Wolf has joined the server
+[23:51:45] [bot] [ID: 929] [join] Junger Wolf has joined the server
+[23:51:45] [bot] [ID: 928] [join] Junger Wolf has joined the server
+[23:51:45] [bot] [ID: 927] [join] Junger Wolf has joined the server
+[23:51:45] [bot] [ID: 926] [join] Junger Wolf has joined the server
+[23:51:45] [bot] [ID: 925] [join] Junger Wolf has joined the server
+[23:51:45] [bot] [ID: 924] [join] Junger Wolf has joined the server
+[23:51:45] [bot] [ID: 923] [join] Junger Wolf has joined the server
+[23:51:45] [bot] [ID: 922] [join] Junger Wolf has joined the server
+[23:51:45] [bot] [ID: 921] [join] Snapper has joined the server
+[23:51:45] [bot] [ID: 920] [join] Snapper has joined the server
+[23:51:45] [bot] [ID: 919] [join] Snapper has joined the server
+[23:51:45] [bot] [ID: 918] [join] Snapper has joined the server
+[23:51:45] [bot] [ID: 917] [join] Snapper has joined the server
+[23:51:45] [bot] [ID: 916] [join] Snapper has joined the server
+[23:51:45] [bot] [ID: 915] [join] Snapper has joined the server
+[23:51:45] [bot] [ID: 914] [join] Snapper has joined the server
+[23:51:45] [bot] [ID: 913] [join] Snapper has joined the server
+[23:51:45] [bot] [ID: 912] [join] Snapper has joined the server
+[23:51:45] [bot] [ID: 911] [join] Snapper has joined the server
+[23:51:45] [bot] [ID: 910] [join] Snapper has joined the server
+[23:51:45] [bot] [ID: 909] [join] Snapper has joined the server
+[23:51:45] [bot] [ID: 908] [join] Snapper has joined the server
+[23:51:45] [bot] [ID: 907] [join] Snapper has joined the server
+[23:51:45] [bot] [ID: 906] [join] Snapper has joined the server
+[23:51:45] [bot] [ID: 905] [join] Snapper has joined the server
+[23:51:45] [bot] [ID: 904] [join] Snapper has joined the server
+[23:51:45] [bot] [ID: 903] [join] Snapper has joined the server
+[23:51:45] [bot] [ID: 902] [join] Snapper has joined the server
+[23:51:45] [bot] [ID: 901] [join] Snapper has joined the server
+[23:51:45] [bot] [ID: 900] [join] Snapper has joined the server
+[23:51:45] [bot] [ID: 899] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 898] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 897] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 896] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 895] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 894] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 893] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 892] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 891] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 890] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 889] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 888] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 887] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 886] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 885] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 884] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 883] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 882] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 881] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 880] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 879] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 878] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 877] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 876] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 875] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 874] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 873] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 872] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 871] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 870] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 869] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 868] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 867] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 866] [join] Wolf has joined the server
+[23:51:45] [bot] [ID: 865] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 864] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 863] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 862] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 861] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 860] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 859] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 858] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 857] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 856] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 855] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 854] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 853] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 852] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 851] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 850] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 849] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 848] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 847] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 846] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 845] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 844] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 843] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 842] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 841] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 840] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 839] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 838] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 837] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 836] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 835] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 834] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 833] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 832] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 831] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 830] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 829] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 828] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 827] [join] Scavanger has joined the server
+[23:51:45] [bot] [ID: 826] [join] Wildschwein has joined the server
+[23:51:45] [bot] [ID: 825] [join] Wildschwein has joined the server
+[23:51:45] [bot] [ID: 824] [join] Wildschwein has joined the server
+[23:51:45] [bot] [ID: 823] [join] Wildschwein has joined the server
+[23:51:45] [bot] [ID: 822] [join] Wildschwein has joined the server
+[23:51:45] [bot] [ID: 821] [join] Wildschwein has joined the server
+[23:51:45] [bot] [ID: 820] [join] Wildschwein has joined the server
+[23:51:45] [bot] [ID: 819] [join] Wildschwein has joined the server
+[23:51:45] [bot] [ID: 818] [join] Wildschwein has joined the server
+[23:51:45] [bot] [ID: 817] [join] Wildschwein has joined the server
+[23:51:45] [bot] [ID: 816] [join] Wildschwein has joined the server
+[23:51:45] [bot] [ID: 815] [join] Wildschwein has joined the server
+[23:51:45] [bot] [ID: 814] [join] Wildschwein has joined the server
+[23:51:45] [bot] [ID: 813] [join] Wildschwein has joined the server
+[23:51:45] [bot] [ID: 812] [join] Wildschwein has joined the server
+[23:51:45] [bot] [ID: 811] [join] Wildschwein has joined the server
+[23:51:45] [bot] [ID: 810] [join] Wildschwein has joined the server
+[23:51:45] [bot] [ID: 809] [join] Wildschwein has joined the server
+[23:51:45] [bot] [ID: 808] [join] Wildschwein has joined the server
+[23:51:45] [bot] [ID: 807] [join] Wildschwein has joined the server
+[23:51:45] [bot] [ID: 806] [join] Wildschwein has joined the server
+[23:51:45] [bot] [ID: 805] [join] Wildschwein has joined the server
+[23:51:45] [bot] [ID: 804] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 803] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 802] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 801] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 800] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 799] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 798] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 797] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 796] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 795] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 794] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 793] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 792] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 791] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 790] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 789] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 788] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 787] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 786] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 785] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 784] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 783] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 782] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 781] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 780] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 779] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 778] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 777] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 776] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 775] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 774] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 773] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 772] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 771] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 770] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 769] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 768] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 767] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 766] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 765] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 764] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 763] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 762] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 761] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 760] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 759] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 758] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 757] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 756] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 755] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 754] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 753] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 752] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 751] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 750] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 749] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 748] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 747] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 746] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 745] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 744] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 743] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 742] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 741] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 740] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 739] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 738] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 737] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 736] [join] Feldraueber has joined the server
+[23:51:45] [bot] [ID: 735] [join] Lurker has joined the server
+[23:51:45] [bot] [ID: 734] [join] Lurker has joined the server
+[23:51:45] [bot] [ID: 733] [join] Lurker has joined the server
+[23:51:45] [bot] [ID: 732] [join] Lurker has joined the server
+[23:51:45] [bot] [ID: 731] [join] Lurker has joined the server
+[23:51:45] [bot] [ID: 730] [join] Lurker has joined the server
+[23:51:45] [bot] [ID: 729] [join] Lurker has joined the server
+[23:51:45] [bot] [ID: 728] [join] Lurker has joined the server
+[23:51:45] [bot] [ID: 727] [join] Lurker has joined the server
+[23:51:45] [bot] [ID: 726] [join] Lurker has joined the server
+[23:51:45] [bot] [ID: 725] [join] Lurker has joined the server
+[23:51:45] [bot] [ID: 724] [join] Lurker has joined the server
+[23:51:45] [bot] [ID: 723] [join] Lurker has joined the server
+[23:51:45] [bot] [ID: 722] [join] Lurker has joined the server
+[23:51:45] [bot] [ID: 721] [join] Lurker has joined the server
+[23:51:45] [bot] [ID: 720] [join] Lurker has joined the server
+[23:51:45] [bot] [ID: 719] [join] Lurker has joined the server
+[23:51:45] [bot] [ID: 718] [join] Lurker has joined the server
+[23:51:45] [bot] [ID: 717] [join] Lurker has joined the server
+[23:51:45] [bot] [ID: 716] [join] Zombie has joined the server
+[23:51:45] [bot] [ID: 715] [join] Zombie has joined the server
+[23:51:45] [bot] [ID: 714] [join] Zombie has joined the server
+[23:51:45] [bot] [ID: 713] [join] Zombie has joined the server
+[23:51:45] [bot] [ID: 712] [join] Zombie has joined the server
+[23:51:45] [bot] [ID: 711] [join] Zombie has joined the server
+[23:51:45] [bot] [ID: 710] [join] Zombie has joined the server
+[23:51:45] [bot] [ID: 709] [join] Zombie has joined the server
+[23:51:45] [bot] [ID: 708] [join] Zombie has joined the server
+[23:51:45] [bot] [ID: 707] [join] Zombie has joined the server
+[23:51:45] [bot] [ID: 706] [join] Zombie has joined the server
+[23:51:45] [bot] [ID: 705] [join] Warg has joined the server
+[23:51:45] [bot] [ID: 704] [join] Warg has joined the server
+[23:51:45] [bot] [ID: 703] [join] Warg has joined the server
+[23:51:45] [bot] [ID: 702] [join] Warg has joined the server
+[23:51:45] [bot] [ID: 701] [join] Warg has joined the server
+[23:51:45] [bot] [ID: 700] [join] Warg has joined the server
+[23:51:45] [bot] [ID: 699] [join] Warg has joined the server
+[23:51:45] [bot] [ID: 698] [join] Warg has joined the server
+[23:51:45] [bot] [ID: 697] [join] Warg has joined the server
+[23:51:45] [bot] [ID: 696] [join] Warg has joined the server
+[23:51:45] [bot] [ID: 695] [join] Warg has joined the server
+[23:51:45] [bot] [ID: 694] [join] Warg has joined the server
+[23:51:45] [bot] [ID: 693] [join] Warg has joined the server
+[23:51:45] [bot] [ID: 692] [join] Warg has joined the server
+[23:51:45] [bot] [ID: 691] [join] Warg has joined the server
+[23:51:45] [bot] [ID: 690] [join] Warg has joined the server
+[23:51:45] [bot] [ID: 689] [join] Warg has joined the server
+[23:51:45] [bot] [ID: 688] [join] Warg has joined the server
+[23:51:45] [bot] [ID: 687] [join] Warg has joined the server
+[23:51:45] [bot] [ID: 686] [join] Warg has joined the server
+[23:51:45] [bot] [ID: 685] [join] Warg has joined the server
+[23:51:45] [bot] [ID: 684] [join] Warg has joined the server
+[23:51:45] [bot] [ID: 683] [join] Warg has joined the server
+[23:51:45] [bot] [ID: 682] [join] Warg has joined the server
+[23:51:45] [bot] [ID: 681] [join] Warg has joined the server
+[23:51:45] [bot] [ID: 680] [join] Warg has joined the server
+[23:51:45] [bot] [ID: 679] [join] Warg has joined the server
+[23:51:45] [bot] [ID: 678] [join] Warg has joined the server
+[23:51:45] [bot] [ID: 677] [join] Warg has joined the server
+[23:51:45] [bot] [ID: 676] [join] Warg has joined the server
+[23:51:45] [bot] [ID: 675] [join] Warg has joined the server
+[23:51:45] [bot] [ID: 674] [join] Warg has joined the server
+[23:51:45] [bot] [ID: 673] [join] Troll has joined the server
+[23:51:45] [bot] [ID: 672] [join] Troll has joined the server
+[23:51:45] [bot] [ID: 671] [join] Schwarzer Troll has joined the server
+[23:51:45] [bot] [ID: 670] [join] Minecrawler has joined the server
+[23:51:45] [bot] [ID: 669] [join] Minecrawler has joined the server
+[23:51:45] [bot] [ID: 668] [join] Minecrawler has joined the server
+[23:51:45] [bot] [ID: 667] [join] Minecrawler has joined the server
+[23:51:45] [bot] [ID: 666] [join] Minecrawler has joined the server
+[23:51:45] [bot] [ID: 665] [join] Minecrawler has joined the server
+[23:51:45] [bot] [ID: 664] [join] Minecrawler has joined the server
+[23:51:45] [bot] [ID: 663] [join] Minecrawler Krieger has joined the server
+[23:51:45] [bot] [ID: 662] [join] Minecrawler Krieger has joined the server
+[23:51:45] [bot] [ID: 661] [join] Minecrawler Krieger has joined the server
+[23:51:45] [bot] [ID: 660] [join] Minecrawler Krieger has joined the server
+[23:51:45] [bot] [ID: 659] [join] Minecrawler Krieger has joined the server
+[23:51:45] [bot] [ID: 658] [join] Minecrawler Krieger has joined the server
+[23:51:45] [bot] [ID: 657] [join] Minecrawler Krieger has joined the server
+[23:51:45] [bot] [ID: 656] [join] Minecrawler Krieger has joined the server
+[23:51:45] [bot] [ID: 655] [join] Molerat has joined the server
+[23:51:45] [bot] [ID: 654] [join] Molerat has joined the server
+[23:51:45] [bot] [ID: 653] [join] Molerat has joined the server
+[23:51:45] [bot] [ID: 652] [join] Molerat has joined the server
+[23:51:45] [bot] [ID: 651] [join] Molerat has joined the server
+[23:51:45] [bot] [ID: 650] [join] Molerat has joined the server
+[23:51:45] [bot] [ID: 649] [join] Molerat has joined the server
+[23:51:45] [bot] [ID: 648] [join] Molerat has joined the server
+[23:51:45] [bot] [ID: 647] [join] Molerat has joined the server
+[23:51:45] [bot] [ID: 646] [join] Molerat has joined the server
+[23:51:45] [bot] [ID: 645] [join] Molerat has joined the server
+[23:51:45] [bot] [ID: 644] [join] Molerat has joined the server
+[23:51:45] [bot] [ID: 643] [join] Molerat has joined the server
+[23:51:45] [bot] [ID: 642] [join] Molerat has joined the server
+[23:51:45] [bot] [ID: 641] [join] Molerat has joined the server
+[23:51:45] [bot] [ID: 640] [join] Molerat has joined the server
+[23:51:45] [bot] [ID: 639] [join] Molerat has joined the server
+[23:51:45] [bot] [ID: 638] [join] Molerat has joined the server
+[23:51:45] [bot] [ID: 637] [join] Molerat has joined the server
+[23:51:45] [bot] [ID: 636] [join] Molerat has joined the server
+[23:51:45] [bot] [ID: 635] [join] Molerat has joined the server
+[23:51:45] [bot] [ID: 634] [join] Molerat has joined the server
+[23:51:45] [bot] [ID: 633] [join] Molerat has joined the server
+[23:51:45] [bot] [ID: 632] [join] Molerat has joined the server
+[23:51:45] Filterscript 'filterscripts//load.lua' has been loaded.
+[23:51:46] Filterscript 'filterscripts//admin.lua' has been loaded.
+[23:51:46] Filterscript 'filterscripts//IS.lua' has been loaded.
+[23:51:46] Filterscript 'filterscripts//Pflanzen.lua' has been loaded.
+[23:51:46] Awaiting for connections on 192.168.178.22:28960...
+[23:52:09] 
+[23:52:09] Gothic Multiplayer Dedicated Server
+[23:52:09] -----------------------------------
+[23:52:09] Accrescere Core 0.1a R-9
+[23:52:09] -----------------------------------
+[23:52:09] GMP Team 2011-2013
+[23:52:09] 
+[23:52:09] Loading server configuration...
+[23:52:09] hostname:         Test Server by Lancia
+[23:52:09] max players:      50
+[23:52:09] max bots:         900
+[23:52:09] max timers:       1000
+[23:52:09] max items:        400
+[23:52:09] max sounds:       1000
+[23:52:09] max global draws: 10000
+[23:52:09] max textures:     200
+[23:52:09] stream distance:  6000 meters
+[23:52:09] stream rate:      4000 miliseconds
+[23:52:09] position rate:    800 miliseconds
+[23:52:09] key rate:         110 miliseconds
+[23:52:09] unsynch items:    false
+[23:52:09] Configuration successfull loaded.
+[23:52:09] 
+[23:52:09] Gamemode 'gamemodes//s.lua' has been loaded.
+[23:52:09] [bot] [ID: 949] [join] Junger Wolf has joined the server
+[23:52:09] [bot] [ID: 948] [join] Junger Wolf has joined the server
+[23:52:09] [bot] [ID: 947] [join] Junger Wolf has joined the server
+[23:52:09] [bot] [ID: 946] [join] Junger Wolf has joined the server
+[23:52:09] [bot] [ID: 945] [join] Junger Wolf has joined the server
+[23:52:09] [bot] [ID: 944] [join] Junger Wolf has joined the server
+[23:52:09] [bot] [ID: 943] [join] Junger Wolf has joined the server
+[23:52:09] [bot] [ID: 942] [join] Junger Wolf has joined the server
+[23:52:09] [bot] [ID: 941] [join] Junger Wolf has joined the server
+[23:52:09] [bot] [ID: 940] [join] Junger Wolf has joined the server
+[23:52:09] [bot] [ID: 939] [join] Junger Wolf has joined the server
+[23:52:09] [bot] [ID: 938] [join] Junger Wolf has joined the server
+[23:52:09] [bot] [ID: 937] [join] Junger Wolf has joined the server
+[23:52:09] [bot] [ID: 936] [join] Junger Wolf has joined the server
+[23:52:09] [bot] [ID: 935] [join] Junger Wolf has joined the server
+[23:52:09] [bot] [ID: 934] [join] Junger Wolf has joined the server
+[23:52:09] [bot] [ID: 933] [join] Junger Wolf has joined the server
+[23:52:09] [bot] [ID: 932] [join] Junger Wolf has joined the server
+[23:52:09] [bot] [ID: 931] [join] Junger Wolf has joined the server
+[23:52:09] [bot] [ID: 930] [join] Junger Wolf has joined the server
+[23:52:09] [bot] [ID: 929] [join] Junger Wolf has joined the server
+[23:52:09] [bot] [ID: 928] [join] Junger Wolf has joined the server
+[23:52:09] [bot] [ID: 927] [join] Junger Wolf has joined the server
+[23:52:09] [bot] [ID: 926] [join] Junger Wolf has joined the server
+[23:52:09] [bot] [ID: 925] [join] Junger Wolf has joined the server
+[23:52:09] [bot] [ID: 924] [join] Junger Wolf has joined the server
+[23:52:09] [bot] [ID: 923] [join] Junger Wolf has joined the server
+[23:52:09] [bot] [ID: 922] [join] Junger Wolf has joined the server
+[23:52:09] [bot] [ID: 921] [join] Snapper has joined the server
+[23:52:09] [bot] [ID: 920] [join] Snapper has joined the server
+[23:52:09] [bot] [ID: 919] [join] Snapper has joined the server
+[23:52:09] [bot] [ID: 918] [join] Snapper has joined the server
+[23:52:09] [bot] [ID: 917] [join] Snapper has joined the server
+[23:52:09] [bot] [ID: 916] [join] Snapper has joined the server
+[23:52:09] [bot] [ID: 915] [join] Snapper has joined the server
+[23:52:09] [bot] [ID: 914] [join] Snapper has joined the server
+[23:52:09] [bot] [ID: 913] [join] Snapper has joined the server
+[23:52:09] [bot] [ID: 912] [join] Snapper has joined the server
+[23:52:09] [bot] [ID: 911] [join] Snapper has joined the server
+[23:52:09] [bot] [ID: 910] [join] Snapper has joined the server
+[23:52:09] [bot] [ID: 909] [join] Snapper has joined the server
+[23:52:09] [bot] [ID: 908] [join] Snapper has joined the server
+[23:52:09] [bot] [ID: 907] [join] Snapper has joined the server
+[23:52:09] [bot] [ID: 906] [join] Snapper has joined the server
+[23:52:09] [bot] [ID: 905] [join] Snapper has joined the server
+[23:52:09] [bot] [ID: 904] [join] Snapper has joined the server
+[23:52:09] [bot] [ID: 903] [join] Snapper has joined the server
+[23:52:09] [bot] [ID: 902] [join] Snapper has joined the server
+[23:52:09] [bot] [ID: 901] [join] Snapper has joined the server
+[23:52:09] [bot] [ID: 900] [join] Snapper has joined the server
+[23:52:09] [bot] [ID: 899] [join] Wolf has joined the server
+[23:52:09] [bot] [ID: 898] [join] Wolf has joined the server
+[23:52:09] [bot] [ID: 897] [join] Wolf has joined the server
+[23:52:09] [bot] [ID: 896] [join] Wolf has joined the server
+[23:52:09] [bot] [ID: 895] [join] Wolf has joined the server
+[23:52:09] [bot] [ID: 894] [join] Wolf has joined the server
+[23:52:09] [bot] [ID: 893] [join] Wolf has joined the server
+[23:52:09] [bot] [ID: 892] [join] Wolf has joined the server
+[23:52:09] [bot] [ID: 891] [join] Wolf has joined the server
+[23:52:10] [bot] [ID: 890] [join] Wolf has joined the server
+[23:52:10] [bot] [ID: 889] [join] Wolf has joined the server
+[23:52:10] [bot] [ID: 888] [join] Wolf has joined the server
+[23:52:10] [bot] [ID: 887] [join] Wolf has joined the server
+[23:52:10] [bot] [ID: 886] [join] Wolf has joined the server
+[23:52:10] [bot] [ID: 885] [join] Wolf has joined the server
+[23:52:10] [bot] [ID: 884] [join] Wolf has joined the server
+[23:52:10] [bot] [ID: 883] [join] Wolf has joined the server
+[23:52:10] [bot] [ID: 882] [join] Wolf has joined the server
+[23:52:10] [bot] [ID: 881] [join] Wolf has joined the server
+[23:52:10] [bot] [ID: 880] [join] Wolf has joined the server
+[23:52:10] [bot] [ID: 879] [join] Wolf has joined the server
+[23:52:10] [bot] [ID: 878] [join] Wolf has joined the server
+[23:52:10] [bot] [ID: 877] [join] Wolf has joined the server
+[23:52:10] [bot] [ID: 876] [join] Wolf has joined the server
+[23:52:10] [bot] [ID: 875] [join] Wolf has joined the server
+[23:52:10] [bot] [ID: 874] [join] Wolf has joined the server
+[23:52:10] [bot] [ID: 873] [join] Wolf has joined the server
+[23:52:10] [bot] [ID: 872] [join] Wolf has joined the server
+[23:52:10] [bot] [ID: 871] [join] Wolf has joined the server
+[23:52:10] [bot] [ID: 870] [join] Wolf has joined the server
+[23:52:10] [bot] [ID: 869] [join] Wolf has joined the server
+[23:52:10] [bot] [ID: 868] [join] Wolf has joined the server
+[23:52:10] [bot] [ID: 867] [join] Wolf has joined the server
+[23:52:10] [bot] [ID: 866] [join] Wolf has joined the server
+[23:52:10] [bot] [ID: 865] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 864] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 863] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 862] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 861] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 860] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 859] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 858] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 857] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 856] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 855] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 854] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 853] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 852] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 851] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 850] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 849] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 848] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 847] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 846] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 845] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 844] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 843] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 842] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 841] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 840] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 839] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 838] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 837] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 836] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 835] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 834] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 833] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 832] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 831] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 830] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 829] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 828] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 827] [join] Scavanger has joined the server
+[23:52:10] [bot] [ID: 826] [join] Wildschwein has joined the server
+[23:52:10] [bot] [ID: 825] [join] Wildschwein has joined the server
+[23:52:10] [bot] [ID: 824] [join] Wildschwein has joined the server
+[23:52:10] [bot] [ID: 823] [join] Wildschwein has joined the server
+[23:52:10] [bot] [ID: 822] [join] Wildschwein has joined the server
+[23:52:10] [bot] [ID: 821] [join] Wildschwein has joined the server
+[23:52:10] [bot] [ID: 820] [join] Wildschwein has joined the server
+[23:52:10] [bot] [ID: 819] [join] Wildschwein has joined the server
+[23:52:10] [bot] [ID: 818] [join] Wildschwein has joined the server
+[23:52:10] [bot] [ID: 817] [join] Wildschwein has joined the server
+[23:52:10] [bot] [ID: 816] [join] Wildschwein has joined the server
+[23:52:10] [bot] [ID: 815] [join] Wildschwein has joined the server
+[23:52:10] [bot] [ID: 814] [join] Wildschwein has joined the server
+[23:52:10] [bot] [ID: 813] [join] Wildschwein has joined the server
+[23:52:10] [bot] [ID: 812] [join] Wildschwein has joined the server
+[23:52:10] [bot] [ID: 811] [join] Wildschwein has joined the server
+[23:52:10] [bot] [ID: 810] [join] Wildschwein has joined the server
+[23:52:10] [bot] [ID: 809] [join] Wildschwein has joined the server
+[23:52:10] [bot] [ID: 808] [join] Wildschwein has joined the server
+[23:52:10] [bot] [ID: 807] [join] Wildschwein has joined the server
+[23:52:10] [bot] [ID: 806] [join] Wildschwein has joined the server
+[23:52:10] [bot] [ID: 805] [join] Wildschwein has joined the server
+[23:52:10] [bot] [ID: 804] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 803] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 802] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 801] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 800] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 799] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 798] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 797] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 796] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 795] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 794] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 793] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 792] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 791] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 790] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 789] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 788] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 787] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 786] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 785] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 784] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 783] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 782] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 781] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 780] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 779] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 778] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 777] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 776] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 775] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 774] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 773] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 772] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 771] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 770] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 769] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 768] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 767] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 766] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 765] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 764] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 763] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 762] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 761] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 760] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 759] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 758] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 757] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 756] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 755] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 754] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 753] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 752] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 751] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 750] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 749] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 748] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 747] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 746] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 745] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 744] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 743] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 742] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 741] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 740] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 739] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 738] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 737] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 736] [join] Feldraueber has joined the server
+[23:52:10] [bot] [ID: 735] [join] Lurker has joined the server
+[23:52:10] [bot] [ID: 734] [join] Lurker has joined the server
+[23:52:10] [bot] [ID: 733] [join] Lurker has joined the server
+[23:52:10] [bot] [ID: 732] [join] Lurker has joined the server
+[23:52:10] [bot] [ID: 731] [join] Lurker has joined the server
+[23:52:10] [bot] [ID: 730] [join] Lurker has joined the server
+[23:52:10] [bot] [ID: 729] [join] Lurker has joined the server
+[23:52:10] [bot] [ID: 728] [join] Lurker has joined the server
+[23:52:10] [bot] [ID: 727] [join] Lurker has joined the server
+[23:52:10] [bot] [ID: 726] [join] Lurker has joined the server
+[23:52:10] [bot] [ID: 725] [join] Lurker has joined the server
+[23:52:10] [bot] [ID: 724] [join] Lurker has joined the server
+[23:52:10] [bot] [ID: 723] [join] Lurker has joined the server
+[23:52:10] [bot] [ID: 722] [join] Lurker has joined the server
+[23:52:10] [bot] [ID: 721] [join] Lurker has joined the server
+[23:52:10] [bot] [ID: 720] [join] Lurker has joined the server
+[23:52:10] [bot] [ID: 719] [join] Lurker has joined the server
+[23:52:10] [bot] [ID: 718] [join] Lurker has joined the server
+[23:52:10] [bot] [ID: 717] [join] Lurker has joined the server
+[23:52:10] [bot] [ID: 716] [join] Zombie has joined the server
+[23:52:10] [bot] [ID: 715] [join] Zombie has joined the server
+[23:52:10] [bot] [ID: 714] [join] Zombie has joined the server
+[23:52:10] [bot] [ID: 713] [join] Zombie has joined the server
+[23:52:10] [bot] [ID: 712] [join] Zombie has joined the server
+[23:52:10] [bot] [ID: 711] [join] Zombie has joined the server
+[23:52:10] [bot] [ID: 710] [join] Zombie has joined the server
+[23:52:10] [bot] [ID: 709] [join] Zombie has joined the server
+[23:52:10] [bot] [ID: 708] [join] Zombie has joined the server
+[23:52:10] [bot] [ID: 707] [join] Zombie has joined the server
+[23:52:10] [bot] [ID: 706] [join] Zombie has joined the server
+[23:52:10] [bot] [ID: 705] [join] Warg has joined the server
+[23:52:10] [bot] [ID: 704] [join] Warg has joined the server
+[23:52:10] [bot] [ID: 703] [join] Warg has joined the server
+[23:52:10] [bot] [ID: 702] [join] Warg has joined the server
+[23:52:10] [bot] [ID: 701] [join] Warg has joined the server
+[23:52:10] [bot] [ID: 700] [join] Warg has joined the server
+[23:52:10] [bot] [ID: 699] [join] Warg has joined the server
+[23:52:10] [bot] [ID: 698] [join] Warg has joined the server
+[23:52:10] [bot] [ID: 697] [join] Warg has joined the server
+[23:52:10] [bot] [ID: 696] [join] Warg has joined the server
+[23:52:10] [bot] [ID: 695] [join] Warg has joined the server
+[23:52:10] [bot] [ID: 694] [join] Warg has joined the server
+[23:52:10] [bot] [ID: 693] [join] Warg has joined the server
+[23:52:10] [bot] [ID: 692] [join] Warg has joined the server
+[23:52:10] [bot] [ID: 691] [join] Warg has joined the server
+[23:52:10] [bot] [ID: 690] [join] Warg has joined the server
+[23:52:10] [bot] [ID: 689] [join] Warg has joined the server
+[23:52:10] [bot] [ID: 688] [join] Warg has joined the server
+[23:52:10] [bot] [ID: 687] [join] Warg has joined the server
+[23:52:10] [bot] [ID: 686] [join] Warg has joined the server
+[23:52:10] [bot] [ID: 685] [join] Warg has joined the server
+[23:52:10] [bot] [ID: 684] [join] Warg has joined the server
+[23:52:10] [bot] [ID: 683] [join] Warg has joined the server
+[23:52:10] [bot] [ID: 682] [join] Warg has joined the server
+[23:52:10] [bot] [ID: 681] [join] Warg has joined the server
+[23:52:10] [bot] [ID: 680] [join] Warg has joined the server
+[23:52:10] [bot] [ID: 679] [join] Warg has joined the server
+[23:52:10] [bot] [ID: 678] [join] Warg has joined the server
+[23:52:10] [bot] [ID: 677] [join] Warg has joined the server
+[23:52:10] [bot] [ID: 676] [join] Warg has joined the server
+[23:52:10] [bot] [ID: 675] [join] Warg has joined the server
+[23:52:10] [bot] [ID: 674] [join] Warg has joined the server
+[23:52:10] [bot] [ID: 673] [join] Troll has joined the server
+[23:52:10] [bot] [ID: 672] [join] Troll has joined the server
+[23:52:10] [bot] [ID: 671] [join] Schwarzer Troll has joined the server
+[23:52:10] [bot] [ID: 670] [join] Minecrawler has joined the server
+[23:52:10] [bot] [ID: 669] [join] Minecrawler has joined the server
+[23:52:10] [bot] [ID: 668] [join] Minecrawler has joined the server
+[23:52:10] [bot] [ID: 667] [join] Minecrawler has joined the server
+[23:52:10] [bot] [ID: 666] [join] Minecrawler has joined the server
+[23:52:10] [bot] [ID: 665] [join] Minecrawler has joined the server
+[23:52:10] [bot] [ID: 664] [join] Minecrawler has joined the server
+[23:52:10] [bot] [ID: 663] [join] Minecrawler Krieger has joined the server
+[23:52:10] [bot] [ID: 662] [join] Minecrawler Krieger has joined the server
+[23:52:10] [bot] [ID: 661] [join] Minecrawler Krieger has joined the server
+[23:52:10] [bot] [ID: 660] [join] Minecrawler Krieger has joined the server
+[23:52:10] [bot] [ID: 659] [join] Minecrawler Krieger has joined the server
+[23:52:10] [bot] [ID: 658] [join] Minecrawler Krieger has joined the server
+[23:52:10] [bot] [ID: 657] [join] Minecrawler Krieger has joined the server
+[23:52:10] [bot] [ID: 656] [join] Minecrawler Krieger has joined the server
+[23:52:10] [bot] [ID: 655] [join] Molerat has joined the server
+[23:52:10] [bot] [ID: 654] [join] Molerat has joined the server
+[23:52:10] [bot] [ID: 653] [join] Molerat has joined the server
+[23:52:10] [bot] [ID: 652] [join] Molerat has joined the server
+[23:52:10] [bot] [ID: 651] [join] Molerat has joined the server
+[23:52:10] [bot] [ID: 650] [join] Molerat has joined the server
+[23:52:10] [bot] [ID: 649] [join] Molerat has joined the server
+[23:52:10] [bot] [ID: 648] [join] Molerat has joined the server
+[23:52:10] [bot] [ID: 647] [join] Molerat has joined the server
+[23:52:10] [bot] [ID: 646] [join] Molerat has joined the server
+[23:52:10] [bot] [ID: 645] [join] Molerat has joined the server
+[23:52:10] [bot] [ID: 644] [join] Molerat has joined the server
+[23:52:10] [bot] [ID: 643] [join] Molerat has joined the server
+[23:52:10] [bot] [ID: 642] [join] Molerat has joined the server
+[23:52:10] [bot] [ID: 641] [join] Molerat has joined the server
+[23:52:10] [bot] [ID: 640] [join] Molerat has joined the server
+[23:52:10] [bot] [ID: 639] [join] Molerat has joined the server
+[23:52:10] [bot] [ID: 638] [join] Molerat has joined the server
+[23:52:10] [bot] [ID: 637] [join] Molerat has joined the server
+[23:52:10] [bot] [ID: 636] [join] Molerat has joined the server
+[23:52:10] [bot] [ID: 635] [join] Molerat has joined the server
+[23:52:10] [bot] [ID: 634] [join] Molerat has joined the server
+[23:52:10] [bot] [ID: 633] [join] Molerat has joined the server
+[23:52:10] [bot] [ID: 632] [join] Molerat has joined the server
+[23:52:10] Filterscript 'filterscripts//load.lua' has been loaded.
+[23:52:11] [bot] [ID: 631] [join] Sklave has joined the server
+[23:52:11] Filterscript 'filterscripts//admin.lua' has been loaded.
+[23:52:11] Filterscript 'filterscripts//IS.lua' has been loaded.
+[23:52:11] Filterscript 'filterscripts//Pflanzen.lua' has been loaded.
+[23:52:11] Awaiting for connections on 192.168.178.22:28960...
+[23:52:36] 
+[23:52:36] Gothic Multiplayer Dedicated Server
+[23:52:36] -----------------------------------
+[23:52:36] Accrescere Core 0.1a R-9
+[23:52:36] -----------------------------------
+[23:52:36] GMP Team 2011-2013
+[23:52:36] 
+[23:52:36] Loading server configuration...
+[23:52:36] hostname:         Test Server by Lancia
+[23:52:36] max players:      50
+[23:52:36] max bots:         900
+[23:52:36] max timers:       1000
+[23:52:36] max items:        400
+[23:52:36] max sounds:       1000
+[23:52:36] max global draws: 10000
+[23:52:36] max textures:     200
+[23:52:36] stream distance:  6000 meters
+[23:52:36] stream rate:      4000 miliseconds
+[23:52:36] position rate:    800 miliseconds
+[23:52:36] key rate:         110 miliseconds
+[23:52:36] unsynch items:    false
+[23:52:36] Configuration successfull loaded.
+[23:52:36] 
+[23:52:36] Gamemode 'gamemodes//s.lua' has been loaded.
+[23:52:36] [bot] [ID: 949] [join] Junger Wolf has joined the server
+[23:52:36] [bot] [ID: 948] [join] Junger Wolf has joined the server
+[23:52:36] [bot] [ID: 947] [join] Junger Wolf has joined the server
+[23:52:36] [bot] [ID: 946] [join] Junger Wolf has joined the server
+[23:52:36] [bot] [ID: 945] [join] Junger Wolf has joined the server
+[23:52:36] [bot] [ID: 944] [join] Junger Wolf has joined the server
+[23:52:36] [bot] [ID: 943] [join] Junger Wolf has joined the server
+[23:52:36] [bot] [ID: 942] [join] Junger Wolf has joined the server
+[23:52:36] [bot] [ID: 941] [join] Junger Wolf has joined the server
+[23:52:36] [bot] [ID: 940] [join] Junger Wolf has joined the server
+[23:52:36] [bot] [ID: 939] [join] Junger Wolf has joined the server
+[23:52:36] [bot] [ID: 938] [join] Junger Wolf has joined the server
+[23:52:36] [bot] [ID: 937] [join] Junger Wolf has joined the server
+[23:52:36] [bot] [ID: 936] [join] Junger Wolf has joined the server
+[23:52:36] [bot] [ID: 935] [join] Junger Wolf has joined the server
+[23:52:36] [bot] [ID: 934] [join] Junger Wolf has joined the server
+[23:52:36] [bot] [ID: 933] [join] Junger Wolf has joined the server
+[23:52:36] [bot] [ID: 932] [join] Junger Wolf has joined the server
+[23:52:36] [bot] [ID: 931] [join] Junger Wolf has joined the server
+[23:52:36] [bot] [ID: 930] [join] Junger Wolf has joined the server
+[23:52:36] [bot] [ID: 929] [join] Junger Wolf has joined the server
+[23:52:36] [bot] [ID: 928] [join] Junger Wolf has joined the server
+[23:52:36] [bot] [ID: 927] [join] Junger Wolf has joined the server
+[23:52:36] [bot] [ID: 926] [join] Junger Wolf has joined the server
+[23:52:36] [bot] [ID: 925] [join] Junger Wolf has joined the server
+[23:52:36] [bot] [ID: 924] [join] Junger Wolf has joined the server
+[23:52:36] [bot] [ID: 923] [join] Junger Wolf has joined the server
+[23:52:36] [bot] [ID: 922] [join] Junger Wolf has joined the server
+[23:52:36] [bot] [ID: 921] [join] Snapper has joined the server
+[23:52:36] [bot] [ID: 920] [join] Snapper has joined the server
+[23:52:36] [bot] [ID: 919] [join] Snapper has joined the server
+[23:52:36] [bot] [ID: 918] [join] Snapper has joined the server
+[23:52:36] [bot] [ID: 917] [join] Snapper has joined the server
+[23:52:36] [bot] [ID: 916] [join] Snapper has joined the server
+[23:52:36] [bot] [ID: 915] [join] Snapper has joined the server
+[23:52:36] [bot] [ID: 914] [join] Snapper has joined the server
+[23:52:36] [bot] [ID: 913] [join] Snapper has joined the server
+[23:52:36] [bot] [ID: 912] [join] Snapper has joined the server
+[23:52:36] [bot] [ID: 911] [join] Snapper has joined the server
+[23:52:36] [bot] [ID: 910] [join] Snapper has joined the server
+[23:52:36] [bot] [ID: 909] [join] Snapper has joined the server
+[23:52:36] [bot] [ID: 908] [join] Snapper has joined the server
+[23:52:36] [bot] [ID: 907] [join] Snapper has joined the server
+[23:52:36] [bot] [ID: 906] [join] Snapper has joined the server
+[23:52:36] [bot] [ID: 905] [join] Snapper has joined the server
+[23:52:36] [bot] [ID: 904] [join] Snapper has joined the server
+[23:52:36] [bot] [ID: 903] [join] Snapper has joined the server
+[23:52:36] [bot] [ID: 902] [join] Snapper has joined the server
+[23:52:36] [bot] [ID: 901] [join] Snapper has joined the server
+[23:52:36] [bot] [ID: 900] [join] Snapper has joined the server
+[23:52:36] [bot] [ID: 899] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 898] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 897] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 896] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 895] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 894] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 893] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 892] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 891] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 890] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 889] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 888] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 887] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 886] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 885] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 884] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 883] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 882] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 881] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 880] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 879] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 878] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 877] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 876] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 875] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 874] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 873] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 872] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 871] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 870] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 869] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 868] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 867] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 866] [join] Wolf has joined the server
+[23:52:36] [bot] [ID: 865] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 864] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 863] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 862] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 861] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 860] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 859] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 858] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 857] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 856] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 855] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 854] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 853] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 852] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 851] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 850] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 849] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 848] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 847] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 846] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 845] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 844] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 843] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 842] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 841] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 840] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 839] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 838] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 837] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 836] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 835] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 834] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 833] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 832] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 831] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 830] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 829] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 828] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 827] [join] Scavanger has joined the server
+[23:52:36] [bot] [ID: 826] [join] Wildschwein has joined the server
+[23:52:36] [bot] [ID: 825] [join] Wildschwein has joined the server
+[23:52:36] [bot] [ID: 824] [join] Wildschwein has joined the server
+[23:52:36] [bot] [ID: 823] [join] Wildschwein has joined the server
+[23:52:36] [bot] [ID: 822] [join] Wildschwein has joined the server
+[23:52:36] [bot] [ID: 821] [join] Wildschwein has joined the server
+[23:52:36] [bot] [ID: 820] [join] Wildschwein has joined the server
+[23:52:36] [bot] [ID: 819] [join] Wildschwein has joined the server
+[23:52:36] [bot] [ID: 818] [join] Wildschwein has joined the server
+[23:52:36] [bot] [ID: 817] [join] Wildschwein has joined the server
+[23:52:36] [bot] [ID: 816] [join] Wildschwein has joined the server
+[23:52:36] [bot] [ID: 815] [join] Wildschwein has joined the server
+[23:52:36] [bot] [ID: 814] [join] Wildschwein has joined the server
+[23:52:36] [bot] [ID: 813] [join] Wildschwein has joined the server
+[23:52:36] [bot] [ID: 812] [join] Wildschwein has joined the server
+[23:52:36] [bot] [ID: 811] [join] Wildschwein has joined the server
+[23:52:36] [bot] [ID: 810] [join] Wildschwein has joined the server
+[23:52:36] [bot] [ID: 809] [join] Wildschwein has joined the server
+[23:52:36] [bot] [ID: 808] [join] Wildschwein has joined the server
+[23:52:36] [bot] [ID: 807] [join] Wildschwein has joined the server
+[23:52:36] [bot] [ID: 806] [join] Wildschwein has joined the server
+[23:52:36] [bot] [ID: 805] [join] Wildschwein has joined the server
+[23:52:36] [bot] [ID: 804] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 803] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 802] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 801] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 800] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 799] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 798] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 797] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 796] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 795] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 794] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 793] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 792] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 791] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 790] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 789] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 788] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 787] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 786] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 785] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 784] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 783] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 782] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 781] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 780] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 779] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 778] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 777] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 776] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 775] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 774] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 773] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 772] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 771] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 770] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 769] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 768] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 767] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 766] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 765] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 764] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 763] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 762] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 761] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 760] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 759] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 758] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 757] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 756] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 755] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 754] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 753] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 752] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 751] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 750] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 749] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 748] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 747] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 746] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 745] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 744] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 743] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 742] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 741] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 740] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 739] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 738] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 737] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 736] [join] Feldraueber has joined the server
+[23:52:36] [bot] [ID: 735] [join] Lurker has joined the server
+[23:52:36] [bot] [ID: 734] [join] Lurker has joined the server
+[23:52:36] [bot] [ID: 733] [join] Lurker has joined the server
+[23:52:36] [bot] [ID: 732] [join] Lurker has joined the server
+[23:52:36] [bot] [ID: 731] [join] Lurker has joined the server
+[23:52:36] [bot] [ID: 730] [join] Lurker has joined the server
+[23:52:36] [bot] [ID: 729] [join] Lurker has joined the server
+[23:52:36] [bot] [ID: 728] [join] Lurker has joined the server
+[23:52:36] [bot] [ID: 727] [join] Lurker has joined the server
+[23:52:36] [bot] [ID: 726] [join] Lurker has joined the server
+[23:52:36] [bot] [ID: 725] [join] Lurker has joined the server
+[23:52:36] [bot] [ID: 724] [join] Lurker has joined the server
+[23:52:36] [bot] [ID: 723] [join] Lurker has joined the server
+[23:52:36] [bot] [ID: 722] [join] Lurker has joined the server
+[23:52:36] [bot] [ID: 721] [join] Lurker has joined the server
+[23:52:36] [bot] [ID: 720] [join] Lurker has joined the server
+[23:52:36] [bot] [ID: 719] [join] Lurker has joined the server
+[23:52:36] [bot] [ID: 718] [join] Lurker has joined the server
+[23:52:36] [bot] [ID: 717] [join] Lurker has joined the server
+[23:52:36] [bot] [ID: 716] [join] Zombie has joined the server
+[23:52:36] [bot] [ID: 715] [join] Zombie has joined the server
+[23:52:36] [bot] [ID: 714] [join] Zombie has joined the server
+[23:52:36] [bot] [ID: 713] [join] Zombie has joined the server
+[23:52:36] [bot] [ID: 712] [join] Zombie has joined the server
+[23:52:36] [bot] [ID: 711] [join] Zombie has joined the server
+[23:52:36] [bot] [ID: 710] [join] Zombie has joined the server
+[23:52:36] [bot] [ID: 709] [join] Zombie has joined the server
+[23:52:36] [bot] [ID: 708] [join] Zombie has joined the server
+[23:52:36] [bot] [ID: 707] [join] Zombie has joined the server
+[23:52:36] [bot] [ID: 706] [join] Zombie has joined the server
+[23:52:36] [bot] [ID: 705] [join] Warg has joined the server
+[23:52:36] [bot] [ID: 704] [join] Warg has joined the server
+[23:52:36] [bot] [ID: 703] [join] Warg has joined the server
+[23:52:36] [bot] [ID: 702] [join] Warg has joined the server
+[23:52:36] [bot] [ID: 701] [join] Warg has joined the server
+[23:52:36] [bot] [ID: 700] [join] Warg has joined the server
+[23:52:36] [bot] [ID: 699] [join] Warg has joined the server
+[23:52:36] [bot] [ID: 698] [join] Warg has joined the server
+[23:52:36] [bot] [ID: 697] [join] Warg has joined the server
+[23:52:36] [bot] [ID: 696] [join] Warg has joined the server
+[23:52:36] [bot] [ID: 695] [join] Warg has joined the server
+[23:52:36] [bot] [ID: 694] [join] Warg has joined the server
+[23:52:36] [bot] [ID: 693] [join] Warg has joined the server
+[23:52:36] [bot] [ID: 692] [join] Warg has joined the server
+[23:52:36] [bot] [ID: 691] [join] Warg has joined the server
+[23:52:36] [bot] [ID: 690] [join] Warg has joined the server
+[23:52:36] [bot] [ID: 689] [join] Warg has joined the server
+[23:52:36] [bot] [ID: 688] [join] Warg has joined the server
+[23:52:36] [bot] [ID: 687] [join] Warg has joined the server
+[23:52:36] [bot] [ID: 686] [join] Warg has joined the server
+[23:52:36] [bot] [ID: 685] [join] Warg has joined the server
+[23:52:36] [bot] [ID: 684] [join] Warg has joined the server
+[23:52:36] [bot] [ID: 683] [join] Warg has joined the server
+[23:52:36] [bot] [ID: 682] [join] Warg has joined the server
+[23:52:36] [bot] [ID: 681] [join] Warg has joined the server
+[23:52:36] [bot] [ID: 680] [join] Warg has joined the server
+[23:52:36] [bot] [ID: 679] [join] Warg has joined the server
+[23:52:36] [bot] [ID: 678] [join] Warg has joined the server
+[23:52:36] [bot] [ID: 677] [join] Warg has joined the server
+[23:52:36] [bot] [ID: 676] [join] Warg has joined the server
+[23:52:36] [bot] [ID: 675] [join] Warg has joined the server
+[23:52:36] [bot] [ID: 674] [join] Warg has joined the server
+[23:52:36] [bot] [ID: 673] [join] Troll has joined the server
+[23:52:36] [bot] [ID: 672] [join] Troll has joined the server
+[23:52:36] [bot] [ID: 671] [join] Schwarzer Troll has joined the server
+[23:52:36] [bot] [ID: 670] [join] Minecrawler has joined the server
+[23:52:36] [bot] [ID: 669] [join] Minecrawler has joined the server
+[23:52:36] [bot] [ID: 668] [join] Minecrawler has joined the server
+[23:52:36] [bot] [ID: 667] [join] Minecrawler has joined the server
+[23:52:36] [bot] [ID: 666] [join] Minecrawler has joined the server
+[23:52:36] [bot] [ID: 665] [join] Minecrawler has joined the server
+[23:52:37] [bot] [ID: 664] [join] Minecrawler has joined the server
+[23:52:37] [bot] [ID: 663] [join] Minecrawler Krieger has joined the server
+[23:52:37] [bot] [ID: 662] [join] Minecrawler Krieger has joined the server
+[23:52:37] [bot] [ID: 661] [join] Minecrawler Krieger has joined the server
+[23:52:37] [bot] [ID: 660] [join] Minecrawler Krieger has joined the server
+[23:52:37] [bot] [ID: 659] [join] Minecrawler Krieger has joined the server
+[23:52:37] [bot] [ID: 658] [join] Minecrawler Krieger has joined the server
+[23:52:37] [bot] [ID: 657] [join] Minecrawler Krieger has joined the server
+[23:52:37] [bot] [ID: 656] [join] Minecrawler Krieger has joined the server
+[23:52:37] [bot] [ID: 655] [join] Molerat has joined the server
+[23:52:37] [bot] [ID: 654] [join] Molerat has joined the server
+[23:52:37] [bot] [ID: 653] [join] Molerat has joined the server
+[23:52:37] [bot] [ID: 652] [join] Molerat has joined the server
+[23:52:37] [bot] [ID: 651] [join] Molerat has joined the server
+[23:52:37] [bot] [ID: 650] [join] Molerat has joined the server
+[23:52:37] [bot] [ID: 649] [join] Molerat has joined the server
+[23:52:37] [bot] [ID: 648] [join] Molerat has joined the server
+[23:52:37] [bot] [ID: 647] [join] Molerat has joined the server
+[23:52:37] [bot] [ID: 646] [join] Molerat has joined the server
+[23:52:37] [bot] [ID: 645] [join] Molerat has joined the server
+[23:52:37] [bot] [ID: 644] [join] Molerat has joined the server
+[23:52:37] [bot] [ID: 643] [join] Molerat has joined the server
+[23:52:37] [bot] [ID: 642] [join] Molerat has joined the server
+[23:52:37] [bot] [ID: 641] [join] Molerat has joined the server
+[23:52:37] [bot] [ID: 640] [join] Molerat has joined the server
+[23:52:37] [bot] [ID: 639] [join] Molerat has joined the server
+[23:52:37] [bot] [ID: 638] [join] Molerat has joined the server
+[23:52:37] [bot] [ID: 637] [join] Molerat has joined the server
+[23:52:37] [bot] [ID: 636] [join] Molerat has joined the server
+[23:52:37] [bot] [ID: 635] [join] Molerat has joined the server
+[23:52:37] [bot] [ID: 634] [join] Molerat has joined the server
+[23:52:37] [bot] [ID: 633] [join] Molerat has joined the server
+[23:52:37] [bot] [ID: 632] [join] Molerat has joined the server
+[23:52:37] Filterscript 'filterscripts//load.lua' has been loaded.
+[23:52:37] [bot] [ID: 631] [join] Sklave has joined the server
+[23:52:37] Filterscript 'filterscripts//admin.lua' has been loaded.
+[23:52:37] Filterscript 'filterscripts//IS.lua' has been loaded.
+[23:52:37] Filterscript 'filterscripts//Pflanzen.lua' has been loaded.
+[23:52:37] Awaiting for connections on 192.168.178.22:28960...
+[23:53:16] Incoming connection: 37.201.241.119|56812
+[23:53:16] [join] Penis has joined the server 37.201.241.119|56812
+[23:53:20] Penis kill himself
+[23:53:34] [info] Penis disconnected from server 37.201.241.119|56812
+[23:54:10] Incoming connection: 92.252.5.71|64155
+[23:54:10] [join] Lancia has joined the server 92.252.5.71|64155
+[23:54:31] [info] Lancia disconnected from server 92.252.5.71|64155
+[23:56:21] 
+[23:56:21] Gothic Multiplayer Dedicated Server
+[23:56:21] -----------------------------------
+[23:56:21] Accrescere Core 0.1a R-9
+[23:56:21] -----------------------------------
+[23:56:21] GMP Team 2011-2013
+[23:56:21] 
+[23:56:21] Loading server configuration...
+[23:56:21] hostname:         Test Server by Lancia
+[23:56:21] max players:      50
+[23:56:21] max bots:         900
+[23:56:21] max timers:       1000
+[23:56:21] max items:        400
+[23:56:21] max sounds:       1000
+[23:56:21] max global draws: 10000
+[23:56:21] max textures:     200
+[23:56:21] stream distance:  6000 meters
+[23:56:21] stream rate:      4000 miliseconds
+[23:56:21] position rate:    800 miliseconds
+[23:56:21] key rate:         110 miliseconds
+[23:56:21] unsynch items:    false
+[23:56:21] Configuration successfull loaded.
+[23:56:21] 
+[23:56:21] Gamemode 'gamemodes//s.lua' has been loaded.
+[23:56:21] [bot] [ID: 949] [join] Junger Wolf has joined the server
+[23:56:21] [bot] [ID: 948] [join] Junger Wolf has joined the server
+[23:56:21] [bot] [ID: 947] [join] Junger Wolf has joined the server
+[23:56:21] [bot] [ID: 946] [join] Junger Wolf has joined the server
+[23:56:21] [bot] [ID: 945] [join] Junger Wolf has joined the server
+[23:56:21] [bot] [ID: 944] [join] Junger Wolf has joined the server
+[23:56:21] [bot] [ID: 943] [join] Junger Wolf has joined the server
+[23:56:21] [bot] [ID: 942] [join] Junger Wolf has joined the server
+[23:56:21] [bot] [ID: 941] [join] Junger Wolf has joined the server
+[23:56:21] [bot] [ID: 940] [join] Junger Wolf has joined the server
+[23:56:21] [bot] [ID: 939] [join] Junger Wolf has joined the server
+[23:56:21] [bot] [ID: 938] [join] Junger Wolf has joined the server
+[23:56:21] [bot] [ID: 937] [join] Junger Wolf has joined the server
+[23:56:21] [bot] [ID: 936] [join] Junger Wolf has joined the server
+[23:56:21] [bot] [ID: 935] [join] Junger Wolf has joined the server
+[23:56:21] [bot] [ID: 934] [join] Junger Wolf has joined the server
+[23:56:21] [bot] [ID: 933] [join] Junger Wolf has joined the server
+[23:56:21] [bot] [ID: 932] [join] Junger Wolf has joined the server
+[23:56:21] [bot] [ID: 931] [join] Junger Wolf has joined the server
+[23:56:21] [bot] [ID: 930] [join] Junger Wolf has joined the server
+[23:56:21] [bot] [ID: 929] [join] Junger Wolf has joined the server
+[23:56:21] [bot] [ID: 928] [join] Junger Wolf has joined the server
+[23:56:21] [bot] [ID: 927] [join] Junger Wolf has joined the server
+[23:56:21] [bot] [ID: 926] [join] Junger Wolf has joined the server
+[23:56:21] [bot] [ID: 925] [join] Junger Wolf has joined the server
+[23:56:21] [bot] [ID: 924] [join] Junger Wolf has joined the server
+[23:56:21] [bot] [ID: 923] [join] Junger Wolf has joined the server
+[23:56:21] [bot] [ID: 922] [join] Junger Wolf has joined the server
+[23:56:21] [bot] [ID: 921] [join] Snapper has joined the server
+[23:56:21] [bot] [ID: 920] [join] Snapper has joined the server
+[23:56:21] [bot] [ID: 919] [join] Snapper has joined the server
+[23:56:21] [bot] [ID: 918] [join] Snapper has joined the server
+[23:56:21] [bot] [ID: 917] [join] Snapper has joined the server
+[23:56:21] [bot] [ID: 916] [join] Snapper has joined the server
+[23:56:21] [bot] [ID: 915] [join] Snapper has joined the server
+[23:56:21] [bot] [ID: 914] [join] Snapper has joined the server
+[23:56:21] [bot] [ID: 913] [join] Snapper has joined the server
+[23:56:21] [bot] [ID: 912] [join] Snapper has joined the server
+[23:56:21] [bot] [ID: 911] [join] Snapper has joined the server
+[23:56:21] [bot] [ID: 910] [join] Snapper has joined the server
+[23:56:21] [bot] [ID: 909] [join] Snapper has joined the server
+[23:56:21] [bot] [ID: 908] [join] Snapper has joined the server
+[23:56:21] [bot] [ID: 907] [join] Snapper has joined the server
+[23:56:21] [bot] [ID: 906] [join] Snapper has joined the server
+[23:56:21] [bot] [ID: 905] [join] Snapper has joined the server
+[23:56:21] [bot] [ID: 904] [join] Snapper has joined the server
+[23:56:21] [bot] [ID: 903] [join] Snapper has joined the server
+[23:56:21] [bot] [ID: 902] [join] Snapper has joined the server
+[23:56:21] [bot] [ID: 901] [join] Snapper has joined the server
+[23:56:21] [bot] [ID: 900] [join] Snapper has joined the server
+[23:56:21] [bot] [ID: 899] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 898] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 897] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 896] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 895] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 894] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 893] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 892] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 891] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 890] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 889] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 888] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 887] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 886] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 885] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 884] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 883] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 882] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 881] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 880] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 879] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 878] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 877] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 876] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 875] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 874] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 873] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 872] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 871] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 870] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 869] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 868] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 867] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 866] [join] Wolf has joined the server
+[23:56:21] [bot] [ID: 865] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 864] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 863] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 862] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 861] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 860] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 859] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 858] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 857] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 856] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 855] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 854] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 853] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 852] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 851] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 850] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 849] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 848] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 847] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 846] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 845] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 844] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 843] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 842] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 841] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 840] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 839] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 838] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 837] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 836] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 835] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 834] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 833] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 832] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 831] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 830] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 829] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 828] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 827] [join] Scavanger has joined the server
+[23:56:21] [bot] [ID: 826] [join] Wildschwein has joined the server
+[23:56:21] [bot] [ID: 825] [join] Wildschwein has joined the server
+[23:56:21] [bot] [ID: 824] [join] Wildschwein has joined the server
+[23:56:21] [bot] [ID: 823] [join] Wildschwein has joined the server
+[23:56:21] [bot] [ID: 822] [join] Wildschwein has joined the server
+[23:56:21] [bot] [ID: 821] [join] Wildschwein has joined the server
+[23:56:21] [bot] [ID: 820] [join] Wildschwein has joined the server
+[23:56:21] [bot] [ID: 819] [join] Wildschwein has joined the server
+[23:56:21] [bot] [ID: 818] [join] Wildschwein has joined the server
+[23:56:21] [bot] [ID: 817] [join] Wildschwein has joined the server
+[23:56:21] [bot] [ID: 816] [join] Wildschwein has joined the server
+[23:56:21] [bot] [ID: 815] [join] Wildschwein has joined the server
+[23:56:21] [bot] [ID: 814] [join] Wildschwein has joined the server
+[23:56:21] [bot] [ID: 813] [join] Wildschwein has joined the server
+[23:56:21] [bot] [ID: 812] [join] Wildschwein has joined the server
+[23:56:21] [bot] [ID: 811] [join] Wildschwein has joined the server
+[23:56:21] [bot] [ID: 810] [join] Wildschwein has joined the server
+[23:56:21] [bot] [ID: 809] [join] Wildschwein has joined the server
+[23:56:21] [bot] [ID: 808] [join] Wildschwein has joined the server
+[23:56:21] [bot] [ID: 807] [join] Wildschwein has joined the server
+[23:56:21] [bot] [ID: 806] [join] Wildschwein has joined the server
+[23:56:21] [bot] [ID: 805] [join] Wildschwein has joined the server
+[23:56:21] [bot] [ID: 804] [join] Feldraueber has joined the server
+[23:56:21] [bot] [ID: 803] [join] Feldraueber has joined the server
+[23:56:21] [bot] [ID: 802] [join] Feldraueber has joined the server
+[23:56:21] [bot] [ID: 801] [join] Feldraueber has joined the server
+[23:56:21] [bot] [ID: 800] [join] Feldraueber has joined the server
+[23:56:21] [bot] [ID: 799] [join] Feldraueber has joined the server
+[23:56:21] [bot] [ID: 798] [join] Feldraueber has joined the server
+[23:56:21] [bot] [ID: 797] [join] Feldraueber has joined the server
+[23:56:21] [bot] [ID: 796] [join] Feldraueber has joined the server
+[23:56:21] [bot] [ID: 795] [join] Feldraueber has joined the server
+[23:56:21] [bot] [ID: 794] [join] Feldraueber has joined the server
+[23:56:21] [bot] [ID: 793] [join] Feldraueber has joined the server
+[23:56:21] [bot] [ID: 792] [join] Feldraueber has joined the server
+[23:56:21] [bot] [ID: 791] [join] Feldraueber has joined the server
+[23:56:21] [bot] [ID: 790] [join] Feldraueber has joined the server
+[23:56:21] [bot] [ID: 789] [join] Feldraueber has joined the server
+[23:56:21] [bot] [ID: 788] [join] Feldraueber has joined the server
+[23:56:21] [bot] [ID: 787] [join] Feldraueber has joined the server
+[23:56:21] [bot] [ID: 786] [join] Feldraueber has joined the server
+[23:56:21] [bot] [ID: 785] [join] Feldraueber has joined the server
+[23:56:21] [bot] [ID: 784] [join] Feldraueber has joined the server
+[23:56:21] [bot] [ID: 783] [join] Feldraueber has joined the server
+[23:56:21] [bot] [ID: 782] [join] Feldraueber has joined the server
+[23:56:21] [bot] [ID: 781] [join] Feldraueber has joined the server
+[23:56:21] [bot] [ID: 780] [join] Feldraueber has joined the server
+[23:56:21] [bot] [ID: 779] [join] Feldraueber has joined the server
+[23:56:21] [bot] [ID: 778] [join] Feldraueber has joined the server
+[23:56:21] [bot] [ID: 777] [join] Feldraueber has joined the server
+[23:56:21] [bot] [ID: 776] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 775] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 774] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 773] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 772] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 771] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 770] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 769] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 768] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 767] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 766] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 765] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 764] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 763] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 762] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 761] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 760] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 759] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 758] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 757] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 756] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 755] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 754] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 753] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 752] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 751] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 750] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 749] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 748] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 747] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 746] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 745] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 744] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 743] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 742] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 741] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 740] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 739] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 738] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 737] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 736] [join] Feldraueber has joined the server
+[23:56:22] [bot] [ID: 735] [join] Lurker has joined the server
+[23:56:22] [bot] [ID: 734] [join] Lurker has joined the server
+[23:56:22] [bot] [ID: 733] [join] Lurker has joined the server
+[23:56:22] [bot] [ID: 732] [join] Lurker has joined the server
+[23:56:22] [bot] [ID: 731] [join] Lurker has joined the server
+[23:56:22] [bot] [ID: 730] [join] Lurker has joined the server
+[23:56:22] [bot] [ID: 729] [join] Lurker has joined the server
+[23:56:22] [bot] [ID: 728] [join] Lurker has joined the server
+[23:56:22] [bot] [ID: 727] [join] Lurker has joined the server
+[23:56:22] [bot] [ID: 726] [join] Lurker has joined the server
+[23:56:22] [bot] [ID: 725] [join] Lurker has joined the server
+[23:56:22] [bot] [ID: 724] [join] Lurker has joined the server
+[23:56:22] [bot] [ID: 723] [join] Lurker has joined the server
+[23:56:22] [bot] [ID: 722] [join] Lurker has joined the server
+[23:56:22] [bot] [ID: 721] [join] Lurker has joined the server
+[23:56:22] [bot] [ID: 720] [join] Lurker has joined the server
+[23:56:22] [bot] [ID: 719] [join] Lurker has joined the server
+[23:56:22] [bot] [ID: 718] [join] Lurker has joined the server
+[23:56:22] [bot] [ID: 717] [join] Lurker has joined the server
+[23:56:22] [bot] [ID: 716] [join] Zombie has joined the server
+[23:56:22] [bot] [ID: 715] [join] Zombie has joined the server
+[23:56:22] [bot] [ID: 714] [join] Zombie has joined the server
+[23:56:22] [bot] [ID: 713] [join] Zombie has joined the server
+[23:56:22] [bot] [ID: 712] [join] Zombie has joined the server
+[23:56:22] [bot] [ID: 711] [join] Zombie has joined the server
+[23:56:22] [bot] [ID: 710] [join] Zombie has joined the server
+[23:56:22] [bot] [ID: 709] [join] Zombie has joined the server
+[23:56:22] [bot] [ID: 708] [join] Zombie has joined the server
+[23:56:22] [bot] [ID: 707] [join] Zombie has joined the server
+[23:56:22] [bot] [ID: 706] [join] Zombie has joined the server
+[23:56:22] [bot] [ID: 705] [join] Warg has joined the server
+[23:56:22] [bot] [ID: 704] [join] Warg has joined the server
+[23:56:22] [bot] [ID: 703] [join] Warg has joined the server
+[23:56:22] [bot] [ID: 702] [join] Warg has joined the server
+[23:56:22] [bot] [ID: 701] [join] Warg has joined the server
+[23:56:22] [bot] [ID: 700] [join] Warg has joined the server
+[23:56:22] [bot] [ID: 699] [join] Warg has joined the server
+[23:56:22] [bot] [ID: 698] [join] Warg has joined the server
+[23:56:22] [bot] [ID: 697] [join] Warg has joined the server
+[23:56:22] [bot] [ID: 696] [join] Warg has joined the server
+[23:56:22] [bot] [ID: 695] [join] Warg has joined the server
+[23:56:22] [bot] [ID: 694] [join] Warg has joined the server
+[23:56:22] [bot] [ID: 693] [join] Warg has joined the server
+[23:56:22] [bot] [ID: 692] [join] Warg has joined the server
+[23:56:22] [bot] [ID: 691] [join] Warg has joined the server
+[23:56:22] [bot] [ID: 690] [join] Warg has joined the server
+[23:56:22] [bot] [ID: 689] [join] Warg has joined the server
+[23:56:22] [bot] [ID: 688] [join] Warg has joined the server
+[23:56:22] [bot] [ID: 687] [join] Warg has joined the server
+[23:56:22] [bot] [ID: 686] [join] Warg has joined the server
+[23:56:22] [bot] [ID: 685] [join] Warg has joined the server
+[23:56:22] [bot] [ID: 684] [join] Warg has joined the server
+[23:56:22] [bot] [ID: 683] [join] Warg has joined the server
+[23:56:22] [bot] [ID: 682] [join] Warg has joined the server
+[23:56:22] [bot] [ID: 681] [join] Warg has joined the server
+[23:56:22] [bot] [ID: 680] [join] Warg has joined the server
+[23:56:22] [bot] [ID: 679] [join] Warg has joined the server
+[23:56:22] [bot] [ID: 678] [join] Warg has joined the server
+[23:56:22] [bot] [ID: 677] [join] Warg has joined the server
+[23:56:22] [bot] [ID: 676] [join] Warg has joined the server
+[23:56:22] [bot] [ID: 675] [join] Warg has joined the server
+[23:56:22] [bot] [ID: 674] [join] Warg has joined the server
+[23:56:22] [bot] [ID: 673] [join] Troll has joined the server
+[23:56:22] [bot] [ID: 672] [join] Troll has joined the server
+[23:56:22] [bot] [ID: 671] [join] Schwarzer Troll has joined the server
+[23:56:22] [bot] [ID: 670] [join] Minecrawler has joined the server
+[23:56:22] [bot] [ID: 669] [join] Minecrawler has joined the server
+[23:56:22] [bot] [ID: 668] [join] Minecrawler has joined the server
+[23:56:22] [bot] [ID: 667] [join] Minecrawler has joined the server
+[23:56:22] [bot] [ID: 666] [join] Minecrawler has joined the server
+[23:56:22] [bot] [ID: 665] [join] Minecrawler has joined the server
+[23:56:22] [bot] [ID: 664] [join] Minecrawler has joined the server
+[23:56:22] [bot] [ID: 663] [join] Minecrawler Krieger has joined the server
+[23:56:22] [bot] [ID: 662] [join] Minecrawler Krieger has joined the server
+[23:56:22] [bot] [ID: 661] [join] Minecrawler Krieger has joined the server
+[23:56:22] [bot] [ID: 660] [join] Minecrawler Krieger has joined the server
+[23:56:22] [bot] [ID: 659] [join] Minecrawler Krieger has joined the server
+[23:56:22] [bot] [ID: 658] [join] Minecrawler Krieger has joined the server
+[23:56:22] [bot] [ID: 657] [join] Minecrawler Krieger has joined the server
+[23:56:22] [bot] [ID: 656] [join] Minecrawler Krieger has joined the server
+[23:56:22] [bot] [ID: 655] [join] Molerat has joined the server
+[23:56:22] [bot] [ID: 654] [join] Molerat has joined the server
+[23:56:22] [bot] [ID: 653] [join] Molerat has joined the server
+[23:56:22] [bot] [ID: 652] [join] Molerat has joined the server
+[23:56:22] [bot] [ID: 651] [join] Molerat has joined the server
+[23:56:22] [bot] [ID: 650] [join] Molerat has joined the server
+[23:56:22] [bot] [ID: 649] [join] Molerat has joined the server
+[23:56:22] [bot] [ID: 648] [join] Molerat has joined the server
+[23:56:22] [bot] [ID: 647] [join] Molerat has joined the server
+[23:56:22] [bot] [ID: 646] [join] Molerat has joined the server
+[23:56:22] [bot] [ID: 645] [join] Molerat has joined the server
+[23:56:22] [bot] [ID: 644] [join] Molerat has joined the server
+[23:56:22] [bot] [ID: 643] [join] Molerat has joined the server
+[23:56:22] [bot] [ID: 642] [join] Molerat has joined the server
+[23:56:22] [bot] [ID: 641] [join] Molerat has joined the server
+[23:56:22] [bot] [ID: 640] [join] Molerat has joined the server
+[23:56:22] [bot] [ID: 639] [join] Molerat has joined the server
+[23:56:22] [bot] [ID: 638] [join] Molerat has joined the server
+[23:56:22] [bot] [ID: 637] [join] Molerat has joined the server
+[23:56:22] [bot] [ID: 636] [join] Molerat has joined the server
+[23:56:22] [bot] [ID: 635] [join] Molerat has joined the server
+[23:56:22] [bot] [ID: 634] [join] Molerat has joined the server
+[23:56:22] [bot] [ID: 633] [join] Molerat has joined the server
+[23:56:22] [bot] [ID: 632] [join] Molerat has joined the server
+[23:56:22] Filterscript 'filterscripts//load.lua' has been loaded.
+[23:56:22] [bot] [ID: 631] [join] Sklave has joined the server
+[23:56:22] Error runtime: C stack overflow
+[23:56:22] Error runtime: C stack overflow
+[23:56:22] Filterscript 'filterscripts//admin.lua' has been loaded.
+[23:56:22] Filterscript 'filterscripts//IS.lua' has been loaded.
+[23:56:22] Filterscript 'filterscripts//Pflanzen.lua' has been loaded.
+[23:56:23] Awaiting for connections on 192.168.178.22:28960...
+[23:56:56] Incoming connection: 92.252.5.71|62760
+[23:56:56] [join] Lancia has joined the server 92.252.5.71|62760
+[23:56:56] Error runtime: C stack overflow
+[23:57:24] [info] Lancia disconnected from server 92.252.5.71|62760
+[23:57:45] Incoming connection: 37.201.241.119|53013
+[23:57:45] [join] Penis has joined the server 37.201.241.119|53013
+[23:57:45] Error runtime: C stack overflow
+[23:57:58] Incoming connection: 92.252.5.71|61572
+[23:57:58] [join] Lancia has joined the server 92.252.5.71|61572
+[23:57:58] Error runtime: C stack overflow
+[23:58:05] [bot] [ID: 630] [join] CharacterHelper has joined the server
+[23:58:05] Error runtime: C stack overflow
+[23:58:05] Error runtime: C stack overflow
+[23:58:05] Error runtime: .\filterscripts\classes\LoginSystem.lua:301: attempt to concatenate global 'username' (a nil value)
+[23:58:09] [bot] [ID: 630] [info] CharacterHelper left from server
+[23:58:14] [bot] [ID: 630] [join] CharacterHelper has joined the server
+[23:58:14] Error runtime: C stack overflow
+[23:58:14] Error runtime: C stack overflow
+[23:58:14] Error runtime: .\filterscripts\classes\LoginSystem.lua:301: attempt to concatenate global 'username' (a nil value)
+[23:58:16] [bot] [ID: 630] [info] CharacterHelper left from server
+[23:59:31] [info] und disconnected from server 92.252.5.71|61572
+[23:59:32] [info] Lehona2 disconnected from server 37.201.241.119|53013

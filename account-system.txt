@@ -1,0 +1,9 @@
+[23:53:34]: <Account-Sys> Tried to log out Account  with playerid :0 which wasnt even logged in
+[23:54:31]: <Account-Sys> Tried to log out Account  with playerid :0 which wasnt even logged in
+[23:57:24]: <Account-Sys> Tried to log out Account  with playerid :0 which wasnt even logged in
+[23:58:05]: <Account-Sys>Lehona2 succesfully logged in  Playerid:0
+[23:58:09]: <Account-Sys> Tried to log out Account  with playerid :630 which wasnt even logged in
+[23:58:14]: <Account-Sys>und succesfully logged in  Playerid:1
+[23:58:16]: <Account-Sys> Tried to log out Account  with playerid :630 which wasnt even logged in
+[23:59:31]: <Account-Sys> Account und with playerid :1 was logged out
+[23:59:32]: <Account-Sys> Account Lehona2 with playerid :0 was logged out

@@ -1,0 +1,2 @@
+[23:58:05]: <DB> Account with name 'Lehona2' was registered
+[23:58:14]: <DB> Account with name 'und' was registered
