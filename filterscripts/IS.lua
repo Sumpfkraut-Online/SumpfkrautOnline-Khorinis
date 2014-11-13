@@ -811,7 +811,7 @@ end
 end
 
 if IsNPC(playerid) == 0 then
-SetPlayerPos(playerid,45239.16015625,3137.9907226563,3333.822265625);
+--SetPlayerPos(playerid,45239.16015625,3137.9907226563,3333.822265625);
 SetPlayerAngle(playerid,221);
 PlayAnimation(playerid,"S_DEAD");
 FreezePlayer(playerid,1);
@@ -827,7 +827,7 @@ function TOD(playerid)
 	 		if (GetPlayerHealth(playerid) <= 0) then
 			SpawnPlayer(playerid);
 		end
-	 SetPlayerPos(playerid,44940.18359375,3125.1279296875,3000.5388183594);
+	 --SetPlayerPos(playerid,44940.18359375,3125.1279296875,3000.5388183594);
 	 SetPlayerAngle(playerid,220);
 	 PlayAnimation(playerid,"S_RUN");
 	 SetPlayerStrength(playerid, GetPlayerStrength(playerid) - 1);

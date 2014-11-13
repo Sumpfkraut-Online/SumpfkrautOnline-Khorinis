@@ -218,7 +218,7 @@ function CharEditor:new(playerid)
 	--Spawn Helper Npc
 	SpawnPlayer(tempSelf.MyNpc);
 	--Telerport Helper NPC into the Chareditroom
-	TeleportPlayerToWayPoint(tempSelf.MyNpc,CharEditRooms_Helper[self.spawnroomnumber])
+	--TeleportPlayerToWayPoint(tempSelf.MyNpc,CharEditRooms_Helper[self.spawnroomnumber])
 	--Set Helper NPC Visuals and Health
     SetPlayerAdditionalVisual(tempSelf.MyNpc,HumBodys[tempSelf.BodyModelId],tempSelf.BodyTextureId,HumHeads[tempSelf.HeadModelId],tempSelf.HeadTextureId);
 	SetPlayerMaxHealth(tempSelf.MyNpc, 99999999)
@@ -228,7 +228,7 @@ function CharEditor:new(playerid)
 	tempSelf.HelperAngle=GetPlayerAngle(tempSelf.MyNpc);
 	--Teleport Player into the Chareditroom and freeze him/her
 	FreezePlayer(playerid,1)
-	TeleportPlayerToWayPoint(playerid,CharEditRooms_Player[self.spawnroomnumber]);
+	--TeleportPlayerToWayPoint(playerid,CharEditRooms_Player[self.spawnroomnumber]);
 	FreezePlayer(playerid,1)
 	
 	--Create PlayerDraws
@@ -503,7 +503,7 @@ function CharEditor:Close()
 		SetPlayerSkillWeapon(self.playID, 3, ClassCrossbow[self.Class])
 		--Delete this char editor from the global list
 		CharEditorList[self.playID]=nil;
-		TeleportPlayerToWayPoint(self.playID,"spawn_hafen");
+		--TeleportPlayerToWayPoint(self.playID,"spawn_hafen");
 		--Unfreeze the Player	
 		CharEditUsedRooms[self.spawnroomnumber]=-1;
 		FreezePlayer(self.playID, 0)
@@ -630,7 +630,7 @@ function CharEditor:OnPlayerUpdate(playerid)
 		if CharEditorList[playerid]  then	
 			local temEdit = CharEditorList[playerid] 
 			FreezePlayer(playerid,1)
-			TeleportPlayerToWayPoint(playerid,CharEditRooms_Player[temEdit.spawnroomnumber]);
+			--TeleportPlayerToWayPoint(playerid,CharEditRooms_Player[temEdit.spawnroomnumber]);
 		end
 end
 

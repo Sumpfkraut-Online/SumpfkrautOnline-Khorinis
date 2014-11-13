@@ -161,7 +161,7 @@ function OnPlayerCommandText(playerid, cmdtext)
         if(spl[1] == "waypoint")then
             local wp = AI_WayNets[GetPlayerOrNPC(playerid).GP_World]:GetWaypoint(spl[2]);
             if(wp ~= nil)then
-                SetPlayerPos(playerid, wp.x, wp.y, wp.z);
+                --SetPlayerPos(playerid, wp.x, wp.y, wp.z);
             end
         else
             local worlds = {};

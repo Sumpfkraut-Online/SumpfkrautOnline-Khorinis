@@ -97,7 +97,7 @@ function Character:new(playerid, accountID)
     end
     
     SetPlayerAngle(playerid, tonumber(row[3]));
-		SetPlayerPos(playerid, tonumber(row[4]), tonumber(row[5]), tonumber(row[6]));
+		--SetPlayerPos(playerid, tonumber(row[4]), tonumber(row[5]), tonumber(row[6]));
     
 		SetPlayerAdditionalVisual(playerid,  row[7],  tonumber(row[8]),  row[9],  tonumber(row[10]));
 		SetPlayerFatness(playerid,  tonumber(row[12]))

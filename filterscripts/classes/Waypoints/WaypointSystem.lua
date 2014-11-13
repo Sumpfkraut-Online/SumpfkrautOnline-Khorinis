@@ -104,7 +104,7 @@ function TeleportPlayerToWayPoint(playerid,waypointname)
 					end
 				end		
 			end
-			SetPlayerPos(playerid,tempWaypoint.posX,tempWaypoint.posY ,tempWaypoint.posZ);
+			--SetPlayerPos(playerid,tempWaypoint.posX,tempWaypoint.posY ,tempWaypoint.posZ);
 			SetPlayerAngle(playerid, tempWaypoint.angle)
 			return true;
 	else

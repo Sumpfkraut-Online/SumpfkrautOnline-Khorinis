@@ -314,7 +314,7 @@ function LoginSystem:showLogin(playerid,enabled,typ)
 		if enabled == 1 then
 			if typ ==0 then 
 				FreezePlayer(playerid, 1);		
-				TeleportPlayerToWayPoint(playerid,"login");
+				--TeleportPlayerToWayPoint(playerid,"login");
 				FreezePlayer(playerid, 1);
 				PlayAnimation(playerid, "S_IDOL_S1")
 				ShowDraw(playerid,  self.Login_Message);
@@ -323,7 +323,7 @@ function LoginSystem:showLogin(playerid,enabled,typ)
 			elseif typ==1 then		
 				ShowDraw(playerid,  self.Login_MessageLauncher);
 				FreezePlayer(playerid, 1)		
-				TeleportPlayerToWayPoint(playerid,"login");
+				--TeleportPlayerToWayPoint(playerid,"login");
 				FreezePlayer(playerid, 1)		
 				PlayAnimation(playerid, "S_IDOL_S1")
 			end

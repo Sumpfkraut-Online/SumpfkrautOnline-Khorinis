@@ -5,12 +5,12 @@ print("-----------------------------------------------------------");
 print("-------------------------CLASSES---------------------------");
 require("filterscripts.classes.DBConnection");
 require("filterscripts.classes.CharEditor");
+require("filterscripts.classes.LoginSystem");
 require("filterscripts.classes.Menu.MenuFunctions");
 require("filterscripts.systems.InventorySystem");
 require("filterscripts.classes.Inventory.Inventory");
 require("filterscripts.classes.Character");
 require("filterscripts.classes.Animation");
-require("filterscripts.classes.LoginSystem");
 require("filterscripts.classes.Keybinder");
 require("filterscripts.systems.Craftingsystem");
 require("filterscripts.systems.Teachsystem");
@@ -66,7 +66,7 @@ function OnFilterscriptInit()
 	
 	Character:new(tmp_id,getAccountIdByName("Sklave"));
 	SpawnPlayer(tmp_id);
-	SetPlayerPos(tmp_id, 321312412, 4124123123, 3213123213);
+	--SetPlayerPos(tmp_id, 321312412, 4124123123, 3213123213);
 	SetPlayerHealth(tmp_id, 80);
 	PlayAnimation(tmp_id,"S_RUN");
 		
