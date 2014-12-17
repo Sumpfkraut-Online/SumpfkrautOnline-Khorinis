@@ -1,0 +1,204 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C670CA0D-F27B-4745-9B76-B06882052E6B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GUC</RootNamespace>
+    <AssemblyName>GUC</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\GothicII\System\UntoldChapter\DLL\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;D_CLIENT</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\GothicII\System\UntoldChapter\DLL\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="RakNetSwig, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\GothicII\System\UntoldChapter\DLL\RakNetSwig.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Network\**\*.cs">
+      <Link>%(RecursiveDir)%(FileName)%(Extension)</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="GUI\Button.cs" />
+    <Compile Include="GUI\Cursor.cs" />
+    <Compile Include="GUI\GuiList\List.cs" />
+    <Compile Include="GUI\GuiList\ListButton.cs" />
+    <Compile Include="GUI\GuiList\ListRow.cs" />
+    <Compile Include="GUI\GuiList\ListText.cs" />
+    <Compile Include="GUI\GuiList\ListTextBox.cs" />
+    <Compile Include="GUI\TextArea.cs" />
+    <Compile Include="GUI\MessageBox.cs" />
+    <Compile Include="GUI\Text.cs" />
+    <Compile Include="GUI\TextBox.cs" />
+    <Compile Include="GUI\Texture.cs" />
+    <Compile Include="GUI\View.cs" />
+    <Compile Include="Hooks\Externals.cs" />
+    <Compile Include="Hooks\hGame.cs" />
+    <Compile Include="Hooks\hItem.cs" />
+    <Compile Include="Hooks\hItemContainer.cs" />
+    <Compile Include="Hooks\hMagBook.cs" />
+    <Compile Include="Hooks\hMobInter.cs" />
+    <Compile Include="Hooks\hModelAni.cs" />
+    <Compile Include="Hooks\hNpc.cs" />
+    <Compile Include="Hooks\hParser.cs" />
+    <Compile Include="Hooks\hSpell.cs" />
+    <Compile Include="Network\Client.cs" />
+    <Compile Include="Network\IMessage.cs" />
+    <Compile Include="Network\Messages\Callbacks\CallbackNPCCanSee.cs" />
+    <Compile Include="Network\Messages\Callbacks\ReadMD5Message.cs" />
+    <Compile Include="Network\Messages\Callbacks\ReadIniEntryMessage.cs" />
+    <Compile Include="Network\Messages\CameraCommands\CamToPlayerFront.cs" />
+    <Compile Include="Network\Messages\CameraCommands\CamToVobMessage.cs" />
+    <Compile Include="Network\Messages\Connection\ConnectionMessage.cs" />
+    <Compile Include="Network\Messages\Connection\DisconnectMessage.cs" />
+    <Compile Include="Network\Messages\Connection\ExitGameMessage.cs" />
+    <Compile Include="Network\Messages\Connection\NPCSpawnMessage.cs" />
+    <Compile Include="Network\Messages\ContainerCommands\AddItemMessage.cs" />
+    <Compile Include="Network\Messages\ContainerCommands\ItemChangedMessage.cs" />
+    <Compile Include="Network\Messages\GuiMessage.cs" />
+    <Compile Include="Network\Messages\ItemCommands\ItemChangeContainer.cs" />
+    <Compile Include="Network\Messages\ItemCommands\ItemChangeAmount.cs" />
+    <Compile Include="Network\Messages\MobInterCommands\MobInterMessage.cs" />
+    <Compile Include="Network\Messages\NpcCommands\AnimationUpdateMessage.cs" />
+    <Compile Include="Network\Messages\NpcCommands\ClearInventory.cs" />
+    <Compile Include="Network\Messages\NpcCommands\SetSlotMessage.cs" />
+    <Compile Include="Network\Messages\NpcCommands\NPCControllerMessage.cs" />
+    <Compile Include="Network\Messages\NpcCommands\NPCEnableMessage.cs" />
+    <Compile Include="Network\Messages\NpcCommands\NPCFatnessMessage.cs" />
+    <Compile Include="Network\Messages\NpcCommands\NPCProtoSetWeaponMode.cs" />
+    <Compile Include="Network\Messages\NpcCommands\NPCSetInvisibleMessage.cs" />
+    <Compile Include="Network\Messages\NpcCommands\NPCSetInvisibleName.cs" />
+    <Compile Include="Network\Messages\NpcCommands\NPCUpdateMessage.cs" />
+    <Compile Include="Network\Messages\NpcCommands\ScaleMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\AnimationMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\ChangeNameMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\CreateItemInstanceMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\DropItemMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\DropUnconsciousMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\EquipItemMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\CreateSpellMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\CastSpellMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\InterfaceOptionsMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\NPCChangeAttributeMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\NPCChangeSkillMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\OnDamageMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\PlayerFreezeMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\PlayerKeyMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\PlayVideo.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\ReviveMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\SetVisualMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\SpellInvestMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\StartDialogAnimMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\TakeItemMessage.cs" />
+    <Compile Include="Network\Messages\VobCommands\ChangeWorldMessage.cs" />
+    <Compile Include="Network\Messages\VobCommands\CreateVobMessage.cs" />
+    <Compile Include="Network\Messages\VobCommands\PlayEffectMessage.cs" />
+    <Compile Include="Network\Messages\VobCommands\SetVobListPosDirMessage.cs" />
+    <Compile Include="Network\Messages\VobCommands\SetVobDirectionMessage.cs" />
+    <Compile Include="Network\Messages\VobCommands\SetVobPosDirMessage.cs" />
+    <Compile Include="Network\Messages\VobCommands\SetVobPositionMessage.cs" />
+    <Compile Include="Network\Messages\VobCommands\SpawnVobMessage.cs" />
+    <Compile Include="Network\Messages\WorldCommands\RainMessage.cs" />
+    <Compile Include="Network\Messages\WorldCommands\TimerMessage.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="States\AbstractState.cs" />
+    <Compile Include="States\GameState.cs" />
+    <Compile Include="timer\DespawnTimer.cs" />
+    <Compile Include="timer\Timer.cs" />
+    <Compile Include="Tests\Keytest.cs" />
+    <Compile Include="UpdateListener.cs" />
+    <Compile Include="WorldObjects\Character\NPC.Client.cs" />
+    <Compile Include="WorldObjects\Character\NPCProto.Client.cs" />
+    <Compile Include="WorldObjects\Character\Player.Client.cs" />
+    <Compile Include="WorldObjects\Item.Client.cs" />
+    <Compile Include="WorldObjects\ItemInstance.Client.cs" />
+    <Compile Include="WorldObjects\Mobs\MobBed.Client.cs" />
+    <Compile Include="WorldObjects\Mobs\MobContainer.Client.cs" />
+    <Compile Include="WorldObjects\Mobs\MobDoor.Client.cs" />
+    <Compile Include="WorldObjects\Mobs\MobInter.Client.cs" />
+    <Compile Include="WorldObjects\Mobs\MobLockable.Client.cs" />
+    <Compile Include="WorldObjects\Mobs\MobSwitch.Client.cs" />
+    <Compile Include="WorldObjects\Spell.Client.cs" />
+    <Compile Include="WorldObjects\sWorld.Client.cs" />
+    <Compile Include="WorldObjects\Vob.Client.cs" />
+    <Compile Include="WorldObjects\World.Client.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="States\StartupState.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <EmbeddedResource Include="Resources\Classes.d" />
+    <EmbeddedResource Include="Resources\Constants.d" />
+    <EmbeddedResource Include="Resources\PC_Hero.d" />
+    <EmbeddedResource Include="Resources\NPC_Default.d" />
+    <EmbeddedResource Include="Resources\AI_Constants.d" />
+    <EmbeddedResource Include="Resources\BodyStates.d" />
+    <EmbeddedResource Include="Resources\Focus.d" />
+    <EmbeddedResource Include="Resources\Species.d" />
+    <EmbeddedResource Include="Resources\Startup.d" />
+    <EmbeddedResource Include="Resources\itm.d" />
+    <EmbeddedResource Include="Resources\Text.d" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Gothic\Gothic.csproj">
+      <Project>{82655F73-CF7C-4416-9313-BD657AD8F05F}</Project>
+      <Name>Gothic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WinApi\WinApi.csproj">
+      <Project>{52793B3F-130C-4B05-8333-1529981DE780}</Project>
+      <Name>WinApi</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

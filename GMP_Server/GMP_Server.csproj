@@ -1,0 +1,197 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{27FA7C52-3C80-4B72-8FBB-BCAC0328236E}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GUC.Server</RootNamespace>
+    <AssemblyName>GMP_Server</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\GothicII\System\UntoldChapter\Server\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;D_SERVER</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\GothicII\System\UntoldChapter\Server\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>Internet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>false</GenerateManifests>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="RakNetSwig">
+      <HintPath>..\GothicII\System\UntoldChapter\DLL\RakNetSwig.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Network\**\*.cs">
+      <Link>%(RecursiveDir)%(FileName)%(Extension)</Link>
+    </Compile>
+    <Compile Include="Network\Messages\Callbacks\CallbackNPCCanSee.cs" />
+    <Compile Include="Network\Messages\Callbacks\ReadIniEntryMessage.cs" />
+    <Compile Include="Network\Messages\Callbacks\ReadMd5Message.cs" />
+    <Compile Include="Network\Messages\Connection\ConnectionMessage.cs" />
+    <Compile Include="Network\Messages\Connection\DisconnectMessage.cs" />
+    <Compile Include="Network\Messages\Connection\NPCSpawnMessage.cs" />
+    <Compile Include="Network\Messages\ContainerCommands\ItemChangedMessage.cs" />
+    <Compile Include="Network\Messages\GuiMessage.cs" />
+    <Compile Include="Network\Messages\MobInterCommands\ContainerMessage.cs" />
+    <Compile Include="Network\Messages\MobInterCommands\MobInterMessage.cs" />
+    <Compile Include="Network\Messages\NpcCommands\AnimationUpdateMessage.cs" />
+    <Compile Include="Network\Messages\NpcCommands\DoDieMessage.cs" />
+    <Compile Include="Network\Messages\NpcCommands\ItemRemovedByUsing.cs" />
+    <Compile Include="Network\Messages\NpcCommands\NPCControllerMessage.cs" />
+    <Compile Include="Network\Messages\NpcCommands\NPCUpdateMessage.cs" />
+    <Compile Include="Network\Messages\NpcCommands\UseItemMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\CastSpell.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\DropItemMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\EquipItemMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\OnDamageMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\PlayerKeyMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\SpellInvestMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\TakeItemMessage.cs" />
+    <Compile Include="Network\Messages\VobCommands\ChangeWorldMessage.cs" />
+    <Compile Include="Network\Messages\VobCommands\CreateVobMessage.cs" />
+    <Compile Include="Network\Messages\VobCommands\SetVobListPosDirMessage.cs" />
+    <Compile Include="Network\Messages\VobCommands\SetVobPosDirMessage.cs" />
+    <Compile Include="Network\Messages\VobCommands\SpawnVobMessage.cs" />
+    <Compile Include="Scripting\Events.cs" />
+    <Compile Include="Scripting\GUI\Button.cs" />
+    <Compile Include="Scripting\GUI\Cursor.cs" />
+    <Compile Include="Scripting\GUI\GuiList\List.cs" />
+    <Compile Include="Scripting\GUI\GuiList\ListButton.cs" />
+    <Compile Include="Scripting\GUI\GuiList\ListRow.cs" />
+    <Compile Include="Scripting\GUI\GuiList\ListText.cs" />
+    <Compile Include="Scripting\GUI\GuiList\ListTextBox.cs" />
+    <Compile Include="Scripting\GUI\TextArea.cs" />
+    <Compile Include="Scripting\GUI\MessagesBox.cs" />
+    <Compile Include="Scripting\GUI\Text.cs" />
+    <Compile Include="Scripting\GUI\TextBox.cs" />
+    <Compile Include="Scripting\GUI\Texture.cs" />
+    <Compile Include="Scripting\GUI\View.cs" />
+    <Compile Include="Scripting\Listener\IServerStartup.cs" />
+    <Compile Include="Scripting\Objects\Character\NPC.cs" />
+    <Compile Include="Scripting\Objects\Character\NPCProto.cs" />
+    <Compile Include="Scripting\Objects\Character\Player.cs" />
+    <Compile Include="Scripting\Objects\Item.cs" />
+    <Compile Include="Scripting\Objects\ItemInstance.cs" />
+    <Compile Include="Scripting\Objects\Mob\MobBed.cs" />
+    <Compile Include="Scripting\Objects\Mob\MobContainer.cs" />
+    <Compile Include="Scripting\Objects\Mob\MobDoor.cs" />
+    <Compile Include="Scripting\Objects\Mob\MobInter.cs" />
+    <Compile Include="Scripting\Objects\Mob\MobLockable.cs" />
+    <Compile Include="Scripting\Objects\Mob\MobSwitch.cs" />
+    <Compile Include="Scripting\Objects\Spell.cs" />
+    <Compile Include="Scripting\Objects\Vob.cs" />
+    <Compile Include="Scripting\Objects\World.cs" />
+    <Compile Include="Scripting\ScriptManager.cs" />
+    <Compile Include="Scripting\Timer.cs" />
+    <Compile Include="TCPStatus.cs" />
+    <Compile Include="WorldObjects\Character\NPC.Server.cs" />
+    <Compile Include="WorldObjects\Character\NPCProto.Server.cs" />
+    <Compile Include="WorldObjects\Character\Player.Server.cs" />
+    <Compile Include="WorldObjects\Item.Server.cs" />
+    <Compile Include="WorldObjects\ItemInstance.Server.cs" />
+    <Compile Include="WorldObjects\Mobs\MobContainer.Server.cs" />
+    <Compile Include="WorldObjects\Mobs\MobInter.Server.cs" />
+    <Compile Include="WorldObjects\Mobs\MobLockable.Server.cs" />
+    <Compile Include="WorldObjects\Spell.Server.cs" />
+    <Compile Include="WorldObjects\sWorld.Server.cs" />
+    <Compile Include="WorldObjects\Vob.Server.cs" />
+    <Compile Include="WorldObjects\World.Server.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Log\Logger.cs" />
+    <Compile Include="Network\IMessage.cs" />
+    <Compile Include="Network\Server.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="app.manifest" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.SQL.Server.Compact.3.5">
+      <Visible>False</Visible>
+      <ProductName>SQL Server Compact 3.5 SP2</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

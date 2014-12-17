@@ -1,3 +1,10 @@
+###
+GothicII/
+DocWriter/
+Server Script Helper/
+NSISInstaller/
+
+
 #################
 ## Eclipse
 #################
@@ -40,7 +47,6 @@ local.properties
 *.suo
 *.user
 *.sln.docstates
-*.csproj
 
 # Build results
 
@@ -128,7 +134,6 @@ publish/
 # Publish Web Output
 *.Publish.xml
 *.pubxml
-*.publishproj
 
 # NuGet Packages Directory
 ## TODO: If you have NuGet Package Restore enabled, uncomment the next line
@@ -189,7 +194,7 @@ $RECYCLE.BIN/
 ## Python
 #############
 
-*.py[cod]
+*.py[co]
 
 # Packages
 *.egg
@@ -215,33 +220,3 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
-
-
-
-###############
-## GMPA
-###############
-
-Tools
-zeditor
-Account.txt
-account-system.txt
-Administration.lua
-Administration.txt
-class.txt
-Database.sql
-DBConnection.txt
-GC.txt
-GlobalChat.txt
-libmysql.dll
-msvcp100.dll
-msvcp100d.dll
-msvcr100.dll
-msvcr100d.dll
-OOC.txt
-readme.txt
-Report.txt
-server_gmp.exe
-server_log.txt
-SimpleRP.db
-test.vm
