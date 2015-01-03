@@ -92,13 +92,16 @@ namespace GUC.Server
 
         private void HandleClient(Object state)
         {
+            NetworkStream clientStream = null;
+            StreamReader sr = null;
+            StreamWriter sw = null;
             try
             {
                 TcpClient client = (TcpClient)state;
-                NetworkStream clientStream = client.GetStream();
+                clientStream = client.GetStream();
 
-                StreamReader sr = new StreamReader(clientStream);
-                StreamWriter sw = new StreamWriter(clientStream);
+                sr = new StreamReader(clientStream);
+                sw = new StreamWriter(clientStream);
                 sw.AutoFlush = true;
 
                 string type = sr.ReadLine().Trim().ToLower();
@@ -131,14 +134,25 @@ namespace GUC.Server
 
                 }
 
-                sr.Close();
-                sw.Close();
-                clientStream.Close();
-
             }
             catch (Exception ex)
             {
 
+            }
+            finally
+            {
+                if (sr != null)
+                {
+                    sr.Close();
+                }
+                if (sw != null)
+                {
+                    sw.Close();
+                }
+                if (clientStream != null)
+                {
+                    clientStream.Close();
+                }
             }
         }
     }
