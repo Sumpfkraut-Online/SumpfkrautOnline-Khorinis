@@ -341,7 +341,7 @@ namespace GUC.Server.Scripting.Objects
 
         /// <summary>
         /// Sets the actual time.
-        /// It will be send secure, The clients get definetly the message, but it can be slower.
+        /// It will be send secure - the clients get definetly the message, but it can be slower.
         /// 
         /// This function is static and all worlds will have the same time.
         /// </summary>
@@ -353,6 +353,18 @@ namespace GUC.Server.Scripting.Objects
             iSetTime(day, hour, minute, false);
         }
 
+        /// <summary>
+        /// Sets the actual time.
+        /// I can be send secure, thus the clients definetly get the message, or faster but 
+        /// insecure.
+        /// 
+        /// This function is static and all worlds will have the same time.
+        /// </summary>
+        /// <param name="day">The new day</param>
+        /// <param name="hour">The new hour</param>
+        /// <param name="minute">The new minute</param>
+        /// <param name="fast">Whether to use fast but insecure streamed packets or slower 
+        /// but more secure ones</param>
         private static void iSetTime( int day, byte hour, byte minute, bool fast)
         {
             sWorld.Day = day;
