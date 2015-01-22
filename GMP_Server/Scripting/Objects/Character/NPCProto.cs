@@ -11,6 +11,12 @@ using System.Collections;
 
 namespace GUC.Server.Scripting.Objects.Character
 {
+    /** 
+    * Prototype class (base class) for all vobs which are npcs.
+    * Class which defines RakNet network communication regarding npcs (npc-vobs) in general.
+    * It contains constant defintions for meshes and textures of bodies and heads/faces.
+    * It inherits from Vob, the base class for all possible vobs in the game.
+    */
     public class NPCProto : Vob, IEnumerable
     {
         #region constants
@@ -219,7 +225,11 @@ namespace GUC.Server.Scripting.Objects.Character
 
         #endregion
 
-
+        /**
+         *   Constructor.
+         *   One constructor for NPCProto.
+         *   @param proto a GUC.WorldObjects.Character.NPCProto of the same type as this class.
+         */
         internal NPCProto(GUC.WorldObjects.Character.NPCProto proto)
             : base(proto)
         {
@@ -251,8 +261,16 @@ namespace GUC.Server.Scripting.Objects.Character
 
         #region Fields
 
+        /**
+         *   Get/Set-Accessor for the name of an npc.
+         *   Get/Set-Accessor for the name of an npc.
+         */
         public String Name { get { return proto.Name; } set { setName(value); } }
 
+        /**
+         *   Get/Set-Accessor for the scale of an npc.
+         *   Get/Set-Accessor for the scale of an npc.
+         */
         public Vec3f Scale { get { return proto.Scale; } set { setScale(value); } }
 
         public ColorRGBA Color { get; set; }
@@ -263,43 +281,70 @@ namespace GUC.Server.Scripting.Objects.Character
             set { setFatness(value); }
         }
 
+        /**
+         *   Get/Set-Accessor for the strength of an npc.
+         *   Get/Set-Accessor for the strength of an npc.
+         */
         public int Strength {
             get { return proto.Attributes[(byte)NPCAttribute.ATR_STRENGTH]; }
             set { setAttribute(NPCAttribute.ATR_STRENGTH, value); }
         }
 
+        /**
+         *   Get/Set-Accessor for the dexterity of an npc.
+         *   Get/Set-Accessor for the dexterity of an npc.
+         */
         public int Dexterity
         {
             get { return proto.Attributes[(byte)NPCAttribute.ATR_DEXTERITY]; }
             set { setAttribute(NPCAttribute.ATR_DEXTERITY, value); }
         }
 
+        /**
+         *   Get/Set-Accessor for the health points/HP of an npc.
+         *   Get/Set-Accessor for the health points/HP of an npc.
+         */
         public int HP
         {
             get { return proto.Attributes[(byte)NPCAttribute.ATR_HITPOINTS]; }
             set { setAttribute(NPCAttribute.ATR_HITPOINTS, value); }
         }
 
+        /**
+         *   Get/Set-Accessor for the maximum health points/HP of an npc.
+         *   Get/Set-Accessor for the maximum health points/HP of an npc.
+         */
         public int HPMax
         {
             get { return proto.Attributes[(byte)NPCAttribute.ATR_HITPOINTS_MAX]; }
             set { setAttribute(NPCAttribute.ATR_HITPOINTS_MAX, value); }
         }
 
+        /**
+         *   Get/Set-Accessor for the mana points/MP of an npc.
+         *   Get/Set-Accessor for the mana points/MP of an npc.
+         */
         public int MP
         {
             get { return proto.Attributes[(byte)NPCAttribute.ATR_MANA]; }
             set { setAttribute(NPCAttribute.ATR_MANA, value); }
         }
 
+        /**
+         *   Get/Set-Accessor for the maximum mana points/MP of an npc.
+         *   Get/Set-Accessor for the maximum mana points/MP of an npc.
+         */
         public int MPMax
         {
             get { return proto.Attributes[(byte)NPCAttribute.ATR_MANA_MAX]; }
             set { setAttribute(NPCAttribute.ATR_MANA_MAX, value); }
         }
 
-        
 
+        /**
+         *   Get-Accessor for the currently equipped armor of an npc.
+         *   Get-Accessor for the currently equipped armor of an npc.
+         */
         public Item EquippedArmor { 
             get {
                 if (proto.Armor == null)
@@ -307,6 +352,10 @@ namespace GUC.Server.Scripting.Objects.Character
                 return proto.Armor.ScriptingProto;
             } }
 
+        /**
+         *   Get-Accessor for the currently equipped weapon of an npc.
+         *   Get-Accessor for the currently equipped weapon of an npc.
+         */
         public Item EquippedWeapon
         {
             get
@@ -317,6 +366,10 @@ namespace GUC.Server.Scripting.Objects.Character
             }
         }
 
+        /**
+         *   Get-Accessor for the currently equipped ranged weapon of an npc.
+         *   Get-Accessor for the currently equipped ranged weapon of an npc.
+         */
         public Item EquippedRangeWeapon
         {
             get
@@ -327,53 +380,97 @@ namespace GUC.Server.Scripting.Objects.Character
             }
         }
 
-        
 
+
+        /**
+         *   Get/Set-Accessor for the active weapon mode (melee or ranged???) of an npc.
+         *   Get/Set-Accessor for the active weapon mode (melee or ranged???) of an npc.
+         */
         public int WeaponMode { get { return proto.WeaponMode; } set { setWeaponMode(value); } }
 
         #region Protection
+        /**
+         *   Get/Set-Accessor for the protection of an npc against fire damage.
+         *   Get/Set-Accessor for the protection of an npc against fire damage.
+         *   Protection is provided by equpiment, potions, or other effects.
+         */
         public int ProtectionFire
         {
             get { return getProtection(DamageTypeIndex.DAM_INDEX_FIRE); }
             set { setProtection(DamageTypeIndex.DAM_INDEX_FIRE, value); }
         }
 
+        /**
+         *   Get/Set-Accessor for the protection of an npc against edge damage.
+         *   Get/Set-Accessor for the protection of an npc against edge damage.
+         *   Protection is provided by equpiment, potions, or other effects.
+         */
         public int ProtectionEdge
         {
             get { return getProtection(DamageTypeIndex.DAM_INDEX_EDGE); }
             set { setProtection(DamageTypeIndex.DAM_INDEX_EDGE, value); }
         }
 
+        /**
+         *   Get/Set-Accessor for the protection of an npc against barrier damage (???).
+         *   Get/Set-Accessor for the protection of an npc against barrier damage (???).
+         *   Protection is provided by equpiment, potions, or other effects.
+         */
         public int ProtectionBarrier
         {
             get { return getProtection(DamageTypeIndex.DAM_INDEX_BARRIER); }
             set { setProtection(DamageTypeIndex.DAM_INDEX_BARRIER, value); }
         }
 
+        /**
+         *   Get/Set-Accessor for the protection of an npc against blunt damage.
+         *   Get/Set-Accessor for the protection of an npc against blunt damage.
+         *   Protection is provided by equpiment, potions, or other effects.
+         */
         public int ProtectionBlunt
         {
             get { return getProtection(DamageTypeIndex.DAM_INDEX_BLUNT); }
             set { setProtection(DamageTypeIndex.DAM_INDEX_BLUNT, value); }
         }
 
+        /**
+         *   Get/Set-Accessor for the protection of an npc against fall damage.
+         *   Get/Set-Accessor for the protection of an npc against fall damage.
+         *   Protection is provided by equpiment, potions, or other effects.
+         */
         public int ProtectionFall
         {
             get { return getProtection(DamageTypeIndex.DAM_INDEX_FALL); }
             set { setProtection(DamageTypeIndex.DAM_INDEX_FALL, value); }
         }
 
+        /**
+         *   Get/Set-Accessor for the protection of an npc against fly damage (???).
+         *   Get/Set-Accessor for the protection of an npc against fly damage (???).
+         *   Protection is provided by equpiment, potions, or other effects.
+         */
         public int ProtectionFly
         {
             get { return getProtection(DamageTypeIndex.DAM_INDEX_FLY); }
             set { setProtection(DamageTypeIndex.DAM_INDEX_FLY, value); }
         }
 
+        /**
+         *   Get/Set-Accessor for the protection of an npc against magic damage.
+         *   Get/Set-Accessor for the protection of an npc against magic damage.
+         *   Protection is provided by equpiment, potions, or other effects.
+         */
         public int ProtectionMagic
         {
             get { return getProtection(DamageTypeIndex.DAM_INDEX_MAGIC); }
             set { setProtection(DamageTypeIndex.DAM_INDEX_MAGIC, value); }
         }
 
+        /**
+         *   Get/Set-Accessor for the protection of an npc against point damage.
+         *   Get/Set-Accessor for the protection of an npc against point damage.
+         *   Protection is provided by equpiment, potions, or other effects.
+         */
         public int ProtectionPoint
         {
             get { return getProtection(DamageTypeIndex.DAM_INDEX_POINT); }
@@ -383,10 +480,13 @@ namespace GUC.Server.Scripting.Objects.Character
         #endregion
 
         #region Methods
-        /// <summary>
-        /// Returns an Integer with the callback ID!
-        /// </summary>
-        /// <returns></returns>
+
+        /**
+         *   Method used to check whether the NPCProto-instance (npc) can see another vob.
+         *   Method used to check whether the NPCProto-instance (npc) can see another vob. Includes network handling.
+         *   @param vob of type Vob is vob-object which might be seen by the calling npc-observer.
+         *   @return callBackID as int which represents the callback id or -1 if there is no oberserver.
+         */
         public int CanSee(Vob vob)
         {
             Player plToCheck = null;
@@ -416,6 +516,12 @@ namespace GUC.Server.Scripting.Objects.Character
         }
 
 
+        /**
+         *   Method used to check what item inhibits a given inventory slot.
+         *   Method used to check what item inhibits a given inventory slot.
+         *   @param index of type int as slot-index for which the item is requested.
+         *   @return ScriptingProto-Object or null if there is no item for the given slot-index.
+         */
         public Item getSlotItem(int index)
         {
             if (index >= 9)
@@ -425,6 +531,11 @@ namespace GUC.Server.Scripting.Objects.Character
             return proto.Slots[index].ScriptingProto;
         }
 
+        /**
+         *   Method used to set the weapon mode of the npc.
+         *   Method used to set the weapon mode of the npc.
+         *   @param weaponMode of type int as index-representation of the actual wepaon mode.
+         */
         public void setWeaponMode(int weaponMode)
         {
             proto.WeaponMode = weaponMode;
@@ -441,6 +552,12 @@ namespace GUC.Server.Scripting.Objects.Character
             Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
+        /**
+         *   Method used to put a provided item in a given inventory slot.
+         *   Method used to put a provided item in a given inventory slot.
+         *   @param slot of type int as slot index where the given item should be put into.
+         *   @param item of type Item is the item which should be put in the given slot.
+         */
         public void setSlotItem(int slot, Item item)
         {
             if (item != null)
@@ -464,6 +581,13 @@ namespace GUC.Server.Scripting.Objects.Character
             Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
+		/**
+         *   Method used to get the current protection of an npc against the provided damage type.
+         *   Method used to get the current protection of an npc against the provided damage type.
+         *   @param index of type DamageType represents the damage type as entry in the respective enum.
+         *   @return protection value as type int against the chosen damage type.
+         *   @see DamageType
+         */
         public int getProtection(DamageTypes index)
         {
             if (EquippedArmor != null)
@@ -476,6 +600,13 @@ namespace GUC.Server.Scripting.Objects.Character
             }
         }
 
+        /**
+         *   Method used to get the current protection of an npc against the damage type hinted by index.
+         *   Method used to get the current protection of an npc against the damage type hinted by index.
+         *   @param index of type DamageTypeIndex is the numeric index of the damage type listed in the respective enum.
+         *   @return protection value as type int against the chosen damage type.
+         *   @see DamageTypeIndex
+         */
         public int getProtection(DamageTypeIndex index)
         {
             if (EquippedArmor != null)
@@ -488,11 +619,25 @@ namespace GUC.Server.Scripting.Objects.Character
             }
         }
 
+        /**
+         *   Method used to set the protection value for a given DamageTypeIndex.
+         *   Method used to set the protection value for a given DamageTypeIndex.
+         *   @param index of type DamageTypeIndex is the numeric index of the damage type listed in the respective enum.
+         *   @param value of type int is the actual protection value of the chosen damage type.
+         *   @see DamageTypeIndex
+         */
         public void setProtection(DamageTypeIndex index, int value)
         {
             proto.protection[(int)index] = value;
         }
 
+        /**
+         *   Method used to get the total damage the npc can inflict with the currently equipped weapon.
+         *   Method used to get the total damage the npc can inflict with the currently equipped weapon.
+         *   Supports a weapon state where no weapons are equipped but bare fists.
+         *   @param index of type DamageTypeIndex is the numeric index of the damage type listed in the respective enum.
+         *   @return totalDamage value of type int
+         */
         public int getTotalDamage()
         {
             if (EquippedWeapon != null)
@@ -503,6 +648,13 @@ namespace GUC.Server.Scripting.Objects.Character
                 return proto.totalDamage;
         }
 
+		/**
+         *   Method used to get the damage type of the currently equipped weapon.
+         *   Method used to get the damage type of the currently equipped weapon.
+         *   Supports a weapon state where no weapons are equipped but bare fists.
+         *   @return damage type of type DamageType
+         *   @see DamageType
+         */
         public DamageTypes getDamageType()
         {
             if (EquippedWeapon != null)
@@ -513,21 +665,46 @@ namespace GUC.Server.Scripting.Objects.Character
                 return proto.damageType;
         }
 
+        /**
+         *   Method used to set the total damage the npc itself can inflict without a weapon (bare hands).
+         *   Method used to set the total damage the npc itself can inflict without a weapon (bare hands).
+         *   @param damage of type int represents the total amount of damage dealt by the npcs bare hands.
+         */
         public void setTotalDamage(int damage)
         {
             proto.totalDamage = damage;
         }
 
+		/**
+         *   Method used to set the damage type the npc can inflict on others.
+         *   Method used to set the damage type the npc can inflict on others.
+         *   @param type of type DamageType is the respective enum entry of the damage type.
+         *   @see DamageType
+         */
         public void setDamageType(DamageTypes type)
         {
             proto.damageType = type;
         }
 
+        /**
+         *   Method used to set the damage for a specified damage type by DamageTypeIndex.
+         *   Method used to set the damage for a specified damage type by DamageTypeIndex.
+         *   @param dti of type DamageTypeIndex is the numeric index of the damage type listed in the respective enum.
+         *   @param value of type int is the amount of damage dealt as the specified type of damage.
+         *   @see DamageTypeIndex
+         */
         public void setDamage(DamageTypeIndex dti, int value)
         {
             proto.damages[(int)dti] = value;
         }
 
+        /**
+         *   Method used to get the damage of the currently equipped weapon for a specified damage type by DamageTypeIndex.
+         *   Method used to get the damage of the currently equipped weapon for a specified damage type by DamageTypeIndex.
+         *   @param dti of type DamageTypeIndex is the numeric index of the damage type listed in the respective enum.
+         *   @return amount of damage of the given type which currently equipped weapon is able to deal
+         *   @see DamageTypeIndex
+         */
         public int getDamage(DamageTypeIndex dti)
         {
             if (EquippedWeapon != null)
@@ -539,6 +716,14 @@ namespace GUC.Server.Scripting.Objects.Character
         }
 
 
+        /**
+         *   Method used to set the npcs scale (in x, y, z).
+         *   Method used to set the npcs scale (in x, y, z).
+         *   Not only the mesh scales but the movement speed, too.
+         *   The cartesian scale values can be >= 0.
+         *   Returns prematurely if the npc is not created/actually spawned in the world.
+         *   @param scale of type Vec3f is the cartesian scale vector (x, y, z).
+         */
         public virtual void setScale(Vec3f scale)
         {
             proto.Scale = scale;
@@ -555,6 +740,13 @@ namespace GUC.Server.Scripting.Objects.Character
             Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
+        /**
+         *   Method used to set the npcs fatness.
+         *   Method used to set the npcs fatness, a way to bloat the npcs mesh.
+         *   In contrast to the scale, the fatness does not influence movement speeds.
+         *   Returns prematurely if the npc is not created/actually spawned in the world.
+         *   @param Fatness of type float is the desired fatness value which should be applied.
+         */
         public virtual void setFatness(float Fatness)
         {
             proto.Fatness = Fatness;
