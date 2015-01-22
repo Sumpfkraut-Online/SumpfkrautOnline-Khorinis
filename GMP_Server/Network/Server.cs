@@ -99,6 +99,7 @@ namespace GUC.Server.Network
         /**
          *   Counts the current amount of client-server-connections and returns them.
          *   Counts the current amount of client-server-connections and returns them.
+         *   @return numbers as ushort amount of client-server-connections
          */
         public ushort ConnectionCount()
         {
