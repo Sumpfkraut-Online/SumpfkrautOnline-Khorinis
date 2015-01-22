@@ -51,30 +51,30 @@ namespace GUC.Enumeration
         ItemRemovedByUsing, /**< Network messages concerning item removable following item use events. */
         ContainerItemChangedMessage, /**< Network messages concerning container exchange (chests, inventory, etc.). */
         ItemChangeContainer, /**< Network messages when item instances change containers. */
-        ClearInventory,
-        TimerMessage,
-        RainMessage,
+        ClearInventory, /**< Network messages when clearing the whole inventory. */
+        TimerMessage, /**< Network messages concerning the ingame time. */
+        RainMessage, /**< Network messages concerning timed rain weather events. */
 
         CallbackNPCCanSee, /**< Network messages concerning visibility by npcs. */
         ReadIniEntryMessage, /**< Network messages concerning ???. */
         ReadMd5Message, /**< Network messages concerning MD5 data encryption. */
 
         DoDieMessage, /**< Network messages concerning object/npc/player death. */
-        ExitGameMessage,
+        ExitGameMessage, /**< Network messages from server to client to force game exit. */
         EquipItemMessage, /**< Network messages concerning item equipping. */
 
         ChangeWorldMessage, /**< Network messages concerning switching the world (go to another world-instance) */
-        NPCSetInvisibleMessage,
-        NPCSetInvisibleName,
-        PlayVideo,
-        NPCControllerMessage,
-        ScaleMessage,
-        NPCFatnessMessage,
+        NPCSetInvisibleMessage, /**< Network messages concerning visibility of npcs/players for others. */
+        NPCSetInvisibleName, /**< Network messages concerning the visibility of names above npcs in focus. */
+        PlayVideo, /**< Network messages to enforce start of a video. */
+        NPCControllerMessage, /**< Network messages to give player control over npcs (???). */
+        ScaleMessage, /**< Network messages concerning npc scale (x, y, z). */
+        NPCFatnessMessage, /**< Network messages concerning npc fatness. */
 
         PlayerKeyMessage, /**< Network messages concerning keys triggered/pressed by players. */
 
-        NPCProtoSetWeaponMode,
-        NPCEnableMessage,
+        NPCProtoSetWeaponMode, /**< Network messages when setting the weapon mode. */
+        NPCEnableMessage, /**< Network messages concerning control of npcs given to players (???). */
 
         UseItemMessage, /**< Network messages concerning item use. */
         CastSpell, /**< Network messages concerning cast spells. */
@@ -82,10 +82,10 @@ namespace GUC.Enumeration
 
         SpellInvestMessage, /**< Network messages concerning investments of an npcs to cast a spell (e.g. mana use). */
 
-        SetSlotMessage,
-        CamToPlayerFront,
+        SetSlotMessage, /**< Network messages when putting items into inventory slots of npcs. */
+        CamToPlayerFront, /**< Network messages concerning camera movement to the fron of the player (use in dialogues?). */
 
-        InterfaceOptionsMessage,
+        InterfaceOptionsMessage, /**< Network messages concerning Gothic 2 standart menus navigated by players. */
 
         PlayerOpenInventoryMessage
 
