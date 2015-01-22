@@ -20,12 +20,12 @@ namespace GUC.Server.Scripting.Objects
 
         protected Dictionary<String, Object> userObjects = new Dictionary<string,object>();
 
-        /// <summary>
-        /// Returns the Vob with the specified ID.
-        /// You can get the id of all vobs (Players, NPCs, mobinters and items) with vob.ID
-        /// </summary>
-        /// <param name="id">The specified vobid</param>
-        /// <returns>returns the vob with the specfied vob-id or null</returns>
+        /**
+         * Returns the Vob with the specified ID.
+         * To access the ID of a vob, use vob.ID
+         * @param id ID of a Vob
+         * @return Vob with the ID id or a null-reference
+         */
         public static Vob getVob(int id){
             WorldObjects.Vob v = null;
             sWorld.VobDict.TryGetValue(id, out v);
@@ -37,37 +37,14 @@ namespace GUC.Server.Scripting.Objects
 
         }
 
-
-        internal Vob(GUC.WorldObjects.Vob vob)
-        {
-            this.vob = vob;
-        }
-
-        /// <summary>
-        /// Creates a new vob.
-        /// Do not forget to use the spawn function.
-        /// </summary>
-        /// <param name="Visual">The visual your vob will get</param>
-        public Vob(String Visual)
-            : this(Visual, true, true, true)
-        { }
-
-        /// <summary>
-        /// Creates a new vob.
-        /// Do not forget to use the spawn function.
-        /// </summary>
-        /// <param name="Visual">The visual your vob will get</param>
-        /// <param name="cdDyn">Dynamic Collisions</param>
-        /// <param name="cdStatic">Static Collisions</param>
-        public Vob(String Visual, bool cdDyn, bool cdStatic)
-            : this(Visual, cdDyn, cdStatic, true)
-        { }
-
-        private Vob(String visual, bool cdDyn, bool cdStatic, bool useCreate)
-            : this(new GUC.WorldObjects.Vob(), visual, cdDyn, cdStatic, useCreate)
-        {
-
-        }
+        /**
+         * Creates a new vob.
+         * @param vob Existing partner-vob in the world
+         * @param visual the visual of the Vob to be creaeted.
+         * @param cdDyn Dynamic collision
+         * @param cdStatic Static collision
+         * @param useCreate Call CreateVob() upon creation
+         */
         internal Vob(GUC.WorldObjects.Vob vob, String visual, bool cdDyn, bool cdStatic, bool useCreate)
             : this(vob)
         {
@@ -81,14 +58,46 @@ namespace GUC.Server.Scripting.Objects
                 CreateVob();
         }
 
-        /// <summary>
-        /// Returns the ID of the vob.
-        /// </summary>
-        public int ID { get { return vob.ID; } }
+        /**
+         * @overload
+         */
+        internal Vob(GUC.WorldObjects.Vob vob)
+        {
+            this.vob = vob;
+        }
 
-        /// <summary>
-        /// Returns or set the Position of the vob.
-        /// </summary>
+
+        /**
+         * @overload
+         */
+        public Vob(String Visual)
+            : this(Visual, true, true, true)
+        { }
+
+        /**
+         * @overload
+         */
+        public Vob(String Visual, bool cdDyn, bool cdStatic)
+            : this(Visual, cdDyn, cdStatic, true)
+        { }
+
+        /**
+         * @overload
+         */
+        private Vob(String visual, bool cdDyn, bool cdStatic, bool useCreate)
+            : this(new GUC.WorldObjects.Vob(), visual, cdDyn, cdStatic, useCreate)
+        {
+
+        }
+
+
+        public int ID { get { return vob.ID; } } /**< Internal ID of this vob. Can only be read. */
+
+        /**
+         * Regular (X|Y|Z) position vector.
+         * When this is set to an invalid value, it will default to (0|0|0).
+         * The position in the world will be updated automatically (D_SERVER???).
+         */
         public Vec3f Position { get { return vob.Position; } set { setPosition(value); } }
         /// <summary>
         /// Returns or set the Direction of the vob.

@@ -15,16 +15,26 @@ namespace GUC.WorldObjects
 {
     internal partial class Vob
     {
-        int _address = 0;
+        int _address = 0; /**< Same as Address. @see Address */
 
-        public int Address { get { return _address; } set { _address = value; } }
+        public int Address { get { return _address; } set { _address = value; } } /**< Client-side address of this vob in Gothic's process. */
 
-
+        /**
+         * Despawns a vob. General vobs can't be despawned,
+         * thus this method has to be re-implemented.
+         */
         public virtual void Despawn()
         {
             spawned = false;
         }
 
+        /**
+         * Spawns a vob in the client's process.
+         * The caller has to take care of enacting this change to other clients (???)
+         * @param map The world to spawn in.
+         * @param position A simple (X|Y|Z) position vector.
+         * @param direction A simple (X|Y|Z) direction vector.
+         */
         public virtual void Spawn(String map, Vec3f position, Vec3f direction)
         {
             this.Map = map;
@@ -54,6 +64,15 @@ namespace GUC.WorldObjects
             
         }
 
+        /** 
+         * Applies the Vob's settings.
+         * This will apply the Vob's settings from the client to
+         * Gothic's process. In particular it will change visual,
+         * position, direction, dynamic collision and static
+         * collision.
+         * @param process Gothic's process
+         * @param vob The client vob
+         */
         protected void setVobData(Process process, zCVob vob)
         {
             if (this.Visual != null && this.Visual.Length != 0)
@@ -73,6 +92,11 @@ namespace GUC.WorldObjects
                 vob.BitField1 &= ~(int)zCVob.BitFlag0.collDetectionStatic;
         }
 
+        /**
+         * This will apply the client vob's position to
+         * Gothic's process.
+         * @param pos A simple (X|Y|Z) position vector.
+         */
         public void setPosition(Vec3f pos)
         {
             this.Position = pos;
@@ -87,6 +111,11 @@ namespace GUC.WorldObjects
             vob.TrafoObjToWorld.setPosition(this.Position.Data);
         }
 
+        /**
+         * This will apply the client vob's direction to
+         * Gothic's process.
+         * @param pos A simple (X|Y|Z) direction vector.
+         */
         public void setDirection(Vec3f dir)
         {
             dir = dir.normalise();
@@ -156,6 +185,13 @@ namespace GUC.WorldObjects
             p.Dispose();
         }
 
+        /**
+         * Reads important vob information from the server.
+         * Which information has been sent is determined by the second int in the stream.
+         * Information that may be in the stream (in this order): visual, dynamic collision,
+         * static collision.
+         * @param stream The information has been sent via this stream.
+         */
         public virtual VobSendFlags Read(BitStream stream)
         {
             int sendInfo = 0;
