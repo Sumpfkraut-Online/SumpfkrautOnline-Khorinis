@@ -11,6 +11,11 @@ using GUC.Server.Network.Messages.PlayerCommands;
 
 namespace GUC.Server.Scripting.Objects.Character
 {
+    /** 
+    * Class from which all player characters/npcs are instantiated.
+    * Class which defines RakNet network communication regarding players/player characters.
+    * It inherits from NPCProto, a prototype class for all vobs which act as npcs.
+    */
     public class Player : NPCProto
     {
         protected bool isSpawned = false;
