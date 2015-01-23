@@ -737,6 +737,10 @@ namespace GUC.Server.Scripting.Objects.Character
             Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
+        /**
+         *   Method used to set the npcs name.
+         *   @param name the new npc name.
+         */
         public void setName(String name)
         {
             if (name == null)
@@ -756,6 +760,10 @@ namespace GUC.Server.Scripting.Objects.Character
             Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
+        /**
+         *   Method used to set the npcs name.
+         *   @param time as timespan (what unit ???) the npc should stay unconscious.
+         */
         public void dropUnconscious(float time)
         {
             if (!created)
@@ -773,6 +781,9 @@ namespace GUC.Server.Scripting.Objects.Character
             Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
+        /**
+         *   Method used to revive the npc if it is already created.
+         */
         public void revive()
         {
             if (!created)
@@ -789,6 +800,11 @@ namespace GUC.Server.Scripting.Objects.Character
             Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
+        /**
+         *   Method used to get an attribute of the npc.
+         *   @param attrib is the flag (from enum) of the desired npc-attribute.
+         *   @see NPCAttributeFlags
+         */
         public int getAttribute(NPCAttributeFlags attrib)
         {
             if (attrib >= NPCAttributeFlags.ATR_MAX)
@@ -796,6 +812,13 @@ namespace GUC.Server.Scripting.Objects.Character
             return proto.Attributes[(byte)attrib];
         }
 
+        /**
+         *   Method used to get an attribute of the npc.
+         *   Only works for specified weapon talents of course.
+         *   @param talents is the talent (from enum) for which the hitchance is requested.
+         *   @return hitchance (as percentage value).
+         *   @see NPCTalents
+         */
         public int getHitChances(NPCTalents talents)
         {
             if (talents != NPCTalents.H1 && talents != NPCTalents.H2 && talents != NPCTalents.Bow && talents != NPCTalents.CrossBow)
@@ -804,6 +827,12 @@ namespace GUC.Server.Scripting.Objects.Character
             return proto.Hitchances[(byte)talents];
         }
 
+        /**
+         *   Method used to get a specified talent value of the npc.
+         *   @param talent is the talent (from enum) for which the value is requested.
+         *   @return current value for the talent and npc.
+         *   @see NPCTalents
+         */
         public int getTalentValues(NPCTalents talent)
         {
             if (talent == NPCTalents.Unknown || talent == NPCTalents.MaxTalents)
@@ -812,6 +841,12 @@ namespace GUC.Server.Scripting.Objects.Character
             return proto.TalentValues[(byte)talent];
         }
 
+        /**
+         *   Method used to get the npcs skills of a specified talent.
+         *   @param talent is the talent (from enum) for which the skills are requested.
+         *   @return skill value for the talent and npc.
+         *   @see NPCTalents
+         */
         public int getTalentSkills(NPCTalents talent)
         {
             if (talent == NPCTalents.Unknown || talent == NPCTalents.MaxTalents)
@@ -821,6 +856,10 @@ namespace GUC.Server.Scripting.Objects.Character
 
         }
 
+        /**
+         *   Method used to set npcs (in)visbility.
+         *   @param invisible specifies if npc should be invisible (true) or not (false). 
+         */
         public void setInvisible(bool invisible)
         {
             proto.IsInvisible = invisible;
@@ -837,6 +876,10 @@ namespace GUC.Server.Scripting.Objects.Character
             Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
+        /**
+         *   Method used to set npcs (in)visbility.
+         *   @param invisible specifies if npc should be invisible (true) or not (false). 
+         */
         public void setInvisible(Player player, bool invisible)
         {
             if (!created)
@@ -852,6 +895,10 @@ namespace GUC.Server.Scripting.Objects.Character
                 Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
         }
 
+        /**
+         *   Method used to set visibility of the npcs name.
+         *   @param invisible specifies if the npc name should be invisible (true) or not (false). 
+         */
         public void hideName(bool invisible)
         {
             proto.hideName = invisible;
@@ -868,6 +915,12 @@ namespace GUC.Server.Scripting.Objects.Character
             Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
+        /**
+         *   Method used to set visibility of the npcs name for the given player.
+         *   In contrast to hideName, this method can be used to hide the name from certain players.
+         *   @param player specifies the player from which the npcs name should be hid or not.
+         *   @param invisible specifies if the npc name should be invisible (true) or not (false). 
+         */
         public void hideNameFrom(Player player, bool invisible)
         {
             if (!created)
@@ -883,6 +936,13 @@ namespace GUC.Server.Scripting.Objects.Character
                 Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
         }
 
+        /**
+         *   Method used to set an attribute to a specified value.
+         *   The method returns prematurely if there is no such attribute.
+         *   @param attrib determines which attribute should be changed by using the respective enum-entry.
+         *   @param value specifies the new value for the npcs attribute.
+         *   @see NPCAttributeFlags
+         */
         public void setAttribute(NPCAttributeFlags attrib, int value)
         {
             if (attrib >= NPCAttributeFlags.ATR_MAX)
@@ -916,6 +976,13 @@ namespace GUC.Server.Scripting.Objects.Character
             Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
+        /**
+         *   Method used to set the hitchance of a weapon talent to a given value.
+         *   The method returns prematurely if there is no such talent.
+         *   @param NPCTalents determines for which talent should the hitchance should be changed by using the respective enum-entry.
+         *   @param value specifies the new hitchance value.
+         *   @see NPCTalents
+         */
         public void setHitchances(NPCTalents talents, int value)
         {
             if (talents != NPCTalents.H1 && talents != NPCTalents.H2 && talents != NPCTalents.Bow && talents != NPCTalents.CrossBow)
@@ -942,6 +1009,13 @@ namespace GUC.Server.Scripting.Objects.Character
             Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
+        /**
+         *   Method used to set the specified npcs talent to a given value.
+         *   The method returns prematurely if there is no such talent.
+         *   @param NPCTalents determines which talent should be changed by using the respective enum-entry.
+         *   @param value specifies the new talent value.
+         *   @see NPCTalents
+         */
         public void setTalentValues(NPCTalents talent, int value)
         {
             if (talent == NPCTalents.Unknown || talent == NPCTalents.MaxTalents)
@@ -968,6 +1042,13 @@ namespace GUC.Server.Scripting.Objects.Character
             Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
+        /**
+         *   Method used to set the skill of a specified npcs talent to a given value.
+         *   The method returns prematurely if there is no such talent.
+         *   @param NPCTalents determines from which talent the skills should be changed by using the respective enum-entry.
+         *   @param value specifies the new skill value of the talent (???).
+         *   @see NPCTalents
+         */
         public void setTalentSkills(NPCTalents talent, int value)
         {
             if (talent == NPCTalents.Unknown || talent == NPCTalents.MaxTalents)
@@ -994,6 +1075,10 @@ namespace GUC.Server.Scripting.Objects.Character
             Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
+        /**
+         *   Method used to get a list of all items which belong to an npc (inventory).
+         *   @return list of items the npc has in inventory.
+         */
         public Item[] getItemList()
         {
             Item[] itemList = new Item[this.proto.ItemList.Count];
@@ -1006,6 +1091,9 @@ namespace GUC.Server.Scripting.Objects.Character
             return itemList;
         }
 
+        /**
+         *   ???
+         */
         public IEnumerator GetEnumerator()
         {
             foreach (GUC.WorldObjects.Item item in proto.ItemList)
@@ -1014,13 +1102,15 @@ namespace GUC.Server.Scripting.Objects.Character
             }
         }
 
+        /**
+         *   Get-accessor for the total amount of items an npc has (in inventory).
+         */
         public int ItemCount { get { return proto.ItemList.Count; } }
 
         public Item this[int i]
         {
             get { return proto.ItemList[i].ScriptingProto; }
         }
-
 
 
         public Item addItem(String instance, int amount)
