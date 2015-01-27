@@ -8,8 +8,18 @@ using GUC.Server.Scripting.Objects.Character;
 
 namespace GUC.Server.Scripting.Objects
 {
+    /**
+    * Base class for all patterns of different items which are used by the Item-class to actually create and spawn items into the world.
+    * The name IntemInstance might be misleading because individual ingame items are actually instances of the Item-class.
+    * Instances/objects of ItemInstance mere represent building plans/patterns which are passed to the Item-constructor(s).
+    * It further holds a dictionary of these plans/patterns for later use.
+    * @see Item
+    */
     public class ItemInstance
     {
+        /**
+        * Distionary of building plans/patterns that are used in Item-instatiation (creating actual ingame items).
+        */
         public static Dictionary<String, ItemInstance> ItemInstances = new Dictionary<string, ItemInstance>();
 
 
