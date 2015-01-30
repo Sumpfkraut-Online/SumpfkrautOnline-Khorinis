@@ -124,7 +124,7 @@ namespace GUC.Network.Messages.Connection
                 {
                     int vobType = 0;
                     stream.Read(out vobType);
-                    Vob vob = Vob.createVob((VobTypes)vobType);
+                    Vob vob = Vob.createVob((VobType)vobType);
                     vob.Read(stream);
                     sWorld.addVob(vob);
                 }
@@ -196,7 +196,7 @@ namespace GUC.Network.Messages.Connection
             BitStream stream = Program.client.sentBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.ConnectionMessage);
+            stream.Write((byte)NetworkID.ConnectionMessage);
 
             stream.Write(Player.Hero.Name);
             stream.Write(connString);

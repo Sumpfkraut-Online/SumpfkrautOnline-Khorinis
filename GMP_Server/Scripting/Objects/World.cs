@@ -310,17 +310,17 @@ namespace GUC.Server.Scripting.Objects
             sWorld.EndRainMinute = endMinute;
 
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.RainMessage);
+            stream.Write((byte)NetworkID.RainMessage);
             stream.Write(sWorld.WeatherType);
             stream.Write(sWorld.StartRainHour);
             stream.Write(sWorld.StartRainMinute);
             stream.Write(sWorld.EndRainHour);
             stream.Write(sWorld.EndRainMinute);
             
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
         /// <summary>
@@ -358,18 +358,18 @@ namespace GUC.Server.Scripting.Objects
             sWorld.Minute = minute;
 
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.TimerMessage);
+            stream.Write((byte)NetworkID.TimerMessage);
             stream.Write(day);
             stream.Write(hour);
             stream.Write(minute);
 
             if(fast)
-                Program.server.server.Send(stream, PacketPriority.MEDIUM_PRIORITY, PacketReliability.UNRELIABLE_SEQUENCED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+                Program.server.ServerInterface.Send(stream, PacketPriority.MEDIUM_PRIORITY, PacketReliability.UNRELIABLE_SEQUENCED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
             else
-                Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
 

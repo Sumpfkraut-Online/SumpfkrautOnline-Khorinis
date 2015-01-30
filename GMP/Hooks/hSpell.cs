@@ -214,7 +214,7 @@ namespace GUC.Hooks
                 BitStream stream = Program.client.sentBitStream;
                 stream.Reset();
                 stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                stream.Write((byte)NetworkIDS.CastSpell);
+                stream.Write((byte)NetworkID.CastSpell);
                 stream.Write(itemID);
                 stream.Write(caster.ID);
                 if (target == null)

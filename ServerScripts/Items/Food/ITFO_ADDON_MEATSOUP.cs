@@ -26,7 +26,7 @@ namespace GUC.Server.Scripts.Items.Food
             Description = "Dampfende Fleischsuppe";
             ScemeName = "RICE";
 
-            Materials = Enumeration.MaterialTypes.MAT_WOOD;
+            Materials = Enumeration.MaterialType.MAT_WOOD;
             OnUse += new Scripting.Events.UseItemEventHandler(useItem);
 
             CreateItemInstance();

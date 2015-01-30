@@ -124,16 +124,16 @@ namespace GUC.WorldObjects.Character
         #endregion
 
         #region Talents
-        protected int[] attributes = new int[(byte)NPCAttributeFlags.ATR_MAX]{1, 1, 0, 0, 0, 0, 0, 0};
+        protected int[] attributes = new int[(byte)NPCAttribute.ATR_MAX]{1, 1, 0, 0, 0, 0, 0, 0};
         protected int[] hitchances = new int[5];
-        protected int[] talentSkills = new int[(byte)NPCTalents.MaxTalents];
-        protected int[] talentValues = new int[(byte)NPCTalents.MaxTalents];
+        protected int[] talentSkills = new int[(byte)NPCTalent.MaxTalents];
+        protected int[] talentValues = new int[(byte)NPCTalent.MaxTalents];
 
         public int[] Attributes { get { return attributes; } set {
             if (value == null)
                 throw new ArgumentNullException("Attribute Value can't be null!");
-            if (value.Length != (byte)NPCAttributeFlags.ATR_MAX)
-                throw new ArgumentException("Value needs a length of " + (byte)NPCAttributeFlags.ATR_MAX);
+            if (value.Length != (byte)NPCAttribute.ATR_MAX)
+                throw new ArgumentException("Value needs a length of " + (byte)NPCAttribute.ATR_MAX);
             for (int i = 0; i < value.Length; i++)
                 attributes[i] = value[i];
         } }
@@ -145,8 +145,8 @@ namespace GUC.WorldObjects.Character
             {
                 if (value == null)
                     throw new ArgumentNullException("TalentSkills Value can't be null!");
-                if (value.Length != (byte)NPCTalents.MaxTalents)
-                    throw new ArgumentException("Value needs a length of " + ((byte)NPCTalents.MaxTalents));
+                if (value.Length != (byte)NPCTalent.MaxTalents)
+                    throw new ArgumentException("Value needs a length of " + ((byte)NPCTalent.MaxTalents));
                 for (int i = 0; i < value.Length; i++)
                     talentSkills[i] = value[i];
             }
@@ -159,8 +159,8 @@ namespace GUC.WorldObjects.Character
             {
                 if (value == null)
                     throw new ArgumentNullException("TalentValues Value can't be null!");
-                if (value.Length != (byte)NPCTalents.MaxTalents)
-                    throw new ArgumentException("Value needs a length of " + ((byte)NPCTalents.MaxTalents));
+                if (value.Length != (byte)NPCTalent.MaxTalents)
+                    throw new ArgumentException("Value needs a length of " + ((byte)NPCTalent.MaxTalents));
                 for (int i = 0; i < value.Length; i++)
                     talentValues[i] = value[i];
             }

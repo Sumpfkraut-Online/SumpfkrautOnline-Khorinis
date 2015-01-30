@@ -64,7 +64,7 @@ namespace GUC.WorldObjects.Mobs
             if (v.State == 0 && this.State != 0)
             {
                 v.OnTrigger(new zCVob(process, 0), new zCVob(process, 0));
-                if (this.VobType == VobTypes.MobDoor)
+                if (this.VobType == VobType.MobDoor)
                 {
                     v.GetModel().StartAnimation("T_S0_2_S1");
                 }
@@ -72,7 +72,7 @@ namespace GUC.WorldObjects.Mobs
             else if (v.State != 0 && this.State == 0)
             {
                 v.OnUnTrigger(new zCVob(process, 0), new zCVob(process, 0));
-                if (this.VobType == VobTypes.MobDoor)
+                if (this.VobType == VobType.MobDoor)
                 {
                     v.GetModel().StartAnimation("T_S1_2_S0");
                 }

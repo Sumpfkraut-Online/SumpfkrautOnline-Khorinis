@@ -21,10 +21,10 @@ namespace GUC.Server.Scripts.Items.Scrolls
         {
             TimePerMana = 30;
             DamagePerLevel = 25;
-            DamageType = Enumeration.DamageType.DAM_FLY;
+            DamageType = Enumeration.DamageTypes.DAM_FLY;
             CanTurnDuringInvest = true;
             TargetCollectionAlgo = Enumeration.SPELL_TARGET_COLLECT.TARGET_COLLECT_FOCUS_FALLBACK_NONE;
-            TargetCollectType = Enumeration.SPELL_TARGET_TYPE.TARGET_TYPE_NPCS;
+            TargetCollectType = Enumeration.SPELL_TARGET_TYPES.TARGET_TYPE_NPCS;
             TargetCollectRange = 1000;
 
             Name = "Windfaust";
@@ -61,7 +61,7 @@ namespace GUC.Server.Scripts.Items.Scrolls
             Value = 25;
 
             Visual = "ItSc_Windfist.3DS";
-            Materials = Enumeration.MaterialTypes.MAT_LEATHER;
+            Materials = Enumeration.MaterialType.MAT_LEATHER;
             Wear = Enumeration.ArmorFlags.WEAR_EFFECT;
 
             Effect = "SPELLFX_WEAKGLIMMER";

@@ -42,14 +42,14 @@ namespace GUC.Server.Network.Messages.NpcCommands
 
         public void Write(Item item, AddressOrGUID addGuild)
         {
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.ItemChangeAmount);
+            stream.Write((byte)NetworkID.ItemChangeAmount);
             stream.Write(item.ID);
             stream.Write(item.Amount);
 
-            Program.server.server.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, addGuild, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, addGuild, true);
         }
     }
 }

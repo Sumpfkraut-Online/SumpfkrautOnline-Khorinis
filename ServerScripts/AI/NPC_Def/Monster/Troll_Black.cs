@@ -31,7 +31,7 @@ namespace GUC.Server.Scripts.AI.NPC_Def.Monster
 
             WeaponMode = 1;
 
-            this.setDamageType(DamageType.DAM_FLY);
+            this.setDamageType(DamageTypes.DAM_FLY);
 
 
 

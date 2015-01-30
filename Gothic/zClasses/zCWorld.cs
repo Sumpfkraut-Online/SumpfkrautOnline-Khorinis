@@ -25,7 +25,9 @@ namespace Gothic.zClasses
             SetSkyControlerOutdoor = 0x00620410,
             AddVob = 0x00624810,
             InsertVobInWorld = 0x00780330,
-            TraceRayNearestHit = 0x00621B80
+            TraceRayNearestHit = 0x00621B80,
+            DisableVob = 0x00780460,
+
         }
 
         public enum HookSize
@@ -289,6 +291,11 @@ namespace Gothic.zClasses
         public void RemoveVob(zCVob vob)
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.RemoveVob, new CallValue[] { vob });
+        }
+
+        public void DisableVob(zCVob vob)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.DisableVob, new CallValue[] { vob });
         }
 
         public zCViewProgressBar GetProgressBar()

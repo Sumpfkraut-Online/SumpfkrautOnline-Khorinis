@@ -27,7 +27,7 @@ namespace GUC.Server.Scripts.Items.Food
             Description = "Sieht gefährlich aus!";
 
             ScemeName = "POTIONFAST";
-            Materials = Enumeration.MaterialTypes.MAT_GLAS;
+            Materials = Enumeration.MaterialType.MAT_GLAS;
 
             OnUse += new Scripting.Events.UseItemEventHandler(useItem);
 

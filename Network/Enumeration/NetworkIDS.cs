@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GUC.Enumeration
 {
-    public enum NetworkIDS : byte
+    public enum NetworkID : byte
     {
         ConnectionMessage,
         DisconnectMessage,
@@ -111,6 +111,14 @@ namespace GUC.Enumeration
         CreateListText,
         CreateListButton,
         CreateListTextBox,
+
+        CreateText3D,
+        CreateTextPlayer,
+
+
+        Text3DPosition,
+        Text3DAddRow,
+        Text3DClear,
 
         SetTexture,
         SetSize,

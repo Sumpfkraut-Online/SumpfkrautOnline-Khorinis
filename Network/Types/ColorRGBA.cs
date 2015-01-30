@@ -21,7 +21,10 @@ namespace GUC.Types
         {
             set(r, g, b, a);
         }
-
+        public ColorRGBA(byte r, byte g, byte b):this(r,g,b,255)
+        {
+          
+        }
         public void set(ColorRGBA color)
         {
             set(color.R, color.G, color.B, color.A);

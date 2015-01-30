@@ -25,7 +25,7 @@ namespace GUC.Server.Scripts.Items.Misc
             Visual = "ItMi_SilverNecklace.3ds";
             Description = Name;
             
-            Materials = Enumeration.MaterialTypes.MAT_METAL;
+            Materials = Enumeration.MaterialType.MAT_METAL;
             Flags = Enumeration.Flags.ITEM_MULTI | Enumeration.Flags.ITEM_AMULET;
 
             CreateItemInstance();

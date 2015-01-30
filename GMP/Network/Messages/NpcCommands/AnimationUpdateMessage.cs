@@ -45,7 +45,7 @@ namespace GUC.Network.Messages.NpcCommands
             BitStream stream = Program.client.sentBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.AnimationUpdateMessage);
+            stream.Write((byte)NetworkID.AnimationUpdateMessage);
             stream.Write(proto.ID);
             stream.Write(proto.Animation);
 

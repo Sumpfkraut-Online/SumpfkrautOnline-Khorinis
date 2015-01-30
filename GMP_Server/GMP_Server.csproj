@@ -106,6 +106,9 @@
     <Compile Include="Scripting\GUI\GuiList\ListRow.cs" />
     <Compile Include="Scripting\GUI\GuiList\ListText.cs" />
     <Compile Include="Scripting\GUI\GuiList\ListTextBox.cs" />
+    <Compile Include="Scripting\GUI\PlayerText.cs" />
+    <Compile Include="Scripting\GUI\Text3D.cs" />
+    <Compile Include="Scripting\GUI\Text3DRow.cs" />
     <Compile Include="Scripting\GUI\TextArea.cs" />
     <Compile Include="Scripting\GUI\MessagesBox.cs" />
     <Compile Include="Scripting\GUI\Text.cs" />

@@ -136,11 +136,15 @@ namespace GUC.WorldObjects.Character
             }
             npc.HP = 0;
             npc.SetPosition(-1000, -100000, -100000);
-            npc.Disable();
+
+            
 
             int WeaponMode = weaponMode;
             setWeaponMode(0);
             weaponMode = WeaponMode;
+
+            oCGame.Game(process).World.DisableVob(npc);
+            oCGame.Game(process).GetSpawnManager().DeleteNPC(npc);
 
             //oCGame.Game(process).GetSpawnManager().DeleteNPC(npc);//Bei verwandlung wird bedmempointer aufgerufen :/
             //new DespawnTimer(this.Address);
@@ -268,6 +272,8 @@ namespace GUC.WorldObjects.Character
                 if (this.Armor != null)
                     npc.UnequipItem(new oCItem(process, this.Armor.Address));
                 npc.Disable();
+
+                
             }
         }
 
@@ -591,5 +597,63 @@ namespace GUC.WorldObjects.Character
                 }
             }
         }
+
+
+        public void SetVisual(String aVisual, String aBodyMesh, String aHeadMesh, int aBodyTex, int aSkinColor, int aHeadTex, int aTeethTex)
+        {
+            String _visual = aVisual.ToUpper().Trim();
+            bool sameVisual = _visual == this.Visual;
+
+            this.Visual = _visual;
+            this.BodyMesh = aBodyMesh;
+            this.BodyTex = aBodyTex;
+            this.SkinColor = aSkinColor;
+            this.HeadMesh = aHeadMesh;
+            this.HeadTex = aHeadTex;
+            this.TeethTex = aTeethTex;
+
+            if (this.Address == 0)
+                return;
+            
+            Process process = Process.ThisProcess();
+            oCNpc npc = new oCNpc(process, this.Address);
+            
+            if (sameVisual)
+            {
+                npc.SetAdditionalVisuals(BodyMesh, bodyTex, skinColor, HeadMesh, headTex, teethTex, -1);
+            }
+            else
+            {
+                npc.ClearOverlays();
+                this.Overlays.Clear();
+
+
+                npc.CloseSpellBook(true);
+                npc.SetWeaponMode2(0);
+                npc.AniCtrl.SearchStandAni();
+
+
+                npc.Shrink();
+
+                npc.MDSName.Set(_visual);
+                npc.SetAdditionalVisuals(BodyMesh, bodyTex, skinColor, HeadMesh, headTex, teethTex, -1);
+
+
+                if (this == Player.Hero)
+                    npc.UnShrink();
+                else
+                    npc.AvoidShrink(1000);
+
+
+
+                this.setWeaponMode(this.WeaponMode);
+
+                //00AB1F28
+                
+            }
+        }
+
+
+
     }
 }

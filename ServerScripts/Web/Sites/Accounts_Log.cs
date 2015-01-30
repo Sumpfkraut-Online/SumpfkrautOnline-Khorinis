@@ -84,13 +84,13 @@ namespace GUC.Server.Scripts.Web.Sites
                     sb.AppendLine("\t\t\t\t\t<td>");
                     String type = "";
                     if (alc.type >= (long)GUC.Server.Scripts.Accounts.Logs.SQLiteLogger.CharStat.HitChances)
-                        type = ""+(NPCTalents)(alc.type - (long)GUC.Server.Scripts.Accounts.Logs.SQLiteLogger.CharStat.HitChances);
+                        type = ""+(NPCTalent)(alc.type - (long)GUC.Server.Scripts.Accounts.Logs.SQLiteLogger.CharStat.HitChances);
                     else if (alc.type >= (long)GUC.Server.Scripts.Accounts.Logs.SQLiteLogger.CharStat.TalentSkillStart)
-                        type = "" + (NPCTalents)(alc.type - (long)GUC.Server.Scripts.Accounts.Logs.SQLiteLogger.CharStat.TalentSkillStart);
+                        type = "" + (NPCTalent)(alc.type - (long)GUC.Server.Scripts.Accounts.Logs.SQLiteLogger.CharStat.TalentSkillStart);
                     else if (alc.type >= (long)GUC.Server.Scripts.Accounts.Logs.SQLiteLogger.CharStat.TalentValuesStart)
-                        type = "" + (NPCTalents)(alc.type - (long)GUC.Server.Scripts.Accounts.Logs.SQLiteLogger.CharStat.TalentValuesStart);
+                        type = "" + (NPCTalent)(alc.type - (long)GUC.Server.Scripts.Accounts.Logs.SQLiteLogger.CharStat.TalentValuesStart);
                     else if (alc.type >= (long)GUC.Server.Scripts.Accounts.Logs.SQLiteLogger.CharStat.AttributeStart)
-                        type = "" + (NPCAttributeFlags)(alc.type - (long)GUC.Server.Scripts.Accounts.Logs.SQLiteLogger.CharStat.AttributeStart);
+                        type = "" + (NPCAttribute)(alc.type - (long)GUC.Server.Scripts.Accounts.Logs.SQLiteLogger.CharStat.AttributeStart);
                     type += " | " + alc.type;
                     sb.AppendLine("\t\t\t\t\t\t" + type);
                     sb.AppendLine("\t\t\t\t\t</td>");

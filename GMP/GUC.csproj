@@ -58,6 +58,8 @@
     <Compile Include="GUI\GuiList\ListRow.cs" />
     <Compile Include="GUI\GuiList\ListText.cs" />
     <Compile Include="GUI\GuiList\ListTextBox.cs" />
+    <Compile Include="GUI\PlayerText.cs" />
+    <Compile Include="GUI\Text3D.cs" />
     <Compile Include="GUI\TextArea.cs" />
     <Compile Include="GUI\MessageBox.cs" />
     <Compile Include="GUI\Text.cs" />

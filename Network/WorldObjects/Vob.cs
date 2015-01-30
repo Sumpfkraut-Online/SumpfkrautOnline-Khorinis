@@ -63,7 +63,7 @@ namespace GUC.WorldObjects
 
         public int ID { get { return this._id; } set { if (_id != 0) throw new Exception("ID can be only set if 0"); _id = value; } }
 
-        public VobTypes VobType { get { return (VobTypes)this.type; } set { type = (int)value; } }
+        public VobType VobType { get { return (VobType)this.type; } set { type = (int)value; } }
 
         public bool IsSpawned { get { return spawned; } set { spawned = value; } }
 
@@ -175,26 +175,26 @@ namespace GUC.WorldObjects
         #endregion
 
 
-        public static Vob createVob(VobTypes vt)
+        public static Vob createVob(VobType vt)
         {
             Vob v = null;
-            if (vt == VobTypes.Npc)
+            if (vt == VobType.Npc)
                 v = new NPC();
-            else if (vt == VobTypes.Player)
+            else if (vt == VobType.Player)
                 v = new Player();
-            else if (vt == VobTypes.Item)
+            else if (vt == VobType.Item)
                 v = new Item();
-            else if (vt == VobTypes.Vob)
+            else if (vt == VobType.Vob)
                 v = new Vob();
-            else if (vt == VobTypes.MobInter)
+            else if (vt == VobType.MobInter)
                 v = new MobInter();
-            else if (vt == VobTypes.MobBed)
+            else if (vt == VobType.MobBed)
                 v = new MobBed();
-            else if (vt == VobTypes.MobContainer)
+            else if (vt == VobType.MobContainer)
                 v = new MobContainer();
-            else if (vt == VobTypes.MobDoor)
+            else if (vt == VobType.MobDoor)
                 v = new MobDoor();
-            else if (vt == VobTypes.MobSwitch)
+            else if (vt == VobType.MobSwitch)
                 v = new MobSwitch();
 
 

@@ -42,6 +42,16 @@ namespace Gothic.zTypes
             }
         }
 
+        public float get(int index)
+        {
+            if (index > 2)
+                throw new ArgumentException("Index can not be larger that 3");
+
+
+            return Process.ReadFloat(Address + index * 4);
+        }
+
+
         public float X 
         {
             get { return Process.ReadFloat(Address); }

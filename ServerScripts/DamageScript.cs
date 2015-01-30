@@ -34,7 +34,7 @@ namespace GUC.Server.Scripts
         public delegate void NPCDamgeHandler(NPCProto victim, NPCProto attacker, int damage, bool dropUnconscious, bool dropDead);
         public static event NPCDamgeHandler Damages;
 
-		public static void OnDamage(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, Vob aggressor, int weaponMode, Spell spell, Item weapon, float fallDownDistanceY) {
+		public static void OnDamage(NPCProto victim, DamageTypes damageMode, Vec3f hitLoc, Vec3f flyDir, Vob aggressor, int weaponMode, Spell spell, Item weapon, float fallDownDistanceY) {
 			if(victim.getUserObjects("IMMORTAL") != null && (bool)victim.getUserObjects("IMMORTAL"))//Victim is immortal!
 				return;
             NPCProto attacker = null;
@@ -51,7 +51,7 @@ namespace GUC.Server.Scripts
 
 			Console.WriteLine("OnDamage: "+damageMode+" | "+weaponMode+" | "+spell+" | "+weapon+" | "+attacker);
 
-			if(damageMode == DamageType.DAM_FALL) {
+			if(damageMode == DamageTypes.DAM_FALL) {
                 damage = (int)(fallDownDistanceY-500)/100 * 20;
 			}
 
@@ -68,11 +68,11 @@ namespace GUC.Server.Scripts
 			bool toUnconscious = false;
 			bool canKill = true;
 			if(attacker != null && victim.HP - damage <= 1) {
-				if(damageMode == DamageType.DAM_BLUNT) {
+				if(damageMode == DamageTypes.DAM_BLUNT) {
 					canKill = false;
 				}
 
-				if(damageMode == DamageType.DAM_BLUNT || damageMode == DamageType.DAM_EDGE)
+				if(damageMode == DamageTypes.DAM_BLUNT || damageMode == DamageTypes.DAM_EDGE)
 					toUnconscious = true;
 			}
 
