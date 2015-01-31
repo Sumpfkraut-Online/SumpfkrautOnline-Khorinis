@@ -17,6 +17,7 @@ namespace Gothic.zClasses
 
         public enum Offsets
         {
+            m_bFillZ = 8,
             next = 12,
             text_lines = 132,
             font = 0x64
@@ -45,7 +46,9 @@ namespace Gothic.zClasses
             any = 0x007A5EC0,
             nax = 0x007A5E00,
             nay = 0x007A5E40,
-            FontY = 0x007A99F0
+            FontY = 0x007A99F0,
+            DrawItems = 0x007A6750,
+            Blit = 0x007A63C0
         }
 
         public enum HookSizes
@@ -56,7 +59,8 @@ namespace Gothic.zClasses
             SetColor = 6,
             SetFont_Str = 9,
             SetPos = 5,
-            Move = 5
+            Move = 5,
+            DrawItems = 5
         }
 
         public zCView()
@@ -88,6 +92,7 @@ namespace Gothic.zClasses
             }
         }
 
+        public bool FillZ { get { return Process.ReadInt(Address + (int)Offsets.m_bFillZ) >= 1; } set { Process.Write(value ? 1 : 0, Address + (int)Offsets.m_bFillZ); } }
 
 
         public void Top()
@@ -159,6 +164,11 @@ namespace Gothic.zClasses
             return Create(process, x, y, width, height, zTviewID.VIEW_ITEM);
         }
 
+
+        public void Blit()
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.Blit, new CallValue[] {  });
+        }
 
         public void InsertBack(zString texture)
         {

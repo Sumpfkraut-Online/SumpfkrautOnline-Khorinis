@@ -11,6 +11,9 @@ using System.Collections;
 
 namespace GUC.Server.Scripting.Objects
 {
+    /// <summary>
+    /// Get a specific World by World.getWorld("map.zen");
+    /// </summary>
     public class World : IEnumerable
     {
         public enum WeatherType
@@ -26,7 +29,6 @@ namespace GUC.Server.Scripting.Objects
         {
             this.world = world;
         }
-
 
         /// <summary>
         /// Returns the world with the specified name.

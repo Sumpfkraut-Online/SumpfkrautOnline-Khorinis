@@ -11,6 +11,56 @@ namespace GUC.Hooks
 {
     public class hItem
     {
+        static zCWorld rndrWorld = null;
+        public static Int32 ViewDraw_DrawChildren(String message)
+        {
+            try
+            {
+                Process process = Process.ThisProcess();
+
+                return 0;
+
+
+                GUC.WorldObjects.Character.Player pl = GUC.WorldObjects.Character.Player.Hero;
+                if (pl == null)
+                    return 0;
+                
+                if (pl.ItemList.Count == 0)
+                    return 0;
+                
+                if (pl.ItemList[0].Address == 0)
+                    return 0;
+                if (oCGame.Game(process).World.Address == 0)
+                    return 0;
+
+                if (rndrWorld == null)
+                {
+                    rndrWorld = zCWorld.Create(process);
+                    rndrWorld.IsInventoryWorld = true;
+                }
+                oCItem item = new oCItem(process, pl.ItemList[0].Address);
+
+                zCView zV = zCView.Create(Process.ThisProcess(), 0, 0, 0x2000, 0x2000);
+                zV.FillZ = true;
+                zV.Blit();
+
+                zCView.GetScreen(Process.ThisProcess()).InsertItem(zV, 0);
+                item.RenderItem(rndrWorld, zV, 0.0f);
+                zCView.GetScreen(Process.ThisProcess()).RemoveItem(zV);
+                zV.Dispose();
+
+                
+
+            }
+            catch (Exception ex)
+            {
+                zERROR.GetZErr(Process.ThisProcess()).Report(4, 'G', ex.ToString(), 0, "ViewDraw_DrawChildren", 0);
+            }
+            return 0;
+        }
+
+
+
         public static int itemaddr;
         public static Int32 InitByScript(String message)
         {
