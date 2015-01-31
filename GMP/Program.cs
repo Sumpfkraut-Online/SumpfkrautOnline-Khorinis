@@ -43,6 +43,10 @@ namespace GUC
             try
             {
                 Process process = Process.ThisProcess();
+
+
+                Version v = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "GUC-Version: " + v.ToString(), 0, "Program.cs", 0);
                 
                 StartupState.SetUpConfig();
 
@@ -93,6 +97,12 @@ namespace GUC
 
         public static void addHooks(Process process)
         {
+
+
+
+            //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hItem).GetMethod("ViewDraw_DrawChildren"), (int)0x00704B90, (int)7, 0);
+
+
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(Externals).GetMethod("AddExternals"), (int)0x006D4780, (int)7, 1);
 
 
@@ -545,7 +555,7 @@ namespace GUC
             try
             {
                 Process process = Process.ThisProcess();
-
+                
 
                 InputHooked.Update(process);
 

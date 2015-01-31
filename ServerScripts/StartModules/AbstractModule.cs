@@ -28,6 +28,7 @@ namespace GUC.Server.Scripts.StartModules
 				Next.start(player);
 			else
 				player.Spawn();
+            
 		}
 		
 		

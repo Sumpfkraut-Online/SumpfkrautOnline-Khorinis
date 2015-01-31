@@ -9,6 +9,11 @@ using GUC.WorldObjects.Character;
 
 namespace GUC.Server.Scripting
 {
+    /// <summary>
+    /// The scriptmanager is internally used to load the c# Scripts.
+    /// And it manages the Timers. 
+    /// The class can be accessed by ScriptManager.Self
+    /// </summary>
     public class ScriptManager
     {
         private Assembly m_Assembly;
@@ -43,6 +48,7 @@ namespace GUC.Server.Scripting
 
         private void Load()
         {
+            
             try
             {
                 m_Assembly = System.Reflection.Assembly.LoadFile(Path.GetFullPath("scripts/_compiled/ServerScripts.dll"));
@@ -144,7 +150,7 @@ namespace GUC.Server.Scripting
                 return;
 
             m_Startuped = true;
-
+            
 
             try
             {

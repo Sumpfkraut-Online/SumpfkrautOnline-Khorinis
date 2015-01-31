@@ -41,6 +41,7 @@ namespace GUC.Server.Scripts
             Test.Text3DTest.Init();
 
             
+            
             ItemInit.Init();
             DefaultItems.Init();
             

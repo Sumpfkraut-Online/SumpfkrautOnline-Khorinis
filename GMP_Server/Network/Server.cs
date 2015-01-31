@@ -76,7 +76,7 @@ namespace GUC.Server.Network
 
         public void Start(ushort port, ushort maxConnections, String pw)
         {
-            pw = "ver2.07" + pw;
+            pw = "ver2.08" + pw;
 
 
             SocketDescriptor socketDescriptor = new SocketDescriptor();
