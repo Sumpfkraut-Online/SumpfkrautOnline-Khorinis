@@ -229,6 +229,18 @@ namespace GUC.Server.Scripting.Objects.Character
         internal GUC.WorldObjects.Character.NPCProto proto { get { return (GUC.WorldObjects.Character.NPCProto)vob; } }
 
 
+        public NPCProto[] getAll()
+        {
+            NPCProto[] protoList = new NPCProto[sWorld.NpcProtoList.Count()];
+
+            for (int i = 0; i < sWorld.NpcProtoList.Count(); i++ )
+            {
+                protoList[i] = sWorld.NpcProtoList[i].ScriptingNPC;
+            }
+
+            return protoList;
+        }
+
         #region Fields
 
         public String Name { get { return proto.Name; } set { setName(value); } }
@@ -1278,6 +1290,26 @@ namespace GUC.Server.Scripting.Objects.Character
         #endregion
 
         #endregion
+
+        #region OnAnimation
+        public event GUC.Server.Scripting.Events.NPCAnimationUpdate OnAnimation;
+        internal void iOnAnimation(NPCProto proto, short animID, short oldAnimID)
+        {
+            if (OnAnimation != null)
+                OnAnimation(proto, animID, oldAnimID);
+        }
+
+        public static event GUC.Server.Scripting.Events.NPCAnimationUpdate sOnAnimation;
+        internal static void isOnAnimation(NPCProto proto, short animID, short oldAnimID)
+        {
+            proto.iOnAnimation(proto, animID, oldAnimID);
+            if (sOnAnimation != null)
+                sOnAnimation(proto, animID, oldAnimID);
+        }
+
+
+        #endregion
+
 
         #region OnEquip
         public event GUC.Server.Scripting.Events.NPCEquipEventHandler OnEquip;

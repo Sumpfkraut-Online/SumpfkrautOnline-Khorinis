@@ -25,10 +25,13 @@ namespace GUC.Server.Network.Messages.NpcCommands
             if (!(vob is NPCProto))
                 throw new Exception("Vob is not an NPC!");
 
+            short oldAnim = ((NPCProto)vob).Animation;
             ((NPCProto)vob).Animation = anim;
 
 
             Write((NPCProto)vob, packet.guid);
+
+            Scripting.Objects.Character.NPCProto.isOnAnimation(((NPCProto)vob).ScriptingNPC, anim, oldAnim);
         }
 
         public static void Write(NPCProto proto)

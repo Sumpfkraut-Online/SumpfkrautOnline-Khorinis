@@ -36,6 +36,7 @@ namespace GUC
         public static HookInfos ParSymbol_GetValueHook;
 
         public static List<timer.Timer> TimerList = new List<timer.Timer>();
+        public static long Now = 0;
 
 
         public static Int32 InjectedMain(String message)
@@ -45,10 +46,10 @@ namespace GUC
                 Process process = Process.ThisProcess();
 
 
-                Version v = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "GUC-Version: " + v.ToString(), 0, "Program.cs", 0);
+                
                 
                 StartupState.SetUpConfig();
+                
 
                 if (StartupState.clientOptions.SaveMode)
                 {
@@ -77,6 +78,9 @@ namespace GUC
 
 
 
+                    Scripting.ScriptManager scriptManager = new Scripting.ScriptManager();
+                    scriptManager.Init();
+                    scriptManager.Startup();
 
                     StartupState.Start();
 
@@ -565,6 +569,7 @@ namespace GUC
 
 
                 long time = DateTime.Now.Ticks;
+                Now = time;
                 timer.Timer[] arr = TimerList.ToArray();
                 foreach (timer.Timer timer in arr)
                 {

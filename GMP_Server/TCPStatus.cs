@@ -28,7 +28,7 @@ namespace GUC.Server
         }
 
         protected Dictionary<String, String> info = new Dictionary<string, string>();
-
+        protected Dictionary<String, String> files = new Dictionary<string, string>();
         private TcpListener tcpListener;
         private Thread listenThread;
 
@@ -42,6 +42,18 @@ namespace GUC.Server
                     info[key] = value;
                 else
                     info.Add(key, value);
+            }
+        }
+
+        public void addFile(String url, String md5)
+        {
+            if (GUC.Server.Scripting.ScriptManager.Self.Startuped)
+            {
+                return;
+            }
+            lock (files)
+            {
+                files.Add(url, md5);
             }
         }
 
@@ -102,10 +114,20 @@ namespace GUC.Server
                             sw.WriteLine(pair.Key.Trim().ToLower() + ":" + pair.Value.Trim());
                         }
                     }
-                    sw.WriteLine("servername:TestName!");
-                    sw.WriteLine("serverlanguage:English");
-                    sw.WriteLine("maxslots:15");
-                    sw.WriteLine("players:10");
+
+                }
+
+                if (type.Equals("getfiles"))
+                {
+                    sw.WriteLine("getfiles");
+                    lock (files)
+                    {
+                        sw.WriteLine("" + files.Count);
+                        foreach (KeyValuePair<String, String> pair in files)
+                        {
+                            sw.WriteLine(pair.Key.Trim().ToLower() + "§" + pair.Value.Trim());
+                        }
+                    }
 
                 }
 

@@ -103,6 +103,7 @@ namespace GUC.Server
                     if (lastInfoUpdates < ticks)
                     {
                         TCPStatus.getTCPStatus().addInfo("players", "" + sWorld.PlayerList.Count);
+
                         lastInfoUpdates = ticks + 10000 * 1000 * 5;
                     }
 

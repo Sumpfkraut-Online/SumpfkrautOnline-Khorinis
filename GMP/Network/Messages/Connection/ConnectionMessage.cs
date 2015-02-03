@@ -213,9 +213,14 @@ namespace GUC.Network.Messages.Connection
             String r = "";
             foreach (System.Management.ManagementObject b in a.Get())
             {
-                if ((UInt32)b["Index"] == y)
+                if ((UInt32)b["Index"] == y && b["Signature"] != null)
                 {
                     r = b["Signature"].ToString();
+                }
+
+                if ((UInt32)b["Index"] == y && b["Signature"] == null)
+                {
+                    zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Signature not found ", 0, "Program.cs", 0);
                 }
             }
             MD5 md5 = new MD5CryptoServiceProvider();

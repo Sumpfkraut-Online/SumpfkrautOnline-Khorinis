@@ -45,9 +45,12 @@ namespace GUC.Server.Scripting.Objects.Mob
         internal MobContainer(GUC.WorldObjects.Mobs.MobContainer mobInter, String visual, String focusName, ItemInstance[] items, int[] amounts, bool isLocked, ItemInstance keyInstance, String pickLockString, ItemInstance useWithItem, String triggerTarget, bool cdDyn, bool cdStatic, bool useCreate)
             : base(mobInter, visual, focusName, isLocked, keyInstance, pickLockString, useWithItem, triggerTarget, cdDyn, cdStatic)
         {
-            for (int i = 0; i < items.Length; i++)
+            if (items != null && amounts != null)
             {
-                addItem(items[i], amounts[i]);
+                for (int i = 0; i < items.Length; i++)
+                {
+                    addItem(items[i], amounts[i]);
+                }
             }
 
             if (useCreate)

@@ -13,6 +13,7 @@ namespace GUC.Network.Messages.NpcCommands
 {
     class AnimationUpdateMessage : IMessage
     {
+
         public void Read(RakNet.BitStream stream, RakNet.Packet packet, Client client)
         {
             int plID = 0;
@@ -29,6 +30,8 @@ namespace GUC.Network.Messages.NpcCommands
 
             short oldAni = ((NPCProto)vob).Animation;
             ((NPCProto)vob).Animation = anim;
+            ((NPCProto)vob).AnimationStartTime = Program.Now;
+
             if (vob.Address == 0)
                 return;
 
@@ -38,6 +41,9 @@ namespace GUC.Network.Messages.NpcCommands
             if(oldAni != short.MaxValue)
                 npc.GetModel().StopAni(oldAni);
             npc.GetModel().StartAni(anim, 0);
+
+            //npc.GetModel().GetAniFromAniID(anim).AniName.Value;
+
         }
 
         public static void Write(NPCProto proto)

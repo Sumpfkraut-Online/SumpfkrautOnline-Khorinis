@@ -64,6 +64,8 @@ namespace GMPStarter
                 Directory.CreateDirectory("./temp_guc");
             if (!Directory.Exists("./Data"))
                 Directory.CreateDirectory("./Data");
+            if (!Directory.Exists("./Downloads"))
+                Directory.CreateDirectory("./Downloads");
         }
 
 
@@ -74,6 +76,23 @@ namespace GMPStarter
             {
                 throw new Exception("Wrong Gothic Version. Gothic2.exe needs a MD5 hash of 3c436bd199caaaa64e9736e3cc1c9c32");
             }
+
+            String vdfsFile = "[VDFS]\r\n";
+            vdfsFile += "Data\\*.VDF\r\n";
+            vdfsFile += "Data\\*.MOD\r\n";
+            vdfsFile += "System\\UntoldChapter\\Data\\*.VDF\r\n";
+            vdfsFile += "System\\UntoldChapter\\Downloads\\"+ip+"_"+port+"\\*.VDF\r\n";
+            vdfsFile += "[END]\r\n";
+
+
+            if (System.IO.File.Exists("../../vdfs.cfg"))
+            {
+                System.IO.File.Delete("../../vdfs.cfg");
+            }
+            System.IO.File.WriteAllText("../../vdfs.cfg", vdfsFile);
+
+
+
 
             if (co == null)
                 co = getClientOptions();

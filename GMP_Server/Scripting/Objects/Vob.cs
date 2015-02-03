@@ -127,6 +127,12 @@ namespace GUC.Server.Scripting.Objects
             SpawnVobMessage.Write(vob);
         }
 
+        public virtual void Despawn()
+        {
+            GUC.WorldObjects.sWorld.getWorld(vob.Map).addVob(this.vob);
+            DespawnVobMessage.Write(vob);
+        }
+
         protected virtual void CreateVob()
         {
             if (created)

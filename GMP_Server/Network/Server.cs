@@ -76,7 +76,7 @@ namespace GUC.Server.Network
 
         public void Start(ushort port, ushort maxConnections, String pw)
         {
-            pw = "ver2.08" + pw;
+            pw = "ver2.081" + pw;
 
 
             SocketDescriptor socketDescriptor = new SocketDescriptor();
@@ -163,6 +163,9 @@ namespace GUC.Server.Network
                             Log.Logger.log(Log.Logger.LOG_ERROR, ex.Source + " <br>" + ex.Message + "<br>" + ex.StackTrace);
                             ServerInterface.CloseConnection(p.guid, true);
                         }
+                        break;
+                    default:
+                        Log.Logger.log(Log.Logger.LOG_INFO, "Message-Type: " + ((DefaultMessageIDTypes)p.data[0]));
                         break;
                 }
                 ServerInterface.DeallocatePacket(p);
