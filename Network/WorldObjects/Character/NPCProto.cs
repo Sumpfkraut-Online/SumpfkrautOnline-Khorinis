@@ -32,6 +32,7 @@ namespace GUC.WorldObjects.Character
         protected short animation = short.MaxValue;
 
         public short Animation { get { return animation; } set { animation = value; } }
+        public long AnimationStartTime = 0;
         #endregion
 
 

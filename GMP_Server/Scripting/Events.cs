@@ -40,6 +40,7 @@ namespace GUC.Server.Scripting
         public delegate void MobContainerPickEventHandler(MobInter sender, NPCProto npc, char pick);
 
         public delegate void NPCEquipEventHandler(NPCProto npc, Item item);
+        public delegate void NPCAnimationUpdate(NPCProto npc, short animID, short oldAnimID);
 
         public delegate void NPCCanSeeEventHandler(int callbackID, NPCProto proto, Vob vob, bool canSee);
         

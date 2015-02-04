@@ -66,6 +66,7 @@ namespace GUC.Network
 
             messageListener.Add((byte)NetworkID.CreateVobMessage, new CreateVobMessage());
             messageListener.Add((byte)NetworkID.SpawnVobMessage, new SpawnVobMessage());
+            messageListener.Add((byte)NetworkID.DespawnVobMessage, new DespawnVobMessage());
 
             messageListener.Add((byte)NetworkID.SetVobPositionMessage, new SetVobPositionMessage());
             messageListener.Add((byte)NetworkID.SetVobDirectionMessage, new SetVobDirectionMessage());
@@ -146,7 +147,7 @@ namespace GUC.Network
                 zERROR.GetZErr(Process.ThisProcess()).Report(4, 'G', "Verbindung nicht möglich!", 0, "Client.cs", 0);
             this.ip = ip; this.port = port; this.pw = pw;
             bool b;
-            pw = "ver2.08" + pw;
+            pw = "ver2.081" + pw;
             b = client.Connect(ip, port, pw, pw.Length) == ConnectionAttemptResult.CONNECTION_ATTEMPT_STARTED;
             client.SetOccasionalPing(true);
             if (!b)

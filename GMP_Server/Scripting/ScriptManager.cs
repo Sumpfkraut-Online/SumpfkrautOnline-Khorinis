@@ -46,6 +46,8 @@ namespace GUC.Server.Scripting
             }
         }
 
+        public bool Startuped { get { return m_Startuped; } }
+
         private void Load()
         {
             
@@ -149,7 +151,7 @@ namespace GUC.Server.Scripting
             if (m_Startuped)
                 return;
 
-            m_Startuped = true;
+            
             
 
             try
@@ -161,6 +163,7 @@ namespace GUC.Server.Scripting
             {
                 Log.Logger.log(Log.Logger.LOG_ERROR, "GUC.Server.Scripts.Startup-Class could not be found!" + "<br>" + ex.Source + "<br>" + ex.Message + "<br>" + ex.StackTrace);
             }
+            m_Startuped = true;
         }
 
         internal void Update()

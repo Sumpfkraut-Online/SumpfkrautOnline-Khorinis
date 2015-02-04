@@ -25,6 +25,18 @@ namespace GUC.Server.Scripting.Objects.Character
             get { return (WorldObjects.Character.Player)this.proto; }
         }
 
+        public Player[] getAll()
+        {
+            Player[] protoList = new Player[sWorld.PlayerList.Count()];
+
+            for (int i = 0; i < sWorld.PlayerList.Count(); i++)
+            {
+                protoList[i] = (Player)sWorld.PlayerList[i].ScriptingNPC;
+            }
+
+            return protoList;
+        }
+
 
         public static void ShowStatusMenu(bool show)
         {

@@ -23,6 +23,16 @@ namespace GUC.WorldObjects
         public virtual void Despawn()
         {
             spawned = false;
+
+            if (this.Address == 0)
+                return;
+            Process process = Process.ThisProcess();
+            zCVob gVob = new zCVob(process, this.Address);
+            oCGame.Game(process).World.RemoveVob(gVob);
+            sWorld.SpawnedVobDict.Remove(this.Address);
+
+            
+            this.Address = 0;
         }
 
         public virtual void Spawn(String map, Vec3f position, Vec3f direction)
@@ -77,8 +87,30 @@ namespace GUC.WorldObjects
         {
             this.Position = pos;
 
+           
+
             if (this.Address == 0)
                 return;
+
+
+             if (this is NPCProto)
+            {
+                NPCProto proto = (NPCProto)this;
+
+                if (proto.Animation == GUC.States.StartupState.StartJumpID)
+                    return;
+
+                if ((proto.Animation == GUC.States.StartupState.TurnLeftID || proto.Animation == GUC.States.StartupState.TurnRightID) && proto.AnimationStartTime + 10000 * 1000 < Program.Now)
+                {
+                    oCNpc npc = new oCNpc(Process.ThisProcess(), this.Address);
+                    npc.GetModel().StopAni(proto.Animation);
+                    proto.Animation = short.MaxValue;
+
+                }
+            }
+
+            
+
 
             Process process = Process.ThisProcess();
             zCVob vob = new zCVob(process, this.Address);

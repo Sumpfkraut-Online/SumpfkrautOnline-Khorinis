@@ -51,7 +51,7 @@ namespace GUC.Server.Scripting.GUI
             this.sendButton = sendButton;
             this.startWritingButton = startWritingButton;
             this.resetButton = resetButton;
-
+            
 
             create(-1);
         }

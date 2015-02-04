@@ -74,6 +74,10 @@ namespace GUC.Network.Messages.PlayerCommands
 
         public void KeyReleased(int key)
         {
+            if (Cursor.noHandle)
+            {
+                return;
+            }
             
             if (!Player.sSendAllKeys && !Player.sSendKeys.Contains((byte)key))
                 return;
@@ -89,6 +93,12 @@ namespace GUC.Network.Messages.PlayerCommands
 
         public void KeyPressed(int key)
         {
+            if (Cursor.noHandle)
+            {
+                return;
+            }
+
+
             if (!Player.sSendAllKeys && !Player.sSendKeys.Contains((byte)key))
                 return;
             if (keys.ContainsKey((byte)key))

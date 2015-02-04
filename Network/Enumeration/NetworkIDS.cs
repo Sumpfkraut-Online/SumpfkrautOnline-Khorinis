@@ -31,6 +31,7 @@ namespace GUC.Enumeration
         ChangeNameMessage,
         CreateVobMessage,
         SpawnVobMessage,
+        DespawnVobMessage,
         SetVobPositionMessage,
         SetVobDirectionMessage,
 
