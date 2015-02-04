@@ -6,6 +6,7 @@ using RakNet;
 using GUC.Enumeration;
 using GUC.Network;
 using GUC.WorldObjects;
+using System.Collections;
 
 namespace GUC.Server.Scripting.Objects.Character
 {
@@ -25,7 +26,7 @@ namespace GUC.Server.Scripting.Objects.Character
             get { return (WorldObjects.Character.Player)this.proto; }
         }
 
-        public Player[] getAll()
+        public static Player[] getAll()
         {
             Player[] protoList = new Player[sWorld.PlayerList.Count()];
 
@@ -35,6 +36,14 @@ namespace GUC.Server.Scripting.Objects.Character
             }
 
             return protoList;
+        }
+
+        public static IEnumerator ToEnumerable()
+        {
+            foreach (GUC.WorldObjects.Character.Player item in sWorld.PlayerList)
+            {
+                yield return (Player)item.ScriptingNPC;
+            }
         }
 
 
@@ -489,5 +498,7 @@ namespace GUC.Server.Scripting.Objects.Character
 
         #endregion
 
+
+        
     }
 }

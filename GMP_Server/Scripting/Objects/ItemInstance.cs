@@ -5,6 +5,7 @@ using System.Text;
 using GUC.Enumeration;
 using RakNet;
 using GUC.Server.Scripting.Objects.Character;
+using System.Collections;
 
 namespace GUC.Server.Scripting.Objects
 {
@@ -18,6 +19,13 @@ namespace GUC.Server.Scripting.Objects
 
         protected String mItemInstance = "";
 
+        public static IEnumerator ToEnumerable()
+        {
+            foreach (ItemInstance item in ItemInstances.Values)
+            {
+                yield return item;
+            }
+        }
 
         public static ItemInstance getItemInstance(String name)
         {

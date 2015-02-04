@@ -128,6 +128,7 @@
     <Compile Include="Network\Messages\VobCommands\CreateVobMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\DespawnVobMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\PlayEffectMessage.cs" />
+    <Compile Include="Network\Messages\VobCommands\SetVobChangeMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\SetVobListPosDirMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\SetVobDirectionMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\SetVobPosDirMessage.cs" />
@@ -141,6 +142,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Scripting\Listener\IClientStartup.cs" />
+    <Compile Include="Scripting\Log.cs" />
     <Compile Include="Scripting\ScriptManager.cs" />
     <Compile Include="States\AbstractState.cs" />
     <Compile Include="States\GameState.cs" />

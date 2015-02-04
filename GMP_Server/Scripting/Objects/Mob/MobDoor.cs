@@ -33,6 +33,10 @@ namespace GUC.Server.Scripting.Objects.Mob
             : this(new GUC.WorldObjects.Mobs.MobDoor(), visual, focusName, isLocked, keyInstance, pickLockString, useWithItem, triggerTarget, cdDyn, cdStatic, true)
         { }
 
+        protected MobDoor()
+            : this(new GUC.WorldObjects.Mobs.MobDoor(), null, null, false, null, null, null, null, false, false, false)
+        { }
+
         internal MobDoor(GUC.WorldObjects.Mobs.MobDoor mobInter, String visual, String focusName, bool isLocked, ItemInstance keyInstance, String pickLockString, ItemInstance useWithItem, String triggerTarget, bool cdDyn, bool cdStatic, bool useCreate)
             : base(mobInter, visual, focusName, isLocked, keyInstance, pickLockString, useWithItem, triggerTarget, cdDyn, cdStatic)
         {

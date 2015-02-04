@@ -10,6 +10,7 @@ using GUC.Server.Network.Messages.VobCommands;
 using GUC.WorldObjects;
 using GUC.Server.Scripting.Objects.Mob;
 using GUC.Server.Scripting.Objects.Character;
+using System.Collections;
 
 namespace GUC.Server.Scripting.Objects
 {
@@ -68,6 +69,13 @@ namespace GUC.Server.Scripting.Objects
         {
 
         }
+
+        protected Vob()
+            : this(new GUC.WorldObjects.Vob(), null, false, false, false)
+        {
+
+        }
+
         internal Vob(GUC.WorldObjects.Vob vob, String visual, bool cdDyn, bool cdStatic, bool useCreate)
             : this(vob)
         {
@@ -79,6 +87,14 @@ namespace GUC.Server.Scripting.Objects
 
             if (useCreate)
                 CreateVob();
+        }
+
+        public static IEnumerator ToEnumerable()
+        {
+            foreach (GUC.WorldObjects.Vob item in sWorld.VobList)
+            {
+                yield return item.ScriptingVob;
+            }
         }
 
         /// <summary>
@@ -94,6 +110,72 @@ namespace GUC.Server.Scripting.Objects
         /// Returns or set the Direction of the vob.
         /// </summary>
         public Vec3f Direction { get { return vob.Direction; } set { setDirection(value); } }
+
+
+
+        public bool CDDyn { get { return vob.CDDyn; } set { setCDDyn(value); } }
+        public bool CDStatic { get { return vob.CDStatic; } set { setCDStatic(value); } }
+
+
+        public void setCDDyn(bool x)
+        {
+            vob.CDDyn = x;
+            setPropertie(VobChangeID.CDStatic, x);
+        }
+
+        public void setCDStatic(bool x)
+        {
+            vob.CDStatic = x;
+            setPropertie(VobChangeID.CDStatic, x);
+        }
+
+        #region SetPropertie
+        internal void setPropertie(VobChangeID vcID, bool x)
+        {
+            if (!created)
+                return;
+
+            BitStream stream = Program.server.SendBitStream;
+            stream.Reset();
+            stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
+            stream.Write((byte)NetworkID.SetVobChangeMessage);
+            stream.Write((byte)vcID);
+            stream.Write(vob.ID);
+            stream.Write(x);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+        }
+
+        internal void setPropertie(VobChangeID vcID, String x)
+        {
+            if (!created)
+                return;
+
+            BitStream stream = Program.server.SendBitStream;
+            stream.Reset();
+            stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
+            stream.Write((byte)NetworkID.SetVobChangeMessage);
+            stream.Write((byte)vcID);
+            stream.Write(vob.ID);
+            stream.Write(x);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+        }
+
+        internal void setPropertie(VobChangeID vcID, ItemInstance x)
+        {
+            if (!created)
+                return;
+            int ii = (x == null) ? 0 : x.ID;
+            
+            BitStream stream = Program.server.SendBitStream;
+            stream.Reset();
+            stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
+            stream.Write((byte)NetworkID.SetVobChangeMessage);
+            stream.Write((byte)vcID);
+            stream.Write(vob.ID);
+            stream.Write(ii);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+        }
+        #endregion
 
         /// <summary>
         /// Spawn your vob into the world.

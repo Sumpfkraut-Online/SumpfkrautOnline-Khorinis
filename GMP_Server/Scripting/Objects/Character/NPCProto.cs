@@ -229,7 +229,7 @@ namespace GUC.Server.Scripting.Objects.Character
         internal GUC.WorldObjects.Character.NPCProto proto { get { return (GUC.WorldObjects.Character.NPCProto)vob; } }
 
 
-        public NPCProto[] getAll()
+        public static NPCProto[] getAll()
         {
             NPCProto[] protoList = new NPCProto[sWorld.NpcProtoList.Count()];
 
@@ -239,6 +239,14 @@ namespace GUC.Server.Scripting.Objects.Character
             }
 
             return protoList;
+        }
+
+        public static IEnumerator ToEnumerable()
+        {
+            foreach (GUC.WorldObjects.Character.NPCProto item in sWorld.NpcProtoList)
+            {
+                yield return (NPCProto)item.ScriptingNPC;
+            }
         }
 
         #region Fields
@@ -1520,6 +1528,7 @@ namespace GUC.Server.Scripting.Objects.Character
         
 
         #endregion
+
 
     }
 }

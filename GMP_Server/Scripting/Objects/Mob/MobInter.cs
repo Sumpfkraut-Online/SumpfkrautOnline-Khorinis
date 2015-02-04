@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Server.Scripting.Objects.Character;
+using GUC.Enumeration;
 
 namespace GUC.Server.Scripting.Objects.Mob
 {
@@ -38,6 +39,10 @@ namespace GUC.Server.Scripting.Objects.Mob
             : this(new GUC.WorldObjects.Mobs.MobInter(), visual, focusName, useWithItem, triggerTarget, cdDyn, cdStatic, true)
         { }
 
+        protected MobInter()
+            : this(new GUC.WorldObjects.Mobs.MobInter(), null, null, null, null,  false, false, false)
+        { }
+
         internal MobInter(GUC.WorldObjects.Mobs.MobInter mobInter, String visual, String focusName, ItemInstance useWithItem, String triggerTarget, bool cdDyn, bool cdStatic, bool useCreate)
             : base(mobInter, visual, cdDyn, cdStatic, false)
         {
@@ -51,6 +56,32 @@ namespace GUC.Server.Scripting.Objects.Mob
         }
 
         private GUC.WorldObjects.Mobs.MobInter Proto { get { return (GUC.WorldObjects.Mobs.MobInter)this.vob; } }
+
+
+
+        public String FocusName { get { return Proto.FocusName; } set { setFocusName(value); } }
+        public String TriggerTarget { get { return Proto.TriggerTarget; } set { setTriggerTarget(value); } }
+        public ItemInstance UseWithItem { get { return (Proto.UseWithItem == null) ? null : Proto.UseWithItem.ScriptingProto; } set { setUseWithItem(value); } }
+
+
+        public void setFocusName(String x)
+        {
+            Proto.FocusName = x;
+            setPropertie(VobChangeID.FocusName, x);
+        }
+
+        public void setTriggerTarget(String x)
+        {
+            Proto.TriggerTarget = x;
+            setPropertie(VobChangeID.TriggerTarget, x);
+        }
+
+        public void setUseWithItem(ItemInstance x)
+        {
+            Proto.UseWithItem = (x == null) ? null : x.itemInstances;
+            setPropertie(VobChangeID.UseWithItem, x);
+        }
+
 
 
 

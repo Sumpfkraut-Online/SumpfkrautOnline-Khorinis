@@ -25,6 +25,7 @@ namespace GUC.Enumeration
         DropUnconsciousMessage,
         ReviveMessage,
         SetVisualMessage,
+        SetVobChangeMessage,
         DropItemMessage,
         TakeItemMessage,
         CamToVobMessage,
@@ -82,6 +83,21 @@ namespace GUC.Enumeration
         CamToPlayerFront,
 
         InterfaceOptionsMessage
+
+    }
+
+    public enum VobChangeID : byte
+    {
+        CDDyn,
+        CDStatic,
+
+        TriggerTarget,
+        FocusName,
+        UseWithItem,
+
+        IsLocked,
+        KeyInstance,
+        PickLockStr,
 
     }
 

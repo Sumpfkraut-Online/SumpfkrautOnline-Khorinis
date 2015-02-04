@@ -37,6 +37,10 @@ namespace GUC.Server.Scripting.Objects.Mob
             : this(new GUC.WorldObjects.Mobs.MobSwitch(), visual, focusName, useWithItem, triggerTarget, cdDyn, cdStatic, true)
         { }
 
+        protected MobSwitch()
+            : this(new GUC.WorldObjects.Mobs.MobSwitch(), null, null, null, null, false, false, false)
+        { }
+
         internal MobSwitch(GUC.WorldObjects.Mobs.MobSwitch mobInter, String visual, String focusName, ItemInstance useWithItem, String triggerTarget, bool cdDyn, bool cdStatic, bool useCreate)
             : base(mobInter, visual, focusName, useWithItem, triggerTarget, cdDyn, cdStatic, false)
         {

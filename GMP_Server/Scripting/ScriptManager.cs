@@ -48,6 +48,9 @@ namespace GUC.Server.Scripting
 
         public bool Startuped { get { return m_Startuped; } }
 
+        public int Slots { get { return Program.serverOptions.Slots; } }
+        
+
         private void Load()
         {
             

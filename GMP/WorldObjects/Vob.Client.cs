@@ -83,6 +83,36 @@ namespace GUC.WorldObjects
                 vob.BitField1 &= ~(int)zCVob.BitFlag0.collDetectionStatic;
         }
 
+        public void setCDDyn(bool x)
+        {
+            this.CDDyn = x;
+
+            if (this.Address == 0)
+                return;
+
+            Process process = Process.ThisProcess();
+            zCVob vob = new zCVob(process, this.Address);
+            if (CDDyn)
+                vob.BitField1 |= (int)zCVob.BitFlag0.collDetectionDynamic;
+            else
+                vob.BitField1 &= ~(int)zCVob.BitFlag0.collDetectionDynamic;
+        }
+
+        public void setCDStatic(bool x)
+        {
+            this.CDStatic = x;
+
+            if (this.Address == 0)
+                return;
+
+            Process process = Process.ThisProcess();
+            zCVob vob = new zCVob(process, this.Address);
+            if (CDStatic)
+                vob.BitField1 |= (int)zCVob.BitFlag0.collDetectionStatic;
+            else
+                vob.BitField1 &= ~(int)zCVob.BitFlag0.collDetectionStatic;
+        }
+
         public void setPosition(Vec3f pos)
         {
             this.Position = pos;
