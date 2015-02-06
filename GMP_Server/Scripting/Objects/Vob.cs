@@ -205,13 +205,12 @@ namespace GUC.Server.Scripting.Objects
             this.vob.Direction = direction;
 
 
-
             SpawnVobMessage.Write(vob);
         }
 
         public virtual void Despawn()
         {
-            GUC.WorldObjects.sWorld.getWorld(vob.Map).addVob(this.vob);
+            GUC.WorldObjects.sWorld.getWorld(vob.Map).removeVob(this.vob);
             DespawnVobMessage.Write(vob);
         }
 

@@ -1061,6 +1061,16 @@ namespace GUC.Server.Scripting.Objects.Character
             Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
+        public Item[] getEquippedItems()
+        {
+            Item[] items = new Item[proto.EquippedList.Count];
+            for (int i = 0; i < proto.EquippedList.Count; i++ )
+            {
+                items[i] = proto.EquippedList[i].ScriptingProto;
+            }
+            return items;
+        }
+
         public void Equip(Item item)
         {
             if (item == null)
@@ -1202,6 +1212,11 @@ namespace GUC.Server.Scripting.Objects.Character
                 this.proto.SendToAreaPlayersAndPlayer(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED);
             }
             //Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+        }
+
+        public String[] getOverlays()
+        {
+            return this.proto.Overlays.ToArray();
         }
 
         public void ApplyOverlay(String anim)

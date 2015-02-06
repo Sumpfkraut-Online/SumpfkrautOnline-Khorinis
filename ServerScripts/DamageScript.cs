@@ -45,7 +45,7 @@ namespace GUC.Server.Scripts
 			if(attacker != null && attacker.getUserObjects("FRIENDS") != null && ((List<NPCProto>)attacker.getUserObjects("FRIENDS")).Contains(victim))//Victim is a friend!
 				return;
             
-           
+            
 
 			int damage = 0;
 

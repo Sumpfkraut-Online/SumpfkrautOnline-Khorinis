@@ -59,6 +59,7 @@ namespace GUC.Network
             messageListener.Add((byte)NetworkID.DropUnconsciousMessage, new DropUnconsciousMessage());
             messageListener.Add((byte)NetworkID.ReviveMessage, new ReviveMessage());
             messageListener.Add((byte)NetworkID.SetVisualMessage, new SetVisualMessage());
+            messageListener.Add((byte)NetworkID.SetVobChangeMessage, new SetVobChangeMessage());
             messageListener.Add((byte)NetworkID.DropItemMessage, new DropItemMessage());
             messageListener.Add((byte)NetworkID.TakeItemMessage, new TakeItemMessage());
             messageListener.Add((byte)NetworkID.CamToVobMessage, new CamToVobMessage());
