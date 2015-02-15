@@ -13,66 +13,66 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
     class ItemDef : ItemInstance
     {
 
-        public bool IsGold 
-        {
-            get { return itemInstances.isGold; } 
-            set { itemInstances.isGold = value; } 
-        }
-        public bool IsKeyInstance 
-        {
-            get { return itemInstances.isKeyInstance; } 
-            set { itemInstances.isKeyInstance = value; } 
-        }
-        public bool IsLockPick 
-        { 
-            get { return itemInstances.isKeyInstance; } 
-            set { itemInstances.isKeyInstance = value; } 
-        }
-        public bool IsTorch 
-        { 
-            get { return itemInstances.isTorch; } 
-            set { itemInstances.isTorch = value; } 
-        }
-        public bool IsTorchBurning { 
-            get { return itemInstances.isTorchBurning; }
-            set { itemInstances.isTorchBurning = value; } 
-        }
-        public bool IsTorchBurned { 
-            get { return itemInstances.isTorchBurned; }
-            set { itemInstances.isTorchBurned = value; } 
-        }
+        //public bool IsGold 
+        //{
+        //    get { return itemInstances.isGold; } 
+        //    set { itemInstances.isGold = value; } 
+        //}
+        //public bool IsKeyInstance 
+        //{
+        //    get { return itemInstances.isKeyInstance; } 
+        //    set { itemInstances.isKeyInstance = value; } 
+        //}
+        //public bool IsLockPick 
+        //{ 
+        //    get { return itemInstances.isKeyInstance; } 
+        //    set { itemInstances.isKeyInstance = value; } 
+        //}
+        //public bool IsTorch 
+        //{ 
+        //    get { return itemInstances.isTorch; } 
+        //    set { itemInstances.isTorch = value; } 
+        //}
+        //public bool IsTorchBurning { 
+        //    get { return itemInstances.isTorchBurning; }
+        //    set { itemInstances.isTorchBurning = value; } 
+        //}
+        //public bool IsTorchBurned { 
+        //    get { return itemInstances.isTorchBurned; }
+        //    set { itemInstances.isTorchBurned = value; } 
+        //}
 
-        public String Effect { 
-            get { return itemInstances.Effect; }
-            set { itemInstances.Effect = value; } 
-        }
-        public Spell Spell { 
-            get { return itemInstances.Spell.ScriptingProto; }
-            set { itemInstances.Spell = value.spell; } 
-        }
+        //public String Effect { 
+        //    get { return itemInstances.Effect; }
+        //    set { itemInstances.Effect = value; } 
+        //}
+        //public Spell Spell { 
+        //    get { return itemInstances.Spell.ScriptingProto; }
+        //    set { itemInstances.Spell = value.spell; } 
+        //}
 
-        public Enumeration.ArmorFlags Wear { 
-            get { return itemInstances.Wear; }
-            set { itemInstances.Wear = value; } 
-        }
-        public Enumeration.DamageType DamageType { 
-            get { return itemInstances.DamageType; }
-            set { itemInstances.DamageType = value; } 
-        }
-        public int Range { 
-            get { return itemInstances.Range; }
-            set { itemInstances.Range = value; } 
-        }
-        public int TotalDamage { 
-            get { return itemInstances.TotalDamage; }
-            set { itemInstances.TotalDamage = value; } 
-        }
-        // !!! TO DO: Damages !!!
-        public ItemInstance Munition
-        {
-            get { return itemInstances.munition; }
-            set { itemInstances.munition = value; }
-        }
+        //public Enumeration.ArmorFlags Wear { 
+        //    get { return itemInstances.Wear; }
+        //    set { itemInstances.Wear = value; } 
+        //}
+        //public Enumeration.DamageType DamageType { 
+        //    get { return itemInstances.DamageType; }
+        //    set { itemInstances.DamageType = value; } 
+        //}
+        //public int Range { 
+        //    get { return itemInstances.Range; }
+        //    set { itemInstances.Range = value; } 
+        //}
+        //public int TotalDamage { 
+        //    get { return itemInstances.TotalDamage; }
+        //    set { itemInstances.TotalDamage = value; } 
+        //}
+        //// !!! TO DO: Damages !!!
+        //public ItemInstance Munition
+        //{
+        //    get { return itemInstances.munition; }
+        //    set { itemInstances.munition = value; }
+        //}
 
         public int HPChange;
         public int HPMaxChange;
