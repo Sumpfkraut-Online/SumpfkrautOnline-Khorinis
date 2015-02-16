@@ -13,65 +13,73 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
     class ItemDef : ItemInstance
     {
 
-        //public bool IsGold 
+        //public bool IsGold
         //{
-        //    get { return itemInstances.isGold; } 
-        //    set { itemInstances.isGold = value; } 
+        //    get { return this.IsGold; }
+        //    set { this.IsGold = value; }
         //}
-        //public bool IsKeyInstance 
+        //public bool IsKeyInstance
         //{
-        //    get { return itemInstances.isKeyInstance; } 
-        //    set { itemInstances.isKeyInstance = value; } 
+        //    get { return this.isKeyInstance; }
+        //    set { this.isKeyInstance = value; }
         //}
-        //public bool IsLockPick 
-        //{ 
-        //    get { return itemInstances.isKeyInstance; } 
-        //    set { itemInstances.isKeyInstance = value; } 
+        //public bool IsLockPick
+        //{
+        //    get { return this.isKeyInstance; }
+        //    set { this.isKeyInstance = value; }
         //}
-        //public bool IsTorch 
-        //{ 
-        //    get { return itemInstances.isTorch; } 
-        //    set { itemInstances.isTorch = value; } 
+        //public bool IsTorch
+        //{
+        //    get { return this.isTorch; }
+        //    set { this.isTorch = value; }
         //}
-        //public bool IsTorchBurning { 
-        //    get { return itemInstances.isTorchBurning; }
-        //    set { itemInstances.isTorchBurning = value; } 
+        //public bool IsTorchBurning
+        //{
+        //    get { return this.isTorchBurning; }
+        //    set { this.isTorchBurning = value; }
         //}
-        //public bool IsTorchBurned { 
-        //    get { return itemInstances.isTorchBurned; }
-        //    set { itemInstances.isTorchBurned = value; } 
+        //public bool IsTorchBurned
+        //{
+        //    get { return this.isTorchBurned; }
+        //    set { this.isTorchBurned = value; }
         //}
 
-        //public String Effect { 
-        //    get { return itemInstances.Effect; }
-        //    set { itemInstances.Effect = value; } 
+        //public String Effect
+        //{
+        //    get { return this.Effect; }
+        //    set { this.Effect = value; }
         //}
-        //public Spell Spell { 
-        //    get { return itemInstances.Spell.ScriptingProto; }
-        //    set { itemInstances.Spell = value.spell; } 
+        //public Spell Spell
+        //{
+        //    get { return this.Spell.ScriptingProto; }
+        //    set { this.Spell = value.spell; }
         //}
 
-        //public Enumeration.ArmorFlags Wear { 
-        //    get { return itemInstances.Wear; }
-        //    set { itemInstances.Wear = value; } 
+        //public Enumeration.ArmorFlags Wear
+        //{
+        //    get { return this.Wear; }
+        //    set { this.Wear = value; }
         //}
-        //public Enumeration.DamageType DamageType { 
-        //    get { return itemInstances.DamageType; }
-        //    set { itemInstances.DamageType = value; } 
+        //public Enumeration.DamageType DamageType
+        //{
+        //    get { return this.DamageType; }
+        //    set { this.DamageType = value; }
         //}
-        //public int Range { 
-        //    get { return itemInstances.Range; }
-        //    set { itemInstances.Range = value; } 
+        //public int Range
+        //{
+        //    get { return this.Range; }
+        //    set { this.Range = value; }
         //}
-        //public int TotalDamage { 
-        //    get { return itemInstances.TotalDamage; }
-        //    set { itemInstances.TotalDamage = value; } 
+        //public int TotalDamage
+        //{
+        //    get { return this.TotalDamage; }
+        //    set { this.TotalDamage = value; }
         //}
         //// !!! TO DO: Damages !!!
         //public ItemInstance Munition
         //{
-        //    get { return itemInstances.munition; }
-        //    set { itemInstances.munition = value; }
+        //    get { return this.munition; }
+        //    set { this.munition = value; }
         //}
 
         public int HPChange;
@@ -79,10 +87,146 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         public int MPChange;
         public int MPMaxChange;
 
-        protected ItemDef(String instanceName)
+        public bool getIsGold ()
+        {
+            return this.IsGold;
+        }
+        public void setIsGold (bool IsGold)
+        {
+            this.IsGold = IsGold;
+        }
+
+        //public bool getIsKeyInstance()
+        //{
+        //    return this.IsKeyInstance;
+        //}
+        //public void setIsKeyInstance(bool IsKeyInstance)
+        //{
+        //    this.IsKeyInstance = IsKeyInstance;
+        //}
+
+        //public bool getIsLockPick()
+        //{
+        //    return this.IsKeyInstance;
+        //}
+        //public void setIsKeyInstance(bool IsKeyInstance)
+        //{
+        //    this.IsKeyInstance = IsKeyInstance;
+        //}
+
+        public bool getIsTorch ()
+        {
+            return this.IsTorch;
+        }
+        public void setIsTorch (bool IsTorch)
+        {
+            this.IsTorch = IsTorch;
+        }
+
+        public bool getIsTorchBurning ()
+        {
+            return this.IsTorchBurning;
+        }
+        public void setIsTorchBurning (bool IsTorchBurning)
+        {
+            this.IsTorchBurning = IsTorchBurning;
+        }
+
+        public bool getIsTorchBurned ()
+        {
+            return this.IsTorchBurned;
+        }
+        public void setIsTorchBurned (bool IsTorchBurned)
+        {
+            this.IsTorchBurned = IsTorchBurned;
+        }
+
+
+
+        public string getEffect ()
+        {
+            return this.Effect;
+        }
+        public void setEffect (string Effect)
+        {
+            this.Effect = Effect;
+        }
+
+
+
+        public Spell getSpell ()
+        {
+            return this.Spell;
+        }
+        public void setSpell (Spell Spell)
+        {
+            this.Spell = Spell;
+        }
+
+        public Enumeration.ArmorFlags getWear ()
+        {
+            return this.Wear;
+        }
+        public void setWear (Enumeration.ArmorFlags Wear)
+        {
+            this.Wear = Wear;
+        }
+
+        //public Enumeration.DamageType DamageType
+        //{
+        //    get { return this.DamageType; }
+        //    set { this.DamageType = value; }
+        //}
+        public Enumeration.DamageType getDamageType ()
+        {
+            return this.DamageType;
+        }
+        public void setDamageType (Enumeration.DamageType DamageType)
+        {
+            this.DamageType = DamageType;
+        }
+        
+        public int getRange()
+        {
+            return this.Range;
+        }
+        public void setRange(int Range)
+        {
+            this.Range = Range;
+        }
+        
+        public int getTotalDamage ()
+        {
+            return this.TotalDamage;
+        }
+        public void setTotalDamage (int TotalDamage)
+        {
+            this.TotalDamage = TotalDamage;
+        }
+
+        // get-method already exists (see public int getDamage(DamageTypeIndex index))
+        //public int[] getDamages()
+        //{
+        //    return this.getDamages();
+        //    //return this.Damages;
+        //}
+        //public void setDamages(int[] Damages)
+        //{
+        //    this.Damages = Damages;
+        //}
+
+        //public ItemInstance getMunition ()
+        //{
+        //    return this.Munition;
+        //}
+        //public void setMunition (ItemInstance Munition)
+        //{
+        //    this.Munition = Munition;
+        //}
+
+        protected ItemDef (String instanceName)
             : base (instanceName)
         {
-            
             //this.InstanceName;
 
             //this.Name;
@@ -96,7 +240,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             //this.Materials;
             //this.Description;
 
-            //this.Effect;
+            //this.Effect = "";
 
             //this.IsGold;
             //this.IsLockPick;
@@ -128,6 +272,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             npc.MP      = this.MPChange;
             npc.MPMax   = this.MPMaxChange;
         }
+
 
     }
 }
