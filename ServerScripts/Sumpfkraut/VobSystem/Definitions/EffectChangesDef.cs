@@ -118,9 +118,34 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
                     //    return;
 
                     case (EffectChangesEnum.Protection):
-                        // !!! TO DO: multiple entries !!!
-                        // !!! use the setProtection method instead of lacking set-accessor !!!
-                        // !!! requires int-index as well as value !!!
+                        // param string should be of pattern 0=0,1=0,2=25,...
+                        string[] data = param.Split(new char[]{',', '='});
+                        if ((data != null) && (data.Length > 0))
+                        {
+                            Enumeration.DamageTypeIndex dti = 0;
+                            int val = 0;
+                            int i = 0;
+                            while (i < data.Length)
+                            {
+                                if ((i + 1) >= data.Length)
+                                {
+                                    break;
+                                }
+
+                                try
+                                {
+                                    dti = (Enumeration.DamageTypeIndex) Convert.ToInt32(data[i]);
+                                    val = Convert.ToInt32(data[i + 1]);
+                                    def.setProtection(dti, val);
+                                }
+                                catch (Exception ex)
+                                {
+                                    throw new Exception("Couldn't convert part of param-string to int or enum-entry DamageTypeIndex: " + ex);
+                                }
+                                
+                                i += 2;
+                            }
+                        }
                         return;
 
                     case (EffectChangesEnum.HPChange):
