@@ -9,28 +9,28 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
     enum EffectChangesEnum
     {
-        IsGold,
-        IsKeyInstance,
-        IsTorch,
-        IsTorchBurning,
-        IsTorchBurned,
+        IsGold                      = 100,
+        IsKeyInstance               = 101,
+        IsTorch                     = 102,
+        IsTorchBurning              = 103,
+        IsTorchBurned               = 104,
 
-        Effect,
-        Spell,
+        Effect                      = 105,
+        Spell                       = 106,
 
-        Wear,
-        DamageType,
-        Range,
-        TotalDamage,
-        Damages,
-        Munition,
+        Wear                        = 107,
+        DamageType                  = 108,
+        Range                       = 109,
+        TotalDamage                 = 110,
+        Damages                     = 111,
+        Munition                    = 112,
 
-        Protection,
+        Protection                  = 113,
 
-        HPChange,
-        HPMaxChange,
-        MPChange,
-        MPMaxChange,
+        HPChange                    = 114,
+        HPMaxChange                 = 115,
+        MPChange                    = 116,
+        MPMaxChange                 = 117,
     }
 
     /**

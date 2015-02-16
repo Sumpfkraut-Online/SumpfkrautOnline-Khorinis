@@ -11,31 +11,31 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
 
     enum DefTableEnum
     {
-        Mob_def,
-        Item_def,
-        Spell_def,
-        NPC_def,
-        Effect_def,
-        Effect_Changes_def
+        Mob_def                 = 0,
+        Item_def                = 1,
+        Spell_def               = 2,
+        NPC_def                 = 3,
+        Effect_def              = 4,
+        Effect_Changes_def      = 5,
     }
 
     enum InstTableEnum
     {
-        World_inst,
-        Account_inst,
+        World_inst              = 0,
+        Account_inst            = 1,
 
-        MobDef_Effects_inst,
-        ItemDef_Effects_inst,
-        NPCDef_Effects_inst,
+        MobDef_Effects_inst     = 10,
+        ItemDef_Effects_inst    = 11,
+        NPCDef_Effects_inst     = 12,
 
-        Mob_inst,
-        Item_inst,
-        NPC_inst,
+        Mob_inst                = 13,
+        Item_inst               = 14,
+        NPC_inst                = 15,
 
-        ItemInInventory_inst,
-        MobInWorld_inst,
-        ItemInWorld_inst,
-        NPCInWorld_inst
+        ItemInInventory_inst    = 16,
+        MobInWorld_inst         = 17,
+        ItemInWorld_inst        = 18,
+        NPCInWorld_inst         = 19,
     }
 
     /**
@@ -43,18 +43,18 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
     */
     enum SQLiteGetTypeEnum
     {
-        GetBoolean,
-        GetByte,
-        GetChar,
-        GetDateTime,
-        GetDecimal,
-        GetDouble,
-        GetFloat,
-        GetGuid,
-        GetInt16,
-        GetInt32,
-        GetInt64,
-        GetString,
+        GetBoolean          = 0,
+        GetByte             = 1,
+        GetChar             = 2,
+        GetDateTime         = 3,
+        GetDecimal          = 4,
+        GetDouble           = 5,
+        GetFloat            = 6,
+        GetGuid             = 7,
+        GetInt16            = 8,
+        GetInt32            = 9,
+        GetInt64            = 10,
+        GetString           = 11,
     }
 
     class DBTables
