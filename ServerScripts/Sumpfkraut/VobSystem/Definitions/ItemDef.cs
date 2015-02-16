@@ -82,10 +82,10 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         //    set { this.munition = value; }
         //}
 
-        public int HPChange;
-        public int HPMaxChange;
-        public int MPChange;
-        public int MPMaxChange;
+        protected int HPChange;
+        protected int HPMaxChange;
+        protected int MPChange;
+        protected int MPMaxChange;
 
         public bool getIsGold ()
         {
@@ -202,6 +202,44 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         public void setTotalDamage (int TotalDamage)
         {
             this.TotalDamage = TotalDamage;
+        }
+
+
+
+        public int getHPChange ()
+        {
+            return this.HPChange;
+        }
+        public void setHPChange (int HPChange)
+        {
+            this.HPChange = HPChange;
+        }
+
+        public int getHPMaxChange ()
+        {
+            return this.HPMaxChange;
+        }
+        public void setHPMaxChange (int HPMaxChange)
+        {
+            this.HPMaxChange = HPMaxChange;
+        }
+
+        public int getMPChange ()
+        {
+            return this.MPChange;
+        }
+        public void setMPChange (int MPChange)
+        {
+            this.MPChange = MPChange;
+        }
+
+        public int getMPMaxChange ()
+        {
+            return this.MPMaxChange;
+        }
+        public void setMPMaxChange (int MPMaxChange)
+        {
+            this.MPMaxChange = MPMaxChange;
         }
 
         // get-method already exists (see public int getDamage(DamageTypeIndex index))
