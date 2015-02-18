@@ -305,10 +305,10 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
                 return;
             }
 
-            npc.HP      = this.HPChange;
-            npc.HPMax   = this.HPMaxChange;
-            npc.MP      = this.MPChange;
-            npc.MPMax   = this.MPMaxChange;
+            //npc.HP      = this.HPChange;
+            //npc.HPMax   = this.HPMaxChange;
+            //npc.MP      = this.MPChange;
+            //npc.MPMax   = this.MPMaxChange;
         }
 
 

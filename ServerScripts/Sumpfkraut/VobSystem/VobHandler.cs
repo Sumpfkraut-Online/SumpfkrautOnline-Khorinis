@@ -50,6 +50,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             DBTables.DefTableNames.TryGetValue(defTab, out defTabName);
             if (defTabName == null)
             {
+                // if there is no table of that name
                 return;
             }
 
@@ -69,15 +70,18 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                     DBTables.DefTableDict.TryGetValue(defTab, out colTypes);
                     List<object> colVals = new List<object>(colTypes.Count());
 
-                    int i = 0;
-                    foreach(KeyValuePair<string, SQLiteGetTypeEnum> e in colTypes)
+                    int col = 0;
+                    while (rdr.Read())
                     {
-                        colVals.Add(DBTables.SqlReadType(ref rdr, i, e.Value));
-                        i++;
-                    }
+                        col = 0;
+                        foreach(KeyValuePair<string, SQLiteGetTypeEnum> e in colTypes)
+                        {
+                            colVals.Add(DBTables.SqlReadType(ref rdr, col, e.Value));
+                            col++;
+                        }
 
-                    // TO DO: Forward data into functionality which applies changes in various ways
-                    
+                        // TO DO: Forward data into functionality which applies changes in various ways
+                    }
                 }
                 catch (Exception ex)
                 {
