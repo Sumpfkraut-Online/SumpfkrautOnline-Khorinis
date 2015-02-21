@@ -40,10 +40,17 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
     class EffectChangesDef
     {
 
+        /**
+         *   Dictionary which holds all EffectChanges for faster access.
+         *   May be deprecated later if only using the databse directly.
+         */
         private static Dictionary<EffectChangesEnum, string> EffectChangesDict = new Dictionary<EffectChangesEnum, string>();
 
         private static Object dictLock = new Object();
 
+        /**
+         *   May be deprecated later if only using the databse directly.
+         */
         public static void Add (EffectChangesEnum changeType, string param)
         {
             if ((changeType != null) && (param != null))
@@ -55,6 +62,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             }
         }
 
+        /**
+         *   May be deprecated later if only using the databse directly.
+         */
         public static void Edit (EffectChangesEnum changeType, string param, bool createNew = true)
         {
             if ((changeType != null) && (param != null))
@@ -76,6 +86,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             }
         }
 
+        /**
+         *   May be deprecated later if only using the databse directly.
+         */
         public static void Remove (EffectChangesEnum changeType)
         {
             if (changeType != null)
@@ -90,6 +103,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             }
         }
 
+        /**
+         *   Apply effect changes to an item defintiion, so derived items can use them.
+         */
         public static void ApplyEffectChanges (ref ItemDef def, EffectChangesEnum changeType, string param)
         {
             try
