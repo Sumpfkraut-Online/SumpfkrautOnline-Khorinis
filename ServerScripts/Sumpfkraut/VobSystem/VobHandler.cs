@@ -68,7 +68,11 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 
                     Dictionary<String, SQLiteGetTypeEnum> colTypes = null;
                     DBTables.DefTableDict.TryGetValue(defTab, out colTypes);
-                    List<object> colVals = new List<object>(colTypes.Count());
+                    //List<string> colKeys = new List<string>(colTypes.Count());
+                    string[] colKeys = new string[colTypes.Count()];
+                    //List<object> colVals = new List<object>(colTypes.Count());
+                    object[] colVals = new object[colTypes.Count()];
+                    bool hasEffects = false; 
 
                     int col = 0;
                     while (rdr.Read())
@@ -76,11 +80,22 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                         col = 0;
                         foreach(KeyValuePair<string, SQLiteGetTypeEnum> e in colTypes)
                         {
-                            colVals.Add(DBTables.SqlReadType(ref rdr, col, e.Value));
+                            colKeys[col] = e.Key;
+                            colVals[col] = DBTables.SqlReadType(ref rdr, col, e.Value);
+                            if ((colKeys[col] == "HasEffects") && ((bool) colVals[col]))
+                            {
+                                hasEffects = true;
+                            }
                             col++;
                         }
 
                         // TO DO: Forward data into functionality which applies changes in various ways
+                        // for vob definitions, the effect and effect-changes definitons have to be loaded
+                        // directly one after the other!!!
+                        if (hasEffects)
+                        {
+
+                        }
                     }
                 }
                 catch (Exception ex)
