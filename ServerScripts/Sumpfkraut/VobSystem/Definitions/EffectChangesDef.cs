@@ -40,8 +40,57 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
     class EffectChangesDef
     {
 
-        //public static readonly Dictionary<EffectChangesEnum, >
-        public static void ApplyEffectChanges (ItemDef def, EffectChangesEnum changeType, string param)
+        private static Dictionary<EffectChangesEnum, string> EffectChangesDict = new Dictionary<EffectChangesEnum, string>();
+
+        private static Object dictLock = new Object();
+
+        public static void Add (EffectChangesEnum changeType, string param)
+        {
+            if ((changeType != null) && (param != null))
+            {
+                lock (dictLock)
+                {
+                    EffectChangesDict.Add(changeType, param);
+                }
+            }
+        }
+
+        public static void Edit (EffectChangesEnum changeType, string param, bool createNew = true)
+        {
+            if ((changeType != null) && (param != null))
+            {
+                lock (dictLock)
+                {
+                    if (EffectChangesDict.ContainsKey(changeType))
+                    {
+                        EffectChangesDict[changeType] = param;
+                    }
+                    else
+                    {
+                        if (createNew)
+                        {
+                            EffectChangesDict.Add(changeType, param);
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void Remove (EffectChangesEnum changeType)
+        {
+            if (changeType != null)
+            {
+                lock (dictLock)
+                {
+                    if (EffectChangesDict.ContainsKey(changeType))
+                    {
+                        EffectChangesDict.Remove(changeType);
+                    }
+                }
+            }
+        }
+
+        public static void ApplyEffectChanges (ref ItemDef def, EffectChangesEnum changeType, string param)
         {
             try
             {

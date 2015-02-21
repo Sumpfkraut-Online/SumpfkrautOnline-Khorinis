@@ -298,7 +298,17 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             CreateItemInstance();
         }
 
-        protected void useItem(NPCProto npc, Item item, short state, short targetState)
+        protected void equip (NPCProto npc, Item item)
+        {
+
+        }
+
+        protected void unequip (NPCProto npc, Item item)
+        {
+
+        }
+
+        protected void useItem (NPCProto npc, Item item, short state, short targetState)
         {
             if (!(state == -1 && targetState == 0))
             {
