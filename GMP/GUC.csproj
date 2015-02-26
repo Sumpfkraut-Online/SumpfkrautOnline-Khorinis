@@ -116,6 +116,7 @@
     <Compile Include="Network\Messages\PlayerCommands\NPCChangeAttributeMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\NPCChangeSkillMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\OnDamageMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\OpenInventoryMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\PlayerFreezeMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\PlayerKeyMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\PlayVideo.cs" />
@@ -141,8 +142,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Scripting\Events.cs" />
     <Compile Include="Scripting\Listener\IClientStartup.cs" />
     <Compile Include="Scripting\Log.cs" />
+    <Compile Include="Scripting\Objects\Character\NPC.cs" />
+    <Compile Include="Scripting\Objects\Character\NPCProto.cs" />
+    <Compile Include="Scripting\Objects\Character\Player.cs" />
+    <Compile Include="Scripting\Objects\Vob.cs" />
     <Compile Include="Scripting\ScriptManager.cs" />
     <Compile Include="States\AbstractState.cs" />
     <Compile Include="States\GameState.cs" />
@@ -200,6 +206,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

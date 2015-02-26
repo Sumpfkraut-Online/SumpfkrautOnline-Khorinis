@@ -257,6 +257,12 @@ namespace GUC.Server.Scripting.Objects.Character
 
         public ColorRGBA Color { get; set; }
 
+        public float Fatness
+        {
+            get { return proto.Fatness; }
+            set { setFatness(value); }
+        }
+
         public int Strength {
             get { return proto.Attributes[(byte)NPCAttribute.ATR_STRENGTH]; }
             set { setAttribute(NPCAttribute.ATR_STRENGTH, value); }
@@ -830,7 +836,7 @@ namespace GUC.Server.Scripting.Objects.Character
                 itemList[i] = item.ScriptingProto;
                 i += 1;
             }
-
+            
             return itemList;
         }
 

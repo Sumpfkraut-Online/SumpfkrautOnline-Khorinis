@@ -16,6 +16,16 @@ namespace GUC.WorldObjects
     internal partial class Vob
     {
         int _address = 0;
+        protected Scripting.Objects.Vob m_ScriptingInstance = null;
+        public virtual Scripting.Objects.Vob ScriptingInstance
+        {
+            get
+            {
+                if (m_ScriptingInstance == null)
+                    m_ScriptingInstance = new Scripting.Objects.Vob(this);
+                return m_ScriptingInstance;
+            }
+        }
 
         public int Address { get { return _address; } set { _address = value; } }
 

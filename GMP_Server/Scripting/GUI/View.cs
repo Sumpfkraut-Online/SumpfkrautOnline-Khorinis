@@ -8,6 +8,7 @@ using GUC.Enumeration;
 using GUC.Network;
 using GUC.WorldObjects;
 using GUC.Server.Scripting.Objects.Character;
+using System.Collections;
 
 namespace GUC.Server.Scripting.GUI
 {
@@ -26,6 +27,22 @@ namespace GUC.Server.Scripting.GUI
         protected int singleUserID = 0;
 
         protected View parent;
+
+
+        public static View get(int id)
+        {
+            if (!allViewDic.ContainsKey(id))
+                return null;
+            return allViewDic[id];
+        }
+
+        public static IEnumerator ToEnumerator()
+        {
+            foreach (KeyValuePair<Int32, View> pair in allViewDic)
+            {
+                yield return pair.Value;
+            }
+        }
 
         public View(int x, int y, bool isSingleUser, int singleUserID, View parent)
             : this(new Vec2i(x, y), isSingleUser, singleUserID, parent)

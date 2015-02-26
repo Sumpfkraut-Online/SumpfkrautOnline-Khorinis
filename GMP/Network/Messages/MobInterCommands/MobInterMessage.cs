@@ -86,6 +86,12 @@ namespace GUC.Network.Messages.MobInterCommands
                     mI.OnUnTrigger(new zCVob(process, mI.Address), new zCVob(process, player.Address));
                     //mI.State = 0;
                     
+
+                    if (mob is MobLockable && ( ((MobLockable)mob).KeyInstance != null ||  ( ((MobLockable)mob).PickLockStr != null && ((MobLockable)mob).PickLockStr.Length != 0)) )
+                    {
+                        oCMobLockable ML = new oCMobLockable(process, mob.Address);
+                        ML.SetLocked(1);
+                    }
                     
                     //mI.StateAniID = mI.GetModel().GetAniIDFromAniName("S_S0");
                     //mI.StateAniID = mI.GetModel().

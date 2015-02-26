@@ -90,6 +90,7 @@
     <Compile Include="Network\Messages\PlayerCommands\DropItemMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\EquipItemMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\OnDamageMessage.cs" />
+    <Compile Include="Network\Messages\PlayerCommands\OpenInventoryMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\PlayerKeyMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\SpellInvestMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\TakeItemMessage.cs" />

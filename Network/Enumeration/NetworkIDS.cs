@@ -82,7 +82,9 @@ namespace GUC.Enumeration
         SetSlotMessage,
         CamToPlayerFront,
 
-        InterfaceOptionsMessage
+        InterfaceOptionsMessage,
+
+        PlayerOpenInventoryMessage
 
     }
 

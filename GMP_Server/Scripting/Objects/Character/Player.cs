@@ -7,6 +7,7 @@ using GUC.Enumeration;
 using GUC.Network;
 using GUC.WorldObjects;
 using System.Collections;
+using GUC.Server.Network.Messages.PlayerCommands;
 
 namespace GUC.Server.Scripting.Objects.Character
 {
@@ -133,6 +134,21 @@ namespace GUC.Server.Scripting.Objects.Character
             stream.Write(freeze);
             using (RakNetGUID guid = this.Proto.GUID)
                 Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+        }
+
+        public void kick()
+        {
+            using (RakNetGUID guid = this.Proto.GUID)
+                Server.Program.server.ServerInterface.CloseConnection(guid, true);
+        }
+
+        public void ban()
+        {
+            using (RakNetGUID guid = this.Proto.GUID)
+            {
+                Server.Program.server.ServerInterface.CloseConnection(guid, true);
+                Server.Program.server.ServerInterface.AddToBanList(this.IP);
+            }
         }
 
         public String Mac {
@@ -365,6 +381,16 @@ namespace GUC.Server.Scripting.Objects.Character
                 Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
         }
 
+        public void openInventory()
+        {
+            OpenInventoryMessage.Write(this.Proto, true);
+        }
+
+        public void closeInventory()
+        {
+            OpenInventoryMessage.Write(this.Proto, false);
+        }
+
         #region PlayerKeyEvent
         public static event Events.PlayerKeyEventHandler sPlayerKeyEvent;
         public event Events.PlayerKeyEventHandler PlayerKeyEvent;
@@ -423,6 +449,42 @@ namespace GUC.Server.Scripting.Objects.Character
         }
 
         #endregion
+
+        #endregion
+
+        #region OnOpenInventory
+        public event GUC.Server.Scripting.Events.PlayerEventHandler OnOpenInventory;
+        internal void iOnOpenInventory(Player pl)
+        {
+            if (OnOpenInventory != null)
+                OnOpenInventory(pl);
+        }
+
+        public static event Events.PlayerEventHandler sOnOpenInventorys;
+        internal static void isOnOpenInventory(Player pl)
+        {
+            pl.iOnOpenInventory(pl);
+            if (sOnOpenInventorys != null)
+                sOnOpenInventorys(pl);
+        }
+
+        #endregion
+
+        #region OnCloseInventory
+        public event GUC.Server.Scripting.Events.PlayerEventHandler OnCloseInventory;
+        internal void iOnCloseInventory(Player pl)
+        {
+            if (OnCloseInventory != null)
+                OnCloseInventory(pl);
+        }
+
+        public static event Events.PlayerEventHandler sOnCloseInventorys;
+        internal static void isOnCloseInventory(Player pl)
+        {
+            pl.iOnCloseInventory(pl);
+            if (sOnCloseInventorys != null)
+                sOnCloseInventorys(pl);
+        }
 
         #endregion
 

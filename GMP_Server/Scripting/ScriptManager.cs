@@ -160,7 +160,15 @@ namespace GUC.Server.Scripting
             try
             {
                 Listener.IServerStartup listener = (Listener.IServerStartup)m_Assembly.CreateInstance("GUC.Server.Scripts.Startup");
-                listener.OnServerInit();
+                try
+                {
+                    listener.OnServerInit();
+                }
+                catch (Exception ex2)
+                {
+                    Log.Logger.log(Log.Logger.LOG_ERROR, ex2.Source + "<br>" + ex2.Message + "<br>" + ex2.StackTrace);
+
+                }
             }
             catch (Exception ex)
             {

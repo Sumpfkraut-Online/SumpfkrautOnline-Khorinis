@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.Server.Scripting.Objects.Character;
 using GUC.Enumeration;
+using GUC.Server.Network.Messages.MobInterCommands;
 
 namespace GUC.Server.Scripting.Objects.Mob
 {
@@ -82,7 +83,15 @@ namespace GUC.Server.Scripting.Objects.Mob
             setPropertie(VobChangeID.UseWithItem, x);
         }
 
+        public void trigger(NPCProto pro)
+        {
+            MobInterMessage.Write(MobInterNetwork.OnTrigger, pro.proto, this.Proto);
+        }
 
+        public void untrigger(NPCProto pro)
+        {
+            MobInterMessage.Write(MobInterNetwork.OnUnTrigger, pro.proto, this.Proto);
+        }
 
 
         #region Events
