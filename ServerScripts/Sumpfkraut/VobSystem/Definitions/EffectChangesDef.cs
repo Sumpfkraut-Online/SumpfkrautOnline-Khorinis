@@ -116,7 +116,12 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
                     //    def.IsGold = Convert.ToBoolean(param);
                     //    return;
                     case (EffectChangesEnum.IsGold):
-                        def.setIsGold(Convert.ToBoolean(param));
+                        bool isGold = false;
+                        if (bool.TryParse(param, out isGold))
+                        {
+                            def.setIsGold(isGold);
+                        }
+                        
                         return;
                     //case (EffectChangesEnum.IsKeyInstance):
                     //    def.IsKeyInstance = Convert.ToBoolean(param);
@@ -125,26 +130,41 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
                     //    def.IsTorch = Convert.ToBoolean(param);
                     //    return;
                     case (EffectChangesEnum.IsTorch):
-                        def.setIsTorch(Convert.ToBoolean(param));
+                        bool isTorch = false;
+                        if (bool.TryParse(param, out isTorch))
+                        {
+                            def.setIsTorch(isTorch);
+                        }
                         return;
                     //case (EffectChangesEnum.IsTorchBurning):
                     //    def.IsTorchBurning = Convert.ToBoolean(param);
                     //    return;
                     case (EffectChangesEnum.IsTorchBurning):
-                        def.setIsTorchBurning(Convert.ToBoolean(param));
+                        bool isTorchBurning = false;
+                        if (bool.TryParse(param, out isTorchBurning))
+                        {
+                            def.setIsTorchBurning(isTorchBurning);
+                        }
                         return;
                     //case (EffectChangesEnum.IsTorchBurned):
                     //    def.IsTorchBurned = Convert.ToBoolean(param);
                     //    return;
                     case (EffectChangesEnum.IsTorchBurned):
-                        def.setIsTorchBurned(Convert.ToBoolean(param));
+                        bool isTorchBurned = false;
+                        if (bool.TryParse(param, out isTorchBurned))
+                        {
+                            def.setIsTorchBurned(isTorchBurned);
+                        }
                         return;
 
                     //case (EffectChangesEnum.Effect):
                     //    def.Effect = param;
                     //    return;
                     case (EffectChangesEnum.Effect):
-                        def.setEffect(param);
+                        if (param != null)
+                        {
+                            def.setEffect(param);
+                        }
                         return;
                     case (EffectChangesEnum.Spell):
                         // !!! TO DO: requires SpellDef --> resulting SpellInst !!!
@@ -154,25 +174,41 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
                     //    def.Wear = (Enumeration.ArmorFlags) Convert.ToInt32(param);
                     //    return;
                     case (EffectChangesEnum.Wear):
-                        def.setWear((Enumeration.ArmorFlags) Convert.ToInt32(param));
+                        int wear = 0;
+                        if (Int32.TryParse(param, out wear))
+                        {
+                            def.setWear((Enumeration.ArmorFlags) wear);
+                        }
                         return;
                     //case (EffectChangesEnum.DamageType):
                     //    def.DamageType = (Enumeration.DamageType) Convert.ToInt32(param);
                     //    return;
                     case (EffectChangesEnum.DamageType):
-                        def.setDamageType((Enumeration.DamageType) Convert.ToInt32(param));
+                        int damageType = 0;
+                        if (Int32.TryParse(param, out damageType))
+                        {
+                            def.setDamageType((Enumeration.DamageType) damageType);
+                        }
                         return;
                     //case (EffectChangesEnum.Range):
                     //    def.Range = Convert.ToInt32(param);
                     //    return;
                     case (EffectChangesEnum.Range):
-                        def.setRange(Convert.ToInt32(param));
+                        int addRange = 0;
+                        if (Int32.TryParse(param, out addRange))
+                        {
+                            def.setRange(def.getRange() + addRange);
+                        }
                         return;
                     //case (EffectChangesEnum.TotalDamage):
                     //    def.TotalDamage = Convert.ToInt32(param);
                     //    return;
                     case (EffectChangesEnum.TotalDamage):
-                        def.setTotalDamage(Convert.ToInt32(param));
+                        int addTotalDamage = 0;
+                        if (Int32.TryParse(param, out addTotalDamage))
+                        {
+                            def.setTotalDamage(def.getTotalDamage() + addTotalDamage);
+                        }
                         return;
                     //case (EffectChangesEnum.Damages):
                     //    // !!! TO DO: multiple entries !!!
@@ -187,7 +223,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
                         string[] data = param.Split(new char[]{',', '='});
                         if ((data != null) && (data.Length > 0))
                         {
-                            Enumeration.DamageTypeIndex dti = 0;
+                            int dti = 0;
                             int val = 0;
                             int i = 0;
                             while (i < data.Length)
@@ -199,13 +235,19 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
                                 try
                                 {
-                                    dti = (Enumeration.DamageTypeIndex) Convert.ToInt32(data[i]);
-                                    val = Convert.ToInt32(data[i + 1]);
-                                    def.setProtection(dti, val);
+                                    if (Int32.TryParse(data[i], out dti) && Int32.TryParse(data[i + 1], out val))
+                                    {
+                                        def.setProtection((Enumeration.DamageTypeIndex) dti, 
+                                            def.getProtection((Enumeration.DamageTypeIndex) dti) + val);
+                                    }
+                                    else
+                                    {
+                                        throw new Exception("Couldn't convert part of param-string to int or enum-entry DamageTypeIndex.");
+                                    }
                                 }
                                 catch (Exception ex)
                                 {
-                                    throw new Exception("Couldn't convert part of param-string to int or enum-entry DamageTypeIndex: " + ex);
+                                    throw new Exception("Couldn't cast converted part of param-string from int to enum-entry DamageTypeIndex: " + ex);
                                 }
                                 
                                 i += 2;
@@ -214,16 +256,49 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
                         return;
 
                     case (EffectChangesEnum.HPChange):
-                        def.setHPChange(Convert.ToInt32(param));
+                        int addHPChange = 0;
+                        if (Int32.TryParse(param, out addHPChange))
+                        {
+                            def.setHPChange(def.getHPChange() + addHPChange);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying HPChange.");
+                        }
                         return;
                     case (EffectChangesEnum.HPMaxChange):
-                        def.setHPMaxChange(Convert.ToInt32(param));
+                        int addHPMaxChange = 0;
+                        if (Int32.TryParse(param, out addHPMaxChange))
+                        {
+                            def.setHPMaxChange(def.getHPMaxChange() + addHPMaxChange);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying HPMaxChange.");
+                        }
                         return;
                     case (EffectChangesEnum.MPChange):
-                        def.setMPChange(Convert.ToInt32(param));
+                        int addMPChange = 0;
+                        if (Int32.TryParse(param, out addMPChange))
+                        {
+                            def.setMPChange(def.getMPChange() + addMPChange);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying MPChange.");
+                        }
                         return;
                     case (EffectChangesEnum.MPMaxChange):
                         def.setMPMaxChange(Convert.ToInt32(param));
+                        int addMPMaxChange = 0;
+                        if (Int32.TryParse(param, out addMPMaxChange))
+                        {
+                            def.setMPMaxChange(def.getMPMaxChange() + addMPMaxChange);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying MPMaxChange.");
+                        }
                         return;
 
                     default:

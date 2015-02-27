@@ -81,7 +81,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                         foreach(KeyValuePair<string, SQLiteGetTypeEnum> e in colTypes)
                         {
                             colKeys.Add(e.Key);
-                            colVals.Add(e.Value);
+                            colVals.Add(DBTables.SqlReadType(ref rdr, col, e.Value));
                             //colKeys[col] = e.Key;
                             //colVals[col] = DBTables.SqlReadType(ref rdr, col, e.Value);
                             //if ((colKeys[col] == "HasEffects") && ((bool) colVals[col]))
@@ -144,32 +144,22 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
         }
 
         private static void LoadEffectDef (out List<int> colKeys, out List<object> colVals, 
-            ref List<int> ids)
-        {
-            colKeys = new List<int>();
-            colVals = new List<object>();
-        }
-
-
-        // must be able to read multiple rows 
-        // count of colVals multiple of the count of colKeys to prevent unnecessary repetition?
-        // 1 => object, 2 => object, 3 => object, 4 => object, ... , 1 => object, ...
-        private static void LoadEffectChangesDef (out List<int> colKeys, out List<object> colVals, 
-            ref List<int> ids)
+            ref List<int> effectDefIDs)
         {
             colKeys = new List<int>();
             colVals = new List<object>();
 
-            if ((ids == null) || (ids.Count <= 0))
+            if ((effectDefIDs == null) || (effectDefIDs.Count <= 0))
             {
                 return;
             }
 
             using (SQLiteCommand cmd = new SQLiteCommand(Sqlite.getSqlite().connection))
             {
-                cmd.CommandText = "SELECT * FROM `Effect_Changes_def` WHERE `ID` IN (" 
-                    + String.Join(",", ids.ToArray()) 
-                    + ");";
+                cmd.CommandText = "SELECT * FROM `Effect_def` WHERE `ID` IN (" 
+                    + String.Join(",", effectDefIDs.ToArray()) 
+                    + ") ORDER BY `ID` ASC;";
+
                 SQLiteDataReader rdr = null;
                 try
                 {
@@ -179,15 +169,88 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                         return;
                     }
 
+                    Dictionary<String, SQLiteGetTypeEnum> colTypes = null;
+                    DBTables.DefTableDict.TryGetValue(DefTableEnum.Effect_Changes_def, out colTypes);
+                    if (colTypes == null)
+                    {
+                        return;
+                    }
+
                     int col = 0;
                     while(rdr.Read())
                     {
-                        //col = 0;
-                        //foreach(KeyValuePair<string, SQLiteGetTypeEnum> e in colTypes)
-                        //{
+                        col = 0;
+                        foreach(KeyValuePair<string, SQLiteGetTypeEnum> e in colTypes)
+                        {
+                            //colKeys.Add(e.Key);
+                            //colVals.Add(DBTables.SqlReadType(ref rdr, col, e.Value));
+                            col++;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Could not execute SQLiteDataReader during loading of effect changes definitions: " + ex);
+                }
+                finally
+                {
+                    if (rdr != null)
+                    {
+                        rdr.Close();
+                    }
+                }
+            }
+        }
 
-                        //    col++;
-                        //}
+
+        // must be able to read multiple rows 
+        // count of colVals multiple of the count of colKeys to prevent unnecessary repetition?
+        // 1 => object, 2 => object, 3 => object, 4 => object, ... , 1 => object, ...
+        private static void LoadEffectChangesDef (out List<int> colKeys, out List<object> colVals, 
+            ref List<int> effectDefIDs)
+        {
+            colKeys = new List<int>();
+            colVals = new List<object>();
+
+            if ((effectDefIDs == null) || (effectDefIDs.Count <= 0))
+            {
+                return;
+            }
+
+            using (SQLiteCommand cmd = new SQLiteCommand(Sqlite.getSqlite().connection))
+            {
+                cmd.CommandText = "SELECT * FROM `Effect_Changes_def` WHERE `EffectDefID` IN (" 
+                    + String.Join(",", effectDefIDs.ToArray()) 
+                    + ") ORDER BY `EffectDefID` ASC;";
+
+                SQLiteDataReader rdr = null;
+                try
+                {
+                    rdr = cmd.ExecuteReader();
+                    if (!rdr.HasRows)
+                    {
+                        return;
+                    }
+
+                    Dictionary<String, SQLiteGetTypeEnum> colTypes = null;
+                    DBTables.DefTableDict.TryGetValue(DefTableEnum.Effect_Changes_def, out colTypes);
+                    if (colTypes == null)
+                    {
+                        return;
+                    }
+
+                    
+
+                    int col = 0;
+                    while(rdr.Read())
+                    {
+                        col = 0;
+                        foreach(KeyValuePair<string, SQLiteGetTypeEnum> e in colTypes)
+                        {
+                            //colKeys.Add(e.Key);
+                            //colVals.Add(DBTables.SqlReadType(ref rdr, col, e.Value));
+                            col++;
+                        }
                     }
                 }
                 catch (Exception ex)

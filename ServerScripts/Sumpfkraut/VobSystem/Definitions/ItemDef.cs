@@ -82,10 +82,10 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         //    set { this.munition = value; }
         //}
 
-        protected int HPChange;
-        protected int HPMaxChange;
-        protected int MPChange;
-        protected int MPMaxChange;
+        protected int HPChange = 0;
+        protected int HPMaxChange = 0;
+        protected int MPChange = 0;
+        protected int MPMaxChange = 0;
 
         public bool getIsGold ()
         {
