@@ -54,6 +54,7 @@
     <Compile Include="Enumeration\VobFlags.cs" />
     <Compile Include="Network\BitStreamExtension.cs" />
     <Compile Include="Options\ClientOptions.cs" />
+    <Compile Include="Options\Constants.cs" />
     <Compile Include="Options\ServerOptions.cs" />
     <Compile Include="Types\ColorRGBA.cs" />
     <Compile Include="Types\FileFunc.cs" />

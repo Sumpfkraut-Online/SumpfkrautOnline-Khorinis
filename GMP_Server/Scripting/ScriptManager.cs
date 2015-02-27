@@ -174,6 +174,7 @@ namespace GUC.Server.Scripting
             {
                 Log.Logger.log(Log.Logger.LOG_ERROR, "GUC.Server.Scripts.Startup-Class could not be found!" + "<br>" + ex.Source + "<br>" + ex.Message + "<br>" + ex.StackTrace);
             }
+            Log.Logger.log(Log.Logger.LOG_INFO, "GUC Server - Initalisation Complete GUC-Version: " + GUC.Options.Constants.VERSION);
             m_Startuped = true;
         }
 

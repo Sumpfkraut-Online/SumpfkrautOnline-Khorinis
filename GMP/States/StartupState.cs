@@ -229,7 +229,7 @@ namespace GUC.States
 
 
             Version v = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-            zERROR.GetZErr(Process).Report(2, 'G', "GUC-Version: " + v.ToString(), 0, "Program.cs", 0);
+            zERROR.GetZErr(Process).Report(2, 'G', "GUC-Version: " + GUC.Options.Constants.VERSION +" - Build:" + v.ToString(), 0, "Program.cs", 0);
 
 
             setupPlayer();

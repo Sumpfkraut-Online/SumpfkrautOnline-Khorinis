@@ -72,6 +72,7 @@ namespace GUC.Server
 
         static void Main(string[] args)
         {
+            
             initFolders();
             loadServerConfig();
             initClientModule();
