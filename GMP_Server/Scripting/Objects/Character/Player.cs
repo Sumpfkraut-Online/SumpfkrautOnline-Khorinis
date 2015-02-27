@@ -39,7 +39,7 @@ namespace GUC.Server.Scripting.Objects.Character
             return protoList;
         }
 
-        public static IEnumerator ToEnumerable()
+        public static IEnumerable ToEnumerable()
         {
             foreach (GUC.WorldObjects.Character.Player item in sWorld.PlayerList)
             {

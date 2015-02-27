@@ -19,7 +19,7 @@ namespace GUC.Server.Scripting.Objects
 
         protected String mItemInstance = "";
 
-        public static IEnumerator ToEnumerable()
+        public static IEnumerable ToEnumerable()
         {
             foreach (ItemInstance item in ItemInstances.Values)
             {

@@ -89,7 +89,7 @@ namespace GUC.Server.Scripting.Objects
                 CreateVob();
         }
 
-        public static IEnumerator ToEnumerable()
+        public static IEnumerable ToEnumerable()
         {
             foreach (GUC.WorldObjects.Vob item in sWorld.VobList)
             {

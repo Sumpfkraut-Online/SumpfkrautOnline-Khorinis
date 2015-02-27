@@ -36,7 +36,7 @@ namespace GUC.Server.Scripting.GUI
             return allViewDic[id];
         }
 
-        public static IEnumerator ToEnumerator()
+        public static IEnumerable ToEnumerator()
         {
             foreach (KeyValuePair<Int32, View> pair in allViewDic)
             {
