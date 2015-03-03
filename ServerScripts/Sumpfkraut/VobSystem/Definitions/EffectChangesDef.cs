@@ -104,7 +104,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         }
 
         /**
-         *   Apply effect changes to an item defintiion, so derived items can use them.
+         *   Apply effect changes to an item-defintiion, so derived items can use them.
          */
         public static void ApplyEffectChanges (ref ItemDef def, EffectChangesEnum changeType, string param)
         {
