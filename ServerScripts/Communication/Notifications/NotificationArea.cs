@@ -3,6 +3,7 @@ using GUC.Server.Scripting.Objects.Character;
 using GUC.Server.Scripts.Utils;
 using GUC.Types;
 using System;
+using GUC.Enumeration;
 
 namespace GUC.Server.Scripts.Communication
 {
@@ -19,7 +20,7 @@ namespace GUC.Server.Scripts.Communication
       this.OffsetY = y;
       this.Width = width;
       this.Height = height;
-      this.MessagesBox = new MessagesBox("FONT_DEFAULT.TGA", (byte)height, x, y);
+      this.MessagesBox = new MessagesBox("FONT_DEFAULT.TGA", (byte)height, x, y,  (int)VirtualKey.Prior, (int)VirtualKey.Next, 0, true);
       this.MessagesBox.show();
     }
 

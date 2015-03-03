@@ -162,13 +162,21 @@ namespace GUC.Network.Messages
                 String font;
                 byte lines;
 
+                int scrollUp, scrollDown, resetScroll;
+                bool resetOnNewMessage;
+
                 stream.Read(out viewID);
                 stream.Read(out position);
                 stream.Read(out parentID);
                 stream.Read(out font);
                 stream.Read(out lines);
 
-                MessageBox messageBox = new MessageBox(viewID, lines, font, position, getTextureParentFromList(parentID));
+                stream.Read(out scrollUp);
+                stream.Read(out scrollDown);
+                stream.Read(out resetScroll);
+                stream.Read(out resetOnNewMessage);
+
+                MessageBox messageBox = new MessageBox(viewID, lines, font, position, getTextureParentFromList(parentID), scrollUp, scrollDown, resetScroll, resetOnNewMessage);
                 viewList.Add(viewID, messageBox);
             }
             else if (gmT == GuiMessageType.CreateCursor)

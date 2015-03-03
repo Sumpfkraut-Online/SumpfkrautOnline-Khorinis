@@ -64,7 +64,9 @@ namespace Gothic.zClasses
 
             InteractItem = 0x968,
             InteractItemState = 0x96C,
-            InteractItemTargetState = 0x0970
+            InteractItemTargetState = 0x0970,
+
+            VoiceHandleList = 0x0740
         }
 
         public enum NPC_Talents
@@ -385,6 +387,12 @@ namespace Gothic.zClasses
         #endregion
 
         #region Fields
+
+        public zCArray<IntArg> listOfVoiceHandles
+        {
+            get { return new zCArray<IntArg>(Process, this.Address + (int)Offsets.VoiceHandleList); }
+        }
+
 
         public int InteractItemState
         {

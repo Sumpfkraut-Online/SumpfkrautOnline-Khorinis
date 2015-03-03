@@ -10,7 +10,7 @@ namespace Gothic.zStruct
     /// <summary>
     /// Größe der Klasse: 0x98 Classdef: 0x00AB2980
     /// </summary>
-    public class oCMsgConversation : oCNpcMessage
+    public class oCMsgConversation : oCNpcMessage, IDisposable
     {
         public enum Offsets
         {
@@ -39,7 +39,7 @@ namespace Gothic.zStruct
             EV_OUTPUT = 4,
             EV_OUTPUTSVM = 5,
             EV_CUTSCENE,
-            EV_WAITTILLEND,
+            EV_WAITTILLEND = 7,
             EV_ASK,
             EV_WAITFORQUESTION,
             EV_STOPLOOKAT,
@@ -87,6 +87,23 @@ namespace Gothic.zStruct
             
             return rVal;
         }
+
+        public static oCMsgConversation Create(Process process, TConversationSubType conversationType, zString str)
+        {
+            oCMsgConversation rVal = null;
+
+            IntPtr address = process.Alloc(0x98);
+            zCClassDef.ObjectCreated(process, address.ToInt32(), 0x00AB2980);
+
+            //Konstruktor...
+            process.THISCALL<NullReturnCall>((uint)address.ToInt32(), 0x00769DE0, new CallValue[] { (IntArg)((int)conversationType), str });
+            rVal = new oCMsgConversation(process, address.ToInt32());
+
+
+
+            return rVal;
+        }
+
         #endregion
 
         #region Fields
@@ -122,8 +139,27 @@ namespace Gothic.zStruct
             {
                 return new zCVob(Process, Process.ReadInt(Address + (int)Offsets.target));
             }
+            set
+            {
+                Process.Write(value.Address, Address + (int)Offsets.target);
+            }
         }
 
         #endregion
+
+        private bool disposed = false;
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!this.disposed)
+            {
+                Process.Free(new IntPtr(Address), 0x98);
+                disposed = true;
+            }
+        }
     }
 }
