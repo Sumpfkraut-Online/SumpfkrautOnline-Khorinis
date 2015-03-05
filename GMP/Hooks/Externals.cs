@@ -76,6 +76,9 @@ namespace GUC.Hooks
 
                 CreateExternalFunction(new zCParser(process, process.ReadInt(address + 4)), "GUC_SPELL_PROCESSMANA".ToUpper(), typeof(Externals).GetMethod("GUC_PROCESSMANA"), "UntoldChapter\\DLL\\GUC.dll", Value_Types.Int, new Value_Types[] { Value_Types.Int, Value_Types.NPC });
                 CreateExternalFunction(new zCParser(process, process.ReadInt(address + 4)), "GUC_SPELL_PROCESSMANA_RELEASE".ToUpper(), typeof(Externals).GetMethod("GUC_PROCESSMANA_RELEASE"), "UntoldChapter\\DLL\\GUC.dll", Value_Types.Int, new Value_Types[] { Value_Types.Int, Value_Types.NPC });
+
+                if (Scripting.Events.OnAddExternals != null)
+                    Scripting.Events.OnAddExternals(process);
             }
             catch (Exception ex)
             {

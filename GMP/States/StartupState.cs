@@ -110,11 +110,11 @@ namespace GUC.States
             foreach (String internalFile in arr)
             {
                 zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Parse: "+internalFile, 0, "Program.cs", 0);
-                using (StreamReader sr = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream(internalFile)))
+                using (StreamReader sr = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream(internalFile), System.Text.Encoding.Default))
                 {
 
                     String file = getRandomScriptString(".d");
-                    File.WriteAllText(file, sr.ReadToEnd());
+                    File.WriteAllText(file, sr.ReadToEnd(), System.Text.Encoding.Default);
                     fileList += Path.GetFileName(file.ToUpper()) + "\r\n";
                     
                     //str = zString.Create(Process.ThisProcess(), file.ToUpper());
@@ -171,6 +171,11 @@ namespace GUC.States
             return getSystemPath() + "\\UntoldChapter\\conf\\";
         }
 
+        public static String getDownloadPath()
+        {
+            return getSystemPath() + "\\UntoldChapter\\Downloads\\"+clientOptions.ip+"_"+clientOptions.port+"\\";
+        }
+
         public static String getDaedalusPath()
         {
             String path = getSystemPath() + "\\UntoldChapter\\tempScripts\\";
@@ -205,17 +210,26 @@ namespace GUC.States
         }
 
 
+        public static int TurnLeftID = 0;
+        public static int TurnRightID = 0;
+        public static int StartJumpID = 0;
+
 
         public override void Init()
         {
             if (_init)
                 return;
 
+            
+
             //Enable Menu:
             Process Process = Process.ThisProcess();
             ASCIIEncoding enc = new ASCIIEncoding();
             Process.Write(enc.GetBytes("AAAAAA"), 0x890898);
 
+
+            Version v = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            zERROR.GetZErr(Process).Report(2, 'G', "GUC-Version: " + GUC.Options.Constants.VERSION +" - Build:" + v.ToString(), 0, "Program.cs", 0);
 
 
             setupPlayer();
@@ -225,6 +239,11 @@ namespace GUC.States
             PlayerKeyMessage.getPlayerKeyMessage().Init();
 
             _init = true;
+
+
+            TurnLeftID = oCNpc.Player(Process.ThisProcess()).GetModel().GetAniIDFromAniName("T_RUNTURNL");
+            TurnRightID = oCNpc.Player(Process.ThisProcess()).GetModel().GetAniIDFromAniName("T_RUNTURNR");
+            StartJumpID = oCNpc.Player(Process.ThisProcess()).GetModel().GetAniIDFromAniName("T_STAND_2_JUMP");
         }
 
         protected void setupPlayer()

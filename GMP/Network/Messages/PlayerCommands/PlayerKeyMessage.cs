@@ -55,7 +55,7 @@ namespace GUC.Network.Messages.PlayerCommands
                 BitStream stream = Program.client.sentBitStream;
                 stream.Reset();
                 stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                stream.Write((byte)NetworkIDS.PlayerKeyMessage);
+                stream.Write((byte)NetworkID.PlayerKeyMessage);
                 stream.Write(Player.Hero.ID);
                 stream.Write((byte)keys.Count);
                 foreach (KeyValuePair<byte, byte> pair in keys)
@@ -74,6 +74,10 @@ namespace GUC.Network.Messages.PlayerCommands
 
         public void KeyReleased(int key)
         {
+            if (Cursor.noHandle)
+            {
+                return;
+            }
             
             if (!Player.sSendAllKeys && !Player.sSendKeys.Contains((byte)key))
                 return;
@@ -89,6 +93,12 @@ namespace GUC.Network.Messages.PlayerCommands
 
         public void KeyPressed(int key)
         {
+            if (Cursor.noHandle)
+            {
+                return;
+            }
+
+
             if (!Player.sSendAllKeys && !Player.sSendKeys.Contains((byte)key))
                 return;
             if (keys.ContainsKey((byte)key))

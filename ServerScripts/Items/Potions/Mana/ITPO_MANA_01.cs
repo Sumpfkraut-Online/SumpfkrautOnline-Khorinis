@@ -27,7 +27,7 @@ namespace GUC.Server.Scripts.Items.Potions.Mana
             MainFlags = MainFlags.ITEM_KAT_POTIONS;
             Flags = Flags.ITEM_MULTI;
 
-            Materials = MaterialTypes.MAT_GLAS;
+            Materials = MaterialType.MAT_GLAS;
             Description = "Mana Essenz";
 
             Effect = "SPELLFX_MANAPOTION";

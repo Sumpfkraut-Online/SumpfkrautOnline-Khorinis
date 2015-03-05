@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Server.Scripting.Objects.Character;
+using GUC.Enumeration;
 
 namespace GUC.Server.Scripting.Objects.Mob
 {
@@ -26,6 +27,28 @@ namespace GUC.Server.Scripting.Objects.Mob
 
         internal GUC.WorldObjects.Mobs.MobLockable Proto { get { return (GUC.WorldObjects.Mobs.MobLockable)this.vob; } }
 
+
+        public bool IsLocked { get { return Proto.IsLocked; } set { setIsLocked(value); } }
+        public String PicklockStr { get { return Proto.PickLockStr; } set { setPicklockStr(value); } }
+        public ItemInstance KeyInstance { get { return (Proto.KeyInstance == null) ? null : Proto.KeyInstance.ScriptingProto; } set { setItemInstance(value); } }
+
+        public void setIsLocked(bool x)
+        {
+            Proto.IsLocked = x;
+            setPropertie(VobChangeID.IsLocked, x);
+        }
+
+        public void setPicklockStr(String x)
+        {
+            Proto.PickLockStr = x;
+            setPropertie(VobChangeID.PickLockStr, x);
+        }
+
+        public void setItemInstance(ItemInstance x)
+        {
+            Proto.KeyInstance = (x == null) ? null : x.itemInstances;
+            setPropertie(VobChangeID.KeyInstance, x);
+        }
 
 
 

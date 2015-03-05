@@ -56,12 +56,7 @@ namespace GUC.Server.Network.Messages.ContainerCommands
                             item.ScriptingProto.Amount = 0;
                         }
 
-                        if (mobContainer is MobContainer)
-                        {
-                            Scripting.Objects.Mob.MobContainer.isOnTakeItemMessage(
-                                (Scripting.Objects.Mob.MobContainer)((MobContainer)mobContainer).ScriptingVob,
-                                (Scripting.Objects.Character.Player)npc.ScriptingNPC, itemInInventory.ScriptingProto, amount);
-                        }
+                        UpdateMobContainer(amount, npc, mobContainer, itemInInventory);
                     }
                     else
                     {
@@ -77,12 +72,7 @@ namespace GUC.Server.Network.Messages.ContainerCommands
                             item.ScriptingProto.Amount -= amount;
                         }
 
-                        if (mobContainer is MobContainer)
-                        {
-                            Scripting.Objects.Mob.MobContainer.isOnTakeItemMessage(
-                                (Scripting.Objects.Mob.MobContainer)((MobContainer)mobContainer).ScriptingVob,
-                                (Scripting.Objects.Character.Player)npc.ScriptingNPC, itemInInventory.ScriptingProto, amount);
-                        }
+                        UpdateMobContainer(amount, npc, mobContainer, itemInInventory);
 
                     }
                 }
@@ -90,12 +80,7 @@ namespace GUC.Server.Network.Messages.ContainerCommands
                 {
                     item.ScriptingProto.toContainer(npc.ScriptingNPC);
 
-                    if (mobContainer is MobContainer)
-                    {
-                        Scripting.Objects.Mob.MobContainer.isOnTakeItemMessage(
-                            (Scripting.Objects.Mob.MobContainer)((MobContainer)mobContainer).ScriptingVob,
-                            (Scripting.Objects.Character.Player)npc.ScriptingNPC, item.ScriptingProto, item.Amount);
-                    }
+                    UpdateMobContainer(item.Amount, npc, mobContainer, item);                   
                 }
             }
             else if (cic == ContainerItemChanged.itemInsertedOld)
@@ -135,12 +120,8 @@ namespace GUC.Server.Network.Messages.ContainerCommands
                             item.ScriptingProto.toContainer(((NPCProto)mobContainer).ScriptingNPC);
                         }
 
-                        if (mobContainer is MobContainer)
-                        {
-                            Scripting.Objects.Mob.MobContainer.isOnPutItemToContainer(
-                                (Scripting.Objects.Mob.MobContainer)((MobContainer)mobContainer).ScriptingVob,
-                                (Scripting.Objects.Character.Player)npc.ScriptingNPC, item.ScriptingProto, item.Amount);
-                        }
+                        UpdateMobContainer(item.Amount, npc, mobContainer, item);
+                        
                     }
                     else
                     {
@@ -148,12 +129,7 @@ namespace GUC.Server.Network.Messages.ContainerCommands
                         gI.ScriptingProto.Amount += item.Amount;
                         item.ScriptingProto.Amount = 0;
 
-                        if (mobContainer is MobContainer)
-                        {
-                            Scripting.Objects.Mob.MobContainer.isOnPutItemToContainer(
-                                (Scripting.Objects.Mob.MobContainer)((MobContainer)mobContainer).ScriptingVob,
-                                (Scripting.Objects.Character.Player)npc.ScriptingNPC, gI.ScriptingProto, _amount);
-                        }
+                        UpdateMobContainer(_amount, npc, mobContainer, gI);
                     }
                 }
                 else
@@ -163,12 +139,8 @@ namespace GUC.Server.Network.Messages.ContainerCommands
                     else if (mobContainer is NPCProto)
                         item.ScriptingProto.toContainer(((NPCProto)mobContainer).ScriptingNPC);
 
-                    if (mobContainer is MobContainer)
-                    {
-                        Scripting.Objects.Mob.MobContainer.isOnPutItemToContainer(
-                            (Scripting.Objects.Mob.MobContainer)((MobContainer)mobContainer).ScriptingVob,
-                            (Scripting.Objects.Character.Player)npc.ScriptingNPC, item.ScriptingProto, item.Amount);
-                    }
+                    UpdateMobContainer(item.Amount, npc, mobContainer, item);
+                    
                 }
                 
             }
@@ -190,13 +162,19 @@ namespace GUC.Server.Network.Messages.ContainerCommands
                     throw new Exception("NPC has not the item: "+item.ID);
                 i.ScriptingProto.Amount -= 1;
 
-                if (mobContainer is MobContainer)
-                {
-                    Scripting.Objects.Mob.MobContainer.isOnPutItemToContainer(
-                        (Scripting.Objects.Mob.MobContainer)((MobContainer)mobContainer).ScriptingVob,
-                        (Scripting.Objects.Character.Player)npc.ScriptingNPC, newItem.ScriptingProto, 1);
-                }
+                UpdateMobContainer(1, npc, mobContainer, newItem);
+               
             }
+        }
+
+        private static void UpdateMobContainer(int amount, NPCProto npc, IContainer mobContainer, Item item)
+        {
+          if (mobContainer is MobContainer)
+          {
+            Scripting.Objects.Mob.MobContainer.isOnTakeItemMessage(
+                (Scripting.Objects.Mob.MobContainer)((MobContainer)mobContainer).ScriptingVob,
+                (Scripting.Objects.Character.Player)npc.ScriptingNPC, item.ScriptingProto, amount);
+          }
         }
     }
 }

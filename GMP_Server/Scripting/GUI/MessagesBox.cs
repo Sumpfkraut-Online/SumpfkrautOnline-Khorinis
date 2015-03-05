@@ -17,8 +17,15 @@ namespace GUC.Server.Scripting.GUI
         protected String font = "";
         byte lines = 5;
 
+        int scrollUp = 0, scrollDown = 0, resetScroll = 0;
+        bool resetOnNewMessage = true;
+
         public MessagesBox(String font, byte lines, int x, int y)
             : this(font, lines, x, y, null, false, 0)
+        { }
+
+        public MessagesBox(String font, byte lines, int x, int y, int ScrollUpKey, int ScrollDownKey, int ResetScrollKey, bool ResetOnNewNessage)
+            : this(font, lines, new Vec2i(x, y), null, ScrollUpKey, ScrollDownKey, ResetScrollKey, ResetOnNewNessage, false, 0)
         { }
 
         public MessagesBox(String font, byte lines, int x, int y, Texture parent, bool singleUser, int singleUserID)
@@ -26,11 +33,20 @@ namespace GUC.Server.Scripting.GUI
         {  }
 
         public MessagesBox(String font, byte lines, Vec2i position, Texture parent, bool singleUser, int singleUserID)
+            : this(font, lines, position, parent, 0, 0, 0, false, singleUser, singleUserID)
+        {  }
+
+        public MessagesBox(String font, byte lines, Vec2i position, Texture parent,int ScrollUpKey, int ScrollDownKey, int ResetScrollKey, bool ResetOnNewNessage, bool singleUser, int singleUserID)
             : base(position, singleUser, singleUserID, parent)
         {
             this.font = font;
             this.lines = lines;
 
+            this.scrollUp = ScrollUpKey;
+            this.scrollDown = ScrollDownKey;
+            this.resetScroll = ResetScrollKey;
+
+            this.resetOnNewMessage = ResetOnNewNessage;
 
             create(-1);
         }
@@ -38,10 +54,10 @@ namespace GUC.Server.Scripting.GUI
 
         protected override void create(int to)
         {
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.GuiMessage);
+            stream.Write((byte)NetworkID.GuiMessage);
             stream.Write((byte)GuiMessageType.CreateMessageBox);
 
             stream.Write(this.id);
@@ -49,6 +65,11 @@ namespace GUC.Server.Scripting.GUI
             stream.Write(ParentID);
             stream.Write(font);
             stream.Write(lines);
+
+            stream.Write(scrollUp);
+            stream.Write(scrollDown);
+            stream.Write(resetScroll);
+            stream.Write(resetOnNewMessage);
 
             sendStream(to, stream);
 
@@ -61,10 +82,10 @@ namespace GUC.Server.Scripting.GUI
 
         public void addLine(int plID, ColorRGBA color, String message)
         {
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.GuiMessage);
+            stream.Write((byte)NetworkID.GuiMessage);
             stream.Write((byte)GuiMessageType.MessageBoxAddLine);
 
             stream.Write(this.id);

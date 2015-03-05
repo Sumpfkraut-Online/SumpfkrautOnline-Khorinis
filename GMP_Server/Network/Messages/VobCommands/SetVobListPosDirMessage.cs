@@ -45,10 +45,10 @@ namespace GUC.Server.Network.Messages.VobCommands
 
         public static void Write(List<Vob> list, AddressOrGUID addGuild)
         {
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.SetVobListPosDirMessage);
+            stream.Write((byte)NetworkID.SetVobListPosDirMessage);
             stream.Write(list.Count);
             foreach (Vob proto in list)
             {
@@ -57,7 +57,7 @@ namespace GUC.Server.Network.Messages.VobCommands
                 stream.Write(proto.Position);
                 stream.Write(proto.Direction);
             }
-            Program.server.server.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE_SEQUENCED, (char)0, addGuild, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE_SEQUENCED, (char)0, addGuild, true);
         }
     }
 }

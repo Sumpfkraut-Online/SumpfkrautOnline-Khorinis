@@ -12,7 +12,9 @@ namespace Gothic.zClasses
         public enum Offsets : uint 
         {
             Owner = 0x60,
-            ModelPrototype = 0x64
+            ModelPrototype = 0x64,
+            BBox3D = 216,
+            BBox3DLocal = 240
         }
 
         public enum FuncOffsets : uint
@@ -38,7 +40,8 @@ namespace Gothic.zClasses
             IsAnimationActive = 0x00576690,
             LoadVisualVirtual = 0x00578760,
             GetAniIDFromAniName = 0x00612070,
-            RemoveMeshLibAll = 0x0057E3D0
+            RemoveMeshLibAll = 0x0057E3D0,
+            SetModelScale = 0x0057DC30
         }
 
         public enum FuncSize : uint
@@ -98,6 +101,38 @@ namespace Gothic.zClasses
         public zCVob Owner
         {
             get { return new zCVob(Process, Process.ReadInt(Address + (int)Offsets.Owner)); }
+        }
+
+        public zTBBox3D BBox3D
+        {
+            get { return new zTBBox3D(Process, Address + (int)Offsets.BBox3D); }
+        }
+
+        public zTBBox3D BBox3DLocal
+        {
+            get { return new zTBBox3D(Process, Address + (int)Offsets.BBox3DLocal); }
+        }
+
+
+
+        public void SetModelScale(float[] scale)
+        {
+            if (scale.Length != 3)
+                return;
+
+            using (zVec3 vec = zVec3.Create(Process))
+            {
+                vec.X = scale[0];
+                vec.Y = scale[1];
+                vec.Z = scale[2];
+
+                SetModelScale(vec);
+            }
+        }
+
+        public void SetModelScale(zVec3 scale)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetModelScale, new CallValue[] { scale });
         }
 
         public void LoadVisualVirtual(zString str)

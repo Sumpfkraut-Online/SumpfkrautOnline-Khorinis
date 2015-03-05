@@ -185,6 +185,12 @@ namespace Gothic.zClasses
             set { Process.Write(value.Address ,Address + (int)Offsets.visual); }
         }
 
+        public zCEventManager EventManager
+        {
+            get { return new zCEventManager(Process, Process.ReadInt(Address + (int)Offsets.eventManager)); }
+            set { Process.Write(value.Address, Address + (int)Offsets.eventManager); }
+        }
+
         public int BitField1
         {
             get { return Process.ReadInt(Address + (int)Offsets.bitfield); }

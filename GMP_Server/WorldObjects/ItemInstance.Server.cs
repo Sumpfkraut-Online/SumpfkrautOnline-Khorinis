@@ -54,7 +54,7 @@ namespace GUC.WorldObjects
                 if (Protection[i] != 0)
                     stream.Write(Protection[i]);
 
-            if (DamageType != Enumeration.DamageType.DAM_INVALID)
+            if (DamageType != Enumeration.DamageTypes.DAM_INVALID)
                 stream.Write((byte)DamageType);
             if (TotalDamage != 0)
                 stream.Write(TotalDamage);

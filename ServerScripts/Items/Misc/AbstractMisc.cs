@@ -18,7 +18,7 @@ namespace GUC.Server.Scripts.Items.Misc
             MainFlags = Enumeration.MainFlags.ITEM_KAT_NONE;
             Flags = Enumeration.Flags.ITEM_MULTI;
 
-            Materials = Enumeration.MaterialTypes.MAT_WOOD;
+            Materials = Enumeration.MaterialType.MAT_WOOD;
         }
     }
 }

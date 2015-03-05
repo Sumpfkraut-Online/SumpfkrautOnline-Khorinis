@@ -18,7 +18,7 @@ namespace GUC.Server.Scripts.Items.Plants
             MainFlags = Enumeration.MainFlags.ITEM_KAT_FOOD;
             Flags = Enumeration.Flags.ITEM_MULTI;
 
-            Materials = Enumeration.MaterialTypes.MAT_LEATHER;
+            Materials = Enumeration.MaterialType.MAT_LEATHER;
             ScemeName = "FOOD";
 
         }

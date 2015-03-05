@@ -16,6 +16,7 @@ using Gothic.mClasses;
 using Gothic.zTypes;
 using Gothic.zStruct;
 using GUC.Network.Messages.PlayerCommands;
+using WinApi.User.Enumeration;
 
 namespace GUC.States
 {
@@ -46,8 +47,8 @@ namespace GUC.States
 
             pkm = PlayerKeyMessage.getPlayerKeyMessage();
 
-
             
+
 
             _init = true;
         }
@@ -71,6 +72,8 @@ namespace GUC.States
                 sWorld.getWorld(oCGame.Game(process).World.WorldFileName.Value).SpawnWorld();
                 Program.newWorld = false;
             }
+
+            
 
             //if (lastKeyPressed + 10000*1000*2 < now)
             //{
@@ -193,7 +196,7 @@ namespace GUC.States
             BitStream stream = Program.client.sentBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.SetVobPosDirMessage);
+            stream.Write((byte)NetworkID.SetVobPosDirMessage);
             stream.Write(proto.ID);
 
             stream.Write(proto.Position);

@@ -64,27 +64,27 @@ namespace GUC.Enumeration
     static class EnumExtensions
     {
 
-        public static DamageTypeIndex getDamageTypeIndex(this DamageType s1)
+        public static DamageTypeIndex getDamageTypeIndex(this DamageTypes s1)
         {
             switch (s1)
             {
-                case DamageType.DAM_INVALID:
+                case DamageTypes.DAM_INVALID:
                     return DamageTypeIndex.DAM_INDEX_MAX;
-                case DamageType.DAM_BARRIER:
+                case DamageTypes.DAM_BARRIER:
                     return DamageTypeIndex.DAM_INDEX_BARRIER;
-                case DamageType.DAM_BLUNT:
+                case DamageTypes.DAM_BLUNT:
                     return DamageTypeIndex.DAM_INDEX_BLUNT;
-                case DamageType.DAM_EDGE:
+                case DamageTypes.DAM_EDGE:
                     return DamageTypeIndex.DAM_INDEX_EDGE;
-                case DamageType.DAM_FIRE:
+                case DamageTypes.DAM_FIRE:
                     return DamageTypeIndex.DAM_INDEX_FIRE;
-                case DamageType.DAM_FLY:
+                case DamageTypes.DAM_FLY:
                     return DamageTypeIndex.DAM_INDEX_FLY;
-                case DamageType.DAM_MAGIC:
+                case DamageTypes.DAM_MAGIC:
                     return DamageTypeIndex.DAM_INDEX_MAGIC;
-                case DamageType.DAM_POINT:
+                case DamageTypes.DAM_POINT:
                     return DamageTypeIndex.DAM_INDEX_POINT;
-                case DamageType.DAM_FALL:
+                case DamageTypes.DAM_FALL:
                     return DamageTypeIndex.DAM_INDEX_FALL;
                 default:
                     return DamageTypeIndex.DAM_INDEX_BARRIER;;
@@ -95,7 +95,7 @@ namespace GUC.Enumeration
 
 
 
-    public enum DamageType : byte
+    public enum DamageTypes : byte
     {
         DAM_INVALID									= 0,       //	  0 - 0x00 - nur der Vollstandigkeit und Transparenz wegen hier definiert ( _NICHT_ verwenden )
         DAM_BARRIER									= 1,  		//	  1 - 0x01 - nur der Vollstandigkeit und Transparenz wegen hier definiert ( _NICHT_ verwenden )
@@ -116,7 +116,7 @@ namespace GUC.Enumeration
         WEAR_EFFECT									=  16	
     }
 
-    public enum MaterialTypes : byte
+    public enum MaterialType : byte
     {
         MAT_WOOD										= 0,
         MAT_STONE										= 1,
@@ -126,7 +126,7 @@ namespace GUC.Enumeration
         MAT_GLAS										= 5		// ??
     }
 
-    public enum SlotFlags : byte
+    public enum SlotFlag : byte
     {
         SLOT_RIGHTHAND = 0,
         SLOT_LEFTHAND = 1,
