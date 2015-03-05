@@ -10,15 +10,21 @@ namespace Gothic.zStruct
     /// <summary>
     /// Größe der Klasse: 0x98 Classdef: 0x00AB2980
     /// </summary>
-    public class oCMsgConversation : zCObject
+    public class oCMsgConversation : oCNpcMessage
     {
         public enum Offsets
         {
-            subType = 36, //18=Overlay 14=keinOverlay 19=keinOverlay????
-            targetVobName = 44,//zString
             text = 68,
             name = 88,
-            vob = 108
+            target = 108,
+            targetPos = 112,
+            aniID = 124,
+            ModelAni = 128,
+            EventMessage = 132,
+            SoundHandle = 136,
+            timer = 140,
+            number = 144,
+            
         }
 
         /// <summary>
@@ -26,7 +32,7 @@ namespace Gothic.zStruct
         /// </summary>
         public enum TConversationSubType
         {
-            Error = 0,//nicht bekannt?
+            EV_PLAYANISOUND = 0,//Default
             EV_PLAYANI,
             EV_PLAYSOUND,
             EV_LOOKAT,
@@ -45,7 +51,9 @@ namespace Gothic.zStruct
             EV_PROCESSINFOS,
             EV_STOPPROCESSINFOS,
             EV_OUTPUTSVM_OVERLAY = 18,
-            EV_SNDPLAY
+            EV_SNDPLAY,
+            EV_SNDPLAY3D,
+
         }
 
         public oCMsgConversation()
@@ -82,17 +90,7 @@ namespace Gothic.zStruct
         #endregion
 
         #region Fields
-        /// <summary>
-        /// Wird durch den Konstruktor angegeben.
-        /// <return>Subtype als ushort, entspricht der Enumeration TConversationSubType</return>
-        /// </summary>
-        public ushort subType
-        {
-            get
-            {
-                return Process.ReadUShort(Address + (int)Offsets.subType);
-            }
-        }
+        
 
         /// <summary>
         /// Der Text der z.B. bei Sprachausgabe ausgegeben wird 
@@ -118,19 +116,11 @@ namespace Gothic.zStruct
             }
         }
 
-        public zString TargetVobName
+        public zCVob Target
         {
             get
             {
-                return new zString(Process, Address + (int)Offsets.targetVobName);
-            }
-        }
-
-        public zCVob Vob
-        {
-            get
-            {
-                return new zCVob(Process, Process.ReadInt(Address + (int)Offsets.vob));
+                return new zCVob(Process, Process.ReadInt(Address + (int)Offsets.target));
             }
         }
 

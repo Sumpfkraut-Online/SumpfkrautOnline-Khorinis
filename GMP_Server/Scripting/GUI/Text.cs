@@ -69,10 +69,10 @@ namespace GUC.Server.Scripting.GUI
 
         protected override void create(int to)
         {
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.GuiMessage);
+            stream.Write((byte)NetworkID.GuiMessage);
             stream.Write((byte)GuiMessageType.CreateText);
 
             stream.Write(this.id);
@@ -110,10 +110,10 @@ namespace GUC.Server.Scripting.GUI
             this.text = text;
 
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.GuiMessage);
+            stream.Write((byte)NetworkID.GuiMessage);
             stream.Write((byte)GuiMessageType.SetText);
 
             stream.Write(this.id);
@@ -132,10 +132,10 @@ namespace GUC.Server.Scripting.GUI
             else
                 this.colorDict[playerID].set(r, g, b, a);
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.GuiMessage);
+            stream.Write((byte)NetworkID.GuiMessage);
             stream.Write((byte)GuiMessageType.SetTextColor);
 
             stream.Write(this.id);
@@ -161,10 +161,10 @@ namespace GUC.Server.Scripting.GUI
             this.font = font;
 
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.GuiMessage);
+            stream.Write((byte)NetworkID.GuiMessage);
             stream.Write((byte)GuiMessageType.SetTextFont);
 
             stream.Write(this.id);

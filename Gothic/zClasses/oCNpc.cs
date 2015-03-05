@@ -203,6 +203,11 @@ namespace Gothic.zClasses
             ReadySpell = 0x006802E0,
             UnreadySpell = 0x00680480,
             EV_RemoveWeapon = 0x0074DB20,
+            Shrink = 0x0072CA20,
+            UnShrink = 0x0072CBA0,
+            CloseSpellBook = 0x0073E9E0,
+            SetVisual = 0x0072E3F0,
+            AvoidShrink = 0x0072D250
         }
 
         public enum HookSize : uint
@@ -699,7 +704,23 @@ namespace Gothic.zClasses
         #endregion
 
         #region ownMethods
+        public void ClearOverlays()
+        {
+            int overlayCount = this.ActiveOverlays.Size;
+            String[] overlayList = new String[overlayCount];
+            for (int i = 0; i < overlayCount; i++)
+            {
+                overlayList[i] = this.ActiveOverlays.get(i, 20).Value.ToUpper().Trim();
+            }
 
+            for (int i = 0; i < overlayCount; i++)
+            {
+                using(zString str = zString.Create(Process, overlayList[i])){
+                    this.RemoveOverlay(str);
+                }
+            }
+
+        }
 
         public void setAttributes(byte type, int value)
         {
@@ -820,6 +841,27 @@ namespace Gothic.zClasses
 
         #region methods
 
+
+        public void Shrink()
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.Shrink, new CallValue[] { });
+        }
+
+        public void UnShrink()
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.UnShrink, new CallValue[] { });
+        }
+
+        public void AvoidShrink(int val)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.AvoidShrink, new CallValue[] { new IntArg(val) });
+        }
+
+        public void CloseSpellBook(bool x)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.CloseSpellBook, new CallValue[] { new BoolArg(x) });
+        }
+
         public void Disable()
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.Disable, new CallValue[] {  });
@@ -866,6 +908,11 @@ namespace Gothic.zClasses
         public void EV_OutputSVM_Overlay(oCMsgConversation msg)
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.EV_OutputSVM_Overlay, new CallValue[] { msg });
+        }
+
+        public int SetVisual(zCVisual visual)
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.SetVisual, new CallValue[] { visual });
         }
 
         public int AssessTalk_S(oCNpc npc)

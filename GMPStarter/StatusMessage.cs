@@ -25,6 +25,7 @@ namespace GMPStarter
         long ping = 0;
         String maxSlots = "";
         String players = "";
+        String[] files = null;
 
 
         public StatusMessage(String _ip, ushort _port)
@@ -37,6 +38,12 @@ namespace GMPStarter
         {
             //run(null);
             ThreadPool.QueueUserWorkItem(run);
+        }
+
+        public void startGetFiles()
+        {
+            //run(null);
+            ThreadPool.QueueUserWorkItem(getFiles);
         }
 
 
@@ -99,16 +106,39 @@ namespace GMPStarter
             }
         }
 
+        public static IPEndPoint getIPFromIPorHost(String host, int port)
+        {
+            IPAddress[] hostInfo = System.Net.Dns.GetHostAddresses(host);
+            if (hostInfo.Length == 0)
+            {
+                return new IPEndPoint(IPAddress.Parse(host), port);
+            }
+            else
+            {
+                return new IPEndPoint(hostInfo[0], port);
+            }
+
+        }
+
         protected void run(Object state)
         {
             try
             {
                 this.ping = new Ping().Send(IP).RoundtripTime;
                 TcpClient client = new TcpClient();
-                
-                IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse(ip), port);
 
-                client.Connect(serverEndPoint);
+
+
+                IPEndPoint serverEndPoint = getIPFromIPorHost(ip, port);
+
+                try
+                {
+                    client.Connect(serverEndPoint);
+                }
+                catch (Exception ex)
+                {
+                    return;
+                }
 
                 NetworkStream clientStream = client.GetStream();
                 StreamReader sr = new StreamReader(clientStream);
@@ -162,5 +192,70 @@ namespace GMPStarter
                 loaded = true;
             }
         }
+
+
+        Dictionary<String, String> fileList = new Dictionary<string, string>();
+
+        public Dictionary<String, String> Files { get{
+            lock(fileList){
+                return fileList;
+            } } }
+        protected void getFiles(Object state)
+        {
+            try
+            {
+                this.ping = new Ping().Send(IP).RoundtripTime;
+                TcpClient client = new TcpClient();
+
+
+
+                IPEndPoint serverEndPoint = getIPFromIPorHost(ip, port);
+
+                client.Connect(serverEndPoint);
+
+                NetworkStream clientStream = client.GetStream();
+                StreamReader sr = new StreamReader(clientStream);
+                StreamWriter sw = new StreamWriter(clientStream);
+                sw.AutoFlush = true;
+
+                sw.WriteLine("getfiles");
+
+                String type = sr.ReadLine().Trim().ToLower();
+                if (type.Equals("getfiles"))
+                {
+                    uint infoCount = 0;
+                    UInt32.TryParse(sr.ReadLine(), out infoCount);
+                    lock (fileList)
+                    {
+                        for (int i = 0; i < infoCount; i++)
+                        {
+                            String completeInfo = sr.ReadLine();
+                            String[] infoValues = completeInfo.Split(new char[] { '§' }, 2);
+                            if (infoValues.Length != 2)
+                                continue;
+                            if (infoValues[0].Length <= 1)
+                                continue;
+
+                            fileList.Add(infoValues[0], infoValues[1]);
+
+                        }
+
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            { }
+
+            lock (lockThis)
+            {
+                loaded = true;
+            }
+        }
+
+
+
+
+
     }
 }

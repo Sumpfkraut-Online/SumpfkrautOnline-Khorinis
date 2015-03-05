@@ -36,16 +36,16 @@ namespace GUC.Server.Network.Messages.VobCommands
 
         public static void Write(Vob proto, AddressOrGUID addGuild)
         {
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.SetVobPosDirMessage);
+            stream.Write((byte)NetworkID.SetVobPosDirMessage);
             stream.Write(proto.ID);
 
             stream.Write(proto.Position);
             stream.Write(proto.Direction);
 
-            Program.server.server.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE_SEQUENCED, (char)0, addGuild, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE_SEQUENCED, (char)0, addGuild, true);
         }
     }
 }

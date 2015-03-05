@@ -146,7 +146,7 @@ namespace GUC.GUI
                         RakNet.BitStream stream = Program.client.sentBitStream;
                         stream.Reset();
                         stream.Write((byte)DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                        stream.Write((byte)NetworkIDS.GuiMessage);
+                        stream.Write((byte)NetworkID.GuiMessage);
                         stream.Write((byte)GuiMessageType.GuiEvent);
                         stream.Write(Player.Hero.ID);
                         stream.Write(this.id);
@@ -166,7 +166,7 @@ namespace GUC.GUI
                         RakNet.BitStream stream = Program.client.sentBitStream;
                         stream.Reset();
                         stream.Write((byte)DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                        stream.Write((byte)NetworkIDS.GuiMessage);
+                        stream.Write((byte)NetworkID.GuiMessage);
                         stream.Write((byte)GuiMessageType.GuiEvent);
                         stream.Write(Player.Hero.ID);
                         stream.Write(this.id);
@@ -189,8 +189,8 @@ namespace GUC.GUI
 
         public void KeyPressed(int key)
         {
-            if (key == (int)VirtualKeys.LeftButton && this.enabledEvents.HasFlag(GUIEvents.LeftClicked)
-                || key == (int)VirtualKeys.RightButton && this.enabledEvents.HasFlag(GUIEvents.RightClicked))
+            if (key == (int)VirtualKey.LeftButton && this.enabledEvents.HasFlag(GUIEvents.LeftClicked)
+                || key == (int)VirtualKey.RightButton && this.enabledEvents.HasFlag(GUIEvents.RightClicked))
             {
                 if (this.position.X < Gothic.mClasses.Cursor.CursorX() && this.position.X + this.size.X > Gothic.mClasses.Cursor.CursorX()
                     && this.position.Y < Gothic.mClasses.Cursor.CursorY() && this.position.Y + this.size.Y > Gothic.mClasses.Cursor.CursorY())
@@ -198,13 +198,13 @@ namespace GUC.GUI
                     RakNet.BitStream stream = Program.client.sentBitStream;
                     stream.Reset();
                     stream.Write((byte)DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                    stream.Write((byte)NetworkIDS.GuiMessage);
+                    stream.Write((byte)NetworkID.GuiMessage);
                     stream.Write((byte)GuiMessageType.GuiEvent);
                     stream.Write(Player.Hero.ID);
                     stream.Write(this.id);
 
                     
-                    int evt = (key == (int)VirtualKeys.LeftButton) ? (int)GUIEvents.LeftClicked : (int)GUIEvents.RightClicked;
+                    int evt = (key == (int)VirtualKey.LeftButton) ? (int)GUIEvents.LeftClicked : (int)GUIEvents.RightClicked;
                     stream.Write(evt);
 
                     Program.client.client.Send(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);

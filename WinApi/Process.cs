@@ -331,6 +331,8 @@ namespace WinApi
             list.AddRange(BitConverter.GetBytes(addr + size));
             list.Add(0xC3);//RTN
 
+            
+
             //IntPtr newASM = Alloc((uint)size + 120 + 3);//Neue Funktion
 
             if (Write(list.ToArray(), newASM.ToInt32()) == 0)//Neue Funktion schreiben

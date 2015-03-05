@@ -13,15 +13,15 @@ namespace GUC.Server.Network.Messages.NpcCommands
 
         public static void Write(NPC npc, Player player, bool r)
         {
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.NPCControllerMessage);
+            stream.Write((byte)NetworkID.NPCControllerMessage);
             stream.Write(npc.ID);
             stream.Write(r);
             
             using (RakNet.RakNetGUID guid = new RakNetGUID(player.Guid))
-                Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
 
         }
     }

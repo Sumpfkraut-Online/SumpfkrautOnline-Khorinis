@@ -28,7 +28,7 @@ namespace GUC.Server
         }
 
         protected Dictionary<String, String> info = new Dictionary<string, string>();
-
+        protected Dictionary<String, String> files = new Dictionary<string, string>();
         private TcpListener tcpListener;
         private Thread listenThread;
 
@@ -42,6 +42,18 @@ namespace GUC.Server
                     info[key] = value;
                 else
                     info.Add(key, value);
+            }
+        }
+
+        public void addFile(String url, String md5)
+        {
+            if (GUC.Server.Scripting.ScriptManager.Self.Startuped)
+            {
+                return;
+            }
+            lock (files)
+            {
+                files.Add(url, md5);
             }
         }
 
@@ -80,16 +92,13 @@ namespace GUC.Server
 
         private void HandleClient(Object state)
         {
-            NetworkStream clientStream = null;
-            StreamReader sr = null;
-            StreamWriter sw = null;
             try
             {
                 TcpClient client = (TcpClient)state;
-                clientStream = client.GetStream();
+                NetworkStream clientStream = client.GetStream();
 
-                sr = new StreamReader(clientStream);
-                sw = new StreamWriter(clientStream);
+                StreamReader sr = new StreamReader(clientStream);
+                StreamWriter sw = new StreamWriter(clientStream);
                 sw.AutoFlush = true;
 
                 string type = sr.ReadLine().Trim().ToLower();
@@ -105,32 +114,31 @@ namespace GUC.Server
                             sw.WriteLine(pair.Key.Trim().ToLower() + ":" + pair.Value.Trim());
                         }
                     }
-                    sw.WriteLine("servername:TestName!");
-                    sw.WriteLine("serverlanguage:English");
-                    sw.WriteLine("maxslots:15");
-                    sw.WriteLine("players:10");
 
                 }
+
+                if (type.Equals("getfiles"))
+                {
+                    sw.WriteLine("getfiles");
+                    lock (files)
+                    {
+                        sw.WriteLine("" + files.Count);
+                        foreach (KeyValuePair<String, String> pair in files)
+                        {
+                            sw.WriteLine(pair.Key.Trim().ToLower() + "§" + pair.Value.Trim());
+                        }
+                    }
+
+                }
+
+                sr.Close();
+                sw.Close();
+                clientStream.Close();
 
             }
             catch (Exception ex)
             {
 
-            }
-            finally
-            {
-                if (sr != null)
-                {
-                    sr.Close();
-                }
-                if (sw != null)
-                {
-                    sw.Close();
-                }
-                if (clientStream != null)
-                {
-                    clientStream.Close();
-                }
             }
         }
     }

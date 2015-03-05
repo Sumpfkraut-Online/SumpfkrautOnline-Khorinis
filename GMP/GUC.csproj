@@ -58,6 +58,8 @@
     <Compile Include="GUI\GuiList\ListRow.cs" />
     <Compile Include="GUI\GuiList\ListText.cs" />
     <Compile Include="GUI\GuiList\ListTextBox.cs" />
+    <Compile Include="GUI\PlayerText.cs" />
+    <Compile Include="GUI\Text3D.cs" />
     <Compile Include="GUI\TextArea.cs" />
     <Compile Include="GUI\MessageBox.cs" />
     <Compile Include="GUI\Text.cs" />
@@ -124,6 +126,7 @@
     <Compile Include="Network\Messages\PlayerCommands\TakeItemMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\ChangeWorldMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\CreateVobMessage.cs" />
+    <Compile Include="Network\Messages\VobCommands\DespawnVobMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\PlayEffectMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\SetVobListPosDirMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\SetVobDirectionMessage.cs" />
@@ -137,6 +140,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Scripting\Listener\IClientStartup.cs" />
+    <Compile Include="Scripting\ScriptManager.cs" />
     <Compile Include="States\AbstractState.cs" />
     <Compile Include="States\GameState.cs" />
     <Compile Include="timer\DespawnTimer.cs" />

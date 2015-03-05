@@ -10,7 +10,7 @@ namespace GUC.WorldObjects.Mobs
         public MobSwitch()
             : base()
         {
-            this.VobType = Enumeration.VobTypes.MobSwitch;
+            this.VobType = Enumeration.VobType.MobSwitch;
         }
     }
 }

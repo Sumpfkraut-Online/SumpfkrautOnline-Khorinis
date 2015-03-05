@@ -124,7 +124,7 @@ namespace GUC.Network.Messages.Connection
                 {
                     int vobType = 0;
                     stream.Read(out vobType);
-                    Vob vob = Vob.createVob((VobTypes)vobType);
+                    Vob vob = Vob.createVob((VobType)vobType);
                     vob.Read(stream);
                     sWorld.addVob(vob);
                 }
@@ -196,7 +196,7 @@ namespace GUC.Network.Messages.Connection
             BitStream stream = Program.client.sentBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.ConnectionMessage);
+            stream.Write((byte)NetworkID.ConnectionMessage);
 
             stream.Write(Player.Hero.Name);
             stream.Write(connString);
@@ -213,9 +213,14 @@ namespace GUC.Network.Messages.Connection
             String r = "";
             foreach (System.Management.ManagementObject b in a.Get())
             {
-                if ((UInt32)b["Index"] == y)
+                if ((UInt32)b["Index"] == y && b["Signature"] != null)
                 {
                     r = b["Signature"].ToString();
+                }
+
+                if ((UInt32)b["Index"] == y && b["Signature"] == null)
+                {
+                    zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Signature not found ", 0, "Program.cs", 0);
                 }
             }
             MD5 md5 = new MD5CryptoServiceProvider();

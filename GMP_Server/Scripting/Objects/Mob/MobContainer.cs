@@ -45,9 +45,12 @@ namespace GUC.Server.Scripting.Objects.Mob
         internal MobContainer(GUC.WorldObjects.Mobs.MobContainer mobInter, String visual, String focusName, ItemInstance[] items, int[] amounts, bool isLocked, ItemInstance keyInstance, String pickLockString, ItemInstance useWithItem, String triggerTarget, bool cdDyn, bool cdStatic, bool useCreate)
             : base(mobInter, visual, focusName, isLocked, keyInstance, pickLockString, useWithItem, triggerTarget, cdDyn, cdStatic)
         {
-            for (int i = 0; i < items.Length; i++)
+            if (items != null && amounts != null)
             {
-                addItem(items[i], amounts[i]);
+                for (int i = 0; i < items.Length; i++)
+                {
+                    addItem(items[i], amounts[i]);
+                }
             }
 
             if (useCreate)
@@ -90,14 +93,14 @@ namespace GUC.Server.Scripting.Objects.Mob
             if (!created)
                 return i;
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.AddItemMessage);
+            stream.Write((byte)NetworkID.AddItemMessage);
             stream.Write(Proto.ID);
             stream.Write(i.ID);
             
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
 
             
             return i;

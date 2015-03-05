@@ -20,12 +20,12 @@ namespace GUC.Server.Scripting.Objects
 
         protected Dictionary<String, Object> userObjects = new Dictionary<string,object>();
 
-        /**
-         * Returns the Vob with the specified ID.
-         * To access the ID of a vob, use vob.ID
-         * @param id ID of a Vob
-         * @return Vob with the ID id or a null-reference
-         */
+        /// <summary>
+        /// Returns the Vob with the specified ID.
+        /// You can get the id of all vobs (Players, NPCs, mobinters and items) with vob.ID
+        /// </summary>
+        /// <param name="id">The specified vobid</param>
+        /// <returns>returns the vob with the specfied vob-id or null</returns>
         public static Vob getVob(int id){
             WorldObjects.Vob v = null;
             sWorld.VobDict.TryGetValue(id, out v);
@@ -37,14 +37,37 @@ namespace GUC.Server.Scripting.Objects
 
         }
 
-        /**
-         * Creates a new vob.
-         * @param vob Existing partner-vob in the world
-         * @param visual the visual of the Vob to be creaeted.
-         * @param cdDyn Dynamic collision
-         * @param cdStatic Static collision
-         * @param useCreate Call CreateVob() upon creation
-         */
+
+        internal Vob(GUC.WorldObjects.Vob vob)
+        {
+            this.vob = vob;
+        }
+
+        /// <summary>
+        /// Creates a new vob.
+        /// Do not forget to use the spawn function.
+        /// </summary>
+        /// <param name="Visual">The visual your vob will get</param>
+        public Vob(String Visual)
+            : this(Visual, true, true, true)
+        { }
+
+        /// <summary>
+        /// Creates a new vob.
+        /// Do not forget to use the spawn function.
+        /// </summary>
+        /// <param name="Visual">The visual your vob will get</param>
+        /// <param name="cdDyn">Dynamic Collisions</param>
+        /// <param name="cdStatic">Static Collisions</param>
+        public Vob(String Visual, bool cdDyn, bool cdStatic)
+            : this(Visual, cdDyn, cdStatic, true)
+        { }
+
+        private Vob(String visual, bool cdDyn, bool cdStatic, bool useCreate)
+            : this(new GUC.WorldObjects.Vob(), visual, cdDyn, cdStatic, useCreate)
+        {
+
+        }
         internal Vob(GUC.WorldObjects.Vob vob, String visual, bool cdDyn, bool cdStatic, bool useCreate)
             : this(vob)
         {
@@ -58,46 +81,14 @@ namespace GUC.Server.Scripting.Objects
                 CreateVob();
         }
 
-        /**
-         * @overload
-         */
-        internal Vob(GUC.WorldObjects.Vob vob)
-        {
-            this.vob = vob;
-        }
+        /// <summary>
+        /// Returns the ID of the vob.
+        /// </summary>
+        public int ID { get { return vob.ID; } }
 
-
-        /**
-         * @overload
-         */
-        public Vob(String Visual)
-            : this(Visual, true, true, true)
-        { }
-
-        /**
-         * @overload
-         */
-        public Vob(String Visual, bool cdDyn, bool cdStatic)
-            : this(Visual, cdDyn, cdStatic, true)
-        { }
-
-        /**
-         * @overload
-         */
-        private Vob(String visual, bool cdDyn, bool cdStatic, bool useCreate)
-            : this(new GUC.WorldObjects.Vob(), visual, cdDyn, cdStatic, useCreate)
-        {
-
-        }
-
-
-        public int ID { get { return vob.ID; } } /**< Internal ID of this vob. Can only be read. */
-
-        /**
-         * Regular (X|Y|Z) position vector.
-         * When this is set to an invalid value, it will default to (0|0|0).
-         * The position in the world will be updated automatically (D_SERVER???).
-         */
+        /// <summary>
+        /// Returns or set the Position of the vob.
+        /// </summary>
         public Vec3f Position { get { return vob.Position; } set { setPosition(value); } }
         /// <summary>
         /// Returns or set the Direction of the vob.
@@ -134,6 +125,12 @@ namespace GUC.Server.Scripting.Objects
 
 
             SpawnVobMessage.Write(vob);
+        }
+
+        public virtual void Despawn()
+        {
+            GUC.WorldObjects.sWorld.getWorld(vob.Map).addVob(this.vob);
+            DespawnVobMessage.Write(vob);
         }
 
         protected virtual void CreateVob()
@@ -192,6 +189,12 @@ namespace GUC.Server.Scripting.Objects
             }
 
             return playerList.ToArray();
+        }
+
+        public float GetDistanceTo(Vob other)
+        {
+          return (other.Position - this.Position).Length;
+          
         }
 
         /// <summary>
@@ -378,10 +381,10 @@ namespace GUC.Server.Scripting.Objects
             if (!created)
                 return;
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.PlayEffectMessage);
+            stream.Write((byte)NetworkID.PlayEffectMessage);
             stream.Write(vob.ID);
             stream.Write(effect);
             stream.Write(targetID);
@@ -390,10 +393,10 @@ namespace GUC.Server.Scripting.Objects
             stream.Write(damagetype);
             stream.Write(isprojectile);
             if(player == null)
-                Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
             else
                 using(RakNetGUID guid = player.proto.GUID)
-                    Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+                    Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
         }
 
         public virtual void setVisual(String visual)
@@ -403,13 +406,13 @@ namespace GUC.Server.Scripting.Objects
             if (!created)
                 return;
             
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.SetVisualMessage);
+            stream.Write((byte)NetworkID.SetVisualMessage);
             stream.Write(vob.ID);
             stream.Write(visual);
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
         public virtual void setPosition(Vec3f position)
@@ -419,17 +422,17 @@ namespace GUC.Server.Scripting.Objects
             if (!created)
                 return;
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.SetVobPositionMessage);
+            stream.Write((byte)NetworkID.SetVobPositionMessage);
             stream.Write(vob.ID);
             stream.Write(vob.Position);
 
             if(this is NPC)
                 ((NPCProto)this).proto.SendToAreaPlayers(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED);
             else
-                Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
         public virtual void setDirection(Vec3f dir)
@@ -442,13 +445,13 @@ namespace GUC.Server.Scripting.Objects
             if (!created)
                 return;
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.SetVobDirectionMessage);
+            stream.Write((byte)NetworkID.SetVobDirectionMessage);
             stream.Write(vob.ID);
             stream.Write(vob.Direction);
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
         public virtual void setDirectionFast(Vec3f dir)
@@ -461,13 +464,13 @@ namespace GUC.Server.Scripting.Objects
             if (!created)
                 return;
 
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.SetVobDirectionMessage);
+            stream.Write((byte)NetworkID.SetVobDirectionMessage);
             stream.Write(vob.ID);
             stream.Write(vob.Direction);
-            Program.server.server.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE_SEQUENCED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE_SEQUENCED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
 

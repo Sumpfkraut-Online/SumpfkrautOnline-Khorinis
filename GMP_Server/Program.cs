@@ -8,6 +8,7 @@ using GUC.Types;
 using GUC.WorldObjects;
 using GUC.WorldObjects.Character;
 using GUC.Server.Network.Messages.NpcCommands;
+using System.Threading;
 
 namespace GUC.Server
 {
@@ -87,25 +88,41 @@ namespace GUC.Server
                 //ModuleLoader.loadAllModules();
 
                 scriptManager = new Scripting.ScriptManager();
-                scriptManager.init();
+                scriptManager.Init();
                 scriptManager.Startup();
                 long lastInfoUpdates = 0;
+
+                long startUpdate = 0;
+                int updatesPerSecond = 100; 
                 while (true)
                 {
                     long ticks = DateTime.Now.Ticks;
+                    startUpdate = ticks;
                     Player.sUpdateNPCList(ticks);
 
                     if (lastInfoUpdates < ticks)
                     {
                         TCPStatus.getTCPStatus().addInfo("players", "" + sWorld.PlayerList.Count);
+
                         lastInfoUpdates = ticks + 10000 * 1000 * 5;
                     }
 
 
                     //ModuleLoader.updateAllModules();
-                    scriptManager.update();
+                    scriptManager.Update();
                     server.Update();
                     updateNPCController(ticks);
+
+                    //limit update intervals
+                    float elapsedTimeMs = (DateTime.Now.Ticks - startUpdate) / TimeSpan.TicksPerMillisecond;
+                    float timePerUpdateMs = 1000 / updatesPerSecond;
+                    if(elapsedTimeMs<timePerUpdateMs)
+                    {
+                      int restMs=(int)(timePerUpdateMs-elapsedTimeMs);
+                      if (restMs > 0)
+                        Thread.Sleep(restMs);
+                    }
+                    
                     
                 }
             }

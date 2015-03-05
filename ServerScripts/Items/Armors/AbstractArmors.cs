@@ -18,7 +18,7 @@ namespace GUC.Server.Scripts.Items.Armors
             MainFlags = Enumeration.MainFlags.ITEM_KAT_ARMOR;
             Flags = 0;
 
-            Materials = Enumeration.MaterialTypes.MAT_LEATHER;
+            Materials = Enumeration.MaterialType.MAT_LEATHER;
             Wear = Enumeration.ArmorFlags.WEAR_TORSO;
 
             Visual_skin = 0;
