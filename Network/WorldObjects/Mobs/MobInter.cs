@@ -20,7 +20,7 @@ namespace GUC.WorldObjects.Mobs
         public MobInter()
             : base()
         {
-            this.VobType = Enumeration.VobType.MobInter;
+            this.VobType = Enumeration.VobTypes.MobInter;
         }
 
 

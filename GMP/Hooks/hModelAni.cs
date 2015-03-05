@@ -12,7 +12,6 @@ namespace GUC.Hooks
 {
     public class hModelAni
     {
-        
         public static Int32 oCStartAnim_ModelAnim(String message)
         {
             int address = Convert.ToInt32(message);
@@ -34,15 +33,12 @@ namespace GUC.Hooks
                 NPCProto player = (NPCProto)v;
                 if (player == null)
                     return 0;
-
-                if (player != Player.Hero)
-                    return 0;
-
                 zCModelAni modelAni = new zCModelAni(process, process.ReadInt(address + 4));
                 if (modelAni == null || modelAni.Address == 0)
                     return 0;
 
-                
+                if (player != Player.Hero)
+                    return 0;
 
                 int aniID = modelAni.GetAniID();
                 //String name = modelAni.AniName.Value.Trim();//Works
@@ -51,7 +47,6 @@ namespace GUC.Hooks
 
                 player.Animation = (short)aniID;
                 AnimationUpdateMessage.Write(player);
-
                 
             }
             catch (Exception ex)

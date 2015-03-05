@@ -14,56 +14,13 @@ namespace GUC.WorldObjects.Mobs
             if (this.KeyInstance != null)
                 vob.SetKeyInstance("ITGUC_"+this.KeyInstance.ID);
             if (this.PickLockStr != null && this.PickLockStr.Length != 0)
-                vob.SetPickLockStr(this.PickLockStr);
+                vob.SetKeyInstance(this.PickLockStr);
 
 
             if (IsLocked)
                 vob.SetLocked(1);
             else
                 vob.SetLocked(0);
-        }
-
-
-        public void setKeyInstance(ItemInstance keyInstance)
-        {
-            this.KeyInstance = keyInstance;
-
-            if (this.Address == 0)
-                return;
-
-            oCMobLockable mobInter = new oCMobLockable(Process.ThisProcess(), this.Address);
-            if (this.KeyInstance != null)
-                mobInter.SetKeyInstance("ITGUC_" + this.KeyInstance.ID);
-            else
-                mobInter.SetKeyInstance("");
-        }
-
-        public void setPickLockStr(String picklockString)
-        {
-            this.PickLockStr = picklockString;
-
-            if (this.Address == 0)
-                return;
-
-            oCMobLockable mobInter = new oCMobLockable(Process.ThisProcess(), this.Address);
-            if (this.PickLockStr != null && PickLockStr.Length != 0)
-                mobInter.SetPickLockStr(PickLockStr);
-            else
-                mobInter.SetPickLockStr("");
-        }
-
-        public void setIsLocked(bool locked)
-        {
-            this.IsLocked = locked;
-
-            if (this.Address == 0)
-                return;
-
-            oCMobLockable mobInter = new oCMobLockable(Process.ThisProcess(), this.Address);
-            if (IsLocked)
-                mobInter.SetLocked(1);
-            else
-                mobInter.SetLocked(0);
         }
 
 

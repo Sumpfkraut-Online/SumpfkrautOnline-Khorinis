@@ -26,7 +26,7 @@ namespace GUC.Server.Scripts.Items.Food
             Description = "Echter Seemanns Grog";
 
             ScemeName = "POTIONFAST";
-            Materials = Enumeration.MaterialType.MAT_GLAS;
+            Materials = Enumeration.MaterialTypes.MAT_GLAS;
 
             OnUse += new Scripting.Events.UseItemEventHandler(useItem);
 

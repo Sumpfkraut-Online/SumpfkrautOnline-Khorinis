@@ -7,7 +7,7 @@ using Gothic.zTypes;
 
 namespace Gothic.zClasses
 {
-    public class zCWorld : zCObject, IDisposable
+    public class zCWorld : zCObject
     {
         public zCWorld(Process process, int address)
             : base(process, address)
@@ -25,9 +25,7 @@ namespace Gothic.zClasses
             SetSkyControlerOutdoor = 0x00620410,
             AddVob = 0x00624810,
             InsertVobInWorld = 0x00780330,
-            TraceRayNearestHit = 0x00621B80,
-            DisableVob = 0x00780460,
-
+            TraceRayNearestHit = 0x00621B80
         }
 
         public enum HookSize
@@ -52,8 +50,7 @@ namespace Gothic.zClasses
             raytrace_foundPoly = 0x0040,
             raytrace_foundIntersection = 0x0044, //zVec[]
             raytrace_foundPolyNormal = 0x0050, // zVec[]
-            raytrace_foundVertex = 0x005C,
-            m_bIsInventoryWorld = 136
+            raytrace_foundVertex = 0x005C
         }
 
         [Flags]
@@ -185,11 +182,6 @@ namespace Gothic.zClasses
             } while ((tree = tree.Next).Address != 0);
         }
 
-        public bool IsInventoryWorld
-        {
-            get { return Process.ReadInt(Address + (int)Offsets.m_bIsInventoryWorld) >= 1; }
-            set { Process.Write(value ? 1 : 0, Address + (int)Offsets.m_bIsInventoryWorld); }
-        }
 
         public int Raytrace_FoundHit
         {
@@ -299,11 +291,6 @@ namespace Gothic.zClasses
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.RemoveVob, new CallValue[] { vob });
         }
 
-        public void DisableVob(zCVob vob)
-        {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.DisableVob, new CallValue[] { vob });
-        }
-
         public zCViewProgressBar GetProgressBar()
         {
             return Process.THISCALL<zCViewProgressBar>((uint)Address, (uint)FuncOffsets.GetProgressBar, new CallValue[] { });
@@ -323,40 +310,6 @@ namespace Gothic.zClasses
         public override uint ValueLength()
         {
             return 4;
-        }
-
-        public override int SizeOf()
-        {
-            return 0x6258;
-        }
-
-
-
-        public static zCWorld Create(Process process)
-        {
-            int ptr = process.Alloc(0x6258).ToInt32();
-
-            process.THISCALL<NullReturnCall>((uint)ptr, (uint)0x0061FA40, new CallValue[]{});
-
-
-            return new zCWorld(process, ptr);
-        }
-
-
-        private bool disposed = false;
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!this.disposed)
-            {
-                Process.THISCALL<NullReturnCall>((uint)Address, (uint)0x006200F0, new CallValue[] { });
-                Process.Free(new IntPtr(Address), 0x6258);
-                disposed = true;
-            }
         }
     }
 }

@@ -25,7 +25,7 @@ namespace GUC.Server.Scripts.Items.Misc
             Visual = "ItMi_Pocket.3ds";
             Description = Name;
 
-            Materials = Enumeration.MaterialType.MAT_LEATHER;
+            Materials = Enumeration.MaterialTypes.MAT_LEATHER;
             ScemeName = "MAPSEALED";
 
             CreateItemInstance();

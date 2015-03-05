@@ -113,7 +113,6 @@ namespace Gothic.mClasses
 
             arr = new byte[] { 0xC2, 0x04, 0x00 };
             Process.Write(arr, (int)oCGame.FuncOffsets.HandleEvent);
-            Process.Write(new byte[] { 0x6A, 0x0 }, 0x0069D354);//Set Key for FirstPerson to undef
         }
 
         public static void activateFullControl(Process Process)
@@ -124,7 +123,6 @@ namespace Gothic.mClasses
 
             arr = new byte[] { 0x6A,  0xff, 0x68};
             Process.Write(arr, (int)oCGame.FuncOffsets.HandleEvent);
-            Process.Write(new byte[] { 0x6A, 0x17 }, 0x0069D354);//Set Key for FirstPerson back to 23
         }
 
         public static int[] VirtualToPixel(Process process, int[] pos)

@@ -6,7 +6,6 @@ using System.Text;
 using System.IO;
 using System.Threading;
 using System.Web;
-using GUC.Server.Scripts.Communication;
 
 namespace GUC.Server.Scripts.Web.Sites
 {
@@ -50,9 +49,9 @@ namespace GUC.Server.Scripts.Web.Sites
                     String str = nameValuePairs.Get("taMsg");
                     if (str != null & str.Length != 0)
                     {
-                      lock (SLMessageManager.GetSLMessageManager().MessageList)
+                        lock (Startup.chat.messageList)
                         {
-                          foreach (SLMessageManager.SLMessage message in SLMessageManager.GetSLMessageManager().MessageList)
+                            foreach (Chat.SLMessage message in Startup.chat.messageList)
                             {
                                 if (message.ID == id)
                                 {
@@ -83,9 +82,9 @@ namespace GUC.Server.Scripts.Web.Sites
                 }
             }
 
-            lock (SLMessageManager.GetSLMessageManager().MessageList)
+            lock (Startup.chat.messageList)
             {
-              foreach (SLMessageManager.SLMessage slm in SLMessageManager.GetSLMessageManager().MessageList)
+                foreach (Chat.SLMessage slm in Startup.chat.messageList)
                 {
                     sb.AppendLine("\t\t<div class=\"content_n\">");
                     sb.AppendLine("\t\t\t" + slm.name + " (" + slm.playerID + "): " + slm.msg + "<br>");

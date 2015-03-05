@@ -29,7 +29,7 @@ namespace GUC.Server.Scripts.Items.Potions
             MainFlags = MainFlags.ITEM_KAT_POTIONS;
             Flags = Flags.ITEM_MULTI;
 
-            Materials = MaterialType.MAT_GLAS;
+            Materials = MaterialTypes.MAT_GLAS;
             Description = "Trank der Geistesveränderung";
 
             Effect = "SPELLFX_ITEMGLIMMER";

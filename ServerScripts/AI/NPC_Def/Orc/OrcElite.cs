@@ -28,12 +28,12 @@ namespace GUC.Server.Scripts.AI.NPC_Def.Orc
             setProtection(DamageTypeIndex.DAM_INDEX_FLY, 160);
             setProtection(DamageTypeIndex.DAM_INDEX_MAGIC, 100);
 
-            setDamageType(DamageTypes.DAM_EDGE);
+            setDamageType(DamageType.DAM_EDGE);
 
-            setHitchances(NPCTalent.H1, 100);
-            setHitchances(NPCTalent.H2, 100);
-            setHitchances(NPCTalent.Bow, 100);
-            setHitchances(NPCTalent.CrossBow, 100);
+            setHitchances(NPCTalents.H1, 100);
+            setHitchances(NPCTalents.H2, 100);
+            setHitchances(NPCTalents.Bow, 100);
+            setHitchances(NPCTalents.CrossBow, 100);
 
             WeaponMode = 1;
 

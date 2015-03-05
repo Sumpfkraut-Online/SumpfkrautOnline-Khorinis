@@ -44,87 +44,83 @@ namespace GUC.Network
         {
             client = RakPeer.GetInstance();
 
-            messageListener.Add((byte)NetworkID.ConnectionMessage, new ConnectionMessage());
-            messageListener.Add((byte)NetworkID.CreateItemInstanceMessage, new CreateItemInstanceMessage());
-            messageListener.Add((byte)NetworkID.PlayerFreezeMessage, new PlayerFreezeMessage());
-            messageListener.Add((byte)NetworkID.AddItemMessage, new AddItemMessage());
-            messageListener.Add((byte)NetworkID.StartDialogAnimMessage, new StartDialogAnimMessage());
-            messageListener.Add((byte)NetworkID.AnimationMessage, new AnimationMessage());
-            messageListener.Add((byte)NetworkID.NPCChangeAttributeMessage, new NPCChangeAttributeMessage());
-            messageListener.Add((byte)NetworkID.NPCChangeSkillMessage, new NPCChangeSkillMessage());
+            messageListener.Add((byte)NetworkIDS.ConnectionMessage, new ConnectionMessage());
+            messageListener.Add((byte)NetworkIDS.CreateItemInstanceMessage, new CreateItemInstanceMessage());
+            messageListener.Add((byte)NetworkIDS.PlayerFreezeMessage, new PlayerFreezeMessage());
+            messageListener.Add((byte)NetworkIDS.AddItemMessage, new AddItemMessage());
+            messageListener.Add((byte)NetworkIDS.StartDialogAnimMessage, new StartDialogAnimMessage());
+            messageListener.Add((byte)NetworkIDS.AnimationMessage, new AnimationMessage());
+            messageListener.Add((byte)NetworkIDS.NPCChangeAttributeMessage, new NPCChangeAttributeMessage());
+            messageListener.Add((byte)NetworkIDS.NPCChangeSkillMessage, new NPCChangeSkillMessage());
 
-            messageListener.Add((byte)NetworkID.NPCSpawnMessage, new NPCSpawnMessage());
-            messageListener.Add((byte)NetworkID.GuiMessage, new GuiMessage());
+            messageListener.Add((byte)NetworkIDS.NPCSpawnMessage, new NPCSpawnMessage());
+            messageListener.Add((byte)NetworkIDS.GuiMessage, new GuiMessage());
 
-            messageListener.Add((byte)NetworkID.DropUnconsciousMessage, new DropUnconsciousMessage());
-            messageListener.Add((byte)NetworkID.ReviveMessage, new ReviveMessage());
-            messageListener.Add((byte)NetworkID.SetVisualMessage, new SetVisualMessage());
-            messageListener.Add((byte)NetworkID.SetVobChangeMessage, new SetVobChangeMessage());
-            messageListener.Add((byte)NetworkID.DropItemMessage, new DropItemMessage());
-            messageListener.Add((byte)NetworkID.TakeItemMessage, new TakeItemMessage());
-            messageListener.Add((byte)NetworkID.CamToVobMessage, new CamToVobMessage());
-            messageListener.Add((byte)NetworkID.ChangeNameMessage, new ChangeNameMessage());
+            messageListener.Add((byte)NetworkIDS.DropUnconsciousMessage, new DropUnconsciousMessage());
+            messageListener.Add((byte)NetworkIDS.ReviveMessage, new ReviveMessage());
+            messageListener.Add((byte)NetworkIDS.SetVisualMessage, new SetVisualMessage());
+            messageListener.Add((byte)NetworkIDS.DropItemMessage, new DropItemMessage());
+            messageListener.Add((byte)NetworkIDS.TakeItemMessage, new TakeItemMessage());
+            messageListener.Add((byte)NetworkIDS.CamToVobMessage, new CamToVobMessage());
+            messageListener.Add((byte)NetworkIDS.ChangeNameMessage, new ChangeNameMessage());
 
-            messageListener.Add((byte)NetworkID.CreateVobMessage, new CreateVobMessage());
-            messageListener.Add((byte)NetworkID.SpawnVobMessage, new SpawnVobMessage());
-            messageListener.Add((byte)NetworkID.DespawnVobMessage, new DespawnVobMessage());
+            messageListener.Add((byte)NetworkIDS.CreateVobMessage, new CreateVobMessage());
+            messageListener.Add((byte)NetworkIDS.SpawnVobMessage, new SpawnVobMessage());
 
-            messageListener.Add((byte)NetworkID.SetVobPositionMessage, new SetVobPositionMessage());
-            messageListener.Add((byte)NetworkID.SetVobDirectionMessage, new SetVobDirectionMessage());
-            messageListener.Add((byte)NetworkID.SetVobPosDirMessage, new SetVobPosDirMessage());
+            messageListener.Add((byte)NetworkIDS.SetVobPositionMessage, new SetVobPositionMessage());
+            messageListener.Add((byte)NetworkIDS.SetVobDirectionMessage, new SetVobDirectionMessage());
+            messageListener.Add((byte)NetworkIDS.SetVobPosDirMessage, new SetVobPosDirMessage());
 
-            messageListener.Add((byte)NetworkID.DisconnectMessage, new DisconnectMessage());
-            messageListener.Add((byte)NetworkID.AnimationUpdateMessage, new AnimationUpdateMessage());
+            messageListener.Add((byte)NetworkIDS.DisconnectMessage, new DisconnectMessage());
+            messageListener.Add((byte)NetworkIDS.AnimationUpdateMessage, new AnimationUpdateMessage());
 
-            messageListener.Add((byte)NetworkID.NPCUpdateMessage, new NPCUpdateMessage());
+            messageListener.Add((byte)NetworkIDS.NPCUpdateMessage, new NPCUpdateMessage());
 
-            messageListener.Add((byte)NetworkID.ItemChangeAmount, new ItemChangeAmount());
+            messageListener.Add((byte)NetworkIDS.ItemChangeAmount, new ItemChangeAmount());
 
-            messageListener.Add((byte)NetworkID.ItemChangeContainer, new ItemChangeContainer());
+            messageListener.Add((byte)NetworkIDS.ItemChangeContainer, new ItemChangeContainer());
 
-            messageListener.Add((byte)NetworkID.ClearInventory, new ClearInventory());
+            messageListener.Add((byte)NetworkIDS.ClearInventory, new ClearInventory());
 
-            messageListener.Add((byte)NetworkID.TimerMessage, new TimerMessage());
-            messageListener.Add((byte)NetworkID.RainMessage, new RainMessage());
+            messageListener.Add((byte)NetworkIDS.TimerMessage, new TimerMessage());
+            messageListener.Add((byte)NetworkIDS.RainMessage, new RainMessage());
 
-            messageListener.Add((byte)NetworkID.CallbackNPCCanSee, new CallbackNPCCanSee());
+            messageListener.Add((byte)NetworkIDS.CallbackNPCCanSee, new CallbackNPCCanSee());
 
-            messageListener.Add((byte)NetworkID.ExitGameMessage, new ExitGameMessage());
+            messageListener.Add((byte)NetworkIDS.ExitGameMessage, new ExitGameMessage());
 
-            messageListener.Add((byte)NetworkID.ReadIniEntryMessage, new ReadIniEntryMessage());
-            messageListener.Add((byte)NetworkID.ReadMd5Message, new ReadMd5Message());
+            messageListener.Add((byte)NetworkIDS.ReadIniEntryMessage, new ReadIniEntryMessage());
+            messageListener.Add((byte)NetworkIDS.ReadMd5Message, new ReadMd5Message());
 
-            messageListener.Add((byte)NetworkID.EquipItemMessage, new EquipItemMessage());
-            messageListener.Add((byte)NetworkID.ChangeWorldMessage, new ChangeWorldMessage());
+            messageListener.Add((byte)NetworkIDS.EquipItemMessage, new EquipItemMessage());
+            messageListener.Add((byte)NetworkIDS.ChangeWorldMessage, new ChangeWorldMessage());
 
-            messageListener.Add((byte)NetworkID.MobInterMessage, new MobInterMessage());
+            messageListener.Add((byte)NetworkIDS.MobInterMessage, new MobInterMessage());
 
-            messageListener.Add((byte)NetworkID.NPCSetInvisibleMessage, new NPCSetInvisibleMessage());
-            messageListener.Add((byte)NetworkID.NPCSetInvisibleName, new NPCSetInvisibleName());
-            messageListener.Add((byte)NetworkID.PlayVideo, new PlayVideo());
+            messageListener.Add((byte)NetworkIDS.NPCSetInvisibleMessage, new NPCSetInvisibleMessage());
+            messageListener.Add((byte)NetworkIDS.NPCSetInvisibleName, new NPCSetInvisibleName());
+            messageListener.Add((byte)NetworkIDS.PlayVideo, new PlayVideo());
 
-            messageListener.Add((byte)NetworkID.NPCControllerMessage, new NPCControllerMessage());
+            messageListener.Add((byte)NetworkIDS.NPCControllerMessage, new NPCControllerMessage());
 
-            messageListener.Add((byte)NetworkID.ScaleMessage, new ScaleMessage());
-            messageListener.Add((byte)NetworkID.NPCFatnessMessage, new NPCFatnessMessage());
+            messageListener.Add((byte)NetworkIDS.ScaleMessage, new ScaleMessage());
+            messageListener.Add((byte)NetworkIDS.NPCFatnessMessage, new NPCFatnessMessage());
 
 
-            messageListener.Add((byte)NetworkID.NPCEnableMessage, new NPCEnableMessage());
-            messageListener.Add((byte)NetworkID.CreateSpellMessage, new CreateSpellMessage());
+            messageListener.Add((byte)NetworkIDS.NPCEnableMessage, new NPCEnableMessage());
+            messageListener.Add((byte)NetworkIDS.CreateSpellMessage, new CreateSpellMessage());
 
-            messageListener.Add((byte)NetworkID.PlayEffectMessage, new PlayEffectMessage());
+            messageListener.Add((byte)NetworkIDS.PlayEffectMessage, new PlayEffectMessage());
 
-            messageListener.Add((byte)NetworkID.CastSpell, new CastSpellMessage());
-            messageListener.Add((byte)NetworkID.SpellInvestMessage, new SpellInvestMessage());
+            messageListener.Add((byte)NetworkIDS.CastSpell, new CastSpellMessage());
+            messageListener.Add((byte)NetworkIDS.SpellInvestMessage, new SpellInvestMessage());
 
-            messageListener.Add((byte)NetworkID.NPCProtoSetWeaponMode, new NPCProtoSetWeaponMode());
-            messageListener.Add((byte)NetworkID.SetSlotMessage, new SetSlotMessage());
+            messageListener.Add((byte)NetworkIDS.NPCProtoSetWeaponMode, new NPCProtoSetWeaponMode());
+            messageListener.Add((byte)NetworkIDS.SetSlotMessage, new SetSlotMessage());
 
-            messageListener.Add((byte)NetworkID.CamToPlayerFront, new CamToPlayerFront());
+            messageListener.Add((byte)NetworkIDS.CamToPlayerFront, new CamToPlayerFront());
 
-            messageListener.Add((byte)NetworkID.InterfaceOptionsMessage, new InterfaceOptionsMessage());
-
-            messageListener.Add((byte)NetworkID.PlayerOpenInventoryMessage, new OpenInventoryMessage());
+            messageListener.Add((byte)NetworkIDS.InterfaceOptionsMessage, new InterfaceOptionsMessage());
             
         }
 
@@ -150,7 +146,7 @@ namespace GUC.Network
                 zERROR.GetZErr(Process.ThisProcess()).Report(4, 'G', "Verbindung nicht möglich!", 0, "Client.cs", 0);
             this.ip = ip; this.port = port; this.pw = pw;
             bool b;
-            pw = GUC.Options.Constants.VERSION + pw;
+            pw = "ver2.07" + pw;
             b = client.Connect(ip, port, pw, pw.Length) == ConnectionAttemptResult.CONNECTION_ATTEMPT_STARTED;
             client.SetOccasionalPing(true);
             if (!b)
@@ -252,7 +248,7 @@ namespace GUC.Network
                             receiveBitStream.Reset();
                             receiveBitStream.Write(packet.data, packet.length);
                             receiveBitStream.IgnoreBytes(2);
-                            if ((Player.Hero == null || Player.Hero.ID == 0) && packet.data[1] != (byte)NetworkID.ConnectionMessage)
+                            if ((Player.Hero == null || Player.Hero.ID == 0) && packet.data[1] != (byte)NetworkIDS.ConnectionMessage)
                                 break;
                             if (messageListener.ContainsKey(packet.data[1]))
                                 messageListener[packet.data[1]].Read(receiveBitStream, packet, this);

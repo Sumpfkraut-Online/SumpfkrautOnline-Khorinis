@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 using WinApi;
-using Gothic.zStruct;
 
 namespace Gothic.zClasses
 {
@@ -33,17 +32,12 @@ namespace Gothic.zClasses
 
         #region methods
 
-        public void OnMessage(zCEventMessage eventMessage, zCVob vob)
+        public void OnMessage(int eventMessage, zCVob vob)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.OnMessage, new CallValue[] { eventMessage, vob });
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.OnMessage, new CallValue[] { (IntArg)eventMessage, vob });
         }
 
         #endregion
 
-
-        public override uint ValueLength()
-        {
-            return 4;
-        }
     }
 }

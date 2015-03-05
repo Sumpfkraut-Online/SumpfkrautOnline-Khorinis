@@ -44,7 +44,7 @@ namespace GUC.WorldObjects
             {
                 byte dT = 0;
                 stream.Read(out dT);
-                DamageType = (Enumeration.DamageTypes)dT;
+                DamageType = (Enumeration.DamageType)dT;
             }
             if (paramI.HasFlag(ItemInstanceParameters.totalDamage))
                 stream.Read(out this.totalDamage);
@@ -90,7 +90,7 @@ namespace GUC.WorldObjects
             {
                 byte dT = 0;
                 stream.Read(out dT);
-                Materials = (Enumeration.MaterialType)dT;
+                Materials = (Enumeration.MaterialTypes)dT;
             }
 
             if (paramI.HasFlag(ItemInstanceParameters.description))

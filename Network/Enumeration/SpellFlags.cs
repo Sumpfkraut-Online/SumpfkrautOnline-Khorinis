@@ -18,7 +18,7 @@ namespace GUC.Enumeration
         TARGET_COLLECT_ALL_FALLBACK_CASTER = 7
     }
 
-    public enum SPELL_TARGET_TYPES : byte
+    public enum SPELL_TARGET_TYPE : byte
     {
         TARGET_TYPE_ALL = 1,
         TARGET_TYPE_ITEMS = 2,

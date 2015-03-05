@@ -36,7 +36,6 @@ namespace GUC
         public static HookInfos ParSymbol_GetValueHook;
 
         public static List<timer.Timer> TimerList = new List<timer.Timer>();
-        public static long Now = 0;
 
 
         public static Int32 InjectedMain(String message)
@@ -44,12 +43,8 @@ namespace GUC
             try
             {
                 Process process = Process.ThisProcess();
-
-
-                
                 
                 StartupState.SetUpConfig();
-                
 
                 if (StartupState.clientOptions.SaveMode)
                 {
@@ -78,9 +73,6 @@ namespace GUC
 
 
 
-                    Scripting.ScriptManager scriptManager = new Scripting.ScriptManager();
-                    scriptManager.Init();
-                    scriptManager.Startup();
 
                     StartupState.Start();
 
@@ -101,12 +93,6 @@ namespace GUC
 
         public static void addHooks(Process process)
         {
-
-
-
-            //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hItem).GetMethod("ViewDraw_DrawChildren"), (int)0x00704B90, (int)7, 0);
-
-
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(Externals).GetMethod("AddExternals"), (int)0x006D4780, (int)7, 1);
 
 
@@ -120,12 +106,12 @@ namespace GUC
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(sWorld).GetMethod("hook_StartChangeLevel"), (int)oCGame.FuncOffsets.ChangeLevel, (int)oCGame.HookSize.ChangeLevel, 2);
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(sWorld).GetMethod("hook_EndChangeLevel"), 0x006C7AD5, 7, 0);
 
-            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(Program).GetMethod("hook_Render"), 0x006C86A0, 7, 0);//Alt: End of Game::Render => 0x006C8AB2, 5
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(Program).GetMethod("hook_Render"), 0x006C8AB2, 5, 0);
 
 
 
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hItem).GetMethod("InitByScript_End"), 0x007120D1, 6, 0);
-            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hItem).GetMethod("InitByScript"), 0x00711BD0, 6, 2);
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hItem).GetMethod("InitByScript"), 0x00711BD0, 6, 0);
 
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("OnDamage_DD"), (int)oCNpc.FuncOffsets.OnDamage_DD, (int)oCNpc.HookSize.OnDamage_DD, 1);
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("DoDie"), (int)oCNpc.FuncOffsets.DoDie, (int)oCNpc.HookSize.DoDie, 1);
@@ -162,11 +148,7 @@ namespace GUC
             //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("oCNpc_EV_UseItem"), (int)oCNpc.FuncOffsets.EV_UseItem, (int)oCNpc.HookSize.EV_UseItem, 1);
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("oCNpc_EV_UseItemToState"), (int)oCNpc.FuncOffsets.EV_UseItemToState, (int)oCNpc.HookSize.EV_UseItemToState, 1);
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("oCNpc_EV_UseItemToState_CALLFUNC"), (int)oCNpc.FuncOffsets.EV_UseItemToState + 0x48D, 6, 0);
-
-
-            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("CloseInventory"), (int)oCNpc.FuncOffsets.CloseInventory, (int)oCNpc.HookSize.CloseInventory, 0);
-            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("OpenInventory"), (int)oCNpc.FuncOffsets.OpenInventory, (int)oCNpc.HookSize.OpenInventory, 1);
-
+            
             //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("EV_CreateInteractItem"), (int)0x00754890, (int)7, 1);
             //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("EV_CreateInteractItem"), (int)0x007546F0, (int)5, 1);
             //process.Write(new byte[] { 0xB8, 0x01, 0x00, 0x00, 0x00, 0xC2, 0x04, 0x00 }, 0x007546F0);
@@ -552,18 +534,12 @@ namespace GUC
 
         static bool first = true;
         static bool spawned = false;
-
-        public delegate void hook_RenderEvent(Process process, long now);
-        public static hook_RenderEvent OnRender;
-        public static hook_RenderEvent OnRenderTimedSecond;//Each second 1 call!
-
-        public static long s_OnRenderCalledLastSecond = 0;
         public static Int32 hook_Render(String message)
         {
             try
             {
                 Process process = Process.ThisProcess();
-                
+
 
                 InputHooked.Update(process);
 
@@ -573,22 +549,14 @@ namespace GUC
 
 
                 long time = DateTime.Now.Ticks;
-                Now = time;
                 timer.Timer[] arr = TimerList.ToArray();
                 foreach (timer.Timer timer in arr)
                 {
                     timer.iUpdate(time);
                 }
-                if(OnRender != null)
-                    OnRender(process, time);
-                if(Scripting.Events.OnRender != null)
-                    Scripting.Events.OnRender(process, time);
 
-                if (OnRenderTimedSecond != null && s_OnRenderCalledLastSecond < time)
-                {
-                    OnRenderTimedSecond(process, time);
-                    s_OnRenderCalledLastSecond = time + 10000000;
-                }
+
+
             }
             catch (Exception ex)
             {

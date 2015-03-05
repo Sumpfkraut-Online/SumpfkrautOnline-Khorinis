@@ -12,36 +12,6 @@ namespace GUC.Server.Network.Messages.MobInterCommands
 {
     class MobInterMessage : IMessage
     {
-        public static void Write(MobInterNetwork network, NPCProto player, Vob vob)
-        {
-            Write(network, player, vob, 'L');
-        }
-
-        public static void Write(MobInterNetwork network, NPCProto player, Vob vob, char pickLock)
-        {
-            BitStream stream = Program.server.SendBitStream;
-            stream.Reset();
-            stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.MobInterMessage);
-            stream.Write((byte)network);
-            stream.Write(player.ID);
-            stream.Write(vob.ID);
-
-            if (network.HasFlag(MobInterNetwork.PickLock))
-                stream.Write(pickLock);
-
-            if (player is Player)
-            {
-                using (RakNet.RakNetGUID guid = new RakNetGUID(player.Guid))
-                    Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
-            }
-            else
-            {
-                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
-            }
-        }
-
-
         public void Read(RakNet.BitStream stream, RakNet.Packet packet, Server server)
         {
             int vobID = 0, playerID = 0;
@@ -52,9 +22,9 @@ namespace GUC.Server.Network.Messages.MobInterCommands
             stream.Read(out playerID);
             stream.Read(out vobID);
 
-            MobInterNetwork mobInterFlags = (MobInterNetwork)mobInterTypeInt;
+            MobInterNetworkFlags mobInterFlags = (MobInterNetworkFlags)mobInterTypeInt;
 
-            if (mobInterFlags.HasFlag(MobInterNetwork.PickLock))
+            if (mobInterFlags.HasFlag(MobInterNetworkFlags.PickLock))
                 stream.Read(out mobInterKey);
 
 
@@ -72,33 +42,33 @@ namespace GUC.Server.Network.Messages.MobInterCommands
                 throw new Exception("Vob was not from type MobInter: "+vob);
 
             stream.ResetReadPointer();
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, packet.guid, true);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, packet.guid, true);
 
 
             MobInter mob = (MobInter)vob;
 
-            if (mobInterFlags == MobInterNetwork.PickLock)
+            if (mobInterFlags == MobInterNetworkFlags.PickLock)
             {
                 if (!(vob is MobLockable))
                     throw new Exception("Vob was not from type MobLockable: " + vob);
                 MobLockable mobLock = (MobLockable)mob;
                 Scripting.Objects.Mob.MobLockable.OnContainerPickLock((Scripting.Objects.Mob.MobLockable)mobLock.ScriptingVob, player.ScriptingNPC, mobInterKey);
             }
-            else if (mobInterFlags == MobInterNetwork.OnTrigger)
+            else if (mobInterFlags == MobInterNetworkFlags.OnTrigger)
             {
                 mob.State = 1;
                 Scripting.Objects.Mob.MobInter.isOnTrigger((Scripting.Objects.Mob.MobInter)mob.ScriptingVob, player.ScriptingNPC);
             }
-            else if (mobInterFlags == MobInterNetwork.OnUnTrigger)
+            else if (mobInterFlags == MobInterNetworkFlags.OnUnTrigger)
             {
                 mob.State = 0;
                 Scripting.Objects.Mob.MobInter.isOnUnTrigger((Scripting.Objects.Mob.MobInter)mob.ScriptingVob, player.ScriptingNPC);
             }
-            else if (mobInterFlags == MobInterNetwork.StartInteraction)
+            else if (mobInterFlags == MobInterNetworkFlags.StartInteraction)
             {
                 Scripting.Objects.Mob.MobInter.isOnStartInteraction((Scripting.Objects.Mob.MobInter)mob.ScriptingVob, player.ScriptingNPC);
             }
-            else if (mobInterFlags == MobInterNetwork.StopInteraction)
+            else if (mobInterFlags == MobInterNetworkFlags.StopInteraction)
             {
                 Scripting.Objects.Mob.MobInter.isOnStopInteraction((Scripting.Objects.Mob.MobInter)mob.ScriptingVob, player.ScriptingNPC);
             }

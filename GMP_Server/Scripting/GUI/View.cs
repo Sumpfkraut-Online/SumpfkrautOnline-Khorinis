@@ -8,7 +8,6 @@ using GUC.Enumeration;
 using GUC.Network;
 using GUC.WorldObjects;
 using GUC.Server.Scripting.Objects.Character;
-using System.Collections;
 
 namespace GUC.Server.Scripting.GUI
 {
@@ -27,22 +26,6 @@ namespace GUC.Server.Scripting.GUI
         protected int singleUserID = 0;
 
         protected View parent;
-
-
-        public static View get(int id)
-        {
-            if (!allViewDic.ContainsKey(id))
-                return null;
-            return allViewDic[id];
-        }
-
-        public static IEnumerable ToEnumerator()
-        {
-            foreach (KeyValuePair<Int32, View> pair in allViewDic)
-            {
-                yield return pair.Value;
-            }
-        }
 
         public View(int x, int y, bool isSingleUser, int singleUserID, View parent)
             : this(new Vec2i(x, y), isSingleUser, singleUserID, parent)
@@ -119,10 +102,10 @@ namespace GUC.Server.Scripting.GUI
 
         public virtual void setPosition(Vec2i pos)
         {
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.GuiMessage);
+            stream.Write((byte)NetworkIDS.GuiMessage);
             stream.Write((byte)GuiMessageType.SetPosition);
 
             stream.Write(this.id);
@@ -149,10 +132,10 @@ namespace GUC.Server.Scripting.GUI
 
         public virtual void show(int plID)
         {
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.GuiMessage);
+            stream.Write((byte)NetworkIDS.GuiMessage);
             stream.Write((byte)GuiMessageType.Show);
 
             stream.Write(this.id);
@@ -178,10 +161,10 @@ namespace GUC.Server.Scripting.GUI
 
         public virtual void hide(int plID)
         {
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.GuiMessage);
+            stream.Write((byte)NetworkIDS.GuiMessage);
             stream.Write((byte)GuiMessageType.Hide);
 
             stream.Write(this.id);
@@ -191,10 +174,10 @@ namespace GUC.Server.Scripting.GUI
 
         public virtual void destroy()
         {
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.GuiMessage);
+            stream.Write((byte)NetworkIDS.GuiMessage);
             stream.Write((byte)GuiMessageType.Destroy);
 
             stream.Write(this.id);
@@ -217,12 +200,12 @@ namespace GUC.Server.Scripting.GUI
                 GUC.WorldObjects.Character.Player player = (GUC.WorldObjects.Character.Player)v;
 
                 using(RakNetGUID guid = player.GUID)
-                    Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+                    Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
             }
             else
             {
                 if (to <= 0)
-                    Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+                    Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
                 else
                 {
                     if (!sWorld.VobDict.ContainsKey(to))
@@ -233,7 +216,7 @@ namespace GUC.Server.Scripting.GUI
                     GUC.WorldObjects.Character.Player player = (GUC.WorldObjects.Character.Player)v;
 
                     using (RakNetGUID guid = player.GUID)
-                        Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+                        Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
                 }
             }
         }

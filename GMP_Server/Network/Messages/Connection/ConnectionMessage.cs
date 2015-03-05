@@ -45,7 +45,7 @@ namespace GUC.Server.Network.Messages.Connection
 
         public void Write(Player player)
         {
-            RakNet.BitStream stream = Program.server.SendBitStream;
+            RakNet.BitStream stream = Program.server.sendBitStream;
             stream.Reset();
 
             //stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
@@ -133,7 +133,7 @@ namespace GUC.Server.Network.Messages.Connection
             using (BitStream stream2 = new BitStream())
             {
                 stream2.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                stream2.Write((byte)NetworkID.ConnectionMessage);
+                stream2.Write((byte)NetworkIDS.ConnectionMessage);
 
                 //Writing Player-Informations:
                 stream2.Write(player.ID);
@@ -141,7 +141,7 @@ namespace GUC.Server.Network.Messages.Connection
                 
 
                 using (RakNetGUID guid = player.GUID)
-                    Program.server.ServerInterface.Send(stream2, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+                    Program.server.server.Send(stream2, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
             }
         }
     }

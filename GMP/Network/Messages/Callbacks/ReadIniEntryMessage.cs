@@ -32,7 +32,7 @@ namespace GUC.Network.Messages.Callbacks
 
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.ReadIniEntryMessage);
+            stream.Write((byte)NetworkIDS.ReadIniEntryMessage);
             stream.Write(callBackID);
             stream.Write(playerID);
             stream.Write(section);

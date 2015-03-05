@@ -118,58 +118,6 @@ namespace GUC.Types
             get { Mat4 mat = new Mat4(); mat.setIdentity(); return mat; }
         }
 
-
-        public void setOnlyForward(Vec3f forward)
-        {
-            Vec3f fw = new Vec3f(forward);
-            fw.normalise();
-
-
-
-            Vec3f zAxis = forward;
-            Vec3f up = new Vec3f(0.0f, 0.0f, 0.0f);
-
-            if (Math.Abs(zAxis.Y) > 0.5)
-            {
-                if (zAxis.Y > 0)
-                    up.Z = -1.0f;
-                else
-                    up.Z = 1.0f;
-            }
-            else if (Math.Abs(zAxis.X) < 0.0001 && Math.Abs(zAxis.Y) < 0.0001)
-            {
-                if (zAxis.Y > -0.0001)
-                {
-                    up.Y = 1.0f;
-                }
-                else
-                {
-                    up.Y = -1.0f;
-                }
-            }
-            else
-            {
-                up.Y = 1.0f;
-            }
-
-
-
-            Vec3f xAxis = up.cross(zAxis).normalise();
-            Vec3f yAxis = zAxis.cross(xAxis).normalise();
-
-            mData[2][0] = zAxis.X;
-            mData[2][1] = zAxis.Y;
-            mData[2][2] = zAxis.Z;
-
-            mData[0][0] = xAxis.X;
-            mData[0][1] = xAxis.Y;
-            mData[0][2] = xAxis.Z;
-
-
-            mData[1][0] = yAxis.X;
-            mData[1][1] = yAxis.Y;
-            mData[1][2] = yAxis.Z;
-        }
         
 
         public Vec3f Forward { get { return new Vec3f((float)mData[2][0], (float)mData[2][1], (float)mData[2][2]); } }
@@ -193,8 +141,6 @@ namespace GUC.Types
                 mData[k][k2] = value;
             }
         }
-
-        
 
         public static Mat4 operator *(Mat4 a, Mat4 b)
         {
@@ -322,64 +268,6 @@ namespace GUC.Types
 
             return newVec;
         }
-
-
-    public void RotateX(double angle)
-    {
-        double s = Math.Sin(angle);
-        double c = Math.Cos(angle);
-
-        double a10 = mData[1][0], a11 = mData[1][1], a12 = mData[1][2], a13 = mData[1][3];
-        double a20 = mData[2][0], a21 = mData[2][1], a22 = mData[2][2], a23 = mData[2][3];
-
-        mData[1][0] = a10 * c + a20 * s;
-        mData[1][1] = a11 * c + a21 * s;
-        mData[1][2] = a12 * c + a22 * s;
-        mData[1][3] = a13 * c + a23 * s;
-        
-        mData[2][0] = a10 * -s + a20 * c;
-        mData[2][1] = a11 * -s + a21 * c;
-        mData[2][2] = a12 * -s + a22 * c;
-        mData[2][3] = a13 * -s + a23 * c;
-    }
-
-    public void RotateY(double angle)
-    {
-        double s = Math.Sin(angle);
-        double c = Math.Cos(angle);
-        
-        double a00 = mData[0][0], a01 = mData[0][1], a02 = mData[0][2], a03 = mData[0][3];
-        double a20 = mData[2][0], a21 = mData[2][1], a22 = mData[2][2], a23 = mData[2][3];
-        
-        mData[0][0] = a00 * c + a20 * -s;
-        mData[0][1] = a01 * c + a21 * -s;
-        mData[0][2] = a02 * c + a22 * -s;
-        mData[0][3] = a03 * c + a23 * -s;
-        
-        mData[2][0] = a00 * s + a20 * c;
-        mData[2][1] = a01 * s + a21 * c;
-        mData[2][2] = a02 * s + a22 * c;
-        mData[2][3] = a03 * s + a23 * c;
-    }
-    
-    public void RotateZ(double angle)
-    {
-        double s = Math.Sin(angle);
-        double c = Math.Cos(angle);
-        
-        double a00 = mData[0][0], a01 = mData[0][1], a02 = mData[0][2], a03 = mData[0][3];
-        double a10 = mData[1][0], a11 = mData[1][1], a12 = mData[1][2], a13 = mData[1][3];
-        
-        mData[0][0] = a00 * c + a10 * s;
-        mData[0][1] = a01 * c + a11 * s;
-        mData[0][2] = a02 * c + a12 * s;
-        mData[0][3] = a03 * c + a13 * s;
-        
-        mData[1][0] = a00 * -s + a10 * c;
-        mData[1][1] = a01 * -s + a11 * c;
-        mData[1][2] = a02 * -s + a12 * c;
-        mData[1][3] = a03 * -s + a13 * c;
-    }
 
     }
 }

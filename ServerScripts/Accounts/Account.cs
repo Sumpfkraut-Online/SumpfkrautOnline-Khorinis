@@ -89,7 +89,7 @@ namespace GUC.Server.Scripts.Accounts
 				using(SQLiteDataReader sdrITM = command.ExecuteReader()) {
 					if(sdrITM.HasRows) {
 						while(sdrITM.Read()) {
-							player.setAttribute((NPCAttribute)Convert.ToInt32(sdrITM["type"]), Convert.ToInt32(sdrITM["value"]));
+							player.setAttribute((NPCAttributeFlags)Convert.ToInt32(sdrITM["type"]), Convert.ToInt32(sdrITM["value"]));
 						}
 					}
 				}
@@ -100,8 +100,8 @@ namespace GUC.Server.Scripts.Accounts
 				using(SQLiteDataReader sdrITM = command.ExecuteReader()) {
 					if(sdrITM.HasRows) {
 						while(sdrITM.Read()) {
-							player.setTalentValues((NPCTalent)Convert.ToInt32(sdrITM["type"]), Convert.ToInt32(sdrITM["value"]));
-							player.setTalentSkills((NPCTalent)Convert.ToInt32(sdrITM["type"]), Convert.ToInt32(sdrITM["skill"]));
+							player.setTalentValues((NPCTalents)Convert.ToInt32(sdrITM["type"]), Convert.ToInt32(sdrITM["value"]));
+							player.setTalentSkills((NPCTalents)Convert.ToInt32(sdrITM["type"]), Convert.ToInt32(sdrITM["skill"]));
 						}
 					}
 				}
@@ -113,7 +113,7 @@ namespace GUC.Server.Scripts.Accounts
                     
 					if(sdrITM.HasRows) {
 						while(sdrITM.Read()) {
-							player.setHitchances((NPCTalent)Convert.ToInt32(sdrITM["type"]), Convert.ToInt32(sdrITM["value"]));
+							player.setHitchances((NPCTalents)Convert.ToInt32(sdrITM["type"]), Convert.ToInt32(sdrITM["value"]));
 						}
 					}
 				}
@@ -197,11 +197,11 @@ namespace GUC.Server.Scripts.Accounts
 				command.ExecuteNonQuery();
 
 				//Saving Attributes!
-				for(int i = 0; i < (int)NPCAttribute.ATR_MAX; i++) {
+				for(int i = 0; i < (int)NPCAttributeFlags.ATR_MAX; i++) {
 					command.CommandText = "UPDATE `account_attributes` ";
 					command.CommandText += " SET `value`=@value";
 					command.CommandText += " WHERE `accountID`=@accountID AND `type`=@type";
-					command.Parameters.AddWithValue("@value", player.getAttribute((NPCAttribute)i));
+					command.Parameters.AddWithValue("@value", player.getAttribute((NPCAttributeFlags)i));
 					command.Parameters.AddWithValue("@accountID", accountID);
 					command.Parameters.AddWithValue("@type", i);
 
@@ -210,7 +210,7 @@ namespace GUC.Server.Scripts.Accounts
 						command.CommandText = "INSERT INTO `account_attributes` (";
 						command.CommandText += "  `id`, `accountID`, `type`, `value`)";
 						command.CommandText += "VALUES( NULL, @accountID, @type, @value)";
-						command.Parameters.AddWithValue("@value", player.getAttribute((NPCAttribute)i));
+						command.Parameters.AddWithValue("@value", player.getAttribute((NPCAttributeFlags)i));
 						command.Parameters.AddWithValue("@accountID", accountID);
 						command.Parameters.AddWithValue("@type", i);
 						command.ExecuteNonQuery();
@@ -218,12 +218,12 @@ namespace GUC.Server.Scripts.Accounts
 				}
 
 				//Saving Talents:
-				for(int i = (int)NPCTalent.H1; i < (int)NPCTalent.MaxTalents; i++) {
+				for(int i = (int)NPCTalents.H1; i < (int)NPCTalents.MaxTalents; i++) {
 					command.CommandText = "UPDATE `account_talents` ";
 					command.CommandText += " SET `value`=@value, `skill`=@skill";
 					command.CommandText += " WHERE `accountID`=@accountID AND `type`=@type";
-					command.Parameters.AddWithValue("@value", player.getTalentValues((NPCTalent)i));
-					command.Parameters.AddWithValue("@skill", player.getTalentSkills((NPCTalent)i));
+					command.Parameters.AddWithValue("@value", player.getTalentValues((NPCTalents)i));
+					command.Parameters.AddWithValue("@skill", player.getTalentSkills((NPCTalents)i));
 					command.Parameters.AddWithValue("@accountID", accountID);
 					command.Parameters.AddWithValue("@type", i);
 
@@ -232,8 +232,8 @@ namespace GUC.Server.Scripts.Accounts
 						command.CommandText = "INSERT INTO `account_talents` (";
 						command.CommandText += "  `id`, `accountID`, `type`, `value`, `skill`)";
 						command.CommandText += "VALUES( NULL, @accountID, @type, @value, @skill)";
-						command.Parameters.AddWithValue("@value", player.getTalentValues((NPCTalent)i));
-						command.Parameters.AddWithValue("@skill", player.getTalentSkills((NPCTalent)i));
+						command.Parameters.AddWithValue("@value", player.getTalentValues((NPCTalents)i));
+						command.Parameters.AddWithValue("@skill", player.getTalentSkills((NPCTalents)i));
 						command.Parameters.AddWithValue("@accountID", accountID);
 						command.Parameters.AddWithValue("@type", i);
 						command.ExecuteNonQuery();
@@ -241,11 +241,11 @@ namespace GUC.Server.Scripts.Accounts
 				}
 
 				//Saving Hitchances:
-				for(int i = (int)NPCTalent.H1; i <= (int)NPCTalent.CrossBow; i++) {
+				for(int i = (int)NPCTalents.H1; i <= (int)NPCTalents.CrossBow; i++) {
 					command.CommandText = "UPDATE `account_hitchances` ";
 					command.CommandText += " SET `value`=@value";
 					command.CommandText += " WHERE `accountID`=@accountID AND `type`=@type";
-					command.Parameters.AddWithValue("@value", player.getTalentValues((NPCTalent)i));
+					command.Parameters.AddWithValue("@value", player.getTalentValues((NPCTalents)i));
 					command.Parameters.AddWithValue("@accountID", accountID);
 					command.Parameters.AddWithValue("@type", i);
 
@@ -254,7 +254,7 @@ namespace GUC.Server.Scripts.Accounts
 						command.CommandText = "INSERT INTO `account_hitchances` (";
 						command.CommandText += "  `id`, `accountID`, `type`, `value`)";
 						command.CommandText += "VALUES( NULL, @accountID, @type, @value)";
-						command.Parameters.AddWithValue("@value", player.getTalentValues((NPCTalent)i));
+						command.Parameters.AddWithValue("@value", player.getTalentValues((NPCTalents)i));
 						command.Parameters.AddWithValue("@accountID", accountID);
 						command.Parameters.AddWithValue("@type", i);
 						command.ExecuteNonQuery();

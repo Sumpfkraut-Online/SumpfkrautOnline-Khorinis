@@ -58,7 +58,7 @@ namespace GUC.GUI
             RakNet.BitStream stream = Program.client.sentBitStream;
             stream.Reset();
             stream.Write((byte)DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.GuiMessage);
+            stream.Write((byte)NetworkIDS.GuiMessage);
             stream.Write((byte)GuiMessageType.TextBoxCallSend);
 
             stream.Write(Player.Hero.ID);

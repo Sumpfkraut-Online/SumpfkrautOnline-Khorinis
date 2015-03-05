@@ -47,57 +47,6 @@ namespace GUC.Hooks
             return 0;
         }
 
-        public static Int32 OpenInventory(String message)
-        {
-            Process Process = Process.ThisProcess();
-            try
-            {
-                int address = Convert.ToInt32(message);
-                oCNpc npc = new oCNpc(Process, Process.ReadInt(address));
-
-                if (npc.Address != Player.Hero.Address)
-                    return 0;
-
-                BitStream stream = Program.client.sentBitStream;
-                stream.Reset();
-                stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                stream.Write((byte)NetworkID.PlayerOpenInventoryMessage);
-                stream.Write(Player.Hero.ID);
-                stream.Write(true);
-                Program.client.client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
-            }
-            catch (Exception ex)
-            {
-                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Exception: " + ex.Message + " " + ex.StackTrace + " " + ex.Source, 0, "Program.cs", 0);
-            }
-            return 0;
-        }
-
-        public static Int32 CloseInventory(String message)
-        {
-            Process Process = Process.ThisProcess();
-            try
-            {
-                int address = Convert.ToInt32(message);
-                oCNpc npc = new oCNpc(Process, Process.ReadInt(address));
-
-                if (npc.Address != Player.Hero.Address)
-                    return 0;
-
-                BitStream stream = Program.client.sentBitStream;
-                stream.Reset();
-                stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                stream.Write((byte)NetworkID.PlayerOpenInventoryMessage);
-                stream.Write(Player.Hero.ID);
-                stream.Write(false);
-                Program.client.client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
-            }
-            catch (Exception ex)
-            {
-                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Exception: " + ex.Message + " " + ex.StackTrace + " " + ex.Source, 0, "Program.cs", 0);
-            }
-            return 0;
-        }
 
         /// <summary>
         /// Not in use anymore!
@@ -172,7 +121,7 @@ namespace GUC.Hooks
                     BitStream stream = Program.client.sentBitStream;
                     stream.Reset();
                     stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                    stream.Write((byte)NetworkID.DropItemMessage);
+                    stream.Write((byte)NetworkIDS.DropItemMessage);
                     stream.Write(Player.Hero.ID);
                     stream.Write(swItem.ID);
                     Program.client.client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
@@ -217,7 +166,7 @@ namespace GUC.Hooks
                     BitStream stream = Program.client.sentBitStream;
                     stream.Reset();
                     stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                    stream.Write((byte)NetworkID.TakeItemMessage);
+                    stream.Write((byte)NetworkIDS.TakeItemMessage);
                     stream.Write(Player.Hero.ID);
                     stream.Write(swItem.ID);
                     Program.client.client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
@@ -265,7 +214,7 @@ namespace GUC.Hooks
                 BitStream stream = Program.client.sentBitStream;
                 stream.Reset();
                 stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                stream.Write((byte)NetworkID.EquipItemMessage);
+                stream.Write((byte)NetworkIDS.EquipItemMessage);
                 stream.Write(npcP.ID);
                 stream.Write(itemP.ID);
                 stream.Write(true);
@@ -313,7 +262,7 @@ namespace GUC.Hooks
                 BitStream stream = Program.client.sentBitStream;
                 stream.Reset();
                 stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                stream.Write((byte)NetworkID.EquipItemMessage);
+                stream.Write((byte)NetworkIDS.EquipItemMessage);
                 stream.Write(npcP.ID);
                 stream.Write(itemP.ID);
                 stream.Write(false);
@@ -442,7 +391,7 @@ namespace GUC.Hooks
                 BitStream stream = Program.client.sentBitStream;
                 stream.Reset();
                 stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                stream.Write((byte)NetworkID.UseItemMessage);
+                stream.Write((byte)NetworkIDS.UseItemMessage);
                 stream.Write(npcP.ID);
                 stream.Write(itemP.ID);
                 stream.Write((short)UseItemNPC.InteractItemState);
@@ -495,7 +444,7 @@ namespace GUC.Hooks
                     BitStream stream = Program.client.sentBitStream;
                     stream.Reset();
                     stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                    stream.Write((byte)NetworkID.DoDieMessage);
+                    stream.Write((byte)NetworkIDS.DoDieMessage);
                     stream.Write(proto.ID);
                     stream.Write(killerproto.ID);
                     Program.client.client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);

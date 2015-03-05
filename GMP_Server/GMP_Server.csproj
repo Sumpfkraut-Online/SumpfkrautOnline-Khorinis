@@ -90,13 +90,11 @@
     <Compile Include="Network\Messages\PlayerCommands\DropItemMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\EquipItemMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\OnDamageMessage.cs" />
-    <Compile Include="Network\Messages\PlayerCommands\OpenInventoryMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\PlayerKeyMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\SpellInvestMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\TakeItemMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\ChangeWorldMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\CreateVobMessage.cs" />
-    <Compile Include="Network\Messages\VobCommands\DespawnVobMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\SetVobListPosDirMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\SetVobPosDirMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\SpawnVobMessage.cs" />
@@ -108,9 +106,6 @@
     <Compile Include="Scripting\GUI\GuiList\ListRow.cs" />
     <Compile Include="Scripting\GUI\GuiList\ListText.cs" />
     <Compile Include="Scripting\GUI\GuiList\ListTextBox.cs" />
-    <Compile Include="Scripting\GUI\PlayerText.cs" />
-    <Compile Include="Scripting\GUI\Text3D.cs" />
-    <Compile Include="Scripting\GUI\Text3DRow.cs" />
     <Compile Include="Scripting\GUI\TextArea.cs" />
     <Compile Include="Scripting\GUI\MessagesBox.cs" />
     <Compile Include="Scripting\GUI\Text.cs" />

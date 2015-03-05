@@ -20,13 +20,13 @@ namespace GUC.WorldObjects
 
         public float TimePerMana = 500;
         public int DamagePerLevel = 1;
-        public GUC.Enumeration.DamageTypes DamageType = GUC.Enumeration.DamageTypes.DAM_MAGIC;
+        public GUC.Enumeration.DamageType DamageType = GUC.Enumeration.DamageType.DAM_MAGIC;
         public SPELL_TYPE SpellType = SPELL_TYPE.BAD;
         public bool CanTurnDuringInvest = true;
         public bool CanChangeTargetDuringInvest = true;
         public bool isMultiEffect = false;
         public SPELL_TARGET_COLLECT TargetCollectionAlgo = SPELL_TARGET_COLLECT.TARGET_COLLECT_FOCUS_FALLBACK_NONE;
-        public SPELL_TARGET_TYPES TargetCollectType = SPELL_TARGET_TYPES.TARGET_TYPE_NPCS;
+        public SPELL_TARGET_TYPE TargetCollectType = SPELL_TARGET_TYPE.TARGET_TYPE_NPCS;
         public int TargetCollectRange = 10000;
         public int TargetCollectAzi = 60;
         public int TargetCollectElev = 60;
@@ -56,7 +56,7 @@ namespace GUC.WorldObjects
                 parameters |= SpellParameters.TimePerMana;
             if (DamagePerLevel != 1)
                 parameters |= SpellParameters.DamagePerLevel;
-            if (DamageType != GUC.Enumeration.DamageTypes.DAM_MAGIC)
+            if (DamageType != GUC.Enumeration.DamageType.DAM_MAGIC)
                 parameters |= SpellParameters.DamageType;
             if (SpellType != SPELL_TYPE.BAD)
                 parameters |= SpellParameters.SpellType;
@@ -68,7 +68,7 @@ namespace GUC.WorldObjects
                 parameters |= SpellParameters.isMultiEffect;
             if (TargetCollectionAlgo != SPELL_TARGET_COLLECT.TARGET_COLLECT_FOCUS_FALLBACK_NONE)
                 parameters |= SpellParameters.TargetCollectionAlgo;
-            if (TargetCollectType != SPELL_TARGET_TYPES.TARGET_TYPE_NPCS)
+            if (TargetCollectType != SPELL_TARGET_TYPE.TARGET_TYPE_NPCS)
                 parameters |= SpellParameters.TargetCollectType;
             if (TargetCollectRange != 10000)
                 parameters |= SpellParameters.TargetCollectRange;

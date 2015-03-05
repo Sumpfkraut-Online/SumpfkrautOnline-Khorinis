@@ -26,7 +26,7 @@ namespace GUC.Server.Scripts.Items.Misc
             Visual = "ItMi_Sulfur.3ds";
             Description = Name;
 
-            Materials = Enumeration.MaterialType.MAT_WOOD;
+            Materials = Enumeration.MaterialTypes.MAT_WOOD;
 
 
             CreateItemInstance();

@@ -25,7 +25,7 @@ namespace GUC.Server.Scripts.Items.Misc
             Visual = "ItMi_Gold.3ds";
             Description = Name;
 
-            Materials = Enumeration.MaterialType.MAT_STONE;
+            Materials = Enumeration.MaterialTypes.MAT_STONE;
 
 
             CreateItemInstance();

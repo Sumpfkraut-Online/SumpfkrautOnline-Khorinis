@@ -158,7 +158,7 @@ namespace GUC.Updater
 
 
 
-        public static bool Datei2MD5(string Dateipfad, string Checksumme)
+        private static bool Datei2MD5(string Dateipfad, string Checksumme)
         {
             //Datei einlesen
             System.IO.FileStream FileCheck = System.IO.File.OpenRead(Dateipfad);

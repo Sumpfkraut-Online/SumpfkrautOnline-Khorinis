@@ -39,8 +39,9 @@ namespace GUC.Server.Scripts.Items
 
         protected void cast(NPCProto caster, Spell spell, Vob target)
         {
-            caster.setWeaponMode(1);
-            caster.setVisual("Sheep.mds", "Sheep_Body", 0, 0, "", 0, 0);
+            //caster.setWeaponMode(1);
+            //caster.setVisual("Sheep.mds", "Sheep_Body", 0, 0, "", 0, 0);
+            //caster.setVisual("Sheep.mds", "Sheep_Body", 0, 0, "", 0, 0);
         }
     }
     public class ITSC_TRFSHEEP : ItemInstance
@@ -64,7 +65,7 @@ namespace GUC.Server.Scripts.Items
             Value = 25;
 
             Visual = "ItSc_TrfSheep.3DS";
-            Materials = Enumeration.MaterialType.MAT_LEATHER;
+            Materials = Enumeration.MaterialTypes.MAT_LEATHER;
             Wear = Enumeration.ArmorFlags.WEAR_EFFECT;
 
             Effect = "SPELLFX_WEAKGLIMMER";

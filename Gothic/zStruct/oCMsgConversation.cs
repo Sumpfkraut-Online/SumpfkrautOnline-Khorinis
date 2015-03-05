@@ -10,21 +10,15 @@ namespace Gothic.zStruct
     /// <summary>
     /// Größe der Klasse: 0x98 Classdef: 0x00AB2980
     /// </summary>
-    public class oCMsgConversation : oCNpcMessage, IDisposable
+    public class oCMsgConversation : zCObject
     {
         public enum Offsets
         {
+            subType = 36, //18=Overlay 14=keinOverlay 19=keinOverlay????
+            targetVobName = 44,//zString
             text = 68,
             name = 88,
-            target = 108,
-            targetPos = 112,
-            aniID = 124,
-            ModelAni = 128,
-            EventMessage = 132,
-            SoundHandle = 136,
-            timer = 140,
-            number = 144,
-            
+            vob = 108
         }
 
         /// <summary>
@@ -32,14 +26,14 @@ namespace Gothic.zStruct
         /// </summary>
         public enum TConversationSubType
         {
-            EV_PLAYANISOUND = 0,//Default
+            Error = 0,//nicht bekannt?
             EV_PLAYANI,
             EV_PLAYSOUND,
             EV_LOOKAT,
             EV_OUTPUT = 4,
             EV_OUTPUTSVM = 5,
             EV_CUTSCENE,
-            EV_WAITTILLEND = 7,
+            EV_WAITTILLEND,
             EV_ASK,
             EV_WAITFORQUESTION,
             EV_STOPLOOKAT,
@@ -51,9 +45,7 @@ namespace Gothic.zStruct
             EV_PROCESSINFOS,
             EV_STOPPROCESSINFOS,
             EV_OUTPUTSVM_OVERLAY = 18,
-            EV_SNDPLAY,
-            EV_SNDPLAY3D,
-
+            EV_SNDPLAY
         }
 
         public oCMsgConversation()
@@ -87,27 +79,20 @@ namespace Gothic.zStruct
             
             return rVal;
         }
-
-        public static oCMsgConversation Create(Process process, TConversationSubType conversationType, zString str)
-        {
-            oCMsgConversation rVal = null;
-
-            IntPtr address = process.Alloc(0x98);
-            zCClassDef.ObjectCreated(process, address.ToInt32(), 0x00AB2980);
-
-            //Konstruktor...
-            process.THISCALL<NullReturnCall>((uint)address.ToInt32(), 0x00769DE0, new CallValue[] { (IntArg)((int)conversationType), str });
-            rVal = new oCMsgConversation(process, address.ToInt32());
-
-
-
-            return rVal;
-        }
-
         #endregion
 
         #region Fields
-        
+        /// <summary>
+        /// Wird durch den Konstruktor angegeben.
+        /// <return>Subtype als ushort, entspricht der Enumeration TConversationSubType</return>
+        /// </summary>
+        public ushort subType
+        {
+            get
+            {
+                return Process.ReadUShort(Address + (int)Offsets.subType);
+            }
+        }
 
         /// <summary>
         /// Der Text der z.B. bei Sprachausgabe ausgegeben wird 
@@ -133,33 +118,22 @@ namespace Gothic.zStruct
             }
         }
 
-        public zCVob Target
+        public zString TargetVobName
         {
             get
             {
-                return new zCVob(Process, Process.ReadInt(Address + (int)Offsets.target));
+                return new zString(Process, Address + (int)Offsets.targetVobName);
             }
-            set
+        }
+
+        public zCVob Vob
+        {
+            get
             {
-                Process.Write(value.Address, Address + (int)Offsets.target);
+                return new zCVob(Process, Process.ReadInt(Address + (int)Offsets.vob));
             }
         }
 
         #endregion
-
-        private bool disposed = false;
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!this.disposed)
-            {
-                Process.Free(new IntPtr(Address), 0x98);
-                disposed = true;
-            }
-        }
     }
 }

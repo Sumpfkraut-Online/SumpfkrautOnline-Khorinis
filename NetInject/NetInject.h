@@ -74,7 +74,7 @@ EXTERN_C __declspec(dllexport) void LoadNetDllEx(NETINJECTPARAMS* params)
 	
 
 	if(hr != S_OK){
-		//test(dllName, typeName, methodName);
+		test(dllName, typeName, methodName);
 	}
 	
 	delete[] dllName;

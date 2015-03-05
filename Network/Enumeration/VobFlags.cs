@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GUC.Enumeration
 {
-    public enum VobType
+    public enum VobTypes
     {
         ERROR = 0,
         Item = 8636420,
@@ -39,7 +39,7 @@ namespace GUC.Enumeration
     }
 
 
-    public enum MobInterNetwork
+    public enum MobInterNetworkFlags
     {
         OnTrigger,
         OnUnTrigger,

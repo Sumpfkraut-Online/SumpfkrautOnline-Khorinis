@@ -68,8 +68,7 @@ namespace Gothic.zClasses
         {
             MultiSlot = 0x007125A0,
             ThisVobAddedToWorld = 0x00712DF0,
-            CreateVisual = 0x00711930,
-            RenderItem = 0x00713AC0
+            CreateVisual = 0x00711930
         }
 
         public enum MainFlags
@@ -417,10 +416,6 @@ namespace Gothic.zClasses
             get { return Process.ReadInt(Address + (int)Offsets.instance); }
         }
 
-        public void RenderItem(zCWorld world, zCView view, float x)
-        {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.RenderItem, new CallValue[] { world, view, new FloatArg(x) });
-        }
 
         public static oCItem Create(Process Process)
         {

@@ -58,10 +58,10 @@ namespace GUC.Server.Scripting.GUI
 
         protected override void create(int to)
         {
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.GuiMessage);
+            stream.Write((byte)NetworkIDS.GuiMessage);
             stream.Write((byte)GuiMessageType.CreateCursor);
 
             stream.Write(this.id);

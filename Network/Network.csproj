@@ -54,7 +54,6 @@
     <Compile Include="Enumeration\VobFlags.cs" />
     <Compile Include="Network\BitStreamExtension.cs" />
     <Compile Include="Options\ClientOptions.cs" />
-    <Compile Include="Options\Constants.cs" />
     <Compile Include="Options\ServerOptions.cs" />
     <Compile Include="Types\ColorRGBA.cs" />
     <Compile Include="Types\FileFunc.cs" />
@@ -69,6 +68,7 @@
     <Compile Include="WorldObjects\Character\NPC.cs" />
     <Compile Include="WorldObjects\Character\NPCProto.cs" />
     <Compile Include="WorldObjects\Character\Player.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WorldObjects\IContainer.cs" />
     <Compile Include="WorldObjects\Item.cs" />
     <Compile Include="WorldObjects\ItemInstance.cs" />
@@ -82,9 +82,6 @@
     <Compile Include="WorldObjects\sWorld.cs" />
     <Compile Include="WorldObjects\Vob.cs" />
     <Compile Include="WorldObjects\World.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

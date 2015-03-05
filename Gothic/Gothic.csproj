@@ -54,7 +54,6 @@
     <Compile Include="mClasses\StealContainer.cs" />
     <Compile Include="mClasses\textBox.cs" />
     <Compile Include="zClasses\CGameManager.cs" />
-    <Compile Include="zClasses\zCViewDraw.cs" />
     <Compile Include="zClasses\oCVisualFX.cs" />
     <Compile Include="zClasses\zCCamera.cs" />
     <Compile Include="zClasses\oCMobBed.cs" />
@@ -129,17 +128,14 @@
     <Compile Include="zClasses\zCWaypoint.cs" />
     <Compile Include="zClasses\zERROR.cs" />
     <Compile Include="zClasses\zFile.cs" />
-    <Compile Include="zStruct\zCEventMessage.cs" />
     <Compile Include="zStruct\NPCAiVar.cs" />
     <Compile Include="zStruct\oCMsgConversation.cs" />
     <Compile Include="zStruct\oCMsgManipulate.cs" />
     <Compile Include="zStruct\oCMsgWeapon.cs" />
-    <Compile Include="zStruct\oCNpcMessage.cs" />
     <Compile Include="zStruct\oSDamageDescriptor.cs" />
     <Compile Include="zStruct\TNpcAIState.cs" />
     <Compile Include="zStruct\zTSound3DParams.cs" />
     <Compile Include="zTypes\DIK_Keys.cs" />
-    <Compile Include="zTypes\zVec4.cs" />
     <Compile Include="zTypes\zMat4.cs" />
     <Compile Include="zTypes\zTBBox3D.cs" />
     <Compile Include="zTypes\zPoint3.cs" />

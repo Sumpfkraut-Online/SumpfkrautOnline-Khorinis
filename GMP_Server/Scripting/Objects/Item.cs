@@ -65,14 +65,14 @@ namespace GUC.Server.Scripting.Objects
                 GUC.WorldObjects.sWorld.removeVob(this.ProtoItem);
             }
 
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.ItemChangeAmount);
+            stream.Write((byte)NetworkIDS.ItemChangeAmount);
             stream.Write(this.ProtoItem.ID);
             stream.Write(amount);
             
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
 
         }
 
@@ -91,14 +91,14 @@ namespace GUC.Server.Scripting.Objects
 
         private void _toContainer(Vob vob)
         {
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.ItemChangeContainer);
+            stream.Write((byte)NetworkIDS.ItemChangeContainer);
             stream.Write(this.ProtoItem.ID);
             stream.Write(vob.ID);
 
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
         public ItemInstance ItemInstance { get { return ProtoItem.ItemInstance.ScriptingProto; } }
@@ -112,7 +112,7 @@ namespace GUC.Server.Scripting.Objects
             return ItemInstance.getProtection(index);
         }
 
-        public int getProtection(DamageTypes index)
+        public int getProtection(DamageType index)
         {
             return getProtection(index.getDamageTypeIndex());
         }
@@ -122,7 +122,7 @@ namespace GUC.Server.Scripting.Objects
             return ItemInstance.getDamage(index);
         }
 
-        public DamageTypes DamageType { get { return ItemInstance.DamageType; } }
+        public DamageType DamageType { get { return ItemInstance.DamageType; } }
         public int TotalDamage { get { return ItemInstance.TotalDamage; } }
 
         #endregion

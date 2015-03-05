@@ -7,11 +7,10 @@ using Gothic.zClasses;
 using GUC.Types;
 using Gothic.mClasses;
 using Gothic.zTypes;
-using GUC.Enumeration;
 
 namespace GUC.GUI
 {
-    public class MessageBox : View, InputReceiver
+    public class MessageBox : View
     {
 
         Texture parent;
@@ -23,14 +22,6 @@ namespace GUC.GUI
 
         List<Row> rows = new List<Row>();
 
-
-        int scrollPosition = -1;
-        int m_KeyScrollDown;
-        int m_KeyScrollUp;
-        int m_KeyResetScroll;
-
-        bool mResetScrollOnNewMessage;
-
         class Row
         {
             public String message;
@@ -38,24 +29,10 @@ namespace GUC.GUI
         }
 
         public MessageBox(int id, int lines, String font, Vec2i pos, Texture parent)
-            : this(id, lines, font, pos, parent, 0, 0, 0, true)
-        {
-
-        }
-
-        public MessageBox(int id, int lines, String font, Vec2i pos, Texture parent, int scrollUp, int scrollDown, int resetScroll, bool resetScrollOnNewMessage)
             : base(id, pos)
         {
 
             this.parent = parent;
-
-            mResetScrollOnNewMessage = resetScrollOnNewMessage;
-
-            m_KeyScrollDown = scrollDown;
-            m_KeyScrollUp = scrollUp;
-            m_KeyResetScroll = resetScroll;
-
-            
 
             //Creation:
             Process process = Process.ThisProcess();
@@ -89,11 +66,7 @@ namespace GUC.GUI
 
         public void updateTextes()
         {
-            
             int startPos = rows.Count - textarr.Length;
-            if (scrollPosition != -1)
-                startPos = scrollPosition;
-
             if (startPos < 0)
                 startPos = 0;
 
@@ -111,9 +84,6 @@ namespace GUC.GUI
 
         public void addMessage(String message, ColorRGBA color)
         {
-            if (mResetScrollOnNewMessage)
-                scrollPosition = -1;
-
             Row row = new Row();
             row.message = message;
             row.color.set(color);
@@ -157,9 +127,6 @@ namespace GUC.GUI
                 return;
             Process process = Process.ThisProcess();
 
-            if (m_KeyScrollDown != 0 || m_KeyScrollUp != 0 || m_KeyResetScroll != 0)
-                InputHooked.receivers.Remove(this);
-
             if (parent == null)
                 zCView.GetStartscreen(process).RemoveItem(this.thisView);
             else
@@ -173,9 +140,6 @@ namespace GUC.GUI
             if (isShown)
                 return;
             Process process = Process.ThisProcess();
-
-            if (m_KeyScrollDown != 0 || m_KeyScrollUp != 0 || m_KeyResetScroll != 0)
-                InputHooked.receivers.Add(this);
 
             if (parent == null)
                 zCView.GetStartscreen(process).InsertItem(this.thisView, 0);
@@ -196,64 +160,5 @@ namespace GUC.GUI
             thisView.Dispose();
         }
 
-        public void changeScroll(int scrollI)
-        {
-            if (rows.Count <= textarr.Length)
-                this.scrollPosition = -1;
-            else if (this.scrollPosition == -1)
-            {
-                if (scrollI > 0)
-                    return;
-                else
-                    this.scrollPosition = (rows.Count - textarr.Length) + scrollI;
-            }
-            else
-            {
-                this.scrollPosition += scrollI;
-            }
-
-            if (this.scrollPosition < 0)
-                this.scrollPosition = 0;
-            else if (this.scrollPosition >= (rows.Count - textarr.Length))
-            {
-                this.scrollPosition = -1;
-            }
-
-            this.updateTextes();
-        }
-
-        public void KeyReleased(int key)
-        {
-            
-        }
-
-        public void KeyPressed(int key)
-        {
-            if (textBox.activeTB != null)
-                return;
-
-            //zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Key: "+key+ "; "+(VirtualKey)key, 0, "Program.cs", 0);
-            if (key == this.m_KeyScrollUp)
-            {
-                changeScroll(-1);
-            }
-            else if (key == this.m_KeyScrollDown)
-            {
-                changeScroll(1);
-            }
-            else if (key == this.m_KeyResetScroll)
-            {
-                if (this.scrollPosition != -1)
-                {
-                    this.scrollPosition = -1;
-                    updateTextes();
-                }
-            }
-        }
-
-        public void wheelChanged(int steps)
-        {
-            
-        }
     }
 }

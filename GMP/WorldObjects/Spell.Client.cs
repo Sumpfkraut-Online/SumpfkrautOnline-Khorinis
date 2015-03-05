@@ -37,7 +37,7 @@ namespace GUC.WorldObjects
             {
                 byte dt = 0;
                 stream.Read(out dt);
-                DamageType = (DamageTypes)dt;
+                DamageType = (DamageType)dt;
             }
             if (paramI.HasFlag(SpellParameters.SpellType))
             {
@@ -61,7 +61,7 @@ namespace GUC.WorldObjects
             {
                 byte dt = 0;
                 stream.Read(out dt);
-                TargetCollectType = (SPELL_TARGET_TYPES)dt;
+                TargetCollectType = (SPELL_TARGET_TYPE)dt;
             }
             if (paramI.HasFlag(SpellParameters.TargetCollectRange))
                 stream.Read(out this.TargetCollectRange);

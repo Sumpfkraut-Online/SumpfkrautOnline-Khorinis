@@ -42,16 +42,16 @@ namespace GUC.Server.Network.Messages.PlayerCommands
         }
         public static void Write(NPCProto proto, AddressOrGUID guidExclude)
         {
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.SpellInvestMessage);
+            stream.Write((byte)NetworkIDS.SpellInvestMessage);
 
             stream.Write(proto.ID);
 
             if (guidExclude == null)
                 guidExclude = RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS;
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guidExclude, true);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guidExclude, true);
         }
     }
 }

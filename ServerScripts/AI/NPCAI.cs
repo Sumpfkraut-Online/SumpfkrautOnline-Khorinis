@@ -12,10 +12,6 @@ using GUC.Server.Scripts.AI.FightFuncs.fightStates;
 
 namespace GUC.Server.Scripts.AI
 {
-    /** 
-     * This is the managing class for the NPC-AI.
-     * More information to follow.
-     */
     public class NPCAI
     {
         protected Timer mAITimer = null;

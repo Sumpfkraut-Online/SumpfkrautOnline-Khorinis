@@ -18,7 +18,7 @@ namespace GUC.WorldObjects
 
         protected int[] protection = new int[8];
 
-        protected DamageTypes damageType = DamageTypes.DAM_INVALID;
+        protected DamageType damageType = DamageType.DAM_INVALID;
         protected int totalDamage = 0;
         protected int[] damages = new int[8];
         protected int range = 0;
@@ -32,7 +32,7 @@ namespace GUC.WorldObjects
         protected Flags flags = 0;
         protected ArmorFlags wear = 0;
 
-        protected MaterialType materials = 0;
+        protected MaterialTypes materials = 0;
 
         protected String description = "";
         protected String[] text = new String[6] {"", "", "", "", "", ""};
@@ -69,7 +69,7 @@ namespace GUC.WorldObjects
         }
 
 
-        public DamageTypes DamageType { get { return damageType; } set { this.damageType = value; } }
+        public DamageType DamageType { get { return damageType; } set { this.damageType = value; } }
         public int TotalDamage { get { return totalDamage; } set { this.totalDamage = value; } }
         public int[] Damages { get { return damages; }
             set
@@ -111,7 +111,7 @@ namespace GUC.WorldObjects
         public Flags Flags { get { return flags; } set { this.flags = value; } }
         public ArmorFlags Wear { get { return wear; } set { this.wear = value; } }
 
-        public MaterialType Materials { get { return materials; } set { this.materials = value; } }
+        public MaterialTypes Materials { get { return materials; } set { this.materials = value; } }
 
         public String Description { get { return description; } set { this.description = value; } }
         public String[] Text
@@ -236,7 +236,7 @@ namespace GUC.WorldObjects
                 if (Protection[i] != 0)
                     param |= (ItemInstanceParameters)((ulong)ItemInstanceParameters.protection0 << i);
 
-            if (DamageType != Enumeration.DamageTypes.DAM_INVALID)
+            if (DamageType != Enumeration.DamageType.DAM_INVALID)
                 param |= ItemInstanceParameters.damageType;
             if (TotalDamage != 0)
                 param |= ItemInstanceParameters.totalDamage;

@@ -11,7 +11,6 @@ namespace Gothic.zClasses
         #region OffsetLists
         public enum Offsets : uint
         {
-            CamMatrix = 164,
 
         }
 
@@ -47,18 +46,12 @@ namespace Gothic.zClasses
         #endregion
 
         #region statics
-        public static zCCamera getActiveCamera(Process process)
-        {
-            return new zCCamera(process, process.ReadInt(0x008D7F94));
-        }
+        
         #endregion
 
         #region Fields
-
-        public zMat4 CamMatrix { get { return new zMat4(Process, Address + (int)Offsets.CamMatrix); } }
-
+        
         #endregion
-
 
 
         #region methods
@@ -94,7 +87,7 @@ namespace Gothic.zClasses
             IntPtr out2 = Process.Alloc(4);
 
 
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.Project_Float, new CallValue[] { in1, new IntArg(out1.ToInt32()), new IntArg(out2.ToInt32()) });
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.Project, new CallValue[] { in1, new IntArg(out1.ToInt32()), new IntArg(out2.ToInt32()) });
 
             oX = Process.ReadFloat(out1.ToInt32());
             oY = Process.ReadFloat(out2.ToInt32());

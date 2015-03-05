@@ -41,7 +41,6 @@
   <ItemGroup>
     <Reference Include="Mono.Data.Sqlite">
       <HintPath>..\..\..\Gothic 2 MP GUC\System\UntoldChapter\Server\Mono.Data.Sqlite.dll</HintPath>
-      <HintPath>..\..\..\..\..\..\..\Programme\Spiele\Gothic\GothicII\Gothic II GuC 2\System\UntoldChapter\Server\Mono.Data.Sqlite.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -133,20 +132,7 @@
     <Compile Include="AI\Waypoints\WayNet.cs" />
     <Compile Include="AI\Waypoints\WayPoint.cs" />
     <Compile Include="AI\Waypoints\WayRoute.cs" />
-    <Compile Include="Communication\Chat.cs" />
-    <Compile Include="Communication\CommandInterpreter.cs" />
-    <Compile Include="Communication\Commands\Command.cs" />
-    <Compile Include="Communication\Commands\CommandList.cs" />
-    <Compile Include="Communication\EventNotifier.cs" />
-    <Compile Include="Communication\NotificationManager.cs" />
-    <Compile Include="Communication\Notifications\ChatMessage.cs" />
-    <Compile Include="Communication\Notifications\ChatMessageType.cs" />
-    <Compile Include="Communication\Notifications\Notification.cs" />
-    <Compile Include="Communication\Notifications\NotificationArea.cs" />
-    <Compile Include="Communication\Notifications\NotificationType.cs" />
-    <Compile Include="Communication\Notifications\ServerMessage.cs" />
-    <Compile Include="Communication\Notifications\StatusMessage.cs" />
-    <Compile Include="Communication\SLMessageManager.cs" />
+    <Compile Include="Chat.cs" />
     <Compile Include="DamageScript.cs" />
     <Compile Include="DayTime.cs" />
     <Compile Include="DefaultItems.cs" />
@@ -414,9 +400,6 @@
     <Compile Include="StartModules\Modules.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Test\ListTestModule.cs" />
-    <Compile Include="Test\Text3DTest.cs" />
-    <Compile Include="Utils\RandomManager.cs" />
-    <Compile Include="Utils\Utils.cs" />
     <Compile Include="Web\Actions\Action.cs" />
     <Compile Include="Web\Actions\GetPlayerListAction.cs" />
     <Compile Include="Web\Actions\GetAccountListAction.cs" />

@@ -54,7 +54,7 @@ namespace GUC.Network.Messages.Callbacks
 
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.ReadMd5Message);
+            stream.Write((byte)NetworkIDS.ReadMd5Message);
             stream.Write(callBackID);
             stream.Write(playerID);
             stream.Write(md5File);

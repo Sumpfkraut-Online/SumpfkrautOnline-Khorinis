@@ -10,7 +10,7 @@ namespace GUC.WorldObjects.Mobs
         public MobDoor()
             : base()
         {
-            this.VobType = Enumeration.VobType.MobDoor;
+            this.VobType = Enumeration.VobTypes.MobDoor;
         }
     }
 }

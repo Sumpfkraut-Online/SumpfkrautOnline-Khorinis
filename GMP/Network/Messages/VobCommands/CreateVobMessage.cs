@@ -15,7 +15,7 @@ namespace GUC.Network.Messages.VobCommands
 
             stream.Read(out vobType);
 
-            Vob v = Vob.createVob((VobType)vobType);
+            Vob v = Vob.createVob((VobTypes)vobType);
             if (v == null)
                 throw new Exception("Vobtype was not known in Vob.createVob: "+vobType);
             v.Read(stream);

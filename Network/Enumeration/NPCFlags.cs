@@ -32,7 +32,7 @@ namespace GUC.Enumeration
     }
 
 
-    public enum NPCAttribute : byte
+    public enum NPCAttributeFlags : byte
     {
         ATR_HITPOINTS				=  0,	// Lebenspunkte
         ATR_HITPOINTS_MAX			=  1,	// Max. Lebenspunkte
@@ -47,7 +47,7 @@ namespace GUC.Enumeration
         ATR_MAX = 8
     }
 
-    public enum NPCHitchance : byte
+    public enum NPCHitchances : byte
     {
         H1,
         H2,
@@ -55,7 +55,7 @@ namespace GUC.Enumeration
         CrossBow
     }
 
-    public enum NPCTalent : byte
+    public enum NPCTalents : byte
     {
         Unknown,
         H1,
@@ -78,7 +78,7 @@ namespace GUC.Enumeration
         MaxTalents
     }
 
-    public enum FightMode
+    public enum FightModes
     {
         None = 0,
         Fist = 1,

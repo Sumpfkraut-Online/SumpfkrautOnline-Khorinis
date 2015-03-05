@@ -27,7 +27,7 @@ namespace GUC.Server.Scripts.Items.Potions.Health
             MainFlags = MainFlags.ITEM_KAT_POTIONS;
             Flags = Flags.ITEM_MULTI;
 
-            Materials = MaterialType.MAT_GLAS;
+            Materials = MaterialTypes.MAT_GLAS;
             Description = "Elixier des Geistes";
 
             Effect = "SPELLFX_MANAPOTION";

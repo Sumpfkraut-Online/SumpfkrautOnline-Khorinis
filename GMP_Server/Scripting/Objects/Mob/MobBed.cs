@@ -38,10 +38,6 @@ namespace GUC.Server.Scripting.Objects.Mob
             : this(new GUC.WorldObjects.Mobs.MobBed(), visual, focusName, useWithItem, triggerTarget, cdDyn, cdStatic, true)
         { }
 
-        protected MobBed()
-            : this(new GUC.WorldObjects.Mobs.MobBed(), null, null, null, null, false, false, false)
-        { }
-
         internal MobBed(GUC.WorldObjects.Mobs.MobInter mobInter, String visual, String focusName, ItemInstance useWithItem, String triggerTarget, bool cdDyn, bool cdStatic, bool useCreate)
             : base(mobInter, visual, focusName, useWithItem, triggerTarget, cdDyn, cdStatic, false)
         {

@@ -117,7 +117,7 @@ namespace GUC.Server.Scripts.Items
             Value = 25;
 
             Visual = "ItSc_Shrink.3DS";
-            Materials = Enumeration.MaterialType.MAT_LEATHER;
+            Materials = Enumeration.MaterialTypes.MAT_LEATHER;
             Wear = Enumeration.ArmorFlags.WEAR_EFFECT;
 
             Effect = "SPELLFX_WEAKGLIMMER";

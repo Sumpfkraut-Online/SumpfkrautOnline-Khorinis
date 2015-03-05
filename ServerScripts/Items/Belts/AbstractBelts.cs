@@ -19,7 +19,7 @@ namespace GUC.Server.Scripts.Items.Belts
             MainFlags = Enumeration.MainFlags.ITEM_KAT_MAGIC;
             Flags = Enumeration.Flags.ITEM_BELT;
 
-            Materials = Enumeration.MaterialType.MAT_METAL;
+            Materials = Enumeration.MaterialTypes.MAT_METAL;
             Visual_skin = 0;
         }
     }

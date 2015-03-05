@@ -26,17 +26,50 @@ namespace GUC.Server.Network.Messages.NpcCommands
             //Equipment:
             if (changeFlags.HasFlag(NPCChangedFlags.EQUIP_ARMOR))
             {
-              proto.Armor = UpdateItem(stream);
+                Item armor = null;
+                int armorID = 0;
+                stream.Read(out armorID);
+                if (armorID > 0)
+                {
+                    armor = (Item)sWorld.VobDict[armorID];
+                    Item oldArmor = proto.Armor;
+
+                    proto.Armor = armor;
+                }
+                else
+                    proto.Armor = null;
             }
 
             if (changeFlags.HasFlag(NPCChangedFlags.EQUIP_NW))
             {
-              proto.Weapon = UpdateItem(stream);
+                Item weapon = null;
+                int weaponID = 0;
+                stream.Read(out weaponID);
+                if (weaponID > 0)
+                {
+                    weapon = (Item)sWorld.VobDict[weaponID];
+                    Item oldWeapon = proto.Weapon;
+
+                    proto.Weapon = weapon;
+                }
+                else
+                    proto.Weapon = null;
             }
 
             if (changeFlags.HasFlag(NPCChangedFlags.EQUIP_RW))
             {
-              proto.RangeWeapon = UpdateItem(stream);
+                Item weapon = null;
+                int weaponID = 0;
+                stream.Read(out weaponID);
+                if (weaponID > 0)
+                {
+                    weapon = (Item)sWorld.VobDict[weaponID];
+                    Item oldWeapon = proto.RangeWeapon;
+
+                    proto.RangeWeapon = weapon;
+                }
+                else
+                    proto.RangeWeapon = null;
             }
 
             if (changeFlags.HasFlag(NPCChangedFlags.WeaponMode))
@@ -56,7 +89,7 @@ namespace GUC.Server.Network.Messages.NpcCommands
                     if (slotItemID > 0)
                     {
                         Item slotItem  = (Item)sWorld.VobDict[slotItemID];
-                        //Item oldSlotItem = proto.Slots[i];
+                        Item oldSlotItem = proto.Slots[i];
 
                         proto.Slots[i] = slotItem;
                     }
@@ -67,32 +100,56 @@ namespace GUC.Server.Network.Messages.NpcCommands
 
             if (changeFlags.HasFlag(NPCChangedFlags.VOBFOCUS))
             {
-              proto.FocusVob=UpdateVob(stream);
+                int vobID = 0;
+                stream.Read(out vobID);
+
+                if (vobID == 0)
+                    proto.FocusVob = null;
+                else
+                    proto.FocusVob = sWorld.VobDict[vobID];
             }
 
             if (changeFlags.HasFlag(NPCChangedFlags.ENEMYFOCUS))
             {
-              proto.Enemy = (NPCProto)UpdateVob(stream);
+                int vobID = 0;
+                stream.Read(out vobID);
+
+                if (vobID == 0)
+                    proto.Enemy = null;
+                else
+                    proto.Enemy = (NPCProto)sWorld.VobDict[vobID];
             }
 
             if (changeFlags.HasFlag(NPCChangedFlags.MOBINTERACT))
             {
-              proto.MobInter = (MobInter)UpdateVob(stream);
+                int vobID = 0;
+                stream.Read(out vobID);
+
+                if (vobID == 0)
+                    proto.MobInter = null;
+                else
+                    proto.MobInter = (MobInter)sWorld.VobDict[vobID];
             }
 
             if (changeFlags.HasFlag(NPCChangedFlags.ISDEAD))
             {
-              proto.IsDead = UpdateState(stream);
+                bool isdead = false;
+                stream.Read(out isdead);
+                proto.IsDead = isdead;
             }
 
             if (changeFlags.HasFlag(NPCChangedFlags.ISUNCONSCIOUS))
             {
-              proto.IsUnconcious = UpdateState(stream);
+                bool isuncon = false;
+                stream.Read(out isuncon);
+                proto.IsUnconcious = isuncon;
             }
 
             if (changeFlags.HasFlag(NPCChangedFlags.ISSWIMMING))
             {
-              proto.IsSwimming = UpdateState(stream);
+                bool isswimming = false;
+                stream.Read(out isswimming);
+                proto.IsSwimming = isswimming;
             }
 
             if (changeFlags.HasFlag(NPCChangedFlags.PORTALROOM))
@@ -116,38 +173,8 @@ namespace GUC.Server.Network.Messages.NpcCommands
             //Sending back:
             stream.ResetReadPointer();
 
-            Program.server.ServerInterface.Send(stream, PacketPriority.MEDIUM_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, packet.guid, true);
+            Program.server.server.Send(stream, PacketPriority.MEDIUM_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, packet.guid, true);
 
         }
-
-        private static bool UpdateState(RakNet.BitStream stream)
-        {
-          bool isX = false;
-          stream.Read(out isX);
-          return isX;
-        }
-
-        private static Vob UpdateVob(RakNet.BitStream stream)
-        {
-          int vobID = 0;
-          stream.Read(out vobID);
-
-          if (vobID == 0)
-            return null;
-          else
-            return sWorld.VobDict[vobID];
-        }
-
-      private Item UpdateItem(RakNet.BitStream stream)
-      {        
-        int itemID = 0;
-        stream.Read(out itemID);
-        if (itemID > 0)
-        {         
-          return (Item)sWorld.VobDict[itemID];
-        }
-        else
-          return null;
-      }
     }
 }

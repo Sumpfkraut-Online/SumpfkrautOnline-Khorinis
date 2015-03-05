@@ -6,8 +6,6 @@ using GUC.GUI;
 using GUC.Enumeration;
 using GUC.Types;
 using GUC.Network;
-using GUC.WorldObjects;
-using GUC.WorldObjects.Character;
 
 namespace GUC.Network.Messages
 {
@@ -162,21 +160,13 @@ namespace GUC.Network.Messages
                 String font;
                 byte lines;
 
-                int scrollUp, scrollDown, resetScroll;
-                bool resetOnNewMessage;
-
                 stream.Read(out viewID);
                 stream.Read(out position);
                 stream.Read(out parentID);
                 stream.Read(out font);
                 stream.Read(out lines);
 
-                stream.Read(out scrollUp);
-                stream.Read(out scrollDown);
-                stream.Read(out resetScroll);
-                stream.Read(out resetOnNewMessage);
-
-                MessageBox messageBox = new MessageBox(viewID, lines, font, position, getTextureParentFromList(parentID), scrollUp, scrollDown, resetScroll, resetOnNewMessage);
+                MessageBox messageBox = new MessageBox(viewID, lines, font, position, getTextureParentFromList(parentID));
                 viewList.Add(viewID, messageBox);
             }
             else if (gmT == GuiMessageType.CreateCursor)
@@ -304,123 +294,6 @@ namespace GUC.Network.Messages
                 GUI.GuiList.ListTextBox listelement = new GUI.GuiList.ListTextBox(viewID, hardText, text, list, activeColor, inactiveColor);
                 list.addRow(listelement);
                 viewList.Add(viewID, listelement);
-            }
-            else if (gmT == GuiMessageType.CreateText3D)
-            {
-                Vec3f position;
-                float maxDistance;
-                int parentID = 0;
-                String world = "";
-
-                stream.Read(out viewID);
-                stream.Read(out position);
-                stream.Read(out world);
-                stream.Read(out maxDistance);
-                stream.Read(out parentID);
-
-                int rowCount = 0;
-                stream.Read(out rowCount);
-
-                Text3D textView = new Text3D(viewID, world, maxDistance, position);
-                for (int i = 0; i < rowCount; i++)
-                {
-                    String text = "";
-                    ColorRGBA color = ColorRGBA.White;
-                    long time = 0, blendTime;
-
-                    stream.Read(out text);
-                    stream.Read(out color);
-                    stream.Read(out time);
-                    stream.Read(out blendTime);
-
-                    textView.addRow(new Text3D.Text3DRow() { Text = text, Color = color, Time = time, BlendTime = blendTime });
-                }
-
-                
-                viewList.Add(viewID, textView);
-            }
-            else if (gmT == GuiMessageType.CreateTextPlayer)
-            {
-                int playerID = 0;
-                float maxDistance;
-                int parentID = 0;
-                
-
-                stream.Read(out viewID);
-                stream.Read(out playerID);
-                stream.Read(out maxDistance);
-                stream.Read(out parentID);
-
-                int rowCount = 0;
-                stream.Read(out rowCount);
-
-                Vob vob = null;
-                if (!sWorld.VobDict.TryGetValue(playerID, out vob))
-                    throw new Exception("Player id:" +playerID +" was not found!");
-                if (!(vob is Player))
-                    throw new Exception("Vob is not a Player: "+playerID+" "+vob);
-
-                PlayerText textView = new PlayerText(viewID, (Player)vob, maxDistance);
-                for (int i = 0; i < rowCount; i++)
-                {
-                    String text = "";
-                    ColorRGBA color = ColorRGBA.White;
-                    long time = 0, blendTime;
-
-                    stream.Read(out text);
-                    stream.Read(out color);
-                    stream.Read(out time);
-                    stream.Read(out blendTime);
-
-                    textView.addRow(new Text3D.Text3DRow() { Text = text, Color = color, Time = time, BlendTime = blendTime });
-                }
-
-
-                viewList.Add(viewID, textView);
-            }
-            else if (gmT == GuiMessageType.Text3DAddRow)
-            {
-                String text = "";
-                ColorRGBA color = ColorRGBA.White;
-                long time = 0, blendTime = 0;
-
-                stream.Read(out viewID);
-                stream.Read(out text);
-                stream.Read(out color);
-                stream.Read(out time);
-                stream.Read(out blendTime);
-
-                View v = getViewFromList(viewID);
-
-                if (!(v is Text3D))
-                    throw new Exception("Text3DAddRow works only with a Text3D!: " + v);
-
-                Text3D t3d = (Text3D)v;
-                t3d.addRow(new Text3D.Text3DRow() { Text = text, Color = color, Time = time, BlendTime = blendTime });
-            }
-            else if (gmT == GuiMessageType.Text3DClear)
-            {
-                stream.Read(out viewID);
-                View v = getViewFromList(viewID);
-
-                if (!(v is Text3D))
-                    throw new Exception("Text3DAddRow works only with a Text3D!: " + v);
-
-                Text3D t3d = (Text3D)v;
-                t3d.Clear();
-            }
-            else if (gmT == GuiMessageType.Text3DPosition)
-            {
-                Vec3f position = new Vec3f();
-                stream.Read(out viewID);
-                stream.Read(out position);
-                View v = getViewFromList(viewID);
-
-                if (!(v is Text3D))
-                    throw new Exception("Text3DAddRow works only with a Text3D!: " + v);
-
-                Text3D t3d = (Text3D)v;
-                t3d.setPosition(position);
             }
                 //Texture:
             else if (gmT == GuiMessageType.SetTexture)

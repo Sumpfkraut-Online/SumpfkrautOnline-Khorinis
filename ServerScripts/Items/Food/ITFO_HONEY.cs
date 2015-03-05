@@ -26,7 +26,7 @@ namespace GUC.Server.Scripts.Items.Food
             Description = Name;
             ScemeName = "FOODHUGE";
 
-            Materials = Enumeration.MaterialType.MAT_STONE;
+            Materials = Enumeration.MaterialTypes.MAT_STONE;
 
             OnUse += new Scripting.Events.UseItemEventHandler(useItem);
 

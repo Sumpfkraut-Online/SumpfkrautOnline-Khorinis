@@ -29,7 +29,7 @@ namespace GUC.Network.Messages.PlayerCommands
             BitStream stream = Program.client.sentBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.OnDamageMessage);
+            stream.Write((byte)NetworkIDS.OnDamageMessage);
 
 
 

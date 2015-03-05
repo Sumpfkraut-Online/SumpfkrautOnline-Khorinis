@@ -17,7 +17,6 @@ namespace Gothic.zClasses
 
         public enum Offsets
         {
-            m_bFillZ = 8,
             next = 12,
             text_lines = 132,
             font = 0x64
@@ -40,15 +39,7 @@ namespace Gothic.zClasses
             SetPos = 0x007A75B0,
             Move = 0x007A76E0,
             SetSize = 0x007A77A0,
-            Top = 0x007A6790,
-            FontSize = 0x007A9A10,
-            anx = 0x007A5E80,
-            any = 0x007A5EC0,
-            nax = 0x007A5E00,
-            nay = 0x007A5E40,
-            FontY = 0x007A99F0,
-            DrawItems = 0x007A6750,
-            Blit = 0x007A63C0
+            Top = 0x007A6790
         }
 
         public enum HookSizes
@@ -59,8 +50,7 @@ namespace Gothic.zClasses
             SetColor = 6,
             SetFont_Str = 9,
             SetPos = 5,
-            Move = 5,
-            DrawItems = 5
+            Move = 5
         }
 
         public zCView()
@@ -92,7 +82,6 @@ namespace Gothic.zClasses
             }
         }
 
-        public bool FillZ { get { return Process.ReadInt(Address + (int)Offsets.m_bFillZ) >= 1; } set { Process.Write(value ? 1 : 0, Address + (int)Offsets.m_bFillZ); } }
 
 
         public void Top()
@@ -165,11 +154,6 @@ namespace Gothic.zClasses
         }
 
 
-        public void Blit()
-        {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.Blit, new CallValue[] {  });
-        }
-
         public void InsertBack(zString texture)
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.insertBack_str, new CallValue[] { texture });
@@ -180,42 +164,6 @@ namespace Gothic.zClasses
             zString f = zString.Create(Process, font);
             SetFont(f);
             f.Dispose();
-        }
-
-        public int nax(int x)
-        {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.nax, new CallValue[] { new IntArg(x) });
-        }
-
-        public int nay(int y)
-        {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.nay, new CallValue[] { new IntArg(y) });
-        }
-
-        public int anx(int x)
-        {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.anx, new CallValue[] { new IntArg(x) });
-        }
-
-        public int any(int y)
-        {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.any, new CallValue[] { new IntArg(y) });
-        }
-        public int FontSize(String str)
-        {
-            using (zString str2 = zString.Create(Process, str))
-            {
-                return FontSize(str2);
-            }
-        }
-        public int FontSize(zString str)
-        {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.FontSize, new CallValue[] { str });
-
-        }
-        public int FontY()
-        {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.FontY, new CallValue[] { });
         }
 
         public void SetFont(zString font)

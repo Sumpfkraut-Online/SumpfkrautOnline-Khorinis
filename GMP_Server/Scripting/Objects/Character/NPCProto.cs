@@ -11,6 +11,12 @@ using System.Collections;
 
 namespace GUC.Server.Scripting.Objects.Character
 {
+    /** 
+    * Prototype class (base class) for all vobs which are npcs.
+    * Class which defines RakNet network communication regarding npcs (npc-vobs) in general.
+    * It contains constant defintions for meshes and textures of bodies and heads/faces.
+    * It inherits from Vob, the base class for all possible vobs in the game.
+    */
     public class NPCProto : Vob, IEnumerable
     {
         #region constants
@@ -219,7 +225,11 @@ namespace GUC.Server.Scripting.Objects.Character
 
         #endregion
 
-
+        /**
+         *   Constructor.
+         *   One constructor for NPCProto.
+         *   @param proto a GUC.WorldObjects.Character.NPCProto of the same type as this class.
+         */
         internal NPCProto(GUC.WorldObjects.Character.NPCProto proto)
             : base(proto)
         {
@@ -229,77 +239,86 @@ namespace GUC.Server.Scripting.Objects.Character
         internal GUC.WorldObjects.Character.NPCProto proto { get { return (GUC.WorldObjects.Character.NPCProto)vob; } }
 
 
-        public static NPCProto[] getAll()
-        {
-            NPCProto[] protoList = new NPCProto[sWorld.NpcProtoList.Count()];
-
-            for (int i = 0; i < sWorld.NpcProtoList.Count(); i++ )
-            {
-                protoList[i] = sWorld.NpcProtoList[i].ScriptingNPC;
-            }
-
-            return protoList;
-        }
-
-        public static IEnumerable ToEnumerable()
-        {
-            foreach (GUC.WorldObjects.Character.NPCProto item in sWorld.NpcProtoList)
-            {
-                yield return (NPCProto)item.ScriptingNPC;
-            }
-        }
-
         #region Fields
 
+        /**
+         *   Get/Set-Accessor for the name of an npc.
+         *   Get/Set-Accessor for the name of an npc.
+         */
         public String Name { get { return proto.Name; } set { setName(value); } }
 
+        /**
+         *   Get/Set-Accessor for the scale of an npc.
+         *   Get/Set-Accessor for the scale of an npc.
+         */
         public Vec3f Scale { get { return proto.Scale; } set { setScale(value); } }
 
-        public ColorRGBA Color { get; set; }
 
-        public float Fatness
-        {
-            get { return proto.Fatness; }
-            set { setFatness(value); }
-        }
 
+        /**
+         *   Get/Set-Accessor for the strength of an npc.
+         *   Get/Set-Accessor for the strength of an npc.
+         */
         public int Strength {
-            get { return proto.Attributes[(byte)NPCAttribute.ATR_STRENGTH]; }
-            set { setAttribute(NPCAttribute.ATR_STRENGTH, value); }
+            get { return proto.Attributes[(byte)NPCAttributeFlags.ATR_STRENGTH]; }
+            set { setAttribute(NPCAttributeFlags.ATR_STRENGTH, value); }
         }
 
+        /**
+         *   Get/Set-Accessor for the dexterity of an npc.
+         *   Get/Set-Accessor for the dexterity of an npc.
+         */
         public int Dexterity
         {
-            get { return proto.Attributes[(byte)NPCAttribute.ATR_DEXTERITY]; }
-            set { setAttribute(NPCAttribute.ATR_DEXTERITY, value); }
+            get { return proto.Attributes[(byte)NPCAttributeFlags.ATR_DEXTERITY]; }
+            set { setAttribute(NPCAttributeFlags.ATR_DEXTERITY, value); }
         }
 
+        /**
+         *   Get/Set-Accessor for the health points/HP of an npc.
+         *   Get/Set-Accessor for the health points/HP of an npc.
+         */
         public int HP
         {
-            get { return proto.Attributes[(byte)NPCAttribute.ATR_HITPOINTS]; }
-            set { setAttribute(NPCAttribute.ATR_HITPOINTS, value); }
+            get { return proto.Attributes[(byte)NPCAttributeFlags.ATR_HITPOINTS]; }
+            set { setAttribute(NPCAttributeFlags.ATR_HITPOINTS, value); }
         }
 
+        /**
+         *   Get/Set-Accessor for the maximum health points/HP of an npc.
+         *   Get/Set-Accessor for the maximum health points/HP of an npc.
+         */
         public int HPMax
         {
-            get { return proto.Attributes[(byte)NPCAttribute.ATR_HITPOINTS_MAX]; }
-            set { setAttribute(NPCAttribute.ATR_HITPOINTS_MAX, value); }
+            get { return proto.Attributes[(byte)NPCAttributeFlags.ATR_HITPOINTS_MAX]; }
+            set { setAttribute(NPCAttributeFlags.ATR_HITPOINTS_MAX, value); }
         }
 
+        /**
+         *   Get/Set-Accessor for the mana points/MP of an npc.
+         *   Get/Set-Accessor for the mana points/MP of an npc.
+         */
         public int MP
         {
-            get { return proto.Attributes[(byte)NPCAttribute.ATR_MANA]; }
-            set { setAttribute(NPCAttribute.ATR_MANA, value); }
+            get { return proto.Attributes[(byte)NPCAttributeFlags.ATR_MANA]; }
+            set { setAttribute(NPCAttributeFlags.ATR_MANA, value); }
         }
 
+        /**
+         *   Get/Set-Accessor for the maximum mana points/MP of an npc.
+         *   Get/Set-Accessor for the maximum mana points/MP of an npc.
+         */
         public int MPMax
         {
-            get { return proto.Attributes[(byte)NPCAttribute.ATR_MANA_MAX]; }
-            set { setAttribute(NPCAttribute.ATR_MANA_MAX, value); }
+            get { return proto.Attributes[(byte)NPCAttributeFlags.ATR_MANA_MAX]; }
+            set { setAttribute(NPCAttributeFlags.ATR_MANA_MAX, value); }
         }
 
-        
 
+        /**
+         *   Get-Accessor for the currently equipped armor of an npc.
+         *   Get-Accessor for the currently equipped armor of an npc.
+         */
         public Item EquippedArmor { 
             get {
                 if (proto.Armor == null)
@@ -307,6 +326,10 @@ namespace GUC.Server.Scripting.Objects.Character
                 return proto.Armor.ScriptingProto;
             } }
 
+        /**
+         *   Get-Accessor for the currently equipped weapon of an npc.
+         *   Get-Accessor for the currently equipped weapon of an npc.
+         */
         public Item EquippedWeapon
         {
             get
@@ -317,6 +340,10 @@ namespace GUC.Server.Scripting.Objects.Character
             }
         }
 
+        /**
+         *   Get-Accessor for the currently equipped ranged weapon of an npc.
+         *   Get-Accessor for the currently equipped ranged weapon of an npc.
+         */
         public Item EquippedRangeWeapon
         {
             get
@@ -327,53 +354,97 @@ namespace GUC.Server.Scripting.Objects.Character
             }
         }
 
-        
 
+
+        /**
+         *   Get/Set-Accessor for the active weapon mode (melee or ranged???) of an npc.
+         *   Get/Set-Accessor for the active weapon mode (melee or ranged???) of an npc.
+         */
         public int WeaponMode { get { return proto.WeaponMode; } set { setWeaponMode(value); } }
 
         #region Protection
+        /**
+         *   Get/Set-Accessor for the protection of an npc against fire damage.
+         *   Get/Set-Accessor for the protection of an npc against fire damage.
+         *   Protection is provided by equpiment, potions, or other effects.
+         */
         public int ProtectionFire
         {
             get { return getProtection(DamageTypeIndex.DAM_INDEX_FIRE); }
             set { setProtection(DamageTypeIndex.DAM_INDEX_FIRE, value); }
         }
 
+        /**
+         *   Get/Set-Accessor for the protection of an npc against edge damage.
+         *   Get/Set-Accessor for the protection of an npc against edge damage.
+         *   Protection is provided by equpiment, potions, or other effects.
+         */
         public int ProtectionEdge
         {
             get { return getProtection(DamageTypeIndex.DAM_INDEX_EDGE); }
             set { setProtection(DamageTypeIndex.DAM_INDEX_EDGE, value); }
         }
 
+        /**
+         *   Get/Set-Accessor for the protection of an npc against barrier damage (???).
+         *   Get/Set-Accessor for the protection of an npc against barrier damage (???).
+         *   Protection is provided by equpiment, potions, or other effects.
+         */
         public int ProtectionBarrier
         {
             get { return getProtection(DamageTypeIndex.DAM_INDEX_BARRIER); }
             set { setProtection(DamageTypeIndex.DAM_INDEX_BARRIER, value); }
         }
 
+        /**
+         *   Get/Set-Accessor for the protection of an npc against blunt damage.
+         *   Get/Set-Accessor for the protection of an npc against blunt damage.
+         *   Protection is provided by equpiment, potions, or other effects.
+         */
         public int ProtectionBlunt
         {
             get { return getProtection(DamageTypeIndex.DAM_INDEX_BLUNT); }
             set { setProtection(DamageTypeIndex.DAM_INDEX_BLUNT, value); }
         }
 
+        /**
+         *   Get/Set-Accessor for the protection of an npc against fall damage.
+         *   Get/Set-Accessor for the protection of an npc against fall damage.
+         *   Protection is provided by equpiment, potions, or other effects.
+         */
         public int ProtectionFall
         {
             get { return getProtection(DamageTypeIndex.DAM_INDEX_FALL); }
             set { setProtection(DamageTypeIndex.DAM_INDEX_FALL, value); }
         }
 
+        /**
+         *   Get/Set-Accessor for the protection of an npc against fly damage (???).
+         *   Get/Set-Accessor for the protection of an npc against fly damage (???).
+         *   Protection is provided by equpiment, potions, or other effects.
+         */
         public int ProtectionFly
         {
             get { return getProtection(DamageTypeIndex.DAM_INDEX_FLY); }
             set { setProtection(DamageTypeIndex.DAM_INDEX_FLY, value); }
         }
 
+        /**
+         *   Get/Set-Accessor for the protection of an npc against magic damage.
+         *   Get/Set-Accessor for the protection of an npc against magic damage.
+         *   Protection is provided by equpiment, potions, or other effects.
+         */
         public int ProtectionMagic
         {
             get { return getProtection(DamageTypeIndex.DAM_INDEX_MAGIC); }
             set { setProtection(DamageTypeIndex.DAM_INDEX_MAGIC, value); }
         }
 
+        /**
+         *   Get/Set-Accessor for the protection of an npc against point damage.
+         *   Get/Set-Accessor for the protection of an npc against point damage.
+         *   Protection is provided by equpiment, potions, or other effects.
+         */
         public int ProtectionPoint
         {
             get { return getProtection(DamageTypeIndex.DAM_INDEX_POINT); }
@@ -383,10 +454,13 @@ namespace GUC.Server.Scripting.Objects.Character
         #endregion
 
         #region Methods
-        /// <summary>
-        /// Returns an Integer with the callback ID!
-        /// </summary>
-        /// <returns></returns>
+
+        /**
+         *   Method used to check whether the NPCProto-instance (npc) can see another vob.
+         *   Method used to check whether the NPCProto-instance (npc) can see another vob. Includes network handling.
+         *   @param vob of type Vob is vob-object which might be seen by the calling npc-observer.
+         *   @return callBackID as int which represents the callback id or -1 if there is no oberserver.
+         */
         public int CanSee(Vob vob)
         {
             Player plToCheck = null;
@@ -402,20 +476,26 @@ namespace GUC.Server.Scripting.Objects.Character
 
             int callBackID = sWorld.getNewCallBackID();
             
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.CallbackNPCCanSee);
+            stream.Write((byte)NetworkIDS.CallbackNPCCanSee);
             stream.Write(callBackID);
             stream.Write(proto.ID);
             stream.Write(vob.ID);
             using (RakNet.RakNetGUID guid = new RakNetGUID(plToCheck.proto.Guid))
-                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+                Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
 
             return callBackID;
         }
 
 
+        /**
+         *   Method used to check what item inhibits a given inventory slot.
+         *   Method used to check what item inhibits a given inventory slot.
+         *   @param index of type int as slot-index for which the item is requested.
+         *   @return ScriptingProto-Object or null if there is no item for the given slot-index.
+         */
         public Item getSlotItem(int index)
         {
             if (index >= 9)
@@ -425,6 +505,11 @@ namespace GUC.Server.Scripting.Objects.Character
             return proto.Slots[index].ScriptingProto;
         }
 
+        /**
+         *   Method used to set the weapon mode of the npc.
+         *   Method used to set the weapon mode of the npc.
+         *   @param weaponMode of type int as index-representation of the actual wepaon mode.
+         */
         public void setWeaponMode(int weaponMode)
         {
             proto.WeaponMode = weaponMode;
@@ -432,15 +517,21 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return;
 
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.NPCProtoSetWeaponMode);
+            stream.Write((byte)NetworkIDS.NPCProtoSetWeaponMode);
             stream.Write(vob.ID);
             stream.Write(proto.WeaponMode);
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
+        /**
+         *   Method used to put a provided item in a given inventory slot.
+         *   Method used to put a provided item in a given inventory slot.
+         *   @param slot of type int as slot index where the given item should be put into.
+         *   @param item of type Item is the item which should be put in the given slot.
+         */
         public void setSlotItem(int slot, Item item)
         {
             if (item != null)
@@ -450,10 +541,10 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return;
 
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.SetSlotMessage);
+            stream.Write((byte)NetworkIDS.SetSlotMessage);
             stream.Write(vob.ID);
             stream.Write(slot);
             if (item == null)
@@ -461,10 +552,17 @@ namespace GUC.Server.Scripting.Objects.Character
             else
                 stream.Write(item.ID);
 
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
-        public int getProtection(DamageTypes index)
+        /**
+         *   Method used to get the current protection of an npc against the provided damage type.
+         *   Method used to get the current protection of an npc against the provided damage type.
+         *   @param index of type DamageType represents the damage type as entry in the respective enum.
+         *   @return protection value as type int against the chosen damage type.
+         *   @see DamageType
+         */
+        public int getProtection(DamageType index)
         {
             if (EquippedArmor != null)
             {
@@ -476,6 +574,13 @@ namespace GUC.Server.Scripting.Objects.Character
             }
         }
 
+        /**
+         *   Method used to get the current protection of an npc against the damage type hinted by index.
+         *   Method used to get the current protection of an npc against the damage type hinted by index.
+         *   @param index of type DamageTypeIndex is the numeric index of the damage type listed in the respective enum.
+         *   @return protection value as type int against the chosen damage type.
+         *   @see DamageTypeIndex
+         */
         public int getProtection(DamageTypeIndex index)
         {
             if (EquippedArmor != null)
@@ -488,11 +593,25 @@ namespace GUC.Server.Scripting.Objects.Character
             }
         }
 
+        /**
+         *   Method used to set the protection value for a given DamageTypeIndex.
+         *   Method used to set the protection value for a given DamageTypeIndex.
+         *   @param index of type DamageTypeIndex is the numeric index of the damage type listed in the respective enum.
+         *   @param value of type int is the actual protection value of the chosen damage type.
+         *   @see DamageTypeIndex
+         */
         public void setProtection(DamageTypeIndex index, int value)
         {
             proto.protection[(int)index] = value;
         }
 
+        /**
+         *   Method used to get the total damage the npc can inflict with the currently equipped weapon.
+         *   Method used to get the total damage the npc can inflict with the currently equipped weapon.
+         *   Supports a weapon state where no weapons are equipped but bare fists.
+         *   @param index of type DamageTypeIndex is the numeric index of the damage type listed in the respective enum.
+         *   @return totalDamage value of type int
+         */
         public int getTotalDamage()
         {
             if (EquippedWeapon != null)
@@ -503,7 +622,14 @@ namespace GUC.Server.Scripting.Objects.Character
                 return proto.totalDamage;
         }
 
-        public DamageTypes getDamageType()
+        /**
+         *   Method used to get the damage type of the currently equipped weapon.
+         *   Method used to get the damage type of the currently equipped weapon.
+         *   Supports a weapon state where no weapons are equipped but bare fists.
+         *   @return damage type of type DamageType
+         *   @see DamageType
+         */
+        public DamageType getDamageType()
         {
             if (EquippedWeapon != null)
                 return EquippedWeapon.DamageType;
@@ -513,21 +639,46 @@ namespace GUC.Server.Scripting.Objects.Character
                 return proto.damageType;
         }
 
+        /**
+         *   Method used to set the total damage the npc itself can inflict without a weapon (bare hands).
+         *   Method used to set the total damage the npc itself can inflict without a weapon (bare hands).
+         *   @param damage of type int represents the total amount of damage dealt by the npcs bare hands.
+         */
         public void setTotalDamage(int damage)
         {
             proto.totalDamage = damage;
         }
 
-        public void setDamageType(DamageTypes type)
+        /**
+         *   Method used to set the damage type the npc can inflict on others.
+         *   Method used to set the damage type the npc can inflict on others.
+         *   @param type of type DamageType is the respective enum entry of the damage type.
+         *   @see DamageType
+         */
+        public void setDamageType(DamageType type)
         {
             proto.damageType = type;
         }
 
+        /**
+         *   Method used to set the damage for a specified damage type by DamageTypeIndex.
+         *   Method used to set the damage for a specified damage type by DamageTypeIndex.
+         *   @param dti of type DamageTypeIndex is the numeric index of the damage type listed in the respective enum.
+         *   @param value of type int is the amount of damage dealt as the specified type of damage.
+         *   @see DamageTypeIndex
+         */
         public void setDamage(DamageTypeIndex dti, int value)
         {
             proto.damages[(int)dti] = value;
         }
 
+        /**
+         *   Method used to get the damage of the currently equipped weapon for a specified damage type by DamageTypeIndex.
+         *   Method used to get the damage of the currently equipped weapon for a specified damage type by DamageTypeIndex.
+         *   @param dti of type DamageTypeIndex is the numeric index of the damage type listed in the respective enum.
+         *   @return amount of damage of the given type which currently equipped weapon is able to deal
+         *   @see DamageTypeIndex
+         */
         public int getDamage(DamageTypeIndex dti)
         {
             if (EquippedWeapon != null)
@@ -539,6 +690,14 @@ namespace GUC.Server.Scripting.Objects.Character
         }
 
 
+        /**
+         *   Method used to set the npcs scale (in x, y, z).
+         *   Method used to set the npcs scale (in x, y, z).
+         *   Not only the mesh scales but the movement speed, too.
+         *   The cartesian scale values can be >= 0.
+         *   Returns prematurely if the npc is not created/actually spawned in the world.
+         *   @param scale of type Vec3f is the cartesian scale vector (x, y, z).
+         */
         public virtual void setScale(Vec3f scale)
         {
             proto.Scale = scale;
@@ -546,15 +705,22 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return;
 
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.ScaleMessage);
+            stream.Write((byte)NetworkIDS.ScaleMessage);
             stream.Write(vob.ID);
             stream.Write(proto.Scale);
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
+        /**
+         *   Method used to set the npcs fatness.
+         *   Method used to set the npcs fatness, a way to bloat the npcs mesh.
+         *   In contrast to the scale, the fatness does not influence movement speeds.
+         *   Returns prematurely if the npc is not created/actually spawned in the world.
+         *   @param Fatness of type float is the desired fatness value which should be applied.
+         */
         public virtual void setFatness(float Fatness)
         {
             proto.Fatness = Fatness;
@@ -562,15 +728,19 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return;
 
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.NPCFatnessMessage);
+            stream.Write((byte)NetworkIDS.NPCFatnessMessage);
             stream.Write(vob.ID);
             stream.Write(proto.Fatness);
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
+        /**
+         *   Method used to set the npcs name.
+         *   @param name the new npc name.
+         */
         public void setName(String name)
         {
             if (name == null)
@@ -581,15 +751,19 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return;
 
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.ChangeNameMessage);
+            stream.Write((byte)NetworkIDS.ChangeNameMessage);
             stream.Write(proto.ID);
             stream.Write(name);
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
+        /**
+         *   Method used to set the npcs name.
+         *   @param time as timespan (what unit ???) the npc should stay unconscious.
+         */
         public void dropUnconscious(float time)
         {
             if (!created)
@@ -598,15 +772,18 @@ namespace GUC.Server.Scripting.Objects.Character
                 return;
             HP = 1;
 
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.DropUnconsciousMessage);
+            stream.Write((byte)NetworkIDS.DropUnconsciousMessage);
             stream.Write(this.ID);
             stream.Write(time);
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
+        /**
+         *   Method used to revive the npc if it is already created.
+         */
         public void revive()
         {
             if (!created)
@@ -614,47 +791,75 @@ namespace GUC.Server.Scripting.Objects.Character
             HP = HPMax;
             MP = MPMax;
 
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.ReviveMessage);
+            stream.Write((byte)NetworkIDS.ReviveMessage);
             stream.Write(this.proto.ID);
             
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
-        public int getAttribute(NPCAttribute attrib)
+        /**
+         *   Method used to get an attribute of the npc.
+         *   @param attrib is the flag (from enum) of the desired npc-attribute.
+         *   @see NPCAttributeFlags
+         */
+        public int getAttribute(NPCAttributeFlags attrib)
         {
-            if (attrib >= NPCAttribute.ATR_MAX)
+            if (attrib >= NPCAttributeFlags.ATR_MAX)
                 throw new ArgumentException("attribute is not valid!");
             return proto.Attributes[(byte)attrib];
         }
 
-        public int getHitChances(NPCTalent talents)
+        /**
+         *   Method used to get an attribute of the npc.
+         *   Only works for specified weapon talents of course.
+         *   @param talents is the talent (from enum) for which the hitchance is requested.
+         *   @return hitchance (as percentage value).
+         *   @see NPCTalents
+         */
+        public int getHitChances(NPCTalents talents)
         {
-            if (talents != NPCTalent.H1 && talents != NPCTalent.H2 && talents != NPCTalent.Bow && talents != NPCTalent.CrossBow)
+            if (talents != NPCTalents.H1 && talents != NPCTalents.H2 && talents != NPCTalents.Bow && talents != NPCTalents.CrossBow)
                 throw new ArgumentException("Talents have to be fighting skills Like H1, H2, Bow or CrossBow!");
 
             return proto.Hitchances[(byte)talents];
         }
 
-        public int getTalentValues(NPCTalent talent)
+        /**
+         *   Method used to get a specified talent value of the npc.
+         *   @param talent is the talent (from enum) for which the value is requested.
+         *   @return current value for the talent and npc.
+         *   @see NPCTalents
+         */
+        public int getTalentValues(NPCTalents talent)
         {
-            if (talent == NPCTalent.Unknown || talent == NPCTalent.MaxTalents)
+            if (talent == NPCTalents.Unknown || talent == NPCTalents.MaxTalents)
                 throw new ArgumentException("Invalid Talent: " + talent);
 
             return proto.TalentValues[(byte)talent];
         }
 
-        public int getTalentSkills(NPCTalent talent)
+        /**
+         *   Method used to get the npcs skills of a specified talent.
+         *   @param talent is the talent (from enum) for which the skills are requested.
+         *   @return skill value for the talent and npc.
+         *   @see NPCTalents
+         */
+        public int getTalentSkills(NPCTalents talent)
         {
-            if (talent == NPCTalent.Unknown || talent == NPCTalent.MaxTalents)
+            if (talent == NPCTalents.Unknown || talent == NPCTalents.MaxTalents)
                 throw new ArgumentException("Invalid Talent: " + talent);
 
             return proto.TalentSkills[(byte)talent];
 
         }
 
+        /**
+         *   Method used to set npcs (in)visbility.
+         *   @param invisible specifies if npc should be invisible (true) or not (false). 
+         */
         public void setInvisible(bool invisible)
         {
             proto.IsInvisible = invisible;
@@ -662,30 +867,38 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return;
 
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.NPCSetInvisibleMessage);
+            stream.Write((byte)NetworkIDS.NPCSetInvisibleMessage);
             stream.Write(proto.ID);
             stream.Write(invisible);
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
+        /**
+         *   Method used to set npcs (in)visbility.
+         *   @param invisible specifies if npc should be invisible (true) or not (false). 
+         */
         public void setInvisible(Player player, bool invisible)
         {
             if (!created)
                 return;
 
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.NPCSetInvisibleMessage);
+            stream.Write((byte)NetworkIDS.NPCSetInvisibleMessage);
             stream.Write(proto.ID);
             stream.Write(invisible);
             using(RakNetGUID guid = player.proto.GUID)
-                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+                Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
         }
 
+        /**
+         *   Method used to set visibility of the npcs name.
+         *   @param invisible specifies if the npc name should be invisible (true) or not (false). 
+         */
         public void hideName(bool invisible)
         {
             proto.hideName = invisible;
@@ -693,39 +906,52 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return;
 
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.NPCSetInvisibleName);
+            stream.Write((byte)NetworkIDS.NPCSetInvisibleName);
             stream.Write(proto.ID);
             stream.Write(invisible);
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
+        /**
+         *   Method used to set visibility of the npcs name for the given player.
+         *   In contrast to hideName, this method can be used to hide the name from certain players.
+         *   @param player specifies the player from which the npcs name should be hid or not.
+         *   @param invisible specifies if the npc name should be invisible (true) or not (false). 
+         */
         public void hideNameFrom(Player player, bool invisible)
         {
             if (!created)
                 return;
 
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.NPCSetInvisibleName);
+            stream.Write((byte)NetworkIDS.NPCSetInvisibleName);
             stream.Write(proto.ID);
             stream.Write(invisible);
             using (RakNetGUID guid = player.proto.GUID)
-                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+                Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
         }
 
-        public void setAttribute(NPCAttribute attrib, int value)
+        /**
+         *   Method used to set an attribute to a specified value.
+         *   The method returns prematurely if there is no such attribute.
+         *   @param attrib determines which attribute should be changed by using the respective enum-entry.
+         *   @param value specifies the new value for the npcs attribute.
+         *   @see NPCAttributeFlags
+         */
+        public void setAttribute(NPCAttributeFlags attrib, int value)
         {
-            if (attrib >= NPCAttribute.ATR_MAX)
+            if (attrib >= NPCAttributeFlags.ATR_MAX)
                 throw new ArgumentException("attribute is not valid!");
             if (value < 0)
                 value = 0;
-            if (attrib == NPCAttribute.ATR_HITPOINTS && value > HPMax)
+            if (attrib == NPCAttributeFlags.ATR_HITPOINTS && value > HPMax)
                 value = HPMax;
-            else if (attrib == NPCAttribute.ATR_MANA && value > MPMax)
+            else if (attrib == NPCAttributeFlags.ATR_MANA && value > MPMax)
                 value = MPMax;
 
             if (proto.Attributes[(byte)attrib] == value)
@@ -740,19 +966,26 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return;
 
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.NPCChangeAttributeMessage);
+            stream.Write((byte)NetworkIDS.NPCChangeAttributeMessage);
             stream.Write(proto.ID);
             stream.Write((byte)attrib);
             stream.Write(value);
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
-        public void setHitchances(NPCTalent talents, int value)
+        /**
+         *   Method used to set the hitchance of a weapon talent to a given value.
+         *   The method returns prematurely if there is no such talent.
+         *   @param NPCTalents determines for which talent should the hitchance should be changed by using the respective enum-entry.
+         *   @param value specifies the new hitchance value.
+         *   @see NPCTalents
+         */
+        public void setHitchances(NPCTalents talents, int value)
         {
-            if (talents != NPCTalent.H1 && talents != NPCTalent.H2 && talents != NPCTalent.Bow && talents != NPCTalent.CrossBow)
+            if (talents != NPCTalents.H1 && talents != NPCTalents.H2 && talents != NPCTalents.Bow && talents != NPCTalents.CrossBow)
                 throw new ArgumentException("Talents have to be fighting skills Like H1, H2, Bow or CrossBow!");
             if (proto.Hitchances[(byte)talents] == value)
                 return;
@@ -765,20 +998,27 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return;
 
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.NPCChangeSkillMessage);
+            stream.Write((byte)NetworkIDS.NPCChangeSkillMessage);
             stream.Write(proto.ID);
             stream.Write((byte)ChangeSkillType.Hitchances);
             stream.Write((byte)talents);
             stream.Write(value);
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
-        public void setTalentValues(NPCTalent talent, int value)
+        /**
+         *   Method used to set the specified npcs talent to a given value.
+         *   The method returns prematurely if there is no such talent.
+         *   @param NPCTalents determines which talent should be changed by using the respective enum-entry.
+         *   @param value specifies the new talent value.
+         *   @see NPCTalents
+         */
+        public void setTalentValues(NPCTalents talent, int value)
         {
-            if (talent == NPCTalent.Unknown || talent == NPCTalent.MaxTalents)
+            if (talent == NPCTalents.Unknown || talent == NPCTalents.MaxTalents)
                 throw new ArgumentException("Invalid Talent: "+talent);
 
             if (proto.TalentValues[(byte)talent] == value)
@@ -791,20 +1031,27 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return;
 
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.NPCChangeSkillMessage);
+            stream.Write((byte)NetworkIDS.NPCChangeSkillMessage);
             stream.Write(proto.ID);
             stream.Write((byte)ChangeSkillType.Value);
             stream.Write((byte)talent);
             stream.Write(value);
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
-        public void setTalentSkills(NPCTalent talent, int value)
+        /**
+         *   Method used to set the skill of a specified npcs talent to a given value.
+         *   The method returns prematurely if there is no such talent.
+         *   @param NPCTalents determines from which talent the skills should be changed by using the respective enum-entry.
+         *   @param value specifies the new skill value of the talent (???).
+         *   @see NPCTalents
+         */
+        public void setTalentSkills(NPCTalents talent, int value)
         {
-            if (talent == NPCTalent.Unknown || talent == NPCTalent.MaxTalents)
+            if (talent == NPCTalents.Unknown || talent == NPCTalents.MaxTalents)
                 throw new ArgumentException("Invalid Talent: " + talent);
 
             if (proto.TalentSkills[(byte)talent] == value)
@@ -817,17 +1064,21 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return;
 
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.NPCChangeSkillMessage);
+            stream.Write((byte)NetworkIDS.NPCChangeSkillMessage);
             stream.Write(proto.ID);
             stream.Write((byte)ChangeSkillType.Skill);
             stream.Write((byte)talent);
             stream.Write(value);
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
+        /**
+         *   Method used to get a list of all items which belong to an npc (inventory).
+         *   @return list of items the npc has in inventory.
+         */
         public Item[] getItemList()
         {
             Item[] itemList = new Item[this.proto.ItemList.Count];
@@ -836,10 +1087,13 @@ namespace GUC.Server.Scripting.Objects.Character
                 itemList[i] = item.ScriptingProto;
                 i += 1;
             }
-            
+
             return itemList;
         }
 
+        /**
+         *   ???
+         */
         public IEnumerator GetEnumerator()
         {
             foreach (GUC.WorldObjects.Item item in proto.ItemList)
@@ -848,13 +1102,15 @@ namespace GUC.Server.Scripting.Objects.Character
             }
         }
 
+        /**
+         *   Get-accessor for the total amount of items an npc has (in inventory).
+         */
         public int ItemCount { get { return proto.ItemList.Count; } }
 
         public Item this[int i]
         {
             get { return proto.ItemList[i].ScriptingProto; }
         }
-
 
 
         public Item addItem(String instance, int amount)
@@ -897,14 +1153,14 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return itm;
 
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.AddItemMessage);
+            stream.Write((byte)NetworkIDS.AddItemMessage);
             stream.Write(proto.ID);
             stream.Write(itm.ID);
             //itm.Write(stream);
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
 
 
             return itm;
@@ -912,41 +1168,41 @@ namespace GUC.Server.Scripting.Objects.Character
 
         public void hit(NPCProto victim)
         {
-            hit(victim, DamageTypes.DAM_BLUNT, 0, this.proto.Weapon.ScriptingProto, null, null, null, 0.0f);
+            hit(victim, DamageType.DAM_BLUNT, 0, this.proto.Weapon.ScriptingProto, null, null, null, 0.0f);
         }
 
-        public void hit(NPCProto victim, DamageTypes damageMode)
+        public void hit(NPCProto victim, DamageType damageMode)
         {
             hit(victim, damageMode, 0, this.proto.Weapon.ScriptingProto, null, null, null, 0.0f);
         }
 
-        public void hit(NPCProto victim, DamageTypes damageMode, int weaponMode)
+        public void hit(NPCProto victim, DamageType damageMode, int weaponMode)
         {
             hit(victim, damageMode, weaponMode, this.proto.Weapon.ScriptingProto, null, null, null, 0.0f);
         }
 
-        public void hit(NPCProto victim, DamageTypes damageMode, int weaponMode, Vec3f hitLoc)
+        public void hit(NPCProto victim, DamageType damageMode, int weaponMode, Vec3f hitLoc)
         {
             hit(victim, damageMode, weaponMode, this.proto.Weapon.ScriptingProto, null, hitLoc, null, 0.0f);
         }
 
-        public void hit(NPCProto victim, DamageTypes damageMode, int weaponMode, Item weapon, Vec3f hitLoc)
+        public void hit(NPCProto victim, DamageType damageMode, int weaponMode, Item weapon, Vec3f hitLoc)
         {
             hit(victim, damageMode, weaponMode, weapon, null, hitLoc, null, 0.0f);
         }
 
-        public void hit(NPCProto victim, DamageTypes damageMode, int weaponMode, Item weapon, Spell spell, Vec3f hitLoc)
+        public void hit(NPCProto victim, DamageType damageMode, int weaponMode, Item weapon, Spell spell, Vec3f hitLoc)
         {
             hit(victim, damageMode, weaponMode, weapon, spell, hitLoc, null, 0.0f);
         }
 
-        public void hit(NPCProto victim, DamageTypes damageMode, int weaponMode, Item weapon, Spell spell, Vec3f hitLoc, Vec3f flyDir, float fallDownDistanceY)
+        public void hit(NPCProto victim, DamageType damageMode, int weaponMode, Item weapon, Spell spell, Vec3f hitLoc, Vec3f flyDir, float fallDownDistanceY)
         {
             WorldObjects.Spell objSpell = (spell == null) ? null : spell.spell;
             WorldObjects.Item objItem = (weapon == null) ? null : weapon.ProtoItem;
             GUC.Server.Network.Messages.PlayerCommands.OnDamageMessage.Write(victim.proto, damageMode, hitLoc, flyDir, this.proto, weaponMode, objSpell, objItem, fallDownDistanceY, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS);
 
-            NPCProto.isOnDamage(victim, (DamageTypes)damageMode, hitLoc, flyDir, this, weaponMode, spell, weapon, fallDownDistanceY);
+            NPCProto.isOnDamage(victim, (DamageType)damageMode, hitLoc, flyDir, this, weaponMode, spell, weapon, fallDownDistanceY);
 
         }
 
@@ -962,13 +1218,13 @@ namespace GUC.Server.Scripting.Objects.Character
                 throw new Exception("Item does not belong to NPC!");
             proto.DropItem(item.ProtoItem);
 
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.DropItemMessage);
+            stream.Write((byte)NetworkIDS.DropItemMessage);
             stream.Write(proto.ID);
             stream.Write(item.ProtoItem.ID);
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
         /// <summary>
@@ -986,13 +1242,13 @@ namespace GUC.Server.Scripting.Objects.Character
 
             proto.TakeItem(item.ProtoItem);
 
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.TakeItemMessage);
+            stream.Write((byte)NetworkIDS.TakeItemMessage);
             stream.Write(proto.ID);
             stream.Write(item.ProtoItem.ID);
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
         /// <summary>
@@ -1035,10 +1291,10 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return;
 
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.SetVisualMessage);
+            stream.Write((byte)NetworkIDS.SetVisualMessage);
             stream.Write(vob.ID);
             stream.Write(visual);
             stream.Write(bodyMesh);
@@ -1048,7 +1304,7 @@ namespace GUC.Server.Scripting.Objects.Character
             stream.Write(headTex);
             stream.Write(TeethTex);
             
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
         public void clearInventory()
@@ -1058,23 +1314,13 @@ namespace GUC.Server.Scripting.Objects.Character
                 sWorld.removeVob(item);
             }
 
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.ClearInventory);
+            stream.Write((byte)NetworkIDS.ClearInventory);
             stream.Write(this.ID);
 
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
-        }
-
-        public Item[] getEquippedItems()
-        {
-            Item[] items = new Item[proto.EquippedList.Count];
-            for (int i = 0; i < proto.EquippedList.Count; i++ )
-            {
-                items[i] = proto.EquippedList[i].ScriptingProto;
-            }
-            return items;
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
         public void Equip(Item item)
@@ -1115,14 +1361,14 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return;
 
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.EquipItemMessage);
+            stream.Write((byte)NetworkIDS.EquipItemMessage);
             stream.Write(proto.ID);
             stream.Write(item.ID);
             stream.Write(true);
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
         public void UnEquip(Item item)
@@ -1144,14 +1390,14 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return;
 
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.EquipItemMessage);
+            stream.Write((byte)NetworkIDS.EquipItemMessage);
             stream.Write(proto.ID);
             stream.Write(item.ID);
             stream.Write(false);
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
 
@@ -1159,24 +1405,24 @@ namespace GUC.Server.Scripting.Objects.Character
         {
             if (!created)
                 throw new Exception("The Player was not created! You can't use this function!");
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.AnimationMessage);
+            stream.Write((byte)NetworkIDS.AnimationMessage);
             stream.Write(proto.ID);
             stream.Write("");
             stream.Write((byte)5);
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
         public void playAnimation( String anim )
         {
             if (!created)
                 throw new Exception("The Player was not created! You can't use this function!");
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.AnimationMessage);
+            stream.Write((byte)NetworkIDS.AnimationMessage);
             stream.Write(proto.ID);
             stream.Write(anim);
             stream.Write((byte)1);
@@ -1184,7 +1430,7 @@ namespace GUC.Server.Scripting.Objects.Character
             {
                 using (RakNetGUID guid = ((WorldObjects.Character.Player)this.proto).GUID)
                 {
-                    Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+                    Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
                 }
             }
             else
@@ -1199,10 +1445,10 @@ namespace GUC.Server.Scripting.Objects.Character
         {
             if (!created)
                 throw new Exception("The Player was not created! You can't use this function!");
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.AnimationMessage);
+            stream.Write((byte)NetworkIDS.AnimationMessage);
             stream.Write(proto.ID);
             stream.Write(anim);
             stream.Write((byte)0);
@@ -1210,7 +1456,7 @@ namespace GUC.Server.Scripting.Objects.Character
             {
                 using (RakNetGUID guid = ((WorldObjects.Character.Player)this.proto).GUID)
                 {
-                    Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+                    Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
                 }
             }
             else
@@ -1218,11 +1464,6 @@ namespace GUC.Server.Scripting.Objects.Character
                 this.proto.SendToAreaPlayersAndPlayer(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED);
             }
             //Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
-        }
-
-        public String[] getOverlays()
-        {
-            return this.proto.Overlays.ToArray();
         }
 
         public void ApplyOverlay(String anim)
@@ -1234,14 +1475,14 @@ namespace GUC.Server.Scripting.Objects.Character
 
             if (!created)
                 return;
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.AnimationMessage);
+            stream.Write((byte)NetworkIDS.AnimationMessage);
             stream.Write(proto.ID);
             stream.Write(anim);
             stream.Write((byte)2);
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
         public void RemoveOverlay(String anim)
@@ -1254,14 +1495,14 @@ namespace GUC.Server.Scripting.Objects.Character
             if (!created)
                 return;
 
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.AnimationMessage);
+            stream.Write((byte)NetworkIDS.AnimationMessage);
             stream.Write(proto.ID);
             stream.Write(anim);
             stream.Write((byte)3);
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
         public void ClearOverlays()
@@ -1271,14 +1512,14 @@ namespace GUC.Server.Scripting.Objects.Character
 
             this.proto.Overlays.Clear();
 
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.AnimationMessage);
+            stream.Write((byte)NetworkIDS.AnimationMessage);
             stream.Write(proto.ID);
             stream.Write("");
             stream.Write((byte)4);
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
 
@@ -1286,12 +1527,12 @@ namespace GUC.Server.Scripting.Objects.Character
         {
             if (!created)
                 throw new Exception("The Player was not created! You can't use this function!");
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.StartDialogAnimMessage);
+            stream.Write((byte)NetworkIDS.StartDialogAnimMessage);
             stream.Write(proto.ID);
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
         #endregion
 
@@ -1319,26 +1560,6 @@ namespace GUC.Server.Scripting.Objects.Character
         #endregion
 
         #endregion
-
-        #region OnAnimation
-        public event GUC.Server.Scripting.Events.NPCAnimationUpdate OnAnimation;
-        internal void iOnAnimation(NPCProto proto, short animID, short oldAnimID)
-        {
-            if (OnAnimation != null)
-                OnAnimation(proto, animID, oldAnimID);
-        }
-
-        public static event GUC.Server.Scripting.Events.NPCAnimationUpdate sOnAnimation;
-        internal static void isOnAnimation(NPCProto proto, short animID, short oldAnimID)
-        {
-            proto.iOnAnimation(proto, animID, oldAnimID);
-            if (sOnAnimation != null)
-                sOnAnimation(proto, animID, oldAnimID);
-        }
-
-
-        #endregion
-
 
         #region OnEquip
         public event GUC.Server.Scripting.Events.NPCEquipEventHandler OnEquip;
@@ -1415,14 +1636,14 @@ namespace GUC.Server.Scripting.Objects.Character
 
         #region Attributes
         public event GUC.Server.Scripting.Events.AttributeChangedEventHandler OnAttributeChanged;
-        internal void iOnAttributeChanged(NPCProto proto, NPCAttribute attrib, int oldValue, int newValue)
+        internal void iOnAttributeChanged(NPCProto proto, NPCAttributeFlags attrib, int oldValue, int newValue)
         {
             if (OnAttributeChanged != null)
                 OnAttributeChanged(proto, attrib, oldValue, newValue);
         }
 
         public static event GUC.Server.Scripting.Events.AttributeChangedEventHandler sOnAttributeChanged;
-        internal static void isOnAttributeChanged(NPCProto proto, NPCAttribute attrib, int oldValue, int newValue)
+        internal static void isOnAttributeChanged(NPCProto proto, NPCAttributeFlags attrib, int oldValue, int newValue)
         {
             proto.iOnAttributeChanged(proto, attrib, oldValue, newValue);
 
@@ -1434,14 +1655,14 @@ namespace GUC.Server.Scripting.Objects.Character
 
         #region Talent_Values
         public event GUC.Server.Scripting.Events.TalentChangedEventHandler OnTalentValueChanged;
-        internal void iOnTalentValueChanged(NPCProto proto, NPCTalent talent, int oldValue, int newValue)
+        internal void iOnTalentValueChanged(NPCProto proto, NPCTalents talent, int oldValue, int newValue)
         {
             if (OnTalentValueChanged != null)
                 OnTalentValueChanged(proto, talent, oldValue, newValue);
         }
 
         public static event GUC.Server.Scripting.Events.TalentChangedEventHandler sOnTalentValueChanged;
-        internal static void isOnTalentValueChanged(NPCProto proto, NPCTalent talent, int oldValue, int newValue)
+        internal static void isOnTalentValueChanged(NPCProto proto, NPCTalents talent, int oldValue, int newValue)
         {
             proto.iOnTalentValueChanged(proto, talent, oldValue, newValue);
 
@@ -1453,14 +1674,14 @@ namespace GUC.Server.Scripting.Objects.Character
 
         #region Talent_Skills
         public event GUC.Server.Scripting.Events.TalentChangedEventHandler OnTalentSkillChanged;
-        internal void iOnTalentSkillChanged(NPCProto proto, NPCTalent talent, int oldValue, int newValue)
+        internal void iOnTalentSkillChanged(NPCProto proto, NPCTalents talent, int oldValue, int newValue)
         {
             if (OnTalentSkillChanged != null)
                 OnTalentSkillChanged(proto, talent, oldValue, newValue);
         }
 
         public static event GUC.Server.Scripting.Events.TalentChangedEventHandler sOnTalentSkillChanged;
-        internal static void isOnTalentSkillChanged(NPCProto proto, NPCTalent talent, int oldValue, int newValue)
+        internal static void isOnTalentSkillChanged(NPCProto proto, NPCTalents talent, int oldValue, int newValue)
         {
             proto.iOnTalentSkillChanged(proto, talent, oldValue, newValue);
 
@@ -1472,14 +1693,14 @@ namespace GUC.Server.Scripting.Objects.Character
 
         #region Hitchances
         public event GUC.Server.Scripting.Events.TalentChangedEventHandler OnHitchancesChanged;
-        internal void iOnHitchancesChanged(NPCProto proto, NPCTalent talent, int oldValue, int newValue)
+        internal void iOnHitchancesChanged(NPCProto proto, NPCTalents talent, int oldValue, int newValue)
         {
             if (OnHitchancesChanged != null)
                 OnHitchancesChanged(proto, talent, oldValue, newValue);
         }
 
         public static event GUC.Server.Scripting.Events.TalentChangedEventHandler sOnHitchancesChanged;
-        internal static void isOnHitchancesChanged(NPCProto proto, NPCTalent talent, int oldValue, int newValue)
+        internal static void isOnHitchancesChanged(NPCProto proto, NPCTalents talent, int oldValue, int newValue)
         {
             proto.iOnHitchancesChanged(proto, talent, oldValue, newValue);
 
@@ -1492,14 +1713,14 @@ namespace GUC.Server.Scripting.Objects.Character
 
         #region Damage
         public event GUC.Server.Scripting.Events.PlayerDamageEventHandler OnDamage;
-        internal void iOnDamage(NPCProto victim, DamageTypes damageMode, Vec3f hitLoc, Vec3f flyDir, Vob attacker, int weaponMode, Spell spellID, Item weapon, float fallDownDistanceY)
+        internal void iOnDamage(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, Vob attacker, int weaponMode, Spell spellID, Item weapon, float fallDownDistanceY)
         {
             if (OnDamage != null)
                 OnDamage(victim, damageMode, hitLoc, flyDir, attacker, weaponMode, spellID, weapon, fallDownDistanceY);
         }
 
         public static event Events.PlayerDamageEventHandler sOnDamage;
-        internal static void isOnDamage(NPCProto victim, DamageTypes damageMode, Vec3f hitLoc, Vec3f flyDir, Vob attacker, int weaponMode, Spell spellID, Item weapon, float fallDownDistanceY)
+        internal static void isOnDamage(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, Vob attacker, int weaponMode, Spell spellID, Item weapon, float fallDownDistanceY)
         {
             victim.iOnDamage(victim, damageMode, hitLoc, flyDir, attacker, weaponMode, spellID, weapon, fallDownDistanceY);
             if (sOnDamage != null)
@@ -1549,7 +1770,6 @@ namespace GUC.Server.Scripting.Objects.Character
         
 
         #endregion
-
 
     }
 }

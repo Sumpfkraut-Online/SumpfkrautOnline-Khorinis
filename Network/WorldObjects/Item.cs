@@ -9,7 +9,7 @@ namespace GUC.WorldObjects
         public Item()
             : base()
         {
-            this.VobType = Enumeration.VobType.Item;
+            this.VobType = Enumeration.VobTypes.Item;
         }
 
         protected ItemInstance itemInstance = null;

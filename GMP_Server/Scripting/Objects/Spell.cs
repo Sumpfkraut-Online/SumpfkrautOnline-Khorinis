@@ -27,25 +27,25 @@ namespace GUC.Server.Scripting.Objects
         }
 
         public Spell(String name, String fxName, String animName,
-            float timePerMana, int DamagePerLevel, DamageTypes DamgeType,
+            float timePerMana, int DamagePerLevel, DamageType DamgeType,
             int mana)
             : this(name, fxName, animName, timePerMana, DamagePerLevel, DamgeType, true,
             new int[] { mana })
         {}
 
         public Spell(String name, String fxName, String animName,
-            float timePerMana, int DamagePerLevel, DamageTypes DamgeType,
+            float timePerMana, int DamagePerLevel, DamageType DamgeType,
             bool CanTurnDuringInvest, int[] chargeMana)
                 : this(name, fxName, animName, timePerMana, DamagePerLevel, DamgeType, SPELL_TYPE.BAD, 
                     CanTurnDuringInvest, true, false, SPELL_TARGET_COLLECT.TARGET_COLLECT_FOCUS_FALLBACK_NONE,
-                    SPELL_TARGET_TYPES.TARGET_TYPE_NPCS, 10000, 60, 60, chargeMana)
+                    SPELL_TARGET_TYPE.TARGET_TYPE_NPCS, 10000, 60, 60, chargeMana)
 
         { }
 
         public Spell(String name, String fxName, String animName,
-            float timePerMana, int DamagePerLevel, DamageTypes DamgeType, SPELL_TYPE SpellType,
+            float timePerMana, int DamagePerLevel, DamageType DamgeType, SPELL_TYPE SpellType,
             bool CanTurnDuringInvest, bool CanChangeTargetDuringInvest, bool isMultiEffect,
-            SPELL_TARGET_COLLECT TargetCollectAlgo, SPELL_TARGET_TYPES TargetCollectType,
+            SPELL_TARGET_COLLECT TargetCollectAlgo, SPELL_TARGET_TYPE TargetCollectType,
             int TargetCollectRange, int  TargetCollectAzi, int TargetCollectElev,
             int[] chargeMana)
             : this()
@@ -84,13 +84,13 @@ namespace GUC.Server.Scripting.Objects
             GUC.WorldObjects.Spell.addItemInstance(spell);
 
 
-            BitStream stream = Program.server.SendBitStream;
+            BitStream stream = Program.server.sendBitStream;
             stream.Reset();
 
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.CreateSpellMessage);
+            stream.Write((byte)NetworkIDS.CreateSpellMessage);
             spell.Write(stream);
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
 
             created = true;
         }
@@ -103,7 +103,7 @@ namespace GUC.Server.Scripting.Objects
 
         public float TimePerMana { get { return spell.TimePerMana; } protected set { spell.TimePerMana = value; } }
         public int DamagePerLevel { get { return spell.DamagePerLevel; } protected set { spell.DamagePerLevel = value; } }
-        public DamageTypes DamageType { get { return spell.DamageType; } protected set { spell.DamageType = value; } }
+        public DamageType DamageType { get { return spell.DamageType; } protected set { spell.DamageType = value; } }
         public SPELL_TYPE SpellType { get { return spell.SpellType; } protected set { spell.SpellType = value; } }
 
         public bool CanTurnDuringInvest { get { return spell.CanTurnDuringInvest; } protected set { spell.CanTurnDuringInvest = value; } }
@@ -111,7 +111,7 @@ namespace GUC.Server.Scripting.Objects
         public bool IsMultiEffect { get { return spell.isMultiEffect; } protected set { spell.isMultiEffect = value; } }
 
         public SPELL_TARGET_COLLECT TargetCollectionAlgo { get { return spell.TargetCollectionAlgo; } protected set { spell.TargetCollectionAlgo = value; } }
-        public SPELL_TARGET_TYPES TargetCollectType { get { return spell.TargetCollectType; } protected set { spell.TargetCollectType = value; } }
+        public SPELL_TARGET_TYPE TargetCollectType { get { return spell.TargetCollectType; } protected set { spell.TargetCollectType = value; } }
 
         public int TargetCollectRange { get { return spell.TargetCollectRange; } protected set { spell.TargetCollectRange = value; } }
         public int TargetCollectAzi { get { return spell.TargetCollectAzi; } protected set { spell.TargetCollectAzi = value; } }

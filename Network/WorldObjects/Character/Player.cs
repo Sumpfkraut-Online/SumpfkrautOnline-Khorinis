@@ -28,7 +28,7 @@ namespace GUC.WorldObjects.Character
         public Player()
             : base()
         {
-            this.VobType = Enumeration.VobType.Player;
+            this.VobType = Enumeration.VobTypes.Player;
         }
 
         public void spawned()

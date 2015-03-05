@@ -13,14 +13,8 @@ namespace GUC.Hooks
         {
             try
             {
-                Process Process = Process.ThisProcess();
-
-                if (Scripting.Events.OnExitGame != null)
-                    Scripting.Events.OnExitGame(Process);
-
-
                 Program.client.Disconnect();
-                
+                Process Process = Process.ThisProcess();
                 zCOption.GetOption(Process).getSection("INTERNAL").getEntry("gameAbnormalExit").VarValue.Set("0");
                 zCOption.GetOption(Process).Save("Gothic.INI");
                 CGameManager.GameManager(Process).ExitGameVar = 1;

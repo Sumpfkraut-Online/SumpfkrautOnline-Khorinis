@@ -56,7 +56,7 @@ namespace GUC.GUI.GuiList
 
         public virtual void KeyPressed(int key)
         {
-            updateActive((VirtualKey)key);
+            updateActive((VirtualKeys)key);
         }
 
         public void wheelChanged(int steps)
@@ -65,17 +65,17 @@ namespace GUC.GUI.GuiList
                 return;
 
             if (steps > 0)
-                updateActive(VirtualKey.Up);
+                updateActive(VirtualKeys.Up);
             else
-                updateActive(VirtualKey.Down);
+                updateActive(VirtualKeys.Down);
 
         }
 
-        protected virtual void updateActive(VirtualKey key)
+        protected virtual void updateActive(VirtualKeys key)
         {
-            if (key == VirtualKey.Up || key == VirtualKey.W)
+            if (key == VirtualKeys.Up || key == VirtualKeys.W)
                 mList.ActiveID--;
-            if (key == VirtualKey.Down || key == VirtualKey.S)
+            if (key == VirtualKeys.Down || key == VirtualKeys.S)
                 mList.ActiveID++;
         }
 

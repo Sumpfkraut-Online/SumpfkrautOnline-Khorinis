@@ -25,7 +25,7 @@ namespace GUC.Server.Scripts.Items.Misc
             Visual = "ItMiSwordraw.3ds";
             Description = Name;
 
-            Materials = Enumeration.MaterialType.MAT_METAL;
+            Materials = Enumeration.MaterialTypes.MAT_METAL;
 
             CreateItemInstance();
         }

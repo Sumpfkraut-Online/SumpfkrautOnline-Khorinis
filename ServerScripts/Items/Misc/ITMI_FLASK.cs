@@ -25,7 +25,7 @@ namespace GUC.Server.Scripts.Items.Misc
             Visual = "ItMi_Flask.3ds";
             Description = Name;
 
-            Materials = Enumeration.MaterialType.MAT_GLAS;
+            Materials = Enumeration.MaterialTypes.MAT_GLAS;
 
             CreateItemInstance();
         }

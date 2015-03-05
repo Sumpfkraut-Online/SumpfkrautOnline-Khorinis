@@ -12,7 +12,7 @@ namespace GUC.WorldObjects.Mobs
         public MobContainer()
             : base()
         {
-            this.VobType = Enumeration.VobType.MobContainer;
+            this.VobType = Enumeration.VobTypes.MobContainer;
         }
 
         public void addItem(Item item)

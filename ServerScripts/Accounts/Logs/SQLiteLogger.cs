@@ -172,25 +172,25 @@ namespace GUC.Server.Scripts.Accounts.Logs
         #region LogCharacterStats
         
 
-        private static void _lcs_Attribute(NPCProto proto, NPCAttribute attrib, int oldValue, int newValue)
+        private static void _lcs_Attribute(NPCProto proto, NPCAttributeFlags attrib, int oldValue, int newValue)
         {
             CharStat cs = CharStat.AttributeStart + (int)attrib;
             log_CharacterStat(proto, cs, newValue);
         }
 
-        private static void _lcs_TalentValue(NPCProto proto, NPCTalent talent, int oldValue, int newValue)
+        private static void _lcs_TalentValue(NPCProto proto, NPCTalents talent, int oldValue, int newValue)
         {
             CharStat cs = CharStat.TalentValuesStart + (int)talent;
             log_CharacterStat(proto, cs, newValue);
         }
 
-        private static void _lcs_TalentSkill(NPCProto proto, NPCTalent talent, int oldValue, int newValue)
+        private static void _lcs_TalentSkill(NPCProto proto, NPCTalents talent, int oldValue, int newValue)
         {
             CharStat cs = CharStat.TalentSkillStart + (int)talent;
             log_CharacterStat(proto, cs, newValue);
         }
 
-        private static void _lcs_Hitchances(NPCProto proto, NPCTalent talent, int oldValue, int newValue)
+        private static void _lcs_Hitchances(NPCProto proto, NPCTalents talent, int oldValue, int newValue)
         {
             CharStat cs = CharStat.HitChances + (int)talent;
             log_CharacterStat(proto, cs, newValue);
@@ -200,9 +200,9 @@ namespace GUC.Server.Scripts.Accounts.Logs
         {
             None = 0,
             AttributeStart = 1,
-            TalentValuesStart = AttributeStart + NPCAttribute.ATR_MAX + 1,
-            TalentSkillStart = TalentValuesStart + NPCTalent.MaxTalents + 1,
-            HitChances = TalentSkillStart + NPCTalent.MaxTalents + 1,
+            TalentValuesStart = AttributeStart + NPCAttributeFlags.ATR_MAX + 1,
+            TalentSkillStart = TalentValuesStart + NPCTalents.MaxTalents + 1,
+            HitChances = TalentSkillStart + NPCTalents.MaxTalents + 1,
 
         }
 

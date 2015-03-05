@@ -27,7 +27,7 @@ namespace GUC.Server.Scripts.Items.Misc
 
             Flags = Enumeration.Flags.ITEM_MULTI | Enumeration.Flags.ITEM_MISSION;
             
-            Materials = Enumeration.MaterialType.MAT_METAL;
+            Materials = Enumeration.MaterialTypes.MAT_METAL;
 
 
             CreateItemInstance();

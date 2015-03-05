@@ -7,8 +7,6 @@ using System.Text;
 using GUC.Server.Scripting.Objects;
 using GUC.Server.Scripting.Objects.Character;
 using GUC.Types;
-using GUC.Server.Scripts.Communication.Notifications;
-using GUC.Server.Scripts.Communication;
 
 namespace GUC.Server.Scripts.Web.Actions
 {
@@ -37,19 +35,13 @@ namespace GUC.Server.Scripts.Web.Actions
         {
             
             if(mToNpc == 0){
-                //Startup.chat.MessageBox.addLine(new ColorRGBA(mR, mG, mB, mA), mMessage);
-                ChatMessage message = new ChatMessage(null, null, ChatMessageType.PM, mMessage);
-                message.Color = new ColorRGBA(mR, mG, mB, mA);
-                NotificationManager.GetNotificationManager().DisplayNotification(message);
+                Startup.chat.MessageBox.addLine(new ColorRGBA(mR, mG, mB, mA), mMessage);
                 completed = true;
             }else{
                 Vob v = Player.getVob(mToNpc);
                 if (v != null && v is Player)
                 {
-                    //Startup.chat.MessageBox.addLine((Player)v, new ColorRGBA(mR, mG, mB, mA), mMessage);
-                    ChatMessage message = new ChatMessage(null, (Player)v, ChatMessageType.PM, mMessage);
-                    message.Color = new ColorRGBA(mR, mG, mB, mA);
-                    NotificationManager.GetNotificationManager().DisplayNotification(message);  
+                    Startup.chat.MessageBox.addLine((Player)v, new ColorRGBA(mR, mG, mB, mA), mMessage);
                     completed = true;
                 }
             }

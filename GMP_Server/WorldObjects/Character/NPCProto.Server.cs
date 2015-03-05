@@ -12,7 +12,7 @@ namespace GUC.WorldObjects.Character
     internal abstract partial class NPCProto
     {
         public int[] protection = new int[8];
-        public DamageTypes damageType = DamageTypes.DAM_EDGE;
+        public DamageType damageType = DamageType.DAM_EDGE;
         public int totalDamage = 0;
         public int[] damages = new int[8];
 
@@ -21,11 +21,11 @@ namespace GUC.WorldObjects.Character
         public NPCProto()
             : base()
         {
-            this.type = (int)VobType.Npc;
+            this.type = (int)VobTypes.Npc;
             this.visual = "HUMANS.MDS";
 
-            this.Attributes[(int)NPCAttribute.ATR_HITPOINTS] = 1;
-            this.Attributes[(int)NPCAttribute.ATR_HITPOINTS_MAX] = 1;
+            this.Attributes[(int)NPCAttributeFlags.ATR_HITPOINTS] = 1;
+            this.Attributes[(int)NPCAttributeFlags.ATR_HITPOINTS_MAX] = 1;
         }
 
         public virtual ulong Guid { get { return 0; } }
@@ -137,7 +137,7 @@ namespace GUC.WorldObjects.Character
                     {
                         using (RakNetGUID guid = m.GUID)
                         {
-                            Program.server.ServerInterface.Send(stream, pp, pr, (char)0, guid, false);
+                            Program.server.server.Send(stream, pp, pr, (char)0, guid, false);
                         }
                     }
                 }
@@ -163,7 +163,7 @@ namespace GUC.WorldObjects.Character
                     {
                         using (RakNetGUID guid = m.GUID)
                         {
-                            Program.server.ServerInterface.Send(stream, pp, pr, (char)0, guid, false);
+                            Program.server.server.Send(stream, pp, pr, (char)0, guid, false);
                         }
                     }
                 }
@@ -212,15 +212,15 @@ namespace GUC.WorldObjects.Character
                 NearNPCList.Add(proto.proto);
 
                 //TODO: Send SpawnMessage to Player
-                BitStream stream = Program.server.SendBitStream;
+                BitStream stream = Program.server.sendBitStream;
                 stream.Reset();
                 stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                stream.Write((byte)NetworkID.NPCEnableMessage);
+                stream.Write((byte)NetworkIDS.NPCEnableMessage);
                 stream.Write(proto.ID);
                 stream.Write(proto.Position);
                 stream.Write(true);
                 using(RakNetGUID guid = GUID){
-                    Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+                    Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
                 }
             }
 
@@ -232,16 +232,16 @@ namespace GUC.WorldObjects.Character
                     continue;
                 
                 //Todo: Send DespawnMessage to Player!
-                BitStream stream = Program.server.SendBitStream;
+                BitStream stream = Program.server.sendBitStream;
                 stream.Reset();
                 stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                stream.Write((byte)NetworkID.NPCEnableMessage);
+                stream.Write((byte)NetworkIDS.NPCEnableMessage);
                 stream.Write(proto.ID);
                 stream.Write(proto.Position);
                 stream.Write(false);
                 using (RakNetGUID guid = GUID)
                 {
-                    Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+                    Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
                 }
             }
 

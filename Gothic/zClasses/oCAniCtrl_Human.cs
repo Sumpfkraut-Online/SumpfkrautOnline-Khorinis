@@ -27,7 +27,6 @@ namespace Gothic.zClasses
             Reset = 0x006A5080,
 
             RemoveWeapon2 = 0x006B33B0,
-            SearchStandAni = 0x006A4D20
         }
 
         public enum HookSize : uint
@@ -52,15 +51,6 @@ namespace Gothic.zClasses
             return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.RemoveWeapon2, new CallValue[] { });
         }
 
-        public void SearchStandAni()
-        {
-            SearchStandAni(false);
-        }
-
-        public void SearchStandAni(bool force)
-        {
-            Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.SearchStandAni, new CallValue[] { new BoolArg(force) });
-        }
 
         public void Reset()
         {

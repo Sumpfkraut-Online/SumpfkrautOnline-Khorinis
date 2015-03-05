@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using GUC.Enumeration;
 using RakNet;
-using System.Collections;
-using GUC.WorldObjects;
 
 namespace GUC.Server.Scripting.Objects.Character
 {
@@ -23,11 +21,11 @@ namespace GUC.Server.Scripting.Objects.Character
         { }
 
         public NPC(String name, int hp, int hpmax, int mp, int mpmax, int strength, int dexterity, int guild, int voice)
-            : this(name, new int[(int)NPCAttribute.ATR_MAX] { hp, hpmax, mp, mpmax, strength, dexterity, 0, 0 }, new int[(int)NPCTalent.MaxTalents], new int[(int)NPCTalent.MaxTalents], new int[5], guild, voice, "HUMANS.MDS", "hum_body_Naked0", 9, 0, "Hum_Head_Pony", 18, 0)
+            : this(name, new int[(int)NPCAttributeFlags.ATR_MAX] { hp, hpmax, mp, mpmax, strength, dexterity, 0, 0 }, new int[(int)NPCTalents.MaxTalents], new int[(int)NPCTalents.MaxTalents], new int[5], guild, voice, "HUMANS.MDS", "hum_body_Naked0", 9, 0, "Hum_Head_Pony", 18, 0)
         {}
 
         public NPC(String name, int hp, int hpmax, int mp, int mpmax, int strength, int dexterity, int guild, int voice, String visual, String bodyMesh, int bodyTex, int skinColor, String headMesh, int headTex, int TeethTex)
-            : this(name, new int[(int)NPCAttribute.ATR_MAX] { hp, hpmax, mp, mpmax, strength, dexterity, 0, 0 }, new int[(int)NPCTalent.MaxTalents], new int[(int)NPCTalent.MaxTalents], new int[5], guild, voice, visual, bodyMesh, bodyTex, skinColor, headMesh, headTex, TeethTex)
+            : this(name, new int[(int)NPCAttributeFlags.ATR_MAX] { hp, hpmax, mp, mpmax, strength, dexterity, 0, 0 }, new int[(int)NPCTalents.MaxTalents], new int[(int)NPCTalents.MaxTalents], new int[5], guild, voice, visual, bodyMesh, bodyTex, skinColor, headMesh, headTex, TeethTex)
         {}
 
         public NPC(String name, int[] attributes, int[] talentValues, int[] talentSkills, int[] hitChances, int guild, int voice, String visual, String bodyMesh, int bodyTex, int skinColor, String headMesh, int headTex, int TeethTex)
@@ -40,12 +38,12 @@ namespace GUC.Server.Scripting.Objects.Character
             this.proto.ScriptingNPC = this;
 
             Name = name;
-            this.HP = attributes[(int)NPCAttribute.ATR_HITPOINTS];
-            this.HPMax = attributes[(int)NPCAttribute.ATR_HITPOINTS_MAX];
-            this.MP = attributes[(int)NPCAttribute.ATR_MANA];
-            this.MPMax = attributes[(int)NPCAttribute.ATR_MANA_MAX];
-            this.Strength = attributes[(int)NPCAttribute.ATR_STRENGTH];
-            this.Dexterity = attributes[(int)NPCAttribute.ATR_DEXTERITY];
+            this.HP = attributes[(int)NPCAttributeFlags.ATR_HITPOINTS];
+            this.HPMax = attributes[(int)NPCAttributeFlags.ATR_HITPOINTS_MAX];
+            this.MP = attributes[(int)NPCAttributeFlags.ATR_MANA];
+            this.MPMax = attributes[(int)NPCAttributeFlags.ATR_MANA_MAX];
+            this.Strength = attributes[(int)NPCAttributeFlags.ATR_STRENGTH];
+            this.Dexterity = attributes[(int)NPCAttributeFlags.ATR_DEXTERITY];
 
             this.setVisual(visual, bodyMesh, bodyTex, skinColor, headMesh, headTex, TeethTex);
 
@@ -62,25 +60,7 @@ namespace GUC.Server.Scripting.Objects.Character
         internal WorldObjects.Character.NPC ProtoNPC { get { return (WorldObjects.Character.NPC)proto; } }
 
         public Player NPCController { get { return (ProtoNPC.NpcController == null) ? null : (Player)ProtoNPC.NpcController.ScriptingNPC; } }
+        
 
-        public static NPC[] getAll()
-        {
-            NPC[] protoList = new NPC[sWorld.NpcList.Count()];
-
-            for (int i = 0; i < sWorld.NpcList.Count(); i++)
-            {
-                protoList[i] = (NPC)sWorld.NpcList[i].ScriptingNPC;
-            }
-
-            return protoList;
-        }
-
-        public static IEnumerable ToEnumerable()
-        {
-            foreach (GUC.WorldObjects.Character.NPC item in sWorld.NpcList)
-            {
-                yield return (NPC)item.ScriptingNPC;
-            }
-        }
     }
 }
