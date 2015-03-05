@@ -69,7 +69,6 @@
     <Compile Include="WorldObjects\Character\NPC.cs" />
     <Compile Include="WorldObjects\Character\NPCProto.cs" />
     <Compile Include="WorldObjects\Character\Player.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WorldObjects\IContainer.cs" />
     <Compile Include="WorldObjects\Item.cs" />
     <Compile Include="WorldObjects\ItemInstance.cs" />
@@ -84,10 +83,10 @@
     <Compile Include="WorldObjects\Vob.cs" />
     <Compile Include="WorldObjects\World.cs" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
