@@ -159,14 +159,12 @@ namespace GUC.WorldObjects
             vob.TrafoObjToWorld.setPosition(this.Position.Data);
         }
 
-<<<<<<< HEAD
+
         /**
          * This will apply the client vob's direction to
          * Gothic's process.
          * @param dir A simple (X|Y|Z) direction vector.
          */
-=======
->>>>>>> origin/master
         public void setDirection(Vec3f dir)
         {
             dir = dir.normalise();
