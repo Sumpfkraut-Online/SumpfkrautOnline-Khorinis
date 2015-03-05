@@ -25,12 +25,12 @@ namespace GUC.Network.Messages.MobInterCommands
             stream.Read(out playerID);
             stream.Read(out vobID);
 
-            MobInterNetworkFlags mobInterFlags = (MobInterNetworkFlags)mobInterTypeInt;
+            MobInterNetwork mobInterFlags = (MobInterNetwork)mobInterTypeInt;
 
-            if (mobInterFlags.HasFlag(MobInterNetworkFlags.PickLock))
+            if (mobInterFlags.HasFlag(MobInterNetwork.PickLock))
                 stream.Read(out mobInterKey);
 
-            if (mobInterFlags.HasFlag(MobInterNetworkFlags.StartStateChange)){
+            if (mobInterFlags.HasFlag(MobInterNetwork.StartStateChange)){
                 stream.Read(out startChangeState0);
                 stream.Read(out startChangeState1);
             }
@@ -52,13 +52,13 @@ namespace GUC.Network.Messages.MobInterCommands
             MobInter mob = (MobInter)vob;
             Process process = Process.ThisProcess();
 
-            if (mobInterFlags == MobInterNetworkFlags.PickLock)
+            if (mobInterFlags == MobInterNetwork.PickLock)
             {
                 if (!(vob is MobLockable))
                     throw new Exception("Vob was not from type MobLockable: " + vob);
                 
             }
-            else if (mobInterFlags == MobInterNetworkFlags.OnTrigger)
+            else if (mobInterFlags == MobInterNetwork.OnTrigger)
             {
                 mob.State = 1;
                 if (mob.Address != 0)
@@ -76,7 +76,7 @@ namespace GUC.Network.Messages.MobInterCommands
 
                 }
             }
-            else if (mobInterFlags == MobInterNetworkFlags.OnUnTrigger)
+            else if (mobInterFlags == MobInterNetwork.OnUnTrigger)
             {
                 mob.State = 0;
                 if (mob.Address != 0)
@@ -86,26 +86,32 @@ namespace GUC.Network.Messages.MobInterCommands
                     mI.OnUnTrigger(new zCVob(process, mI.Address), new zCVob(process, player.Address));
                     //mI.State = 0;
                     
+
+                    if (mob is MobLockable && ( ((MobLockable)mob).KeyInstance != null ||  ( ((MobLockable)mob).PickLockStr != null && ((MobLockable)mob).PickLockStr.Length != 0)) )
+                    {
+                        oCMobLockable ML = new oCMobLockable(process, mob.Address);
+                        ML.SetLocked(1);
+                    }
                     
                     //mI.StateAniID = mI.GetModel().GetAniIDFromAniName("S_S0");
                     //mI.StateAniID = mI.GetModel().
                 }
             }
-            else if (mobInterFlags == MobInterNetworkFlags.StartInteraction)
+            else if (mobInterFlags == MobInterNetwork.StartInteraction)
             {
                 if (mob.Address != 0)
                 {
                     new oCMobInter(process, mob.Address).StartInteraction(new oCNpc(process, player.Address));
                 }
             }
-            else if (mobInterFlags == MobInterNetworkFlags.StopInteraction)
+            else if (mobInterFlags == MobInterNetwork.StopInteraction)
             {
                 if (mob.Address != 0)
                 {
                     new oCMobInter(process, mob.Address).StopInteraction(new oCNpc(process, player.Address));
                 }
             }
-            else if (mobInterFlags == MobInterNetworkFlags.StartStateChange)
+            else if (mobInterFlags == MobInterNetwork.StartStateChange)
             {
                 if (mob.Address != 0)
                 {

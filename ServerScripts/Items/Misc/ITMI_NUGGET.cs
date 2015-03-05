@@ -25,7 +25,7 @@ namespace GUC.Server.Scripts.Items.Misc
             Visual = "ItMi_Nugget.3ds";
             Description = Name;
 
-            Materials = Enumeration.MaterialTypes.MAT_STONE;
+            Materials = Enumeration.MaterialType.MAT_STONE;
 
             Wear = Enumeration.ArmorFlags.WEAR_EFFECT;
             Effect = "SPELLFX_MANAPOTION";

@@ -66,10 +66,10 @@ namespace GUC.Server.Scripting.GUI.GuiList
 
         protected override void create(int to)
         {
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.GuiMessage);
+            stream.Write((byte)NetworkID.GuiMessage);
             stream.Write((byte)GuiMessageType.CreateList);
 
             stream.Write(this.id);
@@ -110,6 +110,11 @@ namespace GUC.Server.Scripting.GUI.GuiList
         #endregion
 
         #region Button
+        /// <summary>
+        /// Create and add a new Button to the List.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
         public ListButton addButton(String text)
         {
             return addButton(text, m_ActiveRowColor, m_InactiveRowColor);
@@ -125,19 +130,49 @@ namespace GUC.Server.Scripting.GUI.GuiList
         #endregion
 
         #region TextBox
+        /// <summary>
+        /// Creates a Row with a textbox and returns it.
+        /// It will be automatically added to the List.
+        /// </summary>
+        /// <returns>The newly created textbox</returns>
         public ListTextBox addTextBox()
         {
             return addTextBox("", "", m_ActiveRowColor, m_InactiveRowColor);
         }
 
+        /// <summary>
+        /// Creates a Row with a textbox and returns it.
+        /// It will be automatically added to the List.
+        /// </summary>
+        /// <param name="hardText">A Text which will stand before the textbox. This text cannot be removed by the user.</param>
+        /// <returns>The newly created textbox</returns>
         public ListTextBox addTextBox(String hardText)
         {
             return addTextBox(hardText, "", m_ActiveRowColor, m_InactiveRowColor);
         }
+
+
+        /// <summary>
+        /// Creates a Row with a textbox and returns it.
+        /// It will be automatically added to the List.
+        /// </summary>
+        /// <param name="hardText">A Text which will stand before the textbox. This text cannot be removed by the user.</param>
+        /// <param name="text">The default text. It will be added to the textbox and can be removed by the client.</param>
+        /// <returns></returns>
         public ListTextBox addTextBox(String hardText, String text)
         {
             return addTextBox(hardText, text, m_ActiveRowColor, m_InactiveRowColor);
         }
+
+        /// <summary>
+        /// Creates a Row with a textbox and returns it.
+        /// It will be automatically added to the List.
+        /// </summary>
+        /// <param name="hardText">A Text which will stand before the textbox. This text cannot be removed by the user.</param>
+        /// <param name="text">The default text. It will be added to the textbox and can be removed by the client.</param>
+        /// <param name="aActiveRowColor">Color of the active Line</param>
+        /// <param name="aInactiveRowColor">Color of the inactive Line</param>
+        /// <returns></returns>
         public ListTextBox addTextBox(String hardText, String text, ColorRGBA aActiveRowColor, ColorRGBA aInactiveRowColor)
         {
             ListTextBox lt = new ListTextBox(this, hardText, text, aActiveRowColor, aInactiveRowColor);
@@ -148,13 +183,20 @@ namespace GUC.Server.Scripting.GUI.GuiList
         }
         #endregion
 
+        /// <summary>
+        /// Removes an element from the list and destroy it. After this function the ListRow cannot be used anymore
+        /// </summary>
+        /// <param name="element"></param>
         public void remove(ListRow element)
         {
             rows.Remove(element);
             element.destroy();
         }
 
-
+        /// <summary>
+        /// Destroy the List and all of its rows!
+        /// All rows cannot be used anymore after this function.
+        /// </summary>
         public override void destroy()
         {
             //Destroy all childs:

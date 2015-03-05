@@ -20,7 +20,7 @@ namespace GUC.Server.Network.Messages.VobCommands
             sWorld.getWorld(levelName).addVob(pl);
 
             stream.ResetReadPointer();
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, packet.guid, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, packet.guid, true);
 
 
         }

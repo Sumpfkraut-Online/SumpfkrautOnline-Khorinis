@@ -10,6 +10,15 @@ namespace GUC.WorldObjects.Character
         protected static Player _player;
         public static Player Hero { get { return _player; } set { _player = value; } }
 
+        public override Scripting.Objects.Vob ScriptingInstance
+        {
+            get
+            {
+                if (m_ScriptingInstance == null)
+                    m_ScriptingInstance = new Scripting.Objects.Character.Player(this);
+                return m_ScriptingInstance;
+            }
+        }
 
         protected bool isPlayer = false;
 

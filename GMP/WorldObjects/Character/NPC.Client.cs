@@ -11,6 +11,14 @@ namespace GUC.WorldObjects.Character
 {
     internal partial class NPC
     {
-        
+        public override Scripting.Objects.Vob ScriptingInstance
+        {
+            get
+            {
+                if (m_ScriptingInstance == null)
+                    m_ScriptingInstance = new Scripting.Objects.Character.NPC(this);
+                return m_ScriptingInstance;
+            }
+        }
     }
 }

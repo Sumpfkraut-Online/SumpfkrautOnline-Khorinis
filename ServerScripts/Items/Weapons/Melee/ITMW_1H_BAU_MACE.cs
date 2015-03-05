@@ -24,10 +24,10 @@ namespace GUC.Server.Scripts.Items.Weapons.Melee
             MainFlags = Enumeration.MainFlags.ITEM_KAT_NF;
             Flags = Enumeration.Flags.ITEM_AXE;
 
-            Materials = Enumeration.MaterialTypes.MAT_WOOD;
+            Materials = Enumeration.MaterialType.MAT_WOOD;
 
             TotalDamage = 50;
-            DamageType = Enumeration.DamageType.DAM_BLUNT;
+            DamageType = Enumeration.DamageTypes.DAM_BLUNT;
 
             Range = 50;
 

@@ -17,18 +17,18 @@ namespace GUC.Server.Network.Messages.VobCommands
         }
         public static void Write(Vob vob, AddressOrGUID addguid)
         {
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
 
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.SpawnVobMessage);
+            stream.Write((byte)NetworkID.SpawnVobMessage);
             stream.Write(vob.ID);
             stream.Write(true);
             stream.Write(vob.Map);
             stream.Write(vob.Position);
             stream.Write(vob.Direction);
 
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, addguid, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, addguid, true);
 
         }
     }

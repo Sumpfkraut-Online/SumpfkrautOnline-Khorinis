@@ -14,7 +14,7 @@ namespace GUC.GUI.GuiList
         public class ButtonPressedEventArg : EventArgs
         {
 
-            public VirtualKeys Key;
+            public VirtualKey Key;
             public Object Data;
             public List list;
         }
@@ -28,11 +28,11 @@ namespace GUC.GUI.GuiList
 
         }
 
-        protected override void updateActive(VirtualKeys key)
+        protected override void updateActive(VirtualKey key)
         {
             base.updateActive(key);
 
-            if (key == VirtualKeys.Return)
+            if (key == VirtualKey.Return)
             {
                 //ButtonPressed(this, new ButtonPressedEventArg() { Key = key, Data = this, list = this.mList });
 
@@ -40,7 +40,7 @@ namespace GUC.GUI.GuiList
                 RakNet.BitStream stream = Program.client.sentBitStream;
                 stream.Reset();
                 stream.Write((byte)DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                stream.Write((byte)NetworkIDS.GuiMessage);
+                stream.Write((byte)NetworkID.GuiMessage);
                 stream.Write((byte)GuiMessageType.GuiEvent);
                 stream.Write(Player.Hero.ID);
                 stream.Write(this.id);

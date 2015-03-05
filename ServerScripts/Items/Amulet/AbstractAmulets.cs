@@ -19,7 +19,7 @@ namespace GUC.Server.Scripts.Items.Amulet
             MainFlags = Enumeration.MainFlags.ITEM_KAT_MAGIC;
             Flags = Enumeration.Flags.ITEM_AMULET;
 
-            Materials = Enumeration.MaterialTypes.MAT_METAL;
+            Materials = Enumeration.MaterialType.MAT_METAL;
             Effect = "SPELLFX_ITEMGLIMMER";
             Wear = Enumeration.ArmorFlags.WEAR_EFFECT;
 

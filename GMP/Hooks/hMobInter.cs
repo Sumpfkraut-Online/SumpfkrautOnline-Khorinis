@@ -36,8 +36,8 @@ namespace GUC.Hooks
                     BitStream stream = Program.client.sentBitStream;
                     stream.Reset();
                     stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                    stream.Write((byte)NetworkIDS.MobInterMessage);
-                    stream.Write((byte)MobInterNetworkFlags.OnTrigger);
+                    stream.Write((byte)NetworkID.MobInterMessage);
+                    stream.Write((byte)MobInterNetwork.OnTrigger);
                     stream.Write(Player.Hero.ID);
                     stream.Write(mI.ID);
                     Program.client.client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
@@ -73,12 +73,17 @@ namespace GUC.Hooks
                     BitStream stream = Program.client.sentBitStream;
                     stream.Reset();
                     stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                    stream.Write((byte)NetworkIDS.MobInterMessage);
-                    stream.Write((byte)MobInterNetworkFlags.OnUnTrigger);
+                    stream.Write((byte)NetworkID.MobInterMessage);
+                    stream.Write((byte)MobInterNetwork.OnUnTrigger);
                     stream.Write(Player.Hero.ID);
                     stream.Write(mI.ID);
                     Program.client.client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
 
+                    if (mI is MobLockable && ( ((MobLockable)mI).KeyInstance != null ||  ( ((MobLockable)mI).PickLockStr != null && ((MobLockable)mI).PickLockStr.Length != 0)) )
+                    {
+                        oCMobLockable ML = new oCMobLockable(process, mI.Address);
+                        ML.SetLocked(1);
+                    }
                 }
             }
             catch (Exception ex)
@@ -109,8 +114,8 @@ namespace GUC.Hooks
                     BitStream stream = Program.client.sentBitStream;
                     stream.Reset();
                     stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                    stream.Write((byte)NetworkIDS.MobInterMessage);
-                    stream.Write((byte)MobInterNetworkFlags.StartInteraction);
+                    stream.Write((byte)NetworkID.MobInterMessage);
+                    stream.Write((byte)MobInterNetwork.StartInteraction);
                     stream.Write(Player.Hero.ID);
                     stream.Write(mI.ID);
                     Program.client.client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
@@ -144,8 +149,8 @@ namespace GUC.Hooks
                     BitStream stream = Program.client.sentBitStream;
                     stream.Reset();
                     stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                    stream.Write((byte)NetworkIDS.MobInterMessage);
-                    stream.Write((byte)MobInterNetworkFlags.StopInteraction);
+                    stream.Write((byte)NetworkID.MobInterMessage);
+                    stream.Write((byte)MobInterNetwork.StopInteraction);
                     stream.Write(Player.Hero.ID);
                     stream.Write(mI.ID);
                     Program.client.client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
@@ -183,8 +188,8 @@ namespace GUC.Hooks
                     BitStream stream = Program.client.sentBitStream;
                     stream.Reset();
                     stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                    stream.Write((byte)NetworkIDS.MobInterMessage);
-                    stream.Write((byte)MobInterNetworkFlags.PickLock);
+                    stream.Write((byte)NetworkID.MobInterMessage);
+                    stream.Write((byte)MobInterNetwork.PickLock);
                     stream.Write(Player.Hero.ID);
                     stream.Write(mI.ID);
                     stream.Write((char)ch);
@@ -202,7 +207,7 @@ namespace GUC.Hooks
 
 
 
-        public static Int32 StartStateChange(String message)
+        public static Int32 StartStateChange( String message )
         {
             int address = Convert.ToInt32(message);
             Process process = Process.ThisProcess();
@@ -225,8 +230,8 @@ namespace GUC.Hooks
                     BitStream stream = Program.client.sentBitStream;
                     stream.Reset();
                     stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                    stream.Write((byte)NetworkIDS.MobInterMessage);
-                    stream.Write((byte)MobInterNetworkFlags.StartStateChange);
+                    stream.Write((byte)NetworkID.MobInterMessage);
+                    stream.Write((byte)MobInterNetwork.StartStateChange);
                     stream.Write(Player.Hero.ID);
                     stream.Write(mI.ID);
                     stream.Write((short)x);

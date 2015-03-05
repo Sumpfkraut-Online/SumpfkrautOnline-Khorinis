@@ -71,16 +71,16 @@ namespace GUC.Server.Network.Messages.PlayerCommands
 
             }
 
-            Scripting.Objects.Character.NPCProto.isOnDamage(vicProto.ScriptingNPC, (DamageType)damageMode, locHit, flydir, attackerScriptProto, weaponMode, scriptSpell, weaponScriptItem, fallDownDistanceY);
-            Write(vicProto, (DamageType)damageMode, locHit, flydir, attProto, weaponMode, spell, weaponIt, fallDownDistanceY, packet.guid);
+            Scripting.Objects.Character.NPCProto.isOnDamage(vicProto.ScriptingNPC, (DamageTypes)damageMode, locHit, flydir, attackerScriptProto, weaponMode, scriptSpell, weaponScriptItem, fallDownDistanceY);
+            Write(vicProto, (DamageTypes)damageMode, locHit, flydir, attProto, weaponMode, spell, weaponIt, fallDownDistanceY, packet.guid);
         }
 
-        public static void Write(NPCProto victim, DamageType damageMode, Vec3f hitLoc, Vec3f flyDir, Vob attacker, int weaponMode, Spell spellID, Item weapon, float fallDownDistanceY, AddressOrGUID guidExclude)
+        public static void Write(NPCProto victim, DamageTypes damageMode, Vec3f hitLoc, Vec3f flyDir, Vob attacker, int weaponMode, Spell spellID, Item weapon, float fallDownDistanceY, AddressOrGUID guidExclude)
         {
-            BitStream stream = Program.server.sendBitStream;
+            BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkIDS.OnDamageMessage);
+            stream.Write((byte)NetworkID.OnDamageMessage);
 
             byte sendFlags = 0;
             if (hitLoc != null)
@@ -119,7 +119,7 @@ namespace GUC.Server.Network.Messages.PlayerCommands
 
             if (guidExclude == null)
                 guidExclude = RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS;
-            Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guidExclude, true);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guidExclude, true);
         }
     }
 }

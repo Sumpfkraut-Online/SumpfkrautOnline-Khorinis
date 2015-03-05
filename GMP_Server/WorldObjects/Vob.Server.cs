@@ -20,7 +20,7 @@ namespace GUC.WorldObjects
             idCount++;
             this._id = idCount;
 
-            this.VobType = Enumeration.VobTypes.Vob;
+            this.VobType = Enumeration.VobType.Vob;
 
             Position = new Vec3f();
         }

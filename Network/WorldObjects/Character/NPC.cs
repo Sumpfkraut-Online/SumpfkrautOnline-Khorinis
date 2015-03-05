@@ -13,7 +13,7 @@ namespace GUC.WorldObjects.Character
         public NPC()
             : base()
         {
-            this.type = (int)VobTypes.Npc;
+            this.type = (int)VobType.Npc;
         }
 
         

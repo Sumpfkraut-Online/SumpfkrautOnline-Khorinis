@@ -38,6 +38,10 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ionic.Zip">
+      <HintPath>..\GothicII\System\UntoldChapter\DLL\Ionic.Zip.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="RakNetSwig">
       <HintPath>..\GothicII\System\UntoldChapter\DLL\RakNetSwig.dll</HintPath>
       <Private>False</Private>
@@ -52,6 +56,12 @@
   <ItemGroup>
     <Compile Include="..\Network\**\*.cs">
       <Link>%(RecursiveDir)%(FileName)%(Extension)</Link>
+    </Compile>
+    <Compile Include="FilesLoader.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FilesLoader.Designer.cs">
+      <DependentUpon>FilesLoader.cs</DependentUpon>
     </Compile>
     <Compile Include="Options\FavoritesOptions.cs" />
     <Compile Include="StarterFunctions.cs" />
@@ -87,6 +97,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="FilesLoader.resx">
+      <DependentUpon>FilesLoader.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

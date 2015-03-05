@@ -18,7 +18,7 @@ namespace GUC.Server.Scripts.Items.Weapons.Melee
             MainFlags = Enumeration.MainFlags.ITEM_KAT_NF;
             Flags = Enumeration.Flags.ITEM_AXE;
 
-            Materials = Enumeration.MaterialTypes.MAT_METAL;
+            Materials = Enumeration.MaterialType.MAT_METAL;
             
 
         }

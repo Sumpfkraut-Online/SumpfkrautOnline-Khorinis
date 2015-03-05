@@ -21,7 +21,7 @@ namespace GUC.Server.Scripts.Items.Scrolls
         {
             TimePerMana = 0;
             DamagePerLevel = 25;
-            DamageType = Enumeration.DamageType.DAM_MAGIC;
+            DamageType = Enumeration.DamageTypes.DAM_MAGIC;
             
 
             Name = "Feuerpfeil";
@@ -58,7 +58,7 @@ namespace GUC.Server.Scripts.Items.Scrolls
             Value = 25;
 
             Visual = "ItSc_Firebolt.3DS";
-            Materials = Enumeration.MaterialTypes.MAT_LEATHER;
+            Materials = Enumeration.MaterialType.MAT_LEATHER;
             Wear = Enumeration.ArmorFlags.WEAR_EFFECT;
 
             Effect = "SPELLFX_WEAKGLIMMER";

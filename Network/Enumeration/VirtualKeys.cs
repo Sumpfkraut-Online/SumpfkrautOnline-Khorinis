@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GUC.Enumeration
 {
-    public enum VirtualKeys
+    public enum VirtualKey
         : ushort
     {
         /// <summary></summary>

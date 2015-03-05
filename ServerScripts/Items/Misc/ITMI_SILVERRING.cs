@@ -26,7 +26,7 @@ namespace GUC.Server.Scripts.Items.Misc
             Description = Name;
             Flags = Enumeration.Flags.ITEM_MULTI | Enumeration.Flags.ITEM_RING;
 
-            Materials = Enumeration.MaterialTypes.MAT_METAL;
+            Materials = Enumeration.MaterialType.MAT_METAL;
 
 
             CreateItemInstance();

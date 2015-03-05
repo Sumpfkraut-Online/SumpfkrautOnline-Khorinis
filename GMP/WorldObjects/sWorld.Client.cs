@@ -98,7 +98,7 @@ namespace GUC.WorldObjects
                     BitStream stream = Program.client.sentBitStream;
                     stream.Reset();
                     stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                    stream.Write((byte)NetworkIDS.ChangeWorldMessage);
+                    stream.Write((byte)NetworkID.ChangeWorldMessage);
                     stream.Write(Player.Hero.ID);
                     stream.Write(levelname);
                     Program.client.client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);

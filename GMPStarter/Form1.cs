@@ -56,6 +56,7 @@ namespace GMPStarter
         
         public void mBStart_Click(object sender, EventArgs e)
         {
+
             String nickname = tB_Nickname.Text.Trim();
             String ip = tB_IP.Text.Trim();
             ushort port = getPort();
@@ -65,14 +66,18 @@ namespace GMPStarter
             bool StartWindowed = checkBox2.Checked;
             Int32.TryParse(textBox5.Text.Trim(), out fps);
 
-            try
-            {
-                StarterFunctions.StartGothic(co, nickname, ip, port, password, logLevel, fps, StartWindowed);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("An Error occurred while starting GUC: "+ex.ToString());
-            }
+
+            FilesLoader fl = new FilesLoader(co, nickname, ip, port, password, logLevel, fps, StartWindowed);
+            fl.ShowDialog(this);
+
+            //try
+            //{
+            //    StarterFunctions.StartGothic(co, nickname, ip, port, password, logLevel, fps, StartWindowed);
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show("An Error occurred while starting GUC: "+ex.ToString());
+            //}
                 
         }
 
@@ -104,6 +109,10 @@ namespace GMPStarter
 
             FavoritesOptions.cFavorite fav = StarterFunctions.addFavorite(fo, ip, port);
             addFavoriteToFavList(fav);
+
+            StatusMessage sm = new StatusMessage(fav.ip, (ushort)fav.port);
+            sm.start();
+            statusMessageList.Add(sm);
         }
 
         public void addFavoriteToFavList(FavoritesOptions.cFavorite fav)

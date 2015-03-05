@@ -10,7 +10,7 @@ namespace GUC.WorldObjects.Mobs
         public MobBed()
             : base()
         {
-            this.VobType = Enumeration.VobTypes.MobBed;
+            this.VobType = Enumeration.VobType.MobBed;
         }
     }
 }

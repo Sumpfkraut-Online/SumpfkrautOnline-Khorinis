@@ -39,59 +39,60 @@ namespace GUC.Network.Messages.PlayerCommands
 
 
 
-                if (plID == 0 || !sWorld.VobDict.ContainsKey(plID))
-                    throw new Exception("Vob not found!");
+                npcP.SetVisual(visual, BodyMesh, HeadMesh, bodyTex, skinColor, headTex, teethTex);
 
 
-                bool visualSame = false;
-                if (vob.Visual.ToUpper().Trim() == visual.ToUpper().Trim())
-                    visualSame = true;
-                vob.Visual = visual;
 
-                npcP.BodyMesh = BodyMesh;
-                npcP.BodyTex = bodyTex;
-                npcP.SkinColor = skinColor;
-                npcP.HeadMesh = HeadMesh;
-                npcP.HeadTex = headTex;
-                npcP.TeethTex = teethTex;
 
-                if (!visualSame && visual.ToUpper().Trim() != "HUMANS.MDS")
-                    npcP.setWeaponMode(1);
+                //bool visualSame = false;
+                //if (vob.Visual.ToUpper().Trim() == visual.ToUpper().Trim())
+                //    visualSame = true;
+                //vob.Visual = visual;
 
-                if (vob.Address == 0)
-                    return;
+                //npcP.BodyMesh = BodyMesh;
+                //npcP.BodyTex = bodyTex;
+                //npcP.SkinColor = skinColor;
+                //npcP.HeadMesh = HeadMesh;
+                //npcP.HeadTex = headTex;
+                //npcP.TeethTex = teethTex;
 
-                if (!visualSame)
-                {
-                    int oldAdress = npcP.Address;
-                    npcP.Despawn();
-                    npcP.Spawn(npcP.Map, npcP.Position, npcP.Direction);
-                    if (Player.Hero == npcP)
-                    {
-                        new oCNpc(Process.ThisProcess(), npcP.Address).SetAsPlayer();
+                //if (!visualSame && visual.ToUpper().Trim() != "HUMANS.MDS")
+                //    npcP.setWeaponMode(1);
 
-                        if (oldAdress != 0)
-                        {
-                            new oCNpc(Process.ThisProcess(), oldAdress).Disable();
-                        }
-                    }
-                    npcP.Enable(npcP.Position);
+                //if (vob.Address == 0)
+                //    return;
+
+                //if (!visualSame)
+                //{
+                //    int oldAdress = npcP.Address;
+                //    npcP.Despawn();
+                //    npcP.Spawn(npcP.Map, npcP.Position, npcP.Direction);
+                //    if (Player.Hero == npcP)
+                //    {
+                //        new oCNpc(Process.ThisProcess(), npcP.Address).SetAsPlayer();
+
+                //        if (oldAdress != 0)
+                //        {
+                //            new oCNpc(Process.ThisProcess(), oldAdress).Disable();
+                //        }
+                //    }
+                //    npcP.Enable(npcP.Position);
 
                     
 
-                    return;
-                }
+                //    return;
+                //}
 
                 
 
 
 
-                Process process = Process.ThisProcess();
-                zCVob zVob = new zCVob(Process.ThisProcess(), vob.Address);
+                //Process process = Process.ThisProcess();
+                //zCVob zVob = new zCVob(Process.ThisProcess(), vob.Address);
 
-                oCNpc npc = new oCNpc(process, vob.Address);
+                //oCNpc npc = new oCNpc(process, vob.Address);
 
-                npc.SetAdditionalVisuals(BodyMesh, bodyTex, skinColor, HeadMesh, headTex, teethTex, -1);
+                //npc.SetAdditionalVisuals(BodyMesh, bodyTex, skinColor, HeadMesh, headTex, teethTex, -1);
             }
         }
     }

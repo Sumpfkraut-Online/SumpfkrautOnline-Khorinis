@@ -9,43 +9,54 @@ using GUC.WorldObjects.Character;
 
 namespace GUC.Server.Scripting
 {
+    /// <summary>
+    /// The scriptmanager is internally used to load the c# Scripts.
+    /// And it manages the Timers. 
+    /// The class can be accessed by ScriptManager.Self
+    /// </summary>
     public class ScriptManager
     {
-        private Assembly assembly;
-        private bool startuped = false;
-        private bool initalised = false;
+        private Assembly m_Assembly;
+        private bool m_Startuped = false;
+        private bool m_Initalised = false;
 
-        internal List<Timer> TimerList = new List<Timer>();
+        internal List<Timer> m_TimerList = new List<Timer>();
 
-        private static ScriptManager _self;
+        private static ScriptManager s_Self;
 
-        public static ScriptManager Self { get { return _self; } }
+        public static ScriptManager Self { get { return s_Self; } }
 
         internal ScriptManager()
         {
-            _self = this;
+            s_Self = this;
         }
 
-        internal void init()
+        internal void Init()
         {
-            if (initalised)
+            if (m_Initalised)
                 return;
 
             if (Program.serverOptions.useScriptedFile)
             {
-                load();
+                Load();
             }
             else
             {
-                compile(Program.serverOptions.generateScriptedFile);
+                Compile(Program.serverOptions.generateScriptedFile);
             }
         }
 
-        private void load()
+        public bool Startuped { get { return m_Startuped; } }
+
+        public int Slots { get { return Program.serverOptions.Slots; } }
+        
+
+        private void Load()
         {
+            
             try
             {
-                assembly = System.Reflection.Assembly.LoadFile(Path.GetFullPath("scripts/_compiled/ServerScripts.dll"));
+                m_Assembly = System.Reflection.Assembly.LoadFile(Path.GetFullPath("scripts/_compiled/ServerScripts.dll"));
             }
             catch (Exception ex)
             {
@@ -53,7 +64,7 @@ namespace GUC.Server.Scripting
             }
         }
 
-        private void compile(bool file)
+        private void Compile(bool file)
         {
             System.CodeDom.Compiler.CodeDomProvider CodeDomProvider = System.CodeDom.Compiler.CodeDomProvider.CreateProvider("CSharp");
 
@@ -97,7 +108,7 @@ namespace GUC.Server.Scripting
             }
 
             List<String> fileList = new List<string>();
-            getFileList(fileList, "scripts/server");
+            GetFileList(fileList, "scripts/server");
             //getFileList(fileList, "scripts/both");
 
             System.CodeDom.Compiler.CompilerResults CompilerResults = CodeDomProvider.CompileAssemblyFromFile(CompilerParameters, fileList.ToArray());
@@ -113,17 +124,17 @@ namespace GUC.Server.Scripting
             }
 
 
-            assembly = CompilerResults.CompiledAssembly;
+            m_Assembly = CompilerResults.CompiledAssembly;
         }
 
 
-        private void getFileList(List<String> filelist, String dir)
+        private void GetFileList(List<String> filelist, String dir)
         {
             try
             {
                 foreach (string d in Directory.GetDirectories(dir))
                 {
-                    getFileList(filelist, d);
+                    GetFileList(filelist, d);
                 }
                 foreach (string f in Directory.GetFiles(dir, "*.cs"))
                 {
@@ -140,27 +151,37 @@ namespace GUC.Server.Scripting
 
         internal void Startup()
         {
-            if (startuped)
+            if (m_Startuped)
                 return;
 
-            startuped = true;
-
+            
+            
 
             try
             {
-                Listener.IServerStartup listener = (Listener.IServerStartup)assembly.CreateInstance("GUC.Server.Scripts.Startup");
-                listener.OnServerInit();
+                Listener.IServerStartup listener = (Listener.IServerStartup)m_Assembly.CreateInstance("GUC.Server.Scripts.Startup");
+                try
+                {
+                    listener.OnServerInit();
+                }
+                catch (Exception ex2)
+                {
+                    Log.Logger.log(Log.Logger.LOG_ERROR, ex2.Source + "<br>" + ex2.Message + "<br>" + ex2.StackTrace);
+
+                }
             }
             catch (Exception ex)
             {
                 Log.Logger.log(Log.Logger.LOG_ERROR, "GUC.Server.Scripts.Startup-Class could not be found!" + "<br>" + ex.Source + "<br>" + ex.Message + "<br>" + ex.StackTrace);
             }
+            Log.Logger.log(Log.Logger.LOG_INFO, "GUC Server - Initalisation Complete GUC-Version: " + GUC.Options.Constants.VERSION);
+            m_Startuped = true;
         }
 
-        internal void update()
+        internal void Update()
         {
             long time = DateTime.Now.Ticks;
-            Timer[] arr = TimerList.ToArray();
+            Timer[] arr = m_TimerList.ToArray();
             foreach (Timer timer in arr)
             {
                 timer.iUpdate(time);

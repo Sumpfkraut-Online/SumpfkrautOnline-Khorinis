@@ -54,19 +54,19 @@ namespace GUC.GUI.GuiList
             }
         }
 
-        protected override void updateActive(VirtualKeys key)
+        protected override void updateActive(VirtualKey key)
         {
-            if (key == VirtualKeys.Up)
+            if (key == VirtualKey.Up)
                 mList.ActiveID--;
-            if (key == VirtualKeys.Down || key == VirtualKeys.Return)
+            if (key == VirtualKey.Down || key == VirtualKey.Return)
                 mList.ActiveID++;
 
-            if (key == VirtualKeys.Up || key == VirtualKeys.Down || key == VirtualKeys.Return)
+            if (key == VirtualKey.Up || key == VirtualKey.Down || key == VirtualKey.Return)
             {
                 RakNet.BitStream stream = Program.client.sentBitStream;
                 stream.Reset();
                 stream.Write((byte)DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                stream.Write((byte)NetworkIDS.GuiMessage);
+                stream.Write((byte)NetworkID.GuiMessage);
                 stream.Write((byte)GuiMessageType.GuiEvent);
                 stream.Write(Player.Hero.ID);
                 stream.Write(this.id);
@@ -88,7 +88,7 @@ namespace GUC.GUI.GuiList
             }
 
             String keyVal = Convert.ToString((char)key);
-            keyVal = Gothic.mClasses.textBox.GetCharsFromKeys((WinApi.User.Enumeration.VirtualKeys)key, InputHooked.IsPressed((int)VirtualKeys.Shift), InputHooked.IsPressed((int)VirtualKeys.Control) && InputHooked.IsPressed((int)VirtualKeys.Menu));
+            keyVal = Gothic.mClasses.textBox.GetCharsFromKeys((WinApi.User.Enumeration.VirtualKeys)key, InputHooked.IsPressed((int)VirtualKey.Shift), InputHooked.IsPressed((int)VirtualKey.Control) && InputHooked.IsPressed((int)VirtualKey.Menu));
 
             if (keyVal != "")
             {
