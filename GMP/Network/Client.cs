@@ -59,6 +59,7 @@ namespace GUC.Network
             messageListener.Add((byte)NetworkID.DropUnconsciousMessage, new DropUnconsciousMessage());
             messageListener.Add((byte)NetworkID.ReviveMessage, new ReviveMessage());
             messageListener.Add((byte)NetworkID.SetVisualMessage, new SetVisualMessage());
+            messageListener.Add((byte)NetworkID.SetVobChangeMessage, new SetVobChangeMessage());
             messageListener.Add((byte)NetworkID.DropItemMessage, new DropItemMessage());
             messageListener.Add((byte)NetworkID.TakeItemMessage, new TakeItemMessage());
             messageListener.Add((byte)NetworkID.CamToVobMessage, new CamToVobMessage());
@@ -122,6 +123,8 @@ namespace GUC.Network
             messageListener.Add((byte)NetworkID.CamToPlayerFront, new CamToPlayerFront());
 
             messageListener.Add((byte)NetworkID.InterfaceOptionsMessage, new InterfaceOptionsMessage());
+
+            messageListener.Add((byte)NetworkID.PlayerOpenInventoryMessage, new OpenInventoryMessage());
             
         }
 
@@ -147,7 +150,7 @@ namespace GUC.Network
                 zERROR.GetZErr(Process.ThisProcess()).Report(4, 'G', "Verbindung nicht möglich!", 0, "Client.cs", 0);
             this.ip = ip; this.port = port; this.pw = pw;
             bool b;
-            pw = "ver2.081" + pw;
+            pw = GUC.Options.Constants.VERSION + pw;
             b = client.Connect(ip, port, pw, pw.Length) == ConnectionAttemptResult.CONNECTION_ATTEMPT_STARTED;
             client.SetOccasionalPing(true);
             if (!b)

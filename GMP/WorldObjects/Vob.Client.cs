@@ -16,6 +16,16 @@ namespace GUC.WorldObjects
     internal partial class Vob
     {
         int _address = 0;
+        protected Scripting.Objects.Vob m_ScriptingInstance = null;
+        public virtual Scripting.Objects.Vob ScriptingInstance
+        {
+            get
+            {
+                if (m_ScriptingInstance == null)
+                    m_ScriptingInstance = new Scripting.Objects.Vob(this);
+                return m_ScriptingInstance;
+            }
+        }
 
         public int Address { get { return _address; } set { _address = value; } }
 
@@ -77,6 +87,36 @@ namespace GUC.WorldObjects
                 vob.BitField1 |= (int)zCVob.BitFlag0.collDetectionDynamic;
             else
                 vob.BitField1 &= ~(int)zCVob.BitFlag0.collDetectionDynamic;
+            if (CDStatic)
+                vob.BitField1 |= (int)zCVob.BitFlag0.collDetectionStatic;
+            else
+                vob.BitField1 &= ~(int)zCVob.BitFlag0.collDetectionStatic;
+        }
+
+        public void setCDDyn(bool x)
+        {
+            this.CDDyn = x;
+
+            if (this.Address == 0)
+                return;
+
+            Process process = Process.ThisProcess();
+            zCVob vob = new zCVob(process, this.Address);
+            if (CDDyn)
+                vob.BitField1 |= (int)zCVob.BitFlag0.collDetectionDynamic;
+            else
+                vob.BitField1 &= ~(int)zCVob.BitFlag0.collDetectionDynamic;
+        }
+
+        public void setCDStatic(bool x)
+        {
+            this.CDStatic = x;
+
+            if (this.Address == 0)
+                return;
+
+            Process process = Process.ThisProcess();
+            zCVob vob = new zCVob(process, this.Address);
             if (CDStatic)
                 vob.BitField1 |= (int)zCVob.BitFlag0.collDetectionStatic;
             else

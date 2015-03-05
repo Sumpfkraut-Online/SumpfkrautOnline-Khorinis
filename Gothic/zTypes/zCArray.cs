@@ -6,7 +6,7 @@ using WinApi;
 
 namespace Gothic.zTypes
 {
-    public class zCArray<T> : zClass where T : zClass, new()
+    public class zCArray<T> : zClass where T : CallValue, new()
     {
         public zCArray(Process process, int Address)
             : base(process, Address)
@@ -62,6 +62,10 @@ namespace Gothic.zTypes
             if (arr is zCVob)
             {
                 Process.THISCALL<NullReturnCall>((uint)Address, (uint)0x00418120, new CallValue[] { arr });
+            }
+            else if (arr is IntArg)
+            {
+                Process.THISCALL<NullReturnCall>((uint)Address, (uint)0x004D5A30, new CallValue[] { arr });
             }
         }
     }

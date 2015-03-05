@@ -162,7 +162,11 @@ namespace GUC
             //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("oCNpc_EV_UseItem"), (int)oCNpc.FuncOffsets.EV_UseItem, (int)oCNpc.HookSize.EV_UseItem, 1);
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("oCNpc_EV_UseItemToState"), (int)oCNpc.FuncOffsets.EV_UseItemToState, (int)oCNpc.HookSize.EV_UseItemToState, 1);
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("oCNpc_EV_UseItemToState_CALLFUNC"), (int)oCNpc.FuncOffsets.EV_UseItemToState + 0x48D, 6, 0);
-            
+
+
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("CloseInventory"), (int)oCNpc.FuncOffsets.CloseInventory, (int)oCNpc.HookSize.CloseInventory, 0);
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("OpenInventory"), (int)oCNpc.FuncOffsets.OpenInventory, (int)oCNpc.HookSize.OpenInventory, 1);
+
             //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("EV_CreateInteractItem"), (int)0x00754890, (int)7, 1);
             //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("EV_CreateInteractItem"), (int)0x007546F0, (int)5, 1);
             //process.Write(new byte[] { 0xB8, 0x01, 0x00, 0x00, 0x00, 0xC2, 0x04, 0x00 }, 0x007546F0);
@@ -577,6 +581,8 @@ namespace GUC
                 }
                 if(OnRender != null)
                     OnRender(process, time);
+                if(Scripting.Events.OnRender != null)
+                    Scripting.Events.OnRender(process, time);
 
                 if (OnRenderTimedSecond != null && s_OnRenderCalledLastSecond < time)
                 {

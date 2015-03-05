@@ -79,6 +79,11 @@ namespace GUC.Hooks
                     stream.Write(mI.ID);
                     Program.client.client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
 
+                    if (mI is MobLockable && ( ((MobLockable)mI).KeyInstance != null ||  ( ((MobLockable)mI).PickLockStr != null && ((MobLockable)mI).PickLockStr.Length != 0)) )
+                    {
+                        oCMobLockable ML = new oCMobLockable(process, mI.Address);
+                        ML.SetLocked(1);
+                    }
                 }
             }
             catch (Exception ex)
@@ -202,7 +207,7 @@ namespace GUC.Hooks
 
 
 
-        public static Int32 StartStateChange(String message)
+        public static Int32 StartStateChange( String message )
         {
             int address = Convert.ToInt32(message);
             Process process = Process.ThisProcess();

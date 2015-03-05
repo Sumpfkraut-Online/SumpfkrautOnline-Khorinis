@@ -59,6 +59,54 @@ namespace GUC.WorldObjects.Mobs
                 mobinter.TriggerTarget.Set(this.TriggerTarget);
         }
 
+        public void setFocusName(String focusName)
+        {
+            this.FocusName = focusName;
+
+            if (this.Address == 0)
+                return;
+
+            oCMobInter mobInter = new oCMobInter(Process.ThisProcess(), this.Address);
+            if (this.FocusName != null && this.FocusName.Length != 0)
+            {
+                mobInter.SetName(this.FocusName);
+                mobInter.Name.Set(this.FocusName);
+            }
+            else
+            {
+                mobInter.SetName("");
+                mobInter.Name.Set("");
+            }
+        }
+
+        public void setTriggerTarget(String triggerTarget)
+        {
+            this.TriggerTarget = triggerTarget;
+
+            if (this.Address == 0)
+                return;
+
+            oCMobInter mobInter = new oCMobInter(Process.ThisProcess(), this.Address);
+            if (this.TriggerTarget != null && this.TriggerTarget.Length != 0)
+                mobInter.TriggerTarget.Set(this.TriggerTarget);
+            else
+                mobInter.TriggerTarget.Set("");
+        }
+
+        public void setUseWithItem(ItemInstance useWithItem)
+        {
+            this.UseWithItem = useWithItem;
+
+            if (this.Address == 0)
+                return;
+
+            oCMobInter mobInter = new oCMobInter(Process.ThisProcess(), this.Address);
+            if (this.UseWithItem != null)
+                mobInter.SetUseWithItem("ITGUC_" + this.UseWithItem.ID);
+            else
+                mobInter.SetUseWithItem("");
+        }
+
         protected void triggerMobInter(Process process, oCMobInter v)
         {
             if (v.State == 0 && this.State != 0)

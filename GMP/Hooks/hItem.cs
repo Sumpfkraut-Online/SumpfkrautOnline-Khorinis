@@ -85,7 +85,7 @@ namespace GUC.Hooks
                     sitem.toItem(item);
                 }
 
-           }
+            }
             catch (Exception ex)
             {
                 zERROR.GetZErr(Process.ThisProcess()).Report(4, 'G', "Hook oCStartAnim_ModelAnim: " + ex.ToString(), 0, "Hooks.zCModelHook.cs", 0);

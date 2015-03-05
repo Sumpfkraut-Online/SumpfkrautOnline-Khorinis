@@ -21,6 +21,13 @@ namespace GUC.Scripting
 
         protected bool ScriptFound = false;
 
+        protected static WinApi.Process s_Process = null;
+        public static WinApi.Process getProcess() {
+            if (s_Process == null)
+                s_Process = WinApi.Process.ThisProcess();
+            return s_Process;
+        }
+
         internal ScriptManager()
         {
             s_Self = this;

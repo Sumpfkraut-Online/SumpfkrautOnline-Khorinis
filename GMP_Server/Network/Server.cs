@@ -72,11 +72,14 @@ namespace GUC.Server.Network
 
             MessageListener.Add((byte)NetworkID.CastSpell, new CastSpell());
             MessageListener.Add((byte)NetworkID.SpellInvestMessage, new SpellInvestMessage());
+
+
+            MessageListener.Add((byte)NetworkID.PlayerOpenInventoryMessage, new OpenInventoryMessage());
         }
 
         public void Start(ushort port, ushort maxConnections, String pw)
         {
-            pw = "ver2.081" + pw;
+            pw = GUC.Options.Constants.VERSION + pw;
 
 
             SocketDescriptor socketDescriptor = new SocketDescriptor();

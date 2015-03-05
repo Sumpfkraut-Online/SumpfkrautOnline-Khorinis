@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using GUC.Enumeration;
 using RakNet;
+using System.Collections;
+using GUC.WorldObjects;
 
 namespace GUC.Server.Scripting.Objects.Character
 {
@@ -60,7 +62,25 @@ namespace GUC.Server.Scripting.Objects.Character
         internal WorldObjects.Character.NPC ProtoNPC { get { return (WorldObjects.Character.NPC)proto; } }
 
         public Player NPCController { get { return (ProtoNPC.NpcController == null) ? null : (Player)ProtoNPC.NpcController.ScriptingNPC; } }
-        
 
+        public static NPC[] getAll()
+        {
+            NPC[] protoList = new NPC[sWorld.NpcList.Count()];
+
+            for (int i = 0; i < sWorld.NpcList.Count(); i++)
+            {
+                protoList[i] = (NPC)sWorld.NpcList[i].ScriptingNPC;
+            }
+
+            return protoList;
+        }
+
+        public static IEnumerable ToEnumerable()
+        {
+            foreach (GUC.WorldObjects.Character.NPC item in sWorld.NpcList)
+            {
+                yield return (NPC)item.ScriptingNPC;
+            }
+        }
     }
 }

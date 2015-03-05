@@ -12,6 +12,36 @@ namespace GUC.Server.Network.Messages.MobInterCommands
 {
     class MobInterMessage : IMessage
     {
+        public static void Write(MobInterNetwork network, NPCProto player, Vob vob)
+        {
+            Write(network, player, vob, 'L');
+        }
+
+        public static void Write(MobInterNetwork network, NPCProto player, Vob vob, char pickLock)
+        {
+            BitStream stream = Program.server.SendBitStream;
+            stream.Reset();
+            stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
+            stream.Write((byte)NetworkID.MobInterMessage);
+            stream.Write((byte)network);
+            stream.Write(player.ID);
+            stream.Write(vob.ID);
+
+            if (network.HasFlag(MobInterNetwork.PickLock))
+                stream.Write(pickLock);
+
+            if (player is Player)
+            {
+                using (RakNet.RakNetGUID guid = new RakNetGUID(player.Guid))
+                    Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+            }
+            else
+            {
+                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            }
+        }
+
+
         public void Read(RakNet.BitStream stream, RakNet.Packet packet, Server server)
         {
             int vobID = 0, playerID = 0;

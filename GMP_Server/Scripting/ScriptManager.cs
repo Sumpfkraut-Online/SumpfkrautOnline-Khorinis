@@ -48,6 +48,9 @@ namespace GUC.Server.Scripting
 
         public bool Startuped { get { return m_Startuped; } }
 
+        public int Slots { get { return Program.serverOptions.Slots; } }
+        
+
         private void Load()
         {
             
@@ -157,12 +160,21 @@ namespace GUC.Server.Scripting
             try
             {
                 Listener.IServerStartup listener = (Listener.IServerStartup)m_Assembly.CreateInstance("GUC.Server.Scripts.Startup");
-                listener.OnServerInit();
+                try
+                {
+                    listener.OnServerInit();
+                }
+                catch (Exception ex2)
+                {
+                    Log.Logger.log(Log.Logger.LOG_ERROR, ex2.Source + "<br>" + ex2.Message + "<br>" + ex2.StackTrace);
+
+                }
             }
             catch (Exception ex)
             {
                 Log.Logger.log(Log.Logger.LOG_ERROR, "GUC.Server.Scripts.Startup-Class could not be found!" + "<br>" + ex.Source + "<br>" + ex.Message + "<br>" + ex.StackTrace);
             }
+            Log.Logger.log(Log.Logger.LOG_INFO, "GUC Server - Initalisation Complete GUC-Version: " + GUC.Options.Constants.VERSION);
             m_Startuped = true;
         }
 

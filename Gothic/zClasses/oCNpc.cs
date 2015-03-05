@@ -64,7 +64,9 @@ namespace Gothic.zClasses
 
             InteractItem = 0x968,
             InteractItemState = 0x96C,
-            InteractItemTargetState = 0x0970
+            InteractItemTargetState = 0x0970,
+
+            VoiceHandleList = 0x0740
         }
 
         public enum NPC_Talents
@@ -101,6 +103,7 @@ namespace Gothic.zClasses
         {
             Disable = 0x00745A20,
             OpenInventory = 0x00762250,
+            CloseInventory = 0x00762410,
             PutInInv_Str = 0x00749570,
             PutInInv_Int = 0x007494B5,
             PutInInv_Item = 0x00749350,
@@ -213,6 +216,7 @@ namespace Gothic.zClasses
         public enum HookSize : uint
         {
             OpenInventory = 6,
+            CloseInventory = 9,
             PutInInv_Str = 5,
             PutInInv_Int = 7,
             PutInInv_Item = 6,
@@ -383,6 +387,12 @@ namespace Gothic.zClasses
         #endregion
 
         #region Fields
+
+        public zCArray<IntArg> listOfVoiceHandles
+        {
+            get { return new zCArray<IntArg>(Process, this.Address + (int)Offsets.VoiceHandleList); }
+        }
+
 
         public int InteractItemState
         {
@@ -1176,6 +1186,11 @@ namespace Gothic.zClasses
         public void OpenInventory(int inv)
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.OpenInventory, new CallValue[] { new IntArg(inv) });
+        }
+
+        public void CloseInventory()
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.CloseInventory, new CallValue[] {  });
         }
 
         public void OpenDeadNPC()

@@ -229,7 +229,7 @@ namespace GUC.Server.Scripting.Objects.Character
         internal GUC.WorldObjects.Character.NPCProto proto { get { return (GUC.WorldObjects.Character.NPCProto)vob; } }
 
 
-        public NPCProto[] getAll()
+        public static NPCProto[] getAll()
         {
             NPCProto[] protoList = new NPCProto[sWorld.NpcProtoList.Count()];
 
@@ -241,6 +241,14 @@ namespace GUC.Server.Scripting.Objects.Character
             return protoList;
         }
 
+        public static IEnumerable ToEnumerable()
+        {
+            foreach (GUC.WorldObjects.Character.NPCProto item in sWorld.NpcProtoList)
+            {
+                yield return (NPCProto)item.ScriptingNPC;
+            }
+        }
+
         #region Fields
 
         public String Name { get { return proto.Name; } set { setName(value); } }
@@ -248,6 +256,12 @@ namespace GUC.Server.Scripting.Objects.Character
         public Vec3f Scale { get { return proto.Scale; } set { setScale(value); } }
 
         public ColorRGBA Color { get; set; }
+
+        public float Fatness
+        {
+            get { return proto.Fatness; }
+            set { setFatness(value); }
+        }
 
         public int Strength {
             get { return proto.Attributes[(byte)NPCAttribute.ATR_STRENGTH]; }
@@ -822,7 +836,7 @@ namespace GUC.Server.Scripting.Objects.Character
                 itemList[i] = item.ScriptingProto;
                 i += 1;
             }
-
+            
             return itemList;
         }
 
@@ -1053,6 +1067,16 @@ namespace GUC.Server.Scripting.Objects.Character
             Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
+        public Item[] getEquippedItems()
+        {
+            Item[] items = new Item[proto.EquippedList.Count];
+            for (int i = 0; i < proto.EquippedList.Count; i++ )
+            {
+                items[i] = proto.EquippedList[i].ScriptingProto;
+            }
+            return items;
+        }
+
         public void Equip(Item item)
         {
             if (item == null)
@@ -1194,6 +1218,11 @@ namespace GUC.Server.Scripting.Objects.Character
                 this.proto.SendToAreaPlayersAndPlayer(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED);
             }
             //Program.server.server.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+        }
+
+        public String[] getOverlays()
+        {
+            return this.proto.Overlays.ToArray();
         }
 
         public void ApplyOverlay(String anim)
@@ -1520,6 +1549,7 @@ namespace GUC.Server.Scripting.Objects.Character
         
 
         #endregion
+
 
     }
 }

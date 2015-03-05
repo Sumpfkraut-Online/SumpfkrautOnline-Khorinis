@@ -42,6 +42,14 @@ namespace GUC.Server.Scripting.Objects.Mob
         public MobContainer(String visual, String focusName, ItemInstance[] items, int[] amounts, bool isLocked, ItemInstance keyInstance, String pickLockString, ItemInstance useWithItem, String triggerTarget, bool cdDyn, bool cdStatic)
             : this(new GUC.WorldObjects.Mobs.MobContainer(), visual, focusName, items, amounts, isLocked, keyInstance, pickLockString, useWithItem, triggerTarget, cdDyn, cdStatic, true)
         { }
+
+        
+        protected MobContainer()
+            : this(new GUC.WorldObjects.Mobs.MobContainer(), null, null, null, null, false, null, null, null, null, false, false, false)
+        {
+
+        }
+
         internal MobContainer(GUC.WorldObjects.Mobs.MobContainer mobInter, String visual, String focusName, ItemInstance[] items, int[] amounts, bool isLocked, ItemInstance keyInstance, String pickLockString, ItemInstance useWithItem, String triggerTarget, bool cdDyn, bool cdStatic, bool useCreate)
             : base(mobInter, visual, focusName, isLocked, keyInstance, pickLockString, useWithItem, triggerTarget, cdDyn, cdStatic)
         {

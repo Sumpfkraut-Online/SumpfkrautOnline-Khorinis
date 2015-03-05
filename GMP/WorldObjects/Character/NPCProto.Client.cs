@@ -19,7 +19,15 @@ namespace GUC.WorldObjects.Character
     {
         public List<String> AnimationList = new List<string>();
 
-
+        public override Scripting.Objects.Vob ScriptingInstance
+        {
+            get
+            {
+                if (m_ScriptingInstance == null)
+                    m_ScriptingInstance = new Scripting.Objects.Character.NPCProto(this);
+                return m_ScriptingInstance;
+            }
+        }
 
         partial void addItemToContainer(Item item)
         {
@@ -38,6 +46,7 @@ namespace GUC.WorldObjects.Character
 
         protected oCNpc gNPC { get { return new oCNpc(Process.ThisProcess(), Address); } }
 
+        
 
         public override VobSendFlags Read(RakNet.BitStream stream)
         {
