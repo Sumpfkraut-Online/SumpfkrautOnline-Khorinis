@@ -85,6 +85,9 @@ build/
 *.log
 *.scc
 
+# project files
+*.csproj
+
 # Visual C++ cache files
 ipch/
 *.aps
