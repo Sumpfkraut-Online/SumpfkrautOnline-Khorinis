@@ -42,7 +42,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         /**
          *   Dictionary which holds all EffectChanges for faster access.
-         *   May be deprecated later if only using the databse directly.
+         *   May be deprecated later if only using the database directly.
          */
         private static Dictionary<EffectChangesEnum, string> EffectChangesDict = new Dictionary<EffectChangesEnum, string>();
 
@@ -112,9 +112,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             {
                 switch (changeType)
                 {
-                    //case (EffectChangesEnum.IsGold):
-                    //    def.IsGold = Convert.ToBoolean(param);
-                    //    return;
                     case (EffectChangesEnum.IsGold):
                         bool isGold = false;
                         if (bool.TryParse(param, out isGold))
@@ -126,9 +123,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
                     //case (EffectChangesEnum.IsKeyInstance):
                     //    def.IsKeyInstance = Convert.ToBoolean(param);
                     //    return;
-                    //case (EffectChangesEnum.IsTorch):
-                    //    def.IsTorch = Convert.ToBoolean(param);
-                    //    return;
                     case (EffectChangesEnum.IsTorch):
                         bool isTorch = false;
                         if (bool.TryParse(param, out isTorch))
@@ -136,9 +130,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
                             def.setIsTorch(isTorch);
                         }
                         return;
-                    //case (EffectChangesEnum.IsTorchBurning):
-                    //    def.IsTorchBurning = Convert.ToBoolean(param);
-                    //    return;
                     case (EffectChangesEnum.IsTorchBurning):
                         bool isTorchBurning = false;
                         if (bool.TryParse(param, out isTorchBurning))
@@ -146,9 +137,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
                             def.setIsTorchBurning(isTorchBurning);
                         }
                         return;
-                    //case (EffectChangesEnum.IsTorchBurned):
-                    //    def.IsTorchBurned = Convert.ToBoolean(param);
-                    //    return;
                     case (EffectChangesEnum.IsTorchBurned):
                         bool isTorchBurned = false;
                         if (bool.TryParse(param, out isTorchBurned))
@@ -157,9 +145,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
                         }
                         return;
 
-                    //case (EffectChangesEnum.Effect):
-                    //    def.Effect = param;
-                    //    return;
                     case (EffectChangesEnum.Effect):
                         if (param != null)
                         {
@@ -170,9 +155,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
                         // !!! TO DO: requires SpellDef --> resulting SpellInst !!!
                         return;
 
-                    //case (EffectChangesEnum.Wear):
-                    //    def.Wear = (Enumeration.ArmorFlags) Convert.ToInt32(param);
-                    //    return;
                     case (EffectChangesEnum.Wear):
                         int wear = 0;
                         if (Int32.TryParse(param, out wear))
@@ -180,9 +162,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
                             def.setWear((Enumeration.ArmorFlags) wear);
                         }
                         return;
-                    //case (EffectChangesEnum.DamageType):
-                    //    def.DamageType = (Enumeration.DamageType) Convert.ToInt32(param);
-                    //    return;
                     case (EffectChangesEnum.DamageType):
                         int damageType = 0;
                         if (Int32.TryParse(param, out damageType))
@@ -190,9 +169,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
                             def.setDamageType((Enumeration.DamageTypes) damageType);
                         }
                         return;
-                    //case (EffectChangesEnum.Range):
-                    //    def.Range = Convert.ToInt32(param);
-                    //    return;
                     case (EffectChangesEnum.Range):
                         int addRange = 0;
                         if (Int32.TryParse(param, out addRange))
@@ -200,9 +176,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
                             def.setRange(def.getRange() + addRange);
                         }
                         return;
-                    //case (EffectChangesEnum.TotalDamage):
-                    //    def.TotalDamage = Convert.ToInt32(param);
-                    //    return;
                     case (EffectChangesEnum.TotalDamage):
                         int addTotalDamage = 0;
                         if (Int32.TryParse(param, out addTotalDamage))
