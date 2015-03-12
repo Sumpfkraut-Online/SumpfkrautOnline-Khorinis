@@ -187,7 +187,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
                         int damageType = 0;
                         if (Int32.TryParse(param, out damageType))
                         {
-                            def.setDamageType((Enumeration.DamageType) damageType);
+                            def.setDamageType((Enumeration.DamageTypes) damageType);
                         }
                         return;
                     //case (EffectChangesEnum.Range):
@@ -255,51 +255,51 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
                         }
                         return;
 
-                    case (EffectChangesEnum.HPChange):
-                        int addHPChange = 0;
-                        if (Int32.TryParse(param, out addHPChange))
-                        {
-                            def.setHPChange(def.getHPChange() + addHPChange);
-                        }
-                        else
-                        {
-                            throw new Exception("Couldn't convert part of param-string to int while applying HPChange.");
-                        }
-                        return;
-                    case (EffectChangesEnum.HPMaxChange):
-                        int addHPMaxChange = 0;
-                        if (Int32.TryParse(param, out addHPMaxChange))
-                        {
-                            def.setHPMaxChange(def.getHPMaxChange() + addHPMaxChange);
-                        }
-                        else
-                        {
-                            throw new Exception("Couldn't convert part of param-string to int while applying HPMaxChange.");
-                        }
-                        return;
-                    case (EffectChangesEnum.MPChange):
-                        int addMPChange = 0;
-                        if (Int32.TryParse(param, out addMPChange))
-                        {
-                            def.setMPChange(def.getMPChange() + addMPChange);
-                        }
-                        else
-                        {
-                            throw new Exception("Couldn't convert part of param-string to int while applying MPChange.");
-                        }
-                        return;
-                    case (EffectChangesEnum.MPMaxChange):
-                        def.setMPMaxChange(Convert.ToInt32(param));
-                        int addMPMaxChange = 0;
-                        if (Int32.TryParse(param, out addMPMaxChange))
-                        {
-                            def.setMPMaxChange(def.getMPMaxChange() + addMPMaxChange);
-                        }
-                        else
-                        {
-                            throw new Exception("Couldn't convert part of param-string to int while applying MPMaxChange.");
-                        }
-                        return;
+                    //case (EffectChangesEnum.HPChange):
+                    //    int addHPChange = 0;
+                    //    if (Int32.TryParse(param, out addHPChange))
+                    //    {
+                    //        def.setHPChange(def.getHPChange() + addHPChange);
+                    //    }
+                    //    else
+                    //    {
+                    //        throw new Exception("Couldn't convert part of param-string to int while applying HPChange.");
+                    //    }
+                    //    return;
+                    //case (EffectChangesEnum.HPMaxChange):
+                    //    int addHPMaxChange = 0;
+                    //    if (Int32.TryParse(param, out addHPMaxChange))
+                    //    {
+                    //        def.setHPMaxChange(def.getHPMaxChange() + addHPMaxChange);
+                    //    }
+                    //    else
+                    //    {
+                    //        throw new Exception("Couldn't convert part of param-string to int while applying HPMaxChange.");
+                    //    }
+                    //    return;
+                    //case (EffectChangesEnum.MPChange):
+                    //    int addMPChange = 0;
+                    //    if (Int32.TryParse(param, out addMPChange))
+                    //    {
+                    //        def.setMPChange(def.getMPChange() + addMPChange);
+                    //    }
+                    //    else
+                    //    {
+                    //        throw new Exception("Couldn't convert part of param-string to int while applying MPChange.");
+                    //    }
+                    //    return;
+                    //case (EffectChangesEnum.MPMaxChange):
+                    //    def.setMPMaxChange(Convert.ToInt32(param));
+                    //    int addMPMaxChange = 0;
+                    //    if (Int32.TryParse(param, out addMPMaxChange))
+                    //    {
+                    //        def.setMPMaxChange(def.getMPMaxChange() + addMPMaxChange);
+                    //    }
+                    //    else
+                    //    {
+                    //        throw new Exception("Couldn't convert part of param-string to int while applying MPMaxChange.");
+                    //    }
+                    //    return;
 
                     default:
                         throw new Exception("There exists no effect-change for EffectChangesEnum changeType="
