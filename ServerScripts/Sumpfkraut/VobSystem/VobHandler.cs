@@ -9,6 +9,8 @@ using SQLiteDataReader = Mono.Data.Sqlite.SqliteDataReader;
 using SQLiteCommand = Mono.Data.Sqlite.SqliteCommand;
 using GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Server.Scripts.Sumpfkraut.Database;
+using GUC.Enumeration;
+using GUC.Server.Scripting.Objects;
 
 namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 {
@@ -24,10 +26,10 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
         //protected List<SpellDef> spellDefList = new List<SpellDef>();
         //protected List<NPCDef> npcDefList = new List<NPCDef>();
 
-        private Dictionary<int, MobDef> mobDefDict = new Dictionary<int, MobDef>();
-        private Dictionary<int, ItemDef> itemDefDict = new Dictionary<int, ItemDef>();
-        private Dictionary<int, SpellDef> spellDefDict = new Dictionary<int, SpellDef>();
-        private Dictionary<int, NPCDef> npcDefDict = new Dictionary<int, NPCDef>();
+        private static Dictionary<int, MobDef> mobDefDict = new Dictionary<int, MobDef>();
+        private static Dictionary<int, ItemDef> itemDefDict = new Dictionary<int, ItemDef>();
+        private static Dictionary<int, SpellDef> spellDefDict = new Dictionary<int, SpellDef>();
+        private static Dictionary<int, NPCDef> npcDefDict = new Dictionary<int, NPCDef>();
 
         /**
          *   Call this method from outside to create the intial vob definitions
@@ -81,6 +83,134 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             List<SQLiteGetTypeEnum> colTypesVals = new List<SQLiteGetTypeEnum>(colTypes.Values);
             LoadVobDef(defTabName, ref colTypes, out defList, out colTypesKeys, out colTypesVals);
 
+            // !!! continue with loading Effect_Changes
+            // !!! apply EffectChanges
+            // !!! instantiate definitions objects (results in them being listed)
+
+            // for easier list-indexing in list<object> of defList = List<List<object>>
+            Dictionary<string, int> colDict = new Dictionary<string, int>();
+            for (int i = 0; i < colTypesKeys.Count; i++)
+            {
+                colDict.Add(colTypesKeys[i], i);
+            }
+
+            // Please forgive me this horrible loop, the G:UC doesn't give me a chance to do it right!
+            for (int r = 0; r < defList.Count; r++)
+            {
+                //instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, visualSkin, types, munition, keyInstance, torch, torchBurning, torchBurned, gold
+                String instanceName = "";
+                String name = "";
+                String scemeName = "";
+                int[] protection = null;
+                int[] damages = null;
+                int value = 0;
+                MainFlags mainFlags = 0;
+                Flags flags = 0;
+                ArmorFlags armorFlags = 0;
+                DamageType dmgType = 0;
+                int totalDamage = 0;
+                int range = 0;
+                String visual = "";
+                String visual_Change = "";
+                String effect = "";
+                int visualSkin = 0;
+                MaterialTypes types = 0;
+                ItemInstance munition = null;
+                bool keyInstance = false;
+                bool torch = false;
+                bool torchBurning = false;
+                bool torchBurned = false;
+                bool gold = false;
+
+                // temporary used index for more secure code
+                int colIndex = -1;
+
+                if (colDict.TryGetValue("InstanceName", out colIndex))
+                {
+                    instanceName = (String) defList[r][colIndex];
+                }
+
+                if (colDict.TryGetValue("Name", out colIndex))
+                {
+                    name = (String) defList[r][colIndex];
+                }
+
+                if (colDict.TryGetValue("ScemeName", out colIndex))
+                {
+                    name = (String) defList[r][colIndex];
+                }
+
+                // TO DO: protection assignment through loaded effect-changes
+
+                if (colDict.TryGetValue("ScemeName", out colIndex))
+                {
+                    scemeName = (String) defList[r][colIndex];
+                }
+
+                // TO DO: damages assignment through loaded effect-changes
+
+                // TO DO: value assignment through loaded effect-changes
+
+                if (colDict.TryGetValue("MainFlag", out colIndex))
+                {
+                    mainFlags = (MainFlags) defList[r][colIndex];
+                }
+
+                // TO DO: value assignment through loaded effect-changes
+
+                // TO DO: armorFlags assignment through loaded effect-changes
+
+                // TO DO: dmgType assignment through loaded effect-changes
+
+                // TO DO: totalDamage assignment through loaded effect-changes
+
+                // TO DO: range assignment through loaded effect-changes
+
+                if (colDict.TryGetValue("Visual", out colIndex))
+                {
+                    visual = (String) defList[r][colIndex];
+                }
+
+                // TO DO: visual_Change assignment through loaded effect-changes
+
+                // TO DO: effect assignment through loaded effect-changes
+
+                if (colDict.TryGetValue("Visual_Skin", out colIndex))
+                {
+                    visualSkin = (int) defList[r][colIndex];
+                }
+
+                if (colDict.TryGetValue("Material", out colIndex))
+                {
+                    types = (MaterialTypes) defList[r][colIndex];
+                }
+
+                // TO DO: munition assignment through loaded effect-changes
+
+                // TO DO: keyInstance assignment through loaded effect-changes
+
+                // TO DO: torch assignment through loaded effect-changes
+
+                // TO DO: torchBurning assignment through loaded effect-changes
+
+                // TO DO: torchBurned assignment through loaded effect-changes
+
+                // TO DO: gold assignment through loaded effect-changes
+
+                // create new ItemInstance to list it internally for the G:UC and list it
+                // for the standardized serverscripts too
+                ItemDef newDef = new ItemDef(instanceName, name, scemeName, protection, damages, 
+                    value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, 
+                    visual_Change, effect, visualSkin, types, munition, keyInstance, torch, 
+                    torchBurning, torchBurned, gold);
+                if (newDef != null)
+                {
+                    itemDefDict.Add(0, newDef); ;
+                }
+
+
+            }
+            
 
         }
 
