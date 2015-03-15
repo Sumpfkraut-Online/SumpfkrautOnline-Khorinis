@@ -34,9 +34,12 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
         /**
          *   Call this method from outside to create the intial vob definitions
          *   (spells, items, mobs, npcs).
+         *   The given order is important for successful loading because some items use spells,
+         *   and npcs might be using spells, items or mobs.
          */
         public static void Init ()
         {
+
             loadDefinitions(DefTableEnum.Spell_def);
             loadDefinitions(DefTableEnum.Item_def);
             loadDefinitions(DefTableEnum.Mob_def);
@@ -95,9 +98,13 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             }
 
             // Please forgive me this horrible loop, the G:UC doesn't give me a chance to do it right!
+            // !!! only items are handled for now --> seperate into private methods for the individual types !!!
+            // !!! don't forget loading the EffectChanges !!!
             for (int r = 0; r < defList.Count; r++)
             {
-                //instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, visualSkin, types, munition, keyInstance, torch, torchBurning, torchBurned, gold
+
+
+
                 String instanceName = "";
                 String name = "";
                 String scemeName = "";
