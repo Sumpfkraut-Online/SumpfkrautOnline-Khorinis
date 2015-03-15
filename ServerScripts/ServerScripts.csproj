@@ -413,6 +413,17 @@
     <Compile Include="StartModules\AbstractModule.cs" />
     <Compile Include="StartModules\Modules.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Sumpfkraut\Database\DBTables.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\EffectChangesDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\ItemDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\MobDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\NPCDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\SpellDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\VobHandler.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\VobInstances\ItemInst.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\VobInstances\MobInst.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\VobInstances\NPCInst.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\VobInstances\SpellInst.cs" />
     <Compile Include="Test\ListTestModule.cs" />
     <Compile Include="Test\Text3DTest.cs" />
     <Compile Include="Utils\RandomManager.cs" />
