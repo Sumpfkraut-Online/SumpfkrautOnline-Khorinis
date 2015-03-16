@@ -518,7 +518,6 @@ namespace GUC.Server.Scripting.Objects.Character
 
         /**
          *   Method used to check what item inhibits a given inventory slot.
-         *   Method used to check what item inhibits a given inventory slot.
          *   @param index of type int as slot-index for which the item is requested.
          *   @return ScriptingProto-Object or null if there is no item for the given slot-index.
          */
