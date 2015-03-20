@@ -34,12 +34,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
         /**
          *   Call this method from outside to create the intial vob definitions
          *   (spells, items, mobs, npcs).
-         *   The given order is important for successful loading because some items use spells,
-         *   and npcs might be using spells, items or mobs.
          */
         public static void Init ()
         {
-
             loadDefinitions(DefTableEnum.Spell_def);
             loadDefinitions(DefTableEnum.Item_def);
             loadDefinitions(DefTableEnum.Mob_def);
@@ -76,15 +73,17 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                 return;
             }
 
+
             /* receive list of vob-definitions here and iterate over it, 
              * loading and applying the effec-changes */
+
             // stores the read and converted data of the sql-query
             List<List<object>> defList = new List<List<object>>();
             // to lists to ensure same key-value-order for each row in rdr because the memory
             // allocation of the original dictionary and order might be changed during runtime
             List<string> colTypesKeys = new List<string>(colTypes.Keys);
             List<SQLiteGetTypeEnum> colTypesVals = new List<SQLiteGetTypeEnum>(colTypes.Values);
-            LoadVobDef(defTabName, ref colTypes, out defList, out colTypesKeys, out colTypesVals);
+            LoadVobDef(defTabName, out defList, ref colTypes, out colTypesKeys, out colTypesVals);
 
             // !!! continue with loading Effect_Changes
             // !!! apply EffectChanges
@@ -98,11 +97,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             }
 
             // Please forgive me this horrible loop, the G:UC doesn't give me a chance to do it right!
-            // !!! only items are handled for now --> seperate into private methods for the individual types !!!
-            // !!! don't forget loading the EffectChanges !!!
             for (int r = 0; r < defList.Count; r++)
             {
-
 
 
                 String instanceName = "";
@@ -114,14 +110,14 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                 MainFlags mainFlags = 0;
                 Flags flags = 0;
                 ArmorFlags armorFlags = 0;
-                DamageTypes dmgType = 0;
+                DamageType dmgType = 0;
                 int totalDamage = 0;
                 int range = 0;
                 String visual = "";
                 String visual_Change = "";
                 String effect = "";
                 int visualSkin = 0;
-                MaterialType types = 0;
+                MaterialTypes types = 0;
                 ItemInstance munition = null;
                 bool keyInstance = false;
                 bool torch = false;
@@ -129,7 +125,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                 bool torchBurned = false;
                 bool gold = false;
 
-                // temporary used index for more secure code
+                // temporary used index for more secure code through TryGetValue (see if-blocks below)
                 int colIndex = -1;
 
                 if (colDict.TryGetValue("InstanceName", out colIndex))
@@ -189,7 +185,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 
                 if (colDict.TryGetValue("Material", out colIndex))
                 {
-                    types = (MaterialType) defList[r][colIndex];
+                    types = (MaterialTypes) defList[r][colIndex];
                 }
 
                 // TO DO: munition assignment through loaded effect-changes
@@ -221,9 +217,33 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 
         }
 
-        private static void LoadVobDef (string defTabName, ref Dictionary<String, SQLiteGetTypeEnum> colTypes, 
-            out List<List<object>> defList, out List<string> colTypesKeys, 
-            out List<SQLiteGetTypeEnum> colTypesVals, string sqlWhere="1")
+        private static void LoadVobDef (string defTabName, out List<List<object>> defList,
+            DefTableEnum defTabEnum,
+            out List<string> colTypesKeys, out List<SQLiteGetTypeEnum> colTypesVals, 
+            string sqlWhere="1")
+        {
+            defList = new List<List<object>>();
+            // to lists to ensure same key-value-order for each row in rdr because, otherwise, the memory
+            // adresses of the original dictionary and order might be changed during runtime
+            colTypesKeys = new List<string>();
+            colTypesVals = new List<SQLiteGetTypeEnum>();
+
+            Dictionary<String, SQLiteGetTypeEnum> colTypes = null;
+            if (DBTables.DefTableDict.TryGetValue(DefTableEnum.Effect_Changes_def, out colTypes))
+            {
+                LoadVobDef(defTabName, out defList, ref colTypes, out colTypesKeys, 
+                out colTypesVals, sqlWhere);
+            }
+            else
+            {
+                throw new Exception("Cannot load vob definition of vobtype " + defTabEnum + ".");
+            }  
+        }
+
+        private static void LoadVobDef (string defTabName, out List<List<object>> defList, 
+            ref Dictionary<String, SQLiteGetTypeEnum> colTypes, 
+            out List<string> colTypesKeys, out List<SQLiteGetTypeEnum> colTypesVals, 
+            string sqlWhere="1")
         {
             // stores the read and converted data of the sql-query
             defList = new List<List<object>>();
@@ -234,8 +254,12 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 
             using (SQLiteCommand cmd = new SQLiteCommand(Sqlite.getSqlite().connection))
             {
-                cmd.CommandText = "SELECT (" + String.Join(",", colTypesKeys.ToArray()) + ") FROM `" 
-                    + defTabName + "` WHERE " + sqlWhere;
+                // outputs all vob definition rows with chosen entries which fit the WHERE-condition
+                // and sorts them in ascending order accordingly
+                cmd.CommandText = "SELECT (" + String.Join(",", colTypesKeys.ToArray()) 
+                    + ") FROM `" + defTabName 
+                    + "` WHERE " + sqlWhere 
+                    + " ORDER BY `ID` ASC";
                 SQLiteDataReader rdr = null;
                 try
                 {
@@ -273,73 +297,80 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             }
         }
 
-        private static void LoadEffectDef (out List<int> colKeys, out List<object> colVals, 
-            ref List<int> effectDefIDs)
-        {
-            colKeys = new List<int>();
-            colVals = new List<object>();
+        //private static void LoadEffectDef (ref List<int> effectDefIDs, 
+        //    ref Dictionary<String, SQLiteGetTypeEnum> colTypes, 
+        //    out List<string> colTypesKeys, out List<SQLiteGetTypeEnum> colTypesVals, 
+        //    string sqlWhere="1")
+        //{
+            ////colKeys = new List<int>();
+            ////colVals = new List<object>();
 
-            if ((effectDefIDs == null) || (effectDefIDs.Count <= 0))
-            {
-                return;
-            }
+            //if ((effectDefIDs == null) || (effectDefIDs.Count <= 0))
+            //{
+            //    return;
+            //}
 
-            using (SQLiteCommand cmd = new SQLiteCommand(Sqlite.getSqlite().connection))
-            {
-                cmd.CommandText = "SELECT * FROM `Effect_def` WHERE `ID` IN (" 
-                    + String.Join(",", effectDefIDs.ToArray()) 
-                    + ") ORDER BY `ID` ASC;";
+            //using (SQLiteCommand cmd = new SQLiteCommand(Sqlite.getSqlite().connection))
+            //{
+            //    cmd.CommandText = "SELECT * FROM `Effect_def` WHERE `ID` IN (" 
+            //        + String.Join(",", effectDefIDs.ToArray()) 
+            //        + ") ORDER BY `ID` ASC;";
 
-                SQLiteDataReader rdr = null;
-                try
-                {
-                    rdr = cmd.ExecuteReader();
-                    if (!rdr.HasRows)
-                    {
-                        return;
-                    }
+            //    SQLiteDataReader rdr = null;
+            //    try
+            //    {
+            //        rdr = cmd.ExecuteReader();
+            //        if (!rdr.HasRows)
+            //        {
+            //            return;
+            //        }
 
-                    Dictionary<String, SQLiteGetTypeEnum> colTypes = null;
-                    if (!DBTables.DefTableDict.TryGetValue(DefTableEnum.Effect_Changes_def, out colTypes))
-                    {
-                        return;
-                    }
+            //        //Dictionary<String, SQLiteGetTypeEnum> colTypes = null;
+            //        //if (!DBTables.DefTableDict.TryGetValue(DefTableEnum.Effect_Changes_def, out colTypes))
+            //        //{
+            //        //    return;
+            //        //}
 
-                    int col = 0;
-                    while(rdr.Read())
-                    {
-                        col = 0;
-                        foreach(KeyValuePair<string, SQLiteGetTypeEnum> e in colTypes)
-                        {
-                            //colKeys.Add(e.Key);
-                            //colVals.Add(DBTables.SqlReadType(ref rdr, col, e.Value));
-                            col++;
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception("Could not execute SQLiteDataReader during loading of effect changes definitions: " + ex);
-                }
-                finally
-                {
-                    if (rdr != null)
-                    {
-                        rdr.Close();
-                    }
-                }
-            }
-        }
+            //        int col = 0;
+            //        while(rdr.Read())
+            //        {
+            //            col = 0;
+            //            foreach(KeyValuePair<string, SQLiteGetTypeEnum> e in colTypes)
+            //            {
+            //                //colKeys.Add(e.Key);
+            //                //colVals.Add(DBTables.SqlReadType(ref rdr, col, e.Value));
+            //                col++;
+            //            }
+            //        }
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        throw new Exception("Could not execute SQLiteDataReader during loading of effect changes definitions: " + ex);
+            //    }
+            //    finally
+            //    {
+            //        if (rdr != null)
+            //        {
+            //            rdr.Close();
+            //        }
+            //    }
+            //}
+        //}
 
 
         // must be able to read multiple rows 
         // count of colVals multiple of the count of colKeys to prevent unnecessary repetition?
         // 1 => object, 2 => object, 3 => object, 4 => object, ... , 1 => object, ...
-        private static void LoadEffectChangesDef (out List<int> colKeys, out List<object> colVals, 
-            ref List<int> effectDefIDs)
+        private static void LoadEffectChangesDef (ref List<int> effectDefIDs, 
+            out List<string> colTypesKeys, out List<SQLiteGetTypeEnum> colTypesVals, 
+            string sqlWhere="1")
         {
-            colKeys = new List<int>();
-            colVals = new List<object>();
+            Dictionary<String, SQLiteGetTypeEnum> colTypes = null;
+            DBTables.DefTableDict.TryGetValue(DefTableEnum.Effect_Changes_def, out colTypes);
+            // to lists to ensure same key-value-order for each row in rdr because, otherwise, the memory
+            // adresses of the original dictionary and order might be changed during runtime
+            colTypesKeys = new List<string>(colTypes.Keys);
+            colTypesVals = new List<SQLiteGetTypeEnum>(colTypes.Values);
 
             if ((effectDefIDs == null) || (effectDefIDs.Count <= 0))
             {
@@ -348,9 +379,13 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 
             using (SQLiteCommand cmd = new SQLiteCommand(Sqlite.getSqlite().connection))
             {
-                cmd.CommandText = "SELECT * FROM `Effect_Changes_def` WHERE `EffectDefID` IN (" 
+                // outputs a row for each effect change definition for the given IDs 
+                // and sorts them accordingly in ascending order before returnign the query
+                cmd.CommandText = "SELECT" + String.Join(",", colTypesKeys.ToArray()) 
+                    +  "FROM `Effect_Changes_def` WHERE `EffectDefID` IN (" 
                     + String.Join(",", effectDefIDs.ToArray()) 
-                    + ") ORDER BY `EffectDefID` ASC;";
+                    + ") WHERE" + sqlWhere
+                    + " ORDER BY `EffectDefID` ASC;";
 
                 SQLiteDataReader rdr = null;
                 try
@@ -361,25 +396,17 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                         return;
                     }
 
-                    Dictionary<String, SQLiteGetTypeEnum> colTypes = null;
-                    DBTables.DefTableDict.TryGetValue(DefTableEnum.Effect_Changes_def, out colTypes);
-                    if (colTypes == null)
-                    {
-                        return;
-                    }
+                    // temporary list to put all data of a row into
+                    List<object> rowList = null;
 
-                    
-
-                    int col = 0;
-                    while(rdr.Read())
+                    while (rdr.Read())
                     {
-                        col = 0;
-                        foreach(KeyValuePair<string, SQLiteGetTypeEnum> e in colTypes)
+                        rowList = new List<object>();
+                        for (int col=0; col<colTypesKeys.Count; col++)
                         {
-                            //colKeys.Add(e.Key);
-                            //colVals.Add(DBTables.SqlReadType(ref rdr, col, e.Value));
-                            col++;
+                            rowList.Add(DBTables.SqlReadType(ref rdr, col, colTypesVals[col]));
                         }
+                        //defList.Add(rowList);
                     }
                 }
                 catch (Exception ex)
