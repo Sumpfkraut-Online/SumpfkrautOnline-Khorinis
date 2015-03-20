@@ -9,28 +9,39 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
     enum EffectChangesEnum
     {
-        IsGold                      = 100,
-        IsKeyInstance               = 101,
-        IsTorch                     = 102,
-        IsTorchBurning              = 103,
-        IsTorchBurned               = 104,
+        // 1 - 5
+        IsGold,
+        IsKeyInstance,
+        IsTorch,
+        IsTorchBurning,
+        IsTorchBurned,
 
-        Effect                      = 105,
-        Spell                       = 106,
+        Effect,
+        Spell,
 
-        Wear                        = 107,
-        DamageType                  = 108,
-        Range                       = 109,
-        TotalDamage                 = 110,
-        Damages                     = 111,
-        Munition                    = 112,
+        Wear,
+        DamageType,
+        Range,
+        TotalDamage,
+        Damages,
+        Munition,
 
-        Protection                  = 113,
+        Protection,
 
-        HPChange                    = 114,
-        HPMaxChange                 = 115,
-        MPChange                    = 116,
-        MPMaxChange                 = 117,
+        OnUse_HPChange,
+        OnUse_HPMaxChange,
+        OnUse_MPChange,
+        OnUse_MPMaxChange,
+
+        OnEquip_HPChange,
+        OnEquip_HPMaxChange,
+        OnEquip_MPChange,
+        OnEquip_MPMaxChange,
+
+        OnUnEquip_HPChange,
+        OnUnEquip_HPMaxChange,
+        OnUnEquip_MPChange,
+        OnUnEquip_MPMaxChange,
     }
 
     /**
@@ -42,7 +53,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         /**
          *   Dictionary which holds all EffectChanges for faster access.
-         *   May be deprecated later if only using the databse directly.
+         *   May be deprecated later if only using the database directly.
          */
         private static Dictionary<EffectChangesEnum, string> EffectChangesDict = new Dictionary<EffectChangesEnum, string>();
 
@@ -110,11 +121,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         {
             try
             {
+                // please don't kill me for this switch case... it could use a more OOP-like replacement
                 switch (changeType)
                 {
-                    //case (EffectChangesEnum.IsGold):
-                    //    def.IsGold = Convert.ToBoolean(param);
-                    //    return;
                     case (EffectChangesEnum.IsGold):
                         bool isGold = false;
                         if (bool.TryParse(param, out isGold))
@@ -126,9 +135,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
                     //case (EffectChangesEnum.IsKeyInstance):
                     //    def.IsKeyInstance = Convert.ToBoolean(param);
                     //    return;
-                    //case (EffectChangesEnum.IsTorch):
-                    //    def.IsTorch = Convert.ToBoolean(param);
-                    //    return;
                     case (EffectChangesEnum.IsTorch):
                         bool isTorch = false;
                         if (bool.TryParse(param, out isTorch))
@@ -136,9 +142,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
                             def.setIsTorch(isTorch);
                         }
                         return;
-                    //case (EffectChangesEnum.IsTorchBurning):
-                    //    def.IsTorchBurning = Convert.ToBoolean(param);
-                    //    return;
                     case (EffectChangesEnum.IsTorchBurning):
                         bool isTorchBurning = false;
                         if (bool.TryParse(param, out isTorchBurning))
@@ -146,9 +149,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
                             def.setIsTorchBurning(isTorchBurning);
                         }
                         return;
-                    //case (EffectChangesEnum.IsTorchBurned):
-                    //    def.IsTorchBurned = Convert.ToBoolean(param);
-                    //    return;
                     case (EffectChangesEnum.IsTorchBurned):
                         bool isTorchBurned = false;
                         if (bool.TryParse(param, out isTorchBurned))
@@ -157,9 +157,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
                         }
                         return;
 
-                    //case (EffectChangesEnum.Effect):
-                    //    def.Effect = param;
-                    //    return;
                     case (EffectChangesEnum.Effect):
                         if (param != null)
                         {
@@ -170,9 +167,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
                         // !!! TO DO: requires SpellDef --> resulting SpellInst !!!
                         return;
 
-                    //case (EffectChangesEnum.Wear):
-                    //    def.Wear = (Enumeration.ArmorFlags) Convert.ToInt32(param);
-                    //    return;
                     case (EffectChangesEnum.Wear):
                         int wear = 0;
                         if (Int32.TryParse(param, out wear))
@@ -180,19 +174,13 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
                             def.setWear((Enumeration.ArmorFlags) wear);
                         }
                         return;
-                    //case (EffectChangesEnum.DamageType):
-                    //    def.DamageType = (Enumeration.DamageType) Convert.ToInt32(param);
-                    //    return;
                     case (EffectChangesEnum.DamageType):
                         int damageType = 0;
                         if (Int32.TryParse(param, out damageType))
                         {
-                            def.setDamageType((Enumeration.DamageType) damageType);
+                            def.setDamageType((Enumeration.DamageTypes) damageType);
                         }
                         return;
-                    //case (EffectChangesEnum.Range):
-                    //    def.Range = Convert.ToInt32(param);
-                    //    return;
                     case (EffectChangesEnum.Range):
                         int addRange = 0;
                         if (Int32.TryParse(param, out addRange))
@@ -200,9 +188,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
                             def.setRange(def.getRange() + addRange);
                         }
                         return;
-                    //case (EffectChangesEnum.TotalDamage):
-                    //    def.TotalDamage = Convert.ToInt32(param);
-                    //    return;
                     case (EffectChangesEnum.TotalDamage):
                         int addTotalDamage = 0;
                         if (Int32.TryParse(param, out addTotalDamage))
@@ -255,49 +240,141 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
                         }
                         return;
 
-                    case (EffectChangesEnum.HPChange):
-                        int addHPChange = 0;
-                        if (Int32.TryParse(param, out addHPChange))
+                    // OnUse
+                    case (EffectChangesEnum.OnUse_HPChange):
+                        int OnUse_addHPChange = 0;
+                        if (Int32.TryParse(param, out OnUse_addHPChange))
                         {
-                            def.setHPChange(def.getHPChange() + addHPChange);
+                            def.setOnUse_HPChange(def.getOnUse_HPChange() + OnUse_addHPChange);
                         }
                         else
                         {
-                            throw new Exception("Couldn't convert part of param-string to int while applying HPChange.");
+                            throw new Exception("Couldn't convert part of param-string to int while applying OnUse_HPChange.");
                         }
                         return;
-                    case (EffectChangesEnum.HPMaxChange):
-                        int addHPMaxChange = 0;
-                        if (Int32.TryParse(param, out addHPMaxChange))
+                    case (EffectChangesEnum.OnUse_HPMaxChange):
+                        int OnUse_addHPMaxChange = 0;
+                        if (Int32.TryParse(param, out OnUse_addHPMaxChange))
                         {
-                            def.setHPMaxChange(def.getHPMaxChange() + addHPMaxChange);
+                            def.setOnUse_HPMaxChange(def.getOnUse_HPMaxChange() + OnUse_addHPMaxChange);
                         }
                         else
                         {
-                            throw new Exception("Couldn't convert part of param-string to int while applying HPMaxChange.");
+                            throw new Exception("Couldn't convert part of param-string to int while applying OnUse_HPMaxChange.");
                         }
                         return;
-                    case (EffectChangesEnum.MPChange):
-                        int addMPChange = 0;
-                        if (Int32.TryParse(param, out addMPChange))
+                    case (EffectChangesEnum.OnUse_MPChange):
+                        int OnUse_addMPChange = 0;
+                        if (Int32.TryParse(param, out OnUse_addMPChange))
                         {
-                            def.setMPChange(def.getMPChange() + addMPChange);
+                            def.setOnUse_MPChange(def.getOnUse_MPChange() + OnUse_addMPChange);
                         }
                         else
                         {
-                            throw new Exception("Couldn't convert part of param-string to int while applying MPChange.");
+                            throw new Exception("Couldn't convert part of param-string to int while applying OnUse_MPChange.");
                         }
                         return;
-                    case (EffectChangesEnum.MPMaxChange):
-                        def.setMPMaxChange(Convert.ToInt32(param));
-                        int addMPMaxChange = 0;
-                        if (Int32.TryParse(param, out addMPMaxChange))
+                    case (EffectChangesEnum.OnUse_MPMaxChange):
+                        int OnUse_addMPMaxChange = 0;
+                        if (Int32.TryParse(param, out OnUse_addMPMaxChange))
                         {
-                            def.setMPMaxChange(def.getMPMaxChange() + addMPMaxChange);
+                            def.setOnUse_MPMaxChange(def.getOnUse_MPMaxChange() + OnUse_addMPMaxChange);
                         }
                         else
                         {
-                            throw new Exception("Couldn't convert part of param-string to int while applying MPMaxChange.");
+                            throw new Exception("Couldn't convert part of param-string to int while applying OnUse_MPMaxChange.");
+                        }
+                        return;
+
+                    // OnEquip
+                    case (EffectChangesEnum.OnEquip_HPChange):
+                        int OnEquip_addHPChange = 0;
+                        if (Int32.TryParse(param, out OnEquip_addHPChange))
+                        {
+                            def.setOnEquip_HPChange(def.getOnEquip_HPChange() + OnEquip_addHPChange);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying OnEquip_HPChange.");
+                        }
+                        return;
+                    case (EffectChangesEnum.OnEquip_HPMaxChange):
+                        int OnEquip_addHPMaxChange = 0;
+                        if (Int32.TryParse(param, out OnEquip_addHPMaxChange))
+                        {
+                            def.setOnEquip_HPMaxChange(def.getOnEquip_HPMaxChange() + OnEquip_addHPMaxChange);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying OnEquip_HPMaxChange.");
+                        }
+                        return;
+                    case (EffectChangesEnum.OnEquip_MPChange):
+                        int OnEquip_addMPChange = 0;
+                        if (Int32.TryParse(param, out OnEquip_addMPChange))
+                        {
+                            def.setOnEquip_MPChange(def.getOnEquip_MPChange() + OnEquip_addMPChange);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying OnEquip_MPChange.");
+                        }
+                        return;
+                    case (EffectChangesEnum.OnEquip_MPMaxChange):
+                        int OnEquip_addMPMaxChange = 0;
+                        if (Int32.TryParse(param, out OnEquip_addMPMaxChange))
+                        {
+                            def.setOnEquip_MPMaxChange(def.getOnEquip_MPMaxChange() + OnEquip_addMPMaxChange);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying OnEquip_MPMaxChange.");
+                        }
+                        return;
+
+                    // OnUnEquip
+                    case (EffectChangesEnum.OnUnEquip_HPChange):
+                        int OnUnEquip_addHPChange = 0;
+                        if (Int32.TryParse(param, out OnUnEquip_addHPChange))
+                        {
+                            def.setOnUnEquip_HPChange(def.getOnUnEquip_HPChange() + OnUnEquip_addHPChange);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying OnUnEquip_HPChange.");
+                        }
+                        return;
+                    case (EffectChangesEnum.OnUnEquip_HPMaxChange):
+                        int OnUnEquip_addHPMaxChange = 0;
+                        if (Int32.TryParse(param, out OnUnEquip_addHPMaxChange))
+                        {
+                            def.setOnUnEquip_HPMaxChange(def.getOnUnEquip_HPMaxChange() + OnUnEquip_addHPMaxChange);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying OnUnEquip_HPMaxChange.");
+                        }
+                        return;
+                    case (EffectChangesEnum.OnUnEquip_MPChange):
+                        int OnUnEquip_addMPChange = 0;
+                        if (Int32.TryParse(param, out OnUnEquip_addMPChange))
+                        {
+                            def.setOnUnEquip_MPChange(def.getOnUnEquip_MPChange() + OnUnEquip_addMPChange);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying OnUnEquip_MPChange.");
+                        }
+                        return;
+                    case (EffectChangesEnum.OnUnEquip_MPMaxChange):
+                        int OnUnEquip_addMPMaxChange = 0;
+                        if (Int32.TryParse(param, out OnUnEquip_addMPMaxChange))
+                        {
+                            def.setOnUnEquip_MPMaxChange(def.getOnUnEquip_MPMaxChange() + OnUnEquip_addMPMaxChange);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying OnUnEquip_MPMaxChange.");
                         }
                         return;
 
