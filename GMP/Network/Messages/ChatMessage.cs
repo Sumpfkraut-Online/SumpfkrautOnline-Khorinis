@@ -10,28 +10,33 @@ using RakNet;
 using GUC.Enumeration;
 using GUC.WorldObjects.Character;
 using GUC.WorldObjects;
+using GUC.GUI;
 
 namespace GUC.Network.Messages
 {
     class ChatMessage : IMessage
     {
-        textBox tB;
-        zCView thisView;
+        textBox tB = null;
+
+        MessageBox mB = null;
+        zCView thisView = null;
 
         public ChatMessage()
         {
             Process process = Process.ThisProcess();
 
-            thisView = zCView.Create(Process.ThisProcess(), 0, 0, 0x2000, 0x2000);
+            thisView = zCView.Create(Process.ThisProcess(), 10, 3000, 0x3000, 0x3000);
 
+            //Input view
             tB = new textBox(thisView, process);
 
             tB.resetKey = (int)VirtualKey.Escape;
             tB.startWritingKey = (int)VirtualKey.U;
             tB.sendKey = (int)VirtualKey.Return;
 
-            tB.vt.PosX = 100;
-            tB.vt.PosY = 500;
+            tB.vt.PosX = 0;
+            tB.vt.PosY = 0;
+
 
             tB.vt.Color.R = 255;
             tB.vt.Color.G = 255;
@@ -40,6 +45,8 @@ namespace GUC.Network.Messages
 
 
             tB.SendInput += new EventHandler<EventArgs>(SendText);
+
+            //Output view
         }
 
         Boolean shown = false;
@@ -47,9 +54,11 @@ namespace GUC.Network.Messages
         //send our chat text to the server
         private void SendText(object obj, EventArgs args)
         {
-            if (!shown) //FIXME: Man muss einmal eine Nachricht abschicken um die Chatbox sichtbar zu machen
+            if (!shown && tB != null && thisView != null) //FIXME: Man muss einmal eine Nachricht abschicken um die Chatbox sichtbar zu machen
             {
                 zCView.GetStartscreen(Process.ThisProcess()).InsertItem(thisView, 0); //FIXME: wenn das hier im Creator steht, crasht es beim Start-Up, andere Lösung?
+                mB = new MessageBox(0, 10, "FONT_DEFAULT.TGA", new Vec2i(10, 10), null);
+                mB.show();
                 shown = true;
             }
 
@@ -73,7 +82,7 @@ namespace GUC.Network.Messages
             string text;
             stream.Read(out text);
 
-            tB.setText(text);
+            mB.addMessage(text, ColorRGBA.White);
         }
     }
 }

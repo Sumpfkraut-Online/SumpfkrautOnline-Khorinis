@@ -187,7 +187,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
                         int damageType = 0;
                         if (Int32.TryParse(param, out damageType))
                         {
-                            def.setDamageType((Enumeration.DamageType) damageType);
+                            def.setDamageType((Enumeration.DamageTypes) damageType);
                         }
                         return;
                     //case (EffectChangesEnum.Range):

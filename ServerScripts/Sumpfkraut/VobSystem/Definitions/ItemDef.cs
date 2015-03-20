@@ -178,11 +178,11 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         //    get { return this.DamageType; }
         //    set { this.DamageType = value; }
         //}
-        public Enumeration.DamageType getDamageType ()
+        public Enumeration.DamageTypes getDamageType ()
         {
             return this.DamageType;
         }
-        public void setDamageType (Enumeration.DamageType DamageType)
+        public void setDamageType (Enumeration.DamageTypes DamageType)
         {
             this.DamageType = DamageType;
         }
@@ -308,7 +308,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         { }
 
         // weapons
-        public ItemDef (String instanceName, String name, DamageType dmgType, MainFlags mainFlags, Flags flags, int totalDamage, int range, int value, String visual)
+        public ItemDef (String instanceName, String name, DamageTypes dmgType, MainFlags mainFlags, Flags flags, int totalDamage, int range, int value, String visual)
             : base (instanceName, name, dmgType, mainFlags, flags, totalDamage, range, value, visual)
         { }
 
@@ -327,40 +327,40 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             : base (instanceName, name, scemeName, null, null, value, mainFlags, flags, 0, 0, 0, 0, visual, visual_Change, effect)
         { }
 
-        public ItemDef (String instanceName, String name, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual)
+        public ItemDef (String instanceName, String name, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual)
             : base (instanceName, name, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, null)
         { }
-        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual)
+        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual)
             : base (instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, null)
         { }
-        public ItemDef (String instanceName, String name, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change)
+        public ItemDef (String instanceName, String name, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change)
             : base (instanceName, name, null, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, null, 0)
         { }
 
-        public ItemDef (String instanceName, String name, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change, String effect)
+        public ItemDef (String instanceName, String name, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change, String effect)
             : base (instanceName, name, null, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, 0)
         { }
 
-        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change)
+        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change)
             : base (instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, "", 0)
         { }
 
-        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change, String effect)
+        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change, String effect)
             : base (instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, 0, 0, null)
         { }
 
-        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, MaterialTypes types)
+        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, MaterialType types)
             : base (instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, 0, types, null)
         { }
 
-        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, MaterialTypes types, ItemInstance munition)
+        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, MaterialType types, ItemInstance munition)
             : base (instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, 0, types, munition)
         { }
 
-        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, int visualSkin, MaterialTypes types, ItemInstance munition)
+        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, int visualSkin, MaterialType types, ItemInstance munition)
             : base (instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, visualSkin, types, munition, false, false, false, false, false)
         { }
-        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageType dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, int visualSkin, MaterialTypes types, ItemInstance munition, bool keyInstance, bool torch, bool torchBurning, bool torchBurned, bool gold)
+        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, int visualSkin, MaterialType types, ItemInstance munition, bool keyInstance, bool torch, bool torchBurning, bool torchBurned, bool gold)
             : base (instanceName)
         { }
 
