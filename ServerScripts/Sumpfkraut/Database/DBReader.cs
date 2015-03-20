@@ -11,17 +11,32 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
     class DBReader
     {
 
+        /**
+         *   Executes a defined sql-query and stores the results.
+         *   Stores the results for each sql-statement provided, so that after defining 2 statements 
+         *   (statement ends with ;) there is a list of 2 results. Each result ist in itself a list of rows.
+         *   Per row there can be 0 or more objects/table column entries of data.
+         *   @param results stores the results of 1 or multuple provided sql-queries
+         *   @param colTypes is the list which provides ways to convert the resulting strings to more defined server data
+         *   @param colTypesKeys stores the column names of the data table in a numeric manner (used in cata conversion)
+         *   @param colTypesVals stores the hints on data conversion used in a numeric manner (used in cata conversion)
+         *   @param convertData must be true if the resultings strings should be converted to data on load
+         *   @param select is the optional string after the SELECT-statement in sql
+         *   @param from is the optional string after the FROM-statement in sql
+         *   @param where is the optional string after the WHERE-statement in sql
+         *   @param orderBy is the optional string after the ORDER BY-statement in sql
+         *   @param completeQuery is an optional query which can be used to define more than one sql-statement in one shot (if provided, select, from, where, orderBy are ignored)
+         */
         public static void LoadFromDB (
-            string select, string from, string where, string orderBy,
             out List<List<List<object>>> results,
-            //out List<List<object>> defList,
             ref Dictionary<String, SQLiteGetTypeEnum> colTypes,
             out List<string> colTypesKeys, out List<SQLiteGetTypeEnum> colTypesVals, 
-            string sqlWhere="1")
+            bool convertData = true,
+            string select="", string from="", string where="", string orderBy="",
+            string completeQuery = "")
         {
+            // the actual query results
             results = new List<List<List<object>>>();
-            //// stores the read and converted data of the sql-query
-            //defList = new List<List<object>>();
 
             // lists to ensure same key-value-order for each row in rdr because, otherwise, the memory
             // adresses of the original dictionary and order might be changed during runtime
@@ -30,13 +45,18 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
 
             using (SQLiteCommand cmd = new SQLiteCommand(Sqlite.getSqlite().connection))
             {
-                // outputs a row for each effect change definition for the given IDs 
-                // and sorts them accordingly in ascending order before returnign the query
-                cmd.CommandText = "SELECT " + select
+                if (completeQuery.Length <= 0)
+                {
+                    cmd.CommandText = "SELECT " + select
                     + " FROM " + from
                     + " WHERE " + where
                     + " ORDER BY " + orderBy
                     + ";";
+                }
+                else
+                {
+                    cmd.CommandText = completeQuery;
+                }
 
                 SQLiteDataReader rdr = null;
                 try
