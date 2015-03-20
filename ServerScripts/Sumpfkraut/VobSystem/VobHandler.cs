@@ -110,14 +110,14 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                 MainFlags mainFlags = 0;
                 Flags flags = 0;
                 ArmorFlags armorFlags = 0;
-                DamageType dmgType = 0;
+                DamageTypes dmgType = 0;
                 int totalDamage = 0;
                 int range = 0;
                 String visual = "";
                 String visual_Change = "";
                 String effect = "";
                 int visualSkin = 0;
-                MaterialTypes types = 0;
+                MaterialType types = 0;
                 ItemInstance munition = null;
                 bool keyInstance = false;
                 bool torch = false;
@@ -185,7 +185,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 
                 if (colDict.TryGetValue("Material", out colIndex))
                 {
-                    types = (MaterialTypes) defList[r][colIndex];
+                    types = (MaterialType) defList[r][colIndex];
                 }
 
                 // TO DO: munition assignment through loaded effect-changes
