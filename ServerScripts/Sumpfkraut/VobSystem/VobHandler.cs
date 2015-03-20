@@ -361,10 +361,12 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
         // must be able to read multiple rows 
         // count of colVals multiple of the count of colKeys to prevent unnecessary repetition?
         // 1 => object, 2 => object, 3 => object, 4 => object, ... , 1 => object, ...
-        private static void LoadEffectChangesDef (ref List<int> effectDefIDs, 
+        private static void LoadEffectChangesDef (ref List<int> effectDefIDs, out List<List<object>> defList, 
             out List<string> colTypesKeys, out List<SQLiteGetTypeEnum> colTypesVals, 
             string sqlWhere="1")
         {
+            // stores the read and converted data of the sql-query
+            defList = new List<List<object>>();
             Dictionary<String, SQLiteGetTypeEnum> colTypes = null;
             DBTables.DefTableDict.TryGetValue(DefTableEnum.Effect_Changes_def, out colTypes);
             // to lists to ensure same key-value-order for each row in rdr because, otherwise, the memory
@@ -406,7 +408,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                         {
                             rowList.Add(DBTables.SqlReadType(ref rdr, col, colTypesVals[col]));
                         }
-                        //defList.Add(rowList);
+                        defList.Add(rowList);
                     }
                 }
                 catch (Exception ex)
