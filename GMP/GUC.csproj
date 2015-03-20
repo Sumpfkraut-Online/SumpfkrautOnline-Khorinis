@@ -83,7 +83,6 @@
     <Compile Include="Network\Messages\Callbacks\ReadIniEntryMessage.cs" />
     <Compile Include="Network\Messages\CameraCommands\CamToPlayerFront.cs" />
     <Compile Include="Network\Messages\CameraCommands\CamToVobMessage.cs" />
-    <Compile Include="Network\Messages\ChatMessage.cs" />
     <Compile Include="Network\Messages\Connection\ConnectionMessage.cs" />
     <Compile Include="Network\Messages\Connection\DisconnectMessage.cs" />
     <Compile Include="Network\Messages\Connection\ExitGameMessage.cs" />

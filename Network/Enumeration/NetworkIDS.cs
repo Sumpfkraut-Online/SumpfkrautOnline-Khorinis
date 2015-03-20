@@ -87,9 +87,7 @@ namespace GUC.Enumeration
 
         InterfaceOptionsMessage, /**< Network messages concerning Gothic 2 standart menus navigated by players. */
 
-        PlayerOpenInventoryMessage,
-
-        ChatMessage
+        PlayerOpenInventoryMessage
 
     }
 

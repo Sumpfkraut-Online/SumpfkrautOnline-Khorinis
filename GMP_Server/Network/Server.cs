@@ -80,8 +80,6 @@ namespace GUC.Server.Network
 
 
 			MessageListener.Add((byte)NetworkID.PlayerOpenInventoryMessage, new OpenInventoryMessage());
-
-            MessageListener.Add((byte)NetworkID.ChatMessage, new ChatMessage());
 		}
 
         /**
