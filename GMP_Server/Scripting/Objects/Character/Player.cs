@@ -113,7 +113,7 @@ namespace GUC.Server.Scripting.Objects.Character
 
         /**
         * Retrieves the current focused Player/NPC
-        * @return The focused NPC or Player if you convert it
+        * @return The focused NPC or Player if you convert it to this class
         */
         public NPCProto Enemy { get { return (proto.Enemy == null) ? null : proto.Enemy.ScriptingNPC; } }
 
@@ -212,12 +212,21 @@ namespace GUC.Server.Scripting.Objects.Character
             get { return Proto.IsConnected; }
         }
 
-
+        /**
+         * Must be set before connection of the clients
+         *@param activate or deactivate all keys
+         */
         public static void EnableAllPlayerKeys(bool x)
         {
             WorldObjects.Character.Player.sSendAllKeys = x;
         }
 
+        /**
+        * Must be set before connection of the client
+        *@param activate or deactivate the key
+        *@param byte array with the keyvalues to use
+        *@see VirtualKeys
+        */
         public static void EnablePlayerKey(bool activate, params byte[] keys)
         {
             foreach (byte key in keys)
