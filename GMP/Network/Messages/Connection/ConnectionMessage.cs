@@ -165,7 +165,8 @@ namespace GUC.Network.Messages.Connection
 
                 }
             }
-            
+
+            ((ChatMessage)Program.client.messageListener[(byte)NetworkID.ChatMessage]).Init();
         }
 
         protected static void CreateItems()

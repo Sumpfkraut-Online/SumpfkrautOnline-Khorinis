@@ -93,6 +93,17 @@ namespace GUC.Enumeration
 
     }
 
+    public enum ChatTextType : byte
+    {
+        Say,
+        Shout,
+        Whisper,
+        Ambient,
+        OOC,
+        GlobalOOC,
+        Global
+    }
+
     public enum VobChangeID : byte
     {
         CDDyn,

@@ -16,73 +16,88 @@ namespace GUC.Network.Messages
 {
     class ChatMessage : IMessage
     {
-        textBox tB = null;
-
-        MessageBox mB = null;
-        zCView thisView = null;
+        ChatGUI gui;
 
         public ChatMessage()
         {
-            Process process = Process.ThisProcess();
-
-            thisView = zCView.Create(Process.ThisProcess(), 10, 3000, 0x3000, 0x3000);
-
-            //Input view
-            tB = new textBox(thisView, process);
-
-            tB.resetKey = (int)VirtualKey.Escape;
-            tB.startWritingKey = (int)VirtualKey.U;
-            tB.sendKey = (int)VirtualKey.Return;
-
-            tB.vt.PosX = 0;
-            tB.vt.PosY = 0;
-
-
-            tB.vt.Color.R = 255;
-            tB.vt.Color.G = 255;
-            tB.vt.Color.B = 255;
-            tB.vt.Color.A = 255;
-
-
-            tB.SendInput += new EventHandler<EventArgs>(SendText);
-
-            //Output view
         }
 
-        Boolean shown = false;
+        public void Init()
+        {
+            gui = new ChatGUI(10);
+            gui.SendInput = SendText;
+        }
 
         //send our chat text to the server
-        private void SendText(object obj, EventArgs args)
+        public void SendText(String text)
         {
-            if (!shown && tB != null && thisView != null) //FIXME: Man muss einmal eine Nachricht abschicken um die Chatbox sichtbar zu machen
-            {
-                zCView.GetStartscreen(Process.ThisProcess()).InsertItem(thisView, 0); //FIXME: wenn das hier im Creator steht, crasht es beim Start-Up, andere Lösung?
-                mB = new MessageBox(0, 10, "FONT_DEFAULT.TGA", new Vec2i(10, 10), null);
-                mB.show();
-                shown = true;
-            }
-
             BitStream stream = Program.client.sentBitStream;
             stream.Reset();
             stream.Write((byte)DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
             stream.Write((byte)NetworkID.ChatMessage);
 
             stream.Write(Player.Hero.ID);
-            stream.Write(tB.getText());
+            stream.Write(text);
 
             Program.client.client.Send(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
-
-            tB.setText("");
-            tB.KeyDisable();
         }
 
         //Receive a chat text from the server
         public void Read(RakNet.BitStream stream, RakNet.Packet packet, Client client)
         {
-            string text;
-            stream.Read(out text);
+            byte type;
+            stream.Read(out type);
+            ChatTextType ctt = (ChatTextType)type;
 
-            mB.addMessage(text, ColorRGBA.White);
+            string addText = "";
+            if (ctt != ChatTextType.Global)
+            {
+                int ID;
+                stream.Read(out ID);
+
+                oCNpc sender = new oCNpc(Process.ThisProcess(), sWorld.VobDict[ID].Address);
+                addText = sender.Name.ToString();
+            }
+
+            string message;
+            stream.Read(out message);
+
+            ColorRGBA color = ColorRGBA.White;
+            switch (ctt)
+            {
+                case ChatTextType.Ambient:
+                    addText += " ";
+                    break;
+                
+                case ChatTextType.Global:
+                    color = new ColorRGBA(0, 255, 0, 255); //green
+                    break;
+
+                case ChatTextType.GlobalOOC:
+                    addText += " (ooc): ";
+                    color = new ColorRGBA(240, 100, 240, 255); //pink
+                    break;
+
+                case ChatTextType.OOC:
+                    addText += " (ooc): ";
+                    color = new ColorRGBA(240, 240, 100, 255); //yellow
+                    break;
+
+                case ChatTextType.Say:
+                    addText += " sagt: ";
+                    break;
+
+                case ChatTextType.Shout:
+                    addText += " ruft: ";
+                    break;
+
+                case ChatTextType.Whisper:
+                    addText += " flüstert: ";
+                    color = new ColorRGBA(255, 255, 255, 200);
+                    break;
+            }
+
+            gui.AddLine(addText + message,color);
         }
     }
 }

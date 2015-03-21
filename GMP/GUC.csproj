@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GUI\Button.cs" />
+    <Compile Include="GUI\ChatGUI.cs" />
     <Compile Include="GUI\Cursor.cs" />
     <Compile Include="GUI\GuiList\List.cs" />
     <Compile Include="GUI\GuiList\ListButton.cs" />
