@@ -6,7 +6,7 @@ using System.Text;
 namespace GUC.Enumeration
 {
     /**
-    *   Enumeration with flags for all keystrokes done by client client.
+    *   Enumeration with flags for all keystrokes done by client. For OnPlayerKeyEvents use the enum VirtualKeys instead.
     */
     public enum GothicKey
     {

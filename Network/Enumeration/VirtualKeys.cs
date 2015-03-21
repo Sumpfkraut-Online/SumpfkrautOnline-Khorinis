@@ -5,6 +5,9 @@ using System.Text;
 
 namespace GUC.Enumeration
 {
+    /**
+     * Enum with the keyboard values to use for OnPlayerKeyEvents
+     */
     public enum VirtualKey
         : ushort
     {
