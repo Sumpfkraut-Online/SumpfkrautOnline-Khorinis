@@ -168,6 +168,15 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
             }
         };
 
+
+
+        /**
+         *   Method to convert strings of a sql-result to the hinted datatype.
+         *   Return or false if the data conversion succeeds or fails, respectively.
+         *   @param sqlString is the string to convert
+         *   @param get is the hint on the final data type of the conversion
+         *   @param output is the object where the resulting type-converted string will be stored into
+         */
         public static bool SqlStringToData (string sqlString, SQLiteGetTypeEnum get, ref object output)
         {
             if (sqlString != null)
@@ -329,13 +338,16 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
 
             return false;
         }
-
+        
         /**
-        *   Method that is mainly used internally to read data from SQLiteDataReader given the type.
-        *   It is used as more flexible "interface" to the standart Get-methods of the SQLiteDataReader
-        *   by other methods. Extra care should be taken when processing the return value, because
-        *   it is of variable type (although generalized as object-type).
-        */
+         *   Method that is mainly used internally to read data from SQLiteDataReader given the type.
+         *   It is used as more flexible "interface" to the standart Get-methods of the SQLiteDataReader
+         *   by other methods. Extra care should be taken when processing the return value, because
+         *   it is of variable type (although generalized as object-type).
+         *   @param rdr is the SQLiteDataReader which has access to the sql query result
+         *   @param col is the column of the current row of the sql result which should be read
+         *   @param get provides the hint which get-method of the SQLiteDataReader should be used (type conversionon read)
+         */
         public static object SqlReadType (ref SQLiteDataReader rdr, int col, SQLiteGetTypeEnum get)
         {
             try
