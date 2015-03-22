@@ -168,13 +168,175 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
             }
         };
 
+        public static bool SqlStringToData (string sqlString, SQLiteGetTypeEnum get, ref object output)
+        {
+            if (sqlString != null)
+            {
+                switch (get)
+                {
+                    case (SQLiteGetTypeEnum.GetBoolean):
+                        bool outBool = false;
+                        if (bool.TryParse(sqlString, out outBool))
+                        {
+                            output = outBool;
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Logger.logError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + get + " in SqlStringToData.");
+                            break;
+                        }
+                    case (SQLiteGetTypeEnum.GetByte):
+                        byte outByte = 0;
+                        if (byte.TryParse(sqlString, out outByte))
+                        {
+                            output = outByte;
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Logger.logError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + get + " in SqlStringToData.");
+                            break;
+                        }
+                    case (SQLiteGetTypeEnum.GetChar):
+                        char outChar = '0';
+                        if (char.TryParse(sqlString, out outChar))
+                        {
+                            output = outChar;
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Logger.logError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + get + " in SqlStringToData.");
+                            break;
+                        }
+                    case (SQLiteGetTypeEnum.GetDateTime):
+                        DateTime outDateTime = new DateTime();
+                        if (DateTime.TryParse(sqlString, out outDateTime))
+                        {
+                            output = outDateTime;
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Logger.logError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + get + " in SqlStringToData.");
+                            break;
+                        }
+                    case (SQLiteGetTypeEnum.GetDecimal):
+                        decimal outDecimal = 0;
+                        if (decimal.TryParse(sqlString, out outDecimal))
+                        {
+                            output = outDecimal;
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Logger.logError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + get + " in SqlStringToData.");
+                            break;
+                        }
+                    case (SQLiteGetTypeEnum.GetDouble):
+                        double outDouble = 0;
+                        if (double.TryParse(sqlString, out outDouble))
+                        {
+                            output = outDouble;
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Logger.logError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + get + " in SqlStringToData.");
+                            break;
+                        }
+                    case (SQLiteGetTypeEnum.GetFloat):
+                        float outFloat = 0;
+                        if (float.TryParse(sqlString, out outFloat))
+                        {
+                            output = outFloat;
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Logger.logError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + get + " in SqlStringToData.");
+                            break;
+                        }
+                    case (SQLiteGetTypeEnum.GetGuid):
+                        Guid outGuid = Guid.Empty;
+                        if (Guid.TryParse(sqlString, out outGuid))
+                        {
+                            output = outGuid;
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Logger.logError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + get + " in SqlStringToData.");
+                            break;
+                        }
+                    case (SQLiteGetTypeEnum.GetInt16):
+                        Int16 outInt16 = 0;
+                        if (Int16.TryParse(sqlString, out outInt16))
+                        {
+                            output = outInt16;
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Logger.logError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + get + " in SqlStringToData.");
+                            break;
+                        }
+                    case (SQLiteGetTypeEnum.GetInt32):
+                        Int32 outInt32 = 0;
+                        if (Int32.TryParse(sqlString, out outInt32))
+                        {
+                            output = outInt32;
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Logger.logError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + get + " in SqlStringToData.");
+                            break;
+                        }
+                    case (SQLiteGetTypeEnum.GetInt64):
+                        Int64 outInt64 = 0;
+                        if (Int64.TryParse(sqlString, out outInt64))
+                        {
+                            output = outInt64;
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Logger.logError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + get + " in SqlStringToData.");
+                            break;
+                        }
+                    case (SQLiteGetTypeEnum.GetString):
+                        output = sqlString;
+                        return true;
+                    default:
+                        Log.Logger.logError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + get + " in SqlStringToData because this datatype is not supported.");
+                        break;
+                }
+            }
+
+            return false;
+        }
+
         /**
         *   Method that is mainly used internally to read data from SQLiteDataReader given the type.
         *   It is used as more flexible "interface" to the standart Get-methods of the SQLiteDataReader
         *   by other methods. Extra care should be taken when processing the return value, because
         *   it is of variable type (although generalized as object-type).
         */
-        public static object SqlReadType(ref SQLiteDataReader rdr, int col, SQLiteGetTypeEnum get)
+        public static object SqlReadType (ref SQLiteDataReader rdr, int col, SQLiteGetTypeEnum get)
         {
             try
             {
