@@ -110,6 +110,11 @@ namespace GUC.Server.Scripting.Objects.Character
 
 
         public Vob FocusVob { get { return (proto.FocusVob == null) ? null : proto.FocusVob.ScriptingVob; } }
+
+        /**
+        * Retrieves the current focused Player/NPC
+        * @return The focused NPC or Player if you convert it
+        */
         public NPCProto Enemy { get { return (proto.Enemy == null) ? null : proto.Enemy.ScriptingNPC; } }
 
 
