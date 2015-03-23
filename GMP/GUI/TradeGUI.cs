@@ -139,7 +139,7 @@ namespace GUC.GUI
 
         private void OpenTradeMenu()
         {
-          /*  item = new oCItem(process, Player.Hero.ItemList[0].Address);
+            item = new oCItem(process, Player.Hero.ItemList[0].Address);
 
             zV = zCView.Create(Process.ThisProcess(), 0, 0, 0x2000, 0x2000);
             zV.CreateText(10, 10, item.Name);
@@ -150,7 +150,7 @@ namespace GUC.GUI
             rndrWorld = zCWorld.Create(process);
             rndrWorld.IsInventoryWorld = true;
 
-            Program.OnRender += Test;*/
+            Program.OnRender += Test;
             
             //Test();
             /*int x = 0; int y = 0;
@@ -167,14 +167,14 @@ namespace GUC.GUI
             }
             zCView.GetStartscreen(process).InsertItem(thisView, 0);*/
         }
-        /*
+        
         zCView zV;
         oCItem item;
         zCWorld rndrWorld;
         public virtual void Test(Process process, long now)
         {
             item.RenderItem(rndrWorld, zV, 0.0f);
-        }*/
+        }
 
     }
 }
