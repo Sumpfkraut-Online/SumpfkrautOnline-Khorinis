@@ -103,8 +103,8 @@ namespace GUC
         {
 
 
-
-            //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hItem).GetMethod("ViewDraw_DrawChildren"), (int)0x00704B90, (int)7, 0);
+            //uncommented by Showdown
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hItem).GetMethod("ViewDraw_DrawChildren"), (int)0x00704B90, (int)7, 0);
 
 
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(Externals).GetMethod("AddExternals"), (int)0x006D4780, (int)7, 1);

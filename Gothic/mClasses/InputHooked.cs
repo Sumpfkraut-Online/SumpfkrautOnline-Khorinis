@@ -104,6 +104,14 @@ namespace Gothic.mClasses
                 process.Write(new byte[] { 0xD9, 0x05, 0xD8, 0xB3, 0x99 }, 0x006FC575);
             }
         }
+
+        //edited by Showdown
+        private static InputReceiver singleRec = null;
+        public static void deactivateFullControl(Process process, InputReceiver rec)
+        {
+            singleRec = rec;
+            deaktivateFullControl(process);
+        }
         
         public static void deaktivateFullControl(Process Process)
         {
@@ -118,6 +126,8 @@ namespace Gothic.mClasses
 
         public static void activateFullControl(Process Process)
         {
+            singleRec = null;
+
             Cursor.noHandle = false;
             byte[] arr = new byte[] { 0x53 };
             Process.Write(arr, (int)oCAiHuman.FuncOffsets.Moving);
@@ -161,10 +171,17 @@ namespace Gothic.mClasses
         {
             if (keys[key] == 0x01)
                 return;
-            InputReceiver[] rec = receivers.ToArray();
-            foreach (InputReceiver receiver in rec)
+
+            if (singleRec == null) //edited by Showdown
             {
-                receiver.KeyPressed(key);
+                foreach (InputReceiver receiver in receivers)
+                {
+                    receiver.KeyPressed(key);
+                }
+            }
+            else
+            {
+                singleRec.KeyPressed(key);
             }
             keys[key] = 0x01;
         }
@@ -173,11 +190,19 @@ namespace Gothic.mClasses
         {
             if (keys[key] == 0x00)
                 return;
-            InputReceiver[] rec = receivers.ToArray();
-            foreach (InputReceiver receiver in rec)
+
+            if (singleRec == null) //edited by Showdown
             {
-                receiver.KeyReleased(key);
+                foreach (InputReceiver receiver in receivers)
+                {
+                    receiver.KeyReleased(key);
+                }
             }
+            else
+            {
+                singleRec.KeyReleased(key);
+            }
+
             keys[key] = 0x00;
         }
 

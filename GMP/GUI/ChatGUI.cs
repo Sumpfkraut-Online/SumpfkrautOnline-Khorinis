@@ -89,6 +89,14 @@ namespace GUC.GUI
 
         public void KeyReleased(int key)
         {
+            if (WinApi.User.Window.GetWindowThreadProcessId(WinApi.User.Window.GetForegroundWindow()) != process.ProcessID || zCConsole.Console(process).IsVisible() == 1)
+                return;
+
+            if (key == resetKey)
+            {
+                KeyDisable();
+                textInput.Text.Clear();
+            }
         }
 
         public void KeyPressed(int key)
@@ -105,18 +113,13 @@ namespace GUC.GUI
             if (!writing)
                 return;
 
-            if (key == sendKey || key == resetKey)
+            if (key == sendKey)
             {
                 KeyDisable();
                 string text = textInput.Text.ToString().Trim();
-                if (SendInput != null && key != resetKey && text.Length > 1)
+                if (SendInput != null && text.Length > 1)
                 {
                     SendInput(text);
-                    textInput.Text.Clear();
-                }
-
-                if (key == resetKey)
-                {
                     textInput.Text.Clear();
                 }
             }
@@ -157,7 +160,7 @@ namespace GUC.GUI
 
         private void KeyEnable()
         {
-            InputHooked.deaktivateFullControl(process);
+            InputHooked.deactivateFullControl(process,this);
             writing = true;
         }
 
