@@ -166,9 +166,7 @@ namespace GUC.Network.Messages.Connection
                 }
             }
 
-            //edit by Showdown
             ((ChatMessage)Program.client.messageListener[(byte)NetworkID.ChatMessage]).Init();
-            ((TradeMessage)Program.client.messageListener[(byte)NetworkID.TradeMessage]).Init();
         }
 
         protected static void CreateItems()

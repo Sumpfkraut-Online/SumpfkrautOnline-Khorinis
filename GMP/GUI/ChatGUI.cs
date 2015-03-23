@@ -13,7 +13,7 @@ namespace GUC.GUI
 {
     class ChatGUI : InputReceiver
     {
-        public int startWritingKey = (int)VirtualKeys.Return;
+        public int startWritingKey = (int)VirtualKeys.U;
         public int resetKey = (int)VirtualKeys.Escape;
         public int sendKey = (int)VirtualKeys.Return;
 
@@ -89,6 +89,24 @@ namespace GUC.GUI
 
         public void KeyReleased(int key)
         {
+            if (WinApi.User.Window.GetWindowThreadProcessId(WinApi.User.Window.GetForegroundWindow()) != process.ProcessID || zCConsole.Console(process).IsVisible() == 1)
+                return;
+
+            if (writing && (key == sendKey || key == resetKey))
+            {
+                KeyDisable();
+                string text = textInput.Text.ToString().Trim();
+                if (SendInput != null && key != resetKey && text.Length > 1)
+                {
+                    SendInput(text);
+                    textInput.Text.Clear();
+                }
+
+                if (key == resetKey)
+                {
+                    textInput.Text.Clear();
+                }
+            }
         }
 
         public void KeyPressed(int key)
@@ -104,22 +122,6 @@ namespace GUC.GUI
 
             if (!writing)
                 return;
-
-            if (key == sendKey || key == resetKey)
-            {
-                KeyDisable();
-                string text = textInput.Text.ToString().Trim();
-                if (SendInput != null && key != resetKey && text.Length > 1)
-                {
-                    SendInput(text);
-                    textInput.Text.Clear();
-                }
-
-                if (key == resetKey)
-                {
-                    textInput.Text.Clear();
-                }
-            }
 
             if (key == (int)VirtualKeys.Back) //Backspace
             {

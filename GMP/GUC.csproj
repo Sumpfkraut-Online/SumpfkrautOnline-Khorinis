@@ -66,7 +66,6 @@
     <Compile Include="GUI\Text.cs" />
     <Compile Include="GUI\TextBox.cs" />
     <Compile Include="GUI\Texture.cs" />
-    <Compile Include="GUI\TradeGUI.cs" />
     <Compile Include="GUI\View.cs" />
     <Compile Include="Hooks\Externals.cs" />
     <Compile Include="Hooks\hGame.cs" />
@@ -128,7 +127,6 @@
     <Compile Include="Network\Messages\PlayerCommands\SpellInvestMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\StartDialogAnimMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\TakeItemMessage.cs" />
-    <Compile Include="Network\Messages\TradeMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\ChangeWorldMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\CreateVobMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\DespawnVobMessage.cs" />
