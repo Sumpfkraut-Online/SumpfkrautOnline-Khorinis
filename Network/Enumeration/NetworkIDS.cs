@@ -89,8 +89,15 @@ namespace GUC.Enumeration
 
         PlayerOpenInventoryMessage,
 
-        ChatMessage
+        ChatMessage,
+        TradeMessage
 
+    }
+
+    public enum TradeStatus : byte
+    {
+        Request,
+        Start
     }
 
     public enum ChatTextType : byte

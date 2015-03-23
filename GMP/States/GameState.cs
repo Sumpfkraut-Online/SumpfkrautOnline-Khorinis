@@ -149,8 +149,9 @@ namespace GUC.States
             //}
 
 
-
-            if (lastPlayerPosUpdate + 10000 * 200 < now )
+            //edit by Showdown
+            //if (lastPlayerPosUpdate + 10000 * 200 < now )
+            if (lastPlayerPosUpdate + 500000 < now)
             {
                 SendPlayerPosition(process, Player.Hero);
                 NPCUpdateMessage.Write(Player.Hero);
@@ -180,7 +181,8 @@ namespace GUC.States
             //    lastNPCPosUpdate = now;
             //}
 
-            pkm.update();
+            //commented by Showdown
+            //pkm.update();
 
             Program.client.Update();
         }
