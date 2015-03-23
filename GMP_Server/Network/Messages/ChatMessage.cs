@@ -72,6 +72,20 @@ namespace GUC.Server.Network.Messages
             {
                 removeCount = 7;
                 type = ChatTextType.Global;
+            } 
+            else if (text.StartsWith("/test"))
+            {
+                BitStream str = Program.server.SendBitStream;
+                str.Reset();
+                str.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
+                str.Write((byte)NetworkID.TradeMessage);
+                str.Write((byte)TradeStatus.Start);
+                str.Write(pl.ID);
+                using (RakNetGUID guid = pl.GUID)
+                    Program.server.ServerInterface.Send(str, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+
+                Log.Logger.log("TRADETEST");
+                return;
             }
             else if (text.StartsWith("/"))
             {

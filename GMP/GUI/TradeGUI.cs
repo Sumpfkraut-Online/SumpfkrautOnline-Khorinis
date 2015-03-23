@@ -21,6 +21,7 @@ namespace GUC.GUI
         private Process process;
         private oCItem item;
         private zCView view;
+        private zCWorld rndrWorld;
 
         public InvSlot(zCView parent, int x, int y, int width, int height)
         {
@@ -38,6 +39,9 @@ namespace GUC.GUI
         public void SetItem(Item item)
         {
             this.item = new oCItem(process, item.Address);
+            rndrWorld = zCWorld.Create(process);
+            rndrWorld.IsInventoryWorld = true;
+            this.item.RenderItem(rndrWorld, view, 0.0f);
         }
     }
 
