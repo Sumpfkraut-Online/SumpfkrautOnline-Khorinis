@@ -217,22 +217,21 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 
         }
 
-        private static void LoadVobDef (string defTabName, out List<List<object>> defList,
+        /**
+         *   Load vob definitions (without effect changes definitions) as usable data objects from database.
+         *   Requires no colTypes-parameter the data column names and types will be stored in
+         *   colTypesKeys and colTypesVals.
+         */
+        private static void LoadVobDef (string defTabName, ref List<List<List<object>>> defList,
             DefTableEnum defTabEnum,
-            out List<string> colTypesKeys, out List<SQLiteGetTypeEnum> colTypesVals, 
+            ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals, 
             string sqlWhere="1")
         {
-            defList = new List<List<object>>();
-            // to lists to ensure same key-value-order for each row in rdr because, otherwise, the memory
-            // adresses of the original dictionary and order might be changed during runtime
-            colTypesKeys = new List<string>();
-            colTypesVals = new List<SQLiteGetTypeEnum>();
-
             Dictionary<String, SQLiteGetTypeEnum> colTypes = null;
             if (DBTables.DefTableDict.TryGetValue(DefTableEnum.Effect_Changes_def, out colTypes))
             {
-                LoadVobDef(defTabName, out defList, ref colTypes, out colTypesKeys, 
-                out colTypesVals, sqlWhere);
+                LoadVobDef(defTabName, ref defList, ref colTypes, ref colTypesKeys, 
+                ref colTypesVals, sqlWhere);
             }
             else
             {
@@ -240,61 +239,89 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             }  
         }
 
-        private static void LoadVobDef (string defTabName, out List<List<object>> defList, 
+        /**
+         *   Lower level loading of vob definition that requires colTypes-paramter.
+         *   @param defTabName is the name of the handled definition table
+         *   @param defList is used to store the sql-result of your sql-query
+         *   @param colTypes describes which column (by name) used which data type
+         *   @param colTypesKeys stores names of colTypes in the order used in the sql-query
+         *   @param colTypesVals stores the types of colTyes in the order used in the sql-query
+         */
+        private static void LoadVobDef (string defTabName, ref List<List<List<object>>> defList, 
             ref Dictionary<String, SQLiteGetTypeEnum> colTypes, 
-            out List<string> colTypesKeys, out List<SQLiteGetTypeEnum> colTypesVals, 
+            ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals, 
             string sqlWhere="1")
         {
-            // stores the read and converted data of the sql-query
-            defList = new List<List<object>>();
-            // to lists to ensure same key-value-order for each row in rdr because, otherwise, the memory
-            // adresses of the original dictionary and order might be changed during runtime
-            colTypesKeys = new List<string>(colTypes.Keys);
-            colTypesVals = new List<SQLiteGetTypeEnum>(colTypes.Values);
+            // grab vom database
+            DBReader.LoadFromDB(ref defList, 
+                "(" + String.Join(",", colTypesKeys.ToArray())  + ")", 
+                defTabName, 
+                sqlWhere, 
+                "ID ASC");
 
-            using (SQLiteCommand cmd = new SQLiteCommand(Sqlite.getSqlite().connection))
+            // convert individual sql-result-strings to usable data of given types
+            object tempEntry = null;
+            int r = 0;
+            int c = 0;
+            while (r < defList[1].Count)
             {
-                // outputs all vob definition rows with chosen entries which fit the WHERE-condition
-                // and sorts them in ascending order accordingly
-                cmd.CommandText = "SELECT (" + String.Join(",", colTypesKeys.ToArray()) 
-                    + ") FROM `" + defTabName 
-                    + "` WHERE " + sqlWhere 
-                    + " ORDER BY `ID` ASC";
-                SQLiteDataReader rdr = null;
-                try
+                c = 0;
+                while (c < defList[1][r].Count)
                 {
-                    rdr = cmd.ExecuteReader();
-                    if (!rdr.HasRows)
+                    tempEntry = defList[1][r][c];
+                    if (!DBTables.SqlStringToData((string)tempEntry, colTypesVals[c], ref tempEntry))
                     {
-                        return;
+                        Log.Logger.logError("Could no convert " + tempEntry + " from string to type " 
+                            + colTypesVals[c] + ".");
                     }
-
-                    // temporary list to put all data of a row into
-                    List<object> rowList = null;
-
-                    while (rdr.Read())
-                    {
-                        rowList = new List<object>();
-                        for (int col=0; col<colTypesKeys.Count; col++)
-                        {
-                            rowList.Add(DBTables.SqlReadType(ref rdr, col, colTypesVals[col]));
-                        }
-                        defList.Add(rowList);
-                    }
-
+                    c++;
                 }
-                catch (Exception ex)
-                {
-                    throw new Exception("Could not execute SQLiteDataReader during vob-definiton-loading: " + ex);
-                }
-                finally
-                {
-                    if (rdr != null)
-                    {
-                        rdr.Close();
-                    }
-                }
+                r++;
             }
+
+            //using (SQLiteCommand cmd = new SQLiteCommand(Sqlite.getSqlite().connection))
+            //{
+            //    // outputs all vob definition rows with chosen entries which fit the WHERE-condition
+            //    // and sorts them in ascending order accordingly
+            //    cmd.CommandText = "SELECT (" + String.Join(",", colTypesKeys.ToArray()) 
+            //        + ") FROM `" + defTabName 
+            //        + "` WHERE " + sqlWhere 
+            //        + " ORDER BY `ID` ASC";
+            //    SQLiteDataReader rdr = null;
+            //    try
+            //    {
+            //        rdr = cmd.ExecuteReader();
+            //        if (!rdr.HasRows)
+            //        {
+            //            return;
+            //        }
+
+            //        // temporary list to put all data of a row into
+            //        List<object> rowList = null;
+
+            //        while (rdr.Read())
+            //        {
+            //            rowList = new List<object>();
+            //            for (int col=0; col<colTypesKeys.Count; col++)
+            //            {
+            //                rowList.Add(DBTables.SqlReadType(ref rdr, col, colTypesVals[col]));
+            //            }
+            //            defList.Add(rowList);
+            //        }
+
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        throw new Exception("Could not execute SQLiteDataReader during vob-definiton-loading: " + ex);
+            //    }
+            //    finally
+            //    {
+            //        if (rdr != null)
+            //        {
+            //            rdr.Close();
+            //        }
+            //    }
+            //}
         }
 
         //private static void LoadEffectDef (ref List<int> effectDefIDs, 

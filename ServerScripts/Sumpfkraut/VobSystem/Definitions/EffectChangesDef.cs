@@ -115,6 +115,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         /**
          *   Apply effect changes to an item-defintiion, so derived items can use them.
+         *   This method includes similar type-conversion as in Sumpfkraut.DataBase.DBTables.SqlStringToData. 
+         *   It handles the special multiparameter-types of effect change definitions, however.
+         *   @see Sumpfkraut.Database.DBTables.SqlStringToData
          */
         public static void ApplyEffectChanges (ref ItemDef def, EffectChangesEnum changeType, string param)
         {
