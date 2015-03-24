@@ -20,12 +20,8 @@ namespace GUC.Network.Messages
 
         public ChatMessage()
         {
-        }
-
-        public void Init()
-        {
-            gui = new ChatGUI(10);
-            gui.SendInput = SendText;
+            gui = new ChatGUI();
+            gui.SendInput += SendText;
         }
 
         //send our chat text to the server
@@ -73,7 +69,7 @@ namespace GUC.Network.Messages
                     color = new ColorRGBA(0, 255, 0, 255); //green
                     break;
 
-                case ChatTextType.GlobalOOC:
+                case ChatTextType.OOCGlobal:
                     addText += " (ooc): ";
                     color = new ColorRGBA(240, 100, 240, 255); //pink
                     break;

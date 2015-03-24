@@ -19,12 +19,12 @@ namespace GUC.Server.Scripts.Communication
   {
     private static Chat chat = null;
 
-    private int offsetX = 100;
+   /* private int offsetX = 100;
     private int offsetY = 0x800;
     private int startButton = 0x54;
     private int abortButton = 0x1B;
     private int sendButton = 0x0D;
-    private TextBox textBox;
+    private TextBox textBox;*/
 
     /// <summary>
     /// Singleton object: call this to get a valid Chat object to work with
@@ -44,11 +44,29 @@ namespace GUC.Server.Scripts.Communication
     /// </summary>
     protected Chat()
     {
-      textBox = new TextBox("", "FONT_DEFAULT.TGA", offsetX, offsetY, sendButton, startButton, abortButton);
+        ch = new Scripting.Client.Chat();
+        ch.OnReceiveMessage += ReceiveMessage;
+      /*textBox = new TextBox("", "FONT_DEFAULT.TGA", offsetX, offsetY, sendButton, startButton, abortButton);
       textBox.show();
-      textBox.TextSended += new Events.TextBoxMessageEventHandler(textBoxMessageSended);
+      textBox.TextSended += new Events.TextBoxMessageEventHandler(textBoxMessageSended);*/
     }
 
+    private GUC.Server.Scripting.Client.Chat ch;
+
+    private void ReceiveMessage(Player sender, string message)
+    {
+        if (message.StartsWith("/global"))
+        {
+            ch.SendGlobal(message.Substring(7).Trim());
+            return;
+        }
+        ch.SendSay(sender, sender, message);
+
+#if SSM_ACCOUNT_LOGGING
+        SQLiteLogger.log_Chat(sender, message);
+#endif
+    }
+      /*
     private void textBoxMessageSended(TextBox sender, Player player, string message)
     {
       message = message.Trim();
@@ -79,6 +97,6 @@ namespace GUC.Server.Scripts.Communication
 #if SSM_ACCOUNT_LOGGING
       SQLiteLogger.log_Chat(player, message);
 #endif
-    }
+    }*/
   }
 }

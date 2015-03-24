@@ -138,6 +138,8 @@ namespace GUC.GUI
         public TradeGUI(Action<int> Request, Action<int> Offer, Action<int> TakeBack)
         {
             process = Process.ThisProcess();
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hItem).GetMethod("ViewDraw_DrawChildren"), (int)0x00704B90, (int)7, 0);
+
             startTradeKey = (int)VirtualKeys.T;
             trading = false;
             trader = null;

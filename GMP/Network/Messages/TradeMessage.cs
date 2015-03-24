@@ -15,12 +15,7 @@ namespace GUC.Network.Messages
 
         public TradeMessage()
         {
-
-        }
-
-        public void Init()
-        {
-            gui = new TradeGUI(SendTradeRequest,SendOffer,TakeBack);
+            gui = new TradeGUI(SendTradeRequest, SendOffer, TakeBack);
         }
 
         void SendTradeRequest(int ID)

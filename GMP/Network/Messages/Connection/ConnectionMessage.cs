@@ -167,8 +167,14 @@ namespace GUC.Network.Messages.Connection
             }
 
             //edit by Showdown
-            ((ChatMessage)Program.client.messageListener[(byte)NetworkID.ChatMessage]).Init();
-            ((TradeMessage)Program.client.messageListener[(byte)NetworkID.TradeMessage]).Init();
+            if (!Program.client.messageListener.ContainsKey((byte)NetworkID.ChatMessage))
+            {
+                Program.client.messageListener.Add((byte)NetworkID.ChatMessage, new ChatMessage());
+            }
+            if (!Program.client.messageListener.ContainsKey((byte)NetworkID.TradeMessage))
+            {
+                Program.client.messageListener.Add((byte)NetworkID.TradeMessage, new TradeMessage());
+            }
         }
 
         protected static void CreateItems()

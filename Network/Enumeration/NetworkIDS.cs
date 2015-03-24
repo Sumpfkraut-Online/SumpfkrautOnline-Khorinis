@@ -109,7 +109,7 @@ namespace GUC.Enumeration
         Whisper,
         Ambient,
         OOC,
-        GlobalOOC,
+        OOCGlobal,
         Global
     }
 

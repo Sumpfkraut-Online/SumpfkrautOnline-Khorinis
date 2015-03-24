@@ -102,6 +102,7 @@
     <Compile Include="Network\Messages\VobCommands\SetVobListPosDirMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\SetVobPosDirMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\SpawnVobMessage.cs" />
+    <Compile Include="Scripting\Client\Chat.cs" />
     <Compile Include="Scripting\Events.cs" />
     <Compile Include="Scripting\GUI\Button.cs" />
     <Compile Include="Scripting\GUI\Cursor.cs" />

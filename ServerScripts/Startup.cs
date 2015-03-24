@@ -41,7 +41,6 @@ namespace GUC.Server.Scripts
             Test.Text3DTest.Init();
 
             
-            
             ItemInit.Init();
             DefaultItems.Init();
             
@@ -55,7 +54,7 @@ namespace GUC.Server.Scripts
 #endif
             DefaultWorld.Init();
 
-
+            Server.Scripting.Client.Chat test = new Scripting.Client.Chat();
 
             
 

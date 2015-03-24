@@ -125,9 +125,6 @@ namespace GUC.Network
             messageListener.Add((byte)NetworkID.InterfaceOptionsMessage, new InterfaceOptionsMessage());
 
             messageListener.Add((byte)NetworkID.PlayerOpenInventoryMessage, new OpenInventoryMessage());
-
-            messageListener.Add((byte)NetworkID.ChatMessage, new ChatMessage());
-            messageListener.Add((byte)NetworkID.TradeMessage, new TradeMessage());
         }
 
         public void Startup()
