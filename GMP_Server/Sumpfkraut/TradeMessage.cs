@@ -8,7 +8,7 @@ using GUC.WorldObjects;
 using RakNet;
 using GUC.Server.Network;
 
-namespace GUC.Server.Mod
+namespace GUC.Server.Sumpfkraut
 {
     class TradeMessage : IMessage
     {

@@ -73,7 +73,7 @@
     <Compile Include="Network\Messages\Callbacks\CallbackNPCCanSee.cs" />
     <Compile Include="Network\Messages\Callbacks\ReadIniEntryMessage.cs" />
     <Compile Include="Network\Messages\Callbacks\ReadMd5Message.cs" />
-    <Compile Include="Mod\ChatMessage.cs" />
+    <Compile Include="Sumpfkraut\ChatMessage.cs" />
     <Compile Include="Network\Messages\Connection\ConnectionMessage.cs" />
     <Compile Include="Network\Messages\Connection\DisconnectMessage.cs" />
     <Compile Include="Network\Messages\Connection\NPCSpawnMessage.cs" />
@@ -95,14 +95,14 @@
     <Compile Include="Network\Messages\PlayerCommands\PlayerKeyMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\SpellInvestMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\TakeItemMessage.cs" />
-    <Compile Include="Mod\TradeMessage.cs" />
+    <Compile Include="Sumpfkraut\TradeMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\ChangeWorldMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\CreateVobMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\DespawnVobMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\SetVobListPosDirMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\SetVobPosDirMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\SpawnVobMessage.cs" />
-    <Compile Include="Mod\Chat.cs" />
+    <Compile Include="Sumpfkraut\Chat.cs" />
     <Compile Include="Scripting\Events.cs" />
     <Compile Include="Scripting\GUI\Button.cs" />
     <Compile Include="Scripting\GUI\Cursor.cs" />

@@ -167,7 +167,7 @@ namespace GUC.Network.Messages.Connection
             }
 
             //edited by Showdown
-            Mod.Ingame.IngameInterface.Init();
+            Sumpfkraut.Ingame.IngameInterface.Init();
         }
 
         protected static void CreateItems()

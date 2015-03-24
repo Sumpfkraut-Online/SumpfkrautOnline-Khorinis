@@ -7,7 +7,7 @@ using RakNet;
 using GUC.Enumeration;
 using GUC.WorldObjects.Character;
 
-namespace GUC.Mod.Ingame
+namespace GUC.Sumpfkraut.Ingame
 {
     class TradeMessage : IMessage
     {

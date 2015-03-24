@@ -9,7 +9,7 @@ using WinApi;
 using WinApi.User.Enumeration;
 using GUC.Types;
 
-namespace GUC.Mod.Ingame
+namespace GUC.Sumpfkraut.Ingame
 {
     class ChatGUI : InputReceiver
     {

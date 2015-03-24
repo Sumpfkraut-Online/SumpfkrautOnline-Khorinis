@@ -44,23 +44,24 @@ namespace GUC.Server.Scripts.Communication
     /// </summary>
     protected Chat()
     {
-        ch = new Mod.Chat();
-        ch.OnReceiveMessage += ReceiveMessage;
+        test = new Server.Sumpfkraut.Chat();
+        test.OnReceiveMessage += ReceiveMessage;
+
       /*textBox = new TextBox("", "FONT_DEFAULT.TGA", offsetX, offsetY, sendButton, startButton, abortButton);
       textBox.show();
       textBox.TextSended += new Events.TextBoxMessageEventHandler(textBoxMessageSended);*/
     }
 
-    private Mod.Chat ch;
+    private Server.Sumpfkraut.Chat test;
 
     private void ReceiveMessage(Player sender, string message)
     {
         if (message.StartsWith("/global"))
         {
-            ch.SendGlobal(message.Substring(7).Trim());
+            test.SendGlobal(message.Substring(7).Trim());
             return;
         }
-        ch.SendSay(sender, sender, message);
+        test.SendSay(sender, sender, message);
     }
       /*
     private void textBoxMessageSended(TextBox sender, Player player, string message)

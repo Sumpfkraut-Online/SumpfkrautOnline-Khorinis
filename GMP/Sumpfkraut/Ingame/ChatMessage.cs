@@ -13,7 +13,7 @@ using GUC.WorldObjects;
 using GUC.GUI;
 using GUC.Network;
 
-namespace GUC.Mod.Ingame
+namespace GUC.Sumpfkraut.Ingame
 {
     class ChatMessage : IMessage
     {

@@ -8,7 +8,7 @@ using RakNet;
 using GUC.Server;
 using GUC.Server.Network;
 
-namespace GUC.Server.Mod
+namespace GUC.Server.Sumpfkraut
 {
     class ChatMessage : IMessage
     {

@@ -7,7 +7,7 @@ using GUC.Server.Scripting.Objects.Character;
 using GUC.Server.Network.Messages;
 using RakNet;
 
-namespace GUC.Server.Mod
+namespace GUC.Server.Sumpfkraut
 {
     public class Chat
     {

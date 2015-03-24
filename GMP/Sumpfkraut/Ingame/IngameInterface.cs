@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.Enumeration;
 
-namespace GUC.Mod.Ingame
+namespace GUC.Sumpfkraut.Ingame
 {
     class IngameInterface
     {

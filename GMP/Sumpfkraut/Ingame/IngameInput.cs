@@ -5,7 +5,7 @@ using System.Text;
 using Gothic.mClasses;
 using WinApi;
 
-namespace GUC.Mod.Ingame
+namespace GUC.Sumpfkraut.Ingame
 {
     class IngameInput : InputReceiver
     {

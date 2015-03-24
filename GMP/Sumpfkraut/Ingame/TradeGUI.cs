@@ -14,7 +14,7 @@ using GUC.Hooks;
 using RakNet;
 
 
-namespace GUC.Mod.Ingame
+namespace GUC.Sumpfkraut.Ingame
 {
 
 
