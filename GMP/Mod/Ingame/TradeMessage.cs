@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.GUI;
+using GUC.Network;
 using RakNet;
 using GUC.Enumeration;
 using GUC.WorldObjects.Character;
 
-namespace GUC.Network.Messages
+namespace GUC.Mod.Ingame
 {
     class TradeMessage : IMessage
     {

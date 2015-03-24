@@ -54,7 +54,6 @@ namespace GUC.Server.Scripts
 #endif
             DefaultWorld.Init();
 
-            Server.Scripting.Client.Chat test = new Scripting.Client.Chat();
 
             
 
@@ -73,6 +72,7 @@ namespace GUC.Server.Scripts
             CommandInterpreter.GetCommandInterpreter();
             Chat.GetChat();
             EventNotifier.GetEventNotifier();
+
       
 
 #endif

@@ -6,8 +6,9 @@ using GUC.Enumeration;
 using GUC.WorldObjects.Character;
 using GUC.WorldObjects;
 using RakNet;
+using GUC.Server.Network;
 
-namespace GUC.Server.Network.Messages
+namespace GUC.Server.Mod
 {
     class TradeMessage : IMessage
     {
@@ -16,7 +17,7 @@ namespace GUC.Server.Network.Messages
 
         }
 
-        public void Read(RakNet.BitStream stream, RakNet.Packet packet, Server server)
+        public void Read(RakNet.BitStream stream, RakNet.Packet packet, GUC.Server.Network.Server server)
         {
             byte b;
             stream.Read(out b);

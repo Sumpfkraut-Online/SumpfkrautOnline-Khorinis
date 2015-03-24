@@ -166,15 +166,8 @@ namespace GUC.Network.Messages.Connection
                 }
             }
 
-            //edit by Showdown
-            if (!Program.client.messageListener.ContainsKey((byte)NetworkID.ChatMessage))
-            {
-                Program.client.messageListener.Add((byte)NetworkID.ChatMessage, new ChatMessage());
-            }
-            if (!Program.client.messageListener.ContainsKey((byte)NetworkID.TradeMessage))
-            {
-                Program.client.messageListener.Add((byte)NetworkID.TradeMessage, new TradeMessage());
-            }
+            //edited by Showdown
+            Mod.Ingame.IngameInterface.Init();
         }
 
         protected static void CreateItems()

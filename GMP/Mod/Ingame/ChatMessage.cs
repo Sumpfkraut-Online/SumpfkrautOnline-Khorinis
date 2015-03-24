@@ -11,8 +11,9 @@ using GUC.Enumeration;
 using GUC.WorldObjects.Character;
 using GUC.WorldObjects;
 using GUC.GUI;
+using GUC.Network;
 
-namespace GUC.Network.Messages
+namespace GUC.Mod.Ingame
 {
     class ChatMessage : IMessage
     {

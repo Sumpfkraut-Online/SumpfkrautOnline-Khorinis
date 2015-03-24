@@ -9,7 +9,7 @@ using WinApi;
 using WinApi.User.Enumeration;
 using GUC.Types;
 
-namespace GUC.GUI
+namespace GUC.Mod.Ingame
 {
     class ChatGUI : InputReceiver
     {
@@ -66,7 +66,7 @@ namespace GUC.GUI
             //scrollPosition = 0;
             writing = false;
 
-            InputHooked.receivers.Add(this); //add for input
+            IngameInput.receivers.Add(this); //add for input
             zCView.GetStartscreen(process).InsertItem(thisView, 0); //add for graphics
         }
 
@@ -97,9 +97,6 @@ namespace GUC.GUI
 
         public void KeyReleased(int key)
         {
-            if (WinApi.User.Window.GetWindowThreadProcessId(WinApi.User.Window.GetForegroundWindow()) != process.ProcessID || zCConsole.Console(process).IsVisible() == 1)
-                return;
-
             if (key == (int)VirtualKeys.Escape)
             {
                 KeyDisable();
@@ -108,10 +105,7 @@ namespace GUC.GUI
 
         public void KeyPressed(int key)
         {
-            if (WinApi.User.Window.GetWindowThreadProcessId(WinApi.User.Window.GetForegroundWindow()) != process.ProcessID || zCConsole.Console(process).IsVisible() == 1)
-                return;
-
-            if (!writing && key == (int)VirtualKeys.Return) //"open" input text
+            if (!writing && key == (int)VirtualKeys.Return) //"open" chat
             {
                 KeyEnable();
                 return;
@@ -142,8 +136,7 @@ namespace GUC.GUI
                     }
                 }
                 else
-                {
-                    //add the char
+                { //add the char
                     input += GetCharsFromKeys((VirtualKeys)key, InputHooked.IsPressed((int)VirtualKeys.Shift), InputHooked.IsPressed((int)VirtualKeys.Control) && InputHooked.IsPressed((int)VirtualKeys.Menu));
                 }
                 ShowInputText();
@@ -179,14 +172,14 @@ namespace GUC.GUI
 
         private void KeyEnable()
         {
-            InputHooked.deactivateFullControl(process,this);
+            IngameInput.activateFullControl(this);
             ShowInputText();
             writing = true;
         }
 
         private void KeyDisable()
         {
-            InputHooked.activateFullControl(process);
+            IngameInput.deactivateFullControl();
             HideInputText();
             writing = false;
         }

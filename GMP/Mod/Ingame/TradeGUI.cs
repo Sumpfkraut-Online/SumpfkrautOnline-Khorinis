@@ -14,8 +14,10 @@ using GUC.Hooks;
 using RakNet;
 
 
-namespace GUC.GUI
+namespace GUC.Mod.Ingame
 {
+
+
     class InvSlot
     {
         public Item item;
@@ -64,7 +66,7 @@ namespace GUC.GUI
             }
 
             this.oCItem = new oCItem(process, item.Address);
-            hItem.renderList.Add(itemView, this.oCItem);
+            ItemRenderer.renderList.Add(itemView, this.oCItem);
             this.item = item;
         }
 
@@ -76,7 +78,7 @@ namespace GUC.GUI
             }
             if (oCItem != null)
             {
-                hItem.renderList.Remove(itemView); //remove old item
+                ItemRenderer.renderList.Remove(itemView); //remove old item
                 oCItem = null;
             }
             if (amountText != null)
@@ -103,6 +105,34 @@ namespace GUC.GUI
 
             itemView.SetPos(pos[0], pos[1]);
             itemView.SetSize(size[0], size[1]);
+        }
+    }
+
+    public class ItemRenderer
+    {
+        public static Dictionary<zCView, oCItem> renderList = new Dictionary<zCView, oCItem>();
+
+        static zCWorld rndrWorld = null;
+        public static Int32 ViewDraw_DrawChildren(String message)
+        {
+            try
+            {
+                if (rndrWorld == null)
+                {
+                    rndrWorld = zCWorld.Create(Process.ThisProcess());
+                    rndrWorld.IsInventoryWorld = true;
+                }
+
+                foreach (KeyValuePair<zCView, oCItem> pair in renderList)
+                {
+                    pair.Value.RenderItem(rndrWorld, pair.Key, 0.0f);
+                }
+            }
+            catch (Exception ex)
+            {
+                zERROR.GetZErr(Process.ThisProcess()).Report(4, 'G', ex.ToString(), 0, "ViewDraw_DrawChildren", 0);
+            }
+            return 0;
         }
     }
 
@@ -138,7 +168,7 @@ namespace GUC.GUI
         public TradeGUI(Action<int> Request, Action<int> Offer, Action<int> TakeBack)
         {
             process = Process.ThisProcess();
-            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hItem).GetMethod("ViewDraw_DrawChildren"), (int)0x00704B90, (int)7, 0);
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(ItemRenderer).GetMethod("ViewDraw_DrawChildren"), (int)0x00704B90, (int)7, 0);
 
             startTradeKey = (int)VirtualKeys.T;
             trading = false;
@@ -151,14 +181,11 @@ namespace GUC.GUI
             scrollPos = 0;
             cursor = new int[2] { 0, 0 };
             CreateTradeMenu();
-            InputHooked.receivers.Add(this);
+            IngameInput.receivers.Add(this);
         }
 
         public void KeyReleased(int key)
         {
-            if (WinApi.User.Window.GetWindowThreadProcessId(WinApi.User.Window.GetForegroundWindow()) != process.ProcessID || zCConsole.Console(process).IsVisible() == 1)
-                return;
-
             if (trading && (key == (int)VirtualKeys.Escape || key == (int)VirtualKeys.Tab))
             {
                 trading = false;
@@ -169,9 +196,6 @@ namespace GUC.GUI
 
         public void KeyPressed(int key)
         {
-            if (WinApi.User.Window.GetWindowThreadProcessId(WinApi.User.Window.GetForegroundWindow()) != process.ProcessID || zCConsole.Console(process).IsVisible() == 1)
-                return;
-
             if (!trading)
             {
                 if (key == startTradeKey)
@@ -369,12 +393,11 @@ namespace GUC.GUI
             sellItems = new List<Item>();
             UpdateMenuItems();
             zCView.GetStartscreen(process).InsertItem(thisView, 0);
-            InputHooked.deactivateFullControl(process,this);
+            IngameInput.activateFullControl(this);
         }
 
         private void UpdateMenuItems()
-        {
-            
+        { 
             for (int num = 0, y = 0; y < inventory.Count; y++)
                 for (int x = 0; x < inventory[y].Count; num++, x++)
                     if (num < invItems.Count)
@@ -437,7 +460,7 @@ namespace GUC.GUI
                     slot.RemoveItem();
 
             zCView.GetStartscreen(process).RemoveItem(thisView);
-            InputHooked.activateFullControl(process);
+            IngameInput.deactivateFullControl();
         }
 
         private InvSlot GetSlot(int[] cur)

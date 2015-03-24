@@ -7,7 +7,7 @@ using GUC.Server.Scripting.Objects.Character;
 using GUC.Server.Network.Messages;
 using RakNet;
 
-namespace GUC.Server.Scripting.Client
+namespace GUC.Server.Mod
 {
     public class Chat
     {
@@ -44,7 +44,7 @@ namespace GUC.Server.Scripting.Client
         }
 
         //Removes the NetworkID
-       /* ~Chat() //removed because it likes to self-destruct
+        /*~Chat() //removed because it likes to self-destruct
         {
             Log.Logger.log("Destroy");
             Program.server.MessageListener.Remove((byte)NetworkID.ChatMessage);

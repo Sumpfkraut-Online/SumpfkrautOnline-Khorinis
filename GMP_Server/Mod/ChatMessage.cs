@@ -5,9 +5,10 @@ using System.Text;
 using GUC.WorldObjects;
 using GUC.WorldObjects.Character;
 using RakNet;
-using GUC.Server.Scripting.Client;
+using GUC.Server;
+using GUC.Server.Network;
 
-namespace GUC.Server.Network.Messages
+namespace GUC.Server.Mod
 {
     class ChatMessage : IMessage
     {
@@ -18,7 +19,7 @@ namespace GUC.Server.Network.Messages
         public event Chat.MessageHandler Receive;
 
         //we received a chat text from a client
-        public void Read(RakNet.BitStream stream, RakNet.Packet packet, Server server)
+        public void Read(RakNet.BitStream stream, RakNet.Packet packet, GUC.Server.Network.Server server)
         {
             string text = null;
             Player from = null;

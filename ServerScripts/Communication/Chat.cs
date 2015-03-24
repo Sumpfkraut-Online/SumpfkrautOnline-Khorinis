@@ -44,14 +44,14 @@ namespace GUC.Server.Scripts.Communication
     /// </summary>
     protected Chat()
     {
-        ch = new Scripting.Client.Chat();
+        ch = new Mod.Chat();
         ch.OnReceiveMessage += ReceiveMessage;
       /*textBox = new TextBox("", "FONT_DEFAULT.TGA", offsetX, offsetY, sendButton, startButton, abortButton);
       textBox.show();
       textBox.TextSended += new Events.TextBoxMessageEventHandler(textBoxMessageSended);*/
     }
 
-    private GUC.Server.Scripting.Client.Chat ch;
+    private Mod.Chat ch;
 
     private void ReceiveMessage(Player sender, string message)
     {
@@ -61,10 +61,6 @@ namespace GUC.Server.Scripts.Communication
             return;
         }
         ch.SendSay(sender, sender, message);
-
-#if SSM_ACCOUNT_LOGGING
-        SQLiteLogger.log_Chat(sender, message);
-#endif
     }
       /*
     private void textBoxMessageSended(TextBox sender, Player player, string message)

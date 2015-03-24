@@ -52,8 +52,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GUI\Button.cs" />
-    <Compile Include="GUI\Client\ChatGUI.cs" />
-    <Compile Include="GUI\Client\TradeGUI.cs" />
+    <Compile Include="Mod\Ingame\ChatGUI.cs" />
+    <Compile Include="Mod\Ingame\TradeGUI.cs" />
     <Compile Include="GUI\Cursor.cs" />
     <Compile Include="GUI\GuiList\List.cs" />
     <Compile Include="GUI\GuiList\ListButton.cs" />
@@ -78,6 +78,8 @@
     <Compile Include="Hooks\hNpc.cs" />
     <Compile Include="Hooks\hParser.cs" />
     <Compile Include="Hooks\hSpell.cs" />
+    <Compile Include="Mod\Ingame\IngameInterface.cs" />
+    <Compile Include="Mod\Ingame\IngameInput.cs" />
     <Compile Include="Network\Client.cs" />
     <Compile Include="Network\IMessage.cs" />
     <Compile Include="Network\Messages\Callbacks\CallbackNPCCanSee.cs" />
@@ -85,7 +87,7 @@
     <Compile Include="Network\Messages\Callbacks\ReadIniEntryMessage.cs" />
     <Compile Include="Network\Messages\CameraCommands\CamToPlayerFront.cs" />
     <Compile Include="Network\Messages\CameraCommands\CamToVobMessage.cs" />
-    <Compile Include="Network\Messages\ChatMessage.cs" />
+    <Compile Include="Mod\Ingame\ChatMessage.cs" />
     <Compile Include="Network\Messages\Connection\ConnectionMessage.cs" />
     <Compile Include="Network\Messages\Connection\DisconnectMessage.cs" />
     <Compile Include="Network\Messages\Connection\ExitGameMessage.cs" />
@@ -128,7 +130,7 @@
     <Compile Include="Network\Messages\PlayerCommands\SpellInvestMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\StartDialogAnimMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\TakeItemMessage.cs" />
-    <Compile Include="Network\Messages\TradeMessage.cs" />
+    <Compile Include="Mod\Ingame\TradeMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\ChangeWorldMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\CreateVobMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\DespawnVobMessage.cs" />
