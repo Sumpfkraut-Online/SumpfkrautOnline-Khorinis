@@ -108,11 +108,13 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             //     --> would need to login agan to synchronize)
             for (int r = 0; r < defList[0].Count; r++)
             {
+
                 // !!! TO DO: load effect changes here !!!
-                // try getting the necessary hints on data conversion for each column 
+                 // try getting the necessary hints on data conversion for each column 
                 // of the given vob-specific effect-instance table (EI)
+                List<List<List<object>>> defList_EI = new List<List<List<object>>>();
                 Dictionary<string, SQLiteGetTypeEnum> colTypes_EI = null;
-                Database.EffectsInstTableEnum effectsInstTab = 0;
+                Database.InstTableEnum effectsInstTab = 0;
                 if (!DBTables.EffectInstAccesDict.TryGetValue(defTab, out effectsInstTab))
                 {
                     return;
@@ -123,12 +125,16 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                 }
                 // to lists to ensure same key-value-order for each row in rdr because the memory
                 // allocation of the original dictionary and order might be changed during runtime
-                List<string> colTypesKeys_EI = new List<string>(colTypes.Keys);
+                List<string> colTypesKeys_EI = new List<string>(colTypes_EI.Keys);
                 List<SQLiteGetTypeEnum> colTypesVals_EI = new List<SQLiteGetTypeEnum>();
                 for (int i = 0; i < colTypesKeys_EI.Count; i++)
                 {
-                    colTypesVals_EI.Add( colTypes[colTypesKeys_EI[i]] );
+                    colTypesVals_EI.Add( colTypes_EI[colTypesKeys_EI[i]] );
                 }
+
+                LoadEffectsInst(effectsInstTab, ref defList_EI, 
+                    ref colTypesKeys_EI, ref colTypesVals_EI);
+
 
                 // these default values are just substitute for the subsequent replacements
                 String instanceName = "";
@@ -354,6 +360,59 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             //}
         }
 
+
+        private static void LoadEffectsInst (InstTableEnum instTab, ref List<List<List<object>>> defList, 
+            ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals, 
+            string sqlWhere="1")
+        {
+            //string defTabName = "";
+            //switch (instTab)
+            //{
+            //    case (DefTableEnum.Mob_def):
+            //        defTabName = "Mob_Effects_inst";
+            //        break;
+            //    case (DefTableEnum.Spell_def):
+            //        defTabName = "Mob_Effects_inst";
+            //        break;
+            //    case (DefTableEnum.Item_def):
+            //        defTabName = "Mob_Effects_inst";
+            //        break;
+            //    case (DefTableEnum.NPC_def):
+            //        defTabName = "Mob_Effects_inst";
+            //        break;
+            //}
+
+           
+                
+            //// grab effect-ids from database
+            //List<List<List<object>>> effectIDs = new List<List<List<object>>>();
+            //DBReader.LoadFromDB(ref effectIDs, 
+            //    "(" + String.Join(",", colTypesKeys.ToArray())  + ")", 
+            //    defTabName, 
+            //    sqlWhere, 
+            //    "ID ASC");
+
+            //// convert individual sql-result-strings to usable data of given types
+            //object tempEntry = null;
+            //int r = 0;
+            //int c = 0;
+            //while (r < defList[1].Count)
+            //{
+            //    c = 0;
+            //    while (c < defList[1][r].Count)
+            //    {
+            //        tempEntry = defList[1][r][c];
+            //        if (!DBTables.SqlStringToData((string)tempEntry, colTypesVals[c], ref tempEntry))
+            //        {
+            //            Log.Logger.logError("Could no convert " + tempEntry + " from string to type " 
+            //                + colTypesVals[c] + ".");
+            //        }
+            //        c++;
+            //    }
+            //    r++;
+            //}
+        }
+
         //private static void LoadEffectDef (ref List<int> effectDefIDs, 
         //    ref Dictionary<String, SQLiteGetTypeEnum> colTypes, 
         //    out List<string> colTypesKeys, out List<SQLiteGetTypeEnum> colTypesVals, 
@@ -418,56 +477,11 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
         // must be able to read multiple rows 
         // count of colVals multiple of the count of colKeys to prevent unnecessary repetition?
         // 1 => object, 2 => object, 3 => object, 4 => object, ... , 1 => object, ...
-        private static void LoadEffectChangesDef (DefTableEnum defTab,
-            ref List<int> effectDefIDs, ref List<List<List<object>>> defList, 
+        private static void LoadEffectChangesDef (ref List<int> effectDefIDs, ref List<List<List<object>>> defList, 
             ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals, 
             string sqlWhere="1")
         {
-            string defTabName = "";
-            switch (defTab)
-            {
-                case (DefTableEnum.Mob_def):
-                    defTabName = "Mob_Effects_inst";
-                    break;
-                case (DefTableEnum.Spell_def):
-                    defTabName = "Mob_Effects_inst";
-                    break;
-                case (DefTableEnum.Item_def):
-                    defTabName = "Mob_Effects_inst";
-                    break;
-                case (DefTableEnum.NPC_def):
-                    defTabName = "Mob_Effects_inst";
-                    break;
-            }
-                
-
-            // grab effect-ids from database
-            List<List<List<object>>> effectIDs = new List<List<List<object>>>();
-            DBReader.LoadFromDB(ref effectIDs, 
-                "(" + String.Join(",", colTypesKeys.ToArray())  + ")", 
-                defTabName, 
-                sqlWhere, 
-                "ID ASC");
-
-            // convert individual sql-result-strings to usable data of given types
-            object tempEntry = null;
-            int r = 0;
-            int c = 0;
-            while (r < defList[1].Count)
-            {
-                c = 0;
-                while (c < defList[1][r].Count)
-                {
-                    tempEntry = defList[1][r][c];
-                    if (!DBTables.SqlStringToData((string)tempEntry, colTypesVals[c], ref tempEntry))
-                    {
-                        Log.Logger.logError("Could no convert " + tempEntry + " from string to type " 
-                            + colTypesVals[c] + ".");
-                    }
-                    c++;
-                }
-                r++;
-            }
+            
 
             //// stores the read and converted data of the sql-query
             //defList = new List<List<object>>();
