@@ -197,35 +197,44 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
             {InstTableEnum.NPC_Effects_inst, "NPC_Effects_inst"},
         };
 
+        public static readonly Dictionary<InstTableEnum, string>
+            EffectsInstTableDefIDDict = new Dictionary<InstTableEnum, string>()
+        {
+            {InstTableEnum.Mob_Effects_inst, "MobDefID"},
+            {InstTableEnum.Spell_Effects_inst, "SpellDefID"},
+            {InstTableEnum.Item_Effects_inst, "ItemDefID"},
+            {InstTableEnum.NPC_Effects_inst, "NPCDefID"},
+        };
+
         public static readonly Dictionary<InstTableEnum, Dictionary<String, SQLiteGetTypeEnum>>
-            EffectsInstTableDict = new Dictionary<InstTableEnum, Dictionary<String, SQLiteGetTypeEnum>> 
+            InstTableDict = new Dictionary<InstTableEnum, Dictionary<String, SQLiteGetTypeEnum>> 
         {
             {
                 InstTableEnum.Mob_Effects_inst, new Dictionary<String, SQLiteGetTypeEnum>
                 {
                     {"MobDefID",                      SQLiteGetTypeEnum.GetInt32},
-                    {"EffectDefID",                      SQLiteGetTypeEnum.GetInt32},
+                    {"EffectDefID",                   SQLiteGetTypeEnum.GetInt32},
                 }
             },
             {
                 InstTableEnum.Spell_Effects_inst, new Dictionary<String, SQLiteGetTypeEnum>
                 {
-                    {"SpellDefID",                      SQLiteGetTypeEnum.GetInt32},
-                    {"EffectDefID",                      SQLiteGetTypeEnum.GetInt32},
+                    {"SpellDefID",                    SQLiteGetTypeEnum.GetInt32},
+                    {"EffectDefID",                   SQLiteGetTypeEnum.GetInt32},
                 }
             },
             {
                 InstTableEnum.Item_Effects_inst, new Dictionary<String, SQLiteGetTypeEnum>
                 {
-                    {"ItemDefID",                      SQLiteGetTypeEnum.GetInt32},
-                    {"EffectDefID",                      SQLiteGetTypeEnum.GetInt32},
+                    {"ItemDefID",                     SQLiteGetTypeEnum.GetInt32},
+                    {"EffectDefID",                   SQLiteGetTypeEnum.GetInt32},
                 }
             },
             {
                 InstTableEnum.NPC_Effects_inst, new Dictionary<String, SQLiteGetTypeEnum>
                 {
                     {"NPCDefID",                      SQLiteGetTypeEnum.GetInt32},
-                    {"EffectDefID",                      SQLiteGetTypeEnum.GetInt32},
+                    {"EffectDefID",                   SQLiteGetTypeEnum.GetInt32},
                 }
             },
         };

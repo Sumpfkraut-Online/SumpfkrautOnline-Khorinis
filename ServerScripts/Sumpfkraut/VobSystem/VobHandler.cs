@@ -31,6 +31,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
         private static Dictionary<int, SpellDef> spellDefDict = new Dictionary<int, SpellDef>();
         private static Dictionary<int, NPCDef> npcDefDict = new Dictionary<int, NPCDef>();
 
+
+
         /**
          *   Call this method from outside to create the intial vob definitions
          *   (spells, items, mobs, npcs).
@@ -43,6 +45,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             loadDefinitions(DefTableEnum.NPC_def);
         }
 
+
         /**
          *   Loads the specified type of definitions from their resective datatables.
          *   The method prepares and executes the sqlite-query and reads the resulting values to create
@@ -52,6 +55,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
          */
         public static void loadDefinitions (DefTableEnum defTab)
         {
+            /* -------------------------------------------------------------
+                getting vob-definitions
+            /* ------------------------------------------------------------- */
             if (!DBTables.DefTableDict.ContainsKey(defTab))
             {
                 return;
@@ -90,10 +96,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 
             LoadVobDef(defTabName, ref defList, defTab, ref colTypesKeys, ref colTypesVals);
 
-            // !!! continue with loading Effect_Changes
-            // !!! apply EffectChanges
-            // !!! instantiate definitions objects (results in them being listed)
-
             // for easier list-indexing in list<object> of defList = List<List<object>>
             Dictionary<string, int> colDict = new Dictionary<string, int>();
             for (int i = 0; i < colTypesKeys.Count; i++)
@@ -108,18 +110,19 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             //     --> would need to login agan to synchronize)
             for (int r = 0; r < defList[0].Count; r++)
             {
-
-                // !!! TO DO: load effect changes here !!!
-                 // try getting the necessary hints on data conversion for each column 
+                /* -------------------------------------------------------------
+                    getting vob-effects-instances (EI) [for each vob-defintion]
+                /* ------------------------------------------------------------- */
+                // try getting the necessary hints on data conversion for each column 
                 // of the given vob-specific effect-instance table (EI)
-                List<List<List<object>>> defList_EI = new List<List<List<object>>>();
+                List<List<List<object>>> instList_EI = new List<List<List<object>>>();
                 Dictionary<string, SQLiteGetTypeEnum> colTypes_EI = null;
                 Database.InstTableEnum effectsInstTab = 0;
                 if (!DBTables.EffectInstAccesDict.TryGetValue(defTab, out effectsInstTab))
                 {
                     return;
                 }
-                if (!DBTables.EffectsInstTableDict.TryGetValue(effectsInstTab, out colTypes_EI))
+                if (!DBTables.InstTableDict.TryGetValue(effectsInstTab, out colTypes_EI))
                 {
                     return;
                 }
@@ -132,126 +135,178 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                     colTypesVals_EI.Add( colTypes_EI[colTypesKeys_EI[i]] );
                 }
 
-                LoadEffectsInst(effectsInstTab, ref defList_EI, 
-                    ref colTypesKeys_EI, ref colTypesVals_EI);
-
-
-                // these default values are just substitute for the subsequent replacements
-                String instanceName = "";
-                String name = "";
-                String scemeName = "";
-                int[] protection = null;
-                int[] damages = null;
-                int value = 0;
-                MainFlags mainFlags = 0;
-                Flags flags = 0;
-                ArmorFlags armorFlags = 0;
-                DamageTypes dmgType = 0;
-                int totalDamage = 0;
-                int range = 0;
-                String visual = "";
-                String visual_Change = "";
-                String effect = "";
-                int visualSkin = 0;
-                MaterialType types = 0;
-                ItemInstance munition = null;
-                bool keyInstance = false;
-                bool torch = false;
-                bool torchBurning = false;
-                bool torchBurned = false;
-                bool gold = false;
-
-                // temporary used index for more secure code through TryGetValue (see if-blocks below)
-                int colIndex = -1;
-
-                if (colDict.TryGetValue("InstanceName", out colIndex))
+                // filter out the vob-defintiion-ids to look them up in effects-instance-tables later
+                List<int> defIDs = new List<int>();
+                int idColIndex = colTypesKeys.IndexOf("ID");
+                for (int i = 0; i < defList[0].Count; i++)
                 {
-                    instanceName = (String) defList[r][0][colIndex];
+                    defIDs.Add((int)defList[0][i][idColIndex]);
                 }
 
-                if (colDict.TryGetValue("Name", out colIndex))
+                // column name and index where the vob-id is
+                string vobIDColName = null;
+                if (!DBTables.EffectsInstTableDefIDDict.TryGetValue(effectsInstTab, out vobIDColName))
                 {
-                    name = (String) defList[r][0][colIndex];
+                    return;
+                }
+                int vobIDColIndex = colTypesKeys_EI.IndexOf(vobIDColName);
+
+                // use the vob-ids to request all effect-ids which belong to them
+                LoadEffectsInst(effectsInstTab, ref instList_EI,
+                    ref colTypesKeys_EI, ref colTypesVals_EI, "vobIDColName IN (" + String.Join(",", defIDs.ToArray()) + ")");
+
+                // filter out the effect-instance-ids to look them up in effects-changes-tables later
+                List<int> effectDefIDs = new List<int>();
+                for (int i = 0; i < instList_EI[0].Count; i++)
+                {
+                    effectDefIDs.Add((int)instList_EI[0][i][vobIDColIndex]);
                 }
 
-                if (colDict.TryGetValue("ScemeName", out colIndex))
+                /* -------------------------------------------------------------
+                    getting effect-changes-defintions (EC) [for each vob-defintion]
+                /* ------------------------------------------------------------- */
+                // try getting the necessary hints on data conversion for each column 
+                // of the given vob-specific effect-instance table (EI)
+                List<List<List<object>>> defList_EC = new List<List<List<object>>>();
+                Dictionary<string, SQLiteGetTypeEnum> colTypes_EC = null;
+                if (!DBTables.DefTableDict.TryGetValue(defTab, out colTypes_EC))
                 {
-                    name = (String) defList[r][0][colIndex];
+                    return;
                 }
 
-                // TO DO: protection assignment through loaded effect-changes
-
-                if (colDict.TryGetValue("ScemeName", out colIndex))
+                // to lists to ensure same key-value-order for each row in rdr because the memory
+                // allocation of the original dictionary and order might be changed during runtime
+                List<string> colTypesKeys_EC = new List<string>(colTypes_EC.Keys);
+                List<SQLiteGetTypeEnum> colTypesVals_EC = new List<SQLiteGetTypeEnum>();
+                for (int i = 0; i < colTypesKeys_EC.Count; i++)
                 {
-                    scemeName = (String) defList[r][0][colIndex];
+                    colTypesVals_EC.Add( colTypes_EC[colTypesKeys_EC[i]] );
                 }
 
-                // TO DO: damages assignment through loaded effect-changes
+                LoadEffectChangesDef(ref effectDefIDs, ref defList_EC,
+                    ref colTypesKeys_EC, ref colTypesVals_EC);
 
-                // TO DO: value assignment through loaded effect-changes
+                /* -------------------------------------------------------------
+                    create the actual instances for vob definitions
+                /* ------------------------------------------------------------- */
 
-                if (colDict.TryGetValue("MainFlag", out colIndex))
-                {
-                    mainFlags = (MainFlags) defList[r][0][colIndex];
-                }
+                //// these default values are just substitute for the subsequent replacements
+                //String instanceName = "";
+                //String name = "";
+                //String scemeName = "";
+                //int[] protection = null;
+                //int[] damages = null;
+                //int value = 0;
+                //MainFlags mainFlags = 0;
+                //Flags flags = 0;
+                //ArmorFlags armorFlags = 0;
+                //DamageTypes dmgType = 0;
+                //int totalDamage = 0;
+                //int range = 0;
+                //String visual = "";
+                //String visual_Change = "";
+                //String effect = "";
+                //int visualSkin = 0;
+                //MaterialType types = 0;
+                //ItemInstance munition = null;
+                //bool keyInstance = false;
+                //bool torch = false;
+                //bool torchBurning = false;
+                //bool torchBurned = false;
+                //bool gold = false;
 
-                // TO DO: value assignment through loaded effect-changes
+                //// temporary used index for more secure code through TryGetValue (see if-blocks below)
+                //int colIndex = -1;
 
-                // TO DO: armorFlags assignment through loaded effect-changes
+                //if (colDict.TryGetValue("InstanceName", out colIndex))
+                //{
+                //    instanceName = (String) defList[r][0][colIndex];
+                //}
 
-                // TO DO: dmgType assignment through loaded effect-changes
+                //if (colDict.TryGetValue("Name", out colIndex))
+                //{
+                //    name = (String) defList[r][0][colIndex];
+                //}
 
-                // TO DO: totalDamage assignment through loaded effect-changes
+                //if (colDict.TryGetValue("ScemeName", out colIndex))
+                //{
+                //    name = (String) defList[r][0][colIndex];
+                //}
 
-                // TO DO: range assignment through loaded effect-changes
+                //// TO DO: protection assignment through loaded effect-changes
 
-                if (colDict.TryGetValue("Visual", out colIndex))
-                {
-                    visual = (String) defList[r][0][colIndex];
-                }
+                //if (colDict.TryGetValue("ScemeName", out colIndex))
+                //{
+                //    scemeName = (String) defList[r][0][colIndex];
+                //}
 
-                // TO DO: visual_Change assignment through loaded effect-changes
+                //// TO DO: damages assignment through loaded effect-changes
 
-                // TO DO: effect assignment through loaded effect-changes
+                //// TO DO: value assignment through loaded effect-changes
 
-                if (colDict.TryGetValue("Visual_Skin", out colIndex))
-                {
-                    visualSkin = (int) defList[r][0][colIndex];
-                }
+                //if (colDict.TryGetValue("MainFlag", out colIndex))
+                //{
+                //    mainFlags = (MainFlags) defList[r][0][colIndex];
+                //}
 
-                if (colDict.TryGetValue("Material", out colIndex))
-                {
-                    types = (MaterialType) defList[r][0][colIndex];
-                }
+                //// TO DO: value assignment through loaded effect-changes
 
-                // TO DO: munition assignment through loaded effect-changes
+                //// TO DO: armorFlags assignment through loaded effect-changes
 
-                // TO DO: keyInstance assignment through loaded effect-changes
+                //// TO DO: dmgType assignment through loaded effect-changes
 
-                // TO DO: torch assignment through loaded effect-changes
+                //// TO DO: totalDamage assignment through loaded effect-changes
 
-                // TO DO: torchBurning assignment through loaded effect-changes
+                //// TO DO: range assignment through loaded effect-changes
 
-                // TO DO: torchBurned assignment through loaded effect-changes
+                //if (colDict.TryGetValue("Visual", out colIndex))
+                //{
+                //    visual = (String) defList[r][0][colIndex];
+                //}
 
-                // TO DO: gold assignment through loaded effect-changes
+                //// TO DO: visual_Change assignment through loaded effect-changes
 
-                // create new ItemInstance to list it internally for the G:UC and list it
-                // for the standardized serverscripts too
-                ItemDef newDef = new ItemDef(instanceName, name, scemeName, protection, damages, 
-                    value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, 
-                    visual_Change, effect, visualSkin, types, munition, keyInstance, torch, 
-                    torchBurning, torchBurned, gold);
-                if (newDef != null)
-                {
-                    itemDefDict.Add(0, newDef); ;
-                }
+                //// TO DO: effect assignment through loaded effect-changes
+
+                //if (colDict.TryGetValue("Visual_Skin", out colIndex))
+                //{
+                //    visualSkin = (int) defList[r][0][colIndex];
+                //}
+
+                //if (colDict.TryGetValue("Material", out colIndex))
+                //{
+                //    types = (MaterialType) defList[r][0][colIndex];
+                //}
+
+                //// TO DO: munition assignment through loaded effect-changes
+
+                //// TO DO: keyInstance assignment through loaded effect-changes
+
+                //// TO DO: torch assignment through loaded effect-changes
+
+                //// TO DO: torchBurning assignment through loaded effect-changes
+
+                //// TO DO: torchBurned assignment through loaded effect-changes
+
+                //// TO DO: gold assignment through loaded effect-changes
+
+                //// create new ItemInstance to list it internally for the G:UC and list it
+                //// for the standardized serverscripts too
+                //ItemDef newDef = new ItemDef(instanceName, name, scemeName, protection, damages, 
+                //    value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, 
+                //    visual_Change, effect, visualSkin, types, munition, keyInstance, torch, 
+                //    torchBurning, torchBurned, gold);
+                //if (newDef != null)
+                //{
+                //    itemDefDict.Add(0, newDef); ;
+                //}
 
 
             }
             
 
         }
+
 
         /**
          *   Load vob definitions (without effect changes definitions) as usable data objects from database.
@@ -274,6 +329,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                 throw new Exception("Cannot load vob definition of vobtype " + defTabEnum + ".");
             }  
         }
+
 
         /**
          *   Lower level loading of vob definition that requires colTypes-paramter.
@@ -305,59 +361,19 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                 while (c < defList[1][r].Count)
                 {
                     tempEntry = defList[1][r][c];
-                    if (!DBTables.SqlStringToData((string)tempEntry, colTypesVals[c], ref tempEntry))
+                    if (DBTables.SqlStringToData((string)tempEntry, colTypesVals[c], ref tempEntry))
+                    {
+                        defList[1][r][c] = tempEntry;
+                    }
+                    else
                     {
                         Log.Logger.logError("Could no convert " + tempEntry + " from string to type " 
-                            + colTypesVals[c] + ".");
+                            + colTypesVals[c] + " in method LoadVobDef.");
                     }
                     c++;
                 }
                 r++;
             }
-
-            //using (SQLiteCommand cmd = new SQLiteCommand(Sqlite.getSqlite().connection))
-            //{
-            //    // outputs all vob definition rows with chosen entries which fit the WHERE-condition
-            //    // and sorts them in ascending order accordingly
-            //    cmd.CommandText = "SELECT (" + String.Join(",", colTypesKeys.ToArray()) 
-            //        + ") FROM `" + defTabName 
-            //        + "` WHERE " + sqlWhere 
-            //        + " ORDER BY `ID` ASC";
-            //    SQLiteDataReader rdr = null;
-            //    try
-            //    {
-            //        rdr = cmd.ExecuteReader();
-            //        if (!rdr.HasRows)
-            //        {
-            //            return;
-            //        }
-
-            //        // temporary list to put all data of a row into
-            //        List<object> rowList = null;
-
-            //        while (rdr.Read())
-            //        {
-            //            rowList = new List<object>();
-            //            for (int col=0; col<colTypesKeys.Count; col++)
-            //            {
-            //                rowList.Add(DBTables.SqlReadType(ref rdr, col, colTypesVals[col]));
-            //            }
-            //            defList.Add(rowList);
-            //        }
-
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        throw new Exception("Could not execute SQLiteDataReader during vob-definiton-loading: " + ex);
-            //    }
-            //    finally
-            //    {
-            //        if (rdr != null)
-            //        {
-            //            rdr.Close();
-            //        }
-            //    }
-            //}
         }
 
 
@@ -365,182 +381,102 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals, 
             string sqlWhere="1")
         {
-            //string defTabName = "";
-            //switch (instTab)
-            //{
-            //    case (DefTableEnum.Mob_def):
-            //        defTabName = "Mob_Effects_inst";
-            //        break;
-            //    case (DefTableEnum.Spell_def):
-            //        defTabName = "Mob_Effects_inst";
-            //        break;
-            //    case (DefTableEnum.Item_def):
-            //        defTabName = "Mob_Effects_inst";
-            //        break;
-            //    case (DefTableEnum.NPC_def):
-            //        defTabName = "Mob_Effects_inst";
-            //        break;
-            //}
+            string instTabName = "";
+            if (!DBTables.EffectsInstTableNamesDict.TryGetValue(instTab, out instTabName))
+            {
+                return;
+            }
+            string orderByID = "";
+            if (!DBTables.EffectsInstTableDefIDDict.TryGetValue(instTab, out orderByID))
+            {
+                return;
+            }
 
-           
-                
-            //// grab effect-ids from database
-            //List<List<List<object>>> effectIDs = new List<List<List<object>>>();
-            //DBReader.LoadFromDB(ref effectIDs, 
-            //    "(" + String.Join(",", colTypesKeys.ToArray())  + ")", 
-            //    defTabName, 
-            //    sqlWhere, 
-            //    "ID ASC");
+            // grab effect-ids from database
+            DBReader.LoadFromDB(ref defList, 
+                "(" + String.Join(",", colTypesKeys.ToArray())  + ")", 
+                instTabName, 
+                sqlWhere, 
+                " " + orderByID + " ASC");
 
-            //// convert individual sql-result-strings to usable data of given types
-            //object tempEntry = null;
-            //int r = 0;
-            //int c = 0;
-            //while (r < defList[1].Count)
-            //{
-            //    c = 0;
-            //    while (c < defList[1][r].Count)
-            //    {
-            //        tempEntry = defList[1][r][c];
-            //        if (!DBTables.SqlStringToData((string)tempEntry, colTypesVals[c], ref tempEntry))
-            //        {
-            //            Log.Logger.logError("Could no convert " + tempEntry + " from string to type " 
-            //                + colTypesVals[c] + ".");
-            //        }
-            //        c++;
-            //    }
-            //    r++;
-            //}
+            // convert individual sql-result-strings to usable data of given types
+            object tempEntry = null;
+            int r = 0;
+            int c = 0;
+            while (r < defList[1].Count)
+            {
+                c = 0;
+                while (c < defList[1][r].Count)
+                {
+                    tempEntry = defList[1][r][c];
+                    if (DBTables.SqlStringToData((string)tempEntry, colTypesVals[c], ref tempEntry))
+                    {
+                        defList[1][r][c] = tempEntry;
+                    }
+                    else
+                    {
+                        Log.Logger.logError("Could no convert " + tempEntry + " from string to type " 
+                            + colTypesVals[c] + " in method LoadEffectsInst.");
+                    }
+                    c++;
+                }
+                r++;
+            }
         }
 
-        //private static void LoadEffectDef (ref List<int> effectDefIDs, 
-        //    ref Dictionary<String, SQLiteGetTypeEnum> colTypes, 
-        //    out List<string> colTypesKeys, out List<SQLiteGetTypeEnum> colTypesVals, 
-        //    string sqlWhere="1")
-        //{
-            ////colKeys = new List<int>();
-            ////colVals = new List<object>();
 
-            //if ((effectDefIDs == null) || (effectDefIDs.Count <= 0))
-            //{
-            //    return;
-            //}
-
-            //using (SQLiteCommand cmd = new SQLiteCommand(Sqlite.getSqlite().connection))
-            //{
-            //    cmd.CommandText = "SELECT * FROM `Effect_def` WHERE `ID` IN (" 
-            //        + String.Join(",", effectDefIDs.ToArray()) 
-            //        + ") ORDER BY `ID` ASC;";
-
-            //    SQLiteDataReader rdr = null;
-            //    try
-            //    {
-            //        rdr = cmd.ExecuteReader();
-            //        if (!rdr.HasRows)
-            //        {
-            //            return;
-            //        }
-
-            //        //Dictionary<String, SQLiteGetTypeEnum> colTypes = null;
-            //        //if (!DBTables.DefTableDict.TryGetValue(DefTableEnum.Effect_Changes_def, out colTypes))
-            //        //{
-            //        //    return;
-            //        //}
-
-            //        int col = 0;
-            //        while(rdr.Read())
-            //        {
-            //            col = 0;
-            //            foreach(KeyValuePair<string, SQLiteGetTypeEnum> e in colTypes)
-            //            {
-            //                //colKeys.Add(e.Key);
-            //                //colVals.Add(DBTables.SqlReadType(ref rdr, col, e.Value));
-            //                col++;
-            //            }
-            //        }
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        throw new Exception("Could not execute SQLiteDataReader during loading of effect changes definitions: " + ex);
-            //    }
-            //    finally
-            //    {
-            //        if (rdr != null)
-            //        {
-            //            rdr.Close();
-            //        }
-            //    }
-            //}
-        //}
-
+        private static void LoadEffectChangesDef (ref List<int> effectDefIDs, ref List<List<List<object>>> defList, 
+            ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals)
+        {
+            if (!(effectDefIDs.Count > 0))
+            {
+                Log.Logger.logError("Cannot load effect-changes-definitions with 0 effect-definition-ids" 
+                + " in LoadEffectChangesDef.");
+                return;
+            }
+            string sqlWhere = "EffectDefID IN (" + String.Concat(",", effectDefIDs.ToArray()) + ")";
+            LoadEffectChangesDef(ref defList,
+                ref colTypesKeys, ref colTypesVals,
+                sqlWhere);
+        }
 
         // must be able to read multiple rows 
         // count of colVals multiple of the count of colKeys to prevent unnecessary repetition?
         // 1 => object, 2 => object, 3 => object, 4 => object, ... , 1 => object, ...
-        private static void LoadEffectChangesDef (ref List<int> effectDefIDs, ref List<List<List<object>>> defList, 
+        private static void LoadEffectChangesDef (ref List<List<List<object>>> defList, 
             ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals, 
             string sqlWhere="1")
         {
-            
+            // grab from database
+            DBReader.LoadFromDB(ref defList, 
+                "(" + String.Join(",", colTypesKeys.ToArray())  + ")", 
+                "Effect_Changes_def", 
+                sqlWhere, 
+                "EffectDefID ASC");
 
-            //// stores the read and converted data of the sql-query
-            //defList = new List<List<object>>();
-            //Dictionary<String, SQLiteGetTypeEnum> colTypes = null;
-            //DBTables.DefTableDict.TryGetValue(DefTableEnum.Effect_Changes_def, out colTypes);
-            //// to lists to ensure same key-value-order for each row in rdr because, otherwise, the memory
-            //// adresses of the original dictionary and order might be changed during runtime
-            //colTypesKeys = new List<string>(colTypes.Keys);
-            //colTypesVals = new List<SQLiteGetTypeEnum>(colTypes.Values);
-
-            //if ((effectDefIDs == null) || (effectDefIDs.Count <= 0))
-            //{
-            //    return;
-            //}
-
-            //using (SQLiteCommand cmd = new SQLiteCommand(Sqlite.getSqlite().connection))
-            //{
-            //    // outputs a row for each effect change definition for the given IDs 
-            //    // and sorts them accordingly in ascending order before returnign the query
-            //    cmd.CommandText = "SELECT" + String.Join(",", colTypesKeys.ToArray()) 
-            //        +  "FROM `Effect_Changes_def` WHERE `EffectDefID` IN (" 
-            //        + String.Join(",", effectDefIDs.ToArray()) 
-            //        + ") WHERE" + sqlWhere
-            //        + " ORDER BY `EffectDefID` ASC;";
-
-            //    SQLiteDataReader rdr = null;
-            //    try
-            //    {
-            //        rdr = cmd.ExecuteReader();
-            //        if (!rdr.HasRows)
-            //        {
-            //            return;
-            //        }
-
-            //        // temporary list to put all data of a row into
-            //        List<object> rowList = null;
-
-            //        while (rdr.Read())
-            //        {
-            //            rowList = new List<object>();
-            //            for (int col=0; col<colTypesKeys.Count; col++)
-            //            {
-            //                rowList.Add(DBTables.SqlReadType(ref rdr, col, colTypesVals[col]));
-            //            }
-            //            defList.Add(rowList);
-            //        }
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        throw new Exception("Could not execute SQLiteDataReader during loading of effect changes definitions: " + ex);
-            //    }
-            //    finally
-            //    {
-            //        if (rdr != null)
-            //        {
-            //            rdr.Close();
-            //        }
-            //    }
-            //}
+            // convert individual sql-result-strings to usable data of given types
+            object tempEntry = null;
+            int r = 0;
+            int c = 0;
+            while (r < defList[1].Count)
+            {
+                c = 0;
+                while (c < defList[1][r].Count)
+                {
+                    tempEntry = defList[1][r][c];
+                    if (DBTables.SqlStringToData((string)tempEntry, colTypesVals[c], ref tempEntry))
+                    {
+                        defList[1][r][c] = tempEntry;
+                    }
+                    else
+                    {
+                        Log.Logger.logError("Could no convert " + tempEntry + " from string to type " 
+                            + colTypesVals[c] + " in method LoadEffectChangesDef.");
+                    }
+                    c++;
+                }
+                r++;
+            }
         }
 
     }
