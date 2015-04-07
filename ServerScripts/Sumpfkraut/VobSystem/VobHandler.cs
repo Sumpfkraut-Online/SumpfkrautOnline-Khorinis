@@ -57,7 +57,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
         {
             /* -------------------------------------------------------------
                 getting vob-definitions
-            /* ------------------------------------------------------------- */
+               ------------------------------------------------------------- */
+
             if (!DBTables.DefTableDict.ContainsKey(defTab))
             {
                 return;
@@ -112,7 +113,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             {
                 /* -------------------------------------------------------------
                     getting vob-effects-instances (EI) [for each vob-defintion]
-                /* ------------------------------------------------------------- */
+                   ------------------------------------------------------------- */
+
                 // try getting the necessary hints on data conversion for each column 
                 // of the given vob-specific effect-instance table (EI)
                 List<List<List<object>>> instList_EI = new List<List<List<object>>>();
@@ -164,7 +166,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 
                 /* -------------------------------------------------------------
                     getting effect-changes-defintions (EC) [for each vob-defintion]
-                /* ------------------------------------------------------------- */
+                   ------------------------------------------------------------- */
+
                 // try getting the necessary hints on data conversion for each column 
                 // of the given vob-specific effect-instance table (EI)
                 List<List<List<object>>> defList_EC = new List<List<List<object>>>();
@@ -187,125 +190,20 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                     ref colTypesKeys_EC, ref colTypesVals_EC);
 
                 /* -------------------------------------------------------------
-                    create the actual instances for vob definitions
-                /* ------------------------------------------------------------- */
+                    create actual instances for vob definitions
+                   ------------------------------------------------------------- */
 
-                //// these default values are just substitute for the subsequent replacements
-                //String instanceName = "";
-                //String name = "";
-                //String scemeName = "";
-                //int[] protection = null;
-                //int[] damages = null;
-                //int value = 0;
-                //MainFlags mainFlags = 0;
-                //Flags flags = 0;
-                //ArmorFlags armorFlags = 0;
-                //DamageTypes dmgType = 0;
-                //int totalDamage = 0;
-                //int range = 0;
-                //String visual = "";
-                //String visual_Change = "";
-                //String effect = "";
-                //int visualSkin = 0;
-                //MaterialType types = 0;
-                //ItemInstance munition = null;
-                //bool keyInstance = false;
-                //bool torch = false;
-                //bool torchBurning = false;
-                //bool torchBurned = false;
-                //bool gold = false;
-
-                //// temporary used index for more secure code through TryGetValue (see if-blocks below)
-                //int colIndex = -1;
-
-                //if (colDict.TryGetValue("InstanceName", out colIndex))
-                //{
-                //    instanceName = (String) defList[r][0][colIndex];
-                //}
-
-                //if (colDict.TryGetValue("Name", out colIndex))
-                //{
-                //    name = (String) defList[r][0][colIndex];
-                //}
-
-                //if (colDict.TryGetValue("ScemeName", out colIndex))
-                //{
-                //    name = (String) defList[r][0][colIndex];
-                //}
-
-                //// TO DO: protection assignment through loaded effect-changes
-
-                //if (colDict.TryGetValue("ScemeName", out colIndex))
-                //{
-                //    scemeName = (String) defList[r][0][colIndex];
-                //}
-
-                //// TO DO: damages assignment through loaded effect-changes
-
-                //// TO DO: value assignment through loaded effect-changes
-
-                //if (colDict.TryGetValue("MainFlag", out colIndex))
-                //{
-                //    mainFlags = (MainFlags) defList[r][0][colIndex];
-                //}
-
-                //// TO DO: value assignment through loaded effect-changes
-
-                //// TO DO: armorFlags assignment through loaded effect-changes
-
-                //// TO DO: dmgType assignment through loaded effect-changes
-
-                //// TO DO: totalDamage assignment through loaded effect-changes
-
-                //// TO DO: range assignment through loaded effect-changes
-
-                //if (colDict.TryGetValue("Visual", out colIndex))
-                //{
-                //    visual = (String) defList[r][0][colIndex];
-                //}
-
-                //// TO DO: visual_Change assignment through loaded effect-changes
-
-                //// TO DO: effect assignment through loaded effect-changes
-
-                //if (colDict.TryGetValue("Visual_Skin", out colIndex))
-                //{
-                //    visualSkin = (int) defList[r][0][colIndex];
-                //}
-
-                //if (colDict.TryGetValue("Material", out colIndex))
-                //{
-                //    types = (MaterialType) defList[r][0][colIndex];
-                //}
-
-                //// TO DO: munition assignment through loaded effect-changes
-
-                //// TO DO: keyInstance assignment through loaded effect-changes
-
-                //// TO DO: torch assignment through loaded effect-changes
-
-                //// TO DO: torchBurning assignment through loaded effect-changes
-
-                //// TO DO: torchBurned assignment through loaded effect-changes
-
-                //// TO DO: gold assignment through loaded effect-changes
-
-                //// create new ItemInstance to list it internally for the G:UC and list it
-                //// for the standardized serverscripts too
-                //ItemDef newDef = new ItemDef(instanceName, name, scemeName, protection, damages, 
-                //    value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, 
-                //    visual_Change, effect, visualSkin, types, munition, keyInstance, torch, 
-                //    torchBurning, torchBurned, gold);
-                //if (newDef != null)
-                //{
-                //    itemDefDict.Add(0, newDef); ;
-                //}
-
-
+                // !!! mixed up accidentally loading effect changes for all vobs in defList 
+                // and the loop over each single vob definition row... MUST BE SOLVED!!!
+                //createVobDefinition(defTab, ref defList[0][r], ref defList_EC);
             }
-            
-
         }
+
+
+
+        /* ---------------------------------------------------------
+            DATABASE INTERACTION
+           --------------------------------------------------------- */
 
 
         /**
@@ -440,6 +338,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                 sqlWhere);
         }
 
+
         // must be able to read multiple rows 
         // count of colVals multiple of the count of colKeys to prevent unnecessary repetition?
         // 1 => object, 2 => object, 3 => object, 4 => object, ... , 1 => object, ...
@@ -477,6 +376,169 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                 }
                 r++;
             }
+        }
+
+
+
+        /* ---------------------------------------------------------
+            APPLICATION OF RECEIVED DATABASE ENTRIES
+           --------------------------------------------------------- */
+
+
+        // !!! TO DO: transfer attribute data and the list<list<list<object>>> of the effect-changes-definition !!!
+        private static void createVobDefinition (DefTableEnum defTab)
+        {
+            switch (defTab)
+            {
+                case (DefTableEnum.Mob_def):
+                    createMobDefinition();
+                    break;
+                case (DefTableEnum.Spell_def):
+                    createMobDefinition();
+                    break;
+                case (DefTableEnum.Item_def):
+                    createMobDefinition();
+                    break;
+                case (DefTableEnum.NPC_def):
+                    createMobDefinition();
+                    break;
+                default:
+                    throw new Exception("Invalid DefTableEnum " + defTab + " detected in method createVobDefinition"
+                        + ": Terminating vob-definition-creation!");
+            }
+        }
+
+
+        private static void createMobDefinition ()
+        {
+
+        }
+
+
+        private static void createSpellDefinition ()
+        {
+
+        }
+
+
+        private static void createItemDefinition ()
+        {
+            //// these default values are just substitute for the subsequent replacements
+            //String instanceName = "";
+            //String name = "";
+            //String scemeName = "";
+            //int[] protection = null;
+            //int[] damages = null;
+            //int value = 0;
+            //MainFlags mainFlags = 0;
+            //Flags flags = 0;
+            //ArmorFlags armorFlags = 0;
+            //DamageTypes dmgType = 0;
+            //int totalDamage = 0;
+            //int range = 0;
+            //String visual = "";
+            //String visual_Change = "";
+            //String effect = "";
+            //int visualSkin = 0;
+            //MaterialType types = 0;
+            //ItemInstance munition = null;
+            //bool keyInstance = false;
+            //bool torch = false;
+            //bool torchBurning = false;
+            //bool torchBurned = false;
+            //bool gold = false;
+
+            //// temporary used index for more secure code through TryGetValue (see if-blocks below)
+            //int colIndex = -1;
+
+            //if (colDict.TryGetValue("InstanceName", out colIndex))
+            //{
+            //    instanceName = (String) defList[r][0][colIndex];
+            //}
+
+            //if (colDict.TryGetValue("Name", out colIndex))
+            //{
+            //    name = (String) defList[r][0][colIndex];
+            //}
+
+            //if (colDict.TryGetValue("ScemeName", out colIndex))
+            //{
+            //    name = (String) defList[r][0][colIndex];
+            //}
+
+            //// TO DO: protection assignment through loaded effect-changes
+
+            //if (colDict.TryGetValue("ScemeName", out colIndex))
+            //{
+            //    scemeName = (String) defList[r][0][colIndex];
+            //}
+
+            //// TO DO: damages assignment through loaded effect-changes
+
+            //// TO DO: value assignment through loaded effect-changes
+
+            //if (colDict.TryGetValue("MainFlag", out colIndex))
+            //{
+            //    mainFlags = (MainFlags) defList[r][0][colIndex];
+            //}
+
+            //// TO DO: value assignment through loaded effect-changes
+
+            //// TO DO: armorFlags assignment through loaded effect-changes
+
+            //// TO DO: dmgType assignment through loaded effect-changes
+
+            //// TO DO: totalDamage assignment through loaded effect-changes
+
+            //// TO DO: range assignment through loaded effect-changes
+
+            //if (colDict.TryGetValue("Visual", out colIndex))
+            //{
+            //    visual = (String) defList[r][0][colIndex];
+            //}
+
+            //// TO DO: visual_Change assignment through loaded effect-changes
+
+            //// TO DO: effect assignment through loaded effect-changes
+
+            //if (colDict.TryGetValue("Visual_Skin", out colIndex))
+            //{
+            //    visualSkin = (int) defList[r][0][colIndex];
+            //}
+
+            //if (colDict.TryGetValue("Material", out colIndex))
+            //{
+            //    types = (MaterialType) defList[r][0][colIndex];
+            //}
+
+            //// TO DO: munition assignment through loaded effect-changes
+
+            //// TO DO: keyInstance assignment through loaded effect-changes
+
+            //// TO DO: torch assignment through loaded effect-changes
+
+            //// TO DO: torchBurning assignment through loaded effect-changes
+
+            //// TO DO: torchBurned assignment through loaded effect-changes
+
+            //// TO DO: gold assignment through loaded effect-changes
+
+            //// create new ItemInstance to list it internally for the G:UC and list it
+            //// for the standardized serverscripts too
+            //ItemDef newDef = new ItemDef(instanceName, name, scemeName, protection, damages, 
+            //    value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, 
+            //    visual_Change, effect, visualSkin, types, munition, keyInstance, torch, 
+            //    torchBurning, torchBurned, gold);
+            //if (newDef != null)
+            //{
+            //    itemDefDict.Add(0, newDef); ;
+            //}
+        }
+
+
+        private static void createNPCDefinition ()
+        {
+
         }
 
     }
