@@ -93,8 +93,49 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         //    this.Munition = Munition;
         //}
 
+
+        // descriptive texts and values (appear ingame in the item information panel)
+
+        public string getDescription () { return this.Description; }
+        public void setDescription (string Description) { this.Description = Description; }
+
+        public string getText0 () { return this.Text0; }
+        public void setText0 (string Text0) { this.Text0 = Text0; }
+
+        public string getText1 () { return this.Text1; }
+        public void setText1 (string Text0) { this.Text0 = Text1; }
+
+        public string getText2 () { return this.Text2; }
+        public void setText2 (string Text0) { this.Text0 = Text2; }
+
+        public string getText3 () { return this.Text3; }
+        public void setText3 (string Text0) { this.Text0 = Text3; }
+
+        public string getText4 () { return this.Text4; }
+        public void setText4 (string Text0) { this.Text0 = Text4; }
+
+        public string getText5 () { return this.Text5; }
+        public void setText5 (string Text0) { this.Text0 = Text5; }
         
+        public int getCount0 () { return this.Count0; }
+        public void setCount0 (int Count0) { this.Count0 = Count0; }
+
+        public int getCount1 () { return this.Count1; }
+        public void setCount1 (int Count0) { this.Count0 = Count1; }
+
+        public int getCount2 () { return this.Count2; }
+        public void setCount2 (int Count0) { this.Count0 = Count2; }
+
+        public int getCount3 () { return this.Count3; }
+        public void setCount3 (int Count0) { this.Count0 = Count3; }
+
+        public int getCount4 () { return this.Count4; }
+        public void setCount4 (int Count0) { this.Count0 = Count4; }
+
+        public int getCount5 () { return this.Count5; }
+        public void setCount5 (int Count0) { this.Count0 = Count5; }
         
+
         // triggered with OnUse
 
         protected int OnUse_HPChange = 0;

@@ -112,19 +112,11 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                     {"Visual_Skin",             SQLiteGetTypeEnum.GetInt32},
                     {"InstanceName",            SQLiteGetTypeEnum.GetString},
                     {"Name",                    SQLiteGetTypeEnum.GetString},
-                    {"Description",             SQLiteGetTypeEnum.GetString},
                     {"ScemeName",               SQLiteGetTypeEnum.GetString},
                     {"MainFlag",                SQLiteGetTypeEnum.GetInt32},
                     {"Flags",                   SQLiteGetTypeEnum.GetInt32},
                     {"Material",                SQLiteGetTypeEnum.GetInt32},
                     {"HasEffect",               SQLiteGetTypeEnum.GetBoolean},
-                    // better define them as effects due them being quite custom attributes/features
-                    // which aren't shared by many most items
-                    //{"IsGold",                  SQLiteGetTypeEnum.GetBoolean},
-                    //{"IsKeyInstance",           SQLiteGetTypeEnum.GetBoolean},
-                    //{"IsTorch",                 SQLiteGetTypeEnum.GetBoolean},
-                    //{"IsTorchBurned",           SQLiteGetTypeEnum.GetBoolean},
-                    //{"IsTorchBurned",           SQLiteGetTypeEnum.GetBoolean},
                 }
             },
             {

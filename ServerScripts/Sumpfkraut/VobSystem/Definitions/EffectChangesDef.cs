@@ -9,38 +9,53 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
     enum EffectChangesEnum
     {
-        IsGold,
-        IsKeyInstance,
-        IsTorch,
-        IsTorchBurning,
-        IsTorchBurned,
+        // 1000 - 1999 reserved for ItemDef effect changes
+        IsGold                      = 1000,
+        IsKeyInstance               = EffectChangesEnum.IsGold + 1,
+        IsTorch                     = EffectChangesEnum.IsKeyInstance + 1,                   
+        IsTorchBurning              = EffectChangesEnum.IsTorch + 1,
+        IsTorchBurned               = EffectChangesEnum.IsTorchBurning + 1,
 
-        Effect,
-        Spell,
+        Effect                      = EffectChangesEnum.IsTorchBurned + 1,
+        Spell                       = EffectChangesEnum.Effect + 1,
 
-        Wear,
-        DamageType,
-        Range,
-        TotalDamage,
-        Damages,
-        Munition,
+        Wear                        = EffectChangesEnum.Spell + 1,
+        DamageType                  = EffectChangesEnum.Wear + 1,
+        Range                       = EffectChangesEnum.DamageType + 1,
+        TotalDamage                 = EffectChangesEnum.Range + 1,
+        Damages                     = EffectChangesEnum.TotalDamage + 1,
+        Munition                    = EffectChangesEnum.Damages + 1,
 
-        Protection,
+        Protection                  = EffectChangesEnum.Munition + 1,
 
-        OnUse_HPChange,
-        OnUse_HPMaxChange,
-        OnUse_MPChange,
-        OnUse_MPMaxChange,
+        Description                 = EffectChangesEnum.Protection + 1,
+        Text0                       = EffectChangesEnum.Description + 1,
+        Text1                       = EffectChangesEnum.Text0 + 1,
+        Text2                       = EffectChangesEnum.Text1 + 1,
+        Text3                       = EffectChangesEnum.Text2 + 1,
+        Text4                       = EffectChangesEnum.Text3 + 1,
+        Text5                       = EffectChangesEnum.Text4 + 1,
+        Count0                      = EffectChangesEnum.Text5 + 1,
+        Count1                      = EffectChangesEnum.Count0 + 1,
+        Count2                      = EffectChangesEnum.Count1 + 1,
+        Count3                      = EffectChangesEnum.Count2 + 1,
+        Count4                      = EffectChangesEnum.Count3 + 1,
+        Count5                      = EffectChangesEnum.Count4 + 1,
 
-        OnEquip_HPChange,
-        OnEquip_HPMaxChange,
-        OnEquip_MPChange,
-        OnEquip_MPMaxChange,
+        OnUse_HPChange              = EffectChangesEnum.Count5 + 1,
+        OnUse_HPMaxChange           = EffectChangesEnum.OnUse_HPChange + 1,
+        OnUse_MPChange              = EffectChangesEnum.OnUse_HPMaxChange + 1,
+        OnUse_MPMaxChange           = EffectChangesEnum.OnUse_MPChange + 1,
 
-        OnUnEquip_HPChange,
-        OnUnEquip_HPMaxChange,
-        OnUnEquip_MPChange,
-        OnUnEquip_MPMaxChange,
+        OnEquip_HPChange            = EffectChangesEnum.OnUse_MPMaxChange + 1,
+        OnEquip_HPMaxChange         = EffectChangesEnum.OnEquip_HPChange + 1,
+        OnEquip_MPChange            = EffectChangesEnum.OnEquip_HPMaxChange + 1,
+        OnEquip_MPMaxChange         = EffectChangesEnum.OnEquip_MPChange + 1,
+
+        OnUnEquip_HPChange          = EffectChangesEnum.OnEquip_MPMaxChange + 1,
+        OnUnEquip_HPMaxChange       = EffectChangesEnum.OnUnEquip_HPChange + 1,
+        OnUnEquip_MPChange          = EffectChangesEnum.OnUnEquip_HPMaxChange + 1,
+        OnUnEquip_MPMaxChange       = EffectChangesEnum.OnUnEquip_MPChange + 1,
     }
 
     /**
@@ -241,6 +256,97 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
                             }
                         }
                         return;
+
+
+                    // descriptive parameters
+                    case (EffectChangesEnum.Description):
+                        def.setDescription(param);
+                        return;
+                    case (EffectChangesEnum.Text0):
+                        def.setText0(param);
+                        return;
+                    case (EffectChangesEnum.Text1):
+                        def.setText1(param);
+                        return;
+                    case (EffectChangesEnum.Text2):
+                        def.setText2(param);
+                        return;
+                    case (EffectChangesEnum.Text3):
+                        def.setText3(param);
+                        return;
+                    case (EffectChangesEnum.Text4):
+                        def.setText4(param);
+                        return;
+                    case (EffectChangesEnum.Text5):
+                        def.setText5(param);
+                        return;
+                    case (EffectChangesEnum.Count0):
+                        int Count0 = -1;
+                        if (int.TryParse(param, out Count0))
+                        {
+                            def.setCount0(Count0);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying Count0.");
+                        }
+                        return;
+                    case (EffectChangesEnum.Count1):
+                        int Count1 = -1;
+                        if (int.TryParse(param, out Count1))
+                        {
+                            def.setCount1(Count1);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying Count1.");
+                        }
+                        return;
+                    case (EffectChangesEnum.Count2):
+                        int Count2 = -1;
+                        if (int.TryParse(param, out Count2))
+                        {
+                            def.setCount2(Count2);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying Count2.");
+                        }
+                        return;
+                    case (EffectChangesEnum.Count3):
+                        int Count3 = -1;
+                        if (int.TryParse(param, out Count3))
+                        {
+                            def.setCount3(Count3);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying Count3.");
+                        }
+                        return;
+                    case (EffectChangesEnum.Count4):
+                        int Count4 = -1;
+                        if (int.TryParse(param, out Count4))
+                        {
+                            def.setCount4(Count4);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying Count4.");
+                        }
+                        return;
+                    case (EffectChangesEnum.Count5):
+                        int Count5 = -1;
+                        if (int.TryParse(param, out Count5))
+                        {
+                            def.setCount5(Count5);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying Count5.");
+                        }
+                        return;
+
 
                     // OnUse
                     case (EffectChangesEnum.OnUse_HPChange):

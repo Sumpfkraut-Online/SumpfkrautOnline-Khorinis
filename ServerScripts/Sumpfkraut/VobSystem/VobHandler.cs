@@ -445,6 +445,19 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             //bool torchBurning = false;
             //bool torchBurned = false;
             //bool gold = false;
+            //string description = "";
+            //string text0 = "";
+            //string text1 = "";
+            //string text2 = "";
+            //string text3 = "";
+            //string text4 = "";
+            //string text5 = "";
+            //int count0 = -1;
+            //int count1 = -1;
+            //int count2 = -1;
+            //int count3 = -1;
+            //int count4 = -1;
+            //int count5 = -1;
 
             //// temporary used index for more secure code through TryGetValue (see if-blocks below)
             //int colIndex = -1;
