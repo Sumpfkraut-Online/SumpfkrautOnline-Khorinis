@@ -106,6 +106,22 @@ namespace GUC.Server.Sumpfkraut
             }
         }
 
+        public void SendPM(Player from, Player to, String text)
+        {
+            if (text != null && text.Length > 0)
+            {
+                SendText(from, to, ChatTextType.PM, text);
+            }
+        }
+
+        public void SendOOCEvent(String text)
+        {
+            if (text != null && text.Length > 0)
+            {
+                SendText(null, null, ChatTextType.Event, text);
+            }
+        }
+
         private void SendText(Player from, Player to, ChatTextType type, String text)
         {
             BitStream stream = Program.server.SendBitStream;
