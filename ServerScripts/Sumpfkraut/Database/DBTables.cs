@@ -161,9 +161,10 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
             {
                 DefTableEnum.Effect_Changes_def, new Dictionary<String, SQLiteGetTypeEnum>
                 {
-                    {"Event",                   SQLiteGetTypeEnum.GetInt32},
+                    {"ID",                      SQLiteGetTypeEnum.GetInt32},
+                    {"EventID",                 SQLiteGetTypeEnum.GetInt32},
                     {"EffectDefID",             SQLiteGetTypeEnum.GetInt32},
-                    {"Change",                  SQLiteGetTypeEnum.GetInt32},
+                    {"ChangeType",              SQLiteGetTypeEnum.GetInt32},
                     {"Parameters",              SQLiteGetTypeEnum.GetString}
                 }
             }
@@ -190,7 +191,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
         };
 
         public static readonly Dictionary<InstTableEnum, string>
-            EffectsInstTableDefIDDict = new Dictionary<InstTableEnum, string>()
+            EffectsInstTableDict_VobDefID = new Dictionary<InstTableEnum, string>()
         {
             {InstTableEnum.Mob_Effects_inst, "MobDefID"},
             {InstTableEnum.Spell_Effects_inst, "SpellDefID"},

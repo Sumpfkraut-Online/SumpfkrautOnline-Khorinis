@@ -65,65 +65,46 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
     class EffectChangesDef
     {
 
-        /**
-         *   Dictionary which holds all EffectChanges for faster access.
-         *   May be deprecated later if only using the database directly.
-         */
-        private static Dictionary<EffectChangesEnum, string> EffectChangesDict = new Dictionary<EffectChangesEnum, string>();
+        private static Dictionary<int, List<object>> EffectChangesDefDict = new Dictionary<int, List<object>>();
 
         private static Object dictLock = new Object();
 
-        /**
-         *   May be deprecated later if only using the databse directly.
-         */
-        public static void Add (EffectChangesEnum changeType, string param)
+        public static void Add (int id, EffectChangesEnum changeType, string param, bool replace=false)
         {
-            if ((changeType != null) && (param != null))
+            lock (dictLock)
             {
-                lock (dictLock)
+                if ((Enum.IsDefined(typeof(EffectChangesEnum), changeType)) && (param != null))
                 {
-                    EffectChangesDict.Add(changeType, param);
-                }
-            }
-        }
-
-        /**
-         *   May be deprecated later if only using the databse directly.
-         */
-        public static void Edit (EffectChangesEnum changeType, string param, bool createNew = true)
-        {
-            if ((changeType != null) && (param != null))
-            {
-                lock (dictLock)
-                {
-                    if (EffectChangesDict.ContainsKey(changeType))
+                    List<object> entry = null;
+                    if (EffectChangesDefDict.TryGetValue(id, out entry))
                     {
-                        EffectChangesDict[changeType] = param;
+                        if (replace)
+                        {
+                            entry[0] = changeType;
+                            entry[1] = param;
+                        }
+                        else
+                        {
+                            Log.Logger.logWarning("ID " + id + " in EffectChangesDefDict already occupied"
+                                + " and replace-parameter is set to false.");
+                        }
                     }
                     else
                     {
-                        if (createNew)
-                        {
-                            EffectChangesDict.Add(changeType, param);
-                        }
+                        entry = new List<object>(){changeType, param};
+                        EffectChangesDefDict.Add(id, entry);
                     }
                 }
             }
         }
 
-        /**
-         *   May be deprecated later if only using the databse directly.
-         */
-        public static void Remove (EffectChangesEnum changeType)
+        public static void Remove (int id)
         {
-            if (changeType != null)
+            lock (dictLock)
             {
-                lock (dictLock)
+                if (EffectChangesDefDict.ContainsKey(id))
                 {
-                    if (EffectChangesDict.ContainsKey(changeType))
-                    {
-                        EffectChangesDict.Remove(changeType);
-                    }
+                    EffectChangesDefDict.Remove(id);
                 }
             }
         }

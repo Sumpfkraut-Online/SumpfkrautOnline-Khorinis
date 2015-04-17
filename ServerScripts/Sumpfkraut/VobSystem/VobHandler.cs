@@ -135,12 +135,12 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             int idColIndex = colTypesKeys.IndexOf("ID");
             for (int i = 0; i < defList[0].Count; i++)
             {
-                defIDs.Add((int)defList[0][i][idColIndex]);
+                 defIDs.Add((int)defList[0][i][idColIndex]);
             }
 
             // column name and index where the vob-id is
             string vobIDColName = null;
-            if (!DBTables.EffectsInstTableDefIDDict.TryGetValue(effectsInstTab, out vobIDColName))
+            if (!DBTables.EffectsInstTableDict_VobDefID.TryGetValue(effectsInstTab, out vobIDColName))
             {
                 return;
             }
@@ -148,13 +148,38 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 
             // use the vob-ids to request all effect-ids which belong to them
             LoadEffectsInst(effectsInstTab, ref instList_EI,
-                ref colTypesKeys_EI, ref colTypesVals_EI, "vobIDColName IN (" + String.Join(",", defIDs.ToArray()) + ")");
+                ref colTypesKeys_EI, ref colTypesVals_EI, vobIDColName + " IN (" + String.Join(",", defIDs.ToArray()) + ")");
 
             // filter out the effect-instance-ids to look them up in effects-changes-tables later
+            // + map vob definition ids to their related effect ids
             List<int> effectDefIDs = new List<int>();
+            int effectIDColIndex = colTypesKeys_EI.IndexOf("EffectDefID");
+            int eiEffectID = -1;
+            Dictionary<int, List<int>> vobToEffectsMap = new Dictionary<int, List<int>>();
+            List<int> tempVobEffectDefIDs;
+            int eiVobID = -1;
             for (int i = 0; i < instList_EI[0].Count; i++)
             {
-                effectDefIDs.Add((int)instList_EI[0][i][vobIDColIndex]);
+                eiEffectID = (int) instList_EI[0][i][effectIDColIndex];
+                eiVobID = (int) instList_EI[0][i][vobIDColIndex];
+
+                if (!effectDefIDs.Contains(eiEffectID))
+                {
+                    effectDefIDs.Add(eiEffectID);
+                }
+
+                if (vobToEffectsMap.TryGetValue(eiVobID, out tempVobEffectDefIDs))
+                {
+                    if (!tempVobEffectDefIDs.Contains(eiEffectID))
+                    {
+                        tempVobEffectDefIDs.Add(eiEffectID);
+                    }
+                }
+                else
+                {
+                    tempVobEffectDefIDs = new List<int>() {eiEffectID};
+                    vobToEffectsMap.Add(eiVobID, tempVobEffectDefIDs);
+                }
             }
 
             /* -------------------------------------------------------------
@@ -181,6 +206,38 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 
             LoadEffectChangesDef(ref effectDefIDs, ref defList_EC,
                 ref colTypesKeys_EC, ref colTypesVals_EC);
+
+            // remember those EffectChanges for later use (no need for less handy defList_EC from here on)
+            // + map effectIDs to the ids of EffectChanges (for late use in the vob-instantiation)
+            int ecIDColIndex = colTypesKeys_EC.IndexOf("ID");
+            int ecCTColIndex = colTypesKeys_EC.IndexOf("ChangeType");
+            int ecParamColIndex = colTypesKeys_EC.IndexOf("Parameters");
+            int ecEffDefIDColIndex = colTypesKeys_EC.IndexOf("EffectDefID");
+            Dictionary<int, List<int>> effectToChangesMap = new Dictionary<int, List<int>>();
+            List<int> tempEffectChangesIDs;
+            int ecEffectID = -1;
+            int ecEffectChangeID = -1;
+            for (int i = 0; i < defList_EC[0].Count; i++)
+            {
+                ecEffectID = (int) defList_EC[0][i][ecEffDefIDColIndex];
+                ecEffectChangeID = (int) defList_EC[0][i][ecIDColIndex];
+
+                Definitions.EffectChangesDef.Add(ecEffectChangeID, 
+                    (EffectChangesEnum) defList_EC[0][i][ecCTColIndex],
+                    (string) defList_EC[0][i][ecParamColIndex],
+                    true);
+
+                if (effectToChangesMap.TryGetValue(ecEffectID, out tempEffectChangesIDs)){
+                    if (!tempEffectChangesIDs.Contains(ecEffectChangeID))
+                    {
+                        tempEffectChangesIDs.Add(ecEffectChangeID);
+                    }
+                }
+                else
+                {
+                    tempEffectChangesIDs = new List<int>() {ecEffectChangeID};
+                }
+            }
 
             /* -------------------------------------------------------------
                 create actual instances for vob definitions
@@ -283,7 +340,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                 return;
             }
             string orderByID = "";
-            if (!DBTables.EffectsInstTableDefIDDict.TryGetValue(instTab, out orderByID))
+            if (!DBTables.EffectsInstTableDict_VobDefID.TryGetValue(instTab, out orderByID))
             {
                 return;
             }
@@ -384,7 +441,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 
 
         // !!! TO DO: transfer attribute data and the list<list<list<object>>> of the effect-changes-definition !!!
-        private static void createVobDefinition (DefTableEnum defTab)
+        private static void createVobDefinition (DefTableEnum defTab, ref List<List<List<object>>> defList, 
+            ref List<List<List<object>>> defList_EC)
         {
             switch (defTab)
             {
