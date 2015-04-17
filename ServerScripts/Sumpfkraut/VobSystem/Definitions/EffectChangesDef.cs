@@ -98,6 +98,21 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             }
         }
 
+        public static bool TryGetValue (int id, out List<object> effectChange)
+        {
+            lock (dictLock)
+            {
+                if (EffectChangesDefDict.TryGetValue(id, out effectChange))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
         public static void Remove (int id)
         {
             lock (dictLock)

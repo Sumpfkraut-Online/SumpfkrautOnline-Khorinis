@@ -247,11 +247,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             // must be done in one shot 
             // (not all properties can be changed afterwards
             //     + the object is only synchronized when a user performs login 
-            //     --> would need to login agan to synchronize)
-            for (int r = 0; r < defList[0].Count; r++)
-            {
-                
-            }
+            //     --> would need to login again to synchronize)
+            //createVobDefinitions(defTab, );
         }
 
 
@@ -440,23 +437,57 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
            --------------------------------------------------------- */
 
 
+        private static void createVobDefinitions (DefTableEnum defTab, ref List<List<List<object>>> defList,
+            ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals,
+            ref Dictionary<int, List<int>> mapVDToED,
+            ref Dictionary<int, List<int>> mapEDToECD)
+        {
+            List<object> def;
+            int vobIDColIndex = colTypesKeys.IndexOf("ID");
+            for (int r = 0; r < defList[0].Count; r++)
+            {
+                def = defList[0][r];
+                CreateVobDefinition(defTab, ref def, 
+                    ref colTypesKeys, ref colTypesVals, 
+                    ref mapVDToED, 
+                    ref mapEDToECD);
+            }
+        }
+
         // !!! TO DO: transfer attribute data and the list<list<list<object>>> of the effect-changes-definition !!!
-        private static void createVobDefinition (DefTableEnum defTab, ref List<List<List<object>>> defList, 
-            ref List<List<List<object>>> defList_EC)
+        //private static void createVobDefinition (DefTableEnum defTab, ref List<object> def,
+        //    ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals, 
+        //    ref Dictionary<int, List<int>> mapEDToECD, int vobID)
+        private static void CreateVobDefinition (DefTableEnum defTab, ref List<object> def,
+            ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals,
+            ref Dictionary<int, List<int>> mapVDToED, 
+            ref Dictionary<int, List<int>> mapEDToECD)
         {
             switch (defTab)
             {
                 case (DefTableEnum.Mob_def):
-                    createMobDefinition();
+                    CreateMobDefinition(defTab, ref def, 
+                        ref colTypesKeys, ref colTypesVals, 
+                        ref mapVDToED, 
+                        ref mapEDToECD);
                     break;
                 case (DefTableEnum.Spell_def):
-                    createMobDefinition();
+                    CreateSpellDefinition(defTab, ref def, 
+                        ref colTypesKeys, ref colTypesVals, 
+                        ref mapVDToED, 
+                        ref mapEDToECD);
                     break;
                 case (DefTableEnum.Item_def):
-                    createMobDefinition();
+                    CreateItemDefinition(defTab, ref def, 
+                        ref colTypesKeys, ref colTypesVals, 
+                        ref mapVDToED, 
+                        ref mapEDToECD);
                     break;
                 case (DefTableEnum.NPC_def):
-                    createMobDefinition();
+                    CreateNPCDefinition(defTab, ref def, 
+                        ref colTypesKeys, ref colTypesVals, 
+                        ref mapVDToED, 
+                        ref mapEDToECD);
                     break;
                 default:
                     throw new Exception("Invalid DefTableEnum " + defTab + " detected in method createVobDefinition"
@@ -465,19 +496,28 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
         }
 
 
-        private static void createMobDefinition ()
+        private static void CreateMobDefinition (DefTableEnum defTab, ref List<object> def,
+            ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals,
+            ref Dictionary<int, List<int>> mapVDToED, 
+            ref Dictionary<int, List<int>> mapEDToECD)
         {
 
         }
 
 
-        private static void createSpellDefinition ()
+        private static void CreateSpellDefinition (DefTableEnum defTab, ref List<object> def,
+            ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals,
+            ref Dictionary<int, List<int>> mapVDToED, 
+            ref Dictionary<int, List<int>> mapEDToECD)
         {
 
         }
 
 
-        private static void createItemDefinition ()
+        private static void CreateItemDefinition (DefTableEnum defTab, ref List<object> def,
+            ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals,
+            ref Dictionary<int, List<int>> mapVDToED, 
+            ref Dictionary<int, List<int>> mapEDToECD)
         {
             //// these default values are just substitute for the subsequent replacements
             //String instanceName = "";
@@ -605,7 +645,10 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
         }
 
 
-        private static void createNPCDefinition ()
+        private static void CreateNPCDefinition (DefTableEnum defTab, ref List<object> def,
+            ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals,
+            ref Dictionary<int, List<int>> mapVDToED, 
+            ref Dictionary<int, List<int>> mapEDToECD)
         {
 
         }
