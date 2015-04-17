@@ -66,7 +66,7 @@ namespace GUC.Sumpfkraut.Ingame
             //scrollPosition = 0;
             writing = false;
 
-            IngameInput.receivers.Add(this); //add for input
+            //IngameInput.receivers.Add(this); //add for input
             zCView.GetStartscreen(process).InsertItem(thisView, 0); //add for graphics
         }
 
@@ -172,7 +172,7 @@ namespace GUC.Sumpfkraut.Ingame
 
         private void KeyEnable()
         {
-            IngameInput.activateFullControl(this);
+            //IngameInput.activateFullControl(this);
             ShowInputText();
             writing = true;
         }

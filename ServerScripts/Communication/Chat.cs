@@ -61,6 +61,21 @@ namespace GUC.Server.Scripts.Communication
             test.SendGlobal(message.Substring(7).Trim());
             return;
         }
+
+        if (message.StartsWith("/oocg"))
+        {
+            test.SendOOCGlobal(sender, message.Substring(5).Trim());
+            return;
+        }
+
+        if (message.StartsWith("/ooc"))
+        {
+            test.SendOOC(sender,sender,message.Substring(4).Trim());
+            return;
+        }
+
+
+
         test.SendSay(sender, sender, message);
     }
       /*

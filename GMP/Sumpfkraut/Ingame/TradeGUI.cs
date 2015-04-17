@@ -12,11 +12,12 @@ using Gothic.zClasses;
 using Gothic.zTypes;
 using GUC.Hooks;
 using RakNet;
+using GUC.Sumpfkraut.Ingame.GUI;
 
 
 namespace GUC.Sumpfkraut.Ingame
 {
-
+    
 
     class InvSlot
     {
@@ -66,7 +67,7 @@ namespace GUC.Sumpfkraut.Ingame
             }
 
             this.oCItem = new oCItem(process, item.Address);
-            ItemRenderer.renderList.Add(itemView, this.oCItem);
+            //ItemRenderer.renderList.Add(itemView, this.oCItem);
             this.item = item;
         }
 
@@ -78,7 +79,7 @@ namespace GUC.Sumpfkraut.Ingame
             }
             if (oCItem != null)
             {
-                ItemRenderer.renderList.Remove(itemView); //remove old item
+                //ItemRenderer.renderList.Remove(itemView); //remove old item
                 oCItem = null;
             }
             if (amountText != null)
@@ -107,35 +108,7 @@ namespace GUC.Sumpfkraut.Ingame
             itemView.SetSize(size[0], size[1]);
         }
     }
-
-    public class ItemRenderer
-    {
-        public static Dictionary<zCView, oCItem> renderList = new Dictionary<zCView, oCItem>();
-
-        static zCWorld rndrWorld = null;
-        public static Int32 ViewDraw_DrawChildren(String message)
-        {
-            try
-            {
-                if (rndrWorld == null)
-                {
-                    rndrWorld = zCWorld.Create(Process.ThisProcess());
-                    rndrWorld.IsInventoryWorld = true;
-                }
-
-                foreach (KeyValuePair<zCView, oCItem> pair in renderList)
-                {
-                    pair.Value.RenderItem(rndrWorld, pair.Key, 0.0f);
-                }
-            }
-            catch (Exception ex)
-            {
-                zERROR.GetZErr(Process.ThisProcess()).Report(4, 'G', ex.ToString(), 0, "ViewDraw_DrawChildren", 0);
-            }
-            return 0;
-        }
-    }
-
+    
     class TradeGUI : InputReceiver
     {
         Process process;
@@ -168,7 +141,6 @@ namespace GUC.Sumpfkraut.Ingame
         public TradeGUI(Action<int> Request, Action<int> Offer, Action<int> TakeBack)
         {
             process = Process.ThisProcess();
-            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(ItemRenderer).GetMethod("ViewDraw_DrawChildren"), (int)0x00704B90, (int)7, 0);
 
             startTradeKey = (int)VirtualKeys.T;
             trading = false;
@@ -181,7 +153,7 @@ namespace GUC.Sumpfkraut.Ingame
             scrollPos = 0;
             cursor = new int[2] { 0, 0 };
             CreateTradeMenu();
-            IngameInput.receivers.Add(this);
+            //IngameInput.receivers.Add(this);
         }
 
         public void KeyReleased(int key)
@@ -384,7 +356,8 @@ namespace GUC.Sumpfkraut.Ingame
 
         private void OpenTradeMenu()
         {
-            cursor[0] = 0;
+            
+            /*cursor[0] = 0;
             cursor[1] = 0;
             inventory[0][0].Mark();
 
@@ -392,8 +365,8 @@ namespace GUC.Sumpfkraut.Ingame
             buyItems = new List<Item>();
             sellItems = new List<Item>();
             UpdateMenuItems();
-            zCView.GetStartscreen(process).InsertItem(thisView, 0);
-            IngameInput.activateFullControl(this);
+            zCView.GetStartscreen(process).InsertItem(thisView, 0);*/
+            //IngameInput.activateFullControl(this);
         }
 
         private void UpdateMenuItems()
@@ -445,7 +418,7 @@ namespace GUC.Sumpfkraut.Ingame
 
         private void CloseTradeMenu()
         {
-            GetSlot(cursor).Demark();
+            /*GetSlot(cursor).Demark();
 
             foreach (List<InvSlot> row in inventory)
                 foreach (InvSlot slot in row)
@@ -459,7 +432,7 @@ namespace GUC.Sumpfkraut.Ingame
                 foreach (InvSlot slot in row)
                     slot.RemoveItem();
 
-            zCView.GetStartscreen(process).RemoveItem(thisView);
+            zCView.GetStartscreen(process).RemoveItem(thisView);*/
             IngameInput.deactivateFullControl();
         }
 

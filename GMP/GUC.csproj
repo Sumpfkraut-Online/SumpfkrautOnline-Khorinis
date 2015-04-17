@@ -52,7 +52,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GUI\Button.cs" />
+    <Compile Include="Sumpfkraut\Ingame\Chat.cs" />
     <Compile Include="Sumpfkraut\Ingame\ChatGUI.cs" />
+    <Compile Include="Sumpfkraut\Ingame\GUI\GUCMenu.cs" />
+    <Compile Include="Sumpfkraut\Ingame\GUI\GUCMenuItem.cs" />
+    <Compile Include="Sumpfkraut\Ingame\GUI\GUCMenuText.cs" />
+    <Compile Include="Sumpfkraut\Ingame\GUI\GUCMenuTextBox.cs" />
+    <Compile Include="Sumpfkraut\Ingame\GUI\GUCMenuTextList.cs" />
+    <Compile Include="Sumpfkraut\Ingame\GUI\GUCMenuTexture.cs" />
+    <Compile Include="Sumpfkraut\Ingame\GUI\ItemRenderer.cs" />
     <Compile Include="Sumpfkraut\Ingame\TradeGUI.cs" />
     <Compile Include="GUI\Cursor.cs" />
     <Compile Include="GUI\GuiList\List.cs" />

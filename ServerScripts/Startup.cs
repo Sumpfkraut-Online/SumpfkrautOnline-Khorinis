@@ -66,12 +66,12 @@ namespace GUC.Server.Scripts
             //chat.Init();
 
             //important: register notification types for notification areas!
-            NotificationManager.GetNotificationManager().AddNotificationArea(100, 100, 50, 8,
+            /*NotificationManager.GetNotificationManager().AddNotificationArea(100, 100, 50, 8,
               new NotificationType[] { NotificationType.ChatMessage, NotificationType.ServerMessage,
-                NotificationType.PlayerStatusMessage, NotificationType.MobsiMessage, NotificationType.Sound });
-            CommandInterpreter.GetCommandInterpreter();
+                NotificationType.PlayerStatusMessage, NotificationType.MobsiMessage, NotificationType.Sound });*/
+            //CommandInterpreter.GetCommandInterpreter();
             Chat.GetChat();
-            EventNotifier.GetEventNotifier();
+            //EventNotifier.GetEventNotifier();
 
       
 

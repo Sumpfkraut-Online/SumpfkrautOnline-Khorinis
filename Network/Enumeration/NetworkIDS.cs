@@ -104,13 +104,18 @@ namespace GUC.Enumeration
 
     public enum ChatTextType : byte
     {
+        //RP
         Say,
         Shout,
         Whisper,
         Ambient,
+        Global,
+
+        //OOC
         OOC,
-        OOCGlobal,
-        Global
+        OOCGlobal, 
+        PM,
+        Event
     }
 
     public enum VobChangeID : byte

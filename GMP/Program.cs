@@ -563,8 +563,9 @@ namespace GUC
             try
             {
                 Process process = Process.ThisProcess();
-                
 
+                //edited by Showdown
+                Sumpfkraut.Ingame.IngameInput.Update();
                 InputHooked.Update(process);
 
                 
