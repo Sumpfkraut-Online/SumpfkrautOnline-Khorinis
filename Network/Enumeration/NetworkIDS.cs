@@ -115,7 +115,8 @@ namespace GUC.Enumeration
         OOC,
         OOCGlobal, 
         PM,
-        Event
+        Event,
+        Error
     }
 
     public enum VobChangeID : byte

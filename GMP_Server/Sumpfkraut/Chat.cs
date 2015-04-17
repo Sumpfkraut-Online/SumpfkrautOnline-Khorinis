@@ -122,6 +122,14 @@ namespace GUC.Server.Sumpfkraut
             }
         }
 
+        public void SendErrorMessage(Player to, String text)
+        {
+            if (text != null && text.Length > 0)
+            {
+                SendText(null, to, ChatTextType.Error, text);
+            }
+        }
+
         private void SendText(Player from, Player to, ChatTextType type, String text)
         {
             BitStream stream = Program.server.SendBitStream;

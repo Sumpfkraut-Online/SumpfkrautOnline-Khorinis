@@ -301,7 +301,11 @@ namespace GUC.Sumpfkraut.Ingame
                     break;
 
                 case ChatTextType.Event:
-                    color = new ColorRGBA(255, 150, 150, 255);
+                    color = new ColorRGBA(255, 200, 200, 255);
+                    break;
+
+                case ChatTextType.Error:
+                    color = new ColorRGBA(255, 255, 255, 255);
                     break;
 
             }

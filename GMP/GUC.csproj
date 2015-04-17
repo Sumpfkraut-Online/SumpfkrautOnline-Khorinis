@@ -53,7 +53,6 @@
   <ItemGroup>
     <Compile Include="GUI\Button.cs" />
     <Compile Include="Sumpfkraut\Ingame\Chat.cs" />
-    <Compile Include="Sumpfkraut\Ingame\ChatGUI.cs" />
     <Compile Include="Sumpfkraut\Ingame\GUI\GUCMenu.cs" />
     <Compile Include="Sumpfkraut\Ingame\GUI\GUCMenuItem.cs" />
     <Compile Include="Sumpfkraut\Ingame\GUI\GUCMenuText.cs" />
@@ -95,7 +94,6 @@
     <Compile Include="Network\Messages\Callbacks\ReadIniEntryMessage.cs" />
     <Compile Include="Network\Messages\CameraCommands\CamToPlayerFront.cs" />
     <Compile Include="Network\Messages\CameraCommands\CamToVobMessage.cs" />
-    <Compile Include="Sumpfkraut\Ingame\ChatMessage.cs" />
     <Compile Include="Network\Messages\Connection\ConnectionMessage.cs" />
     <Compile Include="Network\Messages\Connection\DisconnectMessage.cs" />
     <Compile Include="Network\Messages\Connection\ExitGameMessage.cs" />
