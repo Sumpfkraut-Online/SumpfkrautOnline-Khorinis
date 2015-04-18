@@ -28,14 +28,12 @@ namespace GUC.Sumpfkraut.Ingame
         private IngameInterface()
         {
             Process.ThisProcess().Hook("UntoldChapter\\DLL\\GUC.dll", typeof(GUI.ItemRenderer).GetMethod("OnRender"), (int)0x00704B90, (int)7, 0);
+
             if (!Program.client.messageListener.ContainsKey((byte)NetworkID.ChatMessage))
                 Program.client.messageListener.Add((byte)NetworkID.ChatMessage, new Ingame.Chat());
-
             
-
-            /*
             if (!Program.client.messageListener.ContainsKey((byte)NetworkID.TradeMessage))
-                Program.client.messageListener.Add((byte)NetworkID.TradeMessage, new TradeMessage());*/
+                Program.client.messageListener.Add((byte)NetworkID.TradeMessage, new Trade());
         }
     }
 }

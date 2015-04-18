@@ -22,9 +22,9 @@ namespace GUC.Sumpfkraut.Ingame.GUI
             proc = Process.ThisProcess();
 
             int[] pos = InputHooked.PixelToVirtual(proc, new int[] { x, y });
-            thisView = zCView.Create(proc, pos[0], pos[1], 0x2000, 0x2000);
+            thisView = zCView.Create(proc, 0, 0, 0x2000, 0x2000);
             using (zString z = zString.Create(proc, t))
-                viewText = thisView.CreateText(0, 0, z);
+                viewText = thisView.CreateText(pos[0], pos[1], z);
         }
 
         public void Show()
@@ -40,6 +40,13 @@ namespace GUC.Sumpfkraut.Ingame.GUI
         public void SetText(string t)
         {
             viewText.Text.Set(t);
+        }
+
+        public void SetPos(int x, int y)
+        {
+            int[] pos = InputHooked.PixelToVirtual(proc, new int[] { x, y });
+            viewText.PosX = pos[0];
+            viewText.PosY = pos[1];
         }
 
         public void SetColor(ColorRGBA c)

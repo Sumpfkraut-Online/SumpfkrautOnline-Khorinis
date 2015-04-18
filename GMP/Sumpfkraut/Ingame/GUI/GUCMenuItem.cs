@@ -16,24 +16,53 @@ namespace GUC.Sumpfkraut.Ingame.GUI
     {
         zCView thisView;
         oCItem item;
+        bool shown;
                 
-        public GUCMenuItem(oCItem item, int x, int y, int w, int h)
+        public GUCMenuItem(int x, int y, int w, int h)
         {
-            Process proc = Process.ThisProcess();
+            shown = false;
+            SetSize(x, y, w, h);
+        }
+
+        public void SetItem(oCItem item)
+        {
             this.item = item;
-            thisView = zCView.Create(proc, x, y, x + w, y + h);
+            if (ItemRenderer.renderList.ContainsKey(thisView))
+            {
+                ItemRenderer.renderList[thisView] = item;
+            }
+        }
+
+        public void SetSize(int x, int y, int w, int h)
+        {
+            Hide();
+            if (thisView != null) thisView.Dispose();
+
+            Process proc = Process.ThisProcess();
+            int[] vpos = InputHooked.PixelToVirtual(proc, new int[] { x, y });
+            int[] vsize = InputHooked.PixelToVirtual(proc, new int[] { w, h });
+            thisView = zCView.Create(proc, vpos[0], vpos[1], vpos[0] + vsize[0], vpos[1] + vsize[1]);
             thisView.FillZ = true;
             thisView.Blit();
+            Show();
         }
 
         public void Show()
         {
-            ItemRenderer.renderList.Add(thisView, item);
+            if (!shown)
+            {
+                ItemRenderer.renderList.Add(thisView, item);
+                shown = true;
+            }
         }
 
         public void Hide()
         {
-            ItemRenderer.renderList.Remove(thisView);
+            if (shown)
+            {
+                ItemRenderer.renderList.Remove(thisView);
+                shown = false;
+            }
         }
     }
 }

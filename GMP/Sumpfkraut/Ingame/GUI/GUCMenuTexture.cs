@@ -20,7 +20,10 @@ namespace GUC.Sumpfkraut.Ingame.GUI
         {
             proc = Process.ThisProcess();
 
-            thisView = zCView.Create(proc, x, y, x + w, y + h);
+            int[] vpos = InputHooked.PixelToVirtual(proc, new int[] { x, y });
+            int[] vsize = InputHooked.PixelToVirtual(proc, new int[] { w, h });
+            thisView = zCView.Create(proc, vpos[0], vpos[1], vpos[0] + vsize[0], vpos[1] + vsize[1]);
+
             using (zString z = zString.Create(proc, tex))
                 thisView.InsertBack(z);
         }

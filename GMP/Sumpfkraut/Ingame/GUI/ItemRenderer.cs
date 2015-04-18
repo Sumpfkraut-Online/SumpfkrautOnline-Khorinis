@@ -28,7 +28,10 @@ namespace GUC.Sumpfkraut.Ingame.GUI
 
                 foreach (KeyValuePair<zCView, oCItem> pair in renderList)
                 {
-                    pair.Value.RenderItem(rndrWorld, pair.Key, 0.0f);
+                    if (pair.Value != null)
+                    {
+                        pair.Value.RenderItem(rndrWorld, pair.Key, 0.0f);
+                    }
                 }
             }
             catch (Exception ex)
