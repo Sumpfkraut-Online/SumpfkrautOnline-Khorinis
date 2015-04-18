@@ -5,6 +5,7 @@ using System.Text;
 
 using GUC.Types;
 using GUC.Server.Log;
+using GUC.Enumeration;
 using GUC.Server.Scripting;
 using GUC.Server.Scripting.Objects.Character;
 using GUC.Server.Scripts.Communication;
@@ -23,6 +24,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
 
         public SOKChat()
         {
+            Logger.log(Logger.LogLevel.INFO, "#################### Initialise SOKChat ###################");
+
             Chat = new Server.Sumpfkraut.Chat();
             Chat.OnReceiveMessage += ReceiveMessage;
             Player.sOnPlayerSpawns += new Events.PlayerEventHandler(OnPlayerSpawn);
@@ -33,10 +36,12 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
 
         private void ReceiveMessage(Player sender, string message)
         {
-            ColorRGBA color = new ColorRGBA(255, 0, 0, 255);
             if (message.StartsWith("/"))
                 ExecuteCommandByMessage(sender, message);
-            else {}
+            else
+            {
+                SendTextBasedOnChatType(sender, message, ChatTextType.Say);
+            }
         }
 
         private void OnPlayerSpawn(Player pl)
@@ -50,6 +55,81 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
         }
 
         #region Utilities
+        private void GetTalkingDistances(ChatTextType ChatType, out float maxDistGood, out float maxDistMiddle, out float maxDistBad)
+        {
+            maxDistGood = 0;
+            maxDistBad = 0;
+            maxDistMiddle = 0;
+            if (ChatType == ChatTextType.Say) // Reden
+            {
+                maxDistGood = 900;
+                maxDistMiddle = 1100;
+                maxDistBad = 1500;
+            }
+            else if (ChatType == ChatTextType.Shout) // Rufen
+            {
+                maxDistGood = 2000;
+                maxDistMiddle = 2500;
+                maxDistBad = 3000;
+            }
+            else if (ChatType == ChatTextType.Whisper) // Flüstern
+            {
+                maxDistGood = 200;
+                maxDistMiddle = 250;
+                maxDistBad = 300;
+            }
+            return;
+        }
+
+        private void SendTextBasedOnChatType(Player sender, string message, ChatTextType ChatType)
+        {
+            //Talking Distance Qualities + Maximum High
+            float maxDistGood, maxDistMiddle, maxDistBad;
+            GetTalkingDistances(ChatType, out maxDistGood, out maxDistMiddle, out maxDistBad);
+
+            // The real distances
+            float distX, distY, distZ;
+
+            Vec3f senderPosition = sender.Position;
+            Vec3f otherPosition;
+            string newMessage = message;
+            foreach (var pair in AllPlayers)
+            {
+                if (pair.Value != sender)
+                {
+                    otherPosition = pair.Value.Position;
+                    distX = Math.Abs(senderPosition.X - otherPosition.X);
+                    distY = Math.Abs(senderPosition.Y - otherPosition.Y);
+                    distZ = Math.Abs(senderPosition.Z - otherPosition.Z);
+
+                    if ((distX * distX + distY * distY + distZ * distZ) < maxDistGood * maxDistGood)
+                        newMessage = " (GoodQ) " + ExchangeTextQuality(message, 0);
+                    else if ((distX * distX + distY * distY + distZ * distZ) < maxDistMiddle * maxDistMiddle)
+                        // Middle Talking Quality
+                        newMessage = " (MiddleQ) " + ExchangeTextQuality(message, 1);
+                    else if ((distX * distX + distY * distY + distZ * distZ) < maxDistBad * maxDistBad)
+                        // Bad Talking Qualitiy -> percentage
+                        newMessage = " (BadQ) " + ExchangeTextQuality(message, 2);
+                    else
+                        newMessage = "";
+                }
+
+                if (ChatType == ChatTextType.Say)
+                    Chat.SendSay(sender, pair.Value, newMessage);
+                else if (ChatType == ChatTextType.Shout)
+                    Chat.SendShout(sender, pair.Value, newMessage);
+                else if (ChatType == ChatTextType.Whisper)
+                    Chat.SendWhisper(sender, pair.Value, newMessage);
+            }
+            return;
+        }
+
+        private string ExchangeTextQuality(string message, int qualityType)
+        {
+            // Hier Nachricht entsprechend nach QualityType verändern.
+            return message;
+        }
+
         private void SendErrorMessage(Player pl, string txt)
         {
             Chat.SendErrorMessage(pl, txt);
@@ -106,7 +186,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
                     string str = "Mögliche Befehle: ";
                     foreach (var pair in CommandParameterList)
                     {
-                        str += pair.Key + "  ";
+                        str += pair.Key + " ";
                     }
                     Chat.SendGlobal(str);
                 }
@@ -118,7 +198,44 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
             };
             #endregion
 
-            AddCommand("help", "/help [<befehl>]", Help);
+            #region Whisper
+            CommandDelegate Whisper = delegate(Player player, string[] parameters)
+            {
+                if (parameters.Length == 1)
+                    return;
+
+                string message = "";
+                for (int i = 1; i < parameters.Length; i++)
+                    message += parameters[i] + " ";
+                SendTextBasedOnChatType(player, message, ChatTextType.Whisper);
+            };
+            #endregion
+
+            #region Shout
+            CommandDelegate Shout = delegate(Player player, string[] parameters)
+            {
+                if (parameters.Length == 1)
+                    return;
+
+                string message = "";
+                for(int i = 1; i < parameters.Length; i ++)
+                    message += parameters[i] + " ";
+                SendTextBasedOnChatType(player, message, ChatTextType.Shout);
+            };
+            #endregion
+
+            #region PlayDialogueAnimation
+            CommandDelegate PlayDialogueAnimation = delegate(Player player, string[] parameters)
+            {
+                player.startDialogAnimation();
+                Chat.SendGlobal("starting ani");
+            };
+            #endregion
+
+            AddCommand("help", "/help <befehl>", Help);
+            AddCommand("whisper", "/whisper <text>", Whisper);
+            AddCommand("shout", "/shout <text>", Shout);
+            AddCommand("StartDialogueAnimation", PlayDialogueAnimation);
         }
         #endregion
 

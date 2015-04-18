@@ -70,7 +70,7 @@ namespace GUC.Server.Scripts
               new NotificationType[] { NotificationType.ChatMessage, NotificationType.ServerMessage,
                 NotificationType.PlayerStatusMessage, NotificationType.MobsiMessage, NotificationType.Sound });*/
             //CommandInterpreter.GetCommandInterpreter();
-            Chat.GetChat();
+            //Chat.GetChat();
             //EventNotifier.GetEventNotifier();
 
       
@@ -95,7 +95,7 @@ namespace GUC.Server.Scripts
             Web.http_server.Init();
 #endif
 
-
+            Sumpfkraut.SOKChat.SOKChat SOKChat = new Sumpfkraut.SOKChat.SOKChat();
             
             Logger.log(Logger.LogLevel.INFO, "###################### End Initalise ######################");
 		}
