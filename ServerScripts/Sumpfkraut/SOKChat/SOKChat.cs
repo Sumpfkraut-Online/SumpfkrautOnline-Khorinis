@@ -123,6 +123,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
                     Chat.SendShout(sender, pair.Value, newMessage);
                 else if (ChatType == ChatTextType.Whisper)
                     Chat.SendWhisper(sender, pair.Value, newMessage);
+                else if (ChatType == ChatTextType.OOC)
+                    if (!newMessage.Equals("")) // Sendet OOC nur an erreichbare Spieler
+                        Chat.SendOOC(sender, pair.Value, message);
             }
             return;
         }
@@ -135,14 +138,12 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
 
         private void SendErrorMessage(Player pl, string txt)
         {
-            Chat.SendErrorMessage(pl, txt);
-            Chat.SendGlobal(txt);
+            Chat.SendErrorMessage(pl, txt); // test
         }
 
         private void SendHintMessage(Player pl, string txt)
         {
-            Chat.SendPM(pl, pl, txt);
-            Chat.SendGlobal(txt);
+            Chat.SendHintMessage(pl, txt);
         }
 
         private bool IsPlayerAllowedToUseCommand(Player pl)
@@ -230,6 +231,25 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
                 for(int i = 1; i < parameters.Length; i ++)
                     message += parameters[i] + " ";
                 SendTextBasedOnChatType(player, message, ChatTextType.Shout);
+            };
+            #endregion
+
+            #region OOC
+            CommandDelegate OOC = delegate(Player player, string[] parameters)
+            {
+                if (parameters.Length == 1)
+                    return;
+
+                string message = "";
+                for (int i = 1; i < parameters.Length; i++)
+                    message += parameters[i] + " ";
+
+                if(message.StartsWith("/"))
+                    ExecuteCommandByMessage(player, message);
+                else if (message.StartsWith("@"))
+                    CommandList["@"].DynamicInvoke(player, GetCommandParametersByMessage(message.Substring(1)));
+                else
+                    SendTextBasedOnChatType(player, message, ChatTextType.OOC);
             };
             #endregion
 
@@ -398,7 +418,10 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
                         return;
                     }
                     else
-                        SendErrorMessage(player, "Spieler "+parameters[0]+" wurde nicht gefunden.");
+                    {
+                        SendErrorMessage(player, "Spieler " + parameters[0] + " wurde nicht gefunden.");
+                        return;
+                    }
                 SendHintMessage(player, "Verwendung: " + CommandParameterList["@"]);
             };
             #endregion
@@ -409,6 +432,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
             AddCommand("pa", "/pa <animationName>", playAnimation);
             AddCommand("StartDialogueAnimation", PlayDialogueAnimation);
             AddCommand("@","@<SpielerName> <text>", PersonalMessage);
+            AddCommand("ooc", OOC);
 
             // Admin Commands
             AddCommand("revive", "/revive <player>", Revive);

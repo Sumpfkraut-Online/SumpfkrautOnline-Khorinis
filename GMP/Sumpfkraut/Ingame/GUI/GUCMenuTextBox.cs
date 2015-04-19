@@ -369,6 +369,11 @@ namespace GUC.Sumpfkraut.Ingame.GUI
             }
         }
 
+        public void AddWhiteSpace()
+        {
+            text.Append(' ');
+        }
+
         private int PixelToViewVirtual(int p)
         {
             int screenWidth = InputHooked.GetScreenSize(proc)[0];

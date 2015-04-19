@@ -414,6 +414,7 @@
     <Compile Include="StartModules\Modules.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Sumpfkraut\Database\DBTables.cs" />
+    <Compile Include="Sumpfkraut\SOKChat\SOKChat.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\EffectChangesDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\ItemDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\MobDef.cs" />
