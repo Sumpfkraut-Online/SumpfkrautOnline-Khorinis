@@ -95,6 +95,7 @@
     <Compile Include="Network\Messages\PlayerCommands\PlayerKeyMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\SpellInvestMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\TakeItemMessage.cs" />
+    <Compile Include="Sumpfkraut\Trade.cs" />
     <Compile Include="Sumpfkraut\TradeMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\ChangeWorldMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\CreateVobMessage.cs" />

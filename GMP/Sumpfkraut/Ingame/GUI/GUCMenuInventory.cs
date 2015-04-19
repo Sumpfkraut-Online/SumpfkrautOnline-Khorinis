@@ -21,7 +21,11 @@ namespace GUC.Sumpfkraut.Ingame.GUI
     {
         class Slot
         {
-            Item item;
+            public Item item
+            {
+                private set;
+                get;
+            }
             GUCMenuItem mItem;
             GUCMenuTexture background;
             GUCMenuText amount;
@@ -33,11 +37,6 @@ namespace GUC.Sumpfkraut.Ingame.GUI
                 background = new GUCMenuTexture("Inv_Slot.tga", x, y, 70, 70);
                 mItem = new GUCMenuItem(x-1, y-1, 72, 72);
                 amount = new GUCMenuText("", x, y);
-            }
-
-            public bool HasItem()
-            {
-                return item != null;
             }
 
             public void SetItem(Item item)
@@ -108,6 +107,9 @@ namespace GUC.Sumpfkraut.Ingame.GUI
             private set;
         }
 
+        public delegate void PressedCTRLHandler(Item item);
+        public event PressedCTRLHandler OnPressCTRL;
+
         public GUCMenuInventory(int x, int y, int wNum, int hNum, string tex)
         {
             proc = Process.ThisProcess();
@@ -128,6 +130,19 @@ namespace GUC.Sumpfkraut.Ingame.GUI
             cursorPos = new Vec2i(0, 0);
             startPos = 0;
             enabled = false;
+        }
+
+        public void AddItem(Item item)
+        {
+            itemList.Add(item);
+            UpdateSlots();
+        }
+
+        public void RemoveItem(Item item)
+        {
+            itemList.Remove(item);
+            UpdateSlots();
+            SetCursor(cursorPos.X, cursorPos.Y);
         }
 
         private void RemoveCursor()
@@ -175,7 +190,7 @@ namespace GUC.Sumpfkraut.Ingame.GUI
             {
                 for (int j = i == newY ? newX : 0; j >= 0; j--)
                 {
-                    if (slots[j][i].HasItem())
+                    if (slots[j][i].item != null)
                     {
                         cursorPos.X = j;
                         cursorPos.Y = i;
@@ -217,7 +232,7 @@ namespace GUC.Sumpfkraut.Ingame.GUI
                     slot.Hide();
         }
 
-        public void Show(List<Item> list)
+        public void Open(List<Item> list)
         {
             startPos = 0;
             if (list == null)
@@ -229,7 +244,7 @@ namespace GUC.Sumpfkraut.Ingame.GUI
                 itemList = new List<Item>(list);
             }
             UpdateSlots();
-            Show();
+            Show();            
         }
 
         public void Show()
@@ -307,7 +322,7 @@ namespace GUC.Sumpfkraut.Ingame.GUI
                 if (x < slots.Count - 1)
                 {
                     x++;
-                    if (right != null && !slots[x][y].HasItem())
+                    if (right != null && slots[x][y].item == null)
                     {
                         RemoveCursor();
                         right.SetCursor(0, y);
@@ -322,7 +337,17 @@ namespace GUC.Sumpfkraut.Ingame.GUI
                 }
 
             }
-            else { return; }
+            else 
+            { 
+                if (key == (int)VirtualKeys.Control)
+                {
+                    if (OnPressCTRL != null)
+                    {
+                        OnPressCTRL(slots[cursorPos.X][cursorPos.Y].item);
+                    }
+                }
+                return; 
+            }
             SetCursor(x, y);
             UpdateSlots();
         }

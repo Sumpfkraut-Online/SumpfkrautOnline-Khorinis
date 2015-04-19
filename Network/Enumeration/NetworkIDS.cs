@@ -97,9 +97,10 @@ namespace GUC.Enumeration
     public enum TradeStatus : byte
     {
         Request,
-        Start,
+        Accept,
+        Break,
         OfferItem,
-        TakeBackItem
+        RemoveItem
     }
 
     public enum ChatTextType : byte
