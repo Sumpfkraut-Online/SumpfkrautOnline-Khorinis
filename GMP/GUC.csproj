@@ -62,7 +62,6 @@
     <Compile Include="Sumpfkraut\Ingame\GUI\GUCMenuTexture.cs" />
     <Compile Include="Sumpfkraut\Ingame\GUI\ItemRenderer.cs" />
     <Compile Include="Sumpfkraut\Ingame\Trade.cs" />
-    <Compile Include="Sumpfkraut\Ingame\TradeGUI.cs" />
     <Compile Include="GUI\Cursor.cs" />
     <Compile Include="GUI\GuiList\List.cs" />
     <Compile Include="GUI\GuiList\ListButton.cs" />
@@ -138,7 +137,6 @@
     <Compile Include="Network\Messages\PlayerCommands\SpellInvestMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\StartDialogAnimMessage.cs" />
     <Compile Include="Network\Messages\PlayerCommands\TakeItemMessage.cs" />
-    <Compile Include="Sumpfkraut\Ingame\TradeMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\ChangeWorldMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\CreateVobMessage.cs" />
     <Compile Include="Network\Messages\VobCommands\DespawnVobMessage.cs" />

@@ -74,7 +74,11 @@ namespace GUC.Server.Scripts.Communication
             return;
         }
 
-
+        if (message.StartsWith("/revive"))
+        {
+            sender.revive();
+            return;
+        }
 
         test.SendSay(sender, sender, message);
     }

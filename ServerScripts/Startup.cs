@@ -29,6 +29,7 @@ namespace GUC.Server.Scripts
 {
 	public class Startup : IServerStartup
 	{
+        public static Server.Sumpfkraut.Trade trade = null;
 		//public static Chat chat = null;
 		public static Cursor cursor;
 		public Button connection;
@@ -59,7 +60,7 @@ namespace GUC.Server.Scripts
 
             DamageScript.Init();
 
-
+            trade = new Server.Sumpfkraut.Trade();
 
 #if SSM_CHAT
             //chat = new Chat();
