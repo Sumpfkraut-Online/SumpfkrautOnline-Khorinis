@@ -10,6 +10,9 @@ using GUC.Server.Scripting;
 using GUC.Server.Scripting.Objects.Character;
 using GUC.Server.Scripts.Communication;
 
+using GUC.Server.Scripts.AI;
+using GUC.Server.Scripts.AI.Waypoints;
+
 
 namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
 {
@@ -38,10 +41,10 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
         {
             if (message.StartsWith("/"))
                 ExecuteCommandByMessage(sender, message);
+            else if(message.StartsWith("@"))
+                CommandList["@"].DynamicInvoke(sender, GetCommandParametersByMessage(message.Substring(1)));
             else
-            {
                 SendTextBasedOnChatType(sender, message, ChatTextType.Say);
-            }
         }
 
         private void OnPlayerSpawn(Player pl)
@@ -136,6 +139,12 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
             Chat.SendGlobal(txt);
         }
 
+        private void SendHintMessage(Player pl, string txt)
+        {
+            Chat.SendPM(pl, pl, txt);
+            Chat.SendGlobal(txt);
+        }
+
         private bool IsPlayerAllowedToUseCommand(Player pl)
         {
             return true;
@@ -188,12 +197,12 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
                     {
                         str += pair.Key + " ";
                     }
-                    Chat.SendGlobal(str);
+                    SendHintMessage(player,str);
                 }
                 else
                 {
                     if (CommandParameterList.ContainsKey(parameters[1]))
-                        Chat.SendGlobal(CommandParameterList[parameters[1]]);
+                        SendHintMessage(player, CommandParameterList[parameters[1]]);
                 }
             };
             #endregion
@@ -228,14 +237,185 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
             CommandDelegate PlayDialogueAnimation = delegate(Player player, string[] parameters)
             {
                 player.startDialogAnimation();
-                Chat.SendGlobal("starting ani");
+            };
+            #endregion
+
+            #region Revive
+            CommandDelegate Revive = delegate(Player player, string[] parameters)
+            {
+                if (!IsPlayerAllowedToUseCommand(player))
+                    return;
+
+                if (parameters.Length == 2)
+                    if (AllPlayers.ContainsKey(parameters[1]))
+                        AllPlayers[parameters[1]].revive();
+                    else
+                        SendErrorMessage(player, "Spieler " + parameters[1] + " wurde nicht gefunden.");
+                if (parameters.Length == 1)
+                    player.revive();
+            };
+            #endregion
+
+            #region toWaypoint
+            CommandDelegate toWaypoint = delegate(Player player, string[] parameters)
+            {
+                if (!IsPlayerAllowedToUseCommand(player))
+                    return;
+
+                if (parameters.Length == 2)
+                {
+                    FreeOrWayPoint wp = AISystem.getWaypoint(player.Map, parameters[1]);
+
+                    if (wp != null)
+                        player.setPosition(wp.Position);
+                    else
+                        SendErrorMessage(player, "Wegpunkt \"" + parameters[1] + "\" ist nicht verfügbar.");
+                }
+                else if (parameters.Length == 3)
+                {
+                    Player victim;
+                    if (AllPlayers.ContainsKey(parameters[1]))
+                        victim = AllPlayers[parameters[1]];
+                    else
+                    {
+                        SendErrorMessage(player, "Spieler " + parameters[1] + " wurde nicht gefunden.");
+                        return;
+                    }
+
+                    FreeOrWayPoint wp = AISystem.getWaypoint(player.Map, parameters[2]);
+
+                    if (wp != null)
+                        victim.setPosition(wp.Position);
+                    else
+                        SendErrorMessage(player, "Wegpunkt \""+parameters[2]+"\" ist nicht verfügbar.");
+
+                }
+                else
+                    SendHintMessage(player, "Verwendung: " + CommandParameterList[parameters[0]]);
+            };
+            #endregion
+
+            #region Teleport
+            CommandDelegate Teleport = delegate(Player player, string[] parameters)
+            {
+                if (!IsPlayerAllowedToUseCommand(player))
+                    return;
+
+                Player victim, target;
+
+                if (parameters.Length == 2)
+                {
+                    if (AllPlayers.ContainsKey(parameters[1]))
+                        target = AllPlayers[parameters[1]];
+                    else
+                    {
+                        SendErrorMessage(player, "Spieler " + parameters[1] + " wurde nicht gefunden.");
+                        return;
+                    }
+                    player.setPosition(target.Position);
+                    return;
+                }
+
+                if (parameters.Length == 3)
+                {
+                    if (AllPlayers.ContainsKey(parameters[1]) && AllPlayers.ContainsKey(parameters[2]))
+                    {
+                        victim = AllPlayers[parameters[1]];
+                        target = AllPlayers[parameters[2]];
+                    }
+                    else if (!AllPlayers.ContainsKey(parameters[1]))
+                    {
+                        SendErrorMessage(player, "Spieler " + parameters[1] + " wurde nicht gefunden.");
+                        return;
+                    }
+                    else
+                    {
+                        SendErrorMessage(player, "Spieler " + parameters[2] + " wurde nicht gefunden.");
+                        return;
+                    }
+
+                    victim.setPosition(target.Position);
+                    return;
+                }
+
+                if (parameters.Length == 5)
+                {
+                    if (AllPlayers.ContainsKey(parameters[1]))
+                        victim = AllPlayers[parameters[1]];
+                    else
+                    {
+                        SendErrorMessage(player, "Spieler " + parameters[1] + " wurde nicht gefunden.");
+                        return;
+                    }
+
+                    float X, Y, Z;
+                    if (!float.TryParse(parameters[2], out X) || !float.TryParse(parameters[3], out Y) || !float.TryParse(parameters[4], out Z))
+                    {
+                        SendErrorMessage(player, "Die X,Y,Z Koordinaten wurden nicht richtig angegeben.");
+                        return;
+                    }
+                    victim.setPosition(new Vec3f(X, Y, Z));
+                    return;
+                }
+
+                SendHintMessage(player, "Verwendung: " + CommandParameterList[parameters[0]]);
+
+            };
+            #endregion
+
+            #region playAnimation
+            CommandDelegate playAnimation = delegate(Player player, string[] parameters)
+            {
+                if (parameters.Length == 2)
+                {
+                    player.playAnimation(parameters[1]);
+                }
+                else
+                    SendHintMessage(player, "Verwendung: " + CommandParameterList[parameters[0]]);      
+            };
+            #endregion
+
+            #region Sprint
+            CommandDelegate Sprint = delegate(Player player, string[] parameters)
+            {
+                if (!IsPlayerAllowedToUseCommand(player))
+                    return;
+                player.ApplyOverlay("HUMANS_SPRINT.MDS");
+            };
+            #endregion
+
+            #region PersonalMessage
+            CommandDelegate PersonalMessage = delegate(Player player, string[] parameters)
+            {
+                if(parameters.Length >= 2)
+                    if (AllPlayers.ContainsKey(parameters[0]))
+                    {
+                        string message = "";
+                        for (int i = 1; i < parameters.Length; i++)
+                            message += parameters[i] + " ";
+
+                        Chat.SendPM(player, AllPlayers[parameters[0]], message);
+                        return;
+                    }
+                    else
+                        SendErrorMessage(player, "Spieler "+parameters[0]+" wurde nicht gefunden.");
+                SendHintMessage(player, "Verwendung: " + CommandParameterList["@"]);
             };
             #endregion
 
             AddCommand("help", "/help <befehl>", Help);
             AddCommand("whisper", "/whisper <text>", Whisper);
             AddCommand("shout", "/shout <text>", Shout);
+            AddCommand("pa", "/pa <animationName>", playAnimation);
             AddCommand("StartDialogueAnimation", PlayDialogueAnimation);
+            AddCommand("@","@<SpielerName> <text>", PersonalMessage);
+
+            // Admin Commands
+            AddCommand("revive", "/revive <player>", Revive);
+            AddCommand("tp", "/tp <Spieler/Ziel> <Ziel/X> <Y> <Z>", Teleport);
+            AddCommand("wp", "/wp <Spieler/Ziel> <Ziel>", toWaypoint);
+            AddCommand("sprint", Sprint);
+
         }
         #endregion
 
