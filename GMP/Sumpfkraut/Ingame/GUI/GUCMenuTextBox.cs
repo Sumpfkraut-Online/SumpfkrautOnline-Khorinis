@@ -127,6 +127,8 @@ namespace GUC.Sumpfkraut.Ingame.GUI
         {
             if (saveInput)
             {
+                if (sentTexts.Contains(input))
+                    sentTexts.Remove(input);
                 sentTexts.Insert(0, input);
             }
             text.Clear();
@@ -165,6 +167,7 @@ namespace GUC.Sumpfkraut.Ingame.GUI
                 if (sentCursorPos < sentTexts.Count - 1)
                 {
                     sentCursorPos++;
+                    cursorPos = sentTexts[sentCursorPos].Length;
                     SetInput(sentTexts[sentCursorPos]);
                 }
             }
@@ -175,10 +178,12 @@ namespace GUC.Sumpfkraut.Ingame.GUI
                     sentCursorPos--;
                     if (sentCursorPos == -1)
                     {
+                        cursorPos = 0;
                         text.Clear();
                     }
                     else
                     {
+                        cursorPos = sentTexts[sentCursorPos].Length;
                         SetInput(sentTexts[sentCursorPos]);
                     }
                 }

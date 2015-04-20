@@ -24,6 +24,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
         Dictionary<string, Player> AllPlayers = new Dictionary<string, Player>();
         Dictionary<string, Delegate> CommandList = new Dictionary<string, Delegate>();
         Dictionary<string, string> CommandParameterList = new Dictionary<string, string>();
+        Dictionary<string, DateTime[]> MutedPlayers = new Dictionary<string, DateTime[]>();
 
         public SOKChat()
         {
@@ -86,12 +87,18 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
 
         private void SendTextBasedOnChatType(Player sender, string[] message, ChatTextType ChatType)
         {
+
+            if (IsMuted(sender.Name))
+            {
+                SendHintMessage(sender, "Der Chat ist derzeit für dich nicht verfügbar.");
+                return;
+            }
             //Talking Distance Qualities + Maximum High
             float maxDistGood, maxDistMiddle, maxDistBad;
             GetTalkingDistances(ChatType, out maxDistGood, out maxDistMiddle, out maxDistBad);
 
             // The real distances
-            float distX, distY, distZ;
+            //float distX, distY, distZ;
 
             Vec3f senderPosition = sender.Position;
             Vec3f otherPosition;
@@ -101,18 +108,19 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
                 if (pair.Value != sender)
                 {
                     otherPosition = pair.Value.Position;
-                    distX = Math.Abs(senderPosition.X - otherPosition.X);
-                    distY = Math.Abs(senderPosition.Y - otherPosition.Y);
-                    distZ = Math.Abs(senderPosition.Z - otherPosition.Z);
+                    //distX = Math.Abs(senderPosition.X - otherPosition.X);
+                    //distY = Math.Abs(senderPosition.Y - otherPosition.Y);
+                    //distZ = Math.Abs(senderPosition.Z - otherPosition.Z); (distX * distX + distY * distY + distZ * distZ)
+                    float distance = (senderPosition - otherPosition).Length;
 
-                    if ((distX * distX + distY * distY + distZ * distZ) < maxDistGood * maxDistGood)
+                    if ( distance < maxDistGood)
                         newMessage = ExchangeTextQuality(message, 0);
                     /*else if ((distX * distX + distY * distY + distZ * distZ) < maxDistMiddle * maxDistMiddle)
                         // Middle Talking Quality
                         newMessage = " (MiddleQ) " + ExchangeTextQuality(message, 1);*/
-                    else if ((distX * distX + distY * distY + distZ * distZ) < maxDistBad * maxDistBad)
-                        // Bad Talking Qualitiy -> percentage
-                        newMessage = ExchangeTextQuality(message, (float)Math.Sqrt(distX * distX + distY * distY + distZ * distZ) / (maxDistBad / 100));
+                    else if (distance < maxDistBad)
+                        // Bad Talking Quality -> percentage
+                        newMessage = ExchangeTextQuality(message, distance / (maxDistBad / 100));
                     else
                         newMessage = new string[] { "" };
                 }
@@ -189,6 +197,49 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
         private bool IsPlayerAllowedToUseCommand(Player pl)
         {
             return true;
+        }
+
+        private void ControlMute(string plName, bool mute, int minutes)
+        {
+            if (mute)
+            {
+                if (MutedPlayers.ContainsKey(plName))
+                {
+                    MutedPlayers[plName][0] = DateTime.Now;
+                    MutedPlayers[plName][1] = MutedPlayers[plName][0].AddMinutes(minutes);
+                }
+                else
+                {
+                    MutedPlayers.Add(plName,new DateTime[] {DateTime.Now,DateTime.Now.AddMinutes(minutes)});
+                }
+            }
+            else
+            {
+                if(MutedPlayers.ContainsKey(plName))
+                {
+                    MutedPlayers.Remove(plName);
+                }
+            }
+        }
+
+        private bool IsMuted(string plName)
+        {
+            if (MutedPlayers.ContainsKey(plName))
+            {
+                MutedPlayers[plName][0] = DateTime.Now;
+                TimeSpan difference = MutedPlayers[plName][1] - MutedPlayers[plName][0];
+                if (difference.TotalSeconds > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    MutedPlayers.Remove(plName);
+                    return false;
+                }
+            }
+            else
+                return false;
         }
         #endregion
 
@@ -481,6 +532,98 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
             };
             #endregion
 
+            #region Mute
+            CommandDelegate Mute = delegate(Player player, string[] parameters)
+            {
+                if (parameters.Length == 2)
+                {
+                    if (AllPlayers.ContainsKey(parameters[1]))
+                    {
+                        ControlMute(parameters[1], true, 60*24);
+                        return;
+                    }
+                    else
+                    {
+                        SendErrorMessage(player, "Spieler " + parameters[1] + " wurde nicht gefunden.");
+                        return;
+                    }
+                }
+                if (parameters.Length == 3)
+                {
+                    if (AllPlayers.ContainsKey(parameters[1]))
+                    {
+                        int minutes = 0;
+                        if(!Int32.TryParse(parameters[2], out minutes))
+                        {
+                            SendErrorMessage(player, "\""+parameters[2]+"\" ist keine gültige Angabe für Minuten.");
+                            return;
+                        }
+                        ControlMute(parameters[1], true, minutes);
+                        return;
+                    }
+                    else
+                    {
+                        SendErrorMessage(player, "Spieler " + parameters[1] + " wurde nicht gefunden.");
+                        return;
+                    }
+                }
+
+                SendHintMessage(player, "Verwendung: " + CommandParameterList[parameters[0]]);
+                return;       
+            };
+            #endregion
+
+            #region Unmute
+            CommandDelegate Unmute = delegate(Player player, string[] parameters)
+            {
+                if (parameters.Length == 2)
+                {
+                    if (AllPlayers.ContainsKey(parameters[1]))
+                    {
+                        ControlMute(parameters[1], false, 0);
+                    }
+                    else
+                    {
+                        SendErrorMessage(player, "Spieler " + parameters[1] + " wurde nicht gefunden.");
+                        return;
+                    }
+                }
+                SendHintMessage(player, "Verwendung: " + CommandParameterList[parameters[0]]);
+                return;
+            };
+            #endregion
+
+            #region IsMuted
+            CommandDelegate IsMuted = delegate(Player player, string[] parameters)
+            {
+                if (parameters.Length == 2)
+                {
+                    if (AllPlayers.ContainsKey(parameters[1]))
+                    {
+                        if (MutedPlayers.ContainsKey(parameters[1]))
+                        {
+                            MutedPlayers[parameters[1]][0] = DateTime.Now;
+                            TimeSpan diff = MutedPlayers[parameters[1]][1] - MutedPlayers[parameters[1]][0];
+                            SendHintMessage(player, "Der Spieler " + parameters[1] + " ist noch für " + Math.Floor(diff.TotalMinutes) + " Minuten bzw. " + Math.Floor(diff.TotalSeconds) + " Sekunden gestummt");
+                            return;
+                        }
+                        else
+                        {
+                            SendHintMessage(player, "Der Spieler \"" + parameters[1] + "\" ist nicht gestummt.");
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        SendErrorMessage(player, "Spieler " + parameters[1] + " wurde nicht gefunden.");
+                        return;
+                    }
+                }
+                SendHintMessage(player, "Verwendung: " + CommandParameterList[parameters[0]]);
+                return;
+            };
+            #endregion
+
             AddCommand("help", "/help <befehl>", Help);
             AddCommand("whisper", "/whisper <text>", Whisper);
             AddCommand("shout", "/shout <text>", Shout);
@@ -495,6 +638,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
             AddCommand("tp", "/tp <Spieler/Ziel> <Ziel/X> <Y> <Z>", Teleport);
             AddCommand("wp", "/wp <Spieler/Ziel> <Ziel>", toWaypoint);
             AddCommand("sprint", Sprint);
+            AddCommand("mute", "/mute <Spieler> <Minuten>", Mute);
+            AddCommand("unmute", "/unmute <Spieler>", Unmute);
+            AddCommand("ismuted", "/ismute <Spieler>", IsMuted);
 
         }
         #endregion
