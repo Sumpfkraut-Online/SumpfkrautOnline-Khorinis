@@ -249,7 +249,7 @@ namespace GUC.Sumpfkraut.Ingame
             ChatTextType ctt = (ChatTextType)type;
 
             string addText = "";
-            if (ctt != ChatTextType.Global)
+            if (ctt != ChatTextType.Global && ctt < ChatTextType.Event)
             {
                 int ID;
                 stream.Read(out ID);
