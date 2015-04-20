@@ -36,14 +36,7 @@ namespace GUC.Server.Sumpfkraut
             {
                 if (from != null && text != null && text.Length > 0 && Receive != null)
                 {
-                    if (text == "/StartDialogueAnimation")
-                    {
-                        from.ScriptingNPC.startDialogAnimation();
-                    }
-                    else
-                    {
-                        Receive((Scripting.Objects.Character.Player)from.ScriptingNPC, text);
-                    }
+                    Receive((Scripting.Objects.Character.Player)from.ScriptingNPC, text);
                 }
             }
         }
