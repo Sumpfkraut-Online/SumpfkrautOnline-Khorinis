@@ -44,7 +44,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
             else if(message.StartsWith("@"))
                 CommandList["@"].DynamicInvoke(sender, GetCommandParametersByMessage(message.Substring(1)));
             else
-                SendTextBasedOnChatType(sender, message, ChatTextType.Say);
+                SendTextBasedOnChatType(sender, GetStringArray(message), ChatTextType.Say);
         }
 
         private void OnPlayerSpawn(Player pl)
@@ -84,7 +84,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
             return;
         }
 
-        private void SendTextBasedOnChatType(Player sender, string message, ChatTextType ChatType)
+        private void SendTextBasedOnChatType(Player sender, string[] message, ChatTextType ChatType)
         {
             //Talking Distance Qualities + Maximum High
             float maxDistGood, maxDistMiddle, maxDistBad;
@@ -95,7 +95,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
 
             Vec3f senderPosition = sender.Position;
             Vec3f otherPosition;
-            string newMessage = message;
+            string[] newMessage = message;
             foreach (var pair in AllPlayers)
             {
                 if (pair.Value != sender)
@@ -106,33 +106,73 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
                     distZ = Math.Abs(senderPosition.Z - otherPosition.Z);
 
                     if ((distX * distX + distY * distY + distZ * distZ) < maxDistGood * maxDistGood)
-                        newMessage = " (GoodQ) " + ExchangeTextQuality(message, 0);
-                    else if ((distX * distX + distY * distY + distZ * distZ) < maxDistMiddle * maxDistMiddle)
+                        newMessage = ExchangeTextQuality(message, 0);
+                    /*else if ((distX * distX + distY * distY + distZ * distZ) < maxDistMiddle * maxDistMiddle)
                         // Middle Talking Quality
-                        newMessage = " (MiddleQ) " + ExchangeTextQuality(message, 1);
+                        newMessage = " (MiddleQ) " + ExchangeTextQuality(message, 1);*/
                     else if ((distX * distX + distY * distY + distZ * distZ) < maxDistBad * maxDistBad)
                         // Bad Talking Qualitiy -> percentage
-                        newMessage = " (BadQ) " + ExchangeTextQuality(message, 2);
+                        newMessage = ExchangeTextQuality(message, (float)Math.Sqrt(distX * distX + distY * distY + distZ * distZ) / (maxDistBad / 100));
                     else
-                        newMessage = "";
+                        newMessage = new string[] { "" };
                 }
 
+                string strMessage = "";
+                for (int i = 0; i < newMessage.Length; i++)
+                    strMessage += newMessage[i] + " ";
+
+                strMessage = strMessage.Trim();
+                
                 if (ChatType == ChatTextType.Say)
-                    Chat.SendSay(sender, pair.Value, newMessage);
+                    Chat.SendSay(sender, pair.Value, strMessage);
                 else if (ChatType == ChatTextType.Shout)
-                    Chat.SendShout(sender, pair.Value, newMessage);
+                    Chat.SendShout(sender, pair.Value, strMessage);
                 else if (ChatType == ChatTextType.Whisper)
-                    Chat.SendWhisper(sender, pair.Value, newMessage);
+                    Chat.SendWhisper(sender, pair.Value, strMessage);
                 else if (ChatType == ChatTextType.OOC)
+                {
                     if (!newMessage.Equals("")) // Sendet OOC nur an erreichbare Spieler
-                        Chat.SendOOC(sender, pair.Value, message);
+                        Chat.SendOOC(sender, pair.Value, strMessage);
+                }
+                else if (ChatType == ChatTextType.Ambient)
+                {
+                    if (!newMessage.Equals(""))
+                        Chat.SendAmbient(sender, pair.Value, strMessage);
+                }
             }
             return;
         }
 
-        private string ExchangeTextQuality(string message, int qualityType)
+        private string[] ExchangeTextQuality(string[] message, float qualityPercentage)
         {
-            // Hier Nachricht entsprechend nach QualityType verändern.
+            Random rnd = new Random();
+            float number;
+            int v;
+
+            for (int i = 0; i < message.Length; i++ )
+            {
+                number = rnd.Next(1, 100);
+                if (number < qualityPercentage && !message[i].Equals(""))
+                {
+                    if (i > 0)
+                    {
+                        v = 0;
+                        while (v < i)
+                        {
+                            v++;
+                            if (!message[i - v].Equals(""))
+                                break;
+                        }
+
+                        if (!message[i - v].Equals("...") && !message[i - v].Equals(""))
+                            message[i] = "...";
+                        else
+                            message[i] = "";
+                    }
+                    else
+                        message[i] = "...";
+                }
+            }
             return message;
         }
 
@@ -157,9 +197,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
         {
             string[] parameters = GetCommandParametersByMessage(message.Substring(1));
 
-            if (!IsPlayerAllowedToUseCommand(pl))
-                return;
-
             if (CommandList.ContainsKey(parameters[0]))
             {
                 CommandList[parameters[0]].DynamicInvoke(pl, parameters);
@@ -170,7 +207,22 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
 
         private string[] GetCommandParametersByMessage(string message)
         {
+            foreach(var command in CommandList)
+            {
+                if (message.StartsWith(command.Key))
+                {
+                    // Wenn Befehle ohne Leerzeichen gesendet werden: /oocHallo dann => /ooc Hallo
+                    string newMessage = message.Substring(command.Key.Length);
+                    message = command.Key + " " + newMessage;
+                    break;
+                }
+            }
             return message.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        }
+
+        private string[] GetStringArray(string message)
+        {
+            return message.Split(new char[] { ' ' });
         }
 
         private void AddCommand(string command, CommandDelegate func)
@@ -213,11 +265,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
             {
                 if (parameters.Length == 1)
                     return;
-
-                string message = "";
-                for (int i = 1; i < parameters.Length; i++)
-                    message += parameters[i] + " ";
-                SendTextBasedOnChatType(player, message, ChatTextType.Whisper);
+                parameters[0] = ""; // where cmd is
+                SendTextBasedOnChatType(player, parameters, ChatTextType.Whisper);
             };
             #endregion
 
@@ -226,11 +275,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
             {
                 if (parameters.Length == 1)
                     return;
-
-                string message = "";
-                for(int i = 1; i < parameters.Length; i ++)
-                    message += parameters[i] + " ";
-                SendTextBasedOnChatType(player, message, ChatTextType.Shout);
+                parameters[0] = ""; // where cmd is
+                SendTextBasedOnChatType(player, parameters, ChatTextType.Shout);
             };
             #endregion
 
@@ -249,12 +295,12 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
                 else if (message.StartsWith("@"))
                     CommandList["@"].DynamicInvoke(player, GetCommandParametersByMessage(message.Substring(1)));
                 else
-                    SendTextBasedOnChatType(player, message, ChatTextType.OOC);
+                    SendTextBasedOnChatType(player, parameters, ChatTextType.OOC);
             };
             #endregion
 
-            #region PlayDialogueAnimation
-            CommandDelegate PlayDialogueAnimation = delegate(Player player, string[] parameters)
+            #region StartDialogueAnimation
+            CommandDelegate StartDialogueAnimation = delegate(Player player, string[] parameters)
             {
                 player.startDialogAnimation();
             };
@@ -426,13 +472,23 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
             };
             #endregion
 
+            #region Me
+            CommandDelegate Me = delegate(Player player, string[] parameters)
+            {
+                if (parameters.Length == 1)
+                    return;
+                SendTextBasedOnChatType(player, parameters, ChatTextType.Ambient);   
+            };
+            #endregion
+
             AddCommand("help", "/help <befehl>", Help);
             AddCommand("whisper", "/whisper <text>", Whisper);
             AddCommand("shout", "/shout <text>", Shout);
             AddCommand("pa", "/pa <animationName>", playAnimation);
-            AddCommand("StartDialogueAnimation", PlayDialogueAnimation);
+            AddCommand("StartDialogueAnimation", StartDialogueAnimation);
             AddCommand("@","@<SpielerName> <text>", PersonalMessage);
-            AddCommand("ooc", OOC);
+            AddCommand("ooc", "/ooc <text>", OOC);
+            AddCommand("me", "/me <text>", Me);
 
             // Admin Commands
             AddCommand("revive", "/revive <player>", Revive);
