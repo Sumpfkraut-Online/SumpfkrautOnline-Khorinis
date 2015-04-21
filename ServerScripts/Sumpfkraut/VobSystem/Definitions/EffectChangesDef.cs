@@ -494,6 +494,370 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             }
         }
 
+        public static void ApplyToDummy (ref DummyItemDef def, EffectChangesEnum changeType, string param)
+        {
+            try
+            {
+                // please don't kill me for this switch case... it could use a more OOP-like replacement
+                switch (changeType)
+                {
+                    case (EffectChangesEnum.IsGold):
+                        bool isGold = false;
+                        if (bool.TryParse(param, out isGold))
+                        {
+                            def.setIsGold(isGold);
+                        }
+                        
+                        return;
+                    //case (EffectChangesEnum.IsKeyInstance):
+                    //    def.IsKeyInstance = Convert.ToBoolean(param);
+                    //    return;
+                    case (EffectChangesEnum.IsTorch):
+                        bool isTorch = false;
+                        if (bool.TryParse(param, out isTorch))
+                        {
+                            def.setIsTorch(isTorch);
+                        }
+                        return;
+                    case (EffectChangesEnum.IsTorchBurning):
+                        bool isTorchBurning = false;
+                        if (bool.TryParse(param, out isTorchBurning))
+                        {
+                            def.setIsTorchBurning(isTorchBurning);
+                        }
+                        return;
+                    case (EffectChangesEnum.IsTorchBurned):
+                        bool isTorchBurned = false;
+                        if (bool.TryParse(param, out isTorchBurned))
+                        {
+                            def.setIsTorchBurned(isTorchBurned);
+                        }
+                        return;
+
+                    case (EffectChangesEnum.Effect):
+                        if (param != null)
+                        {
+                            def.setEffect(param);
+                        }
+                        return;
+                    case (EffectChangesEnum.Spell):
+                        // !!! TO DO: requires SpellDef --> resulting SpellInst !!!
+                        return;
+
+                    case (EffectChangesEnum.Wear):
+                        int wear = 0;
+                        if (Int32.TryParse(param, out wear))
+                        {
+                            def.setWear((Enumeration.ArmorFlags) wear);
+                        }
+                        return;
+                    case (EffectChangesEnum.DamageType):
+                        int damageType = 0;
+                        if (Int32.TryParse(param, out damageType))
+                        {
+                            def.setDamageType((Enumeration.DamageTypes) damageType);
+                        }
+                        return;
+                    case (EffectChangesEnum.Range):
+                        int addRange = 0;
+                        if (Int32.TryParse(param, out addRange))
+                        {
+                            def.setRange(def.getRange() + addRange);
+                        }
+                        return;
+                    case (EffectChangesEnum.TotalDamage):
+                        int addTotalDamage = 0;
+                        if (Int32.TryParse(param, out addTotalDamage))
+                        {
+                            def.setTotalDamage(def.getTotalDamage() + addTotalDamage);
+                        }
+                        return;
+                    //case (EffectChangesEnum.Damages):
+                    //    // !!! TO DO: multiple entries !!!
+                    //    // ??? should setting them even possible ???
+                    //    return;
+                    //case (EffectChangesEnum.Munition):
+                    //    // !!! TO DO: requires ItemDef --> resulting ItemInst !!!
+                    //    return;
+
+                    case (EffectChangesEnum.Protection):
+                        // param string should be of pattern 0=0,1=0,2=25,...
+                        string[] data = param.Split(new char[]{',', '='});
+                        if ((data != null) && (data.Length > 0))
+                        {
+                            int dti = 0;
+                            int val = 0;
+                            int i = 0;
+                            while (i < data.Length)
+                            {
+                                if ((i + 1) >= data.Length)
+                                {
+                                    break;
+                                }
+
+                                try
+                                {
+                                    if (Int32.TryParse(data[i], out dti) && Int32.TryParse(data[i + 1], out val))
+                                    {
+                                        def.setProtection((Enumeration.DamageTypeIndex) dti, 
+                                            def.getProtection((Enumeration.DamageTypeIndex) dti) + val);
+                                    }
+                                    else
+                                    {
+                                        throw new Exception("Couldn't convert part of param-string to int or enum-entry DamageTypeIndex.");
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    throw new Exception("Couldn't cast converted part of param-string from int to enum-entry DamageTypeIndex: " + ex);
+                                }
+                                
+                                i += 2;
+                            }
+                        }
+                        return;
+
+
+                    // descriptive parameters
+                    case (EffectChangesEnum.Description):
+                        def.setDescription(param);
+                        return;
+                    case (EffectChangesEnum.Text0):
+                        def.setText0(param);
+                        return;
+                    case (EffectChangesEnum.Text1):
+                        def.setText1(param);
+                        return;
+                    case (EffectChangesEnum.Text2):
+                        def.setText2(param);
+                        return;
+                    case (EffectChangesEnum.Text3):
+                        def.setText3(param);
+                        return;
+                    case (EffectChangesEnum.Text4):
+                        def.setText4(param);
+                        return;
+                    case (EffectChangesEnum.Text5):
+                        def.setText5(param);
+                        return;
+                    case (EffectChangesEnum.Count0):
+                        int Count0 = -1;
+                        if (int.TryParse(param, out Count0))
+                        {
+                            def.setCount0(Count0);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying Count0.");
+                        }
+                        return;
+                    case (EffectChangesEnum.Count1):
+                        int Count1 = -1;
+                        if (int.TryParse(param, out Count1))
+                        {
+                            def.setCount1(Count1);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying Count1.");
+                        }
+                        return;
+                    case (EffectChangesEnum.Count2):
+                        int Count2 = -1;
+                        if (int.TryParse(param, out Count2))
+                        {
+                            def.setCount2(Count2);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying Count2.");
+                        }
+                        return;
+                    case (EffectChangesEnum.Count3):
+                        int Count3 = -1;
+                        if (int.TryParse(param, out Count3))
+                        {
+                            def.setCount3(Count3);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying Count3.");
+                        }
+                        return;
+                    case (EffectChangesEnum.Count4):
+                        int Count4 = -1;
+                        if (int.TryParse(param, out Count4))
+                        {
+                            def.setCount4(Count4);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying Count4.");
+                        }
+                        return;
+                    case (EffectChangesEnum.Count5):
+                        int Count5 = -1;
+                        if (int.TryParse(param, out Count5))
+                        {
+                            def.setCount5(Count5);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying Count5.");
+                        }
+                        return;
+
+
+                    // OnUse
+                    case (EffectChangesEnum.OnUse_HPChange):
+                        int OnUse_addHPChange = 0;
+                        if (Int32.TryParse(param, out OnUse_addHPChange))
+                        {
+                            def.setOnUse_HPChange(def.getOnUse_HPChange() + OnUse_addHPChange);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying OnUse_HPChange.");
+                        }
+                        return;
+                    case (EffectChangesEnum.OnUse_HPMaxChange):
+                        int OnUse_addHPMaxChange = 0;
+                        if (Int32.TryParse(param, out OnUse_addHPMaxChange))
+                        {
+                            def.setOnUse_HPMaxChange(def.getOnUse_HPMaxChange() + OnUse_addHPMaxChange);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying OnUse_HPMaxChange.");
+                        }
+                        return;
+                    case (EffectChangesEnum.OnUse_MPChange):
+                        int OnUse_addMPChange = 0;
+                        if (Int32.TryParse(param, out OnUse_addMPChange))
+                        {
+                            def.setOnUse_MPChange(def.getOnUse_MPChange() + OnUse_addMPChange);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying OnUse_MPChange.");
+                        }
+                        return;
+                    case (EffectChangesEnum.OnUse_MPMaxChange):
+                        int OnUse_addMPMaxChange = 0;
+                        if (Int32.TryParse(param, out OnUse_addMPMaxChange))
+                        {
+                            def.setOnUse_MPMaxChange(def.getOnUse_MPMaxChange() + OnUse_addMPMaxChange);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying OnUse_MPMaxChange.");
+                        }
+                        return;
+
+                    // OnEquip
+                    case (EffectChangesEnum.OnEquip_HPChange):
+                        int OnEquip_addHPChange = 0;
+                        if (Int32.TryParse(param, out OnEquip_addHPChange))
+                        {
+                            def.setOnEquip_HPChange(def.getOnEquip_HPChange() + OnEquip_addHPChange);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying OnEquip_HPChange.");
+                        }
+                        return;
+                    case (EffectChangesEnum.OnEquip_HPMaxChange):
+                        int OnEquip_addHPMaxChange = 0;
+                        if (Int32.TryParse(param, out OnEquip_addHPMaxChange))
+                        {
+                            def.setOnEquip_HPMaxChange(def.getOnEquip_HPMaxChange() + OnEquip_addHPMaxChange);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying OnEquip_HPMaxChange.");
+                        }
+                        return;
+                    case (EffectChangesEnum.OnEquip_MPChange):
+                        int OnEquip_addMPChange = 0;
+                        if (Int32.TryParse(param, out OnEquip_addMPChange))
+                        {
+                            def.setOnEquip_MPChange(def.getOnEquip_MPChange() + OnEquip_addMPChange);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying OnEquip_MPChange.");
+                        }
+                        return;
+                    case (EffectChangesEnum.OnEquip_MPMaxChange):
+                        int OnEquip_addMPMaxChange = 0;
+                        if (Int32.TryParse(param, out OnEquip_addMPMaxChange))
+                        {
+                            def.setOnEquip_MPMaxChange(def.getOnEquip_MPMaxChange() + OnEquip_addMPMaxChange);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying OnEquip_MPMaxChange.");
+                        }
+                        return;
+
+                    // OnUnEquip
+                    case (EffectChangesEnum.OnUnEquip_HPChange):
+                        int OnUnEquip_addHPChange = 0;
+                        if (Int32.TryParse(param, out OnUnEquip_addHPChange))
+                        {
+                            def.setOnUnEquip_HPChange(def.getOnUnEquip_HPChange() + OnUnEquip_addHPChange);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying OnUnEquip_HPChange.");
+                        }
+                        return;
+                    case (EffectChangesEnum.OnUnEquip_HPMaxChange):
+                        int OnUnEquip_addHPMaxChange = 0;
+                        if (Int32.TryParse(param, out OnUnEquip_addHPMaxChange))
+                        {
+                            def.setOnUnEquip_HPMaxChange(def.getOnUnEquip_HPMaxChange() + OnUnEquip_addHPMaxChange);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying OnUnEquip_HPMaxChange.");
+                        }
+                        return;
+                    case (EffectChangesEnum.OnUnEquip_MPChange):
+                        int OnUnEquip_addMPChange = 0;
+                        if (Int32.TryParse(param, out OnUnEquip_addMPChange))
+                        {
+                            def.setOnUnEquip_MPChange(def.getOnUnEquip_MPChange() + OnUnEquip_addMPChange);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying OnUnEquip_MPChange.");
+                        }
+                        return;
+                    case (EffectChangesEnum.OnUnEquip_MPMaxChange):
+                        int OnUnEquip_addMPMaxChange = 0;
+                        if (Int32.TryParse(param, out OnUnEquip_addMPMaxChange))
+                        {
+                            def.setOnUnEquip_MPMaxChange(def.getOnUnEquip_MPMaxChange() + OnUnEquip_addMPMaxChange);
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int while applying OnUnEquip_MPMaxChange.");
+                        }
+                        return;
+
+                    default:
+                        throw new Exception("There exists no effect-change for EffectChangesEnum changeType="
+                            + changeType + ".");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Couldn't process effect changes for EffectChangesEnum changeType=" 
+                    + changeType + " and with string param=" + param + ": " + ex);
+            }
+        }
+
     }
 
 }

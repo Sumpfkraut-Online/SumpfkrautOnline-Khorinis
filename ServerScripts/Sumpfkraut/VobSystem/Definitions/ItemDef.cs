@@ -14,6 +14,35 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
     class ItemDef : ItemInstance
     {
 
+        public string getInstanceName () { return this.InstanceName; }
+        // read only in GUC
+        //public void setInstanceName (string InstanceName) { this.InstanceName = InstanceName; }
+
+        public string getName () { return this.Name; }
+        public void setName (string Name) { this.Name = Name; }
+
+        public string getScemeName () { return this.ScemeName; }
+        public void setScemeName (string ScemeName) { this.ScemeName = ScemeName; }
+
+        public string getVisual () { return this.Visual; }
+        public void setVisual (string Visual) { this.Visual = Visual; }
+
+        public string getVisual_Change () { return this.Visual_Change; }
+        public void setVisual_Change (string Visual_Change) { this.Visual_Change = Visual_Change; }
+
+        public int getVisual_skin () { return this.Visual_skin; }
+        public void setVisual_skin (int Visual_skin) { this.Visual_skin = Visual_skin; }
+
+        public Enumeration.MainFlags getMainFlags () { return this.MainFlags; }
+        public void setMainFlags (Enumeration.MainFlags MainFlags) { this.MainFlags = MainFlags; }
+        
+        public Enumeration.MaterialType getMaterials () { return this.Materials; }
+        public void setMaterials (Enumeration.MaterialType Materials) { this.Materials = Materials; }
+
+        public int getValue () { return this.Value; }
+        public void setValue (int Value) { this.Value = Value; }
+
+
         public bool getIsGold (){ return this.IsGold; }
         public void setIsGold (bool IsGold) { this.IsGold = IsGold; }
 
@@ -243,50 +272,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         public void setOnUnEquip_MPMax_Min (int MPMax_Min) { this.OnUnEquip_MPMax_Min = MPMax_Min; }
 
         
-        //static ItemDef ii;
-        //static ItemDef get ()
-        //{
-        //    if (ii == null)
-        //        ii = new ItemDef();
-        //    return ii;
-        //}
-
-        //protected ItemDef (String instanceName)
-        //    : base (instanceName)
-        //{
-        //    //this.InstanceName;
-
-        //    //this.Name;
-        //    //this.Value;
-        //    //this.Visual;
-        //    //this.Visual_Change;
-        //    //this.Visual_skin;
-        //    //this.MainFlags;
-        //    //this.Flags;
-
-        //    //this.Materials;
-        //    //this.Description;
-
-        //    //this.Effect = "";
-
-        //    //this.IsGold;
-        //    //this.IsLockPick;
-        //    //this.IsTorch;
-        //    //this.IsTorchBurned;
-        //    //this.IsTorchBurning;
-
-        //    //this.Range;
-        //    //this.Spell;
-
-        //    //this.Wear;
-        //    //this.ScemeName;
-
-        //    this.OnUse += new Scripting.Events.UseItemEventHandler(this.UseItem);
-        //    this.OnEquip += new Scripting.Events.NPCEquipEventHandler(this.EquipItem);
-        //    this.OnUnEquip += new Scripting.Events.NPCEquipEventHandler(this.UnequipItem);
-
-        //    CreateItemInstance();
-        //}
 
         // potions
         public ItemDef (String instanceName, String name, String scemeName, int value, String visual, String effect)
@@ -305,84 +290,109 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         
 
-        public ItemDef (String instanceName, String name, String scemeName, int value, MainFlags mainFlags, Flags flags, String visual)
-            : this (instanceName, name, scemeName, null, null, value, mainFlags, flags, 0, 0, 0, 0, visual, null)
+        public ItemDef (String instanceName, String name, String scemeName, int value, 
+            MainFlags mainFlags, Flags flags, String visual)
+            : this (instanceName, name, scemeName, null, null, value, 
+                mainFlags, flags, 0, 0, 0, 0, visual, null)
         { }
 
-        public ItemDef (String instanceName, String name, String scemeName, int value, MainFlags mainFlags, Flags flags, String visual, String visual_Change, String effect)
-            : this (instanceName, name, scemeName, null, null, value, mainFlags, flags, 0, 0, 0, 0, visual, visual_Change, effect)
+        public ItemDef (String instanceName, String name, String scemeName, int value, 
+            MainFlags mainFlags, Flags flags, String visual, String visual_Change, String effect)
+            : this (instanceName, name, scemeName, null, null, value, 
+                mainFlags, flags, 0, 0, 0, 0, visual, visual_Change, effect)
         { }
 
-        public ItemDef (String instanceName, String name, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual)
-            : this (instanceName, name, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, null)
+        public ItemDef (String instanceName, String name, int[] protection, int[] damages, 
+            int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, 
+            DamageTypes dmgType, int totalDamage, int range, String visual)
+            : this (instanceName, name, protection, damages, 
+                value, mainFlags, flags, armorFlags, 
+                dmgType, totalDamage, range, visual, null)
         { }
-        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual)
-            : this (instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, null)
+        public ItemDef (String instanceName, String name, String scemeName, int[] protection, 
+            int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, 
+            DamageTypes dmgType, int totalDamage, int range, String visual)
+            : this (instanceName, name, scemeName, protection, 
+                damages, value, mainFlags, flags, armorFlags, 
+                dmgType, totalDamage, range, visual, null)
         { }
-        public ItemDef (String instanceName, String name, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change)
-            : this (instanceName, name, null, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, null, 0)
-        { }
-
-        public ItemDef (String instanceName, String name, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change, String effect)
-            : this (instanceName, name, null, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, 0)
-        { }
-
-        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change)
-            : this (instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, "", 0)
-        { }
-
-        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change, String effect)
-            : this (instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, 0, 0, null)
-        { }
-
-        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, MaterialType types)
-            : this (instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, 0, types, null)
+        public ItemDef (String instanceName, String name, int[] protection, int[] damages, 
+            int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, 
+            int totalDamage, int range, String visual, String visual_Change)
+            : this (instanceName, name, null, protection, damages, 
+                value, mainFlags, flags, armorFlags, dmgType, 
+                totalDamage, range, visual, visual_Change, null, 0)
         { }
 
-        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, MaterialType types, ItemInstance munition)
-            : this (instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, 0, types, munition)
+        public ItemDef (String instanceName, String name, int[] protection, int[] damages, 
+            int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, 
+            int totalDamage, int range, String visual, String visual_Change, String effect)
+            : this (instanceName, name, null, protection, damages, 
+                value, mainFlags, flags, armorFlags, dmgType, 
+                totalDamage, range, visual, visual_Change, effect, 0)
         { }
 
-        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, int visualSkin, MaterialType types, ItemInstance munition)
-            : this (instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, visualSkin, types, munition, false, false, false, false, false)
+        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, 
+            int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, 
+            int totalDamage, int range, String visual, String visual_Change)
+            : this (instanceName, name, scemeName, protection, damages, 
+                value, mainFlags, flags, armorFlags, dmgType, 
+                totalDamage, range, visual, visual_Change, "", 0)
         { }
 
-        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, int visualSkin, MaterialType types, ItemInstance munition, bool keyInstance, bool torch, bool torchBurning, bool torchBurned, bool gold)
-            : base (instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, visualSkin, types, munition, keyInstance, torch, torchBurning, torchBurned, gold)
-            //: base (instanceName)
+        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, 
+            int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, 
+            int totalDamage, int range, String visual, String visual_Change, String effect)
+            : this (instanceName, name, scemeName, protection, damages, 
+                value, mainFlags, flags, armorFlags, dmgType, 
+                totalDamage, range, visual, visual_Change, effect, 0, 0, null)
+        { }
+
+        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, 
+            int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, 
+            int totalDamage, int range, String visual, String visual_Change, String effect, MaterialType types)
+            : this (instanceName, name, scemeName, protection, damages, 
+                value, mainFlags, flags, armorFlags, dmgType, 
+                totalDamage, range, visual, visual_Change, effect, 0, types, null)
+        { }
+
+        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, 
+            int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, 
+            int totalDamage, int range, String visual, String visual_Change, String effect, MaterialType types, 
+            ItemInstance munition)
+            : this (instanceName, name, scemeName, protection, damages, 
+                value, mainFlags, flags, armorFlags, dmgType, 
+                totalDamage, range, visual, visual_Change, effect, 0, types, 
+                munition)
+        { }
+
+        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, 
+            int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, 
+            int totalDamage, int range, String visual, String visual_Change, String effect, int visualSkin, 
+            MaterialType types, ItemInstance munition)
+            : this (instanceName, name, scemeName, protection, damages, 
+                value, mainFlags, flags, armorFlags, dmgType, 
+                totalDamage, range, visual, visual_Change, effect, visualSkin, 
+                types, munition, false, false, false, false, false)
+        { }
+
+        public ItemDef (String instanceName, String name, String scemeName, int[] protection, 
+            int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, 
+            DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change, 
+            String effect, int visualSkin, MaterialType types, ItemInstance munition, bool keyInstance, 
+            bool torch, bool torchBurning, bool torchBurned, bool gold)
+            : base (instanceName, name, scemeName, protection, 
+                damages, value, mainFlags, flags, armorFlags, 
+                dmgType, totalDamage, range, visual, visual_Change, 
+                effect, visualSkin, types, munition, keyInstance, 
+                torch, torchBurning, torchBurned, gold)
         {
-            //this.itemInstances.Name = name;
-            //this.itemInstances.Protection = protection;
-            //this.itemInstances.Damages = damages;
-            //this.itemInstances.Value = value;
-            //this.itemInstances.MainFlags = mainFlags;
-            //this.itemInstances.Flags = flags;
-            //this.itemInstances.Wear = armorFlags;
-            //this.itemInstances.Visual = visual;
-            //this.itemInstances.Visual_Change = visual_Change;
-            //this.itemInstances.Visual_skin = visualSkin;
-            //this.itemInstances.ScemeName = scemeName;
-            //this.itemInstances.Effect = effect;
-            //if(munition != null)
-            //    this.itemInstances.Munition = munition.itemInstances;
-
-            //this.itemInstances.DamageType = dmgType;
-            //this.itemInstances.Range = range;
-            //this.itemInstances.TotalDamage = totalDamage;
-            //this.itemInstances.isKeyInstance = keyInstance;
-            //this.IsTorch = torch;
-            //this.IsTorchBurned = torchBurned;
-            //this.IsTorchBurning = torchBurning;
-            //this.IsGold = gold;
-
             this.OnUse += new Scripting.Events.UseItemEventHandler(this.UseItem);
             this.OnEquip += new Scripting.Events.NPCEquipEventHandler(this.EquipItem);
             this.OnUnEquip += new Scripting.Events.NPCEquipEventHandler(this.UnequipItem);
-
-            CreateItemInstance();
+            
+            //CreateItemInstance();
         }
-
-
 
 
 

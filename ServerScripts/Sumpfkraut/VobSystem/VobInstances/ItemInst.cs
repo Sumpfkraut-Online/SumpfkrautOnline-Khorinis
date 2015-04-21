@@ -11,6 +11,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.VobInstances
      */
     class ItemInst
     {
+
+
         
     }
 }
