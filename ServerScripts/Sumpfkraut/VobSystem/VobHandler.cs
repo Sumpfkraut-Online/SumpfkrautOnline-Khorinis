@@ -587,49 +587,49 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             if (colIndex != -1)
             {
                 //instanceName = (String) def[colIndex];
-                dummyDef.instanceName = (String) def[colIndex];
+                dummyDef.setInstanceName((String) def[colIndex]);
             }
 
             colIndex = colTypesKeys.IndexOf("Name");
             if (colIndex != -1)
             {
                 //name = (String) def[colIndex];
-                dummyDef.name = (String) def[colIndex];
+                dummyDef.setName((String) def[colIndex]);
             }
 
             colIndex = colTypesKeys.IndexOf("ScemeName");
             if (colIndex != -1)
             {
                 //scemeName = (String) def[colIndex];
-                dummyDef.scemeName = (String) def[colIndex];
+                dummyDef.setScemeName((String) def[colIndex]);
             }
 
             colIndex = colTypesKeys.IndexOf("MainFlag");
             if (colIndex != -1)
             {
                 //mainFlags = (GUC.Enumeration.MainFlags) def[colIndex];
-                dummyDef.mainFlags = (GUC.Enumeration.MainFlags) def[colIndex];
+                dummyDef.setMainFlags((GUC.Enumeration.MainFlags) def[colIndex]);
             }
 
             colIndex = colTypesKeys.IndexOf("Visual");
             if (colIndex != -1)
             {
                 //visual = (String) def[colIndex];
-                dummyDef.visual = (String) def[colIndex];
+                dummyDef.setVisual((String) def[colIndex]);
             }
 
             colIndex = colTypesKeys.IndexOf("Visual_Skin");
             if (colIndex != -1)
             {
                 //visualSkin = (int) def[colIndex];
-                dummyDef.visualSkin = (int) def[colIndex];
+                dummyDef.setVisual_skin((int) def[colIndex]);
             }
 
             colIndex = colTypesKeys.IndexOf("Material");
             if (colIndex != -1)
             {
                 //types = (GUC.Enumeration.MaterialType) def[colIndex];
-                dummyDef.material = (GUC.Enumeration.MaterialType) def[colIndex];
+                dummyDef.setMaterials((GUC.Enumeration.MaterialType) def[colIndex]);
             }
 
             /* ---------------------------------------------------

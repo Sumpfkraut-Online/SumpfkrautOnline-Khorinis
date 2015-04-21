@@ -52,7 +52,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         protected string InstanceName;
         public string getInstanceName () { return this.InstanceName; }
         // read only in GUC
-        //public void setInstanceName (string InstanceName) { this.InstanceName = InstanceName; }
+        public void setInstanceName (string InstanceName) { this.InstanceName = InstanceName; }
 
         protected string Name;
         public string getName () { return this.Name; }
