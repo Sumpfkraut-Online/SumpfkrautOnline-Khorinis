@@ -624,6 +624,199 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
             };
             #endregion
 
+            #region cheatEquip
+            CommandDelegate cheatEquip = delegate(Player player, string[] parameters)
+            {
+                if (parameters.Length != 2)
+                {
+                    SendHintMessage(player, "Verwendung: " + CommandParameterList[parameters[0]]);
+                    return;
+                }
+
+                int nr = 0;
+                if (!Int32.TryParse(parameters[1], out nr))
+                {
+                    SendErrorMessage(player, ""+parameters[1]+" ist keine gültige Zahl."); 
+                }
+
+                if (nr == 1) // schwache Miliz
+                {
+                    player.setAttribute(NPCAttribute.ATR_HITPOINTS_MAX, 300);
+                    player.setAttribute(NPCAttribute.ATR_HITPOINTS, 300);
+                    player.setAttribute(NPCAttribute.ATR_STRENGTH, 50);
+                    player.setAttribute(NPCAttribute.ATR_DEXTERITY, 50);
+
+                    player.setTalentSkills(NPCTalent.H1, 50);
+                    player.setTalentSkills(NPCTalent.CrossBow, 50);
+
+                    player.Equip(player.addItem("ItAr_Mil_L", 1));
+                    player.Equip(player.addItem("ItMw_Schwert1", 1));
+                    player.Equip(player.addItem("ItRw_Crossbow_L_02", 1));
+                    player.addItem("ItRw_Bolt", 200);
+                    player.addItem("ItPo_Health_01", 5);
+                    player.addItem("ItPo_Speed", 2);
+
+                    player.addItem("ItMi_Gold", 100);
+                }
+                else if(nr == 2) // schwacher Söldner
+                {
+                    player.setAttribute(NPCAttribute.ATR_HITPOINTS_MAX, 300);
+                    player.setAttribute(NPCAttribute.ATR_HITPOINTS, 300);
+                    player.setAttribute(NPCAttribute.ATR_STRENGTH, 50);
+                    player.setAttribute(NPCAttribute.ATR_DEXTERITY, 50);
+
+                    player.setTalentSkills(NPCTalent.H1, 50);
+                    player.setTalentSkills(NPCTalent.Bow, 50);
+
+                    player.Equip(player.addItem("ItAr_Sld_M", 1));
+                    player.Equip(player.addItem("ItMw_2H_Sld_Axe", 1));
+                    player.Equip(player.addItem("ItRw_Bow_L_04", 1));
+                    player.addItem("ItRw_Arrow", 200);
+                    player.addItem("ItPo_Health_01", 5);
+                    player.addItem("ItPo_Speed", 2);
+                    player.addItem("ItWr_BabosPinup_Mis", 1);
+
+                    player.addItem("ItMi_Gold", 50);
+                }
+                else if (nr == 3) // schwacher Magier
+                {
+                    player.setAttribute(NPCAttribute.ATR_HITPOINTS_MAX, 300);
+                    player.setAttribute(NPCAttribute.ATR_HITPOINTS, 300);
+                    player.setAttribute(NPCAttribute.ATR_STRENGTH, 50);
+                    player.setAttribute(NPCAttribute.ATR_DEXTERITY, 50);
+
+                    player.setAttribute(NPCAttribute.ATR_MANA_MAX, 200);
+                    player.setAttribute(NPCAttribute.ATR_MANA, 200);
+
+                    player.setTalentSkills(NPCTalent.Mage, 3);
+
+                    player.Equip(player.addItem("ItAr_KdF_L", 1));
+                    player.Equip(player.addItem("ItMw_1H_Nov_Mace", 1));
+                    player.addItem("ItPo_Health_01", 2);
+                    player.addItem("ItPo_Perm_LittleMana", 3);
+                    player.addItem("ItPo_Speed", 2);
+
+                    player.Equip(player.addItem("ItRu_Firebolt", 1));
+                    player.Equip(player.addItem("ItRu_InstantFireball", 1));
+                    player.Equip(player.addItem("ItRu_Icecube", 1));
+                    player.Equip(player.addItem("ItRu_LightHeal", 1));
+                    player.Equip(player.addItem("ItRu_SumGobSkel", 1));
+                    player.Equip(player.addItem("ItRu_Sleep", 1));
+
+                    player.addItem("ItMi_Gold", 30);
+                }
+                else if (nr == 4) // Paladin
+                {
+                    player.setAttribute(NPCAttribute.ATR_HITPOINTS_MAX, 600);
+                    player.setAttribute(NPCAttribute.ATR_HITPOINTS, 600);
+                    player.setAttribute(NPCAttribute.ATR_STRENGTH, 100);
+                    player.setAttribute(NPCAttribute.ATR_DEXTERITY, 80);
+
+                    player.setAttribute(NPCAttribute.ATR_MANA_MAX, 100);
+                    player.setAttribute(NPCAttribute.ATR_MANA, 100);
+
+                    player.setTalentSkills(NPCTalent.Mage, 3);
+                    player.setTalentSkills(NPCTalent.H1, 150);
+                    player.setTalentSkills(NPCTalent.H2, 150);
+                    player.setTalentSkills(NPCTalent.CrossBow, 150);
+
+                    player.Equip(player.addItem("ItAr_Pal_M", 1));
+                    player.Equip(player.addItem("ItMw_2H_Special_02", 1));
+                    player.Equip(player.addItem("ItRw_Crossbow_M_02", 1));
+
+                    player.addItem("ItRw_Bolt", 200);
+                    player.addItem("ItPo_Health_02", 4);
+                    player.addItem("ItPo_Health_03", 1);
+                    player.addItem("ItPo_Perm_LittleMana", 3);
+                    player.addItem("ItPo_Speed", 2);
+
+                    player.Equip(player.addItem("ItRu_PalDestroyEvil", 1));
+                    player.Equip(player.addItem("ItRu_PalHolyBolt", 1));
+
+                    player.addItem("ItMi_Gold", 500);
+                }
+                else if (nr == 5) // Söldner
+                {
+                    player.setAttribute(NPCAttribute.ATR_HITPOINTS_MAX, 600);
+                    player.setAttribute(NPCAttribute.ATR_HITPOINTS, 600);
+                    player.setAttribute(NPCAttribute.ATR_STRENGTH, 90);
+                    player.setAttribute(NPCAttribute.ATR_DEXTERITY, 120);
+
+                    player.setTalentSkills(NPCTalent.H1, 3);
+                    player.setTalentSkills(NPCTalent.H2, 2);
+                    player.setTalentSkills(NPCTalent.CrossBow, 1);
+
+                    player.Equip(player.addItem("ItAr_Djg_M", 1));
+                    player.Equip(player.addItem("ItMw_Doppelaxt", 1));
+                    player.Equip(player.addItem("ItRw_Bow_H_01", 1));
+
+                    player.addItem("ItRw_Arrow", 200);
+                    player.addItem("ItPo_Health_02", 2);
+                    player.addItem("ItPo_Health_03", 3);
+                    player.addItem("ItPo_Speed", 2);
+
+                    player.addItem("ItMi_Gold", 444);
+                }
+                else if (nr == 6) // Magier
+                {
+                    player.setAttribute(NPCAttribute.ATR_HITPOINTS_MAX, 500);
+                    player.setAttribute(NPCAttribute.ATR_HITPOINTS, 500);
+                    player.setAttribute(NPCAttribute.ATR_STRENGTH, 90);
+                    player.setAttribute(NPCAttribute.ATR_DEXTERITY, 30);
+
+                    player.Equip(player.addItem("ItAr_KdW_H", 1));
+                    player.Equip(player.addItem("ItMw_Addon_Stab03", 1));
+
+                    player.setAttribute(NPCAttribute.ATR_MANA_MAX, 400);
+                    player.setAttribute(NPCAttribute.ATR_MANA, 400);
+
+                    player.setTalentSkills(NPCTalent.Mage, 6);
+
+                    player.addItem("ItPo_Health_02", 2);
+                    player.addItem("ItPo_Health_03", 3);
+                    player.addItem("ItPo_Speed", 2);
+
+                    player.Equip(player.addItem("ItRu_Firerain", 1));
+                    player.Equip(player.addItem("ItRu_Icewave", 1));
+                    player.Equip(player.addItem("ItRu_PalFullHeal", 1));
+                    player.Equip(player.addItem("ItRu_SumDemon", 1));
+                    player.Equip(player.addItem("ItRu_ArmyOfDarkness", 1));
+
+                    player.addItem("ItMi_Gold", 200);
+                }
+                else if (nr == 7) // Master of Desaster
+                {
+                    player.setAttribute(NPCAttribute.ATR_HITPOINTS_MAX, 750);
+                    player.setAttribute(NPCAttribute.ATR_HITPOINTS, 750);
+                    player.setAttribute(NPCAttribute.ATR_STRENGTH, 200);
+                    player.setAttribute(NPCAttribute.ATR_DEXTERITY, 190);
+
+                    player.Equip(player.addItem("ItAr_FireArmor_Addon", 1));
+                    player.Equip(player.addItem("ItMw_BeliarWeapon_2H_20", 1));
+                    player.Equip(player.addItem("ItRw_Addon_Firebow", 1));
+
+                    player.addItem("ItRw_Addon_FireArrow", 300);
+
+                    player.setAttribute(NPCAttribute.ATR_MANA_MAX, 600);
+                    player.setAttribute(NPCAttribute.ATR_MANA, 600);
+
+                    player.setTalentSkills(NPCTalent.Mage, 6);
+
+                    player.addItem("ItPo_Health_03", 20);
+                    player.addItem("ItPo_Mana_03", 20);
+                    player.addItem("ItPo_Speed", 2);
+
+                    player.Equip(player.addItem("ItRu_Firerain", 1));
+                    player.Equip(player.addItem("ItRu_Icewave", 1));
+                    player.Equip(player.addItem("ItRu_PalFullHeal", 1));
+                    player.Equip(player.addItem("ItRu_SumDemon", 1));
+                    player.Equip(player.addItem("ItRu_ArmyOfDarkness", 1));
+
+                    player.addItem("ItMi_Gold", 1000);
+                }
+            };
+            #endregion
+
             AddCommand("help", "/help <befehl>", Help);
             AddCommand("whisper", "/whisper <text>", Whisper);
             AddCommand("shout", "/shout <text>", Shout);
@@ -641,6 +834,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
             AddCommand("mute", "/mute <Spieler> <Minuten>", Mute);
             AddCommand("unmute", "/unmute <Spieler>", Unmute);
             AddCommand("ismuted", "/ismute <Spieler>", IsMuted);
+            AddCommand("cheateq", "/cheateq <Nummer(1-6)>", cheatEquip);
 
         }
         #endregion
