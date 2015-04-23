@@ -157,7 +157,6 @@ namespace GUC.Sumpfkraut.Ingame
         {
             string message = tb.input.Trim(); int w;
             int screenWidth = InputHooked.GetScreenSize(Process.ThisProcess())[0];
-            
 
             if (message.Length > 0)
             {
@@ -169,17 +168,21 @@ namespace GUC.Sumpfkraut.Ingame
                     {
                         foreach (string cmd in pair.Key)
                         {
-                            if (message.StartsWith(cmd))
+                            if (message.StartsWith(cmd + ' '))
                             {
                                 if (cmd != "/")
                                 {
-                                    tb.numHideChars = cmd.Length;
-                                    if (message.Length > cmd.Length)
+                                    tb.numHideChars = cmd.Length+1;
+                                    if (message.Length > cmd.Length+1)
                                         SendDialogueAnimation(pair.Value);
+                                }
+                                else
+                                {
+                                    tb.numHideChars = 0;
                                 }
                                 w = IngameInput.StringPixelWidth(pair.Value);
                                 tb.SetXSize(w, screenWidth - w);
-                                helpText.SetText(pair.Value);
+                                helpText.Text = pair.Value;
                                 return;
                             }
                         }
@@ -195,7 +198,7 @@ namespace GUC.Sumpfkraut.Ingame
             tb.numHideChars = 0;
             w = IngameInput.StringPixelWidth(rpCmdList.Values.ToArray()[0]);
             tb.SetXSize(w, screenWidth - w);
-            helpText.SetText(rpCmdList.Values.ToArray()[0]);
+            helpText.Text = rpCmdList.Values.ToArray()[0];
         }
 
         private void SendDialogueAnimation(string textType)

@@ -16,6 +16,18 @@ namespace GUC.Sumpfkraut.Ingame.GUI
         Process proc;
         zCView thisView;
         zCViewText viewText;
+
+        public string Text
+        {
+            set
+            {
+                viewText.Text.Set(value);
+            }
+            get
+            {
+                return viewText.Text.ToString();
+            }
+        }
                 
         public GUCMenuText(string t, int x, int y)
         {
@@ -35,11 +47,6 @@ namespace GUC.Sumpfkraut.Ingame.GUI
         public void Hide()
         {
             zCView.GetStartscreen(proc).RemoveItem(thisView);
-        }
-
-        public void SetText(string t)
-        {
-            viewText.Text.Set(t);
         }
 
         public void SetPos(int x, int y)

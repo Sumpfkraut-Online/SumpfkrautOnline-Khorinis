@@ -17,7 +17,7 @@ using Gothic.zClasses;
 
 namespace GUC.Sumpfkraut.Ingame
 {
-    class Trade : IMessage, GUCMInputReceiver
+    class Trade : GUCMInputReceiver
     {
         GUCMenuInventory inv;
         GUCMenuInventory sellInv;
@@ -25,8 +25,20 @@ namespace GUC.Sumpfkraut.Ingame
 
         Player trader;
 
+        private TradeMessage messenger;
         public Trade()
         {
+            if (!Program.client.messageListener.ContainsKey((byte)NetworkID.TradeMessage))
+            {
+
+                Program.client.messageListener.Add((byte)NetworkID.TradeMessage, new TradeMessage());
+            }
+            messenger = (TradeMessage)Program.client.messageListener[(byte)NetworkID.TradeMessage];
+
+            messenger.OnBreakMessage += CloseTradeMenu;
+            messenger.OnAcceptMessage += OpenTradeMenu;
+            messenger.OnChangeItemMessage += ChangeItem;
+
             buyInv = new GUCMenuInventory(80, 200, 2, 3, "Inv_Back_Buy.tga");
             sellInv = new GUCMenuInventory(290, 200, 2, 3, "Inv_Back_Sell.tga");
             inv = new GUCMenuInventory(500, 200, 4, 3, "Inv_Back.tga");
@@ -36,55 +48,72 @@ namespace GUC.Sumpfkraut.Ingame
             sellInv.left = buyInv;
             buyInv.right = sellInv;
 
-            inv.OnPressCTRL += CTRLPressedInventory;
-            sellInv.OnPressCTRL += CTRLPressedSell;
+            inv.OnPressCTRL += messenger.OfferItem;
+            sellInv.OnPressCTRL += messenger.RemoveItem;
             
             IngameInput.menus.Add(this);
         }
 
-        private void CTRLPressedInventory(Item item)
+        private void ChangeItem(Item item, bool self, bool add)
         {
-            BitStream stream = Program.client.sentBitStream;
-            stream.Reset();
-            stream.Write((byte)DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.TradeMessage);
-            stream.Write((byte)TradeStatus.OfferItem);
-            stream.Write(Player.Hero.ID);
-            stream.Write(item.ID);
-            Program.client.client.Send(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
-
-            inv.RemoveItem(item);
-            sellInv.AddItem(item);
-        }
-
-        private void CTRLPressedSell(Item item)
-        {
-            BitStream stream = Program.client.sentBitStream;
-            stream.Reset();
-            stream.Write((byte)DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.TradeMessage);
-            stream.Write((byte)TradeStatus.RemoveItem);
-            stream.Write(Player.Hero.ID);
-            stream.Write(item.ID);
-            Program.client.client.Send(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
-
-            sellInv.RemoveItem(item);
-            inv.AddItem(item);
-        }
-
-        public void KeyPressed(int key)
-        {
-            if (key == (int)VirtualKeys.T)
+            if (self)
             {
-                if (trader == null) //trade menu is not shown
+                if (add)
                 {
-                    if (Player.Hero.FocusVob != null && Player.Hero.FocusVob.VobType == VobType.Player)
-                    {
-                       SendRequest((Player)sWorld.VobDict[Player.Hero.FocusVob.ID]);
-                    }
+                    sellInv.AddItem(item);
+                    inv.RemoveItem(item);
                 }
                 else
                 {
+                    sellInv.RemoveItem(item);
+                    inv.AddItem(item);
+                }
+            }
+            else
+            {
+                if (add)
+                {
+                    buyInv.AddItem(item);
+                }
+                else
+                {
+                    buyInv.RemoveItem(item);
+                }
+            }
+        }
+
+        GUCMenuText test;
+        public void KeyPressed(int key)
+        {
+            if (key == (int)VirtualKeys.O)
+            {
+                int xPtr = Process.ThisProcess().Alloc(4).ToInt32();
+                int yPtr = Process.ThisProcess().Alloc(4).ToInt32();
+                int address = ((IntPtr)(Player.Hero.Address + 0x06CC)).ToInt32();
+                Process.ThisProcess().THISCALL<NullReturnCall>((uint)address, (uint)0x007A7660, new CallValue[] { (IntArg)xPtr, (IntArg)yPtr });
+
+                if (test == null)
+                {
+                    test = new GUCMenuText("TEST", 10, 10);
+                    test.Show();
+                }
+                test.Text = Process.ThisProcess().ReadInt(xPtr).ToString() + " " + Process.ThisProcess().ReadInt(yPtr).ToString();
+                Process.ThisProcess().Free(new IntPtr(xPtr), 4);
+                Process.ThisProcess().Free(new IntPtr(yPtr), 4);
+            }
+            else if (key == (int)VirtualKeys.T)
+            {
+                if (trader == null) //trade menu is not shown
+                {
+                    /*if (Player.Hero.FocusVob != null && Player.Hero.FocusVob.VobType == VobType.Player)
+                    {
+                       SendRequest(Player.Hero.FocusVob.ID);
+                    }*/
+                    messenger.SendRequest(Player.Hero.ID);
+                }
+                else
+                {
+                    messenger.SendBreak();
                     CloseTradeMenu();
                 }
             }
@@ -92,6 +121,7 @@ namespace GUC.Sumpfkraut.Ingame
             {
                 if (trader != null)
                 {
+                    messenger.SendBreak();
                     CloseTradeMenu();
                 }
             }
@@ -127,14 +157,6 @@ namespace GUC.Sumpfkraut.Ingame
 
         private void CloseTradeMenu()
         {
-            BitStream stream = Program.client.sentBitStream;
-            stream.Reset();
-            stream.Write((byte)DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.TradeMessage);
-            stream.Write((byte)TradeStatus.Break);
-            stream.Write(Player.Hero.ID);
-            Program.client.client.Send(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
-
             trader = null;
             sellInv.Hide();
             buyInv.Hide();
@@ -144,55 +166,6 @@ namespace GUC.Sumpfkraut.Ingame
 
         public void Update(long ticks)
         {
-        }
-
-        private void SendRequest(Player pl)
-        {
-            BitStream stream = Program.client.sentBitStream;
-            stream.Reset();
-            stream.Write((byte)DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.TradeMessage);
-            stream.Write((byte)TradeStatus.Request);
-
-            stream.Write(Player.Hero.ID);
-            stream.Write(pl.ID);
-
-            Program.client.client.Send(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
-        }
-
-        public void Read(RakNet.BitStream stream, RakNet.Packet packet, Client client)
-        {
-            byte b;
-            stream.Read(out b);
-            TradeStatus status = (TradeStatus)b;
-
-            if (status == TradeStatus.Accept)
-            {
-                int traderID;
-                stream.Read(out traderID);
-
-                OpenTradeMenu((Player)sWorld.VobDict[traderID]);
-            }
-            else if (status == TradeStatus.Break)
-            {
-                trader = null;
-                sellInv.Hide();
-                buyInv.Hide();
-                inv.Hide();
-                IngameInput.deactivateFullControl();
-            }
-            else if (status == TradeStatus.OfferItem)
-            {
-                int itemID;
-                stream.Read(out itemID);
-                buyInv.AddItem((Item)sWorld.VobDict[itemID]);
-            }
-            else if (status == TradeStatus.RemoveItem)
-            {
-                int itemID;
-                stream.Read(out itemID);
-                buyInv.RemoveItem((Item)sWorld.VobDict[itemID]);
-            }
         }
     }
 }

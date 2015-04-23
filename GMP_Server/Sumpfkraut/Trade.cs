@@ -19,13 +19,9 @@ namespace GUC.Server.Sumpfkraut
         {
             if (!Program.server.MessageListener.ContainsKey((byte)NetworkID.TradeMessage))
             {
-                messenger = new TradeMessage();
-                Program.server.MessageListener.Add((byte)NetworkID.TradeMessage, messenger);
+                Program.server.MessageListener.Add((byte)NetworkID.TradeMessage, new TradeMessage());
             }
-            else
-            {
-                messenger = (TradeMessage)Program.server.MessageListener[(byte)NetworkID.TradeMessage];
-            }
+            messenger = (TradeMessage)Program.server.MessageListener[(byte)NetworkID.TradeMessage];
 
             requests = new List<Request>();
             tradings = new List<TradeCouple>();
@@ -61,11 +57,14 @@ namespace GUC.Server.Sumpfkraut
 
         private void HandleOffer(Player trader, Item item, bool add)
         {
-            foreach(TradeCouple tc in tradings)
+            if (!trader.ItemList.Contains(item))
+                return;
+
+            foreach (TradeCouple tc in tradings)
             {
-                if (trader == tc.pl1 && trader.ItemList.Contains(item))
+                if (trader == tc.pl1)
                 {
-                    if (add)
+                    if (add && !tc.list1.Contains(item))
                     {
                         tc.list1.Add(item);
                     }
@@ -73,10 +72,10 @@ namespace GUC.Server.Sumpfkraut
                     {
                         tc.list1.Remove(item);
                     }
-                    messenger.SendOffer(tc.pl2, item, add);
+                    messenger.SendOffer(tc.pl1, tc.pl2, item, add);
                     return;
                 }
-                else if (trader == tc.pl2 && trader.ItemList.Contains(item))
+                else if (trader == tc.pl2)
                 {
                     if (add)
                     {
@@ -86,7 +85,7 @@ namespace GUC.Server.Sumpfkraut
                     {
                         tc.list2.Remove(item);
                     }
-                    messenger.SendOffer(tc.pl1, item, add);
+                    messenger.SendOffer(tc.pl2, tc.pl1, item, add);
                     return;
                 }
             }
@@ -94,52 +93,27 @@ namespace GUC.Server.Sumpfkraut
 
         private void HandleRequest(Player requester, Player target)
         {
-            BitStream stream = Program.server.SendBitStream;
             foreach (TradeCouple tc in tradings)
             {
                 if (tc.pl1 == target || tc.pl2 == target)
                 {
-                    stream.Reset();
-                    stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                    stream.Write((byte)NetworkID.ChatMessage);
-                    stream.Write((byte)ChatTextType.Global);
-                    stream.Write("Diese Person handelt bereits.");
-
-                    Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
                     return;
                 }
             }
 
             CleanRequestList();
 
-            foreach(Request req in requests)
+            foreach (Request req in requests)
             {
                 if (req.requester == target && req.target == requester)
                 {
-                    stream.Reset();
-                    stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                    stream.Write((byte)NetworkID.ChatMessage);
-                    stream.Write((byte)ChatTextType.Global);
-                    stream.Write(requester.Name + " accepted " + target.Name);
-
-                    Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
-
                     AddCouple(requester, target);
-
                     messenger.SendAccept(requester, target);
                     return;
                 }
                 else if (req.requester == requester && req.target == target)
                 {
                     req.time = DateTime.Now.Ticks + 300000000; //30sec long
-
-                    stream.Reset();
-                    stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-                    stream.Write((byte)NetworkID.ChatMessage);
-                    stream.Write((byte)ChatTextType.Global);
-                    stream.Write(requester.Name + " requested " + target.Name + " again.");
-
-                    Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
                     return;
                 }
             }
@@ -149,29 +123,21 @@ namespace GUC.Server.Sumpfkraut
             newReq.target = target;
             newReq.time = DateTime.Now.Ticks + 300000000; //30sec long
             requests.Add(newReq);
-
-            stream.Reset();
-            stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.ChatMessage);
-            stream.Write((byte)ChatTextType.Global);
-            stream.Write(requester.Name + " requested " + target.Name);
-
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
         private void BreakTrade(Player sender)
         {
-            foreach(TradeCouple tc in tradings)
+            for (int i = tradings.Count - 1; i >= 0; i--)
             {
-                if (tc.pl1 == sender)
+                if (tradings[i].pl1 == sender)
                 {
-                    messenger.SendBreak(tc.pl2);
-                    tradings.Remove(tc);
+                    messenger.SendBreak(tradings[i].pl2);
+                    tradings.Remove(tradings[i]);
                 }
-                else if (tc.pl2 == sender)
+                else if (tradings[i].pl2 == sender)
                 {
-                    messenger.SendBreak(tc.pl1);
-                    tradings.Remove(tc);
+                    messenger.SendBreak(tradings[i].pl1);
+                    tradings.Remove(tradings[i]);
                 }
             }
         }
@@ -179,20 +145,20 @@ namespace GUC.Server.Sumpfkraut
         private void CleanRequestList()
         {
             long now = DateTime.Now.Ticks;
-            foreach (Request req in requests)
+            for (int i = requests.Count - 1; i >= 0; i--)
             {
-                if (req.time < now)
-                    requests.Remove(req);
+                if (requests[i].time < now)
+                    requests.Remove(requests[i]);
             }
         }
 
         private void AddCouple(Player pl1, Player pl2)
         {
-            foreach (Request req in requests)
-                if (req.requester == pl1 || req.target == pl1 || req.requester == pl2 || req.target == pl2)
-                    requests.Remove(req);
+            for (int i = requests.Count - 1; i >= 0; i--)
+                if (requests[i].requester == pl1 || requests[i].target == pl1 || requests[i].requester == pl2 || requests[i].target == pl2)
+                    requests.Remove(requests[i]);
 
-            tradings.Add(new TradeCouple(pl1,pl2));
+            tradings.Add(new TradeCouple(pl1, pl2));
         }
     }
 }

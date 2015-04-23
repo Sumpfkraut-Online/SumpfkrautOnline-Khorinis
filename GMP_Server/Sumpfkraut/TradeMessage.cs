@@ -42,7 +42,7 @@ namespace GUC.Server.Sumpfkraut
                 Player requester = (Player)sWorld.VobDict[requesterID];
                 Player target = (Player)sWorld.VobDict[targetID];
 
-                if (OnRequestMessage != null && (requester.Position - target.Position).Length < 300)
+                if (OnRequestMessage != null && requester != null && target != null)
                 {
                     OnRequestMessage(requester, target);
                 }
@@ -51,13 +51,13 @@ namespace GUC.Server.Sumpfkraut
             {
                 int senderID = 0;
                 stream.Read(out senderID);
-
-                if (OnBreakMessage != null)
+                Player pl = (Player)sWorld.VobDict[senderID];
+                if (OnBreakMessage != null && pl != null)
                 {
-                    OnBreakMessage((Player)sWorld.VobDict[senderID]);
+                    OnBreakMessage(pl);
                 }
             }
-            else if (status == TradeStatus.OfferItem || status == TradeStatus.RemoveItem)
+            else if (status >= TradeStatus.SelfOfferItem)
             {
                 int traderID = 0;
                 int itemID = 0;
@@ -65,23 +65,35 @@ namespace GUC.Server.Sumpfkraut
                 stream.Read(out traderID);
                 stream.Read(out itemID);
 
-                if (OnOfferMessage != null)
+                Player pl = (Player)sWorld.VobDict[traderID];
+                Item item = (Item)sWorld.VobDict[itemID];
+
+                if (OnOfferMessage != null && pl != null && item != null)
                 {
-                    OnOfferMessage((Player)sWorld.VobDict[traderID], (Item)sWorld.VobDict[itemID], status == TradeStatus.OfferItem);
+                    OnOfferMessage(pl, item, status == TradeStatus.SelfOfferItem);
                 }
             }
         }
 
-        public void SendOffer(Player trader, Item item, bool add)
+        public void SendOffer(Player from, Player to, Item item, bool add)
         {
             BitStream stream = Program.server.SendBitStream;
             stream.Reset();
             stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
             stream.Write((byte)NetworkID.TradeMessage);
-            if (add) stream.Write((byte)TradeStatus.OfferItem);
-            else stream.Write((byte)TradeStatus.RemoveItem);
+            if (add) stream.Write((byte)TradeStatus.SelfOfferItem);
+            else stream.Write((byte)TradeStatus.SelfRemoveItem);
             stream.Write(item.ID);
-            using (RakNetGUID guid = trader.GUID)
+            using (RakNetGUID guid = from.GUID)
+                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+
+            stream.Reset();
+            stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
+            stream.Write((byte)NetworkID.TradeMessage);
+            if (add) stream.Write((byte)TradeStatus.OtherOfferItem);
+            else stream.Write((byte)TradeStatus.OtherRemoveItem);
+            stream.Write(item.ID);
+            using (RakNetGUID guid = to.GUID)
                 Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
         }
 

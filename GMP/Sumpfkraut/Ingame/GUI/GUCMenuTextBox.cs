@@ -238,12 +238,7 @@ namespace GUC.Sumpfkraut.Ingame.GUI
 
             if (fixedBorders)
             {
-                int sp = 0;
-                if (cursorPos >= numHideChars)
-                {
-                    sp = -numHideChars;
-                }
-                cursorText.PosX = PixelToViewVirtual(cursorLen + sp - 1);
+                cursorText.PosX = PixelToViewVirtual(cursorLen - sub - 1);
             }
             else
             {
@@ -372,11 +367,6 @@ namespace GUC.Sumpfkraut.Ingame.GUI
                 }
                 cursorTime = ticks + 3000000;
             }
-        }
-
-        public void AddWhiteSpace()
-        {
-            text.Append(' ');
         }
 
         private int PixelToViewVirtual(int p)

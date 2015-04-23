@@ -31,9 +31,8 @@ namespace GUC.Sumpfkraut.Ingame
 
             if (!Program.client.messageListener.ContainsKey((byte)NetworkID.ChatMessage))
                 Program.client.messageListener.Add((byte)NetworkID.ChatMessage, new Ingame.Chat());
-            
-            if (!Program.client.messageListener.ContainsKey((byte)NetworkID.TradeMessage))
-                Program.client.messageListener.Add((byte)NetworkID.TradeMessage, new Trade());
+
+            new Trade();
         }
     }
 }

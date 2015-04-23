@@ -99,8 +99,10 @@ namespace GUC.Enumeration
         Request,
         Accept,
         Break,
-        OfferItem,
-        RemoveItem
+        SelfOfferItem,
+        SelfRemoveItem,
+        OtherOfferItem,
+        OtherRemoveItem
     }
 
     public enum ChatTextType : byte

@@ -164,6 +164,7 @@
     <Compile Include="Scripting\ScriptManager.cs" />
     <Compile Include="States\AbstractState.cs" />
     <Compile Include="States\GameState.cs" />
+    <Compile Include="Sumpfkraut\Ingame\TradeMessage.cs" />
     <Compile Include="timer\DespawnTimer.cs" />
     <Compile Include="timer\Timer.cs" />
     <Compile Include="Tests\Keytest.cs" />

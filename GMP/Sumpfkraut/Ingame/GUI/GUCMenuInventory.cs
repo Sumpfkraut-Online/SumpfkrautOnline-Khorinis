@@ -34,8 +34,8 @@ namespace GUC.Sumpfkraut.Ingame.GUI
             public Slot(int x, int y)
             {
                 pos = new Vec2i(x, y);
-                background = new GUCMenuTexture("Inv_Slot.tga", x, y, 70, 70);
-                mItem = new GUCMenuItem(x-1, y-1, 72, 72);
+                background = new GUCMenuTexture("Inv_Slot_Focus.tga", x, y, 70, 70);
+                mItem = new GUCMenuItem(x - 1, y - 1, 72, 72);
                 amount = new GUCMenuText("", x, y);
             }
 
@@ -45,33 +45,33 @@ namespace GUC.Sumpfkraut.Ingame.GUI
                 if (item == null)
                 {
                     mItem.SetItem(null);
-                    amount.SetText("");
+                    amount.Text = "";
                 }
                 else
                 {
                     mItem.SetItem(new oCItem(Process.ThisProcess(), item.Address));
                     if (item.Amount > 1)
                     {
-                        amount.SetText(item.Amount.ToString());
-                        amount.SetPos(pos.X+61-IngameInput.StringPixelWidth(item.Amount.ToString()), pos.Y+46);
+                        amount.Text = item.Amount.ToString();
+                        amount.SetPos(pos.X + 61 - IngameInput.StringPixelWidth(item.Amount.ToString()), pos.Y + 46);
                     }
                     else
                     {
-                        amount.SetText("");
+                        amount.Text = "";
                     }
                 }
             }
 
             public void Mark()
             {
-                background.SetTexture("Inv_Slot_Highlighted.tga");
+                background.SetTexture("Inv_Slot_Highlighted_Focus.tga");
                 mItem.SetSize(pos.X - 9, pos.Y - 9, 88, 88);
             }
 
             public void Demark()
             {
-                background.SetTexture("Inv_Slot.tga");
-                mItem.SetSize(pos.X-1, pos.Y-1, 72, 72);
+                background.SetTexture("Inv_Slot_Focus.tga");
+                mItem.SetSize(pos.X - 1, pos.Y - 1, 72, 72);
             }
 
             public void Show()
@@ -134,15 +134,24 @@ namespace GUC.Sumpfkraut.Ingame.GUI
 
         public void AddItem(Item item)
         {
-            itemList.Add(item);
-            UpdateSlots();
+            if (!itemList.Contains(item))
+            {
+                itemList.Add(item);
+                UpdateSlots();
+            }
         }
 
         public void RemoveItem(Item item)
         {
-            itemList.Remove(item);
-            UpdateSlots();
-            SetCursor(cursorPos.X, cursorPos.Y);
+            if (itemList.Contains(item))
+            {
+                itemList.Remove(item);
+                UpdateSlots();
+                if (enabled)
+                {
+                    SetCursor(cursorPos.X, cursorPos.Y);
+                }
+            }
         }
 
         private void RemoveCursor()
@@ -206,6 +215,8 @@ namespace GUC.Sumpfkraut.Ingame.GUI
 
         private void UpdateSlots()
         {
+            itemList.Sort(GUCMenuInventory.inventoryComparer);
+
             int i = slots.Count * startPos;
             for (int y = 0; y < slots[0].Count; y++)
             {
@@ -244,7 +255,7 @@ namespace GUC.Sumpfkraut.Ingame.GUI
                 itemList = new List<Item>(list);
             }
             UpdateSlots();
-            Show();            
+            Show();
         }
 
         public void Show()
@@ -337,19 +348,53 @@ namespace GUC.Sumpfkraut.Ingame.GUI
                 }
 
             }
-            else 
-            { 
+            else
+            {
                 if (key == (int)VirtualKeys.Control)
                 {
-                    if (OnPressCTRL != null)
+                    if (OnPressCTRL != null && slots[cursorPos.X][cursorPos.Y].item != null)
                     {
                         OnPressCTRL(slots[cursorPos.X][cursorPos.Y].item);
                     }
                 }
-                return; 
+                return;
             }
             SetCursor(x, y);
             UpdateSlots();
+        }
+
+        private static List<oCItem.MainFlags> sortList = new List<oCItem.MainFlags>() { oCItem.MainFlags.ITEM_KAT_NF,
+                                                                                        oCItem.MainFlags.ITEM_KAT_FF,
+                                                                                        oCItem.MainFlags.ITEM_KAT_MUN,
+                                                                                        oCItem.MainFlags.ITEM_KAT_FOOD,
+                                                                                        oCItem.MainFlags.ITEM_KAT_RUNE,
+                                                                                        oCItem.MainFlags.ITEM_KAT_ARMOR,
+                                                                                        oCItem.MainFlags.ITEM_KAT_DOCS,
+                                                                                        oCItem.MainFlags.ITEM_KAT_POTIONS,
+                                                                                        oCItem.MainFlags.ITEM_KAT_MAGIC };
+
+        private static InventoryComparer inventoryComparer = new InventoryComparer();
+        private class InventoryComparer : IComparer<Item>
+        {
+            Process process;
+            public InventoryComparer()
+            {
+                process = Process.ThisProcess();
+            }
+
+            public int Compare(Item a, Item b)
+            {
+                int aIndex = sortList.IndexOf((oCItem.MainFlags)a.ItemInstance.MainFlags);
+                int bIndex = sortList.IndexOf((oCItem.MainFlags)b.ItemInstance.MainFlags);
+                if (aIndex < 0) aIndex = sortList.Count;
+                if (bIndex < 0) bIndex = sortList.Count;
+
+                if (aIndex.CompareTo(bIndex) != 0)
+                {
+                    return aIndex.CompareTo(bIndex);
+                }
+                return (new oCItem(process, a.Address)).Instanz.CompareTo((new oCItem(process, b.Address)).Instanz);
+            }
         }
 
         public void Update(long ticks)

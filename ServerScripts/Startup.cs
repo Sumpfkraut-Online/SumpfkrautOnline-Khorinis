@@ -29,7 +29,6 @@ namespace GUC.Server.Scripts
 {
 	public class Startup : IServerStartup
 	{
-        public static Server.Sumpfkraut.Trade trade = null;
 		//public static Chat chat = null;
 		public static Cursor cursor;
 		public Button connection;
@@ -60,7 +59,7 @@ namespace GUC.Server.Scripts
 
             DamageScript.Init();
 
-            trade = new Server.Sumpfkraut.Trade();
+            
 
 #if SSM_CHAT
             //chat = new Chat();
@@ -97,6 +96,8 @@ namespace GUC.Server.Scripts
 #endif
 
             Sumpfkraut.SOKChat.SOKChat SOKChat = new Sumpfkraut.SOKChat.SOKChat();
+
+            Server.Sumpfkraut.Trade trade = new Server.Sumpfkraut.Trade();
             
             Logger.log(Logger.LogLevel.INFO, "###################### End Initalise ######################");
 		}
