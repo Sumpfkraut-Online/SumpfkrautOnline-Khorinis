@@ -33,6 +33,8 @@ namespace GUC.Sumpfkraut.Ingame
                 Program.client.messageListener.Add((byte)NetworkID.ChatMessage, new Ingame.Chat());
 
             new Trade();
+
+            new AnimationMenu();
         }
     }
 }

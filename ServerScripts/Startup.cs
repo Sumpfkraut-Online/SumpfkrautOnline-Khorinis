@@ -98,6 +98,8 @@ namespace GUC.Server.Scripts
             Sumpfkraut.SOKChat.SOKChat SOKChat = new Sumpfkraut.SOKChat.SOKChat();
 
             Server.Sumpfkraut.Trade trade = new Server.Sumpfkraut.Trade();
+
+            Server.Sumpfkraut.AnimationMenuMessage.Init();
             
             Logger.log(Logger.LogLevel.INFO, "###################### End Initalise ######################");
 		}

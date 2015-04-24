@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GUI\Button.cs" />
+    <Compile Include="Sumpfkraut\Ingame\AnimationMenu.cs" />
     <Compile Include="Sumpfkraut\Ingame\Chat.cs" />
     <Compile Include="Sumpfkraut\Ingame\GUI\GUCMenu.cs" />
     <Compile Include="Sumpfkraut\Ingame\GUI\GUCMenuInventory.cs" />

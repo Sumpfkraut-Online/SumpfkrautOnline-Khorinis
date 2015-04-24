@@ -73,6 +73,7 @@
     <Compile Include="Network\Messages\Callbacks\CallbackNPCCanSee.cs" />
     <Compile Include="Network\Messages\Callbacks\ReadIniEntryMessage.cs" />
     <Compile Include="Network\Messages\Callbacks\ReadMd5Message.cs" />
+    <Compile Include="Sumpfkraut\AnimationMenuMessage.cs" />
     <Compile Include="Sumpfkraut\ChatMessage.cs" />
     <Compile Include="Network\Messages\Connection\ConnectionMessage.cs" />
     <Compile Include="Network\Messages\Connection\DisconnectMessage.cs" />

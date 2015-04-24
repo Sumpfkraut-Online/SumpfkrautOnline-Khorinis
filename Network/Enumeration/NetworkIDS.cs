@@ -90,7 +90,8 @@ namespace GUC.Enumeration
         PlayerOpenInventoryMessage,
 
         ChatMessage,
-        TradeMessage
+        TradeMessage,
+        AnimationMenuMessage
 
     }
 
