@@ -59,28 +59,34 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
         }
 
         #region Utilities
-        private void GetTalkingDistances(ChatTextType ChatType, out float maxDistGood, out float maxDistMiddle, out float maxDistBad)
+        private void GetTalkingDistances(ChatTextType ChatType, out float maxDistGood, out float maxDistBad)
         {
             maxDistGood = 0;
             maxDistBad = 0;
-            maxDistMiddle = 0;
             if (ChatType == ChatTextType.Say) // Reden
             {
                 maxDistGood = 900;
-                maxDistMiddle = 1100;
-                maxDistBad = 1500;
+                maxDistBad = 2000;
             }
             else if (ChatType == ChatTextType.Shout) // Rufen
             {
-                maxDistGood = 2000;
-                maxDistMiddle = 2500;
-                maxDistBad = 3000;
+                maxDistGood = 3000;
+                maxDistBad = 4000;
             }
             else if (ChatType == ChatTextType.Whisper) // Flüstern
             {
                 maxDistGood = 200;
-                maxDistMiddle = 250;
-                maxDistBad = 300;
+                maxDistBad = 400;
+            }
+            else if (ChatType == ChatTextType.OOC)
+            {
+                maxDistGood = 3500;
+                maxDistBad = 3500;
+            }
+            else if (ChatType == ChatTextType.Ambient)
+            {
+                maxDistGood = 2000;
+                maxDistBad = 2000;
             }
             return;
         }
@@ -93,36 +99,33 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
                 SendHintMessage(sender, "Der Chat ist derzeit für dich nicht verfügbar.");
                 return;
             }
-            //Talking Distance Qualities + Maximum High
-            float maxDistGood, maxDistMiddle, maxDistBad;
-            GetTalkingDistances(ChatType, out maxDistGood, out maxDistMiddle, out maxDistBad);
 
-            // The real distances
-            //float distX, distY, distZ;
+            //Talking Distance Qualities
+            float maxDistGood, maxDistBad;
+            GetTalkingDistances(ChatType, out maxDistGood, out maxDistBad);
 
             Vec3f senderPosition = sender.Position;
             Vec3f otherPosition;
-            string[] newMessage = message;
+            string[] newMessage = new string[message.Length];
+            bool DoExchange;
+
             foreach (var pair in AllPlayers)
             {
-                if (pair.Value != sender)
+                message.CopyTo(newMessage, 0);
+
+                if (!pair.Value.Name.Equals(sender.Name))
                 {
                     otherPosition = pair.Value.Position;
-                    //distX = Math.Abs(senderPosition.X - otherPosition.X);
-                    //distY = Math.Abs(senderPosition.Y - otherPosition.Y);
-                    //distZ = Math.Abs(senderPosition.Z - otherPosition.Z); (distX * distX + distY * distY + distZ * distZ)
                     float distance = (senderPosition - otherPosition).Length;
 
-                    if ( distance < maxDistGood)
-                        newMessage = ExchangeTextQuality(message, 0);
-                    /*else if ((distX * distX + distY * distY + distZ * distZ) < maxDistMiddle * maxDistMiddle)
-                        // Middle Talking Quality
-                        newMessage = " (MiddleQ) " + ExchangeTextQuality(message, 1);*/
-                    else if (distance < maxDistBad)
-                        // Bad Talking Quality -> percentage
-                        newMessage = ExchangeTextQuality(message, distance / (maxDistBad / 100));
-                    else
-                        newMessage = new string[] { "" };
+                    DoExchange = ChatType <= ChatTextType.Whisper;
+
+                    if (distance <= maxDistGood && DoExchange)
+                        ExchangeTextQuality(newMessage, 0);
+                    else if (distance <= maxDistBad && DoExchange)
+                        ExchangeTextQuality(newMessage, distance / (maxDistBad / 100));
+                    else if (DoExchange)
+                        ExchangeToEmptyString(newMessage);
                 }
 
                 string strMessage = "";
@@ -138,24 +141,31 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
                 else if (ChatType == ChatTextType.Whisper)
                     Chat.SendWhisper(sender, pair.Value, strMessage);
                 else if (ChatType == ChatTextType.OOC)
-                {
-                    if (!newMessage.Equals("")) // Sendet OOC nur an erreichbare Spieler
-                        Chat.SendOOC(sender, pair.Value, strMessage);
-                }
+                    Chat.SendOOC(sender, pair.Value, strMessage);
                 else if (ChatType == ChatTextType.Ambient)
-                {
-                    if (!newMessage.Equals(""))
-                        Chat.SendAmbient(sender, pair.Value, strMessage);
-                }
+                    Chat.SendAmbient(sender, pair.Value, strMessage);
             }
             return;
         }
 
-        private string[] ExchangeTextQuality(string[] message, float qualityPercentage)
+
+        private void ExchangeToEmptyString(string[] str)
+        {
+            for(int i = 0; i < str.Length; i++)
+            {
+                str[i] = "";
+            }
+        }
+
+        private void ExchangeTextQuality(string[] message, float qualityPercentage)
         {
             Random rnd = new Random();
             float number;
-            int v;
+            int offset;
+
+            // never bigger then 70 percent
+            if (qualityPercentage > 70)
+                qualityPercentage = 70;
 
             for (int i = 0; i < message.Length; i++ )
             {
@@ -164,15 +174,15 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
                 {
                     if (i > 0)
                     {
-                        v = 0;
-                        while (v < i)
+                        offset = 0;
+                        while (offset < i)
                         {
-                            v++;
-                            if (!message[i - v].Equals(""))
+                            offset++;
+                            if (!message[i - offset].Equals(""))
                                 break;
                         }
 
-                        if (!message[i - v].Equals("...") && !message[i - v].Equals(""))
+                        if (!message[i - offset].Equals("...") && !message[i - offset].Equals(""))
                             message[i] = "...";
                         else
                             message[i] = "";
@@ -181,7 +191,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
                         message[i] = "...";
                 }
             }
-            return message;
         }
 
         private void SendErrorMessage(Player pl, string txt)
@@ -273,7 +282,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
 
         private string[] GetStringArray(string message)
         {
-            return message.Split(new char[] { ' ' });
+            // Wird Remove Empty Entries entfernt, sind mehrere Leerzeichen wieder darstellbar...
+            return message.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
         }
 
         private void AddCommand(string command, CommandDelegate func)
