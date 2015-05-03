@@ -31,7 +31,7 @@ namespace GUC.Server.Sumpfkraut
 
         public void Read(RakNet.BitStream stream, RakNet.Packet packet, GUC.Server.Network.Server server)
         {
-            string animation = null;
+            short animation = 0;
             Player from = null;
             int mode = 1;
             try
@@ -47,12 +47,20 @@ namespace GUC.Server.Sumpfkraut
             catch { }
             finally
             {
-
+                // getting player object
                 Scripting.Objects.Character.Player pl = (Scripting.Objects.Character.Player)from.ScriptingNPC;
+
+                AnimVoices anim = (AnimVoices)animation;
+                switch (anim)
+                {
+                    case AnimVoices.T_DANCE_04:
+                        break;
+                }
+
                 if (mode == 1)
-                    pl.playAnimation(animation);
+                    pl.playAnimation(anim.ToString());
                 else if (mode == 0)
-                    pl.stopAnimation(animation);
+                    pl.stopAnimation(anim.ToString());
 
             }
         }
