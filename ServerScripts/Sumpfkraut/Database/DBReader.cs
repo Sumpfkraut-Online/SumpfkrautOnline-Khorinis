@@ -65,6 +65,11 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
 
             using (SQLiteCommand cmd = new SQLiteCommand(Sqlite.getSqlite().connection))
             {
+                if (!DBSecurity.IsSecureSQLCommand(completeQuery))
+                {
+                    throw new Exception("LoadFromDB: Prevented forwarding of insecure sql-command: " + completeQuery);
+                }
+
                 cmd.CommandText = completeQuery;
 
                 SQLiteDataReader rdr = null;
@@ -106,6 +111,41 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                     }
                 }
             }
+        }
+
+        public static int SaveToDB (string completeQuery)
+        {
+
+            if (!DBSecurity.IsSecureSQLCommand(completeQuery))
+            {
+                throw new Exception("SaveToDB: Prevented forwarding of insecure sql-command: " + completeQuery);
+            }
+
+            int changedRows = 0;
+
+            using (SQLiteCommand cmd = new SQLiteCommand(Sqlite.getSqlite().connection))
+            {
+                cmd.CommandText = completeQuery;
+
+                SQLiteDataReader rdr = null;
+                try
+                {
+                    changedRows = cmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Could not execute SQLiteDataReader in SaveToDB: " + ex);
+                }
+                finally
+                {
+                    if (rdr != null)
+                    {
+                        rdr.Close();
+                    }
+                }
+            }
+
+            return changedRows;
         }
 
         public static int[] ParseParamToIntArray (string param)
