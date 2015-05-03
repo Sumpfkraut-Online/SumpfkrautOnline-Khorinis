@@ -14,6 +14,11 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
     class ItemDef : ItemInstance
     {
 
+        // read only in GUC and may conflict with ID of ItemDef in database 
+        // --> must test the GUC-interal assignment
+        public int getID () { return this.ID; }
+        //public void setID (int ID) { this.ID = ID; }
+
         public string getInstanceName () { return this.InstanceName; }
         // read only in GUC
         //public void setInstanceName (string InstanceName) { this.InstanceName = InstanceName; }
@@ -24,28 +29,87 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         public string getScemeName () { return this.ScemeName; }
         public void setScemeName (string ScemeName) { this.ScemeName = ScemeName; }
 
-        public string getVisual () { return this.Visual; }
-        public void setVisual (string Visual) { this.Visual = Visual; }
+        // setProtection(int[] Protection) is already defined in ItemInstance-class
+        public int[] getProtections ()
+        {
+            DamageTypeIndex[] damageTypeIndices = Enum.GetValues(typeof(DamageTypeIndex)).Cast<DamageTypeIndex>().ToArray();
+            int[] protections = new int[damageTypeIndices.Length - 1];
+            foreach (DamageTypeIndex dti in damageTypeIndices)
+            {
+                if ((int) dti == 0)
+                {
+                    continue;
+                }
+                protections[(int) dti - 1] = this.getProtection(dti);
+            }
+            return protections;
+        }
 
-        public string getVisual_Change () { return this.Visual_Change; }
-        public void setVisual_Change (string Visual_Change) { this.Visual_Change = Visual_Change; }
-
-        public int getVisual_skin () { return this.Visual_skin; }
-        public void setVisual_skin (int Visual_skin) { this.Visual_skin = Visual_skin; }
-
-        public Enumeration.MainFlags getMainFlags () { return this.MainFlags; }
-        public void setMainFlags (Enumeration.MainFlags MainFlags) { this.MainFlags = MainFlags; }
-        
-        public Enumeration.MaterialType getMaterials () { return this.Materials; }
-        public void setMaterials (Enumeration.MaterialType Materials) { this.Materials = Materials; }
+        // another get-method already exists (see public int getDamage(DamageTypeIndex index))
+        // no set-method due to missing scope in GMP_Server
+        // ignores damage type barrier (index 0 in enum DamageTypeIndex) as does the GUC itself mostly
+        public int[] getDamages ()
+        {
+            DamageTypeIndex[] damageTypeIndices = Enum.GetValues(typeof(DamageTypeIndex)).Cast<DamageTypeIndex>().ToArray();
+            int[] damages = new int[damageTypeIndices.Length - 1];
+            foreach (DamageTypeIndex dti in damageTypeIndices)
+            {
+                if ((int) dti == 0)
+                {
+                    continue;
+                }
+                damages[(int) dti - 1] = this.getDamage(dti);
+            }
+            return damages;
+        }
 
         public int getValue () { return this.Value; }
         public void setValue (int Value) { this.Value = Value; }
 
+        public Enumeration.MainFlags getMainFlag () { return this.MainFlags; }
+        public void setMainFlag (Enumeration.MainFlags MainFlag) { this.MainFlags = MainFlag; }
 
-        public bool getIsGold (){ return this.IsGold; }
-        public void setIsGold (bool IsGold) { this.IsGold = IsGold; }
+        public Enumeration.Flags getFlag () { return this.Flags; }
+        public void setFlag (Enumeration.Flags Flag) { this.Flags = Flag; }
 
+        public Enumeration.ArmorFlags getArmorFlag () { return this.Wear; }
+        public void setArmorFlag (Enumeration.ArmorFlags ArmorFlag) { this.Wear = ArmorFlag; }
+
+        public Enumeration.DamageTypes getDamageType () { return this.DamageType; }
+        public void setDamageType (Enumeration.DamageTypes DamageType) { this.DamageType = DamageType; }
+        
+        public int getTotalDamage () { return this.TotalDamage; }
+        public void setTotalDamage (int TotalDamage) { this.TotalDamage = TotalDamage; }
+
+        public int getRange() { return this.Range; }
+        public void setRange(int Range) { this.Range = Range; }
+
+        public string getVisual () { return this.Visual; }
+        public void setVisual (string Visual) { this.Visual = Visual; }
+
+        public string getVisualChange () { return this.Visual_Change; }
+        public void setVisualChange (string VisualChange) { this.Visual_Change = VisualChange; }
+
+        public string getEffect () { return this.Effect; }
+        public void setEffect (string Effect) { this.Effect = Effect; }
+
+        public int getVisualSkin () { return this.Visual_skin; }
+        public void setVisualSkin (int VisualSkin) { this.Visual_skin = VisualSkin; }
+
+        public Enumeration.MaterialType getMaterial () { return this.Materials; }
+        public void setMaterial (Enumeration.MaterialType Material) { this.Materials = Material; }
+
+        // no access to Munition in ItemInstance of the GUC (only by passing it in a constructor)
+        //public ItemInstance getMunition ()
+        //{
+        //    return this.Munition;
+        //}
+        //public void setMunition (ItemInstance Munition)
+        //{
+        //    this.Munition = Munition;
+        //}
+
+        // no access to IsKeyInstance in ItemInstance of the GUC (only by passing it in a constructor)
         //public bool getIsKeyInstance()
         //{
         //    return this.IsKeyInstance;
@@ -73,56 +137,20 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         public bool getIsTorchBurned () { return this.IsTorchBurned; }
         public void setIsTorchBurned (bool IsTorchBurned) { this.IsTorchBurned = IsTorchBurned; }
 
+        public bool getIsGold (){ return this.IsGold; }
+        public void setIsGold (bool IsGold) { this.IsGold = IsGold; }
 
 
-        public string getEffect () { return this.Effect; }
-        public void setEffect (string Effect) { this.Effect = Effect; }
 
+        // -----------------------------------------------------------
+        // not part of general ItemDef- and ItemInstance-constructors
+        // -----------------------------------------------------------
 
 
         public Spell getSpell () { return this.Spell; }
         public void setSpell (Spell Spell) { this.Spell = Spell; }
 
-        public Enumeration.ArmorFlags getWear () { return this.Wear; }
-        public void setWear (Enumeration.ArmorFlags Wear) { this.Wear = Wear; }
-
-        //public Enumeration.DamageType DamageType
-        //{
-        //    get { return this.DamageType; }
-        //    set { this.DamageType = value; }
-        //}
-        public Enumeration.DamageTypes getDamageType () { return this.DamageType; }
-        public void setDamageType (Enumeration.DamageTypes DamageType) { this.DamageType = DamageType; }
-        
-        public int getRange() { return this.Range; }
-        public void setRange(int Range) { this.Range = Range; }
-        
-        public int getTotalDamage () { return this.TotalDamage; }
-        public void setTotalDamage (int TotalDamage) { this.TotalDamage = TotalDamage; }
-
-
-
-        // get-method already exists (see public int getDamage(DamageTypeIndex index))
-        //public int[] getDamages()
-        //{
-        //    return this.getDamages();
-        //    //return this.Damages;
-        //}
-        //public void setDamages(int[] Damages)
-        //{
-        //    this.Damages = Damages;
-        //}
-
-        //public ItemInstance getMunition ()
-        //{
-        //    return this.Munition;
-        //}
-        //public void setMunition (ItemInstance Munition)
-        //{
-        //    this.Munition = Munition;
-        //}
-
-
+  
         // descriptive texts and values (appear ingame in the item information panel)
 
         public string getDescription () { return this.Description; }

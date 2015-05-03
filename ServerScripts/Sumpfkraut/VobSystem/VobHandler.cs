@@ -236,6 +236,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                 else
                 {
                     tempEffectChangesIDs = new List<int>() {ecEffectChangeID};
+                    effectToChangesMap.Add(ecEffectID, tempEffectChangesIDs);
                 }
             }
 
@@ -517,128 +518,166 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
         {
             string idColName = "ID";
             int vobID = def.IndexOf(idColName);
+            // list of effect-definition-ids of the the handled vob-definition
             List<int> effectDefIDs;
+            // respective list of effect-changes-definition-ids which is renewed for each effect-def.-id
             List<int> effectChangesDefIDs;
+            // temporarly stores List with {int changeType, string parameters} == the actual single EffectChangeDef
+            List<object> effectChange;
+            // temporarly holds the necessary values to instantiate the respective definition-object
+            DummyItemDef dummyDef = new DummyItemDef();
             if (vobID == -1){
-                throw new Exception("There is no column for the vob id with the name: " + idColName + "!"
+                throw new Exception("CreateItemDefinition: There is no column for the vob id with the name: " 
+                    + idColName + "!"
                     + " Correct this malfunction immediately by comparing database tables and their "
                     + "related Dictionaries in Sumpfkraut.Database.DBTables.");
             }
-            if (mapVDToED.TryGetValue(vobID, out effectDefIDs)){
-                //if ()
-                //{
-
-                //}
+            if (!mapVDToED.TryGetValue(vobID, out effectDefIDs)){
+                throw new Exception("CreateItemDefinition: There are no effect-definitions-ids mapped to by vob-id "
+                    + vobID + "!");
             }
 
 
-            // temporarly holds the necessary values to instantiate the respective definition-object
-            DummyItemDef dummyDef = new DummyItemDef();
-
-            //// these default values are just substitute for the subsequent replacements
-            //String instanceName = "";
-            //String name = "";
-            //String scemeName = "";
-            //int[] protection = null;
-            //int[] damages = null;
-            //int value = 0;
-            //MainFlags mainFlags = 0;
-            //Flags flags = 0;
-            //ArmorFlags armorFlags = 0;
-            //DamageTypes dmgType = 0;
-            //int totalDamage = 0;
-            //int range = 0;
-            //String visual = "";
-            //String visual_Change = "";
-            //String effect = "";
-            //int visualSkin = 0;
-            //MaterialType types = 0;
-            //ItemInstance munition = null;
-            //bool keyInstance = false;
-            //bool torch = false;
-            //bool torchBurning = false;
-            //bool torchBurned = false;
-            //bool gold = false;
-            //string description = "";
-            //string text0 = "";
-            //string text1 = "";
-            //string text2 = "";
-            //string text3 = "";
-            //string text4 = "";
-            //string text5 = "";
-            //int count0 = -1;
-            //int count1 = -1;
-            //int count2 = -1;
-            //int count3 = -1;
-            //int count4 = -1;
-            //int count5 = -1;
-
+            /* ---------------------------------------------------
+                directly accessable attributes from definition table
+                --------------------------------------------------- */
 
             // temporary used index for more secure code through TryGetValue (see if-blocks below)
             int colIndex = -1;
-            // temporarly stores List with {int changeType, string parameters}
-            List<object> effectChange;
 
-            /* ---------------------------------------------------
-                directly accessable attributes from definition table
-               --------------------------------------------------- */
+            colIndex = colTypesKeys.IndexOf("ID");
+            if (colIndex != -1)
+            {
+                dummyDef.setID((int) def[colIndex]);
+            }
 
             colIndex = colTypesKeys.IndexOf("InstanceName");
             if (colIndex != -1)
             {
                 //instanceName = (String) def[colIndex];
-                dummyDef.setInstanceName((String) def[colIndex]);
+                dummyDef.setInstanceName((string) def[colIndex]);
             }
 
             colIndex = colTypesKeys.IndexOf("Name");
             if (colIndex != -1)
             {
                 //name = (String) def[colIndex];
-                dummyDef.setName((String) def[colIndex]);
+                dummyDef.setName((string) def[colIndex]);
             }
 
             colIndex = colTypesKeys.IndexOf("ScemeName");
             if (colIndex != -1)
             {
                 //scemeName = (String) def[colIndex];
-                dummyDef.setScemeName((String) def[colIndex]);
+                dummyDef.setScemeName((string) def[colIndex]);
+            }
+
+            colIndex = colTypesKeys.IndexOf("Protection");
+            if (colIndex != -1)
+            {
+                dummyDef.setProtections(DBReader.ParseParamToIntArray((string) def[colIndex]));
+            }
+
+            colIndex = colTypesKeys.IndexOf("Damages");
+            if (colIndex != -1)
+            {
+                dummyDef.setDamages(DBReader.ParseParamToIntArray((string) def[colIndex]));
             }
 
             colIndex = colTypesKeys.IndexOf("MainFlag");
             if (colIndex != -1)
             {
                 //mainFlags = (GUC.Enumeration.MainFlags) def[colIndex];
-                dummyDef.setMainFlags((GUC.Enumeration.MainFlags) def[colIndex]);
+                dummyDef.setMainFlag((GUC.Enumeration.MainFlags) def[colIndex]);
+            }
+
+            colIndex = colTypesKeys.IndexOf("Flags");
+            if (colIndex != -1)
+            {
+                dummyDef.setFlag((GUC.Enumeration.Flags) def[colIndex]);
+            }
+
+            colIndex = colTypesKeys.IndexOf("Wear");
+            if (colIndex != -1)
+            {
+                dummyDef.setArmorFlag((GUC.Enumeration.ArmorFlags) def[colIndex]);
             }
 
             colIndex = colTypesKeys.IndexOf("Visual");
             if (colIndex != -1)
             {
                 //visual = (String) def[colIndex];
-                dummyDef.setVisual((String) def[colIndex]);
+                dummyDef.setVisual((string) def[colIndex]);
             }
 
             colIndex = colTypesKeys.IndexOf("Visual_Skin");
             if (colIndex != -1)
             {
                 //visualSkin = (int) def[colIndex];
-                dummyDef.setVisual_skin((int) def[colIndex]);
+                dummyDef.setVisualSkin((int) def[colIndex]);
             }
 
             colIndex = colTypesKeys.IndexOf("Material");
             if (colIndex != -1)
             {
                 //types = (GUC.Enumeration.MaterialType) def[colIndex];
-                dummyDef.setMaterials((GUC.Enumeration.MaterialType) def[colIndex]);
+                dummyDef.setMaterial((GUC.Enumeration.MaterialType) def[colIndex]);
+            }
+
+            colIndex = colTypesKeys.IndexOf("IsKeyInstance");
+            if (colIndex != -1)
+            {
+                dummyDef.setIsKeyInstance((bool) def[colIndex]);
+            }
+
+            colIndex = colTypesKeys.IndexOf("IsGold");
+            if (colIndex != -1)
+            {
+                dummyDef.setIsGold((bool) def[colIndex]);
+            }
+
+            colIndex = colTypesKeys.IndexOf("IsTorch");
+            if (colIndex != -1)
+            {
+                dummyDef.setIsTorch((bool) def[colIndex]);
+            }
+
+            colIndex = colTypesKeys.IndexOf("IsTorchBurning");
+            if (colIndex != -1)
+            {
+                dummyDef.setIsTorchBurning((bool) def[colIndex]);
+            }
+
+            colIndex = colTypesKeys.IndexOf("IsTorchBurned");
+            if (colIndex != -1)
+            {
+                dummyDef.setIsTorchBurned((bool) def[colIndex]);
             }
 
             /* ---------------------------------------------------
                 attributes which make use of EffectChanges
                --------------------------------------------------- */
 
-            // TO DO: protection assignment through loaded effect-changes
+            for (int e = 0; e < effectDefIDs.Count; e++)
+            {
+                if (mapEDToECD.TryGetValue(effectDefIDs[e], out effectChangesDefIDs))
+                {
+                    for (int ec = 0; ec < effectChangesDefIDs.Count; ec++)
+                    {
+                        if (EffectChangesDef.TryGetValue(effectChangesDefIDs[ec], out effectChange))
+                        {
+                            EffectChangesDef.ApplyToDummy(ref dummyDef, effectChange);
+                        }
+                    } 
+                }
+                else
+                {
+                    Log.Logger.logWarning("CreateItemDefinition: No EffectChangesDef provided for EffectDef-id "
+                        + effectDefIDs[e] + "!");
+                }
+            }
 
-            // TO DO: damages assignment through loaded effect-changes
+            
 
             // TO DO: value assignment through loaded effect-changes
 
@@ -682,6 +721,31 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             //{
             //    itemDefDict.Add(0, newDef); ;
             //}
+
+            CreateItemDefinition(ref dummyDef);
+        }
+
+        private static void CreateItemDefinition (ref DummyItemDef dummyDef)
+        {
+            try
+            {
+                ItemDef newDef = new ItemDef(dummyDef.getInstanceName(), dummyDef.getName(), dummyDef.getScemeName(), 
+                    dummyDef.getProtections(), dummyDef.getDamages(), dummyDef.getValue(), dummyDef.getMainFlag(), 
+                    dummyDef.getFlag(), dummyDef.getArmorFlag(), dummyDef.getDamageType(), dummyDef.getTotalDamage(), 
+                    dummyDef.getRange(), dummyDef.getVisual(), dummyDef.getVisualChange(), dummyDef.getEffect(), 
+                    dummyDef.getVisualSkin(), dummyDef.getMaterial(), dummyDef.getMunition(), 
+                    dummyDef.getIsKeyInstance(), dummyDef.getIsTorch(), dummyDef.getIsTorchBurning(), 
+                    dummyDef.getIsTorchBurned(), dummyDef.getIsGold());
+                if (newDef != null)
+                {
+                    itemDefDict.Add(0, newDef); ;
+                }
+            }
+            catch
+            {
+                throw new Exception("CreateItemDefinition: Some necessary attributes of DummyItemDef" 
+                    + " are not valid or missing!");
+            }
         }
 
 

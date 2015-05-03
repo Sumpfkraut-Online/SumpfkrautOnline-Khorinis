@@ -108,5 +108,72 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
             }
         }
 
+        public static int[] ParseParamToIntArray (string param)
+        {
+            string[] data = param.Split(new char[]{',', '='});
+            int resultLength = data.Length / 2;
+            int[] result = new int[resultLength];
+            if ((data != null) && (data.Length > 0))
+            {
+                int resultIndex = 0;
+                int val = 0;
+                int i = 0;
+                while (i < data.Length)
+                {
+                    if ((i + 1) >= data.Length)
+                    {
+                        break;
+                    }
+
+                    try
+                    {
+                        if (Int32.TryParse(data[i + 1], out val))
+                        {
+                            result[resultIndex] = val;
+                            resultIndex++;
+                        }
+                        else
+                        {
+                            throw new Exception("Couldn't convert part of param-string to int in ParseMultiParamToArray.");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("Couldn't cast converted part of param-string from int to enum-entry DamageTypeIndex: " + ex);
+                    }
+                                
+                    i += 2;
+                }
+            }
+
+            return result;
+        }
+
+        public static string[] ParseParamToStringArray (string param)
+        {
+            string[] data = param.Split(new char[]{',', '='});
+            int resultLength = data.Length / 2;
+            string[] result = new string[resultLength];
+            if ((data != null) && (data.Length > 0))
+            {
+                int resultIndex = 0;
+                int i = 0;
+                while (i < data.Length)
+                {
+                    if ((i + 1) >= data.Length)
+                    {
+                        break;
+                    }
+
+                    result[resultIndex] = data[i + 1];
+                    resultIndex++;
+                                
+                    i += 2;
+                }
+            }
+
+            return result;
+        }
+
     }
 }

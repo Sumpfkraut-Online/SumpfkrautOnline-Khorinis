@@ -494,6 +494,27 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             }
         }
 
+        public static void ApplyToDummy (ref DummyItemDef def, List<object> effectChangesDef)
+        {
+            if (effectChangesDef.Count >= 2){
+                try
+                {
+                    EffectChangesEnum changeType = (EffectChangesEnum) effectChangesDef[0];
+                    string param = (string) effectChangesDef[1];
+                    ApplyToDummy(ref def, changeType, param);
+                }
+                catch
+                {
+                    throw new Exception ("ApplyToDummy: No valid changeType could");
+                }
+            }
+            else
+            {
+                throw new Exception ("ApplyToDummy: Parameter effectChangesDef is not of length >= 2!");
+            }
+            
+        }
+
         public static void ApplyToDummy (ref DummyItemDef def, EffectChangesEnum changeType, string param)
         {
             try

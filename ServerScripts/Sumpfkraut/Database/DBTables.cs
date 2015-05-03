@@ -97,26 +97,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                 DefTableEnum.Mob_def, new Dictionary<String, SQLiteGetTypeEnum>
                 {
                     {"ID",                      SQLiteGetTypeEnum.GetInt32},
-                    {"VobType",                 SQLiteGetTypeEnum.GetInt32},
                     {"Visual",                  SQLiteGetTypeEnum.GetString},
                     {"Material",                SQLiteGetTypeEnum.GetInt32},
                     {"HasEffect",               SQLiteGetTypeEnum.GetBoolean}
-                }
-            },
-            {
-                DefTableEnum.Item_def, new Dictionary<String, SQLiteGetTypeEnum>
-                {
-                    {"ID",                      SQLiteGetTypeEnum.GetInt32},
-                    {"VobType",                 SQLiteGetTypeEnum.GetInt32},
-                    {"Visual",                  SQLiteGetTypeEnum.GetString},
-                    {"Visual_Skin",             SQLiteGetTypeEnum.GetInt32},
-                    {"InstanceName",            SQLiteGetTypeEnum.GetString},
-                    {"Name",                    SQLiteGetTypeEnum.GetString},
-                    {"ScemeName",               SQLiteGetTypeEnum.GetString},
-                    {"MainFlag",                SQLiteGetTypeEnum.GetInt32},
-                    {"Flags",                   SQLiteGetTypeEnum.GetInt32},
-                    {"Material",                SQLiteGetTypeEnum.GetInt32},
-                    {"HasEffect",               SQLiteGetTypeEnum.GetBoolean},
                 }
             },
             {
@@ -142,10 +125,39 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                 }
             },
             {
+                DefTableEnum.Item_def, new Dictionary<String, SQLiteGetTypeEnum>
+                {
+                    {"ID",                      SQLiteGetTypeEnum.GetInt32},
+                    {"InstanceName",            SQLiteGetTypeEnum.GetString},
+                    {"Name",                    SQLiteGetTypeEnum.GetString},
+                    {"ScemeName",               SQLiteGetTypeEnum.GetString},
+                    {"Protections",             SQLiteGetTypeEnum.GetString},
+                    {"Damages",                 SQLiteGetTypeEnum.GetString},
+                    {"Value",                   SQLiteGetTypeEnum.GetInt32},
+                    {"MainFlag",                SQLiteGetTypeEnum.GetInt32},
+                    {"Flag",                    SQLiteGetTypeEnum.GetInt32},
+                    {"ArmorFlag",               SQLiteGetTypeEnum.GetInt32},
+                    {"DamageType",              SQLiteGetTypeEnum.GetInt32},
+                    {"TotalDamage",             SQLiteGetTypeEnum.GetInt32},
+                    {"Range",                   SQLiteGetTypeEnum.GetInt32},
+                    {"Visual",                  SQLiteGetTypeEnum.GetString},
+                    {"VisualChange",            SQLiteGetTypeEnum.GetString},
+                    {"Effect",                  SQLiteGetTypeEnum.GetString},
+                    {"VisualSkin",              SQLiteGetTypeEnum.GetInt32},
+                    {"Material",                SQLiteGetTypeEnum.GetInt32},
+                    {"Munition",                SQLiteGetTypeEnum.GetInt32},
+                    {"IsKeyInstance",           SQLiteGetTypeEnum.GetBoolean},
+                    {"IsTorch",                 SQLiteGetTypeEnum.GetBoolean},
+                    {"IsTorchBurning",          SQLiteGetTypeEnum.GetBoolean},
+                    {"IsTorchBurned",           SQLiteGetTypeEnum.GetBoolean},
+                    {"IsGold",                  SQLiteGetTypeEnum.GetBoolean},
+                    {"HasEffect",               SQLiteGetTypeEnum.GetBoolean},
+                }
+            },
+            {
                 DefTableEnum.NPC_def, new Dictionary<String, SQLiteGetTypeEnum>
                 {
                     {"ID",                      SQLiteGetTypeEnum.GetInt32},
-                    {"VobType",                 SQLiteGetTypeEnum.GetInt32},
                     {"Visual",                  SQLiteGetTypeEnum.GetString},
                     {"Visual_Skin",             SQLiteGetTypeEnum.GetInt32},
                     {"HasEffect",               SQLiteGetTypeEnum.GetBoolean}
