@@ -50,11 +50,13 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
 
         private void OnPlayerSpawn(Player pl)
         {
+            Chat.SendOOCEvent(pl.Name + " ist dem Spiel beigetreten.");
             AllPlayers.Add(pl.Name, pl);
         }
 
         private void OnPlayerDisconnect(Player pl)
         {
+            Chat.SendOOCEvent(pl.Name + " hat das Spiel verlassen.");
             AllPlayers.Remove(pl.Name);
         }
 
@@ -830,6 +832,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
             AddCommand("help", "/help <befehl>", Help);
             AddCommand("whisper", "/whisper <text>", Whisper);
             AddCommand("shout", "/shout <text>", Shout);
+            AddCommand("!", "/! <text>", Shout);
             AddCommand("pa", "/pa <animationName>", playAnimation);
             AddCommand("StartDialogueAnimation", StartDialogueAnimation);
             AddCommand("@","@<SpielerName> <text>", PersonalMessage);
