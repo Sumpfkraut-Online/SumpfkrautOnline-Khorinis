@@ -69,8 +69,12 @@ namespace GUC.Sumpfkraut.Ingame
         AnimationMenuMessage AniMessage = new AnimationMenuMessage();
         AnimVoices loopAnimationEnd = AnimVoices.INVALID;
         AnimVoices latestAnimationsUsed = AnimVoices.INVALID;
-        AnimationPage currentShownAnimationPage, StartPage, FirstPage, SecondPage, Test;
-        List<AnimationPage> MainAnimationList, Ambiente, Working, Aho;
+        // Animation Pages
+        AnimationPage currentShownAnimationPage, StartPage, ActionPage, ArmPage, PrayPage, EatPage, GesturePage, GreetPage,
+        ScratchPage, MagicPage, DancePage, HGUARDPage, LGUARDPage, SitPage, WorkPage, AmbientPage, PraySpecial;
+        // Animation Page Lists
+        List<AnimationPage> StartPList, ActionPList, ArmPList, PrayPList, EatPList, GesturePList, GreetPList,
+        ScratchPList, MagicPList, DancePList, HGUARDPList, LGUARDPList, SitPList, WorkPList, AmbientPList;
 
 
         public AnimationMenu()
@@ -169,9 +173,11 @@ namespace GUC.Sumpfkraut.Ingame
                         else
                             latestAnimationsUsed = currentShownAnimationPage.AnimationPages[position].ani;
 
-                        // neue Animation page setzen
-                        currentShownAnimationPage = currentShownAnimationPage.AnimationPages[position];
+                        // neue Animationsseite setzen, wenn es eine gibt.
+                        if (currentShownAnimationPage.AnimationPages[position].AnimationPages != null)
+                            currentShownAnimationPage = currentShownAnimationPage.AnimationPages[position];
 
+                        Console.WriteLine(currentShownAnimationPage);
                     }
                 }
             }
@@ -244,37 +250,207 @@ namespace GUC.Sumpfkraut.Ingame
         {
             // Initialisierung aller Animation Pages mit Hirachie
             StartPage = new AnimationPage();
-            FirstPage = new AnimationPage("Erste Aktion", StartPage);
-            SecondPage = new AnimationPage("Zweite Aktion", StartPage);
-            Test = new AnimationPage("Rang 2", SecondPage);
 
-            MainAnimationList = new List<AnimationPage>();
+            ActionPage = new AnimationPage("Aktionen", StartPage);
+            ArmPage = new AnimationPage("Armbewegungen", StartPage);
+            PrayPage = new AnimationPage("Beten", StartPage);
+            EatPage = new AnimationPage("Essen und Trinken", StartPage);
+            GesturePage = new AnimationPage("Gesten", StartPage);
+            GreetPage = new AnimationPage("Grüßen", StartPage);
+            ScratchPage = new AnimationPage("Kratzen", StartPage);
+            MagicPage = new AnimationPage("Magie üben", StartPage);
+            DancePage = new AnimationPage("Tanzen", StartPage);
 
-            Ambiente = new List<AnimationPage>()
+            HGUARDPage = new AnimationPage("Hände in die Hüfte", AnimVoices.T_STAND_2_HGUARD, AnimVoices.T_HGUARD_2_STAND, ActionPage);
+            LGUARDPage = new AnimationPage("Arme verschränken", AnimVoices.T_STAND_2_LGUARD, AnimVoices.T_LGUARD_2_STAND, ActionPage);
+            SitPage = new AnimationPage("Am Boden sitzen", AnimVoices.T_STAND_2_SIT, AnimVoices.T_SIT_2_STAND, ActionPage);
+            WorkPage = new AnimationPage("Arbeiten", ActionPage);
+            AmbientPage = new AnimationPage("Ambiente", ActionPage);
+
+            StartPList = new List<AnimationPage>();
+
+            #region Animation Lists
+
+            #region ActionPList
+            ActionPList = new List<AnimationPage>()
             {
-                new AnimationPage("Pinkeln", AnimVoices.T_STAND_2_PEE, AnimVoices.T_PEE_2_STAND, FirstPage),
+                HGUARDPage,
+                LGUARDPage,
+                AmbientPage,
+                WorkPage,
+                SitPage,
+                new AnimationPage("Am Boden schlafen", AnimVoices.T_STAND_2_SLEEPGROUND, AnimVoices.T_SLEEPGROUND_2_STAND, ActionPage),
+                new AnimationPage("Bein schütteln", AnimVoices.R_LEGSHAKE, ActionPage),
+                new AnimationPage("Geben", AnimVoices.T_TRADEITEM, ActionPage),
+                new AnimationPage("Plündern",AnimVoices.T_PLUNDER, ActionPage),
             };
 
-            Working = new List<AnimationPage>()
-            {
 
+            HGUARDPList = new List<AnimationPage>{
+                    new AnimationPage("Umsehen", AnimVoices.T_HGUARD_LOOKAROUND, ActionPage),
+                    new AnimationPage("Durchgangsverweigerung", AnimVoices.T_HGUARD_NOENTRY, ActionPage),
+                    new AnimationPage("Gruß", AnimVoices.T_HGUARD_GREET, ActionPage),
+                    new AnimationPage("Durchgangsgenehmigung", AnimVoices.T_HGUARD_COMEIN, ActionPage),
             };
 
-            Aho = new List<AnimationPage>()
-            {
-                new AnimationPage("Pinkeln", AnimVoices.T_STAND_2_PEE, AnimVoices.T_PEE_2_STAND, Test),
+            LGUARDPList = new List<AnimationPage>(){
+                    new AnimationPage("Umsehen", AnimVoices.T_HGUARD_LOOKAROUND, ActionPage),
+                    new AnimationPage("Durchgangsverweigerung", AnimVoices.T_LGUARD_NOENTRY, ActionPage),
+                    new AnimationPage("Gruß", AnimVoices.T_LGUARD_GREET, ActionPage),
+                    new AnimationPage("Durchgangsgenehmigung", AnimVoices.T_LGUARD_COMEIN, ActionPage),
+                    new AnimationPage("Nicken", AnimVoices.T_LGUARD_ALLRIGHT, ActionPage),
+                    new AnimationPage("Gewichtsverlagerung", AnimVoices.T_LGUARD_CHANGELEG, ActionPage),
+                    new AnimationPage("An der Nase kratzen", AnimVoices.T_LGUARD_SCRATCH, ActionPage),
+                    new AnimationPage("Schaukeln", AnimVoices.T_LGUARD_STRETCH, ActionPage),
             };
 
-            Test.AnimationPages = Aho;
+            AmbientPList = new List<AnimationPage>(){
+                    new AnimationPage("Schwerttraining", AnimVoices.T_1HSFREE, AnimVoices.T_1HSFREE, ActionPage),
+                    new AnimationPage("Waffe inspizieren", AnimVoices.T_1HSINSPECT, ActionPage),
+                    new AnimationPage("Horn blasen" ,AnimVoices.T_HORN_S0_2_S1, AnimVoices.T_HORN_S0_2_STAND, ActionPage),
+                    new AnimationPage("Gitarre spielen", AnimVoices.T_LUTE_S0_2_S1, AnimVoices.T_LUTE_S0_2_STAND, ActionPage),
+                    new AnimationPage("Waschen", AnimVoices.T_STAND_2_WASH, AnimVoices.T_WASH_2_STAND, ActionPage),
+                    new AnimationPage("Pinkeln", AnimVoices.T_STAND_2_PEE, AnimVoices.T_PEE_2_STAND, ActionPage)
+            };
 
-            Working.Add(Test);
-            MainAnimationList.Add(FirstPage);
-            MainAnimationList.Add(SecondPage);
+            WorkPList = new List<AnimationPage>()
+            {
+                new AnimationPage("Harken", AnimVoices.T_RAKE_S0_2_S1, AnimVoices.T_RAKE_S0_2_STAND, ActionPage),
+                new AnimationPage("Hämmern", AnimVoices.T_REPAIR_S0_2_S1, AnimVoices.T_REPAIR_S0_2_STAND, ActionPage),
+                new AnimationPage("Fegen", AnimVoices.T_BROOM_S0_2_S1, AnimVoices.T_BROOM_S0_2_STAND, ActionPage),
+                new AnimationPage("Wischen", AnimVoices.T_BRUSH_S0_2_S1, AnimVoices.T_BRUSH_S0_2_STAND, ActionPage),
+            };
 
-            
-            FirstPage.AnimationPages = Ambiente;
-            SecondPage.AnimationPages = Working;
-            StartPage.AnimationPages = MainAnimationList;
+            SitPList = new List<AnimationPage>()
+            {
+                // Was kann man im Sitzen machen?
+            };
+
+            #endregion
+
+
+            #region ScratchPList
+            ScratchPList = new List<AnimationPage>(){
+                    new AnimationPage("Am Sack kratzen",AnimVoices.R_SCRATCHEGG, StartPage),
+                    new AnimationPage("Am Kopf kratzen",AnimVoices.R_SCRATCHHEAD, StartPage),
+                    new AnimationPage("Linke Schulter kratzen",AnimVoices.R_SCRATCHLSHOULDER, StartPage),
+                    new AnimationPage("Rechte Schulter kratzen",AnimVoices.R_SCRATCHRSHOULDER, StartPage),
+            };
+            #endregion
+
+            #region Pray + Special Pray PList
+            PraySpecial = new AnimationPage("Auf beiden Knien beten", AnimVoices.T_STAND_2_PRAY, AnimVoices.T_PRAY_2_STAND, StartPage);
+            PrayPList = new List<AnimationPage>(){
+                    new AnimationPage("Anbeten", AnimVoices.T_IDOL_S0_2_S1, AnimVoices.T_IDOL_S0_2_STAND, StartPage),
+                    new AnimationPage("????", AnimVoices.T_IDOL_S0_2_S1, AnimVoices.T_IDOL_S1_2_S0, StartPage),
+                    new AnimationPage("Auf einem Knie Beten", AnimVoices.T_INNOS_S0_2_S1, AnimVoices.T_INNOS_S0_2_STAND, StartPage),
+                    new AnimationPage("????", AnimVoices.T_INNOS_S0_2_S1, AnimVoices.T_INNOS_S1_2_S0, StartPage),
+                    PraySpecial,
+            };
+
+            PraySpecial.AnimationPages = new List<AnimationPage>() { 
+                new AnimationPage("Schaukeln", AnimVoices.T_PRAY_RANDOM, PrayPage),
+            };
+            #endregion
+
+            #region GreetPList
+            GreetPList = new List<AnimationPage>(){
+                    new AnimationPage("Gruß mit linkem Arm",AnimVoices.T_GREETCOOL, StartPage),
+                    new AnimationPage("Gruß mit rechtem Arm",AnimVoices.T_GREETLEFT, StartPage),
+                    new AnimationPage("Herzlicher Gruß",AnimVoices.T_GREETGRD, StartPage),
+                    new AnimationPage("Gruß mit Verbeugung",AnimVoices.T_GREETNOV, StartPage),
+                    new AnimationPage("Winken mit rechtem Arm",AnimVoices.T_GREETRIGHT, StartPage),
+            };
+            #endregion
+
+            #region GesturePList
+            GesturePList = new List<AnimationPage>(){
+                    new AnimationPage("Boden treten",AnimVoices.T_BORINGKICK, StartPage),
+                    new AnimationPage("Umschauen",AnimVoices.T_SEARCH, StartPage),
+                    new AnimationPage("Nicken",AnimVoices.T_YES, StartPage),
+                    new AnimationPage("Schulterzucken",AnimVoices.T_DONTKNOW, StartPage),
+                    new AnimationPage("Verneinen",AnimVoices.T_NO, StartPage),
+            };
+            #endregion
+
+            #region ArmPList
+            ArmPList = new List<AnimationPage>(){
+                    new AnimationPage("Jubeln",AnimVoices.T_STAND_2_WATCHFIGHT, AnimVoices.T_WATCHFIGHT_2_STAND, StartPage),
+                    new AnimationPage("Enttäuschtes Jubeln",AnimVoices.T_WATCHFIGHT_OHNO, AnimVoices.T_WATCHFIGHT_2_STAND, StartPage),
+                    new AnimationPage("Anfeuern",AnimVoices.T_WATCHFIGHT_YEAH, AnimVoices.T_WATCHFIGHT_2_STAND, StartPage),
+                    new AnimationPage("Abwinken",AnimVoices.T_FORGETIT, StartPage),
+                    new AnimationPage("Rumfuchteln 1",AnimVoices.T_GETLOST, StartPage),
+                    new AnimationPage("Rumfuchteln 2",AnimVoices.T_GETLOST2, StartPage),
+                    new AnimationPage("Ich kriege dich noch!",AnimVoices.T_IGETYOU, StartPage),
+            };
+            #endregion
+
+            #region DancePList
+            DancePList = new List<AnimationPage>(){
+                    new AnimationPage("Tanzen1",AnimVoices.T_DANCE_01, StartPage),
+                    new AnimationPage("Tanzen2",AnimVoices.T_DANCE_02, StartPage),
+                    new AnimationPage("Tanzen3",AnimVoices.T_DANCE_03, StartPage),
+                    new AnimationPage("Tanzen4",AnimVoices.T_DANCE_04, StartPage),
+                    new AnimationPage("Tanzen5",AnimVoices.T_DANCE_05, StartPage),
+                    new AnimationPage("Tanzen6",AnimVoices.T_DANCE_06, StartPage),
+                    new AnimationPage("Tanzen7",AnimVoices.T_DANCE_07, StartPage),
+                    new AnimationPage("Tanzen8",AnimVoices.T_DANCE_08, StartPage),
+            };
+            #endregion
+
+            #region MagicPList
+            MagicPList = new List<AnimationPage>(){
+                    new AnimationPage("Magie üben ohne Wirkung",AnimVoices.T_PRACTICEMAGIC5, StartPage),
+                    new AnimationPage("Feuermagie üben",AnimVoices.T_PRACTICEMAGIC, StartPage),
+                    new AnimationPage("Feuermagie üben 2",AnimVoices.T_PRACTICEMAGIC4, StartPage),
+                    new AnimationPage("Beschwörungsmagie üben",AnimVoices.T_PRACTICEMAGIC2, StartPage),
+                    new AnimationPage("Teleportmagie üben",AnimVoices.T_PRACTICEMAGIC3, StartPage),
+            };
+            #endregion
+
+            #region EatPList
+            EatPList = new List<AnimationPage>(){
+                    new AnimationPage("mit beiden Händen essen",AnimVoices.T_FOODHUGE_RANDOM_1, StartPage),
+                    new AnimationPage("mit einer Hand essen",AnimVoices.T_FOOD_RANDOM_1, StartPage),
+                    new AnimationPage("Essen in den Mund werfen",AnimVoices.T_FOOD_RANDOM_2, StartPage),
+                    new AnimationPage("Trinken",AnimVoices.T_POTION_RANDOM_1, StartPage),
+                    new AnimationPage("Mund abwischen",AnimVoices.T_POTION_RANDOM_2, StartPage),
+                    new AnimationPage("Trank hochhalten und beobachten",AnimVoices.T_POTION_RANDOM_3, StartPage),
+                    new AnimationPage("Suppe essen",AnimVoices.T_RICE_RANDOM_1, StartPage),
+                    new AnimationPage("Suppe trinken",AnimVoices.T_RICE_RANDOM_2, StartPage),
+                    new AnimationPage("Charakter hebt eine Reisschüssel",AnimVoices.S_RICE_S0, AnimVoices.S_RICE_S0, StartPage),
+            };
+            #endregion
+
+            #endregion
+
+            ActionPage.AnimationPages = ActionPList;
+            ArmPage.AnimationPages = ArmPList;
+            PrayPage.AnimationPages = PrayPList;
+            EatPage.AnimationPages = EatPList;
+            GesturePage.AnimationPages = GesturePList;
+            GreetPage.AnimationPages = GreetPList;
+            ScratchPage.AnimationPages = ScratchPList;
+            MagicPage.AnimationPages = MagicPList;
+            DancePage.AnimationPages = DancePList;
+
+            HGUARDPage.AnimationPages = HGUARDPList;
+            LGUARDPage.AnimationPages = LGUARDPList;
+            SitPage.AnimationPages = SitPList;
+            WorkPage.AnimationPages = WorkPList;
+            AmbientPage.AnimationPages = AmbientPList;
+
+            StartPList.Add(ActionPage);
+            StartPList.Add(ArmPage);
+            StartPList.Add(PrayPage);
+            StartPList.Add(EatPage);
+            StartPList.Add(GesturePage);
+            StartPList.Add(GreetPage);
+            StartPList.Add(ScratchPage);
+            StartPList.Add(EatPage);
+            StartPList.Add(PrayPage);
+
+            StartPage.AnimationPages = StartPList;
 
             currentShownAnimationPage = StartPage;
 
@@ -343,6 +519,11 @@ namespace GUC.Sumpfkraut.Ingame
             this.prevAniPage = prevAni;
             this.stopAni = stopAni;
             this.AnimationPages = AnimationPages;
+        }
+
+        public string toString()
+        {
+            return " CurrentAnimationPage: TEXT(" + text + ") ANI(" + ani + ") STOPANI(" + stopAni + ") PREVAP(" + prevAniPage + ")"; 
         }
 
     }
