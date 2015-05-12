@@ -11,6 +11,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
     class DBReader
     {
 
+        private static string sqLiteDataSource = "Data Source=save.db";
+
         ///**
         // *   Executes a defined sql-query and stores the results as strings.
         // *   Stores the results for each sql-statement provided, so that after defining 2 statements 
@@ -62,15 +64,19 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
         public static void LoadFromDB (ref List<List<List<object>>> results,
             string completeQuery)
         {
-            using (SqliteConnection con = Sqlite.getSqlite().connection)
+            using (SqliteConnection con = new SqliteConnection())
             {
+                con.ConnectionString = sqLiteDataSource;
+                con.Open();
+
                 // security check and close connection if necessary
                 if (!DBSecurity.IsSecureSQLCommand(completeQuery))
                 {
                     Log.Logger.logWarning("LoadFromDB: Prevented forwarding of insecure sql-command: " + completeQuery);
                     if (con.State.ToString() == "Open")
                     {
-                        con.Close(); 
+                        con.Close();
+                        con.Dispose();
                     }
                     return;
                 }

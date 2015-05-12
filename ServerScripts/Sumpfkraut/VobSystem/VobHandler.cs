@@ -133,9 +133,13 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             // filter out the vob-defintiion-ids to look them up in effects-instance-tables later
             List<int> defIDs = new List<int>();
             int idColIndex = colTypesKeys.IndexOf("ID");
+            int hasEffectsColIndex = colTypesKeys.IndexOf("HasEffects");
             for (int i = 0; i < defList[0].Count; i++)
             {
-                 defIDs.Add((int)defList[0][i][idColIndex]);
+                if ((bool)defList[0][i][hasEffectsColIndex])
+                {
+                    defIDs.Add((int)defList[0][i][idColIndex]);
+                }
             }
 
             // column name and index where the vob-id is
@@ -147,8 +151,12 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             int vobIDColIndex = colTypesKeys_EI.IndexOf(vobIDColName);
 
             // use the vob-ids to request all effect-ids which belong to them
-            LoadEffectsInst(effectsInstTab, ref instList_EI,
-                ref colTypesKeys_EI, ref colTypesVals_EI, vobIDColName + " IN (" + String.Join(",", defIDs.ToArray()) + ")");
+            if (defIDs.Count > 0)
+            {
+                LoadEffectsInst(effectsInstTab, ref instList_EI,
+                    ref colTypesKeys_EI, ref colTypesVals_EI, 
+                    vobIDColName + " IN (" + String.Join(",", defIDs.ToArray()) + ")");
+            }
 
             // filter out the effect-instance-ids to look them up in effects-changes-tables later
             // + map vob definition ids to their related effect ids
