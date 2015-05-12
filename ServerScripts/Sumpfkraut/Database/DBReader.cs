@@ -62,55 +62,74 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
         public static void LoadFromDB (ref List<List<List<object>>> results,
             string completeQuery)
         {
-
-            using (SQLiteCommand cmd = new SQLiteCommand(Sqlite.getSqlite().connection))
+            using (SqliteConnection con = Sqlite.getSqlite().connection)
             {
+                // security check and close connection if necessary
                 if (!DBSecurity.IsSecureSQLCommand(completeQuery))
                 {
-                    throw new Exception("LoadFromDB: Prevented forwarding of insecure sql-command: " + completeQuery);
+                    Log.Logger.logWarning("LoadFromDB: Prevented forwarding of insecure sql-command: " + completeQuery);
+                    if (con.State.ToString() == "Open")
+                    {
+                        con.Close(); 
+                    }
+                    return;
                 }
 
-                cmd.CommandText = completeQuery;
-
-                SQLiteDataReader rdr = null;
-                try
+                using (SQLiteCommand cmd = new SQLiteCommand(completeQuery, con))
                 {
-                    rdr = cmd.ExecuteReader();
-                    if (!rdr.HasRows)
+                    SQLiteDataReader rdr = null;
+                    try
                     {
-                        return;
-                    }
-
-                    // temporary array to put all data of a row into
-                    object[] rowArr = null;
-
-                    do
-                    {
-                        // add new result-list
-                        results.Add(new List<List<object>>());
-                        while (rdr.Read())
+                        rdr = cmd.ExecuteReader();
+                        if (rdr == null)
                         {
-                            // create and fill array of the temporary data row
-                            rowArr = new object[rdr.FieldCount];
-                            rdr.GetValues(rowArr);
-                            results[results.Count - 1].Add(new List<object>(rowArr));
+                            return;
+                        }
+                        if (!rdr.HasRows)
+                        {
+                            return;
+                        }
+
+                        // temporary array to put all data of a row into
+                        object[] rowArr = null;
+
+                        do
+                        {
+                            // add new result-list
+                            results.Add(new List<List<object>>());
+                            while (rdr.Read())
+                            {
+                                // create and fill array of the temporary data row
+                                rowArr = new object[rdr.FieldCount];
+                                rdr.GetValues(rowArr);
+                                results[results.Count - 1].Add(new List<object>(rowArr));
+                            }
+                        }
+                        while (rdr.NextResult());
+
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("LoadFromDB: Could not execute SQLiteDataReader: " + ex);
+                    }
+                    finally
+                    {
+                        if (rdr != null)
+                        {
+                            rdr.Close();
+                            rdr.Dispose();
                         }
                     }
-                    while (rdr.NextResult());
-                    
                 }
-                catch (Exception ex)
+
+                // close connection if still opened
+                if (con.State.ToString() == "Open")
                 {
-                    throw new Exception("Could not execute SQLiteDataReader in LoadFromDB: " + ex);
-                }
-                finally
-                {
-                    if (rdr != null)
-                    {
-                        rdr.Close();
-                    }
+                    con.Close();
+                    con.Dispose();
                 }
             }
+            
         }
 
         public static int SaveToDB (string completeQuery)

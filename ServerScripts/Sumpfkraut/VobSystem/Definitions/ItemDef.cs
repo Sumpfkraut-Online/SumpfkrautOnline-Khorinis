@@ -19,6 +19,12 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         public int getID () { return this.ID; }
         //public void setID (int ID) { this.ID = ID; }
 
+        // ID exclusively for the VobSystem (VobSys) representing the ID in database
+        // simply ID as attribute name was already occupied by the GUC internal
+        protected int VobSysID;
+        public int getVobSysID () { return this.VobSysID; }
+        public void setVobSysID (int VobSysID) { this.VobSysID = VobSysID; }
+
         public string getInstanceName () { return this.InstanceName; }
         // read only in GUC
         //public void setInstanceName (string InstanceName) { this.InstanceName = InstanceName; }

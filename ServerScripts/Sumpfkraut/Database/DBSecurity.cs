@@ -22,16 +22,19 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
             if (rgx_sqlMeta_1.Match(cmd).Length > 0)
             {
                 //Log.Logger.logWarning("Detected insecure sql-code with pattern: " + pattern_sqlMeta_1);
+                Console.WriteLine("1)" + rgx_sqlMeta_1.Match(cmd).Value);
                 return false;
             }
             else if (rgx_sqlMeta_2.Match(cmd).Length > 0)
             {
                 //Log.Logger.logWarning("Detected insecure sql-code with pattern: " + pattern_sqlMeta_2);
+                Console.WriteLine("2)" + rgx_sqlMeta_1.Match(cmd).Value);
                 return false;
             }
             else if (rgx_sqlMeta_3.Match(cmd).Length > 0)
             {
                 //Log.Logger.logWarning("Detected insecure sql-code with pattern: " + pattern_sqlMeta_3);
+                Console.WriteLine("3)" + rgx_sqlMeta_1.Match(cmd).Value);
                 return false;
             }
             return true;

@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS `Item_def` (
     `ID` INTEGER  NOT NULL,
     `InstanceName` TEXT NOT NULL, -- insertcode of that item
     `Name` TEXT NOT NULL, -- displayed name
-    `ScemeName` TEXT DEFAULT NULL, -- ??? (e.g. MAP, MAPSEALED, etc.)
+    `ScemeName` TEXT DEFAULT "", -- ??? (e.g. MAP, MAPSEALED, etc.)
     `Protections` TEXT DEFAULT NULL, -- should be of pattern 0=0,1=0,2=25
     `Damages` TEXT DEFAULT NULL, -- should be of pattern 0=0,1=0,2=25
     `Value` INTEGER NOT NULL DEFAULT 0, -- price of that item (not used in our custom trade?)
@@ -85,8 +85,8 @@ CREATE TABLE IF NOT EXISTS `Item_def` (
     `TotalDamage` INTEGER DEFAULT NULL, -- sum of Damages (why not sum it up internally Gothic 2?)
     `Range` INTEGER DEFAULT NULL, -- weapon range
     `Visual` TEXT NOT NULL, -- name of 3D-model file (.3DS-file)
-    `VisualChange` TEXT DEFAULT NULL, -- for armors (.asc-file)
-    `Effect` TEXT DEFAULT NULL, -- triggered particle effect (e.g. when drinking potions)
+    `VisualChange` TEXT DEFAULT "", -- for armors (.asc-file)
+    `Effect` TEXT DEFAULT "", -- triggered particle effect (e.g. when drinking potions)
     `VisualSkin` INTEGER DEFAULT NULL, -- ???
     `Material` INTEGER NOT NULL DEFAULT 3, -- type of material which determines the collision sound (defaults to MAT_LEATHER)
     `Munition` INTEGER  DEFAULT NULL, -- ID of the munition-Item_def of this table
@@ -202,8 +202,10 @@ CREATE TABLE IF NOT EXISTS `NPC_inst` (
     `ScaleX` INTEGER  NOT NULL,
     `ScaleY` INTEGER  NOT NULL,
     `ScaleZ` INTEGER  NOT NULL,
-    `HeadTexture` TEXT DEFAULT "",
-    `BodyTexture` TEXT DEFAULT "",
+    `HeadMesh` TEXT NOT NULL,
+    `HeadTexture` INTEGER NOT NULL,
+    `BodyMesh` TEXT NOT NULL,
+    `BodyTexture` INTEGER NOT NULL,
     `CurrWalk` INTEGER  NOT NULL,
     `CurrAnimation` TEXT DEFAULT "",
     `ChangeDate` TEXT NOT NULL,

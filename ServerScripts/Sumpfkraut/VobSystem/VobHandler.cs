@@ -27,7 +27,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
         //protected List<NPCDef> npcDefList = new List<NPCDef>();
 
         private static Dictionary<int, MobDef> mobDefDict = new Dictionary<int, MobDef>();
-        private static Dictionary<int, ItemDef> itemDefDict = new Dictionary<int, ItemDef>();
+        public static Dictionary<int, ItemDef> itemDefDict = new Dictionary<int, ItemDef>();
         private static Dictionary<int, SpellDef> spellDefDict = new Dictionary<int, SpellDef>();
         private static Dictionary<int, NPCDef> npcDefDict = new Dictionary<int, NPCDef>();
 
@@ -39,10 +39,10 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
          */
         public static void Init ()
         {
-            loadDefinitions(DefTableEnum.Spell_def);
-            loadDefinitions(DefTableEnum.Item_def);
-            loadDefinitions(DefTableEnum.Mob_def);
-            loadDefinitions(DefTableEnum.NPC_def);
+            //LoadDefinitions(DefTableEnum.Spell_def);
+            LoadDefinitions(DefTableEnum.Item_def);
+            //LoadDefinitions(DefTableEnum.Mob_def);
+            //LoadDefinitions(DefTableEnum.NPC_def);
         }
 
 
@@ -53,7 +53,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
          *   @param defTab , the enum-entry which represents the type of definitions to load
          *   @see DefTableEnum
          */
-        public static void loadDefinitions (DefTableEnum defTab)
+        public static void LoadDefinitions (DefTableEnum defTab)
         {
             /* -------------------------------------------------------------
                 getting vob-definitions
@@ -107,7 +107,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             /* -------------------------------------------------------------
                 getting vob-effects-instances (EI) [for each vob-defintion]
                 ------------------------------------------------------------- */
-
+            
             // try getting the necessary hints on data conversion for each column 
             // of the given vob-specific effect-instance table (EI)
             List<List<List<object>>> instList_EI = new List<List<List<object>>>();
@@ -158,34 +158,37 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             Dictionary<int, List<int>> vobToEffectsMap = new Dictionary<int, List<int>>();
             List<int> tempVobEffectDefIDs;
             int eiVobID = -1;
-            for (int i = 0; i < instList_EI[0].Count; i++)
+            if (instList_EI.Count > 0)
             {
-                eiEffectID = (int) instList_EI[0][i][effectIDColIndex];
-                eiVobID = (int) instList_EI[0][i][vobIDColIndex];
-
-                if (!effectDefIDs.Contains(eiEffectID))
+                for (int i = 0; i < instList_EI[0].Count; i++)
                 {
-                    effectDefIDs.Add(eiEffectID);
-                }
+                    eiEffectID = (int) instList_EI[0][i][effectIDColIndex];
+                    eiVobID = (int) instList_EI[0][i][vobIDColIndex];
 
-                if (vobToEffectsMap.TryGetValue(eiVobID, out tempVobEffectDefIDs))
-                {
-                    if (!tempVobEffectDefIDs.Contains(eiEffectID))
+                    if (!effectDefIDs.Contains(eiEffectID))
                     {
-                        tempVobEffectDefIDs.Add(eiEffectID);
+                        effectDefIDs.Add(eiEffectID);
+                    }
+
+                    if (vobToEffectsMap.TryGetValue(eiVobID, out tempVobEffectDefIDs))
+                    {
+                        if (!tempVobEffectDefIDs.Contains(eiEffectID))
+                        {
+                            tempVobEffectDefIDs.Add(eiEffectID);
+                        }
+                    }
+                    else
+                    {
+                        tempVobEffectDefIDs = new List<int>() {eiEffectID};
+                        vobToEffectsMap.Add(eiVobID, tempVobEffectDefIDs);
                     }
                 }
-                else
-                {
-                    tempVobEffectDefIDs = new List<int>() {eiEffectID};
-                    vobToEffectsMap.Add(eiVobID, tempVobEffectDefIDs);
-                }
-            }
+            }    
 
             /* -------------------------------------------------------------
                 getting effect-changes-defintions (EC) [for each vob-defintion]
                 ------------------------------------------------------------- */
-
+            
             // try getting the necessary hints on data conversion for each column 
             // of the given vob-specific effect-instance table (EI)
             List<List<List<object>>> defList_EC = new List<List<List<object>>>();
@@ -217,29 +220,32 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             List<int> tempEffectChangesIDs;
             int ecEffectID = -1;
             int ecEffectChangeID = -1;
-            for (int i = 0; i < defList_EC[0].Count; i++)
+            if (defList_EC.Count > 0) 
             {
-                ecEffectID = (int) defList_EC[0][i][ecEffDefIDColIndex];
-                ecEffectChangeID = (int) defList_EC[0][i][ecIDColIndex];
+                for (int i = 0; i < defList_EC[0].Count; i++)
+                {
+                    ecEffectID = (int) defList_EC[0][i][ecEffDefIDColIndex];
+                    ecEffectChangeID = (int) defList_EC[0][i][ecIDColIndex];
 
-                Definitions.EffectChangesDef.Add(ecEffectChangeID, 
-                    (EffectChangesEnum) defList_EC[0][i][ecCTColIndex],
-                    (string) defList_EC[0][i][ecParamColIndex],
-                    true);
+                    Definitions.EffectChangesDef.Add(ecEffectChangeID, 
+                        (EffectChangesEnum) defList_EC[0][i][ecCTColIndex],
+                        (string) defList_EC[0][i][ecParamColIndex],
+                        true);
 
-                if (effectToChangesMap.TryGetValue(ecEffectID, out tempEffectChangesIDs)){
-                    if (!tempEffectChangesIDs.Contains(ecEffectChangeID))
+                    if (effectToChangesMap.TryGetValue(ecEffectID, out tempEffectChangesIDs)){
+                        if (!tempEffectChangesIDs.Contains(ecEffectChangeID))
+                        {
+                            tempEffectChangesIDs.Add(ecEffectChangeID);
+                        }
+                    }
+                    else
                     {
-                        tempEffectChangesIDs.Add(ecEffectChangeID);
+                        tempEffectChangesIDs = new List<int>() {ecEffectChangeID};
+                        effectToChangesMap.Add(ecEffectID, tempEffectChangesIDs);
                     }
                 }
-                else
-                {
-                    tempEffectChangesIDs = new List<int>() {ecEffectChangeID};
-                    effectToChangesMap.Add(ecEffectID, tempEffectChangesIDs);
-                }
             }
-
+            
             /* -------------------------------------------------------------
                 create actual instances for vob definitions
                 ------------------------------------------------------------- */
@@ -297,8 +303,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
         {
             // grab from database
             DBReader.LoadFromDB(ref defList, 
-                "(" + String.Join(",", colTypesKeys.ToArray())  + ")", 
-                defTabName, 
+                String.Join(",", colTypesKeys.ToArray()), 
+                "`" + defTabName + "`", 
                 sqlWhere, 
                 "ID ASC");
 
@@ -306,20 +312,22 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             object tempEntry = null;
             int r = 0;
             int c = 0;
-            while (r < defList[1].Count)
+            while (r < defList[0].Count)
             {
                 c = 0;
-                while (c < defList[1][r].Count)
+                while (c < defList[0][r].Count)
                 {
-                    tempEntry = defList[1][r][c];
+                    tempEntry = defList[0][r][c].ToString();
                     if (DBTables.SqlStringToData((string)tempEntry, colTypesVals[c], ref tempEntry))
                     {
-                        defList[1][r][c] = tempEntry;
+                        defList[0][r][c] = tempEntry;
                     }
                     else
                     {
+                        defList[0][r][c] = null;
                         Log.Logger.logError("Could no convert " + tempEntry + " from string to type " 
-                            + colTypesVals[c] + " in method LoadVobDef.");
+                            + colTypesVals[c] + " in method LoadVobDef for loaded database-entry of column "
+                            + colTypesKeys[c]);
                     }
                     c++;
                 }
@@ -345,24 +353,29 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 
             // grab effect-ids from database
             DBReader.LoadFromDB(ref defList, 
-                "(" + String.Join(",", colTypesKeys.ToArray())  + ")", 
-                instTabName, 
+                String.Join(",", colTypesKeys.ToArray()), 
+                "`" + instTabName + "`", 
                 sqlWhere, 
                 " " + orderByID + " ASC");
+
+            if (defList.Count < 1)
+            {
+                return;
+            }
 
             // convert individual sql-result-strings to usable data of given types
             object tempEntry = null;
             int r = 0;
             int c = 0;
-            while (r < defList[1].Count)
+            while (r < defList[0].Count)
             {
                 c = 0;
-                while (c < defList[1][r].Count)
+                while (c < defList[0][r].Count)
                 {
-                    tempEntry = defList[1][r][c];
+                    tempEntry = defList[0][r][c];
                     if (DBTables.SqlStringToData((string)tempEntry, colTypesVals[c], ref tempEntry))
                     {
-                        defList[1][r][c] = tempEntry;
+                        defList[0][r][c] = tempEntry;
                     }
                     else
                     {
@@ -401,8 +414,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
         {
             // grab from database
             DBReader.LoadFromDB(ref defList, 
-                "(" + String.Join(",", colTypesKeys.ToArray())  + ")", 
-                "Effect_Changes_def", 
+                String.Join(",", colTypesKeys.ToArray()), 
+                "`" + "Effect_Changes_def" + "`", 
                 sqlWhere, 
                 "EffectDefID ASC");
 
@@ -492,13 +505,29 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             }
         }
 
-
         private static void CreateMobDefinition (DefTableEnum defTab, ref List<object> def,
             ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals,
-            ref Dictionary<int, List<int>> mapVDToED, 
+            ref Dictionary<int, List<int>> mapVDToED,
             ref Dictionary<int, List<int>> mapEDToECD)
         {
-            // !!! TODO !!!
+
+        }
+
+        private static void CreateMobDefinition (ref DummyMobDef dummyDef)
+        {
+            try
+            {
+                MobDef newDef = new MobDef();
+                if (newDef != null)
+                {
+                    //itemDefDict.Add(dummyDef.getID(), newDef);
+                }
+            }
+            catch
+            {
+                throw new Exception("CreateItemDefinition: Some necessary attributes of DummyItemDef" 
+                    + " are not valid or missing:" + dummyDef);
+            }
         }
 
 
@@ -546,110 +575,103 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             int colIndex = -1;
 
             colIndex = colTypesKeys.IndexOf("ID");
-            if (colIndex != -1)
+            if ((colIndex != -1) && (def[colIndex] != null))
             {
                 dummyDef.setID((int) def[colIndex]);
             }
 
             colIndex = colTypesKeys.IndexOf("InstanceName");
-            if (colIndex != -1)
+            if ((colIndex != -1) && (def[colIndex] != null))
             {
-                //instanceName = (String) def[colIndex];
                 dummyDef.setInstanceName((string) def[colIndex]);
             }
 
             colIndex = colTypesKeys.IndexOf("Name");
-            if (colIndex != -1)
+            if ((colIndex != -1) && (def[colIndex] != null))
             {
-                //name = (String) def[colIndex];
                 dummyDef.setName((string) def[colIndex]);
             }
 
             colIndex = colTypesKeys.IndexOf("ScemeName");
-            if (colIndex != -1)
+            if ((colIndex != -1) && (def[colIndex] != null))
             {
-                //scemeName = (String) def[colIndex];
                 dummyDef.setScemeName((string) def[colIndex]);
             }
 
             colIndex = colTypesKeys.IndexOf("Protection");
-            if (colIndex != -1)
+            if ((colIndex != -1) && (def[colIndex] != null))
             {
                 dummyDef.setProtections(DBReader.ParseParamToIntArray((string) def[colIndex]));
             }
 
             colIndex = colTypesKeys.IndexOf("Damages");
-            if (colIndex != -1)
+            if ((colIndex != -1) && (def[colIndex] != null))
             {
                 dummyDef.setDamages(DBReader.ParseParamToIntArray((string) def[colIndex]));
             }
 
             colIndex = colTypesKeys.IndexOf("MainFlag");
-            if (colIndex != -1)
+            if ((colIndex != -1) && (def[colIndex] != null))
             {
-                //mainFlags = (GUC.Enumeration.MainFlags) def[colIndex];
                 dummyDef.setMainFlag((GUC.Enumeration.MainFlags) def[colIndex]);
             }
 
             colIndex = colTypesKeys.IndexOf("Flags");
-            if (colIndex != -1)
+            if ((colIndex != -1) && (def[colIndex] != null))
             {
                 dummyDef.setFlag((GUC.Enumeration.Flags) def[colIndex]);
             }
 
             colIndex = colTypesKeys.IndexOf("Wear");
-            if (colIndex != -1)
+            if ((colIndex != -1) && (def[colIndex] != null))
             {
                 dummyDef.setArmorFlag((GUC.Enumeration.ArmorFlags) def[colIndex]);
             }
 
             colIndex = colTypesKeys.IndexOf("Visual");
-            if (colIndex != -1)
+            if ((colIndex != -1) && (def[colIndex] != null))
             {
-                //visual = (String) def[colIndex];
                 dummyDef.setVisual((string) def[colIndex]);
             }
 
             colIndex = colTypesKeys.IndexOf("Visual_Skin");
-            if (colIndex != -1)
+            if ((colIndex != -1) && (def[colIndex] != null))
             {
-                //visualSkin = (int) def[colIndex];
                 dummyDef.setVisualSkin((int) def[colIndex]);
             }
 
             colIndex = colTypesKeys.IndexOf("Material");
-            if (colIndex != -1)
+            if ((colIndex != -1) && (def[colIndex] != null))
             {
-                //types = (GUC.Enumeration.MaterialType) def[colIndex];
                 dummyDef.setMaterial((GUC.Enumeration.MaterialType) def[colIndex]);
             }
 
             colIndex = colTypesKeys.IndexOf("IsKeyInstance");
-            if (colIndex != -1)
+            if ((colIndex != -1) && (def[colIndex] != null))
             {
                 dummyDef.setIsKeyInstance((bool) def[colIndex]);
             }
 
             colIndex = colTypesKeys.IndexOf("IsGold");
-            if (colIndex != -1)
+            if ((colIndex != -1) && (def[colIndex] != null))
             {
                 dummyDef.setIsGold((bool) def[colIndex]);
             }
 
             colIndex = colTypesKeys.IndexOf("IsTorch");
-            if (colIndex != -1)
+            if ((colIndex != -1) && (def[colIndex] != null))
             {
                 dummyDef.setIsTorch((bool) def[colIndex]);
             }
 
             colIndex = colTypesKeys.IndexOf("IsTorchBurning");
-            if (colIndex != -1)
+            if ((colIndex != -1) && (def[colIndex] != null))
             {
                 dummyDef.setIsTorchBurning((bool) def[colIndex]);
             }
 
             colIndex = colTypesKeys.IndexOf("IsTorchBurned");
-            if (colIndex != -1)
+            if ((colIndex != -1) && (def[colIndex] != null))
             {
                 dummyDef.setIsTorchBurned((bool) def[colIndex]);
             }
@@ -677,51 +699,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                 }
             }
 
-            
-
-            // TO DO: value assignment through loaded effect-changes
-
-            // TO DO: value assignment through loaded effect-changes
-
-            // TO DO: armorFlags assignment through loaded effect-changes
-
-            // TO DO: dmgType assignment through loaded effect-changes
-
-            // TO DO: totalDamage assignment through loaded effect-changes
-
-            // TO DO: range assignment through loaded effect-changes
-
-            // TO DO: visual_Change assignment through loaded effect-changes
-
-            // TO DO: effect assignment through loaded effect-changes
-
-            // TO DO: munition assignment through loaded effect-changes
-
-            // TO DO: keyInstance assignment through loaded effect-changes
-
-            // TO DO: torch assignment through loaded effect-changes
-
-            // TO DO: torchBurning assignment through loaded effect-changes
-
-            // TO DO: torchBurned assignment through loaded effect-changes
-
-            // TO DO: gold assignment through loaded effect-changes
-            //if (EffectChangesDef.TryGetValue(, out effectChange))
-            //{
-
-            //}
-
-            //// create new ItemInstance to list it internally for the G:UC and list it
-            //// for the standardized serverscripts too
-            //ItemDef newDef = new ItemDef(instanceName, name, scemeName, protection, damages, 
-            //    value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, 
-            //    visual_Change, effect, visualSkin, types, munition, keyInstance, torch, 
-            //    torchBurning, torchBurned, gold);
-            //if (newDef != null)
-            //{
-            //    itemDefDict.Add(0, newDef); ;
-            //}
-
             CreateItemDefinition(ref dummyDef);
         }
 
@@ -738,16 +715,19 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                     dummyDef.getIsTorchBurned(), dummyDef.getIsGold());
                 if (newDef != null)
                 {
-                    itemDefDict.Add(0, newDef); ;
+                    itemDefDict.Add(dummyDef.getID(), newDef);
                 }
             }
             catch
             {
                 throw new Exception("CreateItemDefinition: Some necessary attributes of DummyItemDef" 
-                    + " are not valid or missing!");
+                    + " are not valid or missing: ID=" + dummyDef.getID());
             }
         }
 
+        public static void CreateItemDefinition_Test (ref DummyItemDef dummyDef){
+            CreateItemDefinition(ref dummyDef);
+        }
 
         private static void CreateNPCDefinition (DefTableEnum defTab, ref List<object> def,
             ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals,

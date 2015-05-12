@@ -151,7 +151,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                     {"IsTorchBurning",          SQLiteGetTypeEnum.GetBoolean},
                     {"IsTorchBurned",           SQLiteGetTypeEnum.GetBoolean},
                     {"IsGold",                  SQLiteGetTypeEnum.GetBoolean},
-                    {"HasEffect",               SQLiteGetTypeEnum.GetBoolean},
+                    {"HasEffects",               SQLiteGetTypeEnum.GetBoolean},
                 }
             },
             {
@@ -264,6 +264,16 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                         if (bool.TryParse(sqlString, out outBool))
                         {
                             output = outBool;
+                            return true;
+                        }
+                        else if (sqlString.Equals("0"))
+                        {
+                            output = false;
+                            return true;
+                        }
+                        else if (sqlString.Equals("1"))
+                        {
+                            output = true;
                             return true;
                         }
                         else
