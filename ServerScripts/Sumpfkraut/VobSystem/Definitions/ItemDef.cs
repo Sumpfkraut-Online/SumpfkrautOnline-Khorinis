@@ -424,8 +424,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             this.OnUse += new Scripting.Events.UseItemEventHandler(this.UseItem);
             this.OnEquip += new Scripting.Events.NPCEquipEventHandler(this.EquipItem);
             this.OnUnEquip += new Scripting.Events.NPCEquipEventHandler(this.UnequipItem);
-            
-            //CreateItemInstance();
         }
 
 

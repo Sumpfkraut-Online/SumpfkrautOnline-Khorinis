@@ -258,12 +258,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                 create actual instances for vob definitions
                 ------------------------------------------------------------- */
 
-            // a little unhandy but the instantiation of the ItemDef-Object (which inherits ItemInstance)
-            // must be done in one shot 
-            // (not all properties can be changed afterwards
-            //     + the object is only synchronized when a user performs login 
-            //     --> would need to login again to synchronize)
-            //createVobDefinitions(defTab, );
+            CreateVobDefinitions(defTab, ref defList, ref colTypesKeys, ref colTypesVals, 
+                ref vobToEffectsMap, ref effectToChangesMap);
         }
 
 
@@ -291,7 +287,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             }
             else
             {
-                throw new Exception("Cannot load vob definition of vobtype " + defTabEnum + ".");
+                Log.Logger.logError("LoadVobDef: Cannot load vob definition of vobtype " + defTabEnum);
             }  
         }
 
@@ -325,18 +321,34 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                 c = 0;
                 while (c < defList[0][r].Count)
                 {
-                    tempEntry = defList[0][r][c].ToString();
-                    if (DBTables.SqlStringToData((string)tempEntry, colTypesVals[c], ref tempEntry))
+                    Console.WriteLine("----------- " + colTypesKeys[c] + "|--|" + defList[0][r][c].GetType() + "|--|" + defList[0][r][c]);
+                    if (defList[0][r][c] == null)
                     {
-                        defList[0][r][c] = tempEntry;
+                        // null might be just fine
+                    }
+                    else if (defList[0][r][c].GetType() == typeof(DBNull))
+                    {
+                        // DBNull is aa little unheady because it would need additional type-checks later
+                        // use null instead
+                        defList[0][r][c] = null;
                     }
                     else
                     {
-                        defList[0][r][c] = null;
-                        Log.Logger.logError("Could no convert " + tempEntry + " from string to type " 
-                            + colTypesVals[c] + " in method LoadVobDef for loaded database-entry of column "
-                            + colTypesKeys[c]);
+                        // everything else should be a string and somehow convertable
+                        tempEntry = defList[0][r][c].ToString();
+                        if (DBTables.SqlStringToData((string)tempEntry, colTypesVals[c], ref tempEntry))
+                        {
+                            defList[0][r][c] = tempEntry;
+                        }
+                        else
+                        {
+                            defList[0][r][c] = null;
+                            Log.Logger.logError("Could no convert " + tempEntry + " from string to type " 
+                                + colTypesVals[c] + " in method LoadVobDef for loaded database-entry of column "
+                                + colTypesKeys[c]);
+                        }
                     }
+                     Console.WriteLine("----------- " + colTypesKeys[c] + "|--|" + (defList[0][r][c] == null) + "|--|" + defList[0][r][c]);
                     c++;
                 }
                 r++;
@@ -402,8 +414,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
         {
             if (!(effectDefIDs.Count > 0))
             {
-                Log.Logger.logError("Cannot load effect-changes-definitions with 0 effect-definition-ids" 
-                + " in LoadEffectChangesDef.");
+                Log.Logger.logWarning("LoadEffectChangesDef: Cannot load effect-changes-definitions with 0 effect-definition-ids.");
                 return;
             }
             string sqlWhere = "EffectDefID IN (" + String.Concat(",", effectDefIDs.ToArray()) + ")";
@@ -459,7 +470,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
            --------------------------------------------------------- */
 
 
-        private static void createVobDefinitions (DefTableEnum defTab, ref List<List<List<object>>> defList,
+        private static void CreateVobDefinitions (DefTableEnum defTab, ref List<List<List<object>>> defList,
             ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals,
             ref Dictionary<int, List<int>> mapVDToED,
             ref Dictionary<int, List<int>> mapEDToECD)
@@ -554,7 +565,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             ref Dictionary<int, List<int>> mapEDToECD)
         {
             string idColName = "ID";
-            int vobID = def.IndexOf(idColName);
+            int vobID = colTypesKeys.IndexOf(idColName);
             // list of effect-definition-ids of the the handled vob-definition
             List<int> effectDefIDs;
             // respective list of effect-changes-definition-ids which is renewed for each effect-def.-id
@@ -570,7 +581,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                     + "related Dictionaries in Sumpfkraut.Database.DBTables.");
             }
             if (!mapVDToED.TryGetValue(vobID, out effectDefIDs)){
-                throw new Exception("CreateItemDefinition: There are no effect-definitions-ids mapped to by vob-id "
+                Log.Logger.logWarning("CreateItemDefinition: There are no effect-definitions-ids mapped to by vob-id "
                     + vobID + "!");
             }
 
@@ -606,7 +617,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                 dummyDef.setScemeName((string) def[colIndex]);
             }
 
-            colIndex = colTypesKeys.IndexOf("Protection");
+            colIndex = colTypesKeys.IndexOf("Protections");
             if ((colIndex != -1) && (def[colIndex] != null))
             {
                 dummyDef.setProtections(DBReader.ParseParamToIntArray((string) def[colIndex]));
@@ -618,22 +629,50 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                 dummyDef.setDamages(DBReader.ParseParamToIntArray((string) def[colIndex]));
             }
 
+            colIndex = colTypesKeys.IndexOf("Value");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                dummyDef.setValue((int) def[colIndex]);
+            }
+
             colIndex = colTypesKeys.IndexOf("MainFlag");
             if ((colIndex != -1) && (def[colIndex] != null))
             {
-                dummyDef.setMainFlag((GUC.Enumeration.MainFlags) def[colIndex]);
+                dummyDef.setMainFlag((GUC.Enumeration.MainFlags)Enum.ToObject(typeof(GUC.Enumeration.MainFlags), 
+                    def[colIndex]));
             }
 
-            colIndex = colTypesKeys.IndexOf("Flags");
+            colIndex = colTypesKeys.IndexOf("Flag");
             if ((colIndex != -1) && (def[colIndex] != null))
             {
-                dummyDef.setFlag((GUC.Enumeration.Flags) def[colIndex]);
+                dummyDef.setFlag((GUC.Enumeration.Flags)Enum.ToObject(typeof(GUC.Enumeration.Flags), 
+                    def[colIndex]));
             }
 
-            colIndex = colTypesKeys.IndexOf("Wear");
+            colIndex = colTypesKeys.IndexOf("ArmorFlag");
             if ((colIndex != -1) && (def[colIndex] != null))
             {
-                dummyDef.setArmorFlag((GUC.Enumeration.ArmorFlags) def[colIndex]);
+                dummyDef.setArmorFlag((GUC.Enumeration.ArmorFlags)Enum.ToObject(typeof(GUC.Enumeration.ArmorFlags), 
+                    def[colIndex]));
+            }
+
+            colIndex = colTypesKeys.IndexOf("DamageType");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                dummyDef.setDamageType((GUC.Enumeration.DamageTypes)Enum.ToObject(typeof(GUC.Enumeration.DamageTypes), 
+                    def[colIndex]));
+            }
+
+            colIndex = colTypesKeys.IndexOf("TotalDamage");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                dummyDef.setTotalDamage((int) def[colIndex]);
+            }
+
+            colIndex = colTypesKeys.IndexOf("Range");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                dummyDef.setRange((int) def[colIndex]);
             }
 
             colIndex = colTypesKeys.IndexOf("Visual");
@@ -642,7 +681,19 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                 dummyDef.setVisual((string) def[colIndex]);
             }
 
-            colIndex = colTypesKeys.IndexOf("Visual_Skin");
+            colIndex = colTypesKeys.IndexOf("VisualChange");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                dummyDef.setVisualChange((string) def[colIndex]);
+            }
+
+            colIndex = colTypesKeys.IndexOf("Effect");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                dummyDef.setEffect((string) def[colIndex]);
+            }
+
+            colIndex = colTypesKeys.IndexOf("VisualSkin");
             if ((colIndex != -1) && (def[colIndex] != null))
             {
                 dummyDef.setVisualSkin((int) def[colIndex]);
@@ -651,19 +702,20 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             colIndex = colTypesKeys.IndexOf("Material");
             if ((colIndex != -1) && (def[colIndex] != null))
             {
-                dummyDef.setMaterial((GUC.Enumeration.MaterialType) def[colIndex]);
+                dummyDef.setMaterial((GUC.Enumeration.MaterialType)Enum.ToObject(typeof(GUC.Enumeration.MaterialType), 
+                    def[colIndex]));
+            }
+
+            colIndex = colTypesKeys.IndexOf("Munition");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                // !!! TO DO !!!
             }
 
             colIndex = colTypesKeys.IndexOf("IsKeyInstance");
             if ((colIndex != -1) && (def[colIndex] != null))
             {
                 dummyDef.setIsKeyInstance((bool) def[colIndex]);
-            }
-
-            colIndex = colTypesKeys.IndexOf("IsGold");
-            if ((colIndex != -1) && (def[colIndex] != null))
-            {
-                dummyDef.setIsGold((bool) def[colIndex]);
             }
 
             colIndex = colTypesKeys.IndexOf("IsTorch");
@@ -684,29 +736,41 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                 dummyDef.setIsTorchBurned((bool) def[colIndex]);
             }
 
+            colIndex = colTypesKeys.IndexOf("IsGold");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                dummyDef.setIsGold((bool) def[colIndex]);
+            }
+
             /* ---------------------------------------------------
                 attributes which make use of EffectChanges
                --------------------------------------------------- */
 
-            for (int e = 0; e < effectDefIDs.Count; e++)
+            if (effectDefIDs != null)
             {
-                if (mapEDToECD.TryGetValue(effectDefIDs[e], out effectChangesDefIDs))
+                for (int e = 0; e < effectDefIDs.Count; e++)
                 {
-                    for (int ec = 0; ec < effectChangesDefIDs.Count; ec++)
+                    if (mapEDToECD.TryGetValue(effectDefIDs[e], out effectChangesDefIDs))
                     {
-                        if (EffectChangesDef.TryGetValue(effectChangesDefIDs[ec], out effectChange))
+                        if (effectChangesDefIDs != null)
                         {
-                            EffectChangesDef.ApplyToDummy(ref dummyDef, effectChange);
+                            for (int ec = 0; ec < effectChangesDefIDs.Count; ec++)
+                            {
+                                if (EffectChangesDef.TryGetValue(effectChangesDefIDs[ec], out effectChange))
+                                {
+                                    EffectChangesDef.ApplyToDummy(ref dummyDef, effectChange);
+                                }
+                            } 
                         }
-                    } 
-                }
-                else
-                {
-                    Log.Logger.logWarning("CreateItemDefinition: No EffectChangesDef provided for EffectDef-id "
-                        + effectDefIDs[e] + "!");
+                    }
+                    else
+                    {
+                        Log.Logger.logWarning("CreateItemDefinition: No EffectChangesDef provided for EffectDef-id "
+                            + effectDefIDs[e] + "!");
+                    }
                 }
             }
-
+            
             CreateItemDefinition(ref dummyDef);
         }
 
@@ -726,10 +790,10 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                     itemDefDict.Add(dummyDef.getID(), newDef);
                 }
             }
-            catch
+            catch (Exception ex)
             {
                 throw new Exception("CreateItemDefinition: Some necessary attributes of DummyItemDef" 
-                    + " are not valid or missing: ID=" + dummyDef.getID());
+                    + " are not valid or missing: ID=" + dummyDef.getID() + ": " + ex);
             }
         }
 
