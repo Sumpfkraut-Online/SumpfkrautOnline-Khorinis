@@ -30,20 +30,6 @@ namespace GUC.Sumpfkraut.Ingame
 
     class AnimationMenu : GUCMInputReceiver
     {
-
-        [DllImport("kernel32.dll",
-     EntryPoint = "GetStdHandle",
-     SetLastError = true,
-     CharSet = CharSet.Auto,
-     CallingConvention = CallingConvention.StdCall)]
-        private static extern IntPtr GetStdHandle(int nStdHandle);
-        [DllImport("kernel32.dll",
-            EntryPoint = "AllocConsole",
-            SetLastError = true,
-            CharSet = CharSet.Auto,
-            CallingConvention = CallingConvention.StdCall)]
-        private static extern int AllocConsole();
-
         GUCMenuTexture background;
         GUCMenuText[] TextLines;
 
@@ -69,9 +55,11 @@ namespace GUC.Sumpfkraut.Ingame
         AnimationMenuMessage AniMessage = new AnimationMenuMessage();
         AnimVoices loopAnimationEnd = AnimVoices.INVALID;
         AnimVoices latestAnimationsUsed = AnimVoices.INVALID;
+        int latestAniStopMode = 0;
+        bool latestAnimationStopped = false;
         // Animation Pages
-        AnimationPage currentShownAnimationPage, StartPage, ActionPage, ArmPage, PrayPage, EatPage, GesturePage, GreetPage,
-        ScratchPage, MagicPage, DancePage, HGUARDPage, LGUARDPage, SitPage, WorkPage, AmbientPage, PraySpecial;
+        AnimationPage currentShownAnimationPage, latestAnimationPage, StartPage, ActionPage, ArmPage, PrayPage, EatPage, GesturePage, GreetPage,
+        ScratchPage, MagicPage, DancePage, HGUARDPage, LGUARDPage, SitPage, WorkPage, AmbientPage;
         // Animation Page Lists
         List<AnimationPage> StartPList, ActionPList, ArmPList, PrayPList, EatPList, GesturePList, GreetPList,
         ScratchPList, MagicPList, DancePList, HGUARDPList, LGUARDPList, SitPList, WorkPList, AmbientPList;
@@ -79,8 +67,6 @@ namespace GUC.Sumpfkraut.Ingame
 
         public AnimationMenu()
         {
-
-            AllocConsole();
 
             if (!Program.client.messageListener.ContainsKey((byte)NetworkID.AnimationMenuMessage))
             {
@@ -101,7 +87,7 @@ namespace GUC.Sumpfkraut.Ingame
                     offset = 16;
 
                 TextLines[i] = new GUCMenuText("", x+5, y+5+offset*i);
-                TextLines[i].Show();
+                //TextLines[i].Show();
             }
 
             IngameInput.menus.Add(this);
@@ -146,15 +132,36 @@ namespace GUC.Sumpfkraut.Ingame
 
                 // Die AnimationLoop beenden falls vorhanden
                 if (loopAnimationEnd > AnimVoices.INVALID)
-                    AniMessage.StartAnimation(loopAnimationEnd);
+                {
+                    if (latestAniStopMode == 0)
+                    {
+                        AniMessage.StartAnimation(loopAnimationEnd);
+                    }
+                    else
+                    {
+                        AniMessage.StopAnimation(loopAnimationEnd);
+                    }
+                }
 
                 // wenn möglich, eine Seite nach oben gehen
                 if (currentShownAnimationPage.prevAniPage != null)
-                    currentShownAnimationPage = currentShownAnimationPage.prevAniPage;
+                {
+                    // letzte verwendete Animation hatte ein Untermenü => nach oben schalten
+                    if (latestAnimationPage.AnimationPages != null)
+                        currentShownAnimationPage = currentShownAnimationPage.prevAniPage;
+                    // letzte verwendete Animation hatte kein Untermenü, war aber keine LoopAnimation => nach oben
+                    else if (latestAnimationPage.AnimationPages == null && latestAnimationsUsed > AnimVoices.INVALID)
+                        currentShownAnimationPage = currentShownAnimationPage.prevAniPage;
+                    // letzte verwendete Animation hatte kein Untermenü, die Loop wurde allerdings bereits gestoppt.
+                    else if (latestAnimationPage.AnimationPages == null && latestAnimationStopped)
+                        currentShownAnimationPage = currentShownAnimationPage.prevAniPage;
+                }
 
                 // Zurücksetzen
                 latestAnimationsUsed = AnimVoices.INVALID;
                 loopAnimationEnd = AnimVoices.INVALID;
+                // Animation beendet setzen
+                latestAnimationStopped = true;
             }
             else
             {
@@ -164,20 +171,28 @@ namespace GUC.Sumpfkraut.Ingame
                 {
                     if (position < currentShownAnimationPage.AnimationPages.Count)
                     {
+                        // Eine Animation wurde gestartet => Animation läuft
+                        latestAnimationStopped = false;
+                        // Letze aufgerufene AnimationPage
+                        latestAnimationPage = currentShownAnimationPage.AnimationPages[position];
+
                         // Animation starten
                         if (currentShownAnimationPage.AnimationPages[position].ani > AnimVoices.INVALID)
                             AniMessage.StartAnimation(currentShownAnimationPage.AnimationPages[position].ani);
+
+
                         // LoopAnimation? -> Animation für's Beenden abspeichern
                         if (currentShownAnimationPage.AnimationPages[position].stopAni > AnimVoices.INVALID)
                             loopAnimationEnd = currentShownAnimationPage.AnimationPages[position].stopAni;
                         else
                             latestAnimationsUsed = currentShownAnimationPage.AnimationPages[position].ani;
 
+                        // stopMode == 1 => Animation muss sich durch sich selbst stoppen
+                        latestAniStopMode = currentShownAnimationPage.AnimationPages[position].stopMode;
+
                         // neue Animationsseite setzen, wenn es eine gibt.
                         if (currentShownAnimationPage.AnimationPages[position].AnimationPages != null)
                             currentShownAnimationPage = currentShownAnimationPage.AnimationPages[position];
-
-                        Console.WriteLine(currentShownAnimationPage);
                     }
                 }
             }
@@ -189,7 +204,6 @@ namespace GUC.Sumpfkraut.Ingame
         {
             if (currentShownAnimationPage == null)
             {
-                Console.WriteLine("CurrentShownAnimationPage == null ");
                 return;
             }
 
@@ -205,11 +219,8 @@ namespace GUC.Sumpfkraut.Ingame
                         count++;
                     }
                 }
-                else
-                    Console.WriteLine("Ani Count not > 0");
+
             }
-            else
-                Console.WriteLine("AnimationPages are empty!");
 
             if (currentShownAnimationPage != StartPage)
             {
@@ -249,23 +260,26 @@ namespace GUC.Sumpfkraut.Ingame
         public void InitAnimationPages()
         {
             // Initialisierung aller Animation Pages mit Hirachie
+
+            // Eine AnmationPage kann durch ihr aufrufen eine Animation starte
+            // sowie eine weitere Seite anzeigen auf der AnimationPages gelistet sind
             StartPage = new AnimationPage();
 
-            ActionPage = new AnimationPage("Aktionen", StartPage);
-            ArmPage = new AnimationPage("Armbewegungen", StartPage);
-            PrayPage = new AnimationPage("Beten", StartPage);
-            EatPage = new AnimationPage("Essen und Trinken", StartPage);
-            GesturePage = new AnimationPage("Gesten", StartPage);
-            GreetPage = new AnimationPage("Grüßen", StartPage);
-            ScratchPage = new AnimationPage("Kratzen", StartPage);
-            MagicPage = new AnimationPage("Magie üben", StartPage);
-            DancePage = new AnimationPage("Tanzen", StartPage);
+            ActionPage   = new AnimationPage("-> Aktionen", StartPage);
+            ArmPage      = new AnimationPage("-> Armbewegungen", StartPage);
+            PrayPage     = new AnimationPage("-> Beten", StartPage);
+            EatPage      = new AnimationPage("-> Essen und Trinken", StartPage);
+            GesturePage  = new AnimationPage("-> Gesten", StartPage);
+            GreetPage    = new AnimationPage("-> Grüßen", StartPage);
+            ScratchPage  = new AnimationPage("-> Kratzen", StartPage);
+            MagicPage    = new AnimationPage("-> Magie üben", StartPage);
+            DancePage    = new AnimationPage("-> Tanzen", StartPage);
 
-            HGUARDPage = new AnimationPage("Hände in die Hüfte", AnimVoices.T_STAND_2_HGUARD, AnimVoices.T_HGUARD_2_STAND, ActionPage);
-            LGUARDPage = new AnimationPage("Arme verschränken", AnimVoices.T_STAND_2_LGUARD, AnimVoices.T_LGUARD_2_STAND, ActionPage);
-            SitPage = new AnimationPage("Am Boden sitzen", AnimVoices.T_STAND_2_SIT, AnimVoices.T_SIT_2_STAND, ActionPage);
-            WorkPage = new AnimationPage("Arbeiten", ActionPage);
-            AmbientPage = new AnimationPage("Ambiente", ActionPage);
+            HGUARDPage  = new AnimationPage("-> Hände in die Hüfte", AnimVoices.T_STAND_2_HGUARD, AnimVoices.T_HGUARD_2_STAND, ActionPage);
+            LGUARDPage  = new AnimationPage("-> Arme verschränken", AnimVoices.T_STAND_2_LGUARD, AnimVoices.T_LGUARD_2_STAND, ActionPage);
+            SitPage     = new AnimationPage("Am Boden sitzen", AnimVoices.T_STAND_2_SIT, AnimVoices.T_SIT_2_STAND, ActionPage);
+            WorkPage    = new AnimationPage("-> Arbeiten", ActionPage);
+            AmbientPage = new AnimationPage("-> Ambiente", ActionPage);
 
             StartPList = new List<AnimationPage>();
 
@@ -305,20 +319,20 @@ namespace GUC.Sumpfkraut.Ingame
             };
 
             AmbientPList = new List<AnimationPage>(){
-                    new AnimationPage("Schwerttraining", AnimVoices.T_1HSFREE, AnimVoices.T_1HSFREE, ActionPage),
+                    new AnimationPage("Schwerttraining", AnimVoices.T_1HSFREE, AnimVoices.T_1HSFREE, AmbientPage, 1),
                     new AnimationPage("Waffe inspizieren", AnimVoices.T_1HSINSPECT, ActionPage),
-                    new AnimationPage("Horn blasen" ,AnimVoices.T_HORN_S0_2_S1, AnimVoices.T_HORN_S0_2_STAND, ActionPage),
-                    new AnimationPage("Gitarre spielen", AnimVoices.T_LUTE_S0_2_S1, AnimVoices.T_LUTE_S0_2_STAND, ActionPage),
-                    new AnimationPage("Waschen", AnimVoices.T_STAND_2_WASH, AnimVoices.T_WASH_2_STAND, ActionPage),
-                    new AnimationPage("Pinkeln", AnimVoices.T_STAND_2_PEE, AnimVoices.T_PEE_2_STAND, ActionPage)
+                    new AnimationPage("Horn blasen" ,AnimVoices.T_HORN_S0_2_S1, AnimVoices.T_HORN_S0_2_STAND, AmbientPage),
+                    new AnimationPage("Gitarre spielen", AnimVoices.T_LUTE_S0_2_S1, AnimVoices.T_LUTE_S0_2_STAND, AmbientPage),
+                    new AnimationPage("Waschen", AnimVoices.T_STAND_2_WASH, AnimVoices.T_WASH_2_STAND, AmbientPage),
+                    new AnimationPage("Pinkeln", AnimVoices.T_STAND_2_PEE, AnimVoices.T_PEE_2_STAND, AmbientPage)
             };
 
             WorkPList = new List<AnimationPage>()
             {
-                new AnimationPage("Harken", AnimVoices.T_RAKE_S0_2_S1, AnimVoices.T_RAKE_S0_2_STAND, ActionPage),
-                new AnimationPage("Hämmern", AnimVoices.T_REPAIR_S0_2_S1, AnimVoices.T_REPAIR_S0_2_STAND, ActionPage),
-                new AnimationPage("Fegen", AnimVoices.T_BROOM_S0_2_S1, AnimVoices.T_BROOM_S0_2_STAND, ActionPage),
-                new AnimationPage("Wischen", AnimVoices.T_BRUSH_S0_2_S1, AnimVoices.T_BRUSH_S0_2_STAND, ActionPage),
+                new AnimationPage("Harken", AnimVoices.T_RAKE_S0_2_S1, AnimVoices.T_RAKE_S0_2_STAND, WorkPage),
+                new AnimationPage("Hämmern", AnimVoices.T_REPAIR_S0_2_S1, AnimVoices.T_REPAIR_S0_2_STAND, WorkPage),
+                new AnimationPage("Fegen", AnimVoices.T_BROOM_S0_2_S1, AnimVoices.T_BROOM_S0_2_STAND, WorkPage),
+                new AnimationPage("Wischen", AnimVoices.T_BRUSH_S0_2_S1, AnimVoices.T_BRUSH_S0_2_STAND, WorkPage),
             };
 
             SitPList = new List<AnimationPage>()
@@ -327,7 +341,6 @@ namespace GUC.Sumpfkraut.Ingame
             };
 
             #endregion
-
 
             #region ScratchPList
             ScratchPList = new List<AnimationPage>(){
@@ -339,18 +352,12 @@ namespace GUC.Sumpfkraut.Ingame
             #endregion
 
             #region Pray + Special Pray PList
-            PraySpecial = new AnimationPage("Auf beiden Knien beten", AnimVoices.T_STAND_2_PRAY, AnimVoices.T_PRAY_2_STAND, StartPage);
             PrayPList = new List<AnimationPage>(){
-                    new AnimationPage("Anbeten", AnimVoices.T_IDOL_S0_2_S1, AnimVoices.T_IDOL_S0_2_STAND, StartPage),
-                    new AnimationPage("????", AnimVoices.T_IDOL_S0_2_S1, AnimVoices.T_IDOL_S1_2_S0, StartPage),
-                    new AnimationPage("Auf einem Knie Beten", AnimVoices.T_INNOS_S0_2_S1, AnimVoices.T_INNOS_S0_2_STAND, StartPage),
-                    new AnimationPage("????", AnimVoices.T_INNOS_S0_2_S1, AnimVoices.T_INNOS_S1_2_S0, StartPage),
-                    PraySpecial,
+                    new AnimationPage("Anbeten", AnimVoices.T_IDOL_S0_2_S1, AnimVoices.T_IDOL_S0_2_STAND, PrayPage),
+                    new AnimationPage("Auf einem Knie Beten", AnimVoices.T_INNOS_S0_2_S1, AnimVoices.T_INNOS_S0_2_STAND, PrayPage),
+                    new AnimationPage("Auf beiden Knien beten", AnimVoices.T_STAND_2_PRAY, AnimVoices.T_PRAY_2_STAND, PrayPage),
             };
 
-            PraySpecial.AnimationPages = new List<AnimationPage>() { 
-                new AnimationPage("Schaukeln", AnimVoices.T_PRAY_RANDOM, PrayPage),
-            };
             #endregion
 
             #region GreetPList
@@ -375,9 +382,9 @@ namespace GUC.Sumpfkraut.Ingame
 
             #region ArmPList
             ArmPList = new List<AnimationPage>(){
-                    new AnimationPage("Jubeln",AnimVoices.T_STAND_2_WATCHFIGHT, AnimVoices.T_WATCHFIGHT_2_STAND, StartPage),
-                    new AnimationPage("Enttäuschtes Jubeln",AnimVoices.T_WATCHFIGHT_OHNO, AnimVoices.T_WATCHFIGHT_2_STAND, StartPage),
-                    new AnimationPage("Anfeuern",AnimVoices.T_WATCHFIGHT_YEAH, AnimVoices.T_WATCHFIGHT_2_STAND, StartPage),
+                    new AnimationPage("Jubeln",AnimVoices.T_STAND_2_WATCHFIGHT, AnimVoices.T_WATCHFIGHT_2_STAND, ArmPage),
+                    new AnimationPage("Enttäuschtes Jubeln",AnimVoices.T_WATCHFIGHT_OHNO, AnimVoices.T_WATCHFIGHT_2_STAND, ArmPage),
+                    new AnimationPage("Anfeuern",AnimVoices.T_WATCHFIGHT_YEAH, AnimVoices.T_WATCHFIGHT_2_STAND, ArmPage),
                     new AnimationPage("Abwinken",AnimVoices.T_FORGETIT, StartPage),
                     new AnimationPage("Rumfuchteln 1",AnimVoices.T_GETLOST, StartPage),
                     new AnimationPage("Rumfuchteln 2",AnimVoices.T_GETLOST2, StartPage),
@@ -472,6 +479,8 @@ namespace GUC.Sumpfkraut.Ingame
         public List<AnimationPage> AnimationPages;
         // Der Text mit der die Seite/Animation angezeigt wird.
         public string text;
+        // Wenn stopMode = 1 dann muss die Animation über sich selbst beendet werden
+        public int stopMode = 0;
 
 
         public AnimationPage()
@@ -511,9 +520,20 @@ namespace GUC.Sumpfkraut.Ingame
             this.stopAni = stopAni;
         }
 
+        public AnimationPage(string text, AnimVoices ani, AnimVoices stopAni, AnimationPage prevAni, int stopMode)
+        {
+            // Eine Animation die über sich selbst gestoppt werden muss. 
+            // stopMode gibt an, das AnimationStop aufgerufen wird
+            this.text = text;
+            this.ani = ani;
+            this.prevAniPage = prevAni;
+            this.stopAni = stopAni;
+            this.stopMode = stopMode;
+        }
+
         public AnimationPage(string text, AnimVoices ani, AnimationPage prevAni, AnimVoices stopAni, List<AnimationPage> AnimationPages)
         {
-            // Eine Anmation die über eine andere gestoppt werden muss und zusätzlich eine weitere Seite öffnet.
+            // Eine Anmation die über eine andere gestoppt werden muss und zusätzlich eine weitere Seite öffnet
             this.text = text;
             this.ani = ani;
             this.prevAniPage = prevAni;
