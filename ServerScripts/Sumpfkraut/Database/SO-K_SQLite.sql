@@ -127,7 +127,6 @@ CREATE TABLE IF NOT EXISTS `Effect_def` (
 DROP TABLE IF EXISTS `Effect_Changes_def`;
 CREATE TABLE IF NOT EXISTS `Effect_Changes_def` (
     `ID` INTEGER NOT NULL,
-    `EventID` INTEGER  NOT NULL,
     `EffectDefID` INTEGER  NOT NULL,
     `ChangeType` INTEGER  NOT NULL,
     `Parameters` TEXT NOT NULL DEFAULT "",

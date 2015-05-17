@@ -201,7 +201,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             // of the given vob-specific effect-instance table (EI)
             List<List<List<object>>> defList_EC = new List<List<List<object>>>();
             Dictionary<string, SQLiteGetTypeEnum> colTypes_EC = null;
-            if (!DBTables.DefTableDict.TryGetValue(defTab, out colTypes_EC))
+            if (!DBTables.DefTableDict.TryGetValue(DefTableEnum.Effect_Changes_def, out colTypes_EC))
             {
                 return;
             }
@@ -269,6 +269,52 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
            --------------------------------------------------------- */
 
 
+        private static void ConvertSQLResult (ref List<List<List<object>>> defList,
+            ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals,
+            string tabName="/Default defTabName/")
+        {
+            object tempEntry = null;
+            int r = 0;
+            int c = 0;
+            while (r < defList[0].Count)
+            {
+                c = 0;
+                while (c < defList[0][r].Count)
+                {
+                    //Console.WriteLine("----------- " + colTypesKeys[c] + "|--|" + defList[0][r][c].GetType() + "|--|" + defList[0][r][c]);
+                    if (defList[0][r][c] == null)
+                    {
+                        // null might be just fine
+                    }
+                    else if (defList[0][r][c].GetType() == typeof(DBNull))
+                    {
+                        // DBNull is aa little unheady because it would need additional type-checks later
+                        // use null instead
+                        defList[0][r][c] = null;
+                    }
+                    else
+                    {
+                        // everything else should be a string and somehow convertable
+                        tempEntry = defList[0][r][c].ToString();
+                        if (DBTables.SqlStringToData((string) tempEntry, colTypesVals[c], ref tempEntry))
+                        {
+                            defList[0][r][c] = tempEntry;
+                        }
+                        else
+                        {
+                            defList[0][r][c] = null;
+                            Log.Logger.logError("LoadVobDef: Could no convert " + tempEntry + " from string to type "
+                                + colTypesVals[c] + " for loaded database-entry of column "
+                                + colTypesKeys[c] + " (table = `" + tabName + "`)!");
+                        }
+                    }
+                    //Console.WriteLine("----------- " + colTypesKeys[c] + "|--|" + (defList[0][r][c] == null) + "|--|" + defList[0][r][c]);
+                    c++;
+                }
+                r++;
+            }
+        }
+
         /**
          *   Load vob definitions (without effect changes definitions) as usable data objects from database.
          *   Requires no colTypes-parameter the data column names and types will be stored in
@@ -313,46 +359,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                 "ID ASC");
 
             // convert individual sql-result-strings to usable data of given types
-            object tempEntry = null;
-            int r = 0;
-            int c = 0;
-            while (r < defList[0].Count)
-            {
-                c = 0;
-                while (c < defList[0][r].Count)
-                {
-                    Console.WriteLine("----------- " + colTypesKeys[c] + "|--|" + defList[0][r][c].GetType() + "|--|" + defList[0][r][c]);
-                    if (defList[0][r][c] == null)
-                    {
-                        // null might be just fine
-                    }
-                    else if (defList[0][r][c].GetType() == typeof(DBNull))
-                    {
-                        // DBNull is aa little unheady because it would need additional type-checks later
-                        // use null instead
-                        defList[0][r][c] = null;
-                    }
-                    else
-                    {
-                        // everything else should be a string and somehow convertable
-                        tempEntry = defList[0][r][c].ToString();
-                        if (DBTables.SqlStringToData((string)tempEntry, colTypesVals[c], ref tempEntry))
-                        {
-                            defList[0][r][c] = tempEntry;
-                        }
-                        else
-                        {
-                            defList[0][r][c] = null;
-                            Log.Logger.logError("Could no convert " + tempEntry + " from string to type " 
-                                + colTypesVals[c] + " in method LoadVobDef for loaded database-entry of column "
-                                + colTypesKeys[c]);
-                        }
-                    }
-                     Console.WriteLine("----------- " + colTypesKeys[c] + "|--|" + (defList[0][r][c] == null) + "|--|" + defList[0][r][c]);
-                    c++;
-                }
-                r++;
-            }
+            ConvertSQLResult(ref defList, ref colTypesKeys, ref colTypesVals, defTabName);
         }
 
 
@@ -384,28 +391,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             }
 
             // convert individual sql-result-strings to usable data of given types
-            object tempEntry = null;
-            int r = 0;
-            int c = 0;
-            while (r < defList[0].Count)
-            {
-                c = 0;
-                while (c < defList[0][r].Count)
-                {
-                    tempEntry = defList[0][r][c];
-                    if (DBTables.SqlStringToData((string)tempEntry, colTypesVals[c], ref tempEntry))
-                    {
-                        defList[0][r][c] = tempEntry;
-                    }
-                    else
-                    {
-                        Log.Logger.logError("Could no convert " + tempEntry + " from string to type " 
-                            + colTypesVals[c] + " in method LoadEffectsInst.");
-                    }
-                    c++;
-                }
-                r++;
-            }
+            ConvertSQLResult(ref defList, ref colTypesKeys, ref colTypesVals, instTabName);
         }
 
 
@@ -417,7 +403,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                 Log.Logger.logWarning("LoadEffectChangesDef: Cannot load effect-changes-definitions with 0 effect-definition-ids.");
                 return;
             }
-            string sqlWhere = "EffectDefID IN (" + String.Concat(",", effectDefIDs.ToArray()) + ")";
+
+            string sqlWhere = "EffectDefID IN (" + Utilities.String.Concatenate<int>(effectDefIDs.ToArray(), ",") + ")";
+
             LoadEffectChangesDef(ref defList,
                 ref colTypesKeys, ref colTypesVals,
                 sqlWhere);
@@ -439,28 +427,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                 "EffectDefID ASC");
 
             // convert individual sql-result-strings to usable data of given types
-            object tempEntry = null;
-            int r = 0;
-            int c = 0;
-            while (r < defList[1].Count)
-            {
-                c = 0;
-                while (c < defList[1][r].Count)
-                {
-                    tempEntry = defList[1][r][c];
-                    if (DBTables.SqlStringToData((string)tempEntry, colTypesVals[c], ref tempEntry))
-                    {
-                        defList[1][r][c] = tempEntry;
-                    }
-                    else
-                    {
-                        Log.Logger.logError("Could no convert " + tempEntry + " from string to type " 
-                            + colTypesVals[c] + " in method LoadEffectChangesDef.");
-                    }
-                    c++;
-                }
-                r++;
-            }
+            ConvertSQLResult(ref defList, ref colTypesKeys, ref colTypesVals, "EffectChanges_def");
         }
 
 
@@ -758,6 +725,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                             {
                                 if (EffectChangesDef.TryGetValue(effectChangesDefIDs[ec], out effectChange))
                                 {
+                                    //Console.WriteLine("~~~~~~" + effectChange[0] + "|--|" + effectChange[1]);
                                     EffectChangesDef.ApplyToDummy(ref dummyDef, effectChange);
                                 }
                             } 
@@ -787,6 +755,51 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                     dummyDef.getIsTorchBurned(), dummyDef.getIsGold());
                 if (newDef != null)
                 {
+                    // descriptive texts and numbers
+                    newDef.setDescription(dummyDef.getDescription());
+                    newDef.setText0(dummyDef.getText0());
+                    newDef.setText1(dummyDef.getText1());
+                    newDef.setText2(dummyDef.getText2());
+                    newDef.setText3(dummyDef.getText3());
+                    newDef.setText4(dummyDef.getText4());
+                    newDef.setText5(dummyDef.getText5());
+                    newDef.setCount0(dummyDef.getCount0());
+                    newDef.setCount1(dummyDef.getCount1());
+                    newDef.setCount2(dummyDef.getCount2());
+                    newDef.setCount3(dummyDef.getCount3());
+                    newDef.setCount4(dummyDef.getCount4());
+                    newDef.setCount5(dummyDef.getCount5());
+
+                    // triggered with OnUse
+                    newDef.setOnUse_HPChange(dummyDef.getOnUse_HPChange());
+                    newDef.setOnUse_HPMaxChange(dummyDef.getOnUse_HPMaxChange());
+                    newDef.setOnUse_MPChange(dummyDef.getOnUse_MPChange());
+                    newDef.setOnUse_MPMaxChange(dummyDef.getOnUse_MPMaxChange());
+                    newDef.setOnUse_HP_Min(dummyDef.getOnUse_HP_Min());
+                    newDef.setOnUse_HPMax_Min(dummyDef.getOnUse_HPMax_Min());
+                    newDef.setOnUse_MP_Min(dummyDef.getOnUse_MP_Min());
+                    newDef.setOnUse_MPMax_Min(dummyDef.getOnUse_MPMax_Min());
+
+                    // triggered with OnEquip
+                    newDef.setOnEquip_HPChange(dummyDef.getOnEquip_HPChange());
+                    newDef.setOnEquip_HPMaxChange(dummyDef.getOnEquip_HPMaxChange());
+                    newDef.setOnEquip_MPChange(dummyDef.getOnEquip_MPChange());
+                    newDef.setOnEquip_MPMaxChange(dummyDef.getOnEquip_MPMaxChange());
+                    newDef.setOnEquip_HP_Min(dummyDef.getOnEquip_HP_Min());
+                    newDef.setOnEquip_HPMax_Min(dummyDef.getOnEquip_HPMax_Min());
+                    newDef.setOnEquip_MP_Min(dummyDef.getOnEquip_MP_Min());
+                    newDef.setOnEquip_MPMax_Min(dummyDef.getOnEquip_MPMax_Min());
+
+                    // triggered with OnUnEquip
+                    newDef.setOnUnEquip_HPChange(dummyDef.getOnUnEquip_HPChange());
+                    newDef.setOnUnEquip_HPMaxChange(dummyDef.getOnUnEquip_HPMaxChange());
+                    newDef.setOnUnEquip_MPChange(dummyDef.getOnUnEquip_MPChange());
+                    newDef.setOnUnEquip_MPMaxChange(dummyDef.getOnUnEquip_MPMaxChange());
+                    newDef.setOnUnEquip_HP_Min(dummyDef.getOnUnEquip_HP_Min());
+                    newDef.setOnUnEquip_HPMax_Min(dummyDef.getOnUnEquip_HPMax_Min());
+                    newDef.setOnUnEquip_MP_Min(dummyDef.getOnUnEquip_MP_Min());
+                    newDef.setOnUnEquip_MPMax_Min(dummyDef.getOnUnEquip_MPMax_Min());
+
                     itemDefDict.Add(dummyDef.getID(), newDef);
                 }
             }
@@ -807,6 +820,11 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             ref Dictionary<int, List<int>> mapEDToECD)
         {
             // !!! TODO !!!
+        }
+
+        private static void CreateNPCDefinition (ref DummyNPCDef dummyDef)
+        {
+
         }
 
     }

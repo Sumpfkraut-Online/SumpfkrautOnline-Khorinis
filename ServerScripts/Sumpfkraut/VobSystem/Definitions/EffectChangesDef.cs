@@ -10,25 +10,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
     enum EffectChangesEnum
     {
         // 1000 - 1999 reserved for ItemDef effect changes
-        IsGold                      = 1000,
-        IsKeyInstance               = EffectChangesEnum.IsGold + 1,
-        IsTorch                     = EffectChangesEnum.IsKeyInstance + 1,                   
-        IsTorchBurning              = EffectChangesEnum.IsTorch + 1,
-        IsTorchBurned               = EffectChangesEnum.IsTorchBurning + 1,
-
-        Effect                      = EffectChangesEnum.IsTorchBurned + 1,
-        Spell                       = EffectChangesEnum.Effect + 1,
-
-        Wear                        = EffectChangesEnum.Spell + 1,
-        DamageType                  = EffectChangesEnum.Wear + 1,
-        Range                       = EffectChangesEnum.DamageType + 1,
-        TotalDamage                 = EffectChangesEnum.Range + 1,
-        Damages                     = EffectChangesEnum.TotalDamage + 1,
-        Munition                    = EffectChangesEnum.Damages + 1,
-
-        Protection                  = EffectChangesEnum.Munition + 1,
-
-        Description                 = EffectChangesEnum.Protection + 1,
+        Description                 = 1000,
         Text0                       = EffectChangesEnum.Description + 1,
         Text1                       = EffectChangesEnum.Text0 + 1,
         Text2                       = EffectChangesEnum.Text1 + 1,
@@ -74,13 +56,13 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         private static Dictionary<EffectChangesEnum, Del_ApplyToDummy> ApplyToDummyDict_Item = 
             new Dictionary<EffectChangesEnum, Del_ApplyToDummy>()
         {
-            {
-                EffectChangesEnum.Spell, delegate(ref DummyItemDef def, string param)
-                {
-                    // !!! TO DO !!!
-                    return false;
-                }
-            },
+            //{
+            //    EffectChangesEnum.Spell, delegate(ref DummyItemDef def, string param)
+            //    {
+            //        // !!! TO DO !!!
+            //        return false;
+            //    }
+            //},
             {
                 EffectChangesEnum.Description, delegate(ref DummyItemDef def, string param)
                 {
@@ -479,12 +461,12 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
                 }
                 catch
                 {
-                    throw new Exception ("ApplyToDummy: No valid changeType could");
+                    Log.Logger.logWarning("ApplyToDummy: ???");
                 }
             }
             else
             {
-                throw new Exception ("ApplyToDummy: Parameter effectChangesDef is not of length >= 2!");
+                Log.Logger.logWarning("ApplyToDummy: Parameter effectChangesDef is not of length >= 2!");
             }
             
         }
@@ -501,7 +483,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             }
             catch (Exception ex)
             {
-                throw new Exception("Couldn't process effect changes for EffectChangesEnum changeType=" 
+                throw new Exception("ApplyToDummy: Couldn't process effect changes for EffectChangesEnum changeType=" 
                     + changeType + " and with string param=" + param + ": " + ex);
             }
         }

@@ -174,7 +174,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                 DefTableEnum.Effect_Changes_def, new Dictionary<String, SQLiteGetTypeEnum>
                 {
                     {"ID",                      SQLiteGetTypeEnum.GetInt32},
-                    {"EventID",                 SQLiteGetTypeEnum.GetInt32},
                     {"EffectDefID",             SQLiteGetTypeEnum.GetInt32},
                     {"ChangeType",              SQLiteGetTypeEnum.GetInt32},
                     {"Parameters",              SQLiteGetTypeEnum.GetString}

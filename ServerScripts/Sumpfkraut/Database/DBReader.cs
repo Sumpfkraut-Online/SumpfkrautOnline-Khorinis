@@ -86,6 +86,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                     SQLiteDataReader rdr = null;
                     try
                     {
+                        //Console.WriteLine("###########" + completeQuery);
                         rdr = cmd.ExecuteReader();
                         if (rdr == null)
                         {
