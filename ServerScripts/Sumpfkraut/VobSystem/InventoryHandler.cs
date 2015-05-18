@@ -10,7 +10,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 
         public static bool HasItems (int npcInstID, int[] itemDefIDs, int[] amounts, ref int[] errRealAmounts)
         {
-
+            //System.Text.StringBuilder completeQuerySB = new System.Text.StringBuilder();
+            //Database.DBReader.LoadFromDB();
             return true;
         }
 
