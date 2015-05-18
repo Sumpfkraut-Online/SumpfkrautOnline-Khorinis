@@ -611,8 +611,16 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             colIndex = colTypesKeys.IndexOf("UseWithItem");
             if ((colIndex != -1) && (def[colIndex] != null))
             {
-                //dummyDef.setIsLocked((bool) def[colIndex]);
-                // !! TO DO !!
+                ItemDef tempUseWithItem;
+                if (itemDefDict.TryGetValue((int) def[colIndex], out tempUseWithItem))
+                {
+                    dummyDef.setUseWithItem(tempUseWithItem);
+                }
+                else
+                {
+                    Log.Logger.logWarning("CreateMobDefinition: An ItemDef with ID " + (int) def[colIndex]
+                        + " does not exist (yet). The attribute UseWithItem will be neglected in the further process.");
+                }
             }
 
             colIndex = colTypesKeys.IndexOf("TriggerTarget");
