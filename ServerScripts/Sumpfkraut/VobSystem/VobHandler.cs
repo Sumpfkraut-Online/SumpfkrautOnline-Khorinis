@@ -496,23 +496,170 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             ref Dictionary<int, List<int>> mapVDToED,
             ref Dictionary<int, List<int>> mapEDToECD)
         {
+            string idColName = "ID";
+            int vobID = colTypesKeys.IndexOf(idColName);
+            // list of effect-definition-ids of the the handled vob-definition
+            List<int> effectDefIDs;
+            // respective list of effect-changes-definition-ids which is renewed for each effect-def.-id
+            List<int> effectChangesDefIDs;
+            // temporarly stores List with {int changeType, string parameters} == the actual single EffectChangeDef
+            List<object> effectChange;
+            // temporarly holds the necessary values to instantiate the respective definition-object
+            DummyMobDef dummyDef = new DummyMobDef();
+            if (vobID == -1){
+                throw new Exception("CreateMobDefinition: There is no column for the vob id with the name: " 
+                    + idColName + "!"
+                    + " Correct this malfunction immediately by comparing database tables and their "
+                    + "related Dictionaries in Sumpfkraut.Database.DBTables.");
+            }
+            if (!mapVDToED.TryGetValue(vobID, out effectDefIDs))
+            {
+                Log.Logger.logWarning("CreateMobDefinition: There are no effect-definitions-ids mapped to by vob-id "
+                    + vobID + "!");
+            }
 
+            /* ---------------------------------------------------
+                directly accessable attributes from definition table
+                --------------------------------------------------- */
+
+            // temporary used index for more secure code through TryGetValue (see if-blocks below)
+            int colIndex = -1;
+
+            colIndex = colTypesKeys.IndexOf("ID");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                dummyDef.setID((int) def[colIndex]);
+            }
+
+            colIndex = colTypesKeys.IndexOf("MobInterType");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                dummyDef.setMobInterType((MobInterType)Enum.ToObject(typeof(MobInterType), 
+                    def[colIndex]));
+            }
+
+            colIndex = colTypesKeys.IndexOf("Visual");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                dummyDef.setVisual((string) def[colIndex]);
+            }
+
+            colIndex = colTypesKeys.IndexOf("FocusName");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                dummyDef.setFocusName((string) def[colIndex]);
+            }
+
+            colIndex = colTypesKeys.IndexOf("Items");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                //dummyDef.setItems(DBReader.ParseParamToIntArray((string) def[colIndex]));
+                // !! TO DO !!
+            }
+
+            colIndex = colTypesKeys.IndexOf("Amounts");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                dummyDef.setAmounts(DBReader.ParseParamToIntArray((string) def[colIndex]));
+            }
+
+            colIndex = colTypesKeys.IndexOf("IsLocked");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                dummyDef.setIsLocked((bool) def[colIndex]);
+            }
+
+            colIndex = colTypesKeys.IndexOf("KeyInstance");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                //dummyDef.setIsLocked((bool) def[colIndex]);
+                // !! TO DO !!
+            }
+
+            colIndex = colTypesKeys.IndexOf("PicklockString");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                dummyDef.setPicklockString((string) def[colIndex]);
+            }
+
+            colIndex = colTypesKeys.IndexOf("UseWithItem");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                //dummyDef.setIsLocked((bool) def[colIndex]);
+                // !! TO DO !!
+            }
+
+            colIndex = colTypesKeys.IndexOf("TriggerTarget");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                dummyDef.setTriggerTarget((string) def[colIndex]);
+            }
+
+            colIndex = colTypesKeys.IndexOf("CDDyn");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                dummyDef.setCDDyn((bool) def[colIndex]);
+            }
+
+            colIndex = colTypesKeys.IndexOf("CDStatic");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                dummyDef.setCDStatic((bool) def[colIndex]);
+            }
+
+            /* ---------------------------------------------------
+                attributes which make use of EffectChanges
+               --------------------------------------------------- */
+
+            if (effectDefIDs != null)
+            {
+                for (int e = 0; e < effectDefIDs.Count; e++)
+                {
+                    if (mapEDToECD.TryGetValue(effectDefIDs[e], out effectChangesDefIDs))
+                    {
+                        if (effectChangesDefIDs != null)
+                        {
+                            for (int ec = 0; ec < effectChangesDefIDs.Count; ec++)
+                            {
+                                if (EffectChangesDef.TryGetValue(effectChangesDefIDs[ec], out effectChange))
+                                {
+                                    //Console.WriteLine("~~~~~~" + effectChange[0] + "|--|" + effectChange[1]);
+                                    EffectChangesDef.ApplyToDummy(ref dummyDef, effectChange);
+                                }
+                            } 
+                        }
+                    }
+                    else
+                    {
+                        Log.Logger.logWarning("CreateMobDefinition: No EffectChangesDef provided for EffectDef-id "
+                            + effectDefIDs[e] + "!");
+                    }
+                }
+            }
+            
+            CreateMobDefinition(ref dummyDef);
         }
 
         private static void CreateMobDefinition (ref DummyMobDef dummyDef)
         {
             try
             {
-                MobDef newDef = new MobDef();
+            //    MobInterType mobInterType, String visual, String focusName, ItemInstance[] items, int[] amounts, 
+            //bool isLocked, ItemInstance keyInstance, String pickLockString, ItemInstance useWithItem, 
+            //String triggerTarget, bool cdDyn, bool cdStatic
+                MobDef newDef = new MobDef(dummyDef.getMobInterType(), dummyDef.getVisual(), dummyDef.getFocusName(),
+                    dummyDef.getItems(), dummyDef.getAmounts(), dummyDef.getIsLocked(), dummyDef.getKeyInstance(),
+                    dummyDef.getPicklockString(), dummyDef.getUseWithItem(), dummyDef.getTriggerTarget(),
+                    dummyDef.getCDDyn(), dummyDef.getCDStatic());
                 if (newDef != null)
                 {
-                    //itemDefDict.Add(dummyDef.getID(), newDef);
+                    mobDefDict.Add(dummyDef.getID(), newDef);
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                throw new Exception("CreateItemDefinition: Some necessary attributes of DummyItemDef" 
-                    + " are not valid or missing:" + dummyDef);
+                throw new Exception("CreateMobDefinition: Some necessary attributes of DummyItemDef" 
+                    + " are not valid or missing: ID=" + dummyDef.getID() + ": " + ex);
             }
         }
 
@@ -837,7 +984,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             }
             if (!mapVDToED.TryGetValue(vobID, out effectDefIDs))
             {
-                Log.Logger.logWarning("CreateItemDefinition: There are no effect-definitions-ids mapped to by vob-id "
+                Log.Logger.logWarning("CreateNPCDefinition: There are no effect-definitions-ids mapped to by vob-id "
                     + vobID + "!");
             }
 
@@ -989,7 +1136,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             }
             catch (Exception ex)
             {
-                throw new Exception("CreateItemDefinition: Some necessary attributes of DummyItemDef" 
+                throw new Exception("CreateNPCDefinition: Some necessary attributes of DummyItemDef" 
                     + " are not valid or missing: ID=" + dummyDef.getID() + ": " + ex);
             }
         }

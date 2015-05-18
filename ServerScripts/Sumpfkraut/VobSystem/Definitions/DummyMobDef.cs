@@ -16,9 +16,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         public int getID () { return this.ID; }
         public void setID (int ID) { this.ID = ID; }
 
-        protected int InterType;
-        public int getInterType () { return this.InterType; }
-        public void setInterType (int InterType) { this.InterType = InterType; }
+        protected MobInterType MobInterType;
+        public MobInterType getMobInterType () { return this.MobInterType; }
+        public void setMobInterType (MobInterType MobInterType) { this.MobInterType = MobInterType; }
 
 
         // necessary for both interactice and non-interactive vobs 

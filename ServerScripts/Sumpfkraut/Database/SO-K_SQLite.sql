@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `AccountNPCs_inst` (
 DROP TABLE IF EXISTS `Mob_def`;
 CREATE TABLE IF NOT EXISTS `Mob_def` (
     `ID` INTEGER NOT NULL,
-    `InterType` INTEGER  NOT NULL DEFAULT 0, -- defaults to 0=None (not an interactive vob/mob)
+    `MobInterType` INTEGER  NOT NULL DEFAULT 0, -- defaults to 0=None (not an interactive vob/mob)
     `Visual` TEXT NOT NULL,
     `CDDyn` INTEGER  NOT NULL DEFAULT 0, -- defaults to 0=no collision detection with vobs
     `CDStatic` INTEGER  NOT NULL DEFAULT 0, -- defaults to 0=no collision detection with worldmesh

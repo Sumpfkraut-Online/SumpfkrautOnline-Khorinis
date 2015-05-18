@@ -7,6 +7,17 @@ using GUC.Server.Scripting.Objects;
 
 namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 {
+
+    public enum MobInterType
+    {
+        None            = 0,
+        MobInter        = None + 1,
+        MobBed          = MobInter + 1,
+        MobSwitch       = MobBed + 1,
+        MobDoor         = MobSwitch + 1,
+        MobContainer    = MobDoor + 1,
+    } 
+
     /**
      *   Class from which all mobs are instatiated (which are handled by the serverscript).
      */
@@ -19,9 +30,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         public int getID () { return this.ID; }
         public void setID (int ID) { this.ID = ID; }
 
-        protected int InterType;
-        public int getInterType () { return this.InterType; }
-        public void setInterType (int InterType) { this.InterType = InterType; }
+        protected MobInterType MobInterType;
+        public MobInterType getMobInterType () { return this.MobInterType; }
+        public void setMobInterType (MobInterType MobInterType) { this.MobInterType = MobInterType; }
 
 
         // necessary for both interactice and non-interactive vobs 
@@ -80,6 +91,26 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         protected int[] Amounts;
         public int[] getAmounts () { return this.Amounts; }
         public void setAmounts (int[] Amounts) { this.Amounts = Amounts; }
+
+
+
+        public MobDef (MobInterType mobInterType, String visual, String focusName, ItemInstance[] items, int[] amounts, 
+            bool isLocked, ItemInstance keyInstance, String pickLockString, ItemInstance useWithItem, 
+            String triggerTarget, bool cdDyn, bool cdStatic)
+        {
+            this.MobInterType = mobInterType;
+            this.Visual = visual;
+            this.FocusName = focusName;
+            this.Items = items;
+            this.Amounts = amounts;
+            this.IsLocked = isLocked;
+            this.KeyInstance = keyInstance;
+            this.PicklockString = pickLockString;
+            this.UseWithItem = useWithItem;
+            this.TriggerTarget = triggerTarget;
+            this.CDDyn = cdDyn;
+            this.CDStatic = cdStatic;
+        }
 
     }
 }
