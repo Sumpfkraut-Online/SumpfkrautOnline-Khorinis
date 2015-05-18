@@ -553,8 +553,26 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             colIndex = colTypesKeys.IndexOf("Items");
             if ((colIndex != -1) && (def[colIndex] != null))
             {
-                //dummyDef.setItems(DBReader.ParseParamToIntArray((string) def[colIndex]));
-                // !! TO DO !!
+                List<ItemDef> Items_List = new List<ItemDef>();
+
+                int[] Items_DefIDs = DBReader.ParseParamToIntArray((string) def[colIndex]);
+                if ((Items_DefIDs != null) && (Items_DefIDs.Length > 0))
+                {
+                    ItemDef tempContItemDef;
+                    for (int i = 0; i < Items_DefIDs.Length; i++)
+                    {
+                        if (itemDefDict.TryGetValue(Items_DefIDs[i], out tempContItemDef))
+                        {
+                            Items_List.Add(tempContItemDef);
+                        }
+                        else
+                        {
+                            Log.Logger.logWarning("CreateMobDefinition: An ItemDef with ID " + (int) def[colIndex]
+                                + " does not exist (yet). It won't be added to the Items-attribute of its container.");
+                        }
+                    }
+                    dummyDef.setItems(Items_List.ToArray());
+                }
             }
 
             colIndex = colTypesKeys.IndexOf("Amounts");
@@ -572,8 +590,16 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             colIndex = colTypesKeys.IndexOf("KeyInstance");
             if ((colIndex != -1) && (def[colIndex] != null))
             {
-                //dummyDef.setIsLocked((bool) def[colIndex]);
-                // !! TO DO !!
+                ItemDef tempKeyItemDef;
+                if (itemDefDict.TryGetValue((int) def[colIndex], out tempKeyItemDef))
+                {
+                    dummyDef.setKeyInstance(tempKeyItemDef);
+                }
+                else
+                {
+                    Log.Logger.logWarning("CreateMobDefinition: An ItemDef with ID " + (int) def[colIndex]
+                        + " does not exist (yet). The attribute KeyInstance will be neglected in the further process.");
+                }
             }
 
             colIndex = colTypesKeys.IndexOf("PicklockString");
@@ -662,7 +688,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                     + " are not valid or missing: ID=" + dummyDef.getID() + ": " + ex);
             }
         }
-
 
         private static void CreateSpellDefinition (DefTableEnum defTab, ref List<object> def,
             ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals,
