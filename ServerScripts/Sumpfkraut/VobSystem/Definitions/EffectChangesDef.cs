@@ -51,10 +51,21 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         private static Dictionary<int, List<object>> EffectChangesDefDict = new Dictionary<int, List<object>>();
 
-        delegate bool Del_ApplyToDummy(ref DummyItemDef def, string param);
+        delegate bool Del_ApplyToDummy_Spell(ref DummySpellDef def, string param);
+        delegate bool Del_ApplyToDummy_Item(ref DummyItemDef def, string param);
+        delegate bool Del_ApplyToDummy_Mob(ref DummyMobDef def, string param);
+        delegate bool Del_ApplyToDummy_NPC(ref DummyNPCDef def, string param);
 
-        private static Dictionary<EffectChangesEnum, Del_ApplyToDummy> ApplyToDummyDict_Item = 
-            new Dictionary<EffectChangesEnum, Del_ApplyToDummy>()
+
+
+        private static Dictionary<EffectChangesEnum, Del_ApplyToDummy_Spell> ApplyToDummyDict_Spell =
+            new Dictionary<EffectChangesEnum, Del_ApplyToDummy_Spell>()
+        {
+            // TO DO
+        };
+
+        private static Dictionary<EffectChangesEnum, Del_ApplyToDummy_Item> ApplyToDummyDict_Item = 
+            new Dictionary<EffectChangesEnum, Del_ApplyToDummy_Item>()
         {
             //{
             //    EffectChangesEnum.Spell, delegate(ref DummyItemDef def, string param)
@@ -393,6 +404,18 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             },
         };
 
+        private static Dictionary<EffectChangesEnum, Del_ApplyToDummy_Mob> ApplyToDummyDict_Mob =
+            new Dictionary<EffectChangesEnum, Del_ApplyToDummy_Mob>()
+        {
+            // TO DO
+        };
+
+        private static Dictionary<EffectChangesEnum, Del_ApplyToDummy_NPC> ApplyToDummyDict_NPC =
+            new Dictionary<EffectChangesEnum, Del_ApplyToDummy_NPC>()
+        {
+            // TO DO
+        };
+
         
 
         public static void Add (int id, EffectChangesEnum changeType, string param, bool replace=false)
@@ -450,6 +473,44 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             }
         }
 
+        public static void ApplyToDummy (ref DummySpellDef def, List<object> effectChangesDef)
+        {
+            if (effectChangesDef.Count >= 2){
+                try
+                {
+                    EffectChangesEnum changeType = (EffectChangesEnum) effectChangesDef[0];
+                    string param = (string) effectChangesDef[1];
+                    ApplyToDummy(ref def, changeType, param);
+                }
+                catch
+                {
+                    Log.Logger.logWarning("ApplyToDummy: ???");
+                }
+            }
+            else
+            {
+                Log.Logger.logWarning("ApplyToDummy: Parameter effectChangesDef is not of length >= 2!");
+            }
+            
+        }
+
+        public static void ApplyToDummy (ref DummySpellDef def, EffectChangesEnum changeType, string param)
+        {
+            try
+            {
+                Del_ApplyToDummy_Spell applyFunc;
+                if (ApplyToDummyDict_Spell.TryGetValue(changeType, out applyFunc))
+                {
+                    applyFunc(ref def, param);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("ApplyToDummy: Couldn't process effect changes for EffectChangesEnum changeType=" 
+                    + changeType + " and with string param=" + param + ": " + ex);
+            }
+        }
+
         public static void ApplyToDummy (ref DummyItemDef def, List<object> effectChangesDef)
         {
             if (effectChangesDef.Count >= 2){
@@ -475,8 +536,84 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         {
             try
             {
-                Del_ApplyToDummy applyFunc;
+                Del_ApplyToDummy_Item applyFunc;
                 if (ApplyToDummyDict_Item.TryGetValue(changeType, out applyFunc))
+                {
+                    applyFunc(ref def, param);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("ApplyToDummy: Couldn't process effect changes for EffectChangesEnum changeType=" 
+                    + changeType + " and with string param=" + param + ": " + ex);
+            }
+        }
+
+        public static void ApplyToDummy (ref DummyMobDef def, List<object> effectChangesDef)
+        {
+            if (effectChangesDef.Count >= 2){
+                try
+                {
+                    EffectChangesEnum changeType = (EffectChangesEnum) effectChangesDef[0];
+                    string param = (string) effectChangesDef[1];
+                    ApplyToDummy(ref def, changeType, param);
+                }
+                catch
+                {
+                    Log.Logger.logWarning("ApplyToDummy: ???");
+                }
+            }
+            else
+            {
+                Log.Logger.logWarning("ApplyToDummy: Parameter effectChangesDef is not of length >= 2!");
+            }
+            
+        }
+
+        public static void ApplyToDummy (ref DummyMobDef def, EffectChangesEnum changeType, string param)
+        {
+            try
+            {
+                Del_ApplyToDummy_Mob applyFunc;
+                if (ApplyToDummyDict_Mob.TryGetValue(changeType, out applyFunc))
+                {
+                    applyFunc(ref def, param);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("ApplyToDummy: Couldn't process effect changes for EffectChangesEnum changeType=" 
+                    + changeType + " and with string param=" + param + ": " + ex);
+            }
+        }
+
+        public static void ApplyToDummy (ref DummyNPCDef def, List<object> effectChangesDef)
+        {
+            if (effectChangesDef.Count >= 2){
+                try
+                {
+                    EffectChangesEnum changeType = (EffectChangesEnum) effectChangesDef[0];
+                    string param = (string) effectChangesDef[1];
+                    ApplyToDummy(ref def, changeType, param);
+                }
+                catch
+                {
+                    Log.Logger.logWarning("ApplyToDummy: ???");
+                }
+            }
+            else
+            {
+                Log.Logger.logWarning("ApplyToDummy: Parameter effectChangesDef is not of length >= 2!");
+            }
+            
+        }
+
+        public static void ApplyToDummy (ref DummyNPCDef def, EffectChangesEnum changeType, string param)
+        {
+            try
+            {
+                Del_ApplyToDummy_NPC applyFunc;
+                if (ApplyToDummyDict_NPC.TryGetValue(changeType, out applyFunc))
                 {
                     applyFunc(ref def, param);
                 }

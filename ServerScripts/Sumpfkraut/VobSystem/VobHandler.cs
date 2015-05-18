@@ -819,12 +819,179 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             ref Dictionary<int, List<int>> mapVDToED, 
             ref Dictionary<int, List<int>> mapEDToECD)
         {
-            // !!! TODO !!!
+            string idColName = "ID";
+            int vobID = colTypesKeys.IndexOf(idColName);
+            // list of effect-definition-ids of the the handled vob-definition
+            List<int> effectDefIDs;
+            // respective list of effect-changes-definition-ids which is renewed for each effect-def.-id
+            List<int> effectChangesDefIDs;
+            // temporarly stores List with {int changeType, string parameters} == the actual single EffectChangeDef
+            List<object> effectChange;
+            // temporarly holds the necessary values to instantiate the respective definition-object
+            DummyNPCDef dummyDef = new DummyNPCDef();
+            if (vobID == -1){
+                throw new Exception("CreateNPCDefinition: There is no column for the vob id with the name: " 
+                    + idColName + "!"
+                    + " Correct this malfunction immediately by comparing database tables and their "
+                    + "related Dictionaries in Sumpfkraut.Database.DBTables.");
+            }
+            if (!mapVDToED.TryGetValue(vobID, out effectDefIDs))
+            {
+                Log.Logger.logWarning("CreateItemDefinition: There are no effect-definitions-ids mapped to by vob-id "
+                    + vobID + "!");
+            }
+
+            /* ---------------------------------------------------
+                directly accessable attributes from definition table
+                --------------------------------------------------- */
+
+            // temporary used index for more secure code through TryGetValue (see if-blocks below)
+            int colIndex = -1;
+
+            colIndex = colTypesKeys.IndexOf("ID");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                dummyDef.setID((int) def[colIndex]);
+            }
+
+            colIndex = colTypesKeys.IndexOf("Name");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                dummyDef.setName((string) def[colIndex]);
+            }
+
+            colIndex = colTypesKeys.IndexOf("Attributes");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                dummyDef.setAttributes(DBReader.ParseParamToIntArray((string) def[colIndex]));
+            }
+
+            colIndex = colTypesKeys.IndexOf("TalentValues");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                dummyDef.setTalentValues(DBReader.ParseParamToIntArray((string) def[colIndex]));
+            }
+
+            colIndex = colTypesKeys.IndexOf("TalentSkills");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                dummyDef.setTalentSkills(DBReader.ParseParamToIntArray((string) def[colIndex]));
+            }
+
+            colIndex = colTypesKeys.IndexOf("HitChances");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                dummyDef.setHitChances(DBReader.ParseParamToIntArray((string) def[colIndex]));
+            }
+
+            colIndex = colTypesKeys.IndexOf("Guild");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                dummyDef.setGuild((int) def[colIndex]);
+            }
+
+            colIndex = colTypesKeys.IndexOf("Voice");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                dummyDef.setVoice((int) def[colIndex]);
+            }
+
+            colIndex = colTypesKeys.IndexOf("Visual");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                dummyDef.setVisual((string) def[colIndex]);
+            }
+
+            colIndex = colTypesKeys.IndexOf("BodyMesh");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                dummyDef.setBodyMesh((string) def[colIndex]);
+            }
+
+            colIndex = colTypesKeys.IndexOf("BodyTex");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                dummyDef.setBodyTex((int) def[colIndex]);
+            }
+
+            colIndex = colTypesKeys.IndexOf("SkinColor");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                dummyDef.setSkinColor((int) def[colIndex]);
+            }
+
+            colIndex = colTypesKeys.IndexOf("HeadMesh");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                dummyDef.setHeadMesh((string) def[colIndex]);
+            }
+
+            colIndex = colTypesKeys.IndexOf("HeadTex");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                dummyDef.setHeadTex((int) def[colIndex]);
+            }
+
+            colIndex = colTypesKeys.IndexOf("TeethTex");
+            if ((colIndex != -1) && (def[colIndex] != null))
+            {
+                dummyDef.setTeethTex((int) def[colIndex]);
+            }
+
+            /* ---------------------------------------------------
+                attributes which make use of EffectChanges
+               --------------------------------------------------- */
+
+            if (effectDefIDs != null)
+            {
+                for (int e = 0; e < effectDefIDs.Count; e++)
+                {
+                    if (mapEDToECD.TryGetValue(effectDefIDs[e], out effectChangesDefIDs))
+                    {
+                        if (effectChangesDefIDs != null)
+                        {
+                            for (int ec = 0; ec < effectChangesDefIDs.Count; ec++)
+                            {
+                                if (EffectChangesDef.TryGetValue(effectChangesDefIDs[ec], out effectChange))
+                                {
+                                    //Console.WriteLine("~~~~~~" + effectChange[0] + "|--|" + effectChange[1]);
+                                    EffectChangesDef.ApplyToDummy(ref dummyDef, effectChange);
+                                }
+                            } 
+                        }
+                    }
+                    else
+                    {
+                        Log.Logger.logWarning("CreateNPCDefinition: No EffectChangesDef provided for EffectDef-id "
+                            + effectDefIDs[e] + "!");
+                    }
+                }
+            }
+            
+            CreateNPCDefinition(ref dummyDef);
         }
 
         private static void CreateNPCDefinition (ref DummyNPCDef dummyDef)
         {
-
+            try
+            {
+                //(String name, int[] attributes, int[] talentValues, int[] talentSkills, int[] hitChances, 
+                //int guild, int voice, String visual, String bodyMesh, int bodyTex, int skinColor, 
+                //String headMesh, int headTex, int teethTex)
+                NPCDef newDef = new NPCDef(dummyDef.getName(), dummyDef.getAttributes(), dummyDef.getTalentValues(), 
+                    dummyDef.getTalentSkills(), dummyDef.getHitChances(), dummyDef.getGuild(), dummyDef.getVoice(),
+                    dummyDef.getVisual(), dummyDef.getBodyMesh(), dummyDef.getBodyTex(), dummyDef.getSkinColor(),
+                    dummyDef.getHeadMesh(), dummyDef.getHeadTex(), dummyDef.getTeethTex());
+                if (newDef != null)
+                {
+                    npcDefDict.Add(dummyDef.getID(), newDef);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("CreateItemDefinition: Some necessary attributes of DummyItemDef" 
+                    + " are not valid or missing: ID=" + dummyDef.getID() + ": " + ex);
+            }
         }
 
     }

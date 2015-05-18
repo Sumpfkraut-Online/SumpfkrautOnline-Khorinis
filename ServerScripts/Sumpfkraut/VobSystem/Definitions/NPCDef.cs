@@ -17,6 +17,10 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         public int getID () { return this.ID; }
         public void setID (int ID) { this.ID = ID; }
 
+        protected string Name;
+        public string getName () { return this.Name; }
+        public void setName (string Name) { this.Name = Name; }
+
         protected int[] Attributes;
         public int[] getAttributes () { return this.Attributes; }
         public void setAttributes (int[] Attributes) { this.Attributes = Attributes; }
@@ -40,10 +44,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         protected int Voice;
         public int getVoice () { return this.Voice; }
         public void setVoice (int Voice) { this.Voice = Voice; }
-
-        protected string Name;
-        public string getName () { return this.Name; }
-        public void setName (string Name) { this.Name = Name; }
 
         protected string Visual;
         public string getVisual () { return this.Visual; }
@@ -72,6 +72,27 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         protected int TeethTex;
         public int getTeethTex () { return this.TeethTex; }
         public void setTeethTex (int TeethTex) { this.TeethTex = TeethTex; }
+
+
+        public NPCDef(String name, int[] attributes, int[] talentValues, int[] talentSkills, int[] hitChances, 
+            int guild, int voice, String visual, String bodyMesh, int bodyTex, int skinColor, 
+            String headMesh, int headTex, int teethTex)
+        {
+            this.Name = name;
+            this.Attributes = attributes;
+            this.TalentValues = talentValues;
+            this.TalentSkills = talentSkills;
+            this.HitChances = hitChances;
+            this.Guild = guild;
+            this.Voice = voice;
+            this.Visual = visual;
+            this.BodyMesh = bodyMesh;
+            this.BodyTex = bodyTex;
+            this.SkinColor = skinColor;
+            this.HeadMesh = headMesh;
+            this.HeadTex = headTex;
+            this.TeethTex = teethTex;
+        }
 
     }
 }

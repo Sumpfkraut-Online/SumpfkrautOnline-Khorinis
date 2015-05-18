@@ -166,13 +166,13 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                 DefTableEnum.NPC_def, new Dictionary<String, SQLiteGetTypeEnum>
                 {
                     {"ID",                      SQLiteGetTypeEnum.GetInt32},
+                    {"Name",                    SQLiteGetTypeEnum.GetString},
                     {"Attributes",              SQLiteGetTypeEnum.GetString},
                     {"TalentValues",            SQLiteGetTypeEnum.GetString},
                     {"TalentSkills",            SQLiteGetTypeEnum.GetString},
                     {"HitChances",              SQLiteGetTypeEnum.GetString},
                     {"Guild",                   SQLiteGetTypeEnum.GetInt32},
                     {"Voice",                   SQLiteGetTypeEnum.GetInt32},
-                    {"Name",                    SQLiteGetTypeEnum.GetString},
                     {"Visual",                  SQLiteGetTypeEnum.GetString},
                     {"BodyMesh",                SQLiteGetTypeEnum.GetString},
                     {"BodyTex",                 SQLiteGetTypeEnum.GetInt32},
