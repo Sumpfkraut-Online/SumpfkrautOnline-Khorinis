@@ -71,6 +71,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
 
         // necessary for container-mobs (MobContainer)
+        // will be handled as multiple EffectChangesDef, no direct loading from the Mob_def-table of the database
 
         protected ItemInstance[] Items;
         public ItemInstance[] getItems () { return this.Items; }

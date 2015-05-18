@@ -97,9 +97,17 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                 DefTableEnum.Mob_def, new Dictionary<String, SQLiteGetTypeEnum>
                 {
                     {"ID",                      SQLiteGetTypeEnum.GetInt32},
+                    {"InterType",               SQLiteGetTypeEnum.GetInt32},
                     {"Visual",                  SQLiteGetTypeEnum.GetString},
-                    {"Material",                SQLiteGetTypeEnum.GetInt32},
-                    {"HasEffect",               SQLiteGetTypeEnum.GetBoolean}
+                    {"CDDyn",                   SQLiteGetTypeEnum.GetBoolean},
+                    {"CDStatic",                SQLiteGetTypeEnum.GetBoolean},
+                    {"FocusName",               SQLiteGetTypeEnum.GetString},
+                    {"UseWithItem",             SQLiteGetTypeEnum.GetInt32},
+                    {"TriggerTarget",           SQLiteGetTypeEnum.GetString},
+                    {"IsLocked",                SQLiteGetTypeEnum.GetBoolean},
+                    {"KeyInstance",             SQLiteGetTypeEnum.GetInt32},
+                    {"PicklockString",          SQLiteGetTypeEnum.GetString},
+                    {"HasEffects",               SQLiteGetTypeEnum.GetBoolean},
                 }
             },
             {
@@ -121,7 +129,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                     {"TargetCollectRange",      SQLiteGetTypeEnum.GetInt32},
                     {"TargetCollectAzi",        SQLiteGetTypeEnum.GetInt32},
                     {"TargetCollectElev",       SQLiteGetTypeEnum.GetInt32},
-                    {"HasEffect",               SQLiteGetTypeEnum.GetBoolean}
+                    {"HasEffects",               SQLiteGetTypeEnum.GetBoolean}
                 }
             },
             {
@@ -151,16 +159,27 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                     {"IsTorchBurning",          SQLiteGetTypeEnum.GetBoolean},
                     {"IsTorchBurned",           SQLiteGetTypeEnum.GetBoolean},
                     {"IsGold",                  SQLiteGetTypeEnum.GetBoolean},
-                    {"HasEffects",               SQLiteGetTypeEnum.GetBoolean},
+                    {"HasEffects",              SQLiteGetTypeEnum.GetBoolean},
                 }
             },
             {
                 DefTableEnum.NPC_def, new Dictionary<String, SQLiteGetTypeEnum>
                 {
                     {"ID",                      SQLiteGetTypeEnum.GetInt32},
+                    {"Attributes",              SQLiteGetTypeEnum.GetString},
+                    {"TalentValues",            SQLiteGetTypeEnum.GetString},
+                    {"TalentSkills",            SQLiteGetTypeEnum.GetString},
+                    {"HitChances",              SQLiteGetTypeEnum.GetString},
+                    {"Guild",                   SQLiteGetTypeEnum.GetInt32},
+                    {"Voice",                   SQLiteGetTypeEnum.GetInt32},
+                    {"Name",                    SQLiteGetTypeEnum.GetString},
                     {"Visual",                  SQLiteGetTypeEnum.GetString},
-                    {"Visual_Skin",             SQLiteGetTypeEnum.GetInt32},
-                    {"HasEffect",               SQLiteGetTypeEnum.GetBoolean}
+                    {"BodyMesh",                SQLiteGetTypeEnum.GetString},
+                    {"BodyTex",                 SQLiteGetTypeEnum.GetInt32},
+                    {"HeadMesh",                SQLiteGetTypeEnum.GetString},
+                    {"HeadTex",                 SQLiteGetTypeEnum.GetInt32},
+                    {"TeethTex",                SQLiteGetTypeEnum.GetInt32},
+                    {"HasEffects",              SQLiteGetTypeEnum.GetBoolean}
                 }
             },
             {

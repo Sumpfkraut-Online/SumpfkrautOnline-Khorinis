@@ -38,17 +38,27 @@ CREATE TABLE IF NOT EXISTS `AccountNPCs_inst` (
 -- general definition information for Mob-instantiation (static or usable)
 DROP TABLE IF EXISTS `Mob_def`;
 CREATE TABLE IF NOT EXISTS `Mob_def` (
-    `ID` INTEGER  NOT NULL,
+    `ID` INTEGER NOT NULL,
+    `InterType` INTEGER  NOT NULL DEFAULT 0, -- defaults to 0=None (not an interactive vob/mob)
     `Visual` TEXT NOT NULL,
-    `Material` INTEGER  NOT NULL DEFAULT 3,
+    `CDDyn` INTEGER  NOT NULL DEFAULT 0, -- defaults to 0=no collision detection with vobs
+    `CDStatic` INTEGER  NOT NULL DEFAULT 0, -- defaults to 0=no collision detection with worldmesh
+    `FocusName` TEXT DEFAULT NULL, -- name which appears when having mob in focus
+    `UseWithItem` INTEGER DEFAULT NULL, -- mob-interaction only possible with this kind of item in inventory
+    `TriggerTarget` TEXT DEFAULT NULL, -- ???
+    `IsLocked` INTEGER DEFAULT 0, -- whether it is a lockable object or not
+    `KeyInstance` INTEGER DEFAULT 0, -- possible kind of key-item to unlock the lockable mob
+    `PicklockString` TEXT DEFAULT NULL, -- right-left-pattern for lockpicking
     `HasEffects` INTEGER NOT NULL DEFAULT 0,
     `ChangeDate` TEXT NOT NULL,
     `CreationDate` TEXT NOT NULL,
-    PRIMARY KEY (`ID`)
+    PRIMARY KEY (`ID`),
+    FOREIGN KEY (`UseWithItem`) REFERENCES `Item_def`(`ID`),
+    FOREIGN KEY (`KeyInstance`) REFERENCES `Item_def`(`ID`)
 );
 
 -- general definition information for Spell-instantiation
---- !!! incomlete !!!
+--- !!! incomplete and is postponed until Spells are actually needed !!!
 DROP TABLE IF EXISTS `Spell_def`;
 CREATE TABLE IF NOT EXISTS `Spell_def` (
     `ID` INTEGER  NOT NULL,
@@ -102,12 +112,24 @@ CREATE TABLE IF NOT EXISTS `Item_def` (
 );
 
 -- general definition information for NPC-instantiation
---- !!! incomlete !!!
 DROP TABLE IF EXISTS `NPC_def`;
 CREATE TABLE IF NOT EXISTS `NPC_def` (
     `ID` INTEGER  NOT NULL,
+    `Attributes` TEXT NOT NULL DEFAULT "0=1,1=1,2=0,3=0,4=0,5=0,6=0,7=0,8=0", -- HP, HPMax, MP, MPMax, STR, DEX, RegenHP, RegenMP, Max???
+    `TalentValues` TEXT NOT NULL DEFAULT "0=0,1=0,2=0,3=0,4=0,5=0,6=0,7=0,8=0,9=0,10=0,11=0,12=0,13=0,14=0,15=0,16=0,17=0,18=0,19=0", -- NOT USED BY GUC AT THE MOMENT! Unknown, H1, H2, Bow, Crossbow, Picklock, Pickpocket, Mage, Sneak, Regenerate, Firemaster, Acrobat, PickpocketG2, Smith, Runes, Alchemy, TakeAnimalTrophy, Foreignlanguage, MaxTalents
+    `TalentSkills` TEXT NOT NULL DEFAULT "0=0,1=0,2=0,3=0,4=0,5=0,6=0,7=0,8=0,9=0,10=0,11=0,12=0,13=0,14=0,15=0,16=0,17=0,18=0,19=0", -- NOT USED BY GUC AT THE MOMENT! Unknown, H1, H2, Bow, Crossbow, Picklock, Pickpocket, Mage, Sneak, Regenerate, Firemaster, Acrobat, PickpocketG2, Smith, Runes, Alchemy, TakeAnimalTrophy, Foreignlanguage, MaxTalents
+    `HitChances` TEXT NOT NULL DEFAULT "0=1,1=1,2=0,3=0", -- H1, H2, Bow, Crossbow
+    `Guild` INTEGER  DEFAULT NULL,
+    `Voice` INTEGER  NOT NULL DEFAULT 0,
+    `Name` TEXT NOT NULL DEFAULT "DEFAULT NAME",
     `Visual` TEXT NOT NULL,
-    `Visual_Skin` INTEGER  NOT NULL DEFAULT 0,
+    `BodyMesh` TEXT NOT NULL,
+    `BodyTex` INTEGER  NOT NULL,
+    `SkinColor` INTEGER  NOT NULL,
+    `HeadMesh` TEXT NOT NULL,
+    `HeadTex` INTEGER  NOT NULL,
+    `TeethTex` INTEGER  NOT NULL,
+    `HasEffects`
     `ChangeDate` TEXT NOT NULL,
     `CreationDate` TEXT NOT NULL,
     PRIMARY KEY (`ID`)
