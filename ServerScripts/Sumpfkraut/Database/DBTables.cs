@@ -97,7 +97,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                 DefTableEnum.Mob_def, new Dictionary<String, SQLiteGetTypeEnum>
                 {
                     {"ID",                      SQLiteGetTypeEnum.GetInt32},
-                    {"InterType",               SQLiteGetTypeEnum.GetInt32},
+                    {"MobInterType",            SQLiteGetTypeEnum.GetInt32},
                     {"Visual",                  SQLiteGetTypeEnum.GetString},
                     {"CDDyn",                   SQLiteGetTypeEnum.GetBoolean},
                     {"CDStatic",                SQLiteGetTypeEnum.GetBoolean},
@@ -107,7 +107,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                     {"IsLocked",                SQLiteGetTypeEnum.GetBoolean},
                     {"KeyInstance",             SQLiteGetTypeEnum.GetInt32},
                     {"PicklockString",          SQLiteGetTypeEnum.GetString},
-                    {"HasEffects",               SQLiteGetTypeEnum.GetBoolean},
+                    {"HasEffects",              SQLiteGetTypeEnum.GetBoolean},
                 }
             },
             {

@@ -288,3 +288,25 @@ CREATE TABLE IF NOT EXISTS `NPCInWorld_inst` (
     FOREIGN KEY (`NPCInstID`) REFERENCES `NPC_inst`(`ID`),
     FOREIGN KEY (`WorldInstID`) REFERENCES `World_inst`(`ID`)
 );
+
+
+------------------------
+-- Test-MobDef(s)
+------------------------
+
+-- a bed in which the exhausted find no sleep
+INSERT OR REPLACE INTO `Mob_def` (ID, MobInterType, Visual, CDDyn, CDStatic, HasEffects, ChangeDate, CreationDate) VALUES (0, 0, "DT_Bed_V1.3ds", 1, 1, 0, "2015-05-11", "2015-05-11");
+
+------------------------
+-- Test-ItemDef(s)
+------------------------
+
+-- ITMI_MOREMONEY
+INSERT OR REPLACE INTO `Item_def` (ID, InstanceName, Name, ScemeName, MainFlag, Flag, Visual, HasEffects, ChangeDate, CreationDate) VALUES (0, "ITMI_MOREMONEY", "MoreMoney", "", 1, 2097152, "ItMi_Gold.3ds", 1, "2015-05-11", "2015-05-11");
+INSERT OR REPLACE INTO `Effect_def` (ID, Name, ChangeDate, CreationDate) VALUES (0, "Item_ITMI_MOREMONEY", "2015-05-11", "2015-05-11");
+INSERT OR REPLACE INTO `Effect_Changes_def` (ID, EffectDefID, ChangeType, Parameters) VALUES (0, 0, 1000, "More money better than less money ya know..."), (1, 0, 1001, "Awesomeness"), (2, 0, 1007, 9001);
+INSERT OR REPLACE INTO `Item_Effects_inst` (ItemDefID, EffectDefID) VALUES (0, 0);
+
+------------------------
+-- Test-NPCDef(s)
+------------------------

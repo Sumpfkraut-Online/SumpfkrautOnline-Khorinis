@@ -109,6 +109,10 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                                 // create and fill array of the temporary data row
                                 rowArr = new object[rdr.FieldCount];
                                 rdr.GetValues(rowArr);
+                                //for (int bla = 0; bla < rowArr.Length; bla++ )
+                                //{
+                                //    Console.WriteLine("+*+*+*+*: " + rowArr[bla].GetType() + " |--| " + rowArr[bla]);
+                                //}
                                 results[results.Count - 1].Add(new List<object>(rowArr));
                             }
                         }
