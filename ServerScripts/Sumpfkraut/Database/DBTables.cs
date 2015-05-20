@@ -36,6 +36,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
         NPC_inst,
 
         ItemInInventory_inst,
+        ItemInContainer_inst,
         MobInWorld_inst,
         ItemInWorld_inst,
         NPCInWorld_inst,
@@ -258,6 +259,34 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                 {
                     {"NPCDefID",                      SQLiteGetTypeEnum.GetInt32},
                     {"EffectDefID",                   SQLiteGetTypeEnum.GetInt32},
+                }
+            },
+            {
+                InstTableEnum.ItemInInventory_inst, new Dictionary<String, SQLiteGetTypeEnum>
+                {
+                    {"NPCInstID",                     SQLiteGetTypeEnum.GetInt32},
+                    {"ItemInstID",                    SQLiteGetTypeEnum.GetInt32},
+                }
+            },
+            {
+                InstTableEnum.ItemInContainer_inst, new Dictionary<String, SQLiteGetTypeEnum>
+                {
+                    {"MobInstID",                     SQLiteGetTypeEnum.GetInt32},
+                    {"ItemInstID",                    SQLiteGetTypeEnum.GetInt32},
+                }
+            },
+            {
+                InstTableEnum.MobInWorld_inst, new Dictionary<String, SQLiteGetTypeEnum>
+                {
+                    {"MobInstID",                     SQLiteGetTypeEnum.GetInt32},
+                    {"WorldInstID",                   SQLiteGetTypeEnum.GetInt32},
+                }
+            },
+            {
+                InstTableEnum.ItemInWorld_inst, new Dictionary<String, SQLiteGetTypeEnum>
+                {
+                    {"ItemInstID",                    SQLiteGetTypeEnum.GetInt32},
+                    {"WorldInstID",                   SQLiteGetTypeEnum.GetInt32},
                 }
             },
         };
