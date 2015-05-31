@@ -153,7 +153,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
 
         private void ExchangeToEmptyString(string[] str)
         {
-            for (int i = 0; i < str.Length; i++)
+            for(int i = 0; i < str.Length; i++)
             {
                 str[i] = "";
             }

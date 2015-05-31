@@ -45,7 +45,7 @@ namespace GUC.Sumpfkraut.Ingame
         private void PlayVoice(Player pl, int num)
         {
             oCNpc npc = new oCNpc(proc, pl.Address);
-            String vcmd = String.Format("SVM_{0}_{1}.WAV",7 /*npc.Voice*/,((VoiceCommands)num).ToString());
+            String vcmd = String.Format("SVM_{0}_{1}.WAV",7 /*npc.Voice*/,((AnimVoices)num).ToString());
             using (zString z = zString.Create(proc,vcmd))
             {
                 ss.PlaySound3D(z, npc, 0, param);

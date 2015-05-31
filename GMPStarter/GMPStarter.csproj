@@ -39,7 +39,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ionic.Zip">
-      <HintPath>..\..\crimson\GothicII\System\UntoldChapter\DLL\Ionic.Zip.dll</HintPath>
+      <HintPath>..\GothicII\System\UntoldChapter\DLL\Ionic.Zip.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="RakNetSwig">
+      <HintPath>..\GothicII\System\UntoldChapter\DLL\RakNetSwig.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

@@ -25,8 +25,8 @@ namespace GUC.Sumpfkraut.Menus
 
             protected override void CreateMenu()
             {
-                const int offset = 150;
-                const int dist = 35;
+                const int offset = 200;
+                const int dist = 38;
                 grey = new ColorRGBA(150, 150, 150);
                 thisMenu = new GUCMainMenu(0);
                 thisMenu.AddText("Hauptmenü", 70);
@@ -35,9 +35,7 @@ namespace GUC.Sumpfkraut.Menus
                 bContinue = thisMenu.AddMenuButton("Weiterspielen", "Aktuelles Spiel fortführen.", Close, offset + dist * 2); //lol
                 thisMenu.AddMenuButton("Spielerliste", "Zeigt die angemeldeten Spieler.", PlayerList.Open, offset + dist * 3);
                 thisMenu.AddMenuButton("RP-Guide", "Eine kurze Einführung ins Rollenspiel.", RPGuide.Open, offset + dist * 4);
-                thisMenu.AddMenuButton("Intro spielen", "Introsequenz noch einmal abspielen.", null, offset + dist * 5);
-                thisMenu.AddMenuButton("Credits", "Credits", null, offset + dist * 6);
-                thisMenu.AddMenuButton("Beenden", "Die Welt von SumpfkrautOnline verlassen.", Exit.Open, offset + dist * 7);
+                thisMenu.AddMenuButton("Beenden", "Die Welt von SumpfkrautOnline verlassen.", Exit.Open, offset + dist * 5);
                 bContinue.SetColor(grey);
                 bContinue.ignore = true;
                 ingame = false;

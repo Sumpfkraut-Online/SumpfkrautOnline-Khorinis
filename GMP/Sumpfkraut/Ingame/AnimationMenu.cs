@@ -27,7 +27,6 @@ using Microsoft.Win32.SafeHandles;
 
 namespace GUC.Sumpfkraut.Ingame
 {
-
     class AnimationMenu : GUCInputReceiver
     {
         private static AnimationMenu animMenu;
@@ -88,7 +87,8 @@ namespace GUC.Sumpfkraut.Ingame
             int offset = 15;
 
             TextLines = new GUCMenuText[10];
-            for (int i = 0; i < 10; i++)
+
+            for (int i = 0; i < 10; i++ )
             {
                 if (i == 9)
                     offset = 16;
@@ -280,6 +280,7 @@ namespace GUC.Sumpfkraut.Ingame
             LGUARDPage = new AnimationPage("-> Arme verschränken", AnimVoices.T_STAND_2_LGUARD, AnimVoices.T_LGUARD_2_STAND, ActionPage);
             SitPage = new AnimationPage("Am Boden sitzen", AnimVoices.T_STAND_2_SIT, AnimVoices.T_SIT_2_STAND, ActionPage);
             WorkPage = new AnimationPage("-> Arbeiten", ActionPage);
+
             AmbientPage = new AnimationPage("-> Ambiente", ActionPage);
 
             StartPList = new List<AnimationPage>();
@@ -546,7 +547,6 @@ namespace GUC.Sumpfkraut.Ingame
         {
             return " CurrentAnimationPage: TEXT(" + text + ") ANI(" + ani + ") STOPANI(" + stopAni + ") PREVAP(" + prevAniPage + ")";
         }
-
     }
 
     class AnimationMenuMessage : IMessage

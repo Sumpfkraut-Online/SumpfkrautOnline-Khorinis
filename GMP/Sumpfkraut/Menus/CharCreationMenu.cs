@@ -157,7 +157,7 @@ namespace GUC.Sumpfkraut.Menus
                     rand = new Random();
                 }
 
-                string v = string.Format("SVM_{0}_{1}.WAV", cVoice.Choice, ((VoiceCommands)rand.Next(0, (int)VoiceCommands.MAX_G2_VOICES)).ToString());
+                string v = string.Format("SVM_{0}_{1}.WAV", cVoice.Choice, ((AnimVoices)rand.Next((int)AnimVoices.MAX_ANIMATIONS+1, (int)AnimVoices.MAX_G2_VOICES)).ToString());
                 InputHandler.PlaySound(v);
             }
 
