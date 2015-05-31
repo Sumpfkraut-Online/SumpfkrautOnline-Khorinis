@@ -6,7 +6,7 @@ using System.Text;
 using WinApi;
 using WinApi.User.Enumeration;
 using GUC.Types;
-using GUC.Sumpfkraut.Ingame.GUI;
+using GUC.Sumpfkraut.GUI;
 using GUC.Enumeration;
 using GUC.WorldObjects.Character;
 using GUC.WorldObjects;
@@ -17,8 +17,20 @@ using Gothic.zClasses;
 
 namespace GUC.Sumpfkraut.Ingame
 {
-    class Trade : GUCMInputReceiver
+    class Trade : GUCInputReceiver
     {
+        private static Trade trade;
+        public static Trade GetTrade()
+        {
+            if (trade == null)
+            {
+                trade = new Trade();
+            }
+            return trade;
+        }
+
+        public VirtualKeys ActivationKey = VirtualKeys.T;
+
         GUCMenuInventory inv;
         GUCMenuInventory sellInv;
         GUCMenuInventory buyInv;
@@ -30,7 +42,6 @@ namespace GUC.Sumpfkraut.Ingame
         {
             if (!Program.client.messageListener.ContainsKey((byte)NetworkID.TradeMessage))
             {
-
                 Program.client.messageListener.Add((byte)NetworkID.TradeMessage, new TradeMessage());
             }
             messenger = (TradeMessage)Program.client.messageListener[(byte)NetworkID.TradeMessage];
@@ -39,10 +50,12 @@ namespace GUC.Sumpfkraut.Ingame
             messenger.OnAcceptMessage += OpenTradeMenu;
             messenger.OnChangeItemMessage += ChangeItem;
 
-            buyInv = new GUCMenuInventory(80, 200, 2, 3, "Inv_Back_Buy.tga");
-            sellInv = new GUCMenuInventory(290, 200, 2, 3, "Inv_Back_Sell.tga");
+            buyInv = new GUCMenuInventory(80, 200, 2, 3, "Inv_Back_Sell.tga"); 
+            buyInv.ShowGold = false;
+            sellInv = new GUCMenuInventory(290, 200, 2, 3, "Inv_Back_Sell.tga"); 
+            sellInv.ShowGold = false;
             inv = new GUCMenuInventory(500, 200, 4, 3, "Inv_Back.tga");
-
+            
             inv.left = sellInv;
             sellInv.right = inv;
             sellInv.left = buyInv;
@@ -50,8 +63,14 @@ namespace GUC.Sumpfkraut.Ingame
 
             inv.OnPressCTRL += messenger.OfferItem;
             sellInv.OnPressCTRL += messenger.RemoveItem;
-            
-            IngameInput.menus.Add(this);
+        }
+
+        public void Activate()
+        {
+                if (Player.Hero.FocusVob != null /* && Player.Hero.FocusVob.VobType == VobType.Player*/)
+                {
+                    messenger.SendRequest(Player.Hero.FocusVob.ID);
+                }
         }
 
         private void ChangeItem(Item item, bool self, bool add)
@@ -82,62 +101,30 @@ namespace GUC.Sumpfkraut.Ingame
             }
         }
 
-        GUCMenuText test;
         public void KeyPressed(int key)
         {
-            if (key == (int)VirtualKeys.O)
-            {
-                int xPtr = Process.ThisProcess().Alloc(4).ToInt32();
-                int yPtr = Process.ThisProcess().Alloc(4).ToInt32();
-                int address = ((IntPtr)(Player.Hero.Address + 0x06CC)).ToInt32();
-                Process.ThisProcess().THISCALL<NullReturnCall>((uint)address, (uint)0x007A7660, new CallValue[] { (IntArg)xPtr, (IntArg)yPtr });
-
-                if (test == null)
-                {
-                    test = new GUCMenuText("TEST", 10, 10);
-                    test.Show();
-                }
-                test.Text = Process.ThisProcess().ReadInt(xPtr).ToString() + " " + Process.ThisProcess().ReadInt(yPtr).ToString();
-                Process.ThisProcess().Free(new IntPtr(xPtr), 4);
-                Process.ThisProcess().Free(new IntPtr(yPtr), 4);
-            }
-            else if (key == (int)VirtualKeys.T)
-            {
-                if (trader == null) //trade menu is not shown
-                {
-                    /*if (Player.Hero.FocusVob != null && Player.Hero.FocusVob.VobType == VobType.Player)
-                    {
-                       SendRequest(Player.Hero.FocusVob.ID);
-                    }*/
-                    messenger.SendRequest(Player.Hero.ID);
-                }
-                else
-                {
-                    messenger.SendBreak();
-                    CloseTradeMenu();
-                }
+            if (key == (int)Chat.GetChat().ActivationKey)
+            { //chat can be opened during trade
+                Chat.GetChat().Open();
             }
             else if (key == (int)VirtualKeys.Escape)
             {
-                if (trader != null)
-                {
-                    messenger.SendBreak();
-                    CloseTradeMenu();
-                }
+                messenger.SendBreak();
+                CloseTradeMenu();
             }
-            else if (trader != null)
+            else
             {
-                if (inv.enabled)
+                if (inv.Enabled)
                 {
                     inv.KeyPressed(key);
                     return;
                 }
-                else if (sellInv.enabled)
+                else if (sellInv.Enabled)
                 {
                     sellInv.KeyPressed(key);
                     return;
                 }
-                else if (buyInv.enabled)
+                else if (buyInv.Enabled)
                 {
                     buyInv.KeyPressed(key);
                     return;
@@ -150,9 +137,9 @@ namespace GUC.Sumpfkraut.Ingame
             trader = pl;
             inv.SetCursor(0, 0);
             inv.Open(Player.Hero.ItemList);
-            sellInv.Open(null);
-            buyInv.Open(null);
-            IngameInput.activateFullControl(this);
+            sellInv.Open(null); sellInv.Title = Player.Hero.Name;
+            buyInv.Open(null); buyInv.Title = pl.Name;
+            InputHandler.activateFullControl(this);
         }
 
         private void CloseTradeMenu()
@@ -161,7 +148,7 @@ namespace GUC.Sumpfkraut.Ingame
             sellInv.Hide();
             buyInv.Hide();
             inv.Hide();
-            IngameInput.deactivateFullControl();
+            InputHandler.deactivateFullControl(this);
         }
 
         public void Update(long ticks)

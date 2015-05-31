@@ -8,18 +8,19 @@ using Gothic.zClasses;
 using Gothic.zTypes;
 using WinApi;
 using GUC.Types;
-
+using GUC.Sumpfkraut;
 using WinApi.User.Enumeration;
 
 
-namespace GUC.Sumpfkraut.Ingame.GUI
+namespace GUC.Sumpfkraut.GUI
 {
-    class GUCMenuTextBox : GUCMInputReceiver, GUCMVisual
+    class GUCMenuTextBox : GUCInputReceiver, GUCMVisual
     {
         Process proc;
 
         public int charLimit; //maximum of writable chars
         public bool allowWhiteSpaces;
+        public bool allowSymbols;
 
         zCView thisView;
         zCViewText viewText;
@@ -50,6 +51,24 @@ namespace GUC.Sumpfkraut.Ingame.GUI
             set { }
         }
 
+        private bool enabled;
+        public bool Enabled
+        {
+            get { return enabled; }
+            set
+            {
+                enabled = value;
+                if (enabled)
+                {
+                    cursorText.Text.Set("|");
+                }
+                else
+                {
+                    cursorText.Text.Clear();
+                }
+            }
+        }
+
         //chat utils
         public delegate void InputChangedHandler();
         public event InputChangedHandler InputChangedEvent;
@@ -62,12 +81,13 @@ namespace GUC.Sumpfkraut.Ingame.GUI
             //Settings
             charLimit = 512;
             allowWhiteSpaces = true;
+            allowSymbols = true;
             this.fixedBorders = fixedBorders;
 
             //Position & size
             pos = new Vec2i(x, y);
             width = w;
-            height = IngameInput.DefaultFontYPixels;
+            height = InputHandler.DefaultFontYPixels;
 
             //Pixels to virtuals
             int[] vpos = InputHooked.PixelToVirtual(proc, new int[] { pos.X, pos.Y });
@@ -105,6 +125,7 @@ namespace GUC.Sumpfkraut.Ingame.GUI
             text = new StringBuilder();
 
             numHideChars = 0;
+            enabled = false;
         }
 
         public void Show()
@@ -139,6 +160,9 @@ namespace GUC.Sumpfkraut.Ingame.GUI
         
         public void KeyPressed(int key)
         {
+            if (!enabled)
+                return;
+
             if (key == (int)VirtualKeys.Back) //Backspace, delete char behind the cursor
             {
                 if (cursorPos > 0)
@@ -198,14 +222,17 @@ namespace GUC.Sumpfkraut.Ingame.GUI
                     return;
 
                 char c = str[0];
-                if (!IngameInput.AllChars.ContainsKey(c)) //check if typed char is supported by gothic's font
+                if (!InputHandler.AllChars.ContainsKey(c)) //check if typed char is supported by gothic's font
                     return;
 
                 if (allowWhiteSpaces == false && c == ' ')
                     return; //we don't want spaces
 
+                if (allowSymbols == false && InputHandler.AllChars.Keys.ToList().IndexOf(c) > 52)
+                    return;
+
                 text.Insert(cursorPos, c);
-                if (fixedBorders && IngameInput.StringPixelWidth(input) > width) //check if fixed borders are reached
+                if (fixedBorders && InputHandler.StringPixelWidth(input) > width) //check if fixed borders are reached
                 {
                     text.Remove(cursorPos, 1);
                     return;
@@ -224,7 +251,7 @@ namespace GUC.Sumpfkraut.Ingame.GUI
 
         private void UpdateViewText()
         {
-            cursorText.Text.Set("|");
+            if (enabled) cursorText.Text.Set("|");
 
             int sub = 0;
             if (cursorPos >= numHideChars)
@@ -233,8 +260,8 @@ namespace GUC.Sumpfkraut.Ingame.GUI
             }
             string substractedText = input.Substring(sub);
             viewText.Text.Set(substractedText);
-            int cursorLen = IngameInput.StringPixelWidth(substractedText.Substring(0, cursorPos - sub));
-            int inputLen = IngameInput.StringPixelWidth(substractedText);
+            int cursorLen = InputHandler.StringPixelWidth(substractedText.Substring(0, cursorPos - sub));
+            int inputLen = InputHandler.StringPixelWidth(substractedText);
 
             if (fixedBorders)
             {
@@ -355,6 +382,9 @@ namespace GUC.Sumpfkraut.Ingame.GUI
 
         public void Update(long ticks)
         {
+            if (!enabled)
+                return;
+
             if (ticks > cursorTime)
             {
                 if (cursorText.Text.Length == 0)

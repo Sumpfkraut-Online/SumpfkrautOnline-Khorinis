@@ -8,7 +8,7 @@ using Gothic.zTypes;
 using WinApi;
 using GUC.WorldObjects;
 
-namespace GUC.Sumpfkraut.Ingame.GUI
+namespace GUC.Sumpfkraut.GUI
 {
     interface GUCMVisual
     {
@@ -16,7 +16,7 @@ namespace GUC.Sumpfkraut.Ingame.GUI
         void Hide();
     }
 
-    interface GUCMInputReceiver
+    interface GUCInputReceiver
     {
         void KeyPressed(int key);
         void Update(long ticks);

@@ -43,12 +43,16 @@ namespace GUC.Server.Sumpfkraut
             public List<Item> list1;
             public Player pl2;
             public List<Item> list2;
+            public bool accepted1;
+            public bool accepted2;
 
             public TradeCouple(Player p1, Player p2)
             {
                 pl1 = p1; pl2 = p2;
                 list1 = new List<Item>();
                 list2 = new List<Item>();
+                accepted1 = false;
+                accepted2 = false;
             }
         }
 
@@ -64,6 +68,8 @@ namespace GUC.Server.Sumpfkraut
             {
                 if (trader == tc.pl1)
                 {
+                    if (tc.accepted1 || tc.accepted2)
+                        return;
                     if (add && !tc.list1.Contains(item))
                     {
                         tc.list1.Add(item);
@@ -77,7 +83,9 @@ namespace GUC.Server.Sumpfkraut
                 }
                 else if (trader == tc.pl2)
                 {
-                    if (add)
+                    if (tc.accepted1 || tc.accepted2)
+                        return;
+                    if (add && !tc.list2.Contains(item))
                     {
                         tc.list2.Add(item);
                     }
@@ -96,6 +104,11 @@ namespace GUC.Server.Sumpfkraut
             foreach (TradeCouple tc in tradings)
             {
                 if (tc.pl1 == target || tc.pl2 == target)
+                {
+                    return;
+                }
+
+                if (tc.pl1 == requester || tc.pl2 == requester)
                 {
                     return;
                 }

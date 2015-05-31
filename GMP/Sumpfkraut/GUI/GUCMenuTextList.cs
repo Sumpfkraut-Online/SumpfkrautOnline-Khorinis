@@ -9,10 +9,11 @@ using Gothic.zTypes;
 using WinApi;
 using GUC.Types;
 using WinApi.User.Enumeration;
+using GUC.Sumpfkraut;
 
-namespace GUC.Sumpfkraut.Ingame.GUI
+namespace GUC.Sumpfkraut.GUI
 {
-    class GUCMenuTextList : GUCMInputReceiver, GUCMVisual
+    class GUCMenuTextList : GUCInputReceiver, GUCMVisual
     {
         Process proc;
 
@@ -28,6 +29,8 @@ namespace GUC.Sumpfkraut.Ingame.GUI
 
         List<Row> rows = new List<Row>();
         int startPos;
+
+        public bool Enabled { get; set; }
 
         class Row
         {
@@ -56,7 +59,7 @@ namespace GUC.Sumpfkraut.Ingame.GUI
             }
 
             //Create the text lines
-            int dist = PixelToViewVirtualY(IngameInput.DefaultFontYPixels);
+            int dist = PixelToViewVirtualY(InputHandler.DefaultFontYPixels);
             int numLines = 0x2000 / dist;
             using (zString emptyString = zString.Create(proc, ""))
             {
@@ -80,6 +83,7 @@ namespace GUC.Sumpfkraut.Ingame.GUI
 
             rows = new List<Row>();
             startPos = 0;
+            Enabled = true;
         }
 
         public void Show()
@@ -101,14 +105,14 @@ namespace GUC.Sumpfkraut.Ingame.GUI
             Row row;
             int num = 0;
 
-            if (IngameInput.StringPixelWidth(text) > width)
+            if (InputHandler.StringPixelWidth(text) > width)
             {
                 string line = "";
                 string nextLine;
                 foreach(char c in text)
                 {
                     nextLine = (line + c).TrimEnd(); //cut of all white spaces at the end
-                    if (IngameInput.StringPixelWidth(nextLine) > width)
+                    if (InputHandler.StringPixelWidth(nextLine) > width)
                     {
                         row = new Row();
                         row.color = color;
@@ -220,6 +224,9 @@ namespace GUC.Sumpfkraut.Ingame.GUI
 
         public void KeyPressed(int key)
         {
+            if (!Enabled)
+                return;
+
             if (key == (int)VirtualKeys.Prior)
             {
                 startPos--;

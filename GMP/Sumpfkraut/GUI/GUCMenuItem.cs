@@ -10,7 +10,7 @@ using WinApi;
 using GUC.Types;
 using GUC.WorldObjects;
 
-namespace GUC.Sumpfkraut.Ingame.GUI
+namespace GUC.Sumpfkraut.GUI
 {
     class GUCMenuItem : GUCMVisual
     {

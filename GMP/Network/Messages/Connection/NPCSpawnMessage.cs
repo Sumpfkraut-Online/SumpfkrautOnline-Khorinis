@@ -18,6 +18,8 @@ namespace GUC.Network.Messages.Connection
     {
         public void Read(RakNet.BitStream stream, RakNet.Packet packet, Client client)
         {
+            
+
             int plID;
             String levelName;
             Vec3f pos, dir;
@@ -34,17 +36,23 @@ namespace GUC.Network.Messages.Connection
 
             NPCProto playerVob = (NPCProto)vob;
 
+            
+
             Process process = Process.ThisProcess();
             oCNpc npc = new oCNpc(process, vob.Address);
             if (vob is Player && vob == Player.Hero)
             {
+                if (Sumpfkraut.Menus.MainMenus._Background != null)
+                    Sumpfkraut.Menus.MainMenus._Background.Hide();
+                if (Sumpfkraut.Menus.MainMenus.ActiveMenu != null)
+                    Sumpfkraut.Menus.MainMenus.ActiveMenu.Close();
+
                 ((Player)vob).spawned();
                 playerVob.Map = levelName;
                 zString level = zString.Create(process, playerVob.Map);
                 oCGame.Game(process).ChangeLevel(level, level);
                 level.Dispose();
-
-                
+                                
                 vob.setDirection(dir);
                 vob.setPosition(pos);
                 Program._state = new GameState();

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.Enumeration;
 using WinApi;
-using GUC.Sumpfkraut.Ingame.GUI;
+using GUC.Sumpfkraut.GUI;
 using GUC.WorldObjects.Character;
 
 namespace GUC.Sumpfkraut.Ingame
@@ -27,12 +27,9 @@ namespace GUC.Sumpfkraut.Ingame
         
         private IngameInterface()
         {
-            Process.ThisProcess().Hook("UntoldChapter\\DLL\\GUC.dll", typeof(GUI.ItemRenderer).GetMethod("OnRender"), (int)0x00704B90, (int)7, 0);
-
-            if (!Program.client.messageListener.ContainsKey((byte)NetworkID.ChatMessage))
-                Program.client.messageListener.Add((byte)NetworkID.ChatMessage, new Ingame.Chat());
-
-            new Trade();
+            Chat.GetChat(); //Init
+            Trade.GetTrade(); //Init
+            AnimationMenu.GetMenu(); //Init
         }
     }
 }

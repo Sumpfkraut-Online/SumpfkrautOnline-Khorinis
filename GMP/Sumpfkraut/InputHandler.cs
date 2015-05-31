@@ -4,15 +4,16 @@ using System.Linq;
 using System.Text;
 using Gothic.mClasses;
 using WinApi;
-
 using Gothic.zClasses;
 using Gothic.zTypes;
+using GUC.Sumpfkraut.GUI;
+using Gothic.zStruct;
+using WinApi.User.Enumeration;
+using GUC.Sumpfkraut.Menus;
 
-using GUC.Sumpfkraut.Ingame.GUI;
-
-namespace GUC.Sumpfkraut.Ingame
+namespace GUC.Sumpfkraut
 {
-    class IngameInput
+    class InputHandler
     {
         /*public static Dictionary<string, double> AllChars = new Dictionary<string, double>() { { "A", 14.998571428571428571428571428571d }, { "B", 11.998857142857142857142857142857d }, { "C", 10.998857142857142857142857142857d }, { "D", 11.998857142857142857142857142857d }, { "E", 11.998857142857142857142857142857d }, { "F", 10.999142857142857142857142857143d }, { "G", 12.998857142857142857142857142857d }, { "H", 11.998857142857142857142857142857d }, { "I", 4.9997142857142857142857142857143d }, { "J", 10.999142857142857142857142857143d }, { "K", 12.998857142857142857142857142857d },
                                                                                          { "L", 10.999142857142857142857142857143d }, { "M", 14.998571428571428571428571428571d }, { "N", 10.999142857142857142857142857143d }, { "O", 12.998857142857142857142857142857d }, { "P", 11.998857142857142857142857142857d }, { "Q", 12.998857142857142857142857142857d }, { "R", 11.998571428571428571428571428571d }, { "S", 11.998857142857142857142857142857d }, { "T", 11.998857142857142857142857142857d }, { "U", 11.998857142857142857142857142857d }, { "V", 11.998857142857142857142857142857d },
@@ -41,49 +42,83 @@ namespace GUC.Sumpfkraut.Ingame
             double size = 0;
             foreach (char c in str)
             {
-                if (!IngameInput.AllChars.ContainsKey(c))
+                if (!InputHandler.AllChars.ContainsKey(c))
                     continue;
 
-                size += (double)IngameInput.AllChars[c];
+                size += (double)InputHandler.AllChars[c];
             }
 
             return (int)size;
         }
 
-        public IngameInput()
+        public InputHandler()
         {
         }
 
-        public static List<GUCMInputReceiver> menus = new List<GUCMInputReceiver>();
-        private static GUCMInputReceiver singleMenu = null;
-        
-        private static long[] keys = new long[0xFF];
-
-        public static void activateFullControl(GUCMInputReceiver menu)
+        private static zTSound3DParams param;
+        private static zCSndSys_MSS ss = null;
+        private static zCVob soundvob;
+        public static void PlaySound(string name)
         {
-            singleMenu = menu;
+            if (ss == null)
+            {
+                param = zTSound3DParams.Create(Process.ThisProcess());
+                ss = zCSndSys_MSS.SoundSystem(Process.ThisProcess());
+                soundvob = zCVob.Create(Process.ThisProcess());
+            }
+
+            using (zString z = zString.Create(Process.ThisProcess(), name))
+            {
+                ss.PlaySound3D(z, soundvob, 0, param);
+            }
+
+            /*using (zString z = zString.Create(Process.ThisProcess(),name))
+            {
+                Process.ThisProcess().CDECLCALL<NullReturnCall>((uint)0x6CBFD0, new CallValue[] { z });
+            }*/
+        }
+
+        public delegate void ShortCutHandler();
+        public static Dictionary<VirtualKeys, ShortCutHandler> shortCuts = new Dictionary<VirtualKeys, ShortCutHandler>()
+        {
+            { VirtualKeys.Escape, MainMenus.Main.Open },
+            { Ingame.Chat.GetChat().ActivationKey, Ingame.Chat.GetChat().Open },
+            { Ingame.Chat.GetChat().ToggleKey, Ingame.Chat.GetChat().ToggleChat },
+            { Ingame.Trade.GetTrade().ActivationKey, Ingame.Trade.GetTrade().Activate },
+            { Ingame.AnimationMenu.GetMenu().ActivationKey, Ingame.AnimationMenu.GetMenu().Open }
+        };
+
+        private static List<GUCInputReceiver> receiver = new List<GUCInputReceiver>();
+
+        public static void activateFullControl(GUCInputReceiver menu)
+        { // when one or more menus overlap. When the last is closed, the one before gets the control back
+            receiver.Insert(0, menu);
             InputHooked.deaktivateFullControl(Process.ThisProcess());
         }
 
-        public static void deactivateFullControl()
+        public static void deactivateFullControl(GUCInputReceiver menu)
         {
-            singleMenu = null;
-            InputHooked.activateFullControl(Process.ThisProcess());
+            receiver.Remove(menu);
+            if (receiver.Count == 0)
+            {
+                InputHooked.activateFullControl(Process.ThisProcess());
+            }
         }
-
+        
         private static void SendKeyPressed(int key)
         {
-            if (singleMenu == null)
-            {
-                foreach (GUCMInputReceiver m in menus)
-                    m.KeyPressed(key);
+            if (receiver.Count == 0) 
+            { //check for shortcuts
+                foreach (KeyValuePair<VirtualKeys,ShortCutHandler> sc in shortCuts)
+                    if (key == (int)sc.Key) sc.Value();
             }
-            else
+            else //a menu is open
             {
-                singleMenu.KeyPressed(key);
+                receiver[0].KeyPressed(key);
             }
         }
 
+        private static long[] keys = new long[0xFF];
         public static void Update()
         {
             if (WinApi.User.Window.GetWindowThreadProcessId(WinApi.User.Window.GetForegroundWindow()) == Process.ThisProcess().ProcessID)
@@ -95,7 +130,7 @@ namespace GUC.Sumpfkraut.Ingame
                     {
                         if (keys[i] == 0) //newly pressed
                         {
-                            keys[i] = ticks + 5000000;
+                            keys[i] = ticks + 5500000;
                             SendKeyPressed(i);
                         }
                         else //hold
@@ -117,8 +152,9 @@ namespace GUC.Sumpfkraut.Ingame
                     }
                     
                 }
-                foreach (GUCMInputReceiver m in menus)
-                    m.Update(ticks);
+
+                if (receiver.Count != 0)
+                    receiver[0].Update(ticks);
             }
             else
             {

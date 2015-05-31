@@ -184,37 +184,46 @@ namespace GUC.Network
             if (connectionView == null)
             {
                 Process process = Process.ThisProcess();
-                connectionView = zCView.Create(process, 0, 0, 0x2000, 0x2000);
+                connectionView = zCView.Create(process, 0xB00, 0x500, 0x1500, 0x700);
                 zString str = zString.Create(process, "Connection aborted!");
-                zCViewText vt = connectionView.CreateText(0x950, 0x800, str);
+                zCViewText vt = connectionView.CreateText((0x2000 - connectionView.FontSize(str))/2, (0x2000 - connectionView.FontY())/2, str);
+                str.Set("Menu_Choice_Back.tga");
+                connectionView.InsertBack(str);
                 str.Dispose();
                 vt.Color.G = 0;
                 vt.Color.B = 0;
                 vt.Color.R = 255;
                 vt.Color.A = 255;
-
-                vt.Timed = 0;
-                vt.Timer = -1;
             }
 
-            if (!shown && (client.GetLastPing(client.GetSystemAddressFromIndex(0)) > 1000 || client.GetLastPing(client.GetSystemAddressFromIndex(0)) <= -1))
+            if (!shown)
             {
-                zCView.GetStartscreen(Process.ThisProcess()).InsertItem(connectionView, 0);
-                shown = true;
+                if (client.GetLastPing(client.GetSystemAddressFromIndex(0)) > 1000 || client.GetLastPing(client.GetSystemAddressFromIndex(0)) <= -1)
+                {
+                    zCView.GetStartscreen(Process.ThisProcess()).InsertItem(connectionView, 1);
+                    shown = true;
+                }
             }
-            else if (shown && (client.GetLastPing(client.GetSystemAddressFromIndex(0)) < 700 && client.GetLastPing(client.GetSystemAddressFromIndex(0)) > -1))
+            else if (shown)
             {
-                zCView.GetStartscreen(Process.ThisProcess()).RemoveItem(connectionView);
-                shown = false;
+                if (client.GetLastPing(client.GetSystemAddressFromIndex(0)) < 700 && client.GetLastPing(client.GetSystemAddressFromIndex(0)) > -1)
+                {
+                    zCView.GetStartscreen(Process.ThisProcess()).RemoveItem(connectionView);
+                    shown = false;
+                }
+                else
+                {   //always on top
+                    zCView.GetStartscreen(Process.ThisProcess()).RemoveItem(connectionView);
+                    zCView.GetStartscreen(Process.ThisProcess()).InsertItem(connectionView, 1);
+                }
             }
 
             int counter = 0;
             Packet packet = client.Receive();
 
-
             while (packet != null)
             {
-                WinApi.Kernel.Process.SetWindowText(System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle, "Gothic II - Untold Chapters - " + client.GetLastPing(client.GetSystemAddressFromIndex(0)));
+                //WinApi.Kernel.Process.SetWindowText(System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle, "Gothic II - Untold Chapters - " + client.GetLastPing(client.GetSystemAddressFromIndex(0)));
 
                 switch (packet.data[0])
                 {
@@ -248,12 +257,10 @@ namespace GUC.Network
                     case (byte)DefaultMessageIDTypes.ID_USER_PACKET_ENUM:
                         try
                         {
-                            
                             receiveBitStream.Reset();
                             receiveBitStream.Write(packet.data, packet.length);
                             receiveBitStream.IgnoreBytes(2);
-                            if ((Player.Hero == null || Player.Hero.ID == 0) && packet.data[1] != (byte)NetworkID.ConnectionMessage)
-                                break;
+
                             if (messageListener.ContainsKey(packet.data[1]))
                                 messageListener[packet.data[1]].Read(receiveBitStream, packet, this);
                         }

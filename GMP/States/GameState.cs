@@ -45,10 +45,9 @@ namespace GUC.States
             StealContainer sc = new StealContainer(Process.ThisProcess());
             sc.Enable();
 
-            pkm = PlayerKeyMessage.getPlayerKeyMessage();
+            //pkm = PlayerKeyMessage.getPlayerKeyMessage();
 
-            
-
+            Sumpfkraut.Ingame.IngameInterface.Init();
 
             _init = true;
         }
@@ -179,7 +178,7 @@ namespace GUC.States
             //    lastNPCPosUpdate = now;
             //}
 
-            pkm.update();
+            //pkm.update();
 
             Program.client.Update();
         }
@@ -201,7 +200,7 @@ namespace GUC.States
             stream.Write(proto.Position);
             stream.Write(proto.Direction);
 
-            Program.client.client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE_SEQUENCED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Program.client.client.Send(stream, PacketPriority.MEDIUM_PRIORITY, PacketReliability.UNRELIABLE_SEQUENCED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
     }

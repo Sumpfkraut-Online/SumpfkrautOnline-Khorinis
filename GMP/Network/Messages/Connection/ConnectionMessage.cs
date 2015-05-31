@@ -165,9 +165,6 @@ namespace GUC.Network.Messages.Connection
 
                 }
             }
-
-            //edited by Showdown
-            Sumpfkraut.Ingame.IngameInterface.Init();
         }
 
         protected static void CreateItems()

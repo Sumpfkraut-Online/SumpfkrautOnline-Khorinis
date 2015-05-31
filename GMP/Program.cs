@@ -98,11 +98,8 @@ namespace GUC
             return 0;
         }
 
-
         public static void addHooks(Process process)
         {
-
-
 
             //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hItem).GetMethod("ViewDraw_DrawChildren"), (int)0x00704B90, (int)7, 0);
 
@@ -565,8 +562,7 @@ namespace GUC
                 Process process = Process.ThisProcess();
 
                 //edited by Showdown
-                Sumpfkraut.Ingame.IngameInput.Update();
-                InputHooked.Update(process);
+                Sumpfkraut.InputHandler.Update();
 
                 
                 _state.Init();

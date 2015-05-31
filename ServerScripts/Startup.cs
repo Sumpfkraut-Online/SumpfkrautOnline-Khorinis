@@ -87,8 +87,8 @@ namespace GUC.Server.Scripts
 
 
 #if SSM_ACCOUNT
-            AccountSystem accSystem = new AccountSystem();
-            accSystem.Init();
+            //AccountSystem accSystem = new AccountSystem();
+            //accSystem.Init();
 #endif
             
 #if SSM_WEB
@@ -98,8 +98,14 @@ namespace GUC.Server.Scripts
             Sumpfkraut.SOKChat.SOKChat SOKChat = new Sumpfkraut.SOKChat.SOKChat();
 
             Server.Sumpfkraut.Trade trade = new Server.Sumpfkraut.Trade();
+
+            Sumpfkraut.Accounts.AccountSystem acs = new Sumpfkraut.Accounts.AccountSystem();
+
+            Server.Sumpfkraut.AnimationMenuMessage.Init();
             
             Logger.log(Logger.LogLevel.INFO, "###################### End Initalise ######################");
 		}
     }
+
+
 }

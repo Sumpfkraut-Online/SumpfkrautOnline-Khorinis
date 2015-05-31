@@ -413,8 +413,15 @@
     <Compile Include="StartModules\AbstractModule.cs" />
     <Compile Include="StartModules\Modules.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Sumpfkraut\Accounts\AccountSystem.cs" />
+    <Compile Include="Sumpfkraut\Database\DBReader.cs" />
+    <Compile Include="Sumpfkraut\Database\DBSecurity.cs" />
     <Compile Include="Sumpfkraut\Database\DBTables.cs" />
     <Compile Include="Sumpfkraut\SOKChat\SOKChat.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\DummyItemDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\DummyMobDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\DummyNPCDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\DummySpellDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\EffectChangesDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\ItemDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\MobDef.cs" />

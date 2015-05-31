@@ -5,7 +5,7 @@ using System.Text;
 using WinApi;
 using WinApi.User.Enumeration;
 using GUC.Types;
-using GUC.Sumpfkraut.Ingame.GUI;
+using GUC.Sumpfkraut.GUI;
 using GUC.Enumeration;
 using GUC.WorldObjects.Character;
 using GUC.WorldObjects;

@@ -232,11 +232,13 @@ namespace GUC.States
             zERROR.GetZErr(Process).Report(2, 'G', "GUC-Version: " + GUC.Options.Constants.VERSION +" - Build:" + v.ToString(), 0, "Program.cs", 0);
 
 
-            setupPlayer();
+            //setupPlayer();
 
-            ConnectionMessage.Write();
+            //ConnectionMessage.Write();
 
-            PlayerKeyMessage.getPlayerKeyMessage().Init();
+            //PlayerKeyMessage.getPlayerKeyMessage().Init();
+
+            Sumpfkraut.Login.LoginInterface.Init();
 
             _init = true;
 
@@ -246,6 +248,7 @@ namespace GUC.States
             StartJumpID = oCNpc.Player(Process.ThisProcess()).GetModel().GetAniIDFromAniName("T_STAND_2_JUMP");
         }
 
+        /*
         protected void setupPlayer()
         {
             Player player = new Player(true, StartupState.clientOptions.name);
@@ -254,13 +257,13 @@ namespace GUC.States
             player.Position = (Vec3f)oCNpc.Player(Process.ThisProcess()).GetPositionArray();
 
             Player.Hero = player;
-        }
+        }*/
 
 
         public override void update()
         {
-            Player.Hero.setPosition(Player.Hero.Position);
-            PlayerKeyMessage.getPlayerKeyMessage().update();
+            //Player.Hero.setPosition(Player.Hero.Position);
+            //PlayerKeyMessage.getPlayerKeyMessage().update();
             Program.client.Update();
         }
 

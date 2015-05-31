@@ -6,7 +6,6 @@ using System.Text;
 using WinApi;
 using WinApi.User.Enumeration;
 using GUC.Types;
-using GUC.Sumpfkraut.Ingame.GUI;
 using GUC.Enumeration;
 using GUC.WorldObjects.Character;
 using GUC.WorldObjects;
@@ -15,9 +14,11 @@ using RakNet;
 using Gothic.mClasses;
 using Gothic.zClasses;
 
-namespace GUC.Sumpfkraut.Ingame.GUI
+using GUC.Sumpfkraut;
+
+namespace GUC.Sumpfkraut.GUI
 {
-    class GUCMenuInventory : GUCMInputReceiver, GUCMVisual
+    class GUCMenuInventory : GUCInputReceiver, GUCMVisual
     {
         class Slot
         {
@@ -34,9 +35,9 @@ namespace GUC.Sumpfkraut.Ingame.GUI
             public Slot(int x, int y)
             {
                 pos = new Vec2i(x, y);
-                background = new GUCMenuTexture("Inv_Slot_Focus.tga", x, y, 70, 70);
+                background = new GUCMenuTexture("Inv_Slot.tga", x, y, 70, 70);
                 mItem = new GUCMenuItem(x - 1, y - 1, 72, 72);
-                amount = new GUCMenuText("", x, y);
+                amount = new GUCMenuText("", x, y,false);
             }
 
             public void SetItem(Item item)
@@ -53,7 +54,7 @@ namespace GUC.Sumpfkraut.Ingame.GUI
                     if (item.Amount > 1)
                     {
                         amount.Text = item.Amount.ToString();
-                        amount.SetPos(pos.X + 61 - IngameInput.StringPixelWidth(item.Amount.ToString()), pos.Y + 46);
+                        amount.SetPos(pos.X + 61 - InputHandler.StringPixelWidth(item.Amount.ToString()), pos.Y + 46);
                     }
                     else
                     {
@@ -64,13 +65,13 @@ namespace GUC.Sumpfkraut.Ingame.GUI
 
             public void Mark()
             {
-                background.SetTexture("Inv_Slot_Highlighted_Focus.tga");
+                background.SetTexture("Inv_Slot_Highlighted.tga");
                 mItem.SetSize(pos.X - 9, pos.Y - 9, 88, 88);
             }
 
             public void Demark()
             {
-                background.SetTexture("Inv_Slot_Focus.tga");
+                background.SetTexture("Inv_Slot.tga");
                 mItem.SetSize(pos.X - 1, pos.Y - 1, 72, 72);
             }
 
@@ -93,6 +94,30 @@ namespace GUC.Sumpfkraut.Ingame.GUI
 
         GUCMenuTexture background;
 
+        GUCMenuTexture titleBackground;
+        zCView title;
+        zCViewText titleText;
+        bool showGold;
+        public bool ShowGold
+        {
+            get { return showGold; }
+            set
+            {
+                showGold = value;
+                SetTitleGold();
+            }
+        }
+
+        public String Title
+        {
+            get { return titleText.Text.ToString(); }
+            set
+            {
+                titleText.Text.Set(value);
+                titleText.PosX = (0x2000 - title.FontSize(value)) / 2;
+            }
+        }
+
         public GUCMenuInventory left;
         public GUCMenuInventory right;
 
@@ -101,10 +126,10 @@ namespace GUC.Sumpfkraut.Ingame.GUI
 
         int startPos;
         Vec2i cursorPos;
-        public bool enabled
+        public bool Enabled
         {
             get;
-            private set;
+            set;
         }
 
         public delegate void PressedCTRLHandler(Item item);
@@ -127,9 +152,36 @@ namespace GUC.Sumpfkraut.Ingame.GUI
                 slots.Add(s);
             }
 
+            //Create title
+            titleBackground = new GUCMenuTexture(tex, x + (wNum - 2) * 70, y - 70, 140, 35);
+            int[] vpos = InputHooked.PixelToVirtual(proc, new int[] {x + (wNum - 2) * 70, y - 70});
+            int[] vsize = InputHooked.PixelToVirtual(proc, new int[] {140,35});
+            title = zCView.Create(proc, vpos[0], vpos[1], vpos[0] + vsize[0], vpos[1] + vsize[1]);
+            using (Gothic.zTypes.zString z = Gothic.zTypes.zString.Create(proc, "Inv_Title.tga"))
+            {
+                title.InsertBack(z);
+                titleText = title.CreateText(0, (0x2000 - title.FontY()) / 2, z);
+            }
+            
+            showGold = true;
+
             cursorPos = new Vec2i(0, 0);
             startPos = 0;
-            enabled = false;
+            Enabled = false;
+        }
+
+        public void SetBackground(string texture)
+        {
+            background.SetTexture(texture);
+            using (Gothic.zTypes.zString z = Gothic.zTypes.zString.Create(proc, texture))
+                title.InsertBack(z);
+        }
+
+        private void SetTitleGold()
+        {
+            if (!showGold) return;
+            Item gold = itemList.Find(i => i.ItemInstance.Name == "Gold");
+            Title = "Gold: " + (gold == null ? 0 : gold.Amount);
         }
 
         public void AddItem(Item item)
@@ -138,6 +190,7 @@ namespace GUC.Sumpfkraut.Ingame.GUI
             {
                 itemList.Add(item);
                 UpdateSlots();
+                SetTitleGold();
             }
         }
 
@@ -147,7 +200,8 @@ namespace GUC.Sumpfkraut.Ingame.GUI
             {
                 itemList.Remove(item);
                 UpdateSlots();
-                if (enabled)
+                SetTitleGold();
+                if (Enabled)
                 {
                     SetCursor(cursorPos.X, cursorPos.Y);
                 }
@@ -156,22 +210,22 @@ namespace GUC.Sumpfkraut.Ingame.GUI
 
         private void RemoveCursor()
         {
-            if (enabled)
+            if (Enabled)
             {
                 slots[cursorPos.X][cursorPos.Y].Demark();
-                enabled = false;
+                Enabled = false;
             }
         }
 
         public void SetCursor(int x, int y)
         {
-            if (enabled)
+            if (Enabled)
             {
                 slots[cursorPos.X][cursorPos.Y].Demark();
             }
             else
             {
-                enabled = true;
+                Enabled = true;
             }
 
             int newX = x;
@@ -241,6 +295,10 @@ namespace GUC.Sumpfkraut.Ingame.GUI
             foreach (List<Slot> s in slots)
                 foreach (Slot slot in s)
                     slot.Hide();
+
+            titleBackground.Hide();
+            zCView.GetStartscreen(proc).RemoveItem(title);
+
         }
 
         public void Open(List<Item> list)
@@ -264,11 +322,16 @@ namespace GUC.Sumpfkraut.Ingame.GUI
             foreach (List<Slot> s in slots)
                 foreach (Slot slot in s)
                     slot.Show();
+
+            titleBackground.Show();
+            zCView.GetStartscreen(proc).InsertItem(title, 1);
+
+            SetTitleGold();
         }
 
         public void KeyPressed(int key)
         {
-            if (!enabled)
+            if (!Enabled)
                 return;
 
             int x = cursorPos.X;

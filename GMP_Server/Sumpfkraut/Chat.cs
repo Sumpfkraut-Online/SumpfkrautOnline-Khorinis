@@ -28,7 +28,6 @@ namespace GUC.Server.Sumpfkraut
         private ChatMessage messenger;
         public Chat()
         {
-            
             if (Program.server != null && Program.server.MessageListener != null)
             {
                 if (!Program.server.MessageListener.ContainsKey((byte)NetworkID.ChatMessage))
@@ -102,7 +101,7 @@ namespace GUC.Server.Sumpfkraut
         {
             if (text != null && text.Length > 0)
             {
-                SendText(null, null, ChatTextType.Global, text);
+                SendText(null, null, ChatTextType.RPGlobal, text);
             }
         }
 
@@ -118,7 +117,7 @@ namespace GUC.Server.Sumpfkraut
         {
             if (text != null && text.Length > 0)
             {
-                SendText(null, null, ChatTextType.Event, text);
+                SendText(null, null, ChatTextType.OOCEvent, text);
             }
         }
 
@@ -126,7 +125,7 @@ namespace GUC.Server.Sumpfkraut
         {
             if (text != null && text.Length > 0)
             {
-                SendText(null, to, ChatTextType.Error, text);
+                SendText(null, to, ChatTextType._Error, text);
             }
         }
 
@@ -134,7 +133,7 @@ namespace GUC.Server.Sumpfkraut
         {
             if (text != null && text.Length > 0)
             {
-                SendText(null, to, ChatTextType.Hint, text);
+                SendText(null, to, ChatTextType._Hint, text);
             }
         }
 

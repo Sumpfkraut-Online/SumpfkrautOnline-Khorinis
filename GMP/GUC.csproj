@@ -52,15 +52,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GUI\Button.cs" />
+    <Compile Include="Sumpfkraut\GUI\GUCMainMenuItems.cs" />
+    <Compile Include="Sumpfkraut\Ingame\AnimationMenu.cs" />
     <Compile Include="Sumpfkraut\Ingame\Chat.cs" />
-    <Compile Include="Sumpfkraut\Ingame\GUI\GUCMenu.cs" />
-    <Compile Include="Sumpfkraut\Ingame\GUI\GUCMenuInventory.cs" />
-    <Compile Include="Sumpfkraut\Ingame\GUI\GUCMenuItem.cs" />
-    <Compile Include="Sumpfkraut\Ingame\GUI\GUCMenuText.cs" />
-    <Compile Include="Sumpfkraut\Ingame\GUI\GUCMenuTextBox.cs" />
-    <Compile Include="Sumpfkraut\Ingame\GUI\GUCMenuTextList.cs" />
-    <Compile Include="Sumpfkraut\Ingame\GUI\GUCMenuTexture.cs" />
-    <Compile Include="Sumpfkraut\Ingame\GUI\ItemRenderer.cs" />
+    <Compile Include="Sumpfkraut\Ingame\ChatMessage.cs" />
+    <Compile Include="Sumpfkraut\GUI\GUCMainMenu.cs" />
+    <Compile Include="Sumpfkraut\GUI\GUCMenu.cs" />
+    <Compile Include="Sumpfkraut\GUI\GUCMenuInventory.cs" />
+    <Compile Include="Sumpfkraut\GUI\GUCMenuItem.cs" />
+    <Compile Include="Sumpfkraut\GUI\GUCMenuText.cs" />
+    <Compile Include="Sumpfkraut\GUI\GUCMenuTextBox.cs" />
+    <Compile Include="Sumpfkraut\GUI\GUCMenuTextList.cs" />
+    <Compile Include="Sumpfkraut\GUI\GUCMenuTexture.cs" />
+    <Compile Include="Sumpfkraut\GUI\ItemRenderer.cs" />
+    <Compile Include="Sumpfkraut\Ingame\VoiceMessage.cs" />
+    <Compile Include="Sumpfkraut\Login\LoginInterface.cs" />
     <Compile Include="Sumpfkraut\Ingame\Trade.cs" />
     <Compile Include="GUI\Cursor.cs" />
     <Compile Include="GUI\GuiList\List.cs" />
@@ -87,7 +93,7 @@
     <Compile Include="Hooks\hParser.cs" />
     <Compile Include="Hooks\hSpell.cs" />
     <Compile Include="Sumpfkraut\Ingame\IngameInterface.cs" />
-    <Compile Include="Sumpfkraut\Ingame\IngameInput.cs" />
+    <Compile Include="Sumpfkraut\InputHandler.cs" />
     <Compile Include="Network\Client.cs" />
     <Compile Include="Network\IMessage.cs" />
     <Compile Include="Network\Messages\Callbacks\CallbackNPCCanSee.cs" />
@@ -165,6 +171,16 @@
     <Compile Include="States\AbstractState.cs" />
     <Compile Include="States\GameState.cs" />
     <Compile Include="Sumpfkraut\Ingame\TradeMessage.cs" />
+    <Compile Include="Sumpfkraut\Login\LoginMessage.cs" />
+    <Compile Include="Sumpfkraut\Menus\CharCreationMenu.cs" />
+    <Compile Include="Sumpfkraut\Menus\CharListMenu.cs" />
+    <Compile Include="Sumpfkraut\Menus\ExitMenu.cs" />
+    <Compile Include="Sumpfkraut\Menus\LoginMenu.cs" />
+    <Compile Include="Sumpfkraut\Menus\MainMenu.cs" />
+    <Compile Include="Sumpfkraut\Menus\Menus.cs" />
+    <Compile Include="Sumpfkraut\Menus\PlayerListMenu.cs" />
+    <Compile Include="Sumpfkraut\Menus\RegisterMenu.cs" />
+    <Compile Include="Sumpfkraut\Menus\RPGuide.cs" />
     <Compile Include="timer\DespawnTimer.cs" />
     <Compile Include="timer\Timer.cs" />
     <Compile Include="Tests\Keytest.cs" />
