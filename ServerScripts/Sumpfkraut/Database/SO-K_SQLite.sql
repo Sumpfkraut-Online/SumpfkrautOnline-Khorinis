@@ -205,7 +205,7 @@ CREATE TABLE IF NOT EXISTS `Mob_inst` (
 -- individual item instances
 DROP TABLE IF EXISTS `Item_inst`;
 CREATE TABLE IF NOT EXISTS `Item_inst` (
-    `ID` INTEGER  NOT NULL,
+    `ID` INTEGER NOT NULL,
     `ItemDefID` INTEGER  NOT NULL,
     `Amount` INTEGER  NOT NULL,
     `ChangeDate` TEXT NOT NULL,

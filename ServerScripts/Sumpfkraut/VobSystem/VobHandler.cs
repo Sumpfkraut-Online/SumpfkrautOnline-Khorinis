@@ -415,7 +415,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                 return;
             }
 
-            string sqlWhere = "EffectDefID IN (" + Utilities.String.Concatenate<int>(effectDefIDs.ToArray(), ",") + ")";
+            string sqlWhere = "EffectDefID IN (" + Utilities.StringUtil.Concatenate<int>(effectDefIDs.ToArray(), ",") + ")";
 
             LoadEffectChangesDef(ref defList,
                 ref colTypesKeys, ref colTypesVals,
