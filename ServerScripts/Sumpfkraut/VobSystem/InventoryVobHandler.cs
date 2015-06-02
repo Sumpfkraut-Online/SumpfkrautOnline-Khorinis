@@ -7,6 +7,10 @@ using GUC.Server.Scripts.Sumpfkraut.Database;
 
 namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 {
+
+    /**
+     *   Class which is used for inventory-manipulation (e.g. for transfering items in a trade).
+     */
     class InventoryVobHandler
     {
 
@@ -25,6 +29,22 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 
 
 
+        /**
+         *   Try to transfer lists of items given by their ItemDef-objects as types and with respective amounts
+         *   between 2 npcs.
+         *   The trade will take place in multiple steps, where items transfer from one player to the other is
+         *   done by applying the inventory changes to the donator and latter to the acceptor. This process is
+         *   done for each player. If one of these transfer steps fails (e.g. items are missing in inventories),
+         *   the whole trade will be rolled back and negated. The order of npcs in the transfer does not matter.
+         *   Negative amounts will result in an attempt to pull those items from the other trade partner instead
+         *   of giving them to him/her.
+         *   @param playerID_1 is the ID of the NPCInst-object which represents the first npc in transfer
+         *   @param playerID_2 is the ID of the NPCInst-object which represents the first npc in transfer
+         *   @param itemDefIDs_1 are the IDs of ItemDef-objects which should be traded from npc 1 to npc 2
+         *   @param itemDefIDs_2 are the IDs of ItemDef-objects which should be traded from npc 2 to npc 1
+         *   @param amounts_1 are the respective amounts used in conjunction with itemDefIDs_1
+         *   @param amounts_2 are the respective amounts used in conjunction with itemDefIDs_2
+         */
         public static bool TransferItems (int playerID_1, int playerID_2, 
             int[] itemDefIDs_1, int[] itemDefIDs_2, int[] amounts_1, int[] amounts_2)
         {
@@ -60,6 +80,17 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             return true;
         }
 
+        /**
+         *   Transfer a list of items, according to their ItemDef with given amounts from the 
+         *   donator- to acceptor-npcs inventory.
+         *   This is a transfer in one direction. For exchanging items between both inventories,
+         *   use the higher-level-TransferItems-method instead. The transfer will be negated if one side
+         *   of the transfer does not have the necessary items or something else went wrong.
+         *   @param donatorID is the ID of the NPCInst-object which represents the donator of this transfer
+         *   @param acceptorID is the ID of the NPCInst-object which represents the acceptor of this transfer
+         *   @param itemDefIDs are the IDs of ItemDef-objects which should be translated into a trade of actual Items
+         *   @param amounts are the respective amounts of items, that should be transferred (if possible)
+         */
         public static bool TransferItems (int donatorID, int acceptorID, int[] itemDefIDs, int[] amounts)
         {
             bool giveItemsDon = RemoveItems(donatorID, itemDefIDs, amounts);
@@ -85,6 +116,16 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             return true;
         }
 
+        /**
+         *   Revert verson of GiveItems-method which applies the negative amounts of items, given by ItemDef-ids, on
+         *   a npc-inventory.
+         *   The sign of negative amounts will be reverted, too, which results in a donation of items to the npc-
+         *   inventory. The method is simply for convenience but can be easily replaced by GiveItems-method because
+         *   this method is called in the end anyway, provided negative amoutns are used to remove items.
+         *   @param npcInstID is the ID of the NPCInst-object for which the inventory will be manipulated
+         *   @param itemDefIDs are the IDs of ItemDef-objects which should be removed or given to the 
+         *   @param amounts are the respective amounts used in conjunction with itemDefIDs
+         */
         public static bool RemoveItems (int npcInstID, int[] itemDefIDs, int[] amounts)
         {
             for (int i = 0; i < amounts.Length; i++)
@@ -94,6 +135,15 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             return GiveItems(npcInstID, itemDefIDs, amounts);
         }
 
+        /**
+         *   Give or remove items, defined by ItemDef-object-ids, with respective amounts to/from a npcs inventory.
+         *   Negative amounts will result in item-removal, positive ones in a donation of items to the inventory.
+         *   In case of item-removal, the inventory manipulation will only take place if enough items of the given
+         *   type are in posession of the npc beforehand.
+         *   @param npcInstID is the ID of the NPCInst-object for which the inventory will be manipulated
+         *   @param itemDefIDs are the IDs of ItemDef-objects which should be removed or given to the 
+         *   @param amounts are the respective amounts used in conjunction with itemDefIDs
+         */
         public static bool GiveItems (int npcInstID, int[] itemDefIDs, int[] amounts)
         {
             int[] errRealAmounts;
@@ -247,13 +297,29 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             return true;
         }
 
-        // maybe, it will use HasItemInstances
+        /**
+         *   Checks (boolean result) if the inventory of npc with provided ID has the amounts of items of given types 
+         *   (by ItemDef-IDs).
+         *   It solely uses HasItemDefinitions-method at the moment and, therefore, can be used only when providing
+         *   ItemDef-ids. Maybe a functionality will be implemented to check for ItemInst-ids as well.
+         *   @param npcInstID is the ID of the NPCInst-object for which the inventory will be checked
+         *   @param itemRelatedIDs are the IDs of ItemDef-objects which should watched for
+         *   @param amounts are the respective amounts used in conjunction with itemDefIDs
+         *   @param errRealAmounts will store the actual amounts of items found by the method as additional information
+         */
         public static bool HasItems (int npcInstID, int[] itemRelatedIDs, int[] amounts, out int[] errRealAmounts)
         {
             return HasItemDefenitions(npcInstID, itemRelatedIDs, amounts, out errRealAmounts);
         }
 
-        // checks, if the npc with given id is in possession of items with given definition-ids and requested amounts
+        /**
+         *   Checks (boolean result) if the inventory of npc with provided ID has the amounts of items of given types 
+         *   (by ItemDef-IDs).
+         *   @param npcInstID is the ID of the NPCInst-object for which the inventory will be checked
+         *   @param itemDefIDs are the IDs of ItemDef-objects which should watched for
+         *   @param amounts are the respective amounts used in conjunction with itemDefIDs
+         *   @param errRealAmounts will store the actual amounts of items found by the method as additional information
+         */
         public static bool HasItemDefenitions (int npcInstID, int[] itemDefIDs, int[] amounts, out int[] errRealAmounts)
         {
             bool hasItems = true;
@@ -383,7 +449,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             return hasItems;
         }
 
-        // !!! DON'T USE <-> MIGHT BE BROKEN !!!
+        /**
+         *   Broken and unused counterpart to HasItemDefinitions-method ==> DON'T USE THIS!
+         */
         public static bool HasItemInstances (int npcInstID, int[] itemDefIDs, int[] amounts, out int[] errRealAmounts)
         {
             bool hasItems = true;
