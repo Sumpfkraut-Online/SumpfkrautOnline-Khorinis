@@ -22,6 +22,8 @@ namespace GUC
 {
     public class Program
     {
+        public static Process process = Process.ThisProcess();
+
         public static Client client;
         public static AbstractState _state;
 
@@ -37,7 +39,6 @@ namespace GUC
 
         public static List<timer.Timer> TimerList = new List<timer.Timer>();
         public static long Now = 0;
-
 
         public static Int32 InjectedMain(String message)
         {

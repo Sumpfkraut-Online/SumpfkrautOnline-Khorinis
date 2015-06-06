@@ -37,6 +37,12 @@ namespace GUC.Sumpfkraut
 
         public const int DefaultFontYPixels = 18;
 
+        public static int[] PixelToVirtual(int x, int y)
+        {
+            int[] screenSize = InputHooked.GetScreenSize(Program.process);
+            return new int[] { x*0x2000/screenSize[0], y*0x2000/screenSize[1] };
+        }
+
         public static int StringPixelWidth(string str)
         {
             double size = 0;

@@ -112,6 +112,19 @@ namespace GUC.Sumpfkraut.GUI
             texts.Add(t);
         }
 
+        public void AddSmallText(string text, int y)
+        {
+            AddSmallText(text, 0, y);
+            texts[texts.Count - 1].CenterText();
+        }
+
+        public void AddSmallText(string text, int x, int y)
+        {
+            GUCMenuText t = new GUCMenuText(text, pos[0] + x, pos[1] + y, false);
+            if (shown) t.Show();
+            texts.Add(t);
+        }
+
         public GUCMainMenuButton AddMenuButton(string text, string helpText, EventHandler func, int y)
         {
             GUCMainMenuButton b = AddMenuButton(text, helpText, func, 0, y);

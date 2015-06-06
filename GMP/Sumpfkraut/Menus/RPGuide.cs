@@ -17,8 +17,8 @@ namespace GUC.Sumpfkraut.Menus
             {
                 thisMenu = new GUCMainMenu(0);
                 thisMenu.AddText("RP-Guide", 100);
-                thisMenu.AddMenuButton("Zurück", "Zurück zum Hauptmenü.", Main.Open, 350);
-                thisMenu.OnEscape = Main.Open;
+                thisMenu.AddMenuButton("Zurück", "Zurück zum Hilfe-Menü.", Help.Open, 350);
+                thisMenu.OnEscape = Help.Open;
             }
         }
     }

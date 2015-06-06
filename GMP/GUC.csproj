@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="GUI\Button.cs" />
     <Compile Include="Sumpfkraut\GUI\GUCMainMenuItems.cs" />
+    <Compile Include="Sumpfkraut\GUI\GUCVisual.cs" />
     <Compile Include="Sumpfkraut\Ingame\AnimationMenu.cs" />
     <Compile Include="Sumpfkraut\Ingame\Chat.cs" />
     <Compile Include="Sumpfkraut\Ingame\ChatMessage.cs" />
@@ -175,6 +176,7 @@
     <Compile Include="Sumpfkraut\Menus\CharCreationMenu.cs" />
     <Compile Include="Sumpfkraut\Menus\CharListMenu.cs" />
     <Compile Include="Sumpfkraut\Menus\ExitMenu.cs" />
+    <Compile Include="Sumpfkraut\Menus\HelpMenu.cs" />
     <Compile Include="Sumpfkraut\Menus\LoginMenu.cs" />
     <Compile Include="Sumpfkraut\Menus\MainMenu.cs" />
     <Compile Include="Sumpfkraut\Menus\Menus.cs" />

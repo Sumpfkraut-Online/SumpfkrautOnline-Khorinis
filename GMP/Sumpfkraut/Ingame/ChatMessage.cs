@@ -56,70 +56,15 @@ namespace GUC.Sumpfkraut.Ingame
             stream.Write(message);
 
             Program.client.client.Send(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+
+            if (test == null)
+            {
+                test = new GUI.GUCMenuText("", 10, 10, true);
+                test.Show();
+            }
         }
 
-        public void setDirection(GUC.Types.Vec3f dir, zCVob vob)
-        {
-            dir = dir.normalise();
-
-            Process process = Process.ThisProcess();
-
-            Types.Vec3f zAxis = dir;
-            Types.Vec3f up = new Types.Vec3f(0.0f, 0.0f, 0.0f);
-
-            if (Math.Abs(zAxis.Y) > 0.5)
-            {
-                if (zAxis.Y > 0)
-                    up.Z = -1.0f;
-                else
-                    up.Z = 1.0f;
-            }
-            else if (Math.Abs(zAxis.X) < 0.0001 && Math.Abs(zAxis.Y) < 0.0001)
-            {
-                if (zAxis.Y > -0.0001)
-                {
-                    up.Y = 1.0f;
-                }
-                else
-                {
-                    up.Y = -1.0f;
-                }
-            }
-            else
-            {
-                up.Y = 1.0f;
-            }
-
-
-
-            Types.Vec3f xAxis = up.cross(zAxis).normalise();
-            Types.Vec3f yAxis = zAxis.cross(xAxis).normalise();
-
-            Matrix4 trafo = vob.TrafoObjToWorld;
-
-            trafo.set(12, 0);
-            trafo.set(13, 0);
-            trafo.set(14, 0);
-            trafo.set(15, 1);
-
-            trafo.set(0, xAxis.X);
-            trafo.set(4, xAxis.Y);
-            trafo.set(8, xAxis.Z);
-
-            trafo.set(1, yAxis.X);
-            trafo.set(5, yAxis.Y);
-            trafo.set(9, yAxis.Z);
-
-            trafo.set(2, zAxis.X);
-            trafo.set(6, zAxis.Y);
-            trafo.set(10, zAxis.Z);
-
-
-            Gothic.zTypes.zVec3 p = vob.GetPosition();
-            vob.SetPositionWorld(p);
-
-            p.Dispose();
-        }
+        Sumpfkraut.GUI.GUCMenuText test = null;
 
         public void Read(RakNet.BitStream stream, RakNet.Packet packet, Client client)
         {

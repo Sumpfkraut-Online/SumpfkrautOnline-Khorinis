@@ -213,6 +213,7 @@ namespace GUC.Sumpfkraut.GUI
             if (Enabled)
             {
                 slots[cursorPos.X][cursorPos.Y].Demark();
+                background.Hide();
                 Enabled = false;
             }
         }
@@ -225,6 +226,7 @@ namespace GUC.Sumpfkraut.GUI
             }
             else
             {
+                background.Show();
                 Enabled = true;
             }
 

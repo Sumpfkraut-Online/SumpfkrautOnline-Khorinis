@@ -55,6 +55,7 @@ namespace GUC.Sumpfkraut.Menus
         public static AbstractMenu RPGuide = new RPGuideMenu();
         public static AbstractMenu CharList = new CharListMenu();
         public static AbstractMenu CharCreation = new CharCreationMenu();
+        public static AbstractMenu Help = new HelpMenu();
 
         public static GUCMenuTexture _Background = null;
     }

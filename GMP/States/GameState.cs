@@ -57,8 +57,7 @@ namespace GUC.States
         static int soundInt = 0;
 
         static bool startGS = false;
-
-
+        
         static long lastKeyPressed = 0;
         public override void update()
         {

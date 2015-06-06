@@ -34,7 +34,7 @@ namespace GUC.Sumpfkraut.Menus
                 bRegister = thisMenu.AddMenuButton("Registrieren", "Einen neuen Account erstellen.", Register.Open, offset + dist * 1);
                 bContinue = thisMenu.AddMenuButton("Weiterspielen", "Aktuelles Spiel fortführen.", Close, offset + dist * 2); //lol
                 thisMenu.AddMenuButton("Spielerliste", "Zeigt die angemeldeten Spieler.", PlayerList.Open, offset + dist * 3);
-                thisMenu.AddMenuButton("RP-Guide", "Eine kurze Einführung ins Rollenspiel.", RPGuide.Open, offset + dist * 4);
+                thisMenu.AddMenuButton("Hilfe", "Hilfe", Help.Open, offset + dist * 4);
                 thisMenu.AddMenuButton("Beenden", "Die Welt von SumpfkrautOnline verlassen.", Exit.Open, offset + dist * 5);
                 bContinue.SetColor(grey);
                 bContinue.ignore = true;
