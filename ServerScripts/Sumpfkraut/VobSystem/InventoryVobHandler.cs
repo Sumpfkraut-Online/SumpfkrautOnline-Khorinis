@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 
 using GUC.Server.Scripts.Sumpfkraut.Database;
+using GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions;
+using GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances;
 
 namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 {
@@ -20,8 +22,14 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
         private static Dictionary<String, Database.SQLiteGetTypeEnum> itemInContTableDict = 
             Database.DBTables.InstTableDict[Database.InstTableEnum.ItemInContainer_inst];
 
+        // referencing can be done without worrying about consistancy because 
+        // InstTableDict won't be changed by any part of the program
         private static Dictionary<String, Database.SQLiteGetTypeEnum> itemInstTableDict = 
             Database.DBTables.InstTableDict[Database.InstTableEnum.Item_inst];
+
+        // stores ItemInst-objects with their ID-attribute as key
+        // used for faster and cleaner access to these items
+        private static Dictionary<int, ItemInst> itemInInvDict = new Dictionary<int, ItemInst>();
 
 
         private static object playerInvLock = new object();
@@ -293,6 +301,19 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             Database.DBReader.SaveToDB(itemInst_NewItemsSB.ToString());
             Database.DBReader.SaveToDB(inv_NewItemsSB.ToString());
             Database.DBReader.SaveToDB(itemInst_UpdateItemsSB.ToString());
+
+            // after updating the database, also change the actual ingame-inventory
+
+
+            return true;
+        }
+
+        private static bool GiveItemsIngame (int npcInstID, int[] itemDefIDs, int[] amounts)
+        {
+             for (int i = 0; i < itemDefIDs.Length; i++)
+            {
+
+            }
 
             return true;
         }

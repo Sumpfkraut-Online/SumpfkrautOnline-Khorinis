@@ -196,6 +196,7 @@ CREATE TABLE IF NOT EXISTS `NPC_Effects_inst` (
 DROP TABLE IF EXISTS `Mob_inst`;
 CREATE TABLE IF NOT EXISTS `Mob_inst` (
     `ID` INTEGER  NOT NULL,
+    `IsSpawned` INTEGER NOT NULL,
     `MobDefID` INTEGER  NOT NULL,
     `ChangeDate` TEXT NOT NULL,
     `CreationDate` TEXT NOT NULL,
@@ -206,6 +207,7 @@ CREATE TABLE IF NOT EXISTS `Mob_inst` (
 DROP TABLE IF EXISTS `Item_inst`;
 CREATE TABLE IF NOT EXISTS `Item_inst` (
     `ID` INTEGER NOT NULL,
+    `IsSpawned` INTEGER NOT NULL,
     `ItemDefID` INTEGER  NOT NULL,
     `Amount` INTEGER  NOT NULL,
     `ChangeDate` TEXT NOT NULL,
@@ -217,18 +219,25 @@ CREATE TABLE IF NOT EXISTS `Item_inst` (
 DROP TABLE IF EXISTS `NPC_inst`;
 CREATE TABLE IF NOT EXISTS `NPC_inst` (
     `ID` INTEGER  NOT NULL,
-    `NPCDefID` INTEGER  NOT NULL,
-    `IsSpawned` INTEGER  NOT NULL,
-    `Fatness` INTEGER  NOT NULL,
-    `ScaleX` INTEGER  NOT NULL,
-    `ScaleY` INTEGER  NOT NULL,
-    `ScaleZ` INTEGER  NOT NULL,
-    `HeadMesh` TEXT NOT NULL,
-    `HeadTexture` INTEGER NOT NULL,
+    `IsSpawned` INTEGER NOT NULL,
+    `NPCDefID` INTEGER NOT NULL,
+    `Fatness` INTEGER  NOT NULL DEFAULT 1,
+    `Scale` TEXT NOT NULL DEFAULT "0=1,1=1,2=1", -- scale in x-, y- and z-directions respectively
+    `Guild` INTEGER NOT NULL DEFAULT 0,
+    `Voice` INTEGER NOT NULL DEFAULT 0,
+    `Visual` TEXT DEFAULT NULL,
     `BodyMesh` TEXT NOT NULL,
     `BodyTexture` INTEGER NOT NULL,
+    `HeadMesh` TEXT NOT NULL,
+    `HeadTexture` INTEGER NOT NULL,
     `CurrWalk` INTEGER  NOT NULL,
     `CurrAnimation` TEXT DEFAULT "",
+    `HP` INTEGER NOT NULL DEFAULT 1,
+    `HPMax` INTEGER NOT NULL DEFAULT 1,
+    `MP` INTEGER NOT NULL DEFAULT 0,
+    `MPMax` INTEGER NOT NULL DEFAULT 0,
+    `Strength` INTEGER NOT NULL DEFAULT 1,
+    `Dexterity` INTEGER NOT NULL DEFAULT 1,
     `ChangeDate` TEXT NOT NULL,
     `CreationDate` TEXT NOT NULL,
     PRIMARY KEY (`ID`)

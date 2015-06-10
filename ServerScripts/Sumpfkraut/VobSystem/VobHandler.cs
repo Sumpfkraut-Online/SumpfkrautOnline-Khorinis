@@ -8,6 +8,7 @@ using Mono.Data.Sqlite;
 using SQLiteDataReader = Mono.Data.Sqlite.SqliteDataReader;
 using SQLiteCommand = Mono.Data.Sqlite.SqliteCommand;
 using GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions;
+using GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Server.Scripts.Sumpfkraut.Database;
 using GUC.Enumeration;
 using GUC.Server.Scripting.Objects;
@@ -21,17 +22,23 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
     class VobHandler
     {
 
-        //protected List<MobDef> mobDefList = new List<MobDef>();
-        //protected List<ItemDef> itemDefList = new List<ItemDef>();
-        //protected List<SpellDef> spellDefList = new List<SpellDef>();
-        //protected List<NPCDef> npcDefList = new List<NPCDef>();
-
+        // stores vob-definitions with their ID-attribute (ID in the VobSystem) as key
         public static Dictionary<int, MobDef> mobDefDict = new Dictionary<int, MobDef>();
         public static Dictionary<int, ItemDef> itemDefDict = new Dictionary<int, ItemDef>();
-        private static Dictionary<int, SpellDef> spellDefDict = new Dictionary<int, SpellDef>();
+        public static Dictionary<int, SpellDef> spellDefDict = new Dictionary<int, SpellDef>();
         public static Dictionary<int, NPCDef> npcDefDict = new Dictionary<int, NPCDef>();
 
+        // stores the same vob-definition-objects as the DefDicts but using their instance name as key
+        public static Dictionary<string, MobDef> mobDefNameDict = new Dictionary<string, MobDef>();
+        public static Dictionary<string, ItemDef> itemDefNameDict = new Dictionary<string, ItemDef>();
+        public static Dictionary<string, SpellDef> spellDefNameDict = new Dictionary<string, SpellDef>();
+        public static Dictionary<string, NPCDef> npcDefNameDict = new Dictionary<string, NPCDef>();
 
+        // stores vob-instances with their ID-attribute (ID in the VobSystem) as key
+        public static Dictionary<int, MobInst> mobInstDict = new Dictionary<int, MobInst>();
+        public static Dictionary<int, ItemInst> itemInstDict = new Dictionary<int, ItemInst>();
+        public static Dictionary<int, SpellInst> spellInstDict = new Dictionary<int, SpellInst>();
+        public static Dictionary<int, NPCInst> npcInstDict = new Dictionary<int, NPCInst>();
 
         /**
          *   Call this method from outside to create the intial vob definitions

@@ -262,6 +262,48 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                 }
             },
             {
+                InstTableEnum.Mob_inst, new Dictionary<String, SQLiteGetTypeEnum>
+                {
+                    {"ID",                            SQLiteGetTypeEnum.GetInt32},
+                    {"IsSpawned",                     SQLiteGetTypeEnum.GetBoolean},
+                    {"MobDefID",                      SQLiteGetTypeEnum.GetInt32},
+                }
+            },
+            {
+                InstTableEnum.Item_inst, new Dictionary<String, SQLiteGetTypeEnum>
+                {
+                    {"ID",                            SQLiteGetTypeEnum.GetInt32},
+                    {"IsSpawned",                     SQLiteGetTypeEnum.GetBoolean},
+                    {"ItemDefID",                     SQLiteGetTypeEnum.GetInt32},
+                    {"Amount",                        SQLiteGetTypeEnum.GetInt32},
+                }
+            },
+            {
+                InstTableEnum.NPC_inst, new Dictionary<String, SQLiteGetTypeEnum>
+                {
+                    {"ID",                            SQLiteGetTypeEnum.GetInt32},
+                    {"IsSpawned",                     SQLiteGetTypeEnum.GetBoolean},
+                    {"NPCDefID",                      SQLiteGetTypeEnum.GetInt32},
+                    {"Fatness",                       SQLiteGetTypeEnum.GetInt32},
+                    {"Scale",                         SQLiteGetTypeEnum.GetString},
+                    {"Guild",                         SQLiteGetTypeEnum.GetInt32},
+                    {"Voice",                         SQLiteGetTypeEnum.GetInt32},
+                    {"Visual",                        SQLiteGetTypeEnum.GetString},
+                    {"BodyMesh",                      SQLiteGetTypeEnum.GetString},
+                    {"BodyTexture",                   SQLiteGetTypeEnum.GetInt32},
+                    {"HeadMesh",                      SQLiteGetTypeEnum.GetString},
+                    {"HeadTexture",                   SQLiteGetTypeEnum.GetInt32},
+                    {"CurrWalk",                      SQLiteGetTypeEnum.GetInt32},
+                    {"CurrAnimation",                 SQLiteGetTypeEnum.GetString},
+                    {"HP",                            SQLiteGetTypeEnum.GetInt32},
+                    {"HPMax",                         SQLiteGetTypeEnum.GetInt32},
+                    {"MP",                            SQLiteGetTypeEnum.GetInt32},
+                    {"MPMax",                         SQLiteGetTypeEnum.GetInt32},
+                    {"Strength",                      SQLiteGetTypeEnum.GetInt32},
+                    {"Dexterity",                     SQLiteGetTypeEnum.GetInt32},
+                }
+            },
+            {
                 InstTableEnum.ItemInInventory_inst, new Dictionary<String, SQLiteGetTypeEnum>
                 {
                     {"NPCInstID",                     SQLiteGetTypeEnum.GetInt32},
