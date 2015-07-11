@@ -53,14 +53,48 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
         }
 
 
+
+        /* ---------------------------------------------------------
+            DATABASE INTERACTION
+           --------------------------------------------------------- */
+
+
         /**
-         *   Loads the specified type of definitions from their resective datatables.
+         *   Loads the specified type of definitions from their respective datatables.
          *   The method prepares and executes the sqlite-query and reads the resulting values to create
          *   vob-definitions.
          *   @param defTab , the enum-entry which represents the type of definitions to load
          *   @see DefTableEnum
          */
         public static void LoadDefinitions (DefTableEnum defTab)
+        {
+            // the "1" will ensure, that LoadVobDef is called with sqlWhere=1
+            // and, thus, tries to load every single definition of the database table (defTab)
+            LoadDefinitions(defTab, "1");
+        }
+
+        public static void LoadDefinitions (DefTableEnum defTab, int[] idArr)
+        {
+            // (does not check if defTab is valid yet, but does it in the subsequent LoadDefinitions-calls)
+
+            if ((idArr == null) || (idArr.Length <= 0))
+            {
+                // no ids are provided and nothing need to be loaded
+                return;
+            }
+
+            string sqlWhere;
+            StringBuilder sqlWhereSB = new StringBuilder();
+            sqlWhereSB.Append("`ID` IN (");
+            sqlWhereSB.Append(string.Join(",", idArr.Select(x => x.ToString()).ToArray()));
+            sqlWhereSB.Append(")");
+            
+            sqlWhere = sqlWhereSB.ToString();
+
+            LoadDefinitions(defTab, sqlWhere);
+        }
+
+        public static void LoadDefinitions (DefTableEnum defTab, string sqlWhere)
         {
             /* -------------------------------------------------------------
                 getting vob-definitions
@@ -79,30 +113,26 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                 return;
             }
 
-            /* try getting the necessary hints on data conversion for each column 
-             * of the given defintion table */
-            Dictionary<String, SQLiteGetTypeEnum> colTypes = null;
-            if (!DBTables.DefTableDict.TryGetValue(defTab, out colTypes))
+            ///* try getting the necessary hints on data conversion for each column 
+            // * of the given defintion table */
+            Dictionary<String, SQLiteGetTypeEnum> colTypes;
+            // create new lists to ensure same key-value-order for each row in rdr because the memory
+            // allocation of the original dictionary and order might be changed during runtime
+            List<string> colTypesKeys;
+            List<SQLiteGetTypeEnum> colTypesVals;
+            if (!DBTables.GetColumnInfo(defTab, out colTypes, out colTypesKeys, out colTypesVals))
             {
                 return;
             }
-
-
+            
             /* receive list of vob-definitions here and iterate over it, 
              * loading and applying the effec-changes */
 
             // stores the read and converted data of the sql-query
             List<List<List<object>>> defList = new List<List<List<object>>>();
-            // to lists to ensure same key-value-order for each row in rdr because the memory
-            // allocation of the original dictionary and order might be changed during runtime
-            List<string> colTypesKeys = new List<string>(colTypes.Keys);
-            List<SQLiteGetTypeEnum> colTypesVals = new List<SQLiteGetTypeEnum>();
-            for (int i = 0; i < colTypesKeys.Count; i++)
-            {
-                colTypesVals.Add( colTypes[colTypesKeys[i]] );
-            }
 
-            LoadVobDef(defTabName, ref defList, defTab, ref colTypesKeys, ref colTypesVals);
+            //LoadVobDef(defTabName, ref defList, defTab, ref colTypesKeys, ref colTypesVals);
+            LoadVobDef(defTabName, ref defList, ref colTypesKeys, ref colTypesVals, sqlWhere);
 
             // for easier list-indexing in list<object> of defList = List<List<object>>
             Dictionary<string, int> colDict = new Dictionary<string, int>();
@@ -119,7 +149,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             
                 // try getting the necessary hints on data conversion for each column 
                 // of the given vob-specific effect-instance table (EI)
-                List<List<List<object>>> instList_EI = new List<List<List<object>>>();
                 Dictionary<string, SQLiteGetTypeEnum> colTypes_EI = null;
                 Database.InstTableEnum effectsInstTab = 0;
                 if (!DBTables.EffectInstAccesDict.TryGetValue(defTab, out effectsInstTab))
@@ -160,6 +189,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                 int vobIDColIndex = colTypesKeys_EI.IndexOf(vobIDColName);
 
                 // use the vob-ids to request all effect-ids which belong to them
+                List<List<List<object>>> instList_EI = new List<List<List<object>>>();
                 if (defIDs.Count > 0)
                 {
                     LoadEffectsInst(effectsInstTab, ref instList_EI,
@@ -274,13 +304,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             
         }
 
-
-
-        /* ---------------------------------------------------------
-            DATABASE INTERACTION
-           --------------------------------------------------------- */
-
-
         private static void ConvertSQLResult (ref List<List<List<object>>> defList,
             ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals,
             string tabName="/Default defTabName/")
@@ -339,33 +362,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
          *   colTypesKeys and colTypesVals.
          */
         private static void LoadVobDef (string defTabName, ref List<List<List<object>>> defList,
-            DefTableEnum defTabEnum,
-            ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals, 
-            string sqlWhere="1")
-        {
-            Dictionary<String, SQLiteGetTypeEnum> colTypes = null;
-            if (DBTables.DefTableDict.TryGetValue(DefTableEnum.Effect_Changes_def, out colTypes))
-            {
-                LoadVobDef(defTabName, ref defList, ref colTypes, ref colTypesKeys, 
-                ref colTypesVals, sqlWhere);
-            }
-            else
-            {
-                Log.Logger.logError("LoadVobDef: Cannot load vob definition of vobtype " + defTabEnum);
-            }  
-        }
-
-
-        /**
-         *   Lower level loading of vob definition that requires colTypes-paramter.
-         *   @param defTabName is the name of the handled definition table
-         *   @param defList is used to store the sql-result of your sql-query
-         *   @param colTypes describes which column (by name) used which data type
-         *   @param colTypesKeys stores names of colTypes in the order used in the sql-query
-         *   @param colTypesVals stores the types of colTyes in the order used in the sql-query
-         */
-        private static void LoadVobDef (string defTabName, ref List<List<List<object>>> defList, 
-            ref Dictionary<String, SQLiteGetTypeEnum> colTypes, 
+            //DefTableEnum defTabEnum,
             ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals, 
             string sqlWhere="1")
         {
@@ -378,7 +375,43 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 
             // convert individual sql-result-strings to usable data of given types
             ConvertSQLResult(ref defList, ref colTypesKeys, ref colTypesVals, defTabName);
+
+            //Dictionary<String, SQLiteGetTypeEnum> colTypes = null;
+            //if (DBTables.DefTableDict.TryGetValue(DefTableEnum.Effect_Changes_def, out colTypes))
+            //{
+            //    LoadVobDef(defTabName, ref defList, ref colTypes, ref colTypesKeys, 
+            //    ref colTypesVals, sqlWhere);
+            //}
+            //else
+            //{
+            //    Log.Logger.logError("LoadVobDef: Cannot load vob definition of vobtype " + defTabEnum);
+            //}
         }
+
+
+        ///**
+        // *   Lower level loading of vob definition that requires colTypes-paramter.
+        // *   @param defTabName is the name of the handled definition table
+        // *   @param defList is used to store the sql-result of your sql-query
+        // *   @param colTypes describes which column (by name) used which data type
+        // *   @param colTypesKeys stores names of colTypes in the order used in the sql-query
+        // *   @param colTypesVals stores the types of colTyes in the order used in the sql-query
+        // */
+        //private static void LoadVobDef (string defTabName, ref List<List<List<object>>> defList, 
+        //    ref Dictionary<String, SQLiteGetTypeEnum> colTypes, 
+        //    ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals, 
+        //    string sqlWhere="1")
+        //{
+        //    // grab from database
+        //    DBReader.LoadFromDB(ref defList, 
+        //        String.Join(",", colTypesKeys.ToArray()), 
+        //        "`" + defTabName + "`", 
+        //        sqlWhere, 
+        //        "ID ASC");
+
+        //    // convert individual sql-result-strings to usable data of given types
+        //    ConvertSQLResult(ref defList, ref colTypesKeys, ref colTypesVals, defTabName);
+        //}
 
 
         private static void LoadEffectsInst (InstTableEnum instTab, ref List<List<List<object>>> defList, 
@@ -386,7 +419,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             string sqlWhere="1")
         {
             string instTabName = "";
-            if (!DBTables.EffectsInstTableNamesDict.TryGetValue(instTab, out instTabName))
+            if (!DBTables.InstTableNamesDict.TryGetValue(instTab, out instTabName))
             {
                 return;
             }
@@ -446,6 +479,92 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 
             // convert individual sql-result-strings to usable data of given types
             ConvertSQLResult(ref defList, ref colTypesKeys, ref colTypesVals, "EffectChanges_def");
+        }
+
+
+
+
+
+        public static void LoadInstances (InstTableEnum instTab)
+        {
+            // the "1" will ensure, that LoadVobDef is called with sqlWhere=1
+            // and, thus, tries to load every single definition of the database table (defTab)
+            LoadInstances(instTab, "1");
+        }
+
+        public static void LoadDefinitions (InstTableEnum instTab, int[] idArr)
+        {
+            // (does not check if defTab is valid yet, but does it in the subsequent LoadInstances-calls)
+
+            if ((idArr == null) || (idArr.Length <= 0))
+            {
+                // no ids are provided and nothing need to be loaded
+                return;
+            }
+
+            string sqlWhere;
+            StringBuilder sqlWhereSB = new StringBuilder();
+            sqlWhereSB.Append("`ID` IN (");
+            sqlWhereSB.Append(string.Join(",", idArr.Select(x => x.ToString()).ToArray()));
+            sqlWhereSB.Append(")");
+            
+            sqlWhere = sqlWhereSB.ToString();
+
+            LoadInstances(instTab, sqlWhere);
+        }
+
+        public static void LoadInstances (InstTableEnum instTab, string sqlWhere)
+        {
+            if (!DBTables.InstTableDict.ContainsKey(instTab))
+            {
+                return;
+            }
+
+            string instTabName = null;
+            DBTables.InstTableNamesDict.TryGetValue(instTab, out instTabName);
+            if (instTabName == null)
+            {
+                // if there is no table of that name
+                return;
+            }
+
+            Dictionary<String, SQLiteGetTypeEnum> colTypes_Vobs;
+             // create new lists to ensure same key-value-order for each row in rdr because the memory
+            // allocation of the original dictionary and order might be changed during runtime
+            List<string> colTypesKeys_Vobs;
+            List<SQLiteGetTypeEnum> colTypesVals_Vobs;
+
+            if (!DBTables.GetColumnInfo(instTab, out colTypes_Vobs, 
+                out colTypesKeys_Vobs, out colTypesVals_Vobs))
+            {
+                return;
+            }
+
+            // receive list of vob-definitions here and iterate over it, 
+            // loading and applying the effec-changes
+
+            // stores the read and converted data of the sql-query
+            List<List<List<object>>> instList_Vobs = new List<List<List<object>>>();
+
+            LoadVobInst (instTabName, ref instList_Vobs, ref colTypesKeys_Vobs, ref colTypesVals_Vobs);
+
+            // TO BE CONTINUED
+        }
+
+        public static void LoadVobInst (string defTabName, ref List<List<List<object>>> instList,
+            //InstTableEnum instTabEnum,
+            ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals, 
+            string sqlWhere="1")
+        {
+            // grab from database
+            DBReader.LoadFromDB(ref instList, 
+                String.Join(",", colTypesKeys.ToArray()), 
+                "`" + defTabName + "`", 
+                sqlWhere, 
+                "ID ASC");
+
+            // convert individual sql-result-strings to usable data of given types
+            ConvertSQLResult(ref instList, ref colTypesKeys, ref colTypesVals, defTabName);
         }
 
 
