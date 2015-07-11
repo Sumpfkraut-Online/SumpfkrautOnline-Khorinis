@@ -134,174 +134,174 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             //LoadVobDef(defTabName, ref defList, defTab, ref colTypesKeys, ref colTypesVals);
             LoadVobDef(defTabName, ref defList, ref colTypesKeys, ref colTypesVals, sqlWhere);
 
-            // for easier list-indexing in list<object> of defList = List<List<object>>
-            Dictionary<string, int> colDict = new Dictionary<string, int>();
-            for (int i = 0; i < colTypesKeys.Count; i++)
+            //// for easier list-indexing in list<object> of defList = List<List<object>>
+            //Dictionary<string, int> colDict = new Dictionary<string, int>();
+            //for (int i = 0; i < colTypesKeys.Count; i++)
+            //{
+            //    colDict.Add(colTypesKeys[i], i);
+            //}
+
+            if ((defList.Count <= 0) || (defList[0].Count <= 0))
             {
-                colDict.Add(colTypesKeys[i], i);
+                return;
             }
 
-            if ((defList.Count > 0) && (defList[0].Count > 0))
+            /* -------------------------------------------------------------
+            getting vob-effects-instances (EI) [for each vob-defintion]
+            ------------------------------------------------------------- */
+            
+            // try getting the necessary hints on data conversion for each column 
+            // of the given vob-specific effect-instance table (EI)
+            Dictionary<string, SQLiteGetTypeEnum> colTypes_EI = null;
+            Database.InstTableEnum effectsInstTab = 0;
+            if (!DBTables.EffectInstAccesDict.TryGetValue(defTab, out effectsInstTab))
             {
-                /* -------------------------------------------------------------
-                getting vob-effects-instances (EI) [for each vob-defintion]
+                return;
+            }
+            if (!DBTables.InstTableDict.TryGetValue(effectsInstTab, out colTypes_EI))
+            {
+                return;
+            }
+            // to lists to ensure same key-value-order for each row in rdr because the memory
+            // allocation of the original dictionary and order might be changed during runtime
+            List<string> colTypesKeys_EI = new List<string>(colTypes_EI.Keys);
+            List<SQLiteGetTypeEnum> colTypesVals_EI = new List<SQLiteGetTypeEnum>();
+            for (int i = 0; i < colTypesKeys_EI.Count; i++)
+            {
+                colTypesVals_EI.Add( colTypes_EI[colTypesKeys_EI[i]] );
+            }
+
+            // filter out the vob-defintiion-ids to look them up in effects-instance-tables later
+            List<int> defIDs = new List<int>();
+            int idColIndex = colTypesKeys.IndexOf("ID");
+            int hasEffectsColIndex = colTypesKeys.IndexOf("HasEffects");
+            for (int i = 0; i < defList[0].Count; i++)
+            {
+                if ((bool)defList[0][i][hasEffectsColIndex])
+                {
+                    defIDs.Add((int)defList[0][i][idColIndex]);
+                }
+            }
+
+            // column name and index where the vob-id is
+            string vobIDColName = null;
+            if (!DBTables.EffectsInstTableDict_VobDefID.TryGetValue(effectsInstTab, out vobIDColName))
+            {
+                return;
+            }
+            int vobIDColIndex = colTypesKeys_EI.IndexOf(vobIDColName);
+
+            // use the vob-ids to request all effect-ids which belong to them
+            List<List<List<object>>> instList_EI = new List<List<List<object>>>();
+            if (defIDs.Count > 0)
+            {
+                LoadEffectsInst(effectsInstTab, ref instList_EI,
+                    ref colTypesKeys_EI, ref colTypesVals_EI, 
+                    vobIDColName + " IN (" + String.Join(",", defIDs.ToArray()) + ")");
+            }
+
+            // filter out the effect-instance-ids to look them up in effects-changes-tables later
+            // + map vob definition ids to their related effect ids
+            List<int> effectDefIDs = new List<int>();
+            int effectIDColIndex = colTypesKeys_EI.IndexOf("EffectDefID");
+            int eiEffectID = -1;
+            Dictionary<int, List<int>> vobToEffectsMap = new Dictionary<int, List<int>>();
+            List<int> tempVobEffectDefIDs;
+            int eiVobID = -1;
+            if (instList_EI.Count > 0)
+            {
+                for (int i = 0; i < instList_EI[0].Count; i++)
+                {
+                    eiEffectID = (int) instList_EI[0][i][effectIDColIndex];
+                    eiVobID = (int) instList_EI[0][i][vobIDColIndex];
+
+                    if (!effectDefIDs.Contains(eiEffectID))
+                    {
+                        effectDefIDs.Add(eiEffectID);
+                    }
+
+                    if (vobToEffectsMap.TryGetValue(eiVobID, out tempVobEffectDefIDs))
+                    {
+                        if (!tempVobEffectDefIDs.Contains(eiEffectID))
+                        {
+                            tempVobEffectDefIDs.Add(eiEffectID);
+                        }
+                    }
+                    else
+                    {
+                        tempVobEffectDefIDs = new List<int>() {eiEffectID};
+                        vobToEffectsMap.Add(eiVobID, tempVobEffectDefIDs);
+                    }
+                }
+            }    
+
+            /* -------------------------------------------------------------
+                getting effect-changes-defintions (EC) [for each vob-defintion]
                 ------------------------------------------------------------- */
             
-                // try getting the necessary hints on data conversion for each column 
-                // of the given vob-specific effect-instance table (EI)
-                Dictionary<string, SQLiteGetTypeEnum> colTypes_EI = null;
-                Database.InstTableEnum effectsInstTab = 0;
-                if (!DBTables.EffectInstAccesDict.TryGetValue(defTab, out effectsInstTab))
-                {
-                    return;
-                }
-                if (!DBTables.InstTableDict.TryGetValue(effectsInstTab, out colTypes_EI))
-                {
-                    return;
-                }
-                // to lists to ensure same key-value-order for each row in rdr because the memory
-                // allocation of the original dictionary and order might be changed during runtime
-                List<string> colTypesKeys_EI = new List<string>(colTypes_EI.Keys);
-                List<SQLiteGetTypeEnum> colTypesVals_EI = new List<SQLiteGetTypeEnum>();
-                for (int i = 0; i < colTypesKeys_EI.Count; i++)
-                {
-                    colTypesVals_EI.Add( colTypes_EI[colTypesKeys_EI[i]] );
-                }
-
-                // filter out the vob-defintiion-ids to look them up in effects-instance-tables later
-                List<int> defIDs = new List<int>();
-                int idColIndex = colTypesKeys.IndexOf("ID");
-                int hasEffectsColIndex = colTypesKeys.IndexOf("HasEffects");
-                for (int i = 0; i < defList[0].Count; i++)
-                {
-                    if ((bool)defList[0][i][hasEffectsColIndex])
-                    {
-                        defIDs.Add((int)defList[0][i][idColIndex]);
-                    }
-                }
-
-                // column name and index where the vob-id is
-                string vobIDColName = null;
-                if (!DBTables.EffectsInstTableDict_VobDefID.TryGetValue(effectsInstTab, out vobIDColName))
-                {
-                    return;
-                }
-                int vobIDColIndex = colTypesKeys_EI.IndexOf(vobIDColName);
-
-                // use the vob-ids to request all effect-ids which belong to them
-                List<List<List<object>>> instList_EI = new List<List<List<object>>>();
-                if (defIDs.Count > 0)
-                {
-                    LoadEffectsInst(effectsInstTab, ref instList_EI,
-                        ref colTypesKeys_EI, ref colTypesVals_EI, 
-                        vobIDColName + " IN (" + String.Join(",", defIDs.ToArray()) + ")");
-                }
-
-                // filter out the effect-instance-ids to look them up in effects-changes-tables later
-                // + map vob definition ids to their related effect ids
-                List<int> effectDefIDs = new List<int>();
-                int effectIDColIndex = colTypesKeys_EI.IndexOf("EffectDefID");
-                int eiEffectID = -1;
-                Dictionary<int, List<int>> vobToEffectsMap = new Dictionary<int, List<int>>();
-                List<int> tempVobEffectDefIDs;
-                int eiVobID = -1;
-                if (instList_EI.Count > 0)
-                {
-                    for (int i = 0; i < instList_EI[0].Count; i++)
-                    {
-                        eiEffectID = (int) instList_EI[0][i][effectIDColIndex];
-                        eiVobID = (int) instList_EI[0][i][vobIDColIndex];
-
-                        if (!effectDefIDs.Contains(eiEffectID))
-                        {
-                            effectDefIDs.Add(eiEffectID);
-                        }
-
-                        if (vobToEffectsMap.TryGetValue(eiVobID, out tempVobEffectDefIDs))
-                        {
-                            if (!tempVobEffectDefIDs.Contains(eiEffectID))
-                            {
-                                tempVobEffectDefIDs.Add(eiEffectID);
-                            }
-                        }
-                        else
-                        {
-                            tempVobEffectDefIDs = new List<int>() {eiEffectID};
-                            vobToEffectsMap.Add(eiVobID, tempVobEffectDefIDs);
-                        }
-                    }
-                }    
-
-                /* -------------------------------------------------------------
-                    getting effect-changes-defintions (EC) [for each vob-defintion]
-                    ------------------------------------------------------------- */
-            
-                // try getting the necessary hints on data conversion for each column 
-                // of the given vob-specific effect-instance table (EI)
-                List<List<List<object>>> defList_EC = new List<List<List<object>>>();
-                Dictionary<string, SQLiteGetTypeEnum> colTypes_EC = null;
-                if (!DBTables.DefTableDict.TryGetValue(DefTableEnum.Effect_Changes_def, out colTypes_EC))
-                {
-                    return;
-                }
-
-                // to lists to ensure same key-value-order for each row in rdr because the memory
-                // allocation of the original dictionary and order might be changed during runtime
-                List<string> colTypesKeys_EC = new List<string>(colTypes_EC.Keys);
-                List<SQLiteGetTypeEnum> colTypesVals_EC = new List<SQLiteGetTypeEnum>();
-                for (int i = 0; i < colTypesKeys_EC.Count; i++)
-                {
-                    colTypesVals_EC.Add( colTypes_EC[colTypesKeys_EC[i]] );
-                }
-
-                LoadEffectChangesDef(ref effectDefIDs, ref defList_EC,
-                    ref colTypesKeys_EC, ref colTypesVals_EC);
-
-                // remember those EffectChanges for later use (no need for less handy defList_EC from here on)
-                // + map effectIDs to the ids of EffectChanges (for late use in the vob-instantiation)
-                int ecIDColIndex = colTypesKeys_EC.IndexOf("ID");
-                int ecCTColIndex = colTypesKeys_EC.IndexOf("ChangeType");
-                int ecParamColIndex = colTypesKeys_EC.IndexOf("Parameters");
-                int ecEffDefIDColIndex = colTypesKeys_EC.IndexOf("EffectDefID");
-                Dictionary<int, List<int>> effectToChangesMap = new Dictionary<int, List<int>>();
-                List<int> tempEffectChangesIDs;
-                int ecEffectID = -1;
-                int ecEffectChangeID = -1;
-                if (defList_EC.Count > 0) 
-                {
-                    for (int i = 0; i < defList_EC[0].Count; i++)
-                    {
-                        ecEffectID = (int) defList_EC[0][i][ecEffDefIDColIndex];
-                        ecEffectChangeID = (int) defList_EC[0][i][ecIDColIndex];
-
-                        Definitions.EffectChangesDef.Add(ecEffectChangeID, 
-                            (EffectChangesEnum) defList_EC[0][i][ecCTColIndex],
-                            (string) defList_EC[0][i][ecParamColIndex],
-                            true);
-
-                        if (effectToChangesMap.TryGetValue(ecEffectID, out tempEffectChangesIDs)){
-                            if (!tempEffectChangesIDs.Contains(ecEffectChangeID))
-                            {
-                                tempEffectChangesIDs.Add(ecEffectChangeID);
-                            }
-                        }
-                        else
-                        {
-                            tempEffectChangesIDs = new List<int>() {ecEffectChangeID};
-                            effectToChangesMap.Add(ecEffectID, tempEffectChangesIDs);
-                        }
-                    }
-                }
-            
-                /* -------------------------------------------------------------
-                    create actual instances for vob definitions
-                    ------------------------------------------------------------- */
-
-                CreateVobDefinitions(defTab, ref defList, ref colTypesKeys, ref colTypesVals, 
-                    ref vobToEffectsMap, ref effectToChangesMap);
+            // try getting the necessary hints on data conversion for each column 
+            // of the given vob-specific effect-instance table (EI)
+            List<List<List<object>>> defList_EC = new List<List<List<object>>>();
+            Dictionary<string, SQLiteGetTypeEnum> colTypes_EC = null;
+            if (!DBTables.DefTableDict.TryGetValue(DefTableEnum.Effect_Changes_def, out colTypes_EC))
+            {
+                return;
             }
 
+            // to lists to ensure same key-value-order for each row in rdr because the memory
+            // allocation of the original dictionary and order might be changed during runtime
+            List<string> colTypesKeys_EC = new List<string>(colTypes_EC.Keys);
+            List<SQLiteGetTypeEnum> colTypesVals_EC = new List<SQLiteGetTypeEnum>();
+            for (int i = 0; i < colTypesKeys_EC.Count; i++)
+            {
+                colTypesVals_EC.Add( colTypes_EC[colTypesKeys_EC[i]] );
+            }
+
+            LoadEffectChangesDef(ref effectDefIDs, ref defList_EC,
+                ref colTypesKeys_EC, ref colTypesVals_EC);
+
+            // remember those EffectChanges for later use (no need for less handy defList_EC from here on)
+            // + map effectIDs to the ids of EffectChanges (for late use in the vob-instantiation)
+            int ecIDColIndex = colTypesKeys_EC.IndexOf("ID");
+            int ecCTColIndex = colTypesKeys_EC.IndexOf("ChangeType");
+            int ecParamColIndex = colTypesKeys_EC.IndexOf("Parameters");
+            int ecEffDefIDColIndex = colTypesKeys_EC.IndexOf("EffectDefID");
+            Dictionary<int, List<int>> effectToChangesMap = new Dictionary<int, List<int>>();
+            List<int> tempEffectChangesIDs;
+            int ecEffectID = -1;
+            int ecEffectChangeID = -1;
+            if (defList_EC.Count > 0) 
+            {
+                for (int i = 0; i < defList_EC[0].Count; i++)
+                {
+                    ecEffectID = (int) defList_EC[0][i][ecEffDefIDColIndex];
+                    ecEffectChangeID = (int) defList_EC[0][i][ecIDColIndex];
+
+                    Definitions.EffectChangesDef.Add(ecEffectChangeID, 
+                        (EffectChangesEnum) defList_EC[0][i][ecCTColIndex],
+                        (string) defList_EC[0][i][ecParamColIndex],
+                        true);
+
+                    if (effectToChangesMap.TryGetValue(ecEffectID, out tempEffectChangesIDs)){
+                        if (!tempEffectChangesIDs.Contains(ecEffectChangeID))
+                        {
+                            tempEffectChangesIDs.Add(ecEffectChangeID);
+                        }
+                    }
+                    else
+                    {
+                        tempEffectChangesIDs = new List<int>() {ecEffectChangeID};
+                        effectToChangesMap.Add(ecEffectID, tempEffectChangesIDs);
+                    }
+                }
+            }
             
+            /* -------------------------------------------------------------
+                create actual instances for vob definitions
+                ------------------------------------------------------------- */
+
+            CreateVobDefinitions(defTab, ref defList, ref colTypesKeys, ref colTypesVals, 
+                ref vobToEffectsMap, ref effectToChangesMap);   
         }
 
         private static void ConvertSQLResult (ref List<List<List<object>>> defList,
@@ -492,7 +492,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             LoadInstances(instTab, "1");
         }
 
-        public static void LoadDefinitions (InstTableEnum instTab, int[] idArr)
+        public static void LoadInstances (InstTableEnum instTab, int[] idArr)
         {
             // (does not check if defTab is valid yet, but does it in the subsequent LoadInstances-calls)
 
@@ -540,15 +540,26 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                 return;
             }
 
-            // receive list of vob-definitions here and iterate over it, 
-            // loading and applying the effec-changes
+            // receive list of vob-instances here and iterate over it, 
+            // loading and applying the effect-changes
 
             // stores the read and converted data of the sql-query
             List<List<List<object>>> instList_Vobs = new List<List<List<object>>>();
 
-            LoadVobInst (instTabName, ref instList_Vobs, ref colTypesKeys_Vobs, ref colTypesVals_Vobs);
+            LoadVobInst (instTabName, ref instList_Vobs, ref colTypesKeys_Vobs, ref colTypesVals_Vobs, 
+                sqlWhere);
 
-            // TO BE CONTINUED
+            if ((instList_Vobs.Count <= 0) || (instList_Vobs[0].Count <= 0))
+            {
+                // if nothing was found in the databse and loaded, it does not need
+                // further initialization --> return prematurely
+                return;
+            }
+
+            // PLACEHOLDER:
+            //     - possible EffectDef- and EffectChangesDef-loading
+
+            CreateVobInstances(instTab, ref instList_Vobs, ref colTypesKeys_Vobs, ref colTypesVals_Vobs);
         }
 
         public static void LoadVobInst (string defTabName, ref List<List<List<object>>> instList,
@@ -581,54 +592,104 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
         {
             List<object> def;
             int vobIDColIndex = colTypesKeys.IndexOf("ID");
-            for (int r = 0; r < defList[0].Count; r++)
-            {
-                def = defList[0][r];
-                CreateVobDefinition(defTab, ref def, 
-                    ref colTypesKeys, ref colTypesVals, 
-                    ref mapVDToED, 
-                    ref mapEDToECD);
-            }
-        }
 
-        private static void CreateVobDefinition (DefTableEnum defTab, ref List<object> def,
-            ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals,
-            ref Dictionary<int, List<int>> mapVDToED, 
-            ref Dictionary<int, List<int>> mapEDToECD)
-        {
+            //for (int r = 0; r < defList[0].Count; r++)
+            //{
+            //    def = defList[0][r];
+            //    CreateVobDefinition(defTab, ref def, 
+            //        ref colTypesKeys, ref colTypesVals, 
+            //        ref mapVDToED, 
+            //        ref mapEDToECD);
+            //}
+
             switch (defTab)
             {
                 case (DefTableEnum.Mob_def):
-                    CreateMobDefinition(defTab, ref def, 
-                        ref colTypesKeys, ref colTypesVals, 
-                        ref mapVDToED, 
-                        ref mapEDToECD);
+                    for (int r = 0; r < defList[0].Count; r++)
+                    {
+                        def = defList[0][r];
+                        CreateMobDefinition(ref def, 
+                            ref colTypesKeys, ref colTypesVals, 
+                            ref mapVDToED, 
+                            ref mapEDToECD);
+                    }
                     break;
                 case (DefTableEnum.Spell_def):
-                    CreateSpellDefinition(defTab, ref def, 
-                        ref colTypesKeys, ref colTypesVals, 
-                        ref mapVDToED, 
-                        ref mapEDToECD);
+                    for (int r = 0; r < defList[0].Count; r++)
+                    {
+                        def = defList[0][r];
+                        CreateSpellDefinition(ref def, 
+                            ref colTypesKeys, ref colTypesVals, 
+                            ref mapVDToED, 
+                            ref mapEDToECD);
+                    }
                     break;
                 case (DefTableEnum.Item_def):
-                    CreateItemDefinition(defTab, ref def, 
-                        ref colTypesKeys, ref colTypesVals, 
-                        ref mapVDToED, 
-                        ref mapEDToECD);
+                    for (int r = 0; r < defList[0].Count; r++)
+                    {
+                        def = defList[0][r];
+                        CreateItemDefinition(ref def, 
+                            ref colTypesKeys, ref colTypesVals, 
+                            ref mapVDToED, 
+                            ref mapEDToECD);
+                    }
                     break;
                 case (DefTableEnum.NPC_def):
-                    CreateNPCDefinition(defTab, ref def, 
-                        ref colTypesKeys, ref colTypesVals, 
-                        ref mapVDToED, 
-                        ref mapEDToECD);
+                    for (int r = 0; r < defList[0].Count; r++)
+                    {
+                        def = defList[0][r];
+                        CreateNPCDefinition(ref def, 
+                            ref colTypesKeys, ref colTypesVals, 
+                            ref mapVDToED, 
+                            ref mapEDToECD);
+                    }
                     break;
                 default:
-                    throw new Exception("Invalid DefTableEnum " + defTab + " detected in method createVobDefinition"
+                    Log.Logger.logError("Invalid DefTableEnum " + defTab + " detected in method CreateVobDefinitions"
                         + ": Terminating vob-definition-creation!");
+                    break;
             }
         }
 
-        private static void CreateMobDefinition (DefTableEnum defTab, ref List<object> def,
+        //private static void CreateVobDefinition (DefTableEnum defTab, ref List<object> def,
+        //    ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals,
+        //    ref Dictionary<int, List<int>> mapVDToED, 
+        //    ref Dictionary<int, List<int>> mapEDToECD)
+        //{
+        //    switch (defTab)
+        //    {
+        //        case (DefTableEnum.Mob_def):
+        //            CreateMobDefinition(ref def, 
+        //                ref colTypesKeys, ref colTypesVals, 
+        //                ref mapVDToED, 
+        //                ref mapEDToECD);
+        //            break;
+        //        case (DefTableEnum.Spell_def):
+        //            CreateSpellDefinition(ref def, 
+        //                ref colTypesKeys, ref colTypesVals, 
+        //                ref mapVDToED, 
+        //                ref mapEDToECD);
+        //            break;
+        //        case (DefTableEnum.Item_def):
+        //            CreateItemDefinition(ref def, 
+        //                ref colTypesKeys, ref colTypesVals, 
+        //                ref mapVDToED, 
+        //                ref mapEDToECD);
+        //            break;
+        //        case (DefTableEnum.NPC_def):
+        //            CreateNPCDefinition(ref def, 
+        //                ref colTypesKeys, ref colTypesVals, 
+        //                ref mapVDToED, 
+        //                ref mapEDToECD);
+        //            break;
+        //        default:
+        //            Log.Logger.logError("Invalid DefTableEnum " + defTab + " detected in method createVobDefinition"
+        //                + ": Terminating vob-definition-creation!");
+        //            break;
+        //    }
+        //}
+
+        private static void CreateMobDefinition (ref List<object> def,
             ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals,
             ref Dictionary<int, List<int>> mapVDToED,
             ref Dictionary<int, List<int>> mapEDToECD)
@@ -834,7 +895,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             }
         }
 
-        private static void CreateSpellDefinition (DefTableEnum defTab, ref List<object> def,
+        private static void CreateSpellDefinition (ref List<object> def,
             ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals,
             ref Dictionary<int, List<int>> mapVDToED, 
             ref Dictionary<int, List<int>> mapEDToECD)
@@ -843,7 +904,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
         }
 
 
-        private static void CreateItemDefinition (DefTableEnum defTab, ref List<object> def,
+        private static void CreateItemDefinition (ref List<object> def,
             ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals,
             ref Dictionary<int, List<int>> mapVDToED, 
             ref Dictionary<int, List<int>> mapEDToECD)
@@ -1127,11 +1188,12 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             }
         }
 
+        // !!! DELETE AFTER TESTING (security risk) !!!
         public static void CreateItemDefinition_Test (ref DummyItemDef dummyDef){
             CreateItemDefinition(ref dummyDef);
         }
 
-        private static void CreateNPCDefinition (DefTableEnum defTab, ref List<object> def,
+        private static void CreateNPCDefinition (ref List<object> def,
             ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals,
             ref Dictionary<int, List<int>> mapVDToED, 
             ref Dictionary<int, List<int>> mapEDToECD)
@@ -1309,6 +1371,107 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                 throw new Exception("CreateNPCDefinition: Some necessary attributes of DummyItemDef" 
                     + " are not valid or missing: ID=" + dummyDef.getID() + ": " + ex);
             }
+        }
+
+
+
+        private static void CreateVobInstances (InstTableEnum instTab, 
+            ref List<List<List<object>>> instList,
+            ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals)
+        {
+            List<object> inst;
+            int vobIDColIndex = colTypesKeys.IndexOf("ID");
+            
+            //for (int r = 0; r < instList[0].Count; r++)
+            //{
+            //    inst = instList[0][r];
+            //    CreateVobInstance(instTab, ref inst, ref colTypesKeys, ref colTypesVals);
+            //}
+
+            switch (instTab)
+            {
+                case (InstTableEnum.Mob_inst):
+                    for (int r = 0; r < instList[0].Count; r++)
+                    {
+                        inst = instList[0][r];
+                        CreateMobInstance(ref inst, ref colTypesKeys, ref colTypesVals);
+                    }
+                    break;
+                case (InstTableEnum.Spell_inst):
+                    for (int r = 0; r < instList[0].Count; r++)
+                    {
+                        inst = instList[0][r];
+                        CreateSpellInstance(ref inst, ref colTypesKeys, ref colTypesVals);
+                    }
+                    break;
+                case (InstTableEnum.Item_inst):
+                    for (int r = 0; r < instList[0].Count; r++)
+                    {
+                        inst = instList[0][r];
+                        CreateItemInstance(ref inst, ref colTypesKeys, ref colTypesVals);
+                    }
+                    break;
+                case (InstTableEnum.NPC_inst):
+                    for (int r = 0; r < instList[0].Count; r++)
+                    {
+                        inst = instList[0][r];
+                        CreateNPCInstance(ref inst, ref colTypesKeys, ref colTypesVals);
+                    }
+                    break;
+                default:
+                    Log.Logger.logError("Invalid InstTableEnum " + instTab + " detected in method CreateVobInstances"
+                        + ": Terminating vob-instance-creation!");
+                    break;
+            }
+        }
+        
+        //private static void CreateVobInstance (InstTableEnum instTab, 
+        //    ref List<object> inst,
+        //    ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals)
+        //{
+        //    switch (instTab)
+        //    {
+        //        case (InstTableEnum.Mob_inst):
+        //            CreateMobInstance(ref inst, ref colTypesKeys, ref colTypesVals);
+        //            break;
+        //        case (InstTableEnum.Spell_inst):
+        //            CreateSpellInstance(ref inst, ref colTypesKeys, ref colTypesVals);
+        //            break;
+        //        case (InstTableEnum.Item_inst):
+        //            CreateItemInstance(ref inst, ref colTypesKeys, ref colTypesVals);
+        //            break;
+        //        case (InstTableEnum.NPC_inst):
+        //            CreateNPCInstance(ref inst, ref colTypesKeys, ref colTypesVals);
+        //            break;
+        //        default:
+        //            Log.Logger.logError("Invalid InstTableEnum " + instTab + " detected in method createVobInstance"
+        //                + ": Terminating vob-instance-creation!");
+        //            break;
+        //    }
+        //}
+
+        private static void CreateMobInstance (ref List<object> inst,
+            ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals)
+        {
+
+        }
+
+        private static void CreateSpellInstance (ref List<object> inst,
+            ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals)
+        {
+
+        }
+
+        private static void CreateItemInstance (ref List<object> inst,
+            ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals)
+        {
+
+        }
+
+        private static void CreateNPCInstance (ref List<object> inst,
+            ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals)
+        {
+
         }
 
     }
