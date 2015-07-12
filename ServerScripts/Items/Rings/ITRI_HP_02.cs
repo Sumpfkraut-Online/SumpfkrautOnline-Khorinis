@@ -29,13 +29,13 @@ namespace GUC.Server.Scripts.Items.Rings
             CreateItemInstance();
         }
 
-        protected void equip(NPCProto npc, Item item)
+        protected void equip(NPC npc, Item item)
         {
             npc.HPMax += 40;
             npc.HP += 40;
         }
 
-        protected void unequip(NPCProto npc, Item item)
+        protected void unequip(NPC npc, Item item)
         {
             if (npc.HP > 40 + 2)
                 npc.HP -= 40;

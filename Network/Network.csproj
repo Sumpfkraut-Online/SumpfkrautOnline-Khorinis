@@ -43,14 +43,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enumeration\HumanVisuals.cs" />
+    <Compile Include="Enumeration\Playerskills.cs" />
+    <Compile Include="Network\AccCharInfo.cs" />
     <Compile Include="Enumeration\GothicKeys.cs" />
-    <Compile Include="Enumeration\GuiFlags.cs" />
     <Compile Include="Enumeration\Item_Flags.cs" />
     <Compile Include="Enumeration\NetworkIDS.cs" />
     <Compile Include="Enumeration\NPCFlags.cs" />
-    <Compile Include="Enumeration\PlayerStatus.cs" />
     <Compile Include="Enumeration\SpellFlags.cs" />
-    <Compile Include="Enumeration\VirtualKeys.cs" />
     <Compile Include="Enumeration\VobFlags.cs" />
     <Compile Include="Network\BitStreamExtension.cs" />
     <Compile Include="Options\ClientOptions.cs" />
@@ -67,8 +67,6 @@
     <Compile Include="Updater\Options.cs" />
     <Compile Include="Updater\Updater.cs" />
     <Compile Include="WorldObjects\Character\NPC.cs" />
-    <Compile Include="WorldObjects\Character\NPCProto.cs" />
-    <Compile Include="WorldObjects\Character\Player.cs" />
     <Compile Include="WorldObjects\IContainer.cs" />
     <Compile Include="WorldObjects\Item.cs" />
     <Compile Include="WorldObjects\ItemInstance.cs" />

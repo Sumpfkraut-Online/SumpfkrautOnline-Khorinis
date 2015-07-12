@@ -56,7 +56,7 @@ namespace GUC.Server.Scripting.Objects.Mob
 
         #region Events
         public event GUC.Server.Scripting.Events.MobContainerPickEventHandler OnPickLocked;
-        internal void OnContainerPickLocks(MobLockable mobInter, NPCProto npc, char c)
+        internal void OnContainerPickLocks(MobLockable mobInter, NPC npc, char c)
         {
             if (OnPickLocked != null)
                 OnPickLocked(mobInter, npc, c);
@@ -66,7 +66,7 @@ namespace GUC.Server.Scripting.Objects.Mob
         #region Static Events:
 
         public static event Events.MobContainerPickEventHandler OnPickLock;
-        internal static void OnContainerPickLock(MobLockable mobInter, NPCProto npc, char c)
+        internal static void OnContainerPickLock(MobLockable mobInter, NPC npc, char c)
         {
             mobInter.OnContainerPickLocks(mobInter, npc, c);
             if (OnPickLock != null)

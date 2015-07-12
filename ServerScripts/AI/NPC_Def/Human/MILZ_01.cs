@@ -29,7 +29,7 @@ namespace GUC.Server.Scripts.AI.NPC_Def.Human
             this.setFightTalent(NPCTalent.CrossBow, 50);
 
 
-            this.setVisual("HUMANS.MDS", NPCProto.BODYMESH_MALE, NPCProto.BODYTEX_MALE_BLACK, 0, "Hum_Head_FatBald", NPCProto.Face_B_Tough_Silas, 0);
+            this.setVisual("HUMANS.MDS", NPC.BODYMESH_MALE, NPC.BODYTEX_MALE_BLACK, 0, "Hum_Head_FatBald", NPC.Face_B_Tough_Silas, 0);
             this.ApplyOverlay("Humans_Militia.mds");
 
             this.InitNPCAI();
@@ -44,7 +44,7 @@ namespace GUC.Server.Scripts.AI.NPC_Def.Human
         }
 
 
-        public void ta_Miliz_01(NPCProto proto)
+        public void ta_Miliz_01(NPC proto)
         {
             if (proto.RTN_ACTIVE(0, 0, 23, 59))
             {
@@ -54,7 +54,7 @@ namespace GUC.Server.Scripts.AI.NPC_Def.Human
             }
         }
 
-        public void ta_Miliz_02(NPCProto proto)
+        public void ta_Miliz_02(NPC proto)
         {
             if (proto.RTN_ACTIVE(0, 0, 23, 59))
             {

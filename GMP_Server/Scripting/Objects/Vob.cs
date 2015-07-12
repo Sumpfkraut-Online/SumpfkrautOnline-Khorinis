@@ -17,8 +17,6 @@ namespace GUC.Server.Scripting.Objects
     public class Vob
     {
         internal GUC.WorldObjects.Vob vob = null;
-        protected bool created = false;
-
         protected Dictionary<String, Object> userObjects = new Dictionary<string,object>();
 
         /**
@@ -28,14 +26,13 @@ namespace GUC.Server.Scripting.Objects
          * @return Vob with the ID id or a null-reference
          */
         public static Vob getVob(int id){
-            WorldObjects.Vob v = null;
+            WorldObjects.Vob v;
             sWorld.VobDict.TryGetValue(id, out v);
 
             if (v == null)
                 return null;
 
             return v.ScriptingVob;
-
         }
 
 
@@ -49,9 +46,9 @@ namespace GUC.Server.Scripting.Objects
         /// Do not forget to use the spawn function.
         /// </summary>
         /// <param name="Visual">The visual your vob will get</param>
-        public Vob(String Visual)
-            : this(Visual, true, true, true)
-        { }
+        public Vob(String Visual) : this(Visual, true, true)
+        { 
+        }
 
         /// <summary>
         /// Creates a new vob.
@@ -60,20 +57,9 @@ namespace GUC.Server.Scripting.Objects
         /// <param name="Visual">The visual your vob will get</param>
         /// <param name="cdDyn">Dynamic Collisions</param>
         /// <param name="cdStatic">Static Collisions</param>
-        public Vob(String Visual, bool cdDyn, bool cdStatic)
-            : this(Visual, cdDyn, cdStatic, true)
-        { }
 
-        private Vob(String visual, bool cdDyn, bool cdStatic, bool useCreate)
-            : this(new GUC.WorldObjects.Vob(), visual, cdDyn, cdStatic, useCreate)
+        public Vob(String visual, bool cdDyn, bool cdStatic) : this(new GUC.WorldObjects.Vob(), visual, cdDyn, cdStatic)
         {
-
-        }
-
-        protected Vob()
-            : this(new GUC.WorldObjects.Vob(), null, false, false, false)
-        {
-
         }
 
 		/**
@@ -84,17 +70,21 @@ namespace GUC.Server.Scripting.Objects
          * @param cdStatic Static collision
          * @param useCreate Call CreateVob() upon creation
          */
-        internal Vob(GUC.WorldObjects.Vob vob, String visual, bool cdDyn, bool cdStatic, bool useCreate)
-            : this(vob)
+        internal Vob(GUC.WorldObjects.Vob vob, String visual, bool cdDyn, bool cdStatic) : this(vob)
         {
             this.vob.ScriptingVob = this;
-
             this.Visual = visual;
             this.vob.CDDyn = cdDyn;
             this.vob.CDStatic = cdStatic;
 
-            if (useCreate)
-                CreateVob();
+            //CreateVobMessage.Write(vob);
+
+            sWorld.addVob(this.vob);
+        }
+
+        internal void test()
+        {
+
         }
 
         public static IEnumerable ToEnumerable()
@@ -105,23 +95,10 @@ namespace GUC.Server.Scripting.Objects
             }
         }
 
-        /// <summary>
-        /// Returns the ID of the vob.
-        /// </summary>
         public int ID { get { return vob.ID; } } /**< Internal ID of this vob. Can only be read. */
 
-        /**
-         * Regular (X|Y|Z) position vector.
-         * When this is set to an invalid value, it will default to (0|0|0).
-         * The position in the world will be updated automatically (D_SERVER???).
-         */
-        public Vec3f Position { get { return vob.Position; } set { setPosition(value); } }
-        /// <summary>
-        /// Returns or set the Direction of the vob.
-        /// </summary>
-        public Vec3f Direction { get { return vob.Direction; } set { setDirection(value); } }
-
-
+        public Vec3f Position { get { return vob.PosVec; } set { vob.PosVec = value } }
+        public Vec3f Direction { get { return vob.DirVec; } set { vob.DirVec = value } }
 
         public bool CDDyn { get { return vob.CDDyn; } set { setCDDyn(value); } }
         public bool CDStatic { get { return vob.CDStatic; } set { setCDStatic(value); } }
@@ -224,16 +201,6 @@ namespace GUC.Server.Scripting.Objects
             DespawnVobMessage.Write(vob);
         }
 
-        protected virtual void CreateVob()
-        {
-            if (created)
-                return;
-            CreateVobMessage.Write(vob);
-
-            GUC.WorldObjects.sWorld.addVob(this.vob);
-            created = true;
-        }
-
         /// <summary>
         /// Returns the world or null if the vob is not spawned
         /// </summary>
@@ -308,8 +275,8 @@ namespace GUC.Server.Scripting.Objects
                 if (!sWorld.getWorld(this.vob.Map).PlayerPositionList.ContainsKey(key))
                     continue;
 
-                List<WorldObjects.Character.Player> mobs = sWorld.getWorld(this.vob.Map).PlayerPositionList[key];
-                foreach (WorldObjects.Character.Player m in mobs)
+                List<WorldObjects.Character.NPC> mobs = sWorld.getWorld(this.vob.Map).PlayerPositionList[key];
+                foreach (WorldObjects.Character.NPC m in mobs)
                 {
                     if (m == this.vob)
                         continue;
@@ -339,12 +306,12 @@ namespace GUC.Server.Scripting.Objects
         /// </summary>
         /// <param name="distance">The maximum distance the NPCProto can be</param>
         /// <returns></returns>
-        public NPCProto[] getNearNPC(float distance)
+        public NPC[] getNearNPC(float distance)
         {
             if (this.vob.Map == null || this.vob.Map.Length == 0)
                 throw new Exception("The Player has not been spawned! Use Spawn() command first!");
 
-            List<NPCProto> playerList = new List<NPCProto>();
+            List<NPC> playerList = new List<NPC>();
 
             uint[] keys = WorldObjects.World.getImportantKeysByPosition(this.Position.Data, distance);
 
@@ -353,8 +320,8 @@ namespace GUC.Server.Scripting.Objects
                 if (!sWorld.getWorld(this.vob.Map).NPCPositionList.ContainsKey(key))
                     continue;
 
-                List<WorldObjects.Character.NPCProto> mobs = sWorld.getWorld(this.vob.Map).NPCPositionList[key];
-                foreach (WorldObjects.Character.NPCProto m in mobs)
+                List<WorldObjects.Character.NPC> mobs = sWorld.getWorld(this.vob.Map).NPCPositionList[key];
+                foreach (WorldObjects.Character.NPC m in mobs)
                 {
                     if (m == this.vob)
                         continue;
@@ -364,7 +331,7 @@ namespace GUC.Server.Scripting.Objects
 
                     if (mD <= distance)
                     {
-                        playerList.Add((NPCProto)m.ScriptingNPC);
+                        playerList.Add((NPC)m.ScriptingNPC);
                     }
                 }
             }
@@ -414,9 +381,9 @@ namespace GUC.Server.Scripting.Objects
         /// Returns the nearest npc
         /// </summary>
         /// <returns></returns>
-        public NPCProto getNearestNPC()
+        public NPC getNearestNPC()
         {
-            NPCProto mi = null;
+            NPC mi = null;
 
             uint[] keys = WorldObjects.World.getImportantKeysByPosition(this.Position.Data, 4000);
             float minDistance = float.MaxValue;
@@ -425,21 +392,21 @@ namespace GUC.Server.Scripting.Objects
             {
                 if (!sWorld.getWorld(this.vob.Map).MobInterPositionList.ContainsKey(key))
                     continue;
-                List<WorldObjects.Character.NPCProto> mobs = sWorld.getWorld(this.vob.Map).NPCPositionList[key];
+                List<WorldObjects.Character.NPC> mobs = sWorld.getWorld(this.vob.Map).NPCPositionList[key];
 
-                foreach (WorldObjects.Character.NPCProto m in mobs)
+                foreach (WorldObjects.Character.NPC m in mobs)
                 {
                     if (mi == null)
                     {
                         minDistance = (m.Position - this.Position).Length;
-                        mi = (NPCProto)m.ScriptingVob;
+                        mi = (NPC)m.ScriptingVob;
                         continue;
                     }
 
                     float mD = (m.Position - this.Position).Length;
                     if (mD < minDistance)
                     {
-                        mi = (NPCProto)m.ScriptingVob;
+                        mi = (NPC)m.ScriptingVob;
                         minDistance = mD;
                     }
 
@@ -521,7 +488,7 @@ namespace GUC.Server.Scripting.Objects
             stream.Write(vob.Position);
 
             if(this is NPC)
-                ((NPCProto)this).proto.SendToAreaPlayers(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED);
+                ((NPC)this).proto.SendToAreaPlayers(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED);
             else
                 Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
@@ -564,11 +531,6 @@ namespace GUC.Server.Scripting.Objects
             Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE_SEQUENCED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
-
-        #region CreationProperty
-
-
-
         public String Map { get { return vob.Map; } }
 
         public virtual String Visual
@@ -576,11 +538,6 @@ namespace GUC.Server.Scripting.Objects
             get { return vob.Visual; }
             protected set { setVisual(value); }
         }
-
-        
-
-        protected void e() { if (created)throw new Exception("Can only be set in constructor/ before creation"); }
-        #endregion
 
 
         public Object getUserObjects(String userObject)

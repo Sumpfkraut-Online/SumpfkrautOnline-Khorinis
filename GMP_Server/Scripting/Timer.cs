@@ -21,7 +21,8 @@ namespace GUC.Server.Scripting
 
         protected long m_Time = 0;
 
-        public event Events.TimerEvent OnTick;
+        public delegate void TimerEvent();
+        public event TimerEvent OnTick;
 
         /// <summary>
         /// Constructor of Timer-Class.

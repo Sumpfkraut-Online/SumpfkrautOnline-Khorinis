@@ -5,9 +5,9 @@ using System.Text;
 using Gothic.zClasses;
 using WinApi;
 using Gothic.zTypes;
-using GUC.WorldObjects;
+using GUC.Client.WorldObjects;
 
-namespace GUC.Hooks
+namespace GUC.Client.Hooks
 {
     class hParser
     {
@@ -17,11 +17,10 @@ namespace GUC.Hooks
         static HookInfos _infoLoadParserFile = null;
         public static void HookLoadDat()
         {
-            _infoLoadDat = Process.ThisProcess().Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hParser).GetMethod("hook_LoadDat"), 0x0078E900, 7, 1);
+            _infoLoadDat = Program.Process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hParser).GetMethod("hook_LoadDat"), 0x0078E900, 7, 1);
+            _infoLoadParserFile = Program.Process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hParser).GetMethod("hook_LoadParserFile"), 0x006C4BE0, 6, 1);
 
-            _infoLoadParserFile = Process.ThisProcess().Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hParser).GetMethod("hook_LoadParserFile"), 0x006C4BE0, 6, 1);
-
-            Process.ThisProcess().Write(new byte[] { 0x33, 0xC0, 0xC2, 0x04, 0x00 }, _infoLoadParserFile.oldFuncInNewFunc.ToInt32());
+            Program.Process.Write(new byte[] { 0x33, 0xC0, 0xC2, 0x04, 0x00 }, _infoLoadParserFile.oldFuncInNewFunc.ToInt32());
         }
 
         public static void BlockLoadDat()
@@ -31,7 +30,7 @@ namespace GUC.Hooks
             if (_loadDatBlocked)
                 return;
 
-            Process.ThisProcess().Write(new byte[] { 0x33, 0xC0, 0xC2, 0x04, 0x00 }, _infoLoadDat.oldFuncInNewFunc.ToInt32());
+            Program.Process.Write(new byte[] { 0x33, 0xC0, 0xC2, 0x04, 0x00 }, _infoLoadDat.oldFuncInNewFunc.ToInt32());
 
             _loadDatBlocked = true;
         }
@@ -42,7 +41,7 @@ namespace GUC.Hooks
                 throw new Exception("Call HookLoadDat first!");
             if (!_loadDatBlocked)
                 return;
-            Process.ThisProcess().Write(new byte[] { 0x6A, 0xFF, 0x68, 0x10, 0xA4 }, _infoLoadDat.oldFuncInNewFunc.ToInt32());
+            Program.Process.Write(new byte[] { 0x6A, 0xFF, 0x68, 0x10, 0xA4 }, _infoLoadDat.oldFuncInNewFunc.ToInt32());
             _loadDatBlocked = false;
         }
 
@@ -51,26 +50,20 @@ namespace GUC.Hooks
             try
             {
                 int parameterAddress = Convert.ToInt32(message);
-                zString str = new zString(Process.ThisProcess(), Process.ThisProcess().ReadInt(parameterAddress + 4));
+                zString str = new zString(Program.Process, Program.Process.ReadInt(parameterAddress + 4));
                 if (str.Value.ToUpper().Trim() == "GOTHIC.DAT")
                 {
-                    
-                    GUC.States.StartupState.initDefaultScripts();
+                    States.StartupState.initDefaultScripts();
                     BlockLoadDat();
                 }
                 else
                 {
                     UnblockLoadDat();
                 }
-
-
-
-                
-                
-                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Load-Dat: "+str.Value, 0, "Program.cs", 0);
+                zERROR.GetZErr(Program.Process).Report(2, 'G', "Load-Dat: " + str.Value, 0, "Program.cs", 0);
             }
             catch (Exception ex) {
-                zERROR.GetZErr(Process.ThisProcess()).Report(4, 'G', ex.ToString(), 0, "Program.cs", 0);
+                zERROR.GetZErr(Program.Process).Report(4, 'G', ex.ToString(), 0, "Program.cs", 0);
             }
             return 0;
         }
@@ -83,33 +76,33 @@ namespace GUC.Hooks
             try
             {
                 int parameterAddress = Convert.ToInt32(message);
-                zString str = new zString(Process.ThisProcess(), Process.ThisProcess().ReadInt(parameterAddress + 4));
-                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "LoadParserFile: " + str.Value, 0, "Program.cs", 0);
+                zString str = new zString(Program.Process, Program.Process.ReadInt(parameterAddress + 4));
+                zERROR.GetZErr(Program.Process).Report(2, 'G', "LoadParserFile: " + str.Value, 0, "Program.cs", 0);
 
-                zCParser parser = zCParser.getParser(Process.ThisProcess());
+                zCParser parser = zCParser.getParser(Program.Process);
                 parser.Reset();
-                oCGame.Game(Process.ThisProcess()).DefineExternals_Ulfi(parser);
+                oCGame.Game(Program.Process).DefineExternals_Ulfi(parser);
                 parser.EnableTreeLoad(0);
                 parser.EnableTreeSave(0);
 
-                GUC.States.StartupState.initDefaultScripts();
+                States.StartupState.initDefaultScripts();
 
-                zString str2 = zString.Create(Process.ThisProcess(), "C_NPC");
+                zString str2 = zString.Create(Program.Process, "C_NPC");
                 parser.AddClassOffset(str2, 0x120);
                 str2.Dispose();
 
-                str2 = zString.Create(Process.ThisProcess(), "C_ITEM");
+                str2 = zString.Create(Program.Process, "C_ITEM");
                 parser.AddClassOffset(str2, 0x120);
                 str2.Dispose();
 
-                parser.MainFileName.Set(GUC.States.StartupState.srcFile);
+                parser.MainFileName.Set(States.StartupState.srcFile);
 
                 parser.CreatePCode();
                 parser.Error();
             }
             catch (Exception ex)
             {
-                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', ex.ToString(), 0, "Program.cs", 0);
+                zERROR.GetZErr(Program.Process).Report(2, 'G', ex.ToString(), 0, "Program.cs", 0);
             }
             return 0;
         }
@@ -122,7 +115,7 @@ namespace GUC.Hooks
         {
             try
             {
-                Process process = Process.ThisProcess();
+                Process process = Program.Process;
                 int address = Convert.ToInt32(message);
 
                 zCPar_Symbol symbol = new zCPar_Symbol(process, process.ReadInt(address));
@@ -130,7 +123,7 @@ namespace GUC.Hooks
                 String name = symbol.Name.Value.Trim().ToLower();
                 if (name.Equals("spellfxaniletters"))
                 {
-                    zString str = new zString(process, process.ReadInt(address + 4));
+                   /* zString str = new zString(process, process.ReadInt(address + 4));
                     int id = process.ReadInt(address + 8);
 
                     String value = "FBT";
@@ -160,7 +153,7 @@ namespace GUC.Hooks
                         process.Write(new byte[]{0xC2, 0x08, 0x00}, Program.ParSymbol_GetValueHook.oldFuncInNewFunc.ToInt32());
                     
                         symbol_GetValue_P_Type = 1;
-                    }
+                    }*/
 
                 }
                 else
@@ -174,7 +167,7 @@ namespace GUC.Hooks
             }
             catch (Exception ex)
             {
-                zERROR.GetZErr(Process.ThisProcess()).Report(4, 'G', ex.ToString(), 0, "Program.cs", 0);
+                zERROR.GetZErr(Program.Process).Report(4, 'G', ex.ToString(), 0, "Program.cs", 0);
             }
             return 0;
         }

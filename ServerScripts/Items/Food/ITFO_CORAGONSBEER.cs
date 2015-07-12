@@ -33,7 +33,7 @@ namespace GUC.Server.Scripts.Items.Food
             CreateItemInstance();
         }
 
-        protected void useItem(NPCProto npc, Item item, short state, short targetState)
+        protected void useItem(NPC npc, Item item, short state, short targetState)
         {
             if (!(state == -1 && targetState == 0))
                 return;

@@ -14,6 +14,7 @@
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -26,7 +27,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -67,96 +67,93 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Network\**\*.cs">
-      <Link>%(RecursiveDir)%(FileName)%(Extension)</Link>
+    <Compile Include="..\Network\Enumeration\GothicKeys.cs">
+      <Link>Enumeration\GothicKeys.cs</Link>
     </Compile>
-    <Compile Include="Network\Messages\Callbacks\CallbackNPCCanSee.cs" />
-    <Compile Include="Network\Messages\Callbacks\ReadIniEntryMessage.cs" />
-    <Compile Include="Network\Messages\Callbacks\ReadMd5Message.cs" />
-    <Compile Include="Sumpfkraut\AnimationMenuMessage.cs" />
-    <Compile Include="Sumpfkraut\ChatMessage.cs" />
-    <Compile Include="Network\Messages\Connection\ConnectionMessage.cs" />
-    <Compile Include="Network\Messages\Connection\DisconnectMessage.cs" />
-    <Compile Include="Network\Messages\Connection\NPCSpawnMessage.cs" />
-    <Compile Include="Network\Messages\ContainerCommands\ItemChangedMessage.cs" />
-    <Compile Include="Network\Messages\GuiMessage.cs" />
-    <Compile Include="Network\Messages\MobInterCommands\ContainerMessage.cs" />
-    <Compile Include="Network\Messages\MobInterCommands\MobInterMessage.cs" />
-    <Compile Include="Network\Messages\NpcCommands\AnimationUpdateMessage.cs" />
-    <Compile Include="Network\Messages\NpcCommands\DoDieMessage.cs" />
-    <Compile Include="Network\Messages\NpcCommands\ItemRemovedByUsing.cs" />
-    <Compile Include="Network\Messages\NpcCommands\NPCControllerMessage.cs" />
-    <Compile Include="Network\Messages\NpcCommands\NPCUpdateMessage.cs" />
-    <Compile Include="Network\Messages\NpcCommands\UseItemMessage.cs" />
-    <Compile Include="Network\Messages\PlayerCommands\CastSpell.cs" />
-    <Compile Include="Network\Messages\PlayerCommands\DropItemMessage.cs" />
-    <Compile Include="Network\Messages\PlayerCommands\EquipItemMessage.cs" />
-    <Compile Include="Network\Messages\PlayerCommands\OnDamageMessage.cs" />
-    <Compile Include="Network\Messages\PlayerCommands\OpenInventoryMessage.cs" />
-    <Compile Include="Network\Messages\PlayerCommands\PlayerKeyMessage.cs" />
-    <Compile Include="Network\Messages\PlayerCommands\SpellInvestMessage.cs" />
-    <Compile Include="Network\Messages\PlayerCommands\TakeItemMessage.cs" />
-    <Compile Include="Sumpfkraut\LoginMessage.cs" />
-    <Compile Include="Sumpfkraut\Trade.cs" />
-    <Compile Include="Sumpfkraut\TradeMessage.cs" />
-    <Compile Include="Network\Messages\VobCommands\ChangeWorldMessage.cs" />
-    <Compile Include="Network\Messages\VobCommands\CreateVobMessage.cs" />
-    <Compile Include="Network\Messages\VobCommands\DespawnVobMessage.cs" />
-    <Compile Include="Network\Messages\VobCommands\SetVobListPosDirMessage.cs" />
-    <Compile Include="Network\Messages\VobCommands\SetVobPosDirMessage.cs" />
-    <Compile Include="Network\Messages\VobCommands\SpawnVobMessage.cs" />
-    <Compile Include="Sumpfkraut\Chat.cs" />
-    <Compile Include="Scripting\Events.cs" />
-    <Compile Include="Scripting\GUI\Button.cs" />
-    <Compile Include="Scripting\GUI\Cursor.cs" />
-    <Compile Include="Scripting\GUI\GuiList\List.cs" />
-    <Compile Include="Scripting\GUI\GuiList\ListButton.cs" />
-    <Compile Include="Scripting\GUI\GuiList\ListRow.cs" />
-    <Compile Include="Scripting\GUI\GuiList\ListText.cs" />
-    <Compile Include="Scripting\GUI\GuiList\ListTextBox.cs" />
-    <Compile Include="Scripting\GUI\PlayerText.cs" />
-    <Compile Include="Scripting\GUI\Text3D.cs" />
-    <Compile Include="Scripting\GUI\Text3DRow.cs" />
-    <Compile Include="Scripting\GUI\TextArea.cs" />
-    <Compile Include="Scripting\GUI\MessagesBox.cs" />
-    <Compile Include="Scripting\GUI\Text.cs" />
-    <Compile Include="Scripting\GUI\TextBox.cs" />
-    <Compile Include="Scripting\GUI\Texture.cs" />
-    <Compile Include="Scripting\GUI\View.cs" />
+    <Compile Include="..\Network\Enumeration\HumanVisuals.cs">
+      <Link>Enumeration\HumanVisuals.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Enumeration\Item_Flags.cs">
+      <Link>Enumeration\Item_Flags.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Enumeration\NetworkIDS.cs">
+      <Link>Enumeration\NetworkIDS.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Enumeration\NPCFlags.cs">
+      <Link>Enumeration\NPCFlags.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Enumeration\Playerskills.cs">
+      <Link>Enumeration\Playerskills.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Enumeration\SpellFlags.cs">
+      <Link>Enumeration\SpellFlags.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Enumeration\VobFlags.cs">
+      <Link>Enumeration\VobFlags.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Network\AccCharInfo.cs">
+      <Link>Network\AccCharInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Network\BitStreamExtension.cs">
+      <Link>Network\BitStreamExtension.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Options\Constants.cs">
+      <Link>Options\Constants.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Options\ServerOptions.cs">
+      <Link>Options\ServerOptions.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Types\ColorRGBA.cs">
+      <Link>Types\ColorRGBA.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Types\FileFunc.cs">
+      <Link>Types\FileFunc.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Types\Mat4.cs">
+      <Link>Types\Mat4.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Types\Vec2f.cs">
+      <Link>Types\Vec2f.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Types\Vec2i.cs">
+      <Link>Types\Vec2i.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Types\Vec3f.cs">
+      <Link>Types\Vec3f.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Types\Vec4f.cs">
+      <Link>Types\Vec4f.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Types\Zip.cs">
+      <Link>Types\Zip.cs</Link>
+    </Compile>
+    <Compile Include="Network\Client.cs" />
+    <Compile Include="Network\Messages\AccountMessage.cs" />
+    <Compile Include="Network\Messages\ConnectionMessage.cs" />
+    <Compile Include="Network\Messages\InventoryMessage.cs" />
+    <Compile Include="Network\Messages\ItemInstanceMessage.cs" />
+    <Compile Include="Network\Messages\NPCMessage.cs" />
+    <Compile Include="Network\Messages\VobMessage.cs" />
     <Compile Include="Scripting\Listener\IServerStartup.cs" />
-    <Compile Include="Scripting\Objects\Character\NPC.cs" />
-    <Compile Include="Scripting\Objects\Character\NPCProto.cs" />
-    <Compile Include="Scripting\Objects\Character\Player.cs" />
-    <Compile Include="Scripting\Objects\Item.cs" />
-    <Compile Include="Scripting\Objects\ItemInstance.cs" />
-    <Compile Include="Scripting\Objects\Mob\MobBed.cs" />
-    <Compile Include="Scripting\Objects\Mob\MobContainer.cs" />
-    <Compile Include="Scripting\Objects\Mob\MobDoor.cs" />
-    <Compile Include="Scripting\Objects\Mob\MobInter.cs" />
-    <Compile Include="Scripting\Objects\Mob\MobLockable.cs" />
-    <Compile Include="Scripting\Objects\Mob\MobSwitch.cs" />
-    <Compile Include="Scripting\Objects\Spell.cs" />
-    <Compile Include="Scripting\Objects\Vob.cs" />
-    <Compile Include="Scripting\Objects\World.cs" />
     <Compile Include="Scripting\ScriptManager.cs" />
     <Compile Include="Scripting\Timer.cs" />
+    <Compile Include="Network\WorldCell.cs" />
     <Compile Include="TCPStatus.cs" />
-    <Compile Include="WorldObjects\Character\NPC.Server.cs" />
-    <Compile Include="WorldObjects\Character\NPCProto.Server.cs" />
-    <Compile Include="WorldObjects\Character\Player.Server.cs" />
-    <Compile Include="WorldObjects\Item.Server.cs" />
-    <Compile Include="WorldObjects\ItemInstance.Server.cs" />
-    <Compile Include="WorldObjects\Mobs\MobContainer.Server.cs" />
-    <Compile Include="WorldObjects\Mobs\MobInter.Server.cs" />
-    <Compile Include="WorldObjects\Mobs\MobLockable.Server.cs" />
-    <Compile Include="WorldObjects\Spell.Server.cs" />
-    <Compile Include="WorldObjects\sWorld.Server.cs" />
-    <Compile Include="WorldObjects\Vob.Server.cs" />
-    <Compile Include="WorldObjects\World.Server.cs" />
+    <Compile Include="WorldObjects\AbstractDropVob.cs" />
+    <Compile Include="WorldObjects\AbstractVob.cs" />
+    <Compile Include="WorldObjects\AbstractCtrlVob.cs" />
+    <Compile Include="WorldObjects\ItemContainer.cs" />
+    <Compile Include="WorldObjects\Item.cs" />
+    <Compile Include="WorldObjects\ItemInstance.cs" />
+    <Compile Include="WorldObjects\NPC.cs" />
+    <Compile Include="WorldObjects\NPCInstance.cs" />
+    <Compile Include="WorldObjects\Player.cs" />
+    <Compile Include="WorldObjects\sWorld.cs" />
+    <Compile Include="WorldObjects\Vob.cs" />
+    <Compile Include="WorldObjects\World.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Log\Logger.cs" />
-    <Compile Include="Network\IMessage.cs" />
     <Compile Include="Network\Server.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

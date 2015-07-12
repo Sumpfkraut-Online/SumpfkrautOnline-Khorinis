@@ -40,19 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CRC32.cs" />
-    <Compile Include="mClasses\Bar.cs" />
-    <Compile Include="mClasses\Button.cs" />
-    <Compile Include="mClasses\Cursor.cs" />
-    <Compile Include="mClasses\Elements\mEButton.cs" />
-    <Compile Include="mClasses\Elements\mEItem.cs" />
-    <Compile Include="mClasses\Elements\mETextBox.cs" />
     <Compile Include="mClasses\InputHooked.cs" />
-    <Compile Include="mClasses\textArea.cs" />
-    <Compile Include="mClasses\listBox.cs" />
-    <Compile Include="mClasses\LoadingScreen.cs" />
-    <Compile Include="mClasses\ManagedListBox.cs" />
-    <Compile Include="mClasses\StealContainer.cs" />
-    <Compile Include="mClasses\textBox.cs" />
     <Compile Include="zClasses\CGameManager.cs" />
     <Compile Include="zClasses\zCViewDraw.cs" />
     <Compile Include="zClasses\oCVisualFX.cs" />

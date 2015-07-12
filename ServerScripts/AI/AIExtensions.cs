@@ -13,19 +13,19 @@ namespace GUC.Server.Scripts.AI
 {
     public static class AIExtensions
     {
-        public static WayNet getWayNet(this NPCProto proto)
+        public static WayNet getWayNet(this NPC proto)
         {
             if (AISystem.WayNets.ContainsKey(proto.Map))
                 return AISystem.WayNets[proto.Map];
             return null;
         }
 
-        public static NPCAI getAI(this NPCProto proto)
+        public static NPCAI getAI(this NPC proto)
         {
             return (NPCAI)proto.getUserObjects("AI");
         }
 
-        public static void setFightTalent(this NPCProto proto, NPCTalent talent, int percent){
+        public static void setFightTalent(this NPC proto, NPCTalent talent, int percent){
             proto.setHitchances(talent, percent);
             
             if (percent >= 60)
@@ -43,7 +43,7 @@ namespace GUC.Server.Scripts.AI
             
         }
 
-        public static void InitNPCAI(this NPCProto proto)
+        public static void InitNPCAI(this NPC proto)
         {
             NPCAI ai = new NPCAI(proto);
             proto.setUserObject("AI", ai);
@@ -56,31 +56,31 @@ namespace GUC.Server.Scripts.AI
             proto.setUserObject("AI", ai);
         }
 
-        public static void AI_GOTOWP(this NPCProto proto, String waypoint)
+        public static void AI_GOTOWP(this NPC proto, String waypoint)
         {
             AIStates.AI_GOTOWP g = new AIStates.AI_GOTOWP(proto, waypoint);
             proto.getAI().addState(g);
         }
 
-        public static void AI_ALIGNTOWP(this NPCProto proto, String waypoint)
+        public static void AI_ALIGNTOWP(this NPC proto, String waypoint)
         {
             AIStates.AI_ALIGNTOWP g = new AIStates.AI_ALIGNTOWP(proto, waypoint);
             proto.getAI().addState(g);
         }
 
-        public static void AI_SETWALKTYPE(this NPCProto proto, WalkTypes wt)
+        public static void AI_SETWALKTYPE(this NPC proto, WalkTypes wt)
         {
             AIStates.AI_SETWALKTYPE g = new AIStates.AI_SETWALKTYPE(proto, wt);
             proto.getAI().addState(g);
         }
 
-        public static void AI_PLAYANIMATION(this NPCProto proto, String anim)
+        public static void AI_PLAYANIMATION(this NPC proto, String anim)
         {
             AIStates.AI_PLAYANIMATION g = new AIStates.AI_PLAYANIMATION(proto, anim);
             proto.getAI().addState(g);
         }
 
-        public static void standAnim(this NPCProto proto)
+        public static void standAnim(this NPC proto)
         {
             if (proto.WeaponMode == 1)
                 proto.playAnimation("S_FISTRUN");
@@ -88,12 +88,12 @@ namespace GUC.Server.Scripts.AI
                 proto.playAnimation("S_RUN");
         }
 
-        public static bool gotoPosition(this NPCProto proto, Vec3f position, float minDistance)
+        public static bool gotoPosition(this NPC proto, Vec3f position, float minDistance)
         {
             if (proto is NPC)
             {
                 NPC p = (NPC)proto;
-                if (p.NPCController == null)//set the position!
+                if (!p.NPCControlled)//set the position!
                 {
                     if (proto.getAI().lastPosUpdate == 0)
                     {
@@ -137,27 +137,27 @@ namespace GUC.Server.Scripts.AI
             }
         }
 
-        public static int getAttackRange(this NPCProto proto)
+        public static int getAttackRange(this NPC proto)
         {
             return 300;
         }
 
-        public static void setGuild(this NPCProto proto, Guilds guild)
+        public static void setGuild(this NPC proto, Guilds guild)
         {
             proto.getAI().Guild = guild;
         }
 
-        public static Guilds getGuild(this NPCProto proto)
+        public static Guilds getGuild(this NPC proto)
         {
             return proto.getAI().Guild;
         }
 
-        public static GuildsAttitude getAttitudeToGuild(this NPCProto proto, Guilds guild)
+        public static GuildsAttitude getAttitudeToGuild(this NPC proto, Guilds guild)
         {
             return AISystem.getGuildAttitude(proto.getGuild(), guild);
         }
 
-        public static bool turnToPosition(this NPCProto proto, Vec3f position)
+        public static bool turnToPosition(this NPC proto, Vec3f position)
         {
             Vec3f direction = position - proto.Position;
             direction.Y = 0;
@@ -165,18 +165,18 @@ namespace GUC.Server.Scripts.AI
             return true;
         }
 
-        public static bool turnTo(this NPCProto proto, Vec3f direction)
+        public static bool turnTo(this NPC proto, Vec3f direction)
         {
             proto.setDirection(direction);
             return true;
         }
 
-        public static void ResetAIStates(this NPCProto proto)
+        public static void ResetAIStates(this NPC proto)
         {
             proto.getAI().clearStateList();
         }
 
-        public static String getRunAnimation(this NPCProto proto)
+        public static String getRunAnimation(this NPC proto)
         {
             String anim = "S_WALKL";
 
@@ -194,7 +194,7 @@ namespace GUC.Server.Scripts.AI
             return anim;
         }
 
-        public static String getFightAnimation(this NPCProto proto)
+        public static String getFightAnimation(this NPC proto)
         {
             String anim = "S_RUN";
 
@@ -206,7 +206,7 @@ namespace GUC.Server.Scripts.AI
             return anim;
         }
 
-        public static String getFightRunAnimation(this NPCProto proto)
+        public static String getFightRunAnimation(this NPC proto)
         {
             String anim = "S_RUN";
 
@@ -218,7 +218,7 @@ namespace GUC.Server.Scripts.AI
             return anim;
         }
 
-        public static void hitEnemy(this NPCProto proto, NPCProto enemy)
+        public static void hitEnemy(this NPC proto, NPC enemy)
         {
             DamageTypes dt = DamageTypes.DAM_BLUNT;
             Item weaponItem = null;
@@ -236,28 +236,28 @@ namespace GUC.Server.Scripts.AI
             proto.hit(enemy, dt, proto.WeaponMode, weaponItem, null);
         }
 
-        public static bool IsHuman(this NPCProto proto)
+        public static bool IsHuman(this NPC proto)
         {
             if (proto.getGuild() <= Guilds.HUM_SPERATOR)
                 return true;
             return false;
         }
 
-        public static bool IsMonster(this NPCProto proto)
+        public static bool IsMonster(this NPC proto)
         {
             if (proto.getGuild() > Guilds.HUM_SPERATOR && proto.getGuild() <= Guilds.MON_SEPERATOR)
                 return true;
             return false;
         }
 
-        public static bool IsOrc(this NPCProto proto)
+        public static bool IsOrc(this NPC proto)
         {
             if (proto.getGuild() > Guilds.MON_SEPERATOR && proto.getGuild() <= Guilds.ORC_SEPERATOR)
                 return true;
             return false;
         }
 
-        public static void unreadyWeapon(this NPCProto proto)
+        public static void unreadyWeapon(this NPC proto)
         {
             if (proto.IsMonster())
                 return;
@@ -299,7 +299,7 @@ namespace GUC.Server.Scripts.AI
 
         }
 
-        public static void readyBestWeapon(this NPCProto proto, NPCProto enemy)
+        public static void readyBestWeapon(this NPC proto, NPC enemy)
         {
             if (proto.IsMonster())//Monsters are always in FIST-Mode.
                 return;
@@ -344,7 +344,7 @@ namespace GUC.Server.Scripts.AI
 
         #region Routines
 
-        public static bool RTN_ACTIVE(this NPCProto proto, int startHour, int startMinute, int endHour, int endMinute)
+        public static bool RTN_ACTIVE(this NPC proto, int startHour, int startMinute, int endHour, int endMinute)
         {
             int day, hour, minute;
             World.getTime(out day, out hour, out minute);

@@ -56,22 +56,22 @@ namespace GUC.Server.Scripts.Communication
       Logger.log(Logger.LOG_INFO, player.Name + " verlässt das Spiel");
     }
 
-    private void startInteract(MobInter sender, NPCProto npc)
+    private void startInteract(MobInter sender, NPC npc)
     {
       Logger.log(Logger.LOG_INFO, npc.Name + " starts Interaction " + sender);
     }
 
-    private void stopInteract(MobInter sender, NPCProto npc)
+    private void stopInteract(MobInter sender, NPC npc)
     {
       Logger.log(Logger.LOG_INFO, npc.Name + " stop Interaction " + sender);
     }
 
-    private void trigger(MobInter sender, NPCProto npc)
+    private void trigger(MobInter sender, NPC npc)
     {
       Logger.log(Logger.LOG_INFO, npc.Name + " triggers " + sender);
     }
 
-    private void untrigger(MobInter sender, NPCProto npc)
+    private void untrigger(MobInter sender, NPC npc)
     {
       Logger.log(Logger.LOG_INFO, npc.Name + " untriggers " + sender);
     }

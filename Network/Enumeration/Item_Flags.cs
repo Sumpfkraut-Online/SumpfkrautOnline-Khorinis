@@ -47,7 +47,7 @@ namespace GUC.Enumeration
         ITEM_THROW		= 1 << 29,  // (OBSOLETE!)
         ITEM_ACTIVE		= 1 << 30  // (INTERNAL!)
     }
-
+    /*
     public enum DamageTypeIndex : byte
     {
         DAM_INDEX_BARRIER								= 0						,  		//				 nur der Vollstandigkeit und Transparenz wegen hier definiert ( _NICHT_ verwenden )
@@ -92,7 +92,7 @@ namespace GUC.Enumeration
         }
     }
 
-
+    */
 
 
     public enum DamageTypes : byte

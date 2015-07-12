@@ -3,17 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using GUC.Server.Log;
-using GUC.Server.Scripting.Listener;
-using GUC.Server.Scripting;
-using GUC.Server.Scripting.Objects;
-using GUC.Server.Scripting.Objects.Character;
-using GUC.Server.Scripting.Objects.Mob;
-using GUC.Enumeration;
-using GUC.Server.Scripting.GUI;
-using GUC.Types;
-
-using GUC.Server.Scripts.AI;
-using GUC.Server.Scripts.AI.Enumeration;
 
 namespace GUC.Server.Scripts
 {
@@ -27,22 +16,22 @@ namespace GUC.Server.Scripts
 		{
             Logger.log(Logger.LogLevel.INFO, "################## Initalise DamageScript #################");
             
-			NPCProto.sOnDamage += new Events.PlayerDamageEventHandler(OnDamage);
+			NPC.sOnDamage += new Events.PlayerDamageEventHandler(OnDamage);
 		}
 
 		
-        public delegate void NPCDamgeHandler(NPCProto victim, NPCProto attacker, int damage, bool dropUnconscious, bool dropDead);
+        public delegate void NPCDamgeHandler(NPC victim, NPC attacker, int damage, bool dropUnconscious, bool dropDead);
         public static event NPCDamgeHandler Damages;
 
-		public static void OnDamage(NPCProto victim, DamageTypes damageMode, Vec3f hitLoc, Vec3f flyDir, Vob aggressor, int weaponMode, Spell spell, Item weapon, float fallDownDistanceY) {
+		public static void OnDamage(NPC victim, DamageTypes damageMode, Vec3f hitLoc, Vec3f flyDir, Vob aggressor, int weaponMode, Spell spell, Item weapon, float fallDownDistanceY) {
 			if(victim.getUserObjects("IMMORTAL") != null && (bool)victim.getUserObjects("IMMORTAL"))//Victim is immortal!
 				return;
-            NPCProto attacker = null;
-            if (aggressor is NPCProto)
-                attacker = (NPCProto)aggressor;
+            NPC attacker = null;
+            if (aggressor is NPC)
+                attacker = (NPC)aggressor;
 
 
-			if(attacker != null && attacker.getUserObjects("FRIENDS") != null && ((List<NPCProto>)attacker.getUserObjects("FRIENDS")).Contains(victim))//Victim is a friend!
+			if(attacker != null && attacker.getUserObjects("FRIENDS") != null && ((List<NPC>)attacker.getUserObjects("FRIENDS")).Contains(victim))//Victim is a friend!
 				return;
             
             

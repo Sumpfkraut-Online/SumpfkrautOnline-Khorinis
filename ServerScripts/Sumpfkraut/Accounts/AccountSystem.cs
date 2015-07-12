@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Server.Log;
-using GUC.Server.Sumpfkraut;
+using GUC.Server.Network.Messages;
 using GUC.Server.Scripting.Objects.Character;
 using GUC.Server.Scripts.Sumpfkraut.Database;
 
@@ -20,16 +20,15 @@ namespace GUC.Server.Scripts.Sumpfkraut.Accounts
             Logger.log(Logger.LogLevel.INFO, "################# Initalise Account-System ################");
             CreateStandardTables();
 
-            LoginMessage.Init(CreateNewAccount,CreateCharacter, GetCharacters);
+            AccountMessage.OnCreateAccount = CreateAccount;
+            AccountMessage.OnLoginAccount = LoginAccount;
+            AccountMessage.OnGetCharacters = GetCharacters;
+            AccountMessage.OnCreateCharacter = CreateCharacter;
         }
 
-        private bool GetCharacters(string accName, string accPW, ref List<LoginMessage.CharInfo> chars)
+        private List<AccountMessage.CharInfo> GetCharacters(int accID)
         {
-            int accID;
-            if (!GetAccID(accName,accPW,out accID))
-            {
-                return false;
-            }
+            var chars = new List<AccountMessage.CharInfo>();
 
             List<List<List<object>>> res = new List<List<List<object>>>();
             DBReader.LoadFromDB(ref res, string.Format("SELECT * FROM player WHERE accountID=\"{0}\"", accID));
@@ -38,7 +37,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Accounts
             {
                 for (int i = 0; i < res[0].Count; i++)
                 {
-                    LoginMessage.CharInfo ci = new LoginMessage.CharInfo();
+                    var ci = new AccountMessage.CharInfo();
                     ci.Name = res[0][i][2].ToString();
                     ci.BodyMesh = Convert.ToInt32(res[0][i][3]);
                     ci.BodyTex = Convert.ToInt32(res[0][i][4]);
@@ -49,51 +48,53 @@ namespace GUC.Server.Scripts.Sumpfkraut.Accounts
                     ci.BodyWidth = Convert.ToSingle(res[0][i][9]);
                     ci.Voice = Convert.ToInt32(res[0][i][10]);
                     ci.FormerClass = Convert.ToInt32(res[0][i][11]);
-                    ci.posx = Convert.ToSingle(res[0][i][12]);
-                    ci.posy = Convert.ToSingle(res[0][i][13]);
-                    ci.posz = Convert.ToSingle(res[0][i][14]);
+                    //ci.posx = Convert.ToSingle(res[0][i][12]);
+                    //ci.posy = Convert.ToSingle(res[0][i][13]);
+                    //ci.posz = Convert.ToSingle(res[0][i][14]);
                     ci.SlotNum = Convert.ToInt32(res[0][i][15]);
 
                     chars.Add(ci);
                 }
             }
-            return true;
+            return chars;
         }
 
-        private bool CreateCharacter(string accName, string accPW, LoginMessage.CharInfo ci)
+        private bool CreateCharacter(int accID, AccountMessage.CharInfo ci)
         {
-            int accID;
-            if (!GetAccID(accName, accPW, out accID))
-            {
-                return false;
-            }
-
             return DBReader.SaveToDB(string.Format("INSERT INTO player (id, accountID, name, bodymesh, bodytex, headmesh, headtex, fatness, bodyheight, bodywidth, voice, class, posx, posy, posz, slotnum) VALUES(NULL, \"{0}\", \"{1}\", \"{2}\", \"{3}\", \"{4}\", \"{5}\", \"{6}\", \"{7}\", \"{8}\", \"{9}\", \"{10}\", \"0\", \"0\", \"0\", \"{11}\")",
                 accID, ci.Name, ci.BodyMesh, ci.BodyTex, ci.HeadMesh, ci.HeadTex, ci.Fatness.ToString(System.Globalization.CultureInfo.InvariantCulture), ci.BodyHeight.ToString(System.Globalization.CultureInfo.InvariantCulture), ci.BodyWidth.ToString(System.Globalization.CultureInfo.InvariantCulture), ci.Voice, ci.FormerClass, ci.SlotNum)) > 0;
         }
 
-        private bool CreateNewAccount(string name, string pw)
+        private int CreateAccount(string name, string pw)
         {
             if (AccNameExists(name))
             {
-                return false;
+                return -1;
             }
 
-            return DBReader.SaveToDB(string.Format("INSERT INTO account (id, name, password) VALUES(NULL, \"{0}\", \"{1}\")",name,pw)) > 0;
+            if (DBReader.SaveToDB(string.Format("INSERT INTO account (id, name, password) VALUES(NULL, \"{0}\", \"{1}\")",name,pw)) <= 0)
+            {
+                return -1;
+            }
+
+            return GetAccID(name, pw);
         }
 
-        private bool GetAccID(string name, string pw, out int id)
+        private int LoginAccount(string name, string pw)
+        {
+            return GetAccID(name, pw);
+        }
+
+        private int GetAccID(string name, string pw)
         {
             List<List<List<object>>> res = new List<List<List<object>>>();
             DBReader.LoadFromDB(ref res, string.Format("SELECT id FROM account WHERE name=\"{0}\" AND password=\"{1}\"", name,pw));
 
             if (res.Count == 0 || res[0].Count == 0 || res[0][0].Count == 0)
             {
-                id = -1;
-                return false;
+                return -1;
             }
-            id = Convert.ToInt32(res[0][0][0]);
-            return true;
+            return Convert.ToInt32(res[0][0][0]);
         }
 
         private bool AccNameExists(String name)

@@ -4,13 +4,11 @@ using System.Linq;
 using System.Text;
 using WinApi;
 using Gothic.zClasses;
-using GUC.WorldObjects;
-using GUC.WorldObjects.Character;
+using GUC.Client.WorldObjects;
 using RakNet;
 using GUC.Enumeration;
-using GUC.WorldObjects.Mobs;
 
-namespace GUC.Hooks
+namespace GUC.Client.Hooks
 {
     public class hItemContainer
     {
@@ -18,8 +16,8 @@ namespace GUC.Hooks
         {
             try
             {
-                int address = Convert.ToInt32(message);
-                Process process = Process.ThisProcess();
+                /*int address = Convert.ToInt32(message);
+                Process process = Program.Process;
 
                 oCNpc player = oCNpc.Player(process);
                 oCNpc stealNPC = oCNpc.StealNPC(process);
@@ -36,7 +34,7 @@ namespace GUC.Hooks
                 {
                     oIC.Remove(item);
                     
-                    zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Item stolen from npc!", 0, "hItemContainer.cs", 0);
+                    zERROR.GetZErr(Program.Process).Report(2, 'G', "Item stolen from npc!", 0, "hItemContainer.cs", 0);
                 }
                 else
                 {
@@ -60,9 +58,9 @@ namespace GUC.Hooks
                     if (!sWorld.SpawnedVobDict.ContainsKey(stealNPC.Address))
                         return 0;
                     Vob sVob = sWorld.SpawnedVobDict[stealNPC.Address];
-                    if (!(sVob is NPCProto))
+                    if (!(sVob is NPC))
                         return 0;
-                    NPCProto npc = (NPCProto)sVob;
+                    NPC npc = (NPC)sVob;
                     containerID = npc.ID;
                 }
 
@@ -87,12 +85,12 @@ namespace GUC.Hooks
                 //stream.Write(item.ID);
                 //stream.Write(amount);
                 //Program.client.client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
-
-                zERROR.GetZErr(process).Report(2, 'G', "Removed Item, Item: " + item.ObjectName.Value + " Found: " + sWorld.SpawnedVobDict.ContainsKey(item.Address) + " Amount: " + amount, 0, "Itemsynchro.cs", 0);
+                */
+                //zERROR.GetZErr(process).Report(2, 'G', "Removed Item, Item: " + item.ObjectName.Value + " Found: " + sWorld.SpawnedVobDict.ContainsKey(item.Address) + " Amount: " + amount, 0, "Itemsynchro.cs", 0);
             }
             catch (Exception ex)
             {
-                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', ex.Source + ": " + ex.Message + " " + ex.StackTrace, 0, "hItemContainer.cs", 0);
+                zERROR.GetZErr(Program.Process).Report(2, 'G', ex.Source + ": " + ex.Message + " " + ex.StackTrace, 0, "hItemContainer.cs", 0);
             }
             return 0;
         }
@@ -103,7 +101,7 @@ namespace GUC.Hooks
             itemsUntilBlock = times;
             ItemContainerBlocked = false;
 
-            Process process = Process.ThisProcess();
+            Process process = Program.Process;
             process.Write(new byte[] { 0x51, 0x53, 0x55, 0x56, 0x8B }, Program.insertItemToList.oldFuncInNewFunc.ToInt32());
         }
         public static int itemsUntilBlock = 0;
@@ -112,7 +110,7 @@ namespace GUC.Hooks
         {
             try
             {
-                Process process = Process.ThisProcess();
+                /*Process process = Program.Process;
                 if (!ItemContainerBlocked && itemsUntilBlock == 0)
                 {
                     process.Write(new byte[] { 0x33, 0xC0, 0xC2, 0x04, 0x00 }, Program.insertItemToList.oldFuncInNewFunc.ToInt32());
@@ -168,16 +166,16 @@ namespace GUC.Hooks
                 }
 
                 
+                */
 
 
-
-                zERROR.GetZErr(process).Report(2, 'G', "Insert Item, Item: " + sWorld.SpawnedVobDict.ContainsKey(process.ReadInt(address + 4)) + " | " + item.Address + " | " + item.ObjectName.Value + "| " + item.Name.Value + " | " + item.Visual.Value + " |" + " Amount: " + item.Amount, 0, "Itemsynchro.cs", 0);
+                //zERROR.GetZErr(process).Report(2, 'G', "Insert Item, Item: " + sWorld.SpawnedVobDict.ContainsKey(process.ReadInt(address + 4)) + " | " + item.Address + " | " + item.ObjectName.Value + "| " + item.Name.Value + " | " + item.Visual.Value + " |" + " Amount: " + item.Amount, 0, "Itemsynchro.cs", 0);
 
 
             }
             catch (Exception ex)
             {
-                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', ex.Source+": "+ex.Message+" "+ex.StackTrace, 0, "hItemContainer.cs", 0);
+                zERROR.GetZErr(Program.Process).Report(2, 'G', ex.Source+": "+ex.Message+" "+ex.StackTrace, 0, "hItemContainer.cs", 0);
 
             }
             return 0;
@@ -187,7 +185,7 @@ namespace GUC.Hooks
         public static Int32 StealContainer_setOwner(String message)
         {
             int address = Convert.ToInt32(message);
-            Process process = Process.ThisProcess();
+            Process process = Program.Process;
             try
             {
                 oCNpc player = new oCNpc(process, process.ReadInt(address + 4));
@@ -196,7 +194,7 @@ namespace GUC.Hooks
             }
             catch (Exception ex)
             {
-                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', ex.ToString(), 0, "hItemContainer.cs", 0);
+                zERROR.GetZErr(Program.Process).Report(2, 'G', ex.ToString(), 0, "hItemContainer.cs", 0);
             }
             //unblockItemInsert(1);
             return 0;
@@ -217,15 +215,15 @@ namespace GUC.Hooks
         {
             try
             {
-                int address = Convert.ToInt32(message);
-                Process process = Process.ThisProcess();
+                /*int address = Convert.ToInt32(message);
+                Process process = Program.Process;
 
                 oCNpc player = oCNpc.Player(process);
                 oCNpc stealNPC = oCNpc.StealNPC(process);
                 oCItemContainer oIC = new oCItemContainer(process, process.ReadInt(address));
                 int itemIndex = process.ReadInt(address + 4);
                 int amount = process.ReadInt(address + 8);
-                String itemName = zCParser.getParser(Process.ThisProcess()).GetSymbol(itemIndex).Name.Value;
+                String itemName = zCParser.getParser(Program.Process).GetSymbol(itemIndex).Name.Value;
 
                 oCMobContainer mC = new oCMobContainer(process, player.GetInteractMob().Address);
 
@@ -240,7 +238,7 @@ namespace GUC.Hooks
                 }
 
                 Player.Hero.removeItem(it, amount);
-                player.RemoveFromInv(new oCItem(Process.ThisProcess(), it.Address), amount);
+                player.RemoveFromInv(new oCItem(Program.Process, it.Address), amount);
 
 
 
@@ -253,11 +251,11 @@ namespace GUC.Hooks
                 Program.client.client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
 
 
-                zERROR.GetZErr(process).Report(2, 'G', "XXXX-Removed Item, Item: " + itemName + " Amount: " + amount, 0, "Itemsynchro.cs", 0);
+                zERROR.GetZErr(process).Report(2, 'G', "XXXX-Removed Item, Item: " + itemName + " Amount: " + amount, 0, "Itemsynchro.cs", 0);*/
             }
             catch (Exception ex)
             {
-                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', ex.Source + ": " + ex.Message + " " + ex.StackTrace, 0, "hItemContainer.cs", 0);
+                zERROR.GetZErr(Program.Process).Report(2, 'G', ex.Source + ": " + ex.Message + " " + ex.StackTrace, 0, "hItemContainer.cs", 0);
             }
             return 0;
         }

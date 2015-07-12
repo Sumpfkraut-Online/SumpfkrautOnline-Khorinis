@@ -6,9 +6,9 @@ using WinApi;
 using Gothic.zClasses;
 using System.Reflection;
 using Gothic.zTypes;
-using GUC.WorldObjects;
+using GUC.Client.WorldObjects;
 
-namespace GUC.Hooks
+namespace GUC.Client.Hooks
 {
     class Externals
     {
@@ -26,7 +26,7 @@ namespace GUC.Hooks
 
         public static void CreateExternalFunction(zCParser parser, String methodname, MethodInfo mi, String dll, Value_Types returnValue, Value_Types[] vTypes)
         {
-            Process process = Process.ThisProcess();
+            Process process = Program.Process;
             IntPtr injectFunction = WinApi.Kernel.Process.GetProcAddress(WinApi.Kernel.Process.GetModuleHandle("NetInject.dll"), "LoadNetDllEx");
             NETINJECTPARAMS parameters = NETINJECTPARAMS.Create(process, dll, mi.DeclaringType.FullName, mi.Name, methodname);
 
@@ -68,7 +68,7 @@ namespace GUC.Hooks
         #region External_Creation
         public static Int32 AddExternals(String message)
         {
-            Process process = Process.ThisProcess();
+            Process process = Program.Process;
             try
             {
                 int address = Convert.ToInt32(message);
@@ -76,9 +76,6 @@ namespace GUC.Hooks
 
                 CreateExternalFunction(new zCParser(process, process.ReadInt(address + 4)), "GUC_SPELL_PROCESSMANA".ToUpper(), typeof(Externals).GetMethod("GUC_PROCESSMANA"), "UntoldChapter\\DLL\\GUC.dll", Value_Types.Int, new Value_Types[] { Value_Types.Int, Value_Types.NPC });
                 CreateExternalFunction(new zCParser(process, process.ReadInt(address + 4)), "GUC_SPELL_PROCESSMANA_RELEASE".ToUpper(), typeof(Externals).GetMethod("GUC_PROCESSMANA_RELEASE"), "UntoldChapter\\DLL\\GUC.dll", Value_Types.Int, new Value_Types[] { Value_Types.Int, Value_Types.NPC });
-
-                if (Scripting.Events.OnAddExternals != null)
-                    Scripting.Events.OnAddExternals(process);
             }
             catch (Exception ex)
             {
@@ -107,10 +104,10 @@ namespace GUC.Hooks
 
         public static Int32 GUC_PROCESSMANA_RELEASE(String message)
         {
-            Process process = Process.ThisProcess();
+            Process process = Program.Process;
             try
             {
-                #region oV
+                /*#region oV
                 int npc_ptr = zCParser.getParser(process).GetInstance();
                 int manaInvested = zCParser.getParser(process).getIntParameter();
 
@@ -131,7 +128,7 @@ namespace GUC.Hooks
                 {
                     zCParser.getParser(process).SetReturn(2);
                 }
-                #endregion
+                #endregion*/
 
             }
             catch (Exception ex)
@@ -145,7 +142,7 @@ namespace GUC.Hooks
         public static Dictionary<int, int> npcProcessManaList = new Dictionary<int, int>();
         public static Int32 GUC_PROCESSMANA(String message)
         {
-            Process process = Process.ThisProcess();
+            Process process = Program.Process;
             try
             {
                 #region oV
@@ -260,7 +257,7 @@ namespace GUC.Hooks
                 //return 0;
                 #endregion
 
-                #region SN
+                /*#region SN
                 int npc_ptr = zCParser.getParser(process).GetInstance();
                 int manaInvested = zCParser.getParser(process).getIntParameter();
 
@@ -326,7 +323,7 @@ namespace GUC.Hooks
                 zCParser.getParser(process).SetReturn(4);
                 return 0;
 
-                #endregion
+                #endregion*/
 
 
 

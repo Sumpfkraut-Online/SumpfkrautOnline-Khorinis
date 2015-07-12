@@ -7,7 +7,7 @@ using GUC.Server.Scripting.Objects.Character;
 
 namespace GUC.Server.Scripts.Items.Amulet
 {
-    public class ITAM_DEX_STRG_01 : AbstractAmulets
+    public class ITAM_DEX_STRG_01 : AbstractAmulet
     {
         static ITAM_DEX_STRG_01 ii;
         public static ITAM_DEX_STRG_01 get()
@@ -30,13 +30,13 @@ namespace GUC.Server.Scripts.Items.Amulet
             CreateItemInstance();
         }
 
-        protected void equip(NPCProto npc, Item item)
+        protected void equip(NPC npc, Item item)
         {
             npc.Dexterity += 8;
             npc.Strength += 8;
         }
 
-        protected void unequip(NPCProto npc, Item item)
+        protected void unequip(NPC npc, Item item)
         {
             npc.Dexterity -= 8;
             npc.Strength -= 8;

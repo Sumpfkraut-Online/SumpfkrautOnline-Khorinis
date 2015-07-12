@@ -41,12 +41,12 @@ namespace GUC.Server.Scripts.Items
             
         }
 
-        protected void cast(NPCProto caster, Spell spell, Vob target)
+        protected void cast(NPC caster, Spell spell, Vob target)
         {
-            if (target == null || !(target is NPCProto))
+            if (target == null || !(target is NPC))
                 return;
 
-            NPCProto targetNPC = (NPCProto)target;
+            NPC targetNPC = (NPC)target;
 
             //targetNPC.setScale(new Types.Vec3f(0.2f, 0.2f, 0.2f));
 
@@ -57,10 +57,10 @@ namespace GUC.Server.Scripts.Items
 
     public class ShrinkTimer : Timer
     {
-        NPCProto npcToShrink = null;
+        NPC npcToShrink = null;
         Vec3f initalScale = null;
 
-        public ShrinkTimer(NPCProto proto)
+        public ShrinkTimer(NPC proto)
             : base(10000*500)
         {
             npcToShrink = proto;

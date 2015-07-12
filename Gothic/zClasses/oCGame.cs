@@ -55,10 +55,7 @@ namespace Gothic.zClasses
 
         public oCGame(Process process, int address)
             : base(process, address)
-        { }
-
-
-        
+        { }        
 
         public zCView GameText { get { return new zCView(Process, Process.ReadInt(this.Address + (int)Offsets.Game_Text)); } }
 

@@ -396,7 +396,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
 
 
-        protected void EquipItem (NPCProto npc, Item item)
+        protected void EquipItem (NPC npc, Item item)
         {
             //npc.HP      = this.getOnEquip_HPChange();
             //npc.HPMax   = this.getOnEquip_HPMaxChange();
@@ -404,7 +404,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             //npc.MPMax   = this.getOnEquip_MPMaxChange();
         }
 
-        protected void UnequipItem (NPCProto npc, Item item)
+        protected void UnequipItem (NPC npc, Item item)
         {
             //npc.HP      = this.getOnUnEquip_HPChange();
             //npc.HPMax   = this.getOnUnEquip_HPMaxChange();
@@ -412,7 +412,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             //npc.MPMax   = this.getOnUnEquip_MPMaxChange();
         }
 
-        protected void UseItem (NPCProto npc, Item item, short state, short targetState)
+        protected void UseItem (NPC npc, Item item, short state, short targetState)
         {
             //if (!(state == -1 && targetState == 0))
             //{

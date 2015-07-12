@@ -29,7 +29,7 @@ namespace GUC.Server.Scripts.Items.Rings
             CreateItemInstance();
         }
 
-        protected void equip(NPCProto npc, Item item)
+        protected void equip(NPC npc, Item item)
         {
             npc.ProtectionEdge += 5;
             npc.ProtectionBlunt += 5;
@@ -38,7 +38,7 @@ namespace GUC.Server.Scripts.Items.Rings
             npc.ProtectionMagic += 5;
         }
 
-        protected void unequip(NPCProto npc, Item item)
+        protected void unequip(NPC npc, Item item)
         {
             npc.ProtectionEdge -= 5;
             npc.ProtectionBlunt -= 5;

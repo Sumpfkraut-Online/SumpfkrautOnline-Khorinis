@@ -5,9 +5,6 @@ using System.Text;
 using System.IO;
 using GUC.Options;
 using GUC.Types;
-using GUC.WorldObjects;
-using GUC.WorldObjects.Character;
-using GUC.Server.Network.Messages.NpcCommands;
 using System.Threading;
 
 namespace GUC.Server
@@ -91,40 +88,49 @@ namespace GUC.Server
                 scriptManager = new Scripting.ScriptManager();
                 scriptManager.Init();
                 scriptManager.Startup();
-                long lastInfoUpdates = 0;
 
-                long startUpdate = 0;
-                int updatesPerSecond = 100; 
+                const long nextInfoUpdateTime = 60 * 1000 * TimeSpan.TicksPerMillisecond;
+                long nextInfoUpdates = DateTime.Now.Ticks + nextInfoUpdateTime;
+
+                long tickAverage = 0;
+                long tickCount = 0;
+                long tickMax = 0;
+
+                long ticks, elapsed;
+                const int serverTickrate = 30; //max 30 updates per second => every 33ms
+                const int updateTime = (int)(1000 / serverTickrate * TimeSpan.TicksPerMillisecond);
                 while (true)
                 {
-                    long ticks = DateTime.Now.Ticks;
-                    startUpdate = ticks;
-                    Player.sUpdateNPCList(ticks);
-
-                    if (lastInfoUpdates < ticks)
-                    {
-                        TCPStatus.getTCPStatus().addInfo("players", "" + sWorld.PlayerList.Count);
-
-                        lastInfoUpdates = ticks + 10000 * 1000 * 5;
-                    }
-
+                    ticks = DateTime.Now.Ticks;
+                    //Player.sUpdateNPCList(ticks);
 
                     //ModuleLoader.updateAllModules();
                     scriptManager.Update();
-                    server.Update();
-                    updateNPCController(ticks);
+                    server.Update(); //process received packets
+                    WorldObjects.AbstractCtrlVob.UpdateCtrlNPCs();
 
-                    //limit update intervals
-                    float elapsedTimeMs = (DateTime.Now.Ticks - startUpdate) / TimeSpan.TicksPerMillisecond;
-                    float timePerUpdateMs = 1000 / updatesPerSecond;
-                    if(elapsedTimeMs<timePerUpdateMs)
+                    if (nextInfoUpdates < DateTime.Now.Ticks)
                     {
-                      int restMs=(int)(timePerUpdateMs-elapsedTimeMs);
-                      if (restMs > 0)
-                        Thread.Sleep(restMs);
+                        tickAverage /= tickCount;
+                        Log.Logger.log(String.Format("Server tick rate info: {0}ms average, {1}ms max.", tickAverage / TimeSpan.TicksPerMillisecond, tickMax / TimeSpan.TicksPerMillisecond));
+                        nextInfoUpdates = DateTime.Now.Ticks + nextInfoUpdateTime;
+                        tickMax = 0;
+                        tickAverage = 0;
+                        tickCount = 0;
                     }
-                    
-                    
+
+                    tickCount++;
+                    elapsed = DateTime.Now.Ticks - ticks;
+                    tickAverage += elapsed;
+                    if (elapsed > tickMax)
+                    {
+                        tickMax = elapsed;
+                    }
+
+                    if (elapsed < updateTime)
+                    {
+                        Thread.Sleep((int)(elapsed / TimeSpan.TicksPerMillisecond));
+                    }
                 }
             }
             catch (System.Exception ex)
@@ -136,7 +142,7 @@ namespace GUC.Server
             Console.Read();
         }
 
-
+        /*
         static int index = 0;
         static long lastNPC = 0;
         static void updateNPCController(long now)
@@ -168,32 +174,29 @@ namespace GUC.Server
 
                 if (!npc.IsSpawned)
                     continue;
-                if (npc.NpcController != null)
+                if (npc.npcController != null)
                 {
                     //Check if npc is in range of controller:
-                    if (!npc.Map.Equals(npc.NpcController.Map) || npc.Position.getDistance(npc.NpcController.Position) > 4500)
+                    if (!npc.Map.Equals(npc.npcController.character.Map) || npc.Position.getDistance(npc.npcController.character.Position) > 4500)
                     {
                         //Send Controller-Message and set NpcController to null
-                        NPCControllerMessage.Write(npc, npc.NpcController, false);
+                        NPCControllerMessage.Write(npc, npc.npcController, false);
 
-                        npc.NpcController.NPCControlledList.Remove(npc);
-                        npc.NpcController = null;
-
-                        
+                        npc.npcController.NPCControlledList.Remove(npc);
+                        npc.npcController = null;
                     }
                 }
-
-                if (npc.NpcController == null)//Search new Player to control the npc!
+                else //Search new Player to control the npc!
                 {
                     Scripting.Objects.Character.Player player = npc.ScriptingNPC.getNearestPlayers(4000.0f);
                     if (player != null)
                     {
                         //Send new controller message!
 
-                        npc.NpcController = (Player)player.proto;
-                        npc.NpcController.NPCControlledList.Add(npc);
+                        npc.npcController = ((NPC)player.proto).client;
+                        npc.npcController.NPCControlledList.Add(npc);
                         
-                        NPCControllerMessage.Write(npc, npc.NpcController, true);
+                        NPCControllerMessage.Write(npc, npc.npcController, true);
 
                     }
                 }
@@ -201,6 +204,6 @@ namespace GUC.Server
 
             lastNPC = now;
 
-        }
+        }*/
     }
 }

@@ -11,8 +11,7 @@ using GUC.Server.Scripting.Objects.Character;
 using GUC.Server.Scripts.Communication;
 
 using GUC.Server.Scripts.AI;
-using GUC.Server.Scripts.AI.Waypoints;
-
+using GUC.Server.Scripts.AI.Waypoints; 
 
 namespace GUC.Server.Scripts.Sumpfkraut.SOKChat
 {

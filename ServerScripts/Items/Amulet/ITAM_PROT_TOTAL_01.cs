@@ -7,7 +7,7 @@ using GUC.Server.Scripting.Objects.Character;
 
 namespace GUC.Server.Scripts.Items.Amulet
 {
-    public class ITAM_PROT_TOTAL_01 : AbstractAmulets
+    public class ITAM_PROT_TOTAL_01 : AbstractAmulet
     {
         static ITAM_PROT_TOTAL_01 ii;
         public static ITAM_PROT_TOTAL_01 get()
@@ -29,7 +29,7 @@ namespace GUC.Server.Scripts.Items.Amulet
             CreateItemInstance();
         }
 
-        protected void equip(NPCProto npc, Item item)
+        protected void equip(NPC npc, Item item)
         {
             npc.ProtectionEdge += 8;
             npc.ProtectionBlunt += 8;
@@ -38,7 +38,7 @@ namespace GUC.Server.Scripts.Items.Amulet
             npc.ProtectionMagic += 8;
         }
 
-        protected void unequip(NPCProto npc, Item item)
+        protected void unequip(NPC npc, Item item)
         {
             npc.ProtectionEdge -= 8;
             npc.ProtectionBlunt -= 8;

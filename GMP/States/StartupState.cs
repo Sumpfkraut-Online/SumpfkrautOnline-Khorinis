@@ -5,16 +5,15 @@ using System.Text;
 using WinApi;
 using GUC.Options;
 using System.IO;
-using GUC.Network;
-using GUC.WorldObjects.Character;
+using GUC.Client.Network;
+using GUC.Client.Network.Messages;
 using Gothic.zClasses;
-using GUC.Network.Messages.Connection;
 using Gothic.zTypes;
 using System.Reflection;
-using GUC.Network.Messages.PlayerCommands;
-using GUC.Types;
+using GUC.Client.Menus;
+using WinApi.User.Enumeration;
 
-namespace GUC.States
+namespace GUC.Client.States
 {
     public class StartupState : AbstractState
     {
@@ -22,39 +21,37 @@ namespace GUC.States
 
         public static void SetUpStartMap()
         {
-            Process Process = Process.ThisProcess();
-
             ASCIIEncoding enc = new ASCIIEncoding();
-            Process.Write(enc.GetBytes(@"gmp-rp/STARTLOCATION.ZEN"), 0x008907B0);
-            Process.Write(new byte[] { 0 }, 0x008907B0 + @"gmp-rp/STARTLOCATION.ZEN".Length);
+            Program.Process.Write(enc.GetBytes(@"gmp-rp/STARTLOCATION.ZEN"), 0x008907B0);
+            Program.Process.Write(new byte[] { 0 }, 0x008907B0 + @"gmp-rp/STARTLOCATION.ZEN".Length);
+            //Program.Process.Write(enc.GetBytes(@"OLDWORLD/OLDWORLD.ZEN"), 0x008907B0);
+            //Program.Process.Write(new byte[] { 0 }, 0x008907B0 + @"OLDWORLD/OLDWORLD.ZEN".Length);
         }
 
         public static void SetupFuncBlocking()
         {
-            Process Process = Process.ThisProcess();
-
             //First disable all:
-            Gothic.mClasses.InputHooked.deactivateStatusScreen(Process, false);
-            Gothic.mClasses.InputHooked.deactivateLogScreen(Process, false);
-            //Gothic.mClasses.InputHooked.deactivateInventory(Process, false);
+            Gothic.mClasses.InputHooked.deactivateStatusScreen(Program.Process, false);
+            Gothic.mClasses.InputHooked.deactivateLogScreen(Program.Process, false);
+            Gothic.mClasses.InputHooked.deactivateInventory(Program.Process, false);
 
-
+            Program.Process.Write(new byte[] { 233, 229, 2, 0, 0, 0 }, 0x42AE7E); //disable ingame ESC menu
 
             //Block gothic.dat loading:
             //Process.Write(new byte[] { 0x33, 0xC0, 0xC2, 0x04, 0x00 }, 0x0078E900);
-            Process.Write(new byte[] { 0xC3 }, 0x006C1C70);//Blocking Call Startup Scripts!
-            Process.Write(new byte[] { 0xC3 }, 0x006C1F60);//Blocking Call Init Scripts!
+            Program.Process.Write(new byte[] { 0xC3 }, 0x006C1C70);//Blocking Call Startup Scripts!
+            Program.Process.Write(new byte[] { 0xC3 }, 0x006C1F60);//Blocking Call Init Scripts!
 
-            Process.Write(new byte[] { 0xC3 }, 0x00780D80);//Blocking time!
-            Process.Write(new byte[] { 0x90, 0x90 }, 0x0073E480 + 0x189);
-            Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90 }, 0x0073E480 + 0x193);//Blocking Dive Damage!
-            Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, 0x0066CAC9);//Block Damage!
-            Process.Write(new byte[] { 0xB8, 0x01, 0x00, 0x00, 0x00, 0xC2, 0x04, 0x00 }, 0x007546F0);//Block removing, when using mobs
+            Program.Process.Write(new byte[] { 0xC3 }, 0x00780D80);//Blocking time!
+            Program.Process.Write(new byte[] { 0x90, 0x90 }, 0x0073E480 + 0x189);
+            Program.Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90 }, 0x0073E480 + 0x193);//Blocking Dive Damage!
+            Program.Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, 0x0066CAC9);//Block Damage!
+            Program.Process.Write(new byte[] { 0xB8, 0x01, 0x00, 0x00, 0x00, 0xC2, 0x04, 0x00 }, 0x007546F0);//Block removing, when using mobs
 
 
-            Process.VirtualProtect(0x007792E0, 40);
-            Process.Write(new byte[] { 0x33, 0xC0, 0xC2, 0x04, 0x00 }, 0x007792E0);//Block deleting of dead characters!
-            Process.Write(new byte[] { 0xE9, 0x77, 0x0D, 0x00, 0x00 }, 0x006FC669);//Blocking F-Keys
+            Program.Process.VirtualProtect(0x007792E0, 40);
+            Program.Process.Write(new byte[] { 0x33, 0xC0, 0xC2, 0x04, 0x00 }, 0x007792E0);//Block deleting of dead characters!
+            Program.Process.Write(new byte[] { 0xE9, 0x77, 0x0D, 0x00, 0x00 }, 0x006FC669);//Blocking F-Keys
 
 
             #region Waffen nicht stapelbar
@@ -69,7 +66,7 @@ namespace GUC.States
             //Process.Write(new byte[] { 0x68, 0x00, 0x00, 0x10, 0x00 }, 0x00732791);
             //Process.Write(new byte[] { 0x68, 0x00, 0x00, 0x10, 0x00 }, 0x007327AB);
 
-            Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, 0x00712618);
+            Program.Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, 0x00712618);
             #endregion
 
             //Disable First-Person:
@@ -85,15 +82,15 @@ namespace GUC.States
 
 
             //Disable Marvin-Mode:
-            Process.VirtualProtect(0x006CBF60, 25);
+            Program.Process.VirtualProtect(0x006CBF60, 25);
             byte[] arr = new byte[25];
             for (int i = 0; i < arr.Length; i++)
                 arr[i] = 0x90;
-            Process.Write(arr, 0x006CBF60);
+            Program.Process.Write(arr, 0x006CBF60);
 
 
             arr = new byte[] { 0xC3 };
-            Process.Write(arr, 0x00432EC0);
+            Program.Process.Write(arr, 0x00432EC0);
 
 
         }
@@ -101,68 +98,55 @@ namespace GUC.States
         public static String srcFile = null;
         public static void initDefaultScripts()
         {
-            String[] arr = new String[] { "GUC.Resources.Constants.d", "GUC.Resources.Classes.d", "GUC.Resources.AI_Constants.d", "GUC.Resources.Text.d", 
-                "GUC.Resources.BodyStates.d", "GUC.Resources.Focus.d", "GUC.Resources.Species.d",
-                "GUC.Resources.NPC_Default.d", "GUC.Resources.PC_Hero.d"};
+            String[] arr = new String[] { "GUC.Client.Resources.Constants.d", "GUC.Client.Resources.Classes.d", "GUC.Client.Resources.AI_Constants.d", "GUC.Client.Resources.Text.d", 
+                "GUC.Client.Resources.BodyStates.d", "GUC.Client.Resources.Focus.d", "GUC.Client.Resources.Species.d",
+                "GUC.Client.Resources.NPC_Default.d", "GUC.Client.Resources.PC_Hero.d" };
 
             zString str = null;
             String fileList = "";
             foreach (String internalFile in arr)
             {
-                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Parse: "+internalFile, 0, "Program.cs", 0);
+                zERROR.GetZErr(Program.Process).Report(2, 'G', "Parse: "+internalFile, 0, "Program.cs", 0);
                 using (StreamReader sr = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream(internalFile), System.Text.Encoding.Default))
                 {
 
-                    String file = getRandomScriptString(".d");
+                    String file = getDaedalusPath() + internalFile.Substring("GUC.Client.Resources.".Length);
                     File.WriteAllText(file, sr.ReadToEnd(), System.Text.Encoding.Default);
                     fileList += Path.GetFileName(file.ToUpper()) + "\r\n";
                     
-                    //str = zString.Create(Process.ThisProcess(), file.ToUpper());
-                    //zCParser.getParser(Process.ThisProcess()).ParseFile(str);
+                    //str = zString.Create(Program.Process, file.ToUpper());
+                    //zCParser.getParser(Program.Process).ParseFile(str);
                     //str.Dispose();
                 }
             }
 
 
-            String file_FileList = getRandomScriptString(".src");
+            String file_FileList = getDaedalusPath() + "GUC.src";
             srcFile = file_FileList;
             File.WriteAllText(file_FileList, fileList);
 
-            str = zString.Create(Process.ThisProcess(), file_FileList.ToUpper());
-            zCParser.getParser(Process.ThisProcess()).ParseSource(str);
+            str = zString.Create(Program.Process, file_FileList.ToUpper());
+            zCParser.getParser(Program.Process).ParseSource(str);
             str.Dispose();
 
-            str = zString.Create(Process.ThisProcess(), "C_NPC");
-            zCPar_Symbol sym = zCParser.getParser(Process.ThisProcess()).GetSymbol(str);
-            str.Dispose();
-            sym.SetClassOffset(0x120);
-
-            str = zString.Create(Process.ThisProcess(), "C_ITEM");
-            sym = zCParser.getParser(Process.ThisProcess()).GetSymbol(str);
+            str = zString.Create(Program.Process, "C_NPC");
+            zCPar_Symbol sym = zCParser.getParser(Program.Process).GetSymbol(str);
             str.Dispose();
             sym.SetClassOffset(0x120);
 
-            zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Startup-Scripts-parsed!", 0, "Program.cs", 0);
-        }
+            str = zString.Create(Program.Process, "C_ITEM");
+            sym = zCParser.getParser(Program.Process).GetSymbol(str);
+            str.Dispose();
+            sym.SetClassOffset(0x120);
 
-        static Random rand = new Random();
-        public static String getRandomScriptString(String ending)
-        {
-            while (true)
-            {
-                String file = getDaedalusPath() + rand.Next(0, 1000000) + ending;
-
-                if (!File.Exists(file))
-                    return file;
-            }            
+            zERROR.GetZErr(Program.Process).Report(2, 'G', "Startup-Scripts-parsed!", 0, "Program.cs", 0);
         }
 
         public static void SetUpConfig()
         {
             String pfad = getConfigPath() + @"\gmp.xml";
-            //zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Path: "+pfad, 0, "Program.cs", 0);
             if (!File.Exists(pfad))
-                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "File does not exists: "+pfad, 0, "Program.cs", 0);
+                zERROR.GetZErr(Program.Process).Report(3, 'G', "File does not exists: "+pfad, 0, "Program.cs", 0);
             clientOptions = ClientOptions.Load(pfad);
         }
 
@@ -200,74 +184,38 @@ namespace GUC.States
             return Path.GetFullPath(".\\");
         }
 
-
         public static void Start()
         {
-            
-            Program.client = new Client();
+            Program.client = new Network.Client();
             Program.client.Startup();
-            Program.client.Connect(clientOptions.ip, clientOptions.port, clientOptions.password);
+            Program.client.Connect(clientOptions.ip, clientOptions.port, "");
         }
 
+        static Dictionary<VirtualKeys, Action> shortcuts = new Dictionary<VirtualKeys, Action>();
+        public override Dictionary<VirtualKeys, Action> Shortcuts { get { return shortcuts; } }
 
-        public static int TurnLeftID = 0;
-        public static int TurnRightID = 0;
-        public static int StartJumpID = 0;
-
-
-        public override void Init()
+        public StartupState()
         {
-            if (_init)
-                return;
-
-            
+            //close gothic main menu
+            //zCMenu.GetMenuByName(Program.Process, zCMenu.MainMenu).ScreenDone();
 
             //Enable Menu:
-            Process Process = Process.ThisProcess();
             ASCIIEncoding enc = new ASCIIEncoding();
-            Process.Write(enc.GetBytes("AAAAAA"), 0x890898);
-
+            Program.Process.Write(enc.GetBytes("AAAAAA"), 0x890898);
 
             Version v = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-            zERROR.GetZErr(Process).Report(2, 'G', "GUC-Version: " + GUC.Options.Constants.VERSION +" - Build:" + v.ToString(), 0, "Program.cs", 0);
+            zERROR.GetZErr(Program.Process).Report(2, 'G', "GUC-Version: " + GUC.Options.Constants.VERSION +" - Build:" + v.ToString(), 0, "Program.cs", 0);
 
+            ConnectionMessage.Write();
 
-            //setupPlayer();
-
-            //ConnectionMessage.Write();
-
-            //PlayerKeyMessage.getPlayerKeyMessage().Init();
-
-            Sumpfkraut.Login.LoginInterface.Init();
-
-            _init = true;
-
-
-            TurnLeftID = oCNpc.Player(Process.ThisProcess()).GetModel().GetAniIDFromAniName("T_RUNTURNL");
-            TurnRightID = oCNpc.Player(Process.ThisProcess()).GetModel().GetAniIDFromAniName("T_RUNTURNR");
-            StartJumpID = oCNpc.Player(Process.ThisProcess()).GetModel().GetAniIDFromAniName("T_STAND_2_JUMP");
+            GUCMenus._Background.Show();
+            GUCMenus.Main.Open();
         }
 
-        /*
-        protected void setupPlayer()
+        public override void Update()
         {
-            Player player = new Player(true, StartupState.clientOptions.name);
-            player.Address = oCNpc.Player(Process.ThisProcess()).Address;
-            player.IsSpawned = true;
-            player.Position = (Vec3f)oCNpc.Player(Process.ThisProcess()).GetPositionArray();
-
-            Player.Hero = player;
-        }*/
-
-
-        public override void update()
-        {
-            //Player.Hero.setPosition(Player.Hero.Position);
-            //PlayerKeyMessage.getPlayerKeyMessage().update();
+            InputHandler.Update();
             Program.client.Update();
         }
-
-
-
     }
 }

@@ -8,7 +8,7 @@ namespace GUC.Scripting.Objects.Character
 {
     public class NPCProto : Vob
     {
-        internal NPCProto(WorldObjects.Character.NPCProto ivob)
+        internal NPCProto(WorldObjects.Character.NPC ivob)
             : base(ivob)
         {
 

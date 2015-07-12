@@ -29,13 +29,13 @@ namespace GUC.Server.Scripts.Items.Rings
             CreateItemInstance();
         }
 
-        protected void equip(NPCProto npc, Item item)
+        protected void equip(NPC npc, Item item)
         {
             npc.Dexterity += 4;
             npc.Strength += 4;
         }
 
-        protected void unequip(NPCProto npc, Item item)
+        protected void unequip(NPC npc, Item item)
         {
             npc.Dexterity -= 4;
             npc.Strength -= 4;

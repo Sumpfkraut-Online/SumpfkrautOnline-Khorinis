@@ -6,18 +6,17 @@ using WinApi;
 using Gothic.zClasses;
 using RakNet;
 using GUC.Enumeration;
-using GUC.WorldObjects.Character;
 
-namespace GUC.Hooks
+namespace GUC.Client.Hooks
 {
     public class hMagBook
     {
         public static Int32 Spell_Invest(String message)
         {
-            Process Process = Process.ThisProcess();
+            Process Process = Program.Process;
             try
             {
-                int address = Convert.ToInt32(message);
+               /* int address = Convert.ToInt32(message);
 
                 oCMag_Book magBook = new oCMag_Book(Process, Process.ReadInt(address));
                 if (oCNpc.Player(Process).MagBook.Address == magBook.Address)
@@ -31,7 +30,7 @@ namespace GUC.Hooks
 
                     oCSpell spell = oCNpc.Player(Process).MagBook.GetSelectedSpell();
                     //zERROR.GetZErr(Process).Report(2, 'G', "Spell Invest: "+spell.Caster.ObjectName+"; "+spell.NPC.ObjectName+"; "+spell.Target.ObjectName, 0, "Program.cs", 0);
-                }
+                }*/
             }
             catch (Exception ex)
             {

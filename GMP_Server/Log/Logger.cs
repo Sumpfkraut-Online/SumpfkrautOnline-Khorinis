@@ -36,7 +36,7 @@ namespace GUC.Server.Log
        
         ~Logger()
         {
-          if (myWriter != null) ;
+          if (myWriter != null)
           {
             myWriter.Flush();
             myWriter.Close();

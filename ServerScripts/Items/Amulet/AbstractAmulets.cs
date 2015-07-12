@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Server.Scripting.Objects;
+using GUC.Server.WorldObjects;
 
 namespace GUC.Server.Scripts.Items.Amulet
 {
@@ -10,10 +10,9 @@ namespace GUC.Server.Scripts.Items.Amulet
     /// Diese Klasse ist abstrakt, das heißt, sie wird nur für
     /// andere Food-Instanzen zum ableiten genutzt.
     /// </summary>
-    public abstract class AbstractAmulets : ItemInstance
+    public abstract class AbstractAmulet : ItemInstance
     {
-        public AbstractAmulets(String instanceName)
-            : base(instanceName)
+        protected AbstractAmulet() : base()
         {
             Name = "Amulett";
             MainFlags = Enumeration.MainFlags.ITEM_KAT_MAGIC;
@@ -23,8 +22,7 @@ namespace GUC.Server.Scripts.Items.Amulet
             Effect = "SPELLFX_ITEMGLIMMER";
             Wear = Enumeration.ArmorFlags.WEAR_EFFECT;
 
-            Visual_skin = 0;
-
+            Weight = 1;
         }
     }
 }

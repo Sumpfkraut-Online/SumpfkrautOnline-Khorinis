@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Server.Scripting.Objects;
+using GUC.Server.WorldObjects;
 
 namespace GUC.Server.Scripts.Items.Food
 {
@@ -12,8 +12,7 @@ namespace GUC.Server.Scripts.Items.Food
     /// </summary>
     public abstract class AbstractFood : ItemInstance
     {
-        public AbstractFood(String instanceName)
-            : base(instanceName)
+        protected AbstractFood() : base()
         {
             MainFlags = Enumeration.MainFlags.ITEM_KAT_FOOD;
             Flags = Enumeration.Flags.ITEM_MULTI;
@@ -21,8 +20,7 @@ namespace GUC.Server.Scripts.Items.Food
             Materials = Enumeration.MaterialType.MAT_LEATHER;
             ScemeName = "FOODHUGE";
 
-
-
+            Weight = 1;
         }
     }
 }

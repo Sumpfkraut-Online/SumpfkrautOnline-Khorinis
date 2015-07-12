@@ -20,7 +20,7 @@ namespace GUC.Server.Scripts.AI
 
         protected bool mInterrupted = false;
 
-        protected NPCProto mNPC;
+        protected NPC mNPC;
 
 
         protected Waypoints.WayPoint lastWP;
@@ -33,9 +33,9 @@ namespace GUC.Server.Scripts.AI
 
 
 
-        public Dictionary<NPCProto, NPCProto> TargetList = new Dictionary<NPCProto, NPCProto>();
-        public LinkedList<NPCProto> EnemyList = new LinkedList<NPCProto>();
-        public List<NPCProto> WarnList = new List<NPCProto>();
+        public Dictionary<NPC, NPC> TargetList = new Dictionary<NPC, NPC>();
+        public LinkedList<NPC> EnemyList = new LinkedList<NPC>();
+        public List<NPC> WarnList = new List<NPC>();
 
         public LinkedList<FightState> FightStates = new LinkedList<FightState>();
 
@@ -66,7 +66,7 @@ namespace GUC.Server.Scripts.AI
         public WalkTypes WalkType = WalkTypes.Run;
 
 
-        public NPCAI(NPCProto npc)
+        public NPCAI(NPC npc)
         {
             mAITimer = new Timer(10000*250);
             mAITimer.OnTick += new Events.TimerEvent(update);
@@ -110,10 +110,10 @@ namespace GUC.Server.Scripts.AI
 
         public void updateTargetList()
         {
-            NPCProto[] newTargetList = this.mNPC.getNearNPC(2000);
-            Dictionary<NPCProto, NPCProto> nTL = new Dictionary<NPCProto, NPCProto>();
+            NPC[] newTargetList = this.mNPC.getNearNPC(2000);
+            Dictionary<NPC, NPC> nTL = new Dictionary<NPC, NPC>();
 
-            foreach (NPCProto proto in newTargetList)
+            foreach (NPC proto in newTargetList)
             {
                 if (proto == mNPC)
                     continue;
@@ -135,7 +135,7 @@ namespace GUC.Server.Scripts.AI
         {
             if (mNPC is NPC)
             {
-                if (((NPC)mNPC).NPCController == null || mNPC.HP == 0)
+                if (!((NPC)mNPC).NPCControlled || mNPC.HP == 0)
                     setTimer( 10000 * 2000 );
                 else
                     setTimer( 10000 * 250  );
@@ -186,7 +186,7 @@ namespace GUC.Server.Scripts.AI
         }
 
 
-        public void addEnemy(NPCProto proto)
+        public void addEnemy(NPC proto)
         {
             if (EnemyList.Contains(proto))
                 return;
@@ -195,7 +195,7 @@ namespace GUC.Server.Scripts.AI
 
         
 
-        public void removeEnemy(NPCProto proto)
+        public void removeEnemy(NPC proto)
         {
             EnemyList.Remove(proto);
         }

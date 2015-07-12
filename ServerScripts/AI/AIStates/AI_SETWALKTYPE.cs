@@ -15,7 +15,7 @@ namespace GUC.Server.Scripts.AI.AIStates
         protected WalkTypes walkType = WalkTypes.Run;
 
 
-        public AI_SETWALKTYPE(NPCProto proto, WalkTypes walkType)
+        public AI_SETWALKTYPE(NPC proto, WalkTypes walkType)
             : base(proto)
         {
             this.walkType = walkType;

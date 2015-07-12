@@ -50,7 +50,6 @@ namespace Gothic.zClasses
         public void ScreenDone()
         {
             Process.THISCALL<NullReturnCall>((uint)Address, 0x004DD9E0, new CallValue[] { });
-            
         }
 
         public int HandleSelAction(int t, zString str, zCMenuItem menuitem)

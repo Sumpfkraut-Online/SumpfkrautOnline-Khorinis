@@ -2,62 +2,34 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Linq;
+using GUC.Server.WorldObjects;
 using GUC.Server.Log;
 using GUC.Server.Scripting.Listener;
-using GUC.Server.Scripting;
-using GUC.Server.Scripting.Objects;
-using GUC.Server.Scripting.Objects.Character;
-using GUC.Server.Scripting.Objects.Mob;
-using GUC.Enumeration;
-using GUC.Server.Scripting.GUI;
-using GUC.Types;
 
-using GUC.Server.Scripts.StartModules;
-#if SSM_ACCOUNT
-using GUC.Server.Scripts.Accounts;
-#endif
-
-using GUC.Server.Scripts.AI.Waypoints;
-using GUC.Server.Scripts.AI.NPC_Def;
-using GUC.Server.Scripts.AI.DataTypes;
-using GUC.Server.Scripts.AI.NPC_Def.Monster;
-using GUC.Server.Scripts.AI.NPC_Def.Human;
-using GUC.Server.Scripts.Items;
-using GUC.Server.Scripts.Communication;
-using GUC.Server.Scripts.Utils;
 namespace GUC.Server.Scripts
 {
 	public class Startup : IServerStartup
 	{
-		//public static Chat chat = null;
-		public static Cursor cursor;
-		public Button connection;
 		public void OnServerInit()
 		{
             Logger.log(Logger.LogLevel.INFO, "######################## Initalise ########################");
-            cursor = Cursor.getCursor();
-            RandomManager.GetRandom();
-
-            Test.Text3DTest.Init();
-
             
-            ItemInit.Init();
-            DefaultItems.Init();
+            //DefaultItems.Init();
             
 
-            DayTime.Init();
-            DayTime.setTime(0, 12, 0);
-
+            //DayTime.Init();
+            //DayTime.setTime(0, 12, 0);
 
 #if SSM_AI
-            AI.AISystem.Init();
+            //AI.AISystem.Init();
 #endif
-            DefaultWorld.Init();
+            //DefaultWorld.Init();
 
 
             
 
-            DamageScript.Init();
+            //DamageScript.Init();
 
             
 
@@ -79,7 +51,7 @@ namespace GUC.Server.Scripts
 
             
 
-            Modules.Init();
+            //Modules.Init();
 
 
 
@@ -92,19 +64,42 @@ namespace GUC.Server.Scripts
 #endif
             
 #if SSM_WEB
-            Web.http_server.Init();
+            //Web.http_server.Init();
 #endif
 
-            Sumpfkraut.SOKChat.SOKChat SOKChat = new Sumpfkraut.SOKChat.SOKChat();
+            //Sumpfkraut.SOKChat.SOKChat SOKChat = new Sumpfkraut.SOKChat.SOKChat();
 
-            Server.Sumpfkraut.Trade trade = new Server.Sumpfkraut.Trade();
+            //Server.Sumpfkraut.Trade trade = new Server.Sumpfkraut.Trade();
 
-            Sumpfkraut.Accounts.AccountSystem acs = new Sumpfkraut.Accounts.AccountSystem();
+            Player.OnEnterWorld += EnterWorld;
 
-            Server.Sumpfkraut.AnimationMenuMessage.Init();
+            InitItemInstances();
+
+            Accounts.AccountSystem.Get(); //init
+
+            //Server.Network.Messages.AnimationMenuMessage.Init();
             
             Logger.log(Logger.LogLevel.INFO, "###################### End Initalise ######################");
 		}
+
+        void EnterWorld(NPC pl)
+        {
+            (new Item("ITFO_APPLE")).Spawn(World.NewWorld);
+
+            for (int i = 0; i < ItemInstance.InstanceList.Count; i++)
+                pl.AddItem(ItemInstance.InstanceList[i], i+1);
+        }
+
+        void InitItemInstances()
+        {
+            var q = from t in System.Reflection.Assembly.GetExecutingAssembly().GetTypes()
+                    where t.IsClass && t.Namespace.StartsWith("GUC.Server.Scripts.Items") && !t.IsAbstract && t.IsSubclassOf(typeof(ItemInstance))
+                    select t;
+            foreach (Type t in q.ToList())
+            {
+                Activator.CreateInstance(t);
+            }
+        }
     }
 
 

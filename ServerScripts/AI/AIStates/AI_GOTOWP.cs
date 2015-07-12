@@ -16,7 +16,7 @@ namespace GUC.Server.Scripts.AI.AIStates
         protected int wpIndex = 0;
 
 
-        public AI_GOTOWP(NPCProto proto, String waypoint)
+        public AI_GOTOWP(NPC proto, String waypoint)
             : base(proto)
         {
             endWP = waypoint;

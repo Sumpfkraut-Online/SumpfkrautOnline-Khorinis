@@ -5,7 +5,6 @@ using System.Text;
 using System.Reflection;
 using System.IO;
 using System.CodeDom.Compiler;
-using GUC.WorldObjects.Character;
 
 namespace GUC.Server.Scripting
 {

@@ -31,12 +31,12 @@ namespace GUC.Server.Scripts.Items.Belts
             CreateItemInstance();
         }
 
-        protected void equip(NPCProto npc, Item item)
+        protected void equip(NPC npc, Item item)
         {
             npc.Strength += 10;
         }
 
-        protected void unequip(NPCProto npc, Item item)
+        protected void unequip(NPC npc, Item item)
         {
             npc.Strength -= 10;
         }

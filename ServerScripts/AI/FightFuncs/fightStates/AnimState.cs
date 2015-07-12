@@ -10,7 +10,7 @@ namespace GUC.Server.Scripts.AI.FightFuncs.fightStates
     {
         protected String mAnim = "";
 
-        public AnimState(NPCProto proto, String animation)
+        public AnimState(NPC proto, String animation)
             : base( proto )
         {
             mAnim = animation;

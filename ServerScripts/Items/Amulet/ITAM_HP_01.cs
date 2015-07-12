@@ -7,7 +7,7 @@ using GUC.Server.Scripting.Objects.Character;
 
 namespace GUC.Server.Scripts.Items.Amulet
 {
-    public class ITAM_HP_01 : AbstractAmulets
+    public class ITAM_HP_01 : AbstractAmulet
     {
         static ITAM_HP_01 ii;
         public static ITAM_HP_01 get()
@@ -29,13 +29,13 @@ namespace GUC.Server.Scripts.Items.Amulet
             CreateItemInstance();
         }
 
-        protected void equip(NPCProto npc, Item item)
+        protected void equip(NPC npc, Item item)
         {
             npc.HPMax += 40;
             npc.HP += 40;
         }
 
-        protected void unequip(NPCProto npc, Item item)
+        protected void unequip(NPC npc, Item item)
         {
 
             if (npc.HP > 40 + 2)

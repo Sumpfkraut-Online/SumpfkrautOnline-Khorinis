@@ -2,41 +2,28 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Server.Scripting.Objects;
-using GUC.Server.Scripting.Objects.Character;
+using GUC.Server.WorldObjects;
 
 namespace GUC.Server.Scripts.Items.Amulet
 {
-    public class ITAM_ADDON_STR : AbstractAmulets
+    public class ITAM_ADDON_STR : AbstractAmulet
     {
-        static ITAM_ADDON_STR ii;
-        public static ITAM_ADDON_STR get()
-        {
-            if (ii == null)
-                ii = new ITAM_ADDON_STR();
-            return ii;
-        }
-
-
-        protected ITAM_ADDON_STR()
-            : base("ITAM_ADDON_STR")
+        public ITAM_ADDON_STR() : base()
         {
             Visual = "ItAm_Hp_01.3ds";
-            Description = "Amulett der Krieger";
+            Name = "Amulett der Krieger";
+            Description = Name;
 
-            OnEquip += new Scripting.Events.NPCEquipEventHandler(equip);
-            OnUnEquip += new Scripting.Events.NPCEquipEventHandler(unequip);
-            CreateItemInstance();
+            OnEquip += equip;
+            OnUnequip += unequip;
         }
 
-        protected void equip(NPCProto npc, Item item)
+        protected void equip(NPC npc, Item item)
         {
-            npc.Strength += 50;
         }
 
-        protected void unequip(NPCProto npc, Item item)
+        protected void unequip(NPC npc, Item item)
         {
-            npc.Strength -= 50;
         }
     }
 }

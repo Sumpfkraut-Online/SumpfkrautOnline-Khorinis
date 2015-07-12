@@ -2,41 +2,29 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Server.Scripting.Objects;
-using GUC.Server.Scripting.Objects.Character;
+using GUC.Server.WorldObjects;
 
 namespace GUC.Server.Scripts.Items.Amulet
 {
-    public class ITAM_ADDON_HEALTH : AbstractAmulets
+    public class ITAM_ADDON_HEALTH : AbstractAmulet
     {
-        static ITAM_ADDON_HEALTH ii;
-        public static ITAM_ADDON_HEALTH get()
-        {
-            if (ii == null)
-                ii = new ITAM_ADDON_HEALTH();
-            return ii;
-        }
-
-
-        protected ITAM_ADDON_HEALTH()
-            : base("ITAM_ADDON_HEALTH")
+        public ITAM_ADDON_HEALTH() : base()
         {
             Visual = "ItAm_Hp_01.3ds";
             Description = "Amulett der Heiler";
 
-            OnEquip += new Scripting.Events.NPCEquipEventHandler(equip);
-            OnUnEquip += new Scripting.Events.NPCEquipEventHandler(unequip);
-            CreateItemInstance();
+            OnEquip += equip;
+            OnUnequip += unequip;
         }
 
-        protected void equip(NPCProto npc, Item item)
+        protected void equip(NPC npc, Item item)
         {
-            npc.HPMax += 50;
+
         }
 
-        protected void unequip(NPCProto npc, Item item)
+        protected void unequip(NPC npc, Item item)
         {
-            npc.HPMax -= 50;
+
         }
     }
 }

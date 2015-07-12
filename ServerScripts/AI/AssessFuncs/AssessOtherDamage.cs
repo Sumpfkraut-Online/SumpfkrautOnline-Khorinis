@@ -8,7 +8,7 @@ namespace GUC.Server.Scripts.AI.AssessFuncs
 {
     public static class AssessOtherDamage
     {
-        public static void OnDamage(NPCProto npc, NPCProto victim, NPCProto attacker, 
+        public static void OnDamage(NPC npc, NPC victim, NPC attacker, 
             int damage, bool dropUnconscious, bool dropDead)
         {
             NPCAI ai = npc.getAI();

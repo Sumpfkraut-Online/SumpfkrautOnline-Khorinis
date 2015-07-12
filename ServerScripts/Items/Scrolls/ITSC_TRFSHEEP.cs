@@ -37,7 +37,7 @@ namespace GUC.Server.Scripts.Items
             CreateSpell();
         }
 
-        protected void cast(NPCProto caster, Spell spell, Vob target)
+        protected void cast(NPC caster, Spell spell, Vob target)
         {
             caster.setWeaponMode(1);
             caster.setVisual("Sheep.mds", "Sheep_Body", 0, 0, "", 0, 0);

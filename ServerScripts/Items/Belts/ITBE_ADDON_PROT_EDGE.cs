@@ -31,13 +31,13 @@ namespace GUC.Server.Scripts.Items.Belts
             CreateItemInstance();
         }
 
-        protected void equip(NPCProto npc, Item item)
+        protected void equip(NPC npc, Item item)
         {
             npc.ProtectionEdge += 10;
             npc.ProtectionBlunt += 10;
         }
 
-        protected void unequip(NPCProto npc, Item item)
+        protected void unequip(NPC npc, Item item)
         {
             npc.ProtectionEdge -= 10;
             npc.ProtectionBlunt -= 10;

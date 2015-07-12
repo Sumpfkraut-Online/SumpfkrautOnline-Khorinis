@@ -8,8 +8,8 @@ namespace GUC.Server.Scripts.AI.FightFuncs.fightStates
 {
     public class DamageState : FightState
     {
-        NPCProto mEnemy = null;
-        public DamageState(NPCProto npc, NPCProto enemy)
+        NPC mEnemy = null;
+        public DamageState(NPC npc, NPC enemy)
             : base(npc)
         {
             mEnemy = enemy;

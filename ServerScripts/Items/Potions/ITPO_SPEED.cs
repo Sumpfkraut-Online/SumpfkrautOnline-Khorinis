@@ -42,7 +42,7 @@ namespace GUC.Server.Scripts.Items.Potions
             CreateItemInstance();
         }
 
-        protected void useItem(NPCProto npc, Item item, short state, short targetState)
+        protected void useItem(NPC npc, Item item, short state, short targetState)
         {
             if (!(state == -1 && targetState == -2))
                 return;
@@ -68,9 +68,9 @@ namespace GUC.Server.Scripts.Items.Potions
 
     public class ITPO_SPEED_TIMER : Timer
     {
-        NPCProto npc = null;
+        NPC npc = null;
 
-        public ITPO_SPEED_TIMER(NPCProto proto)
+        public ITPO_SPEED_TIMER(NPC proto)
             : base(3000000000)
         {
             npc = proto;

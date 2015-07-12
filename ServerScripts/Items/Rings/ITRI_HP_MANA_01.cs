@@ -29,7 +29,7 @@ namespace GUC.Server.Scripts.Items.Rings
             CreateItemInstance();
         }
 
-        protected void equip(NPCProto npc, Item item)
+        protected void equip(NPC npc, Item item)
         {
             npc.HPMax += 30;
             npc.HP += 30;
@@ -38,7 +38,7 @@ namespace GUC.Server.Scripts.Items.Rings
             npc.MP += 10;
         }
 
-        protected void unequip(NPCProto npc, Item item)
+        protected void unequip(NPC npc, Item item)
         {
             if (npc.HP > 30 + 2)
                 npc.HP -= 30;

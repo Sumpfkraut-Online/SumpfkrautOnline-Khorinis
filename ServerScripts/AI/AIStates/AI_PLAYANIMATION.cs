@@ -13,7 +13,7 @@ namespace GUC.Server.Scripts.AI.AIStates
         protected String animation = "";
 
 
-        public AI_PLAYANIMATION(NPCProto proto, String anim)
+        public AI_PLAYANIMATION(NPC proto, String anim)
             : base(proto)
         {
             animation = anim;

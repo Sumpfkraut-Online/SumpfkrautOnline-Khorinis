@@ -2,41 +2,28 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Server.Scripting.Objects;
-using GUC.Server.Scripting.Objects.Character;
+using GUC.Server.WorldObjects;
 
 namespace GUC.Server.Scripts.Items.Amulet
 {
-    public class ITAM_ADDON_MANA : AbstractAmulets
+    public class ITAM_ADDON_MANA : AbstractAmulet
     {
-        static ITAM_ADDON_MANA ii;
-        public static ITAM_ADDON_MANA get()
-        {
-            if (ii == null)
-                ii = new ITAM_ADDON_MANA();
-            return ii;
-        }
-
-
-        protected ITAM_ADDON_MANA()
-            : base("ITAM_ADDON_MANA")
+        public ITAM_ADDON_MANA() : base()
         {
             Visual = "ItAm_Hp_01.3ds";
-            Description = "Amulett der Heiler";
+            Name = "Amulett der Heiler";
+            Description = Name;
 
-            OnEquip += new Scripting.Events.NPCEquipEventHandler(equip);
-            OnUnEquip += new Scripting.Events.NPCEquipEventHandler(unequip);
-            CreateItemInstance();
+            OnEquip += equip;
+            OnUnequip += unequip;
         }
 
-        protected void equip(NPCProto npc, Item item)
+        protected void equip(NPC npc, Item item)
         {
-            npc.MPMax += 50;
         }
 
-        protected void unequip(NPCProto npc, Item item)
+        protected void unequip(NPC npc, Item item)
         {
-            npc.MPMax -= 50;
         }
     }
 }
