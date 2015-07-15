@@ -29,5 +29,46 @@ namespace GUC.Server.Scripts.Sumpfkraut.Utilities
             return dt.ToString(format);
         }
 
+        public static bool TryDateTimeToString (DateTime dt, out string str, string format=null)
+        {
+            if (format == null)
+            {
+                format = dateFormat;
+            }
+
+            str = dt.ToString(format);
+
+            if (str == null)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        //public static DateTime StringToDateTime (string str)
+        //{
+        //    DateTime dt;
+
+        //    if (DateTime.TryParseExact(str, dateFormat, CultureInfo.InvariantCulture,
+        //        DateTimeStyles.None, out dt))
+        //    {
+        //        return dt;
+        //    }
+
+        //    return dt;
+        //}
+
+        public static bool TryStringToDateTime (string str, out DateTime dt)
+        {
+            if (DateTime.TryParseExact(str, dateFormat, CultureInfo.InvariantCulture,
+                DateTimeStyles.None, out dt))
+            {
+                return true;
+            }
+            // else
+            return false;
+        }
+
     }
 }

@@ -100,6 +100,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                     {"KeyInstance",             SQLiteGetTypeEnum.GetInt32},
                     {"PicklockString",          SQLiteGetTypeEnum.GetString},
                     {"HasEffects",              SQLiteGetTypeEnum.GetBoolean},
+                    {"ChangeDate",              SQLiteGetTypeEnum.GetString},
+                    {"CreationDate",            SQLiteGetTypeEnum.GetString},
                 }
             },
             {
@@ -121,7 +123,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                     {"TargetCollectRange",      SQLiteGetTypeEnum.GetInt32},
                     {"TargetCollectAzi",        SQLiteGetTypeEnum.GetInt32},
                     {"TargetCollectElev",       SQLiteGetTypeEnum.GetInt32},
-                    {"HasEffects",               SQLiteGetTypeEnum.GetBoolean}
+                    {"HasEffects",               SQLiteGetTypeEnum.GetBoolean},
+                    {"ChangeDate",              SQLiteGetTypeEnum.GetString},
+                    {"CreationDate",            SQLiteGetTypeEnum.GetString},
                 }
             },
             {
@@ -152,6 +156,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                     {"IsTorchBurned",           SQLiteGetTypeEnum.GetBoolean},
                     {"IsGold",                  SQLiteGetTypeEnum.GetBoolean},
                     {"HasEffects",              SQLiteGetTypeEnum.GetBoolean},
+                    {"ChangeDate",              SQLiteGetTypeEnum.GetString},
+                    {"CreationDate",            SQLiteGetTypeEnum.GetString},
                 }
             },
             {
@@ -171,7 +177,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                     {"HeadMesh",                SQLiteGetTypeEnum.GetString},
                     {"HeadTex",                 SQLiteGetTypeEnum.GetInt32},
                     {"TeethTex",                SQLiteGetTypeEnum.GetInt32},
-                    {"HasEffects",              SQLiteGetTypeEnum.GetBoolean}
+                    {"HasEffects",              SQLiteGetTypeEnum.GetBoolean},
+                    {"ChangeDate",              SQLiteGetTypeEnum.GetString},
+                    {"CreationDate",            SQLiteGetTypeEnum.GetString},
                 }
             },
             {
@@ -242,6 +250,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                     {"ID",                            SQLiteGetTypeEnum.GetInt32},
                     {"IsSpawned",                     SQLiteGetTypeEnum.GetBoolean},
                     {"MobDefID",                      SQLiteGetTypeEnum.GetInt32},
+                    {"ChangeDate",                    SQLiteGetTypeEnum.GetString},
+                    {"CreationDate",                  SQLiteGetTypeEnum.GetString},
                 }
             },
             {
@@ -251,6 +261,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                     {"IsSpawned",                     SQLiteGetTypeEnum.GetBoolean},
                     {"ItemDefID",                     SQLiteGetTypeEnum.GetInt32},
                     {"Amount",                        SQLiteGetTypeEnum.GetInt32},
+                    {"ChangeDate",                    SQLiteGetTypeEnum.GetString},
+                    {"CreationDate",                  SQLiteGetTypeEnum.GetString},
                 }
             },
             {
@@ -276,6 +288,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                     {"MPMax",                         SQLiteGetTypeEnum.GetInt32},
                     {"Strength",                      SQLiteGetTypeEnum.GetInt32},
                     {"Dexterity",                     SQLiteGetTypeEnum.GetInt32},
+                    {"ChangeDate",                    SQLiteGetTypeEnum.GetString},
+                    {"CreationDate",                  SQLiteGetTypeEnum.GetString},
                 }
             },
             {

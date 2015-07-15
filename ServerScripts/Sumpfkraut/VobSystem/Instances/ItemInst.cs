@@ -14,6 +14,11 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
     class ItemInst
     {
 
+        // TO DO: set ids in constructors
+        private int id = -1;
+        public int getID () { return this.id; }
+        public void setID (int id) { this.id = id; }
+
         // definition on which basis the item was created
         private ItemDef itemDef;
         public ItemDef getItemDef () { return this.itemDef; }
@@ -34,6 +39,30 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
             this.item.setAmount(amount);
         }
 
+        private DateTime changeDate;
+        public DateTime getChangeDate () { return this.changeDate; }
+        public void setChangeDate (DateTime changeDate) { this.changeDate = changeDate; }
+        public void setChangeDate (string changeDate)
+        {
+            DateTime dt;
+            if (Sumpfkraut.Utilities.DateTimeUtil.TryStringToDateTime(changeDate, out dt))
+            {
+                this.changeDate = dt;
+            }
+        }
+
+        private DateTime creationDate;
+        public DateTime getCreationDate () { return this.creationDate; }
+        public void setCreationDate (DateTime creationDate) { this.creationDate = creationDate; }
+        public void setCreationDate (string creationDate)
+        {
+            DateTime dt;
+            if (Sumpfkraut.Utilities.DateTimeUtil.TryStringToDateTime(creationDate, out dt))
+            {
+                this.creationDate = dt;
+            }
+        }
+
         // TO DO: if items are already in a world or inventory, they must be removed from this location before
         // adding it to another + split up into two ItemInst if only a partial amount is moved
         private NPCInst inInventoryNPC;
@@ -48,13 +77,26 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
         // (always set inWorld and position at the same time)
         private WorldInst inWorld;
         public WorldInst getInWorld () { return inWorld; }
-        public void setInWorld (WorldInst inWorld) { this.inWorld = inWorld; }
+        public void setInWorld (WorldInst inWorld) 
+        { 
+            Vob vob = this.item;
+            this.inWorld = inWorld;
+            //vob.World = inWorld;
+            // TO DO: world must be set for GUC too (vob.World and vob.Map?)
+        }
 
         // cartesian position in current world 
         // (always set inWorld and position at the same time)
         private Vec3f position;
         public Vec3f getPosition () { return this.position; }
-        public void setPosition (Vec3f position) { this.position = position; }
+        public void setPosition (Vec3f position) 
+        { 
+            Vob vob = this.item;
+            this.position = position;
+            vob.setPosition(position);
+        }
+
+
 
 
         // does not automatically spawn the item in a world or inventory

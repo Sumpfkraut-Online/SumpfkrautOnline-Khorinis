@@ -40,6 +40,12 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
         public static Dictionary<int, SpellInst> spellInstDict = new Dictionary<int, SpellInst>();
         public static Dictionary<int, NPCInst> npcInstDict = new Dictionary<int, NPCInst>();
 
+        // dictionaries to directly point to the VobInst by knowing the IG-Vob (of the GUC)
+        public static Dictionary<Vob, MobInst> mobInstVobDict = new Dictionary<Vob, MobInst>();
+        public static Dictionary<Vob, ItemInst> itemInstVobDict = new Dictionary<Vob, ItemInst>();
+        public static Dictionary<Vob, SpellInst> spellInstVobDict = new Dictionary<Vob, SpellInst>();
+        public static Dictionary<Vob, NPCInst> npcInstVobDict = new Dictionary<Vob, NPCInst>();
+
         /**
          *   Call this method from outside to create the intial vob definitions
          *   (spells, items, mobs, npcs).
@@ -1465,13 +1471,145 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
         private static void CreateItemInstance (ref List<object> inst,
             ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals)
         {
+            ItemDef vobDef;
+            ItemInst vobInst;            
+            int colIndex;
+            
+            colIndex = colTypesKeys.IndexOf("ItemDefID");
+            if ((colIndex != -1) && (inst[colIndex] != null))
+            {
+                if (itemDefDict.TryGetValue((int) inst[colIndex], out vobDef))
+                {
+                    vobInst = new ItemInst(vobDef);
 
+                    // must continue in the if-block because IDE does not understand, vobInst
+                    // is set here and usable afterwards
+
+                    colIndex = colTypesKeys.IndexOf("ID");
+                    if ((colIndex != -1) && (inst[colIndex] != null))
+                    {
+                        vobInst.setID((int) inst[colIndex]);
+                    }
+
+                    colIndex = colTypesKeys.IndexOf("Amount");
+                    if ((colIndex != -1) && (inst[colIndex] != null))
+                    {
+                        vobInst.setAmount((int) inst[colIndex]);
+                    }
+
+                    colIndex = colTypesKeys.IndexOf("ChangeDate");
+                    if ((colIndex != -1) && (inst[colIndex] != null))
+                    {
+                        vobInst.setChangeDate((string) inst[colIndex]);
+                    }
+
+                    colIndex = colTypesKeys.IndexOf("CreationDate");
+                    if ((colIndex != -1) && (inst[colIndex] != null))
+                    {
+                        vobInst.setCreationDate((string) inst[colIndex]);
+                    }
+
+                    //// try to add entry or update exsiting one in dictionaries
+                    //if (vobInst.getID() < 0)
+                    //{
+                    //    // id has not been set properly before --> abort
+                    //    Log.Logger.logError("CreateItemInstance: No valid id was set for the new instance."
+                    //        + " Aborting instantiation.");
+                    //}
+                    //else if (itemInstDict.ContainsKey(vobInst.getID()))
+                    //{
+                    //    // id already exists in dictionary --> replace-update the entry
+                    //    ItemInst oldInst = itemInstDict[vobInst.getID()];
+
+                    //    // delete the ig-item and old entries in dictionaries
+                    //    oldInst.DeleteItem();
+                    //    // TO DO: inventories and name-dictionary
+
+                    //    itemInstDict[vobInst.getID()] = vobInst;
+                    //}
+                    //else
+                    //{
+                    //    // everything is fine and no entry exists at the ment --> add the new entry
+                    //    itemInstDict.Add(vobInst.getID(), vobInst);
+                    //}
+                }
+                else
+                {
+                    // not even the ItemDef-object was found
+                    // there is no basis to continue initialization
+                    Log.Logger.logError("CreateItemInstance: Cannot instantiate ItemInst-object"
+                        + " because itemDefDict does not contain an ItemDef with ID=" 
+                        + (int) inst[colIndex]);
+                    return;
+                }
+            }
         }
 
         private static void CreateNPCInstance (ref List<object> inst,
             ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals)
         {
 
+        }
+
+        private static bool UpdateMobInstance (MobInst oldInst, MobInst newInst)
+        {
+            return true;
+        }
+
+        private static bool UpdateSpellInstance (SpellInst oldInst, SpellInst newInst)
+        {
+            return true;
+        }
+
+        private static bool UpdateItemInstance (ItemInst oldInst, ItemInst newInst)
+        {
+            bool replace = true;
+            int newID = newInst.getID();
+            Item newItem = newInst.getItem();
+            Item oldItem = oldInst.getItem();
+
+            if (oldInst == newInst)
+            {
+                // don't update if nothign would change to be begin with :)
+                return false;
+            }
+            if (oldInst.getID() != newID)
+            {
+                // it is forbidden to update an instance with the incorrect id 
+                // for organizational purposes
+                return false;
+            }
+            if (oldInst.getItemDef() == newInst.getItemDef())
+            {
+                // replacing the object entirely is not necessary 
+                // --> simply update the existing one instead
+                replace = false;
+            }
+
+            if (replace)
+            {
+                // carefully replace the instance because it may 
+                // directly affect the running gameworld
+            }
+            else
+            {
+                // carefully update the existing instance
+                //oldItem.Despawn();
+                //oldItem.Delete();
+                //oldInst.setItem(newItem);
+                oldInst.setAmount(newInst.getAmount());
+                oldInst.setInWorld(newInst.getInWorld());
+                oldInst.setPosition(newInst.getPosition());
+                oldInst.setChangeDate(newInst.getChangeDate());
+                oldInst.setCreationDate(newInst.getCreationDate());
+            }
+
+            return true;
+        }
+
+        private static bool UpdateNPCInstance (NPCInst oldInst, NPCInst newInst)
+        {
+            return true;
         }
 
     }
