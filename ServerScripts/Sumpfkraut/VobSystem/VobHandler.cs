@@ -53,7 +53,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
         public static void Init ()
         {
             //LoadDefinitions(DefTableEnum.Spell_def);
-            //LoadDefinitions(DefTableEnum.Item_def);
+            LoadDefinitions(DefTableEnum.Item_def);
             LoadDefinitions(DefTableEnum.Mob_def);
             LoadDefinitions(DefTableEnum.NPC_def);
         }
@@ -1472,6 +1472,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals)
         {
             ItemDef vobDef;
+            ItemInst oldInst;
             ItemInst vobInst;            
             int colIndex;
             
@@ -1509,29 +1510,37 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                         vobInst.setCreationDate((string) inst[colIndex]);
                     }
 
-                    //// try to add entry or update exsiting one in dictionaries
-                    //if (vobInst.getID() < 0)
-                    //{
-                    //    // id has not been set properly before --> abort
-                    //    Log.Logger.logError("CreateItemInstance: No valid id was set for the new instance."
-                    //        + " Aborting instantiation.");
-                    //}
-                    //else if (itemInstDict.ContainsKey(vobInst.getID()))
-                    //{
-                    //    // id already exists in dictionary --> replace-update the entry
-                    //    ItemInst oldInst = itemInstDict[vobInst.getID()];
+                    // try to add entry or update exsiting one in dictionaries
+                    
+                    if (vobInst.getID() < 0)
+                    {
+                        // id has not been set properly before --> abort
+                        Log.Logger.logError("CreateItemInstance: No valid id was set for the new instance."
+                            + " Aborting instantiation.");
+                        return;
+                    }
+                    
+                    if (itemInstDict.TryGetValue(vobInst.getID(), out oldInst)) 
+                    {
+                        UpdateItemInstance(ref oldInst, ref vobInst);
+                    }
+                    else
+                    {
+                        itemInstDict.Add(vobInst.getID(), vobInst);
+                        //vobInst.SpawnVob();
+                    }
 
-                    //    // delete the ig-item and old entries in dictionaries
-                    //    oldInst.DeleteItem();
-                    //    // TO DO: inventories and name-dictionary
-
-                    //    itemInstDict[vobInst.getID()] = vobInst;
-                    //}
-                    //else
-                    //{
-                    //    // everything is fine and no entry exists at the ment --> add the new entry
-                    //    itemInstDict.Add(vobInst.getID(), vobInst);
-                    //}
+                    // do this after everything else to ensure, the vob will be spawned or despawned,
+                    // no matter if the old entry was only preserved/updated or completly replaced
+                    colIndex = colTypesKeys.IndexOf("IsSpawned");
+                    if ((colIndex != -1) && (inst[colIndex] != null))
+                    {
+                        ItemInst nowInst;
+                        if (itemInstDict.TryGetValue(vobInst.getID(), out nowInst))
+                        {
+                            nowInst.setIsSpawned((bool) inst[colIndex]);
+                        }
+                    }
                 }
                 else
                 {
@@ -1561,25 +1570,29 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             return true;
         }
 
-        private static bool UpdateItemInstance (ItemInst oldInst, ItemInst newInst)
+        private static bool UpdateItemInstance (ref ItemInst oldInst, ref ItemInst newInst)
         {
             bool replace = true;
             int newID = newInst.getID();
-            Item newItem = newInst.getItem();
-            Item oldItem = oldInst.getItem();
+            Item newItem = newInst.getVob();
+            Item oldItem = oldInst.getVob();
 
             if (oldInst == newInst)
             {
-                // don't update if nothign would change to be begin with :)
+                // don't update if nothing would change to be begin with :)
                 return false;
             }
+
             if (oldInst.getID() != newID)
             {
                 // it is forbidden to update an instance with the incorrect id 
                 // for organizational purposes
+                Log.Logger.logWarning("UpdateItemInstance: Warning! Updating old instance"
+                    + " with a new one is forbidden if both don't share the same id!");
                 return false;
             }
-            if (oldInst.getItemDef() == newInst.getItemDef())
+
+            if (oldInst.getVobDef() == newInst.getVobDef())
             {
                 // replacing the object entirely is not necessary 
                 // --> simply update the existing one instead
@@ -1590,13 +1603,13 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             {
                 // carefully replace the instance because it may 
                 // directly affect the running gameworld
+                oldInst.DespawnVob();
+                oldInst.DeleteVob();
+                oldInst.setVobDef(newInst.getVobDef());
             }
             else
             {
                 // carefully update the existing instance
-                //oldItem.Despawn();
-                //oldItem.Delete();
-                //oldInst.setItem(newItem);
                 oldInst.setAmount(newInst.getAmount());
                 oldInst.setInWorld(newInst.getInWorld());
                 oldInst.setPosition(newInst.getPosition());

@@ -19,15 +19,32 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
         public int getID () { return this.id; }
         public void setID (int id) { this.id = id; }
 
+        // is the vob spawned or not? --> for vobs which should be ready to be spawned 
+        // without them changing the ingame-world
+        private bool isSpawned = false;
+        public bool getIsSpawned () { return this.isSpawned; }
+        public void setIsSpawned (bool isSpawned) 
+        {
+            if ((isSpawned) && (!this.isSpawned))
+            {
+                this.SpawnVob();
+            }
+            else if ((!isSpawned) && (this.isSpawned))
+            {
+                this.DespawnVob();
+            }
+            this.isSpawned = isSpawned; 
+        }
+
         // definition on which basis the item was created
-        private ItemDef itemDef;
-        public ItemDef getItemDef () { return this.itemDef; }
-        public void setItemDef (ItemDef itemDef) { this.itemDef = itemDef; }
+        private ItemDef vobDef;
+        public ItemDef getVobDef () { return this.vobDef; }
+        public void setVobDef (ItemDef vobDef) { this.vobDef = vobDef; }
 
         // the ingame-item created by using itemDef
-        private Item item;
-        public Item getItem () { return this.item; }
-        public void setItem (Item item) { this.item = item; }
+        private Item vob;
+        public Item getVob () { return this.vob; }
+        public void setVob (Item vob) { this.vob = vob; }
 
 
         // TO DO: must update the database-entry, too
@@ -36,7 +53,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
         public void setAmount (int amount) 
         { 
             this.amount = amount;
-            this.item.setAmount(amount);
+            this.vob.setAmount(amount);
         }
 
         private DateTime changeDate;
@@ -65,6 +82,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
 
         // TO DO: if items are already in a world or inventory, they must be removed from this location before
         // adding it to another + split up into two ItemInst if only a partial amount is moved
+        // --> maybe doing this in handler-methods would be better than in this container-class
         private NPCInst inInventoryNPC;
         public NPCInst getInInventoryNPC () { return inInventoryNPC; }
         public void setInInventoryNPC (NPCInst inInventoryNPC) { this.inInventoryNPC = inInventoryNPC; }
@@ -79,10 +97,10 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
         public WorldInst getInWorld () { return inWorld; }
         public void setInWorld (WorldInst inWorld) 
         { 
-            Vob vob = this.item;
             this.inWorld = inWorld;
-            //vob.World = inWorld;
-            // TO DO: world must be set for GUC too (vob.World and vob.Map?)
+            // despawn and spawn again to swtich worlds ingame
+            this.DespawnVob();
+            this.SpawnVob();
         }
 
         // cartesian position in current world 
@@ -91,11 +109,19 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
         public Vec3f getPosition () { return this.position; }
         public void setPosition (Vec3f position) 
         { 
-            Vob vob = this.item;
+            Vob vob = this.vob;
             this.position = position;
             vob.setPosition(position);
         }
 
+        private Vec3f direction;
+        public Vec3f getDirection () { return this.direction; }
+        public void setDirection (Vec3f direction) 
+        {
+            Vob vob = this.vob;
+            this.direction = direction;
+            vob.setDirection(direction);
+        }
 
 
 
@@ -107,9 +133,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
         // does not automatically spawn the item in a world or inventory
         public ItemInst (ItemDef def, int amount)
         {
-            this.itemDef = def;
+            this.vobDef = def;
             this.setAmount(amount);
-            this.item = new Item(def, amount);
+            this.vob = new Item(def, amount);
         }
 
         // constructor which also spawns the item in an npcs inventory
@@ -138,31 +164,32 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
 
 
 
-        public void CreateItem ()
+        public void CreateVob ()
         {
-            if (this.item != null)
+            if (this.vob != null)
             {
-                this.DeleteItem();
+                this.DeleteVob();
             }
-            if (this.getItemDef() != null)
+            if (this.getVobDef() != null)
             {
-                this.item = new Item(this.getItemDef(), this.getAmount());
+                this.vob = new Item(this.getVobDef(), this.getAmount());
             }
         }
 
-        public void DeleteItem ()
+        public void DeleteVob ()
         {
-            this.item.Delete();
+            this.vob.Delete();
         }
 
-        public void SpawnItem ()
+        public void SpawnVob ()
         {
-            this.item.Spawn();
+            //this.vob.Spawn();
+            this.vob.Spawn(this.getInWorld().getWorldName(), this.getPosition(), this.getDirection());
         }
 
-        public void DespawnItem ()
+        public void DespawnVob ()
         {
-            this.item.Despawn();
+            this.vob.Despawn();
         }
 
         
