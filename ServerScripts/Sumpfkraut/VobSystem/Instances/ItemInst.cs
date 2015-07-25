@@ -46,14 +46,15 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
         public Item getVob () { return this.vob; }
         public void setVob (Item vob) { this.vob = vob; }
 
-
-        // TO DO: must update the database-entry, too
         private int amount;
         public int getAmount () { return this.amount; }
         public void setAmount (int amount) 
         { 
             this.amount = amount;
-            this.vob.setAmount(amount);
+            if (this.vob != null)
+            {
+                this.vob.setAmount(amount);
+            }
         }
 
         private DateTime changeDate;
@@ -109,18 +110,24 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
         public Vec3f getPosition () { return this.position; }
         public void setPosition (Vec3f position) 
         { 
-            Vob vob = this.vob;
             this.position = position;
-            vob.setPosition(position);
+            if (this.vob != null)
+            {
+                Vob vob = this.vob;
+                vob.setPosition(position);
+            }          
         }
 
         private Vec3f direction;
         public Vec3f getDirection () { return this.direction; }
         public void setDirection (Vec3f direction) 
         {
-            Vob vob = this.vob;
             this.direction = direction;
-            vob.setDirection(direction);
+            if (this.vob != null)
+            {
+                Vob vob = this.vob;
+                vob.setDirection(direction);
+            }   
         }
 
 
@@ -178,18 +185,26 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
 
         public void DeleteVob ()
         {
-            this.vob.Delete();
+            if (this.vob != null)
+            {
+                this.vob.Delete();
+            } 
         }
 
         public void SpawnVob ()
         {
-            //this.vob.Spawn();
-            this.vob.Spawn(this.getInWorld().getWorldName(), this.getPosition(), this.getDirection());
+            if (this.vob != null)
+            {
+                this.vob.Spawn(this.getInWorld().getWorldName(), this.getPosition(), this.getDirection());
+            }  
         }
 
         public void DespawnVob ()
         {
-            this.vob.Despawn();
+            if (this.vob != null)
+            {
+                this.vob.Despawn();
+            }  
         }
 
         

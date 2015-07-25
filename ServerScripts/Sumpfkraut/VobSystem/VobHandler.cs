@@ -35,6 +35,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
         public static Dictionary<string, NPCDef> npcDefNameDict = new Dictionary<string, NPCDef>();
 
         // stores vob-instances with their ID-attribute (ID in the VobSystem) as key
+        public static Dictionary<int, WorldInst> worldInstDict = new Dictionary<int, WorldInst>();
         public static Dictionary<int, MobInst> mobInstDict = new Dictionary<int, MobInst>();
         public static Dictionary<int, ItemInst> itemInstDict = new Dictionary<int, ItemInst>();
         public static Dictionary<int, SpellInst> spellInstDict = new Dictionary<int, SpellInst>();
@@ -56,6 +57,13 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             LoadDefinitions(DefTableEnum.Item_def);
             LoadDefinitions(DefTableEnum.Mob_def);
             LoadDefinitions(DefTableEnum.NPC_def);
+
+            //LoadInstances(InstTableEnum.World_inst);
+
+            //LoadInstances(InstTableEnum.Spell_Effects_inst);
+            LoadInstances(InstTableEnum.Item_inst);
+            LoadInstances(InstTableEnum.Mob_inst);
+            LoadInstances(InstTableEnum.NPC_inst);
         }
 
 
@@ -568,7 +576,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             CreateVobInstances(instTab, ref instList_Vobs, ref colTypesKeys_Vobs, ref colTypesVals_Vobs);
         }
 
-        public static void LoadVobInst (string defTabName, ref List<List<List<object>>> instList,
+        public static void LoadVobInst (string instTabName, ref List<List<List<object>>> instList,
             //InstTableEnum instTabEnum,
             ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals, 
             string sqlWhere="1")
@@ -576,12 +584,12 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             // grab from database
             DBReader.LoadFromDB(ref instList, 
                 String.Join(",", colTypesKeys.ToArray()), 
-                "`" + defTabName + "`", 
+                "`" + instTabName + "`", 
                 sqlWhere, 
                 "ID ASC");
 
             // convert individual sql-result-strings to usable data of given types
-            ConvertSQLResult(ref instList, ref colTypesKeys, ref colTypesVals, defTabName);
+            ConvertSQLResult(ref instList, ref colTypesKeys, ref colTypesVals, instTabName);
         }
 
 
