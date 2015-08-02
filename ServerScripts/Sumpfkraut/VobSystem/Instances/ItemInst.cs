@@ -83,22 +83,52 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
 
         public void CreateVob ()
         {
-            if (this.vob != null)
+            CreateVobFromDef(getVobDef());
+            setAmount(getAmount());
+            
+            MobInst inInventoryMob = getInInventoryMob();
+            NPCInst inInventoryNPC = getInInventoryNPC();
+            WorldInst inWorld = getInWorld();
+
+            if (inInventoryMob != null)
             {
-                this.DeleteVob();
+                setInInventoryMob(inInventoryMob);
             }
-            if (this.getVobDef() != null)
+            else if (inInventoryNPC != null)
             {
-                this.vob = new Item(this.getVobDef(), this.getAmount());
+                setInInventoryNPC(inInventoryNPC);
             }
+            else if (inWorld != null)
+            {
+                setInWorld(inWorld);
+                setPosition(getPosition());
+                setDirection(getDirection());
+            }
+            else
+            {
+                Log.Logger.logError("CreateVob: Cannot create vob because ItemInst does belong to"
+                    + "neither NPCInst, MobInst or WorldInst!");
+            }
+        }
+
+        public void CreateVobFromDef (ItemDef def) 
+        {
+            if (def == null)
+            {
+                Log.Logger.logError("CreateVobFromDef: The ItemDef-object is invalid/null!");
+                return;
+            }
+            this.DeleteVob();
+            this.vob = new Item(this.getVobDef(), this.getAmount());
         }
 
         public void DeleteVob ()
         {
             Item vob = (Item) this.vob;
-            if (this.vob != null)
+            if (vob != null)
             {
                 vob.Delete();
+                vob = null;
             } 
         }
 

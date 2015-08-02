@@ -84,6 +84,31 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
         public MobInst (MobDef def, WorldInst inWorld, Vec3f position, Vec3f direction)
         {
             this.setVobDef(def);
+            this.setInWorld(inWorld);
+            this.setPosition(position);
+            this.setDirection(direction);
+            CreateVob();
+        }
+
+
+        public void CreateVob ()
+        {
+            CreateVobFromDef(this.getVobDef());
+            setInWorld(getInWorld());
+            setPosition(getPosition());
+            setDirection(getDirection());
+        }
+
+        private void CreateVobFromDef (MobDef def)
+        {
+            if (def == null)
+            {
+                Log.Logger.logError("CreateVobFromDef: The MobDef-object is invalid/null!");
+                return;
+            }
+
+            DeleteVob();
+
             MobInter newVob = null;
             MobInterType mobType = def.getMobInterType();
 
@@ -126,40 +151,18 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
                     break;
             }
 
+
             if (newVob != null)
             {
                 this.setVob(newVob);
             }
-
-            this.setInWorld(inWorld);
-            this.setPosition(position);
-            this.setDirection(direction);
         }
 
-
-        public void CreateVob ()
+        public void DeleteVob ()
         {
-            //if (this.vob != null)
-            //{
-            //    this.DeleteVob();
-            //}
-            if (this.getVobDef() != null)
-            {
-                //this.vob = new Item(this.getVobDef(), this.getAmount());
-
-                // TO DO
-
-            }
+            MobInter vob = this.vob;
+            vob = null;
         }
-
-        // MobInter does not seem to support Delete-method
-        //public void DeleteVob ()
-        //{
-        //    if (this.vob != null)
-        //    {
-        //        this.vob.Delete();
-        //    } 
-        //}
 
         public void SpawnVob ()
         {
