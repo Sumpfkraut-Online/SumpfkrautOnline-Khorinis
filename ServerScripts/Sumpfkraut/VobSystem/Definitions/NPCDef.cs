@@ -10,7 +10,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
     /**
      *   Class from which all npcs are instatiated (which are handled by the serverscript).
      */
-    class NPCDef
+    class NPCDef : VobDef
     {
        
         protected int ID;

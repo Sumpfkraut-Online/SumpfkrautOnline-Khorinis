@@ -21,7 +21,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
     /**
      *   Class from which all mobs are instatiated (which are handled by the serverscript).
      */
-    class MobDef
+    class MobDef : VobDef
     {
 
         // general identi- and classifiers

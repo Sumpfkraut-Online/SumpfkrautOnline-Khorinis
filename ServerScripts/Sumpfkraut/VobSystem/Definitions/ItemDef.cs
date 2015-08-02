@@ -10,6 +10,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 {
     /**
      *   Class from which all items are instatiated (which are handled by the serverscript).
+     *   Not, that ItemDef is the only vob-definition-class which does not inherited from VobDef.
+     *   This is due to C# being unable to multiple inheritance, while inheriting from ItemInstance
+     *   is necessary to obtain all the convenient functionality.
      */
     class ItemDef : ItemInstance
     {

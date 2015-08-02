@@ -11,7 +11,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
     /**
      *   Class which handles npc creation.
      */
-    class NPCInst
+    class NPCInst : VobInst
     {
         
         // definition on which basis the item was created

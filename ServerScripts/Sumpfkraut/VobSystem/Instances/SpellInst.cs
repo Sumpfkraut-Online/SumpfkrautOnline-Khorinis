@@ -10,7 +10,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
     /**
      *   Class which handles spell creation.
      */
-    class SpellInst
+    class SpellInst : VobInst
     {
     }
 }

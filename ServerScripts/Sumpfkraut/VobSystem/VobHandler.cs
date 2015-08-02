@@ -1396,12 +1396,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             List<object> inst;
             int vobIDColIndex = colTypesKeys.IndexOf("ID");
             
-            //for (int r = 0; r < instList[0].Count; r++)
-            //{
-            //    inst = instList[0][r];
-            //    CreateVobInstance(instTab, ref inst, ref colTypesKeys, ref colTypesVals);
-            //}
-
             switch (instTab)
             {
                 case (InstTableEnum.Mob_inst):
@@ -1467,7 +1461,87 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
         private static void CreateMobInstance (ref List<object> inst,
             ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals)
         {
+            MobDef vobDef;
+            MobInst oldInst;
+            MobInst vobInst;            
+            int colIndex;
+            
+            colIndex = colTypesKeys.IndexOf("ItemDefID");
+            if ((colIndex != -1) && (inst[colIndex] != null))
+            {
+                if (mobDefDict.TryGetValue((int) inst[colIndex], out vobDef))
+                {
+                    vobInst = new MobInst(vobDef);
 
+                    // must continue in the if-block because IDE does not understand, vobInst
+                    // is set here and usable afterwards
+
+                    colIndex = colTypesKeys.IndexOf("ID");
+                    if ((colIndex != -1) && (inst[colIndex] != null))
+                    {
+                        vobInst.setID((int) inst[colIndex]);
+                    }
+
+                    colIndex = colTypesKeys.IndexOf("Amount");
+                    if ((colIndex != -1) && (inst[colIndex] != null))
+                    {
+                        vobInst.setAmount((int) inst[colIndex]);
+                    }
+
+                    colIndex = colTypesKeys.IndexOf("ChangeDate");
+                    if ((colIndex != -1) && (inst[colIndex] != null))
+                    {
+                        vobInst.setChangeDate((string) inst[colIndex]);
+                    }
+
+                    colIndex = colTypesKeys.IndexOf("CreationDate");
+                    if ((colIndex != -1) && (inst[colIndex] != null))
+                    {
+                        vobInst.setCreationDate((string) inst[colIndex]);
+                    }
+
+                    // try to add entry or update exsiting one in dictionaries
+                    
+                    if (vobInst.getID() < 0)
+                    {
+                        // id has not been set properly before --> abort
+                        Log.Logger.logError("CreateItemInstance: No valid id was set for the new instance."
+                            + " Aborting instantiation.");
+                        return;
+                    }
+                    
+                    if (itemInstDict.TryGetValue(vobInst.getID(), out oldInst)) 
+                    {
+                        UpdateItemInstance(ref oldInst, ref vobInst);
+                    }
+                    else
+                    {
+                        itemInstDict.Add(vobInst.getID(), vobInst);
+                        //vobInst.SpawnVob();
+                    }
+
+                    // do this after everything else to ensure, the vob will be spawned or despawned,
+                    // no matter if the old entry was only preserved/updated or completly replaced
+                    colIndex = colTypesKeys.IndexOf("IsSpawned");
+                    if ((colIndex != -1) && (inst[colIndex] != null))
+                    {
+                        ItemInst nowInst;
+                        if (itemInstDict.TryGetValue(vobInst.getID(), out nowInst))
+                        {
+                            nowInst.setIsSpawned((bool) inst[colIndex]);
+                        }
+                    }
+                }
+                else
+                {
+                    // not even the ItemDef-object was found
+                    // there is no basis to continue initialization
+                    Log.Logger.logError("CreateItemInstance: Cannot instantiate ItemInst-object"
+                        + " because itemDefDict does not contain an ItemDef with ID=" 
+                        + (int) inst[colIndex]);
+                    return;
+                }
+            }
         }
 
         private static void CreateSpellInstance (ref List<object> inst,
@@ -1582,8 +1656,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
         {
             bool replace = true;
             int newID = newInst.getID();
-            Item newItem = newInst.getVob();
-            Item oldItem = oldInst.getVob();
+            Item newItem = (Item) newInst.getVob();
+            Item oldItem = (Item) oldInst.getVob();
 
             if (oldInst == newInst)
             {
