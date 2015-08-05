@@ -415,6 +415,7 @@ namespace Gothic.zClasses
         public int Instanz
         {
             get { return Process.ReadInt(Address + (int)Offsets.instance); }
+            set { Process.Write(value, Address + (int)Offsets.instance); }
         }
 
         public void RenderItem(zCWorld world, zCView view, float x)

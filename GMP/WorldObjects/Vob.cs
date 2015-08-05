@@ -190,6 +190,13 @@ namespace GUC.Client.WorldObjects
             if (Spawned)
                 return;
 
+            if (this is NPC)
+            {
+                ((NPC)this).gNpc.InitHumanAI();
+                ((NPC)this).gNpc.HP = int.MaxValue;
+                ((NPC)this).gNpc.HPMax = int.MaxValue;
+            }
+
             oCGame.Game(Program.Process).World.AddVob(gVob);
             if (drop)
                 Player.Hero.gNpc.DoDropVob(gVob);
@@ -197,7 +204,7 @@ namespace GUC.Client.WorldObjects
             Position = position;
             Direction = direction;
 
-            World.VobDict.Add(ID, this);
+            World.AddVob(this);
             Spawned = true;
         }
 
@@ -207,8 +214,12 @@ namespace GUC.Client.WorldObjects
                 return;
 
             oCGame.Game(Program.Process).World.RemoveVob(gVob);
-            World.VobDict.Remove(ID);
+            World.RemoveVob(this);
             Spawned = false;
+        }
+
+        public virtual void Update(long now)
+        {
         }
         #endregion
     }

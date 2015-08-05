@@ -30,23 +30,51 @@ namespace GUC.Enumeration
         WorldItemSpawnMessage,
 
         //vobs
-        VobPositionMessage,
-        VobDirectionMessage,
+        VobPosDirMessage,
 
         //npcs
         NPCAnimationMessage,
+        NPCEquipMessage,
+        NPCFoodMessage,
+
+        NPCStateMessage,
+        NPCAttackMessage,
+        NPCHitMessage,
+
+        NPCWeaponStateMessage,
+        NPCTalentMessage,
 
         //item instances
         ItemInstanceMessage,
-        
+
         //inventory
         InventoryAddMessage, //add iteminstance to player inventory
         InventoryRemoveMessage, //remove
         InventoryDropItemMessage,
+        InventoryUseItemMessage,
 
         //controller stuff
         ControlAddVobMessage,
         ControlRemoveVobMessage
+    }
+
+    public enum NPCState : byte
+    {
+        Stand,
+
+        MoveForward,
+        MoveBackward,
+        MoveLeft,
+        MoveRight,
+
+        Jump,
+
+        AttackForward,
+        AttackLeft,
+        AttackRight,
+        AttackRun,
+        Parry,
+        DodgeBack,
     }
 
     public enum TradeStatus : byte
@@ -73,7 +101,7 @@ namespace GUC.Enumeration
 
         //OOC
         OOC,
-        OOCGlobal, 
+        OOCGlobal,
         PM,
         OOCEvent,
         MAX_OOC,

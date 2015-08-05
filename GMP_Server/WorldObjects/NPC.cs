@@ -6,20 +6,32 @@ using GUC.Enumeration;
 using GUC.Server.Network;
 using RakNet;
 using GUC.Network;
+using GUC.Server.Network.Messages;
 
 namespace GUC.Server.WorldObjects
 {
     public class NPC : AbstractCtrlVob, ItemContainer
     {
-        public ushort[] Attributes = new ushort[NPCAttributes.MAX_ATTRIBUTES];
-        public ushort[] Talents = new ushort[NPCTalents.MAX_TALENTS];
-
         //Networking
         internal Client client;
         public bool isPlayer { get { return client != null; } }
 
         protected string name = "Spieler";
         public string Name { get { return name; } }
+
+        protected NPCState state = NPCState.Stand;
+        public NPCState State { get { return state; } internal set { state = value; } }
+
+        protected NPCWeaponState wpState = NPCWeaponState.None;
+        public NPCWeaponState WeaponState { get { return wpState; } internal set { wpState = value; } }
+
+        //Things only the playing Client should know
+        #region Player stats
+
+        public ushort[] Attributes = new ushort[NPCAttributes.MAX_ATTRIBUTES];
+        public ushort[] Talents = new ushort[NPCTalents.MAX_TALENTS];
+
+        #endregion
 
         #region Visual
         protected string bodyMesh = "hum_body_Naked0";
@@ -132,7 +144,7 @@ namespace GUC.Server.WorldObjects
 
             Attributes[NPCAttributes.Health_Max] = 1;
             Attributes[NPCAttributes.Health] = 1;
-            Attributes[NPCAttributes.Capacity] = 100;
+            Attributes[NPCAttributes.Capacity] = 1000;
         }
 
         internal override void WriteSpawn(IEnumerable<Client> list)
@@ -147,12 +159,62 @@ namespace GUC.Server.WorldObjects
                 Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, client.guid, false);
         }
 
-        #region Item container
+        #region Equipment
+
+        protected ItemInstance equippedMeleeWeapon;
+        public ItemInstance EquippedMeleeWeapon { get { return equippedMeleeWeapon; } }
+
+        protected ItemInstance equippedRangedWeapon;
+        public ItemInstance EquippedRangedWeapon { get { return equippedRangedWeapon; } }
+
+        protected ItemInstance equippedArmor;
+        public ItemInstance EquippedArmor { get { return equippedArmor; } }
+
+        public void Equip(ItemInstance inst)
+        {
+            if (inst.MainFlags == MainFlags.ITEM_KAT_NF)
+            {
+                equippedMeleeWeapon = inst;
+            }
+            else if (inst.MainFlags == MainFlags.ITEM_KAT_FF)
+            {
+                equippedRangedWeapon = inst;
+            }
+            else if (inst.MainFlags == MainFlags.ITEM_KAT_ARMOR)
+            {
+                equippedArmor = inst;
+            }
+            else return;
+            NPCMessage.WriteEquipMessage(this.cell.SurroundingClients(), this, inst);
+        }
+
+        public void Unequip(ItemInstance inst)
+        {
+            if (inst == equippedMeleeWeapon)
+                equippedMeleeWeapon = null;
+            else if (inst == equippedRangedWeapon)
+                equippedRangedWeapon = null;
+            else if (inst == equippedArmor)
+                equippedArmor = null;
+            else return;
+
+            NPCMessage.WriteEquipMessage(this.cell.SurroundingClients(), this, inst);
+        }
+
+        #endregion
+
+        #region Itemcontainer
+
         protected Dictionary<ItemInstance, int> inventory = new Dictionary<ItemInstance, int>();
         public Dictionary<ItemInstance, int> Inventory { get { return inventory; } }
 
         protected int weight = 0;
         public int Weight { get { return weight; } }
+
+        public bool HasItem(ItemInstance instance)
+        {
+            return HasItem(instance, 1);
+        }
 
         public bool HasItem(ItemInstance instance, int amount)
         {

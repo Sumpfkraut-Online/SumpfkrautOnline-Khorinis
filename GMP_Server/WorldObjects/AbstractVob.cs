@@ -12,7 +12,7 @@ namespace GUC.Server.WorldObjects
 {
     public abstract class AbstractVob
     {
-        static uint idCount = 0;
+        static uint idCount = 1; // Start with 1 cause a "null-vob" (id = 0) is needed for networking
 
         public uint ID { get; private set; }
 
@@ -60,7 +60,7 @@ namespace GUC.Server.WorldObjects
                     dir = new Vec3f(0, 0, 1);
                 }
                 if (Spawned && cell != null)
-                    Network.Messages.VobMessage.WriteDirection(cell.SurroundingClients(), null);
+                    Network.Messages.VobMessage.WritePosDir(cell.SurroundingClients(), null);
             }
         }
         #endregion
@@ -123,7 +123,7 @@ namespace GUC.Server.WorldObjects
             Spawn(world, position, Direction);
         }
 
-        public void Spawn(World world, Vec3f position, Vec3f direction)
+        public virtual void Spawn(World world, Vec3f position, Vec3f direction)
         {
             pos = position;
             dir = direction;
@@ -131,7 +131,7 @@ namespace GUC.Server.WorldObjects
             Spawned = true;
         }
 
-        public void Despawn()
+        public virtual void Despawn()
         {
             if (Spawned)
             {
@@ -157,5 +157,14 @@ namespace GUC.Server.WorldObjects
             foreach (Client client in list)
                 Program.server.ServerInterface.Send(stream, PacketPriority.MEDIUM_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, client.guid, false);
         }
+
+        #region Cells
+        internal void ChangeCells()
+        {
+
+        }
+
+
+        #endregion
     }
 }

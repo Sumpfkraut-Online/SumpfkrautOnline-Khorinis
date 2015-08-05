@@ -28,8 +28,8 @@ namespace GUC.Client.Network.Messages
 
             if (World.MapName != newMap)
             {
-                Program._state = new GameState();
                 World.ChangeLevel(newMap);
+                Program._state = new GameState();
             }
             
             if (Player.Hero == null)
@@ -41,16 +41,16 @@ namespace GUC.Client.Network.Messages
             }
             else
             {
-                if (id == Player.Hero.ID)
+                /*if (id == Player.Hero.ID)
                     return; //nothing to do here...
 
-                if (!World.VobDict.ContainsKey(id))
+                if (!World.AllVobs.ContainsKey(id))
                 { //no information about this NPC
                     Player.Hero = new NPC(id);
                     Player.Hero.Name = name;
                     Player.Hero.Spawn(pos, dir);
                 }
-                Program.Process.Write(Player.Hero.gVob.Address, 0xAB2684);
+                Program.Process.Write(Player.Hero.gVob.Address, 0xAB2684);*/
             }
 
             WriteControl();

@@ -140,17 +140,6 @@ namespace GUC.Types
             return new Vec3f(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
         }
 
-        public bool Equal(Vec3f b)
-        {
-            if (this == b)
-                return true;
-
-            if ((this - b).isNull())
-                return true;
-
-            return false;
-        }
-
         public float X
         {
             get { return data[0]; }

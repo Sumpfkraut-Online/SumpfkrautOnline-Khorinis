@@ -12,19 +12,23 @@ namespace GUC.Server.Network.Messages
 {
     static class VobMessage
     {
-        public static void ReadPosition(BitStream stream, Client client)
+        public static void ReadPosDir(BitStream stream, Client client)
         {
             uint id = stream.mReadUInt();
-            Vec3f pos = stream.mReadVec();
             AbstractVob vob;
 
             sWorld.AllVobs.TryGetValue(id, out vob);
             if (vob == null || !(vob is AbstractCtrlVob))
                 return;
+
+
             
             if (vob == client.character || client.VobControlledList.Contains(vob))
             {
+                Vec3f pos = stream.mReadVec();
+                Vec3f dir = stream.mReadVec();
                 vob.pos = pos;
+                vob.dir = dir;
                 if (vob is AbstractDropVob)
                 {
                     ((AbstractDropVob)vob).Update(pos);
@@ -36,41 +40,13 @@ namespace GUC.Server.Network.Messages
             }
         }
 
-        public static void ReadDirection(BitStream stream, Client client)
+        public static void WritePosDir(IEnumerable<Client> list, AbstractVob vob)
         {
-            uint id = stream.mReadUInt();
-            Vec3f dir = stream.mReadVec();
-            AbstractVob vob;
-
-            sWorld.AllVobs.TryGetValue(id, out vob);
-            if (vob == null || !(vob is AbstractCtrlVob))
-                return;
-
-            if (vob == client.character || client.VobControlledList.Contains(vob))
-            {
-                vob.dir = dir;
-                WriteDirection(vob.cell.SurroundingClients(client), vob);
-            }
-
-        }
-
-        public static void WritePosition(IEnumerable<Client> list, AbstractVob vob)
-        {
-            BitStream stream = Program.server.SetupStream(NetworkID.VobPositionMessage);
+            BitStream stream = Program.server.SetupStream(NetworkID.VobPosDirMessage);
             stream.mWrite(vob.ID);
             stream.mWrite(vob.Position);
-
+            stream.mWrite(vob.Direction);
             foreach (Client client in list)
-                Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, (char)0, client.guid, false);
-        }
-
-        public static void WriteDirection(IEnumerable<Client> list, AbstractVob vob)
-        {
-            BitStream stream = Program.server.SetupStream(NetworkID.VobDirectionMessage);
-            stream.mWrite(vob.ID);
-            stream.mWrite(vob.dir);
-
-            foreach(Client client in list)
                 Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, (char)0, client.guid, false);
         }
     }

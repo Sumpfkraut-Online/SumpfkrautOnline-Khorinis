@@ -58,8 +58,8 @@
     <Compile Include="..\Network\Enumeration\NetworkIDS.cs">
       <Link>Enumeration\NetworkIDS.cs</Link>
     </Compile>
-    <Compile Include="..\Network\Enumeration\NPCFlags.cs">
-      <Link>Enumeration\NPCFlags.cs</Link>
+    <Compile Include="..\Network\Enumeration\NPCEnums.cs">
+      <Link>Enumeration\NPCEnums.cs</Link>
     </Compile>
     <Compile Include="..\Network\Enumeration\SpellFlags.cs">
       <Link>Enumeration\SpellFlags.cs</Link>
@@ -103,7 +103,6 @@
     <Compile Include="..\Network\Types\Zip.cs">
       <Link>Types\Zip.cs</Link>
     </Compile>
-    <Compile Include="Enumeration\Playerskills.cs" />
     <Compile Include="GUI\GUCInventory.cs" />
     <Compile Include="GUI\GUCTextBox.cs" />
     <Compile Include="GUI\GUCView.cs" />
@@ -121,6 +120,8 @@
     <Compile Include="GUI\MainMenu\MainMenuCharSlot.cs" />
     <Compile Include="GUI\MainMenu\MainMenuItem.cs" />
     <Compile Include="GUI\MainMenu\MainMenuTextBox.cs" />
+    <Compile Include="Hooks\hAniCtrl_Human.cs" />
+    <Compile Include="Hooks\hEventManager.cs" />
     <Compile Include="Menus\DropItemMenu.cs" />
     <Compile Include="Menus\PlayerInventory.cs" />
     <Compile Include="Menus\MainMenus\CharCreationMenu.cs" />

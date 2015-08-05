@@ -42,6 +42,17 @@ namespace GUC.Server.Network
             initMessageListener();
         }
 
+        static void ReadTalent(BitStream stream, Client client)
+        {
+            byte t = stream.mReadByte();
+            BitStream send = Program.server.SetupStream(NetworkID.NPCTalentMessage);
+            send.mWrite(client.character.ID);
+            send.mWrite(t);
+
+            foreach (Client cl in client.character.cell.SurroundingClients())
+                Program.server.ServerInterface.Send(send, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, (char)0, cl.guid, false);
+        }
+
         protected void initMessageListener()
         {
             MessageListener.Add((byte)NetworkID.ConnectionMessage, ConnectionMessage.Read);
@@ -54,12 +65,17 @@ namespace GUC.Server.Network
             MessageListener.Add((byte)NetworkID.PlayerControlMessage, Player.ReadControl);
             MessageListener.Add((byte)NetworkID.PlayerPickUpItemMessage, Player.ReadPickUpItem);
 
-            MessageListener.Add((byte)NetworkID.VobPositionMessage, VobMessage.ReadPosition);
-            MessageListener.Add((byte)NetworkID.VobDirectionMessage, VobMessage.ReadDirection);
+            MessageListener.Add((byte)NetworkID.VobPosDirMessage, VobMessage.ReadPosDir);
 
             MessageListener.Add((byte)NetworkID.NPCAnimationMessage, NPCMessage.ReadAnimation);
+            MessageListener.Add((byte)NetworkID.NPCStateMessage, NPCMessage.ReadState);
+            MessageListener.Add((byte)NetworkID.NPCAttackMessage, NPCMessage.ReadAttack);
+            MessageListener.Add((byte)NetworkID.NPCWeaponStateMessage, NPCMessage.ReadWeaponState);
+            MessageListener.Add((byte)NetworkID.NPCHitMessage, NPCMessage.ReadHitMessage);
+            MessageListener.Add((byte)NetworkID.NPCTalentMessage, ReadTalent);
 
             MessageListener.Add((byte)NetworkID.InventoryDropItemMessage, InventoryMessage.ReadDropItem);
+            MessageListener.Add((byte)NetworkID.InventoryUseItemMessage, InventoryMessage.ReadUseItem);
         }
 
         /**

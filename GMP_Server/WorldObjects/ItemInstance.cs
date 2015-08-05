@@ -118,6 +118,11 @@ namespace GUC.Server.WorldObjects
             return true;
         }
 
+        public virtual void Use(NPC npc)
+        {
+            //FIXME: Add boolean for usable
+        }
+
         internal void Write(BitStream stream)
         {
             stream.mWrite(ID);

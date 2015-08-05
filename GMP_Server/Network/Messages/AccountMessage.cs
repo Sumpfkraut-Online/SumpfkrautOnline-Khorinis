@@ -123,6 +123,7 @@ namespace GUC.Server.Network.Messages
             npc.World = WorldObjects.World.NewWorld;
             //set all the stuff from the data bank
             client.SetControl(npc);
+            Log.Logger.log("Client joins in on npc " + npc.ID);
         }
     }
 }

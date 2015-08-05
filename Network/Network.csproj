@@ -44,12 +44,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enumeration\HumanVisuals.cs" />
-    <Compile Include="Enumeration\Playerskills.cs" />
+    <Compile Include="Enumeration\NPCEnums.cs" />
     <Compile Include="Network\AccCharInfo.cs" />
     <Compile Include="Enumeration\GothicKeys.cs" />
     <Compile Include="Enumeration\Item_Flags.cs" />
     <Compile Include="Enumeration\NetworkIDS.cs" />
-    <Compile Include="Enumeration\NPCFlags.cs" />
     <Compile Include="Enumeration\SpellFlags.cs" />
     <Compile Include="Enumeration\VobFlags.cs" />
     <Compile Include="Network\BitStreamExtension.cs" />

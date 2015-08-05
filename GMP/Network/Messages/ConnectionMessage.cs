@@ -69,22 +69,11 @@ namespace GUC.Client.Network.Messages
 
         public static void Read(BitStream stream)
         {
-            StringBuilder sb = new StringBuilder();
             int num = stream.mReadInt();
             for (int i = 0; i < num; i++)
             {
-                sb.Append(ItemInstance.ReadNew(stream)); //read
-                sb.AppendLine("");
-                sb.AppendLine("");
+                ItemInstance.ReadNew(stream);
             }
-
-            string fileName = States.StartupState.getDaedalusPath() + "Iteminstances.d";
-            System.IO.File.WriteAllText(fileName, sb.ToString()); //save as file
-
-
-            using (zString z = zString.Create(Program.Process, fileName))
-                zCParser.getParser(Program.Process).ParseFile(z); //parse
-
         }
     }
 }

@@ -30,9 +30,6 @@ namespace GUC.Client.Hooks
 
                 int aniID = modelAni.GetAniID();
 
-                if (aniID == Player.AniTurnLeft || aniID == Player.AniTurnRight)
-                    return 0;
-
                 if (Player.Hero.Animation == aniID)
                     return 0;
 

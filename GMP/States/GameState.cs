@@ -11,18 +11,23 @@ using GUC.Types;
 using WinApi.User.Enumeration;
 using GUC.Client.WorldObjects;
 using GUC.Client.Network.Messages;
+using Gothic.zStruct;
+using Gothic.zTypes;
+using GUC.Client.Hooks;
 
 namespace GUC.Client.States
 {
     class GameState : AbstractState
     {
-        public const int UpdateTimeMS = 120;
-
         static Dictionary<VirtualKeys, Action> shortcuts = new Dictionary<VirtualKeys, Action>()
         {
             { VirtualKeys.Escape, Menus.GUCMenus.Main.Open },
             { VirtualKeys.Tab, Menus.GUCMenus.Inventory.Open },
-             { VirtualKeys.F1, RenderTest }
+            { VirtualKeys.OEM5, DrawFists }, //^
+             { VirtualKeys.F1, RenderTest },
+             { VirtualKeys.F2, RenderTest2 },
+              { VirtualKeys.F3, RenderTest3 }
+
             /*
             { Ingame.Chat.GetChat().ActivationKey, Ingame.Chat.GetChat().Open },
             { Ingame.Chat.GetChat().ToggleKey, Ingame.Chat.GetChat().ToggleChat },
@@ -31,37 +36,61 @@ namespace GUC.Client.States
         };
         public override Dictionary<VirtualKeys, Action> Shortcuts { get { return shortcuts; } }
 
-        static oCItem item;
+        public static void DrawFists()
+        {
+            //send
+            Player.Hero.DrawFists();
+        }
+
+
         public static void RenderTest()
         {
-            if (item == null)
+            Program.Process.THISCALL<FloatArg>((uint)Player.Hero.gNpc.AniCtrl.Address, (uint)0x6AE540, new CallValue[] { (FloatArg)5.0f, (IntArg)0 });
+        }
+
+        public static void RenderTest2()
+        {
+            Program.Process.THISCALL<FloatArg>((uint)Player.Hero.gNpc.AniCtrl.Address, (uint)0x6AE540, new CallValue[] { (FloatArg)5.0f, (IntArg)1 });
+        }
+
+        public static void RenderTest3()
+        {
+            Program.Process.THISCALL<FloatArg>((uint)Player.Hero.gNpc.AniCtrl.Address, (uint)0x6AE540, new CallValue[] { (FloatArg)(-5.0f), (IntArg)0 });
+        }
+
+        public static void WriteTalent(byte num)
+        {
+            BitStream stream = Program.client.SetupSendStream(NetworkID.NPCTalentMessage);
+            stream.mWrite(num);
+            Program.client.SendStream(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE);
+        }
+
+        public static void ReadTalent(BitStream stream)
+        {
+            uint id = stream.mReadUInt();
+            byte talent = stream.mReadByte();
+            NPC npc;
+
+            World.npcDict.TryGetValue(id, out npc);
+
+            if (npc != null)
             {
-                item = oCItem.Create(Program.Process);
-                item.SetVisual("ITFO_APPLE.3DS");
-                Player.Hero.gNpc.DoDropVob(item);
-                //item.TrafoObjToWorld.setPosition(new float[] {0, 500, 0});
-                //oCGame.Game(Program.Process).World.AddVob(item);
+                npc.gNpc.SetTalentSkill(1, talent);
+                npc.gNpc.SetTalentSkill(2, talent);
             }
-            else
-            {
-                //item.TrafoObjToWorld.setPosition(new float[] { 0, 500, 0 });
-                //item.BitField1 &= ~(int)oCItem.BitFlag0.physicsEnabled;
-            }
-            /*Player.Hero.gNpc.GetModel().StartAni(Player.AniRun, 0);
-            zCModelAni ani = Player.Hero.gNpc.GetModel().GetAniFromAniID(Player.AniRun);
-            Player.Hero.gNpc.GetModel().GetActiveAni(ani).SetActFrame(1000.0f);*/
-            foreach(Vob vob in World.VobDict.Values)
-            {
-                if (vob is NPC)
-                    ((NPC)vob).gNpc.SetBodyState(1);
-            }
+
         }
 
         public GameState()
         {
+            hEventManager.AddHooks(Program.Process);
+            hAniCtrl_Human.AddHooks(Program.Process);
+
             Player.AniTurnLeft = oCNpc.Player(Program.Process).GetModel().GetAniIDFromAniName("T_RUNTURNL");
             Player.AniTurnRight = oCNpc.Player(Program.Process).GetModel().GetAniIDFromAniName("T_RUNTURNR");
-            Player.AniRun = oCNpc.Player(Program.Process).GetModel().GetAniIDFromAniName("S_JUMPUP");
+            Player.AniStrafeLeft = oCNpc.Player(Program.Process).GetModel().GetAniIDFromAniName("S_1HATTACK");
+            Player.AniRun = oCNpc.Player(Program.Process).GetModel().GetAniIDFromAniName("S_RUNL");
+
             /*if (oCNpc.Player(process).MagBook.Address == 0)
             {
                 oCMag_Book magBook = oCMag_Book.Create(process);
@@ -76,51 +105,18 @@ namespace GUC.Client.States
             //Sumpfkraut.Ingame.IngameInterface.Init();
         }
 
-        const long updateTime = UpdateTimeMS * TimeSpan.TicksPerMillisecond;
-        protected long lastPosUpdate = 0;
-
-
-        Vec3f lastPos;
-        Vec3f lastDir;
         public override void Update()
         {
+            long ticks = DateTime.Now.Ticks;
             InputHandler.Update();
             Program.client.Update();
 
-            if (lastPosUpdate < DateTime.Now.Ticks)
-            {
-                if (Player.Hero.Position.getDistance(lastPos) > 0)
-                {
-                    VobMessage.WritePosition(Player.Hero);
-                    lastPos = Player.Hero.Position;
-                }
-                if (Player.Hero.Direction.getDistance(lastDir) > 0)
-                {
-                    VobMessage.WriteDirection(Player.Hero);
-                    lastDir = Player.Hero.Direction;
-                }
-                
-                Vob ctrl;
-                for (int i = 0; i < Player.VobControlledList.Count; i++)
-                {
-                    ctrl = null;
-                    World.VobDict.TryGetValue(Player.VobControlledList[i], out ctrl);
-                    if (ctrl == null) continue;
+            Vec3f dir = Player.Hero.Position.normalise() * -1.0f;
+            GUI.GUCView.DebugText.Text = "" + (Player.Hero.Direction.Z*dir.X - dir.Z*Player.Hero.Direction.X);
 
-                    VobMessage.WritePosition(ctrl);
-                }
-                lastPosUpdate = DateTime.Now.Ticks + updateTime;
-            }
-            
-            foreach (Vob vob in World.VobDict.Values)
+            for (int i = 0; i < World.AllVobs.Count; i++)
             {
-                if (vob is NPC)
-                {
-                    if (((NPC)vob).Animation == Player.AniTurnRight && DateTime.Now.Ticks >= ((NPC)vob).AnimationStartTime + (long)(1.25f*UpdateTimeMS*TimeSpan.TicksPerMillisecond))
-                    {
-                        ((NPC)vob).gNpc.GetModel().FadeOutAni(Player.AniTurnRight);
-                    }
-                }
+                World.AllVobs[i].Update(ticks);
             }
         }
     }

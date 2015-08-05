@@ -25,8 +25,8 @@ namespace GUC.Client.Network.Messages
 
         public static void ReadVobDelete(BitStream stream)
         {
-            Vob vob;
-            World.VobDict.TryGetValue(stream.mReadUInt(), out vob);
+            uint id = stream.mReadUInt();
+            Vob vob = World.GetVobByID(id);
             if (vob != null)
             {
                 vob.Despawn();

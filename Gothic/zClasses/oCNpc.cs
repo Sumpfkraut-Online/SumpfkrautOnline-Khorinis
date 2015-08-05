@@ -171,6 +171,7 @@ namespace Gothic.zClasses
             CanSee = 0x00741C10,
             SetHead = 0x007380F0,
             InitModel = 0x00738480,
+            InitHumanAI = 0x0072F5B0,
             GetOverlay = 0x00730007,
             CreatePassivePerception = 0x0075B270,
             OnDamage_DD = 0x006660E0,
@@ -210,7 +211,9 @@ namespace Gothic.zClasses
             UnShrink = 0x0072CBA0,
             CloseSpellBook = 0x0073E9E0,
             SetVisual = 0x0072E3F0,
-            AvoidShrink = 0x0072D250
+            AvoidShrink = 0x0072D250,
+
+            EV_Strafe = 0x683DE0
         }
 
         public enum HookSize : uint
@@ -275,7 +278,9 @@ namespace Gothic.zClasses
             SetInteractItem = 6,
             IsUnconscious = 8,
             EV_AttackFinish = 7,
-            DoDie = 7
+            DoDie = 7,
+
+            EV_Strafe = 7
         }
         #endregion
 
@@ -411,6 +416,10 @@ namespace Gothic.zClasses
             get { return new oCItem(Process, Process.ReadInt(Address + (int)Offsets.InteractItem)); }
         }
 
+        public void SetInteractItem(oCItem item)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetInteractItem, new CallValue[] { item });
+        }
 
         public int Flags
         {
@@ -656,6 +665,11 @@ namespace Gothic.zClasses
             set {
                 Process.Write(value.Address, Address + (int)Offsets.FocusVob);
             }
+        }
+
+        public oCNpc GetFocusNpc()
+        {
+            return new oCNpc(Process, Process.THISCALL<IntArg>((uint)Address, (uint)0x732BF0, new CallValue[] { }));
         }
 
         public zCArray<oCNpcTalent> Talents
@@ -1005,6 +1019,11 @@ namespace Gothic.zClasses
             Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.InitModel, new CallValue[] { });
         }
 
+        public void InitHumanAI()
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.InitHumanAI, new CallValue[] { });
+        }
+
         public void CloseSteal()
         {
             Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.CloseSteal, new CallValue[] { });
@@ -1053,10 +1072,20 @@ namespace Gothic.zClasses
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.RemoveFromSlot, new CallValue[] { slot, new IntArg(vob), new IntArg(i) });
         }
+
+        public int GetInvSlot(zString slot)
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)0x749AE0, new CallValue[] { slot });
+        }
         
         public void PutInSlot(zString slot, zCVob vob, int i)
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.PutInSlot, new CallValue[] { slot, vob, new IntArg(i) });
+        }
+
+        public void PutInSlot(int slot, zCVob vob, int i)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)0x749D80, new CallValue[] { new IntArg(slot), vob, new IntArg(i) });
         }
 
         public void ResetPos(zVec3 pos)
@@ -1363,6 +1392,11 @@ namespace Gothic.zClasses
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.DoTakeVob, new CallValue[] { vob });
         }
+
+        public void SetLeftHand(zCVob vob)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)0x73B0C0, new CallValue[] { vob });
+        }
         #endregion
 
 
@@ -1373,6 +1407,30 @@ namespace Gothic.zClasses
                 process.Write(1, 0x00AB2664);
             else
                 process.Write(0, 0x00AB2664);
+        }
+
+        public void SetEnemy(oCNpc npc)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)0x734BC0, new CallValue[] { npc });
+        }
+
+
+        public void DrawMeleeWeapon()
+        {
+            oCMsgWeapon msg = oCMsgWeapon.Create(Process, oCMsgWeapon.SubTypes.DrawWeapon, 0, 0);
+            GetEM(0).OnMessage(msg, this);
+        }
+
+        public void DrawRangedWeapon()
+        {
+            oCMsgWeapon msg = oCMsgWeapon.Create(Process, oCMsgWeapon.SubTypes.DrawWeapon, 4, 0);
+            GetEM(0).OnMessage(msg, this);
+        }
+
+        public void RemoveWeapon()
+        {
+            oCMsgWeapon msg = oCMsgWeapon.Create(Process, oCMsgWeapon.SubTypes.RemoveWeapon, 0, 0);
+            GetEM(0).OnMessage(msg, this);
         }
     }
 }

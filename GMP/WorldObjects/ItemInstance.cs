@@ -69,6 +69,8 @@ namespace GUC.Client.WorldObjects
 
         public void InitItem(oCItem gItem)
         {
+            gItem.Instanz = (int)this.id;
+
             if (name != null) gItem.Name.Set(name);
             if (scemeName != null) gItem.ScemeName.Set(scemeName);
             if (effect != null) gItem.Effect.Set(effect);
@@ -91,7 +93,7 @@ namespace GUC.Client.WorldObjects
             //gItem.Munition
         }
 
-        public static String ReadNew(BitStream stream)
+        public static void ReadNew(BitStream stream)
         {
             ItemInstance ii = new ItemInstance();
 
@@ -161,13 +163,6 @@ namespace GUC.Client.WorldObjects
             ii.IsGold = stream.ReadBit();
 
             instanceDict.Add(ii.ID, ii);
-
-
-            //return iteminstance-name for the parser. The parser is buggy and won't save all the 
-            //item data he reads, that's why he only gets the instance name. The real initialisation
-            //will be done in the hItem-Hooks.
-            return String.Format("INSTANCE ITGUC_{0} (C_ITEM)\r\n{{\r\n}};", ii.id);
         }
-
     }
 }

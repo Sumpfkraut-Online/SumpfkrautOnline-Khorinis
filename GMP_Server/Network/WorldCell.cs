@@ -94,6 +94,7 @@ namespace GUC.Server.Network
                 if (c != exclude)
                     yield return c;
             }
+            yield break;
         }
 
         public IEnumerable<Client> SurroundingClients()
@@ -124,6 +125,38 @@ namespace GUC.Server.Network
                     }
                 }
             }
+            yield break;
+        }
+
+        public IEnumerable<NPC> SurroundingPlayers()
+        {
+            return SurroundingPlayers(null);
+        }
+
+        public IEnumerable<NPC> SurroundingPlayers(NPC exclude)
+        {
+            NPC next;
+            for (int i = x - 1; i <= x + 1; i++)
+            {
+                Dictionary<int, WorldCell> row;
+                world.Cells.TryGetValue(i, out row);
+                if (row == null) continue;
+
+                for (int j = z - 1; j <= z + 1; j++)
+                {
+                    WorldCell c;
+                    row.TryGetValue(j, out c);
+                    if (c == null) continue;
+
+                    for (int p = 0; p < c.PlayerList.Count; p++)
+                    {
+                        next = c.PlayerList[p];
+                        if (next != exclude)
+                            yield return next;
+                    }
+                }
+            }
+            yield break;
         }
 
         public IEnumerable<WorldCell> SurroundingCells()
@@ -143,6 +176,7 @@ namespace GUC.Server.Network
                     yield return c;
                 }
             }
+            yield break;
         }
 
         public IEnumerable<AbstractVob> AllVobs()
@@ -158,6 +192,8 @@ namespace GUC.Server.Network
 
             for (int i = 0; i < VobList.Count; i++)
                 yield return VobList[i];
+
+            yield break;
         }
     }
 }

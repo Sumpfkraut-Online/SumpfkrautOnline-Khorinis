@@ -79,11 +79,8 @@
     <Compile Include="..\Network\Enumeration\NetworkIDS.cs">
       <Link>Enumeration\NetworkIDS.cs</Link>
     </Compile>
-    <Compile Include="..\Network\Enumeration\NPCFlags.cs">
-      <Link>Enumeration\NPCFlags.cs</Link>
-    </Compile>
-    <Compile Include="..\Network\Enumeration\Playerskills.cs">
-      <Link>Enumeration\Playerskills.cs</Link>
+    <Compile Include="..\Network\Enumeration\NPCEnums.cs">
+      <Link>Enumeration\NPCEnums.cs</Link>
     </Compile>
     <Compile Include="..\Network\Enumeration\SpellFlags.cs">
       <Link>Enumeration\SpellFlags.cs</Link>
@@ -128,6 +125,7 @@
       <Link>Types\Zip.cs</Link>
     </Compile>
     <Compile Include="Network\Client.cs" />
+    <Compile Include="Network\SmallCell.cs" />
     <Compile Include="Network\Messages\AccountMessage.cs" />
     <Compile Include="Network\Messages\ConnectionMessage.cs" />
     <Compile Include="Network\Messages\InventoryMessage.cs" />
@@ -139,9 +137,10 @@
     <Compile Include="Scripting\Timer.cs" />
     <Compile Include="Network\WorldCell.cs" />
     <Compile Include="TCPStatus.cs" />
+    <Compile Include="WorldObjects\AbstractAI.cs" />
+    <Compile Include="WorldObjects\AbstractCtrlVob.cs" />
     <Compile Include="WorldObjects\AbstractDropVob.cs" />
     <Compile Include="WorldObjects\AbstractVob.cs" />
-    <Compile Include="WorldObjects\AbstractCtrlVob.cs" />
     <Compile Include="WorldObjects\ItemContainer.cs" />
     <Compile Include="WorldObjects\Item.cs" />
     <Compile Include="WorldObjects\ItemInstance.cs" />

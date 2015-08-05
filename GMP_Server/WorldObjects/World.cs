@@ -32,6 +32,23 @@ namespace GUC.Server.WorldObjects
         {
             MapName = mapname;
             sWorld.WorldList.Add(this);
+
+            (new NPC()).Spawn(this);
+        }
+
+        public NPC GetNpcOrPlayer(uint id)
+        {
+            if (id == 0)
+            {
+                return null;
+            }
+
+            NPC npc = null;
+            playerDict.TryGetValue(id, out npc);
+            if (npc != null) return npc;
+
+            npcDict.TryGetValue(id, out npc);
+            return npc;
         }
 
         internal void AddVob(AbstractVob vob)
@@ -49,7 +66,7 @@ namespace GUC.Server.WorldObjects
             }
             else if (vob is Vob)
             {
-                vobDict.Add(vob.ID,(Vob)vob);
+                vobDict.Add(vob.ID, (Vob)vob);
             }
             vob.World = this;
         }
@@ -132,7 +149,7 @@ namespace GUC.Server.WorldObjects
                 }
 
                 //still in the old cell, updates for everyone!
-                VobMessage.WritePosition(vob.cell.SurroundingClients(exclude), vob);
+                VobMessage.WritePosDir(vob.cell.SurroundingClients(exclude), vob);
             }
         }
 
@@ -155,7 +172,7 @@ namespace GUC.Server.WorldObjects
             {
                 if (exclude != null)
                 {
-                    VobMessage.WritePosition(new Client[1] {exclude}, vob);
+                    VobMessage.WritePosDir(new Client[1] { exclude }, vob);
                 }
                 //Send creation message to all players in surrounding cells
                 vob.WriteSpawn(newCell.SurroundingClients(exclude));
@@ -177,7 +194,34 @@ namespace GUC.Server.WorldObjects
                 VobChangeDiffCells(vob, vob.cell, newCell, exclude);
                 vob.cell.RemoveVob(vob);
             }
+
             newCell.AddVob(vob);
+
+            #region vob controlling
+            if (vob is NPC && ((NPC)vob).isPlayer)
+            {
+                foreach (AbstractCtrlVob ctrl in new List<AbstractCtrlVob>(((NPC)vob).client.VobControlledList))
+                {
+                    ctrl.FindNewController();
+                }
+                foreach (WorldCell c in newCell.SurroundingCells())
+                    foreach (AbstractVob v in c.AllVobs())
+                        if (v is AbstractCtrlVob)
+                        {
+                            if (v is NPC && ((NPC)v).isPlayer)
+                                continue;
+
+                            if (v is AbstractDropVob && !((AbstractDropVob)v).physicsEnabled)
+                                continue;
+
+                            ((AbstractCtrlVob)v).FindNewController();
+                        }
+            }
+            else if (vob is AbstractCtrlVob)
+            {
+                ((AbstractCtrlVob)vob).FindNewController();
+            }
+            #endregion
         }
 
         void VobChangeDiffCells(AbstractVob vob, WorldCell from, WorldCell to, Client exclude)
@@ -200,8 +244,8 @@ namespace GUC.Server.WorldObjects
 
                     if (i <= to.x + 1 && i >= to.x - 1 && j <= to.z + 1 && j >= to.z - 1)
                     {
-                         //Position updates in shared cells
-                         VobMessage.WritePosition(cell.GetClients(exclude), vob);
+                        //Position updates in shared cells
+                        VobMessage.WritePosDir(cell.GetClients(exclude), vob);
                     }
                     else
                     {
@@ -213,7 +257,7 @@ namespace GUC.Server.WorldObjects
                         {
                             foreach (AbstractVob v in cell.AllVobs())
                             {
-                                v.WriteDespawn(new Client[1] {((NPC)vob).client});
+                                v.WriteDespawn(new Client[1] { ((NPC)vob).client });
                             }
                         }
                     }
@@ -237,7 +281,7 @@ namespace GUC.Server.WorldObjects
 
                     if (exclude != null)
                     {
-                        VobMessage.WritePosition(new Client[1] { exclude }, vob);
+                        VobMessage.WritePosDir(new Client[1] { exclude }, vob);
                     }
 
                     //creation updates in the new cells
@@ -248,7 +292,7 @@ namespace GUC.Server.WorldObjects
                     {
                         foreach (AbstractVob v in cell.AllVobs())
                         {
-                            v.WriteSpawn(new Client[1] {((NPC)vob).client});
+                            v.WriteSpawn(new Client[1] { ((NPC)vob).client });
                         }
                     }
                 }

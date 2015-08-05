@@ -8,20 +8,28 @@ using GUC.Types;
 using Gothic.zTypes;
 using RakNet;
 using GUC.Network;
+using Gothic.zStruct;
 
 namespace GUC.Client.WorldObjects
 {
     class NPC : Vob
     {
+        public const long PositionUpdateTime = 1200000; //120ms
+        public const long DirectionUpdateTime = PositionUpdateTime + 300000;
+
         public NPC(uint id)
             : base(id, oCObjectFactory.GetFactory(Program.Process).CreateNPC("OTHERS_NPC"))
         {
+
         }
 
         public NPC(uint id, oCNpc npc)
             : base(id, npc)
         {
         }
+
+        public NPCState State = NPCState.Stand;
+        public NPCWeaponState WeaponState = NPCWeaponState.None;
 
         public string Name
         {
@@ -133,33 +141,89 @@ namespace GUC.Client.WorldObjects
         public long AnimationStartTime = 0;
         #endregion
 
-        public int WeaponMode
+        public void DrawFists()
         {
-            get
-            {
-                return gNpc.WeaponMode;
-            }
-            set
-            {
-                gNpc.SetWeaponMode(value);
-            }
+            oCItem w = gNpc.GetEquippedMeleeWeapon();
+            gNpc.UnequipItem(w);
+            gNpc.DrawMeleeWeapon();
+            gNpc.GetEM(0).DoFrameActivity();
+            gNpc.EquipWeapon(w);
         }
 
-        //protected MobInter mobInter = null;
-        //public MobInter MobInter { get { return mobInter; } set { mobInter = value; } }
+        public ItemInstance EquippedMeleeWeapon;
+        public ItemInstance EquippedRangedWeapon;
+        public ItemInstance EquippedArmor;
 
-        public bool IsDead
+        public Vec3f lastDir;
+        public Vec3f nextDir;
+        public long lastDirTime;
+
+        public void StartTurnAni(bool right)
         {
-            get
+            if (right)
             {
-                return gNpc.IsDead() > 0;
+                Animation = (short)gNpc.AniCtrl._t_turnr;
             }
-        }
-        public bool IsUnconcious
-        {
-            get
+            else
             {
-                return gNpc.IsUnconscious() > 0;
+                Animation = (short)gNpc.AniCtrl._t_turnl;
+            }
+            gNpc.GetModel().StartAni(Animation, 0);
+        }
+
+        public void StopTurnAnis()
+        {
+            gNpc.GetModel().FadeOutAni(Animation);
+            lastDir = null;
+            nextDir = null;
+        }
+
+        public long nextPosUpdate = 0;
+        public override void Update(long now)
+        {
+            if (nextDir != null) //turn!
+            {
+                float diff = (float)(DateTime.Now.Ticks - lastDirTime) / (float)DirectionUpdateTime;
+
+                if (diff < 1.0f)
+                {
+                    this.Direction = lastDir + (nextDir - lastDir) * diff;
+                }
+                else
+                {
+                    this.Direction = nextDir;
+                    StopTurnAnis();
+                }
+            }
+
+            if (this != Player.Hero)
+            {
+                switch (State)
+                {
+                    case NPCState.Stand:
+                        gNpc.AniCtrl._Stand();
+                        break;
+                    case NPCState.MoveForward:
+                        gNpc.AniCtrl._Forward();
+                        break;
+                    case NPCState.MoveBackward:
+                        gNpc.AniCtrl._Backward();
+                        break;
+                    case NPCState.Jump:
+                        if (this.gNpc.GetBodyState() != 8) //jumping
+                        {
+                            this.gNpc.AniCtrl.PC_JumpForward();
+                        }
+                        break;
+                }
+            }
+            else
+            {
+                if (nextPosUpdate < DateTime.Now.Ticks)
+                {
+                    Network.Messages.VobMessage.WritePosDir(this);
+                    nextPosUpdate = DateTime.Now.Ticks + PositionUpdateTime;
+                }
             }
         }
     }

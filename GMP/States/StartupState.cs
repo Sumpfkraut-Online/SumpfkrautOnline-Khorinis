@@ -31,11 +31,12 @@ namespace GUC.Client.States
         public static void SetupFuncBlocking()
         {
             //First disable all:
-            Gothic.mClasses.InputHooked.deactivateStatusScreen(Program.Process, false);
+            //Gothic.mClasses.InputHooked.deactivateStatusScreen(Program.Process, false);
             Gothic.mClasses.InputHooked.deactivateLogScreen(Program.Process, false);
             Gothic.mClasses.InputHooked.deactivateInventory(Program.Process, false);
 
             Program.Process.Write(new byte[] { 233, 229, 2, 0, 0, 0 }, 0x42AE7E); //disable ingame ESC menu
+            Program.Process.Write(new byte[] { 0xE9, 0x35, 0x03, 0x00, 0x00, 0x90, 0x90 }, 0x6FC2B9); //disable map hotkey
 
             //Block gothic.dat loading:
             //Process.Write(new byte[] { 0x33, 0xC0, 0xC2, 0x04, 0x00 }, 0x0078E900);
@@ -82,7 +83,7 @@ namespace GUC.Client.States
 
 
             //Disable Marvin-Mode:
-            Program.Process.VirtualProtect(0x006CBF60, 25);
+            /*Program.Process.VirtualProtect(0x006CBF60, 25);
             byte[] arr = new byte[25];
             for (int i = 0; i < arr.Length; i++)
                 arr[i] = 0x90;
@@ -90,7 +91,7 @@ namespace GUC.Client.States
 
 
             arr = new byte[] { 0xC3 };
-            Program.Process.Write(arr, 0x00432EC0);
+            Program.Process.Write(arr, 0x00432EC0);*/
 
 
         }

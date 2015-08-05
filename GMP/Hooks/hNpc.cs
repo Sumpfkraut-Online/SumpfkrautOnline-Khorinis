@@ -134,10 +134,11 @@ namespace GUC.Client.Hooks
                 {
                     int itemAddr = Program.Process.ReadInt(address + 4);
 
-                    KeyValuePair<uint, Vob> pair = World.VobDict.FirstOrDefault(p => p.Value.gVob.Address == itemAddr);
-                    if (pair.Value != null)
+                    Vob vob;
+                    World.vobAddr.TryGetValue(itemAddr, out vob);
+                    if (vob != null)
                     {
-                        Network.Messages.PlayerMessage.WritePickUpItem(pair.Value);
+                        Network.Messages.PlayerMessage.WritePickUpItem(vob);
                     }
                 }
             }

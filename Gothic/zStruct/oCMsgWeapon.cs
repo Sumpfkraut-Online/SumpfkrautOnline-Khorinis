@@ -7,8 +7,28 @@ using WinApi;
 
 namespace Gothic.zStruct
 {
-    public class oCMsgWeapon : zCObject, IDisposable
+    public class oCMsgWeapon : oCNpcMessage, IDisposable
     {
+        public enum SubTypes
+        {
+            DrawWeapon,
+            DrawWeapon1,
+            DrawWeapon2,
+
+            RemoveWeapon,
+            RemoveWeapon1,
+            RemoveWeapon2,
+
+            ChooseWeapon,
+            ForceRemoveWeapon,
+            Attack, //wat
+            EquipBestWeapon,
+            EquipBestArmor,
+            UnequipWeapons,
+            UnEquipArmor,//guessed
+            EquipArmor
+        }
+
         public oCMsgWeapon()
             : base()
         {
@@ -22,23 +42,26 @@ namespace Gothic.zStruct
         }
 
 
+        public SubTypes SubType
+        {
+            get { return (SubTypes)Process.ReadUShort(Address + 0x24); }
+        }
+
+        public int WpType
+        {
+            get { return Process.ReadUShort(Address + 0x44); }
+        }
 
         #region statics
 
-        public static oCMsgWeapon Create(Process process, int subType, int arg1, int arg2)
+        public static oCMsgWeapon Create(Process process, SubTypes subType, int arg1, int arg2)
         {
-            oCMsgWeapon rVal = null;
-
-            IntPtr address = process.Alloc(0x50);
-            zCClassDef.ObjectCreated(process, address.ToInt32(), 0x00AB2CC0);
+            int address = process.CDECLCALL<IntArg>(0x7636E0, null);
             
             //Konstruktor...
-            process.THISCALL<NullReturnCall>((uint)address.ToInt32(), 0x007667D0, new CallValue[] { (IntArg)subType, (IntArg)arg1, (IntArg)arg2 });
-            rVal = new oCMsgWeapon(process, address.ToInt32());
+            process.THISCALL<NullReturnCall>((uint)address, 0x007667D0, new CallValue[] { (IntArg)(int)subType, (IntArg)arg1, (IntArg)arg2 });
 
-
-            
-            return rVal;
+            return new oCMsgWeapon(process, address);
         }
         #endregion
 

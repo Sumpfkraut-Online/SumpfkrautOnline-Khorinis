@@ -107,7 +107,7 @@ namespace GUC.Server
                     //ModuleLoader.updateAllModules();
                     scriptManager.Update();
                     server.Update(); //process received packets
-                    WorldObjects.AbstractCtrlVob.UpdateCtrlNPCs();
+                    //WorldObjects.AbstractCtrlVob.UpdateCtrlNPCs();
 
                     if (nextInfoUpdates < DateTime.Now.Ticks)
                     {

@@ -38,5 +38,12 @@ namespace GUC.Client.Network.Messages
             stream.mWrite(amount);
             Program.client.SendStream(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.UNRELIABLE);
         }
+
+        public static void WriteUseItem(ItemInstance instance)
+        {
+            BitStream stream = Program.client.SetupSendStream(NetworkID.InventoryUseItemMessage);
+            stream.mWrite(instance.ID);
+            Program.client.SendStream(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.UNRELIABLE);
+        }
     }
 }

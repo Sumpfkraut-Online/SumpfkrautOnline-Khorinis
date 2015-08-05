@@ -49,6 +49,14 @@ namespace GUC.Client.Menus
                 else
                     InventoryMessage.WriteDropItem(selected.Key, selected.Value);
             }
+            else if (key == VirtualKeys.Control)
+            {
+                KeyValuePair<WorldObjects.ItemInstance, int> selected = inv.SelectedItem;
+                if (selected.Key == null || selected.Value <= 0)
+                    return;
+
+                InventoryMessage.WriteUseItem(selected.Key);
+            }
             else
             {
                 inv.KeyPressed(key);

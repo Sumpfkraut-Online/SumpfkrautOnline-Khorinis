@@ -74,7 +74,7 @@
     <Compile Include="zClasses\zCAICamera.cs" />
     <Compile Include="zClasses\zCClassDef.cs" />
     <Compile Include="zClasses\zCConsole.cs" />
-    <Compile Include="zClasses\zCCSManager.cs" />
+    <Compile Include="zClasses\oCCSManager.cs" />
     <Compile Include="zClasses\zCEventManager.cs" />
     <Compile Include="zClasses\zCFont.cs" />
     <Compile Include="zClasses\zCInput.cs" />
@@ -117,6 +117,8 @@
     <Compile Include="zClasses\zCWaypoint.cs" />
     <Compile Include="zClasses\zERROR.cs" />
     <Compile Include="zClasses\zFile.cs" />
+    <Compile Include="zStruct\oCMsgAttack.cs" />
+    <Compile Include="zStruct\oCMsgMovement.cs" />
     <Compile Include="zStruct\zCEventMessage.cs" />
     <Compile Include="zStruct\NPCAiVar.cs" />
     <Compile Include="zStruct\oCMsgConversation.cs" />

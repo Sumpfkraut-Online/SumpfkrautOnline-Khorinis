@@ -20,8 +20,12 @@ namespace GUC.Client.WorldObjects
             }
         }
 
-        public Item(uint id, uint instanceID) : base(id, oCObjectFactory.GetFactory(Program.Process).CreateItem("ITGUC_" + instanceID))
+        public Item(uint id, uint instanceID) : base(id, oCItem.Create(Program.Process))
         {
+            ItemInstance.InstanceDict[instanceID].InitItem(gItem);
+            CDDyn = true;
+            CDStatic = true;
+            gItem.Amount = 1;
         }
     }
 }

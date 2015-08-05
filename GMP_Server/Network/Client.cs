@@ -63,7 +63,10 @@ namespace GUC.Server.Network
                 {
                     npc.cell.NPCList.Remove(npc);
                     npc.cell.PlayerList.Add(npc);
-                } 
+                }
+
+                if (npc.VobController != null)
+                    npc.VobController.RemoveControlledVob(npc);
             }
 
             sWorld.NPCList.Remove(npc);
@@ -103,7 +106,10 @@ namespace GUC.Server.Network
             }
 
             for (int i = 0; i < VobControlledList.Count; i++)
+            {
                 VobControlledList[i].VobController = null;
+                VobControlledList[i].FindNewController();
+            }
         }
 
         public void AddControlledVob(AbstractCtrlVob vob)
@@ -112,6 +118,7 @@ namespace GUC.Server.Network
             vob.VobController = this;
             BitStream stream = Program.server.SetupStream(NetworkID.ControlAddVobMessage); stream.mWrite(vob.ID);
             Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+            Log.Logger.log("AddCtrl: " + character.ID + " " + vob.ID + ": " + vob.GetType().Name);
         }
 
         public void RemoveControlledVob(AbstractCtrlVob vob)
@@ -120,6 +127,7 @@ namespace GUC.Server.Network
             vob.VobController = null;
             BitStream stream = Program.server.SetupStream(NetworkID.ControlRemoveVobMessage); stream.mWrite(vob.ID);
             Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+            Log.Logger.log("RemoveCtrl: " + character.ID + " " + vob.ID + ": " + vob.GetType().Name);
         }
 
         private bool disposed = false;

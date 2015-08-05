@@ -11,20 +11,76 @@ namespace GUC.Client.WorldObjects
     {
         public static string MapName = null;
 
-        public static Dictionary<uint, Vob> VobDict = new Dictionary<uint, Vob>();
+        public static Dictionary<int, Vob> vobAddr = new Dictionary<int, Vob>();
+        public static List<Vob> AllVobs { get { return vobAddr.Values.ToList(); } }
+
+        public static Dictionary<uint, NPC> npcDict = new Dictionary<uint, NPC>();
+        public static Dictionary<uint, Item> itemDict = new Dictionary<uint, Item>();
+        public static Dictionary<uint, Vob> vobDict = new Dictionary<uint, Vob>();
+
+        public static Vob GetVobByID(uint id)
+        {
+            NPC npc;
+            npcDict.TryGetValue(id, out npc);
+            if (npc != null) return (Vob)npc;
+
+            Item item;
+            itemDict.TryGetValue(id, out item);
+            if (item != null) return (Vob)item;
+
+            Vob vob;
+            vobDict.TryGetValue(id, out vob);
+            return vob;
+        }
+
+        public static void AddVob(Vob vob)
+        {
+            vobAddr.Add(vob.gVob.Address, vob);
+
+            if (vob is NPC)
+            {
+                npcDict.Add(vob.ID, (NPC)vob);
+            }
+            else if (vob is Item)
+            {
+                itemDict.Add(vob.ID, (Item)vob);
+            }
+            else
+            {
+                vobDict.Add(vob.ID, vob);
+            }
+        }
+
+        public static void RemoveVob(Vob vob)
+        {
+            vobAddr.Remove(vob.gVob.Address);
+
+            if (vob is NPC)
+            {
+                npcDict.Remove(vob.ID);
+            }
+            else if (vob is Item)
+            {
+                itemDict.Remove(vob.ID);
+            }
+            else
+            {
+                vobDict.Remove(vob.ID);
+            }
+        }
 
         public static void ChangeLevel(string newMap)
         {
-            for (int i = VobDict.Count-1; i >= 0; i--)
+            for (int i = AllVobs.Count - 1; i >= 0; i--)
             {
-                VobDict.Values.ToArray()[i].Despawn();
+                AllVobs[i].Despawn();
             }
             
             //Change the world!
-                using (zString newlevel = zString.Create(Program.Process, newMap))
-                {
-                    oCGame.Game(Program.Process).ChangeLevel(newlevel, newlevel);
-                }
+            using (zString newlevel = zString.Create(Program.Process, newMap))
+            {
+                oCGame.Game(Program.Process).ChangeLevel(newlevel, newlevel);
+            }
             World.MapName = newMap;
         }
 
@@ -49,8 +105,8 @@ namespace GUC.Client.WorldObjects
             {
                 //FIXME: Set weather accordingly at EndChangeLevel
                 //FIXME: Show chat
-                //FIXME: leave menu section & close init screen
-                
+
+                //CGameManager.InitScreen_Close(Program.Process);                
 
                 /*String levelname = sWorld.getMapName(oCGame.Game(process).World.WorldFileName.Value);
 

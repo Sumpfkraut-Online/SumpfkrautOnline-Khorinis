@@ -40,6 +40,7 @@ namespace GUC.Client.WorldObjects
 
         public static int AniTurnLeft;
         public static int AniTurnRight;
+        public static int AniStrafeLeft;
         public static int AniRun;
     }
 }

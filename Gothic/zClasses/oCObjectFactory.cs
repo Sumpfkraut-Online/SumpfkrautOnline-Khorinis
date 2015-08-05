@@ -20,9 +20,9 @@ namespace Gothic.zClasses
         }
 
 
-        public zCCSManager CreateCSManager()
+        public oCCSManager CreateCSManager()
         {
-            return Process.THISCALL<zCCSManager>((uint)Address, (uint)0x0076FB80, new CallValue[] { });
+            return Process.THISCALL<oCCSManager>((uint)Address, (uint)0x0076FB80, new CallValue[] { });
         }
 
         public oCItem CreateItem(int id)

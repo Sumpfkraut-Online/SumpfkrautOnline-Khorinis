@@ -358,7 +358,7 @@ namespace GUC.Client.GUI
             }
             else if (LeftInfoBox == "WEIGHT")
             {
-                leftText.Text = weight + "/100";
+                leftText.Text = weight + "/1000";
             }
         }
 

@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Server.Network;
-using RakNet;
-using GUC.Enumeration;
-using GUC.Network;
+using GUC.Types;
 
 namespace GUC.Server.WorldObjects
 {
@@ -13,17 +11,48 @@ namespace GUC.Server.WorldObjects
     {
         internal Client VobController;
 
-        internal void UpdateCtrl()
+        public override void Despawn()
         {
+            base.Despawn();
 
+            if (VobController != null)
+                VobController.RemoveControlledVob(this);
         }
 
-        internal static void UpdateCtrlNPCs()
+        internal void FindNewController()
         {
-            for (int i = 0; i < sWorld.NPCList.Count; i++)
+            Client newCtrler = FindNearestController();
+
+            if (newCtrler == VobController)
+                return;
+
+            if (VobController != null)
             {
-                sWorld.NPCList[i].UpdateCtrl();
+                VobController.RemoveControlledVob(this);
             }
+            VobController = newCtrler;
+            if (newCtrler != null)
+            {
+                VobController.AddControlledVob(this);
+            }
+        }
+
+        Client FindNearestController()
+        {
+            Client nearest = null;
+            float bestDist = float.MaxValue;
+            float dist;
+
+            foreach (NPC npc in cell.SurroundingPlayers())
+            {
+                dist = this.Position.getDistance(npc.Position);
+                if (dist < bestDist)
+                {
+                    nearest = npc.client;
+                    bestDist = dist;
+                }
+            }
+            return nearest;
         }
     }
 }

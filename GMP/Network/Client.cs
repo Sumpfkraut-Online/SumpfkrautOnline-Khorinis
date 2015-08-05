@@ -45,8 +45,7 @@ namespace GUC.Client.Network
 
             messageListener.Add((byte)NetworkID.PlayerControlMessage, PlayerMessage.ReadControl);
 
-            messageListener.Add((byte)NetworkID.VobPositionMessage, VobMessage.ReadPosition);
-            messageListener.Add((byte)NetworkID.VobDirectionMessage, VobMessage.ReadDirection);
+            messageListener.Add((byte)NetworkID.VobPosDirMessage, VobMessage.ReadPosDir);
 
             messageListener.Add((byte)NetworkID.WorldVobDeleteMessage, WorldMessage.ReadVobDelete);
             messageListener.Add((byte)NetworkID.WorldVobSpawnMessage, WorldMessage.ReadVobSpawn);
@@ -54,6 +53,12 @@ namespace GUC.Client.Network
             messageListener.Add((byte)NetworkID.WorldItemSpawnMessage, WorldMessage.ReadItemSpawn);
 
             messageListener.Add((byte)NetworkID.NPCAnimationMessage, NPCMessage.ReadAnimation);
+            messageListener.Add((byte)NetworkID.NPCStateMessage, NPCMessage.ReadState);
+            messageListener.Add((byte)NetworkID.NPCAttackMessage, NPCMessage.ReadAttack);
+            messageListener.Add((byte)NetworkID.NPCWeaponStateMessage, NPCMessage.ReadWeaponState);
+            messageListener.Add((byte)NetworkID.NPCEquipMessage, NPCMessage.ReadEquipMessage);
+            messageListener.Add((byte)NetworkID.NPCHitMessage, NPCMessage.ReadHitMessage);
+            messageListener.Add((byte)NetworkID.NPCTalentMessage, States.GameState.ReadTalent);
 
             messageListener.Add((byte)NetworkID.InventoryAddMessage, InventoryMessage.ReadAddItem);
             messageListener.Add((byte)NetworkID.InventoryRemoveMessage, InventoryMessage.ReadRemoveItem);

@@ -84,10 +84,8 @@ namespace GUC.Server.Scripts
 
         void EnterWorld(NPC pl)
         {
-            (new Item("ITFO_APPLE")).Spawn(World.NewWorld);
-
             for (int i = 0; i < ItemInstance.InstanceList.Count; i++)
-                pl.AddItem(ItemInstance.InstanceList[i], i+1);
+                pl.AddItem(ItemInstance.InstanceList[i], 3);
         }
 
         void InitItemInstances()
@@ -97,10 +95,9 @@ namespace GUC.Server.Scripts
                     select t;
             foreach (Type t in q.ToList())
             {
+                Log.Logger.log(t.Name);
                 Activator.CreateInstance(t);
             }
         }
     }
-
-
 }
