@@ -112,9 +112,10 @@ namespace GUC.Enumeration
 
     }
 
-    public enum AnimVoices : short // Animation and Voices
+    public enum Animations : short // Animation and Voices
     {
         INVALID,
+
         // Animation's
         T_STAND_2_HGUARD,
         T_HGUARD_2_STAND,
@@ -270,8 +271,10 @@ namespace GUC.Enumeration
         T_LGUARD_CHANGELEG,
         T_LGUARD_SCRATCH,
         T_LGUARD_STRETCH,
+    }
 
-        MAX_ANIMATIONS,
+    public enum Voices : short // Animation and Voices
+    {
 
         // Gothic 2 Voices
         ABS_GOOD, //Das ist gut.

@@ -23,6 +23,7 @@ namespace GUC.Client.States
         {
             { VirtualKeys.Escape, Menus.GUCMenus.Main.Open },
             { VirtualKeys.Tab, Menus.GUCMenus.Inventory.Open },
+            { VirtualKeys.X, Menus.GUCMenus.Animation.Open},
             { VirtualKeys.OEM5, DrawFists }, //^
              { VirtualKeys.F1, RenderTest },
              { VirtualKeys.F2, RenderTest2 },

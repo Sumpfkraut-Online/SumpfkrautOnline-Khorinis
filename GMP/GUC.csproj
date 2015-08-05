@@ -122,6 +122,7 @@
     <Compile Include="GUI\MainMenu\MainMenuTextBox.cs" />
     <Compile Include="Hooks\hAniCtrl_Human.cs" />
     <Compile Include="Hooks\hEventManager.cs" />
+    <Compile Include="Menus\AnimationMenu.cs" />
     <Compile Include="Menus\DropItemMenu.cs" />
     <Compile Include="Menus\PlayerInventory.cs" />
     <Compile Include="Menus\MainMenus\CharCreationMenu.cs" />
