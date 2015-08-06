@@ -12,9 +12,11 @@ namespace GUC.Client.Menus
 {
     class AnimationMenu : GUCMenu
     {
-
+        public VirtualKeys Hotkey = VirtualKeys.X;
         bool isOpen = false;
         GUCVisual back;
+        GUCVisualText[] TextLines;
+        AniPage current;
 
         public AnimationMenu()
         {
@@ -22,11 +24,20 @@ namespace GUC.Client.Menus
             const int backHeight = 400;
             back = new GUCVisual(200, 200, backWidth, backHeight);
             back.SetBackTexture("Menu_Ingame.tga");
+
+            int[] size = {300,400};
+           /* for (int i = 0; i < 10; i++)
+            {
+            // Error...
+                TextLines[i] = back.CreateText("hello baby");
+            }*/
+
+            InitAniPages();
         }
 
         public override void Open()
         {
-            zERROR.GetZErr(Program.Process).Report(2, 'G', "Open THIS SHIT", 0, "hGame.cs", 0);
+            zERROR.GetZErr(Program.Process).Report(2, 'G', "Open Ani Menu", 0, "hGame.cs", 0);
             back.Show();
             isOpen = true;
             base.Open();
@@ -34,6 +45,7 @@ namespace GUC.Client.Menus
 
         public override void Close()
         {
+            zERROR.GetZErr(Program.Process).Report(2, 'G', "Close Ani Menu", 0, "hGame.cs", 0);
             back.Hide();
             isOpen = false;
             base.Close();
@@ -41,61 +53,50 @@ namespace GUC.Client.Menus
 
         public override void KeyPressed(VirtualKeys key)
         {
-            if (!isOpen)
-            {
-                if(key == VirtualKeys.X)
-                {
-                    Open();
-                }
-            }
-            else if( !ActivateItem(key) )
+            if( !ActivateItem(key) )
             {
                 Close();
             }
         }
 
-        abstract class AniItem
+        class AniPage
         {
-            public string Text;
-        }
-
-        class Animation : AniItem
-        {
-            public Animations StartAni = Animations.INVALID;
-            public Animations StopAni = Animations.INVALID;
-            public Animation(string text, Animations StartAni)
-            {
-                Text = text;
-                this.StartAni = StartAni;
-            }
-            public Animation(string text, Animations StartAni, Animations StopAni) : this(text, StartAni)
-            {
-                this.StopAni = StopAni;
-            }
-        }
-
-        class AniPage : AniItem
-        {
+            string Text;
+            public Animations StartAni;
+            public Animations StopAni;
             public AniPage Parent;
-            public Animation PageAnimation;
-            public List<AniItem> ItemList;
-            public AniPage(string text)
+
+            public List<AniPage> ItemList;
+
+            public AniPage()
             {
-                Text = text;
-                ItemList = new List<AniItem>();
+                StartAni = Animations.INVALID;
+                StopAni = Animations.INVALID;
+                ItemList = new List<AniPage>();
             }
 
-            public void AddItem(AniItem item)
+            public AniPage(string text) : this()
+            {
+                Text = text;
+            }
+
+            public AniPage(string text, Animations startAni) : this(text)
+            {
+                Text = text;
+                StartAni = startAni;
+            }
+
+            public AniPage(string text, Animations startAni, Animations stopAni) : this(text, startAni)
+            {
+                StopAni = stopAni;
+            }
+
+            public void AddItem(AniPage item)
             {
                 ItemList.Add(item);
-                if (item is AniPage)
-                {
-                    ((AniPage)item).Parent = this;
-                }
+                item.Parent = this;
             }
         }
-
-        AniPage current;
 
         void SetMenu(AniPage newList)
         {
@@ -113,43 +114,58 @@ namespace GUC.Client.Menus
 
         bool ActivateItem(VirtualKeys key)
         {
-            int num =  KeyToNumber(key);
-            if (key < VirtualKeys.N0 || key > VirtualKeys.N9 || num >= current.ItemList.Count)
+            if (key < VirtualKeys.N0 || key > VirtualKeys.N9)
                 return false;
 
-            if(num == 0 && current.Parent != null)
+            int num = KeyToNumber(key);
+            if (num == 0 && current.Parent != null)
             {
-                if(current.Parent.PageAnimation != null)
+                if(current.StopAni != Animations.INVALID)
                 {
-                    StopAnimation(current.Parent.PageAnimation);
+                    if(current.StartAni == current.StopAni)
+                    {
+                        StopAnimation(current.StopAni);
+                    }
+                    else
+                    {
+                        PlayAnimation(current.StopAni);
+                    }
                 }
                 SetMenu(current.Parent);
-                return true;
-            }
-            else if (current.ItemList[num] is AniPage)
-            {
-                if (((AniPage)current.ItemList[num]).PageAnimation != null)
-                {
-                    PlayAnimation(((Animation)current.ItemList[num]).StartAni);
-                }
-                SetMenu((AniPage)current.ItemList[num]);
-                return true;
             }
             else
             {
-                // Animation starten
-                PlayAnimation(((Animation)current.ItemList[num]).StartAni);
-                return true;
+                if(num < current.ItemList.Count)
+                {
+                    if(current.ItemList[num].ItemList.Count > 0)
+                    {
+                        SetMenu(current.ItemList[num]);
+                    }
+                    if(current.ItemList[num].StartAni != Animations.INVALID)
+                    {
+                        PlayAnimation(current.ItemList[num].StartAni);
+                    }
+                }
             }
+            return true;
+        }
+
+        public void InitAniPages()
+        {
+
+            AniPage MainPage = new AniPage();
+            MainPage.AddItem(new AniPage("test",Animations.R_CHAIR_RANDOM_1, Animations.R_CHAIR_RANDOM_1));
+
+            current = MainPage;
         }
 
         public void StopAnimation(Animations StopAni)
         {
-
+            zERROR.GetZErr(Program.Process).Report(2, 'G', "Stop Animation " + StopAni, 0, "hGame.cs", 0);
         }
         public void PlayAnimation(Animations StartAni)
         {
-
+            zERROR.GetZErr(Program.Process).Report(2, 'G', "Play Animation " + StartAni, 0, "hGame.cs", 0);
         }
 
     }
