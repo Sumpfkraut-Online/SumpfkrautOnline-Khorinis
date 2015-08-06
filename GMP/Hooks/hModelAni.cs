@@ -15,7 +15,7 @@ namespace GUC.Client.Hooks
         {
             try
             {
-                if (Player.Hero == null || !Player.Hero.Spawned)
+               /* if (Player.Hero == null || !Player.Hero.Spawned)
                     return 0;
 
                 int address = Convert.ToInt32(message);
@@ -30,11 +30,11 @@ namespace GUC.Client.Hooks
 
                 int aniID = modelAni.GetAniID();
 
-                if (Player.Hero.Animation == aniID)
+                if (Player.Hero.TurnAnimation == aniID)
                     return 0;
 
-                Player.Hero.Animation = (short)aniID;
-                Network.Messages.NPCMessage.WriteAnimation(Player.Hero);
+                Player.Hero.TurnAnimation = (short)aniID;
+                Network.Messages.NPCMessage.WriteAnimation(Player.Hero);*/
             }
             catch (Exception ex)
             {

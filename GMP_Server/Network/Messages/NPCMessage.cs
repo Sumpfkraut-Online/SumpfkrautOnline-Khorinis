@@ -12,26 +12,43 @@ namespace GUC.Server.Network.Messages
 {
     static class NPCMessage
     {
-        public static void ReadAnimation(BitStream stream, Client client)
-        {
-            short anim = stream.mReadShort();
-            client.character.Animation = anim;
+        #region Animation
 
-            if (client.character.Spawned && client.character.cell != null)
-            {
-                WriteAnimation(client.character.cell.SurroundingClients(client), client.character);
-            }
+        public static void ReadAniStart(BitStream stream, Client client)
+        {
+            Animations ani = (Animations)stream.mReadUShort();
+            WriteAniStart(client.character.cell.SurroundingClients(client), client.character, ani);
         }
 
-        public static void WriteAnimation(IEnumerable<Client> list, NPC npc)
+        public static void ReadAniStop(BitStream stream, Client client)
         {
-            BitStream stream = Program.server.SetupStream(NetworkID.NPCAnimationMessage);
+            Animations ani = (Animations)stream.mReadUShort();
+            bool fadeout = stream.ReadBit();
+            WriteAniStop(client.character.cell.SurroundingClients(client), client.character, ani, fadeout);
+        }
+
+        public static void WriteAniStart(IEnumerable<Client> list, NPC npc, Animations ani)
+        {
+            BitStream stream = Program.server.SetupStream(NetworkID.NPCAniStartMessage);
             stream.mWrite(npc.ID);
-            stream.mWrite(npc.Animation);
+            stream.mWrite((ushort)ani);
 
             foreach(Client client in list)
-                Program.server.ServerInterface.Send(stream, PacketPriority.MEDIUM_PRIORITY, PacketReliability.RELIABLE, (char)0, client.guid, false);
+                Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, (char)0, client.guid, false);
         }
+
+        public static void WriteAniStop(IEnumerable<Client> list, NPC npc, Animations ani, bool fadeout)
+        {
+            BitStream stream = Program.server.SetupStream(NetworkID.NPCAniStartMessage);
+            stream.mWrite(npc.ID);
+            stream.mWrite((ushort)ani);
+            stream.mWrite(fadeout);
+
+            foreach (Client client in list)
+                Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, (char)0, client.guid, false);
+        }
+
+        #endregion
 
         public static void WriteFoodMessage(IEnumerable<Client> list, NPC npc)
         {

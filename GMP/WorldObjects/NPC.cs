@@ -15,7 +15,7 @@ namespace GUC.Client.WorldObjects
     class NPC : Vob
     {
         public const long PositionUpdateTime = 1200000; //120ms
-        public const long DirectionUpdateTime = PositionUpdateTime + 300000;
+        public const long DirectionUpdateTime = PositionUpdateTime + 200000;
 
         public NPC(uint id)
             : base(id, oCObjectFactory.GetFactory(Program.Process).CreateNPC("OTHERS_NPC"))
@@ -136,9 +136,34 @@ namespace GUC.Client.WorldObjects
         #endregion
 
         #region Animation
-        public List<String> Overlays = new List<string>();
-        public short Animation = short.MaxValue;
-        public long AnimationStartTime = 0;
+
+        public int TurnAnimation = 0;
+
+        public void AnimationStart(Animations ani)
+        {
+            using (zString z = zString.Create(Program.Process, ani.ToString()))
+            {
+                gNpc.GetModel().StartAnimation(z);
+            }
+        }
+
+        public void AnimationStop(Animations ani)
+        {
+            using (zString z = zString.Create(Program.Process, ani.ToString()))
+            {
+                gNpc.GetModel().StopAnimation(z);
+            }
+        }
+
+        public void AnimationFade(Animations ani)
+        {
+            using (zString z = zString.Create(Program.Process, ani.ToString()))
+            {
+                int id = gNpc.GetModel().GetAniIDFromAniName(z);
+                gNpc.GetModel().FadeOutAni(id);
+            }
+        }
+
         #endregion
 
         public void DrawFists()
@@ -162,18 +187,18 @@ namespace GUC.Client.WorldObjects
         {
             if (right)
             {
-                Animation = (short)gNpc.AniCtrl._t_turnr;
+                TurnAnimation = gNpc.AniCtrl._t_turnr;
             }
             else
             {
-                Animation = (short)gNpc.AniCtrl._t_turnl;
+                TurnAnimation = gNpc.AniCtrl._t_turnl;
             }
-            gNpc.GetModel().StartAni(Animation, 0);
+            gNpc.GetModel().StartAni(TurnAnimation, 0);
         }
 
         public void StopTurnAnis()
         {
-            gNpc.GetModel().FadeOutAni(Animation);
+            gNpc.GetModel().FadeOutAni(TurnAnimation);
             lastDir = null;
             nextDir = null;
         }

@@ -20,6 +20,9 @@ namespace GUC.Client.Menus
 
         public override void Open()
         {
+            if (WorldObjects.Player.Hero.gNpc.GetBodyState() != 0) //only open while standing
+                return;
+
             base.Open();
             inv.SetContents(WorldObjects.Player.Inventory);
             inv.Show();

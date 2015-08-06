@@ -13,7 +13,7 @@ namespace GUC.Client.Menus
     class AnimationMenu : GUCMenu
     {
         public VirtualKeys Hotkey = VirtualKeys.X;
-        bool isOpen = false;
+
         GUCVisual back;
         GUCVisualText[] TextLines;
         AniPage current;
@@ -22,15 +22,16 @@ namespace GUC.Client.Menus
         {
             const int backWidth = 300;
             const int backHeight = 400;
-            back = new GUCVisual(200, 200, backWidth, backHeight);
-            back.SetBackTexture("Menu_Ingame.tga");
+            const int numLines = 10;
 
-            int[] size = {300,400};
-           /* for (int i = 0; i < 10; i++)
+            back = new GUCVisual(200, 200, backWidth, backHeight);
+            back.SetBackTexture("Menu_Ingame.tga");     
+
+            TextLines = new GUCVisualText[numLines];
+            for (int i = 0; i < numLines; i++)
             {
-            // Error...
-                TextLines[i] = back.CreateText("hello baby");
-            }*/
+                TextLines[i] = back.CreateText("hello baby", 20, 20 + i*25);
+            }
 
             InitAniPages();
         }
@@ -39,7 +40,6 @@ namespace GUC.Client.Menus
         {
             zERROR.GetZErr(Program.Process).Report(2, 'G', "Open Ani Menu", 0, "hGame.cs", 0);
             back.Show();
-            isOpen = true;
             base.Open();
         }
 
@@ -47,7 +47,6 @@ namespace GUC.Client.Menus
         {
             zERROR.GetZErr(Program.Process).Report(2, 'G', "Close Ani Menu", 0, "hGame.cs", 0);
             back.Hide();
-            isOpen = false;
             base.Close();
         }
 
@@ -61,7 +60,7 @@ namespace GUC.Client.Menus
 
         class AniPage
         {
-            string Text;
+            public string Text;
             public Animations StartAni;
             public Animations StopAni;
             public AniPage Parent;
@@ -101,14 +100,24 @@ namespace GUC.Client.Menus
         void SetMenu(AniPage newList)
         {
             current = newList;
-            for (int i = 0; i < current.ItemList.Count; i++)
+            for (int i = 0; i < TextLines.Length; i++)
             {
-                //VisualTexts[i].SetText(curList.list[i].Text);
+                if (i < current.ItemList.Count)
+                {
+                    TextLines[i].Text = current.ItemList[i].Text;
+                }
+                else
+                {
+                    TextLines[i].Text = "";
+                }
             }
         }
 
         int KeyToNumber(VirtualKeys key)
         {
+            //so N1 = 0, N2 = 1, ... , N9 = 8, N0 = 9
+            //int num = key - VirtualKeys.N0 - 1;
+            //return num >= 0 ? num : 10;
             return key - VirtualKeys.N0;
         }
 
@@ -156,16 +165,28 @@ namespace GUC.Client.Menus
             AniPage MainPage = new AniPage();
             MainPage.AddItem(new AniPage("test",Animations.R_CHAIR_RANDOM_1, Animations.R_CHAIR_RANDOM_1));
 
-            current = MainPage;
+            SetMenu(MainPage);
         }
 
-        public void StopAnimation(Animations StopAni)
+        void PlayAnimation(Animations StartAni)
         {
-            zERROR.GetZErr(Program.Process).Report(2, 'G', "Stop Animation " + StopAni, 0, "hGame.cs", 0);
-        }
-        public void PlayAnimation(Animations StartAni)
-        {
+            Player.Hero.AnimationStart(StartAni);
+            Network.Messages.NPCMessage.WriteAnimationStart(StartAni);
             zERROR.GetZErr(Program.Process).Report(2, 'G', "Play Animation " + StartAni, 0, "hGame.cs", 0);
+        }
+
+        void FadeAnimation(Animations StopAni)
+        {
+            Player.Hero.AnimationFade(StopAni);
+            Network.Messages.NPCMessage.WriteAnimationStop(StopAni, true);
+            zERROR.GetZErr(Program.Process).Report(2, 'G', "Fade Animation " + StopAni, 0, "hGame.cs", 0);
+        }
+
+        void StopAnimation(Animations StopAni)
+        {
+            Player.Hero.AnimationStop(StopAni);
+            Network.Messages.NPCMessage.WriteAnimationStop(StopAni, false);
+            zERROR.GetZErr(Program.Process).Report(2, 'G', "Stop Animation " + StopAni, 0, "hGame.cs", 0);
         }
 
     }

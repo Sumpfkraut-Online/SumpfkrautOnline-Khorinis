@@ -59,29 +59,6 @@ namespace GUC.Client.States
             Program.Process.THISCALL<FloatArg>((uint)Player.Hero.gNpc.AniCtrl.Address, (uint)0x6AE540, new CallValue[] { (FloatArg)(-5.0f), (IntArg)0 });
         }
 
-        public static void WriteTalent(byte num)
-        {
-            BitStream stream = Program.client.SetupSendStream(NetworkID.NPCTalentMessage);
-            stream.mWrite(num);
-            Program.client.SendStream(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE);
-        }
-
-        public static void ReadTalent(BitStream stream)
-        {
-            uint id = stream.mReadUInt();
-            byte talent = stream.mReadByte();
-            NPC npc;
-
-            World.npcDict.TryGetValue(id, out npc);
-
-            if (npc != null)
-            {
-                npc.gNpc.SetTalentSkill(1, talent);
-                npc.gNpc.SetTalentSkill(2, talent);
-            }
-
-        }
-
         public GameState()
         {
             hEventManager.AddHooks(Program.Process);
@@ -111,9 +88,6 @@ namespace GUC.Client.States
             long ticks = DateTime.Now.Ticks;
             InputHandler.Update();
             Program.client.Update();
-
-            Vec3f dir = Player.Hero.Position.normalise() * -1.0f;
-            GUI.GUCView.DebugText.Text = "" + (Player.Hero.Direction.Z*dir.X - dir.Z*Player.Hero.Direction.X);
 
             for (int i = 0; i < World.AllVobs.Count; i++)
             {

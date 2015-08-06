@@ -33,7 +33,8 @@ namespace GUC.Enumeration
         VobPosDirMessage,
 
         //npcs
-        NPCAnimationMessage,
+        NPCAniStartMessage,
+        NPCAniStopMessage,
         NPCEquipMessage,
         NPCFoodMessage,
 
@@ -112,7 +113,7 @@ namespace GUC.Enumeration
 
     }
 
-    public enum Animations : short // Animation and Voices
+    public enum Animations : ushort // Animation and Voices
     {
         INVALID,
 
@@ -273,9 +274,8 @@ namespace GUC.Enumeration
         T_LGUARD_STRETCH,
     }
 
-    public enum Voices : short // Animation and Voices
+    public enum Voices : ushort // Animation and Voices
     {
-
         // Gothic 2 Voices
         ABS_GOOD, //Das ist gut.
         ADDON_ADDON_NOARMOR_BDT, //Hast ja nichtmal ne Rüstung. Verschwinde!

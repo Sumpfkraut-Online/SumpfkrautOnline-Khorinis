@@ -14,30 +14,59 @@ namespace GUC.Client.Network.Messages
 {
     static class NPCMessage
     {
-        public static void ReadAnimation(BitStream stream)
+
+        #region Animation
+
+        public static void WriteAnimationStart(Animations ani)
         {
-            /*uint id = stream.mReadUInt();
-            short anim = stream.mReadShort();
-
-            Vob vob;
-            World.AllVobs.TryGetValue(id, out vob);
-            if (vob == null || !(vob is NPC)) return;
-
-            short oldAni = ((NPC)vob).Animation;
-            ((NPC)vob).Animation = anim;
-            ((NPC)vob).AnimationStartTime = DateTime.Now.Ticks;
-
-            if (oldAni != short.MaxValue)
-                ((NPC)vob).gNpc.GetModel().StopAni(oldAni);
-            ((NPC)vob).gNpc.GetModel().StartAni(anim, 0);*/
+            BitStream stream = Program.client.SetupSendStream(NetworkID.NPCAniStartMessage);
+            stream.mWrite((ushort)ani);
+            Program.client.SendStream(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE);
         }
 
-        public static void WriteAnimation(NPC npc)
+        public static void WriteAnimationStop(Animations ani, bool fadeout)
         {
-            /*BitStream stream = Program.client.SetupSendStream(NetworkID.NPCAnimationMessage);
-            stream.mWrite(npc.Animation);
-            Program.client.SendStream(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE);*/
+            BitStream stream = Program.client.SetupSendStream(NetworkID.NPCAniStopMessage);
+            stream.mWrite((ushort)ani);
+            stream.mWrite(fadeout);
+            Program.client.SendStream(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE);
         }
+
+        public static void ReadAniStart(BitStream stream)
+        {
+            uint id = stream.mReadUInt();
+
+            NPC npc;
+            World.npcDict.TryGetValue(id, out npc);
+            if (npc == null) return;
+
+            Animations ani = (Animations)stream.mReadUShort();
+            npc.AnimationStart(ani);
+        }
+
+        public static void ReadAniStop(BitStream stream)
+        {
+            uint id = stream.mReadUInt();
+
+            NPC npc;
+            World.npcDict.TryGetValue(id, out npc);
+            if (npc == null) return;
+
+            Animations ani = (Animations)stream.mReadUShort();
+            bool fadeout = stream.ReadBit();
+            if (fadeout)
+            {
+                npc.AnimationFade(ani);
+            }
+            else
+            {
+                npc.AnimationStop(ani);
+            }
+        }
+
+        #endregion
+
+        #region States
 
         public static void WriteState(NPC npc)
         {
@@ -74,6 +103,46 @@ namespace GUC.Client.Network.Messages
                     break;
             }
         }
+
+        public static void WriteWeaponState()
+        {
+            BitStream stream = Program.client.SetupSendStream(NetworkID.NPCWeaponStateMessage);
+            stream.mWrite((byte)Player.Hero.WeaponState);
+            stream.mWrite(Player.Hero.Position);
+            stream.mWrite(Player.Hero.Direction);
+            Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE_ORDERED);
+            Player.Hero.nextPosUpdate = DateTime.Now.Ticks + NPC.PositionUpdateTime; //set position update time
+        }
+
+        public static void ReadWeaponState(BitStream stream)
+        {
+            NPC npc;
+            World.npcDict.TryGetValue(stream.mReadUInt(), out npc);
+            if (npc == null) return;
+
+            npc.WeaponState = (NPCWeaponState)stream.mReadByte();
+            npc.Position = stream.mReadVec();
+            npc.Direction = stream.mReadVec();
+
+            switch (npc.WeaponState)
+            {
+                case NPCWeaponState.Fists: //FIXME
+                case NPCWeaponState.Melee:
+                    npc.gNpc.DrawMeleeWeapon();
+                    break;
+                case NPCWeaponState.Ranged:
+                case NPCWeaponState.Magic: //FIXME
+                    npc.gNpc.DrawRangedWeapon();
+                    break;
+                default:
+                    npc.gNpc.RemoveWeapon();
+                    break;
+            }
+        }
+
+        #endregion
+
+        #region Combat
 
         public static void WriteAttack()
         {
@@ -159,41 +228,27 @@ namespace GUC.Client.Network.Messages
             attacker.gVob.GetEM(0).OnMessage(msg, attacker.gVob);
         }
 
-        public static void WriteWeaponState()
+        public static void WriteHits(NPC attacker)
         {
-            BitStream stream = Program.client.SetupSendStream(NetworkID.NPCWeaponStateMessage);
-            stream.mWrite((byte)Player.Hero.WeaponState);
-            stream.mWrite(Player.Hero.Position);
-            stream.mWrite(Player.Hero.Direction);
+            BitStream stream = Program.client.SetupSendStream(NetworkID.NPCHitMessage);
+            stream.mWrite(attacker.ID);
             Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE_ORDERED);
-            Player.Hero.nextPosUpdate = DateTime.Now.Ticks + NPC.PositionUpdateTime; //set position update time
         }
 
-        public static void ReadWeaponState(BitStream stream)
+        public static void ReadHitMessage(BitStream stream)
         {
-            NPC npc;
-            World.npcDict.TryGetValue(stream.mReadUInt(), out npc);
-            if (npc == null) return;
-
-            npc.WeaponState = (NPCWeaponState)stream.mReadByte();
-            npc.Position = stream.mReadVec();
-            npc.Direction = stream.mReadVec();
-
-            switch (npc.WeaponState)
+            NPC attacker, target;
+            World.npcDict.TryGetValue(stream.mReadUInt(), out attacker);
+            World.npcDict.TryGetValue(stream.mReadUInt(), out target);
+            if (target != null && attacker != null)
             {
-                case NPCWeaponState.Fists: //FIXME
-                case NPCWeaponState.Melee:
-                    npc.gNpc.DrawMeleeWeapon();
-                    break;
-                case NPCWeaponState.Ranged:
-                case NPCWeaponState.Magic: //FIXME
-                    npc.gNpc.DrawRangedWeapon();
-                    break;
-                default:
-                    npc.gNpc.RemoveWeapon();
-                    break;
+                attacker.gNpc.AniCtrl.CreateHit(target.gVob);
             }
         }
+
+        #endregion
+
+        #region Appearance
 
         public static void ReadEquipMessage(BitStream stream)
         {
@@ -245,22 +300,6 @@ namespace GUC.Client.Network.Messages
             }
         }
 
-        public static void WriteHits(NPC attacker)
-        {
-            BitStream stream = Program.client.SetupSendStream(NetworkID.NPCHitMessage);
-            stream.mWrite(attacker.ID);
-            Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE_ORDERED);
-        }
-
-        public static void ReadHitMessage(BitStream stream)
-        {
-            NPC attacker, target;
-            World.npcDict.TryGetValue(stream.mReadUInt(), out attacker);
-            World.npcDict.TryGetValue(stream.mReadUInt(), out target);
-            if (target != null && attacker != null)
-            {
-                attacker.gNpc.AniCtrl.CreateHit(target.gVob);
-            }
-        }
+        #endregion
     }
 }
