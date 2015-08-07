@@ -37,7 +37,6 @@ namespace GUC.Client.Hooks
                             OnMsgWeapon(new oCMsgWeapon(Program.Process, msgAddr));
                             break;
                     }
-
                 }
             }
             catch (Exception e)
@@ -90,8 +89,12 @@ namespace GUC.Client.Hooks
                     {
                         Player.Hero.WeaponState = NPCWeaponState.Ranged; 
                     }
-                    else
+                    else if (Player.Hero.gNpc.GetEquippedMeleeWeapon().Address == 0) //no weapon equipped
                     {
+                        Player.Hero.WeaponState = NPCWeaponState.Fists;
+                    }
+                    else if (Player.Hero.WeaponState != NPCWeaponState.Fists)
+                    { //Don't change the state if we want to get fists while a weapon is equipped
                         Player.Hero.WeaponState = NPCWeaponState.Melee;
                     }
                     break;

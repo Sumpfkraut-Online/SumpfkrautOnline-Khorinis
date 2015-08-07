@@ -192,7 +192,7 @@ namespace GUC.Client.States
             Program.client.Connect(clientOptions.ip, clientOptions.port, "");
         }
 
-        static Dictionary<VirtualKeys, Action> shortcuts = new Dictionary<VirtualKeys, Action>();
+        Dictionary<VirtualKeys, Action> shortcuts = new Dictionary<VirtualKeys, Action>();
         public override Dictionary<VirtualKeys, Action> Shortcuts { get { return shortcuts; } }
 
         public StartupState()

@@ -90,7 +90,7 @@ namespace GUC.Client.WorldObjects
                 if (text[i] != null) gItem.Text[i].Set(text[i]);
                 gItem.Count[i] = count[i];
             }
-            //gItem.Munition
+            gItem.Munition = 9999;
         }
 
         public static void ReadNew(BitStream stream)

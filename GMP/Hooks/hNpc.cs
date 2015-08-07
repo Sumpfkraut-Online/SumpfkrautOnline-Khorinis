@@ -14,6 +14,38 @@ namespace GUC.Client.Hooks
 {
     public class hNpc
     {
+        public static Int32 hook_GetNextWeaponMode(String message)
+        {
+            try
+            {
+                int address = Convert.ToInt32(message);
+
+                Vob vob;
+                World.vobAddr.TryGetValue(Program.Process.ReadInt(address), out vob);
+                if (vob != null && vob is NPC)
+                {
+                    NPC npc = (NPC)vob;
+                    if (npc.WeaponState == Enumeration.NPCWeaponState.Fists && npc.gNpc.WeaponMode != 1)
+                    {
+                        //return 1:
+                        Program.Process.Write(new byte[] { 0xBB, 0x01, 0x00, 0x00, 0x00,              //mov ebx, 1
+                                                   0xE9, 0x5B, 0x01, 0x00, 0x00 }, 0x739A36); //jmp to ret
+                        return 0;
+                    }
+                }
+
+                //original code:
+                Program.Process.Write(new byte[] { 0x8B, 0x87, 0xB8, 0x09, 0x00, 0x00, 0x33, 0xF6, 0x85, 0xC0 }, 0x739A36);
+            }
+            catch (Exception e)
+            {
+                zERROR.GetZErr(Program.Process).Report(4, 'G', e.Source + "\n" + e.Message + "\n" + e.StackTrace, 0, "Program.cs", 0);
+            }
+            return 0;
+        }
+
+
+
         public static bool blockSending = false;
         public static Int32 OnDamage_DD(String message)
         {

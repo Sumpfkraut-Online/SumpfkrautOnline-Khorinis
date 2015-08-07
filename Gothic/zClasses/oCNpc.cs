@@ -1414,6 +1414,11 @@ namespace Gothic.zClasses
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)0x734BC0, new CallValue[] { npc });
         }
 
+        public int GetNextWeaponmode(int arg1, int arg2, int arg3)
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)0x739A30, new CallValue[] { (IntArg)arg1, (IntArg)arg2, (IntArg)arg3 });
+        }
+
 
         public void DrawMeleeWeapon()
         {
@@ -1432,5 +1437,6 @@ namespace Gothic.zClasses
             oCMsgWeapon msg = oCMsgWeapon.Create(Process, oCMsgWeapon.SubTypes.RemoveWeapon, 0, 0);
             GetEM(0).OnMessage(msg, this);
         }
+
     }
 }

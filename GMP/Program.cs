@@ -28,7 +28,7 @@ namespace GUC.Client
         public static HookInfos ParSymbol_GetValueHook;
 
         public static AbstractState _state = null;
-        
+
         public static Int32 InjectedMain(String message)
         {
             try
@@ -42,7 +42,7 @@ namespace GUC.Client
                 Hooks.hParser.HookLoadDat();
 
                 StartupState.Start(); //connect to the server
-                  
+
                 while (true)
                 {
                     Thread.Sleep(10000);
@@ -70,7 +70,7 @@ namespace GUC.Client
                 }
                 _state.Update();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 zERROR.GetZErr(Program.Process).Report(4, 'G', e.Source + "\n" + e.Message + "\n" + e.StackTrace, 0, "Program.cs", 0);
             }
@@ -84,7 +84,7 @@ namespace GUC.Client
                 int address = Convert.ToInt32(message);
 
                 int addr = Process.ReadInt(address);
-                int type = Process.ReadInt(address+4);
+                int type = Process.ReadInt(address + 4);
                 //int vaddr = Process.ReadInt(address+8);
                 //int num = Process.ReadInt(address+12);
                 if (Player.Hero == null || Player.Hero.gVob == null || addr != Player.Hero.gVob.Address)
@@ -99,30 +99,15 @@ namespace GUC.Client
             return 0;
         }
 
-        public static Int32 hook_Weapon(String message)
-        {
-            try
-            {
-                int address = Convert.ToInt32(message);
-                int addr = Process.ReadInt(address);
-                int type = Process.ReadInt(address + 4);
-                int arg1 = Process.ReadInt(address+8);
-                int arg2 = Process.ReadInt(address+12);
-                zERROR.GetZErr(Program.Process).Report(2, 'G', "Weapon: " + type + " " + arg1 + " " + arg2, 0, "Program.cs", 0);
-            }
-            catch (Exception e)
-            {
-                zERROR.GetZErr(Program.Process).Report(4, 'G', e.Source + "\n" + e.Message + "\n" + e.StackTrace, 0, "Program.cs", 0);
-            }
-            return 0;
-        }
+
+
 
         public static void addHooks(Process process)
         {
             //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(Program).GetMethod("hook_JUMP"), 0x767060, 7, 4);
-            //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(Program).GetMethod("hook_Weapon"), 0x7667D0, 7, 4);
+
             //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(Program).GetMethod("hook_EM"), 0x5FFE10, 9, 2);
-            
+
             process.WriteJMP("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("DoTakeVob"), (int)oCNpc.FuncOffsets.DoTakeVob, (int)oCNpc.HookSize.DoTakeVob, 2);
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(Program).GetMethod("hook_MenuRender"), 0x004DC1C0, 10, 0);
 
@@ -131,7 +116,7 @@ namespace GUC.Client
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(GUI.MenuRenderer).GetMethod("hook_OnDrawItems"), 0x007A6750, 5, 0);//for rendering Vobs in GUI
 
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(World).GetMethod("hook_StartChangeLevel"), (int)oCGame.FuncOffsets.ChangeLevel, (int)oCGame.HookSize.ChangeLevel, 2);
-            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(World).GetMethod("hook_EndChangeLevel"), 0x006C7AD5, 7, 0); 
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(World).GetMethod("hook_EndChangeLevel"), 0x006C7AD5, 7, 0);
 
             ParSymbol_GetValueHook = process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hParser).GetMethod("hook_Symbol_GetValue"), 0x007A2040, 7, 2);
 
@@ -140,7 +125,7 @@ namespace GUC.Client
             //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hModelAni).GetMethod("oCStartAni_ModelInt"), (int)zCModel.FuncOffsets.StartAni_ModelInt, (int)zCModel.FuncSize.StartAni_ModelInt, 2);
 
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hGame).GetMethod("ExitGame"), (int)CGameManager.FuncOffsets.Done, (int)CGameManager.HookSize.Done, 0);
-            
+
             /*
             //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("AniCtrl_InitAnimations"), (int)oCAniCtrl_Human.FuncOffsets.InitAnimations, (int)oCAniCtrl_Human.HookSize.InitAnimations, 0);
 

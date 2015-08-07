@@ -168,11 +168,8 @@ namespace GUC.Client.WorldObjects
 
         public void DrawFists()
         {
-            oCItem w = gNpc.GetEquippedMeleeWeapon();
-            gNpc.UnequipItem(w);
+            WeaponState = NPCWeaponState.Fists;
             gNpc.DrawMeleeWeapon();
-            gNpc.GetEM(0).DoFrameActivity();
-            gNpc.EquipWeapon(w);
         }
 
         public ItemInstance EquippedMeleeWeapon;
@@ -185,6 +182,7 @@ namespace GUC.Client.WorldObjects
 
         public void StartTurnAni(bool right)
         {
+            //FIXME: Swim & Dive anis
             if (right)
             {
                 TurnAnimation = gNpc.AniCtrl._t_turnr;

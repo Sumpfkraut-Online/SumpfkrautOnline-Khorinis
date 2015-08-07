@@ -19,12 +19,12 @@ namespace GUC.Client.States
 {
     class GameState : AbstractState
     {
-        static Dictionary<VirtualKeys, Action> shortcuts = new Dictionary<VirtualKeys, Action>()
+        Dictionary<VirtualKeys, Action> shortcuts = new Dictionary<VirtualKeys, Action>()
         {
             { VirtualKeys.Escape, Menus.GUCMenus.Main.Open },
             { VirtualKeys.Tab, Menus.GUCMenus.Inventory.Open },
             { Menus.GUCMenus.Animation.Hotkey, Menus.GUCMenus.Animation.Open},
-            { VirtualKeys.OEM5, DrawFists }, //^
+            { VirtualKeys.OEM5, Fists }, //^
              { VirtualKeys.F1, RenderTest },
              { VirtualKeys.F2, RenderTest2 },
               { VirtualKeys.F3, RenderTest3 }
@@ -37,37 +37,45 @@ namespace GUC.Client.States
         };
         public override Dictionary<VirtualKeys, Action> Shortcuts { get { return shortcuts; } }
 
-        public static void DrawFists()
+        public static void Fists()
         {
             //send
-            Player.Hero.DrawFists();
+            if (Player.Hero.gNpc.WeaponMode == 0)
+            {
+                Player.Hero.DrawFists();
+            }
+            else if (Player.Hero.gNpc.WeaponMode== 1)
+            {
+                oCMsgWeapon msg = oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.RemoveWeapon1, 0, 0);
+                Player.Hero.gVob.GetEM(0).OnMessage(msg, Player.Hero.gVob);
+            }
         }
 
 
         public static void RenderTest()
         {
-            Program.Process.THISCALL<FloatArg>((uint)Player.Hero.gNpc.AniCtrl.Address, (uint)0x6AE540, new CallValue[] { (FloatArg)5.0f, (IntArg)0 });
         }
 
         public static void RenderTest2()
         {
-            Program.Process.THISCALL<FloatArg>((uint)Player.Hero.gNpc.AniCtrl.Address, (uint)0x6AE540, new CallValue[] { (FloatArg)5.0f, (IntArg)1 });
         }
 
         public static void RenderTest3()
         {
-            Program.Process.THISCALL<FloatArg>((uint)Player.Hero.gNpc.AniCtrl.Address, (uint)0x6AE540, new CallValue[] { (FloatArg)(-5.0f), (IntArg)0 });
         }
 
         public GameState()
         {
             hEventManager.AddHooks(Program.Process);
             hAniCtrl_Human.AddHooks(Program.Process);
+            Program.Process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("hook_GetNextWeaponMode"), 0x739A30, 6, 4);
 
             Player.AniTurnLeft = oCNpc.Player(Program.Process).GetModel().GetAniIDFromAniName("T_RUNTURNL");
             Player.AniTurnRight = oCNpc.Player(Program.Process).GetModel().GetAniIDFromAniName("T_RUNTURNR");
             Player.AniStrafeLeft = oCNpc.Player(Program.Process).GetModel().GetAniIDFromAniName("S_1HATTACK");
             Player.AniRun = oCNpc.Player(Program.Process).GetModel().GetAniIDFromAniName("S_RUNL");
+
+            
 
             /*if (oCNpc.Player(process).MagBook.Address == 0)
             {
@@ -82,6 +90,8 @@ namespace GUC.Client.States
 
             //Sumpfkraut.Ingame.IngameInterface.Init();
         }
+
+
 
         public override void Update()
         {
