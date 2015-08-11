@@ -45,7 +45,7 @@ namespace GUC.Server.WorldObjects
             stream.mWrite(physicsEnabled);
 
             foreach (Client client in list)
-                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, client.guid, false);
+                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
         }
     }
 }

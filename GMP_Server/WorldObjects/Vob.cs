@@ -24,6 +24,19 @@ namespace GUC.Server.WorldObjects
             this.cdstatic = cdstatic;
         }
 
+        #region Visual
+        protected string visual = "ITFO_APPLE.3DS";
+        public string Visual
+        {
+            get { return visual; }
+            set
+            {
+                visual = value;
+                //update network
+            }
+        }
+        #endregion
+
         internal override void WriteSpawn(IEnumerable<Client> list)
         {
             BitStream stream = Program.server.SetupStream(NetworkID.WorldVobSpawnMessage);
@@ -36,7 +49,7 @@ namespace GUC.Server.WorldObjects
             stream.mWrite(physicsEnabled);
 
             foreach (Client client in list)
-                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, client.guid, false);
+                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
         }
     }
 }

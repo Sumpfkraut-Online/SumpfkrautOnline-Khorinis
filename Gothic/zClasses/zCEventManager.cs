@@ -63,6 +63,13 @@ namespace Gothic.zClasses
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.InsertInList, new CallValue[] { msg });
         }
 
+
+        public zCEventMessage GetActiveMsg()
+        {
+            int addr = Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.GetActiveMsg, null);
+            return new zCEventMessage(Process, addr);
+        }
+
         #endregion
 
 

@@ -12,12 +12,364 @@ namespace GUC.Server.WorldObjects
 {
     public class NPC : AbstractCtrlVob, ItemContainer
     {
-        //Networking
-        internal Client client;
-        public bool isPlayer { get { return client != null; } }
+        #region Instance
+        protected NPCInstance instance;
+        public NPCInstance Instance { get { return instance; } }
+        #endregion
 
-        protected string name = "Spieler";
-        public string Name { get { return name; } }
+        //Things everyone sees
+        #region Appearance
+
+        public NPCAppearance Appearance { get; private set; }
+        public class NPCAppearance
+        {
+            NPC npc;
+            public NPCAppearance(NPC npc)
+            {
+                this.npc = npc;
+
+                name = npc.instance.Name;
+                visual = npc.instance.Visual;
+                bodyMesh = npc.instance.BodyMesh;
+                bodyTex = npc.instance.BodyTex;
+                headMesh = npc.instance.HeadMesh;
+                headTex = npc.instance.HeadTex;
+                bodyHeight = npc.instance.BodyHeight;
+                bodyWidth = npc.instance.BodyWidth;
+                fatness = npc.instance.Fatness;
+
+                changeFlags = 0;
+            }
+
+            protected short changeFlags;
+
+            #region Fields
+
+            protected string name;
+            public string Name
+            {
+                get { return name; }
+                set
+                {
+                    name = value;
+                    if (name == npc.instance.Name)
+                    {
+                        changeFlags &= ~NPCAppearanceFlags.Name;
+                    }
+                    else
+                    {
+                        changeFlags |= NPCAppearanceFlags.Name;
+                    }
+                }
+            }
+
+            protected string visual;
+            public string Visual
+            {
+                get { return visual; }
+                set
+                {
+                    visual = value.ToUpper();
+                    if (visual == npc.instance.Visual)
+                    {
+                        changeFlags &= ~NPCAppearanceFlags.Visual;
+                    }
+                    else
+                    {
+                        changeFlags |= NPCAppearanceFlags.Visual;
+                    }
+                }
+            }
+
+            protected string bodyMesh;
+            public string BodyMesh
+            {
+                get { return bodyMesh; }
+                set
+                {
+                    bodyMesh = value.ToUpper();
+                    if (bodyMesh == npc.instance.BodyMesh)
+                    {
+                        changeFlags &= ~NPCAppearanceFlags.BodyMesh;
+                    }
+                    else
+                    {
+                        changeFlags |= NPCAppearanceFlags.BodyMesh;
+                    }
+                }
+            }
+
+            protected byte bodyTex;
+            public int BodyTex
+            {
+                get { return bodyTex; }
+                set
+                {
+                    bodyTex = value > byte.MaxValue ? byte.MaxValue : (byte)value;
+                    if (bodyTex == npc.instance.BodyTex)
+                    {
+                        changeFlags &= ~NPCAppearanceFlags.BodyTex;
+                    }
+                    else
+                    {
+                        changeFlags |= NPCAppearanceFlags.BodyTex;
+                    }
+                }
+            }
+
+            protected string headMesh;
+            public string HeadMesh
+            {
+                get { return headMesh; }
+                set
+                {
+                    headMesh = value.ToUpper();
+                    if (headMesh == npc.instance.HeadMesh)
+                    {
+                        changeFlags &= ~NPCAppearanceFlags.HeadMesh;
+                    }
+                    else
+                    {
+                        changeFlags |= NPCAppearanceFlags.HeadMesh;
+                    }
+                    changeFlags &= ~NPCAppearanceFlags.HumanHead;
+                }
+            }
+            protected HumanHeadMesh hheadMesh; //special case for humans
+            public HumanHeadMesh HumanHead
+            {
+                get { return hheadMesh; }
+                set
+                {
+                    hheadMesh = value;
+                    if (hheadMesh == null)
+                    {
+                        changeFlags &= ~NPCAppearanceFlags.HumanHead;
+                    }
+                    else
+                    {
+                        changeFlags |= NPCAppearanceFlags.HumanHead;
+                    }
+                }
+            }
+
+            protected byte headTex;
+            public int HeadTex
+            {
+                get { return headTex; }
+                set
+                {
+                    headTex = value > byte.MaxValue ? byte.MaxValue : (byte)value;
+                    if (headTex == npc.instance.HeadTex)
+                    {
+                        changeFlags &= ~NPCAppearanceFlags.HeadTex;
+                    }
+                    else
+                    {
+                        changeFlags |= NPCAppearanceFlags.HeadTex;
+                    }
+                }
+            }
+
+            protected float bodyHeight;
+            public float BodyHeight
+            {
+                get { return bodyHeight; }
+                set
+                {
+                    bodyHeight = value;
+                    if (bodyHeight == npc.instance.BodyHeight)
+                    {
+                        changeFlags &= ~NPCAppearanceFlags.BodyHeight;
+                    }
+                    else
+                    {
+                        changeFlags |= NPCAppearanceFlags.BodyHeight;
+                    }
+                }
+            }
+
+            protected float bodyWidth;
+            public float BodyWidth
+            {
+                get { return bodyWidth; }
+                set
+                {
+                    bodyWidth = value;
+                    if (bodyWidth == npc.instance.BodyWidth)
+                    {
+                        changeFlags &= ~NPCAppearanceFlags.BodyWidth;
+                    }
+                    else
+                    {
+                        changeFlags |= NPCAppearanceFlags.BodyWidth;
+                    }
+                }
+            }
+
+            protected float fatness;
+            public float Fatness
+            {
+                get { return fatness; }
+                set
+                {
+                    fatness = value;
+                    if (fatness == npc.instance.Fatness)
+                    {
+                        changeFlags &= ~NPCAppearanceFlags.Fatness;
+                    }
+                    else
+                    {
+                        changeFlags |= NPCAppearanceFlags.Fatness;
+                    }
+                }
+            }
+
+            protected byte voice;
+            public int Voice
+            {
+                get { return voice; }
+                set
+                {
+                    voice = value > byte.MaxValue ? byte.MaxValue : (byte)value;
+                    if (voice == npc.instance.Voice)
+                    {
+                        changeFlags &= ~NPCAppearanceFlags.Voice;
+                    }
+                    else
+                    {
+                        changeFlags |= NPCAppearanceFlags.Voice;
+                    }
+                }
+            }
+
+            #endregion
+
+            public void NetUpdate()
+            {
+
+            }
+
+            internal void Write(BitStream stream)
+            {
+                stream.mWrite(changeFlags);
+                if ((changeFlags & NPCAppearanceFlags.Name) != 0)
+                {
+                    stream.mWrite(name);
+                }
+                if ((changeFlags & NPCAppearanceFlags.Visual) != 0)
+                {
+                    stream.mWrite(visual);
+                }
+                if ((changeFlags & NPCAppearanceFlags.BodyMesh) != 0)
+                {
+                    stream.mWrite(bodyMesh);
+                }
+                if ((changeFlags & NPCAppearanceFlags.BodyTex) != 0)
+                {
+                    stream.mWrite(bodyTex);
+                }
+                if ((changeFlags & NPCAppearanceFlags.HumanHead) != 0)
+                {
+                    stream.mWrite((byte)hheadMesh);
+                }
+                else if ((changeFlags & NPCAppearanceFlags.HeadMesh) != 0)
+                {
+                    stream.mWrite(headMesh);
+                }
+                if ((changeFlags & NPCAppearanceFlags.HeadTex) != 0)
+                {
+                    stream.mWrite(headTex);
+                }
+                if ((changeFlags & NPCAppearanceFlags.BodyHeight) != 0)
+                {
+                    stream.mWrite(bodyHeight);
+                }
+                if ((changeFlags & NPCAppearanceFlags.BodyWidth) != 0)
+                {
+                    stream.mWrite(bodyWidth);
+                }
+                if ((changeFlags & NPCAppearanceFlags.Fatness) != 0)
+                {
+                    stream.mWrite(fatness);
+                }
+                if ((changeFlags & NPCAppearanceFlags.Voice) != 0)
+                {
+                    stream.mWrite(voice);
+                }
+            }
+        }
+
+        #endregion
+
+        //Things only the playing Client should know
+        #region Player stats
+
+        public AttributeArray Attributes;
+        public class AttributeArray
+        {
+            NPC npc;
+            public AttributeArray(NPC npc)
+            {
+                this.npc = npc;
+            }
+
+            internal bool[] changed = new bool[NPCAttributes.MAX_ATTRIBUTES]; //for networking
+
+            internal byte healthPercent = 0;
+            ushort[] arr = new ushort[NPCAttributes.MAX_ATTRIBUTES];
+            public int this[int i]
+            {
+                get { return arr[i]; }
+                set
+                {
+                    arr[i] = value > ushort.MaxValue ? ushort.MaxValue : (ushort)value;
+                    if (i <= NPCAttributes.Health_Max)
+                    {
+                        healthPercent = (byte)(100.0f * (float)arr[NPCAttributes.Health] / (float)arr[NPCAttributes.Health_Max]);
+                    }
+                    changed[i] = true;
+                }
+            }
+
+            public void UpdateHealth(int value) //send immediatly
+            {
+                this[NPCAttributes.Health] = value;
+                Write();
+            }
+
+            internal void Write()
+            {
+                BitStream stream = Program.server.SetupStream(NetworkID.NPCHitMessage);
+                stream.mWrite(npc.ID);
+                stream.mWrite(healthPercent);
+                foreach (Client client in npc.cell.SurroundingClients(npc.client))
+                {
+                    Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE, 'W', client.guid, false);
+                }
+
+                if (npc.isPlayer) //Player gets all the info
+                {
+                    stream = Program.server.SetupStream(NetworkID.PlayerAttributeMessage);
+                    for (int i = 0; i < NPCAttributes.MAX_ATTRIBUTES; i++)
+                    {
+                        stream.mWrite(changed[i]);
+                        if (changed[i])
+                        {
+                            stream.mWrite(arr[i]);
+                            changed[i] = false;
+                        }
+                    }
+                    Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE, 'M', npc.client.guid, false);
+                }
+            }
+        }
+
+        public ushort[] Talents = new ushort[NPCTalents.MAX_TALENTS];
+
+        #endregion
+
+        #region States
 
         protected NPCState state = NPCState.Stand;
         public NPCState State { get { return state; } internal set { state = value; } }
@@ -25,127 +377,22 @@ namespace GUC.Server.WorldObjects
         protected NPCWeaponState wpState = NPCWeaponState.None;
         public NPCWeaponState WeaponState { get { return wpState; } internal set { wpState = value; } }
 
-        //Things only the playing Client should know
-        #region Player stats
+        #endregion
 
-        public ushort[] Attributes = new ushort[NPCAttributes.MAX_ATTRIBUTES];
-        public ushort[] Talents = new ushort[NPCTalents.MAX_TALENTS];
+        #region Constructors
+
+        public NPC()
+        {
+            //Attributes = new AttributeArray(this);
+            //Appearance = new NPCAppearance(this);
+        }
 
         #endregion
 
-        #region Visual
-        protected string bodyMesh = "hum_body_Naked0";
-        public string BodyMesh
-        {
-            get
-            {
-                return bodyMesh;
-            }
-            set
-            {
-                bodyMesh = value;
-                //update Networking
-            }
-        }
+        #region Networking
 
-        protected int bodyTex = 9;
-        public int BodyTex
-        {
-            get
-            {
-                return bodyTex;
-            }
-            set
-            {
-                bodyTex = value;
-                //update Networking
-            }
-        }
-
-        protected string headMesh = "Hum_Head_Pony";
-        public string HeadMesh
-        {
-            get
-            {
-                return headMesh;
-            }
-            set
-            {
-                headMesh = value;
-                //update Networking
-            }
-        }
-
-        protected int headTex = 18;
-        public int HeadTex
-        {
-            get
-            {
-                return headTex;
-            }
-            set
-            {
-                headTex = value;
-                //update Networking
-            }
-        }
-
-        protected float fatness = 0;
-        public float Fatness
-        {
-            get
-            {
-                return fatness;
-            }
-            set
-            {
-                fatness = value;
-                //update Networking
-            }
-        }
-
-        protected float bodyHeight = 1.0f;
-        public float BodyHeight
-        {
-            get
-            {
-                return bodyHeight;
-            }
-            set
-            {
-                bodyHeight = value;
-                //update Networking
-            }
-        }
-        
-        protected float bodyWidth = 1.0f; //x & z together
-        public float BodyWidth
-        {
-            get
-            {
-                return bodyWidth;
-            }
-            set
-            {
-                bodyWidth = value;
-                //update Networking
-            }
-        }
-        #endregion
-
-        #region Animation
-        public List<String> Overlays = new List<string>();
-        public short Animation = short.MaxValue;
-        #endregion
-
-        public NPC() : base()
-        {
-            visual = "HUMANS.MDS";
-
-            Attributes[NPCAttributes.Health_Max] = 1;
-            Attributes[NPCAttributes.Health] = 1;
-            Attributes[NPCAttributes.Capacity] = 1000;
-        }
+        internal Client client;
+        public bool isPlayer { get { return client != null; } }
 
         internal override void WriteSpawn(IEnumerable<Client> list)
         {
@@ -153,11 +400,12 @@ namespace GUC.Server.WorldObjects
             stream.mWrite(ID);
             stream.mWrite(pos);
             stream.mWrite(dir);
-            stream.mWrite(name);
 
             foreach (Client client in list)
-                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, client.guid, false);
+                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
         }
+
+        #endregion
 
         #region Equipment
 
@@ -273,6 +521,24 @@ namespace GUC.Server.WorldObjects
                 {
                     Network.Messages.InventoryMessage.WriteRemoveItem(client, instance, amount);
                 }
+            }
+        }
+        #endregion
+
+        #region Events
+        public delegate void OnHitHandler(NPC attacker, NPC target);
+        public OnHitHandler OnHit;
+        public static OnHitHandler sOnHit;
+
+        internal void DoHit(NPC attacker)
+        {
+            if (sOnHit != null)
+            {
+                sOnHit(attacker, this);
+            }
+            if (OnHit != null)
+            {
+                OnHit(attacker, this);
             }
         }
         #endregion

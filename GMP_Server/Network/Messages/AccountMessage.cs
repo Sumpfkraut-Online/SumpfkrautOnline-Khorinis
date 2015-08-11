@@ -107,14 +107,14 @@ namespace GUC.Server.Network.Messages
             {
                 chars[i].Write(stream);
             }
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE, (char)0, client.guid, false);
+            Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'M', client.guid, false);
         }
 
         private static void SendFailed(Client client, string message)
         {
             BitStream stream = Program.server.SetupStream(NetworkID.AccountErrorMessage);
             stream.mWrite(message);
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, client.guid, false);
+            Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'M', client.guid, false);
         }
 
         private static void StartInWorld(Client client, AccCharInfo ci)

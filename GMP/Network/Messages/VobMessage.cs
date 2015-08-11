@@ -24,20 +24,27 @@ namespace GUC.Client.Network.Messages
             {
                 Vec3f pos = stream.mReadVec();
                 Vec3f dir = stream.mReadVec();
-                vob.Position = pos;
-                if (vob is NPC && ((NPC)vob).State == NPCState.Stand)
-                {
-                    Vec3f curDir = ((NPC)vob).nextDir == null ? vob.Direction : ((NPC)vob).nextDir;
 
-                    if ((dir.X-curDir.X)*(dir.X-curDir.X) + (dir.Z-curDir.Z)*(dir.Z-curDir.Z) > 0.000000001f)
+                vob.Position = pos;
+
+                if (vob is NPC)
+                {
+                    NPC npc = (NPC)vob;
+                    if (npc.State == NPCState.Stand)
                     {
-                        ((NPC)vob).StartTurnAni(vob.Direction.Z * dir.X - dir.Z * vob.Direction.X > 0);
-                        ((NPC)vob).lastDir = vob.Direction;
-                        ((NPC)vob).nextDir = dir;
-                        ((NPC)vob).lastDirTime = DateTime.Now.Ticks;
-                        return;
+                        Vec3f curDir = npc.nextDir == null ? npc.Direction : npc.nextDir;
+
+                        if ((dir.X - curDir.X) * (dir.X - curDir.X) + (dir.Y - curDir.Y) * (dir.Y - curDir.Y) + (dir.Z - curDir.Z) * (dir.Z - curDir.Z) > 0.000000001f)
+                        {
+                            npc.StartTurnAni(npc.Direction.Z * dir.X - dir.Z * npc.Direction.X > 0);
+                            npc.lastDir = npc.Direction;
+                            npc.nextDir = dir;
+                            npc.lastDirTime = DateTime.Now.Ticks;
+                            return;
+                        }
                     }
                 }
+
                 vob.Direction = dir;
             }
         }

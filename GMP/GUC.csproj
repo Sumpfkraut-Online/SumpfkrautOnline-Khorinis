@@ -147,6 +147,7 @@
     <Compile Include="WorldObjects\Item.cs" />
     <Compile Include="WorldObjects\ItemInstance.cs" />
     <Compile Include="WorldObjects\NPC.cs" />
+    <Compile Include="WorldObjects\NPCInstance.cs" />
     <Compile Include="WorldObjects\Player.cs" />
     <Compile Include="WorldObjects\Vob.cs" />
     <Compile Include="WorldObjects\World.cs" />
@@ -155,7 +156,6 @@
     <Compile Include="Network\Messages\ConnectionMessage.cs" />
     <Compile Include="Hooks\Externals.cs" />
     <Compile Include="Hooks\hGame.cs" />
-    <Compile Include="Hooks\hItem.cs" />
     <Compile Include="Hooks\hItemContainer.cs" />
     <Compile Include="Hooks\hMagBook.cs" />
     <Compile Include="Hooks\hMobInter.cs" />

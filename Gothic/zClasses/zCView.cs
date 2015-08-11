@@ -303,5 +303,19 @@ namespace Gothic.zClasses
         {
             return new zCView(process, process.ReadInt(0x00AB6468));
         }
+
+        public static void Printwin(Process process, string text)
+        {
+            using (zString z = zString.Create(process, text))
+            {
+                Printwin(process, z);
+            }
+        }
+
+        public static void Printwin(Process process, zString text)
+        {
+            int textViewAddr = process.THISCALL<IntArg>((uint)oCGame.Game(process).Address, (uint)0x6C2C70, null);
+            process.THISCALL<NullReturnCall>((uint)textViewAddr, (uint)0x7AA8D0, new CallValue[] { text });
+        }
     }
 }

@@ -71,9 +71,7 @@ namespace GUC.Server.Scripts
 
             //Server.Sumpfkraut.Trade trade = new Server.Sumpfkraut.Trade();
 
-            Player.OnEnterWorld += EnterWorld;
-
-            InitItemInstances();
+            Instances.VobInstances.Init();
 
             Accounts.AccountSystem.Get(); //init
 
@@ -81,23 +79,5 @@ namespace GUC.Server.Scripts
             
             Logger.log(Logger.LogLevel.INFO, "###################### End Initalise ######################");
 		}
-
-        void EnterWorld(NPC pl)
-        {
-            for (int i = 0; i < ItemInstance.InstanceList.Count; i++)
-                pl.AddItem(ItemInstance.InstanceList[i], 3);
-        }
-
-        void InitItemInstances()
-        {
-            var q = from t in System.Reflection.Assembly.GetExecutingAssembly().GetTypes()
-                    where t.IsClass && t.Namespace.StartsWith("GUC.Server.Scripts.Items") && !t.IsAbstract && t.IsSubclassOf(typeof(ItemInstance))
-                    select t;
-            foreach (Type t in q.ToList())
-            {
-                Log.Logger.log(t.Name);
-                Activator.CreateInstance(t);
-            }
-        }
     }
 }

@@ -47,7 +47,7 @@ namespace GUC.Server.Network.Messages
             stream.mWrite(vob.Position);
             stream.mWrite(vob.Direction);
             foreach (Client client in list)
-                Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, (char)0, client.guid, false);
+                Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE, 'W', client.guid, false);
         }
     }
 }

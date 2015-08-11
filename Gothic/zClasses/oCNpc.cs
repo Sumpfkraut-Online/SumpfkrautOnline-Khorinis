@@ -302,6 +302,15 @@ namespace Gothic.zClasses
         #endregion
 
         #region statics
+        public static oCNpc Create(Process process)
+        {
+            int address = process.CDECLCALL<IntArg>(0x0075FA00, null); //_CreateInstance()
+
+            //Konstruktor...
+            process.THISCALL<NullReturnCall>((uint)address, 0x0072D950, null);
+            return new oCNpc(process, address);
+        }
+
         public static oCNpc Player(Process process)
         {
             return new oCNpc(process, process.ReadInt(0xAB2684));
@@ -1419,7 +1428,6 @@ namespace Gothic.zClasses
             return Process.THISCALL<IntArg>((uint)Address, (uint)0x739A30, new CallValue[] { (IntArg)arg1, (IntArg)arg2, (IntArg)arg3 });
         }
 
-
         public void DrawMeleeWeapon()
         {
             oCMsgWeapon msg = oCMsgWeapon.Create(Process, oCMsgWeapon.SubTypes.DrawWeapon, 0, 0);
@@ -1438,5 +1446,38 @@ namespace Gothic.zClasses
             GetEM(0).OnMessage(msg, this);
         }
 
+        public void RemoveWeapon1()
+        {
+            oCMsgWeapon msg = oCMsgWeapon.Create(Process, oCMsgWeapon.SubTypes.RemoveWeapon1, 0, 0);
+            GetEM(0).OnMessage(msg, this);
+            msg = oCMsgWeapon.Create(Process, oCMsgWeapon.SubTypes.RemoveWeapon2, 0, 0);
+            GetEM(0).OnMessage(msg, this);
+        }
+
+        public bool IsInFightRange(zCVob vob, float range)
+        {
+            IntPtr ptr = Process.Alloc(4);
+            Process.Write(range, ptr.ToInt32());
+            int result = Process.THISCALL<IntArg>((uint)Address, (uint)0x67CB60, new CallValue[] { vob, (IntArg)ptr.ToInt32() });
+            Process.Free(ptr, 4);
+            return result > 0;
+        }
+
+        public bool IsInFightFocus(zCVob vob)
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)0x735290, new CallValue[] { vob }) > 0;
+        }
+
+        public bool IsSameHeight(zCVob vob)
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)0x737BE0, new CallValue[] { vob }) > 0;
+        }
+
+        public void DoStrafe(bool right)
+        {
+            oCMsgMovement msg = oCMsgMovement.Create(Process, oCMsgMovement.SubTypes.Strafe, new zCVob());
+            msg.Animation = right ? AniCtrl._t_strafer : AniCtrl._t_strafel;
+            GetEM(0).OnMessage(msg, this);
+        }
     }
 }

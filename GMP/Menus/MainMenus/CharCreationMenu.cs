@@ -70,7 +70,7 @@ namespace GUC.Client.Menus.MainMenus
             Name.AllowSymbols = false;
 
             Character = AddCharacter("", -60, 50, 533, 400);
-            Character.Info.BodyMesh = (int)BodyMesh.HUM_BODY_BABE0;
+            Character.Info.BodyMesh = (int)HumanBodyMesh.HUM_BODY_BABE0;
             AddButton("Start", "Mit dem Charakter in die Welt starten.", 160, 425, CreateNewCharacter);
 
             const int offsetX = 415;
@@ -112,7 +112,7 @@ namespace GUC.Client.Menus.MainMenus
         void ChangedVisual() //FIXME: Fleischzoepfe verhindern!
         {
             AccCharInfo info = Character.Info;
-            if (bodymesh.Choice == (int)BodyMesh.HUM_BODY_NAKED0)
+            if (bodymesh.Choice == (int)HumanBodyMesh.HUM_BODY_NAKED0)
             {
                 bodytex.Choices = c_BodyTex_M;
                 headmesh.Choices = c_HeadMeshes_M;
@@ -171,8 +171,8 @@ namespace GUC.Client.Menus.MainMenus
         #region Character Templates
         static Dictionary<int, string> c_BodyMesh = new Dictionary<int, string>() 
         { 
-            { (int)BodyMesh.HUM_BODY_NAKED0, "männlich" }, 
-            { (int)BodyMesh.HUM_BODY_BABE0, "weiblich" } 
+            { (int)HumanBodyMesh.HUM_BODY_NAKED0, "männlich" }, 
+            { (int)HumanBodyMesh.HUM_BODY_BABE0, "weiblich" } 
         };
 
         static Dictionary<int, string> c_BodyTex_M = new Dictionary<int, string>() 
@@ -198,26 +198,26 @@ namespace GUC.Client.Menus.MainMenus
 
         static Dictionary<int, string> c_HeadMeshes_M = new Dictionary<int, string>() 
         { 
-            {(int)HeadMesh.HUM_HEAD_BALD, "Ulu" },
-            {(int)HeadMesh.HUM_HEAD_FATBALD, "Mulu" },
-            {(int)HeadMesh.HUM_HEAD_FIGHTER, "hoch" },
-            {(int)HeadMesh.HUM_HEAD_PONY, "mit Zopf" },
-            {(int)HeadMesh.HUM_HEAD_PSIONIC, "spitz" }, 
-            {(int)HeadMesh.HUM_HEAD_THIEF, "mit Zopf2" }
+            {(int)HumanHeadMesh.HUM_HEAD_BALD, "Ulu" },
+            {(int)HumanHeadMesh.HUM_HEAD_FATBALD, "Mulu" },
+            {(int)HumanHeadMesh.HUM_HEAD_FIGHTER, "hoch" },
+            {(int)HumanHeadMesh.HUM_HEAD_PONY, "mit Zopf" },
+            {(int)HumanHeadMesh.HUM_HEAD_PSIONIC, "spitz" }, 
+            {(int)HumanHeadMesh.HUM_HEAD_THIEF, "mit Zopf2" }
         };
 
         static Dictionary<int, string> c_HeadMeshes_F = new Dictionary<int, string>() 
         { 
-            {(int)HeadMesh.HUM_HEAD_BABE, "Fremder" },
-            {(int)HeadMesh.HUM_HEAD_BABE1, "tragen" },
-            {(int)HeadMesh.HUM_HEAD_BABE2, "Ulu" },
-            {(int)HeadMesh.HUM_HEAD_BABE3, "Mulu" },
-            {(int)HeadMesh.HUM_HEAD_BABE4, "," },
-            {(int)HeadMesh.HUM_HEAD_BABE5, "dann" },
-            {(int)HeadMesh.HUM_HEAD_BABE6, "Fremder" },
-            {(int)HeadMesh.HUM_HEAD_BABE7, "nicht" },
-            {(int)HeadMesh.HUM_HEAD_BABE8, "sterben" },
-            {(int)HeadMesh.HUM_HEAD_BABEHAIR, "!" } 
+            {(int)HumanHeadMesh.HUM_HEAD_BABE, "Fremder" },
+            {(int)HumanHeadMesh.HUM_HEAD_BABE1, "tragen" },
+            {(int)HumanHeadMesh.HUM_HEAD_BABE2, "Ulu" },
+            {(int)HumanHeadMesh.HUM_HEAD_BABE3, "Mulu" },
+            {(int)HumanHeadMesh.HUM_HEAD_BABE4, "," },
+            {(int)HumanHeadMesh.HUM_HEAD_BABE5, "dann" },
+            {(int)HumanHeadMesh.HUM_HEAD_BABE6, "Fremder" },
+            {(int)HumanHeadMesh.HUM_HEAD_BABE7, "nicht" },
+            {(int)HumanHeadMesh.HUM_HEAD_BABE8, "sterben" },
+            {(int)HumanHeadMesh.HUM_HEAD_BABEHAIR, "!" } 
         };
 
         static Dictionary<int, string> c_Fatness = new Dictionary<int, string>() 

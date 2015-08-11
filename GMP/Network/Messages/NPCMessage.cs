@@ -70,6 +70,7 @@ namespace GUC.Client.Network.Messages
 
         public static void WriteState(NPC npc)
         {
+            zERROR.GetZErr(Program.Process).Report(2, 'G', "State: " + npc.State, 0, "hAniCtrl_Human.cs", 0);
             BitStream stream = Program.client.SetupSendStream(NetworkID.NPCStateMessage);
             stream.mWrite(npc.ID);
             stream.mWrite((byte)npc.State);
@@ -96,18 +97,14 @@ namespace GUC.Client.Network.Messages
             npc.Position = stream.mReadVec();
             npc.Direction = stream.mReadVec();
 
-            switch (npc.State)
-            {
-                default:
-                    npc.Update(DateTime.Now.Ticks);
-                    break;
-            }
+            npc.Update(DateTime.Now.Ticks);
         }
 
-        public static void WriteWeaponState()
-        {
+        public static void WriteWeaponState(bool removeType1)
+        {            
             BitStream stream = Program.client.SetupSendStream(NetworkID.NPCWeaponStateMessage);
             stream.mWrite((byte)Player.Hero.WeaponState);
+            stream.mWrite(removeType1);
             stream.mWrite(Player.Hero.Position);
             stream.mWrite(Player.Hero.Direction);
             Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE_ORDERED);
@@ -121,12 +118,15 @@ namespace GUC.Client.Network.Messages
             if (npc == null) return;
 
             npc.WeaponState = (NPCWeaponState)stream.mReadByte();
+            bool removeType1 = stream.ReadBit();
             npc.Position = stream.mReadVec();
             npc.Direction = stream.mReadVec();
 
             switch (npc.WeaponState)
             {
-                case NPCWeaponState.Fists: //FIXME
+                case NPCWeaponState.Fists:
+                    //npc.DrawFists();
+                    //break;
                 case NPCWeaponState.Melee:
                     npc.gNpc.DrawMeleeWeapon();
                     break;
@@ -134,8 +134,15 @@ namespace GUC.Client.Network.Messages
                 case NPCWeaponState.Magic: //FIXME
                     npc.gNpc.DrawRangedWeapon();
                     break;
-                default:
-                    npc.gNpc.RemoveWeapon();
+                case NPCWeaponState.None:
+                    if (removeType1)
+                    {
+                        npc.gNpc.RemoveWeapon1();
+                    }
+                    else
+                    {
+                        npc.gNpc.RemoveWeapon();
+                    }
                     break;
             }
         }
@@ -228,22 +235,24 @@ namespace GUC.Client.Network.Messages
             attacker.gVob.GetEM(0).OnMessage(msg, attacker.gVob);
         }
 
-        public static void WriteHits(NPC attacker)
+        public static void WriteSelfHit(NPC attacker)
         {
             BitStream stream = Program.client.SetupSendStream(NetworkID.NPCHitMessage);
             stream.mWrite(attacker.ID);
+            stream.mWrite((byte)0);
             Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE_ORDERED);
         }
 
-        public static void ReadHitMessage(BitStream stream)
+        public static void WriteHits(NPC attacker, List<NPC> hitlist)
         {
-            NPC attacker, target;
-            World.npcDict.TryGetValue(stream.mReadUInt(), out attacker);
-            World.npcDict.TryGetValue(stream.mReadUInt(), out target);
-            if (target != null && attacker != null)
+            BitStream stream = Program.client.SetupSendStream(NetworkID.NPCHitMessage);
+            stream.mWrite(attacker.ID);
+            stream.mWrite((byte)hitlist.Count);
+            for (int i = 0; i < hitlist.Count; i++)
             {
-                attacker.gNpc.AniCtrl.CreateHit(target.gVob);
+                stream.mWrite(hitlist[i].ID);
             }
+            Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE_ORDERED);
         }
 
         #endregion
@@ -294,8 +303,7 @@ namespace GUC.Client.Network.Messages
                 }
                 else return;
 
-                oCItem newItem = oCItem.Create(Program.Process);
-                inst.InitItem(newItem);
+                oCItem newItem = inst.CreateItem();
                 npc.gNpc.Equip(newItem);
             }
         }

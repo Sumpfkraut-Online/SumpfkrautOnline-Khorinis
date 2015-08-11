@@ -77,37 +77,8 @@ namespace GUC.Client
             return 0;
         }
 
-        public static Int32 hook_EM(String message)
-        {
-            try
-            {
-                int address = Convert.ToInt32(message);
-
-                int addr = Process.ReadInt(address);
-                int type = Process.ReadInt(address + 4);
-                //int vaddr = Process.ReadInt(address+8);
-                //int num = Process.ReadInt(address+12);
-                if (Player.Hero == null || Player.Hero.gVob == null || addr != Player.Hero.gVob.Address)
-                    return 0;
-
-                zERROR.GetZErr(Program.Process).Report(2, 'G', "GetEM: " + addr.ToString("X4") + " " + type.ToString("X4") /*+ " " + vaddr.ToString("X4") + " " + num.ToString("X4")*/, 0, "Program.cs", 0);
-            }
-            catch (Exception e)
-            {
-                zERROR.GetZErr(Program.Process).Report(4, 'G', e.Source + "\n" + e.Message + "\n" + e.StackTrace, 0, "Program.cs", 0);
-            }
-            return 0;
-        }
-
-
-
-
         public static void addHooks(Process process)
         {
-            //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(Program).GetMethod("hook_JUMP"), 0x767060, 7, 4);
-
-            //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(Program).GetMethod("hook_EM"), 0x5FFE10, 9, 2);
-
             process.WriteJMP("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("DoTakeVob"), (int)oCNpc.FuncOffsets.DoTakeVob, (int)oCNpc.HookSize.DoTakeVob, 2);
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(Program).GetMethod("hook_MenuRender"), 0x004DC1C0, 10, 0);
 

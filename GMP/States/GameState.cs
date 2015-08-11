@@ -24,7 +24,7 @@ namespace GUC.Client.States
             { VirtualKeys.Escape, Menus.GUCMenus.Main.Open },
             { VirtualKeys.Tab, Menus.GUCMenus.Inventory.Open },
             { Menus.GUCMenus.Animation.Hotkey, Menus.GUCMenus.Animation.Open},
-            { VirtualKeys.OEM5, Fists }, //^
+            { VirtualKeys.OEM5, Player.DoFists }, //^
              { VirtualKeys.F1, RenderTest },
              { VirtualKeys.F2, RenderTest2 },
               { VirtualKeys.F3, RenderTest3 }
@@ -37,27 +37,22 @@ namespace GUC.Client.States
         };
         public override Dictionary<VirtualKeys, Action> Shortcuts { get { return shortcuts; } }
 
-        public static void Fists()
-        {
-            //send
-            if (Player.Hero.gNpc.WeaponMode == 0)
-            {
-                Player.Hero.DrawFists();
-            }
-            else if (Player.Hero.gNpc.WeaponMode== 1)
-            {
-                oCMsgWeapon msg = oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.RemoveWeapon1, 0, 0);
-                Player.Hero.gVob.GetEM(0).OnMessage(msg, Player.Hero.gVob);
-            }
-        }
-
-
+        static NPC npc;
         public static void RenderTest()
         {
+            if (npc == null)
+            {
+                npc = new NPC(9999);
+                NPCInstance.InstanceList[3].CreateNPC(npc.gNpc);
+                npc.gNpc.SetToFistMode();
+                npc.Spawn();
+            }
+            npc.Position = new Vec3f(0, 1000, 0);
         }
 
         public static void RenderTest2()
         {
+            npc.State = NPCState.MoveRight;
         }
 
         public static void RenderTest3()
@@ -68,30 +63,8 @@ namespace GUC.Client.States
         {
             hEventManager.AddHooks(Program.Process);
             hAniCtrl_Human.AddHooks(Program.Process);
-            Program.Process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("hook_GetNextWeaponMode"), 0x739A30, 6, 4);
-
-            Player.AniTurnLeft = oCNpc.Player(Program.Process).GetModel().GetAniIDFromAniName("T_RUNTURNL");
-            Player.AniTurnRight = oCNpc.Player(Program.Process).GetModel().GetAniIDFromAniName("T_RUNTURNR");
-            Player.AniStrafeLeft = oCNpc.Player(Program.Process).GetModel().GetAniIDFromAniName("S_1HATTACK");
-            Player.AniRun = oCNpc.Player(Program.Process).GetModel().GetAniIDFromAniName("S_RUNL");
-
-            
-
-            /*if (oCNpc.Player(process).MagBook.Address == 0)
-            {
-                oCMag_Book magBook = oCMag_Book.Create(process);
-                oCNpc.Player(process).MagBook = magBook;
-
-                magBook.SetOwner(oCNpc.Player(process));
-            }*/
-
-            /*StealContainer sc = new StealContainer(Program.Process);
-            sc.Enable();*/
-
-            //Sumpfkraut.Ingame.IngameInterface.Init();
+            hNpc.AddHooks(Program.Process);
         }
-
-
 
         public override void Update()
         {

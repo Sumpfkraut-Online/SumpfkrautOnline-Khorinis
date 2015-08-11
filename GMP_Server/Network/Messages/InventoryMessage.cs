@@ -16,7 +16,7 @@ namespace GUC.Server.Network.Messages
             BitStream stream = Program.server.SetupStream(NetworkID.InventoryAddMessage);
             stream.mWrite(instance.ID);
             stream.mWrite(amount);
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, client.guid, false);
+            Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I', client.guid, false);
         }
 
         public static void WriteRemoveItem(Client client, ItemInstance instance, int amount)
@@ -24,7 +24,7 @@ namespace GUC.Server.Network.Messages
             BitStream stream = Program.server.SetupStream(NetworkID.InventoryRemoveMessage);
             stream.mWrite(instance.ID);
             stream.mWrite(amount);
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, client.guid, false);
+            Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I', client.guid, false);
         }
 
         public static void ReadDropItem(BitStream stream, Client client)

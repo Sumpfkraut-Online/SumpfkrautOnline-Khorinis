@@ -14,6 +14,31 @@ namespace GUC.Client.Hooks
 {
     public class hNpc
     {
+        public static Int32 DoTakeVob(String message)
+        {
+            try
+            {
+                int address = Convert.ToInt32(message);
+
+                if (Player.Hero.gVob.Address == Program.Process.ReadInt(address))
+                {
+                    int itemAddr = Program.Process.ReadInt(address + 4);
+
+                    Vob vob;
+                    World.vobAddr.TryGetValue(itemAddr, out vob);
+                    if (vob != null)
+                    {
+                        Network.Messages.PlayerMessage.WritePickUpItem(vob);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                zERROR.GetZErr(Program.Process).Report(2, 'G', "Exception: " + ex.Message + " " + ex.StackTrace + " " + ex.Source, 0, "Program.cs", 0);
+            }
+            return 0;
+        }
+
         public static Int32 hook_GetNextWeaponMode(String message)
         {
             try
@@ -29,7 +54,7 @@ namespace GUC.Client.Hooks
                     {
                         //return 1:
                         Program.Process.Write(new byte[] { 0xBB, 0x01, 0x00, 0x00, 0x00,              //mov ebx, 1
-                                                   0xE9, 0x5B, 0x01, 0x00, 0x00 }, 0x739A36); //jmp to ret
+                                                           0xE9, 0x5B, 0x01, 0x00, 0x00 }, 0x739A36); //jmp to ret
                         return 0;
                     }
                 }
@@ -42,6 +67,11 @@ namespace GUC.Client.Hooks
                 zERROR.GetZErr(Program.Process).Report(4, 'G', e.Source + "\n" + e.Message + "\n" + e.StackTrace, 0, "Program.cs", 0);
             }
             return 0;
+        }
+
+        public static void AddHooks(Process process)
+        {
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("hook_GetNextWeaponMode"), 0x739A30, 6, 4);
         }
 
 
@@ -156,30 +186,7 @@ namespace GUC.Client.Hooks
             return 0;
         }
 
-        public static Int32 DoTakeVob(String message)
-        {
-            try
-            {
-                int address = Convert.ToInt32(message);
 
-                if (Player.Hero.gVob.Address == Program.Process.ReadInt(address))
-                {
-                    int itemAddr = Program.Process.ReadInt(address + 4);
-
-                    Vob vob;
-                    World.vobAddr.TryGetValue(itemAddr, out vob);
-                    if (vob != null)
-                    {
-                        Network.Messages.PlayerMessage.WritePickUpItem(vob);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                zERROR.GetZErr(Program.Process).Report(2, 'G', "Exception: " + ex.Message + " " + ex.StackTrace + " " + ex.Source, 0, "Program.cs", 0);
-            }
-            return 0;
-        }
 
 
 

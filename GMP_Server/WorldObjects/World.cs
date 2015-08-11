@@ -32,8 +32,6 @@ namespace GUC.Server.WorldObjects
         {
             MapName = mapname;
             sWorld.WorldList.Add(this);
-
-            (new NPC()).Spawn(this);
         }
 
         public NPC GetNpcOrPlayer(uint id)

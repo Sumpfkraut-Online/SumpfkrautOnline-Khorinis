@@ -5,13 +5,13 @@ using System.Text;
 
 namespace GUC.Enumeration
 {
-    public enum BodyMesh
+    public enum HumanBodyMesh
     {
         HUM_BODY_NAKED0,
         HUM_BODY_BABE0
     }
 
-    public enum HeadMesh
+    public enum HumanHeadMesh
     {
         HUM_HEAD_BALD,
         HUM_HEAD_FATBALD,

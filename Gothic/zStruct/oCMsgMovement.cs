@@ -63,6 +63,12 @@ namespace Gothic.zStruct
 
         }
 
+        public SubTypes SubType
+        {
+            get { return (SubTypes)Process.ReadUShort(Address + 0x24); }
+            set { Process.Write((ushort)value, Address + 0x24); }
+        }
+
         public int Animation
         {
             get { return Process.ReadInt(Address + (int)Offsets.ani); }

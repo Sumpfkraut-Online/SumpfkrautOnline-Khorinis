@@ -128,16 +128,40 @@ namespace GUC.Network
         public static void mWrite(this BitStream stream, string val)
         {
             byteArr = System.Text.Encoding.UTF8.GetBytes(val);
-            stream.Write(BitConverter.GetBytes((ushort)byteArr.Length), 2);
+            stream.Write((byte)byteArr.Length);
             stream.Write(byteArr, (uint)byteArr.Length);
         }
 
         public static string mReadString(this BitStream stream)
         {
-            stream.Read(twoByte, 2);
-            byteArr = new byte[BitConverter.ToUInt16(twoByte,0)];
-            stream.Read(byteArr, (uint)byteArr.Length);
-            return System.Text.Encoding.UTF8.GetString(byteArr);
+            byte len;
+            stream.Read(out len);
+            if (len > 0)
+            {
+                byteArr = new byte[len];
+                stream.Read(byteArr, len);
+                return System.Text.Encoding.UTF8.GetString(byteArr);
+            }
+            return string.Empty;
+        }
+
+        public static void mWriteStringLong(this BitStream stream, string val)
+        {
+            byteArr = System.Text.Encoding.UTF8.GetBytes(val);
+            stream.Write(BitConverter.GetBytes((ushort)byteArr.Length), 2);
+            stream.Write(byteArr, (uint)byteArr.Length);
+        }
+
+        public static string mReadStringLong(this BitStream stream)
+        {
+            ushort len = stream.mReadUShort();
+            if (len > 0)
+            {
+                byteArr = new byte[len];
+                stream.Read(byteArr, len);
+                return System.Text.Encoding.UTF8.GetString(byteArr);
+            }
+            return "";
         }
         
         public static void mWrite(this BitStream stream, float[] pos)
@@ -185,7 +209,7 @@ namespace GUC.Network
         public static sbyte mReadSByte(this BitStream stream)
         {
             stream.Read(out singleByte);
-            return Convert.ToSByte(singleByte);
+            return (sbyte)singleByte;
         }
     }
 }

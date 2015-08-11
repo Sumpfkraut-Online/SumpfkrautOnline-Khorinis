@@ -78,6 +78,19 @@ namespace GUC.Client.Hooks
             return 0;
         }
 
+        public static Int32 hook_StartFallDownAni(String message)
+        {
+            try
+            {
+                CheckState(message, NPCState.Fall);
+            }
+            catch (Exception e)
+            {
+                zERROR.GetZErr(Program.Process).Report(4, 'G', e.Source + "\n" + e.Message + "\n" + e.StackTrace, 0, "hAniCtrl_Human.cs", 0);
+            }
+            return 0;
+        }
+
         /* 
          * FIGHTING
          */
@@ -100,79 +113,60 @@ namespace GUC.Client.Hooks
             return 0;
         }
 
-        static NPC GetNextNPC()
-        {
-            while (enumerator.MoveNext())
-            {
-                if (enumerator.Current is NPC && ((NPC)enumerator.Current).gNpc.AniCtrl.Address != aniCtrl.Address && enumerator.Current.gVob.Address != originalAddr)
-                {
-                    return (NPC)enumerator.Current;
-                }
-            }
-            return null;
-        }
-
-        static int originalAddr;
-        static IEnumerator<Vob> enumerator = null;
-        static NPC current = null;
-        static bool done = false;
-
-        public static Int32 CheckHit(String message)
+        public static Int32 hook_CheckHit(String message)
         {
             try
             {
-                if (enumerator == null)
-                {   //first call
-                    Program.Process.Write(new byte[] { 0xE9, 0x22, 0xFF, 0xFF, 0xFF, 0x90 }, 0x6B047D); //write a jmp back
-                    Program.Process.Write(new byte[] { 0xE9, 0x35, 0xFF, 0xFF, 0xFF }, 0x6B046A); //Parade return -> jmp back
+                aniCtrl.BitField &= ~oCAniCtrl_Human.BitFlag.comboCanHit;
 
-                    Program.Process.Write(new byte[] { 0x00, 0x24, 0xFB, 0x88, 0x86, 0xB0, 0x01, 0x00, 0x00 }, 0x6B03A9); //something
-
-                    originalAddr = aniCtrl.HitTarget;
-                    enumerator = World.AllVobs.GetEnumerator();
-                }
-                else if (!done)
+                Vob aVob;
+                World.vobAddr.TryGetValue(aniCtrl.NPC.Address, out aVob);
+                if (aVob != null && aVob is NPC)
                 {
-                    Program.Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, 0x6B03A9); //something
-                    done = true;
-                }
+                    NPC attacker = (NPC)aVob;
+                    List<NPC> hitlist = new List<NPC>();
 
-                current = GetNextNPC();
-
-                if (current != null)
-                {
-                    aniCtrl.HitTarget = current.gNpc.Address;
-                }
-                else
-                { // revert changes, last call
-                    Program.Process.Write(new byte[] { 0x8B, 0x86, 0xB4, 0x01, 0x00, 0x00 }, 0x6B047D);
-                    Program.Process.Write(new byte[] { 0xE9, 0x2F, 0x01, 0x00, 0x00 }, 0x6B046A);
-
-                    aniCtrl.HitTarget = originalAddr;
-                    enumerator = null;
-                    done = false;
-                }
-            }
-            catch (Exception e)
-            {
-                zERROR.GetZErr(Program.Process).Report(4, 'G', e.Source + "\n" + e.Message + "\n" + e.StackTrace, 0, "hAniCtrl_Human.cs", 0);
-            }
-            return 0;
-        }
-
-        public static Int32 hook_CatchHit(String message)
-        {
-            try
-            {
-                if (aniCtrl.HitTarget == Player.Hero.gVob.Address)
-                {
-                    Vob attacker;
-                    World.vobAddr.TryGetValue(aniCtrl.NPC.Address, out attacker);
-                    if (attacker != null && attacker is NPC)
+                    foreach (NPC npc in World.npcDict.Values)
                     {
-                        NPCMessage.WriteHits((NPC)attacker);
+                        if (npc.gNpc.AniCtrl.Address == aniCtrl.Address) // self
+                        {
+                            continue;
+                        }                        
+
+                        if (aniCtrl.NPC.IsInFightRange(npc.gVob, 0) &&
+                            aniCtrl.NPC.IsInFightFocus(npc.gVob) &&
+                            aniCtrl.NPC.IsSameHeight(npc.gVob))
+                        {
+                            //if (!aniCtrl.NPC.GetDamageByType(16))
+                            //FIXME: !Dead
+                            if (npc.gNpc.AniCtrl.CanParade(aniCtrl.NPC))
+                            {   //attack got parried, no one gets hit
+                                aniCtrl.StartParadeEffects(npc.gNpc);
+                                Program.Process.Write(new byte[] { 0xF0, 0x01, 0x00, 0x00 }, 0x6B03AA); // parade end
+                                return 0;
+                            }
+                            hitlist.Add(npc);
+                        }
+                    }
+
+                    if (hitlist.Count > 0)
+                    {
+                        foreach (NPC target in hitlist)
+                        {
+                            if (target == Player.Hero)
+                            {
+                                NPCMessage.WriteSelfHit(attacker);
+                            }
+                            aniCtrl.CreateHit(target.gVob);
+                        }
+
+                        if (attacker == Player.Hero)
+                        {
+                            NPCMessage.WriteHits(attacker, hitlist);
+                        }
                     }
                 }
+                Program.Process.Write(new byte[] { 0xCF, 0x00, 0x00, 0x00 }, 0x6B03AA); //continue
             }
             catch (Exception e)
             {
@@ -181,21 +175,6 @@ namespace GUC.Client.Hooks
             return 0;
         }
 
-        public static Int32 hook_CatchCombo(String message)
-        {
-            try
-            {
-                if (aniCtrl.Address == Player.Hero.gNpc.AniCtrl.Address)
-                {
-                    NPCMessage.WriteAttack();
-                }
-            }
-            catch (Exception e)
-            {
-                zERROR.GetZErr(Program.Process).Report(4, 'G', e.Source + "\n" + e.Message + "\n" + e.StackTrace, 0, "hAniCtrl_Human.cs", 0);
-            }
-            return 0;
-        }
 
         public static void AddHooks(Process process)
         {
@@ -203,16 +182,12 @@ namespace GUC.Client.Hooks
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("_Backward"), (int)oCAniCtrl_Human.FuncOffsets._Backward, 5, 1);
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("_Stand"), (int)oCAniCtrl_Human.FuncOffsets._Stand, 5, 1);
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("JumpForward"), (int)oCAniCtrl_Human.FuncOffsets.PC_JumpForward, 5, 1);
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("hook_StartFallDownAni"), 0x6B5220, 6, 1);
 
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("HitCombo"), (int)oCAniCtrl_Human.FuncOffsets.HitCombo, 6, 2); //entry
-            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("hook_CatchCombo"), 0x6B02E7, 8, 0);
-            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("CheckHit"), 0x6B03A4, 6, 0); //loop entry
 
-            process.Write(Enumerable.Repeat<byte>(0x90, 0xE).ToArray(), 0x6B046F); //remove CreateHit call completely
-            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("hook_CatchHit"), 0x6B046F, 5, 0);
-            
-            
-
+            process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0xE9 }, 0x6B03A4); //clear
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("hook_CheckHit"), (int)0x6B03A4, 5, 0);
         }
     }
 }

@@ -41,6 +41,7 @@ namespace GUC.Client.Network.Messages
             vob.Name = stream.mReadString();
             vob.gNpc.SetVisual("HUMANS.MDS");
             vob.gNpc.SetAdditionalVisuals("HUM_BODY_NAKED0", 1, 0, "HUM_HEAD_THIEF", 2, 0, -1);
+            vob.gNpc.Voice = 10;
             vob.Spawn(pos, dir);
         }
 

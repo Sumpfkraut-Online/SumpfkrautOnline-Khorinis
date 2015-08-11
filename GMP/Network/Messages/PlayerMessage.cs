@@ -18,7 +18,7 @@ namespace GUC.Client.Network.Messages
         public static void ReadControl(BitStream stream)
         {
             uint id = stream.mReadUInt();
-            string name = stream.mReadString();
+            string name = "Ich";
             string newMap = stream.mReadString();
             Vec3f pos = stream.mReadVec();
             Vec3f dir = stream.mReadVec();
@@ -29,7 +29,6 @@ namespace GUC.Client.Network.Messages
             if (World.MapName != newMap)
             {
                 World.ChangeLevel(newMap);
-                Program._state = new GameState();
             }
             
             if (Player.Hero == null)
@@ -54,12 +53,17 @@ namespace GUC.Client.Network.Messages
             }
 
             WriteControl();
+
+            if (!(Program._state is GameState))
+            {
+                Program._state = new GameState();
+            }
         }
 
         private static void WriteControl() //for confirmation
         {
             BitStream stream = Program.client.SetupSendStream(NetworkID.PlayerControlMessage);
-            Program.client.SendStream(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE);
+            Program.client.SendStream(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED);
         }
 
         public static void WritePickUpItem(Vob vob)

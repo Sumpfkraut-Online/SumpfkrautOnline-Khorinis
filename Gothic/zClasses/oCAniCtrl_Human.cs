@@ -21,8 +21,21 @@ namespace Gothic.zClasses
             _t_hitf = 0x1100,
             _t_hitfrun = 0x1124,
 
+            _s_walk = 0x1008,
             _t_turnl = 0x1028,
-            _t_turnr = 0x102C
+            _t_turnr = 0x102C,
+
+            _s_dive = 0x109C,
+            _t_diveturnl = 0x10D8,
+            _t_diveturnr = 0x10DC,
+
+            _s_swim = 0x10B4,
+            _t_swimturnl = 0x10D0,
+            _t_swimturnr = 0x10D4,
+
+            _t_strafel = 0x1030,
+            _t_strafer = 0x1034
+
         }
         public enum FuncOffsets : uint
         {
@@ -80,35 +93,25 @@ namespace Gothic.zClasses
         {
         }
 
-        public int _t_hitfrun
-        {
-            get { return Process.ReadInt(Address + (int)Offsets._t_hitfrun); }
-        }
+        public int _t_hitfrun { get { return Process.ReadInt(Address + (int)Offsets._t_hitfrun); } }
+        public int _t_hitf { get { return Process.ReadInt(Address + (int)Offsets._t_hitf); } }
+        public int _t_hitr { get { return Process.ReadInt(Address + (int)Offsets._t_hitr); } }
+        public int _t_hitl { get { return Process.ReadInt(Address + (int)Offsets._t_hitl); } }
 
-        public int _t_hitf
-        {
-            get { return Process.ReadInt(Address + (int)Offsets._t_hitf); }
-        }
+        public int _s_walk { get { return Process.ReadInt(Address + (int)Offsets._s_walk); } }
+        public int _t_turnr { get { return Process.ReadInt(Address + (int)Offsets._t_turnr); } }
+        public int _t_turnl { get { return Process.ReadInt(Address + (int)Offsets._t_turnl); } }
 
-        public int _t_hitr
-        {
-            get { return Process.ReadInt(Address + (int)Offsets._t_hitr); }
-        }
+        public int _s_dive { get { return Process.ReadInt(Address + (int)Offsets._s_dive); } }
+        public int _t_diveturnr { get { return Process.ReadInt(Address + (int)Offsets._t_diveturnr); } }
+        public int _t_diveturnl { get { return Process.ReadInt(Address + (int)Offsets._t_diveturnl); } }
 
-        public int _t_hitl
-        {
-            get { return Process.ReadInt(Address + (int)Offsets._t_hitl); }
-        }
+        public int _s_swim { get { return Process.ReadInt(Address + (int)Offsets._s_swim); } }
+        public int _t_swimturnr { get { return Process.ReadInt(Address + (int)Offsets._t_swimturnr); } }
+        public int _t_swimturnl { get { return Process.ReadInt(Address + (int)Offsets._t_swimturnl); } }
 
-        public int _t_turnr
-        {
-            get { return Process.ReadInt(Address + (int)Offsets._t_turnr); }
-        }
-
-        public int _t_turnl
-        {
-            get { return Process.ReadInt(Address + (int)Offsets._t_turnl); }
-        }
+        public int _t_strafer { get { return Process.ReadInt(Address + (int)Offsets._t_strafer); } }
+        public int _t_strafel { get { return Process.ReadInt(Address + (int)Offsets._t_strafel); } }
 
         public int HitTarget
         {
@@ -214,7 +217,22 @@ namespace Gothic.zClasses
 
         public bool IsStanding()
         {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.IsStanding, new CallValue[] { }) > 0;
+            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.IsStanding, null) > 0;
+        }
+
+        public bool CanParade(oCNpc npc)
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)0x6B15B0, new CallValue[] { npc }) > 0;
+        }
+
+        public void StartParadeEffects(oCNpc npc)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)0x6B16F0, new CallValue[] { npc });
+        }
+
+        public void StartFallDownAni()
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)0x6B5220, null);
         }
 
         public zString GetWalkModeZString()

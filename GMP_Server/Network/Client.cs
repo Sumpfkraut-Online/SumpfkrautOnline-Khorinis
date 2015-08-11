@@ -19,6 +19,9 @@ namespace GUC.Server.Network
         public String MacString = "";
         public bool isValid = false;
 
+        public bool instanceNPCNeeded;
+        public bool instanceItemNeeded;
+
         //Account
         public int accountID = -1;
         public bool isLoggedIn { get { return accountID != -1; } set { } }        
@@ -77,11 +80,16 @@ namespace GUC.Server.Network
             Player.WriteControl(this, character);
         }
 
-        public void CheckValidity(String driveString, String macString)
+        public void CheckValidity(String driveString, String macString, byte[] npcTableHash)
         {
             //FIXME: Check for banned strings
             this.DriveString = driveString;
             this.MacString = macString;
+
+            instanceNPCNeeded = !npcTableHash.SequenceEqual(NPCInstance.hash);
+
+            Log.Logger.log(System.BitConverter.ToString(npcTableHash) + " ? " + System.BitConverter.ToString(NPCInstance.hash));
+
             isValid = true;
         }
 
@@ -117,7 +125,7 @@ namespace GUC.Server.Network
             VobControlledList.Add(vob);
             vob.VobController = this;
             BitStream stream = Program.server.SetupStream(NetworkID.ControlAddVobMessage); stream.mWrite(vob.ID);
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+            Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'G', guid, false);
             Log.Logger.log("AddCtrl: " + character.ID + " " + vob.ID + ": " + vob.GetType().Name);
         }
 
@@ -126,7 +134,7 @@ namespace GUC.Server.Network
             VobControlledList.Remove(vob);
             vob.VobController = null;
             BitStream stream = Program.server.SetupStream(NetworkID.ControlRemoveVobMessage); stream.mWrite(vob.ID);
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, guid, false);
+            Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'G', guid, false);
             Log.Logger.log("RemoveCtrl: " + character.ID + " " + vob.ID + ": " + vob.GetType().Name);
         }
 

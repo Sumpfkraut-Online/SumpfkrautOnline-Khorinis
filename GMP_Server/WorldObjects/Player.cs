@@ -18,11 +18,10 @@ namespace GUC.Server.WorldObjects
         {
             BitStream stream = Program.server.SetupStream(NetworkID.PlayerControlMessage);
             stream.mWrite(npc.ID);
-            stream.mWrite(npc.Name);
             stream.mWrite(npc.World.MapName);
             stream.mWrite(npc.pos);
             stream.mWrite(npc.dir);
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE, (char)0, client.guid, false);
+            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE, 'G', client.guid, false);
         }
 
         internal static void ReadControl(BitStream stream, Client client)
@@ -30,7 +29,7 @@ namespace GUC.Server.WorldObjects
             if (client.mainChar == null)
             {
                 client.mainChar = client.character;
-                Network.Messages.ConnectionMessage.Write(client);
+                Network.Messages.ConnectionMessage.WriteInstanceTables(client);
 
                 if (OnEnterWorld != null)
                     OnEnterWorld(client.mainChar);

@@ -12,13 +12,31 @@ namespace GUC.Client.WorldObjects
         public static NPC Hero = null;
         public static List<uint> VobControlledList = new List<uint>();
 
-        public static Dictionary<ItemInstance, int> Inventory = new Dictionary<ItemInstance, int>();
+        public static void DoFists()
+        {
+            //send
+            if (Player.Hero.gNpc.WeaponMode == 0)
+            {
+                Player.Hero.DrawFists();
+            }
+            else if (Player.Hero.gNpc.WeaponMode == 1)
+            {
+                Player.Hero.gNpc.RemoveWeapon1();
+            }
+        }
 
+        #region Attributes & Talents
+
+        #endregion
+
+        #region Inventory
+
+        public static Dictionary<ItemInstance, int> Inventory = new Dictionary<ItemInstance, int>();
         public static void AddItem(ItemInstance instance, int amount)
         {
             if (!Inventory.ContainsKey(instance))
             {
-                Inventory.Add(instance, amount);   
+                Inventory.Add(instance, amount);
             }
             else
             {
@@ -37,10 +55,6 @@ namespace GUC.Client.WorldObjects
                     Inventory[instance] -= amount;
             }
         }
-
-        public static int AniTurnLeft;
-        public static int AniTurnRight;
-        public static int AniStrafeLeft;
-        public static int AniRun;
+        #endregion
     }
 }

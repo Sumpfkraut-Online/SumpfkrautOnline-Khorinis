@@ -20,9 +20,8 @@ namespace GUC.Client.WorldObjects
             }
         }
 
-        public Item(uint id, uint instanceID) : base(id, oCItem.Create(Program.Process))
+        public Item(uint id, uint instanceID) : base(id, ItemInstance.InstanceDict[instanceID].CreateItem())
         {
-            ItemInstance.InstanceDict[instanceID].InitItem(gItem);
             CDDyn = true;
             CDStatic = true;
             gItem.Amount = 1;

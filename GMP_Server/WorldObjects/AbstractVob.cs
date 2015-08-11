@@ -65,22 +65,6 @@ namespace GUC.Server.WorldObjects
         }
         #endregion
 
-        #region Visual
-        protected string visual = "HUMANS.MDS";
-        public string Visual
-        {
-            get
-            {
-                return visual;
-            }
-            set
-            {
-                visual = value;
-                //update network
-            }
-        }
-        #endregion
-
         #region Collision
         protected bool cddyn = true;
         protected bool cdstatic = true;
@@ -155,7 +139,7 @@ namespace GUC.Server.WorldObjects
             stream.mWrite(ID);
 
             foreach (Client client in list)
-                Program.server.ServerInterface.Send(stream, PacketPriority.MEDIUM_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, client.guid, false);
+                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
         }
 
         #region Cells

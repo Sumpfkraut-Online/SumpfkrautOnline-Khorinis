@@ -22,6 +22,7 @@ namespace GUC.Enumeration
         //player stuff
         PlayerControlMessage,
         PlayerPickUpItemMessage,
+        PlayerAttributeMessage,
 
         //world
         WorldVobSpawnMessage,
@@ -39,14 +40,14 @@ namespace GUC.Enumeration
         NPCFoodMessage,
 
         NPCStateMessage,
+        NPCWeaponStateMessage,
+
         NPCAttackMessage,
         NPCHitMessage,
 
-        NPCWeaponStateMessage,
-        NPCTalentMessage,
-
-        //item instances
+        //instances
         ItemInstanceMessage,
+        NPCInstanceMessage,
 
         //inventory
         InventoryAddMessage, //add iteminstance to player inventory
@@ -57,25 +58,6 @@ namespace GUC.Enumeration
         //controller stuff
         ControlAddVobMessage,
         ControlRemoveVobMessage
-    }
-
-    public enum NPCState : byte
-    {
-        Stand,
-
-        MoveForward,
-        MoveBackward,
-        MoveLeft,
-        MoveRight,
-
-        Jump,
-
-        AttackForward,
-        AttackLeft,
-        AttackRight,
-        AttackRun,
-        Parry,
-        DodgeBack,
     }
 
     public enum TradeStatus : byte

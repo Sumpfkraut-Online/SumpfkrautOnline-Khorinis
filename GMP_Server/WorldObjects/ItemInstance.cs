@@ -65,15 +65,6 @@ namespace GUC.Server.WorldObjects
 
         protected ItemInstance()
         {
-            string codename = this.GetType().Name.ToUpper();
-            if (instanceDict.ContainsKey(codename))
-            {
-                throw new Exception("Iteminstance " + codename + " is already existing.");
-            }
-            ID = (uint)instanceList.Count;
-            instanceList.Add(this);
-            instanceDict.Add(codename, this);
-
             Name = "";
             ScemeName = "";
             Protection = new ushort[8];
@@ -107,10 +98,19 @@ namespace GUC.Server.WorldObjects
             IsTorch = false;
             IsTorchBurned = false;
             IsTorchBurning = false;
+        }
 
-            /*BitStream stream = Program.server.SetupStream(NetworkID.ItemInstanceMessage);
-            Write(stream);
-            Program.server.SendToPlayers(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED);*/
+        public static void AddInstance(ItemInstance inst)
+        {
+            string codename = inst.GetType().Name.ToUpper();
+            if (instanceDict.ContainsKey(codename))
+            {
+                throw new Exception("Iteminstance " + codename + " is already existing.");
+            }
+            inst.ID = (uint)instanceList.Count;
+            instanceList.Add(inst);
+            instanceDict.Add(codename, inst);
+
         }
 
         public virtual bool CanTake(NPC npc) //requirement check for FIRST taking (plants from the ground, fur from animals etc)

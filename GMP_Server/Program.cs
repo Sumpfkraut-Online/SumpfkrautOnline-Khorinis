@@ -6,6 +6,7 @@ using System.IO;
 using GUC.Options;
 using GUC.Types;
 using System.Threading;
+using GUC.Server.WorldObjects;
 
 namespace GUC.Server
 {
@@ -83,8 +84,7 @@ namespace GUC.Server
             {
                 server = new Network.Server();
                 server.Start((ushort)serverOptions.Port, (ushort)serverOptions.Slots, serverOptions.password);
-                //ModuleLoader.loadAllModules();
-
+                
                 scriptManager = new Scripting.ScriptManager();
                 scriptManager.Init();
                 scriptManager.Startup();
@@ -97,17 +97,14 @@ namespace GUC.Server
                 long tickMax = 0;
 
                 long ticks, elapsed;
-                const int serverTickrate = 30; //max 30 updates per second => every 33ms
-                const int updateTime = (int)(1000 / serverTickrate * TimeSpan.TicksPerMillisecond);
+                //const int serverTickrate = 30;
+                const long updateTime = 20 * TimeSpan.TicksPerMillisecond;
                 while (true)
                 {
                     ticks = DateTime.Now.Ticks;
-                    //Player.sUpdateNPCList(ticks);
 
-                    //ModuleLoader.updateAllModules();
                     scriptManager.Update();
                     server.Update(); //process received packets
-                    //WorldObjects.AbstractCtrlVob.UpdateCtrlNPCs();
 
                     if (nextInfoUpdates < DateTime.Now.Ticks)
                     {
@@ -141,69 +138,5 @@ namespace GUC.Server
             }
             Console.Read();
         }
-
-        /*
-        static int index = 0;
-        static long lastNPC = 0;
-        static void updateNPCController(long now)
-        {
-            if (sWorld.NpcList.Count == 0)
-                return;
-            if (sWorld.PlayerList.Count == 0)
-                return;
-                    
-            int x = (sWorld.NpcList.Count / 250 == 0) ? 1 : (sWorld.NpcList.Count / 250);
-
-
-
-            if (lastNPC + 10000 * (250 / (sWorld.NpcList.Count / x)) > now)
-                return;
-
-            if (index >= sWorld.NpcList.Count)
-                index = 0;
-            int c = 250;
-            int endIndex = (index + c > sWorld.NpcList.Count) ? sWorld.NpcList.Count : index + c;
-
-            
-
-            for (; index < endIndex; index++)
-            {
-                
-                //Checking NPC-Ranges!
-                NPC npc = sWorld.NpcList[index];
-
-                if (!npc.IsSpawned)
-                    continue;
-                if (npc.npcController != null)
-                {
-                    //Check if npc is in range of controller:
-                    if (!npc.Map.Equals(npc.npcController.character.Map) || npc.Position.getDistance(npc.npcController.character.Position) > 4500)
-                    {
-                        //Send Controller-Message and set NpcController to null
-                        NPCControllerMessage.Write(npc, npc.npcController, false);
-
-                        npc.npcController.NPCControlledList.Remove(npc);
-                        npc.npcController = null;
-                    }
-                }
-                else //Search new Player to control the npc!
-                {
-                    Scripting.Objects.Character.Player player = npc.ScriptingNPC.getNearestPlayers(4000.0f);
-                    if (player != null)
-                    {
-                        //Send new controller message!
-
-                        npc.npcController = ((NPC)player.proto).client;
-                        npc.npcController.NPCControlledList.Add(npc);
-                        
-                        NPCControllerMessage.Write(npc, npc.npcController, true);
-
-                    }
-                }
-            }
-
-            lastNPC = now;
-
-        }*/
     }
 }

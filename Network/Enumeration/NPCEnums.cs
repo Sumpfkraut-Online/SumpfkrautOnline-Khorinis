@@ -5,6 +5,27 @@ using System.Text;
 
 namespace GUC.Enumeration
 {
+    public enum NPCState : byte
+    {
+        Stand,
+
+        MoveForward,
+        MoveBackward,
+        MoveLeft,
+        MoveRight,
+
+        Jump,
+
+        Fall,
+
+        AttackForward,
+        AttackLeft,
+        AttackRight,
+        AttackRun,
+        Parry,
+        DodgeBack,
+    }
+
     public struct NPCAttributes
     {
         public const int Health = 0;
@@ -30,5 +51,20 @@ namespace GUC.Enumeration
         Melee,
         Ranged,
         Magic
+    }
+
+    internal struct NPCAppearanceFlags
+    {
+        public const short Name = 1;
+        public const short Visual = 2;
+        public const short BodyMesh = 4;
+        public const short BodyTex = 8;
+        public const short HeadMesh = 16;
+        public const short HeadTex = 32;
+        public const short BodyHeight = 64;
+        public const short BodyWidth = 128;
+        public const short Fatness = 256;
+        public const short Voice = 512;
+        public const short HumanHead = 1024;
     }
 }

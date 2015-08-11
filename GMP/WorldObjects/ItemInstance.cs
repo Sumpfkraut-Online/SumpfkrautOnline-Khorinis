@@ -67,8 +67,10 @@ namespace GUC.Client.WorldObjects
         {
         }
 
-        public void InitItem(oCItem gItem)
+        public oCItem CreateItem()
         {
+            oCItem gItem = oCItem.Create(Program.Process);
+
             gItem.Instanz = (int)this.id;
 
             if (name != null) gItem.Name.Set(name);
@@ -91,6 +93,8 @@ namespace GUC.Client.WorldObjects
                 gItem.Count[i] = count[i];
             }
             gItem.Munition = 9999;
+
+            return gItem;
         }
 
         public static void ReadNew(BitStream stream)

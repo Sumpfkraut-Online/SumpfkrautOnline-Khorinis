@@ -34,7 +34,7 @@ namespace GUC.Server.Network.Messages
             stream.mWrite((ushort)ani);
 
             foreach(Client client in list)
-                Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, (char)0, client.guid, false);
+                Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'W', client.guid, false);
         }
 
         public static void WriteAniStop(IEnumerable<Client> list, NPC npc, Animations ani, bool fadeout)
@@ -45,7 +45,7 @@ namespace GUC.Server.Network.Messages
             stream.mWrite(fadeout);
 
             foreach (Client client in list)
-                Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, (char)0, client.guid, false);
+                Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'W', client.guid, false);
         }
 
         #endregion
@@ -55,6 +55,18 @@ namespace GUC.Server.Network.Messages
             BitStream stream = Program.server.SetupStream(NetworkID.NPCFoodMessage);
             //stream.mWrite()
         }
+
+        public static void WriteEquipMessage(IEnumerable<Client> list, NPC npc, ItemInstance inst)
+        {
+            BitStream stream = Program.server.SetupStream(NetworkID.NPCEquipMessage);
+            stream.mWrite(npc.ID);
+            stream.mWrite(inst.ID);
+
+            foreach (Client client in list)
+                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
+        }
+
+        #region States
 
         public static void ReadState(BitStream stream, Client client)
         {
@@ -87,8 +99,34 @@ namespace GUC.Server.Network.Messages
             stream.mWrite(npc.pos);
             stream.mWrite(npc.dir);
             foreach (Client client in list)
-                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0,client.guid,false);
+                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W',client.guid,false);
         }
+
+        public static void ReadWeaponState(BitStream stream, Client client)
+        {
+            client.character.WeaponState = (NPCWeaponState)stream.mReadByte();
+            bool removeType1 = stream.ReadBit();
+            client.character.pos = stream.mReadVec();
+            client.character.dir = stream.mReadVec();
+            WriteWeaponState(client.character.cell.SurroundingClients(client), client.character, removeType1);
+        }
+
+        public static void WriteWeaponState(IEnumerable<Client> list, NPC npc, bool removeType1)
+        {
+            BitStream stream = Program.server.SetupStream(NetworkID.NPCWeaponStateMessage);
+            stream.mWrite(npc.ID);
+            stream.mWrite((byte)npc.WeaponState);
+            stream.mWrite(removeType1);
+            stream.mWrite(npc.pos);
+            stream.mWrite(npc.dir);
+
+            foreach (Client client in list)
+                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
+        }
+
+        #endregion
+
+        #region Combat
 
         public static void ReadAttack(BitStream stream, Client client)
         {
@@ -118,56 +156,36 @@ namespace GUC.Server.Network.Messages
             }
 
             foreach (Client client in list)
-                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, client.guid, false);
-        }
-
-        public static void WriteWeaponState(IEnumerable<Client> list, NPC npc)
-        {
-            BitStream stream = Program.server.SetupStream(NetworkID.NPCWeaponStateMessage);
-            stream.mWrite(npc.ID);
-            stream.mWrite((byte)npc.WeaponState);
-            stream.mWrite(npc.pos);
-            stream.mWrite(npc.dir);
-            
-            foreach (Client client in list)
-                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, client.guid, false);
-        }
-
-        public static void ReadWeaponState(BitStream stream, Client client)
-        {
-            client.character.WeaponState = (NPCWeaponState)stream.mReadByte();
-            client.character.pos = stream.mReadVec();
-            client.character.dir = stream.mReadVec();
-            WriteWeaponState(client.character.cell.SurroundingClients(client), client.character);
-        }
-
-        public static void WriteEquipMessage(IEnumerable<Client> list, NPC npc, ItemInstance inst)
-        {
-            BitStream stream = Program.server.SetupStream(NetworkID.NPCEquipMessage);
-            stream.mWrite(npc.ID);
-            stream.mWrite(inst.ID);
-
-            foreach (Client client in list)
-                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, client.guid, false);
+                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
         }
 
         public static void ReadHitMessage(BitStream stream, Client client)
         {
             NPC attacker = client.character.World.GetNpcOrPlayer(stream.mReadUInt());
-            if (attacker != null)
+            byte num = stream.mReadByte();
+
+            if (num == 0) //this client got hit
             {
-                WriteHitMessage(client.character.cell.SurroundingClients(), attacker, client.character);
+                client.character.DoHit(attacker);
+            }
+            else //list of npcs this client has hit
+            {
+                uint id;
+                NPC npc;
+                for (int i = 0; i < num; i++)
+                {
+                    id = stream.mReadUInt(); 
+
+                    npc = null; //only check bots, because players send hit events themselves
+                    client.character.World.NPCDict.TryGetValue(id, out npc);
+                    if (npc != null)
+                    {
+                        npc.DoHit(attacker);
+                    }
+                }
             }
         }
 
-        public static void WriteHitMessage(IEnumerable<Client> list, NPC attacker, NPC target)
-        {
-            BitStream stream = Program.server.SetupStream(NetworkID.NPCHitMessage);
-            stream.mWrite(attacker.ID);
-            stream.mWrite(target.ID);
-
-            foreach (Client client in list)
-                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, client.guid, false);
-        }
+        #endregion
     }
 }

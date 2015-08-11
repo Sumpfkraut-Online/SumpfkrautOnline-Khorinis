@@ -213,18 +213,6 @@ namespace GUC.Server.Network
             client.Dispose();
         }
 
-        //sends the bitstream to all players ingame
-        public void SendToPlayers(BitStream stream, PacketPriority pp, PacketReliability pr)
-        {
-            foreach (Client client in clientList.Values.ToArray())
-            {
-                if (!client.isValid || client.character == null)
-                    continue;
-
-                GUC.Server.Program.server.ServerInterface.Send(stream, pp, pr, (char)0, client.guid, false);
-            }
-        }
-
         public BitStream SetupStream(NetworkID id)
         {
             SendBitStream.Reset();

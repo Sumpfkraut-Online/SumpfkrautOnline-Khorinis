@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using RakNet;
 using GUC.Enumeration;
-using Gothic.zClasses;
 using System.Management;
 using System.Security.Cryptography;
 using GUC.Network;
+using System.IO;
+using System.IO.Compression;
+using Gothic.zClasses;
 using GUC.Client.WorldObjects;
-using Gothic.zTypes;
 
 namespace GUC.Client.Network.Messages
 {
@@ -19,10 +20,12 @@ namespace GUC.Client.Network.Messages
         {
             String connString = getDefaultConnectionString(0);
             String macString = x();
+            byte[] npcTableHash = NPCInstance.ReadFile();
 
             BitStream stream = Program.client.SetupSendStream(NetworkID.ConnectionMessage);
             stream.mWrite(connString);
             stream.mWrite(macString);
+            stream.Write(npcTableHash, 16);
             Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE);
         }
 
@@ -69,10 +72,35 @@ namespace GUC.Client.Network.Messages
 
         public static void Read(BitStream stream)
         {
-            int num = stream.mReadInt();
-            for (int i = 0; i < num; i++)
+            if (stream.ReadBit())
             {
-                ItemInstance.ReadNew(stream);
+                NPCInstance inst;
+                ushort num = stream.mReadUShort();
+                NPCInstance.InstanceList = new Dictionary<ushort, NPCInstance>(num);
+                for (int i = 0; i < num; i++)
+                {
+                    inst = new NPCInstance();
+
+                    inst.ID = stream.mReadUShort();
+                    inst.Name = stream.mReadString();
+                    inst.Visual = stream.mReadString();
+                    inst.BodyMesh = stream.mReadString();
+                    inst.BodyTex = stream.mReadByte();
+                    inst.HeadMesh = stream.mReadString();
+                    inst.HeadTex = stream.mReadByte();
+                    inst.BodyHeight = (float)stream.mReadByte() / 100.0f;
+                    inst.BodyWidth = (float)stream.mReadByte() / 100.0f;
+                    inst.Fatness = (float)stream.mReadSByte() / 100.0f;
+                    inst.Voice = stream.mReadByte();
+
+                    NPCInstance.InstanceList.Add(inst.ID, inst);
+                }
+
+                NPCInstance.WriteFile();
+            }
+            if (stream.ReadBit())
+            {
+
             }
         }
     }

@@ -15,6 +15,9 @@ namespace GUC.Client.Hooks
     {
         public static Int32 hook_OnMessage(String message)
         {
+            //zCVob test = new zCVob(Program.Process, Program.Process.ReadInt(Convert.ToInt32(message) + 4));
+            //zERROR.GetZErr(Program.Process).Report(2, 'G', "Msg: " + test.VobType, 0, "Program.cs", 0);
+
             try
             {
                 int address = Convert.ToInt32(message);
@@ -35,6 +38,9 @@ namespace GUC.Client.Hooks
                             break;
                         case zCObject.VobTypes.oCMsgWeapon:
                             OnMsgWeapon(new oCMsgWeapon(Program.Process, msgAddr));
+                            break;
+                        case zCObject.VobTypes.oCMsgMovement:
+                            OnMsgMovement(new oCMsgMovement(Program.Process, msgAddr));
                             break;
                     }
                 }
@@ -80,6 +86,7 @@ namespace GUC.Client.Hooks
 
         static void OnMsgWeapon(oCMsgWeapon msg)
         {
+            bool removeType1 = false;
             switch (msg.SubType)
             {
                 //FIXME: Magic!
@@ -99,14 +106,33 @@ namespace GUC.Client.Hooks
                     }
                     break;
                 case oCMsgWeapon.SubTypes.RemoveWeapon:
+                    Player.Hero.WeaponState = NPCWeaponState.None;
+                    break;
                 case oCMsgWeapon.SubTypes.RemoveWeapon1:
                     Player.Hero.WeaponState = NPCWeaponState.None;
+                    removeType1 = true;
                     break;
                 default:
                     return;
-
             }
-            NPCMessage.WriteWeaponState();
+            NPCMessage.WriteWeaponState(removeType1);
+        }
+
+        static void OnMsgMovement(oCMsgMovement msg)
+        {
+            if (msg.SubType == oCMsgMovement.SubTypes.Strafe)
+            {
+                if (msg.Animation == Player.Hero.gNpc.AniCtrl._t_strafel)
+                {
+                    Player.Hero.State = NPCState.MoveLeft;
+                }
+                else if (msg.Animation == Player.Hero.gNpc.AniCtrl._t_strafer)
+                {
+                    Player.Hero.State = NPCState.MoveRight;
+                }
+                else return;
+                NPCMessage.WriteState(Player.Hero);
+            }
         }
 
         public static void AddHooks(Process process)

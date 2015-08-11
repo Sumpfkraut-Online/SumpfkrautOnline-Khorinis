@@ -24,8 +24,8 @@ namespace GUC.Client.GUI.MainMenu
                 info = value;
                 if (value != null)
                 {
-                    thisNpc.SetAdditionalVisuals(((BodyMesh)info.BodyMesh).ToString(), info.BodyTex, 0,
-                                                 ((HeadMesh)info.HeadMesh).ToString(), info.HeadTex, 0, -1);
+                    thisNpc.SetAdditionalVisuals(((HumanBodyMesh)info.BodyMesh).ToString(), info.BodyTex, 0,
+                                                 ((HumanHeadMesh)info.HeadMesh).ToString(), info.HeadTex, 0, -1);
 
                     using (zVec3 vec = zVec3.Create(Program.Process))
                     {
