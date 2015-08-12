@@ -20,7 +20,7 @@ namespace GUC.Client.WorldObjects
             }
         }
 
-        public Item(uint id, uint instanceID) : base(id, ItemInstance.InstanceDict[instanceID].CreateItem())
+        public Item(uint id, ushort instanceID) : base(id, ItemInstance.InstanceList[instanceID].CreateItem())
         {
             CDDyn = true;
             CDStatic = true;

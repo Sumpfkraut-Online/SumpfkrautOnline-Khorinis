@@ -280,14 +280,14 @@ namespace GUC.Client.GUI
                 //set description box
                 if (instance.Name != null && instance.Name.Length > 0)
                 {
-                    descrBack.Texts[0].Text = instance.Name;
+                    descrBack.Texts[0].Text = instance.Name.Value;
                 }
 
                 for (int i = 0; i < 6; i++)
                 {
                     if (instance.Text[i] != null && instance.Text[i].Length > 0)
                     {
-                        descrBack.Texts[2*i+1].Text = instance.Text[i];
+                        descrBack.Texts[2*i+1].Text = instance.Text[i].Value;
                         descrBack.Texts[2*i+2].Text = instance.Count[i].ToString();
                     }
                 }
@@ -336,7 +336,7 @@ namespace GUC.Client.GUI
 
             UpdateSlots();
 
-            KeyValuePair<ItemInstance,int> gold = contents.Find(i => i.Key.Name == "Gold");
+            KeyValuePair<ItemInstance,int> gold = contents.Find(i => i.Key.Name.Value == "Gold");
             int weight = 0;
             foreach (KeyValuePair<ItemInstance,int> pair in contents)
             {
@@ -412,7 +412,7 @@ namespace GUC.Client.GUI
 
         #region sorting
 
-        static List<MainFlags> sortList = new List<MainFlags>() { MainFlags.ITEM_KAT_NF,
+        /*static List<MainFlags> sortList = new List<MainFlags>() { MainFlags.ITEM_KAT_NF,
                                                                   MainFlags.ITEM_KAT_FF,
                                                                   MainFlags.ITEM_KAT_MUN,
                                                                   MainFlags.ITEM_KAT_FOOD,
@@ -420,14 +420,14 @@ namespace GUC.Client.GUI
                                                                   MainFlags.ITEM_KAT_ARMOR,
                                                                   MainFlags.ITEM_KAT_DOCS,
                                                                   MainFlags.ITEM_KAT_POTIONS,
-                                                                  MainFlags.ITEM_KAT_MAGIC };
+                                                                  MainFlags.ITEM_KAT_MAGIC };*/
 
         static InventoryComparer inventoryComparer = new InventoryComparer();
         class InventoryComparer : IComparer<KeyValuePair<ItemInstance, int>>
         {
             public int Compare(KeyValuePair<ItemInstance, int> a, KeyValuePair<ItemInstance, int> b)
             {
-                int aIndex = sortList.IndexOf(a.Key.MainFlags);
+               /* int aIndex = sortList.IndexOf(a.Key.MainFlags);
                 int bIndex = sortList.IndexOf(a.Key.MainFlags);
                 if (aIndex < 0) aIndex = sortList.Count;
                 if (bIndex < 0) bIndex = sortList.Count;
@@ -435,7 +435,7 @@ namespace GUC.Client.GUI
                 if (aIndex.CompareTo(bIndex) != 0)
                 {
                     return aIndex.CompareTo(bIndex);
-                }
+                }*/
                 return a.Key.Count[0].CompareTo(b.Key.Count[0]); //just sort by something
             }
         }

@@ -266,7 +266,7 @@ namespace GUC.Client.Network.Messages
             if (npc == null) return;
 
             ItemInstance inst;
-            ItemInstance.InstanceDict.TryGetValue(stream.mReadUInt(), out inst);
+            ItemInstance.InstanceList.TryGetValue(stream.mReadUShort(), out inst);
             if (inst == null) return;
 
             if (inst == npc.EquippedMeleeWeapon)
@@ -286,17 +286,17 @@ namespace GUC.Client.Network.Messages
             }
             else
             {
-                if (inst.MainFlags == MainFlags.ITEM_KAT_NF)
+                if (inst.MainFlags == oCItem.MainFlags.ITEM_KAT_NF)
                 {
                     npc.EquippedMeleeWeapon = inst;
                     npc.gNpc.UnequipItem(npc.gNpc.GetEquippedMeleeWeapon());
                 }
-                else if (inst.MainFlags == MainFlags.ITEM_KAT_FF)
+                else if (inst.MainFlags == oCItem.MainFlags.ITEM_KAT_FF)
                 {
                     npc.EquippedRangedWeapon = inst;
                     npc.gNpc.UnequipItem(npc.gNpc.GetEquippedRangedWeapon());
                 }
-                else if (inst.MainFlags == MainFlags.ITEM_KAT_ARMOR)
+                else if (inst.MainFlags == oCItem.MainFlags.ITEM_KAT_ARMOR)
                 {
                     npc.EquippedArmor = inst;
                     npc.gNpc.UnequipItem(npc.gNpc.GetEquippedArmor());

@@ -7,6 +7,7 @@ using GUC.Server.Network;
 using RakNet;
 using GUC.Network;
 using System.IO;
+using System.IO.Compression;
 using System.Security.Cryptography;
 
 namespace GUC.Server.WorldObjects
@@ -22,7 +23,6 @@ namespace GUC.Server.WorldObjects
         public static Dictionary<ushort, NPCInstance> InstanceList { get { return instanceList; } }
 
         public ushort ID { get; protected set; }
-
         public string _CodeName { get; protected set; }
 
         #region Client fields
@@ -86,6 +86,7 @@ namespace GUC.Server.WorldObjects
 
             instanceList.Add(this.ID, this);
             instanceDict.Add(this._CodeName, this);
+            idCount = (ushort)(this.ID + 1);
         }
 
         #endregion
@@ -98,23 +99,27 @@ namespace GUC.Server.WorldObjects
         public static void NetUpdate()
         {
             using (MemoryStream ms = new MemoryStream())
-            using (BinaryWriter bw = new BinaryWriter(ms, Encoding.UTF8))
-            {
-                bw.Write((ushort)instanceList.Count);
-                //ordered by IDs
-                foreach (NPCInstance inst in instanceList.Values.OrderBy(n => n.ID))
+            {   //SO MANY STREAMS
+                using (GZipStream gz = new GZipStream(ms, CompressionMode.Compress))
+                using (BufferedStream bs = new BufferedStream(gz))
+                using (BinaryWriter bw = new BinaryWriter(bs, Encoding.UTF8))
                 {
-                    bw.Write(inst.ID);
-                    bw.Write(inst.Name);
-                    bw.Write(inst.Visual);
-                    bw.Write(inst.BodyMesh);
-                    bw.Write(inst.BodyTex);
-                    bw.Write(inst.HeadMesh);
-                    bw.Write(inst.HeadTex);
-                    bw.Write(inst.BodyHeight);
-                    bw.Write(inst.BodyWidth);
-                    bw.Write(inst.Fatness);
-                    bw.Write(inst.Voice);
+                    bw.Write((ushort)instanceList.Count);
+                    //ordered by IDs
+                    foreach (NPCInstance inst in instanceList.Values.OrderBy(n => n.ID))
+                    {
+                        bw.Write(inst.ID);
+                        bw.Write(inst.Name);
+                        bw.Write(inst.Visual);
+                        bw.Write(inst.BodyMesh);
+                        bw.Write(inst.BodyTex);
+                        bw.Write(inst.HeadMesh);
+                        bw.Write(inst.HeadTex);
+                        bw.Write(inst.BodyHeight);
+                        bw.Write(inst.BodyWidth);
+                        bw.Write(inst.Fatness);
+                        bw.Write(inst.Voice);
+                    }
                 }
                 data = ms.ToArray();
             }
@@ -124,6 +129,8 @@ namespace GUC.Server.WorldObjects
                 md5.TransformFinalBlock(data, 0, data.Length);
                 hash = md5.Hash;
             }
+
+            System.IO.File.WriteAllBytes("data1", data);
         }
 
         #endregion

@@ -80,15 +80,14 @@ namespace GUC.Server.Network
             Player.WriteControl(this, character);
         }
 
-        public void CheckValidity(String driveString, String macString, byte[] npcTableHash)
+        public void CheckValidity(String driveString, String macString, byte[] npcTableHash, byte[] itemTableHash)
         {
             //FIXME: Check for banned strings
             this.DriveString = driveString;
             this.MacString = macString;
 
             instanceNPCNeeded = !npcTableHash.SequenceEqual(NPCInstance.hash);
-
-            Log.Logger.log(System.BitConverter.ToString(npcTableHash) + " ? " + System.BitConverter.ToString(NPCInstance.hash));
+            instanceItemNeeded = !itemTableHash.SequenceEqual(ItemInstance.hash);
 
             isValid = true;
         }

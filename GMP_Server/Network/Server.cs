@@ -121,6 +121,8 @@ namespace GUC.Server.Network
         {
             Packet p = ServerInterface.Receive();
             Client client;
+            PacketReader func;
+            byte msgID;
 
             while (p != null)
             {
@@ -156,20 +158,20 @@ namespace GUC.Server.Network
                                 ReceiveBitStream.Reset();
                                 ReceiveBitStream.Write(p.data, p.length);
                                 ReceiveBitStream.IgnoreBytes(2);
+                                msgID = p.data[1];
                                 if (client.isValid)
                                 {
-                                    if (!client.isLoggedIn && p.data[1] > (byte)NetworkID.AccountLoginMessage)
+                                    if (!client.isLoggedIn && msgID > (byte)NetworkID.AccountLoginMessage)
                                     { //not even logged in but trying to send non-login-packets
                                         DisconnectClient(client);
                                         return;
-                                    } 
-                                    else if (!client.isControlling && p.data[1] > (byte)NetworkID.PlayerControlMessage)
+                                    }
+                                    else if (!client.isControlling && msgID > (byte)NetworkID.PlayerControlMessage)
                                     { //not even controlling a character but trying to send character-packets
                                         DisconnectClient(client);
                                         return;
                                     }
-                                    PacketReader func;
-                                    MessageListener.TryGetValue(p.data[1], out func);
+                                    MessageListener.TryGetValue(msgID, out func);
                                     if (func != null)
                                     {
                                         func(ReceiveBitStream, client);
@@ -177,7 +179,7 @@ namespace GUC.Server.Network
                                 }
                                 else
                                 {
-                                    if (p.data[1] == (byte)NetworkID.ConnectionMessage) //sends mac & drive string
+                                    if (msgID == (byte)NetworkID.ConnectionMessage) //sends mac & drive string
                                     {
                                         ConnectionMessage.Read(ReceiveBitStream, client);
                                     }

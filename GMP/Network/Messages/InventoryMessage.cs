@@ -13,9 +13,9 @@ namespace GUC.Client.Network.Messages
     {
         public static void ReadAddItem(BitStream stream)
         {
-            uint id = stream.mReadUInt();
+            ushort id = stream.mReadUShort();
             ItemInstance instance;
-            if (ItemInstance.InstanceDict.TryGetValue(id, out instance))
+            if (ItemInstance.InstanceList.TryGetValue(id, out instance))
             {
                 Player.AddItem(instance, stream.mReadInt());
             }
@@ -23,9 +23,9 @@ namespace GUC.Client.Network.Messages
 
         public static void ReadRemoveItem(BitStream stream)
         {
-            uint id = stream.mReadUInt();
+            ushort id = stream.mReadUShort();
             ItemInstance instance;
-            if (ItemInstance.InstanceDict.TryGetValue(id, out instance))
+            if (ItemInstance.InstanceList.TryGetValue(id, out instance))
             {
                 Player.RemoveItem(instance, stream.mReadInt());
             }

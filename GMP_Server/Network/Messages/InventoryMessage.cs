@@ -29,12 +29,12 @@ namespace GUC.Server.Network.Messages
 
         public static void ReadDropItem(BitStream stream, Client client)
         {
-            uint id = stream.mReadUInt();
+            ushort id = stream.mReadUShort();
             int amount = stream.mReadInt();
 
             if (id < ItemInstance.InstanceList.Count)
             {
-                ItemInstance inst = ItemInstance.InstanceList[(int)id];
+                ItemInstance inst = ItemInstance.InstanceList[id];
                 if (client.character.HasItem(inst, amount))
                 {
                     client.character.RemoveItem(inst, amount);
@@ -48,15 +48,15 @@ namespace GUC.Server.Network.Messages
 
         public static void ReadUseItem(BitStream stream, Client client)
         {
-            uint id = stream.mReadUInt();
+            /*ushort id = stream.mReadUShort();
             if (id < ItemInstance.InstanceList.Count)
             {
-                ItemInstance inst = ItemInstance.InstanceList[(int)id];
+                ItemInstance inst = ItemInstance.InstanceList[id];
                 if (client.character.HasItem(inst))
                 {
                     inst.Use(client.character);
                 }
-            }
+            }*/
         }
     }
 }

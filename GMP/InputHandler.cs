@@ -79,7 +79,7 @@ namespace GUC.Client
                         {
                             if (ticks > keys[i])
                             {
-                                keys[i] = ticks + 200000;
+                                keys[i] = ticks + 20000;//200000;
                                 SendKeyPressed((VirtualKeys)i);
                             }
                         }

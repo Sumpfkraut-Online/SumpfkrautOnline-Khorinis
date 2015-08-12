@@ -47,7 +47,7 @@ namespace GUC.Client.Network.Messages
 
         public static void ReadItemSpawn(BitStream stream)
         {
-            Item item = new Item(stream.mReadUInt(), stream.mReadUInt());
+            Item item = new Item(stream.mReadUInt(), stream.mReadUShort());
             Vec3f pos = stream.mReadVec();
             Vec3f dir = stream.mReadVec();
             bool drop = stream.ReadBit();

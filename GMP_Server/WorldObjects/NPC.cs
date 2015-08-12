@@ -420,7 +420,7 @@ namespace GUC.Server.WorldObjects
 
         public void Equip(ItemInstance inst)
         {
-            if (inst.MainFlags == MainFlags.ITEM_KAT_NF)
+            /*if (inst.MainFlags == MainFlags.ITEM_KAT_NF)
             {
                 equippedMeleeWeapon = inst;
             }
@@ -432,7 +432,7 @@ namespace GUC.Server.WorldObjects
             {
                 equippedArmor = inst;
             }
-            else return;
+            else return;*/
             NPCMessage.WriteEquipMessage(this.cell.SurroundingClients(), this, inst);
         }
 

@@ -13,17 +13,17 @@ using System.Security.Cryptography;
 
 namespace GUC.Client.WorldObjects
 {
-    class NPCInstance
+    class NPCInstance : IDisposable
     {
         public static Dictionary<ushort, NPCInstance> InstanceList;
 
         public ushort ID;
 
-        public string Name;
-        public string Visual;
-        public string BodyMesh;
+        public zString Name;
+        public zString Visual;
+        public zString BodyMesh;
         public int BodyTex;
-        public string HeadMesh;
+        public zString HeadMesh;
         public int HeadTex;
 
         public float BodyHeight;
@@ -39,7 +39,7 @@ namespace GUC.Client.WorldObjects
 
         public oCNpc CreateNPC(oCNpc npc)
         {
-            npc.Instance = (int)ID;
+            npc.Instance = ID;
             npc.Name.Set(Name);
             npc.SetVisual(Visual);
             npc.SetAdditionalVisuals(BodyMesh, BodyTex, 0, HeadMesh, HeadTex, 0, -1);
@@ -57,7 +57,7 @@ namespace GUC.Client.WorldObjects
             return npc;
         }
 
-        static string FileName = "Data1.pak";
+        static string FileName = States.StartupState.getDaedalusPath() + "Data1.pak";
 
         public static byte[] ReadFile()
         {
@@ -65,48 +65,16 @@ namespace GUC.Client.WorldObjects
             {
                 if (File.Exists(FileName))
                 {
+                    byte[] data = File.ReadAllBytes(FileName);
+                    ReadData(data);
+
                     byte[] hash;
-                    using (MemoryStream ms = new MemoryStream())
+                    using (MD5 md5 = new MD5CryptoServiceProvider())
                     {
-                        using (FileStream fs = new FileStream(FileName, FileMode.Open))
-                        using (GZipStream gz = new GZipStream(fs, CompressionMode.Decompress))
-                        {
-                            gz.CopyTo(ms);
-                        }
-
-                        ms.Position = 0;
-
-                        using (BinaryReader br = new BinaryReader(ms,Encoding.UTF8))
-                        {
-                            NPCInstance inst;
-                            ushort num = br.ReadUInt16();
-                            InstanceList = new Dictionary<ushort, NPCInstance>(num);
-                            for (int i = 0; i < num; i++)
-                            {
-                                inst = new NPCInstance();
-
-                                inst.ID = br.ReadUInt16();
-                                inst.Name = br.ReadString();
-                                inst.Visual = br.ReadString();
-                                inst.BodyMesh = br.ReadString();
-                                inst.BodyTex = br.ReadByte();
-                                inst.HeadMesh = br.ReadString();
-                                inst.HeadTex = br.ReadByte();
-                                inst.BodyHeight = (float)br.ReadByte() / 100.0f;
-                                inst.BodyWidth = (float)br.ReadByte() / 100.0f;
-                                inst.Fatness = (float)br.ReadSByte() / 100.0f;
-                                inst.Voice = br.ReadByte();
-
-                                InstanceList.Add(inst.ID, inst);
-                            }
-
-                            using (MD5 md5 = new MD5CryptoServiceProvider())
-                            {
-                                md5.TransformFinalBlock(ms.ToArray(), 0, (int)ms.Length);
-                                hash = md5.Hash;
-                            }
-                        }
+                        md5.TransformFinalBlock(data, 0, data.Length);
+                        hash = md5.Hash;
                     }
+
                     return hash;
                 }
             }
@@ -114,28 +82,89 @@ namespace GUC.Client.WorldObjects
             return new byte[16];
         }
 
+        public static void ReadData(byte[] data)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                ms.Write(data, 0, data.Length);
+                ms.Position = 0;
+
+                using (GZipStream gz = new GZipStream(ms, CompressionMode.Decompress))
+                using (BinaryReader br = new BinaryReader(gz, Encoding.UTF8))
+                {
+                    // dispose old instances
+                    if (InstanceList != null)
+                    for (int i = 0; i < InstanceList.Count; i++)
+                    {
+                        InstanceList.ElementAt(i).Value.Dispose();
+                    }
+
+                    //read new instances
+                    NPCInstance inst;
+                    ushort num = br.ReadUInt16();
+                    InstanceList = new Dictionary<ushort, NPCInstance>(num);
+                    for (int i = 0; i < num; i++)
+                    {
+                        inst = new NPCInstance();
+
+                        inst.ID = br.ReadUInt16();
+                        inst.Name = zString.Create(Program.Process, br.ReadString());
+                        inst.Visual = zString.Create(Program.Process, br.ReadString());
+                        inst.BodyMesh = zString.Create(Program.Process, br.ReadString());
+                        inst.BodyTex = br.ReadByte();
+                        inst.HeadMesh = zString.Create(Program.Process, br.ReadString());
+                        inst.HeadTex = br.ReadByte();
+                        inst.BodyHeight = (float)br.ReadByte() / 100.0f;
+                        inst.BodyWidth = (float)br.ReadByte() / 100.0f;
+                        inst.Fatness = (float)br.ReadSByte() / 100.0f;
+                        inst.Voice = br.ReadByte();
+
+                        InstanceList.Add(inst.ID, inst);
+                    }
+                }
+            }
+        }
+
         public static void WriteFile()
         {
             using (FileStream fs = new FileStream(FileName, FileMode.Create))
             using (GZipStream gz = new GZipStream(fs, CompressionMode.Compress))
-            using (BinaryWriter bw = new BinaryWriter(gz,Encoding.UTF8))
+            using (BinaryWriter bw = new BinaryWriter(gz, Encoding.UTF8))
             {
                 bw.Write((ushort)InstanceList.Count);
                 //ordered by IDs
                 foreach (NPCInstance inst in InstanceList.Values.OrderBy(n => n.ID))
                 {
                     bw.Write(inst.ID);
-                    bw.Write(inst.Name);
-                    bw.Write(inst.Visual);
-                    bw.Write(inst.BodyMesh);
+                    bw.Write(inst.Name.Value);
+                    bw.Write(inst.Visual.Value);
+                    bw.Write(inst.BodyMesh.Value);
                     bw.Write((byte)inst.BodyTex);
-                    bw.Write(inst.HeadMesh);
+                    bw.Write(inst.HeadMesh.Value);
                     bw.Write((byte)inst.HeadTex);
-                    bw.Write((byte)Math.Round(100.0f*(float)inst.BodyHeight));
-                    bw.Write((byte)Math.Round(100.0f*(float)inst.BodyWidth));
-                    bw.Write((sbyte)Math.Round(100.0f*(float)inst.Fatness));
+                    bw.Write((byte)Math.Round(100.0f * (float)inst.BodyHeight));
+                    bw.Write((byte)Math.Round(100.0f * (float)inst.BodyWidth));
+                    bw.Write((sbyte)Math.Round(100.0f * (float)inst.Fatness));
                     bw.Write((byte)inst.Voice);
                 }
+            }
+        }
+
+        private bool disposed = false;
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!this.disposed)
+            {
+                Name.Dispose();
+                Visual.Dispose();
+                BodyMesh.Dispose();
+                HeadMesh.Dispose();
+                disposed = true;
             }
         }
     }

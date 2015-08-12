@@ -38,21 +38,27 @@ namespace GUC.Client.States
         public override Dictionary<VirtualKeys, Action> Shortcuts { get { return shortcuts; } }
 
         static NPC npc;
+        static Item item;
+        static uint num = 9999;
         public static void RenderTest()
         {
-            if (npc == null)
-            {
-                npc = new NPC(9999);
-                NPCInstance.InstanceList[3].CreateNPC(npc.gNpc);
-                npc.gNpc.SetToFistMode();
-                npc.Spawn();
-            }
+
+            npc = new NPC(num++);
+            NPCInstance.InstanceList[3].CreateNPC(npc.gNpc);
+            npc.gNpc.SetToFistMode();
             npc.Position = new Vec3f(0, 1000, 0);
+            npc.Spawn();
         }
 
+        static Random rand = new Random();
         public static void RenderTest2()
         {
-            npc.State = NPCState.MoveRight;
+            for (int i = 0; i < 25; i++)
+            {
+                item = new Item(num++, (ushort)rand.Next(0, 7));
+                item.Position = new Vec3f(rand.Next(-700, 700), 1000, rand.Next(-700, 700));
+                item.Spawn(item.Position, item.Direction, true);
+            }
         }
 
         public static void RenderTest3()

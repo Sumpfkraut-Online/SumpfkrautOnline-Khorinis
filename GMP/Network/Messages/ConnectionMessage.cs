@@ -21,11 +21,13 @@ namespace GUC.Client.Network.Messages
             String connString = getDefaultConnectionString(0);
             String macString = x();
             byte[] npcTableHash = NPCInstance.ReadFile();
+            byte[] itemTableHash = ItemInstance.ReadFile();
 
             BitStream stream = Program.client.SetupSendStream(NetworkID.ConnectionMessage);
             stream.mWrite(connString);
             stream.mWrite(macString);
             stream.Write(npcTableHash, 16);
+            stream.Write(itemTableHash, 16);
             Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE);
         }
 
@@ -72,35 +74,28 @@ namespace GUC.Client.Network.Messages
 
         public static void Read(BitStream stream)
         {
-            if (stream.ReadBit())
+            if (stream.ReadBit()) // new npc instances for us
             {
-                NPCInstance inst;
-                ushort num = stream.mReadUShort();
-                NPCInstance.InstanceList = new Dictionary<ushort, NPCInstance>(num);
-                for (int i = 0; i < num; i++)
-                {
-                    inst = new NPCInstance();
+                int len = stream.mReadInt(); // length of packed data
 
-                    inst.ID = stream.mReadUShort();
-                    inst.Name = stream.mReadString();
-                    inst.Visual = stream.mReadString();
-                    inst.BodyMesh = stream.mReadString();
-                    inst.BodyTex = stream.mReadByte();
-                    inst.HeadMesh = stream.mReadString();
-                    inst.HeadTex = stream.mReadByte();
-                    inst.BodyHeight = (float)stream.mReadByte() / 100.0f;
-                    inst.BodyWidth = (float)stream.mReadByte() / 100.0f;
-                    inst.Fatness = (float)stream.mReadSByte() / 100.0f;
-                    inst.Voice = stream.mReadByte();
+                byte[] data = new byte[len];
+                stream.Read(data, (uint)len);
 
-                    NPCInstance.InstanceList.Add(inst.ID, inst);
-                }
+                NPCInstance.ReadData(data);
 
                 NPCInstance.WriteFile();
             }
+
             if (stream.ReadBit())
             {
+                int len = stream.mReadInt(); // length of packed data
 
+                byte[] data = new byte[len];
+                stream.Read(data, (uint)len);
+
+                ItemInstance.ReadData(data);
+
+                ItemInstance.WriteFile();
             }
         }
     }

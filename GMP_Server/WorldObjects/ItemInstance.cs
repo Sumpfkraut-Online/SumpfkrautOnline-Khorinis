@@ -6,298 +6,146 @@ using GUC.Enumeration;
 using GUC.Server.Network;
 using RakNet;
 using GUC.Network;
+using System.IO;
+using System.IO.Compression;
+using System.Security.Cryptography;
 
 namespace GUC.Server.WorldObjects
 {
-    public abstract class ItemInstance
+    public class ItemInstance
     {
-        protected static List<ItemInstance> instanceList = new List<ItemInstance>();
+        static ushort idCount = 0;
+
+        protected static Dictionary<ushort, ItemInstance> instanceList = new Dictionary<ushort, ItemInstance>();
+        public static Dictionary<ushort, ItemInstance> InstanceList { get { return instanceList; } }
+
         protected static Dictionary<string, ItemInstance> instanceDict = new Dictionary<string, ItemInstance>();
-        public static List<ItemInstance> InstanceList { get { return instanceList; } }
         public static Dictionary<string, ItemInstance> InstanceDict { get { return instanceDict; } }
 
-        public uint ID { get; protected set; }
+        public ushort ID { get; protected set; }
+        public string _CodeName { get; protected set; }
 
-        public String Name { get; protected set; }
-        public String ScemeName { get; protected set; }
+        #region Client fields
 
-        public ushort[] Protection { get; protected set; }
+        public String Name = "";
 
-        public DamageTypes DamageType { get; protected set; }
-        public ushort TotalDamage { get; protected set; }
-        public ushort[] Damages { get; protected set; }
-        public ushort Range { get; protected set; }
+        public ushort Range = 0;
+        public ushort Weight = 0;
 
-        public ushort[] ConditionAttributes { get; protected set; }
-        public ushort[] ConditionValues { get; protected set; }
+        public ItemType Type = ItemType.Misc;
+        public ItemMaterial Material = ItemMaterial.Wood;
 
-        public ushort Weight { get; protected set; }
-
-        public MainFlags MainFlags { get; protected set; }
-        public Flags Flags { get; protected set; }
-        public ArmorFlags Wear { get; protected set; }
-
-        public MaterialType Materials { get; protected set; }
-
-        public String Description { get; protected set; }
-        public String[] Text { get; protected set; }
-        public ushort[] Count { get; protected set; }
+        public String Description = "";
+        public String[] Text = new string[6] { "", "", "", "", "", "" };
+        public ushort[] Count = new ushort[6];
 
         //Visuals:
-        public String Visual { get; protected set; }
-        public String Visual_Change { get; protected set; }
-        public String Effect { get; protected set; }
+        public String Visual = "";
+        public String Visual_Change = "";
+        public String Effect = "";
 
-        public byte Visual_Skin { get; protected set; }
-        public ItemInstance Munition { get; protected set; }
+        public ItemInstance Munition = null;
 
-        public bool IsKeyInstance { get; protected set; }
-        public bool IsTorch { get; protected set; }
-        public bool IsTorchBurned { get; protected set; }
-        public bool IsTorchBurning { get; protected set; }
-        public bool IsGold { get; protected set; }
+        #endregion 
 
-        //public Spell Spell = null;
+        #region Constructors
 
-        protected delegate void OnEquipHandler(NPC npc, Item item);
-        protected event OnEquipHandler OnEquip = null;
-        protected event OnEquipHandler OnUnequip = null;
-
-        protected ItemInstance()
+        public ItemInstance(string codeName)
         {
-            Name = "";
-            ScemeName = "";
-            Protection = new ushort[8];
-            DamageType = DamageTypes.DAM_INVALID;
-            TotalDamage = 0;
-            Damages = new ushort[8];
-            Range = 0;
+            this._CodeName = codeName.ToUpper();
 
-            ConditionAttributes = new ushort[3];
-            ConditionValues = new ushort[3];
-
-            Weight = 0;
-            MainFlags = 0;
-            Flags = 0;
-            Wear = 0;
-            Materials = 0;
-
-            Description = "";
-            Text = new String[6] { "", "", "", "", "", "" };
-            Count = new ushort[6];
-
-            Visual = "";
-            Visual_Change = "";
-            Effect = "";
-            Visual_Skin = 0;
-
-            Munition = null;
-
-            IsGold = false;
-            IsKeyInstance = false;
-            IsTorch = false;
-            IsTorchBurned = false;
-            IsTorchBurning = false;
-        }
-
-        public static void AddInstance(ItemInstance inst)
-        {
-            string codename = inst.GetType().Name.ToUpper();
-            if (instanceDict.ContainsKey(codename))
+            if (instanceDict.ContainsKey(this._CodeName))
             {
-                throw new Exception("Iteminstance " + codename + " is already existing.");
-            }
-            inst.ID = (uint)instanceList.Count;
-            instanceList.Add(inst);
-            instanceDict.Add(codename, inst);
-
-        }
-
-        public virtual bool CanTake(NPC npc) //requirement check for FIRST taking (plants from the ground, fur from animals etc)
-        {
-            return true;
-        }
-
-        public virtual void Use(NPC npc)
-        {
-            //FIXME: Add boolean for usable
-        }
-
-        internal void Write(BitStream stream)
-        {
-            stream.mWrite(ID);
-
-            if (Name != null && Name.Length > 0)
-            {
-                stream.Write1();
-                stream.mWrite(Name);
-            }
-            else
-            {
-                stream.Write0();
+                Log.Logger.log("ERR: ItemInstance creation failed: CodeName is already existing " + this._CodeName);
+                return;
             }
 
-            if (ScemeName != null && ScemeName.Length > 0)
+            for (int i = 0; i < ushort.MaxValue; i++)
             {
-                stream.Write1();
-                stream.mWrite(ScemeName);
-            }
-            else
-            {
-                stream.Write0();
-            }
-
-            if (Range > 0)
-            {
-                stream.Write1();
-                stream.mWrite(Range);
-            }
-            else
-            {
-                stream.Write0();
-            }
-
-            if (Weight > 0)
-            {
-                stream.Write1();
-                stream.mWrite(Weight);
-            }
-            else
-            {
-                stream.Write0();
-            }
-
-            if (MainFlags != 0)
-            {
-                stream.Write1();
-                stream.mWrite((int)MainFlags);
-            }
-            else
-            {
-                stream.Write0();
-            }
-
-            if (Flags != 0)
-            {
-                stream.Write1();
-                stream.mWrite((int)Flags);
-            }
-            else
-            {
-                stream.Write0();
-            }
-
-            if (Wear != 0)
-            {
-                stream.Write1();
-                stream.mWrite((int)Wear);
-            }
-            else
-            {
-                stream.Write0();
-            }
-
-            if (Materials > 0)
-            {
-                stream.Write1();
-                stream.mWrite((byte)Materials);
-            }
-            else
-            {
-                stream.Write0();
-            }
-
-            if (Description != null && Description.Length > 0)
-            {
-                stream.Write1();
-                stream.mWrite(Description);
-            }
-            else
-            {
-                stream.Write0();
-            }
-
-            for (int i = 0; i < Text.Length; i++)
-            {
-                if (Text[i] != null && Text[i].Length > 0)
+                if (!instanceList.ContainsKey(idCount))
                 {
-                    stream.Write1();
-                    stream.mWrite(Text[i]);
+                    this.ID = idCount;
+                    instanceList.Add(idCount, this);
+                    instanceDict.Add(codeName, this);
+                    idCount++;
+                    return;
                 }
-                else
-                {
-                    stream.Write0();
-                }
+                idCount++;
             }
-
-            for (int i = 0; i < Count.Length; i++)
-            {
-                if (Count[i] > 0)
-                {
-                    stream.Write1();
-                    stream.mWrite(Count[i]);
-                }
-                else
-                {
-                    stream.Write0();
-                }
-            }
-
-            if (Visual != null && Visual.Length > 0)
-            {
-                stream.Write1();
-                stream.mWrite(Visual);
-            }
-            else
-            {
-                stream.Write0();
-            }
-
-            if (Visual_Change != null && Visual_Change.Length > 0)
-            {
-                stream.Write1();
-                stream.mWrite(Visual_Change);
-            }
-            else
-            {
-                stream.Write0();
-            }
-
-            if (Effect != null && Effect.Length > 0)
-            {
-                stream.Write1();
-                stream.mWrite(Effect);
-            }
-            else
-            {
-                stream.Write0();
-            }
-
-            if (Visual_Skin > 0)
-            {
-                stream.Write1();
-                stream.mWrite(Visual_Skin);
-            }
-            else
-            {
-                stream.Write0();
-            }
-
-            if (Munition != null)
-            {
-                stream.Write1();
-                stream.mWrite(Munition.ID);
-            }
-            else
-            {
-                stream.Write0();
-            }
-
-            stream.mWrite(IsKeyInstance);
-            stream.mWrite(IsTorch);
-            stream.mWrite(IsTorchBurned);
-            stream.mWrite(IsTorchBurning);
-            stream.mWrite(IsGold);
+            Log.Logger.log("ERR: ItemInstance creation failed: Maximum reached " + ushort.MaxValue);
         }
+
+        public ItemInstance(ushort ID, string codeName)
+        {
+            this.ID = ID;
+            this._CodeName = codeName.ToUpper();
+
+            if (instanceDict.ContainsKey(this._CodeName))
+            {
+                Log.Logger.log("ERR: ItemInstance creation failed: CodeName is already existing " + this._CodeName);
+                return;
+            }
+
+            if (instanceList.ContainsKey(ID))
+            {
+                Log.Logger.log("ERR: ItemInstance creation failed: ID is already existing: " + this.ID);
+                return;
+            }
+
+            instanceList.Add(this.ID, this);
+            instanceDict.Add(this._CodeName, this);
+            idCount = (ushort)(this.ID + 1);
+        }
+
+        #endregion
+
+        #region Networking
+
+        internal static byte[] data;
+        internal static byte[] hash;
+
+        public static void NetUpdate()
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {   //SO MANY STREAMS
+                using (GZipStream gz = new GZipStream(ms, CompressionMode.Compress))
+                using (BufferedStream bs = new BufferedStream(gz))
+                using (BinaryWriter bw = new BinaryWriter(bs, Encoding.UTF8))
+                {
+                    bw.Write((ushort)instanceList.Count);
+                    //ordered by IDs
+                    foreach (ItemInstance inst in instanceList.Values.OrderBy(n => n.ID))
+                    {
+                        bw.Write(inst.ID);
+                        bw.Write(inst.Name);
+                        bw.Write(inst.Range);
+                        bw.Write(inst.Weight);
+                        bw.Write((byte)inst.Type);
+                        bw.Write((byte)inst.Material);
+                        bw.Write(inst.Description);
+                        for (int i = 0; i < 6; i++)
+                        {
+                            bw.Write(inst.Text[i]);
+                            bw.Write(inst.Count[i]);
+                        }
+                        bw.Write(inst.Visual);
+                        bw.Write(inst.Visual_Change);
+                        bw.Write(inst.Effect);
+                        bw.Write(inst.Munition == null ? ushort.MinValue : inst.Munition.ID);
+                    }
+                }
+                data = ms.ToArray();
+            }
+
+            using (MD5 md5 = new MD5CryptoServiceProvider())
+            {
+                md5.TransformFinalBlock(data, 0, data.Length);
+                hash = md5.Hash;
+            }
+
+            System.IO.File.WriteAllBytes("data2", data);
+        }
+
+        #endregion
     }
 }
