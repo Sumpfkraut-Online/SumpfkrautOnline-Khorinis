@@ -35,7 +35,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
         public static Dictionary<string, NPCDef> npcDefNameDict = new Dictionary<string, NPCDef>();
 
         // stores vob-instances with their ID-attribute (ID in the VobSystem) as key
-        public static Dictionary<int, WorldInst> worldInstDict = new Dictionary<int, WorldInst>();
         public static Dictionary<int, MobInst> mobInstDict = new Dictionary<int, MobInst>();
         public static Dictionary<int, ItemInst> itemInstDict = new Dictionary<int, ItemInst>();
         public static Dictionary<int, SpellInst> spellInstDict = new Dictionary<int, SpellInst>();
@@ -1482,12 +1481,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                         vobInst.setID((int) inst[colIndex]);
                     }
 
-                    colIndex = colTypesKeys.IndexOf("Amount");
-                    if ((colIndex != -1) && (inst[colIndex] != null))
-                    {
-                        vobInst.setAmount((int) inst[colIndex]);
-                    }
-
                     colIndex = colTypesKeys.IndexOf("ChangeDate");
                     if ((colIndex != -1) && (inst[colIndex] != null))
                     {
@@ -1510,13 +1503,13 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                         return;
                     }
                     
-                    if (itemInstDict.TryGetValue(vobInst.getID(), out oldInst)) 
+                    if (mobInstDict.TryGetValue(vobInst.getID(), out oldInst)) 
                     {
-                        UpdateItemInstance(ref oldInst, ref vobInst);
+                        UpdateMobInstance(ref oldInst, ref vobInst);
                     }
                     else
                     {
-                        itemInstDict.Add(vobInst.getID(), vobInst);
+                        mobInstDict.Add(vobInst.getID(), vobInst);
                         //vobInst.SpawnVob();
                     }
 
