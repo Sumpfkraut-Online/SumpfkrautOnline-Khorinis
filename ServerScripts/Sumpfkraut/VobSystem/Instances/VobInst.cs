@@ -5,6 +5,7 @@ using System.Text;
 
 using GUC.Server.Scripting.Objects;
 using GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions;
+using GUC.Server.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Types;
 
 namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
@@ -116,10 +117,10 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
 
 
 
-        public abstract void CreateVob();
+        public void CreateVob () { }
         //public abstract void DeleteVob();
-        public abstract void SpawnVob();
-        public abstract void DespawnVob();
+        public void SpawnVob () { }
+        public void DespawnVob () { }
 
     }
 }

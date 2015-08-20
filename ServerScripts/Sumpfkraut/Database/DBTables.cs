@@ -69,10 +69,12 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
         GetString           = 11,
     }
 
+
+
+    
+    
     class DBTables
     {
-
-        
 
         /**
         *   Definition datatable enum entries mapped to their respective access-functions 
@@ -213,6 +215,10 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
 
 
 
+
+
+
+
         public static readonly Dictionary<InstTableEnum, Dictionary<String, SQLiteGetTypeEnum>>
             InstTableDict = new Dictionary<InstTableEnum, Dictionary<String, SQLiteGetTypeEnum>> 
         {
@@ -336,7 +342,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
         };
         
         public static readonly Dictionary<DefTableEnum, InstTableEnum>
-            EffectInstAccesDict = new Dictionary<DefTableEnum, InstTableEnum>()
+            Def2EffectsDict = new Dictionary<DefTableEnum, InstTableEnum>()
         {
             {DefTableEnum.Mob_def, InstTableEnum.Mob_Effects_inst},
             {DefTableEnum.Spell_def, InstTableEnum.Spell_Effects_inst},
@@ -345,7 +351,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
         };
 
         public static readonly Dictionary<InstTableEnum, string>
-            EffectsInstTableNamesDict = new Dictionary<InstTableEnum, string>()
+            EffectsTableNamesDict = new Dictionary<InstTableEnum, string>()
         {
             {InstTableEnum.Mob_Effects_inst, "Mob_Effects_inst"},
             {InstTableEnum.Spell_Effects_inst, "Spell_Effects_inst"},
@@ -354,13 +360,16 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
         };
 
         public static readonly Dictionary<InstTableEnum, string>
-            EffectsInstTableDict_VobDefID = new Dictionary<InstTableEnum, string>()
+            EffectsTableDict_VobDefID = new Dictionary<InstTableEnum, string>()
         {
             {InstTableEnum.Mob_Effects_inst, "MobDefID"},
             {InstTableEnum.Spell_Effects_inst, "SpellDefID"},
             {InstTableEnum.Item_Effects_inst, "ItemDefID"},
             {InstTableEnum.NPC_Effects_inst, "NPCDefID"},
         };
+
+
+
 
 
 

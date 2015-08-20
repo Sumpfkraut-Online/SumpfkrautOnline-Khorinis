@@ -5,6 +5,7 @@ using System.Text;
 using GUC.Server.Scripting.Objects;
 using GUC.Server.Scripting.Objects.Character;
 using GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions;
+using GUC.Server.Scripts.Sumpfkraut.WorldSystem;
 
 namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
 {

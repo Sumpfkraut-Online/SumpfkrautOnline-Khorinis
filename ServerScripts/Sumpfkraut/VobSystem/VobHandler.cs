@@ -12,6 +12,8 @@ using GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Server.Scripts.Sumpfkraut.Database;
 using GUC.Enumeration;
 using GUC.Server.Scripting.Objects;
+using GUC.Server.Scripting.Objects.Mob;
+using GUC.Server.Scripting.Objects.Character;
 
 namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 {
@@ -167,7 +169,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             // of the given vob-specific effect-instance table (EI)
             Dictionary<string, SQLiteGetTypeEnum> colTypes_EI = null;
             Database.InstTableEnum effectsInstTab = 0;
-            if (!DBTables.EffectInstAccesDict.TryGetValue(defTab, out effectsInstTab))
+            if (!DBTables.Def2EffectsDict.TryGetValue(defTab, out effectsInstTab))
             {
                 return;
             }
@@ -198,7 +200,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 
             // column name and index where the vob-id is
             string vobIDColName = null;
-            if (!DBTables.EffectsInstTableDict_VobDefID.TryGetValue(effectsInstTab, out vobIDColName))
+            if (!DBTables.EffectsTableDict_VobDefID.TryGetValue(effectsInstTab, out vobIDColName))
             {
                 return;
             }
@@ -437,7 +439,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                 return;
             }
             string orderByID = "";
-            if (!DBTables.EffectsInstTableDict_VobDefID.TryGetValue(instTab, out orderByID))
+            if (!DBTables.EffectsTableDict_VobDefID.TryGetValue(instTab, out orderByID))
             {
                 return;
             }
@@ -1388,6 +1390,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 
 
 
+
+
         private static void CreateVobInstances (InstTableEnum instTab, 
             ref List<List<List<object>>> instList,
             ref List<string> colTypesKeys, ref List<SQLiteGetTypeEnum> colTypesVals)
@@ -1480,7 +1484,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
                     {
                         vobInst.setID((int) inst[colIndex]);
                     }
-
+                    
                     colIndex = colTypesKeys.IndexOf("ChangeDate");
                     if ((colIndex != -1) && (inst[colIndex] != null))
                     {
@@ -1635,12 +1639,58 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 
         }
 
-        private static bool UpdateMobInstance (MobInst oldInst, MobInst newInst)
+
+
+        private static bool UpdateMobInstance (ref MobInst oldInst, ref MobInst newInst)
         {
+            bool replace = true;
+            int newID = newInst.getID();
+            MobInter newItem = (MobInter) newInst.getVob();
+            MobInter oldItem = (MobInter) oldInst.getVob();
+
+            if (oldInst == newInst)
+            {
+                // don't update if nothing would change to be begin with :)
+                return false;
+            }
+
+            if (oldInst.getID() != newID)
+            {
+                // it is forbidden to update an instance with the incorrect id 
+                // for organizational purposes
+                Log.Logger.logWarning("UpdateItemInstance: Warning! Updating old instance"
+                    + " with a new one is forbidden if both don't share the same id!");
+                return false;
+            }
+
+            if (oldInst.getVobDef() == newInst.getVobDef())
+            {
+                // replacing the object entirely is not necessary 
+                // --> simply update the existing one instead
+                replace = false;
+            }
+
+            if (replace)
+            {
+                // carefully replace the instance because it may 
+                // directly affect the running gameworld
+                oldInst.DespawnVob();
+                oldInst.DeleteVob();
+                oldInst.setVobDef(newInst.getVobDef());
+            }
+            else
+            {
+                // carefully update the existing instance
+                oldInst.setInWorld(newInst.getInWorld());
+                oldInst.setPosition(newInst.getPosition());
+                oldInst.setChangeDate(newInst.getChangeDate());
+                oldInst.setCreationDate(newInst.getCreationDate());
+            }
+
             return true;
         }
 
-        private static bool UpdateSpellInstance (SpellInst oldInst, SpellInst newInst)
+        private static bool UpdateSpellInstance (ref SpellInst oldInst, ref SpellInst newInst)
         {
             return true;
         }
@@ -1695,7 +1745,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             return true;
         }
 
-        private static bool UpdateNPCInstance (NPCInst oldInst, NPCInst newInst)
+        private static bool UpdateNPCInstance (ref NPCInst oldInst, ref NPCInst newInst)
         {
             return true;
         }

@@ -9,7 +9,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
     /**
      *   Class from which all spellitems are instatiated (which are handled by the serverscript).
      */
-    class SpellDef : Spell, VobDef
+    class SpellDef : VobDef
     {
     }
 }

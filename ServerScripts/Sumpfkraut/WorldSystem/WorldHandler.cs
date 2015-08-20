@@ -8,6 +8,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.WorldSystem
     class WorldHandler
     {
 
+        public static readonly string defaultWorldName = @"NEWWORLD\NEWWORLD.ZEN";
+
         public static Dictionary<int, WorldInst> worldInstDict = new Dictionary<int, WorldInst>();
         public static Dictionary<string, WorldInst> worldInstNameDict = new Dictionary<string, WorldInst>();
 

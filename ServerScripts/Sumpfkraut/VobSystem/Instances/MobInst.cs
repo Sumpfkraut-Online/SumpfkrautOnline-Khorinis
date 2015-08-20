@@ -5,6 +5,7 @@ using System.Text;
 using GUC.Server.Scripting.Objects;
 using GUC.Server.Scripting.Objects.Mob;
 using GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions;
+using GUC.Server.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Types;
 
 namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
@@ -71,7 +72,15 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
             this.inventoryItems = inventoryItems; 
         }
 
-        // TO DO: MobInst (MobDef def) --> requires a default world and, thus, the world management beforehand
+
+    
+        public MobInst ()
+            : this(null)
+        { }
+
+        public MobInst (MobDef def)
+            : this(def, null)
+        { }
 
         public MobInst (MobDef def, WorldInst inWorld)
             : this(def, inWorld, new Vec3f(0, 0, 0))
@@ -83,10 +92,19 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
 
         public MobInst (MobDef def, WorldInst inWorld, Vec3f position, Vec3f direction)
         {
-            this.setVobDef(def);
-            this.setInWorld(inWorld);
+            if (def != null)
+            {
+                this.setVobDef(def);
+            }
+
+            if (inWorld != null)
+            {
+                this.setInWorld(inWorld);
+            }
+            
             this.setPosition(position);
             this.setDirection(direction);
+
             CreateVob();
         }
 
@@ -168,7 +186,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
         {
             if (this.vob != null)
             {
-                this.vob.Spawn(this.getInWorld().getWorldName(), this.getPosition(), this.getDirection());
+                this.vob.Spawn(this.getInWorld().getName(), this.getPosition(), this.getDirection());
                 setIsSpawned(true);
             }  
         }

@@ -5,6 +5,7 @@ using System.Text;
 using GUC.Types;
 using GUC.Server.Scripting.Objects;
 using GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions;
+using GUC.Server.Scripts.Sumpfkraut.WorldSystem;
 
 namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
 {
@@ -136,7 +137,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
         {
             if (this.vob != null)
             {
-                this.vob.Spawn(this.getInWorld().getWorldName(), this.getPosition(), this.getDirection());
+                this.vob.Spawn(this.getInWorld().getName(), this.getPosition(), this.getDirection());
                 setIsSpawned(true);
             }  
         }
