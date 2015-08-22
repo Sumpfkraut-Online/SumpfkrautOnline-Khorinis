@@ -13,7 +13,7 @@ namespace GUC.Server.Scripts.AI.NPC_Def.Monster
         public Scavenger()
             : base()
         {
-            Name = "Scavanger";
+            Name = "Scavenger";
 
             Strength = 35;
             Dexterity = 35;
@@ -37,7 +37,7 @@ namespace GUC.Server.Scripts.AI.NPC_Def.Monster
 
             this.InitNPCAI();
 
-            this.setGuild(Guilds.MON_SCAVANGER);
+            this.setGuild(Guilds.MON_SCAVENGER);
 
             this.addItem("ItFoMuttonRaw", 1);
 

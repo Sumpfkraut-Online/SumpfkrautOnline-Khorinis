@@ -38,7 +38,7 @@ namespace GUC.Server.Scripts.AI.NPC_Def.Monster
 
             this.InitNPCAI();
 
-            this.setGuild(Guilds.MON_WOLF);
+            this.setGuild(Guilds.MON_KEILER);
 
             WeaponMode = 1;
 

@@ -7,7 +7,7 @@ namespace GUC.Server.Scripts.AI.Enumeration
 {
     public enum WalkTypes
     {
-        Walk = 0,
-        Run = 1
+        Walk,
+        Run
     }
 }

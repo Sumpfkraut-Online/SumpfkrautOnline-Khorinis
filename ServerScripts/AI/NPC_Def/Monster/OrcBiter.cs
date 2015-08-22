@@ -39,7 +39,7 @@ namespace GUC.Server.Scripts.AI.NPC_Def.Monster
 
             this.InitNPCAI();
 
-            this.setGuild(Guilds.MON_SCAVANGER);
+            this.setGuild(Guilds.MON_ORCBITER);
 
             WeaponMode = 1;
 
