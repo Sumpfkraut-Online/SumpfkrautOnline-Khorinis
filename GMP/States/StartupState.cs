@@ -83,7 +83,7 @@ namespace GUC.States
             //Process.Write(arr, 0x00745A20);
 
 
-
+#if !DEBUG
             //Disable Marvin-Mode:
             Process.VirtualProtect(0x006CBF60, 25);
             byte[] arr = new byte[25];
@@ -91,10 +91,9 @@ namespace GUC.States
                 arr[i] = 0x90;
             Process.Write(arr, 0x006CBF60);
 
-
             arr = new byte[] { 0xC3 };
             Process.Write(arr, 0x00432EC0);
-
+#endif
 
         }
 

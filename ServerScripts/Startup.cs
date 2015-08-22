@@ -27,41 +27,32 @@ using GUC.Server.Scripts.Communication;
 using GUC.Server.Scripts.Utils;
 namespace GUC.Server.Scripts
 {
-	public class Startup : IServerStartup
-	{
-		//public static Chat chat = null;
-		public static Cursor cursor;
-		public Button connection;
-		public void OnServerInit()
-		{
+    public class Startup : IServerStartup
+    {
+        //public static Chat chat = null;
+        public static Cursor cursor;
+        public Button connection;
+        public void OnServerInit()
+        {
             Logger.log(Logger.LogLevel.INFO, "######################## Initalise ########################");
             cursor = Cursor.getCursor();
             RandomManager.GetRandom();
 
-            Test.Text3DTest.Init();
+            //Test.Text3DTest.Init();
 
-            
-            
             ItemInit.Init();
             DefaultItems.Init();
-            
+
 
             DayTime.Init();
             DayTime.setTime(0, 12, 0);
-
 
 #if SSM_AI
             AI.AISystem.Init();
 #endif
             DefaultWorld.Init();
 
-
-
-            
-
             DamageScript.Init();
-
-
 
 #if SSM_CHAT
             //chat = new Chat();
@@ -74,31 +65,22 @@ namespace GUC.Server.Scripts
             CommandInterpreter.GetCommandInterpreter();
             Chat.GetChat();
             EventNotifier.GetEventNotifier();
-      
-
 #endif
-
-            
 
             Modules.Init();
 
-
-
             //Modules.addModule(new Test.ListTestModule());
-
 
 #if SSM_ACCOUNT
             AccountSystem accSystem = new AccountSystem();
             accSystem.Init();
 #endif
-            
+
 #if SSM_WEB
             Web.http_server.Init();
 #endif
 
-
-            
             Logger.log(Logger.LogLevel.INFO, "###################### End Initalise ######################");
-		}
+        }
     }
 }
