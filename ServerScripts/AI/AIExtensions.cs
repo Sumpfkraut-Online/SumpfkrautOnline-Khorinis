@@ -93,7 +93,7 @@ namespace GUC.Server.Scripts.AI
             if (proto is NPC)
             {
                 NPC p = (NPC)proto;
-                if (p.NPCController == null)//set the position!
+                if (p.NPCController == null) //set the position!
                 {
                     if (proto.getAI().lastPosUpdate == 0)
                     {
@@ -238,15 +238,17 @@ namespace GUC.Server.Scripts.AI
 
         public static bool IsHuman(this NPCProto proto)
         {
-            if (proto.getGuild() <= Guilds.HUM_SPERATOR)
+            if (proto.getGuild() <= Guilds.HUM_SEPERATOR)
                 return true;
+
             return false;
         }
 
         public static bool IsMonster(this NPCProto proto)
         {
-            if (proto.getGuild() > Guilds.HUM_SPERATOR && proto.getGuild() <= Guilds.MON_SEPERATOR)
+            if (proto.getGuild() > Guilds.HUM_SEPERATOR && proto.getGuild() <= Guilds.MON_SEPERATOR)
                 return true;
+
             return false;
         }
 
@@ -254,6 +256,7 @@ namespace GUC.Server.Scripts.AI
         {
             if (proto.getGuild() > Guilds.MON_SEPERATOR && proto.getGuild() <= Guilds.ORC_SEPERATOR)
                 return true;
+
             return false;
         }
 
@@ -264,12 +267,15 @@ namespace GUC.Server.Scripts.AI
             if (proto.WeaponMode == 0)
                 return;
 
-            if (proto.WeaponMode == (int)FightMode.Fist)//Fist
+            if (proto.WeaponMode == (int)FightMode.Fist) //Fist
+            {
                 proto.WeaponMode = 0;
-            else if (proto.WeaponMode == (int)FightMode.Meele)//Sword
+            }
+            else if (proto.WeaponMode == (int)FightMode.Meele) //Sword
             {
                 proto.WeaponMode = 0;
                 Item i = proto.getSlotItem((int)SlotFlag.SLOT_RIGHTHAND);
+
                 if ((i.ItemInstance.Flags & (Flags.ITEM_2HD_SWD | Flags.ITEM_2HD_AXE)) > 0)
                 {
                     proto.setSlotItem((int)SlotFlag.SLOT_RIGHTHAND, null);
@@ -301,7 +307,7 @@ namespace GUC.Server.Scripts.AI
 
         public static void readyBestWeapon(this NPCProto proto, NPCProto enemy)
         {
-            if (proto.IsMonster())//Monsters are always in FIST-Mode.
+            if (proto.IsMonster()) //Monsters are always in FIST-Mode.
                 return;
             if (proto.WeaponMode != 0)
                 return;
