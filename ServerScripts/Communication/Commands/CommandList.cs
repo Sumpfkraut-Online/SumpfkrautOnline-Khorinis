@@ -8,10 +8,6 @@ using System;
 using System.Collections.Generic;
 using GUC.Server.Scripts.Communication.Notifications;
 
-using GUC.Server.Scripts.Items.Scrolls;
-using GUC.Types;
-
-
 #if SSM_ACCOUNT
 using GUC.Server.Scripts.Accounts;
 #endif
@@ -255,51 +251,6 @@ namespace GUC.Server.Scripts.Communication
 
       
       Commands.Add(command);
-      command = new Command("npc", 0, delegate(Player player, string[] parameters)
-      {
-        NPC lastNPC;
-        lastNPC = new NPC("Test");
-        lastNPC.Spawn("NEWWORLD\\NEWWORLD.ZEN", new Vec3f(0, 0, 0), new Vec3f(0, 0, 0));
-
-        lastNPC.addItem(ItemInstance.getItemInstance("ITAT_SHEEPFUR"), 12);
-        lastNPC.addItem(ItemInstance.getItemInstance("ITAT_WOLFFUR"), 11);
-        lastNPC.addItem(ItemInstance.getItemInstance("ITMW_1H_VLK_MACE"), 1);
-        lastNPC.setAttribute(NPCAttribute.ATR_HITPOINTS_MAX, 500);
-        lastNPC.setAttribute(NPCAttribute.ATR_HITPOINTS, 500);
-        lastNPC.InitNPCAI();
-
-        return true;
-      });
-      Commands.Add(command);
-    //ERSTMAL KI SOWEIT FIXEN
-      command = new Command("bogen", 0, delegate(Player player, string[] parameters)
-      {
-          Item item1, item2, item3, item4;
-
-          player.setAttribute(NPCAttribute.ATR_STRENGTH, 120);
-          player.setAttribute(NPCAttribute.ATR_DEXTERITY, 120);
-          player.setAttribute(NPCAttribute.ATR_MANA_MAX, 200);
-          player.setAttribute(NPCAttribute.ATR_MANA, 200);
-
-          item1 = player.addItem("ItRw_Bow_M_04", 1);
-          item2 = player.addItem("ItRw_Arrow", 100);
-          item3 = player.addItem("ItRw_Crossbow_H_01", 1);
-          item4 = player.addItem("ItRw_Bolt", 100);
-          player.addItem("ItRu_Firebolt", 30); //gibt fehler: untersuchen!
-          player.addItem("ItRu_InstantFireball", 30); //gibt fehler: untersuchen!
-          player.addItem(ITSC_FIREBOLT.get(), 30);
-          //player.addItem(SPELL_ITSC_FIREBOLT.get(),3);
-
-          //player.setSlotItem((int)SlotFlag.SLOT_BOW, item1);
-          //player.setSlotItem((int)SlotFlag.SLOT_LEFTHAND, player.EquippedRangeWeapon);
-
-          //player.setSlotItem((int)SlotFlag.SLOT_CROSSBOW, null);
-          //player.setSlotItem((int)SlotFlag.SLOT_LEFTHAND, player.EquippedRangeWeapon);
-
-          return true;
-      });
-      Commands.Add(command);
-
     }
   }
 }

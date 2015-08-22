@@ -2,7 +2,6 @@ using GUC.Server.Scripting;
 using GUC.Server.Scripting.Objects.Character;
 using GUC.Server.Scripting.GUI;
 using GUC.Server.Scripts.Communication.Notifications;
-using GUC.Server.Scripts.Items.Scrolls;
 
 #if SSM_ACCOUNT_LOGGING
 
