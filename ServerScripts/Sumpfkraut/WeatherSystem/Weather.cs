@@ -27,11 +27,11 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
     class Weather : Runnable
     {
 
-        private List<WeatherState> weatherStateQuery; // query of (future) weather-states
+        private List<WeatherState> weatherStateQueue; // queue of (future) weather-states
         private WeatherState currWeatherState; // the current weather-state
         private bool currWSChanged; // true, when current weather state was changed and not yet activated
         private bool currWSExpired; // true, when current weather state is expired and not yet substituted
-        private int maxQueryLength; // maximum length of query which will be filled with calculated states
+        private int maxQueueLength; // maximum length of queue which will be filled with calculated states
         private TimeSpan maxWSTime; // maximum timespan for weather-states
         private TimeSpan minWSTime; // minimum timespan for weather-states
         private int precFactor; // possibility of precipitation, including rain and snow (0 - 100)
@@ -44,7 +44,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
 
         private Random random;
 
-        private Object wsQueryLock;
+        private Object wsQueueLock;
 
 
 
@@ -58,10 +58,10 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
             this.objName = "weather (default)";
             this.printStateControls = true;
 
-            this.weatherStateQuery = new List<WeatherState> { };
+            this.weatherStateQueue = new List<WeatherState> { };
             this.currWSChanged = false;
             this.currWSExpired = false;
-            this.maxQueryLength = 10;
+            this.maxQueueLength = 10;
 
             this.maxWSTime = new TimeSpan(0, 2, 0, 0); // 2 hours
             this.minWSTime = new TimeSpan(0, 0, 30, 0); // 30 minutes
@@ -72,7 +72,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
             World.getTime(out this.lastIGTime.day, out this.lastIGTime.hour, out this.lastIGTime.minute);
 
             this.random = new Random();
-            this.wsQueryLock = new Object();
+            this.wsQueueLock = new Object();
 
             this.defaultTimeout = new TimeSpan(0, 2, 0); // default timeout / threadsleep is 2 minutes
             this.timeout = this.defaultTimeout;
@@ -83,29 +83,214 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
             }
         }
 
-        // deletes all expired weatherState-entries in the query, but leaves
+
+
+        public static bool IsValidWeatherState (WeatherState ws)
+        {
+            return IsValidWeatherState(ws, true);
+        }
+
+        public static bool IsValidWeatherState (WeatherState ws, bool timeCheck)
+        {
+            return IsValidWeatherState(ws, timeCheck, false);
+        }
+
+        public static bool IsValidWeatherState (WeatherState ws, bool timeCheck, 
+            bool isCompleteFuture)
+        {
+            return IsValidWeatherState(ws, timeCheck, isCompleteFuture, DateTime.Now);
+        }
+
+        // check if the WheatherState makes sense to the system
+        public static bool IsValidWeatherState (WeatherState ws, bool timeCheck, 
+            bool isCompleteFuture, DateTime checkDateTime)
+        {
+            int wtInt = (int) ws.weatherType;
+            if ((wtInt < 0) || (wtInt > 2))
+            {
+                return false;
+            }
+            if (ws.startTime > ws.endTime)
+            {
+                return false;
+            }
+            if (timeCheck)
+            {
+                if (ws.endTime < checkDateTime)
+                {
+                    return false;
+                }
+                if (isCompleteFuture)
+                {
+                    if (ws.startTime < checkDateTime)
+                    {
+                        return false;
+                    }
+                }
+                
+            }
+            return true;
+        }
+        
+
+
+        // detect the index-range of ws with already registered WheaterState-objects
+        // (ignores maxQueueLength)
+        // overlapRange: the index-range which overlapts with the ws-timeinterval 
+        //               (-1 means overlap with this.currentWeatherState;
+        //                ignore overlapRange if relPos is not 0)
+        // relPos: relative position of the overlap (-1: before, 0: within, 1: after registered states,
+        //         -999: undefined)
+        public void IndexRangeOfWSOverlap (WeatherState ws, out int[] overlapRange, out int relPos)
+        {
+            List<WeatherState> wsQueue = this.weatherStateQueue;
+            overlapRange = new int[]{-999, -999};
+            bool setRangeStart = false;
+            bool setRangeEnd = false;
+            relPos = -999;
+
+            if (ws.endTime < this.currWeatherState.startTime)
+            {
+                // completely before registered weather-states
+                relPos = -1;
+                return;
+            }
+            else if (ws.startTime > wsQueue[wsQueue.Count - 1].endTime)
+            {
+                // completely after registered weather-states
+                relPos = 1;
+                return;
+            }
+
+            // first check on current state as it might avoid further searching
+            if ((ws.startTime <= this.currWeatherState.endTime) && 
+                (ws.endTime >= this.currWeatherState.startTime))
+            {
+                // ws definitely overlaps the current weather-state at least as starting-point
+                overlapRange[0] = -1;
+                setRangeStart = true;
+
+                if (ws.endTime <= this.currWeatherState.endTime)
+                {
+                    // ws ends in the current weather-state
+                    overlapRange[1] = -1;
+                    setRangeEnd = true;
+                }
+            }
+
+            // if necessary, search in the queue
+            if ((!setRangeStart) && (!setRangeEnd))
+            {
+                int i = 0;
+                while (i < wsQueue.Count)
+                {
+                    if (!setRangeStart)
+                    {
+                        if ((ws.startTime <= wsQueue[i].endTime) && (ws.endTime >= wsQueue[i].startTime))
+                        {
+                            overlapRange[0] = i;
+                            setRangeStart = true;
+                        }
+                    }
+
+                    if (!setRangeEnd)
+                    {
+                        if (setRangeStart && (ws.endTime <= wsQueue[i].endTime))
+                        {
+                            // exit on finding the overlap-end
+                            overlapRange[1] = i;
+                            setRangeEnd = true;
+                            break;
+                        }
+                    }
+                
+                    i++;
+                }
+                if (!setRangeEnd)
+                {
+                    // if it's still not set, the las index must close the overlapRange
+                    overlapRange[1] = wsQueue.Count - 1;
+                }
+            }
+            
+        }
+        
+        public void InsertWeatherState (WeatherState ws)
+        {
+            lock (wsQueueLock)
+            {
+                List<WeatherState> wsQueue= this.weatherStateQueue;
+
+                if (!IsValidWeatherState(ws))
+                {
+                    MakeLogWarning("Invalid WeatherState detected in method InsertWeatherState!");
+                    return;
+                }
+
+                int[] overlap;
+                int relPos;
+                IndexRangeOfWSOverlap(ws, out overlap, out relPos);
+
+                // -- simple processing if possible --
+
+                if (relPos == -1)
+                {
+                    MakeLogWarning("Prevented insert of already expired WeatherState into the queue!");
+                    return;
+                }
+                else if (relPos == -999)
+                {
+                    MakeLogWarning("Prevented insert of invalid WeatherState into the queue!");
+                    return;
+                }
+                else if (relPos == 1)
+                {
+                    // simply append the WeatherState when it doesn't conflict with registered states
+                    // and is still relevant (in the future)
+                    wsQueue.Add(ws);
+                    return;
+                }
+
+                // -- more complex processing if there is no way around it --
+
+                //if ((ws.startTime <= ))
+                //{
+
+                //}
+
+                //if ((ws.startTime <= wsQueue[overlap[0]].startTime) && 
+                //    (ws.endTime >= wsQueue[overlap[0]].endTime))
+                //{
+                //    // complete override of the starting
+                //}
+                
+                // TO DO
+            }
+        }
+              
+        // deletes all expired weatherState-entries in the queue, but leaves
         // all others in place, including the potential current weatherState
         // !! it does not pick the current state like JumpToNextState !!
-        public void CleanupQuery ()
+        public void CleanupQueue ()
         {
-            lock (wsQueryLock)
+            lock (wsQueueLock)
             {
                 DateTime dtNow = DateTime.Now;
                 int nextStateIndex = -1;
 
                 // find the weatherState which would be the next chronologically
-                if ((this.weatherStateQuery != null) && (this.weatherStateQuery.Count > 0))
+                if ((this.weatherStateQueue != null) && (this.weatherStateQueue.Count > 0))
                 {
-                    for (int i = 0; i < this.weatherStateQuery.Count; i++)
+                    for (int i = 0; i < this.weatherStateQueue.Count; i++)
                     {
                         // iterate until a future weatherState is met and use the previous
                         // state-entry as current one
-                        if (this.weatherStateQuery[i].startTime <= dtNow)
+                        if (this.weatherStateQueue[i].startTime <= dtNow)
                         {
                             nextStateIndex = i - 1;
                         }
 
-                        if (this.weatherStateQuery[i].startTime > dtNow)
+                        if (this.weatherStateQueue[i].startTime > dtNow)
                         {
                             break;
                         }
@@ -116,12 +301,12 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
                 // or which are overriden by subsequent states
                 if (nextStateIndex > -1)
                 {
-                    this.weatherStateQuery.RemoveRange(0, 1 + nextStateIndex);
+                    this.weatherStateQueue.RemoveRange(0, 1 + nextStateIndex);
                 }
             }
         }
 
-        // clean up the weatherState-query, removing expired entries including the
+        // clean up the weatherState-queue, removing expired entries including the
         // potential current state + picks and the latter and activates it
         public void JumpToNextState ()
         {
@@ -130,24 +315,24 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
 
         public void JumpToNextState (bool activate)
         {
-            lock (wsQueryLock)
+            lock (wsQueueLock)
             {
                 DateTime dtNow = DateTime.Now;
                 int jumpToIndex = -1;
 
                 // find the weatherState which would be the next chronologically
-                if ((this.weatherStateQuery != null) && (this.weatherStateQuery.Count > 0))
+                if ((this.weatherStateQueue != null) && (this.weatherStateQueue.Count > 0))
                 {
-                    for (int i = 0; i < this.weatherStateQuery.Count; i++)
+                    for (int i = 0; i < this.weatherStateQueue.Count; i++)
                     {
                         // iterate until a future weatherState is met and use the previous
                         // state-entry as current one
-                        if (this.weatherStateQuery[i].startTime <= dtNow)
+                        if (this.weatherStateQueue[i].startTime <= dtNow)
                         {
                             jumpToIndex = i;
                         }
 
-                        if (this.weatherStateQuery[i].startTime > dtNow)
+                        if (this.weatherStateQueue[i].startTime > dtNow)
                         {
                             break;
                         }
@@ -158,17 +343,17 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
                 // or which are overriden by subsequent states
                 if (jumpToIndex > -1)
                 {
-                    if (this.weatherStateQuery[jumpToIndex].endTime > dtNow)
+                    if (this.weatherStateQueue[jumpToIndex].endTime > dtNow)
                     {
                         // only apply this weatherstate when it is still relevant
-                        this.currWeatherState = this.weatherStateQuery[jumpToIndex];
+                        this.currWeatherState = this.weatherStateQueue[jumpToIndex];
                         this.currWSChanged = true;
                         Print("Changed current weatherState to " + this.currWeatherState.weatherType
                             + this.currWeatherState.startTime + " " + this.currWeatherState.endTime);
                     }
-                    // delete expired weatherStates from query, including the current one,
+                    // delete expired weatherStates from queue, including the current one,
                     // as it is saved elsewhere in this.currweatherState
-                    this.weatherStateQuery.RemoveRange(0, jumpToIndex);
+                    this.weatherStateQueue.RemoveRange(0, jumpToIndex);
                 }
 
                 if (activate && this.currWSChanged)
@@ -191,21 +376,21 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
             WeatherState newWS;
             TimeSpan tempTS;
             int tempInt;
-            while (this.maxQueryLength > this.weatherStateQuery.Count)
+            while (this.maxQueueLength > this.weatherStateQueue.Count)
             {
                 newWS = new WeatherState();
 
                 // determine startTime
-                if (this.weatherStateQuery.Count > 0)
+                if (this.weatherStateQueue.Count > 0)
                 {
-                    if (this.weatherStateQuery[this.weatherStateQuery.Count - 1].endTime < dtNow)
+                    if (this.weatherStateQueue[this.weatherStateQueue.Count - 1].endTime < dtNow)
                     {
                         newWS.startTime = dtNow;
                     }
                     else
                     {
                         newWS.startTime = 
-                            this.weatherStateQuery[this.weatherStateQuery.Count - 1].endTime;
+                            this.weatherStateQueue[this.weatherStateQueue.Count - 1].endTime;
                     }
                 }
                 else
@@ -240,11 +425,11 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
                 }
 
                 // go go little weatherState!
-                lock (wsQueryLock)
+                lock (wsQueueLock)
                 {
                     MakeLog("Adding new weatherState: " + newWS.weatherType
                         + newWS.startTime + " " + newWS.endTime);
-                    this.weatherStateQuery.Add(newWS);
+                    this.weatherStateQueue.Add(newWS);
                 }
             }
 
@@ -260,7 +445,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
             }
             else if (this.currWeatherState.endTime <= dtNow)
             {
-                // let the current weatherState expire without a new one available from query
+                // let the current weatherState expire without a new one available from queue
                 this.currWSExpired = true;
                 World.setRainTime(World.WeatherType.Undefined, 0, 0, 23, 59);
             }
