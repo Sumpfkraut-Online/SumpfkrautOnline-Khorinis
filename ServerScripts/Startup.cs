@@ -25,6 +25,9 @@ using GUC.Server.Scripts.AI.NPC_Def.Human;
 using GUC.Server.Scripts.Items;
 using GUC.Server.Scripts.Communication;
 using GUC.Server.Scripts.Utils;
+
+using GUC.Server.Scripts.Sumpfkraut.WeatherSystem;
+
 namespace GUC.Server.Scripts
 {
 	public class Startup : IServerStartup
@@ -34,6 +37,53 @@ namespace GUC.Server.Scripts
 		public Button connection;
 		public void OnServerInit()
 		{
+
+            Console.WriteLine(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+
+            //List<int> myList = new List<int>();
+            //for (int i = 0; i <= 10; i++)
+            //{
+            //    myList.Add(i);
+            //}
+            //myList.Insert(5, 999);
+            //myList.RemoveRange(0, 4);
+            //for (int i = 0; i < myList.Count; i++)
+            //{
+            //    Console.WriteLine(myList[i]);
+            //}
+
+            //List<Object> objList = new List<Object>();
+            //Object obj1 = new Object();
+            //Object obj2 = obj1;
+            //objList.Add(obj1);
+            //Object obj3 = objList[0];
+            //Console.WriteLine((obj1 == obj2) + " " + (obj1 == obj3) + " " + (obj2 == obj3));
+
+            Weather w = new Weather(false);
+
+            w.FillUpQueue();
+            //Console.WriteLine(">>> " + w.weatherStateQueue.Count);
+            for (int i = 0; i < w.weatherStateQueue.Count; i++)
+            {
+                Console.WriteLine(i + ": " + w.weatherStateQueue[i].startTime + " ## " + 
+                    w.weatherStateQueue[i].endTime);
+            }
+
+            w.InsertWeatherState(new WeatherState(World.WeatherType.Snow, 
+                w.weatherStateQueue[5].startTime, 
+                w.weatherStateQueue[7].endTime));
+            //Console.WriteLine(">>> " + w.weatherStateQueue.Count);
+            for (int i = 0; i < w.weatherStateQueue.Count; i++)
+            {
+                Console.WriteLine(i + ": " + w.weatherStateQueue[i].startTime + " ## " + 
+                    w.weatherStateQueue[i].endTime);
+            }
+
+            Console.WriteLine(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+
+
+
+
             Logger.log(Logger.LogLevel.INFO, "######################## Initalise ########################");
             cursor = Cursor.getCursor();
             RandomManager.GetRandom();
