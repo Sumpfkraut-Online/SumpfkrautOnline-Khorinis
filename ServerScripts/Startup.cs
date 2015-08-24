@@ -59,25 +59,27 @@ namespace GUC.Server.Scripts
             //Object obj3 = objList[0];
             //Console.WriteLine((obj1 == obj2) + " " + (obj1 == obj3) + " " + (obj2 == obj3));
 
-            Weather w = new Weather(false);
 
-            w.FillUpQueue();
-            //Console.WriteLine(">>> " + w.weatherStateQueue.Count);
-            for (int i = 0; i < w.weatherStateQueue.Count; i++)
-            {
-                Console.WriteLine(i + ": " + w.weatherStateQueue[i].startTime + " ## " + 
-                    w.weatherStateQueue[i].endTime);
-            }
 
-            w.InsertWeatherState(new WeatherState(World.WeatherType.Snow, 
-                w.weatherStateQueue[5].startTime, 
-                w.weatherStateQueue[7].endTime));
-            //Console.WriteLine(">>> " + w.weatherStateQueue.Count);
-            for (int i = 0; i < w.weatherStateQueue.Count; i++)
-            {
-                Console.WriteLine(i + ": " + w.weatherStateQueue[i].startTime + " ## " + 
-                    w.weatherStateQueue[i].endTime);
-            }
+            //Weather w = new Weather(false);
+
+            //w.FillUpQueue();
+            ////Console.WriteLine(">>> " + w.weatherStateQueue.Count);
+            //for (int i = 0; i < w.weatherStateQueue.Count; i++)
+            //{
+            //    Console.WriteLine(i + ": " + w.weatherStateQueue[i].startTime + " ## " + 
+            //        w.weatherStateQueue[i].endTime);
+            //}
+
+            //w.InsertWeatherState(new WeatherState(World.WeatherType.Snow, 
+            //    w.weatherStateQueue[5].startTime, 
+            //    w.weatherStateQueue[7].endTime));
+            ////Console.WriteLine(">>> " + w.weatherStateQueue.Count);
+            //for (int i = 0; i < w.weatherStateQueue.Count; i++)
+            //{
+            //    Console.WriteLine(i + ": " + w.weatherStateQueue[i].startTime + " ## " + 
+            //        w.weatherStateQueue[i].endTime);
+            //}
 
             Console.WriteLine(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 

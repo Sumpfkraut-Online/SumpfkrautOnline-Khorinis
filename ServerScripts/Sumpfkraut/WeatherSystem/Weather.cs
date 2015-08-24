@@ -70,10 +70,10 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
             this.currWSChanged = false;
             this.maxQueueLength = 10;
 
-            //this.maxWSTime = new TimeSpan(0, 0, 0, 5);
-            //this.minWSTime = new TimeSpan(0, 0, 0, 3);
-            this.maxWSTime = new TimeSpan(0, 2, 0, 0); // 2 hours
-            this.minWSTime = new TimeSpan(0, 0, 30, 0); // 30 minutes
+            this.maxWSTime = new TimeSpan(0, 0, 0, 5);
+            this.minWSTime = new TimeSpan(0, 0, 0, 3);
+            //this.maxWSTime = new TimeSpan(0, 2, 0, 0); // 2 hours
+            //this.minWSTime = new TimeSpan(0, 0, 30, 0); // 30 minutes
             this.precFactor = 33; // 33 % chance of weather with precipitation
             this.snowFactor = 0; // no snow on default
 
@@ -83,8 +83,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
             this.random = new Random();
             this.wsQueueLock = new Object();
 
-            //this.defaultTimeout = new TimeSpan(0, 0, 1);
-            this.defaultTimeout = new TimeSpan(0, 2, 0); // default timeout / threadsleep is 2 minutes
+            this.defaultTimeout = new TimeSpan(0, 0, 5);
+            //this.defaultTimeout = new TimeSpan(0, 2, 0); // default timeout / threadsleep is 2 minutes
             this.timeout = this.defaultTimeout;
 
             if (startOnCreate)
