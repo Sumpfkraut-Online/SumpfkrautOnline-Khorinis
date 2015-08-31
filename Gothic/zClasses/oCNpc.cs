@@ -1479,5 +1479,35 @@ namespace Gothic.zClasses
             msg.Animation = right ? AniCtrl._t_strafer : AniCtrl._t_strafel;
             GetEM(0).OnMessage(msg, this);
         }
+
+        public int StartFaceAni(string ani, float arg1, float arg2)
+        {
+            int result;
+            using (zString z = zString.Create(Process, ani))
+            {
+                result = StartFaceAni(z, arg1, arg2);
+            }
+            return result;
+        }
+
+        public int StartFaceAni(zString ani, float arg1, float arg2)
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)0x738860, new CallValue[] { ani, (FloatArg)arg1, (FloatArg)arg2 });
+        }
+
+        public int StopFaceAni(string ani)
+        {
+            int result;
+            using (zString z = zString.Create(Process, ani))
+            {
+                result = StopFaceAni(z);
+            }
+            return result;
+        }
+
+        public int StopFaceAni(zString ani)
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)0x738B50, new CallValue[] { ani });
+        }
     }
 }

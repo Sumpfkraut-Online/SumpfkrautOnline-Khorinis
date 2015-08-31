@@ -70,7 +70,7 @@ namespace GUC.Client.Network.Messages
 
         public static void WriteState(NPC npc)
         {
-            zERROR.GetZErr(Program.Process).Report(2, 'G', "State: " + npc.State, 0, "hAniCtrl_Human.cs", 0);
+            //zERROR.GetZErr(Program.Process).Report(2, 'G', "State: " + npc.State, 0, "hAniCtrl_Human.cs", 0);
             BitStream stream = Program.client.SetupSendStream(NetworkID.NPCStateMessage);
             stream.mWrite(npc.ID);
             stream.mWrite((byte)npc.State);
@@ -89,7 +89,7 @@ namespace GUC.Client.Network.Messages
             if (npc == null) return;
 
             if (npc.State == NPCState.Stand)
-            {
+            {   //Just in case the npc is turning
                 npc.StopTurnAnis();
             }
 
@@ -97,7 +97,20 @@ namespace GUC.Client.Network.Messages
             npc.Position = stream.mReadVec();
             npc.Direction = stream.mReadVec();
 
-            npc.Update(DateTime.Now.Ticks);
+            switch (npc.State)
+            {
+                case NPCState.Jump:
+                    npc.gNpc.AniCtrl.PC_JumpForward();
+                    break;
+                case NPCState.Fall:
+                    npc.gNpc.AniCtrl.StartFallDownAni();
+                    break;
+                default:
+                    npc.Update(DateTime.Now.Ticks);
+                    break;
+            }
+
+            
         }
 
         public static void WriteWeaponState(bool removeType1)

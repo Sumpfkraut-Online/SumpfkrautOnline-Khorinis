@@ -35,7 +35,7 @@ namespace GUC.Server.WorldObjects
 
         public byte BodyHeight = 100;
         public byte BodyWidth = 100;
-        public sbyte Fatness = 0;
+        public short Fatness = 0;
 
         public byte Voice = 0;
         #endregion
@@ -57,8 +57,8 @@ namespace GUC.Server.WorldObjects
                 if (!instanceList.ContainsKey(idCount))
                 {
                     this.ID = idCount;
-                    instanceList.Add(idCount, this);
-                    instanceDict.Add(codeName, this);
+                    instanceList.Add(this.ID, this);
+                    instanceDict.Add(this._CodeName, this);
                     idCount++;
                     return;
                 }

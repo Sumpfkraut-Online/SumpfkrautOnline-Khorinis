@@ -147,6 +147,7 @@ namespace GUC.Client.Network
             {
                 //WinApi.Kernel.Process.SetWindowText(System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle, "Gothic II - Untold Chapters - " + client.GetLastPing(client.GetSystemAddressFromIndex(0)));
                 packetKB += packet.length;
+
                 switch (packet.data[0])
                 {
                     case (byte)DefaultMessageIDTypes.ID_CONNECTION_REQUEST_ACCEPTED:

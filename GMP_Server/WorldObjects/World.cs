@@ -32,6 +32,15 @@ namespace GUC.Server.WorldObjects
         {
             MapName = mapname;
             sWorld.WorldList.Add(this);
+            try
+            {
+                //(new NPC(NPCInstance.InstanceDict["MUD"])).Spawn(this);
+            }
+            catch (Exception e)
+            {
+                Log.Logger.log(e.ToString());
+                Log.Logger.log(e.InnerException.ToString());
+            }
         }
 
         public NPC GetNpcOrPlayer(uint id)

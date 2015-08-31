@@ -39,30 +39,42 @@ namespace GUC.Client.States
 
         static NPC npc;
         static Item item;
-        static uint num = 9999;
+        static uint num = 0;
         public static void RenderTest()
         {
-
-            npc = new NPC(num++);
-            NPCInstance.InstanceList[3].CreateNPC(npc.gNpc);
-            npc.gNpc.SetToFistMode();
+            if (npc == null)
+            {
+                npc = new NPC(num++);
+                NPCInstance.InstanceList[3].CreateNPC(npc.gNpc);
+                npc.Spawn();
+            }
             npc.Position = new Vec3f(0, 1000, 0);
-            npc.Spawn();
         }
 
         static Random rand = new Random();
         public static void RenderTest2()
         {
-            for (int i = 0; i < 25; i++)
+            npc.gNpc.AniCtrl.StartFallDownAni();
+           /* for (int i = 0; i < 25; i++)
             {
                 item = new Item(num++, (ushort)rand.Next(0, 7));
                 item.Position = new Vec3f(rand.Next(-700, 700), 1000, rand.Next(-700, 700));
                 item.Spawn(item.Position, item.Direction, true);
-            }
+            }*/
         }
 
+        static int lop = 9;
+        static List<string> anis = new List<string>() { "S_NEUTRAL", "S_FRIENDLY", "S_ANGRY", "S_HOSTILE", "S_FRIGHTENED",
+            "S_EYESCLOSED", "R_EYESBLINK", "T_EAT", "T_HURT", "VISEME" };
         public static void RenderTest3()
         {
+            Player.Hero.gNpc.StopFaceAni(anis[lop]);
+            lop++;
+            if (lop >= anis.Count)
+                lop = 0;
+
+            Player.Hero.gNpc.StartFaceAni(anis[lop], 1, -1);
+            GUI.GUCView.DebugText.Text = anis[lop];
         }
 
         public GameState()
@@ -78,10 +90,24 @@ namespace GUC.Client.States
             InputHandler.Update();
             Program.client.Update();
 
-            for (int i = 0; i < World.AllVobs.Count; i++)
+            GUI.GUCView.DebugText.Text = "";
+            foreach (NPC npc in World.npcDict.Values)
             {
-                World.AllVobs[i].Update(ticks);
+                if (npc == Player.Hero)
+                    continue;
+                GUI.GUCView.DebugText.Text += " " + npc.gNpc.Address.ToString("X4") + " " + npc.gNpc.AniCtrl.Address.ToString("X4") + ": " + npc.gNpc.GetModel().GetAniIDFromAniName("T_FALLEN_2_STAND");
             }
+
+            /*GUI.GUCView.DebugText.Text = "";
+            for (int i = 0; i < Player.VobControlledList.Count; i++)
+            {
+                GUI.GUCView.DebugText.Text += " " + Player.VobControlledList[i].ID;
+            }*/
+
+                for (int i = 0; i < World.AllVobs.Count; i++)
+                {
+                    World.AllVobs[i].Update(ticks);
+                }
         }
     }
 }

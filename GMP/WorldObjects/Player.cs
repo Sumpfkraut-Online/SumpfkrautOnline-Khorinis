@@ -10,7 +10,7 @@ namespace GUC.Client.WorldObjects
     static class Player
     {
         public static NPC Hero = null;
-        public static List<uint> VobControlledList = new List<uint>();
+        public static List<Vob> VobControlledList = new List<Vob>();
 
         public static void DoFists()
         {

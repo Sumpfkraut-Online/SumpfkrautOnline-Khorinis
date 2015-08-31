@@ -24,6 +24,7 @@ namespace GUC.Server.Scripts.Instances
             npc.BodyMesh = "Sca_Body";
 
             npc = new NPCInstance("Mud");
+            npc.Name = "Mud";
             npc.Visual = "HUMANS.MDS";
             npc.BodyMesh = "HUM_BODY_NAKED0";
             npc.BodyTex = 1;
@@ -31,7 +32,7 @@ namespace GUC.Server.Scripts.Instances
             npc.HeadTex = 22;
             npc.BodyHeight = 70;
             npc.BodyWidth = 70;
-            npc.Fatness = sbyte.MinValue;
+            npc.Fatness = 0;
             npc.Voice = 3;
 
             /*Random rand = random;

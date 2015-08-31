@@ -269,9 +269,6 @@ namespace GUC.Client.WorldObjects
 
                 switch (State)
                 {
-                    case NPCState.Stand:
-                        gNpc.AniCtrl._Stand();
-                        break;
                     case NPCState.MoveForward:
                         gNpc.AniCtrl._Forward();
                         break;
@@ -286,13 +283,9 @@ namespace GUC.Client.WorldObjects
                         gVob.GetEM(0).KillMessages();
                         gNpc.DoStrafe(false);
                         break;
-                    case NPCState.Jump:
-                        if (this.gNpc.GetBodyState() != 8) //jumping, FIXME?
-                        {
-                            this.gNpc.AniCtrl.PC_JumpForward();
-                        }
-                        break;
-                    case NPCState.Fall:
+                    //case NPCState.Stand:
+                    default:
+                        gNpc.AniCtrl._Stand();
                         break;
                 }
             }

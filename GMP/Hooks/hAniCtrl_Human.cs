@@ -12,25 +12,22 @@ namespace GUC.Client.Hooks
 {
     static class hAniCtrl_Human
     {
-        static void CheckState(String message, NPCState state)
-        {
-            int thisAddr = Program.Process.ReadInt(Convert.ToInt32(message));
-
-            if (thisAddr != Player.Hero.gNpc.AniCtrl.Address)
-                return;
-
-            if (Player.Hero.State != state)
-            {
-                Player.Hero.State = state;
-                NPCMessage.WriteState(Player.Hero);
-            }
-        }
-
         public static Int32 _Forward(String message)
         {
             try
             {
-                CheckState(message, NPCState.MoveForward);
+                if (Program.Process.ReadInt(Convert.ToInt32(message)) != Player.Hero.gNpc.AniCtrl.Address)
+                    return 0;
+
+                int bs = Player.Hero.gNpc.GetBodyState();
+                if (bs < 1 /*walk*/ || bs > 7 /*dive*/)
+                    return 0;
+
+                if (Player.Hero.State != NPCState.MoveForward)
+                {
+                    Player.Hero.State = NPCState.MoveForward;
+                    NPCMessage.WriteState(Player.Hero);
+                }
             }
             catch (Exception e)
             {
@@ -43,7 +40,17 @@ namespace GUC.Client.Hooks
         {
             try
             {
-                CheckState(message, NPCState.Stand);
+                if (Program.Process.ReadInt(Convert.ToInt32(message)) != Player.Hero.gNpc.AniCtrl.Address)
+                    return 0;
+
+                if (Player.Hero.gNpc.GetBodyState() != 0 /*stand*/)
+                    return 0;
+
+                if (Player.Hero.State != NPCState.Stand)
+                {
+                    Player.Hero.State = NPCState.Stand;
+                    NPCMessage.WriteState(Player.Hero);
+                }
             }
             catch (Exception e)
             {
@@ -56,7 +63,18 @@ namespace GUC.Client.Hooks
         {
             try
             {
-                CheckState(message, NPCState.MoveBackward);
+                if (Program.Process.ReadInt(Convert.ToInt32(message)) != Player.Hero.gNpc.AniCtrl.Address)
+                    return 0;
+
+                int bs = Player.Hero.gNpc.GetBodyState();
+                if (bs < 1 /*walk*/ || bs > 6 /*crawl, wat*/)
+                    return 0;
+
+                if (Player.Hero.State != NPCState.MoveBackward)
+                {
+                    Player.Hero.State = NPCState.MoveBackward;
+                    NPCMessage.WriteState(Player.Hero);
+                }
             }
             catch (Exception e)
             {
@@ -69,7 +87,16 @@ namespace GUC.Client.Hooks
         {
             try
             {
-                CheckState(message, NPCState.Jump);
+                if (Program.Process.ReadInt(Convert.ToInt32(message)) != Player.Hero.gNpc.AniCtrl.Address)
+                    return 0;
+
+                //FIXME und so
+
+                if (Player.Hero.State != NPCState.Jump)
+                {
+                    Player.Hero.State = NPCState.Jump;
+                    NPCMessage.WriteState(Player.Hero);
+                }
             }
             catch (Exception e)
             {
@@ -82,7 +109,14 @@ namespace GUC.Client.Hooks
         {
             try
             {
-                CheckState(message, NPCState.Fall);
+                if (Program.Process.ReadInt(Convert.ToInt32(message)) != Player.Hero.gNpc.AniCtrl.Address)
+                    return 0;
+
+                if (Player.Hero.State != NPCState.Fall)
+                {
+                    Player.Hero.State = NPCState.Fall;
+                    NPCMessage.WriteState(Player.Hero);
+                }
             }
             catch (Exception e)
             {

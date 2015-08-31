@@ -203,7 +203,7 @@ namespace GUC.Network
 
         public static void mWrite(this BitStream stream, sbyte s)
         {
-            stream.Write(Convert.ToByte(s));
+            stream.Write((byte)s);
         }
 
         public static sbyte mReadSByte(this BitStream stream)

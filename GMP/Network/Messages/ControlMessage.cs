@@ -13,12 +13,20 @@ namespace GUC.Client.Network.Messages
     {
         public static void ReadAddVob(BitStream stream)
         {
-            Player.VobControlledList.Add(stream.mReadUInt());
+            Vob vob = World.GetVobByID(stream.mReadUInt());
+            if (vob != null)
+            {
+                Player.VobControlledList.Add(vob);
+            }
         }
 
         public static void ReadRemoveVob(BitStream stream)
         {
-            Player.VobControlledList.Remove(stream.mReadUInt());
+            Vob vob = World.GetVobByID(stream.mReadUInt());
+            if (vob != null)
+            {
+                Player.VobControlledList.Remove(vob);
+            }
         }
     }
 }

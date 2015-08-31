@@ -116,7 +116,7 @@ namespace GUC.Client.WorldObjects
                         inst.HeadTex = br.ReadByte();
                         inst.BodyHeight = (float)br.ReadByte() / 100.0f;
                         inst.BodyWidth = (float)br.ReadByte() / 100.0f;
-                        inst.Fatness = (float)br.ReadSByte() / 100.0f;
+                        inst.Fatness = (float)br.ReadInt16() / 100.0f;
                         inst.Voice = br.ReadByte();
 
                         InstanceList.Add(inst.ID, inst);
@@ -144,7 +144,7 @@ namespace GUC.Client.WorldObjects
                     bw.Write((byte)inst.HeadTex);
                     bw.Write((byte)Math.Round(100.0f * (float)inst.BodyHeight));
                     bw.Write((byte)Math.Round(100.0f * (float)inst.BodyWidth));
-                    bw.Write((sbyte)Math.Round(100.0f * (float)inst.Fatness));
+                    bw.Write((short)Math.Round(100.0f * (float)inst.Fatness));
                     bw.Write((byte)inst.Voice);
                 }
             }
