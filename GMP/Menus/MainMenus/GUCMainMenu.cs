@@ -25,6 +25,7 @@ namespace GUC.Client.Menus.MainMenus
         protected List<MainMenuItem> items = new List<MainMenuItem>();
         protected int cursor = 0;
         protected int[] pos;
+        protected int preferredCursorItem = 0;
 
         protected Action OnEscape = null;
 
@@ -64,7 +65,7 @@ namespace GUC.Client.Menus.MainMenus
             for (int i = 0; i < items.Count; i++)
                 items[i].Show();
 
-            cursor = 0;
+            cursor = preferredCursorItem;
             if (!items[cursor].Enabled)
                 MoveCursor(false); //first element is disabled, move to the next one
             items[cursor].Select();
