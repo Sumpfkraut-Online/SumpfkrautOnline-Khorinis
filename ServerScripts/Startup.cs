@@ -38,54 +38,6 @@ namespace GUC.Server.Scripts
 		public void OnServerInit()
 		{
 
-            Console.WriteLine(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-
-            //List<int> myList = new List<int>();
-            //for (int i = 0; i <= 10; i++)
-            //{
-            //    myList.Add(i);
-            //}
-            //myList.Insert(5, 999);
-            //myList.RemoveRange(0, 4);
-            //for (int i = 0; i < myList.Count; i++)
-            //{
-            //    Console.WriteLine(myList[i]);
-            //}
-
-            //List<Object> objList = new List<Object>();
-            //Object obj1 = new Object();
-            //Object obj2 = obj1;
-            //objList.Add(obj1);
-            //Object obj3 = objList[0];
-            //Console.WriteLine((obj1 == obj2) + " " + (obj1 == obj3) + " " + (obj2 == obj3));
-
-
-
-            //Weather w = new Weather(false);
-
-            //w.FillUpQueue();
-            ////Console.WriteLine(">>> " + w.weatherStateQueue.Count);
-            //for (int i = 0; i < w.weatherStateQueue.Count; i++)
-            //{
-            //    Console.WriteLine(i + ": " + w.weatherStateQueue[i].startTime + " ## " + 
-            //        w.weatherStateQueue[i].endTime);
-            //}
-
-            //w.InsertWeatherState(new WeatherState(World.WeatherType.Snow, 
-            //    w.weatherStateQueue[5].startTime, 
-            //    w.weatherStateQueue[7].endTime));
-            ////Console.WriteLine(">>> " + w.weatherStateQueue.Count);
-            //for (int i = 0; i < w.weatherStateQueue.Count; i++)
-            //{
-            //    Console.WriteLine(i + ": " + w.weatherStateQueue[i].startTime + " ## " + 
-            //        w.weatherStateQueue[i].endTime);
-            //}
-
-            Console.WriteLine(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-
-
-
-
             Logger.log(Logger.LogLevel.INFO, "######################## Initalise ########################");
             cursor = Cursor.getCursor();
             RandomManager.GetRandom();
@@ -98,8 +50,8 @@ namespace GUC.Server.Scripts
             DefaultItems.Init();
             
 
-            DayTime.Init();
-            DayTime.setTime(0, 12, 0);
+            //DayTime.Init();
+            //DayTime.setTime(0, 12, 0);
 
 
 #if SSM_AI
@@ -151,6 +103,70 @@ namespace GUC.Server.Scripts
 
             
             Logger.log(Logger.LogLevel.INFO, "###################### End Initalise ######################");
+
+
+
+
+
+
+            Console.WriteLine(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+
+            //List<int> myList = new List<int>();
+            //for (int i = 0; i <= 10; i++)
+            //{
+            //    myList.Add(i);
+            //}
+            //myList.Insert(5, 999);
+            //myList.RemoveRange(0, 4);
+            //for (int i = 0; i < myList.Count; i++)
+            //{
+            //    Console.WriteLine(myList[i]);
+            //}
+
+            //List<Object> objList = new List<Object>();
+            //Object obj1 = new Object();
+            //Object obj2 = obj1;
+            //objList.Add(obj1);
+            //Object obj3 = objList[0];
+            //Console.WriteLine((obj1 == obj2) + " " + (obj1 == obj3) + " " + (obj2 == obj3));
+
+
+
+            //World.setTime(20, 9, 0);
+            //IGTime now;
+            //World.getTime(out now.day, out now.hour, out now.minute);
+            //Console.WriteLine(now.day + ":" + now.hour + ":" + now.minute);
+
+            //World.setRainTime(World.WeatherType.Rain, 0, 0, 23, 59);
+            //Console.WriteLine(">>> CODE: PAPIER <<<");
+            //World.setRainTime(World.WeatherType.Rain, (byte) now.hour, (byte) (now.minute + 1), 23, 59);
+
+            //Weather w = new Weather(false);
+
+            //w.FillUpQueue();
+            ////Console.WriteLine(">>> " + w.weatherStateQueue.Count);
+            //for (int i = 0; i < w.weatherStateQueue.Count; i++)
+            //{
+            //    Console.WriteLine(i + ": " + w.weatherStateQueue[i].startTime + " ## " + 
+            //        w.weatherStateQueue[i].endTime);
+            //}
+
+            //w.InsertWeatherState(new WeatherState(World.WeatherType.Snow, 
+            //    w.weatherStateQueue[5].startTime, 
+            //    w.weatherStateQueue[7].endTime));
+            ////Console.WriteLine(">>> " + w.weatherStateQueue.Count);
+            //for (int i = 0; i < w.weatherStateQueue.Count; i++)
+            //{
+            //    Console.WriteLine(i + ": " + w.weatherStateQueue[i].startTime + " ## " + 
+            //        w.weatherStateQueue[i].endTime);
+            //}
+
+            
+            
+
+
+
+            Console.WriteLine(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		}
     }
 }
