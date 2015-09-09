@@ -27,6 +27,7 @@ namespace GUC.Client.Menus.MainMenus
         protected List<MainMenuItem> items = new List<MainMenuItem>();
         protected int cursor = 0;
         protected int[] pos;
+        protected int preferredCursorItem = 0;
 
         protected Action OnEscape = null;
 
@@ -65,11 +66,11 @@ namespace GUC.Client.Menus.MainMenus
             helpVis.Show();
             for (int i = 0; i < items.Count; i++)
                 items[i].Show();
-    
-            cursor = 0;
+
+            cursor = preferredCursorItem;
             if (!items[cursor].Enabled)
             {
-                sndEnabled = false; // char list is not loaded when the browse sound is played on opening. wtf
+                sndEnabled = false; //sound would be played on opening
                 MoveCursor();
                 sndEnabled = true;
             }

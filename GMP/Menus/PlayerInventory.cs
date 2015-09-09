@@ -15,7 +15,17 @@ namespace GUC.Client.Menus
 
         public PlayerInventory()
         {
-            inv = new GUCInventory(627, 134, 5, 6);
+            // Create the player inventory relative to the screen size
+            int x, y, cols, rows;
+            int[] screenSize = GUCView.GetScreenSize();
+            const int descrHeight = 200;
+            const int slotSize = 70;
+
+            cols = 5;
+            x = screenSize[0] - (slotSize * cols + screenSize[0] / 25);
+            y = screenSize[1] / 7;
+            rows = (screenSize[1] - descrHeight - y) / slotSize;
+            inv = new GUCInventory(x, y, cols, rows);
         }
 
         public override void Open()
