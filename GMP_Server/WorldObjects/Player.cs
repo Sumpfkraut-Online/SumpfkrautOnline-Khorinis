@@ -21,12 +21,13 @@ namespace GUC.Server.WorldObjects
             stream.mWrite(npc.World.MapName);
             stream.mWrite(npc.pos);
             stream.mWrite(npc.dir);
-            Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE, 'G', client.guid, false);
+            //write stats
+            Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'G', client.guid, false);
         }
 
         internal static void ReadControl(BitStream stream, Client client)
         {
-            if (client.mainChar == null)
+            if (client.mainChar == null) // coming from the log-in menus, first spawn
             {
                 client.mainChar = client.character;
                 Network.Messages.ConnectionMessage.WriteInstanceTables(client);
@@ -35,18 +36,12 @@ namespace GUC.Server.WorldObjects
                     OnEnterWorld(client.mainChar);
             }
 
-            if (client.character.Spawned == false)
+            if (!client.character.Spawned)
                 client.character.Spawn(client.character.World);
         }
 
         internal static void ReadPickUpItem(BitStream stream, Client client)
         {
-            if (client.character == null)
-                return; //whut
-
-            if (!client.character.Spawned)
-                return;
-
             Item item;
             client.character.World.ItemDict.TryGetValue(stream.mReadUInt(), out item);
             if (item == null) return;

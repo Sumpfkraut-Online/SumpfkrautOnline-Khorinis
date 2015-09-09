@@ -11,7 +11,7 @@ namespace GUC.Server.WorldObjects
     public class World
     {
         //Worlds, hardcoded but whatever
-        private static World newworld = new World("NEWWORLD\\NEWWORLD.ZEN");
+        private static World newworld = new World("SOK-NEWWORLD.ZEN");
         public static World NewWorld { get { return newworld; } }
 
         public string MapName { get; protected set; }

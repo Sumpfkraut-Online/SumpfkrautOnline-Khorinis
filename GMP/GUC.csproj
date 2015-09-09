@@ -137,6 +137,7 @@
     <Compile Include="Menus\MainMenus\PlayerlistMenu.cs" />
     <Compile Include="Menus\MainMenus\HelpRPMenu.cs" />
     <Compile Include="Menus\MainMenus\RegisterMenu.cs" />
+    <Compile Include="Menus\StatusMenu.cs" />
     <Compile Include="Network\Messages\ControlMessage.cs" />
     <Compile Include="Network\Messages\InventoryMessage.cs" />
     <Compile Include="Network\Messages\NPCMessage.cs" />
@@ -188,7 +189,7 @@
     <EmbeddedResource Include="Resources\Species.d" />
     <EmbeddedResource Include="Resources\Startup.d" />
     <EmbeddedResource Include="Resources\itm.d" />
-    <EmbeddedResource Include="Resources\Text.d" />
+    <EmbeddedResource Include="Resources\SFX.d" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Gothic\Gothic.csproj">

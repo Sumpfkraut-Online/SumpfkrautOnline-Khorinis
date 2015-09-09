@@ -50,6 +50,16 @@ namespace Gothic.zClasses
             return rArg;
         }
 
+        public int PlaySound(zCSoundFX sound, int arg)
+        {
+            return Process.THISCALL<IntArg>((uint)Address, 0x4EF7B0, new CallValue[] { sound, (IntArg)arg });
+        }
+
+        public int PlaySound(zCSoundFX sound, int arg1, int arg2, float vol)
+        {
+            return Process.THISCALL<IntArg>((uint)Address, 0x4F0B70, new CallValue[] { sound, (IntArg)arg1, (IntArg)arg2, (FloatArg)vol });
+        }
+
         public int PlaySound3D(zString sound, zCVob vob, int arg, zStruct.zTSound3DParams param)
         {
             return Process.THISCALL<IntArg>((uint)Address, (int)FuncOffsets.PlaySound3D_Str, new CallValue[] { sound, vob, (IntArg)arg, param });
@@ -60,15 +70,24 @@ namespace Gothic.zClasses
             return Process.THISCALL<IntArg>((uint)Address, (int)FuncOffsets.PlaySound3D, new CallValue[] { sound, vob, (IntArg)arg, param });
         }
 
+        public zCSoundFX LoadSingle(zString text)
+        {
+            return Process.THISCALL<zCSoundFX>((uint)Address, (uint)0x4EF0E0, new CallValue[] { text });
+        }
+
         public zCSoundFX LoadSoundFX(zString text)
         {
             return Process.THISCALL<zCSoundFX>((uint)Address, (uint)FuncOffsets.LoadSoundFX, new CallValue[] { text });
+        }
+
+        public zCSoundFX LoadSoundFXScript(zString text)
+        {
+            return Process.THISCALL<zCSoundFX>((uint)Address, (uint)0x4EE120, new CallValue[] { text });
         }
 
         public static zCSndSys_MSS SoundSystem(Process process)
         {
             return new zCSndSys_MSS(process, process.ReadInt(0x0099B03C));
         }
-        
     }
 }

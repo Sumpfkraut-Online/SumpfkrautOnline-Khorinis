@@ -41,6 +41,7 @@ namespace GUC.Server.Network
 
         public void SetControl(NPC npc)
         {
+            //set old character to NPC
             if (character != null)
             {
                 sWorld.PlayerList.Remove(character);
@@ -58,6 +59,7 @@ namespace GUC.Server.Network
                 character.client = null;
             }
 
+            //npc is already in the world, set to player
             if (npc.Spawned)
             {
                 npc.World.NPCDict.Remove(npc.ID);

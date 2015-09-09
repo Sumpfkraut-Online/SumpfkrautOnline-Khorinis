@@ -55,7 +55,7 @@ namespace Gothic.zClasses
 
         public int HandleSelAction(int t, zString str, zCMenuItem menuitem)
         {
-            return Process.THISCALL<IntArg>((uint)Address, 0x004DC430, new CallValue[] { new IntArg(t), str, menuitem }).Address;
+            return Process.THISCALL<IntArg>((uint)Address, 0x004DC430, new CallValue[] { new IntArg(t), str, menuitem });
         }
 
         public int HandleActivateItem(zCMenuItem menuitem)

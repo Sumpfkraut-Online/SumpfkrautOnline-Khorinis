@@ -9,17 +9,20 @@ namespace GUC.Client.GUI.MainMenu
     class MainMenuButton : MainMenuItem
     {
         GUCVisual vis;
+        GUCVisualText visText;
 
         public MainMenuButton(string text, string help, int y, Action action)
             : this(text, help, 0, y, action)
         {
-            vis.Texts[0].CenteredX = true;
+            visText.CenteredX = true;
         }
 
         public MainMenuButton(string text, string help, int x, int y, Action action)
         {
             HelpText = help;
             vis = GUCVisualText.Create(text, x, y);
+            visText = vis.Texts[0];
+            visText.Format = GUCVisualText.TextFormat.Center;
             vis.Font = GUCVisual.Fonts.Menu;
             OnActivate = action;
         }
@@ -28,11 +31,11 @@ namespace GUC.Client.GUI.MainMenu
         {
             get
             {
-                return vis.Texts[0].Text;
+                return visText.Text;
             }
             set
             {
-                vis.Texts[0].Text = value;
+                visText.Text = value;
             }
         }
 
@@ -67,11 +70,11 @@ namespace GUC.Client.GUI.MainMenu
                 enabled = value;
                 if (value)
                 {
-                    vis.Texts[0].SetColor(ColorRGBA.White);
+                    visText.SetColor(ColorRGBA.White);
                 }
                 else
                 {
-                    vis.Texts[0].SetColor(ColorRGBA.Grey);
+                    visText.SetColor(ColorRGBA.Grey);
                 }
             }
         }

@@ -35,7 +35,7 @@ namespace GUC.Client.Menus
         {
             if (activeMenus.Count == 0)
             {
-                InputHooked.deaktivateFullControl(Program.Process);
+                InputHooked.deactivateFullControl(Program.Process);
             }
             activeMenus.Insert(0, menu);
         }
@@ -87,9 +87,9 @@ namespace GUC.Client.Menus
 
         //ingame menus
         public static PlayerInventory Inventory = new PlayerInventory();
+        public static AnimationMenu Animation = new AnimationMenu();
+        public static StatusMenu Status = new StatusMenu();
 
         public static DropItemMenu InputNumber = new DropItemMenu();
-
-        public static AnimationMenu Animation = new AnimationMenu();
     }
 }

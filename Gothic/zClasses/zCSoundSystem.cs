@@ -37,7 +37,6 @@ namespace Gothic.zClasses
         public static zCSoundSystem SoundSystem(Process process)
         {
             return new zCSoundSystem(process, process.ReadInt(0x0099B03C));
-        }
-        
+        }        
     }
 }

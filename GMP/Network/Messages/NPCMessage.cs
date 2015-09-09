@@ -109,8 +109,6 @@ namespace GUC.Client.Network.Messages
                     npc.Update(DateTime.Now.Ticks);
                     break;
             }
-
-            
         }
 
         public static void WriteWeaponState(bool removeType1)
@@ -266,6 +264,16 @@ namespace GUC.Client.Network.Messages
                 stream.mWrite(hitlist[i].ID);
             }
             Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE_ORDERED);
+        }
+
+        public static void ReadHitMessage(BitStream stream)
+        {
+            NPC npc;
+            World.npcDict.TryGetValue(stream.mReadUInt(), out npc);
+            if (npc == null) return;
+
+            npc.gNpc.HPMax = stream.mReadUShort();
+            npc.gNpc.HP = stream.mReadUShort();
         }
 
         #endregion

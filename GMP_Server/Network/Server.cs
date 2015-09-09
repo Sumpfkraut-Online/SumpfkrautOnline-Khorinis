@@ -21,7 +21,7 @@ namespace GUC.Server.Network
         Dictionary<byte, PacketReader> MessageListener;
         public BitStream ReceiveBitStream { get; private set; }
         public BitStream SendBitStream { get; private set; }
-        
+
         Dictionary<ulong, Client> clientList;
 
         /** 
@@ -161,16 +161,31 @@ namespace GUC.Server.Network
                                 msgID = p.data[1];
                                 if (client.isValid)
                                 {
-                                    if (!client.isLoggedIn && msgID > (byte)NetworkID.AccountLoginMessage)
-                                    { //not even logged in but trying to send non-login-packets
-                                        DisconnectClient(client);
-                                        return;
+                                    //for safety:
+                                    if (msgID > (byte)NetworkID.AccountLoginMessage)
+                                    {
+                                        if (client.accountID == -1)
+                                        {   //not even logged in but trying to send non-login-packets
+                                            DisconnectClient(client);
+                                            break;
+                                        }
+
+                                        if (msgID >= (byte)NetworkID.PlayerControlMessage)
+                                        {
+                                            if (client.character == null)
+                                            { //not even controlling a character but trying to send character/world packets
+                                                DisconnectClient(client);
+                                                break;
+                                            }
+
+                                            if (!client.character.Spawned && msgID > (byte)NetworkID.PlayerControlMessage)
+                                            { //not even spawned but trying to send world packets
+                                                DisconnectClient(client);
+                                                break;
+                                            }
+                                        }
                                     }
-                                    else if (!client.isControlling && msgID > (byte)NetworkID.PlayerControlMessage)
-                                    { //not even controlling a character but trying to send character-packets
-                                        DisconnectClient(client);
-                                        return;
-                                    }
+
                                     MessageListener.TryGetValue(msgID, out func);
                                     if (func != null)
                                     {
@@ -197,14 +212,12 @@ namespace GUC.Server.Network
                 }
                 catch (Exception ex)
                 {
-                    Log.Logger.log(Log.Logger.LOG_ERROR, ex.Source + "\n" + ex.Message + "\n" + ex.StackTrace);
-                    ServerInterface.CloseConnection(p.guid, true);
+                    Log.Logger.log(Log.Logger.LOG_ERROR, (NetworkID)p.data[1] + ":\n" + ex.Source + "\n" + ex.Message + "\n" + ex.StackTrace);
+                    ServerInterface.CloseConnection(p.guid, false);
                 }
                 ServerInterface.DeallocatePacket(p);
                 p = ServerInterface.Receive();
             }
-
-            
         }
 
         void DisconnectClient(Client client)

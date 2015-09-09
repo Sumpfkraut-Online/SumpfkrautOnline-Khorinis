@@ -26,6 +26,20 @@ namespace GUC.Client.Network.Messages
             Menus.GUCMenus.CloseActiveMenus();
             Menus.GUCMenus._Background.Hide();
 
+            if (World.MapName == null)
+            {
+                // the map which is used for NEW_GAME
+                Program.Process.Write(System.Text.Encoding.UTF8.GetBytes(newMap), 0x008907B0);
+                Program.Process.Write(new byte[] { 0 }, 0x008907B0 + newMap.Length);
+
+                zCMenu activeGothicMenu = zCMenu.GetActive(Program.Process);
+                using (zString z = zString.Create(Program.Process, "RESUME_GAME"))
+                {
+                    activeGothicMenu.HandleSelAction(4, z, new zCMenuItem()); //SEL_ACTION_CLOSE, menuAction = NEW_GAME
+                }
+                Program.Process.Write(1, activeGothicMenu.Address + 0xC24); //escape zCMenu::Run() loop        
+            }
+
             if (World.MapName != newMap)
             {
                 World.ChangeLevel(newMap);

@@ -12,6 +12,7 @@ namespace Gothic.zClasses
         public enum Offsets
         {
         }
+
         public enum FuncOffsets : uint
         {
         }
@@ -37,7 +38,6 @@ namespace Gothic.zClasses
         public override uint ValueLength()
         {
             return 4;
-        }
-    
+        }    
     }
 }

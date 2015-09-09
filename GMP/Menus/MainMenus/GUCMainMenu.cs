@@ -8,6 +8,8 @@ using Gothic.mClasses;
 using WinApi.User.Enumeration;
 using GUC.Types;
 using GUC.Network;
+using Gothic.zClasses;
+using Gothic.zTypes;
 
 namespace GUC.Client.Menus.MainMenus
 {
@@ -63,10 +65,14 @@ namespace GUC.Client.Menus.MainMenus
             helpVis.Show();
             for (int i = 0; i < items.Count; i++)
                 items[i].Show();
-
+    
             cursor = 0;
             if (!items[cursor].Enabled)
-                MoveCursor(false); //first element is disabled, move to the next one
+            {
+                sndEnabled = false; // char list is not loaded when the browse sound is played on opening. wtf
+                MoveCursor();
+                sndEnabled = true;
+            }
             items[cursor].Select();
             UpdateHelpText();
         }
@@ -184,7 +190,7 @@ namespace GUC.Client.Menus.MainMenus
         #region Choices
         protected MainMenuChoice AddChoice(string title, string help, int x, int y, Dictionary<int, string> choices, bool sorted, Action OnActivate, Action OnChange)
         {
-            var c = new MainMenuChoice(title, help, pos[0]+x, pos[1]+y, choices, sorted, OnActivate, OnChange);
+            var c = new MainMenuChoice(title, help, pos[0] + x, pos[1] + y, choices, sorted, OnActivate, OnChange);
             items.Add(c);
             return c;
         }
@@ -265,18 +271,18 @@ namespace GUC.Client.Menus.MainMenus
                 MoveCursor(up);
                 return;
             }
-            //PlaySound("INV_CHANGE.WAV");
+            PlaySound(SndBrowse);
         }
 
         public override void KeyPressed(VirtualKeys key)
         {
             if (key == VirtualKeys.Return)
             {
-                //PlaySound("INV_OPEN.WAV");
                 if (items[cursor].OnActivate != null)
                 {
                     items[cursor].OnActivate();
                 }
+                PlaySound(SndSelect);
                 return;
             }
             else if (key == VirtualKeys.Up)
@@ -289,17 +295,18 @@ namespace GUC.Client.Menus.MainMenus
             }
             else if (key == VirtualKeys.Escape)
             {
-                //PlaySound("INV_CLOSE.WAV");
                 this.Close();
                 if (OnEscape != null)
                 {
                     OnEscape();
                 }
+                PlaySound(SndEscape);
                 return;
             }
             else if (items[cursor] is InputReceiver)
             {
                 ((InputReceiver)items[cursor]).KeyPressed(key);
+                PlaySound(SndBrowse);
             }
         }
         #endregion
@@ -309,6 +316,63 @@ namespace GUC.Client.Menus.MainMenus
             if (items[cursor] is MainMenuTextBox)
             {
                 ((MainMenuTextBox)items[cursor]).Update(now);
+            }
+        }
+
+        bool sndEnabled = true;
+        void PlaySound(zCSoundFX snd)
+        {
+            if (sndEnabled)
+            {
+                zCSndSys_MSS.SoundSystem(Program.Process).PlaySound(snd, 0);
+            }
+        }
+
+        static zCSoundFX sndBrowse = null;
+        protected zCSoundFX SndBrowse
+        {
+            get
+            {
+                if (sndBrowse == null)
+                {
+                    using (zString z = zString.Create(Program.Process, "MENU_BROWSE"))
+                    {
+                        sndBrowse = zCSndSys_MSS.SoundSystem(Program.Process).LoadSoundFXScript(z);
+                    }
+                }
+                return sndBrowse;
+            }
+        }
+
+        static zCSoundFX sndSelect = null;
+        protected zCSoundFX SndSelect
+        {
+            get
+            {
+                if (sndSelect == null)
+                {
+                    using (zString z = zString.Create(Program.Process, "MENU_SELECT"))
+                    {
+                        sndSelect = zCSndSys_MSS.SoundSystem(Program.Process).LoadSoundFXScript(z);
+                    }
+                }
+                return sndSelect;
+            }
+        }
+
+        static zCSoundFX sndEscape = null;
+        protected zCSoundFX SndEscape
+        {
+            get
+            {
+                if (sndEscape == null)
+                {
+                    using (zString z = zString.Create(Program.Process, "MENU_ESC"))
+                    {
+                        sndEscape = zCSndSys_MSS.SoundSystem(Program.Process).LoadSoundFXScript(z);
+                    }
+                }
+                return sndEscape;
             }
         }
     }

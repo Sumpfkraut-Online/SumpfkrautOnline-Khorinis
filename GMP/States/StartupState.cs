@@ -19,24 +19,19 @@ namespace GUC.Client.States
     {
         public static ClientOptions clientOptions = null;
 
-        public static void SetUpStartMap()
-        {
-            ASCIIEncoding enc = new ASCIIEncoding();
-            Program.Process.Write(enc.GetBytes(@"gmp-rp/STARTLOCATION.ZEN"), 0x008907B0);
-            Program.Process.Write(new byte[] { 0 }, 0x008907B0 + @"gmp-rp/STARTLOCATION.ZEN".Length);
-            //Program.Process.Write(enc.GetBytes(@"OLDWORLD/OLDWORLD.ZEN"), 0x008907B0);
-            //Program.Process.Write(new byte[] { 0 }, 0x008907B0 + @"OLDWORLD/OLDWORLD.ZEN".Length);
-        }
-
         public static void SetupFuncBlocking()
         {
+            Program.Process.Write(new byte[] { 0xEB }, 0x7A55D8); // disable interface buttons
+
+            Program.Process.Write(new byte[] { 0xE9, 0x1A, 0x01, 0x00 }, 0x4DB7AD); //disable menu theme cause we play our own
+
             //First disable all:
-            //Gothic.mClasses.InputHooked.deactivateStatusScreen(Program.Process, false);
+            /*Gothic.mClasses.InputHooked.deactivateStatusScreen(Program.Process, false);
             Gothic.mClasses.InputHooked.deactivateLogScreen(Program.Process, false);
             Gothic.mClasses.InputHooked.deactivateInventory(Program.Process, false);
 
             Program.Process.Write(new byte[] { 233, 229, 2, 0, 0, 0 }, 0x42AE7E); //disable ingame ESC menu
-            Program.Process.Write(new byte[] { 0xE9, 0x35, 0x03, 0x00, 0x00, 0x90, 0x90 }, 0x6FC2B9); //disable map hotkey
+            Program.Process.Write(new byte[] { 0xE9, 0x35, 0x03, 0x00, 0x00, 0x90, 0x90 }, 0x6FC2B9); //disable map hotkey*/
 
             //Block gothic.dat loading:
             //Process.Write(new byte[] { 0x33, 0xC0, 0xC2, 0x04, 0x00 }, 0x0078E900);
@@ -83,7 +78,7 @@ namespace GUC.Client.States
 
 
             //Disable Marvin-Mode:
-            /*Program.Process.VirtualProtect(0x006CBF60, 25);
+            Program.Process.VirtualProtect(0x006CBF60, 25);
             byte[] arr = new byte[25];
             for (int i = 0; i < arr.Length; i++)
                 arr[i] = 0x90;
@@ -91,7 +86,7 @@ namespace GUC.Client.States
 
 
             arr = new byte[] { 0xC3 };
-            Program.Process.Write(arr, 0x00432EC0);*/
+            Program.Process.Write(arr, 0x00432EC0);
 
 
         }
@@ -99,9 +94,9 @@ namespace GUC.Client.States
         public static String srcFile = null;
         public static void initDefaultScripts()
         {
-            String[] arr = new String[] { "GUC.Client.Resources.Constants.d", "GUC.Client.Resources.Classes.d", "GUC.Client.Resources.AI_Constants.d", "GUC.Client.Resources.Text.d", 
-                "GUC.Client.Resources.BodyStates.d", "GUC.Client.Resources.Focus.d", "GUC.Client.Resources.Species.d",
-                "GUC.Client.Resources.NPC_Default.d", "GUC.Client.Resources.PC_Hero.d" };
+            String[] arr = new String[] { "GUC.Client.Resources.Constants.d", "GUC.Client.Resources.Classes.d", "GUC.Client.Resources.AI_Constants.d", 
+                "GUC.Client.Resources.BodyStates.d", "GUC.Client.Resources.Focus.d", "GUC.Client.Resources.Species.d", "GUC.Client.Resources.NPC_Default.d", 
+                "GUC.Client.Resources.PC_Hero.d"/*, "GUC.Client.Resources.SFX.d"*/ };
 
             zString str = null;
             String fileList = "";

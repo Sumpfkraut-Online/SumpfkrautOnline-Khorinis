@@ -30,9 +30,9 @@ namespace GUC.Server.Scripts.Instances
             npc.BodyTex = 1;
             npc.HeadMesh = "Hum_Head_Pony";
             npc.HeadTex = 22;
-            npc.BodyHeight = 70;
-            npc.BodyWidth = 70;
-            npc.Fatness = 0;
+            npc.BodyHeight = 100;
+            npc.BodyWidth = 100;
+            npc.Fatness = 20;
             npc.Voice = 3;
 
             /*Random rand = random;

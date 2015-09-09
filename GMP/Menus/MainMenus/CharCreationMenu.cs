@@ -6,6 +6,8 @@ using GUC.Client.GUI.MainMenu;
 using GUC.Enumeration;
 using GUC.Network;
 using WinApi.User.Enumeration;
+using Gothic.zClasses;
+using Gothic.zTypes;
 
 namespace GUC.Client.Menus.MainMenus
 {
@@ -84,7 +86,7 @@ namespace GUC.Client.Menus.MainMenus
             fatness = AddChoice("Statur", "Wähle die Statur deines Charakters.", offsetX, offsetY + dist * 4, c_Fatness, false, MoveCursor, ChangedVisual);
             bodyheight = AddChoice("Größe", "Wähle die Körpergröße deines Charakters.", offsetX, offsetY + dist * 5, c_BodyHeight, false, MoveCursor, ChangedVisual);
             bodywidth = AddChoice("Breite", "Wähle die Körperbreite deines Charakters.", offsetX, offsetY + dist * 6, c_BodyWidth, false, MoveCursor, ChangedVisual);
-            voice = AddChoice("Stimme", "Wähle die Stimme deines Charakters.", offsetX, offsetY + dist * 7, c_Voices_M, true, null, null);
+            voice = AddChoice("Stimme", "Wähle die Stimme deines Charakters.", offsetX, offsetY + dist * 7, c_Voices_M, true, PlayVoice, PlayVoice);
             formerclass = AddChoice("ehem. Beruf", "Wähle den Beruf den dein Charakter früher tätigte.", offsetX, offsetY + dist * 8, c_FormerClass, false, MoveCursor, null);
 
             OnEscape = GUCMenus.CharSelection.Open;
@@ -107,6 +109,17 @@ namespace GUC.Client.Menus.MainMenus
             info.FormerClass = formerclass.Choice;
             
             Network.Messages.AccountMessage.CreateNewCharacter(info);
+        }
+
+        Random random = new Random();
+        void PlayVoice()
+        {
+            zCSndSys_MSS ss = zCSndSys_MSS.SoundSystem(Program.Process);
+            Voices sfx = (Voices)random.Next(0,(int)Voices.MAX_G2_VOICES);
+            using (zString z = zString.Create(Program.Process, String.Format("SVM_{0}_{1}.WAV",voice.Choice, sfx)))
+            {
+                ss.PlaySound(ss.LoadSoundFX(z), 0);
+            }
         }
 
         void ChangedVisual() //FIXME: Fleischzoepfe verhindern!

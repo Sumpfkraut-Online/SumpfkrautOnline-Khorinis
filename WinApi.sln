@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinApi", "WinApi\WinApi.csproj", "{52793B3F-130C-4B05-8333-1529981DE780}"
 EndProject
@@ -108,7 +108,6 @@ Global
 		{07C4FA1D-750B-47F5-81E8-D7243BB980E4}.Release|Any CPU.ActiveCfg = Release|x86
 		{07C4FA1D-750B-47F5-81E8-D7243BB980E4}.Release|Any CPU.Build.0 = Release|x86
 		{07C4FA1D-750B-47F5-81E8-D7243BB980E4}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{07C4FA1D-750B-47F5-81E8-D7243BB980E4}.Release|Mixed Platforms.Build.0 = Release|x86
 		{07C4FA1D-750B-47F5-81E8-D7243BB980E4}.Release|Win32.ActiveCfg = Release|x86
 		{07C4FA1D-750B-47F5-81E8-D7243BB980E4}.Release|x86.ActiveCfg = Release|x86
 		{07C4FA1D-750B-47F5-81E8-D7243BB980E4}.Release|x86.Build.0 = Release|x86
@@ -183,7 +182,6 @@ Global
 		{A896EADC-459C-4F6D-8B16-86B0A0F0F6A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A896EADC-459C-4F6D-8B16-86B0A0F0F6A8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A896EADC-459C-4F6D-8B16-86B0A0F0F6A8}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{A896EADC-459C-4F6D-8B16-86B0A0F0F6A8}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{A896EADC-459C-4F6D-8B16-86B0A0F0F6A8}.Release|Win32.ActiveCfg = Release|Any CPU
 		{A896EADC-459C-4F6D-8B16-86B0A0F0F6A8}.Release|x86.ActiveCfg = Release|Any CPU
 		{A896EADC-459C-4F6D-8B16-86B0A0F0F6A8}.Release|x86.Build.0 = Release|Any CPU

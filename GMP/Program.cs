@@ -34,7 +34,6 @@ namespace GUC.Client
             try
             {
                 StartupState.SetUpConfig(); //read client options
-                StartupState.SetUpStartMap();
 
                 //add hooks etc
                 addHooks(Process);
@@ -63,10 +62,17 @@ namespace GUC.Client
                 {
                     _state = new StartupState();
                     Network.Messages.AccountMessage.Login(); //try to log into last account
+
+                    zCSndSys_MSS ss = zCSndSys_MSS.SoundSystem(Process);
+                    using (zString z = zString.Create(Process, "MENUTHEME"))
+                    {
+                        zCSoundFX snd = ss.LoadSingle(z);
+                        ss.PlaySound(snd, 0, 0, 1.0f);
+                    }
+
                 }
                 if (Gothic.mClasses.InputHooked.IsPressed((int)WinApi.User.Enumeration.VirtualKeys.F1))
                 {
-
                 }
                 _state.Update();
             }
@@ -79,8 +85,9 @@ namespace GUC.Client
 
         public static void addHooks(Process process)
         {
-            process.WriteJMP("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("DoTakeVob"), (int)oCNpc.FuncOffsets.DoTakeVob, (int)oCNpc.HookSize.DoTakeVob, 2);
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(Program).GetMethod("hook_MenuRender"), 0x004DC1C0, 10, 0);
+
+            process.WriteJMP("UntoldChapter\\DLL\\GUC.dll", typeof(hNpc).GetMethod("DoTakeVob"), (int)oCNpc.FuncOffsets.DoTakeVob, (int)oCNpc.HookSize.DoTakeVob, 2);
 
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(Program).GetMethod("hook_Render"), 0x006C86A0, 7, 0);
 

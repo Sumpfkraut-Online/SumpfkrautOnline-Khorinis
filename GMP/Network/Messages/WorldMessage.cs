@@ -77,6 +77,9 @@ namespace GUC.Client.Network.Messages
                     npc.Name = customName;
                 }
 
+                npc.gNpc.HPMax = stream.mReadUShort();
+                npc.gNpc.HP = stream.mReadUShort();
+                
                 npc.Spawn(pos, dir);
             }
             else

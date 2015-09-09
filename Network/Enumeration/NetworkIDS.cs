@@ -22,6 +22,7 @@ namespace GUC.Enumeration
         //player stuff
         PlayerControlMessage,
         PlayerPickUpItemMessage,
+        PlayerAttributeMSMessage,
         PlayerAttributeMessage,
 
         //world

@@ -193,8 +193,6 @@ namespace GUC.Client.WorldObjects
             if (this is NPC)
             {
                 ((NPC)this).gNpc.InitHumanAI();
-                ((NPC)this).gNpc.HP = int.MaxValue;
-                ((NPC)this).gNpc.HPMax = int.MaxValue;
             }
 
             oCGame.Game(Program.Process).World.AddVob(gVob);

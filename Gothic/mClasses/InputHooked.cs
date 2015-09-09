@@ -59,38 +59,18 @@ namespace Gothic.mClasses
             }
         }
         
-        public static void deaktivateFullControl(Process Process)
+        public static void deactivateFullControl(Process Process)
         {
-            //key pressed
-            byte[] arr = new byte[] { 0x31, 0xC0, 0xC2, 0x04, 0x00 };
-            Process.Write(arr, (int)0x004D51C0);
-            //key toggled
-            arr = new byte[] { 0x31, 0xC0, 0xC2, 0x04, 0x00 };
-            Process.Write(arr, (int)0x004D51D0);
-
-            /*byte[] arr = new byte[] { 0xC3 };
-            Process.Write(arr, (int)oCAiHuman.FuncOffsets.Moving);
-
-            arr = new byte[] { 0xC2, 0x04, 0x00 };
-            Process.Write(arr, (int)oCGame.FuncOffsets.HandleEvent);
-            Process.Write(new byte[] { 0x6A, 0x0 }, 0x0069D354);//Set Key for FirstPerson to undef*/
+            Process.Write(new byte[] { 0xE9, 0xA8, 0x00 }, 0x4D4D3D); // disable ingame keyboard movement
+            Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, 0x4D3E50); // disable x-mouse movement  
+            Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, 0x4D3E5C); // disable y-mouse movement  
         }
 
         public static void activateFullControl(Process Process)
         {
-            //key pressed
-            byte[] arr = new byte[] { 0x8B, 0x44, 0x24, 0x04, 0x0F  };
-            Process.Write(arr, (int)0x004D51C0);
-            // key toggled
-            arr = new byte[] { 0x8B, 0x4C, 0x24, 0x04, 0x0F  };
-            Process.Write(arr, (int)0x004D51D0);
-
-            /*byte[] arr = new byte[] { 0x53 };
-            Process.Write(arr, (int)oCAiHuman.FuncOffsets.Moving);
-
-            arr = new byte[] { 0x6A,  0xff, 0x68};
-            Process.Write(arr, (int)oCGame.FuncOffsets.HandleEvent);
-            Process.Write(new byte[] { 0x6A, 0x17 }, 0x0069D354);//Set Key for FirstPerson back to 23*/
+            Process.Write(new byte[] { 0x0F, 0x84, 0xA7 }, 0x4D4D3D); //enable ingame keyboard movement
+            Process.Write(new byte[] { 0x89, 0x0D, 0x5C, 0x16, 0x8D, 0x00 }, 0x4D3E50); // enable x-mouse movement    
+            Process.Write(new byte[] { 0x89, 0x15, 0x60, 0x16, 0x8D, 0x00 }, 0x4D3E5C); // enable y-mouse movement   
         }
 
         public static bool IsPressed(Process process, int key)

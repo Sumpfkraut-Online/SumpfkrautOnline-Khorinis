@@ -24,6 +24,7 @@ namespace GUC.Client.States
             { VirtualKeys.Escape, Menus.GUCMenus.Main.Open },
             { VirtualKeys.Tab, Menus.GUCMenus.Inventory.Open },
             { Menus.GUCMenus.Animation.Hotkey, Menus.GUCMenus.Animation.Open},
+            { Menus.GUCMenus.Status.Hotkey, Menus.GUCMenus.Status.Open },
             { VirtualKeys.OEM5, Player.DoFists }, //^
              { VirtualKeys.F1, RenderTest },
              { VirtualKeys.F2, RenderTest2 },
@@ -37,24 +38,38 @@ namespace GUC.Client.States
         };
         public override Dictionary<VirtualKeys, Action> Shortcuts { get { return shortcuts; } }
 
-        static NPC npc;
-        static Item item;
-        static uint num = 0;
+        static oCNpc npc;
         public static void RenderTest()
         {
             if (npc == null)
             {
-                npc = new NPC(num++);
-                NPCInstance.InstanceList[3].CreateNPC(npc.gNpc);
-                npc.Spawn();
+                npc = NPCInstance.InstanceList[0].CreateNPC();
+                npc.Name.Set("Testcharakter");
+                npc.SetAdditionalVisuals(HumBodyMesh.HUM_BODY_NAKED0.ToString(), (int)HumBodyTex.G1Hero, 0, HumHeadMesh.HUM_HEAD_PONY.ToString(), (int)HumHeadTex.Face_N_Player, 0, -1);
+                npc.InitHumanAI();
+                oCGame.Game(Program.Process).World.AddVob(npc);
+                npc.HPMax = 100;
             }
-            npc.Position = new Vec3f(0, 1000, 0);
+            npc.HP = 100;
+
+            Vec3f newPos = Player.Hero.Position;
+            newPos.X += 20;
+            npc.TrafoObjToWorld.setPosition(newPos.Data);
+            npc.SetPositionWorld(newPos.Data);
+            npc.TrafoObjToWorld.setPosition(newPos.Data);
         }
 
         static Random rand = new Random();
+        static oCMsgMovement msg = null;
         public static void RenderTest2()
         {
-            npc.gNpc.AniCtrl.StartFallDownAni();
+            if (npc != null)
+            {
+                npc.GetEM(0).KillMessages();
+                msg = oCMsgMovement.Create(Program.Process, oCMsgMovement.SubTypes.RobustTrace, Player.Hero.gNpc);
+                npc.GetEM(0).OnMessage(msg, npc);
+            }
+            //npc.gNpc.AniCtrl.StartFallDownAni();
            /* for (int i = 0; i < 25; i++)
             {
                 item = new Item(num++, (ushort)rand.Next(0, 7));
@@ -90,12 +105,11 @@ namespace GUC.Client.States
             InputHandler.Update();
             Program.client.Update();
 
-            GUI.GUCView.DebugText.Text = "";
-            foreach (NPC npc in World.npcDict.Values)
+            if (npc != null)
+            if ((new Vec3f(npc.TrafoObjToWorld.getPosition())).getDistance(Player.Hero.Position) < 150)
             {
-                if (npc == Player.Hero)
-                    continue;
-                GUI.GUCView.DebugText.Text += " " + npc.gNpc.Address.ToString("X4") + " " + npc.gNpc.AniCtrl.Address.ToString("X4") + ": " + npc.gNpc.GetModel().GetAniIDFromAniName("T_FALLEN_2_STAND");
+                npc.GetEM(0).KillMessages();
+                npc.AniCtrl._Stand();
             }
 
             /*GUI.GUCView.DebugText.Text = "";

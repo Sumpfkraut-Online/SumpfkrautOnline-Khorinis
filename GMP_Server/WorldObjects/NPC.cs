@@ -58,15 +58,71 @@ namespace GUC.Server.WorldObjects
         //Things only the playing Client should know
         #region Player stats
 
-        internal byte AttrHealthPercent;
         public ushort AttrHealth;
         public ushort AttrHealthMax;
+
         public ushort AttrMana;
         public ushort AttrManaMax;
+        public ushort AttrStamina;
+        public ushort AttrStaminaMax;
+
         public ushort AttrStrength;
         public ushort AttrDexterity;
 
-        public ushort AttrCapacity = 1000;
+        public ushort AttrCapacity;
+
+        #region Health
+
+        public void AttrHealthUpdate()
+        {
+            BitStream stream = Program.server.SetupStream(NetworkID.NPCHitMessage);
+            stream.mWrite(ID);
+            stream.mWrite(AttrHealthMax);
+            stream.mWrite(AttrHealth);
+
+            foreach (Client cl in cell.SurroundingClients())
+                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', cl.guid, false);
+        }
+
+        public void AttrManaStaminaUpdate()
+        {
+            if (isPlayer)
+            {
+                BitStream stream = Program.server.SetupStream(NetworkID.PlayerAttributeMSMessage);
+                stream.mWrite(AttrManaMax);
+                stream.mWrite(AttrMana);
+                stream.mWrite(AttrStaminaMax);
+                stream.mWrite(AttrStamina);
+                Program.server.ServerInterface.Send(stream, PacketPriority.MEDIUM_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
+            }
+        }
+
+        public void AttrUpdate()
+        {
+            BitStream stream = Program.server.SetupStream(NetworkID.NPCHitMessage);
+            stream.mWrite(ID);
+            stream.mWrite(AttrHealthMax);
+            stream.mWrite(AttrHealth);
+
+            foreach (Client cl in cell.SurroundingClients(client))
+                Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', cl.guid, false);
+
+            if (isPlayer)
+            {
+                // Update all the stats!
+                stream = Program.server.SetupStream(NetworkID.PlayerAttributeMessage);
+                stream.mWrite(AttrHealthMax);
+                stream.mWrite(AttrHealth);
+                stream.mWrite(AttrManaMax);
+                stream.mWrite(AttrMana);
+                stream.mWrite(AttrStaminaMax);
+                stream.mWrite(AttrStamina);
+                stream.mWrite(AttrCapacity);
+                Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
+            }
+        }
+
+        #endregion
 
         #endregion
 
@@ -88,6 +144,19 @@ namespace GUC.Server.WorldObjects
             BodyHeight = instance.BodyHeight;
             BodyWidth = instance.BodyWidth;
             BodyFatness = instance.Fatness;
+
+            AttrHealthMax = 100;
+            AttrHealth = 100;
+
+            AttrManaMax = 10;
+            AttrMana = 10;
+            AttrStaminaMax = 100;
+            AttrStamina = 100;
+
+            AttrStrength = 10;
+            AttrDexterity = 10;
+
+            AttrCapacity = 1000;
         }
 
         #endregion
@@ -117,8 +186,11 @@ namespace GUC.Server.WorldObjects
 
             stream.mWrite(CustomName);
 
-            foreach (Client client in list)
-                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
+            stream.mWrite(AttrHealthMax);
+            stream.mWrite(AttrHealth);
+
+            foreach (Client cl in list)
+                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', cl.guid, false);
         }
 
         #endregion
