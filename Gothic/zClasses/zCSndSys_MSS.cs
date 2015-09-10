@@ -89,5 +89,15 @@ namespace Gothic.zClasses
         {
             return new zCSndSys_MSS(process, process.ReadInt(0x0099B03C));
         }
+
+        public void StopAllSounds()
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)0x4F23C0, null );
+        }
+
+        public void StopSound(int num)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)0x4F2300, new CallValue[] { (IntArg)num });
+        }
     }
 }

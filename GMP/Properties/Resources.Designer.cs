@@ -143,16 +143,6 @@ namespace GUC.Client.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] SFX {
-            get {
-                object obj = ResourceManager.GetObject("SFX", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
         internal static byte[] Species {
             get {
                 object obj = ResourceManager.GetObject("Species", resourceCulture);

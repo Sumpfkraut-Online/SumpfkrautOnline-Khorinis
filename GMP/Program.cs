@@ -54,25 +54,26 @@ namespace GUC.Client
             return 0;
         }
 
+        static zCSoundFX snd = null;
         public static Int32 hook_MenuRender(String message)
         {
             try
             {
                 if (_state == null)
                 {
+                    System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture; // damit ToString bei Floats nen Punkt setzt. Bullshit!
+
                     _state = new StartupState();
                     Network.Messages.AccountMessage.Login(); //try to log into last account
-
+                    
+                    // play our own menu theme
                     zCSndSys_MSS ss = zCSndSys_MSS.SoundSystem(Process);
-                    using (zString z = zString.Create(Process, "MENUTHEME"))
+                    using (zString z = zString.Create(Process, "MENUTHEME.WAV"))
                     {
-                        zCSoundFX snd = ss.LoadSingle(z);
-                        ss.PlaySound(snd, 0, 0, 1.0f);
+                        snd = ss.LoadSoundFX(z);
+                        snd.isFixed = true; //so it continues playing during the loading screen
+                        ss.PlaySound(snd, 0, 0, 0.8f*GetMusicVol()); //nerf volume
                     }
-
-                }
-                if (Gothic.mClasses.InputHooked.IsPressed((int)WinApi.User.Enumeration.VirtualKeys.F1))
-                {
                 }
                 _state.Update();
             }
@@ -184,11 +185,6 @@ namespace GUC.Client
         {
             try
             {
-                if (_state == null)
-                {
-                    _state = new StartupState();
-                    Network.Messages.AccountMessage.Login(); //try to log into last account
-                }
                 _state.Update();
             }
             catch (Exception ex)
@@ -196,6 +192,16 @@ namespace GUC.Client
                 zERROR.GetZErr(Program.Process).Report(4, 'G', ex.ToString(), 0, "Program.cs", 0);
             }
             return 0;
+        }
+
+        public static float GetMusicVol()
+        {
+            return Single.Parse(zCOption.GetOption(Process).getEntryValue("SOUND", "musicVolume"));
+        }
+
+        public static float GetSoundVol()
+        {
+            return Single.Parse(zCOption.GetOption(Process).getEntryValue("SOUND", "soundVolume"));
         }
     }
 }

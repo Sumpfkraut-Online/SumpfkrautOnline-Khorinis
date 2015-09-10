@@ -23,7 +23,7 @@ namespace GUC.Client.Menus
 
             cols = 5;
             x = screenSize[0] - (slotSize * cols + screenSize[0] / 25);
-            y = screenSize[1] / 7;
+            y = screenSize[1] / 7 + 15;
             rows = (screenSize[1] - descrHeight - y) / slotSize;
             inv = new GUCInventory(x, y, cols, rows);
         }

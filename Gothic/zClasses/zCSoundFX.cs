@@ -39,5 +39,11 @@ namespace Gothic.zClasses
         {
             return 4;
         }    
+
+        public bool isFixed
+        {
+            get { return Process.ReadInt(Address + 104) > 0; }
+            set { Process.Write(value ? 1 : 0, Address + 104); }
+        }
     }
 }

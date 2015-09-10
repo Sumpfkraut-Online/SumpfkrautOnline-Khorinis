@@ -79,9 +79,16 @@ namespace GUC.Client.WorldObjects
             //Change the world!
             using (zString newlevel = zString.Create(Program.Process, newMap))
             {
-                oCGame.Game(Program.Process).ChangeLevel(newlevel, newlevel);
+                if (MapName == null || MapName.Length == 0)
+                {
+                    oCGame.Game(Program.Process).LoadGame(unchecked((int)0xFFFFFFFE) /*SAVEGAME_SLOT_NEW*/, newlevel);
+                }
+                else
+                {
+                    oCGame.Game(Program.Process).ChangeLevel(newlevel, newlevel /*start way point*/);
+                }
             }
-            World.MapName = newMap;
+            MapName = newMap;
         }
 
         #region Hooks

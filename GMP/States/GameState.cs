@@ -41,7 +41,9 @@ namespace GUC.Client.States
         static oCNpc npc;
         public static void RenderTest()
         {
-            if (npc == null)
+            Player.AddItem(ItemInstance.InstanceList[0], 10);
+            Player.AddItem(ItemInstance.InstanceList[1], 10);
+            /*if (npc == null)
             {
                 npc = NPCInstance.InstanceList[0].CreateNPC();
                 npc.Name.Set("Testcharakter");
@@ -56,7 +58,7 @@ namespace GUC.Client.States
             newPos.X += 20;
             npc.TrafoObjToWorld.setPosition(newPos.Data);
             npc.SetPositionWorld(newPos.Data);
-            npc.TrafoObjToWorld.setPosition(newPos.Data);
+            npc.TrafoObjToWorld.setPosition(newPos.Data);*/
         }
 
         static Random rand = new Random();

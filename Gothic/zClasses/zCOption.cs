@@ -104,6 +104,15 @@ namespace Gothic.zClasses
             //str.Dispose();
             return rval;
         }
+
+        public float ReadReal(string section, string entry, float def)
+        {
+            using (zString sec = zString.Create(Process, section))
+            using (zString ent = zString.Create(Process, entry))
+            {
+                return Process.THISCALL<FloatArg>((uint)Address, (uint)0x463A60, new CallValue[] { sec, ent, (FloatArg)def });
+            }
+        }
         #endregion
     }
 }

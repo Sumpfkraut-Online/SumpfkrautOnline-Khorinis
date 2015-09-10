@@ -325,7 +325,7 @@ namespace GUC.Client.Menus.MainMenus
         {
             if (sndEnabled)
             {
-                zCSndSys_MSS.SoundSystem(Program.Process).PlaySound(snd, 0);
+                zCSndSys_MSS.SoundSystem(Program.Process).PlaySound(snd, 0, 0, 1.3f * Program.GetSoundVol());
             }
         }
 

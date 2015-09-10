@@ -1,1 +1,0 @@
-INSTANCE GAMESTART (C_SFX_DEF) { file="menutheme.wav"; vol=127; };

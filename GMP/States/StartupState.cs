@@ -50,21 +50,6 @@ namespace GUC.Client.States
             Program.Process.Write(new byte[] { 0xE9, 0x77, 0x0D, 0x00, 0x00 }, 0x006FC669);//Blocking F-Keys
 
 
-            #region Waffen nicht stapelbar
-            //Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, 0x00745FA6);//Blocking EquipBestWeapon when enabling a npc
-
-            //Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0xEB, 0x0C }, 0x007125DA);
-            //Process.Write(new byte[] { 0x68, 0x00, 0x00, 0x10, 0x00 }, 0x0073272D);
-            //Process.Write(new byte[] { 0x68, 0x00, 0x00, 0x10, 0x00 }, 0x00732745);
-            //Process.Write(new byte[] { 0x68, 0x00, 0x00, 0x10, 0x00 }, 0x00732759);
-            //Process.Write(new byte[] { 0x68, 0x00, 0x00, 0x10, 0x00 }, 0x0073276D);
-            //Process.Write(new byte[] { 0x68, 0x00, 0x00, 0x10, 0x00 }, 0x00732781);
-            //Process.Write(new byte[] { 0x68, 0x00, 0x00, 0x10, 0x00 }, 0x00732791);
-            //Process.Write(new byte[] { 0x68, 0x00, 0x00, 0x10, 0x00 }, 0x007327AB);
-
-            Program.Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, 0x00712618);
-            #endregion
-
             //Disable First-Person:
             //Process.Write(new byte[] { 0x83, 0xC4, 0x6C, 0xC3 }, 0x004A40E0);
 
@@ -74,8 +59,6 @@ namespace GUC.Client.States
             //for (int i = 0; i < arr.Length; i++)
             //    arr[i] = 0x90;
             //Process.Write(arr, 0x00745A20);
-
-
 
             //Disable Marvin-Mode:
             Program.Process.VirtualProtect(0x006CBF60, 25);
@@ -87,8 +70,6 @@ namespace GUC.Client.States
 
             arr = new byte[] { 0xC3 };
             Program.Process.Write(arr, 0x00432EC0);
-
-
         }
 
         public static String srcFile = null;
@@ -96,7 +77,7 @@ namespace GUC.Client.States
         {
             String[] arr = new String[] { "GUC.Client.Resources.Constants.d", "GUC.Client.Resources.Classes.d", "GUC.Client.Resources.AI_Constants.d", 
                 "GUC.Client.Resources.BodyStates.d", "GUC.Client.Resources.Focus.d", "GUC.Client.Resources.Species.d", "GUC.Client.Resources.NPC_Default.d", 
-                "GUC.Client.Resources.PC_Hero.d"/*, "GUC.Client.Resources.SFX.d"*/ };
+                "GUC.Client.Resources.PC_Hero.d" };
 
             zString str = null;
             String fileList = "";

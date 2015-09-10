@@ -36,7 +36,7 @@ namespace GUC.Client.GUI
                 amount.Format = GUCVisualText.TextFormat.Right;
             }
 
-            KeyValuePair<ItemInstance, int> item = new KeyValuePair<ItemInstance,int>();
+            KeyValuePair<ItemInstance, int> item = new KeyValuePair<ItemInstance, int>();
             public KeyValuePair<ItemInstance, int> Item
             {
                 get { return item; }
@@ -55,7 +55,7 @@ namespace GUC.Client.GUI
                         thisVob.Flags = (int)item.Key.Flags;
                         amount.Text = item.Value > 1 ? item.Value.ToString() : "";
                         if (shown) vis.Show();
-                    }              
+                    }
                 }
             }
 
@@ -165,7 +165,7 @@ namespace GUC.Client.GUI
                 count.Format = GUCVisualText.TextFormat.Right;
             }
 
-            descrVis = new GUCVisualVob(GetScreenSize()[0]/2 + 160, GetScreenSize()[1] - 128 - 48, 128, 128);
+            descrVis = new GUCVisualVob(GetScreenSize()[0] / 2 + 160, GetScreenSize()[1] - 128 - 48, 128, 128);
             descrVob = oCItem.Create(Program.Process);
             descrVis.SetVob(descrVob);
 
@@ -184,7 +184,7 @@ namespace GUC.Client.GUI
             LeftInfoBox = "WEIGHT";
         }
 
-        public KeyValuePair<ItemInstance,int> SelectedItem
+        public KeyValuePair<ItemInstance, int> SelectedItem
         {
             get { return slots[cursor.X, cursor.Y].Item; }
         }
@@ -287,8 +287,20 @@ namespace GUC.Client.GUI
                 {
                     if (instance.Text[i] != null && instance.Text[i].Length > 0)
                     {
-                        descrBack.Texts[2*i+1].Text = instance.Text[i].Value;
-                        descrBack.Texts[2*i+2].Text = instance.Count[i].ToString();
+                        descrBack.Texts[2 * i + 1].Text = instance.Text[i].Value;
+                    }
+                    else
+                    {
+                        descrBack.Texts[2 * i + 1].Text = "";
+                    }
+
+                    if (instance.Count[i] > 0)
+                    {
+                        descrBack.Texts[2 * i + 2].Text = instance.Count[i].ToString();
+                    }
+                    else
+                    {
+                        descrBack.Texts[2 * i + 2].Text = "";
                     }
                 }
 
@@ -336,9 +348,9 @@ namespace GUC.Client.GUI
 
             UpdateSlots();
 
-            KeyValuePair<ItemInstance,int> gold = contents.Find(i => i.Key.Name.Value == "Gold");
+            KeyValuePair<ItemInstance, int> gold = contents.Find(i => i.Key.Name.Value == "Gold");
             int weight = 0;
-            foreach (KeyValuePair<ItemInstance,int> pair in contents)
+            foreach (KeyValuePair<ItemInstance, int> pair in contents)
             {
                 weight += pair.Key.Weight * pair.Value;
             }
@@ -427,15 +439,15 @@ namespace GUC.Client.GUI
         {
             public int Compare(KeyValuePair<ItemInstance, int> a, KeyValuePair<ItemInstance, int> b)
             {
-               /* int aIndex = sortList.IndexOf(a.Key.MainFlags);
-                int bIndex = sortList.IndexOf(a.Key.MainFlags);
-                if (aIndex < 0) aIndex = sortList.Count;
-                if (bIndex < 0) bIndex = sortList.Count;
+                /* int aIndex = sortList.IndexOf(a.Key.MainFlags);
+                 int bIndex = sortList.IndexOf(a.Key.MainFlags);
+                 if (aIndex < 0) aIndex = sortList.Count;
+                 if (bIndex < 0) bIndex = sortList.Count;
 
-                if (aIndex.CompareTo(bIndex) != 0)
-                {
-                    return aIndex.CompareTo(bIndex);
-                }*/
+                 if (aIndex.CompareTo(bIndex) != 0)
+                 {
+                     return aIndex.CompareTo(bIndex);
+                 }*/
                 return a.Key.Count[0].CompareTo(b.Key.Count[0]); //just sort by something
             }
         }

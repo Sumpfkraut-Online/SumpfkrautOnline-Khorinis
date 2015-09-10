@@ -42,6 +42,8 @@ namespace GUC.Client
                                                                                          { '|', 2.99971f }, { '#', 12.99886f }, { '\'', 4.99971f }, { '+', 8.99914f }, { '~', 9.99914f }, { '{', 5.99943f }, { '}', 5.99943f }, { '@', 13.99857f }, {' ', 9.99914f } };
 
 
+        
+
         private static void SendKeyPressed(VirtualKeys key)
         {
             if (GUCMenus._ActiveMenus.Count == 0)
@@ -60,15 +62,16 @@ namespace GUC.Client
             }
         }
 
-        private static long[] keys = new long[0xFF];
+        static Process Process = Program.Process;
+        static long[] keys = new long[0xFF];
         public static void Update()
         {
-            if (WinApi.User.Window.GetWindowThreadProcessId(WinApi.User.Window.GetForegroundWindow()) == Program.Process.ProcessID)
+            if (WinApi.User.Window.GetWindowThreadProcessId(WinApi.User.Window.GetForegroundWindow()) == Process.ProcessID)
             {
                 long ticks = DateTime.Now.Ticks;
                 for (int i = 1; i < keys.Length; i++)
                 {
-                    if (InputHooked.IsPressed(i))
+                    if (InputHooked.IsPressed(Process, i))
                     {
                         if (keys[i] == 0) //newly pressed
                         {

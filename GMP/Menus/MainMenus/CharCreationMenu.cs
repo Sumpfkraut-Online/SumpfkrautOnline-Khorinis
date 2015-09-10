@@ -118,7 +118,7 @@ namespace GUC.Client.Menus.MainMenus
             Voices sfx = (Voices)random.Next(0,(int)Voices.MAX_G2_VOICES);
             using (zString z = zString.Create(Program.Process, String.Format("SVM_{0}_{1}.WAV",voice.Choice, sfx)))
             {
-                ss.PlaySound(ss.LoadSoundFX(z), 0);
+                ss.PlaySound(ss.LoadSoundFX(z), 0, 0, 0.65f * Program.GetSoundVol());
             }
         }
 
