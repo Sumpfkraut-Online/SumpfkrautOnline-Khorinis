@@ -38,17 +38,27 @@ CREATE TABLE IF NOT EXISTS `AccountNPCs_inst` (
 -- general definition information for Mob-instantiation (static or usable)
 DROP TABLE IF EXISTS `Mob_def`;
 CREATE TABLE IF NOT EXISTS `Mob_def` (
-    `ID` INTEGER  NOT NULL,
+    `ID` INTEGER NOT NULL,
+    `MobInterType` INTEGER  NOT NULL DEFAULT 0, -- defaults to 0=None (not an interactive vob/mob)
     `Visual` TEXT NOT NULL,
-    `Material` INTEGER  NOT NULL DEFAULT 3,
+    `CDDyn` INTEGER  NOT NULL DEFAULT 0, -- defaults to 0=no collision detection with vobs
+    `CDStatic` INTEGER  NOT NULL DEFAULT 0, -- defaults to 0=no collision detection with worldmesh
+    `FocusName` TEXT DEFAULT NULL, -- name which appears when having mob in focus
+    `UseWithItem` INTEGER DEFAULT NULL, -- mob-interaction only possible with this kind of item in inventory
+    `TriggerTarget` TEXT DEFAULT NULL, -- ???
+    `IsLocked` INTEGER DEFAULT 0, -- whether it is a lockable object or not
+    `KeyInstance` INTEGER DEFAULT 0, -- possible kind of key-item to unlock the lockable mob
+    `PicklockString` TEXT DEFAULT NULL, -- right-left-pattern for lockpicking
     `HasEffects` INTEGER NOT NULL DEFAULT 0,
     `ChangeDate` TEXT NOT NULL,
     `CreationDate` TEXT NOT NULL,
-    PRIMARY KEY (`ID`)
+    PRIMARY KEY (`ID`),
+    FOREIGN KEY (`UseWithItem`) REFERENCES `Item_def`(`ID`),
+    FOREIGN KEY (`KeyInstance`) REFERENCES `Item_def`(`ID`)
 );
 
 -- general definition information for Spell-instantiation
---- !!! incomlete !!!
+--- !!! incomplete and is postponed until Spells are actually needed !!!
 DROP TABLE IF EXISTS `Spell_def`;
 CREATE TABLE IF NOT EXISTS `Spell_def` (
     `ID` INTEGER  NOT NULL,
@@ -102,12 +112,24 @@ CREATE TABLE IF NOT EXISTS `Item_def` (
 );
 
 -- general definition information for NPC-instantiation
---- !!! incomlete !!!
 DROP TABLE IF EXISTS `NPC_def`;
 CREATE TABLE IF NOT EXISTS `NPC_def` (
     `ID` INTEGER  NOT NULL,
+    `Name` TEXT NOT NULL DEFAULT "Pumper Nickel :)",
+    `Attributes` TEXT NOT NULL DEFAULT "0=1,1=1,2=0,3=0,4=0,5=0,6=0,7=0,8=0", -- HP, HPMax, MP, MPMax, STR, DEX, RegenHP, RegenMP, Max???
+    `TalentValues` TEXT NOT NULL DEFAULT "0=0,1=0,2=0,3=0,4=0,5=0,6=0,7=0,8=0,9=0,10=0,11=0,12=0,13=0,14=0,15=0,16=0,17=0,18=0,19=0", -- NOT USED BY GUC AT THE MOMENT! Unknown, H1, H2, Bow, Crossbow, Picklock, Pickpocket, Mage, Sneak, Regenerate, Firemaster, Acrobat, PickpocketG2, Smith, Runes, Alchemy, TakeAnimalTrophy, Foreignlanguage, MaxTalents
+    `TalentSkills` TEXT NOT NULL DEFAULT "0=0,1=0,2=0,3=0,4=0,5=0,6=0,7=0,8=0,9=0,10=0,11=0,12=0,13=0,14=0,15=0,16=0,17=0,18=0,19=0", -- NOT USED BY GUC AT THE MOMENT! Unknown, H1, H2, Bow, Crossbow, Picklock, Pickpocket, Mage, Sneak, Regenerate, Firemaster, Acrobat, PickpocketG2, Smith, Runes, Alchemy, TakeAnimalTrophy, Foreignlanguage, MaxTalents
+    `HitChances` TEXT NOT NULL DEFAULT "0=1,1=1,2=0,3=0", -- H1, H2, Bow, Crossbow
+    `Guild` INTEGER  DEFAULT NULL,
+    `Voice` INTEGER  NOT NULL DEFAULT 0,
     `Visual` TEXT NOT NULL,
-    `Visual_Skin` INTEGER  NOT NULL DEFAULT 0,
+    `BodyMesh` TEXT NOT NULL,
+    `BodyTex` INTEGER  NOT NULL,
+    `SkinColor` INTEGER  NOT NULL,
+    `HeadMesh` TEXT NOT NULL,
+    `HeadTex` INTEGER  NOT NULL,
+    `TeethTex` INTEGER  NOT NULL,
+    `HasEffects`
     `ChangeDate` TEXT NOT NULL,
     `CreationDate` TEXT NOT NULL,
     PRIMARY KEY (`ID`)
@@ -127,7 +149,6 @@ CREATE TABLE IF NOT EXISTS `Effect_def` (
 DROP TABLE IF EXISTS `Effect_Changes_def`;
 CREATE TABLE IF NOT EXISTS `Effect_Changes_def` (
     `ID` INTEGER NOT NULL,
-    `EventID` INTEGER  NOT NULL,
     `EffectDefID` INTEGER  NOT NULL,
     `ChangeType` INTEGER  NOT NULL,
     `Parameters` TEXT NOT NULL DEFAULT "",
@@ -175,6 +196,7 @@ CREATE TABLE IF NOT EXISTS `NPC_Effects_inst` (
 DROP TABLE IF EXISTS `Mob_inst`;
 CREATE TABLE IF NOT EXISTS `Mob_inst` (
     `ID` INTEGER  NOT NULL,
+    `IsSpawned` INTEGER NOT NULL,
     `MobDefID` INTEGER  NOT NULL,
     `ChangeDate` TEXT NOT NULL,
     `CreationDate` TEXT NOT NULL,
@@ -184,7 +206,8 @@ CREATE TABLE IF NOT EXISTS `Mob_inst` (
 -- individual item instances
 DROP TABLE IF EXISTS `Item_inst`;
 CREATE TABLE IF NOT EXISTS `Item_inst` (
-    `ID` INTEGER  NOT NULL,
+    `ID` INTEGER NOT NULL,
+    `IsSpawned` INTEGER NOT NULL,
     `ItemDefID` INTEGER  NOT NULL,
     `Amount` INTEGER  NOT NULL,
     `ChangeDate` TEXT NOT NULL,
@@ -196,18 +219,25 @@ CREATE TABLE IF NOT EXISTS `Item_inst` (
 DROP TABLE IF EXISTS `NPC_inst`;
 CREATE TABLE IF NOT EXISTS `NPC_inst` (
     `ID` INTEGER  NOT NULL,
-    `NPCDefID` INTEGER  NOT NULL,
-    `IsSpawned` INTEGER  NOT NULL,
-    `Fatness` INTEGER  NOT NULL,
-    `ScaleX` INTEGER  NOT NULL,
-    `ScaleY` INTEGER  NOT NULL,
-    `ScaleZ` INTEGER  NOT NULL,
-    `HeadMesh` TEXT NOT NULL,
-    `HeadTexture` INTEGER NOT NULL,
+    `IsSpawned` INTEGER NOT NULL,
+    `NPCDefID` INTEGER NOT NULL,
+    `Fatness` INTEGER  NOT NULL DEFAULT 1,
+    `Scale` TEXT NOT NULL DEFAULT "0=1,1=1,2=1", -- scale in x-, y- and z-directions respectively
+    `Guild` INTEGER NOT NULL DEFAULT 0,
+    `Voice` INTEGER NOT NULL DEFAULT 0,
+    `Visual` TEXT DEFAULT NULL,
     `BodyMesh` TEXT NOT NULL,
     `BodyTexture` INTEGER NOT NULL,
+    `HeadMesh` TEXT NOT NULL,
+    `HeadTexture` INTEGER NOT NULL,
     `CurrWalk` INTEGER  NOT NULL,
     `CurrAnimation` TEXT DEFAULT "",
+    `HP` INTEGER NOT NULL DEFAULT 1,
+    `HPMax` INTEGER NOT NULL DEFAULT 1,
+    `MP` INTEGER NOT NULL DEFAULT 0,
+    `MPMax` INTEGER NOT NULL DEFAULT 0,
+    `Strength` INTEGER NOT NULL DEFAULT 1,
+    `Dexterity` INTEGER NOT NULL DEFAULT 1,
     `ChangeDate` TEXT NOT NULL,
     `CreationDate` TEXT NOT NULL,
     PRIMARY KEY (`ID`)
@@ -267,3 +297,25 @@ CREATE TABLE IF NOT EXISTS `NPCInWorld_inst` (
     FOREIGN KEY (`NPCInstID`) REFERENCES `NPC_inst`(`ID`),
     FOREIGN KEY (`WorldInstID`) REFERENCES `World_inst`(`ID`)
 );
+
+
+------------------------
+-- Test-MobDef(s)
+------------------------
+
+-- a bed in which the exhausted find no sleep
+INSERT OR REPLACE INTO `Mob_def` (ID, MobInterType, Visual, CDDyn, CDStatic, HasEffects, ChangeDate, CreationDate) VALUES (0, 0, "DT_Bed_V1.3ds", 1, 1, 0, "2015-05-11", "2015-05-11");
+
+------------------------
+-- Test-ItemDef(s)
+------------------------
+
+-- ITMI_MOREMONEY
+INSERT OR REPLACE INTO `Item_def` (ID, InstanceName, Name, ScemeName, MainFlag, Flag, Visual, HasEffects, ChangeDate, CreationDate) VALUES (0, "ITMI_MOREMONEY", "MoreMoney", "", 1, 2097152, "ItMi_Gold.3ds", 1, "2015-05-11", "2015-05-11");
+INSERT OR REPLACE INTO `Effect_def` (ID, Name, ChangeDate, CreationDate) VALUES (0, "Item_ITMI_MOREMONEY", "2015-05-11", "2015-05-11");
+INSERT OR REPLACE INTO `Effect_Changes_def` (ID, EffectDefID, ChangeType, Parameters) VALUES (0, 0, 1000, "More money better than less money ya know..."), (1, 0, 1001, "Awesomeness"), (2, 0, 1007, 9001);
+INSERT OR REPLACE INTO `Item_Effects_inst` (ItemDefID, EffectDefID) VALUES (0, 0);
+
+------------------------
+-- Test-NPCDef(s)
+------------------------

@@ -11,43 +11,13 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
     class DummyItemDef
     {
 
-        //public String instanceName;
-        //public String name;
-        //public String scemeName;
-        //public int[] protection;
-        //public int[] damages;
-        //public int value = 0;
-        //public MainFlags mainFlags = 0;
-        //public Flags flags = 0;
-        //public ArmorFlags armorFlags = 0;
-        //public DamageTypes damageType = 0;
-        //public int totalDamage = 0;
-        //public int range = 0;
-        //public String visual;
-        //public String visual_Change;
-        //public String effect;
-        //public int visualSkin = 0;
-        //public MaterialType material = 0;
-        //public ItemInstance munition = null;
-        //public bool isKeyInstance = false;
-        //public bool isTorch = false;
-        //public bool isTorchBurning = false;
-        //public bool isTorchBurned = false;
-        //public bool isGold = false;
-        //public string description = "";
-        //public string text0;
-        //public string text1;
-        //public string text2;
-        //public string text3;
-        //public string text4;
-        //public string text5;
-        //public int count0 = -1;
-        //public int count1 = -1;
-        //public int count2 = -1;
-        //public int count3 = -1;
-        //public int count4 = -1;
-        //public int count5 = -1;
+        protected int VobSysID;
+        public int getVobSysID () { return this.VobSysID; }
+        public void setVobSysID (int VobSysID) { this.VobSysID = VobSysID; this.ID = VobSysID; }
 
+        protected int ID;
+        public int getID () { return this.ID; }
+        public void setID (int ID) { this.ID = ID; this.VobSysID = ID; }
 
         protected string InstanceName;
         public string getInstanceName () { return this.InstanceName; }
@@ -62,53 +32,88 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         public string getScemeName () { return this.ScemeName; }
         public void setScemeName (string ScemeName) { this.ScemeName = ScemeName; }
 
-        protected string Visual;
-        public string getVisual () { return this.Visual; }
-        public void setVisual (string Visual) { this.Visual = Visual; }
+        protected int[] Protections = new int[Enum.GetValues(typeof(DamageTypeIndex)).Length];
+        public int[] getProtections () { return this.Protections; }
+        public int getProtections (DamageTypeIndex index) 
+        {
+            if (index == DamageTypeIndex.DAM_INDEX_BARRIER)
+                throw new Exception("Don't use Protectiontype Barrier!");
+            return this.Protections[(int)index - 1];
+        }
+        public void setProtections (int[] Protections) { this.Protections = Protections; }
+        public void setProtections (DamageTypeIndex index, int value)
+        {
+            if (index == DamageTypeIndex.DAM_INDEX_BARRIER)
+                throw new Exception("Don't use Protectiontype Barrier!");
+            this.Protections[(int)index - 1] = value;
+        }
 
-        protected string Visual_Change;
-        public string getVisual_Change () { return this.Visual_Change; }
-        public void setVisual_Change (string Visual_Change) { this.Visual_Change = Visual_Change; }
-
-        protected int Visual_skin;
-        public int getVisual_skin () { return this.Visual_skin; }
-        public void setVisual_skin (int Visual_skin) { this.Visual_skin = Visual_skin; }
-
-        protected Enumeration.MainFlags MainFlags;
-        public Enumeration.MainFlags getMainFlags () { return this.MainFlags; }
-        public void setMainFlags (Enumeration.MainFlags MainFlags) { this.MainFlags = MainFlags; }
-        
-        protected Enumeration.MaterialType Materials;
-        public Enumeration.MaterialType getMaterials () { return this.Materials; }
-        public void setMaterials (Enumeration.MaterialType Materials) { this.Materials = Materials; }
+        // get-method already exists (see public int getDamage(DamageTypeIndex index))
+        protected int[] Damages;
+        public int[] getDamages()
+        {
+            return this.Damages;
+        }
+        public void setDamages(int[] Damages)
+        {
+            this.Damages = Damages;
+        }
 
         protected int Value;
         public int getValue () { return this.Value; }
         public void setValue (int Value) { this.Value = Value; }
 
+        protected Enumeration.MainFlags MainFlag;
+        public Enumeration.MainFlags getMainFlag () { return this.MainFlag; }
+        public void setMainFlag (Enumeration.MainFlags MainFlag) { this.MainFlag = MainFlag; }
 
+        protected Enumeration.Flags Flag;
+        public Enumeration.Flags getFlag () { return this.Flag; }
+        public void setFlag (Enumeration.Flags Flag) { this.Flag = Flag; }
 
-        protected bool IsGold;
-        public bool getIsGold (){ return this.IsGold; }
-        public void setIsGold (bool IsGold) { this.IsGold = IsGold; }
+        protected Enumeration.ArmorFlags ArmorFlag;
+        public Enumeration.ArmorFlags getArmorFlag () { return this.ArmorFlag; }
+        public void setArmorFlag (Enumeration.ArmorFlags ArmorFlag) { this.ArmorFlag = ArmorFlag; }
 
-        //public bool getIsKeyInstance()
-        //{
-        //    return this.IsKeyInstance;
-        //}
-        //public void setIsKeyInstance(bool IsKeyInstance)
-        //{
-        //    this.IsKeyInstance = IsKeyInstance;
-        //}
+        protected Enumeration.DamageTypes DamageType;
+        public Enumeration.DamageTypes getDamageType () { return this.DamageType; }
+        public void setDamageType (Enumeration.DamageTypes DamageType) { this.DamageType = DamageType; }
 
-        //public bool getIsLockPick()
-        //{
-        //    return this.IsKeyInstance;
-        //}
-        //public void setIsKeyInstance(bool IsKeyInstance)
-        //{
-        //    this.IsKeyInstance = IsKeyInstance;
-        //}
+        protected int TotalDamage;
+        public int getTotalDamage () { return this.TotalDamage; }
+        public void setTotalDamage (int TotalDamage) { this.TotalDamage = TotalDamage; }
+
+        protected int Range;
+        public int getRange() { return this.Range; }
+        public void setRange(int Range) { this.Range = Range; }
+
+        protected string Visual;
+        public string getVisual () { return this.Visual; }
+        public void setVisual (string Visual) { this.Visual = Visual; }
+
+        protected string VisualChange;
+        public string getVisualChange () { return this.VisualChange; }
+        public void setVisualChange (string VisualChange) { this.VisualChange = VisualChange; }
+
+        protected string Effect;
+        public string getEffect () { return this.Effect; }
+        public void setEffect (string Effect) { this.Effect = Effect; }
+        
+        protected int VisualSkin;
+        public int getVisualSkin () { return this.VisualSkin; }
+        public void setVisualSkin (int VisualSkin) { this.VisualSkin = VisualSkin; }
+
+        protected Enumeration.MaterialType Material;
+        public Enumeration.MaterialType getMaterial () { return this.Material; }
+        public void setMaterial (Enumeration.MaterialType Material) { this.Material = Material; }
+
+        protected ItemDef Munition;
+        public ItemDef getMunition () { return this.Munition; }
+        public void setMunition (ItemDef Munition) { this.Munition = Munition; }
+
+        protected bool IsKeyInstance;
+        public bool getIsKeyInstance (){ return this.IsKeyInstance; }
+        public void setIsKeyInstance (bool IsKeyInstance) { this.IsKeyInstance = IsKeyInstance; }
 
         protected bool IsTorch;
         public bool getIsTorch () { return this.IsTorch; }
@@ -122,74 +127,18 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         public bool getIsTorchBurned () { return this.IsTorchBurned; }
         public void setIsTorchBurned (bool IsTorchBurned) { this.IsTorchBurned = IsTorchBurned; }
 
+        protected bool IsGold;
+        public bool getIsGold (){ return this.IsGold; }
+        public void setIsGold (bool IsGold) { this.IsGold = IsGold; }
 
 
-        protected string Effect;
-        public string getEffect () { return this.Effect; }
-        public void setEffect (string Effect) { this.Effect = Effect; }
 
-
+        // only attributes which aren't used in constructor from here on after
 
         protected Spell Spell;
         public Spell getSpell () { return this.Spell; }
         public void setSpell (Spell Spell) { this.Spell = Spell; }
 
-        protected Enumeration.ArmorFlags Wear;
-        public Enumeration.ArmorFlags getWear () { return this.Wear; }
-        public void setWear (Enumeration.ArmorFlags Wear) { this.Wear = Wear; }
-
-
-        protected Enumeration.DamageTypes DamageType;
-        public Enumeration.DamageTypes getDamageType () { return this.DamageType; }
-        public void setDamageType (Enumeration.DamageTypes DamageType) { this.DamageType = DamageType; }
-
-        protected int Range;
-        public int getRange() { return this.Range; }
-        public void setRange(int Range) { this.Range = Range; }
-
-        protected int TotalDamage;
-        public int getTotalDamage () { return this.TotalDamage; }
-        public void setTotalDamage (int TotalDamage) { this.TotalDamage = TotalDamage; }
-
-
-
-        protected int[] Protection = new int[Enum.GetValues(typeof(DamageTypeIndex)).Length];
-        public int[] getProtection () { return this.Protection; }
-        public int getProtection (DamageTypeIndex index) 
-        {
-            if (index == DamageTypeIndex.DAM_INDEX_BARRIER)
-                throw new Exception("Don't use Protectiontype Barrier!");
-            return this.Protection[(int)index - 1];
-        }
-        public void setProtection (int[] Protection) { this.Protection = Protection; }
-        public void setProtection (DamageTypeIndex index, int value)
-        {
-            if (index == DamageTypeIndex.DAM_INDEX_BARRIER)
-                throw new Exception("Don't use Protectiontype Barrier!");
-            this.Protection[(int)index - 1] = value;
-        }
-
-
-
-        // get-method already exists (see public int getDamage(DamageTypeIndex index))
-        //public int[] getDamages()
-        //{
-        //    return this.getDamages();
-        //    //return this.Damages;
-        //}
-        //public void setDamages(int[] Damages)
-        //{
-        //    this.Damages = Damages;
-        //}
-
-        //public ItemInstance getMunition ()
-        //{
-        //    return this.Munition;
-        //}
-        //public void setMunition (ItemInstance Munition)
-        //{
-        //    this.Munition = Munition;
-        //}
 
 
         // descriptive texts and values (appear ingame in the item information panel)
@@ -204,23 +153,23 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         protected string Text1;
         public string getText1 () { return this.Text1; }
-        public void setText1 (string Text0) { this.Text0 = Text1; }
+        public void setText1 (string Text1) { this.Text1 = Text1; }
 
         protected string Text2;
         public string getText2 () { return this.Text2; }
-        public void setText2 (string Text0) { this.Text0 = Text2; }
+        public void setText2 (string Text2) { this.Text2 = Text2; }
 
         protected string Text3;
         public string getText3 () { return this.Text3; }
-        public void setText3 (string Text0) { this.Text0 = Text3; }
+        public void setText3 (string Text3) { this.Text3 = Text3; }
 
         protected string Text4;
         public string getText4 () { return this.Text4; }
-        public void setText4 (string Text0) { this.Text0 = Text4; }
+        public void setText4 (string Text4) { this.Text4 = Text4; }
 
         protected string Text5;
         public string getText5 () { return this.Text5; }
-        public void setText5 (string Text0) { this.Text0 = Text5; }
+        public void setText5 (string Text5) { this.Text5 = Text5; }
 
         protected int Count0;
         public int getCount0 () { return this.Count0; }
@@ -228,63 +177,28 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         protected int Count1;
         public int getCount1 () { return this.Count1; }
-        public void setCount1 (int Count0) { this.Count0 = Count1; }
+        public void setCount1 (int Count1) { this.Count1 = Count1; }
 
         protected int Count2;
         public int getCount2 () { return this.Count2; }
-        public void setCount2 (int Count0) { this.Count0 = Count2; }
+        public void setCount2 (int Count2) { this.Count2 = Count2; }
 
         protected int Count3;
         public int getCount3 () { return this.Count3; }
-        public void setCount3 (int Count0) { this.Count0 = Count3; }
+        public void setCount3 (int Count3) { this.Count3 = Count3; }
 
         protected int Count4;
         public int getCount4 () { return this.Count4; }
-        public void setCount4 (int Count0) { this.Count0 = Count4; }
+        public void setCount4 (int Count4) { this.Count4 = Count4; }
 
         protected int Count5;
         public int getCount5 () { return this.Count5; }
-        public void setCount5 (int Count0) { this.Count0 = Count5; }
+        public void setCount5 (int Count5) { this.Count5 = Count5; }
 
+   
 
-
-        //// triggered with OnUse
-
-        //public int OnUse_HPChange = 0;
-        //public int OnUse_HPMaxChange = 0;
-        //public int OnUse_MPChange = 0;
-        //public int OnUse_MPMaxChange = 0;
-        //public int OnUse_HP_Min = 1;
-        //public int OnUse_HPMax_Min = 1;
-        //public int OnUse_MP_Min = 0;
-        //public int OnUse_MPMax_Min = 0;
-
-
-
-        //// triggered with OnEquip
-
-        //public int OnEquip_HPChange = 0;
-        //public int OnEquip_HPMaxChange = 0;
-        //public int OnEquip_MPChange = 0;
-        //public int OnEquip_MPMaxChange = 0;
-        //public int OnEquip_HP_Min = 1;
-        //public int OnEquip_HPMax_Min = 1;
-        //public int OnEquip_MP_Min = 0;
-        //public int OnEquip_MPMax_Min = 0;
-
-
-
-        //// triggered with OnUnEquip
-
-        //public int OnUnEquip_HPChange = 0;
-        //public int OnUnEquip_HPMaxChange = 0;
-        //public int OnUnEquip_MPChange = 0;
-        //public int OnUnEquip_MPMaxChange = 0;
-        //public int OnUnEquip_HP_Min = 1;
-        //public int OnUnEquip_HPMax_Min = 1;
-        //public int OnUnEquip_MP_Min = 0;
-        //public int OnUnEquip_MPMax_Min = 0;
-
+        // attributes which are part of events
+        
         // triggered with OnUse
 
         protected int OnUse_HPChange = 0;

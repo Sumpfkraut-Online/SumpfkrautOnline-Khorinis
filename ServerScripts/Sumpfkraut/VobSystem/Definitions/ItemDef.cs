@@ -10,9 +10,23 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 {
     /**
      *   Class from which all items are instatiated (which are handled by the serverscript).
+     *   Not, that ItemDef is the only vob-definition-class which does not inherited from VobDef.
+     *   This is due to C# being unable to multiple inheritance, while inheriting from ItemInstance
+     *   is necessary to obtain all the convenient functionality.
      */
     class ItemDef : ItemInstance
     {
+
+        // read only in GUC and may conflict with ID of ItemDef in database 
+        // --> must test the GUC-interal assignment
+        public int getID () { return this.ID; }
+        //public void setID (int ID) { this.ID = ID; }
+
+        // ID exclusively for the VobSystem (VobSys) representing the ID in database
+        // simply ID as attribute name was already occupied by the GUC internal
+        protected int VobSysID;
+        public int getVobSysID () { return this.VobSysID; }
+        public void setVobSysID (int VobSysID) { this.VobSysID = VobSysID; }
 
         public string getInstanceName () { return this.InstanceName; }
         // read only in GUC
@@ -24,28 +38,87 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         public string getScemeName () { return this.ScemeName; }
         public void setScemeName (string ScemeName) { this.ScemeName = ScemeName; }
 
-        public string getVisual () { return this.Visual; }
-        public void setVisual (string Visual) { this.Visual = Visual; }
+        // setProtection(int[] Protection) is already defined in ItemInstance-class
+        public int[] getProtections ()
+        {
+            DamageTypeIndex[] damageTypeIndices = Enum.GetValues(typeof(DamageTypeIndex)).Cast<DamageTypeIndex>().ToArray();
+            int[] protections = new int[damageTypeIndices.Length - 1];
+            foreach (DamageTypeIndex dti in damageTypeIndices)
+            {
+                if ((int) dti == 0)
+                {
+                    continue;
+                }
+                protections[(int) dti - 1] = this.getProtection(dti);
+            }
+            return protections;
+        }
 
-        public string getVisual_Change () { return this.Visual_Change; }
-        public void setVisual_Change (string Visual_Change) { this.Visual_Change = Visual_Change; }
-
-        public int getVisual_skin () { return this.Visual_skin; }
-        public void setVisual_skin (int Visual_skin) { this.Visual_skin = Visual_skin; }
-
-        public Enumeration.MainFlags getMainFlags () { return this.MainFlags; }
-        public void setMainFlags (Enumeration.MainFlags MainFlags) { this.MainFlags = MainFlags; }
-        
-        public Enumeration.MaterialType getMaterials () { return this.Materials; }
-        public void setMaterials (Enumeration.MaterialType Materials) { this.Materials = Materials; }
+        // another get-method already exists (see public int getDamage(DamageTypeIndex index))
+        // no set-method due to missing scope in GMP_Server
+        // ignores damage type barrier (index 0 in enum DamageTypeIndex) as does the GUC itself mostly
+        public int[] getDamages ()
+        {
+            DamageTypeIndex[] damageTypeIndices = Enum.GetValues(typeof(DamageTypeIndex)).Cast<DamageTypeIndex>().ToArray();
+            int[] damages = new int[damageTypeIndices.Length - 1];
+            foreach (DamageTypeIndex dti in damageTypeIndices)
+            {
+                if ((int) dti == 0)
+                {
+                    continue;
+                }
+                damages[(int) dti - 1] = this.getDamage(dti);
+            }
+            return damages;
+        }
 
         public int getValue () { return this.Value; }
         public void setValue (int Value) { this.Value = Value; }
 
+        public Enumeration.MainFlags getMainFlag () { return this.MainFlags; }
+        public void setMainFlag (Enumeration.MainFlags MainFlag) { this.MainFlags = MainFlag; }
 
-        public bool getIsGold (){ return this.IsGold; }
-        public void setIsGold (bool IsGold) { this.IsGold = IsGold; }
+        public Enumeration.Flags getFlag () { return this.Flags; }
+        public void setFlag (Enumeration.Flags Flag) { this.Flags = Flag; }
 
+        public Enumeration.ArmorFlags getArmorFlag () { return this.Wear; }
+        public void setArmorFlag (Enumeration.ArmorFlags ArmorFlag) { this.Wear = ArmorFlag; }
+
+        public Enumeration.DamageTypes getDamageType () { return this.DamageType; }
+        public void setDamageType (Enumeration.DamageTypes DamageType) { this.DamageType = DamageType; }
+        
+        public int getTotalDamage () { return this.TotalDamage; }
+        public void setTotalDamage (int TotalDamage) { this.TotalDamage = TotalDamage; }
+
+        public int getRange() { return this.Range; }
+        public void setRange(int Range) { this.Range = Range; }
+
+        public string getVisual () { return this.Visual; }
+        public void setVisual (string Visual) { this.Visual = Visual; }
+
+        public string getVisualChange () { return this.Visual_Change; }
+        public void setVisualChange (string VisualChange) { this.Visual_Change = VisualChange; }
+
+        public string getEffect () { return this.Effect; }
+        public void setEffect (string Effect) { this.Effect = Effect; }
+
+        public int getVisualSkin () { return this.Visual_skin; }
+        public void setVisualSkin (int VisualSkin) { this.Visual_skin = VisualSkin; }
+
+        public Enumeration.MaterialType getMaterial () { return this.Materials; }
+        public void setMaterial (Enumeration.MaterialType Material) { this.Materials = Material; }
+
+        // no access to Munition in ItemInstance of the GUC (only by passing it in a constructor)
+        //public ItemInstance getMunition ()
+        //{
+        //    return this.Munition;
+        //}
+        //public void setMunition (ItemInstance Munition)
+        //{
+        //    this.Munition = Munition;
+        //}
+
+        // no access to IsKeyInstance in ItemInstance of the GUC (only by passing it in a constructor)
         //public bool getIsKeyInstance()
         //{
         //    return this.IsKeyInstance;
@@ -73,56 +146,20 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         public bool getIsTorchBurned () { return this.IsTorchBurned; }
         public void setIsTorchBurned (bool IsTorchBurned) { this.IsTorchBurned = IsTorchBurned; }
 
+        public bool getIsGold (){ return this.IsGold; }
+        public void setIsGold (bool IsGold) { this.IsGold = IsGold; }
 
 
-        public string getEffect () { return this.Effect; }
-        public void setEffect (string Effect) { this.Effect = Effect; }
 
+        // -----------------------------------------------------------
+        // not part of general ItemDef- and ItemInstance-constructors
+        // -----------------------------------------------------------
 
 
         public Spell getSpell () { return this.Spell; }
         public void setSpell (Spell Spell) { this.Spell = Spell; }
 
-        public Enumeration.ArmorFlags getWear () { return this.Wear; }
-        public void setWear (Enumeration.ArmorFlags Wear) { this.Wear = Wear; }
-
-        //public Enumeration.DamageType DamageType
-        //{
-        //    get { return this.DamageType; }
-        //    set { this.DamageType = value; }
-        //}
-        public Enumeration.DamageTypes getDamageType () { return this.DamageType; }
-        public void setDamageType (Enumeration.DamageTypes DamageType) { this.DamageType = DamageType; }
-        
-        public int getRange() { return this.Range; }
-        public void setRange(int Range) { this.Range = Range; }
-        
-        public int getTotalDamage () { return this.TotalDamage; }
-        public void setTotalDamage (int TotalDamage) { this.TotalDamage = TotalDamage; }
-
-
-
-        // get-method already exists (see public int getDamage(DamageTypeIndex index))
-        //public int[] getDamages()
-        //{
-        //    return this.getDamages();
-        //    //return this.Damages;
-        //}
-        //public void setDamages(int[] Damages)
-        //{
-        //    this.Damages = Damages;
-        //}
-
-        //public ItemInstance getMunition ()
-        //{
-        //    return this.Munition;
-        //}
-        //public void setMunition (ItemInstance Munition)
-        //{
-        //    this.Munition = Munition;
-        //}
-
-
+  
         // descriptive texts and values (appear ingame in the item information panel)
 
         public string getDescription () { return this.Description; }
@@ -132,37 +169,37 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         public void setText0 (string Text0) { this.Text0 = Text0; }
 
         public string getText1 () { return this.Text1; }
-        public void setText1 (string Text0) { this.Text0 = Text1; }
+        public void setText1 (string Text1) { this.Text1 = Text1; }
 
         public string getText2 () { return this.Text2; }
-        public void setText2 (string Text0) { this.Text0 = Text2; }
+        public void setText2 (string Text2) { this.Text2 = Text2; }
 
         public string getText3 () { return this.Text3; }
-        public void setText3 (string Text0) { this.Text0 = Text3; }
+        public void setText3 (string Text3) { this.Text3 = Text3; }
 
         public string getText4 () { return this.Text4; }
-        public void setText4 (string Text0) { this.Text0 = Text4; }
+        public void setText4 (string Text4) { this.Text4 = Text4; }
 
         public string getText5 () { return this.Text5; }
-        public void setText5 (string Text0) { this.Text0 = Text5; }
+        public void setText5 (string Text5) { this.Text5 = Text5; }
         
         public int getCount0 () { return this.Count0; }
         public void setCount0 (int Count0) { this.Count0 = Count0; }
 
         public int getCount1 () { return this.Count1; }
-        public void setCount1 (int Count0) { this.Count0 = Count1; }
+        public void setCount1 (int Count1) { this.Count1 = Count1; }
 
         public int getCount2 () { return this.Count2; }
-        public void setCount2 (int Count0) { this.Count0 = Count2; }
+        public void setCount2 (int Count2) { this.Count2 = Count2; }
 
         public int getCount3 () { return this.Count3; }
-        public void setCount3 (int Count0) { this.Count0 = Count3; }
+        public void setCount3 (int Count3) { this.Count3 = Count3; }
 
         public int getCount4 () { return this.Count4; }
-        public void setCount4 (int Count0) { this.Count0 = Count4; }
+        public void setCount4 (int Count4) { this.Count4 = Count4; }
 
         public int getCount5 () { return this.Count5; }
-        public void setCount5 (int Count0) { this.Count0 = Count5; }
+        public void setCount5 (int Count5) { this.Count5 = Count5; }
         
 
         // triggered with OnUse
@@ -390,13 +427,11 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             this.OnUse += new Scripting.Events.UseItemEventHandler(this.UseItem);
             this.OnEquip += new Scripting.Events.NPCEquipEventHandler(this.EquipItem);
             this.OnUnEquip += new Scripting.Events.NPCEquipEventHandler(this.UnequipItem);
-            
-            //CreateItemInstance();
         }
 
 
 
-        protected void EquipItem (NPC npc, Item item)
+        protected void EquipItem (NPCProto npc, Item item)
         {
             //npc.HP      = this.getOnEquip_HPChange();
             //npc.HPMax   = this.getOnEquip_HPMaxChange();
@@ -404,7 +439,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             //npc.MPMax   = this.getOnEquip_MPMaxChange();
         }
 
-        protected void UnequipItem (NPC npc, Item item)
+        protected void UnequipItem (NPCProto npc, Item item)
         {
             //npc.HP      = this.getOnUnEquip_HPChange();
             //npc.HPMax   = this.getOnUnEquip_HPMaxChange();
@@ -412,7 +447,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             //npc.MPMax   = this.getOnUnEquip_MPMaxChange();
         }
 
-        protected void UseItem (NPC npc, Item item, short state, short targetState)
+        protected void UseItem (NPCProto npc, Item item, short state, short targetState)
         {
             //if (!(state == -1 && targetState == 0))
             //{
