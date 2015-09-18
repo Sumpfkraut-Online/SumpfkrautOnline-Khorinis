@@ -133,6 +133,7 @@
     <Compile Include="AI\Waypoints\WayNet.cs" />
     <Compile Include="AI\Waypoints\WayPoint.cs" />
     <Compile Include="AI\Waypoints\WayRoute.cs" />
+    <Compile Include="BalancingConstants.cs" />
     <Compile Include="Communication\Chat.cs" />
     <Compile Include="Communication\CommandInterpreter.cs" />
     <Compile Include="Communication\Commands\Command.cs" />
@@ -414,6 +415,7 @@
     <Compile Include="StartModules\Modules.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Sumpfkraut\Database\DBTables.cs" />
+    <Compile Include="Sumpfkraut\Respawn.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\EffectChangesDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\ItemDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\MobDef.cs" />
