@@ -32,6 +32,7 @@ namespace GUC.Server.Scripts.Sumpfkraut
     /**
      * A class for periodical respawning of plants and more (in the future).
      * TODO: Kalkor wants to distribute monsters sorted by XP
+     * TODO: Byte padding with the final version of Zenobject
      */
     public class CRespawn
     {
@@ -67,25 +68,27 @@ namespace GUC.Server.Scripts.Sumpfkraut
 
         private void FillArrayListWithJunk(ref ArrayList _ObjectsToRespawn)
         {
-            double[] Position1 = { -245.0d, -15.0d, 110.0d };
-            double[] Direction1 = { 0.0d, 0.0d, 0.0d };
+            //todo schleife mit random positionen
 
-            ZenObject z1 = new ZenObject();
-            z1.setKlasse(ZENCLASS.PlantContainer);
-            z1.setName("PlantContainer");
-            z1.setPosition(Position1);
-            z1.setDirection(Direction1);
-            _ObjectsToRespawn.Add(z1);
+            //Das X steht für West/Ost Richtung, z.B. "5000" und der Spieler bewegt sich um 5000 Schritte nach Osten, "-5000" und der Spieler bewegt um 5000 Schritte nach Westen.
+            //Das Y steht für die Höhe, "1000" bedeutet, dass der Spieler 1000 Schritte über dem Boden erscheint.
+            //Das Z steht für Norden/Süden. z.B. "5000" und der Spieler bewegt sich um 5000 Schritte nach Norden, "-5000" und der Spieler bewegt sich 5000 Schritte nach Süden. Der Nullpunkt (goto position 0) ist dabei der Hafen von Khorinis.
 
-            double[] Position2 = { -345.0d, -115.0d, 210.0d };
-            double[] Direction2 = { 0.0d, 0.0d, 0.0d };
+            double[] Direction;
+            double[] Position;
+            ZenObject Zobj;
 
-            ZenObject z2 = new ZenObject();
-            z2.setKlasse(ZENCLASS.PlantContainer);
-            z2.setName("PlantContainer");
-            z2.setPosition(Position2);
-            z2.setDirection(Direction2);
-            _ObjectsToRespawn.Add(z2);
+            for (int i = 0; i <= 1000 ; ++i)
+            {
+                Position = new[] { (double)Rng.Next(2000), (double)Rng.Next(30), (double)Rng.Next(2000) };//{ -245.0d, -15.0d, 110.0d };
+                Direction = new[] { 0.0d, 0.0d, 0.0d };
+                Zobj = new ZenObject();
+                Zobj.setKlasse(ZENCLASS.PlantContainer);
+                Zobj.setName("PlantContainer");
+                Zobj.setPosition(Position);
+                Zobj.setDirection(Direction);
+                _ObjectsToRespawn.Add(Zobj);
+            }
 
         }
 
@@ -93,7 +96,7 @@ namespace GUC.Server.Scripts.Sumpfkraut
         {
             foreach (ZenObject ZenObj in ObjectsToRespawn)
             {
-                if (ZenObj.getKlasse() == ZENCLASS.PlantContainer /*&& Rng.Next(100) <= 50*/) //TODO: random chance that nothing spawns?
+                if (ZenObj.getKlasse() == ZENCLASS.PlantContainer /*&& Rng.NextDouble() <= 0.5d*/) //TODO: random chance that nothing spawns?
                 {
                     double[] Position = ZenObj.getPosition();
                     double[] Direction = ZenObj.getDirection();
