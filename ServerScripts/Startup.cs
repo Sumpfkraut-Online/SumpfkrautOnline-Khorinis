@@ -25,6 +25,8 @@ using GUC.Server.Scripts.AI.NPC_Def.Human;
 using GUC.Server.Scripts.Items;
 using GUC.Server.Scripts.Communication;
 using GUC.Server.Scripts.Utils;
+using GUC.Server.Scripts.Sumpfkraut;
+
 namespace GUC.Server.Scripts
 {
     public class Startup : IServerStartup
@@ -79,6 +81,9 @@ namespace GUC.Server.Scripts
 #if SSM_WEB
             Web.http_server.Init();
 #endif
+
+            CRespawn r = new CRespawn();
+
 
             Logger.log(Logger.LogLevel.INFO, "###################### End Initalise ######################");
         }
