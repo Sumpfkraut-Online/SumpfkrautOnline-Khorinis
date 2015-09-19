@@ -12,6 +12,7 @@ namespace GUC.Server.Scripts
     public class BalancingConstants
     {
         public const int RESPAWNINTERVALLMILLISECONDS = 30000; //will effect many things like plants, monsters and ore
+
         public enum PlantList
         {
             ItPl_Blueplant,
@@ -36,7 +37,50 @@ namespace GUC.Server.Scripts
             ItPl_Planeberry
         }
 
-
+        public enum MonsterList
+        {
+            MILZ_01,
+            Alligator,
+            Blattcrawler,
+            Bloodfly,
+            Bloodhound,
+            Giant_Bug,
+            Giant_Desertrat,
+            GiantRat,
+            Gobbo_Black,
+            Gobbo_Green,
+            Gobbo_Skeleton,
+            Gobbo_Warrior,
+            IceWolf,
+            Keiler,
+            Lesser_Skeleton,
+            Lurker,
+            Meatbug,
+            Minecrawler,
+            MinecrawlerWarrior,
+            Molerat,
+            OrcBiter,
+            Razor,
+            Scavenger,
+            Shadowbeast,
+            Shattered_Golem,
+            Sheep,
+            Skeleton,
+            SkeletonLord,
+            SkeletonMage,
+            Snapper,
+            Stoneguardian,
+            Troll,
+            Troll_Black,
+            Waran,
+            Warg,
+            Wisp,
+            Wolf,
+            Zombie1,
+            OrcElite,
+            OrcShaman,
+            OrcWarrior
+        }
 
     }
 }

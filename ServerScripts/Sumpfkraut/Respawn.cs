@@ -43,6 +43,7 @@ namespace GUC.Server.Scripts.Sumpfkraut
         System.Timers.Timer RespawnTimer;
         ArrayList ObjectsToRespawn;
         String[] PlantList;
+        String[] MonsterList;
         Random Rng = new Random();
         
         public CRespawn()
@@ -50,6 +51,7 @@ namespace GUC.Server.Scripts.Sumpfkraut
             //Stopwatch sw = new Stopwatch();
 
             PlantList = Enum.GetNames(typeof(BalancingConstants.PlantList));
+            MonsterList = Enum.GetNames(typeof(BalancingConstants.MonsterList));
 
             //normally: ArrayList with the ZenObjects e.g.
             //ObjectsToRespawn = WorldParser::GetObjects(ZENTYPE.PlantContainer);
@@ -78,13 +80,13 @@ namespace GUC.Server.Scripts.Sumpfkraut
             double[] Position;
             ZenObject Zobj;
 
-            for (int i = 0; i <= 1000 ; ++i)
+            for (int i = 0; i <= 20 ; ++i)
             {
-                Position = new[] { (double)Rng.Next(2000), (double)Rng.Next(30), (double)Rng.Next(2000) };//{ -245.0d, -15.0d, 110.0d };
+                Position = new[] { (double)Rng.Next(6000), -90.0d, (double)Rng.Next(6000) };//{ -245.0d, -15.0d, 110.0d };
                 Direction = new[] { 0.0d, 0.0d, 0.0d };
                 Zobj = new ZenObject();
-                Zobj.setKlasse(ZENCLASS.PlantContainer);
-                Zobj.setName("PlantContainer");
+                Zobj.setKlasse(ZENCLASS.MonsterContainer);
+                Zobj.setName("Container");
                 Zobj.setPosition(Position);
                 Zobj.setDirection(Direction);
                 _ObjectsToRespawn.Add(Zobj);
@@ -104,8 +106,20 @@ namespace GUC.Server.Scripts.Sumpfkraut
                     Vec3f VectorPos = new Vec3f((float)Position[0], (float)Position[1], (float)Position[2]);
                     Vec3f VectorDir = new Vec3f((float)Direction[0], (float)Direction[1], (float)Direction[2]);
 
-                    Item test = new Item(ItemInstance.getItemInstance(this.PlantList.ElementAt(Rng.Next(PlantList.Count()))), 1);
-                    test.Spawn(MAPNAME, VectorPos, VectorDir);
+                    Item item = new Item(ItemInstance.getItemInstance(this.PlantList.ElementAt(Rng.Next(PlantList.Count()))), 1);
+                    item.Spawn(MAPNAME, VectorPos, VectorDir);
+                }
+                else if (ZenObj.getKlasse() == ZENCLASS.MonsterContainer)
+                {
+                    double[] Position = ZenObj.getPosition();
+                    double[] Direction = ZenObj.getDirection();
+
+                    Vec3f VectorPos = new Vec3f((float)Position[0], (float)Position[1], (float)Position[2]);
+                    Vec3f VectorDir = new Vec3f((float)Direction[0], (float)Direction[1], (float)Direction[2]);
+
+                    //this.MonsterList.ElementAt(Rng.Next(MonsterList.Count())));
+                    //NPCInstance.InstanceDict["Mud"];
+                    //NPCInstance.InstanceDict[3];
                 }
                 //else if (ZenObj.getKlasse() == ZENCLASS.OreContainer)
                 //{
@@ -126,7 +140,7 @@ namespace GUC.Server.Scripts.Sumpfkraut
 //Everything down below  is just for testing purposes. It will be replaced later with the real parser.
 #region ParserStuff
 public enum ZENTYPE { Waypoint, Vobs, zCVob, oCMob, oCItem, Container, RessourceContainer, PlantContainer, OreContainer, EventContainer, ALL }; // Don't change the order of this! The external parser depends on it.
-public enum ZENCLASS { oCWaypoint, zCVob, oCMob, oCItem, PlantContainer, OreContainer, EventContainer};
+public enum ZENCLASS { oCWaypoint, zCVob, oCMob, oCItem, PlantContainer, OreContainer, EventContainer, MonsterContainer};
 
 public class ZenObject
 {
