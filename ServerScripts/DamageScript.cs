@@ -49,7 +49,7 @@ namespace GUC.Server.Scripts
 
 			int damage = 0;
 
-			Console.WriteLine("OnDamage: "+damageMode+" | "+weaponMode+" | "+spell+" | "+weapon+" | "+attacker);
+			//Console.WriteLine("OnDamage: "+damageMode+" | "+weaponMode+" | "+spell+" | "+weapon+" | "+attacker);
 
 			if(damageMode == DamageTypes.DAM_FALL) {
                 damage = (int)(fallDownDistanceY-500)/100 * 20;
