@@ -128,37 +128,37 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
             DeleteVob();
 
             MobInter newVob = null;
-            MobInterType mobType = def.getMobInterType();
+            MobInterType mobType = def.GetMobInterType();
 
             // need to despawn newly created vobs because, maybe, they shouldn not be spawned at
             // this point, however, the GUC does not allow so at the moment
             switch (mobType)
             {
                 case MobInterType.MobBed:
-                    newVob = new MobBed(def.getVisual(), def.getFocusName(), def.getUseWithItem(), 
-                        def.getTriggerTarget(), def.getCDDyn(), def.getCDStatic());
+                    newVob = new MobBed(def.GetVisual(), def.GetFocusName(), def.GetUseWithItem(), 
+                        def.GetTriggerTarget(), def.GetCDDyn(), def.GetCDStatic());
                     newVob.Despawn();
                     break;
                 case MobInterType.MobContainer:
-                    newVob = new MobContainer(def.getVisual(), def.getFocusName(), new ItemInstance[0], 
-                        new int[0], def.getIsLocked(), def.getKeyInstance(), def.getPicklockString(), 
-                        def.getUseWithItem(), def.getTriggerTarget(), def.getCDDyn(), def.getCDStatic());
+                    newVob = new MobContainer(def.GetVisual(), def.GetFocusName(), new ItemInstance[0], 
+                        new int[0], def.GetIsLocked(), def.GetKeyInstance(), def.GetPicklockString(), 
+                        def.GetUseWithItem(), def.GetTriggerTarget(), def.GetCDDyn(), def.GetCDStatic());
                     newVob.Despawn();
                     break;
                 case MobInterType.MobDoor:
-                    newVob = new MobDoor(def.getVisual(), def.getFocusName(), def.getIsLocked(), 
-                        def.getKeyInstance(), def.getPicklockString(), def.getUseWithItem(), 
-                        def.getTriggerTarget(), def.getCDDyn(), def.getCDStatic());
+                    newVob = new MobDoor(def.GetVisual(), def.GetFocusName(), def.GetIsLocked(), 
+                        def.GetKeyInstance(), def.GetPicklockString(), def.GetUseWithItem(), 
+                        def.GetTriggerTarget(), def.GetCDDyn(), def.GetCDStatic());
                     newVob.Despawn();
                     break;
                 case MobInterType.MobInter:
-                    newVob = new MobInter(def.getVisual(), def.getFocusName(), def.getUseWithItem(), 
-                        def.getTriggerTarget(), def.getCDDyn(), def.getCDStatic());
+                    newVob = new MobInter(def.GetVisual(), def.GetFocusName(), def.GetUseWithItem(), 
+                        def.GetTriggerTarget(), def.GetCDDyn(), def.GetCDStatic());
                     newVob.Despawn();
                     break;
                 case MobInterType.MobSwitch:
-                    newVob = new MobSwitch(def.getVisual(), def.getFocusName(), def.getUseWithItem(), 
-                        def.getTriggerTarget(), def.getCDDyn(), def.getCDStatic());
+                    newVob = new MobSwitch(def.GetVisual(), def.GetFocusName(), def.GetUseWithItem(), 
+                        def.GetTriggerTarget(), def.GetCDDyn(), def.GetCDStatic());
                     newVob.Despawn();
                     break;
                 case MobInterType.None:

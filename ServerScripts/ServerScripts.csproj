@@ -63,6 +63,38 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sqlite.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Sumpfkraut\Database\DBReader.cs" />
+    <Compile Include="Sumpfkraut\Database\DBSecurity.cs" />
+    <Compile Include="Sumpfkraut\Database\DBTables.cs" />
+    <Compile Include="Sumpfkraut\IScriptObject.cs" />
+    <Compile Include="Sumpfkraut\ScriptObject.cs" />
+    <Compile Include="Sumpfkraut\Utilities\DateTimeUtil.cs" />
+    <Compile Include="Sumpfkraut\Utilities\StringUtil.cs" />
+    <Compile Include="Sumpfkraut\Utilities\Threading\IRunnable.cs" />
+    <Compile Include="Sumpfkraut\Utilities\Threading\Runnable.cs" />
+    <Compile Include="Sumpfkraut\Utilities\Threading\TestRunnable.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\DummyItemDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\DummyMobDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\DummyNPCDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\DummySpellDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\EffectChangesDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\ItemDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\MobDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\NPCDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\SpellDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\VobDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\ItemInst.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\MobInst.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\NPCInst.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\SpellInst.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\VobInst.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\InventoryVobHandler.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\VobHandler.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\WorldVobHandler.cs" />
+    <Compile Include="Sumpfkraut\WeatherSystem\Weather.cs" />
+    <Compile Include="Sumpfkraut\WeatherSystem\WeatherHandler.cs" />
+    <Compile Include="Sumpfkraut\WorldSystem\WorldHandler.cs" />
+    <Compile Include="Sumpfkraut\WorldSystem\WorldInst.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GMP_Server\GMP_Server.csproj">
@@ -73,6 +105,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Database\SO-K_SQLite.sql" />
+    <Content Include="Sumpfkraut\Database\SO-K_SQLite.sql" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

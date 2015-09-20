@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Server.Scripting.Objects;
-using GUC.Server.Scripting.Objects.Character;
+//using GUC.Server.Scripting.Objects;
+//using GUC.Server.Scripting.Objects.Character;
 using GUC.Enumeration;
 
 namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
@@ -14,99 +14,163 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
      *   This is due to C# being unable to multiple inheritance, while inheriting from ItemInstance
      *   is necessary to obtain all the convenient functionality.
      */
-    class ItemDef : ItemInstance
+    class ItemDef : VobDef
     {
 
-        // read only in GUC and may conflict with ID of ItemDef in database 
-        // --> must test the GUC-interal assignment
-        public int getID () { return this.ID; }
-        //public void setID (int ID) { this.ID = ID; }
+        #region dictionaries
 
-        // ID exclusively for the VobSystem (VobSys) representing the ID in database
-        // simply ID as attribute name was already occupied by the GUC internal
-        protected int VobSysID;
-        public int getVobSysID () { return this.VobSysID; }
-        public void setVobSysID (int VobSysID) { this.VobSysID = VobSysID; }
+        Dictionary<int, ItemDef> defById = new Dictionary<int, ItemDef>();
+        Dictionary<string, ItemDef> defByName = new Dictionary<string, ItemDef>();
 
-        public string getInstanceName () { return this.InstanceName; }
-        // read only in GUC
-        //public void setInstanceName (string InstanceName) { this.InstanceName = InstanceName; }
+        #endregion
 
-        public string getName () { return this.Name; }
-        public void setName (string Name) { this.Name = Name; }
+        #region standard attributes
 
-        public string getScemeName () { return this.ScemeName; }
-        public void setScemeName (string ScemeName) { this.ScemeName = ScemeName; }
-
-        // setProtection(int[] Protection) is already defined in ItemInstance-class
-        public int[] getProtections ()
-        {
-            DamageTypeIndex[] damageTypeIndices = Enum.GetValues(typeof(DamageTypeIndex)).Cast<DamageTypeIndex>().ToArray();
-            int[] protections = new int[damageTypeIndices.Length - 1];
-            foreach (DamageTypeIndex dti in damageTypeIndices)
-            {
-                if ((int) dti == 0)
-                {
-                    continue;
-                }
-                protections[(int) dti - 1] = this.getProtection(dti);
-            }
-            return protections;
+        protected string instanceName;
+        public string getInstanceName () { return this.instanceName; }
+        public void setInstanceName (string instanceName) 
+        { 
+            this.instanceName = instanceName; 
         }
 
+        protected string name;
+        public string getName () { return this.name; }
+        public void setName (string name) 
+        { 
+            this.name = name; 
+        }
+
+        protected string scemeName;
+        public string getScemeName () { return this.scemeName; }
+        public void setScemeName (string scemeName) 
+        { 
+            this.scemeName = scemeName;
+        }
+
+        protected int[] protections;
+        public int[] getProtections () { return this.protections; }
+        public void setProtections (int[] protections) 
+        {
+            this.protections = protections;
+        }
+
+        protected int[] damages;
+        public int[] getDamages ()
+        {
+            return this.damages;
+        }
+        public void setDamages (int[] damages)
+        {
+            this.damages = damages;
+        }
         // another get-method already exists (see public int getDamage(DamageTypeIndex index))
         // no set-method due to missing scope in GMP_Server
         // ignores damage type barrier (index 0 in enum DamageTypeIndex) as does the GUC itself mostly
-        public int[] getDamages ()
+        //public int[] getDamages ()
+        //{
+        //    DamageTypeIndex[] damageTypeIndices = Enum.GetValues(typeof(DamageTypeIndex)).Cast<DamageTypeIndex>().ToArray();
+        //    int[] damages = new int[damageTypeIndices.Length - 1];
+        //    foreach (DamageTypeIndex dti in damageTypeIndices)
+        //    {
+        //        if ((int) dti == 0)
+        //        {
+        //            continue;
+        //        }
+        //        damages[(int) dti - 1] = this.getDamage(dti);
+        //    }
+        //    return damages;
+        //}
+
+        protected int value;
+        public int getValue () { return this.value; }
+        public void setValue (int value) 
         {
-            DamageTypeIndex[] damageTypeIndices = Enum.GetValues(typeof(DamageTypeIndex)).Cast<DamageTypeIndex>().ToArray();
-            int[] damages = new int[damageTypeIndices.Length - 1];
-            foreach (DamageTypeIndex dti in damageTypeIndices)
-            {
-                if ((int) dti == 0)
-                {
-                    continue;
-                }
-                damages[(int) dti - 1] = this.getDamage(dti);
-            }
-            return damages;
+            this.value = value;
         }
 
-        public int getValue () { return this.Value; }
-        public void setValue (int Value) { this.Value = Value; }
+        protected ItemType itemType;
+        public ItemType getItemType () { return this.itemType; }
+        public void setItemType (ItemType itemType)
+        {
+            this.itemType = itemType;
+        }
 
-        public Enumeration.MainFlags getMainFlag () { return this.MainFlags; }
-        public void setMainFlag (Enumeration.MainFlags MainFlag) { this.MainFlags = MainFlag; }
+        //protected Enumeration.MainFlags mainFlag;
+        //public Enumeration.MainFlags getMainFlag () { return this.mainFlag; }
+        //public void setMainFlag (Enumeration.MainFlags mainFlag) 
+        //{ 
+        //    this.mainFlag = mainFlag; 
+        //}
 
-        public Enumeration.Flags getFlag () { return this.Flags; }
-        public void setFlag (Enumeration.Flags Flag) { this.Flags = Flag; }
+        //protected Enumeration.Flags flag;
+        //public Enumeration.Flags getFlag () { return this.flag; }
+        //public void setFlag (Enumeration.Flags flag) 
+        //{ 
+        //    this.flag = flag; 
+        //}
 
-        public Enumeration.ArmorFlags getArmorFlag () { return this.Wear; }
-        public void setArmorFlag (Enumeration.ArmorFlags ArmorFlag) { this.Wear = ArmorFlag; }
+        //protected Enumeration.ArmorFlags armorFlag;
+        //public Enumeration.ArmorFlags getArmorFlag () { return this.armorFlag; }
+        //public void setArmorFlag (Enumeration.ArmorFlags armorFlag) 
+        //{ 
+        //    this.armorFlag = armorFlag; 
+        //}
 
-        public Enumeration.DamageTypes getDamageType () { return this.DamageType; }
-        public void setDamageType (Enumeration.DamageTypes DamageType) { this.DamageType = DamageType; }
-        
-        public int getTotalDamage () { return this.TotalDamage; }
-        public void setTotalDamage (int TotalDamage) { this.TotalDamage = TotalDamage; }
+        //protected Enumeration.DamageTypes damageType;
+        //public Enumeration.DamageTypes getDamageType () { return this.damageType; }
+        //public void setDamageType (Enumeration.DamageTypes damageType) 
+        //{ 
+        //    this.damageType = damageType; 
+        //}
 
-        public int getRange() { return this.Range; }
-        public void setRange(int Range) { this.Range = Range; }
+        //protected int totalDamage;
+        //public int getTotalDamage () { return this.totalDamage; }
+        //public void setTotalDamage (int totalDamage) 
+        //{ 
+        //    this.totalDamage = totalDamage; 
+        //}
 
-        public string getVisual () { return this.Visual; }
-        public void setVisual (string Visual) { this.Visual = Visual; }
+        protected int range;
+        public int getRange() { return this.range; }
+        public void setRange(int range) 
+        { 
+            this.range = range; 
+        }
 
-        public string getVisualChange () { return this.Visual_Change; }
-        public void setVisualChange (string VisualChange) { this.Visual_Change = VisualChange; }
+        protected string visual;
+        public string getVisual () { return this.visual; }
+        public void setVisual (string visual) 
+        { 
+            this.visual = visual; 
+        }
 
-        public string getEffect () { return this.Effect; }
-        public void setEffect (string Effect) { this.Effect = Effect; }
+        protected string visualChange;
+        public string getVisualChange () { return this.visualChange; }
+        public void setVisualChange (string visualChange) 
+        { 
+            this.visualChange = visualChange; 
+        }
 
-        public int getVisualSkin () { return this.Visual_skin; }
-        public void setVisualSkin (int VisualSkin) { this.Visual_skin = VisualSkin; }
+        protected string effect;
+        public string getEffect () { return this.effect; }
+        public void setEffect (string effect) 
+        { 
+            this.effect = effect; 
+        }
 
-        public Enumeration.MaterialType getMaterial () { return this.Materials; }
-        public void setMaterial (Enumeration.MaterialType Material) { this.Materials = Material; }
+        protected int visualSkin;
+        public int getVisualSkin () { return this.visualSkin; }
+        public void setVisualSkin (int visualSkin) 
+        { 
+            this.visualSkin = visualSkin; 
+        }
+
+        protected ItemMaterial material;
+        public ItemMaterial getMaterial () { return this.material; }
+        public void setMaterial (ItemMaterial material) 
+        { 
+            this.material = material; 
+        }
 
         // no access to Munition in ItemInstance of the GUC (only by passing it in a constructor)
         //public ItemInstance getMunition ()
@@ -137,17 +201,33 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         //    this.IsKeyInstance = IsKeyInstance;
         //}
 
-        public bool getIsTorch () { return this.IsTorch; }
-        public void setIsTorch (bool IsTorch) { this.IsTorch = IsTorch; }
+        protected bool isTorch;
+        public bool getIsTorch () { return this.isTorch; }
+        public void setIsTorch (bool isTorch) 
+        { 
+            this.isTorch = isTorch; 
+        }
 
-        public bool getIsTorchBurning () { return this.IsTorchBurning; }
-        public void setIsTorchBurning (bool IsTorchBurning) { this.IsTorchBurning = IsTorchBurning; }
+        protected bool isTorchBurning;
+        public bool getIsTorchBurning () { return this.isTorchBurning; }
+        public void setIsTorchBurning (bool isTorchBurning) 
+        { 
+            this.isTorchBurning = isTorchBurning; 
+        }
 
-        public bool getIsTorchBurned () { return this.IsTorchBurned; }
-        public void setIsTorchBurned (bool IsTorchBurned) { this.IsTorchBurned = IsTorchBurned; }
+        protected bool isTorchBurned;
+        public bool getIsTorchBurned () { return this.isTorchBurned; }
+        public void setIsTorchBurned (bool isTorchBurned) 
+        { 
+            this.isTorchBurned = isTorchBurned; 
+        }
 
-        public bool getIsGold (){ return this.IsGold; }
-        public void setIsGold (bool IsGold) { this.IsGold = IsGold; }
+        protected bool isGold;
+        public bool getIsGold (){ return this.isGold; }
+        public void setIsGold (bool isGold) 
+        { 
+            this.isGold = isGold; 
+        }
 
 
 
@@ -156,159 +236,188 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         // -----------------------------------------------------------
 
 
-        public Spell getSpell () { return this.Spell; }
-        public void setSpell (Spell Spell) { this.Spell = Spell; }
+        protected SpellDef spell;
+        public SpellDef getSpell () { return this.spell; }
+        public void setSpell (SpellDef spell) 
+        { 
+            this.spell = spell; 
+        }
 
   
         // descriptive texts and values (appear ingame in the item information panel)
 
-        public string getDescription () { return this.Description; }
-        public void setDescription (string Description) { this.Description = Description; }
+        protected string description;
+        public string getDescription () { return this.description; }
+        public void setDescription (string description) 
+        { 
+            this.description = description; 
+        }
 
-        public string getText0 () { return this.Text0; }
-        public void setText0 (string Text0) { this.Text0 = Text0; }
+        protected string[] text;
+        public string[] getText () { return this.text; }
+        public void setText (string[] text)
+        {
+            this.text = text;
+        }
+        //public string getText0 () { return this.Text0; }
+        //public void setText0 (string Text0) { this.Text0 = Text0; }
 
-        public string getText1 () { return this.Text1; }
-        public void setText1 (string Text1) { this.Text1 = Text1; }
+        //public string getText1 () { return this.Text1; }
+        //public void setText1 (string Text1) { this.Text1 = Text1; }
 
-        public string getText2 () { return this.Text2; }
-        public void setText2 (string Text2) { this.Text2 = Text2; }
+        //public string getText2 () { return this.Text2; }
+        //public void setText2 (string Text2) { this.Text2 = Text2; }
 
-        public string getText3 () { return this.Text3; }
-        public void setText3 (string Text3) { this.Text3 = Text3; }
+        //public string getText3 () { return this.Text3; }
+        //public void setText3 (string Text3) { this.Text3 = Text3; }
 
-        public string getText4 () { return this.Text4; }
-        public void setText4 (string Text4) { this.Text4 = Text4; }
+        //public string getText4 () { return this.Text4; }
+        //public void setText4 (string Text4) { this.Text4 = Text4; }
 
-        public string getText5 () { return this.Text5; }
-        public void setText5 (string Text5) { this.Text5 = Text5; }
-        
-        public int getCount0 () { return this.Count0; }
-        public void setCount0 (int Count0) { this.Count0 = Count0; }
+        //public string getText5 () { return this.Text5; }
+        //public void setText5 (string Text5) { this.Text5 = Text5; }
 
-        public int getCount1 () { return this.Count1; }
-        public void setCount1 (int Count1) { this.Count1 = Count1; }
+        protected int[] count;
+        public int[] getCount () { return this.count; }
+        public void setCount (int[] count) 
+        { 
+            this.count = count; 
+        }
+        //public int getCount0 () { return this.Count0; }
+        //public void setCount0 (int Count0) { this.Count0 = Count0; }
 
-        public int getCount2 () { return this.Count2; }
-        public void setCount2 (int Count2) { this.Count2 = Count2; }
+        //public int getCount1 () { return this.Count1; }
+        //public void setCount1 (int Count1) { this.Count1 = Count1; }
 
-        public int getCount3 () { return this.Count3; }
-        public void setCount3 (int Count3) { this.Count3 = Count3; }
+        //public int getCount2 () { return this.Count2; }
+        //public void setCount2 (int Count2) { this.Count2 = Count2; }
 
-        public int getCount4 () { return this.Count4; }
-        public void setCount4 (int Count4) { this.Count4 = Count4; }
+        //public int getCount3 () { return this.Count3; }
+        //public void setCount3 (int Count3) { this.Count3 = Count3; }
 
-        public int getCount5 () { return this.Count5; }
-        public void setCount5 (int Count5) { this.Count5 = Count5; }
-        
+        //public int getCount4 () { return this.Count4; }
+        //public void setCount4 (int Count4) { this.Count4 = Count4; }
 
+        //public int getCount5 () { return this.Count5; }
+        //public void setCount5 (int Count5) { this.Count5 = Count5; }
+
+        #endregion
+
+        #region OnUse
         // triggered with OnUse
 
-        protected int OnUse_HPChange = 0;
-        public int getOnUse_HPChange () { return this.OnUse_HPChange; }
-        public void setOnUse_HPChange (int HPChange) { this.OnUse_HPChange = HPChange; }
+        protected int onUse_HPChange = 0;
+        public int getOnUse_HPChange () { return this.onUse_HPChange; }
+        public void setOnUse_HPChange (int HPChange) { this.onUse_HPChange = HPChange; }
 
-        protected int OnUse_HPMaxChange = 0;
-        public int getOnUse_HPMaxChange () { return this.OnUse_HPMaxChange; }
-        public void setOnUse_HPMaxChange (int HPMaxChange) { this.OnUse_HPMaxChange = HPMaxChange; }
+        protected int onUse_HPMaxChange = 0;
+        public int getOnUse_HPMaxChange () { return this.onUse_HPMaxChange; }
+        public void setOnUse_HPMaxChange (int HPMaxChange) { this.onUse_HPMaxChange = HPMaxChange; }
 
-        protected int OnUse_MPChange = 0;
-        public int getOnUse_MPChange () { return this.OnUse_MPChange; }
-        public void setOnUse_MPChange (int MPChange) { this.OnUse_MPChange = MPChange; }
+        protected int onUse_MPChange = 0;
+        public int getOnUse_MPChange () { return this.onUse_MPChange; }
+        public void setOnUse_MPChange (int MPChange) { this.onUse_MPChange = MPChange; }
 
-        protected int OnUse_MPMaxChange = 0;
-        public int getOnUse_MPMaxChange () { return this.OnUse_MPMaxChange; }
-        public void setOnUse_MPMaxChange (int MPMaxChange) { this.OnUse_MPMaxChange = MPMaxChange; }
+        protected int onUse_MPMaxChange = 0;
+        public int getOnUse_MPMaxChange () { return this.onUse_MPMaxChange; }
+        public void setOnUse_MPMaxChange (int MPMaxChange) { this.onUse_MPMaxChange = MPMaxChange; }
 
-        protected int OnUse_HP_Min = 1;
-        public int getOnUse_HP_Min () { return this.OnUse_HP_Min; }
-        public void setOnUse_HP_Min (int HP_Min) { this.OnUse_HP_Min = HP_Min; }
+        protected int onUse_HP_Min = 1;
+        public int getOnUse_HP_Min () { return this.onUse_HP_Min; }
+        public void setOnUse_HP_Min (int HP_Min) { this.onUse_HP_Min = HP_Min; }
 
-        protected int OnUse_HPMax_Min = 1;
-        public int getOnUse_HPMax_Min () { return this.OnUse_HPMax_Min; }
-        public void setOnUse_HPMax_Min (int HPMax_Min) { this.OnUse_HPMax_Min = HPMax_Min; }
+        protected int onUse_HPMax_Min = 1;
+        public int getOnUse_HPMax_Min () { return this.onUse_HPMax_Min; }
+        public void setOnUse_HPMax_Min (int HPMax_Min) { this.onUse_HPMax_Min = HPMax_Min; }
 
-        protected int OnUse_MP_Min = 0;
-        public int getOnUse_MP_Min () { return this.OnUse_MP_Min; }
-        public void setOnUse_MP_Min (int MP_Min) { this.OnUse_MP_Min = MP_Min; }
+        protected int onUse_MP_Min = 0;
+        public int getOnUse_MP_Min () { return this.onUse_MP_Min; }
+        public void setOnUse_MP_Min (int MP_Min) { this.onUse_MP_Min = MP_Min; }
 
-        protected int OnUse_MPMax_Min = 0;
-        public int getOnUse_MPMax_Min () { return this.OnUse_MPMax_Min; }
-        public void setOnUse_MPMax_Min (int MPMax_Min) { this.OnUse_MPMax_Min = MPMax_Min; }
+        protected int onUse_MPMax_Min = 0;
+        public int getOnUse_MPMax_Min () { return this.onUse_MPMax_Min; }
+        public void setOnUse_MPMax_Min (int MPMax_Min) { this.onUse_MPMax_Min = MPMax_Min; }
+
+        #endregion
 
 
-
+        #region OnEquip
         // triggered with OnEquip
 
-        protected int OnEquip_HPChange = 0;
-        public int getOnEquip_HPChange () { return this.OnEquip_HPChange; }
-        public void setOnEquip_HPChange (int HPChange) { this.OnEquip_HPChange = HPChange; }
+        protected int onEquip_HPChange = 0;
+        public int getOnEquip_HPChange () { return this.onEquip_HPChange; }
+        public void setOnEquip_HPChange (int HPChange) { this.onEquip_HPChange = HPChange; }
 
-        protected int OnEquip_HPMaxChange = 0;
-        public int getOnEquip_HPMaxChange () { return this.OnEquip_HPMaxChange; }
-        public void setOnEquip_HPMaxChange (int HPMaxChange) { this.OnEquip_HPMaxChange = HPMaxChange; }
+        protected int onEquip_HPMaxChange = 0;
+        public int getOnEquip_HPMaxChange () { return this.onEquip_HPMaxChange; }
+        public void setOnEquip_HPMaxChange (int HPMaxChange) { this.onEquip_HPMaxChange = HPMaxChange; }
 
-        protected int OnEquip_MPChange = 0;
-        public int getOnEquip_MPChange () { return this.OnEquip_MPChange; }
-        public void setOnEquip_MPChange (int MPChange) { this.OnEquip_MPChange = MPChange; }
+        protected int onEquip_MPChange = 0;
+        public int getOnEquip_MPChange () { return this.onEquip_MPChange; }
+        public void setOnEquip_MPChange (int MPChange) { this.onEquip_MPChange = MPChange; }
 
-        protected int OnEquip_MPMaxChange = 0;
-        public int getOnEquip_MPMaxChange () { return this.OnEquip_MPMaxChange; }
-        public void setOnEquip_MPMaxChange (int MPMaxChange) { this.OnEquip_MPMaxChange = MPMaxChange; }
+        protected int onEquip_MPMaxChange = 0;
+        public int getOnEquip_MPMaxChange () { return this.onEquip_MPMaxChange; }
+        public void setOnEquip_MPMaxChange (int MPMaxChange) { this.onEquip_MPMaxChange = MPMaxChange; }
 
-        protected int OnEquip_HP_Min = 1;
-        public int getOnEquip_HP_Min () { return this.OnEquip_HP_Min; }
-        public void setOnEquip_HP_Min (int HP_Min) { this.OnEquip_HP_Min = HP_Min; }
+        protected int onEquip_HP_Min = 1;
+        public int getOnEquip_HP_Min () { return this.onEquip_HP_Min; }
+        public void setOnEquip_HP_Min (int HP_Min) { this.onEquip_HP_Min = HP_Min; }
 
-        protected int OnEquip_HPMax_Min = 1;
-        public int getOnEquip_HPMax_Min () { return this.OnEquip_HPMax_Min; }
-        public void setOnEquip_HPMax_Min (int HPMax_Min) { this.OnEquip_HPMax_Min = HPMax_Min; }
+        protected int onEquip_HPMax_Min = 1;
+        public int getOnEquip_HPMax_Min () { return this.onEquip_HPMax_Min; }
+        public void setOnEquip_HPMax_Min (int HPMax_Min) { this.onEquip_HPMax_Min = HPMax_Min; }
 
-        protected int OnEquip_MP_Min = 0;
-        public int getOnEquip_MP_Min () { return this.OnEquip_MP_Min; }
-        public void setOnEquip_MP_Min (int MP_Min) { this.OnEquip_MP_Min = MP_Min; }
+        protected int onEquip_MP_Min = 0;
+        public int getOnEquip_MP_Min () { return this.onEquip_MP_Min; }
+        public void setOnEquip_MP_Min (int MP_Min) { this.onEquip_MP_Min = MP_Min; }
 
-        protected int OnEquip_MPMax_Min = 0;
-        public int getOnEquip_MPMax_Min () { return this.OnEquip_MPMax_Min; }
-        public void setOnEquip_MPMax_Min (int MPMax_Min) { this.OnEquip_MPMax_Min = MPMax_Min; }
+        protected int onEquip_MPMax_Min = 0;
+        public int getOnEquip_MPMax_Min () { return this.onEquip_MPMax_Min; }
+        public void setOnEquip_MPMax_Min (int MPMax_Min) { this.onEquip_MPMax_Min = MPMax_Min; }
+
+        #endregion
 
 
-
+        #region OnUnEquip
         // triggered with OnUnEquip
 
-        protected int OnUnEquip_HPChange = 0;
-        public int getOnUnEquip_HPChange () { return this.OnUnEquip_HPChange; }
-        public void setOnUnEquip_HPChange (int HPChange) { this.OnUnEquip_HPChange = HPChange; }
+        protected int onUnEquip_HPChange = 0;
+        public int getOnUnEquip_HPChange () { return this.onUnEquip_HPChange; }
+        public void setOnUnEquip_HPChange (int HPChange) { this.onUnEquip_HPChange = HPChange; }
 
-        protected int OnUnEquip_HPMaxChange = 0;
-        public int getOnUnEquip_HPMaxChange () { return this.OnUnEquip_HPMaxChange; }
-        public void setOnUnEquip_HPMaxChange (int HPMaxChange) { this.OnUnEquip_HPMaxChange = HPMaxChange; }
+        protected int onUnEquip_HPMaxChange = 0;
+        public int getOnUnEquip_HPMaxChange () { return this.onUnEquip_HPMaxChange; }
+        public void setOnUnEquip_HPMaxChange (int HPMaxChange) { this.onUnEquip_HPMaxChange = HPMaxChange; }
 
-        protected int OnUnEquip_MPChange = 0;
-        public int getOnUnEquip_MPChange () { return this.OnUnEquip_MPChange; }
-        public void setOnUnEquip_MPChange (int MPChange) { this.OnUnEquip_MPChange = MPChange; }
+        protected int onUnEquip_MPChange = 0;
+        public int getOnUnEquip_MPChange () { return this.onUnEquip_MPChange; }
+        public void setOnUnEquip_MPChange (int MPChange) { this.onUnEquip_MPChange = MPChange; }
 
-        protected int OnUnEquip_MPMaxChange = 0;
-        public int getOnUnEquip_MPMaxChange () { return this.OnUnEquip_MPMaxChange; }
-        public void setOnUnEquip_MPMaxChange (int MPMaxChange) { this.OnUnEquip_MPMaxChange = MPMaxChange; }
+        protected int onUnEquip_MPMaxChange = 0;
+        public int getOnUnEquip_MPMaxChange () { return this.onUnEquip_MPMaxChange; }
+        public void setOnUnEquip_MPMaxChange (int MPMaxChange) { this.onUnEquip_MPMaxChange = MPMaxChange; }
 
-        protected int OnUnEquip_HP_Min = 1;
-        public int getOnUnEquip_HP_Min () { return this.OnUnEquip_HP_Min; }
-        public void setOnUnEquip_HP_Min (int HP_Min) { this.OnUnEquip_HP_Min = HP_Min; }
+        protected int onUnEquip_HP_Min = 1;
+        public int getOnUnEquip_HP_Min () { return this.onUnEquip_HP_Min; }
+        public void setOnUnEquip_HP_Min (int HP_Min) { this.onUnEquip_HP_Min = HP_Min; }
 
-        protected int OnUnEquip_HPMax_Min = 1;
-        public int getOnUnEquip_HPMax_Min () { return this.OnUnEquip_HPMax_Min; }
-        public void setOnUnEquip_HPMax_Min (int HPMax_Min) { this.OnUnEquip_HPMax_Min = HPMax_Min; }
+        protected int onUnEquip_HPMax_Min = 1;
+        public int getOnUnEquip_HPMax_Min () { return this.onUnEquip_HPMax_Min; }
+        public void setOnUnEquip_HPMax_Min (int HPMax_Min) { this.onUnEquip_HPMax_Min = HPMax_Min; }
 
-        protected int OnUnEquip_MP_Min = 0;
-        public int getOnUnEquip_MP_Min () { return this.OnUnEquip_MP_Min; }
-        public void setOnUnEquip_MP_Min (int MP_Min) { this.OnUnEquip_MP_Min = MP_Min; }
+        protected int onUnEquip_MP_Min = 0;
+        public int getOnUnEquip_MP_Min () { return this.onUnEquip_MP_Min; }
+        public void setOnUnEquip_MP_Min (int MP_Min) { this.onUnEquip_MP_Min = MP_Min; }
 
-        protected int OnUnEquip_MPMax_Min = 0;
-        public int getOnUnEquip_MPMax_Min () { return this.OnUnEquip_MPMax_Min; }
-        public void setOnUnEquip_MPMax_Min (int MPMax_Min) { this.OnUnEquip_MPMax_Min = MPMax_Min; }
+        protected int onUnEquip_MPMax_Min = 0;
+        public int getOnUnEquip_MPMax_Min () { return this.onUnEquip_MPMax_Min; }
+        public void setOnUnEquip_MPMax_Min (int MPMax_Min) { this.onUnEquip_MPMax_Min = MPMax_Min; }
 
-        
+        #endregion
+
+
+        #region constructors
 
         // potions
         public ItemDef (String instanceName, String name, String scemeName, int value, String visual, String effect)
@@ -429,7 +538,11 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             this.OnUnEquip += new Scripting.Events.NPCEquipEventHandler(this.UnequipItem);
         }
 
+        #endregion
 
+
+
+        #region called by EventHandlers
 
         protected void EquipItem (NPCProto npc, Item item)
         {
@@ -485,9 +598,11 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             //{
             //    npc.MPMax =+ this.getOnUse_MPMaxChange();
             //}
-            
+
 
         }
+
+        #endregion
 
 
     }

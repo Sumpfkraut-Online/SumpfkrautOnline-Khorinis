@@ -13,6 +13,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
     class NPCDef : VobDef
     {
        
+        Dictionary<int, NPCDef> defById = new Dictionary<int, NPCDef>();
+        Dictionary<string, NPCDef> defByName = new Dictionary<string, NPCDef>();
+
         protected int ID;
         public int getID () { return this.ID; }
         public void setID (int ID) { this.ID = ID; }
@@ -78,6 +81,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             int guild, int voice, String visual, String bodyMesh, int bodyTex, int skinColor, 
             String headMesh, int headTex, int teethTex)
         {
+            this.objName = "NPCDef (default)";
             this.Name = name;
             this.Attributes = attributes;
             this.TalentValues = talentValues;
