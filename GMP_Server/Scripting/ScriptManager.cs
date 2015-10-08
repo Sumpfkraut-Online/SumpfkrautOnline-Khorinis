@@ -186,8 +186,5 @@ namespace GUC.Server.Scripting
                 timer.iUpdate(time);
             }
         }
-
-
-
     }
 }

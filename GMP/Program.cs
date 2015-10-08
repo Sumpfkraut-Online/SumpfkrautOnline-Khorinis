@@ -54,7 +54,6 @@ namespace GUC.Client
             return 0;
         }
 
-        static zCSoundFX snd = null;
         public static Int32 hook_MenuRender(String message)
         {
             try
@@ -70,9 +69,10 @@ namespace GUC.Client
                     zCSndSys_MSS ss = zCSndSys_MSS.SoundSystem(Process);
                     using (zString z = zString.Create(Process, "MENUTHEME.WAV"))
                     {
-                        snd = ss.LoadSoundFX(z);
+                        zCSoundFX snd = ss.LoadSoundFX(z);
                         snd.isFixed = true; //so it continues playing during the loading screen
                         ss.PlaySound(snd, 0, 0, 0.8f*GetMusicVol()); //nerf volume
+                        //FIXME: Stop theme when loading is finished?
                     }
                 }
                 _state.Update();

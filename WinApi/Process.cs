@@ -254,6 +254,110 @@ namespace WinApi
                 Kernel.Error.GetLastError();
         }
 
+        public HookInfos Replace(String dll, MethodInfo methods, int addr, int size, int sizeParam)
+        {
+            if (addr == 0 || size < 5 || methods == null)
+                throw new Exception();
+
+            IntPtr injectFunction = Kernel.Process.GetProcAddress(Kernel.Process.GetModuleHandle("NetInject.dll"), "LoadNetDllEx");
+
+            if (injectFunction == IntPtr.Zero)
+                throw new Exception("Add Hook : Handle or Function not Found");
+
+            HookInfos rValue = new HookInfos();
+            IntPtr varPtr = Alloc(4 + (uint)sizeParam * 4 + 4 + 4);
+            IntPtr ecxPtr = varPtr;
+            IntPtr eaxPtr = varPtr + 4 + sizeParam * 4;
+            IntPtr ebxPtr = varPtr + 4 + sizeParam * 4 + 4;
+            int length = 0;
+
+            if (varPtr == IntPtr.Zero)
+                throw new Exception("Add Hook : Allocate Error");
+
+            //Alte Anweisung sichern
+            if (!VirtualProtect(addr, size + 3))
+                throw new Exception("Add Hook : Virtual Protection Error");
+
+            byte[] oldFunc = ReadBytes(addr, (uint)size);
+
+            //Neue funktion:
+            List<byte> list = new List<byte>();
+
+            //This pointer (ecx) in Speicher schreiben
+            list.Add(0x89); list.Add(0x0D);// mov [Address], ecx
+            list.AddRange(BitConverter.GetBytes(ecxPtr.ToInt32()));
+
+            list.Add(0xA3); // mov [Address], eax
+            list.AddRange(BitConverter.GetBytes(eaxPtr.ToInt32()));
+
+            list.Add(0x89); list.Add(0x1D); // mov [Address], ebx
+            list.AddRange(BitConverter.GetBytes(ebxPtr.ToInt32()));
+
+            //Statt die Parameter an den dafür vorgesehenen Platz zu schreiben, könnten auch die Register-Werte eingespeichert werden.
+            for (int i = 1; i <= sizeParam; i++)
+            {
+                list.Add(0x8B); list.Add(0x4C); list.Add(0x24);//8B 4C 24 08 -> mov     ecx, [esp+8]
+                list.Add((Byte)(4 * i));
+                list.Add(0x89); list.Add(0x0D);// mov [Address], ecx
+                list.AddRange(BitConverter.GetBytes(ecxPtr.ToInt32() + 4 * (i)));
+            }
+
+            //pointer zurück in ecx schreiben
+            list.Add(0x8B); list.Add(0x0D);
+            list.AddRange(BitConverter.GetBytes(ecxPtr.ToInt32()));
+
+            list.Add(0x60);//pushad
+
+            NETINJECTPARAMS parameters = NETINJECTPARAMS.Create(this, dll, methods.DeclaringType.FullName, methods.Name, varPtr.ToInt32() + "");
+            list.Add(0x68);//Parameter für LoadNetDllEx pushen
+            list.AddRange(BitConverter.GetBytes(parameters.Address));
+
+            length = list.Count + 1 + 4 + 1 + 1 + /*oldFunc.Length + 1 + 4 +*/ 1;
+            IntPtr newASM = Alloc((uint)length);
+            ////Funktion callen
+            list.Add(0xE8);
+            list.AddRange(BitConverter.GetBytes(injectFunction.ToInt32() - (newASM.ToInt32() + list.Count) - 4));
+
+            list.Add(0x59);//pop ecx
+            list.Add(0x61);//popad
+
+            list.Add(0xA1);
+            list.AddRange(BitConverter.GetBytes(eaxPtr.ToInt32()));
+
+            rValue.oldFuncInNewFunc = new IntPtr(newASM.ToInt32() + list.Count);
+            //Alten Code:
+            //list.AddRange(oldFunc);
+
+            //list.Add(0x68);
+            //list.AddRange(BitConverter.GetBytes(addr + size));
+            list.Add(0xC3);//RTN
+
+
+
+            //IntPtr newASM = Alloc((uint)size + 120 + 3);//Neue Funktion
+
+            if (Write(list.ToArray(), newASM.ToInt32()) == 0)//Neue Funktion schreiben
+                throw new Exception("Add Hook : Writing Failed!");
+            byte[] newJMP = new byte[size];
+            byte[] asmAddress = BitConverter.GetBytes(newASM.ToInt32() - addr - 5);
+            newJMP[0] = 0xE9;
+            newJMP[1] = asmAddress[0];
+            newJMP[2] = asmAddress[1];
+            newJMP[3] = asmAddress[2];
+            newJMP[4] = asmAddress[3];
+
+            if (Write(newJMP, addr) == 0)
+                throw new Exception("Add Hook : Writing Failed 2!");
+
+            rValue.oldFuncAddr = new IntPtr(addr);
+            rValue.oldFuncSize = size;
+            rValue.NewFuncAddr = newASM;
+            rValue.NewFuncSize = length;
+            rValue.oldFunc = oldFunc;
+
+            return rValue;
+        }
+
         public HookInfos WriteJMP(String dll, MethodInfo methods, int addr, int size, int sizeParam)
         {
             if (addr == 0 || size < 5 || methods == null)

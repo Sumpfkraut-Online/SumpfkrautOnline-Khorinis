@@ -73,5 +73,12 @@ namespace Gothic.zClasses
         {
             get { return new zString(Process, Address + (int)Offsets.Name); }
         }
+
+        public new static oCMob Create(Process process)
+        {
+            int address = process.CDECLCALL<IntArg>(0x718590, null); //_CreateInstance()
+            process.THISCALL<NullReturnCall>((uint)address, 0x71B8F0, null); //Konstruktor...
+            return new oCMob(process, address);
+        }
     }
 }

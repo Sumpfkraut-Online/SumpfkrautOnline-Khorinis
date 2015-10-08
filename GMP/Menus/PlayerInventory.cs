@@ -13,6 +13,8 @@ namespace GUC.Client.Menus
     {
         GUCInventory inv;
 
+        bool shown = false;
+
         public PlayerInventory()
         {
             // Create the player inventory relative to the screen size
@@ -37,12 +39,14 @@ namespace GUC.Client.Menus
             inv.SetContents(WorldObjects.Player.Inventory);
             inv.Show();
             inv.Enabled = true;
+            shown = true;
         }
 
         public override void Close()
         {
             base.Close();
             inv.Hide();
+            shown = false;
         }
 
         public override void KeyPressed(VirtualKeys key)
@@ -73,6 +77,14 @@ namespace GUC.Client.Menus
             else
             {
                 inv.KeyPressed(key);
+            }
+        }
+
+        public void UpdateContents()
+        {
+            if (shown)
+            {
+                inv.SetContents(WorldObjects.Player.Inventory);
             }
         }
     }

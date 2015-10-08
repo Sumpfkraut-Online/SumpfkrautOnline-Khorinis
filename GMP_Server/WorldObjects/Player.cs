@@ -38,6 +38,11 @@ namespace GUC.Server.WorldObjects
 
             if (!client.character.Spawned)
                 client.character.Spawn(client.character.World);
+
+            foreach (WorldObjects.ItemInstance i in WorldObjects.ItemInstance.InstanceList.Values)
+            {
+                client.character.AddItem(i, 10);
+            }
         }
 
         internal static void ReadPickUpItem(BitStream stream, Client client)

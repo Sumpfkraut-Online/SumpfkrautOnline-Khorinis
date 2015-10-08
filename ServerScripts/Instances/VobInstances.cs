@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Server.WorldObjects;
+using GUC.Enumeration;
 
 namespace GUC.Server.Scripts.Instances
 {
@@ -54,6 +55,26 @@ namespace GUC.Server.Scripts.Instances
             }*/
 
             NPCInstance.NetUpdate();
+            /*
+            Random rand = random;
+            for (int i = 0; i < 5000; i++)
+            {
+                ItemInstance item = new ItemInstance("Item_" + i);
+                item.Name = RandomString(8);
+                item.Visual = RandomString(8);
+                
+                for (int t = 0; t < 3; t++)
+                {
+                    item.Text[t] = RandomString(10);
+                    item.Count[t] = (ushort)rand.Next(0, ushort.MaxValue);
+                }
+
+                item.Description = item.Name;
+                item.Range = (ushort)rand.Next(0, ushort.MaxValue);
+                item.Type = (ItemType)rand.Next(0, (int)ItemType.Misc_Usable);
+                item.Visual_Change = RandomString(8);
+                item.Weight = (ushort)rand.Next(0, 100);
+            }*/
 
             ItemInstance item = new ItemInstance("itfo_apple");
             item.Name = "Apfel";
@@ -97,13 +118,39 @@ namespace GUC.Server.Scripts.Instances
             item.Name = "Bier";
             item.Visual = "ITFO_BEER.3DS";
 
+            item = new ItemInstance("itmw_zweihaender2");
+            item.Name = "Zweihänder";
+            item.Type = ItemType.Sword_2H;
+            item.Material = ItemMaterial.Metal;
+            item.Range = 100;
+            item.Visual = "ItMw_055_2h_sword_light_05.3DS";
+            item.Description = item.Name;
+            item.Weight = 50;
+
+            item = new ItemInstance("itmw_kriegskeule");
+            item.Name = "Kriegskeule";
+            item.Type = ItemType.Blunt_1H;
+            item.Material = ItemMaterial.Wood;
+            item.Range = 50;
+            item.Visual = "ItMw_022_1h_mace_war_01.3DS";
+            item.Description = item.Name;
+            item.Weight = 20;
+
+            item = new ItemInstance("itar_armor");
+            item.Name = "Garderüstung";
+            item.Type = ItemType.Armor;
+            item.Material = ItemMaterial.Leather;
+            item.Visual = "ItAr_Bloodwyn_ADDON.3ds";
+            item.Visual_Change = "Armor_Bloodwyn_ADDON.asc";
+            item.Description = item.Name;
+
             ItemInstance.NetUpdate();
         }
 
         static Random random = new Random();
         static string RandomString(int len)
         {
-            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var chars = "AB  CDE   FGHIJKLMNO   PQRSTU VWXY Zab  cdefg hijklmn   opq rstu  vwxyz0 1234567 89";
             var stringChars = new char[len];
 
             for (int i = 0; i < stringChars.Length; i++)

@@ -193,6 +193,8 @@ namespace GUC.Client.WorldObjects
             if (this is NPC)
             {
                 ((NPC)this).gNpc.InitHumanAI();
+                ((NPC)this).gNpc.SetTalentSkill(1, 1);
+                ((NPC)this).gNpc.SetTalentSkill(2, 1);
             }
 
             oCGame.Game(Program.Process).World.AddVob(gVob);

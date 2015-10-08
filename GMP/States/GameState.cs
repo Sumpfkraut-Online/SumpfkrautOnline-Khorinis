@@ -41,8 +41,27 @@ namespace GUC.Client.States
         static oCNpc npc;
         public static void RenderTest()
         {
-            Player.AddItem(ItemInstance.InstanceList[0], 10);
-            Player.AddItem(ItemInstance.InstanceList[1], 10);
+            oCMob mob = oCMob.Create(Program.Process);
+            mob.VobType = zCObject.VobTypes.Mob;
+            mob.Name.Set("FONT_Screen");
+            mob.SetName("FONT_Screen");
+
+            mob.SetVisual("ITFO_APPLE.3DS");
+
+            Vec3f newPos = Player.Hero.Position;
+            newPos.X += 20;
+            mob.TrafoObjToWorld.setPosition(newPos.Data);
+            mob.SetPositionWorld(newPos.Data);
+            mob.TrafoObjToWorld.setPosition(newPos.Data);
+
+            mob.BitField1 |= (int)zCVob.BitFlag0.collDetectionDynamic;
+            mob.BitField1 |= (int)zCVob.BitFlag0.collDetectionStatic;
+            mob.BitField1 |= (int)zCVob.BitFlag0.staticVob;
+
+            oCGame.Game(Program.Process).World.AddVob(mob);
+
+            //Player.AddItem(ItemInstance.InstanceList[0], 10);
+            //Player.AddItem(ItemInstance.InstanceList[1], 10);
             /*if (npc == null)
             {
                 npc = NPCInstance.InstanceList[0].CreateNPC();
@@ -72,12 +91,12 @@ namespace GUC.Client.States
                 npc.GetEM(0).OnMessage(msg, npc);
             }
             //npc.gNpc.AniCtrl.StartFallDownAni();
-           /* for (int i = 0; i < 25; i++)
-            {
-                item = new Item(num++, (ushort)rand.Next(0, 7));
-                item.Position = new Vec3f(rand.Next(-700, 700), 1000, rand.Next(-700, 700));
-                item.Spawn(item.Position, item.Direction, true);
-            }*/
+            /* for (int i = 0; i < 25; i++)
+             {
+                 item = new Item(num++, (ushort)rand.Next(0, 7));
+                 item.Position = new Vec3f(rand.Next(-700, 700), 1000, rand.Next(-700, 700));
+                 item.Spawn(item.Position, item.Direction, true);
+             }*/
         }
 
         static int lop = 9;
@@ -94,11 +113,29 @@ namespace GUC.Client.States
             GUI.GUCView.DebugText.Text = anis[lop];
         }
 
+        public static zString str = zString.Create(Program.Process, "TESTMOBSI");
+        public static Int32 GetNameHook(String message)
+        {
+            try
+            {
+                int address = Convert.ToInt32(message);
+                zERROR.GetZErr(Program.Process).Report(2, 'G', str.Address.ToString("X4"), 0, "Program.cs", 0);
+                Program.Process.Write(str.Address, address + 8);
+            }
+            catch (Exception ex)
+            {
+                zERROR.GetZErr(Program.Process).Report(2, 'G', "Exception: " + ex.Message + " " + ex.StackTrace + " " + ex.Source, 0, "Program.cs", 0);
+            }
+            return 0;
+        }
+
         public GameState()
         {
             hEventManager.AddHooks(Program.Process);
             hAniCtrl_Human.AddHooks(Program.Process);
             hNpc.AddHooks(Program.Process);
+
+            //Program.Process.Replace("UntoldChapter\\DLL\\GUC.dll", typeof(GameState).GetMethod("GetNameHook"), 0x71BC30, 5, 1);
         }
 
         public override void Update()
@@ -108,11 +145,11 @@ namespace GUC.Client.States
             Program.client.Update();
 
             if (npc != null)
-            if ((new Vec3f(npc.TrafoObjToWorld.getPosition())).getDistance(Player.Hero.Position) < 150)
-            {
-                npc.GetEM(0).KillMessages();
-                npc.AniCtrl._Stand();
-            }
+                if ((new Vec3f(npc.TrafoObjToWorld.getPosition())).getDistance(Player.Hero.Position) < 150)
+                {
+                    npc.GetEM(0).KillMessages();
+                    npc.AniCtrl._Stand();
+                }
 
             /*GUI.GUCView.DebugText.Text = "";
             for (int i = 0; i < Player.VobControlledList.Count; i++)
@@ -120,10 +157,10 @@ namespace GUC.Client.States
                 GUI.GUCView.DebugText.Text += " " + Player.VobControlledList[i].ID;
             }*/
 
-                for (int i = 0; i < World.AllVobs.Count; i++)
-                {
-                    World.AllVobs[i].Update(ticks);
-                }
+            for (int i = 0; i < World.AllVobs.Count; i++)
+            {
+                World.AllVobs[i].Update(ticks);
+            }
         }
     }
 }

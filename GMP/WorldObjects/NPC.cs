@@ -283,9 +283,11 @@ namespace GUC.Client.WorldObjects
                         gVob.GetEM(0).KillMessages();
                         gNpc.DoStrafe(false);
                         break;
-                    //case NPCState.Stand:
-                    default:
+                    case NPCState.Stand:
                         gNpc.AniCtrl._Stand();
+                        break;
+                    default:
+                        //gNpc.AniCtrl._Stand();
                         break;
                 }
             }

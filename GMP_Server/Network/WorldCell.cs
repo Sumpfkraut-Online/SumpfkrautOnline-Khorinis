@@ -11,14 +11,14 @@ namespace GUC.Server.Network
 {
     internal class WorldCell
     {
-        public const float cellSize = 5000;
+        public const float cellSize = 4000;
 
         public World world;
         public int x, z;
         public List<NPC> PlayerList;
         public List<NPC> NPCList;
         public List<Item> ItemList;
-        public List<Vob> VobList;
+        public List<Mob> VobList;
 
         public WorldCell(World world, int x, int z)
         {
@@ -26,7 +26,7 @@ namespace GUC.Server.Network
             PlayerList = new List<NPC>();
             NPCList = new List<NPC>();
             ItemList = new List<Item>();
-            VobList = new List<Vob>();
+            VobList = new List<Mob>();
             this.x = x;
             this.z = z;
         }
@@ -44,9 +44,9 @@ namespace GUC.Server.Network
             {
                 ItemList.Add((Item)vob);
             }
-            else if (vob is Vob)
+            else if (vob is Mob)
             {
-                VobList.Add((Vob)vob);
+                VobList.Add((Mob)vob);
             }
             vob.cell = this;
         }
@@ -64,9 +64,9 @@ namespace GUC.Server.Network
             {
                 ItemList.Remove((Item)vob);
             }
-            else if (vob is Vob)
+            else if (vob is Mob)
             {
-                VobList.Remove((Vob)vob);
+                VobList.Remove((Mob)vob);
             }
             vob.cell = null;
 

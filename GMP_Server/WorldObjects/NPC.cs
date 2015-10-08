@@ -189,6 +189,27 @@ namespace GUC.Server.WorldObjects
             stream.mWrite(AttrHealthMax);
             stream.mWrite(AttrHealth);
 
+            stream.mWrite(equippedMeleeWeapon != null);
+            if (equippedMeleeWeapon != null)
+            {
+                stream.mWrite(equippedMeleeWeapon.ID);
+            }
+
+            stream.mWrite(equippedRangedWeapon != null);
+            if (equippedRangedWeapon != null)
+            {
+                stream.mWrite(equippedRangedWeapon.ID);
+            }
+
+            stream.mWrite(equippedArmor != null);
+            if (equippedArmor != null)
+            {
+                stream.mWrite(equippedArmor.ID);
+            }
+
+            stream.mWrite((byte)state);
+            stream.mWrite((byte)wpState);
+
             foreach (Client cl in list)
                 Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', cl.guid, false);
         }
@@ -208,19 +229,14 @@ namespace GUC.Server.WorldObjects
 
         public void Equip(ItemInstance inst)
         {
-            /*if (inst.MainFlags == MainFlags.ITEM_KAT_NF)
-            {
+            if (inst.Type >= ItemType.Sword_1H && inst.Type <= ItemType.Blunt_2H)
                 equippedMeleeWeapon = inst;
-            }
-            else if (inst.MainFlags == MainFlags.ITEM_KAT_FF)
-            {
+            else if (inst.Type == ItemType.Bow || inst.Type == ItemType.XBow)
                 equippedRangedWeapon = inst;
-            }
-            else if (inst.MainFlags == MainFlags.ITEM_KAT_ARMOR)
-            {
+            else if (inst.Type == ItemType.Armor)
                 equippedArmor = inst;
-            }
-            else return;*/
+            else return;
+
             NPCMessage.WriteEquipMessage(this.cell.SurroundingClients(), this, inst);
         }
 

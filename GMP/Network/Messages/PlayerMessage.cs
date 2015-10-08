@@ -50,6 +50,8 @@ namespace GUC.Client.Network.Messages
                 //we have not been ingame yet
                 Player.Hero = new NPC(id, oCNpc.Player(Program.Process));
                 Player.Hero.Name = name;
+                Player.Hero.gNpc.HP = 100;
+                Player.Hero.gNpc.HPMax = 100;
                 Player.Hero.Spawn(pos, dir);
             }
             else

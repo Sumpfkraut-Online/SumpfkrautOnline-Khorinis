@@ -209,6 +209,22 @@ namespace GUC.Client.Hooks
             return 0;
         }
 
+        public static Int32 DoCombo(String message)
+        {
+            try
+            {
+                if (aniCtrl.Address == Player.Hero.gNpc.AniCtrl.Address)
+                {
+                    Player.Hero.State = NPCState.AttackForward;
+                    NPCMessage.WriteAttack();
+                }
+            }
+            catch (Exception e)
+            {
+                zERROR.GetZErr(Program.Process).Report(4, 'G', e.Source + "\n" + e.Message + "\n" + e.StackTrace, 0, "hAniCtrl_Human.cs", 0);
+            }
+            return 0;
+        }
 
         public static void AddHooks(Process process)
         {
@@ -222,6 +238,8 @@ namespace GUC.Client.Hooks
 
             process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0xE9 }, 0x6B03A4); //clear
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("hook_CheckHit"), (int)0x6B03A4, 5, 0);
+
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("DoCombo"), (int)0x6B02E7, 8, 0); //entry
         }
     }
 }
