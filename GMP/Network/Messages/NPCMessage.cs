@@ -70,7 +70,7 @@ namespace GUC.Client.Network.Messages
 
         public static void WriteState(NPC npc)
         {
-            //zERROR.GetZErr(Program.Process).Report(2, 'G', "WriteState: " + npc.State, 0, "hAniCtrl_Human.cs", 0);
+            //zERROR.GetZErr(Program.Process).Report(2, 'G', "State: " + npc.State, 0, "hAniCtrl_Human.cs", 0);
             BitStream stream = Program.client.SetupSendStream(NetworkID.NPCStateMessage);
             stream.mWrite(npc.ID);
             stream.mWrite((byte)npc.State);
@@ -109,8 +109,6 @@ namespace GUC.Client.Network.Messages
                     npc.Update(DateTime.Now.Ticks);
                     break;
             }
-
-            //zERROR.GetZErr(Program.Process).Report(2, 'G', "ReadState: " + npc.State, 0, "hAniCtrl_Human.cs", 0);
         }
 
         public static void WriteWeaponState(bool removeType1)
@@ -290,7 +288,7 @@ namespace GUC.Client.Network.Messages
 
             ItemInstance inst;
             ItemInstance.InstanceList.TryGetValue(stream.mReadUShort(), out inst);
-            if (inst == null || inst.Type > ItemType.Armor || inst.Type < ItemType.Sword_1H) return;
+            if (inst == null) return;
 
             if (inst == npc.EquippedMeleeWeapon)
             {
@@ -309,27 +307,25 @@ namespace GUC.Client.Network.Messages
             }
             else
             {
-                oCItem newItem = inst.CreateItem();
-
                 if (inst.MainFlags == oCItem.MainFlags.ITEM_KAT_NF)
                 {
                     npc.EquippedMeleeWeapon = inst;
                     npc.gNpc.UnequipItem(npc.gNpc.GetEquippedMeleeWeapon());
-                    npc.gNpc.EquipWeapon(newItem);
                 }
                 else if (inst.MainFlags == oCItem.MainFlags.ITEM_KAT_FF)
                 {
                     npc.EquippedRangedWeapon = inst;
                     npc.gNpc.UnequipItem(npc.gNpc.GetEquippedRangedWeapon());
-                    npc.gNpc.EquipWeapon(newItem);
                 }
                 else if (inst.MainFlags == oCItem.MainFlags.ITEM_KAT_ARMOR)
                 {
                     npc.EquippedArmor = inst;
                     npc.gNpc.UnequipItem(npc.gNpc.GetEquippedArmor());
-                    npc.gNpc.EquipWeapon(newItem);
                 }
                 else return;
+
+                oCItem newItem = inst.CreateItem();
+                npc.gNpc.Equip(newItem);
             }
         }
 

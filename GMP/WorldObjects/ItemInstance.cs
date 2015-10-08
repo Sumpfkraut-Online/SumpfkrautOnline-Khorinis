@@ -60,7 +60,7 @@ namespace GUC.Client.WorldObjects
                 item.Text[i].Set(Text[i]);
                 item.Count[i] = Count[i];
             }
-            item.SetVisual(Visual);
+            item.Visual.Set(Visual);
             item.VisualChange.Set(Visual_Change);
             item.Effect.Set(Effect);
 
@@ -207,13 +207,9 @@ namespace GUC.Client.WorldObjects
                     MainFlags = oCItem.MainFlags.ITEM_KAT_FF;
                     Flags = oCItem.ItemFlags.ITEM_CROSSBOW;
                     break;
-                case ItemType.Arrow:
+                case ItemType.Ammo:
                     MainFlags = oCItem.MainFlags.ITEM_KAT_MUN;
-                    Flags = oCItem.ItemFlags.ITEM_BOW;
-                    break;
-                case ItemType.XBolt:
-                    MainFlags = oCItem.MainFlags.ITEM_KAT_MUN;
-                    Flags = oCItem.ItemFlags.ITEM_CROSSBOW;
+                    Flags = oCItem.ItemFlags.ITEM_BOW; // FIXME? bolts -> xbow?
                     break;
                 case ItemType.Armor:
                     MainFlags = oCItem.MainFlags.ITEM_KAT_ARMOR;

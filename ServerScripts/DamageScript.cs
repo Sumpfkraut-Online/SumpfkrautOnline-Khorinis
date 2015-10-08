@@ -17,10 +17,7 @@ namespace GUC.Server.Scripts
         public static void HitEvent(NPC attacker, NPC victim)
         {
             if (victim.AttrHealth > 0)
-                victim.AttrHealth -= 3;
-
-            if (victim.AttrHealth <= 5)
-                victim.AttrHealth = 100;
+                victim.AttrHealth--;
 
             if (attacker.WeaponState == NPCWeaponState.Fists)
             {

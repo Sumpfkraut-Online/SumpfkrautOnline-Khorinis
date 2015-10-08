@@ -119,22 +119,10 @@ namespace GUC.Server.Network.Messages
 
         private static void StartInWorld(Client client, AccCharInfo ci)
         {
-            WorldObjects.NPC npc;
-            if (ci.BodyMesh == (int)HumBodyMesh.HUM_BODY_NAKED0)
-                npc = new WorldObjects.NPC(WorldObjects.NPCInstance.Get("_MALE"));
-            else
-                npc = new WorldObjects.NPC(WorldObjects.NPCInstance.Get("_FEMALE"));
+            WorldObjects.NPC npc = new WorldObjects.NPC(WorldObjects.NPCInstance.InstanceDict["_MALE"]);
             npc.World = WorldObjects.World.NewWorld;
             npc.CustomName = ci.Name;
-            npc.HumanBodyTex = (HumBodyTex)ci.BodyTex;
-            npc.HumanHeadMesh = (HumHeadMesh)ci.HeadMesh;
-            npc.HumanHeadTex = (HumHeadTex)ci.HeadTex;
-            npc.BodyHeight = (byte)Math.Round(ci.BodyHeight*100);
-            npc.BodyWidth = (byte)Math.Round(ci.BodyWidth * 100);
-            npc.BodyFatness = (short)Math.Round(ci.Fatness * 100);
-            npc.HumanVoice = (HumVoice)ci.Voice;
             //set all the stuff from the data bank
-
             client.SetControl(npc);
             Log.Logger.log("Client joins in on npc " + npc.ID);
         }

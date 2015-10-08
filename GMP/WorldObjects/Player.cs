@@ -42,7 +42,6 @@ namespace GUC.Client.WorldObjects
             {
                 Inventory[instance] += amount;
             }
-            Menus.GUCMenus.Inventory.UpdateContents();
         }
 
         public static void RemoveItem(ItemInstance instance, int amount)
@@ -55,7 +54,6 @@ namespace GUC.Client.WorldObjects
                 else
                     Inventory[instance] -= amount;
             }
-            Menus.GUCMenus.Inventory.UpdateContents();
         }
         #endregion
     }

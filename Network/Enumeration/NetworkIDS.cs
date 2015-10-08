@@ -31,8 +31,6 @@ namespace GUC.Enumeration
         WorldNPCSpawnMessage,
         WorldItemSpawnMessage,
 
-        WorldMobSpawnMessage,
-
         //vobs
         VobPosDirMessage,
 

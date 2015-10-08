@@ -147,12 +147,10 @@
     <Compile Include="States\AbstractState.cs" />
     <Compile Include="WorldObjects\Item.cs" />
     <Compile Include="WorldObjects\ItemInstance.cs" />
-    <Compile Include="WorldObjects\MobInstance.cs" />
     <Compile Include="WorldObjects\NPC.cs" />
     <Compile Include="WorldObjects\NPCInstance.cs" />
     <Compile Include="WorldObjects\Player.cs" />
     <Compile Include="WorldObjects\Vob.cs" />
-    <Compile Include="WorldObjects\AbstractInstance.cs" />
     <Compile Include="WorldObjects\World.cs" />
   </ItemGroup>
   <ItemGroup>

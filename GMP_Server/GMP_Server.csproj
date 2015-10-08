@@ -48,7 +48,6 @@
     <DefineConstants>TRACE;D_SERVER</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -126,8 +125,6 @@
       <Link>Types\Zip.cs</Link>
     </Compile>
     <Compile Include="Network\Client.cs" />
-    <Compile Include="Network\MyStream.cs" />
-    <Compile Include="Network\OldStream.cs" />
     <Compile Include="Network\SmallCell.cs" />
     <Compile Include="Network\Messages\AccountMessage.cs" />
     <Compile Include="Network\Messages\ConnectionMessage.cs" />
@@ -142,17 +139,15 @@
     <Compile Include="WorldObjects\AbstractAI.cs" />
     <Compile Include="WorldObjects\AbstractCtrlVob.cs" />
     <Compile Include="WorldObjects\AbstractDropVob.cs" />
-    <Compile Include="WorldObjects\AbstractInstance.cs" />
     <Compile Include="WorldObjects\AbstractVob.cs" />
     <Compile Include="WorldObjects\ItemContainer.cs" />
     <Compile Include="WorldObjects\Item.cs" />
     <Compile Include="WorldObjects\ItemInstance.cs" />
-    <Compile Include="WorldObjects\MobInstance.cs" />
     <Compile Include="WorldObjects\NPC.cs" />
     <Compile Include="WorldObjects\NPCInstance.cs" />
     <Compile Include="WorldObjects\Player.cs" />
     <Compile Include="WorldObjects\sWorld.cs" />
-    <Compile Include="WorldObjects\Mob.cs" />
+    <Compile Include="WorldObjects\Vob.cs" />
     <Compile Include="WorldObjects\World.cs" />
   </ItemGroup>
   <ItemGroup>

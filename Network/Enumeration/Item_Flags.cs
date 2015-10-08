@@ -15,10 +15,8 @@ namespace GUC.Enumeration
         Blunt_2H, // two-handed blunt weapons
         Bow,   // bows
         XBow,  // crossbows
+        Ammo,  // munition
         Armor, // armor & clothing
-
-        Arrow,  // munition
-        XBolt,  // munition
 
         Ring,   // rings
         Amulet, // amulets

@@ -5,19 +5,6 @@ using System.Text;
 
 namespace GUC.Enumeration
 {
-    public enum MobType
-    {
-        Vob,
-        Mob,
-        MobInter,
-        MobFire,
-        MobLadder,
-        MobSwitch,
-        MobWheel,
-        MobContainer,
-        MobDoor
-    }
-
     public enum VobType
     {
         ERROR = 0,

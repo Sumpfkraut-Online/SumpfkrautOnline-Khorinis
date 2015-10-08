@@ -48,18 +48,15 @@ namespace GUC.Server.Network.Messages
 
         public static void ReadUseItem(BitStream stream, Client client)
         {
-            ushort id = stream.mReadUShort();
+            /*ushort id = stream.mReadUShort();
             if (id < ItemInstance.InstanceList.Count)
             {
                 ItemInstance inst = ItemInstance.InstanceList[id];
                 if (client.character.HasItem(inst))
                 {
-                    if (inst.Type <= ItemType.Armor && inst.Type > ItemType.Misc)
-                    {
-                        client.character.Equip(inst);
-                    }
+                    inst.Use(client.character);
                 }
-            }
+            }*/
         }
     }
 }

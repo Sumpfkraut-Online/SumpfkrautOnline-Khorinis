@@ -14,7 +14,7 @@ namespace GUC.Server.WorldObjects
         public static List<NPC> NPCList = new List<NPC>(); //bots
         public static List<NPC> PlayerList = new List<NPC>(); //players
         public static List<Item> ItemList = new List<Item>(); //items
-        public static List<Mob> VobList = new List<Mob>(); //mobsis and simple objects (trees, crates, etc.)
+        public static List<Vob> VobList = new List<Vob>(); //mobsis and simple objects (trees, crates, etc.)
 
         public static int Day = 1;
         public static byte Hour = 12;
@@ -41,9 +41,9 @@ namespace GUC.Server.WorldObjects
             {
                 ItemList.Add((Item)vob);
             }
-            else if (vob is Mob)
+            else if (vob is Vob)
             {
-                VobList.Add((Mob)vob);
+                VobList.Add((Vob)vob);
             }
         }
 
@@ -61,9 +61,9 @@ namespace GUC.Server.WorldObjects
             {
                 ItemList.Remove((Item)vob);
             }
-            else if (vob is Mob)
+            else if (vob is Vob)
             {
-                VobList.Remove((Mob)vob);
+                VobList.Remove((Vob)vob);
             }
         }
     }

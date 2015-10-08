@@ -79,59 +79,7 @@ namespace GUC.Client.Network.Messages
 
                 npc.gNpc.HPMax = stream.mReadUShort();
                 npc.gNpc.HP = stream.mReadUShort();
-
-                bool isEquipped = stream.ReadBit();
-                if (isEquipped)
-                {
-                    ItemInstance ii = null;
-                    ItemInstance.InstanceList.TryGetValue(stream.mReadUShort(), out ii);
-                    if (ii != null)
-                    {
-                        npc.gNpc.EquipWeapon(ii.CreateItem());
-                        npc.EquippedMeleeWeapon = ii;   
-                    }
-                }
-
-                isEquipped = stream.ReadBit();
-                if (isEquipped)
-                {
-                    ItemInstance ii = null;
-                    ItemInstance.InstanceList.TryGetValue(stream.mReadUShort(), out ii);
-                    if (ii != null)
-                    {
-                        npc.gNpc.EquipWeapon(ii.CreateItem());
-                        npc.EquippedRangedWeapon = ii; 
-                    }
-                }
-
-                isEquipped = stream.ReadBit();
-                if (isEquipped)
-                {
-                    ItemInstance ii = null;
-                    ItemInstance.InstanceList.TryGetValue(stream.mReadUShort(), out ii);
-                    if (ii != null)
-                    {
-                        npc.gNpc.EquipWeapon(ii.CreateItem());
-                        npc.EquippedRangedWeapon = ii; 
-                    }
-                }
-
-                npc.State = (Enumeration.NPCState)stream.mReadByte();
-                npc.WeaponState = (Enumeration.NPCWeaponState)stream.mReadByte();
-                switch (npc.WeaponState)
-                {
-                    case Enumeration.NPCWeaponState.Fists:
-                    case Enumeration.NPCWeaponState.Melee:
-                        npc.gNpc.SetWeaponMode(1);
-                        break;
-                    case Enumeration.NPCWeaponState.Ranged:
-                    case Enumeration.NPCWeaponState.Magic: //FIXME
-                        npc.gNpc.SetWeaponMode(2);
-                        break;
-                    default:
-                        break;
-                }
-
+                
                 npc.Spawn(pos, dir);
             }
             else

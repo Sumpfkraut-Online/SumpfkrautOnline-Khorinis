@@ -11,8 +11,7 @@ namespace GUC.Server.WorldObjects
     public class World
     {
         //Worlds, hardcoded but whatever
-        private static World newworld = new World("NEWWORLD\\NEWWORLD.ZEN"); 
-        //private static World newworld = new World("SOK-NEWWORLD.ZEN"); //rename for release, so the original is not replaced and SP is still functional!
+        private static World newworld = new World("NEWWORLD\\NEWWORLD.ZEN"); //new World("SOK-NEWWORLD.ZEN"); rename for release, so the original is not replaced and SP is still functional!
         public static World NewWorld { get { return newworld; } }
 
         public string MapName { get; protected set; }
@@ -22,12 +21,12 @@ namespace GUC.Server.WorldObjects
         Dictionary<uint, NPC> playerDict = new Dictionary<uint, NPC>();
         Dictionary<uint, NPC> npcDict = new Dictionary<uint, NPC>();
         Dictionary<uint, Item> itemDict = new Dictionary<uint, Item>();
-        Dictionary<uint, Mob> vobDict = new Dictionary<uint, Mob>();
+        Dictionary<uint, Vob> vobDict = new Dictionary<uint, Vob>();
 
         public Dictionary<uint, NPC> PlayerDict { get { return playerDict; } }
         public Dictionary<uint, NPC> NPCDict { get { return npcDict; } }
         public Dictionary<uint, Item> ItemDict { get { return itemDict; } }
-        public Dictionary<uint, Mob> VobDict { get { return vobDict; } }
+        public Dictionary<uint, Vob> VobDict { get { return vobDict; } }
 
         public World(string mapname)
         {
@@ -35,7 +34,7 @@ namespace GUC.Server.WorldObjects
             sWorld.WorldList.Add(this);
             try
             {
-                (new Item(ItemInstance.InstanceList[0])).Spawn(this);
+                //(new NPC(NPCInstance.InstanceDict["MUD"])).Spawn(this);
             }
             catch (Exception e)
             {
@@ -72,9 +71,9 @@ namespace GUC.Server.WorldObjects
             {
                 itemDict.Add(vob.ID, (Item)vob);
             }
-            else if (vob is Mob)
+            else if (vob is Vob)
             {
-                vobDict.Add(vob.ID, (Mob)vob);
+                vobDict.Add(vob.ID, (Vob)vob);
             }
             vob.World = this;
         }

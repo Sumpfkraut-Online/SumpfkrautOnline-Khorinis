@@ -142,6 +142,8 @@ namespace GUC.Server.WorldObjects
                 md5.TransformFinalBlock(data, 0, data.Length);
                 hash = md5.Hash;
             }
+
+            System.IO.File.WriteAllBytes("data2", data);
         }
 
         #endregion
