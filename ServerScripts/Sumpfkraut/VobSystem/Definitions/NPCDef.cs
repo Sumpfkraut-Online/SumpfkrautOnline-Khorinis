@@ -24,7 +24,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #region standard attributes
 
-        protected String objName = "NPCDef (default)";
+        protected static String _staticName = "NPCDef (static)";
+        protected String _objName = "NPCDef (default)";
 
         protected int ID;
         public int getID () { return this.ID; }
@@ -96,7 +97,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             int guild, int voice, String visual, String bodyMesh, int bodyTex, int skinColor, 
             String headMesh, int headTex, int teethTex)
         {
-            this.objName = "NPCDef (default)";
+            this._objName = "NPCDef (default)";
             this.Name = name;
             this.Attributes = attributes;
             this.TalentValues = talentValues;

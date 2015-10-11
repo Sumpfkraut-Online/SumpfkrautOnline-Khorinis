@@ -6,7 +6,10 @@ using System.Linq;
 using GUC.Server.WorldObjects;
 using GUC.Server.Log;
 using GUC.Server.Scripting.Listener;
+using GUC.Server.Scripts.Sumpfkraut.VobSystem;
 using GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions;
+using GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances;
+using GUC.Server.Scripts.Sumpfkraut;
 
 namespace GUC.Server.Scripts
 {
@@ -14,6 +17,57 @@ namespace GUC.Server.Scripts
 	{
 		public void OnServerInit()
 		{
+
+
+            //Type bla = typeof(ScriptObject);
+            ////Console.WriteLine(bla.GetProperty("_staticName"));
+            ////Console.WriteLine(bla.GetProperty("_staticName").GetGetMethod());
+            //Console.WriteLine(bla.GetMembers().Length);
+            //Console.WriteLine(bla.GetMember("_staticName").Length);
+            //Console.WriteLine(bla.GetMember("_staticName").GetValue(0));
+            //System.Reflection.MemberInfo[] mInfo = bla.GetMember("_staticName");
+
+            //for (int i = 0; i < mInfo.Length; i++)
+            //{
+
+            //    Console.WriteLine(mInfo[i]);
+            //}
+
+            //object temp;
+            //int i = 0;
+            //while (true)
+            //{
+            //    try
+            //    {
+            //        temp = mInfo.GetValue(i);
+            //        Console.WriteLine(temp.GetType());
+            //        Console.WriteLine(temp);
+            //        Console.WriteLine("--------------------------");
+            //    } catch
+            //    {
+            //        break;
+            //    }
+            //    i++;
+            //}
+
+
+            //Type type = typeof(ScriptObject); // MyClass is static class with static properties
+            //foreach (var p in type.GetProperties())
+            //{
+            //    var v = p.GetValue(null, null); // static classes cannot be instanced, so use null...
+            //    Console.WriteLine(v.GetType());
+            //    Console.WriteLine(v);
+            //    Console.WriteLine("--------------------------");
+            //}
+
+            Type t = typeof(ScriptObject);
+            System.Reflection.PropertyInfo prop = t.GetProperty("_staticName");
+            //object value = prop.GetValue(null, null);
+            //Console.WriteLine(value);
+
+            Console.WriteLine(t.GetField("_staticName"));
+            Console.WriteLine(t.GetField("_staticName").GetValue(""));
+
 
 
             Logger.log(Logger.LogLevel.INFO, "######################## Initalise ########################");

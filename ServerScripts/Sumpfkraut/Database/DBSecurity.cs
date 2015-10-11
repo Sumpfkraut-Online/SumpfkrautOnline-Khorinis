@@ -9,6 +9,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
     class DBSecurity
     {
 
+        protected static String _staticName = "DBSecurity (static)";
+        protected String _objName = "DBSecurity (default)";
+
         // according to http://www.symantec.com/connect/articles/detection-sql-injection-and-cross-site-scripting-attacks 
         private static string pattern_sqlMeta_1 = @"/(\%27)|(\')|(\-\-)|(\%23)|(#)/ix";
         private static Regex rgx_sqlMeta_1 = new Regex(pattern_sqlMeta_1);

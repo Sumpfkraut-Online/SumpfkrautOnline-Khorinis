@@ -12,5 +12,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
      */
     class SpellInst : VobInst
     {
+
+        protected static String _staticName = "SpellInst (static)";
+        protected String _objName = "SpellInst (default)";
+
     }
 }

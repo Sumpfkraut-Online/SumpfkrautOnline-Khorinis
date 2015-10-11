@@ -8,10 +8,13 @@ using SQLiteCommand = Mono.Data.Sqlite.SqliteCommand;
 
 namespace GUC.Server.Scripts.Sumpfkraut.Database
 {
-    class DBReader
+    class DBReader : ScriptObject
     {
 
         #region attributes
+
+        protected static String _staticName = "DBReader (static)";
+        protected String _objName = "DBReader (default)";
 
         private static string sqLiteDataSource = "Data Source=save.db";
 

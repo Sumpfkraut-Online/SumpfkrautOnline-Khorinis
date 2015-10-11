@@ -24,8 +24,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #region standard attributes
 
+        protected static String _staticName = "SpellDef (static)";
         protected String _objName = "SpellDef (default)";
-        protected static string _staticName = "SpellDef (static)";
 
         #endregion
 

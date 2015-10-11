@@ -16,6 +16,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
     class MobInst : VobInst
     {
 
+        protected static String _staticName = "MobInst (static)";
+        protected String _objName = "MobInst (default)";
+
         //// definition on which basis the item was created
         //private MobDef vobDef;
         //public MobDef getVobDef () { return this.vobDef; }

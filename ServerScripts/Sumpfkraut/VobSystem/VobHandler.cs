@@ -22,6 +22,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
     class VobHandler
     {
 
+        protected static String _staticName = "VobHandler (static)";
+        protected String _objName = "VobHandler (default)";
+
         //// stores vob-definitions with their ID-attribute (ID in the VobSystem) as key
         //public static Dictionary<int, MobDef> mobDefDict = new Dictionary<int, MobDef>();
         //public static Dictionary<int, ItemDef> itemDefDict = new Dictionary<int, ItemDef>();

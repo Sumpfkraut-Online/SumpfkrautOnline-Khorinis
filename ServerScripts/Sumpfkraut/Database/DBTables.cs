@@ -77,6 +77,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
     class DBTables
     {
 
+        protected static String _staticName = "DBTables (static)";
+        protected String _objName = "DBTables (default)";
+
         /**
         *   Definition datatable enum entries mapped to their respective access-functions 
         *   (further strcutured in a dictionary).

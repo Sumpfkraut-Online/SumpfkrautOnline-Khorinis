@@ -36,34 +36,34 @@ namespace GUC.Client.Network.Messages
                 itemInst = null; // stream read
             }
 
-            switch (tradeState)
-            {
-                case TradeStatus.Request:
-                    uint playerID = stream.mReadUInt();
-                    NPC npc;
-                    World.npcDict.TryGetValue(playerID, out npc);
-                    if (npc == null) return;
-                    trade.TradeRequested(npc);
-                    break;
-                case TradeStatus.Accept:
-                    trade.Open();
-                    break;
-                case TradeStatus.Break:
-                    trade.TradeCancelled();
-                    break;
-                case TradeStatus.SelfOfferItem:
-                    trade.ChangeItem(itemInst, true, true);
-                    break;
-                case TradeStatus.SelfRemoveItem:
-                    trade.ChangeItem(itemInst, true, false);
-                    break;
-                case TradeStatus.OtherOfferItem:
-                    trade.ChangeItem(itemInst, false, true);
-                    break;
-                case TradeStatus.OtherRemoveItem:
-                    trade.ChangeItem(itemInst, false, false);
-                    break;
-            }
+            //switch (tradeState)
+            //{
+            //    case TradeStatus.Request:
+            //        uint playerID = stream.mReadUInt();
+            //        NPC npc;
+            //        World.npcDict.TryGetValue(playerID, out npc);
+            //        if (npc == null) return;
+            //        trade.TradeRequested(npc);
+            //        break;
+            //    case TradeStatus.Accept:
+            //        trade.Open();
+            //        break;
+            //    case TradeStatus.Break:
+            //        trade.TradeCancelled();
+            //        break;
+            //    case TradeStatus.SelfOfferItem:
+            //        trade.ChangeItem(itemInst, true, true);
+            //        break;
+            //    case TradeStatus.SelfRemoveItem:
+            //        trade.ChangeItem(itemInst, true, false);
+            //        break;
+            //    case TradeStatus.OtherOfferItem:
+            //        trade.ChangeItem(itemInst, false, true);
+            //        break;
+            //    case TradeStatus.OtherRemoveItem:
+            //        trade.ChangeItem(itemInst, false, false);
+            //        break;
+            //}
 
             //GUC.Client.Menus.TradeMenu.GetTrade().ChangeItem();
         }

@@ -27,8 +27,12 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #region standard attributes
 
-        protected String _objName = "ItemDef (default)";
         protected static string _staticName = "ItemDef (static)";
+        protected String _objName = "ItemDef (default)";
+
+        protected ItemInstance itemInstance;
+        public ItemInstance getItemInstance () { return this.itemInstance; }
+        public void setItemInstance (ItemInstance itemInstance) { this.itemInstance = itemInstance; }
 
         protected string instanceName;
         public string getInstanceName () { return this.instanceName; }

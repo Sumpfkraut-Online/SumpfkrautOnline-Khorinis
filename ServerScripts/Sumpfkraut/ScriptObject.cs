@@ -10,6 +10,8 @@ namespace GUC.Server.Scripts.Sumpfkraut
 
         #region attributes
 
+        public static readonly string _staticName = "ScriptObject (static)";
+
         protected String _objName = "ScriptObject (default)";
         public virtual String getObjName ()
         {
@@ -19,8 +21,6 @@ namespace GUC.Server.Scripts.Sumpfkraut
         {
             this._objName = objName;
         }
-
-        protected static string _staticName = "ScriptObject (static)";
 
         #endregion
 
@@ -45,58 +45,99 @@ namespace GUC.Server.Scripts.Sumpfkraut
         public static void MakeLogStatic ()
         { }
 
-        public void MakeLogStatic (Object obj)
+        public void MakeLogStatic (Type type, Object obj)
         {
-            if (obj != null)
+            try
             {
-                String output = _staticName + ": " + obj.ToString();
-                Log.Logger.log(output);
+                String staticName = type.GetField("_staticName").GetValue("").ToString();
+                if (obj != null)
+                {
+                    String output = _staticName + ": " + obj.ToString();
+                    Log.Logger.log(output);
+                }
+            }
+            catch (Exception e)
+            {
+                String errMsg = String.Format(
+                    "Couldn't find field _staticName while creating log: {0} || ERROR: {1}",
+                    obj.ToString(), e.ToString());
+                Log.Logger.logError(errMsg);
             }
         }
 
-        public void MakeLogErrorStatic (Object obj)
+        public static void MakeLogErrorStatic (Type type, Object obj)
         {
-            if (obj != null)
+            try
             {
-                String output = _staticName + ": " + obj.ToString();
-                Log.Logger.logError(output);
+                String staticName = type.GetField("_staticName").GetValue("").ToString();
+                if (obj != null)
+                {
+                    String output = _staticName + ": " + obj.ToString();
+                    Log.Logger.log(output);
+                }
+            }
+            catch (Exception e)
+            {
+                String errMsg = String.Format(
+                    "Couldn't find field _staticName while creating error-log: {0} || ERROR: {1}",
+                    obj.ToString(), e.ToString());
+                Log.Logger.logError(errMsg);
             }
         }
 
-        public void MakeLogWarningStatic (Object obj)
+        public static void MakeLogWarningStatic (Type type, Object obj)
         {
-            if (obj != null)
+            try
             {
-                String output = _staticName + ": " + obj.ToString();
-                Log.Logger.logWarning(output);
+                String staticName = type.GetField("_staticName").GetValue("").ToString();
+                if (obj != null)
+                {
+                    String output = _staticName + ": " + obj.ToString();
+                    Log.Logger.log(output);
+                }
+            }
+            catch (Exception e)
+            {
+                String errMsg = String.Format(
+                    "Couldn't find field _staticName while creating warning-log: {0} || ERROR: {1}",
+                    obj.ToString(), e.ToString());
+                Log.Logger.logError(errMsg);
             }
         }
         
-        public void PrintStatic ()
-        { }
-
-        public void PrintStatic (Object obj)
+        public static void PrintStatic (Type type, Object obj)
         {
-            Print(obj, true);
+            PrintStatic(type, obj, true);
         }
 
-        public void PrintStatic (Object obj, bool newLine)
+        public static void PrintStatic (Type type, Object obj, bool newLine)
         {
-            if (obj == null)
+            try
             {
-                return;
-            }
-            else
-            {
-                String output = _staticName + ": " + obj.ToString();
-                if (newLine)
+                String staticName = type.GetField("_staticName").GetValue("").ToString();
+                if (obj == null)
                 {
-                    Console.WriteLine(output);
+                    return;
                 }
                 else
                 {
-                    Console.Write(output);
+                    String output = _staticName + ": " + obj.ToString();
+                    if (newLine)
+                    {
+                        Console.WriteLine(output);
+                    }
+                    else
+                    {
+                        Console.Write(output);
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                String errMsg = String.Format(
+                    "Couldn't find field _staticName while printing to console: {0} || ERROR: {1}",
+                    obj.ToString(), e.ToString());
+                Log.Logger.logError(errMsg);
             }
         }
 

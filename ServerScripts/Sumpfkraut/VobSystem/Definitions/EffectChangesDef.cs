@@ -47,6 +47,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
     class EffectChangesDef
     {
 
+        protected static String _staticName = "EffectChangesDef (static)";
+        protected String _objName = "EffectChangesDef (default)";
+
         //private static Object dictLock = new Object();
 
         //private static Dictionary<int, List<object>> EffectChangesDefDict = new Dictionary<int, List<object>>();

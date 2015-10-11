@@ -17,7 +17,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         #region dictionaries
 
         private static Dictionary<int, MobDef> defById = new Dictionary<int, MobDef>();
-        private static Dictionary<string, MobDef> defByName = new Dictionary<string, MobDef>();
 
         #endregion
 
@@ -25,8 +24,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #region standard attributes
 
-        protected String _objName = "MobDef (default)";
         protected static string _staticName = "MobDef (static)";
+        protected String _objName = "MobDef (default)";
 
         // general identi- and classifiers
 
