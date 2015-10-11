@@ -104,7 +104,7 @@ namespace GUC.Client.Menus
             current = newList;
             for (int i = 1; i < TextLines.Length; i++)
             {
-                if (i-1 < current.ItemList.Count)
+                if (i - 1 < current.ItemList.Count && current.ItemList[i - 1].Text != null && current.ItemList[i - 1].Text.Length > 0)
                 {
                     TextLines[i].Text = (i) + " " + current.ItemList[i-1].Text;
                 }

@@ -89,6 +89,7 @@ namespace GUC.Client.Menus
         public static PlayerInventory Inventory = new PlayerInventory();
         public static AnimationMenu Animation = new AnimationMenu();
         public static StatusMenu Status = new StatusMenu();
+        public static TradeMenu Trade = new TradeMenu();
 
         public static DropItemMenu InputNumber = new DropItemMenu();
     }

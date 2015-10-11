@@ -109,6 +109,10 @@ namespace GUC.Client.GUI
         GUCVisualVob descrVis;
         oCItem descrVob;
 
+        // next inventories
+        public GUCInventory left;
+        public GUCInventory right;
+
         bool enabled = false;
         public bool Enabled
         {
@@ -204,13 +208,25 @@ namespace GUC.Client.GUI
 
             if (newX < 0)
             {
-                //if left != null
-                newX = 0;
+                if (left != null)
+                {
+                    left.SetCursor(left.slots.GetLength(0)-1, y);
+                }
+                else
+                {
+                    newX = 0;
+                }
             }
             else if (newX >= slots.GetLength(0))
             {
-                //if right != null
-                newX = slots.GetLength(0) - 1;
+                if (right != null)
+                {
+                    right.SetCursor(0, y);
+                }
+                else
+                {
+                    newX = slots.GetLength(0) - 1;
+                }
             }
 
             if (contents.Count > 0)

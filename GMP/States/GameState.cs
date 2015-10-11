@@ -25,6 +25,7 @@ namespace GUC.Client.States
             { VirtualKeys.Tab, Menus.GUCMenus.Inventory.Open },
             { Menus.GUCMenus.Animation.Hotkey, Menus.GUCMenus.Animation.Open},
             { Menus.GUCMenus.Status.Hotkey, Menus.GUCMenus.Status.Open },
+            { Menus.GUCMenus.Trade.HotKey, Menus.GUCMenus.Trade.Open},
             { VirtualKeys.OEM5, Player.DoFists }, //^
              { VirtualKeys.F1, RenderTest },
              { VirtualKeys.F2, RenderTest2 },
