@@ -8,7 +8,19 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
     class VobDef : ScriptObject
     {
 
-        #region classfields
+        #region dictionaries
+
+        //// override them in child classes
+        //protected static Dictionary<int, VobDef> defById = new Dictionary<int, VobDef>();
+        //protected static Dictionary<string, VobDef> defByName = new Dictionary<string, VobDef>();
+
+        #endregion
+
+
+        #region standard attributes
+
+        protected String _objName = "VobDef (default)";
+        protected static string _staticName = "VobDef (static)";
 
         protected int id;
         public int getId () { return this.id; }
@@ -39,6 +51,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         }
 
         #endregion
+
+
 
         #region constructors
 

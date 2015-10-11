@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Server.Scripting.Objects;
+using GUC.Enumeration;
+using GUC.Server.WorldObjects;
 
 namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 {
@@ -11,5 +12,28 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
      */
     class SpellDef : VobDef
     {
+
+        #region dictionaries
+
+        private static Dictionary<int, SpellDef> defById = new Dictionary<int, SpellDef>();
+        private static Dictionary<string, SpellDef> defByName = new Dictionary<string, SpellDef>();
+
+        #endregion
+
+
+
+        #region standard attributes
+
+        protected String _objName = "SpellDef (default)";
+        protected static string _staticName = "SpellDef (static)";
+
+        #endregion
+
+
+
+        #region constructors
+
+        #endregion
+
     }
 }

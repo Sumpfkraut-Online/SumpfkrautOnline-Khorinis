@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using GUC.Server.Scripting.Objects;
+using GUC.Server.WorldObjects;
 using GUC.Server.Scripts.Sumpfkraut.Utilities.Threading;
 
 namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
@@ -54,7 +54,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
         public Weather (bool startOnCreate)
             : base(false)
         {
-            this.objName = "weather (default)";
+            this._objName = "weather (default)";
             this.printStateControls = true;
 
             this.weatherStateQueue = new List<WeatherState> { };

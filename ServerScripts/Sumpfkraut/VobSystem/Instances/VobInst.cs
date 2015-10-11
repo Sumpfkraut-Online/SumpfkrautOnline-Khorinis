@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using GUC.Server.Scripting.Objects;
+using GUC.Server.WorldObjects;
 using GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Server.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Types;
@@ -64,31 +64,31 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
             this.SpawnVob();
         }
 
-        // cartesian position in current world 
-        // (always set inWorld and position at the same time)
-        protected Vec3f position;
-        public Vec3f getPosition () { return this.position; }
-        public void setPosition (Vec3f position) 
-        { 
-            this.position = position;
-            if (this.vob != null)
-            {
-                Vob vob = this.vob;
-                vob.setPosition(position);
-            }          
-        }
+        //// cartesian position in current world 
+        //// (always set inWorld and position at the same time)
+        //protected Vec3f position;
+        //public Vec3f getPosition () { return this.position; }
+        //public void setPosition (Vec3f position) 
+        //{ 
+        //    this.position = position;
+        //    if (this.vob != null)
+        //    {
+        //        Vob vob = this.vob;
+        //        vob.setPosition(position);
+        //    }          
+        //}
 
-        protected Vec3f direction;
-        public Vec3f getDirection () { return this.direction; }
-        public void setDirection (Vec3f direction) 
-        {
-            this.direction = direction;
-            if (this.vob != null)
-            {
-                Vob vob = this.vob;
-                vob.setDirection(direction);
-            }   
-        }
+        //protected Vec3f direction;
+        //public Vec3f getDirection () { return this.direction; }
+        //public void setDirection (Vec3f direction) 
+        //{
+        //    this.direction = direction;
+        //    if (this.vob != null)
+        //    {
+        //        Vob vob = this.vob;
+        //        vob.setDirection(direction);
+        //    }   
+        //}
 
         protected DateTime changeDate;
         public DateTime getChangeDate () { return this.changeDate; }

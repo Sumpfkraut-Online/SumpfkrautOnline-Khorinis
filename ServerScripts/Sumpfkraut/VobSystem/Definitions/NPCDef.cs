@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using GUC.Server.Scripting.Objects;
+using GUC.Server.WorldObjects;
 
 namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 {
@@ -12,9 +12,19 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
      */
     class NPCDef : VobDef
     {
-       
-        Dictionary<int, NPCDef> defById = new Dictionary<int, NPCDef>();
-        Dictionary<string, NPCDef> defByName = new Dictionary<string, NPCDef>();
+
+        #region dictionaries
+
+        private static Dictionary<int, NPCDef> defById = new Dictionary<int, NPCDef>();
+        private static Dictionary<string, NPCDef> defByName = new Dictionary<string, NPCDef>();
+
+        #endregion
+
+
+
+        #region standard attributes
+
+        protected String objName = "NPCDef (default)";
 
         protected int ID;
         public int getID () { return this.ID; }
@@ -76,6 +86,11 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         public int getTeethTex () { return this.TeethTex; }
         public void setTeethTex (int TeethTex) { this.TeethTex = TeethTex; }
 
+        #endregion
+
+
+
+        #region constructors
 
         public NPCDef(String name, int[] attributes, int[] talentValues, int[] talentSkills, int[] hitChances, 
             int guild, int voice, String visual, String bodyMesh, int bodyTex, int skinColor, 
@@ -97,6 +112,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             this.HeadTex = headTex;
             this.TeethTex = teethTex;
         }
+
+        #endregion
 
     }
 }

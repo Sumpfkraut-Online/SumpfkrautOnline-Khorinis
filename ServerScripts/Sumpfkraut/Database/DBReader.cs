@@ -11,7 +11,13 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
     class DBReader
     {
 
+        #region attributes
+
         private static string sqLiteDataSource = "Data Source=save.db";
+
+        #endregion
+
+
 
         ///**
         // *   Executes a defined sql-query and stores the results as strings.
@@ -29,6 +35,10 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
         // *   @param orderBy is the optional string after the ORDER BY-statement in sql
         // *   @param completeQuery is an optional query which can be used to define more than one sql-statement in one shot (if provided, select, from, where, orderBy are ignored)
         // */
+
+
+
+        #region methods for database-interaction
 
         /**
          *   Executes a defined sql-query and stores the results as strings.
@@ -178,6 +188,12 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
             return changedRows;
         }
 
+        #endregion
+
+
+
+        #region utility methods
+
         public static int[] ParseParamToIntArray (string param)
         {
             string[] data = param.Split(new char[]{',', '='});
@@ -244,6 +260,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
 
             return result;
         }
+
+        #endregion
 
     }
 }

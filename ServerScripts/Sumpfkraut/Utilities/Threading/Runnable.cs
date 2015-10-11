@@ -31,7 +31,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Utilities.Threading
 
         public Runnable (bool startOnCreate, TimeSpan timeout, bool runOnce)
         {
-            this.objName = "Runnable (default)";
+            this._objName = "Runnable (default)";
             this.printStateControls = false;
             this.timeout = timeout;
             this.runOnce = runOnce;

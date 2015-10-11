@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-//using GUC.Server.Scripting.Objects;
-//using GUC.Server.Scripting.Objects.Character;
 using GUC.Enumeration;
+using GUC.Server.WorldObjects;
 
 namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 {
@@ -19,12 +18,17 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #region dictionaries
 
-        Dictionary<int, ItemDef> defById = new Dictionary<int, ItemDef>();
-        Dictionary<string, ItemDef> defByName = new Dictionary<string, ItemDef>();
+        protected static Dictionary<int, ItemDef> defById = new Dictionary<int, ItemDef>();
+        protected static Dictionary<string, ItemDef> defByName = new Dictionary<string, ItemDef>();
 
         #endregion
 
+
+
         #region standard attributes
+
+        protected String _objName = "ItemDef (default)";
+        protected static string _staticName = "ItemDef (static)";
 
         protected string instanceName;
         public string getInstanceName () { return this.instanceName; }
@@ -303,7 +307,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #endregion
 
-        #region OnUse
+
+
+        #region OnUse attributes
         // triggered with OnUse
 
         protected int onUse_HPChange = 0;
@@ -339,9 +345,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         public void setOnUse_MPMax_Min (int MPMax_Min) { this.onUse_MPMax_Min = MPMax_Min; }
 
         #endregion
-
-
-        #region OnEquip
+        
+        #region OnEquip attributes
         // triggered with OnEquip
 
         protected int onEquip_HPChange = 0;
@@ -377,9 +382,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         public void setOnEquip_MPMax_Min (int MPMax_Min) { this.onEquip_MPMax_Min = MPMax_Min; }
 
         #endregion
-
-
-        #region OnUnEquip
+        
+        #region OnUnEquip attributes
         // triggered with OnUnEquip
 
         protected int onUnEquip_HPChange = 0;
@@ -415,195 +419,213 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         public void setOnUnEquip_MPMax_Min (int MPMax_Min) { this.onUnEquip_MPMax_Min = MPMax_Min; }
 
         #endregion
+        
 
 
         #region constructors
 
         // potions
-        public ItemDef (String instanceName, String name, String scemeName, int value, String visual, String effect)
-            : base (instanceName, name, scemeName, value, visual, effect)
-        { }
+        //public ItemDef (String instanceName, String name, String scemeName, int value, String visual, String effect)
+        //    : base (instanceName, name, scemeName, value, visual, effect)
+        //{ }
 
-        // weapons
-        public ItemDef (String instanceName, String name, DamageTypes dmgType, MainFlags mainFlags, Flags flags, int totalDamage, int range, int value, String visual)
-            : base (instanceName, name, dmgType, mainFlags, flags, totalDamage, range, value, visual)
-        { }
+        //// weapons
+        //public ItemDef (String instanceName, String name, DamageTypes dmgType, MainFlags mainFlags, Flags flags, int totalDamage, int range, int value, String visual)
+        //    : base (instanceName, name, dmgType, mainFlags, flags, totalDamage, range, value, visual)
+        //{ }
 
-        // armor
-        public ItemDef (String instanceName, String name, int[] protection, int value, String visual, String visual_Change)
-            : base (instanceName, name, protection, value, visual, visual_Change)
-        { }
+        //// armor
+        //public ItemDef (String instanceName, String name, int[] protection, int value, String visual, String visual_Change)
+        //    : base (instanceName, name, protection, value, visual, visual_Change)
+        //{ }
 
         
 
-        public ItemDef (String instanceName, String name, String scemeName, int value, 
-            MainFlags mainFlags, Flags flags, String visual)
-            : this (instanceName, name, scemeName, null, null, value, 
-                mainFlags, flags, 0, 0, 0, 0, visual, null)
-        { }
+        //public ItemDef (String instanceName, String name, String scemeName, int value, 
+        //    MainFlags mainFlags, Flags flags, String visual)
+        //    : this (instanceName, name, scemeName, null, null, value, 
+        //        mainFlags, flags, 0, 0, 0, 0, visual, null)
+        //{ }
 
-        public ItemDef (String instanceName, String name, String scemeName, int value, 
-            MainFlags mainFlags, Flags flags, String visual, String visual_Change, String effect)
-            : this (instanceName, name, scemeName, null, null, value, 
-                mainFlags, flags, 0, 0, 0, 0, visual, visual_Change, effect)
-        { }
+        //public ItemDef (String instanceName, String name, String scemeName, int value, 
+        //    MainFlags mainFlags, Flags flags, String visual, String visual_Change, String effect)
+        //    : this (instanceName, name, scemeName, null, null, value, 
+        //        mainFlags, flags, 0, 0, 0, 0, visual, visual_Change, effect)
+        //{ }
 
-        public ItemDef (String instanceName, String name, int[] protection, int[] damages, 
-            int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, 
-            DamageTypes dmgType, int totalDamage, int range, String visual)
-            : this (instanceName, name, protection, damages, 
-                value, mainFlags, flags, armorFlags, 
-                dmgType, totalDamage, range, visual, null)
-        { }
-        public ItemDef (String instanceName, String name, String scemeName, int[] protection, 
-            int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, 
-            DamageTypes dmgType, int totalDamage, int range, String visual)
-            : this (instanceName, name, scemeName, protection, 
-                damages, value, mainFlags, flags, armorFlags, 
-                dmgType, totalDamage, range, visual, null)
-        { }
-        public ItemDef (String instanceName, String name, int[] protection, int[] damages, 
-            int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, 
-            int totalDamage, int range, String visual, String visual_Change)
-            : this (instanceName, name, null, protection, damages, 
-                value, mainFlags, flags, armorFlags, dmgType, 
-                totalDamage, range, visual, visual_Change, null, 0)
-        { }
+        //public ItemDef (String instanceName, String name, int[] protection, int[] damages, 
+        //    int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, 
+        //    DamageTypes dmgType, int totalDamage, int range, String visual)
+        //    : this (instanceName, name, protection, damages, 
+        //        value, mainFlags, flags, armorFlags, 
+        //        dmgType, totalDamage, range, visual, null)
+        //{ }
+        //public ItemDef (String instanceName, String name, String scemeName, int[] protection, 
+        //    int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, 
+        //    DamageTypes dmgType, int totalDamage, int range, String visual)
+        //    : this (instanceName, name, scemeName, protection, 
+        //        damages, value, mainFlags, flags, armorFlags, 
+        //        dmgType, totalDamage, range, visual, null)
+        //{ }
+        //public ItemDef (String instanceName, String name, int[] protection, int[] damages, 
+        //    int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, 
+        //    int totalDamage, int range, String visual, String visual_Change)
+        //    : this (instanceName, name, null, protection, damages, 
+        //        value, mainFlags, flags, armorFlags, dmgType, 
+        //        totalDamage, range, visual, visual_Change, null, 0)
+        //{ }
 
-        public ItemDef (String instanceName, String name, int[] protection, int[] damages, 
-            int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, 
-            int totalDamage, int range, String visual, String visual_Change, String effect)
-            : this (instanceName, name, null, protection, damages, 
-                value, mainFlags, flags, armorFlags, dmgType, 
-                totalDamage, range, visual, visual_Change, effect, 0)
-        { }
+        //public ItemDef (String instanceName, String name, int[] protection, int[] damages, 
+        //    int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, 
+        //    int totalDamage, int range, String visual, String visual_Change, String effect)
+        //    : this (instanceName, name, null, protection, damages, 
+        //        value, mainFlags, flags, armorFlags, dmgType, 
+        //        totalDamage, range, visual, visual_Change, effect, 0)
+        //{ }
 
-        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, 
-            int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, 
-            int totalDamage, int range, String visual, String visual_Change)
-            : this (instanceName, name, scemeName, protection, damages, 
-                value, mainFlags, flags, armorFlags, dmgType, 
-                totalDamage, range, visual, visual_Change, "", 0)
-        { }
+        //public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, 
+        //    int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, 
+        //    int totalDamage, int range, String visual, String visual_Change)
+        //    : this (instanceName, name, scemeName, protection, damages, 
+        //        value, mainFlags, flags, armorFlags, dmgType, 
+        //        totalDamage, range, visual, visual_Change, "", 0)
+        //{ }
 
-        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, 
-            int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, 
-            int totalDamage, int range, String visual, String visual_Change, String effect)
-            : this (instanceName, name, scemeName, protection, damages, 
-                value, mainFlags, flags, armorFlags, dmgType, 
-                totalDamage, range, visual, visual_Change, effect, 0, 0, null)
-        { }
+        //public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, 
+        //    int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, 
+        //    int totalDamage, int range, String visual, String visual_Change, String effect)
+        //    : this (instanceName, name, scemeName, protection, damages, 
+        //        value, mainFlags, flags, armorFlags, dmgType, 
+        //        totalDamage, range, visual, visual_Change, effect, 0, 0, null)
+        //{ }
 
-        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, 
-            int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, 
-            int totalDamage, int range, String visual, String visual_Change, String effect, MaterialType types)
-            : this (instanceName, name, scemeName, protection, damages, 
-                value, mainFlags, flags, armorFlags, dmgType, 
-                totalDamage, range, visual, visual_Change, effect, 0, types, null)
-        { }
+        //public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, 
+        //    int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, 
+        //    int totalDamage, int range, String visual, String visual_Change, String effect, MaterialType types)
+        //    : this (instanceName, name, scemeName, protection, damages, 
+        //        value, mainFlags, flags, armorFlags, dmgType, 
+        //        totalDamage, range, visual, visual_Change, effect, 0, types, null)
+        //{ }
 
-        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, 
-            int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, 
-            int totalDamage, int range, String visual, String visual_Change, String effect, MaterialType types, 
-            ItemInstance munition)
-            : this (instanceName, name, scemeName, protection, damages, 
-                value, mainFlags, flags, armorFlags, dmgType, 
-                totalDamage, range, visual, visual_Change, effect, 0, types, 
-                munition)
-        { }
+        //public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, 
+        //    int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, 
+        //    int totalDamage, int range, String visual, String visual_Change, String effect, MaterialType types, 
+        //    ItemInstance munition)
+        //    : this (instanceName, name, scemeName, protection, damages, 
+        //        value, mainFlags, flags, armorFlags, dmgType, 
+        //        totalDamage, range, visual, visual_Change, effect, 0, types, 
+        //        munition)
+        //{ }
 
-        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, 
-            int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, 
-            int totalDamage, int range, String visual, String visual_Change, String effect, int visualSkin, 
-            MaterialType types, ItemInstance munition)
-            : this (instanceName, name, scemeName, protection, damages, 
-                value, mainFlags, flags, armorFlags, dmgType, 
-                totalDamage, range, visual, visual_Change, effect, visualSkin, 
-                types, munition, false, false, false, false, false)
-        { }
+        //public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, 
+        //    int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, 
+        //    int totalDamage, int range, String visual, String visual_Change, String effect, int visualSkin, 
+        //    MaterialType types, ItemInstance munition)
+        //    : this (instanceName, name, scemeName, protection, damages, 
+        //        value, mainFlags, flags, armorFlags, dmgType, 
+        //        totalDamage, range, visual, visual_Change, effect, visualSkin, 
+        //        types, munition, false, false, false, false, false)
+        //{ }
 
-        public ItemDef (String instanceName, String name, String scemeName, int[] protection, 
-            int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, 
-            DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change, 
-            String effect, int visualSkin, MaterialType types, ItemInstance munition, bool keyInstance, 
-            bool torch, bool torchBurning, bool torchBurned, bool gold)
-            : base (instanceName, name, scemeName, protection, 
-                damages, value, mainFlags, flags, armorFlags, 
-                dmgType, totalDamage, range, visual, visual_Change, 
-                effect, visualSkin, types, munition, keyInstance, 
-                torch, torchBurning, torchBurned, gold)
+        //public ItemDef (String instanceName, String name, String scemeName, int[] protection, 
+        //    int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, 
+        //    DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change, 
+        //    String effect, int visualSkin, MaterialType types, ItemInstance munition, bool keyInstance, 
+        //    bool torch, bool torchBurning, bool torchBurned, bool gold)
+        //    : base (instanceName, name, scemeName, protection, 
+        //        damages, value, mainFlags, flags, armorFlags, 
+        //        dmgType, totalDamage, range, visual, visual_Change, 
+        //        effect, visualSkin, types, munition, keyInstance, 
+        //        torch, torchBurning, torchBurned, gold)
+        //{
+        //    this.OnUse += new Scripting.Events.UseItemEventHandler(this.UseItem);
+        //    this.OnEquip += new Scripting.Events.NPCEquipEventHandler(this.EquipItem);
+        //    this.OnUnEquip += new Scripting.Events.NPCEquipEventHandler(this.UnequipItem);
+        //}
+
+        #endregion
+
+
+
+        #region dictionary-methods
+
+        static bool AddToDict (ItemDef obj)
         {
-            this.OnUse += new Scripting.Events.UseItemEventHandler(this.UseItem);
-            this.OnEquip += new Scripting.Events.NPCEquipEventHandler(this.EquipItem);
-            this.OnUnEquip += new Scripting.Events.NPCEquipEventHandler(this.UnequipItem);
+            int id = obj.getId();
+
+            if (id < 1)
+            {
+                
+            }
+
+            return true;
         }
 
         #endregion
 
 
 
-        #region called by EventHandlers
+        #region methods called by EventHandlers
 
-        protected void EquipItem (NPCProto npc, Item item)
-        {
-            //npc.HP      = this.getOnEquip_HPChange();
-            //npc.HPMax   = this.getOnEquip_HPMaxChange();
-            //npc.MP      = this.getOnEquip_MPChange();
-            //npc.MPMax   = this.getOnEquip_MPMaxChange();
-        }
+        //protected void EquipItem (NPCProto npc, Item item)
+        //{
+        //    //npc.HP      = this.getOnEquip_HPChange();
+        //    //npc.HPMax   = this.getOnEquip_HPMaxChange();
+        //    //npc.MP      = this.getOnEquip_MPChange();
+        //    //npc.MPMax   = this.getOnEquip_MPMaxChange();
+        //}
 
-        protected void UnequipItem (NPCProto npc, Item item)
-        {
-            //npc.HP      = this.getOnUnEquip_HPChange();
-            //npc.HPMax   = this.getOnUnEquip_HPMaxChange();
-            //npc.MP      = this.getOnUnEquip_MPChange();
-            //npc.MPMax   = this.getOnUnEquip_MPMaxChange();
-        }
+        //protected void UnequipItem (NPCProto npc, Item item)
+        //{
+        //    //npc.HP      = this.getOnUnEquip_HPChange();
+        //    //npc.HPMax   = this.getOnUnEquip_HPMaxChange();
+        //    //npc.MP      = this.getOnUnEquip_MPChange();
+        //    //npc.MPMax   = this.getOnUnEquip_MPMaxChange();
+        //}
 
-        protected void UseItem (NPCProto npc, Item item, short state, short targetState)
-        {
-            //if (!(state == -1 && targetState == 0))
-            //{
-            //    return;
-            //}
+        //protected void UseItem (NPCProto npc, Item item, short state, short targetState)
+        //{
+        //    //if (!(state == -1 && targetState == 0))
+        //    //{
+        //    //    return;
+        //    //}
 
-            //if ((npc.HP + this.getOnUse_HPChange()) >= this.getOnUse_HP_Min())
-            //{
-            //    // 
-            //    //if ((npc.HP + this.getOnUse_HPChange()))
-            //    npc.HP =+ this.getOnUse_HPChange();
-            //}
-            //else
-            //{
-            //    //if (this.getHP_Min <= this.getHPMax_min)
-            //    npc.HP = this.getOnUse_HP_Min();
-            //}
+        //    //if ((npc.HP + this.getOnUse_HPChange()) >= this.getOnUse_HP_Min())
+        //    //{
+        //    //    // 
+        //    //    //if ((npc.HP + this.getOnUse_HPChange()))
+        //    //    npc.HP =+ this.getOnUse_HPChange();
+        //    //}
+        //    //else
+        //    //{
+        //    //    //if (this.getHP_Min <= this.getHPMax_min)
+        //    //    npc.HP = this.getOnUse_HP_Min();
+        //    //}
 
-            //if ((npc.HPMax + this.getOnUse_HPMaxChange()) >= this.getOnUse_HPMax_Min())
-            //{
-            //    npc.HPMax =+ this.getOnUse_HPMaxChange();
-            //}
-            //else
-            //{
-            //    npc.HPMax = this.getOnUse_HPMax_Min();
-            //}
-
-
-            //if ((npc.MP + this.getOnUse_MPChange()) >= this.getOnUse_MP_Min())
-            //{
-            //    npc.MP =+ this.getOnUse_MPChange();
-            //}
-
-            //if ((npc.MPMax + this.getOnUse_MPMaxChange()) >= this.getOnUse_MPMax_Min())
-            //{
-            //    npc.MPMax =+ this.getOnUse_MPMaxChange();
-            //}
+        //    //if ((npc.HPMax + this.getOnUse_HPMaxChange()) >= this.getOnUse_HPMax_Min())
+        //    //{
+        //    //    npc.HPMax =+ this.getOnUse_HPMaxChange();
+        //    //}
+        //    //else
+        //    //{
+        //    //    npc.HPMax = this.getOnUse_HPMax_Min();
+        //    //}
 
 
-        }
+        //    //if ((npc.MP + this.getOnUse_MPChange()) >= this.getOnUse_MP_Min())
+        //    //{
+        //    //    npc.MP =+ this.getOnUse_MPChange();
+        //    //}
+
+        //    //if ((npc.MPMax + this.getOnUse_MPMaxChange()) >= this.getOnUse_MPMax_Min())
+        //    //{
+        //    //    npc.MPMax =+ this.getOnUse_MPMaxChange();
+        //    //}
+
+
+        //}
 
         #endregion
-
-
+        
     }
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Server.Scripting.Objects;
+using GUC.Server.WorldObjects;
 
 namespace GUC.Server.Scripts.Sumpfkraut.WorldSystem
 {
@@ -31,7 +31,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.WorldSystem
         {
             this.id = id;
             this.name = name;
-            this.world = World.getWorld(this.name);
+            //this.world = World.getWorld(this.name);
+            this.world = World.NewWorld;
             if (this.world == null)
             {
                 Log.Logger.logError("WorldInst (constructor): There is no world named" + this.name 

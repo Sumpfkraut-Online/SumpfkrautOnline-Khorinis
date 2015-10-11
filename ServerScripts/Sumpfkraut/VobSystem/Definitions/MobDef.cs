@@ -2,21 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using GUC.Server.Scripting.Objects;
+using GUC.Enumeration;
+using GUC.Server.WorldObjects;
 
 namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 {
-
-    public enum MobInterType
-    {
-        None            = 0,
-        MobInter        = None + 1,
-        MobBed          = MobInter + 1,
-        MobSwitch       = MobBed + 1,
-        MobDoor         = MobSwitch + 1,
-        MobContainer    = MobDoor + 1,
-    } 
 
     /**
      *   Class from which all mobs are instatiated (which are handled by the serverscript).
@@ -24,97 +14,110 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
     class MobDef : VobDef
     {
 
-        Dictionary<int, MobDef> defById = new Dictionary<int, MobDef>();
-        Dictionary<string, MobDef> defByName = new Dictionary<string, MobDef>();
+        #region dictionaries
+
+        private static Dictionary<int, MobDef> defById = new Dictionary<int, MobDef>();
+        private static Dictionary<string, MobDef> defByName = new Dictionary<string, MobDef>();
+
+        #endregion
+
+
+
+        #region standard attributes
+
+        protected String _objName = "MobDef (default)";
+        protected static string _staticName = "MobDef (static)";
 
         // general identi- and classifiers
 
-        protected int MobDefID;
-        public int GetID () { return this.MobDefID; }
-        public void SetID (int MobDefID) { this.MobDefID = MobDefID; }
-
-        protected MobInterType MobInterType;
-        public MobInterType GetMobInterType () { return this.MobInterType; }
-        public void SetMobInterType (MobInterType MobInterType) { this.MobInterType = MobInterType; }
+        protected MobInterType mobInterType;
+        public MobInterType GetMobInterType () { return this.mobInterType; }
+        public void SetMobInterType (MobInterType mobInterType) { this.mobInterType = mobInterType; }
 
 
         // necessary for both interactice and non-interactive vobs 
 
-        protected string Visual;
-        public string GetVisual () { return this.Visual; }
-        public void SetVisual (string Visual) { this.Visual = Visual; }
+        protected string visual;
+        public string GetVisual () { return this.visual; }
+        public void SetVisual (string visual) { this.visual = visual; }
 
-        protected bool CDDyn;
-        public bool GetCDDyn () { return this.CDDyn; }
-        public void SetCDDyn (bool CDDyn) { this.CDDyn = CDDyn; }
+        protected bool cdDyn;
+        public bool GetCDDyn () { return this.cdDyn; }
+        public void SetCDDyn (bool cdDyn) { this.cdDyn = cdDyn; }
 
-        protected bool CDStatic;
-        public bool GetCDStatic () { return this.CDStatic; }
-        public void SetCDStatic (bool CDStatic) { this.CDStatic = CDStatic; }
+        protected bool cdStatic;
+        public bool GetCDStatic () { return this.cdStatic; }
+        public void SetCDStatic (bool cdStatic) { this.cdStatic = cdStatic; }
 
 
         // necessary for interactice vobs (MobInter, MobSwitch)
         // -- all previous attributes are still required
 
-        protected string FocusName;
-        public string GetFocusName () { return this.FocusName; }
-        public void SetFocusName (string FocusName) { this.FocusName = FocusName; }
+        protected string focusName;
+        public string GetFocusName () { return this.focusName; }
+        public void SetFocusName (string focusName) { this.focusName = focusName; }
 
-        protected ItemInstance UseWithItem;
-        public ItemInstance GetUseWithItem () { return this.UseWithItem; }
-        public void SetUseWithItem (ItemInstance UseWithItem) { this.UseWithItem = UseWithItem; }
+        protected ItemInstance useWithItem;
+        public ItemInstance GetUseWithItem () { return this.useWithItem; }
+        public void SetUseWithItem (ItemInstance useWithItem) { this.useWithItem = useWithItem; }
 
-        protected string TriggerTarget;
-        public string GetTriggerTarget () { return this.TriggerTarget; }
-        public void SetTriggerTarget (string TriggerTarget) { this.TriggerTarget = TriggerTarget; }
+        protected string triggerTarget;
+        public string GetTriggerTarget () { return this.triggerTarget; }
+        public void SetTriggerTarget (string triggerTarget) { this.triggerTarget = triggerTarget; }
 
         
         // necessary for lockable mobs (MobDoor)
 
-        protected bool IsLocked;
-        public bool GetIsLocked () { return this.IsLocked; }
-        public void SetIsLocked (bool IsLocked) { this.IsLocked = IsLocked; }
+        protected bool isLocked;
+        public bool GetIsLocked () { return this.isLocked; }
+        public void SetIsLocked (bool isLocked) { this.isLocked = isLocked; }
 
-        protected ItemInstance KeyInstance;
-        public ItemInstance GetKeyInstance () { return this.KeyInstance; }
-        public void SetKeyInstance (ItemInstance KeyInstance) { this.KeyInstance = KeyInstance; }
+        protected ItemInstance keyInstance;
+        public ItemInstance GetKeyInstance () { return this.keyInstance; }
+        public void SetKeyInstance (ItemInstance keyInstance) { this.keyInstance = keyInstance; }
 
-        protected string PicklockString;
-        public string GetPicklockString () { return this.PicklockString; }
-        public void SetPicklockString (string PicklockString) { this.PicklockString = PicklockString; }
+        protected string picklockString;
+        public string GetPicklockString () { return this.picklockString; }
+        public void SetPicklockString (string picklockString) { this.picklockString = picklockString; }
 
 
         // necessary for container-mobs (MobContainer)
         // will be handled as multiple EffectChangesDef, no direct loading from the Mob_def-table of the database
 
-        protected ItemInstance[] Items;
-        public ItemInstance[] GetItems () { return this.Items; }
-        public void SetItems (ItemInstance[] Items) { this.Items = Items; }
+        protected ItemInstance[] items;
+        public ItemInstance[] GetItems () { return this.items; }
+        public void SetItems (ItemInstance[] items) { this.items = items; }
 
-        protected int[] Amounts;
-        public int[] GetAmounts () { return this.Amounts; }
-        public void SetAmounts (int[] Amounts) { this.Amounts = Amounts; }
+        protected int[] amounts;
+        public int[] GetAmounts () { return this.amounts; }
+        public void SetAmounts (int[] amounts) { this.amounts = amounts; }
+
+        #endregion
 
 
 
-        public MobDef (MobInterType mobInterType, String visual, String focusName, ItemInstance[] items, int[] amounts, 
-            bool isLocked, ItemInstance keyInstance, String pickLockString, ItemInstance useWithItem, 
-            String triggerTarget, bool cdDyn, bool cdStatic)
-        {
-            this.objName = "MobDef (default)";
-            this.MobInterType = mobInterType;
-            this.Visual = visual;
-            this.FocusName = focusName;
-            this.Items = items;
-            this.Amounts = amounts;
-            this.IsLocked = isLocked;
-            this.KeyInstance = keyInstance;
-            this.PicklockString = pickLockString;
-            this.UseWithItem = useWithItem;
-            this.TriggerTarget = triggerTarget;
-            this.CDDyn = cdDyn;
-            this.CDStatic = cdStatic;
-        }
+        #region constructors
+
+        //public MobDef (MobInterType mobInterType, String visual, String focusName, ItemInstance[] items, int[] amounts, 
+        //    bool isLocked, ItemInstance keyInstance, String pickLockString, ItemInstance useWithItem, 
+        //    String triggerTarget, bool cdDyn, bool cdStatic)
+        //{
+        //    this._objName = "MobDef (default)";
+        //    this.MobInterType = mobInterType;
+        //    this.Visual = visual;
+        //    this.FocusName = focusName;
+        //    this.Items = items;
+        //    this.Amounts = amounts;
+        //    this.IsLocked = isLocked;
+        //    this.KeyInstance = keyInstance;
+        //    this.PicklockString = pickLockString;
+        //    this.UseWithItem = useWithItem;
+        //    this.TriggerTarget = triggerTarget;
+        //    this.CDDyn = cdDyn;
+        //    this.CDStatic = cdStatic;
+        //}
+
+        #endregion
 
     }
 }

@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Server.Scripting.Objects;
-using GUC.Server.Scripting.Objects.Character;
+using GUC.Server.WorldObjects;
 using GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Server.Scripts.Sumpfkraut.WorldSystem;
 
@@ -31,11 +30,11 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
         public void setInWorld (WorldInst inWorld) { this.inWorld = inWorld; }
 
 
-        // does not spawn NPC directly into a world
-        public NPCInst (NPCDef def)
-        {
-            this.npc = new NPC(def.getName());
-        }
+        //// does not spawn NPC directly into a world
+        //public NPCInst (NPCDef def)
+        //{
+        //    this.npc = new NPC(def.getName());
+        //}
 
         // 
         //public NPCInst (NPCDef def, WorldInst inWorld)

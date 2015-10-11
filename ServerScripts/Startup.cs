@@ -6,6 +6,7 @@ using System.Linq;
 using GUC.Server.WorldObjects;
 using GUC.Server.Log;
 using GUC.Server.Scripting.Listener;
+using GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions;
 
 namespace GUC.Server.Scripts
 {
@@ -13,6 +14,8 @@ namespace GUC.Server.Scripts
 	{
 		public void OnServerInit()
 		{
+
+
             Logger.log(Logger.LogLevel.INFO, "######################## Initalise ########################");
             
             //DefaultItems.Init();

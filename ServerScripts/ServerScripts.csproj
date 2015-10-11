@@ -73,10 +73,7 @@
     <Compile Include="Sumpfkraut\Utilities\Threading\IRunnable.cs" />
     <Compile Include="Sumpfkraut\Utilities\Threading\Runnable.cs" />
     <Compile Include="Sumpfkraut\Utilities\Threading\TestRunnable.cs" />
-    <Compile Include="Sumpfkraut\VobSystem\Definitions\DummyItemDef.cs" />
-    <Compile Include="Sumpfkraut\VobSystem\Definitions\DummyMobDef.cs" />
-    <Compile Include="Sumpfkraut\VobSystem\Definitions\DummyNPCDef.cs" />
-    <Compile Include="Sumpfkraut\VobSystem\Definitions\DummySpellDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\Enumeration.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\EffectChangesDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\ItemDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\MobDef.cs" />
@@ -91,8 +88,6 @@
     <Compile Include="Sumpfkraut\VobSystem\InventoryVobHandler.cs" />
     <Compile Include="Sumpfkraut\VobSystem\VobHandler.cs" />
     <Compile Include="Sumpfkraut\VobSystem\WorldVobHandler.cs" />
-    <Compile Include="Sumpfkraut\WeatherSystem\Weather.cs" />
-    <Compile Include="Sumpfkraut\WeatherSystem\WeatherHandler.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldHandler.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldInst.cs" />
   </ItemGroup>
