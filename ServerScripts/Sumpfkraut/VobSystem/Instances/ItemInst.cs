@@ -15,8 +15,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
     class ItemInst : VobInst
     {
 
-        protected static String _staticName = "ItemInst (static)";
-        protected String _objName = "ItemInst (default)";
+        new public static readonly String _staticName = "ItemInst (static)";
+        new protected String _objName = "ItemInst (default)";
 
         // must provide an alternative vobDef and corresponding get-set-methods
         // due to C# being unable to inherit from more than 1 baseclass

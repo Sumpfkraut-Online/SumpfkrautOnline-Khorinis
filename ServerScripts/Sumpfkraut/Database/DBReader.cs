@@ -13,8 +13,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
 
         #region attributes
 
-        protected static String _staticName = "DBReader (static)";
-        protected String _objName = "DBReader (default)";
+        new public static readonly String _staticName = "DBReader (static)";
+        new protected String _objName = "DBReader (default)";
 
         private static string sqLiteDataSource = "Data Source=save.db";
 

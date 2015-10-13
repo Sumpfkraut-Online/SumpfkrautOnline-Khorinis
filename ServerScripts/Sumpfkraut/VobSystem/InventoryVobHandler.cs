@@ -13,7 +13,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
     /**
      *   Class which is used for inventory-manipulation (e.g. for transfering items in a trade).
      */
-    class InventoryVobHandler
+    class InventoryVobHandler : ScriptObject
     {
 
         private static Dictionary<String, Database.SQLiteGetTypeEnum> itemInInvTableDict = 
@@ -31,6 +31,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
         // used for faster and cleaner access to these items
         private static Dictionary<int, ItemInst> itemInInvDict = new Dictionary<int, ItemInst>();
 
+
+        new public static readonly String _staticName = "InventoryVobHandler (static)";
+        new protected String _objName = "InventoryVobHandler (default)";
 
         private static object playerInvLock = new object();
         private static object containerInvLock = new object();

@@ -14,8 +14,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
     class NPCInst : VobInst
     {
 
-        protected static String _staticName = "NPCInst (static)";
-        protected String _objName = "NPCInst (default)";
+        new public static readonly String _staticName = "NPCInst (static)";
+        new protected String _objName = "NPCInst (default)";
         
         // definition on which basis the item was created
         private NPCDef npcDef;

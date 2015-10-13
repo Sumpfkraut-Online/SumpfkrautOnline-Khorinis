@@ -10,7 +10,7 @@ namespace GUC.Server.Scripts.Sumpfkraut
 
         #region attributes
 
-        public static readonly string _staticName = "ScriptObject (static)";
+        public static readonly String _staticName = "ScriptObject (static)";
 
         protected String _objName = "ScriptObject (default)";
         public virtual String getObjName ()
@@ -52,7 +52,7 @@ namespace GUC.Server.Scripts.Sumpfkraut
                 String staticName = type.GetField("_staticName").GetValue("").ToString();
                 if (obj != null)
                 {
-                    String output = _staticName + ": " + obj.ToString();
+                    String output = staticName + ": " + obj.ToString();
                     Log.Logger.log(output);
                 }
             }
@@ -72,7 +72,7 @@ namespace GUC.Server.Scripts.Sumpfkraut
                 String staticName = type.GetField("_staticName").GetValue("").ToString();
                 if (obj != null)
                 {
-                    String output = _staticName + ": " + obj.ToString();
+                    String output = staticName + ": " + obj.ToString();
                     Log.Logger.log(output);
                 }
             }
@@ -92,7 +92,7 @@ namespace GUC.Server.Scripts.Sumpfkraut
                 String staticName = type.GetField("_staticName").GetValue("").ToString();
                 if (obj != null)
                 {
-                    String output = _staticName + ": " + obj.ToString();
+                    String output = staticName + ": " + obj.ToString();
                     Log.Logger.log(output);
                 }
             }
@@ -121,7 +121,7 @@ namespace GUC.Server.Scripts.Sumpfkraut
                 }
                 else
                 {
-                    String output = _staticName + ": " + obj.ToString();
+                    String output = staticName + ": " + obj.ToString();
                     if (newLine)
                     {
                         Console.WriteLine(output);

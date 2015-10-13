@@ -19,11 +19,11 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
     /**
      *   Class which initializes all vobs of the indivual types from database information: mobs, items, npcs.
      */
-    class VobHandler
+    class VobHandler : ScriptObject
     {
 
-        protected static String _staticName = "VobHandler (static)";
-        protected String _objName = "VobHandler (default)";
+        new public static readonly String _staticName = "VobHandler (static)";
+        new protected String _objName = "VobHandler (default)";
 
         //// stores vob-definitions with their ID-attribute (ID in the VobSystem) as key
         //public static Dictionary<int, MobDef> mobDefDict = new Dictionary<int, MobDef>();

@@ -24,8 +24,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #region standard attributes
 
-        protected static string _staticName = "MobDef (static)";
-        protected String _objName = "MobDef (default)";
+        new public static readonly String _staticName = "MobDef (static)";
+        new protected String _objName = "MobDef (default)";
 
         // general identi- and classifiers
 

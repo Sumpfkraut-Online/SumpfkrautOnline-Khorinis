@@ -44,11 +44,11 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
      *   Class from which all additional effects (not only visual) 
      *   are instatiated (which are handled by the serverscript).
      */
-    class EffectChangesDef
+    class EffectChangesDef : ScriptObject
     {
 
-        protected static String _staticName = "EffectChangesDef (static)";
-        protected String _objName = "EffectChangesDef (default)";
+        new public static readonly String _staticName = "EffectChangesDef (static)";
+        new protected String _objName = "EffectChangesDef (default)";
 
         //private static Object dictLock = new Object();
 

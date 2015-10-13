@@ -19,8 +19,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #region standard attributes
 
-        protected static String _staticName = "VobDef (static)";
-        protected String _objName = "VobDef (default)";
+        new public static readonly String _staticName = "VobDef (static)";
+        new protected String _objName = "VobDef (default)";
 
         protected int id;
         public int getId () { return this.id; }

@@ -24,8 +24,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #region standard attributes
 
-        protected static String _staticName = "NPCDef (static)";
-        protected String _objName = "NPCDef (default)";
+        new public static readonly String _staticName = "NPCDef (static)";
+        new protected String _objName = "NPCDef (default)";
 
         protected int ID;
         public int getID () { return this.ID; }

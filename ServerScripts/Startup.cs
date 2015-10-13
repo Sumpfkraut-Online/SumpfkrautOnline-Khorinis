@@ -60,13 +60,21 @@ namespace GUC.Server.Scripts
             //    Console.WriteLine("--------------------------");
             //}
 
-            Type t = typeof(ScriptObject);
-            System.Reflection.PropertyInfo prop = t.GetProperty("_staticName");
+            //Type t = typeof(ScriptObject);
+            //System.Reflection.PropertyInfo prop = t.GetProperty("_staticName");
             //object value = prop.GetValue(null, null);
             //Console.WriteLine(value);
 
-            Console.WriteLine(t.GetField("_staticName"));
-            Console.WriteLine(t.GetField("_staticName").GetValue(""));
+            //Console.WriteLine(t.GetField("_staticName"));
+            //Console.WriteLine(t.GetField("_staticName").GetValue(""));
+            //Console.WriteLine(typeof(ScriptObject).GetField("_staticName").GetValue(""));
+            Console.WriteLine(typeof(VobHandler).GetField("_staticName").GetValue(""));
+
+            //VobDef def = new VobDef();
+            //def.Print("Hello World!");
+
+            VobDef.PrintStatic(typeof(VobHandler), "GOTCHA!");
+
 
 
 

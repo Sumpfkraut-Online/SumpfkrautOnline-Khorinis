@@ -13,8 +13,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
     class VobInst : ScriptObject
     {
 
-        protected static String _staticName = "VobInst (static)";
-        protected String _objName = "VobInst (default)";
+        new public static readonly String _staticName = "VobInst (static)";
+        new protected String _objName = "VobInst (default)";
 
         // TO DO: set ids in constructors
         protected int id = -1;
