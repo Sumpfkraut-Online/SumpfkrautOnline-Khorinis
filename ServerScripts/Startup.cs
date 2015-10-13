@@ -68,12 +68,28 @@ namespace GUC.Server.Scripts
             //Console.WriteLine(t.GetField("_staticName"));
             //Console.WriteLine(t.GetField("_staticName").GetValue(""));
             //Console.WriteLine(typeof(ScriptObject).GetField("_staticName").GetValue(""));
-            Console.WriteLine(typeof(VobHandler).GetField("_staticName").GetValue(""));
+            //Console.WriteLine(typeof(VobHandler).GetField("_staticName").GetValue(""));
 
             //VobDef def = new VobDef();
             //def.Print("Hello World!");
 
-            VobDef.PrintStatic(typeof(VobHandler), "GOTCHA!");
+            //VobDef.PrintStatic(typeof(VobHandler), "GOTCHA!");
+
+
+            //ItemDef.MakeLogErrorStatic(typeof(ItemDef), 
+            //    String.Format("Prevented attempt of adding a definition to the dictionaries:"
+            //        + " The {0} {1} is already taken.", "id", 9999));
+
+            //Func<bool, bool, bool> check = (x, y) => x && y;
+            //Console.WriteLine(check.Invoke(true, false));
+
+            //ItemDef def0 = new ItemDef(); def0.setId(0); ItemDef.Add(def0);
+            //ItemDef def1 = new ItemDef(); def1.setId(1); ItemDef.Add(def1);
+            //ItemDef def2 = new ItemDef(); def2.setId(2); ItemDef.Add(def2);
+            //ItemDef def2_ = new ItemDef(); def2_.setId(2); ItemDef.Add(def2_);
+
+            
+
 
 
 

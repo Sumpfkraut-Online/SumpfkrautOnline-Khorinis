@@ -19,7 +19,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         #region dictionaries
 
         protected static Dictionary<int, ItemDef> defById = new Dictionary<int, ItemDef>();
-        protected static Dictionary<string, ItemDef> defByName = new Dictionary<string, ItemDef>();
+        //protected static Dictionary<string, ItemDef> defByInstanceName = new Dictionary<string, ItemDef>();
 
         #endregion
 
@@ -553,17 +553,157 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #region dictionary-methods
 
-        static bool AddToDict (ItemDef obj)
+        public static bool Add (ItemDef def)
         {
-            int id = obj.getId();
+            int id = def.getId();
 
             if (id < 1)
             {
-                
+                MakeLogWarningStatic(typeof(ItemDef), 
+                    "Prevented attempt of adding a definition to to dictionary: "
+                     + "An invalid id < 1 was provided!");
+                return false;
             }
 
+            if (defById.ContainsKey(id))
+            {
+                MakeLogWarningStatic(typeof(ItemDef), 
+                    String.Format("Prevented attempt of adding a definition to dictionary:"
+                        + " The {0}={1} is already taken!", "id", id));
+                return false;
+            }
+            
+            defById.Add(id, def);
             return true;
         }
+
+        public static bool ContainsId (int id)
+        {
+            if (defById.ContainsKey(id))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static bool ContainsDefinition (ItemDef def)
+        {
+            return defById.ContainsValue(def);
+        }
+
+        public static bool Remove (int id)
+        {
+            ItemDef def;
+            defById.TryGetValue(id, out def);
+
+            if (def != null)
+            {
+                defById.Remove(id);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static bool TryGetValue (int id, out ItemDef def)
+        {
+            return defById.TryGetValue(id, out def);
+        }
+
+        //public static bool Add (ItemDef def)
+        //{
+        //    int id = def.getId();
+        //    String instanceName = def.getInstanceName();
+
+        //    if (id < 1)
+        //    {
+        //        MakeLogWarningStatic(typeof(ItemDef), 
+        //            "Prevented attempt of adding a definition to the dictionaries:"
+        //             + "An invalid id < 1 was provided!");
+        //        return false;
+        //    }
+
+        //    if (defById.ContainsKey(id))
+        //    {
+        //        MakeLogWarningStatic(typeof(ItemDef), 
+        //            String.Format("Prevented attempt of adding a definition to the dictionaries:"
+        //                + " The {0} {1} is already taken.", "id", id));
+        //        return false;
+        //    }
+        //    else if (defByInstanceName.ContainsKey(instanceName))
+        //    {
+        //        MakeLogWarningStatic(typeof(ItemDef), 
+        //            String.Format("Prevented attempt of adding a definition to the dictionaries:"
+        //                + " The {0} {1} is already taken.", "instanceName", instanceName));
+        //        return false;
+        //    }
+
+        //    defById.Add(id, def);
+        //    defByInstanceName.Add(instanceName, def);
+
+        //    return true;
+        //}
+
+        //public static bool ContainsId (int id)
+        //{
+        //    if (defById.ContainsKey(id))
+        //    {
+        //        return true;
+        //    }
+        //    else
+        //    {
+        //        return false;
+        //    }
+        //}
+
+        //public static bool ContainsInstanceName (String instanceName)
+        //{
+        //    if (defByInstanceName.ContainsKey(instanceName))
+        //    {
+        //        return true;
+        //    }
+        //    else
+        //    {
+        //        return false;
+        //    }
+        //}
+
+        //public static bool ContainsDefinition (ItemDef def)
+        //{
+        //    return defById.ContainsValue(def) && defByInstanceName.ContainsValue(def);
+        //}
+
+        //public static bool Remove (int id)
+        //{
+        //    ItemDef def;
+        //    defById.TryGetValue(id, out def);
+
+        //    if (def != null)
+        //    {
+        //        defById.Remove(id);
+        //        defByInstanceName.Remove(def.getInstanceName());
+        //        return true;
+        //    }
+        //    else
+        //    {
+        //        return false;
+        //    }
+        //}
+
+        //public static bool TryGetValue (int id, out ItemDef def)
+        //{
+        //    return defById.TryGetValue(id, out def);
+        //}
+
+        //public static bool TryGetValue (String instanceName, out ItemDef def)
+        //{
+        //    return defByInstanceName.TryGetValue(instanceName, out def);
+        //}
 
         #endregion
 

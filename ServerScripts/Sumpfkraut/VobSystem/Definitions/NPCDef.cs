@@ -16,7 +16,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         #region dictionaries
 
         private static Dictionary<int, NPCDef> defById = new Dictionary<int, NPCDef>();
-        private static Dictionary<string, NPCDef> defByName = new Dictionary<string, NPCDef>();
+        //private static Dictionary<string, NPCDef> defByName = new Dictionary<string, NPCDef>();
 
         #endregion
 
@@ -112,6 +112,74 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             this.HeadMesh = headMesh;
             this.HeadTex = headTex;
             this.TeethTex = teethTex;
+        }
+
+        #endregion
+
+
+
+        #region dictionary-methods
+
+        public static bool Add (NPCDef def)
+        {
+            int id = def.getId();
+
+            if (id < 1)
+            {
+                MakeLogWarningStatic(typeof(NPCDef), 
+                    "Prevented attempt of adding a definition to to dictionary: "
+                     + "An invalid id < 1 was provided!");
+                return false;
+            }
+
+            if (defById.ContainsKey(id))
+            {
+                MakeLogWarningStatic(typeof(NPCDef), 
+                    String.Format("Prevented attempt of adding a definition to dictionary:"
+                        + " The {0}={1} is already taken!", "id", id));
+                return false;
+            }
+            
+            defById.Add(id, def);
+            return true;
+        }
+
+        public static bool ContainsId (int id)
+        {
+            if (defById.ContainsKey(id))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static bool ContainsDefinition (NPCDef def)
+        {
+            return defById.ContainsValue(def);
+        }
+
+        public static bool Remove (int id)
+        {
+            NPCDef def;
+            defById.TryGetValue(id, out def);
+
+            if (def != null)
+            {
+                defById.Remove(id);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static bool TryGetValue (int id, out NPCDef def)
+        {
+            return defById.TryGetValue(id, out def);
         }
 
         #endregion

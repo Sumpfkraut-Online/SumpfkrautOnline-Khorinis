@@ -1,7 +1,6 @@
 ﻿namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 {
-
-
+    
     public enum MobInterType
     {
         None            = 0,

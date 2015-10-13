@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 {
-    class VobDef : ScriptObject
+    abstract class VobDef : ScriptObject
     {
 
         #region dictionaries
@@ -59,6 +59,18 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         public VobDef ()
             : base("VobDef (default)")
         { }
+
+        #endregion
+        
+
+
+        #region dictionary-methods
+
+        //public static bool Add (VobDef def);
+        //public static bool ContainsId (int id);
+        //public static bool ContainsDefinition (VobDef def);
+        //public static bool Remove (int id);
+        //public static bool TryGetValue (int id, out VobDef def);
 
         #endregion
 

@@ -118,5 +118,73 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #endregion
 
+
+
+        #region dictionary-methods
+
+        public static bool Add (MobDef def)
+        {
+            int id = def.getId();
+
+            if (id < 1)
+            {
+                MakeLogWarningStatic(typeof(MobDef), 
+                    "Prevented attempt of adding a definition to to dictionary: "
+                     + "An invalid id < 1 was provided!");
+                return false;
+            }
+
+            if (defById.ContainsKey(id))
+            {
+                MakeLogWarningStatic(typeof(MobDef), 
+                    String.Format("Prevented attempt of adding a definition to dictionary:"
+                        + " The {0}={1} is already taken!", "id", id));
+                return false;
+            }
+            
+            defById.Add(id, def);
+            return true;
+        }
+
+        public static bool ContainsId (int id)
+        {
+            if (defById.ContainsKey(id))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static bool ContainsDefinition (MobDef def)
+        {
+            return defById.ContainsValue(def);
+        }
+
+        public static bool Remove (int id)
+        {
+            MobDef def;
+            defById.TryGetValue(id, out def);
+
+            if (def != null)
+            {
+                defById.Remove(id);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static bool TryGetValue (int id, out MobDef def)
+        {
+            return defById.TryGetValue(id, out def);
+        }
+
+        #endregion
+
     }
 }
