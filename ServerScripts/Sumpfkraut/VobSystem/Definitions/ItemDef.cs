@@ -19,7 +19,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         #region dictionaries
 
         protected static Dictionary<int, ItemDef> defById = new Dictionary<int, ItemDef>();
-        //protected static Dictionary<string, ItemDef> defByInstanceName = new Dictionary<string, ItemDef>();
+        protected static Dictionary<string, ItemDef> defByInstanceName = new Dictionary<string, ItemDef>();
 
         #endregion
 

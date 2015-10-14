@@ -88,6 +88,27 @@ namespace GUC.Server.Scripts
             //ItemDef def2 = new ItemDef(); def2.setId(2); ItemDef.Add(def2);
             //ItemDef def2_ = new ItemDef(); def2_.setId(2); ItemDef.Add(def2_);
 
+            ItemInstance ii = new ItemInstance("Schmarn");
+            ii.Name = "Schmarn (Ya mei!)";
+            ii.Material = Enumeration.ItemMaterial.Metal;
+            ii.Type = Enumeration.ItemType.Food_Small;
+            ii.Weight = 99;
+            ii.Description = String.Format("Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
+                +"Sed faucibus magna sem, at lobortis magna dignissim ac. " 
+                + "Suspendisse vitae augue ultrices velit suscipit pellentesque et quis ligula. "
+                + "Duis vitae pharetra nisl. Aenean id sollicitudin ligula, ut mattis arcu. "
+                + "Maecenas varius euismod ornare. Etiam id leo sodales, facilisis leo ac, "
+                + "tincidunt enim. Nulla eget efficitur sapien, eu egestas dolor. Nullam fermentum "
+                + "tincidunt massa, non tempus magna lacinia a. In feugiat vel risus ac vestibulum.");
+            ii.Visual = "ItFo_FishSoup.3ds";
+            Item item = new Item(ii);
+            item.Amount = 9001;
+            item.Position = new GUC.Types.Vec3f(0.0f, 0.0f, 0.0f);
+            //item.CDDyn = false;
+            //item.CDStatic = true;
+            //World.NewWorld.ItemDict.Add(1, item);
+            //item.Spawn(World.NewWorld);
+            item.Drop(World.NewWorld, item.Position);
             
 
 
