@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.WorldObjects;
+using GUC.Client.WorldObjects;
 using Gothic.zClasses;
 using WinApi;
 using Gothic.zTypes;
-using GUC.WorldObjects.Character;
 using GUC.Enumeration;
 using RakNet;
 
-namespace GUC.Hooks
+namespace GUC.Client.Hooks
 {
     class hSpell
     {
@@ -22,11 +21,11 @@ namespace GUC.Hooks
             try
             {
                 int address = Convert.ToInt32(message);
-                itemaddr = Process.ThisProcess().ReadInt(address);
+                itemaddr = Program.Process.ReadInt(address);
             }
             catch (Exception ex)
             {
-                zERROR.GetZErr(Process.ThisProcess()).Report(4, 'G', "Hook oCStartAnim_ModelAnim: " + ex.ToString(), 0, "Hooks.zCModelHook.cs", 0);
+                zERROR.GetZErr(Program.Process).Report(4, 'G', "Hook oCStartAnim_ModelAnim: " + ex.ToString(), 0, "Hooks.zCModelHook.cs", 0);
             }
             return 0;
         }
@@ -35,7 +34,7 @@ namespace GUC.Hooks
         {
             try
             {
-                Process process = Process.ThisProcess();
+                /*Process process = Program.Process;
 
                 oCSpell spell = new oCSpell(process, itemaddr);
 
@@ -68,11 +67,11 @@ namespace GUC.Hooks
                 //spell.TimePerMana = 0;
                 //spell.DamagePerLevel = 25;
                 //spell.DamageType = (int)Gothic.zStruct.oSDamageDescriptor.DamageTypes.DAM_MAGIC;
-
+                */
             }
             catch (Exception ex)
             {
-                zERROR.GetZErr(Process.ThisProcess()).Report(4, 'G', "Hook oCStartAnim_ModelAnim: " + ex.ToString(), 0, "Hooks.zCModelHook.cs", 0);
+                zERROR.GetZErr(Program.Process).Report(4, 'G', "Hook oCStartAnim_ModelAnim: " + ex.ToString(), 0, "Hooks.zCModelHook.cs", 0);
             }
             return 0;
         }
@@ -82,7 +81,7 @@ namespace GUC.Hooks
         {
             try
             {
-                Process process = Process.ThisProcess();
+                /*Process process = Program.Process;
                 int address = Convert.ToInt32(message);
                 int spelladdr = process.ReadInt(address);
                 int spellString = process.ReadInt(address + 4);//Stack pointer will be pushed as variable
@@ -111,13 +110,13 @@ namespace GUC.Hooks
 
 
 
+                */
 
-
-                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Spell: GetSpellInstanceName SpellID: " + spellID, 0, "hItem.cs", 0);
+                //zERROR.GetZErr(Program.Process).Report(2, 'G', "Spell: GetSpellInstanceName SpellID: " + spellID, 0, "hItem.cs", 0);
             }
             catch (Exception ex)
             {
-                zERROR.GetZErr(Process.ThisProcess()).Report(4, 'G', "Hook oCStartAnim_ModelAnim: " + ex.ToString(), 0, "Hooks.zCModelHook.cs", 0);
+                zERROR.GetZErr(Program.Process).Report(4, 'G', "Hook oCStartAnim_ModelAnim: " + ex.ToString(), 0, "Hooks.zCModelHook.cs", 0);
             }
             return 0;
         }
@@ -126,7 +125,7 @@ namespace GUC.Hooks
         {
             try
             {
-                Process process = Process.ThisProcess();
+                /*Process process = Program.Process;
                 int address = Convert.ToInt32(message);
                 int spelladdr = process.ReadInt(address);
                 int spellString = process.ReadInt(address + 4);//Stack pointer will be pushed as variable
@@ -158,13 +157,13 @@ namespace GUC.Hooks
 
 
 
+                */
 
-
-                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Spell: getName SpellID: ", 0, "hItem.cs", 0);
+                zERROR.GetZErr(Program.Process).Report(2, 'G', "Spell: getName SpellID: ", 0, "hItem.cs", 0);
             }
             catch (Exception ex)
             {
-                zERROR.GetZErr(Process.ThisProcess()).Report(4, 'G', "Hook oCStartAnim_ModelAnim: " + ex.ToString(), 0, "Hooks.zCModelHook.cs", 0);
+                zERROR.GetZErr(Program.Process).Report(4, 'G', "Hook oCStartAnim_ModelAnim: " + ex.ToString(), 0, "Hooks.zCModelHook.cs", 0);
             }
             return 0;
         }
@@ -175,7 +174,7 @@ namespace GUC.Hooks
         {
             try
             {
-                Process process = Process.ThisProcess();
+                /*Process process = Program.Process;
                 int address = Convert.ToInt32(message);
 
                 oCMag_Book magBook = new oCMag_Book(process, process.ReadInt(address));
@@ -191,7 +190,7 @@ namespace GUC.Hooks
                 if (gSpell.Caster == null || gSpell.Caster.Address != player.Address)
                     return 0;
 
-                NPCProto caster = Player.Hero;
+                NPC caster = Player.Hero;
                 Vob target = null;
                 if (gSpell.Target != null && gSpell.Target.Address != 0)
                 {
@@ -225,11 +224,11 @@ namespace GUC.Hooks
                 stream.Write(castLevel);
                 
                 Program.client.client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
-
+                */
             }
             catch (Exception ex)
             {
-                zERROR.GetZErr(Process.ThisProcess()).Report(4, 'G', "Hook oCStartAnim_ModelAnim: " + ex.ToString(), 0, "Hooks.zCModelHook.cs", 0);
+                zERROR.GetZErr(Program.Process).Report(4, 'G', "Hook oCStartAnim_ModelAnim: " + ex.ToString(), 0, "Hooks.zCModelHook.cs", 0);
             }
             return 0;
         }

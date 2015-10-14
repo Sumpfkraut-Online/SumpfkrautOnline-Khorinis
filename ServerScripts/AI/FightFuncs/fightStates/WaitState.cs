@@ -10,7 +10,7 @@ namespace GUC.Server.Scripts.AI.FightFuncs.fightStates
     {
         public long time = 0;
         public long timespan = 0;
-        public WaitState(NPCProto npc, long time)
+        public WaitState(NPC npc, long time)
             : base(npc)
         {
             timespan = time;

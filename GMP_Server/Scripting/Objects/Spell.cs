@@ -124,7 +124,7 @@ namespace GUC.Server.Scripting.Objects
         #region Events
         #region OnCastSpell
         public event GUC.Server.Scripting.Events.CastSpell OnCastSpell;
-        internal void iOnCastSpell(NPCProto caster, Spell spell, Vob target)
+        internal void iOnCastSpell(NPC caster, Spell spell, Vob target)
         {
             if (OnCastSpell != null)
                 OnCastSpell(caster, spell, target);

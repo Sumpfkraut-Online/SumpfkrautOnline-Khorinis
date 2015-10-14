@@ -10,18 +10,16 @@ namespace GUC.WorldObjects
         protected static Dictionary<String, World> worldDict = new Dictionary<string, World>();
         protected static Dictionary<int, Vob> vobDict = new Dictionary<int, Vob>();
 
-        protected static List<NPCProto> npcProtoList = new List<NPCProto>();
         protected static List<NPC> npcList = new List<NPC>();
-        protected static List<Player> playerList = new List<Player>();
+        protected static List<NPC> playerList = new List<NPC>();
         protected static List<Item> itemList = new List<Item>();
         protected static List<Vob> vobList = new List<Vob>(); 
 
         public static Dictionary<String, World> WorldDict { get { return worldDict; } }
         public static Dictionary<int, Vob> VobDict { get { return vobDict; } }
 
-        public static List<NPCProto> NpcProtoList { get { return npcProtoList; } }
         public static List<NPC> NpcList { get { return npcList; } }
-        public static List<Player> PlayerList { get { return playerList; } }
+        public static List<NPC> PlayerList { get { return playerList; } }
         public static List<Item> ItemList { get { return itemList; } }
         public static List<Vob> VobList { get { return vobList; } }//Only real Vobs! No Items, No NPCS!
 

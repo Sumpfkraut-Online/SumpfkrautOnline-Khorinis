@@ -77,7 +77,7 @@ namespace GUC.Server.Scripting.Objects
         }
 
 
-        public void toContainer(NPCProto proto)
+        public void toContainer(NPC proto)
         {
             proto.proto.addItem(this.ProtoItem);
             _toContainer(proto);

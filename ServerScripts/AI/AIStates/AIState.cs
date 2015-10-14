@@ -11,8 +11,8 @@ namespace GUC.Server.Scripts.AI.AIStates
         protected bool mStarted = false;
         protected bool mContinues = false;//Continue this state when it is the last?
 
-        protected NPCProto mNPC = null;
-        public AIState(NPCProto proto)
+        protected NPC mNPC = null;
+        public AIState(NPC proto)
         {
             mNPC = proto;
         }

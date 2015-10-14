@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Mono.Data.Sqlite;
 using SQLiteDataReader = Mono.Data.Sqlite.SqliteDataReader;
+using SQLiteCommand = Mono.Data.Sqlite.SqliteCommand;
 //using SQLiteCommand = Mono.Data.Sqlite.SqliteCommand;
 
 namespace GUC.Server.Scripts.Sumpfkraut.Database
@@ -11,32 +12,42 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
 
     enum DefTableEnum
     {
-        Mob_def                 = 0,
-        Item_def                = 1,
-        Spell_def               = 2,
-        NPC_def                 = 3,
-        Effect_def              = 4,
-        Effect_Changes_def      = 5,
+        Mob_def,
+        Item_def,
+        Spell_def,
+        NPC_def,
+        Effect_def,
+        Effect_Changes_def,
     }
 
     enum InstTableEnum
     {
-        World_inst              = 0,
-        Account_inst            = 1,
+        World_inst,
+        Account_inst,
 
-        MobDef_Effects_inst     = 10,
-        ItemDef_Effects_inst    = 11,
-        NPCDef_Effects_inst     = 12,
+        Mob_Effects_inst,
+        Spell_Effects_inst,
+        Item_Effects_inst,
+        NPC_Effects_inst,
 
-        Mob_inst                = 13,
-        Item_inst               = 14,
-        NPC_inst                = 15,
+        Mob_inst,
+        Spell_inst,
+        Item_inst,
+        NPC_inst,
 
-        ItemInInventory_inst    = 16,
-        MobInWorld_inst         = 17,
-        ItemInWorld_inst        = 18,
-        NPCInWorld_inst         = 19,
+        ItemInInventory_inst,
+        MobInWorld_inst,
+        ItemInWorld_inst,
+        NPCInWorld_inst,
     }
+
+    //enum EffectsInstTableEnum
+    //{
+    //    Mob_Effects_inst,
+    //    Spell_Effects_inst,
+    //    Item_Effects_inst,
+    //    NPC_Effects_inst
+    //}
 
     /**
     *   Enum of the supported SQLite-Get-Types, used internally 
@@ -61,7 +72,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
     {
 
         public static readonly Dictionary<DefTableEnum, string>
-            DefTableNames = new Dictionary<DefTableEnum, string>
+            DefTableNamesDict = new Dictionary<DefTableEnum, string>
         {
             {DefTableEnum.Mob_def, "Mob_def"},
             {DefTableEnum.Item_def, "Item_def"},
@@ -79,7 +90,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
         *   @see sqlReadType
         *   @see SQLiteDataReader
         */
-        //public static Dictionary<DefTableEnum, SQLiteGetTypeEnum[]> DefTableDict = new Dictionary<DefTableEnum, SQLiteGetTypeEnum[]>();
         public static readonly Dictionary<DefTableEnum, Dictionary<String, SQLiteGetTypeEnum>>
             DefTableDict = new Dictionary<DefTableEnum, Dictionary<String, SQLiteGetTypeEnum>> 
         {
@@ -87,34 +97,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                 DefTableEnum.Mob_def, new Dictionary<String, SQLiteGetTypeEnum>
                 {
                     {"ID",                      SQLiteGetTypeEnum.GetInt32},
-                    {"VobType",                 SQLiteGetTypeEnum.GetInt32},
                     {"Visual",                  SQLiteGetTypeEnum.GetString},
                     {"Material",                SQLiteGetTypeEnum.GetInt32},
                     {"HasEffect",               SQLiteGetTypeEnum.GetBoolean}
-                }
-            },
-            {
-                DefTableEnum.Item_def, new Dictionary<String, SQLiteGetTypeEnum>
-                {
-                    {"ID",                      SQLiteGetTypeEnum.GetInt32},
-                    {"VobType",                 SQLiteGetTypeEnum.GetInt32},
-                    {"Visual",                  SQLiteGetTypeEnum.GetString},
-                    {"Visual_Skin",             SQLiteGetTypeEnum.GetInt32},
-                    {"InstanceName",            SQLiteGetTypeEnum.GetString},
-                    {"Name",                    SQLiteGetTypeEnum.GetString},
-                    {"Description",             SQLiteGetTypeEnum.GetString},
-                    {"ScemeName",               SQLiteGetTypeEnum.GetString},
-                    {"MainFlag",                SQLiteGetTypeEnum.GetInt32},
-                    {"Flags",                   SQLiteGetTypeEnum.GetInt32},
-                    {"Material",                SQLiteGetTypeEnum.GetInt32},
-                    {"HasEffect",               SQLiteGetTypeEnum.GetBoolean},
-                    // better define them as effects due them being quite custom attributes/features
-                    // which aren't shared by many most items
-                    //{"IsGold",                  SQLiteGetTypeEnum.GetBoolean},
-                    //{"IsKeyInstance",           SQLiteGetTypeEnum.GetBoolean},
-                    //{"IsTorch",                 SQLiteGetTypeEnum.GetBoolean},
-                    //{"IsTorchBurned",           SQLiteGetTypeEnum.GetBoolean},
-                    //{"IsTorchBurned",           SQLiteGetTypeEnum.GetBoolean},
                 }
             },
             {
@@ -140,10 +125,39 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                 }
             },
             {
+                DefTableEnum.Item_def, new Dictionary<String, SQLiteGetTypeEnum>
+                {
+                    {"ID",                      SQLiteGetTypeEnum.GetInt32},
+                    {"InstanceName",            SQLiteGetTypeEnum.GetString},
+                    {"Name",                    SQLiteGetTypeEnum.GetString},
+                    {"ScemeName",               SQLiteGetTypeEnum.GetString},
+                    {"Protections",             SQLiteGetTypeEnum.GetString},
+                    {"Damages",                 SQLiteGetTypeEnum.GetString},
+                    {"Value",                   SQLiteGetTypeEnum.GetInt32},
+                    {"MainFlag",                SQLiteGetTypeEnum.GetInt32},
+                    {"Flag",                    SQLiteGetTypeEnum.GetInt32},
+                    {"ArmorFlag",               SQLiteGetTypeEnum.GetInt32},
+                    {"DamageType",              SQLiteGetTypeEnum.GetInt32},
+                    {"TotalDamage",             SQLiteGetTypeEnum.GetInt32},
+                    {"Range",                   SQLiteGetTypeEnum.GetInt32},
+                    {"Visual",                  SQLiteGetTypeEnum.GetString},
+                    {"VisualChange",            SQLiteGetTypeEnum.GetString},
+                    {"Effect",                  SQLiteGetTypeEnum.GetString},
+                    {"VisualSkin",              SQLiteGetTypeEnum.GetInt32},
+                    {"Material",                SQLiteGetTypeEnum.GetInt32},
+                    {"Munition",                SQLiteGetTypeEnum.GetInt32},
+                    {"IsKeyInstance",           SQLiteGetTypeEnum.GetBoolean},
+                    {"IsTorch",                 SQLiteGetTypeEnum.GetBoolean},
+                    {"IsTorchBurning",          SQLiteGetTypeEnum.GetBoolean},
+                    {"IsTorchBurned",           SQLiteGetTypeEnum.GetBoolean},
+                    {"IsGold",                  SQLiteGetTypeEnum.GetBoolean},
+                    {"HasEffects",               SQLiteGetTypeEnum.GetBoolean},
+                }
+            },
+            {
                 DefTableEnum.NPC_def, new Dictionary<String, SQLiteGetTypeEnum>
                 {
                     {"ID",                      SQLiteGetTypeEnum.GetInt32},
-                    {"VobType",                 SQLiteGetTypeEnum.GetInt32},
                     {"Visual",                  SQLiteGetTypeEnum.GetString},
                     {"Visual_Skin",             SQLiteGetTypeEnum.GetInt32},
                     {"HasEffect",               SQLiteGetTypeEnum.GetBoolean}
@@ -159,21 +173,268 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
             {
                 DefTableEnum.Effect_Changes_def, new Dictionary<String, SQLiteGetTypeEnum>
                 {
-                    {"Event",                   SQLiteGetTypeEnum.GetInt32},
+                    {"ID",                      SQLiteGetTypeEnum.GetInt32},
+                    {"EventID",                 SQLiteGetTypeEnum.GetInt32},
                     {"EffectDefID",             SQLiteGetTypeEnum.GetInt32},
-                    {"Change",                  SQLiteGetTypeEnum.GetInt32},
+                    {"ChangeType",              SQLiteGetTypeEnum.GetInt32},
                     {"Parameters",              SQLiteGetTypeEnum.GetString}
                 }
             }
         };
 
+
+
+        public static readonly Dictionary<DefTableEnum, InstTableEnum>
+            EffectInstAccesDict = new Dictionary<DefTableEnum, InstTableEnum>()
+        {
+            {DefTableEnum.Mob_def, InstTableEnum.Mob_Effects_inst},
+            {DefTableEnum.Spell_def, InstTableEnum.Spell_Effects_inst},
+            {DefTableEnum.Item_def, InstTableEnum.Item_Effects_inst},
+            {DefTableEnum.NPC_def, InstTableEnum.NPC_Effects_inst},
+        };
+
+        public static readonly Dictionary<InstTableEnum, string>
+            EffectsInstTableNamesDict = new Dictionary<InstTableEnum, string>()
+        {
+            {InstTableEnum.Mob_Effects_inst, "Mob_Effects_inst"},
+            {InstTableEnum.Spell_Effects_inst, "Spell_Effects_inst"},
+            {InstTableEnum.Item_Effects_inst, "Item_Effects_inst"},
+            {InstTableEnum.NPC_Effects_inst, "NPC_Effects_inst"},
+        };
+
+        public static readonly Dictionary<InstTableEnum, string>
+            EffectsInstTableDict_VobDefID = new Dictionary<InstTableEnum, string>()
+        {
+            {InstTableEnum.Mob_Effects_inst, "MobDefID"},
+            {InstTableEnum.Spell_Effects_inst, "SpellDefID"},
+            {InstTableEnum.Item_Effects_inst, "ItemDefID"},
+            {InstTableEnum.NPC_Effects_inst, "NPCDefID"},
+        };
+
+        public static readonly Dictionary<InstTableEnum, Dictionary<String, SQLiteGetTypeEnum>>
+            InstTableDict = new Dictionary<InstTableEnum, Dictionary<String, SQLiteGetTypeEnum>> 
+        {
+            {
+                InstTableEnum.Mob_Effects_inst, new Dictionary<String, SQLiteGetTypeEnum>
+                {
+                    {"MobDefID",                      SQLiteGetTypeEnum.GetInt32},
+                    {"EffectDefID",                   SQLiteGetTypeEnum.GetInt32},
+                }
+            },
+            {
+                InstTableEnum.Spell_Effects_inst, new Dictionary<String, SQLiteGetTypeEnum>
+                {
+                    {"SpellDefID",                    SQLiteGetTypeEnum.GetInt32},
+                    {"EffectDefID",                   SQLiteGetTypeEnum.GetInt32},
+                }
+            },
+            {
+                InstTableEnum.Item_Effects_inst, new Dictionary<String, SQLiteGetTypeEnum>
+                {
+                    {"ItemDefID",                     SQLiteGetTypeEnum.GetInt32},
+                    {"EffectDefID",                   SQLiteGetTypeEnum.GetInt32},
+                }
+            },
+            {
+                InstTableEnum.NPC_Effects_inst, new Dictionary<String, SQLiteGetTypeEnum>
+                {
+                    {"NPCDefID",                      SQLiteGetTypeEnum.GetInt32},
+                    {"EffectDefID",                   SQLiteGetTypeEnum.GetInt32},
+                }
+            },
+        };
+
+
+
         /**
-        *   Method that is mainly used internally to read data from SQLiteDataReader given the type.
-        *   It is used as more flexible "interface" to the standart Get-methods of the SQLiteDataReader
-        *   by other methods. Extra care should be taken when processing the return value, because
-        *   it is of variable type (although generalized as object-type).
-        */
-        public static object SqlReadType(ref SQLiteDataReader rdr, int col, SQLiteGetTypeEnum get)
+         *   Method to convert strings of a sql-result to the hinted datatype.
+         *   Return or false if the data conversion succeeds or fails, respectively.
+         *   @param sqlString is the string to convert
+         *   @param get is the hint on the final data type of the conversion
+         *   @param output is the object where the resulting type-converted string will be stored into
+         */
+        public static bool SqlStringToData (string sqlString, SQLiteGetTypeEnum get, ref object output)
+        {
+            if (sqlString != null)
+            {
+                switch (get)
+                {
+                    case (SQLiteGetTypeEnum.GetBoolean):
+                        bool outBool = false;
+                        if (bool.TryParse(sqlString, out outBool))
+                        {
+                            output = outBool;
+                            return true;
+                        }
+                        else if (sqlString.Equals("0"))
+                        {
+                            output = false;
+                            return true;
+                        }
+                        else if (sqlString.Equals("1"))
+                        {
+                            output = true;
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Logger.logError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + get + " in SqlStringToData.");
+                            break;
+                        }
+                    case (SQLiteGetTypeEnum.GetByte):
+                        byte outByte = 0;
+                        if (byte.TryParse(sqlString, out outByte))
+                        {
+                            output = outByte;
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Logger.logError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + get + " in SqlStringToData.");
+                            break;
+                        }
+                    case (SQLiteGetTypeEnum.GetChar):
+                        char outChar = '0';
+                        if (char.TryParse(sqlString, out outChar))
+                        {
+                            output = outChar;
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Logger.logError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + get + " in SqlStringToData.");
+                            break;
+                        }
+                    case (SQLiteGetTypeEnum.GetDateTime):
+                        DateTime outDateTime = new DateTime();
+                        if (DateTime.TryParse(sqlString, out outDateTime))
+                        {
+                            output = outDateTime;
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Logger.logError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + get + " in SqlStringToData.");
+                            break;
+                        }
+                    case (SQLiteGetTypeEnum.GetDecimal):
+                        decimal outDecimal = 0;
+                        if (decimal.TryParse(sqlString, out outDecimal))
+                        {
+                            output = outDecimal;
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Logger.logError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + get + " in SqlStringToData.");
+                            break;
+                        }
+                    case (SQLiteGetTypeEnum.GetDouble):
+                        double outDouble = 0;
+                        if (double.TryParse(sqlString, out outDouble))
+                        {
+                            output = outDouble;
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Logger.logError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + get + " in SqlStringToData.");
+                            break;
+                        }
+                    case (SQLiteGetTypeEnum.GetFloat):
+                        float outFloat = 0;
+                        if (float.TryParse(sqlString, out outFloat))
+                        {
+                            output = outFloat;
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Logger.logError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + get + " in SqlStringToData.");
+                            break;
+                        }
+                    case (SQLiteGetTypeEnum.GetGuid):
+                        Guid outGuid = Guid.Empty;
+                        if (Guid.TryParse(sqlString, out outGuid))
+                        {
+                            output = outGuid;
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Logger.logError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + get + " in SqlStringToData.");
+                            break;
+                        }
+                    case (SQLiteGetTypeEnum.GetInt16):
+                        Int16 outInt16 = 0;
+                        if (Int16.TryParse(sqlString, out outInt16))
+                        {
+                            output = outInt16;
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Logger.logError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + get + " in SqlStringToData.");
+                            break;
+                        }
+                    case (SQLiteGetTypeEnum.GetInt32):
+                        Int32 outInt32 = 0;
+                        if (Int32.TryParse(sqlString, out outInt32))
+                        {
+                            output = outInt32;
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Logger.logError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + get + " in SqlStringToData.");
+                            break;
+                        }
+                    case (SQLiteGetTypeEnum.GetInt64):
+                        Int64 outInt64 = 0;
+                        if (Int64.TryParse(sqlString, out outInt64))
+                        {
+                            output = outInt64;
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Logger.logError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + get + " in SqlStringToData.");
+                            break;
+                        }
+                    case (SQLiteGetTypeEnum.GetString):
+                        output = sqlString;
+                        return true;
+                    default:
+                        Log.Logger.logError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + get + " in SqlStringToData because this datatype is not supported.");
+                        break;
+                }
+            }
+
+            return false;
+        }
+        
+        /**
+         *   Method that is mainly used internally to read data from SQLiteDataReader given the type.
+         *   It is used as more flexible "interface" to the standart Get-methods of the SQLiteDataReader
+         *   by other methods. Extra care should be taken when processing the return value, because
+         *   it is of variable type (although generalized as object-type).
+         *   @param rdr is the SQLiteDataReader which has access to the sql query result
+         *   @param col is the column of the current row of the sql result which should be read
+         *   @param get provides the hint which get-method of the SQLiteDataReader should be used (type conversionon read)
+         */
+        public static object SqlReadType (ref SQLiteDataReader rdr, int col, SQLiteGetTypeEnum get)
         {
             try
             {

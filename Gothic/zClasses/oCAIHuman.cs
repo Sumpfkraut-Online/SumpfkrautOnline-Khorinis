@@ -78,6 +78,10 @@ namespace Gothic.zClasses
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.InitAllAnis, new CallValue[] { });
         }
 
+        public void PC_WeaponMove(int arg)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)0x69A0E0, new CallValue[] { (IntArg)arg });
+        }
 
         public void Destroy()
         {

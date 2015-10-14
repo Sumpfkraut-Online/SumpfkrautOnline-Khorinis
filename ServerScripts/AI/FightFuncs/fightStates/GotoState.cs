@@ -8,10 +8,10 @@ namespace GUC.Server.Scripts.AI.FightFuncs.fightStates
 {
     public class GotoState : FightState
     {
-        NPCProto mEnemy = null;
+        NPC mEnemy = null;
         float mRange = 0.0f;
 
-        public GotoState(NPCProto proto, NPCProto enemy, float range)
+        public GotoState(NPC proto, NPC enemy, float range)
             : base( proto)
         {
             mEnemy = enemy;

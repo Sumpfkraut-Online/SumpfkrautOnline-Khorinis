@@ -94,9 +94,9 @@ namespace GUC.Server.Scripting.Objects
         /// <param name="position"></param>
         /// <param name="distance"></param>
         /// <returns></returns>
-        public List<NPCProto> getNearNPC(Vec3f position, int distance)
+        public List<NPC> getNearNPC(Vec3f position, int distance)
         {
-            List<NPCProto> playerList = new List<NPCProto>();
+            List<NPC> playerList = new List<NPC>();
 
             uint[] keys = WorldObjects.World.getImportantKeysByPosition(position.Data, distance);
 
@@ -105,8 +105,8 @@ namespace GUC.Server.Scripting.Objects
                 if (!sWorld.getWorld(this.world.Map).NPCPositionList.ContainsKey(key))
                     continue;
 
-                List<WorldObjects.Character.NPCProto> mobs = sWorld.getWorld(this.world.Map).NPCPositionList[key];
-                foreach (WorldObjects.Character.NPCProto m in mobs)
+                List<WorldObjects.Character.NPC> mobs = sWorld.getWorld(this.world.Map).NPCPositionList[key];
+                foreach (WorldObjects.Character.NPC m in mobs)
                 {
                     if (m.ScriptingNPC is Player && !((Player)m.ScriptingVob).IsSpawned())
                         continue;
@@ -114,7 +114,7 @@ namespace GUC.Server.Scripting.Objects
 
                     if (mD <= distance)
                     {
-                        playerList.Add((NPCProto)m.ScriptingNPC);
+                        playerList.Add((NPC)m.ScriptingNPC);
                     }
                 }
             }
@@ -126,10 +126,10 @@ namespace GUC.Server.Scripting.Objects
         /// Returns an array of all npcs and player.
         /// </summary>
         /// <returns></returns>
-        public NPCProto[] getNPCList()
+        public NPC[] getNPCList()
         {
-            NPCProto[] arrayList = new NPCProto[world.NPCList.Count];
-            WorldObjects.Character.NPCProto[] protoList = world.NPCList.ToArray();
+            NPC[] arrayList = new NPC[world.NPCList.Count];
+            WorldObjects.Character.NPC[] protoList = world.NPCList.ToArray();
             for (int i = 0; i < arrayList.Length; i++)
             {
                 arrayList[i] = protoList[i].ScriptingNPC;
@@ -200,7 +200,7 @@ namespace GUC.Server.Scripting.Objects
         {
             for (int i = start; i < end; i++)
             {
-                WorldObjects.Character.NPCProto vob = world.NPCList[i];
+                WorldObjects.Character.NPC vob = world.NPCList[i];
                 yield return vob.ScriptingNPC;
             }
         }

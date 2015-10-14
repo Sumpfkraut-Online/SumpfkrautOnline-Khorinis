@@ -4,29 +4,27 @@ using System.Linq;
 using System.Text;
 using Gothic.zClasses;
 using WinApi;
-using GUC.WorldObjects;
+using GUC.Client.WorldObjects;
 using GUC.Enumeration;
 using RakNet;
-using GUC.WorldObjects.Character;
-using GUC.WorldObjects.Mobs;
 
-namespace GUC.Hooks
+namespace GUC.Client.Hooks
 {
     public class hMobInter
     {
         public static Int32 OnTrigger(String message)
         {
             int address = Convert.ToInt32(message);
-            Process process = Process.ThisProcess();
+            Process process = Program.Process;
             try
             {
-                zCVob str = new zCVob(process, process.ReadInt(address + 4));
+                /*zCVob str = new zCVob(process, process.ReadInt(address + 4));
                 zCVob str2 = new zCVob(process, process.ReadInt(address + 8));
                 oCMobInter mobInter = new oCMobInter(process, process.ReadInt(address));
 
                 if (oCNpc.Player(process).Address == str2.Address)
                 {
-                    zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "Trigger: " + mobInter.State + " | StateNum: " + mobInter.StateNum + " | " + mobInter.Rewind, 0, "Program.cs", 0);
+                    zERROR.GetZErr(Program.Process).Report(2, 'G', "Trigger: " + mobInter.State + " | StateNum: " + mobInter.StateNum + " | " + mobInter.Rewind, 0, "Program.cs", 0);
 
                     if (!sWorld.SpawnedVobDict.ContainsKey(mobInter.Address))
                         return 0;
@@ -42,11 +40,11 @@ namespace GUC.Hooks
                     stream.Write(mI.ID);
                     Program.client.client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
 
-                }
+                }*/
             }
             catch (Exception ex)
             {
-                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', ex.ToString(), 0, "hMobInter.cs", 0);
+                zERROR.GetZErr(Program.Process).Report(2, 'G', ex.ToString(), 0, "hMobInter.cs", 0);
             }
             return 0;
         }
@@ -54,16 +52,16 @@ namespace GUC.Hooks
         public static Int32 OnUnTrigger(String message)
         {
             int address = Convert.ToInt32(message);
-            Process process = Process.ThisProcess();
+            Process process = Program.Process;
             try
             {
-                zCVob str = new zCVob(process, process.ReadInt(address + 4));
+               /* zCVob str = new zCVob(process, process.ReadInt(address + 4));
                 zCVob str2 = new zCVob(process, process.ReadInt(address + 8));
                 oCMobInter mobInter = new oCMobInter(process, process.ReadInt(address));
 
                 if (oCNpc.Player(process).Address == str2.Address)
                 {
-                    zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "UnTrigger: " + mobInter.State + " | StateNum: " + mobInter.StateNum + " | " + mobInter.Rewind + " | " + str.Address + " | " + str2.Address + " | " + str + " | " + str2 + " | " + oCNpc.Player(process).FocusVob.Address, 0, "Program.cs", 0);
+                    zERROR.GetZErr(Program.Process).Report(2, 'G', "UnTrigger: " + mobInter.State + " | StateNum: " + mobInter.StateNum + " | " + mobInter.Rewind + " | " + str.Address + " | " + str2.Address + " | " + str + " | " + str2 + " | " + oCNpc.Player(process).FocusVob.Address, 0, "Program.cs", 0);
 
                     if (!sWorld.SpawnedVobDict.ContainsKey(mobInter.Address))
                         return 0;
@@ -84,11 +82,11 @@ namespace GUC.Hooks
                         oCMobLockable ML = new oCMobLockable(process, mI.Address);
                         ML.SetLocked(1);
                     }
-                }
+                }*/
             }
             catch (Exception ex)
             {
-                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', ex.ToString(), 0, "hMobInter.cs", 0);
+                zERROR.GetZErr(Program.Process).Report(2, 'G', ex.ToString(), 0, "hMobInter.cs", 0);
             }
             return 0;
         }
@@ -98,11 +96,11 @@ namespace GUC.Hooks
         public static Int32 StartInteraction(String message)
         {
             int address = Convert.ToInt32(message);
-            Process process = Process.ThisProcess();
+            Process process = Program.Process;
 
             try
             {
-                oCNpc npc = new oCNpc(process, process.ReadInt(address + 4));
+                /*oCNpc npc = new oCNpc(process, process.ReadInt(address + 4));
                 if (oCNpc.Player(process).Address == npc.Address)
                 {
                     oCMobInter mobInter = new oCMobInter(process, process.ReadInt(address));
@@ -120,11 +118,11 @@ namespace GUC.Hooks
                     stream.Write(mI.ID);
                     Program.client.client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
 
-                }
+                }*/
             }
             catch (Exception ex)
             {
-                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', ex.ToString(), 0, "hMobInter.cs", 0);
+                zERROR.GetZErr(Program.Process).Report(2, 'G', ex.ToString(), 0, "hMobInter.cs", 0);
             }
             return 0;
         }
@@ -132,11 +130,11 @@ namespace GUC.Hooks
         public static Int32 StopInteraction(String message)
         {
             int address = Convert.ToInt32(message);
-            Process process = Process.ThisProcess();
+            Process process = Program.Process;
 
             try
             {
-                oCNpc npc = new oCNpc(process, process.ReadInt(address + 4));
+                /*oCNpc npc = new oCNpc(process, process.ReadInt(address + 4));
 
                 if (oCNpc.Player(process).Address == npc.Address)
                 {
@@ -155,11 +153,11 @@ namespace GUC.Hooks
                     stream.Write(mI.ID);
                     Program.client.client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
 
-                }
+                }*/
             }
             catch (Exception ex)
             {
-                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', ex.ToString(), 0, "hMobInter.cs", 0);
+                zERROR.GetZErr(Program.Process).Report(2, 'G', ex.ToString(), 0, "hMobInter.cs", 0);
             }
             return 0;
         }
@@ -170,11 +168,11 @@ namespace GUC.Hooks
         public static Int32 PickLock(String message)
         {
             int address = Convert.ToInt32(message);
-            Process process = Process.ThisProcess();
+            Process process = Program.Process;
 
             try
             {
-                oCNpc npc = new oCNpc(process, process.ReadInt(address + 4));
+                /*oCNpc npc = new oCNpc(process, process.ReadInt(address + 4));
                 int ch = process.ReadInt(address + 8);
 
                 if (oCNpc.Player(process).Address == npc.Address)
@@ -195,11 +193,11 @@ namespace GUC.Hooks
                     stream.Write((char)ch);
                     Program.client.client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
 
-                }
+                }*/
             }
             catch (Exception ex)
             {
-                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', ex.ToString(), 0, "hMobInter.cs", 0);
+                zERROR.GetZErr(Program.Process).Report(2, 'G', ex.ToString(), 0, "hMobInter.cs", 0);
             }
             return 0;
         }
@@ -210,17 +208,17 @@ namespace GUC.Hooks
         public static Int32 StartStateChange( String message )
         {
             int address = Convert.ToInt32(message);
-            Process process = Process.ThisProcess();
+            Process process = Program.Process;
             try
             {
-                oCNpc str = new oCNpc(process, process.ReadInt(address + 4));
+                /*oCNpc str = new oCNpc(process, process.ReadInt(address + 4));
                 int x = process.ReadInt(address + 8);
                 int y = process.ReadInt(address + 12);
                 oCMobInter mobInter = new oCMobInter(process, process.ReadInt(address));
 
                 if (oCNpc.Player(process).Address == str.Address)
                 {
-                    zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', "StartStateChange: "+str+" "+x+" "+y, 0, "Program.cs", 0);
+                    zERROR.GetZErr(Program.Process).Report(2, 'G', "StartStateChange: "+str+" "+x+" "+y, 0, "Program.cs", 0);
 
 
                     if (!sWorld.SpawnedVobDict.ContainsKey(mobInter.Address))
@@ -239,11 +237,11 @@ namespace GUC.Hooks
                     Program.client.client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
 
                     
-                }
+                }*/
             }
             catch (Exception ex)
             {
-                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', ex.ToString(), 0, "hMobInter.cs", 0);
+                zERROR.GetZErr(Program.Process).Report(2, 'G', ex.ToString(), 0, "hMobInter.cs", 0);
             }
             return 0;
         }

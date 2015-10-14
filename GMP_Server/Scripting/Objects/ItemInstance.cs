@@ -338,14 +338,14 @@ namespace GUC.Server.Scripting.Objects
 
         #region OnEquip
         public event GUC.Server.Scripting.Events.NPCEquipEventHandler OnEquip;
-        internal void iOnEquip(NPCProto proto, Item item)
+        internal void iOnEquip(NPC proto, Item item)
         {
             if (OnEquip != null)
                 OnEquip(proto, item);
         }
 
         public event GUC.Server.Scripting.Events.NPCEquipEventHandler OnUnEquip;
-        internal void iOnUnEquip(NPCProto proto, Item item)
+        internal void iOnUnEquip(NPC proto, Item item)
         {
             if (OnUnEquip != null)
                 OnUnEquip(proto, item);
@@ -356,7 +356,7 @@ namespace GUC.Server.Scripting.Objects
 
         #region OnUse
         public event GUC.Server.Scripting.Events.UseItemEventHandler OnUse;
-        internal void iOnUse(NPCProto proto, Item item, short state, short targetState)
+        internal void iOnUse(NPC proto, Item item, short state, short targetState)
         {
             if (OnUse != null)
                 OnUse(proto, item, state, targetState);

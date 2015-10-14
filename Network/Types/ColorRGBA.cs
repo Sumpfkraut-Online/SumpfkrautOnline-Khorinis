@@ -57,11 +57,11 @@ namespace GUC.Types
         public byte B { get { return data[2]; } set { data[2] = value; } }
         public byte A { get { return data[3]; } set { data[3] = value; } }
 
-
         public static ColorRGBA White { get { return new ColorRGBA(255, 255, 255, 255); } }
         public static ColorRGBA Black { get { return new ColorRGBA(0, 0, 0, 255); } }
         public static ColorRGBA Red { get { return new ColorRGBA(255, 0, 0, 255); } }
-        public static ColorRGBA Blue { get { return new ColorRGBA(0, 255, 0, 255); } }
-        public static ColorRGBA Green { get { return new ColorRGBA(0, 0, 255, 255); } }
+        public static ColorRGBA Green { get { return new ColorRGBA(0, 255, 0, 255); } }
+        public static ColorRGBA Blue { get { return new ColorRGBA(0, 0, 255, 255); } }
+        public static ColorRGBA Grey { get { return new ColorRGBA(155, 155, 155, 255); } }
     }
 }

@@ -26,7 +26,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\GothicII\System\UntoldChapter\DLL\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -40,19 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CRC32.cs" />
-    <Compile Include="mClasses\Bar.cs" />
-    <Compile Include="mClasses\Button.cs" />
-    <Compile Include="mClasses\Cursor.cs" />
-    <Compile Include="mClasses\Elements\mEButton.cs" />
-    <Compile Include="mClasses\Elements\mEItem.cs" />
-    <Compile Include="mClasses\Elements\mETextBox.cs" />
     <Compile Include="mClasses\InputHooked.cs" />
-    <Compile Include="mClasses\textArea.cs" />
-    <Compile Include="mClasses\listBox.cs" />
-    <Compile Include="mClasses\LoadingScreen.cs" />
-    <Compile Include="mClasses\ManagedListBox.cs" />
-    <Compile Include="mClasses\StealContainer.cs" />
-    <Compile Include="mClasses\textBox.cs" />
     <Compile Include="zClasses\CGameManager.cs" />
     <Compile Include="zClasses\zCViewDraw.cs" />
     <Compile Include="zClasses\oCVisualFX.cs" />
@@ -86,7 +74,7 @@
     <Compile Include="zClasses\zCAICamera.cs" />
     <Compile Include="zClasses\zCClassDef.cs" />
     <Compile Include="zClasses\zCConsole.cs" />
-    <Compile Include="zClasses\zCCSManager.cs" />
+    <Compile Include="zClasses\oCCSManager.cs" />
     <Compile Include="zClasses\zCEventManager.cs" />
     <Compile Include="zClasses\zCFont.cs" />
     <Compile Include="zClasses\zCInput.cs" />
@@ -129,6 +117,8 @@
     <Compile Include="zClasses\zCWaypoint.cs" />
     <Compile Include="zClasses\zERROR.cs" />
     <Compile Include="zClasses\zFile.cs" />
+    <Compile Include="zStruct\oCMsgAttack.cs" />
+    <Compile Include="zStruct\oCMsgMovement.cs" />
     <Compile Include="zStruct\zCEventMessage.cs" />
     <Compile Include="zStruct\NPCAiVar.cs" />
     <Compile Include="zStruct\oCMsgConversation.cs" />

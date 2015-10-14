@@ -171,6 +171,7 @@ namespace Gothic.zClasses
             CanSee = 0x00741C10,
             SetHead = 0x007380F0,
             InitModel = 0x00738480,
+            InitHumanAI = 0x0072F5B0,
             GetOverlay = 0x00730007,
             CreatePassivePerception = 0x0075B270,
             OnDamage_DD = 0x006660E0,
@@ -210,7 +211,9 @@ namespace Gothic.zClasses
             UnShrink = 0x0072CBA0,
             CloseSpellBook = 0x0073E9E0,
             SetVisual = 0x0072E3F0,
-            AvoidShrink = 0x0072D250
+            AvoidShrink = 0x0072D250,
+
+            EV_Strafe = 0x683DE0
         }
 
         public enum HookSize : uint
@@ -275,7 +278,9 @@ namespace Gothic.zClasses
             SetInteractItem = 6,
             IsUnconscious = 8,
             EV_AttackFinish = 7,
-            DoDie = 7
+            DoDie = 7,
+
+            EV_Strafe = 7
         }
         #endregion
 
@@ -297,6 +302,15 @@ namespace Gothic.zClasses
         #endregion
 
         #region statics
+        public static oCNpc Create(Process process)
+        {
+            int address = process.CDECLCALL<IntArg>(0x0075FA00, null); //_CreateInstance()
+
+            //Konstruktor...
+            process.THISCALL<NullReturnCall>((uint)address, 0x0072D950, null);
+            return new oCNpc(process, address);
+        }
+
         public static oCNpc Player(Process process)
         {
             return new oCNpc(process, process.ReadInt(0xAB2684));
@@ -411,6 +425,10 @@ namespace Gothic.zClasses
             get { return new oCItem(Process, Process.ReadInt(Address + (int)Offsets.InteractItem)); }
         }
 
+        public void SetInteractItem(oCItem item)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetInteractItem, new CallValue[] { item });
+        }
 
         public int Flags
         {
@@ -656,6 +674,11 @@ namespace Gothic.zClasses
             set {
                 Process.Write(value.Address, Address + (int)Offsets.FocusVob);
             }
+        }
+
+        public oCNpc GetFocusNpc()
+        {
+            return new oCNpc(Process, Process.THISCALL<IntArg>((uint)Address, (uint)0x732BF0, new CallValue[] { }));
         }
 
         public zCArray<oCNpcTalent> Talents
@@ -1005,6 +1028,11 @@ namespace Gothic.zClasses
             Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.InitModel, new CallValue[] { });
         }
 
+        public void InitHumanAI()
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.InitHumanAI, new CallValue[] { });
+        }
+
         public void CloseSteal()
         {
             Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.CloseSteal, new CallValue[] { });
@@ -1053,10 +1081,20 @@ namespace Gothic.zClasses
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.RemoveFromSlot, new CallValue[] { slot, new IntArg(vob), new IntArg(i) });
         }
+
+        public int GetInvSlot(zString slot)
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)0x749AE0, new CallValue[] { slot });
+        }
         
         public void PutInSlot(zString slot, zCVob vob, int i)
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.PutInSlot, new CallValue[] { slot, vob, new IntArg(i) });
+        }
+
+        public void PutInSlot(int slot, zCVob vob, int i)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)0x749D80, new CallValue[] { new IntArg(slot), vob, new IntArg(i) });
         }
 
         public void ResetPos(zVec3 pos)
@@ -1363,6 +1401,11 @@ namespace Gothic.zClasses
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.DoTakeVob, new CallValue[] { vob });
         }
+
+        public void SetLeftHand(zCVob vob)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)0x73B0C0, new CallValue[] { vob });
+        }
         #endregion
 
 
@@ -1373,6 +1416,98 @@ namespace Gothic.zClasses
                 process.Write(1, 0x00AB2664);
             else
                 process.Write(0, 0x00AB2664);
+        }
+
+        public void SetEnemy(oCNpc npc)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)0x734BC0, new CallValue[] { npc });
+        }
+
+        public int GetNextWeaponmode(int arg1, int arg2, int arg3)
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)0x739A30, new CallValue[] { (IntArg)arg1, (IntArg)arg2, (IntArg)arg3 });
+        }
+
+        public void DrawMeleeWeapon()
+        {
+            oCMsgWeapon msg = oCMsgWeapon.Create(Process, oCMsgWeapon.SubTypes.DrawWeapon, 0, 0);
+            GetEM(0).OnMessage(msg, this);
+        }
+
+        public void DrawRangedWeapon()
+        {
+            oCMsgWeapon msg = oCMsgWeapon.Create(Process, oCMsgWeapon.SubTypes.DrawWeapon, 4, 0);
+            GetEM(0).OnMessage(msg, this);
+        }
+
+        public void RemoveWeapon()
+        {
+            oCMsgWeapon msg = oCMsgWeapon.Create(Process, oCMsgWeapon.SubTypes.RemoveWeapon, 0, 0);
+            GetEM(0).OnMessage(msg, this);
+        }
+
+        public void RemoveWeapon1()
+        {
+            oCMsgWeapon msg = oCMsgWeapon.Create(Process, oCMsgWeapon.SubTypes.RemoveWeapon1, 0, 0);
+            GetEM(0).OnMessage(msg, this);
+            msg = oCMsgWeapon.Create(Process, oCMsgWeapon.SubTypes.RemoveWeapon2, 0, 0);
+            GetEM(0).OnMessage(msg, this);
+        }
+
+        public bool IsInFightRange(zCVob vob, float range)
+        {
+            IntPtr ptr = Process.Alloc(4);
+            Process.Write(range, ptr.ToInt32());
+            int result = Process.THISCALL<IntArg>((uint)Address, (uint)0x67CB60, new CallValue[] { vob, (IntArg)ptr.ToInt32() });
+            Process.Free(ptr, 4);
+            return result > 0;
+        }
+
+        public bool IsInFightFocus(zCVob vob)
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)0x735290, new CallValue[] { vob }) > 0;
+        }
+
+        public bool IsSameHeight(zCVob vob)
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)0x737BE0, new CallValue[] { vob }) > 0;
+        }
+
+        public void DoStrafe(bool right)
+        {
+            oCMsgMovement msg = oCMsgMovement.Create(Process, oCMsgMovement.SubTypes.Strafe, new zCVob());
+            msg.Animation = right ? AniCtrl._t_strafer : AniCtrl._t_strafel;
+            GetEM(0).OnMessage(msg, this);
+        }
+
+        public int StartFaceAni(string ani, float arg1, float arg2)
+        {
+            int result;
+            using (zString z = zString.Create(Process, ani))
+            {
+                result = StartFaceAni(z, arg1, arg2);
+            }
+            return result;
+        }
+
+        public int StartFaceAni(zString ani, float arg1, float arg2)
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)0x738860, new CallValue[] { ani, (FloatArg)arg1, (FloatArg)arg2 });
+        }
+
+        public int StopFaceAni(string ani)
+        {
+            int result;
+            using (zString z = zString.Create(Process, ani))
+            {
+                result = StopFaceAni(z);
+            }
+            return result;
+        }
+
+        public int StopFaceAni(zString ani)
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)0x738B50, new CallValue[] { ani });
         }
     }
 }

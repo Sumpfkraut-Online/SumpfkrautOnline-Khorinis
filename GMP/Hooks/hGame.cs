@@ -5,7 +5,7 @@ using System.Text;
 using Gothic.zClasses;
 using WinApi;
 
-namespace GUC.Hooks
+namespace GUC.Client.Hooks
 {
     public class hGame
     {
@@ -13,22 +13,15 @@ namespace GUC.Hooks
         {
             try
             {
-                Process Process = Process.ThisProcess();
-
-                if (Scripting.Events.OnExitGame != null)
-                    Scripting.Events.OnExitGame(Process);
-
-
                 Program.client.Disconnect();
                 
-                zCOption.GetOption(Process).getSection("INTERNAL").getEntry("gameAbnormalExit").VarValue.Set("0");
-                zCOption.GetOption(Process).Save("Gothic.INI");
-                CGameManager.GameManager(Process).ExitGameVar = 1;
-
+                zCOption.GetOption(Program.Process).getSection("INTERNAL").getEntry("gameAbnormalExit").VarValue.Set("0");
+                zCOption.GetOption(Program.Process).Save("Gothic.INI");
+                CGameManager.GameManager(Program.Process).ExitGameVar = 1;
             }
             catch (Exception ex)
             {
-                zERROR.GetZErr(Process.ThisProcess()).Report(2, 'G', ex.ToString(), 0, "hGame.cs", 0);
+                zERROR.GetZErr(Program.Process).Report(2, 'G', ex.ToString(), 0, "hGame.cs", 0);
             }
             return 0;
         }

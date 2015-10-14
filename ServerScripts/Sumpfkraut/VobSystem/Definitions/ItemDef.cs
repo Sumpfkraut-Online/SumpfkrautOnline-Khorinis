@@ -14,88 +14,37 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
     class ItemDef : ItemInstance
     {
 
-        //public bool IsGold
-        //{
-        //    get { return this.IsGold; }
-        //    set { this.IsGold = value; }
-        //}
-        //public bool IsKeyInstance
-        //{
-        //    get { return this.isKeyInstance; }
-        //    set { this.isKeyInstance = value; }
-        //}
-        //public bool IsLockPick
-        //{
-        //    get { return this.isKeyInstance; }
-        //    set { this.isKeyInstance = value; }
-        //}
-        //public bool IsTorch
-        //{
-        //    get { return this.isTorch; }
-        //    set { this.isTorch = value; }
-        //}
-        //public bool IsTorchBurning
-        //{
-        //    get { return this.isTorchBurning; }
-        //    set { this.isTorchBurning = value; }
-        //}
-        //public bool IsTorchBurned
-        //{
-        //    get { return this.isTorchBurned; }
-        //    set { this.isTorchBurned = value; }
-        //}
+        public string getInstanceName () { return this.InstanceName; }
+        // read only in GUC
+        //public void setInstanceName (string InstanceName) { this.InstanceName = InstanceName; }
 
-        //public String Effect
-        //{
-        //    get { return this.Effect; }
-        //    set { this.Effect = value; }
-        //}
-        //public Spell Spell
-        //{
-        //    get { return this.Spell.ScriptingProto; }
-        //    set { this.Spell = value.spell; }
-        //}
+        public string getName () { return this.Name; }
+        public void setName (string Name) { this.Name = Name; }
 
-        //public Enumeration.ArmorFlags Wear
-        //{
-        //    get { return this.Wear; }
-        //    set { this.Wear = value; }
-        //}
-        //public Enumeration.DamageType DamageType
-        //{
-        //    get { return this.DamageType; }
-        //    set { this.DamageType = value; }
-        //}
-        //public int Range
-        //{
-        //    get { return this.Range; }
-        //    set { this.Range = value; }
-        //}
-        //public int TotalDamage
-        //{
-        //    get { return this.TotalDamage; }
-        //    set { this.TotalDamage = value; }
-        //}
-        //// !!! TO DO: Damages !!!
-        //public ItemInstance Munition
-        //{
-        //    get { return this.munition; }
-        //    set { this.munition = value; }
-        //}
+        public string getScemeName () { return this.ScemeName; }
+        public void setScemeName (string ScemeName) { this.ScemeName = ScemeName; }
 
-        protected int HPChange = 0;
-        protected int HPMaxChange = 0;
-        protected int MPChange = 0;
-        protected int MPMaxChange = 0;
+        public string getVisual () { return this.Visual; }
+        public void setVisual (string Visual) { this.Visual = Visual; }
 
-        public bool getIsGold ()
-        {
-            return this.IsGold;
-        }
-        public void setIsGold (bool IsGold)
-        {
-            this.IsGold = IsGold;
-        }
+        public string getVisual_Change () { return this.Visual_Change; }
+        public void setVisual_Change (string Visual_Change) { this.Visual_Change = Visual_Change; }
+
+        public int getVisual_skin () { return this.Visual_skin; }
+        public void setVisual_skin (int Visual_skin) { this.Visual_skin = Visual_skin; }
+
+        public Enumeration.MainFlags getMainFlags () { return this.MainFlags; }
+        public void setMainFlags (Enumeration.MainFlags MainFlags) { this.MainFlags = MainFlags; }
+        
+        public Enumeration.MaterialType getMaterials () { return this.Materials; }
+        public void setMaterials (Enumeration.MaterialType Materials) { this.Materials = Materials; }
+
+        public int getValue () { return this.Value; }
+        public void setValue (int Value) { this.Value = Value; }
+
+
+        public bool getIsGold (){ return this.IsGold; }
+        public void setIsGold (bool IsGold) { this.IsGold = IsGold; }
 
         //public bool getIsKeyInstance()
         //{
@@ -115,133 +64,43 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         //    this.IsKeyInstance = IsKeyInstance;
         //}
 
-        public bool getIsTorch ()
-        {
-            return this.IsTorch;
-        }
-        public void setIsTorch (bool IsTorch)
-        {
-            this.IsTorch = IsTorch;
-        }
+        public bool getIsTorch () { return this.IsTorch; }
+        public void setIsTorch (bool IsTorch) { this.IsTorch = IsTorch; }
 
-        public bool getIsTorchBurning ()
-        {
-            return this.IsTorchBurning;
-        }
-        public void setIsTorchBurning (bool IsTorchBurning)
-        {
-            this.IsTorchBurning = IsTorchBurning;
-        }
+        public bool getIsTorchBurning () { return this.IsTorchBurning; }
+        public void setIsTorchBurning (bool IsTorchBurning) { this.IsTorchBurning = IsTorchBurning; }
 
-        public bool getIsTorchBurned ()
-        {
-            return this.IsTorchBurned;
-        }
-        public void setIsTorchBurned (bool IsTorchBurned)
-        {
-            this.IsTorchBurned = IsTorchBurned;
-        }
+        public bool getIsTorchBurned () { return this.IsTorchBurned; }
+        public void setIsTorchBurned (bool IsTorchBurned) { this.IsTorchBurned = IsTorchBurned; }
 
 
 
-        public string getEffect ()
-        {
-            return this.Effect;
-        }
-        public void setEffect (string Effect)
-        {
-            this.Effect = Effect;
-        }
+        public string getEffect () { return this.Effect; }
+        public void setEffect (string Effect) { this.Effect = Effect; }
 
 
 
-        public Spell getSpell ()
-        {
-            return this.Spell;
-        }
-        public void setSpell (Spell Spell)
-        {
-            this.Spell = Spell;
-        }
+        public Spell getSpell () { return this.Spell; }
+        public void setSpell (Spell Spell) { this.Spell = Spell; }
 
-        public Enumeration.ArmorFlags getWear ()
-        {
-            return this.Wear;
-        }
-        public void setWear (Enumeration.ArmorFlags Wear)
-        {
-            this.Wear = Wear;
-        }
+        public Enumeration.ArmorFlags getWear () { return this.Wear; }
+        public void setWear (Enumeration.ArmorFlags Wear) { this.Wear = Wear; }
 
         //public Enumeration.DamageType DamageType
         //{
         //    get { return this.DamageType; }
         //    set { this.DamageType = value; }
         //}
-        public Enumeration.DamageTypes getDamageType ()
-        {
-            return this.DamageType;
-        }
-        public void setDamageType (Enumeration.DamageTypes DamageType)
-        {
-            this.DamageType = DamageType;
-        }
+        public Enumeration.DamageTypes getDamageType () { return this.DamageType; }
+        public void setDamageType (Enumeration.DamageTypes DamageType) { this.DamageType = DamageType; }
         
-        public int getRange()
-        {
-            return this.Range;
-        }
-        public void setRange(int Range)
-        {
-            this.Range = Range;
-        }
+        public int getRange() { return this.Range; }
+        public void setRange(int Range) { this.Range = Range; }
         
-        public int getTotalDamage ()
-        {
-            return this.TotalDamage;
-        }
-        public void setTotalDamage (int TotalDamage)
-        {
-            this.TotalDamage = TotalDamage;
-        }
+        public int getTotalDamage () { return this.TotalDamage; }
+        public void setTotalDamage (int TotalDamage) { this.TotalDamage = TotalDamage; }
 
 
-
-        public int getHPChange ()
-        {
-            return this.HPChange;
-        }
-        public void setHPChange (int HPChange)
-        {
-            this.HPChange = HPChange;
-        }
-
-        public int getHPMaxChange ()
-        {
-            return this.HPMaxChange;
-        }
-        public void setHPMaxChange (int HPMaxChange)
-        {
-            this.HPMaxChange = HPMaxChange;
-        }
-
-        public int getMPChange ()
-        {
-            return this.MPChange;
-        }
-        public void setMPChange (int MPChange)
-        {
-            this.MPChange = MPChange;
-        }
-
-        public int getMPMaxChange ()
-        {
-            return this.MPMaxChange;
-        }
-        public void setMPMaxChange (int MPMaxChange)
-        {
-            this.MPMaxChange = MPMaxChange;
-        }
 
         // get-method already exists (see public int getDamage(DamageTypeIndex index))
         //public int[] getDamages()
@@ -264,43 +123,155 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         //}
 
 
+        // descriptive texts and values (appear ingame in the item information panel)
+
+        public string getDescription () { return this.Description; }
+        public void setDescription (string Description) { this.Description = Description; }
+
+        public string getText0 () { return this.Text0; }
+        public void setText0 (string Text0) { this.Text0 = Text0; }
+
+        public string getText1 () { return this.Text1; }
+        public void setText1 (string Text0) { this.Text0 = Text1; }
+
+        public string getText2 () { return this.Text2; }
+        public void setText2 (string Text0) { this.Text0 = Text2; }
+
+        public string getText3 () { return this.Text3; }
+        public void setText3 (string Text0) { this.Text0 = Text3; }
+
+        public string getText4 () { return this.Text4; }
+        public void setText4 (string Text0) { this.Text0 = Text4; }
+
+        public string getText5 () { return this.Text5; }
+        public void setText5 (string Text0) { this.Text0 = Text5; }
+        
+        public int getCount0 () { return this.Count0; }
+        public void setCount0 (int Count0) { this.Count0 = Count0; }
+
+        public int getCount1 () { return this.Count1; }
+        public void setCount1 (int Count0) { this.Count0 = Count1; }
+
+        public int getCount2 () { return this.Count2; }
+        public void setCount2 (int Count0) { this.Count0 = Count2; }
+
+        public int getCount3 () { return this.Count3; }
+        public void setCount3 (int Count0) { this.Count0 = Count3; }
+
+        public int getCount4 () { return this.Count4; }
+        public void setCount4 (int Count0) { this.Count0 = Count4; }
+
+        public int getCount5 () { return this.Count5; }
+        public void setCount5 (int Count0) { this.Count0 = Count5; }
+        
+
+        // triggered with OnUse
+
+        protected int OnUse_HPChange = 0;
+        public int getOnUse_HPChange () { return this.OnUse_HPChange; }
+        public void setOnUse_HPChange (int HPChange) { this.OnUse_HPChange = HPChange; }
+
+        protected int OnUse_HPMaxChange = 0;
+        public int getOnUse_HPMaxChange () { return this.OnUse_HPMaxChange; }
+        public void setOnUse_HPMaxChange (int HPMaxChange) { this.OnUse_HPMaxChange = HPMaxChange; }
+
+        protected int OnUse_MPChange = 0;
+        public int getOnUse_MPChange () { return this.OnUse_MPChange; }
+        public void setOnUse_MPChange (int MPChange) { this.OnUse_MPChange = MPChange; }
+
+        protected int OnUse_MPMaxChange = 0;
+        public int getOnUse_MPMaxChange () { return this.OnUse_MPMaxChange; }
+        public void setOnUse_MPMaxChange (int MPMaxChange) { this.OnUse_MPMaxChange = MPMaxChange; }
+
+        protected int OnUse_HP_Min = 1;
+        public int getOnUse_HP_Min () { return this.OnUse_HP_Min; }
+        public void setOnUse_HP_Min (int HP_Min) { this.OnUse_HP_Min = HP_Min; }
+
+        protected int OnUse_HPMax_Min = 1;
+        public int getOnUse_HPMax_Min () { return this.OnUse_HPMax_Min; }
+        public void setOnUse_HPMax_Min (int HPMax_Min) { this.OnUse_HPMax_Min = HPMax_Min; }
+
+        protected int OnUse_MP_Min = 0;
+        public int getOnUse_MP_Min () { return this.OnUse_MP_Min; }
+        public void setOnUse_MP_Min (int MP_Min) { this.OnUse_MP_Min = MP_Min; }
+
+        protected int OnUse_MPMax_Min = 0;
+        public int getOnUse_MPMax_Min () { return this.OnUse_MPMax_Min; }
+        public void setOnUse_MPMax_Min (int MPMax_Min) { this.OnUse_MPMax_Min = MPMax_Min; }
 
 
-        protected ItemDef (String instanceName)
-            : base (instanceName)
-        {
-            //this.InstanceName;
 
-            //this.Name;
-            //this.Value;
-            //this.Visual;
-            //this.Visual_Change;
-            //this.Visual_skin;
-            //this.MainFlags;
-            //this.Flags;
+        // triggered with OnEquip
 
-            //this.Materials;
-            //this.Description;
+        protected int OnEquip_HPChange = 0;
+        public int getOnEquip_HPChange () { return this.OnEquip_HPChange; }
+        public void setOnEquip_HPChange (int HPChange) { this.OnEquip_HPChange = HPChange; }
 
-            //this.Effect = "";
+        protected int OnEquip_HPMaxChange = 0;
+        public int getOnEquip_HPMaxChange () { return this.OnEquip_HPMaxChange; }
+        public void setOnEquip_HPMaxChange (int HPMaxChange) { this.OnEquip_HPMaxChange = HPMaxChange; }
 
-            //this.IsGold;
-            //this.IsLockPick;
-            //this.IsTorch;
-            //this.IsTorchBurned;
-            //this.IsTorchBurning;
+        protected int OnEquip_MPChange = 0;
+        public int getOnEquip_MPChange () { return this.OnEquip_MPChange; }
+        public void setOnEquip_MPChange (int MPChange) { this.OnEquip_MPChange = MPChange; }
 
-            //this.Range;
-            //this.Spell;
+        protected int OnEquip_MPMaxChange = 0;
+        public int getOnEquip_MPMaxChange () { return this.OnEquip_MPMaxChange; }
+        public void setOnEquip_MPMaxChange (int MPMaxChange) { this.OnEquip_MPMaxChange = MPMaxChange; }
 
-            //this.Wear;
-            //this.ScemeName;
+        protected int OnEquip_HP_Min = 1;
+        public int getOnEquip_HP_Min () { return this.OnEquip_HP_Min; }
+        public void setOnEquip_HP_Min (int HP_Min) { this.OnEquip_HP_Min = HP_Min; }
 
-            this.OnUse += new Scripting.Events.UseItemEventHandler(this.useItem);
-            //this.OnEquip += new Scripting.Events.UseItemEventHandler(useItem);
-            //this.OnUnEquip += new Scripting.Events.UseItemEventHandler(useItem);
-            CreateItemInstance();
-        }
+        protected int OnEquip_HPMax_Min = 1;
+        public int getOnEquip_HPMax_Min () { return this.OnEquip_HPMax_Min; }
+        public void setOnEquip_HPMax_Min (int HPMax_Min) { this.OnEquip_HPMax_Min = HPMax_Min; }
+
+        protected int OnEquip_MP_Min = 0;
+        public int getOnEquip_MP_Min () { return this.OnEquip_MP_Min; }
+        public void setOnEquip_MP_Min (int MP_Min) { this.OnEquip_MP_Min = MP_Min; }
+
+        protected int OnEquip_MPMax_Min = 0;
+        public int getOnEquip_MPMax_Min () { return this.OnEquip_MPMax_Min; }
+        public void setOnEquip_MPMax_Min (int MPMax_Min) { this.OnEquip_MPMax_Min = MPMax_Min; }
+
+
+
+        // triggered with OnUnEquip
+
+        protected int OnUnEquip_HPChange = 0;
+        public int getOnUnEquip_HPChange () { return this.OnUnEquip_HPChange; }
+        public void setOnUnEquip_HPChange (int HPChange) { this.OnUnEquip_HPChange = HPChange; }
+
+        protected int OnUnEquip_HPMaxChange = 0;
+        public int getOnUnEquip_HPMaxChange () { return this.OnUnEquip_HPMaxChange; }
+        public void setOnUnEquip_HPMaxChange (int HPMaxChange) { this.OnUnEquip_HPMaxChange = HPMaxChange; }
+
+        protected int OnUnEquip_MPChange = 0;
+        public int getOnUnEquip_MPChange () { return this.OnUnEquip_MPChange; }
+        public void setOnUnEquip_MPChange (int MPChange) { this.OnUnEquip_MPChange = MPChange; }
+
+        protected int OnUnEquip_MPMaxChange = 0;
+        public int getOnUnEquip_MPMaxChange () { return this.OnUnEquip_MPMaxChange; }
+        public void setOnUnEquip_MPMaxChange (int MPMaxChange) { this.OnUnEquip_MPMaxChange = MPMaxChange; }
+
+        protected int OnUnEquip_HP_Min = 1;
+        public int getOnUnEquip_HP_Min () { return this.OnUnEquip_HP_Min; }
+        public void setOnUnEquip_HP_Min (int HP_Min) { this.OnUnEquip_HP_Min = HP_Min; }
+
+        protected int OnUnEquip_HPMax_Min = 1;
+        public int getOnUnEquip_HPMax_Min () { return this.OnUnEquip_HPMax_Min; }
+        public void setOnUnEquip_HPMax_Min (int HPMax_Min) { this.OnUnEquip_HPMax_Min = HPMax_Min; }
+
+        protected int OnUnEquip_MP_Min = 0;
+        public int getOnUnEquip_MP_Min () { return this.OnUnEquip_MP_Min; }
+        public void setOnUnEquip_MP_Min (int MP_Min) { this.OnUnEquip_MP_Min = MP_Min; }
+
+        protected int OnUnEquip_MPMax_Min = 0;
+        public int getOnUnEquip_MPMax_Min () { return this.OnUnEquip_MPMax_Min; }
+        public void setOnUnEquip_MPMax_Min (int MPMax_Min) { this.OnUnEquip_MPMax_Min = MPMax_Min; }
+
+        
 
         // potions
         public ItemDef (String instanceName, String name, String scemeName, int value, String visual, String effect)
@@ -319,76 +290,168 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         
 
-        public ItemDef (String instanceName, String name, String scemeName, int value, MainFlags mainFlags, Flags flags, String visual)
-            : base (instanceName, name, scemeName, null, null, value, mainFlags, flags, 0, 0, 0, 0, visual, null)
+        public ItemDef (String instanceName, String name, String scemeName, int value, 
+            MainFlags mainFlags, Flags flags, String visual)
+            : this (instanceName, name, scemeName, null, null, value, 
+                mainFlags, flags, 0, 0, 0, 0, visual, null)
         { }
 
-        public ItemDef (String instanceName, String name, String scemeName, int value, MainFlags mainFlags, Flags flags, String visual, String visual_Change, String effect)
-            : base (instanceName, name, scemeName, null, null, value, mainFlags, flags, 0, 0, 0, 0, visual, visual_Change, effect)
+        public ItemDef (String instanceName, String name, String scemeName, int value, 
+            MainFlags mainFlags, Flags flags, String visual, String visual_Change, String effect)
+            : this (instanceName, name, scemeName, null, null, value, 
+                mainFlags, flags, 0, 0, 0, 0, visual, visual_Change, effect)
         { }
 
-        public ItemDef (String instanceName, String name, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual)
-            : base (instanceName, name, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, null)
+        public ItemDef (String instanceName, String name, int[] protection, int[] damages, 
+            int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, 
+            DamageTypes dmgType, int totalDamage, int range, String visual)
+            : this (instanceName, name, protection, damages, 
+                value, mainFlags, flags, armorFlags, 
+                dmgType, totalDamage, range, visual, null)
         { }
-        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual)
-            : base (instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, null)
+        public ItemDef (String instanceName, String name, String scemeName, int[] protection, 
+            int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, 
+            DamageTypes dmgType, int totalDamage, int range, String visual)
+            : this (instanceName, name, scemeName, protection, 
+                damages, value, mainFlags, flags, armorFlags, 
+                dmgType, totalDamage, range, visual, null)
         { }
-        public ItemDef (String instanceName, String name, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change)
-            : base (instanceName, name, null, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, null, 0)
-        { }
-
-        public ItemDef (String instanceName, String name, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change, String effect)
-            : base (instanceName, name, null, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, 0)
-        { }
-
-        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change)
-            : base (instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, "", 0)
-        { }
-
-        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change, String effect)
-            : base (instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, 0, 0, null)
-        { }
-
-        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, MaterialType types)
-            : base (instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, 0, types, null)
+        public ItemDef (String instanceName, String name, int[] protection, int[] damages, 
+            int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, 
+            int totalDamage, int range, String visual, String visual_Change)
+            : this (instanceName, name, null, protection, damages, 
+                value, mainFlags, flags, armorFlags, dmgType, 
+                totalDamage, range, visual, visual_Change, null, 0)
         { }
 
-        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, MaterialType types, ItemInstance munition)
-            : base (instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, 0, types, munition)
+        public ItemDef (String instanceName, String name, int[] protection, int[] damages, 
+            int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, 
+            int totalDamage, int range, String visual, String visual_Change, String effect)
+            : this (instanceName, name, null, protection, damages, 
+                value, mainFlags, flags, armorFlags, dmgType, 
+                totalDamage, range, visual, visual_Change, effect, 0)
         { }
 
-        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, int visualSkin, MaterialType types, ItemInstance munition)
-            : base (instanceName, name, scemeName, protection, damages, value, mainFlags, flags, armorFlags, dmgType, totalDamage, range, visual, visual_Change, effect, visualSkin, types, munition, false, false, false, false, false)
+        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, 
+            int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, 
+            int totalDamage, int range, String visual, String visual_Change)
+            : this (instanceName, name, scemeName, protection, damages, 
+                value, mainFlags, flags, armorFlags, dmgType, 
+                totalDamage, range, visual, visual_Change, "", 0)
         { }
-        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change, String effect, int visualSkin, MaterialType types, ItemInstance munition, bool keyInstance, bool torch, bool torchBurning, bool torchBurned, bool gold)
-            : base (instanceName)
+
+        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, 
+            int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, 
+            int totalDamage, int range, String visual, String visual_Change, String effect)
+            : this (instanceName, name, scemeName, protection, damages, 
+                value, mainFlags, flags, armorFlags, dmgType, 
+                totalDamage, range, visual, visual_Change, effect, 0, 0, null)
         { }
 
+        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, 
+            int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, 
+            int totalDamage, int range, String visual, String visual_Change, String effect, MaterialType types)
+            : this (instanceName, name, scemeName, protection, damages, 
+                value, mainFlags, flags, armorFlags, dmgType, 
+                totalDamage, range, visual, visual_Change, effect, 0, types, null)
+        { }
 
+        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, 
+            int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, 
+            int totalDamage, int range, String visual, String visual_Change, String effect, MaterialType types, 
+            ItemInstance munition)
+            : this (instanceName, name, scemeName, protection, damages, 
+                value, mainFlags, flags, armorFlags, dmgType, 
+                totalDamage, range, visual, visual_Change, effect, 0, types, 
+                munition)
+        { }
 
+        public ItemDef (String instanceName, String name, String scemeName, int[] protection, int[] damages, 
+            int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, DamageTypes dmgType, 
+            int totalDamage, int range, String visual, String visual_Change, String effect, int visualSkin, 
+            MaterialType types, ItemInstance munition)
+            : this (instanceName, name, scemeName, protection, damages, 
+                value, mainFlags, flags, armorFlags, dmgType, 
+                totalDamage, range, visual, visual_Change, effect, visualSkin, 
+                types, munition, false, false, false, false, false)
+        { }
 
-
-        protected void equip (NPCProto npc, Item item)
+        public ItemDef (String instanceName, String name, String scemeName, int[] protection, 
+            int[] damages, int value, MainFlags mainFlags, Flags flags, ArmorFlags armorFlags, 
+            DamageTypes dmgType, int totalDamage, int range, String visual, String visual_Change, 
+            String effect, int visualSkin, MaterialType types, ItemInstance munition, bool keyInstance, 
+            bool torch, bool torchBurning, bool torchBurned, bool gold)
+            : base (instanceName, name, scemeName, protection, 
+                damages, value, mainFlags, flags, armorFlags, 
+                dmgType, totalDamage, range, visual, visual_Change, 
+                effect, visualSkin, types, munition, keyInstance, 
+                torch, torchBurning, torchBurned, gold)
         {
-
+            this.OnUse += new Scripting.Events.UseItemEventHandler(this.UseItem);
+            this.OnEquip += new Scripting.Events.NPCEquipEventHandler(this.EquipItem);
+            this.OnUnEquip += new Scripting.Events.NPCEquipEventHandler(this.UnequipItem);
+            
+            //CreateItemInstance();
         }
 
-        protected void unequip (NPCProto npc, Item item)
-        {
 
+
+        protected void EquipItem (NPC npc, Item item)
+        {
+            //npc.HP      = this.getOnEquip_HPChange();
+            //npc.HPMax   = this.getOnEquip_HPMaxChange();
+            //npc.MP      = this.getOnEquip_MPChange();
+            //npc.MPMax   = this.getOnEquip_MPMaxChange();
         }
 
-        protected void useItem (NPCProto npc, Item item, short state, short targetState)
+        protected void UnequipItem (NPC npc, Item item)
         {
-            if (!(state == -1 && targetState == 0))
-            {
-                return;
-            }
+            //npc.HP      = this.getOnUnEquip_HPChange();
+            //npc.HPMax   = this.getOnUnEquip_HPMaxChange();
+            //npc.MP      = this.getOnUnEquip_MPChange();
+            //npc.MPMax   = this.getOnUnEquip_MPMaxChange();
+        }
 
-            //npc.HP      = this.HPChange;
-            //npc.HPMax   = this.HPMaxChange;
-            //npc.MP      = this.MPChange;
-            //npc.MPMax   = this.MPMaxChange;
+        protected void UseItem (NPC npc, Item item, short state, short targetState)
+        {
+            //if (!(state == -1 && targetState == 0))
+            //{
+            //    return;
+            //}
+
+            //if ((npc.HP + this.getOnUse_HPChange()) >= this.getOnUse_HP_Min())
+            //{
+            //    // 
+            //    //if ((npc.HP + this.getOnUse_HPChange()))
+            //    npc.HP =+ this.getOnUse_HPChange();
+            //}
+            //else
+            //{
+            //    //if (this.getHP_Min <= this.getHPMax_min)
+            //    npc.HP = this.getOnUse_HP_Min();
+            //}
+
+            //if ((npc.HPMax + this.getOnUse_HPMaxChange()) >= this.getOnUse_HPMax_Min())
+            //{
+            //    npc.HPMax =+ this.getOnUse_HPMaxChange();
+            //}
+            //else
+            //{
+            //    npc.HPMax = this.getOnUse_HPMax_Min();
+            //}
+
+
+            //if ((npc.MP + this.getOnUse_MPChange()) >= this.getOnUse_MP_Min())
+            //{
+            //    npc.MP =+ this.getOnUse_MPChange();
+            //}
+
+            //if ((npc.MPMax + this.getOnUse_MPMaxChange()) >= this.getOnUse_MPMax_Min())
+            //{
+            //    npc.MPMax =+ this.getOnUse_MPMaxChange();
+            //}
+            
+
         }
 
 

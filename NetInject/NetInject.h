@@ -100,7 +100,7 @@ void LoadNETDLL()
     hr = pClrRuntimeHost->Start();
 
 	// execute the method "Int32 Test.Program.InjectedMain(String arg)"
-	hr = pClrRuntimeHost->ExecuteInDefaultAppDomain(L"UntoldChapter\\DLL\\GUC.dll", L"GUC.Program", L"InjectedMain", L"injected.txt", &result);
+	hr = pClrRuntimeHost->ExecuteInDefaultAppDomain(L"UntoldChapter\\DLL\\GUC.dll", L"GUC.Client.Program", L"InjectedMain", L"injected.txt", &result);
 	pClrRuntimeHost->Stop();
 
 	pRuntimeInfo->Release();
@@ -111,7 +111,7 @@ void LoadNETDLL()
 	delete pRuntimeInfo;
 
 	if(hr != S_OK){
-		test(L"UntoldChapter\DLL\GUC.dll", L"GUC.Program", L"InjectedMain");
+		test(L"UntoldChapter\DLL\GUC.dll", L"GUC.Client.Program", L"InjectedMain");
 	}
 
 	

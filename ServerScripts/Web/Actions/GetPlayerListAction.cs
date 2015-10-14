@@ -32,7 +32,7 @@ namespace GUC.Server.Scripts.Web.Actions
 
         public override void update(ActionTimer timer)
         {
-            NPCProto[] _list = World.getWorld("NEWWORLD\\NEWWORLD.ZEN").getNPCList();
+            NPC[] _list = World.getWorld("NEWWORLD\\NEWWORLD.ZEN").getNPCList();
             list = new NPCCOPYED[_list.Length];
 
             for ( int i = 0; i < list.Length; i++)

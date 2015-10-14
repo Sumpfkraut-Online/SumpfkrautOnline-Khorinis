@@ -2,208 +2,128 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Network.Messages.Connection;
-using GUC.WorldObjects.Character;
 using RakNet;
 using GUC.Enumeration;
 using GUC.Network;
 using Gothic.zClasses;
 using WinApi;
 using GUC.Types;
-using GUC.WorldObjects;
-using GUC.Network.Messages.NpcCommands;
-using Gothic.mClasses;
-using Gothic.zTypes;
-using Gothic.zStruct;
-using GUC.Network.Messages.PlayerCommands;
 using WinApi.User.Enumeration;
+using GUC.Client.WorldObjects;
+using GUC.Client.Network.Messages;
+using Gothic.zStruct;
+using Gothic.zTypes;
+using GUC.Client.Hooks;
 
-namespace GUC.States
+namespace GUC.Client.States
 {
     class GameState : AbstractState
     {
-        protected long lastPlayerPosUpdate = 0;
-        protected long lastNPCPosUpdate = 0;
-
-        protected PlayerKeyMessage pkm;
-        public override void Init()
+        Dictionary<VirtualKeys, Action> shortcuts = new Dictionary<VirtualKeys, Action>()
         {
-            if (_init)
-                return;
-            
-            Process process = Process.ThisProcess();
-            if (oCNpc.Player(process).MagBook.Address == 0)
+            { VirtualKeys.Escape, Menus.GUCMenus.Main.Open },
+            { VirtualKeys.Tab, Menus.GUCMenus.Inventory.Open },
+            { Menus.GUCMenus.Animation.Hotkey, Menus.GUCMenus.Animation.Open},
+            { Menus.GUCMenus.Status.Hotkey, Menus.GUCMenus.Status.Open },
+            { VirtualKeys.OEM5, Player.DoFists }, //^
+             { VirtualKeys.F1, RenderTest },
+             { VirtualKeys.F2, RenderTest2 },
+              { VirtualKeys.F3, RenderTest3 }
+
+            /*
+            { Ingame.Chat.GetChat().ActivationKey, Ingame.Chat.GetChat().Open },
+            { Ingame.Chat.GetChat().ToggleKey, Ingame.Chat.GetChat().ToggleChat },
+            { Ingame.Trade.GetTrade().ActivationKey, Ingame.Trade.GetTrade().Activate },
+            { Ingame.AnimationMenu.GetMenu().ActivationKey, Ingame.AnimationMenu.GetMenu().Open }*/
+        };
+        public override Dictionary<VirtualKeys, Action> Shortcuts { get { return shortcuts; } }
+
+        static oCNpc npc;
+        public static void RenderTest()
+        {
+            Player.AddItem(ItemInstance.InstanceList[0], 10);
+            Player.AddItem(ItemInstance.InstanceList[1], 10);
+            /*if (npc == null)
             {
-                oCMag_Book magBook = oCMag_Book.Create(process);
-                oCNpc.Player(process).MagBook = magBook;
-
-                magBook.SetOwner(oCNpc.Player(process));
+                npc = NPCInstance.InstanceList[0].CreateNPC();
+                npc.Name.Set("Testcharakter");
+                npc.SetAdditionalVisuals(HumBodyMesh.HUM_BODY_NAKED0.ToString(), (int)HumBodyTex.G1Hero, 0, HumHeadMesh.HUM_HEAD_PONY.ToString(), (int)HumHeadTex.Face_N_Player, 0, -1);
+                npc.InitHumanAI();
+                oCGame.Game(Program.Process).World.AddVob(npc);
+                npc.HPMax = 100;
             }
+            npc.HP = 100;
 
-            NPCSpawnMessage.Write();
-
-            StealContainer sc = new StealContainer(Process.ThisProcess());
-            sc.Enable();
-
-            pkm = PlayerKeyMessage.getPlayerKeyMessage();
-
-            
-
-
-            _init = true;
+            Vec3f newPos = Player.Hero.Position;
+            newPos.X += 20;
+            npc.TrafoObjToWorld.setPosition(newPos.Data);
+            npc.SetPositionWorld(newPos.Data);
+            npc.TrafoObjToWorld.setPosition(newPos.Data);*/
         }
 
-        static zString SoundStr = null;
-        static zTSound3DParams SoundParam = null;
-        static int soundInt = 0;
-
-        static bool startGS = false;
-
-
-        static long lastKeyPressed = 0;
-        public override void update()
+        static Random rand = new Random();
+        static oCMsgMovement msg = null;
+        public static void RenderTest2()
         {
-            Process process = Process.ThisProcess();
-
-            long now = DateTime.Now.Ticks;
-
-            if (Program.newWorld)
+            if (npc != null)
             {
-                sWorld.getWorld(oCGame.Game(process).World.WorldFileName.Value).SpawnWorld();
-                Program.newWorld = false;
+                npc.GetEM(0).KillMessages();
+                msg = oCMsgMovement.Create(Program.Process, oCMsgMovement.SubTypes.RobustTrace, Player.Hero.gNpc);
+                npc.GetEM(0).OnMessage(msg, npc);
             }
-
-            
-
-            //if (lastKeyPressed + 10000*1000*2 < now)
-            //{
-            //    if (InputHooked.IsPressed(process, (int)VirtualKeys.F7))
-            //    {
-            //        oCNpc npc = oCNpc.Player(process);
-            //        oCMobInter mI = new oCMobInter(process, npc.FocusVob.Address);
-            //        mI.StartStateChange(npc, 0, 1);
-                    
-            //        zERROR.GetZErr(process).Report(2, 'G', "Start-Ani -1", 0, "Program.cs", 0);
-
-
-            //        lastKeyPressed = now;
-            //    }
-
-            //    if (InputHooked.IsPressed(process, (int)VirtualKeys.F8))
-            //    {
-            //        oCNpc npc = oCNpc.Player(process);
-            //        oCMobInter mI = new oCMobInter(process, npc.FocusVob.Address);
-            //        mI.StartStateChange(npc, 1, 0);
-
-            //        zERROR.GetZErr(process).Report(2, 'G', "Start-Ani -2", 0, "Program.cs", 0);
-
-
-            //        lastKeyPressed = now;
-            //    }
-
-            //    if (InputHooked.IsPressed(process, (int)VirtualKeys.F9))
-            //    {
-            //        oCNpc npc = oCNpc.Player(process);
-            //        oCMobInter mI = new oCMobInter(process, npc.FocusVob.Address);
-            //        mI.GetModel().StartAnimation("T_S0_2_S1");
-
-            //        zERROR.GetZErr(process).Report(2, 'G', "Start-Ani 1", 0, "Program.cs", 0);
-                    
-
-            //        lastKeyPressed = now;
-            //    }
-
-            //    if (InputHooked.IsPressed(process, (int)VirtualKeys.F10))
-            //    {
-            //        oCNpc npc = oCNpc.Player(process);
-            //        oCMobInter mI = new oCMobInter(process, npc.FocusVob.Address);
-            //        mI.GetModel().StartAnimation("S_S1");
-
-            //        zERROR.GetZErr(process).Report(2, 'G', "Start-Ani 2", 0, "Program.cs", 0);
-                    
-            //        lastKeyPressed = now;
-            //    }
-
-            //    if (InputHooked.IsPressed(process, (int)VirtualKeys.F11))
-            //    {
-            //        oCNpc npc = oCNpc.Player(process);
-            //        oCMobInter mI = new oCMobInter(process, npc.FocusVob.Address);
-            //        mI.GetModel().StartAnimation("T_S1_2_S0");
-
-            //        zERROR.GetZErr(process).Report(2, 'G', "Start-Ani 3", 0, "Program.cs", 0);
-                    
-            //        lastKeyPressed = now;
-            //    }
-
-            //    if (InputHooked.IsPressed(process, (int)VirtualKeys.F12))
-            //    {
-            //        oCNpc npc = oCNpc.Player(process);
-            //        oCMobInter mI = new oCMobInter(process, npc.FocusVob.Address);
-            //        mI.GetModel().StartAnimation("S_S0");
-
-            //        zERROR.GetZErr(process).Report(2, 'G', "Start-Ani 4", 0, "Program.cs", 0);
-                    
-            //        lastKeyPressed = now;
-            //    }
-                
-            //}
-
-
-
-            if (lastPlayerPosUpdate + 10000 * 200 < now )
+            //npc.gNpc.AniCtrl.StartFallDownAni();
+           /* for (int i = 0; i < 25; i++)
             {
-                SendPlayerPosition(process, Player.Hero);
-                NPCUpdateMessage.Write(Player.Hero);
+                item = new Item(num++, (ushort)rand.Next(0, 7));
+                item.Position = new Vec3f(rand.Next(-700, 700), 1000, rand.Next(-700, 700));
+                item.Spawn(item.Position, item.Direction, true);
+            }*/
+        }
 
-                foreach (NPC iNPC in Player.Hero.NPCControlledList)
-                {
-                    if (!iNPC.enabled)
-                        continue;
-                    if (!iNPC.IsSpawned)
-                        continue;
-                    SendPlayerPosition(process, iNPC);
-                    NPCUpdateMessage.Write(iNPC);
-                }
-                lastPlayerPosUpdate = now;
-            }
+        static int lop = 9;
+        static List<string> anis = new List<string>() { "S_NEUTRAL", "S_FRIENDLY", "S_ANGRY", "S_HOSTILE", "S_FRIGHTENED",
+            "S_EYESCLOSED", "R_EYESBLINK", "T_EAT", "T_HURT", "VISEME" };
+        public static void RenderTest3()
+        {
+            Player.Hero.gNpc.StopFaceAni(anis[lop]);
+            lop++;
+            if (lop >= anis.Count)
+                lop = 0;
 
-            //if (lastNPCPosUpdate + 10000 * 500 < now)
-            //{
-            //    //SendPlayerPosition(process, Player.Hero);
-            //    //NPCUpdateMessage.Write(Player.Hero);
+            Player.Hero.gNpc.StartFaceAni(anis[lop], 1, -1);
+            GUI.GUCView.DebugText.Text = anis[lop];
+        }
 
-            //    foreach (NPC iNPC in Player.Hero.NPCControlledList)
-            //    {
-            //        SendPlayerPosition(process, iNPC);
-            //        NPCUpdateMessage.Write(iNPC);
-            //    }
-            //    lastNPCPosUpdate = now;
-            //}
+        public GameState()
+        {
+            hEventManager.AddHooks(Program.Process);
+            hAniCtrl_Human.AddHooks(Program.Process);
+            hNpc.AddHooks(Program.Process);
+        }
 
-            pkm.update();
-
+        public override void Update()
+        {
+            long ticks = DateTime.Now.Ticks;
+            InputHandler.Update();
             Program.client.Update();
-        }
 
-        protected void SendPlayerPosition(Process process, NPCProto proto)
-        {
-            if (proto.Address != 0)
+            if (npc != null)
+            if ((new Vec3f(npc.TrafoObjToWorld.getPosition())).getDistance(Player.Hero.Position) < 150)
             {
-                oCNpc npc = new oCNpc(process, proto.Address);
-                proto.Position = (Vec3f)npc.TrafoObjToWorld.getPosition();
-                proto.Direction = (Vec3f)npc.TrafoObjToWorld.getDirection();
+                npc.GetEM(0).KillMessages();
+                npc.AniCtrl._Stand();
             }
-            BitStream stream = Program.client.sentBitStream;
-            stream.Reset();
-            stream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            stream.Write((byte)NetworkID.SetVobPosDirMessage);
-            stream.Write(proto.ID);
 
-            stream.Write(proto.Position);
-            stream.Write(proto.Direction);
+            /*GUI.GUCView.DebugText.Text = "";
+            for (int i = 0; i < Player.VobControlledList.Count; i++)
+            {
+                GUI.GUCView.DebugText.Text += " " + Player.VobControlledList[i].ID;
+            }*/
 
-            Program.client.client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE_SEQUENCED, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+                for (int i = 0; i < World.AllVobs.Count; i++)
+                {
+                    World.AllVobs[i].Update(ticks);
+                }
         }
-
     }
 }

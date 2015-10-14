@@ -14,7 +14,7 @@ namespace GUC.Server.Scripts.AI.AIStates
         protected String endWP = "";
 
 
-        public AI_ALIGNTOWP(NPCProto proto, String waypoint)
+        public AI_ALIGNTOWP(NPC proto, String waypoint)
             : base(proto)
         {
             endWP = waypoint;

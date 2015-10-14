@@ -8,24 +8,16 @@ namespace GUC.WorldObjects
     internal partial class World : IContainer
     {
         #region lists
-        protected List<NPCProto> npcList = new List<NPCProto>();
+        protected List<NPC> npcList = new List<NPC>();
         protected List<Item> itemList = new List<Item>();
         protected List<Vob> vobList = new List<Vob>();//Only for real Vobs/Mobs! Don't add Items or NPCs to it!
 
-        public List<NPCProto> NPCList { get { return npcList; } }
+        public List<NPC> NPCList { get { return npcList; } }
         public List<Item> ItemList { get { return itemList; } }
         public List<Vob> VobList { get { return vobList; } }
         #endregion
 
-
-        #region attributes
         protected String mapName;
-        
-        #endregion
-
-
-        #region Property
-
         public String Map
         {
             get{
@@ -38,39 +30,32 @@ namespace GUC.WorldObjects
             }
         }
 
-
-        #endregion
-
-
-
-
         public void addVob(Vob vob)
         {
-            if (vob.Map != null && vob.Map.Length != 0)
-                sWorld.getWorld(vob.Map).removeVob(vob);
+            if (vob.Map != null)
+                vob.Map.removeVob(vob);
 
-            
+            vob.Map = this;
+            vob.IsSpawned = true;            
 
-            vob.Map = this.Map;
-            vob.IsSpawned = true;
-#if D_SERVER
-            this.setVobPosition(null, vob.Pos, vob);
+            if (vob is NPC)
+            {
+/*#if D_SERVER
+                if (((NPC)vob).client != null)
+                {
+                    playerList.Add
+                }
 #endif
-            
-
-            if (!(vob is NPCProto) && !(vob is Item))
-                VobList.Add(vob);
-
-
-            if (vob is NPCProto)
-                pAddPlayer((NPCProto)vob);
+                pAddPlayer((NPC)vob);*/
+            }
             else if (vob is Item)
+            {
                 pAddItem((Item)vob);
-        }
-
-        protected void pAddPlayer(NPCProto proto)
-        {
-            this.NPCList.Add(proto);
+            }
+            else
+            {
+                VobList.Add(vob);
+            }
         }
 
         protected void pAddItem(Item item)
@@ -78,44 +63,23 @@ namespace GUC.WorldObjects
             if (item.Container != null)
                 item.Container.removeItem(item);
             item.Container = this;
-            item.Map = this.Map;
+            item.Map = this;
             this.itemList.Add(item);
         }
 
         public void removeVob(Vob vob)
         {
-#if D_SERVER
-            this.setVobPosition(vob.Pos, null, vob);
-#endif
-            if (vob is NPCProto)
-                pRemovePlayer((NPCProto)vob);
+            if (vob is NPC)
+                pRemovePlayer((NPC)vob);
             else if (vob is Item)
                 pRemoveItem((Item)vob);
             vob.Map = null;
 
         }
 
-        protected void pRemovePlayer(NPCProto proto)
-        {
-            NPCList.Remove(proto);
-        }
-
         protected void pRemoveItem(Item item)
         {
             this.itemList.Remove(item);
-        }
-
-
-
-
-        public void addItem(Item item)
-        {
-            addVob(item);
-        }
-
-        public void removeItem(Item item)
-        {
-            removeVob(item);
         }
     }
 }

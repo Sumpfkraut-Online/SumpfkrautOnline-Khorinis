@@ -11,13 +11,13 @@ namespace GUC.Server.Scripts.AI.FightFuncs
     public static class MonsterFightRoutine
     {
         static Random rand = new Random();
-        public static void FightRoutine(NPCProto npc)
+        public static void FightRoutine(NPC npc)
         {
             //Draw Weapon:
 
 
             NPCAI ai = npc.getAI();
-            NPCProto enemy = ai.EnemyList.First.Value;
+            NPC enemy = ai.EnemyList.First.Value;
             npc.readyBestWeapon(enemy);
 
 

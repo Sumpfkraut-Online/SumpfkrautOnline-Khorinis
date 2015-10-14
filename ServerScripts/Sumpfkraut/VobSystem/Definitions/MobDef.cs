@@ -10,5 +10,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
      */
     class MobDef
     {
+
     }
 }

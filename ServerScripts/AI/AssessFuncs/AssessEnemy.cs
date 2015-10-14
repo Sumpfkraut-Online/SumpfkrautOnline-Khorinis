@@ -8,7 +8,7 @@ namespace GUC.Server.Scripts.AI.AssessFuncs
 {
     public static class AssessEnemy
     {
-        public static void OnAssessEnemy(NPCProto npc, NPCProto target)
+        public static void OnAssessEnemy(NPC npc, NPC target)
         {
             npc.getAI().addEnemy(target);
         }

@@ -2,21 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using WinApi.User.Enumeration;
 
-namespace GUC.States
+namespace GUC.Client.States
 {
     public abstract class AbstractState
     {
-        protected bool _init = false;
+        public abstract Dictionary<VirtualKeys, Action> Shortcuts { get; }
 
-        public virtual void Init()
-        {
-            if (_init)
-                return;
-
-            _init = true;
-        }
-
-        public abstract void update();
+        public abstract void Update();
     }
 }

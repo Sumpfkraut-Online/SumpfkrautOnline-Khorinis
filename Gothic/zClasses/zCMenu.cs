@@ -14,6 +14,7 @@ namespace Gothic.zClasses
             name = 3112,
             menuItem = 3256
         }
+
         public zCMenu()
         {
 
@@ -50,12 +51,11 @@ namespace Gothic.zClasses
         public void ScreenDone()
         {
             Process.THISCALL<NullReturnCall>((uint)Address, 0x004DD9E0, new CallValue[] { });
-            
         }
 
         public int HandleSelAction(int t, zString str, zCMenuItem menuitem)
         {
-            return Process.THISCALL<IntArg>((uint)Address, 0x004DC430, new CallValue[] { new IntArg(t), str, menuitem }).Address;
+            return Process.THISCALL<IntArg>((uint)Address, 0x004DC430, new CallValue[] { new IntArg(t), str, menuitem });
         }
 
         public int HandleActivateItem(zCMenuItem menuitem)
@@ -72,7 +72,7 @@ namespace Gothic.zClasses
         {
             return Process.THISCALL<zCMenuItem>((uint)Address, 0x004DDD80, new CallValue[] { });
         }
-
+        
         public static void Shutdown(Process process)
         {
             process.CDECLCALL<NullReturnCall>(0x004DA380, new CallValue[] { });
@@ -87,7 +87,7 @@ namespace Gothic.zClasses
         {
             return process.CDECLCALL<zCMenu>(0x004DDD60, new CallValue[] { });
         }
-
+        
         public static zCMenu GetMenuByName(Process process, String name)
         {
             zCArray<zCMenu> menuList = GetMenuList(process);

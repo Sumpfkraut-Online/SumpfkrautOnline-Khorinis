@@ -5,82 +5,67 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using RakNet;
-using GUC.WorldObjects.Character;
-using GUC.WorldObjects;
-using GUC.Server.Network.Messages.Connection;
 using GUC.Enumeration;
 using GUC.Server.Network.Messages;
-using GUC.Server.Network.Messages.PlayerCommands;
-using GUC.Server.Network.Messages.VobCommands;
-using GUC.Server.Network.Messages.NpcCommands;
-using GUC.Server.Network.Messages.MobInterCommands;
-using GUC.Server.Network.Messages.Callbacks;
+using System.Diagnostics;
+using GUC.Network;
+using GUC.Server.WorldObjects;
 
 namespace GUC.Server.Network
 {
+    delegate void PacketReader(BitStream stream, Client client);
+
     public class Server
     {
-
         public RakPeerInterface ServerInterface { get; private set; }
-        public Dictionary<byte, IMessage> MessageListener { get; private set;}
+        Dictionary<byte, PacketReader> MessageListener;
         public BitStream ReceiveBitStream { get; private set; }
         public BitStream SendBitStream { get; private set; }
 
+        Dictionary<ulong, Client> clientList;
 
         /** 
         * Server-class which defines and manages network transfer as well as the game loop.
         * It uses RakNet network messages to establish communication channels between server and clients.
         * It further counts the connections and initialiszes the overall game loop.
         */
+
         public Server()
         {
             ServerInterface = RakPeer.GetInstance(); /**< Instance of RakNets main interface for network communication. */
-            MessageListener = new Dictionary<byte,IMessage>();
+            MessageListener = new Dictionary<byte, PacketReader>();
             ReceiveBitStream = new BitStream();
             SendBitStream = new BitStream();
 
+            clientList = new Dictionary<ulong, Client>();
 
             initMessageListener();
         }
 
-		protected void initMessageListener()
-		{
-			MessageListener.Add((byte)NetworkID.ConnectionMessage, new ConnectionMessage()); /**< Network messages concerning player connection state. */
-			MessageListener.Add((byte)NetworkID.NPCSpawnMessage, new NPCSpawnMessage()); /**< Network messages concerning spawning npcs. */
-			MessageListener.Add((byte)NetworkID.GuiMessage, new GuiMessage()); /**< Network messages concerning GUI events. */
-			MessageListener.Add((byte)NetworkID.OnDamageMessage, new OnDamageMessage()); /**< Network messages concerning damage events. */
+        protected void initMessageListener()
+        {
+            MessageListener.Add((byte)NetworkID.ConnectionMessage, ConnectionMessage.Read);
 
-			MessageListener.Add((byte)NetworkID.TakeItemMessage, new TakeItemMessage()); /**< Network messages concerning events which are triggered when world-items are taken. */
-			MessageListener.Add((byte)NetworkID.DropItemMessage, new DropItemMessage()); /**< Network messages concerning events which are triggered when items are dropped into the world. */
+            MessageListener.Add((byte)NetworkID.AccountCreationMessage, AccountMessage.Register);
+            MessageListener.Add((byte)NetworkID.AccountLoginMessage, AccountMessage.Login);
+            MessageListener.Add((byte)NetworkID.AccountCharCreationMessage, AccountMessage.CreateCharacter);
+            MessageListener.Add((byte)NetworkID.AccountCharLoginMessage, AccountMessage.LoginCharacter);
 
-			MessageListener.Add((byte)NetworkID.SetVobPosDirMessage, new SetVobPosDirMessage()); /**< Network messages concerning forced vob positioning (in world). */
-			MessageListener.Add((byte)NetworkID.AnimationUpdateMessage, new AnimationUpdateMessage()); /**< Network messages concerning npc animations. */
+            MessageListener.Add((byte)NetworkID.PlayerControlMessage, Player.ReadControl);
+            MessageListener.Add((byte)NetworkID.PlayerPickUpItemMessage, Player.ReadPickUpItem);
 
-			MessageListener.Add((byte)NetworkID.NPCUpdateMessage, new NPCUpdateMessage()); /**< Network messages concerning npc-status-updates. */
-			MessageListener.Add((byte)NetworkID.MobInterMessage, new MobInterMessage()); /**< Network messages concerning mob interaction (e.g. using an avil). */
+            MessageListener.Add((byte)NetworkID.VobPosDirMessage, VobMessage.ReadPosDir);
 
-			MessageListener.Add((byte)NetworkID.ItemRemovedByUsing, new ItemRemovedByUsing()); /**< Network messages concerning item removable following item use events. */
-			MessageListener.Add((byte)NetworkID.ContainerItemChangedMessage, new GUC.Server.Network.Messages.ContainerCommands.ItemChangedMessage()); /**< Network messages concerning container exchange (chests, inventory, etc.). */
+            MessageListener.Add((byte)NetworkID.NPCAniStartMessage, NPCMessage.ReadAniStart);
+            MessageListener.Add((byte)NetworkID.NPCAniStopMessage, NPCMessage.ReadAniStop);
+            MessageListener.Add((byte)NetworkID.NPCStateMessage, NPCMessage.ReadState);
+            MessageListener.Add((byte)NetworkID.NPCAttackMessage, NPCMessage.ReadAttack);
+            MessageListener.Add((byte)NetworkID.NPCWeaponStateMessage, NPCMessage.ReadWeaponState);
+            MessageListener.Add((byte)NetworkID.NPCHitMessage, NPCMessage.ReadHitMessage);
 
-			MessageListener.Add((byte)NetworkID.CallbackNPCCanSee, new CallbackNPCCanSee()); /**< Network messages concerning visibility by npcs. */
-			MessageListener.Add((byte)NetworkID.DoDieMessage, new DoDieMessage()); /**< Network messages concerning object/npc/player death. */
-
-			MessageListener.Add((byte)NetworkID.ReadIniEntryMessage, new ReadIniEntryMessage()); /**< Network messages concerning ???. */
-			MessageListener.Add((byte)NetworkID.ReadMd5Message, new ReadMd5Message()); /**< Network messages concerning MD5 data encryption. */
-
-			MessageListener.Add((byte)NetworkID.EquipItemMessage, new EquipItemMessage()); /**< Network messages concerning item equipping. */
-
-			MessageListener.Add((byte)NetworkID.ChangeWorldMessage, new ChangeWorldMessage()); /**< Network messages concerning switching the world (go to another world-instance) */
-
-			MessageListener.Add((byte)NetworkID.PlayerKeyMessage, new PlayerKeyMessage()); /**< Network messages concerning keys triggered/pressed by players. */
-			MessageListener.Add((byte)NetworkID.UseItemMessage, new UseItemMessage()); /**< Network messages concerning item use. */
-
-			MessageListener.Add((byte)NetworkID.CastSpell, new CastSpell()); /**< Network messages concerning cast spells. */
-			MessageListener.Add((byte)NetworkID.SpellInvestMessage, new SpellInvestMessage()); /**< Network messages concerning investments of an npcs to cast a spell (e.g. mana use). */
-
-
-			MessageListener.Add((byte)NetworkID.PlayerOpenInventoryMessage, new OpenInventoryMessage());
-		}
+            MessageListener.Add((byte)NetworkID.InventoryDropItemMessage, InventoryMessage.ReadDropItem);
+            MessageListener.Add((byte)NetworkID.InventoryUseItemMessage, InventoryMessage.ReadUseItem);
+        }
 
         /**
          *   Initializes/Starts the RakPeerInterface server to actually listen and answer network messages.
@@ -93,14 +78,13 @@ namespace GUC.Server.Network
         {
             pw = GUC.Options.Constants.VERSION + pw;
 
-
             SocketDescriptor socketDescriptor = new SocketDescriptor();
             socketDescriptor.port = port;
 
             bool started = ServerInterface.Startup(maxConnections, socketDescriptor, 1) == StartupResult.RAKNET_STARTED;
             ServerInterface.SetMaximumIncomingConnections(maxConnections);
             ServerInterface.SetOccasionalPing(true);
-            
+
             if (pw.Length != 0)
             {
                 ServerInterface.SetIncomingPassword(pw, pw.Length);
@@ -109,7 +93,7 @@ namespace GUC.Server.Network
             if (!started)
                 Log.Logger.logError("Port is already in use");
             else
-                Log.Logger.log("Server start listening on port "+port);
+                Log.Logger.log("Server start listening on port " + port);
         }
 
         /**
@@ -119,7 +103,7 @@ namespace GUC.Server.Network
          */
         public ushort ConnectionCount()
         {
-            SystemAddress[] sa = null;
+            SystemAddress[] sa;
             ushort numbers = 0;
             ServerInterface.GetConnectionList(out sa, ref numbers);
             return numbers;
@@ -136,69 +120,120 @@ namespace GUC.Server.Network
         public void Update()
         {
             Packet p = ServerInterface.Receive();
+            Client client;
+            PacketReader func;
+            byte msgID;
 
             while (p != null)
             {
-                switch (p.data[0])
+                try
                 {
-                    case (byte)DefaultMessageIDTypes.ID_CONNECTION_LOST:
-                    case (byte)DefaultMessageIDTypes.ID_DISCONNECTION_NOTIFICATION:
-                        {
-                            if (!sWorld.GUIDToPlayer.ContainsKey(p.guid.g))
+                    clientList.TryGetValue(p.guid.g, out client);
+
+                    switch (p.data[0])
+                    {
+                        case (byte)DefaultMessageIDTypes.ID_CONNECTION_LOST:
+                        case (byte)DefaultMessageIDTypes.ID_DISCONNECTION_NOTIFICATION:
+                            if (client != null)
                             {
-                                Log.Logger.log("Disconnected: " + ConnectionCount() + " " + p.guid);
+                                DisconnectClient(client);
                             }
                             else
                             {
-                                Player pl = sWorld.GUIDToPlayer[p.guid.g];
-                                pl.IsConnected = false;
-
-                                foreach (NPC npc in pl.NPCControlledList)
+                                ServerInterface.CloseConnection(p.guid, false); //just to be sure
+                            }
+                            Log.Logger.log("Disconnected: " + p.guid);
+                            break;
+                        case (byte)DefaultMessageIDTypes.ID_NEW_INCOMING_CONNECTION:
+                            if (client != null) //whut?
+                            {
+                                DisconnectClient(client);
+                            }
+                            clientList.Add(p.guid.g, new Client(p.guid, p.systemAddress));
+                            Log.Logger.log("New Connection: " + p.guid + " " + p.systemAddress);
+                            break;
+                        case (byte)DefaultMessageIDTypes.ID_USER_PACKET_ENUM:
+                            if (client != null)
+                            {
+                                ReceiveBitStream.Reset();
+                                ReceiveBitStream.Write(p.data, p.length);
+                                ReceiveBitStream.IgnoreBytes(2);
+                                msgID = p.data[1];
+                                if (client.isValid)
                                 {
-                                    npc.NpcController = null;
+                                    //for safety:
+                                    if (msgID > (byte)NetworkID.AccountLoginMessage)
+                                    {
+                                        if (client.accountID == -1)
+                                        {   //not even logged in but trying to send non-login-packets
+                                            DisconnectClient(client);
+                                            break;
+                                        }
+
+                                        if (msgID >= (byte)NetworkID.PlayerControlMessage)
+                                        {
+                                            if (client.character == null)
+                                            { //not even controlling a character but trying to send character/world packets
+                                                DisconnectClient(client);
+                                                break;
+                                            }
+
+                                            if (!client.character.Spawned && msgID > (byte)NetworkID.PlayerControlMessage)
+                                            { //not even spawned but trying to send world packets
+                                                DisconnectClient(client);
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                    MessageListener.TryGetValue(msgID, out func);
+                                    if (func != null)
+                                    {
+                                        func(ReceiveBitStream, client);
+                                    }
                                 }
-                                new DisconnectMessage().Write(ReceiveBitStream, this, pl);
-
-                                sWorld.removeVob(pl);
-                                if(pl.IsSpawned)
-                                    sWorld.getWorld(pl.Map).removeVob(pl);
-
-                                if (p.data[0] == (byte)DefaultMessageIDTypes.ID_CONNECTION_LOST)
+                                else
                                 {
-                                    Scripting.Objects.Character.Player.isOnConnectionLost((Scripting.Objects.Character.Player)pl.ScriptingNPC);
+                                    if (msgID == (byte)NetworkID.ConnectionMessage) //sends mac & drive string
+                                    {
+                                        ConnectionMessage.Read(ReceiveBitStream, client);
+                                    }
+                                    else //bye bye
+                                    {
+                                        DisconnectClient(client);
+                                    }
                                 }
                             }
-
                             break;
-                        }
-                    case (byte)DefaultMessageIDTypes.ID_NEW_INCOMING_CONNECTION:
-                        {
-                            Log.Logger.log("New Connections: " + ConnectionCount() + " " + p.guid+" "+p.systemAddress);
+                        default:
+                            Log.Logger.log(Log.Logger.LOG_INFO, "Message-Type: " + ((DefaultMessageIDTypes)p.data[0]));
                             break;
-                        }
-                    case (byte)DefaultMessageIDTypes.ID_USER_PACKET_ENUM:
-
-                        ReceiveBitStream.Reset();
-                        ReceiveBitStream.Write(p.data, p.length);
-                        ReceiveBitStream.IgnoreBytes(2);
-                        try
-                        {
-                            if (MessageListener.ContainsKey(p.data[1]))
-                                MessageListener[p.data[1]].Read(ReceiveBitStream, p, this);
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Logger.log(Log.Logger.LOG_ERROR, ex.Source + " <br>" + ex.Message + "<br>" + ex.StackTrace);
-                            ServerInterface.CloseConnection(p.guid, true);
-                        }
-                        break;
-                    default:
-                        Log.Logger.log(Log.Logger.LOG_INFO, "Message-Type: " + ((DefaultMessageIDTypes)p.data[0]));
-                        break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Logger.log(Log.Logger.LOG_ERROR, (NetworkID)p.data[1] + ":\n" + ex.Source + "\n" + ex.Message + "\n" + ex.StackTrace);
+                    ServerInterface.CloseConnection(p.guid, false);
                 }
                 ServerInterface.DeallocatePacket(p);
                 p = ServerInterface.Receive();
             }
+        }
+
+        void DisconnectClient(Client client)
+        {
+            ServerInterface.CloseConnection(client.guid, false);
+            client.Disconnect();
+            clientList.Remove(client.guid.g);
+            client.Dispose();
+        }
+
+        public BitStream SetupStream(NetworkID id)
+        {
+            SendBitStream.Reset();
+            SendBitStream.Write((byte)RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
+            SendBitStream.Write((byte)id);
+            return SendBitStream;
         }
     }
 }

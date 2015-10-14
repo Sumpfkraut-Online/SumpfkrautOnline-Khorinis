@@ -83,12 +83,12 @@ namespace GUC.Server.Scripting.Objects.Mob
             setPropertie(VobChangeID.UseWithItem, x);
         }
 
-        public void trigger(NPCProto pro)
+        public void trigger(NPC pro)
         {
             MobInterMessage.Write(MobInterNetwork.OnTrigger, pro.proto, this.Proto);
         }
 
-        public void untrigger(NPCProto pro)
+        public void untrigger(NPC pro)
         {
             MobInterMessage.Write(MobInterNetwork.OnUnTrigger, pro.proto, this.Proto);
         }
@@ -98,14 +98,14 @@ namespace GUC.Server.Scripting.Objects.Mob
 
         #region OnTrigger
         public event GUC.Server.Scripting.Events.MobInterEventHandler OnTrigger;
-        internal void iOnTrigger(MobInter mobInter, NPCProto npc)
+        internal void iOnTrigger(MobInter mobInter, NPC npc)
         {
             if (OnTrigger != null)
                 OnTrigger(mobInter, npc);
         }
 
         public static event Events.MobInterEventHandler sOnTrigger;
-        internal static void isOnTrigger(MobInter mobInter, NPCProto npc)
+        internal static void isOnTrigger(MobInter mobInter, NPC npc)
         {
             mobInter.iOnTrigger(mobInter, npc);
             if (sOnTrigger != null)
@@ -115,14 +115,14 @@ namespace GUC.Server.Scripting.Objects.Mob
 
         #region OnUnTrigger
         public event GUC.Server.Scripting.Events.MobInterEventHandler OnUnTrigger;
-        internal void iOnUnTrigger(MobInter mobInter, NPCProto npc)
+        internal void iOnUnTrigger(MobInter mobInter, NPC npc)
         {
             if (OnUnTrigger != null)
                 OnUnTrigger(mobInter, npc);
         }
 
         public static event Events.MobInterEventHandler sOnUnTrigger;
-        internal static void isOnUnTrigger(MobInter mobInter, NPCProto npc)
+        internal static void isOnUnTrigger(MobInter mobInter, NPC npc)
         {
             mobInter.iOnUnTrigger(mobInter, npc);
             if (sOnUnTrigger != null)
@@ -132,14 +132,14 @@ namespace GUC.Server.Scripting.Objects.Mob
 
         #region OnStartInteraction
         public event GUC.Server.Scripting.Events.MobInterEventHandler OnStartInteraction;
-        internal void iOnStartInteraction(MobInter mobInter, NPCProto npc)
+        internal void iOnStartInteraction(MobInter mobInter, NPC npc)
         {
             if (OnStartInteraction != null)
                 OnStartInteraction(mobInter, npc);
         }
 
         public static event Events.MobInterEventHandler sOnStartInteraction;
-        internal static void isOnStartInteraction(MobInter mobInter, NPCProto npc)
+        internal static void isOnStartInteraction(MobInter mobInter, NPC npc)
         {
             mobInter.iOnStartInteraction(mobInter, npc);
             if (sOnStartInteraction != null)
@@ -149,14 +149,14 @@ namespace GUC.Server.Scripting.Objects.Mob
 
         #region OnStopInteraction
         public event GUC.Server.Scripting.Events.MobInterEventHandler OnStopInteraction;
-        internal void iOnStopInteraction(MobInter mobInter, NPCProto npc)
+        internal void iOnStopInteraction(MobInter mobInter, NPC npc)
         {
             if (OnStopInteraction != null)
                 OnStopInteraction(mobInter, npc);
         }
 
         public static event Events.MobInterEventHandler sOnStopInteraction;
-        internal static void isOnStopInteraction(MobInter mobInter, NPCProto npc)
+        internal static void isOnStopInteraction(MobInter mobInter, NPC npc)
         {
             mobInter.iOnStopInteraction(mobInter, npc);
             if (sOnStopInteraction != null)

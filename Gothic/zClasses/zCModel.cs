@@ -220,6 +220,11 @@ namespace Gothic.zClasses
             return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.IsAnimationActive, new CallValue[] { animname });
         }
 
+        public bool IsAniActive(zCModelAni ani)
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)0x472F90, new CallValue[] { ani }) > 0;
+        }
+
         public int GetAniIDFromAniName(String animname)
         {
             zString str = zString.Create(Process, animname);

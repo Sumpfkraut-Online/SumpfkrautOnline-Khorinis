@@ -8,7 +8,7 @@ namespace GUC.Server.Scripts.AI.Routines
 {
     public static class Routine
     {
-        public delegate void OnRoutine(NPCProto proto);
+        public delegate void OnRoutine(NPC proto);
 
     }
 }

@@ -8,7 +8,7 @@ namespace GUC.Server.Scripts.AI.AssessFuncs
 {
     public static class Update
     {
-        public static void OnUpdate(NPCProto proto)
+        public static void OnUpdate(NPC proto)
         {
 
         }
