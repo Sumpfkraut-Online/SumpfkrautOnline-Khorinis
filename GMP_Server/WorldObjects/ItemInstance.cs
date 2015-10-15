@@ -12,11 +12,6 @@ namespace GUC.Server.WorldObjects
 {
     public class ItemInstance : AbstractInstance
     {
-        new protected static ushort idCount = 0;
-
-        new protected static Dictionary<string, AbstractInstance> instanceDict = new Dictionary<string, AbstractInstance>();
-        new protected static Dictionary<ushort, AbstractInstance> instanceList = new Dictionary<ushort, AbstractInstance>();
-
         #region Client fields
 
         /// <summary>The standard name of this item.</summary>
@@ -36,7 +31,7 @@ namespace GUC.Server.WorldObjects
 
         /// <summary>The material of this item. Controls the dropping sound.</summary>
         public ItemMaterial material = ItemMaterial.Wood;
-        
+
         /// <summary>Text lines shown on the left side of the description box in the inventory.</summary>
         public string[] text = new string[4] { "", "", "", "" };
         /// <summary>Values shown on the right side of the description box in the inventory.</summary>
@@ -57,19 +52,7 @@ namespace GUC.Server.WorldObjects
         /// <summary>The ItemInstance which is used for ammunition.</summary>
         public ItemInstance munition = null;
 
-        #endregion
-
-        #region Constructors
-        public ItemInstance(string instanceName) : base(instanceName)
-        {
-        }
-
-        public ItemInstance(ushort ID, string instanceName) : base(ID, instanceName)
-        {
-        }
-        #endregion
-
-        protected override void Write(BinaryWriter bw)
+        internal override void Write(BinaryWriter bw)
         {
             bw.Write(ID);
             bw.Write(name);
@@ -90,15 +73,22 @@ namespace GUC.Server.WorldObjects
             bw.Write(condition);
         }
 
-        //meh
-        public static ItemInstance Get(string instanceName)
+        #endregion
+
+        #region Constructors
+
+        public ItemInstance(string instanceName)
+            : base(instanceName)
         {
-            return (ItemInstance)UncastedGet(instanceName);
         }
 
-        public static ItemInstance Get(ushort id)
+        public ItemInstance(ushort ID, string instanceName)
+            : base(ID, instanceName)
         {
-            return (ItemInstance)UncastedGet(id);
         }
+
+        #endregion
+        
+        public static InstanceManager<ItemInstance> Table = new InstanceManager<ItemInstance>();
     }
 }

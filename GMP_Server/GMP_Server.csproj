@@ -141,6 +141,7 @@
     <Compile Include="WorldObjects\AbstractDropVob.cs" />
     <Compile Include="WorldObjects\AbstractInstance.cs" />
     <Compile Include="WorldObjects\AbstractVob.cs" />
+    <Compile Include="WorldObjects\InstanceManager.cs" />
     <Compile Include="WorldObjects\Item.cs" />
     <Compile Include="WorldObjects\ItemInstance.cs" />
     <Compile Include="WorldObjects\NPC.cs" />

@@ -34,8 +34,8 @@ namespace GUC.Server.Network.Messages
                 if (client.instanceNPCNeeded)
                 {
                     stream.Write1();
-                    stream.mWrite(NPCInstance.data.Length);
-                    stream.Write(NPCInstance.data, (uint)NPCInstance.data.Length);
+                    stream.mWrite(NPCInstance.Table.data.Length);
+                    stream.Write(NPCInstance.Table.data, (uint)NPCInstance.Table.data.Length);
                 }
                 else
                 {
@@ -45,8 +45,8 @@ namespace GUC.Server.Network.Messages
                 if (client.instanceItemNeeded)
                 {
                     stream.Write1();
-                    stream.mWrite(ItemInstance.data.Length);
-                    stream.Write(ItemInstance.data, (uint)ItemInstance.data.Length);
+                    stream.mWrite(ItemInstance.Table.data.Length);
+                    stream.Write(ItemInstance.Table.data, (uint)ItemInstance.Table.data.Length);
                 }
                 else
                 {

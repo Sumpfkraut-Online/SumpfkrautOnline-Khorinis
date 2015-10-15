@@ -15,7 +15,7 @@ namespace GUC.Server.WorldObjects
         /// <summary>
         /// Gets the NPCInstance of this NPC.
         /// </summary>
-        public NPCInstance instance { get; protected set; }
+        public NPCInstance Instance { get; protected set; }
 
         #region Constructors
 
@@ -25,16 +25,13 @@ namespace GUC.Server.WorldObjects
         /// </summary>
         public static NPC Create(ushort instanceID)
         {
-            NPCInstance inst = NPCInstance.Get(instanceID);
-            if (inst != null)
-            {
-                return Create(inst);
-            }
-            else
+            NPCInstance inst = NPCInstance.Table.Get(instanceID);
+            if (inst == null)
             {
                 Log.Logger.logError("NPC creation failed! Instance ID not found: " + instanceID);
                 return null;
             }
+            return Create(inst);
         }
 
         /// <summary>
@@ -43,16 +40,13 @@ namespace GUC.Server.WorldObjects
         /// </summary>
         public static NPC Create(string instanceName)
         {
-            NPCInstance inst = NPCInstance.Get(instanceName);
-            if (inst != null)
-            {
-                return Create(inst);
-            }
-            else
+            NPCInstance inst = NPCInstance.Table.Get(instanceName);
+            if (inst == null)
             {
                 Log.Logger.logError("NPC creation failed! Instance name not found: " + instanceName);
                 return null;
             }
+            return Create(inst);
         }
 
         /// <summary>
@@ -64,7 +58,7 @@ namespace GUC.Server.WorldObjects
             if (instance != null)
             {
                 NPC npc = new NPC();
-                npc.instance = instance;
+                npc.Instance = instance;
                 npc.BodyHeight = instance.bodyHeight;
                 npc.BodyHeight = instance.bodyHeight;
                 npc.BodyWidth = instance.bodyWidth;
@@ -106,7 +100,7 @@ namespace GUC.Server.WorldObjects
             get { return customName; }
             set
             {
-                if (value == null || value == instance.name)
+                if (value == null || value == Instance.name)
                 {
                     customName = "";
                 }
@@ -225,10 +219,10 @@ namespace GUC.Server.WorldObjects
         {
             BitStream stream = Program.server.SetupStream(NetworkID.WorldNPCSpawnMessage);
             stream.mWrite(ID);
-            stream.mWrite(instance.ID);
+            stream.mWrite(Instance.ID);
             stream.mWrite(pos);
             stream.mWrite(dir);
-            if (instance.ID <= 2)
+            if (Instance.ID <= 2)
             {
                 stream.mWrite((byte)HumanBodyTex);
                 stream.mWrite((byte)HumanHeadMesh);

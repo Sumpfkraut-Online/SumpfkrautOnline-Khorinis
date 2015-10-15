@@ -66,7 +66,7 @@ namespace GUC.Server.WorldObjects
         /// </summary>
         public static Item Create(ushort instanceID)
         {
-            ItemInstance inst = ItemInstance.Get(instanceID);
+            ItemInstance inst = ItemInstance.Table.Get(instanceID);
             if (inst != null)
             {
                 return Create(inst);
@@ -84,7 +84,7 @@ namespace GUC.Server.WorldObjects
         /// </summary>
         public static Item Create(string instanceName)
         {
-            ItemInstance inst = ItemInstance.Get(instanceName);
+            ItemInstance inst = ItemInstance.Table.Get(instanceName);
             if (inst != null)
             {
                 return Create(inst);

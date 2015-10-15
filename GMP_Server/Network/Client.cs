@@ -87,8 +87,8 @@ namespace GUC.Server.Network
             this.DriveString = driveString;
             this.MacString = macString;
 
-            instanceNPCNeeded = !npcTableHash.SequenceEqual(NPCInstance.hash);
-            instanceItemNeeded = !itemTableHash.SequenceEqual(ItemInstance.hash);
+            instanceNPCNeeded = !npcTableHash.SequenceEqual(NPCInstance.Table.hash);
+            instanceItemNeeded = !itemTableHash.SequenceEqual(ItemInstance.Table.hash);
 
             isValid = true;
         }

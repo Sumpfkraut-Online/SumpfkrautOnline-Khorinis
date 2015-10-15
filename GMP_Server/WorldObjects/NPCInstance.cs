@@ -9,21 +9,19 @@ namespace GUC.Server.WorldObjects
 {
     public class NPCInstance : AbstractInstance
     {
-        new protected static ushort idCount = 0;
-
-        new protected static Dictionary<string, AbstractInstance> instanceDict = new Dictionary<string, AbstractInstance>();
-        new protected static Dictionary<ushort, AbstractInstance> instanceList = new Dictionary<ushort, AbstractInstance>();
-
         #region Server fields
+
         public ushort AttrHealthMax = 100;
         public ushort AttrManaMax = 10;
         public ushort AttrStaminaMax = 100;
         public ushort AttrStrength = 10;
         public ushort AttrDexterity = 10;
+
         #endregion
 
         //Things which the client knows too
         #region Client fields
+
         /// <summary>The standard name of the NPC.</summary>
         public string name = "";
         /// <summary>The .MDS-Visual of the NPC.</summary>
@@ -46,9 +44,8 @@ namespace GUC.Server.WorldObjects
 
         /// <summary>The voice index of the NPC. Only used for humans. Default: None</summary>
         public HumVoice voice = HumVoice.None;
-        #endregion
 
-        protected override void Write(BinaryWriter bw)
+        internal override void Write(BinaryWriter bw)
         {
             bw.Write(ID);
 
@@ -64,25 +61,22 @@ namespace GUC.Server.WorldObjects
             bw.Write((byte)voice);
         }
 
-        #region Constructors
-        public NPCInstance(string instanceName) : base(instanceName)
-        {
-        }
-
-        public NPCInstance(ushort ID, string instanceName) : base(ID, instanceName)
-        {
-        }
         #endregion
 
-        //meh
-        public static NPCInstance Get(string instanceName)
+        #region Constructors
+        
+        public NPCInstance(string instanceName)
+            : base(instanceName)
         {
-            return (NPCInstance)UncastedGet(instanceName);
         }
 
-        public static NPCInstance Get(ushort id)
+        public NPCInstance(ushort ID, string instanceName)
+            : base(ID, instanceName)
         {
-            return (NPCInstance)UncastedGet(id);
         }
+
+        #endregion
+        
+        public static InstanceManager<NPCInstance> Table = new InstanceManager<NPCInstance>();
     }
 }
