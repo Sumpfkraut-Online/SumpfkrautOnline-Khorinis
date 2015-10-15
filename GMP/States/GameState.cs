@@ -41,8 +41,6 @@ namespace GUC.Client.States
         static oCNpc npc;
         public static void RenderTest()
         {
-            Player.AddItem(ItemInstance.InstanceList[0], 10);
-            Player.AddItem(ItemInstance.InstanceList[1], 10);
             /*if (npc == null)
             {
                 npc = NPCInstance.InstanceList[0].CreateNPC();
@@ -108,7 +106,7 @@ namespace GUC.Client.States
             Program.client.Update();
 
             if (npc != null)
-            if ((new Vec3f(npc.TrafoObjToWorld.getPosition())).getDistance(Player.Hero.Position) < 150)
+            if ((new Vec3f(npc.TrafoObjToWorld.getPosition())).getDistance(Player.Hero.position) < 150)
             {
                 npc.GetEM(0).KillMessages();
                 npc.AniCtrl._Stand();

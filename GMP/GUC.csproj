@@ -145,6 +145,7 @@
     <Compile Include="Network\Messages\VobMessage.cs" />
     <Compile Include="Network\Messages\WorldMessage.cs" />
     <Compile Include="States\AbstractState.cs" />
+    <Compile Include="WorldObjects\AbstractInstance.cs" />
     <Compile Include="WorldObjects\Item.cs" />
     <Compile Include="WorldObjects\ItemInstance.cs" />
     <Compile Include="WorldObjects\NPC.cs" />

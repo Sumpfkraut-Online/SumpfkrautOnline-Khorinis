@@ -6,64 +6,65 @@ using GUC.Enumeration;
 
 namespace GUC.Server.WorldObjects
 {
+    /// <summary>
+    /// The complete "Server World", contains properties which concern all worlds / the server universe.
+    /// </summary>
     internal static class sWorld
     {
-        public static List<World> WorldList = new List<World>();
-        public static Dictionary<uint, AbstractVob> AllVobs = new Dictionary<uint, AbstractVob>(); //All the vobs!
+        /// <summary>Dictionary of all Worlds. Use only for access!</summary>
+        public static Dictionary<string, World> WorldDict = new Dictionary<string, World>();
 
-        public static List<NPC> NPCList = new List<NPC>(); //bots
-        public static List<NPC> PlayerList = new List<NPC>(); //players
-        public static List<Item> ItemList = new List<Item>(); //items
-        public static List<Vob> VobList = new List<Vob>(); //mobsis and simple objects (trees, crates, etc.)
+        /// <summary>All Non-Players. Use only for access!</summary>
+        public static Dictionary<uint, NPC> NPCDict = new Dictionary<uint, NPC>();
 
-        public static int Day = 1;
-        public static byte Hour = 12;
-        public static byte Minute = 0;
+        /// <summary>All Players. Use only for access!</summary>
+        public static Dictionary<uint, NPC> PlayerDict = new Dictionary<uint, NPC>();
 
-        public static byte WeatherType;
-        public static byte StartRainHour;
-        public static byte StartRainMinute;
-        public static byte EndRainHour;
-        public static byte EndRainMinute;
+        /// <summary>All Items. Use only for access!</summary>
+        public static Dictionary<uint, Item> ItemDict = new Dictionary<uint, Item>();
 
-        public static void AddVob(AbstractVob vob)
+        /// <summary>All Vobs & Mobs. Use only for access!</summary>
+        public static Dictionary<uint, Vob> VobDict = new Dictionary<uint, Vob>();
+
+        internal static void AddVob(AbstractVob vob)
         {
-            //if (!VobDict.ContainsKey(vob.ID)) //is only added once in the Vob-Constructor anyway
-            AllVobs.Add(vob.ID, vob);
             if (vob is NPC)
             {
                 if (((NPC)vob).isPlayer)
-                    PlayerList.Add((NPC)vob);
+                    PlayerDict.Add(vob.ID, (NPC)vob);
                 else
-                    NPCList.Add((NPC)vob);
+                    NPCDict.Add(vob.ID, (NPC)vob);
             }
             else if (vob is Item)
             {
-                ItemList.Add((Item)vob);
+                ItemDict.Add(vob.ID, (Item)vob);
             }
             else if (vob is Vob)
             {
-                VobList.Add((Vob)vob);
+                VobDict.Add(vob.ID, (Vob)vob);
+            }
+            else
+            {
+                Log.Logger.logError("sWorld.AddVob failed: vob is of no specified type!");
             }
         }
 
-        public static void RemoveVob(AbstractVob vob)
+        internal static void RemoveVob(AbstractVob vob)
         {
-            AllVobs.Remove(vob.ID);
             if (vob is NPC)
             {
                 if (((NPC)vob).isPlayer)
-                    PlayerList.Remove((NPC)vob);
+                    PlayerDict.Remove(vob.ID);
                 else
-                    NPCList.Remove((NPC)vob);
+                    NPCDict.Remove(vob.ID);
             }
             else if (vob is Item)
             {
-                ItemList.Remove((Item)vob);
+                ItemDict.Remove(vob.ID);
             }
             else if (vob is Vob)
             {
-                VobList.Remove((Vob)vob);
+                VobDict.Remove(vob.ID);
             }
         }
     }

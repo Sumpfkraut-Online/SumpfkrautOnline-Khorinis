@@ -36,24 +36,24 @@ namespace GUC.Client.GUI
                 amount.Format = GUCVisualText.TextFormat.Right;
             }
 
-            KeyValuePair<ItemInstance, int> item = new KeyValuePair<ItemInstance, int>();
-            public KeyValuePair<ItemInstance, int> Item
+            Item iItem = null;
+            public Item item
             {
-                get { return item; }
+                get { return iItem; }
                 set
                 {
-                    item = value;
+                    iItem = value;
 
-                    if (item.Key == null)
+                    if (iItem == null)
                     {
                         vis.Hide();
                     }
                     else
                     {
-                        thisVob.SetVisual(item.Key.Visual);
-                        thisVob.MainFlag = (int)item.Key.MainFlags; //for proper item rotation
-                        thisVob.Flags = (int)item.Key.Flags;
-                        amount.Text = item.Value > 1 ? item.Value.ToString() : "";
+                        thisVob.SetVisual(iItem.visual);
+                        thisVob.MainFlag = (int)iItem.mainFlags; //for proper item rotation
+                        thisVob.Flags = (int)iItem.flags;
+                        amount.Text = iItem.amount > 1 ? iItem.amount.ToString() : "";
                         if (shown) vis.Show();
                     }
                 }
@@ -74,7 +74,7 @@ namespace GUC.Client.GUI
             public override void Show()
             {
                 back.Show();
-                if (item.Key != null)
+                if (iItem != null)
                 {
                     vis.Show();
                 }
@@ -184,10 +184,7 @@ namespace GUC.Client.GUI
             LeftInfoBox = "WEIGHT";
         }
 
-        public KeyValuePair<ItemInstance, int> SelectedItem
-        {
-            get { return slots[cursor.X, cursor.Y].Item; }
-        }
+        public Item selectedItem { get; protected set; }
 
         #region Navigation
 
@@ -265,12 +262,11 @@ namespace GUC.Client.GUI
 
         void SelectSlot()
         {
-            ItemInstance instance = slots[cursor.X, cursor.Y].Item.Key;
-            int amount = slots[cursor.X, cursor.Y].Item.Value;
+            selectedItem = slots[cursor.X, cursor.Y].item;
 
             slots[cursor.X, cursor.Y].Select();
 
-            if (instance == null)
+            if (selectedItem == null)
             {
                 descrBack.Hide();
                 descrVis.Hide();
@@ -278,25 +274,43 @@ namespace GUC.Client.GUI
             else
             {
                 //set description box
-                if (instance.Name != null && instance.Name.Length > 0)
+                if (selectedItem.description != null && selectedItem.description.Length > 0)
                 {
-                    descrBack.Texts[0].Text = instance.Name.Value;
+                    descrBack.Texts[0].Text = selectedItem.description;
                 }
 
-                for (int i = 0; i < 6; i++)
+                //special line, individual signing etc.
+                int startIndex;
+                GUCVisualText specialLine = descrBack.Texts[9];
+                if (selectedItem.specialLine != null && selectedItem.specialLine.Length > 0)
                 {
-                    if (instance.Text[i] != null && instance.Text[i].Length > 0)
+                    specialLine.Text = selectedItem.specialLine;
+                    specialLine.Format = GUCVisualText.TextFormat.Right;
+                    specialLine.SetPosX(500);
+                    startIndex = 0;
+                }
+                else
+                {
+                    specialLine.Format = GUCVisualText.TextFormat.Left;
+                    specialLine.SetPosX(20);
+                    startIndex = 1;
+                }
+
+                //standard description
+                for (int i = startIndex; i < 4; i++)
+                {
+                    if (selectedItem.text[i] != null && selectedItem.text[i].Length > 0)
                     {
-                        descrBack.Texts[2 * i + 1].Text = instance.Text[i].Value;
+                        descrBack.Texts[2 * i + 1].Text = selectedItem.text[i];
                     }
                     else
                     {
                         descrBack.Texts[2 * i + 1].Text = "";
                     }
 
-                    if (instance.Count[i] > 0)
+                    if (selectedItem.count[i] > 0)
                     {
-                        descrBack.Texts[2 * i + 2].Text = instance.Count[i].ToString();
+                        descrBack.Texts[2 * i + 2].Text = selectedItem.count[i].ToString();
                     }
                     else
                     {
@@ -304,10 +318,16 @@ namespace GUC.Client.GUI
                     }
                 }
 
-                descrVob.SetVisual(instance.Visual);
-                descrVob.MainFlag = (int)instance.MainFlags;
-                descrVob.Flags = (int)instance.Flags;
+                //weight
+                descrBack.Texts[11].Text = "Gewicht:";
+                descrBack.Texts[12].Text = selectedItem.weight.ToString();
 
+                //visual vob
+                descrVob.SetVisual(selectedItem.visual);
+                descrVob.MainFlag = (int)selectedItem.mainFlags;
+                descrVob.Flags = (int)selectedItem.flags;
+
+                //show
                 descrVis.Show();
                 descrBack.Show();
             }
@@ -338,39 +358,34 @@ namespace GUC.Client.GUI
 
         #endregion
 
-        List<KeyValuePair<ItemInstance, int>> contents;
-        public void SetContents(Dictionary<ItemInstance, int> items)
+        List<Item> contents;
+        public void SetContents(Dictionary<uint, Item> items)
         {
-            contents = items.ToList();
-            contents.Sort(inventoryComparer);
+            contents = items.Values.ToList();
+            contents.Sort(inventoryComparer); //sort items
 
             SetCursor(cursor.X, cursor.Y); //update cursor
 
-            UpdateSlots();
+            UpdateSlots(); // update slot visuals
 
-            KeyValuePair<ItemInstance, int> gold = contents.Find(i => i.Key.Name.Value == "Gold");
-            int weight = 0;
-            foreach (KeyValuePair<ItemInstance, int> pair in contents)
-            {
-                weight += pair.Key.Weight * pair.Value;
-            }
+            rightText.Text = GetInfoBoxValue(RightInfoBox);
+            leftText.Text = GetInfoBoxValue(LeftInfoBox);
+        }
 
-            if (RightInfoBox == "GOLD")
+        String GetInfoBoxValue(string text)
+        {
+            switch (text)
             {
-                rightText.Text = "Gold: " + gold.Value;
-            }
-            else if (RightInfoBox == "WEIGHT")
-            {
-                rightText.Text = weight + "/100";
-            }
-
-            if (LeftInfoBox == "GOLD")
-            {
-                leftText.Text = "Gold: " + gold.Value;
-            }
-            else if (LeftInfoBox == "WEIGHT")
-            {
-                leftText.Text = weight + "/1000";
+                case "GOLD":
+                    Item gold = contents.Find(i => i.name == "Gold");
+                    return "Gold: " + (gold == null ? 0 : gold.amount);
+                case "WEIGHT":
+                    int weight = 0;
+                    for (int i = 0; i < contents.Count; i++)
+                        weight += contents[i].weight * contents[i].amount;
+                    return String.Format("{0}/{1}", weight, 100); //FIXME: Show capacity
+                default:
+                    return text;
             }
         }
 
@@ -382,11 +397,11 @@ namespace GUC.Client.GUI
                 {
                     if (i < contents.Count)
                     {
-                        slots[x, y].Item = contents[i];
+                        slots[x, y].item = contents[i];
                     }
                     else
                     {
-                        slots[x, y].Item = new KeyValuePair<ItemInstance, int>();
+                        slots[x, y].item = null;
                     }
                     i++;
                 }
@@ -424,31 +439,31 @@ namespace GUC.Client.GUI
 
         #region sorting
 
-        /*static List<MainFlags> sortList = new List<MainFlags>() { MainFlags.ITEM_KAT_NF,
-                                                                  MainFlags.ITEM_KAT_FF,
-                                                                  MainFlags.ITEM_KAT_MUN,
-                                                                  MainFlags.ITEM_KAT_FOOD,
-                                                                  MainFlags.ITEM_KAT_RUNE,
-                                                                  MainFlags.ITEM_KAT_ARMOR,
-                                                                  MainFlags.ITEM_KAT_DOCS,
-                                                                  MainFlags.ITEM_KAT_POTIONS,
-                                                                  MainFlags.ITEM_KAT_MAGIC };*/
+        static List<oCItem.MainFlags> sortList = new List<oCItem.MainFlags>() { oCItem.MainFlags.ITEM_KAT_NF,
+                                                                                oCItem.MainFlags.ITEM_KAT_FF,
+                                                                                oCItem.MainFlags.ITEM_KAT_MUN,
+                                                                                oCItem.MainFlags.ITEM_KAT_FOOD,
+                                                                                oCItem.MainFlags.ITEM_KAT_RUNE,
+                                                                                oCItem.MainFlags.ITEM_KAT_ARMOR,
+                                                                                oCItem.MainFlags.ITEM_KAT_DOCS,
+                                                                                oCItem.MainFlags.ITEM_KAT_POTIONS,
+                                                                                oCItem.MainFlags.ITEM_KAT_MAGIC };
 
         static InventoryComparer inventoryComparer = new InventoryComparer();
-        class InventoryComparer : IComparer<KeyValuePair<ItemInstance, int>>
+        class InventoryComparer : IComparer<Item>
         {
-            public int Compare(KeyValuePair<ItemInstance, int> a, KeyValuePair<ItemInstance, int> b)
+            public int Compare(Item a, Item b)
             {
-                /* int aIndex = sortList.IndexOf(a.Key.MainFlags);
-                 int bIndex = sortList.IndexOf(a.Key.MainFlags);
-                 if (aIndex < 0) aIndex = sortList.Count;
-                 if (bIndex < 0) bIndex = sortList.Count;
+                int aIndex = sortList.IndexOf(a.mainFlags); // get sort priority
+                int bIndex = sortList.IndexOf(a.mainFlags); // get sort priority
+                if (aIndex < 0) aIndex = sortList.Count; // not in sortList, to the bottom
+                if (bIndex < 0) bIndex = sortList.Count; // not in sortList, to the bottom
 
-                 if (aIndex.CompareTo(bIndex) != 0)
-                 {
-                     return aIndex.CompareTo(bIndex);
-                 }*/
-                return a.Key.Count[0].CompareTo(b.Key.Count[0]); //just sort by something
+                //if (aIndex.CompareTo(bIndex) != 0)
+                //{
+                return aIndex.CompareTo(bIndex);
+                //}
+                //return a.count[0].CompareTo(b.count[0]); //just sort by something
             }
         }
         #endregion

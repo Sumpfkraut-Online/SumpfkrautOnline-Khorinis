@@ -51,8 +51,8 @@ namespace GUC.Server.Network
             MessageListener.Add((byte)NetworkID.AccountCharCreationMessage, AccountMessage.CreateCharacter);
             MessageListener.Add((byte)NetworkID.AccountCharLoginMessage, AccountMessage.LoginCharacter);
 
-            MessageListener.Add((byte)NetworkID.PlayerControlMessage, Player.ReadControl);
-            MessageListener.Add((byte)NetworkID.PlayerPickUpItemMessage, Player.ReadPickUpItem);
+            MessageListener.Add((byte)NetworkID.PlayerControlMessage, NPC.ReadControl);
+            MessageListener.Add((byte)NetworkID.PlayerPickUpItemMessage, NPC.ReadPickUpItem);
 
             MessageListener.Add((byte)NetworkID.VobPosDirMessage, VobMessage.ReadPosDir);
 

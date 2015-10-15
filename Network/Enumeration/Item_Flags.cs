@@ -7,16 +7,16 @@ namespace GUC.Enumeration
 {
     public enum ItemType : byte
     {
-        Misc, // everything else
-
         Sword_1H, // one-handed swordlike weapons
         Sword_2H, // two-handed swordlike weapons
         Blunt_1H, // one-handed blunt weapons
         Blunt_2H, // two-handed blunt weapons
         Bow,   // bows
         XBow,  // crossbows
-        Ammo,  // munition
         Armor, // armor & clothing
+
+        Arrow, // ammunition
+        XBolt, // ammunition
 
         Ring,   // rings
         Amulet, // amulets
@@ -32,7 +32,9 @@ namespace GUC.Enumeration
         Rune,     // magic runes
         Scroll,   // magic scrolls 
 
-        Misc_Usable // interactive items (f.e. brooms, lutes)
+        Misc_Usable, // interactive items (f.e. brooms, lutes)
+
+        Misc // everything else
     }
 
     public enum ItemMaterial : byte
@@ -43,5 +45,12 @@ namespace GUC.Enumeration
         Leather = 3,
         Clay = 4,
         Glass = 5
+    }
+
+    public enum Gender : byte
+    {
+        Masculine,
+        Feminine,
+        Neuter
     }
 }

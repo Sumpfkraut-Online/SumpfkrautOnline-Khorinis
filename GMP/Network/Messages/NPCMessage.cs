@@ -74,8 +74,8 @@ namespace GUC.Client.Network.Messages
             BitStream stream = Program.client.SetupSendStream(NetworkID.NPCStateMessage);
             stream.mWrite(npc.ID);
             stream.mWrite((byte)npc.State);
-            stream.mWrite(npc.Position);
-            stream.mWrite(npc.Direction);
+            stream.mWrite(npc.position);
+            stream.mWrite(npc.direction);
             Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE_ORDERED);
             npc.nextPosUpdate = DateTime.Now.Ticks + NPC.PositionUpdateTime; //set position update time
         }
@@ -94,8 +94,8 @@ namespace GUC.Client.Network.Messages
             }
 
             npc.State = (NPCState)stream.mReadByte();
-            npc.Position = stream.mReadVec();
-            npc.Direction = stream.mReadVec();
+            npc.position = stream.mReadVec();
+            npc.direction = stream.mReadVec();
 
             switch (npc.State)
             {
@@ -116,8 +116,8 @@ namespace GUC.Client.Network.Messages
             BitStream stream = Program.client.SetupSendStream(NetworkID.NPCWeaponStateMessage);
             stream.mWrite((byte)Player.Hero.WeaponState);
             stream.mWrite(removeType1);
-            stream.mWrite(Player.Hero.Position);
-            stream.mWrite(Player.Hero.Direction);
+            stream.mWrite(Player.Hero.position);
+            stream.mWrite(Player.Hero.direction);
             Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE_ORDERED);
             Player.Hero.nextPosUpdate = DateTime.Now.Ticks + NPC.PositionUpdateTime; //set position update time
         }
@@ -130,8 +130,8 @@ namespace GUC.Client.Network.Messages
 
             npc.WeaponState = (NPCWeaponState)stream.mReadByte();
             bool removeType1 = stream.ReadBit();
-            npc.Position = stream.mReadVec();
-            npc.Direction = stream.mReadVec();
+            npc.position = stream.mReadVec();
+            npc.direction = stream.mReadVec();
 
             switch (npc.WeaponState)
             {
@@ -166,8 +166,8 @@ namespace GUC.Client.Network.Messages
         {
             BitStream stream = Program.client.SetupSendStream(NetworkID.NPCAttackMessage);
             stream.mWrite((byte)Player.Hero.State);
-            stream.mWrite(Player.Hero.Position);
-            stream.mWrite(Player.Hero.Direction);
+            stream.mWrite(Player.Hero.position);
+            stream.mWrite(Player.Hero.direction);
 
             Vob target;
             World.vobAddr.TryGetValue(Player.Hero.gNpc.GetFocusNpc().Address, out target);
@@ -191,8 +191,8 @@ namespace GUC.Client.Network.Messages
             if (attacker == null) return;
 
             NPCState state = (NPCState)stream.mReadByte();
-            attacker.Position = stream.mReadVec();
-            attacker.Direction = stream.mReadVec();
+            attacker.position = stream.mReadVec();
+            attacker.direction = stream.mReadVec();
 
             uint targetID = stream.mReadUInt();
 
@@ -286,8 +286,8 @@ namespace GUC.Client.Network.Messages
             World.npcDict.TryGetValue(stream.mReadUInt(), out npc);
             if (npc == null) return;
 
-            ItemInstance inst;
-            ItemInstance.InstanceList.TryGetValue(stream.mReadUShort(), out inst);
+            ItemInstance inst = null;
+            //ItemInstance.InstanceList.TryGetValue(stream.mReadUShort(), out inst);
             if (inst == null) return;
 
             if (inst == npc.EquippedMeleeWeapon)
@@ -307,25 +307,25 @@ namespace GUC.Client.Network.Messages
             }
             else
             {
-                if (inst.MainFlags == oCItem.MainFlags.ITEM_KAT_NF)
+                if (inst.mainFlags == oCItem.MainFlags.ITEM_KAT_NF)
                 {
                     npc.EquippedMeleeWeapon = inst;
                     npc.gNpc.UnequipItem(npc.gNpc.GetEquippedMeleeWeapon());
                 }
-                else if (inst.MainFlags == oCItem.MainFlags.ITEM_KAT_FF)
+                else if (inst.mainFlags == oCItem.MainFlags.ITEM_KAT_FF)
                 {
                     npc.EquippedRangedWeapon = inst;
                     npc.gNpc.UnequipItem(npc.gNpc.GetEquippedRangedWeapon());
                 }
-                else if (inst.MainFlags == oCItem.MainFlags.ITEM_KAT_ARMOR)
+                else if (inst.mainFlags == oCItem.MainFlags.ITEM_KAT_ARMOR)
                 {
                     npc.EquippedArmor = inst;
                     npc.gNpc.UnequipItem(npc.gNpc.GetEquippedArmor());
                 }
                 else return;
 
-                oCItem newItem = inst.CreateItem();
-                npc.gNpc.Equip(newItem);
+                //oCItem newItem = inst.CreateItem();
+                //npc.gNpc.Equip(newItem);
             }
         }
 

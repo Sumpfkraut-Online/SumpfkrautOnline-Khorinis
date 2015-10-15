@@ -15,23 +15,25 @@ namespace GUC.Server.Network.Messages
         public static void ReadPosDir(BitStream stream, Client client)
         {
             uint id = stream.mReadUInt();
-            AbstractVob vob;
+            AbstractCtrlVob vob = null;
 
-            sWorld.AllVobs.TryGetValue(id, out vob);
-            if (vob == null || !(vob is AbstractCtrlVob))
-                return;
-
-
-            
-            if (vob == client.character || client.VobControlledList.Contains(vob))
+            if (id == client.character.ID)
             {
-                Vec3f pos = stream.mReadVec();
-                Vec3f dir = stream.mReadVec();
-                vob.pos = pos;
-                vob.dir = dir;
+                vob = client.character;
+            }
+            else
+            {
+                vob = client.VobControlledList.Find(v => v.ID == id);
+            }
+            
+            if (vob != null)
+            {
+
+                vob.pos = stream.mReadVec();
+                vob.dir = stream.mReadVec();
                 if (vob is AbstractDropVob)
                 {
-                    ((AbstractDropVob)vob).Update(pos);
+                    ((AbstractDropVob)vob).Update(vob.pos);
                 }
                 else
                 {

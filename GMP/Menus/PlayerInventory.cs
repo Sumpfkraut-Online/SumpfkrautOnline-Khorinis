@@ -53,22 +53,20 @@ namespace GUC.Client.Menus
             }
             else if (key == VirtualKeys.Menu)
             {
-                KeyValuePair<WorldObjects.ItemInstance, int> selected = inv.SelectedItem;
-                if (selected.Key == null || selected.Value <= 0)
+                if (inv.selectedItem == null)
                     return;
 
-                if (selected.Value > 1)
-                    GUCMenus.InputNumber.Open(InventoryMessage.WriteDropItem, selected.Key, selected.Value);
+                if (inv.selectedItem.amount > 1)
+                    GUCMenus.InputNumber.Open(InventoryMessage.WriteDropItem, inv.selectedItem, inv.selectedItem.amount);
                 else
-                    InventoryMessage.WriteDropItem(selected.Key, selected.Value);
+                    InventoryMessage.WriteDropItem(inv.selectedItem, 1);
             }
             else if (key == VirtualKeys.Control)
             {
-                KeyValuePair<WorldObjects.ItemInstance, int> selected = inv.SelectedItem;
-                if (selected.Key == null || selected.Value <= 0)
+                if (inv.selectedItem == null)
                     return;
 
-                InventoryMessage.WriteUseItem(selected.Key);
+                InventoryMessage.WriteUseItem(inv.selectedItem);
             }
             else
             {

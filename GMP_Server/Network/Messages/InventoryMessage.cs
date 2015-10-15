@@ -11,37 +11,52 @@ namespace GUC.Server.Network.Messages
 {
     static class InventoryMessage
     {
-        public static void WriteAddItem(Client client, ItemInstance instance, int amount)
+        //Add an item to the client's inventory
+        public static void WriteAddItem(Client client, Item item)
         {
+            if (client == null || item == null)
+                return;
+
             BitStream stream = Program.server.SetupStream(NetworkID.InventoryAddMessage);
-            stream.mWrite(instance.ID);
-            stream.mWrite(amount);
+            stream.mWrite(item.ID);
+            stream.mWrite(item.instance.ID);
+            stream.mWrite(item.iAmount);
+            stream.mWrite(item.condition);
             Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I', client.guid, false);
         }
 
-        public static void WriteRemoveItem(Client client, ItemInstance instance, int amount)
+        public static void WriteAmountUpdate(Client client, Item item)
         {
-            BitStream stream = Program.server.SetupStream(NetworkID.InventoryRemoveMessage);
-            stream.mWrite(instance.ID);
+            WriteAmountUpdate(client, item, item.iAmount);
+        }
+
+        public static void WriteAmountUpdate(Client client, Item item, ushort amount)
+        {
+            if (client == null || item == null)
+                return;
+
+            BitStream stream = Program.server.SetupStream(NetworkID.InventoryAmountMessage);
+            stream.mWrite(item.ID);
             stream.mWrite(amount);
             Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I', client.guid, false);
         }
 
         public static void ReadDropItem(BitStream stream, Client client)
         {
-            ushort id = stream.mReadUShort();
-            int amount = stream.mReadInt();
-
-            if (id < ItemInstance.InstanceList.Count)
+            Item item;
+            if (sWorld.ItemDict.TryGetValue(stream.mReadUInt(), out item))
             {
-                ItemInstance inst = ItemInstance.InstanceList[id];
-                if (client.character.HasItem(inst, amount))
+                ushort amount = stream.mReadUShort();
+                if (client.character.HasItem(item))
                 {
-                    client.character.RemoveItem(inst, amount);
-                    Item item = new Item(inst);
-                    item.Amount = amount;
+                    if (item.iAmount > amount) //split it
+                    {
 
-                    item.Drop(client.character);
+                    } 
+                    else if (item.iAmount == amount) //just throw the item out
+                    {
+
+                    }
                 }
             }
         }

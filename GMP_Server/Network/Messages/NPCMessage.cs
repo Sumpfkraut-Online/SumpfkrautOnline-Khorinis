@@ -72,23 +72,24 @@ namespace GUC.Server.Network.Messages
         {
             uint id = stream.mReadUInt();
 
-            AbstractVob vob;
+            NPC npc = null;
 
-            sWorld.AllVobs.TryGetValue(id, out vob);
-            if (vob == null || !(vob is NPC))
-                return;
+            if (id == client.character.ID)
+            {
+                npc = client.character;
+            }
+            else
+            {
+                npc = (NPC)client.VobControlledList.Find(v => v.ID == id && v is NPC);
+            }
 
-            if (vob != client.character)
-                return;
-
-            NPCState newState = (NPCState)stream.mReadByte();
-            Vec3f pos = stream.mReadVec();
-            Vec3f dir = stream.mReadVec();
-
-            ((NPC)vob).State = newState;
-            ((NPC)vob).pos = pos;
-            ((NPC)vob).dir = dir;
-            WriteState(vob.cell.SurroundingClients(client), (NPC)vob);
+            if (npc != null)
+            {
+                npc.State = (NPCState)stream.mReadByte();
+                npc.pos = stream.mReadVec();
+                npc.dir = stream.mReadVec();
+                WriteState(npc.cell.SurroundingClients(client), npc);
+            }
         }
         
         public static void WriteState(IEnumerable<Client> list, NPC npc)

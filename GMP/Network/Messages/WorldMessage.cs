@@ -16,11 +16,11 @@ namespace GUC.Client.Network.Messages
         public static void ReadVobSpawn(BitStream stream)
         {
             Vob vob = new Vob(stream.mReadUInt());
-            vob.Visual = stream.mReadString();
+            vob.visual = stream.mReadString();
             Vec3f pos = stream.mReadVec();
             Vec3f dir = stream.mReadVec();
-            vob.CDDyn = stream.ReadBit();
-            vob.CDStatic = stream.ReadBit();
+            vob.cdDyn = stream.ReadBit();
+            vob.cdStatic = stream.ReadBit();
 
             vob.Spawn(pos, dir, stream.ReadBit());
         }
@@ -37,55 +37,37 @@ namespace GUC.Client.Network.Messages
 
         public static void ReadNPCSpawn(BitStream stream)
         {
-            NPC npc = new NPC(stream.mReadUInt());
-            Vec3f pos = stream.mReadVec();
-            Vec3f dir = stream.mReadVec();
-
+            uint ID = stream.mReadUInt();
             ushort instID = stream.mReadUShort();
-            NPCInstance inst;
-            NPCInstance.InstanceList.TryGetValue(instID, out inst);
-            if (inst != null)
+
+            NPC npc = new NPC(ID, instID);
+            npc.position = stream.mReadVec();
+            npc.direction = stream.mReadVec();
+
+            if (instID <= 2)
             {
-                inst.CreateNPC(npc.gNpc);
-                if (instID <= 1)
-                {
-                    byte BodyTex = stream.mReadByte();
-                    byte HeadMesh = stream.mReadByte();
-                    byte HeadTex = stream.mReadByte();
-                    npc.gNpc.Voice = stream.mReadByte();
+                byte BodyTex = stream.mReadByte();
+                byte HeadMesh = stream.mReadByte();
+                byte HeadTex = stream.mReadByte();
+                npc.voice = stream.mReadByte();
 
-                    using (zString z = zString.Create(Program.Process, ((Enumeration.HumHeadMesh)HeadMesh).ToString()))
-                        npc.gNpc.SetAdditionalVisuals(inst.BodyMesh, BodyTex, 0, z, HeadTex, 0, -1);
-                }
-
-                float BodyHeight = (float)stream.mReadByte() / 100.0f;
-                float BodyWidth = (float)stream.mReadByte() / 100.0f;
-                float Fatness = (float)stream.mReadShort() / 100.0f;
-
-                using (zVec3 z = zVec3.Create(Program.Process))
-                {
-                    z.X = BodyWidth;
-                    z.Y = BodyHeight;
-                    z.Z = BodyWidth;
-                    npc.gNpc.SetModelScale(z);
-                }
-                npc.gNpc.SetFatness(Fatness);
-
-                string customName = stream.mReadString();
-                if (customName != "")
-                {
-                    npc.Name = customName;
-                }
-
-                npc.gNpc.HPMax = stream.mReadUShort();
-                npc.gNpc.HP = stream.mReadUShort();
-                
-                npc.Spawn(pos, dir);
+                npc.SetBodyVisuals(npc.instance.bodyMesh, BodyTex, ((Enumeration.HumHeadMesh)HeadMesh).ToString(), HeadTex);
             }
-            else
+
+            npc.bodyHeight = (float)stream.mReadByte() / 100.0f;
+            npc.bodyWidth = (float)stream.mReadByte() / 100.0f;
+            npc.fatness = (float)stream.mReadShort() / 100.0f;
+
+            string customName = stream.mReadString();
+            if (customName.Length > 0)
             {
-                zERROR.GetZErr(Program.Process).Report(3, 'G', "NPC Spawn failed: NPCInstance unknown! ID: " + instID, 0, "WorldMessage.cs", 0);
+                npc.name = customName;
             }
+
+            npc.gNpc.HPMax = stream.mReadUShort();
+            npc.gNpc.HP = stream.mReadUShort();
+
+            npc.Spawn();
         }
 
         public static void ReadItemSpawn(BitStream stream)

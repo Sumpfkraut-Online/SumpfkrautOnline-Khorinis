@@ -7,145 +7,98 @@ using GUC.Server.Network;
 using RakNet;
 using GUC.Network;
 using System.IO;
-using System.IO.Compression;
-using System.Security.Cryptography;
 
 namespace GUC.Server.WorldObjects
 {
-    public class ItemInstance
+    public class ItemInstance : AbstractInstance
     {
-        static ushort idCount = 0;
+        new protected static ushort idCount = 0;
 
-        protected static Dictionary<ushort, ItemInstance> instanceList = new Dictionary<ushort, ItemInstance>();
-        public static Dictionary<ushort, ItemInstance> InstanceList { get { return instanceList; } }
-
-        protected static Dictionary<string, ItemInstance> instanceDict = new Dictionary<string, ItemInstance>();
-        public static Dictionary<string, ItemInstance> InstanceDict { get { return instanceDict; } }
-
-        public ushort ID { get; protected set; }
-        public string _CodeName { get; protected set; }
+        new protected static Dictionary<string, AbstractInstance> instanceDict = new Dictionary<string, AbstractInstance>();
+        new protected static Dictionary<ushort, AbstractInstance> instanceList = new Dictionary<ushort, AbstractInstance>();
 
         #region Client fields
 
-        public String Name = "";
+        /// <summary>The standard name of this item.</summary>
+        public String name = "";
 
-        public ushort Range = 0;
-        public ushort Weight = 0;
+        /// <summary>The starter condition value of this item. The higher the condition, the longer it lasts before breaking. Default value is 1000.</summary>
+        public ushort condition = 1000;
 
-        public ItemType Type = ItemType.Misc;
-        public ItemMaterial Material = ItemMaterial.Wood;
+        ///<summary>The grammatical gender of the name. F.e. "Rostig'er' Zweihänder"</summary>
+        public Gender gender = Gender.Neuter;
 
-        public String Description = "";
-        public String[] Text = new string[6] { "", "", "", "", "", "" };
-        public ushort[] Count = new ushort[6];
+        /// <summary>The weight of this item.</summary>
+        public ushort weight = 1;
 
-        //Visuals:
-        public String Visual = "";
-        public String Visual_Change = "";
-        public String Effect = "";
+        /// <summary>The type of this item.</summary>
+        public ItemType type = ItemType.Misc;
 
-        public ItemInstance Munition = null;
+        /// <summary>The material of this item. Controls the dropping sound.</summary>
+        public ItemMaterial material = ItemMaterial.Wood;
+        
+        /// <summary>Text lines shown on the left side of the description box in the inventory.</summary>
+        public string[] text = new string[4] { "", "", "", "" };
+        /// <summary>Values shown on the right side of the description box in the inventory.</summary>
+        public ushort[] count = new ushort[4];
 
-        #endregion 
+        /// <summary>The name shown in the description box in the inventory.</summary>
+        public string description = "";
+
+        /// <summary>The 3DS-Model shown in the world and inventory.</summary>
+        public String visual = "";
+
+        /// <summary>The ASC-Mesh for armors which is put over the NPC's character model.</summary>
+        public String visualChange = "";
+
+        /// <summary>Magic Effect. See Scripts/System/VisualFX/VisualFxInst.d</summary>
+        public String effect = "";
+
+        /// <summary>The ItemInstance which is used for ammunition.</summary>
+        public ItemInstance munition = null;
+
+        #endregion
 
         #region Constructors
-
-        public ItemInstance(string codeName)
+        public ItemInstance(string instanceName) : base(instanceName)
         {
-            this._CodeName = codeName.ToUpper();
-
-            if (instanceDict.ContainsKey(this._CodeName))
-            {
-                Log.Logger.log("ERR: ItemInstance creation failed: CodeName is already existing " + this._CodeName);
-                return;
-            }
-
-            for (int i = 0; i < ushort.MaxValue; i++)
-            {
-                if (!instanceList.ContainsKey(idCount))
-                {
-                    this.ID = idCount;
-                    instanceList.Add(idCount, this);
-                    instanceDict.Add(codeName, this);
-                    idCount++;
-                    return;
-                }
-                idCount++;
-            }
-            Log.Logger.log("ERR: ItemInstance creation failed: Maximum reached " + ushort.MaxValue);
         }
 
-        public ItemInstance(ushort ID, string codeName)
+        public ItemInstance(ushort ID, string instanceName) : base(ID, instanceName)
         {
-            this.ID = ID;
-            this._CodeName = codeName.ToUpper();
-
-            if (instanceDict.ContainsKey(this._CodeName))
-            {
-                Log.Logger.log("ERR: ItemInstance creation failed: CodeName is already existing " + this._CodeName);
-                return;
-            }
-
-            if (instanceList.ContainsKey(ID))
-            {
-                Log.Logger.log("ERR: ItemInstance creation failed: ID is already existing: " + this.ID);
-                return;
-            }
-
-            instanceList.Add(this.ID, this);
-            instanceDict.Add(this._CodeName, this);
-            idCount = (ushort)(this.ID + 1);
         }
-
         #endregion
 
-        #region Networking
-
-        internal static byte[] data;
-        internal static byte[] hash;
-
-        public static void NetUpdate()
+        protected override void Write(BinaryWriter bw)
         {
-            using (MemoryStream ms = new MemoryStream())
-            {   //SO MANY STREAMS
-                using (GZipStream gz = new GZipStream(ms, CompressionMode.Compress))
-                using (BufferedStream bs = new BufferedStream(gz))
-                using (BinaryWriter bw = new BinaryWriter(bs, Encoding.UTF8))
-                {
-                    bw.Write((ushort)instanceList.Count);
-                    //ordered by IDs
-                    foreach (ItemInstance inst in instanceList.Values.OrderBy(n => n.ID))
-                    {
-                        bw.Write(inst.ID);
-                        bw.Write(inst.Name);
-                        bw.Write(inst.Range);
-                        bw.Write(inst.Weight);
-                        bw.Write((byte)inst.Type);
-                        bw.Write((byte)inst.Material);
-                        bw.Write(inst.Description);
-                        for (int i = 0; i < 6; i++)
-                        {
-                            bw.Write(inst.Text[i]);
-                            bw.Write(inst.Count[i]);
-                        }
-                        bw.Write(inst.Visual);
-                        bw.Write(inst.Visual_Change);
-                        bw.Write(inst.Effect);
-                        bw.Write(inst.Munition == null ? ushort.MinValue : inst.Munition.ID);
-                    }
-                }
-                data = ms.ToArray();
-            }
-
-            using (MD5 md5 = new MD5CryptoServiceProvider())
+            bw.Write(ID);
+            bw.Write(name);
+            bw.Write(weight);
+            bw.Write((byte)type);
+            bw.Write((byte)material);
+            for (int i = 0; i < 4; i++)
             {
-                md5.TransformFinalBlock(data, 0, data.Length);
-                hash = md5.Hash;
+                bw.Write(text[i]);
+                bw.Write(count[i]);
             }
-
-            System.IO.File.WriteAllBytes("data2", data);
+            bw.Write(description);
+            bw.Write(visual);
+            bw.Write(visualChange);
+            bw.Write(effect);
+            bw.Write(munition == null ? 0 : munition.ID);
+            bw.Write((byte)gender);
+            bw.Write(condition);
         }
 
-        #endregion
+        //meh
+        public static ItemInstance Get(string instanceName)
+        {
+            return (ItemInstance)UncastedGet(instanceName);
+        }
+
+        public static ItemInstance Get(ushort id)
+        {
+            return (ItemInstance)UncastedGet(id);
+        }
     }
 }

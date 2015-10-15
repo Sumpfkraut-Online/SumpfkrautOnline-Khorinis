@@ -9,6 +9,7 @@ namespace GUC.Client.WorldObjects
 {
     static class Player
     {
+        public static uint ID;
         public static NPC Hero = null;
         public static List<Vob> VobControlledList = new List<Vob>();
 
@@ -29,32 +30,6 @@ namespace GUC.Client.WorldObjects
 
         #endregion
 
-        #region Inventory
-
-        public static Dictionary<ItemInstance, int> Inventory = new Dictionary<ItemInstance, int>();
-        public static void AddItem(ItemInstance instance, int amount)
-        {
-            if (!Inventory.ContainsKey(instance))
-            {
-                Inventory.Add(instance, amount);
-            }
-            else
-            {
-                Inventory[instance] += amount;
-            }
-        }
-
-        public static void RemoveItem(ItemInstance instance, int amount)
-        {
-            int current;
-            if (Inventory.TryGetValue(instance, out current))
-            {
-                if (current - amount <= 0)
-                    Inventory.Remove(instance);
-                else
-                    Inventory[instance] -= amount;
-            }
-        }
-        #endregion
+        public static Dictionary<uint, Item> Inventory = new Dictionary<uint, Item>();
     }
 }

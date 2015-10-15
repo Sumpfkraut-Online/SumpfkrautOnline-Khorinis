@@ -52,7 +52,7 @@ namespace GUC.Enumeration
 
         //inventory
         InventoryAddMessage, //add iteminstance to player inventory
-        InventoryRemoveMessage, //remove
+        InventoryAmountMessage, //remove
         InventoryDropItemMessage,
         InventoryUseItemMessage,
 

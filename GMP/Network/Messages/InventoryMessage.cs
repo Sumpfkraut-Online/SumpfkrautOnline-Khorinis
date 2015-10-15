@@ -13,36 +13,41 @@ namespace GUC.Client.Network.Messages
     {
         public static void ReadAddItem(BitStream stream)
         {
-            ushort id = stream.mReadUShort();
-            ItemInstance instance;
-            if (ItemInstance.InstanceList.TryGetValue(id, out instance))
-            {
-                Player.AddItem(instance, stream.mReadInt());
-            }
+            uint ID = stream.mReadUInt();
+            ushort instID = stream.mReadUShort();
+
+            Item item = new Item(ID, instID);
+            item.amount = stream.mReadUShort();
+            item.condition = stream.mReadUShort();
+
+            Player.Inventory.Add(ID, item);
         }
 
-        public static void ReadRemoveItem(BitStream stream)
+        public static void ReadAmountUpdate(BitStream stream)
         {
-            ushort id = stream.mReadUShort();
-            ItemInstance instance;
-            if (ItemInstance.InstanceList.TryGetValue(id, out instance))
-            {
-                Player.RemoveItem(instance, stream.mReadInt());
-            }
+            uint id = stream.mReadUInt();
+            ushort amount = stream.mReadUShort();
+
+            Player.Inventory[id].amount = amount;
         }
 
-        public static void WriteDropItem(ItemInstance instance, int amount)
+        public static void WriteDropItem(object item, int amount)
         {
+            if (item == null)
+                return;
+
             BitStream stream = Program.client.SetupSendStream(NetworkID.InventoryDropItemMessage);
-            stream.mWrite(instance.ID);
-            stream.mWrite(amount);
+            stream.mWrite(((Item)item).ID);
+            stream.mWrite((ushort)amount);
             Program.client.SendStream(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.UNRELIABLE);
         }
 
-        public static void WriteUseItem(ItemInstance instance)
+        public static void WriteUseItem(Item item)
         {
+            if (item == null)
+                return;
+
             BitStream stream = Program.client.SetupSendStream(NetworkID.InventoryUseItemMessage);
-            stream.mWrite(instance.ID);
             Program.client.SendStream(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.UNRELIABLE);
         }
     }

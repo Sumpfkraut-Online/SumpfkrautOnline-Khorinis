@@ -10,11 +10,91 @@ using GUC.Server.Network.Messages;
 
 namespace GUC.Server.WorldObjects
 {
-    public class NPC : AbstractCtrlVob, ItemContainer
+    public class NPC : AbstractCtrlVob
     {
-        #region Instance
-        protected NPCInstance instance;
-        public NPCInstance Instance { get { return instance; } }
+        /// <summary>
+        /// Gets the NPCInstance of this NPC.
+        /// </summary>
+        public NPCInstance instance { get; protected set; }
+
+        #region Constructors
+
+        /// <summary>
+        /// Creates and returns an NPC object from the given NPCInstance-ID.
+        /// Returns NULL when the ID is not found!
+        /// </summary>
+        public static NPC Create(ushort instanceID)
+        {
+            NPCInstance inst = NPCInstance.Get(instanceID);
+            if (inst != null)
+            {
+                return Create(inst);
+            }
+            else
+            {
+                Log.Logger.logError("NPC creation failed! Instance ID not found: " + instanceID);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Creates and returns an NPC object from the given NPCInstance-Name.
+        /// Returns NULL when the name is not found!
+        /// </summary>
+        public static NPC Create(string instanceName)
+        {
+            NPCInstance inst = NPCInstance.Get(instanceName);
+            if (inst != null)
+            {
+                return Create(inst);
+            }
+            else
+            {
+                Log.Logger.logError("NPC creation failed! Instance name not found: " + instanceName);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Creates and returns an NPC object from the given NPCInstance.
+        /// Returns NULL when the NPCInstance is NULL!
+        /// </summary>
+        public static NPC Create(NPCInstance instance)
+        {
+            if (instance != null)
+            {
+                NPC npc = new NPC();
+                npc.instance = instance;
+                npc.BodyHeight = instance.bodyHeight;
+                npc.BodyHeight = instance.bodyHeight;
+                npc.BodyWidth = instance.bodyWidth;
+                npc.BodyFatness = instance.fatness;
+
+                npc.AttrHealthMax = instance.AttrHealthMax;
+                npc.AttrHealth = instance.AttrHealthMax;
+
+                npc.AttrManaMax = instance.AttrManaMax;
+                npc.AttrMana = instance.AttrManaMax;
+                npc.AttrStaminaMax = instance.AttrStaminaMax;
+                npc.AttrStamina = instance.AttrStaminaMax;
+
+                npc.AttrStrength = instance.AttrStrength;
+                npc.AttrDexterity = instance.AttrDexterity;
+
+                npc.AttrCapacity = 100;
+                return npc;
+            }
+            else
+            {
+                Log.Logger.logError("Item creation failed! Instance can't be NULL!");
+                return null;
+            }
+        }
+
+        protected NPC()
+        {
+        }
+
         #endregion
 
         #region Appearance
@@ -24,9 +104,9 @@ namespace GUC.Server.WorldObjects
         public string CustomName
         {
             get { return customName; }
-            set 
+            set
             {
-                if (value == null || value == instance.Name)
+                if (value == null || value == instance.name)
                 {
                     customName = "";
                 }
@@ -55,7 +135,7 @@ namespace GUC.Server.WorldObjects
 
         #endregion
 
-        //Things only the playing Client should know
+        //Things only the playing client should know
         #region Player stats
 
         public ushort AttrHealth;
@@ -136,31 +216,6 @@ namespace GUC.Server.WorldObjects
 
         #endregion
 
-        #region Constructors
-
-        public NPC(NPCInstance inst)
-        {
-            instance = inst;
-            BodyHeight = instance.BodyHeight;
-            BodyWidth = instance.BodyWidth;
-            BodyFatness = instance.Fatness;
-
-            AttrHealthMax = 100;
-            AttrHealth = 100;
-
-            AttrManaMax = 10;
-            AttrMana = 10;
-            AttrStaminaMax = 100;
-            AttrStamina = 100;
-
-            AttrStrength = 10;
-            AttrDexterity = 10;
-
-            AttrCapacity = 1000;
-        }
-
-        #endregion
-
         #region Networking
 
         internal Client client;
@@ -170,10 +225,10 @@ namespace GUC.Server.WorldObjects
         {
             BitStream stream = Program.server.SetupStream(NetworkID.WorldNPCSpawnMessage);
             stream.mWrite(ID);
+            stream.mWrite(instance.ID);
             stream.mWrite(pos);
             stream.mWrite(dir);
-            stream.mWrite(instance.ID);
-            if (instance.ID <= 1)
+            if (instance.ID <= 2)
             {
                 stream.mWrite((byte)HumanBodyTex);
                 stream.mWrite((byte)HumanHeadMesh);
@@ -191,6 +246,42 @@ namespace GUC.Server.WorldObjects
 
             foreach (Client cl in list)
                 Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', cl.guid, false);
+        }
+
+        public delegate void OnEnterWorldHandler(NPC player);
+        public static event OnEnterWorldHandler OnEnterWorld;
+
+        internal static void WriteControl(Client client, NPC npc)
+        {
+            BitStream stream = Program.server.SetupStream(NetworkID.PlayerControlMessage);
+            stream.mWrite(npc.ID);
+            stream.mWrite(npc.World.MapName);
+            //write stats & inventory
+            Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'G', client.guid, false);
+        }
+
+        internal static void ReadControl(BitStream stream, Client client)
+        {
+            if (client.mainChar == null) // coming from the log-in menus, first spawn
+            {
+                client.mainChar = client.character;
+                Network.Messages.ConnectionMessage.WriteInstanceTables(client);
+
+                if (OnEnterWorld != null)
+                    OnEnterWorld(client.mainChar);
+            }
+
+            if (!client.character.Spawned)
+                client.character.Spawn(client.character.World);
+        }
+
+        internal static void ReadPickUpItem(BitStream stream, Client client)
+        {
+            Item item;
+            client.character.World.ItemDict.TryGetValue(stream.mReadUInt(), out item);
+            if (item == null) return;
+
+            client.character.AddItem(item);
         }
 
         #endregion
@@ -241,76 +332,194 @@ namespace GUC.Server.WorldObjects
 
         #region Itemcontainer
 
-        protected Dictionary<ItemInstance, int> inventory = new Dictionary<ItemInstance, int>();
-        public Dictionary<ItemInstance, int> Inventory { get { return inventory; } }
+        protected Dictionary<ItemInstance, List<Item>> inventory = new Dictionary<ItemInstance, List<Item>>();
 
-        protected int weight = 0;
-        public int Weight { get { return weight; } }
+        /// <summary>
+        /// Gets a list of the items this NPC is carrying.
+        /// </summary>
+        public List<Item> ItemList
+        {
+            get
+            {
+                List<Item> itemList = new List<Item>();
+                foreach (List<Item> list in inventory.Values)
+                {
+                    itemList.AddRange(list);
+                }
+                return itemList;
+            }
+        }
 
+        /// <summary>
+        /// Gets the total weight of the items this NPC is carrying.
+        /// </summary>
+        public ushort carryWeight { get; protected set; }
+
+        /// <summary>
+        /// Checks whether this NPC has the Item with the given ID.
+        /// </summary>
+        public bool HasItem(uint itemID)
+        {
+            Item item = null;
+            if (sWorld.ItemDict.TryGetValue(itemID, out item))
+            {
+                return HasItem(item);
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Checks whether this NPC has the given Item.
+        /// </summary>
+        public bool HasItem(Item item)
+        {
+            List<Item> list;
+            if (inventory.TryGetValue(item.instance, out list))
+            {
+                return list.Contains(item);
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Checks whether this NPC an Item of the given ItemInstance.
+        /// Only stackable Items are considered, i.e. no unique items like user-written scrolls, worn weapons etc.
+        /// </summary>
         public bool HasItem(ItemInstance instance)
         {
             return HasItem(instance, 1);
         }
 
-        public bool HasItem(ItemInstance instance, int amount)
+        /// <summary>
+        /// Checks whether this NPC has the amount of Items of the given ItemInstance.
+        /// Only stackable Items are considered, i.e. no unique items like user-written scrolls, worn weapons etc.
+        /// </summary>
+        public bool HasItem(ItemInstance instance, ushort amount)
         {
-            int has;
-            inventory.TryGetValue(instance, out has);
-            return has >= amount;
-        }
-
-        public bool AddItem(ItemInstance instance)
-        {
-            return AddItem(instance, 1);
-        }
-
-        public bool AddItem(ItemInstance instance, int amount)
-        {
-            int newWeight = weight + instance.Weight * amount;
-            if (AttrCapacity >= newWeight)
+            List<Item> list;
+            if (inventory.TryGetValue(instance, out list))
             {
-                weight = newWeight;
-                if (inventory.ContainsKey(instance))
+                Item item = list.Find(i => i.stackable == true);
+                if (item != null)
                 {
-                    inventory[instance] += amount;
+                    if (item.iAmount >= amount)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Tries to add the given Item to the NPC's inventory, depending on his carry weight limit.
+        /// Stackable items may be deleted by this method!
+        /// </summary>
+        public bool AddItem(Item item)
+        {
+            int newWeight = carryWeight + item.iAmount * item.instance.weight;
+            if (newWeight <= AttrCapacity)
+            {
+                carryWeight = (ushort)newWeight;
+                if (item.Spawned)
+                {
+                    item.Despawn(); //Fixme?: Send despawn + additem msg in one msg to the new owner
+                }
+                //else
+                if (item.owner != null)
+                {
+                    item.owner.RemoveItem(item);
+                }
+
+                List<Item> list;
+                if (inventory.TryGetValue(item.instance, out list))
+                {
+                    if (item.stackable)
+                    {
+                        Item other = list.Find(i => i.stackable == true);
+                        if (other != null) //merge the items
+                        {
+                            other.iAmount += item.iAmount;
+                            item.RemoveFromServer();
+                            InventoryMessage.WriteAmountUpdate(this.client, other);
+                            item.owner = this;
+                            return true;
+                        }
+                    }
                 }
                 else
                 {
-                    inventory.Add(instance, amount);
+                    list = new List<Item>(1);
+                    inventory.Add(item.instance, list);
                 }
-
-                if (this.isPlayer)
-                {
-                    Network.Messages.InventoryMessage.WriteAddItem(client, instance, amount);
-                }
+                list.Add(item);
+                InventoryMessage.WriteAddItem(this.client, item);
+                item.owner = this;
                 return true;
             }
             return false;
         }
 
+        /// <summary>
+        /// Removes the given Item from the NPC's inventory if he owns it.
+        /// If you want to delete the Item call "item.RemoveFromServer()" instead.
+        /// </summary>
+        public void RemoveItem(Item item)
+        {
+            if (item.owner == this)
+            {
+                item.owner = null;
+                List<Item> list;
+                if (inventory.TryGetValue(item.instance, out list))
+                {
+                    list.Remove(item);
+                    if (list.Count == 0)
+                    {
+                        inventory.Remove(item.instance);
+                    }
+                }
+
+                InventoryMessage.WriteAmountUpdate(this.client, item, 0);
+            }
+        }
+
+        /// <summary>
+        /// Removes one Item of the given ItemInstance from the NPC's inventory.
+        /// Only stackable Items are considered, i.e. no unique items like user-written scrolls, worn weapons etc.
+        /// </summary>
         public void RemoveItem(ItemInstance instance)
         {
             RemoveItem(instance, 1);
         }
 
-        public void RemoveItem(ItemInstance instance, int amount)
+        /// <summary>
+        /// Removes the amount of Items of the given ItemInstance from the NPC's inventory.
+        /// Only stackable Items are considered, i.e. no unique items like user-written scrolls, worn weapons etc.
+        /// </summary>
+        public void RemoveItem(ItemInstance instance, ushort amount)
         {
-            int current;
-            if (inventory.TryGetValue(instance, out current))
+            List<Item> list;
+            if (inventory.TryGetValue(instance, out list))
             {
-                if (current - amount <= 0)
-                    inventory.Remove(instance);
-                else
-                    inventory[instance] -= amount;
-
-                weight -= instance.Weight * amount;
-
-                if (this.isPlayer)
+                Item item = list.Find(i => i.stackable == true);
+                if (item != null)
                 {
-                    Network.Messages.InventoryMessage.WriteRemoveItem(client, instance, amount);
+                    int newAmount = item.iAmount - amount;
+                    if (newAmount > 0)
+                    {
+                        item.iAmount = (ushort)newAmount;
+                        carryWeight = (ushort)(carryWeight - item.iAmount * item.instance.weight);
+
+                        InventoryMessage.WriteAmountUpdate(this.client, item);
+                    }
+                    else
+                    {
+                        item.RemoveFromServer();
+                    }
                 }
             }
         }
+
         #endregion
 
         #region Events
@@ -330,5 +539,6 @@ namespace GUC.Server.WorldObjects
             }
         }
         #endregion
+
     }
 }

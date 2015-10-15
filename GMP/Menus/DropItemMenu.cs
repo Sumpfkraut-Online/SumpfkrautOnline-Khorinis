@@ -31,14 +31,27 @@ namespace GUC.Client.Menus
             tb.OnlyNumbers = true;
         }
 
-        Action<ItemInstance,int> callback;
-        ItemInstance instance;
+        Action<int> callback1;
+        Action<object,int> callback2;
+        object obj;
         int max;
 
-        public void Open(Action<ItemInstance,int> callback, ItemInstance instance, int max)
+        public void Open(Action<int> callback, int max)
         {
-            this.callback = callback;
-            this.instance = instance;
+            this.callback1 = callback;
+            this.callback2 = null;
+            this.obj = null;
+            this.max = max;
+
+            tb.Input = max.ToString();
+            Open();
+        }
+
+        public void Open(Action<object,int> callback, object obj, int max)
+        {
+            this.callback1 = null;
+            this.callback2 = callback;
+            this.obj = obj;
             this.max = max;
 
             tb.Input = max.ToString();
@@ -56,8 +69,9 @@ namespace GUC.Client.Menus
         {
             back.Hide();
             tb.Enabled = false;
-            callback = null;
-            instance = null;
+            callback1 = null;
+            callback2 = null;
+            obj = null;
             base.Close();
         }
 
@@ -69,10 +83,14 @@ namespace GUC.Client.Menus
             }
             else if (key == VirtualKeys.Return || key == VirtualKeys.Control || key == VirtualKeys.Menu)
             {
-                if (callback != null && instance != null)
+                int amount = Convert.ToInt32(tb.Input);
+                if (callback1 != null)
                 {
-                    int amount = Convert.ToInt32(tb.Input);
-                    callback(instance, amount > max ? max : amount);
+                    callback1(amount > max ? max : amount);
+                }
+                else if (callback2 != null)
+                {
+                    callback2(obj, amount > max ? max : amount);
                 }
                 Close();
             }

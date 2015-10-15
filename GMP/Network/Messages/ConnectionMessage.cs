@@ -79,6 +79,7 @@ namespace GUC.Client.Network.Messages
                 int len = stream.mReadInt(); // length of packed data
 
                 byte[] data = new byte[len];
+                zERROR.GetZErr(Program.Process).Report(2, 'G', "Len: " + len, 0, "Program.cs", 0);
                 stream.Read(data, (uint)len);
 
                 NPCInstance.ReadData(data);
@@ -91,6 +92,7 @@ namespace GUC.Client.Network.Messages
                 int len = stream.mReadInt(); // length of packed data
 
                 byte[] data = new byte[len];
+                zERROR.GetZErr(Program.Process).Report(2, 'G', "Len: " + len, 0, "Program.cs", 0);
                 stream.Read(data, (uint)len);
 
                 ItemInstance.ReadData(data);

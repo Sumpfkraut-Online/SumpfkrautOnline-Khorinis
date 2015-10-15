@@ -17,30 +17,62 @@ namespace GUC.Client.WorldObjects
         public const long PositionUpdateTime = 1200000; //120ms
         public const long DirectionUpdateTime = PositionUpdateTime + 100000;
 
-        public NPC(uint id)
-            : base(id, oCObjectFactory.GetFactory(Program.Process).CreateNPC("OTHERS_NPC"))
-        {
+        public NPCInstance instance;
 
+        public NPC(uint id, ushort instanceID) : base(id)
+        {
+            instance = NPCInstance.Get(instanceID);
+            instance.SetProperties(this);
         }
 
-        public NPC(uint id, oCNpc npc)
-            : base(id, npc)
+        public NPC(uint id, ushort instanceID, oCNpc npc) : base(id, npc)
         {
+            instance = NPCInstance.Get(instanceID);
+            instance.SetProperties(this);
         }
 
-        public NPCState State = NPCState.Stand;
-        public NPCWeaponState WeaponState = NPCWeaponState.None;
+        protected override void CreateVob(bool createNew)
+        {
+            if (createNew)
+            {
+                gVob = oCNpc.Create(Program.Process);//oCObjectFactory.GetFactory(Program.Process).CreateNPC("OTHERS_NPC");
+                gNpc.InitHumanAI();
+            }
 
-        public string Name
+            gNpc.Instance = instance.ID;
+            gNpc.Name.Set(iName);
+            gNpc.SetVisual(iVisual);
+            gNpc.SetAdditionalVisuals(bodyMesh, bodyTex, 0, headMesh, headTex, 0, -1);
+            using (zVec3 z = zVec3.Create(Program.Process))
+            {
+                z.X = iBodyWidth;
+                z.Y = iBodyHeight;
+                z.Z = iBodyWidth;
+                gNpc.SetModelScale(z);
+            }
+            gNpc.SetFatness(iFatness);
+
+            gNpc.Voice = iVoice;
+        }
+
+        protected string iName;
+        public string name
         {
             set
             {
-                using (zString z = zString.Create(Program.Process, value))
-                    gNpc.SetName(z);
+                iName = value;
+                if (spawned)
+                {
+                    using (zString z = zString.Create(Program.Process, value))
+                    {
+                        gNpc.SetName(z);
+                    }
+                }
+
             }
             get
             {
-                return gNpc.Name.Value;
+                return iName;
             }
         }
 
@@ -52,84 +84,101 @@ namespace GUC.Client.WorldObjects
             }
         }
 
-        #region Visual
-        public string BodyMesh
+        protected int iVoice;
+        public int voice
         {
-            get
-            {
-                return gNpc.BodyVisualString.ToString();
-            }
-        }
-
-        public int BodyTex
-        {
-            get
-            {
-                return gNpc.BodyTex;
-            }
-        }
-
-        public string HeadMesh
-        {
-            get
-            {
-                return gNpc.HeadVisualString.ToString();
-            }
-        }
-
-        public int HeadTex
-        {
-            get
-            {
-                return gNpc.HeadTex;
-            }
-        }
-
-        public float Fatness
-        {
-            get
-            {
-                return gNpc.Fatness;
-            }
+            get { return iVoice; }
             set
             {
-                gNpc.SetFatness(value);
-            }
-        }
-
-        public float BodyHeight
-        {
-            get
-            {
-                return gNpc.Scale.Y;
-            }
-            set
-            {
-                using (zVec3 scale = zVec3.Create(Program.Process))
+                iVoice = value;
+                if (spawned)
                 {
-                    scale.X = gNpc.Scale.X;
-                    scale.Y = value;
-                    scale.Z = gNpc.Scale.Z;
-                    gNpc.SetModelScale(scale);
+                    gNpc.Voice = value;
+                }
+            }
+        }
+
+        public NPCState State = NPCState.Stand;
+        public NPCWeaponState WeaponState = NPCWeaponState.None;
+
+        #region Visual
+        public string bodyMesh { get; protected set; }
+        public int bodyTex { get; protected set; }
+        public string headMesh { get; protected set; }
+        public int headTex { get; protected set; }
+
+        public void SetBodyVisuals(string bodyMesh, int bodyTex, string headMesh, int headtex)
+        {
+            this.bodyMesh = bodyMesh;
+            this.bodyTex = bodyTex;
+            this.headMesh = headMesh;
+            this.headTex = headTex;
+            if (spawned)
+            {
+                gNpc.SetAdditionalVisuals(bodyMesh, bodyTex, 0, headMesh, headTex, 0, -1);
+            }
+        }
+
+        protected float iFatness;
+        public float fatness
+        {
+            get
+            {
+                return iFatness;
+            }
+            set
+            {
+                iFatness = value;
+                if (spawned)
+                {
+                    gNpc.SetFatness(value);
+                }
+            }
+        }
+
+        protected float iBodyHeight;
+        public float bodyHeight
+        {
+            get
+            {
+                return iBodyHeight;
+            }
+            set
+            {
+                iBodyHeight = value;
+                if (spawned)
+                {
+                    using (zVec3 scale = zVec3.Create(Program.Process))
+                    {
+                        scale.X = gNpc.Scale.X;
+                        scale.Y = value;
+                        scale.Z = gNpc.Scale.Z;
+                        gNpc.SetModelScale(scale);
+                    }
                 }
             }
         }
 
         //x & z together
-        public float BodyWidth
+        protected float iBodyWidth;
+        public float bodyWidth
         {
             get
             {
-                return gNpc.Scale.X;
+                return iBodyWidth;
             }
             set
             {
-                using (zVec3 scale = zVec3.Create(Program.Process))
+                iBodyWidth = value;
+                if (spawned)
                 {
-                    scale.X = value;
-                    scale.Y = gNpc.Scale.Y;
-                    scale.Z = value;
-                    gNpc.SetModelScale(scale);
+                    using (zVec3 scale = zVec3.Create(Program.Process))
+                    {
+                        scale.X = value;
+                        scale.Y = gNpc.Scale.Y;
+                        scale.Z = value;
+                        gNpc.SetModelScale(scale);
+                    }
                 }
             }
         }
@@ -258,11 +307,11 @@ namespace GUC.Client.WorldObjects
 
                     if (diff < 1.0f)
                     {
-                        this.Direction = lastDir + (nextDir - lastDir) * diff;
+                        this.direction = lastDir + (nextDir - lastDir) * diff;
                     }
                     else
                     {
-                        this.Direction = nextDir;
+                        this.direction = nextDir;
                         StopTurnAnis();
                     }
                 }
@@ -283,9 +332,10 @@ namespace GUC.Client.WorldObjects
                         gVob.GetEM(0).KillMessages();
                         gNpc.DoStrafe(false);
                         break;
-                    //case NPCState.Stand:
-                    default:
+                    case NPCState.Stand:
                         gNpc.AniCtrl._Stand();
+                        break;
+                    default:
                         break;
                 }
             }

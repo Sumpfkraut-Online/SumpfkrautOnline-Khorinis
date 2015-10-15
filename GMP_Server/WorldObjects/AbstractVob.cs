@@ -125,7 +125,7 @@ namespace GUC.Server.WorldObjects
         }
         #endregion
 
-        public void RemoveFromServer()
+        public virtual void RemoveFromServer()
         {
             Despawn();
             sWorld.RemoveVob(this);

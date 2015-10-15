@@ -11,92 +11,88 @@ namespace GUC.Server.Scripts.Instances
         // wird in Zukunft von Datenbank übernommen
         public static void Init()
         {
-            NPCInstance npc = new NPCInstance(0, "_MALE");
-            npc.Visual = "HUMANS.MDS";
-            npc.BodyMesh = "HUM_BODY_NAKED0";
+            NPCInstance npc = new NPCInstance(1, "_MALE");
+            npc.visual = "HUMANS.MDS";
+            npc.bodyMesh = "HUM_BODY_NAKED0";
+            NPCInstance.Add(npc);
 
-            npc = new NPCInstance(1, "_FEMALE");
-            npc.Visual = "HUMANS.MDS";
-            npc.BodyMesh = "HUM_BODY_BABE0";
+            npc = new NPCInstance(2, "_FEMALE");
+            npc.visual = "HUMANS.MDS";
+            npc.bodyMesh = "HUM_BODY_BABE0";
+            NPCInstance.Add(npc);
 
             npc = new NPCInstance("Scavenger");
-            npc.Visual = "Scavenger.mds";
-            npc.BodyMesh = "Sca_Body";
+            npc.visual = "Scavenger.mds";
+            npc.bodyMesh = "Sca_Body";
+            NPCInstance.Add(npc);
 
             npc = new NPCInstance("Mud");
-            npc.Name = "Mud";
-            npc.Visual = "HUMANS.MDS";
-            npc.BodyMesh = "HUM_BODY_NAKED0";
-            npc.BodyTex = 1;
-            npc.HeadMesh = "Hum_Head_Pony";
-            npc.HeadTex = 22;
-            npc.BodyHeight = 100;
-            npc.BodyWidth = 100;
-            npc.Fatness = 20;
-            npc.Voice = 3;
-
-            /*Random rand = random;
-            for (int i = 0; i < 10000; i++)
-            {
-                npc = new NPCInstance("NPC_" + i);
-                npc.Name = RandomString(10);
-                npc.Visual = RandomString(10);
-                npc.BodyMesh = RandomString(10);
-                npc.BodyTex = (byte)rand.Next(0, 0xFF);
-                npc.HeadMesh = RandomString(10);
-                npc.HeadTex = (byte)rand.Next(0, 0xFF);
-
-                npc.BodyWidth = (byte)rand.Next(0, 0xFF);
-                npc.BodyHeight = (byte)rand.Next(0, 0xFF);
-                npc.Fatness = (sbyte)rand.Next(0, 55);
-
-                npc.Voice = (byte)rand.Next(0, 0xFF);
-            }*/
+            npc.name = "Mud";
+            npc.visual = "HUMANS.MDS";
+            npc.bodyMesh = "HUM_BODY_NAKED0";
+            npc.bodyTex = 1;
+            npc.headMesh = "Hum_Head_Pony";
+            npc.headTex = 22;
+            npc.bodyHeight = 100;
+            npc.bodyWidth = 100;
+            npc.fatness = 20;
+            npc.voice = Enumeration.HumVoice.Andre;
+            NPCInstance.Add(npc);
 
             NPCInstance.NetUpdate();
 
-            ItemInstance item = new ItemInstance("itfo_apple");
-            item.Name = "Apfel";
 
-            item.Type = Enumeration.ItemType.Food_Small;
 
-            item.Visual = "ITFO_APPLE.3DS";
-            item.Material = Enumeration.ItemMaterial.Leather;
 
-            item.Description = item.Name;
-            item.Text[1] = "Lebensenergier wiederherstellen:";
-            item.Count[1] = 3;
+            ItemInstance item;
 
-            item.Text[3] = "Ein frischer Apfel";
-            item.Text[4] = "knackig und saftig";
-            item.Text[5] = "Gewicht:";
-            item.Count[5] = 1;
+
+            item = new ItemInstance("itfo_apple");
+            item.type = Enumeration.ItemType.Food_Small;
+
+            item.visual = "ITFO_APPLE.3DS";
+            item.material = Enumeration.ItemMaterial.Leather;
+
+            item.description = item.name;
+            item.text[0] = "Lebensenergie wiederherstellen:";
+            item.count[0] = 3;
+
+            item.text[2] = "Ein frischer Apfel";
+            item.text[3] = "knackig und saftig";
+            ItemInstance.Add(item);
+
 
 
             item = new ItemInstance("itfo_bread");
-            item.Name = "Brot";
-            item.Visual = "ITFO_BREAD.3DS";
+            item.name = "Brot";
+            item.visual = "ITFO_BREAD.3DS";
+            ItemInstance.Add(item);
 
             item = new ItemInstance("itfo_cheese");
-            item.Name = "Käse";
-            item.Visual = "ITFO_CHEESE.3DS";
+            item.name = "Käse";
+            item.visual = "ITFO_CHEESE.3DS";
+            ItemInstance.Add(item);
 
             item = new ItemInstance("itfo_bacon");
-            item.Name = "Schinken";
-            item.Visual = "ITFO_BACON.3DS";
+            item.name = "Schinken";
+            item.visual = "ITFO_BACON.3DS";
+            ItemInstance.Add(item);
 
             item = new ItemInstance("itfo_fish");
-            item.Name = "Fisch";
-            item.Visual = "ITFO_FISH.3DS";
+            item.name = "Fisch";
+            item.visual = "ITFO_FISH.3DS";
+            ItemInstance.Add(item);
 
             item = new ItemInstance("itfo_stew");
-            item.Name = "Eintopf";
-            item.Visual = "ITFO_STEW.3DS";
+            item.name = "Eintopf";
+            item.visual = "ITFO_STEW.3DS";
+            ItemInstance.Add(item);
 
             item = new ItemInstance("itfo_beer");
-            item.Name = "Bier";
-            item.Visual = "ITFO_BEER.3DS";
-
+            item.name = "Bier";
+            item.visual = "ITFO_BEER.3DS";
+            ItemInstance.Add(item);
+            
             ItemInstance.NetUpdate();
         }
 

@@ -8,276 +8,174 @@ using GUC.Enumeration;
 using Gothic.zTypes;
 using Gothic.zClasses;
 using System.IO;
-using System.IO.Compression;
-using System.Security.Cryptography;
+
 
 namespace GUC.Client.WorldObjects
 {
-    class ItemInstance : IDisposable
+    class ItemInstance : AbstractInstance
     {
-        public static Dictionary<ushort, ItemInstance> InstanceList;
+        public String name;
+        public ushort weight;
 
-        public ushort ID;
+        public ushort condition;
 
-        public zString Name;
-        public int Range;
-        public int Weight;
+        public Gender gender;
 
-        public ItemType Type;
-        public ItemMaterial Material;
+        public ItemType type;
+        public ItemMaterial material;
 
-        public zString Description;
-        public zString[] Text;
-        public int[] Count;
+        public String description;
+        public String[] text;
+        public ushort[] count;
         //Visuals:
-        public zString Visual;
-        public zString Visual_Change;
-        public zString Effect;
+        public String visual;
+        public String visualChange;
+        public String effect;
 
-        public int Munition;
+        public ushort munition;
 
-        public oCItem.MainFlags MainFlags;
-        public oCItem.ItemFlags Flags;
-        public int Wear = 0;
+        public oCItem.MainFlags mainFlags;
+        public oCItem.ItemFlags flags;
+        public int wear = 0;
 
-
-        public oCItem CreateItem()
+        new protected static Dictionary<ushort, AbstractInstance> InstanceList;
+        new protected static string fileName = "items.pak";
+        new protected static void ReadNew(BinaryReader br)
         {
-            return CreateItem(oCItem.Create(Program.Process));
+            ItemInstance inst = new ItemInstance();
+            inst.ID = br.ReadUInt16();
+            inst.name = br.ReadString();
+            inst.weight = br.ReadUInt16();
+            inst.type = (ItemType)br.ReadByte();
+            inst.material = (ItemMaterial)br.ReadByte();
+            inst.text = new string[4];
+            inst.count = new ushort[4];
+            for (int i = 0; i < 4; i++)
+            {
+                inst.text[i] = br.ReadString();
+                inst.count[i] = br.ReadUInt16();
+            }
+            inst.description = br.ReadString();
+            inst.visual = br.ReadString();
+            inst.visualChange = br.ReadString();
+            inst.effect = br.ReadString();
+            inst.munition = br.ReadUInt16();
+            inst.gender = (Gender)br.ReadByte();
+            inst.condition = br.ReadUInt16();
+
+            inst.SetFlags();
+
+            InstanceList.Add(inst.ID, inst);
         }
 
-        public oCItem CreateItem(oCItem item)
+        protected override void Write(BinaryWriter bw)
         {
-            item.Instanz = ID;
-            item.Name.Set(Name);
-
-            item.Range = Range;
-            item.Material = (int)Material;
-
-            item.Description.Set(Description);
-            for (int i = 0; i < 6; i++)
+            bw.Write(ID);
+            bw.Write(name);
+            bw.Write(weight);
+            bw.Write((byte)type);
+            bw.Write((byte)material);
+            for (int i = 0; i < 4; i++)
             {
-                item.Text[i].Set(Text[i]);
-                item.Count[i] = Count[i];
+                bw.Write(text[i]);
+                bw.Write(count[i]);
             }
-            item.Visual.Set(Visual);
-            item.VisualChange.Set(Visual_Change);
-            item.Effect.Set(Effect);
-
-            item.Munition = Munition;
-            item.MainFlag = (int)MainFlags;
-            item.Flags = (int)Flags;
-            item.Wear = Wear;
-
-            return item;
-        }
-
-        static string FileName = States.StartupState.getDaedalusPath() + "Data2.pak";
-
-        public static byte[] ReadFile()
-        {
-            try
-            {
-                if (File.Exists(FileName))
-                {
-                    byte[] data = File.ReadAllBytes(FileName);
-                    ReadData(data);
-
-                    byte[] hash;
-                    using (MD5 md5 = new MD5CryptoServiceProvider())
-                    {
-                        md5.TransformFinalBlock(data, 0, data.Length);
-                        hash = md5.Hash;
-                    }
-
-                    return hash;
-                }
-            }
-            catch { }
-            return new byte[16];
-        }
-
-        public static void ReadData(byte[] data)
-        {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                ms.Write(data, 0, data.Length);
-                ms.Position = 0;
-
-                using (GZipStream gz = new GZipStream(ms, CompressionMode.Decompress))
-                using (BinaryReader br = new BinaryReader(gz, Encoding.UTF8))
-                {
-                    // dispose old instances
-                    if (InstanceList != null)
-                    for (int i = 0; i < InstanceList.Count; i++)
-                    {
-                        InstanceList.ElementAt(i).Value.Dispose();
-                    }
-
-                    // read new instances
-                    ItemInstance inst;
-                    ushort num = br.ReadUInt16();
-                    InstanceList = new Dictionary<ushort, ItemInstance>(num);
-                    for (int i = 0; i < num; i++)
-                    {
-                        inst = new ItemInstance();
-
-                        inst.ID = br.ReadUInt16();
-                        inst.Name = zString.Create(Program.Process, br.ReadString());
-                        inst.Range = br.ReadUInt16();
-                        inst.Weight = br.ReadUInt16();
-                        inst.Type = (ItemType)br.ReadByte();
-                        inst.Material = (ItemMaterial)br.ReadByte();
-                        inst.Description = zString.Create(Program.Process, br.ReadString());
-                        inst.Text = new zString[6];
-                        inst.Count = new int[6];
-                        for (int l = 0; l < 6; l++)
-                        {
-                            inst.Text[l] = zString.Create(Program.Process, br.ReadString());
-                            inst.Count[l] = br.ReadUInt16();
-                        }
-                        inst.Visual = zString.Create(Program.Process, br.ReadString());
-                        inst.Visual_Change = zString.Create(Program.Process, br.ReadString());
-                        inst.Effect = zString.Create(Program.Process, br.ReadString());
-                        inst.Munition = br.ReadUInt16();
-
-                        inst.SetFlags();
-
-                        InstanceList.Add(inst.ID, inst);
-                    }
-                }
-            }
-        }
-
-        public static void WriteFile()
-        {
-            using (FileStream fs = new FileStream(FileName, FileMode.Create))
-            using (GZipStream gz = new GZipStream(fs, CompressionMode.Compress))
-            using (BinaryWriter bw = new BinaryWriter(gz, Encoding.UTF8))
-            {
-                bw.Write((ushort)InstanceList.Count);
-                //ordered by IDs
-                foreach (ItemInstance inst in InstanceList.Values.OrderBy(n => n.ID))
-                {
-                    bw.Write(inst.ID);
-                    bw.Write(inst.Name.Value);
-                    bw.Write((ushort)inst.Range);
-                    bw.Write((ushort)inst.Weight);
-                    bw.Write((byte)inst.Type);
-                    bw.Write((byte)inst.Material);
-                    bw.Write(inst.Description.Value);
-                    for (int i = 0; i < 6; i++)
-                    {
-                        bw.Write(inst.Text[i].Value);
-                        bw.Write((ushort)inst.Count[i]);
-                    }
-                    bw.Write(inst.Visual.Value);
-                    bw.Write(inst.Visual_Change.Value);
-                    bw.Write(inst.Effect.Value);
-                    bw.Write((ushort)inst.Munition);
-                }
-            }
+            bw.Write(description);
+            bw.Write(visual);
+            bw.Write(visualChange);
+            bw.Write(effect);
+            bw.Write(munition);
+            bw.Write((byte)gender);
+            bw.Write(condition);
         }
 
         void SetFlags()
         {
-            switch (Type)
+            switch (type)
             {
                 case ItemType.Sword_1H:
-                    MainFlags = oCItem.MainFlags.ITEM_KAT_NF;
-                    Flags = oCItem.ItemFlags.ITEM_SWD;
+                    mainFlags = oCItem.MainFlags.ITEM_KAT_NF;
+                    flags = oCItem.ItemFlags.ITEM_SWD;
                     break;
                 case ItemType.Sword_2H:
-                    MainFlags = oCItem.MainFlags.ITEM_KAT_NF;
-                    Flags = oCItem.ItemFlags.ITEM_2HD_SWD;
+                    mainFlags = oCItem.MainFlags.ITEM_KAT_NF;
+                    flags = oCItem.ItemFlags.ITEM_2HD_SWD;
                     break;
                 case ItemType.Blunt_1H:
-                    MainFlags = oCItem.MainFlags.ITEM_KAT_NF;
-                    Flags = oCItem.ItemFlags.ITEM_AXE;
+                    mainFlags = oCItem.MainFlags.ITEM_KAT_NF;
+                    flags = oCItem.ItemFlags.ITEM_AXE;
                     break;
                 case ItemType.Blunt_2H:
-                    MainFlags = oCItem.MainFlags.ITEM_KAT_NF;
-                    Flags = oCItem.ItemFlags.ITEM_2HD_AXE;
+                    mainFlags = oCItem.MainFlags.ITEM_KAT_NF;
+                    flags = oCItem.ItemFlags.ITEM_2HD_AXE;
                     break;
                 case ItemType.Bow:
-                    MainFlags = oCItem.MainFlags.ITEM_KAT_FF;
-                    Flags = oCItem.ItemFlags.ITEM_BOW;
+                    mainFlags = oCItem.MainFlags.ITEM_KAT_FF;
+                    flags = oCItem.ItemFlags.ITEM_BOW;
                     break;
                 case ItemType.XBow:
-                    MainFlags = oCItem.MainFlags.ITEM_KAT_FF;
-                    Flags = oCItem.ItemFlags.ITEM_CROSSBOW;
-                    break;
-                case ItemType.Ammo:
-                    MainFlags = oCItem.MainFlags.ITEM_KAT_MUN;
-                    Flags = oCItem.ItemFlags.ITEM_BOW; // FIXME? bolts -> xbow?
+                    mainFlags = oCItem.MainFlags.ITEM_KAT_FF;
+                    flags = oCItem.ItemFlags.ITEM_CROSSBOW;
                     break;
                 case ItemType.Armor:
-                    MainFlags = oCItem.MainFlags.ITEM_KAT_ARMOR;
-                    Flags = 0;
-                    Wear = 1;
+                    mainFlags = oCItem.MainFlags.ITEM_KAT_ARMOR;
+                    flags = 0;
+                    wear = 1;
+                    break;
+                case ItemType.Arrow:
+                    mainFlags = oCItem.MainFlags.ITEM_KAT_MUN;
+                    flags = oCItem.ItemFlags.ITEM_BOW;
+                    break;
+                case ItemType.XBolt:
+                    mainFlags = oCItem.MainFlags.ITEM_KAT_MUN;
+                    flags = oCItem.ItemFlags.ITEM_CROSSBOW;
                     break;
                 case ItemType.Ring:
-                    MainFlags = oCItem.MainFlags.ITEM_KAT_MAGIC;
-                    Flags = oCItem.ItemFlags.ITEM_RING;
+                    mainFlags = oCItem.MainFlags.ITEM_KAT_MAGIC;
+                    flags = oCItem.ItemFlags.ITEM_RING;
                     break;
                 case ItemType.Amulet:
-                    MainFlags = oCItem.MainFlags.ITEM_KAT_MAGIC;
-                    Flags = oCItem.ItemFlags.ITEM_AMULET;
+                    mainFlags = oCItem.MainFlags.ITEM_KAT_MAGIC;
+                    flags = oCItem.ItemFlags.ITEM_AMULET;
                     break;
                 case ItemType.Belt:
-                    MainFlags = oCItem.MainFlags.ITEM_KAT_MAGIC;
-                    Flags = oCItem.ItemFlags.ITEM_BELT;
+                    mainFlags = oCItem.MainFlags.ITEM_KAT_MAGIC;
+                    flags = oCItem.ItemFlags.ITEM_BELT;
                     break;
                 case ItemType.Food_Small:
                 case ItemType.Food_Huge:
                 case ItemType.Drink:
-                    MainFlags = oCItem.MainFlags.ITEM_KAT_FOOD;
-                    Flags = 0;
+                    mainFlags = oCItem.MainFlags.ITEM_KAT_FOOD;
+                    flags = 0;
                     break;
                 case ItemType.Potions:
-                    MainFlags = oCItem.MainFlags.ITEM_KAT_POTIONS;
-                    Flags = 0;
+                    mainFlags = oCItem.MainFlags.ITEM_KAT_POTIONS;
+                    flags = 0;
                     break;
                 case ItemType.Document:
                 case ItemType.Book:
-                    MainFlags = oCItem.MainFlags.ITEM_KAT_DOCS;
-                    Flags = 0;
+                    mainFlags = oCItem.MainFlags.ITEM_KAT_DOCS;
+                    flags = 0;
                     break;
                 case ItemType.Rune:
                 case ItemType.Scroll:
-                    MainFlags = oCItem.MainFlags.ITEM_KAT_RUNE;
-                    Flags = 0;
+                    mainFlags = oCItem.MainFlags.ITEM_KAT_RUNE;
+                    flags = 0;
                     break;
                 case ItemType.Misc:
                 case ItemType.Misc_Usable:
                 default:
-                    MainFlags = oCItem.MainFlags.ITEM_KAT_NONE;
-                    Flags = 0;
+                    mainFlags = oCItem.MainFlags.ITEM_KAT_NONE;
+                    flags = 0;
                     break;
             }
         }
 
-        private bool disposed = false;
-        public void Dispose()
+        public static ItemInstance Get(ushort id)
         {
-            Dispose(true);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!this.disposed)
-            {
-                Name.Dispose();
-                Description.Dispose();
-                for (int i = 0; i < 6; i++)
-                {
-                    Text[i].Dispose();
-                }
-                Visual.Dispose();
-                Visual_Change.Dispose();
-                Effect.Dispose();
-                disposed = true;
-            }
+            AbstractInstance inst = null;
+            InstanceList.TryGetValue(id, out inst);
+            return (ItemInstance)inst;
         }
     }
 }

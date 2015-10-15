@@ -61,7 +61,7 @@ namespace GUC.Client.Network
             messageListener.Add((byte)NetworkID.NPCEquipMessage, NPCMessage.ReadEquipMessage);
 
             messageListener.Add((byte)NetworkID.InventoryAddMessage, InventoryMessage.ReadAddItem);
-            messageListener.Add((byte)NetworkID.InventoryRemoveMessage, InventoryMessage.ReadRemoveItem);
+            messageListener.Add((byte)NetworkID.InventoryAmountMessage, InventoryMessage.ReadAmountUpdate);
 
             messageListener.Add((byte)NetworkID.ControlAddVobMessage, ControlMessage.ReadAddVob);
             messageListener.Add((byte)NetworkID.ControlRemoveVobMessage, ControlMessage.ReadRemoveVob);

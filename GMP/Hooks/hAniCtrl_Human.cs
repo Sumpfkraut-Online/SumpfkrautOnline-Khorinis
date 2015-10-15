@@ -16,6 +16,9 @@ namespace GUC.Client.Hooks
         {
             try
             {
+                if (Player.Hero == null)
+                    return 0;
+
                 if (Program.Process.ReadInt(Convert.ToInt32(message)) != Player.Hero.gNpc.AniCtrl.Address)
                     return 0;
 
@@ -40,6 +43,9 @@ namespace GUC.Client.Hooks
         {
             try
             {
+                if (Player.Hero == null)
+                    return 0;
+
                 if (Program.Process.ReadInt(Convert.ToInt32(message)) != Player.Hero.gNpc.AniCtrl.Address)
                     return 0;
 
@@ -63,6 +69,9 @@ namespace GUC.Client.Hooks
         {
             try
             {
+                if (Player.Hero == null)
+                    return 0;
+
                 if (Program.Process.ReadInt(Convert.ToInt32(message)) != Player.Hero.gNpc.AniCtrl.Address)
                     return 0;
 
@@ -87,6 +96,9 @@ namespace GUC.Client.Hooks
         {
             try
             {
+                if (Player.Hero == null)
+                    return 0;
+
                 if (Program.Process.ReadInt(Convert.ToInt32(message)) != Player.Hero.gNpc.AniCtrl.Address)
                     return 0;
 
@@ -109,6 +121,9 @@ namespace GUC.Client.Hooks
         {
             try
             {
+                if (Player.Hero == null)
+                    return 0;
+
                 if (Program.Process.ReadInt(Convert.ToInt32(message)) != Player.Hero.gNpc.AniCtrl.Address)
                     return 0;
 

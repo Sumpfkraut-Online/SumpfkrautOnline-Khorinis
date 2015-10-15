@@ -5,6 +5,7 @@ using System.Text;
 using RakNet;
 using GUC.Enumeration;
 using GUC.Network;
+using GUC.Server.WorldObjects;
 
 namespace GUC.Server.Network.Messages
 {
@@ -119,10 +120,12 @@ namespace GUC.Server.Network.Messages
 
         private static void StartInWorld(Client client, AccCharInfo ci)
         {
-            WorldObjects.NPC npc = new WorldObjects.NPC(WorldObjects.NPCInstance.InstanceDict["_MALE"]);
+            NPC npc = NPC.Create("_MALE");
             npc.World = WorldObjects.World.NewWorld;
             npc.CustomName = ci.Name;
+
             //set all the stuff from the data bank
+
             client.SetControl(npc);
             Log.Logger.log("Client joins in on npc " + npc.ID);
         }

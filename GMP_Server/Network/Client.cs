@@ -29,7 +29,6 @@ namespace GUC.Server.Network
         //Ingame
         public NPC mainChar = null; //Main
         public NPC character = null; //current npc
-        public bool isControlling { get { return character != null; } set { } } 
 
         public List<AbstractCtrlVob> VobControlledList = new List<AbstractCtrlVob>();
         
@@ -44,8 +43,8 @@ namespace GUC.Server.Network
             //set old character to NPC
             if (character != null)
             {
-                sWorld.PlayerList.Remove(character);
-                sWorld.NPCList.Add(character);
+                sWorld.PlayerDict.Remove(character.ID);
+                sWorld.NPCDict.Add(character.ID, character);
                 if (character.World != null)
                 {
                     character.World.PlayerDict.Remove(npc.ID);
@@ -74,12 +73,12 @@ namespace GUC.Server.Network
                     npc.VobController.RemoveControlledVob(npc);
             }
 
-            sWorld.NPCList.Remove(npc);
-            sWorld.PlayerList.Add(npc);
+            sWorld.NPCDict.Remove(npc.ID);
+            sWorld.PlayerDict.Add(npc.ID, npc);
 
             npc.client = this;
             character = npc;
-            Player.WriteControl(this, character);
+            NPC.WriteControl(this, character);
         }
 
         public void CheckValidity(String driveString, String macString, byte[] npcTableHash, byte[] itemTableHash)
