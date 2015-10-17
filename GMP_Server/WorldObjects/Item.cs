@@ -16,22 +16,25 @@ namespace GUC.Server.WorldObjects
         /// <summary>
         /// Gets the ItemInstance of this item.
         /// </summary>
-        public ItemInstance instance { get; protected set; }
+        public ItemInstance Instance { get; protected set; }
 
         /// <summary>
-        /// Gets or sets the amount of this item. Setting the amount to zero will delete the item.
+        /// Gets or sets the amount of this item. Setting the amount to zero will delete the item. Can't be set when spawned. 
         /// </summary>
-        public ushort amount
+        public ushort Amount
         {
-            get { return iAmount; }
+            get { return amount; }
             set
             {
                 if (value > 0)
                 {
-                    iAmount = value;
-                    if (this.owner != null)
+                    if (this.Spawned)
+                        return;
+
+                    amount = value;
+                    if (this.Owner != null)
                     {
-                        InventoryMessage.WriteAmountUpdate(this.owner.client, this);
+                        InventoryMessage.WriteAmountUpdate(this.Owner.client, this);
                     }
                 }
                 else
@@ -41,22 +44,52 @@ namespace GUC.Server.WorldObjects
 
             }
         }
-
-        internal ushort iAmount = 1;
+        internal ushort amount = 1;
 
         /// <summary>
         /// Stackable items will combine themselves to one single object in inventories.
         /// Set this to false for unique items like user-written scrolls, worn weapons etc.
         /// Default is TRUE.
         /// </summary>
-        public bool stackable = true;
+        public bool Stackable = true;
 
         /// <summary>
         /// Gets the NPC who is carrying this item or NULL.
         /// </summary>
-        public NPC owner { get; internal set; }
+        public NPC Owner { get; internal set; }
 
-        public ushort condition;
+        /// <summary>
+        /// The condition of this item. Only used for weapons, armors, etc. Can't be set when spawned. 
+        /// </summary>
+        public ushort Condition
+        {
+            get { return condition; }
+            set
+            {
+                if (!Spawned)
+                {
+                    condition = value;
+                }
+            }
+        }
+        protected ushort condition;
+
+        /// <summary>
+        /// Changeable extra line in the item description box in the inventory. Use for signatures, etc.
+        /// </summary>
+        public string SpecialLine
+        {
+            get { return specialLine; }
+            set
+            {
+                specialLine = value;
+                if (Owner != null)
+                {
+
+                }
+            }
+        }
+        protected string specialLine = "";
 
         #region Constructors
 
@@ -105,8 +138,8 @@ namespace GUC.Server.WorldObjects
             if (instance != null)
             {
                 Item item = new Item();
-                item.instance = instance;
-                item.condition = instance.condition;
+                item.Instance = instance;
+                item.condition = instance.Condition;
                 return item;
             }
             else
@@ -120,15 +153,27 @@ namespace GUC.Server.WorldObjects
         {
         }
 
+        public static Item Copy(Item source)
+        {
+            Item newItem = new Item();
+            newItem.Instance = source.Instance;
+            newItem.condition = source.condition;
+            newItem.specialLine = source.specialLine;
+            return newItem;
+        }
+
         #endregion
 
         internal override void WriteSpawn(IEnumerable<Client> list)
         {
             BitStream stream = Program.server.SetupStream(NetworkID.WorldItemSpawnMessage);
             stream.mWrite(ID);
-            stream.mWrite(instance.ID);
+            stream.mWrite(Instance.ID);
             stream.mWrite(pos);
             stream.mWrite(dir);
+            stream.mWrite(amount);
+            if (Instance.Type <= ItemType.Armor)
+                stream.mWrite(condition);
             stream.mWrite(physicsEnabled);
 
             foreach (Client client in list)
@@ -137,13 +182,13 @@ namespace GUC.Server.WorldObjects
 
         public override void RemoveFromServer()
         {
-            if (owner == null)
+            if (Owner == null)
             {
                 Despawn();
             }
             else
             {
-                owner.RemoveItem(this);
+                Owner.RemoveItem(this);
             }
             sWorld.RemoveVob(this);
         }

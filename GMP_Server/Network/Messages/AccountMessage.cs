@@ -125,6 +125,10 @@ namespace GUC.Server.Network.Messages
             npc.CustomName = ci.Name;
 
             //set all the stuff from the data bank
+            npc.HumanBodyTex = (HumBodyTex)ci.BodyTex;
+            npc.HumanHeadMesh = (HumHeadMesh)ci.HeadMesh;
+            npc.HumanHeadTex = (HumHeadTex)ci.HeadTex;
+            npc.HumanVoice = (HumVoice)ci.Voice;
 
             client.SetControl(npc);
             Log.Logger.log("Client joins in on npc " + npc.ID);

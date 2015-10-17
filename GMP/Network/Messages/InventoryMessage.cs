@@ -17,10 +17,12 @@ namespace GUC.Client.Network.Messages
             ushort instID = stream.mReadUShort();
 
             Item item = new Item(ID, instID);
-            item.amount = stream.mReadUShort();
-            item.condition = stream.mReadUShort();
+            item.Amount = stream.mReadUShort();
+            item.Condition = stream.mReadUShort();
+            item.specialLine = stream.mReadString();
 
             Player.Inventory.Add(ID, item);
+            Menus.GUCMenus.Inventory.UpdateContents();
         }
 
         public static void ReadAmountUpdate(BitStream stream)
@@ -28,7 +30,15 @@ namespace GUC.Client.Network.Messages
             uint id = stream.mReadUInt();
             ushort amount = stream.mReadUShort();
 
-            Player.Inventory[id].amount = amount;
+            if (amount > 0)
+            {
+                Player.Inventory[id].Amount = amount;
+            }
+            else
+            {
+                Player.Inventory.Remove(id);
+            }
+            Menus.GUCMenus.Inventory.UpdateContents();
         }
 
         public static void WriteDropItem(object item, int amount)

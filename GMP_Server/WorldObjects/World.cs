@@ -32,8 +32,6 @@ namespace GUC.Server.WorldObjects
         {
             MapName = mapname.ToUpper();
             sWorld.WorldDict.Add(MapName, this);
-
-            Item.Create("itfo_apple").Spawn(this);
         }
 
         public NPC GetNpcOrPlayer(uint id)

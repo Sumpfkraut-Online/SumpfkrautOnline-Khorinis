@@ -15,6 +15,8 @@ namespace GUC.Client.WorldObjects
 {
     class NPCInstance : AbstractInstance
     {
+        public static InstanceManager<NPCInstance> Table = new InstanceManager<NPCInstance>("npcs.pak");
+
         public String name;
         public String visual;
         public String bodyMesh;
@@ -31,36 +33,29 @@ namespace GUC.Client.WorldObjects
         public void SetProperties(NPC npc)
         {
             npc.name = name;
-            npc.visual = visual;
+            npc.Visual = visual;
             npc.SetBodyVisuals(bodyMesh, bodyTex, headMesh, headTex);
             npc.bodyHeight = bodyHeight;
             npc.bodyWidth = bodyWidth;
             npc.fatness = fatness;
             npc.voice = voice;
         }
-
-        new protected static Dictionary<ushort, AbstractInstance> InstanceList;
-        new protected static string fileName = "npcs.pak";
-        new protected static void ReadNew(BinaryReader br)
+        internal override void Read(BinaryReader br)
         {
-            NPCInstance inst = new NPCInstance();
-
-            inst.ID = br.ReadUInt16();
-            inst.name = br.ReadString();
-            inst.visual = br.ReadString();
-            inst.bodyMesh = br.ReadString();
-            inst.bodyTex = br.ReadByte();
-            inst.headMesh = br.ReadString();
-            inst.headTex = br.ReadByte();
-            inst.bodyHeight = (float)br.ReadByte() / 100.0f;
-            inst.bodyWidth = (float)br.ReadByte() / 100.0f;
-            inst.fatness = (float)br.ReadInt16() / 100.0f;
-            inst.voice = br.ReadByte();
-
-            InstanceList.Add(inst.ID, inst);
+            ID = br.ReadUInt16();
+            name = br.ReadString();
+            visual = br.ReadString();
+            bodyMesh = br.ReadString();
+            bodyTex = br.ReadByte();
+            headMesh = br.ReadString();
+            headTex = br.ReadByte();
+            bodyHeight = (float)br.ReadByte() / 100.0f;
+            bodyWidth = (float)br.ReadByte() / 100.0f;
+            fatness = (float)br.ReadInt16() / 100.0f;
+            voice = br.ReadByte();
         }
 
-        protected override void Write(BinaryWriter bw)
+        internal override void Write(BinaryWriter bw)
         {
             bw.Write(ID);
             bw.Write(name);
@@ -74,12 +69,5 @@ namespace GUC.Client.WorldObjects
             bw.Write((short)Math.Round(100.0f * (float)fatness));
             bw.Write((byte)voice);
         }
-
-        public static NPCInstance Get(ushort id)
-        {
-            AbstractInstance inst = null;
-            InstanceList.TryGetValue(id, out inst);
-            return (NPCInstance)inst;
-        }
-   } 
+    }
 }

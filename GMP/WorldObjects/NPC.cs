@@ -21,13 +21,13 @@ namespace GUC.Client.WorldObjects
 
         public NPC(uint id, ushort instanceID) : base(id)
         {
-            instance = NPCInstance.Get(instanceID);
+            instance = NPCInstance.Table.Get(instanceID);
             instance.SetProperties(this);
         }
 
         public NPC(uint id, ushort instanceID, oCNpc npc) : base(id, npc)
         {
-            instance = NPCInstance.Get(instanceID);
+            instance = NPCInstance.Table.Get(instanceID);
             instance.SetProperties(this);
         }
 
@@ -41,7 +41,7 @@ namespace GUC.Client.WorldObjects
 
             gNpc.Instance = instance.ID;
             gNpc.Name.Set(iName);
-            gNpc.SetVisual(iVisual);
+            gNpc.SetVisual(visual);
             gNpc.SetAdditionalVisuals(bodyMesh, bodyTex, 0, headMesh, headTex, 0, -1);
             using (zVec3 z = zVec3.Create(Program.Process))
             {
@@ -61,7 +61,7 @@ namespace GUC.Client.WorldObjects
             set
             {
                 iName = value;
-                if (spawned)
+                if (Spawned)
                 {
                     using (zString z = zString.Create(Program.Process, value))
                     {
@@ -91,7 +91,7 @@ namespace GUC.Client.WorldObjects
             set
             {
                 iVoice = value;
-                if (spawned)
+                if (Spawned)
                 {
                     gNpc.Voice = value;
                 }
@@ -107,13 +107,13 @@ namespace GUC.Client.WorldObjects
         public string headMesh { get; protected set; }
         public int headTex { get; protected set; }
 
-        public void SetBodyVisuals(string bodyMesh, int bodyTex, string headMesh, int headtex)
+        public void SetBodyVisuals(string bodyMesh, int bodyTex, string headMesh, int headTex)
         {
             this.bodyMesh = bodyMesh;
             this.bodyTex = bodyTex;
             this.headMesh = headMesh;
             this.headTex = headTex;
-            if (spawned)
+            if (Spawned)
             {
                 gNpc.SetAdditionalVisuals(bodyMesh, bodyTex, 0, headMesh, headTex, 0, -1);
             }
@@ -129,7 +129,7 @@ namespace GUC.Client.WorldObjects
             set
             {
                 iFatness = value;
-                if (spawned)
+                if (Spawned)
                 {
                     gNpc.SetFatness(value);
                 }
@@ -146,7 +146,7 @@ namespace GUC.Client.WorldObjects
             set
             {
                 iBodyHeight = value;
-                if (spawned)
+                if (Spawned)
                 {
                     using (zVec3 scale = zVec3.Create(Program.Process))
                     {
@@ -170,7 +170,7 @@ namespace GUC.Client.WorldObjects
             set
             {
                 iBodyWidth = value;
-                if (spawned)
+                if (Spawned)
                 {
                     using (zVec3 scale = zVec3.Create(Program.Process))
                     {
@@ -307,11 +307,11 @@ namespace GUC.Client.WorldObjects
 
                     if (diff < 1.0f)
                     {
-                        this.direction = lastDir + (nextDir - lastDir) * diff;
+                        this.Direction = lastDir + (nextDir - lastDir) * diff;
                     }
                     else
                     {
-                        this.direction = nextDir;
+                        this.Direction = nextDir;
                         StopTurnAnis();
                     }
                 }

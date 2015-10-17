@@ -14,6 +14,8 @@ namespace GUC.Client.WorldObjects
 {
     class ItemInstance : AbstractInstance
     {
+        public static InstanceManager<ItemInstance> Table = new InstanceManager<ItemInstance>("items.pak");
+
         public String name;
         public ushort weight;
 
@@ -38,37 +40,32 @@ namespace GUC.Client.WorldObjects
         public oCItem.ItemFlags flags;
         public int wear = 0;
 
-        new protected static Dictionary<ushort, AbstractInstance> InstanceList;
-        new protected static string fileName = "items.pak";
-        new protected static void ReadNew(BinaryReader br)
+        internal override void Read(BinaryReader br)
         {
-            ItemInstance inst = new ItemInstance();
-            inst.ID = br.ReadUInt16();
-            inst.name = br.ReadString();
-            inst.weight = br.ReadUInt16();
-            inst.type = (ItemType)br.ReadByte();
-            inst.material = (ItemMaterial)br.ReadByte();
-            inst.text = new string[4];
-            inst.count = new ushort[4];
+            ID = br.ReadUInt16();
+            name = br.ReadString();
+            weight = br.ReadUInt16();
+            type = (ItemType)br.ReadByte();
+            material = (ItemMaterial)br.ReadByte();
+            text = new string[4];
+            count = new ushort[4];
             for (int i = 0; i < 4; i++)
             {
-                inst.text[i] = br.ReadString();
-                inst.count[i] = br.ReadUInt16();
+                text[i] = br.ReadString();
+                count[i] = br.ReadUInt16();
             }
-            inst.description = br.ReadString();
-            inst.visual = br.ReadString();
-            inst.visualChange = br.ReadString();
-            inst.effect = br.ReadString();
-            inst.munition = br.ReadUInt16();
-            inst.gender = (Gender)br.ReadByte();
-            inst.condition = br.ReadUInt16();
+            description = br.ReadString();
+            visual = br.ReadString();
+            visualChange = br.ReadString();
+            effect = br.ReadString();
+            munition = br.ReadUInt16();
+            gender = (Gender)br.ReadByte();
+            condition = br.ReadUInt16();
 
-            inst.SetFlags();
-
-            InstanceList.Add(inst.ID, inst);
+            SetFlags();
         }
 
-        protected override void Write(BinaryWriter bw)
+        internal override void Write(BinaryWriter bw)
         {
             bw.Write(ID);
             bw.Write(name);
@@ -169,13 +166,6 @@ namespace GUC.Client.WorldObjects
                     flags = 0;
                     break;
             }
-        }
-
-        public static ItemInstance Get(ushort id)
-        {
-            AbstractInstance inst = null;
-            InstanceList.TryGetValue(id, out inst);
-            return (ItemInstance)inst;
         }
     }
 }

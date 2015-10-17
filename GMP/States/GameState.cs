@@ -106,7 +106,7 @@ namespace GUC.Client.States
             Program.client.Update();
 
             if (npc != null)
-            if ((new Vec3f(npc.TrafoObjToWorld.getPosition())).getDistance(Player.Hero.position) < 150)
+            if ((new Vec3f(npc.TrafoObjToWorld.getPosition())).getDistance(Player.Hero.Position) < 150)
             {
                 npc.GetEM(0).KillMessages();
                 npc.AniCtrl._Stand();

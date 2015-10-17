@@ -59,10 +59,10 @@ namespace GUC.Server.WorldObjects
             {
                 NPC npc = new NPC();
                 npc.Instance = instance;
-                npc.BodyHeight = instance.bodyHeight;
-                npc.BodyHeight = instance.bodyHeight;
-                npc.BodyWidth = instance.bodyWidth;
-                npc.BodyFatness = instance.fatness;
+                npc.BodyHeight = instance.BodyHeight;
+                npc.BodyHeight = instance.BodyHeight;
+                npc.BodyWidth = instance.BodyWidth;
+                npc.BodyFatness = instance.Fatness;
 
                 npc.AttrHealthMax = instance.AttrHealthMax;
                 npc.AttrHealth = instance.AttrHealthMax;
@@ -100,7 +100,7 @@ namespace GUC.Server.WorldObjects
             get { return customName; }
             set
             {
-                if (value == null || value == Instance.name)
+                if (value == null || value == Instance.Name)
                 {
                     customName = "";
                 }
@@ -262,11 +262,25 @@ namespace GUC.Server.WorldObjects
                 Network.Messages.ConnectionMessage.WriteInstanceTables(client);
 
                 if (OnEnterWorld != null)
+                {
                     OnEnterWorld(client.mainChar);
+                }
+
+                Item item = Item.Create("itfo_apple");
+                item.Amount = 3;
+                item.Spawn(client.character.World);
+
+                item = Item.Create("itmw_wolfszahn");
+                item.Condition = 200;
+                item.SpecialLine = "Geschmiedet von Malak Akbar.";
+                item.Spawn(client.character.World, new Types.Vec3f(200, 0, 200), new Types.Vec3f(0, 0, 1));
             }
 
             if (!client.character.Spawned)
+            {
                 client.character.Spawn(client.character.World);
+                client.character.WriteSpawn(new Client[1] { client });
+            }
         }
 
         internal static void ReadPickUpItem(BitStream stream, Client client)
@@ -368,7 +382,7 @@ namespace GUC.Server.WorldObjects
         public bool HasItem(Item item)
         {
             List<Item> list;
-            if (inventory.TryGetValue(item.instance, out list))
+            if (inventory.TryGetValue(item.Instance, out list))
             {
                 return list.Contains(item);
             }
@@ -393,10 +407,10 @@ namespace GUC.Server.WorldObjects
             List<Item> list;
             if (inventory.TryGetValue(instance, out list))
             {
-                Item item = list.Find(i => i.stackable == true);
+                Item item = list.Find(i => i.Stackable == true);
                 if (item != null)
                 {
-                    if (item.iAmount >= amount)
+                    if (item.amount >= amount)
                     {
                         return true;
                     }
@@ -411,7 +425,7 @@ namespace GUC.Server.WorldObjects
         /// </summary>
         public bool AddItem(Item item)
         {
-            int newWeight = carryWeight + item.iAmount * item.instance.weight;
+            int newWeight = carryWeight + item.amount * item.Instance.Weight;
             if (newWeight <= AttrCapacity)
             {
                 carryWeight = (ushort)newWeight;
@@ -420,23 +434,23 @@ namespace GUC.Server.WorldObjects
                     item.Despawn(); //Fixme?: Send despawn + additem msg in one msg to the new owner
                 }
                 //else
-                if (item.owner != null)
+                if (item.Owner != null)
                 {
-                    item.owner.RemoveItem(item);
+                    item.Owner.RemoveItem(item);
                 }
 
                 List<Item> list;
-                if (inventory.TryGetValue(item.instance, out list))
+                if (inventory.TryGetValue(item.Instance, out list))
                 {
-                    if (item.stackable)
+                    if (item.Stackable)
                     {
-                        Item other = list.Find(i => i.stackable == true);
+                        Item other = list.Find(i => i.Stackable == true);
                         if (other != null) //merge the items
                         {
-                            other.iAmount += item.iAmount;
+                            other.amount += item.amount;
                             item.RemoveFromServer();
                             InventoryMessage.WriteAmountUpdate(this.client, other);
-                            item.owner = this;
+                            item.Owner = this;
                             return true;
                         }
                     }
@@ -444,11 +458,11 @@ namespace GUC.Server.WorldObjects
                 else
                 {
                     list = new List<Item>(1);
-                    inventory.Add(item.instance, list);
+                    inventory.Add(item.Instance, list);
                 }
                 list.Add(item);
                 InventoryMessage.WriteAddItem(this.client, item);
-                item.owner = this;
+                item.Owner = this;
                 return true;
             }
             return false;
@@ -460,16 +474,16 @@ namespace GUC.Server.WorldObjects
         /// </summary>
         public void RemoveItem(Item item)
         {
-            if (item.owner == this)
+            if (item.Owner == this)
             {
-                item.owner = null;
+                item.Owner = null;
                 List<Item> list;
-                if (inventory.TryGetValue(item.instance, out list))
+                if (inventory.TryGetValue(item.Instance, out list))
                 {
                     list.Remove(item);
                     if (list.Count == 0)
                     {
-                        inventory.Remove(item.instance);
+                        inventory.Remove(item.Instance);
                     }
                 }
 
@@ -495,14 +509,14 @@ namespace GUC.Server.WorldObjects
             List<Item> list;
             if (inventory.TryGetValue(instance, out list))
             {
-                Item item = list.Find(i => i.stackable == true);
+                Item item = list.Find(i => i.Stackable == true);
                 if (item != null)
                 {
-                    int newAmount = item.iAmount - amount;
+                    int newAmount = item.amount - amount;
                     if (newAmount > 0)
                     {
-                        item.iAmount = (ushort)newAmount;
-                        carryWeight = (ushort)(carryWeight - item.iAmount * item.instance.weight);
+                        item.amount = (ushort)newAmount;
+                        carryWeight = (ushort)(carryWeight - item.amount * item.Instance.Weight);
 
                         InventoryMessage.WriteAmountUpdate(this.client, item);
                     }

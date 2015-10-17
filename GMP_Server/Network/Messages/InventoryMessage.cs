@@ -19,15 +19,16 @@ namespace GUC.Server.Network.Messages
 
             BitStream stream = Program.server.SetupStream(NetworkID.InventoryAddMessage);
             stream.mWrite(item.ID);
-            stream.mWrite(item.instance.ID);
-            stream.mWrite(item.iAmount);
-            stream.mWrite(item.condition);
+            stream.mWrite(item.Instance.ID);
+            stream.mWrite(item.Amount);
+            stream.mWrite(item.Condition);
+            stream.mWrite(item.SpecialLine);
             Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I', client.guid, false);
         }
 
         public static void WriteAmountUpdate(Client client, Item item)
         {
-            WriteAmountUpdate(client, item, item.iAmount);
+            WriteAmountUpdate(client, item, item.amount);
         }
 
         public static void WriteAmountUpdate(Client client, Item item, ushort amount)
@@ -49,13 +50,18 @@ namespace GUC.Server.Network.Messages
                 ushort amount = stream.mReadUShort();
                 if (client.character.HasItem(item))
                 {
-                    if (item.iAmount > amount) //split it
+                    if (item.amount > amount) //split it
                     {
-
+                        item.amount -= amount;
+                        InventoryMessage.WriteAmountUpdate(client, item);
+                        Item newItem = Item.Copy(item);
+                        newItem.amount = amount;
+                        newItem.Drop(client.character);
                     } 
-                    else if (item.iAmount == amount) //just throw the item out
+                    else //just throw the item out
                     {
-
+                        WriteAmountUpdate(client, item, 0);
+                        item.Drop(client.character);
                     }
                 }
             }

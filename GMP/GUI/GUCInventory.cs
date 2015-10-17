@@ -50,10 +50,10 @@ namespace GUC.Client.GUI
                     }
                     else
                     {
-                        thisVob.SetVisual(iItem.visual);
+                        thisVob.SetVisual(iItem.Visual);
                         thisVob.MainFlag = (int)iItem.mainFlags; //for proper item rotation
                         thisVob.Flags = (int)iItem.flags;
-                        amount.Text = iItem.amount > 1 ? iItem.amount.ToString() : "";
+                        amount.Text = iItem.Amount > 1 ? iItem.Amount.ToString() : "";
                         if (shown) vis.Show();
                     }
                 }
@@ -273,57 +273,40 @@ namespace GUC.Client.GUI
             }
             else
             {
-                //set description box
-                if (selectedItem.description != null && selectedItem.description.Length > 0)
-                {
-                    descrBack.Texts[0].Text = selectedItem.description;
-                }
-
-                //special line, individual signing etc.
-                int startIndex;
-                GUCVisualText specialLine = descrBack.Texts[9];
-                if (selectedItem.specialLine != null && selectedItem.specialLine.Length > 0)
-                {
-                    specialLine.Text = selectedItem.specialLine;
-                    specialLine.Format = GUCVisualText.TextFormat.Right;
-                    specialLine.SetPosX(500);
-                    startIndex = 0;
-                }
-                else
-                {
-                    specialLine.Format = GUCVisualText.TextFormat.Left;
-                    specialLine.SetPosX(20);
-                    startIndex = 1;
-                }
+                //set description name
+                descrBack.Texts[0].Text = selectedItem.description;
 
                 //standard description
-                for (int i = startIndex; i < 4; i++)
+                for (int i = 0; i < 4; i++)
                 {
-                    if (selectedItem.text[i] != null && selectedItem.text[i].Length > 0)
-                    {
-                        descrBack.Texts[2 * i + 1].Text = selectedItem.text[i];
-                    }
-                    else
-                    {
-                        descrBack.Texts[2 * i + 1].Text = "";
-                    }
+                    descrBack.Texts[2 * i + 3].Text = selectedItem.text[i];
 
                     if (selectedItem.count[i] > 0)
                     {
-                        descrBack.Texts[2 * i + 2].Text = selectedItem.count[i].ToString();
+                        descrBack.Texts[2 * i + 4].Text = selectedItem.count[i].ToString();
                     }
                     else
                     {
-                        descrBack.Texts[2 * i + 2].Text = "";
+                        descrBack.Texts[2 * i + 4].Text = "";
                     }
                 }
 
-                //weight
+                //special line directly on top
+                for (int i = 3; i >= 0; i--)
+                {
+                    if (selectedItem.text[i].Length == 0)
+                    {
+                        descrBack.Texts[2 * i + 3].Text = selectedItem.specialLine;
+                        break;
+                    }
+                }
+
+                //weight on bottom
                 descrBack.Texts[11].Text = "Gewicht:";
                 descrBack.Texts[12].Text = selectedItem.weight.ToString();
 
                 //visual vob
-                descrVob.SetVisual(selectedItem.visual);
+                descrVob.SetVisual(selectedItem.Visual);
                 descrVob.MainFlag = (int)selectedItem.mainFlags;
                 descrVob.Flags = (int)selectedItem.flags;
 
@@ -378,11 +361,11 @@ namespace GUC.Client.GUI
             {
                 case "GOLD":
                     Item gold = contents.Find(i => i.name == "Gold");
-                    return "Gold: " + (gold == null ? 0 : gold.amount);
+                    return "Gold: " + (gold == null ? 0 : gold.Amount);
                 case "WEIGHT":
                     int weight = 0;
                     for (int i = 0; i < contents.Count; i++)
-                        weight += contents[i].weight * contents[i].amount;
+                        weight += contents[i].weight * contents[i].Amount;
                     return String.Format("{0}/{1}", weight, 100); //FIXME: Show capacity
                 default:
                     return text;

@@ -28,6 +28,14 @@ namespace GUC.Client.Menus
             inv = new GUCInventory(x, y, cols, rows);
         }
 
+        public void UpdateContents()
+        {
+            if (inv.Enabled)
+            {
+                inv.SetContents(WorldObjects.Player.Inventory);
+            }
+        }
+
         public override void Open()
         {
             if (WorldObjects.Player.Hero.gNpc.GetBodyState() != 0) //only open while standing
@@ -56,8 +64,8 @@ namespace GUC.Client.Menus
                 if (inv.selectedItem == null)
                     return;
 
-                if (inv.selectedItem.amount > 1)
-                    GUCMenus.InputNumber.Open(InventoryMessage.WriteDropItem, inv.selectedItem, inv.selectedItem.amount);
+                if (inv.selectedItem.Amount > 1)
+                    GUCMenus.InputNumber.Open(InventoryMessage.WriteDropItem, inv.selectedItem, inv.selectedItem.Amount);
                 else
                     InventoryMessage.WriteDropItem(inv.selectedItem, 1);
             }

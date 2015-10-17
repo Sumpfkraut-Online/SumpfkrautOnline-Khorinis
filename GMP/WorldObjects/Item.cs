@@ -12,27 +12,66 @@ namespace GUC.Client.WorldObjects
 {
     class Item : Vob
     {
-        public ushort condition;
-        public ushort amount;
+        protected ushort condition;
+        public ushort Condition
+        {
+            get { return condition; }
+            set 
+            {
+                if (condition != value)
+                {
+                    condition = value;
+                    if (Spawned)
+                    {
+                        gItem.Name.Set(name);
+                    }
+                }
+            }
+        }
+
+        protected ushort amount;
+        public ushort Amount
+        {
+            get { return amount; }
+            set
+            {
+                if (amount != value)
+                {
+                    amount = value;
+                    if (Spawned)
+                    {
+                        gItem.Name.Set(name);
+                    }
+                }
+            }
+        }
+
         public String specialLine;
-        public ushort weight;
 
         public ItemInstance instance;
         public String name
         {
             get
             {
-                return String.Format("{0} ({1})", GetAdjective(instance.name), amount);
+                if (amount > 1)
+                {
+                    return String.Format("{0} ({1})", GetAdjective(instance.name), amount);
+                }
+                else
+                {
+                    return GetAdjective(instance.name);
+                }
             }
         }
         public String description
         {
             get
             {
-                return GetAdjective(instance.description);
+                return GetAdjective(instance.description.Length > 0 ? instance.description : instance.name);
             }
         }
-        public String iVisual { get { return instance.visual; } }
+
+        public override string Visual { get { return instance.visual; } }
         public String visualChange { get { return instance.visualChange; } }
         public String effect { get { return instance.effect; } }
 
@@ -53,23 +92,23 @@ namespace GUC.Client.WorldObjects
         {
             string adj = "";
 
-            float percent = (float)condition / (float)instance.condition;
+            float percent = (float)Condition / (float)instance.condition;
 
             if (percent > 1.0f)
             {
-                adj = "geschärft";
+                adj = "Geschärft";
             }
             else if (percent < 0.05f)
             {
-                adj = "kaputt";
+                adj = "Kaputt";
             }
             else if (percent < 0.3f)
             {
-                adj = "rostig";
+                adj = "Rostig";
             }
             else if (percent < 0.6f)
             {
-                adj = "abgenutzt";
+                adj = "Abgenutzt";
             }
 
             if (adj.Length > 0)
@@ -83,23 +122,23 @@ namespace GUC.Client.WorldObjects
         {
             string adj = "";
 
-            float percent = (float)condition / (float)instance.condition;
+            float percent = (float)Condition / (float)instance.condition;
 
             if (percent > 1.0f)
             {
-                adj = "verstärkt";
+                adj = "Verstärkt";
             }
             else if (percent < 0.05f)
             {
-                adj = "kaputt";
+                adj = "Kaputt";
             }
             else if (percent < 0.3f)
             {
-                adj = "alt";
+                adj = "Alt";
             }
             else if (percent < 0.6f)
             {
-                adj = "abgetragen";
+                adj = "Abgetragen";
             }
 
             if (adj.Length > 0)
@@ -132,6 +171,7 @@ namespace GUC.Client.WorldObjects
         public int wear { get { return instance.wear; } }
         public ushort munition { get { return instance.munition; } }
         public Gender gender { get { return instance.gender; } }
+        public ushort weight { get { return instance.weight; } }
 
         public oCItem gItem
         {
@@ -144,18 +184,20 @@ namespace GUC.Client.WorldObjects
         public Item(uint id, ushort instanceID)
             : base(id)
         {
-            instance = ItemInstance.Get(instanceID);
+            instance = ItemInstance.Table.Get(instanceID);
         }
 
         protected override void CreateVob(bool createNew)
         {
+            
             if (createNew)
             {
                 gVob = oCItem.Create(Program.Process);
             }
-            visual = iVisual;
-            //cdDyn = true;
-            //cdStatic = true;
+            gItem.Amount = 1;
+            gItem.Instanz = instance.ID;
+            gItem.Visual.Set(Visual);
+            gItem.Name.Set(name);
         }
     }
 }

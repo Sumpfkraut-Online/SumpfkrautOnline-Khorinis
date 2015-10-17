@@ -21,69 +21,69 @@ namespace GUC.Client.WorldObjects
         {
             ID = id;
             gVob = null;
-            spawned = false;
+            Spawned = false;
         }
 
         public Vob(uint id, zCVob vob)
         {
             ID = id;
             gVob = vob;
-            spawned = false;
+            Spawned = false;
         }
 
         #region Position
-        public float[] posf { get { return position.Data; } set { position = (Vec3f)value; } }
-        public float[] dirf { get { return direction.Data; } set { direction = (Vec3f)value; } }
+        public float[] Posf { get { return Position.Data; } set { Position = (Vec3f)value; } }
+        public float[] Dirf { get { return Direction.Data; } set { Direction = (Vec3f)value; } }
 
-        protected Vec3f iPos = new Vec3f();
-        protected Vec3f iDir = new Vec3f();
+        protected Vec3f pos = new Vec3f();
+        protected Vec3f dir = new Vec3f();
 
-        public Vec3f position
+        public Vec3f Position
         {
             get
             {
-                if (spawned)
+                if (Spawned)
                 {
                     return (Vec3f)gVob.TrafoObjToWorld.getPosition();
                 }
                 else
                 {
-                    return iPos;
+                    return pos;
                 }
             }
             set
             {
-                iPos = value == null ? new Vec3f(0, 0, 0) : value;
+                pos = value == null ? new Vec3f(0, 0, 0) : value;
 
-                if (spawned)
+                if (Spawned)
                 {
-                    gVob.TrafoObjToWorld.setPosition(iPos.Data);
-                    gVob.SetPositionWorld(iPos.Data);
-                    gVob.TrafoObjToWorld.setPosition(iPos.Data);
+                    gVob.TrafoObjToWorld.setPosition(pos.Data);
+                    gVob.SetPositionWorld(pos.Data);
+                    gVob.TrafoObjToWorld.setPosition(pos.Data);
                 }
             }
         }
 
-        public Vec3f direction
+        public Vec3f Direction
         {
             get
             {
-                if (spawned)
+                if (Spawned)
                 {
                     return (Vec3f)gVob.TrafoObjToWorld.getDirection();
                 }
                 else
                 {
-                    return iDir;
+                    return dir;
                 }
             }
             set
             {
-                iDir = (value == null || value.isNull()) ? new Vec3f(0, 0, 1) : value;
+                dir = (value == null || value.isNull()) ? new Vec3f(0, 0, 1) : value;
 
-                if (spawned)
+                if (Spawned)
                 {
-                    Vec3f zAxis = iDir.normalise();
+                    Vec3f zAxis = dir.normalise();
                     Vec3f up = new Vec3f(0.0f, 0.0f, 0.0f);
 
                     if (Math.Abs(zAxis.Y) > 0.5)
@@ -136,17 +136,17 @@ namespace GUC.Client.WorldObjects
         #endregion
 
         #region Visual
-        protected string iVisual = "ITFO_APPLE.3DS";
-        public string visual
+        protected string visual = "ITFO_APPLE.3DS";
+        public virtual string Visual
         {
             get
             {
-                return iVisual;
+                return visual;
             }
             set
             {
-                iVisual = value;
-                if (spawned)
+                visual = value;
+                if (Spawned)
                 {
                     gVob.SetVisual(value);
                 }
@@ -155,18 +155,18 @@ namespace GUC.Client.WorldObjects
         #endregion
 
         #region Collision
-        protected bool icdDyn = false;
+        protected bool cdDyn = false;
 
-        public bool cdDyn
+        public bool CDDyn
         {
             get
             {
-                return icdDyn;
+                return cdDyn;
             }
             set
             {
-                icdDyn = value;
-                if (spawned)
+                cdDyn = value;
+                if (Spawned)
                 {
                     if (value)
                         gVob.BitField1 |= (int)zCVob.BitFlag0.collDetectionDynamic;
@@ -176,13 +176,13 @@ namespace GUC.Client.WorldObjects
             }
         }
 
-        protected bool icdStatic = false;
-        public bool cdStatic
+        protected bool cdStatic = false;
+        public bool CDStatic
         {
-            get { return icdStatic; }
+            get { return cdStatic; }
             set
             {
-                if (spawned)
+                if (Spawned)
                 {
                     if (value)
                         gVob.BitField1 |= (int)zCVob.BitFlag0.collDetectionStatic;
@@ -194,11 +194,11 @@ namespace GUC.Client.WorldObjects
         #endregion
 
         #region Spawn
-        public bool spawned { get; protected set; }
+        public bool Spawned { get; protected set; }
 
         public void Spawn()
         {
-            Spawn(iPos, iDir, false);
+            Spawn(pos, dir, false);
         }
 
         public void Spawn(Vec3f position, Vec3f direction)
@@ -217,13 +217,13 @@ namespace GUC.Client.WorldObjects
                 Player.Hero.gNpc.DoDropVob(gVob);
             }
 
-            this.position = position;
-            this.direction = direction;
-
-            if (!spawned)
+            if (!Spawned)
                 World.AddVob(this);
 
-            spawned = true;
+            Spawned = true;
+
+            this.Position = position;
+            this.Direction = direction;
         }
 
         protected virtual void CreateVob(bool createNew)
@@ -233,20 +233,20 @@ namespace GUC.Client.WorldObjects
                 gVob = zCVob.Create(Program.Process);
             }
             gVob.BitField1 |= (int)zCVob.BitFlag0.staticVob;
-            visual = iVisual;
-            cdDyn = icdDyn;
-            cdStatic = icdStatic;
+            Visual = visual;
+            CDDyn = cdDyn;
+            CDStatic = cdStatic;
         }
 
         public void Despawn()
         {
-            if (!spawned)
+            if (!Spawned)
                 return;
 
             oCGame.Game(Program.Process).World.RemoveVob(gVob);
             World.RemoveVob(this);
             gVob = null;
-            spawned = false;
+            Spawned = false;
         }
 
         public virtual void Update(long now)

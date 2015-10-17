@@ -15,62 +15,62 @@ namespace GUC.Server.WorldObjects
         #region Client fields
 
         /// <summary>The standard name of this item.</summary>
-        public String name = "";
+        public String Name = "";
 
         /// <summary>The starter condition value of this item. The higher the condition, the longer it lasts before breaking. Default value is 1000.</summary>
-        public ushort condition = 1000;
+        public ushort Condition = 1000;
 
         ///<summary>The grammatical gender of the name. F.e. "Rostig'er' Zweihänder"</summary>
-        public Gender gender = Gender.Neuter;
+        public Gender Gender = Gender.Neuter;
 
         /// <summary>The weight of this item.</summary>
-        public ushort weight = 1;
+        public ushort Weight = 1;
 
         /// <summary>The type of this item.</summary>
-        public ItemType type = ItemType.Misc;
+        public ItemType Type = ItemType.Misc;
 
         /// <summary>The material of this item. Controls the dropping sound.</summary>
-        public ItemMaterial material = ItemMaterial.Wood;
+        public ItemMaterial Material = ItemMaterial.Wood;
 
         /// <summary>Text lines shown on the left side of the description box in the inventory.</summary>
-        public string[] text = new string[4] { "", "", "", "" };
+        public string[] Text = new string[4] { "", "", "", "" };
         /// <summary>Values shown on the right side of the description box in the inventory.</summary>
-        public ushort[] count = new ushort[4];
+        public ushort[] Count = new ushort[4];
 
-        /// <summary>The name shown in the description box in the inventory.</summary>
-        public string description = "";
+        /// <summary>The name shown in the description box in the inventory. If it's the same as 'Name', just leave this empty.</summary>
+        public string Description = "";
 
         /// <summary>The 3DS-Model shown in the world and inventory.</summary>
-        public String visual = "";
+        public String Visual = "";
 
         /// <summary>The ASC-Mesh for armors which is put over the NPC's character model.</summary>
-        public String visualChange = "";
+        public String VisualChange = "";
 
         /// <summary>Magic Effect. See Scripts/System/VisualFX/VisualFxInst.d</summary>
-        public String effect = "";
+        public String Effect = "";
 
         /// <summary>The ItemInstance which is used for ammunition.</summary>
-        public ItemInstance munition = null;
+        public ItemInstance Munition = null;
 
         internal override void Write(BinaryWriter bw)
         {
             bw.Write(ID);
-            bw.Write(name);
-            bw.Write(weight);
-            bw.Write((byte)type);
-            bw.Write((byte)material);
+            bw.Write(Name);
+            bw.Write(Weight);
+            bw.Write((byte)Type);
+            bw.Write((byte)Material);
             for (int i = 0; i < 4; i++)
             {
-                bw.Write(text[i]);
-                bw.Write(count[i]);
+                bw.Write(Text[i]);
+                bw.Write(Count[i]);
             }
-            bw.Write(description);
-            bw.Write(visual);
-            bw.Write(visualChange);
-            bw.Write(effect);
-            bw.Write(munition == null ? 0 : munition.ID);
-            bw.Write((byte)gender);
-            bw.Write(condition);
+            bw.Write(Description);
+            bw.Write(Visual);
+            bw.Write(VisualChange);
+            bw.Write(Effect);
+            bw.Write(Munition == null ? (ushort)0 : Munition.ID);
+            bw.Write((byte)Gender);
+            bw.Write(Condition);
         }
 
         #endregion

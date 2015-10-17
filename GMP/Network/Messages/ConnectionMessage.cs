@@ -20,8 +20,8 @@ namespace GUC.Client.Network.Messages
         {
             String connString = getDefaultConnectionString(0);
             String macString = x();
-            byte[] npcTableHash = NPCInstance.ReadFile();
-            byte[] itemTableHash = ItemInstance.ReadFile();
+            byte[] npcTableHash = NPCInstance.Table.ReadFile();
+            byte[] itemTableHash = ItemInstance.Table.ReadFile();
 
             BitStream stream = Program.client.SetupSendStream(NetworkID.ConnectionMessage);
             stream.mWrite(connString);
@@ -79,12 +79,11 @@ namespace GUC.Client.Network.Messages
                 int len = stream.mReadInt(); // length of packed data
 
                 byte[] data = new byte[len];
-                zERROR.GetZErr(Program.Process).Report(2, 'G', "Len: " + len, 0, "Program.cs", 0);
                 stream.Read(data, (uint)len);
 
-                NPCInstance.ReadData(data);
+                NPCInstance.Table.ReadData(data);
 
-                NPCInstance.WriteFile();
+                NPCInstance.Table.WriteFile();
             }
 
             if (stream.ReadBit())
@@ -92,12 +91,11 @@ namespace GUC.Client.Network.Messages
                 int len = stream.mReadInt(); // length of packed data
 
                 byte[] data = new byte[len];
-                zERROR.GetZErr(Program.Process).Report(2, 'G', "Len: " + len, 0, "Program.cs", 0);
                 stream.Read(data, (uint)len);
 
-                ItemInstance.ReadData(data);
+                ItemInstance.Table.ReadData(data);
 
-                ItemInstance.WriteFile();
+                ItemInstance.Table.WriteFile();
             }
         }
     }

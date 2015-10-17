@@ -7,7 +7,7 @@ using RakNet;
 using GUC.Network;
 using GUC.Types;
 using Gothic.zClasses;
-using Gothic.zTypes;
+using GUC.Enumeration;
 
 namespace GUC.Client.Network.Messages
 {
@@ -16,11 +16,11 @@ namespace GUC.Client.Network.Messages
         public static void ReadVobSpawn(BitStream stream)
         {
             Vob vob = new Vob(stream.mReadUInt());
-            vob.visual = stream.mReadString();
+            vob.Visual = stream.mReadString();
             Vec3f pos = stream.mReadVec();
             Vec3f dir = stream.mReadVec();
-            vob.cdDyn = stream.ReadBit();
-            vob.cdStatic = stream.ReadBit();
+            vob.CDDyn = stream.ReadBit();
+            vob.CDStatic = stream.ReadBit();
 
             vob.Spawn(pos, dir, stream.ReadBit());
         }
@@ -37,12 +37,27 @@ namespace GUC.Client.Network.Messages
 
         public static void ReadNPCSpawn(BitStream stream)
         {
+            
             uint ID = stream.mReadUInt();
             ushort instID = stream.mReadUShort();
 
-            NPC npc = new NPC(ID, instID);
-            npc.position = stream.mReadVec();
-            npc.direction = stream.mReadVec();
+            
+
+            NPC npc;
+            if (ID == Player.ID)
+            {
+                
+                npc = new NPC(ID, instID, oCNpc.Player(Program.Process));
+                Player.Hero = npc;
+            }
+            else
+            {
+                npc = new NPC(ID, instID);
+            }
+
+            
+            npc.Position = stream.mReadVec();
+            npc.Direction = stream.mReadVec();
 
             if (instID <= 2)
             {
@@ -57,7 +72,7 @@ namespace GUC.Client.Network.Messages
             npc.bodyHeight = (float)stream.mReadByte() / 100.0f;
             npc.bodyWidth = (float)stream.mReadByte() / 100.0f;
             npc.fatness = (float)stream.mReadShort() / 100.0f;
-
+            
             string customName = stream.mReadString();
             if (customName.Length > 0)
             {
@@ -72,9 +87,15 @@ namespace GUC.Client.Network.Messages
 
         public static void ReadItemSpawn(BitStream stream)
         {
-            Item item = new Item(stream.mReadUInt(), stream.mReadUShort());
+            uint ID = stream.mReadUInt();
+            ushort instID = stream.mReadUShort();
+            Item item = new Item(ID, instID);
+
             Vec3f pos = stream.mReadVec();
             Vec3f dir = stream.mReadVec();
+            item.Amount = stream.mReadUShort();
+            if (item.instance.type <= ItemType.Armor)
+                item.Condition = stream.mReadUShort();
             bool drop = stream.ReadBit();
             item.Spawn(pos, dir, drop);
         }
