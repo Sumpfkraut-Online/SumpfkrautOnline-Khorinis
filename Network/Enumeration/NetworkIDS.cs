@@ -58,7 +58,10 @@ namespace GUC.Enumeration
 
         //controller stuff
         ControlAddVobMessage,
-        ControlRemoveVobMessage
+        ControlRemoveVobMessage,
+
+        // trade info between server and 2 players
+        TradeMessage
     }
 
     public enum TradeStatus : byte

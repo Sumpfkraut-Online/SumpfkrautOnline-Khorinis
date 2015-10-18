@@ -8,10 +8,19 @@ using SQLiteCommand = Mono.Data.Sqlite.SqliteCommand;
 
 namespace GUC.Server.Scripts.Sumpfkraut.Database
 {
-    class DBReader
+    class DBReader : ScriptObject
     {
 
+        #region attributes
+
+        new public static readonly String _staticName = "DBReader (static)";
+        new protected String _objName = "DBReader (default)";
+
         private static string sqLiteDataSource = "Data Source=save.db";
+
+        #endregion
+
+
 
         ///**
         // *   Executes a defined sql-query and stores the results as strings.
@@ -29,6 +38,10 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
         // *   @param orderBy is the optional string after the ORDER BY-statement in sql
         // *   @param completeQuery is an optional query which can be used to define more than one sql-statement in one shot (if provided, select, from, where, orderBy are ignored)
         // */
+
+
+
+        #region methods for database-interaction
 
         /**
          *   Executes a defined sql-query and stores the results as strings.
@@ -86,6 +99,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                     SQLiteDataReader rdr = null;
                     try
                     {
+                        //Console.WriteLine("###########" + completeQuery);
                         rdr = cmd.ExecuteReader();
                         if (rdr == null)
                         {
@@ -108,6 +122,10 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                                 // create and fill array of the temporary data row
                                 rowArr = new object[rdr.FieldCount];
                                 rdr.GetValues(rowArr);
+                                //for (int bla = 0; bla < rowArr.Length; bla++ )
+                                //{
+                                //    Console.WriteLine("+*+*+*+*: " + rowArr[bla].GetType() + " |--| " + rowArr[bla]);
+                                //}
                                 results[results.Count - 1].Add(new List<object>(rowArr));
                             }
                         }
@@ -172,6 +190,12 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
 
             return changedRows;
         }
+
+        #endregion
+
+
+
+        #region utility methods
 
         public static int[] ParseParamToIntArray (string param)
         {
@@ -239,6 +263,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
 
             return result;
         }
+
+        #endregion
 
     }
 }

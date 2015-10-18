@@ -65,6 +65,8 @@ namespace GUC.Client.Network
 
             messageListener.Add((byte)NetworkID.ControlAddVobMessage, ControlMessage.ReadAddVob);
             messageListener.Add((byte)NetworkID.ControlRemoveVobMessage, ControlMessage.ReadRemoveVob);
+
+            messageListener.Add((byte)NetworkID.TradeMessage, TradeMessage.Read);
         }
 
         public void Startup()
