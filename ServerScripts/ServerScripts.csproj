@@ -69,6 +69,7 @@
     <Compile Include="Sumpfkraut\IScriptObject.cs" />
     <Compile Include="Sumpfkraut\ScriptObject.cs" />
     <Compile Include="Sumpfkraut\Utilities\DateTimeUtil.cs" />
+    <Compile Include="Sumpfkraut\Utilities\String.cs" />
     <Compile Include="Sumpfkraut\Utilities\StringUtil.cs" />
     <Compile Include="Sumpfkraut\Utilities\Threading\IRunnable.cs" />
     <Compile Include="Sumpfkraut\Utilities\Threading\Runnable.cs" />
@@ -90,6 +91,30 @@
     <Compile Include="Sumpfkraut\VobSystem\WorldVobHandler.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldHandler.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldInst.cs" />
+    <Compile Include="Sumpfkraut\WeatherSystem\Weather.cs" />
+    <Compile Include="Sumpfkraut\WeatherSystem\WeatherHandler.cs" />
+    <Compile Include="Sumpfkraut\WeatherSystem\WeatherState.cs" />
+    <Compile Include="Sumpfkraut\WorldSystem\WorldHandler.cs" />
+    <Compile Include="Sumpfkraut\WorldSystem\WorldInst.cs" />
+    <Compile Include="Test\ListTestModule.cs" />
+    <Compile Include="Test\Text3DTest.cs" />
+    <Compile Include="Utils\RandomManager.cs" />
+    <Compile Include="Utils\Utils.cs" />
+    <Compile Include="Web\Actions\Action.cs" />
+    <Compile Include="Web\Actions\GetPlayerListAction.cs" />
+    <Compile Include="Web\Actions\GetAccountListAction.cs" />
+    <Compile Include="Web\Actions\GetAccountLogAction.cs" />
+    <Compile Include="Web\Actions\WriteMessageAction.cs" />
+    <Compile Include="Web\ActionTimer.cs" />
+    <Compile Include="Web\http_server.cs" />
+    <Compile Include="Web\Permissions.cs" />
+    <Compile Include="Web\Sites\Accounts.cs" />
+    <Compile Include="Web\Sites\Accounts_Log.cs" />
+    <Compile Include="Web\Sites\Messages.cs" />
+    <Compile Include="Web\Sites\Log.cs" />
+    <Compile Include="Web\Sites\Map.cs" />
+    <Compile Include="Web\Sites\Site.cs" />
+    <Compile Include="Web\User.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GMP_Server\GMP_Server.csproj">
@@ -103,6 +128,9 @@
     <Content Include="Sumpfkraut\Database\SO-K_SQLite.sql" />
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Content Include="Sumpfkraut\Database\SO-K_SQLite.sql" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

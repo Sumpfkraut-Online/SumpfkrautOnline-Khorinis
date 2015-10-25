@@ -1,0 +1,61 @@
+before compilation
+---------------------
+
+- Visal Studio Express 2013 or higher (compability issues)
+
+- update projects to the current Visual Studio Express version standard
+
+- add necessary Reference Path(s) of the dll-files (Mono.Data.Sqlite.dll, RakNet.dll, RakNetSwig.dll, sqlite3.dll) to each individual project (e.g. put all of them in one folder and reference the folder)
+
+- set up Dependencies for each project of the solution (could be cleaner organized but works):
+    * GMP_Server: Gothic, GUC
+    * GMPStarter: GMP_Server, Gothic, GUC, WinApi
+    * Gothic: WinApi
+    * GUC: Gothic, WinApi
+    * NetInject: /
+    * Network: GMPStarter
+    * ServerScripts: GMP_Server
+    * WinApi: /
+        --> results in the following Build Order: WinApi, Gothic, GUC, GMP_Server, GMPStarter, Network, NetInject, ServerScripts
+
+- delete SumpfkrautOnline-Khorinis\Network\Properties\Assembly.cs if existent
+
+- click on the Solution in Solution Explorer -> BUILD (tab) -> Configuration Manager -> exclude Network-project from Build (its code will be used by other projects though)
+    --> make sure everything else is checked for the build (you might want to exclude NetInject too)
+    
+- necessary to compile a playable version in >>Release-mode<<:
+    - for each project: project Properties -> Build (tab) -> set all
+    Conditional compilation symbols as in Debug-mode
+    (e.g. ServerScripts: set to SSM_ACCOUNT;SSM_ACCOUNT_LOGGING;SSM_WEB;SSM_AI;SSM_CHAT)
+    -> this is done for 3 projects setting the following symbols:
+        (project: symbols)
+        * GMP_SERVER: D_SERVER
+        * GUC: D_CLIENT
+        * ServerScripts: SSM_ACCOUNT;SSM_ACCOUNT_LOGGING;SSM_WEB;SSM_AI;SSM_CHAT
+
+# for MySql (ignore - not used yet)
+- download and install MySql Connector if necessary and add reference to projects (if used there)
+
+
+
+after compilation
+-------------------
+
+
+- copy NetInject-build from GUC\SumpfkrautOnline-Khorinis\Release\
+ into B:\Games\Gothic2\System\UntoldChapter\DLL manually
+
+- copy RakNet.dll into <Gothic2-Directory>\System\UntoldChapter\DLL and <Gothic2-Ordner>\System\UntoldChapter\Server
+
+- copy Mono.Data.Sqlite.dll and sqlite3.dll into <Gothic2-Directoy>\System\UntoldChapter\Server
+
+# fix to spawn into the world with no Accountsystem (ignore)
+- add the following to the Startup-Class of the Serverscripts:
+in OnServerInit-method:
+    Player.sOnPlayerConnects += new Events.PlayerEventHandler(test);
+
+in class-body:
+    public void test(Player sender)
+    {
+        sender.Spawn("NEWWORLD\\NEWWORLD.ZEN", new Vec3f(0.0f, 0.0f, 0.0f), new Vec3f(0.0f, 0.0f, 1.0f));
+    }

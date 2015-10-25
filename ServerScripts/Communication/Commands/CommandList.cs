@@ -251,6 +251,13 @@ namespace GUC.Server.Scripts.Communication
 
       
       Commands.Add(command);
+
+        command = new Command("exit", 0, delegate(Player player, string[] parameters)
+        {
+            player.exitGame();
+            return true;
+        });
+        Commands.Add(command);
     }
   }
 }
