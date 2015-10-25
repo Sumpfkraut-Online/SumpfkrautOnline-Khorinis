@@ -94,27 +94,8 @@
     <Compile Include="Sumpfkraut\WeatherSystem\Weather.cs" />
     <Compile Include="Sumpfkraut\WeatherSystem\WeatherHandler.cs" />
     <Compile Include="Sumpfkraut\WeatherSystem\WeatherState.cs" />
-    <Compile Include="Sumpfkraut\WorldSystem\WorldHandler.cs" />
-    <Compile Include="Sumpfkraut\WorldSystem\WorldInst.cs" />
-    <Compile Include="Test\ListTestModule.cs" />
-    <Compile Include="Test\Text3DTest.cs" />
     <Compile Include="Utils\RandomManager.cs" />
     <Compile Include="Utils\Utils.cs" />
-    <Compile Include="Web\Actions\Action.cs" />
-    <Compile Include="Web\Actions\GetPlayerListAction.cs" />
-    <Compile Include="Web\Actions\GetAccountListAction.cs" />
-    <Compile Include="Web\Actions\GetAccountLogAction.cs" />
-    <Compile Include="Web\Actions\WriteMessageAction.cs" />
-    <Compile Include="Web\ActionTimer.cs" />
-    <Compile Include="Web\http_server.cs" />
-    <Compile Include="Web\Permissions.cs" />
-    <Compile Include="Web\Sites\Accounts.cs" />
-    <Compile Include="Web\Sites\Accounts_Log.cs" />
-    <Compile Include="Web\Sites\Messages.cs" />
-    <Compile Include="Web\Sites\Log.cs" />
-    <Compile Include="Web\Sites\Map.cs" />
-    <Compile Include="Web\Sites\Site.cs" />
-    <Compile Include="Web\User.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GMP_Server\GMP_Server.csproj">
