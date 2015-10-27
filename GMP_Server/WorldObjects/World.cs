@@ -6,6 +6,7 @@ using RakNet;
 using GUC.Enumeration;
 using GUC.Server.Network;
 using GUC.Server.Network.Messages;
+using GUC.Network;
 
 namespace GUC.Server.WorldObjects
 {
@@ -373,12 +374,9 @@ namespace GUC.Server.WorldObjects
                 Client client = keyValPair.Value.client;
                 BitStream stream = Program.server.SetupStream(NetworkID.WorldTimeMessage);
                 
-                stream.Write(this.igTime.day);
-                stream.Write(this.igTime.hour);
-                stream.Write(this.igTime.minute);
-
-                //Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY,
-                //    PacketReliability.RELIABLE_ORDERED, 'M', client.guid, false);
+                stream.mWrite(this.igTime.day);
+                stream.mWrite(this.igTime.hour);
+                stream.mWrite(this.igTime.minute);
 
                 Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY,
                     PacketReliability.RELIABLE_ORDERED, 'I', client.guid, false);
@@ -398,16 +396,16 @@ namespace GUC.Server.WorldObjects
                 Client client = keyValPair.Value.client;
 
                 BitStream stream = Program.server.SetupStream(NetworkID.WorldWeatherMessage);
-                stream.Write((byte)wt);
+                stream.mWrite((byte)wt);
                 //stream.Write(startTime.day);
-                stream.Write((byte)startTime.hour);
-                stream.Write((byte)startTime.minute);
+                stream.mWrite((byte)startTime.hour);
+                stream.mWrite((byte)startTime.minute);
                 //stream.Write(endTime.day);
-                stream.Write((byte)endTime.hour);
-                stream.Write((byte)endTime.minute);
+                stream.mWrite((byte)endTime.hour);
+                stream.mWrite((byte)endTime.minute);
 
                 Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY,
-                    PacketReliability.RELIABLE_ORDERED, 'M', client.guid, false);
+                    PacketReliability.RELIABLE_ORDERED, 'I', client.guid, false
             }
         }
 

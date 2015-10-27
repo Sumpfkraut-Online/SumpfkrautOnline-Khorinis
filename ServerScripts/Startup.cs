@@ -110,14 +110,20 @@ namespace GUC.Server.Scripts
             ////item.Spawn(World.NewWorld);
             //item.Drop(World.NewWorld, item.Position);
 
-            IGTime newTime = new IGTime();
-            newTime.day = 4; newTime.hour = 22; newTime.minute = 30;
-            Console.WriteLine(">>>> " + newTime.day + " " + newTime.hour + " " + newTime.minute);
-            World.NewWorld.ChangeTime(newTime.day, newTime.hour, newTime.minute);
-            Console.WriteLine(String.Format(">>> CHANGED TIME to day {0} {1}:{2}<<<",
-                World.NewWorld.GetIGTime().day, 
-                World.NewWorld.GetIGTime().hour, 
-                World.NewWorld.GetIGTime().minute));
+            //IGTime newTime = new IGTime();
+            //newTime.day = 4; newTime.hour = 22; newTime.minute = 30;
+            //Console.WriteLine(">>>> " + newTime.day + " " + newTime.hour + " " + newTime.minute);
+            //World.NewWorld.ChangeTime(newTime.day, newTime.hour, newTime.minute);
+            //Console.WriteLine(String.Format(">>> CHANGED TIME to day {0} {1}:{2}<<<",
+            //    World.NewWorld.GetIGTime().day, 
+            //    World.NewWorld.GetIGTime().hour, 
+            //    World.NewWorld.GetIGTime().minute));
+
+
+            //Sumpfkraut.Utilities.Threading.TestRunnable timeRunner = 
+            //    new Sumpfkraut.Utilities.Threading.TestRunnable(true, new TimeSpan(0, 0, 3), false);
+
+
 
             Logger.log(Logger.LogLevel.INFO, "######################## Initalise ########################");
             
