@@ -21,6 +21,8 @@ namespace GUC.Server.WorldObjects
             stream_Time.mWrite((byte)igTime.day);
             stream_Time.mWrite((byte)igTime.hour);
             stream_Time.mWrite((byte)igTime.minute);
+            Program.server.ServerInterface.Send(stream_Time, PacketPriority.LOW_PRIORITY,
+                PacketReliability.RELIABLE, 'G', client.guid, false);
 
             BitStream stream_Weather = Program.server.SetupStream(NetworkID.WorldWeatherMessage);
             WeatherType weatherType = World.NewWorld.GetWeatherType();
@@ -31,6 +33,8 @@ namespace GUC.Server.WorldObjects
             stream_Weather.mWrite((byte)weatherStartTime.minute);
             stream_Weather.mWrite((byte)weatherEndTime.hour);
             stream_Weather.mWrite((byte)weatherEndTime.minute);
+            Program.server.ServerInterface.Send(stream_Weather, PacketPriority.LOW_PRIORITY, 
+                PacketReliability.RELIABLE, 'G', client.guid, false);
 
             BitStream stream = Program.server.SetupStream(NetworkID.PlayerControlMessage);
             stream.mWrite(npc.ID);
