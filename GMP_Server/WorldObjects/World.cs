@@ -405,7 +405,7 @@ namespace GUC.Server.WorldObjects
                 stream.mWrite((byte)endTime.minute);
 
                 Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY,
-                    PacketReliability.RELIABLE_ORDERED, 'I', client.guid, false
+                    PacketReliability.RELIABLE_ORDERED, 'I', client.guid, false);
             }
         }
 
