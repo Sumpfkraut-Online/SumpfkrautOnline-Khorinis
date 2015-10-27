@@ -16,6 +16,22 @@ namespace GUC.Server.WorldObjects
 
         internal static void WriteControl(Client client, NPC npc)
         {
+            BitStream stream_Time = Program.server.SetupStream(NetworkID.WorldTimeMessage);
+            IGTime igTime = World.NewWorld.GetIGTime();
+            stream_Time.mWrite((byte)igTime.day);
+            stream_Time.mWrite((byte)igTime.hour);
+            stream_Time.mWrite((byte)igTime.minute);
+
+            BitStream stream_Weather = Program.server.SetupStream(NetworkID.WorldWeatherMessage);
+            WeatherType weatherType = World.NewWorld.GetWeatherType();
+            IGTime weatherStartTime = World.NewWorld.GetWeatherStartTime();
+            IGTime weatherEndTime = World.NewWorld.GetWeatherEndTime();
+            stream_Weather.mWrite((byte)weatherType);
+            stream_Weather.mWrite((byte)weatherStartTime.hour);
+            stream_Weather.mWrite((byte)weatherStartTime.minute);
+            stream_Weather.mWrite((byte)weatherEndTime.hour);
+            stream_Weather.mWrite((byte)weatherEndTime.minute);
+
             BitStream stream = Program.server.SetupStream(NetworkID.PlayerControlMessage);
             stream.mWrite(npc.ID);
             stream.mWrite(npc.World.MapName);

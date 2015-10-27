@@ -109,10 +109,12 @@ namespace GUC.Server.Scripts
             ////World.NewWorld.ItemDict.Add(1, item);
             ////item.Spawn(World.NewWorld);
             //item.Drop(World.NewWorld, item.Position);
-            
 
-
-
+            IGTime newTime = new IGTime();
+            newTime.day = 4; newTime.hour = 22; newTime.minute = 30;
+            Console.WriteLine(String.Format(">>> CHANGED TIME to day {0} {1}:{2}<<<",
+                newTime.day, newTime.hour, newTime.minute));
+            World.NewWorld.ChangeTime(newTime.day, newTime.hour, newTime.minute);
 
 
             Logger.log(Logger.LogLevel.INFO, "######################## Initalise ########################");
