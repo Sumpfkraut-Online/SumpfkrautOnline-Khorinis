@@ -160,5 +160,6 @@ namespace GUC.Client.WorldObjects
             return 0;
         }
         #endregion
+
     }
 }

@@ -8,6 +8,21 @@ using GUC.Server.Network.Messages;
 
 namespace GUC.Server.WorldObjects
 {
+
+    public struct IGTime
+    {
+        public byte day;
+        public byte hour;
+        public byte minute;
+    }
+
+    public enum WeatherType : byte
+    {
+        undefined = 0,
+        rain = 1,
+        snow = 2,
+    }
+
     public class World
     {
         //Worlds, hardcoded but whatever
@@ -307,5 +322,59 @@ namespace GUC.Server.WorldObjects
         }
 
         #endregion
+
+
+
+        public static void ChangeTime(int day, int hour, int minute)
+        {
+            ChangeTime(day, hour, minute, true, true, true);
+        }
+
+        public static void ChangeTime(int day, int hour, int minute, 
+            bool changeDay, bool changeHour, bool changeMinute)
+        {
+            foreach (KeyValuePair<uint, NPC> keyValPair in NewWorld.PlayerDict)
+            {
+                Client client = keyValPair.Value.client;
+
+                RakNet.BitStream stream = Program.server.SetupStream(NetworkID.WorldTimeMessage);
+                if (changeDay)
+                {
+                    stream.Write(day);
+                }
+                else if (changeHour)
+                {
+                    stream.Write(hour);
+                }
+                else if (changeMinute)
+                {
+                    stream.Write(minute);
+                }
+                
+                Program.server.ServerInterface.Send(stream, RakNet.PacketPriority.LOW_PRIORITY,
+                    RakNet.PacketReliability.RELIABLE_ORDERED, 'M', client.guid, false);
+            }
+        }
+
+        public static void ChangeWeather(WeatherType wt, IGTime startTime, IGTime endTime)
+        {
+            foreach (KeyValuePair<uint, NPC> keyValPair in NewWorld.PlayerDict)
+            {
+                Client client = keyValPair.Value.client;
+
+                RakNet.BitStream stream = Program.server.SetupStream(NetworkID.WorldWeatherMessage);
+                stream.Write((byte)wt);
+                //stream.Write(startTime.day);
+                stream.Write(startTime.hour);
+                stream.Write(startTime.minute);
+                //stream.Write(endTime.day);
+                stream.Write(endTime.hour);
+                stream.Write(endTime.minute);
+
+                Program.server.ServerInterface.Send(stream, RakNet.PacketPriority.LOW_PRIORITY,
+                    RakNet.PacketReliability.RELIABLE_ORDERED, 'M', client.guid, false);
+            }
+        }
+
     }
 }
