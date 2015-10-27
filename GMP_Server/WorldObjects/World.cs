@@ -32,14 +32,14 @@ namespace GUC.Server.WorldObjects
 
         public string MapName { get; protected set; }
 
-        protected IGTime igTime = new IGTime();
+        protected IGTime igTime;
         public IGTime GetIGTime() { return this.igTime; }
 
-        protected WeatherType weatherType = WeatherType.undefined;
+        protected WeatherType weatherType;
         public WeatherType GetWeatherType() { return this.weatherType; }
-        protected IGTime weatherStartTime = new IGTime();
+        protected IGTime weatherStartTime;
         public IGTime GetWeatherStartTime () { return this.weatherStartTime; }
-        protected IGTime weatherEndTime = new IGTime();
+        protected IGTime weatherEndTime;
         public IGTime GetWeatherEndTime () { return this.weatherEndTime; }
 
         internal Dictionary<int, Dictionary<int, WorldCell>> Cells = new Dictionary<int, Dictionary<int, WorldCell>>();
@@ -57,6 +57,21 @@ namespace GUC.Server.WorldObjects
         public World(string mapname)
         {
             MapName = mapname;
+
+            igTime = new IGTime();
+            igTime.day = 4;
+            igTime.hour = 22;
+            igTime.minute = 30;
+            weatherType = WeatherType.rain;
+            weatherStartTime = new IGTime();
+            weatherStartTime.day = 4;
+            weatherStartTime.hour = 22;
+            weatherStartTime.minute = 30;
+            weatherEndTime = new IGTime();
+            weatherEndTime.day = 4;
+            weatherEndTime.hour = 23;
+            weatherEndTime.minute = 30;
+
             sWorld.WorldList.Add(this);
             try
             {
@@ -346,32 +361,27 @@ namespace GUC.Server.WorldObjects
         {
             // set world time in server
             IGTime newIGTime = new IGTime();
-            newIGTime.day = day;
-            newIGTime.hour = hour;
-            newIGTime.minute = minute;
+            if (changeDay) { newIGTime.day = day; } else { newIGTime.day = -1; }
+            if (changeHour) { newIGTime.hour = hour; } else { newIGTime.hour = -1; }
+            if (changeMinute) { newIGTime.minute = minute; } else { newIGTime.minute = -1; }
             this.igTime = newIGTime;
-
+            //Console.WriteLine("++++ " + newIGTime.day + " " + newIGTime.hour + " " + newIGTime.minute);
+ 
             // send new world time to clients
             foreach (KeyValuePair<uint, NPC> keyValPair in NewWorld.PlayerDict)
             {
                 Client client = keyValPair.Value.client;
-
                 BitStream stream = Program.server.SetupStream(NetworkID.WorldTimeMessage);
-                if (changeDay)
-                {
-                    stream.Write(day);
-                }
-                else if (changeHour)
-                {
-                    stream.Write(hour);
-                }
-                else if (changeMinute)
-                {
-                    stream.Write(minute);
-                }
                 
+                stream.Write(this.igTime.day);
+                stream.Write(this.igTime.hour);
+                stream.Write(this.igTime.minute);
+
+                //Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY,
+                //    PacketReliability.RELIABLE_ORDERED, 'M', client.guid, false);
+
                 Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY,
-                    PacketReliability.RELIABLE_ORDERED, 'M', client.guid, false);
+                    PacketReliability.RELIABLE_ORDERED, 'I', client.guid, false);
             }
         }
 

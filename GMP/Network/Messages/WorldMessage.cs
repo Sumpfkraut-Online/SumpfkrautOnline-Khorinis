@@ -99,11 +99,26 @@ namespace GUC.Client.Network.Messages
 
         public static void ReadTimeChange (BitStream stream)
         {
+            //while (stream.Read(out temp))
+            //{
+            //    GUI.GUCView.DebugText.Text = "GOTCHA";
+            //    //GUI.GUCView.DebugText.Text += " " + temp;
+            //}
+
             int day = stream.mReadInt();
             int hour = stream.mReadInt();
             int minute = stream.mReadInt();
+
+
+            GUI.GUCView.DebugText.Text = "!!! GOTCHA !!! " + day + " " + hour + " " + minute;
+
             oCGame.Game(Program.Process).WorldTimer.SetDay(day);
             oCGame.Game(Program.Process).WorldTimer.SetTime(hour, minute);
+
+            //GUI.GUCView.DebugText.Text = "GOTCHA!";
+            ////oCGame.Game(Program.Process).WorldTimer.Timer();
+            //oCGame.Game(Program.Process).WorldTimer.SetDay(4);
+            //oCGame.Game(Program.Process).WorldTimer.SetTime(22, 30);
         }
 
         public static void ReadWeatherChange (BitStream stream)
