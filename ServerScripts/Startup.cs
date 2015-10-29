@@ -120,13 +120,13 @@ namespace GUC.Server.Scripts
             //    World.NewWorld.GetIGTime().minute));
 
 
-            //Sumpfkraut.Utilities.Threading.TestRunnable timeRunner =
-            //    new Sumpfkraut.Utilities.Threading.TestRunnable(true, new TimeSpan(0, 0, 2), false);
+            Sumpfkraut.Utilities.Threading.TestRunnable timeRunner =
+                new Sumpfkraut.Utilities.Threading.TestRunnable(true, new TimeSpan(0, 0, 2), false);
 
 
-            //Sumpfkraut.WeatherSystem.Weather weather_1 = 
-            //    new Sumpfkraut.WeatherSystem.Weather(false, "MyWeather");
-            //weather_1.Start();
+            Sumpfkraut.WeatherSystem.Weather weather_1 =
+                new Sumpfkraut.WeatherSystem.Weather(false, "MyWeather");
+            weather_1.Start();
 
 
             Logger.log(Logger.LogLevel.INFO, "######################## Initalise ########################");
