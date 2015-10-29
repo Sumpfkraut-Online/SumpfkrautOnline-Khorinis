@@ -16,6 +16,27 @@ namespace GUC.Server.WorldObjects
         public int day;
         public int hour;
         public int minute;
+
+        public IGTime (int hour, int minute)
+            :this (0, hour, minute)
+        { }
+
+        public IGTime (int day, int hour, int minute)
+        {
+            this.day = day;
+            this.hour = hour;
+            this.minute = minute;
+        }
+
+        //public static IGTime operator +(IGTime t1, IGTime t2)
+        //{
+        //    int minute = (t1.minute + t2.minute) % 59;
+        //    //int hour = (t1.hour + t2.hour) + ;
+        //    int day = t1.day + t2.day;
+
+
+        //    return new IGTime(day, hour, minute);
+        //}
     }
 
     public enum WeatherType : byte
@@ -35,6 +56,7 @@ namespace GUC.Server.WorldObjects
 
         protected IGTime igTime;
         public IGTime GetIGTime() { return this.igTime; }
+        protected Object lock_IGTime = new Object();
 
         protected WeatherType weatherType;
         public WeatherType GetWeatherType() { return this.weatherType; }
@@ -42,6 +64,7 @@ namespace GUC.Server.WorldObjects
         public IGTime GetWeatherStartTime () { return this.weatherStartTime; }
         protected IGTime weatherEndTime;
         public IGTime GetWeatherEndTime () { return this.weatherEndTime; }
+        protected Object lock_Weather = new Object();
 
         internal Dictionary<int, Dictionary<int, WorldCell>> Cells = new Dictionary<int, Dictionary<int, WorldCell>>();
 
@@ -360,52 +383,61 @@ namespace GUC.Server.WorldObjects
         public void ChangeTime(int day, int hour, int minute, 
             bool changeDay, bool changeHour, bool changeMinute)
         {
-            // set world time in server
-            IGTime newIGTime = new IGTime();
-            if (changeDay) { newIGTime.day = day; } else { newIGTime.day = -1; }
-            if (changeHour) { newIGTime.hour = hour; } else { newIGTime.hour = -1; }
-            if (changeMinute) { newIGTime.minute = minute; } else { newIGTime.minute = -1; }
-            this.igTime = newIGTime;
-            //Console.WriteLine("++++ " + newIGTime.day + " " + newIGTime.hour + " " + newIGTime.minute);
- 
-            // send new world time to clients
-            foreach (KeyValuePair<uint, NPC> keyValPair in NewWorld.PlayerDict)
+            lock (lock_IGTime)
             {
-                Client client = keyValPair.Value.client;
-                BitStream stream = Program.server.SetupStream(NetworkID.WorldTimeMessage);
-                
-                stream.mWrite(this.igTime.day);
-                stream.mWrite(this.igTime.hour);
-                stream.mWrite(this.igTime.minute);
+                // set world time in server
+                IGTime newIGTime = new IGTime();
+                if (changeDay) { newIGTime.day = day; } else { newIGTime.day = -1; }
+                if (changeHour) { newIGTime.hour = hour; } else { newIGTime.hour = -1; }
+                if (changeMinute) { newIGTime.minute = minute; } else { newIGTime.minute = -1; }
+                this.igTime = newIGTime;
+                //Console.WriteLine("++++ " + newIGTime.day + " " + newIGTime.hour + " " + newIGTime.minute);
 
-                Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY,
-                    PacketReliability.RELIABLE_ORDERED, 'I', client.guid, false);
+                // send new world time to clients
+                foreach (KeyValuePair<uint, NPC> keyValPair in NewWorld.PlayerDict)
+                {
+                    Client client = keyValPair.Value.client;
+                    BitStream stream = Program.server.SetupStream(NetworkID.WorldTimeMessage);
+
+                    stream.mWrite(this.igTime.day);
+                    stream.mWrite(this.igTime.hour);
+                    stream.mWrite(this.igTime.minute);
+
+                    Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY,
+                        PacketReliability.RELIABLE_ORDERED, 'I', client.guid, false);
+                }
             }
         }
 
         public void ChangeWeather(WeatherType wt, IGTime startTime, IGTime endTime)
         {
-            // set world weather in server
-            this.weatherType = wt;
-            this.weatherStartTime = startTime;
-            this.weatherEndTime = endTime;
-
-            // send new weather to clients
-            foreach (KeyValuePair<uint, NPC> keyValPair in NewWorld.PlayerDict)
+            lock (lock_Weather)
             {
-                Client client = keyValPair.Value.client;
+                // set world weather in server
+                this.weatherType = wt;
+                this.weatherStartTime = startTime;
+                this.weatherEndTime = endTime;
+                //Console.WriteLine(String.Format(">>> WT:{0} SD:{1} SH:{2} SM:{3} "
+                //    + "ED:{4} EH:{5} EM:{6}", wt, startTime.day, startTime.hour, startTime.minute,
+                //    endTime.day, endTime.hour, endTime.minute));
 
-                BitStream stream = Program.server.SetupStream(NetworkID.WorldWeatherMessage);
-                stream.mWrite((byte)wt);
-                //stream.Write(startTime.day);
-                stream.mWrite((byte)startTime.hour);
-                stream.mWrite((byte)startTime.minute);
-                //stream.Write(endTime.day);
-                stream.mWrite((byte)endTime.hour);
-                stream.mWrite((byte)endTime.minute);
+                // send new weather to clients
+                foreach (KeyValuePair<uint, NPC> keyValPair in NewWorld.PlayerDict)
+                {
+                    Client client = keyValPair.Value.client;
 
-                Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY,
-                    PacketReliability.RELIABLE_ORDERED, 'I', client.guid, false);
+                    BitStream stream = Program.server.SetupStream(NetworkID.WorldWeatherMessage);
+                    stream.mWrite((byte)wt);
+                    //stream.Write(startTime.day);
+                    stream.mWrite((byte)startTime.hour);
+                    stream.mWrite((byte)startTime.minute);
+                    //stream.Write(endTime.day);
+                    stream.mWrite((byte)endTime.hour);
+                    stream.mWrite((byte)endTime.minute);
+
+                    Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY,
+                        PacketReliability.RELIABLE_ORDERED, 'I', client.guid, false);
+                }
             }
         }
 

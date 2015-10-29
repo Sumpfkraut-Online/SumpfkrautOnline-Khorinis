@@ -23,18 +23,18 @@ namespace GUC.Server.Scripts.Sumpfkraut.Utilities.Threading
 
         public override void Run ()
         {
-            Console.WriteLine("TestRunnable: " + DateTime.Now + " " + this.runOnce);
+            //Console.WriteLine("TestRunnable: " + DateTime.Now + " " + this.runOnce);
             Console.WriteLine("TestRunnable: " + day + " " + hour + " " + minute);
             World.NewWorld.ChangeTime(day, hour, minute);
 
-            weatherStartTime.day = 0;
-            weatherStartTime.hour = 12;
-            weatherStartTime.minute = 0;
-            weatherEndTime.day = 0;
-            weatherEndTime.hour = 16;
-            weatherEndTime.minute = 0;
-            World.NewWorld.ChangeWeather(weatherType, weatherStartTime, weatherEndTime);
-            
+            //weatherStartTime.day = 0;
+            //weatherStartTime.hour = 8;
+            //weatherStartTime.minute = 0;
+            //weatherEndTime.day = 0;
+            //weatherEndTime.hour = 10;
+            //weatherEndTime.minute = 0;
+            //World.NewWorld.ChangeWeather(weatherType, weatherStartTime, weatherEndTime);
+
             hour++;
         }
 

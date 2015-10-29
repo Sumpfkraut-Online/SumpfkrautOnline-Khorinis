@@ -128,6 +128,9 @@ namespace GUC.Client.Network.Messages
                 // 12:00 == 0f; 24:00 == 1f
                 startTime = (((((float)startHour + 12f) % 24f) * 60f) + ((float)startMinute)) / (24f * 60f);
                 endTime = (((((float)endHour + 12f) % 24f) * 60f) + ((float)endMinute)) / (24f * 60f);
+                //zERROR.GetZErr(Program.Process).Report(2, 'G', 
+                //    ">>>> " + startTime + " " + endTime, 
+                //    0, "class.cs", 0);
             }
 
             oCGame.Game(Program.Process).World.SkyControlerOutdoor.SetWeatherType(weatherType);
