@@ -121,21 +121,12 @@ namespace GUC.Server.Scripts
 
 
             //Sumpfkraut.Utilities.Threading.TestRunnable timeRunner =
-            //    new Sumpfkraut.Utilities.Threading.TestRunnable(true, new TimeSpan(0, 0, 5), false);
+            //    new Sumpfkraut.Utilities.Threading.TestRunnable(true, new TimeSpan(0, 0, 2), false);
 
 
-            //Sumpfkraut.WeatherSystem.Weather weather_1 = new Sumpfkraut.WeatherSystem.Weather(false);
+            //Sumpfkraut.WeatherSystem.Weather weather_1 = 
+            //    new Sumpfkraut.WeatherSystem.Weather(false, "MyWeather");
             //weather_1.Start();
-
-            Console.WriteLine(">>> " + (44 % 59));
-            Console.WriteLine(">>>" + (66 % 59));
-            Console.WriteLine(">>>" + (44 / 59));
-            Console.WriteLine(">>>" + (66 / 59));
-
-            Console.WriteLine(">>> " + (44f % 59f));
-            Console.WriteLine(">>>" + (66f % 59f));
-            Console.WriteLine(">>>" + (44f / 59f));
-            Console.WriteLine(">>>" + (66f / 59f));
 
 
             Logger.log(Logger.LogLevel.INFO, "######################## Initalise ########################");

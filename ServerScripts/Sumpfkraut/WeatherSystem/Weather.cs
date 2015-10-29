@@ -23,35 +23,85 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
     {
 
         public List<WeatherState> weatherStateQueue; // queue of (future) weather-states
-        private WeatherState currWeatherState; // the current weather-state
-        private bool currWSChanged; // true, when current weather state was changed until the current tick
-        private int maxQueueLength; // maximum length of queue which will be filled with calculated states
-        private TimeSpan maxWSTime; // maximum timespan for weather-states
-        private TimeSpan minWSTime; // minimum timespan for weather-states
-        private int precFactor; // possibility of precipitation, including rain and snow (0 - 100)
-        private int snowFactor; // possibility of snow when precipitation was chosen (0 - 100)
+        protected WeatherState currWeatherState; // the current weather-state
+        protected bool currWSChanged; // true, when current weather state was changed until the current tick
 
-        private IGTime lastIGTime; // internal variable to track the last requested ig-time
+        protected int maxQueueLength; // maximum length of queue which will be filled with calculated states
+        public int GetMaxQueueLength() { return this.maxQueueLength; }
+        public void SetMaxQueueLength (int mql) { this.maxQueueLength = mql; }
 
-        private Thread thread; // the thread on which object operates
-        private TimeSpan defaultTimeout; // the default timeout / sleeptime of the thread
+        // maximum timespan for weather-states... old weather-entries are uneffected (clear to reset them)
+        protected TimeSpan maxWSTime;
+        public TimeSpan GetMaxWSTimeh() { return this.maxWSTime; }
+        public void SetMaxWSTime(TimeSpan maxWSTime) { this.maxWSTime = maxWSTime; }
 
-        private Random random;
+        // minimum timespan for weather-states... old weather-entries are uneffected (clear to reset them)
+        protected TimeSpan minWSTime;
+        public TimeSpan GetMinWSTimeh() { return this.minWSTime; }
+        public void SetMinWSTime(TimeSpan minWSTime) { this.minWSTime = minWSTime; }
 
-        private Object lock_WSQueue;
+        // possibility of precipitation, including rain and snow (0 - 100)
+        protected int precFactor;
+        public int GetPrecFactor () { return this.precFactor; }
+        public void SetPrecFactor (int precFactor)
+        {
+            if ((precFactor > 0) && (precFactor <= 100))
+            {
+                this.precFactor = precFactor;
+            }
+            else
+            {
+                MakeLogWarning("Prevented illegal change of precFactor to " + precFactor + "!");
+            }
+        }
+
+        // possibility of snow when precipitation was chosen (0 - 100)
+        protected int snowFactor;
+        public int GetSnowFactor() { return this.snowFactor; }
+        public void SetSnowFactor(int snowFactor)
+        {
+            if ((snowFactor > 0) && (snowFactor <= 100))
+            {
+                this.snowFactor = snowFactor;
+            }
+            else
+            {
+                MakeLogWarning("Prevented illegal change of snowFactor to " + snowFactor + "!");
+            }
+        }
+
+        protected IGTime lastIGTime; // internal variable to track the last requested ig-time
+
+        protected TimeSpan defaultTimeout; // the default timeout / sleeptime of the thread
+        // custom timeout changable during runtime
+        protected TimeSpan customTimeout;
+        public TimeSpan GetTimeout () { return this.customTimeout; }
+        public void SetTimeout(TimeSpan timeout)
+        {
+            this.customTimeout = timeout;
+            this.timeout = timeout;
+        }
+
+        protected Random random;
+
+        protected Object lock_WSQueue;
 
 
 
-        public Weather()
-            : this(true)
+        public Weather ()
+            : this("Weather (default)")
         { }
 
-        public Weather(bool startOnCreate)
+        public Weather (String _objName)
+            : this(true, _objName)
+        { }
+
+        public Weather (bool startOnCreate, String _objName)
             : base(false)
         {
-            this._objName = "weather (default)";
             this.printStateControls = true;
 
+            this._objName = _objName;
             this.weatherStateQueue = new List<WeatherState> { };
             this.currWSChanged = false;
             this.maxQueueLength = 10;
@@ -71,7 +121,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
 
             this.defaultTimeout = new TimeSpan(0, 0, 3);
             //this.defaultTimeout = new TimeSpan(0, 2, 0); // default timeout / threadsleep is 2 minutes
-            this.timeout = this.defaultTimeout;
+            this.customTimeout = defaultTimeout;
+            this.timeout = this.customTimeout;
 
             if (startOnCreate)
             {
@@ -283,12 +334,14 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
 
                 if (relPos == -1)
                 {
-                    MakeLogWarning("Prevented insert of already expired WeatherState into the queue (relPos == -1)!");
+                    MakeLogWarning("Prevented insert of already expired WeatherState into "
+                        + "the queue (relPos == -1)!");
                     return;
                 }
                 else if (relPos == -999)
                 {
-                    MakeLogWarning("Prevented insert of invalid WeatherState into the queue (relPos == -999)!");
+                    MakeLogWarning("Prevented insert of invalid WeatherState into " 
+                        + "the queue (relPos == -999)!");
                     return;
                 }
                 else if (relPos == 1)
@@ -405,7 +458,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
                 if ((forceIGWeather) || (setIGWeather && this.currWSChanged))
                 {
                     IGTime igTimeNow = World.NewWorld.GetIGTime();
-                    Print(">>> " + igTimeNow.day + " " + igTimeNow.hour + " " + igTimeNow.minute);
+                    this.lastIGTime = igTimeNow;
+                    //Print(">>> " + igTimeNow.day + " " + igTimeNow.hour + " " + igTimeNow.minute);
+
                     if (this.currWeatherState == null)
                     {
                         World.NewWorld.ChangeWeather(WeatherType.undefined,
@@ -419,12 +474,14 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
                         MakeLog("Updated ingame-weather to " + this.currWeatherState.weatherType +
                             ". Description: " + this.currWeatherState.description);
                     }
+
+                    this.currWSChanged = false;
                 }
             }
         }
 
         // outsourced subroutine of InsertWeatherState where is actual queue-manipulation is performed
-        private void OverrideQueue(ref WeatherState ws, ref int[] overlap, ref WSSplitDecision[] indexOverride)
+        protected void OverrideQueue(ref WeatherState ws, ref int[] overlap, ref WSSplitDecision[] indexOverride)
         {
             lock (lock_WSQueue)
             {
@@ -480,7 +537,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
         {
             DateTime dtNow = DateTime.Now;
             IGTime currIGTime = World.NewWorld.GetIGTime();
-            Print(this.weatherStateQueue.Count);
             FillUpQueue();
 
             if (this.lastIGTime.hour > currIGTime.hour)
@@ -494,7 +550,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
                 // no need to enforce weather when there is absolute need to
                 UpdateCurrWeatherState(true, false);
             }
-            Print(this.weatherStateQueue.Count);
         }
 
     }
