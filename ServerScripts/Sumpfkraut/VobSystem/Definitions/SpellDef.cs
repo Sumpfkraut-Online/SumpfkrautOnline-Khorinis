@@ -15,8 +15,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #region dictionaries
 
-        private static Dictionary<int, SpellDef> defById = new Dictionary<int, SpellDef>();
-        //private static Dictionary<string, SpellDef> defByName = new Dictionary<string, SpellDef>();
+        protected static Dictionary<int, SpellDef> defById = new Dictionary<int, SpellDef>();
+        protected static Dictionary<string, SpellDef> defByCodeName = new Dictionary<string, SpellDef>();
 
         #endregion
 
@@ -41,7 +41,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         public static bool Add (SpellDef def)
         {
-            int id = def.getId();
+            int id = def.GetId();
 
             if (id < 1)
             {

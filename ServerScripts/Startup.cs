@@ -129,6 +129,29 @@ namespace GUC.Server.Scripts
             //weather_1.Start();
 
 
+            //Dictionary<int, VobDef> myDict = new Dictionary<int, VobDef>();
+            //ItemDef myDef = new ItemDef();
+            //myDef.setEffect("myEffect");
+            //myDict.Add(1, myDef);
+            //ItemDef myDef_ = (ItemDef)myDict[1];
+            //Console.WriteLine(">>> " + myDef_.getEffect());
+
+
+            //ItemDef def1 = new ItemDef();
+            //def1.setId(1); def1.setEffect("myEffect");
+            //ItemDef.Add(def1);
+            //VobDef def1_;
+            //if (ItemDef.TryGetValue(1, out def1_))
+            //{
+            //    ItemDef def1__ = (ItemDef)def1_;
+            //    //ItemDef.MakeLogStatic(typeof(ItemDef), def1__.getEffect().ToString());
+            //    ItemDef.MakeLogWarningStatic(typeof(ItemDef), def1__.getEffect());
+            //}
+            
+
+
+
+
             Logger.log(Logger.LogLevel.INFO, "######################## Initalise ########################");
             
             //DefaultItems.Init();

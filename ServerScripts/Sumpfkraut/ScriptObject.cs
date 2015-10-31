@@ -45,7 +45,7 @@ namespace GUC.Server.Scripts.Sumpfkraut
         public static void MakeLogStatic ()
         { }
 
-        public void MakeLogStatic (Type type, Object obj)
+        public static void MakeLogStatic (Type type, Object obj)
         {
             try
             {

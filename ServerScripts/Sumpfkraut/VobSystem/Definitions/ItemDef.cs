@@ -18,8 +18,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #region dictionaries
 
-        protected static Dictionary<int, ItemDef> defById = new Dictionary<int, ItemDef>();
-        protected static Dictionary<string, ItemDef> defByInstanceName = new Dictionary<string, ItemDef>();
+        new protected static Dictionary<int, ItemDef> defById = new Dictionary<int, ItemDef>();
+        new protected static Dictionary<string, ItemDef> defByCodeName = new Dictionary<string, ItemDef>();
 
         #endregion
 
@@ -30,44 +30,46 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         new public static readonly String _staticName = "ItemDef (static)";
         new protected String _objName = "ItemDef (default)";
 
+        new protected static Type _type = typeof(ItemDef);
+
         protected ItemInstance itemInstance;
-        public ItemInstance getItemInstance () { return this.itemInstance; }
-        public void setItemInstance (ItemInstance itemInstance) { this.itemInstance = itemInstance; }
+        public ItemInstance GetItemInstance () { return this.itemInstance; }
+        public void SetItemInstance (ItemInstance itemInstance) { this.itemInstance = itemInstance; }
 
         protected string instanceName;
-        public string getInstanceName () { return this.instanceName; }
-        public void setInstanceName (string instanceName) 
+        public string GetInstanceName () { return this.instanceName; }
+        public void SetInstanceName (string instanceName) 
         { 
             this.instanceName = instanceName; 
         }
 
         protected string name;
-        public string getName () { return this.name; }
-        public void setName (string name) 
+        public string GetName () { return this.name; }
+        public void SetName (string name) 
         { 
             this.name = name; 
         }
 
         protected string scemeName;
-        public string getScemeName () { return this.scemeName; }
-        public void setScemeName (string scemeName) 
+        public string GetScemeName () { return this.scemeName; }
+        public void SetScemeName (string scemeName) 
         { 
             this.scemeName = scemeName;
         }
 
         protected int[] protections;
-        public int[] getProtections () { return this.protections; }
-        public void setProtections (int[] protections) 
+        public int[] GetProtections () { return this.protections; }
+        public void SetProtections (int[] protections) 
         {
             this.protections = protections;
         }
 
         protected int[] damages;
-        public int[] getDamages ()
+        public int[] GetDamages ()
         {
             return this.damages;
         }
-        public void setDamages (int[] damages)
+        public void SetDamages (int[] damages)
         {
             this.damages = damages;
         }
@@ -90,15 +92,15 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         //}
 
         protected int value;
-        public int getValue () { return this.value; }
-        public void setValue (int value) 
+        public int GetValue () { return this.value; }
+        public void SetValue (int value) 
         {
             this.value = value;
         }
 
         protected ItemType itemType;
-        public ItemType getItemType () { return this.itemType; }
-        public void setItemType (ItemType itemType)
+        public ItemType GetItemType () { return this.itemType; }
+        public void SetItemType (ItemType itemType)
         {
             this.itemType = itemType;
         }
@@ -139,43 +141,43 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         //}
 
         protected int range;
-        public int getRange() { return this.range; }
-        public void setRange(int range) 
+        public int GetRange() { return this.range; }
+        public void SetRange(int range) 
         { 
             this.range = range; 
         }
 
         protected string visual;
-        public string getVisual () { return this.visual; }
-        public void setVisual (string visual) 
+        public string GetVisual () { return this.visual; }
+        public void SetVisual (string visual) 
         { 
             this.visual = visual; 
         }
 
         protected string visualChange;
-        public string getVisualChange () { return this.visualChange; }
-        public void setVisualChange (string visualChange) 
+        public string GetVisualChange () { return this.visualChange; }
+        public void SetVisualChange (string visualChange) 
         { 
             this.visualChange = visualChange; 
         }
 
         protected string effect;
-        public string getEffect () { return this.effect; }
-        public void setEffect (string effect) 
+        public string GetEffect () { return this.effect; }
+        public void SetEffect (string effect) 
         { 
             this.effect = effect; 
         }
 
         protected int visualSkin;
-        public int getVisualSkin () { return this.visualSkin; }
-        public void setVisualSkin (int visualSkin) 
+        public int GetVisualSkin () { return this.visualSkin; }
+        public void SetVisualSkin (int visualSkin) 
         { 
             this.visualSkin = visualSkin; 
         }
 
         protected ItemMaterial material;
-        public ItemMaterial getMaterial () { return this.material; }
-        public void setMaterial (ItemMaterial material) 
+        public ItemMaterial GetMaterial () { return this.material; }
+        public void SetMaterial (ItemMaterial material) 
         { 
             this.material = material; 
         }
@@ -210,29 +212,29 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         //}
 
         protected bool isTorch;
-        public bool getIsTorch () { return this.isTorch; }
-        public void setIsTorch (bool isTorch) 
+        public bool GetIsTorch () { return this.isTorch; }
+        public void SetIsTorch (bool isTorch) 
         { 
             this.isTorch = isTorch; 
         }
 
         protected bool isTorchBurning;
-        public bool getIsTorchBurning () { return this.isTorchBurning; }
-        public void setIsTorchBurning (bool isTorchBurning) 
+        public bool GetIsTorchBurning () { return this.isTorchBurning; }
+        public void SetIsTorchBurning (bool isTorchBurning) 
         { 
             this.isTorchBurning = isTorchBurning; 
         }
 
         protected bool isTorchBurned;
-        public bool getIsTorchBurned () { return this.isTorchBurned; }
-        public void setIsTorchBurned (bool isTorchBurned) 
+        public bool GetIsTorchBurned () { return this.isTorchBurned; }
+        public void SetIsTorchBurned (bool isTorchBurned) 
         { 
             this.isTorchBurned = isTorchBurned; 
         }
 
         protected bool isGold;
-        public bool getIsGold (){ return this.isGold; }
-        public void setIsGold (bool isGold) 
+        public bool GetIsGold (){ return this.isGold; }
+        public void SetIsGold (bool isGold) 
         { 
             this.isGold = isGold; 
         }
@@ -245,8 +247,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
 
         protected SpellDef spell;
-        public SpellDef getSpell () { return this.spell; }
-        public void setSpell (SpellDef spell) 
+        public SpellDef GetSpell () { return this.spell; }
+        public void SetSpell (SpellDef spell) 
         { 
             this.spell = spell; 
         }
@@ -255,15 +257,15 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         // descriptive texts and values (appear ingame in the item information panel)
 
         protected string description;
-        public string getDescription () { return this.description; }
-        public void setDescription (string description) 
+        public string GetDescription () { return this.description; }
+        public void SetDescription (string description) 
         { 
             this.description = description; 
         }
 
         protected string[] text;
-        public string[] getText () { return this.text; }
-        public void setText (string[] text)
+        public string[] GetText () { return this.text; }
+        public void SetText (string[] text)
         {
             this.text = text;
         }
@@ -286,8 +288,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         //public void setText5 (string Text5) { this.Text5 = Text5; }
 
         protected int[] count;
-        public int[] getCount () { return this.count; }
-        public void setCount (int[] count) 
+        public int[] GetCount () { return this.count; }
+        public void SetCount (int[] count) 
         { 
             this.count = count; 
         }
@@ -316,111 +318,111 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         #region OnUse attributes
         // triggered with OnUse
 
-        protected int onUse_HPChange = 0;
-        public int getOnUse_HPChange () { return this.onUse_HPChange; }
-        public void setOnUse_HPChange (int HPChange) { this.onUse_HPChange = HPChange; }
+        //protected int onUse_HPChange = 0;
+        //public int getOnUse_HPChange () { return this.onUse_HPChange; }
+        //public void setOnUse_HPChange (int HPChange) { this.onUse_HPChange = HPChange; }
 
-        protected int onUse_HPMaxChange = 0;
-        public int getOnUse_HPMaxChange () { return this.onUse_HPMaxChange; }
-        public void setOnUse_HPMaxChange (int HPMaxChange) { this.onUse_HPMaxChange = HPMaxChange; }
+        //protected int onUse_HPMaxChange = 0;
+        //public int getOnUse_HPMaxChange () { return this.onUse_HPMaxChange; }
+        //public void setOnUse_HPMaxChange (int HPMaxChange) { this.onUse_HPMaxChange = HPMaxChange; }
 
-        protected int onUse_MPChange = 0;
-        public int getOnUse_MPChange () { return this.onUse_MPChange; }
-        public void setOnUse_MPChange (int MPChange) { this.onUse_MPChange = MPChange; }
+        //protected int onUse_MPChange = 0;
+        //public int getOnUse_MPChange () { return this.onUse_MPChange; }
+        //public void setOnUse_MPChange (int MPChange) { this.onUse_MPChange = MPChange; }
 
-        protected int onUse_MPMaxChange = 0;
-        public int getOnUse_MPMaxChange () { return this.onUse_MPMaxChange; }
-        public void setOnUse_MPMaxChange (int MPMaxChange) { this.onUse_MPMaxChange = MPMaxChange; }
+        //protected int onUse_MPMaxChange = 0;
+        //public int getOnUse_MPMaxChange () { return this.onUse_MPMaxChange; }
+        //public void setOnUse_MPMaxChange (int MPMaxChange) { this.onUse_MPMaxChange = MPMaxChange; }
 
-        protected int onUse_HP_Min = 1;
-        public int getOnUse_HP_Min () { return this.onUse_HP_Min; }
-        public void setOnUse_HP_Min (int HP_Min) { this.onUse_HP_Min = HP_Min; }
+        //protected int onUse_HP_Min = 1;
+        //public int getOnUse_HP_Min () { return this.onUse_HP_Min; }
+        //public void setOnUse_HP_Min (int HP_Min) { this.onUse_HP_Min = HP_Min; }
 
-        protected int onUse_HPMax_Min = 1;
-        public int getOnUse_HPMax_Min () { return this.onUse_HPMax_Min; }
-        public void setOnUse_HPMax_Min (int HPMax_Min) { this.onUse_HPMax_Min = HPMax_Min; }
+        //protected int onUse_HPMax_Min = 1;
+        //public int getOnUse_HPMax_Min () { return this.onUse_HPMax_Min; }
+        //public void setOnUse_HPMax_Min (int HPMax_Min) { this.onUse_HPMax_Min = HPMax_Min; }
 
-        protected int onUse_MP_Min = 0;
-        public int getOnUse_MP_Min () { return this.onUse_MP_Min; }
-        public void setOnUse_MP_Min (int MP_Min) { this.onUse_MP_Min = MP_Min; }
+        //protected int onUse_MP_Min = 0;
+        //public int getOnUse_MP_Min () { return this.onUse_MP_Min; }
+        //public void setOnUse_MP_Min (int MP_Min) { this.onUse_MP_Min = MP_Min; }
 
-        protected int onUse_MPMax_Min = 0;
-        public int getOnUse_MPMax_Min () { return this.onUse_MPMax_Min; }
-        public void setOnUse_MPMax_Min (int MPMax_Min) { this.onUse_MPMax_Min = MPMax_Min; }
+        //protected int onUse_MPMax_Min = 0;
+        //public int getOnUse_MPMax_Min () { return this.onUse_MPMax_Min; }
+        //public void setOnUse_MPMax_Min (int MPMax_Min) { this.onUse_MPMax_Min = MPMax_Min; }
 
-        #endregion
+        //#endregion
         
-        #region OnEquip attributes
-        // triggered with OnEquip
+        //#region OnEquip attributes
+        //// triggered with OnEquip
 
-        protected int onEquip_HPChange = 0;
-        public int getOnEquip_HPChange () { return this.onEquip_HPChange; }
-        public void setOnEquip_HPChange (int HPChange) { this.onEquip_HPChange = HPChange; }
+        //protected int onEquip_HPChange = 0;
+        //public int getOnEquip_HPChange () { return this.onEquip_HPChange; }
+        //public void setOnEquip_HPChange (int HPChange) { this.onEquip_HPChange = HPChange; }
 
-        protected int onEquip_HPMaxChange = 0;
-        public int getOnEquip_HPMaxChange () { return this.onEquip_HPMaxChange; }
-        public void setOnEquip_HPMaxChange (int HPMaxChange) { this.onEquip_HPMaxChange = HPMaxChange; }
+        //protected int onEquip_HPMaxChange = 0;
+        //public int getOnEquip_HPMaxChange () { return this.onEquip_HPMaxChange; }
+        //public void setOnEquip_HPMaxChange (int HPMaxChange) { this.onEquip_HPMaxChange = HPMaxChange; }
 
-        protected int onEquip_MPChange = 0;
-        public int getOnEquip_MPChange () { return this.onEquip_MPChange; }
-        public void setOnEquip_MPChange (int MPChange) { this.onEquip_MPChange = MPChange; }
+        //protected int onEquip_MPChange = 0;
+        //public int getOnEquip_MPChange () { return this.onEquip_MPChange; }
+        //public void setOnEquip_MPChange (int MPChange) { this.onEquip_MPChange = MPChange; }
 
-        protected int onEquip_MPMaxChange = 0;
-        public int getOnEquip_MPMaxChange () { return this.onEquip_MPMaxChange; }
-        public void setOnEquip_MPMaxChange (int MPMaxChange) { this.onEquip_MPMaxChange = MPMaxChange; }
+        //protected int onEquip_MPMaxChange = 0;
+        //public int getOnEquip_MPMaxChange () { return this.onEquip_MPMaxChange; }
+        //public void setOnEquip_MPMaxChange (int MPMaxChange) { this.onEquip_MPMaxChange = MPMaxChange; }
 
-        protected int onEquip_HP_Min = 1;
-        public int getOnEquip_HP_Min () { return this.onEquip_HP_Min; }
-        public void setOnEquip_HP_Min (int HP_Min) { this.onEquip_HP_Min = HP_Min; }
+        //protected int onEquip_HP_Min = 1;
+        //public int getOnEquip_HP_Min () { return this.onEquip_HP_Min; }
+        //public void setOnEquip_HP_Min (int HP_Min) { this.onEquip_HP_Min = HP_Min; }
 
-        protected int onEquip_HPMax_Min = 1;
-        public int getOnEquip_HPMax_Min () { return this.onEquip_HPMax_Min; }
-        public void setOnEquip_HPMax_Min (int HPMax_Min) { this.onEquip_HPMax_Min = HPMax_Min; }
+        //protected int onEquip_HPMax_Min = 1;
+        //public int getOnEquip_HPMax_Min () { return this.onEquip_HPMax_Min; }
+        //public void setOnEquip_HPMax_Min (int HPMax_Min) { this.onEquip_HPMax_Min = HPMax_Min; }
 
-        protected int onEquip_MP_Min = 0;
-        public int getOnEquip_MP_Min () { return this.onEquip_MP_Min; }
-        public void setOnEquip_MP_Min (int MP_Min) { this.onEquip_MP_Min = MP_Min; }
+        //protected int onEquip_MP_Min = 0;
+        //public int getOnEquip_MP_Min () { return this.onEquip_MP_Min; }
+        //public void setOnEquip_MP_Min (int MP_Min) { this.onEquip_MP_Min = MP_Min; }
 
-        protected int onEquip_MPMax_Min = 0;
-        public int getOnEquip_MPMax_Min () { return this.onEquip_MPMax_Min; }
-        public void setOnEquip_MPMax_Min (int MPMax_Min) { this.onEquip_MPMax_Min = MPMax_Min; }
+        //protected int onEquip_MPMax_Min = 0;
+        //public int getOnEquip_MPMax_Min () { return this.onEquip_MPMax_Min; }
+        //public void setOnEquip_MPMax_Min (int MPMax_Min) { this.onEquip_MPMax_Min = MPMax_Min; }
 
-        #endregion
+        //#endregion
         
-        #region OnUnEquip attributes
-        // triggered with OnUnEquip
+        //#region OnUnEquip attributes
+        //// triggered with OnUnEquip
 
-        protected int onUnEquip_HPChange = 0;
-        public int getOnUnEquip_HPChange () { return this.onUnEquip_HPChange; }
-        public void setOnUnEquip_HPChange (int HPChange) { this.onUnEquip_HPChange = HPChange; }
+        //protected int onUnEquip_HPChange = 0;
+        //public int getOnUnEquip_HPChange () { return this.onUnEquip_HPChange; }
+        //public void setOnUnEquip_HPChange (int HPChange) { this.onUnEquip_HPChange = HPChange; }
 
-        protected int onUnEquip_HPMaxChange = 0;
-        public int getOnUnEquip_HPMaxChange () { return this.onUnEquip_HPMaxChange; }
-        public void setOnUnEquip_HPMaxChange (int HPMaxChange) { this.onUnEquip_HPMaxChange = HPMaxChange; }
+        //protected int onUnEquip_HPMaxChange = 0;
+        //public int getOnUnEquip_HPMaxChange () { return this.onUnEquip_HPMaxChange; }
+        //public void setOnUnEquip_HPMaxChange (int HPMaxChange) { this.onUnEquip_HPMaxChange = HPMaxChange; }
 
-        protected int onUnEquip_MPChange = 0;
-        public int getOnUnEquip_MPChange () { return this.onUnEquip_MPChange; }
-        public void setOnUnEquip_MPChange (int MPChange) { this.onUnEquip_MPChange = MPChange; }
+        //protected int onUnEquip_MPChange = 0;
+        //public int getOnUnEquip_MPChange () { return this.onUnEquip_MPChange; }
+        //public void setOnUnEquip_MPChange (int MPChange) { this.onUnEquip_MPChange = MPChange; }
 
-        protected int onUnEquip_MPMaxChange = 0;
-        public int getOnUnEquip_MPMaxChange () { return this.onUnEquip_MPMaxChange; }
-        public void setOnUnEquip_MPMaxChange (int MPMaxChange) { this.onUnEquip_MPMaxChange = MPMaxChange; }
+        //protected int onUnEquip_MPMaxChange = 0;
+        //public int getOnUnEquip_MPMaxChange () { return this.onUnEquip_MPMaxChange; }
+        //public void setOnUnEquip_MPMaxChange (int MPMaxChange) { this.onUnEquip_MPMaxChange = MPMaxChange; }
 
-        protected int onUnEquip_HP_Min = 1;
-        public int getOnUnEquip_HP_Min () { return this.onUnEquip_HP_Min; }
-        public void setOnUnEquip_HP_Min (int HP_Min) { this.onUnEquip_HP_Min = HP_Min; }
+        //protected int onUnEquip_HP_Min = 1;
+        //public int getOnUnEquip_HP_Min () { return this.onUnEquip_HP_Min; }
+        //public void setOnUnEquip_HP_Min (int HP_Min) { this.onUnEquip_HP_Min = HP_Min; }
 
-        protected int onUnEquip_HPMax_Min = 1;
-        public int getOnUnEquip_HPMax_Min () { return this.onUnEquip_HPMax_Min; }
-        public void setOnUnEquip_HPMax_Min (int HPMax_Min) { this.onUnEquip_HPMax_Min = HPMax_Min; }
+        //protected int onUnEquip_HPMax_Min = 1;
+        //public int getOnUnEquip_HPMax_Min () { return this.onUnEquip_HPMax_Min; }
+        //public void setOnUnEquip_HPMax_Min (int HPMax_Min) { this.onUnEquip_HPMax_Min = HPMax_Min; }
 
-        protected int onUnEquip_MP_Min = 0;
-        public int getOnUnEquip_MP_Min () { return this.onUnEquip_MP_Min; }
-        public void setOnUnEquip_MP_Min (int MP_Min) { this.onUnEquip_MP_Min = MP_Min; }
+        //protected int onUnEquip_MP_Min = 0;
+        //public int getOnUnEquip_MP_Min () { return this.onUnEquip_MP_Min; }
+        //public void setOnUnEquip_MP_Min (int MP_Min) { this.onUnEquip_MP_Min = MP_Min; }
 
-        protected int onUnEquip_MPMax_Min = 0;
-        public int getOnUnEquip_MPMax_Min () { return this.onUnEquip_MPMax_Min; }
-        public void setOnUnEquip_MPMax_Min (int MPMax_Min) { this.onUnEquip_MPMax_Min = MPMax_Min; }
+        //protected int onUnEquip_MPMax_Min = 0;
+        //public int getOnUnEquip_MPMax_Min () { return this.onUnEquip_MPMax_Min; }
+        //public void setOnUnEquip_MPMax_Min (int MPMax_Min) { this.onUnEquip_MPMax_Min = MPMax_Min; }
 
         #endregion
         
@@ -553,157 +555,30 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #region dictionary-methods
 
-        public static bool Add (ItemDef def)
+        public static bool Add (VobDef def)
         {
-            int id = def.getId();
-
-            if (id < 1)
-            {
-                MakeLogWarningStatic(typeof(ItemDef), 
-                    "Prevented attempt of adding a definition to to dictionary: "
-                     + "An invalid id < 1 was provided!");
-                return false;
-            }
-
-            if (defById.ContainsKey(id))
-            {
-                MakeLogWarningStatic(typeof(ItemDef), 
-                    String.Format("Prevented attempt of adding a definition to dictionary:"
-                        + " The {0}={1} is already taken!", "id", id));
-                return false;
-            }
-            
-            defById.Add(id, def);
-            return true;
+            return Add(_type, def);
         }
 
         public static bool ContainsId (int id)
         {
-            if (defById.ContainsKey(id))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return ContainsId(_type, id);
         }
 
-        public static bool ContainsDefinition (ItemDef def)
+        public static bool ContainsDefinition (VobDef def)
         {
-            return defById.ContainsValue(def);
+            return ContainsDefinition(_type, def);
         }
 
         public static bool Remove (int id)
         {
-            ItemDef def;
-            defById.TryGetValue(id, out def);
-
-            if (def != null)
-            {
-                defById.Remove(id);
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return RemoveId(_type, id);
         }
 
-        public static bool TryGetValue (int id, out ItemDef def)
+        public static bool TryGetValue (int id, out VobDef def)
         {
-            return defById.TryGetValue(id, out def);
+            return TryGetValue(_type, id, out def);
         }
-
-        //public static bool Add (ItemDef def)
-        //{
-        //    int id = def.getId();
-        //    String instanceName = def.getInstanceName();
-
-        //    if (id < 1)
-        //    {
-        //        MakeLogWarningStatic(typeof(ItemDef), 
-        //            "Prevented attempt of adding a definition to the dictionaries:"
-        //             + "An invalid id < 1 was provided!");
-        //        return false;
-        //    }
-
-        //    if (defById.ContainsKey(id))
-        //    {
-        //        MakeLogWarningStatic(typeof(ItemDef), 
-        //            String.Format("Prevented attempt of adding a definition to the dictionaries:"
-        //                + " The {0} {1} is already taken.", "id", id));
-        //        return false;
-        //    }
-        //    else if (defByInstanceName.ContainsKey(instanceName))
-        //    {
-        //        MakeLogWarningStatic(typeof(ItemDef), 
-        //            String.Format("Prevented attempt of adding a definition to the dictionaries:"
-        //                + " The {0} {1} is already taken.", "instanceName", instanceName));
-        //        return false;
-        //    }
-
-        //    defById.Add(id, def);
-        //    defByInstanceName.Add(instanceName, def);
-
-        //    return true;
-        //}
-
-        //public static bool ContainsId (int id)
-        //{
-        //    if (defById.ContainsKey(id))
-        //    {
-        //        return true;
-        //    }
-        //    else
-        //    {
-        //        return false;
-        //    }
-        //}
-
-        //public static bool ContainsInstanceName (String instanceName)
-        //{
-        //    if (defByInstanceName.ContainsKey(instanceName))
-        //    {
-        //        return true;
-        //    }
-        //    else
-        //    {
-        //        return false;
-        //    }
-        //}
-
-        //public static bool ContainsDefinition (ItemDef def)
-        //{
-        //    return defById.ContainsValue(def) && defByInstanceName.ContainsValue(def);
-        //}
-
-        //public static bool Remove (int id)
-        //{
-        //    ItemDef def;
-        //    defById.TryGetValue(id, out def);
-
-        //    if (def != null)
-        //    {
-        //        defById.Remove(id);
-        //        defByInstanceName.Remove(def.getInstanceName());
-        //        return true;
-        //    }
-        //    else
-        //    {
-        //        return false;
-        //    }
-        //}
-
-        //public static bool TryGetValue (int id, out ItemDef def)
-        //{
-        //    return defById.TryGetValue(id, out def);
-        //}
-
-        //public static bool TryGetValue (String instanceName, out ItemDef def)
-        //{
-        //    return defByInstanceName.TryGetValue(instanceName, out def);
-        //}
 
         #endregion
 

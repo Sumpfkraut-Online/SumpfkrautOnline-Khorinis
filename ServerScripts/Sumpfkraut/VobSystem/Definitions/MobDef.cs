@@ -16,7 +16,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #region dictionaries
 
-        private static Dictionary<int, MobDef> defById = new Dictionary<int, MobDef>();
+        protected static Dictionary<int, MobDef> defById = new Dictionary<int, MobDef>();
+        protected static Dictionary<string, MobDef> defByCodeName = new Dictionary<string, MobDef>();
 
         #endregion
 
@@ -124,7 +125,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         public static bool Add (MobDef def)
         {
-            int id = def.getId();
+            int id = def.GetId();
 
             if (id < 1)
             {

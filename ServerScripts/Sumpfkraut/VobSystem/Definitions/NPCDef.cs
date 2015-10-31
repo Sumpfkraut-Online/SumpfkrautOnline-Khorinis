@@ -15,8 +15,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #region dictionaries
 
-        private static Dictionary<int, NPCDef> defById = new Dictionary<int, NPCDef>();
-        //private static Dictionary<string, NPCDef> defByName = new Dictionary<string, NPCDef>();
+        protected static Dictionary<int, NPCDef> defById = new Dictionary<int, NPCDef>();
+        protected static Dictionary<string, NPCDef> defByCodeName = new Dictionary<string, NPCDef>();
 
         #endregion
 
@@ -122,7 +122,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         public static bool Add (NPCDef def)
         {
-            int id = def.getId();
+            int id = def.GetId();
 
             if (id < 1)
             {
