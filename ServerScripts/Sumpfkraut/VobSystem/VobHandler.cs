@@ -12,6 +12,7 @@ using GUC.Server.Scripts.Sumpfkraut.Database;
 using GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Server.WorldObjects;
+using GUC.Server.Scripts.Sumpfkraut.Utilities.Threading;
 
 namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 {
@@ -19,11 +20,57 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
     /**
      *   Class which initializes all vobs of the indivual types from database information: mobs, items, npcs.
      */
-    class VobHandler : ScriptObject
+    class VobHandler : Runnable
     {
 
         new public static readonly String _staticName = "VobHandler (static)";
         new protected String _objName = "VobHandler (default)";
+
+
+        public void Init ()
+        {
+            
+        }
+
+        protected bool LoadDefinitions()
+        {
+            return false;
+        }
+
+        protected bool LoadInstances()
+        {
+            return false;
+        }
+
+        protected bool SaveDefinitions()
+        {
+            return false;
+        }
+
+        protected bool SaveInstances()
+        {
+            return false;
+        }
+
+
+
+        public override void Run()
+        {
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         //// stores vob-definitions with their ID-attribute (ID in the VobSystem) as key
         //public static Dictionary<int, MobDef> mobDefDict = new Dictionary<int, MobDef>();

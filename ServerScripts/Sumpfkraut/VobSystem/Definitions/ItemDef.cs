@@ -50,29 +50,29 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             this.name = name; 
         }
 
-        protected string scemeName;
-        public string GetScemeName () { return this.scemeName; }
-        public void SetScemeName (string scemeName) 
-        { 
-            this.scemeName = scemeName;
-        }
+        //protected string scemeName;
+        //public string GetScemeName () { return this.scemeName; }
+        //public void SetScemeName (string scemeName) 
+        //{ 
+        //    this.scemeName = scemeName;
+        //}
 
-        protected int[] protections;
-        public int[] GetProtections () { return this.protections; }
-        public void SetProtections (int[] protections) 
-        {
-            this.protections = protections;
-        }
+        //protected int[] protections;
+        //public int[] GetProtections () { return this.protections; }
+        //public void SetProtections (int[] protections) 
+        //{
+        //    this.protections = protections;
+        //}
 
-        protected int[] damages;
-        public int[] GetDamages ()
-        {
-            return this.damages;
-        }
-        public void SetDamages (int[] damages)
-        {
-            this.damages = damages;
-        }
+        //protected int[] damages;
+        //public int[] GetDamages ()
+        //{
+        //    return this.damages;
+        //}
+        //public void SetDamages (int[] damages)
+        //{
+        //    this.damages = damages;
+        //}
         // another get-method already exists (see public int getDamage(DamageTypeIndex index))
         // no set-method due to missing scope in GMP_Server
         // ignores damage type barrier (index 0 in enum DamageTypeIndex) as does the GUC itself mostly
@@ -91,12 +91,12 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         //    return damages;
         //}
 
-        protected int value;
-        public int GetValue () { return this.value; }
-        public void SetValue (int value) 
-        {
-            this.value = value;
-        }
+        //protected int value;
+        //public int GetValue () { return this.value; }
+        //public void SetValue (int value) 
+        //{
+        //    this.value = value;
+        //}
 
         protected ItemType itemType;
         public ItemType GetItemType () { return this.itemType; }
@@ -147,6 +147,13 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             this.range = range; 
         }
 
+        protected int weight;
+        public int GetWeight() { return this.weight; }
+        public void SetWeight(int weight)
+        {
+            this.weight = weight;
+        }
+
         protected string visual;
         public string GetVisual () { return this.visual; }
         public void SetVisual (string visual) 
@@ -168,12 +175,12 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             this.effect = effect; 
         }
 
-        protected int visualSkin;
-        public int GetVisualSkin () { return this.visualSkin; }
-        public void SetVisualSkin (int visualSkin) 
-        { 
-            this.visualSkin = visualSkin; 
-        }
+        //protected int visualSkin;
+        //public int GetVisualSkin () { return this.visualSkin; }
+        //public void SetVisualSkin (int visualSkin) 
+        //{ 
+        //    this.visualSkin = visualSkin; 
+        //}
 
         protected ItemMaterial material;
         public ItemMaterial GetMaterial () { return this.material; }
@@ -211,33 +218,33 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         //    this.IsKeyInstance = IsKeyInstance;
         //}
 
-        protected bool isTorch;
-        public bool GetIsTorch () { return this.isTorch; }
-        public void SetIsTorch (bool isTorch) 
-        { 
-            this.isTorch = isTorch; 
-        }
+        //protected bool isTorch;
+        //public bool GetIsTorch () { return this.isTorch; }
+        //public void SetIsTorch (bool isTorch) 
+        //{ 
+        //    this.isTorch = isTorch; 
+        //}
 
-        protected bool isTorchBurning;
-        public bool GetIsTorchBurning () { return this.isTorchBurning; }
-        public void SetIsTorchBurning (bool isTorchBurning) 
-        { 
-            this.isTorchBurning = isTorchBurning; 
-        }
+        //protected bool isTorchBurning;
+        //public bool GetIsTorchBurning () { return this.isTorchBurning; }
+        //public void SetIsTorchBurning (bool isTorchBurning) 
+        //{ 
+        //    this.isTorchBurning = isTorchBurning; 
+        //}
 
-        protected bool isTorchBurned;
-        public bool GetIsTorchBurned () { return this.isTorchBurned; }
-        public void SetIsTorchBurned (bool isTorchBurned) 
-        { 
-            this.isTorchBurned = isTorchBurned; 
-        }
+        //protected bool isTorchBurned;
+        //public bool GetIsTorchBurned () { return this.isTorchBurned; }
+        //public void SetIsTorchBurned (bool isTorchBurned) 
+        //{ 
+        //    this.isTorchBurned = isTorchBurned; 
+        //}
 
-        protected bool isGold;
-        public bool GetIsGold (){ return this.isGold; }
-        public void SetIsGold (bool isGold) 
-        { 
-            this.isGold = isGold; 
-        }
+        //protected bool isGold;
+        //public bool GetIsGold (){ return this.isGold; }
+        //public void SetIsGold (bool isGold) 
+        //{ 
+        //    this.isGold = isGold; 
+        //}
 
 
 
@@ -246,12 +253,12 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         // -----------------------------------------------------------
 
 
-        protected SpellDef spell;
-        public SpellDef GetSpell () { return this.spell; }
-        public void SetSpell (SpellDef spell) 
-        { 
-            this.spell = spell; 
-        }
+        //protected SpellDef spell;
+        //public SpellDef GetSpell () { return this.spell; }
+        //public void SetSpell (SpellDef spell) 
+        //{ 
+        //    this.spell = spell; 
+        //}
 
   
         // descriptive texts and values (appear ingame in the item information panel)
@@ -269,23 +276,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         {
             this.text = text;
         }
-        //public string getText0 () { return this.Text0; }
-        //public void setText0 (string Text0) { this.Text0 = Text0; }
-
-        //public string getText1 () { return this.Text1; }
-        //public void setText1 (string Text1) { this.Text1 = Text1; }
-
-        //public string getText2 () { return this.Text2; }
-        //public void setText2 (string Text2) { this.Text2 = Text2; }
-
-        //public string getText3 () { return this.Text3; }
-        //public void setText3 (string Text3) { this.Text3 = Text3; }
-
-        //public string getText4 () { return this.Text4; }
-        //public void setText4 (string Text4) { this.Text4 = Text4; }
-
-        //public string getText5 () { return this.Text5; }
-        //public void setText5 (string Text5) { this.Text5 = Text5; }
 
         protected int[] count;
         public int[] GetCount () { return this.count; }
@@ -293,23 +283,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         { 
             this.count = count; 
         }
-        //public int getCount0 () { return this.Count0; }
-        //public void setCount0 (int Count0) { this.Count0 = Count0; }
-
-        //public int getCount1 () { return this.Count1; }
-        //public void setCount1 (int Count1) { this.Count1 = Count1; }
-
-        //public int getCount2 () { return this.Count2; }
-        //public void setCount2 (int Count2) { this.Count2 = Count2; }
-
-        //public int getCount3 () { return this.Count3; }
-        //public void setCount3 (int Count3) { this.Count3 = Count3; }
-
-        //public int getCount4 () { return this.Count4; }
-        //public void setCount4 (int Count4) { this.Count4 = Count4; }
-
-        //public int getCount5 () { return this.Count5; }
-        //public void setCount5 (int Count5) { this.Count5 = Count5; }
 
         #endregion
 
