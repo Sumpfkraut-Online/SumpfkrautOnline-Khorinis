@@ -138,16 +138,18 @@ namespace GUC.Server.Scripts
 
 
             //ItemDef def1 = new ItemDef();
-            //def1.setId(1); def1.setEffect("myEffect");
+            //def1.SetId(1);
+            //def1.SetCodeName("myCodeName");
+            //def1.SetEffect("myEffect");
             //ItemDef.Add(def1);
-            //VobDef def1_;
-            //if (ItemDef.TryGetValue(1, out def1_))
+            //ItemDef def1_;
+            //if (ItemDef.TryGetValueById(1, out def1_))
             //{
-            //    ItemDef def1__ = (ItemDef)def1_;
-            //    //ItemDef.MakeLogStatic(typeof(ItemDef), def1__.getEffect().ToString());
-            //    ItemDef.MakeLogWarningStatic(typeof(ItemDef), def1__.getEffect());
+            //    ItemDef.MakeLogStatic(typeof(ItemDef), "GOTCHA!");
+            //    ItemDef.MakeLogStatic(typeof(ItemDef), def1 == def1_);
+            //    ItemDef.MakeLogStatic(typeof(ItemDef), def1_.GetEffect());
             //}
-            
+
 
 
 

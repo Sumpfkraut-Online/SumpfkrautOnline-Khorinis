@@ -10,12 +10,14 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #region dictionaries
 
-        protected static Dictionary<Type, Dictionary<int, VobDef>> allDefById;
-        protected static Dictionary<Type, Dictionary<string, VobDef>> allDefByCodename;
+        protected static Dictionary<Type, Dictionary<int, VobDef>> allDefById =
+            new Dictionary<Type, Dictionary<int, VobDef>>();
+        protected static Dictionary<Type, Dictionary<string, VobDef>> allDefByCodeName = 
+            new Dictionary<Type, Dictionary<string, VobDef>>();
 
         // override them in child classes
         protected static Dictionary<int, VobDef> defById = new Dictionary<int, VobDef>();
-        protected static Dictionary<string, VobDef> defByCodename = new Dictionary<string, VobDef>();
+        protected static Dictionary<string, VobDef> defByCodeName = new Dictionary<string, VobDef>();
 
         #endregion
 
@@ -31,9 +33,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         public int GetId () { return this.id; }
         public void SetId (int id) { this.id = id; }
 
-        protected String codename;
-        public String GetCodeName () { return this.codename; }
-        public void SetCodeName (String codename) { this.codename = codename; }
+        protected String codeName;
+        public String GetCodeName () { return this.codeName; }
+        public void SetCodeName (String codeName) { this.codeName = codeName; }
 
         protected DateTime changeDate;
         public DateTime GetChangeDate () { return this.changeDate; }
@@ -77,14 +79,14 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         // checks whether necessary dictionaries are already registeres and 
         // registers them if not done already
-        public static bool RegisterDictionaries (Type type)
+        protected static bool RegisterDictionaries(Type type)
         {
             if (type.IsSubclassOf(typeof(VobDef)))
             {
                 if (!allDefById.ContainsKey(type))
                 {
                     allDefById.Add(type, new Dictionary<int, VobDef>());
-                    allDefByCodename.Add(type, new Dictionary<string, VobDef>());
+                    allDefByCodeName.Add(type, new Dictionary<string, VobDef>());
                     MakeLogStatic(typeof(VobDef), String.Format("Registered dictionaries for type {0}.",
                         type));
                 }
@@ -92,101 +94,123 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             }
             else
             {
-                MakeLogWarningStatic(typeof(VobDef), String.Format("Prevented registration " 
+                MakeLogWarningStatic(typeof(VobDef), String.Format("Prevented registration "
                     + "of dictionaries for type {0} because it is no subclass of VobDef!",
                     type));
             }
-            
+
             return false;
         }
 
-        public static bool Add (Type type, VobDef def)
+        protected static bool HasDictAttributes(Type type, VobDef def)
         {
-            if (RegisterDictionaries(type))
+            bool check = true;
+            int id = def.GetId();
+            String codeName = def.GetCodeName();
+
+            if (id < 1)
+            {
+                MakeLogWarningStatic(type, String.Format("Invalid {0} detected in HasDictAttributes!",
+                    "id"));
+                check = false;
+            }
+            if ((codeName == null) || (codeName.Length < 1))
+            {
+                MakeLogWarningStatic(type, String.Format("Invalid {0} detected in HasDictAttributes!", 
+                    "codeName"));
+                check = false;
+            }
+
+            return check;
+        }
+
+        protected static bool Add(Type type, VobDef def)
+        {
+            if (RegisterDictionaries(type) && HasDictAttributes(type, def))
             {
                 Dictionary<int, VobDef> defById = allDefById[type];
-                Dictionary<String, VobDef> defByCodename = allDefByCodename[type];
+                Dictionary<String, VobDef> defByCodeName = allDefByCodeName[type];
 
                 int id = def.GetId();
-                String codename = def.GetCodeName();
-
-                if (id < 1)
-                {
-                    MakeLogWarningStatic(type,
-                        "Prevented attempt of adding a definition to to dictionary: "
-                         + "An invalid id < 1 was provided!");
-                    return false;
-                }
+                String codeName = def.GetCodeName();
 
                 if (defById.ContainsKey(id))
                 {
                     MakeLogWarningStatic(type,
                         String.Format("Prevented attempt of adding a definition to dictionary:"
-                            + " The {0}={1} is already taken!", "id", id));
+                            + " The {0}={1} is already taken!", 
+                            "id", id));
                     return false;
                 }
 
-                if (defByCodename.ContainsKey(codename))
+                if (defByCodeName.ContainsKey(codeName))
                 {
                     MakeLogWarningStatic(type,
                         String.Format("Prevented attempt of adding a definition to dictionary:"
-                            + " The {0}={1} is already taken!", "codename", codename));
+                            + " The {0}={1} is already taken!", 
+                            "codeName", codeName));
                     return false;
                 }
 
                 defById.Add(id, def);
-                defByCodename.Add(codename, def);
+                defByCodeName.Add(codeName, def);
+
                 return true;
             }
-            
+            else
+            {
+                MakeLogWarningStatic(type, 
+                    "Prevented attempt of adding a definition to dictionary");
+            }
+
             return false;
         }
 
-        public static bool ContainsCodename (Type type, String codename)
+        protected static bool ContainsCodeName(Type type, String codeName)
         {
             if (RegisterDictionaries(type))
             {
-                Dictionary<String, VobDef> defByCodename = allDefByCodename[type];
-                return defByCodename.ContainsKey(codename);
+                Dictionary<String, VobDef> defByCodeName = allDefByCodeName[type];
+                return defByCodeName.ContainsKey(codeName);
             }
 
             return false;
         }
 
-        public static bool ContainsId (Type type, int id)
+        protected static bool ContainsId(Type type, int id)
         {
             if (RegisterDictionaries(type))
             {
                 Dictionary<int, VobDef> defById = allDefById[type];
                 return defById.ContainsKey(id);
             }
-            
+
             return false;
         }
 
-        public static bool ContainsDefinition (Type type, VobDef def)
+        protected static bool ContainsDefinition(Type type, VobDef def)
         {
             if (RegisterDictionaries(type))
             {
                 Dictionary<int, VobDef> defById = allDefById[type];
                 return defById.ContainsValue(def);
             }
-            
+
             return false;
         }
 
-        public static bool RemoveCodename (Type type, String codename)
+        protected static bool RemoveCodeName(Type type, String codeName)
         {
             if (RegisterDictionaries(type))
             {
                 Dictionary<int, VobDef> defById = allDefById[type];
-                Dictionary<String, VobDef> defByCodename = allDefByCodename[type];
+                Dictionary<String, VobDef> defByCodeName = allDefByCodeName[type];
 
-                if ((defByCodename.ContainsKey(codename))
-                    && (defById.ContainsKey(defByCodename[codename].id)))
+                if ((defByCodeName.ContainsKey(codeName))
+                    && (defById.ContainsKey(defByCodeName[codeName].id)))
                 {
-                    defById.Remove(defByCodename[codename].id);
-                    defByCodename.Remove(codename);
+                    defById.Remove(defByCodeName[codeName].id);
+                    defByCodeName.Remove(codeName);
                     return true;
                 }
                 else
@@ -198,18 +222,18 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             return false;
         }
 
-        public static bool RemoveId (Type type, int id)
+        protected static bool RemoveId(Type type, int id)
         {
             if (RegisterDictionaries(type))
             {
                 Dictionary<int, VobDef> defById = allDefById[type];
-                Dictionary<String, VobDef> defByCodename = allDefByCodename[type];
+                Dictionary<String, VobDef> defByCodeName = allDefByCodeName[type];
 
-                if ((defById.ContainsKey(id)) 
-                    && (defByCodename.ContainsKey(defById[id].codename)))
+                if ((defById.ContainsKey(id))
+                    && (defByCodeName.ContainsKey(defById[id].codeName)))
                 {
                     defById.Remove(id);
-                    defByCodename.Remove(defById[id].codename);
+                    defByCodeName.Remove(defById[id].codeName);
                     return true;
                 }
                 else
@@ -217,25 +241,27 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
                     return false;
                 }
             }
-            
+
             return false;
         }
 
-        public static bool TryGetValue (Type type, String codename, out VobDef def)
+        protected static bool TryGetValueByCodeName(Type type, String codeName, out VobDef def)
         {
             if (RegisterDictionaries(type))
             {
-                return defByCodename.TryGetValue(codename, out def);
+                Dictionary<String, VobDef> defByCodeName = allDefByCodeName[type];
+                return defByCodeName.TryGetValue(codeName, out def);
             }
 
             def = null;
             return false;
         }
 
-        public static bool TryGetValue (Type type, int id, out VobDef def)
+        protected static bool TryGetValueById(Type type, int id, out VobDef def)
         {
             if (RegisterDictionaries(type))
             {
+                Dictionary<int, VobDef> defById = allDefById[type];
                 return defById.TryGetValue(id, out def);
             }
             

@@ -351,7 +351,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         //public void setOnUse_MPMax_Min (int MPMax_Min) { this.onUse_MPMax_Min = MPMax_Min; }
 
         //#endregion
-        
+
         //#region OnEquip attributes
         //// triggered with OnEquip
 
@@ -388,7 +388,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         //public void setOnEquip_MPMax_Min (int MPMax_Min) { this.onEquip_MPMax_Min = MPMax_Min; }
 
         //#endregion
-        
+
         //#region OnUnEquip attributes
         //// triggered with OnUnEquip
 
@@ -425,7 +425,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         //public void setOnUnEquip_MPMax_Min (int MPMax_Min) { this.onUnEquip_MPMax_Min = MPMax_Min; }
 
         #endregion
-        
+
 
 
         #region constructors
@@ -445,7 +445,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         //    : base (instanceName, name, protection, value, visual, visual_Change)
         //{ }
 
-        
+
 
         //public ItemDef (String instanceName, String name, String scemeName, int value, 
         //    MainFlags mainFlags, Flags flags, String visual)
@@ -555,29 +555,50 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #region dictionary-methods
 
-        public static bool Add (VobDef def)
+        public static bool Add(VobDef def)
         {
             return Add(_type, def);
         }
 
-        public static bool ContainsId (int id)
+        public static bool ContainsCodeName(String codeName)
+        {
+            return ContainsCodeName(_type, codeName);
+        }
+
+        public static bool ContainsId(int id)
         {
             return ContainsId(_type, id);
         }
 
-        public static bool ContainsDefinition (VobDef def)
+        public static bool ContainsDefinition(VobDef def)
         {
             return ContainsDefinition(_type, def);
         }
 
-        public static bool Remove (int id)
+        public static bool RemoveCodeName(String codeName)
+        {
+            return RemoveCodeName(_type, codeName);
+        }
+
+        public static bool RemoveId(int id)
         {
             return RemoveId(_type, id);
         }
 
-        public static bool TryGetValue (int id, out VobDef def)
+        public static bool TryGetValueByCodeName(String codeName, out VobDef def)
         {
-            return TryGetValue(_type, id, out def);
+            VobDef tempDef;
+            bool result = TryGetValueByCodeName(_type, codeName, out tempDef);
+            def = (ItemDef)tempDef;
+            return result;
+        }
+
+        public static bool TryGetValueById(int id, out ItemDef def)
+        {
+            VobDef tempDef;
+            bool result = TryGetValueById(_type, id, out tempDef);
+            def = (ItemDef)tempDef;
+            return result;
         }
 
         #endregion
@@ -645,6 +666,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         //}
 
         #endregion
-        
+
     }
 }
