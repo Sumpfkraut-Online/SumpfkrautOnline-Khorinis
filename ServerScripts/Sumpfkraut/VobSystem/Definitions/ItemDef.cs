@@ -585,7 +585,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             return RemoveId(_type, id);
         }
 
-        public static bool TryGetValueByCodeName(String codeName, out VobDef def)
+        public static bool TryGetValueByCodeName(String codeName, out ItemDef def)
         {
             VobDef tempDef;
             bool result = TryGetValueByCodeName(_type, codeName, out tempDef);

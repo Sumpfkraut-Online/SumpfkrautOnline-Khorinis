@@ -28,6 +28,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         new public static readonly String _staticName = "MobDef (static)";
         new protected String _objName = "MobDef (default)";
 
+        new protected static Type _type = typeof(MobDef);
+
         // general identi- and classifiers
 
         protected MobInterType mobInterType;
@@ -123,66 +125,50 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #region dictionary-methods
 
-        public static bool Add (MobDef def)
+        public static bool Add(MobDef def)
         {
-            int id = def.GetId();
-
-            if (id < 1)
-            {
-                MakeLogWarningStatic(typeof(MobDef), 
-                    "Prevented attempt of adding a definition to to dictionary: "
-                     + "An invalid id < 1 was provided!");
-                return false;
-            }
-
-            if (defById.ContainsKey(id))
-            {
-                MakeLogWarningStatic(typeof(MobDef), 
-                    String.Format("Prevented attempt of adding a definition to dictionary:"
-                        + " The {0}={1} is already taken!", "id", id));
-                return false;
-            }
-            
-            defById.Add(id, def);
-            return true;
+            return Add(_type, def);
         }
 
-        public static bool ContainsId (int id)
+        public static bool ContainsCodeName(String codeName)
         {
-            if (defById.ContainsKey(id))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return ContainsCodeName(_type, codeName);
         }
 
-        public static bool ContainsDefinition (MobDef def)
+        public static bool ContainsId(int id)
         {
-            return defById.ContainsValue(def);
+            return ContainsId(_type, id);
         }
 
-        public static bool Remove (int id)
+        public static bool ContainsDefinition(VobDef def)
         {
-            MobDef def;
-            defById.TryGetValue(id, out def);
-
-            if (def != null)
-            {
-                defById.Remove(id);
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return ContainsDefinition(_type, def);
         }
 
-        public static bool TryGetValue (int id, out MobDef def)
+        public static bool RemoveCodeName(String codeName)
         {
-            return defById.TryGetValue(id, out def);
+            return RemoveCodeName(_type, codeName);
+        }
+
+        public static bool RemoveId(int id)
+        {
+            return RemoveId(_type, id);
+        }
+
+        public static bool TryGetValueByCodeName(String codeName, out MobDef def)
+        {
+            VobDef tempDef;
+            bool result = TryGetValueByCodeName(_type, codeName, out tempDef);
+            def = (MobDef)tempDef;
+            return result;
+        }
+
+        public static bool TryGetValueById(int id, out MobDef def)
+        {
+            VobDef tempDef;
+            bool result = TryGetValueById(_type, id, out tempDef);
+            def = (MobDef)tempDef;
+            return result;
         }
 
         #endregion
