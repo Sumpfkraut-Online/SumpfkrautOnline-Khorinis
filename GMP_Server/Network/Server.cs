@@ -58,8 +58,8 @@ namespace GUC.Server.Network
 
             MessageListener.Add((byte)NetworkID.NPCAniStartMessage, NPCMessage.ReadAniStart);
             MessageListener.Add((byte)NetworkID.NPCAniStopMessage, NPCMessage.ReadAniStop);
-            MessageListener.Add((byte)NetworkID.NPCStateMessage, NPCMessage.ReadState);
-            MessageListener.Add((byte)NetworkID.NPCAttackMessage, NPCMessage.ReadAttack);
+            MessageListener.Add((byte)NetworkID.NPCStateMessage, NPC.ReadState);
+            MessageListener.Add((byte)NetworkID.NPCTargetStateMessage, NPC.ReadTargetState);
             MessageListener.Add((byte)NetworkID.NPCWeaponStateMessage, NPCMessage.ReadWeaponState);
             MessageListener.Add((byte)NetworkID.NPCHitMessage, NPCMessage.ReadHitMessage);
 

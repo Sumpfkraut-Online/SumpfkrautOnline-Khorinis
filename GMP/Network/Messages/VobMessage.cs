@@ -19,7 +19,7 @@ namespace GUC.Client.Network.Messages
         {
             uint id = stream.mReadUInt();
 
-            Vob vob = World.GetVobByID(id);
+            AbstractVob vob = World.GetVobByID(id);
             if (vob != null)
             {
                 Vec3f pos = stream.mReadVec();
@@ -49,7 +49,9 @@ namespace GUC.Client.Network.Messages
             }
         }
 
-        public static void WritePosDir(Vob vob)
+
+
+        public static void WritePosDir(AbstractVob vob)
         {
             BitStream stream = Program.client.SetupSendStream(NetworkID.VobPosDirMessage);
             stream.mWrite(vob.ID);

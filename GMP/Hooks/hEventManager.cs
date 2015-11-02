@@ -13,37 +13,75 @@ namespace GUC.Client.Hooks
 {
     static class hEventManager
     {
-        public static Int32 hook_OnMessage(String message)
+        static bool msgHookEnabled = true;
+        static bool blocked = false;
+        static bool BlockMsg
         {
-            //zCVob test = new zCVob(Program.Process, Program.Process.ReadInt(Convert.ToInt32(message) + 4));
-            //zERROR.GetZErr(Program.Process).Report(2, 'G', "Msg: " + test.VobType, 0, "Program.cs", 0);
-
-            try
+            get { return blocked; }
+            set
             {
-                int address = Convert.ToInt32(message);
-                int thisAddr = Program.Process.ReadInt(address);
-                
-                if (thisAddr == Player.Hero.gVob.GetEM(0).Address)
+                if (blocked != value)
                 {
-                    int msgAddr = Program.Process.ReadInt(address + 4);
-                    int vobAddr = Program.Process.ReadInt(address + 8);
-
-                    zCEventMessage eventMsg = new zCEventMessage(Program.Process, msgAddr);
-                    zCVob vob = new zCVob(Program.Process, vobAddr);
-
-                    switch ((zCObject.VobTypes)eventMsg.VTBL)
+                    blocked = value;
+                    if (value)
                     {
-                        case zCObject.VobTypes.oCMsgAttack:
-                            OnMsgAttack(new oCMsgAttack(Program.Process, msgAddr));
-                            break;
-                        case zCObject.VobTypes.oCMsgWeapon:
-                            OnMsgWeapon(new oCMsgWeapon(Program.Process, msgAddr));
-                            break;
-                        case zCObject.VobTypes.oCMsgMovement:
-                            OnMsgMovement(new oCMsgMovement(Program.Process, msgAddr));
-                            break;
+                        Program.Process.Write(new byte[] { 0xE9, 0x11, 0x08, 0x00, 0x00, 0x90 }, 0x7863B9); // jmp to end
+                    }
+                    else
+                    {
+                        Program.Process.Write(new byte[] { 0x0F, 0x8C, 0xE8, 0x02, 0x00, 0x00 }, 0x7863B9); // original code
                     }
                 }
+            }
+        } //block the incoming EventMessage?
+
+        public static void StartMessage(this zCEventManager em, zCEventMessage msg, zCVob vob)
+        {
+            msgHookEnabled = false;
+            em.OnMessage(msg, vob);
+            msgHookEnabled = true;
+        }
+
+        public static void AddHooks(Process process)
+        {
+            //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hEventManager).GetMethod("hook_OnMessage"), (int)zCEventManager.FuncOffsets.OnMessage, 7, 3); //hook
+        }
+
+        public static Int32 hook_OnMessage(String message)
+        {
+            try
+            {
+                if (msgHookEnabled)
+                {
+                    if (Player.Hero != null)
+                    {
+                        int address = Convert.ToInt32(message);
+                        int thisAddr = Program.Process.ReadInt(address);
+
+                        if (thisAddr == Player.Hero.gVob.GetEM(0).Address)
+                        {
+                            int msgAddr = Program.Process.ReadInt(address + 4);
+                            int vobAddr = Program.Process.ReadInt(address + 8);
+
+                            zCEventMessage eventMsg = new zCEventMessage(Program.Process, msgAddr);
+                            zCVob vob = new zCVob(Program.Process, vobAddr);
+
+                            switch ((zCObject.VobTypes)eventMsg.VTBL)
+                            {
+                                case zCObject.VobTypes.oCMsgAttack:
+                                    OnMsgAttack(new oCMsgAttack(Program.Process, msgAddr));
+                                    return 0;
+                                case zCObject.VobTypes.oCMsgWeapon:
+                                    OnMsgWeapon(new oCMsgWeapon(Program.Process, msgAddr));
+                                    break;
+                                case zCObject.VobTypes.oCMsgMovement:
+                                    OnMsgMovement(new oCMsgMovement(Program.Process, msgAddr));
+                                    break;
+                            }
+                        }
+                    }
+                }
+                BlockMsg = false;
             }
             catch (Exception e)
             {
@@ -54,39 +92,46 @@ namespace GUC.Client.Hooks
 
         static void OnMsgAttack(oCMsgAttack msg)
         {
+            BlockMsg = true;
+            NPCState state;
+
             switch (msg.SubType)
             {
                 case oCMsgAttack.SubTypes.AttackForward:
-                    Player.Hero.State = NPCState.AttackForward;
+                    state = NPCState.AttackForward;
                     break;
                 case oCMsgAttack.SubTypes.AttackLeft:
-                    Player.Hero.State = NPCState.AttackLeft;
+                    state = NPCState.AttackLeft;
                     break;
                 case oCMsgAttack.SubTypes.AttackRight:
-                    Player.Hero.State = NPCState.AttackRight;
+                    state = NPCState.AttackRight;
                     break;
                 case oCMsgAttack.SubTypes.AttackRun:
-                    Player.Hero.State = NPCState.AttackRun;
+                    state = NPCState.AttackRun;
                     break;
                 case oCMsgAttack.SubTypes.Parade:
                     if ((msg.Bitfield & oCMsgAttack.BitFlag.Dodge) != 0)
                     {
-                        Player.Hero.State = NPCState.DodgeBack;
+                        state = NPCState.DodgeBack;
                     }
                     else
                     {
-                        Player.Hero.State = NPCState.Parry;
+                        state = NPCState.Parry;
                     }
                     break;
                 default:
                     return;
             }
-            NPCMessage.WriteAttack();
+            NPCMessage.WriteTargetState(state);
         }
 
         static void OnMsgWeapon(oCMsgWeapon msg)
         {
-            bool removeType1 = false;
+            BlockMsg = true;
+
+            bool removeType1 = false; //there are 2 animations of undrawing a weapon
+            NPCWeaponState state = NPCWeaponState.Melee;
+
             switch (msg.SubType)
             {
                 //FIXME: Magic!
@@ -94,50 +139,48 @@ namespace GUC.Client.Hooks
                 case oCMsgWeapon.SubTypes.DrawWeapon1:
                     if ((msg.WpType == 4 || msg.WpType == 5) && Player.Hero.gNpc.IsInInv(Player.Hero.gNpc.GetEquippedRangedWeapon().Munition, 1).Address != 0) //ranged
                     {
-                        Player.Hero.WeaponState = NPCWeaponState.Ranged; 
+                        state = NPCWeaponState.Ranged;
                     }
                     else if (Player.Hero.gNpc.GetEquippedMeleeWeapon().Address == 0) //no weapon equipped
                     {
-                        Player.Hero.WeaponState = NPCWeaponState.Fists;
+                        state = NPCWeaponState.Fists;
                     }
                     else if (Player.Hero.WeaponState != NPCWeaponState.Fists)
                     { //Don't change the state if we want to get fists while a weapon is equipped
-                        Player.Hero.WeaponState = NPCWeaponState.Melee;
+                        state = NPCWeaponState.Melee;
                     }
                     break;
                 case oCMsgWeapon.SubTypes.RemoveWeapon:
-                    Player.Hero.WeaponState = NPCWeaponState.None;
+                    state = NPCWeaponState.None;
                     break;
                 case oCMsgWeapon.SubTypes.RemoveWeapon1:
-                    Player.Hero.WeaponState = NPCWeaponState.None;
+                    state = NPCWeaponState.None;
                     removeType1 = true;
                     break;
                 default:
                     return;
             }
-            NPCMessage.WriteWeaponState(removeType1);
+            NPCMessage.WriteWeaponState(state, removeType1);
         }
 
         static void OnMsgMovement(oCMsgMovement msg)
         {
             if (msg.SubType == oCMsgMovement.SubTypes.Strafe)
             {
+                NPCState state;
                 if (msg.Animation == Player.Hero.gNpc.AniCtrl._t_strafel)
                 {
-                    Player.Hero.State = NPCState.MoveLeft;
+                    state = NPCState.MoveLeft;
                 }
                 else if (msg.Animation == Player.Hero.gNpc.AniCtrl._t_strafer)
                 {
-                    Player.Hero.State = NPCState.MoveRight;
+                    state = NPCState.MoveRight;
                 }
                 else return;
-                NPCMessage.WriteState(Player.Hero);
+                NPCMessage.WriteTargetState(state);
             }
         }
 
-        public static void AddHooks(Process process)
-        {
-            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hEventManager).GetMethod("hook_OnMessage"), (int)zCEventManager.FuncOffsets.OnMessage, 7, 3);
-        }
+
     }
 }

@@ -68,16 +68,51 @@ namespace GUC.Client.Network.Messages
 
         #region States
 
-        public static void WriteState(NPC npc)
+        public static void WriteState(NPCState state, NPC npc)
         {
-            //zERROR.GetZErr(Program.Process).Report(2, 'G', "State: " + npc.State, 0, "hAniCtrl_Human.cs", 0);
             BitStream stream = Program.client.SetupSendStream(NetworkID.NPCStateMessage);
             stream.mWrite(npc.ID);
-            stream.mWrite((byte)npc.State);
+            stream.mWrite((byte)state);
             stream.mWrite(npc.Position);
             stream.mWrite(npc.Direction);
             Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE_ORDERED);
+
             npc.nextPosUpdate = DateTime.Now.Ticks + NPC.PositionUpdateTime; //set position update time
+        }
+
+        public static void WriteTargetState(NPCState state) //only for self, attacks & strafing
+        {
+            BitStream stream = Program.client.SetupSendStream(NetworkID.NPCTargetStateMessage);
+            stream.mWrite((byte)state);
+            stream.mWrite(Player.Hero.Position);
+            stream.mWrite(Player.Hero.Direction);
+
+            AbstractVob target;
+            World.vobAddr.TryGetValue(Player.Hero.gNpc.GetFocusNpc().Address, out target);
+            if (target == null)
+            {
+                stream.mWrite(0);
+            }
+            else
+            {
+                stream.mWrite(target.ID);
+            }
+
+            Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE_ORDERED);
+
+            Player.Hero.nextPosUpdate = DateTime.Now.Ticks + NPC.PositionUpdateTime; //set position update time
+        }
+
+        public static void WriteWeaponState(NPCWeaponState state, bool removeType1)
+        {
+            BitStream stream = Program.client.SetupSendStream(NetworkID.NPCWeaponStateMessage);
+            stream.mWrite((byte)state);
+            stream.mWrite(Player.Hero.Position);
+            stream.mWrite(Player.Hero.Direction);
+            stream.mWrite(removeType1);
+            Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE_ORDERED);
+
+            Player.Hero.nextPosUpdate = DateTime.Now.Ticks + NPC.PositionUpdateTime; //set position update time
         }
 
         public static void ReadState(BitStream stream)
@@ -111,16 +146,7 @@ namespace GUC.Client.Network.Messages
             }
         }
 
-        public static void WriteWeaponState(bool removeType1)
-        {            
-            BitStream stream = Program.client.SetupSendStream(NetworkID.NPCWeaponStateMessage);
-            stream.mWrite((byte)Player.Hero.WeaponState);
-            stream.mWrite(removeType1);
-            stream.mWrite(Player.Hero.Position);
-            stream.mWrite(Player.Hero.Direction);
-            Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE_ORDERED);
-            Player.Hero.nextPosUpdate = DateTime.Now.Ticks + NPC.PositionUpdateTime; //set position update time
-        }
+
 
         public static void ReadWeaponState(BitStream stream)
         {
@@ -162,27 +188,7 @@ namespace GUC.Client.Network.Messages
 
         #region Combat
 
-        public static void WriteAttack()
-        {
-            BitStream stream = Program.client.SetupSendStream(NetworkID.NPCAttackMessage);
-            stream.mWrite((byte)Player.Hero.State);
-            stream.mWrite(Player.Hero.Position);
-            stream.mWrite(Player.Hero.Direction);
 
-            Vob target;
-            World.vobAddr.TryGetValue(Player.Hero.gNpc.GetFocusNpc().Address, out target);
-            if (target == null)
-            {
-                stream.mWrite(0);
-            }
-            else
-            {
-                stream.mWrite(target.ID);
-            }
-
-            Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE_ORDERED);
-            Player.Hero.nextPosUpdate = DateTime.Now.Ticks + NPC.PositionUpdateTime; //set position update time
-        }
 
         public static void ReadAttack(BitStream stream)
         {

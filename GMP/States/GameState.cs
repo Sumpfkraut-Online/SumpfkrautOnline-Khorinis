@@ -39,18 +39,36 @@ namespace GUC.Client.States
         public override Dictionary<VirtualKeys, Action> Shortcuts { get { return shortcuts; } }
 
         static oCNpc npc;
+        static double fvel = 0;
         public static void RenderTest()
         {
             /*if (npc == null)
             {
-                npc = NPCInstance.InstanceList[0].CreateNPC();
-                npc.Name.Set("Testcharakter");
-                npc.SetAdditionalVisuals(HumBodyMesh.HUM_BODY_NAKED0.ToString(), (int)HumBodyTex.G1Hero, 0, HumHeadMesh.HUM_HEAD_PONY.ToString(), (int)HumHeadTex.Face_N_Player, 0, -1);
+                NPCInstance inst = NPCInstance.Table.Get(3);
+                npc = oCObjectFactory.GetFactory(Program.Process).CreateNPC("OTHERS_NPC");
+
+
+                npc.Name.Set(inst.name);
+                npc.SetVisual(inst.visual);
+
+                npc.SetAdditionalVisuals(inst.bodyMesh, inst.bodyTex, 0, inst.headMesh, inst.headTex, 0, -1);
+                using (zVec3 z = zVec3.Create(Program.Process))
+                {
+                    z.X = inst.bodyWidth;
+                    z.Y = inst.bodyHeight;
+                    z.Z = inst.bodyWidth;
+                    npc.SetModelScale(z);
+                }
+                npc.SetFatness(inst.fatness);
+
+                npc.Voice = inst.voice;
+
+                npc.HPMax = 100;
+                npc.HP = 90;
                 npc.InitHumanAI();
                 oCGame.Game(Program.Process).World.AddVob(npc);
-                npc.HPMax = 100;
+
             }
-            npc.HP = 100;
 
             Vec3f newPos = Player.Hero.Position;
             newPos.X += 20;
@@ -70,12 +88,12 @@ namespace GUC.Client.States
                 npc.GetEM(0).OnMessage(msg, npc);
             }
             //npc.gNpc.AniCtrl.StartFallDownAni();
-           /* for (int i = 0; i < 25; i++)
-            {
-                item = new Item(num++, (ushort)rand.Next(0, 7));
-                item.Position = new Vec3f(rand.Next(-700, 700), 1000, rand.Next(-700, 700));
-                item.Spawn(item.Position, item.Direction, true);
-            }*/
+            /* for (int i = 0; i < 25; i++)
+             {
+                 item = new Item(num++, (ushort)rand.Next(0, 7));
+                 item.Position = new Vec3f(rand.Next(-700, 700), 1000, rand.Next(-700, 700));
+                 item.Spawn(item.Position, item.Direction, true);
+             }*/
         }
 
         static int lop = 9;
@@ -105,12 +123,6 @@ namespace GUC.Client.States
             InputHandler.Update();
             Program.client.Update();
 
-            if (npc != null)
-            if ((new Vec3f(npc.TrafoObjToWorld.getPosition())).getDistance(Player.Hero.Position) < 150)
-            {
-                npc.GetEM(0).KillMessages();
-                npc.AniCtrl._Stand();
-            }
 
             /*GUI.GUCView.DebugText.Text = "";
             for (int i = 0; i < Player.VobControlledList.Count; i++)
@@ -118,10 +130,33 @@ namespace GUC.Client.States
                 GUI.GUCView.DebugText.Text += " " + Player.VobControlledList[i].ID;
             }*/
 
-                for (int i = 0; i < World.AllVobs.Count; i++)
-                {
-                    World.AllVobs[i].Update(ticks);
-                }
+            for (int i = 0; i < World.AllVobs.Count; i++)
+            {
+                World.AllVobs[i].Update(ticks);
+            }
+
+            /*using (zVec3 start = zVec3.Create(Program.Process))
+            using (zVec3 dir = zVec3.Create(Program.Process))
+            {
+                start.X = Player.Hero.Position.X;
+                start.Y = Player.Hero.Position.Y;
+                start.Z = Player.Hero.Position.Z;
+
+                dir.X = start.X + Player.Hero.Direction.X * 9999f;
+                dir.Y = start.Y + Player.Hero.Direction.Y * 9999f;
+                dir.Z = start.Z + Player.Hero.Direction.Z * 9999f;
+
+                zCWorld world = oCGame.Game(Program.Process).World;
+                world.TraceRayNearestHit(start, dir, 0);
+
+                double dist = (start.X - world.Raytrace_FoundIntersection.X) * (start.X - world.Raytrace_FoundIntersection.X);
+                dist += (start.Y - world.Raytrace_FoundIntersection.Y) * (start.Y - world.Raytrace_FoundIntersection.Y);
+                dist += (start.Z - world.Raytrace_FoundIntersection.Z) * (start.Z - world.Raytrace_FoundIntersection.Z);
+                dist = Math.Sqrt(dist);
+
+                GUI.GUCView.DebugText.Text = dist.ToString();
+
+            }*/
         }
     }
 }

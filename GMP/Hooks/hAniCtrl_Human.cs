@@ -16,6 +16,8 @@ namespace GUC.Client.Hooks
         {
             try
             {
+                zERROR.GetZErr(Program.Process).Report(2, 'G',"_Forward", 0, "hAniCtrl_Human.cs", 0);
+
                 if (Player.Hero == null)
                     return 0;
 
@@ -28,8 +30,7 @@ namespace GUC.Client.Hooks
 
                 if (Player.Hero.State != NPCState.MoveForward)
                 {
-                    Player.Hero.State = NPCState.MoveForward;
-                    NPCMessage.WriteState(Player.Hero);
+                    NPCMessage.WriteState(NPCState.MoveForward, Player.Hero);
                 }
             }
             catch (Exception e)
@@ -55,7 +56,7 @@ namespace GUC.Client.Hooks
                 if (Player.Hero.State != NPCState.Stand)
                 {
                     Player.Hero.State = NPCState.Stand;
-                    NPCMessage.WriteState(Player.Hero);
+                    NPCMessage.WriteState(NPCState.Stand, Player.Hero);
                 }
             }
             catch (Exception e)
@@ -82,7 +83,7 @@ namespace GUC.Client.Hooks
                 if (Player.Hero.State != NPCState.MoveBackward)
                 {
                     Player.Hero.State = NPCState.MoveBackward;
-                    NPCMessage.WriteState(Player.Hero);
+                    NPCMessage.WriteState(NPCState.Stand, Player.Hero);
                 }
             }
             catch (Exception e)
@@ -107,7 +108,7 @@ namespace GUC.Client.Hooks
                 if (Player.Hero.State != NPCState.Jump)
                 {
                     Player.Hero.State = NPCState.Jump;
-                    NPCMessage.WriteState(Player.Hero);
+                    NPCMessage.WriteState(NPCState.Stand, Player.Hero);
                 }
             }
             catch (Exception e)
@@ -130,7 +131,7 @@ namespace GUC.Client.Hooks
                 if (Player.Hero.State != NPCState.Fall)
                 {
                     Player.Hero.State = NPCState.Fall;
-                    NPCMessage.WriteState(Player.Hero);
+                    NPCMessage.WriteState(NPCState.Stand, Player.Hero);
                 }
             }
             catch (Exception e)
@@ -168,7 +169,7 @@ namespace GUC.Client.Hooks
             {
                 aniCtrl.BitField &= ~oCAniCtrl_Human.BitFlag.comboCanHit;
 
-                Vob aVob;
+                AbstractVob aVob;
                 World.vobAddr.TryGetValue(aniCtrl.NPC.Address, out aVob);
                 if (aVob != null && aVob is NPC)
                 {
@@ -228,15 +229,15 @@ namespace GUC.Client.Hooks
         public static void AddHooks(Process process)
         {
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("_Forward"), (int)oCAniCtrl_Human.FuncOffsets._Forward, 6, 1);
-            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("_Backward"), (int)oCAniCtrl_Human.FuncOffsets._Backward, 5, 1);
-            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("_Stand"), (int)oCAniCtrl_Human.FuncOffsets._Stand, 5, 1);
-            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("JumpForward"), (int)oCAniCtrl_Human.FuncOffsets.PC_JumpForward, 5, 1);
-            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("hook_StartFallDownAni"), 0x6B5220, 6, 1);
+            //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("_Backward"), (int)oCAniCtrl_Human.FuncOffsets._Backward, 5, 1);
+            //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("_Stand"), (int)oCAniCtrl_Human.FuncOffsets._Stand, 5, 1);
+            //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("JumpForward"), (int)oCAniCtrl_Human.FuncOffsets.PC_JumpForward, 5, 1);
+            //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("hook_StartFallDownAni"), 0x6B5220, 6, 1);
 
-            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("HitCombo"), (int)oCAniCtrl_Human.FuncOffsets.HitCombo, 6, 2); //entry
+            //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("HitCombo"), (int)oCAniCtrl_Human.FuncOffsets.HitCombo, 6, 2); //entry
 
-            process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0xE9 }, 0x6B03A4); //clear
-            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("hook_CheckHit"), (int)0x6B03A4, 5, 0);
+            //process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0xE9 }, 0x6B03A4); //clear
+            //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("hook_CheckHit"), (int)0x6B03A4, 5, 0);
         }
     }
 }

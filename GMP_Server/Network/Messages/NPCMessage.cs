@@ -67,30 +67,6 @@ namespace GUC.Server.Network.Messages
         }
 
         #region States
-
-        public static void ReadState(BitStream stream, Client client)
-        {
-            uint id = stream.mReadUInt();
-
-            NPC npc = null;
-
-            if (id == client.character.ID)
-            {
-                npc = client.character;
-            }
-            else
-            {
-                npc = (NPC)client.VobControlledList.Find(v => v.ID == id && v is NPC);
-            }
-
-            if (npc != null)
-            {
-                npc.State = (NPCState)stream.mReadByte();
-                npc.pos = stream.mReadVec();
-                npc.dir = stream.mReadVec();
-                WriteState(npc.cell.SurroundingClients(client), npc);
-            }
-        }
         
         public static void WriteState(IEnumerable<Client> list, NPC npc)
         {
@@ -103,9 +79,29 @@ namespace GUC.Server.Network.Messages
                 Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W',client.guid,false);
         }
 
+        public static void WriteTargetState(IEnumerable<Client> list, NPC npc, NPC target)
+        {
+            BitStream stream = Program.server.SetupStream(NetworkID.NPCTargetStateMessage);
+            stream.mWrite(npc.ID);
+            stream.mWrite((byte)npc.State);
+            stream.mWrite(npc.pos);
+            stream.mWrite(npc.dir);
+            if (target == null)
+            {
+                stream.mWrite(0);
+            }
+            else
+            {
+                stream.mWrite(target.ID);
+            }
+
+            foreach (Client client in list)
+                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
+        }
+
         public static void ReadWeaponState(BitStream stream, Client client)
         {
-            client.character.WeaponState = (NPCWeaponState)stream.mReadByte();
+            //client.character.WeaponState = (NPCWeaponState)stream.mReadByte();
             bool removeType1 = stream.ReadBit();
             client.character.pos = stream.mReadVec();
             client.character.dir = stream.mReadVec();
@@ -129,36 +125,9 @@ namespace GUC.Server.Network.Messages
 
         #region Combat
 
-        public static void ReadAttack(BitStream stream, Client client)
-        {
-            client.character.State = (NPCState)stream.mReadByte();
-            client.character.pos = stream.mReadVec();
-            client.character.dir = stream.mReadVec();
 
-            NPC target = client.character.World.GetNpcOrPlayer(stream.mReadUInt());
 
-            WriteAttack(client.character.cell.SurroundingClients(client), client.character, target);
-        }
 
-        public static void WriteAttack(IEnumerable<Client> list, NPC attacker, NPC target)
-        {
-            BitStream stream = Program.server.SetupStream(NetworkID.NPCAttackMessage);
-            stream.mWrite(attacker.ID);
-            stream.mWrite((byte)attacker.State);
-            stream.mWrite(attacker.pos);
-            stream.mWrite(attacker.dir);
-            if (target == null)
-            {
-                stream.mWrite(0);
-            }
-            else
-            {
-                stream.mWrite(target.ID);
-            }
-
-            foreach (Client client in list)
-                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
-        }
 
         public static void ReadHitMessage(BitStream stream, Client client)
         {

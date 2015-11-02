@@ -21,6 +21,7 @@ namespace GUC.Server.Network
 
         public bool instanceNPCNeeded;
         public bool instanceItemNeeded;
+        public bool instanceMobNeeded;
 
         //Account
         public int accountID = -1;
@@ -81,7 +82,7 @@ namespace GUC.Server.Network
             NPC.WriteControl(this, character);
         }
 
-        public void CheckValidity(String driveString, String macString, byte[] npcTableHash, byte[] itemTableHash)
+        public void CheckValidity(String driveString, String macString, byte[] npcTableHash, byte[] itemTableHash, byte[] mobTableHash)
         {
             //FIXME: Check for banned strings
             this.DriveString = driveString;
@@ -89,6 +90,7 @@ namespace GUC.Server.Network
 
             instanceNPCNeeded = !npcTableHash.SequenceEqual(NPCInstance.Table.hash);
             instanceItemNeeded = !itemTableHash.SequenceEqual(ItemInstance.Table.hash);
+            instanceMobNeeded = !mobTableHash.SequenceEqual(MobInstance.Table.hash);
 
             isValid = true;
         }

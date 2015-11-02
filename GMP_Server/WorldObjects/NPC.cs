@@ -7,6 +7,7 @@ using GUC.Server.Network;
 using RakNet;
 using GUC.Network;
 using GUC.Server.Network.Messages;
+using GUC.Types;
 
 namespace GUC.Server.WorldObjects
 {
@@ -76,11 +77,14 @@ namespace GUC.Server.WorldObjects
                 npc.AttrDexterity = instance.AttrDexterity;
 
                 npc.AttrCapacity = 100;
+
+                npc.State = NPCState.Stand;
+                npc.WeaponState = NPCWeaponState.None;
                 return npc;
             }
             else
             {
-                Log.Logger.logError("Item creation failed! Instance can't be NULL!");
+                Log.Logger.logError("NPC creation failed! Instance can't be NULL!");
                 return null;
             }
         }
@@ -202,11 +206,8 @@ namespace GUC.Server.WorldObjects
 
         #region States
 
-        protected NPCState state = NPCState.Stand;
-        public NPCState State { get { return state; } internal set { state = value; } }
-
-        protected NPCWeaponState wpState = NPCWeaponState.None;
-        public NPCWeaponState WeaponState { get { return wpState; } internal set { wpState = value; } }
+        public NPCState State { get; protected set; }
+        public NPCWeaponState WeaponState { get; protected set; }
 
         #endregion
 
@@ -274,6 +275,12 @@ namespace GUC.Server.WorldObjects
                 item.Condition = 200;
                 item.SpecialLine = "Geschmiedet von Malak Akbar.";
                 item.Spawn(client.character.World, new Types.Vec3f(200, 0, 200), new Types.Vec3f(0, 0, 1));
+
+                NPC scav = NPC.Create("scavenger");
+                scav.Spawn(client.character.World);
+
+                Mob mob = Mob.Create("forge");
+                mob.Spawn(client.character.World, new Types.Vec3f(-200, -100, 200), new Types.Vec3f(0, 0, 1));
             }
 
             if (!client.character.Spawned)
@@ -290,6 +297,79 @@ namespace GUC.Server.WorldObjects
             if (item == null) return;
 
             client.character.AddItem(item);
+        }
+
+        public delegate void MovementHandler(NPC npc, NPCState state, Vec3f position, Vec3f direction);
+        public static MovementHandler sOnMovement;
+        public MovementHandler OnMovement;
+
+        internal static void ReadState(BitStream stream, Client client)
+        {
+            uint id = stream.mReadUInt();
+
+            NPC npc = null;
+
+            if (id == client.character.ID)
+            {
+                npc = client.character;
+            }
+            else
+            {
+                npc = (NPC)client.VobControlledList.Find(v => v.ID == id && v is NPC);
+            }
+
+            if (npc != null)
+            {
+                NPCState state = (NPCState)stream.mReadByte();
+                Vec3f pos = stream.mReadVec();
+                Vec3f dir = stream.mReadVec();
+
+                if (sOnMovement != null)
+                {
+                    sOnMovement(client.character, state, pos, dir);
+                }
+                if (client.character.OnMovement != null)
+                {
+                    client.character.OnMovement(client.character, state, pos, dir);
+                }
+            }
+        }
+
+        public void DoMovement(NPCState state, Vec3f position, Vec3f direction)
+        {
+            this.State = state;
+            this.pos = position; //FIXME: Position -> cell update
+            this.dir = direction;
+            NPCMessage.WriteState(this.client.character.cell.SurroundingClients(), this);
+        }
+
+        public delegate void TargetMovementHandler(NPC npc, NPC target, NPCState state, Vec3f position, Vec3f direction);
+        public static TargetMovementHandler sOnTargetMovement;
+        public TargetMovementHandler OnTargetMovement;
+
+        internal static void ReadTargetState(BitStream stream, Client client)
+        {
+            NPCState state = (NPCState)stream.mReadByte();
+            Vec3f pos = stream.mReadVec();
+            Vec3f dir = stream.mReadVec();
+            NPC target = client.character.World.GetNpcOrPlayer(stream.mReadUInt());
+
+            if (sOnTargetMovement != null)
+            {
+                sOnTargetMovement(client.character, target, state, pos, dir);
+            }
+            if (client.character.OnTargetMovement != null)
+            {
+                client.character.OnTargetMovement(client.character, target, state, pos, dir);
+            }
+        }
+
+        public void DoTargetMovement(NPCState state, Vec3f position, Vec3f direction, NPC target)
+        {
+            this.State = state;
+            this.pos = position;
+            this.dir = direction;
+            NPCMessage.WriteTargetState(this.client.character.cell.SurroundingClients(), this, target);
         }
 
         #endregion

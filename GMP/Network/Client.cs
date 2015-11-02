@@ -55,7 +55,7 @@ namespace GUC.Client.Network
             messageListener.Add((byte)NetworkID.NPCAniStartMessage, NPCMessage.ReadAniStart);
             messageListener.Add((byte)NetworkID.NPCAniStopMessage, NPCMessage.ReadAniStop);
             messageListener.Add((byte)NetworkID.NPCStateMessage, NPCMessage.ReadState);
-            messageListener.Add((byte)NetworkID.NPCAttackMessage, NPCMessage.ReadAttack);
+            messageListener.Add((byte)NetworkID.NPCTargetStateMessage, NPCMessage.ReadAttack);
             messageListener.Add((byte)NetworkID.NPCWeaponStateMessage, NPCMessage.ReadWeaponState);
             messageListener.Add((byte)NetworkID.NPCHitMessage, NPCMessage.ReadHitMessage);
             messageListener.Add((byte)NetworkID.NPCEquipMessage, NPCMessage.ReadEquipMessage);

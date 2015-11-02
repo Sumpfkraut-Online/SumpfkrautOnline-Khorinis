@@ -11,20 +11,20 @@ using GUC.Network;
 
 namespace GUC.Client.WorldObjects
 {
-    class Vob
+    abstract class AbstractVob
     {
         public uint ID { get; private set; }
 
         public zCVob gVob { get; protected set; }
 
-        public Vob(uint id)
+        public AbstractVob(uint id)
         {
             ID = id;
             gVob = null;
             Spawned = false;
         }
 
-        public Vob(uint id, zCVob vob)
+        public AbstractVob(uint id, zCVob vob)
         {
             ID = id;
             gVob = vob;
@@ -135,64 +135,6 @@ namespace GUC.Client.WorldObjects
         }
         #endregion
 
-        #region Visual
-        protected string visual = "ITFO_APPLE.3DS";
-        public virtual string Visual
-        {
-            get
-            {
-                return visual;
-            }
-            set
-            {
-                visual = value;
-                if (Spawned)
-                {
-                    gVob.SetVisual(value);
-                }
-            }
-        }
-        #endregion
-
-        #region Collision
-        protected bool cdDyn = false;
-
-        public bool CDDyn
-        {
-            get
-            {
-                return cdDyn;
-            }
-            set
-            {
-                cdDyn = value;
-                if (Spawned)
-                {
-                    if (value)
-                        gVob.BitField1 |= (int)zCVob.BitFlag0.collDetectionDynamic;
-                    else
-                        gVob.BitField1 &= ~(int)zCVob.BitFlag0.collDetectionDynamic;
-                }
-            }
-        }
-
-        protected bool cdStatic = false;
-        public bool CDStatic
-        {
-            get { return cdStatic; }
-            set
-            {
-                if (Spawned)
-                {
-                    if (value)
-                        gVob.BitField1 |= (int)zCVob.BitFlag0.collDetectionStatic;
-                    else
-                        gVob.BitField1 &= ~(int)zCVob.BitFlag0.collDetectionStatic;
-                }
-            }
-        }
-        #endregion
-
         #region Spawn
         public bool Spawned { get; protected set; }
 
@@ -226,17 +168,7 @@ namespace GUC.Client.WorldObjects
             this.Direction = direction;
         }
 
-        protected virtual void CreateVob(bool createNew)
-        {
-            if (createNew)
-            {
-                gVob = zCVob.Create(Program.Process);
-            }
-            gVob.BitField1 |= (int)zCVob.BitFlag0.staticVob;
-            Visual = visual;
-            CDDyn = cdDyn;
-            CDStatic = cdStatic;
-        }
+        protected abstract void CreateVob(bool createNew);
 
         public void Despawn()
         {

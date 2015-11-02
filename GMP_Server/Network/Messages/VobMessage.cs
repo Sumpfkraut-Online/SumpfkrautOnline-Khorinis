@@ -28,7 +28,6 @@ namespace GUC.Server.Network.Messages
             
             if (vob != null)
             {
-
                 vob.pos = stream.mReadVec();
                 vob.dir = stream.mReadVec();
                 if (vob is AbstractDropVob)

@@ -22,6 +22,7 @@ namespace GUC.Server.Scripts.Instances
             NPCInstance.Table.Add(npc);
 
             npc = new NPCInstance("Scavenger");
+            npc.Name = "Scavenger";
             npc.Visual = "Scavenger.mds";
             npc.BodyMesh = "Sca_Body";
             NPCInstance.Table.Add(npc);
@@ -106,6 +107,15 @@ namespace GUC.Server.Scripts.Instances
             ItemInstance.Table.Add(item);
 
             ItemInstance.Table.NetUpdate();
+
+
+
+            MobInstance mob = new MobInstance("Forge");
+            mob.type = Enumeration.MobType.MobInter;
+            mob.visual = "BSFIRE_OC.MDS";
+            MobInstance.Table.Add(mob);
+
+            MobInstance.Table.NetUpdate();
         }
 
         static Random random = new Random();

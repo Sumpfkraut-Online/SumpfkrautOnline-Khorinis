@@ -1,0 +1,58 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using GUC.Enumeration;
+using System.IO;
+
+namespace GUC.Server.WorldObjects
+{
+    public class MobInstance : AbstractInstance
+    {
+        public MobType type = MobType.Vob;
+
+        //Vob:
+        public string visual = "ITFO_APPLE.3DS";
+        public bool cdDyn = true;
+        public bool cdStatic = true;
+
+        //Mob:
+        public string focusName = "";
+
+        //MobInter:
+        public string onTriggerFunc = "";
+        public string onTriggerClientFunc = "";
+        public string useWithItem = "";
+
+        //MobFire:
+        public string fireVobTreeName = "";
+
+        internal override void Write(BinaryWriter bw)
+        {
+            bw.Write(ID);
+            bw.Write((byte)type);
+            bw.Write(visual);
+            bw.Write(cdDyn);
+            bw.Write(cdStatic);
+            bw.Write(focusName);
+            bw.Write(onTriggerClientFunc);
+            bw.Write(fireVobTreeName);
+        }
+
+        #region Constructors
+
+        public MobInstance(string instanceName)
+            : base(instanceName)
+        {
+        }
+
+        public MobInstance(ushort ID, string instanceName)
+            : base(ID, instanceName)
+        {
+        }
+
+        #endregion
+
+        public static InstanceManager<MobInstance> Table = new InstanceManager<MobInstance>();
+    }
+}

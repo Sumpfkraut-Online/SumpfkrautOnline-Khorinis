@@ -32,13 +32,12 @@ namespace GUC.Client.WorldObjects
 
         public void SetProperties(NPC npc)
         {
-            npc.name = name;
-            npc.Visual = visual;
-            npc.SetBodyVisuals(bodyMesh, bodyTex, headMesh, headTex);
-            npc.bodyHeight = bodyHeight;
-            npc.bodyWidth = bodyWidth;
-            npc.fatness = fatness;
-            npc.voice = voice;
+            npc.Name = name;
+            npc.SetBodyVisuals(bodyTex, headMesh, headTex);
+            npc.BodyHeight = bodyHeight;
+            npc.BodyWidth = bodyWidth;
+            npc.Fatness = fatness;
+            npc.Voice = voice;
         }
         internal override void Read(BinaryReader br)
         {

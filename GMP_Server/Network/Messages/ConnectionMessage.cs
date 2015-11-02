@@ -22,12 +22,15 @@ namespace GUC.Server.Network.Messages
             byte[] itemTableHash = new byte[16];
             stream.Read(itemTableHash, 16);
 
-            client.CheckValidity(driveString, macString, npcTableHash, itemTableHash);
+            byte[] mobTableHash = new byte[16];
+            stream.Read(mobTableHash, 16);
+
+            client.CheckValidity(driveString, macString, npcTableHash, itemTableHash, mobTableHash);
         }
 
         public static void WriteInstanceTables(Client client)
         {
-            if (client.instanceNPCNeeded || client.instanceItemNeeded)
+            if (client.instanceNPCNeeded || client.instanceItemNeeded || client.instanceMobNeeded)
             {
                 BitStream stream = Program.server.SetupStream(NetworkID.ConnectionMessage);
 
@@ -47,6 +50,17 @@ namespace GUC.Server.Network.Messages
                     stream.Write1();
                     stream.mWrite(ItemInstance.Table.data.Length);
                     stream.Write(ItemInstance.Table.data, (uint)ItemInstance.Table.data.Length);
+                }
+                else
+                {
+                    stream.Write0();
+                }
+
+                if (client.instanceMobNeeded)
+                {
+                    stream.Write1();
+                    stream.mWrite(MobInstance.Table.data.Length);
+                    stream.Write(MobInstance.Table.data, (uint)MobInstance.Table.data.Length);
                 }
                 else
                 {

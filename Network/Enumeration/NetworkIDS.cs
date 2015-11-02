@@ -41,9 +41,9 @@ namespace GUC.Enumeration
         NPCFoodMessage,
 
         NPCStateMessage,
+        NPCTargetStateMessage,
         NPCWeaponStateMessage,
-
-        NPCAttackMessage,
+        
         NPCHitMessage,
 
         //instances

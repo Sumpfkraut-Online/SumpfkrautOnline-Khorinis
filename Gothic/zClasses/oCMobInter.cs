@@ -60,13 +60,11 @@ namespace Gothic.zClasses
         {
         }
 
-        public static oCMobInter Create(Process process)
+        public new static oCMobInter Create(Process process)
         {
-            IntPtr ptr = process.Alloc(0x234);
-            zCClassDef.ObjectCreated(process, ptr.ToInt32(), 0x00AB19A0);//0x00AB1518) => MobDoor;
-            process.THISCALL<NullReturnCall>((uint)ptr.ToInt32(), (uint)0x0071D010, new CallValue[] { });
-
-            return new oCMobInter(process, ptr.ToInt32());
+            int address = process.CDECLCALL<IntArg>(0x7187E0, null); //_CreateInstance()
+            process.THISCALL<NullReturnCall>((uint)address, 0x71D010, null); //Konstruktor...
+            return new oCMobInter(process, address);
         }
 
         public int State

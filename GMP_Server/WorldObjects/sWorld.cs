@@ -24,7 +24,7 @@ namespace GUC.Server.WorldObjects
         public static Dictionary<uint, Item> ItemDict = new Dictionary<uint, Item>();
 
         /// <summary>All Vobs & Mobs. Use only for access!</summary>
-        public static Dictionary<uint, Vob> VobDict = new Dictionary<uint, Vob>();
+        public static Dictionary<uint, Mob> VobDict = new Dictionary<uint, Mob>();
 
         internal static void AddVob(AbstractVob vob)
         {
@@ -39,9 +39,9 @@ namespace GUC.Server.WorldObjects
             {
                 ItemDict.Add(vob.ID, (Item)vob);
             }
-            else if (vob is Vob)
+            else if (vob is Mob)
             {
-                VobDict.Add(vob.ID, (Vob)vob);
+                VobDict.Add(vob.ID, (Mob)vob);
             }
             else
             {
@@ -62,7 +62,7 @@ namespace GUC.Server.WorldObjects
             {
                 ItemDict.Remove(vob.ID);
             }
-            else if (vob is Vob)
+            else if (vob is Mob)
             {
                 VobDict.Remove(vob.ID);
             }

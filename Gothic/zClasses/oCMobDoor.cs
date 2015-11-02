@@ -36,11 +36,9 @@ namespace Gothic.zClasses
 
         public static oCMobDoor Create(Process process)
         {
-            IntPtr ptr = process.Alloc(0x274);
-            zCClassDef.ObjectCreated(process, ptr.ToInt32(), 0x00AB1518);
-            process.THISCALL<NullReturnCall>((uint)ptr.ToInt32(), (uint)0x0071D010, new CallValue[] { });
-
-            return new oCMobDoor(process, ptr.ToInt32());
+            int address = process.CDECLCALL<IntArg>(0x71A250, null); //_CreateInstance()
+            process.THISCALL<NullReturnCall>((uint)address, 0x7269B0, null); //Konstruktor...
+            return new oCMobDoor(process, address);
         }
     }
 }

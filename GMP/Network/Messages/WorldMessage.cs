@@ -15,20 +15,58 @@ namespace GUC.Client.Network.Messages
     {
         public static void ReadVobSpawn(BitStream stream)
         {
-            Vob vob = new Vob(stream.mReadUInt());
-            vob.Visual = stream.mReadString();
+            uint ID = stream.mReadUInt();
+            ushort instID = stream.mReadUShort();
             Vec3f pos = stream.mReadVec();
             Vec3f dir = stream.mReadVec();
-            vob.CDDyn = stream.ReadBit();
-            vob.CDStatic = stream.ReadBit();
+            bool drop = stream.mReadBool();
 
-            vob.Spawn(pos, dir, stream.ReadBit());
+            MobInstance instance = MobInstance.Table.Get(instID);
+            if (instance != null)
+            {
+                Vob vob = null;
+                switch (instance.type)
+                {
+                    case MobType.Vob:
+                        vob = new Vob(ID, instID);
+                        break;
+                    case MobType.Mob:
+                        vob = new Mob(ID, instID);
+                        break;
+                    case MobType.MobInter:
+                        vob = new MobInter(ID, instID);
+                        break;
+                    case MobType.MobFire:
+                        vob = new MobFire(ID, instID);
+                        break;
+                    case MobType.MobLadder:
+                        vob = new MobLadder(ID, instID);
+                        break;
+                    case MobType.MobSwitch:
+                        vob = new MobSwitch(ID, instID);
+                        break;
+                    case MobType.MobWheel:
+                        vob = new MobWheel(ID, instID);
+                        break;
+                    case MobType.MobContainer:
+                        vob = new Mob(ID, instID);
+                        break;
+                    case MobType.MobDoor:
+                        vob = new MobDoor(ID, instID);
+                        break;
+                }
+
+                if (vob != null)
+                {
+                    vob.Spawn(pos, dir, drop);
+                }
+            }
         }
 
         public static void ReadVobDelete(BitStream stream)
         {
             uint id = stream.mReadUInt();
-            Vob vob = World.GetVobByID(id);
+            AbstractVob vob = World.GetVobByID(id);
             if (vob != null)
             {
                 vob.Despawn();
@@ -37,16 +75,12 @@ namespace GUC.Client.Network.Messages
 
         public static void ReadNPCSpawn(BitStream stream)
         {
-            
             uint ID = stream.mReadUInt();
             ushort instID = stream.mReadUShort();
-
             
-
             NPC npc;
             if (ID == Player.ID)
             {
-                
                 npc = new NPC(ID, instID, oCNpc.Player(Program.Process));
                 Player.Hero = npc;
             }
@@ -54,7 +88,6 @@ namespace GUC.Client.Network.Messages
             {
                 npc = new NPC(ID, instID);
             }
-
             
             npc.Position = stream.mReadVec();
             npc.Direction = stream.mReadVec();
@@ -64,23 +97,23 @@ namespace GUC.Client.Network.Messages
                 byte BodyTex = stream.mReadByte();
                 byte HeadMesh = stream.mReadByte();
                 byte HeadTex = stream.mReadByte();
-                npc.voice = stream.mReadByte();
+                npc.Voice = stream.mReadByte();
 
-                npc.SetBodyVisuals(npc.instance.bodyMesh, BodyTex, ((Enumeration.HumHeadMesh)HeadMesh).ToString(), HeadTex);
+                npc.SetBodyVisuals(BodyTex, ((HumHeadMesh)HeadMesh).ToString(), HeadTex);
             }
 
-            npc.bodyHeight = (float)stream.mReadByte() / 100.0f;
-            npc.bodyWidth = (float)stream.mReadByte() / 100.0f;
-            npc.fatness = (float)stream.mReadShort() / 100.0f;
+            npc.BodyHeight = (float)stream.mReadByte() / 100.0f;
+            npc.BodyWidth = (float)stream.mReadByte() / 100.0f;
+            npc.Fatness = (float)stream.mReadShort() / 100.0f;
             
             string customName = stream.mReadString();
             if (customName.Length > 0)
             {
-                npc.name = customName;
+                npc.Name = customName;
             }
 
-            npc.gNpc.HPMax = stream.mReadUShort();
-            npc.gNpc.HP = stream.mReadUShort();
+            npc.HPMax = stream.mReadUShort();
+            npc.HP = stream.mReadUShort();
 
             npc.Spawn();
         }

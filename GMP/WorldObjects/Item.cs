@@ -10,7 +10,7 @@ using GUC.Types;
 
 namespace GUC.Client.WorldObjects
 {
-    class Item : Vob
+    class Item : AbstractVob
     {
         protected ushort condition;
         public ushort Condition
@@ -71,7 +71,7 @@ namespace GUC.Client.WorldObjects
             }
         }
 
-        public override string Visual { get { return instance.visual; } }
+        public string Visual { get { return instance.visual; } }
         public String visualChange { get { return instance.visualChange; } }
         public String effect { get { return instance.effect; } }
 
@@ -189,7 +189,6 @@ namespace GUC.Client.WorldObjects
 
         protected override void CreateVob(bool createNew)
         {
-            
             if (createNew)
             {
                 gVob = oCItem.Create(Program.Process);

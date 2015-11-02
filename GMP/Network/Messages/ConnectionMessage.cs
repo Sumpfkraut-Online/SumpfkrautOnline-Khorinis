@@ -97,6 +97,18 @@ namespace GUC.Client.Network.Messages
 
                 ItemInstance.Table.WriteFile();
             }
+
+            if (stream.ReadBit())
+            {
+                int len = stream.mReadInt(); // length of packed data
+
+                byte[] data = new byte[len];
+                stream.Read(data, (uint)len);
+
+                MobInstance.Table.ReadData(data);
+
+                MobInstance.Table.WriteFile();
+            }
         }
     }
 }
