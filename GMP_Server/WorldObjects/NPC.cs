@@ -276,8 +276,8 @@ namespace GUC.Server.WorldObjects
                 item.SpecialLine = "Geschmiedet von Malak Akbar.";
                 item.Spawn(client.character.World, new Types.Vec3f(200, 0, 200), new Types.Vec3f(0, 0, 1));
 
-                NPC scav = NPC.Create("scavenger");
-                scav.Spawn(client.character.World);
+                //NPC scav = NPC.Create("scavenger");
+                //scav.Spawn(client.character.World);
 
                 Mob mob = Mob.Create("forge");
                 mob.Spawn(client.character.World, new Types.Vec3f(-200, -100, 200), new Types.Vec3f(0, 0, 1));

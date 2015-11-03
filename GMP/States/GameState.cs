@@ -24,11 +24,13 @@ namespace GUC.Client.States
             { VirtualKeys.Escape, Menus.GUCMenus.Main.Open },
             { VirtualKeys.Tab, Menus.GUCMenus.Inventory.Open },
             { Menus.GUCMenus.Animation.Hotkey, Menus.GUCMenus.Animation.Open},
+            { Menus.GUCMenus.Trade.HotKey, Menus.GUCMenus.Trade.Open},
             { Menus.GUCMenus.Status.Hotkey, Menus.GUCMenus.Status.Open },
             { VirtualKeys.OEM5, Player.DoFists }, //^
              { VirtualKeys.F1, RenderTest },
              { VirtualKeys.F2, RenderTest2 },
-              { VirtualKeys.F3, RenderTest3 }
+              { VirtualKeys.F3, RenderTest3 },
+              { VirtualKeys.F4, DoTradeRequest }
 
             /*
             { Ingame.Chat.GetChat().ActivationKey, Ingame.Chat.GetChat().Open },
@@ -37,6 +39,16 @@ namespace GUC.Client.States
             { Ingame.AnimationMenu.GetMenu().ActivationKey, Ingame.AnimationMenu.GetMenu().Open }*/
         };
         public override Dictionary<VirtualKeys, Action> Shortcuts { get { return shortcuts; } }
+
+        public static void DoTradeRequest()
+        {
+           oCNpc ocnpc = Player.Hero.gNpc.GetFocusNpc();
+           AbstractVob vob;
+           World.vobAddr.TryGetValue(ocnpc.Address, out vob);
+           NPC npc = (NPC)vob;
+           TradeMessage.SendRequest(npc.ID);
+           zERROR.GetZErr(Program.Process).Report(2, 'G', "Send TradeRequest to NPC ID " + npc.ID.ToString(), 0, "GameState.cs", 0);
+        }
 
         static oCNpc npc;
         static double fvel = 0;
@@ -76,7 +88,6 @@ namespace GUC.Client.States
             npc.SetPositionWorld(newPos.Data);
             npc.TrafoObjToWorld.setPosition(newPos.Data);*/
         }
-
         static Random rand = new Random();
         static oCMsgMovement msg = null;
         public static void RenderTest2()

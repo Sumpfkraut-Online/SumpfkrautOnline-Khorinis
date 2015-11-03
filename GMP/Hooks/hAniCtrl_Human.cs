@@ -16,7 +16,7 @@ namespace GUC.Client.Hooks
         {
             try
             {
-                zERROR.GetZErr(Program.Process).Report(2, 'G',"_Forward", 0, "hAniCtrl_Human.cs", 0);
+                //zERROR.GetZErr(Program.Process).Report(2, 'G',"_Forward", 0, "hAniCtrl_Human.cs", 0);
 
                 if (Player.Hero == null)
                     return 0;
