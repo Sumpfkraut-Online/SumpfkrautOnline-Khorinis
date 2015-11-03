@@ -138,10 +138,12 @@
     <Compile Include="Menus\MainMenus\HelpRPMenu.cs" />
     <Compile Include="Menus\MainMenus\RegisterMenu.cs" />
     <Compile Include="Menus\StatusMenu.cs" />
+    <Compile Include="Menus\TradeMenu.cs" />
     <Compile Include="Network\Messages\ControlMessage.cs" />
     <Compile Include="Network\Messages\InventoryMessage.cs" />
     <Compile Include="Network\Messages\NPCMessage.cs" />
     <Compile Include="Network\Messages\PlayerMessage.cs" />
+    <Compile Include="Network\Messages\TradeMessage.cs" />
     <Compile Include="Network\Messages\VobMessage.cs" />
     <Compile Include="Network\Messages\WorldMessage.cs" />
     <Compile Include="States\AbstractState.cs" />

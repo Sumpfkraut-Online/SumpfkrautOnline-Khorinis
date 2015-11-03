@@ -17,16 +17,19 @@ namespace GUC.Client.GUI
 
         class Slot : GUCView
         {
-            GUCVisual back;
+            public GUCVisual back;
             GUCVisualVob vis;
             GUCVisualText amount;
             oCItem thisVob;
             bool shown = false;
 
+            public static string bgTex = "Inv_Slot.tga";
+            public static string bgHighlightedTex = "Inv_Slot_Highlighted.tga";
+
             public Slot(int x, int y)
             {
                 back = new GUCVisual(x, y, slotSize, slotSize);
-                back.SetBackTexture("Inv_Slot.tga");
+                back.SetBackTexture(bgTex);
 
                 vis = new GUCVisualVob(x, y, slotSize, slotSize);
                 thisVob = oCItem.Create(Program.Process);
@@ -61,13 +64,13 @@ namespace GUC.Client.GUI
 
             public void Select()
             {
-                back.SetBackTexture("Inv_Slot_Highlighted.tga");
+                back.SetBackTexture(bgHighlightedTex);
                 Program.Process.Write(110, thisVob.Address + (int)oCItem.Offsets.inv_zbias);
             }
 
             public void Deselect()
             {
-                back.SetBackTexture("Inv_Slot.tga");
+                back.SetBackTexture(bgTex);
                 Program.Process.Write(0, thisVob.Address + (int)oCItem.Offsets.inv_zbias);
             }
 
@@ -108,6 +111,9 @@ namespace GUC.Client.GUI
         GUCVisual descrBack;
         GUCVisualVob descrVis;
         oCItem descrVob;
+
+        public GUCInventory left;
+        public GUCInventory right;
 
         bool enabled = false;
         public bool Enabled
@@ -190,24 +196,35 @@ namespace GUC.Client.GUI
 
         public void SetCursor(int x, int y)
         {
+            zERROR.GetZErr(Program.Process).Report(2, 'G', "Attempt to Set Cursor at " + x.ToString() + "/" + y.ToString() + " in " + this.ToString(), 0, "GUCInventory.cs", 0);
             if (enabled)
             {
                 slots[cursor.X, cursor.Y].Deselect();
             }
-
 
             int newX = x;
             int newY = y;
 
             if (newX < 0)
             {
-                //if left != null
+                if (left != null)
+                {
+                    left.EnterAt(left.slots.GetLength(0) - 1, y);
+                    left.Enabled = true;
+                    this.Enabled = false;
+                }
                 newX = 0;
             }
-            else if (newX >= slots.GetLength(0))
+            else if (newX >= slots.GetLength(0) || (cursor.Y - newY == 0 && slots[newX, newY].item == null)) // moved to border or empty slot(make sure it was move in X)
             {
-                //if right != null
+                if (right != null)
+                {
+                    right.EnterAt(0, y);
+                    right.Enabled = true;
+                    this.Enabled = false;
+                }
                 newX = slots.GetLength(0) - 1;
+
             }
 
             if (contents.Count > 0)
@@ -256,7 +273,37 @@ namespace GUC.Client.GUI
             cursor.Y = newY;
 
             UpdateSlots();
+            if (enabled)
+            {
+                SelectSlot();
+            }
+        }
 
+        public void EnterAt(int x, int y)
+        {
+            zERROR.GetZErr(Program.Process).Report(2, 'G', "EnterAT " + x.ToString() + "/" + y.ToString(), 0, "GUCInventory.cs", 0);
+            // checks if the entered position is valid
+            // sets cursor to the next valid position
+            for (int X = x; X >= 0; --X)
+            {
+                for (int Y = y; Y >= 0; --Y)
+                {
+                    if (X < slots.GetLength(0) && Y < slots.GetLength(1))
+                    {
+                        if (slots[X, Y].item != null)
+                        {
+                            zERROR.GetZErr(Program.Process).Report(2, 'G', "Slot available at " + X.ToString() + "/" + Y.ToString(), 0, "GUCInventory.cs", 0);
+                            cursor.X = X;
+                            cursor.Y = Y;
+                            SelectSlot();
+                            return;
+                        }
+                    }
+                }
+            }
+            zERROR.GetZErr(Program.Process).Report(2, 'G', "Set default Slot", 0, "GUCInventory.cs", 0);
+            cursor.X = 0;
+            cursor.Y = 0;
             SelectSlot();
         }
 
@@ -369,6 +416,32 @@ namespace GUC.Client.GUI
                     return String.Format("{0}/{1}", weight, 100); //FIXME: Show capacity
                 default:
                     return text;
+            }
+        }
+
+        public void SetAcceptStateColor(bool set)
+        {
+            // set == true -> set bg to accept state
+            // set == false -> sets bg to normal state
+            if (set)
+            {
+                Slot.bgTex = "Book_MayaGlyph_L.tga";
+                Slot.bgHighlightedTex = "Book_MayaRead_L.tga";
+            }
+            else
+            {
+                Slot.bgTex = "Inv_Slot.tga";
+                Slot.bgHighlightedTex = "Inv_Slot_Highlighted.tga";
+            }
+
+            int cols = slots.GetLength(0);
+            int rows = slots.GetLength(1);
+            for (int i = 0; i < cols; i++)
+            {
+                for (int j = 0; j < rows; j++)
+                {
+                    slots[i, j].back.SetBackTexture(Slot.bgTex);
+                }
             }
         }
 

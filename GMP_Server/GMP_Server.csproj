@@ -124,7 +124,9 @@
     <Compile Include="..\Network\Types\Zip.cs">
       <Link>Types\Zip.cs</Link>
     </Compile>
+    <Compile Include="Interface\Trade.cs" />
     <Compile Include="Network\Client.cs" />
+    <Compile Include="Network\Messages\TradeMessage.cs" />
     <Compile Include="Network\SmallCell.cs" />
     <Compile Include="Network\Messages\AccountMessage.cs" />
     <Compile Include="Network\Messages\ConnectionMessage.cs" />
