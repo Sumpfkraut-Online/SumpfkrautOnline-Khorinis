@@ -65,6 +65,8 @@ namespace GUC.Server.Network
 
             MessageListener.Add((byte)NetworkID.InventoryDropItemMessage, InventoryMessage.ReadDropItem);
             MessageListener.Add((byte)NetworkID.InventoryUseItemMessage, InventoryMessage.ReadUseItem);
+
+            MessageListener.Add((byte)NetworkID.TradeMessage, TradeMessage.Read);
         }
 
         /**
