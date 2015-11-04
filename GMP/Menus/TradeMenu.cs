@@ -171,8 +171,10 @@ namespace GUC.Client.Menus
             // trader cancelled trading
             itemsBuy.Clear();
             buyInv.SetContents(itemsBuy);
+            buyInv.SetAcceptStateColor(false);
             itemsSell.Clear();
             sellInv.SetContents(itemsSell);
+            sellInv.SetAcceptStateColor(false);
             Close();
         }
 

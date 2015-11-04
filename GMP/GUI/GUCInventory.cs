@@ -23,8 +23,8 @@ namespace GUC.Client.GUI
             oCItem thisVob;
             bool shown = false;
 
-            public static string bgTex = "Inv_Slot.tga";
-            public static string bgHighlightedTex = "Inv_Slot_Highlighted.tga";
+            public string bgTex = "Inv_Slot.tga";
+            public string bgHighlightedTex = "Inv_Slot_Highlighted.tga";
 
             public Slot(int x, int y)
             {
@@ -423,16 +423,6 @@ namespace GUC.Client.GUI
         {
             // set == true -> set bg to accept state
             // set == false -> sets bg to normal state
-            if (set)
-            {
-                Slot.bgTex = "Book_MayaGlyph_L.tga";
-                Slot.bgHighlightedTex = "Book_MayaRead_L.tga";
-            }
-            else
-            {
-                Slot.bgTex = "Inv_Slot.tga";
-                Slot.bgHighlightedTex = "Inv_Slot_Highlighted.tga";
-            }
 
             int cols = slots.GetLength(0);
             int rows = slots.GetLength(1);
@@ -440,7 +430,18 @@ namespace GUC.Client.GUI
             {
                 for (int j = 0; j < rows; j++)
                 {
-                    slots[i, j].back.SetBackTexture(Slot.bgTex);
+
+                    if (set)
+                    {
+                        slots[i, j].bgTex = "Book_MayaGlyph_L.tga";
+                        slots[i, j].bgHighlightedTex = "Book_MayaRead_L.tga";
+                    }
+                    else
+                    {
+                        slots[i, j].bgTex = "Inv_Slot.tga";
+                        slots[i, j].bgHighlightedTex = "Inv_Slot_Highlighted.tga";
+                    }
+                    slots[i, j].back.SetBackTexture(slots[i, j].bgTex);
                 }
             }
         }
