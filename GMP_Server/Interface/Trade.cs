@@ -104,6 +104,8 @@ namespace GUC.Server.Interface
             // no request so far -> create new request
             Request request = new Request(requester, target);
             requests.Add(request);
+
+            TradeMessage.SendRequest(requester, target);
         }
 
         public void OnBreakMessage(NPC sender)
@@ -165,6 +167,16 @@ namespace GUC.Server.Interface
                 {
                     Log.Logger.log("both accepted the trade");
                     // trade has been accepted by both players
+                    for(int j = 0; j < tradings[i].list1.Count; j++)
+                    {
+                        tradings[i].pl2.AddItem(tradings[i].list1[j]);
+                    }
+                    for (int j = 0; j < tradings[i].list2.Count; j++)
+                    {
+                        tradings[i].pl1.AddItem(tradings[i].list2[j]);
+                    }
+                    TradeMessage.SendTradeDone(tradings[i].pl1, tradings[i].pl2);
+                    tradings.Remove(tradings[i]);
                 }
             }
         }

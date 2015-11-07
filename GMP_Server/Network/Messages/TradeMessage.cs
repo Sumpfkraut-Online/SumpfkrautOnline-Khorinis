@@ -89,12 +89,28 @@ namespace GUC.Server.Network.Messages
         {
             BitStream stream = Program.server.SetupStream(NetworkID.TradeMessage);
             stream.mWrite((byte)TradeStatus.Accept);
-            stream.mWrite(pl1.ID);
+            stream.mWrite(pl2.ID);
             Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I', pl1.client.guid, false);
 
             stream = Program.server.SetupStream(NetworkID.TradeMessage);
             stream.mWrite((byte)TradeStatus.Accept);
-            stream.mWrite(pl2.ID);
+            stream.mWrite(pl1.ID);
+            Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I', pl2.client.guid, false);
+        }
+
+        public static void SendRequest(NPC from, NPC to)
+        {
+            BitStream stream = Program.server.SetupStream(NetworkID.TradeMessage);
+            stream.mWrite((byte)TradeStatus.Request);
+            stream.mWrite(from.ID);
+            Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I', to.client.guid, false);
+        }
+
+        public static void SendTradeDone(NPC pl1, NPC pl2)
+        {
+            BitStream stream = Program.server.SetupStream(NetworkID.TradeMessage);
+            stream.mWrite((byte)TradeStatus.TradeDone);
+            Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I', pl1.client.guid, false);
             Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I', pl2.client.guid, false);
         }
 

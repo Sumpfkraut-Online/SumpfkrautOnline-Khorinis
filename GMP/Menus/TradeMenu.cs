@@ -16,6 +16,7 @@ using Gothic.zClasses;
 using RakNet;
 
 
+
 namespace GUC.Client.Menus
 {
     class TradeMenu : GUCMenu
@@ -31,7 +32,7 @@ namespace GUC.Client.Menus
             return trade;
         }
 
-        public VirtualKeys HotKey = VirtualKeys.T;
+        public VirtualKeys RequestTradeKey = VirtualKeys.T;
         public VirtualKeys AcceptTradeKey = VirtualKeys.T;
 
         GUCInventory inv;
@@ -42,6 +43,8 @@ namespace GUC.Client.Menus
         Dictionary<uint, Item> itemsBuy;
         Dictionary<uint, Item> itemsSell;
 
+        public Dictionary<uint, TradeRequest> requests;
+
         bool confirmed = false;
         bool otherConfirmed = false;
 
@@ -50,9 +53,12 @@ namespace GUC.Client.Menus
             itemsBuy = new Dictionary<uint, Item>();
             itemsSell = new Dictionary<uint, Item>();
 
-            buyInv = new GUCInventory(80, 200, 2, 3); //, "Inv_Back_Sell.tga"); 
-            sellInv = new GUCInventory(290, 200, 2, 3); //, "Inv_Back_Sell.tga"); 
-            inv = new GUCInventory(500, 200, 4, 3); //, "Inv_Back.tga");
+            buyInv = new GUCInventory(80, 200, 2, 3, "Inv_Back_Sell.tga");
+            sellInv = new GUCInventory(290, 200, 2, 3, "Inv_Back_Sell.tga");
+            inv = new GUCInventory(500, 200, 4, 3, "Inv_Back.tga");
+
+            sellInv.RightInfoBox = "";
+            buyInv.RightInfoBox = "";
 
             sellInv.SetContents(itemsSell);
             buyInv.SetContents(itemsBuy);
@@ -61,6 +67,8 @@ namespace GUC.Client.Menus
             sellInv.right = inv;
             sellInv.left = buyInv;
             buyInv.right = sellInv;
+
+            requests = new Dictionary<uint, TradeRequest>();
         }
 
         public override void KeyPressed(VirtualKeys key)
@@ -129,9 +137,15 @@ namespace GUC.Client.Menus
 
         public override void Close()
         {
-            buyInv.Hide();
-            sellInv.Hide();
             inv.Hide();
+            itemsBuy.Clear();
+            buyInv.Hide();
+            buyInv.SetContents(itemsBuy);
+            buyInv.SetAcceptStateColor(false);
+            itemsSell.Clear();
+            sellInv.Hide();
+            sellInv.SetContents(itemsSell);
+            sellInv.SetAcceptStateColor(false);
             base.Close();
         }
 
@@ -155,12 +169,19 @@ namespace GUC.Client.Menus
 
         public void TradeRequested(NPC trader)
         {
+            requests.Add(trader.ID, new TradeRequest(DateTime.Now.Ticks, true));
             // eine anfrage zum Handel hat stattgefunden
+            ShortMsg(trader.Name.ToString() + " möchte mit dir handeln");
+            zERROR.GetZErr(Program.Process).Report(2, 'G', "Listed Requests:", 0, "GUCInventory.cs", 0);
+            foreach (KeyValuePair<uint, TradeRequest> requestPair in requests)
+            {
+                zERROR.GetZErr(Program.Process).Report(2, 'G', "ID= " + requestPair.Key.ToString() + " | received= " + requestPair.Value.Received.ToString(), 0, "GUCInventory.cs", 0);
+            }
         }
 
         public void TradeAccepted(NPC trader)
         {
-            // init any suff that the trade has been accepted
+            // Anfrage akzeptiert -> Handel beginnt
             Open();
             sellInv.LeftInfoBox = Player.Hero.Name;
             buyInv.LeftInfoBox = trader.Name;
@@ -168,13 +189,15 @@ namespace GUC.Client.Menus
 
         public void TradeCancelled()
         {
-            // trader cancelled trading
-            itemsBuy.Clear();
-            buyInv.SetContents(itemsBuy);
-            buyInv.SetAcceptStateColor(false);
-            itemsSell.Clear();
-            sellInv.SetContents(itemsSell);
-            sellInv.SetAcceptStateColor(false);
+            // Handel abgebrochen
+            ShortMsg("Der Handel wurde abgebrochen");
+            Close();
+        }
+
+        public void TradeDone()
+        {
+            // Handel erfolgreich beendet
+            ShortMsg("Der Handel war erfolgreich");
             Close();
         }
 
@@ -219,5 +242,75 @@ namespace GUC.Client.Menus
                 buyInv.SetContents(itemsBuy);
             }
         }
+
+        public void RequestTrade()
+        {
+            zERROR.GetZErr(Program.Process).Report(2, 'G', "Listed Requests:", 0, "GUCInventory.cs", 0);
+            foreach(KeyValuePair<uint,TradeRequest> requestPair in requests)
+            {
+                zERROR.GetZErr(Program.Process).Report(2, 'G', "ID= "+requestPair.Key.ToString()+" | received= "+requestPair.Value.Received.ToString(), 0, "GUCInventory.cs", 0);
+            }
+            oCNpc ocnpc = Player.Hero.gNpc.GetFocusNpc();
+            AbstractVob vob;
+            World.vobAddr.TryGetValue(ocnpc.Address, out vob);
+            NPC npc = (NPC)vob;
+            if (npc != null)
+            {
+                if(!requests.ContainsKey(npc.ID))
+                {
+                    TradeMessage.SendRequest(npc.ID);
+                    ShortMsg("Handelsanfrage an " + npc.Name);
+                    zERROR.GetZErr(Program.Process).Report(2, 'G', "Erstelle Anfrage an ID= "+npc.ID.ToString(), 0, "GUCInventory.cs", 0);
+                    requests.Add(npc.ID, new TradeRequest(DateTime.Now.Ticks, false)); // delay: + 300000000
+                    
+                }
+                else if (requests[npc.ID].Received)
+                {
+                    zERROR.GetZErr(Program.Process).Report(2, 'G', "Erhaltene Anfrage bestätigen! ", 0, "GUCInventory.cs", 0);
+                    TradeMessage.SendRequest(npc.ID);
+                }
+                else if(requests[npc.ID].Time < DateTime.Now.Ticks)
+                {
+                    TradeMessage.SendRequest(npc.ID);
+                    ShortMsg("Handelsanfrage an " + npc.Name);
+                    requests[npc.ID].Time = DateTime.Now.Ticks + 0; // 30s
+                    zERROR.GetZErr(Program.Process).Report(2, 'G', "Eine abgelaufener Request wird erneuert", 0, "GUCInventory.cs", 0);
+                }
+            }
+        }
+
+        public void ShortMsg(string text)
+        {
+            zCView.Printwin(Program.Process, text);
+        }
+    }
+
+    class TradeRequest
+    {
+        // this class is only for showing up the right ingame messages 
+        public long Time;
+        
+        bool received;
+        public bool Received
+        {
+            get
+            {
+                return received;
+            }
+            set
+            {
+                zERROR.GetZErr(Program.Process).Report(2, 'G', "setted request to "+value.ToString(), 0, "GUCInventory.cs", 0);
+                received = value;
+            }
+        }
+
+
+        public TradeRequest(long time, bool received)
+        {
+            Time = time;
+            Received = received;
+            zERROR.GetZErr(Program.Process).Report(2, 'G', "created request with "+received.ToString(), 0, "GUCInventory.cs", 0);
+        }
+
     }
 }

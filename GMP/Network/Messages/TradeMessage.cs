@@ -65,7 +65,6 @@ namespace GUC.Client.Network.Messages
             {
                 case TradeStatus.Request:
                     if (npc == null) return;
-                    zERROR.GetZErr(Program.Process).Report(2, 'G', "NPC request by " + npc.ID.ToString(), 0, "GameState.cs", 0);
                     trade.TradeRequested(npc);
                     break;
                 case TradeStatus.Accept:
@@ -80,6 +79,9 @@ namespace GUC.Client.Network.Messages
                     break;
                 case TradeStatus.DeclineOffer:
                     trade.OtherDeclinedOffer();
+                    break;
+                case TradeStatus.TradeDone:
+                    trade.TradeDone();
                     break;
                 case TradeStatus.SelfOfferItem:
                     trade.ChangeItem(item, true, true);

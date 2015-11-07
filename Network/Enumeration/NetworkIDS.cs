@@ -71,6 +71,7 @@ namespace GUC.Enumeration
         Break,
         ConfirmOffer,
         DeclineOffer,
+        TradeDone,
         SelfOfferItem,
         SelfRemoveItem,
         OtherOfferItem,

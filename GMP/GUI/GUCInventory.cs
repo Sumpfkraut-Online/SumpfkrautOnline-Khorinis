@@ -23,8 +23,8 @@ namespace GUC.Client.GUI
             oCItem thisVob;
             bool shown = false;
 
-            public string bgTex = "Inv_Slot.tga";
-            public string bgHighlightedTex = "Inv_Slot_Highlighted.tga";
+            string bgTex = "Inv_Slot.tga";
+            string bgHighlightedTex = "Inv_Slot_Highlighted.tga";
 
             public Slot(int x, int y)
             {
@@ -114,6 +114,7 @@ namespace GUC.Client.GUI
 
         public GUCInventory left;
         public GUCInventory right;
+        bool TradeAccepted = false; // AcceptedTradeBackgrounds shall not be unshown
 
         bool enabled = false;
         public bool Enabled
@@ -126,12 +127,16 @@ namespace GUC.Client.GUI
                 {
                     SelectSlot();
                     back.Show();
+                    //zERROR.GetZErr(Program.Process).Report(2, 'G', "Inventory enabled in " + name, 0, "GUCInventory.cs", 0);
                     this.Show(); //to the front!
                 }
                 else
                 {
                     slots[cursor.X, cursor.Y].Deselect();
-                    back.Hide();
+                    if (!TradeAccepted)
+                    {
+                        back.Hide();
+                    }
                     descrBack.Hide();
                     descrVis.Hide();
                 }
@@ -394,7 +399,10 @@ namespace GUC.Client.GUI
             contents = items.Values.ToList();
             contents.Sort(inventoryComparer); //sort items
 
-            SetCursor(cursor.X, cursor.Y); //update cursor
+            if (enabled)
+            {
+                SetCursor(cursor.X, cursor.Y); //update cursor // Mad: only if enabled
+            }
 
             UpdateSlots(); // update slot visuals
 
@@ -423,27 +431,26 @@ namespace GUC.Client.GUI
         {
             // set == true -> set bg to accept state
             // set == false -> sets bg to normal state
-
-            int cols = slots.GetLength(0);
-            int rows = slots.GetLength(1);
-            for (int i = 0; i < cols; i++)
+            if(set)
             {
-                for (int j = 0; j < rows; j++)
+                TradeAccepted = true;
+                back.SetBackTexture("Inv_Back_Buy.tga");
+                leftBack.SetBackTexture("Inv_Back_Buy.tga");
+                rightBack.SetBackTexture("Inv_Back_Buy.tga");
+                back.Show();
+            }
+            else
+            {
+                TradeAccepted = false;
+                back.SetBackTexture("Inv_Back_Sell.tga");
+                leftBack.SetBackTexture("Inv_Back_Sell.tga");
+                rightBack.SetBackTexture("Inv_Back_Sell.tga");
+                if(!enabled)
                 {
-
-                    if (set)
-                    {
-                        slots[i, j].bgTex = "Book_MayaGlyph_L.tga";
-                        slots[i, j].bgHighlightedTex = "Book_MayaRead_L.tga";
-                    }
-                    else
-                    {
-                        slots[i, j].bgTex = "Inv_Slot.tga";
-                        slots[i, j].bgHighlightedTex = "Inv_Slot_Highlighted.tga";
-                    }
-                    slots[i, j].back.SetBackTexture(slots[i, j].bgTex);
+                    back.Hide();
                 }
             }
+            
         }
 
         void UpdateSlots()
