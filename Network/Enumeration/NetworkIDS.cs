@@ -34,6 +34,10 @@ namespace GUC.Enumeration
         //vobs
         VobPosDirMessage,
 
+        //mobs
+        MobUseMessage,
+        MobUnUseMessage,
+
         //npcs
         NPCAniStartMessage,
         NPCAniStopMessage,

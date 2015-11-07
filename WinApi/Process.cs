@@ -314,7 +314,7 @@ namespace WinApi
             list.Add(0x68);//Parameter für LoadNetDllEx pushen
             list.AddRange(BitConverter.GetBytes(parameters.Address));
 
-            length = list.Count + 1 + 4 + 1 + 1 + /*oldFunc.Length + 1 + 4 +*/ 1;
+            length = list.Count + 1 + 4 + 1 + 1 + /*oldFunc.Length + 1 + 4 +*/ 1 + 5;
             IntPtr newASM = Alloc((uint)length);
             ////Funktion callen
             list.Add(0xE8);
@@ -324,11 +324,11 @@ namespace WinApi
             list.Add(0x61);//popad
 
             rValue.oldFuncInNewFunc = new IntPtr(newASM.ToInt32() + list.Count);
-            //Alten Code:
-            //list.AddRange(oldFunc);
 
-            //list.Add(0x68);
-            //list.AddRange(BitConverter.GetBytes(addr + size));
+            //Gespeichertes EAX ins Register schreiben
+            list.Add(0xA1);
+            list.AddRange(BitConverter.GetBytes(eaxPtr.ToInt32()));
+
             list.Add(0xC3);//RTN
 
 
@@ -417,7 +417,7 @@ namespace WinApi
             list.Add(0x68);//Parameter für LoadNetDllEx pushen
             list.AddRange(BitConverter.GetBytes(parameters.Address));
 
-            length = list.Count + 1 + 4 + 1 + 1 + oldFunc.Length + 1 + 4 + 1;
+            length = list.Count + 1 + 4 + 1 + 1 + oldFunc.Length + 1 + 4 + 1 + 5;
             IntPtr newASM = Alloc((uint)length);
             ////Funktion callen
             list.Add(0xE8);
@@ -425,6 +425,10 @@ namespace WinApi
 
             list.Add(0x59);//pop
             list.Add(0x61);//popad
+
+            //Gespeichertes EAX ins Register schreiben
+            list.Add(0xA1);
+            list.AddRange(BitConverter.GetBytes(eaxPtr.ToInt32()));
 
             rValue.oldFuncInNewFunc = new IntPtr(newASM.ToInt32() + list.Count);
             //Alten Code:

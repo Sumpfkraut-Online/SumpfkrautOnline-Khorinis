@@ -120,6 +120,7 @@
     <Compile Include="zClasses\zCWaypoint.cs" />
     <Compile Include="zClasses\zERROR.cs" />
     <Compile Include="zClasses\zFile.cs" />
+    <Compile Include="zStruct\oCMobMsg.cs" />
     <Compile Include="zStruct\oCMsgAttack.cs" />
     <Compile Include="zStruct\oCMsgMovement.cs" />
     <Compile Include="zStruct\zCEventMessage.cs" />

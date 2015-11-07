@@ -44,7 +44,7 @@ namespace GUC.Client.Hooks
 
         public static void AddHooks(Process process)
         {
-            //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hEventManager).GetMethod("hook_OnMessage"), (int)zCEventManager.FuncOffsets.OnMessage, 7, 3); //hook
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hEventManager).GetMethod("hook_OnMessage"), (int)zCEventManager.FuncOffsets.OnMessage, 7, 3); //hook
         }
 
         public static Int32 hook_OnMessage(String message)
@@ -56,15 +56,15 @@ namespace GUC.Client.Hooks
                     if (Player.Hero != null)
                     {
                         int address = Convert.ToInt32(message);
-                        int thisAddr = Program.Process.ReadInt(address);
+                        int vobAddr = Program.Process.ReadInt(address + 8);
 
-                        if (thisAddr == Player.Hero.gVob.GetEM(0).Address)
+                        if (vobAddr == Player.Hero.gVob.Address)
                         {
                             int msgAddr = Program.Process.ReadInt(address + 4);
-                            int vobAddr = Program.Process.ReadInt(address + 8);
+                            int EMAddr = Program.Process.ReadInt(address);
 
                             zCEventMessage eventMsg = new zCEventMessage(Program.Process, msgAddr);
-                            zCVob vob = new zCVob(Program.Process, vobAddr);
+                            zCEventManager EM = new zCEventManager(Program.Process, EMAddr);
 
                             switch ((zCObject.VobTypes)eventMsg.VTBL)
                             {
@@ -73,10 +73,13 @@ namespace GUC.Client.Hooks
                                     return 0;
                                 case zCObject.VobTypes.oCMsgWeapon:
                                     OnMsgWeapon(new oCMsgWeapon(Program.Process, msgAddr));
-                                    break;
+                                    return 0;
                                 case zCObject.VobTypes.oCMsgMovement:
                                     OnMsgMovement(new oCMsgMovement(Program.Process, msgAddr));
-                                    break;
+                                    return 0;
+                                case zCObject.VobTypes.oCMobMsg:
+                                    OnMobMsg(new oCMobMsg(Program.Process, msgAddr), EM.OwnerAddress);
+                                    return 0;
                             }
                         }
                     }
@@ -90,11 +93,25 @@ namespace GUC.Client.Hooks
             return 0;
         }
 
+        static void OnMobMsg(oCMobMsg msg, int mobAddr)
+        {
+            BlockMsg = true;
+
+            if (msg.SubType == oCMobMsg.SubTypes.EV_StartInteraction)
+            {
+                AbstractVob vob = null;
+                if (World.vobAddr.TryGetValue(mobAddr, out vob) && vob is MobInter)
+                {
+                    MobMessage.WriteUseMob((MobInter)vob);
+                }
+            }
+        }
+
         static void OnMsgAttack(oCMsgAttack msg)
         {
             BlockMsg = true;
-            NPCState state;
 
+            NPCState state;
             switch (msg.SubType)
             {
                 case oCMsgAttack.SubTypes.AttackForward:
@@ -160,11 +177,14 @@ namespace GUC.Client.Hooks
                 default:
                     return;
             }
+            BlockMsg = true;
             NPCMessage.WriteWeaponState(state, removeType1);
         }
 
         static void OnMsgMovement(oCMsgMovement msg)
         {
+            BlockMsg = true;
+
             if (msg.SubType == oCMsgMovement.SubTypes.Strafe)
             {
                 NPCState state;
@@ -176,7 +196,10 @@ namespace GUC.Client.Hooks
                 {
                     state = NPCState.MoveRight;
                 }
-                else return;
+                else
+                {
+                    return;
+                }
                 NPCMessage.WriteTargetState(state);
             }
         }

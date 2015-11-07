@@ -89,6 +89,12 @@ namespace Gothic.zClasses
             set { if (value)Process.Write(1, Address + (int)Offsets.rewind); else Process.Write(0, Address + (int)Offsets.rewind); }
         }
 
+        public int Bitfield
+        {
+            get { return Process.ReadInt(Address + 0x20C); }
+            set { Process.Write(value, Address + 0x20C); }
+        }
+
         public int StateAniID
         {
             get { return Process.ReadInt((int)Address + (int)Offsets.stateAni); }
@@ -172,6 +178,21 @@ namespace Gothic.zClasses
         public void StopInteraction(oCNpc npc)
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.StopInteraction, new CallValue[] { npc });
+        }
+
+        public void SetIdealPosition(oCNpc npc)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)0x71E240, new CallValue[] { npc });
+        }
+
+        public void ScanIdealPositions()
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)0x71DC30, null);
+        }
+
+        public int GetFreePosition(oCNpc npc, zVec3 vec)
+        {
+            return Process.THISCALL<IntArg>((uint)Address, (uint)0x71DF50, new CallValue[] { npc, vec });
         }
     }
 }

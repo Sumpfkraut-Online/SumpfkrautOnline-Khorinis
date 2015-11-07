@@ -77,6 +77,8 @@ namespace GUC.Server.Scripts
 
             DamageScript.Init();
 
+            CmdHandler.Init();
+
             //Server.Network.Messages.AnimationMenuMessage.Init();
             
             Logger.log(Logger.LogLevel.INFO, "###################### End Initalise ######################");

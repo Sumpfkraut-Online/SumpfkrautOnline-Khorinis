@@ -39,9 +39,13 @@ namespace GUC.Client.States
         public override Dictionary<VirtualKeys, Action> Shortcuts { get { return shortcuts; } }
 
         static oCNpc npc;
-        static double fvel = 0;
+        static MobInter mob;
         public static void RenderTest()
         {
+            mob = new MobInter(9999, 1);
+            mob.Position = Player.Hero.Position;
+            mob.Spawn();
+
             /*if (npc == null)
             {
                 NPCInstance inst = NPCInstance.Table.Get(3);
@@ -78,15 +82,14 @@ namespace GUC.Client.States
         }
 
         static Random rand = new Random();
-        static oCMsgMovement msg = null;
         public static void RenderTest2()
         {
-            if (npc != null)
+            /*if (npc != null)
             {
                 npc.GetEM(0).KillMessages();
                 msg = oCMsgMovement.Create(Program.Process, oCMsgMovement.SubTypes.RobustTrace, Player.Hero.gNpc);
                 npc.GetEM(0).OnMessage(msg, npc);
-            }
+            }*/
             //npc.gNpc.AniCtrl.StartFallDownAni();
             /* for (int i = 0; i < 25; i++)
              {
@@ -101,13 +104,13 @@ namespace GUC.Client.States
             "S_EYESCLOSED", "R_EYESBLINK", "T_EAT", "T_HURT", "VISEME" };
         public static void RenderTest3()
         {
-            Player.Hero.gNpc.StopFaceAni(anis[lop]);
+            /*Player.Hero.gNpc.StopFaceAni(anis[lop]);
             lop++;
             if (lop >= anis.Count)
                 lop = 0;
 
             Player.Hero.gNpc.StartFaceAni(anis[lop], 1, -1);
-            GUI.GUCView.DebugText.Text = anis[lop];
+            GUI.GUCView.DebugText.Text = anis[lop];*/
         }
 
         public GameState()
@@ -115,6 +118,7 @@ namespace GUC.Client.States
             hEventManager.AddHooks(Program.Process);
             hAniCtrl_Human.AddHooks(Program.Process);
             hNpc.AddHooks(Program.Process);
+            hMob.AddHooks(Program.Process);
         }
 
         public override void Update()
@@ -123,6 +127,7 @@ namespace GUC.Client.States
             InputHandler.Update();
             Program.client.Update();
 
+            GUI.GUCView.DebugText.Text = Player.Hero.gNpc.FocusVob.Address.ToString("X4");
 
             /*GUI.GUCView.DebugText.Text = "";
             for (int i = 0; i < Player.VobControlledList.Count; i++)

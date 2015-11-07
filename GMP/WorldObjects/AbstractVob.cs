@@ -11,7 +11,7 @@ using GUC.Network;
 
 namespace GUC.Client.WorldObjects
 {
-    abstract class AbstractVob
+    public abstract class AbstractVob
     {
         public uint ID { get; private set; }
 

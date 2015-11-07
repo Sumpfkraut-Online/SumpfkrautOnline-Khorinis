@@ -216,6 +216,31 @@ namespace GUC.Server.WorldObjects
         internal Client client;
         public bool isPlayer { get { return client != null; } }
 
+        #region Client commands
+        public delegate void CmdOnUseMobHandler(Mob mob, NPC user);
+        public static event CmdOnUseMobHandler CmdOnUseMob;
+
+        internal static void CmdReadUseMob(BitStream stream, Client client)
+        {
+            uint ID = stream.mReadUInt();
+
+            Mob mob;
+            if (client.character.World.VobDict.TryGetValue(ID, out mob) && mob.Type >= MobType.MobInter)
+            {
+                if (CmdOnUseMob != null)
+                {
+                    CmdOnUseMob(mob, client.character);
+                }
+            }
+        }
+
+        internal static void CmdReadUnUseMob(BitStream stream, Client client)
+        {
+
+        }
+
+        #endregion
+
         internal override void WriteSpawn(IEnumerable<Client> list)
         {
             BitStream stream = Program.server.SetupStream(NetworkID.WorldNPCSpawnMessage);
@@ -276,11 +301,8 @@ namespace GUC.Server.WorldObjects
                 item.SpecialLine = "Geschmiedet von Malak Akbar.";
                 item.Spawn(client.character.World, new Types.Vec3f(200, 0, 200), new Types.Vec3f(0, 0, 1));
 
-                NPC scav = NPC.Create("scavenger");
-                scav.Spawn(client.character.World);
-
-                Mob mob = Mob.Create("forge");
-                mob.Spawn(client.character.World, new Types.Vec3f(-200, -100, 200), new Types.Vec3f(0, 0, 1));
+                //NPC scav = NPC.Create("scavenger");
+                //scav.Spawn(client.character.World);
             }
 
             if (!client.character.Spawned)
@@ -300,8 +322,7 @@ namespace GUC.Server.WorldObjects
         }
 
         public delegate void MovementHandler(NPC npc, NPCState state, Vec3f position, Vec3f direction);
-        public static MovementHandler sOnMovement;
-        public MovementHandler OnMovement;
+        public static event MovementHandler sOnMovement;
 
         internal static void ReadState(BitStream stream, Client client)
         {
@@ -327,10 +348,6 @@ namespace GUC.Server.WorldObjects
                 if (sOnMovement != null)
                 {
                     sOnMovement(client.character, state, pos, dir);
-                }
-                if (client.character.OnMovement != null)
-                {
-                    client.character.OnMovement(client.character, state, pos, dir);
                 }
             }
         }
@@ -627,6 +644,21 @@ namespace GUC.Server.WorldObjects
             }
         }
         #endregion
+
+        public void DoUseMob(Mob mob)
+        {
+            if (mob != null && mob.Type >= MobType.MobInter)
+            {
+                BitStream stream = Program.server.SetupStream(NetworkID.MobUseMessage);
+                stream.mWrite(this.ID);
+                stream.mWrite(mob.ID);
+
+                foreach (Client cl in this.cell.SurroundingClients())
+                {
+                    Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', cl.guid, false);
+                }
+            }
+        }
 
     }
 }

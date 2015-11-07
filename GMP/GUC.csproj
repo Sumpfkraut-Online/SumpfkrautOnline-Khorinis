@@ -140,6 +140,7 @@
     <Compile Include="Menus\StatusMenu.cs" />
     <Compile Include="Network\Messages\ControlMessage.cs" />
     <Compile Include="Network\Messages\InventoryMessage.cs" />
+    <Compile Include="Network\Messages\MobMessage.cs" />
     <Compile Include="Network\Messages\NPCMessage.cs" />
     <Compile Include="Network\Messages\PlayerMessage.cs" />
     <Compile Include="Network\Messages\VobMessage.cs" />
@@ -163,7 +164,7 @@
     <Compile Include="Hooks\hGame.cs" />
     <Compile Include="Hooks\hItemContainer.cs" />
     <Compile Include="Hooks\hMagBook.cs" />
-    <Compile Include="Hooks\hMobInter.cs" />
+    <Compile Include="Hooks\hMob.cs" />
     <Compile Include="Hooks\hModelAni.cs" />
     <Compile Include="Hooks\hNpc.cs" />
     <Compile Include="Hooks\hParser.cs" />

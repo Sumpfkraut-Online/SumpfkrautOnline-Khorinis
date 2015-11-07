@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Gothic.zClasses;
+using Gothic.zTypes;
 
 namespace GUC.Client.WorldObjects
 {
-    class Vob : AbstractVob
+    public class Vob : AbstractVob
     {
         public MobInstance Instance { get; protected set; }
 
@@ -43,8 +44,10 @@ namespace GUC.Client.WorldObjects
         }
     }
 
-    class Mob : Vob
+    public class Mob : Vob
     {
+        public oCMob gMob { get { return new oCMob(Program.Process, gVob.Address); } }
+
         public string FocusName { get { return Instance.focusName; } }
 
         public Mob(uint id, ushort instanceID)
@@ -69,8 +72,10 @@ namespace GUC.Client.WorldObjects
         }
     }
 
-    class MobInter : Mob
+    public class MobInter : Mob
     {
+        public oCMobInter gMobInter { get { return new oCMobInter(Program.Process, gVob.Address); } }
+
         public string onTriggerClientFunc { get { return Instance.onTriggerClientFunc; } }
 
         public MobInter(uint id, ushort instanceID)
@@ -88,7 +93,7 @@ namespace GUC.Client.WorldObjects
         }
     }
 
-    class MobFire : MobInter
+    public class MobFire : MobInter
     {
         string fireVobTreeName { get { return Instance.fireVobTreeName; } }
 
@@ -114,7 +119,7 @@ namespace GUC.Client.WorldObjects
         }
     }
 
-    class MobLadder : MobInter
+    public class MobLadder : MobInter
     {
         public MobLadder(uint id, ushort instanceID)
             : base(id, instanceID)
@@ -131,7 +136,7 @@ namespace GUC.Client.WorldObjects
         }
     }
 
-    class MobSwitch : MobInter
+    public class MobSwitch : MobInter
     {
         public MobSwitch(uint id, ushort instanceID)
             : base(id, instanceID)
@@ -148,7 +153,7 @@ namespace GUC.Client.WorldObjects
         }
     }
 
-    class MobWheel : MobInter
+    public class MobWheel : MobInter
     {
         public MobWheel(uint id, ushort instanceID)
             : base(id, instanceID)
@@ -165,7 +170,7 @@ namespace GUC.Client.WorldObjects
         }
     }
 
-    class MobContainer : MobInter
+    public class MobContainer : MobInter
     {
         public MobContainer(uint id, ushort instanceID)
             : base(id, instanceID)
@@ -182,7 +187,7 @@ namespace GUC.Client.WorldObjects
         }
     }
 
-    class MobDoor : MobInter
+    public class MobDoor : MobInter
     {
         public MobDoor(uint id, ushort instanceID)
             : base(id, instanceID)

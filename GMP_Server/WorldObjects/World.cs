@@ -32,6 +32,8 @@ namespace GUC.Server.WorldObjects
         {
             MapName = mapname.ToUpper();
             sWorld.WorldDict.Add(MapName, this);
+
+            Mob.Create("forge").Spawn(this, new Types.Vec3f(0, -100, 0));
         }
 
         public NPC GetNpcOrPlayer(uint id)

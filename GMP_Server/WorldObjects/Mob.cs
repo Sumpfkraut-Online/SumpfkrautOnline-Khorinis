@@ -13,6 +13,7 @@ namespace GUC.Server.WorldObjects
     public class Mob : AbstractDropVob
     {
         public MobInstance Instance { get; protected set; }
+        public MobType Type { get { return Instance.type; } }
 
         #region Constructors
 
@@ -71,6 +72,8 @@ namespace GUC.Server.WorldObjects
 
         #endregion
 
+        #region Networking
+
         internal override void WriteSpawn(IEnumerable<Client> list)
         {
             BitStream stream = Program.server.SetupStream(NetworkID.WorldVobSpawnMessage);
@@ -83,5 +86,7 @@ namespace GUC.Server.WorldObjects
             foreach (Client client in list)
                 Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
         }
+
+        #endregion
     }
 }

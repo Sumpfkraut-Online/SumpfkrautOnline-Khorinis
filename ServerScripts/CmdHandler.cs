@@ -8,12 +8,13 @@ using GUC.Enumeration;
 
 namespace GUC.Server.Scripts
 {
-    static class NPCHandler
+    static class CmdHandler
     {
         public static void Init()
         {
             NPC.sOnMovement += OnMovement;
             NPC.sOnTargetMovement += OnTargetMovement;
+            NPC.CmdOnUseMob += OnUseMob;
         }
 
         static void OnMovement(NPC npc, NPCState state, Vec3f position, Vec3f direction)
@@ -24,6 +25,11 @@ namespace GUC.Server.Scripts
         static void OnTargetMovement(NPC npc, NPC target, NPCState state, Vec3f position, Vec3f direction)
         {
             npc.DoTargetMovement(state, position, direction, target);
+        }
+
+        static void OnUseMob(Mob mob, NPC npc)
+        {
+            npc.DoUseMob(mob);
         }
     }
 }

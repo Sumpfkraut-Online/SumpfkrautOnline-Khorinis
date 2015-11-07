@@ -34,7 +34,10 @@ namespace Gothic.zClasses
 
         #endregion
 
-
+        public int OwnerAddress
+        {
+            get { return Process.ReadInt(Address + 0x3C); }
+        }
 
         #region methods
 

@@ -7,7 +7,7 @@ using System.IO;
 
 namespace GUC.Client.WorldObjects
 {
-    abstract class AbstractInstance
+    public abstract class AbstractInstance
     {
         internal abstract void Read(BinaryReader br);
         internal abstract void Write(BinaryWriter bw);

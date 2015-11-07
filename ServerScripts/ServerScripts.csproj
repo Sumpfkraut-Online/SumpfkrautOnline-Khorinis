@@ -60,7 +60,7 @@
     <Compile Include="Database\DBSecurity.cs" />
     <Compile Include="Database\DBTables.cs" />
     <Compile Include="Instances\VobInstances.cs" />
-    <Compile Include="NPCHandler.cs" />
+    <Compile Include="CmdHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sqlite.cs" />
     <Compile Include="Startup.cs" />

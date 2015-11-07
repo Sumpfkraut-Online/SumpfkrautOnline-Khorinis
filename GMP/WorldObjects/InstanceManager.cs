@@ -8,7 +8,7 @@ using System.Security.Cryptography;
 
 namespace GUC.Client.WorldObjects
 {
-    class InstanceManager<T> where T : AbstractInstance, new()
+    public class InstanceManager<T> where T : AbstractInstance, new()
     {
         Dictionary<ushort, T> instanceList;
         string fileName;

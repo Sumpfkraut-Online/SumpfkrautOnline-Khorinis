@@ -113,6 +113,7 @@ namespace GUC.Server.Scripts.Instances
             MobInstance mob = new MobInstance("Forge");
             mob.type = Enumeration.MobType.MobInter;
             mob.visual = "BSFIRE_OC.MDS";
+            mob.focusName = "Schmiedefeuer";
             MobInstance.Table.Add(mob);
 
             MobInstance.Table.NetUpdate();

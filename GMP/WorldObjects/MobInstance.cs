@@ -7,7 +7,7 @@ using GUC.Enumeration;
 
 namespace GUC.Client.WorldObjects
 {
-    class MobInstance : AbstractInstance
+    public class MobInstance : AbstractInstance
     {
         public static InstanceManager<MobInstance> Table = new InstanceManager<MobInstance>("mobs.pak");
 
