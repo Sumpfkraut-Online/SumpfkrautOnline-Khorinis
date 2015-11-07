@@ -22,10 +22,13 @@ namespace GUC.Server.WorldObjects
         //MobInter:
         public string onTriggerFunc = "";
         public string onTriggerClientFunc = "";
-        public string useWithItem = "";
+        public bool isMulti = false;
 
         //MobFire:
         public string fireVobTreeName = "";
+
+        //MobLockable
+        public string onTryOpenClientFunc = "";
 
         internal override void Write(BinaryWriter bw)
         {
@@ -37,6 +40,7 @@ namespace GUC.Server.WorldObjects
             bw.Write(focusName);
             bw.Write(onTriggerClientFunc);
             bw.Write(fireVobTreeName);
+            bw.Write(onTryOpenClientFunc);
         }
 
         #region Constructors

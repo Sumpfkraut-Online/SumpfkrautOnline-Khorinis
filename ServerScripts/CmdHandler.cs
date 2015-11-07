@@ -27,7 +27,7 @@ namespace GUC.Server.Scripts
             npc.DoTargetMovement(state, position, direction, target);
         }
 
-        static void OnUseMob(Mob mob, NPC npc)
+        static void OnUseMob(Vob mob, NPC npc)
         {
             npc.DoUseMob(mob);
         }

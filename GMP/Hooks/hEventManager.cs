@@ -56,31 +56,26 @@ namespace GUC.Client.Hooks
                     if (Player.Hero != null)
                     {
                         int address = Convert.ToInt32(message);
+                        int emAddr = Program.Process.ReadInt(address);
+                        int msgAddr = Program.Process.ReadInt(address + 4);
                         int vobAddr = Program.Process.ReadInt(address + 8);
 
-                        if (vobAddr == Player.Hero.gVob.Address)
+                        int vtbl = Program.Process.ReadInt(msgAddr);
+
+                        switch ((zCObject.VobTypes)vtbl)
                         {
-                            int msgAddr = Program.Process.ReadInt(address + 4);
-                            int EMAddr = Program.Process.ReadInt(address);
-
-                            zCEventMessage eventMsg = new zCEventMessage(Program.Process, msgAddr);
-                            zCEventManager EM = new zCEventManager(Program.Process, EMAddr);
-
-                            switch ((zCObject.VobTypes)eventMsg.VTBL)
-                            {
-                                case zCObject.VobTypes.oCMsgAttack:
-                                    OnMsgAttack(new oCMsgAttack(Program.Process, msgAddr));
-                                    return 0;
-                                case zCObject.VobTypes.oCMsgWeapon:
-                                    OnMsgWeapon(new oCMsgWeapon(Program.Process, msgAddr));
-                                    return 0;
-                                case zCObject.VobTypes.oCMsgMovement:
-                                    OnMsgMovement(new oCMsgMovement(Program.Process, msgAddr));
-                                    return 0;
-                                case zCObject.VobTypes.oCMobMsg:
-                                    OnMobMsg(new oCMobMsg(Program.Process, msgAddr), EM.OwnerAddress);
-                                    return 0;
-                            }
+                            case zCObject.VobTypes.oCMsgAttack:
+                                OnMsgAttack(emAddr, msgAddr, vobAddr);
+                                return 0;
+                            case zCObject.VobTypes.oCMsgWeapon:
+                                OnMsgWeapon(emAddr, msgAddr, vobAddr);
+                                return 0;
+                            case zCObject.VobTypes.oCMsgMovement:
+                                OnMsgMovement(emAddr, msgAddr, vobAddr);
+                                return 0;
+                            case zCObject.VobTypes.oCMobMsg:
+                                OnMobMsg(emAddr, msgAddr, vobAddr);
+                                return 0;
                         }
                     }
                 }
@@ -93,117 +88,132 @@ namespace GUC.Client.Hooks
             return 0;
         }
 
-        static void OnMobMsg(oCMobMsg msg, int mobAddr)
+        static void OnMobMsg(int emAddress, int msgAddress, int vobAddress)
         {
-            BlockMsg = true;
-
-            if (msg.SubType == oCMobMsg.SubTypes.EV_StartInteraction)
+            oCMobMsg msg = new oCMobMsg(Program.Process, msgAddress);
+            if (msg.UserAddress == Player.Hero.gVob.Address)
             {
-                AbstractVob vob = null;
-                if (World.vobAddr.TryGetValue(mobAddr, out vob) && vob is MobInter)
+                zCEventManager EM = new zCEventManager(Program.Process, emAddress); //EventManager of the used Mob
+
+                if (msg.SubType == oCMobMsg.SubTypes.EV_StartInteraction) //activated a mob
                 {
-                    MobMessage.WriteUseMob((MobInter)vob);
+                    AbstractVob vob = null;
+                    if (World.vobAddr.TryGetValue(EM.OwnerAddress, out vob) && vob is MobInter)
+                    {
+                        MobMessage.WriteUseMob((MobInter)vob);
+                    }
                 }
+                else if (msg.SubType == oCMobMsg.SubTypes.EV_StartStateChange)
+                {
+                    if (msg.StateChangeLeaving) //player wants to stop using the mob
+                    {
+
+                    }
+                    else //players
+                    {
+
+                    }
+                }
+                BlockMsg = true;
+                //return;
             }
+            BlockMsg = false;
         }
 
-        static void OnMsgAttack(oCMsgAttack msg)
+        static void OnMsgAttack(int emAddress, int msgAddress, int vobAddress)
         {
-            BlockMsg = true;
-
-            NPCState state;
-            switch (msg.SubType)
+            if (vobAddress == Player.Hero.gVob.Address)
             {
-                case oCMsgAttack.SubTypes.AttackForward:
-                    state = NPCState.AttackForward;
-                    break;
-                case oCMsgAttack.SubTypes.AttackLeft:
-                    state = NPCState.AttackLeft;
-                    break;
-                case oCMsgAttack.SubTypes.AttackRight:
-                    state = NPCState.AttackRight;
-                    break;
-                case oCMsgAttack.SubTypes.AttackRun:
-                    state = NPCState.AttackRun;
-                    break;
-                case oCMsgAttack.SubTypes.Parade:
-                    if ((msg.Bitfield & oCMsgAttack.BitFlag.Dodge) != 0)
-                    {
-                        state = NPCState.DodgeBack;
-                    }
-                    else
-                    {
-                        state = NPCState.Parry;
-                    }
-                    break;
-                default:
-                    return;
+                oCMsgAttack msg = new oCMsgAttack(Program.Process, msgAddress);
+
+                switch (msg.SubType)
+                {
+                    case oCMsgAttack.SubTypes.AttackForward:
+                        NPCMessage.WriteTargetState(NPCState.AttackForward);
+                        break;
+                    case oCMsgAttack.SubTypes.AttackLeft:
+                        NPCMessage.WriteTargetState(NPCState.AttackLeft);
+                        break;
+                    case oCMsgAttack.SubTypes.AttackRight:
+                        NPCMessage.WriteTargetState(NPCState.AttackRight);
+                        break;
+                    case oCMsgAttack.SubTypes.AttackRun:
+                        NPCMessage.WriteTargetState(NPCState.AttackRun);
+                        break;
+                    case oCMsgAttack.SubTypes.Parade:
+                        if ((msg.Bitfield & oCMsgAttack.BitFlag.Dodge) != 0)
+                        {
+                            NPCMessage.WriteTargetState(NPCState.DodgeBack);
+                        }
+                        else
+                        {
+                            NPCMessage.WriteTargetState(NPCState.Parry);
+                        }
+                        break;
+                }
+                BlockMsg = true;
+                return;
             }
-            NPCMessage.WriteTargetState(state);
+            BlockMsg = false;
         }
 
-        static void OnMsgWeapon(oCMsgWeapon msg)
+        static void OnMsgWeapon(int emAddress, int msgAddress, int vobAddress)
         {
-            BlockMsg = true;
-
-            bool removeType1 = false; //there are 2 animations of undrawing a weapon
-            NPCWeaponState state = NPCWeaponState.Melee;
-
-            switch (msg.SubType)
+            if (vobAddress == Player.Hero.gVob.Address)
             {
-                //FIXME: Magic!
-                case oCMsgWeapon.SubTypes.DrawWeapon:
-                case oCMsgWeapon.SubTypes.DrawWeapon1:
-                    if ((msg.WpType == 4 || msg.WpType == 5) && Player.Hero.gNpc.IsInInv(Player.Hero.gNpc.GetEquippedRangedWeapon().Munition, 1).Address != 0) //ranged
-                    {
-                        state = NPCWeaponState.Ranged;
-                    }
-                    else if (Player.Hero.gNpc.GetEquippedMeleeWeapon().Address == 0) //no weapon equipped
-                    {
-                        state = NPCWeaponState.Fists;
-                    }
-                    else if (Player.Hero.WeaponState != NPCWeaponState.Fists)
-                    { //Don't change the state if we want to get fists while a weapon is equipped
-                        state = NPCWeaponState.Melee;
-                    }
-                    break;
-                case oCMsgWeapon.SubTypes.RemoveWeapon:
-                    state = NPCWeaponState.None;
-                    break;
-                case oCMsgWeapon.SubTypes.RemoveWeapon1:
-                    state = NPCWeaponState.None;
-                    removeType1 = true;
-                    break;
-                default:
-                    return;
+                oCMsgWeapon msg = new oCMsgWeapon(Program.Process, msgAddress);
+
+                switch (msg.SubType)
+                {
+                    //FIXME: Magic!
+                    case oCMsgWeapon.SubTypes.DrawWeapon:
+                    case oCMsgWeapon.SubTypes.DrawWeapon1:
+                        if ((msg.WpType == 4 || msg.WpType == 5) && Player.Hero.gNpc.IsInInv(Player.Hero.gNpc.GetEquippedRangedWeapon().Munition, 1).Address != 0) //ranged
+                        {
+                            NPCMessage.WriteWeaponState(NPCWeaponState.Ranged, false);
+                        }
+                        else if (Player.Hero.gNpc.GetEquippedMeleeWeapon().Address == 0) //no weapon equipped
+                        {
+                            NPCMessage.WriteWeaponState(NPCWeaponState.Fists, false);
+                        }
+                        else// if (Player.Hero.WeaponState != NPCWeaponState.Fists)
+                        { ////Don't change the state if we want to get fists while a weapon is equipped
+                            NPCMessage.WriteWeaponState(NPCWeaponState.Melee, false);
+                        }
+                        break;
+                    case oCMsgWeapon.SubTypes.RemoveWeapon:
+                        NPCMessage.WriteWeaponState(NPCWeaponState.None, false);
+                        break;
+                    case oCMsgWeapon.SubTypes.RemoveWeapon1:
+                        NPCMessage.WriteWeaponState(NPCWeaponState.None, true);
+                        break;
+                }
+                BlockMsg = true;
+                return;
             }
-            BlockMsg = true;
-            NPCMessage.WriteWeaponState(state, removeType1);
+            BlockMsg = false;
         }
 
-        static void OnMsgMovement(oCMsgMovement msg)
+        static void OnMsgMovement(int emAddress, int msgAddress, int vobAddress)
         {
-            BlockMsg = true;
-
-            if (msg.SubType == oCMsgMovement.SubTypes.Strafe)
+            if (vobAddress == Player.Hero.gVob.Address)
             {
-                NPCState state;
-                if (msg.Animation == Player.Hero.gNpc.AniCtrl._t_strafel)
+                oCMsgMovement msg = new oCMsgMovement(Program.Process, msgAddress);
+                if (msg.SubType == oCMsgMovement.SubTypes.Strafe)
                 {
-                    state = NPCState.MoveLeft;
+                    if (msg.Animation == Player.Hero.gNpc.AniCtrl._t_strafel)
+                    {
+                        NPCMessage.WriteTargetState(NPCState.MoveLeft);
+                    }
+                    else if (msg.Animation == Player.Hero.gNpc.AniCtrl._t_strafer)
+                    {
+                        NPCMessage.WriteTargetState(NPCState.MoveRight);
+                    }
                 }
-                else if (msg.Animation == Player.Hero.gNpc.AniCtrl._t_strafer)
-                {
-                    state = NPCState.MoveRight;
-                }
-                else
-                {
-                    return;
-                }
-                NPCMessage.WriteTargetState(state);
+                BlockMsg = true;
+                return;
             }
+            BlockMsg = false;
         }
-
-
     }
 }

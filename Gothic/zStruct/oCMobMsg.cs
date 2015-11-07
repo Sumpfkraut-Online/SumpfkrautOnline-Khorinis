@@ -34,14 +34,14 @@ namespace Gothic.zStruct
 
         public static oCMobMsg Create(Process process, SubTypes subType, oCNpc npc, int arg1)
         {
-            int address = process.CDECLCALL<IntArg>(0x718F20, null);
+            int address = process.CDECLCALL<IntArg>(0x71B030, null);
             process.THISCALL<NullReturnCall>((uint)address, 0x0071B4D0, new CallValue[] { (IntArg)(int)subType, npc, (IntArg)arg1 });
             return new oCMobMsg(process, address);
         }
 
         public static oCMobMsg Create(Process process, SubTypes subType, oCNpc npc)
         {
-            int address = process.CDECLCALL<IntArg>(0x718F20, null);
+            int address = process.CDECLCALL<IntArg>(0x71B030, null);
             process.THISCALL<NullReturnCall>((uint)address, 0x0071B220, new CallValue[] { (IntArg)(int)subType, npc });
             return new oCMobMsg(process, address);
         }
@@ -57,9 +57,10 @@ namespace Gothic.zStruct
         }
 
         //no idea what this address really is, but it's an indicator
-        public bool StateChangeStart
+        public bool StateChangeLeaving
         {
-            get { return Process.ReadInt(Address + 0x30) == 0; }
+            get { return Process.ReadInt(Address + 0x30) != 0; }
+            set { Process.Write(value ? 1 : 0, Address + 0x30); }
         }
 
     }

@@ -21,19 +21,19 @@ namespace GUC.Server.WorldObjects
         Dictionary<uint, NPC> playerDict = new Dictionary<uint, NPC>();
         Dictionary<uint, NPC> npcDict = new Dictionary<uint, NPC>();
         Dictionary<uint, Item> itemDict = new Dictionary<uint, Item>();
-        Dictionary<uint, Mob> vobDict = new Dictionary<uint, Mob>();
+        Dictionary<uint, Vob> vobDict = new Dictionary<uint, Vob>();
 
         public Dictionary<uint, NPC> PlayerDict { get { return playerDict; } }
         public Dictionary<uint, NPC> NPCDict { get { return npcDict; } }
         public Dictionary<uint, Item> ItemDict { get { return itemDict; } }
-        public Dictionary<uint, Mob> VobDict { get { return vobDict; } }
+        public Dictionary<uint, Vob> VobDict { get { return vobDict; } }
 
         public World(string mapname)
         {
             MapName = mapname.ToUpper();
             sWorld.WorldDict.Add(MapName, this);
 
-            Mob.Create("forge").Spawn(this, new Types.Vec3f(0, -100, 0));
+            Vob.Create("forge").Spawn(this, new Types.Vec3f(0, -100, 0));
         }
 
         public NPC GetNpcOrPlayer(uint id)
@@ -64,9 +64,9 @@ namespace GUC.Server.WorldObjects
             {
                 itemDict.Add(vob.ID, (Item)vob);
             }
-            else if (vob is Mob)
+            else if (vob is Vob)
             {
-                vobDict.Add(vob.ID, (Mob)vob);
+                vobDict.Add(vob.ID, (Vob)vob);
             }
             vob.World = this;
         }

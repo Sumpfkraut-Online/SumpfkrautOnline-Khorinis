@@ -217,15 +217,15 @@ namespace GUC.Server.WorldObjects
         public bool isPlayer { get { return client != null; } }
 
         #region Client commands
-        public delegate void CmdOnUseMobHandler(Mob mob, NPC user);
+        public delegate void CmdOnUseMobHandler(Vob mob, NPC user);
         public static event CmdOnUseMobHandler CmdOnUseMob;
 
         internal static void CmdReadUseMob(BitStream stream, Client client)
         {
             uint ID = stream.mReadUInt();
 
-            Mob mob;
-            if (client.character.World.VobDict.TryGetValue(ID, out mob) && mob.Type >= MobType.MobInter)
+            Vob mob;
+            if (client.character.World.VobDict.TryGetValue(ID, out mob) && mob is MobInter)
             {
                 if (CmdOnUseMob != null)
                 {
@@ -645,9 +645,9 @@ namespace GUC.Server.WorldObjects
         }
         #endregion
 
-        public void DoUseMob(Mob mob)
+        public void DoUseMob(Vob mob)
         {
-            if (mob != null && mob.Type >= MobType.MobInter)
+            if (mob != null && mob is MobInter)
             {
                 BitStream stream = Program.server.SetupStream(NetworkID.MobUseMessage);
                 stream.mWrite(this.ID);

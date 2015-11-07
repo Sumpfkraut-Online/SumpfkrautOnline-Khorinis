@@ -20,6 +20,15 @@ namespace GUC.Client.Hooks
 
             process.Write(new byte[] { 0xE9, 0x7B, 0xD2, 0xFF, 0xFF }, 0x723CC0); // so oCMobLockable doesn't check whether we have the skills
             process.Write(new byte[] { 0xE9, 0x1B, 0xB5, 0xFF, 0xFF }, 0x723CF0); // oCMobLockable::Interact -> oCMobInter::Interact
+
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hMob).GetMethod("EndStateChange"), 0x720C80, 5, 4);
+        }
+
+        public static Int32 EndStateChange(string message)
+        {
+            int address = Convert.ToInt32(message);
+            zERROR.GetZErr(Program.Process).Report(2, 'G', "OnEndStateChange: " + Program.Process.ReadInt(address + 8) + " " + Program.Process.ReadInt(address + 12), 0, "hMob.cs", 0);
+            return 0;
         }
 
         #region Mob Focus Name
@@ -44,7 +53,7 @@ namespace GUC.Client.Hooks
             }
             catch (Exception ex)
             {
-                zERROR.GetZErr(Program.Process).Report(2, 'G', ex.ToString(), 0, "hMob.cs", 0);
+                zERROR.GetZErr(Program.Process).Report(4, 'G', ex.ToString(), 0, "hMob.cs", 0);
             }
             return 0;
         }

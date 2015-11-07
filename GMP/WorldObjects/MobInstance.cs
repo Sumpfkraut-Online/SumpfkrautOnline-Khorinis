@@ -27,6 +27,9 @@ namespace GUC.Client.WorldObjects
         //MobFire:
         public string fireVobTreeName;
 
+        //MobLockable:
+        public string onTryOpenClientFunc;
+
         internal override void Read(BinaryReader br)
         {
             ID = br.ReadUInt16();
@@ -37,6 +40,7 @@ namespace GUC.Client.WorldObjects
             focusName = br.ReadString();
             onTriggerClientFunc = br.ReadString();
             fireVobTreeName = br.ReadString();
+            onTryOpenClientFunc = br.ReadString();
         }
 
         internal override void Write(BinaryWriter bw)
@@ -49,6 +53,7 @@ namespace GUC.Client.WorldObjects
             bw.Write(focusName);
             bw.Write(onTriggerClientFunc);
             bw.Write(fireVobTreeName);
+            bw.Write(onTryOpenClientFunc);
         }
     }
 }

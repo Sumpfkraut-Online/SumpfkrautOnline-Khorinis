@@ -63,13 +63,6 @@ namespace GUC.Client.WorldObjects
             }
             SetProperties();
         }
-
-        protected override void SetProperties()
-        {
-            base.SetProperties();
-
-            //Set focus name
-        }
     }
 
     public class MobInter : Mob
@@ -170,7 +163,17 @@ namespace GUC.Client.WorldObjects
         }
     }
 
-    public class MobContainer : MobInter
+    public abstract class MobLockable : MobInter
+    {
+        string OnTryOpenClientFunc { get { return Instance.onTryOpenClientFunc; } }
+
+        public MobLockable(uint id, ushort instanceID)
+            : base(id, instanceID)
+        {
+        }
+    }
+
+    public class MobContainer : MobLockable
     {
         public MobContainer(uint id, ushort instanceID)
             : base(id, instanceID)
@@ -187,7 +190,7 @@ namespace GUC.Client.WorldObjects
         }
     }
 
-    public class MobDoor : MobInter
+    public class MobDoor : MobLockable
     {
         public MobDoor(uint id, ushort instanceID)
             : base(id, instanceID)
