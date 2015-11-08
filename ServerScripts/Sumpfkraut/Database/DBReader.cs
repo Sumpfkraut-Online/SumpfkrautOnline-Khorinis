@@ -85,7 +85,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                 // security check and close connection if necessary
                 if (!DBSecurity.IsSecureSQLCommand(completeQuery))
                 {
-                    Log.Logger.logWarning("LoadFromDB: Prevented forwarding of insecure sql-command: " + completeQuery);
+                    MakeLogWarningStatic(typeof(DBReader), 
+                        "LoadFromDB: Prevented forwarding of insecure sql-command: " 
+                        + completeQuery);
                     if (con.State.ToString() == "Open")
                     {
                         con.Close();
@@ -192,7 +194,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
             // security check and close connection if necessary
             if (!DBSecurity.IsSecureSQLCommand(completeQuery))
             {
-                Log.Logger.logWarning("LoadFromDB: Prevented forwarding of insecure sql-command: "
+                MakeLogWarningStatic(typeof(DBReader), 
+                    "LoadFromDB: Prevented forwarding of insecure sql-command: "
                     + completeQuery);
                 return;
             }
@@ -208,6 +211,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                     try
                     {
                         rdr = cmd.ExecuteReader();
+
                         if (rdr == null)
                         {
                             return;
