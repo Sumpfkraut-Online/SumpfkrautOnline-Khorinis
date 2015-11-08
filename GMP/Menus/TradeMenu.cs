@@ -43,7 +43,7 @@ namespace GUC.Client.Menus
         Dictionary<uint, Item> itemsBuy;
         Dictionary<uint, Item> itemsSell;
 
-        public Dictionary<uint, TradeRequest> requests;
+        //public Dictionary<uint, TradeRequest> requests;
 
         bool confirmed = false;
         bool otherConfirmed = false;
@@ -68,7 +68,7 @@ namespace GUC.Client.Menus
             sellInv.left = buyInv;
             buyInv.right = sellInv;
 
-            requests = new Dictionary<uint, TradeRequest>();
+            //requests = new Dictionary<uint, TradeRequest>();
         }
 
         public override void KeyPressed(VirtualKeys key)
@@ -169,14 +169,9 @@ namespace GUC.Client.Menus
 
         public void TradeRequested(NPC trader)
         {
-            requests.Add(trader.ID, new TradeRequest(DateTime.Now.Ticks, true));
+            //requests.Add(trader.ID, new TradeRequest(DateTime.Now.Ticks, true));
             // eine anfrage zum Handel hat stattgefunden
             ShortMsg(trader.Name.ToString() + " möchte mit dir handeln");
-            zERROR.GetZErr(Program.Process).Report(2, 'G', "Listed Requests:", 0, "GUCInventory.cs", 0);
-            foreach (KeyValuePair<uint, TradeRequest> requestPair in requests)
-            {
-                zERROR.GetZErr(Program.Process).Report(2, 'G', "ID= " + requestPair.Key.ToString() + " | received= " + requestPair.Value.Received.ToString(), 0, "GUCInventory.cs", 0);
-            }
         }
 
         public void TradeAccepted(NPC trader)
@@ -245,18 +240,15 @@ namespace GUC.Client.Menus
 
         public void RequestTrade()
         {
-            zERROR.GetZErr(Program.Process).Report(2, 'G', "Listed Requests:", 0, "GUCInventory.cs", 0);
-            foreach(KeyValuePair<uint,TradeRequest> requestPair in requests)
-            {
-                zERROR.GetZErr(Program.Process).Report(2, 'G', "ID= "+requestPair.Key.ToString()+" | received= "+requestPair.Value.Received.ToString(), 0, "GUCInventory.cs", 0);
-            }
             oCNpc ocnpc = Player.Hero.gNpc.GetFocusNpc();
             AbstractVob vob;
             World.vobAddr.TryGetValue(ocnpc.Address, out vob);
             NPC npc = (NPC)vob;
             if (npc != null)
             {
-                if(!requests.ContainsKey(npc.ID))
+                TradeMessage.SendRequest(npc.ID);
+                ShortMsg("Handelsanfrage an " + npc.Name);
+                /*if(!requests.ContainsKey(npc.ID))
                 {
                     TradeMessage.SendRequest(npc.ID);
                     ShortMsg("Handelsanfrage an " + npc.Name);
@@ -266,7 +258,7 @@ namespace GUC.Client.Menus
                 }
                 else if (requests[npc.ID].Received)
                 {
-                    zERROR.GetZErr(Program.Process).Report(2, 'G', "Erhaltene Anfrage bestätigen! ", 0, "GUCInventory.cs", 0);
+                    zERROR.GetZErr(Program.Process).Report(2, 'G', "Erhaltene Anfrage bestätigen!", 0, "GUCInventory.cs", 0);
                     TradeMessage.SendRequest(npc.ID);
                 }
                 else if(requests[npc.ID].Time < DateTime.Now.Ticks)
@@ -275,7 +267,7 @@ namespace GUC.Client.Menus
                     ShortMsg("Handelsanfrage an " + npc.Name);
                     requests[npc.ID].Time = DateTime.Now.Ticks + 0; // 30s
                     zERROR.GetZErr(Program.Process).Report(2, 'G', "Eine abgelaufener Request wird erneuert", 0, "GUCInventory.cs", 0);
-                }
+                }*/
             }
         }
 
