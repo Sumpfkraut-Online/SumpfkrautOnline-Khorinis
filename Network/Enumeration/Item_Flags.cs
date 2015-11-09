@@ -15,12 +15,12 @@ namespace GUC.Enumeration
         XBow,  // crossbows
         Armor, // armor & clothing
 
-        Arrow, // ammunition
-        XBolt, // ammunition
-
         Ring,   // rings
         Amulet, // amulets
         Belt,   // belts
+
+        Arrow, // ammunition
+        XBolt, // ammunition
 
         Food_Huge,  // food in two hands (f.e. Bread)
         Food_Small, // food in one hand (f.e. Apples)

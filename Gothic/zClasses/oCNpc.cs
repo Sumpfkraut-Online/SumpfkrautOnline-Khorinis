@@ -1063,6 +1063,11 @@ namespace Gothic.zClasses
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.Equip, new CallValue[] { slot });
         }
 
+        public void EquipItem(oCItem item)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)0x7323C0, new CallValue[] { item });
+        }
+
         public void SetAdditionalVisuals(zString bodyMesh, int bodyTex, int skinColor, zString headMesh, int headTex, int TeethTex, int Armor)
         {
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetAdditionalVisuals, new CallValue[] { bodyMesh, new IntArg(bodyTex), new IntArg(skinColor), headMesh, new IntArg(headTex), new IntArg(TeethTex), new IntArg(Armor) });
@@ -1426,32 +1431,6 @@ namespace Gothic.zClasses
         public int GetNextWeaponmode(int arg1, int arg2, int arg3)
         {
             return Process.THISCALL<IntArg>((uint)Address, (uint)0x739A30, new CallValue[] { (IntArg)arg1, (IntArg)arg2, (IntArg)arg3 });
-        }
-
-        public void DrawMeleeWeapon()
-        {
-            oCMsgWeapon msg = oCMsgWeapon.Create(Process, oCMsgWeapon.SubTypes.DrawWeapon, 0, 0);
-            GetEM(0).OnMessage(msg, this);
-        }
-
-        public void DrawRangedWeapon()
-        {
-            oCMsgWeapon msg = oCMsgWeapon.Create(Process, oCMsgWeapon.SubTypes.DrawWeapon, 4, 0);
-            GetEM(0).OnMessage(msg, this);
-        }
-
-        public void RemoveWeapon()
-        {
-            oCMsgWeapon msg = oCMsgWeapon.Create(Process, oCMsgWeapon.SubTypes.RemoveWeapon, 0, 0);
-            GetEM(0).OnMessage(msg, this);
-        }
-
-        public void RemoveWeapon1()
-        {
-            oCMsgWeapon msg = oCMsgWeapon.Create(Process, oCMsgWeapon.SubTypes.RemoveWeapon1, 0, 0);
-            GetEM(0).OnMessage(msg, this);
-            msg = oCMsgWeapon.Create(Process, oCMsgWeapon.SubTypes.RemoveWeapon2, 0, 0);
-            GetEM(0).OnMessage(msg, this);
         }
 
         public bool IsInFightRange(zCVob vob, float range)

@@ -19,13 +19,17 @@ namespace GUC.Client.WorldObjects
 
         public NPCInstance instance;
 
-        public NPC(uint id, ushort instanceID) : base(id)
+        public MobInter UsedMob;
+
+        public NPC(uint id, ushort instanceID)
+            : base(id)
         {
             instance = NPCInstance.Table.Get(instanceID);
             instance.SetProperties(this);
         }
 
-        public NPC(uint id, ushort instanceID, oCNpc npc) : base(id, npc)
+        public NPC(uint id, ushort instanceID, oCNpc npc)
+            : base(id, npc)
         {
             instance = NPCInstance.Table.Get(instanceID);
             instance.SetProperties(this);
@@ -55,6 +59,18 @@ namespace GUC.Client.WorldObjects
 
             gNpc.HPMax = HPMax;
             gNpc.HP = HP;
+
+            foreach (Item item in equippedSlots.Values)
+            {
+                if (item.IsMeleeWeapon)
+                    gNpc.EquipWeapon(item.gItem);
+                else if (item.IsRangedWeapon)
+                    gNpc.EquipFarWeapon(item.gItem);
+                else if (item.IsArmor)
+                    gNpc.EquipArmor(item.gItem);
+                else
+                    gNpc.EquipItem(item.gItem);
+            }
 
             gNpc.InitHumanAI();
         }
@@ -113,6 +129,15 @@ namespace GUC.Client.WorldObjects
             get
             {
                 return new oCNpc(Program.Process, gVob.Address);
+            }
+        }
+
+        public bool HasFreeHands
+        {
+            get
+            {
+                //return (this.gNpc.BodyState & 65536) != 0;
+                return true;
             }
         }
 
@@ -249,15 +274,52 @@ namespace GUC.Client.WorldObjects
 
         #endregion
 
-        public void DrawFists()
+        #region Equipment
+
+        Dictionary<byte, Item> equippedSlots = new Dictionary<byte, Item>();
+
+        public void EquipSlot(byte slot, Item item)
         {
-            WeaponState = NPCWeaponState.Fists;
-            gNpc.DrawMeleeWeapon();
+            if (item != null && !item.Spawned)
+            {
+                if (UnequipSlot(slot))
+                {
+                    equippedSlots[slot] = item;
+                }
+                else
+                {
+                    equippedSlots.Add(slot, item);
+                }
+
+                if (Spawned)
+                {
+                    if (item.IsMeleeWeapon)
+                        gNpc.EquipWeapon(item.gItem);
+                    else if (item.IsRangedWeapon)
+                        gNpc.EquipFarWeapon(item.gItem);
+                    else if (item.IsArmor)
+                        gNpc.EquipArmor(item.gItem);
+                    else
+                        gNpc.EquipItem(item.gItem);
+                }
+            }
         }
 
-        public ItemInstance EquippedMeleeWeapon;
-        public ItemInstance EquippedRangedWeapon;
-        public ItemInstance EquippedArmor;
+        public bool UnequipSlot(byte slot)
+        {
+            Item item;
+            if (equippedSlots.TryGetValue(slot, out item))
+            {
+                if (Spawned)
+                {
+                    gNpc.UnequipItem(item.gItem);
+                }
+                return true;
+            }
+            return false;
+        }
+
+        #endregion
 
         public Vec3f lastDir;
         public Vec3f nextDir;

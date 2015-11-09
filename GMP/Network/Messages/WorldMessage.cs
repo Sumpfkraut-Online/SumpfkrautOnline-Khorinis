@@ -81,8 +81,8 @@ namespace GUC.Client.Network.Messages
             NPC npc;
             if (ID == Player.ID)
             {
-                npc = new NPC(ID, instID, oCNpc.Player(Program.Process));
-                Player.Hero = npc;
+                Player.Hero = new NPC(ID, instID, oCNpc.Player(Program.Process));
+                npc = Player.Hero;
             }
             else
             {
@@ -114,6 +114,21 @@ namespace GUC.Client.Network.Messages
 
             npc.HPMax = stream.mReadUShort();
             npc.HP = stream.mReadUShort();
+
+            int slotCount = stream.mReadByte();
+            zERROR.GetZErr(Program.Process).Report(2, 'G', "Items: " + slotCount, 0, "Program.cs", 0);
+            byte slot; uint itemID; ushort itemInstanceID; ushort itemCondition; Item item;
+            for (int i = 0; i < slotCount; i++)
+            {
+                slot = stream.mReadByte();
+                itemID = stream.mReadUInt();
+                itemInstanceID = stream.mReadUShort();
+                itemCondition = stream.mReadUShort();
+                zERROR.GetZErr(Program.Process).Report(2, 'G', slot + ": " + itemID + " " + itemInstanceID + " " + itemCondition, 0, "Program.cs", 0);
+                item = new Item(itemID, itemInstanceID);
+                item.Condition = itemCondition;
+                npc.EquipSlot(slot, item);
+            }
 
             npc.Spawn();
         }

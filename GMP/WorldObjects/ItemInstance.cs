@@ -40,6 +40,10 @@ namespace GUC.Client.WorldObjects
         public oCItem.ItemFlags flags;
         public int wear = 0;
 
+        public bool IsMeleeWeapon { get { return mainFlags == oCItem.MainFlags.ITEM_KAT_NF; } }
+        public bool IsRangedWeapon { get { return mainFlags == oCItem.MainFlags.ITEM_KAT_FF; } }
+        public bool IsArmor { get { return mainFlags == oCItem.MainFlags.ITEM_KAT_ARMOR; } }
+
         internal override void Read(BinaryReader br)
         {
             ID = br.ReadUInt16();

@@ -135,6 +135,7 @@
     <Compile Include="Scripting\ScriptManager.cs" />
     <Compile Include="Scripting\Timer.cs" />
     <Compile Include="Network\WorldCell.cs" />
+    <Compile Include="Scripting\UserVars.cs" />
     <Compile Include="TCPStatus.cs" />
     <Compile Include="WorldObjects\AbstractAI.cs" />
     <Compile Include="WorldObjects\AbstractCtrlVob.cs" />

@@ -8,6 +8,7 @@ using RakNet;
 using GUC.Network;
 using GUC.Server.Network.Messages;
 using GUC.Types;
+using GUC.Server.Scripting;
 
 namespace GUC.Server.WorldObjects
 {
@@ -211,14 +212,17 @@ namespace GUC.Server.WorldObjects
 
         #endregion
 
+        public MobInter UsedMob { get; protected set; }
+
         #region Networking
 
         internal Client client;
         public bool isPlayer { get { return client != null; } }
 
         #region Client commands
-        public delegate void CmdOnUseMobHandler(Vob mob, NPC user);
+        public delegate void CmdOnUseMobHandler(MobInter mob, NPC user);
         public static event CmdOnUseMobHandler CmdOnUseMob;
+        public static event CmdOnUseMobHandler CmdOnUnUseMob;
 
         internal static void CmdReadUseMob(BitStream stream, Client client)
         {
@@ -229,14 +233,30 @@ namespace GUC.Server.WorldObjects
             {
                 if (CmdOnUseMob != null)
                 {
-                    CmdOnUseMob(mob, client.character);
+                    CmdOnUseMob((MobInter)mob, client.character);
                 }
             }
         }
 
         internal static void CmdReadUnUseMob(BitStream stream, Client client)
         {
+            if (client.character.UsedMob != null && CmdOnUnUseMob != null)
+            {
+                CmdOnUnUseMob(client.character.UsedMob, client.character);
+            }
+        }
 
+        public delegate void CmdOnUseItemHandler(Item item, NPC user);
+        public static event CmdOnUseItemHandler CmdOnUseItem;
+
+        internal static void CmdReadUseItem(BitStream stream, Client client)
+        {
+            uint ID = stream.mReadUInt();
+            Item item;
+            if (sWorld.ItemDict.TryGetValue(ID, out item) && item.Owner == client.character && CmdOnUseItem != null)
+            {
+                CmdOnUseItem(item, client.character);
+            }
         }
 
         #endregion
@@ -263,6 +283,15 @@ namespace GUC.Server.WorldObjects
 
             stream.mWrite(AttrHealthMax);
             stream.mWrite(AttrHealth);
+
+            stream.mWrite((byte)equippedSlots.Count);
+            foreach (KeyValuePair<byte,Item> slot in equippedSlots)
+            {
+                stream.mWrite(slot.Key);
+                stream.mWrite(slot.Value.ID);
+                stream.mWrite(slot.Value.Instance.ID);
+                stream.mWrite(slot.Value.Condition);
+            }
 
             foreach (Client cl in list)
                 Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', cl.guid, false);
@@ -393,44 +422,63 @@ namespace GUC.Server.WorldObjects
 
         #region Equipment
 
-        protected ItemInstance equippedMeleeWeapon;
-        public ItemInstance EquippedMeleeWeapon { get { return equippedMeleeWeapon; } }
+        Dictionary<byte, Item> equippedSlots = new Dictionary<byte, Item>();
 
-        protected ItemInstance equippedRangedWeapon;
-        public ItemInstance EquippedRangedWeapon { get { return equippedRangedWeapon; } }
-
-        protected ItemInstance equippedArmor;
-        public ItemInstance EquippedArmor { get { return equippedArmor; } }
-
-        public void Equip(ItemInstance inst)
+        /// <summary>
+        /// Equip an Item.
+        /// </summary>
+        public void EquipSlot(byte slot, Item item)
         {
-            /*if (inst.MainFlags == MainFlags.ITEM_KAT_NF)
+            if (item != null && item.Owner == this)
             {
-                equippedMeleeWeapon = inst;
+                Item oldItem;
+                if (equippedSlots.TryGetValue(slot, out oldItem))
+                {
+                    oldItem.Slot = -1;
+                    equippedSlots[slot] = item;
+                }
+                else
+                {
+                    equippedSlots.Add(slot, item);
+                }
+                item.Slot = slot;
+                NPCMessage.WriteEquipMessage(cell.SurroundingClients(), this, item, slot);
             }
-            else if (inst.MainFlags == MainFlags.ITEM_KAT_FF)
-            {
-                equippedRangedWeapon = inst;
-            }
-            else if (inst.MainFlags == MainFlags.ITEM_KAT_ARMOR)
-            {
-                equippedArmor = inst;
-            }
-            else return;*/
-            NPCMessage.WriteEquipMessage(this.cell.SurroundingClients(), this, inst);
         }
 
-        public void Unequip(ItemInstance inst)
+        /// <summary>
+        /// Unequip an Item slot.
+        /// </summary>
+        public void UnequipSlot(byte slot)
         {
-            if (inst == equippedMeleeWeapon)
-                equippedMeleeWeapon = null;
-            else if (inst == equippedRangedWeapon)
-                equippedRangedWeapon = null;
-            else if (inst == equippedArmor)
-                equippedArmor = null;
-            else return;
+            Item item;
+            if (equippedSlots.TryGetValue(slot, out item))
+            {
+                item.Slot = -1;
+                equippedSlots.Remove(slot);
+                NPCMessage.WriteUnequipMessage(cell.SurroundingClients(), this, slot);
+            }
+        }
 
-            NPCMessage.WriteEquipMessage(this.cell.SurroundingClients(), this, inst);
+        /// <summary>
+        /// Unequip an Item.
+        /// </summary>
+        public void UnequipItem(Item item)
+        {
+            if (item.Owner == this && item.Slot != -1)
+            {
+                UnequipSlot((byte)item.Slot);
+            }
+        }
+
+        /// <summary>
+        /// Get the equipped Item of a slot.
+        /// </summary>
+        public Item GetEquipment(byte slot)
+        {
+            Item item = null;
+            equippedSlots.TryGetValue(slot, out item);
+            return item;
         }
 
         #endregion
@@ -645,13 +693,31 @@ namespace GUC.Server.WorldObjects
         }
         #endregion
 
-        public void DoUseMob(Vob mob)
+        public void DoUseMob(MobInter mob)
         {
-            if (mob != null && mob is MobInter)
+            if (mob != null)
             {
+                UsedMob = mob;
+
                 BitStream stream = Program.server.SetupStream(NetworkID.MobUseMessage);
                 stream.mWrite(this.ID);
                 stream.mWrite(mob.ID);
+
+                foreach (Client cl in this.cell.SurroundingClients())
+                {
+                    Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', cl.guid, false);
+                }
+            }
+        }
+
+        public void DoUnUseMob()
+        {
+            if (UsedMob != null)
+            {
+                UsedMob = null;
+
+                BitStream stream = Program.server.SetupStream(NetworkID.MobUnUseMessage);
+                stream.mWrite(this.ID);
 
                 foreach (Client cl in this.cell.SurroundingClients())
                 {

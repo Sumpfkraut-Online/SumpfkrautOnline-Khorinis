@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using RakNet;
 using GUC.Network;
+using GUC.Enumeration;
+using GUC.Client.Network.Messages;
 
 namespace GUC.Client.WorldObjects
 {
@@ -15,14 +17,13 @@ namespace GUC.Client.WorldObjects
 
         public static void DoFists()
         {
-            //send
-            if (Player.Hero.gNpc.WeaponMode == 0)
+            if (Player.Hero.WeaponState == NPCWeaponState.None)
             {
-                Player.Hero.DrawFists();
+                NPCMessage.WriteWeaponState(NPCWeaponState.Fists, false);
             }
-            else if (Player.Hero.gNpc.WeaponMode == 1)
+            else if (Player.Hero.WeaponState == NPCWeaponState.Fists)
             {
-                Player.Hero.gNpc.RemoveWeapon1();
+                NPCMessage.WriteWeaponState(NPCWeaponState.None, true);
             }
         }
 

@@ -59,6 +59,7 @@ namespace GUC.Client.Network
             messageListener.Add((byte)NetworkID.NPCWeaponStateMessage, NPCMessage.ReadWeaponState);
             messageListener.Add((byte)NetworkID.NPCHitMessage, NPCMessage.ReadHitMessage);
             messageListener.Add((byte)NetworkID.NPCEquipMessage, NPCMessage.ReadEquipMessage);
+            messageListener.Add((byte)NetworkID.NPCUnequipMessage, NPCMessage.ReadUnequipMessage);
 
             messageListener.Add((byte)NetworkID.InventoryAddMessage, InventoryMessage.ReadAddItem);
             messageListener.Add((byte)NetworkID.InventoryAmountMessage, InventoryMessage.ReadAmountUpdate);
@@ -67,6 +68,7 @@ namespace GUC.Client.Network
             messageListener.Add((byte)NetworkID.ControlRemoveVobMessage, ControlMessage.ReadRemoveVob);
 
             messageListener.Add((byte)NetworkID.MobUseMessage, MobMessage.ReadUseMob);
+            messageListener.Add((byte)NetworkID.MobUnUseMessage, MobMessage.ReadUnUseMob);
         }
 
         public void Startup()

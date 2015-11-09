@@ -64,7 +64,7 @@ namespace GUC.Server.Network
             MessageListener.Add((byte)NetworkID.NPCHitMessage, NPCMessage.ReadHitMessage);
 
             MessageListener.Add((byte)NetworkID.InventoryDropItemMessage, InventoryMessage.ReadDropItem);
-            MessageListener.Add((byte)NetworkID.InventoryUseItemMessage, InventoryMessage.ReadUseItem);
+            MessageListener.Add((byte)NetworkID.InventoryUseItemMessage, NPC.CmdReadUseItem);
 
             MessageListener.Add((byte)NetworkID.MobUseMessage, NPC.CmdReadUseMob);
             MessageListener.Add((byte)NetworkID.MobUnUseMessage, NPC.CmdReadUnUseMob);

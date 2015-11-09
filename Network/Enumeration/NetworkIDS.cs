@@ -42,6 +42,7 @@ namespace GUC.Enumeration
         NPCAniStartMessage,
         NPCAniStopMessage,
         NPCEquipMessage,
+        NPCUnequipMessage,
         NPCFoodMessage,
 
         NPCStateMessage,

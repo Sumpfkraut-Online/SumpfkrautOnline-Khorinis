@@ -173,6 +173,10 @@ namespace GUC.Client.WorldObjects
         public Gender gender { get { return instance.gender; } }
         public ushort weight { get { return instance.weight; } }
 
+        public bool IsMeleeWeapon { get { return instance.IsMeleeWeapon; } }
+        public bool IsRangedWeapon { get { return instance.IsRangedWeapon; } }
+        public bool IsArmor { get { return instance.IsArmor; } }
+
         public oCItem gItem
         {
             get
@@ -185,6 +189,7 @@ namespace GUC.Client.WorldObjects
             : base(id)
         {
             instance = ItemInstance.Table.Get(instanceID);
+            CreateVob(gVob == null);
         }
 
         protected override void CreateVob(bool createNew)
@@ -193,10 +198,16 @@ namespace GUC.Client.WorldObjects
             {
                 gVob = oCItem.Create(Program.Process);
             }
-            gItem.Amount = 1;
-            gItem.Instanz = instance.ID;
-            gItem.Visual.Set(Visual);
-            gItem.Name.Set(name);
+
+            oCItem gi = gItem;
+            gi.Amount = 1;
+            gi.Instanz = instance.ID;
+            gi.Visual.Set(Visual);
+            gi.Name.Set(name);
+            gi.Material = (int)material;
+            gi.MainFlag = (int)mainFlags;
+            gi.Flags = (int)flags;
+            gi.Wear = wear;
         }
     }
 }

@@ -18,6 +18,8 @@ namespace GUC.Server.WorldObjects
         /// </summary>
         public ItemInstance Instance { get; protected set; }
 
+        public ItemType Type { get { return Instance.Type; } }
+
         /// <summary>
         /// Gets or sets the amount of this item. Setting the amount to zero will delete the item. Can't be set when spawned. 
         /// </summary>
@@ -57,6 +59,11 @@ namespace GUC.Server.WorldObjects
         /// Gets the NPC who is carrying this item or NULL.
         /// </summary>
         public NPC Owner { get; internal set; }
+
+        /// <summary>
+        /// Gets the equipment slot for the owner NPC.
+        /// </summary>
+        public int Slot { get; internal set; }
 
         /// <summary>
         /// The condition of this item. Only used for weapons, armors, etc. Can't be set when spawned. 
@@ -140,6 +147,7 @@ namespace GUC.Server.WorldObjects
                 Item item = new Item();
                 item.Instance = instance;
                 item.condition = instance.Condition;
+                item.Slot = -1;
                 return item;
             }
             else

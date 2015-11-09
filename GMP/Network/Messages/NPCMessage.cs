@@ -9,6 +9,7 @@ using GUC.Client.WorldObjects;
 using Gothic.zStruct;
 using WinApi;
 using Gothic.zClasses;
+using GUC.Client.Hooks;
 
 namespace GUC.Client.Network.Messages
 {
@@ -103,18 +104,6 @@ namespace GUC.Client.Network.Messages
             Player.Hero.nextPosUpdate = DateTime.Now.Ticks + NPC.PositionUpdateTime; //set position update time
         }
 
-        public static void WriteWeaponState(NPCWeaponState state, bool removeType1)
-        {
-            BitStream stream = Program.client.SetupSendStream(NetworkID.NPCWeaponStateMessage);
-            stream.mWrite((byte)state);
-            stream.mWrite(Player.Hero.Position);
-            stream.mWrite(Player.Hero.Direction);
-            stream.mWrite(removeType1);
-            Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE_ORDERED);
-
-            Player.Hero.nextPosUpdate = DateTime.Now.Ticks + NPC.PositionUpdateTime; //set position update time
-        }
-
         public static void ReadState(BitStream stream)
         {
             uint id = stream.mReadUInt();
@@ -146,41 +135,63 @@ namespace GUC.Client.Network.Messages
             }
         }
 
+        const int DelayBetweenMessages = 5000000; //500ms
 
+        static long nextWeaponTime = 0;
+        public static void WriteWeaponState(NPCWeaponState state, bool removeType1)
+        {
+            if (DateTime.Now.Ticks > nextWeaponTime)
+            {
+                BitStream stream = Program.client.SetupSendStream(NetworkID.NPCWeaponStateMessage);
+                stream.mWrite((byte)state);
+                stream.mWrite(removeType1);
+                Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
+
+                nextWeaponTime = DateTime.Now.Ticks + DelayBetweenMessages;
+            }
+        }
 
         public static void ReadWeaponState(BitStream stream)
         {
+            uint ID = stream.mReadUInt();
+
             NPC npc;
-            World.npcDict.TryGetValue(stream.mReadUInt(), out npc);
-            if (npc == null) return;
-
-            npc.WeaponState = (NPCWeaponState)stream.mReadByte();
-            bool removeType1 = stream.ReadBit();
-            npc.Position = stream.mReadVec();
-            npc.Direction = stream.mReadVec();
-
-            switch (npc.WeaponState)
+            if (World.npcDict.TryGetValue(ID, out npc))
             {
-                case NPCWeaponState.Fists:
+                npc.WeaponState = (NPCWeaponState)stream.mReadByte();
+                bool removeType1 = stream.ReadBit();
+
+                oCMsgWeapon msg = null;
+                switch (npc.WeaponState)
+                {
+                    case NPCWeaponState.Fists:
                     //npc.DrawFists();
                     //break;
-                case NPCWeaponState.Melee:
-                    npc.gNpc.DrawMeleeWeapon();
-                    break;
-                case NPCWeaponState.Ranged:
-                case NPCWeaponState.Magic: //FIXME
-                    npc.gNpc.DrawRangedWeapon();
-                    break;
-                case NPCWeaponState.None:
-                    if (removeType1)
-                    {
-                        npc.gNpc.RemoveWeapon1();
-                    }
-                    else
-                    {
-                        npc.gNpc.RemoveWeapon();
-                    }
-                    break;
+                    case NPCWeaponState.Melee:
+                        msg = oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.DrawWeapon, 0, 0);
+                        break;
+                    case NPCWeaponState.Ranged:
+                    case NPCWeaponState.Magic: //FIXME
+                        msg = oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.DrawWeapon, 4, 0);
+                        break;
+                    case NPCWeaponState.None:
+                        if (removeType1)
+                        {
+                            msg = oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.RemoveWeapon1, 0, 0);
+                            npc.gVob.GetEM(0).StartMessage(msg, npc.gVob);
+                            msg = oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.RemoveWeapon2, 0, 0);
+                        }
+                        else
+                        {
+                            msg = oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.RemoveWeapon, 0, 0);
+                        }
+                        break;
+                }
+
+                if (msg != null)
+                {
+                    npc.gVob.GetEM(0).StartMessage(msg, npc.gVob);
+                }
             }
         }
 
@@ -288,50 +299,31 @@ namespace GUC.Client.Network.Messages
 
         public static void ReadEquipMessage(BitStream stream)
         {
+            uint npcID = stream.mReadUInt();
+
             NPC npc;
-            World.npcDict.TryGetValue(stream.mReadUInt(), out npc);
-            if (npc == null) return;
-
-            ItemInstance inst = null;
-            //ItemInstance.InstanceList.TryGetValue(stream.mReadUShort(), out inst);
-            if (inst == null) return;
-
-            if (inst == npc.EquippedMeleeWeapon)
+            if (World.npcDict.TryGetValue(npcID, out npc))
             {
-                npc.EquippedMeleeWeapon = null;
-                npc.gNpc.UnequipItem(npc.gNpc.GetEquippedMeleeWeapon());
+                uint itemID = stream.mReadUInt();
+                ushort itemInstanceID = stream.mReadUShort();
+                ushort itemCondition = stream.mReadUShort();
+                byte slot = stream.mReadByte();
+                
+                Item item = new Item(itemID, itemInstanceID);
+                item.Condition = itemCondition;
+                npc.EquipSlot(slot, item);
             }
-            else if (inst == npc.EquippedRangedWeapon)
-            {
-                npc.EquippedRangedWeapon = null;
-                npc.gNpc.UnequipItem(npc.gNpc.GetEquippedRangedWeapon());
-            }
-            else if (inst == npc.EquippedArmor)
-            {
-                npc.EquippedArmor = null;
-                npc.gNpc.UnequipItem(npc.gNpc.GetEquippedArmor());
-            }
-            else
-            {
-                if (inst.mainFlags == oCItem.MainFlags.ITEM_KAT_NF)
-                {
-                    npc.EquippedMeleeWeapon = inst;
-                    npc.gNpc.UnequipItem(npc.gNpc.GetEquippedMeleeWeapon());
-                }
-                else if (inst.mainFlags == oCItem.MainFlags.ITEM_KAT_FF)
-                {
-                    npc.EquippedRangedWeapon = inst;
-                    npc.gNpc.UnequipItem(npc.gNpc.GetEquippedRangedWeapon());
-                }
-                else if (inst.mainFlags == oCItem.MainFlags.ITEM_KAT_ARMOR)
-                {
-                    npc.EquippedArmor = inst;
-                    npc.gNpc.UnequipItem(npc.gNpc.GetEquippedArmor());
-                }
-                else return;
+        }
 
-                //oCItem newItem = inst.CreateItem();
-                //npc.gNpc.Equip(newItem);
+        public static void ReadUnequipMessage(BitStream stream)
+        {
+            uint npcID = stream.mReadUInt();
+
+            NPC npc;
+            if (World.npcDict.TryGetValue(npcID, out npc))
+            {
+                byte slot = stream.mReadByte();
+                npc.UnequipSlot(slot);
             }
         }
 

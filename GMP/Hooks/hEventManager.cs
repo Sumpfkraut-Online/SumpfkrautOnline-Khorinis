@@ -95,27 +95,31 @@ namespace GUC.Client.Hooks
             {
                 zCEventManager EM = new zCEventManager(Program.Process, emAddress); //EventManager of the used Mob
 
-                if (msg.SubType == oCMobMsg.SubTypes.EV_StartInteraction) //activated a mob
+                switch (msg.SubType)
                 {
-                    AbstractVob vob = null;
-                    if (World.vobAddr.TryGetValue(EM.OwnerAddress, out vob) && vob is MobInter)
-                    {
-                        MobMessage.WriteUseMob((MobInter)vob);
-                    }
+                    case oCMobMsg.SubTypes.EV_StartInteraction: //activated a mob
+                        AbstractVob vob = null;
+                        if (World.vobAddr.TryGetValue(EM.OwnerAddress, out vob) && vob is MobInter)
+                        {
+                            MobMessage.WriteUseMob((MobInter)vob);
+                        }
+                        BlockMsg = true;
+                        return;
+                    case oCMobMsg.SubTypes.EV_StartStateChange:
+                        if (msg.StateChangeLeaving) //player wants to stop using the mob
+                        {
+                            MobMessage.WriteUnUseMob();
+                            BlockMsg = true;
+                            return;
+                        }
+                        break;
+                    case oCMobMsg.SubTypes.EV_CallScript:
+                    case oCMobMsg.SubTypes.EV_Lock:
+                    case oCMobMsg.SubTypes.EV_Unlock:
+                        BlockMsg = true;
+                        return;
                 }
-                else if (msg.SubType == oCMobMsg.SubTypes.EV_StartStateChange)
-                {
-                    if (msg.StateChangeLeaving) //player wants to stop using the mob
-                    {
 
-                    }
-                    else //players
-                    {
-
-                    }
-                }
-                BlockMsg = true;
-                //return;
             }
             BlockMsg = false;
         }
@@ -165,19 +169,15 @@ namespace GUC.Client.Hooks
 
                 switch (msg.SubType)
                 {
-                    //FIXME: Magic!
+                    //FIXME: Magic & Ranged
                     case oCMsgWeapon.SubTypes.DrawWeapon:
                     case oCMsgWeapon.SubTypes.DrawWeapon1:
-                        if ((msg.WpType == 4 || msg.WpType == 5) && Player.Hero.gNpc.IsInInv(Player.Hero.gNpc.GetEquippedRangedWeapon().Munition, 1).Address != 0) //ranged
-                        {
-                            NPCMessage.WriteWeaponState(NPCWeaponState.Ranged, false);
-                        }
-                        else if (Player.Hero.gNpc.GetEquippedMeleeWeapon().Address == 0) //no weapon equipped
+                        /*if (Player.Hero.EquippedWeapon == null)
                         {
                             NPCMessage.WriteWeaponState(NPCWeaponState.Fists, false);
                         }
-                        else// if (Player.Hero.WeaponState != NPCWeaponState.Fists)
-                        { ////Don't change the state if we want to get fists while a weapon is equipped
+                        else*/
+                        {
                             NPCMessage.WriteWeaponState(NPCWeaponState.Melee, false);
                         }
                         break;
