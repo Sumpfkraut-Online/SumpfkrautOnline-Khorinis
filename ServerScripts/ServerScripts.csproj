@@ -74,6 +74,8 @@
     <Compile Include="Sumpfkraut\Utilities\Threading\IRunnable.cs" />
     <Compile Include="Sumpfkraut\Utilities\Threading\Runnable.cs" />
     <Compile Include="Sumpfkraut\Utilities\Threading\TestRunnable.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\DefChange.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\DefEffect.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\Enumeration.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\EffectChangesDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\ItemDef.cs" />
@@ -109,9 +111,6 @@
     <Content Include="Sumpfkraut\Database\SO-K_SQLite.sql" />
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <Content Include="Sumpfkraut\Database\SO-K_SQLite.sql" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

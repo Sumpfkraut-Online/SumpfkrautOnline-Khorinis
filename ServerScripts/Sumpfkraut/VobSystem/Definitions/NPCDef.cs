@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using GUC.Server.WorldObjects;
+using GUC.Server.Scripts.Sumpfkraut.Database;
 
 namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 {
@@ -17,6 +18,14 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         protected static Dictionary<int, NPCDef> defById = new Dictionary<int, NPCDef>();
         protected static Dictionary<string, NPCDef> defByCodeName = new Dictionary<string, NPCDef>();
+
+        new protected readonly Dictionary<String, SQLiteGetTypeEnum> defTab_GetTypeByColumn =
+            new Dictionary<String, SQLiteGetTypeEnum>
+            {
+                {"NpcDefId",                SQLiteGetTypeEnum.GetInt32},
+                {"ChangeDate",              SQLiteGetTypeEnum.GetString},
+                {"CreationDate",            SQLiteGetTypeEnum.GetString},
+            };
 
         #endregion
 

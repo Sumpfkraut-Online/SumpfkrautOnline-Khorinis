@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.Enumeration;
 using GUC.Server.WorldObjects;
+using GUC.Server.Scripts.Sumpfkraut.Database;
 
 namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 {
@@ -20,6 +21,14 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         new protected static Dictionary<int, ItemDef> defById = new Dictionary<int, ItemDef>();
         new protected static Dictionary<string, ItemDef> defByCodeName = new Dictionary<string, ItemDef>();
+
+        new protected readonly Dictionary<String, SQLiteGetTypeEnum> defTab_GetTypeByColumn =
+            new Dictionary<String, SQLiteGetTypeEnum>
+            {
+                {"ItemDefId",               SQLiteGetTypeEnum.GetInt32},
+                {"ChangeDate",              SQLiteGetTypeEnum.GetString},
+                {"CreationDate",            SQLiteGetTypeEnum.GetString},
+            };
 
         #endregion
 
@@ -49,13 +58,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         { 
             this.name = name; 
         }
-
-        //protected string scemeName;
-        //public string GetScemeName () { return this.scemeName; }
-        //public void SetScemeName (string scemeName) 
-        //{ 
-        //    this.scemeName = scemeName;
-        //}
 
         //protected int[] protections;
         //public int[] GetProtections () { return this.protections; }
@@ -89,13 +91,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         //        damages[(int) dti - 1] = this.getDamage(dti);
         //    }
         //    return damages;
-        //}
-
-        //protected int value;
-        //public int GetValue () { return this.value; }
-        //public void SetValue (int value) 
-        //{
-        //    this.value = value;
         //}
 
         protected ItemType itemType;

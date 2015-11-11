@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GUC.Server.Scripts.Sumpfkraut.Database;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,9 +16,18 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         protected static Dictionary<Type, Dictionary<string, VobDef>> allDefByCodeName = 
             new Dictionary<Type, Dictionary<string, VobDef>>();
 
-        // override them in child classes
+        // !!! hide them with new-keyworld in child classes !!!
         protected static Dictionary<int, VobDef> defById = new Dictionary<int, VobDef>();
         protected static Dictionary<string, VobDef> defByCodeName = new Dictionary<string, VobDef>();
+
+        // !!! hide it with new-keyworld in child classes !!!
+        public readonly Dictionary<String, SQLiteGetTypeEnum> defTab_GetTypeByColumn =
+            new Dictionary<String, SQLiteGetTypeEnum>
+            {
+                {"VobDefId",                SQLiteGetTypeEnum.GetInt32},
+                {"ChangeDate",              SQLiteGetTypeEnum.GetString},
+                {"CreationDate",            SQLiteGetTypeEnum.GetString},
+            };
 
         #endregion
 
