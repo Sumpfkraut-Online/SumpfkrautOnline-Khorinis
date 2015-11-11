@@ -74,11 +74,7 @@ namespace GUC.Client.Network.Messages
             BitStream stream = Program.client.SetupSendStream(NetworkID.NPCStateMessage);
             stream.mWrite(npc.ID);
             stream.mWrite((byte)state);
-            stream.mWrite(npc.Position);
-            stream.mWrite(npc.Direction);
-            Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE_ORDERED);
-
-            npc.nextPosUpdate = DateTime.Now.Ticks + NPC.PositionUpdateTime; //set position update time
+            Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
         }
 
         public static void WriteTargetState(NPCState state) //only for self, attacks & strafing
@@ -99,7 +95,7 @@ namespace GUC.Client.Network.Messages
                 stream.mWrite(target.ID);
             }
 
-            Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE_ORDERED);
+            Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
 
             Player.Hero.nextPosUpdate = DateTime.Now.Ticks + NPC.PositionUpdateTime; //set position update time
         }
@@ -118,81 +114,125 @@ namespace GUC.Client.Network.Messages
             }
 
             npc.State = (NPCState)stream.mReadByte();
-            npc.Position = stream.mReadVec();
-            npc.Direction = stream.mReadVec();
+            npc.Update(DateTime.Now.Ticks);
+        }
 
-            switch (npc.State)
+        public static void WriteJump(NPC npc)
+        {
+            if (DateTime.Now.Ticks > npc.nextJumpUpdate)
             {
-                case NPCState.Jump:
-                    npc.gNpc.AniCtrl.PC_JumpForward();
-                    break;
-                case NPCState.Fall:
-                    npc.gNpc.AniCtrl.StartFallDownAni();
-                    break;
-                default:
-                    npc.Update(DateTime.Now.Ticks);
-                    break;
+                BitStream stream = Program.client.SetupSendStream(NetworkID.NPCJumpMessage);
+                stream.mWrite(npc.ID);
+                Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
+
+                npc.nextJumpUpdate = DateTime.Now.Ticks + DelayBetweenMessages;
+            }
+        }
+
+        public static void ReadJump(BitStream stream)
+        {
+            uint id = stream.mReadUInt();
+
+            NPC npc;
+            World.npcDict.TryGetValue(id, out npc);
+            if (npc == null) return;
+
+            if (npc.State == NPCState.MoveForward)
+            {
+                npc.gNpc.GetModel().StartAni(npc.gAniCtrl._t_runr_2_jump, 0);
+                //set some flags, see 0x6B1F1D: LOBYTE(aniCtrl->_zCAIPlayer_bitfield[0]) &= 0xF7u;
+                npc.gNpc.SetBodyState(8);
+            }
+            else if (npc.State == NPCState.Stand)
+            {
+                npc.DoJump = true;
+                npc.gAniCtrl.JumpForward();
+                npc.DoJump = false;
             }
         }
 
         const int DelayBetweenMessages = 5000000; //500ms
 
-        static long nextWeaponTime = 0;
-        public static void WriteWeaponState(NPCWeaponState state, bool removeType1)
+        static long nextDrawItemTime = 0;
+        public static void WriteDrawItem(byte slot)
         {
-            if (DateTime.Now.Ticks > nextWeaponTime)
+            if (DateTime.Now.Ticks > nextDrawItemTime)
             {
-                BitStream stream = Program.client.SetupSendStream(NetworkID.NPCWeaponStateMessage);
-                stream.mWrite((byte)state);
-                stream.mWrite(removeType1);
+                BitStream stream = Program.client.SetupSendStream(NetworkID.NPCDrawItemMessage);
+                stream.mWrite(slot);
                 Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
 
-                nextWeaponTime = DateTime.Now.Ticks + DelayBetweenMessages;
+                nextDrawItemTime = DateTime.Now.Ticks + DelayBetweenMessages;
             }
         }
 
-        public static void ReadWeaponState(BitStream stream)
+        public static void ReadDrawItem(BitStream stream)
         {
             uint ID = stream.mReadUInt();
 
             NPC npc;
-            if (World.npcDict.TryGetValue(ID, out npc))
-            {
-                npc.WeaponState = (NPCWeaponState)stream.mReadByte();
-                bool removeType1 = stream.ReadBit();
+            World.npcDict.TryGetValue(ID, out npc);
+            if (npc == null) return;
 
-                oCMsgWeapon msg = null;
-                switch (npc.WeaponState)
+            uint itemID = stream.mReadUInt();
+            bool fast = stream.ReadBit();
+            fast = false;
+
+            Item item = null;
+            if (itemID != 0)
+            {
+                if (npc == Player.Hero) //search in inventory for item
                 {
-                    case NPCWeaponState.Fists:
-                    //npc.DrawFists();
-                    //break;
-                    case NPCWeaponState.Melee:
-                        msg = oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.DrawWeapon, 0, 0);
-                        break;
-                    case NPCWeaponState.Ranged:
-                    case NPCWeaponState.Magic: //FIXME
-                        msg = oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.DrawWeapon, 4, 0);
-                        break;
-                    case NPCWeaponState.None:
-                        if (removeType1)
-                        {
-                            msg = oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.RemoveWeapon1, 0, 0);
-                            npc.gVob.GetEM(0).StartMessage(msg, npc.gVob);
-                            msg = oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.RemoveWeapon2, 0, 0);
-                        }
-                        else
-                        {
-                            msg = oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.RemoveWeapon, 0, 0);
-                        }
-                        break;
+                    Player.Inventory.TryGetValue(itemID, out item);
                 }
 
-                if (msg != null)
+                if (item == null) //search in Equipment
                 {
-                    npc.gVob.GetEM(0).StartMessage(msg, npc.gVob);
+                    item = npc.equippedSlots.Values.FirstOrDefault(x => x.ID == itemID);
+                }
+
+                if (item == null)
+                {
+                    item = new Item(itemID, stream.mReadUShort());
                 }
             }
+            else
+            {
+                item = Item.Fists;
+            }
+
+            npc.DrawItem(item, fast);
+        }
+
+        public static void WriteUndrawItem()
+        {
+            if (DateTime.Now.Ticks > nextDrawItemTime)
+            {
+                BitStream stream = Program.client.SetupSendStream(NetworkID.NPCUndrawItemMessage);
+                Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
+
+                nextDrawItemTime = DateTime.Now.Ticks + DelayBetweenMessages;
+            }
+        }
+
+        public static void ReadUndrawItem(BitStream stream)
+        {
+            uint ID = stream.mReadUInt();
+
+            NPC npc;
+            World.npcDict.TryGetValue(ID, out npc);
+            if (npc == null) return;
+
+            Item item = npc.DrawnItem;
+
+            if (item == null)
+                return;
+
+            bool fast = stream.ReadBit();
+            bool altRemove = stream.ReadBit();
+            fast = false;
+
+            npc.UndrawItem(altRemove, fast);
         }
 
         #endregion
@@ -308,7 +348,7 @@ namespace GUC.Client.Network.Messages
                 ushort itemInstanceID = stream.mReadUShort();
                 ushort itemCondition = stream.mReadUShort();
                 byte slot = stream.mReadByte();
-                
+
                 Item item = new Item(itemID, itemInstanceID);
                 item.Condition = itemCondition;
                 npc.EquipSlot(slot, item);

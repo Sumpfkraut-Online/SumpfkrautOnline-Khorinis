@@ -220,43 +220,119 @@ namespace GUC.Server.WorldObjects
         public bool isPlayer { get { return client != null; } }
 
         #region Client commands
-        public delegate void CmdOnUseMobHandler(MobInter mob, NPC user);
-        public static event CmdOnUseMobHandler CmdOnUseMob;
-        public static event CmdOnUseMobHandler CmdOnUnUseMob;
+        public delegate void CmdUseMobHandler(MobInter mob, NPC user);
+        public static event CmdUseMobHandler CmdOnUseMob;
+        public static event CmdUseMobHandler CmdOnUnUseMob;
 
-        internal static void CmdReadUseMob(BitStream stream, Client client)
+        internal static void ReadCmdUseMob(BitStream stream, Client client)
         {
+            if (CmdOnUseMob == null)
+                return;
+
             uint ID = stream.mReadUInt();
 
             Vob mob;
             if (client.character.World.VobDict.TryGetValue(ID, out mob) && mob is MobInter)
             {
-                if (CmdOnUseMob != null)
-                {
-                    CmdOnUseMob((MobInter)mob, client.character);
-                }
+                CmdOnUseMob((MobInter)mob, client.character);
             }
         }
 
-        internal static void CmdReadUnUseMob(BitStream stream, Client client)
+        internal static void ReadCmdUnuseMob(BitStream stream, Client client)
         {
-            if (client.character.UsedMob != null && CmdOnUnUseMob != null)
+            if (CmdOnUnUseMob != null && client.character.UsedMob != null)
             {
                 CmdOnUnUseMob(client.character.UsedMob, client.character);
             }
         }
 
-        public delegate void CmdOnUseItemHandler(Item item, NPC user);
-        public static event CmdOnUseItemHandler CmdOnUseItem;
+        public delegate void CmdUseItemHandler(Item item, NPC user);
+        public static event CmdUseItemHandler CmdOnUseItem;
 
-        internal static void CmdReadUseItem(BitStream stream, Client client)
+        internal static void ReadCmdUseItem(BitStream stream, Client client)
         {
+            if (CmdOnUseItem == null)
+                return;
+
             uint ID = stream.mReadUInt();
             Item item;
-            if (sWorld.ItemDict.TryGetValue(ID, out item) && item.Owner == client.character && CmdOnUseItem != null)
+            if (sWorld.ItemDict.TryGetValue(ID, out item) && item.Owner == client.character)
             {
                 CmdOnUseItem(item, client.character);
             }
+        }
+
+        public delegate void CmdMoveHandler(NPC npc, NPCState state);
+        public static event CmdMoveHandler CmdOnMove;
+
+        internal static void ReadCmdState(BitStream stream, Client client)
+        {
+            if (CmdOnMove == null)
+                return;
+
+            uint id = stream.mReadUInt();
+            NPCState state = (NPCState)stream.mReadByte();
+            if (id == client.character.ID)
+            {
+                CmdOnMove(client.character, state);
+            }
+            else //is it a controlled NPC?
+            {
+                NPC npc;
+                if (sWorld.NPCDict.TryGetValue(id, out npc) && client.VobControlledList.Find(v => v == npc) != null)
+                {
+                    if (state <= NPCState.MoveRight)
+                    {
+                        CmdOnMove(npc, state);
+                    }
+                }
+            }
+        }
+
+        public delegate void CmdJumpHandler(NPC npc);
+        public static event CmdJumpHandler CmdOnJump;
+
+        internal static void ReadCmdJump(BitStream stream, Client client)
+        {
+            if (CmdOnJump == null)
+                return;
+
+            uint id = stream.mReadUInt();
+            if (id == client.character.ID)
+            {
+                CmdOnJump(client.character);
+            }
+            else //is it a controlled NPC?
+            {
+                NPC npc;
+                if (sWorld.NPCDict.TryGetValue(id, out npc) && client.VobControlledList.Find(v => v == npc) != null)
+                {
+                    CmdOnJump(npc);
+                }
+            }
+        }
+
+        public delegate void CmdDrawEquipmentHandler(NPC npc, Item item);
+        public static event CmdDrawEquipmentHandler CmdOnDrawEquipment;
+        public static event CmdDrawEquipmentHandler CmdOnUndrawItem;
+
+        internal static void ReadCmdDrawEquipment(BitStream stream, Client client)
+        {
+            if (CmdOnDrawEquipment == null)
+                return;
+
+            byte slot = stream.mReadByte();
+            Item item = client.character.GetEquipment(slot);
+
+            CmdOnDrawEquipment(client.character, item == null ? Item.Fists : item);
+        }
+
+        internal static void ReadCmdUndrawItem(BitStream stream, Client client)
+        {
+            if (CmdOnUndrawItem == null || client.character.DrawnItem == null)
+                return;
+
+            CmdOnUndrawItem(client.character, client.character.DrawnItem);
         }
 
         #endregion
@@ -285,7 +361,7 @@ namespace GUC.Server.WorldObjects
             stream.mWrite(AttrHealth);
 
             stream.mWrite((byte)equippedSlots.Count);
-            foreach (KeyValuePair<byte,Item> slot in equippedSlots)
+            foreach (KeyValuePair<byte, Item> slot in equippedSlots)
             {
                 stream.mWrite(slot.Key);
                 stream.mWrite(slot.Value.ID);
@@ -350,45 +426,6 @@ namespace GUC.Server.WorldObjects
             client.character.AddItem(item);
         }
 
-        public delegate void MovementHandler(NPC npc, NPCState state, Vec3f position, Vec3f direction);
-        public static event MovementHandler sOnMovement;
-
-        internal static void ReadState(BitStream stream, Client client)
-        {
-            uint id = stream.mReadUInt();
-
-            NPC npc = null;
-
-            if (id == client.character.ID)
-            {
-                npc = client.character;
-            }
-            else
-            {
-                npc = (NPC)client.VobControlledList.Find(v => v.ID == id && v is NPC);
-            }
-
-            if (npc != null)
-            {
-                NPCState state = (NPCState)stream.mReadByte();
-                Vec3f pos = stream.mReadVec();
-                Vec3f dir = stream.mReadVec();
-
-                if (sOnMovement != null)
-                {
-                    sOnMovement(client.character, state, pos, dir);
-                }
-            }
-        }
-
-        public void DoMovement(NPCState state, Vec3f position, Vec3f direction)
-        {
-            this.State = state;
-            this.pos = position; //FIXME: Position -> cell update
-            this.dir = direction;
-            NPCMessage.WriteState(this.client.character.cell.SurroundingClients(), this);
-        }
-
         public delegate void TargetMovementHandler(NPC npc, NPC target, NPCState state, Vec3f position, Vec3f direction);
         public static TargetMovementHandler sOnTargetMovement;
         public TargetMovementHandler OnTargetMovement;
@@ -415,26 +452,29 @@ namespace GUC.Server.WorldObjects
             this.State = state;
             this.pos = position;
             this.dir = direction;
-            NPCMessage.WriteTargetState(this.client.character.cell.SurroundingClients(), this, target);
+            NPCMessage.WriteTargetState(cell.SurroundingClients(), this, target);
         }
 
         #endregion
 
         #region Equipment
-
         Dictionary<byte, Item> equippedSlots = new Dictionary<byte, Item>();
 
         /// <summary>
         /// Equip an Item.
         /// </summary>
+        /// <param name="slot">Don't use 0!</param>
         public void EquipSlot(byte slot, Item item)
         {
-            if (item != null && item.Owner == this)
+            if (item != null && slot != 0 && item != Item.Fists && item.Owner == this)
             {
                 Item oldItem;
                 if (equippedSlots.TryGetValue(slot, out oldItem))
                 {
-                    oldItem.Slot = -1;
+                    if (oldItem != null)
+                    {
+                        oldItem.Slot = 0;
+                    }
                     equippedSlots[slot] = item;
                 }
                 else
@@ -449,12 +489,24 @@ namespace GUC.Server.WorldObjects
         /// <summary>
         /// Unequip an Item slot.
         /// </summary>
+        /// <param name="slot">Don't use 0!</param>
         public void UnequipSlot(byte slot)
         {
+            if (slot == 0) return;
+
             Item item;
             if (equippedSlots.TryGetValue(slot, out item))
             {
-                item.Slot = -1;
+                if (item != null)
+                {
+                    item.Slot = 0;
+                }
+
+                if (DrawnItem == item)
+                {
+                    DoUndrawItem(true); //set to fists?
+                }
+
                 equippedSlots.Remove(slot);
                 NPCMessage.WriteUnequipMessage(cell.SurroundingClients(), this, slot);
             }
@@ -465,15 +517,16 @@ namespace GUC.Server.WorldObjects
         /// </summary>
         public void UnequipItem(Item item)
         {
-            if (item.Owner == this && item.Slot != -1)
+            if (item != null && item.Owner == this)
             {
-                UnequipSlot((byte)item.Slot);
+                UnequipSlot(item.Slot);
             }
         }
 
         /// <summary>
         /// Get the equipped Item of a slot.
         /// </summary>
+        /// <param name="slot">Don't use 0!</param>
         public Item GetEquipment(byte slot)
         {
             Item item = null;
@@ -502,11 +555,6 @@ namespace GUC.Server.WorldObjects
                 return itemList;
             }
         }
-
-        /// <summary>
-        /// Gets the total weight of the items this NPC is carrying.
-        /// </summary>
-        public ushort carryWeight { get; protected set; }
 
         /// <summary>
         /// Checks whether this NPC has the Item with the given ID.
@@ -565,52 +613,45 @@ namespace GUC.Server.WorldObjects
         }
 
         /// <summary>
-        /// Tries to add the given Item to the NPC's inventory, depending on his carry weight limit.
+        /// Tries to add the given Item to the NPC's inventory.
         /// Stackable items may be deleted by this method!
         /// </summary>
-        public bool AddItem(Item item)
+        public void AddItem(Item item)
         {
-            int newWeight = carryWeight + item.amount * item.Instance.Weight;
-            if (newWeight <= AttrCapacity)
+            if (item.Spawned)
             {
-                carryWeight = (ushort)newWeight;
-                if (item.Spawned)
-                {
-                    item.Despawn(); //Fixme?: Send despawn + additem msg in one msg to the new owner
-                }
-                //else
-                if (item.Owner != null)
-                {
-                    item.Owner.RemoveItem(item);
-                }
+                item.Despawn(); //Fixme?: Send despawn + additem msg in one msg to the new owner
+            }
+            //else
+            if (item.Owner != null)
+            {
+                item.Owner.RemoveItem(item);
+            }
 
-                List<Item> list;
-                if (inventory.TryGetValue(item.Instance, out list))
+            List<Item> list;
+            if (inventory.TryGetValue(item.Instance, out list))
+            {
+                if (item.Stackable)
                 {
-                    if (item.Stackable)
+                    Item other = list.Find(i => i.Stackable == true);
+                    if (other != null) //merge the items
                     {
-                        Item other = list.Find(i => i.Stackable == true);
-                        if (other != null) //merge the items
-                        {
-                            other.amount += item.amount;
-                            item.RemoveFromServer();
-                            InventoryMessage.WriteAmountUpdate(this.client, other);
-                            item.Owner = this;
-                            return true;
-                        }
+                        other.amount += item.amount;
+                        item.RemoveFromServer();
+                        InventoryMessage.WriteAmountUpdate(this.client, other);
+                        item.Owner = this;
+                        return;
                     }
                 }
-                else
-                {
-                    list = new List<Item>(1);
-                    inventory.Add(item.Instance, list);
-                }
-                list.Add(item);
-                InventoryMessage.WriteAddItem(this.client, item);
-                item.Owner = this;
-                return true;
             }
-            return false;
+            else
+            {
+                list = new List<Item>(1);
+                inventory.Add(item.Instance, list);
+            }
+            list.Add(item);
+            InventoryMessage.WriteAddItem(this.client, item);
+            item.Owner = this;
         }
 
         /// <summary>
@@ -621,6 +662,12 @@ namespace GUC.Server.WorldObjects
         {
             if (item.Owner == this)
             {
+                UnequipItem(item);
+                if (DrawnItem == item)
+                {
+                    DoUndrawItem(true); //set to fists?
+                }
+
                 item.Owner = null;
                 List<Item> list;
                 if (inventory.TryGetValue(item.Instance, out list))
@@ -661,8 +708,6 @@ namespace GUC.Server.WorldObjects
                     if (newAmount > 0)
                     {
                         item.amount = (ushort)newAmount;
-                        carryWeight = (ushort)(carryWeight - item.amount * item.Instance.Weight);
-
                         InventoryMessage.WriteAmountUpdate(this.client, item);
                     }
                     else
@@ -719,12 +764,75 @@ namespace GUC.Server.WorldObjects
                 BitStream stream = Program.server.SetupStream(NetworkID.MobUnUseMessage);
                 stream.mWrite(this.ID);
 
-                foreach (Client cl in this.cell.SurroundingClients())
+                foreach (Client cl in cell.SurroundingClients())
                 {
                     Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', cl.guid, false);
                 }
             }
         }
 
+        /// <summary>
+        /// Order the NPC to do a certain movement.
+        /// </summary>
+        public void DoMoveState(NPCState state)
+        {
+            this.State = state;
+            NPCMessage.WriteState(cell.SurroundingClients(), this);
+        }
+
+        /// <summary>
+        /// Let the NPC do a jump.
+        /// </summary>
+        public void DoJump()
+        {
+            NPCMessage.WriteJump(cell.SurroundingClients(), this);
+        }
+
+        /// <summary>
+        /// Gets the current drawn Item in the hands of the NPC.
+        /// </summary>
+        public Item DrawnItem { get; internal set; }
+
+        /// <summary>
+        /// Take out an item.
+        /// </summary>
+        public void DoDrawitem(Item item)
+        {
+            DoDrawitem(item, false);
+        }
+
+        /// <summary>
+        /// Take out an item.
+        /// </summary>
+        /// <param name="fast">True if the state should be set instantly, without playing an animation.</param>
+        public void DoDrawitem(Item item, bool fast)
+        {
+            if (item == null || item.Owner != this)
+                return;
+
+            DrawnItem = item;
+            NPCMessage.WriteDrawItem(cell.SurroundingClients(), this, item, fast);
+        }
+
+        /// <summary>
+        /// Undraw the current Item.
+        /// </summary>
+        public void DoUndrawItem()
+        {
+            DoUndrawItem(false);
+        }
+
+        /// <summary>
+        /// Undraw the current Item.
+        /// </summary>
+        /// <param name="fast">True if the state should be set instantly, without playing an animation.</param>
+        public void DoUndrawItem(bool fast)
+        {
+            if (DrawnItem == null)
+                return;
+
+            DrawnItem = null;
+            NPCMessage.WriteUndrawItem(cell.SurroundingClients(), this, fast, State == NPCState.Stand);
+        }
     }
 }

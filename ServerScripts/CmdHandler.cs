@@ -12,21 +12,39 @@ namespace GUC.Server.Scripts
     {
         public static void Init()
         {
-            NPC.sOnMovement += OnMovement;
+            NPC.CmdOnMove += OnMovement;
             NPC.sOnTargetMovement += OnTargetMovement;
             NPC.CmdOnUseMob += OnUseMob;
             NPC.CmdOnUnUseMob += OnUnUseMob;
             NPC.CmdOnUseItem += OnUseItem;
+            NPC.CmdOnJump += OnJump;
+            NPC.CmdOnDrawEquipment += OnDrawEquipment;
+            NPC.CmdOnUndrawItem += OnUndrawItem;
         }
 
-        static void OnMovement(NPC npc, NPCState state, Vec3f position, Vec3f direction)
+        static void OnDrawEquipment(NPC npc, Item item)
         {
-            npc.DoMovement(state, position, direction);
+            npc.DoDrawitem(item);
+        }
+
+        static void OnUndrawItem(NPC npc, Item item)
+        {
+            npc.DoUndrawItem();
+        }
+
+        static void OnMovement(NPC npc, NPCState state)
+        {
+            npc.DoMoveState(state);
         }
 
         static void OnTargetMovement(NPC npc, NPC target, NPCState state, Vec3f position, Vec3f direction)
         {
             npc.DoTargetMovement(state, position, direction, target);
+        }
+
+        static void OnJump(NPC npc)
+        {
+            npc.DoJump();
         }
 
         static void OnUseMob(MobInter mob, NPC npc)
@@ -44,8 +62,7 @@ namespace GUC.Server.Scripts
 
         static void OnUseItem(Item item, NPC npc)
         {
-            Log.Logger.log(npc.State + " " + npc.WeaponState);
-            //if (npc.State == NPCState.Stand && npc.WeaponState == NPCWeaponState.None)
+            if (npc.State == NPCState.Stand && npc.WeaponState == NPCWeaponState.None)
             {
                 switch (item.Type)
                 {

@@ -14,10 +14,6 @@ namespace GUC.Enumeration
         MoveLeft,
         MoveRight,
 
-        Jump,
-
-        Fall,
-
         AttackForward,
         AttackLeft,
         AttackRight,

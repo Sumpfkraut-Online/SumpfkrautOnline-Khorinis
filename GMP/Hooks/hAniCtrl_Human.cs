@@ -12,24 +12,122 @@ namespace GUC.Client.Hooks
 {
     static class hAniCtrl_Human
     {
+        const int DelayBetweenMessages = 3000000; //300ms
+
+        static bool blockFwd = false;
+        static bool _BlockFwd
+        {
+            get { return blockFwd; }
+            set
+            {
+                if (blockFwd != value)
+                {
+                    if (value)
+                    {
+                        Program.Process.Write(new byte[] { 0xE9, 0x99, 0x00, 0x00 /*,0x00*/ }, 0x6B7906);
+                    }
+                    else
+                    {
+                        Program.Process.Write(new byte[] { 0x8B, 0x86, 0x4C, 0x01 /*,0x00*/ }, 0x6B7906);
+                    }
+                    blockFwd = value;
+                }
+            }
+        }
+
+        static bool blockStd = false;
+        static bool _BlockStd
+        {
+            get { return blockStd; }
+            set
+            {
+                if (blockStd != value)
+                {
+                    if (value)
+                    {
+                        Program.Process.Write(new byte[] { 0xE9, 0x55, 0x04, 0x00, 0x00 }, 0x6B7495);
+                    }
+                    else
+                    {
+                        Program.Process.Write(new byte[] { 0x57, 0x8B, 0x7E, 0x68, 0x85 }, 0x6B7495);
+                    }
+                    blockStd = value;
+                }
+            }
+        }
+
+        static bool blockBwd = false;
+        static bool _BlockBwd
+        {
+            get { return blockBwd; }
+            set
+            {
+                if (blockBwd != value)
+                {
+                    if (value)
+                    {
+                        Program.Process.Write(new byte[] { 0xEB, 0x67 }, 0x6B7BC5);
+                    }
+                    else
+                    {
+                        Program.Process.Write(new byte[] { 0x8B, 0x86 }, 0x6B7BC5);
+                    }
+                    blockBwd = value;
+                }
+            }
+        }
+
+        static bool blockJmp = false;
+        static bool _BlockJmp
+        {
+            get { return blockJmp; }
+            set
+            {
+                if (blockJmp != value)
+                {
+                    if (value)
+                    {
+                        Program.Process.Write(new byte[] { 0xE9, 0xE0, 0x01 /*, 0x00, 0x00*/ }, 0x6B21E6);
+                    }
+                    else
+                    {
+                        Program.Process.Write(new byte[] { 0x80, 0xA6, 0xB8 /*, 0x00, 0x00*/ }, 0x6B21E6);
+                    }
+                    blockJmp = value;
+                }
+            }
+        }
+
+
+
         public static Int32 _Forward(String message)
         {
             try
             {
-                if (Player.Hero == null)
-                    return 0;
-
-                if (Program.Process.ReadInt(Convert.ToInt32(message)) != Player.Hero.gNpc.AniCtrl.Address)
-                    return 0;
-
-                int bs = Player.Hero.gNpc.GetBodyState();
-                if (bs < 1 /*walk*/ || bs > 7 /*dive*/)
-                    return 0;
-
-                if (Player.Hero.State != NPCState.MoveForward)
+                if (Player.Hero != null)
                 {
-                    NPCMessage.WriteState(NPCState.MoveForward, Player.Hero);
+                    int address = Convert.ToInt32(message);
+                    int thisAddr = Program.Process.ReadInt(address);
+
+                    if (thisAddr == Player.Hero.gAniCtrl.Address)
+                    {
+                        //int bs = Player.Hero.gNpc.GetBodyState();
+                        //if (bs >= 1 /*walk*/ && bs <= 7 /*dive*/)
+                        {
+                            if (Player.Hero.State != NPCState.MoveForward)
+                            {
+                                if (DateTime.Now.Ticks > Player.Hero.nextForwardUpdate)
+                                {
+                                    NPCMessage.WriteState(NPCState.MoveForward, Player.Hero);
+                                    Player.Hero.nextForwardUpdate = DateTime.Now.Ticks + DelayBetweenMessages;
+                                }
+                                _BlockFwd = true;
+                                return 0;
+                            }
+                        }
+                    }
                 }
+                _BlockFwd = false;
             }
             catch (Exception e)
             {
@@ -38,24 +136,37 @@ namespace GUC.Client.Hooks
             return 0;
         }
 
+        static long count = 0;
         public static Int32 _Stand(String message)
         {
             try
             {
-                if (Player.Hero == null)
-                    return 0;
+                //zERROR.GetZErr(Program.Process).Report(2, 'G', "Stand " + count++, 0, "hAniCtrl_Human.cs", 0);
 
-                if (Program.Process.ReadInt(Convert.ToInt32(message)) != Player.Hero.gNpc.AniCtrl.Address)
-                    return 0;
-
-                if (Player.Hero.gNpc.GetBodyState() != 0 /*stand*/)
-                    return 0;
-
-                if (Player.Hero.State != NPCState.Stand)
+                if (Player.Hero != null)
                 {
-                    Player.Hero.State = NPCState.Stand;
-                    NPCMessage.WriteState(NPCState.Stand, Player.Hero);
+                    int address = Convert.ToInt32(message);
+                    int thisAddr = Program.Process.ReadInt(address);
+
+                    if (thisAddr == Player.Hero.gAniCtrl.Address)
+                    {
+                        //int bs = Player.Hero.gNpc.GetBodyState();
+                        //if (bs >= 1 /*walk*/ && bs <= 7 /*dive*/)
+                        {
+                            if (Player.Hero.State != NPCState.Stand)
+                            {
+                                if (DateTime.Now.Ticks > Player.Hero.nextStandUpdate)
+                                {
+                                    NPCMessage.WriteState(NPCState.Stand, Player.Hero);
+                                    Player.Hero.nextStandUpdate = DateTime.Now.Ticks + DelayBetweenMessages;
+                                }
+                                _BlockStd = true;
+                                return 0;
+                            }
+                        }
+                    }
                 }
+                _BlockStd = false;
             }
             catch (Exception e)
             {
@@ -68,21 +179,30 @@ namespace GUC.Client.Hooks
         {
             try
             {
-                if (Player.Hero == null)
-                    return 0;
-
-                if (Program.Process.ReadInt(Convert.ToInt32(message)) != Player.Hero.gNpc.AniCtrl.Address)
-                    return 0;
-
-                int bs = Player.Hero.gNpc.GetBodyState();
-                if (bs < 1 /*walk*/ || bs > 6 /*crawl, wat*/)
-                    return 0;
-
-                if (Player.Hero.State != NPCState.MoveBackward)
+                if (Player.Hero != null)
                 {
-                    Player.Hero.State = NPCState.MoveBackward;
-                    NPCMessage.WriteState(NPCState.Stand, Player.Hero);
+                    int address = Convert.ToInt32(message);
+                    int thisAddr = Program.Process.ReadInt(address);
+
+                    if (thisAddr == Player.Hero.gAniCtrl.Address)
+                    {
+                        //int bs = Player.Hero.gNpc.GetBodyState();
+                        //if (bs >= 1 /*walk*/ && bs <= 7 /*dive*/)
+                        {
+                            if (Player.Hero.State != NPCState.MoveBackward)
+                            {
+                                if (DateTime.Now.Ticks > Player.Hero.nextBackwardUpdate)
+                                {
+                                    NPCMessage.WriteState(NPCState.MoveBackward, Player.Hero);
+                                    Player.Hero.nextBackwardUpdate = DateTime.Now.Ticks + DelayBetweenMessages;
+                                }
+                                _BlockBwd = true;
+                                return 0;
+                            }
+                        }
+                    }
                 }
+                _BlockBwd = false;
             }
             catch (Exception e)
             {
@@ -95,19 +215,26 @@ namespace GUC.Client.Hooks
         {
             try
             {
-                if (Player.Hero == null)
-                    return 0;
-
-                if (Program.Process.ReadInt(Convert.ToInt32(message)) != Player.Hero.gNpc.AniCtrl.Address)
-                    return 0;
-
-                //FIXME und so
-
-                if (Player.Hero.State != NPCState.Jump)
+                if (Player.Hero != null)
                 {
-                    Player.Hero.State = NPCState.Jump;
-                    NPCMessage.WriteState(NPCState.Stand, Player.Hero);
+                    int address = Convert.ToInt32(message);
+                    int thisAddr = Program.Process.ReadInt(address);
+
+                    if (thisAddr == Player.Hero.gAniCtrl.Address)
+                    {
+                        //int bs = Player.Hero.gNpc.GetBodyState();
+                        //if (bs >= 1 /*walk && bs <= 7 /*dive)
+                        {
+                            if (!Player.Hero.DoJump) //not trying to jump right now
+                            {
+                                NPCMessage.WriteJump(Player.Hero);
+                                _BlockJmp = true;
+                                return 0;
+                            }
+                        }
+                    }
                 }
+                _BlockJmp = false;
             }
             catch (Exception e)
             {
@@ -116,20 +243,13 @@ namespace GUC.Client.Hooks
             return 0;
         }
 
-        public static Int32 hook_StartFallDownAni(String message)
+        public static Int32 RunJump(String message)
         {
             try
             {
-                if (Player.Hero == null)
-                    return 0;
-
-                if (Program.Process.ReadInt(Convert.ToInt32(message)) != Player.Hero.gNpc.AniCtrl.Address)
-                    return 0;
-
-                if (Player.Hero.State != NPCState.Fall)
+                if (Player.Hero != null)
                 {
-                    Player.Hero.State = NPCState.Fall;
-                    NPCMessage.WriteState(NPCState.Stand, Player.Hero);
+                    NPCMessage.WriteJump(Player.Hero);
                 }
             }
             catch (Exception e)
@@ -138,11 +258,6 @@ namespace GUC.Client.Hooks
             }
             return 0;
         }
-
-        /* 
-         * FIGHTING
-         */
-
 
         static oCAniCtrl_Human aniCtrl = null;
         public static Int32 HitCombo(String message)
@@ -179,7 +294,7 @@ namespace GUC.Client.Hooks
                         if (npc.gNpc.AniCtrl.Address == aniCtrl.Address) // self
                         {
                             continue;
-                        }                        
+                        }
 
                         if (aniCtrl.NPC.IsInFightRange(npc.gVob, 0) &&
                             aniCtrl.NPC.IsInFightFocus(npc.gVob) &&
@@ -227,9 +342,14 @@ namespace GUC.Client.Hooks
         public static void AddHooks(Process process)
         {
             process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("_Forward"), (int)oCAniCtrl_Human.FuncOffsets._Forward, 6, 1);
-            //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("_Backward"), (int)oCAniCtrl_Human.FuncOffsets._Backward, 5, 1);
-            //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("_Stand"), (int)oCAniCtrl_Human.FuncOffsets._Stand, 5, 1);
-            //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("JumpForward"), (int)oCAniCtrl_Human.FuncOffsets.PC_JumpForward, 5, 1);
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("_Backward"), (int)oCAniCtrl_Human.FuncOffsets._Backward, 5, 1);
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("_Stand"), (int)oCAniCtrl_Human.FuncOffsets._Stand, 5, 1);
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("JumpForward"), (int)oCAniCtrl_Human.FuncOffsets.JumpForward, 6, 1);
+
+            process.Write(Enumerable.Repeat<byte>(0x90, 25).ToArray(), 0x6B1F13); //erase PC_ForwardJump runjump
+            process.Write(Enumerable.Repeat<byte>(0x90, 5).ToArray(), 0x6B1F32);
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("RunJump"), 0x6B1F32, 5, 1);
+
             //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("hook_StartFallDownAni"), 0x6B5220, 6, 1);
 
             //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("HitCombo"), (int)oCAniCtrl_Human.FuncOffsets.HitCombo, 6, 2); //entry

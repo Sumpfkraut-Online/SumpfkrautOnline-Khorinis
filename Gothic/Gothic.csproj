@@ -45,6 +45,7 @@
     <Compile Include="zClasses\oCMobFire.cs" />
     <Compile Include="zClasses\oCMobLadder.cs" />
     <Compile Include="zClasses\oCMobWheel.cs" />
+    <Compile Include="zClasses\oCNpcFocus.cs" />
     <Compile Include="zClasses\zCViewDraw.cs" />
     <Compile Include="zClasses\oCVisualFX.cs" />
     <Compile Include="zClasses\zCCamera.cs" />

@@ -169,24 +169,27 @@ namespace GUC.Client.Hooks
 
                 switch (msg.SubType)
                 {
-                    //FIXME: Magic & Ranged
                     case oCMsgWeapon.SubTypes.DrawWeapon:
                     case oCMsgWeapon.SubTypes.DrawWeapon1:
-                        /*if (Player.Hero.EquippedWeapon == null)
+                        byte Slot = 0; // = Item.Fists.Slot;
+                        if (Player.lastUsedWeapon != null && Player.lastUsedWeapon.Slot != 0)
                         {
-                            NPCMessage.WriteWeaponState(NPCWeaponState.Fists, false);
+                            Slot = Player.lastUsedWeapon.Slot;
                         }
-                        else*/
+                        else
                         {
-                            NPCMessage.WriteWeaponState(NPCWeaponState.Melee, false);
+                            Slot = Player.Hero.equippedSlots.FirstOrDefault(x => x.Value.IsMeleeWeapon).Key;
                         }
+                        NPCMessage.WriteDrawItem(Slot);
                         break;
                     case oCMsgWeapon.SubTypes.RemoveWeapon:
-                        NPCMessage.WriteWeaponState(NPCWeaponState.None, false);
-                        break;
                     case oCMsgWeapon.SubTypes.RemoveWeapon1:
-                        NPCMessage.WriteWeaponState(NPCWeaponState.None, true);
+                        NPCMessage.WriteUndrawItem();
                         break;
+                    case oCMsgWeapon.SubTypes.DrawWeapon2:
+                    case oCMsgWeapon.SubTypes.RemoveWeapon2:
+                        BlockMsg = false;
+                        return;
                 }
                 BlockMsg = true;
                 return;

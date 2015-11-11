@@ -9,6 +9,7 @@ using Gothic.zTypes;
 using RakNet;
 using GUC.Network;
 using Gothic.zStruct;
+using GUC.Client.Hooks;
 
 namespace GUC.Client.WorldObjects
 {
@@ -73,6 +74,7 @@ namespace GUC.Client.WorldObjects
             }
 
             gNpc.InitHumanAI();
+            gAniCtrl = gNpc.AniCtrl;
         }
 
         protected ushort hpmax = 100;
@@ -132,6 +134,8 @@ namespace GUC.Client.WorldObjects
             }
         }
 
+        public oCAniCtrl_Human gAniCtrl { get; protected set; }
+
         public bool HasFreeHands
         {
             get
@@ -156,8 +160,6 @@ namespace GUC.Client.WorldObjects
         }
 
         public NPCState State = NPCState.Stand;
-        public NPCState NextState = NPCState.Stand; //target stance, but the server has to allow it first
-        public NPCWeaponState WeaponState = NPCWeaponState.None;
 
         #region Visual
 
@@ -274,14 +276,17 @@ namespace GUC.Client.WorldObjects
 
         #endregion
 
+        public Item DrawnItem = null;
+
         #region Equipment
 
-        Dictionary<byte, Item> equippedSlots = new Dictionary<byte, Item>();
+        public Dictionary<byte, Item> equippedSlots = new Dictionary<byte, Item>();
 
         public void EquipSlot(byte slot, Item item)
         {
             if (item != null && !item.Spawned)
             {
+                item.Slot = slot;
                 if (UnequipSlot(slot))
                 {
                     equippedSlots[slot] = item;
@@ -310,6 +315,7 @@ namespace GUC.Client.WorldObjects
             Item item;
             if (equippedSlots.TryGetValue(slot, out item))
             {
+                item.Slot = 0;
                 if (Spawned)
                 {
                     gNpc.UnequipItem(item.gItem);
@@ -388,6 +394,13 @@ namespace GUC.Client.WorldObjects
         }
 
         public long nextPosUpdate = 0;
+        public long nextForwardUpdate = 0;
+        public long nextStandUpdate = 0;
+        public long nextBackwardUpdate = 0;
+        public long nextJumpUpdate = 0;
+
+        public bool DoJump = false;
+
         public override void Update(long now)
         {
             if (this != Player.Hero)
@@ -443,6 +456,110 @@ namespace GUC.Client.WorldObjects
                     nextPosUpdate = DateTime.Now.Ticks + PositionUpdateTime;
                 }
             }
+        }
+
+        public void DrawItem(Item item, bool fast)
+        {
+            if (item == null) return;
+
+            DrawnItem = item;
+
+            if (item == Item.Fists)
+            {
+                if (fast)
+                {
+                    gNpc.SetWeaponMode2(2);
+                }
+                else
+                {
+                    gVob.GetEM(0).StartMessage(oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.DrawWeapon, 0, 0), gVob);
+                }
+            }
+            else
+            {
+                switch (item.Type)
+                {
+                    case ItemType.Sword_1H:
+                    case ItemType.Sword_2H:
+                    case ItemType.Blunt_1H:
+                    case ItemType.Blunt_2H:
+                        if (fast)
+                        {
+                            gNpc.SetWeaponMode2(3);
+                        }
+                        else
+                        {
+                            gVob.GetEM(0).StartMessage(oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.DrawWeapon, 0, 0), gVob);
+                        }
+                        break;
+                    case ItemType.Bow:
+                    case ItemType.XBow:
+                        if (fast)
+                        {
+                            gNpc.SetWeaponMode2(4);
+                        }
+                        else
+                        {
+                            gVob.GetEM(0).StartMessage(oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.DrawWeapon, 4, 0), gVob);
+                        }
+                        break;
+                    case ItemType.Armor:
+                        break;
+                    case ItemType.Ring:
+                        break;
+                    case ItemType.Amulet:
+                        break;
+                    case ItemType.Belt:
+                        break;
+                    case ItemType.Food_Huge:
+                    case ItemType.Food_Small:
+                    case ItemType.Drink:
+                    case ItemType.Potions:
+                        break;
+                    case ItemType.Document:
+                    case ItemType.Book:
+                        break;
+                    case ItemType.Rune:
+                    case ItemType.Scroll:
+                        break;
+                    case ItemType.Misc_Usable:
+                        break;
+                    case ItemType.Misc:
+                        break;
+                }
+            }
+        }
+
+        public void UndrawItem(bool altRemove, bool fast)
+        {
+            Item item = DrawnItem;
+            if (item == null)
+                return;
+
+            if (item == Item.Fists || (item.Type >= ItemType.Sword_1H && item.Type <= ItemType.XBow) || item.Type == ItemType.Scroll || item.Type == ItemType.Rune)
+            {
+                if (fast)
+                {
+                    gNpc.SetWeaponMode2(0);
+                    if (this == Player.Hero)
+                    {
+                        oCNpcFocus.SetFocusMode(Program.Process, 0);
+                    }
+                }
+                else
+                {
+                    if (altRemove && gAniCtrl.IsStanding())
+                    {
+                        gVob.GetEM(0).StartMessage(oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.RemoveWeapon1, gAniCtrl.wmode_last, 0), gVob);
+                    }
+                    else
+                    {
+                        gVob.GetEM(0).StartMessage(oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.RemoveWeapon, 0, 0), gVob);
+                    }
+                }
+            }
+
+            DrawnItem = null;
         }
     }
 }

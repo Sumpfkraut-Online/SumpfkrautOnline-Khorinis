@@ -34,7 +34,12 @@ namespace Gothic.zClasses
             _t_swimturnr = 0x10D4,
 
             _t_strafel = 0x1030,
-            _t_strafer = 0x1034
+            _t_strafer = 0x1034,
+
+            _t_runr_2_jump = 0x1190,
+
+            wmode_last = 0x154
+
 
         }
         public enum FuncOffsets : uint
@@ -112,6 +117,10 @@ namespace Gothic.zClasses
 
         public int _t_strafer { get { return Process.ReadInt(Address + (int)Offsets._t_strafer); } }
         public int _t_strafel { get { return Process.ReadInt(Address + (int)Offsets._t_strafel); } }
+
+        public int _t_runr_2_jump { get { return Process.ReadInt(Address + (int)Offsets._t_runr_2_jump); } }
+
+        public int wmode_last { get { return Process.ReadInt(Address + (int)Offsets.wmode_last); } }
 
         public int HitTarget
         {

@@ -43,11 +43,13 @@ namespace GUC.Enumeration
         NPCAniStopMessage,
         NPCEquipMessage,
         NPCUnequipMessage,
+        NPCJumpMessage,
         NPCFoodMessage,
 
         NPCStateMessage,
         NPCTargetStateMessage,
-        NPCWeaponStateMessage,
+        NPCDrawItemMessage,
+        NPCUndrawItemMessage,
         
         NPCHitMessage,
 

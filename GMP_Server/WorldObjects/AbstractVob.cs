@@ -14,7 +14,7 @@ namespace GUC.Server.WorldObjects
     {
         static uint idCount = 1; // Start with 1 cause a "null-vob" (id = 0) is needed for networking
 
-        public uint ID { get; private set; }
+        public uint ID { get; internal set; }
 
         internal WorldCell cell;
         internal Client ClientOrNull { get { return (this is NPC && ((NPC)this).isPlayer) ? ((NPC)this).client : null; } }

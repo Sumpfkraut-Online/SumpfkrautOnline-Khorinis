@@ -116,7 +116,6 @@ namespace GUC.Client.Network.Messages
             npc.HP = stream.mReadUShort();
 
             int slotCount = stream.mReadByte();
-            zERROR.GetZErr(Program.Process).Report(2, 'G', "Items: " + slotCount, 0, "Program.cs", 0);
             byte slot; uint itemID; ushort itemInstanceID; ushort itemCondition; Item item;
             for (int i = 0; i < slotCount; i++)
             {
@@ -124,7 +123,7 @@ namespace GUC.Client.Network.Messages
                 itemID = stream.mReadUInt();
                 itemInstanceID = stream.mReadUShort();
                 itemCondition = stream.mReadUShort();
-                zERROR.GetZErr(Program.Process).Report(2, 'G', slot + ": " + itemID + " " + itemInstanceID + " " + itemCondition, 0, "Program.cs", 0);
+
                 item = new Item(itemID, itemInstanceID);
                 item.Condition = itemCondition;
                 npc.EquipSlot(slot, item);

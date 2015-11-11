@@ -13,6 +13,22 @@ namespace GUC.Server.WorldObjects
 {
     public class Item : AbstractDropVob
     {
+        static Item fists = null;
+        public static Item Fists 
+        { 
+            get
+            {
+                if (fists == null)
+                {
+                    fists = new Item();
+                    fists.ID = 0;
+                    fists.Slot = 0;
+                    sWorld.RemoveVob(fists);
+                }
+                return fists;
+            }
+        }
+
         /// <summary>
         /// Gets the ItemInstance of this item.
         /// </summary>
@@ -63,7 +79,7 @@ namespace GUC.Server.WorldObjects
         /// <summary>
         /// Gets the equipment slot for the owner NPC.
         /// </summary>
-        public int Slot { get; internal set; }
+        public byte Slot { get; internal set; }
 
         /// <summary>
         /// The condition of this item. Only used for weapons, armors, etc. Can't be set when spawned. 
@@ -147,7 +163,6 @@ namespace GUC.Server.WorldObjects
                 Item item = new Item();
                 item.Instance = instance;
                 item.condition = instance.Condition;
-                item.Slot = -1;
                 return item;
             }
             else

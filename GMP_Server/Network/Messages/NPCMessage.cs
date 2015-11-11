@@ -79,6 +79,14 @@ namespace GUC.Server.Network.Messages
                 Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
         }
 
+        public static void WriteJump(IEnumerable<Client> list, NPC npc)
+        {
+            BitStream stream = Program.server.SetupStream(NetworkID.NPCJumpMessage);
+            stream.mWrite(npc.ID);
+            foreach (Client client in list)
+                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
+        }
+
         #region States
 
         public static void WriteState(IEnumerable<Client> list, NPC npc)
@@ -86,8 +94,6 @@ namespace GUC.Server.Network.Messages
             BitStream stream = Program.server.SetupStream(NetworkID.NPCStateMessage);
             stream.mWrite(npc.ID);
             stream.mWrite((byte)npc.State);
-            stream.mWrite(npc.pos);
-            stream.mWrite(npc.dir);
             foreach (Client client in list)
                 Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
         }
@@ -112,23 +118,36 @@ namespace GUC.Server.Network.Messages
                 Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
         }
 
-        public static void ReadWeaponState(BitStream stream, Client client)
+        public static void WriteDrawItem(IEnumerable<Client> list, NPC npc, Item item, bool fast)
         {
-            //client.character.WeaponState = (NPCWeaponState)stream.mReadByte();
-            bool removeType1 = stream.ReadBit();
-            client.character.pos = stream.mReadVec();
-            client.character.dir = stream.mReadVec();
-            WriteWeaponState(client.character.cell.SurroundingClients(client), client.character, removeType1);
+            if (npc == null) 
+                return;
+
+            if (item == null)
+                return;
+
+            BitStream stream = Program.server.SetupStream(NetworkID.NPCDrawItemMessage);
+            stream.mWrite(npc.ID);
+            stream.mWrite(item.ID);
+            stream.mWrite(fast);
+            if (item != Item.Fists)
+            {
+                stream.mWrite(item.Instance.ID);
+            }
+
+            foreach (Client client in list)
+                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
         }
 
-        public static void WriteWeaponState(IEnumerable<Client> list, NPC npc, bool removeType1)
+        public static void WriteUndrawItem(IEnumerable<Client> list, NPC npc, bool fast, bool altRemove)
         {
-            BitStream stream = Program.server.SetupStream(NetworkID.NPCWeaponStateMessage);
+            if (npc == null)
+                return;
+
+            BitStream stream = Program.server.SetupStream(NetworkID.NPCUndrawItemMessage);
             stream.mWrite(npc.ID);
-            stream.mWrite((byte)npc.WeaponState);
-            stream.mWrite(removeType1);
-            stream.mWrite(npc.pos);
-            stream.mWrite(npc.dir);
+            stream.mWrite(fast);
+            stream.mWrite(altRemove);
 
             foreach (Client client in list)
                 Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);

@@ -50,7 +50,7 @@ namespace GUC.Client.Hooks
                 if (vob != null && vob is NPC)
                 {
                     NPC npc = (NPC)vob;
-                    if (npc.WeaponState == Enumeration.NPCWeaponState.Fists && npc.gNpc.WeaponMode != 1)
+                    if (npc.DrawnItem == Item.Fists && npc.gNpc.WeaponMode != 1)
                     {
                         //return 1:
                         Program.Process.Write(new byte[] { 0xBB, 0x01, 0x00, 0x00, 0x00,              //mov ebx, 1

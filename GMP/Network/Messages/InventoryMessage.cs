@@ -30,9 +30,13 @@ namespace GUC.Client.Network.Messages
             uint id = stream.mReadUInt();
             ushort amount = stream.mReadUShort();
 
+            Item item;
+            Player.Inventory.TryGetValue(id, out item);
+            if (item == null) return;
+
             if (amount > 0)
             {
-                Player.Inventory[id].Amount = amount;
+                item.Amount = amount;
             }
             else
             {

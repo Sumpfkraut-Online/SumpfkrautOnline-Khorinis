@@ -12,6 +12,28 @@ namespace GUC.Client.WorldObjects
 {
     class Item : AbstractVob
     {
+        static Item fists = null;
+        public static Item Fists
+        {
+            get
+            {
+                if (fists == null)
+                {
+                    fists = new Item(0);
+                }
+                return fists;
+            }
+        }
+
+        private Item(uint ID)
+            : base(ID)
+        {
+        }
+
+        public byte Slot = 0;
+
+        public ItemType Type { get { return instance.type; } }
+
         protected ushort condition;
         public ushort Condition
         {

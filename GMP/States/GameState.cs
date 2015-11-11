@@ -39,13 +39,10 @@ namespace GUC.Client.States
         public override Dictionary<VirtualKeys, Action> Shortcuts { get { return shortcuts; } }
 
         static oCNpc npc;
-        static MobInter mob;
+        static int count = 0;
         public static void RenderTest()
         {
-            mob = new MobInter(9999, 1);
-            mob.Position = Player.Hero.Position;
-            mob.Spawn();
-
+            Player.Hero.gNpc.SetWeaponMode2(count++);
             /*if (npc == null)
             {
                 NPCInstance inst = NPCInstance.Table.Get(3);
@@ -83,7 +80,7 @@ namespace GUC.Client.States
 
         static Random rand = new Random();
         public static void RenderTest2()
-        {
+        {            
             /*if (npc != null)
             {
                 npc.GetEM(0).KillMessages();
@@ -127,7 +124,7 @@ namespace GUC.Client.States
             InputHandler.Update();
             Program.client.Update();
 
-            GUI.GUCView.DebugText.Text = Player.Hero.gNpc.FocusVob.Address.ToString("X4");
+            GUI.GUCView.DebugText.Text = "State: " + Player.Hero.State;
 
             /*GUI.GUCView.DebugText.Text = "";
             for (int i = 0; i < Player.VobControlledList.Count; i++)

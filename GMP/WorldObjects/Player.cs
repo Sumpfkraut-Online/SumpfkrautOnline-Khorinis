@@ -15,15 +15,17 @@ namespace GUC.Client.WorldObjects
         public static NPC Hero = null;
         public static List<AbstractVob> VobControlledList = new List<AbstractVob>();
 
+        public static Item lastUsedWeapon = null;
+
         public static void DoFists()
         {
-            if (Player.Hero.WeaponState == NPCWeaponState.None)
+            if (Player.Hero.DrawnItem == null)
             {
-                NPCMessage.WriteWeaponState(NPCWeaponState.Fists, false);
+                NPCMessage.WriteDrawItem(0/*Item.Fists.Slot*/);
             }
-            else if (Player.Hero.WeaponState == NPCWeaponState.Fists)
+            else if (Player.Hero.DrawnItem == Item.Fists)
             {
-                NPCMessage.WriteWeaponState(NPCWeaponState.None, true);
+                NPCMessage.WriteUndrawItem();
             }
         }
 
