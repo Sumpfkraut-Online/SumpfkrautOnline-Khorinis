@@ -5,6 +5,7 @@ using System.Text;
 using GUC.Enumeration;
 using GUC.Server.Network;
 using GUC.Server.Network.Messages;
+using GUC.Types;
 
 namespace GUC.Server.WorldObjects
 {
@@ -17,6 +18,7 @@ namespace GUC.Server.WorldObjects
         public string MapName { get; protected set; }
 
         internal Dictionary<int, Dictionary<int, WorldCell>> Cells = new Dictionary<int, Dictionary<int, WorldCell>>();
+        internal Dictionary<int, Dictionary<int, NPCCell>> SmallCells = new Dictionary<int, Dictionary<int, NPCCell>>();
 
         Dictionary<uint, NPC> playerDict = new Dictionary<uint, NPC>();
         Dictionary<uint, NPC> npcDict = new Dictionary<uint, NPC>();
@@ -33,7 +35,7 @@ namespace GUC.Server.WorldObjects
             MapName = mapname.ToUpper();
             sWorld.WorldDict.Add(MapName, this);
 
-            Vob.Create("forge").Spawn(this, new Types.Vec3f(0, -100, 0));
+            //Vob.Create("forge").Spawn(this, new Types.Vec3f(0, -100, 0));
         }
 
         public NPC GetNpcOrPlayer(uint id)
@@ -120,8 +122,14 @@ namespace GUC.Server.WorldObjects
         #endregion
 
         #region WorldCells
+
         internal void UpdatePosition(AbstractVob vob, Client exclude)
         {
+            if (vob is NPC)
+            {
+                UpdateSmallCells((NPC)vob);
+            }
+
             float unroundedX = vob.pos.X / WorldCell.cellSize;
             float unroundedZ = vob.pos.Z / WorldCell.cellSize;
 
@@ -138,7 +146,7 @@ namespace GUC.Server.WorldObjects
                 //vob moved to a new cell
                 if (vob.cell.x != x || vob.cell.z != z)
                 {
-                    //check whether we're at least > 20% inside: 0.5f == between 2 cells
+                    //check whether we're at least > 15% inside: 0.5f == between 2 cells
                     float xdiff = unroundedX - vob.cell.x;
                     float zdiff = unroundedZ - vob.cell.z;
                     if ((xdiff > 0.65f || xdiff < -0.65f) || (zdiff > 0.65f || zdiff < -0.65f))
@@ -153,20 +161,61 @@ namespace GUC.Server.WorldObjects
             }
         }
 
+        void UpdateSmallCells(NPC vob)
+        {
+            float unroundedX = vob.pos.X / NPCCell.cellSize;
+            float unroundedZ = vob.pos.Z / NPCCell.cellSize;
+
+            //calculate new cell indices
+            int x = (int)(vob.pos.X >= 0 ? unroundedX + 0.5f : unroundedX - 0.5f);
+            int z = (int)(vob.pos.Z >= 0 ? unroundedZ + 0.5f : unroundedZ - 0.5f);
+
+            if (vob.npcCell != null)
+            {
+                if (vob.npcCell.x == x && vob.npcCell.z == z)
+                    return;
+
+                vob.npcCell.Remove(vob);
+            }
+
+            //find new cell
+            Dictionary<int, NPCCell> row = null;
+            SmallCells.TryGetValue(x, out row);
+            if (row == null)
+            {
+                row = new Dictionary<int, NPCCell>();
+                SmallCells.Add(x, row);
+            }
+
+            NPCCell cell = null;
+            row.TryGetValue(z, out cell);
+            if (cell == null)
+            {
+                cell = new NPCCell(this, x, z);
+                row.Add(z, cell);
+            }
+
+            cell.Add(vob);
+        }
+
         void ChangeCells(AbstractVob vob, int x, int z, Client exclude)
         {
             //create the new cell
-            if (!Cells.ContainsKey(x))
+            Dictionary<int, WorldCell> row = null;
+            Cells.TryGetValue(x, out row);
+            if (row == null)
             {
-                Cells.Add(x, new Dictionary<int, WorldCell>());
+                row = new Dictionary<int, WorldCell>();
+                Cells.Add(x, row);
             }
 
-            if (!Cells[x].ContainsKey(z))
+            WorldCell newCell = null;
+            row.TryGetValue(z, out newCell);
+            if (newCell == null)
             {
-                Cells[x].Add(z, new WorldCell(this, x, z));
+                newCell = new WorldCell(this, x, z);
+                row.Add(z, newCell);
             }
-
-            WorldCell newCell = Cells[x][z];
 
             if (vob.cell == null)
             {
@@ -300,5 +349,44 @@ namespace GUC.Server.WorldObjects
         }
 
         #endregion
+
+        public IEnumerable<NPC> GetNPCs(Vec3f pos, float range)
+        {
+            float unroundedMinX = (pos.X-range) / NPCCell.cellSize;
+            float unroundedMinZ = (pos.Z-range) / NPCCell.cellSize;
+
+            int minX = (int)(pos.X >= 0 ? unroundedMinX + 0.5f : unroundedMinX - 0.5f);
+            int minZ = (int)(pos.Z >= 0 ? unroundedMinZ + 0.5f : unroundedMinZ - 0.5f);
+
+            float unroundedMaxX = (pos.X + range) / NPCCell.cellSize;
+            float unroundedMaxZ = (pos.Z + range) / NPCCell.cellSize;
+
+            int maxX = (int)(pos.X >= 0 ? unroundedMaxX + 0.5f : unroundedMaxX - 0.5f);
+            int maxZ = (int)(pos.Z >= 0 ? unroundedMaxZ + 0.5f : unroundedMaxZ - 0.5f);
+
+            for (int x = minX; x <= maxX; x++)
+            {
+                Dictionary<int, NPCCell> row = null;
+                SmallCells.TryGetValue(x, out row);
+                if (row != null)
+                {
+                    for (int z = minZ; z <= maxZ; z++)
+                    {
+                        NPCCell cell = null;
+                        row.TryGetValue(z, out cell);
+                        if (cell != null)
+                        {
+                            NPC npc;
+                            for (int i = 0; i < cell.NPCList.Count; i++)
+                            {
+                                npc = cell.NPCList[i];
+                                if ((npc.Position - pos).length() <= range)
+                                    yield return npc;
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

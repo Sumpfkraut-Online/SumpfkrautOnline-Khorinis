@@ -98,8 +98,6 @@ namespace GUC.Client.Hooks
             }
         }
 
-
-
         public static Int32 _Forward(String message)
         {
             try
@@ -231,6 +229,7 @@ namespace GUC.Client.Hooks
                                 _BlockJmp = true;
                                 return 0;
                             }
+                            Player.Hero.DoJump = false;
                         }
                     }
                 }
@@ -259,7 +258,28 @@ namespace GUC.Client.Hooks
             return 0;
         }
 
-        static oCAniCtrl_Human aniCtrl = null;
+        static bool blockCombo = false;
+        static bool _BlockCombo
+        {
+            get { return blockCombo; }
+            set
+            {
+                if (blockCombo != value)
+                {
+                    if (value)
+                    {
+                        Program.Process.Write(new byte[] { 0xEB }, 0x6B02B7);
+                    }
+                    else
+                    {
+                        Program.Process.Write(new byte[] { 0x74 }, 0x6B02B7);
+                    }
+                    blockCombo = value;
+                }
+            }
+        }
+
+        public static bool DoCombo = false;
         public static Int32 HitCombo(String message)
         {
             try
@@ -267,69 +287,17 @@ namespace GUC.Client.Hooks
                 int address = Convert.ToInt32(message);
                 int thisAddr = Program.Process.ReadInt(address);
 
-                aniCtrl = new oCAniCtrl_Human(Program.Process, thisAddr);
-            }
-            catch (Exception e)
-            {
-                zERROR.GetZErr(Program.Process).Report(4, 'G', e.Source + "\n" + e.Message + "\n" + e.StackTrace, 0, "hAniCtrl_Human.cs", 0);
-            }
-            return 0;
-        }
-
-        public static Int32 hook_CheckHit(String message)
-        {
-            try
-            {
-                aniCtrl.BitField &= ~oCAniCtrl_Human.BitFlag.comboCanHit;
-
-                AbstractVob aVob;
-                World.vobAddr.TryGetValue(aniCtrl.NPC.Address, out aVob);
-                if (aVob != null && aVob is NPC)
+                if (thisAddr == Player.Hero.gAniCtrl.Address && Program.Process.ReadInt(address + 4) != 0)
                 {
-                    NPC attacker = (NPC)aVob;
-                    List<NPC> hitlist = new List<NPC>();
-
-                    foreach (NPC npc in World.npcDict.Values)
+                    if (!DoCombo)
                     {
-                        if (npc.gNpc.AniCtrl.Address == aniCtrl.Address) // self
-                        {
-                            continue;
-                        }
-
-                        if (aniCtrl.NPC.IsInFightRange(npc.gVob, 0) &&
-                            aniCtrl.NPC.IsInFightFocus(npc.gVob) &&
-                            aniCtrl.NPC.IsSameHeight(npc.gVob))
-                        {
-                            //if (!aniCtrl.NPC.GetDamageByType(16))
-                            //FIXME: !Dead
-                            if (npc.gNpc.AniCtrl.CanParade(aniCtrl.NPC))
-                            {   //attack got parried, no one gets hit
-                                aniCtrl.StartParadeEffects(npc.gNpc);
-                                Program.Process.Write(new byte[] { 0xF0, 0x01, 0x00, 0x00 }, 0x6B03AA); // parade end
-                                return 0;
-                            }
-                            hitlist.Add(npc);
-                        }
+                        NPCMessage.WriteTargetState(NPCState.AttackForward);
+                        _BlockCombo = true;
+                        return 0;
                     }
-
-                    if (hitlist.Count > 0)
-                    {
-                        foreach (NPC target in hitlist)
-                        {
-                            if (target == Player.Hero)
-                            {
-                                NPCMessage.WriteSelfHit(attacker);
-                            }
-                            aniCtrl.CreateHit(target.gVob);
-                        }
-
-                        if (attacker == Player.Hero)
-                        {
-                            NPCMessage.WriteHits(attacker, hitlist);
-                        }
-                    }
+                    DoCombo = false;
                 }
-                Program.Process.Write(new byte[] { 0xCF, 0x00, 0x00, 0x00 }, 0x6B03AA); //continue
+                _BlockCombo = false;
             }
             catch (Exception e)
             {
@@ -337,7 +305,6 @@ namespace GUC.Client.Hooks
             }
             return 0;
         }
-
 
         public static void AddHooks(Process process)
         {
@@ -352,10 +319,12 @@ namespace GUC.Client.Hooks
 
             //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("hook_StartFallDownAni"), 0x6B5220, 6, 1);
 
-            //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("HitCombo"), (int)oCAniCtrl_Human.FuncOffsets.HitCombo, 6, 2); //entry
+            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("HitCombo"), (int)oCAniCtrl_Human.FuncOffsets.HitCombo, 6, 2);
+            process.Write(new byte[] { 0xE9, 0x48, 0x01, 0x00 /*, 0x00*/ }, 0x6B0330); //skip hit detection
 
-            //process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0xE9 }, 0x6B03A4); //clear
-            //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hAniCtrl_Human).GetMethod("hook_CheckHit"), (int)0x6B03A4, 5, 0);
+            //make combos always available:
+            process.Write(Enumerable.Repeat<byte>(0x90, 10).ToArray(), 0x6B02B9);
+            process.Write(Enumerable.Repeat<byte>(0x90, 16).ToArray(), 0x6B02D7);
         }
     }
 }

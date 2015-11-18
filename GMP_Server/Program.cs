@@ -86,49 +86,54 @@ namespace GUC.Server
             {
                 server = new Network.Server();
                 server.Start((ushort)serverOptions.Port, (ushort)serverOptions.Slots, serverOptions.password);
-                
+
+                AnimationControl.Init();
+
                 scriptManager = new Scripting.ScriptManager();
                 scriptManager.Init();
                 scriptManager.Startup();
 
                 const long nextInfoUpdateTime = 60 * 1000 * TimeSpan.TicksPerMillisecond;
-                long nextInfoUpdates = DateTime.Now.Ticks + nextInfoUpdateTime;
+                long nextInfoUpdates = DateTime.UtcNow.Ticks + nextInfoUpdateTime;
 
                 long tickAverage = 0;
                 long tickCount = 0;
                 long tickMax = 0;
 
-                long ticks, elapsed;
+                Stopwatch watch = new Stopwatch();
                 //const int serverTickrate = 30;
-                const long updateTime = 20 * TimeSpan.TicksPerMillisecond;
+                const long updateTime = 200000; //20ms
                 while (true)
                 {
-                    ticks = DateTime.Now.Ticks;
+                    watch.Restart();
 
-                    scriptManager.Update();
+                    ServerTime.Now = DateTime.UtcNow;
+
+                    Scripting.Timer.Update(ServerTime.Now.Ticks);
                     server.Update(); //process received packets
 
-                    if (nextInfoUpdates < DateTime.Now.Ticks)
+                    watch.Stop();
+
+                    if (nextInfoUpdates < ServerTime.Now.Ticks)
                     {
                         tickAverage /= tickCount;
                         Log.Logger.log(String.Format("Server tick rate info: {0}ms average, {1}ms max.", tickAverage / TimeSpan.TicksPerMillisecond, tickMax / TimeSpan.TicksPerMillisecond));
-                        nextInfoUpdates = DateTime.Now.Ticks + nextInfoUpdateTime;
+                        nextInfoUpdates = ServerTime.Now.Ticks + nextInfoUpdateTime;
                         tickMax = 0;
                         tickAverage = 0;
                         tickCount = 0;
                     }
 
                     tickCount++;
-                    elapsed = DateTime.Now.Ticks - ticks;
-                    tickAverage += elapsed;
-                    if (elapsed > tickMax)
+                    tickAverage += watch.ElapsedTicks;
+                    if (watch.ElapsedTicks > tickMax)
                     {
-                        tickMax = elapsed;
+                        tickMax = watch.ElapsedTicks;
                     }
 
-                    if (elapsed < updateTime)
+                    if (watch.ElapsedTicks < updateTime)
                     {
-                        Thread.Sleep((int)(elapsed / TimeSpan.TicksPerMillisecond));
+                        Thread.Sleep((int)(watch.ElapsedTicks / TimeSpan.TicksPerMillisecond));
                     }
                 }
             }

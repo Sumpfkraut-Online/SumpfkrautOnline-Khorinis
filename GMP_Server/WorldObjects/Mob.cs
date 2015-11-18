@@ -14,7 +14,7 @@ namespace GUC.Server.WorldObjects
     {
         public MobInstance Instance { get; protected set; }
 
-        public string Visual { get { return Instance.visual; } }
+        public string Visual { get { return Instance.Visual; } }
         public bool CDDyn { get { return Instance.cdDyn; } }
         public bool CDStatic { get { return Instance.cdStatic; } }
 

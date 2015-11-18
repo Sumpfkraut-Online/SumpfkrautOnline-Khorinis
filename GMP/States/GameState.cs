@@ -39,10 +39,17 @@ namespace GUC.Client.States
         public override Dictionary<VirtualKeys, Action> Shortcuts { get { return shortcuts; } }
 
         static oCNpc npc;
+        static long timeSpan = 0;
         static int count = 0;
+        static Vec3f pos = new Vec3f();
+        static Vec3f dir = new Vec3f();
         public static void RenderTest()
         {
-            Player.Hero.gNpc.SetWeaponMode2(count++);
+            timeSpan += NPCMessage.lastSpan; count++;
+            GUI.GUCView.DebugText.Text = count + " Average: " + (int)((double)timeSpan / (double)count / (double)TimeSpan.TicksPerMillisecond);
+            Player.Hero.Position = pos;
+            Player.Hero.Direction = dir;
+
             /*if (npc == null)
             {
                 NPCInstance inst = NPCInstance.Table.Get(3);
@@ -80,7 +87,14 @@ namespace GUC.Client.States
 
         static Random rand = new Random();
         public static void RenderTest2()
-        {            
+        {
+            timeSpan = 0;
+            count = 0;
+            pos = Player.Hero.Position;
+            dir = Player.Hero.Direction;
+
+            //Player.Hero.gVob.GetEM(0).KillMessages();
+            //Player.Hero.gAniCtrl.StartStandAni();
             /*if (npc != null)
             {
                 npc.GetEM(0).KillMessages();
@@ -124,7 +138,10 @@ namespace GUC.Client.States
             InputHandler.Update();
             Program.client.Update();
 
-            GUI.GUCView.DebugText.Text = "State: " + Player.Hero.State;
+            Vec3f pos = new Vec3f();
+            Vec3f dir = (Player.Hero.Position - pos).normalise();
+            GUI.GUCView.DebugText.Text = (Player.Hero.Direction.Z * dir.X - dir.Z * Player.Hero.Direction.X) + " " + (Player.Hero.Direction.Z * dir.Z + dir.X * Player.Hero.Direction.X);
+
 
             /*GUI.GUCView.DebugText.Text = "";
             for (int i = 0; i < Player.VobControlledList.Count; i++)

@@ -386,8 +386,6 @@ namespace WinApi
             //Neue funktion:
             List<byte> list = new List<byte>();
 
-
-
             //This pointer (ecx) in Speicher schreiben
             list.Add(0x89); list.Add(0x0D);// mov [Address], ecx
             list.AddRange(BitConverter.GetBytes(ecxPtr.ToInt32()));

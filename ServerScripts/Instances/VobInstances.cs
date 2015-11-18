@@ -12,24 +12,24 @@ namespace GUC.Server.Scripts.Instances
         public static void Init()
         {
             NPCInstance npc = new NPCInstance(1, "_MALE");
-            npc.Visual = "HUMANS.MDS";
+            npc.Visual = "HUMANS";
             npc.BodyMesh = "HUM_BODY_NAKED0";
             NPCInstance.Table.Add(npc);
 
             npc = new NPCInstance(2, "_FEMALE");
-            npc.Visual = "HUMANS.MDS";
+            npc.Visual = "HUMANS";
             npc.BodyMesh = "HUM_BODY_BABE0";
             NPCInstance.Table.Add(npc);
 
             npc = new NPCInstance("Scavenger");
             npc.Name = "Scavenger";
-            npc.Visual = "Scavenger.mds";
+            npc.Visual = "Scavenger";
             npc.BodyMesh = "Sca_Body";
             NPCInstance.Table.Add(npc);
 
             npc = new NPCInstance("Mud");
             npc.Name = "Mud";
-            npc.Visual = "HUMANS.MDS";
+            npc.Visual = "HUMANS";
             npc.BodyMesh = "HUM_BODY_NAKED0";
             npc.BodyTex = 1;
             npc.HeadMesh = "Hum_Head_Pony";
@@ -112,7 +112,7 @@ namespace GUC.Server.Scripts.Instances
 
             MobInstance mob = new MobInstance("Forge");
             mob.type = Enumeration.MobType.MobInter;
-            mob.visual = "BSFIRE_OC.MDS";
+            mob.Visual = "BSFIRE_OC.MDS";
             mob.focusName = "Schmiedefeuer";
             MobInstance.Table.Add(mob);
 

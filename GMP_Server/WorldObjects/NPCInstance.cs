@@ -9,6 +9,8 @@ namespace GUC.Server.WorldObjects
 {
     public class NPCInstance : AbstractInstance
     {
+        internal AnimationControl AniCtrl = null;
+
         #region Server fields
 
         public ushort AttrHealthMax = 100;
@@ -24,14 +26,43 @@ namespace GUC.Server.WorldObjects
 
         /// <summary>The standard name of the NPC.</summary>
         public string Name = "";
+
         /// <summary>The .MDS-Visual of the NPC.</summary>
-        public string Visual = "";
+        public string Visual
+        {
+            get { return visual; }
+            set 
+            { 
+                visual = value.Trim().ToUpper();
+
+                AnimationControl.dict.TryGetValue(visual, out AniCtrl);
+                if (AniCtrl == null)
+                {
+                    Log.Logger.logWarning("Warning: Could not find AnimationControl for " + visual);
+                }
+            }
+        }
+        string visual = "";
+
         /// <summary>The body mesh of the NPC.</summary>
-        public string BodyMesh = "";
+        public string BodyMesh
+        {
+            get { return bodyMesh; }
+            set { bodyMesh = value.Trim().ToUpper(); }
+        }
+        string bodyMesh = "";
+
         /// <summary>The body texture of the NPC.</summary>
         public byte BodyTex = 0;
+
         /// <summary>The head mesh of the NPC.</summary>
-        public string HeadMesh = "";
+        public string HeadMesh
+        {
+            get { return headMesh; }
+            set { headMesh = value.Trim().ToUpper(); }
+        }
+        string headMesh = "";
+
         /// <summary>The head texture of the NPC.</summary>
         public byte HeadTex = 0;
 
@@ -50,10 +81,10 @@ namespace GUC.Server.WorldObjects
             bw.Write(ID);
 
             bw.Write(Name);
-            bw.Write(Visual);
-            bw.Write(BodyMesh);
+            bw.Write(visual);
+            bw.Write(bodyMesh);
             bw.Write(BodyTex);
-            bw.Write(HeadMesh);
+            bw.Write(headMesh);
             bw.Write(HeadTex);
             bw.Write(BodyHeight);
             bw.Write(BodyWidth);
@@ -64,7 +95,7 @@ namespace GUC.Server.WorldObjects
         #endregion
 
         #region Constructors
-        
+
         public NPCInstance(string instanceName)
             : base(instanceName)
         {
@@ -76,7 +107,7 @@ namespace GUC.Server.WorldObjects
         }
 
         #endregion
-        
+
         public static InstanceManager<NPCInstance> Table = new InstanceManager<NPCInstance>();
     }
 }

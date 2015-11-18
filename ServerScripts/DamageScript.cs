@@ -19,15 +19,6 @@ namespace GUC.Server.Scripts
             if (victim.AttrHealth > 0)
                 victim.AttrHealth--;
 
-            if (attacker.WeaponState == NPCWeaponState.Fists)
-            {
-
-            }
-            else if (attacker.WeaponState == NPCWeaponState.Melee)
-            {
-
-            }
-
             victim.AttrHealthUpdate();
         }
     }

@@ -163,7 +163,7 @@ namespace GUC.Client.WorldObjects
 
         #region Visual
 
-        public string Visual { get { return instance.visual; } }
+        public string Visual { get { return instance.visual + ".MDS"; } }
         public string BodyMesh { get { return instance.bodyMesh; } }
         public int BodyTex { get; protected set; }
         public string HeadMesh { get; protected set; }
@@ -428,10 +428,10 @@ namespace GUC.Client.WorldObjects
                 switch (State)
                 {
                     case NPCState.MoveForward:
-                        gNpc.AniCtrl._Forward();
+                        gAniCtrl._Forward();
                         break;
                     case NPCState.MoveBackward:
-                        gNpc.AniCtrl._Backward();
+                        gAniCtrl._Backward();
                         break;
                     case NPCState.MoveRight:
                         gVob.GetEM(0).KillMessages();
@@ -442,7 +442,7 @@ namespace GUC.Client.WorldObjects
                         gNpc.DoStrafe(false);
                         break;
                     case NPCState.Stand:
-                        gNpc.AniCtrl._Stand();
+                        gAniCtrl._Stand();
                         break;
                     default:
                         break;
@@ -464,68 +464,96 @@ namespace GUC.Client.WorldObjects
 
             DrawnItem = item;
 
-            if (item == Item.Fists)
+            if (Spawned)
             {
-                if (fast)
+                if (item == Item.Fists)
                 {
-                    gNpc.SetWeaponMode2(2);
+                    if (fast)
+                    {
+                        using (zString z = zString.Create(Program.Process, "FIST"))
+                            gNpc.SetWeaponMode2(z);
+                    }
+                    else
+                    {
+                        gVob.GetEM(0).StartMessage(oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.DrawWeapon, 0, 0), gVob);
+                    }
                 }
                 else
                 {
-                    gVob.GetEM(0).StartMessage(oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.DrawWeapon, 0, 0), gVob);
-                }
-            }
-            else
-            {
-                switch (item.Type)
-                {
-                    case ItemType.Sword_1H:
-                    case ItemType.Sword_2H:
-                    case ItemType.Blunt_1H:
-                    case ItemType.Blunt_2H:
-                        if (fast)
-                        {
-                            gNpc.SetWeaponMode2(3);
-                        }
-                        else
-                        {
-                            gVob.GetEM(0).StartMessage(oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.DrawWeapon, 0, 0), gVob);
-                        }
-                        break;
-                    case ItemType.Bow:
-                    case ItemType.XBow:
-                        if (fast)
-                        {
-                            gNpc.SetWeaponMode2(4);
-                        }
-                        else
-                        {
-                            gVob.GetEM(0).StartMessage(oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.DrawWeapon, 4, 0), gVob);
-                        }
-                        break;
-                    case ItemType.Armor:
-                        break;
-                    case ItemType.Ring:
-                        break;
-                    case ItemType.Amulet:
-                        break;
-                    case ItemType.Belt:
-                        break;
-                    case ItemType.Food_Huge:
-                    case ItemType.Food_Small:
-                    case ItemType.Drink:
-                    case ItemType.Potions:
-                        break;
-                    case ItemType.Document:
-                    case ItemType.Book:
-                        break;
-                    case ItemType.Rune:
-                    case ItemType.Scroll:
-                        break;
-                    case ItemType.Misc_Usable:
-                        break;
-                    case ItemType.Misc:
-                        break;
+                    //FIXME: Sneaky mode
+
+                    switch (item.Type)
+                    {
+                        case ItemType.Sword_1H:
+                        case ItemType.Blunt_1H:
+                            if (fast)
+                            {
+                                using (zString z = zString.Create(Program.Process, "1H"))
+                                    gNpc.SetWeaponMode2(z);
+                            }
+                            else
+                            {
+                                gVob.GetEM(0).StartMessage(oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.DrawWeapon, 0, 0), gVob);
+                            }
+                            break;
+                        case ItemType.Sword_2H:
+                        case ItemType.Blunt_2H:
+                            if (fast)
+                            {
+                                using (zString z = zString.Create(Program.Process, "2H"))
+                                    gNpc.SetWeaponMode2(z);
+                            }
+                            else
+                            {
+                                gVob.GetEM(0).StartMessage(oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.DrawWeapon, 0, 0), gVob);
+                            }
+                            break;
+                        case ItemType.Bow:
+                            if (fast)
+                            {
+                                using (zString z = zString.Create(Program.Process, "BOW"))
+                                    gNpc.SetWeaponMode2(z);
+                            }
+                            else
+                            {
+                                gVob.GetEM(0).StartMessage(oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.DrawWeapon, 4, 0), gVob);
+                            }
+                            break;
+                        case ItemType.XBow:
+                            if (fast)
+                            {
+                                using (zString z = zString.Create(Program.Process, "CBOW"))
+                                    gNpc.SetWeaponMode2(z);
+                            }
+                            else
+                            {
+                                gVob.GetEM(0).StartMessage(oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.DrawWeapon, 4, 0), gVob);
+                            }
+                            break;
+                        case ItemType.Armor:
+                            break;
+                        case ItemType.Ring:
+                            break;
+                        case ItemType.Amulet:
+                            break;
+                        case ItemType.Belt:
+                            break;
+                        case ItemType.Food_Huge:
+                        case ItemType.Food_Small:
+                        case ItemType.Drink:
+                        case ItemType.Potions:
+                            break;
+                        case ItemType.Document:
+                        case ItemType.Book:
+                            break;
+                        case ItemType.Rune:
+                        case ItemType.Scroll:
+                            break;
+                        case ItemType.Misc_Usable:
+                            break;
+                        case ItemType.Misc:
+                            break;
+                    }
                 }
             }
         }
@@ -551,6 +579,10 @@ namespace GUC.Client.WorldObjects
                     if (altRemove && gAniCtrl.IsStanding())
                     {
                         gVob.GetEM(0).StartMessage(oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.RemoveWeapon1, gAniCtrl.wmode_last, 0), gVob);
+                        if (this != Player.Hero)
+                        {
+                            gVob.GetEM(0).StartMessage(oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.RemoveWeapon2, 0, 0), gVob);
+                        }
                     }
                     else
                     {

@@ -125,7 +125,7 @@
       <Link>Types\Zip.cs</Link>
     </Compile>
     <Compile Include="Network\Client.cs" />
-    <Compile Include="Network\SmallCell.cs" />
+    <Compile Include="Network\NPCCell.cs" />
     <Compile Include="Network\Messages\AccountMessage.cs" />
     <Compile Include="Network\Messages\ConnectionMessage.cs" />
     <Compile Include="Network\Messages\InventoryMessage.cs" />
@@ -133,15 +133,17 @@
     <Compile Include="Network\Messages\VobMessage.cs" />
     <Compile Include="Scripting\Listener\IServerStartup.cs" />
     <Compile Include="Scripting\ScriptManager.cs" />
-    <Compile Include="Scripting\Timer.cs" />
     <Compile Include="Network\WorldCell.cs" />
+    <Compile Include="Scripting\Timer.cs" />
     <Compile Include="Scripting\UserVars.cs" />
+    <Compile Include="ServerTime.cs" />
     <Compile Include="TCPStatus.cs" />
     <Compile Include="WorldObjects\AbstractAI.cs" />
     <Compile Include="WorldObjects\AbstractCtrlVob.cs" />
     <Compile Include="WorldObjects\AbstractDropVob.cs" />
     <Compile Include="WorldObjects\AbstractInstance.cs" />
     <Compile Include="WorldObjects\AbstractVob.cs" />
+    <Compile Include="WorldObjects\AniCtrl.cs" />
     <Compile Include="WorldObjects\InstanceManager.cs" />
     <Compile Include="WorldObjects\Item.cs" />
     <Compile Include="WorldObjects\ItemInstance.cs" />

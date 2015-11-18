@@ -16,6 +16,8 @@ namespace GUC.Client.Network.Messages
     static class NPCMessage
     {
 
+
+
         #region Animation
 
         public static void WriteAnimationStart(Animations ani)
@@ -69,35 +71,49 @@ namespace GUC.Client.Network.Messages
 
         #region States
 
+        static long lastTime = 0;
+
+        public static long lastSpan = 0;
+
         public static void WriteState(NPCState state, NPC npc)
         {
+            lastSpan = DateTime.UtcNow.Ticks - lastTime;
+            lastTime = DateTime.UtcNow.Ticks;
+            zERROR.GetZErr(Program.Process).Report(2, 'G', state + " " + lastSpan / TimeSpan.TicksPerMillisecond, 0, "Program.cs", 0);
+
             BitStream stream = Program.client.SetupSendStream(NetworkID.NPCStateMessage);
             stream.mWrite(npc.ID);
             stream.mWrite((byte)state);
             Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
         }
 
+        const int DelayBetweenTargetMessages = 1500000; //150ms
+        static long nextTargetStateUpdate = 0;
         public static void WriteTargetState(NPCState state) //only for self, attacks & strafing
         {
-            BitStream stream = Program.client.SetupSendStream(NetworkID.NPCTargetStateMessage);
-            stream.mWrite((byte)state);
-            stream.mWrite(Player.Hero.Position);
-            stream.mWrite(Player.Hero.Direction);
-
-            AbstractVob target;
-            World.vobAddr.TryGetValue(Player.Hero.gNpc.GetFocusNpc().Address, out target);
-            if (target == null)
+            if (DateTime.Now.Ticks > nextTargetStateUpdate)
             {
-                stream.mWrite(0);
-            }
-            else
-            {
-                stream.mWrite(target.ID);
-            }
+                zERROR.GetZErr(Program.Process).Report(2, 'G', state + " " + (DateTime.UtcNow.Ticks - lastTime) / TimeSpan.TicksPerMillisecond, 0, "Program.cs", 0);
+                lastTime = DateTime.UtcNow.Ticks;
 
-            Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
+                BitStream stream = Program.client.SetupSendStream(NetworkID.NPCTargetStateMessage);
+                stream.mWrite((byte)state);
 
-            Player.Hero.nextPosUpdate = DateTime.Now.Ticks + NPC.PositionUpdateTime; //set position update time
+                AbstractVob target;
+                World.vobAddr.TryGetValue(Player.Hero.gNpc.GetFocusNpc().Address, out target);
+                if (target == null)
+                {
+                    stream.mWrite(0);
+                }
+                else
+                {
+                    stream.mWrite(target.ID);
+                }
+
+                Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
+
+                nextTargetStateUpdate = DateTime.Now.Ticks + DelayBetweenTargetMessages;
+            }
         }
 
         public static void ReadState(BitStream stream)
@@ -115,6 +131,74 @@ namespace GUC.Client.Network.Messages
 
             npc.State = (NPCState)stream.mReadByte();
             npc.Update(DateTime.Now.Ticks);
+        }
+
+        public static void ReadTargetState(BitStream stream)
+        {
+            NPC npc;
+            World.npcDict.TryGetValue(stream.mReadUInt(), out npc);
+            if (npc == null) return;
+
+            if (npc.State == NPCState.Stand)
+            {   //Just in case the npc is turning
+                npc.StopTurnAnis();
+            }
+
+            NPCState state = (NPCState)stream.mReadByte();
+
+            uint targetID = stream.mReadUInt();
+
+            oCNpc targetVob = null;
+            if (targetID != 0)
+            {
+                NPC target = null;
+                World.npcDict.TryGetValue(targetID, out target);
+                if (target != null) targetVob = target.gNpc;
+            }
+            if (targetVob == null)
+            {
+                targetVob = new oCNpc();
+            }
+
+            npc.gNpc.SetEnemy(targetVob);
+
+            oCMsgAttack msg;
+            switch (state)
+            {
+                case NPCState.AttackForward:
+                    
+                    if (npc.State == NPCState.AttackForward)
+                    {
+                        zERROR.GetZErr(Program.Process).Report(2, 'G', "COMBO!", 0, "Program.cs", 0);
+                        hAniCtrl_Human.DoCombo = true;
+                        npc.gAniCtrl.HitCombo(1);
+                        return;
+                    }
+                    zERROR.GetZErr(Program.Process).Report(2, 'G', "ATTACK!", 0, "Program.cs", 0);
+                    msg = oCMsgAttack.Create(Program.Process, oCMsgAttack.SubTypes.AttackForward, npc.gAniCtrl._t_hitf, 1);
+                    break;
+                case NPCState.AttackLeft:
+                    msg = oCMsgAttack.Create(Program.Process, oCMsgAttack.SubTypes.AttackLeft, npc.gAniCtrl._t_hitl, 1);
+                    break;
+                case NPCState.AttackRight:
+                    msg = oCMsgAttack.Create(Program.Process, oCMsgAttack.SubTypes.AttackRight, npc.gAniCtrl._t_hitr, 1);
+                    break;
+                case NPCState.AttackRun:
+                    msg = oCMsgAttack.Create(Program.Process, oCMsgAttack.SubTypes.AttackRun, npc.gAniCtrl._t_hitfrun, 1);
+                    break;
+                case NPCState.Parry:
+                    msg = oCMsgAttack.Create(Program.Process, oCMsgAttack.SubTypes.Parade, targetVob, 0);
+                    break;
+                case NPCState.DodgeBack:
+                    msg = oCMsgAttack.Create(Program.Process, oCMsgAttack.SubTypes.Parade, targetVob, 0);
+                    msg.Bitfield |= oCMsgAttack.BitFlag.Dodge;
+                    break;
+                default:
+                    return;
+            }
+            npc.State = state;
+            npc.gVob.GetEM(0).KillMessages();
+            npc.gVob.GetEM(0).StartMessage(msg, npc.gVob);
         }
 
         public static void WriteJump(NPC npc)
@@ -145,9 +229,11 @@ namespace GUC.Client.Network.Messages
             }
             else if (npc.State == NPCState.Stand)
             {
+                //Just in case the npc is turning
+                npc.StopTurnAnis();
+
                 npc.DoJump = true;
                 npc.gAniCtrl.JumpForward();
-                npc.DoJump = false;
             }
         }
 
@@ -159,6 +245,7 @@ namespace GUC.Client.Network.Messages
             if (DateTime.Now.Ticks > nextDrawItemTime)
             {
                 BitStream stream = Program.client.SetupSendStream(NetworkID.NPCDrawItemMessage);
+                
                 stream.mWrite(slot);
                 Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
 
@@ -172,15 +259,21 @@ namespace GUC.Client.Network.Messages
 
             NPC npc;
             World.npcDict.TryGetValue(ID, out npc);
-            if (npc == null) return;
+            if (npc == null) return;            
 
+            Item item = ReadStrmDrawItem(stream, npc);
+
+            npc.DrawItem(item, stream.ReadBit());
+        }
+
+        public static Item ReadStrmDrawItem(BitStream stream, NPC npc)
+        {
             uint itemID = stream.mReadUInt();
-            bool fast = stream.ReadBit();
-            fast = false;
 
             Item item = null;
             if (itemID != 0)
             {
+                ushort instanceID = stream.mReadUShort();
                 if (npc == Player.Hero) //search in inventory for item
                 {
                     Player.Inventory.TryGetValue(itemID, out item);
@@ -193,15 +286,21 @@ namespace GUC.Client.Network.Messages
 
                 if (item == null)
                 {
-                    item = new Item(itemID, stream.mReadUShort());
+                    item = new Item(itemID, instanceID);
                 }
+
+                byte talent = stream.mReadByte();
+                if (item.Type == ItemType.Blunt_1H || item.Type == ItemType.Sword_1H)
+                    npc.gNpc.SetTalentSkill(1, talent);
+                else if (item.Type == ItemType.Blunt_2H || item.Type == ItemType.Sword_2H)
+                    npc.gNpc.SetTalentSkill(2, talent);
             }
             else
             {
                 item = Item.Fists;
             }
 
-            npc.DrawItem(item, fast);
+            return item;
         }
 
         public static void WriteUndrawItem()
@@ -230,110 +329,22 @@ namespace GUC.Client.Network.Messages
 
             bool fast = stream.ReadBit();
             bool altRemove = stream.ReadBit();
-            fast = false;
 
             npc.UndrawItem(altRemove, fast);
         }
 
         #endregion
 
-        #region Combat
 
-
-
-        public static void ReadAttack(BitStream stream)
-        {
-            NPC attacker;
-            World.npcDict.TryGetValue(stream.mReadUInt(), out attacker);
-            if (attacker == null) return;
-
-            NPCState state = (NPCState)stream.mReadByte();
-            attacker.Position = stream.mReadVec();
-            attacker.Direction = stream.mReadVec();
-
-            uint targetID = stream.mReadUInt();
-
-            oCNpc targetVob = null;
-            if (targetID != 0)
-            {
-                NPC target = null;
-                World.npcDict.TryGetValue(targetID, out target);
-                if (target != null) targetVob = target.gNpc;
-            }
-            if (targetVob == null)
-            {
-                targetVob = new oCNpc(null, 0);
-            }
-
-            attacker.gNpc.SetEnemy(targetVob);
-
-            oCMsgAttack msg;
-            switch (state)
-            {
-                case NPCState.AttackForward:
-                    if (attacker.State == NPCState.AttackForward)
-                    {
-                        attacker.gNpc.AniCtrl.BitField |= oCAniCtrl_Human.BitFlag.canEnableNextCombo;
-                        attacker.gNpc.AniCtrl.HitCombo(1);
-                        return;
-                    }
-                    msg = oCMsgAttack.Create(Program.Process, oCMsgAttack.SubTypes.AttackForward, attacker.gNpc.AniCtrl._t_hitf, 1);
-                    break;
-                case NPCState.AttackLeft:
-                    msg = oCMsgAttack.Create(Program.Process, oCMsgAttack.SubTypes.AttackLeft, attacker.gNpc.AniCtrl._t_hitl, 1);
-                    break;
-                case NPCState.AttackRight:
-                    msg = oCMsgAttack.Create(Program.Process, oCMsgAttack.SubTypes.AttackRight, attacker.gNpc.AniCtrl._t_hitr, 1);
-                    break;
-                case NPCState.AttackRun:
-                    msg = oCMsgAttack.Create(Program.Process, oCMsgAttack.SubTypes.AttackRun, attacker.gNpc.AniCtrl._t_hitfrun, 1);
-                    break;
-                case NPCState.Parry:
-                    msg = oCMsgAttack.Create(Program.Process, oCMsgAttack.SubTypes.Parade, targetVob, 0);
-                    break;
-                case NPCState.DodgeBack:
-                    msg = oCMsgAttack.Create(Program.Process, oCMsgAttack.SubTypes.Parade, targetVob, 0);
-                    msg.Bitfield |= oCMsgAttack.BitFlag.Dodge;
-                    break;
-                default:
-                    return;
-            }
-            attacker.State = state;
-            attacker.gVob.GetEM(0).KillMessages();
-            attacker.gVob.GetEM(0).OnMessage(msg, attacker.gVob);
-        }
-
-        public static void WriteSelfHit(NPC attacker)
-        {
-            BitStream stream = Program.client.SetupSendStream(NetworkID.NPCHitMessage);
-            stream.mWrite(attacker.ID);
-            stream.mWrite((byte)0);
-            Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE_ORDERED);
-        }
-
-        public static void WriteHits(NPC attacker, List<NPC> hitlist)
-        {
-            BitStream stream = Program.client.SetupSendStream(NetworkID.NPCHitMessage);
-            stream.mWrite(attacker.ID);
-            stream.mWrite((byte)hitlist.Count);
-            for (int i = 0; i < hitlist.Count; i++)
-            {
-                stream.mWrite(hitlist[i].ID);
-            }
-            Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE_ORDERED);
-        }
-
-        public static void ReadHitMessage(BitStream stream)
+        public static void ReadHealthMessage(BitStream stream)
         {
             NPC npc;
             World.npcDict.TryGetValue(stream.mReadUInt(), out npc);
             if (npc == null) return;
 
-            npc.gNpc.HPMax = stream.mReadUShort();
-            npc.gNpc.HP = stream.mReadUShort();
+            npc.HPMax = stream.mReadUShort();
+            npc.HP = stream.mReadUShort();
         }
-
-        #endregion
 
         #region Appearance
 

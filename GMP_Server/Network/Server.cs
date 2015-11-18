@@ -59,10 +59,9 @@ namespace GUC.Server.Network
             MessageListener.Add((byte)NetworkID.NPCAniStartMessage, NPCMessage.ReadAniStart);
             MessageListener.Add((byte)NetworkID.NPCAniStopMessage, NPCMessage.ReadAniStop);
             MessageListener.Add((byte)NetworkID.NPCStateMessage, NPC.ReadCmdState);
-            MessageListener.Add((byte)NetworkID.NPCTargetStateMessage, NPC.ReadTargetState);
+            MessageListener.Add((byte)NetworkID.NPCTargetStateMessage, NPC.ReadCmdTargetState);
             MessageListener.Add((byte)NetworkID.NPCDrawItemMessage, NPC.ReadCmdDrawEquipment);
             MessageListener.Add((byte)NetworkID.NPCUndrawItemMessage, NPC.ReadCmdUndrawItem);
-            MessageListener.Add((byte)NetworkID.NPCHitMessage, NPCMessage.ReadHitMessage);
             MessageListener.Add((byte)NetworkID.NPCJumpMessage, NPC.ReadCmdJump);
 
             MessageListener.Add((byte)NetworkID.InventoryDropItemMessage, InventoryMessage.ReadDropItem);

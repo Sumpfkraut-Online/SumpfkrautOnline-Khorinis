@@ -11,6 +11,7 @@ namespace GUC.Enumeration
 
         MoveForward,
         MoveBackward,
+
         MoveLeft,
         MoveRight,
 

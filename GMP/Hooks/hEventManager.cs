@@ -119,7 +119,6 @@ namespace GUC.Client.Hooks
                         BlockMsg = true;
                         return;
                 }
-
             }
             BlockMsg = false;
         }

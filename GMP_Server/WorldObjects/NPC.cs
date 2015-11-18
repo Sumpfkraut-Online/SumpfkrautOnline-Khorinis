@@ -69,18 +69,10 @@ namespace GUC.Server.WorldObjects
                 npc.AttrHealthMax = instance.AttrHealthMax;
                 npc.AttrHealth = instance.AttrHealthMax;
 
-                npc.AttrManaMax = instance.AttrManaMax;
-                npc.AttrMana = instance.AttrManaMax;
-                npc.AttrStaminaMax = instance.AttrStaminaMax;
-                npc.AttrStamina = instance.AttrStaminaMax;
-
-                npc.AttrStrength = instance.AttrStrength;
-                npc.AttrDexterity = instance.AttrDexterity;
-
-                npc.AttrCapacity = 100;
-
                 npc.State = NPCState.Stand;
-                npc.WeaponState = NPCWeaponState.None;
+
+                npc.AttackEndTimer = new Timer(OnAttackEnd, (object)npc);
+                npc.AttackHitTimer = new Timer(OnAttackHit, (object)npc);
                 return npc;
             }
             else
@@ -134,27 +126,18 @@ namespace GUC.Server.WorldObjects
 
         #endregion
 
-        //Things only the playing client should know
+
         #region Player stats
 
         public ushort AttrHealth;
         public ushort AttrHealthMax;
 
-        public ushort AttrMana;
-        public ushort AttrManaMax;
-        public ushort AttrStamina;
-        public ushort AttrStaminaMax;
-
-        public ushort AttrStrength;
-        public ushort AttrDexterity;
-
-        public ushort AttrCapacity;
-
-        #region Health
+        public byte Talent1H = 0;
+        public byte Talent2H = 0;
 
         public void AttrHealthUpdate()
         {
-            BitStream stream = Program.server.SetupStream(NetworkID.NPCHitMessage);
+            BitStream stream = Program.server.SetupStream(NetworkID.NPCHealthMessage);
             stream.mWrite(ID);
             stream.mWrite(AttrHealthMax);
             stream.mWrite(AttrHealth);
@@ -163,54 +146,9 @@ namespace GUC.Server.WorldObjects
                 Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', cl.guid, false);
         }
 
-        public void AttrManaStaminaUpdate()
-        {
-            if (isPlayer)
-            {
-                BitStream stream = Program.server.SetupStream(NetworkID.PlayerAttributeMSMessage);
-                stream.mWrite(AttrManaMax);
-                stream.mWrite(AttrMana);
-                stream.mWrite(AttrStaminaMax);
-                stream.mWrite(AttrStamina);
-                Program.server.ServerInterface.Send(stream, PacketPriority.MEDIUM_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
-            }
-        }
-
-        public void AttrUpdate()
-        {
-            BitStream stream = Program.server.SetupStream(NetworkID.NPCHitMessage);
-            stream.mWrite(ID);
-            stream.mWrite(AttrHealthMax);
-            stream.mWrite(AttrHealth);
-
-            foreach (Client cl in cell.SurroundingClients(client))
-                Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', cl.guid, false);
-
-            if (isPlayer)
-            {
-                // Update all the stats!
-                stream = Program.server.SetupStream(NetworkID.PlayerAttributeMessage);
-                stream.mWrite(AttrHealthMax);
-                stream.mWrite(AttrHealth);
-                stream.mWrite(AttrManaMax);
-                stream.mWrite(AttrMana);
-                stream.mWrite(AttrStaminaMax);
-                stream.mWrite(AttrStamina);
-                stream.mWrite(AttrCapacity);
-                Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
-            }
-        }
-
         #endregion
-
-        #endregion
-
-        #region States
 
         public NPCState State { get; protected set; }
-        public NPCWeaponState WeaponState { get; protected set; }
-
-        #endregion
 
         public MobInter UsedMob { get; protected set; }
 
@@ -281,7 +219,7 @@ namespace GUC.Server.WorldObjects
                 NPC npc;
                 if (sWorld.NPCDict.TryGetValue(id, out npc) && client.VobControlledList.Find(v => v == npc) != null)
                 {
-                    if (state <= NPCState.MoveRight)
+                    if (state <= NPCState.MoveBackward)
                     {
                         CmdOnMove(npc, state);
                     }
@@ -335,6 +273,20 @@ namespace GUC.Server.WorldObjects
             CmdOnUndrawItem(client.character, client.character.DrawnItem);
         }
 
+        public delegate void CmdTargetMoveHandler(NPC npc, NPC target, NPCState state);
+        public static CmdTargetMoveHandler CmdOnTargetMove;
+
+        internal static void ReadCmdTargetState(BitStream stream, Client client)
+        {
+            if (CmdOnTargetMove == null)
+                return;
+
+            NPCState state = (NPCState)stream.mReadByte();
+            NPC target = client.character.World.GetNpcOrPlayer(stream.mReadUInt());
+
+            CmdOnTargetMove(client.character, target, state);
+        }
+
         #endregion
 
         internal override void WriteSpawn(IEnumerable<Client> list)
@@ -367,6 +319,16 @@ namespace GUC.Server.WorldObjects
                 stream.mWrite(slot.Value.ID);
                 stream.mWrite(slot.Value.Instance.ID);
                 stream.mWrite(slot.Value.Condition);
+            }
+
+            if (DrawnItem == null)
+            {
+                stream.Write0();
+            }
+            else
+            {
+                stream.Write1();
+                NPCMessage.WriteStrmDrawItem(stream, this, DrawnItem);
             }
 
             foreach (Client cl in list)
@@ -406,8 +368,9 @@ namespace GUC.Server.WorldObjects
                 item.SpecialLine = "Geschmiedet von Malak Akbar.";
                 item.Spawn(client.character.World, new Types.Vec3f(200, 0, 200), new Types.Vec3f(0, 0, 1));
 
-                //NPC scav = NPC.Create("scavenger");
-                //scav.Spawn(client.character.World);
+                NPC scav = NPC.Create("scavenger");
+                scav.DrawnItem = Item.Fists;
+                scav.Spawn(client.character.World);
             }
 
             if (!client.character.Spawned)
@@ -424,35 +387,6 @@ namespace GUC.Server.WorldObjects
             if (item == null) return;
 
             client.character.AddItem(item);
-        }
-
-        public delegate void TargetMovementHandler(NPC npc, NPC target, NPCState state, Vec3f position, Vec3f direction);
-        public static TargetMovementHandler sOnTargetMovement;
-        public TargetMovementHandler OnTargetMovement;
-
-        internal static void ReadTargetState(BitStream stream, Client client)
-        {
-            NPCState state = (NPCState)stream.mReadByte();
-            Vec3f pos = stream.mReadVec();
-            Vec3f dir = stream.mReadVec();
-            NPC target = client.character.World.GetNpcOrPlayer(stream.mReadUInt());
-
-            if (sOnTargetMovement != null)
-            {
-                sOnTargetMovement(client.character, target, state, pos, dir);
-            }
-            if (client.character.OnTargetMovement != null)
-            {
-                client.character.OnTargetMovement(client.character, target, state, pos, dir);
-            }
-        }
-
-        public void DoTargetMovement(NPCState state, Vec3f position, Vec3f direction, NPC target)
-        {
-            this.State = state;
-            this.pos = position;
-            this.dir = direction;
-            NPCMessage.WriteTargetState(cell.SurroundingClients(), this, target);
         }
 
         #endregion
@@ -720,24 +654,6 @@ namespace GUC.Server.WorldObjects
 
         #endregion
 
-        #region Events
-        public delegate void OnHitHandler(NPC attacker, NPC target);
-        public OnHitHandler OnHit;
-        public static OnHitHandler sOnHit;
-
-        internal void DoHit(NPC attacker)
-        {
-            if (sOnHit != null)
-            {
-                sOnHit(attacker, this);
-            }
-            if (OnHit != null)
-            {
-                OnHit(attacker, this);
-            }
-        }
-        #endregion
-
         public void DoUseMob(MobInter mob)
         {
             if (mob != null)
@@ -774,10 +690,354 @@ namespace GUC.Server.WorldObjects
         /// <summary>
         /// Order the NPC to do a certain movement.
         /// </summary>
+        /// <param name="state">Stand, MoveForward, MoveBackward</param>
         public void DoMoveState(NPCState state)
         {
-            this.State = state;
+            switch (state)
+            {
+                case NPCState.Stand:
+                    DoStand();
+                    break;
+                case NPCState.MoveForward:
+                    DoMoveForward();
+                    break;
+                case NPCState.MoveBackward:
+                    DoMoveBackward();
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Order the NPC to do a certain movement on a target.
+        /// </summary>
+        /// <param name="state">MoveLeft, MoveRight, AttackForward, AttackLeft, AttackRight, AttackRun, Parry, DodgeBack</param>
+        public void DoMoveState(NPCState state, NPC target)
+        {
+            switch (state)
+            {
+                case NPCState.MoveLeft:
+                    DoMoveLeft(target);
+                    break;
+                case NPCState.MoveRight:
+                    DoMoveRight(target);
+                    break;
+                case NPCState.AttackForward:
+                    DoAttackForward(target);
+                    break;
+                case NPCState.AttackLeft:
+                    DoAttackLeft(target);
+                    break;
+                case NPCState.AttackRight:
+                    DoAttackRight(target);
+                    break;
+                case NPCState.AttackRun:
+                    DoAttackRun(target);
+                    break;
+                case NPCState.Parry:
+                    DoParry(target);
+                    break;
+                case NPCState.DodgeBack:
+                    DoDodgeBack(target);
+                    break;
+            }
+        }
+
+        public void DoStand()
+        {
+            this.State = NPCState.Stand;
             NPCMessage.WriteState(cell.SurroundingClients(), this);
+        }
+
+        public void DoMoveForward()
+        {
+            this.State = NPCState.MoveForward;
+            NPCMessage.WriteState(cell.SurroundingClients(), this);
+        }
+
+        public void DoMoveBackward()
+        {
+            this.State = NPCState.MoveBackward;
+            NPCMessage.WriteState(cell.SurroundingClients(), this);
+        }
+
+        public void DoMoveLeft(NPC target)
+        {
+            this.State = NPCState.MoveLeft;
+            NPCMessage.WriteTargetState(cell.SurroundingClients(), this, target);
+        }
+
+        public void DoMoveRight(NPC target)
+        {
+            this.State = NPCState.MoveRight;
+            NPCMessage.WriteTargetState(cell.SurroundingClients(), this, target);
+        }
+
+        internal NPCCell npcCell = null;
+
+        internal AnimationControl AniCtrl { get { return Instance.AniCtrl; } }
+        public int ComboNum { get; protected set; }
+        long comboTime = 0;
+        Timer AttackEndTimer; // fixme? only one timer?
+        Timer AttackHitTimer;
+
+        public void DoAttackForward(NPC target)
+        {
+            if (DrawnItem == null)
+                return;
+
+            AnimationControl.Attacks attack;
+            if (DrawnItem == Item.Fists)
+            {
+                attack = AniCtrl.Fist;
+            }
+            else if (DrawnItem.Type == ItemType.Blunt_1H || DrawnItem.Type == ItemType.Sword_1H)
+            {
+                attack = AniCtrl._1H[Talent1H];
+            }
+            else if (DrawnItem.Type == ItemType.Blunt_2H || DrawnItem.Type == ItemType.Sword_2H)
+            {
+                attack = AniCtrl._2H[Talent2H];
+            }
+            else
+            {
+                return;
+            }
+
+            if (ServerTime.Now.Ticks < comboTime || ComboNum >= attack.ComboNum - 1) //can not combo yet or is in last combo
+                return;
+
+            int newComboNum = 0;
+            if (State == NPCState.AttackForward) //already in attack
+            {
+                newComboNum = ComboNum + 1;
+            }
+            else
+            {
+                newComboNum = 0;
+            }
+
+            AnimationControl.Attacks.Info attackTimes = attack.Forward[newComboNum];
+
+            if (attackTimes.Attack > 0)
+            {
+                AttackEndTimer.CallTime = ServerTime.Now.Ticks + attackTimes.Attack;
+                AttackEndTimer.Start();
+            }
+            else
+            {
+                return;
+            }
+
+            if (attackTimes.Combo > 0)
+            {
+                comboTime = ServerTime.Now.Ticks + attackTimes.Combo;
+            }
+            else //no combo time defined
+            {
+                comboTime = AttackEndTimer.CallTime;
+            }
+
+            if (AttackHitTimer.Started) //just in case, that the last attack's timer has not fired yet
+            {
+                OnAttackHit(this);
+            }
+
+            if (attackTimes.Hit > 0)
+            {
+                AttackHitTimer.CallTime = ServerTime.Now.Ticks + attackTimes.Hit;
+                AttackHitTimer.Start();
+            }
+
+            ComboNum = newComboNum;
+            State = NPCState.AttackForward;
+            NPCMessage.WriteTargetState(cell.SurroundingClients(), this, target);
+        }
+
+        static void OnAttackEnd(object obj)
+        {
+            NPC attacker = (NPC)obj;
+            attacker.State = NPCState.Stand;
+            attacker.ComboNum = 0;
+            Log.Logger.log("Stand");
+        }
+
+        static void OnAttackHit(object obj)
+        {
+            if (obj != null && sOnHit != null)
+            {
+                NPC attacker = (NPC)obj;
+                if (attacker.DrawnItem == null)
+                    return;
+
+                float range = attacker.DrawnItem == Item.Fists ? 100 : attacker.DrawnItem.Instance.Range;
+                foreach (NPC target in attacker.World.GetNPCs(attacker.Position, range))
+                {
+                    if (attacker == target) continue;
+
+                    Vec3f dir = (attacker.Position - target.Position).normalise();
+                    float dot = attacker.Direction.Z * dir.Z + dir.X * attacker.Direction.X;
+
+                    if (dot > 0) continue; //target is behind attacker
+                    if (dot > -0.6f) continue; //target is too far right or left
+
+                    sOnHit(attacker, target);
+                    if (target.OnHit != null)
+                    {
+                        target.OnHit(attacker, target);
+                    }
+                    Log.Logger.log("HIT: " + target.ID);
+                }
+            }
+        }
+
+        public delegate void OnHitHandler(NPC attacker, NPC target);
+        public OnHitHandler OnHit;
+        public static OnHitHandler sOnHit;
+
+        public void DoAttackLeft(NPC target)
+        {
+            if (DrawnItem == null)
+                return;
+
+            AnimationControl.Attacks attack;
+            if (DrawnItem == Item.Fists)
+            {
+                attack = AniCtrl.Fist;
+            }
+            else if (DrawnItem.Type == ItemType.Blunt_1H || DrawnItem.Type == ItemType.Sword_1H)
+            {
+                attack = AniCtrl._1H[Talent1H];
+            }
+            else if (DrawnItem.Type == ItemType.Blunt_2H || DrawnItem.Type == ItemType.Sword_2H)
+            {
+                attack = AniCtrl._2H[Talent2H];
+            }
+            else
+            {
+                return;
+            }
+
+            if (State == NPCState.AttackLeft || ServerTime.Now.Ticks < comboTime)
+            {
+                return;
+            }
+
+            AnimationControl.Attacks.Info attackTimes = attack.Left;
+
+            if (attackTimes.Attack > 0)
+            {
+                AttackEndTimer.CallTime = ServerTime.Now.Ticks + attackTimes.Attack;
+                AttackEndTimer.Start();
+            }
+            else
+            {
+                return;
+            }
+
+            if (attackTimes.Combo > 0)
+            {
+                comboTime = ServerTime.Now.Ticks + attackTimes.Combo;
+            }
+            else //no combo time defined
+            {
+                comboTime = AttackEndTimer.CallTime;
+            }
+
+            if (AttackHitTimer.Started) //just in case, that the last attack's timer has not fired yet
+            {
+                OnAttackHit(this);
+            }
+
+            if (attackTimes.Hit > 0)
+            {
+                AttackHitTimer.CallTime = ServerTime.Now.Ticks + attackTimes.Hit;
+                AttackHitTimer.Start();
+            }
+
+            State = NPCState.AttackLeft;
+            NPCMessage.WriteTargetState(cell.SurroundingClients(), this, target);
+        }
+
+        public void DoAttackRight(NPC target)
+        {
+            if (DrawnItem == null)
+                return;
+
+            AnimationControl.Attacks attack;
+            if (DrawnItem == Item.Fists)
+            {
+                attack = AniCtrl.Fist;
+            }
+            else if (DrawnItem.Type == ItemType.Blunt_1H || DrawnItem.Type == ItemType.Sword_1H)
+            {
+                attack = AniCtrl._1H[Talent1H];
+            }
+            else if (DrawnItem.Type == ItemType.Blunt_2H || DrawnItem.Type == ItemType.Sword_2H)
+            {
+                attack = AniCtrl._2H[Talent2H];
+            }
+            else
+            {
+                return;
+            }
+
+            if (State == NPCState.AttackRight || ServerTime.Now.Ticks < comboTime)
+            {
+                return;
+            }
+
+            AnimationControl.Attacks.Info attackTimes = attack.Right;
+
+            if (attackTimes.Attack > 0)
+            {
+                AttackEndTimer.CallTime = ServerTime.Now.Ticks + attackTimes.Attack;
+                AttackEndTimer.Start();
+            }
+            else
+            {
+                return;
+            }
+
+            if (attackTimes.Combo > 0)
+            {
+                comboTime = ServerTime.Now.Ticks + attackTimes.Combo;
+            }
+            else //no combo time defined
+            {
+                comboTime = AttackEndTimer.CallTime;
+            }
+
+            if (AttackHitTimer.Started) //just in case, that the last attack's timer has not fired yet
+            {
+                OnAttackHit(this);
+            }
+
+            if (attackTimes.Hit > 0)
+            {
+                AttackHitTimer.CallTime = ServerTime.Now.Ticks + attackTimes.Hit;
+                AttackHitTimer.Start();
+            }
+
+            State = NPCState.AttackRight;
+            NPCMessage.WriteTargetState(cell.SurroundingClients(), this, target);
+        }
+
+        public void DoAttackRun(NPC target)
+        {
+            this.State = NPCState.AttackRun;
+            NPCMessage.WriteTargetState(cell.SurroundingClients(), this, target);
+        }
+
+        public void DoParry(NPC target)
+        {
+            this.State = NPCState.Parry;
+            NPCMessage.WriteTargetState(cell.SurroundingClients(), this, target);
+        }
+
+        public void DoDodgeBack(NPC target)
+        {
+            this.State = NPCState.DodgeBack;
+            NPCMessage.WriteTargetState(cell.SurroundingClients(), this, target);
         }
 
         /// <summary>
@@ -807,7 +1067,7 @@ namespace GUC.Server.WorldObjects
         /// <param name="fast">True if the state should be set instantly, without playing an animation.</param>
         public void DoDrawitem(Item item, bool fast)
         {
-            if (item == null || item.Owner != this)
+            if (item == null || (item.Owner != this && item != Item.Fists))
                 return;
 
             DrawnItem = item;

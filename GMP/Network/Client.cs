@@ -55,10 +55,10 @@ namespace GUC.Client.Network
             messageListener.Add((byte)NetworkID.NPCAniStartMessage, NPCMessage.ReadAniStart);
             messageListener.Add((byte)NetworkID.NPCAniStopMessage, NPCMessage.ReadAniStop);
             messageListener.Add((byte)NetworkID.NPCStateMessage, NPCMessage.ReadState);
-            messageListener.Add((byte)NetworkID.NPCTargetStateMessage, NPCMessage.ReadAttack);
+            messageListener.Add((byte)NetworkID.NPCTargetStateMessage, NPCMessage.ReadTargetState);
             messageListener.Add((byte)NetworkID.NPCDrawItemMessage, NPCMessage.ReadDrawItem);
             messageListener.Add((byte)NetworkID.NPCUndrawItemMessage, NPCMessage.ReadUndrawItem);
-            messageListener.Add((byte)NetworkID.NPCHitMessage, NPCMessage.ReadHitMessage);
+            messageListener.Add((byte)NetworkID.NPCHealthMessage, NPCMessage.ReadHealthMessage);
             messageListener.Add((byte)NetworkID.NPCEquipMessage, NPCMessage.ReadEquipMessage);
             messageListener.Add((byte)NetworkID.NPCUnequipMessage, NPCMessage.ReadUnequipMessage);
             messageListener.Add((byte)NetworkID.NPCJumpMessage, NPCMessage.ReadJump);

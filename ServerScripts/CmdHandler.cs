@@ -13,7 +13,7 @@ namespace GUC.Server.Scripts
         public static void Init()
         {
             NPC.CmdOnMove += OnMovement;
-            NPC.sOnTargetMovement += OnTargetMovement;
+            NPC.CmdOnTargetMove += OnTargetMovement;
             NPC.CmdOnUseMob += OnUseMob;
             NPC.CmdOnUnUseMob += OnUnUseMob;
             NPC.CmdOnUseItem += OnUseItem;
@@ -34,12 +34,43 @@ namespace GUC.Server.Scripts
 
         static void OnMovement(NPC npc, NPCState state)
         {
+            switch (state)
+            {
+                case NPCState.Stand:
+                    break;
+                case NPCState.MoveForward:
+                case NPCState.MoveBackward:
+                    break;
+            }
+
             npc.DoMoveState(state);
         }
 
-        static void OnTargetMovement(NPC npc, NPC target, NPCState state, Vec3f position, Vec3f direction)
+        static void OnTargetMovement(NPC npc, NPC target, NPCState state)
         {
-            npc.DoTargetMovement(state, position, direction, target);
+            switch (state)
+            {
+                case NPCState.MoveLeft:
+                case NPCState.MoveRight:
+                    //Strafing
+                    break;
+
+                case NPCState.AttackForward:
+                    break;
+                case NPCState.AttackLeft:
+                    break;
+                case NPCState.AttackRight:
+                    break;
+                case NPCState.AttackRun:
+                    break;
+
+                case NPCState.Parry:
+                    break;
+                case NPCState.DodgeBack:
+                    break;
+            }
+
+            npc.DoMoveState(state, target);
         }
 
         static void OnJump(NPC npc)
@@ -49,7 +80,7 @@ namespace GUC.Server.Scripts
 
         static void OnUseMob(MobInter mob, NPC npc)
         {
-            if (npc.State == NPCState.Stand && npc.WeaponState == NPCWeaponState.None)
+            if (npc.State == NPCState.Stand && npc.DrawnItem == null)
             {
                 npc.DoUseMob(mob);
             }
@@ -62,7 +93,7 @@ namespace GUC.Server.Scripts
 
         static void OnUseItem(Item item, NPC npc)
         {
-            if (npc.State == NPCState.Stand && npc.WeaponState == NPCWeaponState.None)
+            if (npc.State == NPCState.Stand && npc.DrawnItem == null)
             {
                 switch (item.Type)
                 {

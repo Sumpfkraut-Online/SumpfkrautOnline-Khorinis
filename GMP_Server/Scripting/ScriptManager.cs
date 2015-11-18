@@ -19,8 +19,6 @@ namespace GUC.Server.Scripting
         private bool m_Startuped = false;
         private bool m_Initalised = false;
 
-        internal List<Timer> m_TimerList = new List<Timer>();
-
         private static ScriptManager s_Self;
 
         public static ScriptManager Self { get { return s_Self; } }
@@ -48,18 +46,18 @@ namespace GUC.Server.Scripting
         public bool Startuped { get { return m_Startuped; } }
 
         public int Slots { get { return Program.serverOptions.Slots; } }
-        
+
 
         private void Load()
         {
-            
+
             try
             {
                 m_Assembly = System.Reflection.Assembly.LoadFile(Path.GetFullPath("scripts/_compiled/ServerScripts.dll"));
             }
             catch (Exception ex)
             {
-                Log.Logger.log(Log.Logger.LogLevel.ERROR, "ServerScripts.dll could not be found! It has to be in the scripts/_compiled/ folder <br>"+ex.ToString());
+                Log.Logger.log(Log.Logger.LogLevel.ERROR, "ServerScripts.dll could not be found! It has to be in the scripts/_compiled/ folder <br>" + ex.ToString());
             }
         }
 
@@ -81,21 +79,21 @@ namespace GUC.Server.Scripting
                 CompilerParameters.ReferencedAssemblies.Add(str);
             }
 
-            
-            
+
+
             CompilerParameters.CompilerOptions = "/t:library";///debug:full
-            for(int i = 0; i < Program.serverOptions.AdditionalSymbols.Count; i++)
+            for (int i = 0; i < Program.serverOptions.AdditionalSymbols.Count; i++)
             {
                 String str = Program.serverOptions.AdditionalSymbols[i];
                 if (i == 0)
                     CompilerParameters.CompilerOptions += "/define: ";
                 CompilerParameters.CompilerOptions += str;
-                if(i != Program.serverOptions.AdditionalLibs.Count - 1)
+                if (i != Program.serverOptions.AdditionalLibs.Count - 1)
                     CompilerParameters.CompilerOptions += ";";
-            }                                                
+            }
 
             CompilerParameters.IncludeDebugInformation = true;
-            
+
             if (!file)
             {
                 CompilerParameters.GenerateInMemory = true;
@@ -153,9 +151,6 @@ namespace GUC.Server.Scripting
             if (m_Startuped)
                 return;
 
-            
-            
-
             try
             {
                 Listener.IServerStartup listener = (Listener.IServerStartup)m_Assembly.CreateInstance("GUC.Server.Scripts.Startup");
@@ -176,18 +171,5 @@ namespace GUC.Server.Scripting
             Log.Logger.log(Log.Logger.LOG_INFO, "GUC Server - Initalisation Complete GUC-Version: " + GUC.Options.Constants.VERSION);
             m_Startuped = true;
         }
-
-        internal void Update()
-        {
-            long time = DateTime.Now.Ticks;
-            Timer[] arr = m_TimerList.ToArray();
-            foreach (Timer timer in arr)
-            {
-                timer.iUpdate(time);
-            }
-        }
-
-
-
     }
 }

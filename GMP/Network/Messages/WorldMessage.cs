@@ -129,6 +129,11 @@ namespace GUC.Client.Network.Messages
                 npc.EquipSlot(slot, item);
             }
 
+            if (stream.ReadBit())
+            {
+                npc.DrawnItem = NPCMessage.ReadStrmDrawItem(stream, npc);
+            }
+
             npc.Spawn();
         }
 

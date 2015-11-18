@@ -41,13 +41,28 @@ namespace GUC.Server.WorldObjects
         public string Description = "";
 
         /// <summary>The 3DS-Model shown in the world and inventory.</summary>
-        public String Visual = "";
+        public String Visual
+        {
+            get { return visual; }
+            set { visual = value.Trim().ToUpper(); }
+        }
+        string visual = "";
 
         /// <summary>The ASC-Mesh for armors which is put over the NPC's character model.</summary>
-        public String VisualChange = "";
+        public String VisualChange
+        {
+            get { return visualChange; }
+            set { visualChange = value.Trim().ToUpper(); }
+        }
+        string visualChange = "";
 
         /// <summary>Magic Effect. See Scripts/System/VisualFX/VisualFxInst.d</summary>
-        public String Effect = "";
+        public String Effect
+        {
+            get { return effect; }
+            set { effect = value.Trim().ToUpper(); }
+        }
+        string effect = "";
 
         /// <summary>The ItemInstance which is used for ammunition.</summary>
         public ItemInstance Munition = null;
@@ -65,15 +80,17 @@ namespace GUC.Server.WorldObjects
                 bw.Write(Count[i]);
             }
             bw.Write(Description);
-            bw.Write(Visual);
-            bw.Write(VisualChange);
-            bw.Write(Effect);
+            bw.Write(visual);
+            bw.Write(visualChange);
+            bw.Write(effect);
             bw.Write(Munition == null ? (ushort)0 : Munition.ID);
             bw.Write((byte)Gender);
             bw.Write(Condition);
         }
 
         #endregion
+
+        public float Range = 100;
 
         #region Constructors
 

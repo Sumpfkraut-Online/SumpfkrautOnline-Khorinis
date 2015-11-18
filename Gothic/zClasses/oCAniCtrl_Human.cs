@@ -244,6 +244,11 @@ namespace Gothic.zClasses
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)0x6B5220, null);
         }
 
+        public void StartStandAni()
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)0x6A5060, null);
+        }
+
         public zString GetWalkModeZString()
         {
             int str = Process.Alloc(20).ToInt32();

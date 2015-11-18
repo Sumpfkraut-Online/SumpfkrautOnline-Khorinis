@@ -17,7 +17,7 @@ namespace GUC.Server.WorldObjects
         public uint ID { get; internal set; }
 
         internal WorldCell cell;
-        internal Client ClientOrNull { get { return (this is NPC && ((NPC)this).isPlayer) ? ((NPC)this).client : null; } }
+        internal Client ClientOrNull { get { return this is NPC ? ((NPC)this).client : null; } }
         public World World { get; internal set; }
         public bool Spawned { get; private set; }
 
@@ -41,8 +41,11 @@ namespace GUC.Server.WorldObjects
                 {
                     pos = new Vec3f();
                 }
+
                 if (Spawned)
+                {
                     World.UpdatePosition(this, null);
+                }
             }
         }
 

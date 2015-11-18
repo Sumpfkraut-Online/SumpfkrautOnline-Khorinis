@@ -12,7 +12,12 @@ namespace GUC.Server.WorldObjects
         public MobType type = MobType.Vob;
 
         //Vob:
-        public string visual = "ITFO_APPLE.3DS";
+        public string Visual
+        {
+            get { return visual; }
+            set { visual = value.Trim().ToUpper(); }
+        }
+        string visual = "";
         public bool cdDyn = true;
         public bool cdStatic = true;
 

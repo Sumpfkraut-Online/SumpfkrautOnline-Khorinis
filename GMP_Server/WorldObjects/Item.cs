@@ -113,7 +113,7 @@ namespace GUC.Server.WorldObjects
             }
         }
         protected string specialLine = "";
-
+        
         #region Constructors
 
         /// <summary>

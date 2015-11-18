@@ -44,14 +44,14 @@ namespace GUC.Enumeration
         NPCEquipMessage,
         NPCUnequipMessage,
         NPCJumpMessage,
-        NPCFoodMessage,
 
         NPCStateMessage,
         NPCTargetStateMessage,
         NPCDrawItemMessage,
         NPCUndrawItemMessage,
         
-        NPCHitMessage,
+        NPCHealthMessage,
+        NPCStatBarMessage,
 
         //instances
         ItemInstanceMessage,

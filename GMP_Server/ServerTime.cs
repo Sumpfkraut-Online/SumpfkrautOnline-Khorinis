@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace GUC.Server.Network
+namespace GUC.Server
 {
-    class SmallCell
+    public static class ServerTime
     {
+        public static DateTime Now;
     }
 }

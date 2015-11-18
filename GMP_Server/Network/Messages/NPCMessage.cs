@@ -50,12 +50,6 @@ namespace GUC.Server.Network.Messages
 
         #endregion
 
-        public static void WriteFoodMessage(IEnumerable<Client> list, NPC npc)
-        {
-            BitStream stream = Program.server.SetupStream(NetworkID.NPCFoodMessage);
-            //stream.mWrite()
-        }
-
         public static void WriteEquipMessage(IEnumerable<Client> list, NPC npc, Item item, byte slot)
         {
             BitStream stream = Program.server.SetupStream(NetworkID.NPCEquipMessage);
@@ -103,8 +97,7 @@ namespace GUC.Server.Network.Messages
             BitStream stream = Program.server.SetupStream(NetworkID.NPCTargetStateMessage);
             stream.mWrite(npc.ID);
             stream.mWrite((byte)npc.State);
-            stream.mWrite(npc.pos);
-            stream.mWrite(npc.dir);
+
             if (target == null)
             {
                 stream.mWrite(0);
@@ -128,15 +121,26 @@ namespace GUC.Server.Network.Messages
 
             BitStream stream = Program.server.SetupStream(NetworkID.NPCDrawItemMessage);
             stream.mWrite(npc.ID);
-            stream.mWrite(item.ID);
+            WriteStrmDrawItem(stream, npc, item);
             stream.mWrite(fast);
-            if (item != Item.Fists)
-            {
-                stream.mWrite(item.Instance.ID);
-            }
 
             foreach (Client client in list)
                 Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
+        }
+
+        public static void WriteStrmDrawItem(BitStream stream, NPC npc, Item item)
+        {
+            stream.mWrite(item.ID);
+            if (item != Item.Fists)
+            {
+                stream.mWrite(item.Instance.ID);
+                if (item.Type == ItemType.Blunt_1H || item.Type == ItemType.Sword_1H)
+                    stream.mWrite(npc.Talent1H);
+                else if (item.Type == ItemType.Blunt_2H || item.Type == ItemType.Sword_2H)
+                    stream.mWrite(npc.Talent2H);
+                else
+                    stream.mWrite(byte.MinValue);
+            }
         }
 
         public static void WriteUndrawItem(IEnumerable<Client> list, NPC npc, bool fast, bool altRemove)
@@ -151,41 +155,6 @@ namespace GUC.Server.Network.Messages
 
             foreach (Client client in list)
                 Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
-        }
-
-        #endregion
-
-        #region Combat
-
-
-
-
-
-        public static void ReadHitMessage(BitStream stream, Client client)
-        {
-            NPC attacker = client.character.World.GetNpcOrPlayer(stream.mReadUInt());
-            byte num = stream.mReadByte();
-
-            if (num == 0) //this client got hit
-            {
-                client.character.DoHit(attacker);
-            }
-            else //list of npcs this client has hit
-            {
-                uint id;
-                NPC npc;
-                for (int i = 0; i < num; i++)
-                {
-                    id = stream.mReadUInt();
-
-                    npc = null; //only check bots, because players send hit events themselves
-                    client.character.World.NPCDict.TryGetValue(id, out npc);
-                    if (npc != null)
-                    {
-                        npc.DoHit(attacker);
-                    }
-                }
-            }
         }
 
         #endregion
