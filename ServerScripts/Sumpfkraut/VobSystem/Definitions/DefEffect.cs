@@ -160,5 +160,52 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
  
         #endregion
 
+
+
+        public static void ApplyDefEffect (ref MobDef vobDef, DefEffect defEffect, 
+            out List<int> failedIndices)
+        {
+            failedIndices = new List<int>();
+            List<DefChange.DefChangeKeyValPair> changeList = defEffect.GetChangeList();
+
+            for (int i = 0; i < changeList.Count; i++)
+            {
+                if (!DefChange.ApplyDefChange(ref vobDef, changeList[i]))
+                {
+                    failedIndices.Add(i);
+                }
+            }
+        }
+
+        public static void ApplyDefEffect (ref ItemDef vobDef, DefEffect defEffect, 
+            out List<int> failedIndices)
+        {
+            failedIndices = new List<int>();
+            List<DefChange.DefChangeKeyValPair> changeList = defEffect.GetChangeList();
+
+            for (int i = 0; i < changeList.Count; i++)
+            {
+                if (!DefChange.ApplyDefChange(ref vobDef, changeList[i]))
+                {
+                    failedIndices.Add(i);
+                }
+            }
+        }
+
+        public static void ApplyDefEffect (ref NpcDef vobDef, DefEffect defEffect, 
+            out List<int> failedIndices)
+        {
+            failedIndices = new List<int>();
+            List<DefChange.DefChangeKeyValPair> changeList = defEffect.GetChangeList();
+
+            for (int i = 0; i < changeList.Count; i++)
+            {
+                if (!DefChange.ApplyDefChange(ref vobDef, changeList[i]))
+                {
+                    failedIndices.Add(i);
+                }
+            }
+        }
+
     }
 }

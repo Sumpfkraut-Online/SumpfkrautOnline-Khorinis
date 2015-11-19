@@ -82,9 +82,40 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
 
 
-        public static void ApplyDefChanges (MobDef vobDef, DefEffect defEffect)
+        public static bool ApplyDefChange (ref MobDef vobDef, DefChangeKeyValPair defChange)
         {
+            bool success = false;
+            ApplyDefChange_MobDef applyFunc;
+            if (ApplyDefChangeDict_MobDef.TryGetValue(defChange.defChangeType, out applyFunc)
+                && applyFunc(ref vobDef, defChange.param))
+            {
+                success = true;
+            }
+            return success;
+        }
 
+        public static bool ApplyDefChange (ref ItemDef vobDef, DefChangeKeyValPair defChange)
+        {
+            bool success = false;
+            ApplyDefChange_ItemDef applyFunc;
+            if (ApplyDefChangeDict_ItemDef.TryGetValue(defChange.defChangeType, out applyFunc)
+                && applyFunc(ref vobDef, defChange.param))
+            {
+                success = true;
+            }
+            return success;
+        }
+
+        public static bool ApplyDefChange (ref NpcDef vobDef, DefChangeKeyValPair defChange)
+        {
+            bool success = false;
+            ApplyDefChange_NpcDef applyFunc;
+            if (ApplyDefChangeDict_NpcDef.TryGetValue(defChange.defChangeType, out applyFunc)
+                && applyFunc(ref vobDef, defChange.param))
+            {
+                success = true;
+            }
+            return success;
         }
 
     }
