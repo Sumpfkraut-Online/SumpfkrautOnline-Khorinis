@@ -1,12 +1,9 @@
 ﻿namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 {
     
-    public enum VobDefType
+    public enum DefChangeType
     {
-        VobDef  = 0,
-        MobDef  = VobDef + 1,
-        ItemDef = MobDef + 1,
-        NpcDef  = ItemDef + 1,
+        undefined = 0,
     }
 
     public enum MobInterType
@@ -17,6 +14,14 @@
         MobSwitch       = MobBed + 1,
         MobDoor         = MobSwitch + 1,
         MobContainer    = MobDoor + 1,
+    }
+
+    public enum VobDefType
+    {
+        VobDef  = 0,
+        MobDef  = VobDef + 1,
+        ItemDef = MobDef + 1,
+        NpcDef  = ItemDef + 1,
     }
 
 }

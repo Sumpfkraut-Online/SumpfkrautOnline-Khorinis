@@ -42,13 +42,31 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         public String GetEffectName () { return this.effectName; }
         public void SetEffectName(String effectName) { this.effectName = effectName; }
 
+        protected List<DefChange.DefChangeKeyValPair> changeList = 
+            new List<DefChange.DefChangeKeyValPair>();
+        public List<DefChange.DefChangeKeyValPair> GetChangeList () { return this.changeList; }
+
+        #endregion
+
+
+
+        #region constructors
+
+        public DefEffect (int id, String effectName, 
+            List<DefChange.DefChangeKeyValPair> changeList)
+        {
+            this.id = id;
+            this.effectName = effectName;
+            this.changeList = changeList;
+        }
+
         #endregion
 
 
 
         #region dictionary-methods
 
-        public static bool Add(DefEffect defEffect)
+        public static bool Add (DefEffect defEffect)
         {
             int id = defEffect.GetId();
             String effectName = defEffect.GetEffectName();
@@ -132,6 +150,14 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             return defEffectById.TryGetValue(id, out defEffect);
         }
 
+        #endregion
+
+
+
+        #region defChangeList-management
+        
+        // no management yet --> instead assignment only in constructor
+ 
         #endregion
 
     }
