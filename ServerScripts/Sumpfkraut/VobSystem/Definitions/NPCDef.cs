@@ -11,13 +11,13 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
     /**
      *   Class from which all npcs are instatiated (which are handled by the serverscript).
      */
-    class NPCDef : VobDef
+    class NpcDef : VobDef
     {
 
         #region dictionaries
 
-        protected static Dictionary<int, NPCDef> defById = new Dictionary<int, NPCDef>();
-        protected static Dictionary<string, NPCDef> defByCodeName = new Dictionary<string, NPCDef>();
+        protected static Dictionary<int, NpcDef> defById = new Dictionary<int, NpcDef>();
+        protected static Dictionary<string, NpcDef> defByCodeName = new Dictionary<string, NpcDef>();
 
         new protected readonly Dictionary<String, SQLiteGetTypeEnum> defTab_GetTypeByColumn =
             new Dictionary<String, SQLiteGetTypeEnum>
@@ -36,11 +36,11 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         new public static readonly String _staticName = "NPCDef (static)";
         new protected String _objName = "NPCDef (default)";
 
-        new protected static Type _type = typeof(NPCDef);
+        new protected static Type _type = typeof(NpcDef);
 
-        protected int ID;
-        public int getID () { return this.ID; }
-        public void setID (int ID) { this.ID = ID; }
+        //protected int ID;
+        //public int getID () { return this.ID; }
+        //public void setID (int ID) { this.ID = ID; }
 
         protected string Name;
         public string getName () { return this.Name; }
@@ -104,7 +104,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #region constructors
 
-        public NPCDef(String name, int[] attributes, int[] talentValues, int[] talentSkills, int[] hitChances, 
+        public NpcDef(String name, int[] attributes, int[] talentValues, int[] talentSkills, int[] hitChances, 
             int guild, int voice, String visual, String bodyMesh, int bodyTex, int skinColor, 
             String headMesh, int headTex, int teethTex)
         {
@@ -131,7 +131,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #region dictionary-methods
 
-        public static bool Add(NPCDef def)
+        public static bool Add(NpcDef def)
         {
             return Add(_type, def);
         }
@@ -161,19 +161,19 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             return RemoveId(_type, id);
         }
 
-        public static bool TryGetValueByCodeName(String codeName, out NPCDef def)
+        public static bool TryGetValueByCodeName(String codeName, out NpcDef def)
         {
             VobDef tempDef;
             bool result = TryGetValueByCodeName(_type, codeName, out tempDef);
-            def = (NPCDef)tempDef;
+            def = (NpcDef)tempDef;
             return result;
         }
 
-        public static bool TryGetValueById(int id, out NPCDef def)
+        public static bool TryGetValueById(int id, out NpcDef def)
         {
             VobDef tempDef;
             bool result = TryGetValueById(_type, id, out tempDef);
-            def = (NPCDef)tempDef;
+            def = (NpcDef)tempDef;
             return result;
         }
 

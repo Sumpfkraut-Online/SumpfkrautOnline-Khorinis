@@ -11,16 +11,16 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
     /**
      *   Class which handles npc creation.
      */
-    class NPCInst : VobInst
+    class NpcInst : VobInst
     {
 
         new public static readonly String _staticName = "NPCInst (static)";
         new protected String _objName = "NPCInst (default)";
         
         // definition on which basis the item was created
-        private NPCDef npcDef;
-        public NPCDef getNPCDef () { return this.npcDef; }
-        public void setNPCDef (NPCDef npcDef) { this.npcDef = npcDef; }
+        private NpcDef npcDef;
+        public NpcDef getNPCDef () { return this.npcDef; }
+        public void setNPCDef (NpcDef npcDef) { this.npcDef = npcDef; }
 
         // the ingame-item created by using itemDef
         private NPC npc;

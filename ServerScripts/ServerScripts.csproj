@@ -80,12 +80,12 @@
     <Compile Include="Sumpfkraut\VobSystem\Definitions\EffectChangesDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\ItemDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\MobDef.cs" />
-    <Compile Include="Sumpfkraut\VobSystem\Definitions\NPCDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\NpcDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\SpellDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\VobDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\ItemInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\MobInst.cs" />
-    <Compile Include="Sumpfkraut\VobSystem\Instances\NPCInst.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\NpcInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\SpellInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\VobInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\InventoryVobHandler.cs" />
@@ -108,7 +108,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Database\SO-K_SQLite.sql" />
-    <Content Include="Sumpfkraut\Database\SO-K_SQLite.sql" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

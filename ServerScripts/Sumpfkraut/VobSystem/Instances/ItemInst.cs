@@ -40,9 +40,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
             //Vob vob = (Vob) item;
         }
 
-        private NPCInst inInventoryNPC;
-        public NPCInst getInInventoryNPC () { return inInventoryNPC; }
-        public void setInInventoryNPC (NPCInst inInventoryNPC) { this.inInventoryNPC = inInventoryNPC; }
+        private NpcInst inInventoryNPC;
+        public NpcInst getInInventoryNPC () { return inInventoryNPC; }
+        public void setInInventoryNPC (NpcInst inInventoryNPC) { this.inInventoryNPC = inInventoryNPC; }
 
         private MobInst inInventoryMob;
         public MobInst getInInventoryMob () { return inInventoryMob; }
@@ -65,7 +65,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
         }
 
         // constructor which also spawns the item in an npcs inventory
-        public ItemInst (ItemDef def, int amount, NPCInst inInventoryNPC)
+        public ItemInst (ItemDef def, int amount, NpcInst inInventoryNPC)
             : this(def, amount)
         {
             this.setInInventoryNPC(inInventoryNPC);
@@ -94,7 +94,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
             setAmount(getAmount());
             
             MobInst inInventoryMob = getInInventoryMob();
-            NPCInst inInventoryNPC = getInInventoryNPC();
+            NpcInst inInventoryNPC = getInInventoryNPC();
             WorldInst inWorld = getInWorld();
 
             if (inInventoryMob != null)

@@ -45,12 +45,12 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         public ItemInstance GetItemInstance () { return this.itemInstance; }
         public void SetItemInstance (ItemInstance itemInstance) { this.itemInstance = itemInstance; }
 
-        protected string instanceName;
-        public string GetInstanceName () { return this.instanceName; }
-        public void SetInstanceName (string instanceName) 
-        { 
-            this.instanceName = instanceName; 
-        }
+        //protected string instanceName;
+        //public string GetInstanceName () { return this.instanceName; }
+        //public void SetInstanceName (string instanceName) 
+        //{ 
+        //    this.instanceName = instanceName; 
+        //}
 
         protected string name;
         public string GetName () { return this.name; }

@@ -13,6 +13,8 @@ using GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Server.WorldObjects;
 using GUC.Server.Scripts.Sumpfkraut.Utilities.Threading;
+using GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions;
+using GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances;
 
 namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 {
@@ -26,18 +28,33 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
         new public static readonly String _staticName = "VobHandler (static)";
         new protected String _objName = "VobHandler (default)";
 
+        protected bool isInitialized = false;
 
-        public void Init ()
+
+        public VobHandler (String objName, bool startOnCreate)
+            : base(startOnCreate)
         {
-            
+            this.SetObjName(objName);
         }
+
+
+
+        public void Init()
+        {
+            LoadDefinitions();
+            LoadInstances();
+        }
+
+
+
+        #region Vob-Definitions
 
         protected bool LoadDefinitions()
         {
             return false;
         }
 
-        protected bool LoadInstances()
+        protected bool LoadVobDef ()
         {
             return false;
         }
@@ -47,16 +64,30 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
             return false;
         }
 
+        #endregion
+
+        #region Vob-Instances
+
+        protected bool LoadInstances()
+        {
+            return false;
+        }
+
         protected bool SaveInstances()
         {
             return false;
         }
 
+        #endregion
+
 
 
         public override void Run()
         {
-
+            if (!isInitialized)
+            {
+                Init();
+            }
         }
 
 

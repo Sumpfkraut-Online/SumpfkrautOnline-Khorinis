@@ -49,7 +49,7 @@ namespace GUC.Server.WorldObjects
     public class World
     {
         //Worlds, hardcoded but whatever
-        private static World newworld = new World("NEWWORLD\\NEWWORLD.ZEN"); //new World("SOK-NEWWORLD.ZEN"); rename for release, so the original is not replaced and SP is still functional!
+        private static World newworld = new World("SOK-NEWWORLD.ZEN"); //new World("SOK-NEWWORLD.ZEN"); rename for release, so the original is not replaced and SP is still functional!
         public static World NewWorld { get { return newworld; } }
 
         public string MapName { get; protected set; }
