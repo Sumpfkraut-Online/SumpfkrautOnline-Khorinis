@@ -164,11 +164,17 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 
             List<List<List<object>>> sqlResults_VobDef = new List<List<List<object>>>();
 
-            // !!! TODO: need to use DBAgent-object here after merging it into the VobSystem-branch !!!
-            DBReader.LoadFromDB(ref sqlResults_VobDef, sqlSelect_VobDef, sqlFrom_VobDef,
-                sqlWhere_VobDef, sqlOrderBy_VobDef);
+            //DBReader.LoadFromDB(ref sqlResults_VobDef, sqlSelect_VobDef, sqlFrom_VobDef,
+            //    sqlWhere_VobDef, sqlOrderBy_VobDef);
+            DBAgent dbAgent_VobDef = new DBAgent(new List<String> {
+                    String.Format("SELECT {0} FROM {1} WHERE {2} ORDER BY {3}",
+                    sqlSelect_VobDef, sqlFrom_VobDef, sqlWhere_VobDef, sqlOrderBy_VobDef)
+                }, false);
 
-
+            dbAgent_VobDef.ReceivedResults += delegate (object sender, DBAgent.ReceivedResultsEventArgs e)
+            {
+                // convert and use results
+            };
 
             return false;
         }
