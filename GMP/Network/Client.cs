@@ -71,6 +71,8 @@ namespace GUC.Client.Network
 
             messageListener.Add((byte)NetworkID.MobUseMessage, MobMessage.ReadUseMob);
             messageListener.Add((byte)NetworkID.MobUnUseMessage, MobMessage.ReadUnUseMob);
+
+            messageListener.Add((byte)NetworkID.TradeMessage, TradeMessage.Read);
         }
 
         public void Startup()

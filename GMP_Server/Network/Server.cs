@@ -65,10 +65,13 @@ namespace GUC.Server.Network
             MessageListener.Add((byte)NetworkID.NPCJumpMessage, NPC.ReadCmdJump);
 
             MessageListener.Add((byte)NetworkID.InventoryDropItemMessage, InventoryMessage.ReadDropItem);
+
             MessageListener.Add((byte)NetworkID.InventoryUseItemMessage, NPC.ReadCmdUseItem);
 
             MessageListener.Add((byte)NetworkID.MobUseMessage, NPC.ReadCmdUseMob);
             MessageListener.Add((byte)NetworkID.MobUnUseMessage, NPC.ReadCmdUnuseMob);
+
+            MessageListener.Add((byte)NetworkID.TradeMessage, TradeMessage.Read);
         }
 
         /**

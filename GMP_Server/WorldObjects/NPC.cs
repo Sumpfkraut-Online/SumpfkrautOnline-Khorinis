@@ -373,6 +373,9 @@ namespace GUC.Server.WorldObjects
                 NPC scav = NPC.Create("scavenger");
                 scav.DrawnItem = Item.Fists;
                 scav.Spawn(client.character.World);
+
+                Vob mob = Vob.Create("forge");
+                mob.Spawn(client.character.World, new Types.Vec3f(-200, -100, 200), new Types.Vec3f(0, 0, 1));
             }
 
             if (!client.character.Spawned)

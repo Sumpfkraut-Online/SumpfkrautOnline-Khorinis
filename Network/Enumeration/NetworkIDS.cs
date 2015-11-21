@@ -66,7 +66,10 @@ namespace GUC.Enumeration
         //controller stuff
         ControlAddVobMessage,
         ControlRemoveVobMessage,
-        ControlCmdMessage
+        ControlCmdMessage,
+
+        // trade message
+        TradeMessage
     }
 
     public enum TradeStatus : byte
@@ -74,6 +77,9 @@ namespace GUC.Enumeration
         Request,
         Accept,
         Break,
+        ConfirmOffer,
+        DeclineOffer,
+        TradeDone,
         SelfOfferItem,
         SelfRemoveItem,
         OtherOfferItem,

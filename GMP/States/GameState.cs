@@ -24,6 +24,7 @@ namespace GUC.Client.States
             { VirtualKeys.Escape, Menus.GUCMenus.Main.Open },
             { VirtualKeys.Tab, Menus.GUCMenus.Inventory.Open },
             { Menus.GUCMenus.Animation.Hotkey, Menus.GUCMenus.Animation.Open},
+            { Menus.GUCMenus.Trade.RequestTradeKey, Menus.GUCMenus.Trade.RequestTrade},
             { Menus.GUCMenus.Status.Hotkey, Menus.GUCMenus.Status.Open },
             { VirtualKeys.OEM5, Player.DoFists }, //^
              { VirtualKeys.F1, RenderTest },
@@ -84,7 +85,6 @@ namespace GUC.Client.States
             npc.SetPositionWorld(newPos.Data);
             npc.TrafoObjToWorld.setPosition(newPos.Data);*/
         }
-
         static Random rand = new Random();
         public static void RenderTest2()
         {
