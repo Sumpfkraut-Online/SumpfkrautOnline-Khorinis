@@ -73,6 +73,7 @@ namespace GUC.Server.WorldObjects
 
                 npc.AttackEndTimer = new Timer(OnAttackEnd, (object)npc);
                 npc.AttackHitTimer = new Timer(OnAttackHit, (object)npc);
+
                 return npc;
             }
             else
@@ -126,14 +127,15 @@ namespace GUC.Server.WorldObjects
 
         #endregion
 
-
         #region Player stats
 
         public ushort AttrHealth;
         public ushort AttrHealthMax;
 
-        public byte Talent1H = 0;
-        public byte Talent2H = 0;
+        byte talent1H = 0;
+        public byte Talent1H { get { return talent1H; } set { talent1H = value > 2 ? (byte)2 : value; } }
+        byte talent2H = 0;
+        public byte Talent2H { get { return talent2H; } set { talent2H = value > 2 ? (byte)2 : value; } }
 
         public void AttrHealthUpdate()
         {
@@ -779,34 +781,18 @@ namespace GUC.Server.WorldObjects
         long comboTime = 0;
         Timer AttackEndTimer; // fixme? only one timer?
         Timer AttackHitTimer;
+        bool TriedAttack = false;
 
         public void DoAttackForward(NPC target)
         {
-            if (DrawnItem == null)
+            AnimationControl.Attacks attacks;
+            if (!GetAttacks(out attacks))
                 return;
 
-            AnimationControl.Attacks attack;
-            if (DrawnItem == Item.Fists)
-            {
-                attack = AniCtrl.Fist;
-            }
-            else if (DrawnItem.Type == ItemType.Blunt_1H || DrawnItem.Type == ItemType.Sword_1H)
-            {
-                attack = AniCtrl._1H[Talent1H];
-            }
-            else if (DrawnItem.Type == ItemType.Blunt_2H || DrawnItem.Type == ItemType.Sword_2H)
-            {
-                attack = AniCtrl._2H[Talent2H];
-            }
-            else
-            {
-                return;
-            }
-
-            if (ServerTime.Now.Ticks < comboTime || ComboNum >= attack.ComboNum - 1) //can not combo yet or is in last combo
+            if (ComboNum >= attacks.ComboNum - 1) //can not combo yet or is in last combo
                 return;
 
-            int newComboNum = 0;
+            int newComboNum;
             if (State == NPCState.AttackForward) //already in attack
             {
                 newComboNum = ComboNum + 1;
@@ -816,41 +802,7 @@ namespace GUC.Server.WorldObjects
                 newComboNum = 0;
             }
 
-            AnimationControl.Attacks.Info attackTimes = attack.Forward[newComboNum];
-
-            if (attackTimes.Attack > 0)
-            {
-                AttackEndTimer.CallTime = ServerTime.Now.Ticks + attackTimes.Attack;
-                AttackEndTimer.Start();
-            }
-            else
-            {
-                return;
-            }
-
-            if (attackTimes.Combo > 0)
-            {
-                comboTime = ServerTime.Now.Ticks + attackTimes.Combo;
-            }
-            else //no combo time defined
-            {
-                comboTime = AttackEndTimer.CallTime;
-            }
-
-            if (AttackHitTimer.Started) //just in case, that the last attack's timer has not fired yet
-            {
-                OnAttackHit(this);
-            }
-
-            if (attackTimes.Hit > 0)
-            {
-                AttackHitTimer.CallTime = ServerTime.Now.Ticks + attackTimes.Hit;
-                AttackHitTimer.Start();
-            }
-
-            ComboNum = newComboNum;
-            State = NPCState.AttackForward;
-            NPCMessage.WriteTargetState(cell.SurroundingClients(), this, target);
+            DoAttack(target, attacks.Forward[newComboNum], NPCState.AttackForward, newComboNum);
         }
 
         static void OnAttackEnd(object obj)
@@ -858,6 +810,7 @@ namespace GUC.Server.WorldObjects
             NPC attacker = (NPC)obj;
             attacker.State = NPCState.Stand;
             attacker.ComboNum = 0;
+            attacker.TriedAttack = false;
             Log.Logger.log("Stand");
         }
 
@@ -894,150 +847,149 @@ namespace GUC.Server.WorldObjects
         public OnHitHandler OnHit;
         public static OnHitHandler sOnHit;
 
+        bool GetAttacks(out AnimationControl.Attacks attacks)
+        {
+            if (DrawnItem != null)
+            {
+                if (DrawnItem == Item.Fists)
+                {
+                    attacks = AniCtrl.Fist;
+                    return true;
+                }
+                else if (DrawnItem.Type == ItemType.Blunt_1H || DrawnItem.Type == ItemType.Sword_1H)
+                {
+                    attacks = AniCtrl._1H[Talent1H];
+                    return true;
+                }
+                else if (DrawnItem.Type == ItemType.Blunt_2H || DrawnItem.Type == ItemType.Sword_2H)
+                {
+                    attacks = AniCtrl._2H[Talent2H];
+                    return true;
+                }
+            }
+            attacks = default(AnimationControl.Attacks);
+            return false;
+        }
+
+        void DoAttack(NPC target, AnimationControl.Attacks.Info attackTimes, NPCState attack, int comboNum)
+        {
+            if (attack >= NPCState.AttackForward && attackTimes.Attack > 0 && !TriedAttack)
+            {
+                if (ServerTime.Now.Ticks >= comboTime)
+                {
+                    AttackEndTimer.CallTime = ServerTime.Now.Ticks + attackTimes.Attack;
+                    AttackEndTimer.Start();
+
+                    if (attackTimes.Combo > 0)
+                    {
+                        comboTime = ServerTime.Now.Ticks + attackTimes.Combo;
+                    }
+                    else //no combo time defined
+                    {
+                        comboTime = AttackEndTimer.CallTime;
+                    }
+
+                    if (AttackHitTimer.Started) //just in case, that the last attack's timer has not fired yet
+                    {
+                        OnAttackHit(this);
+                    }
+
+                    if (attackTimes.Hit > 0)
+                    {
+                        AttackHitTimer.CallTime = ServerTime.Now.Ticks + attackTimes.Hit;
+                        AttackHitTimer.Start();
+                    }
+
+                    ComboNum = comboNum;
+                    State = attack;
+                    TriedAttack = false;
+                    NPCMessage.WriteTargetState(cell.SurroundingClients(), this, target);
+                }
+                else
+                {
+                    TriedAttack = true;
+                }
+            } 
+        }
+
         public void DoAttackLeft(NPC target)
         {
-            if (DrawnItem == null)
-                return;
-
-            AnimationControl.Attacks attack;
-            if (DrawnItem == Item.Fists)
-            {
-                attack = AniCtrl.Fist;
-            }
-            else if (DrawnItem.Type == ItemType.Blunt_1H || DrawnItem.Type == ItemType.Sword_1H)
-            {
-                attack = AniCtrl._1H[Talent1H];
-            }
-            else if (DrawnItem.Type == ItemType.Blunt_2H || DrawnItem.Type == ItemType.Sword_2H)
-            {
-                attack = AniCtrl._2H[Talent2H];
-            }
-            else
+            AnimationControl.Attacks attacks;
+            if (!GetAttacks(out attacks))
             {
                 return;
             }
 
-            if (State == NPCState.AttackLeft || ServerTime.Now.Ticks < comboTime)
+            if (State == NPCState.AttackLeft)
             {
                 return;
             }
 
-            AnimationControl.Attacks.Info attackTimes = attack.Left;
-
-            if (attackTimes.Attack > 0)
-            {
-                AttackEndTimer.CallTime = ServerTime.Now.Ticks + attackTimes.Attack;
-                AttackEndTimer.Start();
-            }
-            else
-            {
-                return;
-            }
-
-            if (attackTimes.Combo > 0)
-            {
-                comboTime = ServerTime.Now.Ticks + attackTimes.Combo;
-            }
-            else //no combo time defined
-            {
-                comboTime = AttackEndTimer.CallTime;
-            }
-
-            if (AttackHitTimer.Started) //just in case, that the last attack's timer has not fired yet
-            {
-                OnAttackHit(this);
-            }
-
-            if (attackTimes.Hit > 0)
-            {
-                AttackHitTimer.CallTime = ServerTime.Now.Ticks + attackTimes.Hit;
-                AttackHitTimer.Start();
-            }
-
-            State = NPCState.AttackLeft;
-            NPCMessage.WriteTargetState(cell.SurroundingClients(), this, target);
+            DoAttack(target, attacks.Left, NPCState.AttackLeft, 0);
         }
 
         public void DoAttackRight(NPC target)
         {
-            if (DrawnItem == null)
-                return;
-
-            AnimationControl.Attacks attack;
-            if (DrawnItem == Item.Fists)
-            {
-                attack = AniCtrl.Fist;
-            }
-            else if (DrawnItem.Type == ItemType.Blunt_1H || DrawnItem.Type == ItemType.Sword_1H)
-            {
-                attack = AniCtrl._1H[Talent1H];
-            }
-            else if (DrawnItem.Type == ItemType.Blunt_2H || DrawnItem.Type == ItemType.Sword_2H)
-            {
-                attack = AniCtrl._2H[Talent2H];
-            }
-            else
+            AnimationControl.Attacks attacks;
+            if (!GetAttacks(out attacks))
             {
                 return;
             }
 
-            if (State == NPCState.AttackRight || ServerTime.Now.Ticks < comboTime)
+            if (State == NPCState.AttackRight)
             {
                 return;
             }
 
-            AnimationControl.Attacks.Info attackTimes = attack.Right;
-
-            if (attackTimes.Attack > 0)
-            {
-                AttackEndTimer.CallTime = ServerTime.Now.Ticks + attackTimes.Attack;
-                AttackEndTimer.Start();
-            }
-            else
-            {
-                return;
-            }
-
-            if (attackTimes.Combo > 0)
-            {
-                comboTime = ServerTime.Now.Ticks + attackTimes.Combo;
-            }
-            else //no combo time defined
-            {
-                comboTime = AttackEndTimer.CallTime;
-            }
-
-            if (AttackHitTimer.Started) //just in case, that the last attack's timer has not fired yet
-            {
-                OnAttackHit(this);
-            }
-
-            if (attackTimes.Hit > 0)
-            {
-                AttackHitTimer.CallTime = ServerTime.Now.Ticks + attackTimes.Hit;
-                AttackHitTimer.Start();
-            }
-
-            State = NPCState.AttackRight;
-            NPCMessage.WriteTargetState(cell.SurroundingClients(), this, target);
+            DoAttack(target, attacks.Right, NPCState.AttackRight, 0);
         }
 
         public void DoAttackRun(NPC target)
         {
-            this.State = NPCState.AttackRun;
-            NPCMessage.WriteTargetState(cell.SurroundingClients(), this, target);
+            AnimationControl.Attacks attacks;
+            if (!GetAttacks(out attacks))
+            {
+                return;
+            }
+
+            if (State == NPCState.AttackRun)
+            {
+                return;
+            }
+
+            DoAttack(target, attacks.Run, NPCState.AttackRun, 0);
         }
 
         public void DoParry(NPC target)
         {
-            this.State = NPCState.Parry;
-            NPCMessage.WriteTargetState(cell.SurroundingClients(), this, target);
+            AnimationControl.Attacks attacks;
+            if (!GetAttacks(out attacks))
+            {
+                return;
+            }
+
+            if (State == NPCState.Parry)
+            {
+                return;
+            }
+
+            DoAttack(target, attacks.Parry, NPCState.Parry, 0);
         }
 
         public void DoDodgeBack(NPC target)
         {
-            this.State = NPCState.DodgeBack;
-            NPCMessage.WriteTargetState(cell.SurroundingClients(), this, target);
+            AnimationControl.Attacks attacks;
+            if (!GetAttacks(out attacks))
+            {
+                return;
+            }
+
+            if (State == NPCState.DodgeBack)
+            {
+                return;
+            }
+
+            DoAttack(target, attacks.Dodge, NPCState.DodgeBack, 0);
         }
 
         /// <summary>

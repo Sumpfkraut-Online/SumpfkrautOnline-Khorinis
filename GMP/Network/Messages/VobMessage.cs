@@ -51,12 +51,22 @@ namespace GUC.Client.Network.Messages
 
 
 
-        public static void WritePosDir(AbstractVob vob)
+        public static void WritePosDir()
         {
             BitStream stream = Program.client.SetupSendStream(NetworkID.VobPosDirMessage);
-            stream.mWrite(vob.ID);
-            stream.mWrite(vob.Position);
-            stream.mWrite(vob.Direction);
+
+            stream.mWrite(Player.Hero.Position);
+            stream.mWrite(Player.Hero.Direction);
+
+            AbstractVob vob;
+            stream.mWrite(Player.VobControlledList.Count);
+            for (int i = 0; i < Player.VobControlledList.Count; i++)
+            {
+                vob = Player.VobControlledList[i];
+                stream.mWrite(vob.ID);
+                stream.mWrite(vob.Position);
+                stream.mWrite(vob.Direction);
+            }
             Program.client.SendStream(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE);
         }
     }

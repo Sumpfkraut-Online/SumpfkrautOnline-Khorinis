@@ -393,7 +393,6 @@ namespace GUC.Client.WorldObjects
             turn = 0;
         }
 
-        public long nextPosUpdate = 0;
         public long nextForwardUpdate = 0;
         public long nextStandUpdate = 0;
         public long nextBackwardUpdate = 0;
@@ -448,14 +447,6 @@ namespace GUC.Client.WorldObjects
                         break;
                 }
             }
-            else
-            {
-                if (nextPosUpdate < DateTime.Now.Ticks)
-                {
-                    Network.Messages.VobMessage.WritePosDir(this);
-                    nextPosUpdate = DateTime.Now.Ticks + PositionUpdateTime;
-                }
-            }
         }
 
         public void DrawItem(Item item, bool fast)
@@ -470,8 +461,7 @@ namespace GUC.Client.WorldObjects
                 {
                     if (fast)
                     {
-                        using (zString z = zString.Create(Program.Process, "FIST"))
-                            gNpc.SetWeaponMode2(z);
+                        gNpc.SetToFistMode();
                     }
                     else
                     {
@@ -488,8 +478,9 @@ namespace GUC.Client.WorldObjects
                         case ItemType.Blunt_1H:
                             if (fast)
                             {
-                                using (zString z = zString.Create(Program.Process, "1H"))
-                                    gNpc.SetWeaponMode2(z);
+                                gNpc.SetToFightMode(item.gItem, 3);
+                                //using (zString z = zString.Create(Program.Process, "1H"))
+                                //    gNpc.SetWeaponMode2(z);
                             }
                             else
                             {
@@ -592,6 +583,11 @@ namespace GUC.Client.WorldObjects
             }
 
             DrawnItem = null;
+        }
+
+        public void DoMoveTo(Vec3f position, float distance)
+        {
+
         }
     }
 }

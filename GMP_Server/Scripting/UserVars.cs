@@ -5,29 +5,33 @@ using System.Text;
 
 namespace GUC.Server.Scripting
 {
-    public class UserVars<T> : Dictionary<string, T>
+    public class UserVars
     {
-        public new T this[string s]
-        {
-            get
-            {
-                T result = default(T);
-                this.TryGetValue(s, out result);
-                return result;
-            }
-            set
-            {
-                T result;
+        object[] arr;
 
-                if (this.TryGetValue(s, out result))
-                {
-                    result = value;
-                }
-                else
-                {
-                    this.Add(s, value);
-                }
-            }
+        public UserVars(int num)
+        {
+            arr = new object[num];
+        }
+
+        public object Get(int i)
+        {
+            return arr[i];
+        }
+
+        public T Get<T>(int i)
+        {
+            return (T)arr[i];
+        }
+
+        public void Set(int i, object var)
+        {
+            arr[i] = var;
+        }
+
+        public void Set<T>(int i, T var)
+        {
+            arr[i] = (object)var;
         }
     }
 }

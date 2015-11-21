@@ -1246,6 +1246,11 @@ namespace Gothic.zClasses
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetToFistMode, new CallValue[] { });
         }
 
+        public void SetToFightMode(oCItem item, int mode)
+        {
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)0x73A740, new CallValue[] { item, (IntArg)mode });
+        }
+
         public oCItem PutInInv(oCItem code)
         {
             

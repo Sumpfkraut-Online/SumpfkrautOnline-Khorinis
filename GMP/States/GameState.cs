@@ -132,16 +132,13 @@ namespace GUC.Client.States
             hMob.AddHooks(Program.Process);
         }
 
+        long nextPosUpdate = 0;
+
         public override void Update()
         {
             long ticks = DateTime.Now.Ticks;
             InputHandler.Update();
             Program.client.Update();
-
-            Vec3f pos = new Vec3f();
-            Vec3f dir = (Player.Hero.Position - pos).normalise();
-            GUI.GUCView.DebugText.Text = (Player.Hero.Direction.Z * dir.X - dir.Z * Player.Hero.Direction.X) + " " + (Player.Hero.Direction.Z * dir.Z + dir.X * Player.Hero.Direction.X);
-
 
             /*GUI.GUCView.DebugText.Text = "";
             for (int i = 0; i < Player.VobControlledList.Count; i++)
@@ -152,6 +149,12 @@ namespace GUC.Client.States
             for (int i = 0; i < World.AllVobs.Count; i++)
             {
                 World.AllVobs[i].Update(ticks);
+            }
+
+            if (nextPosUpdate < DateTime.Now.Ticks)
+            {
+                VobMessage.WritePosDir();
+                nextPosUpdate = DateTime.Now.Ticks + NPC.PositionUpdateTime;
             }
 
             /*using (zVec3 start = zVec3.Create(Program.Process))

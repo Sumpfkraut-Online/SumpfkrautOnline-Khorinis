@@ -65,7 +65,8 @@ namespace GUC.Enumeration
 
         //controller stuff
         ControlAddVobMessage,
-        ControlRemoveVobMessage
+        ControlRemoveVobMessage,
+        ControlCmdMessage
     }
 
     public enum TradeStatus : byte
