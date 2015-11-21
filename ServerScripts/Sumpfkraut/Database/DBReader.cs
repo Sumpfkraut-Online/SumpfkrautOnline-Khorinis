@@ -85,7 +85,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                 // security check and close connection if necessary
                 if (!DBSecurity.IsSecureSQLCommand(completeQuery))
                 {
-                    Log.Logger.logWarning("LoadFromDB: Prevented forwarding of insecure sql-command: " + completeQuery);
+                    MakeLogWarningStatic(typeof(DBReader), 
+                        "LoadFromDB: Prevented forwarding of insecure sql-command: " 
+                        + completeQuery);
                     if (con.State.ToString() == "Open")
                     {
                         con.Close();
@@ -99,7 +101,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                     SQLiteDataReader rdr = null;
                     try
                     {
-                        //Console.WriteLine("###########" + completeQuery);
                         rdr = cmd.ExecuteReader();
                         if (rdr == null)
                         {
@@ -122,10 +123,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                                 // create and fill array of the temporary data row
                                 rowArr = new object[rdr.FieldCount];
                                 rdr.GetValues(rowArr);
-                                //for (int bla = 0; bla < rowArr.Length; bla++ )
-                                //{
-                                //    Console.WriteLine("+*+*+*+*: " + rowArr[bla].GetType() + " |--| " + rowArr[bla]);
-                                //}
                                 results[results.Count - 1].Add(new List<object>(rowArr));
                             }
                         }
@@ -189,6 +186,81 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
             }
 
             return changedRows;
+        }
+
+        public static void XXX(ref List<List<List<object>>> results,
+            string completeQuery)
+        {
+            // security check and close connection if necessary
+            if (!DBSecurity.IsSecureSQLCommand(completeQuery))
+            {
+                MakeLogWarningStatic(typeof(DBReader), 
+                    "LoadFromDB: Prevented forwarding of insecure sql-command: "
+                    + completeQuery);
+                return;
+            }
+
+            using (SqliteConnection con = new SqliteConnection())
+            {
+                con.ConnectionString = sqLiteDataSource;
+                con.Open();
+
+                using (SQLiteCommand cmd = new SQLiteCommand(completeQuery, con))
+                {
+                    SQLiteDataReader rdr = null;
+                    try
+                    {
+                        rdr = cmd.ExecuteReader();
+
+                        if (rdr == null)
+                        {
+                            return;
+                        }
+                        if (!rdr.HasRows)
+                        {
+                            return;
+                        }
+
+                        // temporary array to put all data of a row into
+                        object[] rowArr = null;
+
+                        do
+                        {
+                            // add new result-list
+                            results.Add(new List<List<object>>());
+                            while (rdr.Read())
+                            {
+                                // create and fill array of the temporary data row
+                                rowArr = new object[rdr.FieldCount];
+                                rdr.GetValues(rowArr);
+                                results[results.Count - 1].Add(new List<object>(rowArr));
+                            }
+                        }
+                        while (rdr.NextResult());
+
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("LoadFromDB: Could not execute SQLiteDataReader: " + ex);
+                    }
+                    finally
+                    {
+                        if (rdr != null)
+                        {
+                            rdr.Close();
+                            rdr.Dispose();
+                        }
+                    }
+                }
+
+                // close connection if still opened
+                if (con.State.ToString() == "Open")
+                {
+                    con.Close();
+                    con.Dispose();
+                }
+            }
+
         }
 
         #endregion

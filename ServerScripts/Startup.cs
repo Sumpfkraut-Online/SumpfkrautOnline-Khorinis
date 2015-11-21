@@ -150,7 +150,18 @@ namespace GUC.Server.Scripts
             //    ItemDef.MakeLogStatic(typeof(ItemDef), def1_.GetEffect());
             //}
 
-
+            //List<String> commandQueue = new List<string> { "SELECT 1; SELECT 11; ", "SELECT 2;", "SELECT 3;" };
+            //Sumpfkraut.Database.DBAgent agentBlack = new Sumpfkraut.Database.DBAgent(commandQueue, false);
+            //agentBlack.ReceivedResults += delegate(object sender, 
+            //    Sumpfkraut.Database.DBAgent.ReceivedResultsEventArgs e) 
+            //{
+            //    List<List<List<object>>> results = e.GetResults();
+            //    Console.WriteLine("+++ " + results[0][0][0]);
+            //};
+            //agentBlack.FinishedQueue += delegate (object sender)
+            //{
+            //    Console.WriteLine("+++ FINISHED");
+            //};
 
 
 
@@ -222,5 +233,10 @@ namespace GUC.Server.Scripts
             
             Logger.log(Logger.LogLevel.INFO, "###################### End Initalise ######################");
 		}
+
+        private void AgentBlack_ReceivedResults(object sender, Sumpfkraut.Database.DBAgent.ReceivedResultsEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
