@@ -20,10 +20,11 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         protected static Dictionary<int, MobDef> defById = new Dictionary<int, MobDef>();
         protected static Dictionary<string, MobDef> defByCodeName = new Dictionary<string, MobDef>();
 
-        new protected readonly Dictionary<String, SQLiteGetTypeEnum> defTab_GetTypeByColumn =
+        public static readonly String dbIdColName = "MobDefId";
+        new public static readonly Dictionary<String, SQLiteGetTypeEnum> defTab_GetTypeByColumn =
             new Dictionary<String, SQLiteGetTypeEnum>
             {
-                {"MobDefId",                SQLiteGetTypeEnum.GetInt32},
+                {dbIdColName,                SQLiteGetTypeEnum.GetInt32},
                 {"ChangeDate",              SQLiteGetTypeEnum.GetString},
                 {"CreationDate",            SQLiteGetTypeEnum.GetString},
             };
@@ -38,6 +39,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         new protected String _objName = "MobDef (default)";
 
         new protected static Type _type = typeof(MobDef);
+        new public static readonly String dbTable = "MobDef";
 
         // general identi- and classifiers
 

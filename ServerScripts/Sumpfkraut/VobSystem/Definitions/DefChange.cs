@@ -82,6 +82,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
 
 
+        #region apply-methods
+
         public static bool ApplyDefChange (ref MobDef vobDef, DefChangeKeyValPair defChange)
         {
             bool success = false;
@@ -117,6 +119,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
             }
             return success;
         }
+
+        #endregion
 
     }
 }

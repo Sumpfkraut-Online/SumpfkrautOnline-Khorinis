@@ -155,12 +155,14 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
 
         #region defChangeList-management
-        
+
         // no management yet --> instead assignment only in constructor
- 
+
         #endregion
 
 
+
+        #region apply-methods
 
         public static void ApplyDefEffect (ref MobDef vobDef, DefEffect defEffect, 
             out List<int> failedIndices)
@@ -206,6 +208,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
                 }
             }
         }
+
+        #endregion
 
     }
 }

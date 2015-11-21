@@ -21,10 +21,11 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         protected static Dictionary<string, VobDef> defByCodeName = new Dictionary<string, VobDef>();
 
         // !!! hide it with new-keyworld in child classes !!!
-        public readonly Dictionary<String, SQLiteGetTypeEnum> defTab_GetTypeByColumn =
+        public static readonly String dbIdColName = "VobDefId";
+        public static readonly Dictionary<String, SQLiteGetTypeEnum> defTab_GetTypeByColumn =
             new Dictionary<String, SQLiteGetTypeEnum>
             {
-                {"VobDefId",                SQLiteGetTypeEnum.GetInt32},
+                {dbIdColName,                SQLiteGetTypeEnum.GetInt32},
                 {"ChangeDate",              SQLiteGetTypeEnum.GetString},
                 {"CreationDate",            SQLiteGetTypeEnum.GetString},
             };
@@ -38,6 +39,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         new protected String _objName = "VobDef (default)";
 
         protected static Type _type = typeof(VobDef);
+        public static readonly String dbTable = "VobDef";
 
         protected int id;
         public int GetId () { return this.id; }

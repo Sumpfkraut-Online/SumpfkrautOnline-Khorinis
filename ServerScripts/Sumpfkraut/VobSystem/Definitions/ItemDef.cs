@@ -22,10 +22,11 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         new protected static Dictionary<int, ItemDef> defById = new Dictionary<int, ItemDef>();
         new protected static Dictionary<string, ItemDef> defByCodeName = new Dictionary<string, ItemDef>();
 
-        new protected readonly Dictionary<String, SQLiteGetTypeEnum> defTab_GetTypeByColumn =
+        public static readonly String dbIdColName = "ItemDefId";
+        new public static readonly Dictionary<String, SQLiteGetTypeEnum> defTab_GetTypeByColumn =
             new Dictionary<String, SQLiteGetTypeEnum>
             {
-                {"ItemDefId",               SQLiteGetTypeEnum.GetInt32},
+                {dbIdColName,               SQLiteGetTypeEnum.GetInt32},
                 {"ChangeDate",              SQLiteGetTypeEnum.GetString},
                 {"CreationDate",            SQLiteGetTypeEnum.GetString},
             };
@@ -40,6 +41,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         new protected String _objName = "ItemDef (default)";
 
         new protected static Type _type = typeof(ItemDef);
+        new public static readonly String dbTable = "ItemDef";
 
         protected ItemInstance itemInstance;
         public ItemInstance GetItemInstance () { return this.itemInstance; }

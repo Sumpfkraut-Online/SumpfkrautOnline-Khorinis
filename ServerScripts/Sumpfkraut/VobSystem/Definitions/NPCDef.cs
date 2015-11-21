@@ -19,10 +19,11 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         protected static Dictionary<int, NpcDef> defById = new Dictionary<int, NpcDef>();
         protected static Dictionary<string, NpcDef> defByCodeName = new Dictionary<string, NpcDef>();
 
-        new protected readonly Dictionary<String, SQLiteGetTypeEnum> defTab_GetTypeByColumn =
+        public static readonly String dbIdColName = "NpcDefId";
+        new public static readonly Dictionary<String, SQLiteGetTypeEnum> defTab_GetTypeByColumn =
             new Dictionary<String, SQLiteGetTypeEnum>
             {
-                {"NpcDefId",                SQLiteGetTypeEnum.GetInt32},
+                {dbIdColName,                SQLiteGetTypeEnum.GetInt32},
                 {"ChangeDate",              SQLiteGetTypeEnum.GetString},
                 {"CreationDate",            SQLiteGetTypeEnum.GetString},
             };
@@ -37,6 +38,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         new protected String _objName = "NPCDef (default)";
 
         new protected static Type _type = typeof(NpcDef);
+        new public static readonly String dbTable = "NpcDef";
 
         //protected int ID;
         //public int getID () { return this.ID; }

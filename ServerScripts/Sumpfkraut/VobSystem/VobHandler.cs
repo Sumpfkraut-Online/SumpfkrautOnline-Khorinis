@@ -25,11 +25,18 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
     class VobHandler : Runnable
     {
 
+        public struct Vec2Int
+        {
+            public int x1;
+            public int x2;
+        }
+
         new public static readonly String _staticName = "VobHandler (static)";
         new protected String _objName = "VobHandler (default)";
 
         protected bool isInitialized = false;
 
+ 
 
         public VobHandler (String objName, bool startOnCreate)
             : base(startOnCreate)
@@ -49,17 +56,131 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 
         #region Vob-Definitions
 
-        protected bool LoadDefinitions()
+        public bool LoadDefinitions()
         {
             return false;
         }
 
-        protected bool LoadVobDef ()
+        public bool LoadVobDef (VobDefType type)
         {
+            return LoadVobDef(type, null);
+        }
+
+        // idRange must be 
+        public bool LoadVobDef (VobDefType type, List<Vec2Int> idRanges)
+        {
+            // *** correct misleading userinput ***
+            bool loadAllVobDef = true;
+            if (idRanges != null)
+            {
+                if (idRanges.Count > 0)
+                {
+                    loadAllVobDef = false;
+                }
+                else
+                {
+                    idRanges = null;
+                }
+            }
+
+            // *** prepare database-commands **
+
+            String sqlSelect_VobDef = "";
+            String sqlFrom_VobDef = "";
+            String sqlWhere_VobDef = "";
+            String sqlOrderBy_VobDef = "";
+            String sqlIdColName_VobDef = "";
+            List<DBTables.ColumnGetTypeInfo> sqlSelectColNames = 
+                new List<DBTables.ColumnGetTypeInfo>();
+
+            // generating FROM- and ORDER BY-clause and preparing for SELECT-clause
+            switch (type)
+            {
+                case VobDefType.MobDef:
+                    sqlFrom_VobDef = MobDef.dbTable;
+                    sqlIdColName_VobDef = MobDef.dbIdColName;
+                    sqlOrderBy_VobDef = sqlIdColName_VobDef + " ASC";
+                    DBTables.SqlColumnInfo(MobDef.defTab_GetTypeByColumn, out sqlSelectColNames);
+                    break;
+                case VobDefType.ItemDef:
+                    sqlFrom_VobDef = ItemDef.dbTable;
+                    sqlIdColName_VobDef = ItemDef.dbIdColName;
+                    sqlOrderBy_VobDef = sqlIdColName_VobDef + " ASC";
+                    DBTables.SqlColumnInfo(ItemDef.defTab_GetTypeByColumn, out sqlSelectColNames);
+                    break;
+                case VobDefType.NpcDef:
+                    sqlFrom_VobDef = NpcDef.dbTable;
+                    sqlIdColName_VobDef = NpcDef.dbIdColName;
+                    sqlOrderBy_VobDef = sqlIdColName_VobDef + " ASC";
+                    DBTables.SqlColumnInfo(NpcDef.defTab_GetTypeByColumn, out sqlSelectColNames);
+                    break;
+                case VobDefType.VobDef:
+                    MakeLogError(String.Format("LoadVobDef: Unknown VobDef-Type {0} detected! "
+                        + "Cancelling loading process.", type));
+                    break;
+                default:
+                    MakeLogError(String.Format("LoadVobDef: Unknown VobDef-Type {0} detected! "
+                        + "Cancelling loading process.", type));
+                    break;
+            }
+
+            // generate SELECT-clause
+            StringBuilder sqlSelect_VobDef_SB = new StringBuilder();
+            for (int c = 0; c < sqlSelectColNames.Count; c++)
+            {
+                if (c > 0)
+                {
+                    sqlSelect_VobDef_SB.Append(",");
+                }
+                sqlSelect_VobDef_SB.Append(sqlSelectColNames[c].colName);
+            }
+
+            // generating WHERE-clause
+            if (loadAllVobDef)
+            {
+                sqlWhere_VobDef = "1";
+            }
+            else
+            {
+                StringBuilder sqlWhere_VobDef_SB = new StringBuilder();
+                sqlWhere_VobDef_SB.Append(sqlIdColName_VobDef);
+                // maybe use <= >= to use the ranges 
+                // -->  with lots of ranges this might result in huge overhead in 
+                // comparison to using IN-operator
+                // --> use Count-threshold to switch between both styles
+                for (int r = 0; r < idRanges.Count; r++)
+                {
+                    if (r > 0)
+                    {
+                        sqlWhere_VobDef_SB.Append(" OR ");
+                    }
+                    sqlWhere_VobDef_SB.AppendFormat("({0} >= {1} AND {0} <= {2])", 
+                        sqlIdColName_VobDef, idRanges[r].x1, idRanges[r].x2);
+                }
+                sqlWhere_VobDef = sqlWhere_VobDef_SB.ToString();
+            }
+
+            // *** execute sql-command, receive results and convert them to usable datatypes ***
+
+            List<List<List<object>>> sqlResults_VobDef = new List<List<List<object>>>();
+
+            // !!! TODO: need to use DBAgent-object here after merging it into the VobSystem-branch !!!
+            DBReader.LoadFromDB(ref sqlResults_VobDef, sqlSelect_VobDef, sqlFrom_VobDef,
+                sqlWhere_VobDef, sqlOrderBy_VobDef);
+
+
+
             return false;
         }
 
-        protected bool SaveDefinitions()
+        public bool LoadDefEffect ()
+        {
+            return false;
+        }
+        
+        // eventually useless because definitions should not be declared by the running server
+        // but from the outside
+        public bool SaveDefinitions()
         {
             return false;
         }
@@ -68,12 +189,12 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 
         #region Vob-Instances
 
-        protected bool LoadInstances()
+        public bool LoadInstances()
         {
             return false;
         }
 
-        protected bool SaveInstances()
+        public bool SaveInstances()
         {
             return false;
         }
