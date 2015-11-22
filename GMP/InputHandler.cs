@@ -68,7 +68,7 @@ namespace GUC.Client
         {
             if (WinApi.User.Window.GetWindowThreadProcessId(WinApi.User.Window.GetForegroundWindow()) == Process.ProcessID)
             {
-                long ticks = DateTime.Now.Ticks;
+                long ticks = DateTime.UtcNow.Ticks;
                 for (int i = 1; i < keys.Length; i++)
                 {
                     if (InputHooked.IsPressed(Process, i))

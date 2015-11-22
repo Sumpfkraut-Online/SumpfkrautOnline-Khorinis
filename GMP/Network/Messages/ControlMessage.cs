@@ -6,6 +6,7 @@ using GUC.Client.WorldObjects;
 using RakNet;
 using GUC.Enumeration;
 using GUC.Network;
+using GUC.Client.Hooks;
 
 namespace GUC.Client.Network.Messages
 {

@@ -25,22 +25,12 @@ namespace GUC.Server.WorldObjects
         internal Vec3f pos = new Vec3f(0, 0, 0);
         internal Vec3f dir = new Vec3f(0, 0, 1);
 
-        public float[] Posf { get { return pos.Data; } set { Position = (Vec3f)value; } }
-        public float[] Dirf { get { return dir.Data; } set { Direction = (Vec3f)value; } }
-
         public Vec3f Position
         {
             get { return pos; }
             set
             {
-                if (value != null)
-                {
-                    pos = value;
-                }
-                else
-                {
-                    pos = new Vec3f();
-                }
+                pos = value;
 
                 if (Spawned)
                 {
@@ -54,7 +44,7 @@ namespace GUC.Server.WorldObjects
             get { return dir; }
             set
             {
-                if (value != null && !value.isNull())
+                if (value.IsNull() == false)
                 {
                     dir = value;
                 }
@@ -62,6 +52,7 @@ namespace GUC.Server.WorldObjects
                 {
                     dir = new Vec3f(0, 0, 1);
                 }
+
                 if (Spawned && cell != null)
                     Network.Messages.VobMessage.WritePosDir(cell.SurroundingClients(), null);
             }

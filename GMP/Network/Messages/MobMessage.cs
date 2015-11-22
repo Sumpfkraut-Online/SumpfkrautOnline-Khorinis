@@ -20,23 +20,23 @@ namespace GUC.Client.Network.Messages
         static long nextUseTime = 0;
         public static void WriteUseMob(MobInter mob)
         {
-            if (DateTime.Now.Ticks > nextUseTime)
+            if (DateTime.UtcNow.Ticks > nextUseTime)
             {
                 BitStream stream = Program.client.SetupSendStream(NetworkID.MobUseMessage);
                 stream.mWrite(mob.ID);
                 Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
-                nextUseTime = DateTime.Now.Ticks + DelayBetweenMessages;
+                nextUseTime = DateTime.UtcNow.Ticks + DelayBetweenMessages;
             }
         }
 
         static long nextUnUseTime = 0;
         public static void WriteUnUseMob()
         {
-            if (DateTime.Now.Ticks > nextUnUseTime)
+            if (DateTime.UtcNow.Ticks > nextUnUseTime)
             {
                 BitStream stream = Program.client.SetupSendStream(NetworkID.MobUnUseMessage);
                 Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
-                nextUnUseTime = DateTime.Now.Ticks + DelayBetweenMessages;
+                nextUnUseTime = DateTime.UtcNow.Ticks + DelayBetweenMessages;
             }
         }
 

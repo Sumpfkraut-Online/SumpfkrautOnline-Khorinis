@@ -5,159 +5,122 @@ using System.Text;
 
 namespace GUC.Types
 {
-    public class Vec3f
+    public struct Vec3f
     {
-        protected float[] data;
+        public static Vec3f Null = new Vec3f(0,0,0);
 
-        public Vec3f(float x, float y, float z)
-            : this()
-        {
-            this.set(x, y, z);
-        }
+        public float X;
+        public float Y;
+        public float Z;
 
         public Vec3f(float[] data)
-            : this()
         {
-            this.set(data);
-        }
-
-        public Vec3f(Vec3f data)
-            : this()
-        {
-            this.set(data);
-        }
-
-        public Vec3f()
-        {
-            this.data = new float[] { 0, 0, 0 };
-        }
-
-        public void set(float x, float y, float z)
-        {
-            this.data[0] = x;
-            this.data[1] = y;
-            this.data[2] = z;
-        }
-
-        public void set(Vec3f vec)
-        {
-            if (vec == null)
-                throw new ArgumentNullException("Paramter vec can't be null!");
-
-            set(vec.X, vec.Y, vec.Z);
-        }
-
-        public void set(float[] vec)
-        {
-            if (vec == null || vec.Length != 3)
-                throw new ArgumentException("Paramter vec can't be null and needs a length of 3");
-
-            set(vec[0], vec[1], vec[2]);
-        }
-
-        public float[] Data { get { return this.data; } }
-
-        public float getDistance(Vec3f value)
-        {
-            return (this - value).Length;
-        }
-
-        public bool isNull()
-        {
-            if (data[0] - 0.000001f < 0 && data[0] + 0.000001f > 0 &&
-                data[1] - 0.000001f < 0 && data[1] + 0.000001f > 0 &&
-                data[2] - 0.000001f < 0 && data[2] + 0.000001f > 0)
-                return true;
+            if (data.Length >= 3)
+            {
+                this.X = data[0];
+                this.Y = data[1];
+                this.Z = data[2];
+            }
+            else if (data.Length == 2)
+            {
+                this.X = data[0];
+                this.Y = data[1];
+                this.Z = 0;
+            }
+            else if (data.Length == 1)
+            {
+                this.X = data[0];
+                this.Y = 0;
+                this.Z = 0;
+            }
             else
-                return false;
+            {
+                this.X = 0;
+                this.Y = 0;
+                this.Z = 0;
+            }
         }
 
-        public Vec3f cross(Vec3f vec2)
+        public Vec3f(Vec3f vec)
         {
-            Vec3f rtn = new Vec3f();
-            rtn.X = this.Y * vec2.Z - this.Z * vec2.Y;
-            rtn.Y = this.Z * vec2.X - this.X * vec2.Z;
-            rtn.Z = this.X * vec2.Y - this.Y * vec2.X;
-            return rtn;
+            this = vec;
         }
 
-        public float length()
+        public Vec3f(float x, float y, float z)
         {
-            return (float)Math.Sqrt((double)X * (double)X + (double)Y * (double)Y + (double)Z * (double)Z);
+            this.X = x;
+            this.Y = y;
+            this.Z = z;
         }
 
-        public float Length { get { return this.length(); } }
-
-        public Vec3f normalise()
+        public void Reset()
         {
-            float len = Length;
-            return new Vec3f(X / len, Y / len, Z / len);
+            this.X = 0;
+            this.Y = 0;
+            this.Z = 0;
         }
+
+        #region Math Methods
+
+        public float GetLength()
+        {
+            return (float)Math.Sqrt((double)this.X * (double)this.X + (double)this.Y * (double)this.Y + (double)this.Z * (double)this.Z);
+        }
+
+        public Vec3f Normalize()
+        {
+            float len = GetLength();
+            if (len != 0)
+            {
+                return new Vec3f(this.X / len, this.Y / len, this.Z / len);
+            }
+            return this;
+        }
+
+        public float GetDistance(Vec3f value)
+        {
+            return (this - value).GetLength();
+        }
+
+        public Vec3f Cross(Vec3f vec)
+        {
+            return new Vec3f(this.Y * vec.Z - this.Z * vec.Y,
+                             this.Z * vec.X - this.X * vec.Z,
+                             this.X * vec.Y - this.Y * vec.X);
+        }
+
+        #endregion
+
+        #region Operators
 
         public static Vec3f operator +(Vec3f a, Vec3f b)
         {
-            if (a == null && b == null)
-                return null;
-            if (a == null)
-                return b;
-            if (b == null)
-                return a;
-
             return new Vec3f(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
         }
 
         public static float operator *(Vec3f a, Vec3f b)
         {
-            if (a == null && b == null)
-                return 0;
-            if (a == null)
-                return 0;
-            if (b == null)
-                return 0;
-
             return (a.X * b.X + a.Y * b.Y + a.Z * b.Z);
+        }
+
+        public static Vec3f operator *(float factor, Vec3f a)
+        {
+            return new Vec3f(a.X * factor, a.Y * factor, a.Z * factor);
         }
 
         public static Vec3f operator *(Vec3f a, float factor)
         {
-            if (a == null)
-                return a;
-            if (a == null)
-                return a;
-
-            return new Vec3f(a.X * factor, a.Y * factor, a.Z * factor);
+            return factor * a;
         }
 
         public static Vec3f operator -(Vec3f a, Vec3f b)
         {
-            if (a == null && b == null)
-                return null;
-            if (a == null)
-                return b;
-            if (b == null)
-                return a;
-
             return new Vec3f(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
         }
 
-        public float X
-        {
-            get { return data[0]; }
-            set { data[0] = value; }
-        }
+        #endregion
 
-        public float Y
-        {
-            get { return data[1]; }
-            set { data[1] = value; }
-        }
-
-        public float Z
-        {
-            get { return data[2]; }
-            set { data[2] = value; }
-        }
-
+        #region Conversion
 
         public static explicit operator Vec3f(float[] data)
         {
@@ -166,7 +129,40 @@ namespace GUC.Types
 
         public override string ToString()
         {
-            return " Vec3f("+X+", "+Y+", "+Z+") ";
+            return String.Format("Vec3f({0} / {1} / {2})", this.X, this.Y, this.Z);
         }
+
+        public float[] ToArray()
+        {
+            return new float[3] { this.X, this.Y, this.Z };
+        }
+
+        #endregion
+
+        #region Equality
+
+        const float nullLimit = 0.0000001f;
+        public bool IsNull()
+        {
+
+            if (this.X < nullLimit && this.X > -nullLimit &&
+                this.Y < nullLimit && this.Y > -nullLimit &&
+                this.Z < nullLimit && this.Z > -nullLimit)
+                return true;
+            else
+                return false;
+        }
+
+        public static bool operator ==(Vec3f a, Vec3f b)
+        {
+            return (a - b).IsNull();
+        }
+
+        public static bool operator !=(Vec3f a, Vec3f b)
+        {
+            return !(a == b);
+        }
+
+        #endregion
     }
 }

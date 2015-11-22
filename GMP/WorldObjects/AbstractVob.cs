@@ -32,11 +32,8 @@ namespace GUC.Client.WorldObjects
         }
 
         #region Position
-        public float[] Posf { get { return Position.Data; } set { Position = (Vec3f)value; } }
-        public float[] Dirf { get { return Direction.Data; } set { Direction = (Vec3f)value; } }
-
-        protected Vec3f pos = new Vec3f();
-        protected Vec3f dir = new Vec3f();
+        protected Vec3f pos = new Vec3f(0, 0, 0);
+        protected Vec3f dir = new Vec3f(0, 0, 1);
 
         public Vec3f Position
         {
@@ -53,13 +50,14 @@ namespace GUC.Client.WorldObjects
             }
             set
             {
-                pos = value == null ? new Vec3f(0, 0, 0) : value;
+                pos = value;
 
                 if (Spawned)
                 {
-                    gVob.TrafoObjToWorld.setPosition(pos.Data);
-                    gVob.SetPositionWorld(pos.Data);
-                    gVob.TrafoObjToWorld.setPosition(pos.Data);
+                    float[] arr = pos.ToArray();
+                    gVob.TrafoObjToWorld.setPosition(arr);
+                    gVob.SetPositionWorld(arr);
+                    gVob.TrafoObjToWorld.setPosition(arr);
                 }
             }
         }
@@ -79,11 +77,11 @@ namespace GUC.Client.WorldObjects
             }
             set
             {
-                dir = (value == null || value.isNull()) ? new Vec3f(0, 0, 1) : value;
+                dir = value.IsNull() ? new Vec3f(0, 0, 1) : value;
 
                 if (Spawned)
                 {
-                    Vec3f zAxis = dir.normalise();
+                    Vec3f zAxis = dir.Normalize();
                     Vec3f up = new Vec3f(0.0f, 0.0f, 0.0f);
 
                     if (Math.Abs(zAxis.Y) > 0.5)
@@ -109,8 +107,8 @@ namespace GUC.Client.WorldObjects
                         up.Y = 1.0f;
                     }
 
-                    Vec3f xAxis = up.cross(zAxis).normalise();
-                    Vec3f yAxis = zAxis.cross(xAxis).normalise();
+                    Vec3f xAxis = up.Cross(zAxis).Normalize();
+                    Vec3f yAxis = zAxis.Cross(xAxis).Normalize();
 
                     Matrix4 trafo = gVob.TrafoObjToWorld;
 

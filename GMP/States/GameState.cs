@@ -136,7 +136,7 @@ namespace GUC.Client.States
 
         public override void Update()
         {
-            long ticks = DateTime.Now.Ticks;
+            long ticks = DateTime.UtcNow.Ticks;
             InputHandler.Update();
             Program.client.Update();
 
@@ -151,10 +151,10 @@ namespace GUC.Client.States
                 World.AllVobs[i].Update(ticks);
             }
 
-            if (nextPosUpdate < DateTime.Now.Ticks)
+            if (nextPosUpdate < DateTime.UtcNow.Ticks)
             {
                 VobMessage.WritePosDir();
-                nextPosUpdate = DateTime.Now.Ticks + NPC.PositionUpdateTime;
+                nextPosUpdate = DateTime.UtcNow.Ticks + NPC.PositionUpdateTime;
             }
 
             /*using (zVec3 start = zVec3.Create(Program.Process))

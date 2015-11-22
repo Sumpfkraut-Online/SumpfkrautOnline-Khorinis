@@ -11,10 +11,11 @@ namespace GUC.Server.WorldObjects
     {
         internal bool physicsEnabled = false;
         internal Vec3f lastPos;
+        bool started = false;
 
         internal void Update(Vec3f newPos)
         {
-            if (lastPos != null && lastPos.getDistance(newPos) == 0)
+            if (started && lastPos.GetDistance(newPos) == 0)
             {
                 VobController.RemoveControlledVob(this);
                 World.UpdatePosition(this, VobController); //set the position on all other clients
@@ -23,6 +24,7 @@ namespace GUC.Server.WorldObjects
             else
             {
                 lastPos = pos;
+                started = true;
             }
         }
 

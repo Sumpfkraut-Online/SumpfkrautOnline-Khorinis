@@ -380,7 +380,7 @@ namespace GUC.Server.WorldObjects
                             for (int i = 0; i < cell.NPCList.Count; i++)
                             {
                                 npc = cell.NPCList[i];
-                                if ((npc.Position - pos).length() <= range)
+                                if (npc.Position.GetDistance(pos) <= range)
                                     yield return npc;
                             }
                         }

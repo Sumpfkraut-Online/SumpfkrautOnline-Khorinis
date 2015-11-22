@@ -73,6 +73,8 @@ namespace GUC.Client.Network
             messageListener.Add((byte)NetworkID.MobUnUseMessage, MobMessage.ReadUnUseMob);
 
             messageListener.Add((byte)NetworkID.TradeMessage, TradeMessage.Read);
+
+            messageListener.Add((byte)NetworkID.ControlCmdMessage, Player.ReadVobControlCmd);
         }
 
         public void Startup()
@@ -91,7 +93,7 @@ namespace GUC.Client.Network
 
         public void Connect(String ip, ushort port, String pw)
         {
-            if (isConnected || lastConnectionTry + 10000 * 100 > DateTime.Now.Ticks)
+            if (isConnected || lastConnectionTry + 10000 * 100 > DateTime.UtcNow.Ticks)
                 return;
             if (connectionTrys >= 100)
                 zERROR.GetZErr(Program.Process).Report(4, 'G', "Verbindung nicht möglich!", 0, "Client.cs", 0);
@@ -106,7 +108,7 @@ namespace GUC.Client.Network
                 zERROR.GetZErr(Program.Process).Report(2, 'G', "Es konnte keine Verbindung aufgebaut werden.", 0, "Client.cs", 0);
             }
             connectionTrys++;
-            lastConnectionTry = DateTime.Now.Ticks;
+            lastConnectionTry = DateTime.UtcNow.Ticks;
         }
 
         public void Disconnect()
@@ -215,7 +217,7 @@ namespace GUC.Client.Network
                 packet = client.Receive();
             }
 
-            long time = DateTime.Now.Ticks - lastInfoUpdate;
+            long time = DateTime.UtcNow.Ticks - lastInfoUpdate;
             if (time > TimeSpan.TicksPerSecond)
             {
                 int Ping = client.GetLastPing(client.GetSystemAddressFromIndex(0));
@@ -232,7 +234,7 @@ namespace GUC.Client.Network
 
                 int kbs = (int)(((double)packetKB / 1024.0f) / ((double)time / (double)TimeSpan.TicksPerSecond));
                 kbsInfo.Texts[0].Text = kbs + "kB/s";
-                lastInfoUpdate = DateTime.Now.Ticks;
+                lastInfoUpdate = DateTime.UtcNow.Ticks;
                 packetKB = 0;
                 kbsInfo.Show();
             }

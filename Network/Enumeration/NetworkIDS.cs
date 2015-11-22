@@ -72,6 +72,13 @@ namespace GUC.Enumeration
         TradeMessage
     }
 
+    public enum ControlCmd : byte
+    {
+        GoToPos,
+        GoToVob,
+        Stop
+    }
+
     public enum TradeStatus : byte
     {
         Request,

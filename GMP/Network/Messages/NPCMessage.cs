@@ -91,7 +91,7 @@ namespace GUC.Client.Network.Messages
         static long nextTargetStateUpdate = 0;
         public static void WriteTargetState(NPCState state) //only for self, attacks & strafing
         {
-            if (DateTime.Now.Ticks > nextTargetStateUpdate)
+            if (DateTime.UtcNow.Ticks > nextTargetStateUpdate)
             {
                 zERROR.GetZErr(Program.Process).Report(2, 'G', state + " " + (DateTime.UtcNow.Ticks - lastTime) / TimeSpan.TicksPerMillisecond, 0, "Program.cs", 0);
                 lastTime = DateTime.UtcNow.Ticks;
@@ -112,7 +112,7 @@ namespace GUC.Client.Network.Messages
 
                 Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
 
-                nextTargetStateUpdate = DateTime.Now.Ticks + DelayBetweenTargetMessages;
+                nextTargetStateUpdate = DateTime.UtcNow.Ticks + DelayBetweenTargetMessages;
             }
         }
 
@@ -124,13 +124,11 @@ namespace GUC.Client.Network.Messages
             World.npcDict.TryGetValue(id, out npc);
             if (npc == null) return;
 
-            if (npc.State == NPCState.Stand)
-            {   //Just in case the npc is turning
-                npc.StopTurnAnis();
-            }
+            //Just in case the npc is turning
+            npc.StopTurnAnis();
 
             npc.State = (NPCState)stream.mReadByte();
-            npc.Update(DateTime.Now.Ticks);
+            npc.Update(DateTime.UtcNow.Ticks);
         }
 
         public static void ReadTargetState(BitStream stream)
@@ -139,10 +137,8 @@ namespace GUC.Client.Network.Messages
             World.npcDict.TryGetValue(stream.mReadUInt(), out npc);
             if (npc == null) return;
 
-            if (npc.State == NPCState.Stand)
-            {   //Just in case the npc is turning
-                npc.StopTurnAnis();
-            }
+            //Just in case the npc is turning
+            npc.StopTurnAnis();
 
             NPCState state = (NPCState)stream.mReadByte();
 
@@ -166,7 +162,7 @@ namespace GUC.Client.Network.Messages
             switch (state)
             {
                 case NPCState.AttackForward:
-                    
+
                     if (npc.State == NPCState.AttackForward)
                     {
                         zERROR.GetZErr(Program.Process).Report(2, 'G', "COMBO!", 0, "Program.cs", 0);
@@ -203,13 +199,13 @@ namespace GUC.Client.Network.Messages
 
         public static void WriteJump(NPC npc)
         {
-            if (DateTime.Now.Ticks > npc.nextJumpUpdate)
+            if (DateTime.UtcNow.Ticks > npc.nextJumpUpdate)
             {
                 BitStream stream = Program.client.SetupSendStream(NetworkID.NPCJumpMessage);
                 stream.mWrite(npc.ID);
                 Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
 
-                npc.nextJumpUpdate = DateTime.Now.Ticks + DelayBetweenMessages;
+                npc.nextJumpUpdate = DateTime.UtcNow.Ticks + DelayBetweenMessages;
             }
         }
 
@@ -242,14 +238,14 @@ namespace GUC.Client.Network.Messages
         static long nextDrawItemTime = 0;
         public static void WriteDrawItem(byte slot)
         {
-            if (DateTime.Now.Ticks > nextDrawItemTime)
+            if (DateTime.UtcNow.Ticks > nextDrawItemTime)
             {
                 BitStream stream = Program.client.SetupSendStream(NetworkID.NPCDrawItemMessage);
-                
+
                 stream.mWrite(slot);
                 Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
 
-                nextDrawItemTime = DateTime.Now.Ticks + DelayBetweenMessages;
+                nextDrawItemTime = DateTime.UtcNow.Ticks + DelayBetweenMessages;
             }
         }
 
@@ -259,7 +255,7 @@ namespace GUC.Client.Network.Messages
 
             NPC npc;
             World.npcDict.TryGetValue(ID, out npc);
-            if (npc == null) return;            
+            if (npc == null) return;
 
             Item item = ReadStrmDrawItem(stream, npc);
 
@@ -305,12 +301,12 @@ namespace GUC.Client.Network.Messages
 
         public static void WriteUndrawItem()
         {
-            if (DateTime.Now.Ticks > nextDrawItemTime)
+            if (DateTime.UtcNow.Ticks > nextDrawItemTime)
             {
                 BitStream stream = Program.client.SetupSendStream(NetworkID.NPCUndrawItemMessage);
                 Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
 
-                nextDrawItemTime = DateTime.Now.Ticks + DelayBetweenMessages;
+                nextDrawItemTime = DateTime.UtcNow.Ticks + DelayBetweenMessages;
             }
         }
 

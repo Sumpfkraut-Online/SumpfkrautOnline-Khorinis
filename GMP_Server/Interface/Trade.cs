@@ -41,7 +41,7 @@ namespace GUC.Server.Interface
                 Log.Logger.log("created new request");
                 this.requester = requester;
                 this.target = target;
-                time = DateTime.Now.Ticks + 300000000; // 30 secs
+                time = DateTime.UtcNow.Ticks + 300000000; // 30 secs
             }
         }
 
@@ -96,7 +96,7 @@ namespace GUC.Server.Interface
                 }
                 else if (req.requester == requester && req.target == target)
                 {
-                    req.time = DateTime.Now.Ticks + 300000000; //30sec long
+                    req.time = DateTime.UtcNow.Ticks + 300000000; //30sec long
                     return;
                 }
             }
@@ -226,7 +226,7 @@ namespace GUC.Server.Interface
 
         private void CleanRequestList()
         {
-            long now = DateTime.Now.Ticks;
+            long now = DateTime.UtcNow.Ticks;
             for (int i = requests.Count - 1; i >= 0; i--)
             {
                 if (requests[i].time < now)

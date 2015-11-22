@@ -114,10 +114,10 @@ namespace GUC.Client.Hooks
                         {
                             if (Player.Hero.State != NPCState.MoveForward)
                             {
-                                if (DateTime.Now.Ticks > Player.Hero.nextForwardUpdate)
+                                if (DateTime.UtcNow.Ticks > Player.Hero.nextForwardUpdate)
                                 {
                                     NPCMessage.WriteState(NPCState.MoveForward, Player.Hero);
-                                    Player.Hero.nextForwardUpdate = DateTime.Now.Ticks + DelayBetweenMessages;
+                                    Player.Hero.nextForwardUpdate = DateTime.UtcNow.Ticks + DelayBetweenMessages;
                                 }
                                 _BlockFwd = true;
                                 return 0;
@@ -153,10 +153,10 @@ namespace GUC.Client.Hooks
                         {
                             if (Player.Hero.State != NPCState.Stand)
                             {
-                                if (DateTime.Now.Ticks > Player.Hero.nextStandUpdate)
+                                if (DateTime.UtcNow.Ticks > Player.Hero.nextStandUpdate)
                                 {
                                     NPCMessage.WriteState(NPCState.Stand, Player.Hero);
-                                    Player.Hero.nextStandUpdate = DateTime.Now.Ticks + DelayBetweenMessages;
+                                    Player.Hero.nextStandUpdate = DateTime.UtcNow.Ticks + DelayBetweenMessages;
                                 }
                                 _BlockStd = true;
                                 return 0;
@@ -189,10 +189,10 @@ namespace GUC.Client.Hooks
                         {
                             if (Player.Hero.State != NPCState.MoveBackward)
                             {
-                                if (DateTime.Now.Ticks > Player.Hero.nextBackwardUpdate)
+                                if (DateTime.UtcNow.Ticks > Player.Hero.nextBackwardUpdate)
                                 {
                                     NPCMessage.WriteState(NPCState.MoveBackward, Player.Hero);
-                                    Player.Hero.nextBackwardUpdate = DateTime.Now.Ticks + DelayBetweenMessages;
+                                    Player.Hero.nextBackwardUpdate = DateTime.UtcNow.Ticks + DelayBetweenMessages;
                                 }
                                 _BlockBwd = true;
                                 return 0;

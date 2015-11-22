@@ -45,7 +45,7 @@ namespace GUC.Server.WorldObjects
 
             foreach (NPC npc in cell.SurroundingPlayers())
             {
-                dist = this.Position.getDistance(npc.Position);
+                dist = this.Position.GetDistance(npc.Position);
                 if (dist < bestDist)
                 {
                     nearest = npc.client;

@@ -32,16 +32,21 @@ namespace GUC.Client.Network.Messages
                     NPC npc = (NPC)vob;
                     if (npc.State == NPCState.Stand)
                     {
-                        Vec3f curDir = npc.nextDir == null ? npc.Direction : npc.nextDir;
+                        Vec3f curDir = npc.turning ? npc.nextDir : npc.Direction;
 
-                        if ((dir.X - curDir.X) * (dir.X - curDir.X) + (dir.Y - curDir.Y) * (dir.Y - curDir.Y) + (dir.Z - curDir.Z) * (dir.Z - curDir.Z) > 0.000000001f)
+                        float x = dir.X - curDir.X;
+                        float z = dir.Z - curDir.Z;
+
+                        if (x*x + z*z > 0.01f)
                         {
                             npc.StartTurnAni(npc.Direction.Z * dir.X - dir.Z * npc.Direction.X > 0);
                             npc.lastDir = npc.Direction;
                             npc.nextDir = dir;
-                            npc.lastDirTime = DateTime.Now.Ticks;
+                            npc.turning = true;
+                            npc.lastDirTime = DateTime.UtcNow.Ticks;
                             return;
                         }
+                        npc.StopTurnAnis();
                     }
                 }
 

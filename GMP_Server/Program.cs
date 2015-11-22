@@ -107,18 +107,16 @@ namespace GUC.Server
                 {
                     watch.Restart();
 
-                    ServerTime.Now = DateTime.UtcNow;
-
-                    Scripting.Timer.Update(ServerTime.Now.Ticks);
+                    Scripting.Timer.Update();
                     server.Update(); //process received packets
 
                     watch.Stop();
 
-                    if (nextInfoUpdates < ServerTime.Now.Ticks)
+                    if (nextInfoUpdates < DateTime.UtcNow.Ticks)
                     {
                         tickAverage /= tickCount;
                         Log.Logger.log(String.Format("Server tick rate info: {0}ms average, {1}ms max.", tickAverage / TimeSpan.TicksPerMillisecond, tickMax / TimeSpan.TicksPerMillisecond));
-                        nextInfoUpdates = ServerTime.Now.Ticks + nextInfoUpdateTime;
+                        nextInfoUpdates = DateTime.UtcNow.Ticks + nextInfoUpdateTime;
                         tickMax = 0;
                         tickAverage = 0;
                         tickCount = 0;

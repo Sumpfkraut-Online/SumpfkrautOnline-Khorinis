@@ -122,9 +122,7 @@ namespace GUC.Types
         public void setOnlyForward(Vec3f forward)
         {
             Vec3f fw = new Vec3f(forward);
-            fw.normalise();
-
-
+            fw.Normalize();
 
             Vec3f zAxis = forward;
             Vec3f up = new Vec3f(0.0f, 0.0f, 0.0f);
@@ -154,8 +152,8 @@ namespace GUC.Types
 
 
 
-            Vec3f xAxis = up.cross(zAxis).normalise();
-            Vec3f yAxis = zAxis.cross(xAxis).normalise();
+            Vec3f xAxis = up.Cross(zAxis).Normalize();
+            Vec3f yAxis = zAxis.Cross(xAxis).Normalize();
 
             mData[2][0] = zAxis.X;
             mData[2][1] = zAxis.Y;

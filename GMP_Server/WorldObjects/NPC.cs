@@ -71,8 +71,8 @@ namespace GUC.Server.WorldObjects
 
                 npc.State = NPCState.Stand;
 
-                npc.AttackEndTimer = new Timer(OnAttackEnd, (object)npc);
-                npc.AttackHitTimer = new Timer(OnAttackHit, (object)npc);
+                npc.AttackEndTimer = new Timer<NPC>(0, OnAttackEnd, npc);
+                npc.AttackHitTimer = new Timer<NPC>(0, OnAttackHit, npc);
 
                 return npc;
             }
@@ -782,8 +782,8 @@ namespace GUC.Server.WorldObjects
         internal AnimationControl AniCtrl { get { return Instance.AniCtrl; } }
         public int ComboNum { get; protected set; }
         long comboTime = 0;
-        Timer AttackEndTimer; // fixme? only one timer?
-        Timer AttackHitTimer;
+        Timer<NPC> AttackEndTimer; // fixme? only one timer?
+        Timer<NPC> AttackHitTimer;
         bool TriedAttack = false;
 
         public void DoAttackForward(NPC target)
@@ -808,21 +808,26 @@ namespace GUC.Server.WorldObjects
             DoAttack(target, attacks.Forward[newComboNum], NPCState.AttackForward, newComboNum);
         }
 
-        static void OnAttackEnd(object obj)
+        static void OnAttackEnd(NPC attacker)
         {
-            NPC attacker = (NPC)obj;
-            attacker.State = NPCState.Stand;
-            attacker.ComboNum = 0;
-            attacker.TriedAttack = false;
-            Log.Logger.log("Stand");
+            if (attacker != null)
+            {
+                attacker.AttackEndTimer.Stop();
+
+                attacker.State = NPCState.Stand;
+                attacker.ComboNum = 0;
+                attacker.TriedAttack = false;
+                Log.Logger.log("Stand");
+            }
         }
 
-        static void OnAttackHit(object obj)
+        static void OnAttackHit(NPC attacker)
         {
-            if (obj != null && sOnHit != null)
+            if (attacker != null)
             {
-                NPC attacker = (NPC)obj;
-                if (attacker.DrawnItem == null)
+                attacker.AttackHitTimer.Stop();
+
+                if (sOnHit == null || attacker.DrawnItem == null)
                     return;
 
                 float range = attacker.DrawnItem == Item.Fists ? 100 : attacker.DrawnItem.Instance.Range;
@@ -830,7 +835,7 @@ namespace GUC.Server.WorldObjects
                 {
                     if (attacker == target) continue;
 
-                    Vec3f dir = (attacker.Position - target.Position).normalise();
+                    Vec3f dir = (attacker.Position - target.Position).Normalize();
                     float dot = attacker.Direction.Z * dir.Z + dir.X * attacker.Direction.X;
 
                     if (dot > 0) continue; //target is behind attacker
@@ -878,18 +883,18 @@ namespace GUC.Server.WorldObjects
         {
             if (attack >= NPCState.AttackForward && attackTimes.Attack > 0 && !TriedAttack)
             {
-                if (ServerTime.Now.Ticks >= comboTime)
+                if (DateTime.UtcNow.Ticks >= comboTime)
                 {
-                    AttackEndTimer.CallTime = ServerTime.Now.Ticks + attackTimes.Attack;
+                    AttackEndTimer.Interval = attackTimes.Attack;
                     AttackEndTimer.Start();
 
                     if (attackTimes.Combo > 0)
                     {
-                        comboTime = ServerTime.Now.Ticks + attackTimes.Combo;
+                        comboTime = DateTime.UtcNow.Ticks + attackTimes.Combo;
                     }
                     else //no combo time defined
                     {
-                        comboTime = AttackEndTimer.CallTime;
+                        comboTime = AttackEndTimer.NextCallTime;
                     }
 
                     if (AttackHitTimer.Started) //just in case, that the last attack's timer has not fired yet
@@ -899,7 +904,7 @@ namespace GUC.Server.WorldObjects
 
                     if (attackTimes.Hit > 0)
                     {
-                        AttackHitTimer.CallTime = ServerTime.Now.Ticks + attackTimes.Hit;
+                        AttackHitTimer.Interval = attackTimes.Hit;
                         AttackHitTimer.Start();
                     }
 
@@ -912,7 +917,7 @@ namespace GUC.Server.WorldObjects
                 {
                     TriedAttack = true;
                 }
-            } 
+            }
         }
 
         public void DoAttackLeft(NPC target)
@@ -1048,6 +1053,73 @@ namespace GUC.Server.WorldObjects
 
             DrawnItem = null;
             NPCMessage.WriteUndrawItem(cell.SurroundingClients(), this, fast, State == NPCState.Stand);
+        }
+
+        ControlCmd ControlState = ControlCmd.Stop;
+        Vec3f ControlTargetPos;
+        AbstractVob ControlTargetVob;
+
+        public void GoTo(Vec3f position)
+        {
+            GoTo(position, 100);
+        }
+
+        public void GoTo(Vec3f position, float range)
+        {
+            if (this.VobController == null)
+            {
+                Vec3f dir = (this.pos - position).Normalize();
+                this.Position = position + dir * range;
+            }
+            else
+            {
+                BitStream stream = Program.server.SetupStream(NetworkID.ControlCmdMessage);
+                stream.mWrite(this.ID);
+                stream.mWrite((byte)ControlCmd.GoToPos);
+                stream.mWrite(position);
+                stream.mWrite(range);
+
+                Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'G', this.VobController.guid, false);
+            }
+        }
+
+        public void GoTo(AbstractVob vob)
+        {
+            GoTo(vob, 100);
+        }
+
+        public void GoTo(AbstractVob vob, float range)
+        {
+            if (vob == null)
+                return;
+
+            if (this.VobController == null)
+            {
+                Vec3f dir = (this.pos - vob.pos).Normalize();
+                this.Position = vob.pos + dir * range;
+            }
+            else
+            {
+                BitStream stream = Program.server.SetupStream(NetworkID.ControlCmdMessage);
+                stream.mWrite(this.ID);
+                stream.mWrite((byte)ControlCmd.GoToVob);
+                stream.mWrite(vob.ID);
+                stream.mWrite(range);
+
+                Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'G', this.VobController.guid, false);
+            }
+        }
+
+        public void GoStop()
+        {
+            if (this.VobController != null)
+            {
+                BitStream stream = Program.server.SetupStream(NetworkID.ControlCmdMessage);
+                stream.mWrite(this.ID);
+                stream.mWrite((byte)ControlCmd.Stop);
+
+                Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'G', this.VobController.guid, false);
+            }
         }
     }
 }

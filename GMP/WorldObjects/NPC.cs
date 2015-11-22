@@ -329,68 +329,62 @@ namespace GUC.Client.WorldObjects
 
         public Vec3f lastDir;
         public Vec3f nextDir;
+        public bool turning = false;
         public long lastDirTime;
-        public int turn;
 
         public void StartTurnAni(bool right)
         {
-            turn = right ? 1 : -1;
-            DoTurnAni();
-        }
-
-        void DoTurnAni()
-        {
-            TurnAnimation = 0;
             zCModel model = gNpc.GetModel();
 
-            if (model.IsAniActive(model.GetAniFromAniID(gNpc.AniCtrl._s_walk)))
+            if (model.IsAniActive(model.GetAniFromAniID(gAniCtrl._s_walk)))
             {
-                if (turn > 0)
+                if (right)
                 {
-                    TurnAnimation = gNpc.AniCtrl._t_turnr;
+                    TurnAnimation = gAniCtrl._t_turnr;
                 }
-                else if (turn < 0)
+                else
                 {
-                    TurnAnimation = gNpc.AniCtrl._t_turnl;
+                    TurnAnimation = gAniCtrl._t_turnl;
                 }
             }
-            else if (model.IsAniActive(model.GetAniFromAniID(gNpc.AniCtrl._s_dive)))
+            else if (model.IsAniActive(model.GetAniFromAniID(gAniCtrl._s_dive)))
             {
-                if (turn > 0)
+                if (right)
                 {
-                    TurnAnimation = gNpc.AniCtrl._t_diveturnr;
+                    TurnAnimation = gAniCtrl._t_diveturnr;
                 }
-                else if (turn < 0)
+                else
                 {
-                    TurnAnimation = gNpc.AniCtrl._t_diveturnl;
+                    TurnAnimation = gAniCtrl._t_diveturnl;
                 }
             }
-            else if (model.IsAniActive(model.GetAniFromAniID(gNpc.AniCtrl._s_swim)))
+            else if (model.IsAniActive(model.GetAniFromAniID(gAniCtrl._s_swim)))
             {
-                if (turn > 0)
+                if (right)
                 {
-                    TurnAnimation = gNpc.AniCtrl._t_swimturnr;
+                    TurnAnimation = gAniCtrl._t_swimturnr;
                 }
-                else if (turn < 0)
+                else
                 {
-                    TurnAnimation = gNpc.AniCtrl._t_swimturnl;
+                    TurnAnimation = gAniCtrl._t_swimturnl;
                 }
             }
-
-            if (TurnAnimation != 0)
+            else
             {
-                gNpc.GetModel().StartAni(TurnAnimation, 0);
-                turn = 0;
+                return;
             }
+                
+            model.StartAni(TurnAnimation, 0);
         }
 
         public void StopTurnAnis()
         {
-            gNpc.GetModel().FadeOutAni(TurnAnimation);
-            TurnAnimation = 0;
-            lastDir = null;
-            nextDir = null;
-            turn = 0;
+            if (turning)
+            {
+                Direction = nextDir;
+                gNpc.GetModel().FadeOutAni(TurnAnimation);
+                turning = false;
+            }
         }
 
         public long nextForwardUpdate = 0;
@@ -404,22 +398,16 @@ namespace GUC.Client.WorldObjects
         {
             if (this != Player.Hero)
             {
-                if (nextDir != null) //turn!
+                if (turning) //turn!
                 {
-                    if (turn != 0)
-                    {
-                        DoTurnAni();
-                    }
-
-                    float diff = (float)(DateTime.Now.Ticks - lastDirTime) / (float)DirectionUpdateTime;
+                    float diff = (float)(DateTime.UtcNow.Ticks - lastDirTime) / (float)DirectionUpdateTime;
 
                     if (diff < 1.0f)
                     {
-                        this.Direction = lastDir + (nextDir - lastDir) * diff;
+                        Direction = lastDir + (nextDir - lastDir) * diff;
                     }
                     else
                     {
-                        this.Direction = nextDir;
                         StopTurnAnis();
                     }
                 }

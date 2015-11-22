@@ -202,7 +202,7 @@ namespace GUC.Client.Menus.MainMenus
         #region Help Text
         protected void UpdateHelpText()
         {
-            if (DateTime.Now.Ticks > HelpTextNextUpdateTime)
+            if (DateTime.UtcNow.Ticks > HelpTextNextUpdateTime)
             {
                 helpText.SetColor(ColorRGBA.White);
                 helpText.Text = items[cursor].HelpText;
@@ -214,7 +214,7 @@ namespace GUC.Client.Menus.MainMenus
         {
             helpText.SetColor(ColorRGBA.Red);
             helpText.Text = Text;
-            HelpTextNextUpdateTime = DateTime.Now.Ticks + 2 * TimeSpan.TicksPerSecond;
+            HelpTextNextUpdateTime = DateTime.UtcNow.Ticks + 2 * TimeSpan.TicksPerSecond;
         }
         #endregion
 
