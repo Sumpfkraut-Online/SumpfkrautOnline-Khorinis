@@ -69,6 +69,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
         // idRange must be 
         public bool LoadVobDef (VobDefType type, List<Vec2Int> idRanges)
         {
+            TestRunnable runnable = new TestRunnable(false, new System.TimeSpan(0, 0, 1), true);
+            
+
             // *** correct misleading userinput ***
             bool loadAllVobDef = true;
             if (idRanges != null)
@@ -162,8 +165,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 
             // *** execute sql-command, receive results and convert them to usable datatypes ***
 
-            List<List<List<object>>> sqlResults_VobDef = new List<List<List<object>>>();
-
             //DBReader.LoadFromDB(ref sqlResults_VobDef, sqlSelect_VobDef, sqlFrom_VobDef,
             //    sqlWhere_VobDef, sqlOrderBy_VobDef);
             DBAgent dbAgent_VobDef = new DBAgent(new List<String> {
@@ -173,7 +174,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 
             dbAgent_VobDef.ReceivedResults += delegate (object sender, DBAgent.ReceivedResultsEventArgs e)
             {
-                // convert and use results
+                // receive results
+                List<List<List<object>>> sqlResults_VobDef  = e.GetResults();
+                // convert results
             };
 
             return false;
