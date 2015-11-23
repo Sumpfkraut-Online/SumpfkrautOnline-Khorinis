@@ -7,7 +7,7 @@ using GUC.Server.Scripts.Sumpfkraut.Utilities.Threading;
 
 namespace GUC.Server.Scripts.Sumpfkraut.Database
 {
-    class DBAgent : Runnable
+    class DBAgent : AbstractRunnable
     {
 
         protected List<String> commandQueue = new List<String>();
@@ -29,7 +29,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
         //    }
         //}
 
-        public delegate void ReceivedResultsEventHandler(object sender, ReceivedResultsEventArgs e);
+        public delegate void ReceivedResultsEventHandler (object sender, ReceivedResultsEventArgs e);
         public event ReceivedResultsEventHandler ReceivedResults;
         public class ReceivedResultsEventArgs : EventArgs
         {

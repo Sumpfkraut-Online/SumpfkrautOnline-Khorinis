@@ -19,7 +19,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
         keepEnd,
     }
 
-    class Weather : Runnable
+    class Weather : AbstractRunnable
     {
 
         public List<WeatherState> weatherStateQueue; // queue of (future) weather-states

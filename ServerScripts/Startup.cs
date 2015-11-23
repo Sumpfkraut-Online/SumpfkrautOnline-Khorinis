@@ -120,8 +120,8 @@ namespace GUC.Server.Scripts
             //    World.NewWorld.GetIGTime().minute));
 
 
-            //Sumpfkraut.Utilities.Threading.TestRunnable timeRunner =
-            //    new Sumpfkraut.Utilities.Threading.TestRunnable(true, new TimeSpan(0, 0, 2), false);
+            Sumpfkraut.Utilities.Threading.TestRunnable timeRunner =
+                new Sumpfkraut.Utilities.Threading.TestRunnable(true, new TimeSpan(0, 0, 2), false);
 
 
             //Sumpfkraut.WeatherSystem.Weather weather_1 =
@@ -163,6 +163,12 @@ namespace GUC.Server.Scripts
             //    Console.WriteLine("+++ FINISHED");
             //};
 
+            //Sumpfkraut.Utilities.Threading.Runnable homeRun = 
+            //    new Sumpfkraut.Utilities.Threading.Runnable(false, new TimeSpan(0, 0, 1), false);
+            //homeRun.OnInit += delegate () { Console.WriteLine("Inuit 1"); };
+            //homeRun.OnInit += delegate () { Console.WriteLine("Inuit 2"); };
+            //homeRun.OnRun += delegate () { Console.WriteLine("Task 1"); };
+            //homeRun.OnRun += delegate () { Console.WriteLine("Task 2"); };
 
 
             Logger.log(Logger.LogLevel.INFO, "######################## Initalise ########################");

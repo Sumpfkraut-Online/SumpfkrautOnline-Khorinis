@@ -22,7 +22,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
     /**
      *   Class which initializes all vobs of the indivual types from database information: mobs, items, npcs.
      */
-    class VobHandler : Runnable
+    class VobHandler : AbstractRunnable
     {
 
         public struct Vec2Int
