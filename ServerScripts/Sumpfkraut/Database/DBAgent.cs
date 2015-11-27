@@ -4,30 +4,16 @@ using System.Linq;
 using System.Text;
 using GUC.Server.Scripts.Sumpfkraut.Database;
 using GUC.Server.Scripts.Sumpfkraut.Utilities.Threading;
+using System.Threading;
 
 namespace GUC.Server.Scripts.Sumpfkraut.Database
 {
-    class DBAgent : AbstractRunnable
+    class DBAgent : Runnable
     {
 
         protected List<String> commandQueue = new List<String>();
 
-        //public delegate void AwaitingResultsEventHandler(object sender, AwaitingResultsEventArgs e);
-        //public event AwaitingResultsEventHandler AwaitingResult;
-        //public class AwaitingResultsEventArgs : EventArgs
-        //{
-        //    private DateTime timestamp;
-        //    public DateTime GetTimestamp() { return this.timestamp; }
 
-        //    private int queueIndex;
-        //    public int GetQueueIndex() { return this.queueIndex; }
-
-        //    public AwaitingResultsEventArgs(int queueIndex)
-        //    {
-        //        this.timestamp = DateTime.Now;
-        //        this.queueIndex = queueIndex;
-        //    }
-        //}
 
         public delegate void ReceivedResultsEventHandler (object sender, ReceivedResultsEventArgs e);
         public event ReceivedResultsEventHandler ReceivedResults;
@@ -53,12 +39,18 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
         public delegate void FinishedQueueEventHandler(object sender);
         public event FinishedQueueEventHandler FinishedQueue;
 
+        // used to alarm another thread when a queue is finished
+        // in case the alarmed thread is waiting to continue afterwards
+        public AutoResetEvent waitHandle;
+
+
 
         public DBAgent(List<String> commandQueue)
             : this(commandQueue, true)
         { }
 
         public DBAgent(List<String> commandQueue, bool startOnCreate)
+            : base(false, new TimeSpan(0, 0, 0), true)
         {
             this.commandQueue = commandQueue;
 
@@ -72,6 +64,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
 
         public override void Run()
         {
+            base.Run();
+
             // iterate over commandQueue and communicating with DB while invoking the events
             for (int i = 0; i < commandQueue.Count; i++)
             {
@@ -79,10 +73,14 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                 DBReader.LoadFromDB(ref results, commandQueue[i]);
                 ReceivedResultsEventArgs e = new ReceivedResultsEventArgs(i, results);
                 ReceivedResults.Invoke(this, e);
+                if (waitHandle != null)
+                {
+                    waitHandle.Set();
+                }
             }
 
             FinishedQueue.Invoke(this);
-            this.Suspend();
+            //this.Suspend();
         } 
 
     }

@@ -2,17 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace GUC.Server.Scripts.Sumpfkraut.Utilities.Threading
 {
-    class Runnable : AbstractRunnable
+    public class Runnable : AbstractRunnable
     {
 
-        public delegate void InitEventHandler ();
+        public delegate void InitEventHandler (Runnable sender);
         public InitEventHandler OnInit;
 
-        public delegate void RunEventHandler ();
+        public delegate void RunEventHandler (Runnable sender);
         public RunEventHandler OnRun;
+
+        new public AutoResetEvent waitHandle;
 
 
 
@@ -26,15 +29,16 @@ namespace GUC.Server.Scripts.Sumpfkraut.Utilities.Threading
         {
             if (OnInit != null)
             {
-                OnInit.Invoke();
+                OnInit.Invoke(this);
             }
         }
 
         public override void Run ()
         {
+            Print("GOTCHA");
             if (OnRun != null)
-            {
-                OnRun.Invoke();
+            { 
+                OnRun.Invoke(this);
             }
         }
 

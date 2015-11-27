@@ -9,12 +9,13 @@ namespace GUC.Server.Scripts.Sumpfkraut.Utilities.Threading
     public abstract class AbstractRunnable : ScriptObject, IRunnable
     {
 
-        protected bool printStateControls;
+        public bool printStateControls;
 
         protected Thread thread; // the thread, on which the object operates
         protected EventWaitHandle resetEvent;
         public TimeSpan timeout;
         public bool runOnce;
+        protected AutoResetEvent waitHandle = new AutoResetEvent(false);
 
 
         public AbstractRunnable () 
@@ -60,19 +61,23 @@ namespace GUC.Server.Scripts.Sumpfkraut.Utilities.Threading
             this.resetEvent.Set();
         }
 
-        protected virtual void _Run ()
+        protected virtual void _Run (AbstractRunnable runnable)
         {
             Init();
 
             while (true)
             {
-                this.resetEvent.WaitOne(Timeout.Infinite);
+                //this.resetEvent.WaitOne(Timeout.Infinite);
 
+                //this.Run();
+                //if (this.runOnce)
+                //{
+                //    this.resetEvent.Reset();
+                //}
+                //Thread.Sleep(this.timeout);
+
+                waitHandle.WaitOne();
                 this.Run();
-                if (this.runOnce)
-                {
-                    this.resetEvent.Reset();
-                }
                 Thread.Sleep(this.timeout);
             }
         }

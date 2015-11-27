@@ -15,6 +15,10 @@ namespace GUC.Server.Scripts
 {
 	public class Startup : IServerStartup
 	{
+
+        public delegate void MyEventHandler (Sumpfkraut.Utilities.Threading.Runnable runnable);
+        public MyEventHandler MyEvent;
+
 		public void OnServerInit()
 		{
 
@@ -163,12 +167,32 @@ namespace GUC.Server.Scripts
             //    Console.WriteLine("+++ FINISHED");
             //};
 
-            //Sumpfkraut.Utilities.Threading.Runnable homeRun = 
+            //Sumpfkraut.Utilities.Threading.Runnable homeRun =
             //    new Sumpfkraut.Utilities.Threading.Runnable(false, new TimeSpan(0, 0, 1), false);
             //homeRun.OnInit += delegate () { Console.WriteLine("Inuit 1"); };
             //homeRun.OnInit += delegate () { Console.WriteLine("Inuit 2"); };
             //homeRun.OnRun += delegate () { Console.WriteLine("Task 1"); };
             //homeRun.OnRun += delegate () { Console.WriteLine("Task 2"); };
+            
+
+            
+
+            //Sumpfkraut.Utilities.Threading.Runnable homeRun =
+            //    new Sumpfkraut.Utilities.Threading.Runnable(false, new TimeSpan(0, 0, 0, 0, 200), false);
+            //homeRun.printStateControls = true;
+            //homeRun.OnRun += delegate (Sumpfkraut.Utilities.Threading.Runnable sender)
+            //{
+            //    Console.WriteLine(DateTime.Now);
+            //    //sender.Suspend();
+            //};
+            //MyEvent += delegate (Sumpfkraut.Utilities.Threading.Runnable runnable) { runnable.Resume(); };
+            //for (int i = 0; i < 20; i++)
+            //{
+            //    Console.WriteLine("--> " + i);
+            //    MyEvent.Invoke(homeRun);
+            //}
+            //homeRun.Start();
+            //homeRun.Suspend();
 
 
             Logger.log(Logger.LogLevel.INFO, "######################## Initalise ########################");

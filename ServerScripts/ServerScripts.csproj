@@ -85,13 +85,16 @@
     <Compile Include="Sumpfkraut\VobSystem\Definitions\NpcDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\SpellDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\VobDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\VobDefLoader.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\ItemInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\MobInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\NpcInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\SpellInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\VobInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\InventoryVobHandler.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Vec2Int.cs" />
     <Compile Include="Sumpfkraut\VobSystem\VobHandler.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\VobLoader.cs" />
     <Compile Include="Sumpfkraut\VobSystem\WorldVobHandler.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldHandler.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldInst.cs" />
