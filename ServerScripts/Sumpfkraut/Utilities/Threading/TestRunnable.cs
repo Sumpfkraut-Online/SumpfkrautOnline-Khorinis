@@ -23,6 +23,11 @@ namespace GUC.Server.Scripts.Sumpfkraut.Utilities.Threading
 
         public override void Run ()
         {
+            //if (hour >= 2)
+            //{
+            //    Suspend();
+            //}
+
             //Console.WriteLine("TestRunnable: " + DateTime.Now + " " + this.runOnce);
             Console.WriteLine("TestRunnable: " + day + " " + hour + " " + minute);
             World.NewWorld.ChangeTime(day, hour, minute);

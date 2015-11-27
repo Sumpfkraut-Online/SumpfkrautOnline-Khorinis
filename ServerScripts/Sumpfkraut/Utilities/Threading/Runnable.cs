@@ -35,7 +35,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.Utilities.Threading
 
         public override void Run ()
         {
-            Print("GOTCHA");
             if (OnRun != null)
             { 
                 OnRun.Invoke(this);

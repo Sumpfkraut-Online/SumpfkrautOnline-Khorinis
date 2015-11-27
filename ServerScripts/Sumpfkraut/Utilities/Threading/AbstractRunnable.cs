@@ -61,24 +61,25 @@ namespace GUC.Server.Scripts.Sumpfkraut.Utilities.Threading
             this.resetEvent.Set();
         }
 
-        protected virtual void _Run (AbstractRunnable runnable)
+        protected virtual void _Run ()
         {
             Init();
 
             while (true)
             {
-                //this.resetEvent.WaitOne(Timeout.Infinite);
+                this.resetEvent.WaitOne(Timeout.Infinite);
 
-                //this.Run();
-                //if (this.runOnce)
-                //{
-                //    this.resetEvent.Reset();
-                //}
-                //Thread.Sleep(this.timeout);
-
-                waitHandle.WaitOne();
                 this.Run();
+
+                if (this.runOnce)
+                {
+                    this.resetEvent.Reset();
+                }
                 Thread.Sleep(this.timeout);
+
+                //waitHandle.WaitOne();
+                //this.Run();
+                //Thread.Sleep(this.timeout);
             }
         }
 

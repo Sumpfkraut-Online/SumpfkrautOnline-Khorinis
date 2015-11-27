@@ -16,8 +16,8 @@ namespace GUC.Server.Scripts
 	public class Startup : IServerStartup
 	{
 
-        public delegate void MyEventHandler (Sumpfkraut.Utilities.Threading.Runnable runnable);
-        public MyEventHandler MyEvent;
+        //public delegate void MyEventHandler (Sumpfkraut.Utilities.Threading.Runnable runnable);
+        //public MyEventHandler MyEvent;
 
 		public void OnServerInit()
 		{
@@ -124,8 +124,11 @@ namespace GUC.Server.Scripts
             //    World.NewWorld.GetIGTime().minute));
 
 
-            Sumpfkraut.Utilities.Threading.TestRunnable timeRunner =
-                new Sumpfkraut.Utilities.Threading.TestRunnable(true, new TimeSpan(0, 0, 2), false);
+            //Sumpfkraut.Utilities.Threading.TestRunnable timeRunner =
+            //    new Sumpfkraut.Utilities.Threading.TestRunnable(false, new TimeSpan(0, 0, 2), false);
+            //timeRunner.SetObjName("timeRunner");
+            //timeRunner.printStateControls = true;
+            //timeRunner.Start();
 
 
             //Sumpfkraut.WeatherSystem.Weather weather_1 =
@@ -168,14 +171,24 @@ namespace GUC.Server.Scripts
             //};
 
             //Sumpfkraut.Utilities.Threading.Runnable homeRun =
-            //    new Sumpfkraut.Utilities.Threading.Runnable(false, new TimeSpan(0, 0, 1), false);
-            //homeRun.OnInit += delegate () { Console.WriteLine("Inuit 1"); };
-            //homeRun.OnInit += delegate () { Console.WriteLine("Inuit 2"); };
-            //homeRun.OnRun += delegate () { Console.WriteLine("Task 1"); };
-            //homeRun.OnRun += delegate () { Console.WriteLine("Task 2"); };
-            
+            //    new Sumpfkraut.Utilities.Threading.Runnable(false, new TimeSpan(0, 0, 0, 1), false);
+            //homeRun.printStateControls = true;
+            //homeRun.OnInit += delegate (Sumpfkraut.Utilities.Threading.Runnable runnable) { Console.WriteLine("Inuit 1"); };
+            ////homeRun.OnInit += delegate (Sumpfkraut.Utilities.Threading.Runnable runnable) { Console.WriteLine("Inuit 2"); };
+            //homeRun.OnRun += delegate (Sumpfkraut.Utilities.Threading.Runnable runnable) { Console.WriteLine("Task 1"); };
+            ////homeRun.OnRun += delegate (Sumpfkraut.Utilities.Threading.Runnable runnable) { Console.WriteLine("Task 2"); };
+            //homeRun.OnRun += delegate (Sumpfkraut.Utilities.Threading.Runnable runnable)
+            //{
+            //    runnable.Print("-----> " + (DateTime.Now.Second % 10));
+            //    if ((DateTime.Now.Second % 10) == 0)
+            //    {
+            //        runnable.Suspend();
+            //    }
+            //};
+            //homeRun.Start();
+            ////homeRun.Suspend();
 
-            
+
 
             //Sumpfkraut.Utilities.Threading.Runnable homeRun =
             //    new Sumpfkraut.Utilities.Threading.Runnable(false, new TimeSpan(0, 0, 0, 0, 200), false);
@@ -183,7 +196,7 @@ namespace GUC.Server.Scripts
             //homeRun.OnRun += delegate (Sumpfkraut.Utilities.Threading.Runnable sender)
             //{
             //    Console.WriteLine(DateTime.Now);
-            //    //sender.Suspend();
+            //    sender.Suspend();
             //};
             //MyEvent += delegate (Sumpfkraut.Utilities.Threading.Runnable runnable) { runnable.Resume(); };
             //for (int i = 0; i < 20; i++)
