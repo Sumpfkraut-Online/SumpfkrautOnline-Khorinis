@@ -9,6 +9,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.Utilities.Threading
     class TestRunnable : Runnable
     {
 
+        public delegate void TestEventHandler (DateTime dt);
+        public event TestEventHandler TestEvent;
+
         int day = 0;
         int hour = 0;
         int minute = 0;
@@ -23,6 +26,11 @@ namespace GUC.Server.Scripts.Sumpfkraut.Utilities.Threading
 
         public override void Run ()
         {
+            if (OnRun != null)
+            { 
+                OnRun.Invoke(this);
+            }
+
             //if (hour >= 2)
             //{
             //    Suspend();
@@ -39,6 +47,16 @@ namespace GUC.Server.Scripts.Sumpfkraut.Utilities.Threading
             //weatherEndTime.hour = 10;
             //weatherEndTime.minute = 0;
             //World.NewWorld.ChangeWeather(weatherType, weatherStartTime, weatherEndTime);
+
+            if (TestEvent != null)
+            {
+                TestEvent.Invoke(DateTime.Now);
+            }
+            
+            if (waitHandle != null)
+            {
+                waitHandle.Set();
+            }
 
             hour++;
         }

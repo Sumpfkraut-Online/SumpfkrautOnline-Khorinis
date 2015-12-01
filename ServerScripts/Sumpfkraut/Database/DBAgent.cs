@@ -15,7 +15,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
 
 
 
-        public delegate void ReceivedResultsEventHandler (object sender, ReceivedResultsEventArgs e);
+        public delegate void ReceivedResultsEventHandler (Runnable sender, ReceivedResultsEventArgs e);
         public event ReceivedResultsEventHandler ReceivedResults;
         public class ReceivedResultsEventArgs : EventArgs
         {
@@ -36,7 +36,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
             }
         }
 
-        public delegate void FinishedQueueEventHandler(object sender);
+        public delegate void FinishedQueueEventHandler(Runnable sender);
         public event FinishedQueueEventHandler FinishedQueue;
 
         // used to alarm another thread when a queue is finished

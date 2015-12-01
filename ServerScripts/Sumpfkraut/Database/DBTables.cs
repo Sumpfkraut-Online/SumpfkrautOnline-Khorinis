@@ -95,24 +95,89 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
         new protected String _objName = "DBTables (default)";
         
 
+        
+        public static bool ConvertSQLResults (ref List<List<List<object>>> sqlResults, 
+            ref List<ColumnGetTypeInfo> colGetTypeInfo)
+        {
+            bool allConverted = true;
+            object tempEntry = null;
+            int res = 0;
+            int row = 0;
+            int col = 0;
+
+
+            // iterating results (resulted by multiplay statements seperated by ; in sql-command)
+            while (res < sqlResults.Count)
+            {
+                // iterating data-rows
+                row = 0;
+                while (row < sqlResults[res].Count)
+                {
+                    // iterating data-columns
+                    col = 0;
+                    while (col < sqlResults[res][row].Count)
+                    {
+                        if (sqlResults[res][row][col] == null)
+                        {
+                            // null might be just fine
+                        }
+                        else if (sqlResults[res][row][col].GetType() == typeof(DBNull))
+                        {
+                            // DBNull is aa little unheady because it would need additional type-checks later
+                            // use null instead
+                            sqlResults[res][row][col] = null;
+                        }
+                        else
+                        {
+                            // everything else should be a string and somehow convertable
+                            tempEntry = sqlResults[res][row][col].ToString();
+                            if (DBTables.SqlStringToData((string) tempEntry, 
+                                colGetTypeInfo[col].getType, 
+                                ref tempEntry))
+                            {
+                                sqlResults[res][row][col] = tempEntry;
+                            }
+                            else
+                            {
+                                sqlResults[res][row][col] = null;
+
+                                MakeLogErrorStatic(typeof(DBTables), String.Format(
+                                    "ConvertSQLResults: Could not convert {0}" 
+                                    + "from String to type {1} for column {2}!", 
+                                    tempEntry, colGetTypeInfo[col].getType, 
+                                    colGetTypeInfo[col].colName));
+
+                                allConverted = false;
+                            }
+                        }
+ 
+                        col++;
+                    }
+
+                    row++;
+                }
+            }
+            
+            return allConverted;
+        }
 
         public static void SqlColumnInfo (Dictionary<String, SQLiteGetTypeEnum> getTypeByColumn,
-            out List<ColumnGetTypeInfo> colTypes)
+            out List<ColumnGetTypeInfo> colGetTypes)
         {
-            colTypes = new List<ColumnGetTypeInfo>();
+            colGetTypes = new List<ColumnGetTypeInfo>();
             foreach (KeyValuePair<String, SQLiteGetTypeEnum> keyValPair in getTypeByColumn)
             {
-                colTypes.Add(new ColumnGetTypeInfo(keyValPair.Key, keyValPair.Value));
+                colGetTypes.Add(new ColumnGetTypeInfo(keyValPair.Key, keyValPair.Value));
             }
         }
 
         public static void SqlColumnInfo (ref Dictionary<String, SQLiteGetTypeEnum> getTypeByColumn,
-            out List<ColumnGetTypeInfo> colTypes)
+            out List<ColumnGetTypeInfo> colGetTypes)
         {
-            colTypes = new List<ColumnGetTypeInfo>();
+            colGetTypes = new List<ColumnGetTypeInfo>();
             foreach (KeyValuePair<String, SQLiteGetTypeEnum> keyValPair in getTypeByColumn)
             {
-                colTypes.Add(new ColumnGetTypeInfo(keyValPair.Key, keyValPair.Value));
+                colGetTypes.Add(new ColumnGetTypeInfo(keyValPair.Key, keyValPair.Value));
             }
         }
         

@@ -9,7 +9,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
     class DefEffect : ScriptObject
     {
 
-        #region dictionaries
+        #region static dictionaries
 
         public static readonly Dictionary<String, SQLiteGetTypeEnum> defTab_GetTypeByColumn =
             new Dictionary<String, SQLiteGetTypeEnum>

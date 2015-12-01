@@ -208,6 +208,43 @@ namespace GUC.Server.Scripts
             //homeRun.Suspend();
 
 
+            //Sumpfkraut.Utilities.Threading.TestRunnable myRun =
+            //    new Sumpfkraut.Utilities.Threading.TestRunnable(false, new TimeSpan(0, 0, 1), false);
+            ////myRun.OnRun += delegate (Sumpfkraut.Utilities.Threading.Runnable runnable) 
+            ////{
+            ////    Sumpfkraut.Utilities.Threading.TestRunnable _runnable = 
+            ////        (Sumpfkraut.Utilities.Threading.TestRunnable) runnable;
+            ////    //_runnable.TestEvent.Invoke(DateTime.Now);
+            ////};
+            //myRun.TestEvent += delegate (DateTime dt) { Console.WriteLine("~~~> " + dt); };
+            //myRun.Start();
+
+
+
+            //DateTime myResults_1 = DateTime.Now.AddHours(2);
+            //int myResults_2 = -1;
+            //Sumpfkraut.Utilities.Threading.TestRunnable homeRun =
+            //    new Sumpfkraut.Utilities.Threading.TestRunnable(false, new TimeSpan(0, 0, 1), true);
+            //homeRun.printStateControls = true;
+            //System.Threading.AutoResetEvent waitHandle = new System.Threading.AutoResetEvent(false);
+            //homeRun.waitHandle = waitHandle;
+            //homeRun.OnRun += delegate (Sumpfkraut.Utilities.Threading.Runnable sender)
+            //{
+            //    int bla;
+            //    for (int i = 0; i < 999999; i++)
+            //    {
+            //        bla = i - 999999;
+            //    }
+            //    myResults_1 = DateTime.Now;
+            //    myResults_2 = 999;
+            //};
+            //homeRun.Start();
+            //waitHandle.WaitOne();
+            //Console.WriteLine("~~~> " + myResults_1 + " " + myResults_2);
+
+
+
+
             Logger.log(Logger.LogLevel.INFO, "######################## Initalise ########################");
             
             //DefaultItems.Init();

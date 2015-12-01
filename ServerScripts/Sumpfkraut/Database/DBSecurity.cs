@@ -6,12 +6,15 @@ using System.Text.RegularExpressions;
 
 namespace GUC.Server.Scripts.Sumpfkraut.Database
 {
-    class DBSecurity
+    class DBSecurity : ScriptObject
     {
 
-       new public static readonly String _staticName = "DBSecurity (static)";
+        new public static readonly String _staticName = "DBSecurity (static)";
         new protected String _objName = "DBSecurity (default)";
 
+
+
+        // search patterns to filter out malicious code in sql-commands to prevent sql-injection, etc.
         // according to http://www.symantec.com/connect/articles/detection-sql-injection-and-cross-site-scripting-attacks 
         private static string pattern_sqlMeta_1 = @"/(\%27)|(\')|(\-\-)|(\%23)|(#)/ix";
         private static Regex rgx_sqlMeta_1 = new Regex(pattern_sqlMeta_1);
@@ -20,26 +23,33 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
         private static string pattern_sqlMeta_3 = @"/\w*((\%27)|(\'))((\%6F)|o|(\%4F))((\%72)|r|(\%52))/ix";
         private static Regex rgx_sqlMeta_3 = new Regex(pattern_sqlMeta_3);
 
+
+
         public static bool IsSecureSQLCommand (string cmd)
         {
+            // detect malicious sql-code
             if (rgx_sqlMeta_1.Match(cmd).Length > 0)
             {
-                //Log.Logger.logWarning("Detected insecure sql-code with pattern: " + pattern_sqlMeta_1);
-                Console.WriteLine("1)" + rgx_sqlMeta_1.Match(cmd).Value);
+                MakeLogWarningStatic(typeof(DBSecurity), String.Format(
+                    "IsSecureSQLCommand: Detected malicious sql-command (pattern {0}): {1}{2}{1}In:{1}{3}", 
+                    1, Environment.NewLine, rgx_sqlMeta_1.Match(cmd).Value, cmd));
                 return false;
             }
             else if (rgx_sqlMeta_2.Match(cmd).Length > 0)
             {
-                //Log.Logger.logWarning("Detected insecure sql-code with pattern: " + pattern_sqlMeta_2);
-                Console.WriteLine("2)" + rgx_sqlMeta_1.Match(cmd).Value);
+                MakeLogWarningStatic(typeof(DBSecurity), String.Format(
+                    "IsSecureSQLCommand: Detected malicious sql-command (pattern {0}): {1}{2}{1}In:{1}{3}", 
+                    2, Environment.NewLine, rgx_sqlMeta_2.Match(cmd).Value, cmd));
                 return false;
             }
             else if (rgx_sqlMeta_3.Match(cmd).Length > 0)
             {
-                //Log.Logger.logWarning("Detected insecure sql-code with pattern: " + pattern_sqlMeta_3);
-                Console.WriteLine("3)" + rgx_sqlMeta_1.Match(cmd).Value);
+                MakeLogWarningStatic(typeof(DBSecurity), String.Format(
+                    "IsSecureSQLCommand: Detected malicious sql-command (pattern {0}): {1}{2}{1}In:{1}{3}", 
+                    3, Environment.NewLine, rgx_sqlMeta_3.Match(cmd).Value, cmd));
                 return false;
             }
+
             return true;
         }
 
