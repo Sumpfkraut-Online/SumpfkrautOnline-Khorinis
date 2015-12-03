@@ -7,6 +7,8 @@ using RakNet;
 using GUC.Enumeration;
 using GUC.Network;
 using GUC.Client.Hooks;
+using Gothic.zClasses;
+using Gothic.zStruct;
 
 namespace GUC.Client.Network.Messages
 {
@@ -27,6 +29,33 @@ namespace GUC.Client.Network.Messages
             if (vob != null)
             {
                 Player.VobControlledList.Remove(vob);
+            }
+        }
+
+        public static void ReadVobControlCmd(BitStream stream)
+        {
+            uint ID = stream.mReadUInt();
+            AbstractVob vob = Player.VobControlledList.Find(v => v.ID == ID);
+            if (vob == null || !(vob is NPC))
+                return;
+            
+            NPC npc = (NPC)vob;
+
+            npc.cmd = (ControlCmd)stream.mReadByte();
+
+            switch (npc.cmd)
+            {
+                case ControlCmd.GoToPos:
+                    break;
+
+                case ControlCmd.GoToVob:
+                    npc.cmdTargetVob = stream.mReadUInt();
+                    npc.cmdTargetRange = stream.mReadFloat();
+                    break;
+
+                case ControlCmd.Stop:
+                    npc.cmd = ControlCmd.Stop;
+                    break;
             }
         }
     }

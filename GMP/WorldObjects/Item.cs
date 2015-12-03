@@ -188,8 +188,8 @@ namespace GUC.Client.WorldObjects
         public ItemMaterial material { get { return instance.material; } }
         public String[] text { get { return instance.text; } }
         public ushort[] count { get { return instance.count; } }
-        public oCItem.MainFlags mainFlags { get { return instance.mainFlags; } }
-        public oCItem.ItemFlags flags { get { return instance.flags; } }
+        public int mainFlags { get { return instance.mainFlags; } }
+        public int flags { get { return instance.flags; } }
         public int wear { get { return instance.wear; } }
         public ushort munition { get { return instance.munition; } }
         public Gender gender { get { return instance.gender; } }
@@ -225,10 +225,11 @@ namespace GUC.Client.WorldObjects
             gi.Amount = 1;
             gi.Instanz = instance.ID;
             gi.Visual.Set(Visual);
+            gi.VisualChange.Set(visualChange);
             gi.Name.Set(name);
             gi.Material = (int)material;
-            gi.MainFlag = (int)mainFlags;
-            gi.Flags = (int)flags;
+            gi.MainFlag = mainFlags;
+            gi.Flags = flags;
             gi.Wear = wear;
         }
     }

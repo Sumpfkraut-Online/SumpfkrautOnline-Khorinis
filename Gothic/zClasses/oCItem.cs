@@ -72,49 +72,49 @@ namespace Gothic.zClasses
             RenderItem = 0x00713AC0
         }
 
-        public enum MainFlags
+        public abstract class MainFlags
         {
             // categories (mainflag)
-            ITEM_KAT_NONE		= 1 <<  0,  // Sonstiges
-            ITEM_KAT_NF		= 1 <<  1,  // Nahkampfwaffen
-            ITEM_KAT_FF		= 1 <<  2,  // Fernkampfwaffen
-            ITEM_KAT_MUN		= 1 <<  3, // Munition (MULTI)
-            ITEM_KAT_ARMOR	= 1 <<  4,  // Ruestungen
-            ITEM_KAT_FOOD		= 1 <<  5,  // Nahrungsmittel (MULTI)
-            ITEM_KAT_DOCS		= 1 <<  6,  // Dokumente
-            ITEM_KAT_POTIONS	= 1 <<  7,  // Traenke
-            ITEM_KAT_LIGHT	= 1 <<  8,  // Lichtquellen
-            ITEM_KAT_RUNE		= 1 <<  9,  // Runen/Scrolls
-            ITEM_KAT_MAGIC	= 1 << 31,  // Ringe/Amulette/Guertel
-            ITEM_KAT_KEYS		= ITEM_KAT_NONE
+            public const int ITEM_KAT_NONE = 1 << 0;  // Sonstiges
+            public const int ITEM_KAT_NF = 1 << 1;  // Nahkampfwaffen
+            public const int ITEM_KAT_FF = 1 << 2;  // Fernkampfwaffen
+            public const int ITEM_KAT_MUN = 1 << 3; // Munition (MULTI)
+            public const int ITEM_KAT_ARMOR = 1 << 4;  // Ruestungen
+            public const int ITEM_KAT_FOOD = 1 << 5;  // Nahrungsmittel (MULTI)
+            public const int ITEM_KAT_DOCS = 1 << 6;  // Dokumente
+            public const int ITEM_KAT_POTIONS = 1 << 7;  // Traenke
+            public const int ITEM_KAT_LIGHT = 1 << 8;  // Lichtquellen
+            public const int ITEM_KAT_RUNE = 1 << 9;  // Runen/Scrolls
+            public const int ITEM_KAT_MAGIC = 1 << 31;  // Ringe/Amulette/Guertel
+            public const int ITEM_KAT_KEYS = ITEM_KAT_NONE;
         }
 
-        public enum ItemFlags
+        public abstract class ItemFlags
         {
             // weapon type (flags)
-            ITEM_DAG			= 1 << 13,  // (OBSOLETE!)
-            ITEM_SWD			= 1 << 14,  // Schwert
-            ITEM_AXE			= 1 << 15,  // Axt
-            ITEM_2HD_SWD		= 1 << 16,  // Zweihaender
-            ITEM_2HD_AXE		= 1 << 17,  // Streitaxt
-            ITEM_SHIELD		= 1 << 18,  // (OBSOLETE!)
-            ITEM_BOW			= 1 << 19,  // Bogen
-            ITEM_CROSSBOW		= 1 << 20,  // Armbrust
+            public const int ITEM_DAG = 1 << 13;  // (OBSOLETE!)
+            public const int ITEM_SWD = 1 << 14;  // Schwert
+            public const int ITEM_AXE = 1 << 15;  // Axt
+            public const int ITEM_2HD_SWD = 1 << 16;  // Zweihaender
+            public const int ITEM_2HD_AXE = 1 << 17;  // Streitaxt
+            public const int ITEM_SHIELD = 1 << 18;  // (OBSOLETE!)
+            public const int ITEM_BOW = 1 << 19;  // Bogen
+            public const int ITEM_CROSSBOW = 1 << 20;  // Armbrust
             // magic type (flags)
-            ITEM_RING			= 1 << 11,  // Ring
-            ITEM_AMULET		= 1 << 22,  // Amulett
-            ITEM_BELT			= 1 << 24,  // Guertel
+            public const int ITEM_RING = 1 << 11;  // Ring
+            public const int ITEM_AMULET = 1 << 22;  // Amulett
+            public const int ITEM_BELT = 1 << 24;  // Guertel
             // attributes (flags)
-            ITEM_DROPPED 		= 1 << 10,  // (INTERNAL!)
-            ITEM_MISSION 		= 1 << 12,  // Missionsgegenstand
-            ITEM_MULTI		= 1 << 21,  // Stapelbar
-            ITEM_NFOCUS		= 1 << 23,  // (INTERNAL!)
-            ITEM_CREATEAMMO	= 1 << 25,  // Erzeugt Munition selbst (magisch)
-            ITEM_NSPLIT		= 1 << 26,  // Kein Split-Item (Waffe als Interact-Item!)
-            ITEM_DRINK		= 1 << 27,  // (OBSOLETE!)
-            ITEM_TORCH		= 1 << 28,  // Fackel
-            ITEM_THROW		= 1 << 29,  // (OBSOLETE!)
-            ITEM_ACTIVE		= 1 << 30  // (INTERNAL!)
+            public const int ITEM_DROPPED = 1 << 10;  // (INTERNAL!)
+            public const int ITEM_MISSION = 1 << 12;  // Missionsgegenstand
+            public const int ITEM_MULTI = 1 << 21;  // Stapelbar
+            public const int ITEM_NFOCUS = 1 << 23;  // (INTERNAL!)
+            public const int ITEM_CREATEAMMO = 1 << 25;  // Erzeugt Munition selbst (magisch)
+            public const int ITEM_NSPLIT = 1 << 26;  // Kein Split-Item (Waffe als Interact-Item!)
+            public const int ITEM_DRINK = 1 << 27;  // (OBSOLETE!)
+            public const int ITEM_TORCH = 1 << 28;  // Fackel
+            public const int ITEM_THROW = 1 << 29;  // (OBSOLETE!)
+            public const int ITEM_ACTIVE = 1 << 30;  // (INTERNAL!)
         }
 
         public oCItem(Process process, int address)
@@ -137,7 +137,8 @@ namespace Gothic.zClasses
 
         public zString[] Text
         {
-            get {
+            get
+            {
                 return new zString[]{
                     new zString(this.Process, Address+(int)Offsets.text),
                     new zString(this.Process, Address+(int)Offsets.text + 20),
@@ -189,7 +190,7 @@ namespace Gothic.zClasses
         {
             if (id >= 8)
                 throw new ArgumentException("id => 0-7");
-            Process.Write(value, Address+(int)Offsets.protection + 4 * id);
+            Process.Write(value, Address + (int)Offsets.protection + 4 * id);
         }
 
         public void setConditionalAttribute(int id, int value)
@@ -208,7 +209,7 @@ namespace Gothic.zClasses
 
         public void CreateVisual()
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.CreateVisual, new CallValue[] {  });
+            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.CreateVisual, new CallValue[] { });
         }
 
         public void ThisVobAddedToWorld(zCWorld slot)
@@ -341,14 +342,14 @@ namespace Gothic.zClasses
 
         public int CondAtr2
         {
-            get { return Process.ReadInt(Address + (int)Offsets.cond_atr+4); }
-            set { Process.Write(value, Address + (int)Offsets.cond_atr+4); }
+            get { return Process.ReadInt(Address + (int)Offsets.cond_atr + 4); }
+            set { Process.Write(value, Address + (int)Offsets.cond_atr + 4); }
         }
 
         public int CondAtr3
         {
-            get { return Process.ReadInt(Address + (int)Offsets.cond_atr+8); }
-            set { Process.Write(value, Address + (int)Offsets.cond_atr+8); }
+            get { return Process.ReadInt(Address + (int)Offsets.cond_atr + 8); }
+            set { Process.Write(value, Address + (int)Offsets.cond_atr + 8); }
         }
 
         public int CondValue1
@@ -374,7 +375,7 @@ namespace Gothic.zClasses
 
         public int[] Damage
         {
-            get 
+            get
             {
                 return new int[] { 
                     Process.ReadInt(Address + (int)Offsets.damage),

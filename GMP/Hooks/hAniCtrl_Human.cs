@@ -107,17 +107,19 @@ namespace GUC.Client.Hooks
                     int address = Convert.ToInt32(message);
                     int thisAddr = Program.Process.ReadInt(address);
 
-                    if (thisAddr == Player.Hero.gAniCtrl.Address)
+                    NPC npc = Player.Hero.gAniCtrl.Address == thisAddr ? Player.Hero : (NPC)Player.VobControlledList.Find(v => v is NPC && ((NPC)v).gAniCtrl.Address == thisAddr);
+
+                    if (npc != null)
                     {
                         //int bs = Player.Hero.gNpc.GetBodyState();
                         //if (bs >= 1 /*walk*/ && bs <= 7 /*dive*/)
                         {
-                            if (Player.Hero.State != NPCState.MoveForward)
+                            if (npc.State != NPCState.MoveForward)
                             {
-                                if (DateTime.UtcNow.Ticks > Player.Hero.nextForwardUpdate)
+                                if (DateTime.UtcNow.Ticks > npc.nextForwardUpdate)
                                 {
-                                    NPCMessage.WriteState(NPCState.MoveForward, Player.Hero);
-                                    Player.Hero.nextForwardUpdate = DateTime.UtcNow.Ticks + DelayBetweenMessages;
+                                    NPCMessage.WriteState(NPCState.MoveForward, npc);
+                                    npc.nextForwardUpdate = DateTime.UtcNow.Ticks + DelayBetweenMessages;
                                 }
                                 _BlockFwd = true;
                                 return 0;
@@ -146,17 +148,19 @@ namespace GUC.Client.Hooks
                     int address = Convert.ToInt32(message);
                     int thisAddr = Program.Process.ReadInt(address);
 
-                    if (thisAddr == Player.Hero.gAniCtrl.Address)
+                    NPC npc = Player.Hero.gAniCtrl.Address == thisAddr ? Player.Hero : (NPC)Player.VobControlledList.Find(v => v is NPC && ((NPC)v).gAniCtrl.Address == thisAddr);
+
+                    if (npc != null)
                     {
                         //int bs = Player.Hero.gNpc.GetBodyState();
                         //if (bs >= 1 /*walk*/ && bs <= 7 /*dive*/)
                         {
-                            if (Player.Hero.State != NPCState.Stand)
+                            if (npc.State != NPCState.Stand)
                             {
-                                if (DateTime.UtcNow.Ticks > Player.Hero.nextStandUpdate)
+                                if (DateTime.UtcNow.Ticks > npc.nextStandUpdate)
                                 {
-                                    NPCMessage.WriteState(NPCState.Stand, Player.Hero);
-                                    Player.Hero.nextStandUpdate = DateTime.UtcNow.Ticks + DelayBetweenMessages;
+                                    NPCMessage.WriteState(NPCState.Stand, npc);
+                                    npc.nextStandUpdate = DateTime.UtcNow.Ticks + DelayBetweenMessages;
                                 }
                                 _BlockStd = true;
                                 return 0;

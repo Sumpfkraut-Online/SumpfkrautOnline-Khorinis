@@ -74,7 +74,7 @@ namespace GUC.Client.Network
 
             messageListener.Add((byte)NetworkID.TradeMessage, TradeMessage.Read);
 
-            messageListener.Add((byte)NetworkID.ControlCmdMessage, Player.ReadVobControlCmd);
+            messageListener.Add((byte)NetworkID.ControlCmdMessage, ControlMessage.ReadVobControlCmd);
         }
 
         public void Startup()

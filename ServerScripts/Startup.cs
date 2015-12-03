@@ -13,8 +13,9 @@ namespace GUC.Server.Scripts
 	{
 		public void OnServerInit()
 		{
-            Logger.log(Logger.LogLevel.INFO, "######################## Initalise ########################");
-            
+            Log.Logger.log("######################## Initalise ########################");
+
+            Animations.AniCtrl.InitAnimations();
             //DefaultItems.Init();
             
 

@@ -161,15 +161,15 @@ PROTOTYPE C_Spell_Proto(C_Spell)
 	targetCollectElev			=	60;
 };
 
-func INT Spell_ProcessMana (VAR INT manaInvested)
-{
-	return GUC_SPELL_PROCESSMANA(manaInvested, self);
-};
+//func INT Spell_ProcessMana (VAR INT manaInvested)
+//{
+//	return GUC_SPELL_PROCESSMANA(manaInvested, self);
+//};
 
-func INT Spell_ProcessMana_Release (VAR INT manaInvested)
-{
-	return GUC_SPELL_PROCESSMANA_RELEASE(manaInvested, self);
-};
+//func INT Spell_ProcessMana_Release (VAR INT manaInvested)
+//{
+//	return GUC_SPELL_PROCESSMANA_RELEASE(manaInvested, self);
+//};
 
 func int C_CanNpcCollideWithSpell(var int spellType)
 {

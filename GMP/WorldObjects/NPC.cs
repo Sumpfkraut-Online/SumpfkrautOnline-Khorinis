@@ -394,8 +394,39 @@ namespace GUC.Client.WorldObjects
 
         public bool DoJump = false;
 
+        public ControlCmd cmd = ControlCmd.Stop;
+        public uint cmdTargetVob;
+        public Vec3f cmdTargetPos;
+        public float cmdTargetRange;
+
         public override void Update(long now)
         {
+            if (cmd == ControlCmd.GoToVob)
+            {
+                zCEventMessage activeMsg = gVob.GetEM(0).GetActiveMsg();
+                if (activeMsg.Address == 0)
+                {
+                    AbstractVob target = World.GetVobByID(cmdTargetVob);
+                    if (target != null && target.Position.GetDistance(this.Position) > cmdTargetRange)
+                    {
+                        oCMsgMovement msg = oCMsgMovement.Create(Program.Process, oCMsgMovement.SubTypes.GotoVob, target.gVob);
+                        gVob.GetEM(0).StartMessage(msg, gVob);
+                    }
+                }
+                else if (activeMsg.VTBL == (int)zCObject.VobTypes.oCMsgMovement)
+                {
+                    oCMsgMovement movMsg = new oCMsgMovement(Program.Process, activeMsg.Address);
+                    if (movMsg.SubType == oCMsgMovement.SubTypes.GotoPos || movMsg.SubType == oCMsgMovement.SubTypes.GotoVob)
+                    {
+                        AbstractVob target = World.GetVobByID(cmdTargetVob);
+                        if (target != null && target.Position.GetDistance(this.Position) <= cmdTargetRange)
+                        {
+                            gVob.GetEM(0).KillMessages();
+                        }
+                    }
+                }
+            }
+
             if (this != Player.Hero)
             {
                 if (turning) //turn!

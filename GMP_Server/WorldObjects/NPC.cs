@@ -370,12 +370,8 @@ namespace GUC.Server.WorldObjects
                 item.SpecialLine = "Geschmiedet von Malak Akbar.";
                 item.Spawn(client.character.World, new Types.Vec3f(200, 0, 200), new Types.Vec3f(0, 0, 1));
 
-                NPC scav = NPC.Create("scavenger");
-                scav.DrawnItem = Item.Fists;
-                scav.Spawn(client.character.World);
-
-                Vob mob = Vob.Create("forge");
-                mob.Spawn(client.character.World, new Types.Vec3f(-200, -100, 200), new Types.Vec3f(0, 0, 1));
+                item = Item.Create("ITAR_BDT_M");
+                item.Spawn(client.character.World, new Types.Vec3f(-200, 0, -200), new Types.Vec3f(0, 0, 1));
             }
 
             if (!client.character.Spawned)
@@ -1068,8 +1064,7 @@ namespace GUC.Server.WorldObjects
         {
             if (this.VobController == null)
             {
-                Vec3f dir = (this.pos - position).Normalize();
-                this.Position = position + dir * range;
+                this.Position = position;
             }
             else
             {
@@ -1095,8 +1090,7 @@ namespace GUC.Server.WorldObjects
 
             if (this.VobController == null)
             {
-                Vec3f dir = (this.pos - vob.pos).Normalize();
-                this.Position = vob.pos + dir * range;
+                this.Position = vob.pos;
             }
             else
             {

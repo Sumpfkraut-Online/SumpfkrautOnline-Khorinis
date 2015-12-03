@@ -431,7 +431,7 @@ namespace GUC.Client.GUI
         {
             // set == true -> set bg to accept state
             // set == false -> sets bg to normal state
-            if(set)
+            if (set)
             {
                 TradeAccepted = true;
                 back.SetBackTexture("Inv_Back_Buy.tga");
@@ -445,12 +445,12 @@ namespace GUC.Client.GUI
                 back.SetBackTexture("Inv_Back_Sell.tga");
                 leftBack.SetBackTexture("Inv_Back_Sell.tga");
                 rightBack.SetBackTexture("Inv_Back_Sell.tga");
-                if(!enabled)
+                if (!enabled)
                 {
                     back.Hide();
                 }
             }
-            
+
         }
 
         void UpdateSlots()
@@ -503,15 +503,15 @@ namespace GUC.Client.GUI
 
         #region sorting
 
-        static List<oCItem.MainFlags> sortList = new List<oCItem.MainFlags>() { oCItem.MainFlags.ITEM_KAT_NF,
-                                                                                oCItem.MainFlags.ITEM_KAT_FF,
-                                                                                oCItem.MainFlags.ITEM_KAT_MUN,
-                                                                                oCItem.MainFlags.ITEM_KAT_FOOD,
-                                                                                oCItem.MainFlags.ITEM_KAT_RUNE,
-                                                                                oCItem.MainFlags.ITEM_KAT_ARMOR,
-                                                                                oCItem.MainFlags.ITEM_KAT_DOCS,
-                                                                                oCItem.MainFlags.ITEM_KAT_POTIONS,
-                                                                                oCItem.MainFlags.ITEM_KAT_MAGIC };
+        static List<int> sortList = new List<int>() { oCItem.MainFlags.ITEM_KAT_NF,
+                                                      oCItem.MainFlags.ITEM_KAT_FF,
+                                                      oCItem.MainFlags.ITEM_KAT_MUN,
+                                                      oCItem.MainFlags.ITEM_KAT_FOOD,
+                                                      oCItem.MainFlags.ITEM_KAT_RUNE,
+                                                      oCItem.MainFlags.ITEM_KAT_ARMOR,
+                                                      oCItem.MainFlags.ITEM_KAT_DOCS,
+                                                      oCItem.MainFlags.ITEM_KAT_POTIONS,
+                                                      oCItem.MainFlags.ITEM_KAT_MAGIC };
 
         static InventoryComparer inventoryComparer = new InventoryComparer();
         class InventoryComparer : IComparer<Item>

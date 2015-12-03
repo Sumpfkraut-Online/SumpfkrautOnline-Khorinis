@@ -33,44 +33,6 @@ namespace GUC.Client.WorldObjects
 
         public static Dictionary<uint, Item> Inventory = new Dictionary<uint, Item>();
 
-        public static void ReadVobControlCmd(BitStream stream)
-        {
-            return;
-            Gothic.zClasses.zERROR.GetZErr(Program.Process).Report(2, 'G', "Read Vob Control Cmd", 0, "hModelAni.cs", 0);
 
-            uint ID = stream.mReadUInt();
-            AbstractVob vob = VobControlledList.Find(v => v.ID == ID);
-            if (vob == null || !(vob is NPC))
-                return;
-
-            Gothic.zClasses.zERROR.GetZErr(Program.Process).Report(2, 'G', "CmdVob found", 0, "hModelAni.cs", 0);
-
-            NPC npc = (NPC)vob;
-
-
-            ControlCmd cmd = (ControlCmd)stream.mReadByte();
-
-            switch (cmd)
-            {
-                case ControlCmd.GoToPos:
-                    break;
-
-                case ControlCmd.GoToVob:
-                    Gothic.zClasses.zERROR.GetZErr(Program.Process).Report(2, 'G', "GoToVob", 0, "hModelAni.cs", 0);
-                    ID = stream.mReadUInt();
-                    AbstractVob target = Player.Hero;
-                    if (target != null)
-                    {
-                        Gothic.zClasses.zERROR.GetZErr(Program.Process).Report(2, 'G', "TargetVob found", 0, "hModelAni.cs", 0);
-                        oCMsgMovement msg = oCMsgMovement.Create(Program.Process, oCMsgMovement.SubTypes.GotoVob, target.gVob);
-                        npc.gVob.GetEM(0).StartMessage(msg, npc.gVob);
-                        Gothic.zClasses.zERROR.GetZErr(Program.Process).Report(2, 'G', "Started Msg", 0, "hModelAni.cs", 0);
-                    }
-                    break;
-
-                case ControlCmd.Stop:
-                    break;
-            }
-        }
     }
 }

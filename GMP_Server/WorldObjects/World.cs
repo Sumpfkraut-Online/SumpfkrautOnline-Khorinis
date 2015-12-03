@@ -35,7 +35,26 @@ namespace GUC.Server.WorldObjects
             MapName = mapname.ToUpper();
             sWorld.WorldDict.Add(MapName, this);
 
-            //Vob.Create("forge").Spawn(this, new Types.Vec3f(0, -100, 0));
+            NPC scav = NPC.Create("scavenger");
+            scav.DrawnItem = Item.Fists;
+            scav.Spawn(this);
+
+            /*Random random = new Random();
+            for (int i = 0; i < 250; i++)
+            {
+                scav = NPC.Create("scavenger");
+                scav.DrawnItem = Item.Fists;
+                scav.Spawn(this, new Vec3f(6286 + random.Next(-1500,1500), 400, -1703 + random.Next(-1500,1500)));
+            }*/
+
+            Vob mob = Vob.Create("forge");
+            mob.Spawn(this, new Types.Vec3f(-200, -100, 200), new Types.Vec3f(0, 0, 1));
+
+            mob = Vob.Create("stool");
+            mob.Spawn(this, new Types.Vec3f(400, -160, 458), new Types.Vec3f(0, 0, 1));
+
+            mob = Vob.Create("latern");
+            mob.Spawn(this, new Types.Vec3f(400, -160, 458), new Types.Vec3f(0, 0, 1));
         }
 
         public NPC GetNpcOrPlayer(uint id)

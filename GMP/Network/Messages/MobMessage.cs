@@ -55,6 +55,9 @@ namespace GUC.Client.Network.Messages
                     npc.UsedMob = (MobInter)vob;
                     oCMobMsg msg = oCMobMsg.Create(Program.Process, oCMobMsg.SubTypes.EV_StartInteraction, npc.gNpc);
                     vob.gVob.GetEM(0).StartMessage(msg, npc.gVob);
+
+                    //Turn collision off while attending the mob, so the NPC doesn't get stuck or sits in the air or smth, THX to Situ
+                    npc.gVob.BitField1 &= ~(int)zCVob.BitFlag0.collDetectionStatic;
                 }
             }
         }

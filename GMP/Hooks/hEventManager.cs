@@ -91,6 +91,13 @@ namespace GUC.Client.Hooks
         static void OnMobMsg(int emAddress, int msgAddress, int vobAddress)
         {
             oCMobMsg msg = new oCMobMsg(Program.Process, msgAddress);
+
+            if (msg.SubType == oCMobMsg.SubTypes.EV_EndInteraction && msg.UserAddress != 0)
+            {
+                //Turn collision on again, THX to Situ
+                (new zCVob(Program.Process, msg.UserAddress)).BitField1 |= (int)zCVob.BitFlag0.collDetectionStatic;
+            }
+
             if (msg.UserAddress == Player.Hero.gVob.Address)
             {
                 zCEventManager EM = new zCEventManager(Program.Process, emAddress); //EventManager of the used Mob
@@ -105,6 +112,8 @@ namespace GUC.Client.Hooks
                         }
                         BlockMsg = true;
                         return;
+                    case oCMobMsg.SubTypes.EV_EndInteraction:
+                        break;
                     case oCMobMsg.SubTypes.EV_StartStateChange:
                         if (msg.StateChangeLeaving) //player wants to stop using the mob
                         {

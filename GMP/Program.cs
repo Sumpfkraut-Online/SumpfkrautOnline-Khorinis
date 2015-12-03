@@ -98,7 +98,7 @@ namespace GUC.Client
 
             ParSymbol_GetValueHook = process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hParser).GetMethod("hook_Symbol_GetValue"), 0x007A2040, 7, 2);
 
-            process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(Externals).GetMethod("AddExternals"), (int)0x006D4780, (int)7, 1);
+            //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(Externals).GetMethod("AddExternals"), (int)0x006D4780, (int)7, 1);
 
             //process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hModelAni).GetMethod("oCStartAni_ModelInt"), (int)zCModel.FuncOffsets.StartAni_ModelInt, (int)zCModel.FuncSize.StartAni_ModelInt, 2);
 

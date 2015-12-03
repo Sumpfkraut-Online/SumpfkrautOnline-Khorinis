@@ -24,7 +24,10 @@ namespace GUC.Server.Scripts
 
         static void OnDrawEquipment(NPC npc, Item item)
         {
-            npc.DoDrawitem(item);
+            if (npc.UsedMob == null)
+            {
+                npc.DoDrawitem(item);
+            }
         }
 
         static void OnUndrawItem(NPC npc, Item item)

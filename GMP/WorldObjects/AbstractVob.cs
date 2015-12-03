@@ -166,7 +166,10 @@ namespace GUC.Client.WorldObjects
             this.Direction = direction;
 
             if (this is NPC)
+            {
+                ((NPC)this).gNpc.Enable(pos.X, pos.Y, pos.Z);
                 ((NPC)this).DrawItem(((NPC)this).DrawnItem, true);
+            }
         }
 
         protected abstract void CreateVob(bool createNew);

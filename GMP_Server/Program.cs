@@ -101,8 +101,6 @@ namespace GUC.Server
                 long tickMax = 0;
 
                 Stopwatch watch = new Stopwatch();
-                //const int serverTickrate = 30;
-                const long updateTime = 200000; //20ms
                 while (true)
                 {
                     watch.Restart();
@@ -115,7 +113,7 @@ namespace GUC.Server
                     if (nextInfoUpdates < DateTime.UtcNow.Ticks)
                     {
                         tickAverage /= tickCount;
-                        Log.Logger.log(String.Format("Server tick rate info: {0}ms average, {1}ms max.", tickAverage / TimeSpan.TicksPerMillisecond, tickMax / TimeSpan.TicksPerMillisecond));
+                        Log.Logger.log(String.Format("Tick rate info: {0}ms average, {1}ms max. Allocated RAM: {2:0.0}MB", tickAverage / TimeSpan.TicksPerMillisecond, tickMax / TimeSpan.TicksPerMillisecond, (double)Process.GetCurrentProcess().PrivateMemorySize64 / 1048576d));
                         nextInfoUpdates = DateTime.UtcNow.Ticks + nextInfoUpdateTime;
                         tickMax = 0;
                         tickAverage = 0;
@@ -129,9 +127,9 @@ namespace GUC.Server
                         tickMax = watch.ElapsedTicks;
                     }
 
-                    if (watch.ElapsedTicks < updateTime)
+                    if (watch.ElapsedTicks < 200000)
                     {
-                        Thread.Sleep((int)(watch.ElapsedTicks / TimeSpan.TicksPerMillisecond));
+                        Thread.Sleep(1);
                     }
                 }
             }

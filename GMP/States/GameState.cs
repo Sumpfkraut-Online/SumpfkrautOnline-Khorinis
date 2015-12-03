@@ -44,12 +44,21 @@ namespace GUC.Client.States
         static int count = 0;
         static Vec3f pos = new Vec3f();
         static Vec3f dir = new Vec3f();
+
+        static int index = -1;
+        static string[] overlays = new string[] { "HumanS_Flee", "HumanS_Sprint", "Humans_Mage", "HumanS_Militia", "Humans_1hST1", "Humans_1hST2" };
+
         public static void RenderTest()
         {
-            timeSpan += NPCMessage.lastSpan; count++;
+            index++;
+            if (index >= overlays.Length)
+                index = 0;
+
+            GUI.GUCView.DebugText.Text = overlays[index];
+            /*timeSpan += NPCMessage.lastSpan; count++;
             GUI.GUCView.DebugText.Text = count + " Average: " + (int)((double)timeSpan / (double)count / (double)TimeSpan.TicksPerMillisecond);
             Player.Hero.Position = pos;
-            Player.Hero.Direction = dir;
+            Player.Hero.Direction = dir;*/
 
             /*if (npc == null)
             {
@@ -88,10 +97,8 @@ namespace GUC.Client.States
         static Random rand = new Random();
         public static void RenderTest2()
         {
-            timeSpan = 0;
-            count = 0;
-            pos = Player.Hero.Position;
-            dir = Player.Hero.Direction;
+            using (zString z = zString.Create(Program.Process, overlays[index]))
+                Player.Hero.gNpc.ApplyOverlay(z);
 
             //Player.Hero.gVob.GetEM(0).KillMessages();
             //Player.Hero.gAniCtrl.StartStandAni();
@@ -115,6 +122,9 @@ namespace GUC.Client.States
             "S_EYESCLOSED", "R_EYESBLINK", "T_EAT", "T_HURT", "VISEME" };
         public static void RenderTest3()
         {
+            using (zString z = zString.Create(Program.Process, overlays[index]))
+                Player.Hero.gNpc.RemoveOverlay(z);
+
             /*Player.Hero.gNpc.StopFaceAni(anis[lop]);
             lop++;
             if (lop >= anis.Count)

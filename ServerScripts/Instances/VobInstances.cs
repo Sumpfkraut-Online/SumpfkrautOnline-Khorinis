@@ -106,6 +106,15 @@ namespace GUC.Server.Scripts.Instances
             item.Text[3] = "Einhand";
             ItemInstance.Table.Add(item);
 
+            item = new ItemInstance("ITAR_BDT_M");
+            item.Name = "Mittlere Banditenrüstung";
+            item.Gender = Enumeration.Gender.Feminine;
+            item.Type = Enumeration.ItemType.Armor;
+            item.Material = Enumeration.ItemMaterial.Leather;
+            item.Visual = "ItAr_Bdt_M.3ds";
+            item.VisualChange = "Armor_Bdt_M.asc";
+            ItemInstance.Table.Add(item);
+
             ItemInstance.Table.NetUpdate();
 
 
@@ -114,6 +123,17 @@ namespace GUC.Server.Scripts.Instances
             mob.type = Enumeration.MobType.MobInter;
             mob.Visual = "BSFIRE_OC.MDS";
             mob.focusName = "Schmiedefeuer";
+            MobInstance.Table.Add(mob);
+
+            mob = new MobInstance("stool");
+            mob.type = Enumeration.MobType.MobInter;
+            mob.Visual = "CHAIR_NW_NORMAL_01.ASC";
+            mob.focusName = "Stuhl";
+            MobInstance.Table.Add(mob);
+
+            mob = new MobInstance("latern");
+            mob.type = Enumeration.MobType.Vob;
+            mob.Visual = "FIREPLACE_NW_LAMP_01.ASC";
             MobInstance.Table.Add(mob);
 
             MobInstance.Table.NetUpdate();

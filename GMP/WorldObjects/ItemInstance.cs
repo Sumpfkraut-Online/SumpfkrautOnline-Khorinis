@@ -36,8 +36,8 @@ namespace GUC.Client.WorldObjects
 
         public ushort munition;
 
-        public oCItem.MainFlags mainFlags;
-        public oCItem.ItemFlags flags;
+        public int mainFlags;
+        public int flags;
         public int wear = 0;
 
         public bool IsMeleeWeapon { get { return mainFlags == oCItem.MainFlags.ITEM_KAT_NF; } }
@@ -170,6 +170,8 @@ namespace GUC.Client.WorldObjects
                     flags = 0;
                     break;
             }
+
+            flags |= mainFlags;
         }
     }
 }

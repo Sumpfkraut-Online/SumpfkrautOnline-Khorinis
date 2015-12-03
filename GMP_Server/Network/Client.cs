@@ -129,6 +129,11 @@ namespace GUC.Server.Network
             BitStream stream = Program.server.SetupStream(NetworkID.ControlAddVobMessage); stream.mWrite(vob.ID);
             Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'G', guid, false);
             Log.Logger.log("AddCtrl: " + character.ID + " " + vob.ID + ": " + vob.GetType().Name);
+
+            if (vob is NPC)
+            {
+                ((NPC)vob).GoTo(this.character, 500);
+            }
         }
 
         public void RemoveControlledVob(AbstractCtrlVob vob)
