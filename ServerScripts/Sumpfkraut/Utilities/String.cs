@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GUC.Server.Scripts.Sumpfkraut.Utilities
 {
-    class String
+    public class String
     {
 
         public static string Concatenate<T>(IEnumerable<T> source, string delimiter)

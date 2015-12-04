@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 {
-    class WorldVobHandler : ScriptObject
+    public class WorldVobHandler : ScriptObject
     {
 
         new public static readonly String _staticName = "WorldVobHandler (static)";

@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace GUC.Server.Scripts.Sumpfkraut.Database
 {
-    class DBAgent : Runnable
+    public class DBAgent : Runnable
     {
 
         protected List<String> commandQueue = new List<String>();

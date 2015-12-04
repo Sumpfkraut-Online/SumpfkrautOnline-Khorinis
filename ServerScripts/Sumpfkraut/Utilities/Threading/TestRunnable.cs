@@ -6,7 +6,7 @@ using GUC.Server.WorldObjects;
 
 namespace GUC.Server.Scripts.Sumpfkraut.Utilities.Threading
 {
-    class TestRunnable : Runnable
+    public class TestRunnable : Runnable
     {
 
         public delegate void TestEventHandler (DateTime dt);

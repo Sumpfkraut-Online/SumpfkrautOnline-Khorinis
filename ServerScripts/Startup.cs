@@ -10,6 +10,7 @@ using GUC.Server.Scripts.Sumpfkraut.VobSystem;
 using GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Server.Scripts.Sumpfkraut;
+using GUC.Server.Scripts.Sumpfkraut.Database;
 
 namespace GUC.Server.Scripts
 {
@@ -241,6 +242,41 @@ namespace GUC.Server.Scripts
             //homeRun.Start();
             //waitHandle.WaitOne();
             //Console.WriteLine("~~~> " + myResults_1 + " " + myResults_2);
+
+
+
+
+            DBQueryHandler queryHandler = new DBQueryHandler("Data Source=save.db");
+
+            List<List<List<object>>> sqlResults = new List<List<List<object>>>();
+            Action<List<List<List<object>>>> receiveResults = 
+                new Action<List<List<List<object>>>>(delegate (List<List<List<object>>> results) 
+                {
+                    Console.WriteLine(">> Received results! Oh my, oh my-!");
+
+                    if ((results == null) || (results.Count < 1))
+                    {
+                        return;
+                    }
+                    for (int res = 0; res < results.Count; res++)
+                    {
+                        Console.WriteLine(">> " + res);
+                        for (int row = 0; row < results[res].Count; row++)
+                        {
+                            Console.WriteLine(">>>> " + row);
+                            for (int col = 0; col < results[res][row].Count; col++)
+                            {
+                                Console.WriteLine(">>>>>> " + results[res][row][col]);
+                            }
+                        }
+                    }
+                });
+
+            Sumpfkraut.Database.DBQuerying.DBQuery query_1 = 
+                new Sumpfkraut.Database.DBQuerying.DBQuery("SELECT 111; SELECT 222; SELECT 333;", 
+                    DBReaderMode.loadData, receiveResults);
+
+            queryHandler.Add(query_1);
 
 
 

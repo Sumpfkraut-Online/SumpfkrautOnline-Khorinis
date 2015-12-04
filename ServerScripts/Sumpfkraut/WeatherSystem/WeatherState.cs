@@ -6,7 +6,7 @@ using GUC.Server.WorldObjects;
 
 namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
 {
-    class WeatherState
+    public class WeatherState
     {
 
         public WeatherType weatherType;

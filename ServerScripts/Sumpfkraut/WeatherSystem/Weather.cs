@@ -10,7 +10,7 @@ using GUC.Server.Scripts.Sumpfkraut.Utilities.Threading;
 namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
 {
 
-    enum WSSplitDecision
+    public enum WSSplitDecision
     {
         undefined,
         completeOverride,
@@ -19,7 +19,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
         keepEnd,
     }
 
-    class Weather : AbstractRunnable
+    public class Weather : AbstractRunnable
     {
 
         public List<WeatherState> weatherStateQueue; // queue of (future) weather-states

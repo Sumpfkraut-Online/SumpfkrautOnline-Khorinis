@@ -8,7 +8,7 @@ using SQLiteCommand = Mono.Data.Sqlite.SqliteCommand;
 
 namespace GUC.Server.Scripts.Sumpfkraut.Database
 {
-    class DBReader : ScriptObject
+    public class DBReader : ScriptObject
     {
 
         #region attributes

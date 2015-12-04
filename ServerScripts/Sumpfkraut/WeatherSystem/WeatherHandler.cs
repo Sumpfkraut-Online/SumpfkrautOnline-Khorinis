@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
 {
-    class WeatherHandler
+    public class WeatherHandler
     {
 
 

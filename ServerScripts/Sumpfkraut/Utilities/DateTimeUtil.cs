@@ -6,7 +6,7 @@ using System.Globalization;
 
 namespace GUC.Server.Scripts.Sumpfkraut.Utilities
 {
-    class DateTimeUtil
+    public class DateTimeUtil
     {
 
         private static string dateFormat = "yyyy-MM-dd HH:mm:ss";

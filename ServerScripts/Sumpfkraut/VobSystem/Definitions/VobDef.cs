@@ -6,7 +6,7 @@ using System.Text;
 
 namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 {
-    abstract class VobDef : ScriptObject
+    public abstract class VobDef : ScriptObject
     {
 
         #region dictionaries

@@ -7,7 +7,7 @@ using System.Text;
 
 namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 {
-    abstract class VobLoader : Runnable
+    public abstract class VobLoader : Runnable
     {
 
         // 0: before loading; 1: started loading; ?: done

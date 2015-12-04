@@ -10,71 +10,7 @@ using SQLiteCommand = Mono.Data.Sqlite.SqliteCommand;
 namespace GUC.Server.Scripts.Sumpfkraut.Database
 {
 
-    //enum DefTableEnum
-    //{
-    //    Mob_def,
-    //    Item_def,
-    //    Spell_def,
-    //    NPC_def,
-    //    Effect_def,
-    //    Effect_Changes_def,
-    //}
-
-    //enum InstTableEnum
-    //{
-    //    World_inst,
-    //    Account_inst,
-
-    //    Mob_Effects_inst,
-    //    Spell_Effects_inst,
-    //    Item_Effects_inst,
-    //    NPC_Effects_inst,
-
-    //    Mob_inst,
-    //    Spell_inst,
-    //    Item_inst,
-    //    NPC_inst,
-
-    //    ItemInInventory_inst,
-    //    ItemInContainer_inst,
-    //    MobInWorld_inst,
-    //    ItemInWorld_inst,
-    //    NPCInWorld_inst,
-    //}
-
-
-    //enum EffectsInstTableEnum
-    //{
-    //    Mob_Effects_inst,
-    //    Spell_Effects_inst,
-    //    Item_Effects_inst,
-    //    NPC_Effects_inst
-    //}
-
-    /**
-    *   Enum of the supported SQLite-Get-Types, used internally 
-    */
-    enum SQLiteGetTypeEnum
-    {
-        GetBoolean          = 0,
-        GetByte             = 1,
-        GetChar             = 2,
-        GetDateTime         = 3,
-        GetDecimal          = 4,
-        GetDouble           = 5,
-        GetFloat            = 6,
-        GetGuid             = 7,
-        GetInt16            = 8,
-        GetInt32            = 9,
-        GetInt64            = 10,
-        GetString           = 11,
-    }
-
-
-
-    
-    
-    class DBTables : ScriptObject
+    public class DBTables : ScriptObject
     {
 
         public struct ColumnGetTypeInfo

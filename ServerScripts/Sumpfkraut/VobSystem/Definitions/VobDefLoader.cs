@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 {
-    class VobDefLoader : VobLoader
+    public class VobDefLoader : VobLoader
     {
 
         protected VobDefType vobDefType = VobDefType.VobDef;

@@ -7,44 +7,11 @@ using GUC.Server.WorldObjects;
 namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 {
 
-    enum EffectChangesEnum
-    {
-        // 1000 - 1999 reserved for ItemDef effect changes
-        Description                 = 1000,
-        Text0                       = EffectChangesEnum.Description + 1,
-        Text1                       = EffectChangesEnum.Text0 + 1,
-        Text2                       = EffectChangesEnum.Text1 + 1,
-        Text3                       = EffectChangesEnum.Text2 + 1,
-        Text4                       = EffectChangesEnum.Text3 + 1,
-        Text5                       = EffectChangesEnum.Text4 + 1,
-        Count0                      = EffectChangesEnum.Text5 + 1,
-        Count1                      = EffectChangesEnum.Count0 + 1,
-        Count2                      = EffectChangesEnum.Count1 + 1,
-        Count3                      = EffectChangesEnum.Count2 + 1,
-        Count4                      = EffectChangesEnum.Count3 + 1,
-        Count5                      = EffectChangesEnum.Count4 + 1,
-
-        OnUse_HPChange              = EffectChangesEnum.Count5 + 1,
-        OnUse_HPMaxChange           = EffectChangesEnum.OnUse_HPChange + 1,
-        OnUse_MPChange              = EffectChangesEnum.OnUse_HPMaxChange + 1,
-        OnUse_MPMaxChange           = EffectChangesEnum.OnUse_MPChange + 1,
-
-        OnEquip_HPChange            = EffectChangesEnum.OnUse_MPMaxChange + 1,
-        OnEquip_HPMaxChange         = EffectChangesEnum.OnEquip_HPChange + 1,
-        OnEquip_MPChange            = EffectChangesEnum.OnEquip_HPMaxChange + 1,
-        OnEquip_MPMaxChange         = EffectChangesEnum.OnEquip_MPChange + 1,
-
-        OnUnEquip_HPChange          = EffectChangesEnum.OnEquip_MPMaxChange + 1,
-        OnUnEquip_HPMaxChange       = EffectChangesEnum.OnUnEquip_HPChange + 1,
-        OnUnEquip_MPChange          = EffectChangesEnum.OnUnEquip_HPMaxChange + 1,
-        OnUnEquip_MPMaxChange       = EffectChangesEnum.OnUnEquip_MPChange + 1,
-    }
-
     /**
      *   Class from which all additional effects (not only visual) 
      *   are instatiated (which are handled by the serverscript).
      */
-    class EffectChangesDef : ScriptObject
+    public class EffectChangesDef : ScriptObject
     {
 
         new public static readonly String _staticName = "EffectChangesDef (static)";

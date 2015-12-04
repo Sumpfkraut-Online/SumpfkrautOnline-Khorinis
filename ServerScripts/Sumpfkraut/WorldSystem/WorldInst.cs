@@ -6,7 +6,7 @@ using GUC.Server.WorldObjects;
 
 namespace GUC.Server.Scripts.Sumpfkraut.WorldSystem
 {
-    class WorldInst
+    public class WorldInst
     {
 
         protected int id = -1;

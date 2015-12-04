@@ -14,7 +14,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
      *   This is due to C# being unable to multiple inheritance, while inheriting from ItemInstance
      *   is necessary to obtain all the convenient functionality.
      */
-    class ItemDef : VobDef
+    public class ItemDef : VobDef
     {
 
         #region dictionaries

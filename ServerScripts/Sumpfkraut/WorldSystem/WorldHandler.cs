@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GUC.Server.Scripts.Sumpfkraut.WorldSystem
 {
-    class WorldHandler
+    public class WorldHandler
     {
 
         public static readonly string defaultWorldName = @"NEWWORLD\NEWWORLD.ZEN";

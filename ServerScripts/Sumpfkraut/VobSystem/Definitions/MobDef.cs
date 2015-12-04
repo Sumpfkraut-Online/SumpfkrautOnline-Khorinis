@@ -12,7 +12,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
     /**
      *   Class from which all mobs are instatiated (which are handled by the serverscript).
      */
-    class MobDef : VobDef
+    public class MobDef : VobDef
     {
 
         #region dictionaries

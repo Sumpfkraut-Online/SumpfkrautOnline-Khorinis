@@ -11,7 +11,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
     /**
      *   Class from which all npcs are instatiated (which are handled by the serverscript).
      */
-    class NpcDef : VobDef
+    public class NpcDef : VobDef
     {
 
         #region dictionaries
