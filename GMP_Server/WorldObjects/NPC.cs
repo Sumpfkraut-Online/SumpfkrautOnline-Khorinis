@@ -831,7 +831,7 @@ namespace GUC.Server.WorldObjects
                 {
                     if (attacker == target) continue;
 
-                    Vec3f dir = (attacker.Position - target.Position).Normalize();
+                    Vec3f dir = (attacker.Position - target.Position).Normalise();
                     float dot = attacker.Direction.Z * dir.Z + dir.X * attacker.Direction.X;
 
                     if (dot > 0) continue; //target is behind attacker

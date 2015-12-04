@@ -5,109 +5,137 @@ using System.Text;
 
 namespace GUC.Types
 {
-    public class Vec2i
+    public struct Vec2i
     {
-        protected int[] data;
+        public static Vec2i Null
+        {
+            get { return new Vec2i(0, 0); }
+        }
+
+        public int X;
+        public int Y;
 
         public Vec2i(int x, int y)
-            : this()
         {
-            this.set(x, y);
+            this.X = x;
+            this.Y = y;
+        }
+
+        public Vec2i(float x, float y)
+        {
+            this.X = (int)x;
+            this.Y = (int)y;
         }
 
         public Vec2i(int[] data)
-            : this()
         {
-            this.set(data);
+            if (data != null)
+            {
+                if (data.Length >= 2)
+                {
+                    this.X = data[0];
+                    this.Y = data[1];
+                    return;
+                }
+                else if (data.Length == 1)
+                {
+                    this.X = data[0];
+                    this.Y = 0;
+                    return;
+                }
+            }
+            this.X = 0;
+            this.Y = 0;
         }
-
-        public Vec2i()
+        public int this[int i]
         {
-            this.data = new int[] { 0, 0 };
+            get
+            {
+                if (i == 0) return X;
+                else if (i == 1) return Y;
+                else throw new ArgumentOutOfRangeException("Vec2i index is out of range (0..1).");
+            }
+            set
+            {
+                if (i == 0) X = value;
+                else if (i == 1) Y = value;
+                else throw new ArgumentOutOfRangeException("Vec2i index is out of range (0..1).");
+            }
         }
-
-        public void set(int x, int y)
-        {
-            this.data[0] = x;
-            this.data[1] = y;
-        }
-
-        public void set(Vec2i vec)
-        {
-            if (vec == null)
-                throw new ArgumentNullException("Paramter vec can't be null!");
-
-            set(vec.X, vec.Y);
-        }
-
-        public void set(int[] vec)
-        {
-            if (vec == null || vec.Length != 2)
-                throw new ArgumentException("Paramter vec can't be null and needs a length of 3");
-
-            set(vec[0], vec[1]);
-        }
-
-        public int[] Data { get { return this.data; } }
-
-        public float getDistance(Vec2i value)
-        {
-            return (this - value).Length;
-        }
-
-        public float length()
-        {
-            return (float)Math.Sqrt(X * X + Y * Y);
-        }
-
-        public float Length { get { return this.length(); } }
-
-        public Vec2i normalise()
-        {
-            float len = Length;
-            return new Vec2i((int)(X * len), (int)(Y * len));
-        }
-
-        public static Vec2i operator +(Vec2i a, Vec2i b)
-        {
-            if (a == null && b == null)
-                return null;
-            if (a == null)
-                return b;
-            if (b == null)
-                return a;
-
-            return new Vec2i(a.X + b.X, a.Y + b.Y);
-        }
-
-        public static Vec2i operator -(Vec2i a, Vec2i b)
-        {
-            if (a == null && b == null)
-                return null;
-            if (a == null)
-                return b;
-            if (b == null)
-                return a;
-
-            return new Vec2i(a.X - b.X, a.Y - b.Y);
-        }
-
-        public int X
-        {
-            get { return data[0]; }
-            set { data[0] = value; }
-        }
-
-        public int Y
-        {
-            get { return data[1]; }
-            set { data[1] = value; }
-        }
-
 
         public static explicit operator Vec2i(int[] data)
         {
             return new Vec2i(data);
         }
+
+        public void Reset()
+        {
+            this.X = 0;
+            this.Y = 0;
+        }
+
+        public float GetLength()
+        {
+            return (float)Math.Sqrt(this.X * this.X + this.Y * this.Y);
+        }
+
+        public float GetDistance(Vec2i value)
+        {
+            return (this - value).GetLength();
+        }
+
+        #region Operators
+
+        public static Vec2i operator +(Vec2i a, Vec2i b)
+        {
+            return new Vec2i(a.X + b.X, a.Y + b.Y);
+        }
+
+        public static float operator *(Vec2i a, Vec2i b)
+        {
+            return (a.X * b.X + a.Y * b.Y);
+        }
+
+        public static Vec2i operator *(float factor, Vec2i a)
+        {
+            return new Vec2i(a.X * factor, a.Y * factor);
+        }
+
+        public static Vec2i operator *(Vec2i a, float factor)
+        {
+            return factor * a;
+        }
+
+        public static Vec2i operator -(Vec2i a, Vec2i b)
+        {
+            return new Vec2i(a.X - b.X, a.Y - b.Y);
+        }
+
+        #endregion
+
+        #region Equality
+
+        const float nullLimit = 0.0000001f;
+        public bool IsNull()
+        {
+
+            if (this.X < nullLimit && this.X > -nullLimit &&
+                this.Y < nullLimit && this.Y > -nullLimit)
+                return true;
+            else
+                return false;
+        }
+
+        public static bool operator ==(Vec2i a, Vec2i b)
+        {
+            return (a - b).IsNull();
+        }
+
+        public static bool operator !=(Vec2i a, Vec2i b)
+        {
+            return !(a == b);
+        }
+
+        #endregion
     }
 }

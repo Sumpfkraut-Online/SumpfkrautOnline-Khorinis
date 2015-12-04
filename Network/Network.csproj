@@ -56,13 +56,8 @@
     <Compile Include="Options\Constants.cs" />
     <Compile Include="Options\ServerOptions.cs" />
     <Compile Include="Types\ColorRGBA.cs" />
-    <Compile Include="Types\FileFunc.cs" />
-    <Compile Include="Types\Vec4f.cs" />
-    <Compile Include="Types\Mat4.cs" />
     <Compile Include="Types\Vec2i.cs" />
-    <Compile Include="Types\Vec2f.cs" />
     <Compile Include="Types\Vec3f.cs" />
-    <Compile Include="Types\Zip.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

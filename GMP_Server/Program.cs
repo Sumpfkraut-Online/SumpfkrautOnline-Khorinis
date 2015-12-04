@@ -36,20 +36,6 @@ namespace GUC.Server
             catch (System.Exception ex) { Log.Logger.log(Log.Logger.LOG_ERROR, ex.ToString()); serverOptions = new ServerOptions(); }
         }
 
-        static void initClientModule()
-        {
-            try
-            {
-                foreach (Module module in serverOptions.Modules)
-                    module.Hash = FileFunc.Datei2MD5(@"Modules/" + module.name);
-
-            }
-            catch (System.Exception ex)
-            {
-                Log.Logger.log(Log.Logger.LOG_ERROR, ex.ToString());
-            }
-        }
-
         static void initFolders()
         {
             //if (!Directory.Exists("AvailableServerModules"))
@@ -75,7 +61,6 @@ namespace GUC.Server
             
             initFolders();
             loadServerConfig();
-            initClientModule();
 
             TCPStatus.getTCPStatus();
             TCPStatus.getTCPStatus().addInfo("servername", serverOptions.ServerName);

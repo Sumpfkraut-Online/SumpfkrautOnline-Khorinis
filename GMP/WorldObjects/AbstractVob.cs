@@ -81,7 +81,7 @@ namespace GUC.Client.WorldObjects
 
                 if (Spawned)
                 {
-                    Vec3f zAxis = dir.Normalize();
+                    Vec3f zAxis = dir.Normalise();
                     Vec3f up = new Vec3f(0.0f, 0.0f, 0.0f);
 
                     if (Math.Abs(zAxis.Y) > 0.5)
@@ -107,8 +107,8 @@ namespace GUC.Client.WorldObjects
                         up.Y = 1.0f;
                     }
 
-                    Vec3f xAxis = up.Cross(zAxis).Normalize();
-                    Vec3f yAxis = zAxis.Cross(xAxis).Normalize();
+                    Vec3f xAxis = up.Cross(zAxis).Normalise();
+                    Vec3f yAxis = zAxis.Cross(xAxis).Normalise();
 
                     Matrix4 trafo = gVob.TrafoObjToWorld;
 

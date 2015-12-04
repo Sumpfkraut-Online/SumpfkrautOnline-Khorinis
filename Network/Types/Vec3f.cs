@@ -7,43 +7,58 @@ namespace GUC.Types
 {
     public struct Vec3f
     {
-        public static Vec3f Null = new Vec3f(0,0,0);
+        public static Vec3f Null { get { return new Vec3f(0, 0, 0); } }
 
         public float X;
         public float Y;
         public float Z;
 
-        public Vec3f(float[] data)
+        public float this[int i]
         {
-            if (data.Length >= 3)
+            get
             {
-                this.X = data[0];
-                this.Y = data[1];
-                this.Z = data[2];
+                if (i == 0) return X;
+                else if (i == 1) return Y;
+                else if (i == 2) return Z;
+                else throw new ArgumentOutOfRangeException("Vec3f index is out of range (0..2) <> " + i);
             }
-            else if (data.Length == 2)
+            set
             {
-                this.X = data[0];
-                this.Y = data[1];
-                this.Z = 0;
-            }
-            else if (data.Length == 1)
-            {
-                this.X = data[0];
-                this.Y = 0;
-                this.Z = 0;
-            }
-            else
-            {
-                this.X = 0;
-                this.Y = 0;
-                this.Z = 0;
+                if (i == 0) X = value;
+                else if (i == 1) Y = value;
+                else if (i == 2) Z = value;
+                else throw new ArgumentOutOfRangeException("Vec3f index is out of Vec3f range (0..2) <> " + i);
             }
         }
-
-        public Vec3f(Vec3f vec)
+        public Vec3f(float[] data)
         {
-            this = vec;
+            if (data != null)
+            {
+                if (data.Length >= 3)
+                {
+                    this.X = data[0];
+                    this.Y = data[1];
+                    this.Z = data[2];
+                    return;
+                }
+                else if (data.Length == 2)
+                {
+                    this.X = data[0];
+                    this.Y = data[1];
+                    this.Z = 0;
+                    return;
+                }
+                else if (data.Length == 1)
+                {
+                    this.X = data[0];
+                    this.Y = 0;
+                    this.Z = 0;
+                    return;
+                }
+            }
+            this.X = 0;
+            this.Y = 0;
+            this.Z = 0;
         }
 
         public Vec3f(float x, float y, float z)
@@ -60,6 +75,13 @@ namespace GUC.Types
             this.Z = 0;
         }
 
+        public void Set(float x, float y, float z)
+        {
+            this.X = x;
+            this.Y = y;
+            this.Z = z;
+        }
+
         #region Math Methods
 
         public float GetLength()
@@ -67,7 +89,7 @@ namespace GUC.Types
             return (float)Math.Sqrt((double)this.X * (double)this.X + (double)this.Y * (double)this.Y + (double)this.Z * (double)this.Z);
         }
 
-        public Vec3f Normalize()
+        public Vec3f Normalise()
         {
             float len = GetLength();
             if (len != 0)

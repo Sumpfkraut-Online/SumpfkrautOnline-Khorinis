@@ -105,7 +105,7 @@ namespace GUC.Client.GUI
 
         GUCVisual back;
         Slot[,] slots;
-        Vec2i cursor = new Vec2i();
+        Vec2i cursor = new Vec2i(0,0);
         int startPos = 0; //for scrolling
 
         GUCVisual descrBack;

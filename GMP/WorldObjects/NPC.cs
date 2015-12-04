@@ -413,7 +413,7 @@ namespace GUC.Client.WorldObjects
                         gVob.GetEM(0).StartMessage(msg, gVob);
                     }
                 }
-                else if (activeMsg.VTBL == (int)zCObject.VobTypes.oCMsgMovement)
+                /*else if (activeMsg.VTBL == (int)zCObject.VobTypes.oCMsgMovement)
                 {
                     oCMsgMovement movMsg = new oCMsgMovement(Program.Process, activeMsg.Address);
                     if (movMsg.SubType == oCMsgMovement.SubTypes.GotoPos || movMsg.SubType == oCMsgMovement.SubTypes.GotoVob)
@@ -424,7 +424,7 @@ namespace GUC.Client.WorldObjects
                             gVob.GetEM(0).KillMessages();
                         }
                     }
-                }
+                }*/
             }
 
             if (this != Player.Hero)

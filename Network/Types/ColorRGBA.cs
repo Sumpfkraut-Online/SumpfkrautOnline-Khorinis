@@ -5,57 +5,100 @@ using System.Text;
 
 namespace GUC.Types
 {
-    public class ColorRGBA
+    public struct ColorRGBA
     {
-        protected byte[] data = new byte[4];
+        public byte R;
+        public byte G;
+        public byte B;
+        public byte A;
 
-        public ColorRGBA()
-        {
-            set(255,255,255,255);
-        }
         public ColorRGBA(byte[] data)
         {
-            set(data);
+            if (data != null)
+            {
+                if (data.Length >= 4)
+                {
+                    this.R = data[0];
+                    this.G = data[1];
+                    this.B = data[2];
+                    this.A = data[3];
+                    return;
+                }
+                else if (data.Length == 3)
+                {
+                    this.R = data[0];
+                    this.G = data[1];
+                    this.B = data[2];
+                    this.A = 255;
+                    return;
+                }
+                else if (data.Length == 2)
+                {
+                    this.R = data[0];
+                    this.G = data[1];
+                    this.B = 255;
+                    this.A = 255;
+                    return;
+                }
+                else if (data.Length == 1)
+                {
+                    this.R = data[0];
+                    this.G = 255;
+                    this.B = 255;
+                    this.A = 255;
+                    return;
+                }
+            }
+            this.R = 255;
+            this.G = 255;
+            this.B = 255;
+            this.A = 255;
         }
+        public byte this[int i]
+        {
+            get
+            {
+                if (i == 0) return R;
+                else if (i == 1) return G;
+                else if (i == 2) return B;
+                else if (i == 3) return A;
+                else throw new ArgumentOutOfRangeException("ColorRGBA index is out of range (0..3) <> " + i);
+            }
+            set
+            {
+                if (i == 0) R = value;
+                else if (i == 1) G = value;
+                else if (i == 2) B = value;
+                else if (i == 3) A = value;
+                else throw new ArgumentOutOfRangeException("ColorRGBA index is out of range (0..3) <> " + i);
+            }
+        }
+
+        public ColorRGBA(byte r, byte g, byte b)
+            : this(r, g, b, 255)
+        {
+        }
+
         public ColorRGBA(byte r, byte g, byte b, byte a)
         {
-            set(r, g, b, a);
-        }
-        public ColorRGBA(byte r, byte g, byte b):this(r,g,b,255)
-        {
-          
-        }
-        public void set(ColorRGBA color)
-        {
-            set(color.R, color.G, color.B, color.A);
+            this.R = r;
+            this.G = g;
+            this.B = b;
+            this.A = a;
         }
 
-        public void set(byte r, byte g, byte b, byte a)
+        public void Set(byte r, byte g, byte b, byte a)
         {
-            data[0] = r;
-            data[1] = g;
-            data[2] = b;
-            data[3] = a;
+            this.R = r;
+            this.G = g;
+            this.B = b;
+            this.A = a;
         }
-
-        public void set(byte[] data)
-        {
-            if (data.Length != 4)
-                throw new ArgumentException("The Data-Array needs a length of 4!");
-            set(data[0], data[1], data[2], data[3]);
-        }
-
-        public byte[] Data { get { return this.data; } }
 
         public static explicit operator ColorRGBA(byte[] data)
         {
             return new ColorRGBA(data);
         }
-
-        public byte R { get { return data[0]; } set { data[0] = value; } }
-        public byte G { get { return data[1]; } set { data[1] = value; } }
-        public byte B { get { return data[2]; } set { data[2] = value; } }
-        public byte A { get { return data[3]; } set { data[3] = value; } }
 
         public static ColorRGBA White { get { return new ColorRGBA(255, 255, 255, 255); } }
         public static ColorRGBA Black { get { return new ColorRGBA(0, 0, 0, 255); } }

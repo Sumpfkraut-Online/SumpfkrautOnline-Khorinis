@@ -82,26 +82,11 @@
     <Compile Include="..\Network\Types\ColorRGBA.cs">
       <Link>Types\ColorRGBA.cs</Link>
     </Compile>
-    <Compile Include="..\Network\Types\FileFunc.cs">
-      <Link>Types\FileFunc.cs</Link>
-    </Compile>
-    <Compile Include="..\Network\Types\Mat4.cs">
-      <Link>Types\Mat4.cs</Link>
-    </Compile>
-    <Compile Include="..\Network\Types\Vec2f.cs">
-      <Link>Types\Vec2f.cs</Link>
-    </Compile>
     <Compile Include="..\Network\Types\Vec2i.cs">
       <Link>Types\Vec2i.cs</Link>
     </Compile>
     <Compile Include="..\Network\Types\Vec3f.cs">
       <Link>Types\Vec3f.cs</Link>
-    </Compile>
-    <Compile Include="..\Network\Types\Vec4f.cs">
-      <Link>Types\Vec4f.cs</Link>
-    </Compile>
-    <Compile Include="..\Network\Types\Zip.cs">
-      <Link>Types\Zip.cs</Link>
     </Compile>
     <Compile Include="GUI\GUCInventory.cs" />
     <Compile Include="GUI\GUCTextBox.cs" />
