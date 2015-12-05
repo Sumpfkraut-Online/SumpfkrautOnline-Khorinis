@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
+namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
 {
-    class DummyMobDef
+    public class WeatherHandler
     {
-        public DummyMobDef ()
+
+
+
+        public void Loadweather ()
         {
 
         }
+
     }
 }

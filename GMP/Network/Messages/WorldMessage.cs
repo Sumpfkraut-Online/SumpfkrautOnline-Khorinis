@@ -151,5 +151,47 @@ namespace GUC.Client.Network.Messages
             bool drop = stream.ReadBit();
             item.Spawn(pos, dir, drop);
         }
+
+        public static void ReadTimeChange (BitStream stream)
+        {
+            int day = stream.mReadInt();
+            int hour = stream.mReadInt();
+            int minute = stream.mReadInt();
+
+            oCGame.Game(Program.Process).WorldTimer.SetDay(day);
+            oCGame.Game(Program.Process).WorldTimer.SetTime(hour, minute);
+        }
+
+        public static void ReadWeatherChange (BitStream stream)
+        {
+            int weatherType = (int)stream.mReadByte();
+            //int startDay = (int)stream.mReadByte();
+            int startHour = (int)stream.mReadByte();
+            int startMinute = (int)stream.mReadByte();
+            //int endDay = (int)stream.mReadByte();
+            int endHour = (int)stream.mReadByte();
+            int endMinute = (int)stream.mReadByte();
+
+            // if start- and endTime remain the same (done when there is no precipitation)...
+            // they stop possible current rain/snow by overwriting the raintime with
+            // something in the past, effectively ending the rain/snow (hopefully...)
+            float startTime = 0f;
+            float endTime = 0f;
+
+            if (weatherType > 0)
+            {
+                // 12:00 == 0f; 24:00 == 1f
+                startTime = (((((float)startHour + 12f) % 24f) * 60f) + ((float)startMinute)) / (24f * 60f);
+                endTime = (((((float)endHour + 12f) % 24f) * 60f) + ((float)endMinute)) / (24f * 60f);
+                //zERROR.GetZErr(Program.Process).Report(2, 'G', 
+                //    ">>>> " + startTime + " " + endTime, 
+                //    0, "class.cs", 0);
+            }
+
+            oCGame.Game(Program.Process).World.SkyControlerOutdoor.SetWeatherType(weatherType);
+            oCGame.Game(Program.Process).World.SkyControlerOutdoor.StartRainTime = startTime;
+            oCGame.Game(Program.Process).World.SkyControlerOutdoor.EndRainTime = endTime;
+        }
+
     }
 }

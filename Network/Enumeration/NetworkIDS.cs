@@ -30,6 +30,8 @@ namespace GUC.Enumeration
         WorldVobDeleteMessage,
         WorldNPCSpawnMessage,
         WorldItemSpawnMessage,
+        WorldTimeMessage,
+        WorldWeatherMessage,
 
         //vobs
         VobPosDirMessage,

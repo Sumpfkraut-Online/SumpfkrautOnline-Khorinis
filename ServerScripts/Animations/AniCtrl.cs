@@ -294,9 +294,6 @@ namespace GUC.Server.Scripts.Animations
                     // FIXME: Search overlays for new animations?
                 }
                 AniCtrl.ctrls.Add(mdsName, ctrl);
-
-                if (ctrl.Fist != null && ctrl.Fist[0] != null && ctrl.Fist[0].GetInfo(null) != null)
-                    Console.WriteLine(mdsName + " ComboDuration: " + ctrl.Fist[0].GetInfo(null).Duration);
             }
         }
 

@@ -23,7 +23,7 @@ namespace GUC.Server.Network.Messages
                 uint targetID = stream.mReadUInt();
                 NPC requester = client.character;
                 NPC target;
-                Log.Logger.log("request by "+targetID.ToString());
+                Log.Logger.log("request by " + targetID.ToString());
                 client.character.World.PlayerDict.TryGetValue(targetID, out target);
 
                 if (requester != null && target != null)
@@ -39,11 +39,11 @@ namespace GUC.Server.Network.Messages
                     trade.OnBreakMessage(sender);
                 }
             }
-            else if(status == TradeStatus.ConfirmOffer)
+            else if (status == TradeStatus.ConfirmOffer)
             {
                 trade.OfferConfirmed(client.character);
             }
-            else if(status == TradeStatus.DeclineOffer)
+            else if (status == TradeStatus.DeclineOffer)
             {
                 trade.OfferDeclined(client.character, true);
             }

@@ -6,6 +6,7 @@ using System.Text;
 using WinApi;
 using WinApi.User.Enumeration;
 using GUC.Types;
+
 using GUC.Network;
 using GUC.Enumeration;
 using GUC.Client.WorldObjects;
@@ -14,8 +15,6 @@ using GUC.Client.Network.Messages;
 using Gothic.mClasses;
 using Gothic.zClasses;
 using RakNet;
-
-
 
 namespace GUC.Client.Menus
 {
@@ -130,8 +129,10 @@ namespace GUC.Client.Menus
             buyInv.Show();
             sellInv.Show();
             inv.Show();
+
             inv.SetContents(Player.Inventory);
             inv.Enabled = true;
+
             base.Open();
         }
 
@@ -306,3 +307,4 @@ namespace GUC.Client.Menus
 
     }
 }
+

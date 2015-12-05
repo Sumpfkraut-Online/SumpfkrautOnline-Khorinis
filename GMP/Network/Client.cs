@@ -51,6 +51,8 @@ namespace GUC.Client.Network
             messageListener.Add((byte)NetworkID.WorldVobSpawnMessage, WorldMessage.ReadVobSpawn);
             messageListener.Add((byte)NetworkID.WorldNPCSpawnMessage, WorldMessage.ReadNPCSpawn);
             messageListener.Add((byte)NetworkID.WorldItemSpawnMessage, WorldMessage.ReadItemSpawn);
+            messageListener.Add((byte)NetworkID.WorldTimeMessage, WorldMessage.ReadTimeChange);
+            messageListener.Add((byte)NetworkID.WorldWeatherMessage, WorldMessage.ReadWeatherChange);
 
             messageListener.Add((byte)NetworkID.NPCAniStartMessage, NPCMessage.ReadAniStart);
             messageListener.Add((byte)NetworkID.NPCAniStopMessage, NPCMessage.ReadAniStop);

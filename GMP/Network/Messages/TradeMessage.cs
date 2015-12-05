@@ -20,12 +20,12 @@ namespace GUC.Client.Network.Messages
 {
     static class TradeMessage
     {
-
         public static void Read(BitStream stream)
         {
             // call accept - break - change item
 
             TradeStatus tradeState = (TradeStatus)stream.mReadByte();
+
             TradeMenu trade = TradeMenu.GetTrade();
 
             Item item = null;
@@ -155,3 +155,4 @@ namespace GUC.Client.Network.Messages
 
     }
 }
+

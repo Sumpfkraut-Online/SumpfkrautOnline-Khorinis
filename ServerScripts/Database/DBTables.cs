@@ -12,33 +12,33 @@ namespace GUC.Server.Scripts.Database
 
     enum DefTableEnum
     {
-        Mob_def,
-        Item_def,
-        Spell_def,
-        NPC_def,
-        Effect_def,
-        Effect_Changes_def,
+        MobDef,
+        ItemDef,
+        SpellDef,
+        NpcDef,
+        DefEffect,
+        DefChange,
     }
 
     enum InstTableEnum
     {
-        World_inst,
-        Account_inst,
+        WorldInst,
+        AccountInst,
 
-        Mob_Effects_inst,
-        Spell_Effects_inst,
-        Item_Effects_inst,
-        NPC_Effects_inst,
+        MobDefToDefEffect,
+        SpellDefToDefEffect,
+        ItemDefToDefEffect,
+        NpcDefToDefEffect,
 
-        Mob_inst,
-        Spell_inst,
-        Item_inst,
-        NPC_inst,
+        MobInst,
+        SpellInst,
+        ItemInst,
+        NpcInst,
 
-        ItemInInventory_inst,
-        MobInWorld_inst,
-        ItemInWorld_inst,
-        NPCInWorld_inst,
+        ItemInInventoryInst,
+        MobInWorldInst,
+        ItemInWorldInst,
+        NpcInWorldInst,
     }
 
     //enum EffectsInstTableEnum
@@ -71,178 +71,178 @@ namespace GUC.Server.Scripts.Database
     class DBTables
     {
 
-        public static readonly Dictionary<DefTableEnum, string>
-            DefTableNamesDict = new Dictionary<DefTableEnum, string>
-        {
-            {DefTableEnum.Mob_def, "Mob_def"},
-            {DefTableEnum.Item_def, "Item_def"},
-            {DefTableEnum.Spell_def, "Spell_def"},
-            {DefTableEnum.NPC_def, "NPC_def"},
-            {DefTableEnum.Effect_def, "Effect_def"},
-            {DefTableEnum.Effect_Changes_def, "Effect_Changes_def"}
-        };
+        //public static readonly Dictionary<DefTableEnum, string>
+        //    DefTableNamesDict = new Dictionary<DefTableEnum, string>
+        //{
+        //    {DefTableEnum.Mob_def, "Mob_def"},
+        //    {DefTableEnum.Item_def, "Item_def"},
+        //    {DefTableEnum.Spell_def, "Spell_def"},
+        //    {DefTableEnum.NPC_def, "NPC_def"},
+        //    {DefTableEnum.Effect_def, "Effect_def"},
+        //    {DefTableEnum.Effect_Changes_def, "Effect_Changes_def"}
+        //};
 
-        /**
-        *   Definition datatable enum entries mapped to their respective access-functions 
-        *   (further strcutured in a dictionary).
-        *   This dictionary is mainly used to allow parts of the program to know what datatype should be read
-        *   from the underlying SQLite-datatable via sqlReadType and SQLiteDataReader.
-        *   @see sqlReadType
-        *   @see SQLiteDataReader
-        */
-        public static readonly Dictionary<DefTableEnum, Dictionary<String, SQLiteGetTypeEnum>>
-            DefTableDict = new Dictionary<DefTableEnum, Dictionary<String, SQLiteGetTypeEnum>> 
-        {
-            {
-                DefTableEnum.Mob_def, new Dictionary<String, SQLiteGetTypeEnum>
-                {
-                    {"ID",                      SQLiteGetTypeEnum.GetInt32},
-                    {"Visual",                  SQLiteGetTypeEnum.GetString},
-                    {"Material",                SQLiteGetTypeEnum.GetInt32},
-                    {"HasEffect",               SQLiteGetTypeEnum.GetBoolean}
-                }
-            },
-            {
-                DefTableEnum.Spell_def, new Dictionary<String, SQLiteGetTypeEnum>
-                {
-                    {"ID",                      SQLiteGetTypeEnum.GetInt32},
-                    {"Name",                    SQLiteGetTypeEnum.GetString},
-                    {"FXName",                  SQLiteGetTypeEnum.GetString},
-                    {"AniName",                 SQLiteGetTypeEnum.GetString},
-                    {"TimePerMana",             SQLiteGetTypeEnum.GetInt32},
-                    {"DamagePerLevel",          SQLiteGetTypeEnum.GetInt32},
-                    {"DamageType",              SQLiteGetTypeEnum.GetInt32},
-                    {"SpellType",               SQLiteGetTypeEnum.GetInt32},
-                    {"CanTurnDuringInvest",     SQLiteGetTypeEnum.GetBoolean},
-                    {"CanChangeDuringInvest",   SQLiteGetTypeEnum.GetBoolean},
-                    {"isMultiEffect",           SQLiteGetTypeEnum.GetBoolean},
-                    {"TargetCollectionAlgo",    SQLiteGetTypeEnum.GetInt32},
-                    {"TargetCollectType",       SQLiteGetTypeEnum.GetInt32},
-                    {"TargetCollectRange",      SQLiteGetTypeEnum.GetInt32},
-                    {"TargetCollectAzi",        SQLiteGetTypeEnum.GetInt32},
-                    {"TargetCollectElev",       SQLiteGetTypeEnum.GetInt32},
-                    {"HasEffect",               SQLiteGetTypeEnum.GetBoolean}
-                }
-            },
-            {
-                DefTableEnum.Item_def, new Dictionary<String, SQLiteGetTypeEnum>
-                {
-                    {"ID",                      SQLiteGetTypeEnum.GetInt32},
-                    {"InstanceName",            SQLiteGetTypeEnum.GetString},
-                    {"Name",                    SQLiteGetTypeEnum.GetString},
-                    {"ScemeName",               SQLiteGetTypeEnum.GetString},
-                    {"Protections",             SQLiteGetTypeEnum.GetString},
-                    {"Damages",                 SQLiteGetTypeEnum.GetString},
-                    {"Value",                   SQLiteGetTypeEnum.GetInt32},
-                    {"MainFlag",                SQLiteGetTypeEnum.GetInt32},
-                    {"Flag",                    SQLiteGetTypeEnum.GetInt32},
-                    {"ArmorFlag",               SQLiteGetTypeEnum.GetInt32},
-                    {"DamageType",              SQLiteGetTypeEnum.GetInt32},
-                    {"TotalDamage",             SQLiteGetTypeEnum.GetInt32},
-                    {"Range",                   SQLiteGetTypeEnum.GetInt32},
-                    {"Visual",                  SQLiteGetTypeEnum.GetString},
-                    {"VisualChange",            SQLiteGetTypeEnum.GetString},
-                    {"Effect",                  SQLiteGetTypeEnum.GetString},
-                    {"VisualSkin",              SQLiteGetTypeEnum.GetInt32},
-                    {"Material",                SQLiteGetTypeEnum.GetInt32},
-                    {"Munition",                SQLiteGetTypeEnum.GetInt32},
-                    {"IsKeyInstance",           SQLiteGetTypeEnum.GetBoolean},
-                    {"IsTorch",                 SQLiteGetTypeEnum.GetBoolean},
-                    {"IsTorchBurning",          SQLiteGetTypeEnum.GetBoolean},
-                    {"IsTorchBurned",           SQLiteGetTypeEnum.GetBoolean},
-                    {"IsGold",                  SQLiteGetTypeEnum.GetBoolean},
-                    {"HasEffects",               SQLiteGetTypeEnum.GetBoolean},
-                }
-            },
-            {
-                DefTableEnum.NPC_def, new Dictionary<String, SQLiteGetTypeEnum>
-                {
-                    {"ID",                      SQLiteGetTypeEnum.GetInt32},
-                    {"Visual",                  SQLiteGetTypeEnum.GetString},
-                    {"Visual_Skin",             SQLiteGetTypeEnum.GetInt32},
-                    {"HasEffect",               SQLiteGetTypeEnum.GetBoolean}
-                }
-            },
-            {
-                DefTableEnum.Effect_def, new Dictionary<String, SQLiteGetTypeEnum>
-                {
-                    {"ID",                      SQLiteGetTypeEnum.GetInt32},
-                    {"Name",                    SQLiteGetTypeEnum.GetString}
-                }
-            },
-            {
-                DefTableEnum.Effect_Changes_def, new Dictionary<String, SQLiteGetTypeEnum>
-                {
-                    {"ID",                      SQLiteGetTypeEnum.GetInt32},
-                    {"EventID",                 SQLiteGetTypeEnum.GetInt32},
-                    {"EffectDefID",             SQLiteGetTypeEnum.GetInt32},
-                    {"ChangeType",              SQLiteGetTypeEnum.GetInt32},
-                    {"Parameters",              SQLiteGetTypeEnum.GetString}
-                }
-            }
-        };
+        ///**
+        //*   Definition datatable enum entries mapped to their respective access-functions 
+        //*   (further strcutured in a dictionary).
+        //*   This dictionary is mainly used to allow parts of the program to know what datatype should be read
+        //*   from the underlying SQLite-datatable via sqlReadType and SQLiteDataReader.
+        //*   @see sqlReadType
+        //*   @see SQLiteDataReader
+        //*/
+        //public static readonly Dictionary<DefTableEnum, Dictionary<String, SQLiteGetTypeEnum>>
+        //    DefTableDict = new Dictionary<DefTableEnum, Dictionary<String, SQLiteGetTypeEnum>> 
+        //{
+        //    {
+        //        DefTableEnum.Mob_def, new Dictionary<String, SQLiteGetTypeEnum>
+        //        {
+        //            {"ID",                      SQLiteGetTypeEnum.GetInt32},
+        //            {"Visual",                  SQLiteGetTypeEnum.GetString},
+        //            {"Material",                SQLiteGetTypeEnum.GetInt32},
+        //            {"HasEffect",               SQLiteGetTypeEnum.GetBoolean}
+        //        }
+        //    },
+        //    {
+        //        DefTableEnum.Spell_def, new Dictionary<String, SQLiteGetTypeEnum>
+        //        {
+        //            {"ID",                      SQLiteGetTypeEnum.GetInt32},
+        //            {"Name",                    SQLiteGetTypeEnum.GetString},
+        //            {"FXName",                  SQLiteGetTypeEnum.GetString},
+        //            {"AniName",                 SQLiteGetTypeEnum.GetString},
+        //            {"TimePerMana",             SQLiteGetTypeEnum.GetInt32},
+        //            {"DamagePerLevel",          SQLiteGetTypeEnum.GetInt32},
+        //            {"DamageType",              SQLiteGetTypeEnum.GetInt32},
+        //            {"SpellType",               SQLiteGetTypeEnum.GetInt32},
+        //            {"CanTurnDuringInvest",     SQLiteGetTypeEnum.GetBoolean},
+        //            {"CanChangeDuringInvest",   SQLiteGetTypeEnum.GetBoolean},
+        //            {"isMultiEffect",           SQLiteGetTypeEnum.GetBoolean},
+        //            {"TargetCollectionAlgo",    SQLiteGetTypeEnum.GetInt32},
+        //            {"TargetCollectType",       SQLiteGetTypeEnum.GetInt32},
+        //            {"TargetCollectRange",      SQLiteGetTypeEnum.GetInt32},
+        //            {"TargetCollectAzi",        SQLiteGetTypeEnum.GetInt32},
+        //            {"TargetCollectElev",       SQLiteGetTypeEnum.GetInt32},
+        //            {"HasEffect",               SQLiteGetTypeEnum.GetBoolean}
+        //        }
+        //    },
+        //    {
+        //        DefTableEnum.Item_def, new Dictionary<String, SQLiteGetTypeEnum>
+        //        {
+        //            {"ID",                      SQLiteGetTypeEnum.GetInt32},
+        //            {"InstanceName",            SQLiteGetTypeEnum.GetString},
+        //            {"Name",                    SQLiteGetTypeEnum.GetString},
+        //            {"ScemeName",               SQLiteGetTypeEnum.GetString},
+        //            {"Protections",             SQLiteGetTypeEnum.GetString},
+        //            {"Damages",                 SQLiteGetTypeEnum.GetString},
+        //            {"Value",                   SQLiteGetTypeEnum.GetInt32},
+        //            {"MainFlag",                SQLiteGetTypeEnum.GetInt32},
+        //            {"Flag",                    SQLiteGetTypeEnum.GetInt32},
+        //            {"ArmorFlag",               SQLiteGetTypeEnum.GetInt32},
+        //            {"DamageType",              SQLiteGetTypeEnum.GetInt32},
+        //            {"TotalDamage",             SQLiteGetTypeEnum.GetInt32},
+        //            {"Range",                   SQLiteGetTypeEnum.GetInt32},
+        //            {"Visual",                  SQLiteGetTypeEnum.GetString},
+        //            {"VisualChange",            SQLiteGetTypeEnum.GetString},
+        //            {"Effect",                  SQLiteGetTypeEnum.GetString},
+        //            {"VisualSkin",              SQLiteGetTypeEnum.GetInt32},
+        //            {"Material",                SQLiteGetTypeEnum.GetInt32},
+        //            {"Munition",                SQLiteGetTypeEnum.GetInt32},
+        //            {"IsKeyInstance",           SQLiteGetTypeEnum.GetBoolean},
+        //            {"IsTorch",                 SQLiteGetTypeEnum.GetBoolean},
+        //            {"IsTorchBurning",          SQLiteGetTypeEnum.GetBoolean},
+        //            {"IsTorchBurned",           SQLiteGetTypeEnum.GetBoolean},
+        //            {"IsGold",                  SQLiteGetTypeEnum.GetBoolean},
+        //            {"HasEffects",               SQLiteGetTypeEnum.GetBoolean},
+        //        }
+        //    },
+        //    {
+        //        DefTableEnum.NPC_def, new Dictionary<String, SQLiteGetTypeEnum>
+        //        {
+        //            {"ID",                      SQLiteGetTypeEnum.GetInt32},
+        //            {"Visual",                  SQLiteGetTypeEnum.GetString},
+        //            {"Visual_Skin",             SQLiteGetTypeEnum.GetInt32},
+        //            {"HasEffect",               SQLiteGetTypeEnum.GetBoolean}
+        //        }
+        //    },
+        //    {
+        //        DefTableEnum.Effect_def, new Dictionary<String, SQLiteGetTypeEnum>
+        //        {
+        //            {"ID",                      SQLiteGetTypeEnum.GetInt32},
+        //            {"Name",                    SQLiteGetTypeEnum.GetString}
+        //        }
+        //    },
+        //    {
+        //        DefTableEnum.Effect_Changes_def, new Dictionary<String, SQLiteGetTypeEnum>
+        //        {
+        //            {"ID",                      SQLiteGetTypeEnum.GetInt32},
+        //            {"EventID",                 SQLiteGetTypeEnum.GetInt32},
+        //            {"EffectDefID",             SQLiteGetTypeEnum.GetInt32},
+        //            {"ChangeType",              SQLiteGetTypeEnum.GetInt32},
+        //            {"Parameters",              SQLiteGetTypeEnum.GetString}
+        //        }
+        //    }
+        //};
 
 
 
-        public static readonly Dictionary<DefTableEnum, InstTableEnum>
-            EffectInstAccesDict = new Dictionary<DefTableEnum, InstTableEnum>()
-        {
-            {DefTableEnum.Mob_def, InstTableEnum.Mob_Effects_inst},
-            {DefTableEnum.Spell_def, InstTableEnum.Spell_Effects_inst},
-            {DefTableEnum.Item_def, InstTableEnum.Item_Effects_inst},
-            {DefTableEnum.NPC_def, InstTableEnum.NPC_Effects_inst},
-        };
+        //public static readonly Dictionary<DefTableEnum, InstTableEnum>
+        //    EffectInstAccesDict = new Dictionary<DefTableEnum, InstTableEnum>()
+        //{
+        //    {DefTableEnum.Mob_def, InstTableEnum.Mob_Effects_inst},
+        //    {DefTableEnum.Spell_def, InstTableEnum.Spell_Effects_inst},
+        //    {DefTableEnum.Item_def, InstTableEnum.Item_Effects_inst},
+        //    {DefTableEnum.NPC_def, InstTableEnum.NPC_Effects_inst},
+        //};
 
-        public static readonly Dictionary<InstTableEnum, string>
-            EffectsInstTableNamesDict = new Dictionary<InstTableEnum, string>()
-        {
-            {InstTableEnum.Mob_Effects_inst, "Mob_Effects_inst"},
-            {InstTableEnum.Spell_Effects_inst, "Spell_Effects_inst"},
-            {InstTableEnum.Item_Effects_inst, "Item_Effects_inst"},
-            {InstTableEnum.NPC_Effects_inst, "NPC_Effects_inst"},
-        };
+        //public static readonly Dictionary<InstTableEnum, string>
+        //    EffectsInstTableNamesDict = new Dictionary<InstTableEnum, string>()
+        //{
+        //    {InstTableEnum.Mob_Effects_inst, "Mob_Effects_inst"},
+        //    {InstTableEnum.Spell_Effects_inst, "Spell_Effects_inst"},
+        //    {InstTableEnum.Item_Effects_inst, "Item_Effects_inst"},
+        //    {InstTableEnum.NPC_Effects_inst, "NPC_Effects_inst"},
+        //};
 
-        public static readonly Dictionary<InstTableEnum, string>
-            EffectsInstTableDict_VobDefID = new Dictionary<InstTableEnum, string>()
-        {
-            {InstTableEnum.Mob_Effects_inst, "MobDefID"},
-            {InstTableEnum.Spell_Effects_inst, "SpellDefID"},
-            {InstTableEnum.Item_Effects_inst, "ItemDefID"},
-            {InstTableEnum.NPC_Effects_inst, "NPCDefID"},
-        };
+        //public static readonly Dictionary<InstTableEnum, string>
+        //    EffectsInstTableDict_VobDefID = new Dictionary<InstTableEnum, string>()
+        //{
+        //    {InstTableEnum.Mob_Effects_inst, "MobDefID"},
+        //    {InstTableEnum.Spell_Effects_inst, "SpellDefID"},
+        //    {InstTableEnum.Item_Effects_inst, "ItemDefID"},
+        //    {InstTableEnum.NPC_Effects_inst, "NPCDefID"},
+        //};
 
-        public static readonly Dictionary<InstTableEnum, Dictionary<String, SQLiteGetTypeEnum>>
-            InstTableDict = new Dictionary<InstTableEnum, Dictionary<String, SQLiteGetTypeEnum>> 
-        {
-            {
-                InstTableEnum.Mob_Effects_inst, new Dictionary<String, SQLiteGetTypeEnum>
-                {
-                    {"MobDefID",                      SQLiteGetTypeEnum.GetInt32},
-                    {"EffectDefID",                   SQLiteGetTypeEnum.GetInt32},
-                }
-            },
-            {
-                InstTableEnum.Spell_Effects_inst, new Dictionary<String, SQLiteGetTypeEnum>
-                {
-                    {"SpellDefID",                    SQLiteGetTypeEnum.GetInt32},
-                    {"EffectDefID",                   SQLiteGetTypeEnum.GetInt32},
-                }
-            },
-            {
-                InstTableEnum.Item_Effects_inst, new Dictionary<String, SQLiteGetTypeEnum>
-                {
-                    {"ItemDefID",                     SQLiteGetTypeEnum.GetInt32},
-                    {"EffectDefID",                   SQLiteGetTypeEnum.GetInt32},
-                }
-            },
-            {
-                InstTableEnum.NPC_Effects_inst, new Dictionary<String, SQLiteGetTypeEnum>
-                {
-                    {"NPCDefID",                      SQLiteGetTypeEnum.GetInt32},
-                    {"EffectDefID",                   SQLiteGetTypeEnum.GetInt32},
-                }
-            },
-        };
+        //public static readonly Dictionary<InstTableEnum, Dictionary<String, SQLiteGetTypeEnum>>
+        //    InstTableDict = new Dictionary<InstTableEnum, Dictionary<String, SQLiteGetTypeEnum>> 
+        //{
+        //    {
+        //        InstTableEnum.Mob_Effects_inst, new Dictionary<String, SQLiteGetTypeEnum>
+        //        {
+        //            {"MobDefID",                      SQLiteGetTypeEnum.GetInt32},
+        //            {"EffectDefID",                   SQLiteGetTypeEnum.GetInt32},
+        //        }
+        //    },
+        //    {
+        //        InstTableEnum.Spell_Effects_inst, new Dictionary<String, SQLiteGetTypeEnum>
+        //        {
+        //            {"SpellDefID",                    SQLiteGetTypeEnum.GetInt32},
+        //            {"EffectDefID",                   SQLiteGetTypeEnum.GetInt32},
+        //        }
+        //    },
+        //    {
+        //        InstTableEnum.Item_Effects_inst, new Dictionary<String, SQLiteGetTypeEnum>
+        //        {
+        //            {"ItemDefID",                     SQLiteGetTypeEnum.GetInt32},
+        //            {"EffectDefID",                   SQLiteGetTypeEnum.GetInt32},
+        //        }
+        //    },
+        //    {
+        //        InstTableEnum.NPC_Effects_inst, new Dictionary<String, SQLiteGetTypeEnum>
+        //        {
+        //            {"NPCDefID",                      SQLiteGetTypeEnum.GetInt32},
+        //            {"EffectDefID",                   SQLiteGetTypeEnum.GetInt32},
+        //        }
+        //    },
+        //};
 
 
 

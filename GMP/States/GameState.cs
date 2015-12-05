@@ -29,8 +29,7 @@ namespace GUC.Client.States
             { VirtualKeys.OEM5, Player.DoFists }, //^
              { VirtualKeys.F1, RenderTest },
              { VirtualKeys.F2, RenderTest2 },
-              { VirtualKeys.F3, RenderTest3 }
-
+              { VirtualKeys.F3, RenderTest3 },
             /*
             { Ingame.Chat.GetChat().ActivationKey, Ingame.Chat.GetChat().Open },
             { Ingame.Chat.GetChat().ToggleKey, Ingame.Chat.GetChat().ToggleChat },

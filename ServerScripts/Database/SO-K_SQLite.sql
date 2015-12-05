@@ -4,200 +4,146 @@ CREATE DATABASE IF NOT EXISTS `SOK_Gameserver`;
 
 USE `SOK_Gameserver`; */
 
-DROP TABLE IF EXISTS `World_inst`;
-CREATE TABLE IF NOT EXISTS `World_inst` (
-    `ID` INTEGER  NOT NULL,
+DROP TABLE IF EXISTS `WorldInst`;
+CREATE TABLE IF NOT EXISTS `WorldInst` (
+    `WorldInstId` INTEGER  NOT NULL,
     `Name` TEXT DEFAULT NULL,
     `Path` TEXT DEFAULT NULL,
     `ChangeDate` TEXT NOT NULL,
     `CreationDate` TEXT NOT NULL,
-    PRIMARY KEY (`ID`)
+    PRIMARY KEY (`WorldInstId`)
 );
 
--- individual player accounts
-DROP TABLE IF EXISTS `Account_inst`;
-CREATE TABLE IF NOT EXISTS `Account_inst` (
-    `ID` INTEGER  NOT NULL,
+/* -- individual player accounts
+DROP TABLE IF EXISTS `AccountInst`;
+CREATE TABLE IF NOT EXISTS `AccountInst` (
+    `AccountInstId` INTEGER  NOT NULL,
     `Name` TEXT NOT NULL,
     `Password` TEXT NOT NULL,
     `EMail` TEXT DEFAULT NULL,
     `ChangeDate` TEXT NOT NULL,
     `CreationDate` TEXT NOT NULL,
-    PRIMARY KEY (`ID`)
+    PRIMARY KEY (`AccountInstId`)
 );
 
 -- npcs which belong to their respective accounts
-DROP TABLE IF EXISTS `AccountNPCs_inst`;
-CREATE TABLE IF NOT EXISTS `AccountNPCs_inst` (
-    `AccountInstID` INTEGER  NOT NULL,
+DROP TABLE IF EXISTS `AccountNPCInst`;
+CREATE TABLE IF NOT EXISTS `AccountNPCInst` (
+    `AccountNPCInstId` INTEGER  NOT NULL,
     `NPCInstID` INTEGER  NOT NULL,
-    FOREIGN KEY (`AccountInstID`) REFERENCES `Account_inst`(`ID`)
-    FOREIGN KEY (`NPCInstID`) REFERENCES `NPC_inst`(`ID`)
-);
+    FOREIGN KEY (`AccountNPCInstId`) REFERENCES `AccountInst`(`AccountInstId`)
+    FOREIGN KEY (`NPCInstId`) REFERENCES `NPCInst`(`NPCInstId`)
+); */
 
 -- general definition information for Mob-instantiation (static or usable)
-DROP TABLE IF EXISTS `Mob_def`;
-CREATE TABLE IF NOT EXISTS `Mob_def` (
-    `ID` INTEGER  NOT NULL,
-    `Visual` TEXT NOT NULL,
-    `Material` INTEGER  NOT NULL DEFAULT 3,
-    `HasEffects` INTEGER NOT NULL DEFAULT 0,
+DROP TABLE IF EXISTS `MobDef`;
+CREATE TABLE IF NOT EXISTS `MobDef` (
+    `MobDefId` INTEGER  NOT NULL,
     `ChangeDate` TEXT NOT NULL,
     `CreationDate` TEXT NOT NULL,
-    PRIMARY KEY (`ID`)
-);
-
--- general definition information for Spell-instantiation
---- !!! incomlete !!!
-DROP TABLE IF EXISTS `Spell_def`;
-CREATE TABLE IF NOT EXISTS `Spell_def` (
-    `ID` INTEGER  NOT NULL,
-    `Name` TEXT NOT NULL,
-    `FXName` TEXT NOT NULL,
-    `DamageType` INTEGER NOT NULL DEFAULT 0,
-    `SpellType` INTEGER NOT NULL DEFAULT 0,
-    `IsMultiEffect` INTEGER NOT NULL DEFAULT 0,
-    `TargetCollectionAlgo` INTEGER NOT NULL DEFAULT 0,
-    `TargetCollectType` INTEGER NOT NULL DEFAULT 0,
-    `TargetCollectRange` INTEGER NOT NULL DEFAULT 0,
-    `TargetCollectAzi` INTEGER NOT NULL DEFAULT 0,
-    `TargetCollectElev` INTEGER NOT NULL DEFAULT 0,
-    `HasEffects` INTEGER NOT NULL DEFAULT 0,
-    `ChangeDate` TEXT NOT NULL,
-    `CreationDate` TEXT NOT NULL,
-    PRIMARY KEY (`ID`)
+    PRIMARY KEY (`MobDefId`)
 );
 
 -- general definition information for Item-instantiation
-DROP TABLE IF EXISTS `Item_def`;
-CREATE TABLE IF NOT EXISTS `Item_def` (
-    `ID` INTEGER  NOT NULL,
-    `InstanceName` TEXT NOT NULL, -- insertcode of that item
-    `Name` TEXT NOT NULL, -- displayed name
-    `ScemeName` TEXT DEFAULT "", -- ??? (e.g. MAP, MAPSEALED, etc.)
-    `Protections` TEXT DEFAULT NULL, -- should be of pattern 0=0,1=0,2=25
-    `Damages` TEXT DEFAULT NULL, -- should be of pattern 0=0,1=0,2=25
-    `Value` INTEGER NOT NULL DEFAULT 0, -- price of that item (not used in our custom trade?)
-    `MainFlag` INTEGER NOT NULL DEFAULT 1, -- what item category (defaults to ITEM_KAT_NONE)
-    `Flag` INTEGER NOT NULL, -- defines type of item in Gothic 2 (must be set individually)
-    `ArmorFlag` INTEGER DEFAULT NULL, -- ArmorFlags-entry (1, 2, 16 <-> WEAR_TORSO, WEAR_HEAD , WEAR_EFFECT)
-    `DamageType` INTEGER DEFAULT NULL, -- type of damage to inflict (only weapons)
-    `TotalDamage` INTEGER DEFAULT NULL, -- sum of Damages (why not sum it up internally Gothic 2?)
-    `Range` INTEGER DEFAULT NULL, -- weapon range
-    `Visual` TEXT NOT NULL, -- name of 3D-model file (.3DS-file)
-    `VisualChange` TEXT DEFAULT "", -- for armors (.asc-file)
-    `Effect` TEXT DEFAULT "", -- triggered particle effect (e.g. when drinking potions)
-    `VisualSkin` INTEGER DEFAULT NULL, -- ???
-    `Material` INTEGER NOT NULL DEFAULT 3, -- type of material which determines the collision sound (defaults to MAT_LEATHER)
-    `Munition` INTEGER  DEFAULT NULL, -- ID of the munition-Item_def of this table
-    `IsKeyInstance` INTEGER NOT NULL DEFAULT 0, -- is it a key?
-    `IsTorch` INTEGER NOT NULL DEFAULT 0, -- is it an unused torch?
-    `IsTorchBurning` INTEGER NOT NULL DEFAULT 0, -- is it an already burning torch?
-    `IsTorchBurned` INTEGER NOT NULL DEFAULT 0, -- is it a finally burned up torch?
-    `IsGold` INTEGER NOT NULL DEFAULT 0, -- is it gold/currency? (will be summed up in inventory in seperate display field)
-    `HasEffects` INTEGER NOT NULL DEFAULT 0, -- has it additional event-driven effects (e.g. giving hp on drinking the potion)
+DROP TABLE IF EXISTS `ItemDef`;
+CREATE TABLE IF NOT EXISTS `ItemDef` (
+    `ItemDefId` INTEGER  NOT NULL,
     `ChangeDate` TEXT NOT NULL,
     `CreationDate` TEXT NOT NULL,
-    PRIMARY KEY (`ID`)
+    PRIMARY KEY (`ItemDefId`)
 );
 
 -- general definition information for NPC-instantiation
---- !!! incomlete !!!
-DROP TABLE IF EXISTS `NPC_def`;
-CREATE TABLE IF NOT EXISTS `NPC_def` (
-    `ID` INTEGER  NOT NULL,
-    `Visual` TEXT NOT NULL,
-    `Visual_Skin` INTEGER  NOT NULL DEFAULT 0,
+DROP TABLE IF EXISTS `NpcDef`;
+CREATE TABLE IF NOT EXISTS `NpcDef` (
+    `NpcDefId` INTEGER  NOT NULL,
     `ChangeDate` TEXT NOT NULL,
     `CreationDate` TEXT NOT NULL,
-    PRIMARY KEY (`ID`)
+    PRIMARY KEY (`NpcDefId`)
 );
 
 -- general definition information for effect-definitions
-DROP TABLE IF EXISTS `Effect_def`;
-CREATE TABLE IF NOT EXISTS `Effect_def` (
-    `ID` INTEGER  NOT NULL,
+DROP TABLE IF EXISTS `DefEffect`;
+CREATE TABLE IF NOT EXISTS `DefEffect` (
+    `DefEffectId` INTEGER  NOT NULL,
     `Name` TEXT NOT NULL DEFAULT "",
     `ChangeDate` TEXT NOT NULL,
     `CreationDate` TEXT NOT NULL,
-    PRIMARY KEY (`ID`)
+    PRIMARY KEY (`DefEffectId`)
 );
 
 -- general definition information for change definition that actually apply to the game
-DROP TABLE IF EXISTS `Effect_Changes_def`;
-CREATE TABLE IF NOT EXISTS `Effect_Changes_def` (
-    `ID` INTEGER NOT NULL,
-    `EventID` INTEGER  NOT NULL,
-    `EffectDefID` INTEGER  NOT NULL,
+DROP TABLE IF EXISTS `DefChange`;
+CREATE TABLE IF NOT EXISTS `DefChange` (
+    `DefChangeId` INTEGER NOT NULL,
+    `DefEffectId` INTEGER  NOT NULL,
     `ChangeType` INTEGER  NOT NULL,
     `Parameters` TEXT NOT NULL DEFAULT "",
-    PRIMARY KEY (`ID`),
-    FOREIGN KEY (`EffectDefID`) REFERENCES `Effect_def`(`ID`)
+    PRIMARY KEY (`DefChangeId`),
+    FOREIGN KEY (`DefEffectId`) REFERENCES `DefEffect`(`DefEffectId`)
 );
 
 -- maps effect- to mob-definitions
-DROP TABLE IF EXISTS `Mob_Effects_inst`;
-CREATE TABLE IF NOT EXISTS `Mob_Effects_inst` (
-    `MobDefID` INTEGER  NOT NULL,
-    `EffectDefID` INTEGER  NOT NULL,
-    FOREIGN KEY (`MobDefID`) REFERENCES `Mob_def`(`ID`),
-    FOREIGN KEY (`EffectDefID`) REFERENCES `Effect_def`(`ID`)
-);
-
--- maps effect- to spell-definitions
-DROP TABLE IF EXISTS `Spell_Effects_inst`;
-CREATE TABLE IF NOT EXISTS `Spell_Effects_inst` (
-    `SpellDefID` INTEGER  NOT NULL,
-    `EffectDefID` INTEGER  NOT NULL,
-    FOREIGN KEY (`SpellDefID`) REFERENCES `Spell_def`(`ID`),
-    FOREIGN KEY (`EffectDefID`) REFERENCES `Effect_def`(`ID`)
+DROP TABLE IF EXISTS `MobDefToDefEffect`;
+CREATE TABLE IF NOT EXISTS `MobDefToDefEffect` (
+    `MobDefId` INTEGER  NOT NULL,
+    `DefEffectId` INTEGER  NOT NULL,
+    FOREIGN KEY (`MobDefId`) REFERENCES `MobDef`(`MobDefId`),
+    FOREIGN KEY (`DefEffectId`) REFERENCES `DefEffect`(`DefEffectId`)
 );
 
 -- maps effect- to item-definitions
-DROP TABLE IF EXISTS `Item_Effects_inst`;
-CREATE TABLE IF NOT EXISTS `Item_Effects_inst` (
-    `ItemDefID` INTEGER  NOT NULL,
-    `EffectDefID` INTEGER  NOT NULL,
-    FOREIGN KEY (`ItemDefID`) REFERENCES `Item_def`(`ID`),
-    FOREIGN KEY (`EffectDefID`) REFERENCES `Effect_def`(`ID`)
+DROP TABLE IF EXISTS `ItemDefToDefEffect`;
+CREATE TABLE IF NOT EXISTS `ItemDefToDefEffect` (
+    `ItemDefId` INTEGER  NOT NULL,
+    `DefEffectId` INTEGER  NOT NULL,
+    FOREIGN KEY (`ItemDefID`) REFERENCES `ItemDef`(`ItemDefId`),
+    FOREIGN KEY (`DefEffectId`) REFERENCES `DefEffect`(`DefEffectId`)
 );
 
 -- maps effect- to npc-definitions
-DROP TABLE IF EXISTS `NPC_Effects_inst`;
-CREATE TABLE IF NOT EXISTS `NPC_Effects_inst` (
-    `NPCDefID` INTEGER  NOT NULL,
-    `EffectDefID` INTEGER  NOT NULL,
-    FOREIGN KEY (`NPCDefID`) REFERENCES `NPC_def`(`ID`),
-    FOREIGN KEY (`EffectDefID`) REFERENCES `Effect_def`(`ID`)
+DROP TABLE IF EXISTS `NpcDefToDefEffect`;
+CREATE TABLE IF NOT EXISTS `NpcDefToDefEffect` (
+    `NPCDefId` INTEGER  NOT NULL,
+    `DefEffectId` INTEGER  NOT NULL,
+    FOREIGN KEY (`NPCDefID`) REFERENCES `NPCDef`(`NPCDefId`),
+    FOREIGN KEY (`DefEffectId`) REFERENCES `DefEffect`(`DefEffectId`)
 );
 
 -- individual mob instances
-DROP TABLE IF EXISTS `Mob_inst`;
-CREATE TABLE IF NOT EXISTS `Mob_inst` (
-    `ID` INTEGER  NOT NULL,
-    `MobDefID` INTEGER  NOT NULL,
+DROP TABLE IF EXISTS `MobInst`;
+CREATE TABLE IF NOT EXISTS `MobInst` (
+    `MobInstId` INTEGER  NOT NULL,
+    `MobDefId` INTEGER NOT NULL,
     `ChangeDate` TEXT NOT NULL,
     `CreationDate` TEXT NOT NULL,
-    PRIMARY KEY (`ID`)
+    PRIMARY KEY (`MobInstId`),
+    FOREIGN KEY (`MobDefId`) REFERENCES `MobDef`(`MobDefId`)
 );
 
 -- individual item instances
-DROP TABLE IF EXISTS `Item_inst`;
-CREATE TABLE IF NOT EXISTS `Item_inst` (
-    `ID` INTEGER  NOT NULL,
-    `ItemDefID` INTEGER  NOT NULL,
+DROP TABLE IF EXISTS `ItemInst`;
+CREATE TABLE IF NOT EXISTS `ItemInst` (
+    `ItemInstId` INTEGER  NOT NULL,
+    `ItemDefId` INTEGER  NOT NULL,
     `Amount` INTEGER  NOT NULL,
     `ChangeDate` TEXT NOT NULL,
     `CreationDate` TEXT NOT NULL,
-    PRIMARY KEY (`ID`)
+    PRIMARY KEY (`ItemInstId`),
+    FOREIGN KEY (`ItemDefId`) REFERENCES `ItemDef`(`ItemDefId`)
 );
 
 -- individual npc instances
-DROP TABLE IF EXISTS `NPC_inst`;
-CREATE TABLE IF NOT EXISTS `NPC_inst` (
-    `ID` INTEGER  NOT NULL,
-    `NPCDefID` INTEGER  NOT NULL,
-    `IsSpawned` INTEGER  NOT NULL,
+DROP TABLE IF EXISTS `NpcInst`;
+CREATE TABLE IF NOT EXISTS `NpcInst` (
+    `NpcInstId` INTEGER  NOT NULL,
+    `NpcDefId` INTEGER  NOT NULL,
+    `ChangeDate` TEXT NOT NULL,
+    `CreationDate` TEXT NOT NULL,
+    PRIMARY KEY (`NpcInstId`),
+    FOREIGN KEY (`NpcDefId`) REFERENCES `NpcDef`(`NpcDefId`)
+);
+`/* IsSpawned` INTEGER  NOT NULL,
     `Fatness` INTEGER  NOT NULL,
     `ScaleX` INTEGER  NOT NULL,
     `ScaleY` INTEGER  NOT NULL,
@@ -207,63 +153,59 @@ CREATE TABLE IF NOT EXISTS `NPC_inst` (
     `BodyMesh` TEXT NOT NULL,
     `BodyTexture` INTEGER NOT NULL,
     `CurrWalk` INTEGER  NOT NULL,
-    `CurrAnimation` TEXT DEFAULT "",
-    `ChangeDate` TEXT NOT NULL,
-    `CreationDate` TEXT NOT NULL,
-    PRIMARY KEY (`ID`)
-);
+    `CurrAnimation` TEXT DEFAULT "", */
 
 -- individual item instances which are positioned in npc inventories
-DROP TABLE IF EXISTS `ItemInInventory_inst`;
-CREATE TABLE IF NOT EXISTS `ItemInInventory_inst` (
-    `NPCInstID` INTEGER  NOT NULL,
-    `ItemInstID` INTEGER  NOT NULL,
+DROP TABLE IF EXISTS `ItemInInventoryInst`;
+CREATE TABLE IF NOT EXISTS `ItemInInventoryInst` (
+    `NpcInstId` INTEGER  NOT NULL,
+    `ItemInstId` INTEGER  NOT NULL,
     `ChangeDate` TEXT NOT NULL,
     `CreationDate` TEXT NOT NULL,
-    FOREIGN KEY (`NPCInstID`) REFERENCES `NPC_inst`(`ID`),
-    FOREIGN KEY (`ItemInstID`) REFERENCES `Item_inst`(`ID`)
+    FOREIGN KEY (`NpcInstId`) REFERENCES `NpcInst`(`NpcInstId`),
+    FOREIGN KEY (`ItemInstId`) REFERENCES `ItemInst`(`ItemInstId`)
 );
 
 -- individual item instances which are positioned in containers/mobs
-DROP TABLE IF EXISTS `ItemInContainer_inst`;
+DROP TABLE IF EXISTS `ItemInContainerInst`;
 CREATE TABLE IF NOT EXISTS `ItemInInventory_inst` (
-    `MobInstID` INTEGER  NOT NULL,
-    `ItemInstID` INTEGER  NOT NULL,
+    `MobInstId` INTEGER  NOT NULL,
+    `ItemInstId` INTEGER  NOT NULL,
     `ChangeDate` TEXT NOT NULL,
     `CreationDate` TEXT NOT NULL,
-    FOREIGN KEY (`MobInstID`) REFERENCES `Mob_inst`(`ID`),
-    FOREIGN KEY (`ItemInstID`) REFERENCES `Item_inst`(`ID`)
+    FOREIGN KEY (`MobInstId`) REFERENCES `MobInst`(`MobInstId`),
+    FOREIGN KEY (`ItemInstId`) REFERENCES `ItemInst`(`ItemInstId`)
 );
 
 -- individual mob instances which are positioned in one of the worlds
-DROP TABLE IF EXISTS `MobInWorld_inst`;
-CREATE TABLE IF NOT EXISTS `MobInWorld_inst` (
-    `MobInstID` INTEGER  NOT NULL,
-    `WorldInstID` INTEGER  NOT NULL,
+DROP TABLE IF EXISTS `MobInWorldInst`;
+CREATE TABLE IF NOT EXISTS `MobInWorldInst` (
+    `MobInstId` INTEGER  NOT NULL,
+    `WorldInstId` INTEGER  NOT NULL,
     `ChangeDate` TEXT NOT NULL,
     `CreationDate` TEXT NOT NULL,
-    FOREIGN KEY (`MobInstID`) REFERENCES `Mob_inst`(`ID`),
-    FOREIGN KEY (`WorldInstID`) REFERENCES `World_inst`(`ID`)
+    FOREIGN KEY (`MobInstId`) REFERENCES `MobInst`(`MobInstId`),
+    FOREIGN KEY (`WorldInstId`) REFERENCES `WorldInst`(`WorldInstId`)
 );
 
 -- individual item instances which are positioned in one of the worlds
-DROP TABLE IF EXISTS `ItemInWorld_inst`;
-CREATE TABLE IF NOT EXISTS `ItemInWorld_inst` (
-    `ItemInstID` INTEGER  NOT NULL,
-    `WorldInstID` INTEGER  NOT NULL,
+DROP TABLE IF EXISTS `ItemInWorldInst`;
+CREATE TABLE IF NOT EXISTS `ItemInWorldInst` (
+    `ItemInstId` INTEGER  NOT NULL,
+    `WorldInstId` INTEGER  NOT NULL,
     `ChangeDate` TEXT NOT NULL,
     `CreationDate` TEXT NOT NULL,
-    FOREIGN KEY (`ItemInstID`) REFERENCES `Item_inst`(`ID`),
-    FOREIGN KEY (`WorldInstID`) REFERENCES `World_inst`(`ID`)
+    FOREIGN KEY (`ItemInstId`) REFERENCES `ItemInst`(`ItemInstId`),
+    FOREIGN KEY (`WorldInstId`) REFERENCES `WorldInst`(`WorldInstId`)
 );
 
 -- individual npc instances which are positioned in one of the worlds
-DROP TABLE IF EXISTS `NPCInWorld_inst`;
-CREATE TABLE IF NOT EXISTS `NPCInWorld_inst` (
-    `NPCInstID` INTEGER  NOT NULL,
-    `WorldInstID` INTEGER  NOT NULL,
+DROP TABLE IF EXISTS `NpcInWorldInst`;
+CREATE TABLE IF NOT EXISTS `NpcInWorldInst` (
+    `NpcInstId` INTEGER  NOT NULL,
+    `WorldInstId` INTEGER  NOT NULL,
     `ChangeDate` TEXT NOT NULL,
     `CreationDate` TEXT NOT NULL,
-    FOREIGN KEY (`NPCInstID`) REFERENCES `NPC_inst`(`ID`),
-    FOREIGN KEY (`WorldInstID`) REFERENCES `World_inst`(`ID`)
+    FOREIGN KEY (`NpcInstId`) REFERENCES `NpcInst`(`NpcInstId`),
+    FOREIGN KEY (`WorldInstId`) REFERENCES `WorldInst`(`WorldInstId`)
 );

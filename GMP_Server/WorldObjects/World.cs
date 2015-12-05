@@ -2,13 +2,51 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using RakNet;
 using GUC.Enumeration;
 using GUC.Server.Network;
 using GUC.Server.Network.Messages;
 using GUC.Types;
+using GUC.Network;
 
 namespace GUC.Server.WorldObjects
 {
+
+    public struct IGTime
+    {
+        public int day;
+        public int hour;
+        public int minute;
+
+        public IGTime (int hour, int minute)
+            :this (0, hour, minute)
+        { }
+
+        public IGTime (int day, int hour, int minute)
+        {
+            this.day = day;
+            this.hour = hour;
+            this.minute = minute;
+        }
+
+        //public static IGTime operator +(IGTime t1, IGTime t2)
+        //{
+        //    int minute = (t1.minute + t2.minute) % 59;
+        //    //int hour = (t1.hour + t2.hour) + ;
+        //    int day = t1.day + t2.day;
+
+
+        //    return new IGTime(day, hour, minute);
+        //}
+    }
+
+    public enum WeatherType : byte
+    {
+        undefined = 0,
+        rain = 1,
+        snow = 2,
+    }
+
     public class World
     {
         //Worlds, hardcoded but whatever
@@ -16,6 +54,18 @@ namespace GUC.Server.WorldObjects
         public static World NewWorld { get { return newworld; } }
 
         public string MapName { get; protected set; }
+
+        protected IGTime igTime;
+        public IGTime GetIGTime() { return this.igTime; }
+        protected Object lock_IGTime = new Object();
+
+        protected WeatherType weatherType;
+        public WeatherType GetWeatherType() { return this.weatherType; }
+        protected IGTime weatherStartTime;
+        public IGTime GetWeatherStartTime () { return this.weatherStartTime; }
+        protected IGTime weatherEndTime;
+        public IGTime GetWeatherEndTime () { return this.weatherEndTime; }
+        protected Object lock_Weather = new Object();
 
         internal Dictionary<int, Dictionary<int, WorldCell>> Cells = new Dictionary<int, Dictionary<int, WorldCell>>();
         internal Dictionary<int, Dictionary<int, NPCCell>> SmallCells = new Dictionary<int, Dictionary<int, NPCCell>>();
@@ -39,13 +89,19 @@ namespace GUC.Server.WorldObjects
             scav.DrawnItem = Item.Fists;
             scav.Spawn(this);
 
-            /*Random random = new Random();
-            for (int i = 0; i < 250; i++)
-            {
-                scav = NPC.Create("scavenger");
-                scav.DrawnItem = Item.Fists;
-                scav.Spawn(this, new Vec3f(6286 + random.Next(-1500,1500), 400, -1703 + random.Next(-1500,1500)));
-            }*/
+            igTime = new IGTime();
+            igTime.day = 4;
+            igTime.hour = 22;
+            igTime.minute = 30;
+            weatherType = WeatherType.rain;
+            weatherStartTime = new IGTime();
+            weatherStartTime.day = 4;
+            weatherStartTime.hour = 22;
+            weatherStartTime.minute = 30;
+            weatherEndTime = new IGTime();
+            weatherEndTime.day = 4;
+            weatherEndTime.hour = 23;
+            weatherEndTime.minute = 30;
 
             Vob mob = Vob.Create("forge");
             mob.Spawn(this, new Types.Vec3f(-200, -100, 200), new Types.Vec3f(0, 0, 1));
@@ -404,6 +460,72 @@ namespace GUC.Server.WorldObjects
                             }
                         }
                     }
+                }
+            }
+        }
+
+        public void ChangeTime(int day, int hour, int minute)
+        {
+            ChangeTime(day, hour, minute, true, true, true);
+        }
+
+        public void ChangeTime(int day, int hour, int minute, 
+            bool changeDay, bool changeHour, bool changeMinute)
+        {
+            lock (lock_IGTime)
+            {
+                // set world time in server
+                IGTime newIGTime = new IGTime();
+                if (changeDay) { newIGTime.day = day; } else { newIGTime.day = -1; }
+                if (changeHour) { newIGTime.hour = hour; } else { newIGTime.hour = -1; }
+                if (changeMinute) { newIGTime.minute = minute; } else { newIGTime.minute = -1; }
+                this.igTime = newIGTime;
+                //Console.WriteLine("++++ " + newIGTime.day + " " + newIGTime.hour + " " + newIGTime.minute);
+
+                // send new world time to clients
+                foreach (KeyValuePair<uint, NPC> keyValPair in NewWorld.PlayerDict)
+                {
+                    Client client = keyValPair.Value.client;
+                    BitStream stream = Program.server.SetupStream(NetworkID.WorldTimeMessage);
+
+                    stream.mWrite(this.igTime.day);
+                    stream.mWrite(this.igTime.hour);
+                    stream.mWrite(this.igTime.minute);
+
+                    Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY,
+                        PacketReliability.RELIABLE_ORDERED, 'I', client.guid, false);
+                }
+            }
+        }
+
+        public void ChangeWeather(WeatherType wt, IGTime startTime, IGTime endTime)
+        {
+            lock (lock_Weather)
+            {
+                // set world weather in server
+                this.weatherType = wt;
+                this.weatherStartTime = startTime;
+                this.weatherEndTime = endTime;
+                //Console.WriteLine(String.Format(">>> WT:{0} SD:{1} SH:{2} SM:{3} "
+                //    + "ED:{4} EH:{5} EM:{6}", wt, startTime.day, startTime.hour, startTime.minute,
+                //    endTime.day, endTime.hour, endTime.minute));
+
+                // send new weather to clients
+                foreach (KeyValuePair<uint, NPC> keyValPair in NewWorld.PlayerDict)
+                {
+                    Client client = keyValPair.Value.client;
+
+                    BitStream stream = Program.server.SetupStream(NetworkID.WorldWeatherMessage);
+                    stream.mWrite((byte)wt);
+                    //stream.Write(startTime.day);
+                    stream.mWrite((byte)startTime.hour);
+                    stream.mWrite((byte)startTime.minute);
+                    //stream.Write(endTime.day);
+                    stream.mWrite((byte)endTime.hour);
+                    stream.mWrite((byte)endTime.minute);
+
+                    Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY,
+                        PacketReliability.RELIABLE_ORDERED, 'I', client.guid, false);
                 }
             }
         }

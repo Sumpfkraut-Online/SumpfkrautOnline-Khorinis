@@ -8,27 +8,21 @@ using SQLiteCommand = Mono.Data.Sqlite.SqliteCommand;
 
 namespace GUC.Server.Scripts.Sumpfkraut.Database
 {
-    class DBReader
+    public class DBReader : ScriptObject
     {
 
-        private static string sqLiteDataSource = "Data Source=save.db";
+        #region attributes
 
-        ///**
-        // *   Executes a defined sql-query and stores the results as strings.
-        // *   Stores the results for each sql-statement provided, so that after defining 2 statements 
-        // *   (statement ends with ;) there is a list of 2 results. Each result ist in itself a list of rows.
-        // *   Per row there can be 0 or more objects/table column entries of data.
-        // *   @param results stores the results of 1 or multuple provided sql-queries
-        // *   @param colTypes is the list which provides ways to convert the resulting strings to more defined server data
-        // *   @param colTypesKeys stores the column names of the data table in a numeric manner (used in cata conversion)
-        // *   @param colTypesVals stores the hints on data conversion used in a numeric manner (used in cata conversion)
-        // *   @param convertData must be true if the resultings strings should be converted to data on load
-        // *   @param select is the optional string after the SELECT-statement in sql
-        // *   @param from is the optional string after the FROM-statement in sql
-        // *   @param where is the optional string after the WHERE-statement in sql
-        // *   @param orderBy is the optional string after the ORDER BY-statement in sql
-        // *   @param completeQuery is an optional query which can be used to define more than one sql-statement in one shot (if provided, select, from, where, orderBy are ignored)
-        // */
+        new public static readonly String _staticName = "DBReader (static)";
+        new protected String _objName = "DBReader (default)";
+
+        public static readonly String sqLiteDataSource = "Data Source=save.db";
+
+        #endregion
+
+
+
+        #region methods for database-interaction
 
         /**
          *   Executes a defined sql-query and stores the results as strings.
@@ -62,7 +56,13 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
          *   @param completeQuery is the query which is send to the database (can have multiple statements seperated by ;)
          */
         public static void LoadFromDB (ref List<List<List<object>>> results,
-            string completeQuery)
+           String completeQuery)
+        {
+            LoadFromDB(ref results, completeQuery, sqLiteDataSource);
+        }
+
+        public static void LoadFromDB (ref List<List<List<object>>> results,
+            String completeQuery, String sqLiteDataSource)
         {
             using (SqliteConnection con = new SqliteConnection())
             {
@@ -72,7 +72,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                 // security check and close connection if necessary
                 if (!DBSecurity.IsSecureSQLCommand(completeQuery))
                 {
-                    Log.Logger.logWarning("LoadFromDB: Prevented forwarding of insecure sql-command: " + completeQuery);
+                    MakeLogWarningStatic(typeof(DBReader), 
+                        "LoadFromDB: Prevented forwarding of insecure sql-command: " 
+                        + completeQuery);
                     if (con.State.ToString() == "Open")
                     {
                         con.Close();
@@ -140,38 +142,63 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
 
         public static int SaveToDB (string completeQuery)
         {
+            return SaveToDB(completeQuery, sqLiteDataSource);
+        }
 
-            if (!DBSecurity.IsSecureSQLCommand(completeQuery))
-            {
-                throw new Exception("SaveToDB: Prevented forwarding of insecure sql-command: " + completeQuery);
-            }
-
+        public static int SaveToDB (string completeQuery, String sqLiteDataSource)
+        {
             int changedRows = 0;
 
-            using (SQLiteCommand cmd = new SQLiteCommand(Sqlite.getSqlite().connection))
+            using (SqliteConnection con = new SqliteConnection())
             {
-                cmd.CommandText = completeQuery;
+                con.ConnectionString = sqLiteDataSource;
+                con.Open();
 
-                SQLiteDataReader rdr = null;
-                try
+                // security check and close connection if necessary
+                if (!DBSecurity.IsSecureSQLCommand(completeQuery))
                 {
-                    changedRows = cmd.ExecuteNonQuery();
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception("Could not execute SQLiteDataReader in SaveToDB: " + ex);
-                }
-                finally
-                {
-                    if (rdr != null)
+                    MakeLogWarningStatic(typeof(DBReader),
+                        "SaveToDB: Prevented forwarding of insecure sql-command: "
+                        + completeQuery);
+                    if (con.State.ToString() == "Open")
                     {
-                        rdr.Close();
+                        con.Close();
+                        con.Dispose();
+                    }
+                    return changedRows;
+                }
+
+                using (SQLiteCommand cmd = new SQLiteCommand(Sqlite.getSqlite().connection))
+                {
+                    cmd.CommandText = completeQuery;
+
+                    SQLiteDataReader rdr = null;
+                    try
+                    {
+                        changedRows = cmd.ExecuteNonQuery();
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("Could not execute SQLiteDataReader in SaveToDB: " + ex);
+                    }
+                    finally
+                    {
+                        if (rdr != null)
+                        {
+                            rdr.Close();
+                        }
                     }
                 }
             }
 
             return changedRows;
         }
+
+        #endregion
+
+
+
+        #region utility methods
 
         public static int[] ParseParamToIntArray (string param)
         {
@@ -239,6 +266,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
 
             return result;
         }
+
+        #endregion
 
     }
 }

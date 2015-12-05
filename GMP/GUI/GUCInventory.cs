@@ -112,6 +112,7 @@ namespace GUC.Client.GUI
         GUCVisualVob descrVis;
         oCItem descrVob;
 
+        // next inventories
         public GUCInventory left;
         public GUCInventory right;
         bool TradeAccepted = false; // AcceptedTradeBackgrounds shall not be unshown
@@ -229,7 +230,6 @@ namespace GUC.Client.GUI
                     this.Enabled = false;
                 }
                 newX = slots.GetLength(0) - 1;
-
             }
 
             if (contents.Count > 0)
