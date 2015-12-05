@@ -30,7 +30,7 @@ namespace GUC.Client.Menus
             }
             return trade;
         }
-
+        
         public VirtualKeys RequestTradeKey = VirtualKeys.T;
         public VirtualKeys AcceptTradeKey = VirtualKeys.T;
 
@@ -132,7 +132,6 @@ namespace GUC.Client.Menus
 
             inv.SetContents(Player.Inventory);
             inv.Enabled = true;
-
             base.Open();
         }
 
@@ -238,7 +237,7 @@ namespace GUC.Client.Menus
                 buyInv.SetContents(itemsBuy);
             }
         }
-
+        
         public void RequestTrade()
         {
             oCNpc ocnpc = Player.Hero.gNpc.GetFocusNpc();
@@ -307,4 +306,3 @@ namespace GUC.Client.Menus
 
     }
 }
-

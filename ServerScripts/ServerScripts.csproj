@@ -111,6 +111,8 @@
     <Compile Include="Sumpfkraut\WeatherSystem\Weather.cs" />
     <Compile Include="Sumpfkraut\WeatherSystem\WeatherHandler.cs" />
     <Compile Include="Sumpfkraut\WeatherSystem\WeatherState.cs" />
+    <Compile Include="Utils\RandomManager.cs" />
+    <Compile Include="Utils\Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GMP_Server\GMP_Server.csproj">

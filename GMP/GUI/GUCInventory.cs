@@ -115,7 +115,9 @@ namespace GUC.Client.GUI
         // next inventories
         public GUCInventory left;
         public GUCInventory right;
+
         bool TradeAccepted = false; // AcceptedTradeBackgrounds shall not be unshown
+
 
         bool enabled = false;
         public bool Enabled
