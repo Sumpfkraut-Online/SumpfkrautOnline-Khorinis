@@ -23,6 +23,85 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Launcher", "Launcher", "{58
 		Launcher\ReadMe.txt = Launcher\ReadMe.txt
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Animations", "Animations", "{2CFE5DD3-579B-4320-8689-4A611ECD5C80}"
+	ProjectSection(SolutionItems) = preProject
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Alligator.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Alligator.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Blattcrawler.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Blattcrawler.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Bloodfly.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Bloodfly.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Crawler.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Crawler.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Demon.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Demon.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Draconian.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Draconian.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Dragon.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Dragon.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Dragon_Rock.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Dragon_Rock.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\DragonSnapper.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\DragonSnapper.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\FireShadow.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\FireShadow.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Giant_Bug.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Giant_Bug.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Giant_Rat.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Giant_Rat.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Gobbo.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Gobbo.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Golem.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Golem.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Harpie.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Harpie.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\HumanS.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\HumanS.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Irrlicht.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Irrlicht.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Keiler.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Keiler.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Lurker.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Lurker.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Meatbug.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Meatbug.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Molerat.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Molerat.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Orc.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Orc.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Razor.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Razor.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Scavenger.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Scavenger.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\ScavengerGL.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\ScavengerGL.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Shadow.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Shadow.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Sheep.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Sheep.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Snapper.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Snapper.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\StoneGuardian.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\StoneGuardian.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\StonePuma.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\StonePuma.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\SwampDrone.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\SwampDrone.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\SwampGolem.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\SwampGolem.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\SwampRat.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\SwampRat.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Swampshark.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Swampshark.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\SwampZombie.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\SwampZombie.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Swarm.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Swarm.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Troll.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Troll.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Waran.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Waran.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Wolf.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Wolf.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Zombie.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Zombie.times
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Overlays", "Overlays", "{B811D44F-B1C0-48B4-85CD-B3E0C19FFF8D}"
+	ProjectSection(SolutionItems) = preProject
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Firewaran.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Firewaran.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Golem_Firegolem.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Golem_Firegolem.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Golem_Icegolem.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Golem_Icegolem.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Humans_1hST1.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Humans_1hST1.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Humans_1hST2.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Humans_1hST2.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Humans_2hST1.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Humans_2hST1.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Humans_2hST2.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Humans_2hST2.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Humans_Acrobatic.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Humans_Acrobatic.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\HumanS_Arrogance.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\HumanS_Arrogance.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Humans_Babe.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Humans_Babe.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Humans_BowT1.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Humans_BowT1.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Humans_BowT2.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Humans_BowT2.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Humans_CBowT1.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Humans_CBowT1.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Humans_CBowT2.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Humans_CBowT2.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\HumanS_Flee.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\HumanS_Flee.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Humans_Mage.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Humans_Mage.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\HumanS_Militia.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\HumanS_Militia.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\HumanS_Relaxed.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\HumanS_Relaxed.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Humans_Skeleton.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Humans_Skeleton.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Humans_Skeleton_Fly.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Humans_Skeleton_Fly.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\HumanS_Sprint.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\HumanS_Sprint.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\HumanS_Swim.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\HumanS_Swim.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Humans_Tired.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Humans_Tired.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Humans_Torch.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Humans_Torch.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Orc_Torch.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Orc_Torch.times
+		E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Orcbiter.times = E:\Spiele\Gothic 2\System\UntoldChapter\Server\Animations\Overlays\Orcbiter.times
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AnimationFiles", "AnimationFiles", "{5FA4D28D-8CD8-4BA8-BC25-4800F17768A9}"
+	ProjectSection(SolutionItems) = preProject
+		ReadMe.txt = ReadMe.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -216,5 +295,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2CFE5DD3-579B-4320-8689-4A611ECD5C80} = {5FA4D28D-8CD8-4BA8-BC25-4800F17768A9}
+		{B811D44F-B1C0-48B4-85CD-B3E0C19FFF8D} = {2CFE5DD3-579B-4320-8689-4A611ECD5C80}
 	EndGlobalSection
 EndGlobal
