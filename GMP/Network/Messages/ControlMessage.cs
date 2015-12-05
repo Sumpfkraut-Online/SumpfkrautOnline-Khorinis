@@ -29,6 +29,8 @@ namespace GUC.Client.Network.Messages
             if (vob != null)
             {
                 Player.VobControlledList.Remove(vob);
+                if (vob is NPC)
+                    ((NPC)vob).cmd = ControlCmd.Stop;
             }
         }
 
