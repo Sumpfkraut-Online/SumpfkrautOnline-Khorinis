@@ -55,37 +55,18 @@ namespace GUC.Server
                 Directory.CreateDirectory("scripts/_compiled");
         }
 
-
-        static void Main(string[] args)
+        static void RunServer()
         {
-            
-            initFolders();
-            loadServerConfig();
+            const long nextInfoUpdateTime = 120 * 1000 * TimeSpan.TicksPerMillisecond;
+            long nextInfoUpdates = DateTime.UtcNow.Ticks + nextInfoUpdateTime;
 
-            TCPStatus.getTCPStatus();
-            TCPStatus.getTCPStatus().addInfo("servername", serverOptions.ServerName);
-            TCPStatus.getTCPStatus().addInfo("serverlanguage", "");
-            TCPStatus.getTCPStatus().addInfo("maxslots", ""+serverOptions.Slots);
+            long tickAverage = 0;
+            long tickCount = 0;
+            long tickMax = 0;
 
+            Stopwatch watch = new Stopwatch();
             try
             {
-                server = new Network.Server();
-                server.Start((ushort)serverOptions.Port, (ushort)serverOptions.Slots, serverOptions.password);
-
-                AnimationControl.Init();
-
-                scriptManager = new Scripting.ScriptManager();
-                scriptManager.Init();
-                scriptManager.Startup();
-
-                const long nextInfoUpdateTime = 60 * 1000 * TimeSpan.TicksPerMillisecond;
-                long nextInfoUpdates = DateTime.UtcNow.Ticks + nextInfoUpdateTime;
-
-                long tickAverage = 0;
-                long tickCount = 0;
-                long tickMax = 0;
-
-                Stopwatch watch = new Stopwatch();
                 while (true)
                 {
                     watch.Restart();
@@ -117,6 +98,40 @@ namespace GUC.Server
                         Thread.Sleep(1);
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                Log.Logger.log(Log.Logger.LOG_ERROR, e.Message);
+                Log.Logger.log(Log.Logger.LOG_ERROR, e.Source);
+                Log.Logger.log(Log.Logger.LOG_ERROR, e.StackTrace);
+            }
+        }
+
+        static void Main(string[] args)
+        {
+            
+            initFolders();
+            loadServerConfig();
+
+            TCPStatus.getTCPStatus();
+            TCPStatus.getTCPStatus().addInfo("servername", serverOptions.ServerName);
+            TCPStatus.getTCPStatus().addInfo("serverlanguage", "");
+            TCPStatus.getTCPStatus().addInfo("maxslots", ""+serverOptions.Slots);
+
+            try
+            {
+                server = new Network.Server();
+                server.Start((ushort)serverOptions.Port, (ushort)serverOptions.Slots, serverOptions.password);
+
+                AnimationControl.Init();
+
+                scriptManager = new Scripting.ScriptManager();
+                scriptManager.Init();
+                scriptManager.Startup();
+
+                new Thread(RunServer).Start();
+
+                Log.Logger.RunLog();
             }
             catch (System.Exception ex)
             {

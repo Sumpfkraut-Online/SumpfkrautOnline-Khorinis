@@ -64,6 +64,7 @@ namespace GUC.Server.Log
           log((int)LogLevel.INFO, Message);
         }
 
+        static object lock_LogObject = new object();
         public static void log(int level, String Message)
         {
             try
@@ -74,14 +75,67 @@ namespace GUC.Server.Log
 
 
                 String[] Messages = Regex.Split(Message, "(<br>)|(</br>)|(<br/>)", RegexOptions.IgnoreCase); 
-                
-                foreach (String message in Messages)
+
+                lock (lock_LogObject)
                 {
-                    Console.WriteLine(message);
+                    foreach (String message in Messages)
+                    {
+                        Console.WriteLine("\r" + message);
+                    }
+
+                    if (typedText.Length > 0)
+                    {
+                        Console.Write(typedText.ToString());
+                    }
                 }
             }
             catch (Exception ex)
             { }
+        }
+
+        public static Action<string> OnCommand;
+        static object lock_KeyObject = new object();
+        static StringBuilder typedText = new StringBuilder();
+        internal static void RunLog()
+        {
+            ConsoleKeyInfo cki;
+            while (true)
+            {
+                try
+                {
+                    cki = Console.ReadKey();
+                    switch (cki.Key)
+                    {
+                        case ConsoleKey.Enter:
+                            if (OnCommand != null)
+                            {
+                                OnCommand(typedText.ToString());
+                            }
+                            typedText.Clear();
+                            break;
+                        case ConsoleKey.Escape:
+                            typedText.Clear();
+                            break;
+                        default:
+                            if (cki.KeyChar != '\0')
+                            {
+                                typedText.Append(cki.KeyChar);
+                            }
+                            break;
+                    }
+
+                    lock(lock_KeyObject)
+                    {
+                        Console.Write("\r" + typedText.ToString());
+                    }
+                }
+                catch(Exception e)
+                {
+                    Log.Logger.log(Log.Logger.LOG_ERROR, e.Message);
+                    Log.Logger.log(Log.Logger.LOG_ERROR, e.Source);
+                    Log.Logger.log(Log.Logger.LOG_ERROR, e.StackTrace);
+                }
+            }
         }
     }
 }
