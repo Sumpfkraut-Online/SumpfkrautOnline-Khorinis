@@ -149,9 +149,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
         public static bool IsValidWeatherState(WeatherState ws, bool timeCheck,
             bool isCompleteFuture, DateTime checkDateTime)
         {
-            if ((ws.weatherType != WeatherType.undefined) &&
-                (ws.weatherType != WeatherType.rain) &&
-                (ws.weatherType != WeatherType.snow))
+            if ((ws.weatherType != WeatherType.Normal) &&
+                (ws.weatherType != WeatherType.Rain) &&
+                (ws.weatherType != WeatherType.Snow))
             {
                 return false;
             }
@@ -219,18 +219,18 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
                     if (tempInt >= this.precFactor)
                     {
                         // no precipitation == default weather
-                        newWS.weatherType = WeatherType.undefined;
+                        newWS.weatherType = WeatherType.Normal;
                     }
                     else
                     {
                         tempInt = this.random.Next(101);
                         if (tempInt >= this.snowFactor)
                         {
-                            newWS.weatherType = WeatherType.rain;
+                            newWS.weatherType = WeatherType.Rain;
                         }
                         else
                         {
-                            newWS.weatherType = WeatherType.snow;
+                            newWS.weatherType = WeatherType.Snow;
                         }
 
                     }
@@ -460,7 +460,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
 
                     if (this.currWeatherState == null)
                     {
-                        World.NewWorld.ChangeWeather(WeatherType.undefined,
+                        World.NewWorld.ChangeWeather(WeatherType.Normal,
                             igTimeNow, new IGTime(23, 59));
                         MakeLog("Updated ingame-weather to the default.");
                     }

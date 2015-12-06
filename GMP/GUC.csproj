@@ -73,6 +73,12 @@
     <Compile Include="..\Network\Network\BitStreamExtension.cs">
       <Link>Network\BitStreamExtension.cs</Link>
     </Compile>
+    <Compile Include="..\Network\Network\PacketReader.cs">
+      <Link>Network\PacketReader.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Network\PacketWriter.cs">
+      <Link>Network\PacketWriter.cs</Link>
+    </Compile>
     <Compile Include="..\Network\Options\ClientOptions.cs">
       <Link>Options\ClientOptions.cs</Link>
     </Compile>

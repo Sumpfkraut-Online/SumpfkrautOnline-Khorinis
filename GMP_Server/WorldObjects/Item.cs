@@ -13,21 +13,17 @@ namespace GUC.Server.WorldObjects
 {
     public class Item : AbstractDropVob
     {
-        static Item fists = null;
-        public static Item Fists 
-        { 
-            get
-            {
-                if (fists == null)
-                {
-                    fists = new Item();
-                    fists.ID = 0;
-                    fists.Slot = 0;
-                    sWorld.RemoveVob(fists);
-                }
-                return fists;
-            }
+        public static readonly Item Fists = CreateFists();
+        static Item CreateFists()
+        {
+            Item fists = new Item(null);
+            fists.ID = 0;
+            fists.Slot = 0;
+            WorldObjects.World.sAllVobsDict.Remove(0);
+            return fists;
         }
+
+
 
         /// <summary>
         /// Gets the ItemInstance of this item.
@@ -57,7 +53,7 @@ namespace GUC.Server.WorldObjects
                 }
                 else
                 {
-                    RemoveFromServer();
+                    Delete();
                 }
 
             }
@@ -120,12 +116,12 @@ namespace GUC.Server.WorldObjects
         /// Creates and returns an Item object from the given ItemInstance-ID.
         /// Returns NULL when the ID is not found!
         /// </summary>
-        public static Item Create(ushort instanceID)
+        public static Item Create(ushort instanceID, object scriptObject)
         {
             ItemInstance inst = ItemInstance.Table.Get(instanceID);
             if (inst != null)
             {
-                return Create(inst);
+                return Create(inst, scriptObject);
             }
             else
             {
@@ -138,12 +134,12 @@ namespace GUC.Server.WorldObjects
         /// Creates and returns an Item object from the given ItemInstance-Name.
         /// Returns NULL when the name is not found!
         /// </summary>
-        public static Item Create(string instanceName)
+        public static Item Create(string instanceName, object scriptObject)
         {
             ItemInstance inst = ItemInstance.Table.Get(instanceName);
             if (inst != null)
             {
-                return Create(inst);
+                return Create(inst, scriptObject);
             }
             else
             {
@@ -156,13 +152,14 @@ namespace GUC.Server.WorldObjects
         /// Creates and returns an Item object from the given ItemInstance.
         /// Returns NULL when the ItemInstance is NULL!
         /// </summary>
-        public static Item Create(ItemInstance instance)
+        public static Item Create(ItemInstance instance, object scriptObject)
         {
             if (instance != null)
             {
-                Item item = new Item();
+                Item item = new Item(scriptObject);
                 item.Instance = instance;
                 item.condition = instance.Condition;
+                Server.Network.Server.sItemDict.Add(item.ID, item);
                 return item;
             }
             else
@@ -172,14 +169,27 @@ namespace GUC.Server.WorldObjects
             }
         }
 
-        protected Item()
+        internal Item(object scriptObject) : base(scriptObject)
         {
+        }
+
+        public override void Delete()
+        {
+            if (Owner == null)
+            {
+                Despawn();
+            }
+            else
+            {
+                Owner.RemoveItem(this);
+            }
+            base.Delete();
+            Server.Network.Server.sItemDict.Remove(this.ID);
         }
 
         public static Item Copy(Item source)
         {
-            Item newItem = new Item();
-            newItem.Instance = source.Instance;
+            Item newItem = Item.Create(source.Instance, source.ScriptObj);
             newItem.condition = source.condition;
             newItem.specialLine = source.specialLine;
             return newItem;
@@ -201,19 +211,6 @@ namespace GUC.Server.WorldObjects
 
             foreach (Client client in list)
                 Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
-        }
-
-        public override void RemoveFromServer()
-        {
-            if (Owner == null)
-            {
-                Despawn();
-            }
-            else
-            {
-                Owner.RemoveItem(this);
-            }
-            sWorld.RemoveVob(this);
         }
     }
 }

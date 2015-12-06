@@ -38,10 +38,10 @@ namespace GUC.Server.Network
 
             if (NPCList.Count == 0)
             {
-                world.SmallCells[x].Remove(z);
-                if (world.SmallCells[x].Count == 0)
+                world.npcCells[x].Remove(z);
+                if (world.npcCells[x].Count == 0)
                 {
-                    world.SmallCells.Remove(x);
+                    world.npcCells.Remove(x);
                 }
             }
         }

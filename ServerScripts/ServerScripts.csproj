@@ -54,6 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Accounts\Account.cs" />
     <Compile Include="Accounts\AccountSystem.cs" />
     <Compile Include="Animations\AniCtrl.cs" />
     <Compile Include="DamageScript.cs" />

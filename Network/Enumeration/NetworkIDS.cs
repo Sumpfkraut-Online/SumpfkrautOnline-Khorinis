@@ -12,15 +12,9 @@ namespace GUC.Enumeration
     {
         //login stuff
         ConnectionMessage,
-
-        AccountCreationMessage,
-        AccountLoginMessage,
-        AccountCharCreationMessage,
-        AccountCharLoginMessage,
-        AccountErrorMessage,
-
-        //player stuff
+        LoginMessage,
         PlayerControlMessage,
+
         PlayerPickUpItemMessage,
         PlayerAttributeMSMessage,
         PlayerAttributeMessage,

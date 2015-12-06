@@ -18,124 +18,151 @@ namespace GUC.Server.WorldObjects
         public int hour;
         public int minute;
 
-        public IGTime (int hour, int minute)
-            :this (0, hour, minute)
+        public IGTime(int hour, int minute)
+            : this(0, hour, minute)
         { }
 
-        public IGTime (int day, int hour, int minute)
+        public IGTime(int day, int hour, int minute)
         {
             this.day = day;
             this.hour = hour;
             this.minute = minute;
         }
-
-        //public static IGTime operator +(IGTime t1, IGTime t2)
-        //{
-        //    int minute = (t1.minute + t2.minute) % 59;
-        //    //int hour = (t1.hour + t2.hour) + ;
-        //    int day = t1.day + t2.day;
-
-
-        //    return new IGTime(day, hour, minute);
-        //}
     }
 
     public enum WeatherType : byte
     {
-        undefined = 0,
-        rain = 1,
-        snow = 2,
+        Normal,
+        Rain,
+        Snow,
     }
 
-    public class World
+    public class World : AbstractObject
     {
-        //Worlds, hardcoded but whatever
-        private static World newworld = new World("NEWWORLD\\NEWWORLD.ZEN"); //new World("SOK-NEWWORLD.ZEN"); rename for release, so the original is not replaced and SP is still functional!
-        public static World NewWorld { get { return newworld; } }
+        public string WorldName { get; protected set; }
+        public string FileName { get; protected set; }
 
-        public string MapName { get; protected set; }
+        internal Dictionary<int, Dictionary<int, WorldCell>> netCells = new Dictionary<int, Dictionary<int, WorldCell>>(); // for networking
+        internal Dictionary<int, Dictionary<int, NPCCell>> npcCells = new Dictionary<int, Dictionary<int, NPCCell>>(); // small cells containing npcs for distance collections
 
+        // All player npcs in this world
+        internal Dictionary<uint, NPC> playerDict = new Dictionary<uint, NPC>();
+        public NPC GetPlayer(uint ID) { NPC npc; playerDict.TryGetValue(ID, out npc); return npc; }
+        public IEnumerable<NPC> GetPlayers() { return playerDict.Values; }
+
+        // All bot npcs in this world
+        internal Dictionary<uint, NPC> npcDict = new Dictionary<uint, NPC>();
+        public NPC GetNpc(uint ID) { NPC npc; npcDict.TryGetValue(ID, out npc); return npc; }
+        public IEnumerable<NPC> GetNpcs() { return npcDict.Values; }
+
+        // All bot npcs & players in this world
+        internal Dictionary<uint, NPC> allNpcsDict = new Dictionary<uint, NPC>();
+        public NPC GetNpcOrPlayer(uint ID) { NPC npc; allNpcsDict.TryGetValue(ID, out npc); return npc; }
+        public IEnumerable<NPC> GetNpcsAndPlayers() { return allNpcsDict.Values; }
+
+
+        // All items in this world
+        internal Dictionary<uint, Item> itemDict = new Dictionary<uint, Item>();
+        public Item GetItem(uint ID) { Item item; itemDict.TryGetValue(ID, out item); return item; }
+        public IEnumerable<Item> GetItems() { return itemDict.Values; }
+
+
+        // All vobs and mobs in this world
+        internal Dictionary<uint, Vob> vobDict = new Dictionary<uint, Vob>();
+        public Vob GetVob(uint ID) { Vob vob; vobDict.TryGetValue(ID, out vob); return vob; }
+        public IEnumerable<Vob> GetVobs() { return vobDict.Values; }
+
+
+        // All vobs in this world
+        internal Dictionary<uint, AbstractVob> allVobsDict = new Dictionary<uint, AbstractVob>();
+        public AbstractVob GetAnyVob(uint ID) { AbstractVob vob; allVobsDict.TryGetValue(ID, out vob); return vob; }
+        public IEnumerable<AbstractVob> GetAllVobs() { return allVobsDict.Values; }
+
+
+        // Ingame time
         protected IGTime igTime;
         public IGTime GetIGTime() { return this.igTime; }
         protected Object lock_IGTime = new Object();
 
+        // The weather of the world
         protected WeatherType weatherType;
         public WeatherType GetWeatherType() { return this.weatherType; }
         protected IGTime weatherStartTime;
-        public IGTime GetWeatherStartTime () { return this.weatherStartTime; }
+        public IGTime GetWeatherStartTime() { return this.weatherStartTime; }
         protected IGTime weatherEndTime;
-        public IGTime GetWeatherEndTime () { return this.weatherEndTime; }
+        public IGTime GetWeatherEndTime() { return this.weatherEndTime; }
         protected Object lock_Weather = new Object();
 
-        internal Dictionary<int, Dictionary<int, WorldCell>> Cells = new Dictionary<int, Dictionary<int, WorldCell>>();
-        internal Dictionary<int, Dictionary<int, NPCCell>> SmallCells = new Dictionary<int, Dictionary<int, NPCCell>>();
+        #region Constructors
 
-        Dictionary<uint, NPC> playerDict = new Dictionary<uint, NPC>();
-        Dictionary<uint, NPC> npcDict = new Dictionary<uint, NPC>();
-        Dictionary<uint, Item> itemDict = new Dictionary<uint, Item>();
-        Dictionary<uint, Vob> vobDict = new Dictionary<uint, Vob>();
-
-        public Dictionary<uint, NPC> PlayerDict { get { return playerDict; } }
-        public Dictionary<uint, NPC> NPCDict { get { return npcDict; } }
-        public Dictionary<uint, Item> ItemDict { get { return itemDict; } }
-        public Dictionary<uint, Vob> VobDict { get { return vobDict; } }
-
-        public World(string mapname)
+        internal World(object scriptObj) : base(scriptObj)
         {
-            MapName = mapname.ToUpper();
-            sWorld.WorldDict.Add(MapName, this);
-
-            NPC scav = NPC.Create("scavenger");
-            scav.DrawnItem = Item.Fists;
-            scav.Spawn(this);
-
-            igTime = new IGTime();
-            igTime.day = 4;
-            igTime.hour = 22;
-            igTime.minute = 30;
-            weatherType = WeatherType.rain;
-            weatherStartTime = new IGTime();
-            weatherStartTime.day = 4;
-            weatherStartTime.hour = 22;
-            weatherStartTime.minute = 30;
-            weatherEndTime = new IGTime();
-            weatherEndTime.day = 4;
-            weatherEndTime.hour = 23;
-            weatherEndTime.minute = 30;
-
-            Vob mob = Vob.Create("forge");
-            mob.Spawn(this, new Types.Vec3f(-200, -100, 200), new Types.Vec3f(0, 0, 1));
-
-            mob = Vob.Create("stool");
-            mob.Spawn(this, new Types.Vec3f(400, -160, 458), new Types.Vec3f(0, 0, 1));
-
-            mob = Vob.Create("latern");
-            mob.Spawn(this, new Types.Vec3f(400, -160, 458), new Types.Vec3f(0, 0, 1));
         }
 
-        public NPC GetNpcOrPlayer(uint id)
+        public static World Create(string worldName, string fileName, object scriptObject)
         {
-            if (id == 0)
+            if (worldName == null)
             {
-                return null;
+                Log.Logger.logError("World creation failed! WorldName can't be NULL!");
             }
+            else if (String.IsNullOrWhiteSpace(fileName))
+            {
+                Log.Logger.logError("World creation failed! FileName is NULL or empty!");
+            }
+            else
+            {
+                World world = new World(scriptObject);
+                world.WorldName = worldName.ToUpper();
+                world.FileName = fileName.ToUpper();
 
-            NPC npc = null;
-            playerDict.TryGetValue(id, out npc);
-            if (npc != null) return npc;
+                world.igTime = new IGTime();
+                world.igTime.day = 4;
+                world.igTime.hour = 22;
+                world.igTime.minute = 30;
 
-            npcDict.TryGetValue(id, out npc);
-            return npc;
+                world.weatherType = WeatherType.Rain;
+                world.weatherStartTime = new IGTime();
+                world.weatherStartTime.day = 4;
+                world.weatherStartTime.hour = 22;
+                world.weatherStartTime.minute = 30;
+                world.weatherEndTime = new IGTime();
+                world.weatherEndTime.day = 4;
+                world.weatherEndTime.hour = 23;
+                world.weatherEndTime.minute = 30;
+
+                Network.Server.sWorldDict.Add(world.WorldName, world);
+            }
+            return null;
         }
 
-        internal void AddVob(AbstractVob vob)
+        /// <summary> Deletes all vobs in this world and removes itself from the server. </summary>
+        public void Delete()
         {
+            foreach(AbstractVob vob in GetAllVobs())
+            {
+                vob.Delete();
+            }
+            Network.Server.sWorldDict.Remove(this.WorldName);
+        }
+
+        #endregion
+
+        void AddVob(AbstractVob vob)
+        {
+            vob.World = this;
+            allVobsDict.Add(vob.ID, vob);
             if (vob is NPC)
             {
-                if (((NPC)vob).isPlayer)
-                    playerDict.Add(vob.ID, (NPC)vob);
+                NPC npc = (NPC)vob;
+                allNpcsDict.Add(npc.ID, npc);
+                if (npc.isPlayer)
+                {
+                    playerDict.Add(npc.ID, npc);
+                }
                 else
-                    npcDict.Add(vob.ID, (NPC)vob);
+                {
+                    npcDict.Add(npc.ID, npc);
+                }
             }
             else if (vob is Item)
             {
@@ -145,17 +172,24 @@ namespace GUC.Server.WorldObjects
             {
                 vobDict.Add(vob.ID, (Vob)vob);
             }
-            vob.World = this;
         }
 
-        internal void RemoveVob(AbstractVob vob)
+        void RemoveVob(AbstractVob vob)
         {
+            vob.World = null;
+            allVobsDict.Remove(vob.ID);
             if (vob is NPC)
             {
-                if (((NPC)vob).isPlayer)
-                    playerDict.Remove(vob.ID);
+                NPC npc = (NPC)vob;
+                allNpcsDict.Remove(npc.ID);
+                if (npc.isPlayer)
+                {
+                    playerDict.Remove(npc.ID);
+                }
                 else
-                    npcDict.Remove(vob.ID);
+                {
+                    npcDict.Remove(npc.ID);
+                }
             }
             else if (vob is Item)
             {
@@ -165,26 +199,30 @@ namespace GUC.Server.WorldObjects
             {
                 vobDict.Remove(vob.ID);
             }
-            vob.World = null;
         }
 
         #region Spawn
+
         public void SpawnVob(AbstractVob vob)
         {
-            if (vob.World != null)
+            if (vob.Spawned)
             {
-                vob.World.DespawnVob(vob);
+                if (vob.World != this)
+                {
+                    vob.Despawn();
+                }
             }
-            AddVob(vob);
-            UpdatePosition(vob, vob.ClientOrNull);
+            else
+            {
+                AddVob(vob);
+            }
+            UpdatePosition(vob, vob is NPC ? ((NPC)vob).client : null);
         }
 
         public void DespawnVob(AbstractVob vob)
         {
             if (vob.World != this)
-            {
                 return;
-            }
 
             RemoveVob(vob);
             if (vob.cell != null)
@@ -255,11 +293,11 @@ namespace GUC.Server.WorldObjects
 
             //find new cell
             Dictionary<int, NPCCell> row = null;
-            SmallCells.TryGetValue(x, out row);
+            npcCells.TryGetValue(x, out row);
             if (row == null)
             {
                 row = new Dictionary<int, NPCCell>();
-                SmallCells.Add(x, row);
+                npcCells.Add(x, row);
             }
 
             NPCCell cell = null;
@@ -277,11 +315,11 @@ namespace GUC.Server.WorldObjects
         {
             //create the new cell
             Dictionary<int, WorldCell> row = null;
-            Cells.TryGetValue(x, out row);
+            netCells.TryGetValue(x, out row);
             if (row == null)
             {
                 row = new Dictionary<int, WorldCell>();
-                Cells.Add(x, row);
+                netCells.Add(x, row);
             }
 
             WorldCell newCell = null;
@@ -357,7 +395,7 @@ namespace GUC.Server.WorldObjects
             for (i = from.x - 1; i <= from.x + 1; i++)
             {
                 row = null;
-                Cells.TryGetValue(i, out row);
+                netCells.TryGetValue(i, out row);
                 if (row == null) continue;
 
                 for (j = from.z - 1; j <= from.z + 1; j++)
@@ -391,7 +429,7 @@ namespace GUC.Server.WorldObjects
             for (i = to.x - 1; i <= to.x + 1; i++)
             {
                 row = null;
-                Cells.TryGetValue(i, out row);
+                netCells.TryGetValue(i, out row);
                 if (row == null) continue;
 
                 for (j = to.z - 1; j <= to.z + 1; j++)
@@ -427,8 +465,8 @@ namespace GUC.Server.WorldObjects
 
         public IEnumerable<NPC> GetNPCs(Vec3f pos, float range)
         {
-            float unroundedMinX = (pos.X-range) / NPCCell.cellSize;
-            float unroundedMinZ = (pos.Z-range) / NPCCell.cellSize;
+            float unroundedMinX = (pos.X - range) / NPCCell.cellSize;
+            float unroundedMinZ = (pos.Z - range) / NPCCell.cellSize;
 
             int minX = (int)(pos.X >= 0 ? unroundedMinX + 0.5f : unroundedMinX - 0.5f);
             int minZ = (int)(pos.Z >= 0 ? unroundedMinZ + 0.5f : unroundedMinZ - 0.5f);
@@ -442,7 +480,7 @@ namespace GUC.Server.WorldObjects
             for (int x = minX; x <= maxX; x++)
             {
                 Dictionary<int, NPCCell> row = null;
-                SmallCells.TryGetValue(x, out row);
+                npcCells.TryGetValue(x, out row);
                 if (row != null)
                 {
                     for (int z = minZ; z <= maxZ; z++)
@@ -464,12 +502,14 @@ namespace GUC.Server.WorldObjects
             }
         }
 
+        #region World Time
+
         public void ChangeTime(int day, int hour, int minute)
         {
             ChangeTime(day, hour, minute, true, true, true);
         }
 
-        public void ChangeTime(int day, int hour, int minute, 
+        public void ChangeTime(int day, int hour, int minute,
             bool changeDay, bool changeHour, bool changeMinute)
         {
             lock (lock_IGTime)
@@ -483,7 +523,7 @@ namespace GUC.Server.WorldObjects
                 //Console.WriteLine("++++ " + newIGTime.day + " " + newIGTime.hour + " " + newIGTime.minute);
 
                 // send new world time to clients
-                foreach (KeyValuePair<uint, NPC> keyValPair in NewWorld.PlayerDict)
+                foreach (KeyValuePair<uint, NPC> keyValPair in this.playerDict)
                 {
                     Client client = keyValPair.Value.client;
                     BitStream stream = Program.server.SetupStream(NetworkID.WorldTimeMessage);
@@ -493,10 +533,14 @@ namespace GUC.Server.WorldObjects
                     stream.mWrite(this.igTime.minute);
 
                     Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY,
-                        PacketReliability.RELIABLE_ORDERED, 'I', client.guid, false);
+                        PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
                 }
             }
         }
+
+        #endregion
+
+        #region World Weather
 
         public void ChangeWeather(WeatherType wt, IGTime startTime, IGTime endTime)
         {
@@ -511,7 +555,7 @@ namespace GUC.Server.WorldObjects
                 //    endTime.day, endTime.hour, endTime.minute));
 
                 // send new weather to clients
-                foreach (KeyValuePair<uint, NPC> keyValPair in NewWorld.PlayerDict)
+                foreach (KeyValuePair<uint, NPC> keyValPair in this.playerDict)
                 {
                     Client client = keyValPair.Value.client;
 
@@ -525,9 +569,11 @@ namespace GUC.Server.WorldObjects
                     stream.mWrite((byte)endTime.minute);
 
                     Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY,
-                        PacketReliability.RELIABLE_ORDERED, 'I', client.guid, false);
+                        PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
                 }
             }
         }
+
+        #endregion
     }
 }

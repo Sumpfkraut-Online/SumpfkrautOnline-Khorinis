@@ -25,7 +25,7 @@ namespace GUC.Server.WorldObjects
         /// Creates and returns an NPC object from the given NPCInstance-ID.
         /// Returns NULL when the ID is not found!
         /// </summary>
-        public static NPC Create(ushort instanceID)
+        public static NPC Create(ushort instanceID, object scriptObject)
         {
             NPCInstance inst = NPCInstance.Table.Get(instanceID);
             if (inst == null)
@@ -33,14 +33,14 @@ namespace GUC.Server.WorldObjects
                 Log.Logger.logError("NPC creation failed! Instance ID not found: " + instanceID);
                 return null;
             }
-            return Create(inst);
+            return Create(inst, scriptObject);
         }
 
         /// <summary>
         /// Creates and returns an NPC object from the given NPCInstance-Name.
         /// Returns NULL when the name is not found!
         /// </summary>
-        public static NPC Create(string instanceName)
+        public static NPC Create(string instanceName, object scriptObject)
         {
             NPCInstance inst = NPCInstance.Table.Get(instanceName);
             if (inst == null)
@@ -48,18 +48,18 @@ namespace GUC.Server.WorldObjects
                 Log.Logger.logError("NPC creation failed! Instance name not found: " + instanceName);
                 return null;
             }
-            return Create(inst);
+            return Create(inst, scriptObject);
         }
 
         /// <summary>
         /// Creates and returns an NPC object from the given NPCInstance.
         /// Returns NULL when the NPCInstance is NULL!
         /// </summary>
-        public static NPC Create(NPCInstance instance)
+        public static NPC Create(NPCInstance instance, object scriptObject)
         {
             if (instance != null)
             {
-                NPC npc = new NPC();
+                NPC npc = new NPC(scriptObject);
                 npc.Instance = instance;
                 npc.BodyHeight = instance.BodyHeight;
                 npc.BodyHeight = instance.BodyHeight;
@@ -74,6 +74,8 @@ namespace GUC.Server.WorldObjects
                 npc.AttackEndTimer = new Timer<NPC>(0, OnAttackEnd, npc);
                 npc.AttackHitTimer = new Timer<NPC>(0, OnAttackHit, npc);
 
+                Network.Server.sAllNpcsDict.Add(npc.ID, npc);
+                Network.Server.sNpcDict.Add(npc.ID, npc);
                 return npc;
             }
             else
@@ -83,8 +85,23 @@ namespace GUC.Server.WorldObjects
             }
         }
 
-        protected NPC()
+        internal NPC(object scriptObject) : base(scriptObject)
         {
+        }
+
+        public override void Delete()
+        {
+            base.Delete();
+
+            Network.Server.sAllNpcsDict.Remove(this.ID);
+            if (this.isPlayer)
+            {
+                Network.Server.sPlayerDict.Remove(this.ID);
+            }
+            else
+            {
+                Network.Server.sNpcDict.Remove(this.ID);
+            }
         }
 
         #endregion
@@ -172,17 +189,17 @@ namespace GUC.Server.WorldObjects
             uint ID = stream.mReadUInt();
 
             Vob mob;
-            if (client.character.World.VobDict.TryGetValue(ID, out mob) && mob is MobInter)
+            if (client.Character.World.VobDict.TryGetValue(ID, out mob) && mob is MobInter)
             {
-                CmdOnUseMob((MobInter)mob, client.character);
+                CmdOnUseMob((MobInter)mob, client.Character);
             }
         }
 
         internal static void ReadCmdUnuseMob(BitStream stream, Client client)
         {
-            if (CmdOnUnUseMob != null && client.character.UsedMob != null)
+            if (CmdOnUnUseMob != null && client.Character.UsedMob != null)
             {
-                CmdOnUnUseMob(client.character.UsedMob, client.character);
+                CmdOnUnUseMob(client.Character.UsedMob, client.Character);
             }
         }
 
@@ -196,9 +213,9 @@ namespace GUC.Server.WorldObjects
 
             uint ID = stream.mReadUInt();
             Item item;
-            if (sWorld.ItemDict.TryGetValue(ID, out item) && item.Owner == client.character)
+            if (sWorld.ItemDict.TryGetValue(ID, out item) && item.Owner == client.Character)
             {
-                CmdOnUseItem(item, client.character);
+                CmdOnUseItem(item, client.Character);
             }
         }
 
@@ -212,9 +229,9 @@ namespace GUC.Server.WorldObjects
 
             uint id = stream.mReadUInt();
             NPCState state = (NPCState)stream.mReadByte();
-            if (id == client.character.ID)
+            if (id == client.Character.ID)
             {
-                CmdOnMove(client.character, state);
+                CmdOnMove(client.Character, state);
             }
             else //is it a controlled NPC?
             {
@@ -238,9 +255,9 @@ namespace GUC.Server.WorldObjects
                 return;
 
             uint id = stream.mReadUInt();
-            if (id == client.character.ID)
+            if (id == client.Character.ID)
             {
-                CmdOnJump(client.character);
+                CmdOnJump(client.Character);
             }
             else //is it a controlled NPC?
             {
@@ -262,17 +279,17 @@ namespace GUC.Server.WorldObjects
                 return;
 
             byte slot = stream.mReadByte();
-            Item item = client.character.GetEquipment(slot);
+            Item item = client.Character.GetEquipment(slot);
 
-            CmdOnDrawEquipment(client.character, item == null ? Item.Fists : item);
+            CmdOnDrawEquipment(client.Character, item == null ? Item.Fists : item);
         }
 
         internal static void ReadCmdUndrawItem(BitStream stream, Client client)
         {
-            if (CmdOnUndrawItem == null || client.character.DrawnItem == null)
+            if (CmdOnUndrawItem == null || client.Character.DrawnItem == null)
                 return;
 
-            CmdOnUndrawItem(client.character, client.character.DrawnItem);
+            CmdOnUndrawItem(client.Character, client.Character.DrawnItem);
         }
 
         public delegate void CmdTargetMoveHandler(NPC npc, NPC target, NPCState state);
@@ -284,9 +301,9 @@ namespace GUC.Server.WorldObjects
                 return;
 
             NPCState state = (NPCState)stream.mReadByte();
-            NPC target = client.character.World.GetNpcOrPlayer(stream.mReadUInt());
+            NPC target = client.Character.World.GetNpcOrPlayer(stream.mReadUInt());
 
-            CmdOnTargetMove(client.character, target, state);
+            CmdOnTargetMove(client.Character, target, state);
         }
 
         #endregion
@@ -344,50 +361,38 @@ namespace GUC.Server.WorldObjects
         {
             BitStream stream = Program.server.SetupStream(NetworkID.PlayerControlMessage);
             stream.mWrite(npc.ID);
-            stream.mWrite(npc.World.MapName);
+            stream.mWrite(npc.World.FileName);
             //write stats & inventory
             Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'G', client.guid, false);
         }
 
-        internal static void ReadControl(BitStream stream, Client client)
+        internal static void ReadControl(PacketReader stream, Client client, NPC character)
         {
-            if (client.mainChar == null) // coming from the log-in menus, first spawn
+            if (client.MainChar == null) // coming from the log-in menus, first spawn
             {
-                client.mainChar = client.character;
+                client.MainChar = client.Character;
                 Network.Messages.ConnectionMessage.WriteInstanceTables(client);
 
                 if (OnEnterWorld != null)
                 {
-                    OnEnterWorld(client.mainChar);
+                    OnEnterWorld(client.MainChar);
                 }
-
-                Item item = Item.Create("itfo_apple");
-                item.Amount = 3;
-                item.Spawn(client.character.World);
-
-                item = Item.Create("itmw_wolfszahn");
-                item.Condition = 200;
-                item.SpecialLine = "Geschmiedet von Malak Akbar.";
-                item.Spawn(client.character.World, new Types.Vec3f(200, 0, 200), new Types.Vec3f(0, 0, 1));
-
-                item = Item.Create("ITAR_BDT_M");
-                item.Spawn(client.character.World, new Types.Vec3f(-200, 0, -200), new Types.Vec3f(0, 0, 1));
             }
 
-            if (!client.character.Spawned)
+            if (!client.Character.Spawned)
             {
-                client.character.Spawn(client.character.World);
-                client.character.WriteSpawn(new Client[1] { client });
+                client.Character.WriteSpawn(new Client[1] { client }); // to self
+                client.Character.Spawn(client.Character.World);
             }
         }
 
         internal static void ReadPickUpItem(BitStream stream, Client client)
         {
             Item item;
-            client.character.World.ItemDict.TryGetValue(stream.mReadUInt(), out item);
+            client.Character.World.ItemDict.TryGetValue(stream.mReadUInt(), out item);
             if (item == null) return;
 
-            client.character.AddItem(item);
+            client.Character.AddItem(item);
         }
 
         #endregion
@@ -572,7 +577,7 @@ namespace GUC.Server.WorldObjects
                     if (other != null) //merge the items
                     {
                         other.amount += item.amount;
-                        item.RemoveFromServer();
+                        item.Delete();
                         InventoryMessage.WriteAmountUpdate(this.client, other);
                         item.Owner = this;
                         return;
@@ -647,7 +652,7 @@ namespace GUC.Server.WorldObjects
                     }
                     else
                     {
-                        item.RemoveFromServer();
+                        item.Delete();
                     }
                 }
             }

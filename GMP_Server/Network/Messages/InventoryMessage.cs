@@ -48,7 +48,7 @@ namespace GUC.Server.Network.Messages
             if (sWorld.ItemDict.TryGetValue(stream.mReadUInt(), out item))
             {
                 ushort amount = stream.mReadUShort();
-                if (client.character.HasItem(item))
+                if (client.Character.HasItem(item))
                 {
                     if (item.amount > amount) //split it
                     {
@@ -56,12 +56,12 @@ namespace GUC.Server.Network.Messages
                         InventoryMessage.WriteAmountUpdate(client, item);
                         Item newItem = Item.Copy(item);
                         newItem.amount = amount;
-                        newItem.Drop(client.character);
+                        newItem.Drop(client.Character);
                     } 
                     else //just throw the item out
                     {
                         WriteAmountUpdate(client, item, 0);
-                        item.Drop(client.character);
+                        item.Drop(client.Character);
                     }
                 }
             }

@@ -7,8 +7,5 @@ using GUC.Server.WorldObjects;
 
 namespace GUC.Server.Scripts
 {
-    class scriptNPC : NPC
-    {
 
-    }
 }

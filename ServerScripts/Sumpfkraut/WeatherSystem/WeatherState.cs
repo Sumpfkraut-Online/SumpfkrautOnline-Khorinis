@@ -17,7 +17,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
         public WeatherState()
         {
             DateTime dtNow = DateTime.Now;
-            this.weatherType = WeatherType.undefined;
+            this.weatherType = WeatherType.Normal;
             this.startTime = dtNow;
             this.endTime = dtNow;
             this.description = "";

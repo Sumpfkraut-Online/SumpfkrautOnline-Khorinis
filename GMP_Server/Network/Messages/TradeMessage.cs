@@ -21,10 +21,10 @@ namespace GUC.Server.Network.Messages
             if (status == TradeStatus.Request)
             {
                 uint targetID = stream.mReadUInt();
-                NPC requester = client.character;
+                NPC requester = client.Character;
                 NPC target;
                 Log.Logger.log("request by " + targetID.ToString());
-                client.character.World.PlayerDict.TryGetValue(targetID, out target);
+                client.Character.World.PlayerDict.TryGetValue(targetID, out target);
 
                 if (requester != null && target != null)
                 {
@@ -33,7 +33,7 @@ namespace GUC.Server.Network.Messages
             }
             else if (status == TradeStatus.Break)
             {
-                NPC sender = client.character;
+                NPC sender = client.Character;
                 if (sender != null)
                 {
                     trade.OnBreakMessage(sender);
@@ -41,19 +41,19 @@ namespace GUC.Server.Network.Messages
             }
             else if (status == TradeStatus.ConfirmOffer)
             {
-                trade.OfferConfirmed(client.character);
+                trade.OfferConfirmed(client.Character);
             }
             else if (status == TradeStatus.DeclineOffer)
             {
-                trade.OfferDeclined(client.character, true);
+                trade.OfferDeclined(client.Character, true);
             }
             else if (status >= TradeStatus.SelfOfferItem)
             {
-                trade.OfferDeclined(client.character, false);
+                trade.OfferDeclined(client.Character, false);
 
                 ushort id = stream.mReadUShort();
                 Item item = sWorld.ItemDict[id];
-                NPC sender = client.character;
+                NPC sender = client.Character;
 
                 if (sender != null && item != null)
                 {

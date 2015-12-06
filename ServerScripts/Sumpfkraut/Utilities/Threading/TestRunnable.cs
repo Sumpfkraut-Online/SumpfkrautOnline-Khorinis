@@ -16,7 +16,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Utilities.Threading
         int hour = 0;
         int minute = 0;
 
-        WeatherType weatherType = WeatherType.rain;
+        WeatherType weatherType = WeatherType.Rain;
         IGTime weatherStartTime = new IGTime();
         IGTime weatherEndTime = new IGTime();
 

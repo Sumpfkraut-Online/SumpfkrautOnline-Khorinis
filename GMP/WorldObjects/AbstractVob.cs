@@ -179,6 +179,11 @@ namespace GUC.Client.WorldObjects
             if (!Spawned)
                 return;
 
+            if (Player.VobControlledList.Contains(this))
+            {
+                Player.VobControlledList.Remove(this);
+            }
+
             oCGame.Game(Program.Process).World.RemoveVob(gVob);
             World.RemoveVob(this);
             gVob = null;

@@ -94,6 +94,12 @@
     <Compile Include="..\Network\Network\BitStreamExtension.cs">
       <Link>Network\BitStreamExtension.cs</Link>
     </Compile>
+    <Compile Include="..\Network\Network\PacketReader.cs">
+      <Link>Network\PacketReader.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Network\PacketWriter.cs">
+      <Link>Network\PacketWriter.cs</Link>
+    </Compile>
     <Compile Include="..\Network\Options\Constants.cs">
       <Link>Options\Constants.cs</Link>
     </Compile>
@@ -113,7 +119,6 @@
     <Compile Include="Network\Client.cs" />
     <Compile Include="Network\NPCCell.cs" />
     <Compile Include="Network\Messages\TradeMessage.cs" />
-    <Compile Include="Network\Messages\AccountMessage.cs" />
     <Compile Include="Network\Messages\ConnectionMessage.cs" />
     <Compile Include="Network\Messages\InventoryMessage.cs" />
     <Compile Include="Network\Messages\NPCMessage.cs" />
@@ -128,6 +133,7 @@
     <Compile Include="WorldObjects\AbstractCtrlVob.cs" />
     <Compile Include="WorldObjects\AbstractDropVob.cs" />
     <Compile Include="WorldObjects\AbstractInstance.cs" />
+    <Compile Include="WorldObjects\AbstractObject.cs" />
     <Compile Include="WorldObjects\AbstractVob.cs" />
     <Compile Include="WorldObjects\AniCtrl.cs" />
     <Compile Include="WorldObjects\InstanceManager.cs" />
@@ -136,7 +142,6 @@
     <Compile Include="WorldObjects\MobInstance.cs" />
     <Compile Include="WorldObjects\NPC.cs" />
     <Compile Include="WorldObjects\NPCInstance.cs" />
-    <Compile Include="WorldObjects\sWorld.cs" />
     <Compile Include="WorldObjects\Mob.cs" />
     <Compile Include="WorldObjects\World.cs" />
   </ItemGroup>

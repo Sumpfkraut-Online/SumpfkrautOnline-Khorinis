@@ -6,19 +6,17 @@ using System.Linq;
 using System.Text;
 using RakNet;
 using Gothic.zClasses;
-using WinApi;
 using GUC.Enumeration;
-using Gothic.zTypes;
 using GUC.Client.Network.Messages;
-using GUC.Client.WorldObjects;
 using GUC.Client.GUI;
 using GUC.Types;
+using GUC.Network;
 
 namespace GUC.Client.Network
 {
-    public delegate void PacketReader(BitStream stream);
+    delegate void MsgReader(PacketReader stream);
 
-    public class Client : IDisposable
+    class Client : IDisposable
     {
         public RakPeerInterface client = null;
         protected SocketDescriptor socketDescriptor = null;
@@ -30,21 +28,19 @@ namespace GUC.Client.Network
         private static long lastConnectionTry = 0;
         private static int connectionTrys = 0;
 
-        BitStream receiveBitStream = new BitStream();
-        public BitStream sendBitStream = new BitStream();
+        PacketReader pktReader;
+        PacketWriter pktWriter;
 
-        public Dictionary<byte, PacketReader> messageListener = new Dictionary<byte, PacketReader>();
+        Dictionary<NetworkID, MsgReader> messageListener = new Dictionary<NetworkID, MsgReader>();
 
         public Client()
         {
             client = RakPeer.GetInstance();
 
-            messageListener.Add((byte)NetworkID.AccountErrorMessage, AccountMessage.Error);
-            messageListener.Add((byte)NetworkID.AccountLoginMessage, AccountMessage.GetCharList);
-            messageListener.Add((byte)NetworkID.ConnectionMessage, ConnectionMessage.Read);
-
-            messageListener.Add((byte)NetworkID.PlayerControlMessage, PlayerMessage.ReadControl);
-
+            messageListener.Add(NetworkID.LoginMessage, null);
+            messageListener.Add(NetworkID.ConnectionMessage, ConnectionMessage.Read);
+            messageListener.Add(NetworkID.PlayerControlMessage, PlayerMessage.ReadControl);
+            /*
             messageListener.Add((byte)NetworkID.VobPosDirMessage, VobMessage.ReadPosDir);
 
             messageListener.Add((byte)NetworkID.WorldVobDeleteMessage, WorldMessage.ReadVobDelete);
@@ -76,7 +72,7 @@ namespace GUC.Client.Network
 
             messageListener.Add((byte)NetworkID.TradeMessage, TradeMessage.Read);
 
-            messageListener.Add((byte)NetworkID.ControlCmdMessage, ControlMessage.ReadVobControlCmd);
+            messageListener.Add((byte)NetworkID.ControlCmdMessage, ControlMessage.ReadVobControlCmd);*/
         }
 
         public void Startup()
@@ -117,12 +113,6 @@ namespace GUC.Client.Network
         {
             client.CloseConnection(client.GetSystemAddressFromIndex(0), true, 0);
             isConnected = false;
-        }
-
-
-        public void logError(String conn)
-        {
-
         }
 
         uint packetKB = 0;

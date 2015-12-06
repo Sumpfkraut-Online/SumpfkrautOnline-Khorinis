@@ -72,10 +72,10 @@ namespace GUC.Server.Network
 
             if (PlayerList.Count == 0 && NPCList.Count == 0 && ItemList.Count == 0 && VobList.Count == 0)
             {
-                world.Cells[x].Remove(z);
-                if (world.Cells[x].Count == 0)
+                world.netCells[x].Remove(z);
+                if (world.netCells[x].Count == 0)
                 {
-                    world.Cells.Remove(x);
+                    world.netCells.Remove(x);
                 }
             }
         }
@@ -108,7 +108,7 @@ namespace GUC.Server.Network
             for (int i = x - 1; i <= x + 1; i++)
             {
                 Dictionary<int, WorldCell> row;
-                world.Cells.TryGetValue(i, out row);
+                world.netCells.TryGetValue(i, out row);
                 if (row == null) continue;
 
                 for (int j = z - 1; j <= z + 1; j++)
@@ -139,7 +139,7 @@ namespace GUC.Server.Network
             for (int i = x - 1; i <= x + 1; i++)
             {
                 Dictionary<int, WorldCell> row;
-                world.Cells.TryGetValue(i, out row);
+                world.netCells.TryGetValue(i, out row);
                 if (row == null) continue;
 
                 for (int j = z - 1; j <= z + 1; j++)
@@ -164,7 +164,7 @@ namespace GUC.Server.Network
             for (int i = x - 1; i <= x + 1; i++)
             {
                 Dictionary<int, WorldCell> row;
-                world.Cells.TryGetValue(i, out row);
+                world.netCells.TryGetValue(i, out row);
                 if (row == null) continue;
 
                 for (int j = z - 1; j <= z + 1; j++)

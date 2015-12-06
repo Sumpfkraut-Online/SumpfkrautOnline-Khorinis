@@ -24,7 +24,7 @@ namespace GUC.Server.WorldObjects
         /// Creates and returns a Mob object from the given MobInstance-ID.
         /// Returns NULL when the ID is not found!
         /// </summary>
-        public static Vob Create(ushort instanceID)
+        public static Vob Create(ushort instanceID, object scriptObject)
         {
             MobInstance inst = MobInstance.Table.Get(instanceID);
             if (inst == null)
@@ -32,14 +32,14 @@ namespace GUC.Server.WorldObjects
                 Log.Logger.logError("Mob creation failed! Instance ID not found: " + instanceID);
                 return null;
             }
-            return Create(inst);
+            return Create(inst, scriptObject);
         }
 
         /// <summary>
         /// Creates and returns a Mob object from the given MobInstance-Name.
         /// Returns NULL when the name is not found!
         /// </summary>
-        public static Vob Create(string instanceName)
+        public static Vob Create(object scriptObject, string instanceName)
         {
             MobInstance inst = MobInstance.Table.Get(instanceName);
             if (inst == null)
@@ -47,14 +47,14 @@ namespace GUC.Server.WorldObjects
                 Log.Logger.logError("Mob creation failed! Instance name not found: " + instanceName);
                 return null;
             }
-            return Create(inst);
+            return Create(inst, scriptObject);
         }
 
         /// <summary>
         /// Creates and returns a Mob object from the given MobInstance.
         /// Returns NULL when the MobInstance is NULL!
         /// </summary>
-        public static Vob Create(MobInstance instance)
+        public static Vob Create(MobInstance instance, object scriptObject)
         {
             if (instance != null)
             {
@@ -62,37 +62,38 @@ namespace GUC.Server.WorldObjects
                 switch (instance.type)
                 {
                     case MobType.Vob:
-                        mob = new Vob();
+                        mob = new Vob(scriptObject);
                         break;
                     case MobType.Mob:
-                        mob = new Mob();
+                        mob = new Mob(scriptObject);
                         break;
                     case MobType.MobInter:
-                        mob = new MobInter();
+                        mob = new MobInter(scriptObject);
                         break;
                     case MobType.MobFire:
-                        mob = new MobFire();
+                        mob = new MobFire(scriptObject);
                         break;
                     case MobType.MobLadder:
-                        mob = new MobLadder();
+                        mob = new MobLadder(scriptObject);
                         break;
                     case MobType.MobSwitch:
-                        mob = new MobSwitch();
+                        mob = new MobSwitch(scriptObject);
                         break;
                     case MobType.MobWheel:
-                        mob = new MobWheel();
+                        mob = new MobWheel(scriptObject);
                         break;
                     case MobType.MobContainer:
-                        mob = new MobContainer();
+                        mob = new MobContainer(scriptObject);
                         break;
                     case MobType.MobDoor:
-                        mob = new MobDoor();
+                        mob = new MobDoor(scriptObject);
                         break;
                     default:
                         Log.Logger.logError("Mob creation failed! Unknown MobType!");
                         return null;
                 }
                 mob.Instance = instance;
+                Server.Network.Server.sVobDict.Add(mob.ID, mob);
                 return mob;
             }
             else
@@ -102,8 +103,14 @@ namespace GUC.Server.WorldObjects
             }
         }
 
-        protected Vob()
+        internal Vob(object scriptObject) : base(scriptObject)
         {
+        }
+
+        public override void Delete()
+        {
+            base.Delete();
+            Server.Network.Server.sVobDict.Remove(this.ID);
         }
 
         #endregion
@@ -129,6 +136,10 @@ namespace GUC.Server.WorldObjects
     public class Mob : Vob
     {
         public string FocusName { get { return Instance.focusName; } }
+
+        internal Mob(object scriptObject) : base(scriptObject)
+        {
+        }
     }
 
     public class MobInter : Mob
@@ -136,35 +147,62 @@ namespace GUC.Server.WorldObjects
         public string OnTriggerFunc { get { return Instance.onTriggerFunc; } }
         public string OnTriggerClientFunc { get { return Instance.onTriggerClientFunc; } }
         public bool IsMulti { get { return Instance.isMulti; } }
+
+        internal MobInter(object scriptObject) : base(scriptObject)
+        {
+        }
     }
 
     public class MobFire : MobInter
     {
         public string FireVobTreeName { get { return Instance.fireVobTreeName; } }
+
+        internal MobFire(object scriptObject) : base(scriptObject)
+        {
+        }
     }
 
     public class MobLadder : MobInter
     {
+        internal MobLadder(object scriptObject) : base(scriptObject)
+        {
+        }
     }
 
     public class MobSwitch : MobInter
     {
+        internal MobSwitch(object scriptObject) : base(scriptObject)
+        {
+        }
     }
 
     public class MobWheel : MobInter
     {
+        internal MobWheel(object scriptObject) : base(scriptObject)
+        {
+        }
     }
 
     public abstract class MobLockable : MobInter
     {
         public string OnTryOpenClientFunc { get { return Instance.onTryOpenClientFunc; } }
+
+        internal MobLockable(object scriptObject) : base(scriptObject)
+        {
+        }
     }
 
     public class MobContainer : MobLockable
     {
+        internal MobContainer(object scriptObject) : base(scriptObject)
+        {
+        }
     }
 
     public class MobDoor : MobLockable
     {
+        internal MobDoor(object scriptObject) : base(scriptObject)
+        {
+        }
     }
 }

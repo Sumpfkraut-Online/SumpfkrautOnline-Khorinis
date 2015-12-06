@@ -22,34 +22,34 @@ namespace GUC.Network
         public int Voice;
         public int FormerClass;
 
-        public void Write(BitStream stream)
+        public void Write(PacketWriter stream)
         {
-            stream.mWrite((byte)SlotNum);
-            stream.mWrite(Name);
-            stream.mWrite((byte)BodyMesh);
-            stream.mWrite((byte)BodyTex);
-            stream.mWrite((byte)HeadMesh);
-            stream.mWrite((byte)HeadTex);
-            stream.mWrite((sbyte)Math.Round(Fatness * 100.0f));
-            stream.mWrite((byte)Math.Round(BodyHeight * 100.0f));
-            stream.mWrite((byte)Math.Round(BodyWidth * 100.0f));
-            stream.mWrite((byte)Voice);
-            stream.mWrite((byte)FormerClass);
+            stream.Write((byte)SlotNum);
+            stream.Write(Name);
+            stream.Write((byte)BodyMesh);
+            stream.Write((byte)BodyTex);
+            stream.Write((byte)HeadMesh);
+            stream.Write((byte)HeadTex);
+            stream.Write((sbyte)Math.Round(Fatness * 100.0f));
+            stream.Write((byte)Math.Round(BodyHeight * 100.0f));
+            stream.Write((byte)Math.Round(BodyWidth * 100.0f));
+            stream.Write((byte)Voice);
+            stream.Write((byte)FormerClass);
         }
 
-        public void Read(BitStream stream)
+        public void Read(PacketReader stream)
         {
-            SlotNum = stream.mReadByte();
-            Name = stream.mReadString();
-            BodyMesh = stream.mReadByte();
-            BodyTex = stream.mReadByte();
-            HeadMesh = stream.mReadByte();
-            HeadTex = stream.mReadByte();
-            Fatness = stream.mReadSByte() / 100.0f;
-            BodyHeight = stream.mReadByte() / 100.0f;
-            BodyWidth = stream.mReadByte() / 100.0f;
-            Voice = stream.mReadByte();
-            FormerClass = stream.mReadByte();
+            SlotNum = stream.ReadByte();
+            Name = stream.ReadString();
+            BodyMesh = stream.ReadByte();
+            BodyTex = stream.ReadByte();
+            HeadMesh = stream.ReadByte();
+            HeadTex = stream.ReadByte();
+            Fatness = stream.ReadSByte() / 100.0f;
+            BodyHeight = stream.ReadByte() / 100.0f;
+            BodyWidth = stream.ReadByte() / 100.0f;
+            Voice = stream.ReadByte();
+            FormerClass = stream.ReadByte();
         }
 
         public override string ToString()

@@ -9,6 +9,10 @@ namespace GUC.Server.WorldObjects
 {
     public abstract class AbstractDropVob : AbstractCtrlVob
     {
+        protected AbstractDropVob(object scriptObject) : base(scriptObject)
+        {
+        }
+
         internal bool physicsEnabled = false;
         internal Vec3f lastPos;
         bool started = false;

@@ -11,19 +11,19 @@ namespace GUC.Server.Network.Messages
 {
     static class ConnectionMessage
     {
-        public static void Read(BitStream stream, Client client)
+        public static void Read(PacketReader stream, Client client, NPC character)
         {
-            String driveString = stream.mReadString();
-            String macString = stream.mReadString();
+            String driveString = stream.ReadString();
+            String macString = stream.ReadString();
 
             byte[] npcTableHash = new byte[16];
-            stream.Read(npcTableHash, 16);
+            stream.Read(npcTableHash, 0, 16);
 
             byte[] itemTableHash = new byte[16];
-            stream.Read(itemTableHash, 16);
+            stream.Read(itemTableHash, 0, 16);
 
             byte[] mobTableHash = new byte[16];
-            stream.Read(mobTableHash, 16);
+            stream.Read(mobTableHash, 0, 16);
 
             client.CheckValidity(driveString, macString, npcTableHash, itemTableHash, mobTableHash);
         }

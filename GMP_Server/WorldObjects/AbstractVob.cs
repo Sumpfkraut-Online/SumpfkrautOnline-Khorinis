@@ -10,28 +10,27 @@ using GUC.Enumeration;
 
 namespace GUC.Server.WorldObjects
 {
-    public abstract class AbstractVob
+    public abstract class AbstractVob : AbstractObject
     {
         static uint idCount = 1; // Start with 1 cause a "null-vob" (id = 0) is needed for networking
 
         public uint ID { get; internal set; }
 
         internal WorldCell cell;
-        internal Client ClientOrNull { get { return this is NPC ? ((NPC)this).client : null; } }
+
         public World World { get; internal set; }
-        public bool Spawned { get; private set; }
+        public bool Spawned { get { return World != null; } }
 
         #region Position
         internal Vec3f pos = new Vec3f(0, 0, 0);
         internal Vec3f dir = new Vec3f(0, 0, 1);
 
-        public Vec3f Position
+        public virtual Vec3f Position
         {
             get { return pos; }
             set
             {
                 pos = value;
-
                 if (Spawned)
                 {
                     World.UpdatePosition(this, null);
@@ -39,55 +38,31 @@ namespace GUC.Server.WorldObjects
             }
         }
 
-        public Vec3f Direction
+        public virtual Vec3f Direction
         {
             get { return dir; }
             set
             {
-                if (value.IsNull() == false)
-                {
-                    dir = value;
-                }
-                else
+                if (value.IsNull())
                 {
                     dir = new Vec3f(0, 0, 1);
                 }
-
-                if (Spawned && cell != null)
+                else
+                {
+                    dir = value;
+                }
+                if (Spawned)
+                {
                     Network.Messages.VobMessage.WritePosDir(cell.SurroundingClients(), null);
+                }
             }
         }
         #endregion
 
-        #region Collision
-        protected bool cddyn = true;
-        protected bool cdstatic = true;
-
-        public bool CDDyn
-        {
-            get { return cddyn; }
-            set
-            {
-                cddyn = value;
-                //network update
-            }
-        }
-        public bool CDStatic
-        {
-            get { return cdstatic; }
-            set
-            {
-                cdstatic = value;
-                //network update
-            }
-        }
-        #endregion
-
-        protected AbstractVob()
+        protected AbstractVob(object scriptObject) : base(scriptObject)
         {
             ID = idCount++;
-            Spawned = false;
-            sWorld.AddVob(this);
+            Network.Server.sAllVobsDict.Add(ID, this);
         }
 
         #region Spawn
@@ -98,7 +73,7 @@ namespace GUC.Server.WorldObjects
 
         public void Spawn(World world, Vec3f position)
         {
-            Spawn(world, position, Direction);
+            Spawn(world, position, this.Direction);
         }
 
         public virtual void Spawn(World world, Vec3f position, Vec3f direction)
@@ -106,7 +81,6 @@ namespace GUC.Server.WorldObjects
             pos = position;
             dir = direction;
             world.SpawnVob(this);
-            Spawned = true;
         }
 
         public virtual void Despawn()
@@ -114,15 +88,15 @@ namespace GUC.Server.WorldObjects
             if (Spawned)
             {
                 World.DespawnVob(this);
-                Spawned = false;
             }
         }
         #endregion
 
-        public virtual void RemoveFromServer()
+        /// <summary> Despawns and removes the vob from the server. </summary>
+        public virtual void Delete()
         {
             Despawn();
-            sWorld.RemoveVob(this);
+            Network.Server.sAllVobsDict.Remove(ID);
         }
 
         internal abstract void WriteSpawn(IEnumerable<Client> list);
@@ -135,14 +109,5 @@ namespace GUC.Server.WorldObjects
             foreach (Client client in list)
                 Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
         }
-
-        #region Cells
-        internal void ChangeCells()
-        {
-
-        }
-
-
-        #endregion
     }
 }

@@ -9,6 +9,10 @@ namespace GUC.Server.WorldObjects
 {
     public abstract class AbstractCtrlVob : AbstractVob
     {
+        protected AbstractCtrlVob(object scriptObject) : base (scriptObject)
+        {
+        }
+
         internal Client VobController;
 
         public override void Despawn()

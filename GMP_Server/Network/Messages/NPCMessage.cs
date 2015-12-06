@@ -17,14 +17,14 @@ namespace GUC.Server.Network.Messages
         public static void ReadAniStart(BitStream stream, Client client)
         {
             Animations ani = (Animations)stream.mReadUShort();
-            WriteAniStart(client.character.cell.SurroundingClients(client), client.character, ani);
+            WriteAniStart(client.Character.cell.SurroundingClients(client), client.Character, ani);
         }
 
         public static void ReadAniStop(BitStream stream, Client client)
         {
             Animations ani = (Animations)stream.mReadUShort();
             bool fadeout = stream.ReadBit();
-            WriteAniStop(client.character.cell.SurroundingClients(client), client.character, ani, fadeout);
+            WriteAniStop(client.Character.cell.SurroundingClients(client), client.Character, ani, fadeout);
         }
 
         public static void WriteAniStart(IEnumerable<Client> list, NPC npc, Animations ani)

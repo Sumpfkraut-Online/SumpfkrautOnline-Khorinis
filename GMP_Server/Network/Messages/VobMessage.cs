@@ -14,7 +14,7 @@ namespace GUC.Server.Network.Messages
     {
         public static void ReadPosDir(BitStream stream, Client client)
         {
-            AbstractCtrlVob vob = client.character;
+            AbstractCtrlVob vob = client.Character;
             vob.pos = stream.mReadVec();
             vob.dir = stream.mReadVec();
             vob.World.UpdatePosition(vob, client);

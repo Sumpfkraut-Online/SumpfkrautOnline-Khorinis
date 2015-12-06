@@ -52,6 +52,8 @@
     <Compile Include="Enumeration\SpellFlags.cs" />
     <Compile Include="Enumeration\VobFlags.cs" />
     <Compile Include="Network\BitStreamExtension.cs" />
+    <Compile Include="Network\PacketReader.cs" />
+    <Compile Include="Network\PacketWriter.cs" />
     <Compile Include="Options\ClientOptions.cs" />
     <Compile Include="Options\Constants.cs" />
     <Compile Include="Options\ServerOptions.cs" />
