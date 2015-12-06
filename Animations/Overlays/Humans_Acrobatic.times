@@ -1,0 +1,24 @@
+Animation Times in Ticks = 1/10000ms
+H = Hit, C = Combo, D = Duration
+
+ANI T_STAND_2_JUMP             6000000
+ANI T_RUNL_2_JUMP              6000000
+ANIALIAS T_RUNR_2_JUMP         T_RUNL_2_JUMP
+ANI S_JUMP                     0
+ANI T_JUMP_2_STAND             6800000
+ANI T_JUMP_2_RUNL              6000000
+ANI T_JUMP_2_FALLDN            2000000
+ANI S_FALLDN                   0
+ANI T_FALLDN_2_STAND           6800000
+ANI T_FALLDN_2_RUNL            9200000
+ANI T_FALLDN_2_FALL            1600000
+ANI S_FALL                     0
+ANI T_FALL_2_FALLEN            2000000
+ANI T_FALLDN_2_FALLB           1600000
+ANI S_FALLB                    0
+ANI T_FALLB_2_FALLENB          2000000
+ANI S_FALLENB                  0
+ANI T_FALLENB_2_STAND          17600000
+ANI T_FALLDN_2_DIVE            8400000
+ANI T_FALL_2_DIVE              8400000
+ANI T_FALLB_2_DIVE             8400000

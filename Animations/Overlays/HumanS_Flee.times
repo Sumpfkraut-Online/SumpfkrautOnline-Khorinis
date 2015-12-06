@@ -1,0 +1,6 @@
+Animation Times in Ticks = 1/10000ms
+H = Hit, C = Combo, D = Duration
+
+ANI T_RUN_2_RUNL               2000000
+ANI S_RUNL                     4800000
+ANI T_RUNL_2_RUN               3600000
