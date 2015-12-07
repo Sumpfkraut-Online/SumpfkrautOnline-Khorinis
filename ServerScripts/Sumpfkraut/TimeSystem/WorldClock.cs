@@ -22,8 +22,14 @@ namespace GUC.Server.Scripts.Sumpfkraut.TimeSystem
         }
 
         // how fast goes ingametime goes by relative to realtime
-        protected float igTimeRate;
+        // note that the actual IGTime does not allow for high precision,
+        // although the DateTime- and rate-calculations are performed with doubles
+        protected double igTimeRate;
+        public double GetIgTimeRate () { return this.igTimeRate; }
+        public void SetIgTimeRate (double igTimeRate) { this.igTimeRate = igTimeRate; }
+
         protected DateTime lastTimeUpdate;
+        public DateTime GetLastTimeUpdate () { return this.lastTimeUpdate; }
 
         protected IGTime igTime;
         public IGTime GetIgTime () { return this.igTime; }
@@ -43,8 +49,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.TimeSystem
 
 
 
-        //public 
-
         public void UpdateWorldTime ()
         {
             if (affectedWorlds == null)
@@ -52,12 +56,14 @@ namespace GUC.Server.Scripts.Sumpfkraut.TimeSystem
                 return;
             }
 
-            //lastTimeUpdate
+            double rlDiff = (DateTime.Now - lastTimeUpdate).TotalSeconds;
+            double igDiff = rlDiff * igTimeRate;
+            long newTotalMinutes = IGTime.ToMinutes(igTime) + (long) igDiff;
+            IGTime newIgTime = new IGTime(newTotalMinutes);
 
             for (int w = 0; w < affectedWorlds.Count; w++)
             {
-                
-                //affectedWorlds[w].ChangeTime();
+                affectedWorlds[w].ChangeTime(newIgTime);
             }
         }
 

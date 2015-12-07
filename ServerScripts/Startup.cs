@@ -289,6 +289,11 @@ namespace GUC.Server.Scripts
             //Logger.log(Math.Sign(-5.553));
             //Logger.log((555555555555555L / 5));
 
+            //Logger.log(DateTime.Now - DateTime.UtcNow);
+            //Logger.log((DateTime.Now - DateTime.UtcNow).TotalMinutes);
+            Logger.log((DateTime.Now - DateTime.UtcNow).TotalSeconds);
+            //Logger.log((long) (5.5d + 10.1d));
+            //Logger.log(((DateTime.Now - DateTime.UtcNow) * 2));
 
 
             Logger.log(Logger.LogLevel.INFO, "######################## Initalise ########################");

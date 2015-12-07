@@ -478,25 +478,40 @@ namespace GUC.Server.WorldObjects
 
 
 
-        public void ChangeTime(int day, int hour, int minute)
+        public void ChangeTime (int day, int hour, int minute)
         {
             ChangeTime(day, hour, minute, true, true, true);
         }
 
-        public void ChangeTime(int day, int hour, int minute, 
+        public void ChangeTime (int day, int hour, int minute, 
             bool changeDay, bool changeHour, bool changeMinute)
         {
+            ChangeTime(new IGTime(day, hour, minute), changeDay, changeHour, changeMinute);
+        }
+
+        public void ChangeTime (IGTime newIGTime)
+        {
+            ChangeTime(newIGTime, true, true, true);
+        }
+
+        public void ChangeTime (IGTime newIGTime, bool changeDay, 
+            bool changeHour, bool changeMinute)
+        {
+            int changeTotal = 3;
+            if (!changeDay) { newIGTime.day = -1; changeTotal--; }
+            if (!changeHour) { newIGTime.hour = -1; changeTotal--; }
+            if (!changeMinute) { newIGTime.minute = -1; changeTotal--; }
+
+            if (changeTotal < 1)
+            {
+                // nothing to change means nothing worth sending network messages
+                return;
+            }
+
             lock (lock_IGTime)
             {
-                // set world time in server
-                IGTime newIGTime = new IGTime();
-                if (changeDay) { newIGTime.day = day; } else { newIGTime.day = -1; }
-                if (changeHour) { newIGTime.hour = hour; } else { newIGTime.hour = -1; }
-                if (changeMinute) { newIGTime.minute = minute; } else { newIGTime.minute = -1; }
                 this.igTime = newIGTime;
-                //Console.WriteLine("++++ " + newIGTime.day + " " + newIGTime.hour + " " + newIGTime.minute);
 
-                // send new world time to clients
                 foreach (KeyValuePair<uint, NPC> keyValPair in NewWorld.PlayerDict)
                 {
                     Client client = keyValPair.Value.client;
