@@ -19,11 +19,9 @@ namespace GUC.Server.WorldObjects
             Item fists = new Item(null);
             fists.ID = 0;
             fists.Slot = 0;
-            WorldObjects.World.sAllVobsDict.Remove(0);
+            Network.Server.sAllVobsDict.Remove(0);
             return fists;
         }
-
-
 
         /// <summary>
         /// Gets the ItemInstance of this item.
@@ -42,7 +40,7 @@ namespace GUC.Server.WorldObjects
             {
                 if (value > 0)
                 {
-                    if (this.Spawned)
+                    if (this.IsSpawned)
                         return;
 
                     amount = value;
@@ -85,7 +83,7 @@ namespace GUC.Server.WorldObjects
             get { return condition; }
             set
             {
-                if (!Spawned)
+                if (!IsSpawned)
                 {
                     condition = value;
                 }
@@ -199,18 +197,18 @@ namespace GUC.Server.WorldObjects
 
         internal override void WriteSpawn(IEnumerable<Client> list)
         {
-            BitStream stream = Program.server.SetupStream(NetworkID.WorldItemSpawnMessage);
-            stream.mWrite(ID);
-            stream.mWrite(Instance.ID);
-            stream.mWrite(pos);
-            stream.mWrite(dir);
-            stream.mWrite(amount);
+            PacketWriter stream = Program.server.SetupStream(NetworkID.WorldItemSpawnMessage);
+            stream.Write(ID);
+            stream.Write(Instance.ID);
+            stream.Write(pos);
+            stream.Write(dir);
+            stream.Write(amount);
             if (Instance.Type <= ItemType.Armor)
-                stream.mWrite(condition);
-            stream.mWrite(physicsEnabled);
+                stream.Write(condition);
+            stream.Write(physicsEnabled);
 
             foreach (Client client in list)
-                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
+                client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
         }
     }
 }

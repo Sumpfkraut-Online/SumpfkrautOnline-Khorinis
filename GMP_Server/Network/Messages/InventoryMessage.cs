@@ -17,13 +17,13 @@ namespace GUC.Server.Network.Messages
             if (client == null || item == null)
                 return;
 
-            BitStream stream = Program.server.SetupStream(NetworkID.InventoryAddMessage);
-            stream.mWrite(item.ID);
-            stream.mWrite(item.Instance.ID);
-            stream.mWrite(item.Amount);
-            stream.mWrite(item.Condition);
-            stream.mWrite(item.SpecialLine);
-            Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I', client.guid, false);
+            PacketWriter stream = Program.server.SetupStream(NetworkID.InventoryAddMessage);
+            stream.Write(item.ID);
+            stream.Write(item.Instance.ID);
+            stream.Write(item.Amount);
+            stream.Write(item.Condition);
+            stream.Write(item.SpecialLine);
+            client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I');
         }
 
         public static void WriteAmountUpdate(Client client, Item item)
@@ -36,16 +36,16 @@ namespace GUC.Server.Network.Messages
             if (client == null || item == null)
                 return;
 
-            BitStream stream = Program.server.SetupStream(NetworkID.InventoryAmountMessage);
-            stream.mWrite(item.ID);
-            stream.mWrite(amount);
-            Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I', client.guid, false);
+            PacketWriter stream = Program.server.SetupStream(NetworkID.InventoryAmountMessage);
+            stream.Write(item.ID);
+            stream.Write(amount);
+            client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I');
         }
 
         public static void ReadDropItem(BitStream stream, Client client)
         {
             Item item;
-            if (sWorld.ItemDict.TryGetValue(stream.mReadUInt(), out item))
+            if (Server.sItemDict.TryGetValue(stream.mReadUInt(), out item))
             {
                 ushort amount = stream.mReadUShort();
                 if (client.Character.HasItem(item))

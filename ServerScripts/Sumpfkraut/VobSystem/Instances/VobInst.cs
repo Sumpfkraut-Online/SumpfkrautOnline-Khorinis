@@ -26,9 +26,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
         public VobDef getVobDef () { return this.vobDef; }
         public void setVobDef (VobDef vobDef) { this.vobDef = vobDef; }
 
-        protected AbstractVob vob;
-        public AbstractVob getVob () { return this.vob; }
-        public void setVob (AbstractVob vob) 
+        protected Vob vob;
+        public Vob getVob () { return this.vob; }
+        public void setVob (Vob vob) 
         { 
             this.vob = vob;
             if (getIsSpawned())
@@ -75,7 +75,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
             this.position = position;
             if (this.vob != null)
             {
-                AbstractVob vob = this.vob;
+                Vob vob = this.vob;
                 vob.Position = position;
             }          
         }
@@ -87,7 +87,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
             this.direction = direction;
             if (this.vob != null)
             {
-                AbstractVob vob = this.vob;
+                Vob vob = this.vob;
                 vob.Direction = direction;
             }   
         }

@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
+using GUC.Types;
+using System.IO;
+using System.IO.Compression;
 
 namespace GUC.Network
 {
@@ -15,13 +16,13 @@ namespace GUC.Network
 
         byte[] data;
         int length;
-
+        
         internal PacketReader()
         {
             dec = Encoding.UTF8.GetDecoder();
         }
 
-        internal void Load(byte[] data)
+        internal void Load(byte[] data, int length)
         {
             this.data = data;
             currentByte = 0;
@@ -29,9 +30,38 @@ namespace GUC.Network
             bitByte = 0;
         }
 
+
+        #region Decompressing
+
+        internal void Decompress()
+        {
+            int uncompressedLen = ReadInt();
+            int compressedLen = ReadInt();
+
+            int newLen = length - compressedLen + uncompressedLen;
+            byte[] newData = new byte[newLen];
+            Buffer.BlockCopy(data, 0, newData, 0, currentByte);
+
+            using (MemoryStream ms = new MemoryStream(uncompressedLen))
+            using (DeflateStream ds = new DeflateStream(ms, CompressionMode.Decompress))
+            {
+                ds.Read(data, currentByte, compressedLen);
+
+                ms.Position = 0;
+
+                ms.Read(newData, currentByte, uncompressedLen);
+            }
+            Buffer.BlockCopy(data, currentByte + compressedLen, newData, currentByte + uncompressedLen, length - currentByte + compressedLen);
+
+            data = newData;
+            length = newLen;
+        }
+
+        #endregion
+
         #region Reading Methods
 
-        public void Read(out bool val)
+        public bool ReadBit()
         {
             if (bitsRead == 8)
             {
@@ -39,8 +69,7 @@ namespace GUC.Network
                 bitsRead = 0;
             }
 
-            val = (bitByte & (1 << bitsRead)) != 0;
-            bitsRead++;
+            return (bitByte & (1 << bitsRead++)) != 0;
         }
 
         public sbyte ReadSByte()
@@ -97,9 +126,9 @@ namespace GUC.Network
             return val;
         }
 
-        public void Read(byte[] arr, int index, int length)
+        public void Read(byte[] arr, int startIndex, int length)
         {
-            Buffer.BlockCopy(data, currentByte, arr, index, length);
+            Buffer.BlockCopy(data, currentByte, arr, startIndex, length);
             currentByte += length;
         }
 
@@ -117,6 +146,28 @@ namespace GUC.Network
             currentByte += len;
 
             return new string(charArr, 0, len);
+        }
+
+        public Vec3f ReadVec3f()
+        {
+            Vec3f vec = new Vec3f();
+            vec.X = BitConverter.ToSingle(data, currentByte);
+            currentByte += 4;
+            vec.Y = BitConverter.ToSingle(data, currentByte);
+            currentByte += 4;
+            vec.Z = BitConverter.ToSingle(data, currentByte);
+            currentByte += 4;
+            return vec;
+        }
+
+        public ColorRGBA ReadColorRGBA()
+        {
+            ColorRGBA color = new ColorRGBA();
+            color.R = data[currentByte++];
+            color.G = data[currentByte++];
+            color.B = data[currentByte++];
+            color.A = data[currentByte++];
+            return color;
         }
 
         #endregion

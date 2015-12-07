@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GUC.Server.WorldObjects
 {
-    public abstract class AbstractObject
+    public abstract class ServerObject
     {
         public object ScriptObj { get; private set; }
 
@@ -14,9 +14,11 @@ namespace GUC.Server.WorldObjects
             return (T)ScriptObj;
         }
 
-        public AbstractObject(object scriptObject)
+        public ServerObject(object scriptObject)
         {
             this.ScriptObj = scriptObject;
         }
+
+        public abstract void Delete();
     }
 }

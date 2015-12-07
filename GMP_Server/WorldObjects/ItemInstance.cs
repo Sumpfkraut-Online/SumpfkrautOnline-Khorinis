@@ -10,7 +10,7 @@ using System.IO;
 
 namespace GUC.Server.WorldObjects
 {
-    public class ItemInstance : AbstractInstance
+    public class ItemInstance : VobInstance
     {
         #region Client fields
 
@@ -94,13 +94,13 @@ namespace GUC.Server.WorldObjects
 
         #region Constructors
 
-        public ItemInstance(string instanceName)
-            : base(instanceName)
+        public ItemInstance(string instanceName, object scriptObject)
+            : base(instanceName, scriptObject)
         {
         }
 
-        public ItemInstance(ushort ID, string instanceName)
-            : base(ID, instanceName)
+        public ItemInstance(ushort ID, string instanceName, object scriptObject)
+            : base(ID, instanceName, scriptObject)
         {
         }
 

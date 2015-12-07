@@ -7,7 +7,7 @@ using GUC.Types;
 
 namespace GUC.Server.WorldObjects
 {
-    public abstract class AbstractCtrlVob : AbstractVob
+    public abstract class AbstractCtrlVob : Vob
     {
         protected AbstractCtrlVob(object scriptObject) : base (scriptObject)
         {

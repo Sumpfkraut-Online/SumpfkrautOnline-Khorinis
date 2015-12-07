@@ -112,7 +112,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
             this.snowFactor = 5; // 5 % change of snow when there is precipitation
 
             this.lastIGTime = new IGTime();
-            this.lastIGTime = World.NewWorld.GetIGTime();
+            this.lastIGTime = Network.Server.GetWorld("newworld").GetIGTime();
 
             this.random = new Random();
             this.lock_WSQueue = new Object();
@@ -454,19 +454,19 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
 
                 if ((forceIGWeather) || (setIGWeather && this.currWSChanged))
                 {
-                    IGTime igTimeNow = World.NewWorld.GetIGTime();
+                    IGTime igTimeNow = Network.Server.GetWorld("newworld").GetIGTime();
                     this.lastIGTime = igTimeNow;
                     //Print(">>> " + igTimeNow.day + " " + igTimeNow.hour + " " + igTimeNow.minute);
 
                     if (this.currWeatherState == null)
                     {
-                        World.NewWorld.ChangeWeather(WeatherType.Normal,
+                        Network.Server.GetWorld("newworld").ChangeWeather(WeatherType.Normal,
                             igTimeNow, new IGTime(23, 59));
                         MakeLog("Updated ingame-weather to the default.");
                     }
                     else
                     {
-                        World.NewWorld.ChangeWeather(this.currWeatherState.weatherType,
+                        Network.Server.GetWorld("newworld").ChangeWeather(this.currWeatherState.weatherType,
                             igTimeNow, new IGTime(23, 59));
                         MakeLog("Updated ingame-weather to " + this.currWeatherState.weatherType +
                             ". Description: " + this.currWeatherState.description);
@@ -533,7 +533,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
         public override void Run()
         {
             DateTime dtNow = DateTime.Now;
-            IGTime currIGTime = World.NewWorld.GetIGTime();
+            IGTime currIGTime = Server.Network.Server.GetWorld("newworld").GetIGTime();
             FillUpQueue();
 
             if (this.lastIGTime.hour > currIGTime.hour)

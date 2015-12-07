@@ -74,7 +74,7 @@ namespace GUC.Server.Network
             }
 
             //npc is already in the world, set to player
-            if (npc.Spawned)
+            if (npc.IsSpawned)
             {
                 npc.World.npcDict.Remove(npc.ID);
                 npc.World.playerDict.Add(npc.ID, npc);
@@ -91,6 +91,7 @@ namespace GUC.Server.Network
             Network.Server.sNpcDict.Remove(npc.ID);
             Network.Server.sPlayerDict.Add(npc.ID, npc);
 
+            npc.World = world;
             npc.client = this;
             Character = npc;
             NPC.WriteControl(this, Character);
@@ -148,8 +149,8 @@ namespace GUC.Server.Network
         {
             VobControlledList.Add(vob);
             vob.VobController = this;
-            BitStream stream = Program.server.SetupStream(NetworkID.ControlAddVobMessage); stream.mWrite(vob.ID);
-            Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', guid, false);
+            PacketWriter stream = Program.server.SetupStream(NetworkID.ControlAddVobMessage); stream.Write(vob.ID);
+            Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
             Log.Logger.log("AddCtrl: " + Character.ID + " " + vob.ID + ": " + vob.GetType().Name);
 
             if (vob is NPC)
@@ -162,8 +163,8 @@ namespace GUC.Server.Network
         {
             VobControlledList.Remove(vob);
             vob.VobController = null;
-            BitStream stream = Program.server.SetupStream(NetworkID.ControlRemoveVobMessage); stream.mWrite(vob.ID);
-            Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', guid, false);
+            PacketWriter stream = Program.server.SetupStream(NetworkID.ControlRemoveVobMessage); stream.Write(vob.ID);
+            Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
             Log.Logger.log("RemoveCtrl: " + Character.ID + " " + vob.ID + ": " + vob.GetType().Name);
         }
 
@@ -174,7 +175,17 @@ namespace GUC.Server.Network
 
         public void SendLoginMsg(PacketWriter stream)
         {
+            Program.server.ServerInterface.Send(stream.GetData(), stream.GetLength(), PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'M', this.guid, false);
+        }
 
+        internal void Send(PacketWriter stream, PacketPriority pp, PacketReliability pr, char orderingChannel)
+        {
+            Program.server.ServerInterface.Send(stream.GetData(), stream.GetLength(), pp, pr, orderingChannel, guid, false);
+        }
+
+        public int GetLastPing()
+        {
+            return Program.server.ServerInterface.GetLastPing(guid);
         }
     }
 }

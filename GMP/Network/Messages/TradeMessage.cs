@@ -100,15 +100,15 @@ namespace GUC.Client.Network.Messages
 
         public static void ConfirmOffer()
         {
-            BitStream stream = Program.client.SetupSendStream(NetworkID.TradeMessage);
-            stream.mWrite((byte)TradeStatus.ConfirmOffer);
+            PacketWriter stream = Program.client.SetupSendStream(NetworkID.TradeMessage);
+            stream.Write((byte)TradeStatus.ConfirmOffer);
             Program.client.SendStream(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.UNRELIABLE);
         }
 
         public static void DeclineOffer()
         {
-            BitStream stream = Program.client.SetupSendStream(NetworkID.TradeMessage);
-            stream.mWrite((byte)TradeStatus.DeclineOffer);
+            PacketWriter stream = Program.client.SetupSendStream(NetworkID.TradeMessage);
+            stream.Write((byte)TradeStatus.DeclineOffer);
             Program.client.SendStream(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.UNRELIABLE);
         }
 
@@ -116,9 +116,9 @@ namespace GUC.Client.Network.Messages
         {
             if (item == null)
                 return;
-            BitStream stream = Program.client.SetupSendStream(NetworkID.TradeMessage);
-            stream.mWrite((byte)TradeStatus.SelfRemoveItem);
-            stream.mWrite(item.ID);
+            PacketWriter stream = Program.client.SetupSendStream(NetworkID.TradeMessage);
+            stream.Write((byte)TradeStatus.SelfRemoveItem);
+            stream.Write(item.ID);
             Program.client.SendStream(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.UNRELIABLE);
             TradeMenu.GetTrade().DeclineOffer();
         }
@@ -127,29 +127,29 @@ namespace GUC.Client.Network.Messages
         {
             if (item == null)
                 return;
-            BitStream stream = Program.client.SetupSendStream(NetworkID.TradeMessage);
-            stream.mWrite((byte)TradeStatus.SelfOfferItem);
-            stream.mWrite(item.ID);
-            stream.mWrite(item.instance.ID);
-            stream.mWrite(item.Amount);
-            stream.mWrite(item.Condition);
-            stream.mWrite(item.specialLine);
+            PacketWriter stream = Program.client.SetupSendStream(NetworkID.TradeMessage);
+            stream.Write((byte)TradeStatus.SelfOfferItem);
+            stream.Write(item.ID);
+            stream.Write(item.instance.ID);
+            stream.Write(item.Amount);
+            stream.Write(item.Condition);
+            stream.Write(item.specialLine);
             Program.client.SendStream(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.UNRELIABLE);
             TradeMenu.GetTrade().DeclineOffer();
         }
 
         public static void SendRequest(uint npcId)
         {
-            BitStream stream = Program.client.SetupSendStream(NetworkID.TradeMessage);
-            stream.mWrite((byte)TradeStatus.Request);
-            stream.mWrite(npcId);
+            PacketWriter stream = Program.client.SetupSendStream(NetworkID.TradeMessage);
+            stream.Write((byte)TradeStatus.Request);
+            stream.Write(npcId);
             Program.client.SendStream(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.UNRELIABLE);
         }
 
         public static void SendBreak()
         {
-            BitStream stream = Program.client.SetupSendStream(NetworkID.TradeMessage);
-            stream.mWrite((byte)TradeStatus.Break);
+            PacketWriter stream = Program.client.SetupSendStream(NetworkID.TradeMessage);
+            stream.Write((byte)TradeStatus.Break);
             Program.client.SendStream(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.UNRELIABLE);
         }
 

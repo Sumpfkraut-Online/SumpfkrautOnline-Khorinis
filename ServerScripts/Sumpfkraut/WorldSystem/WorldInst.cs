@@ -32,7 +32,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.WorldSystem
             this.id = id;
             this.name = name;
             //this.world = World.getWorld(this.name);
-            this.world = World.NewWorld;
+            this.world = Network.Server.GetWorld("newworld");
             if (this.world == null)
             {
                 Log.Logger.logError("WorldInst (constructor): There is no world named" + this.name 

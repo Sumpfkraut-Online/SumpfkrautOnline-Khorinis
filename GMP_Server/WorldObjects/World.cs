@@ -37,7 +37,7 @@ namespace GUC.Server.WorldObjects
         Snow,
     }
 
-    public class World : AbstractObject
+    public class World : ServerObject
     {
         public string WorldName { get; protected set; }
         public string FileName { get; protected set; }
@@ -68,15 +68,15 @@ namespace GUC.Server.WorldObjects
 
 
         // All vobs and mobs in this world
-        internal Dictionary<uint, Vob> vobDict = new Dictionary<uint, Vob>();
-        public Vob GetVob(uint ID) { Vob vob; vobDict.TryGetValue(ID, out vob); return vob; }
-        public IEnumerable<Vob> GetVobs() { return vobDict.Values; }
+        internal Dictionary<uint, VobMob> vobDict = new Dictionary<uint, VobMob>();
+        public VobMob GetVob(uint ID) { VobMob vob; vobDict.TryGetValue(ID, out vob); return vob; }
+        public IEnumerable<VobMob> GetVobs() { return vobDict.Values; }
 
 
         // All vobs in this world
-        internal Dictionary<uint, AbstractVob> allVobsDict = new Dictionary<uint, AbstractVob>();
-        public AbstractVob GetAnyVob(uint ID) { AbstractVob vob; allVobsDict.TryGetValue(ID, out vob); return vob; }
-        public IEnumerable<AbstractVob> GetAllVobs() { return allVobsDict.Values; }
+        internal Dictionary<uint, Vob> allVobsDict = new Dictionary<uint, Vob>();
+        public Vob GetAnyVob(uint ID) { Vob vob; allVobsDict.TryGetValue(ID, out vob); return vob; }
+        public IEnumerable<Vob> GetAllVobs() { return allVobsDict.Values; }
 
 
         // Ingame time
@@ -136,9 +136,9 @@ namespace GUC.Server.WorldObjects
         }
 
         /// <summary> Deletes all vobs in this world and removes itself from the server. </summary>
-        public void Delete()
+        public override void Delete()
         {
-            foreach(AbstractVob vob in GetAllVobs())
+            foreach(Vob vob in GetAllVobs())
             {
                 vob.Delete();
             }
@@ -147,7 +147,7 @@ namespace GUC.Server.WorldObjects
 
         #endregion
 
-        void AddVob(AbstractVob vob)
+        void AddVob(Vob vob)
         {
             vob.World = this;
             allVobsDict.Add(vob.ID, vob);
@@ -168,13 +168,13 @@ namespace GUC.Server.WorldObjects
             {
                 itemDict.Add(vob.ID, (Item)vob);
             }
-            else if (vob is Vob)
+            else if (vob is VobMob)
             {
-                vobDict.Add(vob.ID, (Vob)vob);
+                vobDict.Add(vob.ID, (VobMob)vob);
             }
         }
 
-        void RemoveVob(AbstractVob vob)
+        void RemoveVob(Vob vob)
         {
             vob.World = null;
             allVobsDict.Remove(vob.ID);
@@ -203,9 +203,9 @@ namespace GUC.Server.WorldObjects
 
         #region Spawn
 
-        public void SpawnVob(AbstractVob vob)
+        public void SpawnVob(Vob vob)
         {
-            if (vob.Spawned)
+            if (vob.IsSpawned)
             {
                 if (vob.World != this)
                 {
@@ -219,7 +219,7 @@ namespace GUC.Server.WorldObjects
             UpdatePosition(vob, vob is NPC ? ((NPC)vob).client : null);
         }
 
-        public void DespawnVob(AbstractVob vob)
+        public void DespawnVob(Vob vob)
         {
             if (vob.World != this)
                 return;
@@ -236,7 +236,7 @@ namespace GUC.Server.WorldObjects
 
         #region WorldCells
 
-        internal void UpdatePosition(AbstractVob vob, Client exclude)
+        internal void UpdatePosition(Vob vob, Client exclude)
         {
             if (vob is NPC)
             {
@@ -311,7 +311,7 @@ namespace GUC.Server.WorldObjects
             cell.Add(vob);
         }
 
-        void ChangeCells(AbstractVob vob, int x, int z, Client exclude)
+        void ChangeCells(Vob vob, int x, int z, Client exclude)
         {
             //create the new cell
             Dictionary<int, WorldCell> row = null;
@@ -344,7 +344,7 @@ namespace GUC.Server.WorldObjects
                 {
                     foreach (WorldCell c in newCell.SurroundingCells())
                     {
-                        foreach (AbstractVob v in c.AllVobs())
+                        foreach (Vob v in c.AllVobs())
                         {
                             v.WriteSpawn(new Client[1] { ((NPC)vob).client });
                         }
@@ -367,7 +367,7 @@ namespace GUC.Server.WorldObjects
                     ctrl.FindNewController();
                 }
                 foreach (WorldCell c in newCell.SurroundingCells())
-                    foreach (AbstractVob v in c.AllVobs())
+                    foreach (Vob v in c.AllVobs())
                         if (v is AbstractCtrlVob)
                         {
                             if (v is NPC && ((NPC)v).isPlayer)
@@ -386,7 +386,7 @@ namespace GUC.Server.WorldObjects
             #endregion
         }
 
-        void VobChangeDiffCells(AbstractVob vob, WorldCell from, WorldCell to, Client exclude)
+        void VobChangeDiffCells(Vob vob, WorldCell from, WorldCell to, Client exclude)
         {
             int i, j;
             WorldCell cell;
@@ -417,7 +417,7 @@ namespace GUC.Server.WorldObjects
                         //deletion updates for the player
                         if (vob is NPC && ((NPC)vob).isPlayer)
                         {
-                            foreach (AbstractVob v in cell.AllVobs())
+                            foreach (Vob v in cell.AllVobs())
                             {
                                 v.WriteDespawn(new Client[1] { ((NPC)vob).client });
                             }
@@ -452,7 +452,7 @@ namespace GUC.Server.WorldObjects
                     //creation updates for the player
                     if (vob is NPC && ((NPC)vob).isPlayer)
                     {
-                        foreach (AbstractVob v in cell.AllVobs())
+                        foreach (Vob v in cell.AllVobs())
                         {
                             v.WriteSpawn(new Client[1] { ((NPC)vob).client });
                         }
@@ -526,14 +526,14 @@ namespace GUC.Server.WorldObjects
                 foreach (KeyValuePair<uint, NPC> keyValPair in this.playerDict)
                 {
                     Client client = keyValPair.Value.client;
-                    BitStream stream = Program.server.SetupStream(NetworkID.WorldTimeMessage);
+                    PacketWriter stream = Program.server.SetupStream(NetworkID.WorldTimeMessage);
 
-                    stream.mWrite(this.igTime.day);
-                    stream.mWrite(this.igTime.hour);
-                    stream.mWrite(this.igTime.minute);
+                    stream.Write(this.igTime.day);
+                    stream.Write(this.igTime.hour);
+                    stream.Write(this.igTime.minute);
 
-                    Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY,
-                        PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
+                    client.Send(stream, PacketPriority.LOW_PRIORITY,
+                        PacketReliability.RELIABLE_ORDERED, 'W');
                 }
             }
         }
@@ -559,17 +559,17 @@ namespace GUC.Server.WorldObjects
                 {
                     Client client = keyValPair.Value.client;
 
-                    BitStream stream = Program.server.SetupStream(NetworkID.WorldWeatherMessage);
-                    stream.mWrite((byte)wt);
+                    PacketWriter stream = Program.server.SetupStream(NetworkID.WorldWeatherMessage);
+                    stream.Write((byte)wt);
                     //stream.Write(startTime.day);
-                    stream.mWrite((byte)startTime.hour);
-                    stream.mWrite((byte)startTime.minute);
+                    stream.Write((byte)startTime.hour);
+                    stream.Write((byte)startTime.minute);
                     //stream.Write(endTime.day);
-                    stream.mWrite((byte)endTime.hour);
-                    stream.mWrite((byte)endTime.minute);
+                    stream.Write((byte)endTime.hour);
+                    stream.Write((byte)endTime.minute);
 
-                    Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY,
-                        PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
+                    client.Send(stream, PacketPriority.LOW_PRIORITY,
+                        PacketReliability.RELIABLE_ORDERED, 'W');
                 }
             }
         }

@@ -7,7 +7,7 @@ using System.IO;
 
 namespace GUC.Server.WorldObjects
 {
-    public class MobInstance : AbstractInstance
+    public class MobInstance : VobInstance
     {
         public MobType type = MobType.Vob;
 
@@ -50,13 +50,13 @@ namespace GUC.Server.WorldObjects
 
         #region Constructors
 
-        public MobInstance(string instanceName)
-            : base(instanceName)
+        public MobInstance(string instanceName, object scriptObject)
+            : base(instanceName, scriptObject)
         {
         }
 
-        public MobInstance(ushort ID, string instanceName)
-            : base(ID, instanceName)
+        public MobInstance(ushort ID, string instanceName, object scriptObject)
+            : base(ID, instanceName, scriptObject)
         {
         }
 

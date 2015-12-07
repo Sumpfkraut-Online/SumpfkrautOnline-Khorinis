@@ -10,7 +10,7 @@ using GUC.Network;
 
 namespace GUC.Server.WorldObjects
 {
-    public class Vob : AbstractDropVob
+    public class VobMob : AbstractDropVob
     {
         public MobInstance Instance { get; protected set; }
 
@@ -24,7 +24,7 @@ namespace GUC.Server.WorldObjects
         /// Creates and returns a Mob object from the given MobInstance-ID.
         /// Returns NULL when the ID is not found!
         /// </summary>
-        public static Vob Create(ushort instanceID, object scriptObject)
+        public static VobMob Create(ushort instanceID, object scriptObject)
         {
             MobInstance inst = MobInstance.Table.Get(instanceID);
             if (inst == null)
@@ -39,7 +39,7 @@ namespace GUC.Server.WorldObjects
         /// Creates and returns a Mob object from the given MobInstance-Name.
         /// Returns NULL when the name is not found!
         /// </summary>
-        public static Vob Create(object scriptObject, string instanceName)
+        public static VobMob Create(object scriptObject, string instanceName)
         {
             MobInstance inst = MobInstance.Table.Get(instanceName);
             if (inst == null)
@@ -54,15 +54,15 @@ namespace GUC.Server.WorldObjects
         /// Creates and returns a Mob object from the given MobInstance.
         /// Returns NULL when the MobInstance is NULL!
         /// </summary>
-        public static Vob Create(MobInstance instance, object scriptObject)
+        public static VobMob Create(MobInstance instance, object scriptObject)
         {
             if (instance != null)
             {
-                Vob mob = null;
+                VobMob mob = null;
                 switch (instance.type)
                 {
                     case MobType.Vob:
-                        mob = new Vob(scriptObject);
+                        mob = new VobMob(scriptObject);
                         break;
                     case MobType.Mob:
                         mob = new Mob(scriptObject);
@@ -103,7 +103,7 @@ namespace GUC.Server.WorldObjects
             }
         }
 
-        internal Vob(object scriptObject) : base(scriptObject)
+        internal VobMob(object scriptObject) : base(scriptObject)
         {
         }
 
@@ -119,21 +119,21 @@ namespace GUC.Server.WorldObjects
 
         internal override void WriteSpawn(IEnumerable<Client> list)
         {
-            BitStream stream = Program.server.SetupStream(NetworkID.WorldVobSpawnMessage);
-            stream.mWrite(ID);
-            stream.mWrite(Instance.ID);
-            stream.mWrite(pos);
-            stream.mWrite(dir);
-            stream.mWrite(physicsEnabled);
+            PacketWriter stream = Program.server.SetupStream(NetworkID.WorldVobSpawnMessage);
+            stream.Write(ID);
+            stream.Write(Instance.ID);
+            stream.Write(pos);
+            stream.Write(dir);
+            stream.Write(physicsEnabled);
 
             foreach (Client client in list)
-                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
+                client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
         }
 
         #endregion
     }
 
-    public class Mob : Vob
+    public class Mob : VobMob
     {
         public string FocusName { get { return Instance.focusName; } }
 

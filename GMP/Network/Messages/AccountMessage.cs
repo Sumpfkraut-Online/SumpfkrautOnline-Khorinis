@@ -13,28 +13,40 @@ namespace GUC.Client.Network.Messages
 {
     static class AccountMessage
     {
+        // if you change these, change them in GUC.Server.Scripts.Accounts.AccountSystem too!!!
+        enum LoginType
+        {
+            AccountLogin,
+            AccountCreation,
+            CharacterLogin,
+            CharacterCreation
+        }
+
         public delegate void OnLoginHandler(AccCharInfo[] chars);
         public static OnLoginHandler OnLogin;
 
         public static void Login()
         {
-            BitStream stream = Program.client.SetupSendStream(NetworkID.AccountLoginMessage);
-            stream.mWrite(StartupState.clientOptions.name);
-            stream.mWrite(StartupState.clientOptions.password);
+            PacketWriter stream = Program.client.SetupSendStream(NetworkID.LoginMessage);
+            stream.Write((byte)LoginType.AccountLogin);
+            stream.Write(StartupState.clientOptions.name);
+            stream.Write(StartupState.clientOptions.password);
             Program.client.SendStream(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE);
         }
 
         public static void Register()
         {
-            BitStream stream = Program.client.SetupSendStream(NetworkID.AccountCreationMessage);
-            stream.mWrite(StartupState.clientOptions.name);
-            stream.mWrite(StartupState.clientOptions.password);
+            PacketWriter stream = Program.client.SetupSendStream(NetworkID.LoginMessage);
+            stream.Write((byte)LoginType.AccountCreation);
+            stream.Write(StartupState.clientOptions.name);
+            stream.Write(StartupState.clientOptions.password);
             Program.client.SendStream(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE);
         }
 
         public static void CreateNewCharacter(AccCharInfo ci)
         {
-            BitStream stream = Program.client.SetupSendStream(NetworkID.AccountCharCreationMessage);
+            PacketWriter stream = Program.client.SetupSendStream(NetworkID.LoginMessage);
+            stream.Write((byte)LoginType.CharacterCreation);
             ci.Write(stream);
             Program.client.SendStream(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE);
         }
@@ -43,8 +55,9 @@ namespace GUC.Client.Network.Messages
         {
             if (slotNum >= 0 && slotNum < AccCharInfo.Max_Slots)
             {
-                BitStream stream = Program.client.SetupSendStream(NetworkID.AccountCharLoginMessage);
-                stream.mWrite((byte)slotNum);
+                PacketWriter stream = Program.client.SetupSendStream(NetworkID.LoginMessage);
+                stream.Write((byte)LoginType.CharacterLogin);
+                stream.Write((byte)slotNum);
                 Program.client.SendStream(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE);
             }
         }
@@ -62,9 +75,9 @@ namespace GUC.Client.Network.Messages
             }
         }
 
-        public static void GetCharList(BitStream stream)
+        public static void GetCharList(PacketReader stream)
         {
-            byte count = stream.mReadByte();
+            byte count = stream.ReadByte();
 
             AccCharInfo[] chars = new AccCharInfo[count];
             for (int i = 0; i < count; i++)

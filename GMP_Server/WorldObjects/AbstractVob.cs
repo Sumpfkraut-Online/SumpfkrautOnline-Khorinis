@@ -7,19 +7,26 @@ using GUC.Types;
 using RakNet;
 using GUC.Network;
 using GUC.Enumeration;
+using GUC.Server.Network.Messages;
 
 namespace GUC.Server.WorldObjects
 {
-    public abstract class AbstractVob : AbstractObject
+    public class Vob : ServerObject
     {
         static uint idCount = 1; // Start with 1 cause a "null-vob" (id = 0) is needed for networking
 
-        public uint ID { get; internal set; }
+        public uint ID { get; protected set; }
+        public VobType Type { get; protected set; }
+        public VobInstance Instance { get; protected set; }
+
+        public string Visual { get { return Instance.Visual; } }
+        public bool CDDyn { get { return Instance.CDDyn; } }
+        public bool CDStatic { get { return Instance.CDStatic; } }
+    
+        public World World { get; internal set; }
+        public bool IsSpawned { get { return World != null; } }
 
         internal WorldCell cell;
-
-        public World World { get; internal set; }
-        public bool Spawned { get { return World != null; } }
 
         #region Position
         internal Vec3f pos = new Vec3f(0, 0, 0);
@@ -27,87 +34,92 @@ namespace GUC.Server.WorldObjects
 
         public virtual Vec3f Position
         {
-            get { return pos; }
+            get { return this.pos; }
             set
             {
-                pos = value;
-                if (Spawned)
+                this.pos = value;
+                if (this.IsSpawned)
                 {
-                    World.UpdatePosition(this, null);
+                    this.World.UpdatePosition(this, null);
                 }
             }
         }
 
         public virtual Vec3f Direction
         {
-            get { return dir; }
+            get { return this.dir; }
             set
             {
                 if (value.IsNull())
                 {
-                    dir = new Vec3f(0, 0, 1);
+                    this.dir = new Vec3f(0, 0, 1);
                 }
                 else
                 {
-                    dir = value;
+                    this.dir = value;
                 }
-                if (Spawned)
+                if (this.IsSpawned)
                 {
-                    Network.Messages.VobMessage.WritePosDir(cell.SurroundingClients(), null);
+                    VobMessage.WritePosDir(this.cell.SurroundingClients(), null);
                 }
             }
         }
         #endregion
 
-        protected AbstractVob(object scriptObject) : base(scriptObject)
+        public Vob(VobInstance instance, object scriptObject) : base(scriptObject)
         {
-            ID = idCount++;
-            Network.Server.sAllVobsDict.Add(ID, this);
+            this.ID = Vob.idCount++;
+            this.Type = VobType.Vob;
+            this.Instance = instance;
+            Network.Server.sAllVobsDict.Add(this.ID, this);
+        }
+
+        /// <summary> Despawns and removes the vob from the server. </summary>
+        public override void Delete()
+        {
+            this.Despawn();
+            Network.Server.sAllVobsDict.Remove(ID);
         }
 
         #region Spawn
         public void Spawn(World world)
         {
-            Spawn(world, Position, Direction);
+            Spawn(world, this.pos, this.dir);
         }
 
         public void Spawn(World world, Vec3f position)
         {
-            Spawn(world, position, this.Direction);
+            Spawn(world, position, this.dir);
         }
 
         public virtual void Spawn(World world, Vec3f position, Vec3f direction)
         {
-            pos = position;
-            dir = direction;
+            this.pos = position;
+            this.dir = direction;
             world.SpawnVob(this);
         }
 
         public virtual void Despawn()
         {
-            if (Spawned)
+            if (this.IsSpawned)
             {
-                World.DespawnVob(this);
+                this.World.DespawnVob(this);
             }
         }
         #endregion
 
-        /// <summary> Despawns and removes the vob from the server. </summary>
-        public virtual void Delete()
+        internal virtual void WriteSpawn(IEnumerable<Client> list)
         {
-            Despawn();
-            Network.Server.sAllVobsDict.Remove(ID);
-        }
 
-        internal abstract void WriteSpawn(IEnumerable<Client> list);
+        }
 
         internal void WriteDespawn(IEnumerable<Client> list)
         {
-            BitStream stream = Program.server.SetupStream(NetworkID.WorldVobDeleteMessage);
-            stream.mWrite(ID);
+            PacketWriter stream = Program.server.SetupStream(NetworkID.WorldVobDeleteMessage);
+            stream.Write(this.ID);
 
             foreach (Client client in list)
-                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
+                client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
         }
     }
 }

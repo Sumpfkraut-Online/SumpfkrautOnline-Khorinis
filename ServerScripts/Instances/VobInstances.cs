@@ -11,23 +11,23 @@ namespace GUC.Server.Scripts.Instances
         // wird in Zukunft von Datenbank übernommen
         public static void Init()
         {
-            NPCInstance npc = new NPCInstance(1, "_MALE");
+            NPCInstance npc = new NPCInstance(1, "_MALE", null);
             npc.Visual = "HUMANS";
             npc.BodyMesh = "HUM_BODY_NAKED0";
             NPCInstance.Table.Add(npc);
 
-            npc = new NPCInstance(2, "_FEMALE");
+            npc = new NPCInstance(2, "_FEMALE", null);
             npc.Visual = "HUMANS";
             npc.BodyMesh = "HUM_BODY_BABE0";
             NPCInstance.Table.Add(npc);
 
-            npc = new NPCInstance("Scavenger");
+            npc = new NPCInstance("Scavenger", null);
             npc.Name = "Scavenger";
             npc.Visual = "Scavenger";
             npc.BodyMesh = "Sca_Body";
             NPCInstance.Table.Add(npc);
 
-            npc = new NPCInstance("Mud");
+            npc = new NPCInstance("Mud", null);
             npc.Name = "Mud";
             npc.Visual = "HUMANS";
             npc.BodyMesh = "HUM_BODY_NAKED0";
@@ -48,7 +48,7 @@ namespace GUC.Server.Scripts.Instances
             ItemInstance item;
 
 
-            item = new ItemInstance("itfo_apple");
+            item = new ItemInstance("itfo_apple", null);
             item.Name = "Apfel";
             
             item.Type = Enumeration.ItemType.Food_Small;
@@ -65,37 +65,37 @@ namespace GUC.Server.Scripts.Instances
 
 
 
-            item = new ItemInstance("itfo_bread");
+            item = new ItemInstance("itfo_bread", null);
             item.Name = "Brot";
             item.Visual = "ITFO_BREAD.3DS";
             ItemInstance.Table.Add(item);
 
-            item = new ItemInstance("itfo_cheese");
+            item = new ItemInstance("itfo_cheese", null);
             item.Name = "Käse";
             item.Visual = "ITFO_CHEESE.3DS";
             ItemInstance.Table.Add(item);
 
-            item = new ItemInstance("itfo_bacon");
+            item = new ItemInstance("itfo_bacon", null);
             item.Name = "Schinken";
             item.Visual = "ITFO_BACON.3DS";
             ItemInstance.Table.Add(item);
 
-            item = new ItemInstance("itfo_fish");
+            item = new ItemInstance("itfo_fish", null);
             item.Name = "Fisch";
             item.Visual = "ITFO_FISH.3DS";
             ItemInstance.Table.Add(item);
 
-            item = new ItemInstance("itfo_stew");
+            item = new ItemInstance("itfo_stew", null);
             item.Name = "Eintopf";
             item.Visual = "ITFO_STEW.3DS";
             ItemInstance.Table.Add(item);
 
-            item = new ItemInstance("itfo_beer");
+            item = new ItemInstance("itfo_beer", null);
             item.Name = "Bier";
             item.Visual = "ITFO_BEER.3DS";
             ItemInstance.Table.Add(item);
 
-            item = new ItemInstance("itmw_wolfszahn");
+            item = new ItemInstance("itmw_wolfszahn", null);
             item.Name = "Wolfszahn";
             item.Gender = Enumeration.Gender.Masculine;
             item.Type = Enumeration.ItemType.Sword_1H;
@@ -106,7 +106,7 @@ namespace GUC.Server.Scripts.Instances
             item.Text[3] = "Einhand";
             ItemInstance.Table.Add(item);
 
-            item = new ItemInstance("ITAR_BDT_M");
+            item = new ItemInstance("ITAR_BDT_M", null);
             item.Name = "Mittlere Banditenrüstung";
             item.Gender = Enumeration.Gender.Feminine;
             item.Type = Enumeration.ItemType.Armor;
@@ -119,19 +119,19 @@ namespace GUC.Server.Scripts.Instances
 
 
 
-            MobInstance mob = new MobInstance("Forge");
+            MobInstance mob = new MobInstance("Forge", null);
             mob.type = Enumeration.MobType.MobInter;
             mob.Visual = "BSFIRE_OC.MDS";
             mob.focusName = "Schmiedefeuer";
             MobInstance.Table.Add(mob);
 
-            mob = new MobInstance("stool");
+            mob = new MobInstance("stool", null);
             mob.type = Enumeration.MobType.MobInter;
             mob.Visual = "CHAIR_NW_NORMAL_01.ASC";
             mob.focusName = "Stuhl";
             MobInstance.Table.Add(mob);
 
-            mob = new MobInstance("latern");
+            mob = new MobInstance("latern", null);
             mob.type = Enumeration.MobType.Vob;
             mob.Visual = "FIREPLACE_NW_LAMP_01.ASC";
             MobInstance.Table.Add(mob);

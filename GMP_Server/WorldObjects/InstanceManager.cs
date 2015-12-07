@@ -8,7 +8,7 @@ using System.Security.Cryptography;
 
 namespace GUC.Server.WorldObjects
 {
-    public class InstanceManager<T> where T : AbstractInstance
+    public class InstanceManager<T> where T : VobInstance
     {
         ushort idCount = 0;
 
@@ -44,18 +44,18 @@ namespace GUC.Server.WorldObjects
             if (instance != null && instance.ID != 0)
             {
                 instanceList.Remove(instance.ID);
-                instanceDict.Remove(instance.instanceName);
+                instanceDict.Remove(instance.InstanceName);
             }
         }
 
         public void Add(T instance)
         {
-            if (instance == null || instance.instanceName == null || instance.instanceName.Length == 0)
+            if (instance == null || instance.InstanceName == null || instance.InstanceName.Length == 0)
                 return;
 
-            if (instanceDict.ContainsKey(instance.instanceName))
+            if (instanceDict.ContainsKey(instance.InstanceName))
             {
-                Log.Logger.log(String.Format("ERR: {0} creation failed: {1} is already existing.", instance.GetType(), instance.instanceName));
+                Log.Logger.log(String.Format("ERR: {0} creation failed: {1} is already existing.", instance.GetType(), instance.InstanceName));
                 return;
             }
 
@@ -90,7 +90,7 @@ namespace GUC.Server.WorldObjects
             }
 
             instanceList.Add(instance.ID, instance);
-            instanceDict.Add(instance.instanceName, instance);
+            instanceDict.Add(instance.InstanceName, instance);
         }
 
 
@@ -106,7 +106,7 @@ namespace GUC.Server.WorldObjects
                 {
                     bw.Write((ushort)instanceList.Count);
 
-                    foreach (AbstractInstance inst in instanceList.Values.OrderBy(n => n.ID)) //ordered by IDs
+                    foreach (VobInstance inst in instanceList.Values.OrderBy(n => n.ID)) //ordered by IDs
                     {
                         inst.Write(bw);
                     }

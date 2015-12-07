@@ -29,86 +29,86 @@ namespace GUC.Server.Network.Messages
 
         public static void WriteAniStart(IEnumerable<Client> list, NPC npc, Animations ani)
         {
-            BitStream stream = Program.server.SetupStream(NetworkID.NPCAniStartMessage);
-            stream.mWrite(npc.ID);
-            stream.mWrite((ushort)ani);
+            PacketWriter stream = Program.server.SetupStream(NetworkID.NPCAniStartMessage);
+            stream.Write(npc.ID);
+            stream.Write((ushort)ani);
 
             foreach (Client client in list)
-                Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'W', client.guid, false);
+                client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'W');
         }
 
         public static void WriteAniStop(IEnumerable<Client> list, NPC npc, Animations ani, bool fadeout)
         {
-            BitStream stream = Program.server.SetupStream(NetworkID.NPCAniStartMessage);
-            stream.mWrite(npc.ID);
-            stream.mWrite((ushort)ani);
-            stream.mWrite(fadeout);
+            PacketWriter stream = Program.server.SetupStream(NetworkID.NPCAniStartMessage);
+            stream.Write(npc.ID);
+            stream.Write((ushort)ani);
+            stream.Write(fadeout);
 
             foreach (Client client in list)
-                Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'W', client.guid, false);
+                client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'W');
         }
 
         #endregion
 
         public static void WriteEquipMessage(IEnumerable<Client> list, NPC npc, Item item, byte slot)
         {
-            BitStream stream = Program.server.SetupStream(NetworkID.NPCEquipMessage);
-            stream.mWrite(npc.ID);
-            stream.mWrite(item.ID);
-            stream.mWrite(item.Instance.ID);
-            stream.mWrite(item.Condition);
-            stream.mWrite(slot);
+            PacketWriter stream = Program.server.SetupStream(NetworkID.NPCEquipMessage);
+            stream.Write(npc.ID);
+            stream.Write(item.ID);
+            stream.Write(item.Instance.ID);
+            stream.Write(item.Condition);
+            stream.Write(slot);
 
             foreach (Client client in list)
-                Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
+                client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
         }
 
         public static void WriteUnequipMessage(IEnumerable<Client> list, NPC npc, byte slot)
         {
-            BitStream stream = Program.server.SetupStream(NetworkID.NPCUnequipMessage);
-            stream.mWrite(npc.ID);
-            stream.mWrite(slot);
+            PacketWriter stream = Program.server.SetupStream(NetworkID.NPCUnequipMessage);
+            stream.Write(npc.ID);
+            stream.Write(slot);
 
             foreach (Client client in list)
-                Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
+                client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
         }
 
         public static void WriteJump(IEnumerable<Client> list, NPC npc)
         {
-            BitStream stream = Program.server.SetupStream(NetworkID.NPCJumpMessage);
-            stream.mWrite(npc.ID);
+            PacketWriter stream = Program.server.SetupStream(NetworkID.NPCJumpMessage);
+            stream.Write(npc.ID);
             foreach (Client client in list)
-                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
+                client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
         }
 
         #region States
 
         public static void WriteState(IEnumerable<Client> list, NPC npc)
         {
-            BitStream stream = Program.server.SetupStream(NetworkID.NPCStateMessage);
-            stream.mWrite(npc.ID);
-            stream.mWrite((byte)npc.State);
+            PacketWriter stream = Program.server.SetupStream(NetworkID.NPCStateMessage);
+            stream.Write(npc.ID);
+            stream.Write((byte)npc.State);
             foreach (Client client in list)
-                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
+                client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
         }
 
         public static void WriteTargetState(IEnumerable<Client> list, NPC npc, NPC target)
         {
-            BitStream stream = Program.server.SetupStream(NetworkID.NPCTargetStateMessage);
-            stream.mWrite(npc.ID);
-            stream.mWrite((byte)npc.State);
+            PacketWriter stream = Program.server.SetupStream(NetworkID.NPCTargetStateMessage);
+            stream.Write(npc.ID);
+            stream.Write((byte)npc.State);
 
             if (target == null)
             {
-                stream.mWrite(0);
+                stream.Write(0);
             }
             else
             {
-                stream.mWrite(target.ID);
+                stream.Write(target.ID);
             }
 
             foreach (Client client in list)
-                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
+                client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
         }
 
         public static void WriteDrawItem(IEnumerable<Client> list, NPC npc, Item item, bool fast)
@@ -119,27 +119,27 @@ namespace GUC.Server.Network.Messages
             if (item == null)
                 return;
 
-            BitStream stream = Program.server.SetupStream(NetworkID.NPCDrawItemMessage);
-            stream.mWrite(npc.ID);
+            PacketWriter stream = Program.server.SetupStream(NetworkID.NPCDrawItemMessage);
+            stream.Write(npc.ID);
             WriteStrmDrawItem(stream, npc, item);
-            stream.mWrite(fast);
+            stream.Write(fast);
 
             foreach (Client client in list)
-                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
+                client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
         }
 
-        public static void WriteStrmDrawItem(BitStream stream, NPC npc, Item item)
+        public static void WriteStrmDrawItem(PacketWriter stream, NPC npc, Item item)
         {
-            stream.mWrite(item.ID);
+            stream.Write(item.ID);
             if (item != Item.Fists)
             {
-                stream.mWrite(item.Instance.ID);
+                stream.Write(item.Instance.ID);
                 if (item.Type == ItemType.Blunt_1H || item.Type == ItemType.Sword_1H)
-                    stream.mWrite(npc.Talent1H);
+                    stream.Write(npc.Talent1H);
                 else if (item.Type == ItemType.Blunt_2H || item.Type == ItemType.Sword_2H)
-                    stream.mWrite(npc.Talent2H);
+                    stream.Write(npc.Talent2H);
                 else
-                    stream.mWrite(byte.MinValue);
+                    stream.Write(byte.MinValue);
             }
         }
 
@@ -148,13 +148,13 @@ namespace GUC.Server.Network.Messages
             if (npc == null)
                 return;
 
-            BitStream stream = Program.server.SetupStream(NetworkID.NPCUndrawItemMessage);
-            stream.mWrite(npc.ID);
-            stream.mWrite(fast);
-            stream.mWrite(altRemove);
+            PacketWriter stream = Program.server.SetupStream(NetworkID.NPCUndrawItemMessage);
+            stream.Write(npc.ID);
+            stream.Write(fast);
+            stream.Write(altRemove);
 
             foreach (Client client in list)
-                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
+                client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
         }
 
         #endregion

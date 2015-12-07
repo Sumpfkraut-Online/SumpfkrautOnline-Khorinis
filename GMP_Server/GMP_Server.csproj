@@ -85,9 +85,6 @@
     <Compile Include="..\Network\Enumeration\SpellFlags.cs">
       <Link>Enumeration\SpellFlags.cs</Link>
     </Compile>
-    <Compile Include="..\Network\Enumeration\VobFlags.cs">
-      <Link>Enumeration\VobFlags.cs</Link>
-    </Compile>
     <Compile Include="..\Network\Network\AccCharInfo.cs">
       <Link>Network\AccCharInfo.cs</Link>
     </Compile>
@@ -115,6 +112,7 @@
     <Compile Include="..\Network\Types\Vec3f.cs">
       <Link>Types\Vec3f.cs</Link>
     </Compile>
+    <Compile Include="Enumeration\VobType.cs" />
     <Compile Include="Interface\Trade.cs" />
     <Compile Include="Network\Client.cs" />
     <Compile Include="Network\NPCCell.cs" />

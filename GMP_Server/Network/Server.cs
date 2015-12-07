@@ -39,14 +39,14 @@ namespace GUC.Server.Network
         public static IEnumerable<Item> GetItems() { return sItemDict.Values; }
 
         // All vobs and mobs on this server
-        internal static Dictionary<uint, Vob> sVobDict = new Dictionary<uint, Vob>();
-        public static Vob GetVob(uint ID) { Vob vob; sVobDict.TryGetValue(ID, out vob); return vob; }
-        public static IEnumerable<Vob> GetVobs() { return sVobDict.Values; }
+        internal static Dictionary<uint, VobMob> sVobDict = new Dictionary<uint, VobMob>();
+        public static VobMob GetVob(uint ID) { VobMob vob; sVobDict.TryGetValue(ID, out vob); return vob; }
+        public static IEnumerable<VobMob> GetVobs() { return sVobDict.Values; }
 
         // All vobs which currently exist on the server
-        internal static Dictionary<uint, AbstractVob> sAllVobsDict = new Dictionary<uint, AbstractVob>();
-        public static AbstractVob GetAnyVob(uint ID) { AbstractVob vob; sAllVobsDict.TryGetValue(ID, out vob); return vob; }
-        public static IEnumerable<AbstractVob> GetAllVobs() { return sAllVobsDict.Values; }
+        internal static Dictionary<uint, Vob> sAllVobsDict = new Dictionary<uint, Vob>();
+        public static Vob GetAnyVob(uint ID) { Vob vob; sAllVobsDict.TryGetValue(ID, out vob); return vob; }
+        public static IEnumerable<Vob> GetAllVobs() { return sAllVobsDict.Values; }
 
 
         // All worlds which currently exist on the server
@@ -71,8 +71,10 @@ namespace GUC.Server.Network
         public static Action<PacketReader,Client, PacketWriter> OnLoginMessage;
         static void HandleLoginMsg(PacketReader stream, Client client, NPC character)
         {
+            Log.Logger.log("LOGINMESSAGE");
             if (OnLoginMessage != null)
             {
+                
                 OnLoginMessage(stream, client, Program.server.SetupStream(NetworkID.LoginMessage));
             }
         }
@@ -237,7 +239,7 @@ namespace GUC.Server.Network
                                     else
                                     {
                                         KickClient(client);
-                                        Log.Logger.logWarning(String.Format("Client sent {0} before ConnectionMessage. Kicked: {0} IP:{1}", msgID, p.guid, p.systemAddress));
+                                        Log.Logger.logWarning(String.Format("Client sent {0} before ConnectionMessage or is banned. Kicked: {0} IP:{1}", msgID, p.guid, p.systemAddress));
                                     }
                                 }
                                 else

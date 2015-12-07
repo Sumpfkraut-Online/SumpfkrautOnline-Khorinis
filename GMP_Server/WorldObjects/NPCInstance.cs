@@ -7,7 +7,7 @@ using GUC.Enumeration;
 
 namespace GUC.Server.WorldObjects
 {
-    public class NPCInstance : AbstractInstance
+    public class NPCInstance : VobInstance
     {
         internal AnimationControl AniCtrl = null;
 
@@ -96,13 +96,13 @@ namespace GUC.Server.WorldObjects
 
         #region Constructors
 
-        public NPCInstance(string instanceName)
-            : base(instanceName)
+        public NPCInstance(string instanceName, object scriptObject)
+            : base(instanceName, scriptObject)
         {
         }
 
-        public NPCInstance(ushort ID, string instanceName)
-            : base(ID, instanceName)
+        public NPCInstance(ushort ID, string instanceName, object scriptObject)
+            : base(ID, instanceName, scriptObject)
         {
         }
 

@@ -22,13 +22,15 @@ namespace GUC.Client.Network.Messages
             String macString = x();
             byte[] npcTableHash = NPCInstance.Table.ReadFile();
             byte[] itemTableHash = ItemInstance.Table.ReadFile();
+            byte[] mobTableHash = MobInstance.Table.ReadFile();
 
-            BitStream stream = Program.client.SetupSendStream(NetworkID.ConnectionMessage);
-            stream.mWrite(connString);
-            stream.mWrite(macString);
-            stream.Write(npcTableHash, 16);
-            stream.Write(itemTableHash, 16);
-            Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE);
+            PacketWriter stream = Program.client.SetupSendStream(NetworkID.ConnectionMessage);
+            stream.Write(connString);
+            stream.Write(macString);
+            stream.Write(npcTableHash, 0, 16);
+            stream.Write(itemTableHash, 0, 16);
+            stream.Write(mobTableHash, 0, 16);
+            Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE_ORDERED);
         }
 
         static String getDefaultConnectionString(UInt32 y)
@@ -72,14 +74,14 @@ namespace GUC.Client.Network.Messages
             return a;
         }
 
-        public static void Read(BitStream stream)
+        public static void Read(PacketReader stream)
         {
             if (stream.ReadBit()) // new npc instances for us
             {
-                int len = stream.mReadInt(); // length of packed data
+                int len = stream.ReadInt(); // length of packed data
 
                 byte[] data = new byte[len];
-                stream.Read(data, (uint)len);
+                stream.Read(data, 0, len);
 
                 NPCInstance.Table.ReadData(data);
 
@@ -88,10 +90,10 @@ namespace GUC.Client.Network.Messages
 
             if (stream.ReadBit())
             {
-                int len = stream.mReadInt(); // length of packed data
+                int len = stream.ReadInt(); // length of packed data
 
                 byte[] data = new byte[len];
-                stream.Read(data, (uint)len);
+                stream.Read(data, 0, len);
 
                 ItemInstance.Table.ReadData(data);
 
@@ -100,10 +102,10 @@ namespace GUC.Client.Network.Messages
 
             if (stream.ReadBit())
             {
-                int len = stream.mReadInt(); // length of packed data
+                int len = stream.ReadInt(); // length of packed data
 
                 byte[] data = new byte[len];
-                stream.Read(data, (uint)len);
+                stream.Read(data, 0, len);
 
                 MobInstance.Table.ReadData(data);
 

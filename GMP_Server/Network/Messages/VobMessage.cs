@@ -47,14 +47,14 @@ namespace GUC.Server.Network.Messages
             }
         }
 
-        public static void WritePosDir(IEnumerable<Client> list, AbstractVob vob)
+        public static void WritePosDir(IEnumerable<Client> list, Vob vob)
         {
-            BitStream stream = Program.server.SetupStream(NetworkID.VobPosDirMessage);
-            stream.mWrite(vob.ID);
-            stream.mWrite(vob.Position);
-            stream.mWrite(vob.Direction);
+            PacketWriter stream = Program.server.SetupStream(NetworkID.VobPosDirMessage);
+            stream.Write(vob.ID);
+            stream.Write(vob.Position);
+            stream.Write(vob.Direction);
             foreach (Client client in list)
-                Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE, 'W', client.guid, false);
+                client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE, 'W');
         }
     }
 }

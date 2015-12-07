@@ -10,16 +10,17 @@ using GUC.Enumeration;
 
 namespace GUC.Server.Scripts.Accounts
 {
-    enum LoginType
-    {
-        AccountLogin,
-        AccountCreation,
-        CharacterLogin,
-        CharacterCreation
-    }
-
     static class AccountSystem
     {
+        // if you change these, change them in GUC.Client.Network.Messages.AccountMessage too!!!
+        enum LoginType
+        {
+            AccountLogin,
+            AccountCreation,
+            CharacterLogin,
+            CharacterCreation
+        }
+
         public static void Init()
         {
             Logger.log(Logger.LogLevel.INFO, "################# Initialise Account-System ################");
@@ -30,6 +31,7 @@ namespace GUC.Server.Scripts.Accounts
 
         static void ReadLoginMessage(PacketReader stream, Client client, PacketWriter answer)
         {
+            Log.Logger.log("GOT IT");
             LoginType type = (LoginType)stream.ReadByte();
             switch (type)
             {
@@ -73,7 +75,7 @@ namespace GUC.Server.Scripts.Accounts
                     if (client.AccountID >= 0) // logged in ?
                     {
                         byte slot = stream.ReadByte();
-                        if (slot >= 0 && slot < 20)
+                        if (slot >= 0 && slot < AccCharInfo.Max_Slots)
                         {
                             StartInWorld(client, slot);
                         }

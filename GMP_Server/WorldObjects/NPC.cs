@@ -156,13 +156,7 @@ namespace GUC.Server.WorldObjects
 
         public void AttrHealthUpdate()
         {
-            BitStream stream = Program.server.SetupStream(NetworkID.NPCHealthMessage);
-            stream.mWrite(ID);
-            stream.mWrite(AttrHealthMax);
-            stream.mWrite(AttrHealth);
 
-            foreach (Client cl in cell.SurroundingClients())
-                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', cl.guid, false);
         }
 
         #endregion
@@ -188,8 +182,8 @@ namespace GUC.Server.WorldObjects
 
             uint ID = stream.mReadUInt();
 
-            Vob mob;
-            if (client.Character.World.VobDict.TryGetValue(ID, out mob) && mob is MobInter)
+            VobMob mob;
+            if (client.Character.World.vobDict.TryGetValue(ID, out mob) && mob is MobInter)
             {
                 CmdOnUseMob((MobInter)mob, client.Character);
             }
@@ -213,7 +207,7 @@ namespace GUC.Server.WorldObjects
 
             uint ID = stream.mReadUInt();
             Item item;
-            if (sWorld.ItemDict.TryGetValue(ID, out item) && item.Owner == client.Character)
+            if (Network.Server.sItemDict.TryGetValue(ID, out item) && item.Owner == client.Character)
             {
                 CmdOnUseItem(item, client.Character);
             }
@@ -236,7 +230,7 @@ namespace GUC.Server.WorldObjects
             else //is it a controlled NPC?
             {
                 NPC npc;
-                if (sWorld.NPCDict.TryGetValue(id, out npc) && client.VobControlledList.Find(v => v == npc) != null)
+                if (Network.Server.sNpcDict.TryGetValue(id, out npc) && client.VobControlledList.Find(v => v == npc) != null)
                 {
                     if (state <= NPCState.MoveBackward)
                     {
@@ -262,7 +256,7 @@ namespace GUC.Server.WorldObjects
             else //is it a controlled NPC?
             {
                 NPC npc;
-                if (sWorld.NPCDict.TryGetValue(id, out npc) && client.VobControlledList.Find(v => v == npc) != null)
+                if (Network.Server.sNpcDict.TryGetValue(id, out npc) && client.VobControlledList.Find(v => v == npc) != null)
                 {
                     CmdOnJump(npc);
                 }
@@ -310,48 +304,48 @@ namespace GUC.Server.WorldObjects
 
         internal override void WriteSpawn(IEnumerable<Client> list)
         {
-            BitStream stream = Program.server.SetupStream(NetworkID.WorldNPCSpawnMessage);
-            stream.mWrite(ID);
-            stream.mWrite(Instance.ID);
-            stream.mWrite(pos);
-            stream.mWrite(dir);
+            PacketWriter stream = Program.server.SetupStream(NetworkID.WorldNPCSpawnMessage);
+            stream.Write(ID);
+            stream.Write(Instance.ID);
+            stream.Write(pos);
+            stream.Write(dir);
             if (Instance.ID <= 2)
             {
-                stream.mWrite((byte)HumanBodyTex);
-                stream.mWrite((byte)HumanHeadMesh);
-                stream.mWrite((byte)HumanHeadTex);
-                stream.mWrite((byte)HumanVoice);
+                stream.Write((byte)HumanBodyTex);
+                stream.Write((byte)HumanHeadMesh);
+                stream.Write((byte)HumanHeadTex);
+                stream.Write((byte)HumanVoice);
             }
-            stream.mWrite(BodyHeight);
-            stream.mWrite(BodyWidth);
-            stream.mWrite(BodyFatness);
+            stream.Write(BodyHeight);
+            stream.Write(BodyWidth);
+            stream.Write(BodyFatness);
 
-            stream.mWrite(CustomName);
+            stream.Write(CustomName);
 
-            stream.mWrite(AttrHealthMax);
-            stream.mWrite(AttrHealth);
+            stream.Write(AttrHealthMax);
+            stream.Write(AttrHealth);
 
-            stream.mWrite((byte)equippedSlots.Count);
+            stream.Write((byte)equippedSlots.Count);
             foreach (KeyValuePair<byte, Item> slot in equippedSlots)
             {
-                stream.mWrite(slot.Key);
-                stream.mWrite(slot.Value.ID);
-                stream.mWrite(slot.Value.Instance.ID);
-                stream.mWrite(slot.Value.Condition);
+                stream.Write(slot.Key);
+                stream.Write(slot.Value.ID);
+                stream.Write(slot.Value.Instance.ID);
+                stream.Write(slot.Value.Condition);
             }
 
             if (DrawnItem == null)
             {
-                stream.Write0();
+                stream.Write(false);
             }
             else
             {
-                stream.Write1();
+                stream.Write(true);
                 NPCMessage.WriteStrmDrawItem(stream, this, DrawnItem);
             }
 
             foreach (Client cl in list)
-                Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', cl.guid, false);
+                client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
         }
 
         public delegate void OnEnterWorldHandler(NPC player);
@@ -359,11 +353,15 @@ namespace GUC.Server.WorldObjects
 
         internal static void WriteControl(Client client, NPC npc)
         {
-            BitStream stream = Program.server.SetupStream(NetworkID.PlayerControlMessage);
-            stream.mWrite(npc.ID);
-            stream.mWrite(npc.World.FileName);
+            if (client == null) Log.Logger.log("client = null");
+            if (npc == null) Log.Logger.log("npc = null");
+            if (npc.World == null) Log.Logger.log("npc.world = null");
+            if (npc.World.FileName == null) Log.Logger.log("npc.world.filename = null");
+            PacketWriter stream = Program.server.SetupStream(NetworkID.PlayerControlMessage);
+            stream.Write(npc.ID);
+            stream.Write(npc.World.FileName);
             //write stats & inventory
-            Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'G', client.guid, false);
+            client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'G');
         }
 
         internal static void ReadControl(PacketReader stream, Client client, NPC character)
@@ -379,7 +377,7 @@ namespace GUC.Server.WorldObjects
                 }
             }
 
-            if (!client.Character.Spawned)
+            if (!client.Character.IsSpawned)
             {
                 client.Character.WriteSpawn(new Client[1] { client }); // to self
                 client.Character.Spawn(client.Character.World);
@@ -389,7 +387,7 @@ namespace GUC.Server.WorldObjects
         internal static void ReadPickUpItem(BitStream stream, Client client)
         {
             Item item;
-            client.Character.World.ItemDict.TryGetValue(stream.mReadUInt(), out item);
+            client.Character.World.itemDict.TryGetValue(stream.mReadUInt(), out item);
             if (item == null) return;
 
             client.Character.AddItem(item);
@@ -502,7 +500,7 @@ namespace GUC.Server.WorldObjects
         public bool HasItem(uint itemID)
         {
             Item item = null;
-            if (sWorld.ItemDict.TryGetValue(itemID, out item))
+            if (Network.Server.sItemDict.TryGetValue(itemID, out item))
             {
                 return HasItem(item);
             }
@@ -558,7 +556,7 @@ namespace GUC.Server.WorldObjects
         /// </summary>
         public void AddItem(Item item)
         {
-            if (item.Spawned)
+            if (item.IsSpawned)
             {
                 item.Despawn(); //Fixme?: Send despawn + additem msg in one msg to the new owner
             }
@@ -666,13 +664,13 @@ namespace GUC.Server.WorldObjects
             {
                 UsedMob = mob;
 
-                BitStream stream = Program.server.SetupStream(NetworkID.MobUseMessage);
-                stream.mWrite(this.ID);
-                stream.mWrite(mob.ID);
+                PacketWriter stream = Program.server.SetupStream(NetworkID.MobUseMessage);
+                stream.Write(this.ID);
+                stream.Write(mob.ID);
 
                 foreach (Client cl in this.cell.SurroundingClients())
                 {
-                    Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', cl.guid, false);
+                    cl.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
                 }
             }
         }
@@ -683,12 +681,12 @@ namespace GUC.Server.WorldObjects
             {
                 UsedMob = null;
 
-                BitStream stream = Program.server.SetupStream(NetworkID.MobUnUseMessage);
-                stream.mWrite(this.ID);
+                PacketWriter stream = Program.server.SetupStream(NetworkID.MobUnUseMessage);
+                stream.Write(this.ID);
 
                 foreach (Client cl in cell.SurroundingClients())
                 {
-                    Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', cl.guid, false);
+                    cl.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
                 }
             }
         }
@@ -1058,7 +1056,7 @@ namespace GUC.Server.WorldObjects
 
         ControlCmd ControlState = ControlCmd.Stop;
         Vec3f ControlTargetPos;
-        AbstractVob ControlTargetVob;
+        Vob ControlTargetVob;
 
         public void GoTo(Vec3f position)
         {
@@ -1073,22 +1071,22 @@ namespace GUC.Server.WorldObjects
             }
             else
             {
-                BitStream stream = Program.server.SetupStream(NetworkID.ControlCmdMessage);
-                stream.mWrite(this.ID);
-                stream.mWrite((byte)ControlCmd.GoToPos);
-                stream.mWrite(position);
-                stream.mWrite(range);
+                PacketWriter stream = Program.server.SetupStream(NetworkID.ControlCmdMessage);
+                stream.Write(this.ID);
+                stream.Write((byte)ControlCmd.GoToPos);
+                stream.Write(position);
+                stream.Write(range);
 
-                Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'G', this.VobController.guid, false);
+                this.VobController.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
             }
         }
 
-        public void GoTo(AbstractVob vob)
+        public void GoTo(Vob vob)
         {
             GoTo(vob, 100);
         }
 
-        public void GoTo(AbstractVob vob, float range)
+        public void GoTo(Vob vob, float range)
         {
             if (vob == null)
                 return;
@@ -1099,13 +1097,13 @@ namespace GUC.Server.WorldObjects
             }
             else
             {
-                BitStream stream = Program.server.SetupStream(NetworkID.ControlCmdMessage);
-                stream.mWrite(this.ID);
-                stream.mWrite((byte)ControlCmd.GoToVob);
-                stream.mWrite(vob.ID);
-                stream.mWrite(range);
+                PacketWriter stream = Program.server.SetupStream(NetworkID.ControlCmdMessage);
+                stream.Write(this.ID);
+                stream.Write((byte)ControlCmd.GoToVob);
+                stream.Write(vob.ID);
+                stream.Write(range);
 
-                Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'G', this.VobController.guid, false);
+                this.VobController.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
             }
         }
 
@@ -1113,11 +1111,11 @@ namespace GUC.Server.WorldObjects
         {
             if (this.VobController != null)
             {
-                BitStream stream = Program.server.SetupStream(NetworkID.ControlCmdMessage);
-                stream.mWrite(this.ID);
-                stream.mWrite((byte)ControlCmd.Stop);
+                PacketWriter stream = Program.server.SetupStream(NetworkID.ControlCmdMessage);
+                stream.Write(this.ID);
+                stream.Write((byte)ControlCmd.Stop);
 
-                Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'G', this.VobController.guid, false);
+                this.VobController.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
             }
         }
     }

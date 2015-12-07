@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Text;
+using GUC.Types;
+using System.IO;
+using System.IO.Compression;
 
 namespace GUC.Network
 {
@@ -16,6 +19,12 @@ namespace GUC.Network
         Encoder enc;
         byte[] data;
         int capacity;
+
+        //saved data when in compress mode
+        int SCurrentByte;
+        int SCurrentBitByte;
+        int SBitsWritten;
+        int SBitByte;
 
         internal PacketWriter() : this(StandardCapacity)
         {
@@ -60,6 +69,66 @@ namespace GUC.Network
                 data = newData;
             }
         }
+
+        #region Compressing
+
+        bool compress = false;
+        internal void StartCompressing()
+        {
+            if (!compress)
+            {
+                //save data and reset;
+                SCurrentByte = currentByte;
+                SCurrentBitByte = currentBitByte;
+                SBitsWritten = bitsWritten;
+                SBitByte = bitByte;
+
+                currentBitByte = -1;
+                bitsWritten = 0;
+                bitByte = 0;
+
+                compress = true;
+            }
+        }
+
+        internal void StopCompressing()
+        {
+            if (compress)
+            {
+                FlushBits();
+                
+                //FIXME: Redo without stream + better performance
+                using (MemoryStream ms = new MemoryStream())
+                using (DeflateStream ds = new DeflateStream(ms, CompressionMode.Compress, true))
+                {
+                    int uncompressedLen = currentByte - SCurrentByte;
+
+                    ds.Write(data, SCurrentByte, uncompressedLen);
+                    int compressedLen = (int)ms.Length;
+
+                    //switch current byte back
+                    currentByte = SCurrentByte;
+
+                    //write lengths
+                    Write(uncompressedLen);
+                    Write(compressedLen);
+
+                    //read compressed
+                    ms.Position = 0;
+                    ms.Read(data, SCurrentByte, compressedLen);
+                    currentByte += compressedLen;
+
+                    //switch rest back too
+                    currentBitByte = SCurrentBitByte;
+                    bitsWritten = SBitsWritten;
+                    bitByte = SBitByte;
+                }
+
+                compress = false;
+            }
+        }
+
+        #endregion
 
         #region Writing Methods
 
@@ -189,10 +258,10 @@ namespace GUC.Network
             data[currentByte++] = arr[7];
         }
 
-        public void Write(byte[] arr, int index, int length)
+        public void Write(byte[] arr, int startIndex, int length)
         {
             CheckRealloc(length);
-            Buffer.BlockCopy(arr, index, data, currentByte, length);
+            Buffer.BlockCopy(arr, startIndex, data, currentByte, length);
             currentByte += length;
         }
 
@@ -216,6 +285,37 @@ namespace GUC.Network
             val.CopyTo(0, charArr, 0, len);
             enc.GetBytes(charArr, 0, len, data, currentByte, true);
             currentByte += len;
+        }
+
+        public void Write(Vec3f vec)
+        {
+            CheckRealloc(12);
+            byte[] arr = BitConverter.GetBytes(vec.X);
+            data[currentByte++] = arr[0];
+            data[currentByte++] = arr[1];
+            data[currentByte++] = arr[2];
+            data[currentByte++] = arr[3];
+
+            arr = BitConverter.GetBytes(vec.Y);
+            data[currentByte++] = arr[0];
+            data[currentByte++] = arr[1];
+            data[currentByte++] = arr[2];
+            data[currentByte++] = arr[3];
+
+            arr = BitConverter.GetBytes(vec.Z);
+            data[currentByte++] = arr[0];
+            data[currentByte++] = arr[1];
+            data[currentByte++] = arr[2];
+            data[currentByte++] = arr[3];
+        }
+
+        public void Write(ColorRGBA color)
+        {
+            CheckRealloc(4);
+            data[currentByte++] = color.R;
+            data[currentByte++] = color.G;
+            data[currentByte++] = color.B;
+            data[currentByte++] = color.A;
         }
 
         #endregion

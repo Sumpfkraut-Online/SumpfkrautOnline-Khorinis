@@ -15,10 +15,10 @@ namespace GUC.Client.Network.Messages
 {
     static class PlayerMessage
     {
-        public static void ReadControl(BitStream stream)
+        public static void ReadControl(PacketReader stream)
         {
-            Player.ID = stream.mReadUInt();
-            string newMap = stream.mReadString();
+            Player.ID = stream.ReadUInt();
+            string newMap = stream.ReadString();
 
             Menus.GUCMenus.CloseActiveMenus();
             Menus.GUCMenus._Background.Hide();
@@ -52,14 +52,14 @@ namespace GUC.Client.Network.Messages
 
         private static void WriteControl() //for confirmation
         {
-            BitStream stream = Program.client.SetupSendStream(NetworkID.PlayerControlMessage);
+            PacketWriter stream = Program.client.SetupSendStream(NetworkID.PlayerControlMessage);
             Program.client.SendStream(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED);
         }
 
         public static void WritePickUpItem(AbstractVob vob)
         {
-            BitStream stream = Program.client.SetupSendStream(NetworkID.PlayerPickUpItemMessage);
-            stream.mWrite(vob.ID);
+            PacketWriter stream = Program.client.SetupSendStream(NetworkID.PlayerPickUpItemMessage);
+            stream.Write(vob.ID);
             Program.client.SendStream(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.UNRELIABLE);
         }
     }

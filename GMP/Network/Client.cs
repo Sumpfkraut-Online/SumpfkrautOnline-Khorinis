@@ -16,7 +16,7 @@ namespace GUC.Client.Network
 {
     delegate void MsgReader(PacketReader stream);
 
-    class Client : IDisposable
+    public class Client : IDisposable
     {
         public RakPeerInterface client = null;
         protected SocketDescriptor socketDescriptor = null;
@@ -28,8 +28,8 @@ namespace GUC.Client.Network
         private static long lastConnectionTry = 0;
         private static int connectionTrys = 0;
 
-        PacketReader pktReader;
-        PacketWriter pktWriter;
+        PacketReader pktReader = new PacketReader();
+        PacketWriter pktWriter = new PacketWriter(64000);
 
         Dictionary<NetworkID, MsgReader> messageListener = new Dictionary<NetworkID, MsgReader>();
 
@@ -37,7 +37,7 @@ namespace GUC.Client.Network
         {
             client = RakPeer.GetInstance();
 
-            messageListener.Add(NetworkID.LoginMessage, null);
+            messageListener.Add(NetworkID.LoginMessage, AccountMessage.GetCharList);
             messageListener.Add(NetworkID.ConnectionMessage, ConnectionMessage.Read);
             messageListener.Add(NetworkID.PlayerControlMessage, PlayerMessage.ReadControl);
             /*
@@ -115,6 +115,11 @@ namespace GUC.Client.Network
             isConnected = false;
         }
 
+        void logError(string msg)
+        {
+
+        }
+
         uint packetKB = 0;
         long lastInfoUpdate = 0;
         GUCVisual abortInfo;
@@ -145,53 +150,53 @@ namespace GUC.Client.Network
 
             int counter = 0;
             Packet packet = client.Receive();
+            DefaultMessageIDTypes type;
 
             while (packet != null)
             {
-                //WinApi.Kernel.Process.SetWindowText(System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle, "Gothic II - Untold Chapters - " + client.GetLastPing(client.GetSystemAddressFromIndex(0)));
+                pktReader.Load(packet.data);
                 packetKB += packet.length;
+                type = (DefaultMessageIDTypes)pktReader.ReadByte();
 
-                switch (packet.data[0])
+                switch (type)
                 {
-                    case (byte)DefaultMessageIDTypes.ID_CONNECTION_REQUEST_ACCEPTED:
+                    case DefaultMessageIDTypes.ID_CONNECTION_REQUEST_ACCEPTED:
                         isConnected = true;
                         connectionTrys = 0;
                         break;
-                    case (byte)DefaultMessageIDTypes.ID_CONNECTION_ATTEMPT_FAILED:
+                    case DefaultMessageIDTypes.ID_CONNECTION_ATTEMPT_FAILED:
                         logError("Connection Failed!");
                         isConnected = false;
                         break;
-                    case (byte)DefaultMessageIDTypes.ID_ALREADY_CONNECTED:
+                    case DefaultMessageIDTypes.ID_ALREADY_CONNECTED:
                         logError("Already Connected!");
                         break;
-                    case (byte)DefaultMessageIDTypes.ID_CONNECTION_BANNED:
+                    case DefaultMessageIDTypes.ID_CONNECTION_BANNED:
                         logError("Client banned!");
                         break;
-                    case (byte)DefaultMessageIDTypes.ID_INVALID_PASSWORD:
+                    case DefaultMessageIDTypes.ID_INVALID_PASSWORD:
                         logError("Wrong password");
                         break;
-                    case (byte)DefaultMessageIDTypes.ID_INCOMPATIBLE_PROTOCOL_VERSION:
+                    case DefaultMessageIDTypes.ID_INCOMPATIBLE_PROTOCOL_VERSION:
                         logError("ID_INCOMPATIBLE_PROTOCOL_VERSION");
                         break;
-                    case (byte)DefaultMessageIDTypes.ID_NO_FREE_INCOMING_CONNECTIONS:
+                    case DefaultMessageIDTypes.ID_NO_FREE_INCOMING_CONNECTIONS:
                         logError("ID_NO_FREE_INCOMING_CONNECTIONS");
                         break;
-                    case (byte)DefaultMessageIDTypes.ID_DISCONNECTION_NOTIFICATION:
-                    case (byte)DefaultMessageIDTypes.ID_CONNECTION_LOST:
+                    case DefaultMessageIDTypes.ID_DISCONNECTION_NOTIFICATION:
+                    case DefaultMessageIDTypes.ID_CONNECTION_LOST:
                         isConnected = false;
                         break;
-                    case (byte)DefaultMessageIDTypes.ID_USER_PACKET_ENUM:
+                    case DefaultMessageIDTypes.ID_USER_PACKET_ENUM:
                         try
                         {
-                            receiveBitStream.Reset();
-                            receiveBitStream.Write(packet.data, packet.length);
-                            receiveBitStream.IgnoreBytes(2);
+                            NetworkID netID = (NetworkID)pktReader.ReadByte();
 
-                            PacketReader func;
-                            messageListener.TryGetValue(packet.data[1], out func);
+                            MsgReader func;
+                            messageListener.TryGetValue(netID, out func);
                             if (func != null)
                             {
-                                func(receiveBitStream);
+                                func(pktReader);
                             }
                         }
                         catch (Exception ex) { zERROR.GetZErr(Program.Process).Report(2, 'G', ex.Source + " " + ex.Message + " " + ex.StackTrace, 0, "Client.cs", 0); }
@@ -232,17 +237,17 @@ namespace GUC.Client.Network
             }
         }
 
-        public BitStream SetupSendStream(NetworkID id)
+        public PacketWriter SetupSendStream(NetworkID id)
         {
-            sendBitStream.Reset();
-            sendBitStream.Write((byte)DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            sendBitStream.Write((byte)id);
-            return sendBitStream;
+            pktWriter.Reset();
+            pktWriter.Write((byte)DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
+            pktWriter.Write((byte)id);
+            return pktWriter;
         }
 
-        public void SendStream(BitStream stream, PacketPriority pp, PacketReliability pr)
+        public void SendStream(PacketWriter stream, PacketPriority pp, PacketReliability pr)
         {
-            client.Send(stream, pp, pr, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            client.Send(stream.GetData(), stream.GetLength(), pp, pr, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
 
 
@@ -268,18 +273,10 @@ namespace GUC.Client.Network
                     }
                     if (socketDescriptor != null)
                         socketDescriptor.Dispose();
-                    if (receiveBitStream != null)
-                        receiveBitStream.Dispose();
-                    if (sendBitStream != null)
-                        sendBitStream.Dispose();
                 }
 
                 client = null;
                 socketDescriptor = null;
-                receiveBitStream = null;
-                sendBitStream = null;
-
-
                 _disposed = true;
             }
         }

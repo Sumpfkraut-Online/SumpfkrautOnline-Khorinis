@@ -32,42 +32,42 @@ namespace GUC.Server.Network.Messages
         {
             if (client.instanceNPCNeeded || client.instanceItemNeeded || client.instanceMobNeeded)
             {
-                BitStream stream = Program.server.SetupStream(NetworkID.ConnectionMessage);
+                PacketWriter stream = Program.server.SetupStream(NetworkID.ConnectionMessage);
 
                 if (client.instanceNPCNeeded)
                 {
-                    stream.Write1();
-                    stream.mWrite(NPCInstance.Table.data.Length);
-                    stream.Write(NPCInstance.Table.data, (uint)NPCInstance.Table.data.Length);
+                    stream.Write(true);
+                    stream.Write(NPCInstance.Table.data.Length);
+                    stream.Write(NPCInstance.Table.data, 0, NPCInstance.Table.data.Length);
                 }
                 else
                 {
-                    stream.Write0();
+                    stream.Write(false);
                 }
 
                 if (client.instanceItemNeeded)
                 {
-                    stream.Write1();
-                    stream.mWrite(ItemInstance.Table.data.Length);
-                    stream.Write(ItemInstance.Table.data, (uint)ItemInstance.Table.data.Length);
+                    stream.Write(true);
+                    stream.Write(ItemInstance.Table.data.Length);
+                    stream.Write(ItemInstance.Table.data, 0, ItemInstance.Table.data.Length);
                 }
                 else
                 {
-                    stream.Write0();
+                    stream.Write(false);
                 }
 
                 if (client.instanceMobNeeded)
                 {
-                    stream.Write1();
-                    stream.mWrite(MobInstance.Table.data.Length);
-                    stream.Write(MobInstance.Table.data, (uint)MobInstance.Table.data.Length);
+                    stream.Write(true);
+                    stream.Write(MobInstance.Table.data.Length);
+                    stream.Write(MobInstance.Table.data, 0, MobInstance.Table.data.Length);
                 }
                 else
                 {
-                    stream.Write0();
+                    stream.Write(false);
                 }
 
-                Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'G', client.guid, false);
+                client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'G');
             }
         }
     }

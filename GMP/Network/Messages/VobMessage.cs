@@ -58,19 +58,19 @@ namespace GUC.Client.Network.Messages
 
         public static void WritePosDir()
         {
-            BitStream stream = Program.client.SetupSendStream(NetworkID.VobPosDirMessage);
+            PacketWriter stream = Program.client.SetupSendStream(NetworkID.VobPosDirMessage);
 
-            stream.mWrite(Player.Hero.Position);
-            stream.mWrite(Player.Hero.Direction);
+            stream.Write(Player.Hero.Position);
+            stream.Write(Player.Hero.Direction);
 
             AbstractVob vob;
-            stream.mWrite(Player.VobControlledList.Count);
+            stream.Write(Player.VobControlledList.Count);
             for (int i = 0; i < Player.VobControlledList.Count; i++)
             {
                 vob = Player.VobControlledList[i];
-                stream.mWrite(vob.ID);
-                stream.mWrite(vob.Position);
-                stream.mWrite(vob.Direction);
+                stream.Write(vob.ID);
+                stream.Write(vob.Position);
+                stream.Write(vob.Direction);
             }
             Program.client.SendStream(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE);
         }

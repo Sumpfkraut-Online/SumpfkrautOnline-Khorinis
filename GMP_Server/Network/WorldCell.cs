@@ -18,7 +18,7 @@ namespace GUC.Server.Network
         public List<NPC> PlayerList;
         public List<NPC> NPCList;
         public List<Item> ItemList;
-        public List<Vob> VobList;
+        public List<VobMob> VobList;
 
         public WorldCell(World world, int x, int z)
         {
@@ -26,12 +26,12 @@ namespace GUC.Server.Network
             PlayerList = new List<NPC>();
             NPCList = new List<NPC>();
             ItemList = new List<Item>();
-            VobList = new List<Vob>();
+            VobList = new List<VobMob>();
             this.x = x;
             this.z = z;
         }
 
-        public void AddVob(AbstractVob vob)
+        public void AddVob(Vob vob)
         {
             if (vob is NPC)
             {
@@ -44,14 +44,14 @@ namespace GUC.Server.Network
             {
                 ItemList.Add((Item)vob);
             }
-            else if (vob is Vob)
+            else if (vob is VobMob)
             {
-                VobList.Add((Vob)vob);
+                VobList.Add((VobMob)vob);
             }
             vob.cell = this;
         }
 
-        public void RemoveVob(AbstractVob vob)
+        public void RemoveVob(Vob vob)
         {
             if (vob is NPC)
             {
@@ -64,9 +64,9 @@ namespace GUC.Server.Network
             {
                 ItemList.Remove((Item)vob);
             }
-            else if (vob is Vob)
+            else if (vob is VobMob)
             {
-                VobList.Remove((Vob)vob);
+                VobList.Remove((VobMob)vob);
             }
             vob.cell = null;
 
@@ -179,7 +179,7 @@ namespace GUC.Server.Network
             yield break;
         }
 
-        public IEnumerable<AbstractVob> AllVobs()
+        public IEnumerable<Vob> AllVobs()
         {
             for (int i = 0; i < PlayerList.Count; i++)
                 yield return PlayerList[i];
