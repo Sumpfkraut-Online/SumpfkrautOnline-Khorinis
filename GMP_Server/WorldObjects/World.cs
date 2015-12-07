@@ -156,8 +156,8 @@ namespace GUC.Server.WorldObjects
 
     public class World
     {
-        //Worlds, hardcoded but whatever
-        //new World("SOK-NEWWORLD.ZEN"); rename for release, so the original 
+        // Worlds, hardcoded but whatever
+        // new World("SOK-NEWWORLD.ZEN"); rename for release, so the original 
         // is not replaced and SP is still functional!
         private static World newworld = new World("SOK-NEWWORLD.ZEN");
         public static World NewWorld { get { return newworld; } }
@@ -194,9 +194,9 @@ namespace GUC.Server.WorldObjects
             MapName = mapname.ToUpper();
             sWorld.WorldDict.Add(MapName, this);
 
-            NPC scav = NPC.Create("scavenger");
-            scav.DrawnItem = Item.Fists;
-            scav.Spawn(this);
+            //NPC scav = NPC.Create("scavenger");
+            //scav.DrawnItem = Item.Fists;
+            //scav.Spawn(this);
 
             igTime = new IGTime();
             igTime.day = 4;
@@ -212,14 +212,14 @@ namespace GUC.Server.WorldObjects
             weatherEndTime.hour = 23;
             weatherEndTime.minute = 30;
 
-            Vob mob = Vob.Create("forge");
-            mob.Spawn(this, new Types.Vec3f(-200, -100, 200), new Types.Vec3f(0, 0, 1));
+            //Vob mob = Vob.Create("forge");
+            //mob.Spawn(this, new Types.Vec3f(-200, -100, 200), new Types.Vec3f(0, 0, 1));
 
-            mob = Vob.Create("stool");
-            mob.Spawn(this, new Types.Vec3f(400, -160, 458), new Types.Vec3f(0, 0, 1));
+            //mob = Vob.Create("stool");
+            //mob.Spawn(this, new Types.Vec3f(400, -160, 458), new Types.Vec3f(0, 0, 1));
 
-            mob = Vob.Create("latern");
-            mob.Spawn(this, new Types.Vec3f(400, -160, 458), new Types.Vec3f(0, 0, 1));
+            //mob = Vob.Create("latern");
+            //mob.Spawn(this, new Types.Vec3f(400, -160, 458), new Types.Vec3f(0, 0, 1));
         }
 
         public NPC GetNpcOrPlayer(uint id)

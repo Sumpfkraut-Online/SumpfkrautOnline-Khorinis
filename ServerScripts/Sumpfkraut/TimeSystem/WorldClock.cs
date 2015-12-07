@@ -120,7 +120,10 @@ namespace GUC.Server.Scripts.Sumpfkraut.TimeSystem
                 igTime = new IGTime(newTotalMinutes);
                 lastTimeUpdate = now;
 
-                OnTimeChange.Invoke(igTime);
+                if (OnTimeChange != null)
+                {
+                    OnTimeChange.Invoke(igTime);
+                }
             
                 for (int w = 0; w < affectedWorlds.Count; w++)
                 {

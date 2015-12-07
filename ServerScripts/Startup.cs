@@ -309,7 +309,10 @@ namespace GUC.Server.Scripts
             Sumpfkraut.TimeSystem.WorldClock clock = new Sumpfkraut.TimeSystem.WorldClock(
                 "Big Ben", new List<World>() { World.NewWorld }, new IGTime(0, 0, 0), 60 * 30, false,
                 new TimeSpan(0, 0, 1));
-            clock.OnTimeChange += delegate (IGTime igTime) { Log.Logger.log(igTime); };
+            //clock.OnTimeChange += delegate (IGTime igTime) { Logger.log(igTime); };
+
+
+            //Logger.log(World.NewWorld);
 
 
 
