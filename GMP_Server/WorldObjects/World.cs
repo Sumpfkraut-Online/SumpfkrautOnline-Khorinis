@@ -25,13 +25,13 @@ namespace GUC.Server.WorldObjects
             : this (0, 0, minute)
         { }
 
-        public IGTime (long minute)
+        public IGTime (long totalMinute)
         {
             long min, hour, day;
-            min = minute / 60L;
-            hour = (Math.Abs(min) % 60L) * Math.Sign(minute);
-            day = (Math.Abs(hour) % 24L) * Math.Sign(hour);
-            hour = hour / 24L;
+            min = (Math.Abs(totalMinute) % 60L) * Math.Sign(totalMinute);
+            hour = totalMinute / 60L;
+            day = hour / 24L;
+            hour = (Math.Abs(hour) % 24L) * Math.Sign(hour);
             this.minute = (int) min;
             this.hour = (int) hour;
             this.day = (int) day;
@@ -137,6 +137,12 @@ namespace GUC.Server.WorldObjects
         public static long ToMinutes (IGTime igTime)
         {
             return igTime.minute + ((igTime.hour + (igTime.day * 24L)) * 60L);
+        }
+
+        public override string ToString()
+        {
+            return String.Format("IGTime: day {0} hour {1} minute {2}", 
+                this.day, this.hour, this.minute);
         }
     }
 

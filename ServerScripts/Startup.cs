@@ -291,9 +291,23 @@ namespace GUC.Server.Scripts
 
             //Logger.log(DateTime.Now - DateTime.UtcNow);
             //Logger.log((DateTime.Now - DateTime.UtcNow).TotalMinutes);
-            Logger.log((DateTime.Now - DateTime.UtcNow).TotalSeconds);
+            //Logger.log((DateTime.Now - DateTime.UtcNow).TotalSeconds);
             //Logger.log((long) (5.5d + 10.1d));
             //Logger.log(((DateTime.Now - DateTime.UtcNow) * 2));
+
+
+            //IGTime igTime_1 = new IGTime(60L * 24L);
+            //Logger.log(60L * 24L);
+            //Logger.log(igTime_1);
+            //Logger.log(igTime_1 + 5);
+            //Logger.log(igTime_1 + 61);
+            //Logger.log(igTime_1 / igTime_1);
+
+            Sumpfkraut.TimeSystem.WorldClock clock = new Sumpfkraut.TimeSystem.WorldClock(
+                "Big Ben", new List<World>() { World.NewWorld }, new IGTime(0, 0, 0), 60 * 30, false,
+                new TimeSpan(0, 0, 1));
+            clock.OnTimeChange += delegate (IGTime igTime) { Log.Logger.log(igTime); };
+
 
 
             Logger.log(Logger.LogLevel.INFO, "######################## Initalise ########################");
