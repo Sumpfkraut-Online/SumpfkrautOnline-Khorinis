@@ -44,40 +44,41 @@ namespace GUC.Server.Log
           }
         }
 
-        public static void log(LogLevel ll, String Message)
+        public static void log(LogLevel ll, object message)
         {
-            log((int)ll, Message);
+            log((int)ll, message);
         }
 
-        public static void logWarning(String Message)
+        public static void logWarning(object message)
         {
-          log((int)LogLevel.WARNING, Message);
+          log((int)LogLevel.WARNING, message);
         }
 
-        public static void logError(String Message)
+        public static void logError(object message)
         {
-          log((int)LogLevel.ERROR, Message);
+          log((int)LogLevel.ERROR, message);
         }
         
-        public static void log(String Message)
+        public static void log(object message)
         {
-          log((int)LogLevel.INFO, Message);
+          log((int)LogLevel.INFO, message);
         }
 
-        public static void log(int level, String Message)
+        public static void log(int level, object message)
         {
             try
             {
                 sb.Clear();
-                sb.Append("<span class=\"level_").Append(level).Append("\">").Append(Message).Append("</span><br>");
+                sb.Append("<span class=\"level_").Append(level);
+                sb.Append("\">").Append(message).Append("</span><br>");
                 myWriter.WriteLine(sb.ToString());
 
-
-                String[] Messages = Regex.Split(Message, "(<br>)|(</br>)|(<br/>)", RegexOptions.IgnoreCase); 
+                String[] lines = Regex.Split(message.ToString(), "(<br>)|(</br>)|(<br/>)", 
+                    RegexOptions.IgnoreCase); 
                 
-                foreach (String message in Messages)
+                foreach (String line in lines)
                 {
-                    Console.WriteLine(message);
+                    Console.WriteLine(line);
                 }
             }
             catch (Exception ex)

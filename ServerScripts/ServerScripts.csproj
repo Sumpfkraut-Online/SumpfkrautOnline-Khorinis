@@ -63,6 +63,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sqlite.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Sumpfkraut\CommandConsole\CommandConsole.cs" />
     <Compile Include="Sumpfkraut\Database\DBAgent.cs" />
     <Compile Include="Sumpfkraut\Database\DBQueryHandler.cs" />
     <Compile Include="Sumpfkraut\Database\DBQuerying\AbstractDBQuery.cs" />
@@ -75,6 +76,7 @@
     <Compile Include="Sumpfkraut\Database\DBQuerying\IDBQuery.cs" />
     <Compile Include="Sumpfkraut\IScriptObject.cs" />
     <Compile Include="Sumpfkraut\ScriptObject.cs" />
+    <Compile Include="Sumpfkraut\TimeSystem\WorldClock.cs" />
     <Compile Include="Sumpfkraut\Utilities\DateTimeUtil.cs" />
     <Compile Include="Sumpfkraut\Utilities\String.cs" />
     <Compile Include="Sumpfkraut\Utilities\StringUtil.cs" />
