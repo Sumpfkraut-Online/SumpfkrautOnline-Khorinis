@@ -106,10 +106,10 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
             this.currWSChanged = false;
             this.maxQueueLength = 10;
 
-            this.maxWSTime = new TimeSpan(0, 0, 20, 0); // 20 minutes
-            this.minWSTime = new TimeSpan(0, 0, 2, 0); // 2 minutes
-            this.precFactor = 50; // 50 % chance of weather with precipitation
-            this.snowFactor = 5; // 5 % change of snow when there is precipitation
+            this.maxWSTime = new TimeSpan(0, 0, 0, 20);
+            this.minWSTime = new TimeSpan(0, 0, 0, 20);
+            this.precFactor = 70; // % chance of weather with precipitation
+            this.snowFactor = 20; // % change of snow when there is precipitation
 
             this.lastIGTime = new IGTime();
             this.lastIGTime = World.NewWorld.GetIGTime();
@@ -117,7 +117,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
             this.random = new Random();
             this.lock_WSQueue = new Object();
 
-            this.defaultTimeout = new TimeSpan(0, 0, 0, 10); // 10 seconds thread-sleep
+            this.defaultTimeout = new TimeSpan(0, 0, 0, 3); // 10 seconds thread-sleep
             this.customTimeout = defaultTimeout;
             this.timeout = this.customTimeout;
 

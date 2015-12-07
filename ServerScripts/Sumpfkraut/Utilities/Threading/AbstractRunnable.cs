@@ -35,6 +35,10 @@ namespace GUC.Server.Scripts.Sumpfkraut.Utilities.Threading
             this._objName = "Runnable (default)";
             this.printStateControls = false;
             this.timeout = timeout;
+            if ((this.timeout == TimeSpan.MinValue) || (this.timeout < TimeSpan.Zero))
+            {
+                this.timeout = TimeSpan.Zero;
+            }
             this.runOnce = runOnce;
             this.resetEvent = new ManualResetEvent(true);
             this.thread = new Thread(this._Run);

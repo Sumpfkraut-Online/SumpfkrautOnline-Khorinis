@@ -18,39 +18,148 @@ namespace GUC.Server.WorldObjects
         public int hour;
         public int minute;
 
+        public IGTime (IGTime igTime)
+            : this (igTime.day, igTime.hour, igTime.minute)
+        { }
+
+        public IGTime (int minute)
+            : this (0, 0, minute)
+        { }
+
+        public IGTime (long totalMinute)
+        {
+            long min, hour, day;
+            min = (Math.Abs(totalMinute) % 60L) * Math.Sign(totalMinute);
+            hour = totalMinute / 60L;
+            day = hour / 24L;
+            hour = (Math.Abs(hour) % 24L) * Math.Sign(hour);
+            this.minute = (int) min;
+            this.hour = (int) hour;
+            this.day = (int) day;
+        }
+
         public IGTime (int hour, int minute)
-            :this (0, hour, minute)
+            : this (0, hour, minute)
         { }
 
         public IGTime (int day, int hour, int minute)
         {
-            this.day = day;
-            this.hour = hour;
-            this.minute = minute;
+            this.minute = (Math.Abs(minute) % 60) * Math.Sign(minute);
+            this.hour = hour + (minute / 60);
+            this.day = day + ((Math.Abs(hour) % 24) * Math.Sign(hour));
+            this.hour = this.hour % 24;
         }
 
-        //public static IGTime operator +(IGTime t1, IGTime t2)
-        //{
-        //    int minute = (t1.minute + t2.minute) % 59;
-        //    //int hour = (t1.hour + t2.hour) + ;
-        //    int day = t1.day + t2.day;
 
 
-        //    return new IGTime(day, hour, minute);
-        //}
+        public static IGTime operator -(IGTime t1)
+        {
+            return new IGTime(-t1.day, -t1.hour, -t1.minute);
+        }
+
+        public static IGTime operator +(IGTime t1, IGTime t2)
+        {
+            IGTime t3 = new IGTime(t1.day + t2.day, t1.hour + t2.hour,
+                t1.minute + t2.minute);
+
+            t3.hour += t3.minute / 60;
+            t3.minute = (Math.Abs(t3.minute) % 60) * Math.Sign(t3.minute);
+            t3.day += t3.hour / 24;
+            t3.hour = (Math.Abs(t3.hour) % 24) * Math.Sign(t3.hour);
+            
+            return t3;
+        }
+
+        public static IGTime operator +(IGTime t1, int min)
+        {
+            IGTime t3 = new IGTime(t1);
+
+            t3.minute += min;
+            t3.hour += t3.minute / 60;
+            t3.minute = (Math.Abs(t3.minute) % 60) * Math.Sign(t3.minute);
+            t3.day += t3.hour / 24;
+            t3.hour = (Math.Abs(t3.hour) % 24) * Math.Sign(t3.hour);
+
+            return t3;
+        }
+
+        public static IGTime operator +(int min, IGTime t1)
+        {
+            return t1 + min;
+        }
+
+        public static IGTime operator -(IGTime t1, IGTime t2)
+        {
+            return t1 + (-t2);
+        }
+
+        public static IGTime operator *(IGTime t1, IGTime t2)
+        {
+            long totalMin = ToMinutes(t1) * ToMinutes(t2);
+
+            return new IGTime(totalMin);
+        }
+
+        public static IGTime operator *(IGTime t1, int min)
+        {
+            long totalMin = ToMinutes(t1) * min;
+
+            return new IGTime(totalMin);
+        }
+
+        public static IGTime operator *(int min, IGTime t1)
+        {
+            return t1 * min;
+        }
+
+        public static IGTime operator /(IGTime t1, IGTime t2)
+        {
+            long totalMin = ToMinutes(t1) / ToMinutes(t2);
+
+            return new IGTime(totalMin);
+        }
+
+        public static IGTime operator /(IGTime t1, int min)
+        {
+            long totalMin = ToMinutes(t1) / min;
+
+            return new IGTime(totalMin);
+        }
+
+        public static IGTime operator /(int min, IGTime t1)
+        {
+            long totalMin = min / ToMinutes(t1);
+
+            return new IGTime(totalMin);
+        }
+
+
+
+        public static long ToMinutes (IGTime igTime)
+        {
+            return igTime.minute + ((igTime.hour + (igTime.day * 24L)) * 60L);
+        }
+
+        public override string ToString()
+        {
+            return String.Format("IGTime: day {0} hour {1} minute {2}", 
+                this.day, this.hour, this.minute);
+        }
     }
 
     public enum WeatherType : byte
     {
         undefined = 0,
-        rain = 1,
-        snow = 2,
+        rain = undefined + 1,
+        snow = rain + 1,
     }
 
     public class World
     {
         //Worlds, hardcoded but whatever
-        private static World newworld = new World("NEWWORLD\\NEWWORLD.ZEN"); //new World("SOK-NEWWORLD.ZEN"); rename for release, so the original is not replaced and SP is still functional!
+        //new World("SOK-NEWWORLD.ZEN"); rename for release, so the original 
+        // is not replaced and SP is still functional!
+        private static World newworld = new World("SOK-NEWWORLD.ZEN");
         public static World NewWorld { get { return newworld; } }
 
         public string MapName { get; protected set; }
@@ -464,25 +573,40 @@ namespace GUC.Server.WorldObjects
             }
         }
 
-        public void ChangeTime(int day, int hour, int minute)
+        public void ChangeTime (int day, int hour, int minute)
         {
             ChangeTime(day, hour, minute, true, true, true);
         }
 
-        public void ChangeTime(int day, int hour, int minute, 
+        public void ChangeTime (int day, int hour, int minute, 
             bool changeDay, bool changeHour, bool changeMinute)
         {
+            ChangeTime(new IGTime(day, hour, minute), changeDay, changeHour, changeMinute);
+        }
+
+        public void ChangeTime (IGTime newIGTime)
+        {
+            ChangeTime(newIGTime, true, true, true);
+        }
+
+        public void ChangeTime (IGTime newIGTime, bool changeDay, 
+            bool changeHour, bool changeMinute)
+        {
+            int changeTotal = 3;
+            if (!changeDay) { newIGTime.day = -1; changeTotal--; }
+            if (!changeHour) { newIGTime.hour = -1; changeTotal--; }
+            if (!changeMinute) { newIGTime.minute = -1; changeTotal--; }
+
+            if (changeTotal < 1)
+            {
+                // nothing to change means nothing worth sending network messages
+                return;
+            }
+
             lock (lock_IGTime)
             {
-                // set world time in server
-                IGTime newIGTime = new IGTime();
-                if (changeDay) { newIGTime.day = day; } else { newIGTime.day = -1; }
-                if (changeHour) { newIGTime.hour = hour; } else { newIGTime.hour = -1; }
-                if (changeMinute) { newIGTime.minute = minute; } else { newIGTime.minute = -1; }
                 this.igTime = newIGTime;
-                //Console.WriteLine("++++ " + newIGTime.day + " " + newIGTime.hour + " " + newIGTime.minute);
 
-                // send new world time to clients
                 foreach (KeyValuePair<uint, NPC> keyValPair in NewWorld.PlayerDict)
                 {
                     Client client = keyValPair.Value.client;

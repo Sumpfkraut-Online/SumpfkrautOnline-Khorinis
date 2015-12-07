@@ -58,7 +58,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Utilities.Threading
                 waitHandle.Set();
             }
 
-            hour++;
+            minute++;
         }
 
     }
