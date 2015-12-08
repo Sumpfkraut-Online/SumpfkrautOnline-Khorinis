@@ -2,13 +2,69 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.IO;
-using System.IO.Compression;
+using GUC.Network;
+using GUC.Enumeration;
 using System.Security.Cryptography;
+using GUC.Server.WorldObjects.Mobs;
 
 namespace GUC.Server.WorldObjects
 {
-    public class InstanceManager<T> where T : VobInstance
+    public abstract class InstanceManager
+    {
+        static void Init()
+        {
+            managers = new List<InstanceManager>();
+            managers.Add(VobInstance.Table);
+            managers.Add(ItemInstance.Table);
+            managers.Add(NPCInstance.Table);
+
+            managers.Add(MobInstance.Table);
+            managers.Add(MobInterInstance.Table);
+            managers.Add(MobFireInstance.Table);
+            managers.Add(MobLadderInstance.Table);
+            managers.Add(MobSwitchInstance.Table);
+            managers.Add(MobWheelInstance.Table);
+            managers.Add(MobContainerInstance.Table);
+            managers.Add(MobDoorInstance.Table);
+        }
+
+        internal static byte[] instanceData;
+        internal static byte[] instanceHash;
+        protected static List<InstanceManager> managers;
+
+        protected abstract void WriteTable(PacketWriter stream);
+
+        public void NetUpdate()
+        {
+            if (managers == null)
+                Init();
+
+            PacketWriter stream = Program.server.SetupStream(NetworkID.ConnectionMessage);
+
+            stream.StartCompressing();
+            for (int i = 0; i < managers.Count; i++)
+                managers[i].WriteTable(stream);
+            stream.StopCompressing();
+
+            InstanceManager.instanceData = new byte[stream.GetLength()];
+            Buffer.BlockCopy(stream.GetData(), 0, InstanceManager.instanceData, 0, stream.GetLength());
+
+            using (MD5 md5 = new MD5CryptoServiceProvider())
+            {
+                md5.TransformFinalBlock(InstanceManager.instanceData, 0, InstanceManager.instanceData.Length);
+                InstanceManager.instanceHash = md5.Hash;
+            }
+
+            //FIXME: Send to all clients
+
+            StringBuilder sb = new StringBuilder();
+            foreach (byte b in InstanceManager.instanceHash)
+                sb.Append(b.ToString("X2"));
+            System.IO.File.WriteAllBytes(sb.ToString(), InstanceManager.instanceData);
+        }
+    }
+
+    public class InstanceManager<T> : InstanceManager where T : VobInstance
     {
         ushort idCount = 0;
 
@@ -27,6 +83,11 @@ namespace GUC.Server.WorldObjects
             T instance;
             instanceList.TryGetValue(id, out instance);
             return instance;
+        }
+
+        public IEnumerable<T> GetAll()
+        {
+            return instanceDict.Values;
         }
 
         public void Remove(string instanceName)
@@ -93,37 +154,12 @@ namespace GUC.Server.WorldObjects
             instanceDict.Add(instance.InstanceName, instance);
         }
 
-
-        internal byte[] data; // instance table
-        internal byte[] hash; // MD5 of instance table
-
-        public void NetUpdate()
+        protected override void WriteTable(PacketWriter stream)
         {
-            using (MemoryStream ms = new MemoryStream())
+            foreach (VobInstance inst in this.GetAll().OrderBy(n => n.ID)) //ordered by IDs
             {
-                using (GZipStream gz = new GZipStream(ms, CompressionMode.Compress))
-                using (BinaryWriter bw = new BinaryWriter(gz, Encoding.UTF8))
-                {
-                    bw.Write((ushort)instanceList.Count);
-
-                    foreach (VobInstance inst in instanceList.Values.OrderBy(n => n.ID)) //ordered by IDs
-                    {
-                        inst.Write(bw);
-                    }
-                }
-                data = ms.ToArray();
+                inst.WriteProperties(stream);
             }
-
-            using (MD5 md5 = new MD5CryptoServiceProvider())
-            {
-                md5.TransformFinalBlock(data, 0, data.Length);
-                hash = md5.Hash;
-            }
-
-            StringBuilder sb = new StringBuilder();
-            foreach (byte b in hash)
-                sb.Append(b.ToString("X2"));
-            System.IO.File.WriteAllBytes(sb.ToString(), data);
         }
     }
 }

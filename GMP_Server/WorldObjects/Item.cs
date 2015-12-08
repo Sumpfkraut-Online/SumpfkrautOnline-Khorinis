@@ -51,7 +51,7 @@ namespace GUC.Server.WorldObjects
                 }
                 else
                 {
-                    Delete();
+                    Dispose();
                 }
 
             }
@@ -171,7 +171,7 @@ namespace GUC.Server.WorldObjects
         {
         }
 
-        public override void Delete()
+        public override void Dispose()
         {
             if (Owner == null)
             {
@@ -181,7 +181,7 @@ namespace GUC.Server.WorldObjects
             {
                 Owner.RemoveItem(this);
             }
-            base.Delete();
+            base.Dispose();
             Server.Network.Server.sItemDict.Remove(this.ID);
         }
 

@@ -20,9 +20,7 @@ namespace GUC.Server.Network
         public String DriveString { get; internal set; }
         public String MacString { get; internal set; }
 
-        internal bool instanceNPCNeeded;
-        internal bool instanceItemNeeded;
-        internal bool instanceMobNeeded;
+        internal bool instanceNeeded;
         internal bool isValid = false;
 
         //Ingame
@@ -99,7 +97,7 @@ namespace GUC.Server.Network
 
 
         public static Predicate<Client> IsAllowedToConnect;
-        internal void CheckValidity(String driveString, String macString, byte[] npcTableHash, byte[] itemTableHash, byte[] mobTableHash)
+        internal void CheckValidity(String driveString, String macString, byte[] instanceTableHash)
         {
             this.DriveString = driveString;
             this.MacString = macString;
@@ -115,9 +113,7 @@ namespace GUC.Server.Network
             }
             isValid = true;
 
-            instanceNPCNeeded = !npcTableHash.SequenceEqual(NPCInstance.Table.hash);
-            instanceItemNeeded = !itemTableHash.SequenceEqual(ItemInstance.Table.hash);
-            instanceMobNeeded = !mobTableHash.SequenceEqual(MobInstance.Table.hash);
+            instanceNeeded = !instanceTableHash.SequenceEqual(Server.instanceHash);
         }
 
         public void Disconnect()
@@ -129,7 +125,7 @@ namespace GUC.Server.Network
         {
             if (MainChar != null)
             {
-                MainChar.Delete();
+                MainChar.Dispose();
                 MainChar = null;
             }
 

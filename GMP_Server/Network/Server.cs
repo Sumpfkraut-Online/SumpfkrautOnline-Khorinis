@@ -10,13 +10,14 @@ using GUC.Server.Network.Messages;
 using System.Diagnostics;
 using GUC.Network;
 using GUC.Server.WorldObjects;
+using System.Security.Cryptography;
 
 namespace GUC.Server.Network
 {
     delegate void MsgReader(PacketReader stream, Client client, NPC character);
 
     public class Server
-    {
+    {   
         // All player npcs on this server
         internal static Dictionary<uint, NPC> sPlayerDict = new Dictionary<uint, NPC>();
         public static NPC GetPlayer(uint ID) { NPC npc; sPlayerDict.TryGetValue(ID, out npc); return npc; }
@@ -38,10 +39,12 @@ namespace GUC.Server.Network
         public static Item GetItem(uint ID) { Item item; sItemDict.TryGetValue(ID, out item); return item; }
         public static IEnumerable<Item> GetItems() { return sItemDict.Values; }
 
+
         // All vobs and mobs on this server
-        internal static Dictionary<uint, VobMob> sVobDict = new Dictionary<uint, VobMob>();
-        public static VobMob GetVob(uint ID) { VobMob vob; sVobDict.TryGetValue(ID, out vob); return vob; }
-        public static IEnumerable<VobMob> GetVobs() { return sVobDict.Values; }
+        internal static Dictionary<uint, Vob> sVobDict = new Dictionary<uint, Vob>();
+        public static Vob GetVob(uint ID) { Vob vob; sVobDict.TryGetValue(ID, out vob); return vob; }
+        public static IEnumerable<Vob> GetVobs() { return sVobDict.Values; }
+
 
         // All vobs which currently exist on the server
         internal static Dictionary<uint, Vob> sAllVobsDict = new Dictionary<uint, Vob>();
@@ -85,8 +88,8 @@ namespace GUC.Server.Network
 
         Dictionary<ulong, Client> clientDict;
 
-        PacketReader pktReader = new PacketReader();
-        PacketWriter pktWriter = new PacketWriter(64000);
+        internal PacketReader pktReader = new PacketReader();
+        internal PacketWriter pktWriter = new PacketWriter(64000);
 
         /** 
         * Server-class which defines and manages network transfer as well as the game loop.

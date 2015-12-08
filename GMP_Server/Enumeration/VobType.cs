@@ -7,7 +7,7 @@ namespace GUC.Enumeration
 {
     public enum VobType : byte
     {
-        //None,
+        None,
 
         Vob,
         NPC,

@@ -9,104 +9,17 @@ using GUC.Network;
 using GUC.Server.Network.Messages;
 using GUC.Types;
 using GUC.Server.Scripting;
+using GUC.Server.WorldObjects.Mobs;
 
 namespace GUC.Server.WorldObjects
 {
     public class NPC : AbstractCtrlVob
     {
-        /// <summary>
-        /// Gets the NPCInstance of this NPC.
-        /// </summary>
-        public NPCInstance Instance { get; protected set; }
-
-        #region Constructors
-
-        /// <summary>
-        /// Creates and returns an NPC object from the given NPCInstance-ID.
-        /// Returns NULL when the ID is not found!
-        /// </summary>
-        public static NPC Create(ushort instanceID, object scriptObject)
-        {
-            NPCInstance inst = NPCInstance.Table.Get(instanceID);
-            if (inst == null)
-            {
-                Log.Logger.logError("NPC creation failed! Instance ID not found: " + instanceID);
-                return null;
-            }
-            return Create(inst, scriptObject);
-        }
-
-        /// <summary>
-        /// Creates and returns an NPC object from the given NPCInstance-Name.
-        /// Returns NULL when the name is not found!
-        /// </summary>
-        public static NPC Create(string instanceName, object scriptObject)
-        {
-            NPCInstance inst = NPCInstance.Table.Get(instanceName);
-            if (inst == null)
-            {
-                Log.Logger.logError("NPC creation failed! Instance name not found: " + instanceName);
-                return null;
-            }
-            return Create(inst, scriptObject);
-        }
-
-        /// <summary>
-        /// Creates and returns an NPC object from the given NPCInstance.
-        /// Returns NULL when the NPCInstance is NULL!
-        /// </summary>
-        public static NPC Create(NPCInstance instance, object scriptObject)
-        {
-            if (instance != null)
-            {
-                NPC npc = new NPC(scriptObject);
-                npc.Instance = instance;
-                npc.BodyHeight = instance.BodyHeight;
-                npc.BodyHeight = instance.BodyHeight;
-                npc.BodyWidth = instance.BodyWidth;
-                npc.BodyFatness = instance.Fatness;
-
-                npc.AttrHealthMax = instance.AttrHealthMax;
-                npc.AttrHealth = instance.AttrHealthMax;
-
-                npc.State = NPCState.Stand;
-
-                npc.AttackEndTimer = new Timer<NPC>(0, OnAttackEnd, npc);
-                npc.AttackHitTimer = new Timer<NPC>(0, OnAttackHit, npc);
-
-                Network.Server.sAllNpcsDict.Add(npc.ID, npc);
-                Network.Server.sNpcDict.Add(npc.ID, npc);
-                return npc;
-            }
-            else
-            {
-                Log.Logger.logError("NPC creation failed! Instance can't be NULL!");
-                return null;
-            }
-        }
-
-        internal NPC(object scriptObject) : base(scriptObject)
-        {
-        }
-
-        public override void Delete()
-        {
-            base.Delete();
-
-            Network.Server.sAllNpcsDict.Remove(this.ID);
-            if (this.isPlayer)
-            {
-                Network.Server.sPlayerDict.Remove(this.ID);
-            }
-            else
-            {
-                Network.Server.sNpcDict.Remove(this.ID);
-            }
-        }
-
-        #endregion
+        new public NPCInstance Instance { get; protected set; }
 
         #region Appearance
+
+        public string Name { get { return Instance.Name; } }
 
         protected string customName = "";
         /// <summary>Set this for a different name from the instance-name.</summary>
@@ -126,6 +39,8 @@ namespace GUC.Server.WorldObjects
             }
         }
 
+        public string BodyMesh { get { return Instance.BodyMesh; } }
+
         /// <summary>This field will be only used with the "_Male"- or "_Female"-Instance.</summary>
         public HumBodyTex HumanBodyTex = HumBodyTex.G1Hero;
         /// <summary>This field will be only used with the "_Male"- or "_Female"-Instance.</summary>
@@ -144,31 +59,57 @@ namespace GUC.Server.WorldObjects
 
         #endregion
 
-        #region Player stats
+        #region Stats
 
-        public ushort AttrHealth;
-        public ushort AttrHealthMax;
+        public ushort Health;
+        public ushort HealthMax;
 
-        byte talent1H = 0;
-        public byte Talent1H { get { return talent1H; } set { talent1H = value > 2 ? (byte)2 : value; } }
-        byte talent2H = 0;
-        public byte Talent2H { get { return talent2H; } set { talent2H = value > 2 ? (byte)2 : value; } }
-
-        public void AttrHealthUpdate()
-        {
-
-        }
+        public ushort Mana;
+        public ushort ManaMax;
 
         #endregion
-
+        
         public NPCState State { get; protected set; }
-
         public MobInter UsedMob { get; protected set; }
 
-        #region Networking
-
-        internal Client client;
+        public Client client { get; internal set; }
         public bool isPlayer { get { return client != null; } }
+
+        public NPC(NPCInstance instance, object scriptObject) : base(scriptObject)
+        {
+            this.BodyHeight = instance.BodyHeight;
+            this.BodyHeight = instance.BodyHeight;
+            this.BodyWidth = instance.BodyWidth;
+            this.BodyFatness = instance.Fatness;
+
+            this.HealthMax = instance.HealthMax;
+            this.Health = instance.HealthMax;
+
+            this.ManaMax = instance.ManaMax;
+            this.Mana = instance.ManaMax;
+
+            this.State = NPCState.Stand;
+
+            Network.Server.sAllNpcsDict.Add(this.ID, this);
+            Network.Server.sNpcDict.Add(this.ID, this);
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            Network.Server.sAllNpcsDict.Remove(this.ID);
+            if (this.isPlayer)
+            {
+                Network.Server.sPlayerDict.Remove(this.ID);
+            }
+            else
+            {
+                Network.Server.sNpcDict.Remove(this.ID);
+            }
+        }
+
+        #region Networking
 
         #region Client commands
         public delegate void CmdUseMobHandler(MobInter mob, NPC user);
@@ -302,13 +243,11 @@ namespace GUC.Server.WorldObjects
 
         #endregion
 
-        internal override void WriteSpawn(IEnumerable<Client> list)
+        new public static Action<NPC, PacketWriter> OnWriteSpawn;
+        internal override void WriteSpawn(PacketWriter stream)
         {
-            PacketWriter stream = Program.server.SetupStream(NetworkID.WorldNPCSpawnMessage);
-            stream.Write(ID);
-            stream.Write(Instance.ID);
-            stream.Write(pos);
-            stream.Write(dir);
+            base.WriteSpawn(stream);
+
             if (Instance.ID <= 2)
             {
                 stream.Write((byte)HumanBodyTex);
@@ -322,8 +261,8 @@ namespace GUC.Server.WorldObjects
 
             stream.Write(CustomName);
 
-            stream.Write(AttrHealthMax);
-            stream.Write(AttrHealth);
+            stream.Write(HealthMax);
+            stream.Write(Health);
 
             stream.Write((byte)equippedSlots.Count);
             foreach (KeyValuePair<byte, Item> slot in equippedSlots)
@@ -331,7 +270,6 @@ namespace GUC.Server.WorldObjects
                 stream.Write(slot.Key);
                 stream.Write(slot.Value.ID);
                 stream.Write(slot.Value.Instance.ID);
-                stream.Write(slot.Value.Condition);
             }
 
             if (DrawnItem == null)
@@ -344,8 +282,10 @@ namespace GUC.Server.WorldObjects
                 NPCMessage.WriteStrmDrawItem(stream, this, DrawnItem);
             }
 
-            foreach (Client cl in list)
-                client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
+            //Overlays
+
+            if (NPC.OnWriteSpawn != null)
+                NPC.OnWriteSpawn(this, stream);
         }
 
         public delegate void OnEnterWorldHandler(NPC player);
@@ -353,10 +293,6 @@ namespace GUC.Server.WorldObjects
 
         internal static void WriteControl(Client client, NPC npc)
         {
-            if (client == null) Log.Logger.log("client = null");
-            if (npc == null) Log.Logger.log("npc = null");
-            if (npc.World == null) Log.Logger.log("npc.world = null");
-            if (npc.World.FileName == null) Log.Logger.log("npc.world.filename = null");
             PacketWriter stream = Program.server.SetupStream(NetworkID.PlayerControlMessage);
             stream.Write(npc.ID);
             stream.Write(npc.World.FileName);
@@ -369,7 +305,7 @@ namespace GUC.Server.WorldObjects
             if (client.MainChar == null) // coming from the log-in menus, first spawn
             {
                 client.MainChar = client.Character;
-                Network.Messages.ConnectionMessage.WriteInstanceTables(client);
+                ConnectionMessage.WriteInstanceTables(client);
 
                 if (OnEnterWorld != null)
                 {
@@ -575,7 +511,7 @@ namespace GUC.Server.WorldObjects
                     if (other != null) //merge the items
                     {
                         other.amount += item.amount;
-                        item.Delete();
+                        item.Dispose();
                         InventoryMessage.WriteAmountUpdate(this.client, other);
                         item.Owner = this;
                         return;
@@ -650,7 +586,7 @@ namespace GUC.Server.WorldObjects
                     }
                     else
                     {
-                        item.Delete();
+                        item.Dispose();
                     }
                 }
             }

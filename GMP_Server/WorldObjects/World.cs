@@ -68,9 +68,9 @@ namespace GUC.Server.WorldObjects
 
 
         // All vobs and mobs in this world
-        internal Dictionary<uint, VobMob> vobDict = new Dictionary<uint, VobMob>();
-        public VobMob GetVob(uint ID) { VobMob vob; vobDict.TryGetValue(ID, out vob); return vob; }
-        public IEnumerable<VobMob> GetVobs() { return vobDict.Values; }
+        internal Dictionary<uint, Vob> vobDict = new Dictionary<uint, Vob>();
+        public Vob GetVob(uint ID) { Vob vob; vobDict.TryGetValue(ID, out vob); return vob; }
+        public IEnumerable<Vob> GetVobs() { return vobDict.Values; }
 
 
         // All vobs in this world
@@ -136,11 +136,11 @@ namespace GUC.Server.WorldObjects
         }
 
         /// <summary> Deletes all vobs in this world and removes itself from the server. </summary>
-        public override void Delete()
+        public override void Dispose()
         {
             foreach(Vob vob in GetAllVobs())
             {
-                vob.Delete();
+                vob.Dispose();
             }
             Network.Server.sWorldDict.Remove(this.WorldName);
         }

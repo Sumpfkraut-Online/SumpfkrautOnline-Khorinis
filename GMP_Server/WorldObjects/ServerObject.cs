@@ -18,7 +18,5 @@ namespace GUC.Server.WorldObjects
         {
             this.ScriptObj = scriptObject;
         }
-
-        public abstract void Delete();
     }
 }
