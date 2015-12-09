@@ -12,6 +12,7 @@ using GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Server.Scripts.Sumpfkraut;
 using GUC.Server.Scripts.Sumpfkraut.Database;
 using GUC.Server.Scripts.Sumpfkraut.CommandConsole;
+using GUC.Server.Scripts.Sumpfkraut.Database.DBQuerying;
 
 namespace GUC.Server.Scripts
 {
@@ -21,7 +22,9 @@ namespace GUC.Server.Scripts
         //public delegate void MyEventHandler (Sumpfkraut.Utilities.Threading.Runnable runnable);
         //public MyEventHandler MyEvent;
 
-		public void OnServerInit()
+        public delegate void OnSomething (params object[] args);
+
+        public void OnServerInit()
 		{
             Log.Logger.log("######################## Initalise ########################");
 
@@ -306,13 +309,38 @@ namespace GUC.Server.Scripts
             //Logger.log(igTime_1 + 61);
             //Logger.log(igTime_1 / igTime_1);
 
-            Sumpfkraut.TimeSystem.WorldClock clock = new Sumpfkraut.TimeSystem.WorldClock(
-                "Big Ben", new List<World>() { World.NewWorld }, new IGTime(0, 0, 0), 60 * 30, false,
-                new TimeSpan(0, 0, 1));
+            //Sumpfkraut.TimeSystem.WorldClock clock = new Sumpfkraut.TimeSystem.WorldClock(
+            //    "Big Ben", new List<World>() { World.NewWorld }, new IGTime(0, 0, 0), 60 * 30, false,
+            //    new TimeSpan(0, 0, 1));
             //clock.OnTimeChange += delegate (IGTime igTime) { Logger.log(igTime); };
 
 
-            //Logger.log(World.NewWorld);
+
+            //OnSomething del = delegate (object[] args)
+            //{
+            //    foreach (object a in args)
+            //    {
+            //        Logger.print("--> " + a);
+            //    }
+            //};
+
+            //del(1, 2, 3, del, new object());
+
+            //object[] myObjects = new object[] { 5, "Fünf", false, null };
+            //del(myObjects.);
+
+
+            DBQueryHandler queryHandler = new DBQueryHandler("Data Source=save.db");
+            Action<List<List<List<object>>>, String> callback = 
+                new Action<List<List<List<object>>>, string>(
+                    delegate (List<List<List<object>>> results, string arg1) 
+                    {
+                        Logger.print(results[0][0][0] + " " + arg1);
+                    });
+            DBQuery<String> query_1 = new DBQuery<String>("SELECT 9001;", callback, "Popoklatsche");
+            queryHandler.Add(query_1);
+
+
 
 
 

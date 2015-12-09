@@ -16,7 +16,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
         protected String sqLiteDataSource;
         public String GetSqLiteDataSource () { return this.sqLiteDataSource; }
 
-        protected List<DBQuery> queryQueue = new List<DBQuery>();
+        protected List<AbstractDBQuery> queryQueue = new List<AbstractDBQuery>();
         protected object queryQueueLock = new object();
         protected bool isPaused = false;
 
@@ -34,7 +34,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
 
 
 
-        public void Add (DBQuery query)
+        public void Add (AbstractDBQuery query)
         {
             lock (queryQueueLock)
             {
@@ -48,7 +48,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
             }
         }
 
-        public bool RemoveQuery (DBQuery query)
+        public bool RemoveQuery (AbstractDBQuery query)
         {
             lock (queryQueueLock)
             {
@@ -91,7 +91,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                 }
 
                 // grab next query of the queue and call the database
-                DBQuery nextQuery = queryQueue[0];
+                AbstractDBQuery nextQuery = queryQueue[0];
                 List<List<List<object>>> results = new List<List<List<object>>>();
 
                 switch (nextQuery.GetDBReaderMode())

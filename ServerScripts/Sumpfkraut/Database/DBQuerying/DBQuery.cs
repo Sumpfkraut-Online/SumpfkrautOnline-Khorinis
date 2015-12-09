@@ -9,7 +9,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database.DBQuerying
     {
 
         new public static readonly String _staticName = "DBQuery (static)";
-        new protected String _objName = "DBQuery (default)";
 
         public Action<List<List<List<object>>>> callback;
 
@@ -19,6 +18,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database.DBQuerying
             Action<List<List<List<object>>>> callback)
             : base(sqlCommand)
         {
+            this._objName = "DBQuery (default)";
             this.callback = callback;
         }
 
@@ -26,6 +26,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database.DBQuerying
             Action<List<List<List<object>>>> callback)
             : base(sqlCommand, dbReaderMode)
         {
+            this._objName = "DBQuery (default)";
             this.callback = callback;
         }
 
@@ -33,10 +34,98 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database.DBQuerying
 
         public override void ReturnResults (List<List<List<object>>> results)
         {
-            if (this.callback != null)
+            if (callback != null)
             {
-                this.callback(results);
+                callback(results);
             }
         }
     }
+
+
+
+    public class DBQuery<T1> : AbstractDBQuery
+    {
+
+        new public static readonly String _staticName = "DBQuery<T1> (static)";
+
+        public Action<List<List<List<object>>>, T1> callback;
+        T1 arg1;
+
+
+        public DBQuery (string sqlCommand, 
+            Action<List<List<List<object>>>, T1> callback, 
+            T1 arg1)
+            : base(sqlCommand)
+        {
+            this._objName = "DBQuery<T1> (default)";
+            this.callback = callback;
+            this.arg1 = arg1;
+        }
+
+        public DBQuery (string sqlCommand, DBReaderMode dbReaderMode,
+            Action<List<List<List<object>>>, T1> callback, 
+            T1 arg1)
+            : base(sqlCommand, dbReaderMode)
+        {
+            this._objName = "DBQuery<T1> (default)";
+            this.callback = callback;
+            this.arg1 = arg1;
+        }
+
+
+
+        public override void ReturnResults (List<List<List<object>>> results)
+        {
+            if (callback != null)
+            {
+                callback(results, arg1);
+            }
+        }
+    }
+
+
+
+    public class DBQuery<T1, T2> : AbstractDBQuery
+    {
+
+        new public static readonly String _staticName = "DBQuery<T1, T2> (static)";
+
+        public Action<List<List<List<object>>>, T1, T2> callback;
+        T1 arg1;
+        T2 arg2;
+
+
+        public DBQuery (string sqlCommand, 
+            Action<List<List<List<object>>>, T1, T2> callback, 
+            T1 arg1, T2 arg2)
+            : base(sqlCommand)
+        {
+            this._objName = "DBQuery<T1, T2> (default)";
+            this.callback = callback;
+            this.arg1 = arg1;
+            this.arg2 = arg2;
+        }
+
+        public DBQuery (string sqlCommand, DBReaderMode dbReaderMode,
+            Action<List<List<List<object>>>, T1, T2> callback, 
+            T1 arg1, T2 arg2)
+            : base(sqlCommand, dbReaderMode)
+        {
+            this._objName = "DBQuery<T1, T2> (default)";
+            this.callback = callback;
+            this.arg1 = arg1;
+            this.arg2 = arg2;
+        }
+
+
+
+        public override void ReturnResults (List<List<List<object>>> results)
+        {
+            if (callback != null)
+            {
+                callback(results, arg1, arg2);
+            }
+        }
+    }
+
 }
