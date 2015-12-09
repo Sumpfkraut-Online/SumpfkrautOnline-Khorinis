@@ -27,7 +27,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
         { }
 
         public DBQueryHandler (bool startOnCreate, String sqLiteDataSource)
-            : base(startOnCreate, new TimeSpan(0), false)
+            : base(startOnCreate, TimeSpan.Zero, false)
         {
             this.sqLiteDataSource = sqLiteDataSource;
         }
