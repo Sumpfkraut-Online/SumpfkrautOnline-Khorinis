@@ -22,7 +22,7 @@ namespace GUC.Server.Scripts
         //public delegate void MyEventHandler (Sumpfkraut.Utilities.Threading.Runnable runnable);
         //public MyEventHandler MyEvent;
 
-        public delegate void OnSomething (params object[] args);
+        //public delegate void OnSomething (params object[] args);
 
         public void OnServerInit()
 		{
@@ -330,15 +330,15 @@ namespace GUC.Server.Scripts
             //del(myObjects.);
 
 
-            DBQueryHandler queryHandler = new DBQueryHandler("Data Source=save.db");
-            Action<List<List<List<object>>>, String> callback = 
-                new Action<List<List<List<object>>>, string>(
-                    delegate (List<List<List<object>>> results, string arg1) 
-                    {
-                        Logger.print(results[0][0][0] + " " + arg1);
-                    });
-            DBQuery<String> query_1 = new DBQuery<String>("SELECT 9001;", callback, "Popoklatsche");
-            queryHandler.Add(query_1);
+            //DBQueryHandler queryHandler = new DBQueryHandler("Data Source=save.db");
+            //Action<List<List<List<object>>>, String> callback = 
+            //    new Action<List<List<List<object>>>, string>(
+            //        delegate (List<List<List<object>>> results, string arg1) 
+            //        {
+            //            Logger.print(results[0][0][0] + " " + arg1);
+            //        });
+            //DBQuery<String> query_1 = new DBQuery<String>("SELECT 9001;", callback, "Popoklatsche");
+            //queryHandler.Add(query_1);
 
 
 
