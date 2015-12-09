@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Server.WorldObjects;
+using GUC.Server.WorldObjects.Mobs;
 using GUC.Types;
 using GUC.Enumeration;
 
@@ -18,7 +19,7 @@ namespace GUC.Server.Scripts
             NPC.CmdOnUnUseMob += OnUnUseMob;
             NPC.CmdOnUseItem += OnUseItem;
             NPC.CmdOnJump += OnJump;
-            NPC.CmdOnDrawEquipment += OnDrawEquipment;
+            NPC.CmdOnDrawItem += OnDrawEquipment;
             NPC.CmdOnUndrawItem += OnUndrawItem;
         }
 
@@ -26,13 +27,13 @@ namespace GUC.Server.Scripts
         {
             if (npc.UsedMob == null)
             {
-                npc.DoDrawitem(item);
+                npc.Drawitem(item);
             }
         }
 
-        static void OnUndrawItem(NPC npc, Item item)
+        static void OnUndrawItem(NPC npc)
         {
-            npc.DoUndrawItem();
+            npc.UndrawItem();
         }
 
         static void OnMovement(NPC npc, NPCState state)
@@ -46,7 +47,7 @@ namespace GUC.Server.Scripts
                     break;
             }
 
-            npc.DoMoveState(state);
+            npc.SetMoveState(state);
         }
 
         static void OnTargetMovement(NPC npc, NPC target, NPCState state)
@@ -73,28 +74,28 @@ namespace GUC.Server.Scripts
                     break;
             }
 
-            npc.DoMoveState(state, target);
+            npc.SetMoveState(state, target);
         }
 
         static void OnJump(NPC npc)
         {
-            npc.DoJump();
+            npc.Jump();
         }
 
-        static void OnUseMob(MobInter mob, NPC npc)
+        static void OnUseMob(NPC npc, MobInter mob)
         {
             if (npc.State == NPCState.Stand && npc.DrawnItem == null)
             {
-                npc.DoUseMob(mob);
+                npc.UseMob(mob);
             }
         }
 
-        static void OnUnUseMob(MobInter mob, NPC npc)
+        static void OnUnUseMob(NPC npc)
         {
-            npc.DoUnUseMob();
+            npc.UnuseMob();
         }
 
-        static void OnUseItem(Item item, NPC npc)
+        static void OnUseItem(NPC npc, Item item)
         {
             if (npc.State == NPCState.Stand && npc.DrawnItem == null)
             {

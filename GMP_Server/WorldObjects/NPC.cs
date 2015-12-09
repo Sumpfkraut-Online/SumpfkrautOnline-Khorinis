@@ -13,7 +13,7 @@ using GUC.Server.WorldObjects.Mobs;
 
 namespace GUC.Server.WorldObjects
 {
-    public class NPC : AbstractCtrlVob
+    public class NPC : Vob
     {
         new public NPCInstance Instance { get; protected set; }
 
@@ -64,18 +64,21 @@ namespace GUC.Server.WorldObjects
         public ushort Health;
         public ushort HealthMax;
 
-        public ushort Mana;
-        public ushort ManaMax;
-
         #endregion
-        
+
+        #region States
+
         public NPCState State { get; protected set; }
         public MobInter UsedMob { get; protected set; }
+
+        #endregion
 
         public Client client { get; internal set; }
         public bool isPlayer { get { return client != null; } }
 
-        public NPC(NPCInstance instance, object scriptObject) : base(scriptObject)
+        internal NPCCell npcCell = null;
+
+        public NPC(NPCInstance instance, object scriptObject) : base(instance, scriptObject)
         {
             this.BodyHeight = instance.BodyHeight;
             this.BodyHeight = instance.BodyHeight;
@@ -84,9 +87,6 @@ namespace GUC.Server.WorldObjects
 
             this.HealthMax = instance.HealthMax;
             this.Health = instance.HealthMax;
-
-            this.ManaMax = instance.ManaMax;
-            this.Mana = instance.ManaMax;
 
             this.State = NPCState.Stand;
 
@@ -97,6 +97,12 @@ namespace GUC.Server.WorldObjects
         public override void Dispose()
         {
             base.Dispose();
+
+            foreach (Item item in this.GetItems())
+            {
+                item.Owner = null; //so no messages are sent
+                item.Dispose();
+            }
 
             Network.Server.sAllNpcsDict.Remove(this.ID);
             if (this.isPlayer)
@@ -112,133 +118,145 @@ namespace GUC.Server.WorldObjects
         #region Networking
 
         #region Client commands
-        public delegate void CmdUseMobHandler(MobInter mob, NPC user);
-        public static event CmdUseMobHandler CmdOnUseMob;
-        public static event CmdUseMobHandler CmdOnUnUseMob;
 
-        internal static void ReadCmdUseMob(BitStream stream, Client client)
+        public static Action<NPC, MobInter> CmdOnUseMob;
+        internal static void ReadCmdUseMob(PacketReader stream, Client client, NPC character)
         {
             if (CmdOnUseMob == null)
                 return;
 
-            uint ID = stream.mReadUInt();
+            uint id = stream.ReadUInt();
 
-            VobMob mob;
-            if (client.Character.World.vobDict.TryGetValue(ID, out mob) && mob is MobInter)
+            Vob vob = character.World.GetVob(id);
+            if (vob != null && vob is MobInter)
             {
-                CmdOnUseMob((MobInter)mob, client.Character);
+                CmdOnUseMob(character, (MobInter)vob);
             }
         }
 
-        internal static void ReadCmdUnuseMob(BitStream stream, Client client)
+        public static Action<NPC> CmdOnUnUseMob;
+        internal static void ReadCmdUnuseMob(PacketReader stream, Client client, NPC character)
         {
-            if (CmdOnUnUseMob != null && client.Character.UsedMob != null)
+            if (CmdOnUnUseMob == null)
+                return;
+
+            if (character.UsedMob != null)
             {
-                CmdOnUnUseMob(client.Character.UsedMob, client.Character);
+                CmdOnUnUseMob(character);
             }
         }
 
-        public delegate void CmdUseItemHandler(Item item, NPC user);
-        public static event CmdUseItemHandler CmdOnUseItem;
-
-        internal static void ReadCmdUseItem(BitStream stream, Client client)
+        public static Action<NPC, Item> CmdOnUseItem;
+        internal static void ReadCmdUseItem(PacketReader stream, Client client, NPC character)
         {
             if (CmdOnUseItem == null)
                 return;
 
-            uint ID = stream.mReadUInt();
-            Item item;
-            if (Network.Server.sItemDict.TryGetValue(ID, out item) && item.Owner == client.Character)
+            uint id = stream.ReadUInt();
+
+            Item item = character.GetItem(id);
+            if (item != null)
             {
-                CmdOnUseItem(item, client.Character);
+                CmdOnUseItem(character, item);
             }
         }
 
-        public delegate void CmdMoveHandler(NPC npc, NPCState state);
-        public static event CmdMoveHandler CmdOnMove;
-
-        internal static void ReadCmdState(BitStream stream, Client client)
+        public static Action<NPC, NPCState> CmdOnMove;
+        internal static void ReadCmdMove(PacketReader stream, Client client, NPC character)
         {
             if (CmdOnMove == null)
                 return;
 
-            uint id = stream.mReadUInt();
-            NPCState state = (NPCState)stream.mReadByte();
-            if (id == client.Character.ID)
+            uint id = stream.ReadUInt();
+            NPCState state = (NPCState)stream.ReadByte();
+
+            NPC npc = character.World.GetNpcOrPlayer(id);
+            if (npc != null && (npc == character || (client.VobControlledList.Contains(npc) && state <= NPCState.MoveBackward))) //is it a controlled NPC?
             {
-                CmdOnMove(client.Character, state);
-            }
-            else //is it a controlled NPC?
-            {
-                NPC npc;
-                if (Network.Server.sNpcDict.TryGetValue(id, out npc) && client.VobControlledList.Find(v => v == npc) != null)
-                {
-                    if (state <= NPCState.MoveBackward)
-                    {
-                        CmdOnMove(npc, state);
-                    }
-                }
+                CmdOnMove(npc, state);
             }
         }
 
-        public delegate void CmdJumpHandler(NPC npc);
-        public static event CmdJumpHandler CmdOnJump;
-
-        internal static void ReadCmdJump(BitStream stream, Client client)
+        public static Action<NPC> CmdOnJump;
+        internal static void ReadCmdJump(PacketReader stream, Client client, NPC character)
         {
             if (CmdOnJump == null)
                 return;
 
-            uint id = stream.mReadUInt();
-            if (id == client.Character.ID)
+            uint id = stream.ReadUInt();
+
+            NPC npc = character.World.GetNpcOrPlayer(id);
+            if (npc != null && (npc == character || client.VobControlledList.Contains(npc))) //is it a controlled NPC?
             {
-                CmdOnJump(client.Character);
-            }
-            else //is it a controlled NPC?
-            {
-                NPC npc;
-                if (Network.Server.sNpcDict.TryGetValue(id, out npc) && client.VobControlledList.Find(v => v == npc) != null)
-                {
-                    CmdOnJump(npc);
-                }
+                CmdOnJump(npc);
             }
         }
-
-        public delegate void CmdDrawEquipmentHandler(NPC npc, Item item);
-        public static event CmdDrawEquipmentHandler CmdOnDrawEquipment;
-        public static event CmdDrawEquipmentHandler CmdOnUndrawItem;
-
-        internal static void ReadCmdDrawEquipment(BitStream stream, Client client)
+        
+        public static Action<NPC, Item> CmdOnDrawItem;
+        internal static void ReadCmdDrawItem(PacketReader stream, Client client, NPC character)
         {
-            if (CmdOnDrawEquipment == null)
+            if (CmdOnDrawItem == null)
                 return;
 
-            byte slot = stream.mReadByte();
-            Item item = client.Character.GetEquipment(slot);
+            uint id = stream.ReadUInt();
 
-            CmdOnDrawEquipment(client.Character, item == null ? Item.Fists : item);
+            Item item = character.GetItem(id);
+            CmdOnDrawItem(character, item == null ? Item.Fists : item);
         }
 
-        internal static void ReadCmdUndrawItem(BitStream stream, Client client)
+        public static Action<NPC> CmdOnUndrawItem;
+        internal static void ReadCmdUndrawItem(PacketReader stream, Client client, NPC character)
         {
-            if (CmdOnUndrawItem == null || client.Character.DrawnItem == null)
+            if (CmdOnUndrawItem == null)
                 return;
 
-            CmdOnUndrawItem(client.Character, client.Character.DrawnItem);
+            if (character.DrawnItem != null)
+            {
+                CmdOnUndrawItem(character);
+            }
         }
-
-        public delegate void CmdTargetMoveHandler(NPC npc, NPC target, NPCState state);
-        public static CmdTargetMoveHandler CmdOnTargetMove;
-
-        internal static void ReadCmdTargetState(BitStream stream, Client client)
+        
+        public static Action<NPC, NPC, NPCState> CmdOnTargetMove;
+        internal static void ReadCmdTargetMove(PacketReader stream, Client client, NPC character)
         {
             if (CmdOnTargetMove == null)
                 return;
 
-            NPCState state = (NPCState)stream.mReadByte();
-            NPC target = client.Character.World.GetNpcOrPlayer(stream.mReadUInt());
+            uint targetid = stream.ReadUInt();
+            NPCState state = (NPCState)stream.ReadByte();
 
-            CmdOnTargetMove(client.Character, target, state);
+            NPC target = character.World.GetNpcOrPlayer(targetid);
+            CmdOnTargetMove(character, target, state);
+        }
+
+        public static Action<NPC, Item> CmdOnPickup;
+        internal static void ReadCmdPickupItem(PacketReader stream, Client client, NPC character)
+        {
+            if (CmdOnPickup == null)
+                return;
+
+            uint targetid = stream.ReadUInt();
+
+            Item item = character.World.GetItem(targetid);
+            if (item != null)
+            {
+                CmdOnPickup(character, item);
+            }
+        }
+
+        public static Action<NPC, Item> CmdOnDrop;
+        internal static void ReadCmdDropItem(PacketReader stream, Client client, NPC character)
+        {
+            if (CmdOnPickup == null)
+                return;
+
+            uint targetid = stream.ReadUInt();
+
+            Item item = character.GetItem(targetid);
+            if (item != null)
+            {
+                CmdOnDrop(character, item);
+            }
         }
 
         #endregion
@@ -268,8 +286,7 @@ namespace GUC.Server.WorldObjects
             foreach (KeyValuePair<byte, Item> slot in equippedSlots)
             {
                 stream.Write(slot.Key);
-                stream.Write(slot.Value.ID);
-                stream.Write(slot.Value.Instance.ID);
+                slot.Value.WriteEquipped(stream);
             }
 
             if (DrawnItem == null)
@@ -279,7 +296,7 @@ namespace GUC.Server.WorldObjects
             else
             {
                 stream.Write(true);
-                NPCMessage.WriteStrmDrawItem(stream, this, DrawnItem);
+                DrawnItem.WriteEquipped(stream);
             }
 
             //Overlays
@@ -288,45 +305,50 @@ namespace GUC.Server.WorldObjects
                 NPC.OnWriteSpawn(this, stream);
         }
 
-        public delegate void OnEnterWorldHandler(NPC player);
-        public static event OnEnterWorldHandler OnEnterWorld;
+        internal override void WriteSpawnMessage(IEnumerable<Client> list)
+        {
+            PacketWriter stream = Program.server.SetupStream(NetworkID.WorldNPCSpawnMessage);
+            this.WriteSpawn(stream);
 
+            foreach (Client client in list)
+            {
+                client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
+            }
+        }
+
+        public static Action<Client, NPC> OnWriteControl;
         internal static void WriteControl(Client client, NPC npc)
         {
             PacketWriter stream = Program.server.SetupStream(NetworkID.PlayerControlMessage);
             stream.Write(npc.ID);
             stream.Write(npc.World.FileName);
-            //write stats & inventory
+
+            stream.Write(npc.inventory.Count);
+            foreach (Item item in npc.GetItems())
+            {
+                item.WriteInventory(stream);
+            }
+
             client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'G');
         }
 
+        public static Action<NPC> OnEnterWorld;
         internal static void ReadControl(PacketReader stream, Client client, NPC character)
         {
             if (client.MainChar == null) // coming from the log-in menus, first spawn
             {
-                client.MainChar = client.Character;
+                client.MainChar = character;
                 ConnectionMessage.WriteInstanceTables(client);
 
                 if (OnEnterWorld != null)
-                {
-                    OnEnterWorld(client.MainChar);
-                }
+                    OnEnterWorld(character);
             }
 
-            if (!client.Character.IsSpawned)
+            if (!character.IsSpawned)
             {
-                client.Character.WriteSpawn(new Client[1] { client }); // to self
-                client.Character.Spawn(client.Character.World);
+                character.WriteSpawnMessage(new Client[1] { client }); // to self
+                client.Character.Spawn(character.World);
             }
-        }
-
-        internal static void ReadPickUpItem(BitStream stream, Client client)
-        {
-            Item item;
-            client.Character.World.itemDict.TryGetValue(stream.mReadUInt(), out item);
-            if (item == null) return;
-
-            client.Character.AddItem(item);
         }
 
         #endregion
@@ -376,11 +398,6 @@ namespace GUC.Server.WorldObjects
                     item.Slot = 0;
                 }
 
-                if (DrawnItem == item)
-                {
-                    DoUndrawItem(true); //set to fists?
-                }
-
                 equippedSlots.Remove(slot);
                 NPCMessage.WriteUnequipMessage(cell.SurroundingClients(), this, slot);
             }
@@ -412,189 +429,34 @@ namespace GUC.Server.WorldObjects
 
         #region Itemcontainer
 
-        protected Dictionary<ItemInstance, List<Item>> inventory = new Dictionary<ItemInstance, List<Item>>();
+        protected Dictionary<uint, Item> inventory = new Dictionary<uint, Item>();
 
-        /// <summary>
-        /// Gets a list of the items this NPC is carrying.
-        /// </summary>
-        public List<Item> ItemList
-        {
-            get
-            {
-                List<Item> itemList = new List<Item>();
-                foreach (List<Item> list in inventory.Values)
-                {
-                    itemList.AddRange(list);
-                }
-                return itemList;
-            }
-        }
+        public IEnumerable<Item> GetItems() { return inventory.Values; }
+        public Item GetItem(uint id) { Item item; inventory.TryGetValue(id, out item); return item; }
 
-        /// <summary>
-        /// Checks whether this NPC has the Item with the given ID.
-        /// </summary>
-        public bool HasItem(uint itemID)
-        {
-            Item item = null;
-            if (Network.Server.sItemDict.TryGetValue(itemID, out item))
-            {
-                return HasItem(item);
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Checks whether this NPC has the given Item.
-        /// </summary>
-        public bool HasItem(Item item)
-        {
-            List<Item> list;
-            if (inventory.TryGetValue(item.Instance, out list))
-            {
-                return list.Contains(item);
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Checks whether this NPC an Item of the given ItemInstance.
-        /// Only stackable Items are considered, i.e. no unique items like user-written scrolls, worn weapons etc.
-        /// </summary>
-        public bool HasItem(ItemInstance instance)
-        {
-            return HasItem(instance, 1);
-        }
-
-        /// <summary>
-        /// Checks whether this NPC has the amount of Items of the given ItemInstance.
-        /// Only stackable Items are considered, i.e. no unique items like user-written scrolls, worn weapons etc.
-        /// </summary>
-        public bool HasItem(ItemInstance instance, ushort amount)
-        {
-            List<Item> list;
-            if (inventory.TryGetValue(instance, out list))
-            {
-                Item item = list.Find(i => i.Stackable == true);
-                if (item != null)
-                {
-                    if (item.amount >= amount)
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Tries to add the given Item to the NPC's inventory.
-        /// Stackable items may be deleted by this method!
-        /// </summary>
         public void AddItem(Item item)
         {
-            if (item.IsSpawned)
+            if (item != null && item.ID > 0)
             {
-                item.Despawn(); //Fixme?: Send despawn + additem msg in one msg to the new owner
+                inventory[item.ID] = item;
+                InventoryMessage.WriteAddItem(client, item);
             }
-            //else
-            if (item.Owner != null)
-            {
-                item.Owner.RemoveItem(item);
-            }
-
-            List<Item> list;
-            if (inventory.TryGetValue(item.Instance, out list))
-            {
-                if (item.Stackable)
-                {
-                    Item other = list.Find(i => i.Stackable == true);
-                    if (other != null) //merge the items
-                    {
-                        other.amount += item.amount;
-                        item.Dispose();
-                        InventoryMessage.WriteAmountUpdate(this.client, other);
-                        item.Owner = this;
-                        return;
-                    }
-                }
-            }
-            else
-            {
-                list = new List<Item>(1);
-                inventory.Add(item.Instance, list);
-            }
-            list.Add(item);
-            InventoryMessage.WriteAddItem(this.client, item);
-            item.Owner = this;
         }
 
-        /// <summary>
-        /// Removes the given Item from the NPC's inventory if he owns it.
-        /// If you want to delete the Item call "item.RemoveFromServer()" instead.
-        /// </summary>
         public void RemoveItem(Item item)
         {
-            if (item.Owner == this)
+            if (item != null && item.ID > 0)
             {
-                UnequipItem(item);
-                if (DrawnItem == item)
-                {
-                    DoUndrawItem(true); //set to fists?
-                }
-
-                item.Owner = null;
-                List<Item> list;
-                if (inventory.TryGetValue(item.Instance, out list))
-                {
-                    list.Remove(item);
-                    if (list.Count == 0)
-                    {
-                        inventory.Remove(item.Instance);
-                    }
-                }
-
-                InventoryMessage.WriteAmountUpdate(this.client, item, 0);
-            }
-        }
-
-        /// <summary>
-        /// Removes one Item of the given ItemInstance from the NPC's inventory.
-        /// Only stackable Items are considered, i.e. no unique items like user-written scrolls, worn weapons etc.
-        /// </summary>
-        public void RemoveItem(ItemInstance instance)
-        {
-            RemoveItem(instance, 1);
-        }
-
-        /// <summary>
-        /// Removes the amount of Items of the given ItemInstance from the NPC's inventory.
-        /// Only stackable Items are considered, i.e. no unique items like user-written scrolls, worn weapons etc.
-        /// </summary>
-        public void RemoveItem(ItemInstance instance, ushort amount)
-        {
-            List<Item> list;
-            if (inventory.TryGetValue(instance, out list))
-            {
-                Item item = list.Find(i => i.Stackable == true);
-                if (item != null)
-                {
-                    int newAmount = item.amount - amount;
-                    if (newAmount > 0)
-                    {
-                        item.amount = (ushort)newAmount;
-                        InventoryMessage.WriteAmountUpdate(this.client, item);
-                    }
-                    else
-                    {
-                        item.Dispose();
-                    }
-                }
+                inventory.Remove(item.ID);
+                InventoryMessage.WriteAmountUpdate(client, item, 0);
             }
         }
 
         #endregion
 
-        public void DoUseMob(MobInter mob)
+        #region Mobs
+
+        public void UseMob(MobInter mob)
         {
             if (mob != null)
             {
@@ -611,7 +473,7 @@ namespace GUC.Server.WorldObjects
             }
         }
 
-        public void DoUnUseMob()
+        public void UnuseMob()
         {
             if (UsedMob != null)
             {
@@ -627,321 +489,39 @@ namespace GUC.Server.WorldObjects
             }
         }
 
+        #endregion
+
+        #region Movement
+
         /// <summary>
         /// Order the NPC to do a certain movement.
         /// </summary>
-        /// <param name="state">Stand, MoveForward, MoveBackward</param>
-        public void DoMoveState(NPCState state)
+        public void SetMoveState(NPCState state)
         {
-            switch (state)
-            {
-                case NPCState.Stand:
-                    DoStand();
-                    break;
-                case NPCState.MoveForward:
-                    DoMoveForward();
-                    break;
-                case NPCState.MoveBackward:
-                    DoMoveBackward();
-                    break;
-            }
+            this.State = state;
+            NPCMessage.WriteState(cell.SurroundingClients(), this);
         }
 
         /// <summary>
         /// Order the NPC to do a certain movement on a target.
         /// </summary>
-        /// <param name="state">MoveLeft, MoveRight, AttackForward, AttackLeft, AttackRight, AttackRun, Parry, DodgeBack</param>
-        public void DoMoveState(NPCState state, NPC target)
+        public void SetMoveState(NPCState state, NPC target)
         {
-            switch (state)
-            {
-                case NPCState.MoveLeft:
-                    DoMoveLeft(target);
-                    break;
-                case NPCState.MoveRight:
-                    DoMoveRight(target);
-                    break;
-                case NPCState.AttackForward:
-                    DoAttackForward(target);
-                    break;
-                case NPCState.AttackLeft:
-                    DoAttackLeft(target);
-                    break;
-                case NPCState.AttackRight:
-                    DoAttackRight(target);
-                    break;
-                case NPCState.AttackRun:
-                    DoAttackRun(target);
-                    break;
-                case NPCState.Parry:
-                    DoParry(target);
-                    break;
-                case NPCState.DodgeBack:
-                    DoDodgeBack(target);
-                    break;
-            }
-        }
-
-        public void DoStand()
-        {
-            this.State = NPCState.Stand;
-            NPCMessage.WriteState(cell.SurroundingClients(), this);
-        }
-
-        public void DoMoveForward()
-        {
-            this.State = NPCState.MoveForward;
-            NPCMessage.WriteState(cell.SurroundingClients(), this);
-        }
-
-        public void DoMoveBackward()
-        {
-            this.State = NPCState.MoveBackward;
-            NPCMessage.WriteState(cell.SurroundingClients(), this);
-        }
-
-        public void DoMoveLeft(NPC target)
-        {
-            this.State = NPCState.MoveLeft;
+            this.State = state;
             NPCMessage.WriteTargetState(cell.SurroundingClients(), this, target);
-        }
-
-        public void DoMoveRight(NPC target)
-        {
-            this.State = NPCState.MoveRight;
-            NPCMessage.WriteTargetState(cell.SurroundingClients(), this, target);
-        }
-
-        internal NPCCell npcCell = null;
-
-        internal AnimationControl AniCtrl { get { return Instance.AniCtrl; } }
-        public int ComboNum { get; protected set; }
-        long comboTime = 0;
-        Timer<NPC> AttackEndTimer; // fixme? only one timer?
-        Timer<NPC> AttackHitTimer;
-        bool TriedAttack = false;
-
-        public void DoAttackForward(NPC target)
-        {
-            AnimationControl.Attacks attacks;
-            if (!GetAttacks(out attacks))
-                return;
-
-            if (ComboNum >= attacks.ComboNum - 1) //can not combo yet or is in last combo
-                return;
-
-            int newComboNum;
-            if (State == NPCState.AttackForward) //already in attack
-            {
-                newComboNum = ComboNum + 1;
-            }
-            else
-            {
-                newComboNum = 0;
-            }
-
-            DoAttack(target, attacks.Forward[newComboNum], NPCState.AttackForward, newComboNum);
-        }
-
-        static void OnAttackEnd(NPC attacker)
-        {
-            if (attacker != null)
-            {
-                attacker.AttackEndTimer.Stop();
-
-                attacker.State = NPCState.Stand;
-                attacker.ComboNum = 0;
-                attacker.TriedAttack = false;
-                Log.Logger.log("Stand");
-            }
-        }
-
-        static void OnAttackHit(NPC attacker)
-        {
-            if (attacker != null)
-            {
-                attacker.AttackHitTimer.Stop();
-
-                if (sOnHit == null || attacker.DrawnItem == null)
-                    return;
-
-                float range = attacker.DrawnItem == Item.Fists ? 100 : attacker.DrawnItem.Instance.Range;
-                foreach (NPC target in attacker.World.GetNPCs(attacker.Position, range))
-                {
-                    if (attacker == target) continue;
-
-                    Vec3f dir = (attacker.Position - target.Position).Normalise();
-                    float dot = attacker.Direction.Z * dir.Z + dir.X * attacker.Direction.X;
-
-                    if (dot > 0) continue; //target is behind attacker
-                    if (dot > -0.6f) continue; //target is too far right or left
-
-                    sOnHit(attacker, target);
-                    if (target.OnHit != null)
-                    {
-                        target.OnHit(attacker, target);
-                    }
-                    Log.Logger.log("HIT: " + target.ID);
-                }
-            }
-        }
-
-        public delegate void OnHitHandler(NPC attacker, NPC target);
-        public OnHitHandler OnHit;
-        public static OnHitHandler sOnHit;
-
-        bool GetAttacks(out AnimationControl.Attacks attacks)
-        {
-            if (DrawnItem != null)
-            {
-                if (DrawnItem == Item.Fists)
-                {
-                    attacks = AniCtrl.Fist;
-                    return true;
-                }
-                else if (DrawnItem.Type == ItemType.Blunt_1H || DrawnItem.Type == ItemType.Sword_1H)
-                {
-                    attacks = AniCtrl._1H[Talent1H];
-                    return true;
-                }
-                else if (DrawnItem.Type == ItemType.Blunt_2H || DrawnItem.Type == ItemType.Sword_2H)
-                {
-                    attacks = AniCtrl._2H[Talent2H];
-                    return true;
-                }
-            }
-            attacks = default(AnimationControl.Attacks);
-            return false;
-        }
-
-        void DoAttack(NPC target, AnimationControl.Attacks.Info attackTimes, NPCState attack, int comboNum)
-        {
-            if (attack >= NPCState.AttackForward && attackTimes.Attack > 0 && !TriedAttack)
-            {
-                if (DateTime.UtcNow.Ticks >= comboTime)
-                {
-                    AttackEndTimer.Interval = attackTimes.Attack;
-                    AttackEndTimer.Start();
-
-                    if (attackTimes.Combo > 0)
-                    {
-                        comboTime = DateTime.UtcNow.Ticks + attackTimes.Combo;
-                    }
-                    else //no combo time defined
-                    {
-                        comboTime = AttackEndTimer.NextCallTime;
-                    }
-
-                    if (AttackHitTimer.Started) //just in case, that the last attack's timer has not fired yet
-                    {
-                        OnAttackHit(this);
-                    }
-
-                    if (attackTimes.Hit > 0)
-                    {
-                        AttackHitTimer.Interval = attackTimes.Hit;
-                        AttackHitTimer.Start();
-                    }
-
-                    ComboNum = comboNum;
-                    State = attack;
-                    TriedAttack = false;
-                    NPCMessage.WriteTargetState(cell.SurroundingClients(), this, target);
-                }
-                else
-                {
-                    TriedAttack = true;
-                }
-            }
-        }
-
-        public void DoAttackLeft(NPC target)
-        {
-            AnimationControl.Attacks attacks;
-            if (!GetAttacks(out attacks))
-            {
-                return;
-            }
-
-            if (State == NPCState.AttackLeft)
-            {
-                return;
-            }
-
-            DoAttack(target, attacks.Left, NPCState.AttackLeft, 0);
-        }
-
-        public void DoAttackRight(NPC target)
-        {
-            AnimationControl.Attacks attacks;
-            if (!GetAttacks(out attacks))
-            {
-                return;
-            }
-
-            if (State == NPCState.AttackRight)
-            {
-                return;
-            }
-
-            DoAttack(target, attacks.Right, NPCState.AttackRight, 0);
-        }
-
-        public void DoAttackRun(NPC target)
-        {
-            AnimationControl.Attacks attacks;
-            if (!GetAttacks(out attacks))
-            {
-                return;
-            }
-
-            if (State == NPCState.AttackRun)
-            {
-                return;
-            }
-
-            DoAttack(target, attacks.Run, NPCState.AttackRun, 0);
-        }
-
-        public void DoParry(NPC target)
-        {
-            AnimationControl.Attacks attacks;
-            if (!GetAttacks(out attacks))
-            {
-                return;
-            }
-
-            if (State == NPCState.Parry)
-            {
-                return;
-            }
-
-            DoAttack(target, attacks.Parry, NPCState.Parry, 0);
-        }
-
-        public void DoDodgeBack(NPC target)
-        {
-            AnimationControl.Attacks attacks;
-            if (!GetAttacks(out attacks))
-            {
-                return;
-            }
-
-            if (State == NPCState.DodgeBack)
-            {
-                return;
-            }
-
-            DoAttack(target, attacks.Dodge, NPCState.DodgeBack, 0);
         }
 
         /// <summary>
         /// Let the NPC do a jump.
         /// </summary>
-        public void DoJump()
+        public void Jump()
         {
             NPCMessage.WriteJump(cell.SurroundingClients(), this);
         }
+
+        #endregion
+
+        #region Item Drawing
 
         /// <summary>
         /// Gets the current drawn Item in the hands of the NPC.
@@ -951,16 +531,16 @@ namespace GUC.Server.WorldObjects
         /// <summary>
         /// Take out an item.
         /// </summary>
-        public void DoDrawitem(Item item)
+        public void Drawitem(Item item)
         {
-            DoDrawitem(item, false);
+            Drawitem(item, false);
         }
 
         /// <summary>
         /// Take out an item.
         /// </summary>
         /// <param name="fast">True if the state should be set instantly, without playing an animation.</param>
-        public void DoDrawitem(Item item, bool fast)
+        public void Drawitem(Item item, bool fast)
         {
             if (item == null || (item.Owner != this && item != Item.Fists))
                 return;
@@ -972,16 +552,16 @@ namespace GUC.Server.WorldObjects
         /// <summary>
         /// Undraw the current Item.
         /// </summary>
-        public void DoUndrawItem()
+        public void UndrawItem()
         {
-            DoUndrawItem(false);
+            UndrawItem(false);
         }
 
         /// <summary>
         /// Undraw the current Item.
         /// </summary>
         /// <param name="fast">True if the state should be set instantly, without playing an animation.</param>
-        public void DoUndrawItem(bool fast)
+        public void UndrawItem(bool fast)
         {
             if (DrawnItem == null)
                 return;
@@ -990,7 +570,11 @@ namespace GUC.Server.WorldObjects
             NPCMessage.WriteUndrawItem(cell.SurroundingClients(), this, fast, State == NPCState.Stand);
         }
 
-        ControlCmd ControlState = ControlCmd.Stop;
+        #endregion
+
+        #region AI Commands
+
+        /*ControlCmd ControlState = ControlCmd.Stop;
         Vec3f ControlTargetPos;
         Vob ControlTargetVob;
 
@@ -1053,6 +637,8 @@ namespace GUC.Server.WorldObjects
 
                 this.VobController.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
             }
-        }
+        }*/
+
+        #endregion
     }
 }

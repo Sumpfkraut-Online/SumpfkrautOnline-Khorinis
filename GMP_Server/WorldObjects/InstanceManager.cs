@@ -13,32 +13,41 @@ namespace GUC.Server.WorldObjects
     {
         static void Init()
         {
-            managers = new List<InstanceManager>();
-            managers.Add(VobInstance.Table);
-            managers.Add(ItemInstance.Table);
-            managers.Add(NPCInstance.Table);
+            try
+            {
+                managers = new List<InstanceManager>();
+                managers.Add(VobInstance.Table);
+                managers.Add(ItemInstance.Table);
+                managers.Add(NPCInstance.Table);
 
-            managers.Add(MobInstance.Table);
-            managers.Add(MobInterInstance.Table);
-            managers.Add(MobFireInstance.Table);
-            managers.Add(MobLadderInstance.Table);
-            managers.Add(MobSwitchInstance.Table);
-            managers.Add(MobWheelInstance.Table);
-            managers.Add(MobContainerInstance.Table);
-            managers.Add(MobDoorInstance.Table);
+                managers.Add(MobInstance.Table);
+                managers.Add(MobInterInstance.Table);
+                managers.Add(MobFireInstance.Table);
+                managers.Add(MobLadderInstance.Table);
+                managers.Add(MobSwitchInstance.Table);
+                managers.Add(MobWheelInstance.Table);
+                managers.Add(MobContainerInstance.Table);
+                managers.Add(MobDoorInstance.Table);
+            }
+            catch (Exception e)
+            {
+                Log.Logger.logError(e.InnerException.Source);
+                Log.Logger.logError(e.InnerException.Message);
+                Log.Logger.logError(e.InnerException.StackTrace);
+            }
         }
 
         internal static byte[] instanceData;
         internal static byte[] instanceHash;
-        protected static List<InstanceManager> managers;
+        static List<InstanceManager> managers = null;
 
         protected abstract void WriteTable(PacketWriter stream);
 
         public void NetUpdate()
         {
-            if (managers == null)
+            if (InstanceManager.managers == null)
                 Init();
-
+            
             PacketWriter stream = Program.server.SetupStream(NetworkID.ConnectionMessage);
 
             stream.StartCompressing();

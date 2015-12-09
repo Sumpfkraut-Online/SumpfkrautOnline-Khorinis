@@ -12,7 +12,7 @@ namespace GUC.Server.Network.Messages
 {
     static class TradeMessage
     {
-        public static void Read(BitStream stream, Client client)
+        /*public static void Read(BitStream stream, Client client)
         {
             byte b = stream.mReadByte();
             TradeStatus status = (TradeStatus)b;
@@ -135,6 +135,6 @@ namespace GUC.Server.Network.Messages
             stream.Write((byte)TradeStatus.DeclineOffer);
             pl.client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I');
         }
-
+        */
     }
 }

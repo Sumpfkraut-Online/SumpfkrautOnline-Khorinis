@@ -7,7 +7,7 @@ using GUC.Types;
 
 namespace GUC.Server.WorldObjects
 {
-    public abstract class AbstractCtrlVob : Vob
+    /*public abstract class AbstractCtrlVob : AbstractVob
     {
         protected AbstractCtrlVob(object scriptObject) : base (scriptObject)
         {
@@ -58,5 +58,5 @@ namespace GUC.Server.WorldObjects
             }
             return nearest;
         }
-    }
+    }*/
 }

@@ -108,7 +108,7 @@ namespace GUC.Server.Scripts.Accounts
         {
             AccCharInfo info = GetCharacters(client.AccountID)[slotNum];
 
-            var npc = GUC.Server.WorldObjects.NPC.Create("_MALE", null);
+            /*var npc = WorldObjects.NPC.Create("_MALE", null);
             npc.CustomName = info.Name;
 
             //set all the stuff from the data bank
@@ -117,8 +117,8 @@ namespace GUC.Server.Scripts.Accounts
             npc.HumanHeadTex = (HumHeadTex)info.HeadTex;
             npc.HumanVoice = (HumVoice)info.Voice;
 
-            client.SetControl(npc, Network.Server.GetWorld("newworld"));
-            Log.Logger.log("Client joins in on npc " + npc.ID);
+            client.SetControl(npc, Network.Server.GetWorld("newworld"));*/
+            Log.Logger.log("Client joins in on npc ");// + npc.ID);
         }
 
         static int LoginAccount(string name, string pw)

@@ -198,7 +198,7 @@ namespace GUC.Server.Network
             {
                 try
                 {
-                    pktReader.Load(p.data);
+                    pktReader.Load(p.data, (int)p.length);
 
                     clientDict.TryGetValue(p.guid.g, out client);
 
@@ -270,9 +270,8 @@ namespace GUC.Server.Network
                                             KickClient(client);
                                             Log.Logger.logWarning(String.Format("Client sent another ConnectionMessage. Kicked: {0} IP:{1}", msgID, p.guid, p.systemAddress));
                                         }
-                                        else
+                                        else if (client.Character != null && client.Character.IsSpawned)
                                         {
-                                            
                                             MessageListener.TryGetValue(msgID, out readFunc);
                                             if (readFunc == null)
                                             {

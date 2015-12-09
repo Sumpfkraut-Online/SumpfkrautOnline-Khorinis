@@ -27,7 +27,7 @@ namespace GUC.Server.Network
         public NPC MainChar { get; internal set; }
         public NPC Character { get; internal set; }
 
-        internal List<AbstractCtrlVob> VobControlledList = new List<AbstractCtrlVob>();
+        internal List<Vob> VobControlledList = new List<Vob>();
 
         internal Client(RakNetGUID guid, SystemAddress systemAddress)
         {
@@ -82,8 +82,8 @@ namespace GUC.Server.Network
                     npc.cell.PlayerList.Add(npc);
                 }
 
-                if (npc.VobController != null)
-                    npc.VobController.RemoveControlledVob(npc);
+                //if (npc.VobController != null)
+                //    npc.VobController.RemoveControlledVob(npc);
             }
 
             Network.Server.sNpcDict.Remove(npc.ID);
@@ -113,7 +113,7 @@ namespace GUC.Server.Network
             }
             isValid = true;
 
-            instanceNeeded = !instanceTableHash.SequenceEqual(Server.instanceHash);
+            instanceNeeded = !instanceTableHash.SequenceEqual(InstanceManager.instanceHash);
         }
 
         public void Disconnect()
@@ -134,16 +134,16 @@ namespace GUC.Server.Network
                 Character.client = null;
             }
 
-            for (int i = 0; i < VobControlledList.Count; i++)
+            /*for (int i = 0; i < VobControlledList.Count; i++)
             {
                 VobControlledList[i].VobController = null;
                 VobControlledList[i].FindNewController();
-            }
+            }*/
         }
 
-        internal void AddControlledVob(AbstractCtrlVob vob)
+        internal void AddControlledVob(Vob vob)
         {
-            VobControlledList.Add(vob);
+           /* VobControlledList.Add(vob);
             vob.VobController = this;
             PacketWriter stream = Program.server.SetupStream(NetworkID.ControlAddVobMessage); stream.Write(vob.ID);
             Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
@@ -152,16 +152,16 @@ namespace GUC.Server.Network
             if (vob is NPC)
             {
                 ((NPC)vob).GoTo(this.Character, 500);
-            }
+            }*/
         }
 
-        internal void RemoveControlledVob(AbstractCtrlVob vob)
+        internal void RemoveControlledVob(Vob vob)
         {
-            VobControlledList.Remove(vob);
+            /*VobControlledList.Remove(vob);
             vob.VobController = null;
             PacketWriter stream = Program.server.SetupStream(NetworkID.ControlRemoveVobMessage); stream.Write(vob.ID);
             Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
-            Log.Logger.log("RemoveCtrl: " + Character.ID + " " + vob.ID + ": " + vob.GetType().Name);
+            Log.Logger.log("RemoveCtrl: " + Character.ID + " " + vob.ID + ": " + vob.GetType().Name);*/
         }
 
         public void SendErrorMsg(string msg)

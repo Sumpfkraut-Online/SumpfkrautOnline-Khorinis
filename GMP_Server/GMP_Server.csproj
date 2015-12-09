@@ -79,8 +79,8 @@
     <Compile Include="..\Network\Enumeration\NetworkIDS.cs">
       <Link>Enumeration\NetworkIDS.cs</Link>
     </Compile>
-    <Compile Include="..\Network\Enumeration\NPCEnums.cs">
-      <Link>Enumeration\NPCEnums.cs</Link>
+    <Compile Include="..\Network\Enumeration\NPCStates.cs">
+      <Link>Enumeration\NPCStates.cs</Link>
     </Compile>
     <Compile Include="..\Network\Enumeration\SpellFlags.cs">
       <Link>Enumeration\SpellFlags.cs</Link>
@@ -125,15 +125,13 @@
     <Compile Include="Scripting\ScriptManager.cs" />
     <Compile Include="Network\WorldCell.cs" />
     <Compile Include="Scripting\Timer.cs" />
-    <Compile Include="Scripting\UserVars.cs" />
     <Compile Include="TCPStatus.cs" />
-    <Compile Include="WorldObjects\AbstractAI.cs" />
     <Compile Include="WorldObjects\AbstractCtrlVob.cs" />
     <Compile Include="WorldObjects\AbstractDropVob.cs" />
+    <Compile Include="WorldObjects\Class1.cs" />
     <Compile Include="WorldObjects\VobInstance.cs" />
     <Compile Include="WorldObjects\ServerObject.cs" />
     <Compile Include="WorldObjects\Vob.cs" />
-    <Compile Include="WorldObjects\AniCtrl.cs" />
     <Compile Include="WorldObjects\InstanceManager.cs" />
     <Compile Include="WorldObjects\Item.cs" />
     <Compile Include="WorldObjects\ItemInstance.cs" />

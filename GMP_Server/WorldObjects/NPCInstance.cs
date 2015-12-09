@@ -12,8 +12,7 @@ namespace GUC.Server.WorldObjects
 
         #region Properties
 
-        public ushort HealthMax = 100;
-        public ushort ManaMax = 10;        
+        public ushort HealthMax = 100;    
 
         /// <summary>The default name of the NPC.</summary>
         public string Name = "";

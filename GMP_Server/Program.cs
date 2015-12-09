@@ -72,8 +72,6 @@ namespace GUC.Server
                 server = new Network.Server();
                 server.Start((ushort)serverOptions.Port, (ushort)serverOptions.Slots, serverOptions.password);
 
-                AnimationControl.Init();
-
                 scriptManager = new Scripting.ScriptManager();
                 scriptManager.Init();
                 scriptManager.Startup();

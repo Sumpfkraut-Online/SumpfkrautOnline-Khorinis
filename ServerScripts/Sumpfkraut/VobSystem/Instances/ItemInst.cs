@@ -60,7 +60,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
         public ItemInst (ItemDef def, int amount)
         {
             this.vobDef = def;
-            this.setVob(Item.Create(def.GetItemInstance(), this));
+            //this.setVob(Item.Create(def.GetItemInstance(), this));
             this.setAmount(amount);
         }
 
@@ -126,7 +126,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
                 return;
             }
             this.DeleteVob();
-            this.vob = Item.Create(this.getVobDef().GetItemInstance(), this);
+            //this.vob = Item.Create(this.getVobDef().GetItemInstance(), this);
         }
 
         public void DeleteVob ()

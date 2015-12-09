@@ -14,17 +14,17 @@ namespace GUC.Server.Network.Messages
     {
         #region Animation
 
-        public static void ReadAniStart(BitStream stream, Client client)
+        public static void ReadAniStart(PacketReader stream, Client client, NPC character)
         {
-            Animations ani = (Animations)stream.mReadUShort();
-            WriteAniStart(client.Character.cell.SurroundingClients(client), client.Character, ani);
+            Animations ani = (Animations)stream.ReadUShort();
+            WriteAniStart(character.cell.SurroundingClients(client), character, ani);
         }
 
-        public static void ReadAniStop(BitStream stream, Client client)
+        public static void ReadAniStop(PacketReader stream, Client client, NPC character)
         {
-            Animations ani = (Animations)stream.mReadUShort();
+            Animations ani = (Animations)stream.ReadUShort();
             bool fadeout = stream.ReadBit();
-            WriteAniStop(client.Character.cell.SurroundingClients(client), client.Character, ani, fadeout);
+            WriteAniStop(character.cell.SurroundingClients(client), character, ani, fadeout);
         }
 
         public static void WriteAniStart(IEnumerable<Client> list, NPC npc, Animations ani)
@@ -53,11 +53,10 @@ namespace GUC.Server.Network.Messages
         public static void WriteEquipMessage(IEnumerable<Client> list, NPC npc, Item item, byte slot)
         {
             PacketWriter stream = Program.server.SetupStream(NetworkID.NPCEquipMessage);
+
             stream.Write(npc.ID);
-            stream.Write(item.ID);
-            stream.Write(item.Instance.ID);
-            stream.Write(item.Condition);
             stream.Write(slot);
+            item.WriteEquipped(stream);
 
             foreach (Client client in list)
                 client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
@@ -113,34 +112,13 @@ namespace GUC.Server.Network.Messages
 
         public static void WriteDrawItem(IEnumerable<Client> list, NPC npc, Item item, bool fast)
         {
-            if (npc == null) 
-                return;
-
-            if (item == null)
-                return;
-
             PacketWriter stream = Program.server.SetupStream(NetworkID.NPCDrawItemMessage);
             stream.Write(npc.ID);
-            WriteStrmDrawItem(stream, npc, item);
             stream.Write(fast);
+            item.WriteEquipped(stream);
 
             foreach (Client client in list)
                 client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
-        }
-
-        public static void WriteStrmDrawItem(PacketWriter stream, NPC npc, Item item)
-        {
-            stream.Write(item.ID);
-            if (item != Item.Fists)
-            {
-                stream.Write(item.Instance.ID);
-                if (item.Type == ItemType.Blunt_1H || item.Type == ItemType.Sword_1H)
-                    stream.Write(npc.Talent1H);
-                else if (item.Type == ItemType.Blunt_2H || item.Type == ItemType.Sword_2H)
-                    stream.Write(npc.Talent2H);
-                else
-                    stream.Write(byte.MinValue);
-            }
         }
 
         public static void WriteUndrawItem(IEnumerable<Client> list, NPC npc, bool fast, bool altRemove)

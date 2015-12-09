@@ -12,22 +12,22 @@ namespace GUC.Server.Network.Messages
 {
     static class VobMessage
     {
-        public static void ReadPosDir(BitStream stream, Client client)
+        public static void ReadPosDir(PacketReader stream, Client client, NPC character)
         {
-            AbstractCtrlVob vob = client.Character;
-            vob.pos = stream.mReadVec();
-            vob.dir = stream.mReadVec();
+            Vob vob = client.Character;
+            vob.pos = stream.ReadVec3f();
+            vob.dir = stream.ReadVec3f();
             vob.World.UpdatePosition(vob, client);
-
-            int max = stream.mReadInt();
+            /*
+            int max = stream.ReadInt();
 
             uint id; Vec3f pos; Vec3f dir;
             for (int i = 0; i < max; i++)
             {
                
-                id = stream.mReadUInt();
-                pos = stream.mReadVec();
-                dir = stream.mReadVec();
+                id = stream.ReadUInt();
+                pos = stream.ReadVec();
+                dir = stream.ReadVec();
 
                 vob = client.VobControlledList.Find(v => v.ID == id);
 
@@ -44,7 +44,7 @@ namespace GUC.Server.Network.Messages
                         vob.World.UpdatePosition(vob, client);
                     }
                 }
-            }
+            }*/
         }
 
         public static void WritePosDir(IEnumerable<Client> list, Vob vob)

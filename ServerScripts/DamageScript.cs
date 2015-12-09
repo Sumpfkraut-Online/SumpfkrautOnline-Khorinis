@@ -11,15 +11,15 @@ namespace GUC.Server.Scripts
     {
         public static void Init()
         {
-            NPC.sOnHit += HitEvent;
+            //NPC.sOnHit += HitEvent;
         }
 
         public static void HitEvent(NPC attacker, NPC victim)
         {
-            if (victim.AttrHealth > 0)
-                victim.AttrHealth--;
+            if (victim.Health > 0)
+                victim.Health--;
 
-            victim.AttrHealthUpdate();
+           //victim.HealthUpdate();
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Server.WorldObjects;
+using GUC.Server.WorldObjects.Mobs;
 
 namespace GUC.Server.Scripts.Instances
 {
@@ -37,7 +38,6 @@ namespace GUC.Server.Scripts.Instances
             npc.BodyHeight = 100;
             npc.BodyWidth = 100;
             npc.Fatness = 20;
-            npc.Voice = Enumeration.HumVoice.Andre;
             NPCInstance.Table.Add(npc);
 
             NPCInstance.Table.NetUpdate();
@@ -64,7 +64,7 @@ namespace GUC.Server.Scripts.Instances
             ItemInstance.Table.Add(item);
 
 
-
+            
             item = new ItemInstance("itfo_bread", null);
             item.Name = "Brot";
             item.Visual = "ITFO_BREAD.3DS";
@@ -97,7 +97,6 @@ namespace GUC.Server.Scripts.Instances
 
             item = new ItemInstance("itmw_wolfszahn", null);
             item.Name = "Wolfszahn";
-            item.Gender = Enumeration.Gender.Masculine;
             item.Type = Enumeration.ItemType.Sword_1H;
             item.Material = Enumeration.ItemMaterial.Metal;
             item.Visual = "ItMw_020_1h_Sword_short_04.3DS";
@@ -108,7 +107,6 @@ namespace GUC.Server.Scripts.Instances
 
             item = new ItemInstance("ITAR_BDT_M", null);
             item.Name = "Mittlere Banditenrüstung";
-            item.Gender = Enumeration.Gender.Feminine;
             item.Type = Enumeration.ItemType.Armor;
             item.Material = Enumeration.ItemMaterial.Leather;
             item.Visual = "ItAr_Bdt_M.3ds";
@@ -119,20 +117,17 @@ namespace GUC.Server.Scripts.Instances
 
 
 
-            MobInstance mob = new MobInstance("Forge", null);
-            mob.type = Enumeration.MobType.MobInter;
-            mob.Visual = "BSFIRE_OC.MDS";
-            mob.focusName = "Schmiedefeuer";
-            MobInstance.Table.Add(mob);
+            MobInterInstance mobInter = new MobInterInstance("Forge", null);
+            mobInter.Visual = "BSFIRE_OC.MDS";
+            mobInter.FocusName = "Schmiedefeuer";
+            MobInterInstance.Table.Add(mobInter);
 
-            mob = new MobInstance("stool", null);
-            mob.type = Enumeration.MobType.MobInter;
-            mob.Visual = "CHAIR_NW_NORMAL_01.ASC";
-            mob.focusName = "Stuhl";
-            MobInstance.Table.Add(mob);
+            mobInter = new MobInterInstance("stool", null);
+            mobInter.Visual = "CHAIR_NW_NORMAL_01.ASC";
+            mobInter.FocusName = "Stuhl";
+            MobInterInstance.Table.Add(mobInter);
 
-            mob = new MobInstance("latern", null);
-            mob.type = Enumeration.MobType.Vob;
+            MobInstance mob = new MobInstance("latern", null);
             mob.Visual = "FIREPLACE_NW_LAMP_01.ASC";
             MobInstance.Table.Add(mob);
 

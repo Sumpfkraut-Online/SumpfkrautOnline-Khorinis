@@ -58,14 +58,14 @@
     <Compile Include="..\Network\Enumeration\NetworkIDS.cs">
       <Link>Enumeration\NetworkIDS.cs</Link>
     </Compile>
-    <Compile Include="..\Network\Enumeration\NPCEnums.cs">
-      <Link>Enumeration\NPCEnums.cs</Link>
+    <Compile Include="..\Network\Enumeration\NPCStates.cs">
+      <Link>Enumeration\NPCStates.cs</Link>
     </Compile>
     <Compile Include="..\Network\Enumeration\SpellFlags.cs">
       <Link>Enumeration\SpellFlags.cs</Link>
     </Compile>
-    <Compile Include="..\Network\Enumeration\VobFlags.cs">
-      <Link>Enumeration\VobFlags.cs</Link>
+    <Compile Include="..\Network\Enumeration\VobType.cs">
+      <Link>Enumeration\VobType.cs</Link>
     </Compile>
     <Compile Include="..\Network\Network\AccCharInfo.cs">
       <Link>Network\AccCharInfo.cs</Link>

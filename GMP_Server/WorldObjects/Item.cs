@@ -11,59 +11,39 @@ using GUC.Types;
 
 namespace GUC.Server.WorldObjects
 {
-    public class Item : AbstractDropVob
+    public class Item : Vob
     {
         public static readonly Item Fists = CreateFists();
         static Item CreateFists()
         {
-            Item fists = new Item(null);
+            Item fists = new Item(ItemInstance.FistInstance, null);
             fists.ID = 0;
             fists.Slot = 0;
             Network.Server.sAllVobsDict.Remove(0);
             return fists;
         }
 
+        public const int TextAndCountLen = ItemInstance.TextAndCountLen;
+
         /// <summary>
         /// Gets the ItemInstance of this item.
         /// </summary>
-        public ItemInstance Instance { get; protected set; }
+        new public ItemInstance Instance { get; protected set; }
 
+        public string Name { get { return Instance.Name; } }
         public ItemType Type { get { return Instance.Type; } }
+        public ItemMaterial Material { get { return Instance.Material; } }
+        public string[] Text { get { return Instance.Text; } }
+        public ushort[] Count { get { return Instance.Count; } }
+        public string Description { get { return Instance.Description; } }
+        public string VisualChange { get { return Instance.VisualChange; } }
+        public string Effect { get { return Instance.Effect; } }
+        public ItemInstance Munition { get { return Instance.Munition; } }
 
         /// <summary>
         /// Gets or sets the amount of this item. Setting the amount to zero will delete the item. Can't be set when spawned. 
         /// </summary>
-        public ushort Amount
-        {
-            get { return amount; }
-            set
-            {
-                if (value > 0)
-                {
-                    if (this.IsSpawned)
-                        return;
-
-                    amount = value;
-                    if (this.Owner != null)
-                    {
-                        InventoryMessage.WriteAmountUpdate(this.Owner.client, this);
-                    }
-                }
-                else
-                {
-                    Dispose();
-                }
-
-            }
-        }
-        internal ushort amount = 1;
-
-        /// <summary>
-        /// Stackable items will combine themselves to one single object in inventories.
-        /// Set this to false for unique items like user-written scrolls, worn weapons etc.
-        /// Default is TRUE.
-        /// </summary>
-        public bool Stackable = true;
+        public ushort Amount = 1;
 
         /// <summary>
         /// Gets the NPC who is carrying this item or NULL.
@@ -74,141 +54,62 @@ namespace GUC.Server.WorldObjects
         /// Gets the equipment slot for the owner NPC.
         /// </summary>
         public byte Slot { get; internal set; }
-
-        /// <summary>
-        /// The condition of this item. Only used for weapons, armors, etc. Can't be set when spawned. 
-        /// </summary>
-        public ushort Condition
-        {
-            get { return condition; }
-            set
-            {
-                if (!IsSpawned)
-                {
-                    condition = value;
-                }
-            }
-        }
-        protected ushort condition;
-
-        /// <summary>
-        /// Changeable extra line in the item description box in the inventory. Use for signatures, etc.
-        /// </summary>
-        public string SpecialLine
-        {
-            get { return specialLine; }
-            set
-            {
-                specialLine = value;
-                if (Owner != null)
-                {
-
-                }
-            }
-        }
-        protected string specialLine = "";
         
-        #region Constructors
-
-        /// <summary>
-        /// Creates and returns an Item object from the given ItemInstance-ID.
-        /// Returns NULL when the ID is not found!
-        /// </summary>
-        public static Item Create(ushort instanceID, object scriptObject)
-        {
-            ItemInstance inst = ItemInstance.Table.Get(instanceID);
-            if (inst != null)
-            {
-                return Create(inst, scriptObject);
-            }
-            else
-            {
-                Log.Logger.logError("Item creation failed! Instance ID not found: " + instanceID);
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Creates and returns an Item object from the given ItemInstance-Name.
-        /// Returns NULL when the name is not found!
-        /// </summary>
-        public static Item Create(string instanceName, object scriptObject)
-        {
-            ItemInstance inst = ItemInstance.Table.Get(instanceName);
-            if (inst != null)
-            {
-                return Create(inst, scriptObject);
-            }
-            else
-            {
-                Log.Logger.logError("Item creation failed! Instance name not found: " + instanceName);
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Creates and returns an Item object from the given ItemInstance.
-        /// Returns NULL when the ItemInstance is NULL!
-        /// </summary>
-        public static Item Create(ItemInstance instance, object scriptObject)
-        {
-            if (instance != null)
-            {
-                Item item = new Item(scriptObject);
-                item.Instance = instance;
-                item.condition = instance.Condition;
-                Server.Network.Server.sItemDict.Add(item.ID, item);
-                return item;
-            }
-            else
-            {
-                Log.Logger.logError("Item creation failed! Instance can't be NULL!");
-                return null;
-            }
-        }
-
-        internal Item(object scriptObject) : base(scriptObject)
+        public Item(ItemInstance instance, object scriptObject) : base(instance, scriptObject)
         {
         }
 
         public override void Dispose()
         {
-            if (Owner == null)
-            {
-                Despawn();
-            }
-            else
+            base.Dispose();
+
+            if (Owner != null)
             {
                 Owner.RemoveItem(this);
             }
-            base.Dispose();
+
             Server.Network.Server.sItemDict.Remove(this.ID);
         }
 
-        public static Item Copy(Item source)
+        new public static Action<Item, PacketWriter> OnWriteSpawn;
+        internal override void WriteSpawn(PacketWriter stream)
         {
-            Item newItem = Item.Create(source.Instance, source.ScriptObj);
-            newItem.condition = source.condition;
-            newItem.specialLine = source.specialLine;
-            return newItem;
+            base.WriteSpawn(stream);
+
+            if (Item.OnWriteSpawn != null)
+                Item.OnWriteSpawn(this, stream);
         }
 
-        #endregion
-
-        internal override void WriteSpawn(IEnumerable<Client> list)
+        internal override void WriteSpawnMessage(IEnumerable<Client> list)
         {
             PacketWriter stream = Program.server.SetupStream(NetworkID.WorldItemSpawnMessage);
-            stream.Write(ID);
-            stream.Write(Instance.ID);
-            stream.Write(pos);
-            stream.Write(dir);
-            stream.Write(amount);
-            if (Instance.Type <= ItemType.Armor)
-                stream.Write(condition);
-            stream.Write(physicsEnabled);
+            this.WriteSpawn(stream);
 
             foreach (Client client in list)
-                client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
+            {
+                client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
+            }
+        }
+
+        public static Action<Item, PacketWriter> OnWriteEquipped;
+        internal void WriteEquipped(PacketWriter stream)
+        {
+            stream.Write(this.ID);
+            stream.Write(this.Instance.ID);
+
+            if (OnWriteEquipped != null)
+                OnWriteEquipped(this, stream);
+        }
+
+        public static Action<Item, PacketWriter> OnWriteInventory;
+        internal void WriteInventory(PacketWriter stream)
+        {
+            stream.Write(this.ID);
+            stream.Write(this.Instance.ID);
+            stream.Write(this.Amount);
+
+            if (OnWriteInventory != null)
+                OnWriteInventory(this, stream);
         }
     }
 }

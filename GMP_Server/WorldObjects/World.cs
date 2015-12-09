@@ -136,7 +136,7 @@ namespace GUC.Server.WorldObjects
         }
 
         /// <summary> Deletes all vobs in this world and removes itself from the server. </summary>
-        public override void Dispose()
+        public void Delete()
         {
             foreach(Vob vob in GetAllVobs())
             {
@@ -168,9 +168,9 @@ namespace GUC.Server.WorldObjects
             {
                 itemDict.Add(vob.ID, (Item)vob);
             }
-            else if (vob is VobMob)
+            else
             {
-                vobDict.Add(vob.ID, (VobMob)vob);
+                vobDict.Add(vob.ID, vob);
             }
         }
 
@@ -227,7 +227,7 @@ namespace GUC.Server.WorldObjects
             RemoveVob(vob);
             if (vob.cell != null)
             {
-                vob.WriteDespawn(vob.cell.SurroundingClients());
+                vob.WriteDespawnMessage(vob.cell.SurroundingClients());
                 vob.cell.RemoveVob(vob);
             }
         }
@@ -337,7 +337,7 @@ namespace GUC.Server.WorldObjects
                     VobMessage.WritePosDir(new Client[1] { exclude }, vob);
                 }
                 //Send creation message to all players in surrounding cells
-                vob.WriteSpawn(newCell.SurroundingClients(exclude));
+                vob.WriteSpawnMessage(newCell.SurroundingClients(exclude));
 
                 //send all vobs in surrounding cells to the player
                 if (vob is NPC && ((NPC)vob).isPlayer)
@@ -346,7 +346,7 @@ namespace GUC.Server.WorldObjects
                     {
                         foreach (Vob v in c.AllVobs())
                         {
-                            v.WriteSpawn(new Client[1] { ((NPC)vob).client });
+                            v.WriteSpawnMessage(new Client[1] { ((NPC)vob).client });
                         }
                     }
                 }
@@ -358,7 +358,7 @@ namespace GUC.Server.WorldObjects
             }
 
             newCell.AddVob(vob);
-
+            /*
             #region vob controlling
             if (vob is NPC && ((NPC)vob).isPlayer)
             {
@@ -384,6 +384,7 @@ namespace GUC.Server.WorldObjects
                 ((AbstractCtrlVob)vob).FindNewController();
             }
             #endregion
+            */
         }
 
         void VobChangeDiffCells(Vob vob, WorldCell from, WorldCell to, Client exclude)
@@ -412,14 +413,14 @@ namespace GUC.Server.WorldObjects
                     else
                     {
                         //deletion updates in old cells
-                        vob.WriteDespawn(cell.GetClients());
+                        vob.WriteDespawnMessage(cell.GetClients());
 
                         //deletion updates for the player
                         if (vob is NPC && ((NPC)vob).isPlayer)
                         {
                             foreach (Vob v in cell.AllVobs())
                             {
-                                v.WriteDespawn(new Client[1] { ((NPC)vob).client });
+                                v.WriteDespawnMessage(new Client[1] { ((NPC)vob).client });
                             }
                         }
                     }
@@ -447,14 +448,14 @@ namespace GUC.Server.WorldObjects
                     }
 
                     //creation updates in the new cells
-                    vob.WriteSpawn(cell.GetClients(exclude));
+                    vob.WriteSpawnMessage(cell.GetClients(exclude));
 
                     //creation updates for the player
                     if (vob is NPC && ((NPC)vob).isPlayer)
                     {
                         foreach (Vob v in cell.AllVobs())
                         {
-                            v.WriteSpawn(new Client[1] { ((NPC)vob).client });
+                            v.WriteSpawnMessage(new Client[1] { ((NPC)vob).client });
                         }
                     }
                 }

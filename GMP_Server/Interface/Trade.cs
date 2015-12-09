@@ -10,7 +10,7 @@ namespace GUC.Server.Interface
 {
     public class Trade
     {
-        private static Trade tradeCtrl;
+       /* private static Trade tradeCtrl;
         public static Trade GetTrade()
         {
             if (tradeCtrl == null)
@@ -184,7 +184,7 @@ namespace GUC.Server.Interface
         public void OnOfferMessage(NPC trader, Item item, bool add)
         {
             Log.Logger.log(trader.ID.ToString() + " offers " + item.Instance.Name.ToString());
-            if (!trader.HasItem(item))
+            if (trader.GetItem(item.ID) == null)
                 return;
 
             foreach (TradeCouple tc in tradings)
@@ -241,6 +241,6 @@ namespace GUC.Server.Interface
                     requests.Remove(requests[i]);
 
             tradings.Add(new TradeCouple(pl1, pl2));
-        }
+        }*/
     }
 }

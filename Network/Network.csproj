@@ -44,7 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enumeration\HumanVisuals.cs" />
-    <Compile Include="Enumeration\NPCEnums.cs" />
+    <Compile Include="Enumeration\NPCStates.cs" />
     <Compile Include="Enumeration\VobType.cs" />
     <Compile Include="Network\AccCharInfo.cs" />
     <Compile Include="Enumeration\GothicKeys.cs" />

@@ -12,6 +12,14 @@ namespace GUC.Server.WorldObjects
 {
     public class ItemInstance : VobInstance
     {
+        public static readonly ItemInstance FistInstance = CreateFists();
+        static ItemInstance CreateFists()
+        {
+            ItemInstance fists = new ItemInstance(0, "fists", null);
+            fists.Name = "Fäustedummy";
+            return fists;
+        }
+
         new public readonly static InstanceManager<ItemInstance> Table = new InstanceManager<ItemInstance>();
 
         #region Properties

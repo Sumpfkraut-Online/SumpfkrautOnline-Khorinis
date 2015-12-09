@@ -7,7 +7,7 @@ using GUC.Server.Network;
 
 namespace GUC.Server.WorldObjects
 {
-    public abstract class AbstractDropVob : AbstractCtrlVob
+    /*public abstract class AbstractDropVob : AbstractCtrlVob
     {
         protected AbstractDropVob(object scriptObject) : base(scriptObject)
         {
@@ -59,5 +59,5 @@ namespace GUC.Server.WorldObjects
 
             Drop(npc.World, new Vec3f(npc.pos.X + npc.dir.X*DropDistance, npc.pos.Y + Elevation, npc.pos.Z + npc.dir.Z*DropDistance));
         }
-    }
+    }*/
 }

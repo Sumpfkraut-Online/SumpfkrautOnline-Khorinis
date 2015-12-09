@@ -11,12 +11,14 @@ using GUC.Server.Network.Messages;
 
 namespace GUC.Server.WorldObjects
 {
-    public class Vob : ServerObject, IDisposable
+    public class Vob : ServerObject, IDisposable, IVobClass
     {
         static uint idCount = 1; // Start with 1 cause a "null-vob" (id = 0) is needed for networking
 
         public uint ID { get; protected set; }
         public VobInstance Instance { get; protected set; }
+
+        public VobType GetVobType() { return Instance.GetVobType(); }
 
         public string Visual { get { return Instance.Visual; } }
         public bool CDDyn { get { return Instance.CDDyn; } }
@@ -119,7 +121,18 @@ namespace GUC.Server.WorldObjects
                 Vob.OnWriteSpawn(this, stream);
         }
 
-        internal void WriteDespawn(IEnumerable<Client> list)
+        internal virtual void WriteSpawnMessage(IEnumerable<Client> list)
+        {
+            PacketWriter stream = Program.server.SetupStream(NetworkID.WorldVobSpawnMessage);
+            this.WriteSpawn(stream);
+
+            foreach (Client client in list)
+            {
+                client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
+            }
+        }
+
+        internal void WriteDespawnMessage(IEnumerable<Client> list)
         {
             PacketWriter stream = Program.server.SetupStream(NetworkID.WorldVobDeleteMessage);
             stream.Write(this.ID);

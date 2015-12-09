@@ -9,12 +9,15 @@ using System.Security.Cryptography;
 
 namespace GUC.Server.WorldObjects
 {
-    public class VobInstance : ServerObject
+    public class VobInstance : ServerObject, IVobClass
     {      
         public readonly static InstanceManager<VobInstance> Table = new InstanceManager<VobInstance>();
 
         public ushort ID { get; internal set; }
         public string InstanceName { get; internal set; }
+
+        protected VobType vobType;
+        public VobType GetVobType() { return vobType; }
 
         #region Properties
 
@@ -51,11 +54,7 @@ namespace GUC.Server.WorldObjects
         {
             this.ID = ID;
             this.InstanceName = instanceName.ToUpper();
-        }
-
-        public override void Dispose()
-        {
-            throw new NotImplementedException();
+            this.vobType = VobType.Vob;
         }
 
         /// <summary> Use this to send additional information to the clients. The base properties are already written! </summary>
