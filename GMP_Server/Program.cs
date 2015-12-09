@@ -57,7 +57,7 @@ namespace GUC.Server
 
         static void RunServer()
         {
-            const long nextInfoUpdateTime = 120 * 1000 * TimeSpan.TicksPerMillisecond;
+            const long nextInfoUpdateTime = 10 * 1000 * TimeSpan.TicksPerMillisecond;
             long nextInfoUpdates = DateTime.UtcNow.Ticks + nextInfoUpdateTime;
 
             long tickAverage = 0;
@@ -79,7 +79,7 @@ namespace GUC.Server
                     if (nextInfoUpdates < DateTime.UtcNow.Ticks)
                     {
                         tickAverage /= tickCount;
-                        Log.Logger.log(String.Format("Tick rate info: {0}ms average, {1}ms max. Allocated RAM: {2:0.0}MB", tickAverage / TimeSpan.TicksPerMillisecond, tickMax / TimeSpan.TicksPerMillisecond, (double)Process.GetCurrentProcess().PrivateMemorySize64 / 1048576d));
+                        Log.Logger.print("Tick rate info: {0}ms average, {1}ms max. Allocated RAM: {2:0.0}MB", tickAverage / TimeSpan.TicksPerMillisecond, tickMax / TimeSpan.TicksPerMillisecond, (double)Process.GetCurrentProcess().PrivateMemorySize64 / 1048576d);
                         nextInfoUpdates = DateTime.UtcNow.Ticks + nextInfoUpdateTime;
                         tickMax = 0;
                         tickAverage = 0;
