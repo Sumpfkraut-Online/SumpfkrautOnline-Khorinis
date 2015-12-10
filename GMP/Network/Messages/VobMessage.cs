@@ -19,7 +19,7 @@ namespace GUC.Client.Network.Messages
         {
             uint id = stream.mReadUInt();
 
-            AbstractVob vob = World.GetVobByID(id);
+            Vob vob = World.GetVobByID(id);
             if (vob != null)
             {
                 Vec3f pos = stream.mReadVec();
@@ -63,7 +63,7 @@ namespace GUC.Client.Network.Messages
             stream.Write(Player.Hero.Position);
             stream.Write(Player.Hero.Direction);
 
-            AbstractVob vob;
+            Vob vob;
             stream.Write(Player.VobControlledList.Count);
             for (int i = 0; i < Player.VobControlledList.Count; i++)
             {

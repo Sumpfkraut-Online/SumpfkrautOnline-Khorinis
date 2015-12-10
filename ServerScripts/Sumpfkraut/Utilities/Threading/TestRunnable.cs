@@ -38,7 +38,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Utilities.Threading
 
             //Console.WriteLine("TestRunnable: " + DateTime.Now + " " + this.runOnce);
             Console.WriteLine("TestRunnable: " + day + " " + hour + " " + minute);
-            Network.Server.GetWorld("newworld").ChangeTime(day, hour, minute);
+            World.GetWorld("newworld").ChangeTime(day, hour, minute);
 
             //weatherStartTime.day = 0;
             //weatherStartTime.hour = 8;

@@ -18,7 +18,6 @@ namespace GUC.Server
         internal static Network.Server server = null;
         protected static Scripting.ScriptManager scriptManager = null;
 
-
         public static Scripting.ScriptManager ScriptManager { get { return scriptManager; } }
 
         static void loadServerConfig()
@@ -38,12 +37,6 @@ namespace GUC.Server
 
         static void initFolders()
         {
-            //if (!Directory.Exists("AvailableServerModules"))
-            //    Directory.CreateDirectory("AvailableServerModules");
-            //if (!Directory.Exists("ServerModules"))
-            //    Directory.CreateDirectory("ServerModules");
-            //if (!Directory.Exists("Modules"))
-            //    Directory.CreateDirectory("Modules");
             if (!Directory.Exists("Config"))
                 Directory.CreateDirectory("Config");
 
@@ -82,7 +75,7 @@ namespace GUC.Server
                 long tickAverage = 0;
                 long tickCount = 0;
                 long tickMax = 0;
-
+                
                 Stopwatch watch = new Stopwatch();
                 while (true)
                 {
@@ -116,11 +109,10 @@ namespace GUC.Server
                     }
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception e)
             {
-                Log.Logger.log(Log.Logger.LOG_ERROR, ex.Message);
-                Log.Logger.log(Log.Logger.LOG_ERROR, ex.Source);
-                Log.Logger.log(Log.Logger.LOG_ERROR, ex.StackTrace);
+                Log.Logger.logError(e.Source + "<br>" + e.Message + "<br>" + e.StackTrace);
+                Log.Logger.logError("InnerException: " + e.InnerException.Source + "<br>" + e.InnerException.Message);
             }
             Console.Read();
         }

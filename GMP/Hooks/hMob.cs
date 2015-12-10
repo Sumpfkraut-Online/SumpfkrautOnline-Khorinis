@@ -41,7 +41,7 @@ namespace GUC.Client.Hooks
             {
                 int address = Convert.ToInt32(message);
 
-                AbstractVob vob = null;
+                Vob vob = null;
                 if (World.vobAddr.TryGetValue(Program.Process.ReadInt(address), out vob) && vob is Mob)
                 {
                     mob = (Mob)vob;

@@ -7,58 +7,18 @@ using System.Text;
 using RakNet;
 using GUC.Enumeration;
 using GUC.Server.Network.Messages;
-using System.Diagnostics;
 using GUC.Network;
 using GUC.Server.WorldObjects;
-using System.Security.Cryptography;
+using GUC.Server.WorldObjects.Collections;
 
 namespace GUC.Server.Network
 {
-    delegate void MsgReader(PacketReader stream, Client client, NPC character);
+    delegate void MsgReader(PacketReader stream, Client client, NPC character, World world);
 
     public class Server
-    {   
-        // All player npcs on this server
-        internal static Dictionary<uint, NPC> sPlayerDict = new Dictionary<uint, NPC>();
-        public static NPC GetPlayer(uint ID) { NPC npc; sPlayerDict.TryGetValue(ID, out npc); return npc; }
-        public static IEnumerable<NPC> GetPlayers() { return sPlayerDict.Values; }
-
-        // All bot npcs on this server
-        internal static Dictionary<uint, NPC> sNpcDict = new Dictionary<uint, NPC>();
-        public static NPC GetNpc(uint ID) { NPC npc; sNpcDict.TryGetValue(ID, out npc); return npc; }
-        public static IEnumerable<NPC> GetNpcs() { return sNpcDict.Values; }
-
-        // All bot npcs & players on this server
-        internal static Dictionary<uint, NPC> sAllNpcsDict = new Dictionary<uint, NPC>();
-        public static NPC GetNpcOrPlayer(uint ID) { NPC npc; sAllNpcsDict.TryGetValue(ID, out npc); return npc; }
-        public static IEnumerable<NPC> GetNpcsAndPlayers() { return sAllNpcsDict.Values; }
-
-
-        // All items on this server
-        internal static Dictionary<uint, Item> sItemDict = new Dictionary<uint, Item>();
-        public static Item GetItem(uint ID) { Item item; sItemDict.TryGetValue(ID, out item); return item; }
-        public static IEnumerable<Item> GetItems() { return sItemDict.Values; }
-
-
-        // All vobs and mobs on this server
-        internal static Dictionary<uint, Vob> sVobDict = new Dictionary<uint, Vob>();
-        public static Vob GetVob(uint ID) { Vob vob; sVobDict.TryGetValue(ID, out vob); return vob; }
-        public static IEnumerable<Vob> GetVobs() { return sVobDict.Values; }
-
-
-        // All vobs which currently exist on the server
-        internal static Dictionary<uint, Vob> sAllVobsDict = new Dictionary<uint, Vob>();
-        public static Vob GetAnyVob(uint ID) { Vob vob; sAllVobsDict.TryGetValue(ID, out vob); return vob; }
-        public static IEnumerable<Vob> GetAllVobs() { return sAllVobsDict.Values; }
-
-
-        // All worlds which currently exist on the server
-        internal static Dictionary<string, World> sWorldDict = new Dictionary<string, World>();
-        public static World GetWorld(string worldName) { World world; sWorldDict.TryGetValue(worldName.ToUpper(), out world); return world; }
-        public static IEnumerable<World> GetWorlds() { return sWorldDict.Values; }
-
-
-
+    {
+        public readonly static VobCollection sVobs = new VobCollection();
+        public readonly static InstanceCollection sInstances = new InstanceCollection();
 
         public static IEnumerable<Client> GetClients() { return Program.server.clientDict.Values; }
         public static void DisconnectClient(Client client)
@@ -72,13 +32,12 @@ namespace GUC.Server.Network
         }
 
         public static Action<PacketReader,Client, PacketWriter> OnLoginMessage;
-        static void HandleLoginMsg(PacketReader stream, Client client, NPC character)
+        static void HandleLoginMsg(PacketReader stream, Client client, NPC character, World world)
         {
             Log.Logger.log("LOGINMESSAGE");
             if (OnLoginMessage != null)
             {
-                
-                OnLoginMessage(stream, client, Program.server.SetupStream(NetworkID.LoginMessage));
+                OnLoginMessage(stream, client, Program.server.SetupStream(NetworkID.MenuMessage));
             }
         }
 
@@ -111,7 +70,7 @@ namespace GUC.Server.Network
             MessageListener = new Dictionary<NetworkID, MsgReader>();
 
             MessageListener.Add(NetworkID.ConnectionMessage, ConnectionMessage.Read);
-            MessageListener.Add(NetworkID.LoginMessage, HandleLoginMsg);
+            MessageListener.Add(NetworkID.MenuMessage, HandleLoginMsg);
             MessageListener.Add(NetworkID.PlayerControlMessage, NPC.ReadControl);
 
             /*MessageListener.Add((byte)NetworkID.PlayerPickUpItemMessage, NPC.ReadPickUpItem);
@@ -237,7 +196,7 @@ namespace GUC.Server.Network
                                 {
                                     if (msgID == NetworkID.ConnectionMessage) //sends mac & drive string, should always be sent first
                                     {
-                                        ConnectionMessage.Read(pktReader, client, null);
+                                        ConnectionMessage.Read(pktReader, client, null, null);
                                     }
                                     else
                                     {
@@ -249,13 +208,13 @@ namespace GUC.Server.Network
                                 {
                                     if (client.MainChar == null) // not ingame yet
                                     {
-                                        if (msgID == NetworkID.LoginMessage) // login menu message
+                                        if (msgID == NetworkID.MenuMessage) // login menu message
                                         {
-                                            HandleLoginMsg(pktReader, client, null);
+                                            HandleLoginMsg(pktReader, client, null, null);
                                         }
                                         else if (msgID == NetworkID.PlayerControlMessage && client.Character != null) // confirmation to take control of a npc / start in the world
                                         {
-                                            NPC.ReadControl(pktReader, client, client.Character);
+                                            NPC.ReadControl(pktReader, client, client.Character, client.Character.World);
                                         }
                                         else
                                         {
@@ -280,7 +239,7 @@ namespace GUC.Server.Network
                                             }
                                             else
                                             {
-                                                readFunc(pktReader, client, client.Character);
+                                                readFunc(pktReader, client, client.Character, client.Character.World);
                                             }
                                         }
                                     }

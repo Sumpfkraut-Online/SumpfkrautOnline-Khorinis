@@ -13,7 +13,7 @@ using GUC.Client.Hooks;
 
 namespace GUC.Client.WorldObjects
 {
-    class NPC : AbstractVob
+    class NPC : Vob
     {
         public const long PositionUpdateTime = 1200000; //120ms
         public const long DirectionUpdateTime = PositionUpdateTime + 100000;
@@ -406,7 +406,7 @@ namespace GUC.Client.WorldObjects
                 zCEventMessage activeMsg = gVob.GetEM(0).GetActiveMsg();
                 if (activeMsg.Address == 0)
                 {
-                    AbstractVob target = World.GetVobByID(cmdTargetVob);
+                    Vob target = World.GetVobByID(cmdTargetVob);
                     if (target != null && target.Position.GetDistance(this.Position) > cmdTargetRange)
                     {
                         oCMsgMovement msg = oCMsgMovement.Create(Program.Process, oCMsgMovement.SubTypes.GotoVob, target.gVob);

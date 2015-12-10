@@ -7,8 +7,6 @@ namespace GUC.Enumeration
 {
     public enum VobType : byte
     {
-        None,
-
         Vob,
         NPC,
         Item,
@@ -20,6 +18,8 @@ namespace GUC.Enumeration
         MobSwitch,
         MobWheel,
         MobContainer,
-        MobDoor
+        MobDoor,
+
+        Maximum
     }
 }

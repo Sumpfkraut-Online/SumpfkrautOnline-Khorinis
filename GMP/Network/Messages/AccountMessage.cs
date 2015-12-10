@@ -27,7 +27,7 @@ namespace GUC.Client.Network.Messages
 
         public static void Login()
         {
-            PacketWriter stream = Program.client.SetupSendStream(NetworkID.LoginMessage);
+            PacketWriter stream = Program.client.SetupSendStream(NetworkID.MenuMessage);
             stream.Write((byte)LoginType.AccountLogin);
             stream.Write(StartupState.clientOptions.name);
             stream.Write(StartupState.clientOptions.password);
@@ -36,7 +36,7 @@ namespace GUC.Client.Network.Messages
 
         public static void Register()
         {
-            PacketWriter stream = Program.client.SetupSendStream(NetworkID.LoginMessage);
+            PacketWriter stream = Program.client.SetupSendStream(NetworkID.MenuMessage);
             stream.Write((byte)LoginType.AccountCreation);
             stream.Write(StartupState.clientOptions.name);
             stream.Write(StartupState.clientOptions.password);
@@ -45,7 +45,7 @@ namespace GUC.Client.Network.Messages
 
         public static void CreateNewCharacter(AccCharInfo ci)
         {
-            PacketWriter stream = Program.client.SetupSendStream(NetworkID.LoginMessage);
+            PacketWriter stream = Program.client.SetupSendStream(NetworkID.MenuMessage);
             stream.Write((byte)LoginType.CharacterCreation);
             ci.Write(stream);
             Program.client.SendStream(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE);
@@ -55,7 +55,7 @@ namespace GUC.Client.Network.Messages
         {
             if (slotNum >= 0 && slotNum < AccCharInfo.Max_Slots)
             {
-                PacketWriter stream = Program.client.SetupSendStream(NetworkID.LoginMessage);
+                PacketWriter stream = Program.client.SetupSendStream(NetworkID.MenuMessage);
                 stream.Write((byte)LoginType.CharacterLogin);
                 stream.Write((byte)slotNum);
                 Program.client.SendStream(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE);

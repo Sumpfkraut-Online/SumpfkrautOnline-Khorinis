@@ -158,15 +158,15 @@ namespace GUC.Server.Scripting
                 {
                     listener.OnServerInit();
                 }
-                catch (Exception ex2)
+                catch (Exception e2)
                 {
-                    Log.Logger.log(Log.Logger.LOG_ERROR, ex2.Source + "<br>" + ex2.Message + "<br>" + ex2.StackTrace);
-
+                    Log.Logger.logError(e2.Source + "<br>" + e2.Message + "<br>" + e2.StackTrace);
+                    Log.Logger.logError("InnerException: " + e2.InnerException.Source + "<br>" + e2.InnerException.Message);
                 }
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                Log.Logger.log(Log.Logger.LOG_ERROR, "GUC.Server.Scripts.Startup-Class could not be found!" + "<br>" + ex.Source + "<br>" + ex.Message + "<br>" + ex.StackTrace);
+                Log.Logger.logError("GUC.Server.Scripts.Startup-Class could not be found!" + "<br>" + e.Source + "<br>" + e.Message + "<br>" + e.StackTrace);
             }
             Log.Logger.log(Log.Logger.LOG_INFO, "GUC Server - Initalisation Complete GUC-Version: " + GUC.Options.Constants.VERSION);
             m_Startuped = true;

@@ -10,7 +10,7 @@ using GUC.Types;
 
 namespace GUC.Client.WorldObjects
 {
-    class Item : AbstractVob
+    class Item : Vob
     {
         static Item fists = null;
         public static Item Fists

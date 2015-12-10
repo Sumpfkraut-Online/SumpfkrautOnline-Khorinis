@@ -5,21 +5,22 @@ using System.Text;
 using RakNet;
 using GUC.Network;
 using GUC.Server.Network;
-using GUC.Server.Network.Messages;
 using GUC.Enumeration;
-using GUC.Types;
+using GUC.Server.WorldObjects.Collections;
+using GUC.Server.WorldObjects.Instances;
 
 namespace GUC.Server.WorldObjects
 {
     public class Item : Vob
     {
+        new public static readonly VobDictionary Vobs = Network.Server.sVobs.GetDict(ItemInstance.sVobType);
+
         public static readonly Item Fists = CreateFists();
         static Item CreateFists()
         {
             Item fists = new Item(ItemInstance.FistInstance, null);
             fists.ID = 0;
             fists.Slot = 0;
-            Network.Server.sAllVobsDict.Remove(0);
             return fists;
         }
 
@@ -59,16 +60,13 @@ namespace GUC.Server.WorldObjects
         {
         }
 
-        public override void Dispose()
+        public override void Delete()
         {
-            base.Dispose();
-
             if (Owner != null)
             {
                 Owner.RemoveItem(this);
             }
-
-            Server.Network.Server.sItemDict.Remove(this.ID);
+            base.Delete();
         }
 
         new public static Action<Item, PacketWriter> OnWriteSpawn;

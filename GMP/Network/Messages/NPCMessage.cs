@@ -99,7 +99,7 @@ namespace GUC.Client.Network.Messages
                 PacketWriter stream = Program.client.SetupSendStream(NetworkID.NPCTargetStateMessage);
                 stream.Write((byte)state);
 
-                AbstractVob target;
+                Vob target;
                 World.vobAddr.TryGetValue(Player.Hero.gNpc.GetFocusNpc().Address, out target);
                 if (target == null)
                 {

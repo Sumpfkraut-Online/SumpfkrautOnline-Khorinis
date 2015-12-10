@@ -11,7 +11,7 @@ namespace GUC.Server.Network.Messages
 {
     static class ConnectionMessage
     {
-        public static void Read(PacketReader stream, Client client, NPC character)
+        public static void Read(PacketReader stream, Client client, NPC character, World world)
         {
             String driveString = stream.ReadString();
             String macString = stream.ReadString();
@@ -27,7 +27,7 @@ namespace GUC.Server.Network.Messages
             if (client.instanceNeeded)
             {
                 PacketWriter stream = Program.server.SetupStream(NetworkID.ConnectionMessage);
-                stream.Write(InstanceManager.instanceData, 0, InstanceManager.instanceData.Length);
+                stream.Write(Server.sInstances.Data, 0, Server.sInstances.Data.Length);
                 client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'G');
             }
         }

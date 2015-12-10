@@ -140,7 +140,26 @@
     <Compile Include="Network\Messages\WorldMessage.cs" />
     <Compile Include="States\AbstractState.cs" />
     <Compile Include="WorldObjects\AbstractInstance.cs" />
+    <Compile Include="WorldObjects\Collections\InstanceCollection.cs" />
+    <Compile Include="WorldObjects\Collections\InstanceDictionary.cs" />
+    <Compile Include="WorldObjects\Collections\IVobObj.cs" />
+    <Compile Include="WorldObjects\Collections\VobCollection.cs" />
+    <Compile Include="WorldObjects\Collections\VobDictionary.cs" />
+    <Compile Include="WorldObjects\Collections\VobObjCollection.cs" />
+    <Compile Include="WorldObjects\Collections\VobObjDictionary.cs" />
     <Compile Include="WorldObjects\InstanceManager.cs" />
+    <Compile Include="WorldObjects\Instances\ItemInstance.cs" />
+    <Compile Include="WorldObjects\Instances\MobContainerInstance.cs" />
+    <Compile Include="WorldObjects\Instances\MobDoorInstance.cs" />
+    <Compile Include="WorldObjects\Instances\MobFireInstance.cs" />
+    <Compile Include="WorldObjects\Instances\MobInstance.cs" />
+    <Compile Include="WorldObjects\Instances\MobInterInstance.cs" />
+    <Compile Include="WorldObjects\Instances\MobLadderInstance.cs" />
+    <Compile Include="WorldObjects\Instances\MobLockableInstance.cs" />
+    <Compile Include="WorldObjects\Instances\MobSwitchInstance.cs" />
+    <Compile Include="WorldObjects\Instances\MobWheelInstance.cs" />
+    <Compile Include="WorldObjects\Instances\NPCInstance.cs" />
+    <Compile Include="WorldObjects\Instances\VobInstance.cs" />
     <Compile Include="WorldObjects\Item.cs" />
     <Compile Include="WorldObjects\ItemInstance.cs" />
     <Compile Include="WorldObjects\Mob.cs" />
@@ -148,7 +167,7 @@
     <Compile Include="WorldObjects\NPC.cs" />
     <Compile Include="WorldObjects\NPCInstance.cs" />
     <Compile Include="WorldObjects\Player.cs" />
-    <Compile Include="WorldObjects\AbstractVob.cs" />
+    <Compile Include="WorldObjects\Vob.cs" />
     <Compile Include="WorldObjects\World.cs" />
   </ItemGroup>
   <ItemGroup>

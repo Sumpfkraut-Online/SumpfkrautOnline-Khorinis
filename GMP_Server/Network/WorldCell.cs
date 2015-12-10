@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Server.WorldObjects;
-using RakNet;
-using GUC.Enumeration;
-using System.Collections;
+using GUC.Server.WorldObjects.Collections;
 
 namespace GUC.Server.Network
 {
@@ -15,62 +13,28 @@ namespace GUC.Server.Network
 
         public World world;
         public int x, z;
-        public List<NPC> PlayerList;
-        public List<NPC> NPCList;
-        public List<Item> ItemList;
-        public List<Vob> VobList;
+
+        public readonly VobCollection Vobs = new VobCollection();
 
         public WorldCell(World world, int x, int z)
         {
             this.world = world;
-            PlayerList = new List<NPC>();
-            NPCList = new List<NPC>();
-            ItemList = new List<Item>();
-            VobList = new List<Vob>();
             this.x = x;
             this.z = z;
         }
 
         public void AddVob(Vob vob)
         {
-            if (vob is NPC)
-            {
-                if (((NPC)vob).isPlayer)
-                    PlayerList.Add((NPC)vob);
-                else
-                    NPCList.Add((NPC)vob);
-            }
-            else if (vob is Item)
-            {
-                ItemList.Add((Item)vob);
-            }
-            else
-            {
-                VobList.Add(vob);
-            }
+            Vobs.Add(vob);
             vob.cell = this;
         }
 
         public void RemoveVob(Vob vob)
         {
-            if (vob is NPC)
-            {
-                if (((NPC)vob).isPlayer)
-                    PlayerList.Remove((NPC)vob);
-                else
-                    NPCList.Remove((NPC)vob);
-            }
-            else if (vob is Item)
-            {
-                ItemList.Remove((Item)vob);
-            }
-            else
-            {
-                VobList.Remove(vob);
-            }
+            Vobs.Remove(vob);
             vob.cell = null;
 
-            if (PlayerList.Count == 0 && NPCList.Count == 0 && ItemList.Count == 0 && VobList.Count == 0)
+            if (Vobs.GetCount() == 0)
             {
                 world.netCells[x].Remove(z);
                 if (world.netCells[x].Count == 0)
@@ -87,14 +51,10 @@ namespace GUC.Server.Network
 
         public IEnumerable<Client> GetClients(Client exclude)
         {
-            Client c;
-            for (int i = 0; i < PlayerList.Count; i++)
+            foreach(NPC player in Vobs.Players.GetAll())
             {
-                c = PlayerList[i].client;
-                if (c != exclude)
-                    yield return c;
+                yield return player.client;
             }
-            yield break;
         }
 
         public IEnumerable<Client> SurroundingClients()
@@ -104,7 +64,6 @@ namespace GUC.Server.Network
 
         public IEnumerable<Client> SurroundingClients(Client exclude)
         {
-            Client next;
             for (int i = x - 1; i <= x + 1; i++)
             {
                 Dictionary<int, WorldCell> row;
@@ -117,15 +76,13 @@ namespace GUC.Server.Network
                     row.TryGetValue(j, out c);
                     if (c == null) continue;
 
-                    for (int p = 0; p < c.PlayerList.Count; p++)
+                    foreach (NPC player in Vobs.Players.GetAll())
                     {
-                        next = c.PlayerList[p].client;
-                        if (next != exclude)
-                            yield return next;
+                        if (player.client != exclude)
+                            yield return player.client;
                     }
                 }
             }
-            yield break;
         }
 
         public IEnumerable<NPC> SurroundingPlayers()
@@ -148,15 +105,13 @@ namespace GUC.Server.Network
                     row.TryGetValue(j, out c);
                     if (c == null) continue;
 
-                    for (int p = 0; p < c.PlayerList.Count; p++)
+                    foreach (NPC player in Vobs.Players.GetAll())
                     {
-                        next = c.PlayerList[p];
-                        if (next != exclude)
-                            yield return next;
+                        if (player != exclude)
+                            yield return player;
                     }
                 }
             }
-            yield break;
         }
 
         public IEnumerable<WorldCell> SurroundingCells()
@@ -176,23 +131,6 @@ namespace GUC.Server.Network
                     yield return c;
                 }
             }
-            yield break;
-        }
-
-        public IEnumerable<Vob> AllVobs()
-        {
-            for (int i = 0; i < PlayerList.Count; i++)
-                yield return PlayerList[i];
-
-            for (int i = 0; i < NPCList.Count; i++)
-                yield return NPCList[i];
-
-            for (int i = 0; i < ItemList.Count; i++)
-                yield return ItemList[i];
-
-            for (int i = 0; i < VobList.Count; i++)
-                yield return VobList[i];
-
             yield break;
         }
     }

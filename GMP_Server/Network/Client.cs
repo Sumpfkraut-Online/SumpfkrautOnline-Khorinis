@@ -11,7 +11,8 @@ namespace GUC.Server.Network
 {
     public class Client
     {
-        public int AccountID = -1; //FIXME
+        public int AccountID = -1; //FIXME ?
+        public byte Rank = 0;
 
         //Networking
         internal RakNetGUID guid;
@@ -56,17 +57,14 @@ namespace GUC.Server.Network
             //set old character to NPC
             if (Character != null)
             {
-                Network.Server.sPlayerDict.Remove(Character.ID);
-                Network.Server.sNpcDict.Add(Character.ID, Character);
+                Server.sVobs.Players.Remove(Character);
                 if (Character.World != null)
                 {
-                    Character.World.playerDict.Remove(npc.ID);
-                    Character.World.npcDict.Add(Character.ID, Character);
+                    Character.World.Vobs.Players.Remove(npc);
                 }
                 if (Character.cell != null)
                 {
-                    Character.cell.PlayerList.Remove(npc);
-                    Character.cell.NPCList.Add(Character);
+                    Character.cell.Vobs.Players.Remove(npc);
                 }
                 Character.client = null;
             }
@@ -74,20 +72,17 @@ namespace GUC.Server.Network
             //npc is already in the world, set to player
             if (npc.IsSpawned)
             {
-                npc.World.npcDict.Remove(npc.ID);
-                npc.World.playerDict.Add(npc.ID, npc);
+                npc.World.Vobs.Players.Add( npc);
                 if (npc.cell != null)
                 {
-                    npc.cell.NPCList.Remove(npc);
-                    npc.cell.PlayerList.Add(npc);
+                    npc.cell.Vobs.Players.Add(npc);
                 }
 
                 //if (npc.VobController != null)
                 //    npc.VobController.RemoveControlledVob(npc);
             }
-
-            Network.Server.sNpcDict.Remove(npc.ID);
-            Network.Server.sPlayerDict.Add(npc.ID, npc);
+            
+            Server.sVobs.Players.Add(npc);
 
             npc.World = world;
             npc.client = this;
@@ -113,7 +108,7 @@ namespace GUC.Server.Network
             }
             isValid = true;
 
-            instanceNeeded = !instanceTableHash.SequenceEqual(InstanceManager.instanceHash);
+            instanceNeeded = !instanceTableHash.SequenceEqual(Server.sInstances.Hash);
         }
 
         public void Disconnect()
@@ -125,7 +120,7 @@ namespace GUC.Server.Network
         {
             if (MainChar != null)
             {
-                MainChar.Dispose();
+                MainChar.Delete();
                 MainChar = null;
             }
 

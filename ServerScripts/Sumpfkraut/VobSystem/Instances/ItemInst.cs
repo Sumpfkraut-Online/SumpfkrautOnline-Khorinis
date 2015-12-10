@@ -134,7 +134,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
             Item vob = (Item) this.vob;
             if (vob != null)
             {
-                vob.Dispose();
+                vob.Delete();
                 vob = null;
             } 
         }

@@ -7,8 +7,6 @@ namespace GUC.Types
 {
     public struct Vec3f
     {
-        public static Vec3f Null { get { return new Vec3f(0, 0, 0); } }
-
         public float X;
         public float Y;
         public float Z;
@@ -149,6 +147,11 @@ namespace GUC.Types
             return new Vec3f(data);
         }
 
+        public static implicit operator Vec3f(float value)
+        {
+            return new Vec3f(value, value, value);
+        }
+
         public override string ToString()
         {
             return String.Format("Vec3f({0} / {1} / {2})", this.X, this.Y, this.Z);
@@ -173,6 +176,16 @@ namespace GUC.Types
                 return true;
             else
                 return false;
+        }
+
+        public static bool operator ==(Vec3f a, float b)
+        {
+            return a.GetLength() == b;
+        }
+
+        public static bool operator !=(Vec3f a, float b)
+        {
+            return a.GetLength() != b;
         }
 
         public static bool operator ==(Vec3f a, Vec3f b)

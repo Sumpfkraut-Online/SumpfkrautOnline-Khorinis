@@ -105,7 +105,7 @@ namespace GUC.Client.Hooks
                 switch (msg.SubType)
                 {
                     case oCMobMsg.SubTypes.EV_StartInteraction: //activated a mob
-                        AbstractVob vob = null;
+                        Vob vob = null;
                         if (World.vobAddr.TryGetValue(EM.OwnerAddress, out vob) && vob is MobInter)
                         {
                             MobMessage.WriteUseMob((MobInter)vob);

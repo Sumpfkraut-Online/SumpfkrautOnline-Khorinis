@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Server.WorldObjects;
-using GUC.Server.WorldObjects.Mobs;
+using GUC.Server.WorldObjects.Instances;
 
 namespace GUC.Server.Scripts.Instances
 {
@@ -15,18 +14,18 @@ namespace GUC.Server.Scripts.Instances
             NPCInstance npc = new NPCInstance(1, "_MALE", null);
             npc.Visual = "HUMANS";
             npc.BodyMesh = "HUM_BODY_NAKED0";
-            NPCInstance.Table.Add(npc);
+            npc.Create();
 
             npc = new NPCInstance(2, "_FEMALE", null);
             npc.Visual = "HUMANS";
             npc.BodyMesh = "HUM_BODY_BABE0";
-            NPCInstance.Table.Add(npc);
+            npc.Create();
 
             npc = new NPCInstance("Scavenger", null);
             npc.Name = "Scavenger";
             npc.Visual = "Scavenger";
             npc.BodyMesh = "Sca_Body";
-            NPCInstance.Table.Add(npc);
+            npc.Create();
 
             npc = new NPCInstance("Mud", null);
             npc.Name = "Mud";
@@ -38,9 +37,9 @@ namespace GUC.Server.Scripts.Instances
             npc.BodyHeight = 100;
             npc.BodyWidth = 100;
             npc.Fatness = 20;
-            NPCInstance.Table.Add(npc);
+            npc.Create();
 
-            NPCInstance.Table.NetUpdate();
+            
 
 
 
@@ -61,39 +60,39 @@ namespace GUC.Server.Scripts.Instances
 
             item.Text[2] = "Ein frischer Apfel";
             item.Text[3] = "knackig und saftig";
-            ItemInstance.Table.Add(item);
+            item.Create();
 
 
-            
+
             item = new ItemInstance("itfo_bread", null);
             item.Name = "Brot";
             item.Visual = "ITFO_BREAD.3DS";
-            ItemInstance.Table.Add(item);
+            item.Create();
 
             item = new ItemInstance("itfo_cheese", null);
             item.Name = "Käse";
             item.Visual = "ITFO_CHEESE.3DS";
-            ItemInstance.Table.Add(item);
+            item.Create();
 
             item = new ItemInstance("itfo_bacon", null);
             item.Name = "Schinken";
             item.Visual = "ITFO_BACON.3DS";
-            ItemInstance.Table.Add(item);
+            item.Create();
 
             item = new ItemInstance("itfo_fish", null);
             item.Name = "Fisch";
             item.Visual = "ITFO_FISH.3DS";
-            ItemInstance.Table.Add(item);
+            item.Create();
 
             item = new ItemInstance("itfo_stew", null);
             item.Name = "Eintopf";
             item.Visual = "ITFO_STEW.3DS";
-            ItemInstance.Table.Add(item);
+            item.Create();
 
             item = new ItemInstance("itfo_beer", null);
             item.Name = "Bier";
             item.Visual = "ITFO_BEER.3DS";
-            ItemInstance.Table.Add(item);
+            item.Create();
 
             item = new ItemInstance("itmw_wolfszahn", null);
             item.Name = "Wolfszahn";
@@ -103,7 +102,7 @@ namespace GUC.Server.Scripts.Instances
             item.Text[1] = "Schaden:"; item.Count[0] = 25;
             item.Text[2] = "Benötigte Stärke:"; item.Count[1] = 20;
             item.Text[3] = "Einhand";
-            ItemInstance.Table.Add(item);
+            item.Create();
 
             item = new ItemInstance("ITAR_BDT_M", null);
             item.Name = "Mittlere Banditenrüstung";
@@ -111,27 +110,25 @@ namespace GUC.Server.Scripts.Instances
             item.Material = Enumeration.ItemMaterial.Leather;
             item.Visual = "ItAr_Bdt_M.3ds";
             item.VisualChange = "Armor_Bdt_M.asc";
-            ItemInstance.Table.Add(item);
-
-            ItemInstance.Table.NetUpdate();
+            item.Create();
 
 
 
             MobInterInstance mobInter = new MobInterInstance("Forge", null);
             mobInter.Visual = "BSFIRE_OC.MDS";
             mobInter.FocusName = "Schmiedefeuer";
-            MobInterInstance.Table.Add(mobInter);
+            mobInter.Create();
 
             mobInter = new MobInterInstance("stool", null);
             mobInter.Visual = "CHAIR_NW_NORMAL_01.ASC";
             mobInter.FocusName = "Stuhl";
-            MobInterInstance.Table.Add(mobInter);
+            mobInter.Create();
 
             MobInstance mob = new MobInstance("latern", null);
             mob.Visual = "FIREPLACE_NW_LAMP_01.ASC";
-            MobInstance.Table.Add(mob);
+            mob.Create();
 
-            MobInstance.Table.NetUpdate();
+            Network.Server.sInstances.NetUpdate();
         }
 
         static Random random = new Random();

@@ -7,7 +7,7 @@ using Gothic.zTypes;
 
 namespace GUC.Client.WorldObjects
 {
-    public class Vob : AbstractVob
+   /* public class Vob : Vob
     {
         public MobInstance Instance { get; protected set; }
 
@@ -205,5 +205,5 @@ namespace GUC.Client.WorldObjects
             }
             SetProperties();
         }
-    }
+    }*/
 }

@@ -7,55 +7,24 @@ using GUC.Server.Network;
 using RakNet;
 using GUC.Network;
 using GUC.Server.Network.Messages;
-using GUC.Types;
-using GUC.Server.Scripting;
-using GUC.Server.WorldObjects.Mobs;
+using GUC.Server.WorldObjects.Collections;
+using GUC.Server.WorldObjects.Instances;
 
 namespace GUC.Server.WorldObjects
 {
     public class NPC : Vob
     {
+        new public static readonly Collections.VobDictionary Vobs = Network.Server.sVobs.GetDict(NPCInstance.sVobType);
+
         new public NPCInstance Instance { get; protected set; }
 
         #region Appearance
 
         public string Name { get { return Instance.Name; } }
-
-        protected string customName = "";
-        /// <summary>Set this for a different name from the instance-name.</summary>
-        public string CustomName
-        {
-            get { return customName; }
-            set
-            {
-                if (value == null || value == Instance.Name)
-                {
-                    customName = "";
-                }
-                else
-                {
-                    customName = value;
-                }
-            }
-        }
-
         public string BodyMesh { get { return Instance.BodyMesh; } }
-
-        /// <summary>This field will be only used with the "_Male"- or "_Female"-Instance.</summary>
-        public HumBodyTex HumanBodyTex = HumBodyTex.G1Hero;
-        /// <summary>This field will be only used with the "_Male"- or "_Female"-Instance.</summary>
-        public HumHeadMesh HumanHeadMesh = HumHeadMesh.HUM_HEAD_PONY;
-        /// <summary>This field will be only used with the "_Male"- or "_Female"-Instance.</summary>
-        public HumHeadTex HumanHeadTex = HumHeadTex.Face_N_Player;
-        /// <summary>This field will be only used with the "_Male"- or "_Female"-Instance.</summary>
-        public HumVoice HumanVoice = HumVoice.Hero;
-
-        /// <summary>Body height in percent. (0% ... 255%)</summary>
-        public byte BodyHeight;
-        /// <summary>Body width in percent. (0% ... 255%)</summary>
-        public byte BodyWidth;
-        /// <summary>Fatness in percent. (-32768% ... +32767%)</summary>
-        public short BodyFatness;
+        public byte BodyTex { get { return Instance.BodyTex; } }
+        public string HeadMesh { get { return Instance.HeadMesh; } }
+        public byte HeadTex { get { return Instance.HeadTex; } }
 
         #endregion
 
@@ -80,39 +49,21 @@ namespace GUC.Server.WorldObjects
 
         public NPC(NPCInstance instance, object scriptObject) : base(instance, scriptObject)
         {
-            this.BodyHeight = instance.BodyHeight;
-            this.BodyHeight = instance.BodyHeight;
-            this.BodyWidth = instance.BodyWidth;
-            this.BodyFatness = instance.Fatness;
-
             this.HealthMax = instance.HealthMax;
             this.Health = instance.HealthMax;
 
             this.State = NPCState.Stand;
-
-            Network.Server.sAllNpcsDict.Add(this.ID, this);
-            Network.Server.sNpcDict.Add(this.ID, this);
         }
 
-        public override void Dispose()
+        public override void Delete()
         {
-            base.Dispose();
-
             foreach (Item item in this.GetItems())
             {
                 item.Owner = null; //so no messages are sent
-                item.Dispose();
+                item.Delete();
             }
-
-            Network.Server.sAllNpcsDict.Remove(this.ID);
-            if (this.isPlayer)
-            {
-                Network.Server.sPlayerDict.Remove(this.ID);
-            }
-            else
-            {
-                Network.Server.sNpcDict.Remove(this.ID);
-            }
+            
+            base.Delete();
         }
 
         #region Networking
@@ -127,7 +78,7 @@ namespace GUC.Server.WorldObjects
 
             uint id = stream.ReadUInt();
 
-            Vob vob = character.World.GetVob(id);
+            Vob vob = character.World.Vobs.Get(id);
             if (vob != null && vob is MobInter)
             {
                 CmdOnUseMob(character, (MobInter)vob);
@@ -162,7 +113,7 @@ namespace GUC.Server.WorldObjects
         }
 
         public static Action<NPC, NPCState> CmdOnMove;
-        internal static void ReadCmdMove(PacketReader stream, Client client, NPC character)
+        internal static void ReadCmdMove(PacketReader stream, Client client, NPC character, World world)
         {
             if (CmdOnMove == null)
                 return;
@@ -170,7 +121,7 @@ namespace GUC.Server.WorldObjects
             uint id = stream.ReadUInt();
             NPCState state = (NPCState)stream.ReadByte();
 
-            NPC npc = character.World.GetNpcOrPlayer(id);
+            NPC npc = (NPC)world.Vobs.Get(VobType.NPC, id);
             if (npc != null && (npc == character || (client.VobControlledList.Contains(npc) && state <= NPCState.MoveBackward))) //is it a controlled NPC?
             {
                 CmdOnMove(npc, state);
@@ -178,14 +129,14 @@ namespace GUC.Server.WorldObjects
         }
 
         public static Action<NPC> CmdOnJump;
-        internal static void ReadCmdJump(PacketReader stream, Client client, NPC character)
+        internal static void ReadCmdJump(PacketReader stream, Client client, NPC character, World world)
         {
             if (CmdOnJump == null)
                 return;
 
             uint id = stream.ReadUInt();
 
-            NPC npc = character.World.GetNpcOrPlayer(id);
+            NPC npc = (NPC)world.Vobs.Get(VobType.NPC, id);
             if (npc != null && (npc == character || client.VobControlledList.Contains(npc))) //is it a controlled NPC?
             {
                 CmdOnJump(npc);
@@ -193,7 +144,7 @@ namespace GUC.Server.WorldObjects
         }
         
         public static Action<NPC, Item> CmdOnDrawItem;
-        internal static void ReadCmdDrawItem(PacketReader stream, Client client, NPC character)
+        internal static void ReadCmdDrawItem(PacketReader stream, Client client, NPC character, World world)
         {
             if (CmdOnDrawItem == null)
                 return;
@@ -205,7 +156,7 @@ namespace GUC.Server.WorldObjects
         }
 
         public static Action<NPC> CmdOnUndrawItem;
-        internal static void ReadCmdUndrawItem(PacketReader stream, Client client, NPC character)
+        internal static void ReadCmdUndrawItem(PacketReader stream, Client client, NPC character, World world)
         {
             if (CmdOnUndrawItem == null)
                 return;
@@ -217,7 +168,7 @@ namespace GUC.Server.WorldObjects
         }
         
         public static Action<NPC, NPC, NPCState> CmdOnTargetMove;
-        internal static void ReadCmdTargetMove(PacketReader stream, Client client, NPC character)
+        internal static void ReadCmdTargetMove(PacketReader stream, Client client, NPC character, World world)
         {
             if (CmdOnTargetMove == null)
                 return;
@@ -225,19 +176,19 @@ namespace GUC.Server.WorldObjects
             uint targetid = stream.ReadUInt();
             NPCState state = (NPCState)stream.ReadByte();
 
-            NPC target = character.World.GetNpcOrPlayer(targetid);
+            NPC target = (NPC)world.Vobs.Get(VobType.NPC, targetid);
             CmdOnTargetMove(character, target, state);
         }
 
         public static Action<NPC, Item> CmdOnPickup;
-        internal static void ReadCmdPickupItem(PacketReader stream, Client client, NPC character)
+        internal static void ReadCmdPickupItem(PacketReader stream, Client client, NPC character, World world)
         {
             if (CmdOnPickup == null)
                 return;
 
             uint targetid = stream.ReadUInt();
 
-            Item item = character.World.GetItem(targetid);
+            Item item = (Item)world.Vobs.Get(VobType.Item, targetid);
             if (item != null)
             {
                 CmdOnPickup(character, item);
@@ -265,20 +216,7 @@ namespace GUC.Server.WorldObjects
         internal override void WriteSpawn(PacketWriter stream)
         {
             base.WriteSpawn(stream);
-
-            if (Instance.ID <= 2)
-            {
-                stream.Write((byte)HumanBodyTex);
-                stream.Write((byte)HumanHeadMesh);
-                stream.Write((byte)HumanHeadTex);
-                stream.Write((byte)HumanVoice);
-            }
-            stream.Write(BodyHeight);
-            stream.Write(BodyWidth);
-            stream.Write(BodyFatness);
-
-            stream.Write(CustomName);
-
+            
             stream.Write(HealthMax);
             stream.Write(Health);
 
@@ -333,7 +271,7 @@ namespace GUC.Server.WorldObjects
         }
 
         public static Action<NPC> OnEnterWorld;
-        internal static void ReadControl(PacketReader stream, Client client, NPC character)
+        internal static void ReadControl(PacketReader stream, Client client, NPC character, World world)
         {
             if (client.MainChar == null) // coming from the log-in menus, first spawn
             {
@@ -347,7 +285,7 @@ namespace GUC.Server.WorldObjects
             if (!character.IsSpawned)
             {
                 character.WriteSpawnMessage(new Client[1] { client }); // to self
-                client.Character.Spawn(character.World);
+                client.Character.Spawn(world);
             }
         }
 

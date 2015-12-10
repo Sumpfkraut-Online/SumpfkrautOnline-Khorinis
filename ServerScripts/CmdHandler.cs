@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Server.WorldObjects;
-using GUC.Server.WorldObjects.Mobs;
 using GUC.Types;
 using GUC.Enumeration;
 

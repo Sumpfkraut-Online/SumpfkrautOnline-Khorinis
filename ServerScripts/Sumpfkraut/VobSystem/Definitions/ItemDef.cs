@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Enumeration;
-using GUC.Server.WorldObjects;
+using GUC.Server.WorldObjects.Instances;
 using GUC.Server.Scripts.Sumpfkraut.Database;
 
 namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions

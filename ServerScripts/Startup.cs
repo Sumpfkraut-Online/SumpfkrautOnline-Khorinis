@@ -34,7 +34,7 @@ namespace GUC.Server.Scripts
 
             CmdHandler.Init();
 
-            World.Create("newworld", "newworld\\newworld.zen", null);
+            new World("newworld", "newworld\\newworld.zen", null).Create();
             
             Logger.log(Logger.LogLevel.INFO, "###################### End Initalise ######################");
 		}

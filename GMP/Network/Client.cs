@@ -37,7 +37,7 @@ namespace GUC.Client.Network
         {
             client = RakPeer.GetInstance();
 
-            messageListener.Add(NetworkID.LoginMessage, AccountMessage.GetCharList);
+            messageListener.Add(NetworkID.MenuMessage, AccountMessage.GetCharList);
             messageListener.Add(NetworkID.ConnectionMessage, ConnectionMessage.Read);
             messageListener.Add(NetworkID.PlayerControlMessage, PlayerMessage.ReadControl);
             /*

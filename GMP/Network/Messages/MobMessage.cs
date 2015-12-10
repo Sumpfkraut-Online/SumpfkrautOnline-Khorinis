@@ -49,7 +49,7 @@ namespace GUC.Client.Network.Messages
 
             if (World.npcDict.TryGetValue(npcID, out npc))
             {
-                AbstractVob vob;
+                Vob vob;
                 if (World.vobDict.TryGetValue(mobID, out vob) && vob is MobInter)
                 {
                     npc.UsedMob = (MobInter)vob;

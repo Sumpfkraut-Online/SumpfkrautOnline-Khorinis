@@ -18,5 +18,15 @@ namespace GUC.Server.WorldObjects
         {
             this.ScriptObj = scriptObject;
         }
+
+        public bool IsCreated { get; protected set; }
+        public virtual void Create()
+        {
+            IsCreated = true;
+        }
+        public virtual void Delete()
+        {
+            IsCreated = false;
+        }
     }
 }

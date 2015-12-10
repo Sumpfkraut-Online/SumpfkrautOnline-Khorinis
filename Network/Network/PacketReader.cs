@@ -11,12 +11,12 @@ namespace GUC.Network
         int currentByte;
         int bitsRead;
         int bitByte;
-        
+
         Decoder dec;
 
         byte[] data;
         int length;
-        
+
         internal PacketReader()
         {
             dec = Encoding.UTF8.GetDecoder();
@@ -43,10 +43,11 @@ namespace GUC.Network
             Buffer.BlockCopy(data, 0, newData, 0, currentByte);
 
             using (MemoryStream ms = new MemoryStream(uncompressedLen))
-            using (DeflateStream ds = new DeflateStream(ms, CompressionMode.Decompress))
             {
-                ds.Read(data, currentByte, compressedLen);
-
+                using (DeflateStream ds = new DeflateStream(ms, CompressionMode.Decompress, true))
+                {
+                    ds.Read(data, currentByte, compressedLen);
+                }
                 ms.Position = 0;
 
                 ms.Read(newData, currentByte, uncompressedLen);

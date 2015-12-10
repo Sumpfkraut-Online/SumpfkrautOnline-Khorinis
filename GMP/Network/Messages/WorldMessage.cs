@@ -24,7 +24,7 @@ namespace GUC.Client.Network.Messages
             MobInstance instance = MobInstance.Table.Get(instID);
             if (instance != null)
             {
-                Vob vob = null;
+                /*Vob vob = null;
                 switch (instance.type)
                 {
                     case MobType.Vob:
@@ -59,14 +59,14 @@ namespace GUC.Client.Network.Messages
                 if (vob != null)
                 {
                     vob.Spawn(pos, dir, drop);
-                }
+                }*/
             }
         }
 
         public static void ReadVobDelete(BitStream stream)
         {
             uint id = stream.mReadUInt();
-            AbstractVob vob = World.GetVobByID(id);
+            Vob vob = World.GetVobByID(id);
             if (vob != null)
             {
                 vob.Despawn();

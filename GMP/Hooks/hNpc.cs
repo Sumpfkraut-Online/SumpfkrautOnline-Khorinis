@@ -24,7 +24,7 @@ namespace GUC.Client.Hooks
                 {
                     int itemAddr = Program.Process.ReadInt(address + 4);
 
-                    AbstractVob vob;
+                    Vob vob;
                     World.vobAddr.TryGetValue(itemAddr, out vob);
                     if (vob != null)
                     {
@@ -45,7 +45,7 @@ namespace GUC.Client.Hooks
             {
                 int address = Convert.ToInt32(message);
 
-                AbstractVob vob;
+                Vob vob;
                 World.vobAddr.TryGetValue(Program.Process.ReadInt(address), out vob);
                 if (vob != null && vob is NPC)
                 {

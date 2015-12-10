@@ -49,6 +49,7 @@ namespace GUC.Network
 
         internal byte[] GetData()
         {
+            StopCompressing();
             FlushBits();
             return data;
         }
@@ -96,14 +97,16 @@ namespace GUC.Network
             if (compress)
             {
                 FlushBits();
-                
+
                 //FIXME: Redo without stream + better performance
                 using (MemoryStream ms = new MemoryStream())
-                using (DeflateStream ds = new DeflateStream(ms, CompressionMode.Compress, true))
                 {
                     int uncompressedLen = currentByte - SCurrentByte;
 
-                    ds.Write(data, SCurrentByte, uncompressedLen);
+                    using (DeflateStream ds = new DeflateStream(ms, CompressionMode.Compress, true))
+                    {
+                        ds.Write(data, SCurrentByte, uncompressedLen);
+                    }
                     int compressedLen = (int)ms.Length;
 
                     //switch current byte back
@@ -115,7 +118,8 @@ namespace GUC.Network
 
                     //read compressed
                     ms.Position = 0;
-                    ms.Read(data, SCurrentByte, compressedLen);
+                    ms.Read(data, currentByte, compressedLen);
+
                     currentByte += compressedLen;
 
                     //switch rest back too

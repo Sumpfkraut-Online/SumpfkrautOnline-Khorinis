@@ -56,7 +56,7 @@ namespace GUC.Client.Network.Messages
             Program.client.SendStream(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED);
         }
 
-        public static void WritePickUpItem(AbstractVob vob)
+        public static void WritePickUpItem(Vob vob)
         {
             PacketWriter stream = Program.client.SetupSendStream(NetworkID.PlayerPickUpItemMessage);
             stream.Write(vob.ID);

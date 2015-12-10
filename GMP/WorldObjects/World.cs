@@ -11,29 +11,29 @@ namespace GUC.Client.WorldObjects
     {
         public static string MapName = null;
 
-        public static Dictionary<int, AbstractVob> vobAddr = new Dictionary<int, AbstractVob>();
-        public static List<AbstractVob> AllVobs { get { return vobAddr.Values.ToList(); } }
+        public static Dictionary<int, Vob> vobAddr = new Dictionary<int, Vob>();
+        public static List<Vob> AllVobs { get { return vobAddr.Values.ToList(); } }
 
         public static Dictionary<uint, NPC> npcDict = new Dictionary<uint, NPC>();
         public static Dictionary<uint, Item> itemDict = new Dictionary<uint, Item>();
-        public static Dictionary<uint, AbstractVob> vobDict = new Dictionary<uint, AbstractVob>();
+        public static Dictionary<uint, Vob> vobDict = new Dictionary<uint, Vob>();
 
-        public static AbstractVob GetVobByID(uint id)
+        public static Vob GetVobByID(uint id)
         {
             NPC npc;
             npcDict.TryGetValue(id, out npc);
-            if (npc != null) return (AbstractVob)npc;
+            if (npc != null) return (Vob)npc;
 
             Item item;
             itemDict.TryGetValue(id, out item);
-            if (item != null) return (AbstractVob)item;
+            if (item != null) return (Vob)item;
 
-            AbstractVob vob;
+            Vob vob;
             vobDict.TryGetValue(id, out vob);
             return vob;
         }
 
-        public static void AddVob(AbstractVob vob)
+        public static void AddVob(Vob vob)
         {
             vobAddr.Add(vob.gVob.Address, vob);
 
@@ -51,7 +51,7 @@ namespace GUC.Client.WorldObjects
             }
         }
 
-        public static void RemoveVob(AbstractVob vob)
+        public static void RemoveVob(Vob vob)
         {
             vobAddr.Remove(vob.gVob.Address);
 

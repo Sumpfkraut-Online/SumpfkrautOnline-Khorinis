@@ -12,7 +12,7 @@ namespace GUC.Enumeration
     {
         //login stuff
         ConnectionMessage,
-        LoginMessage,
+        MenuMessage,
         PlayerControlMessage,
 
         PlayerPickUpItemMessage,

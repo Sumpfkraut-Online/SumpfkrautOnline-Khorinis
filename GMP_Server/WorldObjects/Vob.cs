@@ -8,17 +8,21 @@ using RakNet;
 using GUC.Network;
 using GUC.Enumeration;
 using GUC.Server.Network.Messages;
+using GUC.Server.WorldObjects.Collections;
+using GUC.Server.WorldObjects.Instances;
 
 namespace GUC.Server.WorldObjects
 {
-    public class Vob : ServerObject, IDisposable, IVobClass
+    public class Vob : ServerObject, IVobObj<uint>
     {
+        public static readonly VobDictionary Vobs = Network.Server.sVobs.GetDict(VobInstance.sVobType);
+
         static uint idCount = 1; // Start with 1 cause a "null-vob" (id = 0) is needed for networking
 
         public uint ID { get; protected set; }
         public VobInstance Instance { get; protected set; }
 
-        public VobType GetVobType() { return Instance.GetVobType(); }
+        public VobType VobType { get { return Instance.VobType; } }
 
         public string Visual { get { return Instance.Visual; } }
         public bool CDDyn { get { return Instance.CDDyn; } }
@@ -69,16 +73,22 @@ namespace GUC.Server.WorldObjects
 
         public Vob(VobInstance instance, object scriptObject) : base(scriptObject)
         {
-            this.ID = Vob.idCount++;
             this.Instance = instance;
-            Network.Server.sAllVobsDict.Add(this.ID, this);
+        }
+
+        public override void Create()
+        {
+            this.ID = Vob.idCount++;
+            Network.Server.sVobs.Add(this);
+            base.Create();
         }
 
         /// <summary> Despawns and removes the vob from the server. </summary>
-        public virtual void Dispose()
+        public override void Delete()
         {
             this.Despawn();
-            Network.Server.sAllVobsDict.Remove(ID);
+            Network.Server.sVobs.Remove(this);
+            base.Delete();
         }
 
         #region Spawn

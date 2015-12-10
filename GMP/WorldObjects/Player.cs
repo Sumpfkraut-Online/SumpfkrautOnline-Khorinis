@@ -15,7 +15,7 @@ namespace GUC.Client.WorldObjects
     {
         public static uint ID;
         public static NPC Hero = null;
-        public static List<AbstractVob> VobControlledList = new List<AbstractVob>();
+        public static List<Vob> VobControlledList = new List<Vob>();
 
         public static Item lastUsedWeapon = null;
 
