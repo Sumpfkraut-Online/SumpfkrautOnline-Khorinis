@@ -22,8 +22,8 @@ namespace GUC.Server.WorldObjects.Collections
             for (int i = 0; i < (int)VobType.Maximum; i++)
             {
                 InstanceDictionary dict = (InstanceDictionary)vobDicts[i];
-                stream.Write(dict.GetCount());
-                foreach (VobInstance inst in dict.GetAll())
+                stream.Write((ushort)dict.GetCount());
+                foreach (VobInstance inst in dict.GetAll().OrderBy(v => v.ID))
                 {
                     inst.WriteProperties(stream);
                 }

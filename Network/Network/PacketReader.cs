@@ -24,6 +24,7 @@ namespace GUC.Network
 
         internal void Load(byte[] data, int length)
         {
+            this.length = length;
             this.data = data;
             currentByte = 0;
             bitsRead = 8;
@@ -42,17 +43,18 @@ namespace GUC.Network
             byte[] newData = new byte[newLen];
             Buffer.BlockCopy(data, 0, newData, 0, currentByte);
 
-            using (MemoryStream ms = new MemoryStream(uncompressedLen))
+            using (MemoryStream ms = new MemoryStream(compressedLen))
             {
-                using (DeflateStream ds = new DeflateStream(ms, CompressionMode.Decompress, true))
-                {
-                    ds.Read(data, currentByte, compressedLen);
-                }
+                ms.Write(data, currentByte, compressedLen);
                 ms.Position = 0;
 
-                ms.Read(newData, currentByte, uncompressedLen);
+                using (DeflateStream ds = new DeflateStream(ms, CompressionMode.Decompress))
+                {
+                    int read = ds.Read(newData, currentByte, uncompressedLen);
+                }
             }
-            Buffer.BlockCopy(data, currentByte + compressedLen, newData, currentByte + uncompressedLen, length - currentByte + compressedLen);
+            
+            Buffer.BlockCopy(data, currentByte + compressedLen, newData, currentByte + uncompressedLen, length - currentByte - compressedLen);
 
             data = newData;
             length = newLen;

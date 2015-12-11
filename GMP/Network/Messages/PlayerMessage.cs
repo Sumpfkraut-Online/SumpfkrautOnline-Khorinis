@@ -52,13 +52,13 @@ namespace GUC.Client.Network.Messages
 
         private static void WriteControl() //for confirmation
         {
-            PacketWriter stream = Program.client.SetupSendStream(NetworkID.PlayerControlMessage);
+            PacketWriter stream = Program.client.SetupStream(NetworkID.PlayerControlMessage);
             Program.client.SendStream(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED);
         }
 
         public static void WritePickUpItem(Vob vob)
         {
-            PacketWriter stream = Program.client.SetupSendStream(NetworkID.PlayerPickUpItemMessage);
+            PacketWriter stream = Program.client.SetupStream(NetworkID.PlayerPickUpItemMessage);
             stream.Write(vob.ID);
             Program.client.SendStream(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.UNRELIABLE);
         }

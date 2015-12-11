@@ -20,15 +20,19 @@ namespace GUC.Server.Network.Messages
             stream.Read(instanceTableHash, 0, 16);
 
             client.CheckValidity(driveString, macString, instanceTableHash);
+
+            Log.Logger.print("Read ConnectionMSG");
+
+            WriteInstanceTables(client);
         }
 
         public static void WriteInstanceTables(Client client)
         {
+            Log.Logger.print("Write ConnectionMSG ???");
             if (client.instanceNeeded)
             {
-                PacketWriter stream = Program.server.SetupStream(NetworkID.ConnectionMessage);
-                stream.Write(Server.sInstances.Data, 0, Server.sInstances.Data.Length);
-                client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'G');
+                Program.server.ServerInterface.Send(Server.sInstances.Data, Server.sInstances.Data.Length, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'G', client.guid, false);
+                Log.Logger.print("Written ConnectionMSG");
             }
         }
     }

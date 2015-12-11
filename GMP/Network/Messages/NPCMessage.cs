@@ -22,14 +22,14 @@ namespace GUC.Client.Network.Messages
 
         public static void WriteAnimationStart(Animations ani)
         {
-            PacketWriter stream = Program.client.SetupSendStream(NetworkID.NPCAniStartMessage);
+            PacketWriter stream = Program.client.SetupStream(NetworkID.NPCAniStartMessage);
             stream.Write((ushort)ani);
             Program.client.SendStream(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE);
         }
 
         public static void WriteAnimationStop(Animations ani, bool fadeout)
         {
-            PacketWriter stream = Program.client.SetupSendStream(NetworkID.NPCAniStopMessage);
+            PacketWriter stream = Program.client.SetupStream(NetworkID.NPCAniStopMessage);
             stream.Write((ushort)ani);
             stream.Write(fadeout);
             Program.client.SendStream(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE);
@@ -77,7 +77,7 @@ namespace GUC.Client.Network.Messages
             lastTime = DateTime.UtcNow.Ticks;
             zERROR.GetZErr(Program.Process).Report(2, 'G', state + " " + lastSpan / TimeSpan.TicksPerMillisecond, 0, "Program.cs", 0);
 
-            PacketWriter stream = Program.client.SetupSendStream(NetworkID.NPCStateMessage);
+            PacketWriter stream = Program.client.SetupStream(NetworkID.NPCStateMessage);
             stream.Write(npc.ID);
             stream.Write((byte)state);
             Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
@@ -92,7 +92,7 @@ namespace GUC.Client.Network.Messages
                 zERROR.GetZErr(Program.Process).Report(2, 'G', state + " " + (DateTime.UtcNow.Ticks - lastTime) / TimeSpan.TicksPerMillisecond, 0, "Program.cs", 0);
                 lastTime = DateTime.UtcNow.Ticks;
 
-                PacketWriter stream = Program.client.SetupSendStream(NetworkID.NPCTargetStateMessage);
+                PacketWriter stream = Program.client.SetupStream(NetworkID.NPCTargetStateMessage);
                 stream.Write((byte)state);
 
                 Vob target;
@@ -194,7 +194,7 @@ namespace GUC.Client.Network.Messages
         {
             if (DateTime.UtcNow.Ticks > npc.nextJumpUpdate)
             {
-                PacketWriter stream = Program.client.SetupSendStream(NetworkID.NPCJumpMessage);
+                PacketWriter stream = Program.client.SetupStream(NetworkID.NPCJumpMessage);
                 stream.Write(npc.ID);
                 Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
 
@@ -231,7 +231,7 @@ namespace GUC.Client.Network.Messages
         {
             if (DateTime.UtcNow.Ticks > nextDrawItemTime)
             {
-                PacketWriter stream = Program.client.SetupSendStream(NetworkID.NPCDrawItemMessage);
+                PacketWriter stream = Program.client.SetupStream(NetworkID.NPCDrawItemMessage);
 
                 stream.Write(slot);
                 Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
@@ -292,7 +292,7 @@ namespace GUC.Client.Network.Messages
         {
             if (DateTime.UtcNow.Ticks > nextDrawItemTime)
             {
-                PacketWriter stream = Program.client.SetupSendStream(NetworkID.NPCUndrawItemMessage);
+                PacketWriter stream = Program.client.SetupStream(NetworkID.NPCUndrawItemMessage);
                 Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
 
                 nextDrawItemTime = DateTime.UtcNow.Ticks + DelayBetweenMessages;

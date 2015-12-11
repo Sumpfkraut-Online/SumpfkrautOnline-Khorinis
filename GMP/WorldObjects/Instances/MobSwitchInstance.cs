@@ -10,8 +10,7 @@ namespace GUC.Client.WorldObjects.Instances
     {
         new public readonly static Enumeration.VobType sVobType = Enumeration.VobType.MobSwitch;
 
-        public MobSwitchInstance(ushort ID)
-            : base(ID)
+        public MobSwitchInstance()
         {
             this.VobType = sVobType;
         }
@@ -19,6 +18,13 @@ namespace GUC.Client.WorldObjects.Instances
         internal override void ReadProperties(PacketReader stream)
         {
             base.ReadProperties(stream);
+
+            //...
+        }
+
+        internal override void WriteProperties(PacketWriter stream)
+        {
+            base.WriteProperties(stream);
 
             //...
         }

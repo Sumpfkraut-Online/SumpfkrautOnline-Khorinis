@@ -100,14 +100,14 @@ namespace GUC.Client.Network.Messages
 
         public static void ConfirmOffer()
         {
-            PacketWriter stream = Program.client.SetupSendStream(NetworkID.TradeMessage);
+            PacketWriter stream = Program.client.SetupStream(NetworkID.TradeMessage);
             stream.Write((byte)TradeStatus.ConfirmOffer);
             Program.client.SendStream(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.UNRELIABLE);
         }
 
         public static void DeclineOffer()
         {
-            PacketWriter stream = Program.client.SetupSendStream(NetworkID.TradeMessage);
+            PacketWriter stream = Program.client.SetupStream(NetworkID.TradeMessage);
             stream.Write((byte)TradeStatus.DeclineOffer);
             Program.client.SendStream(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.UNRELIABLE);
         }
@@ -116,7 +116,7 @@ namespace GUC.Client.Network.Messages
         {
             if (item == null)
                 return;
-            PacketWriter stream = Program.client.SetupSendStream(NetworkID.TradeMessage);
+            PacketWriter stream = Program.client.SetupStream(NetworkID.TradeMessage);
             stream.Write((byte)TradeStatus.SelfRemoveItem);
             stream.Write(item.ID);
             Program.client.SendStream(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.UNRELIABLE);
@@ -127,7 +127,7 @@ namespace GUC.Client.Network.Messages
         {
             if (item == null)
                 return;
-            PacketWriter stream = Program.client.SetupSendStream(NetworkID.TradeMessage);
+            PacketWriter stream = Program.client.SetupStream(NetworkID.TradeMessage);
             stream.Write((byte)TradeStatus.SelfOfferItem);
             stream.Write(item.ID);
             stream.Write(item.Instance.ID);
@@ -140,7 +140,7 @@ namespace GUC.Client.Network.Messages
 
         public static void SendRequest(uint npcId)
         {
-            PacketWriter stream = Program.client.SetupSendStream(NetworkID.TradeMessage);
+            PacketWriter stream = Program.client.SetupStream(NetworkID.TradeMessage);
             stream.Write((byte)TradeStatus.Request);
             stream.Write(npcId);
             Program.client.SendStream(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.UNRELIABLE);
@@ -148,7 +148,7 @@ namespace GUC.Client.Network.Messages
 
         public static void SendBreak()
         {
-            PacketWriter stream = Program.client.SetupSendStream(NetworkID.TradeMessage);
+            PacketWriter stream = Program.client.SetupStream(NetworkID.TradeMessage);
             stream.Write((byte)TradeStatus.Break);
             Program.client.SendStream(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.UNRELIABLE);
         }

@@ -237,7 +237,7 @@ namespace GUC.Client.Network
             }
         }
 
-        public PacketWriter SetupSendStream(NetworkID id)
+        public PacketWriter SetupStream(NetworkID id)
         {
             pktWriter.Reset();
             pktWriter.Write((byte)DefaultMessageIDTypes.ID_USER_PACKET_ENUM);

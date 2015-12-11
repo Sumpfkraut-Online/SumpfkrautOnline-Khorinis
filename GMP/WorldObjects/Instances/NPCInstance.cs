@@ -47,10 +47,25 @@ namespace GUC.Client.WorldObjects.Instances
 
         #endregion
 
-        public NPCInstance(ushort ID)
-            : base(ID)
+        public NPCInstance()
         {
             this.VobType = sVobType;
+        }
+
+        internal override void WriteProperties(PacketWriter stream)
+        {
+            base.WriteProperties(stream);
+
+            stream.Write(Name);
+            stream.Write(BodyMesh);
+            stream.Write(BodyTex);
+            stream.Write(HeadMesh);
+            stream.Write(HeadTex);
+            stream.Write(BodyHeight);
+            stream.Write(BodyWidth);
+            stream.Write(Fatness);
+
+            //...
         }
 
         internal override void ReadProperties(PacketReader stream)

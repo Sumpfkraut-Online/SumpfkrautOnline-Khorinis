@@ -6,42 +6,78 @@ using GUC.Enumeration;
 using GUC.Client.WorldObjects.Instances;
 using GUC.Network;
 using System.Security.Cryptography;
+using System.IO;
 
 namespace GUC.Client.WorldObjects.Collections
 {
     public class InstanceCollection : VobObjCollection<ushort, VobInstance>
     {
-        public void NetUpdate()
+        string FileName = States.StartupState.getDaedalusPath() + "Instances.pak";
+
+        public byte[] ReadFile()
         {
-            /*PacketWriter stream = Program.server.SetupStream(NetworkID.ConnectionMessage);
+            try
+            {
+                if (File.Exists(FileName))
+                {
+                    byte[] data = File.ReadAllBytes(FileName);
+
+                    PacketReader stream = new PacketReader();
+                    stream.Load(data, data.Length);
+                    stream.ReadShort(); //ignore first 2 bytes
+                    ReadData(stream);
+
+                    byte[] hash;
+                    using (MD5 md5 = new MD5CryptoServiceProvider())
+                    {
+                        md5.TransformFinalBlock(data, 0, data.Length);
+                        hash = md5.Hash;
+                    }
+
+                    return hash;
+                }
+            }
+            catch { }
+            return new byte[16];
+        }
+
+        public void ReadData(PacketReader stream)
+        {
+            stream.Decompress();
+            for (int i = 0; i < (int)VobType.Maximum; i++)
+            {
+                InstanceDictionary dict = new InstanceDictionary();
+                ushort count = stream.ReadUShort();
+                for (int j = 0; j < count; j++)
+                {
+                    VobInstance inst = VobInstance.CreateByType((VobType)i);
+                    inst.ReadProperties(stream);
+                    dict.Add(inst);
+                }
+                vobDicts[i] = dict;
+            }
+        }
+
+        public void WriteFile()
+        {
+            PacketWriter stream = Program.client.SetupStream(NetworkID.ConnectionMessage);
 
             stream.StartCompressing();
             for (int i = 0; i < (int)VobType.Maximum; i++)
             {
                 InstanceDictionary dict = (InstanceDictionary)vobDicts[i];
-                stream.Write(dict.GetCount());
-                foreach (VobInstance inst in dict.GetAll())
+                stream.Write((ushort)dict.GetCount());
+                foreach (VobInstance inst in dict.GetAll().OrderBy(v => v.ID))
                 {
                     inst.WriteProperties(stream);
                 }
             }
             stream.StopCompressing();
 
-            Data = new byte[stream.GetLength()];
-            Buffer.BlockCopy(stream.GetData(), 0, Data, 0, stream.GetLength());
-
-            using (MD5 md5 = new MD5CryptoServiceProvider())
+            using (FileStream fs = new FileStream(FileName, FileMode.Create))
             {
-                md5.TransformFinalBlock(Data, 0, Data.Length);
-                Hash = md5.Hash;
+                fs.Write(stream.GetData(), 0, stream.GetLength());
             }
-
-            //FIXME: Send to all clients
-
-            StringBuilder sb = new StringBuilder();
-            foreach (byte b in Hash)
-                sb.Append(b.ToString("X2"));
-            System.IO.File.WriteAllBytes(sb.ToString(), Data);*/
         }
 
         internal InstanceCollection()

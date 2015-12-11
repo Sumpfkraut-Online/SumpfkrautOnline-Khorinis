@@ -17,8 +17,7 @@ namespace GUC.Client.WorldObjects.Instances
 
         #endregion
 
-        public MobInstance(ushort ID) 
-            : base (ID)
+        public MobInstance()
         {
             this.VobType = sVobType;
         }
@@ -28,6 +27,15 @@ namespace GUC.Client.WorldObjects.Instances
             base.ReadProperties(stream);
 
             this.FocusName = stream.ReadString();
+
+            //...
+        }
+
+        internal override void WriteProperties(PacketWriter stream)
+        {
+            base.WriteProperties(stream);
+
+            stream.Write(FocusName);
 
             //...
         }

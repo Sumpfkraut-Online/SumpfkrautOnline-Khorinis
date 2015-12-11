@@ -11,6 +11,7 @@ using System.IO;
 using System.IO.Compression;
 using Gothic.zClasses;
 using GUC.Client.WorldObjects;
+using GUC.Client.WorldObjects.Instances;
 
 namespace GUC.Client.Network.Messages
 {
@@ -20,13 +21,15 @@ namespace GUC.Client.Network.Messages
         {
             String connString = getDefaultConnectionString(0);
             String macString = x();
-            //byte[] npcTableHash = NPCInstance.Table.ReadFile();
+            byte[] instancesHash = VobInstance.Instances.ReadFile();
 
-            PacketWriter stream = Program.client.SetupSendStream(NetworkID.ConnectionMessage);
+            PacketWriter stream = Program.client.SetupStream(NetworkID.ConnectionMessage);
             stream.Write(connString);
             stream.Write(macString);
-            //stream.Write(npcTableHash, 0, 16);
+            stream.Write(instancesHash, 0, 16);
             Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE_ORDERED);
+
+            zERROR.GetZErr(Program.Process).Report(2, 'G', "Sent ConnectionMsg", 0, "Program.cs", 0);
         }
 
         static String getDefaultConnectionString(UInt32 y)
@@ -72,15 +75,10 @@ namespace GUC.Client.Network.Messages
 
         public static void Read(PacketReader stream)
         {
-           
-               /* int len = stream.ReadInt(); // length of packed data
+            VobInstance.Instances.ReadData(stream);
+            NPCInstance.Instances.WriteFile();
 
-                byte[] data = new byte[len];
-                stream.Read(data, 0, len);
-
-                NPCInstance.Table.ReadData(data);
-
-                NPCInstance.Table.WriteFile();*/
+            zERROR.GetZErr(Program.Process).Report(2, 'G', "Read ConnectionMsg", 0, "Program.cs", 0);
         }
     }
 }

@@ -11,8 +11,7 @@ namespace GUC.Client.WorldObjects.Instances
         new public readonly static Enumeration.VobType sVobType = Enumeration.VobType.MobLadder;
 
 
-        public MobLadderInstance(ushort ID) 
-            : base(ID)
+        public MobLadderInstance()
         {
             this.VobType = sVobType;
         }
@@ -20,6 +19,13 @@ namespace GUC.Client.WorldObjects.Instances
         internal override void ReadProperties(PacketReader stream)
         {
             base.ReadProperties(stream);
+
+            //...
+        }
+
+        internal override void WriteProperties(PacketWriter stream)
+        {
+            base.WriteProperties(stream);
 
             //...
         }

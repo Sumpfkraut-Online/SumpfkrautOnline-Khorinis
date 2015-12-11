@@ -58,7 +58,7 @@ namespace GUC.Client.Network.Messages
 
         public static void WritePosDir()
         {
-            PacketWriter stream = Program.client.SetupSendStream(NetworkID.VobPosDirMessage);
+            PacketWriter stream = Program.client.SetupStream(NetworkID.VobPosDirMessage);
 
             stream.Write(Player.Hero.Position);
             stream.Write(Player.Hero.Direction);

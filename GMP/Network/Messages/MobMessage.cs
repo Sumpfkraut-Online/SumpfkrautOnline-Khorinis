@@ -22,7 +22,7 @@ namespace GUC.Client.Network.Messages
         {
             if (DateTime.UtcNow.Ticks > nextUseTime)
             {
-                PacketWriter stream = Program.client.SetupSendStream(NetworkID.MobUseMessage);
+                PacketWriter stream = Program.client.SetupStream(NetworkID.MobUseMessage);
                 stream.Write(mob.ID);
                 Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
                 nextUseTime = DateTime.UtcNow.Ticks + DelayBetweenMessages;
@@ -34,7 +34,7 @@ namespace GUC.Client.Network.Messages
         {
             if (DateTime.UtcNow.Ticks > nextUnUseTime)
             {
-                PacketWriter stream = Program.client.SetupSendStream(NetworkID.MobUnUseMessage);
+                PacketWriter stream = Program.client.SetupStream(NetworkID.MobUnUseMessage);
                 Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
                 nextUnUseTime = DateTime.UtcNow.Ticks + DelayBetweenMessages;
             }

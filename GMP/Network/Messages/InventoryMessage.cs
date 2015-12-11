@@ -52,7 +52,7 @@ namespace GUC.Client.Network.Messages
         {
             if (item != null && DateTime.UtcNow.Ticks > nextDropItemTime && Player.Hero.HasFreeHands)
             {
-                PacketWriter stream = Program.client.SetupSendStream(NetworkID.InventoryDropItemMessage);
+                PacketWriter stream = Program.client.SetupStream(NetworkID.InventoryDropItemMessage);
                 stream.Write(((Item)item).ID);
                 stream.Write((ushort)amount);
                 Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
@@ -65,7 +65,7 @@ namespace GUC.Client.Network.Messages
         {
             if (item != null && DateTime.UtcNow.Ticks > nextUseItemTime && Player.Hero.HasFreeHands)
             {
-                PacketWriter stream = Program.client.SetupSendStream(NetworkID.InventoryUseItemMessage);
+                PacketWriter stream = Program.client.SetupStream(NetworkID.InventoryUseItemMessage);
                 stream.Write(item.ID);
                 Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
                 nextUseItemTime = DateTime.UtcNow.Ticks + DelayBetweenMessages;

@@ -15,8 +15,7 @@ namespace GUC.Client.WorldObjects.Instances
         #endregion
         
 
-        public MobLockableInstance(ushort ID)
-            : base(ID)
+        public MobLockableInstance()
         {
         }
         
@@ -25,6 +24,15 @@ namespace GUC.Client.WorldObjects.Instances
             base.ReadProperties(stream);
 
             this.OnTryOpenClientFunc = stream.ReadString();
+
+            //...
+        }
+
+        internal override void WriteProperties(PacketWriter stream)
+        {
+            base.WriteProperties(stream);
+
+            stream.Write(OnTryOpenClientFunc);
 
             //...
         }

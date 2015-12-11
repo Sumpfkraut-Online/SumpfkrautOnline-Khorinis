@@ -13,7 +13,7 @@ namespace GUC.Client.WorldObjects.Instances
         public static readonly ItemInstance FistInstance = CreateFists();
         static ItemInstance CreateFists()
         {
-            ItemInstance fists = new ItemInstance(0);
+            ItemInstance fists = new ItemInstance();
             fists.Name = "Fäustedummy";
             return fists;
         }
@@ -71,8 +71,7 @@ namespace GUC.Client.WorldObjects.Instances
         #endregion
 
 
-        public ItemInstance(ushort ID)
-            : base(ID)
+        public ItemInstance()
         {
             this.VobType = sVobType;
         }
@@ -97,6 +96,26 @@ namespace GUC.Client.WorldObjects.Instances
             //...
 
             SetFlags();
+        }
+
+        internal override void WriteProperties(PacketWriter stream)
+        {
+            base.WriteProperties(stream);
+
+            stream.Write(Name);
+            stream.Write((byte)Type);
+            stream.Write((byte)Material);
+            for (int i = 0; i < TextAndCountLen; i++)
+            {
+                stream.Write(Text[i]);
+                stream.Write(Count[i]);
+            }
+            stream.Write(Description);
+            stream.Write(VisualChange);
+            stream.Write(Effect);
+            //stream.Write(Munition == null ? ushort.MinValue : Munition.ID);
+
+            //...
         }
 
         void SetFlags()

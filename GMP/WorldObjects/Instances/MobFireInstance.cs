@@ -17,8 +17,7 @@ namespace GUC.Client.WorldObjects.Instances
         #endregion
 
 
-        public MobFireInstance(ushort ID) 
-            : base(ID)
+        public MobFireInstance()
         {
             this.VobType = sVobType;
         }
@@ -28,6 +27,15 @@ namespace GUC.Client.WorldObjects.Instances
             base.ReadProperties(stream);
 
             this.FireVobTree = stream.ReadString();
+
+            //...
+        }
+
+        internal override void WriteProperties(PacketWriter stream)
+        {
+            base.WriteProperties(stream);
+
+            stream.Write(FireVobTree);
 
             //...
         }

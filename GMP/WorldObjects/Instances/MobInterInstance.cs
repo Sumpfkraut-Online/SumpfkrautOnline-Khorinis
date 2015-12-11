@@ -17,8 +17,7 @@ namespace GUC.Client.WorldObjects.Instances
 
         #endregion
 
-        public MobInterInstance(ushort ID) 
-            : base(ID)
+        public MobInterInstance()
         {
             this.VobType = sVobType;
         }
@@ -28,6 +27,15 @@ namespace GUC.Client.WorldObjects.Instances
             base.ReadProperties(stream);
 
             this.OnTriggerClientFunc = stream.ReadString();
+
+            //...
+        }
+
+        internal override void WriteProperties(PacketWriter stream)
+        {
+            base.WriteProperties(stream);
+
+            stream.Write(OnTriggerClientFunc);
 
             //...
         }

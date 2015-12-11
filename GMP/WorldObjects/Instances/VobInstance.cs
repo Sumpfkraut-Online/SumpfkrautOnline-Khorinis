@@ -43,10 +43,19 @@ namespace GUC.Client.WorldObjects.Instances
 
         #endregion
         
-        public VobInstance(ushort id)
+        public VobInstance()
         {
-            this.ID = id;
             this.VobType = sVobType;
+        }
+
+        internal virtual void WriteProperties(PacketWriter stream)
+        {
+            stream.Write(this.ID);
+            stream.Write(this.Visual);
+            stream.Write(this.CDDyn);
+            stream.Write(this.CDStatic);
+
+            //...
         }
 
         internal virtual void ReadProperties(PacketReader stream)
@@ -57,6 +66,39 @@ namespace GUC.Client.WorldObjects.Instances
             this.CDStatic = stream.ReadBit();
             
             // ... 
+        }
+
+        public static VobInstance CreateByType(VobType type)
+        {
+            switch (type)
+            {
+                case VobType.Vob:
+                    return new VobInstance();
+                case VobType.NPC:
+                    return new NPCInstance();
+                case VobType.Item:
+                    return new ItemInstance();
+
+                case VobType.Mob:
+                    return new MobInstance();
+                case VobType.MobInter:
+                    return new MobInterInstance();
+                case VobType.MobFire:
+                    return new MobFireInstance();
+                case VobType.MobLadder:
+                    return new MobLadderInstance();
+                case VobType.MobSwitch:
+                    return new MobSwitchInstance();
+                case VobType.MobWheel:
+                    return new MobWheelInstance();
+                case VobType.MobContainer:
+                    return new MobContainerInstance();
+                case VobType.MobDoor:
+                    return new MobDoorInstance();
+
+                default:
+                    return null;
+            }
         }
     }
 }
