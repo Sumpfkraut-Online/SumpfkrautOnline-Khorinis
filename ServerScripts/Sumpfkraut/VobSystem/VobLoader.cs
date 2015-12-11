@@ -10,6 +10,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
     public abstract class VobLoader : Runnable
     {
 
+        new public static readonly String _staticName = "VobLoader (static)";
+        
         // 0: before loading; 1: started loading; ?: done
         protected int status = 0;
 
@@ -37,7 +39,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 
         public VobLoader (bool startOnCreate)
             : base(startOnCreate, new TimeSpan(0, 0, 0), true)
-        { }
+        {
+            SetObjName("VobLoader");
+        }
       
         
         

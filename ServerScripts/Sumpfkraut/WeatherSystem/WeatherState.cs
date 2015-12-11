@@ -6,8 +6,10 @@ using GUC.Server.WorldObjects;
 
 namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
 {
-    public class WeatherState
+    public class WeatherState : ScriptObject
     {
+
+        new protected static readonly string _staticName = "WeatherState (static)";
 
         public WeatherType weatherType;
         public DateTime startTime;
@@ -30,6 +32,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
         public WeatherState(WeatherType weatherType, DateTime startTime, DateTime endTime,
             string description)
         {
+            SetObjName("WeatherState (default)");
             this.weatherType = weatherType;
             this.startTime = startTime;
             this.endTime = endTime;

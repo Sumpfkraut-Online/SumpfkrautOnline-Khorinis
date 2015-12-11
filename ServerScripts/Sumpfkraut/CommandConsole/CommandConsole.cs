@@ -25,7 +25,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.CommandConsole
         public CommandConsole (bool startOnCreate)
             : base(startOnCreate, TimeSpan.Zero, false)
         {
-            this._objName = "CommandConsole (default)";
+            SetObjName("CommandConsole (default)");
         }
 
 

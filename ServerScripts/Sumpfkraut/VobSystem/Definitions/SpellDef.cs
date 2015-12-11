@@ -25,8 +25,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         #region standard attributes
 
         new public static readonly String _staticName = "SpellDef (static)";
-        new protected String _objName = "SpellDef (default)";
-
         new protected static Type _type = typeof(SpellDef);
 
         #endregion
@@ -34,6 +32,12 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
 
         #region constructors
+
+        public SpellDef ()
+        {
+            SetObjName("SpellDef (default)");
+        }
+
 
         #endregion
 

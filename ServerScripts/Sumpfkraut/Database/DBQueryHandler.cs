@@ -11,7 +11,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
     {
 
         new public static readonly String _staticName = "DBQueryHandler (static)";
-        new protected String _objName = "DBQueryHandler (default)";
 
         protected String sqLiteDataSource;
         public String GetSqLiteDataSource () { return this.sqLiteDataSource; }
@@ -29,6 +28,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
         public DBQueryHandler (bool startOnCreate, String sqLiteDataSource)
             : base(startOnCreate, TimeSpan.Zero, false)
         {
+            SetObjName("DBQueryHandler (default)");
             this.sqLiteDataSource = sqLiteDataSource;
         }
 

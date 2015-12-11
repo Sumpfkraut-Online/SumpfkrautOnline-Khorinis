@@ -28,8 +28,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
 
         public VobDefLoader (VobDefType vobDefType, List<Vec2Int> idRanges, bool startOnCreate)
-            : base(false)
         {
+            SetObjName("VobDefLoader (default)");
+
             if (startOnCreate)
             {
                 Start();

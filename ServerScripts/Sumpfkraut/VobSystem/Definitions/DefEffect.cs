@@ -32,7 +32,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         #region standard attributes
 
         new public static readonly String _staticName = "DefEffect (static)";
-        new protected String _objName = "DefEffect (default)";
 
         protected int id;
         public int GetId () { return this.id; }
@@ -55,6 +54,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         public DefEffect (int id, String effectName, 
             List<DefChange.DefChangeKeyValPair> changeList)
         {
+            SetObjName("DefEffect (default)");
             this.id = id;
             this.effectName = effectName;
             this.changeList = changeList;

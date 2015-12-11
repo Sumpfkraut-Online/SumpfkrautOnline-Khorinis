@@ -36,7 +36,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         #region standard attributes
 
         new public static readonly String _staticName = "VobDef (static)";
-        new protected String _objName = "VobDef (default)";
 
         protected static Type _type = typeof(VobDef);
         public static readonly String dbTable = "VobDef";
@@ -80,8 +79,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         #region constructors
 
         public VobDef ()
-            : base("VobDef (default)")
-        { }
+        {
+            SetObjName("VobDef (default)");
+        }
 
         #endregion
 

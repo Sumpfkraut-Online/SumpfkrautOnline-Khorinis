@@ -14,7 +14,13 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
     {
 
         new public static readonly String _staticName = "SpellInst (static)";
-        new protected String _objName = "SpellInst (default)";
+
+
+
+        public SpellInst ()
+        {
+            SetObjName("SpellInst (default)");
+        }
 
     }
 }

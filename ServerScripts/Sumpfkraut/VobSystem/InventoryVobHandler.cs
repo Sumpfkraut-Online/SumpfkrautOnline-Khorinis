@@ -16,6 +16,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
     public class InventoryVobHandler : ScriptObject
     {
 
+        new public static readonly String _staticName = "InventoryVobHandler (static)";
+
         //private static Dictionary<String, Database.SQLiteGetTypeEnum> itemInInvTableDict = 
         //    Database.DBTables.InstTableDict[Database.InstTableEnum.ItemInInventory_inst];
 
@@ -40,6 +42,13 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 
 
 
+        public InventoryVobHandler ()
+        {
+            SetObjName("InventoryVobHandler (default)");
+        }
+
+        
+        
         ///**
         // *   Try to transfer lists of items given by their ItemDef-objects as types and with respective amounts
         // *   between 2 npcs.

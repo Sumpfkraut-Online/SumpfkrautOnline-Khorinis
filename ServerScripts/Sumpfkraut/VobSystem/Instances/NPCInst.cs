@@ -15,7 +15,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
     {
 
         new public static readonly String _staticName = "NPCInst (static)";
-        new protected String _objName = "NPCInst (default)";
         
         // definition on which basis the item was created
         private NpcDef npcDef;
@@ -33,6 +32,12 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
         public void setInWorld (WorldInst inWorld) { this.inWorld = inWorld; }
 
 
+
+        public NpcInst ()
+        {
+            SetObjName("NPCInst (default)");
+        }
+        
         //// does not spawn NPC directly into a world
         //public NPCInst (NPCDef def)
         //{

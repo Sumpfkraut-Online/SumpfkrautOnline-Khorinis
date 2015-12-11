@@ -6,10 +6,12 @@ using System.Globalization;
 
 namespace GUC.Server.Scripts.Sumpfkraut.Utilities
 {
-    public class DateTimeUtil
+    public class DateTimeUtil : ScriptObject
     {
 
-        private static string dateFormat = "yyyy-MM-dd HH:mm:ss";
+        new public static readonly string _staticName = "DateTimeUtil (static)"; 
+
+        protected static string dateFormat = "yyyy-MM-dd HH:mm:ss";
 
 
         /**

@@ -6,8 +6,10 @@ using GUC.Server.WorldObjects;
 
 namespace GUC.Server.Scripts.Sumpfkraut.WorldSystem
 {
-    public class WorldInst
+    public class WorldInst : ScriptObject
     {
+
+        new protected static readonly string _staticName = "WorldInst (static)";
 
         protected int id = -1;
         public int getID () { return this.id; }
@@ -29,6 +31,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.WorldSystem
 
         public WorldInst (int id, string name)
         {
+            SetObjName("WorldInst (default)");
             this.id = id;
             this.name = name;
             //this.world = World.getWorld(this.name);

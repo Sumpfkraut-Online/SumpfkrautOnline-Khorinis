@@ -5,8 +5,10 @@ using System.Text;
 
 namespace GUC.Server.Scripts.Sumpfkraut.Utilities
 {
-    public class StringUtil
+    public class StringUtil : ScriptObject
     {
+
+        new public static readonly string _staticName = "StringUtil (static)"; 
 
         public static string Concatenate<T>(IEnumerable<T> source, string delimiter)
         {

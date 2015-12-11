@@ -9,7 +9,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database.DBQuerying
     {
 
         new public static readonly String _staticName = "AbstractDBQuery (static)";
-        new protected String _objName = "AbstractDBQuery (default)";
 
         protected String sqlCommand;
         public String GetSqlCommand () { return this.sqlCommand; }
@@ -25,6 +24,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database.DBQuerying
 
         public AbstractDBQuery (String sqlCommand, DBReaderMode dbReaderMode)
         {
+            SetObjName("AbstractDBQuery (default)");
             this.sqlCommand = sqlCommand;
             this.dbReaderMode = dbReaderMode;
         }

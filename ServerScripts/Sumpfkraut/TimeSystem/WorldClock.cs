@@ -47,11 +47,11 @@ namespace GUC.Server.Scripts.Sumpfkraut.TimeSystem
 
 
 
-        public WorldClock (String _objName, List<World> affectedWorlds, IGTime startIGTime, 
+        public WorldClock (List<World> affectedWorlds, IGTime startIGTime, 
             double igTimeRate, bool startOnCreate, TimeSpan tickTimeout)
             : base (false, tickTimeout, false)
         {
-            this._objName = _objName;
+            SetObjName("WorldClock (default)");
             this.affectedWorlds = affectedWorlds;
             this.igTime = startIGTime;
             this.igTimeRate = igTimeRate;

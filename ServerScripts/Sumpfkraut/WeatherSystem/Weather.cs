@@ -22,6 +22,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
     public class Weather : AbstractRunnable
     {
 
+        new protected static readonly string _staticName = "Weather (static)";
+
         public List<WeatherState> weatherStateQueue; // queue of (future) weather-states
         protected WeatherState currWeatherState; // the current weather-state
         protected bool currWSChanged; // true, when current weather state was changed until the current tick
@@ -89,19 +91,14 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
 
 
         public Weather ()
-            : this("Weather (default)")
+            : this (true)
         { }
 
-        public Weather (String _objName)
-            : this(true, _objName)
-        { }
-
-        public Weather (bool startOnCreate, String _objName)
+        public Weather (bool startOnCreate)
             : base(false)
         {
+            SetObjName("Weather (default)");
             this.printStateControls = true;
-
-            this._objName = _objName;
             this.weatherStateQueue = new List<WeatherState> { };
             this.currWSChanged = false;
             this.maxQueueLength = 10;

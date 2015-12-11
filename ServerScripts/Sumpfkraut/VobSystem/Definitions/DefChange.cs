@@ -70,12 +70,22 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         #region standard attributes
 
         new public static readonly String _staticName = "DefChange (static)";
-        new protected String _objName = "DefChange (default)";
 
         public struct DefChangeKeyValPair
         {
             public DefChangeType defChangeType;
             public String param;
+        }
+
+        #endregion
+
+
+
+        #region constructors
+
+        public DefChange ()
+        {
+            SetObjName("DefChange (default)");
         }
 
         #endregion

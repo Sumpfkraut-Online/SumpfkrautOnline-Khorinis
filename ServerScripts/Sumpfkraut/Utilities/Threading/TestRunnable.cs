@@ -9,6 +9,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.Utilities.Threading
     public class TestRunnable : Runnable
     {
 
+        new public static readonly string _staticName = "TestRunnable (static)";
+
         public delegate void TestEventHandler (DateTime dt);
         public event TestEventHandler TestEvent;
 
@@ -22,7 +24,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.Utilities.Threading
 
         public TestRunnable (bool startOnCreate, TimeSpan timeout, bool runOnce)
             : base(startOnCreate, timeout, runOnce)
-        { }
+        {
+            SetObjName("TestRunnable (default)");
+        }
 
         public override void Run ()
         {

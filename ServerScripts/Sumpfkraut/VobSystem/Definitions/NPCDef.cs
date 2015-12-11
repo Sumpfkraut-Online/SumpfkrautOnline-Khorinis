@@ -35,7 +35,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         #region standard attributes
 
         new public static readonly String _staticName = "NPCDef (static)";
-        new protected String _objName = "NPCDef (default)";
 
         new protected static Type _type = typeof(NpcDef);
         new public static readonly String dbTable = "NpcDef";
@@ -106,11 +105,11 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #region constructors
 
-        public NpcDef(String name, int[] attributes, int[] talentValues, int[] talentSkills, int[] hitChances, 
+        public NpcDef (String name, int[] attributes, int[] talentValues, int[] talentSkills, int[] hitChances, 
             int guild, int voice, String visual, String bodyMesh, int bodyTex, int skinColor, 
             String headMesh, int headTex, int teethTex)
         {
-            this._objName = "NPCDef (default)";
+            SetObjName("NpcDef (default)");
             this.Name = name;
             this.Attributes = attributes;
             this.TalentValues = talentValues;

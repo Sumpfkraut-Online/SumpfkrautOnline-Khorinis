@@ -26,7 +26,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
     {
 
         new public static readonly String _staticName = "VobHandler (static)";
-        new protected String _objName = "VobHandler (default)";
 
         protected bool isInitialized = false;
 

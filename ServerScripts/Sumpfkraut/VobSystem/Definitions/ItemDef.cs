@@ -38,7 +38,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         #region standard attributes
 
         new public static readonly String _staticName = "ItemDef (static)";
-        new protected String _objName = "ItemDef (default)";
 
         new protected static Type _type = typeof(ItemDef);
         new public static readonly String dbTable = "ItemDef";
@@ -399,6 +398,11 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
 
         #region constructors
+
+        public ItemDef ()
+        {
+            SetObjName("ItemDef (default)");
+        }
 
         // potions
         //public ItemDef (String instanceName, String name, String scemeName, int value, String visual, String effect)

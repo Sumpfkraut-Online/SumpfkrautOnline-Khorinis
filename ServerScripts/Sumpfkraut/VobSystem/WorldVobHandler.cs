@@ -9,7 +9,13 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
     {
 
         new public static readonly String _staticName = "WorldVobHandler (static)";
-        new protected String _objName = "WorldVobHandler (default)";
+        
+
+
+        public WorldVobHandler ()
+        {
+            SetObjName("WorldVobHandler (default)");
+        }
 
     }
 }

@@ -12,7 +12,7 @@ namespace GUC.Server.Scripts.Sumpfkraut
 
         public static readonly String _staticName = "ScriptObject (static)";
 
-        protected String _objName = "ScriptObject (default)";
+        protected String _objName;
         public virtual String getObjName ()
         {
             return this._objName;
@@ -29,11 +29,8 @@ namespace GUC.Server.Scripts.Sumpfkraut
         #region constructors
 
         public ScriptObject ()
-        { }
-
-        public ScriptObject (String objName)
         {
-            this._objName = objName;
+            SetObjName("ScriptObject (default)");
         }
 
         #endregion

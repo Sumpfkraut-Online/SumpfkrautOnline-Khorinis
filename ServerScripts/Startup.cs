@@ -340,7 +340,10 @@ namespace GUC.Server.Scripts
             //DBQuery<String> query_1 = new DBQuery<String>("SELECT 9001;", callback, "Popoklatsche");
             //queryHandler.Add(query_1);
 
-
+            //TestClass t1 = new TestClass();
+            //t1.Print("BLA");
+            //SpellDef mySpellDef = new SpellDef();
+            //mySpellDef.Print("BLA");
 
 
 

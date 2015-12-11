@@ -36,7 +36,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         #region standard attributes
 
         new public static readonly String _staticName = "MobDef (static)";
-        new protected String _objName = "MobDef (default)";
 
         new protected static Type _type = typeof(MobDef);
         new public static readonly String dbTable = "MobDef";
@@ -110,6 +109,11 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 
 
         #region constructors
+
+        public MobDef ()
+        {
+            SetObjName("MobDef (default)");
+        }
 
         //public MobDef (MobInterType mobInterType, String visual, String focusName, ItemInstance[] items, int[] amounts, 
         //    bool isLocked, ItemInstance keyInstance, String pickLockString, ItemInstance useWithItem, 

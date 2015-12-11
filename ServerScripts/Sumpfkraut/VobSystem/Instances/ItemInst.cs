@@ -16,7 +16,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
     {
 
         new public static readonly String _staticName = "ItemInst (static)";
-        new protected String _objName = "ItemInst (default)";
 
         // must provide an alternative vobDef and corresponding get-set-methods
         // due to C# being unable to inherit from more than 1 baseclass
@@ -50,15 +49,15 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
 
 
 
-
         // does not automatically spawn the item in a world or inventory
         public ItemInst (ItemDef def)
-            : this(def, 1)
+            : this (def, 1)
         { }
 
         // does not automatically spawn the item in a world or inventory
         public ItemInst (ItemDef def, int amount)
         {
+            SetObjName("ItemInst (default)");
             this.vobDef = def;
             this.setVob(Item.Create(def.GetItemInstance()));
             this.setAmount(amount);
@@ -66,21 +65,21 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
 
         // constructor which also spawns the item in an npcs inventory
         public ItemInst (ItemDef def, int amount, NpcInst inInventoryNPC)
-            : this(def, amount)
+            : this (def, amount)
         {
             this.setInInventoryNPC(inInventoryNPC);
         }
 
         // constructor which also spawns the item in a container-mob
         public ItemInst (ItemDef def, int amount, MobInst inInventoryMob)
-            : this(def, amount)
+            : this (def, amount)
         {
             this.setInInventoryMob(inInventoryMob);
         }
 
         // constructor which also places the item at a certain position into a world
         public ItemInst (ItemDef def, int amount, WorldInst inWorld, Vec3f position)
-            : this(def, amount)
+            : this (def, amount)
         {
             this.setInWorld(inWorld);
             this.setPosition(position);
