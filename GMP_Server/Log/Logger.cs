@@ -135,7 +135,10 @@ namespace GUC.Server.Log
                                 typedText.Clear();
                                 break;
                             case ConsoleKey.Backspace:
-                                typedText.Remove(typedText.Length - 1, 1);
+                                if (typedText.Length > 0)
+                                {
+                                    typedText.Remove(typedText.Length - 1, 1);
+                                }
                                 break;
                             default:
                                 if (cki.KeyChar != '\0')

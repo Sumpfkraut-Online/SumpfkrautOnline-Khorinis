@@ -1,10 +1,12 @@
 ﻿using GUC.Server.Scripts.Sumpfkraut.Utilities.Threading;
+using GUC.Server.WorldObjects;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace GUC.Server.Scripts.Sumpfkraut.CommandConsole
 {
@@ -13,8 +15,16 @@ namespace GUC.Server.Scripts.Sumpfkraut.CommandConsole
 
         new public static readonly String _staticName = "CommandConsole (static)";
 
-        protected Process consoleProcess;
-        protected bool canExecute = false;
+        //protected Process consoleProcess;
+        //protected bool canExecute = false;
+
+
+        public delegate void ProcessCommand (CommandConsole console, String cmd, String param);
+        public static readonly Dictionary<String, ProcessCommand> CmdToProcessFunc =
+            new Dictionary<String, ProcessCommand>()
+            {
+                { "/SETTIME", TestCommands.SetIgTime }, 
+            };
 
 
 
@@ -40,7 +50,34 @@ namespace GUC.Server.Scripts.Sumpfkraut.CommandConsole
 
         public void HandleCommand (String commandText)
         {
+            String cmd, param = null;
+            ProcessCommand processCmd = null;
+
             Log.Logger.print("> " + commandText);
+
+            Regex rgx_cmd = new Regex("^\\/\\w+");
+            cmd = rgx_cmd.Match(commandText, 0).ToString();
+
+            if (cmd == null)
+            {
+                return;
+            }
+
+            cmd = cmd.ToUpper();
+
+            if ((cmd.Length + 1) < commandText.Length)
+            {
+                param = commandText.Substring(cmd.Length + 1);
+            }
+            else
+            {
+                param = "";
+            }
+
+            if (CmdToProcessFunc.TryGetValue(cmd, out processCmd))
+            {
+                processCmd(this, cmd, param);
+            }
         }
 
 

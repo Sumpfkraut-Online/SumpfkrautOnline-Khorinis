@@ -13,6 +13,7 @@ using GUC.Server.Scripts.Sumpfkraut;
 using GUC.Server.Scripts.Sumpfkraut.Database;
 using GUC.Server.Scripts.Sumpfkraut.CommandConsole;
 using GUC.Server.Scripts.Sumpfkraut.Database.DBQuerying;
+using System.Text.RegularExpressions;
 
 namespace GUC.Server.Scripts
 {
@@ -309,10 +310,10 @@ namespace GUC.Server.Scripts
             //Logger.log(igTime_1 + 61);
             //Logger.log(igTime_1 / igTime_1);
 
-            Sumpfkraut.TimeSystem.WorldClock clock = new Sumpfkraut.TimeSystem.WorldClock(
-                new List<World>() { World.NewWorld }, new IGTime(0, 0, 0), 60 * 30, false,
-                new TimeSpan(0, 0, 1));
-            clock.OnTimeChange += delegate (IGTime igTime) { Logger.log(igTime); };
+            //Sumpfkraut.TimeSystem.WorldClock clock = new Sumpfkraut.TimeSystem.WorldClock(
+            //    new List<World>() { World.NewWorld }, new IGTime(0, 0, 0), 60 * 30, false,
+            //    new TimeSpan(0, 0, 1));
+            //clock.OnTimeChange += delegate (IGTime igTime) { Logger.log(igTime); };
 
 
 
@@ -351,6 +352,26 @@ namespace GUC.Server.Scripts
             //ItemDef.PrintStatic(typeof(ItemDef), "#1 ", false);
             //ItemDef.PrintStatic(typeof(ItemDef), "#2 ", true);
             //itemDef.Print("#2 ", true);
+            
+            //Regex rgx = new Regex("(?<!(^\\/\\w+)).+");
+            //String totalCmd = "/help me please!!! 5345 >34234_";
+            //String cmd = "/help";
+            ////Log.Logger.print(rgx.Match(totalCmd));
+            ////for (int i = 0; i < totalCmd.Length; i++)
+            ////{
+            ////    if (totalCmd[i] == ' ')
+            ////    {
+            ////        break;
+            ////    }
+            ////    Logger.print(i + ": " + totalCmd[i]);
+            ////}
+            //Logger.print(totalCmd.Substring(cmd.Length));
+
+            //Logger.print("3:22:1".Split(':').Length);
+            //foreach (String t in "3:22:1".Split(':'))
+            //{
+            //    Logger.print(t);
+            //}
 
 
             CommandConsole cmdConsole = new CommandConsole();
