@@ -134,7 +134,6 @@ namespace GUC.Server.Log
                         switch (cki.Key)
                         {
                             case ConsoleKey.Enter:
-                                //Console.WriteLine("\r" + typedText.ToString().PadRight(Console.WindowWidth-1));
                                 if (OnCommand != null)
                                 {
                                     OnCommand(typedText.ToString());
@@ -216,6 +215,10 @@ namespace GUC.Server.Log
                                         typedText.Append(previousText[previousTextIndex]);
                                     }
                                 }
+                                else
+                                {
+                                    typedText.Clear();
+                                }
                                 break;
                             case ConsoleKey.LeftArrow:
                                 cursorPosition[0]--;
@@ -271,7 +274,8 @@ namespace GUC.Server.Log
                         }
                         else
                         {
-                            Console.Write("\r>");
+                            //print("GOTCHA");
+                            Console.Write("\n\r>");
                         }
                     }
                 }
