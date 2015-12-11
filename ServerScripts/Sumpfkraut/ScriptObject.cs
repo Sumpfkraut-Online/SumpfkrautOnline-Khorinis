@@ -104,7 +104,7 @@ namespace GUC.Server.Scripts.Sumpfkraut
         
         public static void PrintStatic (Type type, Object obj)
         {
-            PrintStatic(type, obj, true);
+            PrintStatic(type, obj, false);
         }
 
         public static void PrintStatic (Type type, Object obj, bool newLine)
@@ -175,7 +175,7 @@ namespace GUC.Server.Scripts.Sumpfkraut
 
         public void Print (Object obj)
         {
-            Print(obj, true);
+            Print(obj, false);
         }
 
         public void Print (Object obj, bool newLine)

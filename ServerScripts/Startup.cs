@@ -309,10 +309,10 @@ namespace GUC.Server.Scripts
             //Logger.log(igTime_1 + 61);
             //Logger.log(igTime_1 / igTime_1);
 
-            //Sumpfkraut.TimeSystem.WorldClock clock = new Sumpfkraut.TimeSystem.WorldClock(
-            //    "Big Ben", new List<World>() { World.NewWorld }, new IGTime(0, 0, 0), 60 * 30, false,
-            //    new TimeSpan(0, 0, 1));
-            //clock.OnTimeChange += delegate (IGTime igTime) { Logger.log(igTime); };
+            Sumpfkraut.TimeSystem.WorldClock clock = new Sumpfkraut.TimeSystem.WorldClock(
+                new List<World>() { World.NewWorld }, new IGTime(0, 0, 0), 60 * 30, false,
+                new TimeSpan(0, 0, 1));
+            clock.OnTimeChange += delegate (IGTime igTime) { Logger.log(igTime); };
 
 
 
@@ -351,6 +351,10 @@ namespace GUC.Server.Scripts
             //ItemDef.PrintStatic(typeof(ItemDef), "#1 ", false);
             //ItemDef.PrintStatic(typeof(ItemDef), "#2 ", true);
             //itemDef.Print("#2 ", true);
+
+
+            CommandConsole cmdConsole = new CommandConsole();
+
 
 
 

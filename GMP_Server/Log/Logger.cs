@@ -123,7 +123,7 @@ namespace GUC.Server.Log
                         switch (cki.Key)
                         {
                             case ConsoleKey.Enter:
-                                Console.WriteLine("\r" + typedText.ToString().PadRight(Console.WindowWidth-1));
+                                //Console.WriteLine("\r" + typedText.ToString().PadRight(Console.WindowWidth-1));
                                 if (OnCommand != null)
                                 {
                                     OnCommand(typedText.ToString());
