@@ -108,11 +108,14 @@ namespace GUC.Server.Log
         }
 
         public static Action<string> OnCommand;
-        static object lock_KeyObject = new object();
-        static StringBuilder typedText = new StringBuilder();
+        private static object lock_KeyObject = new object();
+        private static StringBuilder typedText = new StringBuilder();
+        private static List<String> previousText = new List<String>();
+        private static int maxPreviousText = 20;
         internal static void RunLog()
         {
             ConsoleKeyInfo cki;
+            int previousTextIndex = previousText.Count;
             while (true)
             {
                 try
@@ -128,18 +131,64 @@ namespace GUC.Server.Log
                                 {
                                     OnCommand(typedText.ToString());
                                 }
+                                previousText.Add(typedText.ToString());
+                                previousTextIndex++;
+                                while (previousText.Count > maxPreviousText)
+                                {
+                                    if (previousText.Count > 0)
+                                    {
+                                        previousText.RemoveAt(0);
+                                        previousTextIndex--;
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
+                                }
                                 typedText.Clear();
                                 break;
+
                             case ConsoleKey.Escape:
                                 Console.SetCursorPosition(0, 0);
                                 typedText.Clear();
                                 break;
+
                             case ConsoleKey.Backspace:
                                 if (typedText.Length > 0)
                                 {
                                     typedText.Remove(typedText.Length - 1, 1);
                                 }
                                 break;
+
+                            case ConsoleKey.UpArrow:
+                                if (previousText.Count > 0)
+                                {
+                                    previousTextIndex--;
+                                    if (previousTextIndex < 0)
+                                    {
+                                        previousTextIndex = 0;
+                                    }
+                                    typedText.Clear();
+                                    typedText.Append(previousText[previousTextIndex]);
+                                }
+                                break;
+                            case ConsoleKey.DownArrow:
+                                if (previousText.Count > 0)
+                                {
+                                    previousTextIndex++;
+                                    if (previousTextIndex >= previousText.Count)
+                                    {
+                                        previousTextIndex = previousText.Count;
+                                        typedText.Clear();
+                                    }
+                                    else
+                                    {
+                                        typedText.Clear();
+                                        typedText.Append(previousText[previousTextIndex]);
+                                    }
+                                }
+                                break;
+
                             default:
                                 if (cki.KeyChar != '\0')
                                 {
