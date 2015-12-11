@@ -26,6 +26,10 @@ namespace GUC.Server.WorldObjects
         public string HeadMesh { get { return Instance.HeadMesh; } }
         public byte HeadTex { get { return Instance.HeadTex; } }
 
+        public byte BodyHeight { get { return Instance.BodyHeight; } }
+        public byte BodyWidth { get { return Instance.BodyWidth; } }
+        public short Fatness { get { return Instance.Fatness; } }
+
         #endregion
 
         #region Stats

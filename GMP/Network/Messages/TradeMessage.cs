@@ -40,7 +40,7 @@ namespace GUC.Client.Network.Messages
                 ushort condition   = stream.mReadUShort();
                 string specialLine = stream.mReadString();
 
-                if (!World.itemDict.TryGetValue(id, out item))
+                /*if (!World.itemDict.TryGetValue(id, out item))
                 {
                     // item not existing yet -> creating item
                     Item newItem = new Item(id, instanceId);
@@ -53,12 +53,12 @@ namespace GUC.Client.Network.Messages
                 else
                 {
                     item = World.itemDict[id];
-                }
+                }*/
             }
             else
             {
                 uint playerID = stream.mReadUInt();
-                World.npcDict.TryGetValue(playerID, out npc);
+                npc = (NPC)World.Vobs.Get(VobType.NPC, playerID);
             }
 
             switch (tradeState)
@@ -130,10 +130,10 @@ namespace GUC.Client.Network.Messages
             PacketWriter stream = Program.client.SetupSendStream(NetworkID.TradeMessage);
             stream.Write((byte)TradeStatus.SelfOfferItem);
             stream.Write(item.ID);
-            stream.Write(item.instance.ID);
+            stream.Write(item.Instance.ID);
             stream.Write(item.Amount);
-            stream.Write(item.Condition);
-            stream.Write(item.specialLine);
+            //stream.Write(item.Condition);
+            //stream.Write(item.specialLine);
             Program.client.SendStream(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.UNRELIABLE);
             TradeMenu.GetTrade().DeclineOffer();
         }

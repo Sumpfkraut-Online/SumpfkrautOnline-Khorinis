@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.Enumeration;
 using GUC.Network;
+using Gothic.zClasses;
 
 namespace GUC.Client.WorldObjects.Instances
 {
@@ -12,13 +13,12 @@ namespace GUC.Client.WorldObjects.Instances
         public static readonly ItemInstance FistInstance = CreateFists();
         static ItemInstance CreateFists()
         {
-            ItemInstance fists = new ItemInstance(0, "fists", null);
+            ItemInstance fists = new ItemInstance(0);
             fists.Name = "Fäustedummy";
             return fists;
         }
 
         new public readonly static Enumeration.VobType sVobType = Enumeration.VobType.Item;
-        new public readonly static Collections.InstanceDictionary Instances = Network.Server.sInstances.GetDict(sVobType);
 
         #region Properties
 
@@ -58,47 +58,129 @@ namespace GUC.Client.WorldObjects.Instances
         }
 
         /// <summary>The ItemInstance which is used for ammunition.</summary>
-        public ItemInstance Munition = null;
+        //public ItemInstance Munition = null;
 
-        public override bool CDDyn { get { return true; } }
-        public override bool CDStatic { get { return true; } }
+        public int MainFlags;
+        public int Flags;
+        public int Wear = 0;
+
+        public bool IsMeleeWeapon { get { return MainFlags == oCItem.MainFlags.ITEM_KAT_NF; } }
+        public bool IsRangedWeapon { get { return MainFlags == oCItem.MainFlags.ITEM_KAT_FF; } }
+        public bool IsArmor { get { return MainFlags == oCItem.MainFlags.ITEM_KAT_ARMOR; } }
 
         #endregion
 
-        public ItemInstance(string instanceName, object scriptObject)
-            : this(0, instanceName, scriptObject)
-        {
-        }
 
-        public ItemInstance(ushort ID, string instanceName, object scriptObject)
-            : base(ID, instanceName, scriptObject)
+        public ItemInstance(ushort ID)
+            : base(ID)
         {
             this.VobType = sVobType;
         }
 
-        /// <summary> Use this to send additional information to the clients. The base properties are already written! </summary>
-        new public static Action<ItemInstance, PacketWriter> OnWriteProperties;
-        internal override void WriteProperties(PacketWriter stream)
+        internal override void ReadProperties(PacketReader stream)
         {
-            base.WriteProperties(stream);
+            base.ReadProperties(stream);
 
-            stream.Write(Name);
-            stream.Write((byte)Type);
-            stream.Write((byte)Material);
+            this.Name = stream.ReadString();
+            this.Type = (ItemType)stream.ReadByte();
+            this.Material = (ItemMaterial)stream.ReadByte();
             for (int i = 0; i < TextAndCountLen; i++)
             {
-                stream.Write(Text[i]);
-                stream.Write(Count[i]);
+                this.Text[i] = stream.ReadString();
+                this.Count[i] = stream.ReadUShort();
             }
-            stream.Write(Description);
-            stream.Write(VisualChange);
-            stream.Write(Effect);
-            stream.Write(Munition == null ? ushort.MinValue : Munition.ID);
+            this.Description = stream.ReadString();
+            this.VisualChange = stream.ReadString();
+            this.Effect = stream.ReadString();
+            //this.Munition 
 
-            if (OnWriteProperties != null)
+            //...
+
+            SetFlags();
+        }
+
+        void SetFlags()
+        {
+            switch (Type)
             {
-                OnWriteProperties(this, stream);
+                case ItemType.Sword_1H:
+                    MainFlags = oCItem.MainFlags.ITEM_KAT_NF;
+                    Flags = oCItem.ItemFlags.ITEM_SWD;
+                    break;
+                case ItemType.Sword_2H:
+                    MainFlags = oCItem.MainFlags.ITEM_KAT_NF;
+                    Flags = oCItem.ItemFlags.ITEM_2HD_SWD;
+                    break;
+                case ItemType.Blunt_1H:
+                    MainFlags = oCItem.MainFlags.ITEM_KAT_NF;
+                    Flags = oCItem.ItemFlags.ITEM_AXE;
+                    break;
+                case ItemType.Blunt_2H:
+                    MainFlags = oCItem.MainFlags.ITEM_KAT_NF;
+                    Flags = oCItem.ItemFlags.ITEM_2HD_AXE;
+                    break;
+                case ItemType.Bow:
+                    MainFlags = oCItem.MainFlags.ITEM_KAT_FF;
+                    Flags = oCItem.ItemFlags.ITEM_BOW;
+                    break;
+                case ItemType.XBow:
+                    MainFlags = oCItem.MainFlags.ITEM_KAT_FF;
+                    Flags = oCItem.ItemFlags.ITEM_CROSSBOW;
+                    break;
+                case ItemType.Armor:
+                    MainFlags = oCItem.MainFlags.ITEM_KAT_ARMOR;
+                    Flags = 0;
+                    Wear = 1;
+                    break;
+                case ItemType.Arrow:
+                    MainFlags = oCItem.MainFlags.ITEM_KAT_MUN;
+                    Flags = oCItem.ItemFlags.ITEM_BOW;
+                    break;
+                case ItemType.XBolt:
+                    MainFlags = oCItem.MainFlags.ITEM_KAT_MUN;
+                    Flags = oCItem.ItemFlags.ITEM_CROSSBOW;
+                    break;
+                case ItemType.Ring:
+                    MainFlags = oCItem.MainFlags.ITEM_KAT_MAGIC;
+                    Flags = oCItem.ItemFlags.ITEM_RING;
+                    break;
+                case ItemType.Amulet:
+                    MainFlags = oCItem.MainFlags.ITEM_KAT_MAGIC;
+                    Flags = oCItem.ItemFlags.ITEM_AMULET;
+                    break;
+                case ItemType.Belt:
+                    MainFlags = oCItem.MainFlags.ITEM_KAT_MAGIC;
+                    Flags = oCItem.ItemFlags.ITEM_BELT;
+                    break;
+                case ItemType.Food_Small:
+                case ItemType.Food_Huge:
+                case ItemType.Drink:
+                    MainFlags = oCItem.MainFlags.ITEM_KAT_FOOD;
+                    Flags = 0;
+                    break;
+                case ItemType.Potions:
+                    MainFlags = oCItem.MainFlags.ITEM_KAT_POTIONS;
+                    Flags = 0;
+                    break;
+                case ItemType.Document:
+                case ItemType.Book:
+                    MainFlags = oCItem.MainFlags.ITEM_KAT_DOCS;
+                    Flags = 0;
+                    break;
+                case ItemType.Rune:
+                case ItemType.Scroll:
+                    MainFlags = oCItem.MainFlags.ITEM_KAT_RUNE;
+                    Flags = 0;
+                    break;
+                case ItemType.Misc:
+                case ItemType.Misc_Usable:
+                default:
+                    MainFlags = oCItem.MainFlags.ITEM_KAT_NONE;
+                    Flags = 0;
+                    break;
             }
+
+            Flags |= MainFlags;
         }
     }
 }

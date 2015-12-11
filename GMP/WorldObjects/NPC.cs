@@ -6,10 +6,9 @@ using Gothic.zClasses;
 using GUC.Enumeration;
 using GUC.Types;
 using Gothic.zTypes;
-using RakNet;
-using GUC.Network;
 using Gothic.zStruct;
 using GUC.Client.Hooks;
+using GUC.Client.WorldObjects.Instances;
 
 namespace GUC.Client.WorldObjects
 {
@@ -18,63 +17,70 @@ namespace GUC.Client.WorldObjects
         public const long PositionUpdateTime = 1200000; //120ms
         public const long DirectionUpdateTime = PositionUpdateTime + 100000;
 
-        public NPCInstance instance;
+        new public NPCInstance Instance { get; protected set; }
+
+        new public oCNpc gVob { get; protected set; }
+        public oCAniCtrl_Human gAniCtrl { get; protected set; }
+
+        public string Name { get { return Instance.Name; } }
+        public string BodyMesh { get { return Instance.BodyMesh; } }
+        public byte BodyTex { get { return Instance.BodyTex; } }
+        public string HeadMesh { get { return Instance.HeadMesh; } }
+        public byte HeadTex { get { return Instance.HeadTex; } }
+
+        public byte BodyHeight { get { return Instance.BodyHeight; } }
+        public byte BodyWidth { get { return Instance.BodyWidth; } }
+        public short Fatness { get { return Instance.Fatness; } }
 
         public MobInter UsedMob;
 
         public NPC(uint id, ushort instanceID)
-            : base(id)
+            : this(id, instanceID, null)
         {
-            instance = NPCInstance.Table.Get(instanceID);
-            instance.SetProperties(this);
         }
 
         public NPC(uint id, ushort instanceID, oCNpc npc)
-            : base(id, npc)
+            : base(id, instanceID, npc)
         {
-            instance = NPCInstance.Table.Get(instanceID);
-            instance.SetProperties(this);
         }
 
-        protected override void CreateVob(bool createNew)
+        protected override void CreateVob()
         {
-            if (createNew)
-            {
-                gVob = oCNpc.Create(Program.Process);
-            }
+            this.gVob = oCNpc.Create(Program.Process);
+        }
 
-            gNpc.Instance = instance.ID;
-            gNpc.Name.Set(Name);
-            gNpc.SetVisual(Visual);
-            gNpc.SetAdditionalVisuals(BodyMesh, BodyTex, 0, HeadMesh, HeadTex, 0, -1);
+        protected override void SetProperties()
+        {
+            base.SetProperties();
+
+            gVob.Instance = Instance.ID;
+            gVob.Name.Set(Name);
+            gVob.SetVisual(Visual);
+            gVob.SetAdditionalVisuals(BodyMesh, BodyTex, 0, HeadMesh, HeadTex, 0, -1);
             using (zVec3 z = zVec3.Create(Program.Process))
             {
-                z.X = BodyWidth;
-                z.Y = BodyHeight;
-                z.Z = BodyWidth;
-                gNpc.SetModelScale(z);
+                z.X = (float)BodyWidth / 100.0f;
+                z.Y = (float)BodyHeight / 100.0f;
+                z.Z = (float)BodyWidth / 100.0f;
+                gVob.SetModelScale(z);
             }
-            gNpc.SetFatness(Fatness);
+            gVob.SetFatness((float)Fatness / 100.0f);
 
-            gNpc.Voice = Voice;
+            //gNpc.Voice = Voice;
 
-            gNpc.HPMax = HPMax;
-            gNpc.HP = HP;
+            gVob.HPMax = HPMax;
+            gVob.HP = HP;
 
-            foreach (Item item in equippedSlots.Values)
+            foreach (KeyValuePair<byte, Item> pair in equippedSlots)
             {
-                if (item.IsMeleeWeapon)
-                    gNpc.EquipWeapon(item.gItem);
-                else if (item.IsRangedWeapon)
-                    gNpc.EquipFarWeapon(item.gItem);
-                else if (item.IsArmor)
-                    gNpc.EquipArmor(item.gItem);
-                else
-                    gNpc.EquipItem(item.gItem);
+                EquipSlot(pair.Key, pair.Value);
             }
 
-            gNpc.InitHumanAI();
-            gAniCtrl = gNpc.AniCtrl;
+            gVob.InitHumanAI();
+            gAniCtrl = gVob.AniCtrl;
+
+            gVob.Enable(pos.X, pos.Y, pos.Z);
+            DrawItem(DrawnItem, true);
         }
 
         protected ushort hpmax = 100;
@@ -86,7 +92,7 @@ namespace GUC.Client.WorldObjects
                 hpmax = value;
                 if (Spawned)
                 {
-                    gNpc.HPMax = value;
+                    gVob.HPMax = value;
                 }
             }
         }
@@ -100,41 +106,10 @@ namespace GUC.Client.WorldObjects
                 hp = value;
                 if (Spawned)
                 {
-                    gNpc.HP = value;
+                    gVob.HP = value;
                 }
             }
         }
-
-        protected string name = "";
-        public string Name
-        {
-            set
-            {
-                name = value;
-                if (Spawned)
-                {
-                    using (zString z = zString.Create(Program.Process, value))
-                    {
-                        gNpc.SetName(z);
-                    }
-                }
-
-            }
-            get
-            {
-                return name;
-            }
-        }
-
-        public oCNpc gNpc
-        {
-            get
-            {
-                return new oCNpc(Program.Process, gVob.Address);
-            }
-        }
-
-        public oCAniCtrl_Human gAniCtrl { get; protected set; }
 
         public bool HasFreeHands
         {
@@ -145,105 +120,7 @@ namespace GUC.Client.WorldObjects
             }
         }
 
-        protected int voice = 0;
-        public int Voice
-        {
-            get { return voice; }
-            set
-            {
-                voice = value;
-                if (Spawned)
-                {
-                    gNpc.Voice = value;
-                }
-            }
-        }
-
         public NPCState State = NPCState.Stand;
-
-        #region Visual
-
-        public string Visual { get { return instance.visual + ".MDS"; } }
-        public string BodyMesh { get { return instance.bodyMesh; } }
-        public int BodyTex { get; protected set; }
-        public string HeadMesh { get; protected set; }
-        public int HeadTex { get; protected set; }
-
-        public void SetBodyVisuals(int bodyTex, string headMesh, int headTex)
-        {
-            this.BodyTex = bodyTex;
-            this.HeadMesh = headMesh;
-            this.HeadTex = headTex;
-            if (Spawned)
-            {
-                gNpc.SetAdditionalVisuals(BodyMesh, bodyTex, 0, headMesh, headTex, 0, -1);
-            }
-        }
-
-        protected float fatness = 0;
-        public float Fatness
-        {
-            get
-            {
-                return fatness;
-            }
-            set
-            {
-                fatness = value;
-                if (Spawned)
-                {
-                    gNpc.SetFatness(value);
-                }
-            }
-        }
-
-        protected float bodyHeight = 1.0f;
-        public float BodyHeight
-        {
-            get
-            {
-                return bodyHeight;
-            }
-            set
-            {
-                bodyHeight = value;
-                if (Spawned)
-                {
-                    using (zVec3 scale = zVec3.Create(Program.Process))
-                    {
-                        scale.X = gNpc.Scale.X;
-                        scale.Y = value;
-                        scale.Z = gNpc.Scale.Z;
-                        gNpc.SetModelScale(scale);
-                    }
-                }
-            }
-        }
-
-        //x & z together
-        protected float bodyWidth = 1.0f;
-        public float BodyWidth
-        {
-            get
-            {
-                return bodyWidth;
-            }
-            set
-            {
-                bodyWidth = value;
-                if (Spawned)
-                {
-                    using (zVec3 scale = zVec3.Create(Program.Process))
-                    {
-                        scale.X = value;
-                        scale.Y = gNpc.Scale.Y;
-                        scale.Z = value;
-                        gNpc.SetModelScale(scale);
-                    }
-                }
-            }
-        }
-        #endregion
 
         #region Animation
 
@@ -253,7 +130,7 @@ namespace GUC.Client.WorldObjects
         {
             using (zString z = zString.Create(Program.Process, ani.ToString()))
             {
-                gNpc.GetModel().StartAnimation(z);
+                gVob.GetModel().StartAnimation(z);
             }
         }
 
@@ -261,7 +138,7 @@ namespace GUC.Client.WorldObjects
         {
             using (zString z = zString.Create(Program.Process, ani.ToString()))
             {
-                gNpc.GetModel().StopAnimation(z);
+                gVob.GetModel().StopAnimation(z);
             }
         }
 
@@ -269,8 +146,8 @@ namespace GUC.Client.WorldObjects
         {
             using (zString z = zString.Create(Program.Process, ani.ToString()))
             {
-                int id = gNpc.GetModel().GetAniIDFromAniName(z);
-                gNpc.GetModel().FadeOutAni(id);
+                int id = gVob.GetModel().GetAniIDFromAniName(z);
+                gVob.GetModel().FadeOutAni(id);
             }
         }
 
@@ -299,13 +176,13 @@ namespace GUC.Client.WorldObjects
                 if (Spawned)
                 {
                     if (item.IsMeleeWeapon)
-                        gNpc.EquipWeapon(item.gItem);
+                        gVob.EquipWeapon(item.gVob);
                     else if (item.IsRangedWeapon)
-                        gNpc.EquipFarWeapon(item.gItem);
+                        gVob.EquipFarWeapon(item.gVob);
                     else if (item.IsArmor)
-                        gNpc.EquipArmor(item.gItem);
+                        gVob.EquipArmor(item.gVob);
                     else
-                        gNpc.EquipItem(item.gItem);
+                        gVob.EquipItem(item.gVob);
                 }
             }
         }
@@ -318,7 +195,7 @@ namespace GUC.Client.WorldObjects
                 item.Slot = 0;
                 if (Spawned)
                 {
-                    gNpc.UnequipItem(item.gItem);
+                    gVob.UnequipItem(item.gVob);
                 }
                 return true;
             }
@@ -334,7 +211,7 @@ namespace GUC.Client.WorldObjects
 
         public void StartTurnAni(bool right)
         {
-            zCModel model = gNpc.GetModel();
+            zCModel model = gVob.GetModel();
 
             if (model.IsAniActive(model.GetAniFromAniID(gAniCtrl._s_walk)))
             {
@@ -373,7 +250,7 @@ namespace GUC.Client.WorldObjects
             {
                 return;
             }
-                
+
             model.StartAni(TurnAnimation, 0);
         }
 
@@ -382,7 +259,7 @@ namespace GUC.Client.WorldObjects
             if (turning)
             {
                 Direction = nextDir;
-                gNpc.GetModel().FadeOutAni(TurnAnimation);
+                gVob.GetModel().FadeOutAni(TurnAnimation);
                 turning = false;
             }
         }
@@ -406,7 +283,7 @@ namespace GUC.Client.WorldObjects
                 zCEventMessage activeMsg = gVob.GetEM(0).GetActiveMsg();
                 if (activeMsg.Address == 0)
                 {
-                    Vob target = World.GetVobByID(cmdTargetVob);
+                    Vob target = World.Vobs.Get(cmdTargetVob);
                     if (target != null && target.Position.GetDistance(this.Position) > cmdTargetRange)
                     {
                         oCMsgMovement msg = oCMsgMovement.Create(Program.Process, oCMsgMovement.SubTypes.GotoVob, target.gVob);
@@ -453,11 +330,11 @@ namespace GUC.Client.WorldObjects
                         break;
                     case NPCState.MoveRight:
                         gVob.GetEM(0).KillMessages();
-                        gNpc.DoStrafe(true);
+                        gVob.DoStrafe(true);
                         break;
                     case NPCState.MoveLeft:
                         gVob.GetEM(0).KillMessages();
-                        gNpc.DoStrafe(false);
+                        gVob.DoStrafe(false);
                         break;
                     case NPCState.Stand:
                         gAniCtrl._Stand();
@@ -480,7 +357,7 @@ namespace GUC.Client.WorldObjects
                 {
                     if (fast)
                     {
-                        gNpc.SetToFistMode();
+                        gVob.SetToFistMode();
                     }
                     else
                     {
@@ -497,7 +374,7 @@ namespace GUC.Client.WorldObjects
                         case ItemType.Blunt_1H:
                             if (fast)
                             {
-                                gNpc.SetToFightMode(item.gItem, 3);
+                                gVob.SetToFightMode(item.gVob, 3);
                                 //using (zString z = zString.Create(Program.Process, "1H"))
                                 //    gNpc.SetWeaponMode2(z);
                             }
@@ -511,7 +388,7 @@ namespace GUC.Client.WorldObjects
                             if (fast)
                             {
                                 using (zString z = zString.Create(Program.Process, "2H"))
-                                    gNpc.SetWeaponMode2(z);
+                                    gVob.SetWeaponMode2(z);
                             }
                             else
                             {
@@ -522,7 +399,7 @@ namespace GUC.Client.WorldObjects
                             if (fast)
                             {
                                 using (zString z = zString.Create(Program.Process, "BOW"))
-                                    gNpc.SetWeaponMode2(z);
+                                    gVob.SetWeaponMode2(z);
                             }
                             else
                             {
@@ -533,7 +410,7 @@ namespace GUC.Client.WorldObjects
                             if (fast)
                             {
                                 using (zString z = zString.Create(Program.Process, "CBOW"))
-                                    gNpc.SetWeaponMode2(z);
+                                    gVob.SetWeaponMode2(z);
                             }
                             else
                             {
@@ -578,7 +455,7 @@ namespace GUC.Client.WorldObjects
             {
                 if (fast)
                 {
-                    gNpc.SetWeaponMode2(0);
+                    gVob.SetWeaponMode2(0);
                     if (this == Player.Hero)
                     {
                         oCNpcFocus.SetFocusMode(Program.Process, 0);

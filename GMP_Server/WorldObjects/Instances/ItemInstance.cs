@@ -93,7 +93,7 @@ namespace GUC.Server.WorldObjects.Instances
             stream.Write(Description);
             stream.Write(VisualChange);
             stream.Write(Effect);
-            stream.Write(Munition == null ? ushort.MinValue : Munition.ID);
+            //stream.Write(Munition == null ? ushort.MinValue : Munition.ID);
 
             if (OnWriteProperties != null)
             {

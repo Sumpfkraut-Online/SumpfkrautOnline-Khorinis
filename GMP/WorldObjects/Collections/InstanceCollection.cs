@@ -11,12 +11,9 @@ namespace GUC.Client.WorldObjects.Collections
 {
     public class InstanceCollection : VobObjCollection<ushort, VobInstance>
     {
-        internal byte[] Data;
-        internal byte[] Hash;
-
         public void NetUpdate()
         {
-            PacketWriter stream = Program.server.SetupStream(NetworkID.ConnectionMessage);
+            /*PacketWriter stream = Program.server.SetupStream(NetworkID.ConnectionMessage);
 
             stream.StartCompressing();
             for (int i = 0; i < (int)VobType.Maximum; i++)
@@ -44,7 +41,7 @@ namespace GUC.Client.WorldObjects.Collections
             StringBuilder sb = new StringBuilder();
             foreach (byte b in Hash)
                 sb.Append(b.ToString("X2"));
-            System.IO.File.WriteAllBytes(sb.ToString(), Data);
+            System.IO.File.WriteAllBytes(sb.ToString(), Data);*/
         }
 
         internal InstanceCollection()

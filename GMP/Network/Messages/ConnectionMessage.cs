@@ -20,16 +20,12 @@ namespace GUC.Client.Network.Messages
         {
             String connString = getDefaultConnectionString(0);
             String macString = x();
-            byte[] npcTableHash = NPCInstance.Table.ReadFile();
-            byte[] itemTableHash = ItemInstance.Table.ReadFile();
-            byte[] mobTableHash = MobInstance.Table.ReadFile();
+            //byte[] npcTableHash = NPCInstance.Table.ReadFile();
 
             PacketWriter stream = Program.client.SetupSendStream(NetworkID.ConnectionMessage);
             stream.Write(connString);
             stream.Write(macString);
-            stream.Write(npcTableHash, 0, 16);
-            stream.Write(itemTableHash, 0, 16);
-            stream.Write(mobTableHash, 0, 16);
+            //stream.Write(npcTableHash, 0, 16);
             Program.client.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE_ORDERED);
         }
 
@@ -76,41 +72,15 @@ namespace GUC.Client.Network.Messages
 
         public static void Read(PacketReader stream)
         {
-            if (stream.ReadBit()) // new npc instances for us
-            {
-                int len = stream.ReadInt(); // length of packed data
+           
+               /* int len = stream.ReadInt(); // length of packed data
 
                 byte[] data = new byte[len];
                 stream.Read(data, 0, len);
 
                 NPCInstance.Table.ReadData(data);
 
-                NPCInstance.Table.WriteFile();
-            }
-
-            if (stream.ReadBit())
-            {
-                int len = stream.ReadInt(); // length of packed data
-
-                byte[] data = new byte[len];
-                stream.Read(data, 0, len);
-
-                ItemInstance.Table.ReadData(data);
-
-                ItemInstance.Table.WriteFile();
-            }
-
-            if (stream.ReadBit())
-            {
-                int len = stream.ReadInt(); // length of packed data
-
-                byte[] data = new byte[len];
-                stream.Read(data, 0, len);
-
-                MobInstance.Table.ReadData(data);
-
-                MobInstance.Table.WriteFile();
-            }
+                NPCInstance.Table.WriteFile();*/
         }
     }
 }

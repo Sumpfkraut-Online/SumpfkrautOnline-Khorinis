@@ -16,7 +16,7 @@ namespace GUC.Client.Network.Messages
     {
         public static void ReadAddVob(BitStream stream)
         {
-            Vob vob = World.GetVobByID(stream.mReadUInt());
+            Vob vob = World.Vobs.Get(stream.mReadUInt());
             if (vob != null)
             {
                 Player.VobControlledList.Add(vob);
@@ -25,7 +25,7 @@ namespace GUC.Client.Network.Messages
 
         public static void ReadRemoveVob(BitStream stream)
         {
-            Vob vob = World.GetVobByID(stream.mReadUInt());
+            Vob vob = World.Vobs.Get(stream.mReadUInt());
             if (vob != null)
             {
                 Player.VobControlledList.Remove(vob);

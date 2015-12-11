@@ -154,7 +154,7 @@ namespace GUC.Client.Network
 
             while (packet != null)
             {
-                pktReader.Load(packet.data);
+                pktReader.Load(packet.data, (int)packet.length);
                 packetKB += packet.length;
                 type = (DefaultMessageIDTypes)pktReader.ReadByte();
 

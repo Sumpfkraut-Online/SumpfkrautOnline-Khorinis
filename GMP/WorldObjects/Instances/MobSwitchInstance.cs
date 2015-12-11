@@ -9,28 +9,18 @@ namespace GUC.Client.WorldObjects.Instances
     public class MobSwitchInstance : MobInterInstance
     {
         new public readonly static Enumeration.VobType sVobType = Enumeration.VobType.MobSwitch;
-        new public readonly static Collections.InstanceDictionary Instances = Network.Server.sInstances.GetDict(sVobType);
 
-        public MobSwitchInstance(string instanceName, object scriptObject)
-            : this(0, instanceName, scriptObject)
-        {
-        }
-
-        public MobSwitchInstance(ushort ID, string instanceName, object scriptObject)
-            : base(ID, instanceName, scriptObject)
+        public MobSwitchInstance(ushort ID)
+            : base(ID)
         {
             this.VobType = sVobType;
         }
-
-        public new static Action<MobSwitchInstance, PacketWriter> OnWriteProperties;
-        internal override void WriteProperties(PacketWriter stream)
+        
+        internal override void ReadProperties(PacketReader stream)
         {
-            base.WriteProperties(stream);
+            base.ReadProperties(stream);
 
-            if (MobSwitchInstance.OnWriteProperties != null)
-            {
-                MobSwitchInstance.OnWriteProperties(this, stream);
-            }
+            //...
         }
     }
 }

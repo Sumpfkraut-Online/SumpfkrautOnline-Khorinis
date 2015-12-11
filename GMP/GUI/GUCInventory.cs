@@ -54,8 +54,8 @@ namespace GUC.Client.GUI
                     else
                     {
                         thisVob.SetVisual(iItem.Visual);
-                        thisVob.MainFlag = (int)iItem.mainFlags; //for proper item rotation
-                        thisVob.Flags = (int)iItem.flags;
+                        thisVob.MainFlag = (int)iItem.MainFlags; //for proper item rotation
+                        thisVob.Flags = (int)iItem.Flags;
                         amount.Text = iItem.Amount > 1 ? iItem.Amount.ToString() : "";
                         if (shown) vis.Show();
                     }
@@ -328,16 +328,16 @@ namespace GUC.Client.GUI
             else
             {
                 //set description name
-                descrBack.Texts[0].Text = selectedItem.description;
+                descrBack.Texts[0].Text = selectedItem.Description;
 
                 //standard description
                 for (int i = 0; i < 4; i++)
                 {
-                    descrBack.Texts[2 * i + 3].Text = selectedItem.text[i];
+                    descrBack.Texts[2 * i + 3].Text = selectedItem.Text[i];
 
-                    if (selectedItem.count[i] > 0)
+                    if (selectedItem.Count[i] > 0)
                     {
-                        descrBack.Texts[2 * i + 4].Text = selectedItem.count[i].ToString();
+                        descrBack.Texts[2 * i + 4].Text = selectedItem.Count[i].ToString();
                     }
                     else
                     {
@@ -348,21 +348,21 @@ namespace GUC.Client.GUI
                 //special line directly on top
                 for (int i = 3; i >= 0; i--)
                 {
-                    if (selectedItem.text[i].Length == 0)
+                    if (selectedItem.Text[i].Length == 0)
                     {
-                        descrBack.Texts[2 * i + 3].Text = selectedItem.specialLine;
+                        //descrBack.Texts[2 * i + 3].Text = selectedItem.specialLine;
                         break;
                     }
                 }
 
                 //weight on bottom
                 descrBack.Texts[11].Text = "Gewicht:";
-                descrBack.Texts[12].Text = selectedItem.weight.ToString();
+                //descrBack.Texts[12].Text = selectedItem.weight.ToString();
 
                 //visual vob
                 descrVob.SetVisual(selectedItem.Visual);
-                descrVob.MainFlag = (int)selectedItem.mainFlags;
-                descrVob.Flags = (int)selectedItem.flags;
+                descrVob.MainFlag = (int)selectedItem.MainFlags;
+                descrVob.Flags = (int)selectedItem.Flags;
 
                 //show
                 descrVis.Show();
@@ -417,12 +417,12 @@ namespace GUC.Client.GUI
             switch (text)
             {
                 case "GOLD":
-                    Item gold = contents.Find(i => i.name == "Gold");
+                    Item gold = contents.Find(i => i.Name == "Gold");
                     return "Gold: " + (gold == null ? 0 : gold.Amount);
                 case "WEIGHT":
                     int weight = 0;
-                    for (int i = 0; i < contents.Count; i++)
-                        weight += contents[i].weight * contents[i].Amount;
+                    //for (int i = 0; i < contents.Count; i++)
+                    //    weight += contents[i].weight * contents[i].Amount;
                     return String.Format("{0}/{1}", weight, 100); //FIXME: Show capacity
                 default:
                     return text;
@@ -520,8 +520,8 @@ namespace GUC.Client.GUI
         {
             public int Compare(Item a, Item b)
             {
-                int aIndex = sortList.IndexOf(a.mainFlags); // get sort priority
-                int bIndex = sortList.IndexOf(a.mainFlags); // get sort priority
+                int aIndex = sortList.IndexOf(a.MainFlags); // get sort priority
+                int bIndex = sortList.IndexOf(a.MainFlags); // get sort priority
                 if (aIndex < 0) aIndex = sortList.Count; // not in sortList, to the bottom
                 if (bIndex < 0) bIndex = sortList.Count; // not in sortList, to the bottom
 

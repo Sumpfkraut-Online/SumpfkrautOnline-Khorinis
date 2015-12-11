@@ -38,7 +38,7 @@ namespace GUC.Client.Menus
 
         public override void Open()
         {
-            if (WorldObjects.Player.Hero.gNpc.GetBodyState() != 0) //only open while standing
+            if (WorldObjects.Player.Hero.gVob.GetBodyState() != 0) //only open while standing
                 return;
 
             base.Open();

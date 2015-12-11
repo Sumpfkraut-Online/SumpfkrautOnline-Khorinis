@@ -38,9 +38,7 @@ namespace GUC.Client.Network.Messages
         public static void ReadAniStart(BitStream stream)
         {
             uint id = stream.mReadUInt();
-
-            NPC npc;
-            World.npcDict.TryGetValue(id, out npc);
+            NPC npc = (NPC)World.Vobs.Get(VobType.NPC, id);
             if (npc == null) return;
 
             Animations ani = (Animations)stream.mReadUShort();
@@ -50,9 +48,7 @@ namespace GUC.Client.Network.Messages
         public static void ReadAniStop(BitStream stream)
         {
             uint id = stream.mReadUInt();
-
-            NPC npc;
-            World.npcDict.TryGetValue(id, out npc);
+            NPC npc = (NPC)World.Vobs.Get(VobType.NPC, id);
             if (npc == null) return;
 
             Animations ani = (Animations)stream.mReadUShort();
@@ -100,7 +96,7 @@ namespace GUC.Client.Network.Messages
                 stream.Write((byte)state);
 
                 Vob target;
-                World.vobAddr.TryGetValue(Player.Hero.gNpc.GetFocusNpc().Address, out target);
+                World.vobAddr.TryGetValue(Player.Hero.gVob.GetFocusNpc().Address, out target);
                 if (target == null)
                 {
                     stream.Write(0);
@@ -119,9 +115,7 @@ namespace GUC.Client.Network.Messages
         public static void ReadState(BitStream stream)
         {
             uint id = stream.mReadUInt();
-
-            NPC npc;
-            World.npcDict.TryGetValue(id, out npc);
+            NPC npc = (NPC)World.Vobs.Get(VobType.NPC, id);
             if (npc == null) return;
 
             //Just in case the npc is turning
@@ -133,8 +127,8 @@ namespace GUC.Client.Network.Messages
 
         public static void ReadTargetState(BitStream stream)
         {
-            NPC npc;
-            World.npcDict.TryGetValue(stream.mReadUInt(), out npc);
+            uint id = stream.mReadUInt();
+            NPC npc = (NPC)World.Vobs.Get(VobType.NPC, id);
             if (npc == null) return;
 
             //Just in case the npc is turning
@@ -147,16 +141,15 @@ namespace GUC.Client.Network.Messages
             oCNpc targetVob = null;
             if (targetID != 0)
             {
-                NPC target = null;
-                World.npcDict.TryGetValue(targetID, out target);
-                if (target != null) targetVob = target.gNpc;
+                NPC target = (NPC)World.Vobs.Get(VobType.NPC, targetID);
+                if (target != null) targetVob = target.gVob;
             }
             if (targetVob == null)
             {
                 targetVob = new oCNpc();
             }
 
-            npc.gNpc.SetEnemy(targetVob);
+            npc.gVob.SetEnemy(targetVob);
 
             oCMsgAttack msg;
             switch (state)
@@ -212,16 +205,14 @@ namespace GUC.Client.Network.Messages
         public static void ReadJump(BitStream stream)
         {
             uint id = stream.mReadUInt();
-
-            NPC npc;
-            World.npcDict.TryGetValue(id, out npc);
+            NPC npc = (NPC)World.Vobs.Get(VobType.NPC, id);
             if (npc == null) return;
 
             if (npc.State == NPCState.MoveForward)
             {
-                npc.gNpc.GetModel().StartAni(npc.gAniCtrl._t_runr_2_jump, 0);
+                npc.gVob.GetModel().StartAni(npc.gAniCtrl._t_runr_2_jump, 0);
                 //set some flags, see 0x6B1F1D: LOBYTE(aniCtrl->_zCAIPlayer_bitfield[0]) &= 0xF7u;
-                npc.gNpc.SetBodyState(8);
+                npc.gVob.SetBodyState(8);
             }
             else if (npc.State == NPCState.Stand)
             {
@@ -251,10 +242,8 @@ namespace GUC.Client.Network.Messages
 
         public static void ReadDrawItem(BitStream stream)
         {
-            uint ID = stream.mReadUInt();
-
-            NPC npc;
-            World.npcDict.TryGetValue(ID, out npc);
+            uint id = stream.mReadUInt();
+            NPC npc = (NPC)World.Vobs.Get(VobType.NPC, id);
             if (npc == null) return;
 
             Item item = ReadStrmDrawItem(stream, npc);
@@ -287,9 +276,9 @@ namespace GUC.Client.Network.Messages
 
                 byte talent = stream.mReadByte();
                 if (item.Type == ItemType.Blunt_1H || item.Type == ItemType.Sword_1H)
-                    npc.gNpc.SetTalentSkill(1, talent);
+                    npc.gVob.SetTalentSkill(1, talent);
                 else if (item.Type == ItemType.Blunt_2H || item.Type == ItemType.Sword_2H)
-                    npc.gNpc.SetTalentSkill(2, talent);
+                    npc.gVob.SetTalentSkill(2, talent);
             }
             else
             {
@@ -312,10 +301,8 @@ namespace GUC.Client.Network.Messages
 
         public static void ReadUndrawItem(BitStream stream)
         {
-            uint ID = stream.mReadUInt();
-
-            NPC npc;
-            World.npcDict.TryGetValue(ID, out npc);
+            uint id = stream.mReadUInt();
+            NPC npc = (NPC)World.Vobs.Get(VobType.NPC, id);
             if (npc == null) return;
 
             Item item = npc.DrawnItem;
@@ -334,8 +321,8 @@ namespace GUC.Client.Network.Messages
 
         public static void ReadHealthMessage(BitStream stream)
         {
-            NPC npc;
-            World.npcDict.TryGetValue(stream.mReadUInt(), out npc);
+            uint id = stream.mReadUInt();
+            NPC npc = (NPC)World.Vobs.Get(VobType.NPC, id);
             if (npc == null) return;
 
             npc.HPMax = stream.mReadUShort();
@@ -346,32 +333,28 @@ namespace GUC.Client.Network.Messages
 
         public static void ReadEquipMessage(BitStream stream)
         {
-            uint npcID = stream.mReadUInt();
+            uint id = stream.mReadUInt();
+            NPC npc = (NPC)World.Vobs.Get(VobType.NPC, id);
+            if (npc == null) return;
 
-            NPC npc;
-            if (World.npcDict.TryGetValue(npcID, out npc))
-            {
-                uint itemID = stream.mReadUInt();
-                ushort itemInstanceID = stream.mReadUShort();
-                ushort itemCondition = stream.mReadUShort();
-                byte slot = stream.mReadByte();
+            uint itemID = stream.mReadUInt();
+            ushort itemInstanceID = stream.mReadUShort();
+            ushort itemCondition = stream.mReadUShort();
+            byte slot = stream.mReadByte();
 
-                Item item = new Item(itemID, itemInstanceID);
-                item.Condition = itemCondition;
-                npc.EquipSlot(slot, item);
-            }
+            Item item = new Item(itemID, itemInstanceID);
+            //item.Condition = itemCondition;
+            npc.EquipSlot(slot, item);
         }
 
         public static void ReadUnequipMessage(BitStream stream)
         {
-            uint npcID = stream.mReadUInt();
+            uint id = stream.mReadUInt();
+            NPC npc = (NPC)World.Vobs.Get(VobType.NPC, id);
+            if (npc == null) return;
 
-            NPC npc;
-            if (World.npcDict.TryGetValue(npcID, out npc))
-            {
-                byte slot = stream.mReadByte();
-                npc.UnequipSlot(slot);
-            }
+            byte slot = stream.mReadByte();
+            npc.UnequipSlot(slot);
         }
 
         #endregion

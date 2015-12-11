@@ -21,8 +21,8 @@ namespace GUC.Client.Network.Messages
             Vec3f dir = stream.mReadVec();
             bool drop = stream.mReadBool();
 
-            MobInstance instance = MobInstance.Table.Get(instID);
-            if (instance != null)
+            //MobInstance instance = MobInstance.Table.Get(instID);
+            //if (instance != null)
             {
                 /*Vob vob = null;
                 switch (instance.type)
@@ -66,7 +66,7 @@ namespace GUC.Client.Network.Messages
         public static void ReadVobDelete(BitStream stream)
         {
             uint id = stream.mReadUInt();
-            Vob vob = World.GetVobByID(id);
+            Vob vob = World.Vobs.Get(id);
             if (vob != null)
             {
                 vob.Despawn();
@@ -92,26 +92,6 @@ namespace GUC.Client.Network.Messages
             npc.Position = stream.mReadVec();
             npc.Direction = stream.mReadVec();
 
-            if (instID <= 2)
-            {
-                byte BodyTex = stream.mReadByte();
-                byte HeadMesh = stream.mReadByte();
-                byte HeadTex = stream.mReadByte();
-                npc.Voice = stream.mReadByte();
-
-                npc.SetBodyVisuals(BodyTex, ((HumHeadMesh)HeadMesh).ToString(), HeadTex);
-            }
-
-            npc.BodyHeight = (float)stream.mReadByte() / 100.0f;
-            npc.BodyWidth = (float)stream.mReadByte() / 100.0f;
-            npc.Fatness = (float)stream.mReadShort() / 100.0f;
-            
-            string customName = stream.mReadString();
-            if (customName.Length > 0)
-            {
-                npc.Name = customName;
-            }
-
             npc.HPMax = stream.mReadUShort();
             npc.HP = stream.mReadUShort();
 
@@ -125,7 +105,7 @@ namespace GUC.Client.Network.Messages
                 itemCondition = stream.mReadUShort();
 
                 item = new Item(itemID, itemInstanceID);
-                item.Condition = itemCondition;
+                //item.Condition = itemCondition;
                 npc.EquipSlot(slot, item);
             }
 
@@ -146,8 +126,8 @@ namespace GUC.Client.Network.Messages
             Vec3f pos = stream.mReadVec();
             Vec3f dir = stream.mReadVec();
             item.Amount = stream.mReadUShort();
-            if (item.instance.type <= ItemType.Armor)
-                item.Condition = stream.mReadUShort();
+            //if (item.instance.type <= ItemType.Armor)
+           //     item.Condition = stream.mReadUShort();
             bool drop = stream.ReadBit();
             item.Spawn(pos, dir, drop);
         }

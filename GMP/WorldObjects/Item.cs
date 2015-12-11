@@ -4,233 +4,81 @@ using System.Linq;
 using System.Text;
 using Gothic.zClasses;
 using GUC.Enumeration;
-using RakNet;
-using GUC.Network;
-using GUC.Types;
+using GUC.Client.WorldObjects.Instances;
 
 namespace GUC.Client.WorldObjects
 {
     class Item : Vob
     {
-        static Item fists = null;
-        public static Item Fists
+        public static readonly Item Fists = new Item();
+        private Item() : base(0, 0, null)
         {
-            get
-            {
-                if (fists == null)
-                {
-                    fists = new Item(0);
-                }
-                return fists;
-            }
         }
 
-        private Item(uint ID)
-            : base(ID)
-        {
-        }
+
+
 
         public byte Slot = 0;
 
-        public ItemType Type { get { return instance.type; } }
+        public ushort Amount = 1;
 
-        protected ushort condition;
-        public ushort Condition
+        new public oCItem gVob { get; protected set; }
+
+        new public ItemInstance Instance { get; protected set; }
+
+        public string Name { get { return Instance.Name; } }
+        public ItemType Type { get { return Instance.Type; } }
+        public ItemMaterial Material { get { return Instance.Material; } }
+        public string[] Text { get { return Instance.Text; } }
+        public ushort[] Count { get { return Instance.Count; } }
+        public string Description { get { return Instance.Description; } }
+        public string VisualChange { get { return Instance.VisualChange; } }
+        public string Effect { get { return Instance.Effect; } }
+        //public ItemInstance Munition { get { return Instance.Munition; } }
+
+        public int MainFlags { get { return Instance.MainFlags; } }
+        public int Flags { get { return Instance.Flags; } }
+        public int Wear { get { return Instance.Wear; } }
+
+        public bool IsMeleeWeapon { get { return Instance.IsMeleeWeapon; } }
+        public bool IsRangedWeapon { get { return Instance.IsRangedWeapon; } }
+        public bool IsArmor { get { return Instance.IsArmor; } }
+
+        
+
+        public Item(uint id, ushort instanceid)
+            : this(id, instanceid, null)
         {
-            get { return condition; }
-            set 
+        }
+
+        public Item(uint id, ushort instanceid, oCItem item) : base(id, instanceid, item)
+        {
+            if (this.gVob == null)
             {
-                if (condition != value)
-                {
-                    condition = value;
-                    if (Spawned)
-                    {
-                        gItem.Name.Set(name);
-                    }
-                }
+                CreateVob();
+                SetProperties();
             }
         }
 
-        protected ushort amount;
-        public ushort Amount
+        protected override void CreateVob()
         {
-            get { return amount; }
-            set
-            {
-                if (amount != value)
-                {
-                    amount = value;
-                    if (Spawned)
-                    {
-                        gItem.Name.Set(name);
-                    }
-                }
-            }
+            base.gVob = oCItem.Create(Program.Process);
+
         }
-
-        public String specialLine;
-
-        public ItemInstance instance;
-        public String name
+        protected override void SetProperties()
         {
-            get
-            {
-                if (amount > 1)
-                {
-                    return String.Format("{0} ({1})", GetAdjective(instance.name), amount);
-                }
-                else
-                {
-                    return GetAdjective(instance.name);
-                }
-            }
-        }
-        public String description
-        {
-            get
-            {
-                return GetAdjective(instance.description.Length > 0 ? instance.description : instance.name);
-            }
-        }
+            base.SetProperties();
 
-        public string Visual { get { return instance.visual; } }
-        public String visualChange { get { return instance.visualChange; } }
-        public String effect { get { return instance.effect; } }
-
-        String GetAdjective(string name)
-        {
-            if (instance.type <= ItemType.XBow) //weapon
-            {
-                return GetWeaponAdjective() + name;
-            }
-            else if (instance.type == ItemType.Armor) //armor
-            {
-                return GetArmorAdjective() + name;
-            }
-            //else if //werkzeuge! 
-            return name;
-        }
-        String GetWeaponAdjective()
-        {
-            string adj = "";
-
-            float percent = (float)Condition / (float)instance.condition;
-
-            if (percent > 1.0f)
-            {
-                adj = "Geschärft";
-            }
-            else if (percent < 0.05f)
-            {
-                adj = "Kaputt";
-            }
-            else if (percent < 0.3f)
-            {
-                adj = "Rostig";
-            }
-            else if (percent < 0.6f)
-            {
-                adj = "Abgenutzt";
-            }
-
-            if (adj.Length > 0)
-            {
-                return adj + GetGenderEnding();
-            }
-
-            return adj;
-        }
-        String GetArmorAdjective()
-        {
-            string adj = "";
-
-            float percent = (float)Condition / (float)instance.condition;
-
-            if (percent > 1.0f)
-            {
-                adj = "Verstärkt";
-            }
-            else if (percent < 0.05f)
-            {
-                adj = "Kaputt";
-            }
-            else if (percent < 0.3f)
-            {
-                adj = "Alt";
-            }
-            else if (percent < 0.6f)
-            {
-                adj = "Abgetragen";
-            }
-
-            if (adj.Length > 0)
-            {
-                return adj + GetGenderEnding();
-            }
-
-            return adj;
-        }
-
-        String GetGenderEnding()
-        {
-            switch (gender)
-            {
-                case Gender.Masculine:
-                    return "er ";
-                case Gender.Feminine:
-                    return "e ";
-                case Gender.Neuter:
-                    return "es ";
-            }
-            return null;
-        }
-
-        public ItemMaterial material { get { return instance.material; } }
-        public String[] text { get { return instance.text; } }
-        public ushort[] count { get { return instance.count; } }
-        public int mainFlags { get { return instance.mainFlags; } }
-        public int flags { get { return instance.flags; } }
-        public int wear { get { return instance.wear; } }
-        public ushort munition { get { return instance.munition; } }
-        public Gender gender { get { return instance.gender; } }
-        public ushort weight { get { return instance.weight; } }
-
-        public bool IsMeleeWeapon { get { return instance.IsMeleeWeapon; } }
-        public bool IsRangedWeapon { get { return instance.IsRangedWeapon; } }
-        public bool IsArmor { get { return instance.IsArmor; } }
-
-        public oCItem gItem
-        {
-            get
-            {
-                return new oCItem(Program.Process, gVob.Address);
-            }
-        }
-
-        public Item(uint id, ushort instanceID)
-            : base(id)
-        {
-            instance = ItemInstance.Table.Get(instanceID);
-            CreateVob(gVob == null);
-        }
-
-        protected override void CreateVob(bool createNew)
-        {
-            if (createNew)
-            {
-                gVob = oCItem.Create(Program.Process);
-            }
-
-            oCItem gi = gItem;
+            oCItem gi = gVob;
             gi.Amount = 1;
-            gi.Instanz = instance.ID;
+            gi.Instanz = Instance.ID;
             gi.Visual.Set(Visual);
-            gi.VisualChange.Set(visualChange);
-            gi.Name.Set(name);
-            gi.Material = (int)material;
-            gi.MainFlag = mainFlags;
-            gi.Flags = flags;
-            gi.Wear = wear;
+            gi.VisualChange.Set(VisualChange);
+            gi.Name.Set(Name);
+            gi.Material = (int)Material;
+            gi.MainFlag = MainFlags;
+            gi.Flags = Flags;
+            gi.Wear = Wear;
         }
     }
 }

@@ -4,19 +4,15 @@ using System.Linq;
 using System.Text;
 using GUC.Network;
 using GUC.Enumeration;
-using GUC.Server.WorldObjects.Collections;
 
 namespace GUC.Client.WorldObjects.Instances
 {
     public class NPCInstance : VobInstance
     {
         new public readonly static VobType sVobType = VobType.NPC;
-        new public readonly static InstanceDictionary Instances = Network.Server.sInstances.GetDict(sVobType);
 
         #region Properties
-
-        public ushort HealthMax = 100;    
-
+        
         /// <summary>The default name of the NPC.</summary>
         public string Name = "";
 
@@ -49,41 +45,28 @@ namespace GUC.Client.WorldObjects.Instances
         /// <summary>The default fatness of the NPC in percent. Default: 0</summary>
         public short Fatness = 0;
 
-        public override bool CDDyn { get { return true; } }
-        public override bool CDStatic { get { return true; } }
-
         #endregion
 
-        public NPCInstance(string instanceName, object scriptObject)
-            : this(0, instanceName, scriptObject)
-        {
-        }
-
-        public NPCInstance(ushort ID, string instanceName, object scriptObject)
-            : base(ID, instanceName, scriptObject)
+        public NPCInstance(ushort ID)
+            : base(ID)
         {
             this.VobType = sVobType;
         }
 
-        /// <summary> Use this to send additional information to the clients. The base properties are already written! </summary>
-        new public static Action<NPCInstance, PacketWriter> OnWriteProperties;
-        internal override void WriteProperties(PacketWriter stream)
+        internal override void ReadProperties(PacketReader stream)
         {
-            base.WriteProperties(stream);
+            base.ReadProperties(stream);
 
-            stream.Write(Name);
-            stream.Write(BodyMesh);
-            stream.Write(BodyTex);
-            stream.Write(HeadMesh);
-            stream.Write(HeadTex);
-            stream.Write(BodyHeight);
-            stream.Write(BodyWidth);
-            stream.Write(Fatness);
+            this.Name = stream.ReadString();
+            this.BodyMesh = stream.ReadString();
+            this.BodyTex = stream.ReadByte();
+            this.HeadMesh = stream.ReadString();
+            this.HeadTex = stream.ReadByte();
+            this.BodyHeight = stream.ReadByte();
+            this.BodyWidth = stream.ReadByte();
+            this.Fatness = stream.ReadShort();
 
-            if (OnWriteProperties != null)
-            {
-                OnWriteProperties(this, stream);
-            }
+            //...
         }
     }
 }

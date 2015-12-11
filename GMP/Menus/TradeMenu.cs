@@ -240,7 +240,7 @@ namespace GUC.Client.Menus
         
         public void RequestTrade()
         {
-            oCNpc ocnpc = Player.Hero.gNpc.GetFocusNpc();
+            oCNpc ocnpc = Player.Hero.gVob.GetFocusNpc();
             Vob vob;
             World.vobAddr.TryGetValue(ocnpc.Address, out vob);
             NPC npc = (NPC)vob;

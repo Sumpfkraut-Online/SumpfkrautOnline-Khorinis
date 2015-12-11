@@ -19,7 +19,7 @@ namespace GUC.Client.Network.Messages
         {
             uint id = stream.mReadUInt();
 
-            Vob vob = World.GetVobByID(id);
+            Vob vob = World.Vobs.Get(id);
             if (vob != null)
             {
                 Vec3f pos = stream.mReadVec();

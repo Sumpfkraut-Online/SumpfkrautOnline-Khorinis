@@ -5,30 +5,34 @@ using System.Text;
 using Gothic.zClasses;
 using GUC.Enumeration;
 using GUC.Types;
-using Gothic.zTypes;
-using RakNet;
-using GUC.Network;
+using GUC.Client.WorldObjects.Instances;
 
 namespace GUC.Client.WorldObjects
 {
-    public class Vob
+    public class Vob : Collections.IVobObj<uint>
     {
         public uint ID { get; private set; }
+        public VobInstance Instance { get; protected set; }
 
         public zCVob gVob { get; protected set; }
 
-        public Vob(uint id)
+        public VobType VobType { get { return Instance.VobType; } }
+
+        public string Visual { get { return Instance.Visual; } }
+
+        public bool CDDyn { get { return Instance.CDDyn; } }
+        public bool CDStatic { get { return Instance.CDStatic; } }
+
+        public Vob(uint id, ushort instanceid) : this(id, instanceid, null)
         {
-            ID = id;
-            gVob = null;
-            Spawned = false;
         }
 
-        public Vob(uint id, zCVob vob)
+        public Vob(uint id, ushort instanceid, zCVob vob)
         {
-            ID = id;
-            gVob = vob;
-            Spawned = false;
+            this.ID = id;
+            this.Instance = VobInstance.Instances.Get(instanceid);
+            this.gVob = vob;
+            this.Spawned = false;
         }
 
         #region Position
@@ -148,33 +152,29 @@ namespace GUC.Client.WorldObjects
 
         public virtual void Spawn(Vec3f position, Vec3f direction, bool drop)
         {
-            CreateVob(gVob == null);
+            if (gVob == null)
+            {
+                CreateVob();
+            }
 
             oCGame.Game(Program.Process).World.AddVob(gVob);
 
             if (drop)
             {
-                Player.Hero.gNpc.DoDropVob(gVob);
+                Player.Hero.gVob.DoDropVob(gVob);
             }
 
             if (!Spawned)
-                World.AddVob(this);
+            {
+                World.Vobs.Add(this);
+            }
 
             Spawned = true;
 
             this.Position = position;
             this.Direction = direction;
 
-            if (this is NPC)
-            {
-                ((NPC)this).gNpc.Enable(pos.X, pos.Y, pos.Z);
-                ((NPC)this).DrawItem(((NPC)this).DrawnItem, true);
-            }
-        }
-
-        protected virtual void CreateVob(bool createNew)
-        {
-
+            SetProperties();
         }
 
         public void Despawn()
@@ -188,14 +188,31 @@ namespace GUC.Client.WorldObjects
             }
 
             oCGame.Game(Program.Process).World.RemoveVob(gVob);
-            World.RemoveVob(this);
+            World.Vobs.Remove(this);
             gVob = null;
             Spawned = false;
+        }
+        #endregion
+
+        protected virtual void CreateVob()
+        {
+            this.gVob = zCVob.Create(Program.Process);
+        }
+
+        protected virtual void SetProperties()
+        {
+            gVob.BitField1 |= (int)zCVob.BitFlag0.staticVob;
+            gVob.SetVisual(Visual);
+
+            if (CDDyn) gVob.BitField1 |= (int)zCVob.BitFlag0.collDetectionDynamic;
+            else gVob.BitField1 &= ~(int)zCVob.BitFlag0.collDetectionDynamic;
+
+            if (CDStatic) gVob.BitField1 |= (int)zCVob.BitFlag0.collDetectionStatic;
+            else gVob.BitField1 &= ~(int)zCVob.BitFlag0.collDetectionStatic;
         }
 
         public virtual void Update(long now)
         {
         }
-        #endregion
     }
 }

@@ -97,7 +97,7 @@ namespace GUC.Client.States
         public static void RenderTest2()
         {
             using (zString z = zString.Create(Program.Process, overlays[index]))
-                Player.Hero.gNpc.ApplyOverlay(z);
+                Player.Hero.gVob.ApplyOverlay(z);
 
             //Player.Hero.gVob.GetEM(0).KillMessages();
             //Player.Hero.gAniCtrl.StartStandAni();
@@ -122,7 +122,7 @@ namespace GUC.Client.States
         public static void RenderTest3()
         {
             using (zString z = zString.Create(Program.Process, overlays[index]))
-                Player.Hero.gNpc.RemoveOverlay(z);
+                Player.Hero.gVob.RemoveOverlay(z);
 
             /*Player.Hero.gNpc.StopFaceAni(anis[lop]);
             lop++;

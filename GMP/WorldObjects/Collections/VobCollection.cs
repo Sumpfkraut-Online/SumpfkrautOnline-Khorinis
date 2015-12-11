@@ -8,35 +8,31 @@ namespace GUC.Client.WorldObjects.Collections
 {
     public class VobCollection : VobObjCollection<uint, Vob>
     {
-        public readonly VobObjDictionary<uint, NPC> Players = new VobObjDictionary<uint, NPC>();
+        Dictionary<int, Vob> vobAddr = new Dictionary<int, Vob>();
+        public Vob GetByAddress(int address)
+        {
+            Vob vob;
+            vobAddr.TryGetValue(address, out vob);
+            return vob;
+        }
+
+        internal override void Add(Vob vob)
+        {
+            base.Add(vob);
+            vobAddr.Add(vob.gVob.Address, vob);
+        }
+
+        internal override void Remove(Vob vob)
+        {
+            base.Remove(vob);
+            vobAddr.Remove(vob.gVob.Address);
+        }
 
         internal VobCollection()
         {
             for (int i = 0; i < (int)VobType.Maximum; i++)
             {
                 vobDicts[i] = new VobDictionary();
-            }
-        }
-
-        internal override void Add(Vob vob)
-        {
-            base.Add(vob);
-            if (vob is NPC)
-            {
-                NPC npc = (NPC)vob;
-                if (npc.isPlayer)
-                    Players.Add(npc);
-            }
-        }
-
-        internal override void Remove(Vob vob)
-        {
-            base.Remove(vob);
-            if (vob is NPC)
-            {
-                NPC npc = (NPC)vob;
-                if (npc.isPlayer)
-                    Players.Remove(npc);
             }
         }
 

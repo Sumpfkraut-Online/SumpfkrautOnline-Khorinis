@@ -13,28 +13,20 @@ namespace GUC.Client.WorldObjects.Instances
         public string OnTryOpenClientFunc = "";
 
         #endregion
+        
 
-        public MobLockableInstance(string instanceName, object scriptObject)
-            : this(0, instanceName, scriptObject)
+        public MobLockableInstance(ushort ID)
+            : base(ID)
         {
         }
-
-        public MobLockableInstance(ushort ID, string instanceName, object scriptObject)
-            : base(ID, instanceName, scriptObject)
+        
+        internal override void ReadProperties(PacketReader stream)
         {
-        }
+            base.ReadProperties(stream);
 
-        public new static Action<MobLockableInstance, PacketWriter> OnWriteProperties;
-        internal override void WriteProperties(PacketWriter stream)
-        {
-            base.WriteProperties(stream);
+            this.OnTryOpenClientFunc = stream.ReadString();
 
-            stream.Write(OnTryOpenClientFunc);
-
-            if (MobLockableInstance.OnWriteProperties != null)
-            {
-                MobLockableInstance.OnWriteProperties(this, stream);
-            }
+            //...
         }
     }
 }

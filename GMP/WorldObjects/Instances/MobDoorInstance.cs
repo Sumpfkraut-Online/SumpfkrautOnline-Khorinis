@@ -9,28 +9,18 @@ namespace GUC.Client.WorldObjects.Instances
     public class MobDoorInstance : MobLockableInstance
     {
         new public readonly static Enumeration.VobType sVobType = Enumeration.VobType.MobDoor;
-        new public readonly static Collections.InstanceDictionary Instances = Network.Server.sInstances.GetDict(sVobType);
 
-        public MobDoorInstance(string instanceName, object scriptObject)
-            : this(0, instanceName, scriptObject)
-        {
-        }
-
-        public MobDoorInstance(ushort ID, string instanceName, object scriptObject)
-            : base(ID, instanceName, scriptObject)
+        public MobDoorInstance(ushort ID)
+            : base(ID)
         {
             this.VobType = sVobType;
         }
-
-        public new static Action<MobDoorInstance, PacketWriter> OnWriteProperties;
-        internal override void WriteProperties(PacketWriter stream)
+        
+        internal override void ReadProperties(PacketReader stream)
         {
-            base.WriteProperties(stream);
+            base.ReadProperties(stream);
 
-            if (MobDoorInstance.OnWriteProperties != null)
-            {
-                MobDoorInstance.OnWriteProperties(this, stream);
-            }
+            //...
         }
     }
 }

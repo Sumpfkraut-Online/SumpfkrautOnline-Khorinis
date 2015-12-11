@@ -212,11 +212,11 @@ namespace GUC.Client.Hooks
                 oCMsgMovement msg = new oCMsgMovement(Program.Process, msgAddress);
                 if (msg.SubType == oCMsgMovement.SubTypes.Strafe)
                 {
-                    if (msg.Animation == Player.Hero.gNpc.AniCtrl._t_strafel)
+                    if (msg.Animation == Player.Hero.gVob.AniCtrl._t_strafel)
                     {
                         NPCMessage.WriteTargetState(NPCState.MoveLeft);
                     }
-                    else if (msg.Animation == Player.Hero.gNpc.AniCtrl._t_strafer)
+                    else if (msg.Animation == Player.Hero.gVob.AniCtrl._t_strafer)
                     {
                         NPCMessage.WriteTargetState(NPCState.MoveRight);
                     }

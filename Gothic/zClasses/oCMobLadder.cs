@@ -18,11 +18,11 @@ namespace Gothic.zClasses
         {
         }
 
-        public new static oCMobFire Create(Process process)
+        public new static oCMobLadder Create(Process process)
         {
             int address = process.CDECLCALL<IntArg>(0x719EE0, null); //_CreateInstance()
             process.THISCALL<NullReturnCall>((uint)address, 0x7274C0, null); //Konstruktor...
-            return new oCMobFire(process, address);
+            return new oCMobLadder(process, address);
         }
     }
 }

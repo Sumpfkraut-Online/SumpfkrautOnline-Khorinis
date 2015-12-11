@@ -5,17 +5,16 @@ using System.Text;
 using GUC.Enumeration;
 using GUC.Network;
 using System.Security.Cryptography;
-using GUC.Server.WorldObjects.Collections;
+using GUC.Client.WorldObjects.Collections;
 
 namespace GUC.Client.WorldObjects.Instances
 {
-    public class VobInstance : ServerObject, IVobObj<ushort>
+    public class VobInstance : IVobObj<ushort>
     {
         public readonly static VobType sVobType = VobType.Vob;
-        public readonly static InstanceDictionary Instances = Network.Server.sInstances.GetDict(sVobType);
+        public readonly static InstanceCollection Instances = new InstanceCollection();
 
         public ushort ID { get; internal set; }
-        public string InstanceName { get; internal set; }
 
         public VobType VobType { get; protected set; }
 
@@ -43,66 +42,21 @@ namespace GUC.Client.WorldObjects.Instances
         }
 
         #endregion
-
-        public VobInstance(string instanceName, object scriptObject)
-            : this(0, instanceName, scriptObject)
-        {
-        }
-
-
-        public VobInstance(ushort id, string instanceName, object scriptObject) : base (scriptObject)
+        
+        public VobInstance(ushort id)
         {
             this.ID = id;
-            this.InstanceName = instanceName.ToUpper();
             this.VobType = sVobType;
         }
 
-        static ushort idCount = 1;
-        public override void Create()
+        internal virtual void ReadProperties(PacketReader stream)
         {
-            if (ID == 0) //seek a new ID for this instance
-            {
-                for (int i = 0; i < ushort.MaxValue; i++)
-                {
-                    if (idCount != 0)
-                    {
-                        if (Network.Server.sInstances.Get(idCount) == null)
-                        {
-                            ID = idCount++;
-                            break;
-                        }
-                    }
-                    idCount++;
-                }
-
-                if (ID == 0) //no free id found
-                {
-                    Logger.logError("{0} creation failed: Maximum reached: {1}", this.GetType(), ushort.MaxValue);
-                    return;
-                }
-            }
-
-            Network.Server.sInstances.Add(this);
-            base.Create();
-        }
-
-        public override void Delete()
-        {
-            Network.Server.sInstances.Remove(this);
-            base.Delete();
-        }
-
-        /// <summary> Use this to send additional information to the clients. The base properties are already written! </summary>
-        public static Action<VobInstance, PacketWriter> OnWriteProperties;
-        internal virtual void WriteProperties(PacketWriter stream)
-        {
-            stream.Write(this.ID);
-            stream.Write(this.Visual);
-            stream.Write(this.CDDyn);
-            stream.Write(this.CDStatic);
-
-            if (VobInstance.OnWriteProperties != null)
-                VobInstance.OnWriteProperties(this, stream);
+            this.ID = stream.ReadUShort();
+            this.Visual = stream.ReadString();
+            this.CDDyn = stream.ReadBit();
+            this.CDStatic = stream.ReadBit();
+            
+            // ... 
         }
     }
 }

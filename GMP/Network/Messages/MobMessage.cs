@@ -42,35 +42,31 @@ namespace GUC.Client.Network.Messages
 
         public static void ReadUseMob(BitStream stream)
         {
-            uint npcID = stream.mReadUInt();
-            uint mobID = stream.mReadUInt();
+            uint id = stream.mReadUInt();
+            NPC npc = (NPC)World.Vobs.Get(VobType.NPC, id);
+            if (npc == null) return;
 
-            NPC npc;
+            id = stream.mReadUInt();
+            MobInter mob = (MobInter)World.Vobs.Get(VobType.MobInter, id);
+            if (mob == null) return;
+            
+            npc.UsedMob = mob;
+            oCMobMsg msg = oCMobMsg.Create(Program.Process, oCMobMsg.SubTypes.EV_StartInteraction, npc.gVob);
+            mob.gVob.GetEM(0).StartMessage(msg, npc.gVob);
 
-            if (World.npcDict.TryGetValue(npcID, out npc))
-            {
-                Vob vob;
-                if (World.vobDict.TryGetValue(mobID, out vob) && vob is MobInter)
-                {
-                    npc.UsedMob = (MobInter)vob;
-                    oCMobMsg msg = oCMobMsg.Create(Program.Process, oCMobMsg.SubTypes.EV_StartInteraction, npc.gNpc);
-                    vob.gVob.GetEM(0).StartMessage(msg, npc.gVob);
-
-                    //Turn collision off while attending the mob, so the NPC doesn't get stuck or sits in the air or smth, THX to Situ
-                    npc.gVob.BitField1 &= ~(int)zCVob.BitFlag0.collDetectionStatic;
-                }
-            }
+            //Turn collision off while attending the mob, so the NPC doesn't get stuck or sits in the air or smth, THX to Situ
+            npc.gVob.BitField1 &= ~(int)zCVob.BitFlag0.collDetectionStatic;
         }
 
         public static void ReadUnUseMob(BitStream stream)
         {
-            uint npcID = stream.mReadUInt();
+            uint id = stream.mReadUInt();
+            NPC npc = (NPC)World.Vobs.Get(VobType.NPC, id);
+            if (npc == null) return;
 
-            NPC npc;
-
-            if (World.npcDict.TryGetValue(npcID, out npc) && npc.UsedMob != null)
+            if (npc.UsedMob != null)
             {
-                oCMobMsg msg = oCMobMsg.Create(Program.Process, oCMobMsg.SubTypes.EV_StartStateChange, npc.gNpc);
+                oCMobMsg msg = oCMobMsg.Create(Program.Process, oCMobMsg.SubTypes.EV_StartStateChange, npc.gVob);
                 msg.StateChangeLeaving = true;
                 npc.UsedMob.gVob.GetEM(0).StartMessage(msg, new zCVob());
             }

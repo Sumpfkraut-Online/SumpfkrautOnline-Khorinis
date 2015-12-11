@@ -35,10 +35,8 @@ namespace GUC.Server.WorldObjects.Instances
         internal override void WriteProperties(PacketWriter stream)
         {
             base.WriteProperties(stream);
-
-            stream.Write(OnTriggerFunc);
+            
             stream.Write(OnTriggerClientFunc);
-            stream.Write(IsMulti);
 
             if (MobInterInstance.OnWriteProperties != null)
             {

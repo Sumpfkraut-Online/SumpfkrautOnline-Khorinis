@@ -18,8 +18,8 @@ namespace GUC.Client.Network.Messages
 
             Item item = new Item(ID, instID);
             item.Amount = stream.mReadUShort();
-            item.Condition = stream.mReadUShort();
-            item.specialLine = stream.mReadString();
+            //item.Condition = stream.mReadUShort();
+            //item.specialLine = stream.mReadString();
 
             Player.Inventory.Add(ID, item);
             Menus.GUCMenus.Inventory.UpdateContents();
