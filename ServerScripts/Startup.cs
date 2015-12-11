@@ -345,6 +345,13 @@ namespace GUC.Server.Scripts
             //SpellDef mySpellDef = new SpellDef();
             //mySpellDef.Print("BLA");
 
+            //ItemDef itemDef  = new ItemDef();
+            //ItemDef.PrintStatic(typeof(ItemDef), "#1 ", false);
+            //ItemDef.PrintStatic(typeof(ItemDef), "#1 ", false);
+            //ItemDef.PrintStatic(typeof(ItemDef), "#1 ", false);
+            //ItemDef.PrintStatic(typeof(ItemDef), "#2 ", true);
+            //itemDef.Print("#2 ", true);
+
 
 
             Instances.VobInstances.Init();

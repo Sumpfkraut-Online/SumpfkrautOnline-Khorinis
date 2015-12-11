@@ -121,11 +121,13 @@ namespace GUC.Server.Scripts.Sumpfkraut
                     String output = staticName + ": " + obj.ToString();
                     if (newLine)
                     {
-                        Console.WriteLine(output);
+                        Log.Logger.print(output + "<br>");
+                        //Console.WriteLine(output);
                     }
                     else
                     {
-                        Console.Write(output);
+                        Log.Logger.print(output);
+                        //Console.Write(output);
                     }
                 }
             }
@@ -187,11 +189,13 @@ namespace GUC.Server.Scripts.Sumpfkraut
                 String output = _objName + ": " + obj.ToString();
                 if (newLine)
                 {
-                    Console.WriteLine(output);
+                    Log.Logger.print(output + "<br>");
+                    //Console.WriteLine(output);
                 }
                 else
                 {
-                    Console.Write(output);
+                    Log.Logger.print(output);
+                    //Console.Write(output);
                 }
             }
         }
