@@ -119,13 +119,14 @@ namespace GUC.Server.Log
         private static int[] cursorPosition = new int[]{ 0, 0 }; // { left, top }
         private static ConsoleColor cursorBGCol = consoleFGCol;
         private static ConsoleColor cursorFGCol = consoleBGCol;
+        private static String CmdLineMarker = "";
         internal static void RunLog()
         {
+            cursorPosition[1] = Console.CursorTop;
             ConsoleKeyInfo cki;
             while (true)
             {
                 Console.CursorVisible = false;
-                cursorPosition[1] = Console.CursorTop;
                 try
                 {
                     cki = Console.ReadKey();
@@ -245,13 +246,26 @@ namespace GUC.Server.Log
                                 break;
                         }
 
+
+                        //print(currentText.Length + " < " + cursorPosition[0] + "|" + cursorPosition[1]);
+
+                        // correct cursor position in respect line breaks
+                        //cursorPosition[1] = cursorPosition[0] / (Console.WindowWidth 
+                        //    + CmdLineMarker.Length);
+                        //cursorPosition[0] = cursorPosition[0] % (Console.WindowWidth 
+                        //    + CmdLineMarker.Length);
                         currentText = typedText.ToString();
+
                         //print(currentText);
-                        //print(currentText.Length + " < " + cursorPosition[0]);
-                        
+                        //print(currentText.Length + " < " + cursorPosition[0] + "|" + cursorPosition[1]);
+
                         if (currentText.Length > 0)
                         {
-                            Console.Write("\r".PadRight(Console.WindowWidth) + "\r>");
+                            //Console.Write("\r".PadRight(Console.WindowWidth) + "\r"
+                            //    + CmdLineMarker);
+                            Console.Write("\r" + CmdLineMarker);
+
+                            //Console.Write(currentText);
 
                             if (cursorPosition[0] > 1)
                             {
@@ -268,13 +282,12 @@ namespace GUC.Server.Log
 
                             if (cursorPosition[0] < currentText.Length)
                             {
-                                Console.Write(currentText.Substring(cursorPosition[0], 
+                                Console.Write(currentText.Substring(cursorPosition[0],
                                 currentText.Length - cursorPosition[0]));
                             }
                         }
                         else
                         {
-                            //print("GOTCHA");
                             Console.Write("\n\r>");
                         }
                     }
