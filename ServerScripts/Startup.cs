@@ -352,7 +352,7 @@ namespace GUC.Server.Scripts
             //ItemDef.PrintStatic(typeof(ItemDef), "#1 ", false);
             //ItemDef.PrintStatic(typeof(ItemDef), "#2 ", true);
             //itemDef.Print("#2 ", true);
-            
+
             //Regex rgx = new Regex("(?<!(^\\/\\w+)).+");
             //String totalCmd = "/help me please!!! 5345 >34234_";
             //String cmd = "/help";
@@ -372,6 +372,27 @@ namespace GUC.Server.Scripts
             //{
             //    Logger.print(t);
             //}
+
+
+            //String bla = "{ }";
+            //Logger.print("1)");
+            //Logger.print(bla);
+            //Logger.print("2)");
+            //String[] blaArr = Regex.Split(bla, " ", RegexOptions.IgnoreCase);
+            ////Logger.print(blaArr.Length);
+            //foreach (String bi in blaArr)
+            //{
+            //    Logger.print(bi);
+            //}
+            
+
+
+
+
+            Sumpfkraut.Web.WS.WSServer websocketTest = new Sumpfkraut.Web.WS.WSServer ();
+            websocketTest.Init();
+
+            
 
 
             CommandConsole cmdConsole = new CommandConsole();

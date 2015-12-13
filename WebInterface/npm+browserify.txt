@@ -1,0 +1,4 @@
+# install nodejs
+# open nodejs-command-prompt
+npm install browserify -g
+browserify index.js > bundle.js

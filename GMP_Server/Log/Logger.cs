@@ -86,8 +86,19 @@ namespace GUC.Server.Log
         {
             try
             {
-                String[] lines = Regex.Split(String.Format(message.ToString(), args),
+                String[] lines = null;
+
+                if ((args == null) || (args.Length < 1))
+                {
+                    lines = Regex.Split(message.ToString(),
                     "(<br>)|(</br>)|(<br/>)", RegexOptions.IgnoreCase);
+                }
+                else
+                {
+                    lines = Regex.Split(String.Format(message.ToString(), args),
+                    "(<br>)|(</br>)|(<br/>)", RegexOptions.IgnoreCase);
+                }
+                
 
                 lock (lock_LogObject)
                 {
@@ -104,6 +115,7 @@ namespace GUC.Server.Log
             }
             catch (Exception ex)
             {
+                print("GOTCHA");
             }
         }
 
