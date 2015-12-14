@@ -11,6 +11,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Web.WS
 
         public string name = String.Empty;
         public UserContext context;
+        public String tempId;
 
     }
 }

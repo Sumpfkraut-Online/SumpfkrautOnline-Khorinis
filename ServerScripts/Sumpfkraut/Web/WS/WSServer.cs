@@ -13,117 +13,295 @@ namespace GUC.Server.Scripts.Sumpfkraut.Web.WS
     public class WSServer : ScriptObject
     {
 
+        #region attributes
+
         new public static readonly String _staticName = "WSServer (static)";
 
         protected WebSocketServer wsServer;
-        protected Dictionary<EndPoint, WSUser> onlineUsersByEndPoint = 
-            new Dictionary<EndPoint, WSUser>();
+
+        protected int port;
+        public int GetPort () { return this.port; }
+        //public void SetPort (int port) { this.wsServer.Port = port; }
+
+        protected WSServerState serverState;
+        public WSServerState GetServerState () { return this.serverState; }
+        protected void SetServerState (WSServerState serverState) { this.serverState = serverState; }
+
+        public TimeSpan GetTimeout () { return this.wsServer.TimeOut; }
+        public void SetTimeout (TimeSpan timeout) { this.wsServer.TimeOut = timeout; }
+
+        protected Dictionary<UserContext, WSUser> onlineUserByContext = 
+            new Dictionary<UserContext, WSUser>();
+
+        public delegate void OnConnectEventHandler (UserContext context);
+        protected event OnConnectEventHandler OnConnect;
+
+        public delegate void OnConnectedEventHandler (UserContext context);
+        protected event OnConnectedEventHandler OnConnected;
+
+        public delegate void OnDisconnectEventHandler (UserContext context);
+        protected event OnDisconnectEventHandler OnDisconnect;
+
+        public delegate void OnReceiveEventHandler (UserContext context);
+        protected event OnReceiveEventHandler OnReceive;
+
+        public delegate void OnSendEventHandler (UserContext context);
+        protected event OnSendEventHandler OnSend;
+
+        #endregion
 
 
 
         public WSServer ()
         {
             SetObjName("WSServer (default)");
+            SetServerState(WSServerState.undefined);
+            wsServer.TimeOut = new TimeSpan(0, 10, 0);
         }
 
 
 
-        public void Init ()
+        #region runtime control
+
+        public bool Abort ()
         {
-            wsServer = new WebSocketServer(81, IPAddress.Any);
-            wsServer.OnConnect = OnConnect;
-            wsServer.OnConnected = OnConnected;
-            wsServer.OnDisconnect = OnDisconnect;
-            wsServer.OnReceive = OnReceive;
-            wsServer.OnSend = OnSend;
-            wsServer.TimeOut = new TimeSpan(0, 5, 0);
-            wsServer.Start();
+            try
+            {
+                if (wsServer == null)
+                {
+                    MakeLog("Aborting the websocket server isn't necessary"
+                        + " because it is uninitialized!");
+                }
+                else
+                {
+                    wsServer.Stop();
+                    wsServer.Dispose();
+                    wsServer = null;
+                }
+                SetServerState(WSServerState.undefined);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MakeLogError("Couldn't abort websocket server: " + ex);
+                return false;
+            }
         }
 
-        
+        public bool Init ()
+        {
+            try
+            {
+                if (wsServer == null)
+                {
+                    wsServer = new WebSocketServer(port, IPAddress.Any);
+                }
+                else
+                {
+                    wsServer.Stop();
+                }
+                wsServer.OnConnect = UserConnect;
+                wsServer.OnConnected = UserConnected;
+                wsServer.OnDisconnect = UserDisconnect;
+                wsServer.OnReceive = ReceivedData;
+                wsServer.OnSend = SentData;
+                SetServerState(WSServerState.initialized);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                SetServerState(WSServerState.undefined);
+                return false;
+            }
+        }
 
-        private void OnConnect (UserContext context)
+        public bool Restart ()
+        {
+            try
+            {
+                if (wsServer == null)
+                {
+                    MakeLogError("Cannot restart an uninitialized server!");
+                    return false;
+                }
+                wsServer.Restart();
+                SetServerState(WSServerState.running);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MakeLogError("Couldn't restart websocket server: " + ex);
+                return false;
+            } 
+        }
+
+        public bool Start ()
+        {
+            try
+            {
+                if (GetServerState() == WSServerState.undefined)
+                {
+                    return false;
+                }
+                if ((wsServer == null) && (!Init()))
+                {
+                    MakeLogError("Couldn't start websocket server!");
+                    return false;
+                }
+                if (GetServerState() == WSServerState.stopped)
+                {
+                    wsServer.Restart();
+                }
+                else
+                {
+                    wsServer.Start();
+                }
+                SetServerState(WSServerState.running);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MakeLogError("Couldn't start websocket server: " + ex);
+                return false;
+            }
+        }
+
+        public bool Stop ()
+        {
+            try
+            {
+                if (wsServer == null)
+                {
+                    MakeLogError("Cannot stop an uninitialized server!");
+                    return false;
+                }
+                wsServer.Stop();
+                SetServerState(WSServerState.stopped);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MakeLogError("Couldn't stop websocket server: " + ex);
+                return false;
+            }
+        }
+
+        #endregion
+
+
+
+        #region event management for exterior subroutines
+
+        public void AddOnConnect (OnConnectEventHandler func)
+        {
+            this.OnConnect += func;
+        }
+
+        public void RemoveOnConnect (OnConnectEventHandler func)
+        {
+            this.OnConnect -= func;
+        }
+
+        public void AddOnConnected (OnConnectedEventHandler func)
+        {
+            this.OnConnected += func;
+        }
+
+        public void RemoveOnConnected (OnConnectedEventHandler func)
+        {
+            this.OnConnected -= func;
+        }
+
+        public void AddOnDisconnect (OnDisconnectEventHandler func)
+        {
+            this.OnDisconnect += func;
+        }
+
+        public void RemoveOnDisconnect (OnDisconnectEventHandler func)
+        {
+            this.OnDisconnect -= func;
+        }
+        
+        public void AddOnReceive (OnReceiveEventHandler func)
+        {
+            this.OnReceive += func;
+        }
+
+        public void RemoveOnReceive (OnReceiveEventHandler func)
+        {
+            this.OnReceive -= func;
+        }       
+
+        public void AddOnSend (OnSendEventHandler func)
+        {
+            this.OnSend += func;
+        }
+
+        public void RemoveOnSend (OnSendEventHandler func)
+        {
+            this.OnSend -= func;
+        }
+
+        #endregion
+
+
+
+        #region internal event management
+
+        private void UserConnect (UserContext context)
         {
             MakeLog("Client tries to connect from: " +
                 context.ClientAddress.ToString());
-
+            
             WSUser user = new WSUser();
-            user.context = context;      
-            onlineUsersByEndPoint.Add(user.context.ClientAddress, user);
+            user.context = context;
+            user.tempId = Guid.NewGuid().ToString("N");
+
+            onlineUserByContext.Add(context, user);
         }
 
-        protected void OnConnected (UserContext context)
+        protected void UserConnected (UserContext context)
         {
             MakeLog("New client connection from: " +
                 context.ClientAddress.ToString());
         }
 
-        private void OnDisconnect (UserContext context)
+        private void UserDisconnect (UserContext context)
         {
-            onlineUsersByEndPoint.Remove(context.ClientAddress);
+            onlineUserByContext.Remove(context);
         }
 
-        protected void OnReceive (UserContext context)
+        protected void ReceivedData (UserContext context)
         {
             Print("Received data from: " + context.ClientAddress);
-
-            //object data = context.Data;
-            //Alchemy.Handlers.WebSocket.rfc6455.DataFrame dataFrame = 
-            //    (Alchemy.Handlers.WebSocket.rfc6455.DataFrame) context.DataFrame;
 
             String json = context.DataFrame.ToString();
 
             try
             {
                 dynamic obj = JsonConvert.DeserializeObject(json);
+                
 
-                foreach (var field in obj)
-                {
-                    Print(field);
-                }
 
-                context.Send("Got it, pal!");
+                //foreach (var field in obj)
+                //{
+                //    Print(field);
+                //}
+                //context.Send("Got it, pal!: " + json);
             }
             catch (Exception ex)
             {
-                MakeLogError(ex);
+                MakeLogError("Invalid websocket input: " + ex);
                 context.Send(ex.ToString());
             }
-
-            //try
-            //{
-
-            //    String jsonText = context.DataFrame.ToString();
-            //    Print(jsonText);
-
-            //    //// <3 dynamics
-            //    //dynamic obj = JsonConvert.DeserializeObject(json);
-
-            //    //switch ((int)obj.Type)
-            //    //{
-            //    //    case (int)CommandType.Register:
-            //    //        Register(obj.Name.Value, context);
-            //    //        break;
-            //    //    case (int)CommandType.Message:
-            //    //        ChatMessage(obj.Message.Value, context);
-            //    //        break;
-            //    //    case (int)CommandType.NameChange:
-            //    //        NameChange(obj.Name.Value, context);
-            //    //        break;
-            //    //}
-            //}
-            //catch (Exception ex) // Bad JSON! For shame.
-            //{
-            //    //var r = new Response { Type = ResponseType.Error, Data = new { e.Message } };
-
-            //    //context.Send(JsonConvert.SerializeObject(r));
-            //}
         }
 
-        protected void OnSend (UserContext context)
+        protected void SentData (UserContext context)
         {
-            
+            // do something in the future
         }
+
+        #endregion
 
     }
 }

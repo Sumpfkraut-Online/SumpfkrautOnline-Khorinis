@@ -391,7 +391,16 @@ namespace GUC.Server.Scripts
 
             Sumpfkraut.Web.WS.WSServer websocketTest = new Sumpfkraut.Web.WS.WSServer ();
             websocketTest.Init();
+            websocketTest.Start();
 
+            //String s1 = "12.1213.3213.12121:111";
+            //Logger.print(s1.GetHashCode());
+            //Logger.print(s1.GetHashCode());
+            //Logger.print("12.1213.3213.12121:111".GetHashCode());
+            //Logger.print(Guid.NewGuid().ToString("N"));
+            //Logger.print(Guid.NewGuid().ToString("N"));
+            //Logger.print(Guid.NewGuid().ToString("N"));
+            //Logger.print(Guid.NewGuid().ToString("N"));
             
 
 
