@@ -14,7 +14,7 @@ and open the template in the editor.
         
         <h1>Web Interface</h1>
         
-        <div id="debugButton" onclick="sendDebugMessage()">Click me hard!</div>
+        <div id="debugButton" onclick="Websockets.WS.sendDebugMessage()">Click me hard!</div>
         
         <div id="output" style="height: 400px; background-color: #f1f1f1; overflow-y: scroll;">
             <hr><br>
@@ -22,21 +22,18 @@ and open the template in the editor.
         
         <div id="input" style="">
             <textarea id="inputTextArea" style="width: 100%"></textarea>
-            <div id="inputSubmiz" onclick="alert('PING')"
+            <div id="chatSubmit" onclick="WebSockets.WS.sendInputMessage()"
                  style="display: inline-block; background-color: tomato; border: 0;">
                 Submit
             </div>
-            <div id="testButton" onclick="alert('PING')">TestButton</div>
         </div>
         
-        <!--<script data-main="Main" src="require-js/require.js"></script>-->
-        <!--<script type="text/javascript" src="require-js/require.js"></script>-->
-        <!--<script type="text/javascript" src="vertx-js/vertx.js"></script>-->
-        <script type="text/javascript" src="util/sizeof.js" onload=""></script>
-        <!--<script type="text/javascript" src="Main.js" onload=""></script>-->
-        <script type="text/javascript" src="util/util.js" onload=""></script>
-        <script type="text/javascript" src="debug/debug.js" onload=""></script>
-        <script type="text/javascript" src="websocket/websocket.js" onload=""></script>
-        <!--<script type="text/javascript" src="bundle.js"></script>-->
+        <script type="text/javascript" src="Utilities/INIT.js" onload=""></script>
+        <script type="text/javascript" src="Utilities/ArrayBufferUtil.js" onload=""></script>
+        <script type="text/javascript" src="Utilities/Sizeof.js" onload=""></script>
+        <script type="text/javascript" src="Debug/INIT.js" onload=""></script>
+        <script type="text/javascript" src="Debug/DebugMessage.js" onload=""></script>
+        <script type="text/javascript" src="WebSockets/INIT.js" onload=""></script>
+        <script type="text/javascript" src="WebSockets/WS.js" onload=""></script>
     </body>
 </html>
