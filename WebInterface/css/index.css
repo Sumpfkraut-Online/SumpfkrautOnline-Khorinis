@@ -1,0 +1,22 @@
+@charset "UTF-8";
+
+#chatOutput
+{
+    height: 400px;
+    background-color: #f1f1f1;
+    overflow-y: scroll;
+}
+
+#chatInput { }
+
+#chatTextArea
+{
+    width: 100%;
+}
+
+#chatSubmit
+{
+    display: inline-block;
+    background-color: tomato;
+    border: 0;
+}

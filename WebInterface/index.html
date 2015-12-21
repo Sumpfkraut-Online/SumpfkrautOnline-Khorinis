@@ -9,31 +9,88 @@ and open the template in the editor.
         <title>Web Interface</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="css/index.css" rel="stylesheet" type="text/css">
     </head>
     <body>
         
         <h1>Web Interface</h1>
         
-        <div id="debugButton" onclick="Websockets.WS.sendDebugMessage()">Click me hard!</div>
+        <!-- <div id="debugButton" onclick="Websockets.WS.sendDebugMessage()">Click me hard!</div>-->
         
-        <div id="output" style="height: 400px; background-color: #f1f1f1; overflow-y: scroll;">
+        <div id="chatOutput">
             <hr><br>
         </div>
         
-        <div id="input" style="">
-            <textarea id="inputTextArea" style="width: 100%"></textarea>
-            <div id="chatSubmit" onclick="WebSockets.WS.sendInputMessage()"
-                 style="display: inline-block; background-color: tomato; border: 0;">
-                Submit
-            </div>
+        <div id="chatInput" style="">
+            <textarea id="chatTextArea"></textarea>
+            <div id="chatSubmit">Submit</div>
         </div>
         
-        <script type="text/javascript" src="Utilities/INIT.js" onload=""></script>
+        <!-- load all js-files/-libraries before real initialization -->
+        <!-- <script type="text/javascript" src="Utilities/INIT.js" onload=""></script>
         <script type="text/javascript" src="Utilities/ArrayBufferUtil.js" onload=""></script>
         <script type="text/javascript" src="Utilities/Sizeof.js" onload=""></script>
+        <script type="text/javascript" src="IO/INIT.js" onload=""></script>
+        <script type="text/javascript" src="IO/TextElement.js" onload=""></script>
         <script type="text/javascript" src="Debug/INIT.js" onload=""></script>
         <script type="text/javascript" src="Debug/DebugMessage.js" onload=""></script>
         <script type="text/javascript" src="WebSockets/INIT.js" onload=""></script>
-        <script type="text/javascript" src="WebSockets/WS.js" onload=""></script>
+        <script type="text/javascript" src="WebSockets/WSConnection.js" onload=""></script> -->
+        <!-- call index.js last as it initializes everything properly -->
+        <!-- <script type="text/javascript" src="index.js" onload=""></script> -->
+        <script type="text/javascript">
+        
+            var jsSrcList = new Array 
+            (
+                "Utilities/INIT.js",
+                "IO/INIT.js",
+                "IO/TextElement.js",
+                "WebSockets/INIT.js",
+                "WebSockets/WSConnection.js",
+                "index.js"
+            );
+            
+            var cssSrcList = new Array
+            (
+                //"css/index.css"
+            );
+
+            var loadJS = function (src, callback, asynch = false)
+            {
+                var script = document.createElement("script");
+                script.type = "text/javascript";
+                script.src = src;
+                script.async = asynch;
+                script.onreadystatechange = callback;
+                document.getElementsByTagName("head")[0].appendChild(script);
+            };
+            
+            var loadCSS = function (src, callback, asynch = false)
+            {
+                var stylesheet = document.createElement("link");
+                stylesheet.setAttribute("rel", "stylesheet")
+                stylesheet.setAttribute("type", "text/css")
+                stylesheet.setAttribute("charset", "utf-8");
+                stylesheet.setAttribute("href", src)
+                
+                //stylesheet.type = "text/css";
+                //stylesheet.rel = "stylesheet";
+                //stylesheet.href = src;
+                //stylesheet.async = asynch;
+                //stylesheet.onreadystatechange = callback;
+                document.getElementsByTagName("head")[0].appendChild(stylesheet);
+            }
+     
+            for (s in jsSrcList)
+            {
+                loadJS(jsSrcList[s]);
+            }
+            
+            for (s in cssSrcList)
+            {
+                loadJS(cssSrcList[s]);
+            }
+            
+        </script>
     </body>
 </html>

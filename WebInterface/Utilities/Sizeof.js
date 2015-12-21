@@ -1,9 +1,9 @@
-var Utilities = (function (self)
+var Utilities = (function (module)
 {
 
-    if (typeof(self) === "undefined")
+    if (typeof(module) === "undefined")
     {
-        self = {};
+        module = {};
     }
 
     /*
@@ -24,7 +24,7 @@ var Utilities = (function (self)
      *
      * object - the object whose size should be determined
      */
-    self.sizeof = function (object)
+    module.sizeof = function (object)
     {
 
       // initialise the list of objects and size
@@ -86,6 +86,6 @@ var Utilities = (function (self)
 
     }
 
-    return self;
+    return module;
 
 }(Utilities));

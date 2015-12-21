@@ -96,6 +96,9 @@
     <Compile Include="Sumpfkraut\Database\DBAgent.cs" />
     <Compile Include="Sumpfkraut\TestClass.cs" />
     <Compile Include="Sumpfkraut\Web\WS\Enumeration.cs" />
+    <Compile Include="Sumpfkraut\Web\WS\Protocols\Enumeration.cs" />
+    <Compile Include="Sumpfkraut\Web\WS\Protocols\AbstractWSProtocol.cs" />
+    <Compile Include="Sumpfkraut\Web\WS\Protocols\WSChatProtocol.cs" />
     <Compile Include="Sumpfkraut\Web\WS\WSResponse.cs" />
     <Compile Include="Sumpfkraut\Web\WS\WSServer.cs" />
     <Compile Include="Sumpfkraut\Web\WS\WSUser.cs" />

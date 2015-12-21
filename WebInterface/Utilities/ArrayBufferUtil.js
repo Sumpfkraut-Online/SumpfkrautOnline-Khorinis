@@ -1,17 +1,17 @@
-var Utilities = (function (self)
+var Utilities = (function (module)
 {
 
-    if (typeof(self) === "undefined")
+    if (typeof(module) === "undefined")
     {
-        self = {};
+        module = {};
     }
 
-    self.arrayBufferToString = function (buf)
+    module.arrayBufferToString = function (buf)
     {
       return String.fromCharCode.apply(null, new Uint16Array(buf));
     }
 
-    self.stringToArrayBuffer = function (str)
+    module.stringToArrayBuffer = function (str)
     {
       var buf = new ArrayBuffer(str.length*2); // 2 bytes for each char
       var bufView = new Uint16Array(buf);
@@ -22,6 +22,6 @@ var Utilities = (function (self)
       return buf;
     }
 
-    return self;
+    return module;
 
 }(Utilities));
