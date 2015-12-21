@@ -1,8 +1,15 @@
 @charset "UTF-8";
 
+body
+{
+    background-color: #bad58c;
+}
+
 #chatOutput
 {
     height: 400px;
+    padding-left: 10px;
+    padding-right: 10px;
     background-color: #f1f1f1;
     overflow-y: scroll;
 }
