@@ -24,71 +24,7 @@ and open the template in the editor.
             <div id="chatSubmit">Submit</div>
         </div>
         
-        <!-- load all js-files/-libraries before real initialization -->
-        <!-- <script type="text/javascript" src="Utilities/INIT.js" onload=""></script>
-        <script type="text/javascript" src="Utilities/ArrayBufferUtil.js" onload=""></script>
-        <script type="text/javascript" src="Utilities/Sizeof.js" onload=""></script>
-        <script type="text/javascript" src="IO/INIT.js" onload=""></script>
-        <script type="text/javascript" src="IO/TextElement.js" onload=""></script>
-        <script type="text/javascript" src="Debug/INIT.js" onload=""></script>
-        <script type="text/javascript" src="Debug/DebugMessage.js" onload=""></script>
-        <script type="text/javascript" src="WebSockets/INIT.js" onload=""></script>
-        <script type="text/javascript" src="WebSockets/WSConnection.js" onload=""></script> -->
-        <!-- call index.js last as it initializes everything properly -->
-        <!-- <script type="text/javascript" src="index.js" onload=""></script> -->
-        <script type="text/javascript">
-        
-            var jsSrcList = new Array 
-            (
-                "Utilities/INIT.js",
-                "IO/INIT.js",
-                "IO/TextElement.js",
-                "WebSockets/INIT.js",
-                "WebSockets/WSConnection.js",
-                "index.js"
-            );
-            
-            var cssSrcList = new Array
-            (
-                //"css/index.css"
-            );
-
-            var loadJS = function (src, callback, asynch = false)
-            {
-                var script = document.createElement("script");
-                script.type = "text/javascript";
-                script.src = src;
-                script.async = asynch;
-                script.onreadystatechange = callback;
-                document.getElementsByTagName("head")[0].appendChild(script);
-            };
-            
-            var loadCSS = function (src, callback, asynch = false)
-            {
-                var stylesheet = document.createElement("link");
-                stylesheet.setAttribute("rel", "stylesheet")
-                stylesheet.setAttribute("type", "text/css")
-                stylesheet.setAttribute("charset", "utf-8");
-                stylesheet.setAttribute("href", src)
-                
-                //stylesheet.type = "text/css";
-                //stylesheet.rel = "stylesheet";
-                //stylesheet.href = src;
-                //stylesheet.async = asynch;
-                //stylesheet.onreadystatechange = callback;
-                document.getElementsByTagName("head")[0].appendChild(stylesheet);
-            }
-     
-            for (s in jsSrcList)
-            {
-                loadJS(jsSrcList[s]);
-            }
-            
-            for (s in cssSrcList)
-            {
-                loadJS(cssSrcList[s]);
-            }
-            
-        </script>
+        <!-- main entry point for the scripts after loading all html -->
+        <script type="text/javascript" src="Loading.js" onload=""></script>
     </body>
 </html>

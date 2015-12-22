@@ -4,7 +4,7 @@ var Main = (function (module)
     {
         module = {};
     }
-
+    
     var chatInput = new IO.TextElement(document.getElementById("chatTextArea"), 
         "value", "\n");
     var chatOutput = new IO.TextElement(document.getElementById("chatOutput"), 
