@@ -8,6 +8,7 @@ var ScriptLoading = (function (module)
     var jsSrcList = new Array 
     (
         "Utilities/INIT.js",
+        "Utilities/CallbackHandler.js",
         "IO/INIT.js",
         "IO/TextElement.js",
         "WebSockets/INIT.js",

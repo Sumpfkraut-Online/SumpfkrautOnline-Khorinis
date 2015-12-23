@@ -5,6 +5,10 @@ var IO = (function (module)
     {
         module = {};
     }
+    
+    // ------------------------
+    // --- TextElement
+    // ------------------------
 
     module.TextElement = function (domObject, txtAccess, newLine)
     {
@@ -13,9 +17,16 @@ var IO = (function (module)
         this.newLine = newLine;
     }
     
-    // ------------------------
     // accessors
     // ------------------------
+    
+    Object.defineProperty(module.TextElement.prototype, "_className", 
+    {
+        value: "TextElement",
+        enumerable: false,
+        configurable: false,
+        writable: false
+    });
     
     Object.defineProperty(module.TextElement.prototype, "domObject", 
     {
@@ -41,7 +52,6 @@ var IO = (function (module)
         configurable: false
     });
     
-    // ------------------------
     // io-methods
     // ------------------------
     
