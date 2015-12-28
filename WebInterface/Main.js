@@ -27,50 +27,38 @@ var Main = (function (module)
     
     // var bla = {};
     // alert(typeof(bla) == "object");
+    // bla["bli.blubb"] = function () { console.log("BLABLIBLUBB"); };
+    // bla.bli.blubb();
     
-    // var windowOnClickCH = new Utilities.CallbackHandler();
-    // windowOnClickCH.addSender(window, "onclick");
-    // var callMeBaby = function () { console.log("Ya called me, Baby!"); };
-    // var callMeWilhelm = function () { console.log("Ya called me, Wilhelm!"); };
-    // windowOnClickCH.addReceiver(callMeBaby);
-    // windowOnClickCH.addReceiver(callMeWilhelm);
+    // alert(typeof(1.1));
+    // alert(typeof(1));
     
+    
+    // // potential listener-functions
+    // var callMeBaby = function (evt) { console.log("Ya called me, Baby!"); };
+    // var callMeWilhelm = function (evt) { console.log("Ya called me, Wilhelm!"); };
+    // var callMeMaybe = function (evt)
+    // {
+        // console.log("Ya called me, maybe...");
+    // };
+
+    // // first listener assigned
+    // document.getElementById("chatInput").onclick = callMeBaby;
+
+    // // create 2 CallbackHandler-objects
+    // // they use the same event window.onclick
+    // // myButton.onclick is registered on anotherCH exlusively
+    // // the previous listener window.onclick = callMeBaby will be included in someCH
+    // // someCH.callback (the new listener) will replaced by anotherCH.callback as well
+    // var someCH = new Utilities.CallbackHandler();
+    // someCH.addSender(document.getElementById("chatInput"), "onclick");
     // var anotherCH = new Utilities.CallbackHandler();
-    // anotherCH.addSender(window, "onclick");
-    // var callMeMaybe = function () { console.log("Ya called me, maybe..."); };
+    // anotherCH.addSender(document.getElementById("chatInput"), "onclick");
+    // anotherCH.addSender(document.getElementById("chatOutput"), "onclick");
+
+    // // register callback-function on the CallbackHandler-objects
+    // someCH.addReceiver(callMeWilhelm);
     // anotherCH.addReceiver(callMeMaybe);
-    
-    
-    // potential listener-functions
-    var callMeBaby = function (evt) { console.log("Ya called me, Baby!"); };
-    var callMeWilhelm = function (evt) { console.log("Ya called me, Wilhelm!"); };
-    var callMeMaybe = function (evt)
-    {
-        console.log("Ya called me, maybe...");
-        // console.log(evt.target);
-        // console.log(evt.currentTarget);
-        // console.log(evt.currentTarget === window.onclick);
-        // console.log(evt.type);
-        // console.log(arguments.callee);
-    };
-
-    // first listener assigned
-    window.onclick = callMeBaby;
-
-    // create 2 CallbackHandler-objects
-    // they use the same event window.onclick
-    // myButton.onclick is registered on anotherCH exlusively
-    // the previous listener window.onclick = callMeBaby will be included in windowOnClickCH
-    // windowOnClickCH.callback (the new listener) will replaced by anotherCH.callback as well
-    var windowOnClickCH = new Utilities.CallbackHandler();
-    windowOnClickCH.addSender(window, "onclick");
-    var anotherCH = new Utilities.CallbackHandler();
-    anotherCH.addSender(window, "onclick");
-    anotherCH.addSender(document.getElementById("chatOutput"), "onclick");
-
-    // register callback-function on the CallbackHandler-objects
-    windowOnClickCH.addReceiver(callMeWilhelm);
-    anotherCH.addReceiver(callMeMaybe);
     
     
     

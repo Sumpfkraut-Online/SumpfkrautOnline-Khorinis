@@ -12,8 +12,9 @@ var IO = (function (module)
 
     module.Chat = function (input, output)
     {
-        this.input = input;
-        this.output = output;
+        var self = this;
+        self._input = input;
+        self._output = output;
     }
     
     // accessors
