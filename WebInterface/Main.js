@@ -62,7 +62,7 @@ var Main = (function (module)
     
     
     // console.log(Utilities.StringUtil.indicesOf("<br>", "Bla<br>Mhmhmhmh<br>Iiiiihhh", true));
-    // console.log("0123456".substring(10) == "");
+    // console.log("0123456".substring(2, 4));
     
     
     var chatInput = new IO.TextElement(document.getElementById("chatTextArea"), 

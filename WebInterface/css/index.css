@@ -7,23 +7,33 @@ body
 
 #chatOutput
 {
-    height: 400px;
+    width: 600px;
+    height: 200px;
     padding-left: 10px;
     padding-right: 10px;
+    display: block;
     background-color: #f1f1f1;
     overflow-y: scroll;
 }
 
-#chatInput { }
+#chatInput 
+{
+    width: 600px;
+    display: block;
+}
 
 #chatTextArea
 {
     width: 100%;
+    display: block;
 }
 
 #chatSubmit
 {
-    display: inline-block;
+    width: 100px;
+    display: block;
     background-color: tomato;
-    border: 0;
+    border-style: dotted;
+    border: 1;
+    text-align: center;
 }
