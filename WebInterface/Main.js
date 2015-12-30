@@ -61,11 +61,14 @@ var Main = (function (module)
     // anotherCH.addReceiver(callMeMaybe);
     
     
+    // console.log(Utilities.StringUtil.indicesOf("<br>", "Bla<br>Mhmhmhmh<br>Iiiiihhh", true));
+    // console.log("0123456".substring(10) == "");
+    
     
     var chatInput = new IO.TextElement(document.getElementById("chatTextArea"), 
-        "value", "\n");
+        "value", "\n", 30000);
     var chatOutput = new IO.TextElement(document.getElementById("chatOutput"), 
-        "innerHTML", "<br>");
+        "innerHTML", "<br>", 200);
     var chatSubmit = document.getElementById("chatSubmit");
     
     // try websocket handshake with given websocket uri (wsUri)

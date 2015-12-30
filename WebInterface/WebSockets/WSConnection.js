@@ -27,29 +27,29 @@ WebSockets = (function (module)
         
         self.onClose = function (evt)
         {
-            self.output.writenl('<span style="color: red;">' 
+            self.output.writeln('<span style="color: red;">' 
                 + 'Closed websocket connection.</span> ' + evt.data);
         };
         
         self.onError = function (evt)
         {
-            self.output.writenl('<span style="color: red;">Error:</span> ' 
+            self.output.writeln('<span style="color: red;">Error:</span> ' 
                 + evt.data);
             if (self.websocket.readyState == 3)
             {
-                self.output.writenl("Websocket-connection failed and/or closed.");
+                self.output.writeln("Websocket-connection failed and/or closed.");
             }
         };
         
         self.onMessage = function (evt)
         {
             var jTxt = evt.data.toString();
-            self.output.writenl(jTxt);
+            self.output.writeln(jTxt);
         };
         
         self.onOpen = function (evt)
         {
-            self.output.writenl("Websocket-connection to: " + self.wsUri);
+            self.output.writeln("Websocket-connection to: " + self.wsUri);
         };
         
     }
@@ -117,7 +117,7 @@ WebSockets = (function (module)
     {
         value: function () 
         {
-            this.output.writenl("Initializing WSConnection...");
+            this.output.writeln("Initializing WSConnection...");
             this.websocket = new WebSocket(this.wsUri);
             this.websocket.callbackTarget = this;
             this.websocket.binaryType = "arraybuffer";
@@ -142,7 +142,7 @@ WebSockets = (function (module)
             }
             else
             {
-                this.output.writenl("No websocket-connection established!");
+                this.output.writeln("No websocket-connection established!");
                 return false;
             }
         },

@@ -1,4 +1,4 @@
-var Utilities.StringUtil = (function (module)
+Utilities.StringUtil = (function (module)
 {
 
     if (typeof(module) === "undefined")
@@ -8,7 +8,8 @@ var Utilities.StringUtil = (function (module)
 
     module.indicesOf = function (searchStr, str, caseSensitive)
     {
-        var startIndex = 0, searchStrLen = searchStr.length;
+        var startIndex = 0;
+        var searchStrLen = searchStr.length;
         var index, indices = [];
         if (!caseSensitive)
         {
