@@ -7,6 +7,7 @@ using Alchemy.Classes;
 using System.Net;
 using Newtonsoft.Json;
 using Alchemy.Handlers.WebSocket.rfc6455;
+using GUC.Server.Scripts.Sumpfkraut.Web.WS.Protocols;
 
 namespace GUC.Server.Scripts.Sumpfkraut.Web.WS
 {
@@ -21,14 +22,22 @@ namespace GUC.Server.Scripts.Sumpfkraut.Web.WS
 
         protected int port;
         public int GetPort () { return this.port; }
-        //public void SetPort (int port) { this.wsServer.Port = port; }
+        public void SetPort (int port) { this.port = port; }
 
         protected WSServerState serverState;
         public WSServerState GetServerState () { return this.serverState; }
         protected void SetServerState (WSServerState serverState) { this.serverState = serverState; }
 
-        public TimeSpan GetTimeout () { return this.wsServer.TimeOut; }
-        public void SetTimeout (TimeSpan timeout) { this.wsServer.TimeOut = timeout; }
+        protected TimeSpan timeout;
+        public TimeSpan GetTimeout () { return this.timeout; }
+        public void SetTimeout (TimeSpan timeout)
+        {
+            this.timeout = timeout;
+            if (this.wsServer != null)
+            {
+                this.wsServer.TimeOut = timeout;
+            }
+        }
 
         protected Dictionary<UserContext, WSUser> onlineUserByContext = 
             new Dictionary<UserContext, WSUser>();
@@ -56,7 +65,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.Web.WS
         {
             SetObjName("WSServer (default)");
             SetServerState(WSServerState.undefined);
-            wsServer.TimeOut = new TimeSpan(0, 10, 0);
+            SetPort(81);
+            SetTimeout(new TimeSpan(0, 10, 0));
         }
 
 
@@ -105,6 +115,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Web.WS
                 wsServer.OnDisconnect = UserDisconnect;
                 wsServer.OnReceive = ReceivedData;
                 wsServer.OnSend = SentData;
+                wsServer.TimeOut = GetTimeout();
                 SetServerState(WSServerState.initialized);
                 return true;
             }
@@ -279,14 +290,26 @@ namespace GUC.Server.Scripts.Sumpfkraut.Web.WS
 
             try
             {
-                dynamic obj = JsonConvert.DeserializeObject(json);
-                
-
+                WSChatProtocol obj = JsonConvert.DeserializeObject<WSChatProtocol>(json);
+                obj.context = context;
+                Print(obj.protocolType + ": " + obj.rawText);
 
                 //foreach (var field in obj)
                 //{
                 //    Print(field);
                 //}
+
+                Dictionary<String, object> returnData = new Dictionary<string, object>
+                {
+                    { "Hans", "Wurst" },
+                    { "Eins", 11 },
+                    { "Truth", true },
+                    { "SomeArray", new int[] { 0, 1, 2, 3, 4, 9001 } },
+                };
+
+                String returnJson = JsonConvert.SerializeObject(returnData);
+                context.Send("Got it, pal!: " + returnJson);
+
                 //context.Send("Got it, pal!: " + json);
             }
             catch (Exception ex)

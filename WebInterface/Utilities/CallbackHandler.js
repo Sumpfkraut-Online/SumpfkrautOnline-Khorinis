@@ -55,7 +55,6 @@ var Utilities = (function (module)
                 {
                     // invoke older, replaced listener/callback if there was any
                     var replIndex = self.findReplacedBySubstitute(arguments.callee);
-                    console.log(replIndex);
                     if (replIndex > -1)
                     {
                         self._replacedCallbacks[replIndex].callback.apply(null, arguments);

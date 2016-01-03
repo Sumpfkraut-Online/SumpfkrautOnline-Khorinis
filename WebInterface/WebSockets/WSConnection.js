@@ -10,15 +10,12 @@ WebSockets = (function (module)
     // --- WSConnection-class
     // ------------------------
     
-    module.WSConnection = function (wsUri, input, output, submit)
+    module.WSConnection = function (wsUri, output)
     {
         var self = this;
         
-        // var wsUri = "ws://localhost:81/";
         self.wsUri = wsUri;
-        self.input = input;
         self.output = output;
-        self.submit = submit;
         
         // keep callback function in constructor closure to have access to self
 
@@ -65,13 +62,13 @@ WebSockets = (function (module)
         writable: false
     });
     
-    Object.defineProperty(module.WSConnection.prototype, "input", 
-    {
-        get: function () { return this._input; },
-        set: function (val) { this._input = val; },
-        enumerable: true,
-        configurable: false,
-    });
+    // Object.defineProperty(module.WSConnection.prototype, "input", 
+    // {
+        // get: function () { return this._input; },
+        // set: function (val) { this._input = val; },
+        // enumerable: true,
+        // configurable: false,
+    // });
     
     Object.defineProperty(module.WSConnection.prototype, "output", 
     {
@@ -81,18 +78,19 @@ WebSockets = (function (module)
         configurable: false,
     });
     
-    Object.defineProperty(module.WSConnection.prototype, "submit", 
-    {
-        get: function () { return this._submit; },
-        set: function (val) 
-        {
-            this._submit = val;
-            this._submit.callbackTarget = this;
-            this._submit.onclick = this.sendInputMessage;
-        },
-        enumerable: true,
-        configurable: false,
-    });
+    
+    // Object.defineProperty(module.WSConnection.prototype, "submit", 
+    // {
+        // get: function () { return this._submit; },
+        // set: function (val) 
+        // {
+            // this._submit = val;
+            // this._submit.callbackTarget = this;
+            // this._submit.onclick = this.sendInputMessage;
+        // },
+        // enumerable: true,
+        // configurable: false,
+    // });
     
     Object.defineProperty(module.WSConnection.prototype, "websocket", 
     {
@@ -151,37 +149,37 @@ WebSockets = (function (module)
         writable: false
     });
     
-    Object.defineProperty(module.WSConnection.prototype, "sendInputMessage", 
-    {
-        value: function (msg) 
-        {
-            var target = this.callbackTarget;
+    // Object.defineProperty(module.WSConnection.prototype, "sendInputMessage", 
+    // {
+        // value: function (msg) 
+        // {
+            // var target = this.callbackTarget;
             
-            if (typeof(target.input) != "undefined")
-            {
-                var text = target.input.read();
-                var jObj = {"protocolType":WebSockets.protocalTypes.chatData,"rawText":text};
-                var jTxt = JSON.stringify(jObj);
-                target.sendMessage(jTxt);
-            }
-            else
-            {
-                var warnMsg = "Warning: target.input is undefined: Cannot send input message"
-                    + " to websocket-server!";
-                if (typeof(target.output) != "undefined")
-                {
-                    target.output.writeln(warnMsg);
-                }
-                else
-                {
-                    alert(warnMsg);
-                }
-            }
-        },
-        enumerable: true,
-        configurable: false,
-        writable: false
-    });
+            // if (typeof(target.input) != "undefined")
+            // {
+                // var text = target.input.read();
+                // var jObj = {"protocolType":WebSockets.protocalTypes.chatData,"rawText":text};
+                // var jTxt = JSON.stringify(jObj);
+                // target.sendMessage(jTxt);
+            // }
+            // else
+            // {
+                // var warnMsg = "Warning: target.input is undefined: Cannot send input message"
+                    // + " to websocket-server!";
+                // if (typeof(target.output) != "undefined")
+                // {
+                    // target.output.writeln(warnMsg);
+                // }
+                // else
+                // {
+                    // alert(warnMsg);
+                // }
+            // }
+        // },
+        // enumerable: true,
+        // configurable: false,
+        // writable: false
+    // });
     
     return module;
 

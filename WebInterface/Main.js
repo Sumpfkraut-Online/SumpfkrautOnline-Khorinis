@@ -64,17 +64,58 @@ var Main = (function (module)
     // console.log(Utilities.StringUtil.indicesOf("<br>", "Bla<br>Mhmhmhmh<br>Iiiiihhh", true));
     // console.log("0123456".substring(2, 4));
     
+    // document.onevent = function (evt)
+    // {
+        // console.log("GOTCHA");
+    // }
     
-    var chatInput = new IO.TextElement(document.getElementById("chatTextArea"), 
-        "value", "\n", 30000);
-    var chatOutput = new IO.TextElement(document.getElementById("chatOutput"), 
-        "innerHTML", "<br>", 200);
-    var chatSubmit = document.getElementById("chatSubmit");
+    // var event;
+    // if (document.createEvent)
+    // {console.log("!");
+        // event = document.createEvent("HTMLEvents");
+        // event.initEvent("event", true, true);
+    // } 
+    // else 
+    // {
+        // event = document.createEventObject();
+        // event.eventType = "event";
+    // }
+
+    // event.eventName = "event";
+
+    // if (document.createEvent) 
+    // {
+        // document.dispatchEvent(event);
+    // } 
+    // else 
+    // {
+        // document.fireEvent("on" + event.eventType, event);
+    // }
+    
+    
+    
+    module.generalWsUri = "ws://localhost:81/";
+    
+    module.chatInput = new IO.TextElement(
+        new Array(document.getElementById("chatTextArea"), "value"), 
+        "\n", 20000);
+    module.chatOutput = new IO.TextElement(
+        new Array(document.getElementById("chatOutput"), "innerHTML"), 
+        "<br>", 20000);
+    module.chatSubmit = document.getElementById("chatSubmit");
+    module.chatSubmitHandler = new Utilities.CallbackHandler();
+    module.chatSubmitHandler.addSender(module.chatSubmit, "onclick");
     
     // try websocket handshake with given websocket uri (wsUri)
-    module.wsConnection = new WebSockets.WSConnection("ws://localhost:81/", 
-        chatInput, chatOutput, chatSubmit);
+    module.wsConnection = new WebSockets.WSConnection(module.generalWsUri, 
+        module.chatOutput);
     module.wsConnection.init();
+    
+    module.chat = new IO.Chat();
+    module.chat.wsConnection = module.wsConnection;
+    module.chat.output = module.chatOutput;
+    module.chat.input = module.chatInput;
+    module.chat.submitHandler = module.chatSubmitHandler;
     
     return module;
     

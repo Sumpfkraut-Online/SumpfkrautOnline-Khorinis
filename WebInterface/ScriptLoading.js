@@ -12,6 +12,7 @@ var ScriptLoading = (function (module)
         "Utilities/CallbackHandler.js",
         "IO/INIT.js",
         "IO/TextElement.js",
+        "IO/Chat.js",
         "WebSockets/INIT.js",
         "WebSockets/WSConnection.js",
         "Main.js"

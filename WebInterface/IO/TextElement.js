@@ -10,18 +10,23 @@ var IO = (function (module)
     // --- TextElement
     // ------------------------
 
-    module.TextElement = function (domObject, txtAccess, newLine, maxLength)
+    module.TextElement = function (contentAccess, newLine, maxLength)
     {
         var self = this;
         
-        self.domObject = domObject;
-        self.txtAccess = txtAccess;
+        self.contentAccess = contentAccess;
         self.newLine = newLine;
         self.maxLength = maxLength;
         // relative line breaks at char-indices 
         // (always starts to count index number again after linebreak)
         self._relLineBreaks = new Array(0);
         self._endsWithNLString = false;
+        
+        self.onClear = undefined;
+        self.onCut = undefined;
+        self.onRead = undefined;
+        self.onSubmit = undefined;
+        self.onWrite = undefined;
         
         // io-methods
         // ------------------------
@@ -30,8 +35,13 @@ var IO = (function (module)
         {
             try
             {
-                self.domObject[self.txtAccess] = "";
+                self.contentAccess[0][self.contentAccess[1]] = "";
                 self._lineBreaks = new Array();
+                
+                if (typeof(self.onClear) == "function")
+                {
+                    self.onClear();
+                }
             }
             catch (err)
             {
@@ -44,12 +54,13 @@ var IO = (function (module)
         {
             try
             {
-                if (self.domObject[self.txtAccess].length <= self.maxLength)
+                if (self.contentAccess[0][self.contentAccess[1]].length <= self.maxLength)
                 {
                     return 0;
                 }
                 
-                var charDiff = self.domObject[self.txtAccess].length - self.maxLength;
+                var charDiff = self.contentAccess[0][self.contentAccess[1]].length 
+                    - self.maxLength;
                 if (charDiff < 1)
                 {
                     return 0;
@@ -74,15 +85,9 @@ var IO = (function (module)
                         if ((charCount > 0) && (!isNaN(self._relLineBreaks[i])))
                         {
                             to = charCount - self._relLineBreaks[i];
-                            console.log("case 1a");
-                            // console.log(self.domObject[self.txtAccess].length + " " 
-                                // + charDiff + " " + charCount);
-                            // console.log(self._relLineBreaks[i]);
-                            // console.log(to + " " + charCount + " "  + self._relLineBreaks[i]);
                         }
                         else
                         {
-                            console.log("case 1b");
                             return 0;
                         }
                     }
@@ -91,12 +96,10 @@ var IO = (function (module)
                         // delete the same line completely
                         if (charCount <= 0)
                         {
-                            console.log("case 2a");
-                            to = self.domObject[self.txtAccess].length - 1;
+                            to = self.contentAccess[0][self.contentAccess[1]].length - 1;
                         }
                         else
                         {
-                            console.log("case 2b");
                             to = charCount;
                         }
                     }
@@ -106,10 +109,6 @@ var IO = (function (module)
                     console.log("case 3");
                     to = charDiff;
                 }
-                
-                // console.log(self._relLineBreaks);
-                // console.log(from + " " + to + " " + charDiff + " " + self.maxLength 
-                    // + " " + self.domObject[self.txtAccess].length);
                     
                 return self.cutFromTo(from, to);
             }
@@ -134,58 +133,31 @@ var IO = (function (module)
                 {
                     from = 0;
                 }
-                if (to >= self.domObject[self.txtAccess].length)
+                if (to >= self.contentAccess[0][self.contentAccess[1]].length)
                 {
-                    to = self.domObject[self.txtAccess].length;
+                    to = self.contentAccess[0][self.contentAccess[1]].length;
                 }
                 
                 if (from == 0)
                 {
-                    self.domObject[self.txtAccess] = self.domObject[self.txtAccess].substring(
-                        to);
+                    self.contentAccess[0][self.contentAccess[1]] = 
+                        self.contentAccess[0][self.contentAccess[1]].substring(to);
                 }
                 else
                 {
-                    var strArr = self.domObject[self.txtAccess].split('');
+                    var strArr = self.contentAccess[0][self.contentAccess[1]].split('');
                     strArr.splice(from, to - from);
-                    self.domObject[self.txtAccess] = strArr.join('');
+                    self.contentAccess[0][self.contentAccess[1]] = strArr.join('');
                 }
                 
                 self.updateLineBreaks(from, to);
                 
-                return (to - from + 1);
+                if (typeof(self.onCut) == "function")
+                {
+                    self.onCut();
+                }
                 
-                // if (cutWholeLines)
-                // {
-                    // var newFrom, newTo;
-                    // var i = charCount = 0;
-                    // while (i < self._relLineBreaks.length)
-                    // {
-                        // charCount += self._relLineBreaks[i];
-                        // // !!! TO DO !!!
-                        // if (from >= charCount)
-                        // {
-                            // if (preserveLines)
-                            // {
-                                // // cut beginning from first char after next linebreak
-                                // newFrom = charCount + 1;
-                            // }
-                            // else
-                            // {
-                                // // cut out the whole line if original cut begins there
-                                
-                            // }
-                            // break;
-                        // }
-                        // i++;
-                    // }
-                // }
-                // else
-                // {
-                    // self.domObject[self.txtAccess] = self.domObject[self.txtAccess].substring(
-                        // from, to);
-                    // self.updateLineBreaks(from, to);
-                // }
+                return (to - from + 1);
             }
             catch (err)
             {
@@ -229,7 +201,12 @@ var IO = (function (module)
         {
             try
             {
-                return self.domObject[self.txtAccess];
+                if (typeof(self.onRead) == "function")
+                {
+                    self.onRead();
+                }
+                
+                return self.contentAccess[0][self.contentAccess[1]];
             }
             catch (err)
             {
@@ -245,7 +222,7 @@ var IO = (function (module)
             {
                 // recreate the linebreak-array from the getgo
                 var renewedLineBreaks = Utilities.StringUtil.indicesOf(self.newLine, 
-                    self.domObject[self.txtAccess], true);
+                    self.contentAccess[0][self.contentAccess[1]], true);
                 var i = 0;
                 while (i < renewedLineBreaks.length)
                 {
@@ -303,9 +280,6 @@ var IO = (function (module)
             {               
                 var newLineBreaks = Utilities.StringUtil.indicesOf(self.newLine, msg, false);
                 
-                // console.log(msg);
-                // console.log("1) " + newLineBreaks);
-                
                 if ((typeof(newLineBreaks) == "object") && (newLineBreaks.length > 0))
                 {
                     
@@ -331,8 +305,6 @@ var IO = (function (module)
                         newLineBreaks.splice(0, 1);
                     }
                     
-                    // if ((newLineBreaks[newLineBreaks.length - 1] + self.newLine.length)
-                        // == msg.length)
                     if (msg.length == 0)
                     {
                         self._endsWithNLString = true;
@@ -351,13 +323,9 @@ var IO = (function (module)
                             //                          |    |  == tail
                             lineTail -= (newLineBreaks[newLineBreaks.length - 1]);
                         }
-                        // console.log(msg.length + " " + lineTail + " " + msg);
-                        // console.log(typeof(newLineBreaks) + " " + newLineBreaks.length 
-                            // + " " + newLineBreaks);
                         Array.prototype.push.apply(newLineBreaks, [lineTail]);
                     }
                     
-                    // console.log(newLineBreaks);
                     Array.prototype.push.apply(self._relLineBreaks, newLineBreaks);
                 }
                 else
@@ -376,12 +344,15 @@ var IO = (function (module)
                     self._endsWithNLString = false;
                 }
                 
-                // console.log("2) " + newLineBreaks);
-                // console.log(self._relLineBreaks);
-                // console.log(endOfPrevLine + " - " + msg);
-                self.domObject[self.txtAccess] += endOfPrevLine;
-                self.domObject[self.txtAccess] += msg;
+                self.contentAccess[0][self.contentAccess[1]] += endOfPrevLine;
+                self.contentAccess[0][self.contentAccess[1]] += msg;
                 self.cutAtMaxLength(true, true);
+                self.contentAccess[0].scrollTop = self.contentAccess[0].scrollHeight;
+                
+                if (typeof(self.onWrite) == "function")
+                {
+                    self.onWrite(endOfPrevLine + msg);
+                }
             }
             catch (err)
             {
@@ -415,10 +386,19 @@ var IO = (function (module)
         writable: false
     });
     
-    Object.defineProperty(module.TextElement.prototype, "domObject", 
+    Object.defineProperty(module.TextElement.prototype, "contentAccess", 
     {
-        get: function () { return this._domObject; },
-        set: function (val) { this._domObject = val; },
+        get: function () { return this._contentAccess; },
+        set: function (val) 
+        {
+            if (val.length < 2)
+            {
+                alert("Invalid contentAccess prodived to " + this._className 
+                    + "-object: " + val);
+                return;
+            }
+            this._contentAccess = val;
+        },
         enumerable: true,
         configurable: false
     });
@@ -435,14 +415,6 @@ var IO = (function (module)
     {
         get: function () { return this._newLine; },
         set: function (val) { this._newLine = val; },
-        enumerable: true,
-        configurable: false
-    });
-    
-    Object.defineProperty(module.TextElement.prototype, "txtAccess", 
-    {
-        get: function () { return this._txtAccess; },
-        set: function (val) { this._txtAccess = val; },
         enumerable: true,
         configurable: false
     });
