@@ -10,7 +10,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.Web.WS.Protocols
     public abstract class AbstractWSProtocol : ScriptObject
     {
 
-        public  WSProtocolType protocolType;
+        public  WSProtocolType type;
+        public String sender;
         public UserContext context;
 
     }

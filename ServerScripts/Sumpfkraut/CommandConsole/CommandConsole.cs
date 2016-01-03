@@ -53,8 +53,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.CommandConsole
             String cmd, param = null;
             ProcessCommand processCmd = null;
 
-            //Log.Logger.print("> " + commandText);
-
             Regex rgx_cmd = new Regex("^\\/\\w+");
             cmd = rgx_cmd.Match(commandText, 0).ToString();
 

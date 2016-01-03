@@ -8,10 +8,8 @@ var WebSockets = (function (module)
     
     module.protocalTypes = 
     {
-        undefined: "undefined",
-        userData: "userData",
-        chatData: "chatData",
-        vobData: "vobData"
+        undefined: 0,
+        chatData: 1
     };
     
     module.dataTypes = 

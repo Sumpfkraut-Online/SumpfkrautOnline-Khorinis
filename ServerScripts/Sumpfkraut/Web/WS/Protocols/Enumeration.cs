@@ -8,10 +8,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.Web.WS.Protocols
 
     public enum WSProtocolType
     {
-        Unknown             = 0,
-        UserData            = Unknown + 1,
-        ChatData            = UserData + 1,
-        VobData             = ChatData + 1,
+        undefined           = 0,
+        chatData            = 1,
     }
 
 }

@@ -5,6 +5,11 @@ var Main = (function (module)
         module = {};
     }
     
+    // var str = "/fu My Pony is over the    rainbow!!!11!1 /help me";
+    // var rgx = new RegExp(" ");
+    // var strArr = str.split(rgx);
+    // console.log(strArr);
+    
     // create basic io-elements including submit for later text-forwarding to server
     module.chatInput = new IO.TextElement(
         new Array(document.getElementById("chatTextArea"), "value"), 
@@ -22,12 +27,18 @@ var Main = (function (module)
         module.chatOutput);
     module.wsConnection.init();
     
-    // creating chat
+    // create and register CallbackHandler-objects to access 
+    // fired events of wsConnection
+    module.wsConnOnMessageHandler = new Utilities.CallbackHandler();
+    module.wsConnOnMessageHandler.addSender(module.wsConnection, "onMessage");
+    
+    // creating chat which listens to necessary events
     module.chat = new IO.Chat();
-    module.chat.wsConnection = module.wsConnection;
     module.chat.output = module.chatOutput;
     module.chat.input = module.chatInput;
-    module.chat.submitHandler = module.chatSubmitHandler;
+    module.chat.submit = module.chatSubmitHandler;
+    module.chat.wsConnection = module.wsConnection;
+    module.chat.wsConnOnMessage = module.wsConnOnMessageHandler;
     
     return module;
     

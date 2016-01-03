@@ -286,31 +286,24 @@ namespace GUC.Server.Scripts.Sumpfkraut.Web.WS
         {
             Print("Received data from: " + context.ClientAddress);
 
-            String json = context.DataFrame.ToString();
-
             try
             {
+                String json = context.DataFrame.ToString();
                 WSChatProtocol obj = JsonConvert.DeserializeObject<WSChatProtocol>(json);
                 obj.context = context;
-                Print(obj.protocolType + ": " + obj.rawText);
-
-                //foreach (var field in obj)
-                //{
-                //    Print(field);
-                //}
 
                 Dictionary<String, object> returnData = new Dictionary<string, object>
                 {
-                    { "Hans", "Wurst" },
-                    { "Eins", 11 },
-                    { "Truth", true },
-                    { "SomeArray", new int[] { 0, 1, 2, 3, 4, 9001 } },
+                    { "type", WSProtocolType.chatData },
+                    { "sender", "SERVER" },
+                    { "rawText", "Got it, pal!" },
                 };
 
                 String returnJson = JsonConvert.SerializeObject(returnData);
-                context.Send("Got it, pal!: " + returnJson);
-
-                //context.Send("Got it, pal!: " + json);
+                if (returnJson != null)
+                {
+                    context.Send(returnJson);
+                }
             }
             catch (Exception ex)
             {

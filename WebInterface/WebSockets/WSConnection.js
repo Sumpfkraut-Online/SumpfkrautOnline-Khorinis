@@ -22,33 +22,60 @@ WebSockets = (function (module)
         // websocket callbacks
         // ------------------------
         
-        self.onClose = function (evt)
+        self._onClose = function (evt)
         {
             self.output.writeln('<span style="color: red;">' 
                 + 'Closed websocket connection.</span> ' + evt.data);
+                
+            if (typeof(self.onClose) == "function")
+            {
+                self.onClose(evt);
+            }
         };
         
-        self.onError = function (evt)
+        self._onError = function (evt)
         {
             self.output.writeln('<span style="color: red;">Error:</span> ' 
                 + evt.data);
+                
             if (self.websocket.readyState == 3)
             {
                 self.output.writeln("Websocket-connection failed and/or closed.");
             }
+            
+            if (typeof(self.onError) == "function")
+            {
+                self.onError(evt);
+            }
         };
         
-        self.onMessage = function (evt)
+        self._onMessage = function (evt)
         {
-            var jTxt = evt.data.toString();
-            self.output.writeln(jTxt);
+            // var jTxt = evt.data.toString();
+            if (typeof(self.onMessage) == "function")
+            {
+                self.onMessage(evt);
+            }
         };
         
-        self.onOpen = function (evt)
+        self._onOpen = function (evt)
         {
             self.output.writeln("Websocket-connection to: " + self.wsUri);
+            
+            if (typeof(self.onOpen) == "function")
+            {
+                self.onOpen(evt);
+            }
         };
         
+        // own eventlisteners which can be used to receive data 
+        // from this websocket-connection
+        // ------------------------
+        
+        self.onClose = null;
+        self.onError = null;
+        self.onMessage = null;
+        self.onOpen = null;
     }
     
     // accessors
@@ -62,14 +89,6 @@ WebSockets = (function (module)
         writable: false
     });
     
-    // Object.defineProperty(module.WSConnection.prototype, "input", 
-    // {
-        // get: function () { return this._input; },
-        // set: function (val) { this._input = val; },
-        // enumerable: true,
-        // configurable: false,
-    // });
-    
     Object.defineProperty(module.WSConnection.prototype, "output", 
     {
         get: function () { return this._output; },
@@ -77,20 +96,6 @@ WebSockets = (function (module)
         enumerable: true,
         configurable: false,
     });
-    
-    
-    // Object.defineProperty(module.WSConnection.prototype, "submit", 
-    // {
-        // get: function () { return this._submit; },
-        // set: function (val) 
-        // {
-            // this._submit = val;
-            // this._submit.callbackTarget = this;
-            // this._submit.onclick = this.sendInputMessage;
-        // },
-        // enumerable: true,
-        // configurable: false,
-    // });
     
     Object.defineProperty(module.WSConnection.prototype, "websocket", 
     {
@@ -117,12 +122,11 @@ WebSockets = (function (module)
         {
             this.output.writeln("Initializing WSConnection...");
             this.websocket = new WebSocket(this.wsUri);
-            this.websocket.callbackTarget = this;
             this.websocket.binaryType = "arraybuffer";
-            this.websocket.onclose = this.onClose;
-            this.websocket.onerror = this.onError;
-            this.websocket.onopen = this.onOpen;
-            this.websocket.onmessage = this.onMessage;
+            this.websocket.onclose = this._onClose;
+            this.websocket.onerror = this._onError;
+            this.websocket.onopen = this._onOpen;
+            this.websocket.onmessage = this._onMessage;
         },
         enumerable: false,
         configurable: false,
@@ -148,38 +152,6 @@ WebSockets = (function (module)
         configurable: false,
         writable: false
     });
-    
-    // Object.defineProperty(module.WSConnection.prototype, "sendInputMessage", 
-    // {
-        // value: function (msg) 
-        // {
-            // var target = this.callbackTarget;
-            
-            // if (typeof(target.input) != "undefined")
-            // {
-                // var text = target.input.read();
-                // var jObj = {"protocolType":WebSockets.protocalTypes.chatData,"rawText":text};
-                // var jTxt = JSON.stringify(jObj);
-                // target.sendMessage(jTxt);
-            // }
-            // else
-            // {
-                // var warnMsg = "Warning: target.input is undefined: Cannot send input message"
-                    // + " to websocket-server!";
-                // if (typeof(target.output) != "undefined")
-                // {
-                    // target.output.writeln(warnMsg);
-                // }
-                // else
-                // {
-                    // alert(warnMsg);
-                // }
-            // }
-        // },
-        // enumerable: true,
-        // configurable: false,
-        // writable: false
-    // });
     
     return module;
 

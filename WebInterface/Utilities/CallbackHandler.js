@@ -44,7 +44,6 @@ var Utilities = (function (module)
         self.addSender = function (sObj, sEvtName)
         {
             var index = -1;
-            // if ((typeof(sObj) == "object") && (sObj.hasOwnProperty(sEvtName)))
             if (typeof(sObj) == "object")
             {
                 self._senderObjNamePairs.push(new Array(sObj, sEvtName));
@@ -54,17 +53,18 @@ var Utilities = (function (module)
                 var sub = function ()
                 {
                     // invoke older, replaced listener/callback if there was any
-                    var replIndex = self.findReplacedBySubstitute(arguments.callee);
+                    var replIndex = self.replacedIndexBySubstitute(arguments.callee);
                     if (replIndex > -1)
                     {
                         self._replacedCallbacks[replIndex].callback.apply(null, arguments);
                     }
-                    self.generalCallback();
+                    
+                    self.generalCallback.apply(null, arguments);
                 };
                 self._substitutes.push(sub);
                 
                 // handle cases when there already is a listener-function assigned
-                if (!(sObj[sEvtName] === null))
+                if ((sObj[sEvtName] != null) && ((sObj[sEvtName] != "undefined")))
                 {
                     // add replaced callback as new special receiver
                     self._replacedCallbacks.push({obj:sObj, evtName:sEvtName, 
@@ -75,7 +75,7 @@ var Utilities = (function (module)
             return index;
         };
         
-        self.findReplacedBySubstitute = function (sub)
+        self.replacedIndexBySubstitute = function (sub)
         {
             var index = -1;
             var i = 0;
