@@ -95,9 +95,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         //    return damages;
         //}
 
-        protected ItemType itemType;
-        public ItemType GetItemType () { return this.itemType; }
-        public void SetItemType (ItemType itemType)
+        protected ItemTypes itemType;
+        public ItemTypes GetItemType () { return this.itemType; }
+        public void SetItemType (ItemTypes itemType)
         {
             this.itemType = itemType;
         }
@@ -179,9 +179,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
         //    this.visualSkin = visualSkin; 
         //}
 
-        protected ItemMaterial material;
-        public ItemMaterial GetMaterial () { return this.material; }
-        public void SetMaterial (ItemMaterial material) 
+        protected ItemMaterials material;
+        public ItemMaterials GetMaterial () { return this.material; }
+        public void SetMaterial (ItemMaterials material) 
         { 
             this.material = material; 
         }

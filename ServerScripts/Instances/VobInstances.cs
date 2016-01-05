@@ -50,10 +50,10 @@ namespace GUC.Server.Scripts.Instances
             item = new ItemInstance("itfo_apple", null);
             item.Name = "Apfel";
             
-            item.Type = Enumeration.ItemType.Food_Small;
+            item.Type = Enumeration.ItemTypes.Food_Small;
 
             item.Visual = "ITFO_APPLE.3DS";
-            item.Material = Enumeration.ItemMaterial.Leather;
+            item.Material = Enumeration.ItemMaterials.Leather;
 
             item.Text[0] = "Lebensenergie wiederherstellen:";
             item.Count[0] = 3;
@@ -96,8 +96,8 @@ namespace GUC.Server.Scripts.Instances
 
             item = new ItemInstance("itmw_wolfszahn", null);
             item.Name = "Wolfszahn";
-            item.Type = Enumeration.ItemType.Sword_1H;
-            item.Material = Enumeration.ItemMaterial.Metal;
+            item.Type = Enumeration.ItemTypes.Sword_1H;
+            item.Material = Enumeration.ItemMaterials.Metal;
             item.Visual = "ItMw_020_1h_Sword_short_04.3DS";
             item.Text[1] = "Schaden:"; item.Count[0] = 25;
             item.Text[2] = "Benötigte Stärke:"; item.Count[1] = 20;
@@ -106,8 +106,8 @@ namespace GUC.Server.Scripts.Instances
 
             item = new ItemInstance("ITAR_BDT_M", null);
             item.Name = "Mittlere Banditenrüstung";
-            item.Type = Enumeration.ItemType.Armor;
-            item.Material = Enumeration.ItemMaterial.Leather;
+            item.Type = Enumeration.ItemTypes.Armor;
+            item.Material = Enumeration.ItemMaterials.Leather;
             item.Visual = "ItAr_Bdt_M.3ds";
             item.VisualChange = "Armor_Bdt_M.asc";
             item.Create();

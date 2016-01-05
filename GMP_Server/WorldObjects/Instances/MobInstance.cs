@@ -9,7 +9,7 @@ namespace GUC.Server.WorldObjects.Instances
 {
     public class MobInstance : VobInstance
     {
-        new public readonly static Enumeration.VobType sVobType = Enumeration.VobType.Mob;
+        new public readonly static Enumeration.VobTypes sVobType = Enumeration.VobTypes.Mob;
         new public readonly static Collections.InstanceDictionary Instances = Network.Server.sInstances.GetDict(sVobType);
 
         #region Properties

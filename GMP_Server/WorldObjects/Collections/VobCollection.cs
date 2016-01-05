@@ -12,7 +12,7 @@ namespace GUC.Server.WorldObjects.Collections
 
         internal VobCollection()
         {
-            for (int i = 0; i < (int)VobType.Maximum; i++)
+            for (int i = 0; i < (int)VobTypes.Maximum; i++)
             {
                 vobDicts[i] = new VobDictionary();
             }
@@ -40,7 +40,7 @@ namespace GUC.Server.WorldObjects.Collections
             }
         }
 
-        new public VobDictionary GetDict(VobType type)
+        new public VobDictionary GetDict(VobTypes type)
         {
             return (VobDictionary)base.GetDict(type);
         }

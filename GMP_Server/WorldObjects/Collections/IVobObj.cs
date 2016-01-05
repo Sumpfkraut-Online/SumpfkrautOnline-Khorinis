@@ -9,6 +9,6 @@ namespace GUC.Server.WorldObjects.Collections
     public interface IVobObj<TKey>
     {
         TKey ID { get; }
-        VobType VobType { get; }
+        VobTypes VobType { get; }
     }
 }

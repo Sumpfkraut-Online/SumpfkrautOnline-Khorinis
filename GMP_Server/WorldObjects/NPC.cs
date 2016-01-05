@@ -41,7 +41,7 @@ namespace GUC.Server.WorldObjects
 
         #region States
 
-        public NPCState State { get; protected set; }
+        public NPCStates State { get; protected set; }
         public MobInter UsedMob { get; protected set; }
 
         #endregion
@@ -56,7 +56,7 @@ namespace GUC.Server.WorldObjects
             this.HealthMax = instance.HealthMax;
             this.Health = instance.HealthMax;
 
-            this.State = NPCState.Stand;
+            this.State = NPCStates.Stand;
         }
 
         public override void Delete()
@@ -116,17 +116,17 @@ namespace GUC.Server.WorldObjects
             }
         }
 
-        public static Action<NPC, NPCState> CmdOnMove;
+        public static Action<NPC, NPCStates> CmdOnMove;
         internal static void ReadCmdMove(PacketReader stream, Client client, NPC character, World world)
         {
             if (CmdOnMove == null)
                 return;
 
             uint id = stream.ReadUInt();
-            NPCState state = (NPCState)stream.ReadByte();
+            NPCStates state = (NPCStates)stream.ReadByte();
 
-            NPC npc = (NPC)world.Vobs.Get(VobType.NPC, id);
-            if (npc != null && (npc == character || (client.VobControlledList.Contains(npc) && state <= NPCState.MoveBackward))) //is it a controlled NPC?
+            NPC npc = (NPC)world.Vobs.Get(base.VobType.NPC, id);
+            if (npc != null && (npc == character || (client.VobControlledList.Contains(npc) && state <= NPCStates.MoveBackward))) //is it a controlled NPC?
             {
                 CmdOnMove(npc, state);
             }
@@ -140,7 +140,7 @@ namespace GUC.Server.WorldObjects
 
             uint id = stream.ReadUInt();
 
-            NPC npc = (NPC)world.Vobs.Get(VobType.NPC, id);
+            NPC npc = (NPC)world.Vobs.Get(base.VobType.NPC, id);
             if (npc != null && (npc == character || client.VobControlledList.Contains(npc))) //is it a controlled NPC?
             {
                 CmdOnJump(npc);
@@ -171,16 +171,16 @@ namespace GUC.Server.WorldObjects
             }
         }
         
-        public static Action<NPC, NPC, NPCState> CmdOnTargetMove;
+        public static Action<NPC, NPC, NPCStates> CmdOnTargetMove;
         internal static void ReadCmdTargetMove(PacketReader stream, Client client, NPC character, World world)
         {
             if (CmdOnTargetMove == null)
                 return;
 
             uint targetid = stream.ReadUInt();
-            NPCState state = (NPCState)stream.ReadByte();
+            NPCStates state = (NPCStates)stream.ReadByte();
 
-            NPC target = (NPC)world.Vobs.Get(VobType.NPC, targetid);
+            NPC target = (NPC)world.Vobs.Get(base.VobType.NPC, targetid);
             CmdOnTargetMove(character, target, state);
         }
 
@@ -192,7 +192,7 @@ namespace GUC.Server.WorldObjects
 
             uint targetid = stream.ReadUInt();
 
-            Item item = (Item)world.Vobs.Get(VobType.Item, targetid);
+            Item item = (Item)world.Vobs.Get(base.VobType.Item, targetid);
             if (item != null)
             {
                 CmdOnPickup(character, item);
@@ -249,7 +249,7 @@ namespace GUC.Server.WorldObjects
 
         internal override void WriteSpawnMessage(IEnumerable<Client> list)
         {
-            PacketWriter stream = Program.server.SetupStream(NetworkID.WorldNPCSpawnMessage);
+            PacketWriter stream = Program.server.SetupStream(NetworkIDs.WorldNPCSpawnMessage);
             this.WriteSpawn(stream);
 
             foreach (Client client in list)
@@ -261,7 +261,7 @@ namespace GUC.Server.WorldObjects
         public static Action<Client, NPC> OnWriteControl;
         internal static void WriteControl(Client client, NPC npc)
         {
-            PacketWriter stream = Program.server.SetupStream(NetworkID.PlayerControlMessage);
+            PacketWriter stream = Program.server.SetupStream(NetworkIDs.PlayerControlMessage);
             stream.Write(npc.ID);
             stream.Write(npc.World.FileName);
 
@@ -404,7 +404,7 @@ namespace GUC.Server.WorldObjects
             {
                 UsedMob = mob;
 
-                PacketWriter stream = Program.server.SetupStream(NetworkID.MobUseMessage);
+                PacketWriter stream = Program.server.SetupStream(NetworkIDs.MobUseMessage);
                 stream.Write(this.ID);
                 stream.Write(mob.ID);
 
@@ -421,7 +421,7 @@ namespace GUC.Server.WorldObjects
             {
                 UsedMob = null;
 
-                PacketWriter stream = Program.server.SetupStream(NetworkID.MobUnUseMessage);
+                PacketWriter stream = Program.server.SetupStream(NetworkIDs.MobUnUseMessage);
                 stream.Write(this.ID);
 
                 foreach (Client cl in cell.SurroundingClients())
@@ -438,7 +438,7 @@ namespace GUC.Server.WorldObjects
         /// <summary>
         /// Order the NPC to do a certain movement.
         /// </summary>
-        public void SetMoveState(NPCState state)
+        public void SetMoveState(NPCStates state)
         {
             this.State = state;
             NPCMessage.WriteState(cell.SurroundingClients(), this);
@@ -447,7 +447,7 @@ namespace GUC.Server.WorldObjects
         /// <summary>
         /// Order the NPC to do a certain movement on a target.
         /// </summary>
-        public void SetMoveState(NPCState state, NPC target)
+        public void SetMoveState(NPCStates state, NPC target)
         {
             this.State = state;
             NPCMessage.WriteTargetState(cell.SurroundingClients(), this, target);
@@ -509,7 +509,7 @@ namespace GUC.Server.WorldObjects
                 return;
 
             DrawnItem = null;
-            NPCMessage.WriteUndrawItem(cell.SurroundingClients(), this, fast, State == NPCState.Stand);
+            NPCMessage.WriteUndrawItem(cell.SurroundingClients(), this, fast, State == NPCStates.Stand);
         }
 
         #endregion

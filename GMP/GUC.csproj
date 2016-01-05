@@ -46,14 +46,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Network\Enumeration\GothicKeys.cs">
-      <Link>Enumeration\GothicKeys.cs</Link>
+    <Compile Include="..\Network\Constants.cs">
+      <Link>Constants.cs</Link>
     </Compile>
     <Compile Include="..\Network\Enumeration\HumanVisuals.cs">
       <Link>Enumeration\HumanVisuals.cs</Link>
     </Compile>
-    <Compile Include="..\Network\Enumeration\Item_Flags.cs">
-      <Link>Enumeration\Item_Flags.cs</Link>
+    <Compile Include="..\Network\Enumeration\ItemEnums.cs">
+      <Link>Enumeration\ItemEnums.cs</Link>
     </Compile>
     <Compile Include="..\Network\Enumeration\NetworkIDS.cs">
       <Link>Enumeration\NetworkIDS.cs</Link>
@@ -61,29 +61,20 @@
     <Compile Include="..\Network\Enumeration\NPCStates.cs">
       <Link>Enumeration\NPCStates.cs</Link>
     </Compile>
-    <Compile Include="..\Network\Enumeration\SpellFlags.cs">
-      <Link>Enumeration\SpellFlags.cs</Link>
+    <Compile Include="..\Network\Enumeration\VobTypes.cs">
+      <Link>Enumeration\VobTypes.cs</Link>
     </Compile>
-    <Compile Include="..\Network\Enumeration\VobType.cs">
-      <Link>Enumeration\VobType.cs</Link>
+    <Compile Include="..\Network\Log\Logger.cs">
+      <Link>Log\Logger.cs</Link>
     </Compile>
-    <Compile Include="..\Network\Network\AccCharInfo.cs">
-      <Link>Network\AccCharInfo.cs</Link>
+    <Compile Include="..\Network\Scripting\IScriptInterface.cs">
+      <Link>Scripting\IScriptInterface.cs</Link>
     </Compile>
-    <Compile Include="..\Network\Network\BitStreamExtension.cs">
-      <Link>Network\BitStreamExtension.cs</Link>
+    <Compile Include="..\Network\Scripting\ScriptManager.cs">
+      <Link>Scripting\ScriptManager.cs</Link>
     </Compile>
-    <Compile Include="..\Network\Network\PacketReader.cs">
-      <Link>Network\PacketReader.cs</Link>
-    </Compile>
-    <Compile Include="..\Network\Network\PacketWriter.cs">
-      <Link>Network\PacketWriter.cs</Link>
-    </Compile>
-    <Compile Include="..\Network\Options\ClientOptions.cs">
-      <Link>Options\ClientOptions.cs</Link>
-    </Compile>
-    <Compile Include="..\Network\Options\Constants.cs">
-      <Link>Options\Constants.cs</Link>
+    <Compile Include="..\Network\Scripting\Timer.cs">
+      <Link>Scripting\Timer.cs</Link>
     </Compile>
     <Compile Include="..\Network\Types\ColorRGBA.cs">
       <Link>Types\ColorRGBA.cs</Link>
@@ -94,109 +85,16 @@
     <Compile Include="..\Network\Types\Vec3f.cs">
       <Link>Types\Vec3f.cs</Link>
     </Compile>
-    <Compile Include="GUI\GUCInventory.cs" />
-    <Compile Include="GUI\GUCTextBox.cs" />
-    <Compile Include="GUI\GUCView.cs" />
-    <Compile Include="GUI\GUCVisual.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUI\GUCVisualVob.cs" />
-    <Compile Include="GUI\GUCVisualText.cs" />
-    <Compile Include="GUI\MainMenu\MainMenuChoice.cs" />
-    <Compile Include="GUI\MenuRenderer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUI\MainMenu\MainMenuButton.cs" />
-    <Compile Include="GUI\MainMenu\MainMenuCharacter.cs" />
-    <Compile Include="GUI\MainMenu\MainMenuCharSlot.cs" />
-    <Compile Include="GUI\MainMenu\MainMenuItem.cs" />
-    <Compile Include="GUI\MainMenu\MainMenuTextBox.cs" />
-    <Compile Include="Hooks\hAniCtrl_Human.cs" />
-    <Compile Include="Hooks\hEventManager.cs" />
-    <Compile Include="Menus\AnimationMenu.cs" />
-    <Compile Include="Menus\DropItemMenu.cs" />
-    <Compile Include="Menus\PlayerInventory.cs" />
-    <Compile Include="Menus\MainMenus\CharCreationMenu.cs" />
-    <Compile Include="Menus\MainMenus\CharSelMenu.cs" />
-    <Compile Include="Menus\MainMenus\HelpChatMenu.cs" />
-    <Compile Include="Menus\MainMenus\ExitMenu.cs" />
-    <Compile Include="Menus\MainMenus\GUCMainMenu.cs" />
-    <Compile Include="Menus\GUCMenus.cs" />
-    <Compile Include="Menus\MainMenus\HelpMenu.cs" />
-    <Compile Include="Menus\MainMenus\LoginMenu.cs" />
-    <Compile Include="Menus\MainMenus\MainMenu.cs" />
-    <Compile Include="Menus\MainMenus\PlayerlistMenu.cs" />
-    <Compile Include="Menus\MainMenus\HelpRPMenu.cs" />
-    <Compile Include="Menus\MainMenus\RegisterMenu.cs" />
-    <Compile Include="Menus\StatusMenu.cs" />
-    <Compile Include="Menus\TradeMenu.cs" />
-    <Compile Include="Network\Messages\ControlMessage.cs" />
-    <Compile Include="Network\Messages\InventoryMessage.cs" />
-    <Compile Include="Network\Messages\MobMessage.cs" />
-    <Compile Include="Network\Messages\NPCMessage.cs" />
-    <Compile Include="Network\Messages\PlayerMessage.cs" />
-    <Compile Include="Network\Messages\TradeMessage.cs" />
-    <Compile Include="Network\Messages\VobMessage.cs" />
-    <Compile Include="Network\Messages\WorldMessage.cs" />
-    <Compile Include="States\AbstractState.cs" />
-    <Compile Include="WorldObjects\Collections\InstanceCollection.cs" />
-    <Compile Include="WorldObjects\Collections\InstanceDictionary.cs" />
-    <Compile Include="WorldObjects\Collections\IVobObj.cs" />
-    <Compile Include="WorldObjects\Collections\VobCollection.cs" />
-    <Compile Include="WorldObjects\Collections\VobDictionary.cs" />
-    <Compile Include="WorldObjects\Collections\VobObjCollection.cs" />
-    <Compile Include="WorldObjects\Collections\VobObjDictionary.cs" />
-    <Compile Include="WorldObjects\InstanceManager.cs" />
-    <Compile Include="WorldObjects\Instances\ItemInstance.cs" />
-    <Compile Include="WorldObjects\Instances\MobContainerInstance.cs" />
-    <Compile Include="WorldObjects\Instances\MobDoorInstance.cs" />
-    <Compile Include="WorldObjects\Instances\MobFireInstance.cs" />
-    <Compile Include="WorldObjects\Instances\MobInstance.cs" />
-    <Compile Include="WorldObjects\Instances\MobInterInstance.cs" />
-    <Compile Include="WorldObjects\Instances\MobLadderInstance.cs" />
-    <Compile Include="WorldObjects\Instances\MobLockableInstance.cs" />
-    <Compile Include="WorldObjects\Instances\MobSwitchInstance.cs" />
-    <Compile Include="WorldObjects\Instances\MobWheelInstance.cs" />
-    <Compile Include="WorldObjects\Instances\NPCInstance.cs" />
-    <Compile Include="WorldObjects\Instances\VobInstance.cs" />
-    <Compile Include="WorldObjects\Item.cs" />
-    <Compile Include="WorldObjects\Mob.cs" />
-    <Compile Include="WorldObjects\MobContainer.cs" />
-    <Compile Include="WorldObjects\MobDoor.cs" />
-    <Compile Include="WorldObjects\MobFire.cs" />
-    <Compile Include="WorldObjects\MobInter.cs" />
-    <Compile Include="WorldObjects\MobLadder.cs" />
-    <Compile Include="WorldObjects\MobLockable.cs" />
-    <Compile Include="WorldObjects\MobSwitch.cs" />
-    <Compile Include="WorldObjects\MobWheel.cs" />
-    <Compile Include="WorldObjects\NPC.cs" />
-    <Compile Include="WorldObjects\Player.cs" />
-    <Compile Include="WorldObjects\Vob.cs" />
-    <Compile Include="WorldObjects\World.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Network\Messages\ConnectionMessage.cs" />
-    <Compile Include="Hooks\Externals.cs" />
-    <Compile Include="Hooks\hGame.cs" />
-    <Compile Include="Hooks\hItemContainer.cs" />
-    <Compile Include="Hooks\hMagBook.cs" />
-    <Compile Include="Hooks\hMob.cs" />
-    <Compile Include="Hooks\hModelAni.cs" />
-    <Compile Include="Hooks\hNpc.cs" />
-    <Compile Include="Hooks\hParser.cs" />
-    <Compile Include="Hooks\hSpell.cs" />
-    <Compile Include="InputHandler.cs" />
-    <Compile Include="Network\Client.cs" />
+    <Compile Include="Log\Logger.Client.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="States\GameState.cs" />
-    <Compile Include="Network\Messages\AccountMessage.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="States\StartupState.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -209,7 +107,6 @@
     <EmbeddedResource Include="Resources\Focus.d" />
     <EmbeddedResource Include="Resources\Species.d" />
     <EmbeddedResource Include="Resources\Startup.d" />
-    <EmbeddedResource Include="Resources\itm.d" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Gothic\Gothic.csproj">
@@ -227,6 +124,9 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Options\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

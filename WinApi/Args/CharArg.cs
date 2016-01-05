@@ -19,7 +19,7 @@ namespace WinApi
         public override List<byte[]> getCallParam()
         {
             List<byte[]> b = new List<byte[]>();
-            b.Add(new byte[]{(byte)Address});
+            b.Add(new byte[] { (byte)Address });
             return b;
         }
 

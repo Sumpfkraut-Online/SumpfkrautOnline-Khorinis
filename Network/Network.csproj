@@ -34,10 +34,6 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="RakNetSwig, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\GothicII\System\UntoldChapter\DLL\RakNetSwig.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -45,21 +41,52 @@
   <ItemGroup>
     <Compile Include="Enumeration\HumanVisuals.cs" />
     <Compile Include="Enumeration\NPCStates.cs" />
-    <Compile Include="Enumeration\VobType.cs" />
-    <Compile Include="Network\AccCharInfo.cs" />
-    <Compile Include="Enumeration\GothicKeys.cs" />
-    <Compile Include="Enumeration\Item_Flags.cs" />
+    <Compile Include="Enumeration\VobTypes.cs" />
+    <Compile Include="Enumeration\ItemEnums.cs" />
     <Compile Include="Enumeration\NetworkIDS.cs" />
-    <Compile Include="Enumeration\SpellFlags.cs" />
-    <Compile Include="Network\BitStreamExtension.cs" />
+    <Compile Include="Log\Logger.cs" />
     <Compile Include="Network\PacketReader.cs" />
     <Compile Include="Network\PacketWriter.cs" />
-    <Compile Include="Options\ClientOptions.cs" />
-    <Compile Include="Options\Constants.cs" />
-    <Compile Include="Options\ServerOptions.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="Scripting\IScriptInterface.cs" />
+    <Compile Include="Scripting\ScriptManager.cs" />
+    <Compile Include="Scripting\Timer.cs" />
     <Compile Include="Types\ColorRGBA.cs" />
     <Compile Include="Types\Vec2i.cs" />
     <Compile Include="Types\Vec3f.cs" />
+    <Compile Include="WorldObjects\Collections\InstanceCollection.cs" />
+    <Compile Include="WorldObjects\Collections\InstanceDictionary.cs" />
+    <Compile Include="WorldObjects\Collections\IVobObj.cs" />
+    <Compile Include="WorldObjects\Collections\VobCollection.cs" />
+    <Compile Include="WorldObjects\Collections\VobDictionary.cs" />
+    <Compile Include="WorldObjects\Collections\VobObjCollection.cs" />
+    <Compile Include="WorldObjects\Collections\VobObjDictionary.cs" />
+    <Compile Include="WorldObjects\Instances\ItemInstance.cs" />
+    <Compile Include="WorldObjects\Instances\MobContainerInstance.cs" />
+    <Compile Include="WorldObjects\Instances\MobDoorInstance.cs" />
+    <Compile Include="WorldObjects\Instances\MobFireInstance.cs" />
+    <Compile Include="WorldObjects\Instances\MobInstance.cs" />
+    <Compile Include="WorldObjects\Instances\MobInterInstance.cs" />
+    <Compile Include="WorldObjects\Instances\MobLadderInstance.cs" />
+    <Compile Include="WorldObjects\Instances\MobLockableInstance.cs" />
+    <Compile Include="WorldObjects\Instances\MobSwitchInstance.cs" />
+    <Compile Include="WorldObjects\Instances\MobWheelInstance.cs" />
+    <Compile Include="WorldObjects\Instances\NPCInstance.cs" />
+    <Compile Include="WorldObjects\Instances\VobInstance.cs" />
+    <Compile Include="WorldObjects\Item.cs" />
+    <Compile Include="WorldObjects\Mob.cs" />
+    <Compile Include="WorldObjects\MobContainer.cs" />
+    <Compile Include="WorldObjects\MobDoor.cs" />
+    <Compile Include="WorldObjects\MobFire.cs" />
+    <Compile Include="WorldObjects\MobInter.cs" />
+    <Compile Include="WorldObjects\MobLadder.cs" />
+    <Compile Include="WorldObjects\MobLockable.cs" />
+    <Compile Include="WorldObjects\MobSwitch.cs" />
+    <Compile Include="WorldObjects\MobWheel.cs" />
+    <Compile Include="WorldObjects\NPC.cs" />
+    <Compile Include="WorldObjects\Vob.cs" />
+    <Compile Include="WorldObjects\World.cs" />
+    <Compile Include="WorldObjects\WorldObject.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

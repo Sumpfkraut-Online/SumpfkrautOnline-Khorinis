@@ -29,7 +29,7 @@ namespace GUC.Server.Network.Messages
 
         public static void WriteAniStart(IEnumerable<Client> list, NPC npc, Animations ani)
         {
-            PacketWriter stream = Program.server.SetupStream(NetworkID.NPCAniStartMessage);
+            PacketWriter stream = Program.server.SetupStream(NetworkIDs.NPCAniStartMessage);
             stream.Write(npc.ID);
             stream.Write((ushort)ani);
 
@@ -39,7 +39,7 @@ namespace GUC.Server.Network.Messages
 
         public static void WriteAniStop(IEnumerable<Client> list, NPC npc, Animations ani, bool fadeout)
         {
-            PacketWriter stream = Program.server.SetupStream(NetworkID.NPCAniStartMessage);
+            PacketWriter stream = Program.server.SetupStream(NetworkIDs.NPCAniStartMessage);
             stream.Write(npc.ID);
             stream.Write((ushort)ani);
             stream.Write(fadeout);
@@ -52,7 +52,7 @@ namespace GUC.Server.Network.Messages
 
         public static void WriteEquipMessage(IEnumerable<Client> list, NPC npc, Item item, byte slot)
         {
-            PacketWriter stream = Program.server.SetupStream(NetworkID.NPCEquipMessage);
+            PacketWriter stream = Program.server.SetupStream(NetworkIDs.NPCEquipMessage);
 
             stream.Write(npc.ID);
             stream.Write(slot);
@@ -64,7 +64,7 @@ namespace GUC.Server.Network.Messages
 
         public static void WriteUnequipMessage(IEnumerable<Client> list, NPC npc, byte slot)
         {
-            PacketWriter stream = Program.server.SetupStream(NetworkID.NPCUnequipMessage);
+            PacketWriter stream = Program.server.SetupStream(NetworkIDs.NPCUnequipMessage);
             stream.Write(npc.ID);
             stream.Write(slot);
 
@@ -74,7 +74,7 @@ namespace GUC.Server.Network.Messages
 
         public static void WriteJump(IEnumerable<Client> list, NPC npc)
         {
-            PacketWriter stream = Program.server.SetupStream(NetworkID.NPCJumpMessage);
+            PacketWriter stream = Program.server.SetupStream(NetworkIDs.NPCJumpMessage);
             stream.Write(npc.ID);
             foreach (Client client in list)
                 client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
@@ -84,7 +84,7 @@ namespace GUC.Server.Network.Messages
 
         public static void WriteState(IEnumerable<Client> list, NPC npc)
         {
-            PacketWriter stream = Program.server.SetupStream(NetworkID.NPCStateMessage);
+            PacketWriter stream = Program.server.SetupStream(NetworkIDs.NPCStateMessage);
             stream.Write(npc.ID);
             stream.Write((byte)npc.State);
             foreach (Client client in list)
@@ -93,7 +93,7 @@ namespace GUC.Server.Network.Messages
 
         public static void WriteTargetState(IEnumerable<Client> list, NPC npc, NPC target)
         {
-            PacketWriter stream = Program.server.SetupStream(NetworkID.NPCTargetStateMessage);
+            PacketWriter stream = Program.server.SetupStream(NetworkIDs.NPCTargetStateMessage);
             stream.Write(npc.ID);
             stream.Write((byte)npc.State);
 
@@ -112,7 +112,7 @@ namespace GUC.Server.Network.Messages
 
         public static void WriteDrawItem(IEnumerable<Client> list, NPC npc, Item item, bool fast)
         {
-            PacketWriter stream = Program.server.SetupStream(NetworkID.NPCDrawItemMessage);
+            PacketWriter stream = Program.server.SetupStream(NetworkIDs.NPCDrawItemMessage);
             stream.Write(npc.ID);
             stream.Write(fast);
             item.WriteEquipped(stream);
@@ -126,7 +126,7 @@ namespace GUC.Server.Network.Messages
             if (npc == null)
                 return;
 
-            PacketWriter stream = Program.server.SetupStream(NetworkID.NPCUndrawItemMessage);
+            PacketWriter stream = Program.server.SetupStream(NetworkIDs.NPCUndrawItemMessage);
             stream.Write(npc.ID);
             stream.Write(fast);
             stream.Write(altRemove);

@@ -22,7 +22,7 @@ namespace GUC.Server.WorldObjects
         public uint ID { get; protected set; }
         public VobInstance Instance { get; protected set; }
 
-        public VobType VobType { get { return Instance.VobType; } }
+        public VobTypes VobType { get { return Instance.VobType; } }
 
         public string Visual { get { return Instance.Visual; } }
         public bool CDDyn { get { return Instance.CDDyn; } }
@@ -133,7 +133,7 @@ namespace GUC.Server.WorldObjects
 
         internal virtual void WriteSpawnMessage(IEnumerable<Client> list)
         {
-            PacketWriter stream = Program.server.SetupStream(NetworkID.WorldVobSpawnMessage);
+            PacketWriter stream = Program.server.SetupStream(NetworkIDs.WorldVobSpawnMessage);
             this.WriteSpawn(stream);
 
             foreach (Client client in list)
@@ -144,7 +144,7 @@ namespace GUC.Server.WorldObjects
 
         internal void WriteDespawnMessage(IEnumerable<Client> list)
         {
-            PacketWriter stream = Program.server.SetupStream(NetworkID.WorldVobDeleteMessage);
+            PacketWriter stream = Program.server.SetupStream(NetworkIDs.WorldVobDeleteMessage);
             stream.Write(this.ID);
 
             foreach (Client client in list)

@@ -4,23 +4,9 @@ using System.Text;
 
 namespace WinApi
 {
-    public class CallValue
+    public abstract class CallValue
     {
-        protected Process mProcess;
-        
-        protected int mAddress;
-        
-        //Leerer Konstruktor muss vorhanden sein!
-        public CallValue()
-        {
-
-        }
-
-        public void Initialize(Process process, int address)
-        {
-            Process = process;
-            Address = address;
-        }
+        public abstract byte[] GetData();
 
         public virtual uint ValueLength()
         {
@@ -34,20 +20,12 @@ namespace WinApi
             return b;
         }
 
-        #region Fields
-        public WinApi.Process Process
-        {
-            get { return mProcess; }
-            protected set { mProcess = value; }
-        }
-
         public int Address
         {
             get { return mAddress; }
             protected set { mAddress = value; }
         }
-
-        #endregion
+        
     }
 
     public class NullReturnCall : CallValue

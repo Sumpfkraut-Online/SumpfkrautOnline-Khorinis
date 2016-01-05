@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using GUC.Server.WorldObjects;
 using GUC.Server.Log;
+using GUC.Server.Scripts;
 using GUC.Server.Scripting.Listener;
 using GUC.Server.Scripts.Sumpfkraut.VobSystem;
 using GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions;
@@ -12,7 +13,7 @@ using GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Server.Scripts.Sumpfkraut;
 using GUC.Server.Scripts.Sumpfkraut.Database;
 
-namespace GUC.Server.Scripts
+namespace GUC.Scripts
 {
 	public class Startup : IServerStartup
 	{
@@ -22,7 +23,8 @@ namespace GUC.Server.Scripts
 
 		public void OnServerInit()
 		{
-            Log.Logger.log("######################## Initalise ########################");
+            Logger.log("######################## Initalise ########################");
+
 
             Animations.AniCtrl.InitAnimations();
 

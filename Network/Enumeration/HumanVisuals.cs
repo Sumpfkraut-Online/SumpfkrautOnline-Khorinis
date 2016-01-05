@@ -5,13 +5,13 @@ using System.Text;
 
 namespace GUC.Enumeration
 {
-    public enum HumBodyMesh : byte
+    public enum HumBodyMeshs : byte
     {
         HUM_BODY_NAKED0,
         HUM_BODY_BABE0
     }
 
-    public enum HumBodyTex : byte
+    public enum HumBodyTexs : byte
     {
         M_Pale = 0,
         M_Normal = 1,
@@ -29,7 +29,7 @@ namespace GUC.Enumeration
         F_Babe2 = 12
     }
 
-    public enum HumHeadMesh : byte
+    public enum HumHeadMeshs : byte
     {
         HUM_HEAD_BALD,
         HUM_HEAD_FATBALD,
@@ -52,7 +52,7 @@ namespace GUC.Enumeration
         MAX_FEMALE
     }
 
-    public enum HumHeadTex : byte
+    public enum HumHeadTexs : byte
     {
         Face_N_Gomez = 0,
         Face_N_Scar = 1,
@@ -236,7 +236,7 @@ namespace GUC.Enumeration
         Face_N_ZombieMud = 162
     }
 
-    public enum HumVoice : byte
+    public enum HumVoices : byte
     {
         None = 0,
         Moe = 1,
@@ -257,15 +257,5 @@ namespace GUC.Enumeration
 
         Nadja = 16,
         Thekla = 17
-    }
-
-    public enum FormerClass : byte
-    {
-        Farmer,
-        Hunter,
-        Soldier,
-        Mercenary,
-        Novice,
-        HerbGatherer
     }
 }

@@ -10,6 +10,8 @@ namespace WinApi
 {
     public class Process
     {
+        public static readonly Process Self = Process.ThisProcess();
+
         bool process_thisprocess = false;
         #region static Functions
         /// <summary>

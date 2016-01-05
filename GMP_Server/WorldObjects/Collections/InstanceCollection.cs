@@ -16,10 +16,10 @@ namespace GUC.Server.WorldObjects.Collections
 
         public void NetUpdate()
         {
-            PacketWriter stream = Program.server.SetupStream(NetworkID.ConnectionMessage);
+            PacketWriter stream = Program.server.SetupStream(NetworkIDs.ConnectionMessage);
 
             stream.StartCompressing();
-            for (int i = 0; i < (int)VobType.Maximum; i++)
+            for (int i = 0; i < (int)VobTypes.Maximum; i++)
             {
                 InstanceDictionary dict = (InstanceDictionary)vobDicts[i];
                 stream.Write((ushort)dict.GetCount());
@@ -49,13 +49,13 @@ namespace GUC.Server.WorldObjects.Collections
 
         internal InstanceCollection()
         {
-            for (int i = 0; i < (int)VobType.Maximum; i++)
+            for (int i = 0; i < (int)VobTypes.Maximum; i++)
             {
                 vobDicts[i] = new InstanceDictionary();
             }
         }
 
-        new public InstanceDictionary GetDict(VobType type)
+        new public InstanceDictionary GetDict(VobTypes type)
         {
             return (InstanceDictionary)base.GetDict(type);
         }

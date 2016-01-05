@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GUC.Enumeration
 {
-    public enum NPCState : byte
+    public enum NPCStates : byte
     {
         //States:
 

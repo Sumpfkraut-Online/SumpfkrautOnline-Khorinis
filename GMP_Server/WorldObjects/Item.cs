@@ -32,8 +32,8 @@ namespace GUC.Server.WorldObjects
         new public ItemInstance Instance { get; protected set; }
 
         public string Name { get { return Instance.Name; } }
-        public ItemType Type { get { return Instance.Type; } }
-        public ItemMaterial Material { get { return Instance.Material; } }
+        public ItemTypes Type { get { return Instance.Type; } }
+        public ItemMaterials Material { get { return Instance.Material; } }
         public string[] Text { get { return Instance.Text; } }
         public ushort[] Count { get { return Instance.Count; } }
         public string Description { get { return Instance.Description; } }
@@ -80,7 +80,7 @@ namespace GUC.Server.WorldObjects
 
         internal override void WriteSpawnMessage(IEnumerable<Client> list)
         {
-            PacketWriter stream = Program.server.SetupStream(NetworkID.WorldItemSpawnMessage);
+            PacketWriter stream = Program.server.SetupStream(NetworkIDs.WorldItemSpawnMessage);
             this.WriteSpawn(stream);
 
             foreach (Client client in list)

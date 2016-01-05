@@ -35,41 +35,41 @@ namespace GUC.Server.Scripts
             npc.UndrawItem();
         }
 
-        static void OnMovement(NPC npc, NPCState state)
+        static void OnMovement(NPC npc, NPCStates state)
         {
             switch (state)
             {
-                case NPCState.Stand:
+                case NPCStates.Stand:
                     break;
-                case NPCState.MoveForward:
-                case NPCState.MoveBackward:
+                case NPCStates.MoveForward:
+                case NPCStates.MoveBackward:
                     break;
             }
 
             npc.SetMoveState(state);
         }
 
-        static void OnTargetMovement(NPC npc, NPC target, NPCState state)
+        static void OnTargetMovement(NPC npc, NPC target, NPCStates state)
         {
             switch (state)
             {
-                case NPCState.MoveLeft:
-                case NPCState.MoveRight:
+                case NPCStates.MoveLeft:
+                case NPCStates.MoveRight:
                     //Strafing
                     break;
 
-                case NPCState.AttackForward:
+                case NPCStates.AttackForward:
                     break;
-                case NPCState.AttackLeft:
+                case NPCStates.AttackLeft:
                     break;
-                case NPCState.AttackRight:
+                case NPCStates.AttackRight:
                     break;
-                case NPCState.AttackRun:
+                case NPCStates.AttackRun:
                     break;
 
-                case NPCState.Parry:
+                case NPCStates.Parry:
                     break;
-                case NPCState.DodgeBack:
+                case NPCStates.DodgeBack:
                     break;
             }
 
@@ -83,7 +83,7 @@ namespace GUC.Server.Scripts
 
         static void OnUseMob(NPC npc, MobInter mob)
         {
-            if (npc.State == NPCState.Stand && npc.DrawnItem == null)
+            if (npc.State == NPCStates.Stand && npc.DrawnItem == null)
             {
                 npc.UseMob(mob);
             }
@@ -96,43 +96,43 @@ namespace GUC.Server.Scripts
 
         static void OnUseItem(NPC npc, Item item)
         {
-            if (npc.State == NPCState.Stand && npc.DrawnItem == null)
+            if (npc.State == NPCStates.Stand && npc.DrawnItem == null)
             {
                 switch (item.Type)
                 {
-                    case ItemType.Sword_1H:
-                    case ItemType.Sword_2H:
-                    case ItemType.Blunt_1H:
-                    case ItemType.Blunt_2H:
+                    case ItemTypes.Sword_1H:
+                    case ItemTypes.Sword_2H:
+                    case ItemTypes.Blunt_1H:
+                    case ItemTypes.Blunt_2H:
                         npc.EquipSlot(1, item);
                         break;
-                    case ItemType.Bow:
-                    case ItemType.XBow:
+                    case ItemTypes.Bow:
+                    case ItemTypes.XBow:
                         npc.EquipSlot(2, item);
                         break;
-                    case ItemType.Armor:
+                    case ItemTypes.Armor:
                         npc.EquipSlot(10, item);
                         break;
-                    case ItemType.Ring:
+                    case ItemTypes.Ring:
                         break;
-                    case ItemType.Amulet:
+                    case ItemTypes.Amulet:
                         break;
-                    case ItemType.Belt:
+                    case ItemTypes.Belt:
                         break;
-                    case ItemType.Food_Huge:
-                    case ItemType.Food_Small:
-                    case ItemType.Drink:
-                    case ItemType.Potions:
+                    case ItemTypes.Food_Huge:
+                    case ItemTypes.Food_Small:
+                    case ItemTypes.Drink:
+                    case ItemTypes.Potions:
                         break;
-                    case ItemType.Document:
-                    case ItemType.Book:
+                    case ItemTypes.Document:
+                    case ItemTypes.Book:
                         break;
-                    case ItemType.Rune:
-                    case ItemType.Scroll:
+                    case ItemTypes.Rune:
+                    case ItemTypes.Scroll:
                         break;
-                    case ItemType.Misc_Usable:
+                    case ItemTypes.Misc_Usable:
                         break;
-                    case ItemType.Misc:
+                    case ItemTypes.Misc:
                         break;
                 }
             }

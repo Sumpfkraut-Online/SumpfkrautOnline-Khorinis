@@ -17,7 +17,7 @@ namespace GUC.Server.WorldObjects.Instances
             return fists;
         }
 
-        new public readonly static Enumeration.VobType sVobType = Enumeration.VobType.Item;
+        new public readonly static Enumeration.VobTypes sVobType = Enumeration.VobTypes.Item;
         new public readonly static Collections.InstanceDictionary Instances = Network.Server.sInstances.GetDict(sVobType);
 
         #region Properties
@@ -28,10 +28,10 @@ namespace GUC.Server.WorldObjects.Instances
         public String Name = "";
 
         /// <summary>The type of this item.</summary>
-        public ItemType Type = ItemType.Misc;
+        public ItemTypes Type = ItemTypes.Misc;
 
         /// <summary>The material of this item. Controls the dropping sound.</summary>
-        public ItemMaterial Material = ItemMaterial.Wood;
+        public ItemMaterials Material = ItemMaterials.Wood;
 
         /// <summary>Text lines shown on the left side of the description box in the inventory.</summary>
         public readonly string[] Text = new string[TextAndCountLen] { "", "", "", "", "", "" };

@@ -8,7 +8,7 @@ namespace GUC.Server.WorldObjects.Instances
 {
     public class MobDoorInstance : MobLockableInstance
     {
-        new public readonly static Enumeration.VobType sVobType = Enumeration.VobType.MobDoor;
+        new public readonly static Enumeration.VobTypes sVobType = Enumeration.VobTypes.MobDoor;
         new public readonly static Collections.InstanceDictionary Instances = Network.Server.sInstances.GetDict(sVobType);
 
         public MobDoorInstance(string instanceName, object scriptObject)

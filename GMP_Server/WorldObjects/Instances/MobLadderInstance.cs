@@ -8,7 +8,7 @@ namespace GUC.Server.WorldObjects.Instances
 {
     public class MobLadderInstance : MobInterInstance
     {
-        new public readonly static Enumeration.VobType sVobType = Enumeration.VobType.MobLadder;
+        new public readonly static Enumeration.VobTypes sVobType = Enumeration.VobTypes.MobLadder;
         new public readonly static Collections.InstanceDictionary Instances = Network.Server.sInstances.GetDict(sVobType);
 
         public MobLadderInstance(string instanceName, object scriptObject)

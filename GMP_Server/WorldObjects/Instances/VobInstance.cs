@@ -12,13 +12,13 @@ namespace GUC.Server.WorldObjects.Instances
 {
     public class VobInstance : ServerObject, IVobObj<ushort>
     {
-        public readonly static VobType sVobType = VobType.Vob;
+        public readonly static VobTypes sVobType = VobTypes.Vob;
         public readonly static InstanceDictionary Instances = Network.Server.sInstances.GetDict(sVobType);
 
         public ushort ID { get; internal set; }
         public string InstanceName { get; internal set; }
 
-        public VobType VobType { get; protected set; }
+        public VobTypes VobType { get; protected set; }
 
         #region Properties
 

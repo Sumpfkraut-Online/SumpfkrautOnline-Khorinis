@@ -8,28 +8,28 @@ namespace GUC.Server.WorldObjects.Collections
 {
     public class VobObjCollection<TKey, TBase> where TBase : IVobObj<TKey>
     {
-        protected VobObjDictionary<TKey, TBase>[] vobDicts = new VobObjDictionary<TKey, TBase>[(int)VobType.Maximum];
+        protected VobObjDictionary<TKey, TBase>[] vobDicts = new VobObjDictionary<TKey, TBase>[(int)VobTypes.Maximum];
         protected Dictionary<TKey, TBase> allDict = new Dictionary<TKey, TBase>();
 
         internal VobObjCollection()
         {
-            for (int i = 0; i < (int)VobType.Maximum; i++)
+            for (int i = 0; i < (int)VobTypes.Maximum; i++)
             {
                 vobDicts[i] = new VobObjDictionary<TKey, TBase>();
             }
         }
 
-        public VobObjDictionary<TKey, TBase> GetDict(VobType type)
+        public VobObjDictionary<TKey, TBase> GetDict(VobTypes type)
         {
             return vobDicts[(int)type];
         }
 
-        public TBase Get(VobType type, TKey id)
+        public TBase Get(VobTypes type, TKey id)
         {
             return GetDict(type).Get(id);
         }
 
-        public IEnumerable<TBase> GetAll(VobType type)
+        public IEnumerable<TBase> GetAll(VobTypes type)
         {
             return GetDict(type).GetAll();
         }
