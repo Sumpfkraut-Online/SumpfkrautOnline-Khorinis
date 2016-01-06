@@ -7,7 +7,7 @@ using WinApi.HID.Structures;
 
 namespace WinApi.HID
 {
-    public class HID
+    class HID
     {
         [DllImport("hid.dll", SetLastError = true)]
         public static extern void HidD_GetHidGuid(ref Guid hidGuid);

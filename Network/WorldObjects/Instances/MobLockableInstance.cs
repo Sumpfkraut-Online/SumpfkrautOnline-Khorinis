@@ -6,7 +6,7 @@ using GUC.Network;
 
 namespace GUC.WorldObjects.Instances
 {
-    public partial abstract class MobLockableInstance : MobInterInstance
+    public abstract partial class MobLockableInstance : MobInterInstance
     {
         #region Properties
         

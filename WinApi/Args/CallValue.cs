@@ -6,36 +6,18 @@ namespace WinApi
 {
     public abstract class CallValue
     {
-        public abstract byte[] GetData();
-
-        public virtual uint ValueLength()
-        {
-            return 0;
-        }
-
-        public virtual List<byte[]> getCallParam()
-        {
-            List<byte[]> b = new List<byte[]>();
-            b.Add(BitConverter.GetBytes(Address));
-            return b;
-        }
-
-        public int Address
-        {
-            get { return mAddress; }
-            protected set { mAddress = value; }
-        }
-        
+        public abstract void Initialize(int registerAddress);
+        public abstract List<byte[]> GetCallParams();
+        public abstract uint ValueLength();
     }
 
     public class NullReturnCall : CallValue
     {
-        public NullReturnCall()
+        public override void Initialize(int registerAddress)
         {
-
         }
 
-        public override List<byte[]> getCallParam()
+        public override List<byte[]> GetCallParams()
         {
             return new List<byte[]>();
         }

@@ -12,7 +12,7 @@ using System.IO;
 
 namespace WinApi
 {
-    public abstract class HIDDevice : IDisposable
+    abstract class HIDDevice : IDisposable
     {
         const Int64 INVALID_HANDLE_VALUE = -1;
         static IntPtr INVALID_HANDLE_VALUE_PTR = new IntPtr(-1);
@@ -230,7 +230,7 @@ namespace WinApi
                     BeginAsyncRead();	// when all that is done, kick off another read for the next report
                 }
             }
-            catch (IOException ex)
+            catch
             {
                 HandleDeviceRemoved();
                 if (OnDeviceRemoved != null)
@@ -249,7 +249,7 @@ namespace WinApi
             }
             catch (IOException ex)
             {
-                throw new Exception();
+                throw new Exception(ex.ToString());
             }
             catch (Exception exx)
             {

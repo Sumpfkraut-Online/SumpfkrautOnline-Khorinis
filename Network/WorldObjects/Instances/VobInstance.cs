@@ -115,7 +115,7 @@ namespace GUC.WorldObjects.Instances
                     return null;
             }
 
-            result.ScriptObj = Scripting.ScriptManager.si.CreateScriptInstance(type);
+            //result.ScriptObj = Scripting.ScriptManager.si.CreateScriptInstance(type);
 
             return result;
         }

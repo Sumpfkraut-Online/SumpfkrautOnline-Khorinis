@@ -133,9 +133,6 @@
   <data name="Focus" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Focus.d;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="itm" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\itm.d;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="NPC_Default" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\NPC_Default.d;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>

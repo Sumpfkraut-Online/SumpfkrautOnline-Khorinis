@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 namespace WinApi.SetupApi.Structures
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct DeviceInterfaceData
+    struct DeviceInterfaceData
     {
         public uint size;
         public Guid guid;
@@ -15,7 +15,7 @@ namespace WinApi.SetupApi.Structures
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-    public struct DeviceInterfaceDetailData
+    struct DeviceInterfaceDetailData
     {
         public uint size;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]

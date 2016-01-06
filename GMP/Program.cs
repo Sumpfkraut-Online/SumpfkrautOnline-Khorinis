@@ -10,13 +10,11 @@ namespace GUC.Client
 {
     class Program
     {
-        public readonly static Process Process = Process.ThisProcess();
-
         public static Int32 InjectedMain(String message)
         {
             try
             {
-                ScriptManager.StartScripts("ClientScripts.dll");
+                ScriptManager.StartScripts("UntoldChapter\\DLL\\ClientScripts.dll");
 
                 while (true)
                 {
@@ -25,7 +23,7 @@ namespace GUC.Client
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex.Source + " " + ex.Message);
+                Logger.LogError(ex.Source + " " + ex.Message + " " + ex.StackTrace);
             }
             return 0;
         }

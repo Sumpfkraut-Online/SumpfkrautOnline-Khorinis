@@ -4,7 +4,7 @@ using System.Text;
 
 namespace WinApi.Kernel.Exception
 {
-    public class Win32Exception : System.Exception
+    class Win32Exception : System.Exception
     {
         public int ErrorCode { get; protected set; }
 
@@ -17,7 +17,5 @@ namespace WinApi.Kernel.Exception
         {
             ErrorCode = ec;
         }
-
-
     }
 }

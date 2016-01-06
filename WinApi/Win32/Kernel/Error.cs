@@ -6,7 +6,7 @@ using WinApi.Kernel.Exception;
 
 namespace WinApi.Kernel
 {
-    public class Error
+    class Error
     {
         public static void GetLastError()
         {

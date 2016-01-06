@@ -41,10 +41,8 @@
   <ItemGroup>
     <Compile Include="Args\BoolArg.cs" />
     <Compile Include="Args\CallValue.cs" />
-    <Compile Include="Args\FloatRefArg.cs" />
     <Compile Include="Args\FloatArg.cs" />
     <Compile Include="Args\CharArg.cs" />
-    <Compile Include="Args\UIntArg.cs" />
     <Compile Include="FileFormat\IniFile.cs" />
     <Compile Include="HIDDevice.cs" />
     <Compile Include="Win32\HID\HID.cs" />

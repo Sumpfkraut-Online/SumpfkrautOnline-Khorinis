@@ -6,34 +6,39 @@ using WinApi;
 
 namespace Gothic
 {
-    public static class zError
+    public class zError
     {
-        /// <summary>
-        /// Reports the message to zSpy.
-        /// </summary>
-        /// <param name="levelType">1=Info, 2=Warning, 3=Fault(Message Box!), 4=Critical (MessageBox + Crash!)</param>
-        /// <param name="user"></param>
-        /// <param name="message"></param>
-        /// <param name="errorlevel">0-9?</param>
-        /// <param name="filename"></param>
-        /// <returns></returns>
-        public static int Report(int levelType, char user, String message, int errorlevel, String filename, int line)
+        public class StaticVarAddresses
         {
-            //zERROR::Report(zERROR_TYPE,int,zSTRING const &,signed char,uint,int,char *,char *)
-            //zERROR::Report(zERROR_Level,int,zSTRING const &,signed char,uint,int,char *,char *)
+            public const int zerr = 0x008CDCD0; /// <summary> zERROR </summary>
+        }
 
-            message = user + ":" + message;
+        public class FuncAddresses
+        {
+            public const int ReportByLevel = 0x0044C8C0; /// <summary> int zERROR::Report(zERROR_Level,int,zSTRING const &,signed char,uint,int,char *,char *) </summary>
+        }
 
-            zString messageStr = zString.Create(Process, message);
+        /// <summary>
+        /// Reports a message to zSpy.
+        /// </summary>
+        /// <param name="type">1=Info, 2=Warning, 3=Fault(Message Box!), 4=Critical (MessageBox + Crash!)</param>
+        /// <param name="message"></param>
+        /// <param name="level"> zSpy level 0-9 </param>
+        /// <param name="filename"></param>
+        public static int Report(int type, string message, int level, int line, string filename)
+        {
+            zString messageStr = zString.Create(message);
+
             IntPtr filenamePtr = Process.Alloc((uint)(filename.Length + 1));
-            System.Text.Encoding enc = System.Text.Encoding.Default;
-            Process.Write(enc.GetBytes(filename), filenamePtr.ToInt32());
-            Process.Write(0, filenamePtr.ToInt32() + filename.Length);
+            byte[] arr = Encoding.UTF8.GetBytes(filename);
+            Process.Write(arr, filenamePtr.ToInt32());
+            Process.Write(0, filenamePtr.ToInt32() + arr.Length);
 
+            int x = Process.THISCALL<IntArg>(StaticVarAddresses.zerr, FuncAddresses.ReportByLevel, (IntArg)type, (IntArg)0, messageStr, (IntArg)level, (IntArg)0, (IntArg)line, (IntArg)filenamePtr.ToInt32(), (IntArg)0);
 
-            int x = Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.Report_Level, new CallValue[] { (IntArg)levelType, (IntArg)0, messageStr, (IntArg)errorlevel, (IntArg)0, (IntArg)line, (IntArg)filenamePtr.ToInt32(), (IntArg)0 });
+            Process.Free(filenamePtr, (uint)(arr.Length + 1));
             messageStr.Dispose();
-            Process.Free(filenamePtr, (uint)(filename.Length + 1));
+
             return x;
         }
     }

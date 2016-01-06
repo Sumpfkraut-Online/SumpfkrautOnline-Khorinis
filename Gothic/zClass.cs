@@ -6,11 +6,27 @@ using WinApi;
 
 namespace Gothic
 {
-    public class zClass : CallValue
+    public abstract class zClass : CallValue
     {
+        public int Address { get; protected set; }
+
+        public zClass()
+        {
+        }
+
         public zClass(int address)
         {
-            this.Initialize(address);
+            this.Address = address;
+        }
+
+        public override List<byte[]> GetCallParams()
+        {
+            return new List<byte[]>() { BitConverter.GetBytes(Address) };
+        }
+
+        public override void Initialize(int registerAddress)
+        {
+            this.Address = Process.ReadInt(registerAddress);
         }
 
         public override uint ValueLength()
@@ -18,9 +34,6 @@ namespace Gothic
             return 4;
         }
 
-        public virtual int SizeOf()
-        {
-            return 0;
-        }
+        public abstract uint GetSize();
     }
 }

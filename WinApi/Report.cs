@@ -4,7 +4,7 @@ using System.Text;
 
 namespace WinApi
 {
-    public abstract class Report
+    abstract class Report
     {
         protected HIDDevice device;
         private byte[] m_arrBuffer;

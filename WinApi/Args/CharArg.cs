@@ -6,21 +6,25 @@ namespace WinApi
 {
     public class CharArg : CallValue
     {
-        public CharArg(char i)
-        {
-            Address = Convert.ToInt32(i);
-        }
+        public char Value { get; protected set; }
 
         public CharArg()
         {
-
         }
 
-        public override List<byte[]> getCallParam()
+        public CharArg(char val)
         {
-            List<byte[]> b = new List<byte[]>();
-            b.Add(new byte[] { (byte)Address });
-            return b;
+            Value = val;
+        }
+
+        public override List<byte[]> GetCallParams()
+        {
+            return new List<byte[]>() { new byte[1] { Convert.ToByte(Value) } };
+        }
+
+        public override void Initialize(int registerAddress)
+        {
+            Value = Convert.ToChar(Process.ReadByte(registerAddress));
         }
 
         public override uint ValueLength()

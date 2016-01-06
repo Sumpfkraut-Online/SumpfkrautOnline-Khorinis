@@ -154,7 +154,7 @@ namespace GUC.WorldObjects
                     return null;
             }
 
-            result.ScriptObj = Scripting.ScriptManager.si.CreateScriptVob(type);
+            //result.ScriptObj = Scripting.ScriptManager.si.CreateScriptVob(type);
 
             return result;
         }

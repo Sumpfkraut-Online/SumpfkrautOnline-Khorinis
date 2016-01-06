@@ -5,8 +5,8 @@ using System.Text;
 
 namespace GUC.Scripting
 {
-    public partial interface IGUCScripts
+    public interface IScriptInterface
     {
-        void Startup();
+        void Start();
     }
 }

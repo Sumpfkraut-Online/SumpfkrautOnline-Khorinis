@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace WinApi.Win32.User
 {
-    public class Hook
+    class Hook
     {
         public const int WH_KEYBOARD_LL = 13;
 

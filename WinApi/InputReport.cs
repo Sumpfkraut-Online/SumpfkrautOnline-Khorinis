@@ -4,10 +4,8 @@ using System.Text;
 
 namespace WinApi
 {
-    public abstract class InputReport : Report
+    abstract class InputReport : Report
     {
-        
-
         public InputReport(HIDDevice device)
             : base(device)
         {

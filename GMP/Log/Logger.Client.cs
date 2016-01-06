@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Gothic.zClasses;
+using Gothic;
 
 namespace GUC.Log
 {
@@ -10,7 +10,7 @@ namespace GUC.Log
     {
         static partial void LogMessage(LogLevels level, object message, params object[] args)
         {
-            zERROR.GetZErr(GUC.Client.Program.Process).Report((int)level + 1, 'G', String.Format(message.ToString(), args), 0, "GUC", 0);
+            zError.Report((int)level+1, "G:" + String.Format(message.ToString(), args), 0, 0, "GUC");
         }
     }
 }

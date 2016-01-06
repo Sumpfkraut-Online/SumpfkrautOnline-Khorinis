@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace WinApi.HID.Structures
 {
-    public enum ntStatus : long
+    enum ntStatus : long
     {
         HIDP_STATUS_SUCCESS = 0x00110000,
         HIDP_STATUS_NULL = 0x80110001,
@@ -31,7 +31,7 @@ namespace WinApi.HID.Structures
         HIDP_LINK_COLLECTION_UNSPECIFIED = 0
     }
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct HidCaps
+    struct HidCaps
     {
         public short Usage;
         public short UsagePage;

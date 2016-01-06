@@ -8,7 +8,7 @@ using System.IO;
 
 namespace WinApi.Kernel
 {
-    public class DeviceIoControls
+    class DeviceIoControls
     {
         [DllImport("kernel32.dll", ExactSpelling = true, SetLastError = true, CharSet = CharSet.Auto)]
         static extern bool DeviceIoControl(IntPtr hDevice, uint dwIoControlCode,

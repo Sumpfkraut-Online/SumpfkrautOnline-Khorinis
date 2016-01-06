@@ -4,32 +4,33 @@ using System.Text;
 
 namespace WinApi
 {
-    public class NETINJECTPARAMS : CallValue, IDisposable
+    public class NETINJECTPARAMS : IDisposable
     {
+        public int Address;
 
-        public static NETINJECTPARAMS Create(Process process, String dllname, String typename, String methodname, String ptrAddress)
+        public static NETINJECTPARAMS Create(String dllname, String typename, String methodname, String ptrAddress)
         {
             NETINJECTPARAMS rValue = new NETINJECTPARAMS();
 
-            IntPtr structPtr = process.Alloc(16);
-            IntPtr dllPtr = process.Alloc((uint)dllname.Length + 1);
-            IntPtr typePtr = process.Alloc((uint)typename.Length + 1);
-            IntPtr methodPtr = process.Alloc((uint)methodname.Length + 1);
-            IntPtr adressPtr = process.Alloc((uint)ptrAddress.Length + 1);
+            IntPtr structPtr = Process.Alloc(16);
+            IntPtr dllPtr = Process.Alloc((uint)dllname.Length + 1);
+            IntPtr typePtr = Process.Alloc((uint)typename.Length + 1);
+            IntPtr methodPtr = Process.Alloc((uint)methodname.Length + 1);
+            IntPtr adressPtr = Process.Alloc((uint)ptrAddress.Length + 1);
 
-            process.Write(dllPtr.ToInt32(), structPtr.ToInt32());
-            process.Write(typePtr.ToInt32(), structPtr.ToInt32() + 4);
-            process.Write(methodPtr.ToInt32(), structPtr.ToInt32() + 8);
-            process.Write(adressPtr.ToInt32(), structPtr.ToInt32() + 12);
+            Process.Write(dllPtr.ToInt32(), structPtr.ToInt32());
+            Process.Write(typePtr.ToInt32(), structPtr.ToInt32() + 4);
+            Process.Write(methodPtr.ToInt32(), structPtr.ToInt32() + 8);
+            Process.Write(adressPtr.ToInt32(), structPtr.ToInt32() + 12);
 
             System.Text.ASCIIEncoding enc = new System.Text.ASCIIEncoding();
 
-            process.Write(enc.GetBytes(dllname), dllPtr.ToInt32());
-            process.Write(enc.GetBytes(typename), typePtr.ToInt32());
-            process.Write(enc.GetBytes(methodname), methodPtr.ToInt32());
-            process.Write(enc.GetBytes(ptrAddress), adressPtr.ToInt32());
+            Process.Write(enc.GetBytes(dllname), dllPtr.ToInt32());
+            Process.Write(enc.GetBytes(typename), typePtr.ToInt32());
+            Process.Write(enc.GetBytes(methodname), methodPtr.ToInt32());
+            Process.Write(enc.GetBytes(ptrAddress), adressPtr.ToInt32());
 
-            rValue.Initialize(process, structPtr.ToInt32());
+            rValue.Address = structPtr.ToInt32();
             return rValue;
         }
 
@@ -73,12 +74,6 @@ namespace WinApi
                 Process.Free(new IntPtr(Address),16);
                 disposed = true;
             }
-        }
-
-
-        public override uint ValueLength()
-        {
-            return 4;
         }
     }
 }

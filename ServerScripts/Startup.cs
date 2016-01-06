@@ -15,7 +15,7 @@ using GUC.Server.Scripts.Sumpfkraut.Database;
 
 namespace GUC.Scripts
 {
-	public class Startup : IServerStartup
+	public class Startup
 	{
 
         //public delegate void MyEventHandler (Sumpfkraut.Utilities.Threading.Runnable runnable);
@@ -26,11 +26,11 @@ namespace GUC.Scripts
             Logger.log("######################## Initalise ########################");
 
 
-            Animations.AniCtrl.InitAnimations();
+            GUC.Server.Scripts.Animations.AniCtrl.InitAnimations();
 
-            Accounts.AccountSystem.Init();
+            GUC.Server.Scripts.Accounts.AccountSystem.Init();
 
-            Instances.VobInstances.Init();
+            GUC.Server.Scripts.Instances.VobInstances.Init();
 
             DamageScript.Init();
 
@@ -40,10 +40,5 @@ namespace GUC.Scripts
             
             Logger.log(Logger.LogLevel.INFO, "###################### End Initalise ######################");
 		}
-
-        private void AgentBlack_ReceivedResults(object sender, Sumpfkraut.Database.DBAgent.ReceivedResultsEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

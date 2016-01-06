@@ -6,22 +6,25 @@ namespace WinApi
 {
     public class FloatArg : CallValue
     {
-        float val;
-        public FloatArg(float i)
-        {
-            val = i;
-        }
+        public float Value { get; protected set; }
 
         public FloatArg()
         {
-
         }
 
-        public override List<byte[]> getCallParam()
+        public FloatArg(float val)
         {
-            List<byte[]> bL = new List<byte[]>();
-            bL.Add(BitConverter.GetBytes(val));
-            return bL;
+            Value = val;
+        }
+
+        public override List<byte[]> GetCallParams()
+        {
+            return new List<byte[]>() { BitConverter.GetBytes(Value) };
+        }
+
+        public override void Initialize(int registerAddress)
+        {
+            Value = Process.ReadFloat(registerAddress);
         }
 
         public override uint ValueLength()
@@ -36,7 +39,7 @@ namespace WinApi
 
         public static implicit operator float(FloatArg value)
         {
-            return value.Address;
+            return value.Value;
         }
     }
 }

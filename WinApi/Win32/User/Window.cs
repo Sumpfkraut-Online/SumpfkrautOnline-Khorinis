@@ -6,7 +6,7 @@ using WinApi.Win32.User.Structures;
 
 namespace WinApi.User
 {
-    public class Window
+    class Window
     {
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);

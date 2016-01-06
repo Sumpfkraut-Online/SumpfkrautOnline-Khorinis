@@ -2,291 +2,153 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using WinApi;
 
 namespace Gothic
 {
-    class zString : zClass, IDisposable
+    public class zString : zClass, IDisposable
     {
-        public zString(Process process, int position)
-    : base(process, position)
-        { }
-
         public zString()
         {
-
         }
-        public bool memorySave = false;
 
-        private bool disposed = false;
+        public zString(int address) : base(address)
+        {
+        }
+
         public void Dispose()
         {
             Dispose(true);
         }
 
-        public override uint ValueLength()
-        {
-            return 4;
-        }
-
-        public static zString strVirtualPath(Process process)
-        {
-            return new zString(process, 0x008C3494);
-        }
-
+        bool disposed = false;
         protected virtual void Dispose(bool disposing)
         {
             if (!this.disposed)
             {
-
-                //if (memorySave)
-                //    Process.Free(new IntPtr(PTR - 1), (uint)this.Res + 1);
-                //else
-                Process.THISCALL<NullReturnCall>((uint)Address, (uint)0x00401160, new CallValue[] { });
-                Process.Free(new IntPtr(Address), 20);
+                Process.THISCALL<NullReturnCall>(Address, FuncAddresses.Destructor);
+                Process.Free(new IntPtr(Address), GetSize());
                 disposed = true;
             }
         }
 
-        public String getCheckedValue()
+        public override uint GetSize()
         {
-            if (this.Address == 0)
-                return null;
-            if (this.VTBL != 8578800)
-                return null;
-            //if (this.Value.Length <= 0 || this.Value.Length > 500)
-            //    return null;
-            String val = this.Value.Trim();
-            if (val.Length == 0)
-                return null;
-
-
-
-            //bool found = Regex.IsMatch(val, "^[a-zA-Z0-9_\\-.:;!\\\"§$%&/()=?`´\\\\}\\]\\[ ß{³²<>|,@€ÄÖÜäöü#''*+~]+$");
-            //if (!found)
-            //    return null;
-            return val;
+            return 20;
         }
 
-        //public static zString Create(Process process, String value)
-        //{
+        #region Gothic Methods
 
-        //    IntPtr charArr = process.Alloc((uint)value.Length + 2);
-        //    IntPtr stringArr = process.Alloc(20);
-
-        //    System.Text.ASCIIEncoding enc = new System.Text.ASCIIEncoding();
-        //    byte[] arr = enc.GetBytes(value);
-        //    if (arr.Length > 0)
-        //        process.Write(arr, charArr.ToInt32() + 1);
-
-        //    zString str = new zString(process, stringArr.ToInt32());
-        //    str.PTR = charArr.ToInt32() + 1;
-        //    str.Length = value.Length;
-        //    str.Res = value.Length + 1;
-        //    str.memorySave = true;
-
-        //    return str;
-        //}
-        public static zString Create(Process process, String value)
+        public class FuncAddresses
         {
-            if (process == null)
-                throw new ArgumentNullException("Process can't be null!");
-            if (value == null)
-                throw new ArgumentNullException("Value can't be null!");
-            //IntPtr charArr = process.Alloc((uint)value.Length + 2);
-            //IntPtr stringArr = process.Alloc(20);
+            public const int Insert = 0x0046B400; /// <summary> zString::Insert(uint, zSTRING const &) </summary>
+            public const int Clear = 0x0059D010; /// <summary> zSTRING::Clear(void) </summary>
 
-            //System.Text.ASCIIEncoding enc = new System.Text.ASCIIEncoding();
-            //byte[] arr = enc.GetBytes(value);
-            //if (arr.Length > 0)
-            //    process.Write(arr, charArr.ToInt32() + 1);
+            public const int OperatorAssignZString = 0x0059CEB0; /// <summary> zSTRING::operator=(zSTRING const &) </summary>
+            public const int OperatorAssignConstChar = 0x0059CEB0; /// <summary> zSTRING::operator=(char const &) </summary>
 
-            //zString str = new zString(process, stringArr.ToInt32());
-            //str.PTR = charArr.ToInt32() + 1;
-            //str.Length = value.Length;
-            //str.Res = value.Length + 1;
-
-            //return str;
-
-            System.Text.Encoding enc = System.Text.Encoding.Default;
-            byte[] arr = enc.GetBytes(value);
-
-            IntPtr charArr = process.Alloc((uint)arr.Length + 1);
-            IntPtr stringArr = process.Alloc(20);
-
-
-
-            if (arr.Length > 0)
-                process.Write(arr, charArr.ToInt32());
-
-            process.THISCALL<NullReturnCall>((uint)stringArr.ToInt32(), (uint)0x004010C0, new CallValue[] { new IntArg(charArr.ToInt32()) });
-            process.Free(charArr, (uint)arr.Length + 1);
-            zString str = new zString(process, stringArr.ToInt32());
-            str.memorySave = false;
-            return str;
+            public const int ConstructorConstChar = 0x004010C0; /// <summary> zSTRING::zSTRING(char const *) </summary>
+            public const int Destructor = 0x00401160; /// <summary> zSTRING::~zSTRING(void) </summary>
         }
 
         public void Clear()
         {
-            if (Address == 0)
-                throw new Exception("The zString-Address can't be 0!");
-            Process.THISCALL<NullReturnCall>((uint)Address, 0x0059D010, new CallValue[] { });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.Clear);
         }
 
         public void Insert(int pos, zString str)
         {
-            if (Address == 0)
-                throw new Exception("The zString-Address can't be 0!");
-            Process.THISCALL<NullReturnCall>((uint)Address, 0x0046B400, new CallValue[] { new IntArg(pos), str });
-        }
-
-        public void Add(String str)
-        {
-            if (Address == 0)
-                throw new Exception("The zString-Address can't be 0!");
-            //if (memorySave)
-            //{
-            Set(Value + str);
-
-            //}
-            //else
-            //{
-            //IntPtr charArr = Process.Alloc((uint)str.Length + 1);
-            //System.Text.Encoding enc = System.Text.Encoding.Default;
-            //byte[] arr = enc.GetBytes(str);
-            //if (arr.Length > 0)
-            //    Process.Write(arr, charArr.ToInt32());
-
-            //Process.THISCALL<zString>((uint)Address, (uint)0x0067A7B0, new CallValue[] { new IntArg(charArr.ToInt32()) });
-            //Process.Free(charArr, (uint)str.Length + 1);
-            //}
-
-        }
-
-        public void Set(String str)
-        {
-            if (Address == 0)
-                throw new Exception("The zString-Address can't be 0!");
-            //if (memorySave)
-            //{
-            //IntPtr charArr = Process.Alloc((uint)str.Length + 2);
-            //System.Text.Encoding enc = System.Text.Encoding.Default;
-
-            //byte[] arr = enc.GetBytes(str);
-            //if (arr.Length > 0)
-            //    Process.Write(arr, charArr.ToInt32() + 1);
-
-            ////TODO: PTR wird nicht gelöscht
-            //PTR = charArr.ToInt32() + 1;
-            //Length = str.Length;
-            //Res = str.Length + 1;
-            //}
-            //else
-            //{
-            System.Text.Encoding enc = System.Text.Encoding.Default;
-            byte[] arr = enc.GetBytes(str);
-            IntPtr charArr = Process.Alloc((uint)arr.Length + 1);
-
-
-            if (arr.Length > 0)
-                Process.Write(arr, charArr.ToInt32());
-            Process.Write(new byte[] { 0 }, charArr.ToInt32() + arr.Length);
-            Process.THISCALL<zString>((uint)Address, (uint)0x004CFAF0, new CallValue[] { new IntArg(charArr.ToInt32()) });
-
-            Process.Free(charArr, (uint)str.Length + 1);
-            //}
-
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.Insert, (IntArg)pos, str);
         }
 
         public void Set(zString str)
         {
-            if (Address == 0)
-                throw new Exception("The zString-Address can't be 0!");
-
-            Process.THISCALL<zString>((uint)Address, (uint)0x0059CEB0, new CallValue[] { str });
+            Process.THISCALL<zString>(Address, FuncAddresses.OperatorAssignZString, str);
         }
 
+        #endregion
+
+        #region Gothic Fields
+
+        public struct VarOffsets
+        {
+            public const int VTBL = 0;
+            public const int Allocater = 4;
+            public const int Ptr = 8;
+            public const int Length = 12;
+            public const int Res = 16;
+        }
 
         public int VTBL
         {
-            get { return Process.ReadInt(this.Address); }
-            set { Process.Write(value, this.Address); }
+            get { return Process.ReadInt(Address + VarOffsets.VTBL); }
+            set { Process.Write(value, Address + VarOffsets.VTBL); }
         }
 
         public int ALLOCATER
         {
-            get { return Process.ReadInt(this.Address + 4); }
-            set { Process.Write(value, this.Address + 4); }
+            get { return Process.ReadInt(this.Address + VarOffsets.Allocater); }
+            set { Process.Write(value, this.Address + VarOffsets.Allocater); }
         }
-
-
 
         public int PTR
         {
-            get { return Process.ReadInt(this.Address + 8); }
-            set { Process.Write(value, this.Address + 8); }
+            get { return Process.ReadInt(this.Address + VarOffsets.Ptr); }
+            set { Process.Write(value, this.Address + VarOffsets.Ptr); }
         }
 
         public int Length
         {
-            get { return Process.ReadInt(this.Address + 12); }
-            set { Process.Write(value, this.Address + 12); }
+            get { return Process.ReadInt(this.Address + VarOffsets.Length); }
+            set { Process.Write(value, this.Address + VarOffsets.Length); }
         }
 
         public int Res
         {
-            get { return Process.ReadInt(this.Address + 16); }
-            set { Process.Write(value, this.Address + 16); }
+            get { return Process.ReadInt(this.Address + VarOffsets.Res); }
+            set { Process.Write(value, this.Address + VarOffsets.Res); }
         }
 
-        public void CopyTo(int address)
-        {
-            zString str = new zString(Process, address);
-            str.Dispose();
+        #endregion
 
-            IntPtr charArr = Process.Alloc((uint)this.Value.Length + 1);
-            System.Text.Encoding enc = System.Text.Encoding.Default;
-            byte[] arr = enc.GetBytes(this.Value);
+        public static zString Create(String value)
+        {
+            IntPtr stringArr = Process.Alloc(20);
+
+            byte[] arr = value == null ? new byte[0] : Encoding.UTF8.GetBytes(value);
+            IntPtr charArr = Process.Alloc((uint)arr.Length + 1);
+
             if (arr.Length > 0)
+            {
                 Process.Write(arr, charArr.ToInt32());
+            }
 
-            Process.THISCALL<NullReturnCall>((uint)address, (uint)0x004010C0, new CallValue[] { new IntArg(charArr.ToInt32()) });
-            Process.Free(charArr, (uint)this.Value.Length + 1);
+            Process.Write(new byte[] { 0 }, charArr.ToInt32() + arr.Length);
+            Process.THISCALL<NullReturnCall>(stringArr.ToInt32(), FuncAddresses.ConstructorConstChar, (IntArg)charArr.ToInt32());
+            Process.Free(charArr, (uint)arr.Length + 1);
+
+            return new zString(stringArr.ToInt32());
         }
 
-        public String Value
+        public void Set(String str)
         {
-            get
+            byte[] arr = str == null ? new byte[0] : Encoding.UTF8.GetBytes(str);
+            IntPtr charArr = Process.Alloc((uint)arr.Length + 1);
+
+            if (arr.Length > 0)
             {
-                if (Address == 0)
-                    throw new Exception("The zString-Address can't be 0!");
-                try
-                {
-                    byte[] arr = Process.ReadBytes(this.PTR, (uint)this.Length);
-                    System.Text.Encoding enc = System.Text.Encoding.Default;
-
-                    return enc.GetString(arr);
-                }
-                catch (Exception ex)
-                {
-                    //Todo vll anders bearbeiten?
-                    return "";
-                }
+                Process.Write(arr, charArr.ToInt32());
             }
-            //set
-            //{
-            //    System.Text.Encoding enc = System.Text.Encoding.Default;
-            //    byte[] arr = enc.GetBytes(value);
-            //    byte[] nullB = new byte[Res];
 
-            //    Process.Write(nullB, PTR);
-            //    Process.Write(arr, PTR);
-            //    Length = arr.Length;
-            //}
+            Process.Write(new byte[] { 0 }, charArr.ToInt32() + arr.Length);
+            Process.THISCALL<zString>(Address, FuncAddresses.OperatorAssignConstChar, (IntArg)charArr.ToInt32());
+            Process.Free(charArr, (uint)str.Length + 1);
         }
 
         public override string ToString()
         {
-            return Value;
+            byte[] arr = Process.ReadBytes(this.PTR, (uint)this.Length);
+            return Encoding.UTF8.GetString(arr);
         }
     }
 }

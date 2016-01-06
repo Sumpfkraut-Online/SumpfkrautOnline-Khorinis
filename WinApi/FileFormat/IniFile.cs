@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace WinApi.FileFormat
 {
-    public class IniFile
+    class IniFile
     {
 
         private Dictionary<String, Dictionary<String, String>> mEntrys = new Dictionary<string, Dictionary<string, string>>();

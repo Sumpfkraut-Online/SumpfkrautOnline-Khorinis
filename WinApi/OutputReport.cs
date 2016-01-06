@@ -4,7 +4,7 @@ using System.Text;
 
 namespace WinApi
 {
-    public abstract class OutputReport : Report
+    abstract class OutputReport : Report
     {
         public OutputReport(HIDDevice device)
             : base(device)

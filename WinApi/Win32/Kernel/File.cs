@@ -7,7 +7,7 @@ using Microsoft.Win32.SafeHandles;
 
 namespace WinApi.Kernel
 {
-    public class File
+    class File
     {
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         public static extern SafeFileHandle CreateFile(

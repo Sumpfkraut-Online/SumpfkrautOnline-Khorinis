@@ -6,7 +6,7 @@ using WinApi.SetupApi.Structures;
 
 namespace WinApi.SetupApi
 {
-    public class ClassDev
+    class ClassDev
     {
         [Flags]
         public enum DiGetClassFlags : uint
