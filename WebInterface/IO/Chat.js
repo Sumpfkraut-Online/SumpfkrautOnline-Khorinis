@@ -13,25 +13,46 @@ var IO = (function (module)
     module.Chat = function ()
     {
         var self = this;
+        
+        self.onError = function (evt)
+        {
+            var errMsg;
+            try
+            {
+                errMsg = evt.data.toString();
+            }
+            catch (err)
+            {
+                errMsg = "undefined";
+            }
+            self.output.writeln('<span style="color: red;">Error</span>: '+ errMsg);
+        }
     
         self.onMessage = function (evt)
         {
             var jsonStr = evt.data.toString();
-            var jsonObj = JSON.parse(jsonStr);
-            
-            if (typeof(jsonObj) != "object")
+            try
             {
-                // no need to waste ressources when there 
-                // is nothing valid to process
-                return;
+                var jsonObj = JSON.parse(jsonStr);
+                
+                if (typeof(jsonObj) != "object")
+                {
+                    // no need to waste ressources when there 
+                    // is nothing valid to process
+                    return;
+                }
+                
+                if ((typeof(jsonObj.sender) == "undefined") || (jsonObj.sender.length < 1))
+                {
+                    jsonObj.sender = "SERVER";
+                }
+                
+                self.output.writeln(jsonObj.sender + " > " + jsonObj.rawText);
             }
-            
-            if ((typeof(jsonObj.sender) == "undefined") || (jsonObj.sender.length < 1))
+            catch (err)
             {
-                jsonObj.sender = "SERVER";
+                self.onError(evt);
             }
-            
-            self.output.writeln(jsonObj.sender + " > " + jsonObj.rawText);
         }
         
         self.onSubmit = function (evt)
@@ -42,31 +63,32 @@ var IO = (function (module)
                 
                 var type = WebSockets.protocalTypes.chatData;
                 var sender = "CLIENT";
-                var cmds;
+                var cmdParts;
                 
                 // parse the raw text-input and add chatroom-indication-command
                 // if necessary and not specified
                 var startOfCmds = rawText.indexOf("/");
-                cmds = self.stringToCommands(rawText);
+                cmdParts = self.splitToCommandParts(rawText);
                 
-                if (typeof(cmds) == "undefined")
+                if (typeof(cmdParts) == "undefined")
                 {
-                    cmds = new Array();
+                    cmdParts = new Array();
                 }
-                if (startOfCmds != 0)
+                if ((startOfCmds > 0) || (startOfCmds < 0))
                 {
                     // input doesn't begin with a command
                     // send everything before as global chat-message by default
-                    cmds.splice(0, 0, ["g", rawText.substring(0, startOfCmds)]);
+                    cmdParts.splice(0, 0, "g");
                 }
                 
                 var jObj = 
                 {
                     "type"      : type, 
                     "sender"    : sender,
-                    "cmds"      : cmds
+                    "cmds"      : cmdParts
                 };
                 var jTxt = JSON.stringify(jObj);
+
                 self.wsConnection.sendMessage(jTxt);
             }
             else
@@ -96,9 +118,10 @@ var IO = (function (module)
             }
         }
         
-        self.stringToCommands = function (rawText)
+        self.splitToCommandParts = function (rawText)
         {
             var arr = rawText.split(" ");
+            console.log(arr);
             arr = arr.filter(self.filterInvalidParam);
             return arr;
         }

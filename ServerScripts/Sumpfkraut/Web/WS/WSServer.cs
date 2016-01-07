@@ -289,6 +289,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Web.WS
             try
             {
                 String json = context.DataFrame.ToString();
+                Print("\n" + json + "\n");
                 WSChatProtocol obj = JsonConvert.DeserializeObject<WSChatProtocol>(json);
                 obj.context = context;
 

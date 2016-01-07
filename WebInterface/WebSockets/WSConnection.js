@@ -35,7 +35,7 @@ WebSockets = (function (module)
         
         self._onError = function (evt)
         {
-            self.output.writeln('<span style="color: red;">Error:</span> ' 
+            self.output.writeln('<span style="color: red;">Error</span>: ' 
                 + evt.data);
                 
             if (self.websocket.readyState == 3)

@@ -5,10 +5,9 @@ var Main = (function (module)
         module = {};
     }
     
-    // var str = "/fu My Pony is over the    rainbow!!!11!1 /help me";
-    // var rgx = new RegExp(" ");
-    // var strArr = str.split(rgx);
-    // console.log(strArr);
+    // var arr = new Array();
+    // arr.splice(2, 0, true, false);
+    // console.log(arr);
     
     // create basic io-elements including submit for later text-forwarding to server
     module.chatInput = new IO.TextElement(
