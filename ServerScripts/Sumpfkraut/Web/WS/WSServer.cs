@@ -8,6 +8,8 @@ using System.Net;
 using Newtonsoft.Json;
 using Alchemy.Handlers.WebSocket.rfc6455;
 using GUC.Server.Scripts.Sumpfkraut.Web.WS.Protocols;
+using GUC.Server.Scripts.Sumpfkraut.CommandConsole.InfoObjects;
+using GUC.Server.WorldObjects;
 
 namespace GUC.Server.Scripts.Sumpfkraut.Web.WS
 {
@@ -289,21 +291,96 @@ namespace GUC.Server.Scripts.Sumpfkraut.Web.WS
             try
             {
                 String json = context.DataFrame.ToString();
-                Print("\n" + json + "\n");
-                WSChatProtocol obj = JsonConvert.DeserializeObject<WSChatProtocol>(json);
-                obj.context = context;
+                String returnJson;
+                WSChatProtocol protocol = JsonConvert.DeserializeObject<WSChatProtocol>(json);
+                protocol.context = context;
 
-                Dictionary<String, object> returnData = new Dictionary<string, object>
-                {
-                    { "type", WSProtocolType.chatData },
-                    { "sender", "SERVER" },
-                    { "rawText", "Got it, pal!" },
-                };
+                String cmd;
+                String[] param;
+                CommandConsole.CommandConsole.ProcessCommand processCmd = null;
+                Dictionary<String, object> returnData = null;
 
-                String returnJson = JsonConvert.SerializeObject(returnData);
-                if (returnJson != null)
+                // group commands and parameters and process them
+                int cmdIndex = -1;
+                int lastCmdIndex  = -1;
+                int tempIndex = -1;
+                int paramLength = -1;
+                for (int i = 0; i < protocol.cmds.Length; i++)
                 {
-                    context.Send(returnJson);
+                    tempIndex = protocol.cmds[i].IndexOf('/');
+                    lastCmdIndex = cmdIndex;
+                    cmdIndex = i;
+                    paramLength = i - lastCmdIndex;
+
+                    if (i < (protocol.cmds.Length - 1))
+                    {
+                        // if there are still components to iterate over
+                        if (tempIndex != 0)
+                        {
+                            // not a command -> continue to count further till
+                            // next command or end of array is reached
+                            continue;
+                        }
+
+                        if (lastCmdIndex > -1)
+                        {
+                            // n-th command
+                            // process previous command with full range of its parameters
+                            param = new String[paramLength];
+                        }
+                        else
+                        {
+                            // very first command
+                            continue;
+                        }  
+                    }
+                    else
+                    {
+                        // no components left to iterate over
+                        // process current command with or without parameters
+                        if (lastCmdIndex > -1)
+                        {
+                            // n-th command
+                            param = new String[paramLength];
+                        }
+                        else
+                        {
+                            // only very first command, no parameters
+                            lastCmdIndex = cmdIndex;
+                            paramLength = 0;
+                            param = new String[paramLength];
+                        }
+                    }
+
+                    if (lastCmdIndex < 0)
+                    {
+                        lastCmdIndex = 0;
+                    }
+
+                    // pick and format command-string itself
+                    cmd = protocol.cmds[lastCmdIndex];
+                    cmd = cmd.ToUpper();
+                    if (paramLength > 0)
+                    {
+                        // grab all relevant parameters if there are any for this command
+                        Array.Copy(protocol.cmds, lastCmdIndex + 1, param, 0, paramLength);
+                    }
+
+                    if (!CommandConsole.CommandConsole.CmdToProcessFunc.TryGetValue(
+                        cmd, out processCmd))
+                    {
+                        // command does not map to processing subroutine
+                        continue;
+                    }
+
+                    // serialize json-string from provided command and parameters
+                    // and send everything to the client
+                    processCmd(null, cmd, param, out returnData);
+                    returnJson = JsonConvert.SerializeObject(returnData);
+                    if (returnJson != null)
+                    {
+                        context.Send(returnJson);
+                    }
                 }
             }
             catch (Exception ex)

@@ -1,4 +1,5 @@
 ﻿using Alchemy.Classes;
+using GUC.Server.Scripts.Sumpfkraut.CommandConsole.InfoObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.Web.WS.Protocols
         // mainly used to send text messages back to the client
         // (no specific text-formatting and -forwarding)
         public String rawText;
+        // additional data of any possible info-format
+        public AbstractInfo data;
 
     }
 

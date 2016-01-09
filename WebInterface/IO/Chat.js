@@ -31,6 +31,7 @@ var IO = (function (module)
         self.onMessage = function (evt)
         {
             var jsonStr = evt.data.toString();
+
             try
             {
                 var jsonObj = JSON.parse(jsonStr);
@@ -47,7 +48,14 @@ var IO = (function (module)
                     jsonObj.sender = "SERVER";
                 }
                 
-                self.output.writeln(jsonObj.sender + " > " + jsonObj.rawText);
+                if (typeof(jsonObj.rawText) != "undefined")
+                {
+                    self.output.writeln(jsonObj.sender + " > " + jsonObj.rawText);
+                }
+                if (typeof(jsonObj.data) != "undefined")
+                {
+                    self.output.writeln(jsonObj.data.toSource());
+                }
             }
             catch (err)
             {
@@ -121,7 +129,6 @@ var IO = (function (module)
         self.splitToCommandParts = function (rawText)
         {
             var arr = rawText.split(" ");
-            console.log(arr);
             arr = arr.filter(self.filterInvalidParam);
             return arr;
         }

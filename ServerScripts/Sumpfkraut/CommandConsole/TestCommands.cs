@@ -1,4 +1,6 @@
-﻿using GUC.Server.WorldObjects;
+﻿using GUC.Server.Scripts.Sumpfkraut.CommandConsole.InfoObjects;
+using GUC.Server.Scripts.Sumpfkraut.Web.WS.Protocols;
+using GUC.Server.WorldObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,20 +22,52 @@ namespace GUC.Server.Scripts.Sumpfkraut.CommandConsole
 
 
 
-        // set the ig-time of NewWorld
-        public static void SetIgTime (CommandConsole console, String cmd, String param) 
+        public static void GetPlayerList (object sender, String cmd, String[] param, 
+            out Dictionary<string, object> returnVal)
         {
-            String[] paramArr, timeStringArr;
+            returnVal = null;
+
+            List<object> playerInfo = new List<object>();
+            foreach (KeyValuePair<uint, NPC> keyVal in World.NewWorld.PlayerDict)
+            {
+                NpcInfo info = new NpcInfo();
+                info.id = (int) keyVal.Value.ID;
+                info.mapName = keyVal.Value.World.MapName;
+                info.direction = keyVal.Value.Direction;
+                info.position = keyVal.Value.Position;
+                playerInfo.Add(info);
+            }
+            
+            returnVal = new Dictionary<string, object>
+            {
+                { "type", WSProtocolType.chatData },
+                { "sender", "SERVER" },
+                { "rawText", "List of players: " },
+                { "data", playerInfo },
+            };
+        }
+        
+        // set the ig-time of NewWorld
+        public static void SetIgTime (object sender, String cmd, String[] param, 
+            out Dictionary<string, object> returnVal) 
+        {
+            PrintStatic(typeof(TestCommands), "GOTCHA");
+            foreach (String p in param)
+            {
+                PrintStatic(typeof(TestCommands), p);
+            }
+
+            String[] timeStringArr;
             int[] timeIntArr;
             IGTime igTime;
+            returnVal = null;
 
-            paramArr = param.Split(' ');
-            if ((paramArr == null) || (paramArr.Length < 1))
+            if ((param == null) || (param.Length < 1))
             {
                 return;
             }
 
-            timeStringArr = paramArr[0].Split(':');
+            timeStringArr = param[0].Split(':');
             
             if ((timeStringArr == null) || (timeStringArr.Length < 1))
             {
@@ -48,41 +82,49 @@ namespace GUC.Server.Scripts.Sumpfkraut.CommandConsole
             {
                 if(!int.TryParse(timeStringArr[t], out tempInt))
                 {
-                    console.MakeLogError(String.Format("Unparsable partial time parameter"
-                        + " detected while calling /setTime: {0} at position {1}",
-                        timeStringArr[t], t));
+                    //console.MakeLogError(String.Format("Unparsable partial time parameter"
+                    //    + " detected while calling /setTime: {0} at position {1}",
+                    //    timeStringArr[t], t));
                     return;
                 }
 
                 if (tempInt < 0)
                 {
-                    console.MakeLogError(String.Format("Invalid partial time parameter"
-                        + " detected while calling /setTime: {0} at position {1}",
-                        tempInt, t));
+                    //console.MakeLogError(String.Format("Invalid partial time parameter"
+                    //    + " detected while calling /setTime: {0} at position {1}",
+                    //    tempInt, t));
                     return;
                 }
 
                 switch (t)
                 {
                     case 0:
-                        //console.Print("day = " + tempInt);
                         igTime.day = tempInt;
                         break;
                     case 1:
-                        //console.Print("hour = " + tempInt);
                         igTime.hour = tempInt;
                         break;
                     case 2:
-                        //console.Print("minute = " + tempInt);
                         igTime.minute = tempInt;
                         break;
                     default:
-                        //console.Print("GOTCHA");
                         return;
                 }
             }
-
+            PrintStatic(typeof(TestCommands), igTime);
             World.NewWorld.ChangeTime(igTime);
+
+            returnVal = new Dictionary<string, object>()
+            {
+                { "rawText", "Ingame-Time" },
+                { "data", igTime },
+            };
+        }
+
+        public void TeleportVobTo (object sender, String cmd, String[] param, 
+            out Dictionary<string, object> returnVal)
+        {
+            returnVal = null;
         }
 
     }
