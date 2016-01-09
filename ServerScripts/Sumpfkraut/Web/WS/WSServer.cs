@@ -301,6 +301,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Web.WS
                 Dictionary<String, object> returnData = null;
 
                 // group commands and parameters and process them
+                bool firstCmd = true;
                 int cmdIndex = -1;
                 int lastCmdIndex  = -1;
                 int tempIndex = -1;
@@ -308,9 +309,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Web.WS
                 for (int i = 0; i < protocol.cmds.Length; i++)
                 {
                     tempIndex = protocol.cmds[i].IndexOf('/');
-                    lastCmdIndex = cmdIndex;
-                    cmdIndex = i;
-                    paramLength = i - lastCmdIndex;
+                    paramLength++;
 
                     if (i < (protocol.cmds.Length - 1))
                     {
@@ -322,32 +321,34 @@ namespace GUC.Server.Scripts.Sumpfkraut.Web.WS
                             continue;
                         }
 
-                        if (lastCmdIndex > -1)
+                        if (firstCmd)
+                        {
+                            // very first command
+                            continue;
+                        }
+                        else
                         {
                             // n-th command
                             // process previous command with full range of its parameters
                             param = new String[paramLength];
+                            firstCmd = false;
+                            lastCmdIndex = cmdIndex;
+                            cmdIndex = i;
                         }
-                        else
-                        {
-                            // very first command
-                            continue;
-                        }  
                     }
                     else
                     {
                         // no components left to iterate over
                         // process current command with or without parameters
-                        if (lastCmdIndex > -1)
+                        if (firstCmd)
                         {
-                            // n-th command
+                            // only very first command, no parameters
+                            lastCmdIndex = cmdIndex;
                             param = new String[paramLength];
                         }
                         else
                         {
-                            // only very first command, no parameters
-                            lastCmdIndex = cmdIndex;
-                            paramLength = 0;
+                            // n-th command
                             param = new String[paramLength];
                         }
                     }
@@ -365,7 +366,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Web.WS
                         // grab all relevant parameters if there are any for this command
                         Array.Copy(protocol.cmds, lastCmdIndex + 1, param, 0, paramLength);
                     }
-
+                    
                     if (!CommandConsole.CommandConsole.CmdToProcessFunc.TryGetValue(
                         cmd, out processCmd))
                     {

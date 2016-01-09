@@ -133,6 +133,57 @@ namespace GUC.Server.WorldObjects
             return new IGTime(totalMin);
         }
 
+        public static bool operator >(IGTime t1, IGTime t2)
+        {
+            if (t1.day > t2.day)
+            {
+                return true;
+            }
+            if (t1.hour > t2.hour)
+            {
+                return true;
+            }
+            if (t1.minute > t2.minute)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool operator <(IGTime t1, IGTime t2)
+        {
+            return t2 > t1;
+        }
+
+        public static bool operator ==(IGTime t1, IGTime t2)
+        {
+            if ((t1.day == t2.day) && (t1.hour == t2.hour) 
+                && (t1.minute == t2.minute))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool operator !=(IGTime t1, IGTime t2)
+        {
+            return !(t1 == t2);
+        }
+
+        public static bool operator >=(IGTime t1, IGTime t2)
+        {
+            if (t1 == t2)
+            {
+                return true;
+            }
+            return t1 > t2;
+        }
+
+        public static bool operator <=(IGTime t1, IGTime t2)
+        {
+            return t2 >= t1;
+        }
+
 
 
         public static long ToMinutes (IGTime igTime)
@@ -144,6 +195,57 @@ namespace GUC.Server.WorldObjects
         {
             return String.Format("IGTime: day {0} hour {1} minute {2}", 
                 this.day, this.hour, this.minute);
+        }
+
+        public static bool TryParse (String timeString, out IGTime igTime)
+        {
+            igTime = new IGTime();
+
+            String[] timeStringArr;
+            int[] timeIntArr;
+
+            if (timeString == null)
+            {
+                return false;
+            }
+
+            timeStringArr = timeString.Split(':');
+            if ((timeStringArr == null) || (timeStringArr.Length < 1))
+            {
+                return false;
+            }
+
+            timeIntArr = new int[timeStringArr.Length];
+            int tempInt = -1;
+            for (int t = 0; t < timeStringArr.Length; t++)
+            {
+                if(!int.TryParse(timeStringArr[t], out tempInt))
+                {
+                    return false;
+                }
+
+                if (tempInt < 0)
+                {
+                    return false;
+                }
+
+                switch (t)
+                {
+                    case 0:
+                        igTime.day = tempInt;
+                        break;
+                    case 1:
+                        igTime.hour = tempInt;
+                        break;
+                    case 2:
+                        igTime.minute = tempInt;
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return true;
         }
     }
 

@@ -29,6 +29,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.CommandConsole
                 //{ "/KILL", TestCommands.SetIgTime }, // kill vob in focus (TO DO)
                 { "/PLAYERLIST", TestCommands.GetPlayerList }, // get list of players
                 { "/SETTIME", TestCommands.SetIgTime }, // set ig-time
+                { "/SETWEATHER", TestCommands.SetIgWeather }, // set ig-weather
                 //{ "/SPAWNITEM", TestCommands.SetIgTime }, // spawns item of (type + amount) at position (TO DO)
                 //{ "/TPTO", TestCommands.TeleportVobTo }, // teleport vob (to pos.) (TO DO)
             };

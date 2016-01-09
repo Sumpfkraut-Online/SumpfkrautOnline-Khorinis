@@ -384,7 +384,10 @@ namespace GUC.Server.Scripts
             //{
             //    Logger.print(bi);
             //}
-            
+
+            //IGTime t;
+            //IGTime.TryParse("0:10:3", out t);
+            //Logger.log(t);
 
 
 

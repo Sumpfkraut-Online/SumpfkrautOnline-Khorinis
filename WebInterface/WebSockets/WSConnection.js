@@ -51,7 +51,6 @@ WebSockets = (function (module)
         
         self._onMessage = function (evt)
         {
-            // var jTxt = evt.data.toString();
             if (typeof(self.onMessage) == "function")
             {
                 self.onMessage(evt);

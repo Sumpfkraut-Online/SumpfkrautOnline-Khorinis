@@ -25,7 +25,10 @@ namespace GUC.Server.Scripts.Sumpfkraut.CommandConsole
         public static void GetPlayerList (object sender, String cmd, String[] param, 
             out Dictionary<string, object> returnVal)
         {
-            returnVal = null;
+            returnVal = new Dictionary<string, object>()
+            {
+                { "rawText", "Failed to retrieve player list!" },
+            };
 
             List<object> playerInfo = new List<object>();
             foreach (KeyValuePair<uint, NPC> keyVal in World.NewWorld.PlayerDict)
@@ -51,81 +54,93 @@ namespace GUC.Server.Scripts.Sumpfkraut.CommandConsole
         public static void SetIgTime (object sender, String cmd, String[] param, 
             out Dictionary<string, object> returnVal) 
         {
-            PrintStatic(typeof(TestCommands), "GOTCHA");
-            foreach (String p in param)
-            {
-                PrintStatic(typeof(TestCommands), p);
-            }
-
-            String[] timeStringArr;
-            int[] timeIntArr;
             IGTime igTime;
-            returnVal = null;
+            returnVal = new Dictionary<string, object>()
+            {
+                { "rawText", "Failed to set ingame-time!" },
+            };
 
             if ((param == null) || (param.Length < 1))
             {
                 return;
             }
 
-            timeStringArr = param[0].Split(':');
-            
-            if ((timeStringArr == null) || (timeStringArr.Length < 1))
+            if (IGTime.TryParse(param[0], out igTime))
             {
+                World.NewWorld.ChangeTime(igTime);
+                returnVal["rawText"] = "Successfully set ingame-Time to...";
+                returnVal["data"] = igTime;
+            }
+        }
+
+        public static void SetIgWeather (object sender, String cmd, String[] param, 
+            out Dictionary<string, object> returnVal)
+        {
+            returnVal = new Dictionary<string, object>()
+            {
+                { "rawText", "Failed to set ingame-weather!" },
+            };
+
+            if ((param == null) || (param.Length < 3))
+            {
+                // insufficient paramters
+                Log.Logger.log("#1");
                 return;
             }
 
-            timeIntArr = new int[timeStringArr.Length];
-            igTime = new IGTime();
+            World world = World.NewWorld;
+            WeatherType weatherType;
+            IGTime startTime, endTime;
 
-            int tempInt = -1;
-            for (int t = 0; t < timeStringArr.Length; t++)
+            try
             {
-                if(!int.TryParse(timeStringArr[t], out tempInt))
+                int weatherTypeInt;
+                if (!int.TryParse(param[0], out weatherTypeInt))
                 {
-                    //console.MakeLogError(String.Format("Unparsable partial time parameter"
-                    //    + " detected while calling /setTime: {0} at position {1}",
-                    //    timeStringArr[t], t));
+                    returnVal["rawText"] += " Couldn't parse weatherType.";
                     return;
                 }
 
-                if (tempInt < 0)
+                weatherType = (WeatherType) weatherTypeInt;
+                if (!Enum.IsDefined(typeof(WeatherType), weatherType))
                 {
-                    //console.MakeLogError(String.Format("Invalid partial time parameter"
-                    //    + " detected while calling /setTime: {0} at position {1}",
-                    //    tempInt, t));
+                    returnVal["rawText"] += " Invalid weatherType.";
                     return;
-                }
-
-                switch (t)
-                {
-                    case 0:
-                        igTime.day = tempInt;
-                        break;
-                    case 1:
-                        igTime.hour = tempInt;
-                        break;
-                    case 2:
-                        igTime.minute = tempInt;
-                        break;
-                    default:
-                        return;
                 }
             }
-            PrintStatic(typeof(TestCommands), igTime);
-            World.NewWorld.ChangeTime(igTime);
-
-            returnVal = new Dictionary<string, object>()
+            catch (Exception ex)
             {
-                { "rawText", "Ingame-Time" },
-                { "data", igTime },
-            };
+                returnVal["rawText"] += " Couldn't parse weatherType: " + ex;
+                return;
+            }
+
+            if (!IGTime.TryParse(param[1], out startTime))
+            {
+                returnVal["rawText"] += " Couldn't parse startTime.";
+                return;
+            }
+            if (!IGTime.TryParse(param[2], out endTime))
+            {
+                returnVal["rawText"] += " Couldn't parse endTime.";
+                return;
+            }
+            //if (startTime > endTime)
+            //{
+            //    returnVal["rawText"] += " startTime is bigger than endTime.";
+            //    return;
+            //}
+
+            world.ChangeWeather(weatherType, startTime, endTime);
+
+            returnVal["rawText"] = String.Format("Successfully set ingame-weather to type {0}"
+                + " between times {1} and {2}", weatherType, startTime, endTime);
         }
 
-        public void TeleportVobTo (object sender, String cmd, String[] param, 
-            out Dictionary<string, object> returnVal)
-        {
-            returnVal = null;
-        }
+        //public static void TeleportVobTo (object sender, String cmd, String[] param, 
+        //    out Dictionary<string, object> returnVal)
+        //{
+        //    returnVal = null;
+        //}
 
     }
 }
