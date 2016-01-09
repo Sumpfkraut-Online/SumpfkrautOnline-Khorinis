@@ -8,6 +8,8 @@ namespace Gothic
 {
     public class zString : zClass, IDisposable
     {
+        public const int ByteSize = 20;
+
         public zString()
         {
         }
@@ -27,15 +29,12 @@ namespace Gothic
             if (!this.disposed)
             {
                 Process.THISCALL<NullReturnCall>(Address, FuncAddresses.Destructor);
-                Process.Free(new IntPtr(Address), GetSize());
+                Process.Free(new IntPtr(Address), ByteSize);
                 disposed = true;
             }
         }
 
-        public override uint GetSize()
-        {
-            return 20;
-        }
+        
 
         #region Gothic Methods
 
@@ -113,7 +112,7 @@ namespace Gothic
 
         public static zString Create(String value)
         {
-            IntPtr stringArr = Process.Alloc(20);
+            IntPtr stringArr = Process.Alloc(ByteSize);
 
             byte[] arr = value == null ? new byte[0] : Encoding.UTF8.GetBytes(value);
             IntPtr charArr = Process.Alloc((uint)arr.Length + 1);

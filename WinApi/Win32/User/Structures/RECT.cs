@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace WinApi.Win32.User.Structures
+namespace WinApi.User.Structures
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct RECT

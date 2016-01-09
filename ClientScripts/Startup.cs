@@ -6,13 +6,23 @@ using System.Threading;
 
 namespace GUC.Scripts
 {
-    public class Startup : Scripting.IScriptInterface
+    public class Init
     {
-        public void Start()
+        public Init()
         {
-            Log.Logger.Log("erfolgreich");
-            Thread.Sleep(1000);
-            Log.Logger.LogWarning("erfolgreich!!");
+            AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;
+        }
+
+        static System.Reflection.Assembly ResolveAssembly(object sender, ResolveEventArgs args)
+        {
+            string name = args.Name.Substring(0, args.Name.IndexOf(','));
+
+            System.Reflection.Assembly asm = System.Reflection.Assembly.LoadFrom(System.IO.Path.GetFullPath("System\\UntoldChapter\\Dll\\" + name + ".dll"));
+            if (asm == null)
+            {
+                asm = System.Reflection.Assembly.LoadFrom(System.IO.Path.GetFullPath("UntoldChapter\\Dll\\" + name + ".dll"));
+            }
+            return asm;
         }
     }
 }

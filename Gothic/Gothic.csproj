@@ -40,7 +40,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="zCInput_Win32.cs" />
     <Compile Include="zClass.cs" />
+    <Compile Include="zColor.cs" />
+    <Compile Include="zCRenderer.cs" />
+    <Compile Include="zCSoundSystem.cs" />
+    <Compile Include="zCView.cs" />
     <Compile Include="zError.cs" />
     <Compile Include="zString.cs" />
   </ItemGroup>
@@ -49,6 +54,9 @@
       <Project>{52793B3F-130C-4B05-8333-1529981DE780}</Project>
       <Name>WinApi</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="zTypes\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

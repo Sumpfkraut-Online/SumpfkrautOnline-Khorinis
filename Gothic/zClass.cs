@@ -33,7 +33,5 @@ namespace Gothic
         {
             return 4;
         }
-
-        public abstract uint GetSize();
     }
 }

@@ -10,23 +10,15 @@ namespace GUC.Scripting
     static class ScriptManager
     {
         static Assembly asm = null;
-        static IScriptInterface scripts = null;
 
         public static void StartScripts(string path)
         {
-
             if (asm == null)
             {
                 try
                 {
                     asm = Assembly.LoadFile(Path.GetFullPath(path));
-                    asm.CreateInstance("GUC.Scripts.WriteFile");
-
-                    foreach (Type t in asm.GetTypes())
-                        Log.Logger.Log(t.AssemblyQualifiedName);
-
-                    scripts = (IScriptInterface)asm.CreateInstance("GUC.Scripts.Startup");
-                    scripts.Start();
+                    asm.CreateInstance("GUC.Scripts.Init");
                 }
                 catch (ReflectionTypeLoadException ex)
                 {
@@ -47,11 +39,11 @@ namespace GUC.Scripting
                     }
                     string errorMessage = sb.ToString();
                     //Display or log the error based on your application.
-                    Log.Logger.LogError(errorMessage);
+                    Log.Logger.LogError(Environment.CurrentDirectory + "\n" + errorMessage);
                 }
                 catch (Exception e)
                 {
-                    Log.Logger.LogError(e);
+                    Log.Logger.LogError(Environment.CurrentDirectory + "\n" + e);
                 }
             }
         }

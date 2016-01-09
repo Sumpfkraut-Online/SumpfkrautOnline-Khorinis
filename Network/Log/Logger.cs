@@ -10,12 +10,14 @@ namespace GUC.Log
         public const int LOG_INFO = 0;
         public const int LOG_WARNING = 1;
         public const int LOG_ERROR = 2;
+        public const int LOG_FATAL = 3;
 
         public enum LogLevels
         {
             Info,
             Warning,
-            Error
+            Error,
+            Fatal
         }
 
         public static void Log(object message, params object[] args)

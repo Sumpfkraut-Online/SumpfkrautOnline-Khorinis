@@ -34,14 +34,14 @@ namespace WinApi
             {
                 Kernel.Error.GetLastError();
             }
-            
+
             //Write dll name
             uint tmp = 0;
             if (!Kernel.Process.WriteProcessMemory(process.Handle, dllbPtr, dllb, (uint)dllb.Length, out tmp))
             {
                 Error.GetLastError();
             }
-            
+
             IntPtr loadlib = Kernel.Process.GetProcAddress(WinApi.Kernel.Process.GetModuleHandle("kernel32.dll"), "LoadLibraryA");
 
             return Kernel.Process.CreateRemoteThread(process.Handle, IntPtr.Zero, 0, loadlib, dllbPtr, 0, out tmp);
@@ -82,6 +82,7 @@ namespace WinApi
             IntPtr ptr = WinApi.Kernel.Process.VirtualAllocEx(Handle, IntPtr.Zero, size, WinApi.Kernel.Process.AllocationType.Reserve | WinApi.Kernel.Process.AllocationType.Commit, WinApi.Kernel.Process.MemoryProtection.ReadWrite);
             if (ptr == IntPtr.Zero)
                 Kernel.Error.GetLastError();
+
             return ptr;
         }
 
@@ -93,6 +94,7 @@ namespace WinApi
                 Kernel.Error.GetLastError();
             if (!WinApi.Kernel.Process.VirtualFreeEx(Handle, ptr, 0, Kernel.Process.AllocationType.Release))
                 Kernel.Error.GetLastError();
+
             return true;
         }
 
@@ -208,14 +210,14 @@ namespace WinApi
 
         public static T CDECLCALL<T>(int funcPtr, params CallValue[] args) where T : CallValue, new()
         {
-            return MAKECALL<T>(CALLTYPE.CDECLCALL, 0,0, funcPtr, args);
+            return MAKECALL<T>(CALLTYPE.CDECLCALL, 0, 0, funcPtr, args);
         }
 
         public static T THISCALL<T>(int thisPtr, int funcPtr, params CallValue[] args) where T : CallValue, new()
         {
             if (thisPtr == 0)
                 throw new Exception("Process.THISCALL: This-pointer not found!");
-            return MAKECALL<T>(CALLTYPE.THISCALL ,thisPtr,0, funcPtr, args);
+            return MAKECALL<T>(CALLTYPE.THISCALL, thisPtr, 0, funcPtr, args);
         }
 
         public static T FASTCALL<T>(int para1, int para2, int funcPtr, params CallValue[] args) where T : CallValue, new()
@@ -253,7 +255,7 @@ namespace WinApi
                     }
                 }
             }
-            
+
             //This-Pointer in ecx schreiben
             if (type == CALLTYPE.THISCALL || type == CALLTYPE.FASTCALL)
             {
@@ -276,18 +278,18 @@ namespace WinApi
 
             if (type == CALLTYPE.CDECLCALL)
                 length += 3;
-            
+
 
             IntPtr baseadress = Alloc(length);
 
             IntPtr returnAddress = IntPtr.Zero;
-            if(returnValue.ValueLength() != 0)
+            if (returnValue.ValueLength() != 0)
                 returnAddress = Alloc(returnValue.ValueLength());
 
             //call
             list.Add(0xE8);
             list.AddRange(BitConverter.GetBytes(funcPtr - (baseadress.ToInt32() + list.Count) - 4)); // - Aktuelle Addresse - 4
-            
+
             //Return schreiben
             if (returnValue.ValueLength() != 0)
             {
@@ -310,7 +312,7 @@ namespace WinApi
             //Call the new function
             call mc = (call)Marshal.GetDelegateForFunctionPointer(baseadress, typeof(call));
             mc();
-            
+
             //Bisschen aufräumen
             Free(baseadress, length);
 
@@ -324,7 +326,7 @@ namespace WinApi
             {
                 return null;
             }
-            
+
         }
 
         #endregion
@@ -342,13 +344,13 @@ namespace WinApi
                 throw new Exception("Add Hook : Handle or Function not Found");
 
             HookInfos rValue = new HookInfos();
-            IntPtr varPtr = Alloc(4 + (uint)sizeParam*4 + 4 + 4);
+            IntPtr varPtr = Alloc(4 + (uint)sizeParam * 4 + 4 + 4);
             IntPtr ecxPtr = varPtr;
             IntPtr eaxPtr = varPtr + 4 + sizeParam * 4;
             IntPtr ebxPtr = varPtr + 4 + sizeParam * 4 + 4;
             int length = 0;
 
-            if(varPtr == IntPtr.Zero)
+            if (varPtr == IntPtr.Zero)
                 throw new Exception("Add Hook : Allocate Error");
 
             //Alte Anweisung sichern
@@ -384,7 +386,7 @@ namespace WinApi
             list.AddRange(BitConverter.GetBytes(ecxPtr.ToInt32()));
 
             list.Add(0x60);//pushad
-            
+
             NETINJECTPARAMS parameters = NETINJECTPARAMS.Create(dll, methods.DeclaringType.FullName, methods.Name, varPtr.ToInt32() + "");
             list.Add(0x68);//Parameter für LoadNetDllEx pushen
             list.AddRange(BitConverter.GetBytes(parameters.Address));
@@ -410,7 +412,7 @@ namespace WinApi
             list.AddRange(BitConverter.GetBytes(addr + size));
             list.Add(0xC3);//RTN
 
-            
+
 
             //IntPtr newASM = Alloc((uint)size + 120 + 3);//Neue Funktion
 

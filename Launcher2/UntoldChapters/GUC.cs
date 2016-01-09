@@ -12,7 +12,7 @@ namespace Launcher2
         public static void Start(string ip)
         {
             ClientOptions co;
-            
+
             string confPath = Global.Paths.GUC + "\\" + "conf";
             if (!System.IO.Directory.Exists(confPath))
             {
@@ -33,18 +33,19 @@ namespace Launcher2
             co.Save(confFile);
 
             String dll = Global.Paths.DLL + "\\" + "NetInject.dll";
-            
+
             //zSpy starten
             System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo();
-                psi.UseShellExecute = true;
-                psi.WorkingDirectory = Global.Paths.GUC + "\\Log";
+            psi.UseShellExecute = true;
+            psi.WorkingDirectory = Global.Paths.GUC + "\\Log";
 
-                psi.FileName = Global.Paths.Main + "\\_work\\tools\\zSpy\\zSpy.exe";
-                System.Diagnostics.Process.Start(psi);
+            psi.FileName = Global.Paths.Main + "\\_work\\tools\\zSpy\\zSpy.exe";
+            System.Diagnostics.Process.Start(psi);
 
             //Gothic starten
             psi = new System.Diagnostics.ProcessStartInfo();
             psi.WorkingDirectory = Global.Paths.Sys;
+
             //psi.Arguments = "-nomenu";
             psi.Arguments = "-zlog:5,s -zmaxframerate:60";
 
@@ -52,9 +53,9 @@ namespace Launcher2
             System.Diagnostics.Process process = System.Diagnostics.Process.Start(psi);
 
             //dll injection
-            try 
+            try
             {
-                if (WinApi.Process.LoadLibary(process,dll) == IntPtr.Zero)
+                if (WinApi.Process.LoadLibary(process, dll) == IntPtr.Zero)
                 {
                     throw new Exception(System.Runtime.InteropServices.Marshal.GetLastWin32Error().ToString());
                 }

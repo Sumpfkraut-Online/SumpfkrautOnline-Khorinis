@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
-using WinApi.Win32.User.Structures;
+using WinApi.User.Structures;
 
 namespace WinApi.User
 {

@@ -5,7 +5,7 @@
     <Window.TaskbarItemInfo>
         <TaskbarItemInfo/>
     </Window.TaskbarItemInfo>
-    <Grid MouseLeftButtonDown="Grid_MouseLeftButtonDown">
+    <Grid MouseLeftButtonDown="Grid_MouseLeftButtonDown" RenderTransformOrigin="1.248,0.41">
         <Grid.Background>
             <ImageBrush ImageSource="Resources/Background.png"/>
         </Grid.Background>
