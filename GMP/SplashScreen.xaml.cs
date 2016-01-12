@@ -46,15 +46,29 @@ namespace GUC.Client
         {
             if (splash != null)
                 return;
-
-            var appthread = new Thread(new ThreadStart(() =>
+            try
             {
-                splash = new Application();
-                splash.ShutdownMode = ShutdownMode.OnExplicitShutdown;
-                splash.Run(new SplashScreen());
-            }));
-            appthread.SetApartmentState(ApartmentState.STA);
-            appthread.Start();
+                var appthread = new Thread(new ThreadStart(() =>
+                {
+                    try
+                    {
+                        splash = new Application();
+                        splash.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+                        splash.Run(new SplashScreen());
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Logger.LogError("SplashScreen: " + e);
+                    }
+                }));
+                appthread.IsBackground = true;
+                appthread.SetApartmentState(ApartmentState.STA);
+                appthread.Start();
+            }
+            catch (Exception e2)
+            {
+                Log.Logger.LogError("SplashCreation failed: " + e2);
+            }
         }
 
         public static void Remove()

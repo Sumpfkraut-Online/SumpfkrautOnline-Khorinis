@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using WinApi;
+using Gothic.Types;
 
-namespace Gothic
+namespace Gothic.System
 {
     public static class zCRenderer
     {

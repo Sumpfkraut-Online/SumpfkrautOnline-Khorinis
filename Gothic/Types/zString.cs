@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using WinApi;
 
-namespace Gothic
+namespace Gothic.Types
 {
     public class zString : zClass, IDisposable
     {

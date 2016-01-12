@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using WinApi;
-using Gothic;
+using Gothic.Types;
 using GUC.Log;
 
 namespace GUC.Client.Hooks
@@ -17,9 +17,9 @@ namespace GUC.Client.Hooks
         public static void Init()
         {
             _infoLoadDat = Process.Hook(Constants.GUCDll, typeof(hParser).GetMethod("hook_LoadDat"), 0x0078E900, 7, 1);
-            //_infoLoadParserFile = Process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hParser).GetMethod("hook_LoadParserFile"), 0x006C4BE0, 6, 1);
+            _infoLoadParserFile = Process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(hParser).GetMethod("hook_LoadParserFile"), 0x006C4BE0, 6, 1);
 
-            //Process.Write(new byte[] { 0x33, 0xC0, 0xC2, 0x04, 0x00 }, _infoLoadParserFile.oldFuncInNewFunc.ToInt32());
+            Process.Write(new byte[] { 0x33, 0xC0, 0xC2, 0x04, 0x00 }, _infoLoadParserFile.oldFuncInNewFunc.ToInt32());
         }
 
         static void BlockLoadDat()
@@ -49,7 +49,9 @@ namespace GUC.Client.Hooks
                 string datName = str.ToString().Trim().ToUpper();
                 if (datName == "GOTHIC.DAT" || datName == "FIGHT.DAT" || datName == "MENU.DAT")
                 {
-                    //States.StartupState.initDefaultScripts();
+                    if (datName == "GOTHIC.DAT")
+                        initDefaultScripts();
+
                     BlockLoadDat();
                 }
                 else
@@ -65,47 +67,86 @@ namespace GUC.Client.Hooks
             return 0;
         }
 
-
-
-
-     /*   public static Int32 hook_LoadParserFile(String message)
+        
+        public static Int32 hook_LoadParserFile(String message)
         {
             try
             {
                 int parameterAddress = Convert.ToInt32(message);
-                zString str = new zString(Program.Process, Program.Process.ReadInt(parameterAddress + 4));
-                zERROR.GetZErr(Program.Process).Report(2, 'G', "LoadParserFile: " + str.Value, 0, "Program.cs", 0);
+                zString str = new zString(Process.ReadInt(parameterAddress + 4));
+                Logger.LogWarning("LoadParserFile: " + str);
 
-                zCParser parser = zCParser.getParser(Program.Process);
-                parser.Reset();
-                oCGame.Game(Program.Process).DefineExternals_Ulfi(parser);
-                parser.EnableTreeLoad(0);
-                parser.EnableTreeSave(0);
+                Process.THISCALL<NullReturnCall>(0xAB40C0, 0x00793100); //parser.reset
+                Process.THISCALL<NullReturnCall>(Process.ReadInt(Gothic.oCGame.ogame), 0x006D4780, new IntArg(0xAB40C0)); //Define_ulfi_externals
+                Process.THISCALL<NullReturnCall>(0xAB40C0, 0x00793460, new IntArg(0)); //parser.enabletreeload(0)
+                Process.THISCALL<NullReturnCall>(0xAB40C0, 0x00793440, new IntArg(0)); //parser.enabletreesave(0)
 
-                States.StartupState.initDefaultScripts();
+                initDefaultScripts();
 
-                zString str2 = zString.Create(Program.Process, "C_NPC");
-                parser.AddClassOffset(str2, 0x120);
-                str2.Dispose();
+                using (zString z = zString.Create("C_NPC"))
+                    Process.THISCALL<NullReturnCall>(0xAB40C0, 0x00794730, z, new IntArg(0x120)); // parser.AddClassOffset
 
-                str2 = zString.Create(Program.Process, "C_ITEM");
-                parser.AddClassOffset(str2, 0x120);
-                str2.Dispose();
+                using (zString z = zString.Create("C_ITEM"))
+                    Process.THISCALL<NullReturnCall>(0xAB40C0, 0x00794730, z, new IntArg(0x120)); // parser.AddClassOffset
 
-                parser.MainFileName.Set(States.StartupState.srcFile);
+                zString mainfile = new zString(Process.ReadInt(0xAB40C0 + 8308));
+                mainfile.Set(srcFile);
 
-                parser.CreatePCode();
-                parser.Error();
+                Process.THISCALL<NullReturnCall>(0xAB40C0, 0x007900E0); //parser.createPCode
+                Process.THISCALL<NullReturnCall>(0xAB40C0, 0x0078E730); //parser.error
+                
             }
             catch (Exception ex)
             {
-                zERROR.GetZErr(Program.Process).Report(2, 'G', ex.ToString(), 0, "Program.cs", 0);
+                Logger.Log(ex);
             }
             return 0;
-        }*/
+        }
+
+        static String srcFile = null;
+        static void initDefaultScripts()
+        {
+            String[] arr = new String[] { "GUC.Client.Resources.Constants.d", "GUC.Client.Resources.Classes.d", "GUC.Client.Resources.AI_Constants.d",
+                "GUC.Client.Resources.BodyStates.d", "GUC.Client.Resources.Focus.d", "GUC.Client.Resources.Species.d", "GUC.Client.Resources.NPC_Default.d",
+                "GUC.Client.Resources.PC_Hero.d" };
+
+            zString str = null;
+            String fileList = "";
+            foreach (String internalFile in arr)
+            {
+                Logger.Log("Parse: " + internalFile);
+                using (var sr = new System.IO.StreamReader(System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(internalFile), Encoding.Default))
+                {
+                    String file = ClientPaths.GUCBase + internalFile.Substring("GUC.Client.Resources.".Length);
+                    System.IO.File.WriteAllText(file, sr.ReadToEnd(), Encoding.Default);
+                    fileList += System.IO.Path.GetFileName(file.ToUpper()) + "\r\n";
+
+                    //using (str = zString.Create(file.ToUpper()))
+                    //    Process.THISCALL<NullReturnCall>(0xAB40C0, 0x0078F660, str);
+                }
+            }
 
 
+            String file_FileList = ClientPaths.GUCBase + "GUC.src";
+            srcFile = file_FileList;
+            System.IO.File.WriteAllText(file_FileList, fileList);
 
-        
+            using (str = zString.Create(file_FileList.ToUpper()))
+                Process.THISCALL<NullReturnCall>(0xAB40C0, 0x0078EE20, str);
+
+            using (zString z = zString.Create("C_NPC"))
+            {
+                int symbol = Process.THISCALL<IntArg>(0xAB40C0, 0x007938D0, z); // parser.GetSymbol
+                Process.THISCALL<NullReturnCall>(symbol, 0x007A2F40, new IntArg(0x120)); //parsymbol.SetClassOffset
+            }
+
+            using (zString z = zString.Create("C_ITEM"))
+            {
+                int symbol = Process.THISCALL<IntArg>(0xAB40C0, 0x007938D0, z); // parser.GetSymbol
+                Process.THISCALL<NullReturnCall>(symbol, 0x007A2F40, new IntArg(0x120)); //parsymbol.SetClassOffset
+            }
+
+            Logger.Log("Startup-Scripts-parsed!");
+        }
     }
 }

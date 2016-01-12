@@ -91,6 +91,11 @@
       <Link>Types\Vec3f.cs</Link>
     </Compile>
     <Compile Include="Hooks\hParser.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="SplashScreen.xaml.cs">
       <DependentUpon>SplashScreen.xaml</DependentUpon>
     </Compile>
@@ -99,11 +104,6 @@
     <Compile Include="ClientPaths.cs" />
     <Compile Include="Log\Logger.Client.cs" />
     <Compile Include="Options\BaseOptions.Client.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -112,11 +112,9 @@
     <EmbeddedResource Include="Resources\Constants.d" />
     <EmbeddedResource Include="Resources\PC_Hero.d" />
     <EmbeddedResource Include="Resources\NPC_Default.d" />
-    <EmbeddedResource Include="Resources\AI_Constants.d" />
     <EmbeddedResource Include="Resources\BodyStates.d" />
     <EmbeddedResource Include="Resources\Focus.d" />
     <EmbeddedResource Include="Resources\Species.d" />
-    <EmbeddedResource Include="Resources\Startup.d" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Gothic\Gothic.csproj">
@@ -131,8 +129,8 @@
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -143,6 +141,12 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\AI_Constants.d" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\StartUp.d" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

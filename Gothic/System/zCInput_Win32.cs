@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using WinApi;
 
-namespace Gothic
+namespace Gothic.System
 {
     public static class zCInput_Win32
     {

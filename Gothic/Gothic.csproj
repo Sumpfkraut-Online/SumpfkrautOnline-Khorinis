@@ -39,15 +39,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Objects\oCNpc.cs" />
+    <Compile Include="Objects\zCObject.cs" />
+    <Compile Include="Objects\zCVob.cs" />
+    <Compile Include="oCGame.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="zCInput_Win32.cs" />
+    <Compile Include="System\zCInput_Win32.cs" />
     <Compile Include="zClass.cs" />
-    <Compile Include="zColor.cs" />
-    <Compile Include="zCRenderer.cs" />
-    <Compile Include="zCSoundSystem.cs" />
+    <Compile Include="Types\zColor.cs" />
+    <Compile Include="System\zCRenderer.cs" />
+    <Compile Include="System\zCSoundSystem.cs" />
     <Compile Include="zCView.cs" />
-    <Compile Include="zError.cs" />
-    <Compile Include="zString.cs" />
+    <Compile Include="System\zError.cs" />
+    <Compile Include="Types\zString.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WinApi\WinApi.csproj">
@@ -55,9 +59,7 @@
       <Name>WinApi</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="zTypes\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

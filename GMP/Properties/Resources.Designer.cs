@@ -153,9 +153,9 @@ namespace GUC.Client.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
         /// </summary>
-        internal static byte[] Startup {
+        internal static byte[] StartUp {
             get {
-                object obj = ResourceManager.GetObject("Startup", resourceCulture);
+                object obj = ResourceManager.GetObject("StartUp", resourceCulture);
                 return ((byte[])(obj));
             }
         }

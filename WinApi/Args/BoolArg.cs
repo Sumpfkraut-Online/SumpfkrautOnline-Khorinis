@@ -19,7 +19,7 @@ namespace WinApi
 
         public override List<byte[]> GetCallParams()
         {
-            return new List<byte[]>() { new byte[4] { Convert.ToByte(Value), 0, 0, 0 } };
+            return new List<byte[]>() { BitConverter.GetBytes(Value == true ? 1 : 0) };
         }
 
         public override void Initialize(int registerAddress)
