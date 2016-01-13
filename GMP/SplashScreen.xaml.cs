@@ -41,6 +41,7 @@ namespace GUC.Client
             Process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(SplashScreen).GetMethod("RemoveSplashScreen"), 0x42687F, 6, 0); // add hook to remove our splash screen
         }
 
+        static bool remove = false;
         static Application splash = null;
         public static void Create()
         {
@@ -63,7 +64,8 @@ namespace GUC.Client
                 }));
                 appthread.IsBackground = true;
                 appthread.SetApartmentState(ApartmentState.STA);
-                appthread.Start();
+                if (!remove)
+                    appthread.Start();
             }
             catch (Exception e2)
             {
@@ -78,6 +80,8 @@ namespace GUC.Client
 
         public static Int32 RemoveSplashScreen(String message)
         {
+            remove = true;
+
             if (splash == null)
                 return 0;
 

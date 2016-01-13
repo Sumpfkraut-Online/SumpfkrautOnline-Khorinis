@@ -36,44 +36,36 @@ namespace GUC.Client
             try
             {
                 AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;
-
+                
                 SplashScreen.SetUpHooks();
                 SplashScreen.Create();
 
                 Process.Write(new byte[] { 0xE9, 0x8C, 0x00, 0x00, 0x00 }, 0x0044AEDF); // skip visual vdfs init (vdfs32g.exe)
 
-                //Hooks.hParser.Init();
+                Hooks.hParser.Init();
 
                 // hook the outgame menu
-                //var hi = Process.Hook(Constants.GUCDll, typeof(Program).GetMethod("RunOutgame"), 0x004292D0, 7, 2);
-                //Process.Write(new byte[] { 0xC2, 0x04, 0x00, 0x90, 0x90, 0x90, 0x90 }, hi.oldFuncInNewFunc.ToInt32());
+                var hi = Process.Hook(Constants.GUCDll, typeof(Program).GetMethod("RunOutgame"), 0x004292D0, 7, 2);
+                Process.Write(new byte[] { 0xC2, 0x04, 0x00, 0x90, 0x90, 0x90, 0x90 }, hi.oldFuncInNewFunc.ToInt32());
 
                 Process.Hook(Constants.GUCDll, typeof(Program).GetMethod("RunIngame"), 0x006C86A0, 7, 0);
-
+                
                 //Process.Write(new byte[] { 0xC2, 0x04, 0x00 }, 0x00626570); // kick out zCWorld::UnarcTraverseVobs
-                //Process.Write((byte)0xC3, 0x006C1F60); //Blocking Call Init Scripts!
-                //Process.Write((byte)0xC3, 0x006C1C70); //Blocking Call Startup Scripts!
-                //Process.Write((byte)0x02, 0x006C206D);
-                //Process.Write((byte)0x02, 0x006C1D89);
-
-                Process.Write((byte)0xC3, 0x007929F0);
-
+                Process.Write((byte)0xC3, 0x006C1F60); //Blocking Call Init Scripts!
+                Process.Write((byte)0xC3, 0x006C1C70); //Blocking Call Startup Scripts!
+                
                 Process.Write((byte)0xC3 , 0x00780D80);//Blocking time!
 
                 // hook hero creating
-                /*Process.Write(new byte[] { 0xE9, 0xBD, 0x00, 0x00, 0x00 }, 0x006C434B);
-                var hi = Process.Hook(Constants.GUCDll, typeof(Program).GetMethod("CreatePlayerVob"), 0x006C440D, 5, 0);
+                Process.Write(new byte[] { 0xE9, 0xBD, 0x00, 0x00, 0x00 }, 0x006C434B);
+                hi = Process.Hook(Constants.GUCDll, typeof(Program).GetMethod("CreatePlayerVob"), 0x006C440D, 5, 0);
                 Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90 }, hi.oldFuncInNewFunc.ToInt32());
-                Process.Write(new byte[] { 0xEB, 0x67 }, 0x006C4662); //skip instance check*/
-
-                Thread.Sleep(3000); // Wait a bit for Gothic to start
+                Process.Write(new byte[] { 0xEB, 0x67 }, 0x006C4662); //skip instance check
 
                 ClientPaths.CreateFolders(); // Set up folders
                 BaseOptions.Load(ClientPaths.GUCConfig + "guc.xml"); // Load Options
 
                 ScriptManager.StartScripts(ClientPaths.GUCDlls + "ClientScripts.dll"); // Load Scripts
-
-                
 
                 while (true)
                 {
@@ -107,7 +99,7 @@ namespace GUC.Client
 
                 if ((WinApi.User.Input.GetAsyncKeyState(WinApi.User.Enumeration.VirtualKeys.F2) & 0x8001) == 0x8001 || (WinApi.User.Input.GetAsyncKeyState(WinApi.User.Enumeration.VirtualKeys.F2) & 0x8000) == 0x8000)
                 {
-                    for (int i = 0; i < 100; i++)
+                    for (int i = 0; i < 1; i++)
                     {
                         var vob = zCVob.Create();
                         vob.SetVisual("OW_Forest_Tree_V1.3ds");

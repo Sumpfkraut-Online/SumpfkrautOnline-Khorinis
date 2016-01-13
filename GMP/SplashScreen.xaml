@@ -6,6 +6,6 @@
              xmlns:local="clr-namespace:GUC.Client"
              mc:Ignorable="d" Width="600" Height="200" IsTabStop="False" Focusable="False" Topmost="True" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" AllowsTransparency="True" WindowStyle="None" ShowInTaskbar="False">
     <Window.Background>
-        <ImageBrush ImageSource="Resources/logo.png" Stretch="Uniform"/>
+        <ImageBrush ImageSource="Resources/Splash.png" Stretch="Uniform"/>
     </Window.Background>
 </Window>

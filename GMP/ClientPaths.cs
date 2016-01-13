@@ -14,13 +14,15 @@ namespace GUC.Client
         public static string GUCBase { get { return GetFullPath(gucBase); } }
         public static string GUCDlls { get { return GetFullPath(gucDlls); } }
         public static string GUCConfig { get { return GetFullPath(gucConfig); } }
+        public static string GUCScripts { get { return GetFullPath(gucScripts); } }
 
         static string g2Base = null;
         static string g2System = "\\System\\";
         static string gucBase = "\\System\\UntoldChapter\\";
         static string gucDlls = "\\System\\UntoldChapter\\DLL\\";
         static string gucConfig = "\\System\\UntoldChapter\\conf\\";
-        
+        static string gucScripts = "\\System\\UntoldChapter\\tempScripts\\";
+
         static string GetFullPath(string path)
         {
             if (g2Base == null || !File.Exists(g2Base + "\\System\\Gothic2.exe"))

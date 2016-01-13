@@ -47,7 +47,7 @@ namespace Launcher2
             psi.WorkingDirectory = Global.Paths.Sys;
 
             //psi.Arguments = "-nomenu";
-            psi.Arguments = "-zlog:5,s -zmaxframerate:60";
+            psi.Arguments = "-zlog:5,s";
 
             psi.FileName = "Gothic2.exe";
             System.Diagnostics.Process process = System.Diagnostics.Process.Start(psi);
