@@ -56,13 +56,17 @@
     <Compile Include="Options\Constants.cs" />
     <Compile Include="Options\ServerOptions.cs" />
     <Compile Include="Types\ColorRGBA.cs" />
+    <Compile Include="Types\IgTime.cs" />
     <Compile Include="Types\Vec2i.cs" />
     <Compile Include="Types\Vec3f.cs" />
+    <Compile Include="Utilities\ExtendedObject.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

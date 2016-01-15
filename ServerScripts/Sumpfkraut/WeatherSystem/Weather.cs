@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using GUC.Types;
 using GUC.Server.WorldObjects;
 using GUC.Server.Scripts.Sumpfkraut.Utilities.Threading;
 //using GUC.Server.Scripting.Objects.World.WeatherType;
@@ -72,7 +73,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
             }
         }
 
-        protected IGTime lastIGTime; // internal variable to track the last requested ig-time
+        protected IgTime lastIGTime; // internal variable to track the last requested ig-time
 
         protected TimeSpan defaultTimeout; // the default timeout / sleeptime of the thread
         // custom timeout changable during runtime
@@ -108,7 +109,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
             this.precFactor = 70; // % chance of weather with precipitation
             this.snowFactor = 20; // % change of snow when there is precipitation
 
-            this.lastIGTime = new IGTime();
+            this.lastIGTime = new IgTime();
             this.lastIGTime = World.NewWorld.GetIGTime();
 
             this.random = new Random();
@@ -451,20 +452,20 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
 
                 if ((forceIGWeather) || (setIGWeather && this.currWSChanged))
                 {
-                    IGTime igTimeNow = World.NewWorld.GetIGTime();
+                    IgTime igTimeNow = World.NewWorld.GetIGTime();
                     this.lastIGTime = igTimeNow;
                     //Print(">>> " + igTimeNow.day + " " + igTimeNow.hour + " " + igTimeNow.minute);
 
                     if (this.currWeatherState == null)
                     {
-                        World.NewWorld.ChangeWeather(WeatherType.undefined,
-                            igTimeNow, new IGTime(23, 59));
+                        World.NewWorld.ChangeIgWeather(WeatherType.undefined,
+                            igTimeNow, new IgTime(23, 59));
                         MakeLog("Updated ingame-weather to the default.");
                     }
                     else
                     {
-                        World.NewWorld.ChangeWeather(this.currWeatherState.weatherType,
-                            igTimeNow, new IGTime(23, 59));
+                        World.NewWorld.ChangeIgWeather(this.currWeatherState.weatherType,
+                            igTimeNow, new IgTime(23, 59));
                         MakeLog("Updated ingame-weather to " + this.currWeatherState.weatherType +
                             ". Description: " + this.currWeatherState.description);
                     }
@@ -530,7 +531,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
         public override void Run()
         {
             DateTime dtNow = DateTime.Now;
-            IGTime currIGTime = World.NewWorld.GetIGTime();
+            IgTime currIGTime = World.NewWorld.GetIGTime();
             FillUpQueue();
 
             if (this.lastIGTime.hour > currIGTime.hour)

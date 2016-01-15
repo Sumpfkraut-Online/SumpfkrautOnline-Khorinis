@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using GUC.Types;
 
 namespace GUC.Server.Scripts.Sumpfkraut.TimeSystem
 {
@@ -32,9 +33,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.TimeSystem
         protected DateTime lastTimeUpdate;
         public DateTime GetLastTimeUpdate () { return this.lastTimeUpdate; }
 
-        protected IGTime igTime;
-        public IGTime GetIgTime () { return this.igTime; }
-        public void SetIgTime (IGTime igTime)
+        protected IgTime igTime;
+        public IgTime GetIgTime () { return this.igTime; }
+        public void SetIgTime (IgTime igTime)
         {
             this.igTime = igTime;
             UpdateWorldTime();
@@ -42,12 +43,12 @@ namespace GUC.Server.Scripts.Sumpfkraut.TimeSystem
 
         protected object igTimeLock = new object();
 
-        public delegate void OnTimeChangeEventHandler (IGTime igTime);
+        public delegate void OnTimeChangeEventHandler (IgTime igTime);
         public event OnTimeChangeEventHandler OnTimeChange; 
 
 
 
-        public WorldClock (List<World> affectedWorlds, IGTime startIGTime, 
+        public WorldClock (List<World> affectedWorlds, IgTime startIGTime, 
             double igTimeRate, bool startOnCreate, TimeSpan tickTimeout)
             : base (false, tickTimeout, false)
         {
@@ -82,7 +83,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.TimeSystem
             DateTime now = DateTime.Now;
             double rlDiff, igDiff;
             long newTotalMinutes;
-            IGTime newIgTime;
+            IgTime newIgTime;
 
             lock (igTimeLock)
             {
@@ -90,8 +91,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.TimeSystem
                 {
                     rlDiff = (now - lastTimeUpdate).TotalMinutes;
                     igDiff = rlDiff * igTimeRate;
-                    newTotalMinutes = IGTime.ToMinutes(igTime) + (long) igDiff;
-                    newIgTime = new IGTime(newTotalMinutes);
+                    newTotalMinutes = IgTime.ToMinutes(igTime) + (long) igDiff;
+                    newIgTime = new IgTime(newTotalMinutes);
                 }
                 catch (Exception ex)
                 {
@@ -100,7 +101,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.TimeSystem
                     newIgTime.day = 0;
                     rlDiff = (now - lastTimeUpdate).TotalMinutes;
                     igDiff = rlDiff * igTimeRate;
-                    newTotalMinutes = IGTime.ToMinutes(newIgTime) + (long) igDiff;
+                    newTotalMinutes = IgTime.ToMinutes(newIgTime) + (long) igDiff;
                     MakeLogError("Forcefully reset igTime to 0 days, preserving the daytime"
                         + " due to unhandleble calculations: " + ex);
                 }
@@ -117,7 +118,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.TimeSystem
                     return;
                 }
 
-                igTime = new IGTime(newTotalMinutes);
+                igTime = new IgTime(newTotalMinutes);
                 lastTimeUpdate = now;
 
                 if (OnTimeChange != null)
@@ -127,7 +128,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.TimeSystem
             
                 for (int w = 0; w < affectedWorlds.Count; w++)
                 {
-                    affectedWorlds[w].ChangeTime(newIgTime);
+                    affectedWorlds[w].ChangeIgTime(newIgTime);
                 }
             }
         }

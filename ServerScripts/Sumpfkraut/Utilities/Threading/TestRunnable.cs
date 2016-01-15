@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Server.WorldObjects;
+using GUC.Types;
 
 namespace GUC.Server.Scripts.Sumpfkraut.Utilities.Threading
 {
@@ -19,8 +20,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.Utilities.Threading
         int minute = 0;
 
         WeatherType weatherType = WeatherType.rain;
-        IGTime weatherStartTime = new IGTime();
-        IGTime weatherEndTime = new IGTime();
+        IgTime weatherStartTime = new IgTime();
+        IgTime weatherEndTime = new IgTime();
 
         public TestRunnable (bool startOnCreate, TimeSpan timeout, bool runOnce)
             : base(startOnCreate, timeout, runOnce)
@@ -42,7 +43,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Utilities.Threading
 
             //Console.WriteLine("TestRunnable: " + DateTime.Now + " " + this.runOnce);
             Console.WriteLine("TestRunnable: " + day + " " + hour + " " + minute);
-            World.NewWorld.ChangeTime(day, hour, minute);
+            World.NewWorld.ChangeIgTime(day, hour, minute);
 
             //weatherStartTime.day = 0;
             //weatherStartTime.hour = 8;

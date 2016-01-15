@@ -82,6 +82,9 @@
     <Compile Include="..\Network\Types\ColorRGBA.cs">
       <Link>Types\ColorRGBA.cs</Link>
     </Compile>
+    <Compile Include="..\Network\Types\IgTime.cs">
+      <Link>Types\IgTime.cs</Link>
+    </Compile>
     <Compile Include="..\Network\Types\Vec2i.cs">
       <Link>Types\Vec2i.cs</Link>
     </Compile>
@@ -144,6 +147,7 @@
     <Compile Include="WorldObjects\Player.cs" />
     <Compile Include="WorldObjects\AbstractVob.cs" />
     <Compile Include="WorldObjects\World.cs" />
+    <Compile Include="WorldObjects\WorldClock.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Network\Messages\ConnectionMessage.cs" />

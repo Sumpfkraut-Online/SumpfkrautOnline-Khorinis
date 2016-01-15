@@ -1,6 +1,7 @@
 ﻿using GUC.Server.Scripts.Sumpfkraut.CommandConsole.InfoObjects;
 using GUC.Server.Scripts.Sumpfkraut.Web.WS.Protocols;
 using GUC.Server.WorldObjects;
+using GUC.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,7 +55,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.CommandConsole
         public static void SetIgTime (object sender, String cmd, String[] param, 
             out Dictionary<string, object> returnVal) 
         {
-            IGTime igTime;
+            IgTime igTime;
             returnVal = new Dictionary<string, object>()
             {
                 { "rawText", "Failed to set ingame-time!" },
@@ -65,9 +66,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.CommandConsole
                 return;
             }
 
-            if (IGTime.TryParse(param[0], out igTime))
+            if (IgTime.TryParse(param[0], out igTime))
             {
-                World.NewWorld.ChangeTime(igTime);
+                World.NewWorld.ChangeIgTime(igTime);
                 returnVal["rawText"] = "Successfully set ingame-Time to...";
                 returnVal["data"] = igTime;
             }
@@ -90,7 +91,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.CommandConsole
 
             World world = World.NewWorld;
             WeatherType weatherType;
-            IGTime startTime, endTime;
+            IgTime startTime, endTime;
 
             try
             {
@@ -114,12 +115,12 @@ namespace GUC.Server.Scripts.Sumpfkraut.CommandConsole
                 return;
             }
 
-            if (!IGTime.TryParse(param[1], out startTime))
+            if (!IgTime.TryParse(param[1], out startTime))
             {
                 returnVal["rawText"] += " Couldn't parse startTime.";
                 return;
             }
-            if (!IGTime.TryParse(param[2], out endTime))
+            if (!IgTime.TryParse(param[2], out endTime))
             {
                 returnVal["rawText"] += " Couldn't parse endTime.";
                 return;
@@ -130,7 +131,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.CommandConsole
             //    return;
             //}
 
-            world.ChangeWeather(weatherType, startTime, endTime);
+            world.ChangeIgWeather(weatherType, startTime, endTime);
 
             returnVal["rawText"] = String.Format("Successfully set ingame-weather to type {0}"
                 + " between times {1} and {2}", weatherType, startTime, endTime);

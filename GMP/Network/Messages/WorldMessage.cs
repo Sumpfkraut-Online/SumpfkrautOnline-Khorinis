@@ -13,6 +13,7 @@ namespace GUC.Client.Network.Messages
 {
     static class WorldMessage
     {
+
         public static void ReadVobSpawn(BitStream stream)
         {
             uint ID = stream.mReadUInt();
@@ -158,8 +159,8 @@ namespace GUC.Client.Network.Messages
             int hour = stream.mReadInt();
             int minute = stream.mReadInt();
 
-            oCGame.Game(Program.Process).WorldTimer.SetDay(day);
             oCGame.Game(Program.Process).WorldTimer.SetTime(hour, minute);
+            oCGame.Game(Program.Process).WorldTimer.SetDay(day);
         }
 
         public static void ReadWeatherChange (BitStream stream)
@@ -183,9 +184,6 @@ namespace GUC.Client.Network.Messages
                 // 12:00 == 0f; 24:00 == 1f
                 startTime = (((((float)startHour + 12f) % 24f) * 60f) + ((float)startMinute)) / (24f * 60f);
                 endTime = (((((float)endHour + 12f) % 24f) * 60f) + ((float)endMinute)) / (24f * 60f);
-                //zERROR.GetZErr(Program.Process).Report(2, 'G', 
-                //    ">>>> " + startTime + " " + endTime, 
-                //    0, "class.cs", 0);
             }
 
             oCGame.Game(Program.Process).World.SkyControlerOutdoor.SetWeatherType(weatherType);
@@ -194,4 +192,5 @@ namespace GUC.Client.Network.Messages
         }
 
     }
+
 }

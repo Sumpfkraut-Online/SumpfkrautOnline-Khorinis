@@ -12,243 +12,6 @@ using GUC.Network;
 namespace GUC.Server.WorldObjects
 {
 
-    public struct IGTime
-    {
-        public int day;
-        public int hour;
-        public int minute;
-
-        public IGTime (IGTime igTime)
-            : this (igTime.day, igTime.hour, igTime.minute)
-        { }
-
-        public IGTime (int minute)
-            : this (0, 0, minute)
-        { }
-
-        public IGTime (long totalMinute)
-        {
-            long min, hour, day;
-            min = (Math.Abs(totalMinute) % 60L) * Math.Sign(totalMinute);
-            hour = totalMinute / 60L;
-            day = hour / 24L;
-            hour = (Math.Abs(hour) % 24L) * Math.Sign(hour);
-            this.minute = (int) min;
-            this.hour = (int) hour;
-            this.day = (int) day;
-        }
-
-        public IGTime (int hour, int minute)
-            : this (0, hour, minute)
-        { }
-
-        public IGTime (int day, int hour, int minute)
-        {
-            this.minute = (Math.Abs(minute) % 60) * Math.Sign(minute);
-            this.hour = hour + (minute / 60);
-            this.day = day + ((Math.Abs(hour) % 24) * Math.Sign(hour));
-            this.hour = this.hour % 24;
-        }
-
-
-
-        public static IGTime operator -(IGTime t1)
-        {
-            return new IGTime(-t1.day, -t1.hour, -t1.minute);
-        }
-
-        public static IGTime operator +(IGTime t1, IGTime t2)
-        {
-            IGTime t3 = new IGTime(t1.day + t2.day, t1.hour + t2.hour,
-                t1.minute + t2.minute);
-
-            t3.hour += t3.minute / 60;
-            t3.minute = (Math.Abs(t3.minute) % 60) * Math.Sign(t3.minute);
-            t3.day += t3.hour / 24;
-            t3.hour = (Math.Abs(t3.hour) % 24) * Math.Sign(t3.hour);
-            
-            return t3;
-        }
-
-        public static IGTime operator +(IGTime t1, int min)
-        {
-            IGTime t3 = new IGTime(t1);
-
-            t3.minute += min;
-            t3.hour += t3.minute / 60;
-            t3.minute = (Math.Abs(t3.minute) % 60) * Math.Sign(t3.minute);
-            t3.day += t3.hour / 24;
-            t3.hour = (Math.Abs(t3.hour) % 24) * Math.Sign(t3.hour);
-
-            return t3;
-        }
-
-        public static IGTime operator +(int min, IGTime t1)
-        {
-            return t1 + min;
-        }
-
-        public static IGTime operator -(IGTime t1, IGTime t2)
-        {
-            return t1 + (-t2);
-        }
-
-        public static IGTime operator *(IGTime t1, IGTime t2)
-        {
-            long totalMin = ToMinutes(t1) * ToMinutes(t2);
-
-            return new IGTime(totalMin);
-        }
-
-        public static IGTime operator *(IGTime t1, int min)
-        {
-            long totalMin = ToMinutes(t1) * min;
-
-            return new IGTime(totalMin);
-        }
-
-        public static IGTime operator *(int min, IGTime t1)
-        {
-            return t1 * min;
-        }
-
-        public static IGTime operator /(IGTime t1, IGTime t2)
-        {
-            long totalMin = ToMinutes(t1) / ToMinutes(t2);
-
-            return new IGTime(totalMin);
-        }
-
-        public static IGTime operator /(IGTime t1, int min)
-        {
-            long totalMin = ToMinutes(t1) / min;
-
-            return new IGTime(totalMin);
-        }
-
-        public static IGTime operator /(int min, IGTime t1)
-        {
-            long totalMin = min / ToMinutes(t1);
-
-            return new IGTime(totalMin);
-        }
-
-        public static bool operator >(IGTime t1, IGTime t2)
-        {
-            if (t1.day > t2.day)
-            {
-                return true;
-            }
-            if (t1.hour > t2.hour)
-            {
-                return true;
-            }
-            if (t1.minute > t2.minute)
-            {
-                return true;
-            }
-            return false;
-        }
-
-        public static bool operator <(IGTime t1, IGTime t2)
-        {
-            return t2 > t1;
-        }
-
-        public static bool operator ==(IGTime t1, IGTime t2)
-        {
-            if ((t1.day == t2.day) && (t1.hour == t2.hour) 
-                && (t1.minute == t2.minute))
-            {
-                return true;
-            }
-            return false;
-        }
-
-        public static bool operator !=(IGTime t1, IGTime t2)
-        {
-            return !(t1 == t2);
-        }
-
-        public static bool operator >=(IGTime t1, IGTime t2)
-        {
-            if (t1 == t2)
-            {
-                return true;
-            }
-            return t1 > t2;
-        }
-
-        public static bool operator <=(IGTime t1, IGTime t2)
-        {
-            return t2 >= t1;
-        }
-
-
-
-        public static long ToMinutes (IGTime igTime)
-        {
-            return igTime.minute + ((igTime.hour + (igTime.day * 24L)) * 60L);
-        }
-
-        public override string ToString()
-        {
-            return String.Format("IGTime: day {0} hour {1} minute {2}", 
-                this.day, this.hour, this.minute);
-        }
-
-        public static bool TryParse (String timeString, out IGTime igTime)
-        {
-            igTime = new IGTime();
-
-            String[] timeStringArr;
-            int[] timeIntArr;
-
-            if (timeString == null)
-            {
-                return false;
-            }
-
-            timeStringArr = timeString.Split(':');
-            if ((timeStringArr == null) || (timeStringArr.Length < 1))
-            {
-                return false;
-            }
-
-            timeIntArr = new int[timeStringArr.Length];
-            int tempInt = -1;
-            for (int t = 0; t < timeStringArr.Length; t++)
-            {
-                if(!int.TryParse(timeStringArr[t], out tempInt))
-                {
-                    return false;
-                }
-
-                if (tempInt < 0)
-                {
-                    return false;
-                }
-
-                switch (t)
-                {
-                    case 0:
-                        igTime.day = tempInt;
-                        break;
-                    case 1:
-                        igTime.hour = tempInt;
-                        break;
-                    case 2:
-                        igTime.minute = tempInt;
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            return true;
-        }
-    }
-
     public enum WeatherType : byte
     {
         undefined = 0,
@@ -266,16 +29,16 @@ namespace GUC.Server.WorldObjects
 
         public string MapName { get; protected set; }
 
-        protected IGTime igTime;
-        public IGTime GetIGTime() { return this.igTime; }
+        protected IgTime igTime;
+        public IgTime GetIGTime() { return this.igTime; }
         protected Object lock_IGTime = new Object();
 
         protected WeatherType weatherType;
         public WeatherType GetWeatherType() { return this.weatherType; }
-        protected IGTime weatherStartTime;
-        public IGTime GetWeatherStartTime () { return this.weatherStartTime; }
-        protected IGTime weatherEndTime;
-        public IGTime GetWeatherEndTime () { return this.weatherEndTime; }
+        protected IgTime weatherStartTime;
+        public IgTime GetWeatherStartTime () { return this.weatherStartTime; }
+        protected IgTime weatherEndTime;
+        public IgTime GetWeatherEndTime () { return this.weatherEndTime; }
         protected Object lock_Weather = new Object();
 
         internal Dictionary<int, Dictionary<int, WorldCell>> Cells = new Dictionary<int, Dictionary<int, WorldCell>>();
@@ -300,16 +63,16 @@ namespace GUC.Server.WorldObjects
             //scav.DrawnItem = Item.Fists;
             //scav.Spawn(this);
 
-            igTime = new IGTime();
+            igTime = new IgTime();
             igTime.day = 4;
             igTime.hour = 22;
             igTime.minute = 30;
             weatherType = WeatherType.rain;
-            weatherStartTime = new IGTime();
+            weatherStartTime = new IgTime();
             weatherStartTime.day = 4;
             weatherStartTime.hour = 22;
             weatherStartTime.minute = 30;
-            weatherEndTime = new IGTime();
+            weatherEndTime = new IgTime();
             weatherEndTime.day = 4;
             weatherEndTime.hour = 23;
             weatherEndTime.minute = 30;
@@ -675,23 +438,23 @@ namespace GUC.Server.WorldObjects
             }
         }
 
-        public void ChangeTime (int day, int hour, int minute)
+        public void ChangeIgTime (int day, int hour, int minute)
         {
-            ChangeTime(day, hour, minute, true, true, true);
+            ChangeIgTime(day, hour, minute, true, true, true);
         }
 
-        public void ChangeTime (int day, int hour, int minute, 
+        public void ChangeIgTime (int day, int hour, int minute, 
             bool changeDay, bool changeHour, bool changeMinute)
         {
-            ChangeTime(new IGTime(day, hour, minute), changeDay, changeHour, changeMinute);
+            ChangeIgTime(new IgTime(day, hour, minute), changeDay, changeHour, changeMinute);
         }
 
-        public void ChangeTime (IGTime newIGTime)
+        public void ChangeIgTime (IgTime newIGTime)
         {
-            ChangeTime(newIGTime, true, true, true);
+            ChangeIgTime(newIGTime, true, true, true);
         }
 
-        public void ChangeTime (IGTime newIGTime, bool changeDay, 
+        public void ChangeIgTime (IgTime newIGTime, bool changeDay, 
             bool changeHour, bool changeMinute)
         {
             int changeTotal = 3;
@@ -724,7 +487,7 @@ namespace GUC.Server.WorldObjects
             }
         }
 
-        public void ChangeWeather(WeatherType wt, IGTime startTime, IGTime endTime)
+        public void ChangeIgWeather (WeatherType wt, IgTime startTime, IgTime endTime)
         {
             lock (lock_Weather)
             {
