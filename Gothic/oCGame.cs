@@ -11,7 +11,7 @@ namespace Gothic
     {
         public const int ogame = 0xAB0884;
 
-        public class FuncAddresses
+        public abstract class FuncAddresses
         {
             public const int OpenLoadscreen = 0x6C2690;
             public const int LoadWorld = 0x6C90B0;

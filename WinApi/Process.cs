@@ -4,7 +4,6 @@ using System.Text;
 using WinApi.Kernel;
 using System.Runtime.InteropServices;
 using System.Reflection;
-using System.Windows.Forms;
 
 namespace WinApi
 {
@@ -52,19 +51,19 @@ namespace WinApi
         #region Initialization
 
         static IntPtr Handle = GetThisHandle();
+        static uint ProcessID;
 
         static IntPtr GetThisHandle()
         {
-            uint processID = (uint)System.Diagnostics.Process.GetCurrentProcess().Id;
+            ProcessID = (uint)System.Diagnostics.Process.GetCurrentProcess().Id;
             System.Diagnostics.Process.EnterDebugMode();
-            IntPtr retH = Kernel.Process.OpenProcess((uint)Kernel.Process.ProcessAccess.PROCESS_ALL_ACCESS, false, processID);
+            IntPtr retH = Kernel.Process.OpenProcess((uint)Kernel.Process.ProcessAccess.PROCESS_ALL_ACCESS, false, ProcessID);
             if (retH == IntPtr.Zero)
             {
                 Kernel.Error.GetLastError();
             }
             return retH;
         }
-
         #endregion
 
         #region Memory Methods
@@ -147,7 +146,7 @@ namespace WinApi
 
         public static bool ReadBool(int position)
         {
-            return ReadInt(position) != 0 ? true : false;
+            return ReadInt(position) != 0;
         }
 
         public static int ReadInt(int position)
@@ -453,10 +452,15 @@ namespace WinApi
 
         public static String GetWindowText()
         {
-            int length = WinApi.Kernel.Process.GetWindowTextLength(Handle);
+            int length = Kernel.Process.GetWindowTextLength(Handle);
             StringBuilder sb = new StringBuilder(length + 1);
             Kernel.Process.GetWindowText(Handle, sb, sb.Capacity);
             return sb.ToString();
+        }
+
+        public static bool IsForeground()
+        {
+            return User.Window.GetWindowThreadProcessId(User.Window.GetForegroundWindow()) == ProcessID;
         }
     }
 

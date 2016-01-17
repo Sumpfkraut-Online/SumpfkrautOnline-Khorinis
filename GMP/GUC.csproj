@@ -72,6 +72,12 @@
     <Compile Include="..\Network\Log\Logger.cs">
       <Link>Log\Logger.cs</Link>
     </Compile>
+    <Compile Include="..\Network\Network\PacketReader.cs">
+      <Link>Network\PacketReader.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Network\PacketWriter.cs">
+      <Link>Network\PacketWriter.cs</Link>
+    </Compile>
     <Compile Include="..\Network\Options\BaseOptions.cs">
       <Link>Options\BaseOptions.cs</Link>
     </Compile>
@@ -90,7 +96,123 @@
     <Compile Include="..\Network\Types\Vec3f.cs">
       <Link>Types\Vec3f.cs</Link>
     </Compile>
+    <Compile Include="..\Network\WorldObjects\Collections\InstanceCollection.cs">
+      <Link>WorldObjects\Both\Collections\InstanceCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Collections\InstanceDictionary.cs">
+      <Link>WorldObjects\Both\Collections\InstanceDictionary.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Collections\IVobObj.cs">
+      <Link>WorldObjects\Both\Collections\IVobObj.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Collections\VobCollection.cs">
+      <Link>WorldObjects\Both\Collections\VobCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Collections\VobDictionary.cs">
+      <Link>WorldObjects\Both\Collections\VobDictionary.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Collections\VobObjCollection.cs">
+      <Link>WorldObjects\Both\Collections\VobObjCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Collections\VobObjDictionary.cs">
+      <Link>WorldObjects\Both\Collections\VobObjDictionary.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\ItemInstance.cs">
+      <Link>WorldObjects\Both\Instances\ItemInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\MobContainerInstance.cs">
+      <Link>WorldObjects\Both\Instances\MobContainerInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\MobDoorInstance.cs">
+      <Link>WorldObjects\Both\Instances\MobDoorInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\MobFireInstance.cs">
+      <Link>WorldObjects\Both\Instances\MobFireInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\MobInstance.cs">
+      <Link>WorldObjects\Both\Instances\MobInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\MobInterInstance.cs">
+      <Link>WorldObjects\Both\Instances\MobInterInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\MobLadderInstance.cs">
+      <Link>WorldObjects\Both\Instances\MobLadderInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\MobLockableInstance.cs">
+      <Link>WorldObjects\Both\Instances\MobLockableInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\MobSwitchInstance.cs">
+      <Link>WorldObjects\Both\Instances\MobSwitchInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\MobWheelInstance.cs">
+      <Link>WorldObjects\Both\Instances\MobWheelInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\NPCInstance.cs">
+      <Link>WorldObjects\Both\Instances\NPCInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\VobInstance.cs">
+      <Link>WorldObjects\Both\Instances\VobInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Item.cs">
+      <Link>WorldObjects\Both\Item.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Mob.cs">
+      <Link>WorldObjects\Both\Mob.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\MobContainer.cs">
+      <Link>WorldObjects\Both\MobContainer.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\MobDoor.cs">
+      <Link>WorldObjects\Both\MobDoor.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\MobFire.cs">
+      <Link>WorldObjects\Both\MobFire.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\MobInter.cs">
+      <Link>WorldObjects\Both\MobInter.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\MobLadder.cs">
+      <Link>WorldObjects\Both\MobLadder.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\MobLockable.cs">
+      <Link>WorldObjects\Both\MobLockable.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\MobSwitch.cs">
+      <Link>WorldObjects\Both\MobSwitch.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\MobWheel.cs">
+      <Link>WorldObjects\Both\MobWheel.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\NPC.cs">
+      <Link>WorldObjects\Both\NPC.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Vob.cs">
+      <Link>WorldObjects\Both\Vob.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\World.cs">
+      <Link>WorldObjects\Both\World.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\WorldObject.cs">
+      <Link>WorldObjects\Both\WorldObject.cs</Link>
+    </Compile>
+    <Compile Include="GUI\GUCInventory.cs" />
+    <Compile Include="GUI\GUCTextBox.cs" />
+    <Compile Include="GUI\GUCView.cs" />
+    <Compile Include="GUI\GUCVisual.cs" />
+    <Compile Include="GUI\GUCVisualText.cs" />
+    <Compile Include="GUI\GUCVisualVob.cs" />
+    <Compile Include="GUI\MainMenu\MainMenuButton.cs" />
+    <Compile Include="GUI\MainMenu\MainMenuCharacter.cs" />
+    <Compile Include="GUI\MainMenu\MainMenuCharSlot.cs" />
+    <Compile Include="GUI\MainMenu\MainMenuChoice.cs" />
+    <Compile Include="GUI\MainMenu\MainMenuItem.cs" />
+    <Compile Include="GUI\MainMenu\MainMenuTextBox.cs" />
+    <Compile Include="GUI\MenuRenderer.cs" />
     <Compile Include="Hooks\hParser.cs" />
+    <Compile Include="InputHandler.cs" />
+    <Compile Include="Menus\GUCMenus.cs" />
+    <Compile Include="Menus\MainMenus\GUCMainMenu.cs" />
+    <Compile Include="Network\Client.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -144,6 +266,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Splash.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Network\Messages\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -39,19 +39,46 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Objects\oCItem.cs" />
+    <Compile Include="Objects\Sky\zCSkyControler.cs" />
+    <Compile Include="Objects\Sky\zCSkyControler_Outdoor.cs" />
+    <Compile Include="Objects\Sky\zCSkyLayer.cs" />
+    <Compile Include="Objects\Sky\zCSkyLayerData.cs" />
+    <Compile Include="Objects\Sky\zCSkyState.cs" />
+    <Compile Include="Objects\zCWorld.cs" />
+    <Compile Include="View\zCFont.cs" />
+    <Compile Include="View\zCViewDraw.cs" />
+    <Compile Include="View\zCViewProgressBar.cs" />
+    <Compile Include="View\zCViewStatusBar.cs" />
+    <Compile Include="View\zCViewText.cs" />
+    <Compile Include="Objects\EventManager\zCEventMessage.cs" />
     <Compile Include="Objects\oCNpc.cs" />
+    <Compile Include="Objects\EventManager\zCEventManager.cs" />
     <Compile Include="Objects\zCObject.cs" />
+    <Compile Include="Objects\zCVisual.cs" />
     <Compile Include="Objects\zCVob.cs" />
     <Compile Include="oCGame.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="System\zCInput_Win32.cs" />
+    <Compile Include="Types\zCArray.cs" />
+    <Compile Include="Types\zCList.cs" />
+    <Compile Include="Types\zCListSort.cs" />
+    <Compile Include="Types\zCTree.cs" />
+    <Compile Include="Types\zMat4.cs" />
+    <Compile Include="Types\zPoint3.cs" />
+    <Compile Include="Types\zTBBox3D.cs" />
+    <Compile Include="Types\zVec3.cs" />
+    <Compile Include="Types\zVec4.cs" />
     <Compile Include="zClass.cs" />
     <Compile Include="Types\zColor.cs" />
     <Compile Include="System\zCRenderer.cs" />
     <Compile Include="System\zCSoundSystem.cs" />
-    <Compile Include="zCView.cs" />
+    <Compile Include="View\zCView.cs" />
     <Compile Include="System\zError.cs" />
     <Compile Include="Types\zString.cs" />
+    <Compile Include="zCOption.cs" />
+    <Compile Include="zCOptionEntry.cs" />
+    <Compile Include="zCOptionSection.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WinApi\WinApi.csproj">

@@ -9,7 +9,7 @@ namespace Gothic.Objects
 {
     public class zCObject : zClass
     {
-        public class VarOffsets
+        public abstract class VarOffsets
         {
             public const int vtbl = 0x00,
             refCtr = 0x04,

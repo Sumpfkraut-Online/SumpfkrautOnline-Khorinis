@@ -48,7 +48,7 @@ namespace GUC.Server.Network
         Dictionary<ulong, Client> clientDict;
 
         internal PacketReader pktReader = new PacketReader();
-        internal PacketWriter pktWriter = new PacketWriter(64000);
+        internal PacketWriter pktWriter = new PacketWriter(128000);
 
         /** 
         * Server-class which defines and manages network transfer as well as the game loop.

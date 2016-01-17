@@ -11,6 +11,8 @@ using Gothic;
 using Gothic.Types;
 using Gothic.System;
 using Gothic.Objects;
+using Gothic.View;
+using GUC.Client.Network;
 
 namespace GUC.Client
 {
@@ -41,31 +43,20 @@ namespace GUC.Client
                 SplashScreen.Create();
 
                 Process.Write(new byte[] { 0xE9, 0x8C, 0x00, 0x00, 0x00 }, 0x0044AEDF); // skip visual vdfs init (vdfs32g.exe)
-
+                
                 Hooks.hParser.Init();
 
-                // hook the outgame menu
-                var hi = Process.Hook(Constants.GUCDll, typeof(Program).GetMethod("RunOutgame"), 0x004292D0, 7, 2);
-                Process.Write(new byte[] { 0xC2, 0x04, 0x00, 0x90, 0x90, 0x90, 0x90 }, hi.oldFuncInNewFunc.ToInt32());
+                AddHooks();
 
-                Process.Hook(Constants.GUCDll, typeof(Program).GetMethod("RunIngame"), 0x006C86A0, 7, 0);
-                
-                //Process.Write(new byte[] { 0xC2, 0x04, 0x00 }, 0x00626570); // kick out zCWorld::UnarcTraverseVobs
-                Process.Write((byte)0xC3, 0x006C1F60); //Blocking Call Init Scripts!
-                Process.Write((byte)0xC3, 0x006C1C70); //Blocking Call Startup Scripts!
-                
-                Process.Write((byte)0xC3 , 0x00780D80);//Blocking time!
-
-                // hook hero creating
-                Process.Write(new byte[] { 0xE9, 0xBD, 0x00, 0x00, 0x00 }, 0x006C434B);
-                hi = Process.Hook(Constants.GUCDll, typeof(Program).GetMethod("CreatePlayerVob"), 0x006C440D, 5, 0);
-                Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90 }, hi.oldFuncInNewFunc.ToInt32());
-                Process.Write(new byte[] { 0xEB, 0x67 }, 0x006C4662); //skip instance check
+                Process.SetWindowText("Gothic II - Untold Chapters");
 
                 ClientPaths.CreateFolders(); // Set up folders
                 BaseOptions.Load(ClientPaths.GUCConfig + "guc.xml"); // Load Options
 
                 ScriptManager.StartScripts(ClientPaths.GUCDlls + "ClientScripts.dll"); // Load Scripts
+
+                Network.Client.Startup();
+                Network.Client.Connect("", 0, "");
 
                 while (true)
                 {
@@ -79,11 +70,33 @@ namespace GUC.Client
             return 0;
         }
 
+        static void AddHooks()
+        {
+            // hook outgame loop and kick out the original menus
+            var hi = Process.Hook(Constants.GUCDll, typeof(Program).GetMethod("RunOutgame"), 0x004292D0, 7, 2);
+            Process.Write(new byte[] { 0xC2, 0x04, 0x00, 0x90, 0x90, 0x90, 0x90 }, hi.oldFuncInNewFunc.ToInt32());
+
+            // hook ingame loop
+            Process.Hook(Constants.GUCDll, typeof(Program).GetMethod("RunIngame"), 0x006C86A0, 7, 0);
+
+            //Process.Write(new byte[] { 0xC2, 0x04, 0x00 }, 0x00626570); // kick out zCWorld::UnarcTraverseVobs
+            Process.Write((byte)0xC3, 0x006C1F60); //Blocking Call Init Scripts!
+            Process.Write((byte)0xC3, 0x006C1C70); //Blocking Call Startup Scripts!
+
+            Process.Write((byte)0xC3, 0x00780D80);//Blocking time!
+
+            // hook hero creating
+            Process.Write(new byte[] { 0xE9, 0xBD, 0x00, 0x00, 0x00 }, 0x006C434B);
+            hi = Process.Hook(Constants.GUCDll, typeof(Program).GetMethod("CreatePlayerVob"), 0x006C440D, 5, 0);
+            Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90 }, hi.oldFuncInNewFunc.ToInt32());
+            Process.Write(new byte[] { 0xEB, 0x67 }, 0x006C4662); //skip instance check
+        }
+
         public static Int32 RunIngame(String message)
         {
             try
             {
-                if ((WinApi.User.Input.GetAsyncKeyState(WinApi.User.Enumeration.VirtualKeys.F1) & 0x8001) == 0x8001 || (WinApi.User.Input.GetAsyncKeyState(WinApi.User.Enumeration.VirtualKeys.F1) & 0x8000) == 0x8000)
+                /*if ((WinApi.User.Input.GetAsyncKeyState(WinApi.User.Enumeration.VirtualKeys.F1) & 0x8001) == 0x8001 || (WinApi.User.Input.GetAsyncKeyState(WinApi.User.Enumeration.VirtualKeys.F1) & 0x8000) == 0x8000)
                 {
                     //Process.THISCALL<NullReturnCall>(Process.ReadInt(oCGame.ogame), 0x6C9A50); //oCGame::Compile
 
@@ -107,9 +120,7 @@ namespace GUC.Client
                         int world = Process.ReadInt(Process.ReadInt(oCGame.ogame) + 8);
                         Process.THISCALL<IntArg>(world, 0x624810, vob);
                     }
-                }
-
-                
+                }*/
             }
             catch (Exception e)
             {
@@ -118,6 +129,7 @@ namespace GUC.Client
             return 0;
         }
 
+        static GUI.GUCVisual vis = null;
         static long next = 0;
         public static Int32 RunOutgame(String message)
         {
@@ -141,12 +153,12 @@ namespace GUC.Client
                     zCRenderer.Vid_Blit(1, 0, 0);
                     zCSoundSystem.DoSoundUpdate();
 
-                    next = DateTime.UtcNow.Ticks + 33 * TimeSpan.TicksPerMillisecond;
-                }
+                    if (InputHandler.IsPressed(WinApi.User.Enumeration.VirtualKeys.F1))
+                    {
+                        oCGame.LoadGame(true, "NEWWORLD\\NEWWORLD.ZEN");
+                    }
 
-                if ((WinApi.User.Input.GetAsyncKeyState(WinApi.User.Enumeration.VirtualKeys.F1) & 0x8001) == 0x8001 || (WinApi.User.Input.GetAsyncKeyState(WinApi.User.Enumeration.VirtualKeys.F1) & 0x8000) == 0x8000)
-                {
-                    oCGame.LoadGame(true, "NEWWORLD\\NEWWORLD.ZEN");
+                    next = DateTime.UtcNow.Ticks + 33 * TimeSpan.TicksPerMillisecond;
                 }
             }
             catch (Exception e)

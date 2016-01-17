@@ -9,12 +9,12 @@ namespace Gothic.System
 {
     public class zError
     {
-        public class StaticVarAddresses
+        public abstract class StaticVarAddresses
         {
             public const int zerr = 0x008CDCD0; /// <summary> zERROR </summary>
         }
 
-        public class FuncAddresses
+        public abstract class FuncAddresses
         {
             public const int ReportByLevel = 0x0044C8C0; /// <summary> int zERROR::Report(zERROR_Level,int,zSTRING const &,signed char,uint,int,char *,char *) </summary>
         }

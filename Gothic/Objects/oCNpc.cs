@@ -8,7 +8,7 @@ namespace Gothic.Objects
 {
     public class oCNpc : zCVob
     {
-        new public class VarOffsets : zCVob.VarOffsets
+        new public abstract class VarOffsets : zCVob.VarOffsets
         {
             public const int guild = 0x0230,
             hp_current = 0x1B8,
@@ -97,7 +97,7 @@ namespace Gothic.Objects
             Ghost = 3
         }
 
-        new public class FuncOffsets : zCVob.FuncOffsets
+        new public abstract class FuncAddresses : zCVob.FuncAddresses
         {
             new public const int SetVisual = 0x0072E3F0;
             public const int Disable = 0x00745A20,
@@ -311,14 +311,14 @@ namespace Gothic.Objects
 
         public void SetAdditionalVisuals(zString bodyMesh, int bodyTex, int skinColor, zString headMesh, int headTex, int TeethTex, int Armor)
         {
-            Process.THISCALL<NullReturnCall>(Address, FuncOffsets.SetAdditionalVisuals, bodyMesh, new IntArg(bodyTex), new IntArg(skinColor), headMesh, new IntArg(headTex), new IntArg(TeethTex), new IntArg(Armor));
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetAdditionalVisuals, bodyMesh, new IntArg(bodyTex), new IntArg(skinColor), headMesh, new IntArg(headTex), new IntArg(TeethTex), new IntArg(Armor));
         }
 
         public void SetAdditionalVisuals(String bodyMesh, int bodyTex, int skinColor, String headMesh, int headTex, int TeethTex, int Armor)
         {
             using (zString zBodyMesh = zString.Create(bodyMesh))
             using (zString zHeadMesh = zString.Create(headMesh))
-                Process.THISCALL<NullReturnCall>(Address, FuncOffsets.SetAdditionalVisuals, zBodyMesh, new IntArg(bodyTex), new IntArg(skinColor), zHeadMesh, new IntArg(headTex), new IntArg(TeethTex), new IntArg(Armor));
+                Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetAdditionalVisuals, zBodyMesh, new IntArg(bodyTex), new IntArg(skinColor), zHeadMesh, new IntArg(headTex), new IntArg(TeethTex), new IntArg(Armor));
         }
 
         public int HP

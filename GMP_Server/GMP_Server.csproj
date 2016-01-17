@@ -67,6 +67,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Network\Constants.cs">
+      <Link>Constants.cs</Link>
+    </Compile>
     <Compile Include="..\Network\Enumeration\HumanVisuals.cs">
       <Link>Enumeration\HumanVisuals.cs</Link>
     </Compile>
@@ -82,17 +85,23 @@
     <Compile Include="..\Network\Enumeration\VobTypes.cs">
       <Link>Enumeration\VobTypes.cs</Link>
     </Compile>
+    <Compile Include="..\Network\Log\Logger.cs">
+      <Link>Log\Logger.cs</Link>
+    </Compile>
     <Compile Include="..\Network\Network\PacketReader.cs">
       <Link>Network\PacketReader.cs</Link>
     </Compile>
     <Compile Include="..\Network\Network\PacketWriter.cs">
       <Link>Network\PacketWriter.cs</Link>
     </Compile>
-    <Compile Include="..\Network\Options\Constants.cs">
-      <Link>Options\Constants.cs</Link>
+    <Compile Include="..\Network\Options\BaseOptions.cs">
+      <Link>Options\BaseOptions.cs</Link>
     </Compile>
-    <Compile Include="..\Network\Options\ServerOptions.cs">
-      <Link>Options\ServerOptions.cs</Link>
+    <Compile Include="..\Network\Scripting\ScriptManager.cs">
+      <Link>Scripting\ScriptManager.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Scripting\Timer.cs">
+      <Link>Scripting\Timer.cs</Link>
     </Compile>
     <Compile Include="..\Network\Types\ColorRGBA.cs">
       <Link>Types\ColorRGBA.cs</Link>
@@ -103,7 +112,6 @@
     <Compile Include="..\Network\Types\Vec3f.cs">
       <Link>Types\Vec3f.cs</Link>
     </Compile>
-    <Compile Include="Interface\Trade.cs" />
     <Compile Include="Network\Client.cs" />
     <Compile Include="Network\NPCCell.cs" />
     <Compile Include="Network\Messages\TradeMessage.cs" />
@@ -111,10 +119,7 @@
     <Compile Include="Network\Messages\InventoryMessage.cs" />
     <Compile Include="Network\Messages\NPCMessage.cs" />
     <Compile Include="Network\Messages\VobMessage.cs" />
-    <Compile Include="Scripting\Listener\IServerStartup.cs" />
-    <Compile Include="Scripting\ScriptManager.cs" />
     <Compile Include="Network\WorldCell.cs" />
-    <Compile Include="Scripting\Timer.cs" />
     <Compile Include="TCPStatus.cs" />
     <Compile Include="WorldObjects\AbstractCtrlVob.cs" />
     <Compile Include="WorldObjects\AbstractDropVob.cs" />
@@ -153,7 +158,6 @@
     <Compile Include="WorldObjects\World.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Log\Logger.cs" />
     <Compile Include="Network\Server.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -193,6 +197,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -136,6 +136,24 @@ namespace GUC.Types
             return !(a == b);
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj is Vec2i)
+            {
+                return this == (Vec2i)obj;
+            }
+            return false;
+        }
         #endregion
+
+        public override int GetHashCode()
+        {
+            return (new int[2] { this.X, this.Y }).GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return String.Format("Vec2i({0} / {1})", this.X, this.Y);
+        }
     }
 }

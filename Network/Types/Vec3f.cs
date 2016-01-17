@@ -198,6 +198,20 @@ namespace GUC.Types
             return !(a == b);
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj is Vec3f)
+            {
+                return this == (Vec3f)obj;
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return (new float[3] { this.X, this.Y, this.Z }).GetHashCode();
+        }
+
         #endregion
     }
 }

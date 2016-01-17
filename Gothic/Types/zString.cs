@@ -38,13 +38,13 @@ namespace Gothic.Types
 
         #region Gothic Methods
 
-        public class FuncAddresses
+        public abstract class FuncAddresses
         {
             public const int Insert = 0x0046B400; /// <summary> zString::Insert(uint, zSTRING const &) </summary>
             public const int Clear = 0x0059D010; /// <summary> zSTRING::Clear(void) </summary>
 
             public const int OperatorAssignZString = 0x0059CEB0; /// <summary> zSTRING::operator=(zSTRING const &) </summary>
-            public const int OperatorAssignConstChar = 0x0059CEB0; /// <summary> zSTRING::operator=(char const &) </summary>
+            public const int OperatorAssignConstChar = 0x004CFAF0; /// <summary> zSTRING::operator=(char const &) </summary>
 
             public const int ConstructorConstChar = 0x004010C0; /// <summary> zSTRING::zSTRING(char const *) </summary>
             public const int Destructor = 0x00401160; /// <summary> zSTRING::~zSTRING(void) </summary>
@@ -69,7 +69,7 @@ namespace Gothic.Types
 
         #region Gothic Fields
 
-        public struct VarOffsets
+        public abstract class VarOffsets
         {
             public const int VTBL = 0;
             public const int Allocater = 4;
@@ -114,7 +114,7 @@ namespace Gothic.Types
         {
             IntPtr stringArr = Process.Alloc(ByteSize);
 
-            byte[] arr = value == null ? new byte[0] : Encoding.UTF8.GetBytes(value);
+            byte[] arr = value == null ? new byte[0] : Encoding.Default.GetBytes(value);
             IntPtr charArr = Process.Alloc((uint)arr.Length + 1);
 
             if (arr.Length > 0)
@@ -131,7 +131,7 @@ namespace Gothic.Types
 
         public void Set(String str)
         {
-            byte[] arr = str == null ? new byte[0] : Encoding.UTF8.GetBytes(str);
+            byte[] arr = str == null ? new byte[0] : Encoding.Default.GetBytes(str);
             IntPtr charArr = Process.Alloc((uint)arr.Length + 1);
 
             if (arr.Length > 0)
@@ -147,7 +147,7 @@ namespace Gothic.Types
         public override string ToString()
         {
             byte[] arr = Process.ReadBytes(this.PTR, (uint)this.Length);
-            return Encoding.UTF8.GetString(arr);
+            return Encoding.Default.GetString(arr);
         }
     }
 }

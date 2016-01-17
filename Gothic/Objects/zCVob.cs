@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using WinApi;
 using Gothic.Types;
+using Gothic.Objects.EventManager;
 
 namespace Gothic.Objects
 {
     public class zCVob : zCObject
     {
-        new public class VarOffsets : zCObject.VarOffsets
+        new public abstract class VarOffsets : zCObject.VarOffsets
         {
             public const int globalVobTreeNode = 0x0024,
             lastTimeDrawn = 0x0028,
@@ -43,7 +44,7 @@ namespace Gothic.Objects
             CollisionObject = 0x011C;
         }
 
-        public class FuncOffsets
+        public abstract class FuncAddresses
         {
             public const int RemoveVobFromWorld = 0x00601C40,
             GetEM = 0x005FFE10,
@@ -98,6 +99,12 @@ namespace Gothic.Objects
             lightColorDynDirty = 1 << 10;
         }
 
+        public int BitField1
+        {
+            get { return Process.ReadInt(Address + VarOffsets.bitfield); }
+            set { Process.Write(value, Address + VarOffsets.bitfield); }
+        }
+
         public const int ByteSize = 0x120;
 
         public zCVob(int address)
@@ -129,56 +136,61 @@ namespace Gothic.Objects
 
         public void SetVisual(zString str)
         {
-            Process.THISCALL<NullReturnCall>(Address, FuncOffsets.SetVisual, str);
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetVisual, str);
         }
 
-        /*public Matrix4 TrafoObjToWorld
+        public zMat4 TrafoObjToWorld
         {
-            get { return Matrix4.read(Process, Address + (int)Offsets.trafoObjToWorld); }
+            get { return new zMat4(Address + VarOffsets.trafoObjToWorld); }
+        }
+
+        public float[] Position
+        {
+            get { return TrafoObjToWorld.Position; }
+            set { TrafoObjToWorld.Position = value; }
+        }
+
+        public float[] Direction
+        {
+            get { return TrafoObjToWorld.Direction; }
+            set { TrafoObjToWorld.Direction = value; }
         }
 
         public zTBBox3D BBox3D
         {
-            get { return new zTBBox3D(Process, Address + (int)Offsets.bbox3D); }
+            get { return new zTBBox3D(Address + VarOffsets.bbox3D); }
         }
 
         public zCVisual Visual
         {
-            get { return new zCVisual(Process, Process.ReadInt(Address + (int)Offsets.visual)); }
-            set { Process.Write(value.Address, Address + (int)Offsets.visual); }
+            get { return new zCVisual(Process.ReadInt(Address + VarOffsets.visual)); }
+            set { Process.Write(value.Address, Address + VarOffsets.visual); }
         }
 
         public zCEventManager EventManager
         {
-            get { return new zCEventManager(Process, Process.ReadInt(Address + (int)Offsets.eventManager)); }
-            set { Process.Write(value.Address, Address + (int)Offsets.eventManager); }
+            get { return new zCEventManager(Process.ReadInt(Address + VarOffsets.eventManager)); }
+            set { Process.Write(value.Address, Address + VarOffsets.eventManager); }
         }
-
-        public int BitField1
-        {
-            get { return Process.ReadInt(Address + (int)Offsets.bitfield); }
-            set { Process.Write(value, Address + (int)Offsets.bitfield); }
-        }
-
 
         public void BeginMovement()
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.BeginMovement, new CallValue[] { });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.BeginMovement);
         }
 
         public void ResetRotationsLocal()
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.ResetRotationsLocal, new CallValue[] { });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.ResetRotationsLocal);
         }
 
         public void ResetRotationsWorld()
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.ResetRotationsWorld, new CallValue[] { });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.ResetRotationsWorld);
         }
 
         public void ResetXZRotationsWorld()
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.ResetXZRotationsWorld, new CallValue[] { });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.ResetXZRotationsWorld);
         }
 
         /// <summary>
@@ -187,110 +199,63 @@ namespace Gothic.Objects
         /// <param name="angle"></param>
         public void RotateLocalY(float angle)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.RotateLocalY, new CallValue[] { new FloatArg(angle) });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.RotateLocalY, new FloatArg(angle));
         }
 
         public void RotateWorldY(float angle)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.RotateWorldY, new CallValue[] { new FloatArg(angle) });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.RotateWorldY, new FloatArg(angle));
         }
 
         public void RotateWorldX(float angle)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.RotateWorldX, new CallValue[] { new FloatArg(angle) });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.RotateWorldX, new FloatArg(angle));
         }
 
         public void RotateWorldZ(float angle)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.RotateWorldZ, new CallValue[] { new FloatArg(angle) });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.RotateWorldZ, new FloatArg(angle));
         }
 
         public void SetHeadingAtLocal(zVec3 target)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetHeadingAtLocal, new CallValue[] { target });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetHeadingAtLocal, target);
         }
 
         public void SetHeadingAtWorld(zVec3 target)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetHeadingAtWorld, new CallValue[] { target });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetHeadingAtWorld, target);
         }
-
-
 
         public void RemoveVobFromWorld()
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.RemoveVobFromWorld, new CallValue[] { });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.RemoveVobFromWorld);
         }
-
-
 
         public zString GetSectorNameVobIsIn()
         {
-            return Process.THISCALL<zString>((uint)Address, (uint)FuncOffsets.GetSectorNameVobIsIn, new CallValue[] { });
+            return Process.THISCALL<zString>(Address, FuncAddresses.GetSectorNameVobIsIn);
         }
 
         public zCEventManager GetEM(int x)
         {
-            return Process.FASTCALL<zCEventManager>((uint)Address, (uint)x, (uint)FuncOffsets.GetEM, new CallValue[] { });
-        }
-
-        public zVec3 GetPosition()
-        {
-            Matrix4 traf = this.TrafoObjToWorld;
-            zVec3 pos = zVec3.Create(Process);
-            pos.X = Process.ReadFloat(traf.Address + 3 * 4);
-            pos.Y = Process.ReadFloat(traf.Address + 7 * 4);
-            pos.Z = Process.ReadFloat(traf.Address + 11 * 4);
-            return pos;
-        }
-
-        public float[] GetPositionArray()
-        {
-            float[] posArray = new float[3];
-
-            Matrix4 traf = this.TrafoObjToWorld;
-
-            posArray[0] = Process.ReadFloat(traf.Address + 3 * 4);
-            posArray[1] = Process.ReadFloat(traf.Address + 7 * 4);
-            posArray[2] = Process.ReadFloat(traf.Address + 11 * 4);
-            return posArray;
+            return Process.FASTCALL<zCEventManager>(Address, x, FuncAddresses.GetEM);
         }
 
         public void SetPositionWorld(float[] pos)
         {
-            zVec3 p = zVec3.Create(Process);
-            p.X = pos[0];
-            p.Y = pos[1];
-            p.Z = pos[2];
-
-            SetPositionWorld(p);
-
-            p.Dispose();
+            using (zVec3 p = zVec3.Create(pos[0], pos[1], pos[2]))
+                SetPositionWorld(p);
         }
         public void SetPositionWorld(zVec3 pos)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetPositionWorld, new CallValue[] { pos });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetPositionWorld, pos);
         }
 
-        public void SetAI(zCAIBase ai)
+        /*public void SetAI(zCAIBase ai)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetAI, new CallValue[] { ai });
-        }
-
-
-        public void setShowVisual(bool b)
-        {
-            if (!b)
-                BitField1 &= ~(int)BitFlag0.showVisual;
-            else
-                BitField1 |= (int)BitFlag0.showVisual;
-        }
-
-        public bool getShowVisual()
-        {
-            return ((BitField1 & (int)BitFlag0.showVisual) == (int)BitFlag0.showVisual);
-        }
-        */
+            Process.THISCALL<NullReturnCall>(Address, FuncOffsets.SetAI, ai);
+        }*/
 
         public override string ToString()
         {

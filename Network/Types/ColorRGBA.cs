@@ -7,6 +7,13 @@ namespace GUC.Types
 {
     public struct ColorRGBA
     {
+        public readonly static ColorRGBA White = new ColorRGBA(255, 255, 255, 255);
+        public readonly static ColorRGBA Black = new ColorRGBA(0, 0, 0, 255);
+        public readonly static ColorRGBA Red = new ColorRGBA(255, 0, 0, 255);
+        public readonly static ColorRGBA Green = new ColorRGBA(0, 255, 0, 255);
+        public readonly static ColorRGBA Blue = new ColorRGBA(0, 0, 255, 255);
+        public readonly static ColorRGBA Grey = new ColorRGBA(155, 155, 155, 255);
+
         public byte R;
         public byte G;
         public byte B;
@@ -100,11 +107,33 @@ namespace GUC.Types
             return new ColorRGBA(data);
         }
 
-        public static ColorRGBA White { get { return new ColorRGBA(255, 255, 255, 255); } }
-        public static ColorRGBA Black { get { return new ColorRGBA(0, 0, 0, 255); } }
-        public static ColorRGBA Red { get { return new ColorRGBA(255, 0, 0, 255); } }
-        public static ColorRGBA Green { get { return new ColorRGBA(0, 255, 0, 255); } }
-        public static ColorRGBA Blue { get { return new ColorRGBA(0, 0, 255, 255); } }
-        public static ColorRGBA Grey { get { return new ColorRGBA(155, 155, 155, 255); } }
+        public static bool operator ==(ColorRGBA a, ColorRGBA b)
+        {
+            return a.R == b.R && a.G == b.G && a.B == b.B && a.A == b.A;
+        }
+
+        public static bool operator !=(ColorRGBA a, ColorRGBA b)
+        {
+            return !(a == b);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is ColorRGBA)
+            {
+                return this == (ColorRGBA)obj;
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return (new byte[4] { this.R, this.G, this.B, this.A }).GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return String.Format("ColorRGBA({0} / {1} / {2} / {3})", this.R, this.G, this.B, this.A);
+        }
     }
 }

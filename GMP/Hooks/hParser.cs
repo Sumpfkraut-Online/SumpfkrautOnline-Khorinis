@@ -58,7 +58,7 @@ namespace GUC.Client.Hooks
                 {
                     UnblockLoadDat();
                 }
-                Logger.LogWarning("LoadDat: '{0}', blocked: {1}", str, _loadDatBlocked);
+                Logger.Log("LoadDat: '{0}', blocked: {1}", str, _loadDatBlocked);
             }
             catch (Exception ex)
             {
@@ -74,7 +74,7 @@ namespace GUC.Client.Hooks
             {
                 int parameterAddress = Convert.ToInt32(message);
                 zString str = new zString(Process.ReadInt(parameterAddress + 4));
-                Logger.LogWarning("LoadParserFile: " + str);
+                Logger.Log("LoadParserFile: " + str);
 
                 Process.THISCALL<NullReturnCall>(0xAB40C0, 0x00793100); //parser.reset
                 Process.THISCALL<NullReturnCall>(Process.ReadInt(Gothic.oCGame.ogame), 0x006D4780, new IntArg(0xAB40C0)); //Define_ulfi_externals
@@ -89,12 +89,11 @@ namespace GUC.Client.Hooks
                 using (zString z = zString.Create("C_ITEM"))
                     Process.THISCALL<NullReturnCall>(0xAB40C0, 0x00794730, z, new IntArg(0x120)); // parser.AddClassOffset
                 
-                zString mainfile = new zString(Process.ReadInt(0xAB40C0 + 8308));
-                mainfile.Set(srcFile);
+                zString mainfile = new zString(0xAB40C0 + 0x2074);
+                    mainfile.Set(srcFile);
 
                 Process.THISCALL<NullReturnCall>(0xAB40C0, 0x007900E0); //parser.createPCode
                 Process.THISCALL<NullReturnCall>(0xAB40C0, 0x0078E730); //parser.error
-                
             }
             catch (Exception ex)
             {
@@ -107,8 +106,8 @@ namespace GUC.Client.Hooks
         static void initDefaultScripts()
         {
             String[] arr = new String[] { "GUC.Client.Resources.Constants.d", "GUC.Client.Resources.Classes.d", "GUC.Client.Resources.AI_Constants.d",
-                "GUC.Client.Resources.BodyStates.d", "GUC.Client.Resources.Focus.d"/*, "GUC.Client.Resources.Species.d", "GUC.Client.Resources.NPC_Default.d",
-                "GUC.Client.Resources.PC_Hero.d"*/ };
+                "GUC.Client.Resources.BodyStates.d", "GUC.Client.Resources.Focus.d", "GUC.Client.Resources.Species.d", "GUC.Client.Resources.NPC_Default.d",
+                "GUC.Client.Resources.PC_Hero.d" };
 
             zString str = null;
             String fileList = "";

@@ -5,7 +5,7 @@ using System.Text;
 using WinApi;
 using Gothic.Types;
 
-namespace Gothic
+namespace Gothic.View
 {
     public class zCView : zClass, IDisposable
     {
@@ -16,7 +16,7 @@ namespace Gothic
             VIEW_ITEM
         }
 
-        public class VarOffsets
+        public abstract class VarOffsets
         {
             public const int m_bFillZ = 8;
             public const int next = 12;
@@ -24,7 +24,7 @@ namespace Gothic
             public const int font = 0x64;
         }
 
-        public class FuncAddresses
+        public abstract class FuncAddresses
         {
             public const int zView = 0x007A5700;
             public const int zView_noParam = 0x007A5640;
@@ -52,7 +52,7 @@ namespace Gothic
             public const int Blit = 0x007A63C0;
         }
 
-        public enum HookSizes
+        /*public enum HookSizes
         {
             CreateText_3 = 7,
             PrintTimedCXY = 6,
@@ -62,7 +62,7 @@ namespace Gothic
             SetPos = 5,
             Move = 5,
             DrawItems = 5
-        }
+        }*/
 
         public const int ByteSize = 0x100;
 
@@ -109,16 +109,16 @@ namespace Gothic
             get { return new zCView(Process.ReadInt(Address + VarOffsets.next)); }
         }
 
-       /* public zCFont Font
+        public zCFont Font
         {
-            get { return new zCFont(Process, Process.ReadInt(Address + (int)Offsets.font)); }
-            set { Process.Write(value.Address, Address + (int)Offsets.font); }
+            get { return new zCFont(Process.ReadInt(Address + VarOffsets.font)); }
+            set { Process.Write(value.Address, Address + VarOffsets.font); }
         }
 
         public zCList<zCViewText> TextLines
         {
-            get { return new zCList<zCViewText>(Process, Address + (int)Offsets.text_lines); }
-        }*/
+            get { return new zCList<zCViewText>(Address + VarOffsets.text_lines); }
+        }
 
         public static zCView GetScreen()
         {
@@ -225,10 +225,10 @@ namespace Gothic
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetFont_Str, font);
         }
 
-        /*public void SetColor(zColor color)
+        public void SetColor(zColor color)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetColor, new CallValue[] { color });
-        }*/
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetColor, color);
+        }
 
         public void InsertItem(zCView view, int stayonTop)
         {
@@ -260,19 +260,17 @@ namespace Gothic
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.Move, new IntArg(x), new IntArg(y));
         }
 
-        /*public void PrintTimedCXY(String str, float time, byte r, byte g, byte b, byte a)
+        public void PrintTimedCXY(String str, float time, byte r, byte g, byte b, byte a)
         {
-            zColor colr = zColor.Create(Process, r, g, b, a);
-            zString zstr = zString.Create(Process, str);
-            PrintTimedCXY(zstr, time, colr);
-            colr.Dispose();
-            zstr.Dispose();
+            using (zColor color = zColor.Create(r, g, b, a))
+            using (zString zstr = zString.Create(str))
+                PrintTimedCXY(zstr, time, color);
         }
 
         public void PrintTimedCXY(zString str, float time, zColor color)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.PrintTimedCXY, new CallValue[] { str, new IntArg((int)time), color });
-        }*/
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.PrintTimedCXY, str, new IntArg((int)time), color);
+        }
 
         /// <summary>
         /// The PrintTimedCXY_TV-function does not clear eax so even if it does not officially return a zCViewText it should do it.
@@ -281,10 +279,10 @@ namespace Gothic
         /// <param name="time"></param>
         /// <param name="color"></param>
         /// <returns></returns>
-        /*public zCViewText PrintTimedCXY_TV(zString str, float time, zColor color)
+        public zCViewText PrintTimedCXY_TV(zString str, float time, zColor color)
         {
-            return Process.THISCALL<zCViewText>((uint)Address, (uint)FuncOffsets.PrintTimedCXY, new CallValue[] { str, new IntArg((int)time), color });
-        }*/
+            return Process.THISCALL<zCViewText>(Address, FuncAddresses.PrintTimedCXY, str, new FloatArg(time), color);
+        }
 
         public void Open()
         {
@@ -306,12 +304,12 @@ namespace Gothic
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.DrawItems);
         }
 
-        /*public zCViewText CreateText(int x, int y, zString text)
+        public zCViewText CreateText(int x, int y, zString text)
         {
             return Process.THISCALL<zCViewText>(Address, FuncAddresses.CreateText_3, new IntArg(x), new IntArg(y), text);
-        }*/
+        }
 
-        /*public static void Printwin(string text)
+        public static void Printwin(string text)
         {
             using (zString z = zString.Create(text))
             {
@@ -321,8 +319,8 @@ namespace Gothic
 
         public static void Printwin(zString text)
         {
-            int textViewAddr = Process.THISCALL<IntArg>(oCGame.Game(Process).Address, 0x6C2C70, null);
+            int textViewAddr = Process.THISCALL<IntArg>(Process.ReadInt(oCGame.ogame), 0x6C2C70);
             Process.THISCALL<NullReturnCall>(textViewAddr, 0x7AA8D0, text);
-        }*/
+        }
     }
 }

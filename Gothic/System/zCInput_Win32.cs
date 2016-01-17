@@ -12,7 +12,7 @@ namespace Gothic.System
 
         public const int zinput = 0x008D1650;
 
-        public class FuncAddresses
+        public abstract class FuncAddresses
         {
             /// <summary>
             /// public: virtual void __thiscall zCInput_Win32::ProcessInputEvents(void)
