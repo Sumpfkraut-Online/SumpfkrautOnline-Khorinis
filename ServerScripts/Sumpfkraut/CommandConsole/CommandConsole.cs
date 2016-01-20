@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 
 namespace GUC.Server.Scripts.Sumpfkraut.CommandConsole
 {
-    public class CommandConsole : ScriptObject
+    public class CommandConsole : GUC.Utilities.ExtendedObject
     {
 
         new public static readonly String _staticName = "CommandConsole (static)";

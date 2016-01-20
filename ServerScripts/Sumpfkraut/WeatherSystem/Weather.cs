@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using GUC.Types;
 using GUC.Server.WorldObjects;
+using GUC.Utilities;
 using GUC.Server.Scripts.Sumpfkraut.Utilities.Threading;
 //using GUC.Server.Scripting.Objects.World.WeatherType;
 
@@ -20,9 +21,9 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
         keepEnd,
     }
 
-    public class Weather : AbstractRunnable
+    public class Weather : GUC.Utilities.Threading.AbstractRunnable
     {
-
+        
         new protected static readonly string _staticName = "Weather (static)";
 
         public List<WeatherState> weatherStateQueue; // queue of (future) weather-states

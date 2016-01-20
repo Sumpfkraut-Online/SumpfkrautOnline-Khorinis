@@ -13,7 +13,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
     /**
      *   Class which is used for inventory-manipulation (e.g. for transfering items in a trade).
      */
-    public class InventoryVobHandler : ScriptObject
+    public class InventoryVobHandler : GUC.Utilities.ExtendedObject
     {
 
         new public static readonly String _staticName = "InventoryVobHandler (static)";

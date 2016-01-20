@@ -91,6 +91,15 @@
     <Compile Include="..\Network\Types\Vec3f.cs">
       <Link>Types\Vec3f.cs</Link>
     </Compile>
+    <Compile Include="..\Network\Utilities\ExtendedObject.cs">
+      <Link>Utilities\ExtendedObject.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Utilities\Threading\AbstractRunnable.cs">
+      <Link>Utilities\Threading\AbstractRunnable.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Utilities\Threading\Runnable.cs">
+      <Link>Utilities\Threading\Runnable.cs</Link>
+    </Compile>
     <Compile Include="GUI\GUCInventory.cs" />
     <Compile Include="GUI\GUCTextBox.cs" />
     <Compile Include="GUI\GUCView.cs" />
@@ -136,6 +145,7 @@
     <Compile Include="Network\Messages\VobMessage.cs" />
     <Compile Include="Network\Messages\WorldMessage.cs" />
     <Compile Include="States\AbstractState.cs" />
+    <Compile Include="Utilities\ExtendedObject.Client.cs" />
     <Compile Include="WorldObjects\AbstractInstance.cs" />
     <Compile Include="WorldObjects\InstanceManager.cs" />
     <Compile Include="WorldObjects\Item.cs" />

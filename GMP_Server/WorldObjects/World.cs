@@ -31,6 +31,8 @@ namespace GUC.Server.WorldObjects
 
         protected IgTime igTime;
         public IgTime GetIGTime() { return this.igTime; }
+        protected float igTimeRate;
+        public float GetIgTimeRate () { return this.igTimeRate; }
         protected Object lock_IGTime = new Object();
 
         protected WeatherType weatherType;
@@ -63,10 +65,9 @@ namespace GUC.Server.WorldObjects
             //scav.DrawnItem = Item.Fists;
             //scav.Spawn(this);
 
-            igTime = new IgTime();
-            igTime.day = 4;
-            igTime.hour = 22;
-            igTime.minute = 30;
+            igTime = new IgTime(1, 9, 0);
+            igTimeRate = 4f;
+
             weatherType = WeatherType.rain;
             weatherStartTime = new IgTime();
             weatherStartTime.day = 4;
@@ -438,39 +439,12 @@ namespace GUC.Server.WorldObjects
             }
         }
 
-        public void ChangeIgTime (int day, int hour, int minute)
+        public void ChangeIgTime (IgTime newIGTime, float igTimeRate)
         {
-            ChangeIgTime(day, hour, minute, true, true, true);
-        }
-
-        public void ChangeIgTime (int day, int hour, int minute, 
-            bool changeDay, bool changeHour, bool changeMinute)
-        {
-            ChangeIgTime(new IgTime(day, hour, minute), changeDay, changeHour, changeMinute);
-        }
-
-        public void ChangeIgTime (IgTime newIGTime)
-        {
-            ChangeIgTime(newIGTime, true, true, true);
-        }
-
-        public void ChangeIgTime (IgTime newIGTime, bool changeDay, 
-            bool changeHour, bool changeMinute)
-        {
-            int changeTotal = 3;
-            if (!changeDay) { newIGTime.day = -1; changeTotal--; }
-            if (!changeHour) { newIGTime.hour = -1; changeTotal--; }
-            if (!changeMinute) { newIGTime.minute = -1; changeTotal--; }
-
-            if (changeTotal < 1)
-            {
-                // nothing to change means nothing worth sending network messages
-                return;
-            }
-
             lock (lock_IGTime)
             {
                 this.igTime = newIGTime;
+                this.igTimeRate = igTimeRate;
 
                 foreach (KeyValuePair<uint, NPC> keyValPair in NewWorld.PlayerDict)
                 {
@@ -480,6 +454,7 @@ namespace GUC.Server.WorldObjects
                     stream.mWrite(this.igTime.day);
                     stream.mWrite(this.igTime.hour);
                     stream.mWrite(this.igTime.minute);
+                    stream.mWrite(this.igTimeRate);
 
                     Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY,
                         PacketReliability.RELIABLE_ORDERED, 'I', client.guid, false);

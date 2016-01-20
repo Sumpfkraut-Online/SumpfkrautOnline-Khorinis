@@ -57,7 +57,7 @@ namespace GUC.Server
 
         static void RunServer()
         {
-            const long nextInfoUpdateTime = 10 * 1000 * TimeSpan.TicksPerMillisecond;
+            const long nextInfoUpdateTime = 30 * 1000 * TimeSpan.TicksPerMillisecond;
             long nextInfoUpdates = DateTime.UtcNow.Ticks + nextInfoUpdateTime;
 
             long tickAverage = 0;

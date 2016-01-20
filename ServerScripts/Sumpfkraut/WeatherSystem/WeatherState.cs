@@ -6,7 +6,7 @@ using GUC.Server.WorldObjects;
 
 namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
 {
-    public class WeatherState : ScriptObject
+    public class WeatherState : GUC.Utilities.ExtendedObject
     {
 
         new protected static readonly string _staticName = "WeatherState (static)";

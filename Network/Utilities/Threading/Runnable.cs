@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 
-namespace GUC.Server.Scripts.Sumpfkraut.Utilities.Threading
+namespace GUC.Utilities.Threading
 {
-    public class Runnable : GUC.Utilities.Threading.AbstractRunnable
+    public class Runnable : AbstractRunnable
     {
 
         new public static readonly string _staticName = "Runnable (static)"; 

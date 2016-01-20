@@ -389,13 +389,6 @@ namespace GUC.Server.Scripts
             //IGTime.TryParse("0:10:3", out t);
             //Logger.log(t);
 
-
-
-
-            Sumpfkraut.Web.WS.WSServer websocketTest = new Sumpfkraut.Web.WS.WSServer ();
-            websocketTest.Init();
-            websocketTest.Start();
-
             //String s1 = "12.1213.3213.12121:111";
             //Logger.print(s1.GetHashCode());
             //Logger.print(s1.GetHashCode());
@@ -404,7 +397,54 @@ namespace GUC.Server.Scripts
             //Logger.print(Guid.NewGuid().ToString("N"));
             //Logger.print(Guid.NewGuid().ToString("N"));
             //Logger.print(Guid.NewGuid().ToString("N"));
-            
+
+            //Utilities.TestObject myObj = new Utilities.TestObject();
+            //myObj.Print("Print");
+            //myObj.MakeLog("MakeLog");
+            //myObj.MakeLogWarning("MakeLogWarning");
+            //myObj.MakeLogError("MakeLogError");
+
+
+            //GUC.Utilities.Threading.TestRun testRun = new GUC.Utilities.Threading.TestRun(true,
+            //    new TimeSpan(0, 0, 1), false);
+            //testRun.Suspend();
+            //testRun.Resume();
+            //testRun.Reset();
+
+            //int h = 25;
+            //int d = 1 + ((Math.Abs(h) / 24) * Math.Sign(h));
+            //Logger.print(d);
+
+            //int r = (int)Math.Round(((double)(-30) / 60), MidpointRounding.AwayFromZero);
+            //Logger.print(r);
+
+            //Logger.print(Math.Round(-0.4, MidpointRounding.AwayFromZero));
+            //Logger.print(Math.Floor(-0.9));
+            //Logger.print((int) ((double) -70 / 60));
+            //Logger.print(4 / 3);
+
+
+
+            //Types.IgTime igTime1;
+            ////igTime1 = new Types.IgTime(1, -22, -30);
+            //igTime1 = new Types.IgTime(1, 0, 30);
+            ////Logger.print(igTime1);
+            ////Logger.print(-igTime1);
+            ////Logger.print(new Types.IgTime(0, 0, 0) - igTime1);
+            //Logger.print(igTime1 - 91);
+            //Logger.print(new Types.IgTime(1, 0, -31));
+            ////if (Types.IgTime.TryParse("1:22:-30", out igTime1))
+            ////{
+            ////    Logger.print(igTime1);
+            ////}
+
+            //Logger.print(new Types.IgTime(1, 25, 0));
+
+
+
+            Sumpfkraut.Web.WS.WSServer websocketTest = new Sumpfkraut.Web.WS.WSServer();
+            websocketTest.Init();
+            websocketTest.Start();
 
 
             CommandConsole cmdConsole = new CommandConsole();

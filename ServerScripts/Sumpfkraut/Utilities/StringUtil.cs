@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GUC.Server.Scripts.Sumpfkraut.Utilities
 {
-    public class StringUtil : ScriptObject
+    public class StringUtil : GUC.Utilities.ExtendedObject
     {
 
         new public static readonly string _staticName = "StringUtil (static)"; 

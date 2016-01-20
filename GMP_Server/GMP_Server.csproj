@@ -112,6 +112,15 @@
     <Compile Include="..\Network\Types\Vec3f.cs">
       <Link>Types\Vec3f.cs</Link>
     </Compile>
+    <Compile Include="..\Network\Utilities\ExtendedObject.cs">
+      <Link>Utilities\ExtendedObject.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Utilities\Threading\AbstractRunnable.cs">
+      <Link>Utilities\Threading\AbstractRunnable.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Utilities\Threading\Runnable.cs">
+      <Link>Utilities\Threading\Runnable.cs</Link>
+    </Compile>
     <Compile Include="Interface\Trade.cs" />
     <Compile Include="Network\Client.cs" />
     <Compile Include="Network\NPCCell.cs" />
@@ -127,7 +136,9 @@
     <Compile Include="Scripting\Timer.cs" />
     <Compile Include="Scripting\UserVars.cs" />
     <Compile Include="TCPStatus.cs" />
-    <Compile Include="Utilities\ExtendedObject.cs" />
+    <Compile Include="Utilities\ExtendedObject.Server.cs" />
+    <Compile Include="Utilities\TestObject.cs" />
+    <Compile Include="Utilities\Threading\TestRun.cs" />
     <Compile Include="WorldObjects\AbstractAI.cs" />
     <Compile Include="WorldObjects\AbstractCtrlVob.cs" />
     <Compile Include="WorldObjects\AbstractDropVob.cs" />
@@ -185,6 +196,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

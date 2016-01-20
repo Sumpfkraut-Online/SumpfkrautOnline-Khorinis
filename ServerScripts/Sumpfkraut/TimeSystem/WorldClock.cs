@@ -106,12 +106,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.TimeSystem
                         + " due to unhandleble calculations: " + ex);
                 }
 
-                //MakeLog(IGTime.ToMinutes(igTime));
-                //MakeLog(rlDiff);
-                //MakeLog(igDiff);
-                //MakeLog(newTotalMinutes);
-                //MakeLog(new IGTime(newTotalMinutes));
-
                 if ((long) igDiff == 0)
                 {
                     // no signifcant difference made
@@ -128,7 +122,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.TimeSystem
             
                 for (int w = 0; w < affectedWorlds.Count; w++)
                 {
-                    affectedWorlds[w].ChangeIgTime(newIgTime);
+                    affectedWorlds[w].ChangeIgTime(newIgTime, World.NewWorld.GetIgTimeRate());
                 }
             }
         }

@@ -10,7 +10,7 @@ using GUC.Types;
 
 namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances
 {
-    abstract class VobInst : ScriptObject
+    abstract class VobInst : GUC.Utilities.ExtendedObject
     {
 
         new public static readonly String _staticName = "VobInst (static)";

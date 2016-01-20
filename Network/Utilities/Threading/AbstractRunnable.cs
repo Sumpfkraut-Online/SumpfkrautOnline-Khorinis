@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 
-namespace GUC.Server.Scripts.Sumpfkraut.Utilities.Threading
+namespace GUC.Utilities.Threading
 {
-    public abstract class AbstractRunnable : GUC.Utilities.ExtendedObject
+    public abstract class AbstractRunnable : ExtendedObject
     {
 
         new public static readonly string _staticName = "AbstractRunnable (static)"; 
@@ -44,27 +44,94 @@ namespace GUC.Server.Scripts.Sumpfkraut.Utilities.Threading
             this.runOnce = runOnce;
             this.resetEvent = new ManualResetEvent(true);
             this.thread = new Thread(this._Run);
-            this.Start();
+
+            if (startOnCreate)
+            {
+                Start();
+            }
         }
 
 
 
         public virtual void Abort ()
         {
-            if (this.printStateControls)
+            try
             {
-                Print("Aborting thread...");
+                if (this.printStateControls)
+                {
+                    Print("Aborting thread...");
+                }
+                this.thread.Abort();
             }
-            this.thread.Abort();
+            catch (Exception ex)
+            {
+                MakeLogError("Failed to abort thread: " + ex);
+            }
+        }
+
+        public virtual void Reset ()
+        {
+            try
+            {
+                Suspend();
+                Resume();
+            }
+            catch (Exception ex)
+            {
+                MakeLogError("Failed to reset thread: " + ex);
+            }
         }
         
         public virtual void Resume ()
         {
-            if (this.printStateControls)
+            try
             {
-                Print("Resuming thread...");
+                if (this.printStateControls)
+                {
+                    Print("Resuming thread...");
+                }
+                this.resetEvent.Set();
             }
-            this.resetEvent.Set();
+            catch (Exception ex)
+            {
+                MakeLogError("Failed to resume thread: " + ex);
+            }
+        }
+
+        public virtual void Start ()
+        {
+            try
+            {
+                if (this.printStateControls)
+                {
+                    Print("Starting thread...");
+                }
+                if (this.thread.ThreadState == ThreadState.Unstarted)
+                {
+                    this.thread.Start();
+                }
+            }
+            catch (Exception ex)
+            {
+                MakeLogError("Failed to start thread: " + ex);
+            }
+        }
+
+        public virtual void Suspend ()
+        {
+            try
+            {
+                if (this.printStateControls)
+                {
+                    Print("Suspending thread...");
+                }
+                //this.resetEvent.WaitOne(Timeout.Infinite);
+                this.resetEvent.Reset();
+            }
+            catch (Exception ex)
+            {
+                MakeLogError("Failed to suspend thread: " + ex);
+            }
         }
 
         protected virtual void _Run ()
@@ -87,28 +154,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.Utilities.Threading
                 //this.Run();
                 //Thread.Sleep(this.timeout);
             }
-        }
-
-        public virtual void Start ()
-        {
-            if (this.printStateControls)
-            {
-                Print("Starting thread...");
-            }
-            if (this.thread.ThreadState == ThreadState.Unstarted)
-            {
-                this.thread.Start();
-            }
-        }
-
-        public virtual void Suspend ()
-        {
-            if (this.printStateControls)
-            {
-                Print("Suspending thread...");
-            }
-            //this.resetEvent.WaitOne(Timeout.Infinite);
-            this.resetEvent.Reset();
         }
 
 

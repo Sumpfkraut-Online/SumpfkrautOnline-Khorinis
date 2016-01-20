@@ -42,8 +42,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.Utilities.Threading
             //}
 
             //Console.WriteLine("TestRunnable: " + DateTime.Now + " " + this.runOnce);
-            Console.WriteLine("TestRunnable: " + day + " " + hour + " " + minute);
-            World.NewWorld.ChangeIgTime(day, hour, minute);
+            //Console.WriteLine("TestRunnable: " + day + " " + hour + " " + minute);
+            //World.NewWorld.ChangeIgTime(day, hour, minute);
 
             //weatherStartTime.day = 0;
             //weatherStartTime.hour = 8;

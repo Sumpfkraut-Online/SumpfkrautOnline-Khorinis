@@ -6,7 +6,7 @@ using System.Text;
 
 namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 {
-    public class DefEffect : ScriptObject
+    public class DefEffect : GUC.Utilities.ExtendedObject
     {
 
         #region static dictionaries

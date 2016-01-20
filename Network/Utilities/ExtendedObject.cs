@@ -132,7 +132,7 @@ namespace GUC.Utilities
                     }
                     else
                     {
-                        ToOutputController(2, BuildMessage(null, staticName, obj));
+                        ToOutputController(0, BuildMessage(null, staticName, obj));
                     }
                 }
             }
@@ -154,7 +154,7 @@ namespace GUC.Utilities
             {
                 //String output = _objName + ": " + obj.ToString();
                 //Log.Logger.log(output);
-
+                ToOutputController(1, BuildMessage(new object[] { true }, GetObjName(), obj));
             }
         }
 
@@ -162,7 +162,7 @@ namespace GUC.Utilities
         {
             if (obj != null)
             {
-                ToOutputController(1, BuildMessage(new object[] { true }, GetObjName(), obj));
+                ToOutputController(3, BuildMessage(new object[] { true }, GetObjName(), obj));
             }
         }
 

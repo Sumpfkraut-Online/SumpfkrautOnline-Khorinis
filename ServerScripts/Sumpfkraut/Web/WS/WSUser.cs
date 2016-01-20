@@ -6,7 +6,7 @@ using System.Text;
 
 namespace GUC.Server.Scripts.Sumpfkraut.Web.WS
 {
-    public class WSUser : ScriptObject
+    public class WSUser : GUC.Utilities.ExtendedObject
     {
 
         public string name = String.Empty;

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace GUC.Server.Scripts.Sumpfkraut.CommandConsole.InfoObjects
 {
-    public class NpcInfo : ScriptObject
+    public class NpcInfo : GUC.Utilities.ExtendedObject
     {
 
         new public static readonly String _staticName = "NpcInfo (static)";

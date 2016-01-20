@@ -6,7 +6,7 @@ using System.Text;
 
 namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
 {
-    public class DefChange : ScriptObject
+    public class DefChange : GUC.Utilities.ExtendedObject
     {
 
         #region delegates

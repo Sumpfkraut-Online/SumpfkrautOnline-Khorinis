@@ -11,7 +11,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
      *   Class from which all additional effects (not only visual) 
      *   are instatiated (which are handled by the serverscript).
      */
-    public class EffectChangesDef : ScriptObject
+    public class EffectChangesDef : GUC.Utilities.ExtendedObject
     {
 
         new public static readonly String _staticName = "EffectChangesDef (static)";

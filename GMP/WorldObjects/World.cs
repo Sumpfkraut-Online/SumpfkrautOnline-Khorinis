@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Gothic.zClasses;
 using Gothic.zTypes;
+using GUC.Types;
 
 namespace GUC.Client.WorldObjects
 {
@@ -17,6 +18,10 @@ namespace GUC.Client.WorldObjects
         public static Dictionary<uint, NPC> npcDict = new Dictionary<uint, NPC>();
         public static Dictionary<uint, Item> itemDict = new Dictionary<uint, Item>();
         public static Dictionary<uint, AbstractVob> vobDict = new Dictionary<uint, AbstractVob>();
+
+        public static WorldClock worldClock = new WorldClock();
+
+
 
         public static AbstractVob GetVobByID(uint id)
         {
@@ -89,6 +94,25 @@ namespace GUC.Client.WorldObjects
                 }
             }
             MapName = newMap;
+        }
+
+        public static void SetIgTime (IgTime igTime, float igTimeRate)
+        {
+            try
+            {
+                if (worldClock == null)
+                {
+                    worldClock = new WorldClock();
+                }
+
+                worldClock.SetIgTime(igTime);
+                worldClock.SetIgTimeRate(igTimeRate);
+                worldClock.ApplyIgTime();
+            }
+            catch (Exception ex)
+            {
+                zERROR.GetZErr(Program.Process).Report(3, 'G', "World.SetIgTime failed: " + ex, 0, "World.cs", 0);
+            }
         }
 
         #region Hooks

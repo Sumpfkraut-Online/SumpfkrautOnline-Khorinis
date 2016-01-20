@@ -4,38 +4,113 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using GUC.Types;
+using Gothic.zClasses;
 
 namespace GUC.Client.WorldObjects
 {
 
-    class WorldClock
+    class WorldClock : GUC.Utilities.Threading.AbstractRunnable
     {
 
-        protected Thread thread;
-        protected EventWaitHandle resetEvent;
-        public TimeSpan timeout;
-        protected AutoResetEvent waitHandle = new AutoResetEvent(false);
+        new public static readonly String _staticName = "WorldClock (static)";
 
-        public WorldClock (TimeSpan timeout, IgTime igTime)
+        protected IgTime igTime;
+        public IgTime GetIgTime () { return this.igTime; }
+        public void SetIgTime (IgTime igTime)
         {
-            this.timeout = timeout;
-            this.resetEvent = new ManualResetEvent(true);
-            this.thread = new Thread(_Run);
+            this.igTime = igTime;
+            originIgTime = igTime;
+            this.lastCheckup = DateTime.Now;
+            MakeLog("Set igTime to: " + igTime);
         }
 
-        public void _Run ()
+        // rate at which the ig-time clocks relative to realtime 
+        // [ig-minutes / rl-minutes]
+        protected float igTimeRate;
+        public float GetIgTimeRate () { return this.igTimeRate; }
+        public void SetIgTimeRate (float igTimeRate)
         {
-            while (true)
+            this.igTimeRate = igTimeRate;
+            MakeLog("Set igTimeRate to: " + igTimeRate);
+        }
+
+        // ig time from where tick differences are applied to result in the
+        // current igTime
+        protected IgTime originIgTime;
+        // last time the originIgTime was updated
+        protected DateTime lastCheckup;
+        object igTimeLock;
+
+
+
+        public WorldClock ()
+            : this (new IgTime(1, 9, 0), 4f)
+        { }
+
+        public WorldClock (IgTime igTime, float igTimeRate)
+            : this (true, new TimeSpan(0, 0, 10), igTime, igTimeRate)
+        { }
+
+        protected WorldClock (bool startOnCreate, TimeSpan timeout, IgTime igTime, float igTimeRate)
+            : base(false, timeout, false)
+        {
+            SetObjName("WorldClock (default)");
+            printStateControls = true;
+            lastCheckup = DateTime.Now;
+            //originIgTime = igTime;
+            igTimeLock = new object();
+            SetIgTime(igTime);
+            SetIgTimeRate(igTimeRate);
+            
+            if (startOnCreate)
             {
-                this.resetEvent.WaitOne(Timeout.Infinite);
-                this.Run();
-                Thread.Sleep(this.timeout);
+                Start();
             }
         }
 
-        public void Run ()
-        {
 
+
+        public void ApplyIgTime ()
+        {
+            lock (igTimeLock)
+            {
+                oCGame.Game(Program.Process).WorldTimer.SetTime(igTime.hour, igTime.minute);
+                oCGame.Game(Program.Process).WorldTimer.SetDay(igTime.day);
+                MakeLog("Applied new ingame-time: " + igTime);
+            }
+        }
+
+        //// suspends the the clock and resumes/restarts fresh to avoid waiting time
+        //// with large thread timeouts
+        //public void ForceUpdateClock ()
+        //{
+        //    lock (igTimeLock)
+        //    {
+        //        Reset();
+        //    }
+        //}
+
+        public void TickIgTime ()
+        {
+            TimeSpan tickDiffTS = DateTime.Now - this.lastCheckup;
+            double tickDiff = tickDiffTS.TotalMinutes;
+            long minuteJump = (long)Math.Round(tickDiff * igTimeRate);
+            IgTime newIgTime = new IgTime(IgTime.ToMinutes(igTime) + minuteJump);
+
+            if (newIgTime != igTime)
+            {
+                SetIgTime(newIgTime);
+                ApplyIgTime();
+            }
+        }
+
+
+
+        public override void Run ()
+        {
+            base.Run();
+
+            TickIgTime();
         }
 
     }

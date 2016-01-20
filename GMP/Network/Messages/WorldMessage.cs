@@ -155,12 +155,22 @@ namespace GUC.Client.Network.Messages
 
         public static void ReadTimeChange (BitStream stream)
         {
-            int day = stream.mReadInt();
-            int hour = stream.mReadInt();
-            int minute = stream.mReadInt();
+            try
+            {
+                int day = stream.mReadInt();
+                int hour = stream.mReadInt();
+                int minute = stream.mReadInt();
+                float igTimeRate = stream.mReadFloat();
 
-            oCGame.Game(Program.Process).WorldTimer.SetTime(hour, minute);
-            oCGame.Game(Program.Process).WorldTimer.SetDay(day);
+                IgTime igTime = new IgTime(day, hour, minute);
+                World.SetIgTime(igTime, igTimeRate);
+                //oCGame.Game(Program.Process).WorldTimer.SetTime(hour, minute);
+                //oCGame.Game(Program.Process).WorldTimer.SetDay(day);
+            }
+            catch (Exception ex)
+            {
+                zERROR.GetZErr(Program.Process).Report(3, 'G', "GOTCHA: " + ex, 0, "WorldMessage.cs", 0);
+            }
         }
 
         public static void ReadWeatherChange (BitStream stream)

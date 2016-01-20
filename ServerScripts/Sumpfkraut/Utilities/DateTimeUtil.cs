@@ -6,7 +6,7 @@ using System.Globalization;
 
 namespace GUC.Server.Scripts.Sumpfkraut.Utilities
 {
-    public class DateTimeUtil : ScriptObject
+    public class DateTimeUtil : GUC.Utilities.ExtendedObject
     {
 
         new public static readonly string _staticName = "DateTimeUtil (static)"; 

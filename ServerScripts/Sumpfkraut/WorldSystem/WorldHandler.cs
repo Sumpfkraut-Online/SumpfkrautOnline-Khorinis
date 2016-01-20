@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GUC.Server.Scripts.Sumpfkraut.WorldSystem
 {
-    public class WorldHandler : ScriptObject
+    public class WorldHandler : GUC.Utilities.ExtendedObject
     {
 
         new protected static readonly string _staticName = "WorldHandler (static)";

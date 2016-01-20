@@ -9,7 +9,7 @@ using System.Text;
 
 namespace GUC.Server.Scripts.Sumpfkraut.CommandConsole
 {
-    public class TestCommands : ScriptObject
+    public class TestCommands : GUC.Utilities.ExtendedObject
     {
 
         new public static readonly String _staticName = "TestCommands (static)";
@@ -55,23 +55,68 @@ namespace GUC.Server.Scripts.Sumpfkraut.CommandConsole
         public static void SetIgTime (object sender, String cmd, String[] param, 
             out Dictionary<string, object> returnVal) 
         {
-            IgTime igTime;
+            IgTime igTime = new IgTime();
+            float igTimeRate = 0f;
+            bool igTimeCheck = false;
+            bool igTimeRateCheck = false;
+            int igTimeIndex = -1;
+            int igTimeRateIndex = -1;
+
+            // handle premature failure
             returnVal = new Dictionary<string, object>()
             {
                 { "rawText", "Failed to set ingame-time!" },
             };
-
             if ((param == null) || (param.Length < 1))
             {
                 return;
             }
 
-            if (IgTime.TryParse(param[0], out igTime))
+            // try to parse any parameters given to eventually
+            // find patterns of igTime and igTimeRate
+            for (int i = 0; i < param.Length; i++)
             {
-                World.NewWorld.ChangeIgTime(igTime);
-                returnVal["rawText"] = "Successfully set ingame-Time to...";
-                returnVal["data"] = igTime;
+                if ((!igTimeCheck) && (i != igTimeRateIndex))
+                {
+                    if (igTimeCheck = IgTime.TryParse(param[0], out igTime))
+                    {
+                        igTimeIndex = i;
+                    }
+                }
+                if ((!igTimeRateCheck) && (i != igTimeIndex))
+                {
+                    if (igTimeRateCheck = float.TryParse(param[i], out igTimeRate))
+                    {
+                        igTimeRateIndex = i;
+                    }
+                }
             }
+
+            if (igTimeCheck || igTimeRateCheck)
+            {
+                returnVal["rawText"] = "";
+            }
+
+            // prepare response message and variables to set time and time-rate
+            if (igTimeCheck)
+            {
+                returnVal["rawText"] = "Set igTime to: " + igTime + ". ";
+            }
+            else
+            {
+                igTime = World.NewWorld.GetIGTime();
+            }
+            if (igTimeRateCheck)
+            {
+                returnVal["rawText"] = "Set ingameTimeRate (ingame- to reallife-time-ratio) to: " 
+                    + igTimeRate + ". ";
+            }
+            else
+            {
+                igTimeRate = World.NewWorld.GetIgTimeRate();
+            }
+
+            World.NewWorld.ChangeIgTime(igTime, igTimeRate);
         }
 
         public static void SetIgWeather (object sender, String cmd, String[] param, 

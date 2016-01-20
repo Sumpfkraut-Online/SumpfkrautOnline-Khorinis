@@ -10,7 +10,7 @@ using SQLiteCommand = Mono.Data.Sqlite.SqliteCommand;
 namespace GUC.Server.Scripts.Sumpfkraut.Database
 {
 
-    public class DBTables : ScriptObject
+    public class DBTables : GUC.Utilities.ExtendedObject
     {
 
         public struct ColumnGetTypeInfo

@@ -7,7 +7,7 @@ using System.Text;
 namespace GUC.Server.Scripts.Sumpfkraut.Web.WS.Protocols
 {
 
-    public abstract class AbstractWSProtocol : ScriptObject
+    public abstract class AbstractWSProtocol : GUC.Utilities.ExtendedObject
     {
 
         public  WSProtocolType type;

@@ -6,7 +6,7 @@ using GUC.Server.WorldObjects;
 
 namespace GUC.Server.Scripts.Sumpfkraut.WorldSystem
 {
-    public class WorldInst : ScriptObject
+    public class WorldInst : GUC.Utilities.ExtendedObject
     {
 
         new protected static readonly string _staticName = "WorldInst (static)";

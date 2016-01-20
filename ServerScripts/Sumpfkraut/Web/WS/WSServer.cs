@@ -13,7 +13,7 @@ using GUC.Server.WorldObjects;
 
 namespace GUC.Server.Scripts.Sumpfkraut.Web.WS
 {
-    public class WSServer : ScriptObject
+    public class WSServer : GUC.Utilities.ExtendedObject
     {
 
         #region attributes

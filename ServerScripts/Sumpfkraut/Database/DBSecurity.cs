@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace GUC.Server.Scripts.Sumpfkraut.Database
 {
-    public class DBSecurity : ScriptObject
+    public class DBSecurity : GUC.Utilities.ExtendedObject
     {
 
         new public static readonly String _staticName = "DBSecurity (static)";
