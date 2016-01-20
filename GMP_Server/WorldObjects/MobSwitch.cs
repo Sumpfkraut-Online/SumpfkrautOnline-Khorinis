@@ -8,7 +8,7 @@ namespace GUC.Server.WorldObjects
 {
     class MobSwitch : MobInter
     {
-        new public static readonly Collections.VobDictionary Vobs = Network.Server.sVobs.GetDict(MobSwitchInstance.sVobType);
+        new public static readonly Collections.VobDictionary Vobs = Network.Server.Vobs.GetDict(MobSwitchInstance.sVobType);
 
         new public MobSwitchInstance Instance { get; protected set; }
 

@@ -1,6 +1,4 @@
-﻿#define D_SERVER
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,70 +8,69 @@ using GUC.Server.Network.Messages;
 using GUC.Network;
 using GUC.Server.WorldObjects;
 using GUC.Server.WorldObjects.Collections;
+using GUC.Server.Options;
 
 namespace GUC.Server.Network
 {
     delegate void MsgReader(PacketReader stream, Client client, NPC character, World world);
 
-    public class Server
+    public static class Server
     {
-        public readonly static VobCollection sVobs = new VobCollection();
-        public readonly static InstanceCollection sInstances = new InstanceCollection();
+        internal readonly static ServerOptions Options = ServerOptions.Init();
 
-        public static IEnumerable<Client> GetClients() { return Program.server.clientDict.Values; }
-        public static void DisconnectClient(Client client)
-        {
-            Program.server.KickClient(client);
-        }
+        public readonly static VobCollection Vobs = new VobCollection();
+        public readonly static InstanceCollection Instances = new InstanceCollection();
 
-        public static void AddToBanList(string systemAddress)
-        {
-            Program.server.ServerInterface.AddToBanList(systemAddress);
-        }
+        readonly static Dictionary<ulong, Client> clientDict = new Dictionary<ulong, Client>();
+        public static IEnumerable<Client> GetClients() { return clientDict.Values; }
 
-        public static Action<PacketReader,Client, PacketWriter> OnLoginMessage;
-        static void HandleLoginMsg(PacketReader stream, Client client, NPC character, World world)
+        internal readonly static RakPeerInterface ServerInterface = RakPeer.GetInstance();
+
+        readonly static Dictionary<NetworkIDs, MsgReader> messageListener = new Dictionary<NetworkIDs, MsgReader>();
+        
+        readonly static PacketReader pktReader = new PacketReader();
+        readonly static PacketWriter pktWriter = new PacketWriter(128000);
+
+        static bool started = false;
+        internal static void Start()
         {
-            Log.Logger.log("LOGINMESSAGE");
-            if (OnLoginMessage != null)
+            if (started)
+                return;
+            started = true;
+
+            InitMessages();
+            
+            using (SocketDescriptor socketDescriptor = new SocketDescriptor())
             {
-                OnLoginMessage(stream, client, Program.server.SetupStream(NetworkIDs.MenuMessage));
+                socketDescriptor.port = Options.Port;
+
+                StartupResult res = ServerInterface.Startup(Options.Port, socketDescriptor, 1);
+                if (res == StartupResult.RAKNET_STARTED)
+                {
+                    Log.Logger.Log("Server start listening on port " + Options.Port);
+                }
+                else
+                {
+                    throw new Exception("RakNet startup failed: " + res.ToString());
+                }
+                ServerInterface.SetMaximumIncomingConnections(Options.Slots);
+                ServerInterface.SetOccasionalPing(true);
+
+                string pw = Constants.VERSION + Options.Password;
+                if (pw.Length > 0)
+                {
+                    ServerInterface.SetIncomingPassword(pw, pw.Length);
+                }
             }
         }
 
-        internal RakPeerInterface ServerInterface { get; private set; }
-
-        Dictionary<NetworkIDs, MsgReader> MessageListener;
-
-        Dictionary<ulong, Client> clientDict;
-
-        internal PacketReader pktReader = new PacketReader();
-        internal PacketWriter pktWriter = new PacketWriter(128000);
-
-        /** 
-        * Server-class which defines and manages network transfer as well as the game loop.
-        * It uses RakNet network messages to establish communication channels between server and clients.
-        * It further counts the connections and initialiszes the overall game loop.
-        */
-
-        internal Server()
+        static void InitMessages()
         {
-            ServerInterface = RakPeer.GetInstance(); /**< Instance of RakNets main interface for network communication. */
+            /*messageListener.Add(NetworkIDs.ConnectionMessage, ConnectionMessage.Read);
+            messageListener.Add(NetworkIDs.MenuMessage, HandleLoginMsg);
+            messageListener.Add(NetworkIDs.PlayerControlMessage, NPC.ReadControl);
 
-            clientDict = new Dictionary<ulong, Client>();
-
-            InitMessageListener();
-        }
-
-        protected void InitMessageListener()
-        {
-            MessageListener = new Dictionary<NetworkIDs, MsgReader>();
-
-            MessageListener.Add(NetworkIDs.ConnectionMessage, ConnectionMessage.Read);
-            MessageListener.Add(NetworkIDs.MenuMessage, HandleLoginMsg);
-            MessageListener.Add(NetworkIDs.PlayerControlMessage, NPC.ReadControl);
-
-            /*MessageListener.Add((byte)NetworkID.PlayerPickUpItemMessage, NPC.ReadPickUpItem);
+            MessageListener.Add((byte)NetworkID.PlayerPickUpItemMessage, NPC.ReadPickUpItem);
 
             MessageListener.Add((byte)NetworkID.VobPosDirMessage, VobMessage.ReadPosDir);
 
@@ -94,48 +91,7 @@ namespace GUC.Server.Network
 
             MessageListener.Add((byte)NetworkID.TradeMessage, TradeMessage.Read);*/
         }
-
-        /**
-         *   Initializes/Starts the RakPeerInterface server to actually listen and answer network messages.
-         *   Completes the setup of the network interface/server and starts it, so it can listen on the given port.
-         *   @param port an ushort which is the main port of game server network communication.
-         *   @param maxConnections an ushort which limits the maximum accepted client-server-connections.
-         *   @param pw a String which defines the password to verify client-server-connections (???).
-         */
-        internal void Start(ushort port, ushort maxConnections, String pw)
-        {
-            pw = GUC.Options.Constants.VERSION + pw;
-
-            SocketDescriptor socketDescriptor = new SocketDescriptor();
-            socketDescriptor.port = port;
-
-            bool started = ServerInterface.Startup(maxConnections, socketDescriptor, 1) == StartupResult.RAKNET_STARTED;
-            ServerInterface.SetMaximumIncomingConnections(maxConnections);
-            ServerInterface.SetOccasionalPing(true);
-
-            if (pw.Length != 0)
-            {
-                ServerInterface.SetIncomingPassword(pw, pw.Length);
-            }
-
-            if (!started)
-                Log.Logger.logError("Port is already in use");
-            else
-                Log.Logger.log("Server start listening on port " + port);
-        }
-
-        /**
-         *   Counts the current amount of client-server-connections and returns them.
-         *   Counts the current amount of client-server-connections and returns them.
-         *   @return numbers as ushort amount of client-server-connections
-         */
-        internal ushort ConnectionCount()
-        {
-            SystemAddress[] sa;
-            ushort numbers = 0;
-            ServerInterface.GetConnectionList(out sa, ref numbers);
-            return numbers;
-        }
+        
 
         /**
          *   Game loop which receives data from clients and redirects/reacts accordingly.
@@ -145,7 +101,7 @@ namespace GUC.Server.Network
          *   left. Character creation is done here on successful connection as well as the respective 
          *   deletion of disconnect.
          */
-        internal void Update()
+        internal static void Update()
         {
             Packet p = ServerInterface.Receive();
             Client client;
@@ -174,18 +130,18 @@ namespace GUC.Server.Network
                             {
                                 ServerInterface.CloseConnection(p.guid, false); //just to be sure
                             }
-                            Log.Logger.log("Client disconnected: " + p.guid);
+                            Log.Logger.Log("Client disconnected: " + p.guid);
                             break;
                         case DefaultMessageIDTypes.ID_NEW_INCOMING_CONNECTION:
                             if (client != null) //there is already someone with this GUID. Should not happen.
                             {
                                 KickClient(client);
-                                Log.Logger.logError("Kicked duplicate GUID " + p.guid);
+                                Log.Logger.LogError("Kicked duplicate GUID " + p.guid);
                             }
                             else
                             {
                                 clientDict.Add(p.guid.g, new Client(p.guid, p.systemAddress));
-                                Log.Logger.log(String.Format("Client connected: {0} IP:{1}", p.guid, p.systemAddress));
+                                Log.Logger.Log(String.Format("Client connected: {0} IP:{1}", p.guid, p.systemAddress));
                             }
                             break;
                         case DefaultMessageIDTypes.ID_USER_PACKET_ENUM:
@@ -201,7 +157,7 @@ namespace GUC.Server.Network
                                     else
                                     {
                                         KickClient(client);
-                                        Log.Logger.logWarning(String.Format("Client sent {0} before ConnectionMessage or is banned. Kicked: {0} IP:{1}", msgID, p.guid, p.systemAddress));
+                                        Log.Logger.LogWarning(String.Format("Client sent {0} before ConnectionMessage or is banned. Kicked: {0} IP:{1}", msgID, p.guid, p.systemAddress));
                                     }
                                 }
                                 else
@@ -210,7 +166,10 @@ namespace GUC.Server.Network
                                     {
                                         if (msgID == NetworkIDs.MenuMessage) // login menu message
                                         {
-                                            HandleLoginMsg(pktReader, client, null, null);
+                                            if (OnMenuMsg != null)
+                                            {
+                                                OnMenuMsg(client, pktReader);
+                                            }
                                         }
                                         else if (msgID == NetworkIDs.PlayerControlMessage && client.Character != null) // confirmation to take control of a npc / start in the world
                                         {
@@ -219,7 +178,7 @@ namespace GUC.Server.Network
                                         else
                                         {
                                             KickClient(client);
-                                            Log.Logger.logWarning(String.Format("Client sent {0} before being ingame. Kicked: {0} IP:{1}", msgID, p.guid, p.systemAddress));
+                                            Log.Logger.LogWarning(String.Format("Client sent {0} before being ingame. Kicked: {0} IP:{1}", msgID, p.guid, p.systemAddress));
                                         }
                                     }
                                     else
@@ -227,15 +186,15 @@ namespace GUC.Server.Network
                                         if (msgID == NetworkIDs.ConnectionMessage)
                                         {
                                             KickClient(client);
-                                            Log.Logger.logWarning(String.Format("Client sent another ConnectionMessage. Kicked: {0} IP:{1}", msgID, p.guid, p.systemAddress));
+                                            Log.Logger.LogWarning(String.Format("Client sent another ConnectionMessage. Kicked: {0} IP:{1}", msgID, p.guid, p.systemAddress));
                                         }
                                         else if (client.Character != null && client.Character.IsSpawned)
                                         {
-                                            MessageListener.TryGetValue(msgID, out readFunc);
+                                            messageListener.TryGetValue(msgID, out readFunc);
                                             if (readFunc == null)
                                             {
                                                 KickClient(client);
-                                                Log.Logger.logWarning(String.Format("Client sent unknown NetworkID. Kicked: {0} IP:{1}", p.guid, p.systemAddress));
+                                                Log.Logger.LogWarning(String.Format("Client sent unknown NetworkID. Kicked: {0} IP:{1}", p.guid, p.systemAddress));
                                             }
                                             else
                                             {
@@ -248,7 +207,7 @@ namespace GUC.Server.Network
                             else
                             {
                                 ServerInterface.CloseConnection(p.guid, false);
-                                Log.Logger.logWarning(String.Format("Client sent 'user' packets before 'new connection' packet. Kicked: {0} IP:{1}", p.guid, p.systemAddress));
+                                Log.Logger.LogWarning(String.Format("Client sent 'user' packets before 'new connection' packet. Kicked: {0} IP:{1}", p.guid, p.systemAddress));
                             }
                             break;
                         default:
@@ -260,13 +219,13 @@ namespace GUC.Server.Network
                             {
                                 KickClient(client);
                             }
-                            Log.Logger.log(String.Format("Received unused DefaultMessageIDType {0}. Kicked: {1} IP:{2}", msgDefaultType, p.guid, p.systemAddress));
+                            Log.Logger.Log(String.Format("Received unused DefaultMessageIDType {0}. Kicked: {1} IP:{2}", msgDefaultType, p.guid, p.systemAddress));
                             break;
                     }
                 }
                 catch (Exception ex)
                 {
-                    Log.Logger.logError((NetworkIDs)p.data[1] + ":\n" + ex.Source + "\n" + ex.Message + "\n" + ex.StackTrace);
+                    Log.Logger.LogError((NetworkIDs)p.data[1] + ":\n" + ex.Source + "\n" + ex.Message + "\n" + ex.StackTrace);
                     ServerInterface.CloseConnection(p.guid, false);
                 }
                 ServerInterface.DeallocatePacket(p);
@@ -275,7 +234,7 @@ namespace GUC.Server.Network
         }
 
 
-        internal void KickClient(Client client)
+        internal static void KickClient(Client client)
         {
             ServerInterface.CloseConnection(client.guid, false);
             client.Delete();
@@ -283,12 +242,31 @@ namespace GUC.Server.Network
             client.guid.Dispose();
         }
 
-        internal PacketWriter SetupStream(NetworkIDs ID)
+        internal static PacketWriter SetupStream(NetworkIDs ID)
         {
             pktWriter.Reset();
             pktWriter.Write((byte)DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
             pktWriter.Write((byte)ID);
             return pktWriter;
+        }
+
+        public static void AddToBanList(string systemAddress)
+        {
+            ServerInterface.AddToBanList(systemAddress);
+        }
+
+
+
+        public static Action<Client, PacketReader> OnMenuMsg;
+
+        public static PacketWriter GetMenuMsgStream()
+        {
+            return SetupStream(NetworkIDs.MenuMessage);
+        }
+
+        public static void SendMenuMsg(Client client, PacketWriter stream)
+        {
+            ServerInterface.Send(stream.GetData(), stream.GetLength(), PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'M', client.guid, false);
         }
     }
 }

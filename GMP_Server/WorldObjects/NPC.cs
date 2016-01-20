@@ -14,7 +14,7 @@ namespace GUC.Server.WorldObjects
 {
     public class NPC : Vob
     {
-        new public static readonly Collections.VobDictionary Vobs = Network.Server.sVobs.GetDict(NPCInstance.sVobType);
+        new public static readonly Collections.VobDictionary Vobs = Network.Server.Vobs.GetDict(NPCInstance.sVobType);
 
         new public NPCInstance Instance { get; protected set; }
 
@@ -249,7 +249,7 @@ namespace GUC.Server.WorldObjects
 
         internal override void WriteSpawnMessage(IEnumerable<Client> list)
         {
-            PacketWriter stream = Program.server.SetupStream(NetworkIDs.WorldNPCSpawnMessage);
+            PacketWriter stream = Network.Server.SetupStream(NetworkIDs.WorldNPCSpawnMessage);
             this.WriteSpawn(stream);
 
             foreach (Client client in list)
@@ -261,7 +261,7 @@ namespace GUC.Server.WorldObjects
         public static Action<Client, NPC> OnWriteControl;
         internal static void WriteControl(Client client, NPC npc)
         {
-            PacketWriter stream = Program.server.SetupStream(NetworkIDs.PlayerControlMessage);
+            PacketWriter stream = Network.Server.SetupStream(NetworkIDs.PlayerControlMessage);
             stream.Write(npc.ID);
             stream.Write(npc.World.FileName);
 
@@ -404,7 +404,7 @@ namespace GUC.Server.WorldObjects
             {
                 UsedMob = mob;
 
-                PacketWriter stream = Program.server.SetupStream(NetworkIDs.MobUseMessage);
+                PacketWriter stream = Network.Server.SetupStream(NetworkIDs.MobUseMessage);
                 stream.Write(this.ID);
                 stream.Write(mob.ID);
 
@@ -421,7 +421,7 @@ namespace GUC.Server.WorldObjects
             {
                 UsedMob = null;
 
-                PacketWriter stream = Program.server.SetupStream(NetworkIDs.MobUnUseMessage);
+                PacketWriter stream = Network.Server.SetupStream(NetworkIDs.MobUnUseMessage);
                 stream.Write(this.ID);
 
                 foreach (Client cl in cell.SurroundingClients())
@@ -533,7 +533,7 @@ namespace GUC.Server.WorldObjects
             }
             else
             {
-                PacketWriter stream = Program.server.SetupStream(NetworkID.ControlCmdMessage);
+                PacketWriter stream = Network.Server.SetupStream(NetworkID.ControlCmdMessage);
                 stream.Write(this.ID);
                 stream.Write((byte)ControlCmd.GoToPos);
                 stream.Write(position);
@@ -559,7 +559,7 @@ namespace GUC.Server.WorldObjects
             }
             else
             {
-                PacketWriter stream = Program.server.SetupStream(NetworkID.ControlCmdMessage);
+                PacketWriter stream = Network.Server.SetupStream(NetworkID.ControlCmdMessage);
                 stream.Write(this.ID);
                 stream.Write((byte)ControlCmd.GoToVob);
                 stream.Write(vob.ID);
@@ -573,7 +573,7 @@ namespace GUC.Server.WorldObjects
         {
             if (this.VobController != null)
             {
-                PacketWriter stream = Program.server.SetupStream(NetworkID.ControlCmdMessage);
+                PacketWriter stream = Network.Server.SetupStream(NetworkID.ControlCmdMessage);
                 stream.Write(this.ID);
                 stream.Write((byte)ControlCmd.Stop);
 

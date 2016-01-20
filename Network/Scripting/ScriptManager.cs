@@ -13,38 +13,38 @@ namespace GUC.Scripting
 
         public static void StartScripts(string path)
         {
-            if (asm == null)
+            if (asm != null)
+                return;
+
+            try
             {
-                try
+                asm = Assembly.LoadFile(Path.GetFullPath(path));
+                asm.CreateInstance("GUC.Scripts.Init");
+            }
+            catch (ReflectionTypeLoadException ex)
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach (Exception exSub in ex.LoaderExceptions)
                 {
-                    asm = Assembly.LoadFile(Path.GetFullPath(path));
-                    asm.CreateInstance("GUC.Scripts.Init");
-                }
-                catch (ReflectionTypeLoadException ex)
-                {
-                    StringBuilder sb = new StringBuilder();
-                    foreach (Exception exSub in ex.LoaderExceptions)
+                    sb.AppendLine(exSub.Message);
+                    FileNotFoundException exFileNotFound = exSub as FileNotFoundException;
+                    if (exFileNotFound != null)
                     {
-                        sb.AppendLine(exSub.Message);
-                        FileNotFoundException exFileNotFound = exSub as FileNotFoundException;
-                        if (exFileNotFound != null)
+                        if (!string.IsNullOrEmpty(exFileNotFound.FusionLog))
                         {
-                            if (!string.IsNullOrEmpty(exFileNotFound.FusionLog))
-                            {
-                                sb.AppendLine("Fusion Log:");
-                                sb.AppendLine(exFileNotFound.FusionLog);
-                            }
+                            sb.AppendLine("Fusion Log:");
+                            sb.AppendLine(exFileNotFound.FusionLog);
                         }
-                        sb.AppendLine();
                     }
-                    string errorMessage = sb.ToString();
-                    //Display or log the error based on your application.
-                    Log.Logger.LogError(Environment.CurrentDirectory + "\n" + errorMessage);
+                    sb.AppendLine();
                 }
-                catch (Exception e)
-                {
-                    Log.Logger.LogError(Environment.CurrentDirectory + "\n" + e);
-                }
+                string errorMessage = sb.ToString();
+                //Display or log the error based on your application.
+                Log.Logger.LogError(Environment.CurrentDirectory + "\n" + errorMessage);
+            }
+            catch (Exception e)
+            {
+                Log.Logger.LogError(Environment.CurrentDirectory + "\n" + e);
             }
         }
     }

@@ -12,7 +12,7 @@ using Gothic.Types;
 using Gothic.System;
 using Gothic.Objects;
 using Gothic.View;
-using GUC.Client.Network;
+using GUC.Utilities;
 
 namespace GUC.Client
 {
@@ -49,13 +49,9 @@ namespace GUC.Client
                 AddHooks();
 
                 Process.SetWindowText("Gothic II - Untold Chapters");
-
-                ClientPaths.CreateFolders(); // Set up folders
-                BaseOptions.Load(ClientPaths.GUCConfig + "guc.xml"); // Load Options
-
+                
                 ScriptManager.StartScripts(ClientPaths.GUCDlls + "ClientScripts.dll"); // Load Scripts
-
-                Network.Client.Startup();
+                
                 Network.Client.Connect("", 0, "");
 
                 while (true)

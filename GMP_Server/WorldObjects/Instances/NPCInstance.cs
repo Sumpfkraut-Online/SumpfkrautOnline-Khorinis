@@ -11,7 +11,7 @@ namespace GUC.Server.WorldObjects.Instances
     public class NPCInstance : VobInstance
     {
         new public readonly static VobTypes sVobType = VobTypes.NPC;
-        new public readonly static InstanceDictionary Instances = Network.Server.sInstances.GetDict(sVobType);
+        new public readonly static InstanceDictionary Instances = Network.Server.Instances.GetDict(sVobType);
 
         #region Properties
 

@@ -6,41 +6,41 @@ using System.Xml.Serialization;
 using System.IO;
 using GUC.Log;
 
-namespace GUC.Options
+namespace GUC.Utilities
 {
-    public partial class BaseOptions
+    public class XmlObj
     {
-        public static BaseOptions Current { get; private set; }
-
         public void Save(string path)
         {
             try
             {
-                XmlSerializer ser = new XmlSerializer(typeof(BaseOptions));
+                XmlSerializer ser = new XmlSerializer(this.GetType());
 
                 using (FileStream fs = new FileStream(path, FileMode.Create))
                     ser.Serialize(fs, this);
             }
             catch (Exception e)
             {
-                Logger.LogError("Failed to save BaseOptions! " + e.Message);
+                Logger.LogWarning("Failed to save {0}!<br>{1}", path, e);
             }
         }
 
-        internal static void Load(string path)
+        public static T Load<T>(string path) where T : XmlObj, new()
         {
             try
             {
-                XmlSerializer ser = new XmlSerializer(typeof(BaseOptions));
+                T ret;
+                XmlSerializer ser = new XmlSerializer(typeof(T));
 
                 using (FileStream fs = new FileStream(path, FileMode.Open))
-                    Current = (BaseOptions)ser.Deserialize(fs);
+                    ret = (T)ser.Deserialize(fs);
+
+                return ret;
             }
             catch (Exception e)
             {
-                Logger.LogError("Failed to load BaseOptions, creating new file! " + e.Message);
-                Current = new BaseOptions();
-                Current.Save(path);
+                Logger.LogWarning("Could not load {0}, returning empty object.<br>{1}", path, e);
+                return new T();
             }
         }
     }

@@ -6,7 +6,7 @@ using RakNet;
 using GUC.Network;
 using GUC.Server.WorldObjects;
 using GUC.Enumeration;
-using GUC.Server.Interface;
+//using GUC.Server.Interface;
 
 namespace GUC.Server.Network.Messages
 {
@@ -23,7 +23,7 @@ namespace GUC.Server.Network.Messages
                 uint targetID = stream.mReadUInt();
                 NPC requester = client.Character;
                 NPC target;
-                Log.Logger.log("request by " + targetID.ToString());
+                Log.Logger.Log("request by " + targetID.ToString());
                 client.Character.World.playerDict.TryGetValue(targetID, out target);
 
                 if (requester != null && target != null)
@@ -64,7 +64,7 @@ namespace GUC.Server.Network.Messages
 
         public static void SendOffer(NPC from, NPC to, Item item, bool add)
         {
-            PacketWriter stream = Program.server.SetupStream(NetworkID.TradeMessage);
+            PacketWriter stream = Network.Server.SetupStream(NetworkID.TradeMessage);
             if (add) stream.Write((byte)TradeStatus.SelfOfferItem);
             else stream.Write((byte)TradeStatus.SelfRemoveItem);
             stream.Write(item.ID); // back to from ->self offer/remove
@@ -74,7 +74,7 @@ namespace GUC.Server.Network.Messages
             stream.Write(item.SpecialLine);
             from.client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I');
 
-            stream = Program.server.SetupStream(NetworkID.TradeMessage);
+            stream = Network.Server.SetupStream(NetworkID.TradeMessage);
             if (add) stream.Write((byte)TradeStatus.OtherOfferItem);
             else stream.Write((byte)TradeStatus.OtherRemoveItem);
             stream.Write(item.ID); //other offer/remove
@@ -87,12 +87,12 @@ namespace GUC.Server.Network.Messages
 
         public static void SendAccept(NPC pl1, NPC pl2)
         {
-            PacketWriter stream = Program.server.SetupStream(NetworkID.TradeMessage);
+            PacketWriter stream = Network.Server.SetupStream(NetworkID.TradeMessage);
             stream.Write((byte)TradeStatus.Accept);
             stream.Write(pl2.ID);
             pl1.client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I');
 
-            stream = Program.server.SetupStream(NetworkID.TradeMessage);
+            stream = Network.Server.SetupStream(NetworkID.TradeMessage);
             stream.Write((byte)TradeStatus.Accept);
             stream.Write(pl1.ID);
             pl2.client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I');
@@ -100,7 +100,7 @@ namespace GUC.Server.Network.Messages
 
         public static void SendRequest(NPC from, NPC to)
         {
-            PacketWriter stream = Program.server.SetupStream(NetworkID.TradeMessage);
+            PacketWriter stream = Network.Server.SetupStream(NetworkID.TradeMessage);
             stream.Write((byte)TradeStatus.Request);
             stream.Write(from.ID);
             to.client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I');
@@ -108,7 +108,7 @@ namespace GUC.Server.Network.Messages
 
         public static void SendTradeDone(NPC pl1, NPC pl2)
         {
-            PacketWriter stream = Program.server.SetupStream(NetworkID.TradeMessage);
+            PacketWriter stream = Network.Server.SetupStream(NetworkID.TradeMessage);
             stream.Write((byte)TradeStatus.TradeDone);
             pl1.client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I');
             pl2.client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I');
@@ -116,7 +116,7 @@ namespace GUC.Server.Network.Messages
 
         public static void SendBreak(NPC pl)
         {
-            PacketWriter stream = Program.server.SetupStream(NetworkID.TradeMessage);
+            PacketWriter stream = Network.Server.SetupStream(NetworkID.TradeMessage);
             stream.Write((byte)TradeStatus.Break);
             stream.Write(pl.ID);
             pl.client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I');
@@ -124,14 +124,14 @@ namespace GUC.Server.Network.Messages
 
         public static void SendOfferConfirmed(NPC pl)
         {
-            PacketWriter stream = Program.server.SetupStream(NetworkID.TradeMessage);
+            PacketWriter stream = Network.Server.SetupStream(NetworkID.TradeMessage);
             stream.Write((byte)TradeStatus.ConfirmOffer);
             pl.client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I');
         }
 
         public static void SendOfferDeclined(NPC pl)
         {
-            PacketWriter stream = Program.server.SetupStream(NetworkID.TradeMessage);
+            PacketWriter stream = Network.Server.SetupStream(NetworkID.TradeMessage);
             stream.Write((byte)TradeStatus.DeclineOffer);
             pl.client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I');
         }

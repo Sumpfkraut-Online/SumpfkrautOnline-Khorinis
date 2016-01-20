@@ -11,8 +11,6 @@ using GUC.Client.GUI;
 
 namespace GUC.Client.Network
 {
-    delegate void MsgReader(PacketReader stream);
-
     static class Client
     {
         static RakPeerInterface clientInterface = null;
@@ -25,6 +23,7 @@ namespace GUC.Client.Network
 
         static Dictionary<NetworkIDs, MsgReader> messageListener = new Dictionary<NetworkIDs, MsgReader>();
 
+        delegate void MsgReader(PacketReader stream);
         static void InitMsgs()
         {
             /*
@@ -68,7 +67,7 @@ namespace GUC.Client.Network
             messageListener.Add(NetworkIDs.ControlCmdMessage, ControlMessage.ReadVobControlCmd);*/
         }
 
-        public static void Startup()
+        static Client()
         {
             clientInterface = RakPeer.GetInstance();
 

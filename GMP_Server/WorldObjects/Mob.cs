@@ -8,7 +8,7 @@ namespace GUC.Server.WorldObjects
 {
     public class Mob : Vob
     {
-        new public static readonly Collections.VobDictionary Vobs = Network.Server.sVobs.GetDict(MobInstance.sVobType);
+        new public static readonly Collections.VobDictionary Vobs = Network.Server.Vobs.GetDict(MobInstance.sVobType);
 
         new public MobInstance Instance { get; protected set; }
         public string FocusName { get { return Instance.FocusName; } }

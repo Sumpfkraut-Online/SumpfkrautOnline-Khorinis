@@ -21,18 +21,18 @@ namespace GUC.Server.Network.Messages
 
             client.CheckValidity(driveString, macString, instanceTableHash);
 
-            Log.Logger.print("Read ConnectionMSG");
+            Log.Logger.Print("Read ConnectionMSG");
 
             WriteInstanceTables(client);
         }
 
         public static void WriteInstanceTables(Client client)
         {
-            Log.Logger.print("Write ConnectionMSG ???");
+            Log.Logger.Print("Write ConnectionMSG ???");
             if (client.instanceNeeded)
             {
-                Program.server.ServerInterface.Send(Server.sInstances.Data, Server.sInstances.Data.Length, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'G', client.guid, false);
-                Log.Logger.print("Written ConnectionMSG");
+                Network.Server.ServerInterface.Send(Server.Instances.Data, Server.Instances.Data.Length, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'G', client.guid, false);
+                Log.Logger.Print("Written ConnectionMSG");
             }
         }
     }

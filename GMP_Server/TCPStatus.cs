@@ -9,88 +9,44 @@ using System.IO;
 
 namespace GUC.Server
 {
-    public class TCPStatus
+    public static class TCPStatus
     {
-        static TCPStatus status;
-        public static TCPStatus getTCPStatus()
-        {
-            if (status == null)
-            {
-                status = new TCPStatus();
-                status.start();
-            }
-            
-            return status;
-        }
-        protected TCPStatus()
-        {
+        static TcpListener tcpListener;
+        static Thread listenThread;
 
-        }
-
-        protected Dictionary<String, String> info = new Dictionary<string, string>();
-        protected Dictionary<String, String> files = new Dictionary<string, string>();
-        private TcpListener tcpListener;
-        private Thread listenThread;
-
-        public void addInfo(String key, String value)
-        {
-            lock (info)
-            {
-                key = key.ToLower().Trim();
-                value = value.Trim();
-                if (info.ContainsKey(key))
-                    info[key] = value;
-                else
-                    info.Add(key, value);
-            }
-        }
-
-        public void addFile(String url, String md5)
-        {
-            if (GUC.Server.Scripting.ScriptManager.Self.Startuped)
-            {
-                return;
-            }
-            lock (files)
-            {
-                files.Add(url, md5);
-            }
-        }
-
-        protected void start()
+        public static void Start()
         {
             try
             {
-                this.tcpListener = new TcpListener(IPAddress.Any, Program.serverOptions.Port);
-                this.listenThread = new Thread(new ThreadStart(ListenForClients));
-                this.listenThread.Start();
-
+                tcpListener = new TcpListener(IPAddress.Any, Network.Server.Options.Port);
+                listenThread = new Thread(new ThreadStart(ListenForClients));
+                listenThread.Start();
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                Log.Logger.log(Log.Logger.LogLevel.WARNING, "TCP-Listener for Status-Message could not be setup.<br>"+ex.ToString());
+                Log.Logger.Log("TCP-Listener for Status-Message could not be setup.<br>"+e);
             }
         }
 
-        private void ListenForClients()
+        static void ListenForClients()
         {
             try
             {
-                this.tcpListener.Start();
+                tcpListener.Start();
 
                 while (true)
                 {
-                    TcpClient client = this.tcpListener.AcceptTcpClient();
+                    TcpClient client = tcpListener.AcceptTcpClient();
 
                     ThreadPool.QueueUserWorkItem(HandleClient, client);
 
                     Thread.Sleep(50);//We only accept 20 Clients per second!
                 }
             }
-            catch (Exception ex) { }
+            catch { }
         }
 
-        private void HandleClient(Object state)
+        static void HandleClient(Object state)
         {
             NetworkStream clientStream = null;
             StreamReader sr = null;
@@ -109,35 +65,12 @@ namespace GUC.Server
                 if (type.Equals("getstatus"))
                 {
                     sw.WriteLine("giveStatus");
-                    lock (info)
-                    {
-                        sw.WriteLine("" + info.Count);
-                        foreach (KeyValuePair<String, String> pair in info)
-                        {
-                            sw.WriteLine(pair.Key.Trim().ToLower() + ":" + pair.Value.Trim());
-                        }
-                    }
-
+                    sw.WriteLine(Network.Server.Options.ServerName);
+                    sw.WriteLine(Network.Server.Options.Slots);
                 }
-
-                if (type.Equals("getfiles"))
-                {
-                    sw.WriteLine("getfiles");
-                    lock (files)
-                    {
-                        sw.WriteLine("" + files.Count);
-                        foreach (KeyValuePair<String, String> pair in files)
-                        {
-                            sw.WriteLine(pair.Key.Trim().ToLower() + "§" + pair.Value.Trim());
-                        }
-                    }
-
-                }
-
             }
-            catch (Exception ex)
+            catch
             {
-
             }
             finally
             {

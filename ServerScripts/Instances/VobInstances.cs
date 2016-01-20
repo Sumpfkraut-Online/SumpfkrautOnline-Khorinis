@@ -128,7 +128,7 @@ namespace GUC.Server.Scripts.Instances
             mob.Visual = "FIREPLACE_NW_LAMP_01.ASC";
             mob.Create();
 
-            Network.Server.sInstances.NetUpdate();
+            Network.Server.Instances.NetUpdate();
         }
 
         static Random random = new Random();

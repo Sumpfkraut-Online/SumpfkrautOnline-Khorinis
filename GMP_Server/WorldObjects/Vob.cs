@@ -15,7 +15,7 @@ namespace GUC.Server.WorldObjects
 {
     public class Vob : ServerObject, IVobObj<uint>
     {
-        public static readonly VobDictionary Vobs = Network.Server.sVobs.GetDict(VobInstance.sVobType);
+        public static readonly VobDictionary Vobs = Network.Server.Vobs.GetDict(VobInstance.sVobType);
 
         static uint idCount = 1; // Start with 1 cause a "null-vob" (id = 0) is needed for networking
 
@@ -79,7 +79,7 @@ namespace GUC.Server.WorldObjects
         public override void Create()
         {
             this.ID = Vob.idCount++;
-            Network.Server.sVobs.Add(this);
+            Network.Server.Vobs.Add(this);
             base.Create();
         }
 
@@ -87,7 +87,7 @@ namespace GUC.Server.WorldObjects
         public override void Delete()
         {
             this.Despawn();
-            Network.Server.sVobs.Remove(this);
+            Network.Server.Vobs.Remove(this);
             base.Delete();
         }
 
@@ -133,7 +133,7 @@ namespace GUC.Server.WorldObjects
 
         internal virtual void WriteSpawnMessage(IEnumerable<Client> list)
         {
-            PacketWriter stream = Program.server.SetupStream(NetworkIDs.WorldVobSpawnMessage);
+            PacketWriter stream = Network.Server.SetupStream(NetworkIDs.WorldVobSpawnMessage);
             this.WriteSpawn(stream);
 
             foreach (Client client in list)
@@ -144,7 +144,7 @@ namespace GUC.Server.WorldObjects
 
         internal void WriteDespawnMessage(IEnumerable<Client> list)
         {
-            PacketWriter stream = Program.server.SetupStream(NetworkIDs.WorldVobDeleteMessage);
+            PacketWriter stream = Network.Server.SetupStream(NetworkIDs.WorldVobDeleteMessage);
             stream.Write(this.ID);
 
             foreach (Client client in list)

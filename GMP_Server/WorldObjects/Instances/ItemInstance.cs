@@ -18,7 +18,7 @@ namespace GUC.Server.WorldObjects.Instances
         }
 
         new public readonly static Enumeration.VobTypes sVobType = Enumeration.VobTypes.Item;
-        new public readonly static Collections.InstanceDictionary Instances = Network.Server.sInstances.GetDict(sVobType);
+        new public readonly static Collections.InstanceDictionary Instances = Network.Server.Instances.GetDict(sVobType);
 
         #region Properties
 

@@ -94,9 +94,6 @@
     <Compile Include="..\Network\Network\PacketWriter.cs">
       <Link>Network\PacketWriter.cs</Link>
     </Compile>
-    <Compile Include="..\Network\Options\BaseOptions.cs">
-      <Link>Options\BaseOptions.cs</Link>
-    </Compile>
     <Compile Include="..\Network\Scripting\ScriptManager.cs">
       <Link>Scripting\ScriptManager.cs</Link>
     </Compile>
@@ -112,6 +109,10 @@
     <Compile Include="..\Network\Types\Vec3f.cs">
       <Link>Types\Vec3f.cs</Link>
     </Compile>
+    <Compile Include="..\Network\Utilities\XmlObj.cs">
+      <Link>Utilities\XmlObj.cs</Link>
+    </Compile>
+    <Compile Include="Log\Logger.Server.cs" />
     <Compile Include="Network\Client.cs" />
     <Compile Include="Network\NPCCell.cs" />
     <Compile Include="Network\Messages\TradeMessage.cs" />
@@ -120,6 +121,7 @@
     <Compile Include="Network\Messages\NPCMessage.cs" />
     <Compile Include="Network\Messages\VobMessage.cs" />
     <Compile Include="Network\WorldCell.cs" />
+    <Compile Include="Options\ServerOptions.cs" />
     <Compile Include="TCPStatus.cs" />
     <Compile Include="WorldObjects\AbstractCtrlVob.cs" />
     <Compile Include="WorldObjects\AbstractDropVob.cs" />

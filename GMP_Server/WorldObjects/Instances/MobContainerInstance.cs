@@ -9,7 +9,7 @@ namespace GUC.Server.WorldObjects.Instances
     public class MobContainerInstance : MobLockableInstance
     {
         new public readonly static Enumeration.VobTypes sVobType = Enumeration.VobTypes.MobContainer;
-        new public readonly static Collections.InstanceDictionary Instances = Network.Server.sInstances.GetDict(sVobType);
+        new public readonly static Collections.InstanceDictionary Instances = Network.Server.Instances.GetDict(sVobType);
 
         public MobContainerInstance(string instanceName, object scriptObject)
             : this(0, instanceName, scriptObject)

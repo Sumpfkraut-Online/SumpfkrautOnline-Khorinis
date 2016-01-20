@@ -13,7 +13,7 @@ namespace GUC.Server.WorldObjects
 {
     public class Item : Vob
     {
-        new public static readonly VobDictionary Vobs = Network.Server.sVobs.GetDict(ItemInstance.sVobType);
+        new public static readonly VobDictionary Vobs = Network.Server.Vobs.GetDict(ItemInstance.sVobType);
 
         public static readonly Item Fists = CreateFists();
         static Item CreateFists()
@@ -80,7 +80,7 @@ namespace GUC.Server.WorldObjects
 
         internal override void WriteSpawnMessage(IEnumerable<Client> list)
         {
-            PacketWriter stream = Program.server.SetupStream(NetworkIDs.WorldItemSpawnMessage);
+            PacketWriter stream = Network.Server.SetupStream(NetworkIDs.WorldItemSpawnMessage);
             this.WriteSpawn(stream);
 
             foreach (Client client in list)

@@ -8,7 +8,7 @@ namespace GUC.Server.WorldObjects
 {
     public class MobFire : MobInter
     {
-        new public static readonly Collections.VobDictionary Vobs = Network.Server.sVobs.GetDict(MobFireInstance.sVobType);
+        new public static readonly Collections.VobDictionary Vobs = Network.Server.Vobs.GetDict(MobFireInstance.sVobType);
 
         new public MobFireInstance Instance { get; protected set; }
         public string FireVobTree { get { return Instance.FireVobTree; } }

@@ -49,7 +49,7 @@ namespace GUC.Server.Network.Messages
 
         public static void WritePosDir(IEnumerable<Client> list, Vob vob)
         {
-            PacketWriter stream = Program.server.SetupStream(NetworkIDs.VobPosDirMessage);
+            PacketWriter stream = Network.Server.SetupStream(NetworkIDs.VobPosDirMessage);
             stream.Write(vob.ID);
             stream.Write(vob.Position);
             stream.Write(vob.Direction);

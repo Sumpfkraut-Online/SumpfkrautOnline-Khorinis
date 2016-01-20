@@ -4,8 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.Enumeration;
 using GUC.Network;
-using GUC.Server.Log;
-using System.Security.Cryptography;
+using GUC.Log;
 using GUC.Server.WorldObjects.Collections;
 
 namespace GUC.Server.WorldObjects.Instances
@@ -13,7 +12,7 @@ namespace GUC.Server.WorldObjects.Instances
     public class VobInstance : ServerObject, IVobObj<ushort>
     {
         public readonly static VobTypes sVobType = VobTypes.Vob;
-        public readonly static InstanceDictionary Instances = Network.Server.sInstances.GetDict(sVobType);
+        public readonly static InstanceDictionary Instances = Network.Server.Instances.GetDict(sVobType);
 
         public ushort ID { get; internal set; }
         public string InstanceName { get; internal set; }
@@ -67,7 +66,7 @@ namespace GUC.Server.WorldObjects.Instances
                 {
                     if (idCount != 0)
                     {
-                        if (Network.Server.sInstances.Get(idCount) == null)
+                        if (Network.Server.Instances.Get(idCount) == null)
                         {
                             ID = idCount++;
                             break;
@@ -78,18 +77,18 @@ namespace GUC.Server.WorldObjects.Instances
 
                 if (ID == 0) //no free id found
                 {
-                    Logger.logError("{0} creation failed: Maximum reached: {1}", this.GetType(), ushort.MaxValue);
+                    Logger.LogError("{0} creation failed: Maximum reached: {1}", this.GetType(), ushort.MaxValue);
                     return;
                 }
             }
 
-            Network.Server.sInstances.Add(this);
+            Network.Server.Instances.Add(this);
             base.Create();
         }
 
         public override void Delete()
         {
-            Network.Server.sInstances.Remove(this);
+            Network.Server.Instances.Remove(this);
             base.Delete();
         }
 

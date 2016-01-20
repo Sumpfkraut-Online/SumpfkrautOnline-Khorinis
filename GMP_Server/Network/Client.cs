@@ -50,14 +50,14 @@ namespace GUC.Server.Network
 
             if (npc.isPlayer)
             {
-                Log.Logger.logWarning("Client.SetControl rejected: NPC is a Player!");
+                Log.Logger.LogWarning("Client.SetControl rejected: NPC is a Player!");
                 return;
             }
 
             //set old character to NPC
             if (Character != null)
             {
-                Server.sVobs.Players.Remove(Character);
+                Server.Vobs.Players.Remove(Character);
                 if (Character.World != null)
                 {
                     Character.World.Vobs.Players.Remove(npc);
@@ -82,14 +82,13 @@ namespace GUC.Server.Network
                 //    npc.VobController.RemoveControlledVob(npc);
             }
             
-            Server.sVobs.Players.Add(npc);
+            Server.Vobs.Players.Add(npc);
 
             npc.World = world;
             npc.client = this;
             Character = npc;
             NPC.WriteControl(this, Character);
         }
-
 
         public static Predicate<Client> IsAllowedToConnect;
         internal void CheckValidity(String driveString, String macString, byte[] instanceTableHash)
@@ -108,12 +107,12 @@ namespace GUC.Server.Network
             }
             isValid = true;
 
-            instanceNeeded = !instanceTableHash.SequenceEqual(Server.sInstances.Hash);
+            instanceNeeded = !instanceTableHash.SequenceEqual(Server.Instances.Hash);
         }
 
         public void Disconnect()
         {
-            Program.server.KickClient(this);
+            Server.KickClient(this);
         }
 
         internal void Delete()
@@ -140,9 +139,9 @@ namespace GUC.Server.Network
         {
            /* VobControlledList.Add(vob);
             vob.VobController = this;
-            PacketWriter stream = Program.server.SetupStream(NetworkID.ControlAddVobMessage); stream.Write(vob.ID);
+            PacketWriter stream = Network.Server.SetupStream(NetworkID.ControlAddVobMessage); stream.Write(vob.ID);
             Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
-            Log.Logger.log("AddCtrl: " + Character.ID + " " + vob.ID + ": " + vob.GetType().Name);
+            Log.Logger.Log("AddCtrl: " + Character.ID + " " + vob.ID + ": " + vob.GetType().Name);
 
             if (vob is NPC)
             {
@@ -154,29 +153,19 @@ namespace GUC.Server.Network
         {
             /*VobControlledList.Remove(vob);
             vob.VobController = null;
-            PacketWriter stream = Program.server.SetupStream(NetworkID.ControlRemoveVobMessage); stream.Write(vob.ID);
+            PacketWriter stream = Network.Server.SetupStream(NetworkID.ControlRemoveVobMessage); stream.Write(vob.ID);
             Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
-            Log.Logger.log("RemoveCtrl: " + Character.ID + " " + vob.ID + ": " + vob.GetType().Name);*/
-        }
-
-        public void SendErrorMsg(string msg)
-        {
-
-        }
-
-        public void SendLoginMsg(PacketWriter stream)
-        {
-            Program.server.ServerInterface.Send(stream.GetData(), stream.GetLength(), PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'M', this.guid, false);
+            Log.Logger.Log("RemoveCtrl: " + Character.ID + " " + vob.ID + ": " + vob.GetType().Name);*/
         }
 
         internal void Send(PacketWriter stream, PacketPriority pp, PacketReliability pr, char orderingChannel)
         {
-            Program.server.ServerInterface.Send(stream.GetData(), stream.GetLength(), pp, pr, orderingChannel, guid, false);
+            Server.ServerInterface.Send(stream.GetData(), stream.GetLength(), pp, pr, orderingChannel, this.guid, false);
         }
 
         public int GetLastPing()
         {
-            return Program.server.ServerInterface.GetLastPing(guid);
+            return Server.ServerInterface.GetLastPing(this.guid);
         }
     }
 }

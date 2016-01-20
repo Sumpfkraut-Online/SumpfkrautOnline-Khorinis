@@ -14,7 +14,7 @@ namespace GUC.Server.Network.Messages
         //Add an item to the client's inventory
         public static void WriteAddItem(Client client, Item item)
         {
-            PacketWriter stream = Program.server.SetupStream(NetworkIDs.InventoryAddMessage);
+            PacketWriter stream = Network.Server.SetupStream(NetworkIDs.InventoryAddMessage);
             item.WriteInventory(stream);
             client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I');
         }
@@ -26,7 +26,7 @@ namespace GUC.Server.Network.Messages
 
         public static void WriteAmountUpdate(Client client, Item item, ushort amount)
         {
-            PacketWriter stream = Program.server.SetupStream(NetworkIDs.InventoryAmountMessage);
+            PacketWriter stream = Network.Server.SetupStream(NetworkIDs.InventoryAmountMessage);
             stream.Write(item.ID);
             stream.Write(amount);
             client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I');

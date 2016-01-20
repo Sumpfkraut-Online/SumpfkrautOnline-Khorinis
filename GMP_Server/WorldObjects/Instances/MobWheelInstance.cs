@@ -9,7 +9,7 @@ namespace GUC.Server.WorldObjects.Instances
     public class MobWheelInstance : MobInterInstance
     {
         new public readonly static Enumeration.VobTypes sVobType = Enumeration.VobTypes.MobWheel;
-        new public readonly static Collections.InstanceDictionary Instances = Network.Server.sInstances.GetDict(sVobType);
+        new public readonly static Collections.InstanceDictionary Instances = Network.Server.Instances.GetDict(sVobType);
 
         public MobWheelInstance(string instanceName, object scriptObject)
             : this(0, instanceName, scriptObject)

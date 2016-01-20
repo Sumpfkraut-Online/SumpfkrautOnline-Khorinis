@@ -78,9 +78,6 @@
     <Compile Include="..\Network\Network\PacketWriter.cs">
       <Link>Network\PacketWriter.cs</Link>
     </Compile>
-    <Compile Include="..\Network\Options\BaseOptions.cs">
-      <Link>Options\BaseOptions.cs</Link>
-    </Compile>
     <Compile Include="..\Network\Scripting\ScriptManager.cs">
       <Link>Scripting\ScriptManager.cs</Link>
     </Compile>
@@ -95,6 +92,9 @@
     </Compile>
     <Compile Include="..\Network\Types\Vec3f.cs">
       <Link>Types\Vec3f.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Utilities\XmlObj.cs">
+      <Link>Utilities\XmlObj.cs</Link>
     </Compile>
     <Compile Include="..\Network\WorldObjects\Collections\InstanceCollection.cs">
       <Link>WorldObjects\Both\Collections\InstanceCollection.cs</Link>
@@ -225,7 +225,6 @@
   <ItemGroup>
     <Compile Include="ClientPaths.cs" />
     <Compile Include="Log\Logger.Client.cs" />
-    <Compile Include="Options\BaseOptions.Client.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

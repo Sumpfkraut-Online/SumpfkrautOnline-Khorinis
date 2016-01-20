@@ -85,11 +85,11 @@ namespace GUC.Scripting
         }
     }
 
-    public class Timer : AbstractTimer
+    public class GUCTimer : AbstractTimer
     {
         Action callback;
 
-        public Timer(long interval, Action callback) : base(interval)
+        public GUCTimer(long interval, Action callback) : base(interval)
         {
             if (callback == null)
             {
@@ -106,12 +106,12 @@ namespace GUC.Scripting
         }
     }
 
-    public class Timer<T> : AbstractTimer
+    public class GUCTimer<T> : AbstractTimer
     {
         Action<T> callback;
         T arg1;
 
-        public Timer(long interval, Action<T> callback, T arg1) : base(interval)
+        public GUCTimer(long interval, Action<T> callback, T arg1) : base(interval)
         {
             if (callback == null)
             {
@@ -129,13 +129,13 @@ namespace GUC.Scripting
         }
     }
 
-    public class Timer<T1,T2> : AbstractTimer
+    public class GUCTimer<T1,T2> : AbstractTimer
     {
         Action<T1,T2> callback;
         T1 arg1;
         T2 arg2;
 
-        public Timer(long interval, Action<T1,T2> callback, T1 arg1, T2 arg2)
+        public GUCTimer(long interval, Action<T1,T2> callback, T1 arg1, T2 arg2)
             : base(interval)
         {
             if (callback == null)
@@ -155,14 +155,14 @@ namespace GUC.Scripting
         }
     }
 
-    public class Timer<T1, T2, T3> : AbstractTimer
+    public class GUCTimer<T1, T2, T3> : AbstractTimer
     {
         Action<T1, T2, T3> callback;
         T1 arg1;
         T2 arg2;
         T3 arg3;
 
-        public Timer(long interval, Action<T1, T2, T3> callback, T1 arg1, T2 arg2, T3 arg3)
+        public GUCTimer(long interval, Action<T1, T2, T3> callback, T1 arg1, T2 arg2, T3 arg3)
             : base(interval)
         {
             if (callback == null)

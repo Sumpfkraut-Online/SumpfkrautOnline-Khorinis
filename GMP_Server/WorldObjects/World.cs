@@ -99,11 +99,11 @@ namespace GUC.Server.WorldObjects
         {
             if (WorldName == null)
             {
-                Log.Logger.logError("World creation failed! WorldName can't be NULL!");
+                Log.Logger.LogError("World creation failed! WorldName can't be NULL!");
             }
             else if (String.IsNullOrWhiteSpace(FileName))
             {
-                Log.Logger.logError("World creation failed! FileName is NULL or empty!");
+                Log.Logger.LogError("World creation failed! FileName is NULL or empty!");
             }
             else
             {
@@ -450,7 +450,7 @@ namespace GUC.Server.WorldObjects
                 foreach (KeyValuePair<uint, NPC> keyValPair in this.playerDict)
                 {
                     Client client = keyValPair.Value.client;
-                    PacketWriter stream = Program.server.SetupStream(NetworkID.WorldTimeMessage);
+                    PacketWriter stream = Network.Server.SetupStream(NetworkID.WorldTimeMessage);
 
                     stream.Write(this.igTime.day);
                     stream.Write(this.igTime.hour);
@@ -483,7 +483,7 @@ namespace GUC.Server.WorldObjects
                 {
                     Client client = keyValPair.Value.client;
 
-                    PacketWriter stream = Program.server.SetupStream(NetworkID.WorldWeatherMessage);
+                    PacketWriter stream = Network.Server.SetupStream(NetworkID.WorldWeatherMessage);
                     stream.Write((byte)wt);
                     //stream.Write(startTime.day);
                     stream.Write((byte)startTime.hour);

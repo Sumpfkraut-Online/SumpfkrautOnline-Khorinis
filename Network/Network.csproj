@@ -48,7 +48,7 @@
     <Compile Include="Network\PacketReader.cs" />
     <Compile Include="Network\PacketWriter.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="Options\BaseOptions.cs" />
+    <Compile Include="Utilities\XmlObj.cs" />
     <Compile Include="Scripting\ScriptManager.cs" />
     <Compile Include="Scripting\Timer.cs" />
     <Compile Include="Types\ColorRGBA.cs" />

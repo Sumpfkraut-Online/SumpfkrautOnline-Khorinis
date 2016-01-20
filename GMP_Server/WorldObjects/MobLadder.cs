@@ -8,7 +8,7 @@ namespace GUC.Server.WorldObjects
 {
     public class MobLadder : MobInter
     {
-        new public static readonly Collections.VobDictionary Vobs = Network.Server.sVobs.GetDict(MobLadderInstance.sVobType);
+        new public static readonly Collections.VobDictionary Vobs = Network.Server.Vobs.GetDict(MobLadderInstance.sVobType);
 
         new public MobLadderInstance Instance { get; protected set; }
 

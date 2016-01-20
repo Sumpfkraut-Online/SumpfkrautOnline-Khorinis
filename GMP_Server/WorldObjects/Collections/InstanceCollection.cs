@@ -16,7 +16,7 @@ namespace GUC.Server.WorldObjects.Collections
 
         public void NetUpdate()
         {
-            PacketWriter stream = Program.server.SetupStream(NetworkIDs.ConnectionMessage);
+            PacketWriter stream = Network.Server.SetupStream(NetworkIDs.ConnectionMessage);
 
             stream.StartCompressing();
             for (int i = 0; i < (int)VobTypes.Maximum; i++)

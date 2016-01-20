@@ -8,7 +8,7 @@ namespace GUC.Server.WorldObjects
 {
     public class MobContainer : MobLockable
     {
-        new public static readonly Collections.VobDictionary Vobs = Network.Server.sVobs.GetDict(MobContainerInstance.sVobType);
+        new public static readonly Collections.VobDictionary Vobs = Network.Server.Vobs.GetDict(MobContainerInstance.sVobType);
 
         new public MobContainerInstance Instance { get; protected set; }
 
