@@ -112,6 +112,108 @@
     <Compile Include="..\Network\Utilities\XmlObj.cs">
       <Link>Utilities\XmlObj.cs</Link>
     </Compile>
+    <Compile Include="..\Network\WorldObjects\Collections\InstanceCollection.cs">
+      <Link>WorldObjects\Collections\InstanceCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Collections\InstanceDictionary.cs">
+      <Link>WorldObjects\Collections\InstanceDictionary.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Collections\ItemContainer.cs">
+      <Link>WorldObjects\Collections\ItemContainer.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Collections\VobCollection.cs">
+      <Link>WorldObjects\Collections\VobCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Collections\VobDictionary.cs">
+      <Link>WorldObjects\Collections\VobDictionary.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Collections\VobObj.cs">
+      <Link>WorldObjects\Collections\VobObj.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Collections\VobObjCollection.cs">
+      <Link>WorldObjects\Collections\VobObjCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Collections\VobObjDictionary.cs">
+      <Link>WorldObjects\Collections\VobObjDictionary.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\ItemInstance.cs">
+      <Link>WorldObjects\Instances\ItemInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\Mobs\MobContainerInstance.cs">
+      <Link>WorldObjects\Instances\Mobs\MobContainerInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\Mobs\MobDoorInstance.cs">
+      <Link>WorldObjects\Instances\Mobs\MobDoorInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\Mobs\MobFireInstance.cs">
+      <Link>WorldObjects\Instances\Mobs\MobFireInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\Mobs\MobInstance.cs">
+      <Link>WorldObjects\Instances\Mobs\MobInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\Mobs\MobInterInstance.cs">
+      <Link>WorldObjects\Instances\Mobs\MobInterInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\Mobs\MobLadderInstance.cs">
+      <Link>WorldObjects\Instances\Mobs\MobLadderInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\Mobs\MobLockableInstance.cs">
+      <Link>WorldObjects\Instances\Mobs\MobLockableInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\Mobs\MobSwitchInstance.cs">
+      <Link>WorldObjects\Instances\Mobs\MobSwitchInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\Mobs\MobWheelInstance.cs">
+      <Link>WorldObjects\Instances\Mobs\MobWheelInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\NPCInstance.cs">
+      <Link>WorldObjects\Instances\NPCInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\VobInstance.cs">
+      <Link>WorldObjects\Instances\VobInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Item.cs">
+      <Link>WorldObjects\Item.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Mobs\Mob.cs">
+      <Link>WorldObjects\Mobs\Mob.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Mobs\MobContainer.cs">
+      <Link>WorldObjects\Mobs\MobContainer.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Mobs\MobDoor.cs">
+      <Link>WorldObjects\Mobs\MobDoor.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Mobs\MobFire.cs">
+      <Link>WorldObjects\Mobs\MobFire.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Mobs\MobInter.cs">
+      <Link>WorldObjects\Mobs\MobInter.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Mobs\MobLadder.cs">
+      <Link>WorldObjects\Mobs\MobLadder.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Mobs\MobLockable.cs">
+      <Link>WorldObjects\Mobs\MobLockable.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Mobs\MobSwitch.cs">
+      <Link>WorldObjects\Mobs\MobSwitch.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Mobs\MobWheel.cs">
+      <Link>WorldObjects\Mobs\MobWheel.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\NPC.cs">
+      <Link>WorldObjects\NPC.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Vob.cs">
+      <Link>WorldObjects\Vob.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\World.cs">
+      <Link>WorldObjects\World.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\WorldObject.cs">
+      <Link>WorldObjects\WorldObject.cs</Link>
+    </Compile>
     <Compile Include="Log\Logger.Server.cs" />
     <Compile Include="Network\Client.cs" />
     <Compile Include="Network\NPCCell.cs" />
@@ -123,44 +225,38 @@
     <Compile Include="Network\WorldCell.cs" />
     <Compile Include="Options\ServerOptions.cs" />
     <Compile Include="TCPStatus.cs" />
-    <Compile Include="WorldObjects\AbstractCtrlVob.cs" />
-    <Compile Include="WorldObjects\AbstractDropVob.cs" />
-    <Compile Include="WorldObjects\Collections\InstanceCollection.cs" />
-    <Compile Include="WorldObjects\Collections\InstanceDictionary.cs" />
-    <Compile Include="WorldObjects\Collections\IVobObj.cs" />
-    <Compile Include="WorldObjects\Collections\VobCollection.cs" />
-    <Compile Include="WorldObjects\Collections\VobDictionary.cs" />
-    <Compile Include="WorldObjects\Collections\VobObjCollection.cs" />
-    <Compile Include="WorldObjects\Collections\VobObjDictionary.cs" />
-    <Compile Include="WorldObjects\Instances\VobInstance.cs" />
-    <Compile Include="WorldObjects\ServerObject.cs" />
-    <Compile Include="WorldObjects\Vob.cs" />
-    <Compile Include="WorldObjects\Item.cs" />
-    <Compile Include="WorldObjects\Instances\ItemInstance.cs" />
-    <Compile Include="WorldObjects\Mob.cs" />
-    <Compile Include="WorldObjects\MobContainer.cs" />
-    <Compile Include="WorldObjects\Instances\MobContainerInstance.cs" />
-    <Compile Include="WorldObjects\MobDoor.cs" />
-    <Compile Include="WorldObjects\Instances\MobDoorInstance.cs" />
-    <Compile Include="WorldObjects\MobFire.cs" />
-    <Compile Include="WorldObjects\Instances\MobFireInstance.cs" />
-    <Compile Include="WorldObjects\Instances\MobInstance.cs" />
-    <Compile Include="WorldObjects\MobInter.cs" />
-    <Compile Include="WorldObjects\Instances\MobInterInstance.cs" />
-    <Compile Include="WorldObjects\MobLadder.cs" />
-    <Compile Include="WorldObjects\Instances\MobLadderInstance.cs" />
-    <Compile Include="WorldObjects\MobLockable.cs" />
-    <Compile Include="WorldObjects\Instances\MobLockableInstance.cs" />
-    <Compile Include="WorldObjects\MobSwitch.cs" />
-    <Compile Include="WorldObjects\Instances\MobSwitchInstance.cs" />
-    <Compile Include="WorldObjects\MobWheel.cs" />
-    <Compile Include="WorldObjects\Instances\MobWheelInstance.cs" />
-    <Compile Include="WorldObjects\NPC.cs" />
-    <Compile Include="WorldObjects\Instances\NPCInstance.cs" />
-    <Compile Include="WorldObjects\World.cs" />
+    <Compile Include="WorldObjects\Collections\InstanceCollection.Server.cs" />
+    <Compile Include="WorldObjects\Collections\InstanceDictionary.Server.cs" />
+    <Compile Include="WorldObjects\Collections\VobCollection.Server.cs" />
+    <Compile Include="WorldObjects\Instances\VobInstance.Server.cs" />
+    <Compile Include="WorldObjects\Vob.Server.cs" />
+    <Compile Include="WorldObjects\Item.Server.cs" />
+    <Compile Include="WorldObjects\Instances\ItemInstance.Server.cs" />
+    <Compile Include="WorldObjects\Mobs\Mob.Server.cs" />
+    <Compile Include="WorldObjects\Mobs\MobContainer.Server.cs" />
+    <Compile Include="WorldObjects\Instances\Mobs\MobContainerInstance.Server.cs" />
+    <Compile Include="WorldObjects\Mobs\MobDoor.Server.cs" />
+    <Compile Include="WorldObjects\Instances\Mobs\MobDoorInstance.Server.cs" />
+    <Compile Include="WorldObjects\Mobs\MobFire.Server.cs" />
+    <Compile Include="WorldObjects\Instances\Mobs\MobFireInstance.Server.cs" />
+    <Compile Include="WorldObjects\Instances\Mobs\MobInstance.Server.cs" />
+    <Compile Include="WorldObjects\Mobs\MobInter.Server.cs" />
+    <Compile Include="WorldObjects\Instances\Mobs\MobInterInstance.Server.cs" />
+    <Compile Include="WorldObjects\Mobs\MobLadder.Server.cs" />
+    <Compile Include="WorldObjects\Instances\Mobs\MobLadderInstance.Server.cs" />
+    <Compile Include="WorldObjects\Mobs\MobLockable.Server.cs" />
+    <Compile Include="WorldObjects\Instances\Mobs\MobLockableInstance.Server.cs" />
+    <Compile Include="WorldObjects\Mobs\MobSwitch.Server.cs" />
+    <Compile Include="WorldObjects\Instances\Mobs\MobSwitchInstance.Server.cs" />
+    <Compile Include="WorldObjects\Mobs\MobWheel.Server.cs" />
+    <Compile Include="WorldObjects\Instances\Mobs\MobWheelInstance.Server.cs" />
+    <Compile Include="WorldObjects\NPC.Server.cs" />
+    <Compile Include="WorldObjects\Instances\NPCInstance.Server.cs" />
+    <Compile Include="WorldObjects\World.Server.cs" />
+    <Compile Include="WorldObjects\WorldObject.Server.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Network\Server.cs" />
+    <Compile Include="Network\GameServer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">

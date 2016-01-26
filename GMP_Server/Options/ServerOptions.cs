@@ -7,7 +7,7 @@ using System.IO;
 
 namespace GUC.Server.Options
 {
-    class ServerOptions : XmlObj
+    public class ServerOptions : XmlObj
     {
         public string ServerName = "Test-Server";
         public ushort Port = 9054;

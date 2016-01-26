@@ -8,16 +8,17 @@ using GUC.WorldObjects.Collections;
 
 namespace GUC.WorldObjects.Instances
 {
-    public partial interface IScriptVobInstance : IScriptWorldObject
-    {
-        void OnWriteProperties(PacketWriter stream);
-        void OnReadProperties(PacketReader stream);
-    }
-
     public partial class VobInstance : WorldObject, IVobObj<ushort>
     {
+        public partial interface IScriptVobInstance : IScriptWorldObject
+        {
+            void OnWriteProperties(PacketWriter stream);
+            void OnReadProperties(PacketReader stream);
+        }
+
+        public const VobTypes sVobType = VobTypes.Vob;
         public readonly static InstanceCollection AllInstances = new InstanceCollection();
-        public readonly static InstanceDictionary VobInstances = AllInstances.GetDict(VobTypes.Vob);
+        public readonly static InstanceDictionary VobInstances = AllInstances.GetDict(sVobType);
 
         public ushort ID { get; protected set; }
         public VobTypes VobType { get; protected set; }
@@ -47,10 +48,19 @@ namespace GUC.WorldObjects.Instances
         }
 
         #endregion
-        
-        internal VobInstance()
+
+        partial void pCreate();
+        public override void Create()
         {
-            this.VobType = VobTypes.Vob;
+            pCreate();
+            AllInstances.Add(this);
+            base.Create();
+        }
+
+        public override void Delete()
+        {
+            AllInstances.Remove(this);
+            base.Delete();
         }
 
         internal virtual void WriteProperties(PacketWriter stream)
@@ -71,53 +81,6 @@ namespace GUC.WorldObjects.Instances
             this.CDStatic = stream.ReadBit();
 
             this.ScriptObj.OnReadProperties(stream);
-        }
-
-        internal static VobInstance CreateInstanceByType(VobTypes type)
-        {
-            VobInstance result;
-            switch (type)
-            {
-                case VobTypes.Vob:
-                    result = new VobInstance();
-                    break;
-                case VobTypes.Item:
-                    result = new ItemInstance();
-                    break;
-                case VobTypes.NPC:
-                    result = new NPCInstance();
-                    break;
-                case VobTypes.Mob:
-                    result = new MobInstance();
-                    break;
-                case VobTypes.MobInter:
-                    result = new MobInterInstance();
-                    break;
-                case VobTypes.MobFire:
-                    result = new MobFireInstance();
-                    break;
-                case VobTypes.MobLadder:
-                    result = new MobLadderInstance();
-                    break;
-                case VobTypes.MobSwitch:
-                    result = new MobSwitchInstance();
-                    break;
-                case VobTypes.MobWheel:
-                    result = new MobWheelInstance();
-                    break;
-                case VobTypes.MobContainer:
-                    result = new MobContainerInstance();
-                    break;
-                case VobTypes.MobDoor:
-                    result = new MobDoorInstance();
-                    break;
-                default:
-                    return null;
-            }
-
-            //result.ScriptObj = Scripting.ScriptManager.si.CreateScriptInstance(type);
-
-            return result;
         }
     }
 }

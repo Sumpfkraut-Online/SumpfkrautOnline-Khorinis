@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using RakNet;
-using GUC.Enumeration;
-using GUC.Server.WorldObjects;
+using GUC.WorldObjects;
+using GUC.WorldObjects.Instances;
 using GUC.Network;
 
 namespace GUC.Server.Network
@@ -20,9 +20,9 @@ namespace GUC.Server.Network
         public String SystemAddress { get { return systemAddress.ToString(); } }
         public String DriveString { get; internal set; }
         public String MacString { get; internal set; }
-
-        internal bool instanceNeeded;
+        
         internal bool isValid = false;
+        internal bool instanceNeeded;
 
         //Ingame
         public NPC MainChar { get; internal set; }
@@ -48,7 +48,7 @@ namespace GUC.Server.Network
                 return;
             }
 
-            if (npc.isPlayer)
+            if (npc.IsPlayer)
             {
                 Log.Logger.LogWarning("Client.SetControl rejected: NPC is a Player!");
                 return;
@@ -57,7 +57,7 @@ namespace GUC.Server.Network
             //set old character to NPC
             if (Character != null)
             {
-                Server.Vobs.Players.Remove(Character);
+                Vob.AllVobs.Players.Remove(Character);
                 if (Character.World != null)
                 {
                     Character.World.Vobs.Players.Remove(npc);
@@ -66,7 +66,7 @@ namespace GUC.Server.Network
                 {
                     Character.cell.Vobs.Players.Remove(npc);
                 }
-                Character.client = null;
+                Character.Client = null;
             }
 
             //npc is already in the world, set to player
@@ -82,10 +82,10 @@ namespace GUC.Server.Network
                 //    npc.VobController.RemoveControlledVob(npc);
             }
             
-            Server.Vobs.Players.Add(npc);
+            Vob.AllVobs.Players.Add(npc);
 
             npc.World = world;
-            npc.client = this;
+            npc.Client = this;
             Character = npc;
             NPC.WriteControl(this, Character);
         }
@@ -100,19 +100,24 @@ namespace GUC.Server.Network
             {
                 if (!IsAllowedToConnect(this))
                 {
-                    isValid = false;
-                    Delete();
+                    this.isValid = false;
+                    this.Kick();
                     return;
                 }
             }
             isValid = true;
 
-            instanceNeeded = !instanceTableHash.SequenceEqual(Server.Instances.Hash);
+            instanceNeeded = !instanceTableHash.SequenceEqual(VobInstance.AllInstances.Hash);
         }
 
-        public void Disconnect()
+        public void Kick()
         {
-            Server.KickClient(this);
+            GameServer.DisconnectClient(this);
+        }
+
+        public void Ban()
+        {
+            GameServer.AddToBanList(this.SystemAddress);
         }
 
         internal void Delete()
@@ -125,7 +130,7 @@ namespace GUC.Server.Network
 
             if (Character != null)
             { //client was controlling someone else
-                Character.client = null;
+                Character.Client = null;
             }
 
             /*for (int i = 0; i < VobControlledList.Count; i++)
@@ -160,12 +165,12 @@ namespace GUC.Server.Network
 
         internal void Send(PacketWriter stream, PacketPriority pp, PacketReliability pr, char orderingChannel)
         {
-            Server.ServerInterface.Send(stream.GetData(), stream.GetLength(), pp, pr, orderingChannel, this.guid, false);
+            GameServer.ServerInterface.Send(stream.GetData(), stream.GetLength(), pp, pr, orderingChannel, this.guid, false);
         }
 
         public int GetLastPing()
         {
-            return Server.ServerInterface.GetLastPing(this.guid);
+            return GameServer.ServerInterface.GetLastPing(this.guid);
         }
     }
 }

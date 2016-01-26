@@ -26,7 +26,7 @@ namespace GUC.Server.Scripts.Accounts
             Logger.log(Logger.LogLevel.INFO, "################# Initialise Account-System ################");
             CreateStandardTables();
 
-            Server.Network.Server.OnLoginMessage = ReadLoginMessage;
+            Server.Network.GameServer.OnLoginMessage = ReadLoginMessage;
         }
 
         static void ReadLoginMessage(PacketReader stream, Client client, PacketWriter answer)
@@ -81,7 +81,7 @@ namespace GUC.Server.Scripts.Accounts
                         }
                         else // hax
                         {
-                            client.Disconnect();
+                            client.Kick();
                         }
                     }
                     break;

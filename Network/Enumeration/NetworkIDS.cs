@@ -44,7 +44,7 @@ namespace GUC.Enumeration
         NPCStateMessage,
         NPCTargetStateMessage,
         NPCDrawItemMessage,
-        NPCUndrawItemMessage,
+        NPCDrawFistsMessage,
         
         NPCHealthMessage,
         NPCStatBarMessage,

@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using RakNet;
 using GUC.Enumeration;
-using GUC.Server.WorldObjects;
+using GUC.WorldObjects.Instances;
 using GUC.Network;
 
 namespace GUC.Server.Network.Messages
 {
     static class ConnectionMessage
     {
-        public static void Read(PacketReader stream, Client client, NPC character, World world)
+        public static void Read(PacketReader stream, Client client)
         {
             String driveString = stream.ReadString();
             String macString = stream.ReadString();
@@ -31,7 +31,7 @@ namespace GUC.Server.Network.Messages
             Log.Logger.Print("Write ConnectionMSG ???");
             if (client.instanceNeeded)
             {
-                Network.Server.ServerInterface.Send(Server.Instances.Data, Server.Instances.Data.Length, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'G', client.guid, false);
+                Network.GameServer.ServerInterface.Send(VobInstance.AllInstances.Data, VobInstance.AllInstances.Data.Length, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'G', client.guid, false);
                 Log.Logger.Print("Written ConnectionMSG");
             }
         }

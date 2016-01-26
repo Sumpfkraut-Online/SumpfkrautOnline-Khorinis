@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Server.WorldObjects;
-using GUC.Server.WorldObjects.Collections;
+using GUC.WorldObjects;
+using GUC.WorldObjects.Collections;
 
 namespace GUC.Server.Network
 {

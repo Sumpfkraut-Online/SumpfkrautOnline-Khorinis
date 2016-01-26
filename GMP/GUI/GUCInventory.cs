@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.WorldObjects;
+//using GUC.WorldObjects;
 using WinApi.User.Enumeration;
 using GUC.Enumeration;
 using Gothic.View;

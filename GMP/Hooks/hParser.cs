@@ -5,6 +5,8 @@ using System.Text;
 using WinApi;
 using Gothic.Types;
 using GUC.Log;
+using System.IO;
+using System.Reflection;
 
 namespace GUC.Client.Hooks
 {
@@ -20,6 +22,8 @@ namespace GUC.Client.Hooks
             _infoLoadParserFile = Process.Hook(Constants.GUCDll, typeof(hParser).GetMethod("hook_LoadParserFile"), 0x006C4BE0, 6, 1);
 
             Process.Write(new byte[] { 0x33, 0xC0, 0xC2, 0x04, 0x00 }, _infoLoadParserFile.oldFuncInNewFunc.ToInt32());
+
+            Logger.Log("Parser hooked.");
         }
 
         static void BlockLoadDat()
@@ -105,6 +109,11 @@ namespace GUC.Client.Hooks
         static String srcFile = null;
         static void initDefaultScripts()
         {
+            string dPath = Program.ProjectPath + "Daedalus";
+
+            if (!Directory.Exists(dPath))
+                Directory.CreateDirectory(dPath);
+
             String[] arr = new String[] { "GUC.Client.Resources.Constants.d", "GUC.Client.Resources.Classes.d", "GUC.Client.Resources.AI_Constants.d",
                 "GUC.Client.Resources.BodyStates.d", "GUC.Client.Resources.Focus.d", "GUC.Client.Resources.Species.d", "GUC.Client.Resources.NPC_Default.d",
                 "GUC.Client.Resources.PC_Hero.d" };
@@ -115,11 +124,11 @@ namespace GUC.Client.Hooks
             {
                 try
                 {
-                    using (var sr = new System.IO.StreamReader(System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(internalFile), System.Text.Encoding.Default))
+                    using (var sr = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream(internalFile), Encoding.Default))
                     {
-                        String file = ClientPaths.GUCScripts + internalFile.Substring("GUC.Client.Resources.".Length);
-                        System.IO.File.WriteAllText(file, sr.ReadToEnd(), System.Text.Encoding.Default);
-                         fileList += System.IO.Path.GetFileName(file.ToUpper()) + "\r\n";
+                        String file = dPath + "\\" + internalFile.Substring("GUC.Client.Resources.".Length);
+                        File.WriteAllText(file, sr.ReadToEnd(), Encoding.Default);
+                        fileList += Path.GetFileName(file.ToUpper()) + "\r\n";
 
                         //using (str = zString.Create(file.ToUpper()))
                         //    Process.THISCALL<NullReturnCall>(0xAB40C0, 0x0078F660, str);
@@ -132,9 +141,9 @@ namespace GUC.Client.Hooks
             }
 
 
-            String file_FileList = ClientPaths.GUCScripts + "GUC.src";
+            String file_FileList = dPath + "\\GUC.src";
             srcFile = file_FileList;
-            System.IO.File.WriteAllText(file_FileList, fileList);
+            File.WriteAllText(file_FileList, fileList);
 
             Logger.Log("Parse " + file_FileList);
             using (str = zString.Create(file_FileList.ToUpper()))

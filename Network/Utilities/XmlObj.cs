@@ -39,8 +39,10 @@ namespace GUC.Utilities
             }
             catch (Exception e)
             {
-                Logger.LogWarning("Could not load {0}, returning empty object.<br>{1}", path, e);
-                return new T();
+                Logger.LogWarning("Could not load {0}, creating new object.<br>{1}", path, e.Message);
+                T ret = new T();
+                ret.Save(path);
+                return ret;
             }
         }
     }

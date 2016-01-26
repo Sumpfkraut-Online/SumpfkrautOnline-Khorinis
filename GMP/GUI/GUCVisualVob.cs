@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.WorldObjects;
+//using GUC.WorldObjects;
 using Gothic.Objects;
 
 namespace GUC.Client.GUI

@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.WorldObjects.Collections;
+using GUC.Log;
 
 namespace GUC.WorldObjects
 {
-    public partial interface IScriptWorld : IScriptWorldObject
-    {
-    }
-
     public partial class World : WorldObject
     {
+        public partial interface IScriptWorld : IScriptWorldObject
+        {
+        }
+
         static Dictionary<string, World> sWorldDict = new Dictionary<string, World>();
         public static World GetWorld(string worldName) { World world; sWorldDict.TryGetValue(worldName.ToUpper(), out world); return world; }
         public static IEnumerable<World> GetWorlds() { return sWorldDict.Values; }
@@ -22,10 +23,18 @@ namespace GUC.WorldObjects
         public readonly string FileName;
         public readonly VobCollection Vobs = new VobCollection();
 
+        public readonly VobDictionary Npcs;
+        public readonly VobDictionary Items;
+        public readonly VobDictionary MobInters;
+
         #region Creation
 
-        internal World(string worldName, string fileName)
+        public World(string worldName, string fileName, IScriptWorld scriptObj) : base(scriptObj)
         {
+            Npcs = this.Vobs.GetDict(NPC.sVobType);
+            Items = this.Vobs.GetDict(Item.sVobType);
+            MobInters = this.Vobs.GetDict(MobInter.sVobType);
+
             this.WorldName = worldName.Trim().ToUpper();
             this.FileName = fileName.Trim().ToUpper();
         }
@@ -64,9 +73,18 @@ namespace GUC.WorldObjects
         partial void pSpawnVob(Vob vob);
         public void SpawnVob(Vob vob)
         {
-            if (vob.IsSpawned && vob.World != this)
+            if (!vob.IsCreated)
             {
-                vob.Despawn();
+                Logger.LogWarning("Vobs need to be created before they can spawn!");
+                return;
+            }
+
+            if (vob.IsSpawned)
+            {
+                if (vob.World != this)
+                {
+                    vob.Despawn();
+                }
             }
             else
             {

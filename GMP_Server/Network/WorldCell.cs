@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Server.WorldObjects;
-using GUC.Server.WorldObjects.Collections;
+using GUC.WorldObjects;
+using GUC.WorldObjects.Collections;
 
 namespace GUC.Server.Network
 {
@@ -53,7 +53,7 @@ namespace GUC.Server.Network
         {
             foreach(NPC player in Vobs.Players.GetAll())
             {
-                yield return player.client;
+                yield return player.Client;
             }
         }
 
@@ -78,8 +78,8 @@ namespace GUC.Server.Network
 
                     foreach (NPC player in Vobs.Players.GetAll())
                     {
-                        if (player.client != exclude)
-                            yield return player.client;
+                        if (player.Client != exclude)
+                            yield return player.Client;
                     }
                 }
             }
@@ -92,7 +92,6 @@ namespace GUC.Server.Network
 
         public IEnumerable<NPC> SurroundingPlayers(NPC exclude)
         {
-            NPC next;
             for (int i = x - 1; i <= x + 1; i++)
             {
                 Dictionary<int, WorldCell> row;
@@ -131,7 +130,6 @@ namespace GUC.Server.Network
                     yield return c;
                 }
             }
-            yield break;
         }
     }
 }

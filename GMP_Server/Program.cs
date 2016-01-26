@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading;
 using System.Diagnostics;
 using GUC.Scripting;
+using GUC.Log;
+using GUC.Server.Network;
 
 namespace GUC.Server
 {
@@ -12,13 +14,13 @@ namespace GUC.Server
     {
         static void Main(string[] args)
         {
-            TCPStatus.Start();
+            //TCPStatus.Start();
 
             try
             {
-                Network.Server.Start();
+                GameServer.Start();
 
-                ScriptManager.StartScripts("Scripts\\ServerScripts.dll");
+                //ScriptManager.StartScripts("Scripts\\ServerScripts.dll");
 
                 const int updateRate = 20; //time between server ticks
 
@@ -34,15 +36,13 @@ namespace GUC.Server
                 {
                     watch.Restart();
 
-                    Network.Server.Update(); //process received packets
-                    GUCTimer.Update();
-
-                    watch.Stop();
+                    GameServer.Update(); //process received packets
+                    GUCTimer.Update(); // move to new thread?
 
                     if (nextInfoUpdates < DateTime.UtcNow.Ticks)
                     {
                         tickAverage /= tickCount;
-                        Log.Logger.Log(String.Format("Tick rate info: {0}ms average, {1}ms max. Allocated RAM: {2:0.0}MB", tickAverage / TimeSpan.TicksPerMillisecond, tickMax / TimeSpan.TicksPerMillisecond, (double)Process.GetCurrentProcess().PrivateMemorySize64 / 1048576d));
+                        Logger.Log("Tick rate info: {0}ms average, {1}ms max. Allocated RAM: {2:0.0}MB", tickAverage / TimeSpan.TicksPerMillisecond, tickMax / TimeSpan.TicksPerMillisecond, (double)Process.GetCurrentProcess().PrivateMemorySize64 / 1048576d);
                         nextInfoUpdates = DateTime.UtcNow.Ticks + nextInfoUpdateTime;
                         tickMax = 0;
                         tickAverage = 0;
@@ -65,10 +65,10 @@ namespace GUC.Server
             }
             catch (Exception e)
             {
-                Log.Logger.LogError(e.Source + "<br>" + e.Message + "<br>" + e.StackTrace);
-                Log.Logger.LogError("InnerException: " + e.InnerException.Source + "<br>" + e.InnerException.Message);
+                Logger.LogError(e.Source + "<br>" + e.Message + "<br>" + e.StackTrace);
+                Logger.LogError("InnerException: " + e.InnerException.Source + "<br>" + e.InnerException.Message);
             }
-            Console.Read();
+            Console.ReadLine();
         }
     }
 }

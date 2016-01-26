@@ -11,6 +11,8 @@ namespace GUC.Scripts
         public Init()
         {
             AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;
+
+            Log.Logger.Log("ClientScripts loaded!");
         }
 
         static System.Reflection.Assembly ResolveAssembly(object sender, ResolveEventArgs args)

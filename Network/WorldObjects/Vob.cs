@@ -10,16 +10,18 @@ using GUC.Network;
 
 namespace GUC.WorldObjects
 {
-    public partial interface IScriptVob : IScriptWorldObject
+    public partial class Vob : WorldObject, IVobObj<uint>
     {
-        void OnWriteSpawnProperties(PacketWriter stream);
-        void OnReadSpawnProperties(PacketReader stream);
-    }
+        public partial interface IScriptVob : IScriptWorldObject
+        {
+            void OnWriteSpawnProperties(PacketWriter stream);
+            void OnReadSpawnProperties(PacketReader stream);
+        }
 
-    public class Vob : WorldObject, IVobObj<uint>
-    {
+        public const VobTypes sVobType = VobInstance.sVobType;
+
         public static readonly VobCollection AllVobs = new VobCollection();
-        public static readonly VobDictionary StaticVobs = AllVobs.GetDict(VobTypes.Vob);
+        public static readonly VobDictionary StaticVobs = Vob.AllVobs.GetDict(sVobType);
 
 
         public uint ID { get; protected set; }
@@ -38,14 +40,20 @@ namespace GUC.WorldObjects
         public World World { get; internal set; }
         public bool IsSpawned { get { return World != null; } }
 
-        #region Creation
-
-        internal Vob()
+        public Vob(VobInstance instance, IScriptVob scriptObj) : base(scriptObj)
         {
+            if (instance == null)
+                throw new ArgumentNullException("VobInstance can't be null!");
+
+            this.Instance = instance;
         }
 
+        #region Creation
+
+        partial void pCreate();
         public override void Create()
         {
+            pCreate();
             Vob.AllVobs.Add(this);
             base.Create();
         }
@@ -110,53 +118,6 @@ namespace GUC.WorldObjects
             this.dir = stream.ReadVec3f();
 
             this.ScriptObj.OnReadSpawnProperties(stream);
-        }
-
-        internal static Vob CreateVobByType(VobTypes type)
-        {
-            Vob result;
-            switch (type)
-            {
-                case VobTypes.Vob:
-                    result = new Vob();
-                    break;
-                case VobTypes.Item:
-                    result = new Item();
-                    break;
-                case VobTypes.NPC:
-                    result = new NPC();
-                    break;
-                case VobTypes.Mob:
-                    result = new Mob();
-                    break;
-                case VobTypes.MobInter:
-                    result = new MobInter();
-                    break;
-                case VobTypes.MobFire:
-                    result = new MobFire();
-                    break;
-                case VobTypes.MobLadder:
-                    result = new MobLadder();
-                    break;
-                case VobTypes.MobSwitch:
-                    result = new MobSwitch();
-                    break;
-                case VobTypes.MobWheel:
-                    result = new MobWheel();
-                    break;
-                case VobTypes.MobContainer:
-                    result = new MobContainer();
-                    break;
-                case VobTypes.MobDoor:
-                    result = new MobDoor();
-                    break;
-                default:
-                    return null;
-            }
-
-            //result.ScriptObj = Scripting.ScriptManager.si.CreateScriptVob(type);
-
-            return result;
         }
     }
 }

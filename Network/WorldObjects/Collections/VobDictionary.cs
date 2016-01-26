@@ -6,7 +6,7 @@ using GUC.Enumeration;
 
 namespace GUC.WorldObjects.Collections
 {
-    public partial class VobDictionary : VobObjDictionary<uint, Vob>
+    public class VobDictionary : VobObjDictionary<uint, Vob>
     {
         internal VobDictionary()
         {

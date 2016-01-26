@@ -6,7 +6,7 @@ using RakNet;
 using GUC.Enumeration;
 using GUC.Types;
 using GUC.Network;
-using GUC.Server.WorldObjects;
+using GUC.WorldObjects;
 
 namespace GUC.Server.Network.Messages
 {
@@ -15,8 +15,8 @@ namespace GUC.Server.Network.Messages
         public static void ReadPosDir(PacketReader stream, Client client, NPC character)
         {
             Vob vob = client.Character;
-            vob.pos = stream.ReadVec3f();
-            vob.dir = stream.ReadVec3f();
+            vob.Position = stream.ReadVec3f();
+            vob.Direction = stream.ReadVec3f();
             vob.World.UpdatePosition(vob, client);
             /*
             int max = stream.ReadInt();
@@ -49,7 +49,7 @@ namespace GUC.Server.Network.Messages
 
         public static void WritePosDir(IEnumerable<Client> list, Vob vob)
         {
-            PacketWriter stream = Network.Server.SetupStream(NetworkIDs.VobPosDirMessage);
+            PacketWriter stream = Network.GameServer.SetupStream(NetworkIDs.VobPosDirMessage);
             stream.Write(vob.ID);
             stream.Write(vob.Position);
             stream.Write(vob.Direction);

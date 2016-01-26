@@ -18,7 +18,7 @@ namespace GUC.Server
         {
             try
             {
-                tcpListener = new TcpListener(IPAddress.Any, Network.Server.Options.Port);
+                tcpListener = new TcpListener(IPAddress.Any, Network.GameServer.Options.Port);
                 listenThread = new Thread(new ThreadStart(ListenForClients));
                 listenThread.Start();
             }
@@ -65,8 +65,8 @@ namespace GUC.Server
                 if (type.Equals("getstatus"))
                 {
                     sw.WriteLine("giveStatus");
-                    sw.WriteLine(Network.Server.Options.ServerName);
-                    sw.WriteLine(Network.Server.Options.Slots);
+                    sw.WriteLine(Network.GameServer.Options.ServerName);
+                    sw.WriteLine(Network.GameServer.Options.Slots);
                 }
             }
             catch

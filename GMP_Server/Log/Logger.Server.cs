@@ -30,13 +30,15 @@ namespace GUC.Log
         {
             try
             {
+                string msg = String.Format(message.ToString(), args);
+
                 builder.Clear();
                 builder.Append("<span class=\"level_").Append((int)level).Append("\">");
-                builder.Append(String.Format(message.ToString(), args)).Append("</span><br>");
+                builder.Append(msg).Append("</span><br>");
                 writer.WriteLine(builder.ToString());
                 writer.Flush();
 
-                Print(message);
+                Print(msg);
             }
             catch (Exception e)
             {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using RakNet;
 using GUC.Network;
-using GUC.Server.WorldObjects;
+using GUC.WorldObjects;
 using GUC.Enumeration;
 
 namespace GUC.Server.Network.Messages
@@ -14,8 +14,8 @@ namespace GUC.Server.Network.Messages
         //Add an item to the client's inventory
         public static void WriteAddItem(Client client, Item item)
         {
-            PacketWriter stream = Network.Server.SetupStream(NetworkIDs.InventoryAddMessage);
-            item.WriteInventory(stream);
+            PacketWriter stream = Network.GameServer.SetupStream(NetworkIDs.InventoryAddMessage);
+            //item.WriteInventory(stream);
             client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I');
         }
 
@@ -26,7 +26,7 @@ namespace GUC.Server.Network.Messages
 
         public static void WriteAmountUpdate(Client client, Item item, ushort amount)
         {
-            PacketWriter stream = Network.Server.SetupStream(NetworkIDs.InventoryAmountMessage);
+            PacketWriter stream = Network.GameServer.SetupStream(NetworkIDs.InventoryAmountMessage);
             stream.Write(item.ID);
             stream.Write(amount);
             client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I');

@@ -4,7 +4,6 @@ using System.Text;
 using System.Threading;
 using GUC.Scripting;
 using GUC.Log;
-using GUC.Options;
 using System.Reflection;
 using WinApi;
 using Gothic;
@@ -12,12 +11,36 @@ using Gothic.Types;
 using Gothic.System;
 using Gothic.Objects;
 using Gothic.View;
-using GUC.Utilities;
+using System.IO;
+using GUC.Client.Network;
 
 namespace GUC.Client
 {
-    class Program
+    //zCMesh::Load(class zSTRING const &, int)
+    //( zCMesh::MergeMesh(class zCMesh *, class zMAT4 const &) ? )
+    //zCWorld::CompileWorld(zTBspTreeMode const &,float,int,int,zCArray<zCPolygon *> *) ???
+
+    static class Program
     {
+        public static string ProjectName { get; private set; }
+        public static string ProjectPath { get; private set; }
+
+        static string GetProjectPath(string projectName)
+        {
+            string current = Path.GetFullPath(Environment.CurrentDirectory); // It's Gothic2/System when the process starts, Gothic2/ afterwards.
+
+            if (File.Exists(current + "\\Gothic2.exe"))
+            { // Gothic2/System/
+                return Path.GetFullPath(current + "\\Multiplayer\\UntoldChapters\\" + projectName + "\\");
+            }
+            else if (File.Exists(current + "\\System\\Gothic2.exe"))
+            { // Gothic2/
+                return Path.GetFullPath(current + "\\System\\Multiplayer\\UntoldChapters\\" + projectName + "\\");
+            }
+
+            throw new Exception("Gothic 2 not found!");
+        }
+
         static Assembly ResolveAssembly(object sender, ResolveEventArgs args)
         {
             string name = args.Name.Substring(0, args.Name.IndexOf(','));
@@ -30,15 +53,19 @@ namespace GUC.Client
                 resxStream.Read(buffer, 0, (int)resxStream.Length);
                 return Assembly.Load(buffer);
             }
-            return Assembly.LoadFrom(ClientPaths.GUCDlls + name + ".dll");
+
+            return Assembly.LoadFrom(ProjectPath + name + ".dll");
         }
 
         public static Int32 InjectedMain(String message)
         {
             try
             {
+                ProjectName = message;
+                ProjectPath = GetProjectPath(message);
                 AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;
-                
+                Logger.Log("Project path set.");
+
                 SplashScreen.SetUpHooks();
                 SplashScreen.Create();
 
@@ -50,10 +77,10 @@ namespace GUC.Client
 
                 Process.SetWindowText("Gothic II - Untold Chapters");
                 
-                ScriptManager.StartScripts(ClientPaths.GUCDlls + "ClientScripts.dll"); // Load Scripts
+                ScriptManager.StartScripts(ProjectPath + "\\Scripts\\ClientScripts.dll"); // Load Scripts
                 
-                Network.Client.Connect("", 0, "");
-
+                GameClient.Connect();
+                
                 while (true)
                 {
                     Thread.Sleep(10000);
@@ -86,6 +113,8 @@ namespace GUC.Client
             hi = Process.Hook(Constants.GUCDll, typeof(Program).GetMethod("CreatePlayerVob"), 0x006C440D, 5, 0);
             Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90 }, hi.oldFuncInNewFunc.ToInt32());
             Process.Write(new byte[] { 0xEB, 0x67 }, 0x006C4662); //skip instance check
+
+            Logger.Log("General Hooks added.");
         }
 
         public static Int32 RunIngame(String message)
@@ -124,8 +153,7 @@ namespace GUC.Client
             }
             return 0;
         }
-
-        static GUI.GUCVisual vis = null;
+        
         static long next = 0;
         public static Int32 RunOutgame(String message)
         {
@@ -140,6 +168,8 @@ namespace GUC.Client
 
                 if (next < DateTime.UtcNow.Ticks)
                 {
+                    GameClient.Update();
+
                     using (zColor color = zColor.Create(0, 0, 0, 0))
                         zCRenderer.Vid_Clear(color, 3);
 
@@ -173,7 +203,7 @@ namespace GUC.Client
 
                 oCNpc player = oCNpc.Create();
                 player.SetVisual("HUMANS.MDS");
-                player.SetAdditionalVisuals("hum_body_Naked0", 9, 0, "Hum_Head_Pony", 1, 0, -1);
+                player.SetAdditionalVisuals("hum_body_Naked0", 9, 0, "Hum_Head_Pony", 2, 0, -1);
 
                 player.HPMax = 100;
                 player.HP = 100;

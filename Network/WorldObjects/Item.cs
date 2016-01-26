@@ -9,28 +9,23 @@ using GUC.Network;
 
 namespace GUC.WorldObjects
 {
-    public partial interface IScriptItem : IScriptVob
-    {
-        void WriteEquipProperties(PacketWriter stream);
-        void ReadEquipProperties(PacketReader stream);
-
-        void WriteInventoryProperties(PacketWriter stream);
-        void ReadInventoryProperties(PacketReader stream);
-    }
-
     public partial class Item : Vob
     {
-        #region Fists
-        public static readonly Item Fists = CreateFists();
-        static Item CreateFists()
+        public partial interface IScriptItem : IScriptVob
         {
-            Item fists = new Item();
-            fists.Instance = ItemInstance.FistInstance;
-            return fists;
+            void WriteEquipProperties(PacketWriter stream);
+            void ReadEquipProperties(PacketReader stream);
+
+            void WriteInventoryProperties(PacketWriter stream);
+            void ReadInventoryProperties(PacketReader stream);
         }
+
+        #region Fists
+        public static readonly Item Fists = new Item(ItemInstance.FistInstance, null);
         #endregion
 
-        public static readonly VobDictionary Items = Vob.AllVobs.GetDict(VobTypes.Item);
+        new public const VobTypes sVobType = ItemInstance.sVobType;
+        public static readonly VobDictionary Items = Vob.AllVobs.GetDict(sVobType);
 
         new public IScriptItem ScriptObj { get; protected set; }
         new public ItemInstance Instance { get; protected set; }
@@ -38,16 +33,21 @@ namespace GUC.WorldObjects
         public byte Slot { get; internal set; }
         public ushort Amount { get; internal set; }
 
+        /// <summary>
+        /// Gets the NPC who is carrying this item or NULL.
+        /// </summary>
+        public IContainer Container { get; internal set; }
+
         public string Name { get { return Instance.Name; } }
         public ItemTypes Type { get { return Instance.Type; } }
         public ItemMaterials Material { get { return Instance.Material; } }
         public string VisualChange { get { return Instance.VisualChange; } }
         public string Effect { get { return Instance.Effect; } }
 
-        internal Item()
+        public Item(ItemInstance instance, IScriptItem scriptObject) : base(instance, scriptObject)
         {
         }
-        
+
         internal void WriteEquipProperties(PacketWriter stream)
         {
             stream.Write(this.Instance.ID);

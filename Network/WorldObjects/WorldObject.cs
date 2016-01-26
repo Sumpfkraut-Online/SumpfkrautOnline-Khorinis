@@ -5,13 +5,20 @@ using System.Text;
 
 namespace GUC.WorldObjects
 {
-    public interface IScriptWorldObject
+    public abstract partial class WorldObject
     {
-    }
+        public partial interface IScriptWorldObject
+        {
+        }
 
-    public abstract class WorldObject
-    {
         public IScriptWorldObject ScriptObj { get; protected set; }
+
+        public WorldObject(IScriptWorldObject scriptObj)
+        {
+            if (scriptObj == null)
+                throw new ArgumentNullException("ScriptObject can't be null!");
+            this.ScriptObj = scriptObj;
+        }
 
         public bool IsCreated { get; protected set; }
         public virtual void Create()

@@ -4,12 +4,18 @@ using System.Linq;
 using System.Text;
 using GUC.Network;
 using GUC.Enumeration;
+using GUC.WorldObjects.Collections;
 
 namespace GUC.WorldObjects.Instances
 {
     public partial class NPCInstance : VobInstance
     {
-        public static readonly Collections.InstanceDictionary NPCInstances = VobInstance.AllInstances.GetDict(Enumeration.VobTypes.NPC);
+        public partial interface IScriptNPCInstance : IScriptVobInstance
+        {
+        }
+
+        new public const VobTypes sVobType = VobTypes.NPC;
+        public static readonly InstanceDictionary NPCInstances = VobInstance.AllInstances.GetDict(sVobType);
 
         #region Properties
 
@@ -47,10 +53,7 @@ namespace GUC.WorldObjects.Instances
 
         #endregion
 
-        internal NPCInstance()
-        {
-            this.VobType = VobTypes.NPC;
-        }
+        new public IScriptNPCInstance ScriptObj { get; protected set; }
 
         internal override void WriteProperties(PacketWriter stream)
         {

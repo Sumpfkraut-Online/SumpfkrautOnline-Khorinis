@@ -4,18 +4,24 @@ using System.Linq;
 using System.Text;
 using GUC.Enumeration;
 using GUC.Network;
+using GUC.WorldObjects.Collections;
 
 namespace GUC.WorldObjects.Instances
 {
     public partial class ItemInstance : VobInstance
     {
-        public static readonly Collections.InstanceDictionary ItemInstances = VobInstance.AllInstances.GetDict(Enumeration.VobTypes.Item);
+        public partial interface IScriptItemInstance : IScriptVobInstance
+        {
+        }
+
+        new public const VobTypes sVobType = VobTypes.Item;
+        public static readonly InstanceDictionary ItemInstances = VobInstance.AllInstances.GetDict(sVobType);
 
         #region Fists
         public static readonly ItemInstance FistInstance = CreateFists();
         static ItemInstance CreateFists()
         {
-            ItemInstance fists = new ItemInstance();
+            ItemInstance fists = new ItemInstance(0, "fists", null);
             fists.Name = "Fäustedummy";
             return fists;
         }
@@ -46,14 +52,11 @@ namespace GUC.WorldObjects.Instances
         {
             get { return effect; }
             set { effect = value.Trim().ToUpper(); }
-        }   
+        }
 
         #endregion
 
-        internal ItemInstance()
-        {
-            this.VobType = VobTypes.Item;
-        }
+        new public IScriptItemInstance ScriptObj { get; protected set; }
 
         internal override void ReadProperties(PacketReader stream)
         {

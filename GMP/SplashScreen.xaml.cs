@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows;
 using WinApi;
 using System.Threading;
+using GUC.Log;
 
 namespace GUC.Client
 {
@@ -39,6 +40,8 @@ namespace GUC.Client
             Process.Write((byte)0xEB, 0x00426872); //jump over closing message
 
             Process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(SplashScreen).GetMethod("RemoveSplashScreen"), 0x42687F, 6, 0); // add hook to remove our splash screen
+
+            Logger.Log("Gothic-SplashScreen hooked.");
         }
 
         static bool remove = false;
@@ -59,17 +62,19 @@ namespace GUC.Client
                     }
                     catch (Exception e)
                     {
-                        Log.Logger.LogError("SplashScreen: " + e);
+                        Logger.LogError("GUC-SplashScreen Thread: " + e);
                     }
                 }));
                 appthread.IsBackground = true;
                 appthread.SetApartmentState(ApartmentState.STA);
                 if (!remove)
                     appthread.Start();
+
+                Logger.Log("GUC-SplashScreen started.");
             }
             catch (Exception e2)
             {
-                Log.Logger.LogError("SplashCreation failed: " + e2);
+                Logger.LogError("Creation of GUC-SplashScreen failed: " + e2);
             }
         }
 
