@@ -7,9 +7,14 @@ using System.IO;
 
 namespace GUC.Scripting
 {
+    public partial interface ScriptInterface
+    {
+    }
+
     static class ScriptManager
     {
         static Assembly asm = null;
+        public static ScriptInterface Interface { get; private set; }
 
         public static void StartScripts(string path)
         {
@@ -19,7 +24,7 @@ namespace GUC.Scripting
             try
             {
                 asm = Assembly.LoadFile(Path.GetFullPath(path));
-                asm.CreateInstance("GUC.Scripts.Init");
+                Interface = (ScriptInterface)asm.CreateInstance("GUC.Scripts.Init");
             }
             catch (ReflectionTypeLoadException ex)
             {

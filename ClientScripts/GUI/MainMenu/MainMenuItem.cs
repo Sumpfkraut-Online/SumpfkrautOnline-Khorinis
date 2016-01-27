@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using GUC.Client.GUI;
 
-namespace GUC.Client.GUI.MainMenu
+namespace GUC.Client.Scripts.GUI.MainMenu
 {
     abstract class MainMenuItem : GUCView
     {

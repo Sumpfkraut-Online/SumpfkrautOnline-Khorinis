@@ -8,6 +8,7 @@ using GUC.Network;
 using GUC.Enumeration;
 using GUC.Log;
 using GUC.Client.GUI;
+using GUC.Client.Network.Messages;
 
 namespace GUC.Client.Network
 {
@@ -84,7 +85,7 @@ namespace GUC.Client.Network
 
         static long nextConnectionTry = 0;
         static int connectionTrys = 0;
-        public static void Connect()
+        internal static void Connect()
         {
             if (isConnected || nextConnectionTry > DateTime.UtcNow.Ticks)
                 return;
@@ -129,7 +130,7 @@ namespace GUC.Client.Network
         static GUCVisual kbsInfo;
         static GUCVisual pingInfo;
 
-        public static void Update()
+        internal static void Update()
         {
             if (clientInterface == null)
                 return;
@@ -170,6 +171,8 @@ namespace GUC.Client.Network
                         case DefaultMessageIDTypes.ID_CONNECTION_REQUEST_ACCEPTED:
                             isConnected = true;
                             connectionTrys = 0;
+                            Logger.Log("Connection request accepted from server.");
+                            ConnectionMessage.Write();
                             break;
                         case DefaultMessageIDTypes.ID_CONNECTION_ATTEMPT_FAILED:
                             Logger.LogError("Connection Failed!");
@@ -193,6 +196,7 @@ namespace GUC.Client.Network
                         case DefaultMessageIDTypes.ID_DISCONNECTION_NOTIFICATION:
                         case DefaultMessageIDTypes.ID_CONNECTION_LOST:
                             isConnected = false;
+                            Logger.Log("Disconnected from server.");
                             break;
                         case DefaultMessageIDTypes.ID_USER_PACKET_ENUM:
                             MsgReader func;
@@ -224,8 +228,9 @@ namespace GUC.Client.Network
             long time = DateTime.UtcNow.Ticks - lastInfoUpdate;
             if (time > TimeSpan.TicksPerSecond)
             {
-                int Ping = clientInterface.GetLastPing(clientInterface.GetSystemAddressFromIndex(0));
-                if (Ping > 800 || Ping < 0)
+                // get last ping time
+                int ping = clientInterface.GetLastPing(clientInterface.GetSystemAddressFromIndex(0));
+                if (ping > 800 || ping < 0)
                 {
                     abortInfo.Show();
                 }
@@ -233,18 +238,34 @@ namespace GUC.Client.Network
                 {
                     abortInfo.Hide();
                 }
-                pingInfo.Texts[0].Text = Ping + "ms";
-                pingInfo.Show();
 
+                // update ping text on screen
+                GUCVisualText pingText = pingInfo.Texts[0];
+                pingText.Text = (ping + "ms");
+                if (ping <= 120)
+                {
+                    pingText.SetColor(new ColorRGBA((byte)(40 + 180 * ping / 120), 220, 40));
+                }
+                else if (ping <= 220)
+                {
+                    pingText.SetColor(new ColorRGBA(220, (byte)(220 - 180 * (ping - 100) / 120), 40));
+                }
+                else
+                {
+                    pingText.SetColor(ColorRGBA.Red);
+                }
+                pingInfo.Show(); // bring to front
+
+                // update kB/s text on screen
                 int kbs = (int)(((double)packetKB / 1024d) / ((double)time / (double)TimeSpan.TicksPerSecond));
-                kbsInfo.Texts[0].Text = kbs + "kB/s";
+                kbsInfo.Texts[0].Text = (kbs + "kB/s");
                 lastInfoUpdate = DateTime.UtcNow.Ticks;
                 packetKB = 0;
-                kbsInfo.Show();
+                kbsInfo.Show(); // bring to front
             }
         }
 
-        public static PacketWriter SetupSendStream(NetworkIDs id)
+        internal static PacketWriter SetupSendStream(NetworkIDs id)
         {
             pktWriter.Reset();
             pktWriter.Write((byte)DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
@@ -252,9 +273,9 @@ namespace GUC.Client.Network
             return pktWriter;
         }
 
-        public static void SendStream(BitStream stream, PacketPriority pp, PacketReliability pr)
+        internal static void SendStream(PacketWriter stream, PacketPriority pp, PacketReliability pr)
         {
-            clientInterface.Send(stream, pp, pr, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            clientInterface.Send(stream.GetData(), stream.GetLength(), pp, pr, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
     }
 }

@@ -4,13 +4,11 @@ using System.Linq;
 using System.Text;
 using WinApi.User.Enumeration;
 using GUC.Client.GUI;
-using GUC.Client.WorldObjects;
-using Gothic.zClasses;
 using GUC.Enumeration;
 
 namespace GUC.Client.Menus
 {
-    class AnimationMenu : GUCMenu
+    /*class AnimationMenu : GUCMenu
     {
         public VirtualKeys Hotkey = VirtualKeys.X;
 
@@ -320,5 +318,5 @@ namespace GUC.Client.Menus
             zERROR.GetZErr(Program.Process).Report(2, 'G', "Stop Animation " + StopAni, 0, "hGame.cs", 0);
         }
 
-    }
+    }*/
 }

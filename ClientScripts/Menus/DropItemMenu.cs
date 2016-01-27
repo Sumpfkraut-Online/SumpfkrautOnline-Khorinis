@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using WinApi.User.Enumeration;
 using GUC.Client.GUI;
-using GUC.Client.WorldObjects;
 
 namespace GUC.Client.Menus
 {
-    class DropItemMenu : GUCMenu
+    /*class DropItemMenu : GUCMenu
     {
         GUCVisual back;
         GUCVisual border;
@@ -104,5 +103,5 @@ namespace GUC.Client.Menus
         {
             tb.Update(now);
         }
-    }
+    }*/
 }

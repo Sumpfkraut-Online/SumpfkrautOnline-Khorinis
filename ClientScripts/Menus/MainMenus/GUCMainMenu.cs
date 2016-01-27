@@ -3,24 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Client.GUI;
-using GUC.Client.GUI.MainMenu;
-using Gothic.mClasses;
+using GUC.Client.Scripts.GUI.MainMenu;
 using WinApi.User.Enumeration;
 using GUC.Types;
-using GUC.Network;
-using Gothic.zClasses;
-using Gothic.zTypes;
 
-namespace GUC.Client.Menus.MainMenus
+
+namespace GUC.Client.Scripts.Menus.MainMenus
 {
+    /// <summary>
+    /// Recreation of the classic Gothic main menu.
+    /// </summary>
     abstract class GUCMainMenu : GUCMenu
     {
-        /* Classic main menu
-         * 
-         * Please always add at least one menu item
-         * 
-         */
-
         protected GUCVisual Back;
         protected GUCVisual helpVis;
         protected GUCVisualText helpText { get { return helpVis.Texts[0]; } }
@@ -30,6 +24,8 @@ namespace GUC.Client.Menus.MainMenus
         protected int preferredCursorItem = 0;
 
         protected Action OnEscape = null;
+
+        public MainMenuItem CurrentItem { get; private set; }
 
         #region Init
         public GUCMainMenu()
@@ -52,7 +48,7 @@ namespace GUC.Client.Menus.MainMenus
 
         public override void Open()
         {
-            GUCMenus.CloseActiveMenus(); //main menus never overlap
+            CloseActiveMenus(); //main menus never overlap
 
             if (!init)
             {   //create items on first opening, otherwise pointers to 'Open()-Methods' of other menus, which are yet not constructed, will be used => crash
@@ -68,13 +64,15 @@ namespace GUC.Client.Menus.MainMenus
                 items[i].Show();
 
             cursor = preferredCursorItem;
-            if (!items[cursor].Enabled)
+            CurrentItem = items[cursor];
+
+            if (!CurrentItem.Enabled)
             {
                 sndEnabled = false; //sound would be played on opening
                 MoveCursor();
                 sndEnabled = true;
             }
-            items[cursor].Select();
+            CurrentItem.Select();
             UpdateHelpText();
         }
 
@@ -86,7 +84,7 @@ namespace GUC.Client.Menus.MainMenus
             for (int i = 0; i < items.Count; i++)
                 items[i].Hide();
 
-            items[cursor].Deselect();
+            CurrentItem.Deselect();
         }
 
         #endregion
@@ -133,7 +131,7 @@ namespace GUC.Client.Menus.MainMenus
         }
         #endregion
 
-        #region Character & Character list
+       /* #region Character & Character list
 
         protected MainMenuCharacter AddCharacter(int x, int y, int w, int h)
         {
@@ -195,49 +193,48 @@ namespace GUC.Client.Menus.MainMenus
             items.Add(c);
             return c;
         }
-        #endregion
+        #endregion*/
 
         #endregion
 
         #region Help Text
         protected void UpdateHelpText()
         {
-            if (DateTime.UtcNow.Ticks > HelpTextNextUpdateTime)
+            if (DateTime.UtcNow.Ticks > helpTextNextUpdateTime)
             {
                 helpText.SetColor(ColorRGBA.White);
-                helpText.Text = items[cursor].HelpText;
+                helpText.Text = CurrentItem.HelpText;
             }
         }
 
-        protected long HelpTextNextUpdateTime = 0;
+        protected long helpTextNextUpdateTime = 0;
         public void SetHelpText(String Text)
         {
             helpText.SetColor(ColorRGBA.Red);
             helpText.Text = Text;
-            HelpTextNextUpdateTime = DateTime.UtcNow.Ticks + 2 * TimeSpan.TicksPerSecond;
+            helpTextNextUpdateTime = DateTime.UtcNow.Ticks + 2 * TimeSpan.TicksPerSecond;
         }
         #endregion
 
         #region Navigation
         protected void SetCursor(MainMenuItem item)
         {
-            if (items.Contains(item) && item.Enabled)
-            {
-                items[cursor].Deselect();
-                cursor = items.IndexOf(item);
-                items[cursor].Select();
-                UpdateHelpText();
-            }
+            SetCursor(items.IndexOf(item));
         }
 
         protected void SetCursor(int i)
         {
-            if (i >= 0 && i < items.Count && items[i].Enabled)
+            if (i >= 0 && i < items.Count)
             {
-                items[cursor].Deselect();
-                cursor = i;
-                items[cursor].Select();
-                UpdateHelpText();
+                MainMenuItem newItem = items[i];
+                if (newItem.Enabled)
+                {
+                    CurrentItem.Deselect();
+                    cursor = i;
+                    CurrentItem = newItem;
+                    CurrentItem.Select();
+                    UpdateHelpText();
+                }
             }
         }
 
@@ -248,66 +245,100 @@ namespace GUC.Client.Menus.MainMenus
 
         protected void MoveCursor(bool up)
         {
-            items[cursor].Deselect();
-            if (up)
+            CurrentItem.Deselect();
+            for (int i = 0; i < items.Count; i++)
             {
-                cursor--;
-                if (cursor < 0)
-                    cursor = items.Count - 1;
-            }
-            else
-            {
-                cursor++;
-                if (cursor >= items.Count)
-                    cursor = 0;
-            }
+                if (up)
+                {
+                    cursor--;
+                    if (cursor < 0)
+                        cursor = items.Count - 1;
+                }
+                else
+                {
+                    cursor++;
+                    if (cursor >= items.Count)
+                        cursor = 0;
+                }
 
-            if (items[cursor].Enabled)
-            {
-                items[cursor].Select();
-                UpdateHelpText();
+                CurrentItem = items[cursor];
+                if (CurrentItem.Enabled)
+                {
+                    CurrentItem.Select();
+                    UpdateHelpText();
+                    break;
+                }
             }
-            else
-            {
-                MoveCursor(up);
-                return;
-            }
-            PlaySound(SndBrowse);
+            //PlaySound(SndBrowse);
         }
 
-        public override void KeyPressed(VirtualKeys key)
+        const long KeyHoldTime = 250 * TimeSpan.TicksPerMillisecond;
+        long arrowUpTime = 0;
+        long arrowDownTime = 0;
+        public override void KeyDown(VirtualKeys key, long now)
         {
-            if (key == VirtualKeys.Return)
+            switch (key)
             {
-                if (items[cursor].OnActivate != null)
-                {
-                    items[cursor].OnActivate();
-                }
-                PlaySound(SndSelect);
-                return;
+                case VirtualKeys.Return:
+                    if (items[cursor].OnActivate != null)
+                    {
+                        items[cursor].OnActivate();
+                    }
+                    //PlaySound(SndSelect);
+                    break;
+
+                case VirtualKeys.Up:
+                    if (arrowUpTime == 0) // newly pressed
+                    {
+                        arrowUpTime = now;
+                        MoveCursor(true);
+                    }
+                    else if (arrowUpTime < now) // held down
+                    {
+                        arrowUpTime = now + KeyHoldTime;
+                        MoveCursor(true);
+                    }
+                    break;
+                case VirtualKeys.Down:
+                case VirtualKeys.Tab:
+                    if (arrowDownTime == 0) // newly pressed
+                    {
+                        arrowDownTime = now;
+                        MoveCursor(true);
+                    }
+                    else if (arrowDownTime < now) // held down
+                    {
+                        arrowDownTime = now + KeyHoldTime;
+                        MoveCursor(true);
+                    }
+                    break;
+                case VirtualKeys.Escape:
+                    this.Close();
+                    if (OnEscape != null)
+                    {
+                        OnEscape();
+                    }
+                    //PlaySound(SndEscape);
+                    break;
+                default:
+                    if (CurrentItem is InputReceiver)
+                    {
+                        ((InputReceiver)CurrentItem).KeyPressed(key);
+                    }
+                    break;
             }
-            else if (key == VirtualKeys.Up)
+        }
+
+        public override void KeyUp(VirtualKeys key, long now)
+        {
+            switch (key)
             {
-                MoveCursor(true);
-            }
-            else if (key == VirtualKeys.Down || key == VirtualKeys.Tab)
-            {
-                MoveCursor(false);
-            }
-            else if (key == VirtualKeys.Escape)
-            {
-                this.Close();
-                if (OnEscape != null)
-                {
-                    OnEscape();
-                }
-                PlaySound(SndEscape);
-                return;
-            }
-            else if (items[cursor] is InputReceiver)
-            {
-                ((InputReceiver)items[cursor]).KeyPressed(key);
-                PlaySound(SndBrowse);
+                case VirtualKeys.Up:
+                    arrowUpTime = 0;
+                    break;
+                case VirtualKeys.Down:
+                    arrowDownTime = 0;
+                    break;
             }
         }
         #endregion
@@ -321,7 +352,7 @@ namespace GUC.Client.Menus.MainMenus
         }
 
         bool sndEnabled = true;
-        void PlaySound(zCSoundFX snd)
+        /*void PlaySound(zCSoundFX snd)
         {
             if (sndEnabled)
             {
@@ -375,6 +406,6 @@ namespace GUC.Client.Menus.MainMenus
                 }
                 return sndEscape;
             }
-        }
+        }*/
     }
 }

@@ -8,7 +8,7 @@ using GUC.Client.GUI;
 
 namespace GUC.Client.Menus
 {
-    class StatusMenu : GUCMainMenu
+    /*class StatusMenu : GUCMainMenu
     {
         public VirtualKeys Hotkey = VirtualKeys.C;
 
@@ -94,5 +94,5 @@ namespace GUC.Client.Menus
             AddButton("Alchemist", "", tx, ty2 + 5 * dist2, null);
             AddButton("Gelehrter", "", tx, ty2 + 6 * dist2, null);
         }
-    }
+    }*/
 }

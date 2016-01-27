@@ -10,7 +10,7 @@ using GUC.Types;
 
 namespace GUC.Client.GUI
 {
-  /*  class GUCInventory : GUCView, InputReceiver
+  /* public class GUCInventory : GUCView, InputReceiver
     {
         #region slot
         const int slotSize = 70;

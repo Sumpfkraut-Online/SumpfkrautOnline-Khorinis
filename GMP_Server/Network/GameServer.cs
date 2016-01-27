@@ -62,8 +62,7 @@ namespace GUC.Server.Network
 
         static void InitMessages()
         {
-            /*messageListener.Add(NetworkIDs.ConnectionMessage, ConnectionMessage.Read);
-            messageListener.Add(NetworkIDs.MenuMessage, HandleLoginMsg);
+            /*            messageListener.Add(NetworkIDs.MenuMessage, HandleLoginMsg);
             messageListener.Add(NetworkIDs.PlayerControlMessage, NPC.ReadControl);
 
             MessageListener.Add((byte)NetworkID.PlayerPickUpItemMessage, NPC.ReadPickUpItem);
@@ -158,7 +157,12 @@ namespace GUC.Server.Network
                                 }
                                 else
                                 {
-                                    if (client.MainChar == null) // not ingame yet
+                                    if (msgID == NetworkIDs.ConnectionMessage)
+                                    {
+                                        DisconnectClient(client);
+                                        Logger.LogWarning(String.Format("Client sent another ConnectionMessage. Kicked: {0} IP:{1}", msgID, p.guid, p.systemAddress));
+                                    }
+                                    else if (client.MainChar == null) // not ingame yet
                                     {
                                         if (msgID == NetworkIDs.MenuMessage) // menu message can be sent always
                                         {
@@ -179,12 +183,7 @@ namespace GUC.Server.Network
                                     }
                                     else
                                     {
-                                        if (msgID == NetworkIDs.ConnectionMessage)
-                                        {
-                                            DisconnectClient(client);
-                                            Logger.LogWarning(String.Format("Client sent another ConnectionMessage. Kicked: {0} IP:{1}", msgID, p.guid, p.systemAddress));
-                                        }
-                                        else if (client.Character != null && client.Character.World != null) // client is ingame
+                                        if (client.Character != null && client.Character.World != null) // client is ingame
                                         {
                                             messageListener.TryGetValue(msgID, out readFunc);
                                             if (readFunc == null)

@@ -59,7 +59,7 @@ EXTERN_C __declspec(dllexport) void LoadNetDllEx(NETINJECTPARAMS* params)
 	/*pClrRuntimeHost->Stop();
 	pRuntimeInfo->Release();
 	pMetaHost->Release();
-	pClrRuntimeHost->Release();*/	
+	pClrRuntimeHost->Release();*/
 
 	if(hr != S_OK){
 		Error((wchar_t *)(std::wstring(L"LoadNetDllEx failed on Method: ") + methodName).c_str());

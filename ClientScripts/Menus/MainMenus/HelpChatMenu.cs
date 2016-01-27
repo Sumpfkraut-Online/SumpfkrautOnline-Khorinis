@@ -3,16 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace GUC.Client.Menus.MainMenus
+namespace GUC.Client.Scripts.Menus.MainMenus
 {
     class HelpChatMenu : GUCMainMenu
     {
+        public readonly static HelpChatMenu Menu = new HelpChatMenu();
+
         protected override void OnCreate()
         {
             Back.CreateTextCenterX("Chathilfe", 100);
 
-            AddButton("Zurück", "Zurück zum Hilfemenü.", 400, GUCMenus.Help.Open);
-            OnEscape = GUCMenus.Help.Open;
+            AddButton("Zurück", "Zurück zum Hilfemenü.", 400, HelpMenu.Menu.Open);
+            OnEscape = HelpMenu.Menu.Open;
         }
     }
 }

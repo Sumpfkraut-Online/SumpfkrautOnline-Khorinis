@@ -3,27 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Types;
+using GUC.Client.GUI;
 
-namespace GUC.Client.GUI.MainMenu
+namespace GUC.Client.Scripts.GUI.MainMenu
 {
     class MainMenuButton : MainMenuItem
     {
         GUCVisual vis;
         GUCVisualText visText;
 
-        public MainMenuButton(string text, string help, int y, Action action)
-            : this(text, help, 0, y, action)
+        public MainMenuButton(string text, string help, int y, Action action, Fonts font = Fonts.Menu)
+            : this(text, help, 0, y, action, font)
         {
             visText.CenteredX = true;
         }
 
-        public MainMenuButton(string text, string help, int x, int y, Action action)
+        public MainMenuButton(string text, string help, int x, int y, Action action, Fonts font = Fonts.Menu)
         {
             HelpText = help;
             vis = GUCVisualText.Create(text, x, y);
             visText = vis.Texts[0];
             visText.Format = GUCVisualText.TextFormat.Center;
-            vis.Font = GUCVisual.Fonts.Menu;
+            vis.Font = font;
             OnActivate = action;
         }
 
@@ -51,12 +52,18 @@ namespace GUC.Client.GUI.MainMenu
 
         public override void Select()
         {
-            vis.Font = GUCVisual.Fonts.Menu_Hi;
+            if (vis.Font == Fonts.Menu)
+                vis.Font = Fonts.Menu_Hi;
+            else if (vis.Font == Fonts.Default)
+                vis.Font = Fonts.Default_Hi;
         }
 
         public override void Deselect()
         {
-            vis.Font = GUCVisual.Fonts.Menu;
+            if (vis.Font == Fonts.Menu_Hi)
+                vis.Font = Fonts.Menu;
+            else if (vis.Font == Fonts.Default_Hi)
+                vis.Font = Fonts.Default;
         }
 
         public override bool Enabled

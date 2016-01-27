@@ -7,7 +7,7 @@ using Gothic.Types;
 
 namespace GUC.Client.GUI
 {
-    class GUCVisual : GUCView
+    public class GUCVisual : GUCView
     {
         /*Basically like Gothic's zCView but with more functions and pixel position support.*/
 

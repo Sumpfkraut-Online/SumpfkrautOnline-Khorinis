@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\GothicII\System\UntoldChapter\Server\scripts\_compiled\</OutputPath>
+    <OutputPath>..\GothicII\System\Multiplayer\Server\Scripts\</OutputPath>
     <DefineConstants>TRACE;DEBUG;D_SERVER</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -26,7 +26,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\GothicII\System\UntoldChapter\Server\scripts\_compiled\</OutputPath>
+    <OutputPath>..\GothicII\System\Multiplayer\Server\Scripts\</OutputPath>
     <DefineConstants>TRACE;SSM_ACCOUNT;SSM_ACCOUNT_LOGGING;SSM_WEB;SSM_AI;SSM_CHAT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>

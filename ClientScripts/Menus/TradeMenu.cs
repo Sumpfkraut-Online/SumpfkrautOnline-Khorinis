@@ -9,16 +9,12 @@ using GUC.Types;
 
 using GUC.Network;
 using GUC.Enumeration;
-using GUC.Client.WorldObjects;
 using GUC.Client.GUI;
 using GUC.Client.Network.Messages;
-using Gothic.mClasses;
-using Gothic.zClasses;
-using RakNet;
 
 namespace GUC.Client.Menus
 {
-    class TradeMenu : GUCMenu
+    /*class TradeMenu : GUCMenu
     {
 
         private static TradeMenu trade;
@@ -267,7 +263,7 @@ namespace GUC.Client.Menus
                     ShortMsg("Handelsanfrage an " + npc.Name);
                     requests[npc.ID].Time = DateTime.Now.Ticks + 0; // 30s
                     zERROR.GetZErr(Program.Process).Report(2, 'G', "Eine abgelaufener Request wird erneuert", 0, "GUCInventory.cs", 0);
-                }*/
+                }*//*
             }
         }
 
@@ -275,9 +271,9 @@ namespace GUC.Client.Menus
         {
             zCView.Printwin(Program.Process, text);
         }
-    }
+    }*/
 
-    class TradeRequest
+    /*class TradeRequest
     {
         // this class is only for showing up the right ingame messages 
         public long Time;
@@ -304,5 +300,5 @@ namespace GUC.Client.Menus
             zERROR.GetZErr(Program.Process).Report(2, 'G', "created request with "+received.ToString(), 0, "GUCInventory.cs", 0);
         }
 
-    }
+    }*/
 }

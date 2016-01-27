@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Network;
-using Gothic.zClasses;
-using Gothic.zTypes;
 using GUC.Enumeration;
 using WinApi.User.Enumeration;
+using GUC.Client.GUI;
 
-namespace GUC.Client.GUI.MainMenu
+namespace GUC.Client.Scripts.MainMenu
 {
-    class MainMenuCharacter : MainMenuItem, InputReceiver
+    /*class MainMenuCharacter : MainMenuItem, InputReceiver
     {
         GUCVisualVob vis;
 
@@ -103,5 +102,5 @@ namespace GUC.Client.GUI.MainMenu
 
             Program.Process.Write(rotation, thisVob.Address + (int)oCItem.Offsets.inv_roty);
         }
-    }
+    }*/
 }

@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Client.GUI.MainMenu;
+using GUC.Client.Scripts.GUI.MainMenu;
+using GUC.Client.GUI;
 
-namespace GUC.Client.Menus.MainMenus
+namespace GUC.Client.Scripts.Menus.MainMenus
 {
     class MainMenu : GUCMainMenu
     {
+        public readonly static MainMenu Menu = new MainMenu();
+
         MainMenuButton bLogin, bRegister, bContinue;
         bool ingame = false;
 
@@ -17,19 +20,19 @@ namespace GUC.Client.Menus.MainMenus
 
             const int offset = 200;
             const int dist = 38;
-            bLogin = AddButton("Anmelden", "In einen bestehenden Account einloggen.", offset + dist * 0, GUCMenus.Login.Open);
-            bRegister = AddButton("Registrieren", "Einen neuen Account erstellen.", offset + dist * 1, GUCMenus.Register.Open);
+            bLogin = AddButton("Anmelden", "In einen bestehenden Account einloggen.", offset + dist * 0, LoginMenu.Menu.Open);
+            bRegister = AddButton("Registrieren", "Einen neuen Account erstellen.", offset + dist * 1, null);
             bContinue = AddButton("Weiterspielen", "Aktuelles Spiel fortführen.", offset + dist * 2, Close); //lol
-            AddButton("Spielerliste", "Zeigt die angemeldeten Spieler.", offset + dist * 3, GUCMenus.Playerlist.Open);
-            AddButton("Hilfe", "Kurzhilfe & Einführung in das Rollenspiel.", offset + dist * 4, GUCMenus.Help.Open);
-            AddButton("Beenden", "Die Welt von SumpfkrautOnline verlassen.", offset + dist * 5, GUCMenus.Exit.Open);
+            AddButton("Spielerliste", "Zeigt die angemeldeten Spieler.", offset + dist * 3, PlayerlistMenu.Menu.Open);
+            AddButton("Hilfe", "Kurzhilfe & Einführung in das Rollenspiel.", offset + dist * 4, HelpMenu.Menu.Open);
+            AddButton("Beenden", "Die Welt von SumpfkrautOnline verlassen.", offset + dist * 5, ExitMenu.Menu.Open);
             bContinue.Enabled = false;
             OnEscape = Open;
         }
 
         public override void Open()
         {
-            if (Program._state is States.GameState)
+            if (GUC.Scripts.Init.Ingame)
             {
                 if (!ingame)
                 {

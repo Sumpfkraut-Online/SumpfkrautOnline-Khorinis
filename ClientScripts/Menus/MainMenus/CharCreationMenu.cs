@@ -2,16 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Client.GUI.MainMenu;
 using GUC.Enumeration;
 using GUC.Network;
 using WinApi.User.Enumeration;
-using Gothic.zClasses;
-using Gothic.zTypes;
 
 namespace GUC.Client.Menus.MainMenus
 {
-    class CharCreationMenu : GUCMainMenu
+    /*class CharCreationMenu : GUCMainMenu
     {
         public override void Open()
         {
@@ -195,7 +192,7 @@ namespace GUC.Client.Menus.MainMenus
             { 2, "latino" }, 
             { 3, "dunkelhäutig" }, 
             /*{ 8, "Kettenhemd" }, 
-              { 9, "zerfetzte Kleidung" },*/ 
+              { 9, "zerfetzte Kleidung" },*//* 
             { 10, "tätowiert" } 
         };
 
@@ -206,7 +203,7 @@ namespace GUC.Client.Menus.MainMenus
             { 6, "latino" }, 
             { 7, "dunkelhäutig" } 
             /*{ 11, "Fellkragen" }, 
-             { 12, "schwarzklein" }*/ 
+             { 12, "schwarzklein" }*//* 
         };
 
         static Dictionary<int, string> c_HeadMeshes_M = new Dictionary<int, string>() 
@@ -354,5 +351,5 @@ namespace GUC.Client.Menus.MainMenus
             { 16, "Nadja" }, { 17, "Thekla" } 
         };
         #endregion
-    }
+    }*/
 }

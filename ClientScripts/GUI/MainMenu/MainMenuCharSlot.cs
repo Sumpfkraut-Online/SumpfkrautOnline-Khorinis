@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Network;
-using GUC.Client.Menus.MainMenus;
+//using GUC.Client.Scripts.Menus.MainMenus;
+using GUC.Client.GUI;
 
-namespace GUC.Client.GUI.MainMenu
+namespace GUC.Client.Scripts.GUI.MainMenu
 {
-    class MainMenuCharSlot : MainMenuItem
+   /* class MainMenuCharSlot : MainMenuItem
     {
         GUCVisual vis;
         GUCVisualText visText { get { return vis.Texts[0]; } }
@@ -60,5 +61,5 @@ namespace GUC.Client.GUI.MainMenu
             vis.Font = Fonts.Default;
             Character.Info = null;
         }
-    }
+    }*/
 }

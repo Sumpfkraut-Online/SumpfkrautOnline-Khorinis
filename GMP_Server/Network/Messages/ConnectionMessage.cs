@@ -13,17 +13,13 @@ namespace GUC.Server.Network.Messages
     {
         public static void Read(PacketReader stream, Client client)
         {
-            String driveString = stream.ReadString();
-            String macString = stream.ReadString();
+            byte[] signature = new byte[16];
+            stream.Read(signature, 0, 16);
 
-            byte[] instanceTableHash = new byte[16];
-            stream.Read(instanceTableHash, 0, 16);
+            byte[] mac = new byte[16];
+            stream.Read(mac, 0, 16);
 
-            client.CheckValidity(driveString, macString, instanceTableHash);
-
-            Log.Logger.Print("Read ConnectionMSG");
-
-            WriteInstanceTables(client);
+            //client.CheckValidity(driveString, macString, instanceTableHash);
         }
 
         public static void WriteInstanceTables(Client client)

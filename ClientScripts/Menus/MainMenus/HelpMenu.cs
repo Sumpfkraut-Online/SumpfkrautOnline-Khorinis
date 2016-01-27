@@ -4,18 +4,20 @@ using System.Linq;
 using System.Text;
 using GUC.Client.GUI;
 
-namespace GUC.Client.Menus.MainMenus
+namespace GUC.Client.Scripts.Menus.MainMenus
 {
     class HelpMenu : GUCMainMenu
     {
+        public readonly static HelpMenu Menu = new HelpMenu();
+
         GUCVisual keyHelp;
 
         protected override void OnCreate()
         {
             Back.CreateTextCenterX("Kurzhilfe", 100);
             
-            AddButton("Chatbefehle", "Eine Liste aller nutzbaren Chatbefehle.", 180, GUCMenus.HelpChat.Open);
-            AddButton("RP-Guide", "Eine kurze Einführung ins Rollenspiel.", 220, GUCMenus.HelpRP.Open);
+            AddButton("Chatbefehle", "Eine Liste aller nutzbaren Chatbefehle.", 180, HelpChatMenu.Menu.Open);
+            AddButton("RP-Guide", "Eine kurze Einführung ins Rollenspiel.", 220, HelpRPMenu.Menu.Open);
 
             const int offsetY = 280;
             const int dist = 24;
@@ -25,8 +27,8 @@ namespace GUC.Client.Menus.MainMenus
             keyHelp.CreateTextCenterX("T - Handelsanfrage", pos[1] + offsetY + dist * 2);
             keyHelp.CreateTextCenterX("X - Animationsmenü", pos[1] + offsetY + dist * 3);
 
-            AddButton("Zurück", "Zurück zum Hauptmenü.",400, GUCMenus.Main.Open);
-            OnEscape = GUCMenus.Main.Open;
+            AddButton("Zurück", "Zurück zum Hauptmenü.",400, MainMenu.Menu.Open);
+            OnEscape = MainMenu.Menu.Open;
         }
     }
 }

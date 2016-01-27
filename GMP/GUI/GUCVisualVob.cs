@@ -7,7 +7,7 @@ using Gothic.Objects;
 
 namespace GUC.Client.GUI
 {
-    class GUCVisualVob : GUCVisual
+    public class GUCVisualVob : GUCVisual
     {
         /*This is rendering a vob item*/
 

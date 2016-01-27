@@ -8,7 +8,7 @@ namespace GUC.Enumeration
     /** 
     * Types of network messages (data) which can be exchanged between clients and server.
     */
-    public enum NetworkIDs : byte
+    internal enum NetworkIDs : byte
     {
         //login stuff
         ConnectionMessage,

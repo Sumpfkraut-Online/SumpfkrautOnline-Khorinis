@@ -77,7 +77,7 @@ namespace GUC.Client
 
                 Process.SetWindowText("Gothic II - Untold Chapters");
                 
-                ScriptManager.StartScripts(ProjectPath + "\\Scripts\\ClientScripts.dll"); // Load Scripts
+                ScriptManager.StartScripts(ProjectPath + "Scripts\\ClientScripts.dll"); // Load Scripts
                 
                 GameClient.Connect();
                 
@@ -103,10 +103,17 @@ namespace GUC.Client
             Process.Hook(Constants.GUCDll, typeof(Program).GetMethod("RunIngame"), 0x006C86A0, 7, 0);
 
             //Process.Write(new byte[] { 0xC2, 0x04, 0x00 }, 0x00626570); // kick out zCWorld::UnarcTraverseVobs
-            Process.Write((byte)0xC3, 0x006C1F60); //Blocking Call Init Scripts!
-            Process.Write((byte)0xC3, 0x006C1C70); //Blocking Call Startup Scripts!
 
-            Process.Write((byte)0xC3, 0x00780D80);//Blocking time!
+            // Blocking Call Init Scripts!
+            Process.Write((byte)0xC3, 0x006C1F60);
+            // Blocking Call Startup Scripts!
+            Process.Write((byte)0xC3, 0x006C1C70); 
+
+            // disable interface buttons
+            Process.Write((byte)0xEB, 0x7A55D8);
+
+            // Blocking time!
+            Process.Write((byte)0xC3, 0x00780D80);
 
             // hook hero creating
             Process.Write(new byte[] { 0xE9, 0xBD, 0x00, 0x00, 0x00 }, 0x006C434B);
@@ -117,10 +124,16 @@ namespace GUC.Client
             Logger.Log("General Hooks added.");
         }
 
+        static bool ingameStarted = false;
         public static Int32 RunIngame(String message)
         {
             try
             {
+                if (!ingameStarted)
+                {
+                    ScriptManager.Interface.StartIngame();
+                    ingameStarted = true;
+                }
                 /*if ((WinApi.User.Input.GetAsyncKeyState(WinApi.User.Enumeration.VirtualKeys.F1) & 0x8001) == 0x8001 || (WinApi.User.Input.GetAsyncKeyState(WinApi.User.Enumeration.VirtualKeys.F1) & 0x8000) == 0x8000)
                 {
                     //Process.THISCALL<NullReturnCall>(Process.ReadInt(oCGame.ogame), 0x6C9A50); //oCGame::Compile
@@ -155,20 +168,35 @@ namespace GUC.Client
         }
         
         static long next = 0;
+        static bool outgameStarted = false;
         public static Int32 RunOutgame(String message)
         {
             try
             {
-                int address = Convert.ToInt32(message);
-                int CGameMngerAddress = Process.ReadInt(address);
-                int arg = Process.ReadInt(address + 4);
-
-                Process.CDECLCALL<NullReturnCall>(0x5053E0); // void __cdecl sysEvent(void)
-                Process.CDECLCALL<NullReturnCall>(0x7A55C0); // public: static void __cdecl zCInputCallback::GetInput(void)
+                if (!outgameStarted)
+                {
+                    ScriptManager.Interface.StartOutgame();
+                    outgameStarted = true;
+                }
 
                 if (next < DateTime.UtcNow.Ticks)
                 {
                     GameClient.Update();
+                    InputHandler.Update();
+                    ScriptManager.Interface.Update(DateTime.UtcNow.Ticks);
+
+                    if (InputHandler.IsPressed(WinApi.User.Enumeration.VirtualKeys.F1))
+                    {
+                        oCGame.LoadGame(true, "NEWWORLD\\NEWWORLD.ZEN");
+                    }
+
+                    #region Gothic 
+                    int address = Convert.ToInt32(message);
+                    int CGameMngerAddress = Process.ReadInt(address);
+                    int arg = Process.ReadInt(address + 4);
+
+                    Process.CDECLCALL<NullReturnCall>(0x5053E0); // void __cdecl sysEvent(void)
+                    Process.CDECLCALL<NullReturnCall>(0x7A55C0); // public: static void __cdecl zCInputCallback::GetInput(void)
 
                     using (zColor color = zColor.Create(0, 0, 0, 0))
                         zCRenderer.Vid_Clear(color, 3);
@@ -178,12 +206,8 @@ namespace GUC.Client
                     zCRenderer.EndFrame();
                     zCRenderer.Vid_Blit(1, 0, 0);
                     zCSoundSystem.DoSoundUpdate();
-
-                    if (InputHandler.IsPressed(WinApi.User.Enumeration.VirtualKeys.F1))
-                    {
-                        oCGame.LoadGame(true, "NEWWORLD\\NEWWORLD.ZEN");
-                    }
-
+                    #endregion
+                    
                     next = DateTime.UtcNow.Ticks + 33 * TimeSpan.TicksPerMillisecond;
                 }
             }

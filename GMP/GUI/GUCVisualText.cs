@@ -8,7 +8,7 @@ using Gothic.Types;
 
 namespace GUC.Client.GUI
 {
-    class GUCVisualText : GUCView
+    public class GUCVisualText : GUCView
     {
         GUCVisual parent;
         public GUCVisual Parent { get { return parent; } }

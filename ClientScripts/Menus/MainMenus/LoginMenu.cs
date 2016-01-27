@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Client.GUI.MainMenu;
-using GUC.Client.States;
+using GUC.Client.Scripts.GUI.MainMenu;
 
-namespace GUC.Client.Menus.MainMenus
+namespace GUC.Client.Scripts.Menus.MainMenus
 {
     class LoginMenu : GUCMainMenu
     {
+        public readonly static LoginMenu Menu = new LoginMenu();
+
         MainMenuTextBox name;
         MainMenuTextBox pw;
 
@@ -19,8 +20,8 @@ namespace GUC.Client.Menus.MainMenus
             name = AddTextBox("Accountname:", "Name deines Accounts eingeben.", 200, 200, Login);
             pw = AddTextBox("Passwort:", "Passwort deines Accounts eingeben.", 250, 200, Login);
             AddButton("Einloggen", "In den Account einloggen.", 300, Login);
-            AddButton("Zurück", "Zurück zum Hauptmenü.", 400, GUCMenus.Main.Open);
-            OnEscape = GUCMenus.Main.Open;
+            AddButton("Zurück", "Zurück zum Hauptmenü.", 400, MainMenu.Menu.Open);
+            OnEscape = MainMenu.Menu.Open;
         }
 
         void Login()
@@ -37,10 +38,10 @@ namespace GUC.Client.Menus.MainMenus
             }
             else
             {
-                StartupState.clientOptions.name = name.Input;
+                /*StartupState.clientOptions.name = name.Input;
                 StartupState.clientOptions.password = pw.Input;
                 StartupState.clientOptions.Save(StartupState.getConfigPath() + "gmp.xml");
-                Network.Messages.AccountMessage.Login();
+                Network.Messages.AccountMessage.Login();*/
             }
         }
     }

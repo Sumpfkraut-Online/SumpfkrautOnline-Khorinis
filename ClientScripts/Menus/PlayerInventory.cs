@@ -9,7 +9,7 @@ using GUC.Client.Network.Messages;
 
 namespace GUC.Client.Menus
 {
-    class PlayerInventory : GUCMenu
+    /*class PlayerInventory : GUCMenu
     {
         GUCInventory inv;
 
@@ -81,5 +81,5 @@ namespace GUC.Client.Menus
                 inv.KeyPressed(key);
             }
         }
-    }
+    }*/
 }

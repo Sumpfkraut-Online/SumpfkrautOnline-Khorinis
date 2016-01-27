@@ -5,11 +5,10 @@ using System.Text;
 using WinApi;
 using WinApi.User;
 using WinApi.User.Enumeration;
-using GUC.Client.Menus;
 
 namespace GUC.Client
 {
-    static class InputHandler
+    public static class InputHandler
     {
         public static void DeactivateGothicControl()
         {
@@ -30,67 +29,50 @@ namespace GUC.Client
             return ((Input.GetAsyncKeyState(key) & 0x8001) == 0x8001 || (Input.GetAsyncKeyState(key) & 0x8000) == 0x8000);
         }
 
-        static void SendKeyPressed(VirtualKeys key)
+        public delegate void KeyPressEventHandler(VirtualKeys key, long ticks);
+        public static event KeyPressEventHandler OnKeyDown = null;
+        public static event KeyPressEventHandler OnKeyUp = null;
+
+        static bool[] keys = new bool[0xFF];
+        internal static void Update()
         {
-            if (GUCMenus._ActiveMenus.Count == 0)
+            long ticks = DateTime.UtcNow.Ticks;
+            if (Process.IsForeground())
             {
-                //no active menus, check for shortcuts
-                Action action = null;
-                //Program._state.Shortcuts.TryGetValue(key, out action);
-                if (action != null)
-                {
-                    action();
-                }
-            }
-            else //a menu is open
-            {
-                GUCMenus._ActiveMenus[0].KeyPressed(key);
-            }
-        }
-        
-        static long[] keys = new long[0xFF];
-        public static void Update()
-        {
-            if (WinApi.Process.IsForeground())
-            {
-                long ticks = DateTime.UtcNow.Ticks;
                 for (int i = 1; i < keys.Length; i++)
                 {
-                    if (IsPressed((VirtualKeys)i))
+                    VirtualKeys key = (VirtualKeys)i;
+                    if (IsPressed(key))
                     {
-                        if (keys[i] == 0) //newly pressed
+                        if (!keys[i]) //newly pressed
                         {
-                            keys[i] = ticks + 5500000;
-                            SendKeyPressed((VirtualKeys)i);
-                        }
-                        else //hold
-                        {
-                            if (ticks > keys[i])
-                            {
-                                keys[i] = ticks + 1000000;
-                                SendKeyPressed((VirtualKeys)i);
-                            }
+                            keys[i] = true;
+                            if (OnKeyDown != null)
+                                OnKeyDown(key, ticks);
                         }
                     }
                     else
                     {
-                        if (keys[i] > 0) //release
+                        if (keys[i]) //release
                         {
-                            keys[i] = 0;
-                            //SendKeyReleased(i);
+                            keys[i] = false;
+                            if (OnKeyUp != null)
+                                OnKeyUp(key, ticks);
                         }
                     }
-
-                }
-
-                if (GUCMenus._ActiveMenus.Count > 0)
-                {
-                    GUCMenus._ActiveMenus[0].Update(ticks);
                 }
             }
             else
             {
-                Array.Clear(keys, 0, keys.Length);
+                for (int i = 1; i < keys.Length; i++)
+                {
+                    if (keys[i]) //release
+                    {
+                        keys[i] = false;
+                        if (OnKeyUp != null)
+                            OnKeyUp((VirtualKeys)i, ticks);
+                    }
+                }
             }
         }
     }

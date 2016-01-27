@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using WinApi.User.Enumeration;
+using GUC.Client.GUI;
 
-namespace GUC.Client.GUI.MainMenu
+namespace GUC.Client.Scripts.GUI.MainMenu
 {
     class MainMenuChoice : MainMenuItem, InputReceiver
     {

@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using GUC.Client.Network.Messages;
 using GUC.Network;
-using GUC.Client.GUI.MainMenu;
 
 namespace GUC.Client.Menus.MainMenus
 {
-    class CharSelMenu : GUCMainMenu
+    /*class CharSelMenu : GUCMainMenu
     {
         public CharSelMenu()
         {
@@ -46,5 +45,5 @@ namespace GUC.Client.Menus.MainMenus
         {
             GUCMenus.CharCreation.Open(ListHandle.GetSlotNum(items[cursor]));
         }
-    }
+    }*/
 }

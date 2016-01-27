@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Client.GUI.MainMenu;
-using GUC.Client.States;
 
-namespace GUC.Client.Menus.MainMenus
+namespace GUC.Client.Scripts.Menus.MainMenus
 {
-    class RegisterMenu : GUCMainMenu
+    /*class RegisterMenu : GUCMainMenu
     {
         MainMenuTextBox name;
         MainMenuTextBox pw;
@@ -54,5 +52,5 @@ namespace GUC.Client.Menus.MainMenus
                 Network.Messages.AccountMessage.Register();
             }
         }
-    }
+    }*/
 }

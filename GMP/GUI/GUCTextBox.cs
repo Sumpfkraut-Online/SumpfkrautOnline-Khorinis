@@ -6,7 +6,7 @@ using WinApi.User.Enumeration;
 
 namespace GUC.Client.GUI
 {
-    class GUCTextBox : GUCView
+    public class GUCTextBox : GUCView
     {
         public int CharacterLimit = 512;
         public bool AllowSpaces = true;
