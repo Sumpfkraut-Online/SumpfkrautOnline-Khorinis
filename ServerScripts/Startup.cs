@@ -3,42 +3,18 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Linq;
-using GUC.Server.WorldObjects;
-using GUC.Server.Log;
-using GUC.Server.Scripts;
-using GUC.Server.Scripting.Listener;
-using GUC.Server.Scripts.Sumpfkraut.VobSystem;
-using GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions;
-using GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances;
-using GUC.Server.Scripts.Sumpfkraut;
-using GUC.Server.Scripts.Sumpfkraut.Database;
+using GUC.Log;
+using GUC.Scripting;
 
 namespace GUC.Scripts
 {
-	public class Startup
-	{
-
-        //public delegate void MyEventHandler (Sumpfkraut.Utilities.Threading.Runnable runnable);
-        //public MyEventHandler MyEvent;
-
+    public class Init : ScriptInterface
+    {
 		public void OnServerInit()
 		{
-            Logger.log("######################## Initalise ########################");
-
-
-            GUC.Server.Scripts.Animations.AniCtrl.InitAnimations();
-
-            GUC.Server.Scripts.Accounts.AccountSystem.Init();
-
-            GUC.Server.Scripts.Instances.VobInstances.Init();
-
-            DamageScript.Init();
-
-            CmdHandler.Init();
-
-            new World("newworld", "newworld\\newworld.zen", null).Create();
+            Logger.Log("######################## Initalise ########################");
             
-            Logger.log(Logger.LogLevel.INFO, "###################### End Initalise ######################");
+            Logger.Log("###################### End Initalise ######################");
 		}
     }
 }

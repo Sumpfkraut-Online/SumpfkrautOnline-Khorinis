@@ -44,7 +44,6 @@ namespace GUC.Client
             Logger.Log("Gothic-SplashScreen hooked.");
         }
 
-        static bool remove = false;
         static Application splash = null;
         public static void Create()
         {
@@ -67,8 +66,7 @@ namespace GUC.Client
                 }));
                 appthread.IsBackground = true;
                 appthread.SetApartmentState(ApartmentState.STA);
-                if (!remove)
-                    appthread.Start();
+                appthread.Start();
 
                 Logger.Log("GUC-SplashScreen started.");
             }
@@ -78,15 +76,8 @@ namespace GUC.Client
             }
         }
 
-        public static void Remove()
+        public static Int32 RemoveSplashScreen(String message = null)
         {
-            RemoveSplashScreen(null);
-        }
-
-        public static Int32 RemoveSplashScreen(String message)
-        {
-            remove = true;
-
             if (splash == null)
                 return 0;
 

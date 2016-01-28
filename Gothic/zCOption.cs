@@ -6,8 +6,11 @@ using Gothic.Types;
 
 namespace Gothic
 {
-    public class zCOption : zClass
+    public static class zCOption
     {
+        public const int zoptions = 0x008CD988;
+        public const int zgameoptions = 0x008CD98C;
+
         public abstract class VarOffsets
         {
             public const int SectionList = 8;
@@ -15,77 +18,50 @@ namespace Gothic
 
         public abstract class FuncAddresses
         {
-            public const int Save = 0x004616C0;
-        }
-        
-        public zCOption(int address) : base (address)
-        {
-            
+            public const int Save = 0x004616C0,
+            GetSectionByName = 0x463000, ///<summary> zCOptionSection * __thiscall zCOption::GetSectionByName(class zSTRING const &, int) </summary>
+            GetEntryByName = 0x462D10, ///<summary> zCOptionEntry * __thiscall zCOption::GetEntryByName(class zCOptionSection *, class zSTRING const &, int) </summary>
+            AddParameters = 0x463B00; ///<summary> int __thiscall zCOption::AddParameters(class zSTRING) </summary>
         }
 
-        public zCOption()
+        public static zCOptionSection GetSectionByName(String name)
         {
-
-        }
-        
-        public static zCOption GetOption()
-        {
-            return new zCOption(Process.ReadInt(0x008CD988));
+            zCOptionSection ret;
+            using (zString str = zString.Create(name))
+                ret = GetSectionByName(str);
+            return ret;
         }
 
-        public zCArray<zCOptionSection> SectionList
+        public static zCOptionSection GetSectionByName(zString name)
         {
-            get { return new zCArray<zCOptionSection>(Address + VarOffsets.SectionList); }
+            return Process.THISCALL<zCOptionSection>(Process.ReadInt(zoptions), FuncAddresses.GetSectionByName, name, new IntArg(1));
         }
 
-        #region ownmethods
-
-        public String getEntryValue(String section, String Entry)
+        public static int Save(string file)
         {
-            zCOptionSection sec = getSection(section);
-            if (section == null)
-                return "";
-
-            zCOptionEntry entr = sec.getEntry(Entry);
-            if (entr == null)
-                return "";
-
-            return entr.VarValue.ToString();
-        }
-
-        public zCOptionSection getSection(String section)
-        {
-            zCArray<zCOptionSection> list = SectionList;
-            int size = list.GetCount();
-
-            for (int i = 0; i < size; i++)
-            {
-                if (list.get(i).SectionName.ToString().Trim().ToLower() == section.Trim().ToLower())
-                    return list.get(i);
-            }
-
-            return null;
-        }
-
-        #endregion
-        
-        public int Save(string file)
-        {
-            int rval;
+            int ret;
             using (zString str = zString.Create(file))
-                //Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.Save, new CallValue[] { (IntArg)str.Res, (IntArg)str.Length, (IntArg)str.PTR, (IntArg)str.ALLOCATER, (IntArg)str.VTBL });
-                rval = Process.THISCALL<IntArg>(Address, FuncAddresses.Save, (IntArg)str.VTBL, (IntArg)str.ALLOCATER, (IntArg)str.PTR, (IntArg)str.Length, (IntArg)str.Res);
-
-            return rval;
+                ret = Save(str);
+            return ret;
         }
 
-        public float ReadReal(string section, string entry, float def)
+        public static int Save(zString file)
         {
-            using (zString sec = zString.Create(section))
-            using (zString ent = zString.Create(entry))
-            {
-                return Process.THISCALL<FloatArg>(Address, 0x463A60, sec, ent, (FloatArg)def);
-            }
+            return Process.THISCALL<IntArg>(Process.ReadInt(zoptions), FuncAddresses.Save, (IntArg)file.VTBL, (IntArg)file.ALLOCATER, (IntArg)file.PTR, (IntArg)file.Length, (IntArg)file.Res);
+        }
+
+
+        public static int AddParameters(string parms)
+        {
+            int ret;
+            using (zString str = zString.Create(parms))
+                ret = AddParameters(str);
+            return ret;
+        }
+
+        public static int AddParameters(zString parms)
+        {
+            return Process.THISCALL<IntArg>(Process.ReadInt(zoptions), FuncAddresses.AddParameters, (IntArg)parms.VTBL, (IntArg)parms.ALLOCATER, (IntArg)parms.PTR, (IntArg)parms.Length, (IntArg)parms.Res);
         }
     }
 }

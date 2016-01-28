@@ -10,20 +10,23 @@ using System.Reflection;
 
 namespace GUC.Client.Hooks
 {
-    class hParser
+    static class hParser
     {
         static bool _loadDatBlocked = false;
         static HookInfos _infoLoadDat = null;
 
         static HookInfos _infoLoadParserFile = null;
-        public static void Init()
+        public static void AddHooks()
         {
+            if (_infoLoadDat != null)
+                return;
+
             _infoLoadDat = Process.Hook(Constants.GUCDll, typeof(hParser).GetMethod("hook_LoadDat"), 0x0078E900, 7, 1);
             _infoLoadParserFile = Process.Hook(Constants.GUCDll, typeof(hParser).GetMethod("hook_LoadParserFile"), 0x006C4BE0, 6, 1);
 
             Process.Write(new byte[] { 0x33, 0xC0, 0xC2, 0x04, 0x00 }, _infoLoadParserFile.oldFuncInNewFunc.ToInt32());
 
-            Logger.Log("Parser hooked.");
+            Logger.Log("Added parser hooks.");
         }
 
         static void BlockLoadDat()

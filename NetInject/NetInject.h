@@ -90,7 +90,7 @@ void LoadNETDLL()
 
 	LPCWSTR project = convertToChar(getenv("GUCProject"));
 	std::wstring projectDll = std::wstring(L"Multiplayer\\UntoldChapters\\") + project + std::wstring(L"\\GUC.dll");
-	hr = pClrRuntimeHost->ExecuteInDefaultAppDomain(projectDll.c_str(), L"GUC.Client.Program", L"InjectedMain", project, &result);
+	hr = pClrRuntimeHost->ExecuteInDefaultAppDomain(projectDll.c_str(), L"GUC.Client.Injection", L"Main", project, &result);
 	pClrRuntimeHost->Stop();
 
 	pRuntimeInfo->Release();

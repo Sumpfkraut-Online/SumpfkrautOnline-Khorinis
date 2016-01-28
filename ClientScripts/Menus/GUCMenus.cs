@@ -11,7 +11,7 @@ namespace GUC.Client.Scripts.Menus
     abstract class GUCMenu
     {
         private static readonly List<GUCMenu> activeMenus = new List<GUCMenu>();
-        public IEnumerable<GUCMenu> GetActiveMenus { get { return activeMenus; } }
+        public static IEnumerable<GUCMenu> GetActiveMenus() { return activeMenus; }
 
         public static void CloseActiveMenus()
         {

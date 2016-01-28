@@ -7,7 +7,9 @@ using GUC.Log;
 using GUC.Scripting;
 using System.Reflection;
 using System.IO;
+using GUC.Client.Scripts.Menus;
 using GUC.Client.Scripts.Menus.MainMenus;
+using GUC.Client.Scripts;
 
 namespace GUC.Scripts
 {
@@ -35,16 +37,23 @@ namespace GUC.Scripts
 
         public void Update(long ticks)
         {
+            GUCMenu activeMenu = GUCMenu.GetActiveMenus().ElementAtOrDefault(0);
+            if (activeMenu != null)
+            {
+                activeMenu.Update(ticks);
+            }
         }
 
         public void StartOutgame()
         {
+            InputControl.Init();
             MainMenu.Menu.Open();
             Logger.Log("Outgame started.");
         }
 
         public void StartIngame()
         {
+            InputControl.Init();
             Ingame = true;
             Logger.Log("Ingame started.");
         }

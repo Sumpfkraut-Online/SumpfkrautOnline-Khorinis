@@ -95,6 +95,8 @@ namespace GUC.Client.Network
 
             try
             {
+                Logger.Log("Trying to connect to the server.");
+
                 string[] serverAddress = Environment.GetEnvironmentVariable("ServerAddress").Split(':');
                 string ip = serverAddress[0];
                 ushort port = Convert.ToUInt16(serverAddress[1]);
@@ -110,7 +112,7 @@ namespace GUC.Client.Network
                 nextConnectionTry = DateTime.UtcNow.Ticks + 500 * TimeSpan.TicksPerMillisecond;
                 connectionTrys++;
 
-                Logger.Log("Connection started.");
+                Logger.Log("Connection attempt started.");
             }
             catch (Exception e)
             {

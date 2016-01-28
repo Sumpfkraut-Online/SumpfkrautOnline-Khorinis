@@ -39,6 +39,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CGameManager.cs" />
+    <Compile Include="Objects\Meshes\zCMesh.cs" />
     <Compile Include="Objects\oCItem.cs" />
     <Compile Include="Objects\Sky\zCSkyControler.cs" />
     <Compile Include="Objects\Sky\zCSkyControler_Outdoor.cs" />

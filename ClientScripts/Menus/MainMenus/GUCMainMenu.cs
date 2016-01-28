@@ -304,12 +304,12 @@ namespace GUC.Client.Scripts.Menus.MainMenus
                     if (arrowDownTime == 0) // newly pressed
                     {
                         arrowDownTime = now;
-                        MoveCursor(true);
+                        MoveCursor(false);
                     }
                     else if (arrowDownTime < now) // held down
                     {
                         arrowDownTime = now + KeyHoldTime;
-                        MoveCursor(true);
+                        MoveCursor(false);
                     }
                     break;
                 case VirtualKeys.Escape:

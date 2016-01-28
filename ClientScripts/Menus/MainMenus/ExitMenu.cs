@@ -13,14 +13,9 @@ namespace GUC.Client.Scripts.Menus.MainMenus
         {
             preferredCursorItem = 1;
             Back.CreateTextCenterX("SumpfkrautOnline verlassen?", 100);
-            AddButton("Ja", "Ja, ich möchte SumpfkrautOnline verlassen.", 200, CloseGothic);
+            AddButton("Ja", "Ja, ich möchte SumpfkrautOnline verlassen.", 200, Program.Exit);
             AddButton("Nein", "Nein, ich möchte weiterspielen.", 250, MainMenu.Menu.Open);
             OnEscape = MainMenu.Menu.Open;
-        }
-
-        void CloseGothic()
-        {
-            //Gothic.zClasses.CGameManager.ExitGameFunc(Program.Process);
         }
     }
 }

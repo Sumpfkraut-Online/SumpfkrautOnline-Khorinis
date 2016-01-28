@@ -463,6 +463,4 @@ namespace WinApi
             return User.Window.GetWindowThreadProcessId(User.Window.GetForegroundWindow()) == ProcessID;
         }
     }
-
-
 }

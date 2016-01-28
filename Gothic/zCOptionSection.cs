@@ -30,24 +30,17 @@ namespace Gothic
             get { return new zString(Address + VarOffsets.SectionName); }
         }
 
-        public zCArray<zCOptionEntry> EntryList
+        public zCOptionEntry GetEntryByName(String name)
         {
-            get { return new zCArray<zCOptionEntry>(Address + VarOffsets.EntryList); }
+            zCOptionEntry ret;
+            using (zString str = zString.Create(name))
+                ret = GetEntryByName(str);
+            return ret;
         }
 
-
-        public zCOptionEntry getEntry(String entryname)
+        public zCOptionEntry GetEntryByName(zString name)
         {
-            zCArray<zCOptionEntry> list = EntryList;
-            int size = list.GetCount();
-
-            for (int i = 0; i < size; i++)
-            {
-                if (list.get(i).VarName.ToString().Trim().ToLower() == entryname.Trim().ToLower())
-                    return list.get(i);
-            }
-
-            return null;
+            return Process.THISCALL<zCOptionEntry>(zCOption.zoptions, zCOption.FuncAddresses.GetEntryByName, this, name, new IntArg(1));
         }
     }
 }
