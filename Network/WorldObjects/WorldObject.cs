@@ -21,12 +21,18 @@ namespace GUC.WorldObjects
         }
 
         public bool IsCreated { get; protected set; }
+
+        protected virtual void pCreate() { }
         public virtual void Create()
         {
+            pCreate();
             IsCreated = true;
         }
+
+        protected virtual void pDelete() { }
         public virtual void Delete()
         {
+            pDelete();
             IsCreated = false;
         }
     }

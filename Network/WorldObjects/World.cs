@@ -18,7 +18,6 @@ namespace GUC.WorldObjects
         public static IEnumerable<World> GetWorlds() { return sWorldDict.Values; }
         public static int GetWorldCount() { return sWorldDict.Count; }
 
-
         public readonly string WorldName;
         public readonly string FileName;
         public readonly VobCollection Vobs = new VobCollection();
@@ -51,19 +50,21 @@ namespace GUC.WorldObjects
                 throw new Exception("World creation failed: FileName is null or empty.");
             }
 
-            World.sWorldDict.Add(this.WorldName, this);
             base.Create();
+
+            World.sWorldDict.Add(this.WorldName, this);
         }
 
         public override void Delete()
         {
+            base.Delete();
+
             foreach (Vob vob in Vobs.GetAll())
             {
                 vob.Delete();
             }
 
             World.sWorldDict.Remove(this.WorldName);
-            base.Delete();
         }
 
         #endregion

@@ -21,8 +21,14 @@ namespace GUC.WorldObjects.Instances
         public readonly static InstanceDictionary VobInstances = AllInstances.GetDict(sVobType);
 
         public ushort ID { get; protected set; }
-        public VobTypes VobType { get; protected set; }
+        public virtual VobTypes VobType { get { return sVobType; } }
         new public IScriptVobInstance ScriptObj { get; protected set; }
+
+        public VobInstance(PacketReader stream, IScriptVobInstance scriptObj) : base(scriptObj)
+        {
+            this.ScriptObj = scriptObj;
+            ReadProperties(stream);
+        }
 
         #region Properties
 
@@ -48,19 +54,17 @@ namespace GUC.WorldObjects.Instances
         }
 
         #endregion
-
-        partial void pCreate();
+        
         public override void Create()
         {
-            pCreate();
-            AllInstances.Add(this);
             base.Create();
+            AllInstances.Add(this);
         }
 
         public override void Delete()
         {
-            AllInstances.Remove(this);
             base.Delete();
+            AllInstances.Remove(this);
         }
 
         internal virtual void WriteProperties(PacketWriter stream)

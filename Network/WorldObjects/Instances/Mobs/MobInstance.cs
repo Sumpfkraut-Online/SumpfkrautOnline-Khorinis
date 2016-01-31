@@ -15,7 +15,12 @@ namespace GUC.WorldObjects.Instances
         }
 
         new public const VobTypes sVobType = VobTypes.Mob;
+        public override VobTypes VobType { get { return sVobType; } }
         public static readonly InstanceDictionary MobInstances = VobInstance.AllInstances.GetDict(sVobType);
+
+        public MobInstance(PacketReader stream, IScriptMobInstance scriptObj) : base(stream, scriptObj)
+        {
+        }
 
         #region Properties
 

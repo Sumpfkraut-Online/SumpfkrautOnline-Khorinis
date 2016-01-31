@@ -7,15 +7,22 @@ namespace GUC.Log
 {
     public static partial class Logger
     {
-        public const int LOG_INFO = 0;
-        public const int LOG_WARNING = 1;
-        public const int LOG_ERROR = 2;
+        public const int LOG_PRINT = 0;
+        public const int LOG_INFO = 1;
+        public const int LOG_WARNING = 2;
+        public const int LOG_ERROR = 3;
 
         public enum LogLevels
         {
-            Info,
-            Warning,
-            Error
+            Print = LOG_PRINT,
+            Info = LOG_INFO,
+            Warning = LOG_WARNING,
+            Error = LOG_ERROR
+        }
+
+        public static void Print(object message, params object[] args)
+        {
+            Logger.LogMessage(LogLevels.Print, message, args);
         }
 
         public static void Log(object message, params object[] args)

@@ -12,6 +12,10 @@ namespace GUC.WorldObjects.Instances
         {
         }
 
+        protected MobLockableInstance(PacketReader stream, IScriptMobLockableInstance scriptObj) : base(stream, scriptObj)
+        {
+        }
+
         #region Properties
 
         public string OnTryOpenClientFunc = "";

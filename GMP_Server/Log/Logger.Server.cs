@@ -32,22 +32,25 @@ namespace GUC.Log
             {
                 string msg = String.Format(message.ToString(), args);
 
-                builder.Clear();
-                builder.Append("<span class=\"level_").Append((int)level).Append("\">");
-                builder.Append(msg).Append("</span><br>");
-                writer.WriteLine(builder.ToString());
-                writer.Flush();
+                if (level != LogLevels.Print)
+                {
+                    builder.Clear();
+                    builder.Append("<span class=\"level_").Append((int)level).Append("\">");
+                    builder.Append(msg).Append("</span><br>");
+                    writer.WriteLine(builder.ToString());
+                    writer.Flush();
+                }
 
-                Print(msg);
+                print(msg);
             }
             catch (Exception e)
             {
-                Print(e);
+                print(e);
             }
         }
 
         static object lock_LogObject = new object();
-        public static void Print(object message, params object[] args)
+        static void print(object message, params object[] args)
         {
             try
             {

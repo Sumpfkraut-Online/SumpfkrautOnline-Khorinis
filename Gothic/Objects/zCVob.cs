@@ -5,6 +5,7 @@ using System.Text;
 using WinApi;
 using Gothic.Types;
 using Gothic.Objects.EventManager;
+using Gothic.Objects.Meshes;
 
 namespace Gothic.Objects
 {
@@ -50,7 +51,8 @@ namespace Gothic.Objects
             GetEM = 0x005FFE10,
             SetPositionWorld = 0x0061BB70,
             SetAI = 0x005FE8F0,
-            SetVisual = 0x00602680,
+            SetVisual = 0x6024F0,
+            SetVisualStr = 0x00602680,
             ResetRotationsLocal = 0x0061BCF0,
             ResetRotationsWorld = 0x0061C000,
             RotateLocalY = 0x0061B720,
@@ -84,7 +86,7 @@ namespace Gothic.Objects
             NPC = 130
         }
 
-        public class BitFlag0
+        public abstract class BitFlag0
         {
             public const int showVisual = 1,
             drawBBox3D = 1 << 1,
@@ -128,6 +130,11 @@ namespace Gothic.Objects
             get { return Process.ReadInt(Address + VarOffsets.type); }
         }
 
+        public virtual void SetVisual(zCVisual vis)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetVisual, vis);
+        }
+
         public void SetVisual(String visual)
         {
             using (zString str = zString.Create(visual))
@@ -136,7 +143,7 @@ namespace Gothic.Objects
 
         public void SetVisual(zString str)
         {
-            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetVisual, str);
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetVisualStr, str);
         }
 
         public zMat4 TrafoObjToWorld

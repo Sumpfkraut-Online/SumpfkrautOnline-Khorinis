@@ -28,9 +28,10 @@ namespace GUC.WorldObjects
         protected NPCStates state = NPCStates.Stand;
         protected MobInter usedMob = null;
         protected Item drawnItem = null;
-        
+
         public ItemContainer Inventory { get; protected set; }
         protected Dictionary<byte, Item> equippedSlots = new Dictionary<byte, Item>();
+        public IEnumerable<Item> GetEquippedItems() { return equippedSlots.Values; }
 
         public string Name { get { return Instance.Name; } }
         public string BodyMesh { get { return Instance.BodyMesh; } }

@@ -65,6 +65,7 @@ namespace Gothic.Objects
 
         new public abstract class FuncAddresses : zCVob.FuncAddresses
         {
+            new public const int SetVisual = 0x711910;
             public const int MultiSlot = 0x007125A0,
             ThisVobAddedToWorld = 0x00712DF0,
             CreateVisual = 0x00711930,
@@ -405,7 +406,7 @@ namespace Gothic.Objects
             set { Process.Write(value, Address + VarOffsets.spell); }
         }
 
-        public int Instanz
+        public int Instance
         {
             get { return Process.ReadInt(Address + VarOffsets.instance); }
             set { Process.Write(value, Address + VarOffsets.instance); }

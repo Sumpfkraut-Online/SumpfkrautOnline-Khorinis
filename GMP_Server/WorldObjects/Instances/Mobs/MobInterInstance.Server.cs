@@ -18,7 +18,6 @@ namespace GUC.WorldObjects.Instances
         public MobInterInstance(ushort ID, string instanceName, IScriptMobInterInstance scriptObject) 
             : base(ID, instanceName, scriptObject)
         {
-            this.VobType = sVobType;
         }
     }
 }

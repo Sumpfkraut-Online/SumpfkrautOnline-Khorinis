@@ -27,6 +27,10 @@ namespace GUC.WorldObjects.Instances
         }
         #endregion
 
+        public ItemInstance(PacketReader stream, IScriptItemInstance scriptObj) : base(stream, scriptObj)
+        {
+        }
+
         #region Properties
 
         /// <summary>The standard name of this item.</summary>

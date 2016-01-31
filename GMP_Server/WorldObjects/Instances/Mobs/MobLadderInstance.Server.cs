@@ -7,7 +7,6 @@ namespace GUC.WorldObjects.Instances
 {
     public partial class MobLadderInstance : MobInterInstance
     {
-
         public MobLadderInstance(string instanceName, IScriptMobLadderInstance scriptObject)
             : this(0, instanceName, scriptObject)
         {
@@ -16,7 +15,6 @@ namespace GUC.WorldObjects.Instances
         public MobLadderInstance(ushort ID, string instanceName, IScriptMobLadderInstance scriptObject) 
             : base(ID, instanceName, scriptObject)
         {
-            this.VobType = sVobType;
         }
     }
 }

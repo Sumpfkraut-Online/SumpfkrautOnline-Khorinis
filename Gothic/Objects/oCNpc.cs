@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using WinApi;
 using Gothic.Types;
+using Gothic.Objects.Meshes;
 
 namespace Gothic.Objects
 {
@@ -304,10 +305,10 @@ namespace Gothic.Objects
             return new oCNpc(Process.ReadInt(player));
         }
 
-        /*public int SetVisual(zCVisual visual)
+        public override void SetVisual(zCVisual visual)
         {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.SetVisual, new CallValue[] { visual });
-        }*/
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetVisual, visual);
+        }
 
         public void SetAdditionalVisuals(zString bodyMesh, int bodyTex, int skinColor, zString headMesh, int headTex, int TeethTex, int Armor)
         {
@@ -331,6 +332,27 @@ namespace Gothic.Objects
         {
             get { return Process.ReadInt(Address + VarOffsets.hp_max); }
             set { Process.Write(value, Address + VarOffsets.hp_max); }
+        }
+
+        public int Instance
+        {
+            get { return Process.ReadInt(Address + VarOffsets.instance); }
+            set { Process.Write(value, Address + VarOffsets.instance); }
+        }
+
+        public zString Name
+        {
+            get { return new zString(Address + VarOffsets.name); }
+        }
+
+
+        public void SetModelScale(zVec3 val)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetModelScale, val);
+        }
+        public void SetFatness(float val)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetFatness, new FloatArg(val));
         }
 
         /*
@@ -567,11 +589,6 @@ namespace Gothic.Objects
             set { Process.Write(value, Address + (int)Offsets.BitFieldNPC + 4 + 2); }
         }
 
-        public int Instance
-        {
-            get { return Process.ReadInt(Address + (int)Offsets.instance); }
-            set { Process.Write(value, Address + (int)Offsets.instance); }
-        }
 
         public int Hitchance_h1
         {
@@ -719,10 +736,7 @@ namespace Gothic.Objects
             set { Process.Write(value.Address, Address + (int)Offsets.MagBook); }
         }
 
-        public zString Name
-        {
-            get { return new zString(Process, Address + (int)Offsets.name); }
-        }
+
 
         public zString HeadVisualString
         {
@@ -935,14 +949,6 @@ namespace Gothic.Objects
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.Turn, new CallValue[] { pos });
         }
 
-        public void SetModelScale(zVec3 val)
-        {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetModelScale, new CallValue[] { val });
-        }
-        public void SetFatness(float val)
-        {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetFatness, new CallValue[] { new FloatArg(val) });
-        }
 
         public void OnDamage(oSDamageDescriptor oDD)
         {

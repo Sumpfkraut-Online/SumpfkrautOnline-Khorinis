@@ -21,11 +21,10 @@ namespace GUC.WorldObjects.Instances
         {
             this.ID = id;
             this.InstanceName = instanceName.ToUpper();
-            this.VobType = VobInstance.sVobType;
         }
 
         static ushort idCount = 1;
-        partial void pCreate()
+        protected override void pCreate()
         {
             if (ID == 0) //seek a new ID for this instance
             {

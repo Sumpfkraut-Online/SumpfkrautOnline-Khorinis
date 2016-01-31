@@ -50,19 +50,17 @@ namespace GUC.WorldObjects
 
         #region Creation
 
-        partial void pCreate();
         public override void Create()
         {
-            pCreate();
-            Vob.AllVobs.Add(this);
             base.Create();
+            Vob.AllVobs.Add(this);
         }
         
         public override void Delete()
         {
             this.Despawn();
-            Vob.AllVobs.Remove(this);
             base.Delete();
+            Vob.AllVobs.Remove(this);
         }
 
         #endregion

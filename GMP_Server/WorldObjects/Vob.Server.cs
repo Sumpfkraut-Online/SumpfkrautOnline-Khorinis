@@ -55,7 +55,7 @@ namespace GUC.WorldObjects
         }
         #endregion
 
-        partial void pCreate()
+        protected override void pCreate()
         {
             this.ID = Vob.idCount++;
         }

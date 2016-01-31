@@ -18,7 +18,6 @@ namespace GUC.WorldObjects.Instances
         public NPCInstance(ushort ID, string instanceName, IScriptNPCInstance scriptObject)
             : base(ID, instanceName, scriptObject)
         {
-            this.VobType = sVobType;
         }
     }
 }

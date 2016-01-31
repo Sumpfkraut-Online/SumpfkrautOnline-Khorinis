@@ -41,7 +41,18 @@
   <ItemGroup>
     <Compile Include="CGameManager.cs" />
     <Compile Include="Objects\Meshes\zCMesh.cs" />
+    <Compile Include="Objects\Meshes\zCVisual.cs" />
     <Compile Include="Objects\oCItem.cs" />
+    <Compile Include="Objects\oCMob.cs" />
+    <Compile Include="Objects\oCMobBed.cs" />
+    <Compile Include="Objects\oCMobContainer.cs" />
+    <Compile Include="Objects\oCMobDoor.cs" />
+    <Compile Include="Objects\oCMobFire.cs" />
+    <Compile Include="Objects\oCMobInter.cs" />
+    <Compile Include="Objects\oCMobLadder.cs" />
+    <Compile Include="Objects\oCMobLockable.cs" />
+    <Compile Include="Objects\oCMobSwitch.cs" />
+    <Compile Include="Objects\oCMobWheel.cs" />
     <Compile Include="Objects\Sky\zCSkyControler.cs" />
     <Compile Include="Objects\Sky\zCSkyControler_Outdoor.cs" />
     <Compile Include="Objects\Sky\zCSkyLayer.cs" />
@@ -57,7 +68,6 @@
     <Compile Include="Objects\oCNpc.cs" />
     <Compile Include="Objects\EventManager\zCEventManager.cs" />
     <Compile Include="Objects\zCObject.cs" />
-    <Compile Include="Objects\zCVisual.cs" />
     <Compile Include="Objects\zCVob.cs" />
     <Compile Include="oCGame.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -15,7 +15,6 @@ namespace GUC.WorldObjects.Instances
         public MobWheelInstance(ushort ID, string instanceName, IScriptMobWheelInstance scriptObject)
             : base(ID, instanceName, scriptObject)
         {
-            this.VobType = sVobType;
         }
     }
 }
