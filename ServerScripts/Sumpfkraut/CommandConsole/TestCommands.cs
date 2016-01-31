@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using GUC.Enumeration;
 
 namespace GUC.Server.Scripts.Sumpfkraut.CommandConsole
 {
@@ -100,15 +101,15 @@ namespace GUC.Server.Scripts.Sumpfkraut.CommandConsole
             // prepare response message and variables to set time and time-rate
             if (igTimeCheck)
             {
-                returnVal["rawText"] = "Set igTime to: " + igTime + ". ";
+                returnVal["rawText"] += "Set igTime to: " + igTime + ". ";
             }
             else
             {
-                igTime = World.NewWorld.GetIGTime();
+                igTime = World.NewWorld.GetIgTime();
             }
             if (igTimeRateCheck)
             {
-                returnVal["rawText"] = "Set ingameTimeRate (ingame- to reallife-time-ratio) to: " 
+                returnVal["rawText"] += "Set igTimeRate (ingame- to reallife-time-ratio) to: " 
                     + igTimeRate + ". ";
             }
             else

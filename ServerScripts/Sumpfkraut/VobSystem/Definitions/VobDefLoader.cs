@@ -1,5 +1,4 @@
 ﻿using GUC.Server.Scripts.Sumpfkraut.Database;
-using GUC.Server.Scripts.Sumpfkraut.Utilities.Threading;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -160,7 +159,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
                 sqlSelect, sqlFrom, sqlWhere, sqlOrderBy) }, false);
 
             dbAgent_VobDef.waitHandle = new AutoResetEvent(false);
-            dbAgent_VobDef.ReceivedResults += delegate (Runnable sender, DBAgent.ReceivedResultsEventArgs e) 
+            dbAgent_VobDef.ReceivedResults += delegate (GUC.Utilities.Threading.AbstractRunnable sender, 
+                DBAgent.ReceivedResultsEventArgs e) 
             {
                 tempSqlResults = e.GetResults();
                 sender.waitHandle.Set();
@@ -290,7 +290,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions
                 sqlSelect, sqlFrom, sqlWhere, sqlOrderBy) }, false);
 
             dbAgent_VobDef.waitHandle = new AutoResetEvent(false);
-            dbAgent_VobDef.ReceivedResults += delegate (Runnable sender, DBAgent.ReceivedResultsEventArgs e) 
+            dbAgent_VobDef.ReceivedResults += delegate (GUC.Utilities.Threading.AbstractRunnable sender, 
+                DBAgent.ReceivedResultsEventArgs e) 
             {
                 tempSqlResults = e.GetResults();
                 sender.waitHandle.Set();

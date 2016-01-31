@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using GUC.Types;
+using GUC.Enumeration;
 using GUC.Server.WorldObjects;
 using GUC.Utilities;
-using GUC.Server.Scripts.Sumpfkraut.Utilities.Threading;
 //using GUC.Server.Scripting.Objects.World.WeatherType;
 
 namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
@@ -111,7 +111,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
             this.snowFactor = 20; // % change of snow when there is precipitation
 
             this.lastIGTime = new IgTime();
-            this.lastIGTime = World.NewWorld.GetIGTime();
+            this.lastIGTime = World.NewWorld.GetIgTime();
 
             this.random = new Random();
             this.lock_WSQueue = new Object();
@@ -453,7 +453,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
 
                 if ((forceIGWeather) || (setIGWeather && this.currWSChanged))
                 {
-                    IgTime igTimeNow = World.NewWorld.GetIGTime();
+                    IgTime igTimeNow = World.NewWorld.GetIgTime();
                     this.lastIGTime = igTimeNow;
                     //Print(">>> " + igTimeNow.day + " " + igTimeNow.hour + " " + igTimeNow.minute);
 
@@ -532,7 +532,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
         public override void Run()
         {
             DateTime dtNow = DateTime.Now;
-            IgTime currIGTime = World.NewWorld.GetIGTime();
+            IgTime currIGTime = World.NewWorld.GetIgTime();
             FillUpQueue();
 
             if (this.lastIGTime.hour > currIGTime.hour)

@@ -158,47 +158,39 @@ namespace GUC.Client.Network.Messages
             try
             {
                 int day = stream.mReadInt();
-                int hour = stream.mReadInt();
-                int minute = stream.mReadInt();
+                int hour = stream.mReadByte();
+                int minute = stream.mReadByte();
                 float igTimeRate = stream.mReadFloat();
 
                 IgTime igTime = new IgTime(day, hour, minute);
                 World.SetIgTime(igTime, igTimeRate);
-                //oCGame.Game(Program.Process).WorldTimer.SetTime(hour, minute);
-                //oCGame.Game(Program.Process).WorldTimer.SetDay(day);
             }
             catch (Exception ex)
             {
-                zERROR.GetZErr(Program.Process).Report(3, 'G', "GOTCHA: " + ex, 0, "WorldMessage.cs", 0);
+                zERROR.GetZErr(Program.Process).Report(3, 'G', ex.ToString(), 0, 
+                    "WorldMessage.cs", 0);
             }
         }
 
         public static void ReadWeatherChange (BitStream stream)
         {
-            int weatherType = (int)stream.mReadByte();
-            //int startDay = (int)stream.mReadByte();
-            int startHour = (int)stream.mReadByte();
-            int startMinute = (int)stream.mReadByte();
-            //int endDay = (int)stream.mReadByte();
-            int endHour = (int)stream.mReadByte();
-            int endMinute = (int)stream.mReadByte();
+            WeatherType weatherType = (WeatherType) stream.mReadByte();
+            int startHour = stream.mReadByte();
+            int startMinute = stream.mReadByte();
+            int endHour = stream.mReadByte();
+            int endMinute = stream.mReadByte();
 
-            // if start- and endTime remain the same (done when there is no precipitation)...
-            // they stop possible current rain/snow by overwriting the raintime with
-            // something in the past, effectively ending the rain/snow (hopefully...)
-            float startTime = 0f;
-            float endTime = 0f;
-
-            if (weatherType > 0)
+            if (!Enum.IsDefined(typeof(WeatherType), weatherType))
             {
-                // 12:00 == 0f; 24:00 == 1f
-                startTime = (((((float)startHour + 12f) % 24f) * 60f) + ((float)startMinute)) / (24f * 60f);
-                endTime = (((((float)endHour + 12f) % 24f) * 60f) + ((float)endMinute)) / (24f * 60f);
+                zERROR.GetZErr(Program.Process).Report(3, 'G', 
+                    "Invalid weatherType received from server: " + weatherType, 
+                    0, "WorldMessage.cs", 0);
+                return;
             }
 
-            oCGame.Game(Program.Process).World.SkyControlerOutdoor.SetWeatherType(weatherType);
-            oCGame.Game(Program.Process).World.SkyControlerOutdoor.StartRainTime = startTime;
-            oCGame.Game(Program.Process).World.SkyControlerOutdoor.EndRainTime = endTime;
+            World.weatherController.ChangeWeather(weatherType,
+                new IgTime(0, startHour, startMinute),
+                new IgTime(0, endHour, endMinute));
         }
 
     }

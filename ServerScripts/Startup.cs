@@ -14,6 +14,8 @@ using GUC.Server.Scripts.Sumpfkraut.Database;
 using GUC.Server.Scripts.Sumpfkraut.CommandConsole;
 using GUC.Server.Scripts.Sumpfkraut.Database.DBQuerying;
 using System.Text.RegularExpressions;
+using GUC.Types;
+using GUC.Enumeration;
 
 namespace GUC.Server.Scripts
 {
@@ -440,6 +442,10 @@ namespace GUC.Server.Scripts
 
             //Logger.print(new Types.IgTime(1, 25, 0));
 
+            Bla(WeatherType.rain, new Types.IgTime(0, 0, 0), new Types.IgTime(5, 12, 0));
+            Bla(WeatherType.rain, new Types.IgTime(0, 0, 1), new Types.IgTime(5, 11, 59));
+            Bla(WeatherType.rain, new Types.IgTime(0, 8, 0), new Types.IgTime(5, 24, 0));
+            Bla(WeatherType.rain, new Types.IgTime(0, 15, 0), new Types.IgTime(5, 13, 0));
 
 
             Sumpfkraut.Web.WS.WSServer websocketTest = new Sumpfkraut.Web.WS.WSServer();
@@ -463,9 +469,82 @@ namespace GUC.Server.Scripts
             Logger.log(Logger.LogLevel.INFO, "###################### End Initalise ######################");
 		}
 
-        private void AgentBlack_ReceivedResults(object sender, Sumpfkraut.Database.DBAgent.ReceivedResultsEventArgs e)
+        //private void AgentBlack_ReceivedResults(object sender, Sumpfkraut.Database.DBAgent.ReceivedResultsEventArgs e)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        public void Bla (WeatherType weatherType, IgTime startTime, 
+            IgTime endTime)
         {
-            throw new NotImplementedException();
+            List<WeatherEvent> weatherEvents = new List<WeatherEvent>();
+
+            // days are unnecessary on weather-interval time-scale of Gothic 2
+            startTime.day = endTime.day = 0;
+
+            Logger.print(startTime.hour + ":" + startTime.minute);
+            Logger.print(endTime.hour + ":" + endTime.minute);
+
+            //int daySpan = endTime.day - startTime.day;
+
+            float tempStart = ((((startTime.hour + 12f) % 24f) * 60f)
+                + (startTime.minute)) / (24f * 60f);
+            float tempEnd = ((((endTime.hour + 12f) % 24f) * 60f)
+                + (endTime.minute)) / (24f * 60f);
+
+            WeatherEvent tempWE;
+
+            if (tempEnd > tempStart)
+            {
+                // requires only 1 additional time interval
+                tempWE = new WeatherEvent();
+                tempWE.weatherType = weatherType;
+                tempWE.startTime = startTime;
+                tempWE.endTime = endTime;
+                weatherEvents.Add(tempWE);
+            }
+            else
+            {
+                // requires 2 additional time intervals
+                // first WeatherEvent goes till almost 1f / 23:59
+                tempWE = new WeatherEvent();
+                tempWE.weatherType = weatherType;
+                tempWE.startTime = startTime;
+                tempWE.endTime = new IgTime(0, 11, 59);
+                weatherEvents.Add(tempWE);
+                // second WeatherEvent fills the residual time iterval
+                tempWE = new WeatherEvent();
+                tempWE.weatherType = weatherType;
+                tempWE.startTime = new IgTime(0, 12, 0);
+                tempWE.endTime = endTime;
+                weatherEvents.Add(tempWE);
+            }
+
+            // reset Weather to undefined (no precipitation) for clean setting later on
+            //oCGame.Game(Program.Process).World.SkyControlerOutdoor.StartRainTime = 0f;
+            //oCGame.Game(Program.Process).World.SkyControlerOutdoor.EndRainTime = 1f;
+            //oCGame.Game(Program.Process).World.SkyControlerOutdoor.SetWeatherType(0);
+
+            float gothicStart = 0f;
+            float gothicEnd = 0f;
+
+            foreach (WeatherEvent we in weatherEvents)
+            {
+                // apply WeaterEvents in Gothic 2-process
+                gothicStart = ((((we.startTime.hour + 12f) % 24f) * 60f)
+                    + (we.startTime.minute)) / (24f * 60f);
+                gothicEnd = ((((we.endTime.hour + 12f) % 24f) * 60f)
+                    + (we.endTime.minute)) / (24f * 60f);
+
+                //oCGame.Game(Program.Process).World.SkyControlerOutdoor.StartRainTime = gothicStart;
+                //oCGame.Game(Program.Process).World.SkyControlerOutdoor.EndRainTime = gothicEnd;
+                //oCGame.Game(Program.Process).World.SkyControlerOutdoor.SetWeatherType((int) we.weatherTypes);
+
+                Logger.print(gothicStart + " ==> " + gothicEnd);
+            }
+
+            return;
         }
+
     }
 }

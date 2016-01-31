@@ -9,7 +9,7 @@ using Gothic.zClasses;
 namespace GUC.Client.WorldObjects
 {
 
-    class WorldClock : GUC.Utilities.Threading.AbstractRunnable
+    public class WorldClock : GUC.Utilities.Threading.AbstractRunnable
     {
 
         new public static readonly String _staticName = "WorldClock (static)";
@@ -40,6 +40,9 @@ namespace GUC.Client.WorldObjects
         // last time the originIgTime was updated
         protected DateTime lastCheckup;
         object igTimeLock;
+
+        public delegate void OnApplyIgTimeHandler (IgTime igTime);
+        public event OnApplyIgTimeHandler OnApplyIgTime;
 
 
 
@@ -76,7 +79,7 @@ namespace GUC.Client.WorldObjects
             {
                 oCGame.Game(Program.Process).WorldTimer.SetTime(igTime.hour, igTime.minute);
                 oCGame.Game(Program.Process).WorldTimer.SetDay(igTime.day);
-                MakeLog("Applied new ingame-time: " + igTime);
+                MakeLog("Applied ingame-time: " + igTime);
             }
         }
 

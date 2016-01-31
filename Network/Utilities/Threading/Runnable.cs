@@ -17,7 +17,7 @@ namespace GUC.Utilities.Threading
         public delegate void RunEventHandler (Runnable sender);
         public RunEventHandler OnRun;
 
-        new public AutoResetEvent waitHandle;
+        //new public AutoResetEvent waitHandle;
 
 
 

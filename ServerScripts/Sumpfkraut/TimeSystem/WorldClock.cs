@@ -1,5 +1,4 @@
-﻿using GUC.Server.Scripts.Sumpfkraut.Utilities.Threading;
-using GUC.Server.WorldObjects;
+﻿using GUC.Server.WorldObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +7,7 @@ using GUC.Types;
 
 namespace GUC.Server.Scripts.Sumpfkraut.TimeSystem
 {
-    public class WorldClock : Runnable
+    public class WorldClock : GUC.Utilities.Threading.AbstractRunnable
     {
 
         new public static readonly String _staticName = "WorldClock (static)";

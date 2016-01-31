@@ -3,19 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Server.Scripts.Sumpfkraut.Database;
-using GUC.Server.Scripts.Sumpfkraut.Utilities.Threading;
 using System.Threading;
 
 namespace GUC.Server.Scripts.Sumpfkraut.Database
 {
-    public class DBAgent : Runnable
+    public class DBAgent : GUC.Utilities.Threading.AbstractRunnable
     {
 
         protected List<String> commandQueue = new List<String>();
 
 
 
-        public delegate void ReceivedResultsEventHandler (Runnable sender, ReceivedResultsEventArgs e);
+        public delegate void ReceivedResultsEventHandler (GUC.Utilities.Threading.AbstractRunnable sender, 
+            ReceivedResultsEventArgs e);
         public event ReceivedResultsEventHandler ReceivedResults;
         public class ReceivedResultsEventArgs : EventArgs
         {
@@ -36,7 +36,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
             }
         }
 
-        public delegate void FinishedQueueEventHandler(Runnable sender);
+        public delegate void FinishedQueueEventHandler(GUC.Utilities.Threading.AbstractRunnable sender);
         public event FinishedQueueEventHandler FinishedQueue;
 
         // used to alarm another thread when a queue is finished

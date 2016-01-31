@@ -17,7 +17,7 @@ namespace GUC.Utilities.Threading
         protected EventWaitHandle resetEvent;
         public TimeSpan timeout;
         public bool runOnce;
-        protected AutoResetEvent waitHandle = new AutoResetEvent(false);
+        public AutoResetEvent waitHandle = new AutoResetEvent(false);
 
 
         public AbstractRunnable () 

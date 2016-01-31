@@ -12,7 +12,6 @@ using GUC.Server.Scripts.Sumpfkraut.Database;
 using GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Server.WorldObjects;
-using GUC.Server.Scripts.Sumpfkraut.Utilities.Threading;
 using GUC.Server.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Server.Scripts.Sumpfkraut.VobSystem.Instances;
 

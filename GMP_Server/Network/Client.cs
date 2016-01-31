@@ -80,6 +80,16 @@ namespace GUC.Server.Network
             npc.client = this;
             character = npc;
             NPC.WriteControl(this, character);
+
+            // additional adjustments to synchronize surroundings
+
+            // update ingame-time
+            character.World.ChangeIgTime(character.World.GetIgTime(), character.World.GetIgTimeRate(),
+                new List<NPC> { character });
+            // update ingame-weather
+            character.World.ChangeIgWeather(character.World.GetWeatherType(), 
+                character.World.GetWeatherStartTime(), character.World.GetWeatherEndTime(), 
+                new List<NPC> { character });
         }
 
         public void CheckValidity(String driveString, String macString, byte[] npcTableHash, byte[] itemTableHash, byte[] mobTableHash)

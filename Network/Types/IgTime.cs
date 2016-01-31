@@ -79,6 +79,16 @@ namespace GUC.Types
             return new IgTime(-t1.day, -t1.hour, -t1.minute);
         }
 
+        public static IgTime operator ++(IgTime t1)
+        {
+            return t1 + 1;
+        }
+
+        public static IgTime operator --(IgTime t1)
+        {
+            return t1 - 1;
+        }
+
         public static IgTime operator +(IgTime t1, IgTime t2)
         {
             return new IgTime(t1.day + t2.day, t1.hour + t2.hour, t1.minute + t2.minute);

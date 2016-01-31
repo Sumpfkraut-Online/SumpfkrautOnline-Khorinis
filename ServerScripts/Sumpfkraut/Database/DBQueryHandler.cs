@@ -1,5 +1,4 @@
 ﻿using GUC.Server.Scripts.Sumpfkraut.Database.DBQuerying;
-using GUC.Server.Scripts.Sumpfkraut.Utilities.Threading;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +6,7 @@ using System.Text;
 
 namespace GUC.Server.Scripts.Sumpfkraut.Database
 {
-    public class DBQueryHandler : Runnable
+    public class DBQueryHandler : GUC.Utilities.Threading.AbstractRunnable
     {
 
         new public static readonly String _staticName = "DBQueryHandler (static)";

@@ -1,5 +1,4 @@
 ﻿using GUC.Server.Scripts.Sumpfkraut.Database;
-using GUC.Server.Scripts.Sumpfkraut.Utilities.Threading;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +6,7 @@ using System.Text;
 
 namespace GUC.Server.Scripts.Sumpfkraut.VobSystem
 {
-    public abstract class VobLoader : Runnable
+    public abstract class VobLoader : GUC.Utilities.Threading.AbstractRunnable
     {
 
         new public static readonly String _staticName = "VobLoader (static)";

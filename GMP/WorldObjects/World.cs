@@ -20,6 +20,7 @@ namespace GUC.Client.WorldObjects
         public static Dictionary<uint, AbstractVob> vobDict = new Dictionary<uint, AbstractVob>();
 
         public static WorldClock worldClock = new WorldClock();
+        public static WeatherController weatherController = new WeatherController(worldClock);
 
 
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Server.WorldObjects;
+using GUC.Enumeration;
 
 namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
 {
@@ -18,6 +19,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
 
         public WeatherState()
         {
+            SetObjName("WeatherState (default)");
             DateTime dtNow = DateTime.Now;
             this.weatherType = WeatherType.undefined;
             this.startTime = dtNow;

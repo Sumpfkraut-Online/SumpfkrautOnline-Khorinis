@@ -12,13 +12,6 @@ using GUC.Network;
 namespace GUC.Server.WorldObjects
 {
 
-    public enum WeatherType : byte
-    {
-        undefined = 0,
-        rain = undefined + 1,
-        snow = rain + 1,
-    }
-
     public class World
     {
         // Worlds, hardcoded but whatever
@@ -30,7 +23,7 @@ namespace GUC.Server.WorldObjects
         public string MapName { get; protected set; }
 
         protected IgTime igTime;
-        public IgTime GetIGTime() { return this.igTime; }
+        public IgTime GetIgTime() { return this.igTime; }
         protected float igTimeRate;
         public float GetIgTimeRate () { return this.igTimeRate; }
         protected Object lock_IGTime = new Object();
@@ -65,18 +58,18 @@ namespace GUC.Server.WorldObjects
             //scav.DrawnItem = Item.Fists;
             //scav.Spawn(this);
 
-            igTime = new IgTime(1, 9, 0);
-            igTimeRate = 4f;
+            igTime = new IgTime(1, 0, 0);
+            igTimeRate = 0f;
 
-            weatherType = WeatherType.rain;
+            weatherType = WeatherType.undefined;
             weatherStartTime = new IgTime();
-            weatherStartTime.day = 4;
-            weatherStartTime.hour = 22;
-            weatherStartTime.minute = 30;
+            weatherStartTime.day = 1;
+            weatherStartTime.hour = 0;
+            weatherStartTime.minute = 0;
             weatherEndTime = new IgTime();
-            weatherEndTime.day = 4;
+            weatherEndTime.day = 1;
             weatherEndTime.hour = 23;
-            weatherEndTime.minute = 30;
+            weatherEndTime.minute = 59;
 
             //Vob mob = Vob.Create("forge");
             //mob.Spawn(this, new Types.Vec3f(-200, -100, 200), new Types.Vec3f(0, 0, 1));
@@ -439,30 +432,57 @@ namespace GUC.Server.WorldObjects
             }
         }
 
-        public void ChangeIgTime (IgTime newIGTime, float igTimeRate)
+        public void ChangeIgTime (IgTime igTime, float igTimeRate, List<NPC> npcList = null)
         {
             lock (lock_IGTime)
             {
-                this.igTime = newIGTime;
+                //Log.Logger.print("-_-_-_-_--_-_-_-_--_-_-_-_-");
+                //Log.Logger.print(igTime);
+                //Log.Logger.print((byte) igTime.day + " " + (byte) igTime.hour
+                //    + " " + (byte) igTime.minute);
+                //Log.Logger.print("-_-_-_-_--_-_-_-_--_-_-_-_-");
+
+                this.igTime = igTime;
                 this.igTimeRate = igTimeRate;
 
-                foreach (KeyValuePair<uint, NPC> keyValPair in NewWorld.PlayerDict)
+                if ((npcList != null) && (npcList.Count > 0))
                 {
-                    Client client = keyValPair.Value.client;
-                    BitStream stream = Program.server.SetupStream(NetworkID.WorldTimeMessage);
+                    // send update message to a selection of clients
+                    foreach (NPC npc in npcList)
+                    {
+                        BitStream stream = Program.server.SetupStream(NetworkID.WorldTimeMessage);
 
-                    stream.mWrite(this.igTime.day);
-                    stream.mWrite(this.igTime.hour);
-                    stream.mWrite(this.igTime.minute);
-                    stream.mWrite(this.igTimeRate);
+                        stream.mWrite(this.igTime.day);
+                        stream.mWrite((byte) this.igTime.hour);
+                        stream.mWrite((byte) this.igTime.minute);
+                        stream.mWrite(this.igTimeRate);
 
-                    Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY,
-                        PacketReliability.RELIABLE_ORDERED, 'I', client.guid, false);
+                        Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY,
+                            PacketReliability.RELIABLE_ORDERED, 'I', npc.client.guid, false);
+                    }
+                }
+                else
+                {
+                    // send update message to all clients
+                    foreach (KeyValuePair<uint, NPC> keyValPair in NewWorld.PlayerDict)
+                    {
+                        BitStream stream = Program.server.SetupStream(NetworkID.WorldTimeMessage);
+
+                        stream.mWrite(this.igTime.day);
+                        stream.mWrite((byte) this.igTime.hour);
+                        stream.mWrite((byte) this.igTime.minute);
+                        stream.mWrite(this.igTimeRate);
+
+                        Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY,
+                            PacketReliability.RELIABLE_ORDERED, 'I', keyValPair.Value.client.guid,
+                            false);
+                    }
                 }
             }
         }
 
-        public void ChangeIgWeather (WeatherType wt, IgTime startTime, IgTime endTime)
+        public void ChangeIgWeather (WeatherType wt, IgTime startTime, IgTime endTime, 
+            List<NPC> npcList = null)
         {
             lock (lock_Weather)
             {
@@ -470,26 +490,40 @@ namespace GUC.Server.WorldObjects
                 this.weatherType = wt;
                 this.weatherStartTime = startTime;
                 this.weatherEndTime = endTime;
-                //Console.WriteLine(String.Format(">>> WT:{0} SD:{1} SH:{2} SM:{3} "
-                //    + "ED:{4} EH:{5} EM:{6}", wt, startTime.day, startTime.hour, startTime.minute,
-                //    endTime.day, endTime.hour, endTime.minute));
 
-                // send new weather to clients
-                foreach (KeyValuePair<uint, NPC> keyValPair in NewWorld.PlayerDict)
+                if ((npcList != null) && (npcList.Count > 0))
                 {
-                    Client client = keyValPair.Value.client;
+                    // send update message to a selection of clients
+                    foreach (NPC npc in npcList)
+                    {
+                        BitStream stream = Program.server.SetupStream(NetworkID.WorldWeatherMessage);
 
-                    BitStream stream = Program.server.SetupStream(NetworkID.WorldWeatherMessage);
-                    stream.mWrite((byte)wt);
-                    //stream.Write(startTime.day);
-                    stream.mWrite((byte)startTime.hour);
-                    stream.mWrite((byte)startTime.minute);
-                    //stream.Write(endTime.day);
-                    stream.mWrite((byte)endTime.hour);
-                    stream.mWrite((byte)endTime.minute);
+                        stream.mWrite((byte) wt);
+                        stream.mWrite((byte) startTime.hour);
+                        stream.mWrite((byte) startTime.minute);
+                        stream.mWrite((byte) endTime.hour);
+                        stream.mWrite((byte) endTime.minute);
 
-                    Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY,
-                        PacketReliability.RELIABLE_ORDERED, 'I', client.guid, false);
+                        Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY,
+                            PacketReliability.RELIABLE_ORDERED, 'I', npc.client.guid, false);
+                    }
+                }
+                else
+                {
+                    // send update message to all clients
+                    foreach (KeyValuePair<uint, NPC> keyValPair in NewWorld.PlayerDict)
+                    {
+                        BitStream stream = Program.server.SetupStream(NetworkID.WorldWeatherMessage);
+
+                        stream.mWrite((byte) wt);
+                        stream.mWrite((byte) startTime.hour);
+                        stream.mWrite((byte) startTime.minute);
+                        stream.mWrite((byte) endTime.hour);
+                        stream.mWrite((byte) endTime.minute);
+
+                        Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY,
+                            PacketReliability.RELIABLE_ORDERED, 'I', keyValPair.Value.client.guid, false);
+                    }
                 }
             }
         }

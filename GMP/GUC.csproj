@@ -67,6 +67,9 @@
     <Compile Include="..\Network\Enumeration\VobFlags.cs">
       <Link>Enumeration\VobFlags.cs</Link>
     </Compile>
+    <Compile Include="..\Network\Enumeration\WeatherEnums.cs">
+      <Link>Enumeration\WeatherEnums.cs</Link>
+    </Compile>
     <Compile Include="..\Network\Network\AccCharInfo.cs">
       <Link>Network\AccCharInfo.cs</Link>
     </Compile>
@@ -90,6 +93,9 @@
     </Compile>
     <Compile Include="..\Network\Types\Vec3f.cs">
       <Link>Types\Vec3f.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Types\WeatherEvent.cs">
+      <Link>Types\WeatherEvent.cs</Link>
     </Compile>
     <Compile Include="..\Network\Utilities\ExtendedObject.cs">
       <Link>Utilities\ExtendedObject.cs</Link>
@@ -156,6 +162,7 @@
     <Compile Include="WorldObjects\NPCInstance.cs" />
     <Compile Include="WorldObjects\Player.cs" />
     <Compile Include="WorldObjects\AbstractVob.cs" />
+    <Compile Include="WorldObjects\WeatherController.cs" />
     <Compile Include="WorldObjects\World.cs" />
     <Compile Include="WorldObjects\WorldClock.cs" />
   </ItemGroup>
