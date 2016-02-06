@@ -28,6 +28,7 @@ namespace GUC.WorldObjects
         #endregion
 
         #region Properties
+
         new public BaseVobInstance Instance { get { return (BaseVobInstance)base.Instance; } }
         
         public World World { get; internal set; }
@@ -35,6 +36,13 @@ namespace GUC.WorldObjects
 
         protected Vec3f pos = new Vec3f(0, 0, 0);
         protected Vec3f dir = new Vec3f(0, 0, 1);
+
+        bool isStatic = false;
+        public bool IsStatic
+        {
+            get { return isStatic; }
+            set { isStatic = value; }
+        }
 
         #endregion
 

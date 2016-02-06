@@ -56,6 +56,8 @@
     <Compile Include="Types\Vec3f.cs" />
     <Compile Include="WorldObjects\Collections\VobCollection.cs" />
     <Compile Include="WorldObjects\Collections\WorldCollection.cs" />
+    <Compile Include="WorldObjects\Instances\Mobs\MobBedInstance.cs" />
+    <Compile Include="WorldObjects\Mobs\MobBed.cs" />
     <Compile Include="WorldObjects\WorldObject.cs" />
     <Compile Include="WorldObjects\BaseVob.cs" />
     <Compile Include="WorldObjects\Instances\BaseInstance.cs" />

@@ -10,17 +10,20 @@ namespace GUC.WorldObjects.Instances
 {
     public partial class MobFireInstance : MobInterInstance
     {
+        public override VobTypes VobType { get { return VobTypes.MobFire; } }
+
+        #region ScriptObject
+
         public partial interface IScriptMobFireInstance : IScriptMobInterInstance
         {
         }
 
-        new public const VobTypes sVobType = VobTypes.MobFire;
-        public override VobTypes VobType { get { return sVobType; } }
-        public static readonly InstanceDictionary MobFireInstances = VobInstance.AllInstances.GetDict(sVobType);
-
-        public MobFireInstance(PacketReader stream, IScriptMobFireInstance scriptObj) : base(stream, scriptObj)
+        public new IScriptMobFireInstance ScriptObject
         {
+            get { return (IScriptMobFireInstance)base.ScriptObject; }
         }
+
+        #endregion
 
         #region Properties
 
@@ -28,20 +31,40 @@ namespace GUC.WorldObjects.Instances
 
         #endregion
 
-        new public IScriptMobFireInstance ScriptObj { get; protected set; }
+        #region Constructors
 
-        internal override void ReadProperties(PacketReader stream)
+        /// <summary>
+        /// Creates a new Instance with the given ID or [-1] a free ID.
+        /// </summary>
+        public MobFireInstance(IScriptMobFireInstance scriptObject, int id = -1) : base(scriptObject, id)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new Instance by reading a networking stream.
+        /// </summary>
+        public MobFireInstance(IScriptMobFireInstance scriptObject, PacketReader stream) : base(scriptObject, stream)
+        {
+        }
+
+        #endregion
+
+        #region Read & Write
+
+        protected override void ReadProperties(PacketReader stream)
         {
             base.ReadProperties(stream);
 
             this.FireVobTree = stream.ReadString();
         }
 
-        internal override void WriteProperties(PacketWriter stream)
+        protected override void WriteProperties(PacketWriter stream)
         {
             base.WriteProperties(stream);
 
             stream.Write(FireVobTree);
         }
+
+        #endregion
     }
 }

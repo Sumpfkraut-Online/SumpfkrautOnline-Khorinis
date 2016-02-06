@@ -12,46 +12,76 @@ namespace GUC.WorldObjects
 {
     public partial class NPC : Vob//, IContainer
     {
+        public override VobTypes VobType { get { return VobTypes.NPC; } }
+
+        #region ScriptObject
+
         public partial interface IScriptNPC : IScriptVob
         {
         }
 
-        new public const VobTypes sVobType = NPCInstance.sVobType;
-        public static readonly VobDictionary NPCs = Vob.AllVobs.GetDict(sVobType);
+        new public IScriptNPC ScriptObject { get { return (IScriptNPC)base.ScriptObject; } }
 
-        new public NPCInstance Instance { get; protected set; }
-        new public IScriptNPC ScriptObj { get; protected set; }
+        #endregion
+
+        #region Properties
+
+        new public NPCInstance Instance { get { return (NPCInstance)base.Instance; } }
 
         protected ushort hpmax = 100;
         protected ushort hp = 100;
 
         protected NPCStates state = NPCStates.Stand;
-        protected MobInter usedMob = null;
-        protected Item drawnItem = null;
 
-        public ItemContainer Inventory { get; protected set; }
-        protected Dictionary<byte, Item> equippedSlots = new Dictionary<byte, Item>();
-        public IEnumerable<Item> GetEquippedItems() { return equippedSlots.Values; }
+        protected MobInter usedMob = null;
+
+        protected Item drawnItem = null;
+        protected bool inAttackMode = false;
+        public bool InAttackMode
+        {
+            get { return inAttackMode; }
+        }
+
+        //public ItemContainer Inventory { get; protected set; }
+        //protected Dictionary<byte, Item> equippedSlots = new Dictionary<byte, Item>();
+        //public IEnumerable<Item> GetEquippedItems() { return equippedSlots.Values; }
 
         public string Name { get { return Instance.Name; } }
         public string BodyMesh { get { return Instance.BodyMesh; } }
-        public byte BodyTex { get { return Instance.BodyTex; } }
+        public int BodyTex { get { return Instance.BodyTex; } }
         public string HeadMesh { get { return Instance.HeadMesh; } }
-        public byte HeadTex { get { return Instance.HeadTex; } }
+        public int HeadTex { get { return Instance.HeadTex; } }
 
-        public NPC(NPCInstance instance, IScriptNPC scriptObject) : base(instance, scriptObject)
+        #endregion
+        
+        #region Constructors
+
+        /// <summary>
+        /// Creates a new Vob with the given Instance and ID or [-1] a free ID.
+        /// </summary>
+        public NPC(IScriptNPC scriptObject, NPCInstance instance, int id = -1) : base(scriptObject, instance, id)
         {
-            this.Inventory = new ItemContainer(this);
         }
 
-        internal override void WriteSpawnProperties(PacketWriter stream)
+        /// <summary>
+        /// Creates a new Vob by reading a networking stream.
+        /// </summary>
+        public NPC(IScriptNPC scriptObject, PacketReader stream) : base(scriptObject, stream)
         {
-            base.WriteSpawnProperties(stream);
+        }
+
+        #endregion
+
+        #region Read & Write
+
+        protected override void WriteProperties(PacketWriter stream)
+        {
+            base.WriteProperties(stream);
 
             stream.Write(hpmax);
             stream.Write(hp);
 
-            stream.Write((byte)equippedSlots.Count);
+            /*stream.Write((byte)equippedSlots.Count);
             foreach (KeyValuePair<byte, Item> slot in equippedSlots)
             {
                 stream.Write(slot.Key);
@@ -68,16 +98,14 @@ namespace GUC.WorldObjects
                 drawnItem.WriteEquipProperties(stream);
             }
 
-            //Overlays
-
-            this.ScriptObj.OnWriteSpawnProperties(stream);
+            //Overlays*/
         }
 
-        internal override void ReadSpawnProperties(PacketReader stream)
+        protected override void ReadProperties(PacketReader stream)
         {
-            base.ReadSpawnProperties(stream);
-
-            this.ScriptObj.OnReadSpawnProperties(stream);
+            base.ReadProperties(stream);
         }
+
+        #endregion
     }
 }

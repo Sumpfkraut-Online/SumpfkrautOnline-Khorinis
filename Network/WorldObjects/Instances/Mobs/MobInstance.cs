@@ -10,17 +10,20 @@ namespace GUC.WorldObjects.Instances
 {
     public partial class MobInstance : VobInstance
     {
+        public override VobTypes VobType { get { return VobTypes.Mob; } }
+
+        #region ScriptObject
+
         public partial interface IScriptMobInstance : IScriptVobInstance
         {
         }
 
-        new public const VobTypes sVobType = VobTypes.Mob;
-        public override VobTypes VobType { get { return sVobType; } }
-        public static readonly InstanceDictionary MobInstances = VobInstance.AllInstances.GetDict(sVobType);
-
-        public MobInstance(PacketReader stream, IScriptMobInstance scriptObj) : base(stream, scriptObj)
+        public new IScriptMobInstance ScriptObject
         {
+            get { return (IScriptMobInstance)base.ScriptObject; }
         }
+
+        #endregion
 
         #region Properties
 
@@ -28,20 +31,40 @@ namespace GUC.WorldObjects.Instances
 
         #endregion
 
-        new public IScriptMobInstance ScriptObj { get; protected set; }
+        #region Constructors
 
-        internal override void ReadProperties(PacketReader stream)
+        /// <summary>
+        /// Creates a new Instance with the given ID or [-1] a free ID.
+        /// </summary>
+        public MobInstance(IScriptMobInstance scriptObject, int id = -1) : base(scriptObject, id)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new Instance by reading a networking stream.
+        /// </summary>
+        public MobInstance(IScriptMobInstance scriptObject, PacketReader stream) : base(scriptObject, stream)
+        {
+        }
+
+        #endregion
+
+        #region Read & Write
+
+        protected override void ReadProperties(PacketReader stream)
         {
             base.ReadProperties(stream);
 
             this.FocusName = stream.ReadString();
         }
 
-        internal override void WriteProperties(PacketWriter stream)
+        protected override void WriteProperties(PacketWriter stream)
         {
             base.WriteProperties(stream);
 
             stream.Write(FocusName);
         }
+
+        #endregion
     }
 }

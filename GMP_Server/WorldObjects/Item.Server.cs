@@ -13,7 +13,7 @@ namespace GUC.WorldObjects
 {
     public partial class Item : Vob
     {   
-        public override void Delete()
+        /*public override void Delete()
         {
             if (Container != null)
             {
@@ -31,6 +31,6 @@ namespace GUC.WorldObjects
             {
                 client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
             }
-        }
+        }*/
     }
 }

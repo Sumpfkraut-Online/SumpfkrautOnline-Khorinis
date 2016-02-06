@@ -17,7 +17,7 @@ namespace GUC.WorldObjects
     {
         #region Properties
 
-        internal WorldCell Cell;
+        internal NetCell Cell;
 
         #endregion
 

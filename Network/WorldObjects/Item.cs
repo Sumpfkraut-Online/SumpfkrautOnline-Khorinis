@@ -35,7 +35,7 @@ namespace GUC.WorldObjects
         public byte Slot { get; internal set; }
         public ushort Amount { get; internal set; }
 
-        public IContainer Container { get; internal set; }
+        //public IContainer Container { get; internal set; }
 
         public string Name { get { return Instance.Name; } }
         public ItemMaterials Material { get { return Instance.Material; } }

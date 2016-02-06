@@ -10,18 +10,45 @@ namespace GUC.WorldObjects.Instances
 {
     public partial class MobWheelInstance : MobInterInstance
     {
+        public override VobTypes VobType { get { return VobTypes.MobWheel; } }
+
+        #region ScriptObject
+
         public partial interface IScriptMobWheelInstance : IScriptMobInterInstance
         {
         }
 
-        new public const VobTypes sVobType = VobTypes.MobWheel;
-        public override VobTypes VobType { get { return sVobType; } }
-        public static readonly InstanceDictionary MobWheelInstances = VobInstance.AllInstances.GetDict(sVobType);
+        public new IScriptMobWheelInstance ScriptObject
+        {
+            get { return (IScriptMobWheelInstance)base.ScriptObject; }
+        }
 
-        new public IScriptMobWheelInstance ScriptObj { get; protected set; }
+        #endregion
 
-        public MobWheelInstance(PacketReader stream, IScriptMobWheelInstance scriptObj) : base(stream, scriptObj)
+        #region Properties
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Creates a new Instance with the given ID or [-1] a free ID.
+        /// </summary>
+        public MobWheelInstance(IScriptMobWheelInstance scriptObject, int id = -1) : base(scriptObject, id)
         {
         }
+
+        /// <summary>
+        /// Creates a new Instance by reading a networking stream.
+        /// </summary>
+        public MobWheelInstance(IScriptMobWheelInstance scriptObject, PacketReader stream) : base(scriptObject, stream)
+        {
+        }
+
+        #endregion
+
+        #region Read & Write
+
+        #endregion
     }
 }

@@ -10,16 +10,20 @@ namespace GUC.WorldObjects.Instances
 {
     public partial class ItemInstance : VobInstance
     {
+        public override VobTypes VobType { get { return VobTypes.Item; } }
+
+        #region ScriptObject
+
         public partial interface IScriptItemInstance : IScriptVobInstance
         {
         }
 
-        new public const VobTypes sVobType = VobTypes.Item;
-        public static readonly InstanceDictionary ItemInstances = VobInstance.AllInstances.GetDict(sVobType);
-
-        public ItemInstance(PacketReader stream, IScriptItemInstance scriptObj) : base(stream, scriptObj)
+        public new IScriptItemInstance ScriptObject
         {
+            get { return (IScriptItemInstance)base.ScriptObject; }
         }
+
+        #endregion
 
         #region Properties
 
@@ -30,18 +34,36 @@ namespace GUC.WorldObjects.Instances
         public ItemMaterials Material = ItemMaterials.Wood;
 
         string effect = "";
-        /// <summary>Magic Effect. See Scripts/System/VisualFX/VisualFxInst.d</summary>
+        /// <summary>Magic Effect (case insensitive). See Scripts/System/VisualFX/VisualFxInst.d</summary>
         public String Effect
         {
             get { return effect; }
-            set { effect = value.Trim().ToUpper(); }
+            set { effect = value.ToUpper(); }
         }
 
         #endregion
 
-        new public IScriptItemInstance ScriptObj { get; protected set; }
+        #region Constructors
 
-        internal override void ReadProperties(PacketReader stream)
+        /// <summary>
+        /// Creates a new Instance with the given ID or [-1] a free ID.
+        /// </summary>
+        public ItemInstance(IScriptItemInstance scriptObject, int id = -1) : base(scriptObject, id)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new Instance by reading a networking stream.
+        /// </summary>
+        public ItemInstance(IScriptItemInstance scriptObject, PacketReader stream) : base(scriptObject, stream)
+        {
+        }
+
+        #endregion
+
+        #region Read & Write
+
+        protected override void ReadProperties(PacketReader stream)
         {
             base.ReadProperties(stream);
 
@@ -50,7 +72,7 @@ namespace GUC.WorldObjects.Instances
             this.Effect = stream.ReadString();
         }
 
-        internal override void WriteProperties(PacketWriter stream)
+        protected override void WriteProperties(PacketWriter stream)
         {
             base.WriteProperties(stream);
 
@@ -58,5 +80,7 @@ namespace GUC.WorldObjects.Instances
             stream.Write((byte)Material);
             stream.Write(Effect);
         }
+
+        #endregion
     }
 }

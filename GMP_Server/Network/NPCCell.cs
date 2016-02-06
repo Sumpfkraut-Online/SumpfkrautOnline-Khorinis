@@ -13,7 +13,7 @@ namespace GUC.Server.Network
 
         public World world;
         public int x, z;
-        public VobObjDictionary<uint, NPC> Npcs = new VobObjDictionary<uint, NPC>();
+        public Dictionary<int, NPC> Npcs = new Dictionary<int, NPC>();
 
         public NPCCell(World world, int x, int z)
         {
@@ -24,22 +24,22 @@ namespace GUC.Server.Network
 
         public void Add(NPC npc)
         {
-            Npcs.Add(npc);
+            Npcs.Add(npc.ID, npc);
             npc.npcCell = this;
         }
 
         public void Remove(NPC npc)
         {
-            Npcs.Remove(npc);
+            Npcs.Remove(npc.ID);
             npc.npcCell = null;
 
-            if (Npcs.GetCount() == 0)
+            if (Npcs.Count == 0)
             {
-                world.npcCells[x].Remove(z);
+                /*world.npcCells[x].Remove(z);
                 if (world.npcCells[x].Count == 0)
                 {
                     world.npcCells.Remove(x);
-                }
+                }*/
             }
         }
     }

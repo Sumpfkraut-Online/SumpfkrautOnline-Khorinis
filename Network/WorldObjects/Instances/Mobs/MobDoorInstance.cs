@@ -10,18 +10,45 @@ namespace GUC.WorldObjects.Instances
 {
     public partial class MobDoorInstance : MobLockableInstance
     {
+        public override VobTypes VobType { get { return VobTypes.MobDoor; } }
+
+        #region ScriptObject
+
         public partial interface IScriptMobDoorInstance : IScriptMobLockableInstance
         {
         }
 
-        new public const VobTypes sVobType = VobTypes.MobDoor;
-        public override VobTypes VobType { get { return sVobType; } }
-        public static readonly InstanceDictionary MobDoorInstances = VobInstance.AllInstances.GetDict(sVobType);
+        public new IScriptMobDoorInstance ScriptObject
+        {
+            get { return (IScriptMobDoorInstance)base.ScriptObject; }
+        }
 
-        new public IScriptMobDoorInstance ScriptObj { get; protected set; }
+        #endregion
 
-        public MobDoorInstance(PacketReader stream, IScriptMobDoorInstance scriptObj) : base(stream, scriptObj)
+        #region Properties
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Creates a new Instance with the given ID or [-1] a free ID.
+        /// </summary>
+        protected MobDoorInstance(IScriptMobDoorInstance scriptObject, int id = -1) : base(scriptObject, id)
         {
         }
+
+        /// <summary>
+        /// Creates a new Instance by reading a networking stream.
+        /// </summary>
+        public MobDoorInstance(IScriptMobDoorInstance scriptObject, PacketReader stream) : base(scriptObject, stream)
+        {
+        }
+
+        #endregion
+
+        #region Read & Write
+
+        #endregion
     }
 }

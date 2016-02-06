@@ -11,9 +11,9 @@ using GUC.WorldObjects.Instances;
 
 namespace GUC.WorldObjects
 {
-    public partial class NPC : Vob
+    public partial class NPC
     {
-        public partial interface IScriptNPC : IScriptVob
+        public partial interface IScriptNPC
         {
             void OnCmdUseMob(MobInter mob);
             void OnCmdUseItem(Item item);

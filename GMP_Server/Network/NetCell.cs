@@ -7,7 +7,7 @@ using GUC.WorldObjects.Collections;
 
 namespace GUC.Server.Network
 {
-    internal class WorldCell
+    internal class NetCell
     {
         public const float cellSize = 5000;
 
@@ -16,7 +16,7 @@ namespace GUC.Server.Network
 
         public readonly VobCollection Vobs = new VobCollection();
 
-        public WorldCell(World world, int x, int z)
+        public NetCell(World world, int x, int z)
         {
             this.world = world;
             this.x = x;
@@ -66,13 +66,13 @@ namespace GUC.Server.Network
         {
             for (int i = x - 1; i <= x + 1; i++)
             {
-                Dictionary<int, WorldCell> row;
+                Dictionary<int, NetCell> row;
                 world.netCells.TryGetValue(i, out row);
                 if (row == null) continue;
 
                 for (int j = z - 1; j <= z + 1; j++)
                 {
-                    WorldCell c;
+                    NetCell c;
                     row.TryGetValue(j, out c);
                     if (c == null) continue;
 
@@ -94,13 +94,13 @@ namespace GUC.Server.Network
         {
             for (int i = x - 1; i <= x + 1; i++)
             {
-                Dictionary<int, WorldCell> row;
+                Dictionary<int, NetCell> row;
                 world.netCells.TryGetValue(i, out row);
                 if (row == null) continue;
 
                 for (int j = z - 1; j <= z + 1; j++)
                 {
-                    WorldCell c;
+                    NetCell c;
                     row.TryGetValue(j, out c);
                     if (c == null) continue;
 
@@ -113,17 +113,17 @@ namespace GUC.Server.Network
             }
         }
 
-        public IEnumerable<WorldCell> SurroundingCells()
+        public IEnumerable<NetCell> SurroundingCells()
         {
             for (int i = x - 1; i <= x + 1; i++)
             {
-                Dictionary<int, WorldCell> row;
+                Dictionary<int, NetCell> row;
                 world.netCells.TryGetValue(i, out row);
                 if (row == null) continue;
 
                 for (int j = z - 1; j <= z + 1; j++)
                 {
-                    WorldCell c;
+                    NetCell c;
                     row.TryGetValue(j, out c);
                     if (c == null) continue;
 

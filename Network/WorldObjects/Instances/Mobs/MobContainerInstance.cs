@@ -10,18 +10,45 @@ namespace GUC.WorldObjects.Instances
 {
     public partial class MobContainerInstance : MobLockableInstance
     {
+        public override VobTypes VobType { get { return VobTypes.MobContainer; } }
+
+        #region ScriptObject
+
         public partial interface IScriptMobContainerInstance : IScriptMobLockableInstance
         {
         }
 
-        new public const VobTypes sVobType = VobTypes.MobContainer;
-        public override VobTypes VobType { get { return sVobType; } }
-        public static readonly InstanceDictionary MobContainerInstances = VobInstance.AllInstances.GetDict(sVobType);
+        public new IScriptMobContainerInstance ScriptObject
+        {
+            get { return (IScriptMobContainerInstance)base.ScriptObject; }
+        }
 
-        new public IScriptMobContainerInstance ScriptObj { get; protected set; }
+        #endregion
 
-        public MobContainerInstance(PacketReader stream, IScriptMobContainerInstance scriptObj) : base(stream, scriptObj)
+        #region Properties
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Creates a new Instance with the given ID or [-1] a free ID.
+        /// </summary>
+        protected MobContainerInstance(IScriptMobContainerInstance scriptObject, int id = -1) : base(scriptObject, id)
         {
         }
+
+        /// <summary>
+        /// Creates a new Instance by reading a networking stream.
+        /// </summary>
+        public MobContainerInstance(IScriptMobContainerInstance scriptObject, PacketReader stream) : base(scriptObject, stream)
+        {
+        }
+
+        #endregion
+
+        #region Read & Write
+
+        #endregion
     }
 }

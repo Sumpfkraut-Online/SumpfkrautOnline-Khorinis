@@ -214,7 +214,6 @@
     <Compile Include="..\Network\WorldObjects\WorldObject.cs">
       <Link>WorldObjects\WorldObject.cs</Link>
     </Compile>
-    <Compile Include="BaseVob.Server.cs" />
     <Compile Include="Log\Logger.Server.cs" />
     <Compile Include="Network\Client.cs" />
     <Compile Include="Network\NPCCell.cs" />
@@ -223,9 +222,10 @@
     <Compile Include="Network\Messages\InventoryMessage.cs" />
     <Compile Include="Network\Messages\NPCMessage.cs" />
     <Compile Include="Network\Messages\VobMessage.cs" />
-    <Compile Include="Network\WorldCell.cs" />
+    <Compile Include="Network\NetCell.cs" />
     <Compile Include="Options\ServerOptions.cs" />
     <Compile Include="TCPStatus.cs" />
+    <Compile Include="WorldObjects\BaseVob.Server.cs" />
     <Compile Include="WorldObjects\Collections\InstanceCollection.Server.cs" />
     <Compile Include="WorldObjects\Instances\WorldInstance.Server.cs" />
     <Compile Include="WorldObjects\Vob.Server.cs" />
