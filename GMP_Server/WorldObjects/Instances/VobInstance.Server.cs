@@ -9,43 +9,18 @@ using GUC.WorldObjects.Collections;
 
 namespace GUC.WorldObjects.Instances
 {
-    public partial class VobInstance : WorldObject, IVobObj<ushort>
+    public partial class VobInstance
     {
-        public string InstanceName { get; protected set; }
+        #region Constructors
 
-        public VobInstance(string instanceName, IScriptVobInstance scriptObj) : this(0, instanceName, scriptObj)
+        /// <summary>
+        /// Creates a new Instance with the given ID or searches a new one.
+        /// </summary>
+        /// <param name="codeName">Case insensitive!</param>
+        public VobInstance(IScriptWorldObject scriptObject, string codeName, int id = -1) : base(scriptObject, codeName, id)
         {
         }
 
-        public VobInstance(ushort id, string instanceName, IScriptVobInstance scriptObj) : base(scriptObj)
-        {
-            this.ID = id;
-            this.InstanceName = instanceName.ToUpper();
-        }
-
-        static ushort idCount = 1;
-        protected override void pCreate()
-        {
-            if (ID == 0) //seek a new ID for this instance
-            {
-                for (int i = 0; i < ushort.MaxValue; i++)
-                {
-                    if (idCount != 0)
-                    {
-                        if (AllInstances.Get(idCount) == null)
-                        {
-                            ID = idCount++;
-                            break;
-                        }
-                    }
-                    idCount++;
-                }
-
-                if (ID == 0) //no free id found
-                {
-                    throw new Exception(String.Format("{0} creation failed: Maximum reached: {1}", this.GetType(), ushort.MaxValue));
-                }
-            }
-        }
+        #endregion
     }
 }

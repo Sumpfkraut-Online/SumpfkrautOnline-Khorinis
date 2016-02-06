@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using WinApi.User.Enumeration;
-using GUC.Client.Scripts.Menus;
+using GUC.Client.Scripts.Sumpfkraut.Menus;
 
-namespace GUC.Client.Scripts
+namespace GUC.Client.Scripts.Sumpfkraut
 {
     static class InputControl
     {

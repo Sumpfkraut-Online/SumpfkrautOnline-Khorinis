@@ -6,7 +6,7 @@ using GUC.WorldObjects.Instances;
 
 namespace GUC.WorldObjects.Collections
 {
-    public partial class InstanceDictionary : VobObjDictionary<ushort, VobInstance>
+    public partial class InstanceDictionary
     {
         Dictionary<string, VobInstance> names = new Dictionary<string, VobInstance>();
 

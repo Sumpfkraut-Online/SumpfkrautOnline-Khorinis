@@ -112,6 +112,9 @@
     <Compile Include="..\Network\Utilities\XmlObj.cs">
       <Link>Utilities\XmlObj.cs</Link>
     </Compile>
+    <Compile Include="..\Network\WorldObjects\BaseVob.cs">
+      <Link>WorldObjects\BaseVob.cs</Link>
+    </Compile>
     <Compile Include="..\Network\WorldObjects\Collections\InstanceCollection.cs">
       <Link>WorldObjects\Collections\InstanceCollection.cs</Link>
     </Compile>
@@ -135,6 +138,9 @@
     </Compile>
     <Compile Include="..\Network\WorldObjects\Collections\VobObjDictionary.cs">
       <Link>WorldObjects\Collections\VobObjDictionary.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\BaseInstance.cs">
+      <Link>WorldObjects\Instances\BaseInstance.cs</Link>
     </Compile>
     <Compile Include="..\Network\WorldObjects\Instances\ItemInstance.cs">
       <Link>WorldObjects\Instances\ItemInstance.cs</Link>
@@ -214,6 +220,7 @@
     <Compile Include="..\Network\WorldObjects\WorldObject.cs">
       <Link>WorldObjects\WorldObject.cs</Link>
     </Compile>
+    <Compile Include="BaseVob.Server.cs" />
     <Compile Include="Log\Logger.Server.cs" />
     <Compile Include="Network\Client.cs" />
     <Compile Include="Network\NPCCell.cs" />
@@ -227,7 +234,12 @@
     <Compile Include="TCPStatus.cs" />
     <Compile Include="WorldObjects\Collections\InstanceCollection.Server.cs" />
     <Compile Include="WorldObjects\Collections\InstanceDictionary.Server.cs" />
+    <Compile Include="WorldObjects\Collections\InstColl.cs" />
+    <Compile Include="WorldObjects\Collections\InstDict.cs" />
     <Compile Include="WorldObjects\Collections\VobCollection.Server.cs" />
+    <Compile Include="WorldObjects\Collections\WOCollection.cs" />
+    <Compile Include="WorldObjects\Collections\WODictionary.cs" />
+    <Compile Include="WorldObjects\Instances\BaseInstance.Server.cs" />
     <Compile Include="WorldObjects\Instances\VobInstance.Server.cs" />
     <Compile Include="WorldObjects\Vob.Server.cs" />
     <Compile Include="WorldObjects\Item.Server.cs" />
@@ -253,7 +265,6 @@
     <Compile Include="WorldObjects\NPC.Server.cs" />
     <Compile Include="WorldObjects\Instances\NPCInstance.Server.cs" />
     <Compile Include="WorldObjects\World.Server.cs" />
-    <Compile Include="WorldObjects\WorldObject.Server.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Network\GameServer.cs" />

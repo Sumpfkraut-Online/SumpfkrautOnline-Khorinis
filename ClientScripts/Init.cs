@@ -7,9 +7,9 @@ using GUC.Log;
 using GUC.Scripting;
 using System.Reflection;
 using System.IO;
-using GUC.Client.Scripts.Menus;
-using GUC.Client.Scripts.Menus.MainMenus;
-using GUC.Client.Scripts;
+using GUC.Client.Scripts.Sumpfkraut.Menus;
+using GUC.Client.Scripts.Sumpfkraut.Menus.MainMenus;
+using GUC.Client.Scripts.Sumpfkraut;
 
 namespace GUC.Scripts
 {
@@ -20,7 +20,7 @@ namespace GUC.Scripts
         public Init()
         {
             AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;
-            Logger.Log("ClientScripts loaded!");
+            Logger.Log("SumpfkrautOnline ClientScripts loaded!");
         }
 
         static Assembly ResolveAssembly(object sender, ResolveEventArgs args)
@@ -37,11 +37,7 @@ namespace GUC.Scripts
 
         public void Update(long ticks)
         {
-            GUCMenu activeMenu = GUCMenu.GetActiveMenus().ElementAtOrDefault(0);
-            if (activeMenu != null)
-            {
-                activeMenu.Update(ticks);
-            }
+            GUCMenu.UpdateMenus(ticks);
         }
 
         public void StartOutgame()

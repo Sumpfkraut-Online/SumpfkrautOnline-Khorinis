@@ -20,10 +20,6 @@ namespace GUC.WorldObjects
             void ReadInventoryProperties(PacketReader stream);
         }
 
-        #region Fists
-        public static readonly Item Fists = new Item(ItemInstance.FistInstance, null);
-        #endregion
-
         new public const VobTypes sVobType = ItemInstance.sVobType;
         public static readonly VobDictionary Items = Vob.AllVobs.GetDict(sVobType);
 
@@ -39,9 +35,7 @@ namespace GUC.WorldObjects
         public IContainer Container { get; internal set; }
 
         public string Name { get { return Instance.Name; } }
-        public ItemTypes Type { get { return Instance.Type; } }
         public ItemMaterials Material { get { return Instance.Material; } }
-        public string VisualChange { get { return Instance.VisualChange; } }
         public string Effect { get { return Instance.Effect; } }
 
         public Item(ItemInstance instance, IScriptItem scriptObject) : base(instance, scriptObject)

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.Client.GUI;
 
-namespace GUC.Client.Scripts.GUI.MainMenu
+namespace GUC.Client.Scripts.Sumpfkraut.GUI.MainMenu
 {
     abstract class MainMenuItem : GUCView
     {

@@ -107,7 +107,7 @@ namespace GUC.WorldObjects
 
         internal static void ReadDrawFists(PacketReader stream, Client client, NPC character, World world)
         {
-            character.ScriptObj.OnCmdDrawItem(Item.Fists);
+            //character.ScriptObj.OnCmdDrawItem(Item.Fists);
         }
         
         internal static void ReadCmdTargetMove(PacketReader stream, Client client, NPC character, World world)
@@ -186,7 +186,7 @@ namespace GUC.WorldObjects
         /// <param name="slot">Don't use 0!</param>
         public void EquipSlot(byte slot, Item item)
         {
-            if (item != null && slot != 0 && item != Item.Fists && item.Container == this)
+            if (item != null && slot != 0/* && item != Item.Fists */&& item.Container == this)
             {
                 Item oldItem;
                 if (equippedSlots.TryGetValue(slot, out oldItem))
@@ -339,7 +339,7 @@ namespace GUC.WorldObjects
         /// <param name="fast">True if the state should be set instantly, without playing an animation.</param>
         public void Drawitem(Item item, bool fast)
         {
-            if (item == null || (item.Container != this && item != Item.Fists))
+            if (item == null || (item.Container != this/* && item != Item.Fists*/))
                 return;
 
             DrawnItem = item;

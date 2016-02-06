@@ -47,7 +47,7 @@ namespace GUC.WorldObjects.Collections
         partial void pAdd(Item item);
         public void Add(Item item)
         {
-            if (item != null && item.IsCreated && item != Item.Fists)
+            if (item != null && item.IsCreated/* && item != Item.Fists*/)
             {
                 if (items.Count >= ushort.MaxValue)
                 {

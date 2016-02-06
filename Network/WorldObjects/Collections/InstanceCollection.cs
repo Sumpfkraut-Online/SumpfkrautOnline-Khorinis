@@ -7,19 +7,7 @@ using GUC.WorldObjects.Instances;
 
 namespace GUC.WorldObjects.Collections
 {
-    public partial class InstanceCollection : VobObjCollection<ushort, VobInstance>
+    public partial class InstanceCollection : VobObjCollection<InstanceDictionary, ushort, VobObjInstance>
     {
-        internal InstanceCollection()
-        {
-            for (int i = 0; i < (int)VobTypes.Maximum; i++)
-            {
-                vobDicts[i] = new InstanceDictionary();
-            }
-        }
-
-        new public InstanceDictionary GetDict(VobTypes type)
-        {
-            return (InstanceDictionary)base.GetDict(type);
-        }
     }
 }

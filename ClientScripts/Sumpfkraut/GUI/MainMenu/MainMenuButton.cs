@@ -5,7 +5,7 @@ using System.Text;
 using GUC.Types;
 using GUC.Client.GUI;
 
-namespace GUC.Client.Scripts.GUI.MainMenu
+namespace GUC.Client.Scripts.Sumpfkraut.GUI.MainMenu
 {
     class MainMenuButton : MainMenuItem
     {

@@ -17,17 +17,6 @@ namespace GUC.WorldObjects.Instances
             ret.Instance = this.ID;
             ret.Name.Set(Name);
             ret.SetAdditionalVisuals(BodyMesh, BodyTex, 0, HeadMesh, HeadTex, 0, -1);
-            using (zVec3 z = zVec3.Create())
-            {
-                z.X = (float)BodyWidth / 100.0f;
-                z.Y = (float)BodyHeight / 100.0f;
-                z.Z = (float)BodyWidth / 100.0f;
-                ret.SetModelScale(z);
-            }
-            ret.SetFatness((float)Fatness / 100.0f);
-
-            //gNpc.Voice = Voice;
-
             return ret;
         }
     }

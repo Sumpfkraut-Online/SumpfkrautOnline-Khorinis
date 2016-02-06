@@ -6,7 +6,7 @@ using GUC.Log;
 
 namespace GUC.Scripts.Sumpfkraut
 {
-    public abstract class ScriptObject : IScriptObject
+    public abstract class ScriptObject
     {
         #region attributes
 

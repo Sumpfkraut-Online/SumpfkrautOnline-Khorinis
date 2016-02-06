@@ -7,78 +7,33 @@ using GUC.Log;
 
 namespace GUC.WorldObjects
 {
-    public partial class World : WorldObject
+    public partial class World : WorldObject<World.IScriptWorld>
     {
-        public partial interface IScriptWorld : IScriptWorldObject
+        public const int MAX_VOBS = 65536; // ushort.MaxValue + 1
+
+        public partial interface IScriptWorld
         {
         }
 
-        static Dictionary<string, World> sWorldDict = new Dictionary<string, World>();
-        public static World GetWorld(string worldName) { World world; sWorldDict.TryGetValue(worldName.ToUpper(), out world); return world; }
-        public static IEnumerable<World> GetWorlds() { return sWorldDict.Values; }
-        public static int GetWorldCount() { return sWorldDict.Count; }
+        public int ID { get; internal set; }
 
-        public readonly string WorldName;
-        public readonly string FileName;
-        public readonly VobCollection Vobs = new VobCollection();
-
-        public readonly VobDictionary Npcs;
-        public readonly VobDictionary Items;
-        public readonly VobDictionary MobInters;
-
-        #region Creation
-
-        public World(string worldName, string fileName, IScriptWorld scriptObj) : base(scriptObj)
+        BaseVob[] vobs = new BaseVob[MAX_VOBS];
+        public BaseVob GetVobByID(int id)
         {
-            Npcs = this.Vobs.GetDict(NPC.sVobType);
-            Items = this.Vobs.GetDict(Item.sVobType);
-            MobInters = this.Vobs.GetDict(MobInter.sVobType);
-
-            this.WorldName = worldName.Trim().ToUpper();
-            this.FileName = fileName.Trim().ToUpper();
+            if (id >= 0 && id < MAX_VOBS)
+                return vobs[id];
+            return null;
         }
 
-        public override void Create()
+        public World(IScriptWorld scriptObject, int id = -1) : base(scriptObject)
         {
-            if (String.IsNullOrWhiteSpace(this.WorldName))
-            {
-                throw new Exception("World creation failed: WorldName is null or empty.");
-            }
-
-            if (String.IsNullOrWhiteSpace(this.FileName))
-            {
-                throw new Exception("World creation failed: FileName is null or empty.");
-            }
-
-            base.Create();
-
-            World.sWorldDict.Add(this.WorldName, this);
         }
 
-        public override void Delete()
+        partial void pSpawnVob(BaseVob vob);
+        public void SpawnVob(BaseVob vob)
         {
-            base.Delete();
-
-            foreach (Vob vob in Vobs.GetAll())
-            {
-                vob.Delete();
-            }
-
-            World.sWorldDict.Remove(this.WorldName);
-        }
-
-        #endregion
-
-        #region Spawn
-
-        partial void pSpawnVob(Vob vob);
-        public void SpawnVob(Vob vob)
-        {
-            if (!vob.IsCreated)
-            {
-                Logger.LogWarning("Vobs need to be created before they can spawn!");
-                return;
-            }
+            if (vob == null)
+                throw new ArgumentNullException("World.SpawnVob: Vob is null!");
 
             if (vob.IsSpawned)
             {
@@ -90,24 +45,23 @@ namespace GUC.WorldObjects
             else
             {
                 vob.World = this;
-                Vobs.Add(vob);
             }
 
             pSpawnVob(vob);
+            
+            vobs[vob.WorldID] = vob; 
         }
 
-        partial void pDespawnVob(Vob vob);
-        public void DespawnVob(Vob vob)
+        partial void pDespawnVob(BaseVob vob);
+        public void DespawnVob(BaseVob vob)
         {
+            if (vob == null)
+                throw new ArgumentNullException("World.DespawnVob: Vob is null!");
+
             if (vob.World != this)
                 return;
 
             vob.World = null;
-            Vobs.Remove(vob);
-
-            pDespawnVob(vob);
         }
-
-        #endregion
     }
 }

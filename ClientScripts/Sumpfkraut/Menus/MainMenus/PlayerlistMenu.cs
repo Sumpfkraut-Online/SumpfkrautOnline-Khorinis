@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace GUC.Client.Scripts.Menus.MainMenus
+namespace GUC.Client.Scripts.Sumpfkraut.Menus.MainMenus
 {
     class PlayerlistMenu : GUCMainMenu
     {

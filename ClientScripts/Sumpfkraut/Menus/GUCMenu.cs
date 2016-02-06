@@ -2,16 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Client.GUI;
 using WinApi.User.Enumeration;
-using GUC.Client;
 
-namespace GUC.Client.Scripts.Menus
+namespace GUC.Client.Scripts.Sumpfkraut.Menus
 {
     abstract class GUCMenu
     {
         private static readonly List<GUCMenu> activeMenus = new List<GUCMenu>();
         public static IEnumerable<GUCMenu> GetActiveMenus() { return activeMenus; }
+
+        public static void UpdateMenus(long now)
+        {
+            if (activeMenus.Count > 0)
+            {
+                GUCMenu activeMenu = activeMenus[0];
+                if (activeMenu != null)
+                    activeMenu.Update(now);
+            }
+        }
 
         public static void CloseActiveMenus()
         {
@@ -27,6 +35,7 @@ namespace GUC.Client.Scripts.Menus
             }
             activeMenus.Insert(0, this);
         }
+
         public virtual void Close()
         {
             activeMenus.Remove(this);

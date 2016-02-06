@@ -5,21 +5,28 @@ using System.Text;
 
 namespace GUC.WorldObjects.Collections
 {
-    public class VobObjDictionary<TKey, TBase> where TBase : IVobObj<TKey>
+    public abstract class VobObjDictionary<TKey, TBase> where TBase : IVobObj<TKey>
     {
-        Dictionary<TKey, TBase> dict = new Dictionary<TKey, TBase>();
+        Dictionary<TKey, TValue> dict = new Dictionary<TKey, TValue>();
 
-        internal VobObjDictionary()
+        new public TValue Get(TKey id)
         {
-            
+            TValue vob;
+            dict.TryGetValue(id, out vob);
+            return vob;
         }
 
-        internal virtual void Add(TBase vob)
+        new public IEnumerable<TValue> GetAll()
+        {
+            return dict.Values;
+        }
+
+        internal void Add(TBase vob)
         {
             dict.Add(vob.ID, vob);
         }
 
-        internal virtual void Remove(TBase vob)
+        internal void Remove(TBase vob)
         {
             dict.Remove(vob.ID);
         }

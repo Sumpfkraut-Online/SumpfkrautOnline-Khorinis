@@ -6,20 +6,20 @@ using GUC.Enumeration;
 
 namespace GUC.WorldObjects.Collections
 {
-    public class VobObjCollection<TKey, TBase> where TBase : IVobObj<TKey>
+    public class VobObjCollection<TDictionary, TKey, TBase> where TBase : IVobObj<TKey> where TDictionary : VobObjDictionary<TKey, TBase>, new()
     {
-        protected VobObjDictionary<TKey, TBase>[] vobDicts = new VobObjDictionary<TKey, TBase>[(int)VobTypes.Maximum];
+        protected TDictionary[] vobDicts = new TDictionary[(int)VobTypes.Maximum];
         protected Dictionary<TKey, TBase> allDict = new Dictionary<TKey, TBase>();
 
-        internal VobObjCollection()
+        public VobObjCollection()
         {
             for (int i = 0; i < (int)VobTypes.Maximum; i++)
             {
-                vobDicts[i] = new VobObjDictionary<TKey, TBase>();
+                vobDicts[i] = new TDictionary();
             }
         }
 
-        public VobObjDictionary<TKey, TBase> GetDict(VobTypes type)
+        public TDictionary GetDict(VobTypes type)
         {
             return vobDicts[(int)type];
         }

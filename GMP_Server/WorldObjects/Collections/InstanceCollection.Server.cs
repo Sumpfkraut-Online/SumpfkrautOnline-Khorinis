@@ -10,9 +10,9 @@ using GUC.Server.Network;
 
 namespace GUC.WorldObjects.Collections
 {
-    public partial class InstanceCollection : VobObjCollection<ushort, VobInstance>
+    public partial class InstanceCollection
     {
-        internal byte[] Data;
+        /*internal byte[] Data;
         internal byte[] Hash;
 
         public void NetUpdate()
@@ -46,6 +46,6 @@ namespace GUC.WorldObjects.Collections
             foreach (byte b in Hash)
                 sb.Append(b.ToString("X2"));
             System.IO.File.WriteAllBytes(sb.ToString(), Data);
-        }
+        }*/
     }
 }

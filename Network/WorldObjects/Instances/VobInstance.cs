@@ -8,27 +8,22 @@ using GUC.WorldObjects.Collections;
 
 namespace GUC.WorldObjects.Instances
 {
-    public partial class VobInstance : WorldObject, IVobObj<ushort>
+    public partial class VobInstance : BaseInstance
     {
-        public partial interface IScriptVobInstance : IScriptWorldObject
+        public override VobTypes VobType { get { return VobTypes.Vob; } }
+
+        #region ScriptObject
+
+        public partial interface IScriptVobInstance : IScriptBaseInstance
         {
-            void OnWriteProperties(PacketWriter stream);
-            void OnReadProperties(PacketReader stream);
         }
 
-        public const VobTypes sVobType = VobTypes.Vob;
-        public readonly static InstanceCollection AllInstances = new InstanceCollection();
-        public readonly static InstanceDictionary VobInstances = AllInstances.GetDict(sVobType);
-
-        public ushort ID { get; protected set; }
-        public virtual VobTypes VobType { get { return sVobType; } }
-        new public IScriptVobInstance ScriptObj { get; protected set; }
-
-        public VobInstance(PacketReader stream, IScriptVobInstance scriptObj) : base(scriptObj)
+        public new IScriptVobInstance ScriptObject
         {
-            this.ScriptObj = scriptObj;
-            ReadProperties(stream);
+            get { return (IScriptVobInstance)base.ScriptObject; }
         }
+
+        #endregion
 
         #region Properties
 
@@ -36,7 +31,7 @@ namespace GUC.WorldObjects.Instances
         public virtual string Visual
         {
             get { return visual; }
-            set { visual = value.Trim().ToUpper(); }
+            set { visual = value.ToUpper(); }
         }
 
         protected bool cddyn = true;
@@ -54,37 +49,41 @@ namespace GUC.WorldObjects.Instances
         }
 
         #endregion
-        
-        public override void Create()
+
+        #region Constructors
+
+        /// <summary>
+        /// Creates a new Instance with the given ID or searches a new one when needed.
+        /// </summary>
+        protected VobInstance(IScriptWorldObject scriptObject, int id = -1) : base(scriptObject, id)
         {
-            base.Create();
-            AllInstances.Add(this);
         }
 
-        public override void Delete()
+        /// <summary>
+        /// Creates a new Instance by reading a networking stream.
+        /// </summary>
+        public VobInstance(IScriptWorldObject scriptObject, PacketReader stream) : base(scriptObject, stream)
         {
-            base.Delete();
-            AllInstances.Remove(this);
         }
 
-        internal virtual void WriteProperties(PacketWriter stream)
+        #endregion
+
+        #region Read & Write
+
+        protected override void WriteProperties(PacketWriter stream)
         {
-            stream.Write(this.ID);
             stream.Write(this.Visual);
             stream.Write(this.CDDyn);
             stream.Write(this.CDStatic);
-
-            this.ScriptObj.OnWriteProperties(stream);
         }
 
-        internal virtual void ReadProperties(PacketReader stream)
+        protected override void ReadProperties(PacketReader stream)
         {
-            this.ID = stream.ReadUShort();
             this.Visual = stream.ReadString();
             this.CDDyn = stream.ReadBit();
             this.CDStatic = stream.ReadBit();
-
-            this.ScriptObj.OnReadProperties(stream);
         }
+
+        #endregion
     }
 }

@@ -8,8 +8,5 @@ namespace GUC.WorldObjects.Collections
 {
     public class VobDictionary : VobObjDictionary<uint, Vob>
     {
-        internal VobDictionary()
-        {
-        }
     }
 }

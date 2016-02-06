@@ -5,7 +5,7 @@ using System.Text;
 using WinApi.User.Enumeration;
 using GUC.Client.GUI;
 
-namespace GUC.Client.Scripts.GUI.MainMenu
+namespace GUC.Client.Scripts.Sumpfkraut.GUI.MainMenu
 {
     class MainMenuTextBox : MainMenuItem, InputReceiver
     {
