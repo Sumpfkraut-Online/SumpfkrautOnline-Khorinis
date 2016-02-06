@@ -128,15 +128,38 @@ namespace GUC.Client.WorldObjects
                     weatherEvents.Add(tempWE);
                 }
 
+
+                weatherComponents = weatherEvents;
                 // reset Weather to undefined (no precipitation) for clean setting later on
-                // do it 2x because 1x is not suffice for Gothic 2 for some reason
-                ApplyWeather(WeatherEvent.weatherOverride);
-                ApplyWeather(WeatherEvent.weatherOverride);
+                // -> do it 2x because 1x is not suffice for Gothic 2 for some reason
+                // -> do it with several delays to give the game process some time to adjust
+                Utilities.Threading.Runnable replaceWorker = new Utilities.Threading.Runnable(
+                    false, new TimeSpan(0, 0, 0, 0, 250), false);
+                int counter = 0;
+                replaceWorker.OnRun = delegate (Utilities.Threading.Runnable sender) 
+                {
+                    if (counter < 2)
+                    {
+                        ApplyWeather(WeatherEvent.weatherOverride);
+                    }
+                    else if (counter == 2)
+                    {
+                        UpdateWeather(worldClock.GetIgTime());
+                    }
+                    else
+                    {
+                        replaceWorker.Suspend();
+                    }
+                    counter++;
+                };
+                replaceWorker.Start();
+                //ApplyWeather(WeatherEvent.weatherOverride);
+                //ApplyWeather(WeatherEvent.weatherOverride);
                 //ApplyWeather(WeatherEvent.weatherOverride);
 
                 // apply the new current weather
-                weatherComponents = weatherEvents;
-                UpdateWeather(worldClock.GetIgTime());
+                //weatherComponents = weatherEvents;
+                //UpdateWeather(worldClock.GetIgTime());
 
                 return;
             }
