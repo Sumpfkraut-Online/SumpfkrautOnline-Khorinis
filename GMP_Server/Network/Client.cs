@@ -62,9 +62,9 @@ namespace GUC.Server.Network
                 {
                     Character.World.Vobs.Players.Remove(npc);
                 }
-                if (Character.cell != null)
+                if (Character.Cell != null)
                 {
-                    Character.cell.Vobs.Players.Remove(npc);
+                    Character.Cell.Vobs.Players.Remove(npc);
                 }
                 Character.Client = null;
             }
@@ -73,9 +73,9 @@ namespace GUC.Server.Network
             if (npc.IsSpawned)
             {
                 npc.World.Vobs.Players.Add( npc);
-                if (npc.cell != null)
+                if (npc.Cell != null)
                 {
-                    npc.cell.Vobs.Players.Add(npc);
+                    npc.Cell.Vobs.Players.Add(npc);
                 }
 
                 //if (npc.VobController != null)

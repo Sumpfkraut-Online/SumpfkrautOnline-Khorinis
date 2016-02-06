@@ -4,30 +4,67 @@ using System.Linq;
 using System.Text;
 using GUC.WorldObjects.Collections;
 using GUC.Log;
+using GUC.WorldObjects.Instances;
+using GUC.Network;
 
 namespace GUC.WorldObjects
 {
-    public partial class World : WorldObject<World.IScriptWorld>
+    public partial class World : WorldObject
     {
-        public const int MAX_VOBS = 65536; // ushort.MaxValue + 1
+        #region ScriptObject
 
-        public partial interface IScriptWorld
+        public partial interface IScriptWorld : IScriptWorldObject
         {
         }
 
-        public int ID { get; internal set; }
-
-        BaseVob[] vobs = new BaseVob[MAX_VOBS];
-        public BaseVob GetVobByID(int id)
+        public new IScriptWorld ScriptObject
         {
-            if (id >= 0 && id < MAX_VOBS)
-                return vobs[id];
-            return null;
+            get { return (IScriptWorld)base.ScriptObject; }
         }
 
-        public World(IScriptWorld scriptObject, int id = -1) : base(scriptObject)
+        #endregion
+
+        #region Properties
+
+        new public WorldInstance Instance { get { return (WorldInstance)Instance; } }
+
+        public readonly VobCollection Vobs = new VobCollection();
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Creates a new World with the given ID or [-1] a free ID.
+        /// </summary>
+        public World(IScriptWorld scriptObject, WorldInstance instance, int id = -1) : base(scriptObject, instance, id)
         {
         }
+
+        /// <summary>
+        /// Creates a new World by reading a networking stream.
+        /// </summary>
+        public World(IScriptWorld scriptObject, PacketReader stream) : base(scriptObject, stream)
+        {
+        }
+
+        #endregion
+
+        #region Read & Write
+
+        protected override void WriteProperties(PacketWriter stream)
+        {
+            base.WriteProperties(stream);
+        }
+
+        protected override void ReadProperties(PacketReader stream)
+        {
+            base.ReadProperties(stream);
+        }
+
+        #endregion
+
+        #region Spawn
 
         partial void pSpawnVob(BaseVob vob);
         public void SpawnVob(BaseVob vob)
@@ -48,8 +85,8 @@ namespace GUC.WorldObjects
             }
 
             pSpawnVob(vob);
-            
-            vobs[vob.WorldID] = vob; 
+
+            Vobs.Add(vob);
         }
 
         partial void pDespawnVob(BaseVob vob);
@@ -60,8 +97,13 @@ namespace GUC.WorldObjects
 
             if (vob.World != this)
                 return;
+            
+            pDespawnVob(vob);
 
             vob.World = null;
+            Vobs.Remove(vob);
         }
+
+        #endregion
     }
 }

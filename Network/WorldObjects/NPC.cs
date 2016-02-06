@@ -10,7 +10,7 @@ using GUC.WorldObjects.Collections;
 
 namespace GUC.WorldObjects
 {
-    public partial class NPC : Vob, IContainer
+    public partial class NPC : Vob//, IContainer
     {
         public partial interface IScriptNPC : IScriptVob
         {

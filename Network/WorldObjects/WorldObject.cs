@@ -2,77 +2,74 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using GUC.WorldObjects.Instances;
 using GUC.Network;
 
 namespace GUC.WorldObjects
 {
-    public abstract partial class WorldObject
+    public abstract partial class WorldObject : GameObject
     {
-        public const int MAX_ID = 65536; // ushort.MaxValue + 1 => If you change this, change the ushort cast in WriteStream & ReadStream too!
-
         #region ScriptObject
 
-        public partial interface IScriptWorldObject
+        public partial interface IScriptWorldObject : IScriptGameObject
         {
-            void OnWriteProperties(PacketWriter stream);
-            void OnReadProperties(PacketReader stream);
         }
 
-        public IScriptWorldObject ScriptObject { get; private set; }
-
-        #endregion      
-
-        #region Constructors
-
-        /// <summary>
-        /// Creates a new WorldObject with the given ID or searches a new one when needed.
-        /// </summary>
-        protected WorldObject(IScriptWorldObject scriptObject, int id = -1) : this(scriptObject)
+        public new IScriptWorldObject ScriptObject
         {
-            this.id = id;
-        }
-
-        /// <summary>
-        /// Creates a new WorldObject by reading a networking stream.
-        /// </summary>
-        protected WorldObject(IScriptWorldObject scriptObject, PacketReader stream) : this(scriptObject)
-        {
-            this.ReadStream(stream);
-        }
-
-        private WorldObject(IScriptWorldObject scriptObject)
-        {
-            if (scriptObject == null)
-                throw new ArgumentNullException("WorldObject: ScriptObject is null!");
-
-            this.ScriptObject = scriptObject;
+            get { return (IScriptWorldObject)base.ScriptObject; }
         }
 
         #endregion
 
         #region Properties
 
-        internal int id;
-        public int ID { get { return id; } }
+        private BaseInstance instance;
+        public BaseInstance Instance
+        {
+            get { return instance; }
+        }
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Creates a new WorldObject with the given ID or [-1] a free ID.
+        /// </summary>
+        protected WorldObject(IScriptGameObject scriptObject, BaseInstance instance, int id = -1) : base(scriptObject, id)
+        {
+            if (instance == null)
+                throw new ArgumentNullException("Instance is null!");
+
+            //if (!InstanceCollection.Contains(instance))
+            // throw new Exception
+
+            this.instance = instance;
+        }
+
+        /// <summary>
+        /// Creates a new WorldObject by reading a networking stream.
+        /// </summary>
+        protected WorldObject(IScriptGameObject scriptObject, PacketReader stream) : base(scriptObject, stream)
+        {
+        }
 
         #endregion
 
         #region Read & Write
 
-        protected abstract void WriteProperties(PacketWriter stream);
-        public void WriteStream(PacketWriter stream)
+        protected override void WriteProperties(PacketWriter stream)
         {
-            stream.Write((ushort)this.ID); // If you change the ushort cast, change MAX_ID too!
-            this.WriteProperties(stream);
-            this.ScriptObject.OnWriteProperties(stream);
+            base.WriteProperties(stream);
+            stream.Write((ushort)this.Instance.ID); // MAX_ID
         }
 
-        protected abstract void ReadProperties(PacketReader stream);
-        public void ReadStream(PacketReader stream)
+        protected override void ReadProperties(PacketReader stream)
         {
-            this.id = stream.ReadUShort(); // If you change the ushort cast, change MAX_ID too!
-            this.ReadProperties(stream);
-            this.ScriptObject.OnReadProperties(stream);
+            base.ReadProperties(stream);
+            int instanceID = stream.ReadUShort(); // MAX_ID
+            //this.Instance = InstanceCollection.Get(instanceID);
         }
 
         #endregion

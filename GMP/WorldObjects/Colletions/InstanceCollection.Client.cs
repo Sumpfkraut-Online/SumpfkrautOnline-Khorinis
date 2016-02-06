@@ -7,7 +7,12 @@ using GUC.WorldObjects.Instances;
 
 namespace GUC.WorldObjects.Collections
 {
-    public partial class InstanceCollection : VobObjCollection<ushort, VobInstance>
+    public static partial class InstanceCollection
     {
+        static partial void CheckID(BaseInstance inst)
+        {
+            if (inst.ID < 0 || inst.ID >= WorldObject.MAX_ID)
+                throw new ArgumentOutOfRangeException("Instance ID is out of range!");
+        }
     }
 }

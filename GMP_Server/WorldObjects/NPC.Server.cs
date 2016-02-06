@@ -202,7 +202,7 @@ namespace GUC.WorldObjects
                     equippedSlots.Add(slot, item);
                 }
                 item.Slot = slot;
-                NPCMessage.WriteEquipMessage(cell.SurroundingClients(), this, item, slot);
+                NPCMessage.WriteEquipMessage(Cell.SurroundingClients(), this, item, slot);
             }
         }
 
@@ -223,7 +223,7 @@ namespace GUC.WorldObjects
                 }
 
                 equippedSlots.Remove(slot);
-                NPCMessage.WriteUnequipMessage(cell.SurroundingClients(), this, slot);
+                NPCMessage.WriteUnequipMessage(Cell.SurroundingClients(), this, slot);
             }
         }
 
@@ -263,7 +263,7 @@ namespace GUC.WorldObjects
                 stream.Write(this.ID);
                 stream.Write(mob.ID);
 
-                foreach (Client cl in this.cell.SurroundingClients())
+                foreach (Client cl in this.Cell.SurroundingClients())
                 {
                     cl.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
                 }
@@ -279,7 +279,7 @@ namespace GUC.WorldObjects
                 PacketWriter stream = GameServer.SetupStream(NetworkIDs.MobUnUseMessage);
                 stream.Write(this.ID);
 
-                foreach (Client cl in cell.SurroundingClients())
+                foreach (Client cl in Cell.SurroundingClients())
                 {
                     cl.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
                 }
@@ -296,7 +296,7 @@ namespace GUC.WorldObjects
         public void SetMoveState(NPCStates state)
         {
             this.state = state;
-            NPCMessage.WriteState(cell.SurroundingClients(), this);
+            NPCMessage.WriteState(Cell.SurroundingClients(), this);
         }
 
         /// <summary>
@@ -305,7 +305,7 @@ namespace GUC.WorldObjects
         public void SetMoveState(NPCStates state, NPC target)
         {
             this.state = state;
-            NPCMessage.WriteTargetState(cell.SurroundingClients(), this, target);
+            NPCMessage.WriteTargetState(Cell.SurroundingClients(), this, target);
         }
 
         /// <summary>
@@ -313,7 +313,7 @@ namespace GUC.WorldObjects
         /// </summary>
         public void Jump()
         {
-            NPCMessage.WriteJump(cell.SurroundingClients(), this);
+            NPCMessage.WriteJump(Cell.SurroundingClients(), this);
         }
 
         #endregion
@@ -343,7 +343,7 @@ namespace GUC.WorldObjects
                 return;
 
             DrawnItem = item;
-            NPCMessage.WriteDrawItem(cell.SurroundingClients(), this, item, fast);
+            NPCMessage.WriteDrawItem(Cell.SurroundingClients(), this, item, fast);
         }
 
         /// <summary>
@@ -364,7 +364,7 @@ namespace GUC.WorldObjects
                 return;
 
             DrawnItem = null;
-            NPCMessage.WriteUndrawItem(cell.SurroundingClients(), this, fast, State == NPCStates.Stand);
+            NPCMessage.WriteUndrawItem(Cell.SurroundingClients(), this, fast, State == NPCStates.Stand);
         }
 
         #endregion

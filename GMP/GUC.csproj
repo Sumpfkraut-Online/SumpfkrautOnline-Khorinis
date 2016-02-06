@@ -96,29 +96,14 @@
     <Compile Include="..\Network\Utilities\XmlObj.cs">
       <Link>Utilities\XmlObj.cs</Link>
     </Compile>
+    <Compile Include="..\Network\WorldObjects\BaseVob.cs">
+      <Link>WorldObjects\BaseVob.cs</Link>
+    </Compile>
     <Compile Include="..\Network\WorldObjects\Collections\InstanceCollection.cs">
       <Link>WorldObjects\Colletions\InstanceCollection.cs</Link>
     </Compile>
-    <Compile Include="..\Network\WorldObjects\Collections\InstanceDictionary.cs">
-      <Link>WorldObjects\Colletions\InstanceDictionary.cs</Link>
-    </Compile>
-    <Compile Include="..\Network\WorldObjects\Collections\ItemContainer.cs">
-      <Link>WorldObjects\Colletions\ItemContainer.cs</Link>
-    </Compile>
-    <Compile Include="..\Network\WorldObjects\Collections\VobCollection.cs">
-      <Link>WorldObjects\Colletions\VobCollection.cs</Link>
-    </Compile>
-    <Compile Include="..\Network\WorldObjects\Collections\VobDictionary.cs">
-      <Link>WorldObjects\Colletions\VobDictionary.cs</Link>
-    </Compile>
-    <Compile Include="..\Network\WorldObjects\Collections\VobObj.cs">
-      <Link>WorldObjects\Colletions\VobObj.cs</Link>
-    </Compile>
-    <Compile Include="..\Network\WorldObjects\Collections\VobObjCollection.cs">
-      <Link>WorldObjects\Colletions\VobObjCollection.cs</Link>
-    </Compile>
-    <Compile Include="..\Network\WorldObjects\Collections\VobObjDictionary.cs">
-      <Link>WorldObjects\Colletions\VobObjDictionary.cs</Link>
+    <Compile Include="..\Network\WorldObjects\Instances\BaseInstance.cs">
+      <Link>WorldObjects\Instances\BaseInstance.cs</Link>
     </Compile>
     <Compile Include="..\Network\WorldObjects\Instances\ItemInstance.cs">
       <Link>WorldObjects\Instances\ItemInstance.cs</Link>
@@ -222,8 +207,6 @@
       <DependentUpon>SplashScreen.xaml</DependentUpon>
     </Compile>
     <Compile Include="WorldObjects\Colletions\InstanceCollection.Client.cs" />
-    <Compile Include="WorldObjects\Colletions\InstanceDictionary.Client.cs" />
-    <Compile Include="WorldObjects\Colletions\VobCollection.Client.cs" />
     <Compile Include="WorldObjects\Instances\ItemInstance.Client.cs" />
     <Compile Include="WorldObjects\Instances\Mobs\MobContainerInstance.Client.cs" />
     <Compile Include="WorldObjects\Instances\Mobs\MobDoorInstance.Client.cs" />

@@ -10,42 +10,45 @@ using GUC.Server.Network;
 
 namespace GUC.WorldObjects.Collections
 {
-    public partial class InstanceCollection
+    public static partial class InstanceCollection
     {
-        /*internal byte[] Data;
-        internal byte[] Hash;
-
-        public void NetUpdate()
+        static List<int> freeIDs = new List<int>();
+        static int idCount = 0;
+        static partial void CheckID(BaseVobInstance inst)
         {
-            PacketWriter stream = GameServer.SetupStream(NetworkIDs.ConnectionMessage);
-
-            stream.StartCompressing();
-            for (int i = 0; i < (int)VobTypes.Maximum; i++)
+            if (inst.ID < 0 || inst.ID > WorldObject.MAX_ID)
             {
-                InstanceDictionary dict = (InstanceDictionary)vobDicts[i];
-                stream.Write((ushort)dict.GetCount());
-                foreach (VobInstance inst in dict.GetAll().OrderBy(v => v.ID))
+                //search free ID
+                if (freeIDs.Count > 0)
                 {
-                    inst.WriteProperties(stream);
+                    inst.id = freeIDs[0];
+                    freeIDs.RemoveAt(0);
+                }
+                else
+                {
+                    while (true)
+                        if (idCount >= WorldObject.MAX_ID)
+                        {
+                            throw new Exception("InstanceCollection reached maximum! " + WorldObject.MAX_ID);
+                        }
+                        else
+                        {
+                            inst.id = idCount++;
+                            if (!instances.ContainsKey(inst.id))
+                                break;
+                        }
                 }
             }
-            stream.StopCompressing();
+        }
 
-            Data = new byte[stream.GetLength()];
-            Buffer.BlockCopy(stream.GetData(), 0, Data, 0, stream.GetLength());
+        static partial void pAdd(BaseVobInstance inst)
+        {
+        }
 
-            using (MD5 md5 = new MD5CryptoServiceProvider())
-            {
-                md5.TransformFinalBlock(Data, 0, Data.Length);
-                Hash = md5.Hash;
-            }
-
-            //FIXME: Send to all clients
-
-            StringBuilder sb = new StringBuilder();
-            foreach (byte b in Hash)
-                sb.Append(b.ToString("X2"));
-            System.IO.File.WriteAllBytes(sb.ToString(), Data);
-        }*/
+        static partial void pRemove(BaseVobInstance inst)
+        {
+            freeIDs.Add(inst.ID);
+            inst.id = -1;
+        }
     }
 }

@@ -2,27 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Network;
 using GUC.Enumeration;
+using GUC.Network;
 
 namespace GUC.WorldObjects.Instances
 {
-    public abstract partial class BaseInstance : GameObject
+    public abstract partial class BaseVobInstance : BaseInstance
     {
+        public abstract VobTypes VobType { get; }
+
         #region ScriptObject
 
-        public partial interface IScriptBaseInstance : IScriptGameObject
+        public partial interface IScriptBaseVobInstance : IScriptBaseInstance
         {
         }
 
-        public new IScriptBaseInstance ScriptObject
+        public new IScriptBaseVobInstance ScriptObject
         {
-            get { return (IScriptBaseInstance)base.ScriptObject; }
+            get { return (IScriptBaseVobInstance)base.ScriptObject; }
         }
-
-        #endregion
-
-        #region Properties
 
         #endregion
 
@@ -31,14 +29,14 @@ namespace GUC.WorldObjects.Instances
         /// <summary>
         /// Creates a new Instance with the given ID or [-1] a free ID.
         /// </summary>
-        protected BaseInstance(IScriptBaseInstance scriptObject, int id = -1) : base(scriptObject, id)
+        protected BaseVobInstance(IScriptBaseVobInstance scriptObject, int id = -1) : base(scriptObject, id)
         {
         }
 
         /// <summary>
         /// Creates a new Instance by reading a networking stream.
         /// </summary>
-        protected BaseInstance(IScriptBaseInstance scriptObject, PacketReader stream) : base(scriptObject, stream)
+        protected BaseVobInstance(IScriptBaseVobInstance scriptObject, PacketReader stream) : base(scriptObject, stream)
         {
         }
         #endregion

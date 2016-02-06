@@ -54,20 +54,14 @@
     <Compile Include="Types\ColorRGBA.cs" />
     <Compile Include="Types\Vec2i.cs" />
     <Compile Include="Types\Vec3f.cs" />
-    <Compile Include="WorldObjects\BaseVob.cs" />
-    <Compile Include="WorldObjects\Collections\WODictionary.cs" />
-    <Compile Include="WorldObjects\Collections\WOStorage.cs" />
-    <Compile Include="WorldObjects\Instances\BaseInstance.cs" />
-    <Compile Include="WorldObjects\VobObj.cs" />
-    <Compile Include="WorldObjects\Collections\InstanceCollection.cs" />
-    <Compile Include="WorldObjects\Collections\InstanceDictionary.cs" />
-    <Compile Include="WorldObjects\Collections\ItemContainer.cs" />
-    <Compile Include="WorldObjects\Collections\IVobObj.cs" />
     <Compile Include="WorldObjects\Collections\VobCollection.cs" />
-    <Compile Include="WorldObjects\Collections\VobDictionary.cs" />
-    <Compile Include="WorldObjects\Collections\VobObjCollection.cs" />
-    <Compile Include="WorldObjects\Collections\VobObjDictionary.cs" />
-    <Compile Include="WorldObjects\Instances\VobObjInstance.cs" />
+    <Compile Include="WorldObjects\Collections\WorldCollection.cs" />
+    <Compile Include="WorldObjects\WorldObject.cs" />
+    <Compile Include="WorldObjects\BaseVob.cs" />
+    <Compile Include="WorldObjects\Instances\BaseInstance.cs" />
+    <Compile Include="WorldObjects\Instances\BaseVobInstance.cs" />
+    <Compile Include="WorldObjects\Instances\WorldInstance.cs" />
+    <Compile Include="WorldObjects\Collections\InstanceCollection.cs" />
     <Compile Include="WorldObjects\Instances\ItemInstance.cs" />
     <Compile Include="WorldObjects\Instances\Mobs\MobContainerInstance.cs" />
     <Compile Include="WorldObjects\Instances\Mobs\MobDoorInstance.cs" />
@@ -93,7 +87,7 @@
     <Compile Include="WorldObjects\NPC.cs" />
     <Compile Include="WorldObjects\Vob.cs" />
     <Compile Include="WorldObjects\World.cs" />
-    <Compile Include="WorldObjects\WorldObject.cs" />
+    <Compile Include="WorldObjects\GameObject.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

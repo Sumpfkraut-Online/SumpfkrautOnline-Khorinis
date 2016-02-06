@@ -11,6 +11,10 @@ namespace GUC.WorldObjects
 {
     public partial class Item : Vob
     {
+        public override VobTypes VobType { get { return VobTypes.Item; } }
+
+        #region ScriptObject
+
         public partial interface IScriptItem : IScriptVob
         {
             void WriteEquipProperties(PacketWriter stream);
@@ -20,59 +24,73 @@ namespace GUC.WorldObjects
             void ReadInventoryProperties(PacketReader stream);
         }
 
-        new public const VobTypes sVobType = ItemInstance.sVobType;
-        public static readonly VobDictionary Items = Vob.AllVobs.GetDict(sVobType);
+        new public IScriptItem ScriptObject { get { return (IScriptItem)base.ScriptObject; } }
 
-        new public IScriptItem ScriptObj { get; protected set; }
-        new public ItemInstance Instance { get; protected set; }
+        #endregion
+
+        #region Properties
+
+        new public ItemInstance Instance { get { return (ItemInstance)base.Instance; } }
 
         public byte Slot { get; internal set; }
         public ushort Amount { get; internal set; }
 
-        /// <summary>
-        /// Gets the NPC who is carrying this item or NULL.
-        /// </summary>
         public IContainer Container { get; internal set; }
 
         public string Name { get { return Instance.Name; } }
         public ItemMaterials Material { get { return Instance.Material; } }
         public string Effect { get { return Instance.Effect; } }
 
-        public Item(ItemInstance instance, IScriptItem scriptObject) : base(instance, scriptObject)
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Creates a new Vob with the given Instance and ID or [-1] a free ID.
+        /// </summary>
+        public Item(IScriptItem scriptObject, ItemInstance instance, int id = -1) : base(scriptObject, instance, id)
         {
         }
 
+        /// <summary>
+        /// Creates a new Vob by reading a networking stream.
+        /// </summary>
+        public Item(IScriptItem scriptObject, PacketReader stream) : base(scriptObject, stream)
+        {
+        }
+
+        #endregion
+
+        #region Read & Write
+
         internal void WriteEquipProperties(PacketWriter stream)
         {
-            stream.Write(this.Instance.ID);
-
-            this.ScriptObj.WriteEquipProperties(stream);
+            /*stream.Write(this.Instance.ID);
+            this.ScriptObject.WriteEquipProperties(stream);*/
         }
 
         internal void ReadEquipProperties(PacketReader stream)
         {
-            ushort instanceid = stream.ReadUShort();
+            /*ushort instanceid = stream.ReadUShort();
             this.Instance = (ItemInstance)VobInstance.AllInstances.Get(instanceid);
             if (this.Instance == null)
-            {
                 throw new Exception("Item.ReadEquipProperties failed: Instance-ID not found!");
-            }
 
-            this.ScriptObj.ReadEquipProperties(stream);
+            this.ScriptObject.ReadEquipProperties(stream);*/
         }
         
         internal void WriteInventoryProperties(PacketWriter stream)
         {
-            stream.Write(this.ID);
+            /*stream.Write(this.ID);
             stream.Write(this.Instance.ID);
             stream.Write(this.Amount);
 
-            this.ScriptObj.WriteInventoryProperties(stream);
+            this.ScriptObject.WriteInventoryProperties(stream);*/
         }
 
         internal void ReadInventoryProperties(PacketReader stream)
         {
-            this.ID = stream.ReadUInt();
+            /*this.ID = stream.ReadUInt();
             ushort instanceid = stream.ReadUShort();
             this.Instance = (ItemInstance)VobInstance.AllInstances.Get(instanceid);
             if (this.Instance == null)
@@ -81,7 +99,9 @@ namespace GUC.WorldObjects
             }
             this.Amount = stream.ReadUShort();
 
-            this.ScriptObj.ReadInventoryProperties(stream);
+            this.ScriptObject.ReadInventoryProperties(stream);*/
         }
+
+        #endregion
     }
 }

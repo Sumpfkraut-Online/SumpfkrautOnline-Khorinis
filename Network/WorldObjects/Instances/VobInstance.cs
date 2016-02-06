@@ -4,17 +4,16 @@ using System.Linq;
 using System.Text;
 using GUC.Enumeration;
 using GUC.Network;
-using GUC.WorldObjects.Collections;
 
 namespace GUC.WorldObjects.Instances
 {
-    public partial class VobInstance : BaseInstance
+    public partial class VobInstance : BaseVobInstance
     {
         public override VobTypes VobType { get { return VobTypes.Vob; } }
 
         #region ScriptObject
 
-        public partial interface IScriptVobInstance : IScriptBaseInstance
+        public partial interface IScriptVobInstance : IScriptBaseVobInstance
         {
         }
 
@@ -28,6 +27,9 @@ namespace GUC.WorldObjects.Instances
         #region Properties
 
         protected string visual = "";
+        /// <summary>
+        /// The visual of this vob (case insensitive).
+        /// </summary>
         public virtual string Visual
         {
             get { return visual; }
@@ -35,6 +37,9 @@ namespace GUC.WorldObjects.Instances
         }
 
         protected bool cddyn = true;
+        /// <summary>
+        /// Gothic-collision against dynamic Vobs.
+        /// </summary>
         public virtual bool CDDyn
         {
             get { return cddyn; }
@@ -42,6 +47,9 @@ namespace GUC.WorldObjects.Instances
         }
 
         protected bool cdstatic = true;
+        /// <summary>
+        /// Gothic-collision against static Vobs.
+        /// </summary>
         public virtual bool CDStatic
         {
             get { return cdstatic; }
@@ -53,16 +61,16 @@ namespace GUC.WorldObjects.Instances
         #region Constructors
 
         /// <summary>
-        /// Creates a new Instance with the given ID or searches a new one when needed.
+        /// Creates a new Instance with the given ID or [-1] a free ID.
         /// </summary>
-        protected VobInstance(IScriptWorldObject scriptObject, int id = -1) : base(scriptObject, id)
+        public VobInstance(IScriptVobInstance scriptObject, int id = -1) : base(scriptObject, id)
         {
         }
 
         /// <summary>
         /// Creates a new Instance by reading a networking stream.
         /// </summary>
-        public VobInstance(IScriptWorldObject scriptObject, PacketReader stream) : base(scriptObject, stream)
+        public VobInstance(IScriptVobInstance scriptObject, PacketReader stream) : base(scriptObject, stream)
         {
         }
 
@@ -72,6 +80,8 @@ namespace GUC.WorldObjects.Instances
 
         protected override void WriteProperties(PacketWriter stream)
         {
+            base.WriteProperties(stream);
+
             stream.Write(this.Visual);
             stream.Write(this.CDDyn);
             stream.Write(this.CDStatic);
@@ -79,6 +89,8 @@ namespace GUC.WorldObjects.Instances
 
         protected override void ReadProperties(PacketReader stream)
         {
+            base.ReadProperties(stream);
+
             this.Visual = stream.ReadString();
             this.CDDyn = stream.ReadBit();
             this.CDStatic = stream.ReadBit();

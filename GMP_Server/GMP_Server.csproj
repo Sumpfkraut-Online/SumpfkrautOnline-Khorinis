@@ -118,29 +118,20 @@
     <Compile Include="..\Network\WorldObjects\Collections\InstanceCollection.cs">
       <Link>WorldObjects\Collections\InstanceCollection.cs</Link>
     </Compile>
-    <Compile Include="..\Network\WorldObjects\Collections\InstanceDictionary.cs">
-      <Link>WorldObjects\Collections\InstanceDictionary.cs</Link>
-    </Compile>
-    <Compile Include="..\Network\WorldObjects\Collections\ItemContainer.cs">
-      <Link>WorldObjects\Collections\ItemContainer.cs</Link>
-    </Compile>
     <Compile Include="..\Network\WorldObjects\Collections\VobCollection.cs">
       <Link>WorldObjects\Collections\VobCollection.cs</Link>
     </Compile>
-    <Compile Include="..\Network\WorldObjects\Collections\VobDictionary.cs">
-      <Link>WorldObjects\Collections\VobDictionary.cs</Link>
+    <Compile Include="..\Network\WorldObjects\Collections\WorldCollection.cs">
+      <Link>WorldObjects\Collections\WorldCollection.cs</Link>
     </Compile>
-    <Compile Include="..\Network\WorldObjects\Collections\VobObj.cs">
-      <Link>WorldObjects\Collections\VobObj.cs</Link>
-    </Compile>
-    <Compile Include="..\Network\WorldObjects\Collections\VobObjCollection.cs">
-      <Link>WorldObjects\Collections\VobObjCollection.cs</Link>
-    </Compile>
-    <Compile Include="..\Network\WorldObjects\Collections\VobObjDictionary.cs">
-      <Link>WorldObjects\Collections\VobObjDictionary.cs</Link>
+    <Compile Include="..\Network\WorldObjects\GameObject.cs">
+      <Link>WorldObjects\GameObject.cs</Link>
     </Compile>
     <Compile Include="..\Network\WorldObjects\Instances\BaseInstance.cs">
       <Link>WorldObjects\Instances\BaseInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\BaseVobInstance.cs">
+      <Link>WorldObjects\Instances\BaseVobInstance.cs</Link>
     </Compile>
     <Compile Include="..\Network\WorldObjects\Instances\ItemInstance.cs">
       <Link>WorldObjects\Instances\ItemInstance.cs</Link>
@@ -177,6 +168,9 @@
     </Compile>
     <Compile Include="..\Network\WorldObjects\Instances\VobInstance.cs">
       <Link>WorldObjects\Instances\VobInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\WorldInstance.cs">
+      <Link>WorldObjects\Instances\WorldInstance.cs</Link>
     </Compile>
     <Compile Include="..\Network\WorldObjects\Item.cs">
       <Link>WorldObjects\Item.cs</Link>
@@ -233,14 +227,7 @@
     <Compile Include="Options\ServerOptions.cs" />
     <Compile Include="TCPStatus.cs" />
     <Compile Include="WorldObjects\Collections\InstanceCollection.Server.cs" />
-    <Compile Include="WorldObjects\Collections\InstanceDictionary.Server.cs" />
-    <Compile Include="WorldObjects\Collections\InstColl.cs" />
-    <Compile Include="WorldObjects\Collections\InstDict.cs" />
-    <Compile Include="WorldObjects\Collections\VobCollection.Server.cs" />
-    <Compile Include="WorldObjects\Collections\WOCollection.cs" />
-    <Compile Include="WorldObjects\Collections\WODictionary.cs" />
-    <Compile Include="WorldObjects\Instances\BaseInstance.Server.cs" />
-    <Compile Include="WorldObjects\Instances\VobInstance.Server.cs" />
+    <Compile Include="WorldObjects\Instances\WorldInstance.Server.cs" />
     <Compile Include="WorldObjects\Vob.Server.cs" />
     <Compile Include="WorldObjects\Item.Server.cs" />
     <Compile Include="WorldObjects\Instances\ItemInstance.Server.cs" />

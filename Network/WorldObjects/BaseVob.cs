@@ -10,7 +10,7 @@ using GUC.Enumeration;
 
 namespace GUC.WorldObjects
 {
-    public abstract class BaseVob : WorldObject
+    public abstract partial class BaseVob : WorldObject
     {
         public abstract VobTypes VobType { get; }
 
@@ -28,15 +28,10 @@ namespace GUC.WorldObjects
         #endregion
 
         #region Properties
-        public BaseInstance Instance { get; private set; }
-
-        internal int WorldDictID = -1;
-        public int WorldID { get; internal set; }
+        new public BaseVobInstance Instance { get { return (BaseVobInstance)base.Instance; } }
+        
         public World World { get; internal set; }
         public bool IsSpawned { get { return World != null; } }
-
-        internal BaseVob Next;
-        internal BaseVob Last;
 
         protected Vec3f pos = new Vec3f(0, 0, 0);
         protected Vec3f dir = new Vec3f(0, 0, 1);
@@ -46,23 +41,16 @@ namespace GUC.WorldObjects
         #region Constructors
 
         /// <summary>
-        /// Creates a new WorldObject with the given ID or searches a new one when needed.
+        /// Creates a new Vob with the given Instance and ID or [-1] a free ID.
         /// </summary>
-        protected BaseVob(IScriptWorldObject scriptObject, BaseInstance instance, int id = -1) : base(scriptObject, id)
+        protected BaseVob(IScriptBaseVob scriptObject, BaseVobInstance instance, int id = -1) : base(scriptObject, instance, id)
         {
-            if (instance == null)
-                throw new ArgumentNullException("Instance is null!");
-
-            //if (!InstanceCollection.Contains(instance))
-            // throw new Exception
-
-            this.Instance = instance;
         }
 
         /// <summary>
-        /// Creates a new WorldObject by reading a networking stream.
+        /// Creates a new Vob by reading a networking stream.
         /// </summary>
-        public BaseVob(IScriptWorldObject scriptObject, PacketReader stream) : base(scriptObject, stream)
+        protected BaseVob(IScriptBaseVob scriptObject, PacketReader stream) : base(scriptObject, stream)
         {
         }
 
@@ -72,15 +60,14 @@ namespace GUC.WorldObjects
 
         protected override void WriteProperties(PacketWriter stream)
         {
-            stream.Write((ushort)this.Instance.ID); // MAX_ID
+            base.WriteProperties(stream);
             stream.Write(this.pos);
             stream.Write(this.dir);
         }
 
         protected override void ReadProperties(PacketReader stream)
         {
-            int instanceID = stream.ReadUShort(); // MAX_ID
-            //this.Instance = InstanceCollection.Get(instanceID);
+            base.ReadProperties(stream);
             this.pos = stream.ReadVec3f();
             this.dir = stream.ReadVec3f();
         }
@@ -113,7 +100,5 @@ namespace GUC.WorldObjects
             }
         }
         #endregion
-
-
     }
 }

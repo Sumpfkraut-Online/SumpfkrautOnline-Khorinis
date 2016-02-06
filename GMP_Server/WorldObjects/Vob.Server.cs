@@ -13,11 +13,13 @@ using GUC.WorldObjects.Instances;
 
 namespace GUC.WorldObjects
 {
-    public partial class Vob : WorldObject, IVobObj<uint>
+    public partial class Vob
     {
-        static uint idCount = 1; // Start with 1 cause a "null-vob" (id = 0) is needed for networking
+        #region Properties
 
-        internal WorldCell cell;
+        internal WorldCell Cell;
+
+        #endregion
 
         #region Position
 
@@ -29,7 +31,7 @@ namespace GUC.WorldObjects
                 this.pos = value;
                 if (this.IsSpawned)
                 {
-                    this.World.UpdatePosition(this, null);
+                    //this.World.UpdatePosition(this, null);
                 }
             }
         }
@@ -49,23 +51,19 @@ namespace GUC.WorldObjects
                 }
                 if (this.IsSpawned)
                 {
-                    VobMessage.WritePosDir(this.cell.SurroundingClients(), null);
+                    VobMessage.WritePosDir(this.Cell.SurroundingClients(), null);
                 }
             }
         }
         #endregion
-
-        protected override void pCreate()
-        {
-            this.ID = Vob.idCount++;
-        }
-
+        
         #region Network Messages
 
         internal virtual void WriteSpawnMessage(IEnumerable<Client> list)
         {
             PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldVobSpawnMessage);
-            this.WriteSpawnProperties(stream);
+
+            this.WriteStream(stream);
 
             foreach (Client client in list)
             {
@@ -76,6 +74,7 @@ namespace GUC.WorldObjects
         internal void WriteDespawnMessage(IEnumerable<Client> list)
         {
             PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldVobDeleteMessage);
+
             stream.Write(this.ID);
 
             foreach (Client client in list)

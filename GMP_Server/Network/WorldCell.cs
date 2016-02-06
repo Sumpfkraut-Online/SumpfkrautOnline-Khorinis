@@ -26,13 +26,13 @@ namespace GUC.Server.Network
         public void AddVob(Vob vob)
         {
             Vobs.Add(vob);
-            vob.cell = this;
+            vob.Cell = this;
         }
 
         public void RemoveVob(Vob vob)
         {
             Vobs.Remove(vob);
-            vob.cell = null;
+            vob.Cell = null;
 
             if (Vobs.GetCount() == 0)
             {
