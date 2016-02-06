@@ -107,8 +107,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
 
             this.maxWSTime = new TimeSpan(0, 0, 0, 20);
             this.minWSTime = new TimeSpan(0, 0, 0, 20);
-            this.precFactor = 70; // % chance of weather with precipitation
-            this.snowFactor = 20; // % change of snow when there is precipitation
+            this.precFactor = 50; // % chance of weather with precipitation
+            this.snowFactor = 50; // % change of snow when there is precipitation
 
             this.lastIGTime = new IgTime();
             this.lastIGTime = World.NewWorld.GetIgTime();
@@ -178,7 +178,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
 
 
 
-        public void FillUpQueue()
+        public void FillUpQueue ()
         {
             lock (lock_WSQueue)
             {
@@ -236,7 +236,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
 
                     // go go little weatherState!
                     MakeLog("Adding new weatherState: " + newWS.weatherType
-                        + newWS.startTime + " " + newWS.endTime);
+                        + " " + newWS.startTime + " " + newWS.endTime);
                     this.weatherStateQueue.Add(newWS);
                 }
             }
@@ -249,7 +249,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
         //                ignore overlapRange if relPos is not 0)
         // relPos: relative position of the overlap (-1: before, 0: within, 1: after registered states,
         //         -999: undefined)
-        public void IndexRangeOfWSOverlap(WeatherState ws, out int[] overlapRange, out int relPos)
+        public void IndexRangeOfWSOverlap (WeatherState ws, out int[] overlapRange, out int relPos)
         {
             lock (lock_WSQueue)
             {
@@ -310,7 +310,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
             }
         }
 
-        public void InsertWeatherState(WeatherState ws)
+        public void InsertWeatherState (WeatherState ws)
         {
             lock (lock_WSQueue)
             {
@@ -384,7 +384,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
             }
         }
 
-        public void CleanupQueue()
+        public void CleanupQueue ()
         {
             lock (lock_WSQueue)
             {
@@ -422,7 +422,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
             }
         }
 
-        public void UpdateCurrWeatherState(bool setIGWeather, bool forceIGWeather = false)
+        public void UpdateCurrWeatherState(bool setIGWeather, bool forceIgWeather = false)
         {
             lock (this.lock_WSQueue)
             {
@@ -451,24 +451,31 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
                     }
                 }
 
-                if ((forceIGWeather) || (setIGWeather && this.currWSChanged))
+                if ((forceIgWeather) || (setIGWeather && this.currWSChanged))
                 {
                     IgTime igTimeNow = World.NewWorld.GetIgTime();
                     this.lastIGTime = igTimeNow;
-                    //Print(">>> " + igTimeNow.day + " " + igTimeNow.hour + " " + igTimeNow.minute);
 
                     if (this.currWeatherState == null)
                     {
-                        World.NewWorld.ChangeIgWeather(WeatherType.undefined,
-                            igTimeNow, new IgTime(23, 59));
-                        MakeLog("Updated ingame-weather to the default.");
+                        World.NewWorld.ChangeIgWeather(WeatherEvent.weatherOverride);
+                        MakeLog("Updated ingame-weather to the default value.");
                     }
                     else
                     {
-                        World.NewWorld.ChangeIgWeather(this.currWeatherState.weatherType,
-                            igTimeNow, new IgTime(23, 59));
-                        MakeLog("Updated ingame-weather to " + this.currWeatherState.weatherType +
-                            ". Description: " + this.currWeatherState.description);
+                        //World.NewWorld.ChangeIgWeather(new WeatherEvent(
+                        //    this.currWeatherState.weatherType,
+                        //    igTimeNow, new IgTime(23, 59)));
+                        WeatherEvent tempWeatherEvent = new WeatherEvent(
+                            WeatherEvent.weatherOverride);
+                        tempWeatherEvent.weatherType = this.currWeatherState.weatherType;
+                        World.NewWorld.ChangeIgWeather(tempWeatherEvent);
+                        MakeLog(String.Format("Updated ingame-weather to {0}" + 
+                            " (timespan: {1} to {2}) - description: {3}", 
+                            this.currWeatherState.weatherType, 
+                            this.currWeatherState.startTime,
+                            this.currWeatherState.endTime,
+                            this.currWeatherState.description));
                     }
 
                     this.currWSChanged = false;

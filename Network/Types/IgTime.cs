@@ -165,15 +165,28 @@ namespace GUC.Types
             {
                 return true;
             }
+            else if (t1.day < t2.day)
+            {
+                return false;
+            }
+
             if (t1.hour > t2.hour)
             {
                 return true;
             }
+            else if (t1.hour < t2.hour)
+            {
+                return false;
+            }
+            
             if (t1.minute > t2.minute)
             {
                 return true;
             }
-            return false;
+            else
+            {
+                return false;
+            }
         }
 
         public static bool operator <(IgTime t1, IgTime t2)
@@ -219,7 +232,7 @@ namespace GUC.Types
 
         public override string ToString()
         {
-            return String.Format("IGTime: day {0} hour {1} minute {2}", 
+            return String.Format("{0}:{1}:{2}", 
                 this.day, this.hour, this.minute);
         }
 

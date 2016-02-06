@@ -33,7 +33,16 @@ namespace GUC.Types
         public IgTime startTime;
         public IgTime endTime;
 
+        public static WeatherEvent weatherOverride = new WeatherEvent(WeatherType.undefined,
+            new IgTime(0, 12, 2), new IgTime(0, 12, 1));
 
+
+        public WeatherEvent (WeatherEvent weatherEvent)
+        {
+            _weatherType = weatherEvent.weatherType;
+            startTime = weatherEvent.startTime;
+            endTime = weatherEvent.endTime;
+        }
 
         public WeatherEvent (WeatherType wt, IgTime st, IgTime et)
         {
@@ -46,17 +55,74 @@ namespace GUC.Types
 
 
 
-        public static bool InInverval (IgTime igTime, WeatherEvent weatherEvent)
+        public static bool operator ==(WeatherEvent we1, WeatherEvent we2)
+        {
+            return (we1.weatherType == we2.weatherType) 
+                && (we1.startTime == we2.startTime)
+                && (we1.endTime == we2.endTime);
+        }
+
+        public static bool operator !=(WeatherEvent we1, WeatherEvent we2)
+        {
+            return !(we1 == we2);
+        }
+
+
+
+        public static bool InInterval (IgTime igTime, WeatherEvent weatherEvent)
         {
             bool inInterval = false;
 
-            if ((igTime >= weatherEvent.startTime) 
-                && (igTime <= weatherEvent.endTime))
+            // days are irrelevant on the weather interval time scale
+            igTime.day = weatherEvent.startTime.day = weatherEvent.endTime.day = 0;
+            
+            Console.WriteLine(igTime);
+            Console.WriteLine(weatherEvent);
+
+            if (weatherEvent.startTime > weatherEvent.endTime)
             {
-                inInterval = true;
+                //Console.WriteLine("#1");
+                // weather-interval spans 2 days
+                if ((igTime >= weatherEvent.startTime) 
+                    && (igTime >= weatherEvent.endTime))
+                {
+                    //Console.WriteLine("#1a");
+                    //                   X
+                    // ------->      |---------
+                    // |----------------------|
+                    inInterval = true;
+                }
+                if ((igTime <= weatherEvent.startTime) 
+                    && (igTime <= weatherEvent.endTime))
+                {
+                    //Console.WriteLine("#1b");
+                    //    X
+                    // ------->      |---------
+                    // |----------------------|
+                    inInterval = true;
+                }
+            }
+            else
+            {
+                //Console.WriteLine("#2");
+                // weather-interval lies within a single day
+                if ((igTime >= weatherEvent.startTime) 
+                    && (igTime <= weatherEvent.endTime))
+                {
+                    //          X
+                    //     |-------------->
+                    // |----------------------|
+                    inInterval = true;
+                }
             }
 
             return inInterval;
+        }
+
+        public override string ToString()
+        {
+            return String.Format("weatherType {0} startTime {1} endTime {2}", 
+                this.weatherType, this.startTime, this.endTime);
         }
 
     }

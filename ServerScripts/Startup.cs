@@ -442,16 +442,83 @@ namespace GUC.Server.Scripts
 
             //Logger.print(new Types.IgTime(1, 25, 0));
 
-            Bla(WeatherType.rain, new Types.IgTime(0, 0, 0), new Types.IgTime(5, 12, 0));
-            Bla(WeatherType.rain, new Types.IgTime(0, 0, 1), new Types.IgTime(5, 11, 59));
-            Bla(WeatherType.rain, new Types.IgTime(0, 8, 0), new Types.IgTime(5, 24, 0));
-            Bla(WeatherType.rain, new Types.IgTime(0, 15, 0), new Types.IgTime(5, 13, 0));
+            //Bla(WeatherType.rain, new Types.IgTime(0, 0, 0), new Types.IgTime(5, 12, 0));
+            //Bla(WeatherType.rain, new Types.IgTime(0, 0, 1), new Types.IgTime(5, 11, 59));
+            //Bla(WeatherType.rain, new Types.IgTime(0, 8, 0), new Types.IgTime(5, 24, 0));
+            //Bla(WeatherType.rain, new Types.IgTime(0, 15, 0), new Types.IgTime(5, 13, 0));
+
+            //Logger.print(new IgTime(0, 6, 0) >= new IgTime(0, 6, 0));
+
+            //WeatherEvent we1 = new WeatherEvent(WeatherType.rain, new IgTime(0, 8, 0),
+            //    new IgTime(0, 16, 0));
+            //WeatherEvent we2 = new WeatherEvent(WeatherType.rain, new IgTime(0, 16, 0),
+            //    new IgTime(0, 8, 0));
+            //WeatherEvent we3 = new WeatherEvent(WeatherType.rain, new IgTime(0, 8, 0),
+            //    new IgTime(0, 16, 0));
+            //WeatherEvent we4 = new WeatherEvent(WeatherType.rain, new IgTime(0, 16, 0),
+            //    new IgTime(0, 8, 0));
+
+            //Logger.print(we1 != we2);
+            //Logger.print(we1 != we3);
+            //Logger.print(we2 != we4);
+
+            //Logger.print(we1.startTime);
+            //Logger.print(we1.endTime);
+            //Logger.print(we1.startTime > we1.endTime);
+            //Logger.print(we2.startTime);
+            //Logger.print(we2.endTime);
+            //Logger.print(we2.startTime > we2.endTime);
+
+            //Logger.print("~~~~~~~~~~~~~~~~");
+            //Logger.print(WeatherEvent.InInterval(new IgTime(0, 12, 0), we1));
+            //Logger.print(WeatherEvent.InInterval(new IgTime(0, 8, 0), we1));
+            //Logger.print(WeatherEvent.InInterval(new IgTime(0, 16, 0), we1));
+            //Logger.print(WeatherEvent.InInterval(new IgTime(0, 22, 0), we1));
+            //Logger.print("~~~~~~~~~~~~~~~~");
+            //Logger.print(WeatherEvent.InInterval(new IgTime(0, 12, 0), we2));
+            //Logger.print(WeatherEvent.InInterval(new IgTime(0, 8, 0), we2));
+            //Logger.print(WeatherEvent.InInterval(new IgTime(0, 16, 0), we2));
+            //Logger.print(WeatherEvent.InInterval(new IgTime(0, 22, 0), we2));
+            //Logger.print("~~~~~~~~~~~~~~~~");
+
+            //WeatherEvent we5 = new WeatherEvent(WeatherType.rain, new IgTime(0, 8, 0),
+            //    new IgTime(0, 6, 0));
+            //Logger.print(WeatherEvent.InInterval(new IgTime(0, 6, 30), we5));
 
 
-            Sumpfkraut.Web.WS.WSServer websocketTest = new Sumpfkraut.Web.WS.WSServer();
-            websocketTest.Init();
-            websocketTest.Start();
 
+            //// -- TIME --
+            //Sumpfkraut.TimeSystem.WorldClock clock = new Sumpfkraut.TimeSystem.WorldClock(
+            //    new List<World>() { World.NewWorld }, new IgTime(0, 0, 0), 60D * 30D, 
+            //    new TimeSpan(0, 0, 5), false, new TimeSpan(0, 0, 1));
+            //clock.SetObjName("CLOCK");
+            ////clock.OnIgTimeChange += delegate (IgTime igTime) 
+            ////{
+            ////    clock.MakeLog(igTime);
+            ////};
+            //clock.OnClientUpdate += delegate (IgTime igTime, double igTimeRate) 
+            //{
+            //    clock.MakeLog(String.Format("Updated clients igTime: {0} and igTimeRate: {1}.",
+            //        igTime, igTimeRate));
+            //};
+            //clock.Start();
+
+            //// -- WEATHER --
+            //Sumpfkraut.WeatherSystem.Weather weather  = new Sumpfkraut.WeatherSystem.Weather(false);
+            //weather.SetObjName("WEATHER");
+            //weather.SetMaxQueueLength(10);
+            //weather.SetMaxWSTime(new TimeSpan(0, 0, 20));
+            //weather.SetMinWSTime(new TimeSpan(0, 0, 20));
+            //weather.SetPrecFactor(75);
+            //weather.SetSnowFactor(50);
+            //weather.SetTimeout(new TimeSpan(0, 0, 5));
+            //weather.Start();
+
+            // -- Websocket-Server --
+            Sumpfkraut.Web.WS.WSServer wsServer = new Sumpfkraut.Web.WS.WSServer();
+            wsServer.Init();
+            wsServer.Start();
+            
 
             CommandConsole cmdConsole = new CommandConsole();
 
@@ -473,78 +540,6 @@ namespace GUC.Server.Scripts
         //{
         //    throw new NotImplementedException();
         //}
-
-        public void Bla (WeatherType weatherType, IgTime startTime, 
-            IgTime endTime)
-        {
-            List<WeatherEvent> weatherEvents = new List<WeatherEvent>();
-
-            // days are unnecessary on weather-interval time-scale of Gothic 2
-            startTime.day = endTime.day = 0;
-
-            Logger.print(startTime.hour + ":" + startTime.minute);
-            Logger.print(endTime.hour + ":" + endTime.minute);
-
-            //int daySpan = endTime.day - startTime.day;
-
-            float tempStart = ((((startTime.hour + 12f) % 24f) * 60f)
-                + (startTime.minute)) / (24f * 60f);
-            float tempEnd = ((((endTime.hour + 12f) % 24f) * 60f)
-                + (endTime.minute)) / (24f * 60f);
-
-            WeatherEvent tempWE;
-
-            if (tempEnd > tempStart)
-            {
-                // requires only 1 additional time interval
-                tempWE = new WeatherEvent();
-                tempWE.weatherType = weatherType;
-                tempWE.startTime = startTime;
-                tempWE.endTime = endTime;
-                weatherEvents.Add(tempWE);
-            }
-            else
-            {
-                // requires 2 additional time intervals
-                // first WeatherEvent goes till almost 1f / 23:59
-                tempWE = new WeatherEvent();
-                tempWE.weatherType = weatherType;
-                tempWE.startTime = startTime;
-                tempWE.endTime = new IgTime(0, 11, 59);
-                weatherEvents.Add(tempWE);
-                // second WeatherEvent fills the residual time iterval
-                tempWE = new WeatherEvent();
-                tempWE.weatherType = weatherType;
-                tempWE.startTime = new IgTime(0, 12, 0);
-                tempWE.endTime = endTime;
-                weatherEvents.Add(tempWE);
-            }
-
-            // reset Weather to undefined (no precipitation) for clean setting later on
-            //oCGame.Game(Program.Process).World.SkyControlerOutdoor.StartRainTime = 0f;
-            //oCGame.Game(Program.Process).World.SkyControlerOutdoor.EndRainTime = 1f;
-            //oCGame.Game(Program.Process).World.SkyControlerOutdoor.SetWeatherType(0);
-
-            float gothicStart = 0f;
-            float gothicEnd = 0f;
-
-            foreach (WeatherEvent we in weatherEvents)
-            {
-                // apply WeaterEvents in Gothic 2-process
-                gothicStart = ((((we.startTime.hour + 12f) % 24f) * 60f)
-                    + (we.startTime.minute)) / (24f * 60f);
-                gothicEnd = ((((we.endTime.hour + 12f) % 24f) * 60f)
-                    + (we.endTime.minute)) / (24f * 60f);
-
-                //oCGame.Game(Program.Process).World.SkyControlerOutdoor.StartRainTime = gothicStart;
-                //oCGame.Game(Program.Process).World.SkyControlerOutdoor.EndRainTime = gothicEnd;
-                //oCGame.Game(Program.Process).World.SkyControlerOutdoor.SetWeatherType((int) we.weatherTypes);
-
-                Logger.print(gothicStart + " ==> " + gothicEnd);
-            }
-
-            return;
-        }
 
     }
 }

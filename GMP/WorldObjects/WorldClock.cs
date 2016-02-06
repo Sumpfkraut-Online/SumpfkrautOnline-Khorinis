@@ -21,7 +21,8 @@ namespace GUC.Client.WorldObjects
             this.igTime = igTime;
             originIgTime = igTime;
             this.lastCheckup = DateTime.Now;
-            MakeLog("Set igTime to: " + igTime);
+            MakeLog("Set igTime to: " + this.igTime);
+            ApplyIgTime();
         }
 
         // rate at which the ig-time clocks relative to realtime 
@@ -41,8 +42,8 @@ namespace GUC.Client.WorldObjects
         protected DateTime lastCheckup;
         object igTimeLock;
 
-        public delegate void OnApplyIgTimeHandler (IgTime igTime);
-        public event OnApplyIgTimeHandler OnApplyIgTime;
+        public delegate void OnIgTimeChangeHandler (IgTime igTime);
+        public event OnIgTimeChangeHandler OnIgTimeChange;
 
 
 
@@ -75,35 +76,31 @@ namespace GUC.Client.WorldObjects
 
         public void ApplyIgTime ()
         {
+            if (!(Program._state is GUC.Client.States.GameState))
+            {
+                return;
+            }
             lock (igTimeLock)
             {
                 oCGame.Game(Program.Process).WorldTimer.SetTime(igTime.hour, igTime.minute);
                 oCGame.Game(Program.Process).WorldTimer.SetDay(igTime.day);
-                MakeLog("Applied ingame-time: " + igTime);
             }
-        }
 
-        //// suspends the the clock and resumes/restarts fresh to avoid waiting time
-        //// with large thread timeouts
-        //public void ForceUpdateClock ()
-        //{
-        //    lock (igTimeLock)
-        //    {
-        //        Reset();
-        //    }
-        //}
+            MakeLog("Applied ingame-time: " + igTime);
+            OnIgTimeChange.Invoke(igTime);
+        }
 
         public void TickIgTime ()
         {
             TimeSpan tickDiffTS = DateTime.Now - this.lastCheckup;
             double tickDiff = tickDiffTS.TotalMinutes;
-            long minuteJump = (long)Math.Round(tickDiff * igTimeRate);
+            long minuteJump = (long) Math.Round(tickDiff * igTimeRate);
             IgTime newIgTime = new IgTime(IgTime.ToMinutes(igTime) + minuteJump);
 
             if (newIgTime != igTime)
             {
                 SetIgTime(newIgTime);
-                ApplyIgTime();
+                //ApplyIgTime();
             }
         }
 

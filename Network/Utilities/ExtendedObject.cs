@@ -210,43 +210,11 @@ namespace GUC.Utilities
         public static String BuildMessage (object[] options, params object[] args)
         {
             String msg = "";
-            try
-            {
-                if ((args == null) || (args.Length < 2))
-                {
-                    return null;
-                }
-
-                // additional options
-                if (options != null)
-                {
-                    // print in new line?
-                    bool asNewLine = false;
-                    try
-                    {
-                        asNewLine = (bool) options[0];
-                    }
-                    catch (Exception ex)
-                    { }
-                    if (asNewLine)
-                    {
-                        msg += "\n";
-                    }
-                }
-
-                msg += args[0].ToString() + ": ";
-                for (int i = 1; i < args.Length; i++)
-                {
-                    msg += args[i].ToString();
-                }
-
-                return msg;
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
+            BuildMessage(ref msg, options, args);
+            return msg;
         }
+
+        static partial void BuildMessage (ref String msg, object[] options, params object[] args);
 
         // defines the way to reach the desired output controller where messages are printed to
         // must be completed where this class is needed

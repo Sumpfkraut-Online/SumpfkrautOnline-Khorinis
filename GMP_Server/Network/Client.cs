@@ -87,8 +87,7 @@ namespace GUC.Server.Network
             character.World.ChangeIgTime(character.World.GetIgTime(), character.World.GetIgTimeRate(),
                 new List<NPC> { character });
             // update ingame-weather
-            character.World.ChangeIgWeather(character.World.GetWeatherType(), 
-                character.World.GetWeatherStartTime(), character.World.GetWeatherEndTime(), 
+            character.World.ChangeIgWeather(character.World.GetWeatherEvent(), 
                 new List<NPC> { character });
         }
 

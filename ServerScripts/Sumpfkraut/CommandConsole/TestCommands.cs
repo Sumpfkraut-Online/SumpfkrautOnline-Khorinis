@@ -177,7 +177,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.CommandConsole
             //    return;
             //}
 
-            world.ChangeIgWeather(weatherType, startTime, endTime);
+            world.ChangeIgWeather(new WeatherEvent(weatherType, startTime, endTime));
 
             returnVal["rawText"] = String.Format("Successfully set ingame-weather to type {0}"
                 + " between times {1} and {2}", weatherType, startTime, endTime);

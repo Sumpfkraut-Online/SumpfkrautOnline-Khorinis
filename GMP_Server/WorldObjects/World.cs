@@ -28,12 +28,17 @@ namespace GUC.Server.WorldObjects
         public float GetIgTimeRate () { return this.igTimeRate; }
         protected Object lock_IGTime = new Object();
 
-        protected WeatherType weatherType;
-        public WeatherType GetWeatherType() { return this.weatherType; }
-        protected IgTime weatherStartTime;
-        public IgTime GetWeatherStartTime () { return this.weatherStartTime; }
-        protected IgTime weatherEndTime;
-        public IgTime GetWeatherEndTime () { return this.weatherEndTime; }
+        //protected WeatherType weatherType;
+        //public WeatherType GetWeatherType() { return this.weatherType; }
+        //protected IgTime weatherStartTime;
+        //public IgTime GetWeatherStartTime () { return this.weatherStartTime; }
+        //protected IgTime weatherEndTime;
+        //public IgTime GetWeatherEndTime () { return this.weatherEndTime; }
+
+        protected WeatherEvent weatherEvent;
+        public WeatherEvent GetWeatherEvent () { return this.weatherEvent; }
+        public void SetWeatherEvent (WeatherEvent weatherEvent) { this.weatherEvent = weatherEvent; }
+
         protected Object lock_Weather = new Object();
 
         internal Dictionary<int, Dictionary<int, WorldCell>> Cells = new Dictionary<int, Dictionary<int, WorldCell>>();
@@ -61,15 +66,7 @@ namespace GUC.Server.WorldObjects
             igTime = new IgTime(1, 0, 0);
             igTimeRate = 0f;
 
-            weatherType = WeatherType.undefined;
-            weatherStartTime = new IgTime();
-            weatherStartTime.day = 1;
-            weatherStartTime.hour = 0;
-            weatherStartTime.minute = 0;
-            weatherEndTime = new IgTime();
-            weatherEndTime.day = 1;
-            weatherEndTime.hour = 23;
-            weatherEndTime.minute = 59;
+            this.weatherEvent = new WeatherEvent(WeatherEvent.weatherOverride);
 
             //Vob mob = Vob.Create("forge");
             //mob.Spawn(this, new Types.Vec3f(-200, -100, 200), new Types.Vec3f(0, 0, 1));
@@ -436,12 +433,6 @@ namespace GUC.Server.WorldObjects
         {
             lock (lock_IGTime)
             {
-                //Log.Logger.print("-_-_-_-_--_-_-_-_--_-_-_-_-");
-                //Log.Logger.print(igTime);
-                //Log.Logger.print((byte) igTime.day + " " + (byte) igTime.hour
-                //    + " " + (byte) igTime.minute);
-                //Log.Logger.print("-_-_-_-_--_-_-_-_--_-_-_-_-");
-
                 this.igTime = igTime;
                 this.igTimeRate = igTimeRate;
 
@@ -481,15 +472,13 @@ namespace GUC.Server.WorldObjects
             }
         }
 
-        public void ChangeIgWeather (WeatherType wt, IgTime startTime, IgTime endTime, 
+        public void ChangeIgWeather (WeatherEvent weatherEvent, 
             List<NPC> npcList = null)
         {
             lock (lock_Weather)
             {
                 // set world weather in server
-                this.weatherType = wt;
-                this.weatherStartTime = startTime;
-                this.weatherEndTime = endTime;
+                this.weatherEvent = weatherEvent;
 
                 if ((npcList != null) && (npcList.Count > 0))
                 {
@@ -498,11 +487,11 @@ namespace GUC.Server.WorldObjects
                     {
                         BitStream stream = Program.server.SetupStream(NetworkID.WorldWeatherMessage);
 
-                        stream.mWrite((byte) wt);
-                        stream.mWrite((byte) startTime.hour);
-                        stream.mWrite((byte) startTime.minute);
-                        stream.mWrite((byte) endTime.hour);
-                        stream.mWrite((byte) endTime.minute);
+                        stream.mWrite((byte) weatherEvent.weatherType);
+                        stream.mWrite((byte) weatherEvent.startTime.hour);
+                        stream.mWrite((byte) weatherEvent.startTime.minute);
+                        stream.mWrite((byte) weatherEvent.endTime.hour);
+                        stream.mWrite((byte) weatherEvent.endTime.minute);
 
                         Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY,
                             PacketReliability.RELIABLE_ORDERED, 'I', npc.client.guid, false);
@@ -515,11 +504,11 @@ namespace GUC.Server.WorldObjects
                     {
                         BitStream stream = Program.server.SetupStream(NetworkID.WorldWeatherMessage);
 
-                        stream.mWrite((byte) wt);
-                        stream.mWrite((byte) startTime.hour);
-                        stream.mWrite((byte) startTime.minute);
-                        stream.mWrite((byte) endTime.hour);
-                        stream.mWrite((byte) endTime.minute);
+                        stream.mWrite((byte) weatherEvent.weatherType);
+                        stream.mWrite((byte) weatherEvent.startTime.hour);
+                        stream.mWrite((byte) weatherEvent.startTime.minute);
+                        stream.mWrite((byte) weatherEvent.endTime.hour);
+                        stream.mWrite((byte) weatherEvent.endTime.minute);
 
                         Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY,
                             PacketReliability.RELIABLE_ORDERED, 'I', keyValPair.Value.client.guid, false);

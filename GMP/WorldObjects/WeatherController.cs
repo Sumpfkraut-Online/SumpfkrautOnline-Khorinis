@@ -17,14 +17,9 @@ namespace GUC.Client.WorldObjects
 
         WorldClock worldClock;
 
-        //protected WeatherType weatherType;
-        //protected IgTime startTime;
-        //protected IgTime endTime;
         protected WeatherEvent activeWeather;
         protected List<WeatherEvent> weatherComponents;
-        public static readonly WeatherEvent weatherOverride = new WeatherEvent(
-            WeatherType.undefined, new IgTime(0, 0, 0), new IgTime(0, 11, 59));
-
+        protected WeatherEvent lastWeatherComponent;
         protected object weatherLock;
 
 
@@ -34,30 +29,32 @@ namespace GUC.Client.WorldObjects
             SetObjName("WeatherController (default)");
 
             this.worldClock = worldClock;
-            worldClock.OnApplyIgTime += OnIgTimeChange;
+            worldClock.OnIgTimeChange += OnIgTimeChange;
 
-            this.activeWeather.weatherType = WeatherType.undefined;
-            this.activeWeather.startTime = new IgTime(0, 0, 0);
-            this.activeWeather.endTime = new IgTime(0, 23, 59);
-            this.weatherComponents = new List<WeatherEvent> { this.activeWeather };
+            this.activeWeather = WeatherEvent.weatherOverride;
+            this.weatherComponents = new List<WeatherEvent> { WeatherEvent.weatherOverride };
+            this.lastWeatherComponent = WeatherEvent.weatherOverride;
 
             this.weatherLock = new object();
         }
 
 
 
-        public void ApplyWeather (WeatherEvent we)
+        protected void ApplyWeather (WeatherEvent we)
         {
-            float gothicStart = ((((we.startTime.hour + 12f) % 24f) * 60f)
-                + (we.startTime.minute)) / (24f * 60f);
-            float gothicEnd = ((((we.endTime.hour + 12f) % 24f) * 60f)
-                + (we.endTime.minute)) / (24f * 60f);
+            lock (weatherLock)
+            {
+                float gothicStart = ((((we.startTime.hour + 12f) % 24f) * 60f)
+                    + (we.startTime.minute)) / (24f * 60f);
+                float gothicEnd = ((((we.endTime.hour + 12f) % 24f) * 60f)
+                    + (we.endTime.minute)) / (24f * 60f);
 
-            oCGame.Game(Program.Process).World.SkyControlerOutdoor.StartRainTime = gothicStart;
-            oCGame.Game(Program.Process).World.SkyControlerOutdoor.EndRainTime = gothicEnd;
-            oCGame.Game(Program.Process).World.SkyControlerOutdoor.SetWeatherType((int) we.weatherType);
+                oCGame.Game(Program.Process).World.SkyControlerOutdoor.StartRainTime = gothicStart;
+                oCGame.Game(Program.Process).World.SkyControlerOutdoor.EndRainTime = gothicEnd;
+                oCGame.Game(Program.Process).World.SkyControlerOutdoor.SetWeatherType((int) we.weatherType);
 
-            Print(gothicStart + " ==> " + gothicEnd);
+                Print(gothicStart + " ==> " + gothicEnd);
+            }
         }
 
         public void ChangeWeather ()
@@ -132,16 +129,11 @@ namespace GUC.Client.WorldObjects
                 }
 
                 // reset Weather to undefined (no precipitation) for clean setting later on
-                ApplyWeather(weatherOverride);
+                ApplyWeather(WeatherEvent.weatherOverride);
 
-                float gothicStart = 0f;
-                float gothicEnd = 0f;
-
-                foreach (WeatherEvent we in weatherEvents)
-                {
-                    // apply WeaterEvents in Gothic 2-process
-                    ApplyWeather(we);
-                }
+                // apply the new current weather
+                weatherComponents = weatherEvents;
+                UpdateWeather(worldClock.GetIgTime());
 
                 return;
             }
@@ -149,11 +141,26 @@ namespace GUC.Client.WorldObjects
 
         public void OnIgTimeChange (IgTime igTime)
         {
+            UpdateWeather(igTime);
+        }
+
+        public void UpdateWeather (IgTime igNow)
+        {
             foreach (WeatherEvent we in weatherComponents)
             {
-                if (WeatherEvent.InInverval(igTime, we))
+                Print(">>> " + igNow);
+                Print(">>> " + lastWeatherComponent);
+                Print(">>> " + we);
+                Print(WeatherEvent.InInterval(igNow, we));
+                Print(lastWeatherComponent != we);
+                if (WeatherEvent.InInterval(igNow, we))
                 {
-
+                    if (lastWeatherComponent != we)
+                    {
+                        Print("~~~~~~> " + weatherComponents.Count);
+                        lastWeatherComponent = we;
+                        ApplyWeather(we);
+                    }
                     break;
                 }
             }
