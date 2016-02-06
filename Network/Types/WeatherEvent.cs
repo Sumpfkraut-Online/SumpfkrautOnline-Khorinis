@@ -34,7 +34,7 @@ namespace GUC.Types
         public IgTime endTime;
 
         public static WeatherEvent weatherOverride = new WeatherEvent(WeatherType.undefined,
-            new IgTime(0, 12, 2), new IgTime(0, 12, 1));
+            new IgTime(0, 20, 1), new IgTime(0, 20, 0));
 
 
         public WeatherEvent (WeatherEvent weatherEvent)

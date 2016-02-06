@@ -487,24 +487,24 @@ namespace GUC.Server.Scripts
 
 
 
-            //// -- TIME --
-            //Sumpfkraut.TimeSystem.WorldClock clock = new Sumpfkraut.TimeSystem.WorldClock(
-            //    new List<World>() { World.NewWorld }, new IgTime(0, 0, 0), 60D * 30D, 
-            //    new TimeSpan(0, 0, 5), false, new TimeSpan(0, 0, 1));
-            //clock.SetObjName("CLOCK");
-            ////clock.OnIgTimeChange += delegate (IgTime igTime) 
-            ////{
-            ////    clock.MakeLog(igTime);
-            ////};
-            //clock.OnClientUpdate += delegate (IgTime igTime, double igTimeRate) 
+            // -- TIME --
+            Sumpfkraut.TimeSystem.WorldClock clock = new Sumpfkraut.TimeSystem.WorldClock(
+                new List<World>() { World.NewWorld }, new IgTime(0, 0, 0), 60D * 30D,
+                new TimeSpan(0, 0, 5), false, new TimeSpan(0, 0, 1));
+            clock.SetObjName("CLOCK");
+            //clock.OnIgTimeChange += delegate (IgTime igTime) 
             //{
-            //    clock.MakeLog(String.Format("Updated clients igTime: {0} and igTimeRate: {1}.",
-            //        igTime, igTimeRate));
+            //    clock.MakeLog(igTime);
             //};
-            //clock.Start();
+            clock.OnClientUpdate += delegate (IgTime igTime, double igTimeRate)
+            {
+                clock.MakeLog(String.Format("Updated clients igTime: {0} and igTimeRate: {1}.",
+                    igTime, igTimeRate));
+            };
+            clock.Start();
 
             //// -- WEATHER --
-            //Sumpfkraut.WeatherSystem.Weather weather  = new Sumpfkraut.WeatherSystem.Weather(false);
+            //Sumpfkraut.WeatherSystem.Weather weather = new Sumpfkraut.WeatherSystem.Weather(false);
             //weather.SetObjName("WEATHER");
             //weather.SetMaxQueueLength(10);
             //weather.SetMaxWSTime(new TimeSpan(0, 0, 20));

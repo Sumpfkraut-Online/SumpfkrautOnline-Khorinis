@@ -129,7 +129,10 @@ namespace GUC.Client.WorldObjects
                 }
 
                 // reset Weather to undefined (no precipitation) for clean setting later on
+                // do it 2x because 1x is not suffice for Gothic 2 for some reason
                 ApplyWeather(WeatherEvent.weatherOverride);
+                ApplyWeather(WeatherEvent.weatherOverride);
+                //ApplyWeather(WeatherEvent.weatherOverride);
 
                 // apply the new current weather
                 weatherComponents = weatherEvents;
@@ -148,16 +151,16 @@ namespace GUC.Client.WorldObjects
         {
             foreach (WeatherEvent we in weatherComponents)
             {
-                Print(">>> " + igNow);
-                Print(">>> " + lastWeatherComponent);
-                Print(">>> " + we);
-                Print(WeatherEvent.InInterval(igNow, we));
-                Print(lastWeatherComponent != we);
+                //Print(">>> " + igNow);
+                //Print(">>> " + lastWeatherComponent);
+                //Print(">>> " + we);
+                //Print(WeatherEvent.InInterval(igNow, we));
+                //Print(lastWeatherComponent != we);
                 if (WeatherEvent.InInterval(igNow, we))
                 {
                     if (lastWeatherComponent != we)
                     {
-                        Print("~~~~~~> " + weatherComponents.Count);
+                        //Print("~~~~~~> " + weatherComponents.Count);
                         lastWeatherComponent = we;
                         ApplyWeather(we);
                     }
