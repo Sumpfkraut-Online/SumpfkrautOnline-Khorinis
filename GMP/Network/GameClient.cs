@@ -9,11 +9,65 @@ using GUC.Enumeration;
 using GUC.Log;
 using GUC.Client.GUI;
 using GUC.Client.Network.Messages;
+using GUC.Scripting;
 
 namespace GUC.Client.Network
 {
     public static class GameClient
     {
+        #region Client Rank
+
+        static int rank = 0;
+        public static int Rank { get { return rank; } }
+
+        static void ReadRank(PacketReader stream)
+        {
+            rank = stream.ReadByte();
+            if (rank == 0) rankInfo.Texts[0].Text = "Statist";
+            else if (rank == 1) rankInfo.Texts[0].Text = "Supporter";
+            else if (rank >= 2) rankInfo.Texts[0].Text = "Admin";
+        }
+
+        #endregion
+
+        #region Script Menu Message
+
+        static void ReadMenuMessage(PacketReader stream)
+        {
+            ScriptManager.Interface.OnReadMenuMsg(stream);
+        }
+
+        public static PacketWriter GetMenuMsgStream()
+        {
+            return SetupStream(NetworkIDs.MenuMessage);
+        }
+
+        public static void SendMenuMsg(PacketWriter stream)
+        {
+            Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE);
+        }
+
+        #endregion
+
+        #region Script Ingame Message
+
+        static void ReadIngameMessage(PacketReader stream)
+        {
+            ScriptManager.Interface.OnReadIngameMsg(stream);
+        }
+
+        public static PacketWriter GetIngameMsgStream()
+        {
+            return SetupStream(NetworkIDs.IngameMessage);
+        }
+
+        public static void SendIngameMsg(PacketWriter stream)
+        {
+            Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE);
+        }
+
+        #endregion
+
         static RakPeerInterface clientInterface = null;
         static SocketDescriptor socketDescriptor = null;
         static bool isConnected = false;
@@ -27,6 +81,12 @@ namespace GUC.Client.Network
         delegate void MsgReader(PacketReader stream);
         static void InitMsgs()
         {
+            messageListener.Add(NetworkIDs.ConnectionMessage, ConnectionMessage.Read);
+
+            messageListener.Add(NetworkIDs.RankMessage, ReadRank);
+
+            messageListener.Add(NetworkIDs.MenuMessage, ReadMenuMessage);
+            messageListener.Add(NetworkIDs.IngameMessage, ReadIngameMessage);
             /*
             messageListener.Add(NetworkIDs.AccountErrorMessage, AccountMessage.Error);
             messageListener.Add(NetworkIDs.AccountLoginMessage, AccountMessage.GetCharList);
@@ -132,6 +192,8 @@ namespace GUC.Client.Network
         static GUCVisual kbsInfo;
         static GUCVisual pingInfo;
 
+        static GUCVisual rankInfo;
+
         internal static void Update()
         {
             if (clientInterface == null)
@@ -146,13 +208,16 @@ namespace GUC.Client.Network
                 visText.SetColor(ColorRGBA.Red);
 
                 kbsInfo = GUCVisualText.Create("", 0x2000, 0, true);
-                kbsInfo.Font = GUCVisual.Fonts.Menu;
+                kbsInfo.Font = GUCView.Fonts.Menu;
                 kbsInfo.Texts[0].Format = GUCVisualText.TextFormat.Right;
 
                 pingInfo = GUCVisualText.Create("", 0x2000, kbsInfo.zView.FontY(), true);
-                pingInfo.Font = GUCVisual.Fonts.Menu;
+                pingInfo.Font = GUCView.Fonts.Menu;
                 pingInfo.Texts[0].Format = GUCVisualText.TextFormat.Right;
 
+                rankInfo = GUCVisualText.Create("Statist", 0x2000, kbsInfo.zView.FontY() + pingInfo.zView.FontY() + 1, true);
+                rankInfo.Font = GUCView.Fonts.Menu;
+                rankInfo.Texts[0].Format = GUCVisualText.TextFormat.Right;
             }
 
             int counter = 0;
@@ -264,10 +329,12 @@ namespace GUC.Client.Network
                 lastInfoUpdate = DateTime.UtcNow.Ticks;
                 packetKB = 0;
                 kbsInfo.Show(); // bring to front
+
+                rankInfo.Show();
             }
         }
 
-        internal static PacketWriter SetupSendStream(NetworkIDs id)
+        internal static PacketWriter SetupStream(NetworkIDs id)
         {
             pktWriter.Reset();
             pktWriter.Write((byte)DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
@@ -275,7 +342,7 @@ namespace GUC.Client.Network
             return pktWriter;
         }
 
-        internal static void SendStream(PacketWriter stream, PacketPriority pp, PacketReliability pr)
+        internal static void Send(PacketWriter stream, PacketPriority pp, PacketReliability pr)
         {
             clientInterface.Send(stream.GetData(), stream.GetLength(), pp, pr, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }

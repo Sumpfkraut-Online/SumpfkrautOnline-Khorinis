@@ -3,18 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace GUC.WorldObjects.Instances
+namespace GUC.WorldObjects.Instances.Mobs
 {
     public partial class MobWheelInstance : MobInterInstance
     {
-        public MobWheelInstance(string instanceName, IScriptMobWheelInstance scriptObject)
-            : this(0, instanceName, scriptObject)
-        {
-        }
-
-        public MobWheelInstance(ushort ID, string instanceName, IScriptMobWheelInstance scriptObject)
-            : base(ID, instanceName, scriptObject)
-        {
-        }
     }
 }

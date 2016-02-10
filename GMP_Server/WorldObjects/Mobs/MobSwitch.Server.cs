@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.WorldObjects.Instances;
 
-namespace GUC.WorldObjects
+namespace GUC.WorldObjects.Mobs
 {
     public partial class MobSwitch : MobInter
     {

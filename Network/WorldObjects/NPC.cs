@@ -5,12 +5,13 @@ using System.Text;
 using GUC.Enumeration;
 using GUC.Types;
 using GUC.WorldObjects.Instances;
+using GUC.WorldObjects.Mobs;
 using GUC.Network;
 using GUC.WorldObjects.Collections;
 
 namespace GUC.WorldObjects
 {
-    public partial class NPC : Vob//, IContainer
+    public partial class NPC : Vob, ItemContainer.IContainer
     {
         public override VobTypes VobType { get { return VobTypes.NPC; } }
 
@@ -28,21 +29,18 @@ namespace GUC.WorldObjects
 
         new public NPCInstance Instance { get { return (NPCInstance)base.Instance; } }
 
-        protected ushort hpmax = 100;
-        protected ushort hp = 100;
+        int hpmax = 100;
+        int hp = 100;
 
-        protected NPCStates state = NPCStates.Stand;
+        NPCStates state = NPCStates.Stand;
+        MobInter usedMob = null;
 
-        protected MobInter usedMob = null;
+        Item drawnItem = null;
+        bool inAttackMode = false;
 
-        protected Item drawnItem = null;
-        protected bool inAttackMode = false;
-        public bool InAttackMode
-        {
-            get { return inAttackMode; }
-        }
+        ItemContainer inventory = new ItemContainer();
+        public ItemContainer Inventory { get { return inventory; } }
 
-        //public ItemContainer Inventory { get; protected set; }
         //protected Dictionary<byte, Item> equippedSlots = new Dictionary<byte, Item>();
         //public IEnumerable<Item> GetEquippedItems() { return equippedSlots.Values; }
 
@@ -53,7 +51,7 @@ namespace GUC.WorldObjects
         public int HeadTex { get { return Instance.HeadTex; } }
 
         #endregion
-        
+
         #region Constructors
 
         /// <summary>

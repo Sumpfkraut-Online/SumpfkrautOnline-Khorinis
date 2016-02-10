@@ -13,18 +13,23 @@ namespace GUC.Client.Network.Messages
 {
     static class ConnectionMessage
     {
+        public static void Read(PacketReader strm)
+        {
+
+        }
+
         public static void Write()
         {
             byte[] signature = GetMD5(GetSignature(0));
             byte[] mac = GetMD5(GetMacAddress());
 
-            System.IO.File.WriteAllText("sign", GetSignature(0));
-            System.IO.File.WriteAllText("mac", GetMacAddress());
+            //System.IO.File.WriteAllText("sign", GetSignature(0));
+            //System.IO.File.WriteAllText("mac", GetMacAddress());
 
-            PacketWriter stream = GameClient.SetupSendStream(NetworkIDs.ConnectionMessage);
+            PacketWriter stream = GameClient.SetupStream(NetworkIDs.ConnectionMessage);
             stream.Write(signature, 0, 16);
             stream.Write(mac, 0, 16);
-            GameClient.SendStream(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE);
+            GameClient.Send(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE);
         }
 
         static byte[] GetMD5(string str)
@@ -32,7 +37,7 @@ namespace GUC.Client.Network.Messages
             byte[] buf;
             using (MD5 md5 = new MD5CryptoServiceProvider())
             {
-                buf = md5.ComputeHash(Encoding.Default.GetBytes(str));
+                buf = md5.ComputeHash(Encoding.Unicode.GetBytes(str));
             }
             return buf;
         }

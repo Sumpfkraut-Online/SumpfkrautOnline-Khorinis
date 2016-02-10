@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.WorldObjects.Instances;
+using GUC.WorldObjects.Instances.Mobs;
 using GUC.Enumeration;
 using GUC.Network;
 
-namespace GUC.WorldObjects
+namespace GUC.WorldObjects.Mobs
 {
     public partial class MobLadder : MobInter
     {

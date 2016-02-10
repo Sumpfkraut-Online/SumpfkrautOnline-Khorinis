@@ -6,7 +6,7 @@ using GUC.Enumeration;
 using GUC.WorldObjects.Collections;
 using GUC.Network;
 
-namespace GUC.WorldObjects.Instances
+namespace GUC.WorldObjects.Instances.Mobs
 {
     public partial class MobContainerInstance : MobLockableInstance
     {

@@ -5,18 +5,9 @@ using System.Text;
 using GUC.Enumeration;
 using GUC.Network;
 
-namespace GUC.WorldObjects.Instances
+namespace GUC.WorldObjects.Instances.Mobs
 {
     public partial class MobInstance : VobInstance
     {
-        public MobInstance(string instanceName, IScriptMobInstance scriptObject)
-            : this(0, instanceName, scriptObject)
-        {
-        }
-
-        public MobInstance(ushort ID, string instanceName, IScriptMobInstance scriptObject) 
-            : base (ID, instanceName, scriptObject)
-        {
-        }
     }
 }

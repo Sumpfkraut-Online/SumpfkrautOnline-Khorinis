@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using Gothic.Objects;
 
-namespace GUC.WorldObjects
+namespace GUC.WorldObjects.Mobs
 {
     public partial class MobInter : Mob
     {
-        new public oCMobInter gVob { get; protected set; }
+        new public oCMobInter gVob { get { return (oCMobInter)base.gVob; } }
     }
 }

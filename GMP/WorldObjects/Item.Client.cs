@@ -6,8 +6,8 @@ using Gothic.Objects;
 
 namespace GUC.WorldObjects
 {
-    public partial class Item : Vob
+    public partial class Item
     {
-        new public oCItem gVob { get; protected set; }
+        new public oCItem gVob { get { return (oCItem)base.gVob; } }
     }
 }

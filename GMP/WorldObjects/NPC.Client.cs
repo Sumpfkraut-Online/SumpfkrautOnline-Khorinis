@@ -8,20 +8,18 @@ using Gothic.Objects;
 
 namespace GUC.WorldObjects
 {
-    public partial class NPC : Vob
+    public partial class NPC
     {
         public const long PositionUpdateTime = 1200000; //120ms
         public const long DirectionUpdateTime = PositionUpdateTime + 100000;
 
-        new public oCNpc gVob { get; protected set; }
+        new public oCNpc gVob { get { return (oCNpc)base.gVob; } }
 
         public NPCStates State { get { return state; } set { state = value; } }
-
+        /*
         protected override void pCreate()
         {
-            base.pCreate();
-
-            /*foreach (KeyValuePair<byte, Item> pair in equippedSlots)
+            foreach (KeyValuePair<byte, Item> pair in equippedSlots)
             {
                 EquipSlot(pair.Key, pair.Value);
             }
@@ -30,29 +28,29 @@ namespace GUC.WorldObjects
             gAniCtrl = gVob.AniCtrl;
 
             gVob.Enable(pos.X, pos.Y, pos.Z);
-            DrawItem(DrawnItem, true);*/
+            DrawItem(DrawnItem, true);
         }
-        
-        public ushort HPMax
+        */
+        public int HPMax
         {
             get { return hpmax; }
             set
             {
                 hpmax = value;
-                if (IsCreated)
+                if (IsSpawned)
                 {
                     gVob.HPMax = value;
                 }
             }
         }
         
-        public ushort HP
+        public int HP
         {
             get { return hp; }
             set
             {
                 hp = value;
-                if (IsCreated)
+                if (IsSpawned)
                 {
                     gVob.HP = value;
                 }
@@ -67,8 +65,6 @@ namespace GUC.WorldObjects
                 return true;
             }
         }
-
-       
 
         #region Animation
 

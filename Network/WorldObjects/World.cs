@@ -9,11 +9,11 @@ using GUC.Network;
 
 namespace GUC.WorldObjects
 {
-    public partial class World : WorldObject
+    public partial class World : GameObject
     {
         #region ScriptObject
 
-        public partial interface IScriptWorld : IScriptWorldObject
+        public partial interface IScriptWorld : IScriptGameObject
         {
         }
 
@@ -25,9 +25,7 @@ namespace GUC.WorldObjects
         #endregion
 
         #region Properties
-
-        new public WorldInstance Instance { get { return (WorldInstance)Instance; } }
-
+        
         public readonly VobCollection Vobs = new VobCollection();
 
         #endregion
@@ -37,7 +35,7 @@ namespace GUC.WorldObjects
         /// <summary>
         /// Creates a new World with the given ID or [-1] a free ID.
         /// </summary>
-        public World(IScriptWorld scriptObject, WorldInstance instance, int id = -1) : base(scriptObject, instance, id)
+        public World(IScriptWorld scriptObject, int id = -1) : base(scriptObject, id)
         {
         }
 
@@ -81,7 +79,7 @@ namespace GUC.WorldObjects
             }
             else
             {
-                vob.World = this;
+                vob.world = this;
             }
 
             pSpawnVob(vob);
@@ -100,7 +98,7 @@ namespace GUC.WorldObjects
             
             pDespawnVob(vob);
 
-            vob.World = null;
+            vob.world = null;
             Vobs.Remove(vob);
         }
 

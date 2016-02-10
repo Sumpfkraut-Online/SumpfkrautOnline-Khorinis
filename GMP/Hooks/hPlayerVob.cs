@@ -14,7 +14,7 @@ namespace GUC.Client.Hooks
         {
             // hook hero creating
             Process.Write(new byte[] { 0xE9, 0xBD, 0x00, 0x00, 0x00 }, 0x006C434B);
-            var hi = Process.Hook(Constants.GUCDll, typeof(hPlayerVob).GetMethod("CreatePlayerVob"), 0x006C440D, 5, 0);
+            var hi = Process.Hook(Program.GUCDll, typeof(hPlayerVob).GetMethod("CreatePlayerVob"), 0x006C440D, 5, 0);
             Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90 }, hi.oldFuncInNewFunc.ToInt32());
             Process.Write(new byte[] { 0xEB, 0x67 }, 0x006C4662); //skip instance check
 

@@ -7,12 +7,14 @@ using GUC.Server.Network;
 using RakNet;
 using GUC.Network;
 using GUC.Server.Network.Messages;
-using GUC.WorldObjects.Instances;
+using GUC.WorldObjects.Mobs;
 
 namespace GUC.WorldObjects
 {
     public partial class NPC
     {
+        #region ScriptObject
+
         public partial interface IScriptNPC
         {
             void OnCmdUseMob(MobInter mob);
@@ -25,10 +27,15 @@ namespace GUC.WorldObjects
             void OnCmdDropItem(Item item);
         }
 
+        #endregion
+
+        #region Properties
+
         public Client Client { get; internal set; }
         public bool IsPlayer { get { return Client != null; } }
 
         internal NPCCell npcCell = null;
+
 
         public MobInter UsedMob
         {
@@ -41,21 +48,12 @@ namespace GUC.WorldObjects
             get { return this.state; }
         }
 
-        public override void Delete()
-        {
-            foreach (Item item in this.Inventory.GetAll())
-            {
-                item.Container = null; //so no messages are sent
-                item.Delete();
-            }
-            
-            base.Delete();
-        }
+        #endregion
 
-        #region Networking
+       /* #region Networking
 
         #region Client commands
-        
+
         internal static void ReadCmdUseMob(PacketReader stream, Client client, NPC character, World world)
         {
             uint id = stream.ReadUInt();
@@ -186,7 +184,7 @@ namespace GUC.WorldObjects
         /// <param name="slot">Don't use 0!</param>
         public void EquipSlot(byte slot, Item item)
         {
-            if (item != null && slot != 0/* && item != Item.Fists */&& item.Container == this)
+            if (item != null && slot != 0/* && item != Item.Fists *//*&& item.Container == this)
             {
                 Item oldItem;
                 if (equippedSlots.TryGetValue(slot, out oldItem))
@@ -339,7 +337,7 @@ namespace GUC.WorldObjects
         /// <param name="fast">True if the state should be set instantly, without playing an animation.</param>
         public void Drawitem(Item item, bool fast)
         {
-            if (item == null || (item.Container != this/* && item != Item.Fists*/))
+            if (item == null || (item.Container != this/* && item != Item.Fists*//*))
                 return;
 
             DrawnItem = item;
@@ -434,8 +432,8 @@ namespace GUC.WorldObjects
 
                 this.VobController.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
             }
-        }*/
+        }*//*
 
-        #endregion
+        #endregion*/
     }
 }

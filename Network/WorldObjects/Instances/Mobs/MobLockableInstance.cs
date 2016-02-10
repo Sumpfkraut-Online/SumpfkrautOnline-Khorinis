@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.Network;
 
-namespace GUC.WorldObjects.Instances
+namespace GUC.WorldObjects.Instances.Mobs
 {
     public abstract partial class MobLockableInstance : MobInterInstance
     {

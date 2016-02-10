@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Client.Scripts.Sumpfkraut.GUI.MainMenu;
+using GUC.Client.Network;
 
 namespace GUC.Client.Scripts.Sumpfkraut.Menus.MainMenus
 {
@@ -26,7 +27,10 @@ namespace GUC.Client.Scripts.Sumpfkraut.Menus.MainMenus
 
         void Login()
         {
-            if (name.Input.Length == 0)
+            var strm = GameClient.GetMenuMsgStream();
+            GameClient.SendMenuMsg(strm);
+
+            /*if (name.Input.Length == 0)
             {
                 SetCursor(0);
                 return;
@@ -38,11 +42,11 @@ namespace GUC.Client.Scripts.Sumpfkraut.Menus.MainMenus
             }
             else
             {
-                /*StartupState.clientOptions.name = name.Input;
+                StartupState.clientOptions.name = name.Input;
                 StartupState.clientOptions.password = pw.Input;
                 StartupState.clientOptions.Save(StartupState.getConfigPath() + "gmp.xml");
-                Network.Messages.AccountMessage.Login();*/
-            }
+                Network.Messages.AccountMessage.Login();
+            }*/
         }
     }
 }

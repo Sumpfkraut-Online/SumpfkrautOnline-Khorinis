@@ -9,13 +9,14 @@ using GUC.Network;
 using GUC.WorldObjects;
 using GUC.Server.Options;
 using GUC.Log;
+using GUC.Scripting;
 
 namespace GUC.Server.Network
 {
     public static class GameServer
     {
         internal readonly static ServerOptions Options = ServerOptions.Init();
-        
+
         readonly static Dictionary<ulong, Client> clientDict = new Dictionary<ulong, Client>();
         public static IEnumerable<Client> GetClients() { return clientDict.Values; }
 
@@ -62,7 +63,9 @@ namespace GUC.Server.Network
 
         static void InitMessages()
         {
-            /*            messageListener.Add(NetworkIDs.MenuMessage, HandleLoginMsg);
+            messageListener.Add(NetworkIDs.IngameMessage, ReadIngameMessage);
+
+            /*messageListener.Add(NetworkIDs.MenuMessage, HandleLoginMsg);
             messageListener.Add(NetworkIDs.PlayerControlMessage, NPC.ReadControl);
 
             MessageListener.Add((byte)NetworkID.PlayerPickUpItemMessage, NPC.ReadPickUpItem);
@@ -152,44 +155,37 @@ namespace GUC.Server.Network
                                     else
                                     {
                                         DisconnectClient(client);
-                                        Logger.LogWarning(String.Format("Client sent {0} before ConnectionMessage. Kicked: {1} IP:{2}", msgID, p.guid, p.systemAddress));
+                                        Logger.LogWarning("Client sent {0} before ConnectionMessage. Kicked: {1} IP:{2}", msgID, p.guid, p.systemAddress);
                                     }
                                 }
                                 else
                                 {
-                                    if (msgID == NetworkIDs.ConnectionMessage)
+                                    if (msgID <= NetworkIDs.MenuMessage) // outgame
                                     {
-                                        DisconnectClient(client);
-                                        Logger.LogWarning(String.Format("Client sent another ConnectionMessage. Kicked: {0} IP:{1}", msgID, p.guid, p.systemAddress));
-                                    }
-                                    else if (client.MainChar == null) // not ingame yet
-                                    {
-                                        if (msgID == NetworkIDs.MenuMessage) // menu message can be sent always
-                                        {
-                                            if (OnMenuMsg != null)
-                                            {
-                                                OnMenuMsg(client, pktReader);
-                                            }
-                                        }
-                                        else if (msgID == NetworkIDs.PlayerControlMessage && client.Character != null) // confirmation to take control of a npc / start in the world
-                                        {
-                                            NPC.ReadControl(pktReader, client, client.Character, client.Character.World);
-                                        }
-                                        else
+                                        if (msgID == NetworkIDs.ConnectionMessage)
                                         {
                                             DisconnectClient(client);
-                                            Logger.LogWarning(String.Format("Client sent {0} before being ingame. Kicked: {1} IP:{2}", msgID, p.guid, p.systemAddress));
+                                            Logger.LogWarning("Client sent another ConnectionMessage. Kicked: {0} IP:{1}", msgID, p.guid, p.systemAddress);
+                                        }
+                                        else if (msgID == NetworkIDs.MenuMessage)
+                                        {
+                                            ScriptManager.Interface.OnReadMenuMsg(client, pktReader);
                                         }
                                     }
-                                    else
+                                    else // ingame
                                     {
-                                        if (client.Character != null && client.Character.World != null) // client is ingame
+                                        if (client.Character == null || client.Character.World == null)
+                                        {
+                                            DisconnectClient(client);
+                                            Logger.LogWarning("Client sent {0} before being ingame. Kicked: {1} IP:{2}", msgID, p.guid, p.systemAddress);
+                                        }
+                                        else
                                         {
                                             messageListener.TryGetValue(msgID, out readFunc);
                                             if (readFunc == null)
                                             {
                                                 DisconnectClient(client);
-                                                Logger.LogWarning(String.Format("Client sent unknown NetworkID. Kicked: {0} IP:{1}", p.guid, p.systemAddress));
+                                                Logger.LogWarning("Client sent unknown NetworkID. Kicked: {0} IP:{1}", p.guid, p.systemAddress);
                                             }
                                             else
                                             {
@@ -202,7 +198,7 @@ namespace GUC.Server.Network
                             else
                             {
                                 ServerInterface.CloseConnection(p.guid, false);
-                                Logger.LogWarning(String.Format("Client sent 'user' packets before 'new connection' packet. Kicked: {0} IP:{1}", p.guid, p.systemAddress));
+                                Logger.LogWarning("Client sent 'user' packets before 'new connection' packet. Kicked: {0} IP:{1}", p.guid, p.systemAddress);
                             }
                             break;
                         default:
@@ -221,11 +217,11 @@ namespace GUC.Server.Network
                 catch (Exception e)
                 {
                     if (p.length >= 2)
-                        Logger.LogError("{0} {1}: {2}", (DefaultMessageIDTypes)p.data[0], (NetworkIDs)p.data[1], e);
+                        Logger.LogError("{0} {1}: {2}: {3}\n{4}", (DefaultMessageIDTypes)p.data[0], (NetworkIDs)p.data[1], e.Source, e.Message, e.StackTrace);
                     else if (p.length >= 1)
-                        Logger.LogError("{0}: {1}", (DefaultMessageIDTypes)p.data[0], e);
+                        Logger.LogError("{0}: {1}: {2}\n{3}", (DefaultMessageIDTypes)p.data[0], e.Source, e.Message, e.StackTrace);
                     else
-                        Logger.LogError(e);
+                        Logger.LogError("{0}: {1}\n{2}", e.Source, e.Message, e.StackTrace);
 
                     ServerInterface.CloseConnection(p.guid, false);
                 }
@@ -237,9 +233,8 @@ namespace GUC.Server.Network
 
         public static void DisconnectClient(Client client)
         {
-            ServerInterface.CloseConnection(client.guid, false);  
+            ServerInterface.CloseConnection(client.guid, false);
             clientDict.Remove(client.guid.g);
-            client.Delete();
             client.guid.Dispose();
         }
 
@@ -261,9 +256,7 @@ namespace GUC.Server.Network
             ServerInterface.RemoveFromBanList(systemAddress);
         }
 
-
-
-        public static Action<Client, PacketReader> OnMenuMsg;
+        #region Script Menu Message
 
         public static PacketWriter GetMenuMsgStream()
         {
@@ -274,5 +267,26 @@ namespace GUC.Server.Network
         {
             ServerInterface.Send(stream.GetData(), stream.GetLength(), PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'M', client.guid, false);
         }
+
+        #endregion
+
+        #region Script Ingame Message
+        
+        static void ReadIngameMessage(PacketReader stream, Client client, NPC character, World world)
+        {
+            ScriptManager.Interface.OnReadIngameMsg(client, stream);
+        }
+
+        public static PacketWriter GetIngameMsgStream()
+        {
+            return SetupStream(NetworkIDs.IngameMessage);
+        }
+
+        public static void SendIngameMsg(Client client, PacketWriter stream)
+        {
+            ServerInterface.Send(stream.GetData(), stream.GetLength(), PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
+        }
+
+        #endregion
     }
 }

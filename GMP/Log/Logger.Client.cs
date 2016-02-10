@@ -10,7 +10,7 @@ namespace GUC.Log
     {
         static partial void LogMessage(LogLevels level, object message, params object[] args)
         {
-            zError.Report((int)level, "G:" + String.Format(message.ToString(), args), 0, 0, "GUC");
+            zError.Report((int)level+1, "G:" + String.Format(message.ToString(), args), 0, 0, "GUC");
         }
     }
 }

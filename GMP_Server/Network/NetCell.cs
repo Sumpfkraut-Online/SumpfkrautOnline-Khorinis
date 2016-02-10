@@ -23,7 +23,7 @@ namespace GUC.Server.Network
             this.z = z;
         }
 
-        public void AddVob(Vob vob)
+        /*public void AddVob(Vob vob)
         {
             Vobs.Add(vob);
             vob.Cell = this;
@@ -130,6 +130,6 @@ namespace GUC.Server.Network
                     yield return c;
                 }
             }
-        }
+        }*/
     }
 }

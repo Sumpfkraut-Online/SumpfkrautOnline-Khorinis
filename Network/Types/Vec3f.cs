@@ -209,7 +209,7 @@ namespace GUC.Types
 
         public override int GetHashCode()
         {
-            return (new float[3] { this.X, this.Y, this.Z }).GetHashCode();
+            return this.ToArray().GetHashCode();
         }
 
         #endregion

@@ -17,7 +17,7 @@ namespace GUC.Server.Network.Messages
             Vob vob = client.Character;
             vob.Position = stream.ReadVec3f();
             vob.Direction = stream.ReadVec3f();
-            vob.World.UpdatePosition(vob, client);
+            //vob.World.UpdatePosition(vob, client);
             /*
             int max = stream.ReadInt();
 

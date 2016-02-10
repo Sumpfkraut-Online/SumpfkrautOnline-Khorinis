@@ -16,5 +16,10 @@ namespace GUC.WorldObjects.Collections
         {
 
         }
+
+        public int GetCount()
+        {
+            return 0;
+        }
     }
 }

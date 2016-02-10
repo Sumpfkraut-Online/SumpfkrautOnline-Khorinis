@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using RakNet;
 using GUC.Enumeration;
-using GUC.WorldObjects.Instances;
+using GUC.WorldObjects.Collections;
 using GUC.Network;
+using GUC.WorldObjects.Instances;
 
 namespace GUC.Server.Network.Messages
 {
@@ -19,16 +20,29 @@ namespace GUC.Server.Network.Messages
             byte[] mac = new byte[16];
             stream.Read(mac, 0, 16);
 
-            //client.CheckValidity(driveString, macString, instanceTableHash);
+            if (client.CheckValidation(signature, mac))
+            {
+                WriteInstances(client);
+            }
         }
 
-        public static void WriteInstanceTables(Client client)
+        public static void WriteInstances(Client client)
         {
-            Log.Logger.Print("Write ConnectionMSG ???");
-            if (client.instanceNeeded)
+            if (InstanceCollection.GetCountDynamics() > 0)
             {
-                Network.GameServer.ServerInterface.Send(VobInstance.AllInstances.Data, VobInstance.AllInstances.Data.Length, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'G', client.guid, false);
-                Log.Logger.Print("Written ConnectionMSG");
+                PacketWriter strm = GameServer.SetupStream(NetworkIDs.ConnectionMessage);
+                for (int i = 0; i < (int)VobTypes.Maximum; i++)
+                {
+                    strm.Write((ushort)InstanceCollection.GetCountDynamics(i));
+                    foreach (BaseVobInstance inst in InstanceCollection.GetAllDynamics(i))
+                    {
+                        inst.WriteStream(strm);
+                    }
+                }
+                client.Send(strm, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, '\0');
+
+                using (var fs = new System.IO.FileStream("data", System.IO.FileMode.Create))
+                    fs.Write(strm.GetData(), 0, strm.GetLength());
             }
         }
     }

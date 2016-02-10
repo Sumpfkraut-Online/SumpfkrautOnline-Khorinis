@@ -21,8 +21,8 @@ namespace GUC.Client.Hooks
             if (_infoLoadDat != null)
                 return;
 
-            _infoLoadDat = Process.Hook(Constants.GUCDll, typeof(hParser).GetMethod("hook_LoadDat"), 0x0078E900, 7, 1);
-            _infoLoadParserFile = Process.Hook(Constants.GUCDll, typeof(hParser).GetMethod("hook_LoadParserFile"), 0x006C4BE0, 6, 1);
+            _infoLoadDat = Process.Hook(Program.GUCDll, typeof(hParser).GetMethod("hook_LoadDat"), 0x0078E900, 7, 1);
+            _infoLoadParserFile = Process.Hook(Program.GUCDll, typeof(hParser).GetMethod("hook_LoadParserFile"), 0x006C4BE0, 6, 1);
 
             Process.Write(new byte[] { 0x33, 0xC0, 0xC2, 0x04, 0x00 }, _infoLoadParserFile.oldFuncInNewFunc.ToInt32());
 

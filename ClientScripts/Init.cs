@@ -10,6 +10,7 @@ using System.IO;
 using GUC.Client.Scripts.Sumpfkraut.Menus;
 using GUC.Client.Scripts.Sumpfkraut.Menus.MainMenus;
 using GUC.Client.Scripts.Sumpfkraut;
+using GUC.Network;
 
 namespace GUC.Scripts
 {
@@ -50,8 +51,12 @@ namespace GUC.Scripts
         public void StartIngame()
         {
             InputControl.Init();
+            MainMenu.CloseActiveMenus();
             Ingame = true;
             Logger.Log("Ingame started.");
         }
+
+        public void OnReadMenuMsg(PacketReader steam) { }
+        public void OnReadIngameMsg(PacketReader steam) { }
     }
 }

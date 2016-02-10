@@ -16,7 +16,7 @@ namespace GUC.WorldObjects.Collections
         static int idCount = 0;
         static partial void CheckID(BaseVobInstance inst)
         {
-            if (inst.ID < 0 || inst.ID > WorldObject.MAX_ID)
+            if (inst.ID < 0 || inst.ID > GameObject.MAX_ID)
             {
                 //search free ID
                 if (freeIDs.Count > 0)
@@ -27,9 +27,9 @@ namespace GUC.WorldObjects.Collections
                 else
                 {
                     while (true)
-                        if (idCount >= WorldObject.MAX_ID)
+                        if (idCount >= GameObject.MAX_ID)
                         {
-                            throw new Exception("InstanceCollection reached maximum! " + WorldObject.MAX_ID);
+                            throw new Exception("InstanceCollection reached maximum! " + GameObject.MAX_ID);
                         }
                         else
                         {
@@ -41,10 +41,7 @@ namespace GUC.WorldObjects.Collections
             }
         }
 
-        static partial void pAdd(BaseVobInstance inst)
-        {
-        }
-
+        static partial void pAdd(BaseVobInstance inst) { }
         static partial void pRemove(BaseVobInstance inst)
         {
             freeIDs.Add(inst.ID);

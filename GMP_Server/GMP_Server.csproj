@@ -44,7 +44,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\GothicII\System\Multiplayer\Server\</OutputPath>
+    <OutputPath>..\GothicII\System\Multiplayer\UntoldChapters\SumpfkrautOnline\Server\</OutputPath>
     <DefineConstants>TRACE;D_SERVER</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -59,8 +59,9 @@
     <GenerateManifests>false</GenerateManifests>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="RakNetSwig">
-      <HintPath>..\GothicII\System\UntoldChapter\DLL\RakNetSwig.dll</HintPath>
+    <Reference Include="RakNetSwig, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\GothicII\System\Multiplayer\UntoldChapters\SumpfkrautOnline\Server\RakNetSwig.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -118,17 +119,14 @@
     <Compile Include="..\Network\WorldObjects\Collections\InstanceCollection.cs">
       <Link>WorldObjects\Collections\InstanceCollection.cs</Link>
     </Compile>
+    <Compile Include="..\Network\WorldObjects\Collections\ItemContainer.cs">
+      <Link>WorldObjects\Collections\ItemContainer.cs</Link>
+    </Compile>
     <Compile Include="..\Network\WorldObjects\Collections\VobCollection.cs">
       <Link>WorldObjects\Collections\VobCollection.cs</Link>
     </Compile>
-    <Compile Include="..\Network\WorldObjects\Collections\WorldCollection.cs">
-      <Link>WorldObjects\Collections\WorldCollection.cs</Link>
-    </Compile>
     <Compile Include="..\Network\WorldObjects\GameObject.cs">
       <Link>WorldObjects\GameObject.cs</Link>
-    </Compile>
-    <Compile Include="..\Network\WorldObjects\Instances\BaseInstance.cs">
-      <Link>WorldObjects\Instances\BaseInstance.cs</Link>
     </Compile>
     <Compile Include="..\Network\WorldObjects\Instances\BaseVobInstance.cs">
       <Link>WorldObjects\Instances\BaseVobInstance.cs</Link>
@@ -169,9 +167,6 @@
     <Compile Include="..\Network\WorldObjects\Instances\VobInstance.cs">
       <Link>WorldObjects\Instances\VobInstance.cs</Link>
     </Compile>
-    <Compile Include="..\Network\WorldObjects\Instances\WorldInstance.cs">
-      <Link>WorldObjects\Instances\WorldInstance.cs</Link>
-    </Compile>
     <Compile Include="..\Network\WorldObjects\Item.cs">
       <Link>WorldObjects\Item.cs</Link>
     </Compile>
@@ -211,9 +206,6 @@
     <Compile Include="..\Network\WorldObjects\World.cs">
       <Link>WorldObjects\World.cs</Link>
     </Compile>
-    <Compile Include="..\Network\WorldObjects\WorldObject.cs">
-      <Link>WorldObjects\WorldObject.cs</Link>
-    </Compile>
     <Compile Include="Log\Logger.Server.cs" />
     <Compile Include="Network\Client.cs" />
     <Compile Include="Network\NPCCell.cs" />
@@ -224,10 +216,11 @@
     <Compile Include="Network\Messages\VobMessage.cs" />
     <Compile Include="Network\NetCell.cs" />
     <Compile Include="Options\ServerOptions.cs" />
+    <Compile Include="Scripting\ScriptInterface.cs" />
     <Compile Include="TCPStatus.cs" />
     <Compile Include="WorldObjects\BaseVob.Server.cs" />
     <Compile Include="WorldObjects\Collections\InstanceCollection.Server.cs" />
-    <Compile Include="WorldObjects\Instances\WorldInstance.Server.cs" />
+    <Compile Include="WorldObjects\Collections\VobCollection.Server.cs" />
     <Compile Include="WorldObjects\Vob.Server.cs" />
     <Compile Include="WorldObjects\Item.Server.cs" />
     <Compile Include="WorldObjects\Instances\ItemInstance.Server.cs" />

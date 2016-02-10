@@ -6,18 +6,9 @@ using GUC.Enumeration;
 using GUC.Network;
 using GUC.WorldObjects.Collections;
 
-namespace GUC.WorldObjects.Instances
+namespace GUC.WorldObjects.Instances.Mobs
 {
     public partial class MobInterInstance : MobInstance
     {
-        public MobInterInstance(string instanceName, IScriptMobInterInstance scriptObject)
-            : this(0, instanceName, scriptObject)
-        {
-        }
-
-        public MobInterInstance(ushort ID, string instanceName, IScriptMobInterInstance scriptObject) 
-            : base(ID, instanceName, scriptObject)
-        {
-        }
     }
 }

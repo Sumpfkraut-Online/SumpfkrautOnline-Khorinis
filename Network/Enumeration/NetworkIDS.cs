@@ -10,10 +10,13 @@ namespace GUC.Enumeration
     */
     internal enum NetworkIDs : byte
     {
-        //login stuff
         ConnectionMessage,
-        MenuMessage,
+        RankMessage,
         PlayerControlMessage,
+
+        // Messages for Scripts
+        MenuMessage,
+        IngameMessage,
 
         PlayerPickUpItemMessage,
         PlayerAttributeMSMessage,

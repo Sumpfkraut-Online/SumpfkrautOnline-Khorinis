@@ -4,9 +4,8 @@ using System.Linq;
 using System.Text;
 using GUC.Enumeration;
 using GUC.Network;
-using GUC.WorldObjects.Collections;
 
-namespace GUC.WorldObjects.Instances
+namespace GUC.WorldObjects.Instances.Mobs
 {
     public partial class MobInstance : VobInstance
     {

@@ -7,13 +7,13 @@ using GUC.Network;
 
 namespace GUC.WorldObjects.Instances
 {
-    public abstract partial class BaseVobInstance : BaseInstance
+    public abstract partial class BaseVobInstance : GameObject
     {
         public abstract VobTypes VobType { get; }
 
         #region ScriptObject
 
-        public partial interface IScriptBaseVobInstance : IScriptBaseInstance
+        public partial interface IScriptBaseVobInstance : IScriptGameObject
         {
         }
 
@@ -21,6 +21,13 @@ namespace GUC.WorldObjects.Instances
         {
             get { return (IScriptBaseVobInstance)base.ScriptObject; }
         }
+
+        #endregion
+
+        #region Properties
+
+        bool isStatic = false;
+        public bool IsStatic { get { return isStatic; } }
 
         #endregion
 

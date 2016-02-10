@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Enumeration;
-using GUC.WorldObjects.Collections;
 using GUC.Network;
 
-namespace GUC.WorldObjects.Instances
+namespace GUC.WorldObjects.Instances.Mobs
 {
     public partial class MobLadderInstance : MobInterInstance
     {

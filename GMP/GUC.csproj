@@ -102,11 +102,23 @@
     <Compile Include="..\Network\WorldObjects\Collections\InstanceCollection.cs">
       <Link>WorldObjects\Colletions\InstanceCollection.cs</Link>
     </Compile>
-    <Compile Include="..\Network\WorldObjects\Instances\BaseInstance.cs">
-      <Link>WorldObjects\Instances\BaseInstance.cs</Link>
+    <Compile Include="..\Network\WorldObjects\Collections\ItemContainer.cs">
+      <Link>WorldObjects\Colletions\ItemContainer.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Collections\VobCollection.cs">
+      <Link>WorldObjects\Colletions\VobCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\GameObject.cs">
+      <Link>WorldObjects\GameObject.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\BaseVobInstance.cs">
+      <Link>WorldObjects\Instances\BaseVobInstance.cs</Link>
     </Compile>
     <Compile Include="..\Network\WorldObjects\Instances\ItemInstance.cs">
       <Link>WorldObjects\Instances\ItemInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\Mobs\MobBedInstance.cs">
+      <Link>WorldObjects\Instances\Mobs\MobBedInstance.cs</Link>
     </Compile>
     <Compile Include="..\Network\WorldObjects\Instances\Mobs\MobContainerInstance.cs">
       <Link>WorldObjects\Instances\Mobs\MobContainerInstance.cs</Link>
@@ -147,6 +159,9 @@
     <Compile Include="..\Network\WorldObjects\Mobs\Mob.cs">
       <Link>WorldObjects\Mobs\Mob.cs</Link>
     </Compile>
+    <Compile Include="..\Network\WorldObjects\Mobs\MobBed.cs">
+      <Link>WorldObjects\Mobs\MobBed.cs</Link>
+    </Compile>
     <Compile Include="..\Network\WorldObjects\Mobs\MobContainer.cs">
       <Link>WorldObjects\Mobs\MobContainer.cs</Link>
     </Compile>
@@ -180,9 +195,6 @@
     <Compile Include="..\Network\WorldObjects\World.cs">
       <Link>WorldObjects\World.cs</Link>
     </Compile>
-    <Compile Include="..\Network\WorldObjects\WorldObject.cs">
-      <Link>WorldObjects\WorldObject.cs</Link>
-    </Compile>
     <Compile Include="GUI\GUCInventory.cs" />
     <Compile Include="GUI\GUCTextBox.cs" />
     <Compile Include="GUI\GUCView.cs" />
@@ -206,8 +218,10 @@
     <Compile Include="SplashScreen.xaml.cs">
       <DependentUpon>SplashScreen.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WorldObjects\BaseVob.Client.cs" />
     <Compile Include="WorldObjects\Colletions\InstanceCollection.Client.cs" />
     <Compile Include="WorldObjects\Instances\ItemInstance.Client.cs" />
+    <Compile Include="WorldObjects\Instances\Mobs\MobBedInstance.Client.cs" />
     <Compile Include="WorldObjects\Instances\Mobs\MobContainerInstance.Client.cs" />
     <Compile Include="WorldObjects\Instances\Mobs\MobDoorInstance.Client.cs" />
     <Compile Include="WorldObjects\Instances\Mobs\MobFireInstance.Client.cs" />
@@ -221,6 +235,7 @@
     <Compile Include="WorldObjects\Instances\VobInstance.Client.cs" />
     <Compile Include="WorldObjects\Item.Client.cs" />
     <Compile Include="WorldObjects\Mobs\Mob.Client.cs" />
+    <Compile Include="WorldObjects\Mobs\MobBed.Client.cs" />
     <Compile Include="WorldObjects\Mobs\MobContainer.Client.cs" />
     <Compile Include="WorldObjects\Mobs\MobDoor.Client.cs" />
     <Compile Include="WorldObjects\Mobs\MobFire.Client.cs" />
@@ -277,7 +292,6 @@
   <ItemGroup>
     <Resource Include="Resources\Splash.png" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

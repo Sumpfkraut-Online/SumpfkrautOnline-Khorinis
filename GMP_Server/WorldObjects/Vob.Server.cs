@@ -51,7 +51,7 @@ namespace GUC.WorldObjects
                 }
                 if (this.IsSpawned)
                 {
-                    VobMessage.WritePosDir(this.Cell.SurroundingClients(), null);
+                    //VobMessage.WritePosDir(this.Cell.SurroundingClients(), null);
                 }
             }
         }

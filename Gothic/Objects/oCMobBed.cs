@@ -7,7 +7,6 @@ namespace Gothic.Objects
 {
     public class oCMobBed : oCMobInter
     {
-
         public oCMobBed()
         {
         }

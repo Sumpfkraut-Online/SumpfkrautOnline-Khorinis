@@ -19,6 +19,7 @@ namespace GUC.Enumeration
         MobWheel,
         MobContainer,
         MobDoor,
+        MobBed,
 
         Maximum
     }

@@ -20,7 +20,7 @@ namespace GUC.Server
             {
                 GameServer.Start();
 
-                //ScriptManager.StartScripts("Scripts\\ServerScripts.dll");
+                ScriptManager.StartScripts("Scripts\\ServerScripts.dll");
 
                 const int updateRate = 20; //time between server ticks
 

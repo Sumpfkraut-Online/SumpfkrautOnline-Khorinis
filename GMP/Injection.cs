@@ -64,8 +64,7 @@ namespace GUC.Client
                 }
                 #endregion
 
-                Program.ProjectName = message;
-                Program.ProjectPath = GetProjectPath(message);
+                Program.SetPaths(message);
                 AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;
 
                 SplashScreen.Create();
@@ -100,6 +99,9 @@ namespace GUC.Client
                 hGame.AddHooks();
 
                 #region Some more editing
+                // Make rain drops being blocked by vobs!
+                WinApi.Process.Write((byte)0xE0, 0x5E227A);
+
                 // Blocking Call Init Scripts!
                 WinApi.Process.Write((byte)0xC3, 0x006C1F60);
                 // Blocking Call Startup Scripts!
@@ -114,7 +116,7 @@ namespace GUC.Client
                 #endregion
 
                 GameClient.Connect();
-            
+
                 while (true)
                 {
                     Thread.Sleep(10000);
@@ -125,22 +127,6 @@ namespace GUC.Client
                 Logger.LogError(Environment.CurrentDirectory + " " + ex.Source + " " + ex.Message + " " + ex.StackTrace);
             }
             return 0;
-        }
-
-        static string GetProjectPath(string projectName)
-        {
-            string current = Path.GetFullPath(Environment.CurrentDirectory); // It's Gothic2/System when the process starts, Gothic2/ afterwards.
-
-            if (File.Exists(current + "\\Gothic2.exe"))
-            { // Gothic2/System/
-                return Path.GetFullPath(current + "\\Multiplayer\\UntoldChapters\\" + projectName + "\\");
-            }
-            else if (File.Exists(current + "\\System\\Gothic2.exe"))
-            { // Gothic2/
-                return Path.GetFullPath(current + "\\System\\Multiplayer\\UntoldChapters\\" + projectName + "\\");
-            }
-
-            throw new Exception("Gothic 2 not found!");
         }
 
         static Assembly ResolveAssembly(object sender, ResolveEventArgs args)

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using Gothic.Objects;
 
-namespace GUC.WorldObjects.Instances
+namespace GUC.WorldObjects.Instances.Mobs
 {
-    public partial class MobInstance : VobInstance
+    public partial class MobInstance
     {
         public override zCVob CreateVob(zCVob vob = null)
         {

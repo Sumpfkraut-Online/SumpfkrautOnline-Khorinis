@@ -18,11 +18,11 @@ namespace GUC.Client.Hooks
         public static void AddHooks()
         {
             // hook outgame loop and kick out the original menus
-            var hi = Process.Hook(Constants.GUCDll, typeof(hGame).GetMethod("RunOutgame"), 0x004292D0, 7, 2);
+            var hi = Process.Hook(Program.GUCDll, typeof(hGame).GetMethod("RunOutgame"), 0x004292D0, 7, 2);
             Process.Write(new byte[] { 0xC2, 0x04, 0x00, 0x90, 0x90, 0x90, 0x90 }, hi.oldFuncInNewFunc.ToInt32());
 
             // hook ingame loop
-            Process.Hook(Constants.GUCDll, typeof(hGame).GetMethod("RunIngame"), 0x006C86A0, 7, 0);
+            Process.Hook(Program.GUCDll, typeof(hGame).GetMethod("RunIngame"), 0x006C86A0, 7, 0);
 
             Logger.Log("Added game loop hooks.");
         }
@@ -89,6 +89,15 @@ namespace GUC.Client.Hooks
                 {
                     ingameStarted = true;
                     ScriptManager.Interface.StartIngame();
+                }
+                
+                GameClient.Update();
+                InputHandler.Update();
+                ScriptManager.Interface.Update(DateTime.UtcNow.Ticks);
+
+                if (InputHandler.IsPressed(WinApi.User.Enumeration.VirtualKeys.F4))
+                {
+                    Program.Exit();
                 }
 
                 /*if ((WinApi.User.Input.GetAsyncKeyState(WinApi.User.Enumeration.VirtualKeys.F1) & 0x8001) == 0x8001 || (WinApi.User.Input.GetAsyncKeyState(WinApi.User.Enumeration.VirtualKeys.F1) & 0x8000) == 0x8000)

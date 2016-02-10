@@ -12,13 +12,19 @@ namespace GUC.WorldObjects.Collections
         static Dictionary<int, BaseVobInstance> instances;
         static Dictionary<int, BaseVobInstance>[] typeDicts;
 
+        static List<BaseVobInstance> dynInstances;
+        static List<BaseVobInstance>[] dynDicts;
+
         static InstanceCollection()
         {
             instances = new Dictionary<int, BaseVobInstance>();
+            dynInstances = new List<BaseVobInstance>();
             typeDicts = new Dictionary<int, BaseVobInstance>[(int)VobTypes.Maximum];
+            dynDicts = new List<BaseVobInstance>[(int)VobTypes.Maximum];
             for (int i = 0; i < (int)VobTypes.Maximum; i++)
             {
                 typeDicts[i] = new Dictionary<int, BaseVobInstance>();
+                dynDicts[i] = new List<BaseVobInstance>();
             }
         }
 
@@ -41,14 +47,34 @@ namespace GUC.WorldObjects.Collections
             return instances.Count;
         }
 
-        public static IEnumerable<BaseVobInstance> GetAll(VobTypes type)
+        public static IEnumerable<BaseVobInstance> GetAll(int type)
         {
-            return typeDicts[(int)type].Values;
+            return typeDicts[type].Values;
         }
 
-        public static int GetCount(VobTypes type)
+        public static int GetCount(int type)
         {
-            return typeDicts[(int)type].Count;
+            return typeDicts[type].Count;
+        }
+
+        public static IEnumerable<BaseVobInstance> GetAllDynamics()
+        {
+            return dynInstances;
+        }
+
+        public static IEnumerable<BaseVobInstance> GetAllDynamics(int type)
+        {
+            return dynDicts[type];
+        }
+
+        public static int GetCountDynamics()
+        {
+            return dynInstances.Count;
+        }
+
+        public static int GetCountDynamics(int type)
+        {
+            return dynDicts[type].Count;
         }
 
         #endregion
@@ -65,6 +91,12 @@ namespace GUC.WorldObjects.Collections
 
             instances.Add(inst.ID, inst);
             typeDicts[(int)inst.VobType].Add(inst.ID, inst);
+
+            if (!inst.IsStatic)
+            {
+                dynInstances.Add(inst);
+                dynDicts[(int)inst.VobType].Add(inst);
+            }
 
             pAdd(inst);
         }
@@ -84,6 +116,11 @@ namespace GUC.WorldObjects.Collections
                 {
                     instances.Remove(inst.ID);
                     typeDicts[(int)inst.VobType].Remove(inst.ID);
+                    if (!inst.IsStatic)
+                    {
+                        dynInstances.Remove(inst);
+                        dynDicts[(int)inst.VobType].Remove(inst);
+                    }
 
                     pRemove(inst);
                 }
