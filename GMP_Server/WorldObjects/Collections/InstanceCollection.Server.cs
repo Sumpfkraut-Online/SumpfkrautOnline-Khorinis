@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Enumeration;
 using GUC.WorldObjects.Instances;
-using GUC.Network;
-using System.Security.Cryptography;
 using GUC.Server.Network;
+using GUC.Server.Network.Messages;
 
 namespace GUC.WorldObjects.Collections
 {
@@ -41,9 +39,20 @@ namespace GUC.WorldObjects.Collections
             }
         }
 
-        static partial void pAdd(BaseVobInstance inst) { }
+        static partial void pAdd(BaseVobInstance inst)
+        {
+            if (!inst.IsStatic)
+            {
+                inst.WriteCreate();
+            }
+        }
+
         static partial void pRemove(BaseVobInstance inst)
         {
+            if (!inst.IsStatic)
+            {
+                inst.WriteDelete();
+            }
             freeIDs.Add(inst.ID);
             inst.id = -1;
         }

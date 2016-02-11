@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Network;
+using GUC.Enumeration;
+using GUC.WorldObjects.Instances;
 
 namespace GUC.Scripting
 {
@@ -33,5 +35,9 @@ namespace GUC.Scripting
         /// Is called when an Ingame-Message from the server is received.
         /// </summary>
         void OnReadIngameMsg(PacketReader stream);
+
+
+        void OnCreateInstanceMsg(VobTypes type, PacketReader stream);
+        void OnDeleteInstanceMsg(BaseVobInstance instance);
     }
 }

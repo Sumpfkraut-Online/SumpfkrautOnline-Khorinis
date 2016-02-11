@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using GUC.WorldObjects.Instances;
 using GUC.Network;
 using GUC.Enumeration;
+using GUC.WorldObjects.Collections;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
@@ -30,6 +31,25 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
                 throw new ArgumentNullException("BaseDef is null!");
 
             this.baseDef = def;
+        }
+
+        protected void ReadDef(BaseVobInstance def, PacketReader stream)
+        {
+            if (stream == null)
+                throw new ArgumentNullException("Stream is null!");
+
+            SetBaseDef(def);
+            def.ReadStream(stream); // calls OnReadProperties too!
+        }
+
+        public void Create()
+        {
+            InstanceCollection.Add(this.baseDef);
+        }
+
+        public void Delete()
+        {
+            InstanceCollection.Remove(this.baseDef);
         }
 
         public virtual void OnWriteProperties(PacketWriter stream) { }

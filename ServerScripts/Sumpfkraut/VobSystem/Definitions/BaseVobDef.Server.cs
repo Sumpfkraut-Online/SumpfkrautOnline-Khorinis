@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.WorldObjects.Collections;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
@@ -13,11 +12,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         protected BaseVobDef(string codeName)
         {
             this.CodeName = codeName.Trim().ToUpper();
-        }
-
-        public void Create()
-        {
-            InstanceCollection.Add(this.baseDef);
         }
     }
 }

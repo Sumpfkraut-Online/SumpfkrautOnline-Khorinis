@@ -5,7 +5,7 @@ using System.Text;
 using GUC.Network;
 using GUC.Enumeration;
 using RakNet;
-using GUC.Log;
+using GUC.Scripting;
 using System.Security.Cryptography;
 using System.Management;
 
@@ -15,7 +15,14 @@ namespace GUC.Client.Network.Messages
     {
         public static void Read(PacketReader strm)
         {
-
+            for (int i = 0; i < (int)VobTypes.Maximum; i++)
+            {
+                int num = strm.ReadUShort();
+                for (int n = 0; n < num; n++)
+                {
+                    ScriptManager.Interface.OnCreateInstanceMsg((VobTypes)i, strm);
+                }
+            }
         }
 
         public static void Write()

@@ -21,6 +21,5 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         public bool CDStatic { get { return baseDef.CDStatic; } set { baseDef.CDStatic = value; } }
 
         #endregion
-
     }
 }

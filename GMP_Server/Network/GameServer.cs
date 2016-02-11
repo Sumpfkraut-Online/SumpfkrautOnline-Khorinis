@@ -18,12 +18,10 @@ namespace GUC.Server.Network
         internal readonly static ServerOptions Options = ServerOptions.Init();
 
         readonly static Dictionary<ulong, Client> clientDict = new Dictionary<ulong, Client>();
-        public static IEnumerable<Client> GetClients() { return clientDict.Values; }
+        public static IEnumerable<Client> GetValidClients() { return clientDict.Values.Where(c => c.isValid); }
+        public static IEnumerable<Client> GetAllClients() { return clientDict.Values; }
 
         internal readonly static RakPeerInterface ServerInterface = RakPeer.GetInstance();
-
-        delegate void MsgReader(PacketReader stream, Client client, NPC character, World world);
-        readonly static Dictionary<NetworkIDs, MsgReader> messageListener = new Dictionary<NetworkIDs, MsgReader>();
 
         readonly static PacketReader pktReader = new PacketReader();
         readonly static PacketWriter pktWriter = new PacketWriter(128000);
@@ -34,8 +32,6 @@ namespace GUC.Server.Network
             if (started)
                 return;
             started = true;
-
-            InitMessages();
 
             using (SocketDescriptor socketDescriptor = new SocketDescriptor())
             {
@@ -61,9 +57,30 @@ namespace GUC.Server.Network
             }
         }
 
-        static void InitMessages()
+        static void ReadMessage(NetworkIDs id, Client client, PacketReader stream)
         {
-            messageListener.Add(NetworkIDs.IngameMessage, ReadIngameMessage);
+            switch (id)
+            {
+                case NetworkIDs.ConnectionMessage:
+                    DisconnectClient(client);
+                    Logger.LogWarning("Client sent another ConnectionMessage. Kicked: {0} IP:{1}", client.guid.g, client.systemAddress);
+                    break;
+                case NetworkIDs.MenuMessage:
+                    ScriptManager.Interface.OnReadMenuMsg(client, pktReader);
+                    break;
+
+                // Ingame:
+
+                case NetworkIDs.IngameMessage:
+                    ScriptManager.Interface.OnReadIngameMsg(client, stream);
+                    break;
+
+                default:
+                    DisconnectClient(client);
+                    Logger.LogWarning("Client sent unknown NetworkID. Kicked: {0} IP:{1}", client.guid.g, client.systemAddress);
+                    break;
+
+            }
 
             /*messageListener.Add(NetworkIDs.MenuMessage, HandleLoginMsg);
             messageListener.Add(NetworkIDs.PlayerControlMessage, NPC.ReadControl);
@@ -103,7 +120,6 @@ namespace GUC.Server.Network
         {
             Packet p = ServerInterface.Receive();
             Client client;
-            MsgReader readFunc;
             NetworkIDs msgID;
             DefaultMessageIDTypes msgDefaultType;
 
@@ -160,38 +176,14 @@ namespace GUC.Server.Network
                                 }
                                 else
                                 {
-                                    if (msgID <= NetworkIDs.MenuMessage) // outgame
+                                    if (msgID > NetworkIDs.MenuMessage && (client.Character == null || client.Character.World == null))
                                     {
-                                        if (msgID == NetworkIDs.ConnectionMessage)
-                                        {
-                                            DisconnectClient(client);
-                                            Logger.LogWarning("Client sent another ConnectionMessage. Kicked: {0} IP:{1}", msgID, p.guid, p.systemAddress);
-                                        }
-                                        else if (msgID == NetworkIDs.MenuMessage)
-                                        {
-                                            ScriptManager.Interface.OnReadMenuMsg(client, pktReader);
-                                        }
+                                        DisconnectClient(client);
+                                        Logger.LogWarning("Client sent {0} before being ingame. Kicked: {1} IP:{2}", msgID, p.guid, p.systemAddress);
                                     }
-                                    else // ingame
+                                    else
                                     {
-                                        if (client.Character == null || client.Character.World == null)
-                                        {
-                                            DisconnectClient(client);
-                                            Logger.LogWarning("Client sent {0} before being ingame. Kicked: {1} IP:{2}", msgID, p.guid, p.systemAddress);
-                                        }
-                                        else
-                                        {
-                                            messageListener.TryGetValue(msgID, out readFunc);
-                                            if (readFunc == null)
-                                            {
-                                                DisconnectClient(client);
-                                                Logger.LogWarning("Client sent unknown NetworkID. Kicked: {0} IP:{1}", p.guid, p.systemAddress);
-                                            }
-                                            else
-                                            {
-                                                readFunc(pktReader, client, client.Character, client.Character.World);
-                                            }
-                                        }
+                                        ReadMessage(msgID, client, pktReader);
                                     }
                                 }
                             }
@@ -271,11 +263,6 @@ namespace GUC.Server.Network
         #endregion
 
         #region Script Ingame Message
-        
-        static void ReadIngameMessage(PacketReader stream, Client client, NPC character, World world)
-        {
-            ScriptManager.Interface.OnReadIngameMsg(client, stream);
-        }
 
         public static PacketWriter GetIngameMsgStream()
         {

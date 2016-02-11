@@ -221,6 +221,7 @@
     <Compile Include="WorldObjects\BaseVob.Server.cs" />
     <Compile Include="WorldObjects\Collections\InstanceCollection.Server.cs" />
     <Compile Include="WorldObjects\Collections\VobCollection.Server.cs" />
+    <Compile Include="WorldObjects\Instances\BaseVobInstance.Server.cs" />
     <Compile Include="WorldObjects\Vob.Server.cs" />
     <Compile Include="WorldObjects\Item.Server.cs" />
     <Compile Include="WorldObjects\Instances\ItemInstance.Server.cs" />

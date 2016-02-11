@@ -12,11 +12,21 @@ namespace GUC.Enumeration
     {
         ConnectionMessage,
         RankMessage,
-        PlayerControlMessage,
+        
+        InstanceCreateMessage,
+        InstanceDeleteMessage,
 
         // Messages for Scripts
         MenuMessage,
         IngameMessage,
+
+
+
+
+
+
+
+
 
         PlayerPickUpItemMessage,
         PlayerAttributeMSMessage,

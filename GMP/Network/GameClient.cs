@@ -10,6 +10,8 @@ using GUC.Log;
 using GUC.Client.GUI;
 using GUC.Client.Network.Messages;
 using GUC.Scripting;
+using GUC.WorldObjects.Instances;
+using GUC.WorldObjects.Collections;
 
 namespace GUC.Client.Network
 {
@@ -31,12 +33,7 @@ namespace GUC.Client.Network
         #endregion
 
         #region Script Menu Message
-
-        static void ReadMenuMessage(PacketReader stream)
-        {
-            ScriptManager.Interface.OnReadMenuMsg(stream);
-        }
-
+        
         public static PacketWriter GetMenuMsgStream()
         {
             return SetupStream(NetworkIDs.MenuMessage);
@@ -50,12 +47,7 @@ namespace GUC.Client.Network
         #endregion
 
         #region Script Ingame Message
-
-        static void ReadIngameMessage(PacketReader stream)
-        {
-            ScriptManager.Interface.OnReadIngameMsg(stream);
-        }
-
+        
         public static PacketWriter GetIngameMsgStream()
         {
             return SetupStream(NetworkIDs.IngameMessage);
@@ -75,18 +67,38 @@ namespace GUC.Client.Network
 
         static PacketReader pktReader = new PacketReader();
         static PacketWriter pktWriter = new PacketWriter(128000);
-
-        static Dictionary<NetworkIDs, MsgReader> messageListener = new Dictionary<NetworkIDs, MsgReader>();
-
-        delegate void MsgReader(PacketReader stream);
-        static void InitMsgs()
+        
+        static void ReadMessage(NetworkIDs id, PacketReader stream)
         {
-            messageListener.Add(NetworkIDs.ConnectionMessage, ConnectionMessage.Read);
+            switch (id)
+            {
+                case NetworkIDs.ConnectionMessage:
+                    ConnectionMessage.Read(stream);
+                    break;
+                case NetworkIDs.RankMessage:
+                    GameClient.ReadRank(stream);
+                    break;
+                case NetworkIDs.InstanceCreateMessage:
+                    ScriptManager.Interface.OnCreateInstanceMsg((VobTypes)stream.ReadByte(), stream);
+                    break;
+                case NetworkIDs.InstanceDeleteMessage:
+                    BaseVobInstance inst = InstanceCollection.Get(stream.ReadUShort());
+                    if (inst != null) ScriptManager.Interface.OnDeleteInstanceMsg(inst);
+                    break;
+                case NetworkIDs.MenuMessage:
+                    ScriptManager.Interface.OnReadMenuMsg(stream);
+                    break;
 
-            messageListener.Add(NetworkIDs.RankMessage, ReadRank);
+                // ingame
 
-            messageListener.Add(NetworkIDs.MenuMessage, ReadMenuMessage);
-            messageListener.Add(NetworkIDs.IngameMessage, ReadIngameMessage);
+                case NetworkIDs.IngameMessage:
+                    ScriptManager.Interface.OnReadIngameMsg(stream);
+                    break;
+                default:
+                    Logger.LogError("Received message with invalid NetworkID! " + id);
+                    break;
+            }
+            
             /*
             messageListener.Add(NetworkIDs.AccountErrorMessage, AccountMessage.Error);
             messageListener.Add(NetworkIDs.AccountLoginMessage, AccountMessage.GetCharList);
@@ -131,8 +143,6 @@ namespace GUC.Client.Network
         static GameClient()
         {
             clientInterface = RakPeer.GetInstance();
-
-            InitMsgs();
 
             socketDescriptor = new SocketDescriptor();
             socketDescriptor.port = 0;
@@ -191,8 +201,9 @@ namespace GUC.Client.Network
         static GUCVisual abortInfo;
         static GUCVisual kbsInfo;
         static GUCVisual pingInfo;
-
+        
         static GUCVisual rankInfo;
+        static GUCVisual instInfo;
 
         internal static void Update()
         {
@@ -208,16 +219,16 @@ namespace GUC.Client.Network
                 visText.SetColor(ColorRGBA.Red);
 
                 kbsInfo = GUCVisualText.Create("", 0x2000, 0, true);
-                kbsInfo.Font = GUCView.Fonts.Menu;
                 kbsInfo.Texts[0].Format = GUCVisualText.TextFormat.Right;
 
-                pingInfo = GUCVisualText.Create("", 0x2000, kbsInfo.zView.FontY(), true);
-                pingInfo.Font = GUCView.Fonts.Menu;
+                pingInfo = GUCVisualText.Create("", 0x2000, kbsInfo.zView.FontY()+1, true);
                 pingInfo.Texts[0].Format = GUCVisualText.TextFormat.Right;
 
-                rankInfo = GUCVisualText.Create("Statist", 0x2000, kbsInfo.zView.FontY() + pingInfo.zView.FontY() + 1, true);
-                rankInfo.Font = GUCView.Fonts.Menu;
+                rankInfo = GUCVisualText.Create("Statist", 0x2000, kbsInfo.zView.FontY() + pingInfo.zView.FontY() + 2, true);
                 rankInfo.Texts[0].Format = GUCVisualText.TextFormat.Right;
+
+                instInfo = GUCVisualText.Create("0", 0x2000, kbsInfo.zView.FontY() + pingInfo.zView.FontY() + rankInfo.zView.FontY() + 3, true);
+                instInfo.Texts[0].Format = GUCVisualText.TextFormat.Right;
             }
 
             int counter = 0;
@@ -266,13 +277,8 @@ namespace GUC.Client.Network
                             Logger.Log("Disconnected from server.");
                             break;
                         case DefaultMessageIDTypes.ID_USER_PACKET_ENUM:
-                            MsgReader func;
                             NetworkIDs id = (NetworkIDs)pktReader.ReadByte();
-                            messageListener.TryGetValue(id, out func);
-                            if (func != null)
-                            {
-                                func(pktReader);
-                            }
+                            ReadMessage(id, pktReader);
                             break;
                     }
                     clientInterface.DeallocatePacket(packet);
@@ -308,7 +314,7 @@ namespace GUC.Client.Network
 
                 // update ping text on screen
                 GUCVisualText pingText = pingInfo.Texts[0];
-                pingText.Text = (ping + "ms");
+                pingText.Text = ("Ping: " + ping + "ms");
                 if (ping <= 120)
                 {
                     pingText.SetColor(new ColorRGBA((byte)(40 + 180 * ping / 120), 220, 40));
@@ -325,12 +331,14 @@ namespace GUC.Client.Network
 
                 // update kB/s text on screen
                 int kbs = (int)(((double)packetKB / 1024d) / ((double)time / (double)TimeSpan.TicksPerSecond));
-                kbsInfo.Texts[0].Text = (kbs + "kB/s");
+                kbsInfo.Texts[0].Text = ("Net: " + kbs + "kB/s");
                 lastInfoUpdate = DateTime.UtcNow.Ticks;
                 packetKB = 0;
                 kbsInfo.Show(); // bring to front
 
                 rankInfo.Show();
+                instInfo.Texts[0].Text = ("Instances: " + InstanceCollection.GetCount());
+                instInfo.Show();
             }
         }
 
