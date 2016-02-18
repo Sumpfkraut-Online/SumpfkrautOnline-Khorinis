@@ -137,7 +137,8 @@ namespace WinApi
         }
 
         public delegate void call();
-        private T MAKECALL<T>(CALLTYPE type, UInt32 thisPtr, UInt32 fcallArg, UInt32 funcPtr, CallValue[] args) where T : CallValue, new()
+        private T MAKECALL<T>(CALLTYPE type, UInt32 thisPtr, UInt32 fcallArg, 
+            UInt32 funcPtr, CallValue[] args) where T : CallValue, new()
         {
             if (funcPtr == 0)
                 throw new Exception("Funcptr not found");
@@ -197,7 +198,8 @@ namespace WinApi
 
             //call
             list.Add(0xE8);
-            list.AddRange(BitConverter.GetBytes((uint)(funcPtr - (baseadress.ToInt32() + list.Count) - 4))); // - Aktuelle Addresse - 4
+            list.AddRange(BitConverter.GetBytes((uint)(funcPtr 
+                - (baseadress.ToInt32() + list.Count) - 4))); // - current address - 4
             
             //Return schreiben
             if (returnValue.ValueLength() != 0)
@@ -215,7 +217,7 @@ namespace WinApi
             list.Add(0x61);//popad
             list.Add(0xC3);//RTN
 
-            //Write the new function
+            // Write the new function
             Write(list.ToArray(), baseadress.ToInt32());
 
             //Call the new function
@@ -227,17 +229,19 @@ namespace WinApi
             else
             {
                 uint threadID;
-                IntPtr hThread = Kernel.Process.CreateRemoteThread(Handle, IntPtr.Zero, 0, baseadress, IntPtr.Zero, 0, out threadID);
+                IntPtr hThread = Kernel.Process.CreateRemoteThread(Handle, IntPtr.Zero, 0, 
+                    baseadress, IntPtr.Zero, 0, out threadID);
                 WaitForThreadToExit(hThread);
                 CloseHandle(hThread);
             }
             
-            //Bisschen aufräumen
+            // cleanup
             Free(baseadress, length);
 
             if (returnValue.ValueLength() != 0)
             {
-                returnValue.Initialize(this, ReadInt(returnAddress.ToInt32()));//Adresse in der die return Value gespeichert wurde
+                // address where the return value was written to
+                returnValue.Initialize(this, ReadInt(returnAddress.ToInt32()));
                 Free(returnAddress, returnValue.ValueLength());
                 return returnValue;
             }
@@ -471,7 +475,8 @@ namespace WinApi
         public bool VirtualProtect(int address, int size)
         {
             Kernel.Process.MemoryProtection k;
-            return Kernel.Process.VirtualProtect(new IntPtr(address), (uint)size, Kernel.Process.MemoryProtection.ExecuteReadWrite, out k);
+            return Kernel.Process.VirtualProtect(new IntPtr(address), (uint)size, 
+                Kernel.Process.MemoryProtection.ExecuteReadWrite, out k);
         }
 
 
@@ -479,7 +484,9 @@ namespace WinApi
         {
             if (size == 0)
                 return IntPtr.Zero;
-            IntPtr ptr=  WinApi.Kernel.Process.VirtualAllocEx(Handle, IntPtr.Zero, size, WinApi.Kernel.Process.AllocationType.Reserve | WinApi.Kernel.Process.AllocationType.Commit, WinApi.Kernel.Process.MemoryProtection.ReadWrite);
+            IntPtr ptr=  WinApi.Kernel.Process.VirtualAllocEx(Handle, IntPtr.Zero, size, 
+                WinApi.Kernel.Process.AllocationType.Reserve | WinApi.Kernel.Process.AllocationType.Commit, 
+                WinApi.Kernel.Process.MemoryProtection.ReadWrite);
             if (ptr == IntPtr.Zero)
                 Kernel.Error.GetLastError();
             return ptr;
@@ -489,7 +496,8 @@ namespace WinApi
         {
             if (ptr == IntPtr.Zero || size == 0)
                 return false;
-            if (!WinApi.Kernel.Process.VirtualFreeEx(Handle, ptr, (uint)size, Kernel.Process.AllocationType.Decommit))
+            if (!WinApi.Kernel.Process.VirtualFreeEx(Handle, ptr, (uint)size, 
+                Kernel.Process.AllocationType.Decommit))
                 Kernel.Error.GetLastError();
             if (!WinApi.Kernel.Process.VirtualFreeEx(Handle, ptr, 0, Kernel.Process.AllocationType.Release))
                 Kernel.Error.GetLastError();

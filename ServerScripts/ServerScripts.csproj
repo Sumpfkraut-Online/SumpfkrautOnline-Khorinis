@@ -59,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Accounts\AccountSystem.cs" />
+    <Compile Include="Accounts\TestAccountSystem.cs" />
     <Compile Include="Alchemy\AccessPolicyServer.cs" />
     <Compile Include="Alchemy\Classes\Context.cs" />
     <Compile Include="Alchemy\Classes\Header.cs" />

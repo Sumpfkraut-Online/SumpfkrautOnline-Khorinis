@@ -516,6 +516,7 @@ namespace GUC.Server.Scripts
 
             // -- Websocket-Server --
             Sumpfkraut.Web.WS.WSServer wsServer = new Sumpfkraut.Web.WS.WSServer();
+            wsServer.SetObjName("WSServer");
             wsServer.Init();
             wsServer.Start();
             
@@ -528,6 +529,7 @@ namespace GUC.Server.Scripts
             Instances.VobInstances.Init();
 
             Accounts.AccountSystem.Get(); //init
+            //Accounts.TestAccountSystem accountSystem = new Accounts.TestAccountSystem();
 
             DamageScript.Init();
 

@@ -33,8 +33,8 @@ namespace GUC.Types
         public IgTime startTime;
         public IgTime endTime;
 
-        public static WeatherEvent weatherOverride = new WeatherEvent(WeatherType.undefined,
-            new IgTime(0, 20, 1), new IgTime(0, 20, 0));
+        public static WeatherEvent weatherOverride = new WeatherEvent(WeatherType.rain,
+            new IgTime(0, 0, 0), new IgTime(0, 0, 1));
 
 
         public WeatherEvent (WeatherEvent weatherEvent)

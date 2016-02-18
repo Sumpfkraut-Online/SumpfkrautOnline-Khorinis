@@ -24,16 +24,11 @@ namespace GUC.Server.WorldObjects
 
         protected IgTime igTime;
         public IgTime GetIgTime() { return this.igTime; }
+
         protected float igTimeRate;
         public float GetIgTimeRate () { return this.igTimeRate; }
-        protected Object lock_IGTime = new Object();
 
-        //protected WeatherType weatherType;
-        //public WeatherType GetWeatherType() { return this.weatherType; }
-        //protected IgTime weatherStartTime;
-        //public IgTime GetWeatherStartTime () { return this.weatherStartTime; }
-        //protected IgTime weatherEndTime;
-        //public IgTime GetWeatherEndTime () { return this.weatherEndTime; }
+        protected Object lock_IGTime = new Object();
 
         protected WeatherEvent weatherEvent;
         public WeatherEvent GetWeatherEvent () { return this.weatherEvent; }
@@ -63,10 +58,11 @@ namespace GUC.Server.WorldObjects
             //scav.DrawnItem = Item.Fists;
             //scav.Spawn(this);
 
-            igTime = new IgTime(1, 0, 0);
+            igTime = new IgTime(1, 6, 30);
             igTimeRate = 0f;
 
             this.weatherEvent = new WeatherEvent(WeatherEvent.weatherOverride);
+            Log.Logger.print("~~~~> " + this.weatherEvent);
 
             //Vob mob = Vob.Create("forge");
             //mob.Spawn(this, new Types.Vec3f(-200, -100, 200), new Types.Vec3f(0, 0, 1));

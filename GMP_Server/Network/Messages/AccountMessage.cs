@@ -32,6 +32,12 @@ namespace GUC.Server.Network.Messages
                 client.accountID = OnLoginAccount(accName, accPW);
                 if (client.accountID != -1 && OnGetCharacters != null)
                 {
+                    // FOR TESTING PURPOSES
+                    Log.Logger.print(client);
+                    AccCharInfo[] info = OnGetCharacters(client.accountID);
+                    Log.Logger.print(String.Format("{0} - length: {1}", info, info.Length));
+                    Log.Logger.print(info[0]);
+
                     SendCharList(client, OnGetCharacters(client.accountID));
                 }
                 else

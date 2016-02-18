@@ -83,11 +83,12 @@ namespace GUC.Server.Network
 
             // additional adjustments to synchronize surroundings
 
+            Log.Logger.print("+++++> " + character.World.GetWeatherEvent());
             // update ingame-time
             character.World.ChangeIgTime(character.World.GetIgTime(), character.World.GetIgTimeRate(),
                 new List<NPC> { character });
             // update ingame-weather
-            character.World.ChangeIgWeather(character.World.GetWeatherEvent(), 
+            character.World.ChangeIgWeather(character.World.GetWeatherEvent(),
                 new List<NPC> { character });
         }
 

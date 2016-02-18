@@ -5,6 +5,7 @@ using System.Text;
 using GUC.Client.Network.Messages;
 using GUC.Network;
 using GUC.Client.GUI.MainMenu;
+using Gothic.zClasses;
 
 namespace GUC.Client.Menus.MainMenus
 {
