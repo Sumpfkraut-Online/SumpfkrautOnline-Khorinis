@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A46549EC-1747-4E96-B7F0-A7A18B312DA5}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GUC.Client.Scripts</RootNamespace>
+    <AssemblyName>ClientScripts</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\GothicII\System\Multiplayer\UntoldChapters\SumpfkrautOnline\Scripts\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;D_CLIENT</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\GothicII\System\Multiplayer\UntoldChapters\SumpfkrautOnline\Scripts\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Scripts\Sumpfkraut\ScriptObject.cs">
+      <Link>Sumpfkraut\ScriptObject.cs</Link>
+    </Compile>
+    <Compile Include="..\Scripts\Sumpfkraut\VobSystem\Definitions\BaseVobDef.cs">
+      <Link>Sumpfkraut\VobSystem\Definitions\BaseVobDef.cs</Link>
+    </Compile>
+    <Compile Include="..\Scripts\Sumpfkraut\VobSystem\Definitions\ItemDef.cs">
+      <Link>Sumpfkraut\VobSystem\Definitions\ItemDef.cs</Link>
+    </Compile>
+    <Compile Include="..\Scripts\Sumpfkraut\VobSystem\Definitions\NPCDef.cs">
+      <Link>Sumpfkraut\VobSystem\Definitions\NPCDef.cs</Link>
+    </Compile>
+    <Compile Include="..\Scripts\Sumpfkraut\VobSystem\Definitions\VobDef.cs">
+      <Link>Sumpfkraut\VobSystem\Definitions\VobDef.cs</Link>
+    </Compile>
+    <Compile Include="Sumpfkraut\GUI\MainMenu\MainMenuButton.cs" />
+    <Compile Include="Sumpfkraut\GUI\MainMenu\MainMenuCharacter.cs" />
+    <Compile Include="Sumpfkraut\GUI\MainMenu\MainMenuCharSlot.cs" />
+    <Compile Include="Sumpfkraut\GUI\MainMenu\MainMenuChoice.cs" />
+    <Compile Include="Sumpfkraut\GUI\MainMenu\MainMenuItem.cs" />
+    <Compile Include="Sumpfkraut\GUI\MainMenu\MainMenuTextBox.cs" />
+    <Compile Include="Init.cs" />
+    <Compile Include="Sumpfkraut\InputControl.cs" />
+    <Compile Include="Sumpfkraut\Menus\AnimationMenu.cs" />
+    <Compile Include="Sumpfkraut\Menus\DropItemMenu.cs" />
+    <Compile Include="Sumpfkraut\Menus\GUCMenu.cs" />
+    <Compile Include="Sumpfkraut\Menus\MainMenus\CharCreationMenu.cs" />
+    <Compile Include="Sumpfkraut\Menus\MainMenus\CharSelMenu.cs" />
+    <Compile Include="Sumpfkraut\Menus\MainMenus\ExitMenu.cs" />
+    <Compile Include="Sumpfkraut\Menus\MainMenus\GUCMainMenu.cs" />
+    <Compile Include="Sumpfkraut\Menus\MainMenus\HelpChatMenu.cs" />
+    <Compile Include="Sumpfkraut\Menus\MainMenus\HelpMenu.cs" />
+    <Compile Include="Sumpfkraut\Menus\MainMenus\HelpRPMenu.cs" />
+    <Compile Include="Sumpfkraut\Menus\MainMenus\LoginMenu.cs" />
+    <Compile Include="Sumpfkraut\Menus\MainMenus\MainMenu.cs" />
+    <Compile Include="Sumpfkraut\Menus\MainMenus\PlayerlistMenu.cs" />
+    <Compile Include="Sumpfkraut\Menus\MainMenus\RegisterMenu.cs" />
+    <Compile Include="Sumpfkraut\Menus\PlayerInventory.cs" />
+    <Compile Include="Sumpfkraut\Menus\StatusMenu.cs" />
+    <Compile Include="Sumpfkraut\Menus\TradeMenu.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\ItemDef.Client.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\NPCDef.Client.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\VobDef.Client.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GMP\GUC.csproj">
+      <Project>{c670ca0d-f27b-4745-9b76-b06882052e6b}</Project>
+      <Name>GUC</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Gothic\Gothic.csproj">
+      <Project>{82655f73-cf7c-4416-9313-bd657ad8f05f}</Project>
+      <Name>Gothic</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\WinApi\WinApi.csproj">
+      <Project>{52793b3f-130c-4b05-8333-1529981de780}</Project>
+      <Name>WinApi</Name>
+      <Private>False</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

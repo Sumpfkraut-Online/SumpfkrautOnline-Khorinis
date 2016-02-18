@@ -50,8 +50,8 @@ namespace GUC.WorldObjects
         /// <summary>
         /// The world this Vob is currently spawned in.
         /// </summary>
-        public World World { get { return this.world; } }
-        internal World world;
+        public World World { get { return this.world; } internal set { this.world = value; } }
+        World world;
 
         /// <summary>
         /// Checks whether this Vob is spawned. (World != null)

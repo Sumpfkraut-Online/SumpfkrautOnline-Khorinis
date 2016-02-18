@@ -25,7 +25,7 @@ namespace GUC.WorldObjects
         #endregion
 
         #region Properties
-        
+
         public readonly VobCollection Vobs = new VobCollection();
 
         #endregion
@@ -70,16 +70,21 @@ namespace GUC.WorldObjects
             if (vob == null)
                 throw new ArgumentNullException("World.SpawnVob: Vob is null!");
 
-            if (vob.IsSpawned)
+            if (vob.IsStatic)
             {
-                if (vob.World != this)
-                {
-                    vob.Despawn();
-                }
+                if (vob.World == null)
+                    vob.World = this;
             }
             else
             {
-                vob.world = this;
+                if (vob.IsSpawned)
+                {
+                    if (vob.World != this)
+                    {
+                        vob.Despawn();
+                    }
+                }
+                vob.World = this;
             }
 
             pSpawnVob(vob);
@@ -95,10 +100,10 @@ namespace GUC.WorldObjects
 
             if (vob.World != this)
                 return;
-            
+
             pDespawnVob(vob);
 
-            vob.world = null;
+            vob.World = null;
             Vobs.Remove(vob);
         }
 

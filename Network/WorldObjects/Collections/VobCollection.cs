@@ -7,6 +7,8 @@ namespace GUC.WorldObjects.Collections
 {
     public partial class VobCollection
     {
+
+
         public void Add(BaseVob vob)
         {
 
