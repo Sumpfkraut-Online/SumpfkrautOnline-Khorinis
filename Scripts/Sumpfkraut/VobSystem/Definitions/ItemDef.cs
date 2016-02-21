@@ -11,7 +11,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
     public partial class ItemDef : VobDef, ItemInstance.IScriptItemInstance
     {
         #region BaseDef
-        new protected ItemInstance baseDef { get { return (ItemInstance)base.baseDef; } }
+        new public ItemInstance baseDef { get { return (ItemInstance)base.baseDef; } }
 
         /// <summary>The standard name of this item.</summary>
         public string Name { get { return baseDef.Name; } set { baseDef.Name = value; } }

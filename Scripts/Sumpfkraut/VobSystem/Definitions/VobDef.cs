@@ -14,7 +14,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #region Properties
 
-        protected new VobInstance baseDef { get { return (VobInstance)base.baseDef; } }
+        public new VobInstance baseDef { get { return (VobInstance)base.baseDef; } }
 
         public string Visual { get { return baseDef.Visual; } set { baseDef.Visual = value; } }
         public bool CDDyn { get { return baseDef.CDDyn; } set { baseDef.CDDyn = value; } }

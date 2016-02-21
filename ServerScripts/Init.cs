@@ -46,6 +46,8 @@ namespace GUC.Scripts
         public void OnReadMenuMsg(Client client, PacketReader steam)
         {
             Logger.Log("Login!");
+
+            
         }
 
         public void OnReadIngameMsg(Client client, PacketReader steam) { }

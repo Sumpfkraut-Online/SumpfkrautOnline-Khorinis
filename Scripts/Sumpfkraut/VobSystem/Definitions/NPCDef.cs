@@ -8,7 +8,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
     public partial class NPCDef : VobDef, NPCInstance.IScriptNPCInstance
     {
-        new protected NPCInstance baseDef { get { return (NPCInstance)base.baseDef; } }
+        new public NPCInstance baseDef { get { return (NPCInstance)base.baseDef; } }
 
         public string Name { get { return baseDef.Name; }  set { baseDef.Name = value; } }
         public string BodyMesh { get { return baseDef.BodyMesh; } set { baseDef.BodyMesh = value; } }

@@ -13,6 +13,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
             SetBaseDef(new VobInstance(this, id));
         }
 
+        public VobDef(string codeName, Network.PacketReader stream) : base(codeName)
+        {
+            ReadDef(new VobInstance(this), stream);
+        }
+
         protected VobDef(string codeName) : base(codeName)
         {
         }
