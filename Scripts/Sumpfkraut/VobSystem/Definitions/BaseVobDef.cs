@@ -14,7 +14,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
     {
         #region Properties
 
-        public BaseVobInstance baseDef;
+        BaseVobInstance baseDef;
+        public BaseVobInstance BaseDef { get { return baseDef; } }
 
         public int ID { get { return baseDef.ID; } }
         public VobTypes VobType { get { return baseDef.VobType; } }
@@ -22,34 +23,32 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #endregion
 
-        protected void SetBaseDef(BaseVobInstance def)
+        protected BaseVobDef(BaseVobInstance baseDef, PacketReader stream) : this(baseDef)
         {
-            if (this.baseDef != null)
-                throw new Exception("Can't change BaseDef!");
+            this.baseDef.ReadStream(stream); // calls OnReadProperties too!
+        }
 
-            if (def == null)
+        private BaseVobDef(BaseVobInstance baseDef)
+        {
+            if (baseDef == null)
                 throw new ArgumentNullException("BaseDef is null!");
 
-            this.baseDef = def;
+            this.baseDef = baseDef;
+            this.baseDef.ScriptObject = this;
         }
 
-        protected void ReadDef(BaseVobInstance def, PacketReader stream)
-        {
-            if (stream == null)
-                throw new ArgumentNullException("Stream is null!");
-
-            SetBaseDef(def);
-            def.ReadStream(stream); // calls OnReadProperties too!
-        }
-
+        partial void pCreate();
         public void Create()
         {
             InstanceCollection.Add(this.baseDef);
+            pCreate();
         }
 
+        partial void pDelete();
         public void Delete()
         {
             InstanceCollection.Remove(this.baseDef);
+            pDelete();
         }
 
         public virtual void OnWriteProperties(PacketWriter stream) { }

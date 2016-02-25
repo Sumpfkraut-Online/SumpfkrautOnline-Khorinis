@@ -11,17 +11,21 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
     public partial class ItemDef : VobDef, ItemInstance.IScriptItemInstance
     {
         #region BaseDef
-        new public ItemInstance baseDef { get { return (ItemInstance)base.baseDef; } }
+        new public ItemInstance BaseDef { get { return (ItemInstance)base.BaseDef; } }
 
         /// <summary>The standard name of this item.</summary>
-        public string Name { get { return baseDef.Name; } set { baseDef.Name = value; } }
+        public string Name { get { return BaseDef.Name; } set { BaseDef.Name = value; } }
 
         /// <summary>The material of this item. Controls the dropping sound.</summary>
-        public ItemMaterials Material { get { return baseDef.Material; } set { baseDef.Material = value; } }
+        public ItemMaterials Material { get { return BaseDef.Material; } set { BaseDef.Material = value; } }
 
         /// <summary>Magic effect when laying in the world. See Scripts/System/VisualFX/VisualFxInst.d</summary>
-        public string Effect { get { return baseDef.Effect; } set { baseDef.Effect = value; } }
+        public string Effect { get { return BaseDef.Effect; } set { BaseDef.Effect = value; } }
         #endregion
+        
+        public ItemDef(PacketReader stream) : base(new ItemInstance(), stream)
+        {
+        }
 
         public override void OnReadProperties(PacketReader stream)
         {

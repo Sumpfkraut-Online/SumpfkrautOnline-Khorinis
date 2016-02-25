@@ -14,12 +14,20 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #region Properties
 
-        public new VobInstance baseDef { get { return (VobInstance)base.baseDef; } }
+        public new VobInstance BaseDef { get { return (VobInstance)base.BaseDef; } }
 
-        public string Visual { get { return baseDef.Visual; } set { baseDef.Visual = value; } }
-        public bool CDDyn { get { return baseDef.CDDyn; } set { baseDef.CDDyn = value; } }
-        public bool CDStatic { get { return baseDef.CDStatic; } set { baseDef.CDStatic = value; } }
+        public string Visual { get { return BaseDef.Visual; } set { BaseDef.Visual = value; } }
+        public bool CDDyn { get { return BaseDef.CDDyn; } set { BaseDef.CDDyn = value; } }
+        public bool CDStatic { get { return BaseDef.CDStatic; } set { BaseDef.CDStatic = value; } }
 
         #endregion
+
+        public VobDef(PacketReader stream) : this(new VobInstance(), stream)
+        {
+        }
+
+        protected VobDef(VobInstance baseDef, PacketReader stream) : base(baseDef, stream)
+        {
+        }
     }
 }

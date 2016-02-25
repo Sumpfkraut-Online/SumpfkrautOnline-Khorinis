@@ -24,40 +24,59 @@ namespace GUC.WorldObjects
             void ReadInventoryProperties(PacketReader stream);
         }
 
-        new public IScriptItem ScriptObject { get { return (IScriptItem)base.ScriptObject; } }
+        new public IScriptItem ScriptObject
+        {
+            get { return (IScriptItem)base.ScriptObject; }
+            set { base.ScriptObject = value; }
+        }
 
         #endregion
 
         #region Properties
 
-        new public ItemInstance Instance { get { return (ItemInstance)base.Instance; } }
+        new public ItemInstance Instance
+        {
+            get { return (ItemInstance)base.Instance; }
+            set
+            {
+                if (this.Container != null)
+                {
+                    throw new Exception("ItemInstance can't be changed while in an Inventory!");
+                }
+                base.Instance = value;
+            }
+        }
 
-        public byte Slot { get; internal set; }
-        public ushort Amount { get; internal set; }
+        /// <summary>
+        /// The upper (excluded) limit for Item amounts (ushort.MaxValue + 1).
+        /// </summary>
+        public const int MAX_AMOUNT = 65536;
 
-        //public IContainer Container { get; internal set; }
+        int amount = 1;
+        public int Amount
+        {
+            get { return this.amount; }
+            set
+            {
+                if (value < 0 || value >= MAX_AMOUNT)
+                {
+                    throw new Exception("Item amount is out of range! 0.." + MAX_AMOUNT);
+                }
+
+                this.amount = value;
+
+                if (this.Container != null)
+                {
+                    // send msg
+                }
+            }
+        }
+
+        public ItemContainer.IContainer Container { get; internal set; }
 
         public string Name { get { return Instance.Name; } }
         public ItemMaterials Material { get { return Instance.Material; } }
         public string Effect { get { return Instance.Effect; } }
-
-        #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// Creates a new Vob with the given Instance and ID or [-1] a free ID.
-        /// </summary>
-        public Item(IScriptItem scriptObject, ItemInstance instance, int id = -1) : base(scriptObject, instance, id)
-        {
-        }
-
-        /// <summary>
-        /// Creates a new Vob by reading a networking stream.
-        /// </summary>
-        public Item(IScriptItem scriptObject, PacketReader stream) : base(scriptObject, stream)
-        {
-        }
 
         #endregion
 

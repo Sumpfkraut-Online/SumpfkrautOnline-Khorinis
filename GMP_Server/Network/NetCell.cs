@@ -44,91 +44,25 @@ namespace GUC.Server.Network
             }
         }
 
-        public IEnumerable<Client> GetClients()
+        public void ForEachSurroundingClient(Action<Client> action, Client exclude = null)
         {
-            return GetClients(null);
-        }
+            if (action == null)
+                throw new ArgumentNullException("Action is null!");
 
-        public IEnumerable<Client> GetClients(Client exclude)
-        {
-            foreach(NPC player in Vobs.Players.GetAll())
-            {
-                yield return player.Client;
-            }
-        }
-
-        public IEnumerable<Client> SurroundingClients()
-        {
-            return SurroundingClients(null);
-        }
-
-        public IEnumerable<Client> SurroundingClients(Client exclude)
-        {
             for (int i = x - 1; i <= x + 1; i++)
             {
                 Dictionary<int, NetCell> row;
-                world.netCells.TryGetValue(i, out row);
-                if (row == null) continue;
-
-                for (int j = z - 1; j <= z + 1; j++)
-                {
-                    NetCell c;
-                    row.TryGetValue(j, out c);
-                    if (c == null) continue;
-
-                    foreach (NPC player in Vobs.Players.GetAll())
+                if (world.netCells.TryGetValue(i, out row))
+                    for (int j = z - 1; j <= z + 1; j++)
                     {
-                        if (player.Client != exclude)
-                            yield return player.Client;
+                        NetCell c;
+                        if (row.TryGetValue(j, out c))
+                            Vobs.ForEachPlayer(p =>
+                            {
+                                if (p.Client != exclude)
+                                    action(p.Client);
+                            });
                     }
-                }
-            }
-        }
-
-        public IEnumerable<NPC> SurroundingPlayers()
-        {
-            return SurroundingPlayers(null);
-        }
-
-        public IEnumerable<NPC> SurroundingPlayers(NPC exclude)
-        {
-            for (int i = x - 1; i <= x + 1; i++)
-            {
-                Dictionary<int, NetCell> row;
-                world.netCells.TryGetValue(i, out row);
-                if (row == null) continue;
-
-                for (int j = z - 1; j <= z + 1; j++)
-                {
-                    NetCell c;
-                    row.TryGetValue(j, out c);
-                    if (c == null) continue;
-
-                    foreach (NPC player in Vobs.Players.GetAll())
-                    {
-                        if (player != exclude)
-                            yield return player;
-                    }
-                }
-            }
-        }
-
-        public IEnumerable<NetCell> SurroundingCells()
-        {
-            for (int i = x - 1; i <= x + 1; i++)
-            {
-                Dictionary<int, NetCell> row;
-                world.netCells.TryGetValue(i, out row);
-                if (row == null) continue;
-
-                for (int j = z - 1; j <= z + 1; j++)
-                {
-                    NetCell c;
-                    row.TryGetValue(j, out c);
-                    if (c == null) continue;
-
-                    yield return c;
-                }
             }
         }
     }

@@ -34,14 +34,14 @@ namespace GUC.Server.Network.Messages
                 for (int i = 0; i < (int)VobTypes.Maximum; i++)
                 {
                     strm.Write((ushort)InstanceCollection.GetCountDynamics(i));
-                    foreach (BaseVobInstance inst in InstanceCollection.GetAllDynamics(i))
+                    InstanceCollection.ForEachDynamic(i, inst =>
                     {
                         inst.WriteStream(strm);
-                    }
+                    });
                 }
                 client.Send(strm, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, '\0');
 
-                using (var fs = new System.IO.FileStream("data", System.IO.FileMode.Create))
+                using (var fs = new System.IO.FileStream("instances", System.IO.FileMode.Create))
                     fs.Write(strm.GetData(), 0, strm.GetLength());
             }
         }

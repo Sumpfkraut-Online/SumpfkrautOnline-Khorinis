@@ -20,6 +20,7 @@ namespace GUC.WorldObjects.Instances
         public new IScriptBaseVobInstance ScriptObject
         {
             get { return (IScriptBaseVobInstance)base.ScriptObject; }
+            set { base.ScriptObject = value; }
         }
 
         #endregion
@@ -29,24 +30,33 @@ namespace GUC.WorldObjects.Instances
         bool isStatic = false;
         public bool IsStatic { get { return isStatic; } }
 
-        #endregion
+        public bool Added { get; internal set; }
 
-        #region Constructors
-
-        /// <summary>
-        /// Creates a new Instance with the given ID or [-1] a free ID.
-        /// </summary>
-        protected BaseVobInstance(IScriptBaseVobInstance scriptObject, int id = -1) : base(scriptObject, id)
+        public override int ID
         {
+            get { return base.ID; } 
+            set
+            {
+                if (this.Added)
+                    throw new Exception("Instance is added to InstanceCollection. ID can't be changed!");
+                base.ID = value;
+            }
         }
 
-        /// <summary>
-        /// Creates a new Instance by reading a networking stream.
-        /// </summary>
-        protected BaseVobInstance(IScriptBaseVobInstance scriptObject, PacketReader stream) : base(scriptObject, stream)
-        {
-        }
         #endregion
 
+        #region Write & Read
+
+        protected override void WriteProperties(PacketWriter stream)
+        {
+            stream.Write((ushort)ID);
+        }
+
+        protected override void ReadProperties(PacketReader stream)
+        {
+            this.ID = stream.ReadUShort();
+        }
+
+        #endregion
     }
 }

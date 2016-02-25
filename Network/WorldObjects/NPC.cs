@@ -21,24 +21,84 @@ namespace GUC.WorldObjects
         {
         }
 
-        new public IScriptNPC ScriptObject { get { return (IScriptNPC)base.ScriptObject; } }
+        new public IScriptNPC ScriptObject
+        {
+            get { return (IScriptNPC)base.ScriptObject; }
+            set { base.ScriptObject = value; }
+        }
 
         #endregion
 
+        public NPC()
+        {
+            this.inventory = new ItemContainer(this);
+        }
+
         #region Properties
 
-        new public NPCInstance Instance { get { return (NPCInstance)base.Instance; } }
+        new public NPCInstance Instance
+        {
+            get { return (NPCInstance)base.Instance; }
+            set { base.Instance = value; }
+        }
 
         int hpmax = 100;
+        public int HPMax { get { return hpmax; } }
         int hp = 100;
+        public int HP { get { return hp; } }
 
+        public void SetHealth(int hp)
+        {
+            SetHealth(hp, this.hpmax);
+        }
+
+        partial void pSetHealth(int hp, int hpmax);
+        public void SetHealth(int hp, int hpmax)
+        {
+            if (hp < 0 || hp > ushort.MaxValue)
+                throw new ArgumentOutOfRangeException("HP is out of range! (0..65535) val: " + hp);
+            if (hpmax < 0 || hpmax > ushort.MaxValue)
+                throw new ArgumentOutOfRangeException("HPMax is out of range! (0..65535) val: " + hpmax);
+
+            this.hp = hp;
+            this.hpmax = hpmax;
+
+            pSetHealth(hp, hpmax);
+        }
+        
         NPCStates state = NPCStates.Stand;
+        public NPCStates State { get { return this.state; } }
+
+        public void SetState(NPCStates state, BaseVob target = null)
+        {
+
+        }
+
         MobInter usedMob = null;
+        public MobInter UsedMob { get { return this.usedMob; } }
+
+        public void UseMob(MobInter mob)
+        {
+
+        }
 
         Item drawnItem = null;
-        bool inAttackMode = false;
+        public Item DrawnItem { get { return this.drawnItem; } }
 
-        ItemContainer inventory = new ItemContainer();
+        bool isInAttackMode = false;
+        public bool IsInAttackMode { get { return this.isInAttackMode; } }
+        
+        /// <param name="item">null == fists</param>
+        public void DrawItem(Item item)
+        {
+
+        }
+
+        public void UndrawItem()
+        {
+        }
+
+        ItemContainer inventory;
         public ItemContainer Inventory { get { return inventory; } }
 
         //protected Dictionary<byte, Item> equippedSlots = new Dictionary<byte, Item>();
@@ -49,24 +109,6 @@ namespace GUC.WorldObjects
         public int BodyTex { get { return Instance.BodyTex; } }
         public string HeadMesh { get { return Instance.HeadMesh; } }
         public int HeadTex { get { return Instance.HeadTex; } }
-
-        #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// Creates a new Vob with the given Instance and ID or [-1] a free ID.
-        /// </summary>
-        public NPC(IScriptNPC scriptObject, NPCInstance instance, int id = -1) : base(scriptObject, instance, id)
-        {
-        }
-
-        /// <summary>
-        /// Creates a new Vob by reading a networking stream.
-        /// </summary>
-        public NPC(IScriptNPC scriptObject, PacketReader stream) : base(scriptObject, stream)
-        {
-        }
 
         #endregion
 

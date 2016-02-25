@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GUC.Scripts.Sumpfkraut.WorldSystem
 {
-    class WorldDef
+    public partial class WorldDef
     {
     }
 }

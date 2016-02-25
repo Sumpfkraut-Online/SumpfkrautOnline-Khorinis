@@ -22,35 +22,22 @@ namespace GUC.WorldObjects
         public new IScriptVob ScriptObject
         {
             get { return (IScriptVob)base.ScriptObject; }
+            set { base.ScriptObject = value; }
         }
 
         #endregion
 
         #region Properties
 
-        new public VobInstance Instance { get { return (VobInstance)base.Instance; } }
+        new public VobInstance Instance
+        {
+            get { return (VobInstance)base.Instance; }
+            set { base.Instance = value; }
+        }
 
         public string Visual { get { return Instance.Visual; } }
         public bool CDDyn { get { return Instance.CDDyn; } }
         public bool CDStatic { get { return Instance.CDStatic; } }
-
-        #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// Creates a new Vob with the given Instance and ID or [-1] a free ID.
-        /// </summary>
-        public Vob(IScriptVob scriptObject, VobInstance instance, int id = -1) : base(scriptObject, instance, id)
-        {
-        }
-
-        /// <summary>
-        /// Creates a new Vob by reading a networking stream.
-        /// </summary>
-        public Vob(IScriptVob scriptObject, PacketReader stream) : base(scriptObject, stream)
-        {
-        }
 
         #endregion
     }

@@ -15,7 +15,11 @@ namespace GUC.WorldObjects.Mobs
         {
         }
 
-        new public IScriptMobLockable ScriptObject { get { return (IScriptMobLockable)base.ScriptObject; } }
+        new public IScriptMobLockable ScriptObject
+        {
+            get { return (IScriptMobLockable)base.ScriptObject; }
+            set { base.ScriptObject = value; }
+        }
 
         #endregion
 
@@ -24,24 +28,6 @@ namespace GUC.WorldObjects.Mobs
         new public MobLockableInstance Instance { get { return (MobLockableInstance)base.Instance; } }
 
         public string OnTryOpenClientFunc { get { return Instance.OnTryOpenClientFunc; } }
-
-        #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// Creates a new Vob with the given Instance and ID or [-1] a free ID.
-        /// </summary>
-        public MobLockable(IScriptMobLockable scriptObject, MobLockableInstance instance, int id = -1) : base(scriptObject, instance, id)
-        {
-        }
-
-        /// <summary>
-        /// Creates a new Vob by reading a networking stream.
-        /// </summary>
-        public MobLockable(IScriptMobLockable scriptObject, PacketReader stream) : base(scriptObject, stream)
-        {
-        }
 
         #endregion
 

@@ -17,6 +17,7 @@ namespace GUC.WorldObjects.Instances.Mobs
         public new IScriptMobLockableInstance ScriptObject
         {
             get { return (IScriptMobLockableInstance)base.ScriptObject; }
+            set { base.ScriptObject = value; }
         }
 
         #endregion
@@ -24,24 +25,6 @@ namespace GUC.WorldObjects.Instances.Mobs
         #region Properties
 
         public string OnTryOpenClientFunc = "";
-
-        #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// Creates a new Instance with the given ID or [-1] a free ID.
-        /// </summary>
-        protected MobLockableInstance(IScriptMobLockableInstance scriptObject, int id = -1) : base(scriptObject, id)
-        {
-        }
-
-        /// <summary>
-        /// Creates a new Instance by reading a networking stream.
-        /// </summary>
-        public MobLockableInstance(IScriptMobLockableInstance scriptObject, PacketReader stream) : base(scriptObject, stream)
-        {
-        }
 
         #endregion
 

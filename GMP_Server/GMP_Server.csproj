@@ -125,6 +125,9 @@
     <Compile Include="..\Network\WorldObjects\Collections\VobCollection.cs">
       <Link>WorldObjects\Collections\VobCollection.cs</Link>
     </Compile>
+    <Compile Include="..\Network\WorldObjects\Collections\WorldCollection.cs">
+      <Link>WorldObjects\Collections\WorldCollection.cs</Link>
+    </Compile>
     <Compile Include="..\Network\WorldObjects\GameObject.cs">
       <Link>WorldObjects\GameObject.cs</Link>
     </Compile>
@@ -133,6 +136,9 @@
     </Compile>
     <Compile Include="..\Network\WorldObjects\Instances\ItemInstance.cs">
       <Link>WorldObjects\Instances\ItemInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\Mobs\MobBedInstance.cs">
+      <Link>WorldObjects\Instances\Mobs\MobBedInstance.cs</Link>
     </Compile>
     <Compile Include="..\Network\WorldObjects\Instances\Mobs\MobContainerInstance.cs">
       <Link>WorldObjects\Instances\Mobs\MobContainerInstance.cs</Link>
@@ -172,6 +178,9 @@
     </Compile>
     <Compile Include="..\Network\WorldObjects\Mobs\Mob.cs">
       <Link>WorldObjects\Mobs\Mob.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Mobs\MobBed.cs">
+      <Link>WorldObjects\Mobs\MobBed.cs</Link>
     </Compile>
     <Compile Include="..\Network\WorldObjects\Mobs\MobContainer.cs">
       <Link>WorldObjects\Mobs\MobContainer.cs</Link>
@@ -221,7 +230,10 @@
     <Compile Include="WorldObjects\BaseVob.Server.cs" />
     <Compile Include="WorldObjects\Collections\InstanceCollection.Server.cs" />
     <Compile Include="WorldObjects\Collections\VobCollection.Server.cs" />
+    <Compile Include="WorldObjects\Collections\WorldCollection.Server.cs" />
     <Compile Include="WorldObjects\Instances\BaseVobInstance.Server.cs" />
+    <Compile Include="WorldObjects\Instances\Mobs\MobBedInstance.Server.cs" />
+    <Compile Include="WorldObjects\Mobs\MobBed.Server.cs" />
     <Compile Include="WorldObjects\Vob.Server.cs" />
     <Compile Include="WorldObjects\Item.Server.cs" />
     <Compile Include="WorldObjects\Instances\ItemInstance.Server.cs" />

@@ -14,28 +14,35 @@ namespace GUC.WorldObjects.Collections
         static int idCount = 0;
         static partial void CheckID(BaseVobInstance inst)
         {
-            if (inst.ID < 0 || inst.ID > GameObject.MAX_ID)
+            if (inst.ID < 0 || inst.ID > MAX_INSTANCES) //search free ID
             {
-                //search free ID
-                if (freeIDs.Count > 0)
+                int id;
+                
+                while (freeIDs.Count > 0)
                 {
-                    inst.id = freeIDs[0];
+                    id = freeIDs[0];
                     freeIDs.RemoveAt(0);
+                    if (!instances.ContainsKey(id)) // because ServerScripts can set IDs manually
+                    {
+                        inst.ID = id;
+                        return;
+                    }
                 }
-                else
-                {
-                    while (true)
-                        if (idCount >= GameObject.MAX_ID)
+
+                while (true)
+                    if (idCount >= MAX_INSTANCES)
+                    {
+                        throw new Exception("InstanceCollection reached maximum! " + MAX_INSTANCES);
+                    }
+                    else
+                    {
+                        id = idCount++;
+                        if (!instances.ContainsKey(id))
                         {
-                            throw new Exception("InstanceCollection reached maximum! " + GameObject.MAX_ID);
+                            inst.ID = id;
+                            return;
                         }
-                        else
-                        {
-                            inst.id = idCount++;
-                            if (!instances.ContainsKey(inst.id))
-                                break;
-                        }
-                }
+                    }
             }
         }
 
@@ -54,7 +61,7 @@ namespace GUC.WorldObjects.Collections
                 inst.WriteDelete();
             }
             freeIDs.Add(inst.ID);
-            inst.id = -1;
+            inst.ID = -1;
         }
     }
 }

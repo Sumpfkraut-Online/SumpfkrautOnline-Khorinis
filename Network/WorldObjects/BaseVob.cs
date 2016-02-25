@@ -35,22 +35,51 @@ namespace GUC.WorldObjects
         public new IScriptBaseVob ScriptObject
         {
             get { return (IScriptBaseVob)base.ScriptObject; }
+            set { base.ScriptObject = value; }
         }
 
         #endregion
 
         #region Properties
 
+        public override int ID
+        {
+            get {  return base.ID; }
+            set
+            {
+                if (this.IsSpawned)
+                {
+                    throw new Exception("Can't change the ID of spawned vobs!");
+                }
+                base.ID = value;
+            }
+        }
+
         /// <summary>
         /// The Instance of this object.
         /// </summary>
-        public BaseVobInstance Instance { get { return instance; } }
+        public BaseVobInstance Instance
+        {
+            get { return this.instance; }
+            set
+            {
+                if (this.IsSpawned)
+                {
+                    throw new Exception("Can't change the Instance of spawned vobs!");
+                }
+                this.instance = value;
+            }
+        }
         BaseVobInstance instance;
 
         /// <summary>
         /// The world this Vob is currently spawned in.
         /// </summary>
-        public World World { get { return this.world; } internal set { this.world = value; } }
+        public World World
+        {
+            get { return this.world; }
+            internal set { this.world = value; }
+        }
         World world;
 
         /// <summary>
@@ -62,8 +91,7 @@ namespace GUC.WorldObjects
         protected Vec3f dir = new Vec3f(0, 0, 1);
         
         /// <summary>
-        /// If the Vob is 'static' it's not communicated via the Cell-System but permanently cached on the Client.
-        /// Static Vobs are saved in WorldInstances and will be the same in Worlds with the same WorldInstance.
+        /// If the Vob is 'static' it will not be communicated via the GUC.
         /// </summary>
         public bool IsStatic
         {
@@ -73,36 +101,11 @@ namespace GUC.WorldObjects
 
         #endregion
 
-        #region Constructors
-
-        /// <summary>
-        /// Creates a new Vob with the given Instance and ID or [-1] a free ID.
-        /// </summary>
-        protected BaseVob(IScriptBaseVob scriptObject, BaseVobInstance instance, int id = -1) : base(scriptObject, id)
-        {
-            if (instance == null)
-                throw new ArgumentNullException("Instance is null!");
-
-            if (InstanceCollection.Get(instance.ID) != instance)
-                throw new ArgumentException("Instance is not in the collection!");
-
-            this.instance = instance;
-        }
-
-        /// <summary>
-        /// Creates a new Vob by reading a networking stream.
-        /// </summary>
-        protected BaseVob(IScriptBaseVob scriptObject, PacketReader stream) : base(scriptObject, stream)
-        {
-        }
-
-        #endregion
-
         #region Read & Write
 
         protected override void WriteProperties(PacketWriter stream)
         {
-            base.WriteProperties(stream);
+            stream.Write((ushort)this.ID);
             stream.Write((ushort)this.Instance.ID); // MAX_ID
             stream.Write(this.pos);
             stream.Write(this.dir);
@@ -110,7 +113,7 @@ namespace GUC.WorldObjects
 
         protected override void ReadProperties(PacketReader stream)
         {
-            base.ReadProperties(stream);
+            this.ID = stream.ReadUShort();
 
             int instanceID = stream.ReadUShort(); // MAX_ID
             BaseVobInstance inst = InstanceCollection.Get(instanceID);

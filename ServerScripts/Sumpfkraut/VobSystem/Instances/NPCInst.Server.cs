@@ -8,9 +8,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class NPCInst
     {
-        public NPCInst(NPCDef def, int id = -1) : base(def, true)
+        public NPCInst(NPCDef def) : base(def, new WorldObjects.NPC())
         {
-            SetBaseInst(new WorldObjects.NPC(this, def.baseDef, id));
         }
     }
 }

@@ -15,7 +15,6 @@ namespace GUC.WorldObjects
 
         new public oCNpc gVob { get { return (oCNpc)base.gVob; } }
 
-        public NPCStates State { get { return state; } set { state = value; } }
         /*
         protected override void pCreate()
         {
@@ -31,31 +30,6 @@ namespace GUC.WorldObjects
             DrawItem(DrawnItem, true);
         }
         */
-        public int HPMax
-        {
-            get { return hpmax; }
-            set
-            {
-                hpmax = value;
-                if (IsSpawned)
-                {
-                    gVob.HPMax = value;
-                }
-            }
-        }
-        
-        public int HP
-        {
-            get { return hp; }
-            set
-            {
-                hp = value;
-                if (IsSpawned)
-                {
-                    gVob.HP = value;
-                }
-            }
-        }
 
         public bool HasFreeHands
         {

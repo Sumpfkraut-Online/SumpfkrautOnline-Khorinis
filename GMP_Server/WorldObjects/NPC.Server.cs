@@ -29,24 +29,22 @@ namespace GUC.WorldObjects
 
         #endregion
 
+        public void UpdatePropertiesFast()
+        {
+
+        }
+
+        public void UpdateProperties()
+        {
+            // send msg
+        }
+
         #region Properties
 
         public Client Client { get; internal set; }
         public bool IsPlayer { get { return Client != null; } }
 
         internal NPCCell npcCell = null;
-
-
-        public MobInter UsedMob
-        {
-            get { return this.usedMob; }
-            set { this.usedMob = value; }
-        }
-
-        public NPCStates State
-        {
-            get { return this.state; }
-        }
 
         #endregion
 

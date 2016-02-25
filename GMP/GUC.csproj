@@ -108,6 +108,9 @@
     <Compile Include="..\Network\WorldObjects\Collections\VobCollection.cs">
       <Link>WorldObjects\Colletions\VobCollection.cs</Link>
     </Compile>
+    <Compile Include="..\Network\WorldObjects\Collections\WorldCollection.cs">
+      <Link>WorldObjects\Colletions\WorldCollection.cs</Link>
+    </Compile>
     <Compile Include="..\Network\WorldObjects\GameObject.cs">
       <Link>WorldObjects\GameObject.cs</Link>
     </Compile>
@@ -219,7 +222,9 @@
       <DependentUpon>SplashScreen.xaml</DependentUpon>
     </Compile>
     <Compile Include="WorldObjects\BaseVob.Client.cs" />
-    <Compile Include="WorldObjects\Colletions\InstanceCollection.Client.cs" />
+    <Compile Include="WorldObjects\Collections\InstanceCollection.Client.cs" />
+    <Compile Include="WorldObjects\Collections\VobCollection.Client.cs" />
+    <Compile Include="WorldObjects\Collections\WorldCollection.Client.cs" />
     <Compile Include="WorldObjects\Instances\ItemInstance.Client.cs" />
     <Compile Include="WorldObjects\Instances\Mobs\MobBedInstance.Client.cs" />
     <Compile Include="WorldObjects\Instances\Mobs\MobContainerInstance.Client.cs" />

@@ -9,13 +9,5 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
     public partial class VobDef
     {
-        public VobDef(PacketReader stream)
-        {
-            this.ReadDef(new VobInstance(this), stream);
-        }
-
-        protected VobDef()
-        {
-        }
     }
 }

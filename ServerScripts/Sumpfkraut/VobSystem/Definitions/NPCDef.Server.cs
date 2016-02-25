@@ -8,9 +8,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
     public partial class NPCDef
     {
-        public NPCDef(string codeName, int id = -1) : base(codeName)
+        public NPCDef(string codeName) : base(new NPCInstance(), codeName)
         {
-            SetBaseDef(new NPCInstance(this, id));
         }
     }
 }

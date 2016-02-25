@@ -20,6 +20,7 @@ namespace GUC.WorldObjects
         public new IScriptWorld ScriptObject
         {
             get { return (IScriptWorld)base.ScriptObject; }
+            set { base.ScriptObject = value; }
         }
 
         #endregion
@@ -27,37 +28,21 @@ namespace GUC.WorldObjects
         #region Properties
 
         public readonly VobCollection Vobs = new VobCollection();
+        
+        public bool Added { get; internal set; }
 
         #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// Creates a new World with the given ID or [-1] a free ID.
-        /// </summary>
-        public World(IScriptWorld scriptObject, int id = -1) : base(scriptObject, id)
-        {
-        }
-
-        /// <summary>
-        /// Creates a new World by reading a networking stream.
-        /// </summary>
-        public World(IScriptWorld scriptObject, PacketReader stream) : base(scriptObject, stream)
-        {
-        }
-
-        #endregion
-
+        
         #region Read & Write
 
         protected override void WriteProperties(PacketWriter stream)
         {
-            base.WriteProperties(stream);
+            stream.Write((byte)ID);
         }
 
         protected override void ReadProperties(PacketReader stream)
         {
-            base.ReadProperties(stream);
+            this.ID = stream.ReadByte();
         }
 
         #endregion

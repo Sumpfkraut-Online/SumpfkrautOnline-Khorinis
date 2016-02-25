@@ -9,6 +9,11 @@ namespace GUC.WorldObjects.Collections
 {
     public static partial class InstanceCollection
     {
+        /// <summary>
+        /// The upper (excluded) limit for Instances (ushort.MaxValue+1).
+        /// </summary>
+        public const int MAX_INSTANCES = 65536;
+
         static Dictionary<int, BaseVobInstance> instances;
         static Dictionary<int, BaseVobInstance>[] typeDicts;
 
@@ -37,9 +42,15 @@ namespace GUC.WorldObjects.Collections
             return inst;
         }
 
-        public static IEnumerable<BaseVobInstance> GetAll()
+        public static void ForEach(Action<BaseVobInstance> action)
         {
-            return instances.Values;
+            if (action == null)
+                throw new ArgumentNullException("Action is null!");
+
+            foreach (BaseVobInstance instance in instances.Values)
+            {
+                action(instance);
+            }
         }
 
         public static int GetCount()
@@ -47,9 +58,15 @@ namespace GUC.WorldObjects.Collections
             return instances.Count;
         }
 
-        public static IEnumerable<BaseVobInstance> GetAll(int type)
+        public static void ForEach(int type, Action<BaseVobInstance> action)
         {
-            return typeDicts[type].Values;
+            if (action == null)
+                throw new ArgumentNullException("Action is null!");
+
+            foreach (BaseVobInstance instance in typeDicts[type].Values)
+            {
+                action(instance);
+            }
         }
 
         public static int GetCount(int type)
@@ -57,14 +74,24 @@ namespace GUC.WorldObjects.Collections
             return typeDicts[type].Count;
         }
 
-        public static IEnumerable<BaseVobInstance> GetAllDynamics()
+        public static void ForEachDynamic(Action<BaseVobInstance> action)
         {
-            return dynInstances;
+            if (action == null)
+                throw new ArgumentNullException("Action is null!");
+
+            for (int i = 0; i < dynInstances.Count; i++)
+                action(dynInstances[i]);
         }
 
-        public static IEnumerable<BaseVobInstance> GetAllDynamics(int type)
+        public static void ForEachDynamic(int type, Action<BaseVobInstance> action)
         {
-            return dynDicts[type];
+            if (action == null)
+                throw new ArgumentNullException("Action is null!");
+
+            List<BaseVobInstance> dict = dynDicts[type];
+
+            for (int i = 0; i < dict.Count; i++)
+                action(dict[i]);
         }
 
         public static int GetCountDynamics()
@@ -99,6 +126,8 @@ namespace GUC.WorldObjects.Collections
             }
 
             pAdd(inst);
+
+            inst.Added = true;
         }
         #endregion
 
@@ -109,21 +138,19 @@ namespace GUC.WorldObjects.Collections
             if (inst == null)
                 throw new ArgumentNullException("Instance is null!");
 
-            BaseVobInstance other;
-            if (instances.TryGetValue(inst.ID, out other))
+            if (inst.Added)
             {
-                if (other == inst)
+                instances.Remove(inst.ID);
+                typeDicts[(int)inst.VobType].Remove(inst.ID);
+                if (!inst.IsStatic)
                 {
-                    instances.Remove(inst.ID);
-                    typeDicts[(int)inst.VobType].Remove(inst.ID);
-                    if (!inst.IsStatic)
-                    {
-                        dynInstances.Remove(inst);
-                        dynDicts[(int)inst.VobType].Remove(inst);
-                    }
-
-                    pRemove(inst);
+                    dynInstances.Remove(inst);
+                    dynDicts[(int)inst.VobType].Remove(inst);
                 }
+
+                pRemove(inst);
+
+                inst.Added = false;
             }
         }
         #endregion

@@ -11,11 +11,6 @@ namespace GUC.WorldObjects
     /// </summary>
     public abstract partial class GameObject
     {
-        /// <summary>
-        /// The upper (excluded) limit for GameObject-IDs (ushort.MaxValue + 1).
-        /// </summary>
-        public const int MAX_ID = 65536; // ushort.MaxValue + 1 => If you change this, change the ushort cast in WriteStream & ReadStream too!
-
         #region ScriptObject
 
         /// <summary>
@@ -37,77 +32,55 @@ namespace GUC.WorldObjects
         /// <summary>
         /// The ScriptObject of this GameObject.
         /// </summary>
-        public IScriptGameObject ScriptObject { get { return this.scriptObject; } }
-        IScriptGameObject scriptObject;
+        public IScriptGameObject ScriptObject = null;
 
         #endregion
 
         #region Properties
 
-        /// <summary>
-        /// The ID of this GameObject. Range is ushort (0...65535).
-        /// </summary>
-        public int ID { get { return id; } }
-        internal int id;
-
-        #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// Creates a new ServerObject with the given ID or [-1] a free ID.
-        /// </summary>
-        protected GameObject(IScriptGameObject scriptObject, int id = -1) : this(scriptObject)
+        public virtual int ID
         {
-            this.id = id;
+            get { return id; }
+            set { this.id = value; }
         }
-
-        /// <summary>
-        /// Creates a new ServerObject by reading a networking stream.
-        /// </summary>
-        protected GameObject(IScriptGameObject scriptObject, PacketReader stream) : this(scriptObject)
-        {
-            this.ReadStream(stream);
-        }
-
-        private GameObject(IScriptGameObject scriptObject)
-        {
-            if (scriptObject == null)
-                throw new ArgumentNullException("WorldObject: ScriptObject is null!");
-
-            this.scriptObject = scriptObject;
-        }
+        int id = -1;
 
         #endregion
 
         #region Read & Write
 
-        protected virtual void WriteProperties(PacketWriter stream)
-        {
-            stream.Write((ushort)this.ID); // MAX_ID!
-        }
+        protected abstract void WriteProperties(PacketWriter stream);
 
         /// <summary>
         /// Writes all base & script properties into the stream.
         /// </summary>
         public void WriteStream(PacketWriter stream)
         {
+            if (stream == null)
+                throw new ArgumentNullException("Stream is null!");
+
             this.WriteProperties(stream);
-            this.ScriptObject.OnWriteProperties(stream);
+            if (this.ScriptObject != null)
+            {
+                this.ScriptObject.OnWriteProperties(stream);
+            }
         }
 
-        protected virtual void ReadProperties(PacketReader stream)
-        {
-            this.id = stream.ReadUShort(); // MAX_ID!
-        }
+        protected abstract void ReadProperties(PacketReader stream);
 
         /// <summary>
         /// Reads all base & script properties into the object.
         /// </summary>
         public void ReadStream(PacketReader stream)
         {
+            if (stream == null)
+                throw new ArgumentNullException("Stream is null!");
+
             this.ReadProperties(stream);
-            this.ScriptObject.OnReadProperties(stream);
+            if (this.ScriptObject != null)
+            {
+                this.ScriptObject.OnReadProperties(stream);
+            }
         }
 
         #endregion

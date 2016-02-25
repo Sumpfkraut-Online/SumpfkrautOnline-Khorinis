@@ -3,9 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace GUC.Server.Scripts.Sumpfkraut.WorldSystem
+namespace GUC.Scripts.Sumpfkraut.WorldSystem
 {
-    class WorldInst
+    public partial class WorldInst
     {
+        public static WorldInst NewWorld;
+
+        public WorldInst(WorldDef def) : this(new WorldObjects.World())
+        {
+            this.definition = def;
+        }
     }
 }

@@ -24,11 +24,11 @@ namespace GUC.Server.Network.Messages
             WriteAmountUpdate(client, item, item.Amount);
         }
 
-        public static void WriteAmountUpdate(Client client, Item item, ushort amount)
+        public static void WriteAmountUpdate(Client client, Item item, int amount)
         {
             PacketWriter stream = Network.GameServer.SetupStream(NetworkIDs.InventoryAmountMessage);
             stream.Write(item.ID);
-            stream.Write(amount);
+            stream.Write((ushort)amount);
             client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I');
         }
     }

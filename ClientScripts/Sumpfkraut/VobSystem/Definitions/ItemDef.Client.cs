@@ -9,9 +9,5 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
     public partial class ItemDef
     {
-        public ItemDef(PacketReader stream)
-        {
-            this.ReadDef(new ItemInstance(this), stream);
-        }
     }
 }

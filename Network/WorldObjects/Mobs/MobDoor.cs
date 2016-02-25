@@ -18,31 +18,17 @@ namespace GUC.WorldObjects.Mobs
         {
         }
 
-        new public IScriptMobDoor ScriptObject { get { return (IScriptMobDoor)base.ScriptObject; } }
+        new public IScriptMobDoor ScriptObject
+        {
+            get { return (IScriptMobDoor)base.ScriptObject; }
+            set { base.ScriptObject = value; }
+        }
 
         #endregion
 
         #region Properties
 
         new public MobDoorInstance Instance { get { return (MobDoorInstance)base.Instance; } }
-
-        #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// Creates a new Vob with the given Instance and ID or [-1] a free ID.
-        /// </summary>
-        public MobDoor(IScriptMobDoor scriptObject, MobDoorInstance instance, int id = -1) : base(scriptObject, instance, id)
-        {
-        }
-
-        /// <summary>
-        /// Creates a new Vob by reading a networking stream.
-        /// </summary>
-        public MobDoor(IScriptMobDoor scriptObject, PacketReader stream) : base(scriptObject, stream)
-        {
-        }
 
         #endregion
 

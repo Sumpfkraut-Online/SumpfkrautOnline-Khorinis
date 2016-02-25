@@ -21,6 +21,7 @@ namespace GUC.WorldObjects.Instances
         public new IScriptItemInstance ScriptObject
         {
             get { return (IScriptItemInstance)base.ScriptObject; }
+            set { base.ScriptObject = value; }
         }
 
         #endregion
@@ -39,24 +40,6 @@ namespace GUC.WorldObjects.Instances
         {
             get { return effect; }
             set { effect = value.ToUpper(); }
-        }
-
-        #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// Creates a new Instance with the given ID or [-1] a free ID.
-        /// </summary>
-        public ItemInstance(IScriptItemInstance scriptObject, int id = -1) : base(scriptObject, id)
-        {
-        }
-
-        /// <summary>
-        /// Creates a new Instance by reading a networking stream.
-        /// </summary>
-        public ItemInstance(IScriptItemInstance scriptObject, PacketReader stream) : base(scriptObject, stream)
-        {
         }
 
         #endregion

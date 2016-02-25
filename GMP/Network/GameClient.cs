@@ -303,7 +303,7 @@ namespace GUC.Client.Network
             {
                 // get last ping time
                 int ping = clientInterface.GetLastPing(clientInterface.GetSystemAddressFromIndex(0));
-                if (ping > 800 || ping < 0)
+                if (ping > 300 || ping < 0)
                 {
                     abortInfo.Show();
                 }

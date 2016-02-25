@@ -11,8 +11,8 @@ namespace GUC.WorldObjects.Collections
     {
         static partial void CheckID(BaseVobInstance inst)
         {
-            if (inst.ID < 0 || inst.ID >= GameObject.MAX_ID)
-                throw new ArgumentOutOfRangeException("Instance ID is out of range!");
+            if (inst.ID < 0 || inst.ID >= MAX_INSTANCES)
+                throw new ArgumentOutOfRangeException("Instance ID is out of range! 0.." + MAX_INSTANCES);
         }
     }
 }

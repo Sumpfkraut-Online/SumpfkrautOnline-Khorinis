@@ -3,15 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GUC.Network;
+using GUC.WorldObjects;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
-    public partial class VobInst : BaseVobInst, WorldObjects.Vob.IScriptVob
+    public partial class VobInst : BaseVobInst, Vob.IScriptVob
     {
         #region Properties
 
-        protected new WorldObjects.Vob baseInst { get { return (WorldObjects.Vob)base.baseInst; } }
+        public new WorldObjects.Vob BaseInst { get { return (WorldObjects.Vob)base.BaseInst; } }
 
         #endregion
+        
+        public VobInst(PacketReader stream) : this(new Vob(), stream)
+        {
+        }
+
+        protected VobInst(Vob baseInst, PacketReader stream) : base(baseInst, stream)
+        {
+        }
     }
 }

@@ -6,10 +6,7 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
-    public partial class ItemInst
+    public partial class NPCInst
     {
-        public ItemInst(ItemDef def) : base(def, new WorldObjects.Item())
-        {
-        }
     }
 }

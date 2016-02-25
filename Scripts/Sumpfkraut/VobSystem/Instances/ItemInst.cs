@@ -11,9 +11,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
     {
         #region Properties
 
-        protected new WorldObjects.Item baseInst { get { return (WorldObjects.Item)base.baseInst; } }
+        public new WorldObjects.Item BaseInst { get { return (WorldObjects.Item)base.BaseInst; } }
 
         #endregion
+
+        public ItemInst(PacketReader stream) : base(new WorldObjects.Item(), stream)
+        {
+        }
 
         public void ReadEquipProperties(PacketReader stream)
         {

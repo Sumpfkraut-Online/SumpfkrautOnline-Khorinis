@@ -13,7 +13,7 @@ namespace GUC.Server.Network
 
         public World world;
         public int x, z;
-        public Dictionary<int, NPC> Npcs = new Dictionary<int, NPC>();
+        Dictionary<int, NPC> npcs = new Dictionary<int, NPC>();
 
         public NPCCell(World world, int x, int z)
         {
@@ -24,23 +24,32 @@ namespace GUC.Server.Network
 
         public void Add(NPC npc)
         {
-            Npcs.Add(npc.ID, npc);
+            npcs.Add(npc.ID, npc);
             npc.npcCell = this;
         }
 
         public void Remove(NPC npc)
         {
-            Npcs.Remove(npc.ID);
+            npcs.Remove(npc.ID);
             npc.npcCell = null;
 
-            if (Npcs.Count == 0)
+            if (npcs.Count == 0)
             {
-                /*world.npcCells[x].Remove(z);
+                world.npcCells[x].Remove(z);
                 if (world.npcCells[x].Count == 0)
                 {
                     world.npcCells.Remove(x);
-                }*/
+                }
             }
+        }
+
+        public void ForEach(Action<NPC> action)
+        {
+            if (action == null)
+                throw new ArgumentNullException("Action is null!");
+
+            foreach (NPC npc in npcs.Values)
+                action(npc);
         }
     }
 }

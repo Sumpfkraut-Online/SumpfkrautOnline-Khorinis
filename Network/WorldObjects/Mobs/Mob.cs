@@ -18,7 +18,11 @@ namespace GUC.WorldObjects.Mobs
         {
         }
 
-        new public IScriptMob ScriptObject { get { return (IScriptMob)base.ScriptObject; } }
+        new public IScriptMob ScriptObject
+        {
+            get { return (IScriptMob)base.ScriptObject; }
+            set { base.ScriptObject = value; }
+        }
 
         #endregion
 
@@ -27,24 +31,6 @@ namespace GUC.WorldObjects.Mobs
         new public MobInstance Instance { get { return (MobInstance)base.Instance; } }
         
         public string FocusName { get { return Instance.FocusName; } }
-
-        #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// Creates a new Vob with the given Instance and ID or [-1] a free ID.
-        /// </summary>
-        public Mob(IScriptMob scriptObject, MobInstance instance, int id = -1) : base(scriptObject, instance, id)
-        {
-        }
-
-        /// <summary>
-        /// Creates a new Vob by reading a networking stream.
-        /// </summary>
-        public Mob(IScriptMob scriptObject, PacketReader stream) : base(scriptObject, stream)
-        {
-        }
 
         #endregion
 

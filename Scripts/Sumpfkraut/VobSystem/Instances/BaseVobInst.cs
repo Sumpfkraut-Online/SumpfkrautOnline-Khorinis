@@ -15,9 +15,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
     {
         #region Properties
 
-        public BaseVob baseInst { get; private set; }
+        // GUC - Base - Object
+        BaseVob baseInst;
+        public BaseVob BaseInst { get { return baseInst; } }
 
-        public BaseVobDef Def { get; private set; }
+        // Definition 
+        BaseVobDef definition;
+        public BaseVobDef Definition { get { return definition; } }
 
         public int ID { get { return baseInst.ID; } }
         public VobTypes VobType { get { return baseInst.VobType; } }
@@ -25,32 +29,18 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #endregion
 
-        protected BaseVobInst(BaseVobDef def)
+        protected BaseVobInst(BaseVob baseInst, PacketReader stream) : this(baseInst)
         {
-            if (def == null)
-                throw new ArgumentNullException("VobDef is null!");
-
-            this.Def = def;
+            baseInst.ReadStream(stream);
         }
 
-        protected void SetBaseInst(BaseVob inst)
+        private BaseVobInst(BaseVob baseInst)
         {
-            if (this.baseInst != null)
-                throw new Exception("Can't change BaseInst!");
-
-            if (inst == null)
+            if (baseInst == null)
                 throw new ArgumentNullException("BaseInst is null!");
-
-            this.baseInst = inst;
-        }
-
-        protected void ReadDef(BaseVob inst, PacketReader stream)
-        {
-            if (stream == null)
-                throw new ArgumentNullException("Stream is null!");
-
-            SetBaseInst(inst);
-            inst.ReadStream(stream); // calls OnReadProperties too!
+            
+            this.baseInst = baseInst;
+            this.baseInst.ScriptObject = this;
         }
 
         public void Spawn(WorldInst world)
@@ -62,7 +52,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             baseInst.Despawn();
         }
-        public virtual void OnReadProperties(PacketReader stream) { }
+        public virtual void OnReadProperties(PacketReader stream)
+        {
+            this.definition = (BaseVobDef)baseInst.Instance.ScriptObject;
+        }
         public virtual void OnWriteProperties(PacketWriter stream) { }
     }
 }

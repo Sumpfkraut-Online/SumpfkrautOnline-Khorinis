@@ -10,6 +10,10 @@ namespace GUC.WorldObjects.Instances
 {
     public abstract partial class BaseVobInstance
     {
+        public void UpdateProperties()
+        {
+        }
+
         #region Networking
 
         internal void WriteCreate()

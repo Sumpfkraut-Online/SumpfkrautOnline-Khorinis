@@ -8,9 +8,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
     public partial class ItemDef
     {
-        public ItemDef(string codeName, int id = -1) : base(codeName)
+        public ItemDef(string codeName) : base(new ItemInstance(), codeName)
         {
-            SetBaseDef(new ItemInstance(this, id));
         }
     }
 }

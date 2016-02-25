@@ -18,7 +18,11 @@ namespace GUC.WorldObjects.Mobs
         {
         }
 
-        new public IScriptMobFire ScriptObject { get { return (IScriptMobFire)base.ScriptObject; } }
+        new public IScriptMobFire ScriptObject
+        {
+            get { return (IScriptMobFire)base.ScriptObject; }
+            set { base.ScriptObject = value; }
+        }
 
         #endregion
 
@@ -27,24 +31,6 @@ namespace GUC.WorldObjects.Mobs
         new public MobFireInstance Instance { get { return (MobFireInstance)base.Instance; } }
 
         public string FireVobTree { get { return Instance.FireVobTree; } }
-
-        #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// Creates a new Vob with the given Instance and ID or [-1] a free ID.
-        /// </summary>
-        public MobFire(IScriptMobFire scriptObject, MobFireInstance instance, int id = -1) : base(scriptObject, instance, id)
-        {
-        }
-
-        /// <summary>
-        /// Creates a new Vob by reading a networking stream.
-        /// </summary>
-        public MobFire(IScriptMobFire scriptObject, PacketReader stream) : base(scriptObject, stream)
-        {
-        }
 
         #endregion
 

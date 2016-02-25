@@ -8,17 +8,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
     public partial class VobDef
     {
-        public VobDef(string codeName, int id = -1) : base(codeName)
+        public VobDef(string codeName) : this(new VobInstance(), codeName)
         {
-            SetBaseDef(new VobInstance(this, id));
         }
 
-        public VobDef(string codeName, Network.PacketReader stream) : base(codeName)
-        {
-            ReadDef(new VobInstance(this), stream);
-        }
-
-        protected VobDef(string codeName) : base(codeName)
+        protected VobDef(VobInstance baseDef, string codeName) : base(baseDef, codeName)
         {
         }
     }
