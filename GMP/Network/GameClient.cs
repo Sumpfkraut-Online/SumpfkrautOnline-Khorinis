@@ -12,6 +12,7 @@ using GUC.Client.Network.Messages;
 using GUC.Scripting;
 using GUC.WorldObjects.Instances;
 using GUC.WorldObjects.Collections;
+using GUC.WorldObjects;
 
 namespace GUC.Client.Network
 {
@@ -60,6 +61,41 @@ namespace GUC.Client.Network
 
         #endregion
 
+        #region Hero
+
+        public static int HeroID { get; private set; }
+        public static NPC Hero { get; internal set; }
+        static byte[] heroData = null;
+
+        static void ReadTakeControl(PacketReader stream)
+        {
+            HeroID = stream.ReadUShort();
+            heroData = stream.GetRemainingData();
+            UpdateHeroControl();
+        }
+
+        internal static void UpdateHeroControl()
+        {
+            BaseVob vob = World.Current.Vobs.Get(HeroID);
+            if (vob == null || !(vob is NPC))
+            {
+                return;
+            }
+
+            Hero = (NPC)vob;
+
+            if (heroData != null)
+            {
+                pktReader.Load(heroData, heroData.Length);
+                Hero.ReadTakeControl(pktReader);
+                heroData = null;
+            }
+
+            WinApi.Process.Write(Hero.gVob.Address, Gothic.Objects.oCNpc.player);
+        }
+
+        #endregion
+
         static RakPeerInterface clientInterface = null;
         static SocketDescriptor socketDescriptor = null;
         static bool isConnected = false;
@@ -77,6 +113,9 @@ namespace GUC.Client.Network
                     break;
                 case NetworkIDs.RankMessage:
                     GameClient.ReadRank(stream);
+                    break;
+                case NetworkIDs.PlayerControlMessage:
+                    GameClient.ReadTakeControl(stream);
                     break;
                 case NetworkIDs.InstanceCreateMessage:
                     ScriptManager.Interface.OnCreateInstanceMsg((VobTypes)stream.ReadByte(), stream);

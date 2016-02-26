@@ -19,6 +19,8 @@ namespace GUC.WorldObjects
 
         public partial interface IScriptNPC : IScriptVob
         {
+            void OnWriteTakeControl(PacketWriter stream);
+            void OnReadTakeControl(PacketReader stream);
         }
 
         new public IScriptNPC ScriptObject
@@ -113,6 +115,22 @@ namespace GUC.WorldObjects
         #endregion
 
         #region Read & Write
+
+        internal void WriteTakeControl(PacketWriter stream)
+        {
+            if (this.ScriptObject != null)
+            {
+                this.ScriptObject.OnWriteTakeControl(stream);
+            }
+        }
+
+        internal void ReadTakeControl(PacketReader stream)
+        {
+            if (this.ScriptObject != null)
+            {
+                this.ScriptObject.OnReadTakeControl(stream);
+            }
+        }
 
         protected override void WriteProperties(PacketWriter stream)
         {

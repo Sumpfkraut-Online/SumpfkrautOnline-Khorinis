@@ -100,16 +100,16 @@
       <Link>WorldObjects\BaseVob.cs</Link>
     </Compile>
     <Compile Include="..\Network\WorldObjects\Collections\InstanceCollection.cs">
-      <Link>WorldObjects\Colletions\InstanceCollection.cs</Link>
+      <Link>WorldObjects\Collections\InstanceCollection.cs</Link>
     </Compile>
     <Compile Include="..\Network\WorldObjects\Collections\ItemContainer.cs">
-      <Link>WorldObjects\Colletions\ItemContainer.cs</Link>
+      <Link>WorldObjects\Collections\ItemContainer.cs</Link>
     </Compile>
     <Compile Include="..\Network\WorldObjects\Collections\VobCollection.cs">
-      <Link>WorldObjects\Colletions\VobCollection.cs</Link>
+      <Link>WorldObjects\Collections\VobCollection.cs</Link>
     </Compile>
     <Compile Include="..\Network\WorldObjects\Collections\WorldCollection.cs">
-      <Link>WorldObjects\Colletions\WorldCollection.cs</Link>
+      <Link>WorldObjects\Collections\WorldCollection.cs</Link>
     </Compile>
     <Compile Include="..\Network\WorldObjects\GameObject.cs">
       <Link>WorldObjects\GameObject.cs</Link>
@@ -250,7 +250,6 @@
     <Compile Include="WorldObjects\Mobs\MobSwitch.Client.cs" />
     <Compile Include="WorldObjects\Mobs\MobWheel.Client.cs" />
     <Compile Include="WorldObjects\NPC.Client.cs" />
-    <Compile Include="WorldObjects\Player.cs" />
     <Compile Include="WorldObjects\Vob.Client.cs" />
     <Compile Include="WorldObjects\World.Client.cs" />
   </ItemGroup>

@@ -65,6 +65,18 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             throw new NotImplementedException();
         }
 
+        public void OnWriteTakeControl(PacketWriter stream)
+        {
+            // write everything the player needs to know about this npc
+            // i.e. abilities, level, guild etc
+        }
+
+        public void OnReadTakeControl(PacketReader stream)
+        {
+            // read everything the player needs to know about this npc
+            // i.e. abilities, level, guild etc
+        }
+
         #endregion
     }
 }

@@ -31,6 +31,12 @@ namespace GUC.Network
             bitByte = 0;
         }
 
+        internal byte[] GetRemainingData()
+        {
+            byte[] arr = new byte[this.length - currentByte];
+            Array.Copy(data, currentByte, arr, 0, arr.Length);
+            return arr;
+        }
 
         #region Decompressing
 

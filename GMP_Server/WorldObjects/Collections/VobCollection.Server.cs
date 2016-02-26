@@ -7,7 +7,7 @@ namespace GUC.WorldObjects.Collections
 {
     public partial class VobCollection
     {
-        Dictionary<int, NPC> players = new Dictionary<int, NPC>();
+        internal Dictionary<int, NPC> players = new Dictionary<int, NPC>();
 
         static List<int> freeIDs = new List<int>();
         static int idCount = 0;

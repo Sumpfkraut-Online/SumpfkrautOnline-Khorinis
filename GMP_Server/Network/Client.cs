@@ -93,14 +93,23 @@ namespace GUC.Server.Network
 
             if (npc.IsPlayer)
             {
-                Logger.LogWarning("Rejected SetControl from client {0}: NPC {1} is a Player!", 0, npc.ID);
+                Logger.LogWarning("Rejected SetControl: NPC {1} is a Player!", npc.ID);
                 return;
             }
 
-            //npc is already in the world, set to player
+            // set old character to npc
+            if (this.Character != null)
+            {
+                if (this.Character.IsSpawned)
+                {
+                    npc.World.Vobs.players.Remove(this.Character.ID);
+                }
+            }
+
+            // npc is already in the world, set to player
             if (npc.IsSpawned)
             {
-                //npc.World.Vobs.Players.Add( npc);
+                npc.World.Vobs.players.Add(npc.ID, npc);
                 if (npc.Cell != null)
                 {
                  //   npc.Cell.Vobs.Players.Add(npc);
@@ -110,11 +119,13 @@ namespace GUC.Server.Network
                 //    npc.VobController.RemoveControlledVob(npc);
             }
             
-            //Vob.AllVobs.Players.Add(npc);
-            
             npc.Client = this;
             Character = npc;
-            //NPC.WriteControl(this, Character);
+            
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.PlayerControlMessage);
+            stream.Write((ushort)npc.ID);
+            npc.WriteTakeControl(stream);
+            Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, '\0');
         }
 
         #endregion

@@ -37,9 +37,9 @@ namespace GUC.WorldObjects.Collections
 
         public BaseVob Get(int id)
         {
-            BaseVob inst;
-            vobs.TryGetValue(id, out inst);
-            return inst;
+            BaseVob vob;
+            vobs.TryGetValue(id, out vob);
+            return vob;
         }
 
         public void ForEach(Action<BaseVob> action)

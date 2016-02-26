@@ -16,6 +16,8 @@ namespace GUC.Enumeration
         InstanceCreateMessage,
         InstanceDeleteMessage,
 
+        PlayerControlMessage,
+
         // Messages for Scripts
         MenuMessage,
         IngameMessage,
