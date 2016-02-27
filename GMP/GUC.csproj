@@ -69,8 +69,14 @@
     <Compile Include="..\Network\Enumeration\VobTypes.cs">
       <Link>Enumeration\VobTypes.cs</Link>
     </Compile>
+    <Compile Include="..\Network\GameObject.cs">
+      <Link>GameObject.cs</Link>
+    </Compile>
     <Compile Include="..\Network\Log\Logger.cs">
       <Link>Log\Logger.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Network\GameClient.cs">
+      <Link>Network\GameClient.cs</Link>
     </Compile>
     <Compile Include="..\Network\Network\PacketReader.cs">
       <Link>Network\PacketReader.cs</Link>
@@ -110,9 +116,6 @@
     </Compile>
     <Compile Include="..\Network\WorldObjects\Collections\WorldCollection.cs">
       <Link>WorldObjects\Collections\WorldCollection.cs</Link>
-    </Compile>
-    <Compile Include="..\Network\WorldObjects\GameObject.cs">
-      <Link>WorldObjects\GameObject.cs</Link>
     </Compile>
     <Compile Include="..\Network\WorldObjects\Instances\BaseVobInstance.cs">
       <Link>WorldObjects\Instances\BaseVobInstance.cs</Link>
@@ -210,7 +213,7 @@
     <Compile Include="Hooks\hPlayerVob.cs" />
     <Compile Include="Injection.cs" />
     <Compile Include="InputHandler.cs" />
-    <Compile Include="Network\GameClient.cs" />
+    <Compile Include="Network\GameClient.Client.cs" />
     <Compile Include="Network\Messages\ConnectionMessage.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

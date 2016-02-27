@@ -23,7 +23,7 @@ namespace GUC.WorldObjects
         #region ScriptObject
 
         /// <summary>
-        /// The underyling ScriptObject interface for all Vobs.
+        /// The underlying ScriptObject interface for all Vobs.
         /// </summary>
         public partial interface IScriptBaseVob : IScriptGameObject
         {

@@ -55,6 +55,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Scripts\GUCScripts.cs">
+      <Link>GUCScripts.cs</Link>
+    </Compile>
+    <Compile Include="..\Scripts\Sumpfkraut\Networking\ScriptClient.cs">
+      <Link>Sumpfkraut\Networking\ScriptClient.cs</Link>
+    </Compile>
     <Compile Include="..\Scripts\Sumpfkraut\ScriptObject.cs">
       <Link>Sumpfkraut\ScriptObject.cs</Link>
     </Compile>
@@ -108,7 +114,7 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sqlite.cs" />
-    <Compile Include="Init.cs" />
+    <Compile Include="GUCScripts.Server.cs" />
     <Compile Include="Sumpfkraut\Database\DBAgent.cs" />
     <Compile Include="Sumpfkraut\Database\DBQueryHandler.cs" />
     <Compile Include="Sumpfkraut\Database\DBQuerying\AbstractDBQuery.cs" />
@@ -119,6 +125,7 @@
     <Compile Include="Sumpfkraut\Database\DBSecurity.cs" />
     <Compile Include="Sumpfkraut\Database\DBTables.cs" />
     <Compile Include="Sumpfkraut\Database\Enumeration.cs" />
+    <Compile Include="Sumpfkraut\Networking\ScriptClient.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\BaseVobDef.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\ItemDef.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\NPCDef.Server.cs" />

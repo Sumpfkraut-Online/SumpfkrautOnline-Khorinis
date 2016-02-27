@@ -5,17 +5,14 @@ using System.IO;
 using System.Linq;
 using GUC.Log;
 using GUC.Scripting;
-using GUC.Server.Network;
-using GUC.Network;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
-using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 
 namespace GUC.Scripts
 {
-    public class Init : ScriptInterface
+    public partial class GUCScripts : ScriptInterface
     {
-		public Init()
+		public GUCScripts()
 		{
             Logger.Log("######## Initalise SumpfkrautOnline ServerScripts #########");
 
@@ -51,25 +48,6 @@ namespace GUC.Scripts
         {
             WorldDef wDef = new WorldDef();
             WorldInst.NewWorld = new WorldInst(default(WorldDef));
-        }
-
-        public void OnReadMenuMsg(Client client, PacketReader steam)
-        {
-            Logger.Log("Login!");
-
-            NPCDef def = BaseVobDef.Get<NPCDef>("player");
-            NPCInst npc = new NPCInst(def);
-
-            client.SetControl(npc.BaseInst);
-            npc.Spawn(WorldInst.NewWorld);
-        }
-
-        public void OnReadIngameMsg(Client client, PacketReader steam) { }
-
-        public bool OnClientValidation(Client client)
-        {
-            // check mac, drivestring & ip?
-            return true; // is not banned
         }
     }
 }

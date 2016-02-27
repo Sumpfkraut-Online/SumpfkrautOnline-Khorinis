@@ -32,7 +32,7 @@ namespace GUC.Client.Scripts.Sumpfkraut.Menus.MainMenus
 
         public override void Open()
         {
-            if (GUC.Scripts.Init.Ingame)
+            if (GUC.Scripts.GUCScripts.Ingame)
             {
                 if (!ingame)
                 {

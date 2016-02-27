@@ -59,25 +59,25 @@ namespace GUC.WorldObjects
         
         #region Network Messages
 
-        internal virtual void WriteSpawnMessage(IEnumerable<Client> list)
+        internal virtual void WriteSpawnMessage(IEnumerable<GameClient> list)
         {
             PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldVobSpawnMessage);
 
             this.WriteStream(stream);
 
-            foreach (Client client in list)
+            foreach (GameClient client in list)
             {
                 client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
             }
         }
 
-        internal void WriteDespawnMessage(IEnumerable<Client> list)
+        internal void WriteDespawnMessage(IEnumerable<GameClient> list)
         {
             PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldVobDeleteMessage);
 
             stream.Write(this.ID);
 
-            foreach (Client client in list)
+            foreach (GameClient client in list)
                 client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
         }
 

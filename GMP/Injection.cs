@@ -6,10 +6,9 @@ using System.Threading;
 using GUC.Log;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.IO;
 using System.Reflection;
 using GUC.Client.Hooks;
-using GUC.Client.Network;
+using GUC.Network;
 
 namespace GUC.Client
 {
@@ -97,6 +96,7 @@ namespace GUC.Client
 
                 hParser.AddHooks();
                 hGame.AddHooks();
+                hPlayerVob.AddHooks();
 
                 #region Some more editing
                 // Make rain drops being blocked by vobs!
@@ -115,7 +115,7 @@ namespace GUC.Client
                 Logger.Log("Hooking & editing of gothic process completed. (for now...)");
                 #endregion
 
-                GameClient.Connect();
+                GameClient.Client.Connect();
 
                 while (true)
                 {

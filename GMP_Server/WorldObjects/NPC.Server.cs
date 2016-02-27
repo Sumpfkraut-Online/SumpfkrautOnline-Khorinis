@@ -41,7 +41,7 @@ namespace GUC.WorldObjects
 
         #region Properties
 
-        public Client Client { get; internal set; }
+        public GameClient Client { get; internal set; }
         public bool IsPlayer { get { return Client != null; } }
 
         internal NPCCell npcCell = null;

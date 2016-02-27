@@ -50,7 +50,7 @@ namespace GUC.Server.Network.Messages
 
         #endregion
 
-        public static void WriteEquipMessage(IEnumerable<Client> list, NPC npc, Item item, byte slot)
+        public static void WriteEquipMessage(IEnumerable<GameClient> list, NPC npc, Item item, byte slot)
         {
             PacketWriter stream = Network.GameServer.SetupStream(NetworkIDs.NPCEquipMessage);
 
@@ -58,40 +58,40 @@ namespace GUC.Server.Network.Messages
             stream.Write(slot);
             //item.WriteEquipped(stream);
 
-            foreach (Client client in list)
+            foreach (GameClient client in list)
                 client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
         }
 
-        public static void WriteUnequipMessage(IEnumerable<Client> list, NPC npc, byte slot)
+        public static void WriteUnequipMessage(IEnumerable<GameClient> list, NPC npc, byte slot)
         {
             PacketWriter stream = Network.GameServer.SetupStream(NetworkIDs.NPCUnequipMessage);
             stream.Write(npc.ID);
             stream.Write(slot);
 
-            foreach (Client client in list)
+            foreach (GameClient client in list)
                 client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
         }
 
-        public static void WriteJump(IEnumerable<Client> list, NPC npc)
+        public static void WriteJump(IEnumerable<GameClient> list, NPC npc)
         {
             PacketWriter stream = Network.GameServer.SetupStream(NetworkIDs.NPCJumpMessage);
             stream.Write(npc.ID);
-            foreach (Client client in list)
+            foreach (GameClient client in list)
                 client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
         }
 
         #region States
 
-        public static void WriteState(IEnumerable<Client> list, NPC npc)
+        public static void WriteState(IEnumerable<GameClient> list, NPC npc)
         {
             PacketWriter stream = Network.GameServer.SetupStream(NetworkIDs.NPCStateMessage);
             stream.Write(npc.ID);
             stream.Write((byte)npc.State);
-            foreach (Client client in list)
+            foreach (GameClient client in list)
                 client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
         }
 
-        public static void WriteTargetState(IEnumerable<Client> list, NPC npc, NPC target)
+        public static void WriteTargetState(IEnumerable<GameClient> list, NPC npc, NPC target)
         {
             PacketWriter stream = Network.GameServer.SetupStream(NetworkIDs.NPCTargetStateMessage);
             stream.Write(npc.ID);
@@ -106,22 +106,22 @@ namespace GUC.Server.Network.Messages
                 stream.Write(target.ID);
             }
 
-            foreach (Client client in list)
+            foreach (GameClient client in list)
                 client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
         }
 
-        public static void WriteDrawItem(IEnumerable<Client> list, NPC npc, Item item, bool fast)
+        public static void WriteDrawItem(IEnumerable<GameClient> list, NPC npc, Item item, bool fast)
         {
             PacketWriter stream = Network.GameServer.SetupStream(NetworkIDs.NPCDrawItemMessage);
             stream.Write(npc.ID);
             stream.Write(fast);
             //item.WriteEquipped(stream);
 
-            foreach (Client client in list)
+            foreach (GameClient client in list)
                 client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
         }
 
-        public static void WriteUndrawItem(IEnumerable<Client> list, NPC npc, bool fast, bool altRemove)
+        public static void WriteUndrawItem(IEnumerable<GameClient> list, NPC npc, bool fast, bool altRemove)
         {
             if (npc == null)
                 return;

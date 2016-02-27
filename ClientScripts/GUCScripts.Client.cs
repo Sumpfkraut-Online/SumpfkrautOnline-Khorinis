@@ -17,11 +17,11 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 
 namespace GUC.Scripts
 {
-    public class Init : ScriptInterface
+    public partial class GUCScripts : ScriptInterface
     {
         public static bool Ingame = false;
 
-        public Init()
+        public GUCScripts()
         {
             AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;
             Logger.Log("SumpfkrautOnline ClientScripts loaded!");
@@ -58,9 +58,6 @@ namespace GUC.Scripts
             Ingame = true;
             Logger.Log("Ingame started.");
         }
-
-        public void OnReadMenuMsg(PacketReader steam) { }
-        public void OnReadIngameMsg(PacketReader steam) { }
 
         public void OnCreateInstanceMsg(VobTypes type, PacketReader stream)
         {

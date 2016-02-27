@@ -11,7 +11,6 @@ namespace GUC.Enumeration
     internal enum NetworkIDs : byte
     {
         ConnectionMessage,
-        RankMessage,
         
         InstanceCreateMessage,
         InstanceDeleteMessage,

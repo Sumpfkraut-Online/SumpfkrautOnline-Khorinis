@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Client.Scripts.Sumpfkraut.GUI.MainMenu;
-using GUC.Client.Network;
+using GUC.Network;
 
 namespace GUC.Client.Scripts.Sumpfkraut.Menus.MainMenus
 {
@@ -27,8 +27,8 @@ namespace GUC.Client.Scripts.Sumpfkraut.Menus.MainMenus
 
         void Login()
         {
-            var strm = GameClient.GetMenuMsgStream();
-            GameClient.SendMenuMsg(strm);
+            var strm = GameClient.Client.GetMenuMsgStream();
+            GameClient.Client.SendMenuMsg(strm);
 
             /*if (name.Input.Length == 0)
             {

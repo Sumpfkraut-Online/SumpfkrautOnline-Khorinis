@@ -12,7 +12,7 @@ namespace GUC.Server.Network.Messages
 {
     static class VobMessage
     {
-        public static void ReadPosDir(PacketReader stream, Client client, NPC character)
+        public static void ReadPosDir(PacketReader stream, GameClient client, NPC character)
         {
             Vob vob = client.Character;
             vob.Position = stream.ReadVec3f();
@@ -47,13 +47,13 @@ namespace GUC.Server.Network.Messages
             }*/
         }
 
-        public static void WritePosDir(IEnumerable<Client> list, Vob vob)
+        public static void WritePosDir(IEnumerable<GameClient> list, Vob vob)
         {
             PacketWriter stream = Network.GameServer.SetupStream(NetworkIDs.VobPosDirMessage);
             stream.Write(vob.ID);
             stream.Write(vob.Position);
             stream.Write(vob.Direction);
-            foreach (Client client in list)
+            foreach (GameClient client in list)
                 client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE, 'W');
         }
     }

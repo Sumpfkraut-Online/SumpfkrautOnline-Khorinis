@@ -28,8 +28,11 @@ namespace GUC.Client.Hooks
                 int address = Convert.ToInt32(message);
 
                 oCNpc player = oCNpc.Create();
-                player.SetVisual("HUMANS.MDS");
-                player.SetAdditionalVisuals("hum_body_Naked0", 9, 0, "Hum_Head_Pony", 2, 0, -1);
+                //player.SetVisual("HUMANS.MDS");
+                //player.SetAdditionalVisuals("hum_body_Naked0", 9, 0, "Hum_Head_Pony", 2, 0, -1);
+                player.SetVisual("Scavenger.mds");
+                player.SetAdditionalVisuals("Sca_Body", 0, 0, "", 0, 0, -1);
+                player.SetToFistMode();
 
                 player.HPMax = 100;
                 player.HP = 100;

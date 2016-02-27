@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.Network;
 
-namespace GUC.WorldObjects
+namespace GUC
 {
     /// <summary>
     /// The lowermost object. Provides an ID and a ScriptObject.

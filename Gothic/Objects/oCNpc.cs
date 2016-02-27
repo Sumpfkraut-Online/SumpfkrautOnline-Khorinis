@@ -355,6 +355,11 @@ namespace Gothic.Objects
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetFatness, new FloatArg(val));
         }
 
+        public void SetToFistMode()
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetToFistMode);
+        }
+
         /*
         public static oCNpc StealNPC(Process process)
         {
@@ -1243,10 +1248,7 @@ namespace Gothic.Objects
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.OpenDeadNPC, new CallValue[] { });
         }
 
-        public void SetToFistMode()
-        {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetToFistMode, new CallValue[] { });
-        }
+
 
         public void SetToFightMode(oCItem item, int mode)
         {

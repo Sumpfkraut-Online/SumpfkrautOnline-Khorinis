@@ -14,33 +14,20 @@ using GUC.WorldObjects.Instances;
 using GUC.WorldObjects.Collections;
 using GUC.WorldObjects;
 
-namespace GUC.Client.Network
+namespace GUC.Network
 {
-    public static class GameClient
+    public partial class GameClient
     {
-        #region Client Rank
-
-        static int rank = 0;
-        public static int Rank { get { return rank; } }
-
-        static void ReadRank(PacketReader stream)
-        {
-            rank = stream.ReadByte();
-            if (rank == 0) rankInfo.Texts[0].Text = "Statist";
-            else if (rank == 1) rankInfo.Texts[0].Text = "Supporter";
-            else if (rank >= 2) rankInfo.Texts[0].Text = "Admin";
-        }
-
-        #endregion
+        public static readonly GameClient Client = new GameClient();
 
         #region Script Menu Message
-        
-        public static PacketWriter GetMenuMsgStream()
+
+        public PacketWriter GetMenuMsgStream()
         {
             return SetupStream(NetworkIDs.MenuMessage);
         }
 
-        public static void SendMenuMsg(PacketWriter stream)
+        public void SendMenuMsg(PacketWriter stream)
         {
             Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE);
         }
@@ -48,13 +35,13 @@ namespace GUC.Client.Network
         #endregion
 
         #region Script Ingame Message
-        
-        public static PacketWriter GetIngameMsgStream()
+
+        public PacketWriter GetIngameMsgStream()
         {
             return SetupStream(NetworkIDs.IngameMessage);
         }
 
-        public static void SendIngameMsg(PacketWriter stream)
+        public void SendIngameMsg(PacketWriter stream)
         {
             Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE);
         }
@@ -63,7 +50,7 @@ namespace GUC.Client.Network
 
         #region Hero
 
-        public static int HeroID { get; private set; }
+        /*public static int HeroID { get; private set; }
         public static NPC Hero { get; internal set; }
         static byte[] heroData = null;
 
@@ -92,30 +79,27 @@ namespace GUC.Client.Network
             }
 
             WinApi.Process.Write(Hero.gVob.Address, Gothic.Objects.oCNpc.player);
-        }
+        }*/
 
         #endregion
 
-        static RakPeerInterface clientInterface = null;
-        static SocketDescriptor socketDescriptor = null;
-        static bool isConnected = false;
-        public static bool IsConnected { get { return isConnected; } }
+        RakPeerInterface clientInterface = null;
+        SocketDescriptor socketDescriptor = null;
+        bool isConnected = false;
+        public bool IsConnected { get { return isConnected; } }
 
-        static PacketReader pktReader = new PacketReader();
-        static PacketWriter pktWriter = new PacketWriter(128000);
-        
-        static void ReadMessage(NetworkIDs id, PacketReader stream)
+        PacketReader pktReader = new PacketReader();
+        PacketWriter pktWriter = new PacketWriter(128000);
+
+        void ReadMessage(NetworkIDs id, PacketReader stream)
         {
             switch (id)
             {
                 case NetworkIDs.ConnectionMessage:
                     ConnectionMessage.Read(stream);
                     break;
-                case NetworkIDs.RankMessage:
-                    GameClient.ReadRank(stream);
-                    break;
                 case NetworkIDs.PlayerControlMessage:
-                    GameClient.ReadTakeControl(stream);
+                    //GameClient.ReadTakeControl(stream);
                     break;
                 case NetworkIDs.InstanceCreateMessage:
                     ScriptManager.Interface.OnCreateInstanceMsg((VobTypes)stream.ReadByte(), stream);
@@ -125,61 +109,23 @@ namespace GUC.Client.Network
                     if (inst != null) ScriptManager.Interface.OnDeleteInstanceMsg(inst);
                     break;
                 case NetworkIDs.MenuMessage:
-                    ScriptManager.Interface.OnReadMenuMsg(stream);
+                    if (this.ScriptObject != null)
+                        this.ScriptObject.OnReadMenuMsg(stream);
                     break;
 
                 // ingame
 
                 case NetworkIDs.IngameMessage:
-                    ScriptManager.Interface.OnReadIngameMsg(stream);
+                    if (this.ScriptObject != null)
+                        this.ScriptObject.OnReadIngameMsg(stream);
                     break;
                 default:
                     Logger.LogError("Received message with invalid NetworkID! " + id);
                     break;
             }
-            
-            /*
-            messageListener.Add(NetworkIDs.AccountErrorMessage, AccountMessage.Error);
-            messageListener.Add(NetworkIDs.AccountLoginMessage, AccountMessage.GetCharList);
-            messageListener.Add(NetworkIDs.ConnectionMessage, ConnectionMessage.Read);
-
-            messageListener.Add(NetworkIDs.PlayerControlMessage, PlayerMessage.ReadControl);
-
-            messageListener.Add(NetworkIDs.VobPosDirMessage, VobMessage.ReadPosDir);
-
-            messageListener.Add(NetworkIDs.WorldVobDeleteMessage, WorldMessage.ReadVobDelete);
-            messageListener.Add(NetworkIDs.WorldVobSpawnMessage, WorldMessage.ReadVobSpawn);
-            messageListener.Add(NetworkIDs.WorldNPCSpawnMessage, WorldMessage.ReadNPCSpawn);
-            messageListener.Add(NetworkIDs.WorldItemSpawnMessage, WorldMessage.ReadItemSpawn);
-            messageListener.Add(NetworkIDs.WorldTimeMessage, WorldMessage.ReadTimeChange);
-            messageListener.Add(NetworkIDs.WorldWeatherMessage, WorldMessage.ReadWeatherChange);
-
-            messageListener.Add(NetworkIDs.NPCAniStartMessage, NPCMessage.ReadAniStart);
-            messageListener.Add(NetworkIDs.NPCAniStopMessage, NPCMessage.ReadAniStop);
-            messageListener.Add(NetworkIDs.NPCStateMessage, NPCMessage.ReadState);
-            messageListener.Add(NetworkIDs.NPCTargetStateMessage, NPCMessage.ReadTargetState);
-            messageListener.Add(NetworkIDs.NPCDrawItemMessage, NPCMessage.ReadDrawItem);
-            messageListener.Add(NetworkIDs.NPCUndrawItemMessage, NPCMessage.ReadUndrawItem);
-            messageListener.Add(NetworkIDs.NPCHealthMessage, NPCMessage.ReadHealthMessage);
-            messageListener.Add(NetworkIDs.NPCEquipMessage, NPCMessage.ReadEquipMessage);
-            messageListener.Add(NetworkIDs.NPCUnequipMessage, NPCMessage.ReadUnequipMessage);
-            messageListener.Add(NetworkIDs.NPCJumpMessage, NPCMessage.ReadJump);
-
-            messageListener.Add(NetworkIDs.InventoryAddMessage, InventoryMessage.ReadAddItem);
-            messageListener.Add(NetworkIDs.InventoryAmountMessage, InventoryMessage.ReadAmountUpdate);
-
-            messageListener.Add(NetworkIDs.ControlAddVobMessage, ControlMessage.ReadAddVob);
-            messageListener.Add(NetworkIDs.ControlRemoveVobMessage, ControlMessage.ReadRemoveVob);
-
-            messageListener.Add(NetworkIDs.MobUseMessage, MobMessage.ReadUseMob);
-            messageListener.Add(NetworkIDs.MobUnUseMessage, MobMessage.ReadUnUseMob);
-
-            messageListener.Add(NetworkIDs.TradeMessage, TradeMessage.Read);
-
-            messageListener.Add(NetworkIDs.ControlCmdMessage, ControlMessage.ReadVobControlCmd);*/
         }
 
-        static GameClient()
+        private GameClient()
         {
             clientInterface = RakPeer.GetInstance();
 
@@ -192,9 +138,9 @@ namespace GUC.Client.Network
             }
         }
 
-        static long nextConnectionTry = 0;
-        static int connectionTrys = 0;
-        internal static void Connect()
+        long nextConnectionTry = 0;
+        int connectionTrys = 0;
+        internal void Connect()
         {
             if (isConnected || nextConnectionTry > DateTime.UtcNow.Ticks)
                 return;
@@ -229,22 +175,21 @@ namespace GUC.Client.Network
             }
         }
 
-        public static void Disconnect()
+        public void Disconnect()
         {
             clientInterface.CloseConnection(clientInterface.GetSystemAddressFromIndex(0), true, 0);
             isConnected = false;
         }
 
-        static uint packetKB = 0;
-        static long lastInfoUpdate = 0;
-        static GUCVisual abortInfo;
-        static GUCVisual kbsInfo;
-        static GUCVisual pingInfo;
-        
-        static GUCVisual rankInfo;
-        static GUCVisual instInfo;
+        long packetKB = 0;
+        long lastInfoUpdate = 0;
+        GUCVisual abortInfo;
+        GUCVisual kbsInfo;
+        GUCVisual pingInfo;
 
-        internal static void Update()
+        GUCVisual instInfo;
+
+        internal void Update()
         {
             if (clientInterface == null)
                 return;
@@ -260,13 +205,10 @@ namespace GUC.Client.Network
                 kbsInfo = GUCVisualText.Create("", 0x2000, 0, true);
                 kbsInfo.Texts[0].Format = GUCVisualText.TextFormat.Right;
 
-                pingInfo = GUCVisualText.Create("", 0x2000, kbsInfo.zView.FontY()+1, true);
+                pingInfo = GUCVisualText.Create("", 0x2000, kbsInfo.zView.FontY() + 1, true);
                 pingInfo.Texts[0].Format = GUCVisualText.TextFormat.Right;
 
-                rankInfo = GUCVisualText.Create("Statist", 0x2000, kbsInfo.zView.FontY() + pingInfo.zView.FontY() + 2, true);
-                rankInfo.Texts[0].Format = GUCVisualText.TextFormat.Right;
-
-                instInfo = GUCVisualText.Create("0", 0x2000, kbsInfo.zView.FontY() + pingInfo.zView.FontY() + rankInfo.zView.FontY() + 3, true);
+                instInfo = GUCVisualText.Create("0", 0x2000, kbsInfo.zView.FontY() + pingInfo.zView.FontY() + 2, true);
                 instInfo.Texts[0].Format = GUCVisualText.TextFormat.Right;
             }
 
@@ -374,8 +316,7 @@ namespace GUC.Client.Network
                 lastInfoUpdate = DateTime.UtcNow.Ticks;
                 packetKB = 0;
                 kbsInfo.Show(); // bring to front
-
-                rankInfo.Show();
+                
                 instInfo.Texts[0].Text = ("Instances: " + InstanceCollection.GetCount());
                 instInfo.Show();
             }
@@ -383,15 +324,15 @@ namespace GUC.Client.Network
 
         internal static PacketWriter SetupStream(NetworkIDs id)
         {
-            pktWriter.Reset();
-            pktWriter.Write((byte)DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
-            pktWriter.Write((byte)id);
-            return pktWriter;
+            Client.pktWriter.Reset();
+            Client.pktWriter.Write((byte)DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
+            Client.pktWriter.Write((byte)id);
+            return Client.pktWriter;
         }
 
         internal static void Send(PacketWriter stream, PacketPriority pp, PacketReliability pr)
         {
-            clientInterface.Send(stream.GetData(), stream.GetLength(), pp, pr, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Client.clientInterface.Send(stream.GetData(), stream.GetLength(), pp, pr, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace GUC.Server.Network.Messages
 {
     static class ConnectionMessage
     {
-        public static void Read(PacketReader stream, Client client)
+        public static void Read(PacketReader stream, GameClient client)
         {
             byte[] signature = new byte[16];
             stream.Read(signature, 0, 16);
@@ -26,7 +26,7 @@ namespace GUC.Server.Network.Messages
             }
         }
 
-        public static void WriteInstances(Client client)
+        public static void WriteInstances(GameClient client)
         {
             if (InstanceCollection.GetCountDynamics() > 0)
             {

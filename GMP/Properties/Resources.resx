@@ -133,9 +133,6 @@
   <data name="NPC_Default" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\NPC_Default.d;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="PC_Hero" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\PC_Hero.d;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="Species" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Species.d;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>

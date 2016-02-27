@@ -123,16 +123,6 @@ namespace GUC.Client.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
         /// </summary>
-        internal static byte[] PC_Hero {
-            get {
-                object obj = ResourceManager.GetObject("PC_Hero", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
-        /// </summary>
         internal static byte[] Species {
             get {
                 object obj = ResourceManager.GetObject("Species", resourceCulture);

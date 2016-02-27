@@ -5,7 +5,7 @@ using System.Text;
 using GUC.Scripting;
 using GUC.Log;
 using Gothic;
-using GUC.Client.Network;
+using GUC.Network;
 using WinApi;
 using Gothic.Types;
 using Gothic.System;
@@ -42,7 +42,7 @@ namespace GUC.Client.Hooks
 
                 if (next < DateTime.UtcNow.Ticks)
                 {
-                    GameClient.Update();
+                    GameClient.Client.Update();
                     InputHandler.Update();
                     ScriptManager.Interface.Update(DateTime.UtcNow.Ticks);
 
@@ -91,7 +91,7 @@ namespace GUC.Client.Hooks
                     ScriptManager.Interface.StartIngame();
                 }
                 
-                GameClient.Update();
+                GameClient.Client.Update();
                 InputHandler.Update();
                 ScriptManager.Interface.Update(DateTime.UtcNow.Ticks);
 

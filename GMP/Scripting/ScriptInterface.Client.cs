@@ -25,18 +25,7 @@ namespace GUC.Scripting
         /// Is called once when Gothic is ingame for the first time.
         /// </summary>
         void StartIngame();
-
-        /// <summary>
-        /// Is called when a Menu-Message from the server is received.
-        /// </summary>
-        void OnReadMenuMsg(PacketReader stream);
-
-        /// <summary>
-        /// Is called when an Ingame-Message from the server is received.
-        /// </summary>
-        void OnReadIngameMsg(PacketReader stream);
-
-
+        
         void OnCreateInstanceMsg(VobTypes type, PacketReader stream);
         void OnDeleteInstanceMsg(BaseVobInstance instance);
     }

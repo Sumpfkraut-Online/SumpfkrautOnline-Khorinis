@@ -5,6 +5,7 @@ using System.Text;
 using GUC.Server.Network;
 using GUC.Enumeration;
 using RakNet;
+using GUC.Network;
 
 namespace GUC.WorldObjects.Instances
 {
@@ -23,7 +24,7 @@ namespace GUC.WorldObjects.Instances
             stream.Write((byte)this.VobType);
             this.WriteStream(stream);
 
-            foreach (Client client in GameServer.GetValidClients())
+            foreach (GameClient client in GameServer.GetValidClients())
                 client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, '\0');
         }
 
@@ -33,7 +34,7 @@ namespace GUC.WorldObjects.Instances
 
             stream.Write((ushort)this.ID);
 
-            foreach (Client client in GameServer.GetValidClients())
+            foreach (GameClient client in GameServer.GetValidClients())
                 client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, '\0');
         }
 

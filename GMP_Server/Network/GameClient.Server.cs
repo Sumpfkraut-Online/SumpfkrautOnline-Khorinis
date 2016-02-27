@@ -8,11 +8,24 @@ using GUC.Network;
 using GUC.Log;
 using GUC.Enumeration;
 using GUC.Scripting;
+using GUC.Server.Network;
 
-namespace GUC.Server.Network
+namespace GUC.Network
 {
-    public class Client
+    public partial class GameClient
     {
+        #region ScriptObject
+
+        /// <summary>
+        /// The ScriptObject interface
+        /// </summary>
+        public partial interface IScriptClient : IScriptGameObject
+        {
+            bool OnValidation();
+        }
+
+        #endregion
+
         #region Properties
 
         //Networking
@@ -20,38 +33,14 @@ namespace GUC.Server.Network
         internal SystemAddress systemAddress;
         public String SystemAddress { get { return systemAddress.ToString(); } }
 
-
-        //Ingame
-        public NPC Character { get; internal set; }
-
         internal List<Vob> VobControlledList = new List<Vob>();
-        
-        public int AccountID = -1; //FIXME ?
-
-        #endregion
-
-        #region Rank
-
-        int rank = 0;
-        public int Rank { get { return rank; } }
-
-        public void SetRank(int rank)
-        {
-            if (rank < 0 || rank > byte.MaxValue)
-                throw new ArgumentOutOfRangeException("Rank value is out of range! Must be 0...255");
-
-            PacketWriter strm = GameServer.SetupStream(NetworkIDs.RankMessage);
-            strm.Write((byte)rank);
-            Send(strm, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, '\0');
-
-            this.rank = rank;
-        }
 
         #endregion
 
         #region Validation check
 
         internal bool isValid = false;
+        public bool IsValid { get { return this.isValid; } }
 
         byte[] driveHash;
         public byte[] DriveHash { get { return driveHash; } }
@@ -64,8 +53,8 @@ namespace GUC.Server.Network
             this.driveHash = driveHash;
             this.macHash = macHash;
 
-            this.isValid = ScriptManager.Interface.OnClientValidation(this);
-            if (!isValid)
+            this.isValid = this.ScriptObject == null ? true : this.ScriptObject.OnValidation();
+            if (!this.isValid)
             {
                 this.Kick();
             }
@@ -76,10 +65,11 @@ namespace GUC.Server.Network
 
         #region Constructors
 
-        internal Client(RakNetGUID guid, SystemAddress systemAddress)
+        internal GameClient(RakNetGUID guid, SystemAddress systemAddress)
         {
             this.guid = new RakNetGUID(guid.g);
             this.systemAddress = systemAddress;
+            ScriptManager.Interface.OnClientConnection(this);
         }
 
         #endregion
@@ -120,7 +110,7 @@ namespace GUC.Server.Network
             }
             
             npc.Client = this;
-            Character = npc;
+            character = npc;
             
             PacketWriter stream = GameServer.SetupStream(NetworkIDs.PlayerControlMessage);
             stream.Write((ushort)npc.ID);

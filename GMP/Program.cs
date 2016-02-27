@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-using GUC.Client.Network;
+using GUC.Network;
 using Gothic;
 using WinApi;
 using System.IO;
@@ -43,7 +43,7 @@ namespace GUC.Client
         
         public static void Exit()
         {
-            GameClient.Disconnect();
+            GameClient.Client.Disconnect();
             zCOption.GetSectionByName("INTERNAL").GetEntryByName("gameAbnormalExit").VarValue.Set("0");
             zCOption.Save("Gothic.ini");
             CGameManager.ExitGameVar = 1;

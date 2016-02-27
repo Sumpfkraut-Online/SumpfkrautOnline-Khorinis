@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.WorldObjects;
 using GUC.WorldObjects.Collections;
+using GUC.Network;
 
 namespace GUC.Server.Network
 {
@@ -44,7 +45,7 @@ namespace GUC.Server.Network
             }
         }
 
-        public void ForEachSurroundingClient(Action<Client> action, Client exclude = null)
+        public void ForEachSurroundingClient(Action<GameClient> action, GameClient exclude = null)
         {
             if (action == null)
                 throw new ArgumentNullException("Action is null!");

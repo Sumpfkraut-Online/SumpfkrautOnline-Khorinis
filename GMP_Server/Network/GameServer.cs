@@ -17,9 +17,9 @@ namespace GUC.Server.Network
     {
         internal readonly static ServerOptions Options = ServerOptions.Init();
 
-        readonly static Dictionary<ulong, Client> clientDict = new Dictionary<ulong, Client>();
-        public static IEnumerable<Client> GetValidClients() { return clientDict.Values.Where(c => c.isValid); }
-        public static IEnumerable<Client> GetAllClients() { return clientDict.Values; }
+        readonly static Dictionary<ulong, GameClient> clientDict = new Dictionary<ulong, GameClient>();
+        public static IEnumerable<GameClient> GetValidClients() { return clientDict.Values.Where(c => c.isValid); }
+        public static IEnumerable<GameClient> GetAllClients() { return clientDict.Values; }
 
         internal readonly static RakPeerInterface ServerInterface = RakPeer.GetInstance();
 
@@ -57,7 +57,7 @@ namespace GUC.Server.Network
             }
         }
 
-        static void ReadMessage(NetworkIDs id, Client client, PacketReader stream)
+        static void ReadMessage(NetworkIDs id, GameClient client, PacketReader stream)
         {
             switch (id)
             {
@@ -66,13 +66,14 @@ namespace GUC.Server.Network
                     Logger.LogWarning("Client sent another ConnectionMessage. Kicked: {0} IP:{1}", client.guid.g, client.systemAddress);
                     break;
                 case NetworkIDs.MenuMessage:
-                    ScriptManager.Interface.OnReadMenuMsg(client, pktReader);
+                    //ScriptManager.Interface.OnReadMenuMsg(client, pktReader);
                     break;
 
                 // Ingame:
 
                 case NetworkIDs.IngameMessage:
-                    ScriptManager.Interface.OnReadIngameMsg(client, stream);
+                    
+                    //ScriptManager.Interface.OnReadIngameMsg(client, stream);
                     break;
 
                 default:
@@ -119,7 +120,7 @@ namespace GUC.Server.Network
         internal static void Update()
         {
             Packet p = ServerInterface.Receive();
-            Client client;
+            GameClient client;
             NetworkIDs msgID;
             DefaultMessageIDTypes msgDefaultType;
 
@@ -154,7 +155,7 @@ namespace GUC.Server.Network
                             }
                             else
                             {
-                                clientDict.Add(p.guid.g, new Client(p.guid, p.systemAddress));
+                                clientDict.Add(p.guid.g, new GameClient(p.guid, p.systemAddress));
                                 Logger.Log("Client connected: {0} IP:{1}", p.guid, p.systemAddress);
                             }
                             break;
@@ -223,7 +224,7 @@ namespace GUC.Server.Network
         }
 
 
-        public static void DisconnectClient(Client client)
+        public static void DisconnectClient(GameClient client)
         {
             ServerInterface.CloseConnection(client.guid, false);
             clientDict.Remove(client.guid.g);
@@ -255,7 +256,7 @@ namespace GUC.Server.Network
             return SetupStream(NetworkIDs.MenuMessage);
         }
 
-        public static void SendMenuMsg(Client client, PacketWriter stream)
+        public static void SendMenuMsg(GameClient client, PacketWriter stream)
         {
             ServerInterface.Send(stream.GetData(), stream.GetLength(), PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'M', client.guid, false);
         }
@@ -269,7 +270,7 @@ namespace GUC.Server.Network
             return SetupStream(NetworkIDs.IngameMessage);
         }
 
-        public static void SendIngameMsg(Client client, PacketWriter stream)
+        public static void SendIngameMsg(GameClient client, PacketWriter stream)
         {
             ServerInterface.Send(stream.GetData(), stream.GetLength(), PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
         }

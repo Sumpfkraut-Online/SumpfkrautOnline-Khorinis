@@ -118,8 +118,7 @@ namespace GUC.Client.Hooks
                 Directory.CreateDirectory(dPath);
 
             String[] arr = new String[] { "GUC.Client.Resources.Constants.d", "GUC.Client.Resources.Classes.d", "GUC.Client.Resources.AI_Constants.d",
-                "GUC.Client.Resources.BodyStates.d", "GUC.Client.Resources.Focus.d", "GUC.Client.Resources.Species.d", "GUC.Client.Resources.NPC_Default.d",
-                "GUC.Client.Resources.PC_Hero.d" };
+                "GUC.Client.Resources.BodyStates.d", "GUC.Client.Resources.Focus.d", "GUC.Client.Resources.Species.d", "GUC.Client.Resources.NPC_Default.d" };
 
             zString str = null;
             String fileList = "";

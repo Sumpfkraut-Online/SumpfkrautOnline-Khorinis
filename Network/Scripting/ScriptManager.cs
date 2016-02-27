@@ -4,11 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 using System.IO;
+using GUC.Network;
 
 namespace GUC.Scripting
 {
     public partial interface ScriptInterface
     {
+        void OnClientConnection(GameClient client);
     }
 
     static class ScriptManager
@@ -24,7 +26,7 @@ namespace GUC.Scripting
             try
             {
                 asm = Assembly.LoadFile(Path.GetFullPath(path));
-                Interface = (ScriptInterface)asm.CreateInstance("GUC.Scripts.Init");
+                Interface = (ScriptInterface)asm.CreateInstance("GUC.Scripts.GUCScripts");
             }
             catch (ReflectionTypeLoadException ex)
             {

@@ -11,9 +11,9 @@ namespace GUC.WorldObjects
 
         partial void pSpawnVob(BaseVob vob)
         {
-            if (vob.ID == Client.Network.GameClient.HeroID)
+            //if (vob.ID == Client.Network.GameClient.HeroID)
             {
-                Client.Network.GameClient.UpdateHeroControl();
+            //    Client.Network.GameClient.UpdateHeroControl();
             }
         }
     }
