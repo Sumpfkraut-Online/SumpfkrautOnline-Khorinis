@@ -5,6 +5,7 @@ using System.Text;
 using GUC.Network;
 using GUC.Enumeration;
 using GUC.WorldObjects.Instances;
+using GUC.WorldObjects;
 
 namespace GUC.Scripting
 {
@@ -28,5 +29,8 @@ namespace GUC.Scripting
         
         void OnCreateInstanceMsg(VobTypes type, PacketReader stream);
         void OnDeleteInstanceMsg(BaseVobInstance instance);
+
+        void OnSpawnVobMsg(VobTypes type, PacketReader stream);
+        void OnDespawnVobMsg(BaseVob vob);
     }
 }

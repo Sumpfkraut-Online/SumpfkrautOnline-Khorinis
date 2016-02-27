@@ -10,7 +10,7 @@ namespace GUC.WorldObjects.Instances
 {
     public partial class VobInstance
     {
-        public virtual zCVob CreateVob(zCVob vob = null)
+        public override zCVob CreateVob(zCVob vob = null)
         {
             zCVob ret = vob == null ? zCVob.Create() : vob;
             zCVisual vis = zCVisual.LoadVisual(this.Visual);

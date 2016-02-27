@@ -228,6 +228,7 @@
     <Compile Include="WorldObjects\Collections\InstanceCollection.Client.cs" />
     <Compile Include="WorldObjects\Collections\VobCollection.Client.cs" />
     <Compile Include="WorldObjects\Collections\WorldCollection.Client.cs" />
+    <Compile Include="WorldObjects\Instances\BaseVobInstance.Client.cs" />
     <Compile Include="WorldObjects\Instances\ItemInstance.Client.cs" />
     <Compile Include="WorldObjects\Instances\Mobs\MobBedInstance.Client.cs" />
     <Compile Include="WorldObjects\Instances\Mobs\MobContainerInstance.Client.cs" />

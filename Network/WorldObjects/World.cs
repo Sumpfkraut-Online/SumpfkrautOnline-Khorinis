@@ -50,7 +50,7 @@ namespace GUC.WorldObjects
         #region Spawn
 
         partial void pSpawnVob(BaseVob vob);
-        public void SpawnVob(BaseVob vob)
+        internal void AddVob(BaseVob vob)
         {
             if (vob == null)
                 throw new ArgumentNullException("World.SpawnVob: Vob is null!");
@@ -78,7 +78,7 @@ namespace GUC.WorldObjects
         }
 
         partial void pDespawnVob(BaseVob vob);
-        public void DespawnVob(BaseVob vob)
+        internal void RemoveVob(BaseVob vob)
         {
             if (vob == null)
                 throw new ArgumentNullException("World.DespawnVob: Vob is null!");

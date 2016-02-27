@@ -12,8 +12,8 @@ using GUC.Client.Scripts.Sumpfkraut.Menus.MainMenus;
 using GUC.Client.Scripts.Sumpfkraut;
 using GUC.Network;
 using GUC.Enumeration;
-using GUC.WorldObjects.Instances;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
+using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 
 namespace GUC.Scripts
 {
@@ -81,7 +81,36 @@ namespace GUC.Scripts
             def.Create();
         }
 
-        public void OnDeleteInstanceMsg(BaseVobInstance instance)
+        public void OnDeleteInstanceMsg(WorldObjects.Instances.BaseVobInstance instance)
+        {
+            ((BaseVobDef)instance.ScriptObject).Delete();
+        }
+
+        public void OnSpawnVobMsg(VobTypes type, PacketReader stream)
+        {
+            BaseVobInst inst;
+            switch (type)
+            {
+                case VobTypes.Vob:
+                    inst = new VobInst(stream);
+                    break;
+                case VobTypes.NPC:
+                    inst = new NPCInst(stream);
+                    break;
+                case VobTypes.Item:
+                    inst = new ItemInst(stream);
+                    break;
+                default:
+                    Logger.LogError("Unknown VobDef-Type! " + type);
+                    return;
+            }
+
+            
+
+           
+        }
+
+        public void OnDespawnVobMsg(WorldObjects.BaseVob vob)
         {
 
         }

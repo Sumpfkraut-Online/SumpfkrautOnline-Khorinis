@@ -95,6 +95,8 @@ namespace GUC.Client.Hooks
                 InputHandler.Update();
                 ScriptManager.Interface.Update(DateTime.UtcNow.Ticks);
 
+                GameClient.Client.UpdateCharacters();
+
                 if (InputHandler.IsPressed(WinApi.User.Enumeration.VirtualKeys.F4))
                 {
                     Program.Exit();

@@ -10,20 +10,27 @@ namespace GUC.Enumeration
     */
     internal enum NetworkIDs : byte
     {
+        // general
         ConnectionMessage,
         
+        // instances
         InstanceCreateMessage,
         InstanceDeleteMessage,
 
+        // npc control
         PlayerControlMessage,
 
         // Messages for Scripts
         MenuMessage,
         IngameMessage,
 
+        // world & spawns
+        WorldCellMessage,
+        WorldSpawnMessage,
+        WorldDespawnMessage,
 
-
-
+        //vobs
+        VobPosDirMessage,
 
 
 
@@ -40,10 +47,7 @@ namespace GUC.Enumeration
         WorldItemSpawnMessage,
         WorldTimeMessage,
         WorldWeatherMessage,
-
-        //vobs
-        VobPosDirMessage,
-
+        
         //mobs
         MobUseMessage,
         MobUnUseMessage,

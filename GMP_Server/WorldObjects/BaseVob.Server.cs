@@ -3,19 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Types;
+using GUC.Server.Network;
 
 namespace GUC.WorldObjects
 {
     public partial class BaseVob
     {
-        internal void UpdatePosition(Vec3f pos)
-        {
-
-        }
+        internal NetCell Cell = null;
 
         public void SetPosition(Vec3f pos)
         {
-
+            throw new NotImplementedException();
         }
 
         public Vec3f GetPosition()
@@ -25,7 +23,8 @@ namespace GUC.WorldObjects
 
         public void SetDirection(Vec3f dir)
         {
-
+            Vec3f d = dir.IsNull() ? new Vec3f(0, 0, 1) : dir;
+            throw new NotImplementedException();
         }
 
         public Vec3f GetDirection()

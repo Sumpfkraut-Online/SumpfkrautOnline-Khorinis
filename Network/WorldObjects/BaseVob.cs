@@ -7,6 +7,7 @@ using GUC.Network;
 using GUC.Types;
 using GUC.Enumeration;
 using GUC.WorldObjects.Collections;
+using GUC.Log;
 
 namespace GUC.WorldObjects
 {
@@ -44,7 +45,7 @@ namespace GUC.WorldObjects
 
         public override int ID
         {
-            get {  return base.ID; }
+            get { return base.ID; }
             set
             {
                 if (this.IsSpawned)
@@ -85,11 +86,12 @@ namespace GUC.WorldObjects
         /// <summary>
         /// Checks whether this Vob is spawned. (World != null)
         /// </summary>
-        public bool IsSpawned { get { return world != null; } }
+        public bool IsSpawned { get { return this.spawned; } }
+        bool spawned = false;
 
-        protected Vec3f pos = new Vec3f(0, 0, 0);
-        protected Vec3f dir = new Vec3f(0, 0, 1);
-        
+        internal Vec3f pos = new Vec3f(0, 0, 0);
+        internal Vec3f dir = new Vec3f(0, 0, 1);
+
         /// <summary>
         /// If the Vob is 'static' it will not be communicated via the GUC.
         /// </summary>
@@ -126,7 +128,7 @@ namespace GUC.WorldObjects
                 throw new Exception("Instance is for a different VobType!");
             }
             this.instance = inst;
-            
+
             this.pos = stream.ReadVec3f();
             this.dir = stream.ReadVec3f();
         }
@@ -156,9 +158,16 @@ namespace GUC.WorldObjects
         /// </summary>
         public virtual void Spawn(World world, Vec3f position, Vec3f direction)
         {
+            if (world == null)
+                throw new ArgumentNullException("World is null!");
+            
+                
+
             this.pos = position;
             this.dir = direction;
-            world.SpawnVob(this);
+            world.AddVob(this);
+
+            this.spawned = true;
         }
 
         /// <summary>
@@ -166,9 +175,9 @@ namespace GUC.WorldObjects
         /// </summary>
         public virtual void Despawn()
         {
-            if (this.IsSpawned)
+            if (this.world != null)
             {
-                this.World.DespawnVob(this);
+                this.world.RemoveVob(this);
             }
         }
         #endregion

@@ -29,11 +29,6 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
             this.baseWorld = baseWorld;
         }
 
-        public void SpawnVob(BaseVobInst vob)
-        {
-            this.BaseWorld.SpawnVob(vob.BaseInst);
-        }
-
         public void OnWriteProperties(PacketWriter stream)
         {
             // write definition id

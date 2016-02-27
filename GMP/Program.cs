@@ -44,6 +44,7 @@ namespace GUC.Client
         public static void Exit()
         {
             GameClient.Client.Disconnect();
+            Thread.Sleep(123);
             zCOption.GetSectionByName("INTERNAL").GetEntryByName("gameAbnormalExit").VarValue.Set("0");
             zCOption.Save("Gothic.ini");
             CGameManager.ExitGameVar = 1;

@@ -50,36 +50,57 @@ namespace GUC.Network
 
         #region Hero
 
-        /*public static int HeroID { get; private set; }
-        public static NPC Hero { get; internal set; }
-        static byte[] heroData = null;
+        int charID;
+        public int CharacterID { get { return this.charID; } }
 
-        static void ReadTakeControl(PacketReader stream)
+        byte[] charData = null;
+
+        void ReadTakeControl(PacketReader stream)
         {
-            HeroID = stream.ReadUShort();
-            heroData = stream.GetRemainingData();
+            character = null;
+            charID = stream.ReadUShort();
+            charData = stream.GetRemainingData(); // save for later
             UpdateHeroControl();
         }
 
-        internal static void UpdateHeroControl()
+        internal void UpdateHeroControl()
         {
-            BaseVob vob = World.Current.Vobs.Get(HeroID);
+            BaseVob vob = World.Current.Vobs.Get(CharacterID);
             if (vob == null || !(vob is NPC))
             {
                 return;
             }
 
-            Hero = (NPC)vob;
+            character = (NPC)vob;
 
-            if (heroData != null)
+            if (charData != null)
             {
-                pktReader.Load(heroData, heroData.Length);
-                Hero.ReadTakeControl(pktReader);
-                heroData = null;
+                pktReader.Load(charData, charData.Length);
+                Character.ReadTakeControl(pktReader);
+                charData = null;
             }
 
-            WinApi.Process.Write(Hero.gVob.Address, Gothic.Objects.oCNpc.player);
-        }*/
+            WinApi.Process.Write(Character.gVob.Address, Gothic.Objects.oCNpc.player);
+        }
+
+        #region Position updates
+
+        long nextUpdate = 0;
+        const long updateTime = 1000000; // 100ms
+        internal void UpdateCharacters()
+        {
+            if (DateTime.UtcNow.Ticks > nextUpdate && Character != null)
+            {
+                PacketWriter stream = SetupStream(NetworkIDs.VobPosDirMessage);
+                stream.Write(Character.GetPosition());
+                stream.Write(Character.GetDirection());
+                Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE);
+
+                nextUpdate = DateTime.UtcNow.Ticks + updateTime;
+            }
+        }
+
+        #endregion
 
         #endregion
 
@@ -99,7 +120,7 @@ namespace GUC.Network
                     ConnectionMessage.Read(stream);
                     break;
                 case NetworkIDs.PlayerControlMessage:
-                    //GameClient.ReadTakeControl(stream);
+                    ReadTakeControl(stream);
                     break;
                 case NetworkIDs.InstanceCreateMessage:
                     ScriptManager.Interface.OnCreateInstanceMsg((VobTypes)stream.ReadByte(), stream);
@@ -119,6 +140,24 @@ namespace GUC.Network
                     if (this.ScriptObject != null)
                         this.ScriptObject.OnReadIngameMsg(stream);
                     break;
+
+
+                case NetworkIDs.WorldSpawnMessage:
+                    ScriptManager.Interface.OnSpawnVobMsg((VobTypes)stream.ReadByte(), stream);
+                    break;
+                case NetworkIDs.WorldDespawnMessage:
+                    BaseVob vob = World.Current.Vobs.Get(stream.ReadUShort());
+                    if (vob != null) ScriptManager.Interface.OnDespawnVobMsg(vob);
+                    break;
+                case NetworkIDs.VobPosDirMessage:
+                    vob = World.Current.Vobs.Get(stream.ReadUShort());
+                    if (vob != null)
+                    {
+                        vob.SetPosition(stream.ReadVec3f());
+                        vob.SetDirection(stream.ReadVec3f());
+                    }
+                    break;
+
                 default:
                     Logger.LogError("Received message with invalid NetworkID! " + id);
                     break;

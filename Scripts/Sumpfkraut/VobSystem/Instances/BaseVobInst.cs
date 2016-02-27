@@ -38,14 +38,14 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             if (baseInst == null)
                 throw new ArgumentNullException("BaseInst is null!");
-            
+
             this.baseInst = baseInst;
             this.baseInst.ScriptObject = this;
         }
 
         public void Spawn(WorldInst world)
         {
-            world.SpawnVob(this);
+            this.baseInst.Spawn(world.BaseWorld);
         }
 
         public void Delete()

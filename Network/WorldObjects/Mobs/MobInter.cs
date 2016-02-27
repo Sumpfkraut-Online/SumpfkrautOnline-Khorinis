@@ -33,6 +33,9 @@ namespace GUC.WorldObjects.Mobs
 
         public string OnTriggerClientFunc { get { return Instance.OnTriggerClientFunc; } }
 
+        NPC user;
+        public NPC User { get { return this.user; } }
+
         #endregion
 
         #region Read & Write

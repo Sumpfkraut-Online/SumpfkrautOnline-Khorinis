@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using GUC.Network;
 
 namespace GUC.WorldObjects
 {
@@ -11,9 +12,11 @@ namespace GUC.WorldObjects
 
         partial void pSpawnVob(BaseVob vob)
         {
-            //if (vob.ID == Client.Network.GameClient.HeroID)
+            vob.gvob = vob.Instance.CreateVob();
+
+            if (vob.ID == GameClient.Client.CharacterID)
             {
-            //    Client.Network.GameClient.UpdateHeroControl();
+                GameClient.Client.UpdateHeroControl();
             }
         }
     }

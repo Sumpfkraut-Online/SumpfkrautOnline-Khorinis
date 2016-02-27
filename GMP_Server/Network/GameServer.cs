@@ -6,10 +6,9 @@ using RakNet;
 using GUC.Enumeration;
 using GUC.Server.Network.Messages;
 using GUC.Network;
-using GUC.WorldObjects;
 using GUC.Server.Options;
 using GUC.Log;
-using GUC.Scripting;
+using GUC.Types;
 
 namespace GUC.Server.Network
 {
@@ -66,14 +65,21 @@ namespace GUC.Server.Network
                     Logger.LogWarning("Client sent another ConnectionMessage. Kicked: {0} IP:{1}", client.guid.g, client.systemAddress);
                     break;
                 case NetworkIDs.MenuMessage:
-                    //ScriptManager.Interface.OnReadMenuMsg(client, pktReader);
+                    if (client.ScriptObject != null)
+                        client.ScriptObject.OnReadMenuMsg(pktReader);
                     break;
 
                 // Ingame:
 
                 case NetworkIDs.IngameMessage:
-                    
-                    //ScriptManager.Interface.OnReadIngameMsg(client, stream);
+                    if (client.ScriptObject != null)
+                        client.ScriptObject.OnReadIngameMsg(pktReader);
+                    break;
+
+                case NetworkIDs.VobPosDirMessage:
+                    client.Character.pos = stream.ReadVec3f();
+                    client.Character.dir = stream.ReadVec3f();
+                    client.Character.World.UpdatePosition(client.Character, client);
                     break;
 
                 default:
