@@ -10,6 +10,7 @@ using WinApi;
 using Gothic.Types;
 using Gothic.System;
 using Gothic.View;
+using Gothic.Objects.Sky;
 
 namespace GUC.Client.Hooks
 {
@@ -101,6 +102,12 @@ namespace GUC.Client.Hooks
                 {
                     Program.Exit();
                 }
+
+                if (InputHandler.IsPressed(WinApi.User.Enumeration.VirtualKeys.F2))
+                {
+                    Logger.Log((new zCSkyControler_Outdoor(zCSkyControler.ActiveSkyController.Address)).OutdoorRainFX.NumDestParticles);
+                }
+
 
                 /*if ((WinApi.User.Input.GetAsyncKeyState(WinApi.User.Enumeration.VirtualKeys.F1) & 0x8001) == 0x8001 || (WinApi.User.Input.GetAsyncKeyState(WinApi.User.Enumeration.VirtualKeys.F1) & 0x8000) == 0x8000)
                 {

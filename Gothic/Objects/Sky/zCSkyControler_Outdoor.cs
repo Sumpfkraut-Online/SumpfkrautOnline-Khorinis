@@ -23,7 +23,8 @@ namespace Gothic.Objects.Sky
             LayerRainClouds = 1496,
             MasterState = 136,
             StartRainTime = 1704,
-            EndRainTime = 1708;
+            EndRainTime = 1708,
+            outdoorRainFX = 0x694;
         }
 
         public abstract class FuncAddresses
@@ -95,6 +96,11 @@ namespace Gothic.Objects.Sky
         public zCSkyLayer LayerRainClouds
         {
             get { return new zCSkyLayer(Address + VarOffsets.LayerRainClouds); }
+        }
+
+        public zCOutdoorRainFX OutdoorRainFX
+        {
+            get { return new zCOutdoorRainFX(Process.ReadInt(Address + VarOffsets.outdoorRainFX)); }
         }
     }
 }

@@ -13,9 +13,10 @@ namespace Gothic
 
         public abstract class FuncAddresses
         {
-            public const int OpenLoadscreen = 0x6C2690;
-            public const int LoadWorld = 0x6C90B0;
-            public const int LoadGame = 0x6C65A0;
+            public const int OpenLoadscreen = 0x6C2690,
+            LoadWorld = 0x6C90B0,
+            LoadGame = 0x6C65A0,
+            SetTime = 0x006C4DE0;
         }
 
         /// <summary>
@@ -59,6 +60,11 @@ namespace Gothic
         {
             using (zString z = zString.Create(worldName))
                 LoadGame(savegame_slot_new, z);
+        }
+
+        public static void SetTime(int day, int hour, int minute)
+        {
+            Process.THISCALL<NullReturnCall>(Process.ReadInt(ogame), FuncAddresses.SetTime, new IntArg(day), new IntArg(hour), new IntArg(minute));
         }
     }
 }

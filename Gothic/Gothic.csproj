@@ -58,6 +58,7 @@
     <Compile Include="Objects\Sky\zCSkyLayer.cs" />
     <Compile Include="Objects\Sky\zCSkyLayerData.cs" />
     <Compile Include="Objects\Sky\zCSkyState.cs" />
+    <Compile Include="Objects\Sky\zCOutdoorRainFX.cs" />
     <Compile Include="Objects\zCWorld.cs" />
     <Compile Include="View\zCFont.cs" />
     <Compile Include="View\zCViewDraw.cs" />

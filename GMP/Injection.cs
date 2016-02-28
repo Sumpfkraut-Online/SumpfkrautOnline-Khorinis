@@ -66,10 +66,10 @@ namespace GUC.Client
                 Program.SetPaths(message);
                 AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;
 
-                SplashScreen.Create();
-                SplashScreen.SetUpHooks();
+                //SplashScreen.Create();
+                //SplashScreen.SetUpHooks();
 
-                WinApi.Process.Write(new byte[] { 0xE9, 0x8C, 0x00, 0x00, 0x00 }, 0x0044AEDF); // skip visual vdfs init (vdfs32g.exe)
+                //WinApi.Process.Write(new byte[] { 0xE9, 0x8C, 0x00, 0x00, 0x00 }, 0x0044AEDF); // skip visual vdfs init (vdfs32g.exe)
 
                 WinApi.Process.SetWindowText("Gothic II - Untold Chapters");
 
@@ -94,29 +94,30 @@ namespace GUC.Client
                 }
                 #endregion
 
-                hParser.AddHooks();
+                //hParser.AddHooks();
                 hGame.AddHooks();
-                hPlayerVob.AddHooks();
+                hWeather.AddHooks();
+                //hPlayerVob.AddHooks();
 
                 #region Some more editing
                 // Make rain drops being blocked by vobs!
                 WinApi.Process.Write((byte)0xE0, 0x5E227A);
 
                 // Blocking Call Init Scripts!
-                WinApi.Process.Write((byte)0xC3, 0x006C1F60);
+                //WinApi.Process.Write((byte)0xC3, 0x006C1F60);
                 // Blocking Call Startup Scripts!
-                WinApi.Process.Write((byte)0xC3, 0x006C1C70);
+                //WinApi.Process.Write((byte)0xC3, 0x006C1C70);
 
                 // disable interface buttons
-                WinApi.Process.Write((byte)0xEB, 0x7A55D8);
+                //WinApi.Process.Write((byte)0xEB, 0x7A55D8);
 
                 // Blocking time!
-                WinApi.Process.Write((byte)0xC3, 0x00780D80);
+                //WinApi.Process.Write((byte)0xC3, 0x00780D80);
                 Logger.Log("Hooking & editing of gothic process completed. (for now...)");
                 #endregion
 
-                GameClient.Client.Connect();
-
+                //GameClient.Client.Connect();
+                
                 while (true)
                 {
                     Thread.Sleep(10000);
