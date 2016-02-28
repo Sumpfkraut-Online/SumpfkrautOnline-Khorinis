@@ -9,7 +9,7 @@ namespace GUC.Client.Hooks
 {
     static class hWeather
     {
-        const float DropsPerMillisecond = 2;
+        const float DropsPerMillisecond = 1;
         const int MaxDropsPerFrame = 16;
 
         static HookInfos rainHook;
@@ -18,12 +18,16 @@ namespace GUC.Client.Hooks
             Process.Hook(Program.GUCDll, typeof(hWeather).GetMethod("hook_ResetTime"), 0x005EB02A, 6, 0);
             rainHook = Process.Hook(Program.GUCDll, typeof(hWeather).GetMethod("hook_ParticleMaximum"), 0x005E1F0F, 6, 0);
 
-            Process.Write(new byte[] { 0xB8, 0x00, 0x04, 0x00, 0x00, 0x90 }, addr1);
-            Process.Write(new byte[] { 0xB8, 0x00, 0x04, 0x00, 0x00, 0x90 }, addr2);
+            addr1 = rainHook.oldFuncInNewFunc.ToInt32();
+            addr2 = 0x005E1F78;
+            Process.Write(new byte[] { 0xB8, 0x00, 0x00, 0x00, 0x00, 0x90 }, addr1);
+            Process.Write(new byte[] { 0xB8, 0x00, 0x00, 0x00, 0x00, 0x90 }, addr2);
+            addr1++;
+            addr2++;
         }
 
-        static int addr1 = rainHook.oldFuncInNewFunc.ToInt32() + 1;
-        static int addr2 = 0x005E1F79;
+        static int addr1;
+        static int addr2;
 
         public static Int32 hook_ResetTime(String message)
         {
@@ -57,10 +61,8 @@ namespace GUC.Client.Hooks
                     num = MaxDropsPerFrame;
                 }
 
-                byte[] arr = BitConverter.GetBytes(num);
-
-                Process.Write(arr, addr1);
-                Process.Write(arr, addr2);
+                Process.Write(num, addr1);
+                Process.Write(num, addr2);
 
                 lastTime = now;
             }

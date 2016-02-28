@@ -81,6 +81,8 @@ namespace GUC.Client.Hooks
             return 0;
         }
 
+
+
         static bool ingameStarted = false;
         public static Int32 RunIngame(String message)
         {
@@ -101,11 +103,6 @@ namespace GUC.Client.Hooks
                 if (InputHandler.IsPressed(WinApi.User.Enumeration.VirtualKeys.F4))
                 {
                     Program.Exit();
-                }
-
-                if (InputHandler.IsPressed(WinApi.User.Enumeration.VirtualKeys.F2))
-                {
-                    Logger.Log((new zCSkyControler_Outdoor(zCSkyControler.ActiveSkyController.Address)).OutdoorRainFX.NumDestParticles);
                 }
 
 
