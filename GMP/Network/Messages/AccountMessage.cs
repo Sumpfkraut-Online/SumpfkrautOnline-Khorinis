@@ -22,6 +22,28 @@ namespace GUC.Client.Network.Messages
             stream.mWrite(StartupState.clientOptions.name);
             stream.mWrite(StartupState.clientOptions.password);
             Program.client.SendStream(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE);
+
+            // FOR TESTING PURPOSES
+            AccCharInfo[] chars = new AccCharInfo[1];
+            for (int i = 0; i < chars.Length; i++)
+            {
+                chars[i] = new AccCharInfo();
+                chars[i].Name = "WURST";
+                chars[i].BodyMesh = 0;
+                chars[i].BodyTex = 2;
+                chars[i].HeadMesh = 4;
+                chars[i].HeadTex = 121;
+                chars[i].Fatness = 3f;
+                chars[i].BodyHeight = 1f;
+                chars[i].BodyWidth = 1f;
+                //chars[i].Voice = Convert.ToInt32(res[0][i][10]);
+                chars[i].FormerClass = 0;
+                //ci.posx = Convert.ToSingle(res[0][i][12]);
+                //ci.posy = Convert.ToSingle(res[0][i][13]);
+                //ci.posz = Convert.ToSingle(res[0][i][14]);
+                chars[i].SlotNum = 0;
+            }
+            CreateNewCharacter(chars[0]);
         }
 
         public static void Register()
