@@ -15,7 +15,7 @@ namespace GUC.WorldObjects
         internal Dictionary<int, Dictionary<int, NetCell>> netCells = new Dictionary<int, Dictionary<int, NetCell>>();
         internal Dictionary<int, Dictionary<int, NPCCell>> npcCells = new Dictionary<int, Dictionary<int, NPCCell>>();
 
-        partial void pSpawnVob(BaseVob vob)
+        partial void pAddVob(BaseVob vob)
         {
             // find the cell for this vob
             Vec3f pos = vob.GetPosition();
@@ -32,8 +32,10 @@ namespace GUC.WorldObjects
             vob.WriteStream(stream);
             vob.Cell.ForEachSurroundingClient(c =>
             {
+                Log.Logger.Log("Send " + (c == null) + " " + (c == null ? "" : (c.guid == null).ToString()));
+                Log.Logger.Log("To: " + c.guid.g + " " + c.SystemAddress);
                 c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'W');
-            });
+            }, vob is NPC ? ((NPC)vob).Client : null);
             
             if (vob is NPC && ((NPC)vob).IsPlayer) //send all vobs in surrounding cells to the player
             {
@@ -130,24 +132,7 @@ namespace GUC.WorldObjects
 
         void ChangeCells(BaseVob vob, int x, int z, GameClient exclude)
         {
-            PacketWriter stream;
-
-            //create the new cell
-            Dictionary<int, NetCell> row = null;
-            netCells.TryGetValue(x, out row);
-            if (row == null)
-            {
-                row = new Dictionary<int, NetCell>();
-                netCells.Add(x, row);
-            }
-
-            NetCell newCell = null;
-            row.TryGetValue(z, out newCell);
-            if (newCell == null)
-            {
-                newCell = new NetCell(this, x, z);
-                row.Add(z, newCell);
-            }
+            NetCell newCell = GetCellFromCoords(x, z);
 
             if (vob.Cell == null) // freshly spawned
             {
@@ -161,7 +146,7 @@ namespace GUC.WorldObjects
                 }*/
 
                 //Send creation message to all players in surrounding cells
-                stream = GameServer.SetupStream(NetworkIDs.WorldSpawnMessage);
+                PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldSpawnMessage);
                 stream.Write((byte)vob.VobType);
                 vob.WriteStream(stream);
                 newCell.ForEachSurroundingClient(c =>
@@ -294,6 +279,22 @@ namespace GUC.WorldObjects
                     }
                 }
             }
+        }
+
+        #endregion
+
+        #region Network Messages
+
+        internal static void SendWorldMessage(GameClient client, World world)
+        {
+            if (client == null)
+                throw new ArgumentNullException("GameClient is null!");
+            if (world == null)
+                throw new ArgumentNullException("World is null!");
+
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.LoadWorldMessage);
+            world.WriteStream(stream);
+            client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'W');
         }
 
         #endregion

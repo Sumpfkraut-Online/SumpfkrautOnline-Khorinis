@@ -281,7 +281,7 @@ namespace Gothic.Objects
 
             EV_Strafe = 7
         }*/
-        
+
         public oCNpc(int address) : base(address)
         {
 
@@ -291,7 +291,7 @@ namespace Gothic.Objects
         {
 
         }
-        
+
         new public static oCNpc Create()
         {
             int address = Process.CDECLCALL<IntArg>(0x0075FA00); //_CreateInstance()
@@ -358,6 +358,22 @@ namespace Gothic.Objects
         public void SetToFistMode()
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetToFistMode);
+        }
+
+        public void InitHumanAI()
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.InitHumanAI);
+        }
+
+        public void Enable(zVec3 vec)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.Enable, vec);
+        }
+
+        public void Enable(float x, float y, float z)
+        {
+            using (zVec3 vec = zVec3.Create(x, y, z))
+                Enable(vec);
         }
 
         /*
@@ -1049,10 +1065,6 @@ namespace Gothic.Objects
             Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.InitModel, new CallValue[] { });
         }
 
-        public void InitHumanAI()
-        {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.InitHumanAI, new CallValue[] { });
-        }
 
         public void CloseSteal()
         {
@@ -1196,26 +1208,6 @@ namespace Gothic.Objects
         public oCMag_Book GetSpellBook()
         {
             return Process.THISCALL<oCMag_Book>((uint)Address, (uint)FuncOffsets.GetSpellBook, new CallValue[] { });
-        }
-
-        /// <summary>
-        /// Spawnt den NPC
-        /// </summary>
-        /// <param name="vec"></param>
-        public void Enable(zVec3 vec)
-        {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.Enable, new CallValue[] { vec });
-        }
-
-        public void Enable(float x, float y, float z)
-        {
-            zVec3 vec = zVec3.Create(Process);
-            vec.X = x;
-            vec.Y = y;
-            vec.Z = z;
-
-            Enable(vec);
-            vec.Dispose();
         }
 
         public void ApplyOverlay(zString str)

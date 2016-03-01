@@ -64,6 +64,9 @@ namespace GUC.Server.Network
                     DisconnectClient(client);
                     Logger.LogWarning("Client sent another ConnectionMessage. Kicked: {0} IP:{1}", client.guid.g, client.systemAddress);
                     break;
+                case NetworkIDs.LoadWorldMessage:
+                    client.Character.InsertInWorld();
+                    break;
                 case NetworkIDs.MenuMessage:
                     if (client.ScriptObject != null)
                         client.ScriptObject.OnReadMenuMsg(pktReader);

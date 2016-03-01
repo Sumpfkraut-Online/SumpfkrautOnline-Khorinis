@@ -108,6 +108,11 @@ namespace GUC.Network
                 //if (npc.VobController != null)
                 //    npc.VobController.RemoveControlledVob(npc);
             }
+
+            if (character != null && character.IsSpawned && npc.IsSpawned && character.World != npc.World)
+            {
+                World.SendWorldMessage(this, npc.World);
+            }
             
             npc.Client = this;
             character = npc;
@@ -164,5 +169,7 @@ namespace GUC.Network
             Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
             Log.Logger.Log("RemoveCtrl: " + Character.ID + " " + vob.ID + ": " + vob.GetType().Name);*/
         }
+
+
     }
 }

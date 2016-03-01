@@ -118,6 +118,7 @@
     <Compile Include="Sumpfkraut\VobSystem\Instances\ItemInst.Client.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\NPCInst.Client.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\VobInst.Client.cs" />
+    <Compile Include="Sumpfkraut\WorldSystem\WorldInst.Client.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GMP\GUC.csproj">

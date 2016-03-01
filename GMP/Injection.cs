@@ -44,13 +44,13 @@ namespace GUC.Client
         {
             try
             {
-                #region Suspend Gothic
+                /*#region Suspend Gothic
                 var process = Process.GetCurrentProcess();
                 var threads = process.Threads;
 
                 for (int i = 0; i < threads.Count; i++)
                 {
-                    if (i == Thread.CurrentThread.ManagedThreadId/*pT.Id == AppDomain.GetCurrentThreadId()*/)
+                    if (i == Thread.CurrentThread.ManagedThreadId/*pT.Id == AppDomain.GetCurrentThreadId()*//*)
                         continue;
 
                     IntPtr pOpenThread = OpenThread(ThreadAccess.SUSPEND_RESUME, false, (uint)threads[i].Id);
@@ -61,22 +61,22 @@ namespace GUC.Client
                     SuspendThread(pOpenThread);
                     CloseHandle(pOpenThread);
                 }
-                #endregion
+                #endregion*/
 
                 Program.SetPaths(message);
                 AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;
 
-                SplashScreen.Create();
-                SplashScreen.SetUpHooks();
+                //SplashScreen.Create();
+                //SplashScreen.SetUpHooks();
 
                 WinApi.Process.Write(new byte[] { 0xE9, 0x8C, 0x00, 0x00, 0x00 }, 0x0044AEDF); // skip visual vdfs init (vdfs32g.exe)
 
                 WinApi.Process.SetWindowText("Gothic II - Untold Chapters");
 
-                #region Resume Gothic
+                /*#region Resume Gothic
                 for (int i = 0; i < threads.Count; i++)
                 {
-                    if (i == Thread.CurrentThread.ManagedThreadId/*pT.Id == AppDomain.GetCurrentThreadId()*/)
+                    if (i == Thread.CurrentThread.ManagedThreadId/*pT.Id == AppDomain.GetCurrentThreadId()*//*)
                         continue;
 
                     IntPtr pOpenThread = OpenThread(ThreadAccess.SUSPEND_RESUME, false, (uint)threads[i].Id);
@@ -92,7 +92,7 @@ namespace GUC.Client
 
                     CloseHandle(pOpenThread);
                 }
-                #endregion
+                #endregion*/
 
                 hParser.AddHooks();
                 hGame.AddHooks();

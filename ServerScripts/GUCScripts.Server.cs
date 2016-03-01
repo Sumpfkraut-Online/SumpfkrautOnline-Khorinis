@@ -7,6 +7,7 @@ using GUC.Log;
 using GUC.Scripting;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
+using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 
 namespace GUC.Scripts
 {
@@ -48,6 +49,9 @@ namespace GUC.Scripts
         {
             WorldDef wDef = new WorldDef();
             WorldInst.NewWorld = new WorldInst(default(WorldDef));
+
+            VobInst vob = new VobInst(BaseVobDef.Get<VobDef>("baum"));
+            vob.BaseInst.Spawn(WorldInst.NewWorld.BaseWorld, new Types.Vec3f(300, 0, 0));
         }
     }
 }

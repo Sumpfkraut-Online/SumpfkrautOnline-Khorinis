@@ -65,6 +65,9 @@ namespace GUC.Network
 
         internal void UpdateHeroControl()
         {
+            if (World.Current == null)
+                return;
+
             BaseVob vob = World.Current.Vobs.Get(CharacterID);
             if (vob == null || !(vob is NPC))
             {
@@ -114,6 +117,8 @@ namespace GUC.Network
 
         void ReadMessage(NetworkIDs id, PacketReader stream)
         {
+            Logger.Log("ReadMessage: " + id);
+
             switch (id)
             {
                 case NetworkIDs.ConnectionMessage:
@@ -121,6 +126,10 @@ namespace GUC.Network
                     break;
                 case NetworkIDs.PlayerControlMessage:
                     ReadTakeControl(stream);
+                    break;
+                case NetworkIDs.LoadWorldMessage:
+                    ScriptManager.Interface.OnLoadWorldMsg(out World.Current, stream);
+                    World.Current.SendConfirmation();
                     break;
                 case NetworkIDs.InstanceCreateMessage:
                     ScriptManager.Interface.OnCreateInstanceMsg((VobTypes)stream.ReadByte(), stream);
@@ -159,7 +168,7 @@ namespace GUC.Network
                     break;
 
                 default:
-                    Logger.LogError("Received message with invalid NetworkID! " + id);
+                    Logger.LogWarning("Received message with invalid NetworkID! " + id);
                     break;
             }
         }

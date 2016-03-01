@@ -49,30 +49,13 @@ namespace GUC.WorldObjects
 
         #region Spawn
 
-        partial void pSpawnVob(BaseVob vob);
+        partial void pAddVob(BaseVob vob);
         internal void AddVob(BaseVob vob)
         {
             if (vob == null)
-                throw new ArgumentNullException("World.SpawnVob: Vob is null!");
+                throw new ArgumentNullException("World.AddVob: Vob is null!");
 
-            if (vob.IsStatic)
-            {
-                if (vob.World == null)
-                    vob.World = this;
-            }
-            else
-            {
-                if (vob.IsSpawned)
-                {
-                    if (vob.World != this)
-                    {
-                        vob.Despawn();
-                    }
-                }
-                vob.World = this;
-            }
-
-            pSpawnVob(vob);
+            pAddVob(vob);
 
             Vobs.Add(vob);
         }
@@ -81,14 +64,13 @@ namespace GUC.WorldObjects
         internal void RemoveVob(BaseVob vob)
         {
             if (vob == null)
-                throw new ArgumentNullException("World.DespawnVob: Vob is null!");
+                throw new ArgumentNullException("World.RemoveVob: Vob is null!");
 
             if (vob.World != this)
-                return;
+                throw new Exception("World.RemoveVob: Vob is not in this world!");
 
             pDespawnVob(vob);
 
-            vob.World = null;
             Vobs.Remove(vob);
         }
 

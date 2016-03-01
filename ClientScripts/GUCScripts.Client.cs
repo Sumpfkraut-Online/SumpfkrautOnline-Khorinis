@@ -14,6 +14,7 @@ using GUC.Network;
 using GUC.Enumeration;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using GUC.Scripts.Sumpfkraut.WorldSystem;
 
 namespace GUC.Scripts
 {
@@ -104,15 +105,20 @@ namespace GUC.Scripts
                     Logger.LogError("Unknown VobDef-Type! " + type);
                     return;
             }
-
-            
-
-           
+            inst.Spawn(WorldInst.Current);
         }
 
         public void OnDespawnVobMsg(WorldObjects.BaseVob vob)
         {
+            vob.Despawn();
+        }
 
+        public void OnLoadWorldMsg(out WorldObjects.World world, PacketReader stream)
+        {
+            WorldInst w = new WorldInst(stream);
+            w.Load();
+            world = w.BaseWorld;
+            WorldInst.Current = w;
         }
     }
 }

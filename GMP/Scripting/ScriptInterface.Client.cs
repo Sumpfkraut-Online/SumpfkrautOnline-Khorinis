@@ -32,5 +32,7 @@ namespace GUC.Scripting
 
         void OnSpawnVobMsg(VobTypes type, PacketReader stream);
         void OnDespawnVobMsg(BaseVob vob);
+
+        void OnLoadWorldMsg(out World world, PacketReader stream);
     }
 }

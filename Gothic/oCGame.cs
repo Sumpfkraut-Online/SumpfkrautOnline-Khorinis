@@ -4,12 +4,24 @@ using System.Linq;
 using System.Text;
 using WinApi;
 using Gothic.Types;
+using Gothic.Objects;
 
 namespace Gothic
 {
     public static class oCGame
     {
         public const int ogame = 0xAB0884;
+
+        public abstract class VarOffsets
+        {
+            public const int vtbl = 0,
+            zCCSManager = 4,
+            world = 8,
+            camera = 12,
+            aiCamera = 16,
+            camVob = 20,
+            viewPort = 24;
+        }
 
         public abstract class FuncAddresses
         {
@@ -65,6 +77,11 @@ namespace Gothic
         public static void SetTime(int day, int hour, int minute)
         {
             Process.THISCALL<NullReturnCall>(Process.ReadInt(ogame), FuncAddresses.SetTime, new IntArg(day), new IntArg(hour), new IntArg(minute));
+        }
+
+        public static zCWorld GetWorld()
+        {
+            return new zCWorld(Process.ReadInt(Process.ReadInt(ogame) + VarOffsets.world));
         }
     }
 }

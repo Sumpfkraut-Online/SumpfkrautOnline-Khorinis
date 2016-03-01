@@ -74,20 +74,19 @@ namespace GUC.WorldObjects
         BaseVobInstance instance;
 
         /// <summary>
-        /// The world this Vob is currently spawned in.
+        /// The world this Vob is currently in.
         /// </summary>
         public World World
         {
             get { return this.world; }
-            internal set { this.world = value; }
         }
-        World world;
+        protected World world;
 
         /// <summary>
-        /// Checks whether this Vob is spawned. (World != null)
+        /// Checks whether this Vob is spawned.
         /// </summary>
         public bool IsSpawned { get { return this.spawned; } }
-        bool spawned = false;
+        protected bool spawned = false;
 
         internal Vec3f pos = new Vec3f(0, 0, 0);
         internal Vec3f dir = new Vec3f(0, 0, 1);
@@ -160,13 +159,15 @@ namespace GUC.WorldObjects
         {
             if (world == null)
                 throw new ArgumentNullException("World is null!");
-            
-                
+
+            if (this.spawned)
+                this.Despawn();
 
             this.pos = position;
             this.dir = direction;
-            world.AddVob(this);
+            this.world = world;
 
+            world.AddVob(this);
             this.spawned = true;
         }
 
@@ -179,6 +180,8 @@ namespace GUC.WorldObjects
             {
                 this.world.RemoveVob(this);
             }
+            this.world = null;
+            this.spawned = false;
         }
         #endregion
     }

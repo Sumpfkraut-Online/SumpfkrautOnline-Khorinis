@@ -61,7 +61,8 @@ namespace GUC.Client.Network.Messages
                         return sign.ToString();
                 }
             }
-            throw new Exception("Signature not found!");
+            //throw new Exception("Signature not found!");
+            return "";
         }
 
         static string GetMacAddress()

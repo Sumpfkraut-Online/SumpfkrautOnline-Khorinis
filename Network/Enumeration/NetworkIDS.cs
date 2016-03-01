@@ -16,21 +16,21 @@ namespace GUC.Enumeration
         // instances
         InstanceCreateMessage,
         InstanceDeleteMessage,
-
-        // npc control
-        PlayerControlMessage,
+        
+        PlayerControlMessage, // npc control
+        LoadWorldMessage, // for changing the world
 
         // Messages for Scripts
         MenuMessage,
         IngameMessage,
 
         // world & spawns
-        WorldCellMessage,
-        WorldSpawnMessage,
-        WorldDespawnMessage,
+        WorldCellMessage, // for changing cells
+        WorldSpawnMessage, // for spawning a vob in the world
+        WorldDespawnMessage, // for despawning a vob in the world
 
         //vobs
-        VobPosDirMessage,
+        VobPosDirMessage, // updating position and direction of a vob
 
 
 

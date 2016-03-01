@@ -15,21 +15,15 @@ namespace GUC.WorldObjects
 
         new public oCNpc gVob { get { return (oCNpc)base.gVob; } }
 
-        /*
-        protected override void pCreate()
+        public override void Spawn(World world, Vec3f position, Vec3f direction)
         {
-            foreach (KeyValuePair<byte, Item> pair in equippedSlots)
-            {
-                EquipSlot(pair.Key, pair.Value);
-            }
+            base.Spawn(world, position, direction);
 
             gVob.InitHumanAI();
-            gAniCtrl = gVob.AniCtrl;
-
             gVob.Enable(pos.X, pos.Y, pos.Z);
-            DrawItem(DrawnItem, true);
+            gVob.HP = this.hp;
+            gVob.HPMax = this.hpmax;
         }
-        */
 
         public bool HasFreeHands
         {
