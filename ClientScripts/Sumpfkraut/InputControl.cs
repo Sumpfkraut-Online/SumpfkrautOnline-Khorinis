@@ -28,6 +28,12 @@ namespace GUC.Client.Scripts.Sumpfkraut
             {
                 activeMenu.KeyDown(key, now);
             }
+
+            if (key == VirtualKeys.O)
+            {
+                var stream = GUC.Network.GameClient.Client.GetIngameMsgStream();
+                GUC.Network.GameClient.Client.SendIngameMsg(stream);
+            }
         }
 
         static void KeyUp(VirtualKeys key, long now)

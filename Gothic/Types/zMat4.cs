@@ -56,7 +56,10 @@ namespace Gothic.Types
                 {
                     Process.Write(value, Address + 4 * index);
                 }
-                throw new ArgumentException("zMat4 set index is outside of range: " + index);
+                else
+                {
+                    throw new ArgumentException("zMat4 set index is outside of range: " + index);
+                }
             }
         }
 

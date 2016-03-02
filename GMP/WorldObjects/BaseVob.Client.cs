@@ -31,7 +31,7 @@ namespace GUC.WorldObjects
         {
             this.pos = pos;
 
-            if (IsSpawned)
+            if (gvob != null)
             {
                 float[] arr = pos.ToArray();
                 gVob.TrafoObjToWorld.Direction = arr;
@@ -56,7 +56,7 @@ namespace GUC.WorldObjects
         {
             this.dir = dir.IsNull() ? new Vec3f(0, 0, 1) : dir;
 
-            if (IsSpawned)
+            if (gvob != null)
             {
                 Vec3f zAxis = dir.Normalise();
                 Vec3f up = new Vec3f(0.0f, 0.0f, 0.0f);

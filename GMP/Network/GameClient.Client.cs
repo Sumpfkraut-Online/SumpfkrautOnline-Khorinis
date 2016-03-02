@@ -60,30 +60,36 @@ namespace GUC.Network
             character = null;
             charID = stream.ReadUShort();
             charData = stream.GetRemainingData(); // save for later
-            UpdateHeroControl();
+            UpdateHeroControl(World.Current.Vobs.Get(charID));
         }
 
-        internal void UpdateHeroControl()
+        internal void UpdateHeroControl(BaseVob vob)
         {
-            if (World.Current == null)
-                return;
-
-            BaseVob vob = World.Current.Vobs.Get(CharacterID);
-            if (vob == null || !(vob is NPC))
+            try
             {
-                return;
+                if (World.Current == null)
+                    return;
+
+                if (vob == null || !(vob is NPC))
+                {
+                    return;
+                }
+
+                character = (NPC)vob;
+
+                if (charData != null)
+                {
+                    pktReader.Load(charData, charData.Length);
+                    Character.ReadTakeControl(pktReader);
+                    charData = null;
+                }
+
+                Character.gVob.SetAsPlayer();
             }
-
-            character = (NPC)vob;
-
-            if (charData != null)
+            catch (Exception e)
             {
-                pktReader.Load(charData, charData.Length);
-                Character.ReadTakeControl(pktReader);
-                charData = null;
+                Logger.LogError(e);
             }
-
-            WinApi.Process.Write(Character.gVob.Address, Gothic.Objects.oCNpc.player);
         }
 
         #region Position updates
@@ -364,7 +370,7 @@ namespace GUC.Network
                 lastInfoUpdate = DateTime.UtcNow.Ticks;
                 packetKB = 0;
                 kbsInfo.Show(); // bring to front
-                
+
                 instInfo.Texts[0].Text = ("Instances: " + InstanceCollection.GetCount());
                 instInfo.Show();
             }

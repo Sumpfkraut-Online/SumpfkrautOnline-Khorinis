@@ -129,7 +129,7 @@ namespace GUC.Server.Network
         internal static void Update()
         {
             Packet p = ServerInterface.Receive();
-            GameClient client;
+            GameClient client = null;
             NetworkIDs msgID;
             DefaultMessageIDTypes msgDefaultType;
 
@@ -225,7 +225,14 @@ namespace GUC.Server.Network
                     else
                         Logger.LogError("{0}: {1}\n{2}", e.Source, e.Message, e.StackTrace);
 
-                    ServerInterface.CloseConnection(p.guid, false);
+                    if (client == null)
+                    {
+                        ServerInterface.CloseConnection(p.guid, false);
+                    }
+                    else
+                    {
+                        DisconnectClient(client);
+                    }
                 }
                 ServerInterface.DeallocatePacket(p);
                 p = ServerInterface.Receive();

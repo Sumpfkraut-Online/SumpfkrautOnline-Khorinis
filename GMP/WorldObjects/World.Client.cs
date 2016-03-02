@@ -6,6 +6,7 @@ using GUC.Network;
 using GUC.Enumeration;
 using RakNet;
 using Gothic;
+using Gothic.Objects;
 
 namespace GUC.WorldObjects
 {
@@ -15,14 +16,26 @@ namespace GUC.WorldObjects
 
         partial void pAddVob(BaseVob vob)
         {
-            vob.gvob = vob.Instance.CreateVob();
-
-            if (vob.ID == GameClient.Client.CharacterID)
+            if (vob.ID == GameClient.Client.CharacterID && !Vobs.vobAddr.ContainsKey(oCNpc.GetPlayer().Address))
             {
-                GameClient.Client.UpdateHeroControl();
+                oCNpc.GetPlayer().Disable();
+                oCGame.GetWorld().RemoveVob(oCNpc.GetPlayer());
+                vob.gvob = vob.Instance.CreateVob(oCNpc.GetPlayer());
+            }
+            else
+            {
+                vob.gvob = vob.Instance.CreateVob();
             }
 
             oCGame.GetWorld().AddVob(vob.gVob);
+
+            vob.SetPosition(vob.pos);
+            vob.SetDirection(vob.dir);
+
+            if (vob.ID == GameClient.Client.CharacterID)
+            {
+                GameClient.Client.UpdateHeroControl(vob);
+            }
         }
 
         partial void pDespawnVob(BaseVob vob)

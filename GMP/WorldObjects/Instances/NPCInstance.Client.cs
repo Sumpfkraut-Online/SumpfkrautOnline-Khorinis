@@ -13,7 +13,6 @@ namespace GUC.WorldObjects.Instances
         {
             oCNpc ret = (vob == null || !(vob is oCNpc)) ? oCNpc.Create() : (oCNpc)vob;
             base.CreateVob(ret);
-
             ret.Instance = this.ID;
             ret.Name.Set(Name);
             ret.SetAdditionalVisuals(BodyMesh, BodyTex, 0, HeadMesh, HeadTex, 0, -1);

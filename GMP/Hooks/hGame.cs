@@ -81,8 +81,6 @@ namespace GUC.Client.Hooks
             return 0;
         }
 
-
-
         static bool ingameStarted = false;
         public static Int32 RunIngame(String message)
         {
@@ -93,7 +91,7 @@ namespace GUC.Client.Hooks
                     ingameStarted = true;
                     ScriptManager.Interface.StartIngame();
                 }
-                
+
                 GameClient.Client.Update();
                 InputHandler.Update();
                 ScriptManager.Interface.Update(DateTime.UtcNow.Ticks);

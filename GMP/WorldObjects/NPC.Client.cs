@@ -19,10 +19,10 @@ namespace GUC.WorldObjects
         {
             base.Spawn(world, position, direction);
 
-            gVob.InitHumanAI();
-            gVob.Enable(pos.X, pos.Y, pos.Z);
             gVob.HP = this.hp;
             gVob.HPMax = this.hpmax;
+            gVob.InitHumanAI();
+            gVob.Enable(pos.X, pos.Y, pos.Z);
         }
 
         public bool HasFreeHands

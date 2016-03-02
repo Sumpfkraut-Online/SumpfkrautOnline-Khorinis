@@ -44,13 +44,13 @@ namespace GUC.Client
         {
             try
             {
-                /*#region Suspend Gothic
+                #region Suspend Gothic
                 var process = Process.GetCurrentProcess();
                 var threads = process.Threads;
 
                 for (int i = 0; i < threads.Count; i++)
                 {
-                    if (i == Thread.CurrentThread.ManagedThreadId/*pT.Id == AppDomain.GetCurrentThreadId()*//*)
+                    if (i == Thread.CurrentThread.ManagedThreadId/*pT.Id == AppDomain.GetCurrentThreadId()*/)
                         continue;
 
                     IntPtr pOpenThread = OpenThread(ThreadAccess.SUSPEND_RESUME, false, (uint)threads[i].Id);
@@ -61,7 +61,7 @@ namespace GUC.Client
                     SuspendThread(pOpenThread);
                     CloseHandle(pOpenThread);
                 }
-                #endregion*/
+                #endregion
 
                 Program.SetPaths(message);
                 AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;
@@ -73,10 +73,10 @@ namespace GUC.Client
 
                 WinApi.Process.SetWindowText("Gothic II - Untold Chapters");
 
-                /*#region Resume Gothic
+                #region Resume Gothic
                 for (int i = 0; i < threads.Count; i++)
                 {
-                    if (i == Thread.CurrentThread.ManagedThreadId/*pT.Id == AppDomain.GetCurrentThreadId()*//*)
+                    if (i == Thread.CurrentThread.ManagedThreadId/*pT.Id == AppDomain.GetCurrentThreadId()*/)
                         continue;
 
                     IntPtr pOpenThread = OpenThread(ThreadAccess.SUSPEND_RESUME, false, (uint)threads[i].Id);
@@ -92,7 +92,7 @@ namespace GUC.Client
 
                     CloseHandle(pOpenThread);
                 }
-                #endregion*/
+                #endregion
 
                 hParser.AddHooks();
                 hGame.AddHooks();
@@ -113,6 +113,10 @@ namespace GUC.Client
 
                 // Blocking time!
                 WinApi.Process.Write((byte)0xC3, 0x00780D80);
+
+                WinApi.Process.VirtualProtect(0x007792E0, 40);
+                WinApi.Process.Write(new byte[] { 0x33, 0xC0, 0xC2, 0x04, 0x00 }, 0x007792E0);//Block deleting of dead characters!
+
                 Logger.Log("Hooking & editing of gothic process completed. (for now...)");
                 #endregion
 

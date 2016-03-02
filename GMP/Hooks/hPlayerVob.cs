@@ -34,8 +34,8 @@ namespace GUC.Client.Hooks
                 player.SetAdditionalVisuals("Sca_Body", 0, 0, "", 0, 0, -1);
                 player.SetToFistMode();
 
-                player.HPMax = 100;
-                player.HP = 100;
+                player.HPMax = 10;
+                player.HP = 10;
 
                 Process.Write(player.Address, address + 4); //write address into eax
             }

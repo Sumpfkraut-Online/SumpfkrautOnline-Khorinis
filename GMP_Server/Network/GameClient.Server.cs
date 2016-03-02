@@ -109,18 +109,25 @@ namespace GUC.Network
                 //    npc.VobController.RemoveControlledVob(npc);
             }
 
-            if (character != null && character.IsSpawned && npc.IsSpawned && character.World != npc.World)
+            if (npc.IsSpawned)
             {
-                World.SendWorldMessage(this, npc.World);
+                if (character != null && character.IsSpawned && character.World != npc.World)
+                {
+                    World.SendWorldMessage(this, npc.World);
+                }
+
+                PacketWriter stream = GameServer.SetupStream(NetworkIDs.PlayerControlMessage);
+                stream.Write((ushort)npc.ID);
+                npc.WriteTakeControl(stream);
+                Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, '\0');
             }
+
+
             
             npc.Client = this;
             character = npc;
             
-            PacketWriter stream = GameServer.SetupStream(NetworkIDs.PlayerControlMessage);
-            stream.Write((ushort)npc.ID);
-            npc.WriteTakeControl(stream);
-            Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, '\0');
+
         }
 
         #endregion

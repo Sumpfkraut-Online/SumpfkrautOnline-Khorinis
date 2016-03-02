@@ -33,7 +33,9 @@ namespace GUC.WorldObjects
             vob.Cell.ForEachSurroundingClient(c =>
             {
                 Log.Logger.Log("Send " + (c == null) + " " + (c == null ? "" : (c.guid == null).ToString()));
-                Log.Logger.Log("To: " + c.guid.g + " " + c.SystemAddress);
+                Log.Logger.Log(c.SystemAddress);
+                Log.Logger.Log(c.guid);
+                Log.Logger.Log(c.guid.g);
                 c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'W');
             }, vob is NPC ? ((NPC)vob).Client : null);
             
@@ -102,6 +104,7 @@ namespace GUC.WorldObjects
             if (vob.Cell == null)
             { // Vob has not been in the world yet
                 ChangeCells(vob, x, z, exclude);
+                Log.Logger.Log("cell == null");
             }
             else
             {
@@ -113,6 +116,8 @@ namespace GUC.WorldObjects
                     float zdiff = unroundedZ - vob.Cell.z;
                     if ((xdiff > 0.65f || xdiff < -0.65f) || (zdiff > 0.65f || zdiff < -0.65f))
                     {
+                        Log.Logger.Log("change cell to " + x + " " + z);
+
                         ChangeCells(vob, x, z, exclude);
                         return;
                     }
@@ -127,6 +132,8 @@ namespace GUC.WorldObjects
                 {
                     c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE, 'W');
                 }, exclude);
+
+                Log.Logger.Log("oldcell");
             }
         }
 

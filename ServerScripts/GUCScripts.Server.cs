@@ -45,13 +45,18 @@ namespace GUC.Scripts
             npcDef.Create();
         }
 
+
+        public static NPCInst testChar;
         void CreateWorld()
         {
             WorldDef wDef = new WorldDef();
             WorldInst.NewWorld = new WorldInst(default(WorldDef));
 
             VobInst vob = new VobInst(BaseVobDef.Get<VobDef>("baum"));
-            vob.BaseInst.Spawn(WorldInst.NewWorld.BaseWorld, new Types.Vec3f(300, 0, 0));
+            vob.BaseInst.Spawn(WorldInst.NewWorld.BaseWorld, new Types.Vec3f(0, 0, 1000));
+
+            testChar = new NPCInst(BaseVobDef.Get<NPCDef>("player"));
+            testChar.BaseInst.Spawn(WorldInst.NewWorld.BaseWorld, new Types.Vec3f(0, 0, 500));
         }
     }
 }

@@ -62,8 +62,14 @@ namespace GUC.WorldObjects
                 this.dir = direction;
 
                 this.world = world;
+                this.world.Vobs.Add(this);
 
                 World.SendWorldMessage(this.Client, world);
+                
+                PacketWriter stream = GameServer.SetupStream(NetworkIDs.PlayerControlMessage);
+                stream.Write((ushort)ID);
+                WriteTakeControl(stream);
+                this.Client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, '\0');
             }
             else
             {
@@ -74,6 +80,7 @@ namespace GUC.WorldObjects
         // wait until the client has loaded the map
         internal void InsertInWorld()
         {
+            world.Vobs.Remove(this);
             world.AddVob(this);
             this.spawned = true;
         }

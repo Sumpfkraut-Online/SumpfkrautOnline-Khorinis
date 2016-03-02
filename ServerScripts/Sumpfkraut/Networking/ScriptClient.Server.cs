@@ -31,6 +31,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking
 
         public void OnReadIngameMsg(PacketReader stream)
         {
+            SetControl(GUCScripts.testChar);
         }
 
         public void SetControl(NPCInst npc)

@@ -300,7 +300,7 @@ namespace Gothic.Objects
         }
 
         public const int player = 0xAB2684;
-        public static oCNpc Player()
+        public static oCNpc GetPlayer()
         {
             return new oCNpc(Process.ReadInt(player));
         }
@@ -374,6 +374,16 @@ namespace Gothic.Objects
         {
             using (zVec3 vec = zVec3.Create(x, y, z))
                 Enable(vec);
+        }
+
+        public void SetAsPlayer()
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetAsPlayer);
+        }
+
+        public void Disable()
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.Disable);
         }
 
         /*
@@ -945,10 +955,7 @@ namespace Gothic.Objects
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.CloseSpellBook, new CallValue[] { new BoolArg(x) });
         }
 
-        public void Disable()
-        {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.Disable, new CallValue[] { });
-        }
+
 
         public int ReadySpell(int val, int val2)
         {
@@ -1131,10 +1138,7 @@ namespace Gothic.Objects
             Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.StartDialogAni, new CallValue[] { });
         }
 
-        public void SetAsPlayer()
-        {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetAsPlayer, new CallValue[] { });
-        }
+
         //32 percs?
         public void DisablePerception(int perc)
         {
