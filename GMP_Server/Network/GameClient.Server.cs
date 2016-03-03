@@ -21,7 +21,7 @@ namespace GUC.Network
         /// </summary>
         public partial interface IScriptClient : IScriptGameObject
         {
-            bool OnValidation();
+            void OnDisconnection();
         }
 
         #endregion
@@ -35,41 +35,22 @@ namespace GUC.Network
 
         internal List<Vob> VobControlledList = new List<Vob>();
 
-        #endregion
-
-        #region Validation check
-
-        internal bool isValid = false;
-        public bool IsValid { get { return this.isValid; } }
-
         byte[] driveHash;
         public byte[] DriveHash { get { return driveHash; } }
 
         byte[] macHash;
         public byte[] MacHash { get { return macHash; } }
 
-        internal bool CheckValidation(byte[] driveHash, byte[] macHash)
-        {
-            this.driveHash = driveHash;
-            this.macHash = macHash;
-
-            this.isValid = this.ScriptObject == null ? true : this.ScriptObject.OnValidation();
-            if (!this.isValid)
-            {
-                this.Kick();
-            }
-            return this.isValid;
-        }
-
         #endregion
 
         #region Constructors
 
-        internal GameClient(RakNetGUID guid, SystemAddress systemAddress)
+        internal GameClient(RakNetGUID guid, SystemAddress systemAddress, byte[] macHash, byte[] signHash)
         {
+            this.macHash = macHash;
+            this.driveHash = signHash;
             this.guid = new RakNetGUID(guid.g);
-            this.systemAddress = systemAddress;
-            ScriptManager.Interface.OnClientConnection(this);
+            this.systemAddress = new SystemAddress(systemAddress.ToString(), systemAddress.GetPort());
         }
 
         #endregion
@@ -83,16 +64,18 @@ namespace GUC.Network
 
             if (npc.IsPlayer)
             {
-                Logger.LogWarning("Rejected SetControl: NPC {1} is a Player!", npc.ID);
+                Logger.LogWarning("Rejected SetControl: NPC {0} is a Player!", npc.ID);
                 return;
             }
 
             // set old character to npc
             if (this.Character != null)
             {
+                this.Character.Client = null;
                 if (this.Character.IsSpawned)
                 {
-                    npc.World.Vobs.players.Remove(this.Character.ID);
+                    this.Character.World.Vobs.players.Remove(this.Character.ID);
+                    this.Character.Cell.Vobs.players.Remove(this.Character.ID);
                 }
             }
 
@@ -100,10 +83,7 @@ namespace GUC.Network
             if (npc.IsSpawned)
             {
                 npc.World.Vobs.players.Add(npc.ID, npc);
-                if (npc.Cell != null)
-                {
-                 //   npc.Cell.Vobs.Players.Add(npc);
-                }
+                npc.Cell.Vobs.players.Add(npc.ID, npc);
 
                 //if (npc.VobController != null)
                 //    npc.VobController.RemoveControlledVob(npc);
@@ -122,12 +102,8 @@ namespace GUC.Network
                 Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, '\0');
             }
 
-
-            
             npc.Client = this;
             character = npc;
-            
-
         }
 
         #endregion
@@ -156,16 +132,16 @@ namespace GUC.Network
 
         internal void AddControlledVob(Vob vob)
         {
-           /* VobControlledList.Add(vob);
-            vob.VobController = this;
-            PacketWriter stream = Network.Server.SetupStream(NetworkID.ControlAddVobMessage); stream.Write(vob.ID);
-            Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
-            Log.Logger.Log("AddCtrl: " + Character.ID + " " + vob.ID + ": " + vob.GetType().Name);
+            /* VobControlledList.Add(vob);
+             vob.VobController = this;
+             PacketWriter stream = Network.Server.SetupStream(NetworkID.ControlAddVobMessage); stream.Write(vob.ID);
+             Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
+             Log.Logger.Log("AddCtrl: " + Character.ID + " " + vob.ID + ": " + vob.GetType().Name);
 
-            if (vob is NPC)
-            {
-                ((NPC)vob).GoTo(this.Character, 500);
-            }*/
+             if (vob is NPC)
+             {
+                 ((NPC)vob).GoTo(this.Character, 500);
+             }*/
         }
 
         internal void RemoveControlledVob(Vob vob)

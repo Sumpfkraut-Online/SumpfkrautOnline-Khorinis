@@ -11,9 +11,10 @@ namespace GUC.Scripts
 {
     public partial class GUCScripts : ScriptInterface
     {
-        public void OnClientConnection(GameClient client)
+        public bool OnClientConnection(GameClient client)
         {
-            new ScriptClient(client);
+            ScriptClient sc = new ScriptClient(client);
+            return true;
         }
     }
 }

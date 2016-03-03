@@ -24,7 +24,7 @@ namespace GUC.WorldObjects.Instances
             stream.Write((byte)this.VobType);
             this.WriteStream(stream);
 
-            foreach (GameClient client in GameServer.GetValidClients())
+            foreach (GameClient client in GameServer.GetClients())
                 client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, '\0');
         }
 
@@ -34,7 +34,7 @@ namespace GUC.WorldObjects.Instances
 
             stream.Write((ushort)this.ID);
 
-            foreach (GameClient client in GameServer.GetValidClients())
+            foreach (GameClient client in GameServer.GetClients())
                 client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, '\0');
         }
 

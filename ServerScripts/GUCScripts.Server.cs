@@ -43,6 +43,15 @@ namespace GUC.Scripts
             npcDef.HeadMesh = Enumeration.HumHeadMeshs.HUM_HEAD_PONY.ToString();
             npcDef.HeadTex = (int)Enumeration.HumHeadTexs.Face_N_Player;
             npcDef.Create();
+
+            npcDef = new NPCDef("scavenger");
+            npcDef.Name = "Scavenger";
+            npcDef.Visual = "scavenger.mds";
+            npcDef.BodyMesh = "Sca_Body";
+            npcDef.BodyTex = 0;
+            npcDef.HeadMesh = "";
+            npcDef.HeadTex = 0;
+            npcDef.Create();
         }
 
 
@@ -55,7 +64,7 @@ namespace GUC.Scripts
             VobInst vob = new VobInst(BaseVobDef.Get<VobDef>("baum"));
             vob.BaseInst.Spawn(WorldInst.NewWorld.BaseWorld, new Types.Vec3f(0, 0, 1000));
 
-            testChar = new NPCInst(BaseVobDef.Get<NPCDef>("player"));
+            testChar = new NPCInst(BaseVobDef.Get<NPCDef>("scavenger"));
             testChar.BaseInst.Spawn(WorldInst.NewWorld.BaseWorld, new Types.Vec3f(0, 0, 500));
         }
     }

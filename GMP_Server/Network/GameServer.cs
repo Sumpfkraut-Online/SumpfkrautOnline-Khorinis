@@ -17,8 +17,7 @@ namespace GUC.Server.Network
         internal readonly static ServerOptions Options = ServerOptions.Init();
 
         readonly static Dictionary<ulong, GameClient> clientDict = new Dictionary<ulong, GameClient>();
-        public static IEnumerable<GameClient> GetValidClients() { return clientDict.Values.Where(c => c.isValid); }
-        public static IEnumerable<GameClient> GetAllClients() { return clientDict.Values; }
+        public static IEnumerable<GameClient> GetClients() { return clientDict.Values; }
 
         internal readonly static RakPeerInterface ServerInterface = RakPeer.GetInstance();
 
@@ -159,48 +158,45 @@ namespace GUC.Server.Network
                         case DefaultMessageIDTypes.ID_NEW_INCOMING_CONNECTION:
                             if (client != null) //there is already someone with this GUID. Should not happen.
                             {
-                                DisconnectClient(client);
-                                Logger.LogError("Kicked duplicate GUID " + p.guid);
+                                throw new Exception("Duplicate RakNet-GUID!" + p.guid);
                             }
                             else
                             {
-                                clientDict.Add(p.guid.g, new GameClient(p.guid, p.systemAddress));
                                 Logger.Log("Client connected: {0} IP:{1}", p.guid, p.systemAddress);
                             }
                             break;
                         case DefaultMessageIDTypes.ID_USER_PACKET_ENUM:
-                            if (client != null)
+                            msgID = (NetworkIDs)pktReader.ReadByte();
+                            if (client == null)
                             {
-                                msgID = (NetworkIDs)pktReader.ReadByte();
-                                if (!client.isValid)
+                                if (msgID == NetworkIDs.ConnectionMessage) //sends mac & drive string, should always be sent first
                                 {
-                                    if (msgID == NetworkIDs.ConnectionMessage) //sends mac & drive string, should always be sent first
+                                    if (ConnectionMessage.Read(pktReader, p.guid, p.systemAddress, out client))
                                     {
-                                        ConnectionMessage.Read(pktReader, client);
+                                        clientDict.Add(client.guid.g, client);
                                     }
                                     else
                                     {
                                         DisconnectClient(client);
-                                        Logger.LogWarning("Client sent {0} before ConnectionMessage. Kicked: {1} IP:{2}", msgID, p.guid, p.systemAddress);
                                     }
                                 }
                                 else
                                 {
-                                    if (msgID > NetworkIDs.MenuMessage && (client.Character == null || client.Character.World == null))
-                                    {
-                                        DisconnectClient(client);
-                                        Logger.LogWarning("Client sent {0} before being ingame. Kicked: {1} IP:{2}", msgID, p.guid, p.systemAddress);
-                                    }
-                                    else
-                                    {
-                                        ReadMessage(msgID, client, pktReader);
-                                    }
+                                    ServerInterface.CloseConnection(p.guid, false);
+                                    Logger.LogWarning("Client sent {0} before ConnectionMessage. Kicked: {1} IP:{2}", msgID, p.guid, p.systemAddress);
                                 }
                             }
                             else
                             {
-                                ServerInterface.CloseConnection(p.guid, false);
-                                Logger.LogWarning("Client sent 'user' packets before 'new connection' packet. Kicked: {0} IP:{1}", p.guid, p.systemAddress);
+                                if (msgID > NetworkIDs.MenuMessage && (client.Character == null || client.Character.World == null))
+                                {
+                                    DisconnectClient(client);
+                                    Logger.LogWarning("Client sent {0} without being ingame. Kicked: {1} IP:{2}", msgID, p.guid, p.systemAddress);
+                                }
+                                else
+                                {
+                                    ReadMessage(msgID, client, pktReader);
+                                }
                             }
                             break;
                         default:
@@ -242,9 +238,30 @@ namespace GUC.Server.Network
 
         public static void DisconnectClient(GameClient client)
         {
-            ServerInterface.CloseConnection(client.guid, false);
+            if (client == null)
+                throw new ArgumentNullException("Client is null!");
+
+            if (client.Character != null)
+            {
+                client.Character.Client = null;
+                if (client.Character.IsSpawned)
+                {
+                    client.Character.World.Vobs.players.Remove(client.Character.ID);
+                    client.Character.Cell.Vobs.players.Remove(client.Character.ID);
+                    if (client.Character.npcCell != null)
+                        client.Character.npcCell.Remove(client.Character);
+                }
+            }
+
+            if (client.ScriptObject != null)
+                client.ScriptObject.OnDisconnection();
+
+            client.character = null;
+
+            ServerInterface.CloseConnection(client.guid, true);
             clientDict.Remove(client.guid.g);
             client.guid.Dispose();
+            client.systemAddress.Dispose();
         }
 
         internal static PacketWriter SetupStream(NetworkIDs ID)

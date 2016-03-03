@@ -7,12 +7,13 @@ using GUC.Enumeration;
 using GUC.WorldObjects.Collections;
 using GUC.Network;
 using GUC.WorldObjects.Instances;
+using GUC.Scripting;
 
 namespace GUC.Server.Network.Messages
 {
     static class ConnectionMessage
     {
-        public static void Read(PacketReader stream, GameClient client)
+        public static bool Read(PacketReader stream, RakNetGUID guid, SystemAddress ip, out GameClient client)
         {
             byte[] signature = new byte[16];
             stream.Read(signature, 0, 16);
@@ -20,9 +21,15 @@ namespace GUC.Server.Network.Messages
             byte[] mac = new byte[16];
             stream.Read(mac, 0, 16);
 
-            if (client.CheckValidation(signature, mac))
+            client = new GameClient(guid, ip, mac, signature);
+            if (ScriptManager.Interface.OnClientConnection(client))
             {
                 WriteInstances(client);
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 

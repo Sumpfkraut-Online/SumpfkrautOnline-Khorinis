@@ -23,6 +23,7 @@ namespace GUC.WorldObjects
             gVob.HPMax = this.hpmax;
             gVob.InitHumanAI();
             gVob.Enable(pos.X, pos.Y, pos.Z);
+            gVob.SetToFistMode();
         }
 
         public bool HasFreeHands

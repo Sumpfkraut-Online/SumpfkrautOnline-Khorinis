@@ -10,7 +10,7 @@ namespace GUC.Scripting
 {
     public partial interface ScriptInterface
     {
-        void OnClientConnection(GameClient client);
+        bool OnClientConnection(GameClient client);
     }
 
     static class ScriptManager

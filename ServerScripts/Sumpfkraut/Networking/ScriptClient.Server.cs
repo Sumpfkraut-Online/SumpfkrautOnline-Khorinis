@@ -12,12 +12,6 @@ namespace GUC.Scripts.Sumpfkraut.Networking
 {
     public partial class ScriptClient : ScriptObject, GameClient.IScriptClient
     {
-        public bool OnValidation()
-        {
-            // Check MAC-, Drive-Hashs and IP for bans
-            return BaseClient.MacHash != null && BaseClient.DriveHash != null && BaseClient.SystemAddress != null;
-        }
-
         public void OnReadMenuMsg(PacketReader stream)
         {
             Logger.Log("Login!");

@@ -42,6 +42,11 @@ namespace GUC.Scripts.Sumpfkraut.Networking
 
         #endregion
 
+        public void OnDisconnection()
+        {
+
+        }
+
         #region Read & Write
 
         public void OnReadProperties(PacketReader stream)

@@ -32,13 +32,9 @@ namespace GUC.WorldObjects
             vob.WriteStream(stream);
             vob.Cell.ForEachSurroundingClient(c =>
             {
-                Log.Logger.Log("Send " + (c == null) + " " + (c == null ? "" : (c.guid == null).ToString()));
-                Log.Logger.Log(c.SystemAddress);
-                Log.Logger.Log(c.guid);
-                Log.Logger.Log(c.guid.g);
                 c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'W');
             }, vob is NPC ? ((NPC)vob).Client : null);
-            
+
             if (vob is NPC && ((NPC)vob).IsPlayer) //send all vobs in surrounding cells to the player
             {
                 vob.Cell.ForEachSurroundingCell(c =>
@@ -104,7 +100,7 @@ namespace GUC.WorldObjects
             if (vob.Cell == null)
             { // Vob has not been in the world yet
                 ChangeCells(vob, x, z, exclude);
-                Log.Logger.Log("cell == null");
+                Log.Logger.LogError("UpdatePosition: Cell == null");
             }
             else
             {
@@ -132,8 +128,6 @@ namespace GUC.WorldObjects
                 {
                     c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE, 'W');
                 }, exclude);
-
-                Log.Logger.Log("oldcell");
             }
         }
 
@@ -142,7 +136,9 @@ namespace GUC.WorldObjects
             NetCell newCell = GetCellFromCoords(x, z);
 
             if (vob.Cell == null) // freshly spawned
+
             {
+                Log.Logger.LogError("ChangeCells: Cell == null");
                 /*if (exclude != null)
                 {
                     stream = GameServer.SetupStream(NetworkIDs.VobPosDirMessage);

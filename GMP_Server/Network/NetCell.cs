@@ -10,7 +10,7 @@ namespace GUC.Server.Network
 {
     internal class NetCell
     {
-        public const float cellSize = 5000;
+        public const float cellSize = 4500;
 
         public World world;
         public int x, z;
