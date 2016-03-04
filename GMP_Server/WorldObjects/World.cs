@@ -62,7 +62,6 @@ namespace GUC.Server.WorldObjects
             igTimeRate = 0f;
 
             this.weatherEvent = new WeatherEvent(WeatherEvent.weatherOverride);
-            Log.Logger.print("~~~~> " + this.weatherEvent);
 
             //Vob mob = Vob.Create("forge");
             //mob.Spawn(this, new Types.Vec3f(-200, -100, 200), new Types.Vec3f(0, 0, 1));
@@ -489,7 +488,7 @@ namespace GUC.Server.WorldObjects
                         stream.mWrite((byte) weatherEvent.endTime.hour);
                         stream.mWrite((byte) weatherEvent.endTime.minute);
 
-                        Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY,
+                        Program.server.ServerInterface.Send(stream, PacketPriority.HIGH_PRIORITY,
                             PacketReliability.RELIABLE_ORDERED, 'I', npc.client.guid, false);
                     }
                 }

@@ -139,7 +139,7 @@ namespace Gothic.zClasses
         public void SetRainFXWeight (float weight, float duration)
         {
             // weight: 0 - 1
-            // duration: ?
+            // duration: 0 - 2?
             Process.THISCALL<NullReturnCall>((uint) Address, (uint) FuncOffsets.SetRainFXWeight,
                 new CallValue[] { new FloatArg(weight), new FloatArg(duration) });
         }

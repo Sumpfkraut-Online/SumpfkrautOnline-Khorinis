@@ -120,6 +120,11 @@ namespace GUC.Server.Scripts.Sumpfkraut.CommandConsole
             World.NewWorld.ChangeIgTime(igTime, igTimeRate);
         }
 
+        public static void SetRainTime (byte sh, byte sm, byte eh, byte em)
+        {
+
+        }
+
         public static void SetIgWeather (object sender, String cmd, String[] param, 
             out Dictionary<string, object> returnVal)
         {

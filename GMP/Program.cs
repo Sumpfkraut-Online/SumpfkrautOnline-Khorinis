@@ -42,6 +42,12 @@ namespace GUC.Client
 
                 StartupState.Start(); //connect to the server
 
+                // FOR TESTING PURPOSES
+                // first and last byte only for cpu
+                // for bytes in mid integer
+                //Process.Write(new byte[] { 0xB8, 0x10, 0x00, 0x00, 0x00, 0x90 }, 0x005E1F78);
+                //Process.Write(new byte[] { 0xB8, 0x10, 0x00, 0x00, 0x00, 0x90 }, 0x005E1F0F);
+
                 while (true)
                 {
                     Thread.Sleep(10000);

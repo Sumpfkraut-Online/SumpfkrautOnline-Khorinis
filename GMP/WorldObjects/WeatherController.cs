@@ -34,8 +34,9 @@ namespace GUC.Client.WorldObjects
             this.activeWeather = WeatherEvent.weatherOverride;
             this.weatherComponents = new List<WeatherEvent> { WeatherEvent.weatherOverride };
             this.lastWeatherComponent = WeatherEvent.weatherOverride;
-
             this.weatherLock = new object();
+
+            UpdateWeather(worldClock.GetIgTime());
         }
 
 
@@ -44,34 +45,45 @@ namespace GUC.Client.WorldObjects
         {
             lock (weatherLock)
             {
-                float gothicStart = ((((we.startTime.hour + 12f) % 24f) * 60f)
-                    + (we.startTime.minute)) / (24f * 60f);
-                float gothicEnd = ((((we.endTime.hour + 12f) % 24f) * 60f)
-                    + (we.endTime.minute)) / (24f * 60f);
+                MakeLog("Applying WeatherEvent " + we);
 
+                this.activeWeather = we;
 
-                //zCSkyControler.SkyEffectsEnabled(Program.Process, 0);
+                WeatherType gothicWeatherType;
+                float gothicStart = 0f;
+                float gothicEnd = 0f;
+                bool calcGothicRainTime = true;
 
-                oCGame.Game(Program.Process).World.SkyControlerOutdoor.SetWeatherType((int) we.weatherType);
+                switch (we.weatherType)
+                {
+                    case WeatherType.clear:
+                        // use very short time period of rain instead
+                        // to bug with snowflake-weather
+                        gothicWeatherType = WeatherType.rain;
+                        gothicStart = 0f; // 0:0:0
+                        gothicEnd = 1f / (24f * 60f); // 0:0:1
+                        calcGothicRainTime = false;
+                        break;
+                    case WeatherType.snowflakes:
+                        // make use of bug to provoke snowflakes to occur
+                        gothicWeatherType = WeatherType.undefined;
+                        break;
+                    default:
+                        gothicWeatherType = we.weatherType;
+                        break;
+                }
+
+                if (calcGothicRainTime)
+                {
+                    gothicStart = ((((we.startTime.hour + 12f) % 24f) * 60f)
+                        + (we.startTime.minute)) / (24f * 60f);
+                    gothicEnd = ((((we.endTime.hour + 12f) % 24f) * 60f)
+                        + (we.endTime.minute)) / (24f * 60f);
+                }
+
+                oCGame.Game(Program.Process).World.SkyControlerOutdoor.SetWeatherType((int) gothicWeatherType);
                 oCGame.Game(Program.Process).World.SkyControlerOutdoor.StartRainTime = gothicStart;
                 oCGame.Game(Program.Process).World.SkyControlerOutdoor.EndRainTime = gothicEnd;
-                //oCGame.Game(Program.Process).World.SkyControlerOutdoor.SetRainFXWeight(0.1f, 2.0f);
-
-                //zCSkyControler.SkyEffectsEnabled(Program.Process, 1);
-
-                // experimental
-                //oCGame.Game(Program.Process).World.SkyControlerOutdoor.Interpolate();
-                //oCGame.Game(Program.Process).World.SkyControlerOutdoor.RenderSky();
-                //oCGame.Game(Program.Process).World.SkyControlerOutdoor.RenderSkyPFX();
-                //oCGame.Game(Program.Process).World.SkyControlerOutdoor.CalcGlobalWind();
-                //oCGame.Game(Program.Process).World.SkyControlerOutdoor.ProcessRainFX();
-                //oCGame.Game(Program.Process).World.SkyControlerOutdoor.UpdateWorldDependencies();
-
-                oCGame.Game(Program.Process).World.SkyControlerOutdoor.SetTime(0.5f);
-                WinApi.FloatArg myTime = oCGame.Game(Program.Process).World.SkyControlerOutdoor.GetTime();
-                Print((float) myTime);
-
-                Print(gothicStart + " ==> " + gothicEnd);
             }
         }
 
@@ -107,9 +119,6 @@ namespace GUC.Client.WorldObjects
                 {
                     endTime--;
                 }
-
-                Print(startTime.hour + ":" + startTime.minute);
-                Print(endTime.hour + ":" + endTime.minute);
 
                 //int daySpan = endTime.day - startTime.day;
 
@@ -148,29 +157,29 @@ namespace GUC.Client.WorldObjects
 
                 weatherComponents = weatherEvents;
 
-                //// reset Weather to undefined (no precipitation) for clean setting later on
-                //// -> do it 2x because 1x is not suffice for Gothic 2 for some reason
-                //// -> do it with several delays to give the game process some time to adjust
-                //Utilities.Threading.Runnable replaceWorker = new Utilities.Threading.Runnable(
-                //    false, new TimeSpan(0, 0, 0, 0, 250), false);
-                //int counter = 0;
-                //replaceWorker.OnRun = delegate (Utilities.Threading.Runnable sender)
-                //{
-                //    if (counter < 2)
-                //    {
-                //        ApplyWeather(WeatherEvent.weatherOverride);
-                //    }
-                //    else if (counter == 2)
-                //    {
-                //        UpdateWeather(worldClock.GetIgTime());
-                //    }
-                //    else
-                //    {
-                //        replaceWorker.Suspend();
-                //    }
-                //    counter++;
-                //};
-                //replaceWorker.Start();
+                // reset weather and apply the actual one after some delay
+                // (workaround for Gothic-Engine)
+                Utilities.Threading.Runnable replaceWorker = new Utilities.Threading.Runnable(
+                    false, new TimeSpan(0, 0, 0, 0, 250), false);
+                int counter = 0;
+                int replaceCylces = 1;
+                replaceWorker.OnRun = delegate (Utilities.Threading.Runnable sender)
+                {
+                    if (counter < replaceCylces)
+                    {
+                        ApplyWeather(WeatherEvent.weatherOverride);
+                    }
+                    else if (counter == replaceCylces)
+                    {
+                        UpdateWeather(worldClock.GetIgTime());
+                    }
+                    else
+                    {
+                        replaceWorker.Suspend();
+                    }
+                    counter++;
+                };
+                replaceWorker.Start();
 
                 //ApplyWeather(WeatherEvent.weatherOverride);
                 //ApplyWeather(WeatherEvent.weatherOverride);
@@ -180,9 +189,7 @@ namespace GUC.Client.WorldObjects
                 //weatherComponents = weatherEvents;
                 //UpdateWeather(worldClock.GetIgTime());
 
-                UpdateWeather(worldClock.GetIgTime());
-
-
+                //UpdateWeather(worldClock.GetIgTime());
 
                 return;
             }
@@ -206,19 +213,8 @@ namespace GUC.Client.WorldObjects
                 {
                     if (lastWeatherComponent != we)
                     {
-                        //Print("~~~~~~> " + weatherComponents.Count);
                         lastWeatherComponent = we;
                         ApplyWeather(we);
-
-                        //float gothicStart = ((((we.startTime.hour + 12f) % 24f) * 60f)
-                        //    + (we.startTime.minute)) / (24f * 60f);
-                        //float gothicEnd = ((((we.endTime.hour + 12f) % 24f) * 60f)
-                        //    + (we.endTime.minute)) / (24f * 60f);
-
-                        //oCGame.Game(Program.Process).World.SkyControlerOutdoor.SetWeatherType((int) we.weatherType);
-                        //oCGame.Game(Program.Process).World.SkyControlerOutdoor.StartRainTime = gothicStart;
-                        //oCGame.Game(Program.Process).World.SkyControlerOutdoor.EndRainTime = gothicEnd;
-                        //oCGame.Game(Program.Process).World.SkyControlerOutdoor.SetRainFXWeight(0.1f, 2.0f);
                     }
                     break;
                 }

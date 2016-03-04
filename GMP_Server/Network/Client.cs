@@ -84,12 +84,43 @@ namespace GUC.Server.Network
             // additional adjustments to synchronize surroundings
 
             Log.Logger.print("+++++> " + character.World.GetWeatherEvent());
-            // update ingame-time
+            // send initial ingame-time
             character.World.ChangeIgTime(character.World.GetIgTime(), character.World.GetIgTimeRate(),
                 new List<NPC> { character });
-            // update ingame-weather
+            // send initial ingame-weather
             character.World.ChangeIgWeather(character.World.GetWeatherEvent(),
                 new List<NPC> { character });
+            //GUC.Utilities.Threading.Runnable initiWeatherWorker =
+            //    new GUC.Utilities.Threading.Runnable(false, new TimeSpan(0, 0, 5), false);
+            //int counter = 0;
+            //initiWeatherWorker.OnRun = delegate (GUC.Utilities.Threading.Runnable sender)
+            //{
+            //    Log.Logger.print("~~~~~~> " + counter);
+            //    Log.Logger.print("~~~~~~> " + character.World.GetWeatherEvent());
+
+            //    character.World.ChangeIgWeather(character.World.GetWeatherEvent(),
+            //        new List<NPC> { character });
+
+            //    if (counter > 5)
+            //    {
+            //        initiWeatherWorker.Suspend();
+            //    }
+
+            //    //switch (counter)
+            //    //{
+            //    //    case 1:
+            //    //        character.World.ChangeIgWeather(character.World.GetWeatherEvent(),
+            //    //            new List<NPC> { character });
+            //    //        break;
+            //    //    case 2:
+            //    //        initiWeatherWorker.Suspend();
+            //    //        break;
+            //    //    default:
+            //    //        break;
+            //    //}
+            //    counter++;
+            //};
+            //initiWeatherWorker.Start();
         }
 
         public void CheckValidity(String driveString, String macString, byte[] npcTableHash, byte[] itemTableHash, byte[] mobTableHash)

@@ -217,8 +217,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
                     tempInt = random.Next(101);
                     if (tempInt >= this.precFactor)
                     {
-                        // no precipitation == default weather
-                        newWS.weatherType = WeatherType.undefined;
+                        // no precipitation == clear weather
+                        newWS.weatherType = WeatherType.clear;
                     }
                     else
                     {
@@ -229,7 +229,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
                         }
                         else
                         {
-                            newWS.weatherType = WeatherType.snow;
+                            newWS.weatherType = WeatherType.snowflakes;
                         }
 
                     }

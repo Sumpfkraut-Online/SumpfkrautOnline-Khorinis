@@ -11,6 +11,8 @@ namespace GUC.Enumeration
         undefined = 0,
         rain = undefined + 1,
         snow = rain + 1,
+        snowflakes = snow + 1,
+        clear = snowflakes + 1,
     }
 
 }
