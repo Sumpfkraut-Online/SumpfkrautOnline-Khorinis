@@ -104,6 +104,16 @@ namespace GUC.Types
             return t1 + min;
         }
 
+        public static IgTime operator +(IgTime t1, long min)
+        {
+            return new IgTime(IgTime.ToMinutes(t1) + min);
+        }
+
+        public static IgTime operator +(long min, IgTime t1)
+        {
+            return t1 + min;
+        }
+
         public static IgTime operator -(IgTime t1, IgTime t2)
         {
             return new IgTime(t1.day - t2.day, t1.hour - t2.hour, t1.minute - t2.minute);
@@ -115,6 +125,16 @@ namespace GUC.Types
         }
 
         public static IgTime operator -(int min, IgTime t1)
+        {
+            return min + (-t1);
+        }
+
+        public static IgTime operator -(IgTime t1, long min)
+        {
+            return new IgTime(IgTime.ToMinutes(t1) - min);
+        }
+
+        public static IgTime operator -(long min, IgTime t1)
         {
             return min + (-t1);
         }

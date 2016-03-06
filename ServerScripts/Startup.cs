@@ -485,34 +485,37 @@ namespace GUC.Server.Scripts
             //    new IgTime(0, 6, 0));
             //Logger.print(WeatherEvent.InInterval(new IgTime(0, 6, 30), we5));
 
+            //IgTime t1 = new IgTime(0, 0, 1);
+            //Logger.print(10L + t1);
 
 
-            //// -- TIME --
-            //Sumpfkraut.TimeSystem.WorldClock clock = new Sumpfkraut.TimeSystem.WorldClock(
-            //    new List<World>() { World.NewWorld }, new IgTime(0, 0, 0), 60D * 30D,
-            //    new TimeSpan(0, 0, 5), false, new TimeSpan(0, 0, 1));
-            //clock.SetObjName("CLOCK");
-            ////clock.OnIgTimeChange += delegate (IgTime igTime) 
-            ////{
-            ////    clock.MakeLog(igTime);
-            ////};
-            //clock.OnClientUpdate += delegate (IgTime igTime, double igTimeRate)
+
+            // -- TIME --
+            Sumpfkraut.TimeSystem.WorldClock clock = new Sumpfkraut.TimeSystem.WorldClock(
+                new List<World>() { World.NewWorld }, new IgTime(0, 0, 0), 60.0 * 30.0,
+                new TimeSpan(0, 0, 5), false, new TimeSpan(0, 0, 1));
+            clock.SetObjName("CLOCK");
+            //clock.OnIgTimeChange += delegate (IgTime igTime) 
             //{
-            //    clock.MakeLog(String.Format("Updated clients igTime: {0} and igTimeRate: {1}.",
-            //        igTime, igTimeRate));
+            //    clock.MakeLog(igTime);
             //};
-            //clock.Start();
+            clock.OnClientUpdate += delegate (IgTime igTime, double igTimeRate)
+            {
+                clock.MakeLog(String.Format("Updated clients igTime: {0} and igTimeRate: {1}.",
+                    igTime, igTimeRate));
+            };
+            clock.Start();
 
-            //// -- WEATHER --
-            //Sumpfkraut.WeatherSystem.Weather weather = new Sumpfkraut.WeatherSystem.Weather(false);
-            //weather.SetObjName("WEATHER");
-            //weather.SetMaxQueueLength(10);
-            //weather.SetMaxWSTime(new TimeSpan(0, 0, 20));
-            //weather.SetMinWSTime(new TimeSpan(0, 0, 20));
-            //weather.SetPrecFactor(75);
-            //weather.SetSnowFactor(50);
-            //weather.SetTimeout(new TimeSpan(0, 0, 5));
-            //weather.Start();
+            // -- WEATHER --
+            Sumpfkraut.WeatherSystem.Weather weather = new Sumpfkraut.WeatherSystem.Weather(clock, false);
+            weather.SetObjName("WEATHER");
+            weather.SetMaxQueueLength(10);
+            weather.SetMaxWSTime(new TimeSpan(0, 0, 20));
+            weather.SetMinWSTime(new TimeSpan(0, 0, 20));
+            weather.SetPrecFactor(75);
+            weather.SetSnowFactor(50);
+            weather.SetTimeout(new TimeSpan(0, 0, 5));
+            weather.Start();
 
             // -- Websocket-Server --
             Sumpfkraut.Web.WS.WSServer wsServer = new Sumpfkraut.Web.WS.WSServer();

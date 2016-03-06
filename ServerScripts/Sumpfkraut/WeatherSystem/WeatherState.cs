@@ -17,6 +17,8 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
         public DateTime endTime;
         public string description;
 
+
+
         public WeatherState()
         {
             SetObjName("WeatherState (default)");
@@ -41,5 +43,12 @@ namespace GUC.Server.Scripts.Sumpfkraut.WeatherSystem
             this.description = description;
         }
 
+
+
+        public override String ToString ()
+        {
+            return String.Format("{0} {1} {2} {3}", this.weatherType, 
+                this.startTime, this.endTime, this.description);
+        }
     }
 }
