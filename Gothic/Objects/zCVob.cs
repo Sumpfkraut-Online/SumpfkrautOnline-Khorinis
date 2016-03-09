@@ -65,7 +65,8 @@ namespace Gothic.Objects
             RotateWorldZ = 0x0061B860,
             RotateLocalX = 0x0061B6B0,
             RotateLocalZ = 0x0061B790,
-            GetSectorNameVobIsIn = 0x00600AE0;
+            GetSectorNameVobIsIn = 0x00600AE0,
+            SetPhysicsEnabled = 0x0061D190;
         }
 
         /*public enum HookSize
@@ -264,9 +265,15 @@ namespace Gothic.Objects
             Process.THISCALL<NullReturnCall>(Address, FuncOffsets.SetAI, ai);
         }*/
 
+        public void SetPhysicsEnabled(bool arg)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetPhysicsEnabled, new BoolArg(arg));
+        }
+
         public override string ToString()
         {
             return String.Format("({0}: {1})", this.Address, this.VTBL);
         }
+
     }
 }

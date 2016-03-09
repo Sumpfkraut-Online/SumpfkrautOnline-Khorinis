@@ -34,6 +34,11 @@ namespace GUC.Client.Scripts.Sumpfkraut
                 var stream = GUC.Network.GameClient.Client.GetIngameMsgStream();
                 GUC.Network.GameClient.Client.SendIngameMsg(stream);
             }
+            else if (key == VirtualKeys.F1)
+            {
+                GUC.Network.GameClient.Client.Character.gVob.GetModel().StartAni("S_FALL", 0);
+                GUC.Network.GameClient.Client.Character.gVob.SetPhysicsEnabled(true);
+            }
         }
 
         static void KeyUp(VirtualKeys key, long now)

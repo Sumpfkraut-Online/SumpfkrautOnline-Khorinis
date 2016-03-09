@@ -15,13 +15,17 @@ namespace GUC.Client
             Process.Write(new byte[] { 0xE9, 0xA8, 0x00 }, 0x4D4D3D); // disable ingame keyboard movement
             Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, 0x4D3E50); // disable x-mouse movement  
             Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, 0x4D3E5C); // disable y-mouse movement  
+
+            Process.Write(new byte[] { 0xE9, 0xB0, 0x01, 0x00, 0x00, 0x90 }, 0x0069C08B); // disable Player AI
         }
 
         public static void ActivateGothicControl()
         {
             Process.Write(new byte[] { 0x0F, 0x84, 0xA7 }, 0x4D4D3D); //enable ingame keyboard movement
             Process.Write(new byte[] { 0x89, 0x0D, 0x5C, 0x16, 0x8D, 0x00 }, 0x4D3E50); // enable x-mouse movement    
-            Process.Write(new byte[] { 0x89, 0x15, 0x60, 0x16, 0x8D, 0x00 }, 0x4D3E5C); // enable y-mouse movement   
+            Process.Write(new byte[] { 0x89, 0x15, 0x60, 0x16, 0x8D, 0x00 }, 0x4D3E5C); // enable y-mouse movement
+
+            Process.Write(new byte[] { 0x0F, 0x85, 0xAF, 0x01, 0x00, 0x00 }, 0x0069C08B); // enable Player AI
         }
 
         public static bool IsPressed(VirtualKeys key)

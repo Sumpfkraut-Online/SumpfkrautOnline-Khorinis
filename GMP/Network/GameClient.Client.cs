@@ -60,7 +60,9 @@ namespace GUC.Network
             character = null;
             charID = stream.ReadUShort();
             charData = stream.GetRemainingData(); // save for later
-            UpdateHeroControl(World.Current.Vobs.Get(charID));
+            BaseVob heroVob;
+            if (World.Current.Vobs.GetAny(charID, out heroVob))
+                UpdateHeroControl(heroVob);
         }
 
         internal void UpdateHeroControl(BaseVob vob)
@@ -161,16 +163,28 @@ namespace GUC.Network
                     ScriptManager.Interface.OnSpawnVobMsg((VobTypes)stream.ReadByte(), stream);
                     break;
                 case NetworkIDs.WorldDespawnMessage:
-                    BaseVob vob = World.Current.Vobs.Get(stream.ReadUShort());
-                    if (vob != null) ScriptManager.Interface.OnDespawnVobMsg(vob);
+                    BaseVob vob;
+                    if (World.Current.Vobs.GetAny(stream.ReadUShort(), out vob))
+                    {
+                        ScriptManager.Interface.OnDespawnVobMsg(vob);
+                    }
                     break;
                 case NetworkIDs.VobPosDirMessage:
-                    vob = World.Current.Vobs.Get(stream.ReadUShort());
-                    if (vob != null)
+                    if (World.Current.Vobs.GetAny(stream.ReadUShort(), out vob))
                     {
                         vob.SetPosition(stream.ReadVec3f());
                         vob.SetDirection(stream.ReadVec3f());
                     }
+                    break;
+
+                case NetworkIDs.NPCStateMessage:
+                    NPCMessage.ReadState(stream);
+                    break;
+                case NetworkIDs.NPCTargetStateMessage:
+                    NPCMessage.ReadTargetState(stream);
+                    break;
+                case NetworkIDs.NPCJumpMessage:
+                    NPCMessage.ReadJump(stream);
                     break;
 
                 default:

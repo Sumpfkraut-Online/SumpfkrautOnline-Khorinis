@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Types;
-using GUC.Enumeration;
+using GUC.Network;
 using Gothic.Objects;
+using GUC.Enumeration;
 
 namespace GUC.WorldObjects
 {
@@ -14,6 +15,30 @@ namespace GUC.WorldObjects
         public const long DirectionUpdateTime = PositionUpdateTime + 100000;
 
         new public oCNpc gVob { get { return (oCNpc)base.gVob; } }
+
+        internal long nextForwardUpdate = 0;
+        internal long nextStandUpdate = 0;
+        internal long nextJumpUpdate = 0;
+
+        internal bool DoJump = false;
+
+        partial void pJump()
+        {
+            if (state == NPCStates.MoveForward)
+            {
+                gVob.GetModel().StartAni(gVob.AniCtrl._t_runr_2_jump, 0);
+                //set some flags, see 0x6B1F1D: LOBYTE(aniCtrl->_zCAIPlayer_bitfield[0]) &= 0xF7u;
+                gVob.SetBodyState(8);
+            }
+            else if (state == NPCStates.Stand)
+            {
+                //Just in case the npc is turning
+                //StopTurnAnis();
+
+                DoJump = true;
+                gVob.AniCtrl.JumpForward();
+            }
+        }
 
         public override void Spawn(World world, Vec3f position, Vec3f direction)
         {
@@ -25,6 +50,65 @@ namespace GUC.WorldObjects
             gVob.Enable(pos.X, pos.Y, pos.Z);
             gVob.SetToFistMode();
         }
+
+        partial void pSetState(NPCStates state, BaseVob target = null)
+        {
+            if (state <= NPCStates.Animation)
+            {
+                //npc.StopTurnAnis(); //Just in case the npc is turning
+                
+                this.Update(DateTime.UtcNow.Ticks);
+            }
+            else
+            {
+                Log.Logger.Log(state);
+            }
+        }
+
+        internal void Update(long now)
+        {
+            if (this != GameClient.Client.Character)
+            {
+                /*if (turning) //turn!
+                {
+                    float diff = (float)(DateTime.UtcNow.Ticks - lastDirTime) / (float)DirectionUpdateTime;
+
+                    if (diff < 1.0f)
+                    {
+                        Direction = lastDir + (nextDir - lastDir) * diff;
+                    }
+                    else
+                    {
+                        StopTurnAnis();
+                    }
+                }*/
+
+                switch (State)
+                {
+                    case NPCStates.MoveForward:
+                        gVob.AniCtrl._Forward();
+                        break;
+                    case NPCStates.MoveBackward:
+                        gVob.AniCtrl._Backward();
+                        break;
+                    /*case NPCStates.MoveRight:
+                        gVob.GetEM(0).KillMessages();
+                        gVob.DoStrafe(true);
+                        break;
+                    case NPCStates.MoveLeft:
+                        gVob.GetEM(0).KillMessages();
+                        gVob.DoStrafe(false);
+                        break;*/
+                    case NPCStates.Stand:
+                        gVob.AniCtrl._Stand();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+
 
         public bool HasFreeHands
         {

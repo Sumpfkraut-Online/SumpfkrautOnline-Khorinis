@@ -13,8 +13,8 @@ namespace GUC.Scripts
 {
     public partial class GUCScripts : ScriptInterface
     {
-		public GUCScripts()
-		{
+        public GUCScripts()
+        {
             Logger.Log("######## Initalise SumpfkrautOnline ServerScripts #########");
 
             AddSomeDefs();
@@ -22,7 +22,7 @@ namespace GUC.Scripts
             CreateWorld();
 
             Logger.Log("######################## Finished #########################");
-		}
+        }
 
         void AddSomeDefs()
         {

@@ -41,7 +41,12 @@
   <ItemGroup>
     <Compile Include="CGameManager.cs" />
     <Compile Include="Objects\Meshes\zCMesh.cs" />
+    <Compile Include="Objects\Meshes\zCModel.cs" />
+    <Compile Include="Objects\Meshes\zCModelAni.cs" />
+    <Compile Include="Objects\Meshes\zCModelAniActive.cs" />
     <Compile Include="Objects\Meshes\zCVisual.cs" />
+    <Compile Include="Objects\oCAIHuman.cs" />
+    <Compile Include="Objects\oCAniCtrl_Human.cs" />
     <Compile Include="Objects\oCItem.cs" />
     <Compile Include="Objects\oCMob.cs" />
     <Compile Include="Objects\oCMobBed.cs" />

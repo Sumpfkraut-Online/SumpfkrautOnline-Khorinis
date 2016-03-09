@@ -48,7 +48,7 @@ namespace GUC.Client
             zCOption.GetSectionByName("INTERNAL").GetEntryByName("gameAbnormalExit").VarValue.Set("0");
             zCOption.Save("Gothic.ini");
             CGameManager.ExitGameVar = 1;
-            Process.CDECLCALL<NullReturnCall>(0x00425F30); // ExitGameFunc
+            //Process.CDECLCALL<NullReturnCall>(0x00425F30); // ExitGameFunc
         }
     }
 }

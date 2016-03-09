@@ -98,11 +98,23 @@ namespace GUC.Client.Hooks
 
                 GameClient.Client.UpdateCharacters();
 
+                if (InputHandler.IsPressed(WinApi.User.Enumeration.VirtualKeys.F2))
+                {
+                    GameClient.Client.Character.gVob.GetModel().StartAni("S_FISTATTACK", 0);
+                    GameClient.Client.Character.gVob.AniCtrl.HitCombo(1);
+                    GameClient.Client.Character.gVob.SetEnemy(GameClient.Client.Character.gVob.GetFocusNpc());
+                    GameClient.Client.Character.gVob.AniCtrl.HitTarget = GameClient.Client.Character.gVob.GetFocusNpc().Address;
+                }
+
+                if (InputHandler.IsPressed(WinApi.User.Enumeration.VirtualKeys.F3))
+                {
+                    GameClient.Client.Character.gVob.AniCtrl.HitCombo(0);
+                }
+
                 if (InputHandler.IsPressed(WinApi.User.Enumeration.VirtualKeys.F4))
                 {
                     Program.Exit();
                 }
-
 
                 /*if ((WinApi.User.Input.GetAsyncKeyState(WinApi.User.Enumeration.VirtualKeys.F1) & 0x8001) == 0x8001 || (WinApi.User.Input.GetAsyncKeyState(WinApi.User.Enumeration.VirtualKeys.F1) & 0x8000) == 0x8000)
                 {

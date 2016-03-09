@@ -12,6 +12,107 @@ namespace GUC.Server.Network.Messages
 {
     static class NPCMessage
     {
+        #region States
+
+        public static void ReadState(PacketReader stream, GameClient client, NPC character, World world)
+        {
+            int id = stream.ReadUShort();
+            NPC npc;
+            if (world.Vobs.Get(id, out npc))
+            {
+                NPCStates state = (NPCStates)stream.ReadByte();
+                if (npc == character /*|| (client.VobControlledList.Contains(npc) && state <= NPCStates.MoveBackward)*/) //is it a controlled NPC?
+                {
+                    if (npc.ScriptObject != null)
+                        npc.ScriptObject.OnCmdMove(state);
+                }
+            }
+        }
+
+        public static void WriteState(NPC npc)
+        {
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCStateMessage);
+            stream.Write((ushort)npc.ID);
+            stream.Write((byte)npc.State);
+
+            npc.Cell.ForEachSurroundingClient(c => c.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
+        }
+
+        internal static void ReadTargetState(PacketReader stream, GameClient client, NPC character, World world)
+        {
+            int targetid = stream.ReadUShort();
+            BaseVob target;
+            world.Vobs.GetAny(targetid, out target);
+
+            NPCStates state = (NPCStates)stream.ReadByte();
+            if (character.ScriptObject != null)
+                character.ScriptObject.OnCmdMove(state, target.ScriptObject);
+        }
+
+        public static void WriteTargetState(NPC npc, BaseVob target)
+        {
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCTargetStateMessage);
+            stream.Write((ushort)npc.ID);
+            stream.Write((byte)npc.State);
+            stream.Write((ushort)target.ID);
+
+            npc.Cell.ForEachSurroundingClient(c => c.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
+        }
+
+
+        #endregion
+
+        #region Jumping
+
+        public static void ReadJump(PacketReader stream, GameClient client, NPC character, World world)
+        {
+            int id = stream.ReadUShort();
+            NPC npc;
+            if (world.Vobs.Get(id, out npc))
+            {
+                if (npc == character /*|| (client.VobControlledList.Contains(npc) && state <= NPCStates.MoveBackward)*/) //is it a controlled NPC?
+                {
+                    if (npc.ScriptObject != null)
+                        npc.ScriptObject.OnCmdJump();
+                }
+            }
+        }
+
+        public static void WriteJump(NPC npc)
+        {
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCJumpMessage);
+            stream.Write((ushort)npc.ID);
+
+            npc.Cell.ForEachSurroundingClient(c => c.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
+        }
+
+        #endregion
+
+        public static void WriteDrawItem(IEnumerable<GameClient> list, NPC npc, Item item, bool fast)
+        {
+            PacketWriter stream = Network.GameServer.SetupStream(NetworkIDs.NPCDrawItemMessage);
+            stream.Write(npc.ID);
+            stream.Write(fast);
+            //item.WriteEquipped(stream);
+
+            foreach (GameClient client in list)
+                client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
+        }
+
+        public static void WriteUndrawItem(IEnumerable<GameClient> list, NPC npc, bool fast, bool altRemove)
+        {
+            if (npc == null)
+                return;
+
+            /*PacketWriter stream = Network.GameServer.SetupStream(NetworkIDs.NPCUndrawItemMessage);
+            stream.Write(npc.ID);
+            stream.Write(fast);
+            stream.Write(altRemove);
+
+            foreach (Client client in list)
+                client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');*/
+        }
+
         #region Animation
 
         /*public static void ReadAniStart(PacketReader stream, Client client, NPC character)
@@ -72,70 +173,6 @@ namespace GUC.Server.Network.Messages
                 client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
         }
 
-        public static void WriteJump(IEnumerable<GameClient> list, NPC npc)
-        {
-            PacketWriter stream = Network.GameServer.SetupStream(NetworkIDs.NPCJumpMessage);
-            stream.Write(npc.ID);
-            foreach (GameClient client in list)
-                client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
-        }
-
-        #region States
-
-        public static void WriteState(IEnumerable<GameClient> list, NPC npc)
-        {
-            PacketWriter stream = Network.GameServer.SetupStream(NetworkIDs.NPCStateMessage);
-            stream.Write(npc.ID);
-            stream.Write((byte)npc.State);
-            foreach (GameClient client in list)
-                client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
-        }
-
-        public static void WriteTargetState(IEnumerable<GameClient> list, NPC npc, NPC target)
-        {
-            PacketWriter stream = Network.GameServer.SetupStream(NetworkIDs.NPCTargetStateMessage);
-            stream.Write(npc.ID);
-            stream.Write((byte)npc.State);
-
-            if (target == null)
-            {
-                stream.Write(0);
-            }
-            else
-            {
-                stream.Write(target.ID);
-            }
-
-            foreach (GameClient client in list)
-                client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
-        }
-
-        public static void WriteDrawItem(IEnumerable<GameClient> list, NPC npc, Item item, bool fast)
-        {
-            PacketWriter stream = Network.GameServer.SetupStream(NetworkIDs.NPCDrawItemMessage);
-            stream.Write(npc.ID);
-            stream.Write(fast);
-            //item.WriteEquipped(stream);
-
-            foreach (GameClient client in list)
-                client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
-        }
-
-        public static void WriteUndrawItem(IEnumerable<GameClient> list, NPC npc, bool fast, bool altRemove)
-        {
-            if (npc == null)
-                return;
-
-            /*PacketWriter stream = Network.GameServer.SetupStream(NetworkIDs.NPCUndrawItemMessage);
-            stream.Write(npc.ID);
-            stream.Write(fast);
-            stream.Write(altRemove);
-
-            foreach (Client client in list)
-                client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');*/
-        }
-
-        #endregion
 
     }
 }

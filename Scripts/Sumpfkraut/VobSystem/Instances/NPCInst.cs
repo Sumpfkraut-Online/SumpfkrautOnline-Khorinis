@@ -23,7 +23,29 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
         }
 
+        public void SetState(NPCStates state, BaseVobInst target = null)
+        {
+            this.BaseInst.SetState(state, target == null ? null : target.BaseInst);
+        }
+
+        public void Jump()
+        {
+            this.BaseInst.Jump();
+        }
+
         #region Client Commands
+
+        partial void pOnCmdMove(NPCStates state, BaseVobInst target);
+        public void OnCmdMove(NPCStates state, BaseVob.IScriptBaseVob target = null)
+        {
+            pOnCmdMove(state, (BaseVobInst)target);
+        }
+
+        partial void pOnCmdJump();
+        public void OnCmdJump()
+        {
+            pOnCmdJump();
+        }
 
         public void OnCmdDrawItem(Item item)
         {
@@ -35,20 +57,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             throw new NotImplementedException();
         }
 
-        public void OnCmdJump()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void OnCmdMove(NPCStates state)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void OnCmdMove(NPCStates state, NPC target)
-        {
-            throw new NotImplementedException();
-        }
 
         public void OnCmdPickupItem(Item item)
         {

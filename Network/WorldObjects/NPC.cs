@@ -21,6 +21,9 @@ namespace GUC.WorldObjects
         {
             void OnWriteTakeControl(PacketWriter stream);
             void OnReadTakeControl(PacketReader stream);
+            
+            void OnCmdMove(NPCStates state, IScriptBaseVob target = null);
+            void OnCmdJump();
         }
 
         new public IScriptNPC ScriptObject
@@ -67,17 +70,33 @@ namespace GUC.WorldObjects
 
             pSetHealth(hp, hpmax);
         }
-        
+
+        internal NPCStates NextState = NPCStates.Stand;
+
         NPCStates state = NPCStates.Stand;
         public NPCStates State { get { return this.state; } }
 
-        public void SetState(NPCStates state, BaseVob target = null)
-        {
-
-        }
-
         MobInter usedMob = null;
         public MobInter UsedMob { get { return this.usedMob; } }
+
+        partial void pJump();
+        public void Jump()
+        {
+            if (this.IsSpawned)
+            {
+                pJump();
+            }
+        }
+
+        partial void pSetState(NPCStates state, BaseVob target = null);
+        public void SetState(NPCStates state, BaseVob target = null)
+        {
+            this.state = state;
+            if (this.IsSpawned)
+            {
+                pSetState(state, target);
+            }
+        }
 
         public void UseMob(MobInter mob)
         {
@@ -136,8 +155,8 @@ namespace GUC.WorldObjects
         {
             base.WriteProperties(stream);
 
-            stream.Write(hpmax);
-            stream.Write(hp);
+            stream.Write((ushort)hpmax);
+            stream.Write((ushort)hp);
 
             /*stream.Write((byte)equippedSlots.Count);
             foreach (KeyValuePair<byte, Item> slot in equippedSlots)
@@ -162,6 +181,9 @@ namespace GUC.WorldObjects
         protected override void ReadProperties(PacketReader stream)
         {
             base.ReadProperties(stream);
+
+            this.hpmax = stream.ReadUShort();
+            this.hp = stream.ReadUShort();
         }
 
         #endregion

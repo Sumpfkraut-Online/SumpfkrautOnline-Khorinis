@@ -35,11 +35,22 @@ namespace GUC.WorldObjects.Collections
 
         #region Access
 
-        public BaseVob Get(int id)
+        public bool GetAny(int id, out BaseVob vob)
         {
-            BaseVob vob;
-            vobs.TryGetValue(id, out vob);
-            return vob;
+            return vobs.TryGetValue(id, out vob);
+        }
+
+        public bool Get<T>(int id, out T vob) where T : BaseVob
+        {
+            BaseVob v;
+            vobs.TryGetValue(id, out v);
+            if (v is T)
+            {
+                vob = (T)v;
+                return true;
+            }
+            vob = null;
+            return false;
         }
 
         public void ForEach(Action<BaseVob> action)

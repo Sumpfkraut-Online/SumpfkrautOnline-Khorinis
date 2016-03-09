@@ -8,6 +8,7 @@ using RakNet;
 using GUC.Network;
 using GUC.WorldObjects.Mobs;
 using GUC.Types;
+using GUC.Server.Network.Messages;
 
 namespace GUC.WorldObjects
 {
@@ -19,9 +20,6 @@ namespace GUC.WorldObjects
         {
             void OnCmdUseMob(MobInter mob);
             void OnCmdUseItem(Item item);
-            void OnCmdMove(NPCStates state);
-            void OnCmdMove(NPCStates state, NPC target);
-            void OnCmdJump();
             void OnCmdDrawItem(Item item);
             void OnCmdPickupItem(Item item);
             void OnCmdDropItem(Item item);
@@ -37,6 +35,23 @@ namespace GUC.WorldObjects
         public void UpdateProperties()
         {
             // send msg
+        }
+
+        partial void pJump()
+        {
+            NPCMessage.WriteJump(this);
+        }
+
+        partial void pSetState(NPCStates state, BaseVob target = null)
+        {
+            if (state <= NPCStates.Animation || target == null)
+            {
+                NPCMessage.WriteState(this);
+            }
+            else
+            {
+                NPCMessage.WriteTargetState(this, target);
+            }
         }
 
         #region Properties
@@ -65,7 +80,7 @@ namespace GUC.WorldObjects
                 this.world.Vobs.Add(this);
 
                 World.SendWorldMessage(this.Client, world);
-                
+
                 PacketWriter stream = GameServer.SetupStream(NetworkIDs.PlayerControlMessage);
                 stream.Write((ushort)ID);
                 WriteTakeControl(stream);
@@ -105,19 +120,6 @@ namespace GUC.WorldObjects
              character.ScriptObj.OnCmdUseItem(item);
          }
 
-         internal static void ReadCmdMove(PacketReader stream, Client client, NPC character, World world)
-         {
-             uint id = stream.ReadUInt();
-             NPC npc = (NPC)world.Npcs.Get(id);
-             if (npc == null) return;
-
-             NPCStates state = (NPCStates)stream.ReadByte();
-             if (npc == character || (client.VobControlledList.Contains(npc) && state <= NPCStates.MoveBackward)) //is it a controlled NPC?
-             {
-                 npc.ScriptObj.OnCmdMove(state);
-             }
-         }
-
          internal static void ReadCmdJump(PacketReader stream, Client client, NPC character, World world)
          {
              uint id = stream.ReadUInt();
@@ -143,14 +145,7 @@ namespace GUC.WorldObjects
              //character.ScriptObj.OnCmdDrawItem(Item.Fists);
          }
 
-         internal static void ReadCmdTargetMove(PacketReader stream, Client client, NPC character, World world)
-         {
-             uint targetid = stream.ReadUInt();
-             NPC target = (NPC)world.Npcs.Get(targetid);
 
-             NPCStates state = (NPCStates)stream.ReadByte();            
-             character.ScriptObj.OnCmdMove(state, target);
-         }
 
          internal static void ReadCmdPickupItem(PacketReader stream, Client client, NPC character, World world)
          {

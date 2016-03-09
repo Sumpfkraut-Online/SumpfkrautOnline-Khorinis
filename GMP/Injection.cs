@@ -98,6 +98,7 @@ namespace GUC.Client
                 hGame.AddHooks();
                 hWeather.AddHooks();
                 hPlayerVob.AddHooks();
+                hAniCtrl_Human.AddHooks();
 
                 #region Some more editing
                 // Make rain drops being blocked by vobs!
@@ -114,7 +115,7 @@ namespace GUC.Client
                 // Blocking time!
                 WinApi.Process.Write((byte)0xC3, 0x00780D80);
 
-                WinApi.Process.VirtualProtect(0x007792E0, 40);
+                //WinApi.Process.VirtualProtect(0x007792E0, 40);
                 WinApi.Process.Write(new byte[] { 0x33, 0xC0, 0xC2, 0x04, 0x00 }, 0x007792E0);//Block deleting of dead characters!
 
                 Logger.Log("Hooking & editing of gothic process completed. (for now...)");

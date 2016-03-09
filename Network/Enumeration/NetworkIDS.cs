@@ -32,6 +32,12 @@ namespace GUC.Enumeration
         //vobs
         VobPosDirMessage, // updating position and direction of a vob
 
+        // npcs 
+        NPCStateMessage,
+        NPCTargetStateMessage,
+        NPCJumpMessage,
+
+
 
 
 
@@ -57,10 +63,8 @@ namespace GUC.Enumeration
         NPCAniStopMessage,
         NPCEquipMessage,
         NPCUnequipMessage,
-        NPCJumpMessage,
 
-        NPCStateMessage,
-        NPCTargetStateMessage,
+
         NPCDrawItemMessage,
         NPCDrawFistsMessage,
         

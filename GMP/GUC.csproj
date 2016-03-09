@@ -208,6 +208,7 @@
     <Compile Include="GUI\GUCVisualText.cs" />
     <Compile Include="GUI\GUCVisualVob.cs" />
     <Compile Include="GUI\MenuRenderer.cs" />
+    <Compile Include="Hooks\hAniCtrl_Human.cs" />
     <Compile Include="Hooks\hGame.cs" />
     <Compile Include="Hooks\hParser.cs" />
     <Compile Include="Hooks\hPlayerVob.cs" />
@@ -216,6 +217,7 @@
     <Compile Include="InputHandler.cs" />
     <Compile Include="Network\GameClient.Client.cs" />
     <Compile Include="Network\Messages\ConnectionMessage.cs" />
+    <Compile Include="Network\Messages\NPCMessage.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

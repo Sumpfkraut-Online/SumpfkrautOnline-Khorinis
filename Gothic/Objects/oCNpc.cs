@@ -386,6 +386,49 @@ namespace Gothic.Objects
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.Disable);
         }
 
+        public oCAIHuman HumanAI
+        {
+            get { return new oCAIHuman(Process.ReadInt(Address + VarOffsets.HumanAI)); }
+            set { Process.Write(value.Address, Address + VarOffsets.HumanAI); }
+        }
+
+        public zCVob FocusVob
+        {
+            get { return new zCVob(Process.ReadInt(Address + VarOffsets.FocusVob)); }
+            set { Process.Write(value.Address, Address + VarOffsets.FocusVob); }
+        }
+
+        public oCNpc GetFocusNpc()
+        {
+            return Process.THISCALL<oCNpc>(Address, 0x732BF0);
+        }
+
+        public oCAniCtrl_Human AniCtrl
+        {
+            get { return new oCAniCtrl_Human(Process.ReadInt(Address + VarOffsets.AniCtrl)); }
+            set { Process.Write(value.Address, Address + VarOffsets.AniCtrl); }
+        }
+
+        public zCModel GetModel()
+        {
+            return Process.THISCALL<zCModel>(Address, FuncAddresses.GetModel);
+        }
+
+        public int GetBodyState()
+        {
+            return Process.THISCALL<IntArg>(Address, FuncAddresses.GetBodyState).Value;
+        }
+
+        public void SetBodyState(int x)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetBodyState, new IntArg(x));
+        }
+
+        public void SetEnemy(oCNpc npc)
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x734BC0, npc);
+        }
+
         /*
         public static oCNpc StealNPC(Process process)
         {
@@ -498,7 +541,7 @@ namespace Gothic.Objects
 
         public void SetInteractItem(oCItem item)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetInteractItem, new CallValue[] { item });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetInteractItem, new CallValue[] { item });
         }
 
         public int Flags
@@ -717,32 +760,6 @@ namespace Gothic.Objects
             get { return new oCNpc_States(Process, Address + (int)Offsets.NpcStates); }
         }
 
-        public oCAniCtrl_Human AniCtrl
-        {
-            get { return new oCAniCtrl_Human(Process, Process.ReadInt(Address + (int)Offsets.AniCtrl)); }
-            set { Process.Write(value.Address, Address + (int)Offsets.AniCtrl); }
-        }
-
-        public oCAiHuman HumanAI
-        {
-            get { return new oCAiHuman(Process, Process.ReadInt(Address + (int)Offsets.HumanAI)); }
-            set { Process.Write(value.Address, Address + (int)Offsets.HumanAI); }
-        }
-
-        public zCVob FocusVob
-        {
-            get { return new zCVob(Process, Process.ReadInt(Address + (int)Offsets.FocusVob)); }
-            set
-            {
-                Process.Write(value.Address, Address + (int)Offsets.FocusVob);
-            }
-        }
-
-        public oCNpc GetFocusNpc()
-        {
-            return new oCNpc(Process, Process.THISCALL<IntArg>((uint)Address, (uint)0x732BF0, new CallValue[] { }));
-        }
-
         public zCArray<oCNpcTalent> Talents
         {
             get
@@ -928,7 +945,7 @@ namespace Gothic.Objects
 
         public static void SetNpcAIDisabled(Process Process, int x)
         {
-            Process.CDECLCALL<NullReturnCall>((uint)FuncOffsets.SetNpcAIDisabled, new CallValue[] { new IntArg(x) });
+            Process.CDECLCALL<NullReturnCall>(FuncAddresses.SetNpcAIDisabled, new CallValue[] { new IntArg(x) });
         }
         #endregion
 
@@ -937,50 +954,50 @@ namespace Gothic.Objects
 
         public void Shrink()
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.Shrink, new CallValue[] { });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.Shrink);
         }
 
         public void UnShrink()
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.UnShrink, new CallValue[] { });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.UnShrink);
         }
 
         public void AvoidShrink(int val)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.AvoidShrink, new CallValue[] { new IntArg(val) });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.AvoidShrink, new CallValue[] { new IntArg(val) });
         }
 
         public void CloseSpellBook(bool x)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.CloseSpellBook, new CallValue[] { new BoolArg(x) });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.CloseSpellBook, new CallValue[] { new BoolArg(x) });
         }
 
 
 
         public int ReadySpell(int val, int val2)
         {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.ReadySpell, new CallValue[] { new IntArg(val), new IntArg(val2) });
+            return Process.THISCALL<IntArg>(Address, FuncAddresses.ReadySpell, new CallValue[] { new IntArg(val), new IntArg(val2) });
         }
 
         public int UnreadySpell()
         {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.UnreadySpell, new CallValue[] { });
+            return Process.THISCALL<IntArg>(Address, FuncAddresses.UnreadySpell);
         }
 
         public void SetTrueGuild(int val)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetTrueGuild, new CallValue[] { new IntArg(val) });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetTrueGuild, new CallValue[] { new IntArg(val) });
         }
 
         public void Turn(zVec3 pos)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.Turn, new CallValue[] { pos });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.Turn, new CallValue[] { pos });
         }
 
 
         public void OnDamage(oSDamageDescriptor oDD)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.OnDamage_DD, new CallValue[] { oDD });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.OnDamage_DD, new CallValue[] { oDD });
         }
 
         /// <summary>
@@ -989,432 +1006,414 @@ namespace Gothic.Objects
         /// <param name="msg"></param>
         public void EV_OutputSVM_Overlay(oCMsgConversation msg)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.EV_OutputSVM_Overlay, new CallValue[] { msg });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.EV_OutputSVM_Overlay, new CallValue[] { msg });
         }
 
         public int AssessTalk_S(oCNpc npc)
         {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.AssessTalk_S, new CallValue[] { npc });
+            return Process.THISCALL<IntArg>(Address, FuncAddresses.AssessTalk_S, new CallValue[] { npc });
         }
 
         public int AssessPlayer_S(oCNpc npc)
         {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.AssessPlayer_S, new CallValue[] { npc });
+            return Process.THISCALL<IntArg>(Address, FuncAddresses.AssessPlayer_S, new CallValue[] { npc });
         }
 
         public int CanBeTalkedTo()
         {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.CanBeTalkedTo, new CallValue[] { });
+            return Process.THISCALL<IntArg>(Address, FuncAddresses.CanBeTalkedTo);
         }
 
         public int GetTrueGuild()
         {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.GetTrueGuild, new CallValue[] { });
+            return Process.THISCALL<IntArg>(Address, FuncAddresses.GetTrueGuild);
         }
 
         public int IsBodyStateInterruptable()
         {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.IsBodyStateInterruptable, new CallValue[] { });
+            return Process.THISCALL<IntArg>(Address, FuncAddresses.IsBodyStateInterruptable);
         }
 
         public int CanSense(zCVob npc)
         {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.CanSense, new CallValue[] { npc });
+            return Process.THISCALL<IntArg>(Address, FuncAddresses.CanSense, new CallValue[] { npc });
         }
 
         public int IsUnconscious()
         {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.IsUnconscious, new CallValue[] { });
+            return Process.THISCALL<IntArg>(Address, FuncAddresses.IsUnconscious);
         }
 
         public int IsDead()
         {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.IsDead, new CallValue[] { });
+            return Process.THISCALL<IntArg>(Address, FuncAddresses.IsDead);
         }
 
         public int GetFullBodyState()
         {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.GetFullBodyState, new CallValue[] { });
+            return Process.THISCALL<IntArg>(Address, FuncAddresses.GetFullBodyState);
         }
 
         public int CanSee(zCVob vob, int arg)
         {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.CanSee, new CallValue[] { vob, new IntArg(arg) }).Address;
+            return Process.THISCALL<IntArg>(Address, FuncAddresses.CanSee, new CallValue[] { vob, new IntArg(arg) }).Address;
         }
 
         public int EV_RemoveWeapon(oCMsgWeapon msg)
         {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.EV_RemoveWeapon, new CallValue[] { msg }).Address;
+            return Process.THISCALL<IntArg>(Address, FuncAddresses.EV_RemoveWeapon, new CallValue[] { msg }).Address;
         }
 
         public void CreatePassivePerception(int arg, zCVob vob, zCVob vob2)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.CreatePassivePerception, new CallValue[] { new IntArg(arg), vob, vob2 });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.CreatePassivePerception, new CallValue[] { new IntArg(arg), vob, vob2 });
         }
 
         public void OnMessage(int eventMessage, zCVob vob)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.OnMessage, new CallValue[] { (IntArg)eventMessage, vob });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.OnMessage, new CallValue[] { (IntArg)eventMessage, vob });
         }
 
         public void PerceptionCheck()
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.PerceptionCheck, new CallValue[] { });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.PerceptionCheck);
         }
 
         public void SetHead()
         {
-            Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.SetHead, new CallValue[] { });
+            Process.THISCALL<IntArg>(Address, FuncAddresses.SetHead);
         }
 
         public void InitModel()
         {
-            Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.InitModel, new CallValue[] { });
+            Process.THISCALL<IntArg>(Address, FuncAddresses.InitModel);
         }
 
 
         public void CloseSteal()
         {
-            Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.CloseSteal, new CallValue[] { });
+            Process.THISCALL<IntArg>(Address, FuncAddresses.CloseSteal);
         }
 
         public void OpenSteal()
         {
-            Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.OpenSteal, new CallValue[] { });
+            Process.THISCALL<IntArg>(Address, FuncAddresses.OpenSteal);
         }
 
         public void CloseDeadNpc()
         {
-            Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.CloseDeadNpc, new CallValue[] { });
+            Process.THISCALL<IntArg>(Address, FuncAddresses.CloseDeadNpc);
         }
 
         public int GetActiveSpellNr()
         {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.GetActiveSpellNr, new CallValue[] { }).Address;
+            return Process.THISCALL<IntArg>(Address, FuncAddresses.GetActiveSpellNr).Address;
         }
 
         public int GetActiveSpellLevel()
         {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.GetActiveSpellLevel, new CallValue[] { }).Address;
+            return Process.THISCALL<IntArg>(Address, FuncAddresses.GetActiveSpellLevel).Address;
         }
 
         public void Equip(oCItem slot)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.Equip, new CallValue[] { slot });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.Equip, new CallValue[] { slot });
         }
 
         public void EquipItem(oCItem item)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)0x7323C0, new CallValue[] { item });
+            Process.THISCALL<NullReturnCall>(Address, (uint)0x7323C0, new CallValue[] { item });
         }
 
         public void RemoveFromSlot(zString slot, int vob, int i)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.RemoveFromSlot, new CallValue[] { slot, new IntArg(vob), new IntArg(i) });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.RemoveFromSlot, new CallValue[] { slot, new IntArg(vob), new IntArg(i) });
         }
 
         public int GetInvSlot(zString slot)
         {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)0x749AE0, new CallValue[] { slot });
+            return Process.THISCALL<IntArg>(Address, (uint)0x749AE0, new CallValue[] { slot });
         }
 
         public void PutInSlot(zString slot, zCVob vob, int i)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.PutInSlot, new CallValue[] { slot, vob, new IntArg(i) });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.PutInSlot, new CallValue[] { slot, vob, new IntArg(i) });
         }
 
         public void PutInSlot(int slot, zCVob vob, int i)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)0x749D80, new CallValue[] { new IntArg(slot), vob, new IntArg(i) });
+            Process.THISCALL<NullReturnCall>(Address, (uint)0x749D80, new CallValue[] { new IntArg(slot), vob, new IntArg(i) });
         }
 
         public void ResetPos(zVec3 pos)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.ResetPos, new CallValue[] { pos });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.ResetPos, new CallValue[] { pos });
         }
 
         public void StartDialogAni()
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.StartDialogAni, new CallValue[] { });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.StartDialogAni);
         }
 
 
         //32 percs?
         public void DisablePerception(int perc)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.DisablePerception, new CallValue[] { new IntArg(perc) });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.DisablePerception, new CallValue[] { new IntArg(perc) });
         }
 
         public int GetPermAttitude(oCNpc npc)
         {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.GetPermAttitude, new CallValue[] { npc }).Address;
+            return Process.THISCALL<IntArg>(Address, FuncAddresses.GetPermAttitude, new CallValue[] { npc }).Address;
         }
 
         public int IsAIState(int state)
         {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.IsAIState, new CallValue[] { (IntArg)state });
+            return Process.THISCALL<IntArg>(Address, FuncAddresses.IsAIState, new CallValue[] { (IntArg)state });
         }
 
 
         public void ClearPerception()
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.ClearPerception, new CallValue[] { });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.ClearPerception);
         }
 
         public void ClearPerceptionLists()
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.ClearPerceptionLists, new CallValue[] { });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.ClearPerceptionLists);
         }
 
         public int IsGoblin()
         {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.IsGoblin, new CallValue[] { }).Address;
+            return Process.THISCALL<IntArg>(Address, FuncAddresses.IsGoblin).Address;
         }
 
         public int IsHuman()
         {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.IsHuman, new CallValue[] { }).Address;
+            return Process.THISCALL<IntArg>(Address, FuncAddresses.IsHuman).Address;
         }
 
         public int IsOrc()
         {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.IsOrc, new CallValue[] { }).Address;
+            return Process.THISCALL<IntArg>(Address, FuncAddresses.IsOrc).Address;
         }
 
         public int IsMonster()
         {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.IsMonster, new CallValue[] { }).Address;
+            return Process.THISCALL<IntArg>(Address, FuncAddresses.IsMonster).Address;
         }
 
         public int IsSkeleton()
         {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.IsSkeleton, new CallValue[] { }).Address;
+            return Process.THISCALL<IntArg>(Address, FuncAddresses.IsSkeleton).Address;
         }
 
         public oCMobInter GetInteractMob()
         {
-            return Process.THISCALL<oCMobInter>((uint)Address, (uint)FuncOffsets.GetInteractMob, new CallValue[] { });
-        }
-        /// <summary>
-        /// GetModel liefert das Model des NPCs zurück
-        /// </summary>
-        /// <returns></returns>
-        public zCModel GetModel()
-        {
-            return Process.THISCALL<zCModel>((uint)Address, (uint)FuncOffsets.GetModel, new CallValue[] { });
+            return Process.THISCALL<oCMobInter>(Address, FuncAddresses.GetInteractMob);
         }
 
         public oCAniCtrl_Human GetAnictrl()
         {
-            return Process.THISCALL<oCAniCtrl_Human>((uint)Address, (uint)FuncOffsets.GetAnictrl, new CallValue[] { });
+            return Process.THISCALL<oCAniCtrl_Human>(Address, FuncAddresses.GetAnictrl);
         }
 
         public oCMag_Book GetSpellBook()
         {
-            return Process.THISCALL<oCMag_Book>((uint)Address, (uint)FuncOffsets.GetSpellBook, new CallValue[] { });
+            return Process.THISCALL<oCMag_Book>(Address, FuncAddresses.GetSpellBook);
         }
 
         public void ApplyOverlay(zString str)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.ApplyOverlay, new CallValue[] { str });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.ApplyOverlay, new CallValue[] { str });
         }
 
         public void ApplyTimedOverlayMds(zString str, float val)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.ApplyTimedOverlayMds, new CallValue[] { str, new FloatArg(val) });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.ApplyTimedOverlayMds, new CallValue[] { str, new FloatArg(val) });
         }
 
         public void RemoveOverlay(zString str)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.RemoveOverlay, new CallValue[] { str });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.RemoveOverlay, new CallValue[] { str });
         }
 
         public void OpenInventory(int inv)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.OpenInventory, new CallValue[] { new IntArg(inv) });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.OpenInventory, new CallValue[] { new IntArg(inv) });
         }
 
         public void CloseInventory()
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.CloseInventory, new CallValue[] { });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.CloseInventory);
         }
 
         public void OpenDeadNPC()
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.OpenDeadNPC, new CallValue[] { });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.OpenDeadNPC);
         }
 
 
 
         public void SetToFightMode(oCItem item, int mode)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)0x73A740, new CallValue[] { item, (IntArg)mode });
+            Process.THISCALL<NullReturnCall>(Address, (uint)0x73A740, new CallValue[] { item, (IntArg)mode });
         }
 
         public oCItem PutInInv(oCItem code)
         {
 
-            return Process.THISCALL<oCItem>((uint)Address, (uint)FuncOffsets.PutInInv_Item, new CallValue[] { code });
+            return Process.THISCALL<oCItem>(Address, FuncAddresses.PutInInv_Item, new CallValue[] { code });
         }
 
         public oCItem PutInInv(zString code, int count)
         {
-            return Process.THISCALL<oCItem>((uint)Address, (uint)FuncOffsets.PutInInv_Str, new CallValue[] { code, new IntArg(count) });
+            return Process.THISCALL<oCItem>(Address, FuncAddresses.PutInInv_Str, new CallValue[] { code, new IntArg(count) });
         }
 
         public oCItem PutInInv(int item, int count)
         {
-            return Process.THISCALL<oCItem>((uint)Address, (uint)FuncOffsets.PutInInv_Int, new CallValue[] { new IntArg(item), new IntArg(count) });
+            return Process.THISCALL<oCItem>(Address, FuncAddresses.PutInInv_Int, new CallValue[] { new IntArg(item), new IntArg(count) });
         }
 
         public oCItem IsInInv(int item, int count)
         {
-            return Process.THISCALL<oCItem>((uint)Address, (uint)FuncOffsets.IsInInv, new CallValue[] { new IntArg(item), new IntArg(count) });
+            return Process.THISCALL<oCItem>(Address, FuncAddresses.IsInInv, new CallValue[] { new IntArg(item), new IntArg(count) });
         }
 
         public oCItem IsInInv(zString str, int count)
         {
-            return Process.THISCALL<oCItem>((uint)Address, (uint)FuncOffsets.IsInInv_Str, new CallValue[] { str, new IntArg(count) });
+            return Process.THISCALL<oCItem>(Address, FuncAddresses.IsInInv_Str, new CallValue[] { str, new IntArg(count) });
         }
 
         public oCItem GetSlotItem(zString code)
         {
-            return Process.THISCALL<oCItem>((uint)Address, (uint)FuncOffsets.GetSlotItem, new CallValue[] { code });
+            return Process.THISCALL<oCItem>(Address, FuncAddresses.GetSlotItem, new CallValue[] { code });
         }
 
         public oCItem RemoveFromInv(int item, int count)
         {
-            return Process.THISCALL<oCItem>((uint)Address, (uint)FuncOffsets.RemoveFromInv_Int, new CallValue[] { new IntArg(item), new IntArg(count) });
+            return Process.THISCALL<oCItem>(Address, FuncAddresses.RemoveFromInv_Int, new CallValue[] { new IntArg(item), new IntArg(count) });
         }
 
         public oCItem RemoveFromInv(oCItem item, int count)
         {
-            return Process.THISCALL<oCItem>((uint)Address, (uint)FuncOffsets.RemoveFromInv_Item, new CallValue[] { item, new IntArg(count) });
+            return Process.THISCALL<oCItem>(Address, FuncAddresses.RemoveFromInv_Item, new CallValue[] { item, new IntArg(count) });
         }
 
         public void SetTalentValue(int x, int y)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetTalentValue, new CallValue[] { new IntArg(x), new IntArg(y) });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetTalentValue, new CallValue[] { new IntArg(x), new IntArg(y) });
         }
 
         public void SetTalentSkill(int x, int y)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetTalentSkill, new CallValue[] { new IntArg(x), new IntArg(y) });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetTalentSkill, new CallValue[] { new IntArg(x), new IntArg(y) });
         }
 
         public int GetTalentValue(int x)
         {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.GetTalentValue, new CallValue[] { new IntArg(x) }).Address;
+            return Process.THISCALL<IntArg>(Address, FuncAddresses.GetTalentValue, new CallValue[] { new IntArg(x) }).Address;
         }
 
         public int GetTalentSkill(int x)
         {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.GetTalentSkill, new CallValue[] { new IntArg(x) }).Address;
-        }
-
-        public int GetBodyState()
-        {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.GetBodyState, new CallValue[] { }).Address;
-        }
-
-        public void SetBodyState(int x)
-        {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetBodyState, new CallValue[] { new IntArg(x) });
+            return Process.THISCALL<IntArg>(Address, FuncAddresses.GetTalentSkill, new CallValue[] { new IntArg(x) }).Address;
         }
 
         public void DoShootArrow(int arrowid)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.DoShootArrow, new CallValue[] { new IntArg(arrowid) });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.DoShootArrow, new CallValue[] { new IntArg(arrowid) });
         }
 
         public void DoSpellBook()
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.DoSpellBook, new CallValue[] { });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.DoSpellBook);
         }
 
         public void CompleteHeal()
         {
             IntArg x = 123;
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.CompleteHeal, new CallValue[] { });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.CompleteHeal);
         }
 
         public int GetOverlay(zString str)
         {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)FuncOffsets.GetOverlay, new CallValue[] { str }).Address;
+            return Process.THISCALL<IntArg>(Address, FuncAddresses.GetOverlay, new CallValue[] { str }).Address;
         }
 
         public oCItem GetEquippedArmor()
         {
-            return Process.THISCALL<oCItem>((uint)Address, (uint)FuncOffsets.GetEquippedArmor, new CallValue[] { });
+            return Process.THISCALL<oCItem>(Address, FuncAddresses.GetEquippedArmor);
         }
 
         public oCItem GetEquippedMeleeWeapon()
         {
-            return Process.THISCALL<oCItem>((uint)Address, (uint)FuncOffsets.GetEquippedMeleeWeapon, new CallValue[] { });
+            return Process.THISCALL<oCItem>(Address, FuncAddresses.GetEquippedMeleeWeapon);
         }
 
         public oCItem GetEquippedRangedWeapon()
         {
-            return Process.THISCALL<oCItem>((uint)Address, (uint)FuncOffsets.GetEquippedRangedWeapon, new CallValue[] { });
+            return Process.THISCALL<oCItem>(Address, FuncAddresses.GetEquippedRangedWeapon);
         }
 
         public void EquipArmor(oCItem item)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.EquipArmor, new CallValue[] { item });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.EquipArmor, new CallValue[] { item });
         }
 
         public void EquipWeapon(oCItem item)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.EquipWeapon, new CallValue[] { item });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.EquipWeapon, new CallValue[] { item });
         }
         public void EquipFarWeapon(oCItem item)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.EquipFarWeapon, new CallValue[] { item });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.EquipFarWeapon, new CallValue[] { item });
         }
 
         public void UnequipItem(oCItem item)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.UnequipItem, new CallValue[] { item });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.UnequipItem, new CallValue[] { item });
         }
 
         public void DropUnconscious(float arg, oCNpc npc)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.DropUnconscious, new CallValue[] { new FloatArg(arg), npc });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.DropUnconscious, new CallValue[] { new FloatArg(arg), npc });
         }
 
         public void CheckUnconscious()
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.CheckUnconscious, new CallValue[] { });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.CheckUnconscious);
         }
 
         public void SetWeaponMode(int str)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetWeaponMode, new CallValue[] { new IntArg(str) });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetWeaponMode, new CallValue[] { new IntArg(str) });
         }
 
         public void SetWeaponMode2(int str)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetWeaponMode2_Int, new CallValue[] { new IntArg(str) });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetWeaponMode2_Int, new CallValue[] { new IntArg(str) });
         }
 
         public void SetWeaponMode2(zString str)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.SetWeaponMode2_Str, new CallValue[] { str });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetWeaponMode2_Str, new CallValue[] { str });
         }
 
         public void DoDropVob(zCVob vob)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.DoDropVob, new CallValue[] { vob });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.DoDropVob, new CallValue[] { vob });
         }
 
         public void DoTakeVob(zCVob vob)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)FuncOffsets.DoTakeVob, new CallValue[] { vob });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.DoTakeVob, new CallValue[] { vob });
         }
 
         public void SetLeftHand(zCVob vob)
         {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)0x73B0C0, new CallValue[] { vob });
+            Process.THISCALL<NullReturnCall>(Address, (uint)0x73B0C0, new CallValue[] { vob });
         }
         #endregion
 
@@ -1428,33 +1427,29 @@ namespace Gothic.Objects
                 process.Write(0, 0x00AB2664);
         }
 
-        public void SetEnemy(oCNpc npc)
-        {
-            Process.THISCALL<NullReturnCall>((uint)Address, (uint)0x734BC0, new CallValue[] { npc });
-        }
 
         public int GetNextWeaponmode(int arg1, int arg2, int arg3)
         {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)0x739A30, new CallValue[] { (IntArg)arg1, (IntArg)arg2, (IntArg)arg3 });
+            return Process.THISCALL<IntArg>(Address, (uint)0x739A30, new CallValue[] { (IntArg)arg1, (IntArg)arg2, (IntArg)arg3 });
         }
 
         public bool IsInFightRange(zCVob vob, float range)
         {
             IntPtr ptr = Process.Alloc(4);
             Process.Write(range, ptr.ToInt32());
-            int result = Process.THISCALL<IntArg>((uint)Address, (uint)0x67CB60, new CallValue[] { vob, (IntArg)ptr.ToInt32() });
+            int result = Process.THISCALL<IntArg>(Address, (uint)0x67CB60, new CallValue[] { vob, (IntArg)ptr.ToInt32() });
             Process.Free(ptr, 4);
             return result > 0;
         }
 
         public bool IsInFightFocus(zCVob vob)
         {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)0x735290, new CallValue[] { vob }) > 0;
+            return Process.THISCALL<IntArg>(Address, (uint)0x735290, new CallValue[] { vob }) > 0;
         }
 
         public bool IsSameHeight(zCVob vob)
         {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)0x737BE0, new CallValue[] { vob }) > 0;
+            return Process.THISCALL<IntArg>(Address, (uint)0x737BE0, new CallValue[] { vob }) > 0;
         }
 
         public void DoStrafe(bool right)
@@ -1476,7 +1471,7 @@ namespace Gothic.Objects
 
         public int StartFaceAni(zString ani, float arg1, float arg2)
         {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)0x738860, new CallValue[] { ani, (FloatArg)arg1, (FloatArg)arg2 });
+            return Process.THISCALL<IntArg>(Address, (uint)0x738860, new CallValue[] { ani, (FloatArg)arg1, (FloatArg)arg2 });
         }
 
         public int StopFaceAni(string ani)
@@ -1491,7 +1486,7 @@ namespace Gothic.Objects
 
         public int StopFaceAni(zString ani)
         {
-            return Process.THISCALL<IntArg>((uint)Address, (uint)0x738B50, new CallValue[] { ani });
+            return Process.THISCALL<IntArg>(Address, (uint)0x738B50, new CallValue[] { ani });
         }*/
     }
 }

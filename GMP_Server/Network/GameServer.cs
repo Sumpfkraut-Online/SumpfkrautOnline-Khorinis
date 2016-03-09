@@ -84,6 +84,16 @@ namespace GUC.Server.Network
                     client.Character.World.UpdatePosition(client.Character, client);
                     break;
 
+                case NetworkIDs.NPCStateMessage:
+                    NPCMessage.ReadState(stream, client, client.Character, client.Character.World);
+                    break;
+                case NetworkIDs.NPCTargetStateMessage:
+                    NPCMessage.ReadTargetState(stream, client, client.Character, client.Character.World);
+                    break;
+                case NetworkIDs.NPCJumpMessage:
+                    NPCMessage.ReadJump(stream, client, client.Character, client.Character.World);
+                    break;
+
                 default:
                     DisconnectClient(client);
                     Logger.LogWarning("Client sent unknown NetworkID. Kicked: {0} IP:{1}", client.guid.g, client.systemAddress);

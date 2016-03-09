@@ -34,7 +34,7 @@ namespace GUC.WorldObjects
             if (gvob != null)
             {
                 float[] arr = pos.ToArray();
-                gVob.TrafoObjToWorld.Direction = arr;
+                gVob.TrafoObjToWorld.Position = arr;
                 gVob.SetPositionWorld(arr);
                 gVob.TrafoObjToWorld.Position = arr;
             }
