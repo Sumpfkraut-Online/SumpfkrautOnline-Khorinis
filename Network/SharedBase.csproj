@@ -39,12 +39,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Animation.cs" />
     <Compile Include="Enumeration\HumanVisuals.cs" />
     <Compile Include="Enumeration\NPCStates.cs" />
     <Compile Include="Enumeration\VobTypes.cs" />
     <Compile Include="Enumeration\ItemEnums.cs" />
     <Compile Include="Enumeration\NetworkIDS.cs" />
     <Compile Include="Log\Logger.cs" />
+    <Compile Include="Models\Model.cs" />
     <Compile Include="Network\GameClient.cs" />
     <Compile Include="Network\PacketReader.cs" />
     <Compile Include="Network\PacketWriter.cs" />
@@ -55,14 +57,14 @@
     <Compile Include="Types\ColorRGBA.cs" />
     <Compile Include="Types\Vec2i.cs" />
     <Compile Include="Types\Vec3f.cs" />
+    <Compile Include="WorldObjects\Collections\DynamicCollection.cs" />
     <Compile Include="WorldObjects\Collections\ItemContainer.cs" />
-    <Compile Include="WorldObjects\Collections\VobCollection.cs" />
-    <Compile Include="WorldObjects\Collections\WorldCollection.cs" />
+    <Compile Include="WorldObjects\Collections\StaticCollection.cs" />
+    <Compile Include="WorldObjects\Collections\VobTypeObjectCollection.cs" />
     <Compile Include="WorldObjects\Instances\Mobs\MobBedInstance.cs" />
     <Compile Include="WorldObjects\Mobs\MobBed.cs" />
     <Compile Include="WorldObjects\BaseVob.cs" />
     <Compile Include="WorldObjects\Instances\BaseVobInstance.cs" />
-    <Compile Include="WorldObjects\Collections\InstanceCollection.cs" />
     <Compile Include="WorldObjects\Instances\ItemInstance.cs" />
     <Compile Include="WorldObjects\Instances\Mobs\MobContainerInstance.cs" />
     <Compile Include="WorldObjects\Instances\Mobs\MobDoorInstance.cs" />
@@ -91,6 +93,7 @@
     <Compile Include="GameObject.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Animation\" />
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup />

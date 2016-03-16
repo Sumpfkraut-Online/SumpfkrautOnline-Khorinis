@@ -29,7 +29,7 @@ namespace GUC.Client.Network.Messages
             NPCStates state = (NPCStates)stream.ReadByte();
 
             NPC npc;
-            if (World.Current.Vobs.Get(id, out npc))
+            if (World.Current.TryGetVob(id, out npc))
             {
                 if (npc.ScriptObject != null)
                     npc.ScriptObject.OnCmdMove(state);
@@ -45,14 +45,13 @@ namespace GUC.Client.Network.Messages
                 stream.Write((byte)state);
 
                 BaseVob target;
-                World.Current.Vobs.vobAddr.TryGetValue(GameClient.Client.Character.gVob.FocusVob.Address, out target);
-                if (target == null)
+                if (World.Current.TryGetVobByAddress(GameClient.Client.Character.gVob.FocusVob.Address, out target))
                 {
-                    stream.Write((ushort)0);
+                    stream.Write((ushort)target.ID);
                 }
                 else
                 {
-                    stream.Write((ushort)target.ID);
+                    stream.Write((ushort)0);
                 }
 
                 GameClient.Send(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
@@ -65,13 +64,13 @@ namespace GUC.Client.Network.Messages
         {
             int id = stream.ReadUShort();
             NPC npc;
-            if (World.Current.Vobs.Get(id, out npc))
+            if (World.Current.TryGetVob(id, out npc))
             {
                 NPCStates state = (NPCStates)stream.ReadByte();
                 int targetid = stream.ReadUShort();
 
                 BaseVob vob;
-                World.Current.Vobs.GetAny(targetid, out vob);
+                World.Current.TryGetVob(targetid, out vob);
                 if (GameClient.Client.Character.ScriptObject != null)
                     GameClient.Client.Character.ScriptObject.OnCmdMove(state, vob.ScriptObject);
             }
@@ -98,7 +97,7 @@ namespace GUC.Client.Network.Messages
             int id = stream.ReadUShort();
 
             NPC npc;
-            if (World.Current.Vobs.Get(id, out npc))
+            if (World.Current.TryGetVob(id, out npc))
             {
                 if (npc.ScriptObject != null)
                     npc.ScriptObject.OnCmdJump();

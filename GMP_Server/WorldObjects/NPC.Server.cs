@@ -9,6 +9,7 @@ using GUC.Network;
 using GUC.WorldObjects.Mobs;
 using GUC.Types;
 using GUC.Server.Network.Messages;
+using GUC.Server.WorldObjects.Cells;
 
 namespace GUC.WorldObjects
 {
@@ -54,12 +55,130 @@ namespace GUC.WorldObjects
             }
         }
 
-        #region Properties
-
-        public GameClient Client { get; internal set; }
-        public bool IsPlayer { get { return Client != null; } }
+        #region Cells
 
         internal NPCCell npcCell = null;
+
+        internal int[] GetNPCCellCoords()
+        {
+            return this.GetCellCoords(600);
+        }
+
+        internal override void AddToNetCell(NetCell cell)
+        {
+            base.AddToNetCell(cell);
+            if (this.IsPlayer)
+            {
+                cell.Clients.Add(this.client, ref this.client.cellID);
+            }
+        }
+
+        internal override void RemoveFromNetCell()
+        {
+            if (this.IsPlayer)
+            {
+                this.Cell.Clients.Remove(ref this.client.cellID);
+            }
+            base.RemoveFromNetCell();
+        }
+
+        internal override void ChangeCells(int toX, int toY)
+        {
+            if (!this.IsPlayer)
+            {
+                base.ChangeCells(toX, toY);
+            }
+            else
+            {
+                NetCell from = this.Cell;
+                this.RemoveFromNetCell();
+
+                int i = 0;
+                NetCell[] oldCells = new NetCell[NetCell.NumSurroundingCells];
+                int oldVobCount = 0;
+                from.ForEachSurroundingCell(cell =>
+                {
+
+                    if (cell.X <= toX + 1 && cell.X >= toX - 1 && cell.Y <= toY + 1 && cell.Y >= toY - 1)
+                    {
+                        Log.Logger.Log("Shared Cell: " + cell.X + " " + cell.Y);
+
+                        if (cell.Clients.Count > 0)
+                        {
+                            //Position updates in shared cells
+                            PacketWriter stream = GameServer.SetupStream(NetworkIDs.VobPosDirMessage);
+                            stream.Write((ushort)this.ID);
+                            stream.Write(this.pos);
+                            stream.Write(this.dir);
+                            cell.Clients.ForEach(c =>
+                            {
+                                c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE, 'W');
+                            });
+                        }
+                    }
+                    else
+                    {
+
+                        Log.Logger.Log("Old Cell: " + cell.X + " " + cell.Y);
+
+                        if (cell.Clients.Count > 0)
+                        {
+                            //deletion updates in old cells
+                            PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldDespawnMessage);
+                            stream.Write((ushort)this.ID);
+                            cell.Clients.ForEach(c =>
+                            {
+                                c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
+                            });
+                        }
+
+                        if (cell.DynVobs.GetCount() > 0)
+                        {
+                            oldCells[i++] = cell;
+                            oldVobCount += cell.DynVobs.GetCount();
+                        }
+                    }
+                });
+
+                // new cells
+                i = 0;
+                NetCell[] newCells = new NetCell[NetCell.NumSurroundingCells];
+                this.world.ForEachSurroundingCell(toX, toY, cell =>
+                {
+                    if (!(cell.X <= from.X + 1 && cell.X >= from.X - 1 && cell.Y <= from.Y + 1 && cell.Y >= from.Y - 1))
+                    {
+                        Log.Logger.Log("New Cell: " + cell.X + " " + cell.Y);
+
+                        if (cell.Clients.Count > 0)
+                        {
+                            // spawn updates in the new cells
+                            PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldSpawnMessage);
+                            stream.Write((byte)this.VobType);
+                            this.WriteStream(stream);
+                            cell.Clients.ForEach(c =>
+                            {
+                                c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
+                            });
+                        }
+
+                        if (cell.DynVobs.GetCount() > 0)
+                            newCells[i++] = cell;
+                    }
+                });
+
+                WorldCellMessage.Write(newCells, oldCells, oldVobCount, this.client);
+
+                this.AddToNetCell(this.world.GetCellFromCoords(toX, toY));
+            }
+        }
+
+        #endregion
+
+        #region Properties
+
+        internal GameClient client = null;
+        public GameClient Client { get { return client; } }
+        public bool IsPlayer { get { return Client != null; } }
 
         #endregion
 
@@ -70,21 +189,14 @@ namespace GUC.WorldObjects
                 if (world == null)
                     throw new ArgumentNullException("World is null!");
 
-                if (this.IsSpawned)
-                    this.Despawn();
+                if (this.isCreated)
+                    throw new Exception("Vob is already spawned!");
 
                 this.pos = position;
                 this.dir = direction;
-
                 this.world = world;
-                this.world.Vobs.Add(this);
 
-                World.SendWorldMessage(this.Client, world);
-
-                PacketWriter stream = GameServer.SetupStream(NetworkIDs.PlayerControlMessage);
-                stream.Write((ushort)ID);
-                WriteTakeControl(stream);
-                this.Client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, '\0');
+                World.SendWorldMessage(this.Client, world); // tell the client to change worlds first
             }
             else
             {
@@ -95,9 +207,36 @@ namespace GUC.WorldObjects
         // wait until the client has loaded the map
         internal void InsertInWorld()
         {
-            world.Vobs.Remove(this);
-            world.AddVob(this);
-            this.spawned = true;
+            if (!this.IsSpawned)
+                world.AddVob(this);
+
+            world.AddToPlayers(this.client);
+            this.isCreated = true;
+
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.PlayerControlMessage);
+            stream.Write((ushort)ID);
+            WriteTakeControl(stream);
+            this.Client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, '\0');
+
+            NetCell[] arr = new NetCell[NetCell.NumSurroundingCells];
+            int i = 0;
+            this.Cell.ForEachSurroundingCell(cell =>
+            {
+                if (cell.DynVobs.GetCount() > 0)
+                    arr[i++] = cell;
+            });
+
+            WorldCellMessage.Write(arr, new NetCell[1], 0, this.client);
+        }
+
+        public override void Despawn()
+        {
+            World world = this.world;
+            base.Despawn();
+            if (this.IsPlayer)
+            {
+                world.RemoveFromPlayers(this.client);
+            }
         }
 
         /* #region Networking

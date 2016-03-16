@@ -36,13 +36,13 @@ namespace GUC.Server
                 {
                     watch.Restart();
 
-                    GameServer.Update(); //process received packets
                     GUCTimer.Update(); // move to new thread?
+                    GameServer.Update(); //process received packets
 
                     if (nextInfoUpdates < DateTime.UtcNow.Ticks)
                     {
                         tickAverage /= tickCount;
-                        Logger.Log("Tick rate info: {0}ms average, {1}ms max. Allocated RAM: {2:0.0}MB", tickAverage / TimeSpan.TicksPerMillisecond, tickMax / TimeSpan.TicksPerMillisecond, (double)Process.GetCurrentProcess().PrivateMemorySize64 / 1048576d);
+                        Logger.Log("Tick rate info: {0:0.00}ms average, {1:0.00}ms max. Allocated RAM: {2:0.0}MB", (double)tickAverage / TimeSpan.TicksPerMillisecond, (double)tickMax / TimeSpan.TicksPerMillisecond, Process.GetCurrentProcess().PrivateMemorySize64 / 1048576d);
                         nextInfoUpdates = DateTime.UtcNow.Ticks + nextInfoUpdateTime;
                         tickMax = 0;
                         tickAverage = 0;
@@ -59,7 +59,7 @@ namespace GUC.Server
                     int diff = updateRate - (int)watch.ElapsedMilliseconds;
                     if (diff > 0)
                     {
-                        Thread.Sleep(diff); //remove?
+                        Thread.Sleep(diff);
                     }
                 }
             }

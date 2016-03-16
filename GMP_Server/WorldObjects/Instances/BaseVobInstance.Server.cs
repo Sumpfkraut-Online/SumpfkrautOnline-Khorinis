@@ -11,33 +11,34 @@ namespace GUC.WorldObjects.Instances
 {
     public abstract partial class BaseVobInstance
     {
-        public void UpdateProperties()
+        public override void Update()
         {
+            throw new NotImplementedException();
         }
 
-        #region Networking
-
-        internal void WriteCreate()
+        partial void pCreate()
         {
-            var stream = GameServer.SetupStream(NetworkIDs.InstanceCreateMessage);
+            if (!this.IsStatic)
+            {
+                var stream = GameServer.SetupStream(NetworkIDs.InstanceCreateMessage);
 
-            stream.Write((byte)this.VobType);
-            this.WriteStream(stream);
+                stream.Write((byte)this.VobType);
+                this.WriteStream(stream);
 
-            foreach (GameClient client in GameServer.GetClients())
-                client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, '\0');
+                GameClient.ForEach(c => c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, '\0'));
+            }
         }
 
-        internal void WriteDelete()
+        partial void pDelete()
         {
-            var stream = GameServer.SetupStream(NetworkIDs.InstanceDeleteMessage);
+            if (!this.IsStatic)
+            {
+                var stream = GameServer.SetupStream(NetworkIDs.InstanceDeleteMessage);
 
-            stream.Write((ushort)this.ID);
+                stream.Write((ushort)this.ID);
 
-            foreach (GameClient client in GameServer.GetClients())
-                client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, '\0');
+                GameClient.ForEach(c => c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, '\0'));
+            }
         }
-
-        #endregion
     }
 }

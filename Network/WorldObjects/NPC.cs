@@ -71,6 +71,12 @@ namespace GUC.WorldObjects
             pSetHealth(hp, hpmax);
         }
 
+        partial void pFallDown();
+        public void FallDown()
+        {
+            pFallDown();
+        }
+
         internal NPCStates NextState = NPCStates.Stand;
 
         NPCStates state = NPCStates.Stand;

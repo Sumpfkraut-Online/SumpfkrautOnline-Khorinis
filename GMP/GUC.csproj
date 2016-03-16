@@ -105,17 +105,14 @@
     <Compile Include="..\Network\WorldObjects\BaseVob.cs">
       <Link>WorldObjects\BaseVob.cs</Link>
     </Compile>
-    <Compile Include="..\Network\WorldObjects\Collections\InstanceCollection.cs">
-      <Link>WorldObjects\Collections\InstanceCollection.cs</Link>
+    <Compile Include="..\Network\WorldObjects\Collections\DynamicCollection.cs">
+      <Link>DynamicCollection.cs</Link>
     </Compile>
     <Compile Include="..\Network\WorldObjects\Collections\ItemContainer.cs">
       <Link>WorldObjects\Collections\ItemContainer.cs</Link>
     </Compile>
-    <Compile Include="..\Network\WorldObjects\Collections\VobCollection.cs">
-      <Link>WorldObjects\Collections\VobCollection.cs</Link>
-    </Compile>
-    <Compile Include="..\Network\WorldObjects\Collections\WorldCollection.cs">
-      <Link>WorldObjects\Collections\WorldCollection.cs</Link>
+    <Compile Include="..\Network\WorldObjects\Collections\VobTypeObjectCollection.cs">
+      <Link>WorldObjects\Collections\VobTypeObjectCollection.cs</Link>
     </Compile>
     <Compile Include="..\Network\WorldObjects\Instances\BaseVobInstance.cs">
       <Link>WorldObjects\Instances\BaseVobInstance.cs</Link>
@@ -228,9 +225,8 @@
       <DependentUpon>SplashScreen.xaml</DependentUpon>
     </Compile>
     <Compile Include="WorldObjects\BaseVob.Client.cs" />
-    <Compile Include="WorldObjects\Collections\InstanceCollection.Client.cs" />
-    <Compile Include="WorldObjects\Collections\VobCollection.Client.cs" />
-    <Compile Include="WorldObjects\Collections\WorldCollection.Client.cs" />
+    <Compile Include="WorldObjects\Collections\StaticCollection.Client.cs" />
+    <Compile Include="WorldObjects\Collections\StaticCollection.cs" />
     <Compile Include="WorldObjects\Instances\BaseVobInstance.Client.cs" />
     <Compile Include="WorldObjects\Instances\ItemInstance.Client.cs" />
     <Compile Include="WorldObjects\Instances\Mobs\MobBedInstance.Client.cs" />
@@ -302,6 +298,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Splash.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Animation\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

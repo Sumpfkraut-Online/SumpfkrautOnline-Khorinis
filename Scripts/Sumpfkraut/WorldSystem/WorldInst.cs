@@ -41,12 +41,12 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
 
         public void Create()
         {
-            WorldObjects.Collections.WorldCollection.Add(this.BaseWorld);
+            this.baseWorld.Create();
         }
 
         public void Delete()
         {
-            WorldObjects.Collections.WorldCollection.Remove(this.BaseWorld);
+            this.baseWorld.Delete();
         }
     }
 }

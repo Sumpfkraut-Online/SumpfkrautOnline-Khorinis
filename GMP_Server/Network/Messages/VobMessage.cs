@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using RakNet;
 using GUC.Enumeration;
-using GUC.Types;
 using GUC.Network;
 using GUC.WorldObjects;
+using GUC.Server.WorldObjects.Cells;
 
 namespace GUC.Server.Network.Messages
 {
@@ -47,11 +47,11 @@ namespace GUC.Server.Network.Messages
             }
         }
 
-        public static void WritePosDir(IEnumerable<GameClient> list, Vob vob)
+        public static void WritePosDir(NetCell cell, BaseVob vob)
         {
-            PacketWriter stream = Network.GameServer.SetupStream(NetworkIDs.VobPosDirMessage);
-            stream.Write(vob.ID);
-            stream.Write(vob.Position);
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.VobPosDirMessage);
+            stream.Write((ushort)vob.ID);
+            stream.Write(vob.GetPosition());
             stream.Write(vob.Direction);
             foreach (GameClient client in list)
                 client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE, 'W');

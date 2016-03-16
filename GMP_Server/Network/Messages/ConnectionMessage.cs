@@ -35,13 +35,13 @@ namespace GUC.Server.Network.Messages
 
         public static void WriteInstances(GameClient client)
         {
-            if (InstanceCollection.GetCountDynamics() > 0)
+            if (BaseVobInstance.GetCountDynamics() > 0)
             {
                 PacketWriter strm = GameServer.SetupStream(NetworkIDs.ConnectionMessage);
                 for (int i = 0; i < (int)VobTypes.Maximum; i++)
                 {
-                    strm.Write((ushort)InstanceCollection.GetCountDynamics(i));
-                    InstanceCollection.ForEachDynamic(i, inst =>
+                    strm.Write((ushort)BaseVobInstance.GetCountDynamicsOfType((VobTypes)i));
+                    BaseVobInstance.ForEachDynamicOfType((VobTypes)i, inst =>
                     {
                         inst.WriteStream(strm);
                     });

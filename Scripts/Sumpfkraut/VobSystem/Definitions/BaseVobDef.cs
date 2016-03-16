@@ -40,14 +40,14 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         partial void pCreate();
         public void Create()
         {
-            InstanceCollection.Add(this.baseDef);
+            this.baseDef.Create();
             pCreate();
         }
 
         partial void pDelete();
         public void Delete()
         {
-            InstanceCollection.Remove(this.baseDef);
+            this.baseDef.Delete();
             pDelete();
         }
 

@@ -4,10 +4,8 @@ using System.Linq;
 using System.Text;
 using RakNet;
 using GUC.WorldObjects;
-using GUC.Network;
 using GUC.Log;
 using GUC.Enumeration;
-using GUC.Scripting;
 using GUC.Server.Network;
 
 namespace GUC.Network
@@ -25,6 +23,42 @@ namespace GUC.Network
         }
 
         #endregion
+
+        #region Collection
+
+        static DynamicCollection<GameClient> clients = new DynamicCollection<GameClient>();
+
+        internal void Create()
+        {
+            if (this.isCreated)
+                throw new Exception("Client is already in the collection!");
+
+            clients.Add(this, ref this.collID);
+
+            this.isCreated = true;
+        }
+
+        internal void Delete()
+        {
+            if (!this.isCreated)
+                throw new Exception("Client is not in the collection!");
+
+            clients.Remove(ref this.collID);
+
+            this.isCreated = false;
+        }
+
+        public static void ForEach(Action<GameClient> action)
+        {
+            clients.ForEach(action);
+        }
+
+        #endregion
+
+        public override void Update()
+        {
+            throw new NotImplementedException();
+        }
 
         #region Properties
 
@@ -57,6 +91,9 @@ namespace GUC.Network
 
         #region Player control
 
+        internal int worldID = -1;
+        internal int cellID = -1;
+
         public void SetControl(NPC npc)
         {
             if (npc == null)
@@ -69,40 +106,39 @@ namespace GUC.Network
             }
 
             // set old character to npc
-            if (this.Character != null)
+            if (this.character != null)
             {
-                this.Character.Client = null;
-                if (this.Character.IsSpawned)
+                this.character.client = null;
+                if (this.character.IsSpawned)
                 {
-                    this.Character.World.Vobs.players.Remove(this.Character.ID);
-                    this.Character.Cell.Vobs.players.Remove(this.Character.ID);
+                    this.character.World.RemoveFromPlayers(this);
+                    this.character.Cell.Clients.Remove(ref this.cellID);
                 }
             }
 
             // npc is already in the world, set to player
             if (npc.IsSpawned)
             {
-                npc.World.Vobs.players.Add(npc.ID, npc);
-                npc.Cell.Vobs.players.Add(npc.ID, npc);
-
                 //if (npc.VobController != null)
                 //    npc.VobController.RemoveControlledVob(npc);
-            }
 
-            if (npc.IsSpawned)
-            {
                 if (character != null && character.IsSpawned && character.World != npc.World)
                 {
                     World.SendWorldMessage(this, npc.World);
                 }
+                else
+                {
+                    npc.World.AddToPlayers(this);
+                    npc.Cell.Clients.Add(this, ref this.cellID);
 
-                PacketWriter stream = GameServer.SetupStream(NetworkIDs.PlayerControlMessage);
-                stream.Write((ushort)npc.ID);
-                npc.WriteTakeControl(stream);
-                Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, '\0');
+                    PacketWriter stream = GameServer.SetupStream(NetworkIDs.PlayerControlMessage);
+                    stream.Write((ushort)npc.ID);
+                    npc.WriteTakeControl(stream);
+                    Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, '\0');
+                }
             }
 
-            npc.Client = this;
+            npc.client = this;
             character = npc;
         }
 

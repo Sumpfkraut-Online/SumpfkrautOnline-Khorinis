@@ -14,7 +14,7 @@ namespace GUC.WorldObjects
     /// <summary>
     /// The lowermost VobObject.
     /// </summary>
-    public abstract partial class BaseVob : GameObject
+    public abstract partial class BaseVob : GameObject, VobTypeObject
     {
         /// <summary>
         /// The VobType of this Vob.
@@ -43,19 +43,6 @@ namespace GUC.WorldObjects
 
         #region Properties
 
-        public override int ID
-        {
-            get { return base.ID; }
-            set
-            {
-                if (this.IsSpawned)
-                {
-                    throw new Exception("Can't change the ID of spawned vobs!");
-                }
-                base.ID = value;
-            }
-        }
-
         /// <summary>
         /// The Instance of this object.
         /// </summary>
@@ -64,7 +51,7 @@ namespace GUC.WorldObjects
             get { return this.instance; }
             set
             {
-                if (this.IsSpawned)
+                if (this.isCreated)
                 {
                     throw new Exception("Can't change the Instance of spawned vobs!");
                 }
@@ -85,20 +72,10 @@ namespace GUC.WorldObjects
         /// <summary>
         /// Checks whether this Vob is spawned.
         /// </summary>
-        public bool IsSpawned { get { return this.spawned; } }
-        protected bool spawned = false;
+        public bool IsSpawned { get { return this.isCreated; } }
 
-        internal Vec3f pos = new Vec3f(0, 0, 0);
-        internal Vec3f dir = new Vec3f(0, 0, 1);
-
-        /// <summary>
-        /// If the Vob is 'static' it will not be communicated via the GUC.
-        /// </summary>
-        public bool IsStatic
-        {
-            get { return isStatic; }
-        }
-        bool isStatic = false;
+        protected Vec3f pos = new Vec3f(0, 0, 0);
+        protected Vec3f dir = new Vec3f(0, 0, 1);
 
         #endregion
 
@@ -106,7 +83,7 @@ namespace GUC.WorldObjects
 
         protected override void WriteProperties(PacketWriter stream)
         {
-            stream.Write((ushort)this.ID);
+            base.WriteProperties(stream);
             stream.Write((ushort)this.Instance.ID); // MAX_ID
             stream.Write(this.pos);
             stream.Write(this.dir);
@@ -114,11 +91,11 @@ namespace GUC.WorldObjects
 
         protected override void ReadProperties(PacketReader stream)
         {
-            this.ID = stream.ReadUShort();
+            base.ReadProperties(stream);
 
             int instanceID = stream.ReadUShort(); // MAX_ID
-            BaseVobInstance inst = InstanceCollection.Get(instanceID);
-            if (inst == null)
+            BaseVobInstance inst;
+            if (!BaseVobInstance.TryGet(instanceID, out inst))
             {
                 throw new Exception("Instance ID not found! " + instanceID);
             }
@@ -160,29 +137,71 @@ namespace GUC.WorldObjects
             if (world == null)
                 throw new ArgumentNullException("World is null!");
 
-            if (this.spawned)
-                this.Despawn();
+            if (this.isCreated)
+                throw new Exception("Vob is already spawned!");
 
             this.pos = position;
             this.dir = direction;
-            this.world = world;
 
             world.AddVob(this);
-            this.spawned = true;
+            this.world = world;
+
+            this.pSpawn();
+
+            this.isCreated = true;
         }
+
+        partial void pSpawn();
+        partial void pDespawn();
 
         /// <summary>
         /// Despawns the Vob.
         /// </summary>
         public virtual void Despawn()
         {
-            if (this.world != null)
-            {
-                this.world.RemoveVob(this);
-            }
+            if (!this.isCreated)
+                throw new Exception("Vob isn't spawned!");
+
+            this.world.RemoveVob(this);
             this.world = null;
-            this.spawned = false;
+            pDespawn();
+
+            this.isCreated = false;
         }
         #endregion
+
+        #region Cells
+
+        protected int[] GetCellCoords(int cellSize)
+        {
+            Vec3f pos = this.GetPosition();
+
+            float unroundedX = pos.X / cellSize;
+            float unroundedZ = pos.Z / cellSize;
+
+            // calculate new cell indices
+            int x = (int)(pos.X >= 0 ? unroundedX + 0.5f : unroundedX - 0.5f);
+            int z = (int)(pos.Z >= 0 ? unroundedZ + 0.5f : unroundedZ - 0.5f);
+
+            if (x < short.MinValue || x > short.MaxValue || z < short.MinValue || z > short.MaxValue)
+            {
+                throw new Exception("Vob position is out of cell range!");
+            }
+
+            return new int[2] { x, z };//(x << 16) | z & 0xFFFF;
+        }
+
+        const int NetCellSize = 4500;
+        internal int[] GetNetCellCoords()
+        {
+            return GetCellCoords(NetCellSize);
+        }
+
+        #endregion
+
+        public override string ToString()
+        {
+            return String.Format("({0}: {1})", this.ID, this.VobType);
+        }
     }
 }

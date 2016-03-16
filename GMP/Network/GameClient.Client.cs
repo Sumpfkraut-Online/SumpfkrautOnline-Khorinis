@@ -50,7 +50,7 @@ namespace GUC.Network
 
         #region Hero
 
-        int charID;
+        int charID = -1;
         public int CharacterID { get { return this.charID; } }
 
         byte[] charData = null;
@@ -60,30 +60,38 @@ namespace GUC.Network
             character = null;
             charID = stream.ReadUShort();
             charData = stream.GetRemainingData(); // save for later
-            BaseVob heroVob;
-            if (World.Current.Vobs.GetAny(charID, out heroVob))
-                UpdateHeroControl(heroVob);
+            NPC hero;
+            if (World.Current.TryGetVob(charID, out hero))
+                UpdateHeroControl(hero);
         }
 
-        internal void UpdateHeroControl(BaseVob vob)
+        internal void UpdateHeroControl(NPC npc)
         {
             try
             {
                 if (World.Current == null)
                     return;
 
-                if (vob == null || !(vob is NPC))
+                if (npc == null)
                 {
                     return;
                 }
 
-                character = (NPC)vob;
+                this.character = npc;
 
                 if (charData != null)
                 {
-                    pktReader.Load(charData, charData.Length);
+                    PacketReader rdr = new PacketReader();
+                    rdr.Load(charData, charData.Length);
                     Character.ReadTakeControl(pktReader);
                     charData = null;
+                }
+
+                BaseVob dummy;
+                if (!World.Current.TryGetVobByAddress(Gothic.Objects.oCNpc.GetPlayer().Address, out dummy))
+                {
+                    Gothic.Objects.oCNpc.GetPlayer().Disable();
+                    Gothic.oCGame.GetWorld().RemoveVob(Gothic.Objects.oCNpc.GetPlayer());
                 }
 
                 Character.gVob.SetAsPlayer();
@@ -143,8 +151,11 @@ namespace GUC.Network
                     ScriptManager.Interface.OnCreateInstanceMsg((VobTypes)stream.ReadByte(), stream);
                     break;
                 case NetworkIDs.InstanceDeleteMessage:
-                    BaseVobInstance inst = InstanceCollection.Get(stream.ReadUShort());
-                    if (inst != null) ScriptManager.Interface.OnDeleteInstanceMsg(inst);
+                    BaseVobInstance inst;
+                    if (BaseVobInstance.TryGet(stream.ReadUShort(), out inst))
+                    {
+                        ScriptManager.Interface.OnDeleteInstanceMsg(inst);
+                    }
                     break;
                 case NetworkIDs.MenuMessage:
                     if (this.ScriptObject != null)
@@ -164,13 +175,31 @@ namespace GUC.Network
                     break;
                 case NetworkIDs.WorldDespawnMessage:
                     BaseVob vob;
-                    if (World.Current.Vobs.GetAny(stream.ReadUShort(), out vob))
+                    if (World.Current.TryGetVob(stream.ReadUShort(), out vob))
                     {
                         ScriptManager.Interface.OnDespawnVobMsg(vob);
                     }
                     break;
+                case NetworkIDs.WorldCellMessage:
+                    for (int t = 0; t < (int)VobTypes.Maximum; t++)
+                    {
+                        int vobCount = stream.ReadUShort();
+                        for (int i = 0; i < vobCount; i++)
+                        {
+                            ScriptManager.Interface.OnSpawnVobMsg((VobTypes)t, stream);
+                        }
+                    }
+                    int delCount = stream.ReadUShort();
+                    for (int i = 0; i < delCount; i++)
+                    {
+                        if (World.Current.TryGetVob(stream.ReadUShort(), out vob))
+                        {
+                            ScriptManager.Interface.OnDespawnVobMsg(vob);
+                        }
+                    }
+                    break;
                 case NetworkIDs.VobPosDirMessage:
-                    if (World.Current.Vobs.GetAny(stream.ReadUShort(), out vob))
+                    if (World.Current.TryGetVob(stream.ReadUShort(), out vob))
                     {
                         vob.SetPosition(stream.ReadVec3f());
                         vob.SetDirection(stream.ReadVec3f());
@@ -256,6 +285,7 @@ namespace GUC.Network
         GUCVisual pingInfo;
 
         GUCVisual instInfo;
+        GUCVisual vobInfo;
 
         internal void Update()
         {
@@ -278,6 +308,9 @@ namespace GUC.Network
 
                 instInfo = GUCVisualText.Create("0", 0x2000, kbsInfo.zView.FontY() + pingInfo.zView.FontY() + 2, true);
                 instInfo.Texts[0].Format = GUCVisualText.TextFormat.Right;
+
+                vobInfo = GUCVisualText.Create("0", 0x2000, kbsInfo.zView.FontY() + pingInfo.zView.FontY() + instInfo.zView.FontY() + 3, true);
+                vobInfo.Texts[0].Format = GUCVisualText.TextFormat.Right;
             }
 
             int counter = 0;
@@ -343,7 +376,12 @@ namespace GUC.Network
                 }
                 catch (Exception e)
                 {
-                    Logger.LogError(e);
+                    if (packet.length >= 2)
+                        Logger.LogError("{0} {1}: {2}: {3}\n{4}", (DefaultMessageIDTypes)packet.data[0], (NetworkIDs)packet.data[1], e.Source, e.Message, e.StackTrace);
+                    else if (packet.length >= 1)
+                        Logger.LogError("{0}: {1}: {2}\n{3}", (DefaultMessageIDTypes)packet.data[0], e.Source, e.Message, e.StackTrace);
+                    else
+                        Logger.LogError("{0}: {1}\n{2}", e.Source, e.Message, e.StackTrace);
                 }
             }
 
@@ -385,8 +423,18 @@ namespace GUC.Network
                 packetKB = 0;
                 kbsInfo.Show(); // bring to front
 
-                instInfo.Texts[0].Text = ("Instances: " + InstanceCollection.GetCount());
+                instInfo.Texts[0].Text = ("Instances: " + BaseVobInstance.GetCount());
                 instInfo.Show();
+
+                if (World.Current != null)
+                {
+                    vobInfo.Texts[0].Text = ("Vobs: " + World.Current.GetVobCount());
+                    vobInfo.Show();
+                }
+                else
+                {
+                    vobInfo.Hide();
+                }
             }
         }
 

@@ -18,7 +18,7 @@ namespace GUC.Server.Network.Messages
         {
             int id = stream.ReadUShort();
             NPC npc;
-            if (world.Vobs.Get(id, out npc))
+            if (world.TryGetVob(id, out npc))
             {
                 NPCStates state = (NPCStates)stream.ReadByte();
                 if (npc == character /*|| (client.VobControlledList.Contains(npc) && state <= NPCStates.MoveBackward)*/) //is it a controlled NPC?
@@ -42,7 +42,7 @@ namespace GUC.Server.Network.Messages
         {
             int targetid = stream.ReadUShort();
             BaseVob target;
-            world.Vobs.GetAny(targetid, out target);
+            world.TryGetVob(targetid, out target);
 
             NPCStates state = (NPCStates)stream.ReadByte();
             if (character.ScriptObject != null)
@@ -68,7 +68,7 @@ namespace GUC.Server.Network.Messages
         {
             int id = stream.ReadUShort();
             NPC npc;
-            if (world.Vobs.Get(id, out npc))
+            if (world.TryGetVob(id, out npc))
             {
                 if (npc == character /*|| (client.VobControlledList.Contains(npc) && state <= NPCStates.MoveBackward)*/) //is it a controlled NPC?
                 {

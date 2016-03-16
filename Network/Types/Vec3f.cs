@@ -209,6 +209,7 @@ namespace GUC.Types
 
         public override int GetHashCode()
         {
+            // fixme, this is bullshit
             return this.ToArray().GetHashCode();
         }
 

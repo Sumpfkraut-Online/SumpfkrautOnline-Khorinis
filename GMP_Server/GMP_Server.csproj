@@ -122,17 +122,17 @@
     <Compile Include="..\Network\WorldObjects\BaseVob.cs">
       <Link>WorldObjects\BaseVob.cs</Link>
     </Compile>
-    <Compile Include="..\Network\WorldObjects\Collections\InstanceCollection.cs">
-      <Link>WorldObjects\Collections\InstanceCollection.cs</Link>
+    <Compile Include="..\Network\WorldObjects\Collections\DynamicCollection.cs">
+      <Link>DynamicCollection.cs</Link>
     </Compile>
     <Compile Include="..\Network\WorldObjects\Collections\ItemContainer.cs">
       <Link>WorldObjects\Collections\ItemContainer.cs</Link>
     </Compile>
-    <Compile Include="..\Network\WorldObjects\Collections\VobCollection.cs">
-      <Link>WorldObjects\Collections\VobCollection.cs</Link>
+    <Compile Include="..\Network\WorldObjects\Collections\StaticCollection.cs">
+      <Link>WorldObjects\Collections\StaticCollection.cs</Link>
     </Compile>
-    <Compile Include="..\Network\WorldObjects\Collections\WorldCollection.cs">
-      <Link>WorldObjects\Collections\WorldCollection.cs</Link>
+    <Compile Include="..\Network\WorldObjects\Collections\VobTypeObjectCollection.cs">
+      <Link>WorldObjects\Collections\VobTypeObjectCollection.cs</Link>
     </Compile>
     <Compile Include="..\Network\WorldObjects\Instances\BaseVobInstance.cs">
       <Link>WorldObjects\Instances\BaseVobInstance.cs</Link>
@@ -218,22 +218,23 @@
     <Compile Include="..\Network\WorldObjects\World.cs">
       <Link>WorldObjects\World.cs</Link>
     </Compile>
+    <Compile Include="GameObject.Server.cs" />
     <Compile Include="Log\Logger.Server.cs" />
     <Compile Include="Network\GameClient.Server.cs" />
-    <Compile Include="Network\NPCCell.cs" />
     <Compile Include="Network\Messages\TradeMessage.cs" />
     <Compile Include="Network\Messages\ConnectionMessage.cs" />
     <Compile Include="Network\Messages\InventoryMessage.cs" />
     <Compile Include="Network\Messages\NPCMessage.cs" />
     <Compile Include="Network\Messages\VobMessage.cs" />
-    <Compile Include="Network\NetCell.cs" />
+    <Compile Include="Network\Messages\WorldCellMessage.cs" />
     <Compile Include="Options\ServerOptions.cs" />
     <Compile Include="Scripting\ScriptInterface.Server.cs" />
     <Compile Include="TCPStatus.cs" />
     <Compile Include="WorldObjects\BaseVob.Server.cs" />
-    <Compile Include="WorldObjects\Collections\InstanceCollection.Server.cs" />
-    <Compile Include="WorldObjects\Collections\VobCollection.Server.cs" />
-    <Compile Include="WorldObjects\Collections\WorldCollection.Server.cs" />
+    <Compile Include="WorldObjects\Cells\NetCell.cs" />
+    <Compile Include="WorldObjects\Cells\NPCCell.cs" />
+    <Compile Include="WorldObjects\Cells\WorldCell.cs" />
+    <Compile Include="WorldObjects\Collections\StaticCollection.Server.cs" />
     <Compile Include="WorldObjects\Instances\BaseVobInstance.Server.cs" />
     <Compile Include="WorldObjects\Instances\Mobs\MobBedInstance.Server.cs" />
     <Compile Include="WorldObjects\Mobs\MobBed.Server.cs" />
@@ -302,7 +303,9 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Animation\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

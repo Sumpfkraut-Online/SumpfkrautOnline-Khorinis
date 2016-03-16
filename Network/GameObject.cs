@@ -38,18 +38,56 @@ namespace GUC
 
         #region Properties
 
+        /// <summary>
+        /// The upper (excluded) limit for GameObject-IDs (ushort.MaxValue+1).
+        /// </summary>
+        public const int MAX_ID = 65536;
+
         public virtual int ID
         {
             get { return id; }
-            set { this.id = value; }
+            set
+            {
+                if (this.isCreated)
+                    throw new Exception("The ID can't be changed while the object is created/spawned.");
+
+                this.id = value;
+            }
         }
         int id = -1;
+
+        /// <summary>
+        /// Static objects will not be communicated via the GUC-Base.
+        /// </summary>
+        public virtual bool IsStatic
+        {
+            get { return this.isStatic; }
+            set
+            {
+                if (this.isCreated)
+                    throw new Exception("The IsStatic-property can't be changed while the object is created/spawned.");
+
+                this.isStatic = value;
+            }
+        }
+        bool isStatic = false;
+
+        #endregion
+
+        #region Collection
+
+        protected bool isCreated = false;
+        internal int collID = -1;
+        internal int dynID = -1;
 
         #endregion
 
         #region Read & Write
 
-        protected abstract void WriteProperties(PacketWriter stream);
+        protected virtual void WriteProperties(PacketWriter stream)
+        {
+            stream.Write((ushort)id);
+        }
 
         /// <summary>
         /// Writes all base & script properties into the stream.
@@ -66,7 +104,10 @@ namespace GUC
             }
         }
 
-        protected abstract void ReadProperties(PacketReader stream);
+        protected virtual void ReadProperties(PacketReader stream)
+        {
+            this.id = stream.ReadUShort();
+        }
 
         /// <summary>
         /// Reads all base & script properties into the object.

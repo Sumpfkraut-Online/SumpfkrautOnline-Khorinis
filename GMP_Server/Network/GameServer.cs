@@ -8,7 +8,7 @@ using GUC.Server.Network.Messages;
 using GUC.Network;
 using GUC.Server.Options;
 using GUC.Log;
-using GUC.Types;
+using GUC.WorldObjects.Collections;
 
 namespace GUC.Server.Network
 {
@@ -17,7 +17,6 @@ namespace GUC.Server.Network
         internal readonly static ServerOptions Options = ServerOptions.Init();
 
         readonly static Dictionary<ulong, GameClient> clientDict = new Dictionary<ulong, GameClient>();
-        public static IEnumerable<GameClient> GetClients() { return clientDict.Values; }
 
         internal readonly static RakPeerInterface ServerInterface = RakPeer.GetInstance();
 
@@ -79,9 +78,9 @@ namespace GUC.Server.Network
                     break;
 
                 case NetworkIDs.VobPosDirMessage:
-                    client.Character.pos = stream.ReadVec3f();
-                    client.Character.dir = stream.ReadVec3f();
-                    client.Character.World.UpdatePosition(client.Character, client);
+                    var pos = stream.ReadVec3f();
+                    var dir = stream.ReadVec3f();
+                    client.Character.UpdatePosition(pos, dir, client);
                     break;
 
                 case NetworkIDs.NPCStateMessage:
@@ -184,6 +183,7 @@ namespace GUC.Server.Network
                                     if (ConnectionMessage.Read(pktReader, p.guid, p.systemAddress, out client))
                                     {
                                         clientDict.Add(client.guid.g, client);
+                                        client.Create();
                                     }
                                     else
                                     {
@@ -251,15 +251,15 @@ namespace GUC.Server.Network
             if (client == null)
                 throw new ArgumentNullException("Client is null!");
 
-            if (client.Character != null)
+            if (client.character != null)
             {
-                client.Character.Client = null;
-                if (client.Character.IsSpawned)
+                client.character.client = null;
+                if (client.character.IsSpawned)
                 {
-                    client.Character.World.Vobs.players.Remove(client.Character.ID);
-                    client.Character.Cell.Vobs.players.Remove(client.Character.ID);
-                    if (client.Character.npcCell != null)
-                        client.Character.npcCell.Remove(client.Character);
+                    client.character.World.RemoveFromPlayers(client);
+                    client.Character.Cell.Clients.Remove(ref client.cellID);
+                    /*if (client.Character.npcCell != null)
+                        client.Character.npcCell.Remove(client.Character);*/
                 }
             }
 
@@ -272,6 +272,7 @@ namespace GUC.Server.Network
             clientDict.Remove(client.guid.g);
             client.guid.Dispose();
             client.systemAddress.Dispose();
+            client.Delete();
         }
 
         internal static PacketWriter SetupStream(NetworkIDs ID)
