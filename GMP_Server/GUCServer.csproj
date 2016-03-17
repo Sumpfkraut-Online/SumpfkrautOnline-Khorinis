@@ -234,6 +234,7 @@
     <Compile Include="WorldObjects\Cells\NetCell.cs" />
     <Compile Include="WorldObjects\Cells\NPCCell.cs" />
     <Compile Include="WorldObjects\Cells\WorldCell.cs" />
+    <Compile Include="WorldObjects\Collections\ItemContainer.Server.cs" />
     <Compile Include="WorldObjects\Collections\StaticCollection.Server.cs" />
     <Compile Include="WorldObjects\Instances\BaseVobInstance.Server.cs" />
     <Compile Include="WorldObjects\Instances\Mobs\MobBedInstance.Server.cs" />

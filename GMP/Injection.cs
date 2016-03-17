@@ -14,91 +14,24 @@ namespace GUC.Client
 {
     static class Injection
     {
-        #region Process Suspending
-        [Flags]
-        public enum ThreadAccess : int
-        {
-            TERMINATE = (0x0001),
-            SUSPEND_RESUME = (0x0002),
-            GET_CONTEXT = (0x0008),
-            SET_CONTEXT = (0x0010),
-            SET_INFORMATION = (0x0020),
-            QUERY_INFORMATION = (0x0040),
-            SET_THREAD_TOKEN = (0x0080),
-            IMPERSONATE = (0x0100),
-            DIRECT_IMPERSONATION = (0x0200)
-        }
-
-        [DllImport("kernel32.dll")]
-        static extern IntPtr OpenThread(ThreadAccess dwDesiredAccess, bool bInheritHandle, uint dwThreadId);
-        [DllImport("kernel32.dll")]
-        static extern uint SuspendThread(IntPtr hThread);
-        [DllImport("kernel32.dll")]
-        static extern int ResumeThread(IntPtr hThread);
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool CloseHandle(IntPtr hObject);
-        #endregion
-
         public static Int32 Main(String message)
         {
             try
             {
-                #region Suspend Gothic
-                var process = Process.GetCurrentProcess();
-                var threads = process.Threads;
-
-                for (int i = 0; i < threads.Count; i++)
-                {
-                    if (i == Thread.CurrentThread.ManagedThreadId/*pT.Id == AppDomain.GetCurrentThreadId()*/)
-                        continue;
-
-                    IntPtr pOpenThread = OpenThread(ThreadAccess.SUSPEND_RESUME, false, (uint)threads[i].Id);
-
-                    if (pOpenThread == IntPtr.Zero)
-                        continue;
-
-                    SuspendThread(pOpenThread);
-                    CloseHandle(pOpenThread);
-                }
-                #endregion
+                SplashScreen.Create();
+                SplashScreen.SetUpHooks();
 
                 Program.SetPaths(message);
                 AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;
 
-                //SplashScreen.Create();
-                //SplashScreen.SetUpHooks();
-
                 WinApi.Process.Write(new byte[] { 0xE9, 0x8C, 0x00, 0x00, 0x00 }, 0x0044AEDF); // skip visual vdfs init (vdfs32g.exe)
 
                 WinApi.Process.SetWindowText("Gothic II - Untold Chapters");
-
-                #region Resume Gothic
-                for (int i = 0; i < threads.Count; i++)
-                {
-                    if (i == Thread.CurrentThread.ManagedThreadId/*pT.Id == AppDomain.GetCurrentThreadId()*/)
-                        continue;
-
-                    IntPtr pOpenThread = OpenThread(ThreadAccess.SUSPEND_RESUME, false, (uint)threads[i].Id);
-
-                    if (pOpenThread == IntPtr.Zero)
-                        continue;
-
-                    var suspendCount = 0;
-                    do
-                    {
-                        suspendCount = ResumeThread(pOpenThread);
-                    } while (suspendCount > 0);
-
-                    CloseHandle(pOpenThread);
-                }
-                #endregion
-
+                
                 hParser.AddHooks();
                 hGame.AddHooks();
                 hWeather.AddHooks();
                 hPlayerVob.AddHooks();
-                hAniCtrl_Human.AddHooks();
 
                 #region Some more editing
                 // Make rain drops being blocked by vobs!
@@ -109,8 +42,12 @@ namespace GUC.Client
                 // Blocking Call Startup Scripts!
                 WinApi.Process.Write((byte)0xC3, 0x006C1C70);
 
-                // disable interface buttons
-                WinApi.Process.Write((byte)0xEB, 0x7A55D8);
+                
+                WinApi.Process.Write((byte)0xEB, 0x7A55D8); // disable interface buttons
+                WinApi.Process.Write(new byte[] { 0xE9, 0xB0, 0x01, 0x00, 0x00 }, 0x0069C08B); // disable player AI
+                WinApi.Process.Write(new byte[] { 0xE9, 0xA8, 0x00 }, 0x4D4D3D); // disable ingame keyboard movement
+                WinApi.Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, 0x4D3E50); // disable x-mouse movement  
+                WinApi.Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, 0x4D3E5C); // disable y-mouse movement  
 
                 // Blocking time!
                 WinApi.Process.Write((byte)0xC3, 0x00780D80);

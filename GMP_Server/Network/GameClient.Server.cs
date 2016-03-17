@@ -7,6 +7,8 @@ using GUC.WorldObjects;
 using GUC.Log;
 using GUC.Enumeration;
 using GUC.Server.Network;
+using GUC.Server.WorldObjects.Cells;
+using GUC.Server.Network.Messages;
 
 namespace GUC.Network
 {
@@ -128,6 +130,8 @@ namespace GUC.Network
                 }
                 else
                 {
+                    ChangeCells(character.Cell, npc.Cell);
+
                     npc.World.AddToPlayers(this);
                     npc.Cell.Clients.Add(this, ref this.cellID);
 
@@ -140,6 +144,38 @@ namespace GUC.Network
 
             npc.client = this;
             character = npc;
+        }
+
+        void ChangeCells(NetCell from, NetCell to)
+        {
+            int i = 0;
+            NetCell[] oldCells = new NetCell[NetCell.NumSurroundingCells];
+            int oldVobCount = 0;
+            from.ForEachSurroundingCell(cell =>
+            {
+                if (!(cell.X <= to.X + 1 && cell.X >= to.X - 1 && cell.Y <= to.Y + 1 && cell.Y >= to.Y - 1))
+                {
+                    if (cell.DynVobs.GetCount() > 0)
+                    {
+                        oldCells[i++] = cell;
+                        oldVobCount += cell.DynVobs.GetCount();
+                    }
+                }
+            });
+
+            // new cells
+            i = 0;
+            NetCell[] newCells = new NetCell[NetCell.NumSurroundingCells];
+            to.ForEachSurroundingCell(cell =>
+            {
+                if (!(cell.X <= from.X + 1 && cell.X >= from.X - 1 && cell.Y <= from.Y + 1 && cell.Y >= from.Y - 1))
+                {
+                    if (cell.DynVobs.GetCount() > 0)
+                        newCells[i++] = cell;
+                }
+            });
+
+            WorldCellMessage.Write(newCells, oldCells, oldVobCount, this);
         }
 
         #endregion

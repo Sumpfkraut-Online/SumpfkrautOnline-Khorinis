@@ -9,8 +9,8 @@ namespace GUC.WorldObjects.Collections
     {
         partial void CheckID(T vob)
         {
-            if (vob.ID < 0 || vob.ID >= GameObject.MAX_ID)
-                throw new ArgumentOutOfRangeException("Vob ID is out of range! 0.." + GameObject.MAX_ID);
+            if (vob.ID < 0 || vob.ID >= capacity)
+                throw new ArgumentOutOfRangeException("Vob ID is out of range! 0.." + capacity);
         }
     }
 }

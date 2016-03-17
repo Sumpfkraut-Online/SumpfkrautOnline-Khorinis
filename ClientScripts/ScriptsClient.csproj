@@ -121,9 +121,9 @@
     <Compile Include="Sumpfkraut\WorldSystem\WorldInst.Client.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GMP\GUC.csproj">
+    <ProjectReference Include="..\GMP\GUCClient.csproj">
       <Project>{c670ca0d-f27b-4745-9b76-b06882052e6b}</Project>
-      <Name>GUC</Name>
+      <Name>GUCClient</Name>
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\Gothic\Gothic.csproj">

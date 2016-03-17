@@ -80,7 +80,14 @@ namespace WinApi.User
         public static extern int GetRawInputData(IntPtr hRawInput, RawInputCommand uiCommand, out RawInput pData, ref int pcbSize, int cbSizeHeader);
 
         [DllImport("user32.dll")]
-        public static extern bool GetCursorPos(ref POINT lpPoint);
+        public static extern bool GetCursorPos(out POINT lpPoint);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool SetCursorPos(int X, int Y);
+
+        [DllImport("user32.dll")]
+        public static extern int ShowCursor(bool bShow);
 
         /// <summary>
         /// Function to retrieve raw input data.

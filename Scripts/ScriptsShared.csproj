@@ -66,9 +66,9 @@
     <Compile Include="Sumpfkraut\WorldSystem\WorldInst.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Network\SharedBase.csproj">
+    <ProjectReference Include="..\Network\GUCShared.csproj">
       <Project>{a896eadc-459c-4f6d-8b16-86b0a0f0f6a8}</Project>
-      <Name>SharedBase</Name>
+      <Name>GUCShared</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -25,7 +25,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public void SetState(NPCStates state, BaseVobInst target = null)
         {
-            this.BaseInst.SetState(state, target == null ? null : target.BaseInst);
+            this.BaseInst.SetState(state);
         }
 
         public void Jump()

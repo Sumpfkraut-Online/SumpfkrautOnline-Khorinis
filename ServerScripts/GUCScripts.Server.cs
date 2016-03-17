@@ -53,9 +53,7 @@ namespace GUC.Scripts
             npcDef.HeadTex = 0;
             npcDef.Create();
         }
-
-
-        public static NPCInst testChar;
+        
         void CreateWorld()
         {
             WorldDef wDef = new WorldDef();
@@ -64,8 +62,8 @@ namespace GUC.Scripts
             VobInst vob = new VobInst(BaseVobDef.Get<VobDef>("baum"));
             vob.BaseInst.Spawn(WorldInst.NewWorld.BaseWorld, new Types.Vec3f(0, 0, 1000));
 
-            testChar = new NPCInst(BaseVobDef.Get<NPCDef>("scavenger"));
-            testChar.BaseInst.Spawn(WorldInst.NewWorld.BaseWorld, new Types.Vec3f(0, 0, 500));
+            var npc = new NPCInst(BaseVobDef.Get<NPCDef>("scavenger"));
+            npc.BaseInst.Spawn(WorldInst.NewWorld.BaseWorld, new Types.Vec3f(0, 0, 500));
         }
     }
 }

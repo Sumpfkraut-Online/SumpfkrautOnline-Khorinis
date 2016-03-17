@@ -12,7 +12,8 @@ using GUC.WorldObjects.Instances;
 namespace GUC.WorldObjects
 {
     public partial class Item : Vob
-    {   
+    {
+
         /*public override void Delete()
         {
             if (Container != null)

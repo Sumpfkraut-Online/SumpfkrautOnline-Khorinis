@@ -235,6 +235,11 @@ namespace Gothic.Objects
             Process.THISCALL<NullReturnCall>(Address, 0x6A5060);
         }
 
+        public void Turn(float amount, bool playAni)
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x6AE540, new FloatArg(amount), new BoolArg(playAni));
+        }
+
         /*public zString GetWalkModeZString()
         {
             int str = Process.Alloc(20).ToInt32();

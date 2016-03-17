@@ -43,15 +43,14 @@ namespace GUC.WorldObjects
             NPCMessage.WriteJump(this);
         }
 
-        partial void pSetState(NPCStates state, BaseVob target = null)
+        partial void pSetState(NPCStates state)
         {
-            if (state <= NPCStates.Animation || target == null)
+            if (!this.IsSpawned)
+                return;
+
+            if (state <= NPCStates.Animation)
             {
                 NPCMessage.WriteState(this);
-            }
-            else
-            {
-                NPCMessage.WriteTargetState(this, target);
             }
         }
 
@@ -98,11 +97,8 @@ namespace GUC.WorldObjects
                 int oldVobCount = 0;
                 from.ForEachSurroundingCell(cell =>
                 {
-
                     if (cell.X <= toX + 1 && cell.X >= toX - 1 && cell.Y <= toY + 1 && cell.Y >= toY - 1)
                     {
-                        Log.Logger.Log("Shared Cell: " + cell.X + " " + cell.Y);
-
                         if (cell.Clients.Count > 0)
                         {
                             //Position updates in shared cells
@@ -118,9 +114,6 @@ namespace GUC.WorldObjects
                     }
                     else
                     {
-
-                        Log.Logger.Log("Old Cell: " + cell.X + " " + cell.Y);
-
                         if (cell.Clients.Count > 0)
                         {
                             //deletion updates in old cells
@@ -147,8 +140,6 @@ namespace GUC.WorldObjects
                 {
                     if (!(cell.X <= from.X + 1 && cell.X >= from.X - 1 && cell.Y <= from.Y + 1 && cell.Y >= from.Y - 1))
                     {
-                        Log.Logger.Log("New Cell: " + cell.X + " " + cell.Y);
-
                         if (cell.Clients.Count > 0)
                         {
                             // spawn updates in the new cells
@@ -238,6 +229,24 @@ namespace GUC.WorldObjects
                 world.RemoveFromPlayers(this.client);
             }
         }
+
+        #region Equipment
+
+        partial void pEquipItem(Item item)
+        {
+            NPCMessage.WriteEquipMessage(this, item);
+            if (this.IsPlayer)
+                InventoryMessage.WriteEquipMessage(this, item);
+        }
+
+        partial void pUnequipItem(Item item)
+        {
+            NPCMessage.WriteUnequipMessage(this, item.slot);
+            if (this.IsPlayer)
+                InventoryMessage.WriteUnequipMessage(this, item.slot);
+        }
+
+        #endregion
 
         /* #region Networking
 

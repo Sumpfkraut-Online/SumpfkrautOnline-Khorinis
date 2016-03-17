@@ -12,12 +12,16 @@ namespace GUC.Server
 {
     static class Program
     {
+        static GUC.WorldObjects.NPC test;
+
         static void Main(string[] args)
         {
             //TCPStatus.Start();
 
             try
             {
+
+
                 GameServer.Start();
 
                 ScriptManager.StartScripts("Scripts\\ServerScripts.dll");

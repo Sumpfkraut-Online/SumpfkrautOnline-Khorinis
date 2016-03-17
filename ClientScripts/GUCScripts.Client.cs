@@ -43,6 +43,7 @@ namespace GUC.Scripts
         public void Update(long ticks)
         {
             GUCMenu.UpdateMenus(ticks);
+            InputControl.Update(ticks);
         }
 
         public void StartOutgame()
@@ -119,6 +120,17 @@ namespace GUC.Scripts
             w.Load();
             world = w.BaseWorld;
             WorldInst.Current = w;
+        }
+        
+        public void OnInvAddMsg(PacketReader stream)
+        {
+            var i = ItemInst.ReadFromInvMsg(stream);
+            GameClient.Client.Character.Inventory.Add(i.BaseInst);
+        }
+
+        public void OnInvRemoveMsg(WorldObjects.Item item)
+        {
+            GameClient.Client.Character.Inventory.Remove(item);
         }
     }
 }

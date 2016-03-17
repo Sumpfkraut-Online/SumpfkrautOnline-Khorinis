@@ -4,14 +4,12 @@ using System.Linq;
 using System.Text;
 using RakNet;
 using GUC.Types;
-using GUC.Network;
 using GUC.Enumeration;
 using GUC.Log;
 using GUC.Client.GUI;
 using GUC.Client.Network.Messages;
 using GUC.Scripting;
 using GUC.WorldObjects.Instances;
-using GUC.WorldObjects.Collections;
 using GUC.WorldObjects;
 
 namespace GUC.Network
@@ -19,6 +17,43 @@ namespace GUC.Network
     public partial class GameClient
     {
         public static readonly GameClient Client = new GameClient();
+
+        #region Commands
+
+        NPCStates nextState = NPCStates.Stand;
+        const int DelayBetweenMessages = 3000000; //300ms
+        public void SetHeroState(NPCStates state)
+        {
+            if (this.character == null)
+                return;
+
+            if (state >= NPCStates.Animation)
+                throw new Exception("Don't use Animation states for this!");
+
+            if (this.character.State == state)
+                return;
+
+            this.nextState = state;
+            this.character.nextStateUpdate = 0;
+            UpdateHeroState(DateTime.UtcNow.Ticks);
+        }
+
+        void UpdateHeroState(long now)
+        {
+            if (this.character == null)
+                return;
+
+            if (this.character.State == nextState)
+                return;
+
+            if (now < this.character.nextStateUpdate)
+                return;
+
+            NPCMessage.WriteState(this.character, nextState);
+            this.character.nextStateUpdate = now + DelayBetweenMessages;
+        }
+
+        #endregion
 
         #region Script Menu Message
 
@@ -83,7 +118,7 @@ namespace GUC.Network
                 {
                     PacketReader rdr = new PacketReader();
                     rdr.Load(charData, charData.Length);
-                    Character.ReadTakeControl(pktReader);
+                    Character.ReadTakeControl(rdr);
                     charData = null;
                 }
 
@@ -106,17 +141,25 @@ namespace GUC.Network
 
         long nextUpdate = 0;
         const long updateTime = 1000000; // 100ms
-        internal void UpdateCharacters()
+        internal void UpdateCharacters(long now)
         {
-            if (DateTime.UtcNow.Ticks > nextUpdate && Character != null)
+            World.Current.ForEachVob(v =>
+            {
+                if (v is NPC)
+                    ((NPC)v).Update(now);
+            });
+
+            if (now > nextUpdate && Character != null)
             {
                 PacketWriter stream = SetupStream(NetworkIDs.VobPosDirMessage);
                 stream.Write(Character.GetPosition());
                 stream.Write(Character.GetDirection());
                 Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE);
 
-                nextUpdate = DateTime.UtcNow.Ticks + updateTime;
+                nextUpdate = now + updateTime;
             }
+
+            UpdateHeroState(now);
         }
 
         #endregion
@@ -209,11 +252,21 @@ namespace GUC.Network
                 case NetworkIDs.NPCStateMessage:
                     NPCMessage.ReadState(stream);
                     break;
-                case NetworkIDs.NPCTargetStateMessage:
-                    NPCMessage.ReadTargetState(stream);
+
+                case NetworkIDs.InventoryAddMessage:
+                    ScriptManager.Interface.OnInvAddMsg(stream);
                     break;
-                case NetworkIDs.NPCJumpMessage:
-                    NPCMessage.ReadJump(stream);
+                case NetworkIDs.InventoryRemoveMessage:
+                    Item item;
+                    if (character.Inventory.TryGetItem(stream.ReadByte(), out item))
+                    {
+                        ScriptManager.Interface.OnInvRemoveMsg(item);
+                    }
+                    break;
+
+
+                case NetworkIDs.NPCEquipMessage:
+
                     break;
 
                 default:
@@ -286,6 +339,7 @@ namespace GUC.Network
 
         GUCVisual instInfo;
         GUCVisual vobInfo;
+        GUCVisual inventoryInfo;
 
         internal void Update()
         {
@@ -311,6 +365,8 @@ namespace GUC.Network
 
                 vobInfo = GUCVisualText.Create("0", 0x2000, kbsInfo.zView.FontY() + pingInfo.zView.FontY() + instInfo.zView.FontY() + 3, true);
                 vobInfo.Texts[0].Format = GUCVisualText.TextFormat.Right;
+
+                inventoryInfo = new GUCVisual();
             }
 
             int counter = 0;
@@ -426,14 +482,29 @@ namespace GUC.Network
                 instInfo.Texts[0].Text = ("Instances: " + BaseVobInstance.GetCount());
                 instInfo.Show();
 
-                if (World.Current != null)
+                if (World.Current != null && character != null)
                 {
                     vobInfo.Texts[0].Text = ("Vobs: " + World.Current.GetVobCount());
                     vobInfo.Show();
+
+                    int i = 0;
+                    character.Inventory.ForEachItem(item =>
+                    {
+                        if (i >= inventoryInfo.Texts.Count)
+                        {
+                            int ydist = kbsInfo.zView.FontY() + pingInfo.zView.FontY() + instInfo.zView.FontY() + vobInfo.zView.FontY() + 4 + (inventoryInfo.Texts.Count * inventoryInfo.zView.FontY());
+                            var text = inventoryInfo.CreateText("", 0x2000, ydist, true);
+                            text.Format = GUCVisualText.TextFormat.Right;
+                        }
+                        inventoryInfo.Texts[i].Text = item.Amount + " " + item.Name;
+                        i++;
+                    });
+                    inventoryInfo.Show();
                 }
                 else
                 {
                     vobInfo.Hide();
+                    inventoryInfo.Hide();
                 }
             }
         }

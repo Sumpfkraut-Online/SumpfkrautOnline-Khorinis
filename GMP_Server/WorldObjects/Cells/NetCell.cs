@@ -19,6 +19,8 @@ namespace GUC.Server.WorldObjects.Cells
 
         public readonly VobTypeCollection<BaseVob> DynVobs = new VobTypeCollection<BaseVob>();
         
+        // NetCell[] surroundingCells = new NetCell[9];
+
         public NetCell(World world, int x, int y) : base(world, x, y)
         {
         }

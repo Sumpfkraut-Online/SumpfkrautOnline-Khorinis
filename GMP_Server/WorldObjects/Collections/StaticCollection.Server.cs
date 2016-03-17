@@ -12,7 +12,7 @@ namespace GUC.WorldObjects.Collections
 
         partial void CheckID(T obj)
         {
-            if (obj.ID < 0 || obj.ID >= GameObject.MAX_ID) //search free ID
+            if (obj.ID < 0 || obj.ID >= capacity) //search free ID
             {
                 int id;
 
@@ -28,9 +28,9 @@ namespace GUC.WorldObjects.Collections
                 }
 
                 while (true)
-                    if (idCounter >= GameObject.MAX_ID)
+                    if (idCounter >= capacity)
                     {
-                        throw new Exception("StaticCollection reached maximum! " + GameObject.MAX_ID);
+                        throw new Exception("StaticCollection reached maximum! " + capacity);
                     }
                     else
                     {

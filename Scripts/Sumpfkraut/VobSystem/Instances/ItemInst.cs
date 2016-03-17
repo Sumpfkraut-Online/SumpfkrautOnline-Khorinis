@@ -19,24 +19,31 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
         }
 
+        protected ItemInst() : base(new WorldObjects.Item())
+        {
+        }
+
+        public static ItemInst ReadFromInvMsg(PacketReader stream)
+        {
+            var i = new ItemInst();
+            i.BaseInst.ReadInventoryProperties(stream);
+            return i;
+        }
+
         public void ReadEquipProperties(PacketReader stream)
         {
-            throw new NotImplementedException();
         }
 
         public void ReadInventoryProperties(PacketReader stream)
         {
-            throw new NotImplementedException();
         }
 
         public void WriteEquipProperties(PacketWriter stream)
         {
-            throw new NotImplementedException();
         }
 
         public void WriteInventoryProperties(PacketWriter stream)
         {
-            throw new NotImplementedException();
         }
     }
 }

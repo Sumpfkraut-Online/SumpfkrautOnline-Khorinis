@@ -53,24 +53,26 @@ namespace GUC.WorldObjects
         public const int MAX_AMOUNT = 65536;
 
         int amount = 1;
-        public int Amount
+        public int Amount { get { return this.amount; } }
+
+        public void SetAmount(int amount)
         {
-            get { return this.amount; }
-            set
+            if (amount < 0 || amount >= MAX_AMOUNT)
             {
-                if (value < 0 || value >= MAX_AMOUNT)
-                {
-                    throw new Exception("Item amount is out of range! 0.." + MAX_AMOUNT);
-                }
+                throw new Exception("Item amount is out of range! 0.." + MAX_AMOUNT);
+            }
 
-                this.amount = value;
+            this.amount = amount;
 
-                if (this.Container != null)
-                {
-                    // send msg
-                }
+            if (this.Container != null)
+            {
+                // send msg
             }
         }
+
+        internal int slot = SLOTNUM_UNEQUIPPED;
+        public int Slot { get { return this.slot; } }
+        public const int SLOTNUM_UNEQUIPPED = 255;
 
         public ItemContainer.IContainer Container { get; internal set; }
 
@@ -82,43 +84,47 @@ namespace GUC.WorldObjects
 
         #region Read & Write
 
-        internal void WriteEquipProperties(PacketWriter stream)
+        public void WriteEquipProperties(PacketWriter stream)
         {
-            /*stream.Write(this.Instance.ID);
-            this.ScriptObject.WriteEquipProperties(stream);*/
-        }
-
-        internal void ReadEquipProperties(PacketReader stream)
-        {
-            /*ushort instanceid = stream.ReadUShort();
-            this.Instance = (ItemInstance)VobInstance.AllInstances.Get(instanceid);
-            if (this.Instance == null)
-                throw new Exception("Item.ReadEquipProperties failed: Instance-ID not found!");
-
-            this.ScriptObject.ReadEquipProperties(stream);*/
-        }
-        
-        internal void WriteInventoryProperties(PacketWriter stream)
-        {
-            /*stream.Write(this.ID);
             stream.Write(this.Instance.ID);
-            stream.Write(this.Amount);
-
-            this.ScriptObject.WriteInventoryProperties(stream);*/
+            if (this.ScriptObject != null)
+                this.ScriptObject.WriteEquipProperties(stream);
         }
 
-        internal void ReadInventoryProperties(PacketReader stream)
+        public void ReadEquipProperties(PacketReader stream)
         {
-            /*this.ID = stream.ReadUInt();
             ushort instanceid = stream.ReadUShort();
-            this.Instance = (ItemInstance)VobInstance.AllInstances.Get(instanceid);
-            if (this.Instance == null)
+            if (!BaseVobInstance.TryGet(instanceid, out this.instance))
             {
-                throw new Exception("Item.ReadInventoryProperties failed: Instance-ID not found!");
+                throw new Exception("Instance-ID not found!");
             }
-            this.Amount = stream.ReadUShort();
 
-            this.ScriptObject.ReadInventoryProperties(stream);*/
+            if (this.ScriptObject != null)
+                this.ScriptObject.ReadEquipProperties(stream);
+        }
+
+        public void WriteInventoryProperties(PacketWriter stream)
+        {
+            stream.Write((byte)this.ID);
+            stream.Write((ushort)this.Instance.ID);
+            stream.Write((ushort)this.Amount);
+
+            if (this.ScriptObject != null)
+                this.ScriptObject.WriteInventoryProperties(stream);
+        }
+
+        public void ReadInventoryProperties(PacketReader stream)
+        {
+            this.ID = stream.ReadByte();
+            ushort instanceid = stream.ReadUShort();
+            if (!BaseVobInstance.TryGet(instanceid, out this.instance))
+            {
+                throw new Exception("Instance-ID not found!");
+            }
+            this.amount = stream.ReadUShort();
+
+            if (this.ScriptObject != null)
+                this.ScriptObject.ReadInventoryProperties(stream);
         }
 
         #endregion

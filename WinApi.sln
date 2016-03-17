@@ -7,15 +7,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinApi", "WinApi\WinApi.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gothic", "Gothic\Gothic.csproj", "{82655F73-CF7C-4416-9313-BD657AD8F05F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUC", "GMP\GUC.csproj", "{C670CA0D-F27B-4745-9B76-B06882052E6B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUCClient", "GMP\GUCClient.csproj", "{C670CA0D-F27B-4745-9B76-B06882052E6B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GMP_Server", "GMP_Server\GMP_Server.csproj", "{27FA7C52-3C80-4B72-8FBB-BCAC0328236E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUCServer", "GMP_Server\GUCServer.csproj", "{27FA7C52-3C80-4B72-8FBB-BCAC0328236E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedBase", "Network\SharedBase.csproj", "{A896EADC-459C-4F6D-8B16-86B0A0F0F6A8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUCShared", "Network\GUCShared.csproj", "{A896EADC-459C-4F6D-8B16-86B0A0F0F6A8}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetInject", "NetInject\NetInject.vcxproj", "{B2D09178-C478-4FA0-A62B-3FB40CE9B4D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerScripts", "ServerScripts\ServerScripts.csproj", "{477C9B57-AD36-4CAC-998F-800C5A693C35}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptsServer", "ServerScripts\ScriptsServer.csproj", "{477C9B57-AD36-4CAC-998F-800C5A693C35}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Animations", "Animations", "{2CFE5DD3-579B-4320-8689-4A611ECD5C80}"
 	ProjectSection(SolutionItems) = preProject
@@ -96,12 +96,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AnimationFiles", "Animation
 		ReadMe.txt = ReadMe.txt
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientScripts", "ClientScripts\ClientScripts.csproj", "{A46549EC-1747-4E96-B7F0-A7A18B312DA5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptsClient", "ClientScripts\ScriptsClient.csproj", "{A46549EC-1747-4E96-B7F0-A7A18B312DA5}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C670CA0D-F27B-4745-9B76-B06882052E6B} = {C670CA0D-F27B-4745-9B76-B06882052E6B}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedScripts", "Scripts\SharedScripts.csproj", "{B9C52BDA-4F73-4E5B-BFC7-A0EEA6A3F9A9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptsShared", "Scripts\ScriptsShared.csproj", "{B9C52BDA-4F73-4E5B-BFC7-A0EEA6A3F9A9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OldLauncher", "Launcher2\OldLauncher.csproj", "{D0BC151D-7C3B-473D-A9E3-D9D6ABDB52C7}"
 EndProject

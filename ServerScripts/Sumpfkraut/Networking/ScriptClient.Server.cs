@@ -19,13 +19,41 @@ namespace GUC.Scripts.Sumpfkraut.Networking
             NPCDef def = BaseVobDef.Get<NPCDef>("player");
             NPCInst npc = new NPCInst(def);
 
+            var item = new ItemInst(ItemDef.Get<ItemDef>("apple"));
+            item.BaseInst.SetAmount(42);
+            npc.BaseInst.Inventory.Add(item.BaseInst);
+            npc.BaseInst.Inventory.Add((new ItemInst(ItemDef.Get<ItemDef>("apple"))).BaseInst);
+            npc.BaseInst.Inventory.Add((new ItemInst(ItemDef.Get<ItemDef>("apple"))).BaseInst);
+
             SetControl(npc);
             npc.Spawn(WorldInst.NewWorld);
         }
 
         public void OnReadIngameMsg(PacketReader stream)
         {
-            SetControl(GUCScripts.testChar);
+            /*NPCInst newNPC = null;
+            this.baseClient.Character.World.ForEachVob(v =>
+            {
+                if (v.ID > baseClient.Character.ID && newNPC == null && v is WorldObjects.NPC && v != baseClient.Character)
+                {
+                    newNPC = (NPCInst)v.ScriptObject;
+                }
+            });
+
+            if (newNPC == null)
+            {
+                this.baseClient.Character.World.ForEachVob(v =>
+                {
+                    if (v.ID < baseClient.Character.ID && newNPC == null && v is WorldObjects.NPC && v != baseClient.Character)
+                    {
+                        newNPC = (NPCInst)v.ScriptObject;
+                    }
+                });
+            }
+            SetControl(newNPC);*/
+
+            ItemInst apple = new ItemInst(ItemDef.Get<ItemDef>("apple"));
+            baseClient.Character.Inventory.Add(apple.BaseInst);
         }
 
         public void SetControl(NPCInst npc)

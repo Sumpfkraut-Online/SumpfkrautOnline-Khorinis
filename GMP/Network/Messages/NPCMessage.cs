@@ -35,52 +35,12 @@ namespace GUC.Client.Network.Messages
                     npc.ScriptObject.OnCmdMove(state);
             }
         }
-
-        static long nextTargetStateUpdate = 0;
-        public static void WriteTargetState(NPCStates state) //only for self, attacks & strafing
-        {
-            if (DateTime.UtcNow.Ticks > nextTargetStateUpdate)
-            {
-                PacketWriter stream = GameClient.SetupStream(NetworkIDs.NPCTargetStateMessage);
-                stream.Write((byte)state);
-
-                BaseVob target;
-                if (World.Current.TryGetVobByAddress(GameClient.Client.Character.gVob.FocusVob.Address, out target))
-                {
-                    stream.Write((ushort)target.ID);
-                }
-                else
-                {
-                    stream.Write((ushort)0);
-                }
-
-                GameClient.Send(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
-
-                nextTargetStateUpdate = DateTime.UtcNow.Ticks + DelayBetweenMessages;
-            }
-        }
-
-        public static void ReadTargetState(PacketReader stream)
-        {
-            int id = stream.ReadUShort();
-            NPC npc;
-            if (World.Current.TryGetVob(id, out npc))
-            {
-                NPCStates state = (NPCStates)stream.ReadByte();
-                int targetid = stream.ReadUShort();
-
-                BaseVob vob;
-                World.Current.TryGetVob(targetid, out vob);
-                if (GameClient.Client.Character.ScriptObject != null)
-                    GameClient.Client.Character.ScriptObject.OnCmdMove(state, vob.ScriptObject);
-            }
-        }
-
+        
         #endregion
 
         #region Jumping
 
-        public static void WriteJump(NPC npc)
+        /*public static void WriteJump(NPC npc)
         {
             if (DateTime.UtcNow.Ticks > npc.nextJumpUpdate)
             {
@@ -102,7 +62,7 @@ namespace GUC.Client.Network.Messages
                 if (npc.ScriptObject != null)
                     npc.ScriptObject.OnCmdJump();
             }
-        }
+        }*/
 
         #endregion
 

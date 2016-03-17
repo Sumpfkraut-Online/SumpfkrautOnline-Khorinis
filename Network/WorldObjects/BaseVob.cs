@@ -58,7 +58,7 @@ namespace GUC.WorldObjects
                 this.instance = value;
             }
         }
-        BaseVobInstance instance;
+        protected BaseVobInstance instance;
 
         /// <summary>
         /// The world this Vob is currently in.

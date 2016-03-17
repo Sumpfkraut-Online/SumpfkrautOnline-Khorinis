@@ -8,10 +8,12 @@ namespace GUC.WorldObjects.Collections
     partial class StaticCollection<T> where T : GameObject
     {
         T[] arr;
+        int capacity;
 
-        internal StaticCollection()
+        internal StaticCollection(int capacity = GameObject.MAX_ID)
         {
-            arr = new T[GameObject.MAX_ID];
+            this.capacity = capacity;
+            arr = new T[capacity];
         }
 
         partial void CheckID(T obj);

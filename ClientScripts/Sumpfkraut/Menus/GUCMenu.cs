@@ -29,20 +29,12 @@ namespace GUC.Client.Scripts.Sumpfkraut.Menus
 
         public virtual void Open()
         {
-            if (activeMenus.Count == 0)
-            {
-                InputHandler.DeactivateGothicControl();
-            }
             activeMenus.Insert(0, this);
         }
 
         public virtual void Close()
         {
             activeMenus.Remove(this);
-            if (activeMenus.Count == 0)
-            {
-                InputHandler.ActivateGothicControl();
-            }
         }
 
         public abstract void Update(long now);

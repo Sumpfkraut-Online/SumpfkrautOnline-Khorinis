@@ -34,5 +34,11 @@ namespace GUC.Scripting
         void OnDespawnVobMsg(BaseVob vob);
 
         void OnLoadWorldMsg(out World world, PacketReader stream);
+
+        void OnInvAddMsg(PacketReader stream);
+        void OnInvRemoveMsg(Item item);
+
+        void OnEquipMsg(NPC npc, int slot, PacketReader stream);
+        void OnUnequipMsg(NPC npc, int slot);
     }
 }

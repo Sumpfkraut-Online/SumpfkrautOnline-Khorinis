@@ -11,6 +11,7 @@ namespace GUC.Scripting
     public partial interface ScriptInterface
     {
         bool OnClientConnection(GameClient client);
+        WorldObjects.Item CreateInvItem(PacketReader stream);
     }
 
     static class ScriptManager

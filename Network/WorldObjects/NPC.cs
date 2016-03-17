@@ -94,14 +94,11 @@ namespace GUC.WorldObjects
             }
         }
 
-        partial void pSetState(NPCStates state, BaseVob target = null);
-        public void SetState(NPCStates state, BaseVob target = null)
+        partial void pSetState(NPCStates state);
+        public void SetState(NPCStates state)
         {
             this.state = state;
-            if (this.IsSpawned)
-            {
-                pSetState(state, target);
-            }
+            pSetState(state);
         }
 
         public void UseMob(MobInter mob)
@@ -128,9 +125,6 @@ namespace GUC.WorldObjects
         ItemContainer inventory;
         public ItemContainer Inventory { get { return inventory; } }
 
-        //protected Dictionary<byte, Item> equippedSlots = new Dictionary<byte, Item>();
-        //public IEnumerable<Item> GetEquippedItems() { return equippedSlots.Values; }
-
         public string Name { get { return Instance.Name; } }
         public string BodyMesh { get { return Instance.BodyMesh; } }
         public int BodyTex { get { return Instance.BodyTex; } }
@@ -139,10 +133,112 @@ namespace GUC.WorldObjects
 
         #endregion
 
+        #region Equipment
+
+        Dictionary<int, Item> equippedSlots = new Dictionary<int, Item>();
+
+        partial void pEquipItem(Item item);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="slot">0-254</param>
+        public void EquipItem(int slot, Item item)
+        {
+            if (item == null)
+                throw new ArgumentNullException("Item is null!");
+
+            if (item.Container != this)
+                throw new ArgumentException("Item is not in this container!");
+
+            if (slot < 0 || slot >= Item.SLOTNUM_UNEQUIPPED)
+                throw new ArgumentOutOfRangeException("Slotnum is out of range! 0.." + (Item.SLOTNUM_UNEQUIPPED - 1));
+
+            if (equippedSlots.ContainsKey(slot))
+                throw new ArgumentException("Slot is already equipped!");
+
+            item.slot = slot;
+            equippedSlots.Add(slot, item);
+            pEquipItem(item);
+        }
+
+        public void UnequipItem(Item item)
+        {
+            if (item == null)
+                throw new ArgumentNullException("Item is null!");
+
+            if (item.Container != this)
+                throw new ArgumentException("Item is not in this container!");
+
+            UnequipSlot(item.slot);
+        }
+
+        partial void pUnequipItem(Item item);
+        public void UnequipSlot(int slot)
+        {
+            if (slot < 0 || slot >= Item.SLOTNUM_UNEQUIPPED)
+                throw new ArgumentOutOfRangeException("Slotnum is out of range! 0.." + (Item.SLOTNUM_UNEQUIPPED - 1));
+
+            Item item;
+            if (equippedSlots.TryGetValue(slot, out item))
+            {
+                pUnequipItem(item);
+                item.slot = Item.SLOTNUM_UNEQUIPPED;
+                equippedSlots.Remove(slot);
+            }
+        }
+
+        #region Access
+
+        public bool IsSlotEquipped(int slot)
+        {
+            return equippedSlots.ContainsKey(slot);
+        }
+
+        public bool TryGetEquippedItem(int slot, out Item item)
+        {
+            return equippedSlots.TryGetValue(slot, out item);
+        }
+
+        public void ForEachEquippedItem(Action<Item> action)
+        {
+            if (action == null)
+                throw new ArgumentNullException("Action is null!");
+
+            foreach (Item item in equippedSlots.Values)
+            {
+                action(item);
+            }
+        }
+
+        /// <summary>
+        /// Return FALSE to break the loop!
+        /// </summary>
+        public void ForEachEquippedItem(Predicate<Item> predicate)
+        {
+            if (predicate == null)
+                throw new ArgumentNullException("Predicate is null!");
+
+            foreach(Item item in equippedSlots.Values)
+            {
+                if (!predicate(item))
+                    break;
+            }
+        }
+
+        #endregion
+
+        #endregion
+
         #region Read & Write
 
         internal void WriteTakeControl(PacketWriter stream)
         {
+            stream.Write((byte)this.inventory.GetCount());
+            this.inventory.ForEachItem(item =>
+            {
+                item.WriteInventoryProperties(stream);
+            });
+
             if (this.ScriptObject != null)
             {
                 this.ScriptObject.OnWriteTakeControl(stream);
@@ -151,6 +247,12 @@ namespace GUC.WorldObjects
 
         internal void ReadTakeControl(PacketReader stream)
         {
+            int count = stream.ReadByte();
+            for (int i = 0; i < count; i++)
+            {
+                this.inventory.Add(Scripting.ScriptManager.Interface.CreateInvItem(stream));
+            }
+
             if (this.ScriptObject != null)
             {
                 this.ScriptObject.OnReadTakeControl(stream);

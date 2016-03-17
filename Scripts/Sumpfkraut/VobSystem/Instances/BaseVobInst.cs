@@ -34,7 +34,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             baseInst.ReadStream(stream);
         }
 
-        private BaseVobInst(BaseVob baseInst)
+        protected BaseVobInst(BaseVob baseInst)
         {
             if (baseInst == null)
                 throw new ArgumentNullException("BaseInst is null!");
@@ -52,6 +52,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             baseInst.Despawn();
         }
+
         public virtual void OnReadProperties(PacketReader stream)
         {
             this.definition = (BaseVobDef)baseInst.Instance.ScriptObject;

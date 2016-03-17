@@ -86,12 +86,6 @@ namespace GUC.Server.Network
                 case NetworkIDs.NPCStateMessage:
                     NPCMessage.ReadState(stream, client, client.Character, client.Character.World);
                     break;
-                case NetworkIDs.NPCTargetStateMessage:
-                    NPCMessage.ReadTargetState(stream, client, client.Character, client.Character.World);
-                    break;
-                case NetworkIDs.NPCJumpMessage:
-                    NPCMessage.ReadJump(stream, client, client.Character, client.Character.World);
-                    break;
 
                 default:
                     DisconnectClient(client);

@@ -37,7 +37,7 @@ namespace GUC.Client
             // jmp over everything else
             Process.Write(new byte[] { 0xEB, 0x23 }, 0x004267FF);
 
-            Process.Write((byte)0xEB, 0x00426872); //jump over closing message
+            //Process.Write((byte)0xEB, 0x00426872); //jump over closing message
 
             Process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(SplashScreen).GetMethod("RemoveSplashScreen"), 0x42687F, 6, 0); // add hook to remove our splash screen
 

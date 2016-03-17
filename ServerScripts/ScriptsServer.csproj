@@ -138,9 +138,9 @@
     <Compile Include="Sumpfkraut\WorldSystem\WorldInst.Server.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GMP_Server\GMP_Server.csproj">
+    <ProjectReference Include="..\GMP_Server\GUCServer.csproj">
       <Project>{27FA7C52-3C80-4B72-8FBB-BCAC0328236E}</Project>
-      <Name>GMP_Server</Name>
+      <Name>GUCServer</Name>
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>

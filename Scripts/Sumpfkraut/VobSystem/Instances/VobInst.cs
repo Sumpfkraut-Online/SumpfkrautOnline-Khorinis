@@ -23,5 +23,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         protected VobInst(Vob baseInst, PacketReader stream) : base(baseInst, stream)
         {
         }
+
+        protected VobInst(Vob baseInst) : base(baseInst)
+        {
+        }
     }
 }

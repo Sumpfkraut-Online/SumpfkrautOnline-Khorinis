@@ -34,10 +34,14 @@ namespace GUC.Enumeration
 
         // npcs 
         NPCStateMessage,
-        NPCTargetStateMessage,
-        NPCJumpMessage,
+        NPCEquipMessage,
+        NPCUnequipMessage,
 
-
+        //inventory
+        InventoryAddMessage, // add item to player inventory
+        InventoryRemoveMessage, // remove item from player inventory
+        InventoryEquipMessage,
+        InventoryUnequipMessage,
 
 
 
@@ -47,10 +51,6 @@ namespace GUC.Enumeration
         PlayerAttributeMessage,
 
         //world
-        WorldVobSpawnMessage,
-        WorldVobDeleteMessage,
-        WorldNPCSpawnMessage,
-        WorldItemSpawnMessage,
         WorldTimeMessage,
         WorldWeatherMessage,
         
@@ -61,8 +61,8 @@ namespace GUC.Enumeration
         //npcs
         NPCAniStartMessage,
         NPCAniStopMessage,
-        NPCEquipMessage,
-        NPCUnequipMessage,
+        NPCJumpMessage,
+
 
 
         NPCDrawItemMessage,
@@ -76,7 +76,6 @@ namespace GUC.Enumeration
         NPCInstanceMessage,
 
         //inventory
-        InventoryAddMessage, //add iteminstance to player inventory
         InventoryAmountMessage, //remove
         InventoryDropItemMessage,
         InventoryUseItemMessage,

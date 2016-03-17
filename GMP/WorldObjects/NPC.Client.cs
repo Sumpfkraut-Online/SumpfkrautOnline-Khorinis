@@ -16,11 +16,7 @@ namespace GUC.WorldObjects
 
         new public oCNpc gVob { get { return (oCNpc)base.gVob; } }
 
-        internal long nextForwardUpdate = 0;
-        internal long nextStandUpdate = 0;
-        internal long nextJumpUpdate = 0;
-
-        internal bool DoJump = false;
+        internal long nextStateUpdate = 0;
 
         partial void pJump()
         {
@@ -35,7 +31,6 @@ namespace GUC.WorldObjects
                 //Just in case the npc is turning
                 //StopTurnAnis();
 
-                DoJump = true;
                 gVob.AniCtrl.JumpForward();
             }
         }
@@ -51,12 +46,23 @@ namespace GUC.WorldObjects
             gVob.SetToFistMode();
         }
 
-        partial void pSetState(NPCStates state, BaseVob target = null)
+        partial void pSetState(NPCStates state)
         {
+            if (!this.IsSpawned)
+                return;
+
             if (state <= NPCStates.Animation)
             {
+                if (state != NPCStates.MoveRight && gVob.GetModel().IsAniActive(gVob.GetModel().GetAniFromAniID(gVob.AniCtrl._t_strafer)))
+                {
+                    gVob.GetModel().FadeOutAni(gVob.AniCtrl._t_strafer);
+                }
+                else if (state != NPCStates.MoveLeft && gVob.GetModel().IsAniActive(gVob.GetModel().GetAniFromAniID(gVob.AniCtrl._t_strafel)))
+                {
+                    gVob.GetModel().FadeOutAni(gVob.AniCtrl._t_strafel);
+                }
                 //npc.StopTurnAnis(); //Just in case the npc is turning
-                
+
                 this.Update(DateTime.UtcNow.Ticks);
             }
             else
@@ -67,55 +73,45 @@ namespace GUC.WorldObjects
 
         internal void Update(long now)
         {
-            if (this != GameClient.Client.Character)
+            /*if (turning) //turn!
             {
-                /*if (turning) //turn!
-                {
-                    float diff = (float)(DateTime.UtcNow.Ticks - lastDirTime) / (float)DirectionUpdateTime;
+                float diff = (float)(DateTime.UtcNow.Ticks - lastDirTime) / (float)DirectionUpdateTime;
 
-                    if (diff < 1.0f)
-                    {
-                        Direction = lastDir + (nextDir - lastDir) * diff;
-                    }
-                    else
-                    {
-                        StopTurnAnis();
-                    }
-                }*/
-
-                switch (State)
+                if (diff < 1.0f)
                 {
-                    case NPCStates.MoveForward:
-                        gVob.AniCtrl._Forward();
-                        break;
-                    case NPCStates.MoveBackward:
-                        gVob.AniCtrl._Backward();
-                        break;
-                    /*case NPCStates.MoveRight:
-                        gVob.GetEM(0).KillMessages();
-                        gVob.DoStrafe(true);
-                        break;
-                    case NPCStates.MoveLeft:
-                        gVob.GetEM(0).KillMessages();
-                        gVob.DoStrafe(false);
-                        break;*/
-                    case NPCStates.Stand:
-                        gVob.AniCtrl._Stand();
-                        break;
-                    default:
-                        break;
+                    Direction = lastDir + (nextDir - lastDir) * diff;
                 }
-            }
-        }
+                else
+                {
+                    StopTurnAnis();
+                }
+            }*/
 
-
-
-        public bool HasFreeHands
-        {
-            get
+            switch (State)
             {
-                //return (this.gNpc.BodyState & 65536) != 0;
-                return true;
+                case NPCStates.MoveForward:
+                    gVob.AniCtrl._Forward();
+                    break;
+                case NPCStates.MoveBackward:
+                    gVob.AniCtrl._Backward();
+                    break;
+                case NPCStates.MoveRight:
+                    if (!gVob.GetModel().IsAniActive(gVob.GetModel().GetAniFromAniID(gVob.AniCtrl._t_strafer)))
+                    {
+                        gVob.GetModel().StartAni(gVob.AniCtrl._t_strafer, 0);
+                    }
+                    break;
+                case NPCStates.MoveLeft:
+                    if (!gVob.GetModel().IsAniActive(gVob.GetModel().GetAniFromAniID(gVob.AniCtrl._t_strafel)))
+                    {
+                        gVob.GetModel().StartAni(gVob.AniCtrl._t_strafel, 0);
+                    }
+                    break;
+                case NPCStates.Stand:
+                    gVob.AniCtrl._Stand();
+                    break;
+                default:
+                    break;
             }
         }
 

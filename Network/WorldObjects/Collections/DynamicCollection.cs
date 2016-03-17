@@ -12,16 +12,18 @@ namespace GUC
         List<int> freeIDs;
         int idCounter;
         int count;
+        int maximum;
 
         public int Count { get { return this.count; } }
         public int Size { get { return this.arr.Length; } }
 
-        public DynamicCollection()
+        public DynamicCollection(int maximum = GameObject.MAX_ID)
         {
             arr = new T[0];
             freeIDs = new List<int>(0);
             idCounter = 0;
             count = 0;
+            this.maximum = maximum;
         }
 
         void Insert(T obj, ref int id, int newID)
@@ -47,15 +49,15 @@ namespace GUC
             }
             else // no free IDs
             {
-                if (idCounter >= GameObject.MAX_ID)
+                if (idCounter >= maximum)
                 {
-                    throw new Exception("DynamicCollection reached maximum! " + GameObject.MAX_ID);
+                    throw new Exception("DynamicCollection reached maximum! " + maximum);
                 }
                 else if (idCounter >= arr.Length) // check allocation
                 {
-                    int newSize = 2 * (arr.Length + 10);
-                    if (newSize > GameObject.MAX_ID)
-                        newSize = GameObject.MAX_ID;
+                    int newSize = (int)(1.5f * (arr.Length + 1)); // 2 * (arr.Length + 10);
+                    if (newSize > maximum)
+                        newSize = maximum;
                     T[] newArr = new T[newSize];
                     Array.Copy(arr, newArr, arr.Length);
                     arr = newArr;
@@ -90,6 +92,24 @@ namespace GUC
             {
                 if (arr[i] != null)
                     action(arr[i]);
+            }
+        }
+
+        /// <summary>
+        /// return FALSE to break the loop.
+        /// </summary>
+        public void ForEach(Predicate<T> action)
+        {
+            if (action == null)
+                throw new ArgumentNullException("Action is null!");
+
+            for (int i = 0; i < arr.Length; i++)
+            {
+                if (arr[i] != null)
+                {
+                    if (!action(arr[i]))
+                        break;
+                }
             }
         }
     }

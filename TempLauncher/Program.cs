@@ -75,6 +75,8 @@ namespace TempLauncher
                         psi.FileName = Path.GetFullPath("..\\..\\_work\\tools\\zSpy\\zSpy.exe");
                         Process.Start(psi);
                         zSpy = true;
+
+                        System.Threading.Thread.Sleep(1000); // wait for zSpy to start
                     }
 
                     //Gothic starten
@@ -91,6 +93,7 @@ namespace TempLauncher
 
                     psi.FileName = Path.GetFullPath("..\\Gothic2.exe");
                     Process process = Process.Start(psi);
+
 
                     //dll injection
                     if (LoadLibary(process, Path.GetFullPath("UntoldChapters\\" + projectName + "\\NetInject.dll")) == IntPtr.Zero)

@@ -14,8 +14,15 @@ namespace GUC.Server.Network.Messages
         //Add an item to the client's inventory
         public static void WriteAddItem(GameClient client, Item item)
         {
-            PacketWriter stream = Network.GameServer.SetupStream(NetworkIDs.InventoryAddMessage);
-            //item.WriteInventory(stream);
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.InventoryAddMessage);
+            item.WriteInventoryProperties(stream);
+            client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I');
+        }
+
+        public static void WriteRemoveItem(GameClient client, Item item)
+        {
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.InventoryAddMessage);
+            stream.Write((byte)item.ID);
             client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I');
         }
 
@@ -30,6 +37,20 @@ namespace GUC.Server.Network.Messages
             stream.Write(item.ID);
             stream.Write((ushort)amount);
             client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I');
+        }
+
+        public static void WriteEquipMessage(NPC npc, Item item)
+        {
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.InventoryEquipMessage);
+            stream.Write((byte)item.slot);
+            npc.client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I');
+        }
+
+        public static void WriteUnequipMessage(NPC npc, int slot)
+        {
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.InventoryUnequipMessage);
+            stream.Write((byte)slot);
+            npc.client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I');
         }
     }
 }
