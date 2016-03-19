@@ -88,7 +88,16 @@ void LoadNETDLL()
     hr = pRuntimeInfo->GetInterface(CLSID_CLRRuntimeHost, IID_ICLRRuntimeHost, (LPVOID*)&pClrRuntimeHost);
     hr = pClrRuntimeHost->Start();
 
-	LPCWSTR project = convertToChar(getenv("GUCProject"));
+	char* buf = 0;
+	size_t sz = 0;
+	if (_dupenv_s(&buf, &sz, "GUCProject") != 0)
+	{
+		Error(L"Environment Error.");
+	}
+
+	LPCWSTR project = convertToChar(buf);
+	free(buf);
+
 	std::wstring projectDll = std::wstring(L"Multiplayer\\UntoldChapters\\") + project + std::wstring(L"\\GUC.dll");
 	hr = pClrRuntimeHost->ExecuteInDefaultAppDomain(projectDll.c_str(), L"GUC.Client.Injection", L"Main", project, &result);
 	pClrRuntimeHost->Stop();

@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A896EADC-459C-4F6D-8B16-86B0A0F0F6A8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GUC</RootNamespace>
+    <AssemblyName>Network</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\GothicII\System\UntoldChapter\DLL\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\GothicII\System\UntoldChapter\DLL\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Animation.cs" />
+    <Compile Include="Enumeration\HumanVisuals.cs" />
+    <Compile Include="Enumeration\NPCStates.cs" />
+    <Compile Include="Enumeration\VobTypes.cs" />
+    <Compile Include="Enumeration\ItemEnums.cs" />
+    <Compile Include="Enumeration\NetworkIDS.cs" />
+    <Compile Include="Log\Logger.cs" />
+    <Compile Include="Models\Model.cs" />
+    <Compile Include="Network\GameClient.cs" />
+    <Compile Include="Network\PacketReader.cs" />
+    <Compile Include="Network\PacketWriter.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="Utilities\XmlObj.cs" />
+    <Compile Include="Scripting\ScriptManager.cs" />
+    <Compile Include="Scripting\Timer.cs" />
+    <Compile Include="Types\ColorRGBA.cs" />
+    <Compile Include="Types\Vec2i.cs" />
+    <Compile Include="Types\Vec3f.cs" />
+    <Compile Include="WorldObjects\Collections\DynamicCollection.cs" />
+    <Compile Include="WorldObjects\Collections\ItemContainer.cs" />
+    <Compile Include="WorldObjects\Collections\StaticCollection.cs" />
+    <Compile Include="WorldObjects\Collections\VobTypeObjectCollection.cs" />
+    <Compile Include="WorldObjects\Instances\Mobs\MobBedInstance.cs" />
+    <Compile Include="WorldObjects\Mobs\MobBed.cs" />
+    <Compile Include="WorldObjects\BaseVob.cs" />
+    <Compile Include="WorldObjects\Instances\BaseVobInstance.cs" />
+    <Compile Include="WorldObjects\Instances\ItemInstance.cs" />
+    <Compile Include="WorldObjects\Instances\Mobs\MobContainerInstance.cs" />
+    <Compile Include="WorldObjects\Instances\Mobs\MobDoorInstance.cs" />
+    <Compile Include="WorldObjects\Instances\Mobs\MobFireInstance.cs" />
+    <Compile Include="WorldObjects\Instances\Mobs\MobInstance.cs" />
+    <Compile Include="WorldObjects\Instances\Mobs\MobInterInstance.cs" />
+    <Compile Include="WorldObjects\Instances\Mobs\MobLadderInstance.cs" />
+    <Compile Include="WorldObjects\Instances\Mobs\MobLockableInstance.cs" />
+    <Compile Include="WorldObjects\Instances\Mobs\MobSwitchInstance.cs" />
+    <Compile Include="WorldObjects\Instances\Mobs\MobWheelInstance.cs" />
+    <Compile Include="WorldObjects\Instances\NPCInstance.cs" />
+    <Compile Include="WorldObjects\Instances\VobInstance.cs" />
+    <Compile Include="WorldObjects\Item.cs" />
+    <Compile Include="WorldObjects\Mobs\Mob.cs" />
+    <Compile Include="WorldObjects\Mobs\MobContainer.cs" />
+    <Compile Include="WorldObjects\Mobs\MobDoor.cs" />
+    <Compile Include="WorldObjects\Mobs\MobFire.cs" />
+    <Compile Include="WorldObjects\Mobs\MobInter.cs" />
+    <Compile Include="WorldObjects\Mobs\MobLadder.cs" />
+    <Compile Include="WorldObjects\Mobs\MobLockable.cs" />
+    <Compile Include="WorldObjects\Mobs\MobSwitch.cs" />
+    <Compile Include="WorldObjects\Mobs\MobWheel.cs" />
+    <Compile Include="WorldObjects\NPC.cs" />
+    <Compile Include="WorldObjects\Vob.cs" />
+    <Compile Include="WorldObjects\World.cs" />
+    <Compile Include="GameObject.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

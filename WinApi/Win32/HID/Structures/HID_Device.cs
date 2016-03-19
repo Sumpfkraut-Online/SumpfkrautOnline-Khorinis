@@ -8,7 +8,7 @@ namespace WinApi.HID.Structures
     using Handle = IntPtr;
     using PHIDP_PREPARSED_DATA = IntPtr;
 
-    struct HID_Device
+    /*struct HID_Device
     {
         PCHAR DevicePath;
         Handle HidDevice;
@@ -19,7 +19,5 @@ namespace WinApi.HID.Structures
 
         PHIDP_PREPARSED_DATA Ppd;
         HidCaps Caps;
-
-
-    }
+    }*/
 }

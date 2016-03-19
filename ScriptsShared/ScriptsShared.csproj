@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B9C52BDA-4F73-4E5B-BFC7-A0EEA6A3F9A9}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GUC.Scripts</RootNamespace>
+    <AssemblyName>Scripts</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+    <Folder Include="Sumpfkraut\VobSystem_Showdown\Definitions\Mobs\" />
+    <Folder Include="Sumpfkraut\VobSystem_Showdown\Instances\Mobs\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="GUCScripts.cs" />
+    <Compile Include="Sumpfkraut\Networking\ScriptClient.cs" />
+    <Compile Include="Sumpfkraut\ScriptObject.cs" />
+    <Compile Include="Sumpfkraut\Utilities\DateTimeUtil.cs" />
+    <Compile Include="Sumpfkraut\Utilities\StringUtil.cs" />
+    <Compile Include="Sumpfkraut\Utilities\Threading\AbstractRunnable.cs" />
+    <Compile Include="Sumpfkraut\Utilities\Threading\IRunnable.cs" />
+    <Compile Include="Sumpfkraut\Utilities\Threading\Runnable.cs" />
+    <Compile Include="Sumpfkraut\Utilities\Threading\TestRunnable.cs" />
+    <Compile Include="Sumpfkraut\VobSystem_Showdown\Definitions\BaseVobDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem_Showdown\Definitions\ItemDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem_Showdown\Definitions\ModelDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem_Showdown\Definitions\NPCDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem_Showdown\Definitions\VobDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem_Showdown\Instances\BaseVobInst.cs" />
+    <Compile Include="Sumpfkraut\VobSystem_Showdown\Instances\ItemInst.cs" />
+    <Compile Include="Sumpfkraut\VobSystem_Showdown\Instances\NPCInst.cs" />
+    <Compile Include="Sumpfkraut\VobSystem_Showdown\Instances\VobInst.cs" />
+    <Compile Include="Sumpfkraut\WorldSystem\WorldDef.cs" />
+    <Compile Include="Sumpfkraut\WorldSystem\WorldInst.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GUCShared\GUCShared.csproj">
+      <Project>{a896eadc-459c-4f6d-8b16-86b0a0f0f6a8}</Project>
+      <Name>GUCShared</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

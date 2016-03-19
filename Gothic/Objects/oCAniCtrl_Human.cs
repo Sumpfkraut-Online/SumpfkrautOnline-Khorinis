@@ -39,7 +39,7 @@ namespace Gothic.Objects
             wmode_last = 0x154;
         }
 
-        new public abstract class FuncAddresses //: zCObject.FuncAddresses
+        public abstract class FuncAddresses //: zCObject.FuncAddresses
         {
             public const int GetWalkModeString = 0x006AAE40,
             _Forward = 0x006B7900,

@@ -1,0 +1,315 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C670CA0D-F27B-4745-9B76-B06882052E6B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GUC.Client</RootNamespace>
+    <AssemblyName>GUC</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\GothicII\System\Multiplayer\UntoldChapters\SumpfkrautOnline\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;D_CLIENT</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\GothicII\System\Multiplayer\UntoldChapters\SumpfkrautOnline\</OutputPath>
+    <DefineConstants>TRACE;D_CLIENT</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="RakNetSwig, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\GothicII\System\UntoldChapter\DLL\RakNetSwig.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.XML" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Network\Constants.cs">
+      <Link>Constants.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Enumeration\HumanVisuals.cs">
+      <Link>Enumeration\HumanVisuals.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Enumeration\ItemEnums.cs">
+      <Link>Enumeration\ItemEnums.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Enumeration\NetworkIDS.cs">
+      <Link>Enumeration\NetworkIDS.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Enumeration\NPCStates.cs">
+      <Link>Enumeration\NPCStates.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Enumeration\VobTypes.cs">
+      <Link>Enumeration\VobTypes.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\GameObject.cs">
+      <Link>GameObject.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Log\Logger.cs">
+      <Link>Log\Logger.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Models\Model.cs">
+      <Link>Models\Model.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Network\GameClient.cs">
+      <Link>Network\GameClient.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Network\PacketReader.cs">
+      <Link>Network\PacketReader.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Network\PacketWriter.cs">
+      <Link>Network\PacketWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Scripting\ScriptManager.cs">
+      <Link>Scripting\ScriptManager.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Scripting\Timer.cs">
+      <Link>Scripting\Timer.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Types\ColorRGBA.cs">
+      <Link>Types\ColorRGBA.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Types\Vec2i.cs">
+      <Link>Types\Vec2i.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Types\Vec3f.cs">
+      <Link>Types\Vec3f.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Utilities\XmlObj.cs">
+      <Link>Utilities\XmlObj.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\BaseVob.cs">
+      <Link>WorldObjects\BaseVob.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Collections\DynamicCollection.cs">
+      <Link>DynamicCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Collections\ItemContainer.cs">
+      <Link>WorldObjects\Collections\ItemContainer.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Collections\StaticCollection.cs">
+      <Link>WorldObjects\Collections\StaticCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Collections\VobTypeObjectCollection.cs">
+      <Link>WorldObjects\Collections\VobTypeObjectCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\BaseVobInstance.cs">
+      <Link>WorldObjects\Instances\BaseVobInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\ItemInstance.cs">
+      <Link>WorldObjects\Instances\ItemInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\Mobs\MobBedInstance.cs">
+      <Link>WorldObjects\Instances\Mobs\MobBedInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\Mobs\MobContainerInstance.cs">
+      <Link>WorldObjects\Instances\Mobs\MobContainerInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\Mobs\MobDoorInstance.cs">
+      <Link>WorldObjects\Instances\Mobs\MobDoorInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\Mobs\MobFireInstance.cs">
+      <Link>WorldObjects\Instances\Mobs\MobFireInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\Mobs\MobInstance.cs">
+      <Link>WorldObjects\Instances\Mobs\MobInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\Mobs\MobInterInstance.cs">
+      <Link>WorldObjects\Instances\Mobs\MobInterInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\Mobs\MobLadderInstance.cs">
+      <Link>WorldObjects\Instances\Mobs\MobLadderInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\Mobs\MobLockableInstance.cs">
+      <Link>WorldObjects\Instances\Mobs\MobLockableInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\Mobs\MobSwitchInstance.cs">
+      <Link>WorldObjects\Instances\Mobs\MobSwitchInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\Mobs\MobWheelInstance.cs">
+      <Link>WorldObjects\Instances\Mobs\MobWheelInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\NPCInstance.cs">
+      <Link>WorldObjects\Instances\NPCInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Instances\VobInstance.cs">
+      <Link>WorldObjects\Instances\VobInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Item.cs">
+      <Link>WorldObjects\Item.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Mobs\Mob.cs">
+      <Link>WorldObjects\Mobs\Mob.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Mobs\MobBed.cs">
+      <Link>WorldObjects\Mobs\MobBed.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Mobs\MobContainer.cs">
+      <Link>WorldObjects\Mobs\MobContainer.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Mobs\MobDoor.cs">
+      <Link>WorldObjects\Mobs\MobDoor.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Mobs\MobFire.cs">
+      <Link>WorldObjects\Mobs\MobFire.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Mobs\MobInter.cs">
+      <Link>WorldObjects\Mobs\MobInter.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Mobs\MobLadder.cs">
+      <Link>WorldObjects\Mobs\MobLadder.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Mobs\MobLockable.cs">
+      <Link>WorldObjects\Mobs\MobLockable.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Mobs\MobSwitch.cs">
+      <Link>WorldObjects\Mobs\MobSwitch.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Mobs\MobWheel.cs">
+      <Link>WorldObjects\Mobs\MobWheel.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\NPC.cs">
+      <Link>WorldObjects\NPC.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\Vob.cs">
+      <Link>WorldObjects\Vob.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\WorldObjects\World.cs">
+      <Link>WorldObjects\World.cs</Link>
+    </Compile>
+    <Compile Include="GUI\GUCInventory.cs" />
+    <Compile Include="GUI\GUCTextBox.cs" />
+    <Compile Include="GUI\GUCView.cs" />
+    <Compile Include="GUI\GUCVisual.cs" />
+    <Compile Include="GUI\GUCVisualText.cs" />
+    <Compile Include="GUI\GUCVisualVob.cs" />
+    <Compile Include="GUI\MenuRenderer.cs" />
+    <Compile Include="Hooks\hGame.cs" />
+    <Compile Include="Hooks\hParser.cs" />
+    <Compile Include="Hooks\hPlayerVob.cs" />
+    <Compile Include="Hooks\hWeather.cs" />
+    <Compile Include="Injection.cs" />
+    <Compile Include="InputHandler.cs" />
+    <Compile Include="Network\GameClient.Client.cs" />
+    <Compile Include="Network\Messages\ConnectionMessage.cs" />
+    <Compile Include="Network\Messages\NPCMessage.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Scripting\ScriptInterface.Client.cs" />
+    <Compile Include="SplashScreen.xaml.cs">
+      <DependentUpon>SplashScreen.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WorldObjects\BaseVob.Client.cs" />
+    <Compile Include="WorldObjects\Collections\StaticCollection.Client.cs" />
+    <Compile Include="WorldObjects\Instances\BaseVobInstance.Client.cs" />
+    <Compile Include="WorldObjects\Instances\ItemInstance.Client.cs" />
+    <Compile Include="WorldObjects\Instances\Mobs\MobBedInstance.Client.cs" />
+    <Compile Include="WorldObjects\Instances\Mobs\MobContainerInstance.Client.cs" />
+    <Compile Include="WorldObjects\Instances\Mobs\MobDoorInstance.Client.cs" />
+    <Compile Include="WorldObjects\Instances\Mobs\MobFireInstance.Client.cs" />
+    <Compile Include="WorldObjects\Instances\Mobs\MobInstance.Client.cs" />
+    <Compile Include="WorldObjects\Instances\Mobs\MobInterInstance.Client.cs" />
+    <Compile Include="WorldObjects\Instances\Mobs\MobLadderInstance.Client.cs" />
+    <Compile Include="WorldObjects\Instances\Mobs\MobLockableInstance.Client.cs" />
+    <Compile Include="WorldObjects\Instances\Mobs\MobSwitchInstance.Client.cs" />
+    <Compile Include="WorldObjects\Instances\Mobs\MobWheelInstance.Client.cs" />
+    <Compile Include="WorldObjects\Instances\NPCInstance.Client.cs" />
+    <Compile Include="WorldObjects\Instances\VobInstance.Client.cs" />
+    <Compile Include="WorldObjects\Item.Client.cs" />
+    <Compile Include="WorldObjects\Mobs\Mob.Client.cs" />
+    <Compile Include="WorldObjects\Mobs\MobBed.Client.cs" />
+    <Compile Include="WorldObjects\Mobs\MobContainer.Client.cs" />
+    <Compile Include="WorldObjects\Mobs\MobDoor.Client.cs" />
+    <Compile Include="WorldObjects\Mobs\MobFire.Client.cs" />
+    <Compile Include="WorldObjects\Mobs\MobInter.Client.cs" />
+    <Compile Include="WorldObjects\Mobs\MobLadder.Client.cs" />
+    <Compile Include="WorldObjects\Mobs\MobLockable.Client.cs" />
+    <Compile Include="WorldObjects\Mobs\MobSwitch.Client.cs" />
+    <Compile Include="WorldObjects\Mobs\MobWheel.Client.cs" />
+    <Compile Include="WorldObjects\NPC.Client.cs" />
+    <Compile Include="WorldObjects\Vob.Client.cs" />
+    <Compile Include="WorldObjects\World.Client.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Log\Logger.Client.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Classes.d" />
+    <EmbeddedResource Include="Resources\Constants.d" />
+    <EmbeddedResource Include="Resources\PC_Hero.d" />
+    <EmbeddedResource Include="Resources\NPC_Default.d" />
+    <EmbeddedResource Include="Resources\BodyStates.d" />
+    <EmbeddedResource Include="Resources\Focus.d" />
+    <EmbeddedResource Include="Resources\Species.d" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Gothic\Gothic.csproj">
+      <Project>{82655F73-CF7C-4416-9313-BD657AD8F05F}</Project>
+      <Name>Gothic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WinApi\WinApi.csproj">
+      <Project>{52793B3F-130C-4B05-8333-1529981DE780}</Project>
+      <Name>WinApi</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="SplashScreen.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\AI_Constants.d" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Splash.png" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
