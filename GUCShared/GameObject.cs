@@ -66,9 +66,8 @@ namespace GUC
             {
                 if (this.isCreated)
                     throw new Exception("The IsStatic-property can't be changed while the object is created/spawned.");
-
-                throw new NotImplementedException();
-                //this.isStatic = value;
+                
+                this.isStatic = value;
             }
         }
         bool isStatic = false;

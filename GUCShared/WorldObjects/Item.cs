@@ -34,6 +34,17 @@ namespace GUC.WorldObjects
 
         #region Properties
 
+        public override bool IsStatic
+        {
+            get { return base.IsStatic; }
+            set
+            {
+                if (this.Container != null)
+                    throw new Exception("IsStatic can't be changed when the item is in an inventory!");
+                base.IsStatic = value;
+            }
+        }
+
         new public ItemInstance Instance
         {
             get { return (ItemInstance)base.Instance; }

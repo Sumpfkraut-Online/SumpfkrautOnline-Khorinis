@@ -83,31 +83,31 @@
       <Link>Sumpfkraut\Utilities\Threading\TestRunnable.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem_Showdown\Definitions\BaseVobDef.cs">
-      <Link>Sumpfkraut\VobSystem\Definitions\BaseVobDef.cs</Link>
+      <Link>Sumpfkraut\VobSystem_Showdown\Definitions\BaseVobDef.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem_Showdown\Definitions\ItemDef.cs">
-      <Link>Sumpfkraut\VobSystem\Definitions\ItemDef.cs</Link>
+      <Link>Sumpfkraut\VobSystem_Showdown\Definitions\ItemDef.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem_Showdown\Definitions\ModelDef.cs">
-      <Link>Sumpfkraut\VobSystem\Definitions\ModelDef.cs</Link>
+      <Link>Sumpfkraut\VobSystem_Showdown\Definitions\ModelDef.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem_Showdown\Definitions\NPCDef.cs">
-      <Link>Sumpfkraut\VobSystem\Definitions\NPCDef.cs</Link>
+      <Link>Sumpfkraut\VobSystem_Showdown\Definitions\NPCDef.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem_Showdown\Definitions\VobDef.cs">
-      <Link>Sumpfkraut\VobSystem\Definitions\VobDef.cs</Link>
+      <Link>Sumpfkraut\VobSystem_Showdown\Definitions\VobDef.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem_Showdown\Instances\BaseVobInst.cs">
-      <Link>Sumpfkraut\VobSystem\Instances\BaseVobInst.cs</Link>
+      <Link>Sumpfkraut\VobSystem_Showdown\Instances\BaseVobInst.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem_Showdown\Instances\ItemInst.cs">
-      <Link>Sumpfkraut\VobSystem\Instances\ItemInst.cs</Link>
+      <Link>Sumpfkraut\VobSystem_Showdown\Instances\ItemInst.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem_Showdown\Instances\NPCInst.cs">
-      <Link>Sumpfkraut\VobSystem\Instances\NPCInst.cs</Link>
+      <Link>Sumpfkraut\VobSystem_Showdown\Instances\NPCInst.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem_Showdown\Instances\VobInst.cs">
-      <Link>Sumpfkraut\VobSystem\Instances\VobInst.cs</Link>
+      <Link>Sumpfkraut\VobSystem_Showdown\Instances\VobInst.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\WorldSystem\WorldDef.cs">
       <Link>Sumpfkraut\WorldSystem\WorldDef.cs</Link>
