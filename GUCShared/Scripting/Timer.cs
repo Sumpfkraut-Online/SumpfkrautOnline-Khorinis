@@ -6,180 +6,128 @@ using GUC.Log;
 
 namespace GUC.Scripting
 {
-    public abstract class AbstractTimer
+    public class GUCTimer
     {
-        static List<AbstractTimer> TimerList = new List<AbstractTimer>();
+        static DynamicCollection<GUCTimer> timerList = new DynamicCollection<GUCTimer>();
 
-        internal static void Update()
+        internal static void Update(long now)
         {
-            long now = DateTime.UtcNow.Ticks;
-
-            AbstractTimer timer;
-            for (int i = TimerList.Count - 1; i >= 0; i--)
+            timerList.ForEach(timer =>
             {
-                timer = TimerList[i];
                 if (timer.nextCallTime <= now)
                 {
-                    timer.Fire(now);
+                    timer.callback();
+                    if (timer.started) // still running?
+                    {
+                        timer.SetNextCallTime(now);
+                    }
                 }
-            }
+            });
         }
 
-        bool started;
-        long nextCallTime;
-        long interval;
+        #region Properties
 
+        int id;
+
+        long interval;
         /// <summary>
         /// The interval in ticks in which the callback should be called. Setting this while the timer is running restarts it with the new value.
         /// </summary>
-        public long Interval
-        {
-            get { return interval; }
-            set
-            {
-                interval = value;
-                SetNextCallTime(DateTime.UtcNow.Ticks);
-            }
-        }
+        public long Interval { get { return interval; } }
 
+        long nextCallTime;
         /// <summary>
-        /// DateTime.UtcNow.Ticks + Interval
+        /// DateTime.UtcNow.Ticks + Interval from start/last fire
         /// </summary>
         public long NextCallTime { get { return nextCallTime; } }
 
+        bool started = false;
         /// <summary>
         /// Returns whether the timer is running.
         /// </summary>
         public bool Started { get { return started; } }
+        
+        Action callback;
 
-        public AbstractTimer(long interval)
+        #endregion
+
+        #region Set Methods
+
+        public void SetInterval(long interval)
         {
-            this.started = false;
+            if (interval < 0)
+                throw new ArgumentOutOfRangeException("Interval is < 0!");
+
             this.interval = interval;
         }
+
+        public void SetCallback(Action callback)
+        {
+            if (callback == null)
+                throw new ArgumentNullException("Callback is null!");
+
+            this.callback = callback;
+        }
+
+        void SetNextCallTime(long now)
+        {
+            nextCallTime = now + interval;
+        }
+
+        #endregion
+
+        #region Constructors
+
+        public GUCTimer()
+        {
+        }
+
+        public GUCTimer(long interval, Action callback)
+        {
+            SetInterval(interval);
+            SetCallback(callback);
+        }
+
+        public GUCTimer(long interval)
+        {
+            SetInterval(interval);
+        }
+
+        public GUCTimer(Action callback)
+        {
+            SetCallback(callback);
+        }
+
+        #endregion
+
+        #region Start & Stop
 
         public void Start()
         {
             if (!started)
             {
+                if (this.callback == null)
+                    throw new NullReferenceException("Callback is null!");
+
                 started = true;
-                TimerList.Add(this);
+                timerList.Add(this, ref this.id);
                 SetNextCallTime(DateTime.UtcNow.Ticks);
             }
         }
 
-        public void Stop()
+        public void Stop(bool fire = false)
         {
             if (started)
             {
                 started = false;
-                TimerList.Remove(this);
+                timerList.Remove(ref this.id);
+                if (fire)
+                {
+                    callback();
+                }
             }
         }
 
-        protected abstract void Fire(long now);
-
-        protected void SetNextCallTime(long now)
-        {
-            nextCallTime = now + interval;
-        }
-    }
-
-    public class GUCTimer : AbstractTimer
-    {
-        Action callback;
-
-        public GUCTimer(long interval, Action callback) : base(interval)
-        {
-            if (callback == null)
-            {
-                throw new ArgumentNullException("Timer callback is null!");
-            }
-
-            this.callback = callback;
-        }
-
-        protected override void Fire(long now)
-        {
-            callback();
-            SetNextCallTime(now);
-        }
-    }
-
-    public class GUCTimer<T> : AbstractTimer
-    {
-        Action<T> callback;
-        T arg1;
-
-        public GUCTimer(long interval, Action<T> callback, T arg1) : base(interval)
-        {
-            if (callback == null)
-            {
-                throw new ArgumentNullException("Timer callback is null!");
-            }
-
-            this.callback = callback;
-            this.arg1 = arg1;
-        }
-
-        protected override void Fire(long now)
-        {
-            callback(arg1);
-            SetNextCallTime(now);
-        }
-    }
-
-    public class GUCTimer<T1,T2> : AbstractTimer
-    {
-        Action<T1,T2> callback;
-        T1 arg1;
-        T2 arg2;
-
-        public GUCTimer(long interval, Action<T1,T2> callback, T1 arg1, T2 arg2)
-            : base(interval)
-        {
-            if (callback == null)
-            {
-                throw new ArgumentNullException("Timer callback is null!");
-            }
-
-            this.callback = callback;
-            this.arg1 = arg1;
-            this.arg2 = arg2;
-        }
-
-        protected override void Fire(long now)
-        {
-            callback(arg1, arg2);
-            SetNextCallTime(now);
-        }
-    }
-
-    public class GUCTimer<T1, T2, T3> : AbstractTimer
-    {
-        Action<T1, T2, T3> callback;
-        T1 arg1;
-        T2 arg2;
-        T3 arg3;
-
-        public GUCTimer(long interval, Action<T1, T2, T3> callback, T1 arg1, T2 arg2, T3 arg3)
-            : base(interval)
-        {
-            if (callback == null)
-            {
-                throw new ArgumentNullException("Timer callback is null!");
-            }
-
-            this.callback = callback;
-            this.arg1 = arg1;
-            this.arg2 = arg2;
-            this.arg3 = arg3;
-        }
-
-        protected override void Fire(long now)
-        {
-            callback(arg1, arg2, arg3);
-            SetNextCallTime(now);
-        }
+        #endregion
     }
 }

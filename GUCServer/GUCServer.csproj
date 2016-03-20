@@ -74,6 +74,9 @@
     <Compile Include="..\GUCShared\Animations\Animation.cs">
       <Link>Animations\Animation.cs</Link>
     </Compile>
+    <Compile Include="..\GUCShared\Animations\Overlay.cs">
+      <Link>Animations\Overlay.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\Constants.cs">
       <Link>Constants.cs</Link>
     </Compile>
@@ -227,6 +230,7 @@
     <Compile Include="..\GUCShared\WorldObjects\World.cs">
       <Link>WorldObjects\World.cs</Link>
     </Compile>
+    <Compile Include="Animations\Overlay.Server.cs" />
     <Compile Include="GameObject.Server.cs" />
     <Compile Include="Log\Logger.Server.cs" />
     <Compile Include="Animations\AniJob.Server.cs" />

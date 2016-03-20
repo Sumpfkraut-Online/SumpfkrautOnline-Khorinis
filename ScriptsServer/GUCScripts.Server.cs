@@ -41,10 +41,16 @@ namespace GUC.Scripts
             itemDef.Create();
 
             m = new ModelDef("human", "humans.mds");
-            ScriptAniJob aniJob = new ScriptAniJob("FistAttack");
+
+            ScriptOverlay overlay = new ScriptOverlay("Humans_1hST1");
+            m.AddOverlay(overlay);
+            
+            ScriptAniJob aniJob = new ScriptAniJob("FistAttack", new ScriptAni(560));
             aniJob.AniName = "s_FistAttack";
-            aniJob.DefaultAni = new ScriptAni(560);
             m.AddAniJob(aniJob);
+
+            aniJob.AddOverlayAni(new ScriptAni(300), overlay);
+
             m.Create();
 
             NPCDef npcDef = new NPCDef("player");

@@ -8,30 +8,33 @@ using RakNet;
 using GUC.Scripting;
 using System.Security.Cryptography;
 using System.Management;
+using GUC.Models;
 
 namespace GUC.Client.Network.Messages
 {
     static class ConnectionMessage
     {
-        public static void Read(PacketReader strm)
+        public static void Read(PacketReader stream)
         {
-            if (strm.ReadBit())
+            if (stream.ReadBit())
             {
-                int modelCount = strm.ReadUShort();
+                int modelCount = stream.ReadUShort();
                 for (int i = 0; i < modelCount; i++)
                 {
-                    ScriptManager.Interface.OnCreateModelMsg(strm);
+                    Model model = ScriptManager.Interface.CreateModel();
+                    model.ReadStream(stream);
+                    model.ScriptObject.Create();
                 }
             }
 
-            if (strm.ReadBit())
+            if (stream.ReadBit())
             {
                 for (int i = 0; i < (int)VobTypes.Maximum; i++)
                 {
-                    int num = strm.ReadUShort();
+                    int num = stream.ReadUShort();
                     for (int n = 0; n < num; n++)
                     {
-                        ScriptManager.Interface.OnCreateInstanceMsg((VobTypes)i, strm);
+                        ScriptManager.Interface.OnCreateInstanceMsg((VobTypes)i, stream);
                     }
                 }
             }

@@ -38,7 +38,7 @@ namespace GUC.Server
                 {
                     watch.Restart();
 
-                    GUCTimer.Update(); // move to new thread?
+                    GUCTimer.Update(DateTime.UtcNow.Ticks); // move to new thread?
                     GameServer.Update(); //process received packets
 
                     if (nextInfoUpdates < DateTime.UtcNow.Ticks)

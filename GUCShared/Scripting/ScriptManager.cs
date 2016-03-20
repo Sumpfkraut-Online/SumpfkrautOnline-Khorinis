@@ -7,6 +7,7 @@ using System.IO;
 using GUC.Network;
 using GUC.WorldObjects;
 using GUC.Animations;
+using GUC.Models;
 
 namespace GUC.Scripting
 {
@@ -14,8 +15,10 @@ namespace GUC.Scripting
     {
         bool OnClientConnection(GameClient client);
         Item CreateInvItem(PacketReader stream);
-        AniJob CreateAniJob(PacketReader stream);
-        Animation CreateAnimation(PacketReader stream);
+        Overlay CreateOverlay();
+        AniJob CreateAniJob();
+        Animation CreateAnimation();
+        Model CreateModel();
     }
 
     static class ScriptManager

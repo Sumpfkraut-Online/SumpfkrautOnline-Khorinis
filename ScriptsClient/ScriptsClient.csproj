@@ -62,6 +62,9 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\Visuals\ScriptAniJob.cs">
       <Link>Sumpfkraut\Visuals\ScriptAniJob.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Visuals\ScriptOverlay.cs">
+      <Link>Sumpfkraut\Visuals\ScriptOverlay.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem_Showdown\Definitions\BaseVobDef.cs">
       <Link>Sumpfkraut\VobSystem_Showdown\Definitions\BaseVobDef.cs</Link>
     </Compile>

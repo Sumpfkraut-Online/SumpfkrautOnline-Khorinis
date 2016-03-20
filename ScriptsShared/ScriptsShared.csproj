@@ -55,6 +55,7 @@
     <Compile Include="Sumpfkraut\Utilities\Threading\Runnable.cs" />
     <Compile Include="Sumpfkraut\Utilities\Threading\TestRunnable.cs" />
     <Compile Include="Sumpfkraut\Visuals\ScriptAniJob.cs" />
+    <Compile Include="Sumpfkraut\Visuals\ScriptOverlay.cs" />
     <Compile Include="Sumpfkraut\VobSystem_Showdown\Definitions\BaseVobDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem_Showdown\Definitions\ItemDef.cs" />
     <Compile Include="Sumpfkraut\Visuals\ModelDef.cs" />

@@ -15,6 +15,14 @@ namespace GUC.Models
 
         public interface IScriptModel : IScriptGameObject
         {
+            void Create();
+            void Delete();
+
+            void AddOverlay(Overlay overlay);
+            void RemoveOverlay(Overlay overlay);
+
+            void AddAniJob(AniJob aniJob);
+            void RemoveAniJob(AniJob aniJob);
         }
 
         new public IScriptModel ScriptObject
@@ -144,10 +152,24 @@ namespace GUC.Models
 
             this.Visual = stream.ReadString();
 
-            int count = stream.ReadUShort();
+            // overlays
+            int count = stream.ReadByte();
             for (int i = 0; i < count; i++)
             {
-                this.AddAniJob(ScriptManager.Interface.CreateAniJob(stream));
+                var ov = ScriptManager.Interface.CreateOverlay();
+                ov.ReadStream(stream);
+                this.ScriptObject.AddOverlay(ov);
+            }
+
+            // anijobs
+            count = stream.ReadUShort();
+            for (int i = 0; i < count; i++)
+            {
+                var job = ScriptManager.Interface.CreateAniJob();
+                job.SetModel(this); // meh
+                job.ReadStream(stream);
+                job.SetModel(null);
+                this.ScriptObject.AddAniJob(job);
             }
         }
 
@@ -157,6 +179,11 @@ namespace GUC.Models
 
             stream.Write(this.Visual);
 
+            // overlays
+            stream.Write((byte)this.overlays.Count);
+            dynOvs.ForEach(ov => ov.WriteStream(stream));
+
+            // anijobs
             stream.Write((ushort)this.dynJobs.Count);
             dynJobs.ForEach(job => job.WriteStream(stream));
         }
@@ -164,6 +191,11 @@ namespace GUC.Models
         #endregion
 
         #region Animations
+
+        /// <summary>
+        /// The upper excluded limit for animations of a model. (ushort.MaxValue + 1)
+        /// </summary>
+        public const int MaxAnimations = 65536;
 
         StaticCollection<AniJob> aniIDs = new StaticCollection<AniJob>();
         DynamicCollection<AniJob> aniJobs = new DynamicCollection<AniJob>();
@@ -180,7 +212,7 @@ namespace GUC.Models
             if (job.IsCreated)
                 throw new ArgumentException("AniJob is already added to another Model!");
 
-            if (job.BaseAni == null)
+            if (job.DefaultAni == null)
                 throw new ArgumentException("BaseInfo of AniJob is null!");
 
             aniIDs.Add(job);
@@ -216,11 +248,19 @@ namespace GUC.Models
 
         public bool ContainsAni(int id)
         {
+            if (id < 0 || id >= MaxAnimations)
+            {
+                throw new ArgumentOutOfRangeException("ID is out of range! 0.." + MaxAnimations);
+            }
             return aniIDs.ContainsID(id);
         }
 
         public bool TryGetAni(int id, out AniJob job)
         {
+            if (id < 0 || id >= MaxAnimations)
+            {
+                throw new ArgumentOutOfRangeException("ID is out of range! 0.." + MaxAnimations);
+            }
             return aniIDs.TryGet(id, out job);
         }
 
@@ -251,6 +291,109 @@ namespace GUC.Models
         }
 
         public int GetDynamicAniCount() { return dynJobs.Count; }
+
+        #endregion
+
+        #endregion
+
+        #region Overlays
+
+        /// <summary>
+        /// The upper excluded limit for overlays of a model. (byte.MaxValue + 1)
+        /// </summary>
+        public const int MaxOverlays = 256;
+
+        StaticCollection<Overlay> ovIDs = new StaticCollection<Overlay>(MaxOverlays);
+        DynamicCollection<Overlay> overlays = new DynamicCollection<Overlay>(MaxOverlays);
+        DynamicCollection<Overlay> dynOvs = new DynamicCollection<Overlay>(MaxOverlays);
+
+        #region Add & Remove
+
+        partial void pAddOverlay(Overlay overlay);
+        public void AddOverlay(Overlay overlay)
+        {
+            if (overlay == null)
+                throw new ArgumentNullException("Overlay is null!");
+
+            if (overlay.IsCreated)
+                throw new ArgumentException("Overlay is already added to another Model!");
+
+            ovIDs.Add(overlay);
+            overlays.Add(overlay, ref overlay.collID);
+            dynOvs.Add(overlay, ref overlay.dynID);
+
+            pAddOverlay(overlay);
+
+            overlay.SetModel(this);
+        }
+
+        partial void pRemoveOverlay(Overlay overlay);
+        public void RemoveOverlay(Overlay overlay)
+        {
+            if (overlay == null)
+                throw new ArgumentNullException("Overlay is null!");
+
+            if (overlay.Model != this)
+                throw new Exception("Overlay is not from this Model!");
+
+            ovIDs.Remove(overlay);
+            overlays.Remove(ref overlay.collID);
+            dynOvs.Remove(ref overlay.dynID);
+
+            pRemoveOverlay(overlay);
+
+            overlay.SetModel(null);
+        }
+
+        #endregion
+
+        #region Access
+
+        public bool ContainsOverlay(int id)
+        {
+            if (id < 0 || id >= MaxOverlays)
+            {
+                throw new ArgumentOutOfRangeException("ID is out of range! 0.." + MaxOverlays);
+            }
+            return aniIDs.ContainsID(id);
+        }
+
+        public bool TryGetOverlay(int id, out Overlay overlay)
+        {
+            if (id < 0 || id >= MaxOverlays)
+            {
+                throw new ArgumentOutOfRangeException("ID is out of range! 0.." + MaxOverlays);
+            }
+            return ovIDs.TryGet(id, out overlay);
+        }
+
+
+
+        public void ForEachOverlay(Action<Overlay> action)
+        {
+            overlays.ForEach(action);
+        }
+
+        public void ForEachOverlay(Predicate<Overlay> predicate)
+        {
+            overlays.ForEach(predicate);
+        }
+
+        public int GetOverlayCount() { return overlays.Count; }
+
+
+
+        public void ForEachDynamicOverlay(Action<Overlay> action)
+        {
+            dynOvs.ForEach(action);
+        }
+
+        public void ForEachDynamicOverlay(Predicate<Overlay> predicate)
+        {
+            dynOvs.ForEach(predicate);
+        }
+
+        public int GetDynamicOverlayCount() { return dynOvs.Count; }
 
         #endregion
 

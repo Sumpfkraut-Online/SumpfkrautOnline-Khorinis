@@ -6,6 +6,7 @@ using GUC.Enumeration;
 using GUC.WorldObjects;
 using GUC.Network;
 using RakNet;
+using GUC.Animations;
 
 namespace GUC.Client.Network.Messages
 {
@@ -35,7 +36,7 @@ namespace GUC.Client.Network.Messages
                     npc.ScriptObject.OnCmdMove(state);
             }
         }
-        
+
         #endregion
 
         #region Jumping
@@ -63,6 +64,56 @@ namespace GUC.Client.Network.Messages
                     npc.ScriptObject.OnCmdJump();
             }
         }*/
+
+        #endregion
+
+        #region Animations
+
+        public static void ReadApplyOverlay(PacketReader stream)
+        {
+            int id = stream.ReadUShort();
+
+            NPC npc;
+            if (World.Current.TryGetVob(id, out npc))
+            {
+                Overlay ov;
+                if (npc.Model.TryGetOverlay(stream.ReadByte(), out ov))
+                {
+                    npc.ScriptObject.OnCmdApplyOverlay(ov);
+                }
+                else
+                {
+                    throw new Exception("Overlay not found!");
+                }
+            }
+            else
+            {
+                throw new Exception("NPC not found!");
+            }
+        }
+
+        public static void ReadRemoveOverlay(PacketReader stream)
+        {
+            int id = stream.ReadUShort();
+
+            NPC npc;
+            if (World.Current.TryGetVob(id, out npc))
+            {
+                Overlay ov;
+                if (npc.Model.TryGetOverlay(stream.ReadByte(), out ov))
+                {
+                    npc.ScriptObject.OnCmdRemoveOverlay(ov);
+                }
+                else
+                {
+                    throw new Exception("Overlay not found!");
+                }
+            }
+            else
+            {
+                throw new Exception("NPC not found!");
+            }
+        }
 
         #endregion
 
@@ -227,7 +278,7 @@ namespace GUC.Client.Network.Messages
 
             npc.UndrawItem(altRemove, fast);
         }*/
-        
+
         /*
         #region Animation
 

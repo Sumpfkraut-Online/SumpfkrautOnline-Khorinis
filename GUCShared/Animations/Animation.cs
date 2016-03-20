@@ -37,21 +37,6 @@ namespace GUC.Animations
             }
         }
 
-        int overlay = 0;
-        /// <summary>
-        /// The overlay number of this animation. (byte)
-        /// </summary>
-        public int Overlay
-        {
-            get { return this.overlay; }
-            set
-            {
-                if (overlay < 0 || overlay > byte.MaxValue)
-                    throw new ArgumentOutOfRangeException("Overlay is out of range! 0.." + byte.MaxValue);
-                this.overlay = value;
-            }
-        }
-
         int startPercent = 0;
         /// <summary>
         /// From which percentage the gothic animation should start. 255 = 100% (byte)
@@ -68,6 +53,26 @@ namespace GUC.Animations
             }
         }
 
+        Overlay overlay;
+        /// <summary>
+        /// The overlay of this animation.
+        /// </summary>
+        public Overlay Overlay { get { return this.overlay; } }
+
+        AniJob aniJob;
+        /// <summary>
+        /// The associated AniJob of this animation.
+        /// </summary>
+        public AniJob AniJob { get { return this.aniJob; } }
+
+        public bool IsCreated { get { return this.aniJob != null; } }
+
+        internal void SetAniJob(AniJob job, Overlay overlay)
+        {
+            this.aniJob = job;
+            this.overlay = overlay;
+        }
+
         #endregion
 
         #region Read & Write
@@ -75,14 +80,12 @@ namespace GUC.Animations
         void WriteProperties(PacketWriter stream)
         {
             stream.Write(duration);
-            stream.Write((byte)overlay);
             stream.Write((byte)startPercent);
         }
 
         void ReadProperties(PacketReader stream)
         {
             this.duration = stream.ReadInt();
-            this.overlay = stream.ReadByte();
             this.startPercent = stream.ReadByte();
         }
 

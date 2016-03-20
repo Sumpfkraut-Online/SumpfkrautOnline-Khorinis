@@ -209,13 +209,14 @@ namespace GUC.Network
                     break;
 
                 case NetworkIDs.ModelCreateMessage:
-                    ScriptManager.Interface.OnCreateModelMsg(stream);
+                    Model model = ScriptManager.Interface.CreateModel();
+                    model.ReadStream(stream);
+                    model.ScriptObject.Create();
                     break;
                 case NetworkIDs.ModelDeleteMessage:
-                    Model model;
                     if (Model.TryGet(stream.ReadUShort(), out model))
                     {
-                        ScriptManager.Interface.OnDeleteModelMsg(model);
+                        model.ScriptObject.Delete();
                     }
                     break;
 
@@ -286,6 +287,13 @@ namespace GUC.Network
 
                 case NetworkIDs.NPCEquipMessage:
 
+                    break;
+
+                case NetworkIDs.NPCApplyOverlayMessage:
+                    NPCMessage.ReadApplyOverlay(stream);
+                    break;
+                case NetworkIDs.NPCRemoveOverlayMessage:
+                    NPCMessage.ReadRemoveOverlay(stream);
                     break;
 
                 default:

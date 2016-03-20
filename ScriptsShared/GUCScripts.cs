@@ -9,25 +9,37 @@ using GUC.Scripting;
 using GUC.Scripts.Sumpfkraut.Networking;
 using GUC.WorldObjects;
 using GUC.Scripts.Sumpfkraut.Visuals;
+using GUC.Models;
 
 namespace GUC.Scripts
 {
     public partial class GUCScripts : ScriptInterface
     {
-        public AniJob CreateAniJob(PacketReader stream)
+        public AniJob CreateAniJob()
         {
-            return new ScriptAniJob(stream).BaseAniJob;
+            return new ScriptAniJob().BaseAniJob;
         }
 
-        public Animation CreateAnimation(PacketReader stream)
+        public Animation CreateAnimation()
         {
-            return new ScriptAni(stream).BaseAni;
+            return new ScriptAni().BaseAni;
+        }
+
+        public Overlay CreateOverlay()
+        {
+            return new ScriptOverlay().BaseOverlay;
+        }
+
+        public Model CreateModel()
+        {
+            return new ModelDef().BaseDef;
         }
 
         public Item CreateInvItem(PacketReader stream)
         {
             return Sumpfkraut.VobSystem.Instances.ItemInst.ReadFromInvMsg(stream).BaseInst;
         }
+
 
         public bool OnClientConnection(GameClient client)
         {

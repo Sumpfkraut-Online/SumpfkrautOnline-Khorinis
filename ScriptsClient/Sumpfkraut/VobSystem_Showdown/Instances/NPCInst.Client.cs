@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Enumeration;
-
+using GUC.Scripts.Sumpfkraut.Visuals;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
@@ -17,6 +17,16 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         partial void pOnCmdJump()
         {
             this.Jump();
+        }
+
+        partial void pOnCmdApplyOverlay(ScriptOverlay overlay)
+        {
+            this.ApplyOverlay(overlay);
+        }
+
+        partial void pOnCmdRemoveOverlay(ScriptOverlay overlay)
+        {
+            this.RemoveOverlay(overlay);
         }
     }
 }

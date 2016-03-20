@@ -18,22 +18,18 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         /// <summary> Duration of the animation in ms. (int) </summary>
         public int Duration { get { return this.baseAni.Duration; } set { this.baseAni.Duration = value; } }
 
-        /// <summary> The overlay number of this animation. (byte) </summary>
-        public int Overlay { get { return this.baseAni.Overlay; } set { this.baseAni.Overlay = value; } }
-
         /// <summary> From which percentage the gothic animation should start. 255 = 100% (byte) </summary>
         public int StartPercent { get { return this.baseAni.StartPercent; } set { this.baseAni.StartPercent = value; } }
+
+        /// <summary> The overlay number of this animation. </summary>
+        public ScriptOverlay Overlay { get { return (ScriptOverlay)this.baseAni.Overlay.ScriptObject; } }
+        public ScriptAniJob AniJob { get { return (ScriptAniJob)this.baseAni.AniJob.ScriptObject; } }
 
         #endregion
 
         #region Constructors
 
-        public ScriptAni(PacketReader stream) : this()
-        {
-            this.baseAni.ReadStream(stream);
-        }
-
-        private ScriptAni()
+        public ScriptAni()
         {
             this.baseAni = new Animation();
             this.baseAni.ScriptObject = this;

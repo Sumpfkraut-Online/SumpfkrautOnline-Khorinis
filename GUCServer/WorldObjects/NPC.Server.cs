@@ -10,6 +10,7 @@ using GUC.WorldObjects.Mobs;
 using GUC.Types;
 using GUC.Server.Network.Messages;
 using GUC.Server.WorldObjects.Cells;
+using GUC.Animations;
 
 namespace GUC.WorldObjects
 {
@@ -244,6 +245,22 @@ namespace GUC.WorldObjects
             NPCMessage.WriteUnequipMessage(this, item.slot);
             if (this.IsPlayer)
                 InventoryMessage.WriteUnequipMessage(this, item.slot);
+        }
+
+        #endregion
+
+        #region Animations
+
+        partial void pAddOverlay(Overlay overlay)
+        {
+            if (this.isCreated)
+                NPCMessage.WriteApplyOverlayMessage(this, overlay);
+        }
+
+        partial void pRemoveOverlay(Overlay overlay)
+        {
+            if (this.isCreated)
+                NPCMessage.WriteRemoveOverlayMessage(this, overlay);
         }
 
         #endregion

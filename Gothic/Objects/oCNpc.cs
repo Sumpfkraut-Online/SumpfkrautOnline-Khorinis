@@ -429,6 +429,33 @@ namespace Gothic.Objects
             Process.THISCALL<NullReturnCall>(Address, 0x734BC0, npc);
         }
 
+        public void ApplyOverlay(string str)
+        {
+            using (zString z = zString.Create(str))
+                ApplyOverlay(z);
+        }
+
+        public void ApplyOverlay(zString str)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.ApplyOverlay, str);
+        }
+
+        public void ApplyTimedOverlayMds(zString str, float val)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.ApplyTimedOverlayMds, str, new FloatArg(val));
+        }
+
+        public void RemoveOverlay(string str)
+        {
+            using (zString z = zString.Create(str))
+                RemoveOverlay(z);
+        }
+
+        public void RemoveOverlay(zString str)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.RemoveOverlay, str);
+        }
+
         /*
         public static oCNpc StealNPC(Process process)
         {
@@ -1221,21 +1248,6 @@ namespace Gothic.Objects
         public oCMag_Book GetSpellBook()
         {
             return Process.THISCALL<oCMag_Book>(Address, FuncAddresses.GetSpellBook);
-        }
-
-        public void ApplyOverlay(zString str)
-        {
-            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.ApplyOverlay, new CallValue[] { str });
-        }
-
-        public void ApplyTimedOverlayMds(zString str, float val)
-        {
-            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.ApplyTimedOverlayMds, new CallValue[] { str, new FloatArg(val) });
-        }
-
-        public void RemoveOverlay(zString str)
-        {
-            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.RemoveOverlay, new CallValue[] { str });
         }
 
         public void OpenInventory(int inv)

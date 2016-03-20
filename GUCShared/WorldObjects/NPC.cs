@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Enumeration;
-using GUC.Types;
 using GUC.WorldObjects.Instances;
 using GUC.WorldObjects.Mobs;
 using GUC.Network;
 using GUC.WorldObjects.Collections;
+using GUC.Animations;
+using GUC.Scripting;
 
 namespace GUC.WorldObjects
 {
@@ -21,9 +22,12 @@ namespace GUC.WorldObjects
         {
             void OnWriteTakeControl(PacketWriter stream);
             void OnReadTakeControl(PacketReader stream);
-            
+
             void OnCmdMove(NPCStates state);
             void OnCmdJump();
+
+            void OnCmdApplyOverlay(Overlay overlay);
+            void OnCmdRemoveOverlay(Overlay overlay);
         }
 
         new public IScriptNPC ScriptObject
@@ -37,6 +41,7 @@ namespace GUC.WorldObjects
         public NPC()
         {
             this.inventory = new ItemContainer(this);
+            this.aniTimer = new GUCTimer(this.EndAni);
         }
 
         #region Properties
@@ -77,8 +82,6 @@ namespace GUC.WorldObjects
             pFallDown();
         }
 
-        internal NPCStates NextState = NPCStates.Stand;
-
         NPCStates state = NPCStates.Stand;
         public NPCStates State { get { return this.state; } }
 
@@ -111,7 +114,7 @@ namespace GUC.WorldObjects
 
         bool isInAttackMode = false;
         public bool IsInAttackMode { get { return this.isInAttackMode; } }
-        
+
         /// <param name="item">null == fists</param>
         public void DrawItem(Item item)
         {
@@ -152,7 +155,7 @@ namespace GUC.WorldObjects
                 throw new ArgumentException("Item is not in this container!");
 
             if (slot < 0 || slot >= MAX_EQUIPPEDITEMS)
-                throw new ArgumentOutOfRangeException("Slotnum is out of range! 0.." + (MAX_EQUIPPEDITEMS-1));
+                throw new ArgumentOutOfRangeException("Slotnum is out of range! 0.." + (MAX_EQUIPPEDITEMS - 1));
 
             if (equippedSlots.ContainsKey(slot))
                 throw new ArgumentException("Slot is already equipped!");
@@ -219,7 +222,7 @@ namespace GUC.WorldObjects
             if (predicate == null)
                 throw new ArgumentNullException("Predicate is null!");
 
-            foreach(Item item in equippedSlots.Values)
+            foreach (Item item in equippedSlots.Values)
             {
                 if (!predicate(item))
                     break;
@@ -267,6 +270,21 @@ namespace GUC.WorldObjects
             stream.Write((ushort)hpmax);
             stream.Write((ushort)hp);
 
+            // applied overlays
+
+            if (this.overlays == null)
+            {
+                stream.Write((byte)0);
+            }
+            else
+            {
+                stream.Write((byte)overlays.Count);
+                for (int i = 0; i < overlays.Count; i++)
+                {
+                    stream.Write((byte)overlays[i].ID);
+                }
+            }
+
             /*stream.Write((byte)equippedSlots.Count);
             foreach (KeyValuePair<byte, Item> slot in equippedSlots)
             {
@@ -293,6 +311,164 @@ namespace GUC.WorldObjects
 
             this.hpmax = stream.ReadUShort();
             this.hp = stream.ReadUShort();
+
+            int count = stream.ReadByte();
+            for (int i = 0; i < count; i++)
+            {
+                Overlay ov;
+                int id = stream.ReadByte();
+                if (this.Model.TryGetOverlay(id, out ov))
+                {
+                    this.ScriptObject.OnCmdApplyOverlay(ov);
+                }
+                else
+                {
+                    throw new Exception("Overlay not found: " + id);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Animations
+
+        #region Overlays
+        List<Overlay> overlays = null;
+
+        /// <summary>
+        /// Checks whether the overlay with the given number is applied.
+        /// </summary>
+        /// <param name="num">0-255</param>
+        public bool IsOverlayApplied(Overlay overlay)
+        {
+            if (overlay == null)
+                throw new ArgumentNullException("Overlay is null!");
+
+            if (overlays != null)
+                return overlays.Contains(overlay);
+            return false;
+        }
+
+        partial void pAddOverlay(Overlay overlay);
+        /// <summary>
+        /// Applies an overlay.
+        /// </summary>
+        /// <param name="num">0-255</param>
+        public void ApplyOverlay(Overlay overlay)
+        {
+            if (overlay == null)
+                throw new ArgumentNullException("Overlay is null!");
+
+            if (overlays != null)
+            {
+                if (overlays.Contains(overlay))
+                    return;
+                //overlays.Remove(overlay); // so it's on top
+                overlays.Add(overlay);
+            }
+            else
+            {
+                overlays = new List<Overlay>(1);
+                overlays.Add(overlay);
+            }
+            pAddOverlay(overlay);
+        }
+
+        partial void pRemoveOverlay(Overlay overlay);
+        /// <summary>
+        /// Removes an overlay.
+        /// </summary>
+        /// <param name="num">0-255</param>
+        public void RemoveOverlay(Overlay overlay)
+        {
+            if (overlay == null)
+                throw new ArgumentNullException("Overlay is null!");
+
+            if (overlays == null || !overlays.Remove(overlay))
+                return;
+
+            pRemoveOverlay(overlay);
+        }
+
+        #endregion
+
+        NPCStates nextState;
+
+        GUCTimer aniTimer;
+        Action onStop;
+
+        Animation currentAni = null;
+        public Animation CurrentAni { get { return this.currentAni; } }
+        public bool IsInAni { get { return this.state == NPCStates.Animation || this.state == NPCStates.AttackAnimation; } }
+        public bool IsInAttackAni { get { return this.state == NPCStates.AttackAnimation; } }
+
+        public Animation GetAniFromJob(AniJob job)
+        {
+            if (job == null)
+                throw new ArgumentNullException("AniJob is null!");
+
+            if (job.Model != this.Model)
+                throw new ArgumentException("AniJob is not for this NPC's Model!");
+
+            if (overlays != null)
+                for (int i = overlays.Count - 1; i >= 0; i--)
+                {
+                    Animation ani;
+                    if (job.TryGetOverlayAni(overlays[i], out ani))
+                        return ani;
+
+                }
+            return job.DefaultAni;
+        }
+
+        partial void pStartAnimation(Animation ani, bool attack);
+        public void StartAnimation(Animation ani, Action OnStop = null, bool attack = false)
+        {
+            if (ani == null)
+                throw new ArgumentNullException("Animation is null!");
+
+            if (!ani.IsCreated)
+                throw new ArgumentException("Animation is not created!");
+
+            if (ani.AniJob.Model != this.Model)
+                throw new ArgumentException("Animation is for a different Model!");
+
+            if (!this.IsSpawned)
+                throw new Exception("NPC is not spawned!");
+
+            this.state = attack ? NPCStates.AttackAnimation : NPCStates.Animation;
+            this.currentAni = ani;
+            this.onStop = OnStop;
+            aniTimer.SetInterval(ani.Duration * TimeSpan.TicksPerMillisecond);
+            aniTimer.Start();
+
+            pStartAnimation(ani, attack);
+        }
+        
+        public void StopAnimation()
+        {
+            if (!this.IsInAni)
+                return;
+
+            aniTimer.Stop(true);
+        }
+
+        void EndAni()
+        {
+            this.currentAni = null;
+
+            if (this.nextState != NPCStates.Stand)
+            {
+                this.ScriptObject.OnCmdMove(this.nextState);
+                this.nextState = NPCStates.Stand;
+            }
+            else
+            {
+                this.state = NPCStates.Stand;
+            }
+
+            if (this.onStop != null)
+                this.onStop();
         }
 
         #endregion

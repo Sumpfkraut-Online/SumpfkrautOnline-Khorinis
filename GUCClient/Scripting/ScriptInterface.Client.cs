@@ -31,9 +31,6 @@ namespace GUC.Scripting
         void OnCreateInstanceMsg(VobTypes type, PacketReader stream);
         void OnDeleteInstanceMsg(BaseVobInstance instance);
 
-        void OnCreateModelMsg(PacketReader stream);
-        void OnDeleteModelMsg(Model model);
-
         void OnSpawnVobMsg(VobTypes type, PacketReader stream);
         void OnDespawnVobMsg(BaseVob vob);
 

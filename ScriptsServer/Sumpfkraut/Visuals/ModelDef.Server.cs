@@ -83,17 +83,17 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
         Dictionary<string, ScriptAniJob> aniNames = new Dictionary<string, ScriptAniJob>();
 
-        partial void pAddAniJob(ScriptAniJob job)
+        partial void pAddAniJob(ScriptAniJob aniJob)
         {
-            if (string.IsNullOrWhiteSpace(job.CodeName))
+            if (string.IsNullOrWhiteSpace(aniJob.CodeName))
                 throw new ArgumentException("CodeName of ScriptAniJob is null or white space!");
 
-            aniNames.Add(job.CodeName, job);
+            aniNames.Add(aniJob.CodeName, aniJob);
         }
 
-        partial void pRemoveAniJob(ScriptAniJob job)
+        partial void pRemoveAniJob(ScriptAniJob aniJob)
         {
-            aniNames.Remove(job.CodeName);
+            aniNames.Remove(aniJob.CodeName);
         }
 
         #endregion

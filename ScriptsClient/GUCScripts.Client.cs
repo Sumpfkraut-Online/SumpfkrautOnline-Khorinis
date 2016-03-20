@@ -136,11 +136,6 @@ namespace GUC.Scripts
             GameClient.Client.Character.Inventory.Remove(item);
         }
 
-        public void OnCreateModelMsg(PacketReader stream)
-        {
-            new ModelDef(stream).Create();
-        }
-
         public void OnDeleteModelMsg(Model model)
         {
             ((ModelDef)model.ScriptObject).Delete();

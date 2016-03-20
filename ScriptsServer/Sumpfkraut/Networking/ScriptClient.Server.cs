@@ -7,6 +7,7 @@ using GUC.Log;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
+using GUC.Scripts.Sumpfkraut.Visuals;
 
 namespace GUC.Scripts.Sumpfkraut.Networking
 {
@@ -24,6 +25,13 @@ namespace GUC.Scripts.Sumpfkraut.Networking
             npc.BaseInst.Inventory.Add(item.BaseInst);
             npc.BaseInst.Inventory.Add((new ItemInst(ItemDef.Get<ItemDef>("apple"))).BaseInst);
             npc.BaseInst.Inventory.Add((new ItemInst(ItemDef.Get<ItemDef>("apple"))).BaseInst);
+
+            ScriptOverlay ov;
+            if (!npc.Definition.Model.TryGetOverlay(0, out ov))
+            {
+                throw new Exception("Wo ist nur das Overlay hin?");
+            }
+            npc.ApplyOverlay(ov);
 
             SetControl(npc);
             npc.Spawn(WorldInst.NewWorld);

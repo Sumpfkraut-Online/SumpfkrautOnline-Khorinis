@@ -19,36 +19,43 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
         public string AniName { get { return this.baseAniJob.Name; } set { this.baseAniJob.Name = value; } }
         
-        public ScriptAni DefaultAni
-        {
-            get { return (ScriptAni)this.baseAniJob.BaseAni.ScriptObject; }
-            set { this.baseAniJob.BaseAni = value == null ? null : value.BaseAni; }
-        }
-
-        public bool TryGetOverlayAni(int overlay, out ScriptAni ani)
-        {
-            for (int i = 0; i < this.baseAniJob.OverlayAnis.Count; i++)
-            {
-                if (this.baseAniJob.OverlayAnis[i].Overlay == overlay)
-                {
-                    ani = (ScriptAni)this.baseAniJob.OverlayAnis[overlay].ScriptObject;
-                    return true;
-                }
-            }
-            ani = null;
-            return false;
-        }
+        public ScriptAni DefaultAni { get { return (ScriptAni)this.baseAniJob.DefaultAni.ScriptObject; } }
 
         #endregion
 
-        #region Constructors
-
-        public ScriptAniJob(PacketReader stream) : this()
+        public void SetDefaultAni(Animation ani)
         {
-            this.baseAniJob.ReadStream(stream);
+            this.SetDefaultAni((ScriptAni)ani.ScriptObject);
         }
 
-        private ScriptAniJob()
+        public void SetDefaultAni(ScriptAni ani)
+        {
+            this.baseAniJob.SetDefaultAni(ani.BaseAni);
+        }
+
+        public void AddOverlayAni(Animation ani, Overlay overlay)
+        {
+            this.AddOverlayAni((ScriptAni)ani.ScriptObject, (ScriptOverlay)overlay.ScriptObject);
+        }
+
+        public void AddOverlayAni(ScriptAni ani, ScriptOverlay ov)
+        {
+            this.baseAniJob.AddOverlayAni(ani.BaseAni, ov.BaseOverlay);
+        }
+
+        public void RemoveOverlayAni(Animation ani)
+        {
+            this.RemoveOverlayAni((ScriptAni)ani.ScriptObject);
+        }
+
+        public void RemoveOverlayAni(ScriptAni ani)
+        {
+            this.baseAniJob.RemoveOverlayAni(ani.BaseAni);
+        }
+
+        #region Constructors
+
+        public ScriptAniJob()
         {
             this.baseAniJob = new AniJob();
             this.baseAniJob.ScriptObject = this;

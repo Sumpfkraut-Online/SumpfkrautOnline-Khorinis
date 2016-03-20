@@ -6,7 +6,7 @@ using RakNet;
 using GUC.Enumeration;
 using GUC.WorldObjects;
 using GUC.Network;
-using GUC.Types;
+using GUC.Animations;
 
 namespace GUC.Server.Network.Messages
 {
@@ -155,6 +155,25 @@ namespace GUC.Server.Network.Messages
                 if (client != npc.client)
                     client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
             });
+        }
+
+        public static void WriteApplyOverlayMessage(NPC npc, Overlay overlay)
+        {
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCApplyOverlayMessage);
+            stream.Write((ushort)npc.ID);
+            stream.Write((byte)overlay.ID);
+
+            npc.Cell.ForEachSurroundingClient(c => c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'W'));
+        }
+
+        public static void WriteRemoveOverlayMessage(NPC npc, Overlay overlay)
+        {
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCRemoveOverlayMessage);
+            stream.Write((ushort)npc.ID);
+            stream.Write((byte)overlay.ID);
+
+            npc.Cell.ForEachSurroundingClient(c => c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'W'));
+
         }
     }
 }

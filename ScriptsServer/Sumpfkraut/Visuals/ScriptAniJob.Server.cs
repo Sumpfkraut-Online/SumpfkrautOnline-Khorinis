@@ -25,5 +25,10 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         {
             this.CodeName = codeName;
         }
+
+        public ScriptAniJob(string codeName, ScriptAni defaultAni) : this(codeName)
+        {
+            this.SetDefaultAni(defaultAni);
+        }
     }
 }

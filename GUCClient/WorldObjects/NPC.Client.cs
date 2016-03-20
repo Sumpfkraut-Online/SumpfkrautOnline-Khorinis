@@ -6,6 +6,7 @@ using GUC.Types;
 using GUC.Network;
 using Gothic.Objects;
 using GUC.Enumeration;
+using GUC.Animations;
 
 namespace GUC.WorldObjects
 {
@@ -35,6 +36,26 @@ namespace GUC.WorldObjects
             }
         }
 
+        #region Animations
+
+        #region Overlays
+
+        partial void pAddOverlay(Overlay overlay)
+        {
+            if (this.gvob != null)
+                this.gVob.ApplyOverlay(overlay.Name);
+        }
+
+        partial void pRemoveOverlay(Overlay overlay)
+        {
+            if (this.gvob != null)
+                this.gVob.ApplyOverlay(overlay.Name);
+        }
+
+        #endregion
+
+        #endregion
+
         public override void Spawn(World world, Vec3f position, Vec3f direction)
         {
             base.Spawn(world, position, direction);
@@ -44,6 +65,9 @@ namespace GUC.WorldObjects
             gVob.InitHumanAI();
             gVob.Enable(pos.X, pos.Y, pos.Z);
             gVob.SetToFistMode();
+            if (overlays != null)
+                for (int i = 0; i < overlays.Count; i++)
+                    this.gVob.ApplyOverlay(overlays[i].Name);
         }
 
         partial void pSetState(NPCStates state)
