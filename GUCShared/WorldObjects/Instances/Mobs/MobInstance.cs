@@ -27,7 +27,12 @@ namespace GUC.WorldObjects.Instances.Mobs
 
         #region Properties
 
-        public string FocusName = "";
+        string focusName = "";
+        public string FocusName
+        {
+            get { return this.focusName; }
+            set { this.focusName = value == null ? "" : value; }
+        }
 
         #endregion
         

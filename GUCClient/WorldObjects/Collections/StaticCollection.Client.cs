@@ -7,10 +7,10 @@ namespace GUC.WorldObjects.Collections
 {
     internal partial class StaticCollection<T> where T : GameObject
     {
-        partial void CheckID(T vob)
+        partial void pCheckID(T vob)
         {
             if (vob.ID < 0 || vob.ID >= capacity)
-                throw new ArgumentOutOfRangeException("Vob ID is out of range! 0.." + capacity);
+                throw new ArgumentOutOfRangeException("Vob ID is out of range! 0.." + (capacity-1));
         }
     }
 }

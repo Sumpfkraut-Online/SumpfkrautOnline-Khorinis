@@ -86,11 +86,7 @@ namespace GUC.WorldObjects
         public const int SLOTNUM_UNEQUIPPED = -1;
 
         public ItemContainer.IContainer Container { get; internal set; }
-
-        public string Name { get { return Instance.Name; } }
-        public ItemMaterials Material { get { return Instance.Material; } }
-        public string Effect { get { return Instance.Effect; } }
-
+        
         #endregion
 
         #region Read & Write

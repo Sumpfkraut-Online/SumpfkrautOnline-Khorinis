@@ -13,14 +13,24 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         #region BaseDef
         new public ItemInstance BaseDef { get { return (ItemInstance)base.BaseDef; } }
 
+        string name = "";
         /// <summary>The standard name of this item.</summary>
-        public string Name { get { return BaseDef.Name; } set { BaseDef.Name = value; } }
+        public string Name
+        {
+            get { return this.name; }
+            set { this.name = value == null ? "" : value; }
+        }
 
         /// <summary>The material of this item. Controls the dropping sound.</summary>
-        public ItemMaterials Material { get { return BaseDef.Material; } set { BaseDef.Material = value; } }
+        public ItemMaterials Material = ItemMaterials.Wood;
 
-        /// <summary>Magic effect when laying in the world. See Scripts/System/VisualFX/VisualFxInst.d</summary>
-        public string Effect { get { return BaseDef.Effect; } set { BaseDef.Effect = value; } }
+        string effect = "";
+        /// <summary>Magic effect when laying in the world. (case insensitive) See _work/Data/Scripts/System/VisualFX/VisualFxInst.d</summary>
+        public string Effect
+        {
+            get { return this.effect; }
+            set { this.effect = value == null ? "" : value.ToUpper(); }
+        }
         #endregion
         
         public ItemDef(PacketReader stream) : base(new ItemInstance(), stream)

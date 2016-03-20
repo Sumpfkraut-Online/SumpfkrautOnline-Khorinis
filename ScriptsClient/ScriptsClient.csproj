@@ -53,14 +53,20 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\ScriptObject.cs">
       <Link>Sumpfkraut\ScriptObject.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Visuals\ModelDef.cs">
+      <Link>Sumpfkraut\Visuals\ModelDef.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Visuals\ScriptAni.cs">
+      <Link>Sumpfkraut\Visuals\ScriptAni.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Visuals\ScriptAniJob.cs">
+      <Link>Sumpfkraut\Visuals\ScriptAniJob.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem_Showdown\Definitions\BaseVobDef.cs">
       <Link>Sumpfkraut\VobSystem_Showdown\Definitions\BaseVobDef.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem_Showdown\Definitions\ItemDef.cs">
       <Link>Sumpfkraut\VobSystem_Showdown\Definitions\ItemDef.cs</Link>
-    </Compile>
-    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem_Showdown\Definitions\ModelDef.cs">
-      <Link>Sumpfkraut\VobSystem_Showdown\Definitions\ModelDef.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem_Showdown\Definitions\NPCDef.cs">
       <Link>Sumpfkraut\VobSystem_Showdown\Definitions\NPCDef.cs</Link>

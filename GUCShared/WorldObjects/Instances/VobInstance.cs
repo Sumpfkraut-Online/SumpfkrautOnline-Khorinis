@@ -41,7 +41,19 @@ namespace GUC.WorldObjects.Instances
         public bool CDStatic = true;
 
         #endregion
-        
+
+        #region Create
+
+        public override void Create()
+        {
+            if (this.Model == null)
+                throw new NullReferenceException("Model is null!");
+
+            base.Create();
+        }
+
+        #endregion
+
         #region Read & Write
 
         protected override void WriteProperties(PacketWriter stream)

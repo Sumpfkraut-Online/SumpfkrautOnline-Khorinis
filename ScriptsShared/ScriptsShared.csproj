@@ -54,10 +54,12 @@
     <Compile Include="Sumpfkraut\Utilities\Threading\IRunnable.cs" />
     <Compile Include="Sumpfkraut\Utilities\Threading\Runnable.cs" />
     <Compile Include="Sumpfkraut\Utilities\Threading\TestRunnable.cs" />
+    <Compile Include="Sumpfkraut\Visuals\ScriptAniJob.cs" />
     <Compile Include="Sumpfkraut\VobSystem_Showdown\Definitions\BaseVobDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem_Showdown\Definitions\ItemDef.cs" />
-    <Compile Include="Sumpfkraut\VobSystem_Showdown\Definitions\ModelDef.cs" />
+    <Compile Include="Sumpfkraut\Visuals\ModelDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem_Showdown\Definitions\NPCDef.cs" />
+    <Compile Include="Sumpfkraut\Visuals\ScriptAni.cs" />
     <Compile Include="Sumpfkraut\VobSystem_Showdown\Definitions\VobDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem_Showdown\Instances\BaseVobInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem_Showdown\Instances\ItemInst.cs" />

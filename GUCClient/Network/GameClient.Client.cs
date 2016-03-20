@@ -360,6 +360,7 @@ namespace GUC.Network
         GUCVisual modelInfo;
         GUCVisual vobInfo;
         GUCVisual inventoryInfo;
+        GUCVisual aniInfo;
 
         internal void Update()
         {
@@ -386,10 +387,13 @@ namespace GUC.Network
                 modelInfo = GUCVisualText.Create("0", 0x2000, kbsInfo.zView.FontY() + pingInfo.zView.FontY() + instInfo.zView.FontY() + 6, true);
                 modelInfo.Texts[0].Format = GUCVisualText.TextFormat.Right;
 
-                vobInfo = GUCVisualText.Create("0", 0x2000, kbsInfo.zView.FontY() + pingInfo.zView.FontY() + instInfo.zView.FontY() + modelInfo.zView.FontY() + 8, true);
+                aniInfo = GUCVisualText.Create("0", 0x2000, kbsInfo.zView.FontY() + pingInfo.zView.FontY() + instInfo.zView.FontY() + modelInfo.zView.FontY() + 8, true);
+                aniInfo.Texts[0].Format = GUCVisualText.TextFormat.Right;
+
+                vobInfo = GUCVisualText.Create("0", 0x2000, kbsInfo.zView.FontY() + pingInfo.zView.FontY() + instInfo.zView.FontY() + modelInfo.zView.FontY() + aniInfo.zView.FontY() + 10, true);
                 vobInfo.Texts[0].Format = GUCVisualText.TextFormat.Right;
 
-                inventoryInfo = GUCVisualText.Create("Inventory:", 0x2000, kbsInfo.zView.FontY() + pingInfo.zView.FontY() + instInfo.zView.FontY() + modelInfo.zView.FontY() + vobInfo.zView.FontY() + 10, true);
+                inventoryInfo = GUCVisualText.Create("0", 0x2000, kbsInfo.zView.FontY() + pingInfo.zView.FontY() + instInfo.zView.FontY() + modelInfo.zView.FontY() + vobInfo.zView.FontY() + aniInfo.zView.FontY() + 12, true);
                 inventoryInfo.Texts[0].Format = GUCVisualText.TextFormat.Right;
             }
 
@@ -514,19 +518,11 @@ namespace GUC.Network
                     vobInfo.Texts[0].Text = ("Vobs: " + World.Current.GetVobCount());
                     vobInfo.Show();
 
-                    int i = 1;
-                    character.Inventory.ForEachItem(item =>
-                    {
-                        if (i >= inventoryInfo.Texts.Count)
-                        {
-                            int ydist = kbsInfo.zView.FontY() + pingInfo.zView.FontY() + instInfo.zView.FontY() + modelInfo.zView.FontY() + vobInfo.zView.FontY() + 10 + (inventoryInfo.Texts.Count * inventoryInfo.zView.FontY());
-                            var text = inventoryInfo.CreateText("", 0x2000, ydist, true);
-                            text.Format = GUCVisualText.TextFormat.Right;
-                        }
-                        inventoryInfo.Texts[i].Text = item.Amount + " " + item.Name;
-                        i++;
-                    });
+                    inventoryInfo.Texts[0].Text = ("Inventory: " + character.Inventory.GetCount());
                     inventoryInfo.Show();
+
+                    aniInfo.Texts[0].Text = ("Animations: " + character.Model.GetAniCount());
+                    aniInfo.Show();
                 }
                 else
                 {

@@ -5,13 +5,17 @@ using System.Text;
 using System.Reflection;
 using System.IO;
 using GUC.Network;
+using GUC.WorldObjects;
+using GUC.Animations;
 
 namespace GUC.Scripting
 {
     public partial interface ScriptInterface
     {
         bool OnClientConnection(GameClient client);
-        WorldObjects.Item CreateInvItem(PacketReader stream);
+        Item CreateInvItem(PacketReader stream);
+        AniJob CreateAniJob(PacketReader stream);
+        Animation CreateAnimation(PacketReader stream);
     }
 
     static class ScriptManager

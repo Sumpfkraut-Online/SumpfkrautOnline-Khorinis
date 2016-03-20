@@ -39,7 +39,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Animation.cs" />
+    <Compile Include="Animations\AniJob.cs" />
+    <Compile Include="Animations\Animation.cs" />
     <Compile Include="Enumeration\HumanVisuals.cs" />
     <Compile Include="Enumeration\NPCStates.cs" />
     <Compile Include="Enumeration\VobTypes.cs" />

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using GUC.Network;
 using GUC.WorldObjects.Collections;
+using GUC.Scripting;
+using GUC.Animations;
 
 namespace GUC.Models
 {
@@ -24,12 +26,14 @@ namespace GUC.Models
         #endregion
 
         #region Collection
-        
+
         static StaticCollection<Model> idColl = new StaticCollection<Model>();
         static DynamicCollection<Model> models = new DynamicCollection<Model>();
         static DynamicCollection<Model> dynModels = new DynamicCollection<Model>();
 
         #region Create & Delete
+
+        public bool IsCreated { get { return this.isCreated; } }
 
         partial void pCreate();
         public void Create()
@@ -121,16 +125,13 @@ namespace GUC.Models
         #region Properties
 
         string visual = "";
+        /// <summary>
+        /// The Gothic visual of this Model. (case insensitive)
+        /// </summary>
         public string Visual
         {
             get { return this.visual; }
-            set
-            {
-                if (value == null)
-                    throw new ArgumentNullException("Visual is null!");
-
-                this.visual = value.ToUpper();
-            }
+            set { if (value == null) this.visual = ""; else this.visual = value.ToUpper(); }
         }
 
         #endregion
@@ -142,6 +143,12 @@ namespace GUC.Models
             base.ReadProperties(stream);
 
             this.Visual = stream.ReadString();
+
+            int count = stream.ReadUShort();
+            for (int i = 0; i < count; i++)
+            {
+                this.AddAniJob(ScriptManager.Interface.CreateAniJob(stream));
+            }
         }
 
         protected override void WriteProperties(PacketWriter stream)
@@ -149,11 +156,103 @@ namespace GUC.Models
             base.WriteProperties(stream);
 
             stream.Write(this.Visual);
+
+            stream.Write((ushort)this.dynJobs.Count);
+            dynJobs.ForEach(job => job.WriteStream(stream));
         }
 
         #endregion
 
         #region Animations
+
+        StaticCollection<AniJob> aniIDs = new StaticCollection<AniJob>();
+        DynamicCollection<AniJob> aniJobs = new DynamicCollection<AniJob>();
+        DynamicCollection<AniJob> dynJobs = new DynamicCollection<AniJob>();
+
+        #region Add & Remove
+
+        partial void pAddAniJob(AniJob job);
+        public void AddAniJob(AniJob job)
+        {
+            if (job == null)
+                throw new ArgumentNullException("AniJob is null!");
+
+            if (job.IsCreated)
+                throw new ArgumentException("AniJob is already added to another Model!");
+
+            if (job.BaseAni == null)
+                throw new ArgumentException("BaseInfo of AniJob is null!");
+
+            aniIDs.Add(job);
+            aniJobs.Add(job, ref job.collID);
+            dynJobs.Add(job, ref job.dynID);
+
+            pAddAniJob(job);
+
+            job.SetModel(this);
+        }
+
+        partial void pRemoveAniJob(AniJob job);
+        public void RemoveAniJob(AniJob job)
+        {
+            if (job == null)
+                throw new ArgumentNullException("AniJob is null!");
+
+            if (job.Model != this)
+                throw new Exception("AniJob is not from this Model!");
+
+            aniIDs.Remove(job);
+            aniJobs.Remove(ref job.collID);
+            dynJobs.Remove(ref job.dynID);
+
+            pRemoveAniJob(job);
+
+            job.SetModel(null);
+        }
+
+        #endregion
+
+        #region Access
+
+        public bool ContainsAni(int id)
+        {
+            return aniIDs.ContainsID(id);
+        }
+
+        public bool TryGetAni(int id, out AniJob job)
+        {
+            return aniIDs.TryGet(id, out job);
+        }
+
+
+
+        public void ForEachAni(Action<AniJob> action)
+        {
+            aniJobs.ForEach(action);
+        }
+
+        public void ForEachAni(Predicate<AniJob> predicate)
+        {
+            aniJobs.ForEach(predicate);
+        }
+
+        public int GetAniCount() { return aniJobs.Count; }
+
+
+
+        public void ForEachDynamicAni(Action<AniJob> action)
+        {
+            dynJobs.ForEach(action);
+        }
+
+        public void ForEachDynamicAni(Predicate<AniJob> predicate)
+        {
+            dynJobs.ForEach(predicate);
+        }
+
+        public int GetDynamicAniCount() { return dynJobs.Count; }
+
+        #endregion
 
         #endregion
     }

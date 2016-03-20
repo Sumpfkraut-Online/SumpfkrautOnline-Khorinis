@@ -8,6 +8,7 @@ using GUC.Scripting;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using GUC.Scripts.Sumpfkraut.Visuals;
 
 namespace GUC.Scripts
 {
@@ -26,24 +27,26 @@ namespace GUC.Scripts
 
         void AddSomeDefs()
         {
-            ModelDef m = new ModelDef();
-            m.Visual = "NW_Nature_BigTree_356P.3ds";
+            ModelDef m = new ModelDef("baum", "NW_Nature_BigTree_356P.3ds");
             m.Create();
             VobDef vobDef = new VobDef("baum");
             vobDef.Model = m;
             vobDef.Create();
 
-            m = new ModelDef();
-            m.Visual = "ItFo_Apple.3ds";
+            m = new ModelDef("apple", "ItFo_Apple.3ds");
             m.Create();
             ItemDef itemDef = new ItemDef("apple");
             itemDef.Name = "Apfel";
             itemDef.Model = m;
             itemDef.Create();
 
-            m = new ModelDef();
-            m.Visual = "humans.mds";
+            m = new ModelDef("human", "humans.mds");
+            ScriptAniJob aniJob = new ScriptAniJob("FistAttack");
+            aniJob.AniName = "s_FistAttack";
+            aniJob.DefaultAni = new ScriptAni(560);
+            m.AddAniJob(aniJob);
             m.Create();
+
             NPCDef npcDef = new NPCDef("player");
             npcDef.Name = "Spieler";
             npcDef.Model = m;
@@ -53,8 +56,7 @@ namespace GUC.Scripts
             npcDef.HeadTex = (int)Enumeration.HumHeadTexs.Face_N_Player;
             npcDef.Create();
 
-            m = new ModelDef();
-            m.Visual = "scavenger.mds";
+            m = new ModelDef("scavenger", "scavenger.mds");
             m.Create();
             npcDef = new NPCDef("scavenger");
             npcDef.Name = "Scavenger";
@@ -65,7 +67,7 @@ namespace GUC.Scripts
             npcDef.HeadTex = 0;
             npcDef.Create();
         }
-        
+
         void CreateWorld()
         {
             WorldDef wDef = new WorldDef();

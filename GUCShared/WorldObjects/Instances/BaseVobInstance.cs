@@ -44,7 +44,7 @@ namespace GUC.WorldObjects.Instances
         #region Create & Delete
 
         partial void pCreate();
-        public void Create()
+        public virtual void Create()
         {
             if (this.isCreated)
                 throw new ArgumentException("Instance is already in the collection!");
@@ -64,7 +64,7 @@ namespace GUC.WorldObjects.Instances
         }
 
         partial void pDelete();
-        public void Delete()
+        public virtual void Delete()
         {
             if (!this.isCreated)
                 throw new ArgumentException("Instance is not in the collection!");

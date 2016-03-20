@@ -273,6 +273,11 @@ namespace GUC.Network
         char[] charArr = new char[MaxStringLength];
         public void Write(string val)
         {
+            if (val == null)
+            {
+                throw new ArgumentNullException("String is null!");
+            }
+
             int len = val.Length > MaxStringLength ? MaxStringLength : val.Length; // cut off everything > short.maxValue
 
             if (len > 127)

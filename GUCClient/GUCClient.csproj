@@ -51,6 +51,12 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\GUCShared\Animations\AniJob.cs">
+      <Link>Animations\AniJob.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\Animations\Animation.cs">
+      <Link>Animations\Animation.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\Constants.cs">
       <Link>Constants.cs</Link>
     </Compile>

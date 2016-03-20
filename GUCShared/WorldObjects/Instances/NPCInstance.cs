@@ -28,15 +28,20 @@ namespace GUC.WorldObjects.Instances
 
         #region Properties
 
+        string name = "";
         /// <summary>The name of the NPC.</summary>
-        public string Name = "";
+        public string Name
+        {
+            get { return this.name; }
+            set { if (value == null) this.name = ""; else this.name = value; }
+        }
 
         protected string bodyMesh = "";
         /// <summary>The body mesh of the NPC (case insensitive).</summary>
         public string BodyMesh
         {
             get { return bodyMesh; }
-            set { bodyMesh = value.ToUpper(); }
+            set { if (value == null) this.bodyMesh = ""; else this.bodyMesh = value.ToUpper(); }
         }
 
         /// <summary>The body texture of the NPC (byte).</summary>
@@ -47,7 +52,7 @@ namespace GUC.WorldObjects.Instances
         public string HeadMesh
         {
             get { return headMesh; }
-            set { headMesh = value.ToUpper(); }
+            set { if (value == null) this.headMesh = ""; else this.headMesh = value.ToUpper(); }
         }
 
         /// <summary>The head texture of the NPC (byte).</summary>

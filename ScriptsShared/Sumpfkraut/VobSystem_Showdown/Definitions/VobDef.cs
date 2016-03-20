@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.WorldObjects.Instances;
 using GUC.Network;
-using GUC.Enumeration;
+using GUC.Scripts.Sumpfkraut.Visuals;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {

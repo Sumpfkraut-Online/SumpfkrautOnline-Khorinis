@@ -16,8 +16,8 @@ namespace GUC.WorldObjects.Instances
             ret.Amount = 1;
             ret.Instance = this.ID;
             //ret.ItemVisual.Set(Visual);
-            ret.Name.Set(Name);
-            ret.Material = (int)Material;
+            //ret.Name.Set(Name);
+            //ret.Material = (int)Material;
 
             return ret;
         }

@@ -17,6 +17,7 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Models;
 using GUC.WorldObjects;
+using GUC.Scripts.Sumpfkraut.Visuals;
 
 namespace GUC.Scripts
 {
