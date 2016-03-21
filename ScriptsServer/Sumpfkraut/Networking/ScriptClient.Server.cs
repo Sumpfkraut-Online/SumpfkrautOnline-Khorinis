@@ -26,12 +26,12 @@ namespace GUC.Scripts.Sumpfkraut.Networking
             npc.BaseInst.Inventory.Add((new ItemInst(ItemDef.Get<ItemDef>("apple"))).BaseInst);
             npc.BaseInst.Inventory.Add((new ItemInst(ItemDef.Get<ItemDef>("apple"))).BaseInst);
 
-            ScriptOverlay ov;
+            /*ScriptOverlay ov;
             if (!npc.Definition.Model.TryGetOverlay(0, out ov))
             {
                 throw new Exception("Wo ist nur das Overlay hin?");
             }
-            npc.ApplyOverlay(ov);
+            npc.ApplyOverlay(ov);*/
 
             SetControl(npc);
             npc.Spawn(WorldInst.NewWorld);
@@ -60,8 +60,14 @@ namespace GUC.Scripts.Sumpfkraut.Networking
             }
             SetControl(newNPC);*/
 
-            ItemInst apple = new ItemInst(ItemDef.Get<ItemDef>("apple"));
-            baseClient.Character.Inventory.Add(apple.BaseInst);
+            //ItemInst apple = new ItemInst(ItemDef.Get<ItemDef>("apple"));
+            //baseClient.Character.Inventory.Add(apple.BaseInst);
+
+            ScriptAniJob job;
+            if (!this.Character.Model.TryGetAniJob(0, out job))
+                Logger.Log("Wo ist denn die Ani? Ja wo ist sie denn nur?");
+
+            this.Character.StartAnimation(job);
         }
 
         public void SetControl(NPCInst npc)

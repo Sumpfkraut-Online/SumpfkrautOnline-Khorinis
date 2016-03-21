@@ -81,6 +81,9 @@
     <Compile Include="..\GUCShared\GameObject.cs">
       <Link>GameObject.cs</Link>
     </Compile>
+    <Compile Include="..\GUCShared\GameTime.cs">
+      <Link>GameTime.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\Log\Logger.cs">
       <Link>Log\Logger.cs</Link>
     </Compile>

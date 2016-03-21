@@ -188,10 +188,21 @@ namespace Gothic.Objects.Meshes
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.StopAni_Int, new IntArg(ani));
         }
 
+        public void StopAni(zCModelAniActive ani)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.StopAni_AktivAni, ani);
+        }
+
         public void FadeOutAni(int ani)
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.FadeOutAni_Int, new IntArg(ani));
         }
+
+        public void FadeOutAni(zCModelAniActive ani)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.FadeOutAni_AktivAni, ani);
+        }
+
         public int IsAnimationActive(String animname)
         {
             int result = 0;
@@ -201,6 +212,7 @@ namespace Gothic.Objects.Meshes
 
             return result;
         }
+
         public int IsAnimationActive(zString animname)
         {
             return Process.THISCALL<IntArg>(Address, FuncAddresses.IsAnimationActive, animname);

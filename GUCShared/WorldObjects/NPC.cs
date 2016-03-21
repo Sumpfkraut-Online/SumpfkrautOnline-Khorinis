@@ -28,6 +28,9 @@ namespace GUC.WorldObjects
 
             void OnCmdApplyOverlay(Overlay overlay);
             void OnCmdRemoveOverlay(Overlay overlay);
+
+            void OnCmdStartAni(AniJob job);
+            void OnCmdStopAni(bool fadeOut);
         }
 
         new public IScriptNPC ScriptObject
@@ -38,12 +41,6 @@ namespace GUC.WorldObjects
 
         #endregion
 
-        public NPC()
-        {
-            this.inventory = new ItemContainer(this);
-            this.aniTimer = new GUCTimer(this.EndAni);
-        }
-
         #region Properties
 
         new public NPCInstance Instance
@@ -51,6 +48,26 @@ namespace GUC.WorldObjects
             get { return (NPCInstance)base.Instance; }
             set { base.Instance = value; }
         }
+
+        public string Name { get { return Instance.Name; } }
+        public string BodyMesh { get { return Instance.BodyMesh; } }
+        public int BodyTex { get { return Instance.BodyTex; } }
+        public string HeadMesh { get { return Instance.HeadMesh; } }
+        public int HeadTex { get { return Instance.HeadTex; } }
+
+        #endregion
+
+        #region Constructors
+
+        public NPC()
+        {
+            this.inventory = new ItemContainer(this);
+            this.aniTimer = new GUCTimer(this.EndAni);
+        }
+
+        #endregion
+
+        #region Health
 
         int hpmax = 100;
         public int HPMax { get { return hpmax; } }
@@ -76,63 +93,32 @@ namespace GUC.WorldObjects
             pSetHealth(hp, hpmax);
         }
 
+        #endregion
+
+        #region Movement / NPCStates
+
+        NPCStates state = NPCStates.Stand;
+        public NPCStates State { get { return this.state; } }
+
+        partial void pSetState(NPCStates state);
+        public void SetState(NPCStates state)
+        {
+            pSetState(state);
+            this.state = state;
+        }
+
         partial void pFallDown();
         public void FallDown()
         {
             pFallDown();
         }
 
-        NPCStates state = NPCStates.Stand;
-        public NPCStates State { get { return this.state; } }
+        #endregion
 
-        MobInter usedMob = null;
-        public MobInter UsedMob { get { return this.usedMob; } }
-
-        partial void pJump();
-        public void Jump()
-        {
-            if (this.IsSpawned)
-            {
-                pJump();
-            }
-        }
-
-        partial void pSetState(NPCStates state);
-        public void SetState(NPCStates state)
-        {
-            this.state = state;
-            pSetState(state);
-        }
-
-        public void UseMob(MobInter mob)
-        {
-
-        }
-
-        Item drawnItem = null;
-        public Item DrawnItem { get { return this.drawnItem; } }
-
-        bool isInAttackMode = false;
-        public bool IsInAttackMode { get { return this.isInAttackMode; } }
-
-        /// <param name="item">null == fists</param>
-        public void DrawItem(Item item)
-        {
-
-        }
-
-        public void UndrawItem()
-        {
-        }
+        #region Inventory
 
         ItemContainer inventory;
         public ItemContainer Inventory { get { return inventory; } }
-
-        public string Name { get { return Instance.Name; } }
-        public string BodyMesh { get { return Instance.BodyMesh; } }
-        public int BodyTex { get { return Instance.BodyTex; } }
-        public string HeadMesh { get { return Instance.HeadMesh; } }
-        public int HeadTex { get { return Instance.HeadTex; } }
 
         #endregion
 
@@ -230,6 +216,26 @@ namespace GUC.WorldObjects
         }
 
         #endregion
+
+        #endregion
+
+        #region Item drawing
+
+        Item drawnItem = null;
+        public Item DrawnItem { get { return this.drawnItem; } }
+
+        bool isInAttackMode = false;
+        public bool IsInAttackMode { get { return this.isInAttackMode; } }
+
+        /// <param name="item">null == fists</param>
+        public void DrawItem(Item item)
+        {
+
+        }
+
+        public void UndrawItem()
+        {
+        }
 
         #endregion
 
@@ -332,6 +338,15 @@ namespace GUC.WorldObjects
 
         #region Animations
 
+        partial void pJump();
+        public void Jump()
+        {
+            if (this.IsSpawned)
+            {
+                pJump();
+            }
+        }
+
         #region Overlays
         List<Overlay> overlays = null;
 
@@ -392,24 +407,15 @@ namespace GUC.WorldObjects
 
         #endregion
 
-        NPCStates nextState;
-
         GUCTimer aniTimer;
         Action onStop;
 
         Animation currentAni = null;
         public Animation CurrentAni { get { return this.currentAni; } }
-        public bool IsInAni { get { return this.state == NPCStates.Animation || this.state == NPCStates.AttackAnimation; } }
-        public bool IsInAttackAni { get { return this.state == NPCStates.AttackAnimation; } }
+        public bool IsInAnimation { get { return this.currentAni != null; } }
 
-        public Animation GetAniFromJob(AniJob job)
+        Animation GetAniFromJob(AniJob job)
         {
-            if (job == null)
-                throw new ArgumentNullException("AniJob is null!");
-
-            if (job.Model != this.Model)
-                throw new ArgumentException("AniJob is not for this NPC's Model!");
-
             if (overlays != null)
                 for (int i = overlays.Count - 1; i >= 0; i--)
                 {
@@ -421,54 +427,58 @@ namespace GUC.WorldObjects
             return job.DefaultAni;
         }
 
-        partial void pStartAnimation(Animation ani, bool attack);
-        public void StartAnimation(Animation ani, Action OnStop = null, bool attack = false)
+        partial void pStartAnimation(Animation ani);
+        public void StartAnimation(AniJob job, Action OnStop = null)
         {
-            if (ani == null)
-                throw new ArgumentNullException("Animation is null!");
+            if (job == null)
+                throw new ArgumentNullException("AniJob is null!");
 
-            if (!ani.IsCreated)
-                throw new ArgumentException("Animation is not created!");
-
-            if (ani.AniJob.Model != this.Model)
-                throw new ArgumentException("Animation is for a different Model!");
+            if (job.Model != this.Model)
+                throw new ArgumentException("AniJob is not for this NPC's Model!");
 
             if (!this.IsSpawned)
                 throw new Exception("NPC is not spawned!");
 
-            this.state = attack ? NPCStates.AttackAnimation : NPCStates.Animation;
+            Animation ani = GetAniFromJob(job);
             this.currentAni = ani;
             this.onStop = OnStop;
             aniTimer.SetInterval(ani.Duration * TimeSpan.TicksPerMillisecond);
             aniTimer.Start();
 
-            pStartAnimation(ani, attack);
+            pStartAnimation(ani);
         }
-        
-        public void StopAnimation()
+
+        partial void pStopAnimation(bool fadeOut);
+        public void StopAnimation(bool fadeOut = false)
         {
-            if (!this.IsInAni)
+            if (!this.IsInAnimation)
                 return;
 
-            aniTimer.Stop(true);
+            pStopAnimation(fadeOut);
+            aniTimer.Stop();
         }
 
+        partial void pEndAni();
         void EndAni()
         {
+            pEndAni();
+            aniTimer.Stop();
             this.currentAni = null;
-
-            if (this.nextState != NPCStates.Stand)
-            {
-                this.ScriptObject.OnCmdMove(this.nextState);
-                this.nextState = NPCStates.Stand;
-            }
-            else
-            {
-                this.state = NPCStates.Stand;
-            }
-
             if (this.onStop != null)
                 this.onStop();
+        }
+
+        #endregion
+
+        #region Mob using
+
+        MobInter usedMob = null;
+        public MobInter UsedMob { get { return this.usedMob; } }
+
+
+        public void UseMob(MobInter mob)
+        {
+
         }
 
         #endregion

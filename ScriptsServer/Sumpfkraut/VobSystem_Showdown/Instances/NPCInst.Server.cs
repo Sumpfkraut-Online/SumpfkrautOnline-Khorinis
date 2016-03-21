@@ -33,5 +33,15 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             this.RemoveOverlay(overlay);
         }
+
+        partial void pOnCmdStartAni(ScriptAniJob job)
+        {
+            this.StartAnimation(job);
+        }
+
+        partial void pOnCmdStopAni(bool fadeOut)
+        {
+            this.StopAnimation(fadeOut);
+        }
     }
 }

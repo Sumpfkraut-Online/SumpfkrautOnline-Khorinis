@@ -34,6 +34,10 @@ namespace GUC.Client
                 hPlayerVob.AddHooks();
 
                 #region Some more editing
+
+                WinApi.Process.Write(18000.0f, 0x008BACD0); // spawnManager : insertrange
+                WinApi.Process.Write(20000.0f, 0x008BACD4); // spawnManager : removerange
+
                 // Make rain drops being blocked by vobs!
                 WinApi.Process.Write((byte)0xE0, 0x5E227A);
 

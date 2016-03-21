@@ -47,6 +47,7 @@
     <Compile Include="Enumeration\VobTypes.cs" />
     <Compile Include="Enumeration\ItemEnums.cs" />
     <Compile Include="Enumeration\NetworkIDS.cs" />
+    <Compile Include="GameTime.cs" />
     <Compile Include="Log\Logger.cs" />
     <Compile Include="Models\Model.cs" />
     <Compile Include="Network\GameClient.cs" />

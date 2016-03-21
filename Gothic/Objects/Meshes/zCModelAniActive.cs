@@ -14,14 +14,15 @@ namespace Gothic.Objects.Meshes
         }
         public abstract class FuncAddresses
         {
-            public const int SetActFrame = 0x00576CF0;
+            public const int SetActFrame = 0x00576CF0,
+            SetProgressPercent = 0x00576CA0;
         }
 
-       /* public enum HookSize : uint
-        {
-            SetActFrame = 6
-        }*/
-        
+        /* public enum HookSize : uint
+         {
+             SetActFrame = 6
+         }*/
+
         public zCModelAniActive(int address) : base(address)
         {
 
@@ -40,6 +41,11 @@ namespace Gothic.Objects.Meshes
         public void SetActFrame(float value)
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetActFrame, new FloatArg(value));
+        }
+
+        public void SetProgressPercent(float value)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetProgressPercent, new FloatArg(value));
         }
     }
 }

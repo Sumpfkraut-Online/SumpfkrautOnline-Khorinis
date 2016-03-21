@@ -45,7 +45,7 @@ namespace GUC.Scripts
             ScriptOverlay overlay = new ScriptOverlay("Humans_1hST1");
             m.AddOverlay(overlay);
             
-            ScriptAniJob aniJob = new ScriptAniJob("FistAttack", new ScriptAni(560));
+            ScriptAniJob aniJob = new ScriptAniJob("FistAttack", new ScriptAni(505, 127));
             aniJob.AniName = "s_FistAttack";
             m.AddAniJob(aniJob);
 

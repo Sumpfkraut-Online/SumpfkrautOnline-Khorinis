@@ -83,6 +83,24 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
         Dictionary<string, ScriptAniJob> aniNames = new Dictionary<string, ScriptAniJob>();
 
+        // By Names
+
+        public bool ContainsAniJob(string codeName)
+        {
+            if (codeName == null)
+                throw new ArgumentNullException("CodeName is null!");
+
+            return aniNames.ContainsKey(codeName);
+        }
+
+        public bool TryGetAniJob(string codeName, out ScriptAniJob job)
+        {
+            if (codeName == null)
+                throw new ArgumentNullException("CodeName is null!");
+
+            return aniNames.TryGetValue(codeName, out job);
+        }
+
         partial void pAddAniJob(ScriptAniJob aniJob)
         {
             if (string.IsNullOrWhiteSpace(aniJob.CodeName))

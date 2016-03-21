@@ -20,6 +20,7 @@ namespace Gothic.Objects
             _t_hitfrun = 0x1124,
 
             _s_walk = 0x1008,
+            _s_walkl = 0x1014,
             _t_turnl = 0x1028,
             _t_turnr = 0x102C,
 
@@ -89,6 +90,7 @@ namespace Gothic.Objects
         public int _t_hitr { get { return Process.ReadInt(Address + VarOffsets._t_hitr); } }
         public int _t_hitl { get { return Process.ReadInt(Address + VarOffsets._t_hitl); } }
 
+        public int _s_walkl { get { return Process.ReadInt(Address + VarOffsets._s_walkl); } }
         public int _s_walk { get { return Process.ReadInt(Address + VarOffsets._s_walk); } }
         public int _t_turnr { get { return Process.ReadInt(Address + VarOffsets._t_turnr); } }
         public int _t_turnl { get { return Process.ReadInt(Address + VarOffsets._t_turnl); } }

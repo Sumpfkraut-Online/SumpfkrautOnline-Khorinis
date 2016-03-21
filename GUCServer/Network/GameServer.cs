@@ -84,39 +84,41 @@ namespace GUC.Server.Network
                     break;
 
                 case NetworkIDs.NPCStateMessage:
-                    NPCMessage.ReadState(stream, client, client.Character, client.Character.World);
+                    NPCMessage.ReadState(stream, client, client.character, client.character.World);
+                    break;
+
+                case NetworkIDs.NPCApplyOverlayMessage:
+                    NPCMessage.ReadApplyOverlay(stream, client.character);
+                    break;
+                case NetworkIDs.NPCRemoveOverlayMessage:
+                    NPCMessage.ReadRemoveOverlay(stream, client.character);
+                    break;
+
+                case NetworkIDs.NPCAniStartMessage:
+                    NPCMessage.ReadAniStart(stream, client.character);
+                    break;
+                case NetworkIDs.NPCAniStopMessage:
+                    NPCMessage.ReadAniStop(stream, client.character);
                     break;
 
                 default:
-                    DisconnectClient(client);
                     Logger.LogWarning("Client sent unknown NetworkID. Kicked: {0} IP:{1}", client.guid.g, client.systemAddress);
-                    break;
-
+                    DisconnectClient(client);
+                    return;
             }
 
-            /*messageListener.Add(NetworkIDs.MenuMessage, HandleLoginMsg);
-            messageListener.Add(NetworkIDs.PlayerControlMessage, NPC.ReadControl);
-
-            MessageListener.Add((byte)NetworkID.PlayerPickUpItemMessage, NPC.ReadPickUpItem);
-
-            MessageListener.Add((byte)NetworkID.VobPosDirMessage, VobMessage.ReadPosDir);
-
-            MessageListener.Add((byte)NetworkID.NPCAniStartMessage, NPCMessage.ReadAniStart);
-            MessageListener.Add((byte)NetworkID.NPCAniStopMessage, NPCMessage.ReadAniStop);
-            MessageListener.Add((byte)NetworkID.NPCStateMessage, NPC.ReadCmdState);
-            MessageListener.Add((byte)NetworkID.NPCTargetStateMessage, NPC.ReadCmdTargetState);
-            MessageListener.Add((byte)NetworkID.NPCDrawItemMessage, NPC.ReadCmdDrawEquipment);
-            MessageListener.Add((byte)NetworkID.NPCUndrawItemMessage, NPC.ReadCmdUndrawItem);
-            MessageListener.Add((byte)NetworkID.NPCJumpMessage, NPC.ReadCmdJump);
-
-            MessageListener.Add((byte)NetworkID.InventoryDropItemMessage, InventoryMessage.ReadDropItem);
-
-            MessageListener.Add((byte)NetworkID.InventoryUseItemMessage, NPC.ReadCmdUseItem);
-
-            MessageListener.Add((byte)NetworkID.MobUseMessage, NPC.ReadCmdUseMob);
-            MessageListener.Add((byte)NetworkID.MobUnUseMessage, NPC.ReadCmdUnuseMob);
-
-            MessageListener.Add((byte)NetworkID.TradeMessage, TradeMessage.Read);*/
+            // flooding protection
+            client.PacketCount++;
+            if (client.nextCheck < GameTime.Ticks)
+            {
+                if (client.PacketCount >= 20)
+                {
+                    Logger.LogWarning("Client spammed too many packets. Kicked: {0} IP:{1}", client.guid.g, client.systemAddress);
+                    DisconnectClient(client);
+                }
+                client.nextCheck = GameTime.Ticks + 1000000; // 100ms
+                client.PacketCount = 0;
+            }
         }
 
 
@@ -150,13 +152,13 @@ namespace GUC.Server.Network
                         case DefaultMessageIDTypes.ID_DISCONNECTION_NOTIFICATION:
                             if (client != null)
                             {
+                                Logger.Log("Client disconnected: {0} IP:{1}", p.guid, p.systemAddress);
                                 DisconnectClient(client);
                             }
                             else
                             {
                                 ServerInterface.CloseConnection(p.guid, false); //just to be sure
                             }
-                            Logger.Log("Client disconnected: " + p.guid);
                             break;
                         case DefaultMessageIDTypes.ID_NEW_INCOMING_CONNECTION:
                             if (client != null) //there is already someone with this GUID. Should not happen.
@@ -186,16 +188,16 @@ namespace GUC.Server.Network
                                 }
                                 else
                                 {
-                                    ServerInterface.CloseConnection(p.guid, false);
                                     Logger.LogWarning("Client sent {0} before ConnectionMessage. Kicked: {1} IP:{2}", msgID, p.guid, p.systemAddress);
+                                    ServerInterface.CloseConnection(p.guid, false);
                                 }
                             }
                             else
                             {
-                                if (msgID > NetworkIDs.MenuMessage && (client.Character == null || client.Character.World == null))
+                                if (msgID > NetworkIDs.MenuMessage && (client.Character == null || !client.Character.IsSpawned))
                                 {
-                                    DisconnectClient(client);
                                     Logger.LogWarning("Client sent {0} without being ingame. Kicked: {1} IP:{2}", msgID, p.guid, p.systemAddress);
+                                    DisconnectClient(client);
                                 }
                                 else
                                 {
@@ -204,6 +206,7 @@ namespace GUC.Server.Network
                             }
                             break;
                         default:
+                            Logger.LogWarning("Received unused DefaultMessageIDType {0}. Kicked: {1} IP:{2}", msgDefaultType, p.guid, p.systemAddress);
                             if (client == null)
                             {
                                 ServerInterface.CloseConnection(p.guid, false);
@@ -212,7 +215,6 @@ namespace GUC.Server.Network
                             {
                                 DisconnectClient(client);
                             }
-                            Logger.LogWarning("Received unused DefaultMessageIDType {0}. Kicked: {1} IP:{2}", msgDefaultType, p.guid, p.systemAddress);
                             break;
                     }
                 }

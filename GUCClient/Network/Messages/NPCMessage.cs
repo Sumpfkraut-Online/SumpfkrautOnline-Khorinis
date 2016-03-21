@@ -69,6 +69,8 @@ namespace GUC.Client.Network.Messages
 
         #region Animations
 
+        #region Overlays
+
         public static void ReadApplyOverlay(PacketReader stream)
         {
             int id = stream.ReadUShort();
@@ -81,14 +83,6 @@ namespace GUC.Client.Network.Messages
                 {
                     npc.ScriptObject.OnCmdApplyOverlay(ov);
                 }
-                else
-                {
-                    throw new Exception("Overlay not found!");
-                }
-            }
-            else
-            {
-                throw new Exception("NPC not found!");
             }
         }
 
@@ -104,14 +98,31 @@ namespace GUC.Client.Network.Messages
                 {
                     npc.ScriptObject.OnCmdRemoveOverlay(ov);
                 }
-                else
+            }
+        }
+
+        #endregion
+
+        public static void ReadAniStart(PacketReader stream)
+        {
+            NPC npc;
+            if (World.Current.TryGetVob(stream.ReadUShort(), out npc))
+            {
+                AniJob job;
+                if (npc.Model.TryGetAni(stream.ReadUShort(), out job))
                 {
-                    throw new Exception("Overlay not found!");
+                    npc.ScriptObject.OnCmdStartAni(job);
                 }
             }
-            else
+        }
+
+        public static void ReadAniStop(PacketReader stream)
+        {
+            NPC npc;
+            if (World.Current.TryGetVob(stream.ReadUShort(), out npc))
             {
-                throw new Exception("NPC not found!");
+                bool fadeOut = stream.ReadBit();
+                npc.ScriptObject.OnCmdStopAni(fadeOut);
             }
         }
 

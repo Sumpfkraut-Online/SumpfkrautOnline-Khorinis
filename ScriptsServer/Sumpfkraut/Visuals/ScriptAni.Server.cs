@@ -8,9 +8,15 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 {
     public partial class ScriptAni : ScriptObject, Animation.IScriptAnimation
     {
-        public ScriptAni(int duration) : this()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="duration">Duration in ms.</param>
+        /// <param name="startPercent">255 = 100%</param>
+        public ScriptAni(int duration, int startPercent = 0) : this()
         {
             this.Duration = duration;
+            this.StartPercent = startPercent;
         }
     }
 }

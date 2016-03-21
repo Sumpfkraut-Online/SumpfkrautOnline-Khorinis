@@ -54,6 +54,48 @@ namespace GUC.WorldObjects
 
         #endregion
 
+        partial void pStartAnimation(Animation ani)
+        {
+            if (this.gvob != null)
+            {
+                var gModel = this.gVob.GetModel();
+                int aniID = gModel.GetAniIDFromAniName(ani.AniJob.Name);
+                if (aniID > 0)
+                {
+                    gModel.StartAni(aniID, 0);
+                    var activeAni = this.gVob.GetModel().GetActiveAni(aniID);
+                    activeAni.SetProgressPercent(ani.StartPercent/255.0f);
+                }
+            }
+        }
+
+        partial void pStopAnimation(bool fadeOut)
+        {
+            if (this.gvob != null)
+            {
+                var gModel = gVob.GetModel();
+                int id = gModel.GetAniIDFromAniName(currentAni.AniJob.Name);
+                var activeAni = gModel.GetActiveAni(id);
+
+                if (fadeOut)
+                {
+                    gModel.StopAni(activeAni);
+                }
+                else
+                {
+                    gModel.FadeOutAni(activeAni);
+                }
+            }
+        }
+
+        partial void pEndAni()
+        {
+            if (this.state == NPCStates.MoveForward)
+                this.gVob.GetModel().StartAni(this.gVob.AniCtrl._s_walkl, 0);
+            else
+                this.gVob.GetModel().StartAni(this.gVob.AniCtrl._s_walk, 0);
+        }
+
         #endregion
 
         public override void Spawn(World world, Vec3f position, Vec3f direction)
@@ -72,27 +114,18 @@ namespace GUC.WorldObjects
 
         partial void pSetState(NPCStates state)
         {
-            if (!this.IsSpawned)
+            if (this.gVob == null)
                 return;
 
-            if (state <= NPCStates.Animation)
+            if (this.state == NPCStates.MoveRight || this.state == NPCStates.MoveLeft)
             {
-                if (state != NPCStates.MoveRight && gVob.GetModel().IsAniActive(gVob.GetModel().GetAniFromAniID(gVob.AniCtrl._t_strafer)))
-                {
-                    gVob.GetModel().FadeOutAni(gVob.AniCtrl._t_strafer);
-                }
-                else if (state != NPCStates.MoveLeft && gVob.GetModel().IsAniActive(gVob.GetModel().GetAniFromAniID(gVob.AniCtrl._t_strafel)))
-                {
-                    gVob.GetModel().FadeOutAni(gVob.AniCtrl._t_strafel);
-                }
-                //npc.StopTurnAnis(); //Just in case the npc is turning
+                if (state == NPCStates.MoveForward)
+                    this.gVob.GetModel().StartAni(this.gVob.AniCtrl._s_walkl, 0);
+                else
+                    this.gVob.GetModel().StartAni(this.gVob.AniCtrl._s_walk, 0);
+            }
 
-                this.Update(DateTime.UtcNow.Ticks);
-            }
-            else
-            {
-                Log.Logger.Log(state);
-            }
+            this.Update(DateTime.UtcNow.Ticks);
         }
 
         internal void Update(long now)
@@ -110,6 +143,9 @@ namespace GUC.WorldObjects
                     StopTurnAnis();
                 }
             }*/
+
+            if (this.IsInAnimation)
+                return;
 
             switch (State)
             {

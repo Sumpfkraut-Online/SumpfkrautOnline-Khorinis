@@ -10,7 +10,6 @@ using WinApi;
 using Gothic.Types;
 using Gothic.System;
 using Gothic.View;
-using Gothic.Objects.Sky;
 
 namespace GUC.Client.Hooks
 {
@@ -28,8 +27,9 @@ namespace GUC.Client.Hooks
             Logger.Log("Added game loop hooks.");
         }
 
-        static long next = 0;
         static bool outgameStarted = false;
+
+        static System.Diagnostics.Stopwatch fpsWatch = new System.Diagnostics.Stopwatch();
         public static Int32 RunOutgame(String message)
         {
             try
@@ -41,37 +41,43 @@ namespace GUC.Client.Hooks
                     ScriptManager.Interface.StartOutgame();
                 }
 
-                if (next < DateTime.UtcNow.Ticks)
+                GUCTimer.Update(GameTime.Ticks);
+                GameClient.Client.Update();
+                InputHandler.Update();
+                ScriptManager.Interface.Update(GameTime.Ticks);
+
+                if (InputHandler.IsPressed(WinApi.User.Enumeration.VirtualKeys.F1))
                 {
-                    GameClient.Client.Update();
-                    InputHandler.Update();
-                    ScriptManager.Interface.Update(DateTime.UtcNow.Ticks);
-
-                    if (InputHandler.IsPressed(WinApi.User.Enumeration.VirtualKeys.F1))
-                    {
-                        oCGame.LoadGame(true, "NEWWORLD\\NEWWORLD.ZEN");
-                    }
-
-                    #region Gothic 
-                    int address = Convert.ToInt32(message);
-                    int CGameMngerAddress = Process.ReadInt(address);
-                    int arg = Process.ReadInt(address + 4);
-
-                    Process.CDECLCALL<NullReturnCall>(0x5053E0); // void __cdecl sysEvent(void)
-                    Process.CDECLCALL<NullReturnCall>(0x7A55C0); // public: static void __cdecl zCInputCallback::GetInput(void)
-
-                    using (zColor color = zColor.Create(0, 0, 0, 0))
-                        zCRenderer.Vid_Clear(color, 3);
-
-                    zCRenderer.BeginFrame();
-                    zCView.GetScreen().Render();
-                    zCRenderer.EndFrame();
-                    zCRenderer.Vid_Blit(1, 0, 0);
-                    zCSoundSystem.DoSoundUpdate();
-                    #endregion
-
-                    next = DateTime.UtcNow.Ticks + 33 * TimeSpan.TicksPerMillisecond;
+                    oCGame.LoadGame(true, "NEWWORLD\\NEWWORLD.ZEN");
                 }
+
+                #region Gothic 
+                int address = Convert.ToInt32(message);
+                int CGameMngerAddress = Process.ReadInt(address);
+                int arg = Process.ReadInt(address + 4);
+
+                Process.CDECLCALL<NullReturnCall>(0x5053E0); // void __cdecl sysEvent(void)
+                Process.CDECLCALL<NullReturnCall>(0x7A55C0); // public: static void __cdecl zCInputCallback::GetInput(void)
+
+                using (zColor color = zColor.Create(0, 0, 0, 0))
+                    zCRenderer.Vid_Clear(color, 3);
+
+                zCRenderer.BeginFrame();
+                zCView.GetScreen().Render();
+                zCRenderer.EndFrame();
+                zCRenderer.Vid_Blit(1, 0, 0);
+                zCSoundSystem.DoSoundUpdate();
+                #endregion
+
+                if (fpsWatch.IsRunning)
+                {
+                    long diff = 8 * TimeSpan.TicksPerMillisecond - fpsWatch.ElapsedTicks;
+                    if (diff > 0)
+                    {
+                        System.Threading.Thread.Sleep((int)(diff / TimeSpan.TicksPerMillisecond));
+                    }
+                }
+                fpsWatch.Restart();
             }
             catch (Exception e)
             {
@@ -92,16 +98,41 @@ namespace GUC.Client.Hooks
                     ScriptManager.Interface.StartIngame();
                 }
 
+                GUCTimer.Update(GameTime.Ticks);
                 GameClient.Client.Update();
                 InputHandler.Update();
-                ScriptManager.Interface.Update(DateTime.UtcNow.Ticks);
+                ScriptManager.Interface.Update(GameTime.Ticks);
 
-                GameClient.Client.UpdateCharacters(DateTime.UtcNow.Ticks);
+                GameClient.Client.UpdateCharacters(GameTime.Ticks);
 
                 if (InputHandler.IsPressed(WinApi.User.Enumeration.VirtualKeys.F4))
                 {
                     Program.Exit();
                 }
+
+                if (InputHandler.IsPressed(WinApi.User.Enumeration.VirtualKeys.F6))
+                {
+                    int bitField = Process.ReadInt(GameClient.Client.Character.gVob.HumanAI.Address + 0x1204);
+                    if ((bitField & 0x10) != 0)
+                    {
+                        bitField &= ~0x10;
+                    }
+                    else
+                    {
+                        bitField |= 0x10;
+                    }
+                    Process.Write(bitField, GameClient.Client.Character.gVob.HumanAI.Address + 0x1204);
+                }
+
+                if (fpsWatch.IsRunning)
+                {
+                    long diff = 8 * TimeSpan.TicksPerMillisecond - fpsWatch.ElapsedTicks;
+                    if (diff > 0)
+                    {
+                        System.Threading.Thread.Sleep((int)(diff / TimeSpan.TicksPerMillisecond));
+                    }
+                }
+                fpsWatch.Restart();
 
                 /*if ((WinApi.User.Input.GetAsyncKeyState(WinApi.User.Enumeration.VirtualKeys.F1) & 0x8001) == 0x8001 || (WinApi.User.Input.GetAsyncKeyState(WinApi.User.Enumeration.VirtualKeys.F1) & 0x8000) == 0x8000)
                 {

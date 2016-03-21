@@ -27,7 +27,7 @@ namespace GUC.Scripting
 
         #region Properties
 
-        int id;
+        int id = -1;
 
         long interval;
         /// <summary>

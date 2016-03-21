@@ -46,13 +46,8 @@ namespace GUC.WorldObjects
 
         partial void pSetState(NPCStates state)
         {
-            if (!this.IsSpawned)
-                return;
-
-            if (state <= NPCStates.Animation)
-            {
-                NPCMessage.WriteState(this);
-            }
+            if (this.isCreated)
+                NPCMessage.WriteState(this, state);
         }
 
         #region Cells
@@ -261,6 +256,16 @@ namespace GUC.WorldObjects
         {
             if (this.isCreated)
                 NPCMessage.WriteRemoveOverlayMessage(this, overlay);
+        }
+
+        partial void pStartAnimation(Animation ani)
+        {
+            NPCMessage.WriteAniStart(this, ani);
+        }
+
+        partial void pStopAnimation(bool fadeOut)
+        {
+            NPCMessage.WriteAniStop(this, fadeOut);
         }
 
         #endregion

@@ -34,9 +34,6 @@ namespace GUC.Network
             if (this.character == null)
                 return;
 
-            if (state >= NPCStates.Animation)
-                throw new Exception("Don't use Animation states for this!");
-
             if (this.character.State == state)
                 return;
 
@@ -294,6 +291,13 @@ namespace GUC.Network
                     break;
                 case NetworkIDs.NPCRemoveOverlayMessage:
                     NPCMessage.ReadRemoveOverlay(stream);
+                    break;
+
+                case NetworkIDs.NPCAniStartMessage:
+                    NPCMessage.ReadAniStart(stream);
+                    break;
+                case NetworkIDs.NPCAniStopMessage:
+                    NPCMessage.ReadAniStop(stream);
                     break;
 
                 default:

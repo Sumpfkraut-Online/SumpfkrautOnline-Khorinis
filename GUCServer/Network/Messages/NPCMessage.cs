@@ -29,11 +29,11 @@ namespace GUC.Server.Network.Messages
             }
         }
 
-        public static void WriteState(NPC npc)
+        public static void WriteState(NPC npc, NPCStates state)
         {
             PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCStateMessage);
             stream.Write((ushort)npc.ID);
-            stream.Write((byte)npc.State);
+            stream.Write((byte)state);
 
             npc.Cell.ForEachSurroundingClient(c => c.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
         }
@@ -93,39 +93,78 @@ namespace GUC.Server.Network.Messages
 
         #region Animation
 
-        /*public static void ReadAniStart(PacketReader stream, Client client, NPC character)
+        #region Overlays
+
+        public static void ReadApplyOverlay(PacketReader stream, NPC npc)
         {
-            Animations ani = (Animations)stream.ReadUShort();
-            WriteAniStart(character.cell.SurroundingClients(client), character, ani);
+            Overlay ov;
+            if (npc.Model.TryGetOverlay(stream.ReadByte(), out ov))
+            {
+                npc.ScriptObject.OnCmdApplyOverlay(ov);
+            }
         }
 
-        public static void ReadAniStop(PacketReader stream, Client client, NPC character)
+        public static void ReadRemoveOverlay(PacketReader stream, NPC npc)
         {
-            Animations ani = (Animations)stream.ReadUShort();
-            bool fadeout = stream.ReadBit();
-            WriteAniStop(character.cell.SurroundingClients(client), character, ani, fadeout);
+            Overlay ov;
+            if (npc.Model.TryGetOverlay(stream.ReadByte(), out ov))
+            {
+                npc.ScriptObject.OnCmdRemoveOverlay(ov);
+            }
         }
 
-        public static void WriteAniStart(IEnumerable<Client> list, NPC npc, Animations ani)
+        public static void WriteApplyOverlayMessage(NPC npc, Overlay overlay)
         {
-            PacketWriter stream = Network.GameServer.SetupStream(NetworkIDs.NPCAniStartMessage);
-            stream.Write(npc.ID);
-            stream.Write((ushort)ani);
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCApplyOverlayMessage);
+            stream.Write((ushort)npc.ID);
+            stream.Write((byte)overlay.ID);
 
-            foreach (Client client in list)
-                client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'W');
+            npc.Cell.ForEachSurroundingClient(c => c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'W'));
         }
 
-        public static void WriteAniStop(IEnumerable<Client> list, NPC npc, Animations ani, bool fadeout)
+        public static void WriteRemoveOverlayMessage(NPC npc, Overlay overlay)
         {
-            PacketWriter stream = Network.GameServer.SetupStream(NetworkIDs.NPCAniStartMessage);
-            stream.Write(npc.ID);
-            stream.Write((ushort)ani);
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCRemoveOverlayMessage);
+            stream.Write((ushort)npc.ID);
+            stream.Write((byte)overlay.ID);
+
+            npc.Cell.ForEachSurroundingClient(c => c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'W'));
+        }
+
+        #endregion
+
+        public static void ReadAniStart(PacketReader stream, NPC character)
+        {
+            AniJob job;
+            if (character.Model.TryGetAni(stream.ReadUShort(), out job))
+            {
+                character.ScriptObject.OnCmdStartAni(job);
+            }
+        }
+
+        public static void ReadAniStop(PacketReader stream, NPC character)
+        {
+            character.ScriptObject.OnCmdStopAni(stream.ReadBit());
+        }
+
+
+        public static void WriteAniStart(NPC npc, Animation ani)
+        {
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCAniStartMessage);
+            stream.Write((ushort)npc.ID);
+            stream.Write((ushort)ani.AniJob.ID);
+
+            npc.Cell.ForEachSurroundingClient(c => c.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE, 'W'));
+        }
+
+        public static void WriteAniStop(NPC npc, bool fadeout)
+        {
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCAniStartMessage);
+            stream.Write((ushort)npc.ID);
             stream.Write(fadeout);
 
-            foreach (Client client in list)
-                client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'W');
-        }*/
+            npc.Cell.ForEachSurroundingClient(c => c.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE, 'W'));
+        }
 
         #endregion
 
@@ -155,25 +194,6 @@ namespace GUC.Server.Network.Messages
                 if (client != npc.client)
                     client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
             });
-        }
-
-        public static void WriteApplyOverlayMessage(NPC npc, Overlay overlay)
-        {
-            PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCApplyOverlayMessage);
-            stream.Write((ushort)npc.ID);
-            stream.Write((byte)overlay.ID);
-
-            npc.Cell.ForEachSurroundingClient(c => c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'W'));
-        }
-
-        public static void WriteRemoveOverlayMessage(NPC npc, Overlay overlay)
-        {
-            PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCRemoveOverlayMessage);
-            stream.Write((ushort)npc.ID);
-            stream.Write((byte)overlay.ID);
-
-            npc.Cell.ForEachSurroundingClient(c => c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'W'));
-
         }
     }
 }

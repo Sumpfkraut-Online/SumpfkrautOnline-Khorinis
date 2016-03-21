@@ -14,9 +14,6 @@ namespace GUC.Enumeration
         MoveBackward,
 
         MoveLeft,
-        MoveRight,
-        
-        Animation,
-        AttackAnimation,
+        MoveRight
     }
 }

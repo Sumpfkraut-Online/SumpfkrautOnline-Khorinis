@@ -42,6 +42,8 @@ namespace GUC.Enumeration
         NPCUnequipMessage,
         NPCApplyOverlayMessage,
         NPCRemoveOverlayMessage,
+        NPCAniStartMessage,
+        NPCAniStopMessage,
 
         //inventory
         InventoryAddMessage, // add item to player inventory
@@ -65,8 +67,6 @@ namespace GUC.Enumeration
         MobUnUseMessage,
 
         //npcs
-        NPCAniStartMessage,
-        NPCAniStopMessage,
         NPCJumpMessage,
 
 

@@ -18,9 +18,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #region Properties
 
-        public new WorldObjects.NPC BaseInst { get { return (WorldObjects.NPC)base.BaseInst; } }
+        public new NPC BaseInst { get { return (NPC)base.BaseInst; } }
 
         public new NPCDef Definition { get { return (NPCDef)base.Definition; } }
+
+        public ModelDef Model { get { return this.Definition.Model; } }
 
         #endregion
 
@@ -48,6 +50,16 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public void RemoveOverlay(ScriptOverlay overlay)
         {
             this.BaseInst.RemoveOverlay(overlay.BaseOverlay);
+        }
+
+        public void StartAnimation(ScriptAniJob job, Action onStop = null)
+        {
+            this.BaseInst.StartAnimation(job.BaseAniJob, onStop);
+        }
+
+        public void StopAnimation(bool fadeOut = false)
+        {
+            this.BaseInst.StopAnimation(fadeOut);
         }
 
         #endregion
@@ -114,6 +126,18 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public void OnCmdRemoveOverlay(Overlay overlay)
         {
             this.pOnCmdRemoveOverlay((ScriptOverlay)overlay.ScriptObject);
+        }
+
+        partial void pOnCmdStartAni(ScriptAniJob job);
+        public void OnCmdStartAni(AniJob job)
+        {
+            this.pOnCmdStartAni((ScriptAniJob)job.ScriptObject);
+        }
+
+        partial void pOnCmdStopAni(bool fadeOut);
+        public void OnCmdStopAni(bool fadeOut)
+        {
+            this.pOnCmdStopAni(fadeOut);
         }
 
         #endregion

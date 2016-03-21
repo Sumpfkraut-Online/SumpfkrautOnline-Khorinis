@@ -66,6 +66,9 @@ namespace GUC.Network
 
         #region Properties
 
+        internal int PacketCount = 0;
+        internal long nextCheck = 0;
+
         //Networking
         internal RakNetGUID guid;
         internal SystemAddress systemAddress;

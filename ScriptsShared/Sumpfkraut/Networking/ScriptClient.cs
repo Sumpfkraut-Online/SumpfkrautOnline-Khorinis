@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GUC.Network;
+using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 
 namespace GUC.Scripts.Sumpfkraut.Networking
 {
@@ -13,6 +14,8 @@ namespace GUC.Scripts.Sumpfkraut.Networking
 
         GameClient baseClient;
         public GameClient BaseClient { get { return this.baseClient; } }
+
+        public NPCInst Character { get { return (NPCInst)this.baseClient.Character.ScriptObject; } }
         
         #region dank rank
 
