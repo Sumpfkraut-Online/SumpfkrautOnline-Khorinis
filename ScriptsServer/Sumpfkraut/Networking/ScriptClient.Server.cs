@@ -20,11 +20,9 @@ namespace GUC.Scripts.Sumpfkraut.Networking
             NPCDef def = BaseVobDef.Get<NPCDef>("player");
             NPCInst npc = new NPCInst(def);
 
-            var item = new ItemInst(ItemDef.Get<ItemDef>("apple"));
-            item.BaseInst.SetAmount(42);
-            npc.BaseInst.Inventory.Add(item.BaseInst);
-            npc.BaseInst.Inventory.Add((new ItemInst(ItemDef.Get<ItemDef>("apple"))).BaseInst);
-            npc.BaseInst.Inventory.Add((new ItemInst(ItemDef.Get<ItemDef>("apple"))).BaseInst);
+            var item = new ItemInst(ItemDef.Get<ItemDef>("zweihander"));
+            npc.AddItem(item);
+            npc.EquipItem(1, item);
 
             /*ScriptOverlay ov;
             if (!npc.Definition.Model.TryGetOverlay(0, out ov))
@@ -64,15 +62,10 @@ namespace GUC.Scripts.Sumpfkraut.Networking
             //baseClient.Character.Inventory.Add(apple.BaseInst);
 
             ScriptAniJob job;
-            if (!this.Character.Model.TryGetAniJob(0, out job))
+            if (!this.Character.Model.TryGetAniJob("FistRunAttack", out job))
                 Logger.Log("Wo ist denn die Ani? Ja wo ist sie denn nur?");
 
             this.Character.StartAnimation(job);
-        }
-
-        public void SetControl(NPCInst npc)
-        {
-            BaseClient.SetControl(npc.BaseInst);
         }
     }
 }

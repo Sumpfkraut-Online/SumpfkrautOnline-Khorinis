@@ -13,8 +13,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             if (def == null)
                 throw new ArgumentNullException("VobDef is null!");
 
-            this.definition = def;
-            this.baseInst.Instance = this.definition.BaseDef;
+            this.Definition = def;
         }
     }
 }

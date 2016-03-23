@@ -41,6 +41,8 @@ namespace GUC.Client.Hooks
                     ScriptManager.Interface.StartOutgame();
                 }
 
+                GameTime.Update();
+
                 GUCTimer.Update(GameTime.Ticks);
                 GameClient.Client.Update();
                 InputHandler.Update();
@@ -97,6 +99,8 @@ namespace GUC.Client.Hooks
                     ingameStarted = true;
                     ScriptManager.Interface.StartIngame();
                 }
+                
+                GameTime.Update();
 
                 GUCTimer.Update(GameTime.Ticks);
                 GameClient.Client.Update();

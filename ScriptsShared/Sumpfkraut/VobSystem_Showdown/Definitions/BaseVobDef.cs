@@ -23,12 +23,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #endregion
 
-        protected BaseVobDef(BaseVobInstance baseDef, PacketReader stream) : this(baseDef)
-        {
-            this.baseDef.ReadStream(stream); // calls OnReadProperties too!
-        }
-
-        private BaseVobDef(BaseVobInstance baseDef)
+        protected BaseVobDef(BaseVobInstance baseDef)
         {
             if (baseDef == null)
                 throw new ArgumentNullException("BaseDef is null!");

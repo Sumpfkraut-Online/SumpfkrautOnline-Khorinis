@@ -179,6 +179,30 @@ namespace GUC.Network
             return color;
         }
 
+        public Vec3f ReadCompressedPosition()
+        {
+            Vec3f vec = new Vec3f();
+            vec.X = ReadInt24() / 10.0f;
+            vec.Y = ReadInt24() / 10.0f;
+            vec.Z = ReadInt24() / 10.0f;
+            return vec;
+        }
+
+        int ReadInt24()
+        {
+            int val = ((int)data[currentByte++]) | (((int)data[currentByte++]) << 8) | (((int)data[currentByte++]) << 16);
+            return (val & 0x800000) != 0 ? val | (0xFF << 24) : val;
+        }
+
+        public Vec3f ReadCompressedDirection()
+        {
+            Vec3f vec = new Vec3f();
+            vec.X = ReadSByte() / 127.0f;
+            vec.Y = ReadSByte() / 127.0f;
+            vec.Z = ReadSByte() / 127.0f;
+            return vec;
+        }
+
         #endregion
     }
 }

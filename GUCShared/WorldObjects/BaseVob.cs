@@ -28,6 +28,8 @@ namespace GUC.WorldObjects
         /// </summary>
         public partial interface IScriptBaseVob : IScriptGameObject
         {
+            void Spawn(World world);
+            void Despawn();
         }
 
         /// <summary>
@@ -162,11 +164,12 @@ namespace GUC.WorldObjects
             if (!this.isCreated)
                 throw new Exception("Vob isn't spawned!");
 
+            this.isCreated = false;
+
             this.world.RemoveVob(this);
             this.world = null;
             pDespawn();
 
-            this.isCreated = false;
         }
         #endregion
 

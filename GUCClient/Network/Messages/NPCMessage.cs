@@ -7,6 +7,7 @@ using GUC.WorldObjects;
 using GUC.Network;
 using RakNet;
 using GUC.Animations;
+using GUC.Scripting;
 
 namespace GUC.Client.Network.Messages
 {
@@ -123,6 +124,35 @@ namespace GUC.Client.Network.Messages
             {
                 bool fadeOut = stream.ReadBit();
                 npc.ScriptObject.OnCmdStopAni(fadeOut);
+            }
+        }
+
+        #endregion
+
+        #region Equipment
+
+        public static void ReadEquipMessage(PacketReader stream)
+        {
+            NPC npc;
+            if (World.Current.TryGetVob(stream.ReadUShort(), out npc))
+            {
+                int slot = stream.ReadByte();
+                Item item = (Item)ScriptManager.Interface.CreateVob(VobTypes.Item);
+                item.ReadEquipProperties(stream);
+                npc.ScriptObject.EquipItem(slot, item);
+            }
+        }
+
+        public static void ReadUnequipMessage(PacketReader stream)
+        {
+            NPC npc;
+            if (World.Current.TryGetVob(stream.ReadUShort(), out npc))
+            {
+                Item item;
+                if (npc.TryGetEquippedItem(stream.ReadByte(), out item))
+                {
+                    npc.ScriptObject.UnequipItem(item);
+                }
             }
         }
 

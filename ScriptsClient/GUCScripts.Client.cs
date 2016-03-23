@@ -10,14 +10,6 @@ using System.IO;
 using GUC.Client.Scripts.Sumpfkraut.Menus;
 using GUC.Client.Scripts.Sumpfkraut.Menus.MainMenus;
 using GUC.Client.Scripts.Sumpfkraut;
-using GUC.Network;
-using GUC.Enumeration;
-using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
-using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
-using GUC.Scripts.Sumpfkraut.WorldSystem;
-using GUC.Models;
-using GUC.WorldObjects;
-using GUC.Scripts.Sumpfkraut.Visuals;
 
 namespace GUC.Scripts
 {
@@ -62,93 +54,6 @@ namespace GUC.Scripts
             MainMenu.CloseActiveMenus();
             Ingame = true;
             Logger.Log("Ingame started.");
-        }
-
-        public void OnCreateInstanceMsg(VobTypes type, PacketReader stream)
-        {
-            BaseVobDef def;
-            switch (type)
-            {
-                case VobTypes.Vob:
-                    def = new VobDef(stream);
-                    break;
-                case VobTypes.NPC:
-                    def = new NPCDef(stream);
-                    break;
-                case VobTypes.Item:
-                    def = new ItemDef(stream);
-                    break;
-                default:
-                    Logger.LogError("Unknown VobDef-Type! " + type);
-                    return;
-            }
-
-            def.Create();
-        }
-
-        public void OnDeleteInstanceMsg(WorldObjects.Instances.BaseVobInstance instance)
-        {
-            ((BaseVobDef)instance.ScriptObject).Delete();
-        }
-
-        public void OnSpawnVobMsg(VobTypes type, PacketReader stream)
-        {
-            BaseVobInst inst;
-            switch (type)
-            {
-                case VobTypes.Vob:
-                    inst = new VobInst(stream);
-                    break;
-                case VobTypes.NPC:
-                    inst = new NPCInst(stream);
-                    break;
-                case VobTypes.Item:
-                    inst = new ItemInst(stream);
-                    break;
-                default:
-                    Logger.LogError("Unknown VobDef-Type! " + type);
-                    return;
-            }
-            inst.Spawn(WorldInst.Current);
-        }
-
-        public void OnDespawnVobMsg(WorldObjects.BaseVob vob)
-        {
-            vob.Despawn();
-        }
-
-        public void OnLoadWorldMsg(out WorldObjects.World world, PacketReader stream)
-        {
-            WorldInst w = new WorldInst(stream);
-            w.Load();
-            world = w.BaseWorld;
-            WorldInst.Current = w;
-        }
-        
-        public void OnInvAddMsg(PacketReader stream)
-        {
-            var i = ItemInst.ReadFromInvMsg(stream);
-            GameClient.Client.Character.Inventory.Add(i.BaseInst);
-        }
-
-        public void OnInvRemoveMsg(WorldObjects.Item item)
-        {
-            GameClient.Client.Character.Inventory.Remove(item);
-        }
-
-        public void OnDeleteModelMsg(Model model)
-        {
-            ((ModelDef)model.ScriptObject).Delete();
-        }
-
-        public void OnEquipMsg(NPC npc, int slot, PacketReader stream)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void OnUnequipMsg(NPC npc, int slot)
-        {
-            throw new NotImplementedException();
         }
     }
 }

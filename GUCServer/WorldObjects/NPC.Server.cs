@@ -25,6 +25,8 @@ namespace GUC.WorldObjects
             void OnCmdDrawItem(Item item);
             void OnCmdPickupItem(Item item);
             void OnCmdDropItem(Item item);
+            void OnCmdEquipItem(int slot, Item item);
+            void OnCmdUnequipItem(Item item);
         }
 
         #endregion
@@ -169,6 +171,8 @@ namespace GUC.WorldObjects
 
         #endregion
 
+        #region Spawn
+
         public override void Spawn(World world, Vec3f position, Vec3f direction)
         {
             if (this.IsPlayer)
@@ -194,26 +198,26 @@ namespace GUC.WorldObjects
         // wait until the client has loaded the map
         internal void InsertInWorld()
         {
-            if (!this.IsSpawned)
-                world.AddVob(this);
-
-            world.AddToPlayers(this.client);
-            this.isCreated = true;
-
-            PacketWriter stream = GameServer.SetupStream(NetworkIDs.PlayerControlMessage);
-            stream.Write((ushort)ID);
-            WriteTakeControl(stream);
-            this.Client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, '\0');
-
-            NetCell[] arr = new NetCell[NetCell.NumSurroundingCells];
-            int i = 0;
-            this.Cell.ForEachSurroundingCell(cell =>
+            // Write surrounding vobs to this client
+            int[] coords = GetNetCellCoords();
+            NetCell[] arr = new NetCell[NetCell.NumSurroundingCells]; int i = 0;
+            this.world.ForEachSurroundingCell(coords[0], coords[1], cell =>
             {
                 if (cell.DynVobs.GetCount() > 0)
-                    arr[i++] = cell;
+                    arr[i++] = cell; // save for cell message
             });
+            WorldCellMessage.Write(arr, new NetCell[0], 0, this.client);
 
-            WorldCellMessage.Write(arr, new NetCell[1], 0, this.client);
+            if (!this.isCreated)
+            {
+                base.Spawn(this.world, pos, dir);
+            }
+            world.AddToPlayers(this.client);
+
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.PlayerControlMessage);
+            stream.Write((ushort)this.ID);
+            this.WriteTakeControl(stream);
+            this.Client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, '\0');
         }
 
         public override void Despawn()
@@ -226,20 +230,28 @@ namespace GUC.WorldObjects
             }
         }
 
+        #endregion
+
         #region Equipment
 
         partial void pEquipItem(Item item)
         {
-            NPCMessage.WriteEquipMessage(this, item);
-            if (this.IsPlayer)
-                InventoryMessage.WriteEquipMessage(this, item);
+            if (this.isCreated)
+            {
+                NPCMessage.WriteEquipMessage(this, item);
+                if (this.IsPlayer)
+                    InventoryMessage.WriteEquipMessage(this, item);
+            }
         }
 
         partial void pUnequipItem(Item item)
         {
-            NPCMessage.WriteUnequipMessage(this, item.slot);
-            if (this.IsPlayer)
-                InventoryMessage.WriteUnequipMessage(this, item.slot);
+            if (this.isCreated)
+            {
+                NPCMessage.WriteUnequipMessage(this, item.slot);
+                if (this.IsPlayer)
+                    InventoryMessage.WriteUnequipMessage(this, item.slot);
+            }
         }
 
         #endregion

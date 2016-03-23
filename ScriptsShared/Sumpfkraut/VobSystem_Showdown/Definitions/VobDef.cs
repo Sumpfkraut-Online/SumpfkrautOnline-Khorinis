@@ -34,11 +34,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #endregion
 
-        public VobDef(PacketReader stream) : this(new VobInstance(), stream)
+        public VobDef() : this(new VobInstance())
         {
         }
 
-        protected VobDef(VobInstance baseDef, PacketReader stream) : base(baseDef, stream)
+        protected VobDef(VobInstance baseDef) : base(baseDef)
         {
         }
     }

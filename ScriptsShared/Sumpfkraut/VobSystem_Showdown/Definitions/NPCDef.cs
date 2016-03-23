@@ -17,7 +17,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         public string HeadMesh { get { return BaseDef.HeadMesh; } set { BaseDef.HeadMesh = value; } }
         public int HeadTex { get { return BaseDef.HeadTex; } set { BaseDef.HeadTex = value; } }
 
-        public NPCDef(PacketReader stream) : base(new NPCInstance(), stream)
+        public NPCDef() : base(new NPCInstance())
         {
         }
     }

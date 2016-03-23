@@ -54,6 +54,10 @@ namespace GUC.Enumeration
 
 
 
+
+
+
+
         PlayerPickUpItemMessage,
         PlayerAttributeMSMessage,
         PlayerAttributeMessage,

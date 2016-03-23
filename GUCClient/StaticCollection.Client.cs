@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace GUC.WorldObjects.Collections
+namespace GUC
 {
     internal partial class StaticCollection<T> where T : GameObject
     {

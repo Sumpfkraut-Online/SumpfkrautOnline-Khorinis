@@ -43,5 +43,17 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             this.StopAnimation(fadeOut);
         }
+
+
+
+        public void OnCmdEquipItem(int slot, WorldObjects.Item item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnCmdUnequipItem(WorldObjects.Item item)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

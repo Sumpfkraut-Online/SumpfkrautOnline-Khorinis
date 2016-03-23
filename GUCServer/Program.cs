@@ -24,7 +24,7 @@ namespace GUC.Server
 
                 ScriptManager.StartScripts("Scripts\\ServerScripts.dll");
 
-                const int updateRate = 20; //time between server ticks
+                const int updateRate = 8; //time between server ticks
 
                 const long nextInfoUpdateTime = 60 * TimeSpan.TicksPerSecond;
                 long nextInfoUpdates = DateTime.UtcNow.Ticks + nextInfoUpdateTime;
@@ -38,14 +38,15 @@ namespace GUC.Server
                 {
                     watch.Restart();
 
-                    GUCTimer.Update(DateTime.UtcNow.Ticks); // move to new thread?
+                    GameTime.Update();
+                    GUCTimer.Update(GameTime.Ticks); // move to new thread?
                     GameServer.Update(); //process received packets
 
-                    if (nextInfoUpdates < DateTime.UtcNow.Ticks)
+                    if (nextInfoUpdates < GameTime.Ticks)
                     {
                         tickAverage /= tickCount;
                         Logger.Log("Tick rate info: {0:0.00}ms average, {1:0.00}ms max. Allocated RAM: {2:0.0}MB", (double)tickAverage / TimeSpan.TicksPerMillisecond, (double)tickMax / TimeSpan.TicksPerMillisecond, Process.GetCurrentProcess().PrivateMemorySize64 / 1048576d);
-                        nextInfoUpdates = DateTime.UtcNow.Ticks + nextInfoUpdateTime;
+                        nextInfoUpdates = GameTime.Ticks + nextInfoUpdateTime;
                         tickMax = 0;
                         tickAverage = 0;
                         tickCount = 0;

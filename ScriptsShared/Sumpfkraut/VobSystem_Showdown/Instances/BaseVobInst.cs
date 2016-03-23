@@ -11,7 +11,7 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
-    public partial class BaseVobInst : ScriptObject, BaseVob.IScriptBaseVob
+    public abstract partial class BaseVobInst : ScriptObject, BaseVob.IScriptBaseVob
     {
         #region Properties
 
@@ -20,19 +20,18 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public BaseVob BaseInst { get { return baseInst; } }
 
         // Definition 
-        BaseVobDef definition;
-        public BaseVobDef Definition { get { return definition; } }
+        public BaseVobDef Definition
+        {
+            get { return (BaseVobDef)baseInst.Instance.ScriptObject; }
+            set { baseInst.Instance = value.BaseDef; }
+        }
 
         public int ID { get { return baseInst.ID; } }
         public VobTypes VobType { get { return baseInst.VobType; } }
         public bool IsStatic { get { return baseInst.IsStatic; } }
+        public bool IsSpawned { get { return baseInst.IsSpawned; } }
 
         #endregion
-
-        protected BaseVobInst(BaseVob baseInst, PacketReader stream) : this(baseInst)
-        {
-            baseInst.ReadStream(stream);
-        }
 
         protected BaseVobInst(BaseVob baseInst)
         {
@@ -43,20 +42,26 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             this.baseInst.ScriptObject = this;
         }
 
-        public void Spawn(WorldInst world)
+        public void Spawn(World world)
+        {
+            this.Spawn((WorldInst)world.ScriptObject);
+        }
+        
+        public virtual void Spawn(WorldInst world)
         {
             this.baseInst.Spawn(world.BaseWorld);
         }
-
-        public void Delete()
+        
+        public virtual void Despawn()
         {
             baseInst.Despawn();
         }
 
         public virtual void OnReadProperties(PacketReader stream)
         {
-            this.definition = (BaseVobDef)baseInst.Instance.ScriptObject;
         }
-        public virtual void OnWriteProperties(PacketWriter stream) { }
+        public virtual void OnWriteProperties(PacketWriter stream)
+        {
+        }
     }
 }

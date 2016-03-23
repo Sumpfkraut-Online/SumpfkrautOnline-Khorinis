@@ -9,6 +9,7 @@ using GUC.Enumeration;
 using GUC.Server.Network;
 using GUC.Server.WorldObjects.Cells;
 using GUC.Server.Network.Messages;
+using GUC.WorldObjects.Collections;
 
 namespace GUC.Network
 {
@@ -30,6 +31,7 @@ namespace GUC.Network
 
         #region Collection
 
+        static StaticCollection<GameClient> idColl = new StaticCollection<GameClient>(200); // slots
         static DynamicCollection<GameClient> clients = new DynamicCollection<GameClient>();
 
         internal void Create()
@@ -37,6 +39,7 @@ namespace GUC.Network
             if (this.isCreated)
                 throw new Exception("Client is already in the collection!");
 
+            idColl.Add(this);
             clients.Add(this, ref this.collID);
 
             this.isCreated = true;
@@ -47,14 +50,22 @@ namespace GUC.Network
             if (!this.isCreated)
                 throw new Exception("Client is not in the collection!");
 
-            clients.Remove(ref this.collID);
-
             this.isCreated = false;
+
+            idColl.Remove(this);
+            clients.Remove(ref this.collID);
         }
 
         public static void ForEach(Action<GameClient> action)
         {
             clients.ForEach(action);
+        }
+
+        public static int GetCount() { return clients.Count; }
+
+        public static bool TryGetClient(int id, out GameClient client)
+        {
+            return idColl.TryGet(id, out client);
         }
 
         #endregion
@@ -101,11 +112,8 @@ namespace GUC.Network
         internal int worldID = -1;
         internal int cellID = -1;
 
-        public void SetControl(NPC npc)
+        partial void pSetControl(NPC npc)
         {
-            if (npc == null)
-                throw new ArgumentNullException("NPC is null!");
-
             if (npc.IsPlayer)
             {
                 Logger.LogWarning("Rejected SetControl: NPC {0} is a Player!", npc.ID);
@@ -143,7 +151,7 @@ namespace GUC.Network
                     PacketWriter stream = GameServer.SetupStream(NetworkIDs.PlayerControlMessage);
                     stream.Write((ushort)npc.ID);
                     npc.WriteTakeControl(stream);
-                    Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, '\0');
+                    Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, '\0');
                 }
             }
 

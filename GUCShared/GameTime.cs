@@ -7,6 +7,12 @@ namespace GUC
 {
     public static class GameTime
     {
-        public static long Ticks { get { return DateTime.UtcNow.Ticks; } }
+        static long ticks = DateTime.UtcNow.Ticks;
+        public static long Ticks { get { return ticks; } }
+
+        internal static void Update()
+        {
+            ticks = DateTime.UtcNow.Ticks;
+        }
     }
 }

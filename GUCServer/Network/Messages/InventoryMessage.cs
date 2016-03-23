@@ -15,6 +15,7 @@ namespace GUC.Server.Network.Messages
         public static void WriteAddItem(GameClient client, Item item)
         {
             PacketWriter stream = GameServer.SetupStream(NetworkIDs.InventoryAddMessage);
+            stream.Write((byte)item.ID);
             item.WriteInventoryProperties(stream);
             client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I');
         }
@@ -39,18 +40,46 @@ namespace GUC.Server.Network.Messages
             client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I');
         }
 
+
+
+        #region Equipment
+
         public static void WriteEquipMessage(NPC npc, Item item)
         {
-            PacketWriter stream = GameServer.SetupStream(NetworkIDs.InventoryEquipMessage);
-            stream.Write((byte)item.slot);
-            npc.client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I');
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCEquipMessage);
+
+            stream.Write((byte)item.ID);
+            stream.Write((byte)item.Slot);
+
+            npc.client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
         }
 
         public static void WriteUnequipMessage(NPC npc, int slot)
         {
-            PacketWriter stream = GameServer.SetupStream(NetworkIDs.InventoryUnequipMessage);
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCUnequipMessage);
+            
             stream.Write((byte)slot);
-            npc.client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I');
+
+            npc.client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
         }
+
+        public static void ReadEquipMessage(PacketReader stream, NPC character)
+        {
+            Item item;
+            if (character.TryGetEquippedItem(stream.ReadByte(), out item))
+            {
+                character.ScriptObject.OnCmdEquipItem(stream.ReadByte(), item);
+            }
+        }
+
+        public static void ReadUnequipMessage(PacketReader stream, NPC character)
+        {
+            Item item;
+            if (character.TryGetEquippedItem(stream.ReadByte(), out item))
+            {
+                character.ScriptObject.OnCmdUnequipItem(item);
+            }
+        }
+        #endregion
     }
 }

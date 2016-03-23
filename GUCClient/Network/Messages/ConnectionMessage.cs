@@ -9,6 +9,7 @@ using GUC.Scripting;
 using System.Security.Cryptography;
 using System.Management;
 using GUC.Models;
+using GUC.WorldObjects.Instances;
 
 namespace GUC.Client.Network.Messages
 {
@@ -34,7 +35,9 @@ namespace GUC.Client.Network.Messages
                     int num = stream.ReadUShort();
                     for (int n = 0; n < num; n++)
                     {
-                        ScriptManager.Interface.OnCreateInstanceMsg((VobTypes)i, stream);
+                        BaseVobInstance inst = ScriptManager.Interface.CreateInstance((VobTypes)i);
+                        inst.ReadStream(stream);
+                        inst.ScriptObject.Create();
                     }
                 }
             }

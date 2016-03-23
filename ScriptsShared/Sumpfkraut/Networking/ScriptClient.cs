@@ -50,6 +50,16 @@ namespace GUC.Scripts.Sumpfkraut.Networking
 
         }
 
+        public void SetControl(WorldObjects.NPC npc)
+        {
+            this.SetControl((NPCInst)npc.ScriptObject);
+        }
+
+        public void SetControl(NPCInst npc)
+        {
+            this.baseClient.SetControl(npc.BaseInst);
+        }
+
         #region Read & Write
 
         public void OnReadProperties(PacketReader stream)

@@ -9,7 +9,7 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
     {
         public static WorldInst NewWorld;
 
-        public WorldInst(WorldDef def) : this(new WorldObjects.World())
+        public WorldInst(WorldDef def) : this()
         {
             this.definition = def;
         }

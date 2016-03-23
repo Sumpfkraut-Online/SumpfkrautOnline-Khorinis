@@ -159,8 +159,9 @@ namespace GUC.Animations
 
             overlays.Add(ani);
 
-            ani.SetAniJob(this, overlay);
             pAddOverlayAni(ani);
+
+            ani.SetAniJob(this, overlay);
         }
 
         partial void pRemoveOverlayAni(Animation ani);
@@ -175,10 +176,11 @@ namespace GUC.Animations
             if (ani.Overlay == null)
                 throw new ArgumentException("Animation is BaseAni!");
 
+            ani.SetAniJob(null, null);
+
             pRemoveOverlayAni(ani);
 
             overlays.Remove(ani);
-            ani.SetAniJob(null, null);
         }
 
         #endregion

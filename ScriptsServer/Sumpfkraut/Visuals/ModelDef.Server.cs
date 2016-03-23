@@ -98,7 +98,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
             if (codeName == null)
                 throw new ArgumentNullException("CodeName is null!");
 
-            return aniNames.TryGetValue(codeName, out job);
+            return aniNames.TryGetValue(codeName.ToUpper(), out job);
         }
 
         partial void pAddAniJob(ScriptAniJob aniJob)

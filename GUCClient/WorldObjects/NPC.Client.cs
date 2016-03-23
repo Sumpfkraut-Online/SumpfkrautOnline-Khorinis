@@ -112,6 +112,12 @@ namespace GUC.WorldObjects
                     this.gVob.ApplyOverlay(overlays[i].Name);
         }
 
+        public override void Despawn()
+        {
+            gVob.Disable();
+            base.Despawn();
+        }
+
         partial void pSetState(NPCStates state)
         {
             if (this.gVob == null)

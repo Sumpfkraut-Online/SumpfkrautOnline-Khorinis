@@ -8,9 +8,17 @@ using GUC.WorldObjects.Instances;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
+    public enum ItemTypes : byte
+    {
+        Misc,
+        Wep1H,
+        Wep2H
+    }
+
     public partial class ItemDef : VobDef, ItemInstance.IScriptItemInstance
     {
-        #region BaseDef
+        #region Properties
+
         new public ItemInstance BaseDef { get { return (ItemInstance)base.BaseDef; } }
 
         string name = "";
@@ -31,20 +39,27 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
             get { return this.effect; }
             set { this.effect = value == null ? "" : value.ToUpper(); }
         }
-        #endregion
-        
-        public ItemDef(PacketReader stream) : base(new ItemInstance(), stream)
-        {
-        }
 
-        public override void OnReadProperties(PacketReader stream)
+        public ItemTypes ItemType = ItemTypes.Misc;
+
+        #endregion
+
+        public ItemDef() : base(new ItemInstance())
         {
-            base.OnReadProperties(stream);
         }
 
         public override void OnWriteProperties(PacketWriter stream)
         {
             base.OnWriteProperties(stream);
+            stream.Write((byte)this.ItemType);
+            stream.Write(this.name);
+        }
+
+        public override void OnReadProperties(PacketReader stream)
+        {
+            base.OnReadProperties(stream);
+            this.ItemType = (ItemTypes)stream.ReadByte();
+            this.name = stream.ReadString();
         }
     }
 }

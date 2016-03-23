@@ -10,6 +10,17 @@ namespace GUC.WorldObjects
 {
     public abstract partial class BaseVob
     {
+        #region ScriptObject
+
+        /// <summary>
+        /// The underlying ScriptObject interface for all Vobs.
+        /// </summary>
+        public partial interface IScriptBaseVob : IScriptGameObject
+        {
+        }
+
+        #endregion
+
         internal zCVob gvob;
         public zCVob gVob { get {return gvob; } }
 

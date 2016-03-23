@@ -78,9 +78,7 @@ namespace GUC.Server.Network
                     break;
 
                 case NetworkIDs.VobPosDirMessage:
-                    var pos = stream.ReadVec3f();
-                    var dir = stream.ReadVec3f();
-                    client.Character.UpdatePosition(pos, dir, client);
+                    VobMessage.ReadPosDir(stream, client, client.character);
                     break;
 
                 case NetworkIDs.NPCStateMessage:
@@ -99,6 +97,13 @@ namespace GUC.Server.Network
                     break;
                 case NetworkIDs.NPCAniStopMessage:
                     NPCMessage.ReadAniStop(stream, client.character);
+                    break;
+
+                case NetworkIDs.InventoryEquipMessage:
+                    InventoryMessage.ReadEquipMessage(stream, client.character);
+                    break;
+                case NetworkIDs.InventoryUnequipMessage:
+                    InventoryMessage.ReadUnequipMessage(stream, client.character);
                     break;
 
                 default:

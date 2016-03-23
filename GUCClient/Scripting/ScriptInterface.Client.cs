@@ -27,19 +27,5 @@ namespace GUC.Scripting
         /// Is called once when Gothic is ingame for the first time.
         /// </summary>
         void StartIngame();
-        
-        void OnCreateInstanceMsg(VobTypes type, PacketReader stream);
-        void OnDeleteInstanceMsg(BaseVobInstance instance);
-
-        void OnSpawnVobMsg(VobTypes type, PacketReader stream);
-        void OnDespawnVobMsg(BaseVob vob);
-
-        void OnLoadWorldMsg(out World world, PacketReader stream);
-
-        void OnInvAddMsg(PacketReader stream);
-        void OnInvRemoveMsg(Item item);
-
-        void OnEquipMsg(NPC npc, int slot, PacketReader stream);
-        void OnUnequipMsg(NPC npc, int slot);
     }
 }

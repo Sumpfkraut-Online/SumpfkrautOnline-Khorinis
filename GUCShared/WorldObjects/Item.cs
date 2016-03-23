@@ -86,52 +86,52 @@ namespace GUC.WorldObjects
         public const int SLOTNUM_UNEQUIPPED = -1;
 
         public ItemContainer.IContainer Container { get; internal set; }
-        
+
         #endregion
 
         #region Read & Write
 
         public void WriteEquipProperties(PacketWriter stream)
         {
-            stream.Write(this.Instance.ID);
-            if (this.ScriptObject != null)
-                this.ScriptObject.WriteEquipProperties(stream);
+            stream.Write((byte)this.ID);
+            stream.Write((ushort)this.Instance.ID);
+            this.ScriptObject.WriteEquipProperties(stream);
         }
 
         public void ReadEquipProperties(PacketReader stream)
         {
+            this.ID = stream.ReadByte();
             ushort instanceid = stream.ReadUShort();
-            if (!BaseVobInstance.TryGet(instanceid, out this.instance))
+            ItemInstance inst;
+            if (!BaseVobInstance.TryGet(instanceid, out inst))
             {
-                throw new Exception("Instance-ID not found!");
+                throw new Exception("Instance-ID not found! " + instanceid);
             }
+            this.instance = inst;
 
-            if (this.ScriptObject != null)
-                this.ScriptObject.ReadEquipProperties(stream);
+            this.ScriptObject.ReadEquipProperties(stream);
         }
 
         public void WriteInventoryProperties(PacketWriter stream)
         {
-            stream.Write((byte)this.ID);
             stream.Write((ushort)this.Instance.ID);
             stream.Write((ushort)this.Amount);
 
-            if (this.ScriptObject != null)
-                this.ScriptObject.WriteInventoryProperties(stream);
+            this.ScriptObject.WriteInventoryProperties(stream);
         }
 
         public void ReadInventoryProperties(PacketReader stream)
         {
-            this.ID = stream.ReadByte();
             ushort instanceid = stream.ReadUShort();
-            if (!BaseVobInstance.TryGet(instanceid, out this.instance))
+            ItemInstance inst;
+            if (!BaseVobInstance.TryGet(instanceid, out inst))
             {
-                throw new Exception("Instance-ID not found!");
+                throw new Exception("Instance-ID not found! " + instanceid);
             }
+            this.instance = inst;
             this.amount = stream.ReadUShort();
 
-            if (this.ScriptObject != null)
-                this.ScriptObject.ReadInventoryProperties(stream);
+            this.ScriptObject.ReadInventoryProperties(stream);
         }
 
         #endregion

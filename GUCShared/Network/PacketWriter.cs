@@ -327,6 +327,40 @@ namespace GUC.Network
             data[currentByte++] = color.A;
         }
 
+        /*
+                    if (asInt > 8388607)
+                asInt = 8388607;
+            else if (asInt < -8388608)
+                asInt = -8388608;
+                */
+
+        /// <summary>
+        /// Coordinates must be between -838860.8 and +838860.7 !!!
+        /// </summary>
+        public void WriteCompressedPosition(Vec3f position)
+        {
+            WriteInt24((int)(position.X * 10));
+            WriteInt24((int)(position.Y * 10));
+            WriteInt24((int)(position.Z * 10));
+        }
+
+        void WriteInt24(int val)
+        {
+            data[currentByte++] = (byte)val;
+            data[currentByte++] = (byte)(val >> 8);
+            data[currentByte++] = (byte)(val >> 16);
+        }
+
+        /// <summary>
+        /// Coordinates must be between -1 and +1 !!!
+        /// </summary>
+        public void WriteCompressedDirection(Vec3f direction)
+        {
+            data[currentByte++] = (byte)(direction.X * 127.0f);
+            data[currentByte++] = (byte)(direction.Y * 127.0f);
+            data[currentByte++] = (byte)(direction.Z * 127.0f);
+        }
+
         #endregion
     }
 }

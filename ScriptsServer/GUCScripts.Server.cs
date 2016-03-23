@@ -20,7 +20,7 @@ namespace GUC.Scripts
 
             AddSomeDefs();
 
-            CreateWorld();
+            CreateTestWorld();
 
             Logger.Log("######################## Finished #########################");
         }
@@ -33,10 +33,11 @@ namespace GUC.Scripts
             vobDef.Model = m;
             vobDef.Create();
 
-            m = new ModelDef("apple", "ItFo_Apple.3ds");
+            m = new ModelDef("zweihander", "ItMw_040_2h_PAL_Sword_03.3DS");
             m.Create();
-            ItemDef itemDef = new ItemDef("apple");
-            itemDef.Name = "Apfel";
+            ItemDef itemDef = new ItemDef("zweihander");
+            itemDef.Name = "Paladin Zweihänder";
+            itemDef.ItemType = ItemTypes.Wep2H;
             itemDef.Model = m;
             itemDef.Create();
 
@@ -49,7 +50,9 @@ namespace GUC.Scripts
             aniJob.AniName = "s_FistAttack";
             m.AddAniJob(aniJob);
 
-            aniJob.AddOverlayAni(new ScriptAni(300), overlay);
+            aniJob = new ScriptAniJob("FistRunAttack", new ScriptAni(1100));
+            aniJob.AniName = "t_FistAttackMove";
+            m.AddAniJob(aniJob);
 
             m.Create();
 
@@ -74,7 +77,7 @@ namespace GUC.Scripts
             npcDef.Create();
         }
 
-        void CreateWorld()
+        void CreateTestWorld()
         {
             WorldDef wDef = new WorldDef();
             WorldInst.NewWorld = new WorldInst(default(WorldDef));

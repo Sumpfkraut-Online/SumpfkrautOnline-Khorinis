@@ -21,7 +21,7 @@ namespace GUC.Server.Network.Messages
             for (int t = 0; t < (int)VobTypes.Maximum; t++)
             {
                 int vobCount = 0;
-                for (int i = 0; i < NetCell.NumSurroundingCells; i++)
+                for (int i = 0; i < newCells.Length; i++)
                 {
                     if (newCells[i] == null)
                         break;
@@ -30,7 +30,7 @@ namespace GUC.Server.Network.Messages
                 }
 
                 stream.Write((ushort)vobCount);
-                for (int i = 0; i < NetCell.NumSurroundingCells; i++)
+                for (int i = 0; i < newCells.Length; i++)
                 {
                     if (newCells[i] == null)
                         break;
@@ -40,7 +40,7 @@ namespace GUC.Server.Network.Messages
             }
 
             stream.Write((ushort)oldVobs);
-            for (int i = 0; i < NetCell.NumSurroundingCells; i++)
+            for (int i = 0; i < oldCells.Length; i++)
             {
                 if (oldCells[i] == null)
                     break;

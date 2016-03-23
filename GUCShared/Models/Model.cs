@@ -69,6 +69,8 @@ namespace GUC.Models
             if (!this.isCreated)
                 throw new ArgumentException("Model is not in the collection!");
 
+            this.isCreated = false;
+
             pDelete();
 
             idColl.Remove(this);
@@ -78,8 +80,6 @@ namespace GUC.Models
             {
                 dynModels.Remove(ref this.dynID);
             }
-
-            this.isCreated = false;
         }
 
         #endregion
@@ -233,13 +233,13 @@ namespace GUC.Models
             if (job.Model != this)
                 throw new Exception("AniJob is not from this Model!");
 
+            job.SetModel(null);
+
             aniIDs.Remove(job);
             aniJobs.Remove(ref job.collID);
             dynJobs.Remove(ref job.dynID);
 
             pRemoveAniJob(job);
-
-            job.SetModel(null);
         }
 
         #endregion
@@ -336,13 +336,13 @@ namespace GUC.Models
             if (overlay.Model != this)
                 throw new Exception("Overlay is not from this Model!");
 
+            overlay.SetModel(null);
+
             ovIDs.Remove(overlay);
             overlays.Remove(ref overlay.collID);
             dynOvs.Remove(ref overlay.dynID);
 
             pRemoveOverlay(overlay);
-
-            overlay.SetModel(null);
         }
 
         #endregion

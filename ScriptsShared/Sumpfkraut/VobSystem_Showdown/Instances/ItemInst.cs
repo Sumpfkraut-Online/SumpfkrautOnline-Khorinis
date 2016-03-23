@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GUC.Network;
+using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
@@ -12,29 +13,20 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         #region Properties
 
         public new WorldObjects.Item BaseInst { get { return (WorldObjects.Item)base.BaseInst; } }
+        public new ItemDef Definition { get { return (ItemDef)base.Definition; } }
+
+        public int Slot { get { return this.BaseInst.Slot; } }
+
+        public ItemTypes ItemType { get { return this.Definition.ItemType; } }
 
         #endregion
 
-        public ItemInst(PacketReader stream) : base(new WorldObjects.Item(), stream)
+        public ItemInst() : base(new WorldObjects.Item())
         {
         }
 
-        protected ItemInst() : base(new WorldObjects.Item())
-        {
-        }
-
-        public static ItemInst ReadFromInvMsg(PacketReader stream)
-        {
-            var i = new ItemInst();
-            i.BaseInst.ReadInventoryProperties(stream);
-            return i;
-        }
-
+        // Nur das Wichtigste was von aussen zu sehen ist!
         public void ReadEquipProperties(PacketReader stream)
-        {
-        }
-
-        public void ReadInventoryProperties(PacketReader stream)
         {
         }
 
@@ -42,7 +34,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
         }
 
+
+        // Alles schreiben was man über dieses Item wissen muss
         public void WriteInventoryProperties(PacketWriter stream)
+        {
+        }
+
+        public void ReadInventoryProperties(PacketReader stream)
         {
         }
     }

@@ -68,10 +68,10 @@ namespace GUC.WorldObjects
             if (!this.isCreated)
                 throw new ArgumentException("World is not in the collection!");
 
+            this.isCreated = false;
+
             worldsByID.Remove(this);
             worlds.Remove(ref this.collID);
-
-            this.isCreated = false;
         }
 
         #endregion

@@ -15,7 +15,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class NPCInst : VobInst, NPC.IScriptNPC
     {
-
         #region Properties
 
         public new NPC BaseInst { get { return (NPC)base.BaseInst; } }
@@ -26,7 +25,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #endregion
 
-        public NPCInst(PacketReader stream) : base(new NPC(), stream)
+        public NPCInst() : base(new NPC())
         {
         }
 
@@ -138,6 +137,50 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public void OnCmdStopAni(bool fadeOut)
         {
             this.pOnCmdStopAni(fadeOut);
+        }
+
+        public void AddItem(Item item)
+        {
+            this.AddItem((ItemInst)item.ScriptObject);
+        }
+
+        public void AddItem(ItemInst item)
+        {
+            this.BaseInst.Inventory.Add(item.BaseInst);
+        }
+
+        public void RemoveItem(Item item)
+        {
+            this.RemoveItem((ItemInst)item.ScriptObject);
+        }
+
+        public void RemoveItem(ItemInst item)
+        {
+            this.BaseInst.Inventory.Remove(item.BaseInst);
+        }
+
+        public void EquipItem(int slot, Item item)
+        {
+            this.EquipItem(slot, (ItemInst)item.ScriptObject);
+        }
+
+        partial void pEquipItem(ItemInst item);
+        public void EquipItem(int slot, ItemInst item)
+        {
+            this.BaseInst.EquipItem(slot, item.BaseInst);
+            pEquipItem(item);
+        }
+
+        public void UnequipItem(Item item)
+        {
+            this.UnequipItem((ItemInst)item.ScriptObject);
+        }
+
+        partial void pUnequipItem(ItemInst item);
+        public void UnequipItem(ItemInst item)
+        {
+            this.BaseInst.UnequipItem(item.BaseInst);
+            pUnequipItem(item);
         }
 
         #endregion

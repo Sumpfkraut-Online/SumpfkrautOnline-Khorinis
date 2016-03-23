@@ -80,6 +80,9 @@
     <Compile Include="..\GUCShared\Constants.cs">
       <Link>Constants.cs</Link>
     </Compile>
+    <Compile Include="..\GUCShared\DynamicCollection.cs">
+      <Link>DynamicCollection.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\Enumeration\HumanVisuals.cs">
       <Link>Enumeration\HumanVisuals.cs</Link>
     </Compile>
@@ -122,6 +125,9 @@
     <Compile Include="..\GUCShared\Scripting\Timer.cs">
       <Link>Scripting\Timer.cs</Link>
     </Compile>
+    <Compile Include="..\GUCShared\StaticCollection.cs">
+      <Link>StaticCollection.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\Types\ColorRGBA.cs">
       <Link>Types\ColorRGBA.cs</Link>
     </Compile>
@@ -137,14 +143,8 @@
     <Compile Include="..\GUCShared\WorldObjects\BaseVob.cs">
       <Link>WorldObjects\BaseVob.cs</Link>
     </Compile>
-    <Compile Include="..\GUCShared\WorldObjects\Collections\DynamicCollection.cs">
-      <Link>DynamicCollection.cs</Link>
-    </Compile>
     <Compile Include="..\GUCShared\WorldObjects\Collections\ItemContainer.cs">
       <Link>WorldObjects\Collections\ItemContainer.cs</Link>
-    </Compile>
-    <Compile Include="..\GUCShared\WorldObjects\Collections\StaticCollection.cs">
-      <Link>WorldObjects\Collections\StaticCollection.cs</Link>
     </Compile>
     <Compile Include="..\GUCShared\WorldObjects\Collections\VobTypeObjectCollection.cs">
       <Link>WorldObjects\Collections\VobTypeObjectCollection.cs</Link>
@@ -253,7 +253,7 @@
     <Compile Include="WorldObjects\Cells\NPCCell.cs" />
     <Compile Include="WorldObjects\Cells\WorldCell.cs" />
     <Compile Include="WorldObjects\Collections\ItemContainer.Server.cs" />
-    <Compile Include="WorldObjects\Collections\StaticCollection.Server.cs" />
+    <Compile Include="StaticCollection.Server.cs" />
     <Compile Include="WorldObjects\Instances\BaseVobInstance.Server.cs" />
     <Compile Include="WorldObjects\Instances\Mobs\MobBedInstance.Server.cs" />
     <Compile Include="WorldObjects\Mobs\MobBed.Server.cs" />

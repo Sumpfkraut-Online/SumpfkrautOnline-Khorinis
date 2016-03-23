@@ -15,6 +15,8 @@ namespace GUC.WorldObjects.Instances
 
         public partial interface IScriptBaseVobInstance : IScriptGameObject
         {
+            void Create();
+            void Delete();
         }
 
         public new IScriptBaseVobInstance ScriptObject
@@ -69,6 +71,8 @@ namespace GUC.WorldObjects.Instances
             if (!this.isCreated)
                 throw new ArgumentException("Instance is not in the collection!");
 
+            this.isCreated = false;
+
             pDelete();
 
             idColl.Remove(this);
@@ -78,8 +82,6 @@ namespace GUC.WorldObjects.Instances
             {
                 dynInstances.Remove(this, ref this.dynID, ref this.dynTypeID);
             }
-            
-            this.isCreated = false;
         }
 
         #endregion

@@ -5,6 +5,7 @@ using System.Text;
 using WinApi.User.Enumeration;
 using GUC.Client.Scripts.Sumpfkraut.Menus;
 using GUC.Enumeration;
+using GUC.Types;
 
 namespace GUC.Client.Scripts.Sumpfkraut
 {
@@ -25,6 +26,8 @@ namespace GUC.Client.Scripts.Sumpfkraut
         static int fwdKeys = 0;
         static int strafeKeys = 0;
         static int turnKeys = 0;
+
+        static long teleportKey = 0;
 
         static void Fwd(bool inc)
         {
@@ -96,6 +99,20 @@ namespace GUC.Client.Scripts.Sumpfkraut
             {
                 turnKeys--;
             }
+            else if (key == VirtualKeys.K)
+            {
+                Vec3f pos = GUC.Network.GameClient.Client.Character.GetPosition();
+                Vec3f dir = GUC.Network.GameClient.Client.Character.GetDirection();
+                pos += dir * 100.0f;
+                GUC.Network.GameClient.Client.Character.SetPosition(pos);
+                teleportKey = GameTime.Ticks;
+            }
+            else if (key == VirtualKeys.F8)
+            {
+                Vec3f pos = GUC.Network.GameClient.Client.Character.GetPosition();
+                pos.Y += 200.0f;
+                GUC.Network.GameClient.Client.Character.SetPosition(pos);
+            }
         }
 
         static void KeyUp(VirtualKeys key, long now)
@@ -134,6 +151,8 @@ namespace GUC.Client.Scripts.Sumpfkraut
             {
                 turnKeys++;
             }
+            else if (key == VirtualKeys.K)
+                teleportKey = 0;
         }
         
         public static void Update(long now)
@@ -152,6 +171,19 @@ namespace GUC.Client.Scripts.Sumpfkraut
             else
             {
                 GUC.Network.GameClient.Client.Character.gVob.AniCtrl.StopTurnAnis();
+            }
+
+            if (teleportKey > 0)
+            {
+                if (GameTime.Ticks - teleportKey > TimeSpan.TicksPerSecond)
+                {
+                    Vec3f pos = GUC.Network.GameClient.Client.Character.GetPosition();
+                    Vec3f dir = GUC.Network.GameClient.Client.Character.GetDirection();
+                    pos += dir * 100.0f;
+                    GUC.Network.GameClient.Client.Character.SetPosition(pos);
+
+                    teleportKey += 150 * TimeSpan.TicksPerMillisecond;
+                }
             }
         }
     }

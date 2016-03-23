@@ -8,17 +8,21 @@ using GUC.Network;
 using GUC.WorldObjects;
 using GUC.Animations;
 using GUC.Models;
+using GUC.Enumeration;
+using GUC.WorldObjects.Instances;
 
 namespace GUC.Scripting
 {
     public partial interface ScriptInterface
     {
         bool OnClientConnection(GameClient client);
-        Item CreateInvItem(PacketReader stream);
         Overlay CreateOverlay();
         AniJob CreateAniJob();
         Animation CreateAnimation();
         Model CreateModel();
+        BaseVob CreateVob(VobTypes type);
+        BaseVobInstance CreateInstance(VobTypes type);
+        World CreateWorld();
     }
 
     static class ScriptManager

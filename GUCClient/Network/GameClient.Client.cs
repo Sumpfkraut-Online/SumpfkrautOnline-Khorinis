@@ -12,6 +12,8 @@ using GUC.Scripting;
 using GUC.WorldObjects.Instances;
 using GUC.WorldObjects;
 using GUC.Models;
+using Gothic.Objects;
+using Gothic;
 
 namespace GUC.Network
 {
@@ -88,63 +90,38 @@ namespace GUC.Network
         #endregion
 
         #region Hero
-
-        int charID = -1;
-        public int CharacterID { get { return this.charID; } }
-
-        byte[] charData = null;
-
+        
         void ReadTakeControl(PacketReader stream)
         {
-            character = null;
-            charID = stream.ReadUShort();
-            charData = stream.GetRemainingData(); // save for later
-            NPC hero;
-            if (World.Current.TryGetVob(charID, out hero))
-                UpdateHeroControl(hero);
+            int characterID = stream.ReadUShort();
+            NPC npc;
+            if (!World.current.TryGetVob(characterID, out npc))
+            {
+                throw new Exception("Hero not found!");
+            }
+            npc.ReadTakeControl(stream);
+
+            Logger.Log("Take control of npc " + npc.ID);
+
+            // Remove the gothic hero if he's there
+            var hero = oCNpc.GetPlayer();
+            if (!World.Current.ContainsVobAddress(hero.Address))
+            {
+                hero.Disable();
+                oCGame.GetWorld().RemoveVob(hero);
+            }
+            
+            this.ScriptObject.SetControl(npc);
         }
 
-        internal void UpdateHeroControl(NPC npc)
+        partial void pSetControl(NPC npc)
         {
-            try
-            {
-                if (World.Current == null)
-                    return;
-
-                if (npc == null)
-                {
-                    return;
-                }
-
-                this.character = npc;
-
-                if (charData != null)
-                {
-                    PacketReader rdr = new PacketReader();
-                    rdr.Load(charData, charData.Length);
-                    Character.ReadTakeControl(rdr);
-                    charData = null;
-                }
-
-                BaseVob dummy;
-                if (!World.Current.TryGetVobByAddress(Gothic.Objects.oCNpc.GetPlayer().Address, out dummy))
-                {
-                    Gothic.Objects.oCNpc.GetPlayer().Disable();
-                    Gothic.oCGame.GetWorld().RemoveVob(Gothic.Objects.oCNpc.GetPlayer());
-                }
-
-                Character.gVob.SetAsPlayer();
-            }
-            catch (Exception e)
-            {
-                Logger.LogError(e);
-            }
+            this.character = npc;
+            Character.gVob.SetAsPlayer();
         }
 
         #region Position updates
 
-        long nextUpdate = 0;
-        const long updateTime = 1000000; // 100ms
         internal void UpdateCharacters(long now)
         {
             World.Current.ForEachVob(v =>
@@ -153,15 +130,7 @@ namespace GUC.Network
                     ((NPC)v).Update(now);
             });
 
-            if (now > nextUpdate && Character != null)
-            {
-                PacketWriter stream = SetupStream(NetworkIDs.VobPosDirMessage);
-                stream.Write(Character.GetPosition());
-                stream.Write(Character.GetDirection());
-                Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE);
-
-                nextUpdate = now + updateTime;
-            }
+            VobMessage.WritePosDirMessage(now);
 
             UpdateHeroState(now);
         }
@@ -184,106 +153,88 @@ namespace GUC.Network
 
             switch (id)
             {
+                /*
+                *   OUTGAME MESSAGES
+                */
+
+                // CONNECTION MESSAGE
                 case NetworkIDs.ConnectionMessage:
                     ConnectionMessage.Read(stream);
                     break;
+
+                // Player Messages
                 case NetworkIDs.PlayerControlMessage:
-                    ReadTakeControl(stream);
+                    this.ReadTakeControl(stream);
                     break;
+
+                // World Messages
                 case NetworkIDs.LoadWorldMessage:
-                    ScriptManager.Interface.OnLoadWorldMsg(out World.Current, stream);
-                    World.Current.SendConfirmation();
+                    WorldMessage.ReadLoadWorldMessage(stream);
                     break;
+
+                // Instance Messages
                 case NetworkIDs.InstanceCreateMessage:
-                    ScriptManager.Interface.OnCreateInstanceMsg((VobTypes)stream.ReadByte(), stream);
+                    InstanceMessage.ReadCreateMessage(stream);
                     break;
                 case NetworkIDs.InstanceDeleteMessage:
-                    BaseVobInstance inst;
-                    if (BaseVobInstance.TryGet(stream.ReadUShort(), out inst))
-                    {
-                        ScriptManager.Interface.OnDeleteInstanceMsg(inst);
-                    }
+                    InstanceMessage.ReadDeleteMessage(stream);
                     break;
 
+                // Model Messages
                 case NetworkIDs.ModelCreateMessage:
-                    Model model = ScriptManager.Interface.CreateModel();
-                    model.ReadStream(stream);
-                    model.ScriptObject.Create();
+                    ModelMessage.ReadCreateMessage(stream);
                     break;
                 case NetworkIDs.ModelDeleteMessage:
-                    if (Model.TryGet(stream.ReadUShort(), out model))
-                    {
-                        model.ScriptObject.Delete();
-                    }
+                    ModelMessage.ReadDeleteMessage(stream);
                     break;
 
+                // Script Message
                 case NetworkIDs.MenuMessage:
-                    if (this.ScriptObject != null)
-                        this.ScriptObject.OnReadMenuMsg(stream);
+                    this.ScriptObject.OnReadMenuMsg(stream);
                     break;
 
-                // ingame
+                /*
+                *   INGAME MESSAGES
+                */
 
+                // Script Message
                 case NetworkIDs.IngameMessage:
-                    if (this.ScriptObject != null)
-                        this.ScriptObject.OnReadIngameMsg(stream);
+                    this.ScriptObject.OnReadIngameMsg(stream);
                     break;
 
-
+                // World Messages
                 case NetworkIDs.WorldSpawnMessage:
-                    ScriptManager.Interface.OnSpawnVobMsg((VobTypes)stream.ReadByte(), stream);
+                    WorldMessage.ReadVobSpawnMessage(stream);
                     break;
                 case NetworkIDs.WorldDespawnMessage:
-                    BaseVob vob;
-                    if (World.Current.TryGetVob(stream.ReadUShort(), out vob))
-                    {
-                        ScriptManager.Interface.OnDespawnVobMsg(vob);
-                    }
+                    WorldMessage.ReadVobDespawnMessage(stream);
                     break;
                 case NetworkIDs.WorldCellMessage:
-                    for (int t = 0; t < (int)VobTypes.Maximum; t++)
-                    {
-                        int vobCount = stream.ReadUShort();
-                        for (int i = 0; i < vobCount; i++)
-                        {
-                            ScriptManager.Interface.OnSpawnVobMsg((VobTypes)t, stream);
-                        }
-                    }
-                    int delCount = stream.ReadUShort();
-                    for (int i = 0; i < delCount; i++)
-                    {
-                        if (World.Current.TryGetVob(stream.ReadUShort(), out vob))
-                        {
-                            ScriptManager.Interface.OnDespawnVobMsg(vob);
-                        }
-                    }
-                    break;
-                case NetworkIDs.VobPosDirMessage:
-                    if (World.Current.TryGetVob(stream.ReadUShort(), out vob))
-                    {
-                        vob.SetPosition(stream.ReadVec3f());
-                        vob.SetDirection(stream.ReadVec3f());
-                    }
+                    WorldMessage.ReadCellMessage(stream);
                     break;
 
+                // Vob Messages
+                case NetworkIDs.VobPosDirMessage:
+                    VobMessage.ReadPosDirMessage(stream);
+                    break;
+
+                // Inventory Messages
+                case NetworkIDs.InventoryAddMessage:
+                    InventoryMessage.ReadAddItem(stream);
+                    break;
+                case NetworkIDs.InventoryRemoveMessage:
+                    InventoryMessage.ReadRemoveItem(stream);
+                    break;
+
+                // NPC Messages
                 case NetworkIDs.NPCStateMessage:
                     NPCMessage.ReadState(stream);
                     break;
-
-                case NetworkIDs.InventoryAddMessage:
-                    ScriptManager.Interface.OnInvAddMsg(stream);
-                    break;
-                case NetworkIDs.InventoryRemoveMessage:
-                    Item item;
-                    if (character.Inventory.TryGetItem(stream.ReadByte(), out item))
-                    {
-                        ScriptManager.Interface.OnInvRemoveMsg(item);
-                    }
-                    break;
-
-
                 case NetworkIDs.NPCEquipMessage:
-
+                    NPCMessage.ReadEquipMessage(stream);
+                    break;
+                case NetworkIDs.NPCUnequipMessage:
+                    NPCMessage.ReadUnequipMessage(stream);
                     break;
 
                 case NetworkIDs.NPCApplyOverlayMessage:
@@ -345,15 +296,16 @@ namespace GUC.Network
                 }
                 clientInterface.SetOccasionalPing(true);
 
-                nextConnectionTry = DateTime.UtcNow.Ticks + 500 * TimeSpan.TicksPerMillisecond;
-                connectionTrys++;
-
                 Logger.Log("Connection attempt started.");
+
             }
             catch (Exception e)
             {
                 Logger.LogError("Verbindung fehlgeschlagen! " + e);
             }
+
+            nextConnectionTry = DateTime.UtcNow.Ticks + 500 * TimeSpan.TicksPerMillisecond;
+            connectionTrys++;
         }
 
         public void Disconnect()
@@ -362,10 +314,12 @@ namespace GUC.Network
             isConnected = false;
         }
 
-        long packetKB = 0;
+        long receivedBytes = 0;
+        long sentBytes = 0;
         long lastInfoUpdate = 0;
         GUCVisual abortInfo;
-        GUCVisual kbsInfo;
+        GUCVisual receivedInfo;
+        GUCVisual sentInfo;
         GUCVisual pingInfo;
 
         GUCVisual instInfo;
@@ -387,25 +341,28 @@ namespace GUC.Network
                 GUCVisualText visText = abortInfo.CreateText("Verbindung unterbrochen!");
                 visText.SetColor(ColorRGBA.Red);
 
-                kbsInfo = GUCVisualText.Create("", 0x2000, 0, true);
-                kbsInfo.Texts[0].Format = GUCVisualText.TextFormat.Right;
+                receivedInfo = GUCVisualText.Create("", 0x2000, 0, true);
+                receivedInfo.Texts[0].Format = GUCVisualText.TextFormat.Right;
 
-                pingInfo = GUCVisualText.Create("", 0x2000, kbsInfo.zView.FontY() + 2, true);
+                sentInfo = GUCVisualText.Create("", 0x2000, receivedInfo.zView.FontY() + 2, true);
+                sentInfo.Texts[0].Format = GUCVisualText.TextFormat.Right;
+
+                pingInfo = GUCVisualText.Create("", 0x2000, receivedInfo.zView.FontY() + sentInfo.zView.FontY() + 4, true);
                 pingInfo.Texts[0].Format = GUCVisualText.TextFormat.Right;
 
-                instInfo = GUCVisualText.Create("0", 0x2000, kbsInfo.zView.FontY() + pingInfo.zView.FontY() + 4, true);
+                instInfo = GUCVisualText.Create("0", 0x2000, receivedInfo.zView.FontY() + sentInfo.zView.FontY() + pingInfo.zView.FontY() + 6, true);
                 instInfo.Texts[0].Format = GUCVisualText.TextFormat.Right;
 
-                modelInfo = GUCVisualText.Create("0", 0x2000, kbsInfo.zView.FontY() + pingInfo.zView.FontY() + instInfo.zView.FontY() + 6, true);
+                modelInfo = GUCVisualText.Create("0", 0x2000, receivedInfo.zView.FontY() + sentInfo.zView.FontY() + pingInfo.zView.FontY() + instInfo.zView.FontY() + 8, true);
                 modelInfo.Texts[0].Format = GUCVisualText.TextFormat.Right;
 
-                aniInfo = GUCVisualText.Create("0", 0x2000, kbsInfo.zView.FontY() + pingInfo.zView.FontY() + instInfo.zView.FontY() + modelInfo.zView.FontY() + 8, true);
+                aniInfo = GUCVisualText.Create("0", 0x2000, receivedInfo.zView.FontY() + sentInfo.zView.FontY() + pingInfo.zView.FontY() + instInfo.zView.FontY() + modelInfo.zView.FontY() + 10, true);
                 aniInfo.Texts[0].Format = GUCVisualText.TextFormat.Right;
 
-                vobInfo = GUCVisualText.Create("0", 0x2000, kbsInfo.zView.FontY() + pingInfo.zView.FontY() + instInfo.zView.FontY() + modelInfo.zView.FontY() + aniInfo.zView.FontY() + 10, true);
+                vobInfo = GUCVisualText.Create("0", 0x2000, receivedInfo.zView.FontY() + sentInfo.zView.FontY() + pingInfo.zView.FontY() + instInfo.zView.FontY() + modelInfo.zView.FontY() + aniInfo.zView.FontY() + 12, true);
                 vobInfo.Texts[0].Format = GUCVisualText.TextFormat.Right;
 
-                inventoryInfo = GUCVisualText.Create("0", 0x2000, kbsInfo.zView.FontY() + pingInfo.zView.FontY() + instInfo.zView.FontY() + modelInfo.zView.FontY() + vobInfo.zView.FontY() + aniInfo.zView.FontY() + 12, true);
+                inventoryInfo = GUCVisualText.Create("0", 0x2000, receivedInfo.zView.FontY() + sentInfo.zView.FontY() + pingInfo.zView.FontY() + instInfo.zView.FontY() + modelInfo.zView.FontY() + vobInfo.zView.FontY() + aniInfo.zView.FontY() + 14, true);
                 inventoryInfo.Texts[0].Format = GUCVisualText.TextFormat.Right;
             }
 
@@ -417,7 +374,7 @@ namespace GUC.Network
             {
                 try
                 {
-                    packetKB += packet.length;
+                    receivedBytes += packet.length;
 
                     pktReader.Load(packet.data, (int)packet.length);
                     msgDefaultType = (DefaultMessageIDTypes)pktReader.ReadByte();
@@ -428,6 +385,7 @@ namespace GUC.Network
                             isConnected = true;
                             connectionTrys = 0;
                             Logger.Log("Connection request accepted from server.");
+                            ScriptManager.Interface.OnClientConnection(this);
                             ConnectionMessage.Write();
                             break;
                         case DefaultMessageIDTypes.ID_CONNECTION_ATTEMPT_FAILED:
@@ -481,8 +439,8 @@ namespace GUC.Network
                 }
             }
 
-            long time = DateTime.UtcNow.Ticks - lastInfoUpdate;
-            if (time > TimeSpan.TicksPerSecond)
+            long time = GameTime.Ticks - lastInfoUpdate;
+            if (time > TimeSpan.TicksPerSecond / 2)
             {
                 // get last ping time
                 int ping = clientInterface.GetLastPing(clientInterface.GetSystemAddressFromIndex(0));
@@ -513,27 +471,33 @@ namespace GUC.Network
                 pingInfo.Show(); // bring to front
 
                 // update kB/s text on screen
-                int kbs = (int)(((double)packetKB / 1024d) / ((double)time / (double)TimeSpan.TicksPerSecond));
-                kbsInfo.Texts[0].Text = ("Net: " + kbs + "kB/s");
-                lastInfoUpdate = DateTime.UtcNow.Ticks;
-                packetKB = 0;
-                kbsInfo.Show(); // bring to front
+                int kbs = (int)((double)receivedBytes / ((double)time / (double)TimeSpan.TicksPerSecond / 2));
+                receivedInfo.Texts[0].Text = ("Net received: " + kbs + "B/s");
+                kbs = (int)((double)sentBytes / ((double)time / (double)TimeSpan.TicksPerSecond / 2));
+                sentInfo.Texts[0].Text = ("Net Sent: " + kbs + "B/s");
+                lastInfoUpdate = GameTime.Ticks;
+                receivedBytes = 0;
+                sentBytes = 0;
+                receivedInfo.Show(); // bring to front
+                sentInfo.Show();
 
                 instInfo.Texts[0].Text = ("Instances: " + BaseVobInstance.GetCount());
                 instInfo.Show();
 
-                modelInfo.Texts[0].Text = ("Models: " + Model.GetCount());
+                modelInfo.Texts[0].Text = "Models: " + Model.GetCount();
                 modelInfo.Show();
 
                 if (World.Current != null && character != null)
                 {
-                    vobInfo.Texts[0].Text = ("Vobs: " + World.Current.GetVobCount());
+                    vobInfo.Texts[0].Text = character.GetPosition() + (" Vobs: " + World.Current.GetVobCount());
                     vobInfo.Show();
 
                     inventoryInfo.Texts[0].Text = ("Inventory: " + character.Inventory.GetCount());
                     inventoryInfo.Show();
 
                     aniInfo.Texts[0].Text = ("Animations: " + character.Model.GetAniCount());
+                    if (character.IsInAnimation)
+                        aniInfo.Texts[0].Text = "(InAni) " + aniInfo.Texts[0].Text;
                     aniInfo.Show();
                 }
                 else
@@ -555,6 +519,7 @@ namespace GUC.Network
         internal static void Send(PacketWriter stream, PacketPriority pp, PacketReliability pr)
         {
             Client.clientInterface.Send(stream.GetData(), stream.GetLength(), pp, pr, (char)0, RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS, true);
+            Client.sentBytes += stream.GetLength();
         }
     }
 }

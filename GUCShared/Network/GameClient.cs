@@ -15,6 +15,7 @@ namespace GUC.Network
         /// </summary>
         public partial interface IScriptClient : IScriptGameObject
         {
+            void SetControl(NPC npc);
         }
 
         /// <summary>
@@ -36,6 +37,15 @@ namespace GUC.Network
         new public int ID { get { return base.ID; } }
 
         #endregion
+
+        partial void pSetControl(NPC npc);
+        public void SetControl(NPC npc)
+        {
+            if (npc == null)
+                throw new ArgumentNullException("NPC is null!");
+
+            pSetControl(npc);
+        }
 
         #region Read & Write
 

@@ -12,9 +12,24 @@ namespace GUC.WorldObjects
 {
     public partial class World
     {
-        public static World Current;
+        #region ScriptObject
+
+        public partial interface IScriptWorld : IScriptGameObject
+        {
+            void Load();
+        }
+
+        #endregion
+
+        internal static World current = null;
+        public static World Current { get { return World.current; } }
 
         Dictionary<int, BaseVob> vobAddr = new Dictionary<int, BaseVob>();
+
+        public bool ContainsVobAddress(int address)
+        {
+            return vobAddr.ContainsKey(address);
+        }
 
         public bool TryGetVobByAddress(int address, out BaseVob vob)
         {
@@ -38,27 +53,13 @@ namespace GUC.WorldObjects
 
         partial void pAddVob(BaseVob vob)
         {
-            if (vob.ID == GameClient.Client.CharacterID && !vobAddr.ContainsKey(oCNpc.GetPlayer().Address))
-            {
-                oCNpc.GetPlayer().Disable();
-                oCGame.GetWorld().RemoveVob(oCNpc.GetPlayer());
-                vob.gvob = vob.Instance.CreateVob(oCNpc.GetPlayer());
-            }
-            else
-            {
-                vob.gvob = vob.Instance.CreateVob();
-            }
+            vob.gvob = vob.Instance.CreateVob(vob.gvob);
 
             oCGame.GetWorld().AddVob(vob.gVob);
             vobAddr.Add(vob.gvob.Address, vob);
 
             vob.SetPosition(vob.GetPosition());
             vob.SetDirection(vob.GetDirection());
-
-            if (vob.ID == GameClient.Client.CharacterID)
-            {
-                GameClient.Client.UpdateHeroControl((NPC)vob);
-            }
         }
 
         partial void pRemoveVob(BaseVob vob)
@@ -66,15 +67,5 @@ namespace GUC.WorldObjects
             oCGame.GetWorld().RemoveVob(vob.gVob);
             vobAddr.Remove(vob.gvob.Address);
         }
-
-        #region Network Messages
-
-        internal void SendConfirmation()
-        {
-            PacketWriter stream = GameClient.SetupStream(NetworkIDs.LoadWorldMessage);
-            GameClient.Send(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE);
-        }
-
-        #endregion
     }
 }

@@ -456,6 +456,26 @@ namespace Gothic.Objects
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.RemoveOverlay, str);
         }
 
+
+        public void EquipArmor(oCItem item)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.EquipArmor, item);
+        }
+
+        public void EquipWeapon(oCItem item)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.EquipWeapon, item);
+        }
+        public void EquipFarWeapon(oCItem item)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.EquipFarWeapon, item);
+        }
+
+        public void UnequipItem(oCItem item)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.UnequipItem, item);
+        }
+
         /*
         public static oCNpc StealNPC(Process process)
         {
@@ -1369,24 +1389,6 @@ namespace Gothic.Objects
             return Process.THISCALL<oCItem>(Address, FuncAddresses.GetEquippedRangedWeapon);
         }
 
-        public void EquipArmor(oCItem item)
-        {
-            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.EquipArmor, new CallValue[] { item });
-        }
-
-        public void EquipWeapon(oCItem item)
-        {
-            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.EquipWeapon, new CallValue[] { item });
-        }
-        public void EquipFarWeapon(oCItem item)
-        {
-            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.EquipFarWeapon, new CallValue[] { item });
-        }
-
-        public void UnequipItem(oCItem item)
-        {
-            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.UnequipItem, new CallValue[] { item });
-        }
 
         public void DropUnconscious(float arg, oCNpc npc)
         {

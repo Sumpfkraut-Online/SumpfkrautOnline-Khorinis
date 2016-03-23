@@ -16,17 +16,10 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
         WorldDef definition = null;
         public WorldDef Definition { get { return definition; } }
 
-        public WorldInst(PacketReader stream) : this(new WorldObjects.World())
+        public WorldInst()
         {
-            baseWorld.ReadStream(stream);
-        }
-
-        private WorldInst(WorldObjects.World baseWorld)
-        {
-            if (baseWorld == null)
-                throw new ArgumentNullException("BaseWorld is null!");
-
-            this.baseWorld = baseWorld;
+            this.baseWorld = new WorldObjects.World();
+            this.baseWorld.ScriptObject = this;
         }
 
         public void OnWriteProperties(PacketWriter stream)

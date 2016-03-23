@@ -168,6 +168,8 @@ namespace GUC.Server.Network.Messages
 
         #endregion
 
+        #region Equipment
+
         public static void WriteEquipMessage(NPC npc, Item item)
         {
             PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCEquipMessage);
@@ -195,5 +197,7 @@ namespace GUC.Server.Network.Messages
                     client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
             });
         }
+
+        #endregion
     }
 }

@@ -23,6 +23,12 @@ namespace GUC.WorldObjects
             void OnWriteTakeControl(PacketWriter stream);
             void OnReadTakeControl(PacketReader stream);
 
+            void AddItem(Item item);
+            void RemoveItem(Item item);
+
+            void EquipItem(int slot, Item item);
+            void UnequipItem(Item item);
+
             void OnCmdMove(NPCStates state);
             void OnCmdJump();
 
@@ -241,33 +247,82 @@ namespace GUC.WorldObjects
 
         #region Read & Write
 
+        #region Player Control
+
         internal void WriteTakeControl(PacketWriter stream)
         {
+            base.WriteProperties(stream);
+
+            stream.Write((ushort)hpmax);
+            stream.Write((ushort)hp);
+
+            // applied overlays
+            if (this.overlays == null)
+            {
+                stream.Write((byte)0);
+            }
+            else
+            {
+                stream.Write((byte)overlays.Count);
+                for (int i = 0; i < overlays.Count; i++)
+                {
+                    stream.Write((byte)overlays[i].ID);
+                }
+            }
+
             stream.Write((byte)this.inventory.GetCount());
             this.inventory.ForEachItem(item =>
             {
+                stream.Write((byte)item.ID);
                 item.WriteInventoryProperties(stream);
             });
 
-            if (this.ScriptObject != null)
-            {
-                this.ScriptObject.OnWriteTakeControl(stream);
-            }
+            this.ScriptObject.OnWriteTakeControl(stream);
         }
 
         internal void ReadTakeControl(PacketReader stream)
         {
+            base.ReadProperties(stream);
+
+            this.hpmax = stream.ReadUShort();
+            this.hp = stream.ReadUShort();
+
             int count = stream.ReadByte();
             for (int i = 0; i < count; i++)
             {
-                this.inventory.Add(Scripting.ScriptManager.Interface.CreateInvItem(stream));
+                Overlay ov;
+                int id = stream.ReadByte();
+                if (this.Model.TryGetOverlay(id, out ov))
+                {
+                    this.ScriptObject.OnCmdApplyOverlay(ov);
+                }
+                else
+                {
+                    throw new Exception("Overlay not found: " + id);
+                }
             }
 
-            if (this.ScriptObject != null)
+            count = stream.ReadByte();
+            for (int i = 0; i < count; i++)
             {
-                this.ScriptObject.OnReadTakeControl(stream);
+                int itemID = stream.ReadByte();
+                Item item;
+                if (!inventory.TryGetItem(itemID, out item))
+                {
+                    item = (Item)ScriptManager.Interface.CreateVob(VobTypes.Item);
+                    item.ID = itemID;
+                    item.ReadInventoryProperties(stream);
+                    this.ScriptObject.AddItem(item);
+                }
+                else
+                {
+                    item.ReadInventoryProperties(stream);
+                }
             }
+            this.ScriptObject.OnReadTakeControl(stream);
         }
+
+        #endregion
 
         protected override void WriteProperties(PacketWriter stream)
         {
@@ -291,24 +346,12 @@ namespace GUC.WorldObjects
                 }
             }
 
-            /*stream.Write((byte)equippedSlots.Count);
-            foreach (KeyValuePair<byte, Item> slot in equippedSlots)
+            stream.Write((byte)equippedSlots.Count);
+            ForEachEquippedItem(item =>
             {
-                stream.Write(slot.Key);
-                slot.Value.WriteEquipProperties(stream);
-            }
-
-            if (drawnItem == null)
-            {
-                stream.Write(false);
-            }
-            else
-            {
-                stream.Write(true);
-                drawnItem.WriteEquipProperties(stream);
-            }
-
-            //Overlays*/
+                stream.Write((byte)item.slot);
+                item.WriteEquipProperties(stream);
+            });
         }
 
         protected override void ReadProperties(PacketReader stream)
@@ -331,6 +374,16 @@ namespace GUC.WorldObjects
                 {
                     throw new Exception("Overlay not found: " + id);
                 }
+            }
+
+            count = stream.ReadByte();
+            for (int i = 0; i < count; i++)
+            {
+                Item item = (Item)ScriptManager.Interface.CreateVob(VobTypes.Item);
+                int slot = stream.ReadByte();
+                item.ReadEquipProperties(stream);
+                this.ScriptObject.AddItem(item);
+                this.ScriptObject.EquipItem(slot, item);
             }
         }
 
