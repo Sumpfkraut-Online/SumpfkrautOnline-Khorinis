@@ -46,8 +46,8 @@ local.properties
 # User-specific files
 *.suo
 *.user
-*.csproj
 *.sln.docstates
+.vs/WinApi/v14/.suo
 
 # Build results
 
@@ -189,5 +189,3 @@ $RECYCLE.BIN/
 
 # Mac crap
 .DS_Store
-*.suo
-*.suo
