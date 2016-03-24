@@ -270,6 +270,11 @@ namespace Gothic.Objects
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetPhysicsEnabled, new BoolArg(arg));
         }
 
+        public void DoFrameActivity()
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x00602C60);
+        }
+
         public override string ToString()
         {
             return String.Format("({0}: {1})", this.Address, this.VTBL);
