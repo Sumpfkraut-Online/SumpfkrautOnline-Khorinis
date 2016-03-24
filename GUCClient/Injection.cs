@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using GUC.Log;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Reflection;
 using GUC.Client.Hooks;
 using GUC.Network;
