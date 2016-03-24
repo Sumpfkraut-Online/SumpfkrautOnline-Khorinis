@@ -41,8 +41,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
-    <Folder Include="Sumpfkraut\VobSystem_Showdown\Definitions\Mobs\" />
-    <Folder Include="Sumpfkraut\VobSystem_Showdown\Instances\Mobs\" />
+    <Folder Include="Sumpfkraut\VobSystem\Definitions\Mobs\" />
+    <Folder Include="Sumpfkraut\VobSystem\Instances\Mobs\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GUCScripts.cs" />
@@ -66,6 +66,15 @@
     <Compile Include="Sumpfkraut\VobSystem_Showdown\Instances\ItemInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem_Showdown\Instances\NPCInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem_Showdown\Instances\VobInst.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\BaseVobDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\ItemDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\ModelDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\NPCDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\VobDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\BaseVobInst.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\ItemInst.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\NPCInst.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\VobInst.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldDef.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldInst.cs" />
   </ItemGroup>
