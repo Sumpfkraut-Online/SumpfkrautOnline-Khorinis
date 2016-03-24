@@ -1,0 +1,231 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C670CA0D-F27B-4745-9B76-B06882052E6B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GUC.Client</RootNamespace>
+    <AssemblyName>GUC</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\GothicII\System\UntoldChapter\DLL\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;D_CLIENT</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\GothicII\System\UntoldChapter\DLL\</OutputPath>
+    <DefineConstants>TRACE;D_CLIENT</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="RakNetSwig, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\GothicII\System\UntoldChapter\DLL\RakNetSwig.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Network\Enumeration\GothicKeys.cs">
+      <Link>Enumeration\GothicKeys.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Enumeration\HumanVisuals.cs">
+      <Link>Enumeration\HumanVisuals.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Enumeration\Item_Flags.cs">
+      <Link>Enumeration\Item_Flags.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Enumeration\NetworkIDS.cs">
+      <Link>Enumeration\NetworkIDS.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Enumeration\NPCEnums.cs">
+      <Link>Enumeration\NPCEnums.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Enumeration\SpellFlags.cs">
+      <Link>Enumeration\SpellFlags.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Enumeration\VobFlags.cs">
+      <Link>Enumeration\VobFlags.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Enumeration\WeatherEnums.cs">
+      <Link>Enumeration\WeatherEnums.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Network\AccCharInfo.cs">
+      <Link>Network\AccCharInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Network\BitStreamExtension.cs">
+      <Link>Network\BitStreamExtension.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Options\ClientOptions.cs">
+      <Link>Options\ClientOptions.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Options\Constants.cs">
+      <Link>Options\Constants.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Types\ColorRGBA.cs">
+      <Link>Types\ColorRGBA.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Types\IgTime.cs">
+      <Link>Types\IgTime.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Types\Vec2i.cs">
+      <Link>Types\Vec2i.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Types\Vec3f.cs">
+      <Link>Types\Vec3f.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Types\WeatherEvent.cs">
+      <Link>Types\WeatherEvent.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Utilities\ExtendedObject.cs">
+      <Link>Utilities\ExtendedObject.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Utilities\Threading\AbstractRunnable.cs">
+      <Link>Utilities\Threading\AbstractRunnable.cs</Link>
+    </Compile>
+    <Compile Include="..\Network\Utilities\Threading\Runnable.cs">
+      <Link>Utilities\Threading\Runnable.cs</Link>
+    </Compile>
+    <Compile Include="GUI\GUCInventory.cs" />
+    <Compile Include="GUI\GUCTextBox.cs" />
+    <Compile Include="GUI\GUCView.cs" />
+    <Compile Include="GUI\GUCVisual.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUI\GUCVisualVob.cs" />
+    <Compile Include="GUI\GUCVisualText.cs" />
+    <Compile Include="GUI\MainMenu\MainMenuChoice.cs" />
+    <Compile Include="GUI\MenuRenderer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUI\MainMenu\MainMenuButton.cs" />
+    <Compile Include="GUI\MainMenu\MainMenuCharacter.cs" />
+    <Compile Include="GUI\MainMenu\MainMenuCharSlot.cs" />
+    <Compile Include="GUI\MainMenu\MainMenuItem.cs" />
+    <Compile Include="GUI\MainMenu\MainMenuTextBox.cs" />
+    <Compile Include="Hooks\hAniCtrl_Human.cs" />
+    <Compile Include="Hooks\hEventManager.cs" />
+    <Compile Include="Menus\AnimationMenu.cs" />
+    <Compile Include="Menus\DropItemMenu.cs" />
+    <Compile Include="Menus\PlayerInventory.cs" />
+    <Compile Include="Menus\MainMenus\CharCreationMenu.cs" />
+    <Compile Include="Menus\MainMenus\CharSelMenu.cs" />
+    <Compile Include="Menus\MainMenus\HelpChatMenu.cs" />
+    <Compile Include="Menus\MainMenus\ExitMenu.cs" />
+    <Compile Include="Menus\MainMenus\GUCMainMenu.cs" />
+    <Compile Include="Menus\GUCMenus.cs" />
+    <Compile Include="Menus\MainMenus\HelpMenu.cs" />
+    <Compile Include="Menus\MainMenus\LoginMenu.cs" />
+    <Compile Include="Menus\MainMenus\MainMenu.cs" />
+    <Compile Include="Menus\MainMenus\PlayerlistMenu.cs" />
+    <Compile Include="Menus\MainMenus\HelpRPMenu.cs" />
+    <Compile Include="Menus\MainMenus\RegisterMenu.cs" />
+    <Compile Include="Menus\StatusMenu.cs" />
+    <Compile Include="Menus\TradeMenu.cs" />
+    <Compile Include="Network\Messages\ControlMessage.cs" />
+    <Compile Include="Network\Messages\InventoryMessage.cs" />
+    <Compile Include="Network\Messages\MobMessage.cs" />
+    <Compile Include="Network\Messages\NPCMessage.cs" />
+    <Compile Include="Network\Messages\PlayerMessage.cs" />
+    <Compile Include="Network\Messages\TradeMessage.cs" />
+    <Compile Include="Network\Messages\VobMessage.cs" />
+    <Compile Include="Network\Messages\WorldMessage.cs" />
+    <Compile Include="States\AbstractState.cs" />
+    <Compile Include="Utilities\ExtendedObject.Client.cs" />
+    <Compile Include="WorldObjects\AbstractInstance.cs" />
+    <Compile Include="WorldObjects\InstanceManager.cs" />
+    <Compile Include="WorldObjects\Item.cs" />
+    <Compile Include="WorldObjects\ItemInstance.cs" />
+    <Compile Include="WorldObjects\Mob.cs" />
+    <Compile Include="WorldObjects\MobInstance.cs" />
+    <Compile Include="WorldObjects\NPC.cs" />
+    <Compile Include="WorldObjects\NPCInstance.cs" />
+    <Compile Include="WorldObjects\Player.cs" />
+    <Compile Include="WorldObjects\AbstractVob.cs" />
+    <Compile Include="WorldObjects\WeatherController.cs" />
+    <Compile Include="WorldObjects\World.cs" />
+    <Compile Include="WorldObjects\WorldClock.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Network\Messages\ConnectionMessage.cs" />
+    <Compile Include="Hooks\Externals.cs" />
+    <Compile Include="Hooks\hGame.cs" />
+    <Compile Include="Hooks\hItemContainer.cs" />
+    <Compile Include="Hooks\hMagBook.cs" />
+    <Compile Include="Hooks\hMob.cs" />
+    <Compile Include="Hooks\hModelAni.cs" />
+    <Compile Include="Hooks\hNpc.cs" />
+    <Compile Include="Hooks\hParser.cs" />
+    <Compile Include="Hooks\hSpell.cs" />
+    <Compile Include="InputHandler.cs" />
+    <Compile Include="Network\Client.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="States\GameState.cs" />
+    <Compile Include="Network\Messages\AccountMessage.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="States\StartupState.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <EmbeddedResource Include="Resources\Classes.d" />
+    <EmbeddedResource Include="Resources\Constants.d" />
+    <EmbeddedResource Include="Resources\PC_Hero.d" />
+    <EmbeddedResource Include="Resources\NPC_Default.d" />
+    <EmbeddedResource Include="Resources\AI_Constants.d" />
+    <EmbeddedResource Include="Resources\BodyStates.d" />
+    <EmbeddedResource Include="Resources\Focus.d" />
+    <EmbeddedResource Include="Resources\Species.d" />
+    <EmbeddedResource Include="Resources\Startup.d" />
+    <EmbeddedResource Include="Resources\itm.d" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Gothic\Gothic.csproj">
+      <Project>{82655F73-CF7C-4416-9313-BD657AD8F05F}</Project>
+      <Name>Gothic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WinApi\WinApi.csproj">
+      <Project>{52793B3F-130C-4B05-8333-1529981DE780}</Project>
+      <Name>WinApi</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

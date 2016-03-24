@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{477C9B57-AD36-4CAC-998F-800C5A693C35}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GUC.Server.Scripts</RootNamespace>
+    <AssemblyName>ServerScripts</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\GothicII\System\UntoldChapter\Server\scripts\_compiled\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;SSM_ACCOUNT;SSM_ACCOUNT_LOGGING;SSM_WEB;SSM_AI;SSM_CHAT</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\GothicII\System\UntoldChapter\Server\scripts\_compiled\</OutputPath>
+    <DefineConstants>TRACE;SSM_ACCOUNT;SSM_ACCOUNT_LOGGING;SSM_WEB;SSM_AI;SSM_CHAT</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Mono.Data.Sqlite">
+      <HintPath>..\..\..\Gothic 2 MP GUC\System\UntoldChapter\Server\Mono.Data.Sqlite.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Programme\Spiele\Gothic\GothicII\Gothic II GuC 2\System\UntoldChapter\Server\Mono.Data.Sqlite.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Accounts\AccountSystem.cs" />
+    <Compile Include="Accounts\TestAccountSystem.cs" />
+    <Compile Include="Alchemy\AccessPolicyServer.cs" />
+    <Compile Include="Alchemy\Classes\Context.cs" />
+    <Compile Include="Alchemy\Classes\Header.cs" />
+    <Compile Include="Alchemy\Classes\Response.cs" />
+    <Compile Include="Alchemy\Classes\UserContext.cs" />
+    <Compile Include="Alchemy\Handlers\Authentication.cs" />
+    <Compile Include="Alchemy\Handlers\Handler.cs" />
+    <Compile Include="Alchemy\Handlers\IAuthentication.cs" />
+    <Compile Include="Alchemy\Handlers\WebSocket\DataFrame.cs" />
+    <Compile Include="Alchemy\Handlers\WebSocket\hybi00\Authentication.cs" />
+    <Compile Include="Alchemy\Handlers\WebSocket\hybi00\DataFrame.cs" />
+    <Compile Include="Alchemy\Handlers\WebSocket\hybi00\Handler.cs" />
+    <Compile Include="Alchemy\Handlers\WebSocket\hybi00\Handshakes.cs" />
+    <Compile Include="Alchemy\Handlers\WebSocket\rfc6455\Authentication.cs" />
+    <Compile Include="Alchemy\Handlers\WebSocket\rfc6455\DataFrame.cs" />
+    <Compile Include="Alchemy\Handlers\WebSocket\rfc6455\FrameHeader.cs" />
+    <Compile Include="Alchemy\Handlers\WebSocket\rfc6455\Handler.cs" />
+    <Compile Include="Alchemy\Handlers\WebSocket\rfc6455\Handshakes.cs" />
+    <Compile Include="Alchemy\Handlers\WebSocket\WebSocketHandler.cs" />
+    <Compile Include="Alchemy\TCPServer.cs" />
+    <Compile Include="Alchemy\WebSocketClient.cs" />
+    <Compile Include="Alchemy\WebSocketServer.cs" />
+    <Compile Include="Animations\AniCtrl.cs" />
+    <Compile Include="DamageScript.cs" />
+    <Compile Include="Database\DBReader.cs" />
+    <Compile Include="Database\DBSecurity.cs" />
+    <Compile Include="Database\DBTables.cs" />
+    <Compile Include="Instances\VobInstances.cs" />
+    <Compile Include="CmdHandler.cs" />
+    <Compile Include="Animations\Overlays.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sqlite.cs" />
+    <Compile Include="Startup.cs" />
+    <Compile Include="Sumpfkraut\CommandConsole\InfoObjects\AbstractInfo.cs" />
+    <Compile Include="Sumpfkraut\CommandConsole\InfoObjects\NpcInfo.cs" />
+    <Compile Include="Sumpfkraut\CommandConsole\TestCommands.cs" />
+    <Compile Include="Sumpfkraut\Database\DBAgent.cs" />
+    <Compile Include="Sumpfkraut\Web\WS\Enumeration.cs" />
+    <Compile Include="Sumpfkraut\Web\WS\Protocols\Enumeration.cs" />
+    <Compile Include="Sumpfkraut\Web\WS\Protocols\AbstractWSProtocol.cs" />
+    <Compile Include="Sumpfkraut\Web\WS\Protocols\WSChatProtocol.cs" />
+    <Compile Include="Sumpfkraut\Web\WS\WSResponse.cs" />
+    <Compile Include="Sumpfkraut\Web\WS\WSServer.cs" />
+    <Compile Include="Sumpfkraut\Web\WS\WSUser.cs" />
+    <Compile Include="UserVars.cs" />
+    <Compile Include="Sumpfkraut\CommandConsole\CommandConsole.cs" />
+    <Compile Include="Sumpfkraut\Database\DBQueryHandler.cs" />
+    <Compile Include="Sumpfkraut\Database\DBQuerying\AbstractDBQuery.cs" />
+    <Compile Include="Sumpfkraut\Database\DBQuerying\DBBackupQuery.cs" />
+    <Compile Include="Sumpfkraut\Database\DBQuerying\DBQuery.cs" />
+    <Compile Include="Sumpfkraut\Database\Enumeration.cs" />
+    <Compile Include="Sumpfkraut\Database\DBReader.cs" />
+    <Compile Include="Sumpfkraut\Database\DBSecurity.cs" />
+    <Compile Include="Sumpfkraut\Database\DBTables.cs" />
+    <Compile Include="Sumpfkraut\Database\DBQuerying\IDBQuery.cs" />
+    <Compile Include="Sumpfkraut\TimeSystem\WorldClock.cs" />
+    <Compile Include="Sumpfkraut\Utilities\DateTimeUtil.cs" />
+    <Compile Include="Sumpfkraut\Utilities\StringUtil.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\DefChange.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\DefEffect.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\Enumeration.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\EffectChangesDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\ItemDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\MobDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\NpcDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\SpellDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\VobDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\VobDefLoader.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\ItemInst.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\MobInst.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\NpcInst.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\SpellInst.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\VobInst.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\InventoryVobHandler.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Vec2Int.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\VobHandler.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\VobLoader.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\WorldVobHandler.cs" />
+    <Compile Include="Sumpfkraut\WorldSystem\WorldHandler.cs" />
+    <Compile Include="Sumpfkraut\WorldSystem\WorldInst.cs" />
+    <Compile Include="Sumpfkraut\WeatherSystem\Weather.cs" />
+    <Compile Include="Sumpfkraut\WeatherSystem\WeatherHandler.cs" />
+    <Compile Include="Sumpfkraut\WeatherSystem\WeatherState.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GMP_Server\GMP_Server.csproj">
+      <Project>{27FA7C52-3C80-4B72-8FBB-BCAC0328236E}</Project>
+      <Name>GMP_Server</Name>
+      <Private>False</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Database\SO-K_SQLite.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A896EADC-459C-4F6D-8B16-86B0A0F0F6A8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GUC</RootNamespace>
+    <AssemblyName>Network</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\GothicII\System\UntoldChapter\DLL\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\GothicII\System\UntoldChapter\DLL\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="RakNetSwig, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\GothicII\System\UntoldChapter\DLL\RakNetSwig.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Enumeration\HumanVisuals.cs" />
+    <Compile Include="Enumeration\NPCEnums.cs" />
+    <Compile Include="Enumeration\WeatherEnums.cs" />
+    <Compile Include="Network\AccCharInfo.cs" />
+    <Compile Include="Enumeration\GothicKeys.cs" />
+    <Compile Include="Enumeration\Item_Flags.cs" />
+    <Compile Include="Enumeration\NetworkIDS.cs" />
+    <Compile Include="Enumeration\SpellFlags.cs" />
+    <Compile Include="Enumeration\VobFlags.cs" />
+    <Compile Include="Network\BitStreamExtension.cs" />
+    <Compile Include="Options\ClientOptions.cs" />
+    <Compile Include="Options\Constants.cs" />
+    <Compile Include="Options\ServerOptions.cs" />
+    <Compile Include="Types\ColorRGBA.cs" />
+    <Compile Include="Types\IgTime.cs" />
+    <Compile Include="Types\Vec2i.cs" />
+    <Compile Include="Types\Vec3f.cs" />
+    <Compile Include="Types\WeatherEvent.cs" />
+    <Compile Include="Utilities\ExtendedObject.cs" />
+    <Compile Include="Utilities\Threading\AbstractRunnable.cs" />
+    <Compile Include="Utilities\Threading\Runnable.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
