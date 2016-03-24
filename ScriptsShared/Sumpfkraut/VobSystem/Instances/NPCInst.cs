@@ -15,71 +15,72 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #region Properties
 
+        new public static readonly String _staticName = "NPCInst (static)";
+
         public new WorldObjects.NPC BaseInst { get { return (WorldObjects.NPC)base.BaseInst; } }
 
         #endregion
 
-        public NPCInst(PacketReader stream) : base(new NPC(), stream)
+        public NPCInst (PacketReader stream) : base(new NPC(), stream)
+        { }
+
+        public void SetState (NPCStates state)
         {
+            BaseInst.SetState(state);
         }
 
-        public void SetState(NPCStates state)
+        public void Jump ()
         {
-            this.BaseInst.SetState(state);
+            BaseInst.Jump();
         }
 
-        public void Jump()
-        {
-            this.BaseInst.Jump();
-        }
-
-        #region Client Commands
+        #region client-commands
 
         partial void pOnCmdMove(NPCStates state);
-        public void OnCmdMove(NPCStates state)
+        public void OnCmdMove (NPCStates state)
         {
             pOnCmdMove(state);
         }
 
         partial void pOnCmdJump();
-        public void OnCmdJump()
+        public void OnCmdJump ()
         {
             pOnCmdJump();
         }
 
-        public void OnCmdDrawItem(Item item)
+        public void OnCmdDrawItem (Item item)
         {
             throw new NotImplementedException();
         }
 
-        public void OnCmdDropItem(Item item)
+        public void OnCmdDropItem (Item item)
         {
             throw new NotImplementedException();
         }
 
 
-        public void OnCmdPickupItem(Item item)
+        public void OnCmdPickupItem (Item item)
         {
             throw new NotImplementedException();
         }
 
-        public void OnCmdUseItem(Item item)
+        public void OnCmdUseItem (Item item)
         {
             throw new NotImplementedException();
         }
 
-        public void OnCmdUseMob(MobInter mob)
+        public void OnCmdUseMob (MobInter mob)
         {
             throw new NotImplementedException();
         }
 
-        public void OnWriteTakeControl(PacketWriter stream)
+        public void OnWriteTakeControl (PacketWriter stream)
         {
             // write everything the player needs to know about this npc
             // i.e. abilities, level, guild etc
         }
 
-        public void OnReadTakeControl(PacketReader stream)
+        public void OnReadTakeControl (PacketReader stream)
         {
             // read everything the player needs to know about this npc
             // i.e. abilities, level, guild etc

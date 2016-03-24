@@ -12,20 +12,19 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
     {
         #region Properties
 
-        public new WorldObjects.Vob BaseInst { get { return (WorldObjects.Vob)base.BaseInst; } }
+        new public static readonly String _staticName = "VobInst (static)";
+
+        public new WorldObjects.Vob BaseInst { get { return (WorldObjects.Vob) base.BaseInst; } }
 
         #endregion
         
-        public VobInst(PacketReader stream) : this(new Vob(), stream)
-        {
-        }
+        public VobInst (PacketReader stream) : this(new Vob(), stream)
+        { }
 
-        protected VobInst(Vob baseInst, PacketReader stream) : base(baseInst, stream)
-        {
-        }
+        protected VobInst (Vob baseInst, PacketReader stream) : base(baseInst, stream)
+        { }
 
-        protected VobInst(Vob baseInst) : base(baseInst)
-        {
-        }
+        protected VobInst (Vob baseInst) : base(baseInst)
+        { }
     }
 }

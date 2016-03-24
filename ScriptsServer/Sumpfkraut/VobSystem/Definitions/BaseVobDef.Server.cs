@@ -8,33 +8,36 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
     public abstract partial class BaseVobDef
     {
-        static Dictionary<string, BaseVobDef> nameDict = new Dictionary<string, BaseVobDef>();
-        public static T Get<T>(string codeName) where T : BaseVobDef
+        static Dictionary<string, BaseVobDef> codeNameDict = new Dictionary<string, BaseVobDef>();
+        public static T Get<T> (string codeName) where T : BaseVobDef
         {
-            BaseVobDef ret;
-            nameDict.TryGetValue(codeName.ToUpper(), out ret);
-            return (T)ret;
+            BaseVobDef baseVobDef;
+            codeNameDict.TryGetValue(codeName.ToUpper(), out baseVobDef);
+            return (T) baseVobDef;
         }
 
-        string codeName;
-        public string CodeName { get { return codeName; } }
+        private String codeName;
+        public String CodeName { get { return codeName; } }
 
-        protected BaseVobDef(BaseVobInstance baseDef, string codeName) : this(baseDef)
+        protected BaseVobDef (BaseVobInstance baseDef, string codeName) : this(baseDef)
         {
             if (string.IsNullOrWhiteSpace(codeName))
-                throw new ArgumentException("CodeName is null or white space!");
+            {
+                throw new ArgumentException(this.getObjName()  + ": Invalid null or white space" 
+                    + "provided in constructor for parameter codeName!");
+            }
 
             this.codeName = codeName.Trim().ToUpper();
         }
 
-        partial void pCreate()
+        partial void pCreate ()
         {
-            nameDict.Add(this.CodeName, this);
+            codeNameDict.Add(CodeName, this);
         }
 
-        partial void pDelete()
+        partial void pDelete ()
         {
-            nameDict.Remove(this.CodeName);
+            codeNameDict.Remove(CodeName);
         }
     }
 }

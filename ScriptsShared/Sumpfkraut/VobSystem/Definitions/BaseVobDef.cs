@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using GUC.WorldObjects.Instances;
 using GUC.Network;
 using GUC.Enumeration;
-using GUC.WorldObjects.Collections;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
@@ -14,40 +13,46 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
     {
         #region Properties
 
-        BaseVobInstance baseDef;
+        new public static readonly String _staticName = "BaseVobDef (static)";
+
+        private BaseVobInstance baseDef;
         public BaseVobInstance BaseDef { get { return baseDef; } }
 
-        public int ID { get { return baseDef.ID; } }
-        public VobTypes VobType { get { return baseDef.VobType; } }
+        public int Id { get { return baseDef.ID; } }
+        public bool IsCreated { get { return baseDef.IsCreated; } }
         public bool IsStatic { get { return baseDef.IsStatic; } }
+        public VobTypes VobType { get { return baseDef.VobType; } }
 
         #endregion
 
-        protected BaseVobDef(BaseVobInstance baseDef, PacketReader stream) : this(baseDef)
+        protected BaseVobDef (BaseVobInstance baseDef, PacketReader stream) : this(baseDef)
         {
             this.baseDef.ReadStream(stream); // calls OnReadProperties too!
         }
 
-        private BaseVobDef(BaseVobInstance baseDef)
+        private BaseVobDef (BaseVobInstance baseDef)
         {
             if (baseDef == null)
-                throw new ArgumentNullException("BaseDef is null!");
+            {
+                throw new Exception(this.getObjName() 
+                    + ": Invalid null-value provided for baseDef in constrcutor!");
+            }
 
             this.baseDef = baseDef;
             this.baseDef.ScriptObject = this;
         }
 
         partial void pCreate();
-        public void Create()
+        public void Create ()
         {
-            this.baseDef.Create();
+            baseDef.Create();
             pCreate();
         }
 
         partial void pDelete();
-        public void Delete()
+        public void Delete ()
         {
-            this.baseDef.Delete();
+            baseDef.Delete();
             pDelete();
         }
 

@@ -15,48 +15,54 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
     {
         #region Properties
 
+        new public static readonly String _staticName = "BaseVobInst (static)";
+
         // GUC - Base - Object
         BaseVob baseInst;
         public BaseVob BaseInst { get { return baseInst; } }
 
-        // Definition 
-        BaseVobDef definition;
-        public BaseVobDef Definition { get { return definition; } }
+        // definition 
+        BaseVobDef vobDef;
+        public BaseVobDef VobDef { get { return vobDef; } }
 
-        public int ID { get { return baseInst.ID; } }
+        public int Id { get { return baseInst.ID; } }
         public VobTypes VobType { get { return baseInst.VobType; } }
         public bool IsStatic { get { return baseInst.IsStatic; } }
 
         #endregion
 
-        protected BaseVobInst(BaseVob baseInst, PacketReader stream) : this(baseInst)
+        protected BaseVobInst (BaseVob baseInst, PacketReader stream) : this(baseInst)
         {
             baseInst.ReadStream(stream);
         }
 
-        protected BaseVobInst(BaseVob baseInst)
+        protected BaseVobInst (BaseVob baseInst)
         {
             if (baseInst == null)
-                throw new ArgumentNullException("BaseInst is null!");
+            {
+                throw new ArgumentNullException("Invalid null-value provided as baseInst in constructor!");
+            }
 
             this.baseInst = baseInst;
             this.baseInst.ScriptObject = this;
         }
 
-        public void Spawn(WorldInst world)
+        public void Spawn (WorldInst world)
         {
-            this.baseInst.Spawn(world.BaseWorld);
+            baseInst.Spawn(world.BaseWorld);
         }
 
-        public void Delete()
+        public void Delete ()
         {
             baseInst.Despawn();
         }
 
         public virtual void OnReadProperties(PacketReader stream)
         {
-            this.definition = (BaseVobDef)baseInst.Instance.ScriptObject;
+            this.vobDef = (BaseVobDef) baseInst.Instance.ScriptObject;
         }
-        public virtual void OnWriteProperties(PacketWriter stream) { }
+
+        public virtual void OnWriteProperties(PacketWriter stream)
+        { }
     }
 }

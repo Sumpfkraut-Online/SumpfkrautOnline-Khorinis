@@ -8,12 +8,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
     public partial class VobDef
     {
-        public VobDef(string codeName) : this(new VobInstance(), codeName)
-        {
-        }
+        public VobDef (string codeName) : this(new VobInstance(), codeName)
+        { }
 
-        protected VobDef(VobInstance baseDef, string codeName) : base(baseDef, codeName)
-        {
-        }
+        protected VobDef (VobInstance baseDef, string codeName) : base(baseDef, codeName)
+        { }
     }
 }

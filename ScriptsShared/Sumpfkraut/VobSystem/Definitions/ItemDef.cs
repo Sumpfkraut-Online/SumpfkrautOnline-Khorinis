@@ -10,7 +10,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
     public partial class ItemDef : VobDef, ItemInstance.IScriptItemInstance
     {
-        #region BaseDef
+        #region properties 
+        new public static readonly String _staticName = "ItemDef (static)";
+
         new public ItemInstance BaseDef { get { return (ItemInstance)base.BaseDef; } }
 
         /// <summary>The standard name of this item.</summary>
@@ -23,16 +25,15 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         public string Effect { get { return BaseDef.Effect; } set { BaseDef.Effect = value; } }
         #endregion
         
-        public ItemDef(PacketReader stream) : base(new ItemInstance(), stream)
-        {
-        }
+        public ItemDef (PacketReader stream) : base(new ItemInstance(), stream)
+        { }
 
-        public override void OnReadProperties(PacketReader stream)
+        public override void OnReadProperties (PacketReader stream)
         {
             base.OnReadProperties(stream);
         }
 
-        public override void OnWriteProperties(PacketWriter stream)
+        public override void OnWriteProperties (PacketWriter stream)
         {
             base.OnWriteProperties(stream);
         }

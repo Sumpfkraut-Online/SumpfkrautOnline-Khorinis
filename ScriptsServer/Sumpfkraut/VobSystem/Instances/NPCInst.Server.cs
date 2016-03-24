@@ -9,18 +9,17 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class NPCInst
     {
-        public NPCInst(NPCDef def) : base(def, new WorldObjects.NPC())
+        public NPCInst (NPCDef vobDef) : base(vobDef, new WorldObjects.NPC())
+        { }
+
+        partial void pOnCmdMove (NPCStates state)
         {
+            SetState(state);
         }
 
-        partial void pOnCmdMove(NPCStates state)
+        partial void pOnCmdJump ()
         {
-            this.SetState(state);
-        }
-
-        partial void pOnCmdJump()
-        {
-            this.Jump();
+            Jump();
         }
     }
 }

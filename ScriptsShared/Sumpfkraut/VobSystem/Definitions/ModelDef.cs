@@ -9,12 +9,14 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
     public partial class ModelDef : ScriptObject, Models.Model.IScriptModel
     {
-        #region Properties
+        #region properties
+
+        new public static readonly String _staticName = "ModelDef (static)";
 
         Models.Model baseDef;
         public Models.Model BaseDef { get { return baseDef; } }
 
-        public int ID { get { return baseDef.ID; } }
+        public int Id { get { return baseDef.ID; } }
         public bool IsStatic { get { return baseDef.IsStatic; } }
 
         public string Visual { get { return baseDef.Visual; } set { baseDef.Visual = value; } }
@@ -23,32 +25,30 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #endregion
 
-        public ModelDef(PacketReader stream)
+        public ModelDef (PacketReader stream)
         {
-            this.baseDef = new Models.Model();
-            this.baseDef.ReadStream(stream);
+            baseDef = new Models.Model();
+            baseDef.ReadStream(stream);
         }
 
         partial void pCreate();
         public void Create()
         {
-            this.baseDef.Create();
+            baseDef.Create();
             pCreate();
         }
 
         partial void pDelete();
         public void Delete()
         {
-            this.baseDef.Delete();
+            baseDef.Delete();
             pDelete();
         }
 
-        public void OnReadProperties(PacketReader stream)
-        {
-        }
+        public void OnReadProperties (PacketReader stream)
+        { }
 
-        public void OnWriteProperties(PacketWriter stream)
-        {
-        }
+        public void OnWriteProperties (PacketWriter stream)
+        { }
     }
 }
