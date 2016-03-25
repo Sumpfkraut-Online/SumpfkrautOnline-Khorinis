@@ -66,6 +66,9 @@ namespace GUC.Scripts.Sumpfkraut.Networking
                 Logger.Log("Wo ist denn die Ani? Ja wo ist sie denn nur?");
 
             this.Character.StartAnimation(job);
+
+            this.Character.BaseInst.World.Clock.SetTime(1, 21, 0, 60);
+            this.Character.BaseInst.World.Clock.Start();
         }
     }
 }

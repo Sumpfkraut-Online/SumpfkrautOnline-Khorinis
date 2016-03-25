@@ -41,5 +41,24 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
         {
             this.baseWorld.Delete();
         }
+
+        #region World Clock
+
+        public void SetDayTime(int day, int hour, int minute, float rate)
+        {
+            this.baseWorld.Clock.SetTime(day, hour, minute, rate);
+        }
+
+        public void StartDayClock()
+        {
+            this.baseWorld.Clock.Start();
+        }
+
+        public void StopDayClock()
+        {
+            this.baseWorld.Clock.Stop();
+        }
+
+        #endregion
     }
 }

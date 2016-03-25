@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using GUC.Scripts.Sumpfkraut;
 
 namespace GUC.Server.Scripts.Sumpfkraut.Database
 {
-    public class DBSecurity : ScriptObject
+    public class DBSecurity : GUC.Utilities.ExtendedObject
     {
 
         new public static readonly String _staticName = "DBSecurity (static)";

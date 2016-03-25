@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using GUC.WorldObjects.Instances;
 using GUC.Network;
 using GUC.Enumeration;
+using GUC.WorldObjects.Collections;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
@@ -13,46 +14,35 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
     {
         #region Properties
 
-        new public static readonly String _staticName = "BaseVobDef (static)";
-
-        private BaseVobInstance baseDef;
+        BaseVobInstance baseDef;
         public BaseVobInstance BaseDef { get { return baseDef; } }
 
-        public int Id { get { return baseDef.ID; } }
-        public bool IsCreated { get { return baseDef.IsCreated; } }
-        public bool IsStatic { get { return baseDef.IsStatic; } }
+        public int ID { get { return baseDef.ID; } }
         public VobTypes VobType { get { return baseDef.VobType; } }
+        public bool IsStatic { get { return baseDef.IsStatic; } }
 
         #endregion
 
-        protected BaseVobDef (BaseVobInstance baseDef, PacketReader stream) : this(baseDef)
-        {
-            this.baseDef.ReadStream(stream); // calls OnReadProperties too!
-        }
-
-        private BaseVobDef (BaseVobInstance baseDef)
+        protected BaseVobDef(BaseVobInstance baseDef)
         {
             if (baseDef == null)
-            {
-                throw new Exception(this.getObjName() 
-                    + ": Invalid null-value provided for baseDef in constrcutor!");
-            }
+                throw new ArgumentNullException("BaseDef is null!");
 
             this.baseDef = baseDef;
             this.baseDef.ScriptObject = this;
         }
 
         partial void pCreate();
-        public void Create ()
+        public void Create()
         {
-            baseDef.Create();
+            this.baseDef.Create();
             pCreate();
         }
 
         partial void pDelete();
-        public void Delete ()
+        public void Delete()
         {
-            baseDef.Delete();
+            this.baseDef.Delete();
             pDelete();
         }
 

@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Scripts.Sumpfkraut;
 
 namespace GUC.Server.Scripts.Sumpfkraut.Database.DBQuerying
 {
-    public abstract class AbstractDBQuery : ScriptObject, IDBQuery
+    public abstract class AbstractDBQuery : GUC.Utilities.ExtendedObject, IDBQuery
     {
 
         new public static readonly String _staticName = "AbstractDBQuery (static)";

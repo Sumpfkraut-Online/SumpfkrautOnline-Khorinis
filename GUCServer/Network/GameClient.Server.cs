@@ -139,7 +139,7 @@ namespace GUC.Network
 
                 if (character != null && character.IsSpawned && character.World != npc.World)
                 {
-                    World.SendWorldMessage(this, npc.World);
+                    WorldMessage.WriteLoadMessage(this, npc.World);
                 }
                 else
                 {
@@ -188,7 +188,7 @@ namespace GUC.Network
                 }
             });
 
-            WorldCellMessage.Write(newCells, oldCells, oldVobCount, this);
+            WorldMessage.WriteCellMessage(newCells, oldCells, oldVobCount, this);
         }
 
         #endregion

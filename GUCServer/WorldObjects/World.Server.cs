@@ -99,21 +99,5 @@ namespace GUC.WorldObjects
         }
 
         #endregion
-
-        #region Network Messages
-
-        internal static void SendWorldMessage(GameClient client, World world)
-        {
-            if (client == null)
-                throw new ArgumentNullException("GameClient is null!");
-            if (world == null)
-                throw new ArgumentNullException("World is null!");
-
-            PacketWriter stream = GameServer.SetupStream(NetworkIDs.LoadWorldMessage);
-            world.WriteStream(stream);
-            client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'W');
-        }
-
-        #endregion
     }
 }

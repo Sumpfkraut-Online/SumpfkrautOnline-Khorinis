@@ -87,6 +87,8 @@ namespace GUC.Scripts
 
             var npc = new NPCInst(BaseVobDef.Get<NPCDef>("scavenger"));
             npc.BaseInst.Spawn(WorldInst.NewWorld.BaseWorld, new Types.Vec3f(0, 0, 500));
+
+            WorldInst.NewWorld.Create();
         }
     }
 }

@@ -1,0 +1,5 @@
+Animation Times in Ticks = 1/10000ms
+H = Hit, C = Combo, D = Duration
+
+ANI S_SWIM                     94000000
+ANI S_SWIMF                    39000000

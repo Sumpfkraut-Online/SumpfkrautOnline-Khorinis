@@ -6,13 +6,11 @@ using Mono.Data.Sqlite;
 using SQLiteDataReader = Mono.Data.Sqlite.SqliteDataReader;
 using SQLiteCommand = Mono.Data.Sqlite.SqliteCommand;
 //using SQLiteCommand = Mono.Data.Sqlite.SqliteCommand;
-using GUC.Scripts.Sumpfkraut;
-using GUC.Log;
 
 namespace GUC.Server.Scripts.Sumpfkraut.Database
 {
 
-    public class DBTables : ScriptObject
+    public class DBTables : GUC.Utilities.ExtendedObject
     {
 
         public struct ColumnGetTypeInfo
@@ -151,7 +149,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                         }
                         else
                         {
-                            Logger.LogError("Could not convert sql-result-string '" + sqlString 
+                            Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
                                 + "' with " + get + " in SqlStringToData.");
                             break;
                         }
@@ -164,7 +162,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                         }
                         else
                         {
-                            Logger.LogError("Could not convert sql-result-string '" + sqlString 
+                            Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
                                 + "' with " + get + " in SqlStringToData.");
                             break;
                         }
@@ -177,7 +175,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                         }
                         else
                         {
-                            Logger.LogError("Could not convert sql-result-string '" + sqlString 
+                            Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
                                 + "' with " + get + " in SqlStringToData.");
                             break;
                         }
@@ -190,7 +188,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                         }
                         else
                         {
-                            Logger.LogError("Could not convert sql-result-string '" + sqlString 
+                            Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
                                 + "' with " + get + " in SqlStringToData.");
                             break;
                         }
@@ -203,7 +201,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                         }
                         else
                         {
-                            Logger.LogError("Could not convert sql-result-string '" + sqlString 
+                            Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
                                 + "' with " + get + " in SqlStringToData.");
                             break;
                         }
@@ -216,7 +214,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                         }
                         else
                         {
-                            Logger.LogError("Could not convert sql-result-string '" + sqlString 
+                            Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
                                 + "' with " + get + " in SqlStringToData.");
                             break;
                         }
@@ -229,7 +227,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                         }
                         else
                         {
-                            Logger.LogError("Could not convert sql-result-string '" + sqlString 
+                            Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
                                 + "' with " + get + " in SqlStringToData.");
                             break;
                         }
@@ -242,7 +240,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                         }
                         else
                         {
-                            Logger.LogError("Could not convert sql-result-string '" + sqlString 
+                            Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
                                 + "' with " + get + " in SqlStringToData.");
                             break;
                         }
@@ -255,7 +253,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                         }
                         else
                         {
-                            Logger.LogError("Could not convert sql-result-string '" + sqlString 
+                            Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
                                 + "' with " + get + " in SqlStringToData.");
                             break;
                         }
@@ -268,7 +266,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                         }
                         else
                         {
-                            Logger.LogError("Could not convert sql-result-string '" + sqlString 
+                            Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
                                 + "' with " + get + " in SqlStringToData.");
                             break;
                         }
@@ -281,7 +279,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                         }
                         else
                         {
-                            Logger.LogError("Could not convert sql-result-string '" + sqlString 
+                            Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
                                 + "' with " + get + " in SqlStringToData.");
                             break;
                         }
@@ -289,7 +287,7 @@ namespace GUC.Server.Scripts.Sumpfkraut.Database
                         output = sqlString;
                         return true;
                     default:
-                        Logger.LogError("Could not convert sql-result-string '" + sqlString 
+                        Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
                                 + "' with " + get + " in SqlStringToData because this datatype is not supported.");
                         break;
                 }

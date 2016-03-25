@@ -1,0 +1,30 @@
+Animation Times in Ticks = 1/10000ms
+H = Hit, C = Combo, D = Duration
+
+ANI S_FISTRUN                  20000000
+ANI S_FISTRUNL                 7600000
+ANIALIAS T_FISTJUMPB           S_FISTRUNL
+ANI T_FISTRUNSTRAFEL           4000000
+ANI T_FISTRUNSTRAFER           4000000
+ANI T_DEAD                     39200000
+ANI S_DEAD                     0
+ANI T_DEADB                    39200000
+ANI S_DEADB                    0
+ANI T_STUMBLEB                 4000000
+ANI T_STUMBLE                  4000000
+ANI T_WARN                     12800000
+ANI S_FALLDN                   0
+ANI T_FALLDN_2_STAND           8000000
+ANI T_STAND_2_JUMPUPLOW        1600000
+ANI S_JUMPUPLOW                4000000
+ANI T_JUMPUPLOW_2_STAND        6000000
+FWDATK S_FISTATTACK            H:2000000 C:2000000 D:4000000
+ATK T_FISTATTACKMOVE           H:7600000 D:7600000
+ANIALIAS T_FISTPARADE_0        T_FISTRUNSTRAFEL
+ANIALIAS T_FISTPARADEJUMPB     S_FISTRUNL
+ANI FLY1                       39600000
+ANI FLY2                       39600000
+ANI FLY3                       39600000
+ANIALIAS R_ROAM1               FLY1
+ANIALIAS R_ROAM2               FLY2
+ANIALIAS R_ROAM3               FLY3

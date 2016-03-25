@@ -1,0 +1,5 @@
+Animation Times in Ticks = 1/10000ms
+H = Hit, C = Combo, D = Duration
+
+ATK FWD FIST 1                 H0:5600000 C0:5600000 D0:11600000
+ATK RUN FIST                   H:2800000 D:4800000

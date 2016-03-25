@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GUC.Network;
+using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
@@ -11,35 +12,36 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
     {
         #region Properties
 
-        new public static readonly String _staticName = "ItemInst (static)";
+        public new WorldObjects.Item BaseInst { get { return (WorldObjects.Item)base.BaseInst; } }
+        public new ItemDef Definition { get { return (ItemDef)base.Definition; } }
 
-        public new WorldObjects.Item BaseInst { get { return (WorldObjects.Item) base.BaseInst; } }
+        public int Slot { get { return this.BaseInst.Slot; } }
+
+        public ItemTypes ItemType { get { return this.Definition.ItemType; } }
 
         #endregion
 
-        public ItemInst (PacketReader stream) : base(new WorldObjects.Item(), stream)
-        { }
-
-        protected ItemInst() : base(new WorldObjects.Item())
-        { }
-
-        public static ItemInst ReadFromInvMsg (PacketReader stream)
+        public ItemInst() : base(new WorldObjects.Item())
         {
-            var i = new ItemInst();
-            i.BaseInst.ReadInventoryProperties(stream);
-            return i;
         }
 
-        public void ReadEquipProperties (PacketReader stream)
-        { }
+        // Nur das Wichtigste was von aussen zu sehen ist!
+        public void ReadEquipProperties(PacketReader stream)
+        {
+        }
 
-        public void ReadInventoryProperties (PacketReader stream)
-        { }
+        public void WriteEquipProperties(PacketWriter stream)
+        {
+        }
 
-        public void WriteEquipProperties (PacketWriter stream)
-        { }
 
-        public void WriteInventoryProperties (PacketWriter stream)
-        { }
+        // Alles schreiben was man über dieses Item wissen muss
+        public void WriteInventoryProperties(PacketWriter stream)
+        {
+        }
+
+        public void ReadInventoryProperties(PacketReader stream)
+        {
+        }
     }
 }

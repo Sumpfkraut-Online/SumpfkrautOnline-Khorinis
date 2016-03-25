@@ -81,6 +81,9 @@
     <Compile Include="..\GUCShared\Enumeration\VobTypes.cs">
       <Link>Enumeration\VobTypes.cs</Link>
     </Compile>
+    <Compile Include="..\GUCShared\Enumeration\WeatherEnums.cs">
+      <Link>Enumeration\WeatherEnums.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\GameObject.cs">
       <Link>GameObject.cs</Link>
     </Compile>
@@ -119,6 +122,15 @@
     </Compile>
     <Compile Include="..\GUCShared\Types\Vec3f.cs">
       <Link>Types\Vec3f.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\Utilities\ExtendedObject.cs">
+      <Link>Utilities\ExtendedObject.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\Utilities\Threading\AbstractRunnable.cs">
+      <Link>Utilities\Threading\AbstractRunnable.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\Utilities\Threading\Runnable.cs">
+      <Link>Utilities\Threading\Runnable.cs</Link>
     </Compile>
     <Compile Include="..\GUCShared\Utilities\XmlObj.cs">
       <Link>Utilities\XmlObj.cs</Link>
@@ -213,8 +225,17 @@
     <Compile Include="..\GUCShared\WorldObjects\Vob.cs">
       <Link>WorldObjects\Vob.cs</Link>
     </Compile>
+    <Compile Include="..\GUCShared\WorldObjects\Weather\SkyController.cs">
+      <Link>WorldObjects\Weather\SkyController.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\WorldObjects\World.cs">
       <Link>WorldObjects\World.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\WorldObjects\WorldTime\IgTime.cs">
+      <Link>WorldObjects\WorldTime\IgTime.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\WorldObjects\WorldTime\WorldClock.cs">
+      <Link>WorldObjects\WorldTime\WorldClock.cs</Link>
     </Compile>
     <Compile Include="GUI\GUCInventory.cs" />
     <Compile Include="GUI\GUCTextBox.cs" />
@@ -246,6 +267,7 @@
     <Compile Include="SplashScreen.xaml.cs">
       <DependentUpon>SplashScreen.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\ExtendedObject.Client.cs" />
     <Compile Include="WorldObjects\BaseVob.Client.cs" />
     <Compile Include="StaticCollection.Client.cs" />
     <Compile Include="WorldObjects\Collections\ItemContainer.Client.cs" />
@@ -277,6 +299,7 @@
     <Compile Include="WorldObjects\NPC.Client.cs" />
     <Compile Include="WorldObjects\Vob.Client.cs" />
     <Compile Include="WorldObjects\World.Client.cs" />
+    <Compile Include="WorldObjects\WorldTime\WorldClock.Client.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Log\Logger.Client.cs" />

@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.WorldObjects.Collections;
+using GUC.Network;
+using GUC.WorldObjects.WorldTime;
+using GUC.WorldObjects.Weather;
 
 namespace GUC.WorldObjects
 {
@@ -12,6 +14,9 @@ namespace GUC.WorldObjects
 
         public partial interface IScriptWorld : IScriptGameObject
         {
+            void SetDayTime(int day, int hour, int minute, float rate);
+            void StartDayClock();
+            void StopDayClock();
         }
 
         public new IScriptWorld ScriptObject
@@ -39,7 +44,29 @@ namespace GUC.WorldObjects
             }
         }
 
+        WorldClock clock;
+        public WorldClock Clock { get { return this.clock; } }
+
+        SkyController skyCtrl;
+        public SkyController SkyCtrl { get { return this.skyCtrl; } }
+
         #endregion
+
+        public World()
+        {
+            this.clock = new WorldClock(this);
+            this.skyCtrl = new SkyController(this);
+        }
+
+        protected override void ReadProperties(PacketReader stream)
+        {
+            this.clock.ReadProperties(stream);
+        }
+
+        protected override void WriteProperties(PacketWriter stream)
+        {
+            this.clock.WriteProperties(stream);
+        }
 
         #region Collection
 
@@ -67,9 +94,9 @@ namespace GUC.WorldObjects
         {
             if (!this.isCreated)
                 throw new ArgumentException("World is not in the collection!");
-
+            
             this.isCreated = false;
-
+            
             worldsByID.Remove(this);
             worlds.Remove(ref this.collID);
         }

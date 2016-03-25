@@ -12,14 +12,44 @@ namespace GUC.Client.Network.Messages
 {
     static class WorldMessage
     {
+        #region WorldClock
+
+        public static void ReadTimeMessage(PacketReader stream)
+        {
+            var clock = World.Current.Clock;
+            clock.ReadProperties(stream);
+            World.Current.ScriptObject.SetDayTime(clock.Day, clock.Hour, clock.Minute, clock.Rate);
+        }
+
+        public static void ReadTimeStartMessage(PacketReader stream)
+        {
+            if (stream.ReadBit())
+            {
+                World.Current.ScriptObject.StartDayClock();
+            }
+            else
+            {
+                World.Current.ScriptObject.StopDayClock();
+            }
+        }
+
+        #endregion
+
         #region World Loading
 
         public static void ReadLoadWorldMessage(PacketReader stream)
         {
             var world = ScriptManager.Interface.CreateWorld();
+            world.ID = 0;
             world.ReadStream(stream);
+            bool startClock = stream.ReadBit();
+            world.Create();
             World.current = world;
             world.ScriptObject.Load();
+            if (startClock)
+            {
+                world.ScriptObject.StartDayClock();
+            }
 
             SendConfirmation();
         }

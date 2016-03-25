@@ -20,7 +20,8 @@ namespace Gothic
             camera = 12,
             aiCamera = 16,
             camVob = 20,
-            viewPort = 24;
+            viewPort = 24,
+            WorldTimer = 0x114;
         }
 
         public abstract class FuncAddresses
@@ -82,6 +83,11 @@ namespace Gothic
         public static zCWorld GetWorld()
         {
             return new zCWorld(Process.ReadInt(Process.ReadInt(ogame) + VarOffsets.world));
+        }
+
+        public static oCWorldTimer WorldTimer
+        {
+            get { return new oCWorldTimer(Process.ReadInt(Process.ReadInt(ogame) + VarOffsets.WorldTimer)); }
         }
     }
 }

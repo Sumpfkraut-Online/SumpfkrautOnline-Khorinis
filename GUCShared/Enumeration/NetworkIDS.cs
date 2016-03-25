@@ -32,6 +32,9 @@ namespace GUC.Enumeration
         WorldCellMessage, // for changing cells
         WorldSpawnMessage, // for spawning a vob in the world
         WorldDespawnMessage, // for despawning a vob in the world
+        WorldTimeMessage, // to set the world's time
+        WorldTimeStartMessage, // to start/stop the world's time
+        WorldWeatherMessage, // to set the world's weather
 
         //vobs
         VobPosDirMessage, // updating position and direction of a vob
@@ -61,11 +64,7 @@ namespace GUC.Enumeration
         PlayerPickUpItemMessage,
         PlayerAttributeMSMessage,
         PlayerAttributeMessage,
-
-        //world
-        WorldTimeMessage,
-        WorldWeatherMessage,
-        
+                
         //mobs
         MobUseMessage,
         MobUnUseMessage,

@@ -80,6 +80,12 @@ namespace Gothic.Objects.Sky
             set { Process.Write(value, Address + VarOffsets.EndRainTime); }
         }
 
+        public float OutdoorRainFXWeight
+        {
+            get { return Process.ReadFloat(Address + 0x69C); }
+            set { Process.Write(value, Address + 0x69C); }
+        }
+
         public zCSkyState MasterState
         {
             get { return new zCSkyState(Address + VarOffsets.MasterState); }

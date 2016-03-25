@@ -1,0 +1,9 @@
+Animation Times in Ticks = 1/10000ms
+H = Hit, C = Combo, D = Duration
+
+ANI T_WALK_2_WALKL             4400000
+ANI S_WALKL                    16800000
+ANI T_WALKL_2_WALK             5200000
+ANI T_STAND_2_SIT              25333333
+ANI S_SIT                      15600000
+ANIALIAS T_SIT_2_STAND         T_STAND_2_SIT

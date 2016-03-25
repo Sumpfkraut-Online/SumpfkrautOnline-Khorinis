@@ -47,6 +47,7 @@
     <Compile Include="Enumeration\VobTypes.cs" />
     <Compile Include="Enumeration\ItemEnums.cs" />
     <Compile Include="Enumeration\NetworkIDS.cs" />
+    <Compile Include="Enumeration\WeatherEnums.cs" />
     <Compile Include="GameTime.cs" />
     <Compile Include="Log\Logger.cs" />
     <Compile Include="Models\Model.cs" />
@@ -54,6 +55,9 @@
     <Compile Include="Network\PacketReader.cs" />
     <Compile Include="Network\PacketWriter.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Utilities\ExtendedObject.cs" />
+    <Compile Include="Utilities\Threading\AbstractRunnable.cs" />
+    <Compile Include="Utilities\Threading\Runnable.cs" />
     <Compile Include="Utilities\XmlObj.cs" />
     <Compile Include="Scripting\ScriptManager.cs" />
     <Compile Include="Scripting\Timer.cs" />
@@ -92,8 +96,11 @@
     <Compile Include="WorldObjects\Mobs\MobWheel.cs" />
     <Compile Include="WorldObjects\NPC.cs" />
     <Compile Include="WorldObjects\Vob.cs" />
+    <Compile Include="WorldObjects\Weather\SkyController.cs" />
     <Compile Include="WorldObjects\World.cs" />
     <Compile Include="GameObject.cs" />
+    <Compile Include="WorldObjects\WorldTime\IgTime.cs" />
+    <Compile Include="WorldObjects\WorldTime\WorldClock.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

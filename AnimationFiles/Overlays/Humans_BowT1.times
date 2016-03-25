@@ -1,0 +1,23 @@
+Animation Times in Ticks = 1/10000ms
+H = Hit, C = Combo, D = Duration
+
+ANI T_RUN_2_BOW                1600000
+ANI S_BOW                      0
+ANI T_BOW_2_BOWRUN             4000000
+ANI T_BOWRUN_2_BOW             4000000
+ANIALIAS T_BOW_2_RUN           T_RUN_2_BOW
+ANI T_BOWRUN_2_BOWAIM          4000000
+ANIALIAS T_BOWWALK_2_BOWAIM    T_BOWRUN_2_BOWAIM
+ANI C_BOW_1                    0
+ANI C_BOW_2                    0
+ANI C_BOW_3                    0
+ANI C_BOW_4                    0
+ANI C_BOW_5                    0
+ANI C_BOW_6                    0
+ANI C_BOW_7                    0
+ANI C_BOW_8                    0
+ANI C_BOW_9                    0
+ANI S_BOWSHOOT                 0
+ANI T_BOWRELOAD                10400000
+ANI T_BOWAIM_2_BOWRUN          4000000
+ANIALIAS T_BOWAIM_2_BOWWALK    T_BOWAIM_2_BOWRUN

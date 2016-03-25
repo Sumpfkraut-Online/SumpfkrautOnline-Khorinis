@@ -24,6 +24,8 @@ namespace GUC.Client.Hooks
             Process.Write(new byte[] { 0xB8, 0x00, 0x00, 0x00, 0x00, 0x90 }, addr2);
             addr1++;
             addr2++;
+
+            Process.Write(new byte[] { 0xE9, 0x8D, 0x00, 0x00, 0x00 }, 0x005EAF54); // jmp over rain weight calculation
         }
 
         static int addr1;

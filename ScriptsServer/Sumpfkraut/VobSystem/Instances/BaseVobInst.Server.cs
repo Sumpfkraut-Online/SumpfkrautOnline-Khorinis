@@ -8,15 +8,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class BaseVobInst
     {
-        protected BaseVobInst (BaseVobDef vobDef, WorldObjects.BaseVob baseInst) : this(baseInst)
+        protected BaseVobInst(BaseVobDef def, WorldObjects.BaseVob baseInst) : this(baseInst)
         {
-            if (vobDef == null)
-            {
-                throw new ArgumentNullException("Invalid null-value probided for vobDef in constructor!");
-            }
+            if (def == null)
+                throw new ArgumentNullException("VobDef is null!");
 
-            this.vobDef = vobDef;
-            this.baseInst.Instance = this.vobDef.BaseDef;
+            this.Definition = def;
         }
     }
 }

@@ -11,58 +11,57 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
-    public partial class BaseVobInst : ScriptObject, BaseVob.IScriptBaseVob
+    public abstract partial class BaseVobInst : ScriptObject, BaseVob.IScriptBaseVob
     {
         #region Properties
-
-        new public static readonly String _staticName = "BaseVobInst (static)";
 
         // GUC - Base - Object
         BaseVob baseInst;
         public BaseVob BaseInst { get { return baseInst; } }
 
-        // definition 
-        BaseVobDef vobDef;
-        public BaseVobDef VobDef { get { return vobDef; } }
+        // Definition 
+        public BaseVobDef Definition
+        {
+            get { return (BaseVobDef)baseInst.Instance.ScriptObject; }
+            set { baseInst.Instance = value.BaseDef; }
+        }
 
-        public int Id { get { return baseInst.ID; } }
+        public int ID { get { return baseInst.ID; } }
         public VobTypes VobType { get { return baseInst.VobType; } }
         public bool IsStatic { get { return baseInst.IsStatic; } }
+        public bool IsSpawned { get { return baseInst.IsSpawned; } }
 
         #endregion
 
-        protected BaseVobInst (BaseVob baseInst, PacketReader stream) : this(baseInst)
-        {
-            baseInst.ReadStream(stream);
-        }
-
-        protected BaseVobInst (BaseVob baseInst)
+        protected BaseVobInst(BaseVob baseInst)
         {
             if (baseInst == null)
-            {
-                throw new ArgumentNullException("Invalid null-value provided as baseInst in constructor!");
-            }
+                throw new ArgumentNullException("BaseInst is null!");
 
             this.baseInst = baseInst;
             this.baseInst.ScriptObject = this;
         }
 
-        public void Spawn (WorldInst world)
+        public void Spawn(World world)
         {
-            baseInst.Spawn(world.BaseWorld);
+            this.Spawn((WorldInst)world.ScriptObject);
         }
-
-        public void Delete ()
+        
+        public virtual void Spawn(WorldInst world)
+        {
+            this.baseInst.Spawn(world.BaseWorld);
+        }
+        
+        public virtual void Despawn()
         {
             baseInst.Despawn();
         }
 
         public virtual void OnReadProperties(PacketReader stream)
         {
-            this.vobDef = (BaseVobDef) baseInst.Instance.ScriptObject;
         }
-
         public virtual void OnWriteProperties(PacketWriter stream)
-        { }
+        {
+        }
     }
 }

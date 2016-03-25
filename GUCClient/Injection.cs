@@ -18,8 +18,8 @@ namespace GUC.Client
         {
             try
             {
-                SplashScreen.Create();
-                SplashScreen.SetUpHooks();
+                //SplashScreen.Create();
+                //SplashScreen.SetUpHooks();
 
                 Program.SetPaths(message);
                 AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;

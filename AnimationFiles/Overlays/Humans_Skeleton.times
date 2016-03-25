@@ -1,0 +1,10 @@
+Animation Times in Ticks = 1/10000ms
+H = Hit, C = Combo, D = Duration
+
+ANI T_DEAD                     7600000
+ANI S_DEAD                     0
+ANIALIAS T_DEADB               T_DEAD
+ANIALIAS S_DEADB               S_DEAD
+ANIALIAS T_DIVE_2_DROWNED      T_DEAD
+ANIALIAS S_DROWNED             S_DEAD
+ANI T_SPAWN                    19200000

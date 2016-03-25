@@ -155,7 +155,7 @@ namespace GUC.WorldObjects
                     }
                 });
 
-                WorldCellMessage.Write(newCells, oldCells, oldVobCount, this.client);
+                WorldMessage.WriteCellMessage(newCells, oldCells, oldVobCount, this.client);
 
                 this.AddToNetCell(this.world.GetCellFromCoords(toX, toY));
             }
@@ -187,7 +187,7 @@ namespace GUC.WorldObjects
                 this.dir = direction;
                 this.world = world;
 
-                World.SendWorldMessage(this.Client, world); // tell the client to change worlds first
+                WorldMessage.WriteLoadMessage(this.client, world); // tell the client to change worlds first
             }
             else
             {
@@ -206,7 +206,7 @@ namespace GUC.WorldObjects
                 if (cell.DynVobs.GetCount() > 0)
                     arr[i++] = cell; // save for cell message
             });
-            WorldCellMessage.Write(arr, new NetCell[0], 0, this.client);
+            WorldMessage.WriteCellMessage(arr, new NetCell[0], 0, this.client);
 
             if (!this.isCreated)
             {

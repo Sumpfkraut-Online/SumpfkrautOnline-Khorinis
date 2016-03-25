@@ -20,7 +20,7 @@ namespace Gothic.Objects.Sky
         public abstract class VarOffsets
         {
             public const int numFlyParticles = 0xE000,
-                numImpactParticles = 0xE004,
+            numImpactParticles = 0xE004,
             numDestParticles = 0xE018,
             freeFlyParticleList = 0xE008;
         }

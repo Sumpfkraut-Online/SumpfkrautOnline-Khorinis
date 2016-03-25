@@ -212,6 +212,12 @@ namespace GUC.Network
                 case NetworkIDs.WorldCellMessage:
                     WorldMessage.ReadCellMessage(stream);
                     break;
+                case NetworkIDs.WorldTimeMessage:
+                    WorldMessage.ReadTimeMessage(stream);
+                    break;
+                case NetworkIDs.WorldTimeStartMessage:
+                    WorldMessage.ReadTimeStartMessage(stream);
+                    break;
 
                 // Vob Messages
                 case NetworkIDs.VobPosDirMessage:
