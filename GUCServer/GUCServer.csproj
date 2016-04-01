@@ -239,6 +239,12 @@
     <Compile Include="..\GUCShared\WorldObjects\NPC.cs">
       <Link>WorldObjects\NPC.cs</Link>
     </Compile>
+    <Compile Include="..\GUCShared\WorldObjects\Time\WorldClock.cs">
+      <Link>WorldObjects\Time\WorldClock.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\WorldObjects\Time\WorldTime.cs">
+      <Link>WorldObjects\Time\WorldTime.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\WorldObjects\Vob.cs">
       <Link>WorldObjects\Vob.cs</Link>
     </Compile>
@@ -247,12 +253,6 @@
     </Compile>
     <Compile Include="..\GUCShared\WorldObjects\World.cs">
       <Link>WorldObjects\World.cs</Link>
-    </Compile>
-    <Compile Include="..\GUCShared\WorldObjects\WorldTime\IgTime.cs">
-      <Link>WorldObjects\WorldTime\IgTime.cs</Link>
-    </Compile>
-    <Compile Include="..\GUCShared\WorldObjects\WorldTime\WorldClock.cs">
-      <Link>WorldObjects\WorldTime\WorldClock.cs</Link>
     </Compile>
     <Compile Include="Animations\Overlay.Server.cs" />
     <Compile Include="GameObject.Server.cs" />
@@ -304,8 +304,9 @@
     <Compile Include="WorldObjects\Instances\Mobs\MobWheelInstance.Server.cs" />
     <Compile Include="WorldObjects\NPC.Server.cs" />
     <Compile Include="WorldObjects\Instances\NPCInstance.Server.cs" />
+    <Compile Include="WorldObjects\Weather\SkyController.Server.cs" />
     <Compile Include="WorldObjects\World.Server.cs" />
-    <Compile Include="WorldObjects\WorldTime\WorldClock.Server.cs" />
+    <Compile Include="WorldObjects\Time\WorldClock.Server.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Network\GameServer.cs" />

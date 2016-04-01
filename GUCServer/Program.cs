@@ -18,28 +18,27 @@ namespace GUC.Server
 
             try
             {
-
-
                 GameServer.Start();
 
                 ScriptManager.StartScripts("Scripts\\ServerScripts.dll");
 
                 const int updateRate = 8; //time between server ticks
 
-                const long nextInfoUpdateTime = 60 * TimeSpan.TicksPerSecond;
+                const long nextInfoUpdateTime = 20 * TimeSpan.TicksPerSecond;
                 long nextInfoUpdates = DateTime.UtcNow.Ticks + nextInfoUpdateTime;
 
                 long tickAverage = 0;
                 long tickCount = 0;
                 long tickMax = 0;
-                
+
+                Random rand = new Random();
                 Stopwatch watch = new Stopwatch();
                 while (true)
                 {
                     watch.Restart();
 
                     GameTime.Update();
-                    GUC.WorldObjects.World.ForEach(w => w.Clock.UpdateTime());
+                    GUC.WorldObjects.World.ForEach(w => w.UpdateTimeAndWeather());
                     GUCTimer.Update(GameTime.Ticks); // move to new thread?
                     GameServer.Update(); //process received packets
 

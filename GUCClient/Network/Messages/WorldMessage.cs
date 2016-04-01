@@ -7,34 +7,12 @@ using GUC.Scripting;
 using GUC.WorldObjects;
 using GUC.Enumeration;
 using RakNet;
+using GUC.Types;
 
 namespace GUC.Client.Network.Messages
 {
     static class WorldMessage
     {
-        #region WorldClock
-
-        public static void ReadTimeMessage(PacketReader stream)
-        {
-            var clock = World.Current.Clock;
-            clock.ReadProperties(stream);
-            World.Current.ScriptObject.SetDayTime(clock.Day, clock.Hour, clock.Minute, clock.Rate);
-        }
-
-        public static void ReadTimeStartMessage(PacketReader stream)
-        {
-            if (stream.ReadBit())
-            {
-                World.Current.ScriptObject.StartDayClock();
-            }
-            else
-            {
-                World.Current.ScriptObject.StopDayClock();
-            }
-        }
-
-        #endregion
-
         #region World Loading
 
         public static void ReadLoadWorldMessage(PacketReader stream)
@@ -48,8 +26,9 @@ namespace GUC.Client.Network.Messages
             world.ScriptObject.Load();
             if (startClock)
             {
-                world.ScriptObject.StartDayClock();
+                world.Clock.ScriptObject.Start();
             }
+            world.SkyCtrl.ScriptObject.SetRainTime(world.SkyCtrl.TargetTime, world.SkyCtrl.TargetWeight);
 
             SendConfirmation();
         }
@@ -101,6 +80,40 @@ namespace GUC.Client.Network.Messages
                     vob.ScriptObject.Despawn();
                 }
             }
+        }
+
+        #endregion
+
+        #region WorldClock
+
+        public static void ReadTimeMessage(PacketReader stream)
+        {
+            var clock = World.Current.Clock;
+            clock.ReadStream(stream);
+            clock.ScriptObject.SetTime(clock.Time, clock.Rate);
+        }
+
+        public static void ReadTimeStartMessage(PacketReader stream)
+        {
+            if (stream.ReadBit())
+            {
+                World.Current.Clock.ScriptObject.Start();
+            }
+            else
+            {
+                World.Current.Clock.ScriptObject.Stop();
+            }
+        }
+
+        #endregion
+
+        #region Weather
+
+        public static void ReadWeatherMessage(PacketReader stream)
+        {
+            var skyCtrl = World.current.SkyCtrl;
+            skyCtrl.ReadStream(stream);
+            skyCtrl.ScriptObject.SetRainTime(skyCtrl.TargetTime, skyCtrl.TargetWeight);
         }
 
         #endregion

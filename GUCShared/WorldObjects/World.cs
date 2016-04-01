@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Network;
-using GUC.WorldObjects.WorldTime;
+using GUC.WorldObjects.Time;
 using GUC.WorldObjects.Weather;
 
 namespace GUC.WorldObjects
@@ -14,9 +14,6 @@ namespace GUC.WorldObjects
 
         public partial interface IScriptWorld : IScriptGameObject
         {
-            void SetDayTime(int day, int hour, int minute, float rate);
-            void StartDayClock();
-            void StopDayClock();
         }
 
         public new IScriptWorld ScriptObject
@@ -52,21 +49,31 @@ namespace GUC.WorldObjects
 
         #endregion
 
+        #region Constructors
+
         public World()
         {
             this.clock = new WorldClock(this);
             this.skyCtrl = new SkyController(this);
         }
 
+        #endregion
+
+        #region Read & Write
+
         protected override void ReadProperties(PacketReader stream)
         {
-            this.clock.ReadProperties(stream);
+            this.clock.ReadStream(stream);
+            this.skyCtrl.ReadStream(stream);
         }
 
         protected override void WriteProperties(PacketWriter stream)
         {
-            this.clock.WriteProperties(stream);
+            this.clock.WriteStream(stream);
+            this.skyCtrl.WriteStream(stream);
         }
+
+        #endregion
 
         #region Collection
 
@@ -197,5 +204,11 @@ namespace GUC.WorldObjects
         #endregion
 
         #endregion
+        
+        internal void UpdateTimeAndWeather()
+        {
+            this.clock.UpdateTime();
+            this.skyCtrl.UpdateWeather();
+        }
     }
 }

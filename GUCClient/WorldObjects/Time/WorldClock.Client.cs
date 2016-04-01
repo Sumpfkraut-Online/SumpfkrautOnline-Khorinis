@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Gothic;
 
-namespace GUC.WorldObjects.WorldTime
+namespace GUC.WorldObjects.Time
 {
     public partial class WorldClock
     {
@@ -15,7 +15,7 @@ namespace GUC.WorldObjects.WorldTime
 
         partial void pUpdateTime()
         {
-            oCGame.WorldTimer.SetTime(this.hour, this.minute);
+            oCGame.WorldTimer.SetTime(this.time.GetHour(), this.time.GetMinute());
         }
     }
 }

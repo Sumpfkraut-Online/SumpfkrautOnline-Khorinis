@@ -89,6 +89,8 @@ namespace GUC.Scripts
             npc.BaseInst.Spawn(WorldInst.NewWorld.BaseWorld, new Types.Vec3f(0, 0, 500));
 
             WorldInst.NewWorld.Create();
+            WorldInst.NewWorld.Clock.SetTime(new Types.WorldTime(0, 8), 3.0f);
+            WorldInst.NewWorld.Clock.Start();
         }
     }
 }

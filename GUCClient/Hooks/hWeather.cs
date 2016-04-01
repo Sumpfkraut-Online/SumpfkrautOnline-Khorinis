@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using WinApi;
 using GUC.Log;
+using GUC.WorldObjects;
 
 namespace GUC.Client.Hooks
 {
     static class hWeather
     {
-        const float DropsPerMillisecond = 1;
-        const int MaxDropsPerFrame = 16;
+        const int MaxDropsPerFrame = 128;
 
         static HookInfos rainHook;
         public static void AddHooks()
@@ -49,24 +49,28 @@ namespace GUC.Client.Hooks
         {
             try
             {
-                long now = DateTime.UtcNow.Ticks;
+                long now = GameTime.Ticks;
 
                 int num;
                 if (lastTime > 0)
                 {
-                    num = (int)(DropsPerMillisecond * (double)(now - lastTime) / TimeSpan.TicksPerMillisecond);
-                    if (num > MaxDropsPerFrame)
-                        num = MaxDropsPerFrame;
+                    long diff = now - lastTime;
+                    double t = 10500d / World.current.SkyCtrl.CurrentWeight;
+
+                    num = (int)(diff / t);
+                    lastTime = now - (int)(diff % t);
                 }
                 else
                 {
-                    num = MaxDropsPerFrame;
+                    num = 1;
+                    lastTime = now;
                 }
+
+                if (num > MaxDropsPerFrame)
+                    num = MaxDropsPerFrame;
 
                 Process.Write(num, addr1);
                 Process.Write(num, addr2);
-
-                lastTime = now;
             }
             catch (Exception e)
             {

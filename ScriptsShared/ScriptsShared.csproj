@@ -66,6 +66,8 @@
     <Compile Include="Sumpfkraut\VobSystem\Instances\ItemInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\NPCInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\VobInst.cs" />
+    <Compile Include="Sumpfkraut\WorldSystem\ScriptClock.cs" />
+    <Compile Include="Sumpfkraut\WorldSystem\ScriptSkyCtrl.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldDef.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldInst.cs" />
   </ItemGroup>

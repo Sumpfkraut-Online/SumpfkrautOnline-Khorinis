@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Server.WorldObjects.Cells;
-using GUC.WorldObjects.WorldTime;
+using GUC.WorldObjects.Time;
 using GUC.Network;
 using RakNet;
 using GUC.Enumeration;
 using GUC.WorldObjects;
+using GUC.WorldObjects.Weather;
 
 namespace GUC.Server.Network.Messages
 {
@@ -24,26 +25,8 @@ namespace GUC.Server.Network.Messages
         }
 
         #endregion
-
-        #region World Clock
-
-        public static void WriteTimeMessage(WorldClock clock)
-        {
-            PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldTimeMessage);
-            clock.WriteProperties(stream);
-
-            clock.World.ForEachClient(client => client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'W'));
-        }
-
-        public static void WriteTimeStartMessage(WorldClock clock, bool start)
-        {
-            PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldTimeStartMessage);
-            stream.Write(start);
-
-            clock.World.ForEachClient(client => client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'W'));
-        }
-
-        #endregion
+        
+        #region Cells
 
         public static void WriteCellMessage(NetCell[] newCells, NetCell[] oldCells, int oldVobs, GameClient client)
         {
@@ -82,5 +65,38 @@ namespace GUC.Server.Network.Messages
 
             client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
         }
+
+        #endregion
+
+        #region World Clock
+
+        public static void WriteTimeMessage(WorldClock clock)
+        {
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldTimeMessage);
+            clock.WriteStream(stream);
+
+            clock.World.ForEachClient(client => client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'W'));
+        }
+
+        public static void WriteTimeStartMessage(WorldClock clock, bool start)
+        {
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldTimeStartMessage);
+            stream.Write(start);
+
+            clock.World.ForEachClient(client => client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'W'));
+        }
+
+        #endregion
+
+        #region Weather
+
+        public static void WriteWeatherMessage(World world, SkyController skyCtrler)
+        {
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldWeatherMessage);
+            skyCtrler.WriteStream(stream);
+            world.ForEachClient(client => client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'W'));
+        }
+
+        #endregion
     }
 }

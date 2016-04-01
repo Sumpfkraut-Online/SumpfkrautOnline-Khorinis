@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.Server.Network.Messages;
 
-namespace GUC.WorldObjects.WorldTime
+namespace GUC.WorldObjects.Time
 {
     public partial class WorldClock
     {

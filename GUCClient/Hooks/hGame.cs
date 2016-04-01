@@ -101,7 +101,7 @@ namespace GUC.Client.Hooks
                 }
                 
                 GameTime.Update();
-                WorldObjects.World.ForEach(w => w.Clock.UpdateTime());
+                WorldObjects.World.ForEach(w => w.UpdateTimeAndWeather());
                 GUCTimer.Update(GameTime.Ticks);
                 GameClient.Client.Update();
                 InputHandler.Update();

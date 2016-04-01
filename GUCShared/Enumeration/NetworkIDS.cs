@@ -35,6 +35,7 @@ namespace GUC.Enumeration
         WorldTimeMessage, // to set the world's time
         WorldTimeStartMessage, // to start/stop the world's time
         WorldWeatherMessage, // to set the world's weather
+        WorldWeatherTypeMessage, // rain & snow
 
         //vobs
         VobPosDirMessage, // updating position and direction of a vob

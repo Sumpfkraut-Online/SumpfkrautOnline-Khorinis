@@ -218,6 +218,9 @@ namespace GUC.Network
                 case NetworkIDs.WorldTimeStartMessage:
                     WorldMessage.ReadTimeStartMessage(stream);
                     break;
+                case NetworkIDs.WorldWeatherMessage:
+                    WorldMessage.ReadWeatherMessage(stream);
+                    break;
 
                 // Vob Messages
                 case NetworkIDs.VobPosDirMessage:

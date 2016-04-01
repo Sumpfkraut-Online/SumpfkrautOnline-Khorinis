@@ -89,6 +89,12 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\VobInst.cs">
       <Link>Sumpfkraut\VobSystem\Instances\VobInst.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\WorldSystem\ScriptClock.cs">
+      <Link>Sumpfkraut\WorldSystem\ScriptClock.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\WorldSystem\ScriptSkyCtrl.cs">
+      <Link>Sumpfkraut\WorldSystem\ScriptSkyCtrl.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\WorldSystem\WorldDef.cs">
       <Link>Sumpfkraut\WorldSystem\WorldDef.cs</Link>
     </Compile>

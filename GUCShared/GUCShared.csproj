@@ -99,8 +99,8 @@
     <Compile Include="WorldObjects\Weather\SkyController.cs" />
     <Compile Include="WorldObjects\World.cs" />
     <Compile Include="GameObject.cs" />
-    <Compile Include="WorldObjects\WorldTime\IgTime.cs" />
-    <Compile Include="WorldObjects\WorldTime\WorldClock.cs" />
+    <Compile Include="WorldObjects\Time\WorldTime.cs" />
+    <Compile Include="WorldObjects\Time\WorldClock.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

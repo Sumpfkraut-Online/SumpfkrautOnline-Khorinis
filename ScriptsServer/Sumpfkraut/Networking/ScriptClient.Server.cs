@@ -67,8 +67,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking
 
             this.Character.StartAnimation(job);
 
-            this.Character.BaseInst.World.Clock.SetTime(1, 21, 0, 60);
-            this.Character.BaseInst.World.Clock.Start();
+            this.Character.BaseInst.World.SkyCtrl.SetRainTime(this.Character.BaseInst.World.Clock.Time, 1.0f);
         }
     }
 }

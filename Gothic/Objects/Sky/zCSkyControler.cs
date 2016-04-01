@@ -10,8 +10,10 @@ namespace Gothic.Objects.Sky
         public enum Offsets
         {
             WeatherType = 0x30,
-
         }
+
+        public const int activeSkyController = 0x0099AC8C;
+
         public zCSkyControler(int address)
             : base(address)
         {
@@ -23,8 +25,8 @@ namespace Gothic.Objects.Sky
 
         public static zCSkyControler ActiveSkyController
         {
-            get { return new zCSkyControler(Process.ReadInt(0x0099AC8C)); }
-            set { Process.Write(value.Address, 0x0099AC8C); }
+            get { return new zCSkyControler(Process.ReadInt(activeSkyController)); }
+            set { Process.Write(value.Address, activeSkyController); }
         }
 
         public static int SkyEffectsEnabled

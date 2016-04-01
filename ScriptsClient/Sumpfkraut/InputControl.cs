@@ -52,8 +52,8 @@ namespace GUC.Client.Scripts.Sumpfkraut
             else if (fwdKeys == 0)
                 GUC.Network.GameClient.Client.SetHeroState(NPCStates.Stand);
         }
-        
-        static float weight = 0.0f;
+
+        static int type = 1;
         static void KeyDown(VirtualKeys key, long now)
         {
             GUCMenu activeMenu = GUCMenu.GetActiveMenus().ElementAtOrDefault(0);
@@ -67,10 +67,10 @@ namespace GUC.Client.Scripts.Sumpfkraut
                 return;
             if (key == VirtualKeys.P)
             {
-                new Gothic.Objects.Sky.zCSkyControler_Outdoor(Gothic.Objects.Sky.zCSkyControler.ActiveSkyController.Address).OutdoorRainFXWeight = weight;
-                weight += 0.1f;
-                if (weight > 1.0f)
-                    weight = 0;
+                new Gothic.Objects.Sky.zCSkyControler_Outdoor(Gothic.Objects.Sky.zCSkyControler.ActiveSkyController.Address).SetWeatherType(type++);
+                if (type > 8)
+                    type = 0;
+                Log.Logger.Log(type);
             }
             if (key == VirtualKeys.O)
             {

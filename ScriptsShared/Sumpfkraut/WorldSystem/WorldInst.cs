@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Network;
 
 namespace GUC.Scripts.Sumpfkraut.WorldSystem
@@ -16,10 +14,19 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
         WorldDef definition = null;
         public WorldDef Definition { get { return definition; } }
 
+        ScriptClock clock;
+        public ScriptClock Clock { get { return this.clock; } }
+
+        ScriptSkyCtrl skyCtrl;
+        public ScriptSkyCtrl SkyCtrl { get { return this.skyCtrl; } }
+
         public WorldInst()
         {
             this.baseWorld = new WorldObjects.World();
             this.baseWorld.ScriptObject = this;
+
+            this.clock = new ScriptClock(this);
+            this.skyCtrl = new ScriptSkyCtrl(this);
         }
 
         public void OnWriteProperties(PacketWriter stream)
@@ -32,33 +39,18 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
             // read definition id
         }
 
+        partial void pCreate();
         public void Create()
         {
             this.baseWorld.Create();
+            pCreate();
         }
 
+        partial void pDelete();
         public void Delete()
         {
             this.baseWorld.Delete();
+            pDelete();
         }
-
-        #region World Clock
-
-        public void SetDayTime(int day, int hour, int minute, float rate)
-        {
-            this.baseWorld.Clock.SetTime(day, hour, minute, rate);
-        }
-
-        public void StartDayClock()
-        {
-            this.baseWorld.Clock.Start();
-        }
-
-        public void StopDayClock()
-        {
-            this.baseWorld.Clock.Stop();
-        }
-
-        #endregion
     }
 }

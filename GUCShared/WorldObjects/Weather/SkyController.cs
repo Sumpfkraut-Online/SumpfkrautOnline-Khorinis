@@ -2,13 +2,54 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using GUC.Types;
+using GUC.Network;
 
 namespace GUC.WorldObjects.Weather
 {
     public partial class SkyController
     {
+        #region ScriptObject
+
+        public partial interface IScriptSkyController
+        {
+            /// <summary>
+            /// Can be used to write additional script properties when "WriteStream" is called.
+            /// </summary>
+            void OnWriteProperties(PacketWriter stream);
+
+            /// <summary>
+            /// Can be used to read the additional script properties written when "ReadStream" is called.
+            /// </summary>
+            void OnReadProperties(PacketReader stream);
+
+            void SetRainTime(WorldTime time, float weight);
+        }
+
+        /// <summary>
+        /// The ScriptObject of this GameObject.
+        /// </summary>
+        public IScriptSkyController ScriptObject = null;
+
+        #endregion
+
+        #region Properties
+
         World world;
         public World World { get { return this.world; } }
+        
+        WorldTime startTime;
+        float startWeight;
+
+        WorldTime endTime;
+        float endWeight;
+        public WorldTime TargetTime { get { return this.endTime; } }
+        public float TargetWeight { get { return this.endWeight; } }
+
+        float currentWeight = 0;
+        public float CurrentWeight { get { return this.currentWeight; } }
+
+        #endregion
 
         internal SkyController(World world)
         {
@@ -18,27 +59,71 @@ namespace GUC.WorldObjects.Weather
             this.world = world;
         }
 
-        /*
-        float LinearInterpolate(float y0, float y1, float mu)   //LINEAR
+        partial void pSetRainTime();
+        public void SetRainTime(WorldTime time, float weight)
         {
-	        return y0*(1-mu)+y1*mu;
+            startTime = world.Clock.Time;
+            startWeight = currentWeight;
+
+            endTime = time;
+            if (weight < 0)
+                endWeight = 0;
+            else if (weight > 1)
+                endWeight = 1;
+            else
+                endWeight = weight;
+
+            pSetRainTime();
         }
 
-        float CatmullRomSpline(  //SMOOTH
-	         float y0,float y1,
-           float y2,float y3,
-           float mu)
+        partial void pUpdateWeather();
+        internal void UpdateWeather()
         {
-           float a0,a1,a2,a3,mu2;
+            if (endTime != startTime)
+            {
+                float percent;
 
-           mu2 = mu*mu;
-           a0 = -0.5*y0 + 1.5*y1 - 1.5*y2 + 0.5*y3;
-           a1 = y0 - 2.5*y1 + 2*y2 - 0.5*y3;
-           a2 = -0.5*y0 + 0.5*y2;
-           a3 = y1;
+                WorldTime currentTime = world.Clock.Time;
+                if (currentTime > this.endTime)
+                {
+                    percent = 1;
+                }
+                
+                else if (currentTime < this.startTime)
+                {
+                    percent = 0;
+                }
+                else
+                {
+                    percent = (float)((double)(currentTime - this.startTime).GetTotalSeconds() / (endTime - this.startTime).GetTotalSeconds());
+                }
 
-           return (a0*mu*mu2+a1*mu2+a2*mu+a3);
+                this.currentWeight = startWeight + (endWeight - startWeight) * percent;
+            }
+            else
+            {
+                this.currentWeight = endWeight;
+            }
+
+            pUpdateWeather();
         }
-        */
+
+        #region Read & Write
+
+        public void ReadStream(PacketReader stream)
+        {
+            this.endTime = new WorldTime(stream.ReadInt());
+            this.endWeight = stream.ReadFloat();
+            this.ScriptObject.OnReadProperties(stream);
+        }
+
+        public void WriteStream(PacketWriter stream)
+        {
+            stream.Write(this.endTime.GetTotalSeconds());
+            stream.Write(this.endWeight);
+            this.ScriptObject.OnWriteProperties(stream);
+        }
+
+        #endregion
     }
 }

@@ -66,7 +66,7 @@ namespace GUC
             {
                 if (this.isCreated)
                     throw new Exception("The IsStatic-property can't be changed while the object is created/spawned.");
-                
+
                 this.isStatic = value;
             }
         }
@@ -98,10 +98,7 @@ namespace GUC
                 throw new ArgumentNullException("Stream is null!");
 
             this.WriteProperties(stream);
-            if (this.ScriptObject != null)
-            {
-                this.ScriptObject.OnWriteProperties(stream);
-            }
+            this.ScriptObject.OnWriteProperties(stream);
         }
 
         protected virtual void ReadProperties(PacketReader stream)
@@ -118,10 +115,7 @@ namespace GUC
                 throw new ArgumentNullException("Stream is null!");
 
             this.ReadProperties(stream);
-            if (this.ScriptObject != null)
-            {
-                this.ScriptObject.OnReadProperties(stream);
-            }
+            this.ScriptObject.OnReadProperties(stream);
         }
 
         #endregion
