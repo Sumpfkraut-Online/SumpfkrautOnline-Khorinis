@@ -24,6 +24,11 @@ namespace Gothic.Objects.Sky
             numDestParticles = 0xE018,
             freeFlyParticleList = 0xE008;
         }
+        
+        public abstract class FuncOffsets
+        {
+            public const int SetWeatherType = 0x5E1570;
+        }
 
         public int NumFlyParticles
         {
@@ -38,6 +43,11 @@ namespace Gothic.Objects.Sky
         public int NumDestParticles
         {
             get { return Process.ReadInt(Address + VarOffsets.numDestParticles); }
+        }
+
+        public void SetWeatherType(int type)
+        {
+            Process.THISCALL<NullReturnCall>(this.Address, FuncOffsets.SetWeatherType, new IntArg(type));
         }
     }
 }

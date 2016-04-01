@@ -53,7 +53,7 @@ namespace GUC.Client.Scripts.Sumpfkraut
                 GUC.Network.GameClient.Client.SetHeroState(NPCStates.Stand);
         }
 
-        static int type = 1;
+        static bool lightning = false;
         static void KeyDown(VirtualKeys key, long now)
         {
             GUCMenu activeMenu = GUCMenu.GetActiveMenus().ElementAtOrDefault(0);
@@ -67,10 +67,9 @@ namespace GUC.Client.Scripts.Sumpfkraut
                 return;
             if (key == VirtualKeys.P)
             {
-                new Gothic.Objects.Sky.zCSkyControler_Outdoor(Gothic.Objects.Sky.zCSkyControler.ActiveSkyController.Address).SetWeatherType(type++);
-                if (type > 8)
-                    type = 0;
-                Log.Logger.Log(type);
+                Log.Logger.Log(lightning);
+                new Gothic.Objects.Sky.zCSkyControler_Outdoor(Gothic.Objects.Sky.zCSkyControler.ActiveSkyController.Address).RenderLightning = lightning;
+                lightning = !lightning; 
             }
             if (key == VirtualKeys.O)
             {

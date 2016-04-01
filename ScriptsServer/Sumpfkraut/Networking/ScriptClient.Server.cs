@@ -8,6 +8,7 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Scripts.Sumpfkraut.Visuals;
+using GUC.Enumeration;
 
 namespace GUC.Scripts.Sumpfkraut.Networking
 {
@@ -66,8 +67,6 @@ namespace GUC.Scripts.Sumpfkraut.Networking
                 Logger.Log("Wo ist denn die Ani? Ja wo ist sie denn nur?");
 
             this.Character.StartAnimation(job);
-
-            this.Character.BaseInst.World.SkyCtrl.SetRainTime(this.Character.BaseInst.World.Clock.Time, 1.0f);
         }
     }
 }

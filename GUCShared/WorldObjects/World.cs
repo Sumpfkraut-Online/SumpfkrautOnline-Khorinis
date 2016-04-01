@@ -204,11 +204,5 @@ namespace GUC.WorldObjects
         #endregion
 
         #endregion
-        
-        internal void UpdateTimeAndWeather()
-        {
-            this.clock.UpdateTime();
-            this.skyCtrl.UpdateWeather();
-        }
     }
 }

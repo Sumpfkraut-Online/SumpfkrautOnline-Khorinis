@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.Types;
 using GUC.Network;
+using GUC.Enumeration;
 
 namespace GUC.WorldObjects.Weather
 {
@@ -24,6 +25,12 @@ namespace GUC.WorldObjects.Weather
             void OnReadProperties(PacketReader stream);
 
             void SetRainTime(WorldTime time, float weight);
+            void OnWriteSetRainTime(PacketWriter stream);
+            void OnReadSetRainTime(PacketReader stream);
+
+            void SetWeatherType(WeatherTypes type);
+            void OnWriteSetWeatherType(PacketWriter stream);
+            void OnReadSetWeatherType(PacketReader stream);
         }
 
         /// <summary>
@@ -48,6 +55,9 @@ namespace GUC.WorldObjects.Weather
 
         float currentWeight = 0;
         public float CurrentWeight { get { return this.currentWeight; } }
+
+        WeatherTypes type = WeatherTypes.Rain;
+        public WeatherTypes WeatherType { get { return this.type; } }
 
         #endregion
 
@@ -108,12 +118,20 @@ namespace GUC.WorldObjects.Weather
             pUpdateWeather();
         }
 
+        partial void pSetWeatherType();
+        public void SetWeatherType(WeatherTypes type)
+        {
+            this.type = type;
+            pSetWeatherType();
+        }
+
         #region Read & Write
 
         public void ReadStream(PacketReader stream)
         {
             this.endTime = new WorldTime(stream.ReadInt());
             this.endWeight = stream.ReadFloat();
+            this.type = (WeatherTypes)stream.ReadByte();
             this.ScriptObject.OnReadProperties(stream);
         }
 
@@ -121,7 +139,34 @@ namespace GUC.WorldObjects.Weather
         {
             stream.Write(this.endTime.GetTotalSeconds());
             stream.Write(this.endWeight);
+            stream.Write((byte)this.type);
             this.ScriptObject.OnWriteProperties(stream);
+        }
+
+        public void WriteSetRainTime(PacketWriter stream)
+        {
+            stream.Write(this.endTime.GetTotalSeconds());
+            stream.Write(this.endWeight);
+            this.ScriptObject.OnWriteSetRainTime(stream);
+        }
+
+        public void ReadSetRainTime(PacketReader stream)
+        {
+            this.endTime = new WorldTime(stream.ReadInt());
+            this.endWeight = stream.ReadFloat();
+            this.ScriptObject.OnReadSetRainTime(stream);
+        }
+
+        public void WriteSetWeatherType(PacketWriter stream)
+        {
+            stream.Write((byte)this.type);
+            this.ScriptObject.OnWriteSetWeatherType(stream);
+        }
+
+        public void ReadSetWeatherType(PacketReader stream)
+        {
+            this.type = (WeatherTypes)stream.ReadByte();
+            this.ScriptObject.OnReadSetWeatherType(stream);
         }
 
         #endregion

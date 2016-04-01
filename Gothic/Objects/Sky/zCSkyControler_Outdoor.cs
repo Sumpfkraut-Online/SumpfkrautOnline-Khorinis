@@ -15,7 +15,7 @@ namespace Gothic.Objects.Sky
         public zCSkyControler_Outdoor()
         {
         }
-        
+
         public abstract class VarOffsets
         {
             public const int Layer0 = 1448,
@@ -24,7 +24,10 @@ namespace Gothic.Objects.Sky
             MasterState = 136,
             StartRainTime = 1704,
             EndRainTime = 1708,
-            outdoorRainFX = 0x694;
+
+            // rainfx
+            outdoorRainFX = 0x694,
+            renderLightning = 0x6B0;
         }
 
         public abstract class FuncAddresses
@@ -44,7 +47,7 @@ namespace Gothic.Objects.Sky
             return new zCSkyControler_Outdoor(address);
         }
 
-        public void setRainTime(byte sh, byte sm, byte eh, byte em)
+        /*public void setRainTime(byte sh, byte sm, byte eh, byte em)
         {
             if (sh == 0 && sm == 0 && eh == 24 && em == 0)
             {
@@ -66,11 +69,11 @@ namespace Gothic.Objects.Sky
             StartRainTime = s;
             EndRainTime = e;
     
-        }
+        }*/
 
         public float StartRainTime
         {
-            get { return Process.ReadFloat( Address + VarOffsets.StartRainTime); }
+            get { return Process.ReadFloat(Address + VarOffsets.StartRainTime); }
             set { Process.Write(value, Address + VarOffsets.StartRainTime); }
         }
 
@@ -93,7 +96,7 @@ namespace Gothic.Objects.Sky
 
         public zCSkyLayer Layer0
         {
-            get { return new zCSkyLayer(Address+VarOffsets.Layer0); }
+            get { return new zCSkyLayer(Address + VarOffsets.Layer0); }
         }
         public zCSkyLayer Layer1
         {
@@ -107,6 +110,12 @@ namespace Gothic.Objects.Sky
         public zCOutdoorRainFX OutdoorRainFX
         {
             get { return new zCOutdoorRainFX(Process.ReadInt(Address + VarOffsets.outdoorRainFX)); }
+        }
+
+        public bool RenderLightning
+        {
+            get { return Process.ReadBool(Address + VarOffsets.renderLightning); }
+            set { Process.Write(value, Address + VarOffsets.renderLightning); }
         }
     }
 }

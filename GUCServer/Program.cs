@@ -38,7 +38,7 @@ namespace GUC.Server
                     watch.Restart();
 
                     GameTime.Update();
-                    GUC.WorldObjects.World.ForEach(w => w.UpdateTimeAndWeather());
+                    GUC.WorldObjects.World.ForEach(w => w.Clock.UpdateTime());
                     GUCTimer.Update(GameTime.Ticks); // move to new thread?
                     GameServer.Update(); //process received packets
 

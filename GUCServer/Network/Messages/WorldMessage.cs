@@ -93,7 +93,14 @@ namespace GUC.Server.Network.Messages
         public static void WriteWeatherMessage(World world, SkyController skyCtrler)
         {
             PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldWeatherMessage);
-            skyCtrler.WriteStream(stream);
+            skyCtrler.WriteSetRainTime(stream);
+            world.ForEachClient(client => client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'W'));
+        }
+
+        public static void WriteWeatherTypeMessage(World world, SkyController skyCtrler)
+        {
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldWeatherTypeMessage);
+            skyCtrler.WriteSetWeatherType(stream);
             world.ForEachClient(client => client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'W'));
         }
 

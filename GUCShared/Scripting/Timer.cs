@@ -111,7 +111,7 @@ namespace GUC.Scripting
 
                 started = true;
                 timerList.Add(this, ref this.id);
-                SetNextCallTime(DateTime.UtcNow.Ticks);
+                SetNextCallTime(GameTime.Ticks);
             }
         }
 
@@ -125,6 +125,19 @@ namespace GUC.Scripting
                 {
                     callback();
                 }
+            }
+        }
+
+        public void Restart(bool fire = false)
+        {
+            if (started)
+            {
+                if (fire) callback();
+                SetNextCallTime(GameTime.Ticks);
+            }
+            else
+            {
+                this.Start();
             }
         }
 

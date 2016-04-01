@@ -13,7 +13,7 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
 
         partial void pConstruct()
         {
-            rainTimer = new GUCTimer(30 * TimeSpan.TicksPerSecond, OnRainChange);
+            rainTimer = new GUCTimer(2 * TimeSpan.TicksPerMinute, OnRainChange);
         }
 
         Random rand = new Random();
@@ -21,11 +21,11 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
         {
             if (rand.Next(0, 3) == 0)
             {
-                SetRainTime(this.World.Clock.Time + rand.Next(10, 60), (float)rand.NextDouble()); // rain
+                SetRainTime(this.World.Clock.Time + rand.Next(60, 360), (float)rand.NextDouble()); // rain
             }
             else
             {
-                SetRainTime(this.World.Clock.Time + rand.Next(10, 60), 0.0f); // sun
+                SetRainTime(this.World.Clock.Time + rand.Next(60, 360), 0.0f); // sun
             }
         }
 
@@ -41,8 +41,7 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
 
         partial void pSetRainTime(WorldTime time, float weight)
         {
-            rainTimer.Stop();
-            rainTimer.Start();
+            rainTimer.Restart();
         }
     }
 }

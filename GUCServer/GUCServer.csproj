@@ -98,8 +98,8 @@
     <Compile Include="..\GUCShared\Enumeration\VobTypes.cs">
       <Link>Enumeration\VobTypes.cs</Link>
     </Compile>
-    <Compile Include="..\GUCShared\Enumeration\WeatherEnums.cs">
-      <Link>Enumeration\WeatherEnums.cs</Link>
+    <Compile Include="..\GUCShared\Enumeration\WeatherTypes.cs">
+      <Link>Enumeration\WeatherTypes.cs</Link>
     </Compile>
     <Compile Include="..\GUCShared\GameObject.cs">
       <Link>GameObject.cs</Link>

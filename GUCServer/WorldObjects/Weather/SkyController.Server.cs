@@ -13,5 +13,11 @@ namespace GUC.WorldObjects.Weather
             if (this.world.IsCreated)
                 WorldMessage.WriteWeatherMessage(this.world, this);
         }
+
+        partial void pSetWeatherType()
+        {
+            if (this.world.IsCreated)
+                WorldMessage.WriteWeatherTypeMessage(this.world, this);
+        }
     }
 }

@@ -7,7 +7,6 @@ using GUC.Scripting;
 using GUC.WorldObjects;
 using GUC.Enumeration;
 using RakNet;
-using GUC.Types;
 
 namespace GUC.Client.Network.Messages
 {
@@ -29,6 +28,7 @@ namespace GUC.Client.Network.Messages
                 world.Clock.ScriptObject.Start();
             }
             world.SkyCtrl.ScriptObject.SetRainTime(world.SkyCtrl.TargetTime, world.SkyCtrl.TargetWeight);
+            world.SkyCtrl.ScriptObject.SetWeatherType(world.SkyCtrl.WeatherType);
 
             SendConfirmation();
         }
@@ -112,8 +112,15 @@ namespace GUC.Client.Network.Messages
         public static void ReadWeatherMessage(PacketReader stream)
         {
             var skyCtrl = World.current.SkyCtrl;
-            skyCtrl.ReadStream(stream);
+            skyCtrl.ReadSetRainTime(stream);
             skyCtrl.ScriptObject.SetRainTime(skyCtrl.TargetTime, skyCtrl.TargetWeight);
+        }
+
+        public static void ReadWeatherTypeMessage(PacketReader stream)
+        {
+            var skyCtrl = World.current.SkyCtrl;
+            skyCtrl.ReadSetWeatherType(stream);
+            skyCtrl.ScriptObject.SetWeatherType(skyCtrl.WeatherType);
         }
 
         #endregion

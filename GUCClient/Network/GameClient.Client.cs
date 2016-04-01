@@ -221,6 +221,9 @@ namespace GUC.Network
                 case NetworkIDs.WorldWeatherMessage:
                     WorldMessage.ReadWeatherMessage(stream);
                     break;
+                case NetworkIDs.WorldWeatherTypeMessage:
+                    WorldMessage.ReadWeatherTypeMessage(stream);
+                    break;
 
                 // Vob Messages
                 case NetworkIDs.VobPosDirMessage:
@@ -501,7 +504,7 @@ namespace GUC.Network
                     vobInfo.Texts[0].Text = character.GetPosition() + (" Vobs: " + World.Current.GetVobCount());
                     vobInfo.Show();
 
-                    inventoryInfo.Texts[0].Text = ("Inventory: " + character.Inventory.GetCount());
+                    inventoryInfo.Texts[0].Text = World.current.SkyCtrl.WeatherType + " Weather: " + World.current.SkyCtrl.CurrentWeight + (" Inventory: " + character.Inventory.GetCount());
                     inventoryInfo.Show();
 
                     aniInfo.Texts[0].Text = ("Animations: " + character.Model.GetAniCount());

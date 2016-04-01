@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using GUC.Network;
 using GUC.Types;
 using GUC.WorldObjects.Weather;
+using GUC.Enumeration;
 
 namespace GUC.Scripts.Sumpfkraut.WorldSystem
 {
@@ -26,6 +27,18 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
             pConstruct();
         }
 
+        partial void pSetRainTime(WorldTime time, float weight);
+        public void SetRainTime(WorldTime time, float weight)
+        {
+            this.baseCtrl.SetRainTime(time, weight);
+            pSetRainTime(time, weight);
+        }
+
+        public void SetWeatherType(WeatherTypes type)
+        {
+            this.baseCtrl.SetWeatherType(type);
+        }
+
         public void OnReadProperties(PacketReader stream)
         {
         }
@@ -34,11 +47,20 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
         {
         }
 
-        partial void pSetRainTime(WorldTime time, float weight);
-        public void SetRainTime(WorldTime time, float weight)
+        public void OnWriteSetRainTime(PacketWriter stream)
         {
-            this.baseCtrl.SetRainTime(time, weight);
-            pSetRainTime(time, weight);
+        }
+
+        public void OnReadSetRainTime(PacketReader stream)
+        {
+        }
+
+        public void OnWriteSetWeatherType(PacketWriter stream)
+        {
+        }
+
+        public void OnReadSetWeatherType(PacketReader stream)
+        {
         }
     }
 }
