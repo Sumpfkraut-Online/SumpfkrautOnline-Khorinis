@@ -34,7 +34,7 @@ namespace GUC.Client.Network.Messages
             if (World.Current.TryGetVob(id, out npc))
             {
                 if (npc.ScriptObject != null)
-                    npc.ScriptObject.OnCmdMove(state);
+                    npc.ScriptObject.SetState(state);
             }
         }
 
@@ -82,7 +82,7 @@ namespace GUC.Client.Network.Messages
                 Overlay ov;
                 if (npc.Model.TryGetOverlay(stream.ReadByte(), out ov))
                 {
-                    npc.ScriptObject.OnCmdApplyOverlay(ov);
+                    npc.ScriptObject.ApplyOverlay(ov);
                 }
             }
         }
@@ -97,7 +97,7 @@ namespace GUC.Client.Network.Messages
                 Overlay ov;
                 if (npc.Model.TryGetOverlay(stream.ReadByte(), out ov))
                 {
-                    npc.ScriptObject.OnCmdRemoveOverlay(ov);
+                    npc.ScriptObject.RemoveOverlay(ov);
                 }
             }
         }
@@ -112,7 +112,9 @@ namespace GUC.Client.Network.Messages
                 AniJob job;
                 if (npc.Model.TryGetAni(stream.ReadUShort(), out job))
                 {
-                    npc.ScriptObject.OnCmdStartAni(job);
+                    Animation ani;
+                    if (npc.TryGetAniFromJob(job, out ani))
+                        npc.ScriptObject.StartAnimation(ani);
                 }
             }
         }
@@ -123,8 +125,15 @@ namespace GUC.Client.Network.Messages
             if (World.Current.TryGetVob(stream.ReadUShort(), out npc))
             {
                 bool fadeOut = stream.ReadBit();
-                npc.ScriptObject.OnCmdStopAni(fadeOut);
+                npc.ScriptObject.StopAnimation(fadeOut);
             }
+        }
+
+        public static void WriteAniStart(AniJob ani)
+        {
+            PacketWriter stream = GameClient.SetupStream(NetworkIDs.NPCAniStartMessage);
+            stream.Write((ushort)ani.ID);
+            GameClient.Send(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
         }
 
         #endregion

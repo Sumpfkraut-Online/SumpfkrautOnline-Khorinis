@@ -27,11 +27,15 @@ namespace GUC.Scripts
 
         void AddSomeDefs()
         {
+            // VOBS
+
             ModelDef m = new ModelDef("baum", "NW_Nature_BigTree_356P.3ds");
             m.Create();
             VobDef vobDef = new VobDef("baum");
             vobDef.Model = m;
             vobDef.Create();
+
+            // ITEMS
 
             m = new ModelDef("zweihander", "ItMw_040_2h_PAL_Sword_03.3DS");
             m.Create();
@@ -41,20 +45,33 @@ namespace GUC.Scripts
             itemDef.Model = m;
             itemDef.Create();
 
+            m = new ModelDef("ITAR_Garde", "ItAr_Bloodwyn_ADDON.3ds");
+            m.Create();
+
+            itemDef = new ItemDef("ITAR_Garde");
+            itemDef.Name = "Gardistenrüstung";
+            itemDef.ItemType = ItemTypes.Armor;
+            itemDef.VisualChange = "Armor_Bloodwyn_ADDON.asc";
+            itemDef.Model = m;
+            itemDef.Create();
+
+            // ANIMATIONS
+
             m = new ModelDef("human", "humans.mds");
 
             ScriptOverlay overlay = new ScriptOverlay("Humans_1hST1");
             m.AddOverlay(overlay);
-            
-            ScriptAniJob aniJob = new ScriptAniJob("FistAttack", new ScriptAni(505, 127));
-            aniJob.AniName = "s_FistAttack";
-            m.AddAniJob(aniJob);
 
-            aniJob = new ScriptAniJob("FistRunAttack", new ScriptAni(1100));
-            aniJob.AniName = "t_FistAttackMove";
+            ScriptAniJob aniJob = new ScriptAniJob("attack2hfwd1");
+            var ani = new ScriptAni(1010);
+            aniJob.SetDefaultAni(ani);
+            aniJob.AniName = "s_2hAttack";
+            aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HFwd1;
             m.AddAniJob(aniJob);
 
             m.Create();
+
+            // NPCs
 
             NPCDef npcDef = new NPCDef("player");
             npcDef.Name = "Spieler";

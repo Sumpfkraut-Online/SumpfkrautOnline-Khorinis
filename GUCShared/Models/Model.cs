@@ -211,10 +211,7 @@ namespace GUC.Models
 
             if (job.IsCreated)
                 throw new ArgumentException("AniJob is already added to another Model!");
-
-            if (job.DefaultAni == null)
-                throw new ArgumentException("BaseInfo of AniJob is null!");
-
+            
             aniIDs.Add(job);
             aniJobs.Add(job, ref job.collID);
             dynJobs.Add(job, ref job.dynID);

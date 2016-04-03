@@ -25,6 +25,10 @@ namespace GUC.Scripts.Sumpfkraut.Networking
             npc.AddItem(item);
             npc.EquipItem(1, item);
 
+            item = new ItemInst(ItemDef.Get<ItemDef>("itar_Garde"));
+            npc.AddItem(item);
+            npc.EquipItem(0, item);
+
             /*ScriptOverlay ov;
             if (!npc.Definition.Model.TryGetOverlay(0, out ov))
             {
@@ -61,12 +65,6 @@ namespace GUC.Scripts.Sumpfkraut.Networking
 
             //ItemInst apple = new ItemInst(ItemDef.Get<ItemDef>("apple"));
             //baseClient.Character.Inventory.Add(apple.BaseInst);
-
-            ScriptAniJob job;
-            if (!this.Character.Model.TryGetAniJob("FistRunAttack", out job))
-                Logger.Log("Wo ist denn die Ani? Ja wo ist sie denn nur?");
-
-            this.Character.StartAnimation(job);
         }
     }
 }

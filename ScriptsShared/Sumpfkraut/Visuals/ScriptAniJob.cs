@@ -7,10 +7,28 @@ using GUC.Animations;
 using GUC.Network;
 
 namespace GUC.Scripts.Sumpfkraut.Visuals
-{
+{   
+    // create inherited classes for each type?
+    public enum SetAnis
+    {
+        Attack2HFwd1,
+        Attack2HFwd2,
+        Attack2HFwd3,
+        Attack2HFwd4,
+        Attack2HLeft,
+        Attack2HRight,
+        Attack2HRun,
+
+        Attack2HParry,
+        Attack2HDodge,
+    }
+
     public partial class ScriptAniJob : ScriptObject, AniJob.IScriptAniJob
     {
         #region Properties
+
+        public bool IsFightMove { get { return this.ID >= 0 && this.ID <= (int)SetAnis.Attack2HDodge; } }
+        public bool IsAttack { get { return this.ID >= 0 && this.ID <= (int)SetAnis.Attack2HRun; } }
 
         public bool IsCreated { get { return this.baseAniJob.IsCreated; } }
 
@@ -21,7 +39,27 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         
         public ScriptAni DefaultAni { get { return (ScriptAni)this.baseAniJob.DefaultAni.ScriptObject; } }
 
+        public int ID { get { return this.baseAniJob.ID; } set { this.baseAniJob.ID = value; } }
+
         #endregion
+
+        void ValidateAni(ScriptAni ani)
+        {
+            if (ani == null)
+                throw new Exception("Ani is null!");
+
+            if (this.IsFightMove)
+            {
+                if (ani.ComboTime > ani.Duration)
+                    throw new Exception("ComboTime > Duration");
+
+                if (this.IsAttack)
+                {
+                    if (ani.HitTime > ani.ComboTime)
+                        throw new Exception("HitTime > ComboTime");
+                }
+            }
+        }
 
         public void SetDefaultAni(Animation ani)
         {
@@ -30,6 +68,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
         public void SetDefaultAni(ScriptAni ani)
         {
+            ValidateAni(ani);
             this.baseAniJob.SetDefaultAni(ani.BaseAni);
         }
 
@@ -40,6 +79,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
         public void AddOverlayAni(ScriptAni ani, ScriptOverlay ov)
         {
+            ValidateAni(ani);
             this.baseAniJob.AddOverlayAni(ani.BaseAni, ov.BaseOverlay);
         }
 

@@ -8,11 +8,13 @@ using GUC.WorldObjects.Instances;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
+    // create an inherited class for each type ?
     public enum ItemTypes : byte
     {
         Misc,
         Wep1H,
-        Wep2H
+        Wep2H,
+        Armor
     }
 
     public partial class ItemDef : VobDef, ItemInstance.IScriptItemInstance
@@ -40,6 +42,14 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
             set { this.effect = value == null ? "" : value.ToUpper(); }
         }
 
+        string visualChange = "";
+        /// <summary>For Armors</summary>
+        public string VisualChange
+        {
+            get { return this.visualChange; }
+            set { this.visualChange = value == null ? "" : value.ToUpper(); }
+        }
+
         public ItemTypes ItemType = ItemTypes.Misc;
 
         #endregion
@@ -53,6 +63,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
             base.OnWriteProperties(stream);
             stream.Write((byte)this.ItemType);
             stream.Write(this.name);
+            stream.Write(this.visualChange);
         }
 
         public override void OnReadProperties(PacketReader stream)
@@ -60,6 +71,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
             base.OnReadProperties(stream);
             this.ItemType = (ItemTypes)stream.ReadByte();
             this.name = stream.ReadString();
+            this.visualChange = stream.ReadString();
         }
     }
 }

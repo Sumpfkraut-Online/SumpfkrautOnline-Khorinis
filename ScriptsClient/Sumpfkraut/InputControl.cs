@@ -6,6 +6,8 @@ using WinApi.User.Enumeration;
 using GUC.Client.Scripts.Sumpfkraut.Menus;
 using GUC.Enumeration;
 using GUC.Types;
+using GUC.Scripts.Sumpfkraut.Networking;
+using GUC.Scripts.Sumpfkraut.Visuals;
 
 namespace GUC.Client.Scripts.Sumpfkraut
 {
@@ -34,11 +36,11 @@ namespace GUC.Client.Scripts.Sumpfkraut
             fwdKeys += inc ? 1 : -1;
 
             if (fwdKeys > 0)
-                GUC.Network.GameClient.Client.SetHeroState(NPCStates.MoveForward);
+                GUC.Network.GameClient.Client.DoSetHeroState(NPCStates.MoveForward);
             else if (fwdKeys < 0)
-                GUC.Network.GameClient.Client.SetHeroState(NPCStates.MoveBackward);
+                GUC.Network.GameClient.Client.DoSetHeroState(NPCStates.MoveBackward);
             else if (strafeKeys == 0)
-                GUC.Network.GameClient.Client.SetHeroState(NPCStates.Stand);
+                GUC.Network.GameClient.Client.DoSetHeroState(NPCStates.Stand);
         }
 
         static void Strafe(bool inc)
@@ -46,14 +48,13 @@ namespace GUC.Client.Scripts.Sumpfkraut
             strafeKeys += inc ? 1 : -1;
 
             if (strafeKeys > 0)
-                GUC.Network.GameClient.Client.SetHeroState(NPCStates.MoveRight);
+                GUC.Network.GameClient.Client.DoSetHeroState(NPCStates.MoveRight);
             else if (strafeKeys < 0)
-                GUC.Network.GameClient.Client.SetHeroState(NPCStates.MoveLeft);
+                GUC.Network.GameClient.Client.DoSetHeroState(NPCStates.MoveLeft);
             else if (fwdKeys == 0)
-                GUC.Network.GameClient.Client.SetHeroState(NPCStates.Stand);
+                GUC.Network.GameClient.Client.DoSetHeroState(NPCStates.Stand);
         }
-
-        static bool lightning = false;
+        
         static void KeyDown(VirtualKeys key, long now)
         {
             GUCMenu activeMenu = GUCMenu.GetActiveMenus().ElementAtOrDefault(0);
@@ -65,16 +66,25 @@ namespace GUC.Client.Scripts.Sumpfkraut
 
             if (GUC.Network.GameClient.Client.Character == null)
                 return;
-            if (key == VirtualKeys.P)
+
+            if (key == VirtualKeys.Control)
             {
-                Log.Logger.Log(lightning);
-                new Gothic.Objects.Sky.zCSkyControler_Outdoor(Gothic.Objects.Sky.zCSkyControler.ActiveSkyController.Address).RenderLightning = lightning;
-                lightning = !lightning; 
+                ScriptAniJob job;
+                if (ScriptClient.Client.Character.Model.TryGetAniJob((int)SetAnis.Attack2HFwd1, out job))
+                {
+                    ScriptClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
+                }
             }
-            if (key == VirtualKeys.O)
+            else if (key == VirtualKeys.P)
             {
-                var stream = GUC.Network.GameClient.Client.GetIngameMsgStream();
-                GUC.Network.GameClient.Client.SendIngameMsg(stream);
+                using (var str = Gothic.Types.zString.Create("2H"))
+                    ScriptClient.Client.Character.BaseInst.gVob.SetWeaponMode2(str);
+            }
+            else if (key == VirtualKeys.O)
+            {
+                //var stream = GUC.Network.GameClient.Client.GetIngameMsgStream();
+                //GUC.Network.GameClient.Client.SendIngameMsg(stream);
+                WinApi.Process.STDCALL<WinApi.NullReturnCall>(0x5ED8A0, ScriptClient.Client.Character.BaseInst.gVob, new WinApi.IntArg(3), new WinApi.IntArg(2), new WinApi.IntArg(0));
             }
             else if (key == VirtualKeys.F1)
             {

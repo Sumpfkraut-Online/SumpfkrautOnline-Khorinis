@@ -106,16 +106,15 @@ namespace GUC.WorldObjects
             gVob.HPMax = this.hpmax;
             gVob.InitHumanAI();
             gVob.Enable(pos.X, pos.Y, pos.Z);
-            gVob.SetToFistMode();
+            if (this.Name == "Scavenger") gVob.SetToFistMode();
             if (overlays != null)
                 for (int i = 0; i < overlays.Count; i++)
                     this.gVob.ApplyOverlay(overlays[i].Name);
         }
 
-        public override void Despawn()
+        partial void pDespawn()
         {
             gVob.Disable();
-            base.Despawn();
         }
 
         partial void pSetState(NPCStates state)

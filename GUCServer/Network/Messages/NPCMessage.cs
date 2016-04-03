@@ -24,7 +24,7 @@ namespace GUC.Server.Network.Messages
                 if (npc == character /*|| (client.VobControlledList.Contains(npc) && state <= NPCStates.MoveBackward)*/) //is it a controlled NPC?
                 {
                     if (npc.ScriptObject != null)
-                        npc.ScriptObject.OnCmdMove(state);
+                        npc.ScriptObject.SetState(state);
                 }
             }
         }
@@ -51,7 +51,7 @@ namespace GUC.Server.Network.Messages
                 if (npc == character /*|| (client.VobControlledList.Contains(npc) && state <= NPCStates.MoveBackward)*/) //is it a controlled NPC?
                 {
                     if (npc.ScriptObject != null)
-                        npc.ScriptObject.OnCmdJump();
+                        npc.ScriptObject.Jump();
                 }
             }
         }
@@ -100,7 +100,7 @@ namespace GUC.Server.Network.Messages
             Overlay ov;
             if (npc.Model.TryGetOverlay(stream.ReadByte(), out ov))
             {
-                npc.ScriptObject.OnCmdApplyOverlay(ov);
+                npc.ScriptObject.ApplyOverlay(ov);
             }
         }
 
@@ -109,7 +109,7 @@ namespace GUC.Server.Network.Messages
             Overlay ov;
             if (npc.Model.TryGetOverlay(stream.ReadByte(), out ov))
             {
-                npc.ScriptObject.OnCmdRemoveOverlay(ov);
+                npc.ScriptObject.RemoveOverlay(ov);
             }
         }
 
@@ -138,13 +138,15 @@ namespace GUC.Server.Network.Messages
             AniJob job;
             if (character.Model.TryGetAni(stream.ReadUShort(), out job))
             {
-                character.ScriptObject.OnCmdStartAni(job);
+                Animation ani;
+                if (character.TryGetAniFromJob(job, out ani))
+                    character.ScriptObject.OnCmdAniStart(ani);
             }
         }
 
         public static void ReadAniStop(PacketReader stream, NPC character)
         {
-            character.ScriptObject.OnCmdStopAni(stream.ReadBit());
+            character.ScriptObject.OnCmdAniStop(stream.ReadBit());
         }
 
 

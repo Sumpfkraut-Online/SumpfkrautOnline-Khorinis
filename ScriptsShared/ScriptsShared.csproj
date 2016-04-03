@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GUCScripts.cs" />
+    <Compile Include="Sumpfkraut\FightSystem\Fight.cs" />
     <Compile Include="Sumpfkraut\Networking\ScriptClient.cs" />
     <Compile Include="Sumpfkraut\ScriptObject.cs" />
     <Compile Include="Sumpfkraut\Utilities\DateTimeUtil.cs" />

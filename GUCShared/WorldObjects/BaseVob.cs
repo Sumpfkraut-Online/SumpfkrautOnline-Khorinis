@@ -139,6 +139,9 @@ namespace GUC.WorldObjects
             if (world == null)
                 throw new ArgumentNullException("World is null!");
 
+            if (this.instance == null)
+                throw new Exception("Vob has no Instance!");
+
             if (this.isCreated)
                 throw new Exception("Vob is already spawned!");
 

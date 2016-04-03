@@ -15,19 +15,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         #region Properties
 
         public new VobInstance BaseDef { get { return (VobInstance)base.BaseDef; } }
-
-        ModelDef model;
+        
         public ModelDef Model
         {
-            get { return model; }
-            set
-            {
-                if (value == null)
-                    throw new ArgumentNullException("Model is null!");
-
-                this.model = value;
-                this.BaseDef.Model = value.BaseDef;
-            }
+            get { return (ModelDef)this.BaseDef.Model.ScriptObject; }
+            set { this.BaseDef.Model = value.BaseDef; }
         }
         public bool CDDyn { get { return BaseDef.CDDyn; } set { BaseDef.CDDyn = value; } }
         public bool CDStatic { get { return BaseDef.CDStatic; } set { BaseDef.CDStatic = value; } }

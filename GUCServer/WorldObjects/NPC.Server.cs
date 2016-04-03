@@ -27,6 +27,8 @@ namespace GUC.WorldObjects
             void OnCmdDropItem(Item item);
             void OnCmdEquipItem(int slot, Item item);
             void OnCmdUnequipItem(Item item);
+            void OnCmdAniStart(Animation ani);
+            void OnCmdAniStop(bool fadeOut);
         }
 
         #endregion
@@ -220,13 +222,11 @@ namespace GUC.WorldObjects
             this.Client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, '\0');
         }
 
-        public override void Despawn()
+        partial void pDespawn()
         {
-            World world = this.world;
-            base.Despawn();
             if (this.IsPlayer)
             {
-                world.RemoveFromPlayers(this.client);
+                this.world.RemoveFromPlayers(this.client);
             }
         }
 

@@ -43,7 +43,14 @@ namespace Gothic.Objects.Meshes
             get { return new zString(Address + VarOffsets.name); }
         }
 
+        public int Layer
+        {
+            get { return Process.ReadInt(Address + 108); }
+            set { Process.Write(value, Address + 108); }
+        }
+
         #endregion
+
         public int GetAniID()
         {
             return Process.THISCALL<IntArg>(Address, FuncAddresses.GetAniID).Value;

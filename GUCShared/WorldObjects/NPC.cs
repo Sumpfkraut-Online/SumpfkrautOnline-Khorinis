@@ -9,6 +9,7 @@ using GUC.Network;
 using GUC.WorldObjects.Collections;
 using GUC.Animations;
 using GUC.Scripting;
+using GUC.Types;
 
 namespace GUC.WorldObjects
 {
@@ -29,14 +30,14 @@ namespace GUC.WorldObjects
             void EquipItem(int slot, Item item);
             void UnequipItem(Item item);
 
-            void OnCmdMove(NPCStates state);
-            void OnCmdJump();
+            void SetState(NPCStates state);
+            void Jump();
 
-            void OnCmdApplyOverlay(Overlay overlay);
-            void OnCmdRemoveOverlay(Overlay overlay);
+            void ApplyOverlay(Overlay overlay);
+            void RemoveOverlay(Overlay overlay);
 
-            void OnCmdStartAni(AniJob job);
-            void OnCmdStopAni(bool fadeOut);
+            void StartAnimation(Animation ani);
+            void StopAnimation(bool fadeOut);
         }
 
         new public IScriptNPC ScriptObject
@@ -294,7 +295,7 @@ namespace GUC.WorldObjects
                 int id = stream.ReadByte();
                 if (this.Model.TryGetOverlay(id, out ov))
                 {
-                    this.ScriptObject.OnCmdApplyOverlay(ov);
+                    this.ScriptObject.ApplyOverlay(ov);
                 }
                 else
                 {
@@ -368,7 +369,7 @@ namespace GUC.WorldObjects
                 int id = stream.ReadByte();
                 if (this.Model.TryGetOverlay(id, out ov))
                 {
-                    this.ScriptObject.OnCmdApplyOverlay(ov);
+                    this.ScriptObject.ApplyOverlay(ov);
                 }
                 else
                 {
@@ -467,36 +468,38 @@ namespace GUC.WorldObjects
         public Animation CurrentAni { get { return this.currentAni; } }
         public bool IsInAnimation { get { return this.currentAni != null; } }
 
-        Animation GetAniFromJob(AniJob job)
+        public bool TryGetAniFromJob(AniJob job, out Animation ani)
         {
             if (overlays != null)
                 for (int i = overlays.Count - 1; i >= 0; i--)
                 {
-                    Animation ani;
                     if (job.TryGetOverlayAni(overlays[i], out ani))
-                        return ani;
+                        return true;
 
                 }
-            return job.DefaultAni;
+            ani = job.DefaultAni;
+            return ani != null;
         }
 
         partial void pStartAnimation(Animation ani);
-        public void StartAnimation(AniJob job, Action OnStop = null)
+        public void StartAnimation(Animation ani, Action OnStop = null)
         {
-            if (job == null)
-                throw new ArgumentNullException("AniJob is null!");
+            if (ani == null)
+                throw new ArgumentNullException("Ani is null!");
 
-            if (job.Model != this.Model)
-                throw new ArgumentException("AniJob is not for this NPC's Model!");
+            if (ani.AniJob == null)
+                throw new ArgumentException("Ani is from no AniJob!");
+
+            if (ani.AniJob.Model != this.Model)
+                throw new ArgumentException("Ani is not for this NPC's Model!");
 
             if (!this.IsSpawned)
                 throw new Exception("NPC is not spawned!");
-
-            Animation ani = GetAniFromJob(job);
+            
             this.currentAni = ani;
             this.onStop = OnStop;
             aniTimer.SetInterval(ani.Duration * TimeSpan.TicksPerMillisecond);
-            aniTimer.Start();
+            aniTimer.Restart();
 
             pStartAnimation(ani);
         }
@@ -535,5 +538,13 @@ namespace GUC.WorldObjects
         }
 
         #endregion
+
+        partial void pDespawn();
+        public override void Despawn()
+        {
+            pDespawn();
+            this.aniTimer.Stop();
+            base.Despawn();
+        }
     }
 }

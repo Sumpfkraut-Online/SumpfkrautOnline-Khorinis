@@ -10,9 +10,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
     {
         protected BaseVobInst(BaseVobDef def, WorldObjects.BaseVob baseInst) : this(baseInst)
         {
-            if (def == null)
-                throw new ArgumentNullException("VobDef is null!");
-
             this.Definition = def;
         }
     }

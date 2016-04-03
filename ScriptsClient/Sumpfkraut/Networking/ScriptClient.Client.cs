@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Network;
-using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 
 namespace GUC.Scripts.Sumpfkraut.Networking
 {
@@ -12,6 +11,6 @@ namespace GUC.Scripts.Sumpfkraut.Networking
         public void OnReadMenuMsg(PacketReader stream) { }
         public void OnReadIngameMsg(PacketReader stream) { }
 
-
+        public static ScriptClient Client { get { return (ScriptClient)GameClient.Client.ScriptObject; } }
     }
 }

@@ -25,8 +25,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #endregion
 
+        partial void pConstruct();
         public NPCInst() : base(new NPC())
         {
+            pConstruct();
         }
 
         public void SetState(NPCStates state)
@@ -41,9 +43,21 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #region Animations
 
+        #region Overlays
+
+        public void ApplyOverlay(Overlay overlay)
+        {
+            this.ApplyOverlay((ScriptOverlay)overlay.ScriptObject);
+        }
+
         public void ApplyOverlay(ScriptOverlay overlay)
         {
             this.BaseInst.ApplyOverlay(overlay.BaseOverlay);
+        }
+
+        public void RemoveOverlay(Overlay overlay)
+        {
+            this.RemoveOverlay((ScriptOverlay)overlay.ScriptObject);
         }
 
         public void RemoveOverlay(ScriptOverlay overlay)
@@ -51,9 +65,28 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             this.BaseInst.RemoveOverlay(overlay.BaseOverlay);
         }
 
-        public void StartAnimation(ScriptAniJob job, Action onStop = null)
+        #endregion
+
+        public bool TryGetAniFromJob(ScriptAniJob job, out ScriptAni ani)
         {
-            this.BaseInst.StartAnimation(job.BaseAniJob, onStop);
+            Animation baseAni;
+            if (this.BaseInst.TryGetAniFromJob(job.BaseAniJob, out baseAni))
+            {
+                ani = (ScriptAni)baseAni.ScriptObject;
+                return true;
+            }
+            ani = null;
+            return false;
+        }
+
+        public void StartAnimation(Animation ani)
+        {
+            this.StartAnimation((ScriptAni)ani.ScriptObject);
+        }
+
+        public void StartAnimation(ScriptAni ani, Action onStop = null)
+        {
+            this.BaseInst.StartAnimation(ani.BaseAni, onStop);
         }
 
         public void StopAnimation(bool fadeOut = false)
@@ -61,47 +94,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             this.BaseInst.StopAnimation(fadeOut);
         }
 
+        public bool IsInAni { get { return this.BaseInst.IsInAnimation; } }
+        public ScriptAni CurrentAni { get { return this.BaseInst.IsInAnimation ? (ScriptAni)this.BaseInst.CurrentAni.ScriptObject : null; } }
+
+        public bool IsInFightAni { get { return this.CurrentAni.AniJob.IsFightMove; } }
+        public bool IsInAttackAni { get { return this.CurrentAni.AniJob.IsAttack; } }
+
         #endregion
-
-        #region Client Commands
-
-        partial void pOnCmdMove(NPCStates state);
-        public void OnCmdMove(NPCStates state)
-        {
-            pOnCmdMove(state);
-        }
-
-        partial void pOnCmdJump();
-        public void OnCmdJump()
-        {
-            pOnCmdJump();
-        }
-
-        public void OnCmdDrawItem(Item item)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void OnCmdDropItem(Item item)
-        {
-            throw new NotImplementedException();
-        }
-
-
-        public void OnCmdPickupItem(Item item)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void OnCmdUseItem(Item item)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void OnCmdUseMob(MobInter mob)
-        {
-            throw new NotImplementedException();
-        }
 
         public void OnWriteTakeControl(PacketWriter stream)
         {
@@ -114,31 +113,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             // read everything the player needs to know about this npc
             // i.e. abilities, level, guild etc
         }
-
-        partial void pOnCmdApplyOverlay(ScriptOverlay overlay);
-        public void OnCmdApplyOverlay(Overlay overlay)
-        {
-            this.pOnCmdApplyOverlay((ScriptOverlay)overlay.ScriptObject);
-        }
-
-        partial void pOnCmdRemoveOverlay(ScriptOverlay overlay);
-        public void OnCmdRemoveOverlay(Overlay overlay)
-        {
-            this.pOnCmdRemoveOverlay((ScriptOverlay)overlay.ScriptObject);
-        }
-
-        partial void pOnCmdStartAni(ScriptAniJob job);
-        public void OnCmdStartAni(AniJob job)
-        {
-            this.pOnCmdStartAni((ScriptAniJob)job.ScriptObject);
-        }
-
-        partial void pOnCmdStopAni(bool fadeOut);
-        public void OnCmdStopAni(bool fadeOut)
-        {
-            this.pOnCmdStopAni(fadeOut);
-        }
-
+        
         public void AddItem(Item item)
         {
             this.AddItem((ItemInst)item.ScriptObject);
@@ -182,7 +157,5 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             this.BaseInst.UnequipItem(item.BaseInst);
             pUnequipItem(item);
         }
-
-        #endregion
     }
 }

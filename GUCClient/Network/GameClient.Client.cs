@@ -14,6 +14,7 @@ using GUC.WorldObjects;
 using GUC.Models;
 using Gothic.Objects;
 using Gothic;
+using GUC.Animations;
 
 namespace GUC.Network
 {
@@ -31,7 +32,7 @@ namespace GUC.Network
 
         NPCStates nextState = NPCStates.Stand;
         const int DelayBetweenMessages = 3000000; //300ms
-        public void SetHeroState(NPCStates state)
+        public void DoSetHeroState(NPCStates state)
         {
             if (this.character == null)
                 return;
@@ -57,6 +58,14 @@ namespace GUC.Network
 
             NPCMessage.WriteState(this.character, nextState);
             this.character.nextStateUpdate = now + DelayBetweenMessages;
+        }
+
+        public void DoStartAni(AniJob job)
+        {
+            if (this.character == null)
+                return;
+
+            NPCMessage.WriteAniStart(job);
         }
 
         #endregion

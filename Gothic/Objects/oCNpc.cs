@@ -475,6 +475,26 @@ namespace Gothic.Objects
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.UnequipItem, item);
         }
+        
+        public void SetToFightMode(oCItem item, int mode)
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x73A740, item, (IntArg)mode);
+        }
+
+        public void SetWeaponMode(int str)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetWeaponMode, new CallValue[] { new IntArg(str) });
+        }
+
+        public void SetWeaponMode2(int str)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetWeaponMode2_Int, new CallValue[] { new IntArg(str) });
+        }
+
+        public void SetWeaponMode2(zString str)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetWeaponMode2_Str, new CallValue[] { str });
+        }
 
         /*
         public static oCNpc StealNPC(Process process)
@@ -1286,12 +1306,6 @@ namespace Gothic.Objects
         }
 
 
-
-        public void SetToFightMode(oCItem item, int mode)
-        {
-            Process.THISCALL<NullReturnCall>(Address, (uint)0x73A740, new CallValue[] { item, (IntArg)mode });
-        }
-
         public oCItem PutInInv(oCItem code)
         {
 
@@ -1400,20 +1414,6 @@ namespace Gothic.Objects
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.CheckUnconscious);
         }
 
-        public void SetWeaponMode(int str)
-        {
-            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetWeaponMode, new CallValue[] { new IntArg(str) });
-        }
-
-        public void SetWeaponMode2(int str)
-        {
-            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetWeaponMode2_Int, new CallValue[] { new IntArg(str) });
-        }
-
-        public void SetWeaponMode2(zString str)
-        {
-            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetWeaponMode2_Str, new CallValue[] { str });
-        }
 
         public void DoDropVob(zCVob vob)
         {
