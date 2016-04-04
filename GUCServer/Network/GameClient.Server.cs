@@ -238,6 +238,15 @@ namespace GUC.Network
             Log.Logger.Log("RemoveCtrl: " + Character.ID + " " + vob.ID + ": " + vob.GetType().Name);*/
         }
 
+        public PacketWriter GetMenuMsgStream()
+        {
+            return GameServer.SetupStream(NetworkIDs.ScriptMessage);
+        }
+
+        public void SendMenuMsg(GameClient client, PacketWriter stream)
+        {
+            this.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'M');
+        }
 
     }
 }

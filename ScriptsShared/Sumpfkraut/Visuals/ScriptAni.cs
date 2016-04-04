@@ -21,7 +21,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         public int Duration { get { return this.baseAni.Duration; } set { this.baseAni.Duration = value; } }
 
         /// <summary> From which percentage the gothic animation should start. 255 = 100% (byte) </summary>
-        public int StartPercent { get { return this.baseAni.StartPercent; } set { this.baseAni.StartPercent = value; } }
+        public int StartFrame { get { return this.baseAni.StartFrame; } set { this.baseAni.StartFrame = value; } }
 
         /// <summary> The overlay number of this animation. </summary>
         public ScriptOverlay Overlay { get { return (ScriptOverlay)this.baseAni.Overlay.ScriptObject; } }
@@ -36,7 +36,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
             set
             {
                 if (this.IsCreated)
-                    throw new Exception("HitPercent can't be changed when the object is created.");
+                    throw new Exception("HitTime can't be changed when the object is created.");
                 this.hitTime = value;
             }
         }
@@ -48,7 +48,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
             set
             {
                 if (this.IsCreated)
-                    throw new Exception("ComboPercent can't be changed when the object is created.");
+                    throw new Exception("ComboTime can't be changed when the object is created.");
                 this.comboTime = value;
             }
         }

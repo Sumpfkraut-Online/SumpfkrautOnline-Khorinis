@@ -57,10 +57,38 @@ namespace GUC.WorldObjects
         #region Cells
 
         internal NPCCell npcCell = null;
-
-        internal int[] GetNPCCellCoords()
+        internal int npcCellID = -1;
+        
+        void UpdateNPCCell()
         {
-            return this.GetCellCoords(600);
+            int[] coords = this.GetCellCoords(NPCCell.Size);
+
+            if (coords[0] < short.MinValue || coords[0] > short.MaxValue || coords[1] < short.MinValue || coords[1] > short.MaxValue)
+            {
+                throw new Exception("Coords are out of cell range!");
+            }
+
+            if (this.npcCell == null || this.npcCell.X != coords[0] || this.npcCell.Y != coords[1])
+            {
+                int coord = (coords[0] << 16) | coords[1] & 0xFFFF;
+
+                if (this.npcCell != null)
+                {
+                    this.npcCell.npcs.Remove(ref this.npcCellID);
+                    if (this.npcCell.npcs.Count <= 0)
+                        this.world.npcCells.Remove(this.npcCell.Coord);
+                }
+
+                NPCCell newCell;
+                if (!this.world.npcCells.TryGetValue(coord, out newCell))
+                {
+                    newCell = new NPCCell(this.world, coords[0], coords[1]);
+                    this.world.npcCells.Add(coord, newCell);
+                }
+
+                newCell.npcs.Add(this, ref this.npcCellID);
+                this.npcCell = newCell;
+            }
         }
 
         internal override void AddToNetCell(NetCell cell)
@@ -79,6 +107,12 @@ namespace GUC.WorldObjects
                 this.Cell.Clients.Remove(ref this.client.cellID);
             }
             base.RemoveFromNetCell();
+        }
+
+        internal override void UpdatePosition(Vec3f newPos, Vec3f newDir, GameClient exclude)
+        {
+            base.UpdatePosition(newPos, newDir, exclude);
+            this.UpdateNPCCell();
         }
 
         internal override void ChangeCells(int toX, int toY)
@@ -171,6 +205,10 @@ namespace GUC.WorldObjects
         public GameClient Client { get { return client; } }
         public bool IsPlayer { get { return Client != null; } }
 
+        partial void pSetHealth(int hp, int hpmax)
+        {
+        }
+
         #endregion
 
         #region Spawn
@@ -194,6 +232,7 @@ namespace GUC.WorldObjects
             else
             {
                 base.Spawn(world, position, direction);
+                this.UpdateNPCCell();
             }
         }
 
@@ -213,6 +252,7 @@ namespace GUC.WorldObjects
             if (!this.isCreated)
             {
                 base.Spawn(this.world, pos, dir);
+                this.UpdateNPCCell();
             }
             world.AddToPlayers(this.client);
 
@@ -228,6 +268,9 @@ namespace GUC.WorldObjects
             {
                 this.world.RemoveFromPlayers(this.client);
             }
+            this.npcCell.npcs.Remove(ref this.npcCellID);
+            if (this.npcCell.npcs.Count <= 0)
+                this.world.npcCells.Remove(this.npcCell.Coord);
         }
 
         #endregion
@@ -647,5 +690,6 @@ namespace GUC.WorldObjects
          }*//*
 
          #endregion*/
+
     }
 }

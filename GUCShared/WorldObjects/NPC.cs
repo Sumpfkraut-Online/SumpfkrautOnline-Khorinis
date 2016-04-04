@@ -498,7 +498,7 @@ namespace GUC.WorldObjects
             
             this.currentAni = ani;
             this.onStop = OnStop;
-            aniTimer.SetInterval(ani.Duration * TimeSpan.TicksPerMillisecond);
+            aniTimer.SetInterval(ani.Duration);
             aniTimer.Restart();
 
             pStartAnimation(ani);

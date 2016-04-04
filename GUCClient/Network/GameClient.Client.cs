@@ -24,8 +24,7 @@ namespace GUC.Network
 
         public partial interface IScriptClient : IScriptGameObject
         {
-            void OnReadMenuMsg(PacketReader stream);
-            void OnReadIngameMsg(PacketReader stream);
+            void OnReadScriptMsg(PacketReader stream);
         }
 
         #region Commands
@@ -72,32 +71,18 @@ namespace GUC.Network
 
         #region Script Menu Message
 
-        public PacketWriter GetMenuMsgStream()
+        public PacketWriter GetScriptMsgStream()
         {
-            return SetupStream(NetworkIDs.MenuMessage);
+            return SetupStream(NetworkIDs.ScriptMessage);
         }
 
-        public void SendMenuMsg(PacketWriter stream)
-        {
-            Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE);
-        }
-
-        #endregion
-
-        #region Script Ingame Message
-
-        public PacketWriter GetIngameMsgStream()
-        {
-            return SetupStream(NetworkIDs.IngameMessage);
-        }
-
-        public void SendIngameMsg(PacketWriter stream)
+        public void SendScriptMsg(PacketWriter stream)
         {
             Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE);
         }
 
         #endregion
-
+        
         #region Hero
         
         void ReadTakeControl(PacketReader stream)
@@ -198,8 +183,8 @@ namespace GUC.Network
                     break;
 
                 // Script Message
-                case NetworkIDs.MenuMessage:
-                    this.ScriptObject.OnReadMenuMsg(stream);
+                case NetworkIDs.ScriptMessage:
+                    this.ScriptObject.OnReadScriptMsg(stream);
                     break;
 
                 /*
@@ -207,8 +192,8 @@ namespace GUC.Network
                 */
 
                 // Script Message
-                case NetworkIDs.IngameMessage:
-                    this.ScriptObject.OnReadIngameMsg(stream);
+                case NetworkIDs.ScriptVobMessage:
+                    ScriptMessage.ReadVobMsg(stream);
                     break;
 
                 // World Messages
@@ -515,17 +500,20 @@ namespace GUC.Network
 
                     inventoryInfo.Texts[0].Text = World.current.SkyCtrl.WeatherType + " Weather: " + World.current.SkyCtrl.CurrentWeight + (" Inventory: " + character.Inventory.GetCount());
                     inventoryInfo.Show();
-
-                    aniInfo.Texts[0].Text = ("Animations: " + character.Model.GetAniCount());
-                    if (character.IsInAnimation)
-                        aniInfo.Texts[0].Text = "(InAni) " + aniInfo.Texts[0].Text;
-                    aniInfo.Show();
                 }
                 else
                 {
                     vobInfo.Hide();
                     inventoryInfo.Hide();
                 }
+            }
+
+            if (World.Current != null && character != null)
+            {
+                aniInfo.Texts[0].Text = ("Animations: " + character.Model.GetAniCount());
+                if (character.IsInAnimation)
+                    aniInfo.Texts[0].Text = "(InAni) " + aniInfo.Texts[0].Text;
+                aniInfo.Show();
             }
         }
 

@@ -10,7 +10,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class NPCInst
     {
-        long comboTime = 0;
+
+
 
         public NPCInst(NPCDef def) : base(def, new WorldObjects.NPC())
         {
@@ -51,18 +52,30 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             throw new NotImplementedException();
         }
-        
+
         partial void pConstruct()
         {
             this.hitTimer = new GUCTimer(CalcHit);
         }
 
         GUCTimer hitTimer;
+        long comboTime = 0;
 
         void CalcHit()
         {
-            Log.Logger.Log("Calc Hit!");
             hitTimer.Stop();
+
+            float range = 100;
+            this.BaseInst.World.ForEachNPCInRange(this.BaseInst.GetPosition(), range, npc =>
+            {
+                if (npc.ScriptObject != this)
+                {
+                    var strm = this.BaseInst.GetScriptVobStream();
+                    strm.Write((byte)Networking.NetVobMsgIDs.HitMessage);
+                    strm.Write((ushort)npc.ID);
+                    this.BaseInst.SendScriptVobStream(strm);
+                }
+            });
         }
 
         public void OnCmdAniStart(Animations.Animation ani)
@@ -77,13 +90,23 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             ScriptAni anim = (ScriptAni)ani.ScriptObject;
             if (anim.AniJob.IsFightMove) // FIGHT MOVE
             {
-                comboTime = now + anim.ComboTime; // can combo from this time on
-                
-                if (anim.AniJob.IsAttack)
+                if (anim.AniJob.IsAttack) // new move is an attack
                 {
-                    hitTimer.SetInterval(anim.HitTime * TimeSpan.TicksPerMillisecond);
+                    ScriptAni curAni = this.CurrentAni;
+                    if (curAni != null && curAni.AniJob.IsAttack) // currently in an attack
+                    {
+                        if (curAni.AniJob == anim.AniJob) // same attack
+                            return;
+
+                        if (curAni.AniJob.ID >= (int)SetAnis.Attack2HFwd1 && curAni.AniJob.ID <= (int)SetAnis.Attack2HFwd4 && anim.AniJob.ID <= curAni.AniJob.ID)
+                            return;                        
+                    }
+
+                    hitTimer.SetInterval(anim.HitTime);
                     hitTimer.Start();
                 }
+
+                this.comboTime = now + anim.ComboTime; // can combo from this time on
             }
 
             this.StartAnimation(anim);

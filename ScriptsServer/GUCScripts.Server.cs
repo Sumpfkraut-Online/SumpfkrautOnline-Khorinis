@@ -43,6 +43,7 @@ namespace GUC.Scripts
             itemDef.Name = "Paladin Zweihänder";
             itemDef.ItemType = ItemTypes.Wep2H;
             itemDef.Model = m;
+            itemDef.Range = 100;
             itemDef.Create();
 
             m = new ModelDef("ITAR_Garde", "ItAr_Bloodwyn_ADDON.3ds");
@@ -55,19 +56,12 @@ namespace GUC.Scripts
             itemDef.Model = m;
             itemDef.Create();
 
-            // ANIMATIONS
+            // HUMAN MODEL
 
             m = new ModelDef("human", "humans.mds");
+            m.Radius = 30;
 
-            ScriptOverlay overlay = new ScriptOverlay("Humans_1hST1");
-            m.AddOverlay(overlay);
-
-            ScriptAniJob aniJob = new ScriptAniJob("attack2hfwd1");
-            var ani = new ScriptAni(1010);
-            aniJob.SetDefaultAni(ani);
-            aniJob.AniName = "s_2hAttack";
-            aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HFwd1;
-            m.AddAniJob(aniJob);
+            Add2hAttacks(m);
 
             m.Create();
 
@@ -108,6 +102,27 @@ namespace GUC.Scripts
             WorldInst.NewWorld.Create();
             WorldInst.NewWorld.Clock.SetTime(new Types.WorldTime(0, 8), 5.0f);
             WorldInst.NewWorld.Clock.Start();
+        }
+
+        void Add2hAttacks(ModelDef model)
+        {
+            // 2h COMBO 1
+            ScriptAniJob aniJob = new ScriptAniJob("attack2hfwd1");
+            aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HFwd1;
+            aniJob.AniName = "s_2hAttack";
+
+            var ani = new ScriptAni(10000000); ani.ComboTime = 5800000; ani.HitTime = 2800000; aniJob.SetDefaultAni(ani);
+
+            model.AddAniJob(aniJob);
+
+            // 2h COMBO 2
+            aniJob = new ScriptAniJob("attack2hfwd2");
+            aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HFwd2;
+            aniJob.AniName = "s_2hAttack";
+
+            ani = new ScriptAni(6000000); ani.StartFrame = 31; ani.ComboTime = 4400000; ani.HitTime = 2300000; aniJob.SetDefaultAni(ani);
+
+            model.AddAniJob(aniJob);
         }
     }
 }

@@ -256,6 +256,7 @@
     <Compile Include="Network\Messages\InventoryMessage.cs" />
     <Compile Include="Network\Messages\ModelMessage.cs" />
     <Compile Include="Network\Messages\NPCMessage.cs" />
+    <Compile Include="Network\Messages\ScriptMessage.cs" />
     <Compile Include="Network\Messages\VobMessage.cs" />
     <Compile Include="Network\Messages\WorldMessage.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

@@ -49,6 +49,12 @@ namespace Gothic.Objects.Meshes
             set { Process.Write(value, Address + 108); }
         }
 
+        public int ID
+        {
+            get { return Process.ReadInt(Address + VarOffsets.id); }
+            set { Process.Write(value, Address + VarOffsets.id); }
+        }
+
         #endregion
 
         public int GetAniID()

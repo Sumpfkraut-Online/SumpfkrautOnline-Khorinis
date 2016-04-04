@@ -63,8 +63,7 @@ namespace GUC.WorldObjects
                 if (aniID > 0)
                 {
                     gModel.StartAni(aniID, 0);
-                    var activeAni = this.gVob.GetModel().GetActiveAni(aniID);
-                    activeAni.SetProgressPercent(ani.StartPercent/255.0f);
+                    gModel.GetActiveAni(aniID).SetActFrame(ani.StartFrame);
                 }
             }
         }

@@ -16,7 +16,8 @@ namespace GUC.Client.Scripts.Sumpfkraut
         static bool inited = false;
         public static void Init()
         {
-            if (inited) {
+            if (inited)
+            {
                 return;
             }
             inited = true;
@@ -70,6 +71,16 @@ namespace GUC.Client.Scripts.Sumpfkraut
             if (key == VirtualKeys.Control)
             {
                 ScriptAniJob job;
+                if (ScriptClient.Client.Character.CurrentAni != null)
+                {
+                    int curID = ScriptClient.Client.Character.CurrentAni.AniJob.ID;
+                    if (curID >= (int)SetAnis.Attack2HFwd1 && curID < (int)SetAnis.Attack2HFwd4
+                        && ScriptClient.Client.Character.Model.TryGetAniJob(curID + 1, out job))
+                    {
+                        ScriptClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
+                        return;
+                    }
+                }
                 if (ScriptClient.Client.Character.Model.TryGetAniJob((int)SetAnis.Attack2HFwd1, out job))
                 {
                     ScriptClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
@@ -84,7 +95,8 @@ namespace GUC.Client.Scripts.Sumpfkraut
             {
                 //var stream = GUC.Network.GameClient.Client.GetIngameMsgStream();
                 //GUC.Network.GameClient.Client.SendIngameMsg(stream);
-                WinApi.Process.STDCALL<WinApi.NullReturnCall>(0x5ED8A0, ScriptClient.Client.Character.BaseInst.gVob, new WinApi.IntArg(3), new WinApi.IntArg(2), new WinApi.IntArg(0));
+
+                GUC.Network.GameClient.Client.Character.gVob.AniCtrl.CreateHit(GUC.Network.GameClient.Client.Character.gVob);
             }
             else if (key == VirtualKeys.F1)
             {
@@ -170,12 +182,12 @@ namespace GUC.Client.Scripts.Sumpfkraut
             else if (key == VirtualKeys.K)
                 teleportKey = 0;
         }
-        
+
         public static void Update(long now)
         {
             if (GUC.Network.GameClient.Client.Character == null)
                 return;
-            
+
             if (turnKeys > 0)
             {
                 GUC.Network.GameClient.Client.Character.gVob.AniCtrl.Turn(3.0f, true);

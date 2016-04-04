@@ -62,7 +62,7 @@ EXTERN_C __declspec(dllexport) void LoadNetDllEx(NETINJECTPARAMS* params)
 	pClrRuntimeHost->Release();*/
 
 	if(hr != S_OK){
-		Error((wchar_t *)(std::wstring(L"LoadNetDllEx failed on Method: ") + methodName).c_str());
+		Error((wchar_t *)(dllName + std::wstring(L" ") + typeName + std::wstring(L" ") + methodName + std::wstring(L" ") + ptrAddress + std::wstring(L" ") + std::wstring(L" LoadNetDllEx failed on Method: ") + methodName).c_str());
 	}
 	
 	delete[] dllName;

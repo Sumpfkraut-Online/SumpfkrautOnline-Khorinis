@@ -5,6 +5,7 @@ using System.Text;
 using Gothic.Objects;
 using GUC.Types;
 using Gothic.Types;
+using GUC.Network;
 
 namespace GUC.WorldObjects
 {
@@ -17,6 +18,7 @@ namespace GUC.WorldObjects
         /// </summary>
         public partial interface IScriptBaseVob : IScriptGameObject
         {
+            void OnReadScriptVobMsg(PacketReader stream);
         }
 
         #endregion

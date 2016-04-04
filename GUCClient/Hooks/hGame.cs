@@ -10,6 +10,7 @@ using WinApi;
 using Gothic.Types;
 using Gothic.System;
 using Gothic.View;
+using Gothic.Sound;
 
 namespace GUC.Client.Hooks
 {
@@ -68,7 +69,7 @@ namespace GUC.Client.Hooks
                 zCView.GetScreen().Render();
                 zCRenderer.EndFrame();
                 zCRenderer.Vid_Blit(1, 0, 0);
-                zCSoundSystem.DoSoundUpdate();
+                zCSndSys_MSS.DoSoundUpdate();
                 #endregion
 
                 if (fpsWatch.IsRunning)

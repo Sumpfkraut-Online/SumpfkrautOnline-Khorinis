@@ -222,5 +222,29 @@ namespace GUC.WorldObjects
         }
 
         #endregion
+
+
+
+        public PacketWriter GetScriptVobStream()
+        {
+            if (!this.IsSpawned)
+                throw new Exception("Vob is not ingame!");
+
+            var strm = GameServer.SetupStream(NetworkIDs.ScriptVobMessage);
+            strm.Write((ushort)this.ID);
+
+            return strm;
+        }
+
+        public void SendScriptVobStream(PacketWriter stream)
+        {
+            if (stream == null)
+                throw new Exception("Stream is null!");
+
+            if (!this.IsSpawned)
+                throw new Exception("Vob is not ingame!");
+
+            this.Cell.ForEachSurroundingClient(c => c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
+        }
     }
 }

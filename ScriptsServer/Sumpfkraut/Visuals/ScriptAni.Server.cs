@@ -16,7 +16,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         public ScriptAni(int duration, int startPercent = 0) : this()
         {
             this.Duration = duration;
-            this.StartPercent = startPercent;
+            this.StartFrame = startPercent;
         }
     }
 }

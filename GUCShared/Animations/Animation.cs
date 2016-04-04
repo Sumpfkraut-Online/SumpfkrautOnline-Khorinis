@@ -37,19 +37,19 @@ namespace GUC.Animations
             }
         }
 
-        int startPercent = 0;
+        int startFrame = 0;
         /// <summary>
-        /// From which percentage the gothic animation should start. 255 = 100% (byte)
+        /// From which frame the gothic animation should start. (ushort)
         /// </summary>
-        public int StartPercent
+        public int StartFrame
         {
-            get { return this.startPercent; }
+            get { return this.startFrame; }
             set
             {
-                if (startPercent < 0 || startPercent > byte.MaxValue)
-                    throw new ArgumentOutOfRangeException("StartPercent is out of range! 0.." + byte.MaxValue);
+                if (startFrame < 0 || startFrame > ushort.MaxValue)
+                    throw new ArgumentOutOfRangeException("StartFrame is out of range! 0.." + ushort.MaxValue);
 
-                this.startPercent = value;
+                this.startFrame = value;
             }
         }
 
@@ -80,13 +80,13 @@ namespace GUC.Animations
         void WriteProperties(PacketWriter stream)
         {
             stream.Write(duration);
-            stream.Write((byte)startPercent);
+            stream.Write((ushort)startFrame);
         }
 
         void ReadProperties(PacketReader stream)
         {
             this.duration = stream.ReadInt();
-            this.startPercent = stream.ReadByte();
+            this.startFrame = stream.ReadUShort();
         }
 
         /// <summary>

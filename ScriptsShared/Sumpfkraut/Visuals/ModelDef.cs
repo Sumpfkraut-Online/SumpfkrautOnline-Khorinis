@@ -22,8 +22,6 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
         public string Visual { get { return baseDef.Visual; } set { baseDef.Visual = value; } }
 
-        public int Radius = 1;
-
         #endregion
 
         #region Collections

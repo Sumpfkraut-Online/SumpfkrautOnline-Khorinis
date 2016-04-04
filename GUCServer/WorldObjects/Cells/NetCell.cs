@@ -18,16 +18,34 @@ namespace GUC.Server.WorldObjects.Cells
         public readonly DynamicCollection<GameClient> Clients = new DynamicCollection<GameClient>();
 
         public readonly VobTypeCollection<BaseVob> DynVobs = new VobTypeCollection<BaseVob>();
-        
+
         // NetCell[] surroundingCells = new NetCell[9];
 
         public NetCell(World world, int x, int y) : base(world, x, y)
         {
         }
-        
+
         public void ForEachSurroundingClient(Action<GameClient> action)
         {
-            ForEachSurroundingCell(c => c.Clients.ForEach(action));
+            if (action == null)
+                throw new ArgumentNullException("Action is null!");
+
+            for (int x = this.x - 1; x <= this.x + 1; x++)
+            {
+                if (x < short.MinValue || x > short.MaxValue)
+                    continue;
+
+                for (int y = this.y - 1; y <= this.y + 1; y++)
+                {
+                    if (y < short.MinValue || y > short.MaxValue)
+                        continue;
+                    NetCell cell;
+                    if (this.world.TryGetCellFromCoords(x, y, out cell))
+                    {
+                        cell.Clients.ForEach(client => action(client));
+                    }
+                }
+            }
         }
 
         public void ForEachSurroundingCell(Action<NetCell> action)
@@ -36,14 +54,20 @@ namespace GUC.Server.WorldObjects.Cells
                 throw new ArgumentNullException("Action is null!");
 
             for (int x = this.x - 1; x <= this.x + 1; x++)
+            {
+                if (x < short.MinValue || x > short.MaxValue)
+                    continue;
                 for (int y = this.y - 1; y <= this.y + 1; y++)
                 {
+                    if (y < short.MinValue || y > short.MaxValue)
+                        continue;
                     NetCell cell;
                     if (this.world.TryGetCellFromCoords(x, y, out cell))
                     {
                         action(cell);
                     }
                 }
+            }
         }
 
         public const int NumSurroundingCells = 9;

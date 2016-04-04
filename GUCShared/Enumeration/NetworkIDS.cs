@@ -25,8 +25,8 @@ namespace GUC.Enumeration
         LoadWorldMessage, // for changing the world
 
         // Messages for Scripts
-        MenuMessage,
-        IngameMessage,
+        ScriptMessage,
+        ScriptVobMessage,
 
         // world & spawns
         WorldCellMessage, // for changing cells
@@ -48,6 +48,7 @@ namespace GUC.Enumeration
         NPCRemoveOverlayMessage,
         NPCAniStartMessage,
         NPCAniStopMessage,
+        NPCHealthMessage,
 
         //inventory
         InventoryAddMessage, // add item to player inventory
@@ -78,7 +79,6 @@ namespace GUC.Enumeration
         NPCDrawItemMessage,
         NPCDrawFistsMessage,
         
-        NPCHealthMessage,
         NPCStatBarMessage,
 
         //instances

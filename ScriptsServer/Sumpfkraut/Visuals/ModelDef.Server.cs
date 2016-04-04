@@ -46,6 +46,8 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
             }
         }
 
+        public float Radius = 1;
+
         #endregion
 
         #region Constructors

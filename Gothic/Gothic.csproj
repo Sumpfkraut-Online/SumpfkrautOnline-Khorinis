@@ -66,6 +66,7 @@
     <Compile Include="Objects\Sky\zCSkyState.cs" />
     <Compile Include="Objects\Sky\zCOutdoorRainFX.cs" />
     <Compile Include="Objects\zCWorld.cs" />
+    <Compile Include="Sound\zCSndFX_MSS.cs" />
     <Compile Include="View\zCFont.cs" />
     <Compile Include="View\zCViewDraw.cs" />
     <Compile Include="View\zCViewProgressBar.cs" />
@@ -91,7 +92,7 @@
     <Compile Include="zClass.cs" />
     <Compile Include="Types\zColor.cs" />
     <Compile Include="System\zCRenderer.cs" />
-    <Compile Include="System\zCSoundSystem.cs" />
+    <Compile Include="Sound\zCSndSys_MSS.cs" />
     <Compile Include="View\zCView.cs" />
     <Compile Include="System\zError.cs" />
     <Compile Include="Types\zString.cs" />

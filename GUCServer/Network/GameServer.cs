@@ -65,14 +65,14 @@ namespace GUC.Server.Network
                 case NetworkIDs.LoadWorldMessage:
                     client.Character.InsertInWorld();
                     break;
-                case NetworkIDs.MenuMessage:
+                case NetworkIDs.ScriptMessage:
                     if (client.ScriptObject != null)
                         client.ScriptObject.OnReadMenuMsg(pktReader);
                     break;
 
                 // Ingame:
 
-                case NetworkIDs.IngameMessage:
+                case NetworkIDs.ScriptVobMessage:
                     if (client.ScriptObject != null)
                         client.ScriptObject.OnReadIngameMsg(pktReader);
                     break;
@@ -199,7 +199,7 @@ namespace GUC.Server.Network
                             }
                             else
                             {
-                                if (msgID > NetworkIDs.MenuMessage && (client.Character == null || !client.Character.IsSpawned))
+                                if (msgID > NetworkIDs.ScriptMessage && (client.Character == null || !client.Character.IsSpawned))
                                 {
                                     Logger.LogWarning("Client sent {0} without being ingame. Kicked: {1} IP:{2}", msgID, p.guid, p.systemAddress);
                                     DisconnectClient(client);
@@ -259,8 +259,6 @@ namespace GUC.Server.Network
                 {
                     client.character.World.RemoveFromPlayers(client);
                     client.Character.Cell.Clients.Remove(ref client.cellID);
-                    /*if (client.Character.npcCell != null)
-                        client.Character.npcCell.Remove(client.Character);*/
                 }
             }
 
@@ -293,33 +291,5 @@ namespace GUC.Server.Network
         {
             ServerInterface.RemoveFromBanList(systemAddress);
         }
-
-        #region Script Menu Message
-
-        public static PacketWriter GetMenuMsgStream()
-        {
-            return SetupStream(NetworkIDs.MenuMessage);
-        }
-
-        public static void SendMenuMsg(GameClient client, PacketWriter stream)
-        {
-            ServerInterface.Send(stream.GetData(), stream.GetLength(), PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'M', client.guid, false);
-        }
-
-        #endregion
-
-        #region Script Ingame Message
-
-        public static PacketWriter GetIngameMsgStream()
-        {
-            return SetupStream(NetworkIDs.IngameMessage);
-        }
-
-        public static void SendIngameMsg(GameClient client, PacketWriter stream)
-        {
-            ServerInterface.Send(stream.GetData(), stream.GetLength(), PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W', client.guid, false);
-        }
-
-        #endregion
     }
 }

@@ -34,7 +34,7 @@ namespace GUC.WorldObjects
 
         #endregion
 
-        
+
         public override void Update()
         {
             throw new NotImplementedException();
@@ -77,7 +77,7 @@ namespace GUC.WorldObjects
                 cell = new NetCell(this, x, y);
                 netCells.Add((x << 16) | y & 0xFFFF, cell);
             }
-            
+
             return cell;
         }
 
@@ -88,16 +88,72 @@ namespace GUC.WorldObjects
                 throw new ArgumentNullException("Action is null!");
 
             for (int i = x - 1; i <= x + 1; i++)
+            {
+                if (i < short.MinValue || i > short.MaxValue)
+                    continue;
+
                 for (int j = y - 1; j <= y + 1; j++)
                 {
+                    if (j < short.MinValue || j > short.MaxValue)
+                        continue;
+
                     NetCell cell;
                     if (this.TryGetCellFromCoords(i, j, out cell))
                     {
                         action(cell);
                     }
                 }
+            }
         }
 
         #endregion
+
+        public void ForEachNPCInRange(BaseVob vob, float range, Action<NPC> action)
+        {
+            if (vob == null)
+                throw new ArgumentException("Vob is null!");
+            this.ForEachNPCInRange(vob.GetPosition(), range, action);
+        }
+
+        public void ForEachNPCInRange(Vec3f pos, float range, Action<NPC> action)
+        {
+            if (action == null)
+                throw new ArgumentException("Action is null!");
+
+            float unroundedMinX = (pos.X - range) / NPCCell.Size;
+            float unroundedMinZ = (pos.Z - range) / NPCCell.Size;
+
+            int minX = (int)(pos.X >= 0 ? unroundedMinX + 0.5f : unroundedMinX - 0.5f);
+            int minZ = (int)(pos.Z >= 0 ? unroundedMinZ + 0.5f : unroundedMinZ - 0.5f);
+
+            float unroundedMaxX = (pos.X + range) / NPCCell.Size;
+            float unroundedMaxZ = (pos.Z + range) / NPCCell.Size;
+
+            int maxX = (int)(pos.X >= 0 ? unroundedMaxX + 0.5f : unroundedMaxX - 0.5f);
+            int maxZ = (int)(pos.Z >= 0 ? unroundedMaxZ + 0.5f : unroundedMaxZ - 0.5f);
+
+            for (int x = minX; x <= maxX; x++)
+            {
+                if (x < short.MinValue || x > short.MaxValue)
+                    continue;
+
+                for (int z = minZ; z <= maxZ; z++)
+                {
+                    if (z < short.MinValue || z > short.MaxValue)
+                        continue;
+
+                    int coord = (x << 16) | z & 0xFFFF;
+                    NPCCell npcCell;
+                    if (npcCells.TryGetValue(coord, out npcCell))
+                    {
+                        npcCell.npcs.ForEach(npc =>
+                        {
+                            if (npc.GetPosition().GetDistance(pos) < range)
+                                action(npc);
+                        });
+                    }
+                }
+            }
+        }
     }
 }

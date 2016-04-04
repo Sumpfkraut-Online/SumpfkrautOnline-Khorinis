@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Enumeration;
+using GUC.Network;
 using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 
@@ -58,6 +59,24 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         partial void pUnequipItem(ItemInst item)
         {
             this.BaseInst.gVob.UnequipItem(item.BaseInst.gVob);
+        }
+
+        public override void OnReadScriptVobMsg(PacketReader stream)
+        {
+            var msgID = (Networking.NetVobMsgIDs)stream.ReadByte();
+            switch (msgID)
+            {
+                case Networking.NetVobMsgIDs.HitMessage:
+                    var targetID = stream.ReadUShort();
+                    WorldObjects.BaseVob target;
+                    if (WorldInst.Current.BaseWorld.TryGetVob(targetID, out target))
+                    {
+                        this.BaseInst.gVob.AniCtrl.CreateHit(target.gVob);
+                    }
+                    break;
+                default:
+                    return;
+            }
         }
     }
 }

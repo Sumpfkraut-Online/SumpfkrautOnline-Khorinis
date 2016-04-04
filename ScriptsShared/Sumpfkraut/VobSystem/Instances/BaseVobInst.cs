@@ -63,5 +63,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public virtual void OnWriteProperties(PacketWriter stream)
         {
         }
+
+        public virtual void OnReadScriptVobMsg(PacketReader stream)
+        {
+        }
     }
 }
