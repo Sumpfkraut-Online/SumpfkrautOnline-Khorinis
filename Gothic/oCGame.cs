@@ -12,6 +12,11 @@ namespace Gothic
     {
         public const int ogame = 0xAB0884;
 
+        public static int GetGameAddress()
+        {
+            return Process.ReadInt(ogame);
+        }
+
         public abstract class VarOffsets
         {
             public const int vtbl = 0,

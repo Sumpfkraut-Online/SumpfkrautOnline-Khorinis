@@ -510,7 +510,7 @@ namespace GUC.Network
 
             if (World.Current != null && character != null)
             {
-                aniInfo.Texts[0].Text = ("Animations: " + character.Model.GetAniCount());
+                aniInfo.Texts[0].Text = character.State + (" Animations: " + character.Model.GetAniCount());
                 if (character.IsInAnimation)
                     aniInfo.Texts[0].Text = "(InAni) " + aniInfo.Texts[0].Text;
                 aniInfo.Show();

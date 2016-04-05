@@ -34,6 +34,8 @@ namespace GUC.Client
 
                 #region Some more editing
 
+                Process.Write(new byte[] { 0xD8, 0x1D, 0xB4, 0x04, 0x83, 0x00}, 0x006C873D); // reduce time gothic waits after the loading screen from 2500ms to 1000ms
+
                 Process.Write(18000.0f, 0x008BACD0); // spawnManager : insertrange
                 Process.Write(20000.0f, 0x008BACD4); // spawnManager : removerange
 

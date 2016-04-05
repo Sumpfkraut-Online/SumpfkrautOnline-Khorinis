@@ -511,7 +511,8 @@ namespace GUC.WorldObjects
                 return;
 
             pStopAnimation(fadeOut);
-            aniTimer.Stop();
+            aniTimer.Stop(true);
+            this.currentAni = null;
         }
 
         partial void pEndAni();

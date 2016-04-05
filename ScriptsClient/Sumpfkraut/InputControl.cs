@@ -55,7 +55,8 @@ namespace GUC.Client.Scripts.Sumpfkraut
             else if (fwdKeys == 0)
                 GUC.Network.GameClient.Client.DoSetHeroState(NPCStates.Stand);
         }
-        
+
+        static bool actionMode = false;
         static void KeyDown(VirtualKeys key, long now)
         {
             GUCMenu activeMenu = GUCMenu.GetActiveMenus().ElementAtOrDefault(0);
@@ -70,20 +71,14 @@ namespace GUC.Client.Scripts.Sumpfkraut
 
             if (key == VirtualKeys.Control)
             {
-                ScriptAniJob job;
-                if (ScriptClient.Client.Character.CurrentAni != null)
+                if (ScriptClient.Client.Character.BaseInst.State == NPCStates.MoveForward)
                 {
-                    int curID = ScriptClient.Client.Character.CurrentAni.AniJob.ID;
-                    if (curID >= (int)SetAnis.Attack2HFwd1 && curID < (int)SetAnis.Attack2HFwd4
-                        && ScriptClient.Client.Character.Model.TryGetAniJob(curID + 1, out job))
-                    {
-                        ScriptClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
-                        return;
-                    }
+
                 }
-                if (ScriptClient.Client.Character.Model.TryGetAniJob((int)SetAnis.Attack2HFwd1, out job))
+                else
                 {
-                    ScriptClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
+                    actionMode = true;
+                    GUC.Network.GameClient.Client.DoSetHeroState(NPCStates.Stand);
                 }
             }
             else if (key == VirtualKeys.P)
@@ -105,27 +100,79 @@ namespace GUC.Client.Scripts.Sumpfkraut
             }
             else if (key == VirtualKeys.Up)
             {
-                Fwd(true);
+                if (actionMode)
+                {
+                    ScriptAniJob job;
+                    if (ScriptClient.Client.Character.CurrentAni != null)
+                    {
+                        int curID = ScriptClient.Client.Character.CurrentAni.AniJob.ID;
+                        if (curID >= (int)SetAnis.Attack2HFwd1 && curID < (int)SetAnis.Attack2HFwd4
+                            && ScriptClient.Client.Character.Model.TryGetAniJob(curID + 1, out job))
+                        {
+                            ScriptClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
+                            return;
+                        }
+                    }
+                    if (ScriptClient.Client.Character.Model.TryGetAniJob((int)SetAnis.Attack2HFwd1, out job))
+                    {
+                        ScriptClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
+                    }
+                }
+                else
+                    Fwd(true);
             }
             else if (key == VirtualKeys.Down)
             {
-                Fwd(false);
+                if (actionMode)
+                {
+
+                }
+                else
+                    if (fwdKeys == 0) Fwd(false);
             }
             else if (key == VirtualKeys.D)
             {
-                Strafe(true);
+                if (actionMode)
+                {
+
+                }
+                else
+                    if (strafeKeys == 0) Strafe(true);
             }
             else if (key == VirtualKeys.A)
             {
-                Strafe(false);
+                if (actionMode)
+                {
+
+                }
+                else
+                    if (strafeKeys == 0) Strafe(false);
             }
             else if (key == VirtualKeys.Right)
             {
-                turnKeys++;
+                if (actionMode)
+                {
+                    ScriptAniJob job;
+                    if (ScriptClient.Client.Character.Model.TryGetAniJob((int)SetAnis.Attack2HRight, out job))
+                    {
+                        ScriptClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
+                    }
+                }
+                else
+                    if (turnKeys == 0) turnKeys++;
             }
             else if (key == VirtualKeys.Left)
             {
-                turnKeys--;
+                if (actionMode)
+                {
+                    ScriptAniJob job;
+                    if (ScriptClient.Client.Character.Model.TryGetAniJob((int)SetAnis.Attack2HLeft, out job))
+                    {
+                        ScriptClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
+                    }
+                }
+                else
+                    if (turnKeys == 0) turnKeys--;
             }
             else if (key == VirtualKeys.K)
             {
@@ -155,29 +202,63 @@ namespace GUC.Client.Scripts.Sumpfkraut
             if (GUC.Network.GameClient.Client.Character == null)
                 return;
 
-            if (key == VirtualKeys.Up)
+            if (key == VirtualKeys.Control)
             {
-                Fwd(false);
+                actionMode = false;
+            }
+            else if (key == VirtualKeys.Up)
+            {
+                if (actionMode)
+                {
+
+                }
+                else
+                    if (fwdKeys > 0) Fwd(false);
             }
             else if (key == VirtualKeys.Down)
             {
-                Fwd(true);
+                if (actionMode)
+                {
+
+                }
+                else
+                    if (fwdKeys < 0) Fwd(true);
             }
             else if (key == VirtualKeys.D)
             {
-                Strafe(false);
+                if (actionMode)
+                {
+
+                }
+                else
+                    if (strafeKeys > 0) Strafe(false);
             }
             else if (key == VirtualKeys.A)
             {
-                Strafe(true);
+                if (actionMode)
+                {
+
+                }
+                else
+                    if (strafeKeys < 0) Strafe(true);
             }
             else if (key == VirtualKeys.Right)
             {
-                turnKeys--;
+                if (actionMode)
+                {
+
+                }
+                else
+                    if (turnKeys > 0) turnKeys--;
             }
             else if (key == VirtualKeys.Left)
             {
-                turnKeys++;
+                if (actionMode)
+                {
+
+                }
+                else
+                    if (turnKeys < 0) turnKeys++;
             }
             else if (key == VirtualKeys.K)
                 teleportKey = 0;
@@ -203,7 +284,7 @@ namespace GUC.Client.Scripts.Sumpfkraut
 
             if (teleportKey > 0)
             {
-                if (GameTime.Ticks - teleportKey > TimeSpan.TicksPerSecond)
+                if (GameTime.Ticks - teleportKey > TimeSpan.TicksPerSecond/2)
                 {
                     Vec3f pos = GUC.Network.GameClient.Client.Character.GetPosition();
                     Vec3f dir = GUC.Network.GameClient.Client.Character.GetDirection();

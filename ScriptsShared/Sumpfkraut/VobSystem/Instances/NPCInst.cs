@@ -23,6 +23,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public ModelDef Model { get { return this.Definition.Model; } }
 
+        public NPCStates State { get { return this.BaseInst.State; } }
+
         #endregion
 
         partial void pConstruct();

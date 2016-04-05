@@ -24,7 +24,7 @@ namespace GUC.Server.Network.Messages
                 if (npc == character /*|| (client.VobControlledList.Contains(npc) && state <= NPCStates.MoveBackward)*/) //is it a controlled NPC?
                 {
                     if (npc.ScriptObject != null)
-                        npc.ScriptObject.SetState(state);
+                        npc.ScriptObject.OnCmdMove(state);
                 }
             }
         }
@@ -161,7 +161,7 @@ namespace GUC.Server.Network.Messages
 
         public static void WriteAniStop(NPC npc, bool fadeout)
         {
-            PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCAniStartMessage);
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCAniStopMessage);
             stream.Write((ushort)npc.ID);
             stream.Write(fadeout);
 

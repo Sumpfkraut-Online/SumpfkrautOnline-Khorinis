@@ -40,13 +40,38 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
             set
             {
                 if (this.IsCreated)
-                    throw new Exception("CodeName can't be changed while the object is created!");
+                    throw new Exception("CodeName can't be changed when the object is created!");
 
                 this.codeName = value == null ? "" : value.ToUpper();
             }
         }
 
-        public float Radius = 1;
+        float radius = 1;
+        public float Radius
+        {
+            get { return this.radius; }
+            set
+            {
+                if (this.IsCreated)
+                    throw new Exception("Radius can't be changed when the object is created!");
+                this.radius = value;
+            }
+        }
+
+        float height = 1;
+        public float Height
+        {
+            get { return this.height; }
+            set
+            {
+                if (this.IsCreated)
+                    throw new Exception("Height can't be changed when the object is created!");
+                this.height = value;
+            }
+        }
+
+        public static ModelDef LargestNPC = null; // for fight system
+        public bool IsNPCModel() { return this.Visual.EndsWith(".MDS"); }
 
         #endregion
 
@@ -72,11 +97,27 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                 throw new Exception("CodeName is null or white space!");
 
             names.Add(this.CodeName, this);
+
+            if (this.IsNPCModel() && (LargestNPC == null || this.radius > LargestNPC.radius))
+                LargestNPC = this;
         }
 
         partial void pDelete()
         {
             names.Remove(this.CodeName);
+
+            //improve ?
+            if (this == LargestNPC)
+            {
+                ModelDef newLargestNPC = null;
+                Models.Model.ForEach(m =>
+                {
+                    ModelDef model = (ModelDef)m.ScriptObject;
+                    if (model != this && model.IsNPCModel() && model.radius > this.radius)
+                        newLargestNPC = model;
+                });
+                LargestNPC = newLargestNPC;
+            }
         }
 
         #endregion

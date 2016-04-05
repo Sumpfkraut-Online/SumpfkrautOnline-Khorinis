@@ -60,6 +60,7 @@ namespace GUC.Scripts
 
             m = new ModelDef("human", "humans.mds");
             m.Radius = 30;
+            m.Height = 200;
 
             Add2hAttacks(m);
 
@@ -77,6 +78,8 @@ namespace GUC.Scripts
             npcDef.Create();
 
             m = new ModelDef("scavenger", "scavenger.mds");
+            m.Radius = 80;
+            m.Height = 160;
             m.Create();
             npcDef = new NPCDef("scavenger");
             npcDef.Name = "Scavenger";
@@ -121,6 +124,24 @@ namespace GUC.Scripts
             aniJob.AniName = "s_2hAttack";
 
             ani = new ScriptAni(6000000); ani.StartFrame = 31; ani.ComboTime = 4400000; ani.HitTime = 2300000; aniJob.SetDefaultAni(ani);
+
+            model.AddAniJob(aniJob);
+
+            // 2h LEFT ATTACK
+            aniJob = new ScriptAniJob("attack2hleft");
+            aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HLeft;
+            aniJob.AniName = "t_2hAttackL";
+
+            ani = new ScriptAni(14000000); ani.ComboTime = 7200000; ani.HitTime = 2400000; aniJob.SetDefaultAni(ani);
+
+            model.AddAniJob(aniJob);
+
+            // 2h RIGHT ATTACK
+            aniJob = new ScriptAniJob("attack2hright");
+            aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HRight;
+            aniJob.AniName = "t_2hAttackR";
+
+            ani = new ScriptAni(14000000); ani.ComboTime = 7200000; ani.HitTime = 2400000; aniJob.SetDefaultAni(ani);
 
             model.AddAniJob(aniJob);
         }

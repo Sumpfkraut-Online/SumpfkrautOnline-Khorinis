@@ -15,8 +15,13 @@ namespace GUC.WorldObjects.Weather
             int address = Process.ReadInt(zCSkyControler.activeSkyController);
             if (address != 0)
             {
+                int rainAddr = Process.ReadInt(address + zCSkyControler_Outdoor.VarOffsets.outdoorRainFX);
+                if (rainAddr != 0)
+                {
+                    new zCOutdoorRainFX(rainAddr).SetWeatherType((int)this.type);
+                }
+
                 var gCtrl = new zCSkyControler_Outdoor(address);
-                gCtrl.OutdoorRainFX.SetWeatherType((int)this.type);
                 gCtrl.OutdoorRainFXWeight = this.currentWeight;
                 if (this.type == WeatherTypes.Rain && this.currentWeight > 0.5f)
                     gCtrl.RenderLightning = true;

@@ -121,13 +121,14 @@ namespace GUC.WorldObjects
             if (this.gVob == null)
                 return;
 
-            if (this.state == NPCStates.MoveRight || this.state == NPCStates.MoveLeft)
-            {
-                if (state == NPCStates.MoveForward)
-                    this.gVob.GetModel().StartAni(this.gVob.AniCtrl._s_walkl, 0);
-                else
-                    this.gVob.GetModel().StartAni(this.gVob.AniCtrl._s_walk, 0);
-            }
+            if (!this.IsInAnimation)
+                if (this.state == NPCStates.MoveRight || this.state == NPCStates.MoveLeft)
+                {
+                    if (state == NPCStates.MoveForward)
+                        this.gVob.GetModel().StartAni(this.gVob.AniCtrl._s_walkl, 0);
+                    else
+                        this.gVob.GetModel().StartAni(this.gVob.AniCtrl._s_walk, 0);
+                }
 
             this.Update(DateTime.UtcNow.Ticks);
         }
@@ -160,13 +161,13 @@ namespace GUC.WorldObjects
                     gVob.AniCtrl._Backward();
                     break;
                 case NPCStates.MoveRight:
-                    if (!gVob.GetModel().IsAniActive(gVob.GetModel().GetAniFromAniID(gVob.AniCtrl._t_strafer)))
+                    if (!this.IsInAnimation && !gVob.GetModel().IsAniActive(gVob.GetModel().GetAniFromAniID(gVob.AniCtrl._t_strafer)))
                     {
                         gVob.GetModel().StartAni(gVob.AniCtrl._t_strafer, 0);
                     }
                     break;
                 case NPCStates.MoveLeft:
-                    if (!gVob.GetModel().IsAniActive(gVob.GetModel().GetAniFromAniID(gVob.AniCtrl._t_strafel)))
+                    if (!this.IsInAnimation && !gVob.GetModel().IsAniActive(gVob.GetModel().GetAniFromAniID(gVob.AniCtrl._t_strafel)))
                     {
                         gVob.GetModel().StartAni(gVob.AniCtrl._t_strafel, 0);
                     }

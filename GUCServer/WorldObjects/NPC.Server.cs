@@ -20,6 +20,7 @@ namespace GUC.WorldObjects
 
         public partial interface IScriptNPC
         {
+            void OnCmdMove(NPCStates state);
             void OnCmdUseMob(MobInter mob);
             void OnCmdUseItem(Item item);
             void OnCmdDrawItem(Item item);

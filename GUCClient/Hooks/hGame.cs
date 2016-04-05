@@ -24,6 +24,7 @@ namespace GUC.Client.Hooks
 
             // hook ingame loop
             Process.Hook(Program.GUCDll, typeof(hGame).GetMethod("RunIngame"), 0x006C86A0, 7, 0);
+            //Process.Hook(Program.GUCDll, typeof(hGame).GetMethod("RunIngame"), 0x006C876B, 6, 0);
 
             Logger.Log("Added game loop hooks.");
         }

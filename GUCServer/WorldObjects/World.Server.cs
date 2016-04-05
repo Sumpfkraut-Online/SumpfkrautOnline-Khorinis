@@ -108,14 +108,20 @@ namespace GUC.WorldObjects
 
         #endregion
 
-        public void ForEachNPCInRange(BaseVob vob, float range, Action<NPC> action)
+        /// <summary>
+        /// 600 ingame units accuracy
+        /// </summary>
+        public void ForEachNPCRoughInRange(BaseVob vob, float range, Action<NPC> action)
         {
             if (vob == null)
                 throw new ArgumentException("Vob is null!");
-            this.ForEachNPCInRange(vob.GetPosition(), range, action);
+            this.ForEachNPCRoughInRange(vob.GetPosition(), range, action);
         }
 
-        public void ForEachNPCInRange(Vec3f pos, float range, Action<NPC> action)
+        /// <summary>
+        /// 600 ingame units accuracy
+        /// </summary>
+        public void ForEachNPCRoughInRange(Vec3f pos, float range, Action<NPC> action)
         {
             if (action == null)
                 throw new ArgumentException("Action is null!");
@@ -146,11 +152,7 @@ namespace GUC.WorldObjects
                     NPCCell npcCell;
                     if (npcCells.TryGetValue(coord, out npcCell))
                     {
-                        npcCell.npcs.ForEach(npc =>
-                        {
-                            if (npc.GetPosition().GetDistance(pos) < range)
-                                action(npc);
-                        });
+                        npcCell.npcs.ForEach(npc => action(npc));
                     }
                 }
             }
