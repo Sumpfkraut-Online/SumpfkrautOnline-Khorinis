@@ -45,7 +45,6 @@ namespace GUC.Client.Scripts.Sumpfkraut
             }
             else if (key == VirtualKeys.O)
             {
-                //GUC.Network.GameClient.Client.Character.gVob.AniCtrl.CreateHit(GUC.Network.GameClient.Client.Character.gVob);
             }
             else if (key == VirtualKeys.F1)
             {

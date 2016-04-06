@@ -45,6 +45,7 @@ namespace GUC.Scripts
         {
             InputControl.Init();
             MainMenu.Menu.Open();
+            Client.Scripts.TFFA.NameMenu.Instance.Open();
             Logger.Log("Outgame started.");
         }
 

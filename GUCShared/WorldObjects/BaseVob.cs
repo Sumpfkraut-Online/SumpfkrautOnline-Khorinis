@@ -142,6 +142,9 @@ namespace GUC.WorldObjects
             if (this.instance == null)
                 throw new Exception("Vob has no Instance!");
 
+            if (this.ScriptObject == null)
+                throw new Exception("Vob has no ScriptObject!");
+
             if (this.isCreated)
                 throw new Exception("Vob is already spawned!");
 

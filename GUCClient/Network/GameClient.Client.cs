@@ -260,6 +260,10 @@ namespace GUC.Network
                     NPCMessage.ReadAniStop(stream);
                     break;
 
+                case NetworkIDs.NPCHealthMessage:
+                    NPCMessage.ReadHealthMessage(stream);
+                    break;
+
                 default:
                     Logger.LogWarning("Received message with invalid NetworkID! " + id);
                     break;

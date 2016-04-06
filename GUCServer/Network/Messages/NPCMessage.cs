@@ -65,6 +65,8 @@ namespace GUC.Server.Network.Messages
         }
 
         #endregion
+        
+        #region Item drawing
 
         public static void WriteDrawItem(IEnumerable<GameClient> list, NPC npc, Item item, bool fast)
         {
@@ -90,6 +92,8 @@ namespace GUC.Server.Network.Messages
             foreach (Client client in list)
                 client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');*/
         }
+
+        #endregion
 
         #region Animation
 
@@ -201,5 +205,19 @@ namespace GUC.Server.Network.Messages
         }
 
         #endregion
+
+        #region Properties
+
+        public static void WriteHealthMessage(NPC npc)
+        {
+            var stream = GameServer.SetupStream(NetworkIDs.NPCHealthMessage);
+            stream.Write((ushort)npc.ID);
+            stream.Write((ushort)npc.HPMax);
+            stream.Write((ushort)npc.HP);
+            npc.Cell.ForEachSurroundingClient(client => client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
+        }
+
+        #endregion
+
     }
 }

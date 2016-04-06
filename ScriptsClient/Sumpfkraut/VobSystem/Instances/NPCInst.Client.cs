@@ -23,8 +23,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 return;
 
             item.BaseInst.gVob.Material = (int)item.Definition.Material;
-            item.BaseInst.gVob.DamageType = 4;
-            item.BaseInst.gVob.DamageTotal = 5;
 
             switch (item.ItemType)
             {

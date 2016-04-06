@@ -159,5 +159,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             this.BaseInst.UnequipItem(item.BaseInst);
             pUnequipItem(item);
         }
+
+        public void SetHealth(int hp, int hpmax)
+        {
+            this.BaseInst.SetHealth(hp, hpmax);
+        }
     }
 }

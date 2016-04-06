@@ -62,11 +62,10 @@ namespace GUC.Client.GUI
         #region pixel virtual conversion
         public static int[] GetScreenSize()
         {
-            //return new int[2] { Process.ReadInt(0x08DFC8), Process.ReadInt(0x08DFCC) };
-            return new int[] { 800, 600
-                //Convert.ToInt32(Gothic.zCOption.GetOption().getEntryValue("VIDEO", "zVidResFullscreenX")),
-                //Convert.ToInt32(Gothic.zCOption.GetOption().getEntryValue("VIDEO", "zVidResFullscreenY"))
-            };
+            //return new int[2] { Process.ReadInt(0x08D4B0), Process.ReadInt(0x08D4B4) };
+            //Convert.ToInt32(Gothic.zCOption.GetOption().getEntryValue("VIDEO", "zVidResFullscreenX")),
+            //Convert.ToInt32(Gothic.zCOption.GetOption().getEntryValue("VIDEO", "zVidResFullscreenY"))
+            return new int[2] { Process.ReadInt(0x7FD90040), Process.ReadInt(0x7FD90044) };
         }
 
         public static int[] PixelToVirtual(int x, int y)

@@ -91,7 +91,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             this.BaseInst.World.ForEachNPCRoughInRange(attPos, range, npc =>
             {
                 NPCInst target = (NPCInst)npc.ScriptObject;
-                if (target != this)
+                if (target != this && !target.BaseInst.IsDead)
                 {
                     Vec3f targetPos = npc.GetPosition();
                     Vec3f targetDir = npc.GetDirection();
@@ -126,6 +126,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                                     }
                                     else // HIT
                                     {
+                                        target.SetHealth(target.BaseInst.HP - 10, target.BaseInst.HPMax);
+
                                         var strm = this.BaseInst.GetScriptVobStream();
                                         strm.Write((byte)Networking.NetVobMsgIDs.HitMessage);
                                         strm.Write((ushort)npc.ID);

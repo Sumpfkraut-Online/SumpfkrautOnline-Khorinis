@@ -208,6 +208,7 @@
   <ItemGroup>
     <Folder Include="Sumpfkraut\VobSystem\Definitions\Mobs\" />
     <Folder Include="Sumpfkraut\VobSystem\Instances\Mobs\" />
+    <Folder Include="TFFA\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Sumpfkraut\packages.config" />

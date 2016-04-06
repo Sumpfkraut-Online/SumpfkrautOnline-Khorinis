@@ -33,7 +33,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking
         #endregion
 
         #region Constructors
-
+        
         public ScriptClient(GameClient baseClient)
         {
             if (baseClient == null)

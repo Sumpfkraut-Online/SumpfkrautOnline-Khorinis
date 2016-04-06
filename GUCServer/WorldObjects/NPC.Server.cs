@@ -33,7 +33,7 @@ namespace GUC.WorldObjects
         }
 
         #endregion
-
+        
         public void UpdatePropertiesFast()
         {
 
@@ -206,8 +206,10 @@ namespace GUC.WorldObjects
         public GameClient Client { get { return client; } }
         public bool IsPlayer { get { return Client != null; } }
 
-        partial void pSetHealth(int hp, int hpmax)
+        partial void pSetHealth()
         {
+            if (this.isCreated)
+                NPCMessage.WriteHealthMessage(this);
         }
 
         #endregion
@@ -261,17 +263,6 @@ namespace GUC.WorldObjects
             stream.Write((ushort)this.ID);
             this.WriteTakeControl(stream);
             this.Client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, '\0');
-            
-            Ani();
-        }
-
-        void Ani()
-        {
-            AniJob job;
-            this.Model.TryGetAni(7, out job);
-            Animation ani;
-            this.TryGetAniFromJob(job, out ani);
-            this.StartAnimation(ani, Ani);
         }
 
         partial void pDespawn()
