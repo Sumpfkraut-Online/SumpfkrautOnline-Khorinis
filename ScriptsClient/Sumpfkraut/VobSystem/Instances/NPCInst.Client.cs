@@ -19,9 +19,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         partial void pEquipItem(ItemInst item)
         {
-
             if (!this.IsSpawned)
                 return;
+
+            item.BaseInst.gVob.Material = (int)item.Definition.Material;
+            item.BaseInst.gVob.DamageType = 4;
+            item.BaseInst.gVob.DamageTotal = 5;
 
             switch (item.ItemType)
             {
@@ -31,6 +34,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     item.BaseInst.gVob.Flags = Gothic.Objects.oCItem.ItemFlags.ITEM_SWD;
                     item.BaseInst.gVob.Flags |= item.BaseInst.gVob.MainFlag;
                     this.BaseInst.gVob.EquipWeapon(item.BaseInst.gVob);
+                    using (var str = Gothic.Types.zString.Create("1H"))
+                        this.BaseInst.gVob.SetWeaponMode2(str);
                     break;
 
                 case Definitions.ItemTypes.Wep2H:
@@ -39,6 +44,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     item.BaseInst.gVob.Flags = Gothic.Objects.oCItem.ItemFlags.ITEM_2HD_SWD;
                     item.BaseInst.gVob.Flags |= item.BaseInst.gVob.MainFlag;
                     this.BaseInst.gVob.EquipWeapon(item.BaseInst.gVob);
+                    using (var str = Gothic.Types.zString.Create("2H"))
+                        this.BaseInst.gVob.SetWeaponMode2(str);
                     break;
 
                 case Definitions.ItemTypes.Armor:
@@ -72,6 +79,14 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     if (WorldInst.Current.BaseWorld.TryGetVob(targetID, out target))
                     {
                         this.BaseInst.gVob.AniCtrl.CreateHit(target.gVob);
+                    }
+                    break;
+                case Networking.NetVobMsgIDs.ParryMessage:
+                    targetID = stream.ReadUShort();
+                    WorldObjects.NPC targetNPC;
+                    if (WorldInst.Current.BaseWorld.TryGetVob(targetID, out targetNPC))
+                    {
+                        this.BaseInst.gVob.AniCtrl.StartParadeEffects(targetNPC.gVob);
                     }
                     break;
                 default:

@@ -64,6 +64,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
             stream.Write((byte)this.ItemType);
             stream.Write(this.name);
             stream.Write(this.visualChange);
+            stream.Write((byte)this.Material);
         }
 
         public override void OnReadProperties(PacketReader stream)
@@ -72,6 +73,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
             this.ItemType = (ItemTypes)stream.ReadByte();
             this.name = stream.ReadString();
             this.visualChange = stream.ReadString();
+            this.Material = (ItemMaterials)stream.ReadByte();
         }
     }
 }

@@ -30,18 +30,18 @@ namespace GUC.Network
         #region Commands
 
         NPCStates nextState = NPCStates.Stand;
-        const int DelayBetweenMessages = 3000000; //300ms
+        const int DelayBetweenMessages = 1000000; //100ms
         public void DoSetHeroState(NPCStates state)
         {
             if (this.character == null)
                 return;
 
-            if (this.character.State == state)
+            if (this.nextState == state)
                 return;
 
             this.nextState = state;
             this.character.nextStateUpdate = 0;
-            UpdateHeroState(DateTime.UtcNow.Ticks);
+            UpdateHeroState(GameTime.Ticks);
         }
 
         void UpdateHeroState(long now)
@@ -54,17 +54,22 @@ namespace GUC.Network
 
             if (now < this.character.nextStateUpdate)
                 return;
-
+            
             NPCMessage.WriteState(this.character, nextState);
             this.character.nextStateUpdate = now + DelayBetweenMessages;
         }
 
+        long nextAniUpdate = 0;
         public void DoStartAni(AniJob job)
         {
             if (this.character == null)
                 return;
-
-            NPCMessage.WriteAniStart(job);
+            
+            if (GameTime.Ticks > nextAniUpdate)
+            {
+                NPCMessage.WriteAniStart(job);
+                nextAniUpdate = GameTime.Ticks + DelayBetweenMessages;
+            }
         }
 
         #endregion
@@ -143,8 +148,6 @@ namespace GUC.Network
 
         void ReadMessage(NetworkIDs id, PacketReader stream)
         {
-            Logger.Log("ReadMessage: " + id);
-
             switch (id)
             {
                 /*

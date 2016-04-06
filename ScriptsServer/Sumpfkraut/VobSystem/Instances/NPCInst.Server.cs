@@ -58,18 +58,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             this.comboTimer = new GUCTimer(AbleCombo);
         }
 
-        NPCStates nextState = NPCStates.Stand;
         public void OnCmdMove(NPCStates state)
         {
             if (state == this.State)
                 return;
 
-            Log.Logger.Log("Move: " + state + " Current: " + this.State);
-            this.nextState = state;
-            if (!this.IsInAni)
-            {
-                this.SetState(state);
-            }
+            this.SetState(state);
         }
 
         GUCTimer hitTimer;
@@ -80,8 +74,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             comboTimer.Stop();
             canCombo = true;
-            Log.Logger.Log("Combo " + this.nextState + " " + this.State);
-            if (this.nextState != this.State)
+            if (this.State != NPCStates.Stand)
             {
                 this.StopAnimation();
             }
@@ -101,7 +94,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 if (target != this)
                 {
                     Vec3f targetPos = npc.GetPosition();
+                    Vec3f targetDir = npc.GetDirection();
                     float distance = (targetPos - attPos).GetLength();
+
+                    if (target.IsInAni && target.CurrentAni.AniJob.ID == (int)SetAnis.Attack2HDodge)
+                        distance /= 2.0f;
+
                     if (distance <= wepRange + this.Model.Radius + target.Model.Radius) // target is in range
                     {
                         if (targetPos.Y + target.Model.Height / 2.0f >= attPos.Y && targetPos.Y - target.Model.Height / 2.0f <= attPos.Y) // same height
@@ -109,17 +107,30 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                             Vec3f dir = (attPos - targetPos).Normalise();
                             float dot = attDir.Z * dir.Z + dir.X * attDir.X;
 
-                            if (dot <= -0.3f) // target is in front of attacker
+                            if (dot <= -0.4f) // target is in front of attacker
                             {
                                 float dist = attDir.X * (targetPos.Z - attPos.Z) - attDir.Z * (targetPos.X - attPos.X);
                                 dist = (float)Math.Sqrt(dist * dist / (attDir.X * attDir.X + attDir.Z * attDir.Z));
 
                                 if (dist <= target.Model.Radius) // distance to attack direction is smaller than radius
                                 {
-                                    var strm = this.BaseInst.GetScriptVobStream();
-                                    strm.Write((byte)Networking.NetVobMsgIDs.HitMessage);
-                                    strm.Write((ushort)npc.ID);
-                                    this.BaseInst.SendScriptVobStream(strm);
+                                    dir = (targetPos - attPos).Normalise();
+                                    dot = targetDir.Z * dir.Z + dir.X * targetDir.X;
+
+                                    if (target.CurrentAni != null && target.CurrentAni.AniJob.ID == (int)SetAnis.Attack2HParry && dot <= -0.4f) // PARRY
+                                    {
+                                        var strm = this.BaseInst.GetScriptVobStream();
+                                        strm.Write((byte)Networking.NetVobMsgIDs.ParryMessage);
+                                        strm.Write((ushort)npc.ID);
+                                        this.BaseInst.SendScriptVobStream(strm);
+                                    }
+                                    else // HIT
+                                    {
+                                        var strm = this.BaseInst.GetScriptVobStream();
+                                        strm.Write((byte)Networking.NetVobMsgIDs.HitMessage);
+                                        strm.Write((ushort)npc.ID);
+                                        this.BaseInst.SendScriptVobStream(strm);
+                                    }
                                 }
                             }
                         }
@@ -155,11 +166,14 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     hitTimer.Start();
                 }
 
-                comboTimer.SetInterval(anim.ComboTime);
-                comboTimer.Start();
+                if (ani.AniJob.ID < (int)SetAnis.Attack2HRun)
+                {
+                    comboTimer.SetInterval(anim.ComboTime);
+                    comboTimer.Start();
+                }
             }
-
-            this.StartAnimation(anim, () => { this.canCombo = true; if (this.nextState != this.State) this.SetState(this.nextState); });
+            
+            this.StartAnimation(anim, () => this.canCombo = true);
         }
 
         public void OnCmdAniStop(bool fadeOut)

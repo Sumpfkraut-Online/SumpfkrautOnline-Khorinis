@@ -130,7 +130,7 @@ namespace GUC.WorldObjects
                         this.gVob.GetModel().StartAni(this.gVob.AniCtrl._s_walk, 0);
                 }
 
-            this.Update(DateTime.UtcNow.Ticks);
+            this.Update(GameTime.Ticks);
         }
 
         internal void Update(long now)

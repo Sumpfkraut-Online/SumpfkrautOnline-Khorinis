@@ -496,6 +496,11 @@ namespace Gothic.Objects
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetWeaponMode2_Str, new CallValue[] { str });
         }
 
+        public int GetWeaponMode()
+        {
+            return Process.THISCALL<IntArg>(Address, FuncAddresses.GetWeaponMode).Value;
+        }
+
         /*
         public static oCNpc StealNPC(Process process)
         {

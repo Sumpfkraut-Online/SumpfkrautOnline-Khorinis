@@ -42,6 +42,7 @@ namespace GUC.Scripts
             ItemDef itemDef = new ItemDef("zweihander");
             itemDef.Name = "Paladin Zweihänder";
             itemDef.ItemType = ItemTypes.Wep2H;
+            itemDef.Material = Enumeration.ItemMaterials.Metal;
             itemDef.Model = m;
             itemDef.Range = 100;
             itemDef.Create();
@@ -51,6 +52,7 @@ namespace GUC.Scripts
 
             itemDef = new ItemDef("ITAR_Garde");
             itemDef.Name = "Gardistenrüstung";
+            itemDef.Material = Enumeration.ItemMaterials.Leather;
             itemDef.ItemType = ItemTypes.Armor;
             itemDef.VisualChange = "Armor_Bloodwyn_ADDON.asc";
             itemDef.Model = m;
@@ -142,6 +144,33 @@ namespace GUC.Scripts
             aniJob.AniName = "t_2hAttackR";
 
             ani = new ScriptAni(14000000); ani.ComboTime = 7200000; ani.HitTime = 2400000; aniJob.SetDefaultAni(ani);
+
+            model.AddAniJob(aniJob);
+
+            // 2h RUN ATTACK
+            aniJob = new ScriptAniJob("attack2hrun");
+            aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HRun;
+            aniJob.AniName = "t_2hAttackMove";
+
+            ani = new ScriptAni(8800000); ani.ComboTime = 8800000; ani.HitTime = 6000000; aniJob.SetDefaultAni(ani);
+
+            model.AddAniJob(aniJob);
+
+            // 2h Parry
+            aniJob = new ScriptAniJob("attack2hparry");
+            aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HParry;
+            aniJob.AniName = "T_2HPARADE_0";
+
+            ani = new ScriptAni(5600000); ani.ComboTime = 5600000; aniJob.SetDefaultAni(ani);
+
+            model.AddAniJob(aniJob);
+
+            // 2h Dodge
+            aniJob = new ScriptAniJob("attack2hdodge");
+            aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HDodge;
+            aniJob.AniName = "T_2HPARADEJUMPB";
+
+            ani = new ScriptAni(9200000); ani.ComboTime = 9200000; aniJob.SetDefaultAni(ani);
 
             model.AddAniJob(aniJob);
         }

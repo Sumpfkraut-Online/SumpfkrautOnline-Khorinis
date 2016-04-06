@@ -12,7 +12,7 @@ namespace GUC.Client
     {
         public static bool IsPressed(VirtualKeys key)
         {
-            return ((Input.GetAsyncKeyState(key) & 0x8001) == 0x8001 || (Input.GetAsyncKeyState(key) & 0x8000) == 0x8000);
+            return keys[(int)key];
         }
 
         public delegate void KeyPressEventHandler(VirtualKeys key, long ticks);
@@ -28,7 +28,7 @@ namespace GUC.Client
                 for (int i = 1; i < keys.Length; i++)
                 {
                     VirtualKeys key = (VirtualKeys)i;
-                    if (IsPressed(key))
+                    if ((Input.GetAsyncKeyState(key) & 0x8001) == 0x8001 || (Input.GetAsyncKeyState(key) & 0x8000) == 0x8000)
                     {
                         if (!keys[i]) //newly pressed
                         {

@@ -261,6 +261,17 @@ namespace GUC.WorldObjects
             stream.Write((ushort)this.ID);
             this.WriteTakeControl(stream);
             this.Client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, '\0');
+            
+            Ani();
+        }
+
+        void Ani()
+        {
+            AniJob job;
+            this.Model.TryGetAni(7, out job);
+            Animation ani;
+            this.TryGetAniFromJob(job, out ani);
+            this.StartAnimation(ani, Ani);
         }
 
         partial void pDespawn()
