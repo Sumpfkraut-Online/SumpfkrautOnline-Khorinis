@@ -34,7 +34,6 @@ namespace GUC.WorldObjects
 
         #endregion
 
-
         public override void Update()
         {
             throw new NotImplementedException();
@@ -46,7 +45,7 @@ namespace GUC.WorldObjects
         partial void pAddVob(BaseVob vob)
         {
             // find the cell for this vob
-            int[] coords = vob.GetNetCellCoords();
+            int[] coords = NetCell.GetCoords(vob.GetPosition());
             NetCell cell = GetCellFromCoords(coords[0], coords[1]);
             vob.AddToNetCell(cell);
         }

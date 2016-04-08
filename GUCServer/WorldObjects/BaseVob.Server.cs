@@ -41,36 +41,11 @@ namespace GUC.WorldObjects
         }
 
         #region Cells
-        
-        protected int[] GetCellCoords(int cellSize)
-        {
-            Vec3f pos = this.GetPosition();
-
-            float unroundedX = pos.X / cellSize;
-            float unroundedZ = pos.Z / cellSize;
-
-            // calculate new cell indices
-            int x = (int)(pos.X >= 0 ? unroundedX + 0.5f : unroundedX - 0.5f);
-            int z = (int)(pos.Z >= 0 ? unroundedZ + 0.5f : unroundedZ - 0.5f);
-
-            if (x < short.MinValue || x > short.MaxValue || z < short.MinValue || z > short.MaxValue)
-            {
-                throw new Exception("Vob position is out of cell range!");
-            }
-
-            return new int[2] { x, z };//(x << 16) | z & 0xFFFF;
-        }
-
-        const int NetCellSize = 4500;
-        internal int[] GetNetCellCoords()
-        {
-            return GetCellCoords(NetCellSize);
-        }
 
         internal virtual void UpdatePosition(Vec3f newPos, Vec3f newDir, GameClient exclude)
         {
-            float unroundedX = newPos.X / NetCellSize;
-            float unroundedZ = newPos.Z / NetCellSize;
+            float unroundedX = newPos.X / NetCell.Size;
+            float unroundedZ = newPos.Z / NetCell.Size;
 
             // calculate new cell indices
             int x = (int)(newPos.X >= 0 ? unroundedX + 0.5f : unroundedX - 0.5f);

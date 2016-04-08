@@ -32,6 +32,7 @@ namespace GUC.Client.Scripts.Sumpfkraut.Menus.MainMenus
 
         public override void Open()
         {
+            base.Open();
             if (GUC.Scripts.GUCScripts.Ingame)
             {
                 if (!ingame)
@@ -68,7 +69,6 @@ namespace GUC.Client.Scripts.Sumpfkraut.Menus.MainMenus
                     ingame = false;
                 }
             }
-            base.Open();
         }
     }
 }

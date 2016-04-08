@@ -15,6 +15,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class NPCInst : VobInst, NPC.IScriptNPC
     {
+        public ItemInst DrawnWeapon;
+
         #region Properties
 
         public new NPC BaseInst { get { return (NPC)base.BaseInst; } }
@@ -160,6 +162,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             pUnequipItem(item);
         }
 
+        public void SetHealth(int hp)
+        {
+            this.SetHealth(hp, BaseInst.HPMax);
+        }
         public void SetHealth(int hp, int hpmax)
         {
             this.BaseInst.SetHealth(hp, hpmax);

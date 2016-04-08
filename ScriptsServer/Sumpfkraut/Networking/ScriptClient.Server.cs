@@ -37,7 +37,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking
             npc.ApplyOverlay(ov);*/
 
             SetControl(npc);
-            npc.Spawn(WorldInst.NewWorld);
+            npc.Spawn(WorldInst.Current);
         }
 
         public void OnReadIngameMsg(PacketReader stream)

@@ -19,6 +19,8 @@ namespace GUC.Client.Network.Messages
             {
                 vob.SetPosition(stream.ReadVec3f());
                 vob.SetDirection(stream.ReadVec3f());
+
+                vob.ScriptObject.OnPosChanged();
             }
         }
 
@@ -38,6 +40,8 @@ namespace GUC.Client.Network.Messages
             GameClient.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE);
 
             nextUpdate = now + updateTime;
+
+            GameClient.Client.character.ScriptObject.OnPosChanged();
         }
 
         static Vec3f GetLimitedPosition(BaseVob vob)

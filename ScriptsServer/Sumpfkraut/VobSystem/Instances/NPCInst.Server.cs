@@ -12,6 +12,15 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class NPCInst
     {
+        // TFFA
+        public override void OnPosChanged()
+        {
+            if (this.BaseInst.GetPosition().Y < -370)
+            {
+                this.SetHealth(0);
+            }
+        }
+
         public NPCInst(NPCDef def) : base(def, new WorldObjects.NPC())
         {
             pConstruct();
@@ -83,11 +92,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         void CalcHit()
         {
             hitTimer.Stop();
-
-            const float wepRange = 100;
+            
             Vec3f attPos = this.BaseInst.GetPosition();
             Vec3f attDir = this.BaseInst.GetDirection();
-            float range = wepRange + this.Model.Radius + ModelDef.LargestNPC.Radius;
+            float range = this.DrawnWeapon.Definition.Range + this.Model.Radius + ModelDef.LargestNPC.Radius;
             this.BaseInst.World.ForEachNPCRoughInRange(attPos, range, npc =>
             {
                 NPCInst target = (NPCInst)npc.ScriptObject;
@@ -100,7 +108,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     if (target.IsInAni && target.CurrentAni.AniJob.ID == (int)SetAnis.Attack2HDodge)
                         distance /= 2.0f;
 
-                    if (distance <= wepRange + this.Model.Radius + target.Model.Radius) // target is in range
+                    if (distance <= this.DrawnWeapon.Definition.Range + this.Model.Radius + target.Model.Radius) // target is in range
                     {
                         if (targetPos.Y + target.Model.Height / 2.0f >= attPos.Y && targetPos.Y - target.Model.Height / 2.0f <= attPos.Y) // same height
                         {
@@ -112,7 +120,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                                 float dist = attDir.X * (targetPos.Z - attPos.Z) - attDir.Z * (targetPos.X - attPos.X);
                                 dist = (float)Math.Sqrt(dist * dist / (attDir.X * attDir.X + attDir.Z * attDir.Z));
 
-                                if (dist <= target.Model.Radius) // distance to attack direction is smaller than radius
+                                if (dist <= target.Model.Radius + 5.0f) // distance to attack direction is smaller than radius + 5
                                 {
                                     dir = (targetPos - attPos).Normalise();
                                     dot = targetDir.Z * dir.Z + dir.X * targetDir.X;

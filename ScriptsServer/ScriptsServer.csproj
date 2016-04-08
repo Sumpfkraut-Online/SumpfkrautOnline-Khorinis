@@ -135,6 +135,12 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\WorldSystem\WorldInst.cs">
       <Link>Sumpfkraut\WorldSystem\WorldInst.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\TFFA\Enums.cs">
+      <Link>Enums.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\TFFA\TFFAClient.cs">
+      <Link>TFFA\TFFAClient.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sqlite.cs" />
     <Compile Include="GUCScripts.Server.cs" />
@@ -197,6 +203,8 @@
     <Compile Include="Sumpfkraut\WorldSystem\ScriptSkyCtrl.Server.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldDef.Server.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldInst.Server.cs" />
+    <Compile Include="TFFA\TFFA.cs" />
+    <Compile Include="TFFA\TFFAClient.Server.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GUCServer\GUCServer.csproj">
@@ -208,7 +216,6 @@
   <ItemGroup>
     <Folder Include="Sumpfkraut\VobSystem\Definitions\Mobs\" />
     <Folder Include="Sumpfkraut\VobSystem\Instances\Mobs\" />
-    <Folder Include="TFFA\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Sumpfkraut\packages.config" />

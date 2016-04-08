@@ -62,7 +62,7 @@ namespace GUC.WorldObjects
         
         void UpdateNPCCell()
         {
-            int[] coords = this.GetCellCoords(NPCCell.Size);
+            int[] coords = NPCCell.GetCoords(this.pos);
 
             if (coords[0] < short.MinValue || coords[0] > short.MaxValue || coords[1] < short.MinValue || coords[1] > short.MaxValue)
             {
@@ -243,7 +243,7 @@ namespace GUC.WorldObjects
         internal void InsertInWorld()
         {
             // Write surrounding vobs to this client
-            int[] coords = GetNetCellCoords();
+            int[] coords = NetCell.GetCoords(this.pos);
             NetCell[] arr = new NetCell[NetCell.NumSurroundingCells]; int i = 0;
             this.world.ForEachSurroundingCell(coords[0], coords[1], cell =>
             {
@@ -256,8 +256,8 @@ namespace GUC.WorldObjects
             {
                 base.Spawn(this.world, pos, dir);
                 this.UpdateNPCCell();
+                world.AddToPlayers(this.client);
             }
-            world.AddToPlayers(this.client);
 
             PacketWriter stream = GameServer.SetupStream(NetworkIDs.PlayerControlMessage);
             stream.Write((ushort)this.ID);

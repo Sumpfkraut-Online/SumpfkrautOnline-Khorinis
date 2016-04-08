@@ -104,6 +104,12 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\WorldSystem\WorldInst.cs">
       <Link>Sumpfkraut\WorldSystem\WorldInst.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\TFFA\Enums.cs">
+      <Link>TFFA\Enums.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\TFFA\TFFAClient.cs">
+      <Link>TFFA\TFFAClient.cs</Link>
+    </Compile>
     <Compile Include="Sumpfkraut\GUI\MainMenu\MainMenuButton.cs" />
     <Compile Include="Sumpfkraut\GUI\MainMenu\MainMenuCharacter.cs" />
     <Compile Include="Sumpfkraut\GUI\MainMenu\MainMenuCharSlot.cs" />
@@ -117,6 +123,7 @@
     <Compile Include="Sumpfkraut\Menus\GUCMenu.cs" />
     <Compile Include="Sumpfkraut\Menus\MainMenus\CharCreationMenu.cs" />
     <Compile Include="Sumpfkraut\Menus\MainMenus\CharSelMenu.cs" />
+    <Compile Include="TFFA\ClassMenu.cs" />
     <Compile Include="Sumpfkraut\Menus\MainMenus\ExitMenu.cs" />
     <Compile Include="Sumpfkraut\Menus\MainMenus\GUCMainMenu.cs" />
     <Compile Include="Sumpfkraut\Menus\MainMenus\HelpChatMenu.cs" />
@@ -126,6 +133,10 @@
     <Compile Include="Sumpfkraut\Menus\MainMenus\MainMenu.cs" />
     <Compile Include="Sumpfkraut\Menus\MainMenus\PlayerlistMenu.cs" />
     <Compile Include="Sumpfkraut\Menus\MainMenus\RegisterMenu.cs" />
+    <Compile Include="TFFA\InputControl.cs" />
+    <Compile Include="TFFA\MainMenu.cs" />
+    <Compile Include="TFFA\NameMenu.cs" />
+    <Compile Include="TFFA\TeamMenu.cs" />
     <Compile Include="Sumpfkraut\Menus\PlayerInventory.cs" />
     <Compile Include="Sumpfkraut\Menus\StatusMenu.cs" />
     <Compile Include="Sumpfkraut\Menus\TradeMenu.cs" />
@@ -140,7 +151,7 @@
     <Compile Include="Sumpfkraut\VobSystem\Instances\NPCInst.Client.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\VobInst.Client.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldInst.Client.cs" />
-    <Compile Include="TFFA\NameMenu.cs" />
+    <Compile Include="TFFA\TFFAClient.Client.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GUCClient\GUCClient.csproj">

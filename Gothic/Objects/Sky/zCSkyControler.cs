@@ -7,9 +7,9 @@ namespace Gothic.Objects.Sky
 {
     public class zCSkyControler : zClass
     {
-        public enum Offsets
+        public abstract class VarOffsets
         {
-            WeatherType = 0x30,
+            public const int WeatherType = 0x30;
         }
 
         public const int activeSkyController = 0x0099AC8C;
@@ -33,6 +33,12 @@ namespace Gothic.Objects.Sky
         {
             get { return Process.ReadInt(0x008A5DB0); }
             set { Process.Write(value, 0x008A5DB0); }
+        }
+
+        public int m_enuWeather
+        {
+            get { return Process.ReadInt(Address + VarOffsets.WeatherType); }
+            set { Process.Write(value, Address + VarOffsets.WeatherType); }
         }
     }
 }

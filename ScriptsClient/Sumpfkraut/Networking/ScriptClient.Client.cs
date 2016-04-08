@@ -8,7 +8,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking
 {
     public partial class ScriptClient : ScriptObject, GameClient.IScriptClient
     {
-        public void OnReadScriptMsg(PacketReader stream) { }
+        public void ReadScriptMsg(PacketReader stream) { }
 
         public static ScriptClient Client { get { return (ScriptClient)GameClient.Client.ScriptObject; } }
     }

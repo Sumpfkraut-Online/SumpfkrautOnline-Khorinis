@@ -30,6 +30,8 @@ namespace GUC.WorldObjects
         {
             void Spawn(World world);
             void Despawn();
+
+            void OnPosChanged();
         }
 
         /// <summary>

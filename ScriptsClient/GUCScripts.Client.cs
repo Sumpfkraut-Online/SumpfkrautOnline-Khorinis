@@ -8,8 +8,6 @@ using GUC.Scripting;
 using System.Reflection;
 using System.IO;
 using GUC.Client.Scripts.Sumpfkraut.Menus;
-using GUC.Client.Scripts.Sumpfkraut.Menus.MainMenus;
-using GUC.Client.Scripts.Sumpfkraut;
 
 namespace GUC.Scripts
 {
@@ -38,21 +36,20 @@ namespace GUC.Scripts
         public void Update(long ticks)
         {
             GUCMenu.UpdateMenus(ticks);
-            InputControl.Update(ticks);
+            Client.Scripts.TFFA.InputControl.Update(ticks);
         }
 
         public void StartOutgame()
         {
-            InputControl.Init();
-            MainMenu.Menu.Open();
-            Client.Scripts.TFFA.NameMenu.Instance.Open();
+            Client.Scripts.TFFA.InputControl.Init();
+            Client.Scripts.TFFA.MainMenu.Menu.Open();
             Logger.Log("Outgame started.");
         }
 
         public void StartIngame()
         {
-            InputControl.Init();
-            MainMenu.CloseActiveMenus();
+            Client.Scripts.TFFA.InputControl.Init();
+            GUCMenu.CloseActiveMenus();
             Ingame = true;
             Logger.Log("Ingame started.");
         }

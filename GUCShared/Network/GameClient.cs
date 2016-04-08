@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.WorldObjects;
+using GUC.Types;
 
 namespace GUC.Network
 {
@@ -36,6 +37,10 @@ namespace GUC.Network
 
         new public int ID { get { return base.ID; } }
 
+        World specWorld;
+        bool isSpectating = false;
+        public bool IsSpectating { get { return this.isSpectating; } }
+
         #endregion
 
         partial void pSetControl(NPC npc);
@@ -46,6 +51,19 @@ namespace GUC.Network
 
             pSetControl(npc);
         }
+
+        /// <summary>
+        /// The client will lose control of its current NPC and move into spectator mode (free view).
+        /// </summary>
+        public void SetToSpectate(World world, Vec3f position, Vec3f direction)
+        {
+            if (world == null)
+                throw new Exception("World is null!");
+            if (!world.IsCreated)
+                throw new Exception("World is not created!");
+            pSetToSpectate(world, position, direction);
+        }
+        partial void pSetToSpectate(World world, Vec3f pos, Vec3f dir);
 
         #region Read & Write
 

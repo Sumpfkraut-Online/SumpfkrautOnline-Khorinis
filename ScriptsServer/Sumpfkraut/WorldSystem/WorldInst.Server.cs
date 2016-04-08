@@ -7,7 +7,7 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
 {
     public partial class WorldInst
     {
-        public static WorldInst NewWorld;
+        public static WorldInst Current;
 
         public WorldInst(WorldDef def) : this()
         {

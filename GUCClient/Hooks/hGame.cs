@@ -36,6 +36,8 @@ namespace GUC.Client.Hooks
         {
             try
             {
+                GameTime.Update();
+
                 if (!outgameStarted)
                 {
                     outgameStarted = true;
@@ -43,17 +45,11 @@ namespace GUC.Client.Hooks
                     ScriptManager.Interface.StartOutgame();
                 }
 
-                GameTime.Update();
-
                 GUCTimer.Update(GameTime.Ticks);
                 GameClient.Client.Update();
+
                 InputHandler.Update();
                 ScriptManager.Interface.Update(GameTime.Ticks);
-
-                if (InputHandler.IsPressed(WinApi.User.Enumeration.VirtualKeys.F1))
-                {
-                    oCGame.LoadGame(true, "NEWWORLD\\NEWWORLD.ZEN");
-                }
 
                 #region Gothic 
                 int address = Convert.ToInt32(message);

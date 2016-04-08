@@ -30,6 +30,12 @@ namespace GUC.Client
                     VirtualKeys key = (VirtualKeys)i;
                     if ((Input.GetAsyncKeyState(key) & 0x8001) == 0x8001 || (Input.GetAsyncKeyState(key) & 0x8000) == 0x8000)
                     {
+                        if (key == VirtualKeys.F4)
+                        {
+                            Program.Exit();
+                            return;
+                        }
+
                         if (!keys[i]) //newly pressed
                         {
                             keys[i] = true;
