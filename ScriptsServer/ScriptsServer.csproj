@@ -136,7 +136,7 @@
       <Link>Sumpfkraut\WorldSystem\WorldInst.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\TFFA\Enums.cs">
-      <Link>Enums.cs</Link>
+      <Link>TFFA\Enums.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\TFFA\TFFAClient.cs">
       <Link>TFFA\TFFAClient.cs</Link>

@@ -21,6 +21,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 this.BaseInst.gVob.SetFatness(Fatness);
                 using (var vec = Gothic.Types.zVec3.Create(ModelScale.X, ModelScale.Y, ModelScale.Z))
                     this.BaseInst.gVob.SetModelScale(vec);
+                this.BaseInst.gVob.Name.Set(CustomName);
             }
 
             this.BaseInst.ForEachEquippedItem(i => this.pEquipItem((ItemInst)i.ScriptObject));

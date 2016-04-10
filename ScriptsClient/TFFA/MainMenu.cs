@@ -23,7 +23,7 @@ namespace GUC.Client.Scripts.TFFA
             const int dist = 38;
             AddButton("Team Wählen", "", offset + dist * 0, TeamMenu.Menu.Open);
             bClass = AddButton("Klasse Wählen", "", offset + dist * 1, ClassMenu.Menu.Open);
-            AddButton("Name ändern", "", offset + dist * 2, null);
+            AddButton("Name ändern", "", offset + dist * 2, NameMenu.Menu.Open);
             bContinue = AddButton("Weiterspielen", "Aktuelles Spiel fortführen.", offset + dist * 3, Close);
             AddButton("Beenden", "Die Welt von SumpfkrautOnline verlassen.", offset + dist * 5, ExitMenu.Menu.Open);
             bContinue.Enabled = false;

@@ -41,6 +41,29 @@ namespace GUC.Scripts.TFFA
 
                 case MenuMsgID.OpenScoreboard:
                     Scoreboard.Menu.SetTime(stream.ReadInt());
+                    int count = stream.ReadByte();
+                    for (int i = 0; i < count; i++)
+                    {
+                        string name = stream.ReadString();
+                        int kills = stream.ReadByte();
+                        int deaths = stream.ReadByte();
+                        int damage = stream.ReadUShort();
+                        Scoreboard.Menu.AddPlayer(Team.AL, name, kills, deaths, damage);
+                    }
+                    count = stream.ReadByte();
+                    for (int i = 0; i < count; i++)
+                    {
+                        string name = stream.ReadString();
+                        int kills = stream.ReadByte();
+                        int deaths = stream.ReadByte();
+                        int damage = stream.ReadUShort();
+                        Scoreboard.Menu.AddPlayer(Team.NL, name, kills, deaths, damage);
+                    }
+                    break;
+
+                case MenuMsgID.WinMsg:
+                    Team winner = (Team)stream.ReadByte();
+                    Scoreboard.Menu.OpenWinner(winner);
                     break;
             }
         }

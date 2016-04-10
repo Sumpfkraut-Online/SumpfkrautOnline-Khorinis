@@ -39,6 +39,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public float Fatness = 0;
         public Vec3f ModelScale = new Vec3f(1,1,1);
 
+        public string CustomName = "";
+
         #endregion
 
         partial void pConstruct();
@@ -203,6 +205,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 CustomVoice = (HumVoices)stream.ReadByte();
                 Fatness = stream.ReadFloat();
                 ModelScale = stream.ReadVec3f();
+                CustomName = stream.ReadString();
             }
         }
 
@@ -218,6 +221,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 stream.Write((byte)CustomVoice);
                 stream.Write(Fatness);
                 stream.Write(ModelScale);
+                stream.Write(CustomName);
             }
             else
             {

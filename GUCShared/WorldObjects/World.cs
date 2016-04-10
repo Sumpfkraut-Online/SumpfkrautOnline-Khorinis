@@ -153,8 +153,6 @@ namespace GUC.WorldObjects
             vobsByID.Add(vob);
             vobs.Add(vob, ref vob.collID);
 
-            Log.Logger.Log("AddVob " + vob.VobType + ": " + vob.ID);
-
             pAddVob(vob);
         }
 
@@ -166,8 +164,6 @@ namespace GUC.WorldObjects
 
             if (vob.World != this)
                 throw new ArgumentException("Vob is not in this world!");
-
-            Log.Logger.Log("RemoveVob " + vob.VobType + ": " + vob.ID);
 
             pRemoveVob(vob);
 

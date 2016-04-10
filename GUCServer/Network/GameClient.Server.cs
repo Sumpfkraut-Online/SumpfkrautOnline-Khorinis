@@ -139,7 +139,7 @@ namespace GUC.Network
                     this.character = null;
                 }
             }
-            
+
         }
 
         #region Player control
@@ -201,12 +201,13 @@ namespace GUC.Network
             int oldVobCount = 0;
             from.ForEachSurroundingCell(cell =>
             {
-                if (!(cell.X <= to.X + 1 && cell.X >= to.X - 1 && cell.Y <= to.Y + 1 && cell.Y >= to.Y - 1))
+                if (cell.X > to.X + 1 || cell.X < to.X - 1 || cell.Y > to.Y + 1 || cell.Y < to.Y - 1)
                 {
                     if (cell.DynVobs.GetCount() > 0)
                     {
                         oldCells[i++] = cell;
                         oldVobCount += cell.DynVobs.GetCount();
+                        Logger.Log("Add old Cell");
                     }
                 }
             });
@@ -216,7 +217,7 @@ namespace GUC.Network
             NetCell[] newCells = new NetCell[NetCell.NumSurroundingCells];
             to.ForEachSurroundingCell(cell =>
             {
-                if (!(cell.X <= from.X + 1 && cell.X >= from.X - 1 && cell.Y <= from.Y + 1 && cell.Y >= from.Y - 1))
+                if (cell.X > from.X + 1 || cell.X < from.X - 1 || cell.Y > from.Y + 1 || cell.Y < from.Y - 1)
                 {
                     if (cell.DynVobs.GetCount() > 0)
                         newCells[i++] = cell;

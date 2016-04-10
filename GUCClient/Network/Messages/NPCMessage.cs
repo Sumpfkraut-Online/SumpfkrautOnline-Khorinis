@@ -42,16 +42,11 @@ namespace GUC.Client.Network.Messages
 
         #region Jumping
 
-        /*public static void WriteJump(NPC npc)
+        public static void WriteJump(NPC npc)
         {
-            if (DateTime.UtcNow.Ticks > npc.nextJumpUpdate)
-            {
-                PacketWriter stream = GameClient.SetupStream(NetworkIDs.NPCJumpMessage);
-                stream.Write((ushort)npc.ID);
-                GameClient.Send(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
-
-                npc.nextJumpUpdate = DateTime.UtcNow.Ticks + DelayBetweenMessages;
-            }
+            PacketWriter stream = GameClient.SetupStream(NetworkIDs.NPCJumpMessage);
+            stream.Write((ushort)npc.ID);
+            GameClient.Send(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
         }
 
         public static void ReadJump(PacketReader stream)
@@ -61,10 +56,9 @@ namespace GUC.Client.Network.Messages
             NPC npc;
             if (World.Current.TryGetVob(id, out npc))
             {
-                if (npc.ScriptObject != null)
-                    npc.ScriptObject.OnCmdJump();
+                npc.ScriptObject.Jump();
             }
-        }*/
+        }
 
         #endregion
 

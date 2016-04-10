@@ -16,6 +16,9 @@ namespace GUC.Server.Scripts.TFFA
 {
     public static class TFFAGame
     {
+        const long FightTime = 4 * TimeSpan.TicksPerMinute;
+        const int KillsToWin = 30;
+
         static List<Tuple<Vec3f, Vec3f>> NLSpawns = new List<Tuple<Vec3f, Vec3f>>()
         {
             new Tuple<Vec3f, Vec3f>(new Vec3f(3728, 645, 282), new Vec3f(-0.245f, 0, -0.95f)),
@@ -71,7 +74,7 @@ namespace GUC.Server.Scripts.TFFA
             if (client.Class != c && client.Character != null)
             {
                 client.Character.SetHealth(0);
-                if (status == TFFAPhase.Wait)
+                if (status == TFFAPhase.Warmup)
                     SpawnNewPlayer(client);
             }
             client.Class = c;
@@ -129,6 +132,27 @@ namespace GUC.Server.Scripts.TFFA
                 stream.Write((byte)MenuMsgID.OpenScoreboard);
                 stream.Write((int)(gameTimer.GetRemainingTicks() / TimeSpan.TicksPerSecond));
 
+                var list = Teams[Team.AL];
+                stream.Write((byte)list.Count);
+                for (int i = 0; i < list.Count; i++)
+                {
+                    stream.Write(list[i].Name);
+                    stream.Write((byte)list[i].Kills);
+                    stream.Write((byte)list[i].Deaths);
+                    stream.Write((ushort)list[i].Damage);
+                }
+
+                list = Teams[Team.NL];
+                stream.Write((byte)list.Count);
+                for (int i = 0; i < list.Count; i++)
+                {
+                    stream.Write(list[i].Name);
+                    stream.Write((byte)list[i].Kills);
+                    stream.Write((byte)list[i].Deaths);
+                    stream.Write((ushort)list[i].Damage);
+                }
+
+
                 for (int i = 0; i < scoreboardClients.Count; i++)
                     scoreboardClients[i].BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.UNRELIABLE);
             }
@@ -138,6 +162,8 @@ namespace GUC.Server.Scripts.TFFA
         static GUCTimer statUpdateTimer;
         static TFFAGame()
         {
+            NPCInst.sOnHit += OnHit;
+
             statUpdateTimer = new GUCTimer(10000000, UpdateStats);
             statUpdateTimer.Start();
 
@@ -149,6 +175,40 @@ namespace GUC.Server.Scripts.TFFA
             PhaseFight();
         }
 
+        static int ALKills = 0;
+        static int NLKills = 0;
+
+        static void AddKill(TFFAClient client)
+        {
+            client.Kills++;
+            if (client.Team == Team.AL)
+            {
+                ALKills++;
+            }
+            else if (client.Team == Team.NL)
+            {
+                NLKills++;
+            }
+
+
+            if (ALKills >= KillsToWin || NLKills >= KillsToWin)
+                PhaseEnd();
+        }
+
+        static void OnHit(NPCInst attacker, NPCInst target, int damage)
+        {
+            if (attacker.BaseInst.Client == null || target.BaseInst.Client == null)
+                return;
+
+            ((TFFAClient)attacker.BaseInst.Client.ScriptObject).Damage += damage;
+            if (target.BaseInst.HP <= 0)
+            {
+                //Log.Logger.Log()
+                ((TFFAClient)target.BaseInst.Client.ScriptObject).Deaths++;
+                AddKill((TFFAClient)attacker.BaseInst.Client.ScriptObject);
+            }
+        }
+
         static TFFAPhase status;
         public static TFFAPhase Status { get { return status; } }
 
@@ -156,18 +216,44 @@ namespace GUC.Server.Scripts.TFFA
         {
             Log.Logger.Log("Wait Phase");
             status = TFFAPhase.Wait;
-            TFFAClient.ForEach(client => AddToTeam(client, Team.Spec));
+            TFFAClient.ForEach(client =>
+            {
+                client.Deaths = 0;
+                client.Kills = 0;
+                client.Damage = 0;
+                ALKills = 0;
+                NLKills = 0;
+            });
+            RemoveAllPlayers();
 
             gameTimer.SetInterval(20 * TimeSpan.TicksPerSecond);
             gameTimer.SetCallback(PhaseWarmup);
             gameTimer.Restart();
         }
 
+        static void RemoveAllPlayers()
+        {
+            WorldInst.Current.BaseWorld.ForEachVob(v =>
+            {
+                if (v is GUC.WorldObjects.NPC && !((GUC.WorldObjects.NPC)v).IsPlayer)
+                    v.Despawn();
+            });
+        }
+
         static void PhaseWarmup()
         {
             Log.Logger.Log("Warmup Phase");
             status = TFFAPhase.Warmup;
-            TFFAClient.ForEach(client => SpawnNewPlayer(client));
+            TFFAClient.ForEach(client =>
+            {
+                SpawnNewPlayer(client);
+                client.Deaths = 0;
+                client.Kills = 0;
+                client.Damage = 0;
+                ALKills = 0;
+                NLKills = 0;
+            });
+            RemoveAllPlayers();
 
             gameTimer.SetInterval(10 * TimeSpan.TicksPerSecond);
             gameTimer.SetCallback(PhaseFight);
@@ -178,8 +264,18 @@ namespace GUC.Server.Scripts.TFFA
         {
             Log.Logger.Log("Fight Phase");
             status = TFFAPhase.Fight;
+            TFFAClient.ForEach(client =>
+            {
+                SpawnNewPlayer(client);
+                client.Deaths = 0;
+                client.Kills = 0;
+                client.Damage = 0;
+                ALKills = 0;
+                NLKills = 0;
+            });
+            RemoveAllPlayers();
 
-            gameTimer.SetInterval(5 * TimeSpan.TicksPerMinute);
+            gameTimer.SetInterval(FightTime);
             gameTimer.SetCallback(PhaseEnd);
             gameTimer.Restart();
         }
@@ -188,6 +284,25 @@ namespace GUC.Server.Scripts.TFFA
         {
             Log.Logger.Log("End Phase");
             status = TFFAPhase.End;
+
+            if (ALKills > NLKills)
+            {
+                Teams[Team.NL].ForEach(client => client.Character.SetHealth(0));
+                var stream = GameClient.GetMenuMsgStream();
+                stream.Write((byte)MenuMsgID.WinMsg);
+                stream.Write((byte)Team.AL);
+                TFFAClient.ForEach(client => client.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE));
+                Log.Logger.Log("TEAM GOMEZ HAT GEWONNEN");
+            }
+            else if (NLKills > ALKills)
+            {
+                Teams[Team.AL].ForEach(client => client.Character.SetHealth(0));
+                var stream = GameClient.GetMenuMsgStream();
+                stream.Write((byte)MenuMsgID.WinMsg);
+                stream.Write((byte)Team.NL);
+                TFFAClient.ForEach(client => client.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE));
+                Log.Logger.Log("TETRIANDOCH HAT GEWONNEN");
+            }
 
             gameTimer.SetInterval(10 * TimeSpan.TicksPerSecond);
             gameTimer.SetCallback(PhaseWait);
@@ -223,6 +338,9 @@ namespace GUC.Server.Scripts.TFFA
             if (client.Team == Team.Spec || client.Class == PlayerClass.None)
                 return;
 
+            if (client.Character != null && client.Character.BaseInst.HP > 0)
+                client.Character.SetHealth(0);
+
             var def = BaseVobDef.Get<NPCDef>("player");
             NPCInst npc = new NPCInst(def);
 
@@ -246,6 +364,8 @@ namespace GUC.Server.Scripts.TFFA
             npc.Fatness = rand.Next(-100, 250) / 100.0f;
 
             npc.ModelScale = new Vec3f(rand.Next(95, 105) / 100.0f, rand.Next(95, 105) / 100.0f, rand.Next(95, 105) / 100.0f);
+
+            npc.CustomName = client.Name;
 
             npc.UseCustoms = true;
 
@@ -287,10 +407,9 @@ namespace GUC.Server.Scripts.TFFA
                 spawnPoint = NLSpawns[rand.Next(0, 6)];
             }
 
-
             npc.AddItem(weapon);
             npc.EquipItem(1, weapon); // 1 = DrawnWeapon
-            
+
             npc.AddItem(armor);
             npc.EquipItem(0, armor);
 
@@ -298,7 +417,8 @@ namespace GUC.Server.Scripts.TFFA
             {
                 npc.ApplyOverlay(overlay);
             }
-            
+
+
             npc.Spawn(WorldInst.Current, spawnPoint.Item1, spawnPoint.Item2);
             client.SetControl(npc);
         }

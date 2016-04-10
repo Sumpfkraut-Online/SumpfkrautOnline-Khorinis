@@ -34,6 +34,9 @@ namespace GUC.Network
             if (this.character == null)
                 return;
 
+            if (this.character.IsDead)
+                return;
+
             if (this.nextState == state)
                 return;
 
@@ -45,6 +48,9 @@ namespace GUC.Network
         void UpdateHeroState(long now)
         {
             if (this.character == null)
+                return;
+
+            if (this.character.IsDead)
                 return;
 
             if (this.character.State == nextState)
@@ -62,10 +68,28 @@ namespace GUC.Network
         {
             if (this.character == null)
                 return;
-            
+
+            if (this.character.IsDead)
+                return;
+
             if (GameTime.Ticks > nextAniUpdate)
             {
                 NPCMessage.WriteAniStart(job);
+                nextAniUpdate = GameTime.Ticks + DelayBetweenMessages;
+            }
+        }
+        
+        public void DoJump()
+        {
+            if (this.character == null)
+                return;
+
+            if (this.character.IsDead)
+                return;
+
+            if (GameTime.Ticks > nextAniUpdate)
+            {
+                NPCMessage.WriteJump(this.character);
                 nextAniUpdate = GameTime.Ticks + DelayBetweenMessages;
             }
         }
@@ -127,6 +151,8 @@ namespace GUC.Network
                     ((NPC)v).Update(now);
             });
 
+            if (this.character == null || this.character.IsDead)
+                return;
             VobMessage.WritePosDirMessage(now);
 
             UpdateHeroState(now);
@@ -263,6 +289,10 @@ namespace GUC.Network
 
                 case NetworkIDs.NPCHealthMessage:
                     NPCMessage.ReadHealthMessage(stream);
+                    break;
+
+                case NetworkIDs.NPCJumpMessage:
+                    NPCMessage.ReadJump(stream);
                     break;
 
                 default:

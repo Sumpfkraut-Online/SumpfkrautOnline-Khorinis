@@ -50,8 +50,7 @@ namespace GUC.Server.Network.Messages
             {
                 if (npc == character /*|| (client.VobControlledList.Contains(npc) && state <= NPCStates.MoveBackward)*/) //is it a controlled NPC?
                 {
-                    if (npc.ScriptObject != null)
-                        npc.ScriptObject.Jump();
+                    npc.ScriptObject.OnCmdJump();
                 }
             }
         }
@@ -60,12 +59,11 @@ namespace GUC.Server.Network.Messages
         {
             PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCJumpMessage);
             stream.Write((ushort)npc.ID);
-
             npc.Cell.ForEachSurroundingClient(c => c.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
         }
 
         #endregion
-        
+
         #region Item drawing
 
         public static void WriteDrawItem(IEnumerable<GameClient> list, NPC npc, Item item, bool fast)

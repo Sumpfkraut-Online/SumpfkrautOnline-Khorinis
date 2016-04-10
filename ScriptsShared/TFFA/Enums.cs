@@ -40,5 +40,6 @@ namespace GUC.Scripts.TFFA
         SetName,
         OpenScoreboard,
         CloseScoreboard,
+        WinMsg
     }
 }

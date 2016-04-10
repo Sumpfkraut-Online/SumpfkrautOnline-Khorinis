@@ -50,6 +50,10 @@ namespace GUC.Client.Scripts.TFFA
             {
                 Scoreboard.Menu.Open();
             }
+            else if (key == VirtualKeys.Menu)
+            {
+                TFFAClient.Client.BaseClient.DoJump();
+            }
             else if (key == VirtualKeys.P)
             {
                 if (TFFAClient.Client.Character != null && TFFAClient.Client.Character.IsSpawned)

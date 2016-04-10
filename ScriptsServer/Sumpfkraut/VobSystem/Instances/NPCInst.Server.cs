@@ -67,6 +67,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             this.comboTimer = new GUCTimer(AbleCombo);
         }
 
+        public void OnCmdJump()
+        {
+            if (!this.IsInAni)
+                this.Jump();
+        }
+
         public void OnCmdMove(NPCStates state)
         {
             if (state == this.State)
@@ -91,6 +97,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 canCombo = true;
             }
         }
+
+        public delegate void OnHitHandler(NPCInst attacker, NPCInst target, int damage);
+        public static event OnHitHandler sOnHit;
 
         void CalcHit()
         {
@@ -147,6 +156,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                                         {
                                             target.SetHealth(target.BaseInst.HP - damage);
                                         }
+
+                                        if (sOnHit != null)
+                                            sOnHit(this, target, damage);
                                     }
                                 }
                             }

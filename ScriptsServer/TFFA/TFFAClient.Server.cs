@@ -9,6 +9,10 @@ namespace GUC.Scripts.TFFA
 {
     partial class TFFAClient : GameClient.IScriptClient
     {
+        public int Kills = 0;
+        public int Deaths = 0;
+        public int Damage = 0;
+
         public static void ForEach(Action<TFFAClient> action)
         {
             GameClient.ForEach(gc => action((TFFAClient)gc.ScriptObject));
@@ -75,6 +79,7 @@ namespace GUC.Scripts.TFFA
                     TFFAGame.SelectClass(this, (PlayerClass)stream.ReadByte());
                     break;
                 case MenuMsgID.SetName:
+                    this.Name = stream.ReadString();
                     break;
             }
 

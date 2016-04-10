@@ -13,8 +13,7 @@ namespace GUC.Scripts.TFFA
     {
         public PlayerClass Class = PlayerClass.None;
         public Team Team = Team.Spec;
-        public int Kills = 0;
-        public int Deaths = 0;
+        public string Name = "Spieler";
 
         GameClient baseClient;
         public GameClient BaseClient { get { return this.baseClient; } }

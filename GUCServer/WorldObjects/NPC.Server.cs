@@ -30,6 +30,7 @@ namespace GUC.WorldObjects
             void OnCmdUnequipItem(Item item);
             void OnCmdAniStart(Animation ani);
             void OnCmdAniStop(bool fadeOut);
+            void OnCmdJump();
         }
 
         #endregion

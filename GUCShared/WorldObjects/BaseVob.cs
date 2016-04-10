@@ -174,9 +174,10 @@ namespace GUC.WorldObjects
 
             this.isCreated = false;
 
+            pDespawn();
+
             this.world.RemoveVob(this);
             this.world = null;
-            pDespawn();
 
         }
         #endregion

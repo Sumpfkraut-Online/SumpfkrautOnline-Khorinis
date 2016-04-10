@@ -43,7 +43,7 @@ namespace GUC.Client.Scripts.Sumpfkraut
                 using (var str = Gothic.Types.zString.Create("2H"))
                     ScriptClient.Client.Character.BaseInst.gVob.SetWeaponMode2(str);
             }
-            else if (key == VirtualKeys.O)
+            else if (key == VirtualKeys.Menu)
             {
             }
             else if (key == VirtualKeys.F1)
