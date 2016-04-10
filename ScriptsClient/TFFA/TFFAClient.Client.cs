@@ -23,6 +23,9 @@ namespace GUC.Scripts.TFFA
                     TeamMenu.Menu.SetCounts(countSpec, countAL, countNL);
                     break;
                 case MenuMsgID.OpenClassMenu:
+                    int tLight = stream.ReadByte();
+                    int tHeavy = stream.ReadByte();
+                    ClassMenu.Menu.SetCounts(tLight, tHeavy);
                     break;
                 case MenuMsgID.SelectTeam:
                     this.Team = (Team)stream.ReadByte();
@@ -34,6 +37,10 @@ namespace GUC.Scripts.TFFA
                 case MenuMsgID.SelectClass:
                     break;
                 case MenuMsgID.SetName:
+                    break;
+
+                case MenuMsgID.OpenScoreboard:
+                    Scoreboard.Menu.SetTime(stream.ReadInt());
                     break;
             }
         }

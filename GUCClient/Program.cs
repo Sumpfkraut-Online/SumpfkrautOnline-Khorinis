@@ -6,6 +6,7 @@ using GUC.Network;
 using Gothic;
 using WinApi;
 using System.IO;
+using Gothic.Types;
 
 namespace GUC.Client
 {
@@ -40,14 +41,14 @@ namespace GUC.Client
 
             Program.GUCDll = Program.ProjectPath + "GUC.dll";
         }
-        
+
         public static void Exit()
         {
             GameClient.Client.Disconnect();
-            Thread.Sleep(123);
-            zCOption.GetSectionByName("INTERNAL").GetEntryByName("gameAbnormalExit").VarValue.Set("0");
-            zCOption.Save("Gothic.ini");
+            Thread.Sleep(200);
             CGameManager.ExitGameVar = 1;
+            zCOption.GetSectionByName("internal").GetEntryByName("gameAbnormalExit").VarValue.Set("0");
+            zCOption.Save(zString.Create("Gothic.ini")); // don't dispose this zString or crashes will happen
             //Process.CDECLCALL<NullReturnCall>(0x00425F30); // ExitGameFunc
         }
     }

@@ -11,8 +11,9 @@ namespace GUC.Client.Network.Messages
     {
         public static void ReadVobMsg(PacketReader stream)
         {
+            int id = stream.ReadUShort();
             BaseVob vob;
-            if (World.current.TryGetVob(stream.ReadUShort(), out vob))
+            if (World.current.TryGetVob(id, out vob))
             {
                 vob.ScriptObject.OnReadScriptVobMsg(stream);
             }

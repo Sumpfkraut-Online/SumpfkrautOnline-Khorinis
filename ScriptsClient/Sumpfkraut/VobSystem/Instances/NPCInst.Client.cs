@@ -14,6 +14,15 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public override void Spawn(WorldInst world)
         {
             base.Spawn(world);
+            if (UseCustoms)
+            {
+                this.BaseInst.gVob.SetAdditionalVisuals(HumBodyMeshs.HUM_BODY_NAKED0.ToString(), (int)CustomBodyTex, 0, CustomHeadMesh.ToString(), (int)CustomHeadTex, 0, -1);
+                this.BaseInst.gVob.Voice = (int)CustomVoice;
+                this.BaseInst.gVob.SetFatness(Fatness);
+                using (var vec = Gothic.Types.zVec3.Create(ModelScale.X, ModelScale.Y, ModelScale.Z))
+                    this.BaseInst.gVob.SetModelScale(vec);
+            }
+
             this.BaseInst.ForEachEquippedItem(i => this.pEquipItem((ItemInst)i.ScriptObject));
         }
 
@@ -88,8 +97,14 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     }
                     break;
                 default:
-                    return;
+                    break;
             }
+        }
+
+        public void OnTick(long now)
+        {
+            if (this.IsInAttackAni)
+                this.BaseInst.gVob.AniCtrl.ShowWeaponTrail();
         }
     }
 }

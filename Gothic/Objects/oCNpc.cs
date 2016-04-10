@@ -506,6 +506,13 @@ namespace Gothic.Objects
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.DoDie, killer);
         }
 
+
+        public int Voice
+        {
+            get { return Process.ReadInt(Address + VarOffsets.voice); }
+            set { Process.Write(value, Address + VarOffsets.voice); }
+        }
+
         /*
         public static oCNpc StealNPC(Process process)
         {
@@ -659,11 +666,6 @@ namespace Gothic.Objects
             get { return new zVec3(Process, Address + (int)Offsets.model_scale); }
         }
 
-        public int Voice
-        {
-            get { return Process.ReadInt(Address + (int)Offsets.voice); }
-            set { Process.Write(value, Address + (int)Offsets.voice); }
-        }
 
         public int VoiceIndex
         {

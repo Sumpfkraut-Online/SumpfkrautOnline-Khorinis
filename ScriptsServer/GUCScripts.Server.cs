@@ -7,7 +7,6 @@ using GUC.Log;
 using GUC.Scripting;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
-using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Scripts.Sumpfkraut.Visuals;
 
 namespace GUC.Scripts
@@ -31,10 +30,11 @@ namespace GUC.Scripts
 
             // HUMAN MODEL
             var m = new ModelDef("human", "humans.mds");
-            m.Radius = 30;
+            m.Radius = 40;
             m.Height = 200;
             
             Add2hAttacks(m);
+            Add1hAttacks(m);
 
             m.Create();
 
@@ -60,6 +60,96 @@ namespace GUC.Scripts
             WorldInst.Current.Clock.Start();
         }
 
+        void Add1hAttacks(ModelDef model)
+        {
+            var ov1 = new ScriptOverlay("1HST1", "Humans_1hST1"); model.AddOverlay(ov1);
+            var ov2 = new ScriptOverlay("1HST2", "Humans_1hST2"); model.AddOverlay(ov2);
+
+            // 1h COMBO 1
+            ScriptAniJob aniJob = new ScriptAniJob("attack1hfwd1");
+            aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HFwd1;
+            aniJob.AniName = "s_1hAttack";
+            model.AddAniJob(aniJob);
+
+            var ani = new ScriptAni(8400000); ani.ComboTime = 4400000; ani.HitTime = 2000000; aniJob.SetDefaultAni(ani);
+            ani = new ScriptAni(13200000); ani.ComboTime = 4400000; ani.HitTime = 1200000; aniJob.AddOverlayAni(ani, ov1);
+            ani = new ScriptAni(11200000); ani.ComboTime = 3600000; ani.HitTime = 1200000; aniJob.AddOverlayAni(ani, ov2);
+            
+            // 1h COMBO 2
+            aniJob = new ScriptAniJob("attack1hfwd2");
+            aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HFwd2;
+            aniJob.AniName = "s_1hAttack";
+            model.AddAniJob(aniJob);
+
+            ani = new ScriptAni(5200000); ani.StartFrame = 26; ani.ComboTime = 3200000; ani.HitTime = 3200000; aniJob.SetDefaultAni(ani);
+            ani = new ScriptAni(12500000); ani.StartFrame = 36; ani.ComboTime = 5200000; ani.HitTime = 2000000; aniJob.AddOverlayAni(ani, ov1);
+            ani = new ScriptAni(10800000); ani.StartFrame = 33; ani.ComboTime = 5200000; ani.HitTime = 2800000; aniJob.AddOverlayAni(ani, ov2);
+
+
+            // 1h COMBO 3
+            aniJob = new ScriptAniJob("attack1hfwd3");
+            aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HFwd3;
+            aniJob.AniName = "s_1hAttack";
+            model.AddAniJob(aniJob);
+
+            ani = new ScriptAni(12500000); ani.StartFrame = 71; ani.ComboTime = 5200000; ani.HitTime = 2000000; aniJob.AddOverlayAni(ani, ov1);
+            ani = new ScriptAni(10800000); ani.StartFrame = 65; ani.ComboTime = 6800000; ani.HitTime = 4800000; aniJob.AddOverlayAni(ani, ov2);
+            
+            // 1h COMBO 4
+            aniJob = new ScriptAniJob("attack1hfwd4");
+            aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HFwd4;
+            aniJob.AniName = "s_1hAttack";
+            model.AddAniJob(aniJob);
+
+            ani = new ScriptAni(6400000); ani.StartFrame = 106; ani.ComboTime = 2400000; ani.HitTime = 2400000; aniJob.AddOverlayAni(ani, ov1);
+            ani = new ScriptAni(6400000); ani.StartFrame = 97; ani.ComboTime = 5600000; ani.HitTime = 5600000; aniJob.AddOverlayAni(ani, ov2);
+            
+            // 1h LEFT ATTACK
+            aniJob = new ScriptAniJob("attack1hleft");
+            aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HLeft;
+            aniJob.AniName = "t_1hAttackL";
+            model.AddAniJob(aniJob);
+
+            ani = new ScriptAni(11600000); ani.ComboTime = 6000000; ani.HitTime = 2000000; aniJob.SetDefaultAni(ani);
+            ani = new ScriptAni(9200000); ani.ComboTime = 4000000; ani.HitTime = 1600000; aniJob.AddOverlayAni(ani, ov1);
+            ani = new ScriptAni(7200000); ani.ComboTime = 3200000; ani.HitTime = 1200000; aniJob.AddOverlayAni(ani, ov2);
+
+
+            // 1h RIGHT ATTACK
+            aniJob = new ScriptAniJob("attack1hright");
+            aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HRight;
+            aniJob.AniName = "t_1hAttackR";
+            model.AddAniJob(aniJob);
+
+            ani = new ScriptAni(11600000); ani.ComboTime = 6000000; ani.HitTime = 2000000; aniJob.SetDefaultAni(ani);
+            ani = new ScriptAni(9600000); ani.ComboTime = 4000000; ani.HitTime = 1600000; aniJob.AddOverlayAni(ani, ov1);
+            ani = new ScriptAni(7600000); ani.ComboTime = 3200000; ani.HitTime = 1200000; aniJob.AddOverlayAni(ani, ov2);
+
+            // 1h RUN ATTACK
+            aniJob = new ScriptAniJob("attack1hrun");
+            aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HRun;
+            aniJob.AniName = "t_1hAttackMove";
+            model.AddAniJob(aniJob);
+
+            ani = new ScriptAni(11200000); ani.ComboTime = 11200000; ani.HitTime = 10000000; aniJob.SetDefaultAni(ani);
+            
+            // 1h Parry
+            aniJob = new ScriptAniJob("attack1hparry");
+            aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HParry;
+            aniJob.AniName = "T_1HPARADE_0";
+            model.AddAniJob(aniJob);
+
+            ani = new ScriptAni(5600000); ani.ComboTime = 5600000; aniJob.SetDefaultAni(ani);
+            
+            // 1h Dodge
+            aniJob = new ScriptAniJob("attack1hdodge");
+            aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HDodge;
+            aniJob.AniName = "T_1HPARADEJUMPB";
+            model.AddAniJob(aniJob);
+
+            ani = new ScriptAni(5200000); ani.ComboTime = 5200000; aniJob.SetDefaultAni(ani);
+        }
+
         void Add2hAttacks(ModelDef model)
         {
             var ov1 = new ScriptOverlay("2HST1", "Humans_2hST1"); model.AddOverlay(ov1);
@@ -74,7 +164,7 @@ namespace GUC.Scripts
             var ani = new ScriptAni(10000000); ani.ComboTime = 5800000; ani.HitTime = 2800000; aniJob.SetDefaultAni(ani);
             ani = new ScriptAni(13000000); ani.ComboTime = 6000000; ani.HitTime = 2000000; aniJob.AddOverlayAni(ani, ov1);
             ani = new ScriptAni(13000000); ani.ComboTime = 4800000; ani.HitTime = 1600000; aniJob.AddOverlayAni(ani, ov2);
-            
+
             // 2h COMBO 2
             aniJob = new ScriptAniJob("attack2hfwd2");
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HFwd2;
@@ -94,7 +184,7 @@ namespace GUC.Scripts
 
             ani = new ScriptAni(7000000); ani.StartFrame = 80; ani.ComboTime = 7000000; ani.HitTime = 4000000; aniJob.AddOverlayAni(ani, ov1);
             ani = new ScriptAni(13500000); ani.StartFrame = 81; ani.ComboTime = 8800000; ani.HitTime = 5600000; aniJob.AddOverlayAni(ani, ov2);
-            
+
             // 2h COMBO 4
             aniJob = new ScriptAniJob("attack2hfwd4");
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HFwd4;
@@ -102,7 +192,7 @@ namespace GUC.Scripts
             model.AddAniJob(aniJob);
 
             ani = new ScriptAni(7500000); ani.StartFrame = 126; ani.ComboTime = 7500000; ani.HitTime = 6800000; aniJob.AddOverlayAni(ani, ov2);
-            
+
             // 2h LEFT ATTACK
             aniJob = new ScriptAniJob("attack2hleft");
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HLeft;
@@ -131,7 +221,7 @@ namespace GUC.Scripts
             model.AddAniJob(aniJob);
 
             ani = new ScriptAni(8800000); ani.ComboTime = 8800000; ani.HitTime = 6000000; aniJob.SetDefaultAni(ani);
-            
+
             // 2h Parry
             aniJob = new ScriptAniJob("attack2hparry");
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HParry;
@@ -139,7 +229,7 @@ namespace GUC.Scripts
             model.AddAniJob(aniJob);
 
             ani = new ScriptAni(5600000); ani.ComboTime = 5600000; aniJob.SetDefaultAni(ani);
-            
+
             // 2h Dodge
             aniJob = new ScriptAniJob("attack2hdodge");
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HDodge;
@@ -159,7 +249,8 @@ namespace GUC.Scripts
             itemDef.ItemType = ItemTypes.Wep2H;
             itemDef.Material = Enumeration.ItemMaterials.Metal;
             itemDef.Model = m;
-            itemDef.Range = 100;
+            itemDef.Range = 110;
+            itemDef.Damage = 40;
             itemDef.Create();
 
             // GARDERÜSTUNG
@@ -169,6 +260,7 @@ namespace GUC.Scripts
             itemDef.Name = "Gardistenrüstung";
             itemDef.Material = Enumeration.ItemMaterials.Leather;
             itemDef.ItemType = ItemTypes.Armor;
+            itemDef.Protection = 30;
             itemDef.VisualChange = "Armor_Bloodwyn_ADDON.asc";
             itemDef.Model = m;
             itemDef.Create();
@@ -181,7 +273,8 @@ namespace GUC.Scripts
             itemDef.ItemType = ItemTypes.Wep1H;
             itemDef.Material = Enumeration.ItemMaterials.Metal;
             itemDef.Model = m;
-            itemDef.Range = 70;
+            itemDef.Damage = 35;
+            itemDef.Range = 90;
             itemDef.Create();
 
             // SCHATTENRÜSTUNG
@@ -192,6 +285,7 @@ namespace GUC.Scripts
             itemDef.Material = Enumeration.ItemMaterials.Leather;
             itemDef.ItemType = ItemTypes.Armor;
             itemDef.VisualChange = "Armor_Diego.asc";
+            itemDef.Protection = 25;
             itemDef.Model = m;
             itemDef.Create();
 
@@ -203,7 +297,8 @@ namespace GUC.Scripts
             itemDef.ItemType = ItemTypes.Wep2H;
             itemDef.Material = Enumeration.ItemMaterials.Metal;
             itemDef.Model = m;
-            itemDef.Range = 90;
+            itemDef.Damage = 45;
+            itemDef.Range = 80;
             itemDef.Create();
 
             // SÖLDNERRÜSTUNG
@@ -214,6 +309,7 @@ namespace GUC.Scripts
             itemDef.Material = Enumeration.ItemMaterials.Leather;
             itemDef.ItemType = ItemTypes.Armor;
             itemDef.VisualChange = "Armor_Sld_M.asc";
+            itemDef.Protection = 30;
             itemDef.Model = m;
             itemDef.Create();
 
@@ -224,6 +320,7 @@ namespace GUC.Scripts
             itemDef.Name = "Grobes Kriegsbeil";
             itemDef.ItemType = ItemTypes.Wep1H;
             itemDef.Material = Enumeration.ItemMaterials.Metal;
+            itemDef.Damage = 40;
             itemDef.Model = m;
             itemDef.Range = 60;
             itemDef.Create();
@@ -236,6 +333,7 @@ namespace GUC.Scripts
             itemDef.Material = Enumeration.ItemMaterials.Leather;
             itemDef.ItemType = ItemTypes.Armor;
             itemDef.VisualChange = "Armor_Bdt_H.asc";
+            itemDef.Protection = 25;
             itemDef.Model = m;
             itemDef.Create();
         }

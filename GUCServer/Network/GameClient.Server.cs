@@ -9,7 +9,6 @@ using GUC.Enumeration;
 using GUC.Server.Network;
 using GUC.Server.WorldObjects.Cells;
 using GUC.Server.Network.Messages;
-using GUC.WorldObjects.Collections;
 using GUC.Types;
 
 namespace GUC.Network
@@ -311,10 +310,9 @@ namespace GUC.Network
             return GameServer.SetupStream(NetworkIDs.ScriptMessage);
         }
 
-        public void SendMenuMsg(PacketWriter stream)
+        public void SendMenuMsg(PacketWriter stream, PktPriority pr, PktReliability rl)
         {
-            this.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'M');
+            this.Send(stream, (PacketPriority)pr, (PacketReliability)rl, 'M');
         }
-
     }
 }

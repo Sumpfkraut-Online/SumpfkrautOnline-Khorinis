@@ -60,12 +60,40 @@ namespace GUC.Client.GUI
         #endregion
 
         #region pixel virtual conversion
+
+        static bool iniRes = false;
         public static int[] GetScreenSize()
         {
-            //return new int[2] { Process.ReadInt(0x08D4B0), Process.ReadInt(0x08D4B4) };
-            //Convert.ToInt32(Gothic.zCOption.GetOption().getEntryValue("VIDEO", "zVidResFullscreenX")),
-            //Convert.ToInt32(Gothic.zCOption.GetOption().getEntryValue("VIDEO", "zVidResFullscreenY"))
-            return new int[2] { Process.ReadInt(0x7FD90040), Process.ReadInt(0x7FD90044) };
+            var ret = new int[2] { Process.ReadInt(0x08D4B0), Process.ReadInt(0x08D4B4) };
+
+            if (ret[0] != 0 && ret[1] != 0)
+            {
+                iniRes = false;
+                return ret;
+            }
+            else
+            {
+                ret = new int[2] { Process.ReadInt(0x7FD90040), Process.ReadInt(0x7FD90044) };
+            }
+
+            if (ret[0] != 0 || ret[1] != 0)
+            {
+                iniRes = false;
+                return ret;
+            }
+            else
+            {
+                var sec = Gothic.zCOption.GetSectionByName("VIDEO");
+                ret[0] = Convert.ToInt32(sec.GetEntryByName("zVidResFullscreenX").VarValue.ToString());
+                ret[1] = Convert.ToInt32(sec.GetEntryByName("zVidResFullscreenY").VarValue.ToString());
+
+                if (!iniRes)
+                {
+                    Log.Logger.LogWarning("Couldn't find real resolution, using Gothic.ini resolution: " + ret[0] + "x" + ret[1]);
+                }
+                iniRes = true;
+                return ret;
+            }
         }
 
         public static int[] PixelToVirtual(int x, int y)

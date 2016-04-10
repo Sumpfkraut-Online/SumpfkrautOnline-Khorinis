@@ -127,6 +127,11 @@ namespace Gothic.Objects
             return Process.THISCALL<IntArg>(Address, FuncAddresses.RemoveWeapon2);
         }
 
+        public void ShowWeaponTrail()
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x6AFE70);
+        }
+
         public void SearchStandAni()
         {
             SearchStandAni(false);

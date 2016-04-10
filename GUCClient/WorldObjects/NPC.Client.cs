@@ -12,6 +12,11 @@ namespace GUC.WorldObjects
 {
     public partial class NPC
     {
+        public partial interface IScriptNPC : IScriptVob
+        {
+            void OnTick(long now);
+        }
+
         public const long PositionUpdateTime = 1200000; //120ms
         public const long DirectionUpdateTime = PositionUpdateTime + 100000;
 
@@ -111,6 +116,7 @@ namespace GUC.WorldObjects
             if (overlays != null)
                 for (int i = 0; i < overlays.Count; i++)
                     this.gVob.ApplyOverlay(overlays[i].Name);
+            gVob.Name.Set(this.Name);
         }
 
         partial void pDespawn()
@@ -162,8 +168,12 @@ namespace GUC.WorldObjects
                 }
             }*/
 
+            this.ScriptObject.OnTick(now);
+
             if (this.IsInAnimation)
+            {
                 return;
+            }
 
             switch (State)
             {

@@ -9,6 +9,11 @@ namespace GUC.Scripts.TFFA
 {
     partial class TFFAClient : GameClient.IScriptClient
     {
+        public static void ForEach(Action<TFFAClient> action)
+        {
+            GameClient.ForEach(gc => action((TFFAClient)gc.ScriptObject));
+        }
+
         partial void pConstruct()
         {
             TFFAGame.AddToTeam(this, Team.Spec);
@@ -29,18 +34,21 @@ namespace GUC.Scripts.TFFA
             {
                 case MenuMsgID.OpenTeamMenu:
                     TFFAGame.teamMenuClients.Add(this);
+                    TFFAGame.UpdateStats();
                     break;
                 case MenuMsgID.CloseTeamMenu:
                     TFFAGame.teamMenuClients.Remove(this);
                     break;
                 case MenuMsgID.OpenClassMenu:
                     TFFAGame.classMenuClients.Add(this);
+                    TFFAGame.UpdateStats();
                     break;
                 case MenuMsgID.CloseClassMenu:
                     TFFAGame.classMenuClients.Remove(this);
                     break;
                 case MenuMsgID.OpenScoreboard:
                     TFFAGame.scoreboardClients.Add(this);
+                    TFFAGame.UpdateStats();
                     break;
                 case MenuMsgID.CloseScoreboard:
                     TFFAGame.scoreboardClients.Remove(this);
@@ -61,7 +69,7 @@ namespace GUC.Scripts.TFFA
                     PacketWriter answer = GameClient.GetMenuMsgStream();
                     answer.Write((byte)MenuMsgID.SelectTeam);
                     answer.Write((byte)team);
-                    this.baseClient.SendMenuMsg(answer);
+                    this.baseClient.SendMenuMsg(answer, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE);
                     break;
                 case MenuMsgID.SelectClass:
                     TFFAGame.SelectClass(this, (PlayerClass)stream.ReadByte());

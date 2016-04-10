@@ -6,6 +6,14 @@ using System.Threading.Tasks;
 
 namespace GUC.Scripts.TFFA
 {
+    public enum TFFAPhase
+    {
+        Wait,
+        Warmup,
+        Fight,
+        End
+    }
+
     public enum Team
     {
         Spec,
@@ -31,6 +39,6 @@ namespace GUC.Scripts.TFFA
         SelectClass,
         SetName,
         OpenScoreboard,
-        CloseScoreboard
+        CloseScoreboard,
     }
 }

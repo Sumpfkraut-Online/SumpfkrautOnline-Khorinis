@@ -28,7 +28,7 @@ namespace GUC.Client.Scripts.Sumpfkraut.Menus.MainMenus
         void Login()
         {
             var strm = GameClient.Client.GetMenuMsgStream();
-            GameClient.Client.SendMenuMsg(strm);
+            GameClient.Client.SendMenuMsg(strm, PktPriority.HIGH_PRIORITY, PktReliability.RELIABLE);
 
             /*if (name.Input.Length == 0)
             {

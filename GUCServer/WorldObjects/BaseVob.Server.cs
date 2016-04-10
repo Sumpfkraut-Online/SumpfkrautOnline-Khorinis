@@ -69,8 +69,6 @@ namespace GUC.WorldObjects
                 float zdiff = unroundedZ - this.Cell.Y;
                 if ((xdiff > 0.65f || xdiff < -0.65f) || (zdiff > 0.65f || zdiff < -0.65f))
                 {
-                    Log.Logger.Log("change cell to " + x + " " + z);
-
                     ChangeCells(x, z);
                     return;
                 }
@@ -81,8 +79,8 @@ namespace GUC.WorldObjects
             {
                 PacketWriter stream = GameServer.SetupStream(NetworkIDs.VobPosDirMessage);
                 stream.Write((ushort)this.ID);
-                stream.Write(this.pos);
-                stream.Write(this.dir);
+                stream.WriteCompressedPosition(this.pos);
+                stream.WriteCompressedDirection(this.dir);
                 this.Cell.ForEachSurroundingClient(c =>
                 {
                     if (c != exclude)
@@ -106,8 +104,8 @@ namespace GUC.WorldObjects
                         //Position updates in shared cells
                         PacketWriter stream = GameServer.SetupStream(NetworkIDs.VobPosDirMessage);
                         stream.Write((ushort)this.ID);
-                        stream.Write(this.pos);
-                        stream.Write(this.dir);
+                        stream.WriteCompressedPosition(this.pos);
+                        stream.WriteCompressedDirection(this.dir);
                         cell.Clients.ForEach(c =>
                         {
                             c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE, 'W');

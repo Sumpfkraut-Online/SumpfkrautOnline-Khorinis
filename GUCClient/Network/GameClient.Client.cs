@@ -9,9 +9,7 @@ using GUC.Log;
 using GUC.Client.GUI;
 using GUC.Client.Network.Messages;
 using GUC.Scripting;
-using GUC.WorldObjects.Instances;
 using GUC.WorldObjects;
-using GUC.Models;
 using Gothic.Objects;
 using Gothic;
 using GUC.Animations;
@@ -81,9 +79,9 @@ namespace GUC.Network
             return SetupStream(NetworkIDs.ScriptMessage);
         }
 
-        public void SendMenuMsg(PacketWriter stream)
+        public void SendMenuMsg(PacketWriter stream, PktPriority pr, PktReliability rl)
         {
-            Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE);
+            Send(stream, (PacketPriority)pr, (PacketReliability)rl);
         }
 
         #endregion
@@ -148,6 +146,9 @@ namespace GUC.Network
 
         void ReadMessage(NetworkIDs id, PacketReader stream)
         {
+            if (id != NetworkIDs.VobPosDirMessage && id != NetworkIDs.NPCStateMessage)
+                Logger.Log(id);
+
             switch (id)
             {
                 /*

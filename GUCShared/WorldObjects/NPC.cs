@@ -274,6 +274,8 @@ namespace GUC.WorldObjects
         {
             base.WriteProperties(stream);
 
+            stream.Write((byte)this.state);
+
             stream.Write((ushort)hpmax);
             stream.Write((ushort)hp);
 
@@ -304,6 +306,8 @@ namespace GUC.WorldObjects
         internal void ReadTakeControl(PacketReader stream)
         {
             base.ReadProperties(stream);
+
+            this.state = (NPCStates)stream.ReadByte();
 
             this.hpmax = stream.ReadUShort();
             this.hp = stream.ReadUShort();
@@ -349,6 +353,8 @@ namespace GUC.WorldObjects
         {
             base.WriteProperties(stream);
 
+            stream.Write((byte)this.state);
+
             stream.Write((ushort)hpmax);
             stream.Write((ushort)hp);
 
@@ -378,6 +384,8 @@ namespace GUC.WorldObjects
         protected override void ReadProperties(PacketReader stream)
         {
             base.ReadProperties(stream);
+
+            this.state = (NPCStates)stream.ReadByte();
 
             this.hpmax = stream.ReadUShort();
             this.hp = stream.ReadUShort();

@@ -58,6 +58,7 @@
     <Compile Include="Objects\oCMobLockable.cs" />
     <Compile Include="Objects\oCMobSwitch.cs" />
     <Compile Include="Objects\oCMobWheel.cs" />
+    <Compile Include="Objects\oCNpcFocus.cs" />
     <Compile Include="Objects\oCWorldTimer.cs" />
     <Compile Include="Objects\Sky\zCSkyControler.cs" />
     <Compile Include="Objects\Sky\zCSkyControler_Outdoor.cs" />

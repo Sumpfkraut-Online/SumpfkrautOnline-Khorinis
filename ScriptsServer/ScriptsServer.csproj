@@ -203,7 +203,7 @@
     <Compile Include="Sumpfkraut\WorldSystem\ScriptSkyCtrl.Server.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldDef.Server.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldInst.Server.cs" />
-    <Compile Include="TFFA\TFFA.cs" />
+    <Compile Include="TFFA\TFFAGame.cs" />
     <Compile Include="TFFA\TFFAClient.Server.cs" />
   </ItemGroup>
   <ItemGroup>

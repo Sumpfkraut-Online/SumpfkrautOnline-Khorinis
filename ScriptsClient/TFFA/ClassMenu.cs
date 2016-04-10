@@ -54,7 +54,7 @@ namespace GUC.Client.Scripts.TFFA
 
             PacketWriter stream = GameClient.Client.GetMenuMsgStream();
             stream.Write((byte)MenuMsgID.OpenClassMenu);
-            GameClient.Client.SendMenuMsg(stream);
+            GameClient.Client.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.UNRELIABLE);
             base.Open();
             SetTeam(TFFAClient.Client.Team);
         }
@@ -63,7 +63,7 @@ namespace GUC.Client.Scripts.TFFA
         {
             PacketWriter stream = GameClient.Client.GetMenuMsgStream();
             stream.Write((byte)MenuMsgID.CloseClassMenu);
-            GameClient.Client.SendMenuMsg(stream);
+            GameClient.Client.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE);
             base.Close();
         }
 
@@ -72,7 +72,7 @@ namespace GUC.Client.Scripts.TFFA
             PacketWriter stream = GameClient.Client.GetMenuMsgStream();
             stream.Write((byte)MenuMsgID.SelectClass);
             stream.Write((byte)c);
-            GameClient.Client.SendMenuMsg(stream);
+            GameClient.Client.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE);
             Close();
         }
     }

@@ -26,7 +26,8 @@ namespace Gothic.Objects
             InitAnimations = 0x006A4010,
             InitAllAnis = 0x006A5BF0,
             PC_Turnings = 0x0069A940,
-            StartFlyDamage = 0x69D940;
+            StartFlyDamage = 0x69D940,
+            CheckFocusVob = 0x0069B7A0;
         }
 
         public oCAIHuman()
@@ -91,6 +92,16 @@ namespace Gothic.Objects
         public void StartFlyDamage(float arg1, zVec3 arg2)
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.StartFlyDamage, new FloatArg(arg1), arg2);
+        }
+
+        public void Moving()
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.Moving);
+        }
+
+        public void CheckFocusVob(int arg)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.CheckFocusVob, (IntArg)arg);
         }
     }
 }

@@ -17,8 +17,8 @@ namespace GUC.Client.Network.Messages
             BaseVob vob;
             if (World.Current.TryGetVob(stream.ReadUShort(), out vob))
             {
-                vob.SetPosition(stream.ReadVec3f());
-                vob.SetDirection(stream.ReadVec3f());
+                vob.SetPosition(stream.ReadCompressedPosition());
+                vob.SetDirection(stream.ReadCompressedDirection());
 
                 vob.ScriptObject.OnPosChanged();
             }

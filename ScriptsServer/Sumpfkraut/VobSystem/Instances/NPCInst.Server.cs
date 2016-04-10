@@ -15,7 +15,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         // TFFA
         public override void OnPosChanged()
         {
-            if (this.BaseInst.GetPosition().Y < -370)
+            if (this.BaseInst.GetPosition().Y < -400 && this.BaseInst.HP > 0)
             {
                 this.SetHealth(0);
             }
@@ -82,17 +82,20 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         void AbleCombo()
         {
             comboTimer.Stop();
-            canCombo = true;
             if (this.State != NPCStates.Stand)
             {
                 this.StopAnimation();
+            }
+            else
+            {
+                canCombo = true;
             }
         }
 
         void CalcHit()
         {
             hitTimer.Stop();
-            
+
             Vec3f attPos = this.BaseInst.GetPosition();
             Vec3f attDir = this.BaseInst.GetDirection();
             float range = this.DrawnWeapon.Definition.Range + this.Model.Radius + ModelDef.LargestNPC.Radius;
@@ -120,7 +123,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                                 float dist = attDir.X * (targetPos.Z - attPos.Z) - attDir.Z * (targetPos.X - attPos.X);
                                 dist = (float)Math.Sqrt(dist * dist / (attDir.X * attDir.X + attDir.Z * attDir.Z));
 
-                                if (dist <= target.Model.Radius + 5.0f) // distance to attack direction is smaller than radius + 5
+                                if (dist <= target.Model.Radius + 10.0f) // distance to attack direction is smaller than radius + 10
                                 {
                                     dir = (targetPos - attPos).Normalise();
                                     dot = targetDir.Z * dir.Z + dir.X * targetDir.X;
@@ -134,12 +137,16 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                                     }
                                     else // HIT
                                     {
-                                        target.SetHealth(target.BaseInst.HP - 10, target.BaseInst.HPMax);
-
                                         var strm = this.BaseInst.GetScriptVobStream();
                                         strm.Write((byte)Networking.NetVobMsgIDs.HitMessage);
                                         strm.Write((ushort)npc.ID);
                                         this.BaseInst.SendScriptVobStream(strm);
+
+                                        int damage = this.DrawnWeapon.Definition.Damage - target.Armor.Definition.Protection;
+                                        if (damage > 0)
+                                        {
+                                            target.SetHealth(target.BaseInst.HP - damage);
+                                        }
                                     }
                                 }
                             }
@@ -168,7 +175,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                         if (curAni.AniJob == anim.AniJob) // same attack
                             return;
 
-                        if (curAni.AniJob.ID >= (int)SetAnis.Attack2HFwd1 && curAni.AniJob.ID <= (int)SetAnis.Attack2HFwd4 && anim.AniJob.ID <= curAni.AniJob.ID)
+                        if (curAni.AniJob.IsCombo && anim.AniJob.ID <= curAni.AniJob.ID)
                             return;
                     }
 
@@ -176,13 +183,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     hitTimer.Start();
                 }
 
-                if (ani.AniJob.ID < (int)SetAnis.Attack2HRun)
+                if (anim.AniJob.IsAttack)
                 {
                     comboTimer.SetInterval(anim.ComboTime);
                     comboTimer.Start();
                 }
             }
-            
+
             this.StartAnimation(anim, () => this.canCombo = true);
         }
 
