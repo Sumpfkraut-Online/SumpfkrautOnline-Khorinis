@@ -119,7 +119,7 @@ namespace GUC.Server.Network
             client.PacketCount++;
             if (client.nextCheck < GameTime.Ticks)
             {
-                if (client.PacketCount >= 20)
+                if (client.PacketCount >= 30)
                 {
                     Logger.LogWarning("Client spammed too many packets. Kicked: {0} IP:{1}", client.guid.g, client.systemAddress);
                     DisconnectClient(client);

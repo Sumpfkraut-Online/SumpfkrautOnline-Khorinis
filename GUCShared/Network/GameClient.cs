@@ -46,9 +46,6 @@ namespace GUC.Network
         partial void pSetControl(NPC npc);
         public void SetControl(NPC npc)
         {
-            if (npc == null)
-                throw new ArgumentNullException("NPC is null!");
-
             pSetControl(npc);
         }
 

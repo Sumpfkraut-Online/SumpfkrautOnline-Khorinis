@@ -117,8 +117,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     Vec3f targetDir = npc.GetDirection();
                     float distance = (targetPos - attPos).GetLength();
 
-                    if (target.IsInAni && target.CurrentAni.AniJob.ID == (int)SetAnis.Attack2HDodge)
-                        distance /= 2.0f;
+                    if (target.IsInAni && (target.CurrentAni.AniJob.ID == (int)SetAnis.Attack2HDodge || target.CurrentAni.AniJob.ID == (int)SetAnis.Attack1HDodge))
+                        distance /= 4.0f;
 
                     if (distance <= this.DrawnWeapon.Definition.Range + this.Model.Radius + target.Model.Radius) // target is in range
                     {
@@ -127,7 +127,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                             Vec3f dir = (attPos - targetPos).Normalise();
                             float dot = attDir.Z * dir.Z + dir.X * attDir.X;
 
-                            if (dot <= -0.4f) // target is in front of attacker
+                            if (dot <= -0.2f) // target is in front of attacker
                             {
                                 float dist = attDir.X * (targetPos.Z - attPos.Z) - attDir.Z * (targetPos.X - attPos.X);
                                 dist = (float)Math.Sqrt(dist * dist / (attDir.X * attDir.X + attDir.Z * attDir.Z));
@@ -137,7 +137,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                                     dir = (targetPos - attPos).Normalise();
                                     dot = targetDir.Z * dir.Z + dir.X * targetDir.X;
 
-                                    if (target.CurrentAni != null && target.CurrentAni.AniJob.ID == (int)SetAnis.Attack2HParry && dot <= -0.4f) // PARRY
+                                    if (target.CurrentAni != null && (target.CurrentAni.AniJob.ID == (int)SetAnis.Attack2HParry || target.CurrentAni.AniJob.ID == (int)SetAnis.Attack1HParry) && dot <= -0.2f) // PARRY
                                     {
                                         var strm = this.BaseInst.GetScriptVobStream();
                                         strm.Write((byte)Networking.NetVobMsgIDs.ParryMessage);
@@ -207,6 +207,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public void OnCmdAniStop(bool fadeOut)
         {
+        }
+
+        public override void Despawn()
+        {
+            hitTimer.Stop();
+            comboTimer.Stop();
+            base.Despawn();
         }
     }
 }

@@ -35,6 +35,19 @@ namespace GUC.Client
                             Program.Exit();
                             return;
                         }
+                        else if (key == VirtualKeys.F5)
+                        {
+                            int bitField = Process.ReadInt(GUC.Network.GameClient.Client.Character.gVob.HumanAI.Address + 0x1204);
+                            if ((bitField & 0x10) != 0)
+                            {
+                                bitField &= ~0x10;
+                            }
+                            else
+                            {
+                                bitField |= 0x10;
+                            }
+                            Process.Write(bitField, GUC.Network.GameClient.Client.Character.gVob.HumanAI.Address + 0x1204);
+                        }
 
                         if (!keys[i]) //newly pressed
                         {

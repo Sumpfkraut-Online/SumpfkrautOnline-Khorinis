@@ -59,6 +59,7 @@ namespace Gothic.Objects
             RotateWorldY = 0x0061B830,
             SetHeadingAtLocal = 0x0061C860,
             SetHeadingAtWorld = 0x0061CBC0,
+            SetHeadingYWorld = 0x61C450,
             ResetXZRotationsWorld = 0x0061C090,
             BeginMovement = 0x0061DA80,
             RotateWorldX = 0x0061B800,
@@ -66,7 +67,10 @@ namespace Gothic.Objects
             RotateLocalX = 0x0061B6B0,
             RotateLocalZ = 0x0061B790,
             GetSectorNameVobIsIn = 0x00600AE0,
-            SetPhysicsEnabled = 0x0061D190;
+            SetPhysicsEnabled = 0x0061D190,
+            SetCollDetStat = 0x61CE50,
+            SetCollDetDyn = 0x61CF40,
+            SetSleeping = 0x602930;
         }
 
         /*public enum HookSize
@@ -119,6 +123,31 @@ namespace Gothic.Objects
         {
         }
 
+        public void SetCollDetDyn(bool arg)
+        {
+            Process.FASTCALL<NullReturnCall>(Address, arg ? 1 : 0, FuncAddresses.SetCollDetDyn);
+        }
+
+        public void SetCollDetStat(bool arg)
+        {
+            Process.FASTCALL<NullReturnCall>(Address, arg ? 1 : 0, FuncAddresses.SetCollDetStat);
+        }
+
+        public void SetSleeping(bool arg)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetSleeping, (BoolArg)arg);
+        }
+
+        public void SetAI(zCAIBase ai)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetAI, ai);
+        }
+
+        public void SetHeadingYWorld(zCVob vob)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetHeadingYWorld, vob);
+        }
+
         public static zCVob Create()
         {
             int address = Process.CDECLCALL<IntArg>(0x5FD940); //_CreateInstance()
@@ -162,6 +191,11 @@ namespace Gothic.Objects
         {
             get { return TrafoObjToWorld.Direction; }
             set { TrafoObjToWorld.Direction = value; }
+        }
+
+        public zCAIBase callback_ai
+        {
+            get { return new zCAIBase(Process.ReadInt(Address + VarOffsets.callback_ai)); }
         }
 
         public zTBBox3D BBox3D

@@ -186,12 +186,6 @@ namespace GUC.WorldObjects
 
         partial void pDespawn()
         {
-            if (this.Cell == null)
-            {
-                Log.Logger.Log("WTF");
-                return;
-            }
-
             PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldDespawnMessage);
             stream.Write((ushort)this.ID);
             this.Cell.ForEachSurroundingClient(c =>

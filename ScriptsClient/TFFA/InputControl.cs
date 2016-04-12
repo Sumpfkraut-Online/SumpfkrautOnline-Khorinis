@@ -30,6 +30,7 @@ namespace GUC.Client.Scripts.TFFA
 
         static int inc { get { return TFFAClient.Client.Character.DrawnWeapon.Definition.ItemType == ItemTypes.Wep1H ? 9 : 0; } }
 
+        static bool freeLook = false;
         static void KeyDown(VirtualKeys key, long now)
         {
             GUCMenu activeMenu = GUCMenu.GetActiveMenus().ElementAtOrDefault(0);
@@ -42,7 +43,27 @@ namespace GUC.Client.Scripts.TFFA
             if (GUC.Network.GameClient.Client.Character == null)
                 return;
 
-            if (key == VirtualKeys.Escape)
+            if (key == VirtualKeys.U)
+            {
+                try
+                {
+                    if (!freeLook)
+                    {
+                        Gothic.oCGame.GetCameraVob().SetAI(Gothic.Objects.oCAICamera.Create());
+                        freeLook = true;
+                    }
+                    else
+                    {
+                        Gothic.oCGame.GetCameraVob().SetAI(Gothic.oCGame.GetCameraAI());
+                        freeLook = false;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Logger.Log(e);
+                }
+            }
+            else if (key == VirtualKeys.Escape)
             {
                 MainMenu.Menu.Open();
             }

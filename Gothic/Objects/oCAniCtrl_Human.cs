@@ -132,12 +132,7 @@ namespace Gothic.Objects
             Process.THISCALL<NullReturnCall>(Address, 0x6AFE70);
         }
 
-        public void SearchStandAni()
-        {
-            SearchStandAni(false);
-        }
-
-        public void SearchStandAni(bool force)
+        public void SearchStandAni(bool force = false)
         {
             Process.THISCALL<IntArg>(Address, FuncAddresses.SearchStandAni, new BoolArg(force));
         }

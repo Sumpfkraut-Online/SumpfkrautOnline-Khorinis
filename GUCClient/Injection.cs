@@ -34,6 +34,11 @@ namespace GUC.Client
 
                 #region Some more editing
 
+                Process.Write(new byte[] { 0xE9, 0x3E, 0x04, 0x00, 0x00 }, 0x004D3DF6);
+                Process.Write(new byte[] { 0xE8, 0x8B, 0xE6, 0xFF, 0xFF, 0xC3 }, 0x004D5700);
+
+                Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90 }, 0x006C8A71); // remove freeLook controls
+
                 Process.Write(new byte[] { 0xD8, 0x1D, 0xB4, 0x04, 0x83, 0x00}, 0x006C873D); // reduce time gothic waits after the loading screen from 2500ms to 1000ms
 
                 Process.Write(18000.0f, 0x008BACD0); // spawnManager : insertrange
@@ -55,7 +60,7 @@ namespace GUC.Client
                 Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, 0x4D3E5C); // disable y-mouse movement  
 
                 Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, 0x006B0896);// don't let oCAniCtrl_Human::CreateHit check whether the target is an enemy
-
+                
                 Process.Write((byte)0xC3, 0x0073E480);//Blocking oCNpc::ProcessNpc (Dive Damage etc)
                 Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, 0x0066CAC9);//Block Damage!
 

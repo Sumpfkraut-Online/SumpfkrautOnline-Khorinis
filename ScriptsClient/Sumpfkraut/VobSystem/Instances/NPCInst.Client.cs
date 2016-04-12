@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using GUC.Enumeration;
 using GUC.Network;
-using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
@@ -16,11 +15,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             base.Spawn(world);
             if (UseCustoms)
             {
+                using (var vec = Gothic.Types.zVec3.Create(ModelScale.X, 1, ModelScale.Z))
+                    this.BaseInst.gVob.SetModelScale(vec);
+
                 this.BaseInst.gVob.SetAdditionalVisuals(HumBodyMeshs.HUM_BODY_NAKED0.ToString(), (int)CustomBodyTex, 0, CustomHeadMesh.ToString(), (int)CustomHeadTex, 0, -1);
                 this.BaseInst.gVob.Voice = (int)CustomVoice;
                 this.BaseInst.gVob.SetFatness(Fatness);
-                using (var vec = Gothic.Types.zVec3.Create(ModelScale.X, ModelScale.Y, ModelScale.Z))
-                    this.BaseInst.gVob.SetModelScale(vec);
                 this.BaseInst.gVob.Name.Set(CustomName);
             }
 

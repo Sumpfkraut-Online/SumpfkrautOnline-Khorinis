@@ -153,6 +153,7 @@ namespace GUC.Network
 
             if (this.character == null || this.character.IsDead)
                 return;
+
             VobMessage.WritePosDirMessage(now);
 
             UpdateHeroState(now);
@@ -465,7 +466,7 @@ namespace GUC.Network
             }
 
             long time = GameTime.Ticks - lastInfoUpdate;
-            if (time > TimeSpan.TicksPerSecond / 2)
+            if (time > TimeSpan.TicksPerSecond)
             {
                 // get last ping time
                 int ping = clientInterface.GetLastPing(clientInterface.GetSystemAddressFromIndex(0));
@@ -495,9 +496,9 @@ namespace GUC.Network
                 }
 
                 // update kB/s text on screen
-                int kbs = (int)((double)receivedBytes / ((double)time / (double)TimeSpan.TicksPerSecond / 2));
+                int kbs = (int)(receivedBytes);
                 devInfo.Texts[1].Text = ("Net received: " + kbs + "B/s");
-                kbs = (int)((double)sentBytes / ((double)time / (double)TimeSpan.TicksPerSecond / 2));
+                kbs = (int)(sentBytes);
                 devInfo.Texts[2].Text = ("Net Sent: " + kbs + "B/s");
                 lastInfoUpdate = GameTime.Ticks;
                 receivedBytes = 0;

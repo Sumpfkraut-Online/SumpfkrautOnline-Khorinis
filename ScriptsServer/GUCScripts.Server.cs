@@ -250,7 +250,7 @@ namespace GUC.Scripts
             itemDef.Material = Enumeration.ItemMaterials.Metal;
             itemDef.Model = m;
             itemDef.Range = 110;
-            itemDef.Damage = 40;
+            itemDef.Damage = 42;
             itemDef.Create();
 
             // GARDERÜSTUNG
@@ -273,7 +273,7 @@ namespace GUC.Scripts
             itemDef.ItemType = ItemTypes.Wep1H;
             itemDef.Material = Enumeration.ItemMaterials.Metal;
             itemDef.Model = m;
-            itemDef.Damage = 35;
+            itemDef.Damage = 40;
             itemDef.Range = 90;
             itemDef.Create();
 
@@ -297,7 +297,7 @@ namespace GUC.Scripts
             itemDef.ItemType = ItemTypes.Wep2H;
             itemDef.Material = Enumeration.ItemMaterials.Metal;
             itemDef.Model = m;
-            itemDef.Damage = 45;
+            itemDef.Damage = 44;
             itemDef.Range = 80;
             itemDef.Create();
 
@@ -320,7 +320,7 @@ namespace GUC.Scripts
             itemDef.Name = "Grobes Kriegsbeil";
             itemDef.ItemType = ItemTypes.Wep1H;
             itemDef.Material = Enumeration.ItemMaterials.Metal;
-            itemDef.Damage = 40;
+            itemDef.Damage = 42;
             itemDef.Model = m;
             itemDef.Range = 60;
             itemDef.Create();

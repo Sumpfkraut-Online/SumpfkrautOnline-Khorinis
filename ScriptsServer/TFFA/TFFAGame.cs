@@ -16,7 +16,7 @@ namespace GUC.Server.Scripts.TFFA
 {
     public static class TFFAGame
     {
-        const long FightTime = 4 * TimeSpan.TicksPerMinute;
+        const long FightTime = 1 * TimeSpan.TicksPerMinute;
         const int KillsToWin = 30;
 
         static List<Tuple<Vec3f, Vec3f>> NLSpawns = new List<Tuple<Vec3f, Vec3f>>()

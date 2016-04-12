@@ -68,7 +68,7 @@ namespace GUC.Client.Hooks
                 zCRenderer.Vid_Blit(1, 0, 0);
                 zCSndSys_MSS.DoSoundUpdate();
                 #endregion
-
+                
                 if (fpsWatch.IsRunning)
                 {
                     long diff = 8 * TimeSpan.TicksPerMillisecond - fpsWatch.ElapsedTicks;
@@ -91,7 +91,7 @@ namespace GUC.Client.Hooks
         public static Int32 RunIngame(String message)
         {
             try
-            {
+            {                
                 if (!ingameStarted)
                 {
                     ingameStarted = true;
@@ -106,26 +106,7 @@ namespace GUC.Client.Hooks
                 ScriptManager.Interface.Update(GameTime.Ticks);
 
                 GameClient.Client.UpdateCharacters(GameTime.Ticks);
-
-                if (InputHandler.IsPressed(WinApi.User.Enumeration.VirtualKeys.F4))
-                {
-                    Program.Exit();
-                }
-
-                if (InputHandler.IsPressed(WinApi.User.Enumeration.VirtualKeys.F6))
-                {
-                    int bitField = Process.ReadInt(GameClient.Client.Character.gVob.HumanAI.Address + 0x1204);
-                    if ((bitField & 0x10) != 0)
-                    {
-                        bitField &= ~0x10;
-                    }
-                    else
-                    {
-                        bitField |= 0x10;
-                    }
-                    Process.Write(bitField, GameClient.Client.Character.gVob.HumanAI.Address + 0x1204);
-                }
-
+                
                 if (fpsWatch.IsRunning)
                 {
                     long diff = 8 * TimeSpan.TicksPerMillisecond - fpsWatch.ElapsedTicks;
