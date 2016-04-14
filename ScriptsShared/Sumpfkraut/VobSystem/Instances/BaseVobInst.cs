@@ -34,8 +34,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #endregion
 
-
-
         public virtual void OnPosChanged()
         {
         }

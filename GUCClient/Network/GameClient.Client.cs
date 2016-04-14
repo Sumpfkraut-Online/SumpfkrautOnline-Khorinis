@@ -25,6 +25,45 @@ namespace GUC.Network
             void ReadScriptMsg(PacketReader stream);
         }
 
+        #region Spectator
+
+        oCAICamera specCam = oCAICamera.Create();
+        void ReadSpectatorMessage(PacketReader stream)
+        {
+            Vec3f pos = stream.ReadVec3f();
+            Vec3f dir = stream.ReadVec3f();
+
+            var cam = oCGame.GetCameraVob();
+            cam.SetAI(specCam);
+            cam.SetPositionWorld(pos.ToArray());
+            this.isSpectating = true;
+        }
+
+        Vec3f lastSpecPos;
+        static long specNextUpdate = 0;
+        internal void UpdateSpectator(long now)
+        {
+            var cam = oCGame.GetCameraVob();
+            var pos = new Vec3f(cam.Position);
+            if (VobMessage.ChangedCoord(ref pos.X) || VobMessage.ChangedCoord(ref pos.Y) || VobMessage.ChangedCoord(ref pos.Z))
+            {
+                cam.SetPositionWorld(pos.ToArray());
+            }
+
+            if (now - specNextUpdate < TimeSpan.TicksPerSecond && pos.GetDistance(lastSpecPos) < 10)
+                return;
+
+            lastSpecPos = pos;
+
+            PacketWriter stream = SetupStream(NetworkIDs.SpecPosMessage);
+            stream.WriteCompressedPosition(pos);
+            Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE);
+
+            specNextUpdate = now + 1000000;
+        }
+
+        #endregion
+
         #region Commands
 
         NPCStates nextState = NPCStates.Stand;
@@ -37,10 +76,33 @@ namespace GUC.Network
             if (this.character.IsDead)
                 return;
 
-            if (this.nextState == state)
+            NPCStates s = state;
+
+            if (s == NPCStates.MoveForward)
+            {
+                if (!character.gVob.AniCtrl.CheckEnoughSpaceMoveForward(false))
+                    s = NPCStates.Stand;
+            }
+            else if (s == NPCStates.MoveBackward)
+            {
+                if (!character.gVob.AniCtrl.CheckEnoughSpaceMoveBackward(false))
+                    s = NPCStates.Stand;
+            }
+            else if (s == NPCStates.MoveLeft)
+            {
+                if (!character.gVob.AniCtrl.CheckEnoughSpaceMoveLeft(false))
+                    s = NPCStates.Stand;
+            }
+            else if (s == NPCStates.MoveRight)
+            {
+                if (!character.gVob.AniCtrl.CheckEnoughSpaceMoveRight(false))
+                    s = NPCStates.Stand;
+            }
+
+            if (this.nextState == s)
                 return;
 
-            this.nextState = state;
+            this.nextState = s;
             this.character.nextStateUpdate = 0;
             UpdateHeroState(GameTime.Ticks);
         }
@@ -139,6 +201,8 @@ namespace GUC.Network
         {
             this.character = npc;
             Character.gVob.SetAsPlayer();
+            oCGame.GetCameraVob().SetAI(oCGame.GetCameraAI());
+            this.isSpectating = false;
         }
 
         #region Position updates
@@ -185,6 +249,11 @@ namespace GUC.Network
                 // CONNECTION MESSAGE
                 case NetworkIDs.ConnectionMessage:
                     ConnectionMessage.Read(stream);
+                    break;
+
+                // Spectator Messages
+                case NetworkIDs.SpectatorMessage:
+                    this.ReadSpectatorMessage(stream);
                     break;
 
                 // Player Messages
@@ -503,11 +572,19 @@ namespace GUC.Network
                 lastInfoUpdate = GameTime.Ticks;
                 receivedBytes = 0;
                 sentBytes = 0;
-
-                if (World.Current != null && character != null)
+                
+                if (World.Current != null)
                 {
-                    devInfo.Texts[3].Text = "Pos: " + character.GetPosition();
-                    devInfo.Texts[4].Text = "Dir: " + character.GetDirection();
+                    if (character != null)
+                    {
+                        devInfo.Texts[3].Text = "Pos: " + character.GetPosition();
+                        devInfo.Texts[4].Text = "Dir: " + character.GetDirection();
+                    }
+                    else
+                    {
+                        devInfo.Texts[3].Text = "Pos: " + new Vec3f(oCGame.GetCameraVob().TrafoObjToWorld.Position);
+                        devInfo.Texts[4].Text = "Dir: " + new Vec3f(oCGame.GetCameraVob().TrafoObjToWorld.Direction);
+                    }
                 }
             }
 

@@ -62,6 +62,9 @@ namespace GUC.Server.Scripts.TFFA
             RemoveFromTeam(client);
             Teams[team].Add(client);
             client.Team = team;
+
+            if (team == Team.Spec)
+                client.BaseClient.SetToSpectate(WorldInst.Current.BaseWorld, new Vec3f(0, 300, 0), new Vec3f());
         }
 
         public static void RemoveFromTeam(TFFAClient client)

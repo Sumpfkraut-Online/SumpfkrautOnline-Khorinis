@@ -29,8 +29,7 @@ namespace GUC.Client.Scripts.TFFA
         }
 
         static int inc { get { return TFFAClient.Client.Character.DrawnWeapon.Definition.ItemType == ItemTypes.Wep1H ? 9 : 0; } }
-
-        static bool freeLook = false;
+        
         static void KeyDown(VirtualKeys key, long now)
         {
             GUCMenu activeMenu = GUCMenu.GetActiveMenus().ElementAtOrDefault(0);
@@ -40,30 +39,7 @@ namespace GUC.Client.Scripts.TFFA
                 return;
             }
 
-            if (GUC.Network.GameClient.Client.Character == null)
-                return;
-
-            if (key == VirtualKeys.U)
-            {
-                try
-                {
-                    if (!freeLook)
-                    {
-                        Gothic.oCGame.GetCameraVob().SetAI(Gothic.Objects.oCAICamera.Create());
-                        freeLook = true;
-                    }
-                    else
-                    {
-                        Gothic.oCGame.GetCameraVob().SetAI(Gothic.oCGame.GetCameraAI());
-                        freeLook = false;
-                    }
-                }
-                catch (Exception e)
-                {
-                    Log.Logger.Log(e);
-                }
-            }
-            else if (key == VirtualKeys.Escape)
+            if (key == VirtualKeys.Escape)
             {
                 MainMenu.Menu.Open();
             }
@@ -71,7 +47,11 @@ namespace GUC.Client.Scripts.TFFA
             {
                 Scoreboard.Menu.Open();
             }
-            else if (key == VirtualKeys.Menu)
+
+            if (GUC.Network.GameClient.Client.Character == null)
+                return;
+
+            if (key == VirtualKeys.Menu)
             {
                 TFFAClient.Client.BaseClient.DoJump();
             }
@@ -84,7 +64,7 @@ namespace GUC.Client.Scripts.TFFA
                     System.IO.File.AppendAllText(Program.ProjectPath + "SavedLocations.txt", str);
                 }
             }
-            else if (key == VirtualKeys.Control)
+            else if (key == VirtualKeys.Control || key == VirtualKeys.LeftButton)
             {
                 Gothic.Objects.oCNpcFocus.StartHighlightingFX(TFFAClient.Client.Character.BaseInst.gVob.GetFocusNpc());
 
@@ -98,9 +78,9 @@ namespace GUC.Client.Scripts.TFFA
                     }
                 }
             }
-            else if (InputHandler.IsPressed(VirtualKeys.Control))
+            else if (InputHandler.IsPressed(VirtualKeys.Control) || InputHandler.IsPressed(VirtualKeys.LeftButton))
             {
-                if (key == VirtualKeys.Up)
+                if (key == VirtualKeys.Up || key == VirtualKeys.W)
                 {
                     ScriptAniJob job;
                     if (TFFAClient.Client.Character.CurrentAni != null)
@@ -118,7 +98,7 @@ namespace GUC.Client.Scripts.TFFA
                         TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
                     }
                 }
-                else if (key == VirtualKeys.Left)
+                else if (key == VirtualKeys.Left || key == VirtualKeys.Q)
                 {
                     ScriptAniJob job;
                     if (TFFAClient.Client.Character.Model.TryGetAniJob((int)SetAnis.Attack2HLeft + inc, out job))
@@ -126,7 +106,7 @@ namespace GUC.Client.Scripts.TFFA
                         TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
                     }
                 }
-                else if (key == VirtualKeys.Right)
+                else if (key == VirtualKeys.Right || key == VirtualKeys.E)
                 {
                     ScriptAniJob job;
                     if (TFFAClient.Client.Character.Model.TryGetAniJob((int)SetAnis.Attack2HRight + inc, out job))
@@ -134,7 +114,7 @@ namespace GUC.Client.Scripts.TFFA
                         TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
                     }
                 }
-                else if (key == VirtualKeys.Down)
+                else if (key == VirtualKeys.Down || key == VirtualKeys.S)
                 {
                     ScriptAniJob job;
                     if (TFFAClient.Client.Character.Model.TryGetAniJob((int)SetAnis.Attack2HParry + inc, out job))
@@ -154,15 +134,15 @@ namespace GUC.Client.Scripts.TFFA
                 return;
             }
 
-            if (GUC.Network.GameClient.Client.Character == null)
-                return;
-
-
             if (key == VirtualKeys.Tab)
             {
                 Scoreboard.Menu.Close();
             }
-            else if (key == VirtualKeys.Control)
+
+            if (GUC.Network.GameClient.Client.Character == null)
+                return;
+
+            if (key == VirtualKeys.Control || key == VirtualKeys.LeftButton)
             {
                 Gothic.Objects.oCNpcFocus.StopHighlightingFX();
             }
@@ -176,12 +156,42 @@ namespace GUC.Client.Scripts.TFFA
                 return;
             }
 
+            if (GUC.Network.GameClient.Client.IsSpectating)
+            {
+                if (InputHandler.MouseDistY != 0)
+                {
+                    Gothic.oCGame.GetCameraVob().RotateLocalX(InputHandler.MouseDistY * 0.1f);
+                }
+                if (InputHandler.MouseDistX != 0)
+                {
+                    Gothic.oCGame.GetCameraVob().RotateWorldY(InputHandler.MouseDistX * 0.1f);
+                }
+
+                if (InputHandler.IsPressed(VirtualKeys.Up) || InputHandler.IsPressed(VirtualKeys.W))
+                {
+                    var cam = Gothic.oCGame.GetCameraVob();
+                    var dir = new Vec3f(cam.Direction) * 10.0f;
+                    cam.MoveWorld(dir.X, dir.Y, dir.Z);
+                }
+                else if (InputHandler.IsPressed(VirtualKeys.Down) || InputHandler.IsPressed(VirtualKeys.S))
+                {
+                    var cam = Gothic.oCGame.GetCameraVob();
+                    var dir = new Vec3f(cam.Direction) * -10.0f;
+                    cam.MoveWorld(dir.X, dir.Y, dir.Z);
+                }
+
+                return;
+            }
+
             if (GUC.Network.GameClient.Client.Character == null)
                 return;
+            
+            if (InputHandler.MouseDistX != 0)
+            {
+                GUC.Network.GameClient.Client.Character.gVob.AniCtrl.Turn(InputHandler.MouseDistX * 0.1f, true);
+            }
 
-
-
-            if (!InputHandler.IsPressed(VirtualKeys.Control))
+            if (!InputHandler.IsPressed(VirtualKeys.Control) && !InputHandler.IsPressed(VirtualKeys.LeftButton))
             {
                 TFFAClient.Client.Character.BaseInst.gVob.HumanAI.CheckFocusVob(0);
                 if (InputHandler.IsPressed(VirtualKeys.A)) // strafe left

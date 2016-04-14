@@ -37,7 +37,9 @@ namespace GUC.Network
 
         new public int ID { get { return base.ID; } }
 
+        Vec3f specPos, specDir;
         World specWorld;
+        public World SpecWorld { get { return this.specWorld; } }
         bool isSpectating = false;
         public bool IsSpectating { get { return this.isSpectating; } }
 
@@ -46,6 +48,9 @@ namespace GUC.Network
         partial void pSetControl(NPC npc);
         public void SetControl(NPC npc)
         {
+            if (this.character == npc)
+                return;
+
             pSetControl(npc);
         }
 
@@ -58,6 +63,7 @@ namespace GUC.Network
                 throw new Exception("World is null!");
             if (!world.IsCreated)
                 throw new Exception("World is not created!");
+
             pSetToSpectate(world, position, direction);
         }
         partial void pSetToSpectate(World world, Vec3f pos, Vec3f dir);

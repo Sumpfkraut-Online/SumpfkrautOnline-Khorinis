@@ -64,22 +64,13 @@ namespace GUC.Client.GUI
         static bool iniRes = false;
         public static int[] GetScreenSize()
         {
-            var ret = new int[2] { Process.ReadInt(0x08D4B0), Process.ReadInt(0x08D4B4) };
+            var screen = Gothic.View.zCView.GetScreen();
 
-            if (ret[0] != 0 && ret[1] != 0)
+            var ret = new int[2] { screen.pSizeX, screen.pSizeY };
+
+            if (ret[0] > 0 && ret[1] > 0)
             {
                 iniRes = false;
-                return ret;
-            }
-            else
-            {
-                ret = new int[2] { Process.ReadInt(0x7FD90040), Process.ReadInt(0x7FD90044) };
-            }
-
-            if (ret[0] != 0 || ret[1] != 0)
-            {
-                iniRes = false;
-                return ret;
             }
             else
             {
@@ -92,16 +83,17 @@ namespace GUC.Client.GUI
                     Log.Logger.LogWarning("Couldn't find real resolution, using Gothic.ini resolution: " + ret[0] + "x" + ret[1]);
                 }
                 iniRes = true;
-                return ret;
             }
+            return ret;
         }
 
         public static int[] PixelToVirtual(int x, int y)
         {
+            var res = GetScreenSize();
             return new int[]
             {
-                x * 0x2000 / GetScreenSize()[0],
-                y * 0x2000 / GetScreenSize()[1]
+                x * 0x2000 / res[0],
+                y * 0x2000 / res[1]
             };
         }
 
@@ -118,11 +110,11 @@ namespace GUC.Client.GUI
         public static int StringPixelWidth(string str)
         {
             float size = 0;
-            float add;
             for (int i = 0; i < str.Length; i++)
             {
-                GothicChars.TryGetValue(str[i], out add);
-                size += add;
+                float add;
+                if (GothicChars.TryGetValue(str[i], out add))
+                    size += add;
             }
             return (int)size;
         }

@@ -63,11 +63,15 @@ namespace GUC.Server.Network
                     Logger.LogWarning("Client sent another ConnectionMessage. Kicked: {0} IP:{1}", client.guid.g, client.systemAddress);
                     break;
                 case NetworkIDs.LoadWorldMessage:
-                    client.Character.InsertInWorld();
+                    client.ConfirmLoadWorldMessage();
                     break;
                 case NetworkIDs.ScriptMessage:
-                    if (client.ScriptObject != null)
-                        client.ScriptObject.OnReadMenuMsg(pktReader);
+                    client.ScriptObject.OnReadMenuMsg(pktReader);
+                    break;
+
+                case NetworkIDs.SpecPosMessage:
+                    if (client.IsSpectating)
+                        SpectatorMessage.ReadPos(stream, client);
                     break;
 
                 // Ingame:

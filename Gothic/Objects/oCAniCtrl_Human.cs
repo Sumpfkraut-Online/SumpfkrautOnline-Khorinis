@@ -6,7 +6,7 @@ using WinApi;
 
 namespace Gothic.Objects
 {
-    public class oCAniCtrl_Human : zCObject // : zCAIPlayer
+    public class oCAniCtrl_Human : zCAIPlayer
     {
         new public abstract class VarOffsets : zCObject.VarOffsets
         {

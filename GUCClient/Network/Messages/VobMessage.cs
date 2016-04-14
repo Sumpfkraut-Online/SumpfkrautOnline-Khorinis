@@ -72,7 +72,7 @@ namespace GUC.Client.Network.Messages
             return pos;
         }
 
-        static bool ChangedCoord(ref float coord)
+        public static bool ChangedCoord(ref float coord)
         {
             bool changed = false;
             if (coord < -838860.8f)

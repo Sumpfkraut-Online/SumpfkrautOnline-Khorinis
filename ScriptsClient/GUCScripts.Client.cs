@@ -51,6 +51,7 @@ namespace GUC.Scripts
             Client.Scripts.TFFA.InputControl.Init();
             GUCMenu.CloseActiveMenus();
             Gothic.Objects.oCNpcFocus.SetFocusMode(1);
+            Client.SoundHandler.SetPlayFightMusic(true);
             Ingame = true;
             Logger.Log("Ingame started.");
         }

@@ -28,7 +28,7 @@ namespace GUC.Client.Hooks
 
             Logger.Log("Added game loop hooks.");
         }
-
+        
         static bool outgameStarted = false;
 
         static System.Diagnostics.Stopwatch fpsWatch = new System.Diagnostics.Stopwatch();
@@ -105,7 +105,14 @@ namespace GUC.Client.Hooks
                 InputHandler.Update();
                 ScriptManager.Interface.Update(GameTime.Ticks);
 
-                GameClient.Client.UpdateCharacters(GameTime.Ticks);
+                if (GameClient.Client.IsSpectating)
+                {
+                    GameClient.Client.UpdateSpectator(GameTime.Ticks);
+                }
+                else
+                {
+                    GameClient.Client.UpdateCharacters(GameTime.Ticks);
+                }
                 
                 if (fpsWatch.IsRunning)
                 {

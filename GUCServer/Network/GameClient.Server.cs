@@ -107,13 +107,41 @@ namespace GUC.Network
 
         #endregion
 
+
+        internal void ConfirmLoadWorldMessage()
+        {
+            if (character != null)
+            {
+                character.InsertInWorld();
+            }
+            else if (specWorld != null)
+            {
+                this.isSpectating = true;
+                // Write surrounding vobs to this client
+                int[] coords = NetCell.GetCoords(specPos);
+                this.SpecCell = specWorld.GetCellFromCoords(coords[0], coords[1]);
+                NetCell[] arr = new NetCell[NetCell.NumSurroundingCells]; int i = 0;
+                SpecCell.ForEachSurroundingCell(cell =>
+                {
+                    if (cell.DynVobs.GetCount() > 0)
+                        arr[i++] = cell; // save for cell message
+                });
+                WorldMessage.WriteCellMessage(arr, new NetCell[0], 0, this);
+                this.SpecCell.Clients.Add(this, ref this.cellID);
+            }
+            else
+            {
+                throw new Exception("Unallowed LoadWorldMessage");
+            }
+        }
+
         internal NetCell SpecCell;
 
         partial void pSetToSpectate(World world, Vec3f pos, Vec3f dir)
         {
             if (this.isSpectating)
             {
-
+                throw new NotImplementedException();
             }
             else
             {
@@ -121,10 +149,11 @@ namespace GUC.Network
                 {
                     WorldMessage.WriteLoadMessage(this, world);
                 }
-                else // character is already in this world
+                else // just switch cells
                 {
                     int[] coords = NetCell.GetCoords(pos);
-                    ChangeCells(character.Cell, coords[0], coords[1]);
+                    this.SpecCell = world.GetCellFromCoords(coords[0], coords[1]);
+                    ChangeCells(character.Cell, this.SpecCell);
                 }
 
                 // set old character to npc
@@ -138,8 +167,16 @@ namespace GUC.Network
                     }
                     this.character = null;
                 }
-            }
 
+                var stream = GameServer.SetupStream(NetworkIDs.SpectatorMessage);
+                stream.Write(pos);
+                stream.Write(dir);
+                this.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, '\0');
+
+                this.specPos = pos;
+                this.specDir = dir;
+                this.specWorld = world;
+            }
         }
 
         #region Player control
@@ -151,7 +188,7 @@ namespace GUC.Network
         {
             if (npc == null)
             {
-
+                throw new NotImplementedException();
             }
             else
             {
@@ -175,18 +212,41 @@ namespace GUC.Network
                 // npc is already in the world, set to player
                 if (npc.IsSpawned)
                 {
-                    if (this.character == null || (this.character.IsSpawned && this.character.World != npc.World))
+                    if (this.isSpectating)
                     {
-                        WorldMessage.WriteLoadMessage(this, npc.World);
+                        if (this.specWorld != npc.World)
+                        {
+                            WorldMessage.WriteLoadMessage(this, npc.World);
+                        }
+                        else
+                        {
+                            this.ChangeCells(this.SpecCell, npc.Cell);
+
+                            PacketWriter stream = GameServer.SetupStream(NetworkIDs.PlayerControlMessage);
+                            stream.Write((ushort)npc.ID);
+                            npc.WriteTakeControl(stream);
+                            this.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, '\0');
+                        }
+                        this.SpecCell.Clients.Remove(ref this.cellID);
+                        this.SpecCell = null;
+                        this.specWorld = null;
+                        this.isSpectating = false;
                     }
                     else
                     {
-                        this.ChangeCells(this.character.Cell, npc.Cell);
+                        if (this.character == null || this.character.World != npc.World)
+                        {
+                            WorldMessage.WriteLoadMessage(this, npc.World);
+                        }
+                        else
+                        {
+                            this.ChangeCells(this.character.Cell, npc.Cell);
 
-                        PacketWriter stream = GameServer.SetupStream(NetworkIDs.PlayerControlMessage);
-                        stream.Write((ushort)npc.ID);
-                        npc.WriteTakeControl(stream);
-                        this.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, '\0');
+                            PacketWriter stream = GameServer.SetupStream(NetworkIDs.PlayerControlMessage);
+                            stream.Write((ushort)npc.ID);
+                            npc.WriteTakeControl(stream);
+                            this.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, '\0');
+                        }
                     }
 
                     npc.World.AddToPlayers(this);
@@ -213,7 +273,7 @@ namespace GUC.Network
             }
         }
 
-        void ChangeCells(NetCell from, NetCell to)
+        internal void ChangeCells(NetCell from, NetCell to)
         {
             int i = 0;
             NetCell[] oldCells = new NetCell[NetCell.NumSurroundingCells];
@@ -248,7 +308,7 @@ namespace GUC.Network
             WorldMessage.WriteCellMessage(newCells, oldCells, oldVobCount, this);
         }
 
-        void ChangeCells(NetCell from, int x, int y)
+        internal void ChangeCells(NetCell from, int x, int y)
         {
             int i = 0;
             NetCell[] oldCells = new NetCell[NetCell.NumSurroundingCells];

@@ -18,10 +18,12 @@ namespace Gothic.View
 
         public abstract class VarOffsets
         {
-            public const int m_bFillZ = 8;
-            public const int next = 12;
-            public const int text_lines = 132;
-            public const int font = 0x64;
+            public const int m_bFillZ = 8,
+            next = 12,
+            text_lines = 132,
+            psizex = 0x5C,
+            psizey = 0x60,
+            font = 0x64;
         }
 
         public abstract class FuncAddresses
@@ -83,6 +85,13 @@ namespace Gothic.View
             Dispose(true);
         }
 
+        public const int screen = 0x00AB6468;
+
+        public static zCView GetScreen()
+        {
+            return new zCView(Process.ReadInt(screen));
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!this.disposed)
@@ -92,6 +101,9 @@ namespace Gothic.View
                 disposed = true;
             }
         }
+
+        public int pSizeX { get { return Process.ReadInt(Address + VarOffsets.psizex); } }
+        public int pSizeY { get { return Process.ReadInt(Address + VarOffsets.psizey); } }
 
         public bool FillZ
         {
@@ -118,11 +130,6 @@ namespace Gothic.View
         public zCList<zCViewText> TextLines
         {
             get { return new zCList<zCViewText>(Address + VarOffsets.text_lines); }
-        }
-
-        public static zCView GetScreen()
-        {
-            return new zCView(Process.ReadInt(0x00AB6468));
         }
 
         public static zCView STDOutput()
