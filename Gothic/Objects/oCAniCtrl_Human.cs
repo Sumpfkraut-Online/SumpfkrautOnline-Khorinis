@@ -61,6 +61,8 @@ namespace Gothic.Objects
 
             RemoveWeapon2 = 0x006B33B0,
             SearchStandAni = 0x006A4D20,
+            CheckMeleeWeaponHitsLevel = 0x6B0CD0,
+            GetFightLimbs = 0x6AF1E0,
 
             HitCombo = 0x6B0260;
         }
@@ -236,6 +238,17 @@ namespace Gothic.Objects
         {
             Process.THISCALL<NullReturnCall>(Address, 0x6A5060);
         }
+
+        public void CheckMeleeWeaponHitsLevel(oCItem item)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.CheckMeleeWeaponHitsLevel, item);
+        }
+
+        public void GetFightLimbs()
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.GetFightLimbs);
+        }
+
 
         public void Turn(float amount, bool playAni)
         {

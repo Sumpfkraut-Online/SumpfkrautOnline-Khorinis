@@ -141,21 +141,11 @@ namespace GUC.Network
         {
             if (this.isSpectating)
             {
+                return;
                 throw new NotImplementedException();
             }
             else
             {
-                if (this.character == null || (this.character.IsSpawned && this.character.World != world))
-                {
-                    WorldMessage.WriteLoadMessage(this, world);
-                }
-                else // just switch cells
-                {
-                    int[] coords = NetCell.GetCoords(pos);
-                    this.SpecCell = world.GetCellFromCoords(coords[0], coords[1]);
-                    ChangeCells(character.Cell, this.SpecCell);
-                }
-
                 // set old character to npc
                 if (this.character != null)
                 {
@@ -165,8 +155,21 @@ namespace GUC.Network
                         this.character.World.RemoveFromPlayers(this);
                         this.character.Cell.Clients.Remove(ref this.cellID);
                     }
-                    this.character = null;
                 }
+
+                if (this.character == null || (this.character.IsSpawned && this.character.World != world))
+                {
+                    WorldMessage.WriteLoadMessage(this, world);
+                }
+                else // just switch cells
+                {
+                    int[] coords = NetCell.GetCoords(pos);
+                    this.SpecCell = world.GetCellFromCoords(coords[0], coords[1]);
+                    ChangeCells(character.Cell, this.SpecCell);
+                    this.SpecCell.Clients.Add(this, ref this.cellID);
+                    this.isSpectating = true;
+                }
+                this.character = null;
 
                 var stream = GameServer.SetupStream(NetworkIDs.SpectatorMessage);
                 stream.Write(pos);
@@ -188,6 +191,7 @@ namespace GUC.Network
         {
             if (npc == null)
             {
+                return;
                 throw new NotImplementedException();
             }
             else
@@ -228,6 +232,8 @@ namespace GUC.Network
                             this.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, '\0');
                         }
                         this.SpecCell.Clients.Remove(ref this.cellID);
+                        if (this.SpecCell.Vobs.GetCount() <= 0 && this.SpecCell.Clients.Count <= 0)
+                            this.specWorld.netCells.Remove(this.SpecCell.Coord);
                         this.SpecCell = null;
                         this.specWorld = null;
                         this.isSpectating = false;

@@ -15,10 +15,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         // TFFA
         public override void OnPosChanged()
         {
-            if (this.BaseInst.GetPosition().Y < -400 && this.BaseInst.HP > 0)
-            {
-                this.SetHealth(0);
-            }
+            if (this.BaseInst.IsPlayer && !this.BaseInst.IsDead && this.BaseInst.GetPosition().Y < -400)
+                Server.Scripts.TFFA.TFFAGame.Kill((TFFA.TFFAClient)this.BaseInst.Client.ScriptObject);
         }
 
         public NPCInst(NPCDef def) : base(def, new WorldObjects.NPC())
@@ -81,6 +79,22 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             this.SetState(state);
         }
 
+        partial void pSetHealth(int hp, int hpmax)
+        {
+            if (hp <= 0)
+            {
+                if (hitTimer.NextCallTime - GameTime.Ticks < 100000)
+                {
+                    hitTimer.Stop(true);
+                }
+                else
+                {
+                    hitTimer.Stop(false);
+                }
+                comboTimer.Stop(false);
+            }
+        }
+
         GUCTimer hitTimer;
         GUCTimer comboTimer;
         bool canCombo = true;
@@ -127,7 +141,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                             Vec3f dir = (attPos - targetPos).Normalise();
                             float dot = attDir.Z * dir.Z + dir.X * attDir.X;
 
-                            if (dot <= -0.2f) // target is in front of attacker
+                            if (dot < -0.2f) // target is in front of attacker
                             {
                                 float dist = attDir.X * (targetPos.Z - attPos.Z) - attDir.Z * (targetPos.X - attPos.X);
                                 dist = (float)Math.Sqrt(dist * dist / (attDir.X * attDir.X + attDir.Z * attDir.Z));
@@ -154,11 +168,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                                         int damage = this.DrawnWeapon.Definition.Damage - target.Armor.Definition.Protection;
                                         if (damage > 0)
                                         {
-                                            target.SetHealth(target.BaseInst.HP - damage);
+                                            if (sOnHit != null)
+                                                sOnHit(this, target, damage);
                                         }
-
-                                        if (sOnHit != null)
-                                            sOnHit(this, target, damage);
                                     }
                                 }
                             }

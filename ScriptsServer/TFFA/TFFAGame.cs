@@ -16,7 +16,8 @@ namespace GUC.Server.Scripts.TFFA
 {
     public static class TFFAGame
     {
-        const long FightTime = 1 * TimeSpan.TicksPerMinute;
+        const long FightTime = 2 * TimeSpan.TicksPerMinute;
+        const long WaitTime = 30 * TimeSpan.TicksPerSecond;
         const int KillsToWin = 30;
 
         static List<Tuple<Vec3f, Vec3f>> NLSpawns = new List<Tuple<Vec3f, Vec3f>>()
@@ -51,20 +52,26 @@ namespace GUC.Server.Scripts.TFFA
             return Teams[team].Count;
         }
 
-        public static void AddToTeam(TFFAClient client, Team team)
+        public static void AddToTeam(TFFAClient client, Team team, bool force = false)
         {
-            if (client.Team != team && client.Character != null)
-            {
-                client.Character.SetHealth(0);
-                if (status == TFFAPhase.Warmup)
-                    SpawnNewPlayer(client);
-            }
+            if (!force && client.Team == team)
+                return;
+
+            Kill(client);
+
+            client.Class = PlayerClass.None;
+
             RemoveFromTeam(client);
             Teams[team].Add(client);
             client.Team = team;
-
+            
             if (team == Team.Spec)
                 client.BaseClient.SetToSpectate(WorldInst.Current.BaseWorld, new Vec3f(0, 300, 0), new Vec3f());
+            
+            PacketWriter answer = GameClient.GetMenuMsgStream();
+            answer.Write((byte)MenuMsgID.SelectTeam);
+            answer.Write((byte)team);
+            client.BaseClient.SendMenuMsg(answer, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE);
         }
 
         public static void RemoveFromTeam(TFFAClient client)
@@ -74,13 +81,14 @@ namespace GUC.Server.Scripts.TFFA
 
         public static void SelectClass(TFFAClient client, PlayerClass c)
         {
-            if (client.Class != c && client.Character != null)
+            if (client.Class != c)
             {
-                client.Character.SetHealth(0);
-                if (status == TFFAPhase.Warmup)
+                Kill(client);
+
+                client.Class = c;
+                if (status == TFFAPhase.Wait && client.Team != Team.Spec)
                     SpawnNewPlayer(client);
             }
-            client.Class = c;
         }
 
         public static void UpdateStats()
@@ -135,22 +143,24 @@ namespace GUC.Server.Scripts.TFFA
                 stream.Write((byte)MenuMsgID.OpenScoreboard);
                 stream.Write((int)(gameTimer.GetRemainingTicks() / TimeSpan.TicksPerSecond));
 
+                stream.Write((byte)ALKills);
                 var list = Teams[Team.AL];
                 stream.Write((byte)list.Count);
                 for (int i = 0; i < list.Count; i++)
                 {
                     stream.Write(list[i].Name);
-                    stream.Write((byte)list[i].Kills);
+                    stream.Write((sbyte)list[i].Kills);
                     stream.Write((byte)list[i].Deaths);
                     stream.Write((ushort)list[i].Damage);
                 }
 
+                stream.Write((byte)NLKills);
                 list = Teams[Team.NL];
                 stream.Write((byte)list.Count);
                 for (int i = 0; i < list.Count; i++)
                 {
                     stream.Write(list[i].Name);
-                    stream.Write((byte)list[i].Kills);
+                    stream.Write((sbyte)list[i].Kills);
                     stream.Write((byte)list[i].Deaths);
                     stream.Write((ushort)list[i].Damage);
                 }
@@ -181,21 +191,23 @@ namespace GUC.Server.Scripts.TFFA
         static int ALKills = 0;
         static int NLKills = 0;
 
-        static void AddKill(TFFAClient client)
+        public static void Kill(TFFAClient client)
         {
-            client.Kills++;
-            if (client.Team == Team.AL)
-            {
-                ALKills++;
-            }
-            else if (client.Team == Team.NL)
-            {
-                NLKills++;
-            }
+            if (client.Character == null)
+                return;
 
+            client.Character.SetHealth(0);
 
-            if (ALKills >= KillsToWin || NLKills >= KillsToWin)
-                PhaseEnd();
+            if (status == TFFAPhase.Fight)
+            {
+                client.Deaths++;
+                if (client.Team == Team.AL)
+                    NLKills++;
+                else if (client.Team == Team.NL)
+                    ALKills++;
+                if (ALKills >= KillsToWin || NLKills >= KillsToWin)
+                    PhaseEnd();
+            }
         }
 
         static void OnHit(NPCInst attacker, NPCInst target, int damage)
@@ -203,12 +215,25 @@ namespace GUC.Server.Scripts.TFFA
             if (attacker.BaseInst.Client == null || target.BaseInst.Client == null)
                 return;
 
-            ((TFFAClient)attacker.BaseInst.Client.ScriptObject).Damage += damage;
+            TFFAClient att = ((TFFAClient)attacker.BaseInst.Client.ScriptObject);
+            TFFAClient tar = ((TFFAClient)target.BaseInst.Client.ScriptObject);
+
+            int realDamage = att.Team == tar.Team ? (int)(damage * 0.5f) : damage;
+            target.SetHealth(target.BaseInst.HP - realDamage);
+
+            if (att.Team != tar.Team)
+                att.Damage += damage;
             if (target.BaseInst.HP <= 0)
             {
-                //Log.Logger.Log()
-                ((TFFAClient)target.BaseInst.Client.ScriptObject).Deaths++;
-                AddKill((TFFAClient)attacker.BaseInst.Client.ScriptObject);
+                if (att.Team != tar.Team)
+                {
+                    att.Kills++;
+                }
+                else
+                {
+                    att.Kills--;
+                }
+                Kill(tar);
             }
         }
 
@@ -219,8 +244,14 @@ namespace GUC.Server.Scripts.TFFA
         {
             Log.Logger.Log("Wait Phase");
             status = TFFAPhase.Wait;
+
             TFFAClient.ForEach(client =>
             {
+                var stream = GameClient.GetMenuMsgStream();
+                stream.Write((byte)MenuMsgID.PhaseMsg);
+                stream.Write((byte)status);
+                client.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE);
+                AddToTeam(client, Team.Spec);
                 client.Deaths = 0;
                 client.Kills = 0;
                 client.Damage = 0;
@@ -229,8 +260,8 @@ namespace GUC.Server.Scripts.TFFA
             });
             RemoveAllPlayers();
 
-            gameTimer.SetInterval(20 * TimeSpan.TicksPerSecond);
-            gameTimer.SetCallback(PhaseWarmup);
+            gameTimer.SetInterval(WaitTime);
+            gameTimer.SetCallback(PhaseFight);
             gameTimer.Restart();
         }
 
@@ -243,32 +274,16 @@ namespace GUC.Server.Scripts.TFFA
             });
         }
 
-        static void PhaseWarmup()
-        {
-            Log.Logger.Log("Warmup Phase");
-            status = TFFAPhase.Warmup;
-            TFFAClient.ForEach(client =>
-            {
-                SpawnNewPlayer(client);
-                client.Deaths = 0;
-                client.Kills = 0;
-                client.Damage = 0;
-                ALKills = 0;
-                NLKills = 0;
-            });
-            RemoveAllPlayers();
-
-            gameTimer.SetInterval(10 * TimeSpan.TicksPerSecond);
-            gameTimer.SetCallback(PhaseFight);
-            gameTimer.Restart();
-        }
-
         static void PhaseFight()
         {
             Log.Logger.Log("Fight Phase");
             status = TFFAPhase.Fight;
             TFFAClient.ForEach(client =>
             {
+                var stream = GameClient.GetMenuMsgStream();
+                stream.Write((byte)MenuMsgID.PhaseMsg);
+                stream.Write((byte)status);
+                client.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE);
                 SpawnNewPlayer(client);
                 client.Deaths = 0;
                 client.Kills = 0;
@@ -287,11 +302,15 @@ namespace GUC.Server.Scripts.TFFA
         {
             Log.Logger.Log("End Phase");
             status = TFFAPhase.End;
+            var stream = GameClient.GetMenuMsgStream();
+            stream.Write((byte)MenuMsgID.PhaseMsg);
+            stream.Write((byte)status);
+            TFFAClient.ForEach(client => client.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE));
 
             if (ALKills > NLKills)
             {
                 Teams[Team.NL].ForEach(client => client.Character.SetHealth(0));
-                var stream = GameClient.GetMenuMsgStream();
+                stream = GameClient.GetMenuMsgStream();
                 stream.Write((byte)MenuMsgID.WinMsg);
                 stream.Write((byte)Team.AL);
                 TFFAClient.ForEach(client => client.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE));
@@ -300,7 +319,7 @@ namespace GUC.Server.Scripts.TFFA
             else if (NLKills > ALKills)
             {
                 Teams[Team.AL].ForEach(client => client.Character.SetHealth(0));
-                var stream = GameClient.GetMenuMsgStream();
+                stream = GameClient.GetMenuMsgStream();
                 stream.Write((byte)MenuMsgID.WinMsg);
                 stream.Write((byte)Team.NL);
                 TFFAClient.ForEach(client => client.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE));

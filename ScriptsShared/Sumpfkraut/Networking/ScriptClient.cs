@@ -60,6 +60,11 @@ namespace GUC.Scripts.Sumpfkraut.Networking
             this.baseClient.SetControl(npc.BaseInst);
         }
 
+        public void SetToSpectator(WorldObjects.World world, Types.Vec3f pos, Types.Vec3f dir)
+        {
+            throw new NotImplementedException();
+        }
+
         #region Read & Write
 
         public void OnReadProperties(PacketReader stream)

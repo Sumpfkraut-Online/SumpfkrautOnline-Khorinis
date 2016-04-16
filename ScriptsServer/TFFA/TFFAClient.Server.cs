@@ -20,7 +20,11 @@ namespace GUC.Scripts.TFFA
 
         partial void pConstruct()
         {
-            TFFAGame.AddToTeam(this, Team.Spec);
+            TFFAGame.AddToTeam(this, Team.Spec, true);
+            var stream = GameClient.GetMenuMsgStream();
+            stream.Write((byte)MenuMsgID.PhaseMsg);
+            stream.Write((byte)TFFAGame.Status);
+            this.baseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE);
         }
 
         public void OnDisconnection()
@@ -29,6 +33,7 @@ namespace GUC.Scripts.TFFA
             TFFAGame.teamMenuClients.Remove(this);
             TFFAGame.classMenuClients.Remove(this);
             TFFAGame.scoreboardClients.Remove(this);
+            TFFAGame.Kill(this);
         }
 
         public void OnReadMenuMsg(PacketReader stream)
@@ -59,27 +64,40 @@ namespace GUC.Scripts.TFFA
                     break;
                 case MenuMsgID.SelectTeam:
                     Team team = (Team)stream.ReadByte();
-                    if (team != Team.Spec)
+                    if (team != this.Team)
                     {
-                        int teamCount = TFFAGame.GetCount(team);
-                        for (int i = 0; i < (int)Team.Max; i++)
-                            if (i != (int)Team.Spec && i != (int)team)
-                                if (teamCount > TFFAGame.GetCount((Team)i))
-                                    return; // uneven teams, can't join
+                        if (team != Team.Spec)
+                        {
+                            int alCount = TFFAGame.GetCount(Team.AL);
+                            int nlCount = TFFAGame.GetCount(Team.NL);
+
+                            if (this.Team == Team.AL)
+                                alCount--;
+                            else if (this.Team == Team.NL)
+                                nlCount--;
+
+                            if (team == Team.AL)
+                            {
+                                if (alCount > nlCount)
+                                    return;
+                            }
+                            else if (team == Team.NL)
+                            {
+                                if (nlCount > alCount)
+                                    return;
+                            }     
+                        }
+
+                        TFFAGame.AddToTeam(this, team);
                     }
-
-                    TFFAGame.AddToTeam(this, team);
-
-                    PacketWriter answer = GameClient.GetMenuMsgStream();
-                    answer.Write((byte)MenuMsgID.SelectTeam);
-                    answer.Write((byte)team);
-                    this.baseClient.SendMenuMsg(answer, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE);
                     break;
                 case MenuMsgID.SelectClass:
                     TFFAGame.SelectClass(this, (PlayerClass)stream.ReadByte());
                     break;
                 case MenuMsgID.SetName:
-                    this.Name = stream.ReadString();
+                    string newName = stream.ReadString();
+                    if (!string.IsNullOrWhiteSpace(newName))
+                        this.Name = newName;
                     break;
             }
 

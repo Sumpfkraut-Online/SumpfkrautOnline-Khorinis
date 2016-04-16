@@ -48,7 +48,7 @@ namespace GUC.Client.Scripts.TFFA
                 Scoreboard.Menu.Open();
             }
 
-            if (GUC.Network.GameClient.Client.Character == null)
+            if (GUC.Network.GameClient.Client.Character == null || TFFAClient.Status == TFFAPhase.Wait)
                 return;
 
             if (key == VirtualKeys.Menu)
@@ -139,7 +139,7 @@ namespace GUC.Client.Scripts.TFFA
                 Scoreboard.Menu.Close();
             }
 
-            if (GUC.Network.GameClient.Client.Character == null)
+            if (GUC.Network.GameClient.Client.Character == null || TFFAClient.Status == TFFAPhase.Wait)
                 return;
 
             if (key == VirtualKeys.Control || key == VirtualKeys.LeftButton)
@@ -183,7 +183,7 @@ namespace GUC.Client.Scripts.TFFA
                 return;
             }
 
-            if (GUC.Network.GameClient.Client.Character == null)
+            if (GUC.Network.GameClient.Client.Character == null || TFFAClient.Status == TFFAPhase.Wait)
                 return;
             
             if (InputHandler.MouseDistX != 0)

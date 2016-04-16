@@ -17,6 +17,7 @@ namespace GUC.Network
         public partial interface IScriptClient : IScriptGameObject
         {
             void SetControl(NPC npc);
+            void SetToSpectator(World world, Vec3f pos, Vec3f dir);
         }
 
         /// <summary>

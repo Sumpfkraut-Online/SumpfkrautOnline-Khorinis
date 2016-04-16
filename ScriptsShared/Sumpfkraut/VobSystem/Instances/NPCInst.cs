@@ -188,9 +188,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             this.SetHealth(hp, BaseInst.HPMax);
         }
+
+        partial void pSetHealth(int hp, int hpmax);
         public void SetHealth(int hp, int hpmax)
         {
             this.BaseInst.SetHealth(hp, hpmax);
+            pSetHealth(hp, hpmax);
         }
 
         public override void OnReadProperties(PacketReader stream)

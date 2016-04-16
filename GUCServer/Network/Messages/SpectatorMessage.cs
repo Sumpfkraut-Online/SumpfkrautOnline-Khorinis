@@ -37,6 +37,8 @@ namespace GUC.Server.Network.Messages
                 if ((xdiff > 0.65f || xdiff < -0.65f) || (zdiff > 0.65f || zdiff < -0.65f))
                 {
                     client.SpecCell.Clients.Remove(ref client.cellID);
+                    if (client.SpecCell.Vobs.GetCount() <= 0 && client.SpecCell.Clients.Count <= 0)
+                        client.SpecWorld.netCells.Remove(client.SpecCell.Coord);
                     var newCell = client.SpecWorld.GetCellFromCoords(x, z);
                     client.ChangeCells(client.SpecCell, newCell);
                     client.SpecCell = newCell;

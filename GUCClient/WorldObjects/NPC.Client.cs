@@ -170,6 +170,9 @@ namespace GUC.WorldObjects
 
             this.ScriptObject.OnTick(now);
 
+            if (this.IsDead)
+                return;
+
             if (this.IsInAnimation)
             {
                 return;
@@ -202,83 +205,6 @@ namespace GUC.WorldObjects
                     break;
             }
         }
-
-        #region Animation
-
-        /*public int TurnAnimation = 0;
-
-        public void AnimationStart(Animations ani)
-        {
-            using (zString z = zString.Create(Program.Process, ani.ToString()))
-            {
-                gVob.GetModel().StartAnimation(z);
-            }
-        }
-
-        public void AnimationStop(Animations ani)
-        {
-            using (zString z = zString.Create(Program.Process, ani.ToString()))
-            {
-                gVob.GetModel().StopAnimation(z);
-            }
-        }
-
-        public void AnimationFade(Animations ani)
-        {
-            using (zString z = zString.Create(Program.Process, ani.ToString()))
-            {
-                int id = gVob.GetModel().GetAniIDFromAniName(z);
-                gVob.GetModel().FadeOutAni(id);
-            }
-        }*/
-
-        #endregion
-
-        #region Equipment
-
-        /*public void EquipSlot(byte slot, Item item)
-        {
-            if (item != null && !item.Spawned)
-            {
-                item.Slot = slot;
-                if (UnequipSlot(slot))
-                {
-                    equippedSlots[slot] = item;
-                }
-                else
-                {
-                    equippedSlots.Add(slot, item);
-                }
-
-                if (Spawned)
-                {
-                    if (item.IsMeleeWeapon)
-                        gVob.EquipWeapon(item.gVob);
-                    else if (item.IsRangedWeapon)
-                        gVob.EquipFarWeapon(item.gVob);
-                    else if (item.IsArmor)
-                        gVob.EquipArmor(item.gVob);
-                    else
-                        gVob.EquipItem(item.gVob);
-                }
-            }
-        }
-
-        public bool UnequipSlot(byte slot)
-        {
-            Item item;
-            if (equippedSlots.TryGetValue(slot, out item))
-            {
-                item.Slot = 0;
-                if (Spawned)
-                {
-                    gVob.UnequipItem(item.gVob);
-                }
-                return true;
-            }
-            return false;
-        }*/
-
-        #endregion
+        
     }
 }

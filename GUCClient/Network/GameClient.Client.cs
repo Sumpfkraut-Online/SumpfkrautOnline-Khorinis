@@ -27,22 +27,30 @@ namespace GUC.Network
 
         #region Spectator
 
-        oCAICamera specCam = oCAICamera.Create();
-        void ReadSpectatorMessage(PacketReader stream)
+        partial void pSetToSpectate(World world, Vec3f pos, Vec3f dir)
         {
-            Vec3f pos = stream.ReadVec3f();
-            Vec3f dir = stream.ReadVec3f();
-
             var cam = oCGame.GetCameraVob();
             cam.SetAI(specCam);
             cam.SetPositionWorld(pos.ToArray());
             this.isSpectating = true;
         }
 
+        oCAICamera specCam = oCAICamera.Create();
+        void ReadSpectatorMessage(PacketReader stream)
+        {
+            Vec3f pos = stream.ReadVec3f();
+            Vec3f dir = stream.ReadVec3f();
+
+            this.ScriptObject.SetToSpectator(World.current, pos, dir);
+        }
+
         Vec3f lastSpecPos;
         static long specNextUpdate = 0;
         internal void UpdateSpectator(long now)
         {
+            if (now < specNextUpdate)
+                return;
+
             var cam = oCGame.GetCameraVob();
             var pos = new Vec3f(cam.Position);
             if (VobMessage.ChangedCoord(ref pos.X) || VobMessage.ChangedCoord(ref pos.Y) || VobMessage.ChangedCoord(ref pos.Z))

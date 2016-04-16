@@ -24,10 +24,14 @@ namespace GUC.Client.Scripts.TFFA
 
         public override void Close()
         {
-            PacketWriter stream = GameClient.Client.GetMenuMsgStream();
-            stream.Write((byte)MenuMsgID.SetName);
-            stream.Write(box.Input);
-            GameClient.Client.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE);
+            string newName = box.Input;
+            if (!string.IsNullOrWhiteSpace(newName) && newName != TFFAClient.Client.Name)
+            {
+                PacketWriter stream = GameClient.Client.GetMenuMsgStream();
+                stream.Write((byte)MenuMsgID.SetName);
+                stream.Write(newName);
+                GameClient.Client.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE);
+            }
             base.Close();
         }
     }

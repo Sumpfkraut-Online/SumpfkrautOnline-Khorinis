@@ -9,7 +9,6 @@ namespace GUC.Scripts.TFFA
     public enum TFFAPhase
     {
         Wait,
-        Warmup,
         Fight,
         End
     }
@@ -40,6 +39,7 @@ namespace GUC.Scripts.TFFA
         SetName,
         OpenScoreboard,
         CloseScoreboard,
-        WinMsg
+        WinMsg,
+        PhaseMsg
     }
 }

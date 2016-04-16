@@ -32,6 +32,8 @@ namespace GUC.Client.Scripts.TFFA
 
         public override void Open()
         {
+            Scoreboard.Menu.Close();
+
             base.Open();
             bClass.Enabled = TFFAClient.Client != null && TFFAClient.Client.Team != Team.Spec;
 

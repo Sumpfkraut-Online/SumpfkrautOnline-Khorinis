@@ -105,7 +105,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public void OnTick(long now)
         {
             if (this.IsInAttackAni)
+            {
                 this.BaseInst.gVob.AniCtrl.ShowWeaponTrail();
+            }
         }
     }
 }

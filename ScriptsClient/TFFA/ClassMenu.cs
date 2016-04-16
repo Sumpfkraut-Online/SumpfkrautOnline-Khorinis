@@ -49,6 +49,9 @@ namespace GUC.Client.Scripts.TFFA
 
         public override void Open()
         {
+            if (this.isOpen)
+                return;
+
             if (TFFAClient.Client.Team == Team.Spec)
                 return;
 
@@ -57,18 +60,26 @@ namespace GUC.Client.Scripts.TFFA
             GameClient.Client.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.UNRELIABLE);
             base.Open();
             SetTeam(TFFAClient.Client.Team);
+            PhaseInfo.info.Open();
         }
 
         public override void Close()
         {
+            if (!this.isOpen)
+                return;
+
             PacketWriter stream = GameClient.Client.GetMenuMsgStream();
             stream.Write((byte)MenuMsgID.CloseClassMenu);
             GameClient.Client.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE);
             base.Close();
+            PhaseInfo.info.Close();
         }
 
         void SelectClass(PlayerClass c)
         {
+            if (TFFAClient.Client.Class == c)
+                return;
+
             PacketWriter stream = GameClient.Client.GetMenuMsgStream();
             stream.Write((byte)MenuMsgID.SelectClass);
             stream.Write((byte)c);

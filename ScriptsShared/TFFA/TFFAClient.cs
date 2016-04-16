@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using GUC.Network;
 using GUC.WorldObjects;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using GUC.Scripts.Sumpfkraut.WorldSystem;
+using GUC.Types;
 
 namespace GUC.Scripts.TFFA
 {
@@ -44,6 +46,18 @@ namespace GUC.Scripts.TFFA
 
         public void OnWriteProperties(PacketWriter stream)
         {
+        }
+
+        public void SetToSpectator(World world, Vec3f pos, Vec3f dir)
+        {
+            this.SetToSpectator((WorldInst)world.ScriptObject, pos, dir);
+        }
+
+        partial void pSetToSpectator(WorldInst world, Vec3f pos, Vec3f dir);
+        public void SetToSpectator(WorldInst world, Vec3f pos, Vec3f dir)
+        {
+            this.baseClient.SetToSpectate(world.BaseWorld, pos, dir);
+            pSetToSpectator(world, pos, dir);
         }
     }
 }

@@ -166,7 +166,7 @@ namespace GUC.WorldObjects
             if (!this.IsStatic)
                 this.Cell.DynVobs.Remove(this, ref this.dynCellID, ref this.dynCellTypeID);
 
-            if (this.Cell.Vobs.GetCount() == 0)
+            if (this.Cell.Vobs.GetCount() == 0 && this.Cell.Clients.Count == 0)
                 this.world.netCells.Remove(this.Cell.Coord);
 
             this.Cell = null;

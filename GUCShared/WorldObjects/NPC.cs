@@ -102,7 +102,7 @@ namespace GUC.WorldObjects
             {
                 this.state = NPCStates.Stand;
                 this.currentAni = null;
-                this.aniTimer.Stop();
+                this.aniTimer.Stop(true);
                 this.hp = 0;
             }
             else
@@ -547,9 +547,6 @@ namespace GUC.WorldObjects
         partial void pStopAnimation(bool fadeOut);
         public void StopAnimation(bool fadeOut = false)
         {
-            if (this.IsDead)
-                return;
-
             if (!this.IsInAnimation)
                 return;
 

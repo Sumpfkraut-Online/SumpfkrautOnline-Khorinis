@@ -131,7 +131,7 @@ namespace GUC.Scripts
             aniJob.AniName = "t_1hAttackMove";
             model.AddAniJob(aniJob);
 
-            ani = new ScriptAni(11200000); ani.ComboTime = 11200000; ani.HitTime = 10000000; aniJob.SetDefaultAni(ani);
+            ani = new ScriptAni(11200000); ani.ComboTime = 11200000; ani.HitTime = 7000000; aniJob.SetDefaultAni(ani);
             
             // 1h Parry
             aniJob = new ScriptAniJob("attack1hparry");
@@ -298,7 +298,7 @@ namespace GUC.Scripts
             itemDef.Material = Enumeration.ItemMaterials.Metal;
             itemDef.Model = m;
             itemDef.Damage = 44;
-            itemDef.Range = 80;
+            itemDef.Range = 90;
             itemDef.Create();
 
             // SÖLDNERRÜSTUNG
@@ -322,7 +322,7 @@ namespace GUC.Scripts
             itemDef.Material = Enumeration.ItemMaterials.Metal;
             itemDef.Damage = 42;
             itemDef.Model = m;
-            itemDef.Range = 60;
+            itemDef.Range = 70;
             itemDef.Create();
 
             // BANDITENRÜSTUNG

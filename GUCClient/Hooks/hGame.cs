@@ -28,7 +28,7 @@ namespace GUC.Client.Hooks
 
             Logger.Log("Added game loop hooks.");
         }
-        
+
         static bool outgameStarted = false;
 
         static System.Diagnostics.Stopwatch fpsWatch = new System.Diagnostics.Stopwatch();
@@ -68,7 +68,7 @@ namespace GUC.Client.Hooks
                 zCRenderer.Vid_Blit(1, 0, 0);
                 zCSndSys_MSS.DoSoundUpdate();
                 #endregion
-                
+
                 if (fpsWatch.IsRunning)
                 {
                     long diff = 8 * TimeSpan.TicksPerMillisecond - fpsWatch.ElapsedTicks;
@@ -91,13 +91,13 @@ namespace GUC.Client.Hooks
         public static Int32 RunIngame(String message)
         {
             try
-            {                
+            {
                 if (!ingameStarted)
                 {
                     ingameStarted = true;
                     ScriptManager.Interface.StartIngame();
                 }
-                
+
                 GameTime.Update();
                 WorldObjects.World.ForEach(w => { w.Clock.UpdateTime(); w.SkyCtrl.UpdateWeather(); });
                 GUCTimer.Update(GameTime.Ticks);
@@ -109,11 +109,8 @@ namespace GUC.Client.Hooks
                 {
                     GameClient.Client.UpdateSpectator(GameTime.Ticks);
                 }
-                else
-                {
-                    GameClient.Client.UpdateCharacters(GameTime.Ticks);
-                }
-                
+                GameClient.Client.UpdateCharacters(GameTime.Ticks);
+
                 if (fpsWatch.IsRunning)
                 {
                     long diff = 8 * TimeSpan.TicksPerMillisecond - fpsWatch.ElapsedTicks;

@@ -15,11 +15,21 @@ namespace GUC.Client.Scripts.TFFA
 
         public void SetCounts(int tSpec, int tAL, int tNL)
         {
+            int al = tAL; int nl = tNL;
+            if (TFFAClient.Client.Team == Team.AL)
+            {
+                al--;
+            }
+            else if (TFFAClient.Client.Team == Team.NL)
+            {
+                nl--;
+            }
+
             bTeamAL.Text = "Team Gomez: " + tAL;
-            bTeamAL.Enabled = tAL <= tNL;
+            bTeamAL.Enabled = al <= nl;
 
             bTeamNL.Text = "Tetriandoch: " + tNL;
-            bTeamNL.Enabled = tAL >= tNL;
+            bTeamNL.Enabled = al >= nl;
 
             bSpec.Text = "Zuschauer: " + tSpec;
         }
@@ -41,26 +51,42 @@ namespace GUC.Client.Scripts.TFFA
 
         public override void Open()
         {
+            if (this.isOpen)
+                return;
+
             PacketWriter stream = GameClient.Client.GetMenuMsgStream();
             stream.Write((byte)MenuMsgID.OpenTeamMenu);
             GameClient.Client.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.UNRELIABLE);
             base.Open();
+            PhaseInfo.info.Open();
         }
 
         public override void Close()
         {
+            if (!this.isOpen)
+                return;
+
             PacketWriter stream = GameClient.Client.GetMenuMsgStream();
             stream.Write((byte)MenuMsgID.CloseTeamMenu);
             GameClient.Client.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE);
             base.Close();
+            PhaseInfo.info.Close();
         }
 
         void SelectTeam(Team team)
         {
-            PacketWriter stream = GameClient.Client.GetMenuMsgStream();
-            stream.Write((byte)MenuMsgID.SelectTeam);
-            stream.Write((byte)team);
-            GameClient.Client.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE);
+            Close();
+            if (TFFAClient.Client.Team != team)
+            {
+                PacketWriter stream = GameClient.Client.GetMenuMsgStream();
+                stream.Write((byte)MenuMsgID.SelectTeam);
+                stream.Write((byte)team);
+                GameClient.Client.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE);
+            }
+            else
+            {
+                ClassMenu.Menu.Open();
+            }
         }
     }
 }

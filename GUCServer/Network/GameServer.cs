@@ -123,7 +123,7 @@ namespace GUC.Server.Network
             client.PacketCount++;
             if (client.nextCheck < GameTime.Ticks)
             {
-                if (client.PacketCount >= 30)
+                if (client.PacketCount >= 40)
                 {
                     Logger.LogWarning("Client spammed too many packets. Kicked: {0} IP:{1}", client.guid.g, client.systemAddress);
                     DisconnectClient(client);
@@ -239,6 +239,29 @@ namespace GUC.Server.Network
                     else
                         Logger.LogError("{0}: {1}\n{2}", e.Source, e.Message, e.StackTrace);
 
+                    if (client != null)
+                    {
+                        if (client.IsSpectating)
+                        {
+                            Logger.Log("Cells:");
+                            foreach (var cell in client.SpecWorld.netCells.Values)
+                            {
+                                string clients = ""; cell.Clients.ForEach(c => clients += c.ID + ", ");
+                                Logger.Log(String.Format("({0},{1}): {2} Vobs, {3} Clients ({4})", cell.X, cell.Y, cell.Vobs.GetCount(), cell.Clients.Count, clients));
+                            }
+                        }
+                        else if (client.character != null)
+                        {
+                            Logger.Log("Cells:");
+                            foreach (var cell in client.character.World.netCells.Values)
+                            {
+                                string clients = ""; cell.Clients.ForEach(c => clients += c.ID + ", ");
+                                Logger.Log(String.Format("({0},{1}): {2} Vobs, {3} Clients ({4})", cell.X, cell.Y, cell.Vobs.GetCount(), cell.Clients.Count, clients));
+                            }
+                        }
+                    }
+
+
                     if (client == null)
                     {
                         ServerInterface.CloseConnection(p.guid, false);
@@ -268,9 +291,14 @@ namespace GUC.Server.Network
                     client.Character.Cell.Clients.Remove(ref client.cellID);
                 }
             }
+            if (client.IsSpectating)
+            {
+                client.SpecCell.Clients.Remove(ref client.cellID);
+                if (client.SpecCell.Vobs.GetCount() == 0 && client.SpecCell.Clients.Count == 0)
+                    client.SpecWorld.netCells.Remove(client.SpecCell.Coord);
+            }
 
-            if (client.ScriptObject != null)
-                client.ScriptObject.OnDisconnection();
+            client.ScriptObject.OnDisconnection();
 
             client.character = null;
 
