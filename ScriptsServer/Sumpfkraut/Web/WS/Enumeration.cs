@@ -1,4 +1,4 @@
-﻿namespace GUC.Server.Scripts.Sumpfkraut.Web.WS
+﻿namespace GUC.Scripts.Sumpfkraut.Web.WS
 {
 
     public enum WSServerState

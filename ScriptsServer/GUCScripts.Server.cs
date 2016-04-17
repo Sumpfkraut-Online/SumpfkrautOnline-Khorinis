@@ -21,6 +21,15 @@ namespace GUC.Scripts
 
             CreateTestWorld();
 
+            // -- Websocket-Server --
+            Sumpfkraut.Web.WS.WSServer wsServer = new Sumpfkraut.Web.WS.WSServer();
+            wsServer.SetObjName("WSServer");
+            wsServer.Init();
+            wsServer.Start();
+
+            // -- command console --
+            Sumpfkraut.CommandConsole.CommandConsole cmdConsole = new Sumpfkraut.CommandConsole.CommandConsole();
+
             Logger.Log("######################## Finished #########################");
         }
 

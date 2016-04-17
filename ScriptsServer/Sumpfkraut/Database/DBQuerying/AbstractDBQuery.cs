@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace GUC.Server.Scripts.Sumpfkraut.Database.DBQuerying
+namespace GUC.Scripts.Sumpfkraut.Database.DBQuerying
 {
     public abstract class AbstractDBQuery : GUC.Utilities.ExtendedObject, IDBQuery
     {

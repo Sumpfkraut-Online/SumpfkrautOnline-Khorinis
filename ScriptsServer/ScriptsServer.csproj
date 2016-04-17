@@ -169,6 +169,8 @@
     <Compile Include="Sumpfkraut\CommandConsole\CommandConsole.cs" />
     <Compile Include="Sumpfkraut\CommandConsole\InfoObjects\AbstractInfo.cs" />
     <Compile Include="Sumpfkraut\CommandConsole\InfoObjects\NPCInfo.cs" />
+    <Compile Include="Sumpfkraut\CommandConsole\InfoObjects\PlayerInfo.cs" />
+    <Compile Include="Sumpfkraut\CommandConsole\InfoObjects\VobInfo.cs" />
     <Compile Include="Sumpfkraut\CommandConsole\TestCommands.cs" />
     <Compile Include="Sumpfkraut\Database\DBAgent.cs" />
     <Compile Include="Sumpfkraut\Database\DBQueryHandler.cs" />

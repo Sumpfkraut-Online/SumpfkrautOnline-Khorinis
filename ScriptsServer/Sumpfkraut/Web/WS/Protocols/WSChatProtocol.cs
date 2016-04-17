@@ -1,11 +1,11 @@
 ﻿using Alchemy.Classes;
-using GUC.Server.Scripts.Sumpfkraut.CommandConsole.InfoObjects;
+using GUC.Scripts.Sumpfkraut.CommandConsole.InfoObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace GUC.Server.Scripts.Sumpfkraut.Web.WS.Protocols
+namespace GUC.Scripts.Sumpfkraut.Web.WS.Protocols
 {
 
     public class WSChatProtocol : AbstractWSProtocol
