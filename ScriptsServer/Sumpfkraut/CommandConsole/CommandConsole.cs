@@ -23,6 +23,7 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
         public static readonly Dictionary<string, ProcessCommand> CmdToProcessFunc =
             new Dictionary<string, ProcessCommand>()
             {
+                { "/GETPLAYERS", TestCommands.GetPlayerList },
                 { "/BAN", TestCommands.BanPlayers },
                 { "/KICK", TestCommands.KickPlayers },
                 { "/KILL", TestCommands.KillPlayers },

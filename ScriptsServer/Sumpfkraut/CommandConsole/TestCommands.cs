@@ -127,10 +127,8 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
             Network.GameClient.ForEach(client => 
             {
                 index = charNames.IndexOf(client.Character.Name);
-                if (index > -1)
-                {
-                    clients.Add(client);
-                }
+
+                if (index > -1) { clients.Add(client); }
             });
 
             return clients;
