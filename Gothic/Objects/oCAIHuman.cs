@@ -14,6 +14,7 @@ namespace Gothic.Objects
             public const int NPC = 0x12C,
             fallDownDistanceY = 156,
             waterLevel = 136,
+            aboveFloor = 0x84,
             wmode = 336;
         }
         new public abstract class FuncAddresses : oCAniCtrl_Human.FuncAddresses
@@ -58,6 +59,10 @@ namespace Gothic.Objects
             set { Process.Write(value, Address + VarOffsets.fallDownDistanceY); }
         }
 
+        public float AboveFloor
+        {
+            get { return Process.ReadFloat(Address + VarOffsets.aboveFloor); }
+        }
 
         public void Init(oCNpc npc)
         {

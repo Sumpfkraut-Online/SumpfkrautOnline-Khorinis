@@ -149,9 +149,7 @@ namespace GUC.WorldObjects
 
             if (this.isCreated)
                 throw new Exception("Vob is already spawned!");
-
-            Logger.Log("Spawn vob " + this.ID);
-
+            
             this.pos = position;
             this.dir = direction;
 

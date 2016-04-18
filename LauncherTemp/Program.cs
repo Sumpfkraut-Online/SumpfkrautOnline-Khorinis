@@ -94,9 +94,10 @@ namespace TempLauncher
                     psi.FileName = Path.GetFullPath("..\\Gothic2.exe");
                     Process process = Process.Start(psi);
 
-
+                    string path = Path.GetFullPath("UntoldChapters\\" + projectName + "\\NetInject.dll");
+                    Console.WriteLine("Injecting " + path);
                     //dll injection
-                    if (LoadLibary(process, Path.GetFullPath("UntoldChapters\\" + projectName + "\\NetInject.dll")) == IntPtr.Zero)
+                    if (LoadLibary(process, path) == IntPtr.Zero)
                     {
                         throw new Exception(Marshal.GetLastWin32Error().ToString());
                     }
@@ -178,8 +179,18 @@ namespace TempLauncher
             {
                 throw new Exception(Marshal.GetLastWin32Error().ToString());
             }
+            
+            IntPtr moduleHandle = GetModuleHandle("kernel32.dll");
+            if (moduleHandle == IntPtr.Zero)
+            {
+                throw new Exception(Marshal.GetLastWin32Error().ToString());
+            }
 
-            IntPtr loadlib = GetProcAddress(GetModuleHandle("kernel32.dll"), "LoadLibraryA");
+            IntPtr loadlib = GetProcAddress(moduleHandle, "LoadLibraryA");
+            if (loadlib == IntPtr.Zero)
+            {
+                throw new Exception(Marshal.GetLastWin32Error().ToString());
+            }
 
             return CreateRemoteThread(process.Handle, IntPtr.Zero, 0, loadlib, dllbPtr, 0, out tmp);
         }

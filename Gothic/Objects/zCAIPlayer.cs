@@ -3,9 +3,45 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using WinApi;
+using Gothic.Types;
 
 namespace Gothic.Objects
 {
+    public class zTLedgeInfo : zClass
+    {
+        public const int ByteSize = 40;
+
+        public zTLedgeInfo()
+        {
+        }
+
+        public zTLedgeInfo(int address)
+            : base(address)
+        {
+        }
+
+        public zVec3 Position
+        {
+            get { return new zVec3(Address); }
+        }
+
+        public zVec3 Normal
+        {
+            get { return new zVec3(Address + 12); }
+        }
+
+        public zVec3 Cont
+        {
+            get { return new zVec3(Address + 24); }
+        }
+
+        public float MaxMoveForward
+        {
+            get { return Process.ReadFloat(Address + 36); }
+            set { Process.Write(value, Address + 36); }
+        }
+    }
+
     public class zCAIPlayer : zCAIBase
     {
         public zCAIPlayer()
@@ -36,6 +72,11 @@ namespace Gothic.Objects
         public bool CheckEnoughSpaceMoveRight(bool arg)
         {
             return Process.THISCALL<BoolArg>(Address, 0x511790, (BoolArg)arg);
+        }
+
+        public zTLedgeInfo GetLedgeInfo()
+        {
+            return Process.THISCALL<zTLedgeInfo>(Address, 0x50FCC0);
         }
     }
 }

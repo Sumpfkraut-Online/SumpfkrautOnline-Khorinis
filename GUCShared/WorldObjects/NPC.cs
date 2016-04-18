@@ -430,6 +430,7 @@ namespace GUC.WorldObjects
                 return;
 
             pJump();
+            this.state = NPCStates.MoveForward;
         }
 
         #region Overlays

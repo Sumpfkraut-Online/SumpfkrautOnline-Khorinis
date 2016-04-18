@@ -208,8 +208,9 @@ namespace GUC.Server.Network
                             {
                                 if (msgID > NetworkIDs.ScriptMessage && (client.Character == null || !client.Character.IsSpawned))
                                 {
-                                    Logger.LogWarning("Client sent {0} without being ingame. Kicked: {1} IP:{2}", msgID, p.guid, p.systemAddress);
-                                    DisconnectClient(client);
+                                    return;
+                                    //Logger.LogWarning("Client sent {0} without being ingame. Kicked: {1} IP:{2}", msgID, p.guid, p.systemAddress);
+                                    //DisconnectClient(client);
                                 }
                                 else
                                 {
@@ -239,28 +240,15 @@ namespace GUC.Server.Network
                     else
                         Logger.LogError("{0}: {1}\n{2}", e.Source, e.Message, e.StackTrace);
 
-                    if (client != null)
+                    GUC.WorldObjects.World.ForEach(world =>
                     {
-                        if (client.IsSpectating)
+                        Logger.Log("World (" + world.ID + ") Cells:");
+                        foreach (var cell in world.netCells.Values)
                         {
-                            Logger.Log("Cells:");
-                            foreach (var cell in client.SpecWorld.netCells.Values)
-                            {
-                                string clients = ""; cell.Clients.ForEach(c => clients += c.ID + ", ");
-                                Logger.Log(String.Format("({0},{1}): {2} Vobs, {3} Clients ({4})", cell.X, cell.Y, cell.Vobs.GetCount(), cell.Clients.Count, clients));
-                            }
+                            string clients = ""; cell.Clients.ForEach(c => clients += c.ID + ", "); if (clients.Length > 2) clients = clients.Remove(clients.Length - 2);
+                            Logger.Log(String.Format("({0},{1}): {2} Vobs, {3} Clients ({4})", cell.X, cell.Y, cell.Vobs.GetCount(), cell.Clients.Count, clients));
                         }
-                        else if (client.character != null)
-                        {
-                            Logger.Log("Cells:");
-                            foreach (var cell in client.character.World.netCells.Values)
-                            {
-                                string clients = ""; cell.Clients.ForEach(c => clients += c.ID + ", ");
-                                Logger.Log(String.Format("({0},{1}): {2} Vobs, {3} Clients ({4})", cell.X, cell.Y, cell.Vobs.GetCount(), cell.Clients.Count, clients));
-                            }
-                        }
-                    }
-
+                    });
 
                     if (client == null)
                     {

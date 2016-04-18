@@ -67,14 +67,25 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public void OnCmdJump()
         {
+            //TFFA
+            if (Server.Scripts.TFFA.TFFAGame.Status == TFFA.TFFAPhase.Waiting)
+                return;
+
             if (!this.IsInAni)
                 this.Jump();
         }
 
         public void OnCmdMove(NPCStates state)
         {
+            //TFFA
+            if (Server.Scripts.TFFA.TFFAGame.Status == TFFA.TFFAPhase.Waiting)
+                return;
+
             if (state == this.State)
                 return;
+
+            if (canCombo && this.IsInAni)
+                this.StopAnimation();
 
             this.SetState(state);
         }
@@ -129,12 +140,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 {
                     Vec3f targetPos = npc.GetPosition();
                     Vec3f targetDir = npc.GetDirection();
-                    float distance = (targetPos - attPos).GetLength();
+                    float realRange = this.DrawnWeapon.Definition.Range + this.Model.Radius + target.Model.Radius;
 
                     if (target.IsInAni && (target.CurrentAni.AniJob.ID == (int)SetAnis.Attack2HDodge || target.CurrentAni.AniJob.ID == (int)SetAnis.Attack1HDodge))
-                        distance /= 4.0f;
+                        realRange /= 2.0f;
 
-                    if (distance <= this.DrawnWeapon.Definition.Range + this.Model.Radius + target.Model.Radius) // target is in range
+                    if ((targetPos - attPos).GetLength() <= realRange) // target is in range
                     {
                         if (targetPos.Y + target.Model.Height / 2.0f >= attPos.Y && targetPos.Y - target.Model.Height / 2.0f <= attPos.Y) // same height
                         {
@@ -182,6 +193,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public void OnCmdAniStart(Animations.Animation ani)
         {
+            //TFFA
+            if (Server.Scripts.TFFA.TFFAGame.Status == TFFA.TFFAPhase.Waiting)
+                return;
             long now = GameTime.Ticks;
 
             if (!this.canCombo) // can't combo yet

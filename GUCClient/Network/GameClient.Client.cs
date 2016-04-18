@@ -464,6 +464,7 @@ namespace GUC.Network
 
                 devInfo.CreateText("Position", 0x2000, 3 * zDist, true);
                 devInfo.CreateText("Direction", 0x2000, 4 * zDist, true);
+                devInfo.CreateText("LedgeInfo", 0x2000, 5 * zDist, true);
 
                 for (int i = 0; i < devInfo.Texts.Count; i++)
                     devInfo.Texts[i].Format = GUCVisualText.TextFormat.Right;

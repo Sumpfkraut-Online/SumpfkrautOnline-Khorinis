@@ -56,6 +56,14 @@ namespace GUC.Network
             clients.Remove(ref this.collID);
         }
 
+        /// <summary>
+        /// return FALSE to break the loop.
+        /// </summary>
+        public static void ForEach(Predicate<GameClient> predicate)
+        {
+            clients.ForEach(predicate);
+        }
+
         public static void ForEach(Action<GameClient> action)
         {
             clients.ForEach(action);

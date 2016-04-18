@@ -8,7 +8,7 @@ namespace GUC.Scripts.TFFA
 {
     public enum TFFAPhase
     {
-        Wait,
+        Waiting,
         Fight,
         End
     }

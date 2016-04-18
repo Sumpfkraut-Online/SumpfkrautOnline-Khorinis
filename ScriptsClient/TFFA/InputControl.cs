@@ -48,14 +48,10 @@ namespace GUC.Client.Scripts.TFFA
                 Scoreboard.Menu.Open();
             }
 
-            if (GUC.Network.GameClient.Client.Character == null || TFFAClient.Status == TFFAPhase.Wait)
+            if (GUC.Network.GameClient.Client.Character == null)
                 return;
 
-            if (key == VirtualKeys.Menu)
-            {
-                TFFAClient.Client.BaseClient.DoJump();
-            }
-            else if (key == VirtualKeys.P)
+            if (key == VirtualKeys.P)
             {
                 if (TFFAClient.Client.Character != null && TFFAClient.Client.Character.IsSpawned)
                 {
@@ -64,7 +60,11 @@ namespace GUC.Client.Scripts.TFFA
                     System.IO.File.AppendAllText(Program.ProjectPath + "SavedLocations.txt", str);
                 }
             }
-            else if (key == VirtualKeys.Control || key == VirtualKeys.LeftButton)
+
+            if (TFFAClient.Status == TFFAPhase.Waiting)
+                return;
+
+            if (key == VirtualKeys.Control || key == VirtualKeys.LeftButton)
             {
                 Gothic.Objects.oCNpcFocus.StartHighlightingFX(TFFAClient.Client.Character.BaseInst.gVob.GetFocusNpc());
 
@@ -77,6 +77,14 @@ namespace GUC.Client.Scripts.TFFA
                         TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
                     }
                 }
+            }
+
+            if (GUC.Network.GameClient.Client.Character.gVob.HumanAI.AboveFloor > 20)
+                return;
+
+            if (key == VirtualKeys.Menu)
+            {
+                TFFAClient.Client.BaseClient.DoJump();
             }
             else if (InputHandler.IsPressed(VirtualKeys.Control) || InputHandler.IsPressed(VirtualKeys.LeftButton))
             {
@@ -106,7 +114,7 @@ namespace GUC.Client.Scripts.TFFA
                         TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
                     }
                 }
-                else if (key == VirtualKeys.Right || key == VirtualKeys.E)
+                else if (key == VirtualKeys.Right || key == VirtualKeys.D)
                 {
                     ScriptAniJob job;
                     if (TFFAClient.Client.Character.Model.TryGetAniJob((int)SetAnis.Attack2HRight + inc, out job))
@@ -114,7 +122,7 @@ namespace GUC.Client.Scripts.TFFA
                         TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
                     }
                 }
-                else if (key == VirtualKeys.Down || key == VirtualKeys.S)
+                else if (key == VirtualKeys.Down || key == VirtualKeys.A)
                 {
                     ScriptAniJob job;
                     if (TFFAClient.Client.Character.Model.TryGetAniJob((int)SetAnis.Attack2HParry + inc, out job))
@@ -139,7 +147,7 @@ namespace GUC.Client.Scripts.TFFA
                 Scoreboard.Menu.Close();
             }
 
-            if (GUC.Network.GameClient.Client.Character == null || TFFAClient.Status == TFFAPhase.Wait)
+            if (GUC.Network.GameClient.Client.Character == null || TFFAClient.Status == TFFAPhase.Waiting)
                 return;
 
             if (key == VirtualKeys.Control || key == VirtualKeys.LeftButton)
@@ -160,66 +168,39 @@ namespace GUC.Client.Scripts.TFFA
             {
                 if (InputHandler.MouseDistY != 0)
                 {
-                    Gothic.oCGame.GetCameraVob().RotateLocalX(InputHandler.MouseDistY * 0.1f);
+                    Gothic.oCGame.GetCameraVob().RotateLocalX(InputHandler.MouseDistY * 0.2f);
                 }
                 if (InputHandler.MouseDistX != 0)
                 {
-                    Gothic.oCGame.GetCameraVob().RotateWorldY(InputHandler.MouseDistX * 0.1f);
+                    Gothic.oCGame.GetCameraVob().RotateWorldY(InputHandler.MouseDistX * 0.2f);
                 }
 
                 if (InputHandler.IsPressed(VirtualKeys.Up) || InputHandler.IsPressed(VirtualKeys.W))
                 {
                     var cam = Gothic.oCGame.GetCameraVob();
-                    var dir = new Vec3f(cam.Direction) * 10.0f;
+                    var dir = new Vec3f(cam.Direction) * 20.0f;
                     cam.MoveWorld(dir.X, dir.Y, dir.Z);
                 }
                 else if (InputHandler.IsPressed(VirtualKeys.Down) || InputHandler.IsPressed(VirtualKeys.S))
                 {
                     var cam = Gothic.oCGame.GetCameraVob();
-                    var dir = new Vec3f(cam.Direction) * -10.0f;
+                    var dir = new Vec3f(cam.Direction) * -20.0f;
                     cam.MoveWorld(dir.X, dir.Y, dir.Z);
                 }
 
                 return;
             }
 
-            if (GUC.Network.GameClient.Client.Character == null || TFFAClient.Status == TFFAPhase.Wait)
+            if (GUC.Network.GameClient.Client.Character == null || TFFAClient.Status == TFFAPhase.Waiting)
                 return;
             
             if (InputHandler.MouseDistX != 0)
             {
-                GUC.Network.GameClient.Client.Character.gVob.AniCtrl.Turn(InputHandler.MouseDistX * 0.1f, true);
+                GUC.Network.GameClient.Client.Character.gVob.AniCtrl.Turn(InputHandler.MouseDistX * 0.05f, false);
             }
 
             if (!InputHandler.IsPressed(VirtualKeys.Control) && !InputHandler.IsPressed(VirtualKeys.LeftButton))
             {
-                TFFAClient.Client.Character.BaseInst.gVob.HumanAI.CheckFocusVob(0);
-                if (InputHandler.IsPressed(VirtualKeys.A)) // strafe left
-                {
-                    GUC.Network.GameClient.Client.DoSetHeroState(NPCStates.MoveLeft);
-                }
-                else if (InputHandler.IsPressed(VirtualKeys.D)) // strafe right
-                {
-                    GUC.Network.GameClient.Client.DoSetHeroState(NPCStates.MoveRight);
-                }
-                else if (InputHandler.IsPressed(VirtualKeys.Up) || InputHandler.IsPressed(VirtualKeys.W)) // move forward
-                {
-                    GUC.Network.GameClient.Client.DoSetHeroState(NPCStates.MoveForward);
-                }
-                else if (InputHandler.IsPressed(VirtualKeys.Down) || InputHandler.IsPressed(VirtualKeys.S)) // move backward
-                {
-                    //GUC.Network.GameClient.Client.DoSetHeroState(NPCStates.MoveBackward)
-                    ScriptAniJob job;
-                    if (TFFAClient.Client.Character.Model.TryGetAniJob((int)SetAnis.Attack2HDodge + inc, out job))
-                    {
-                        TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
-                    }
-                }
-                else // not moving
-                {
-                    GUC.Network.GameClient.Client.DoSetHeroState(NPCStates.Stand);
-                }
-
                 // Do turning
                 if (InputHandler.IsPressed(VirtualKeys.Left) || InputHandler.IsPressed(VirtualKeys.Q))
                 {
@@ -232,6 +213,37 @@ namespace GUC.Client.Scripts.TFFA
                 else
                 {
                     GUC.Network.GameClient.Client.Character.gVob.AniCtrl.StopTurnAnis();
+                }
+
+                if (GUC.Network.GameClient.Client.Character.gVob.HumanAI.AboveFloor <= 20)
+                {
+
+                    TFFAClient.Client.Character.BaseInst.gVob.HumanAI.CheckFocusVob(0);
+                    if (InputHandler.IsPressed(VirtualKeys.A)) // strafe left
+                    {
+                        GUC.Network.GameClient.Client.DoSetHeroState(NPCStates.MoveLeft);
+                    }
+                    else if (InputHandler.IsPressed(VirtualKeys.D)) // strafe right
+                    {
+                        GUC.Network.GameClient.Client.DoSetHeroState(NPCStates.MoveRight);
+                    }
+                    else if (InputHandler.IsPressed(VirtualKeys.Up) || InputHandler.IsPressed(VirtualKeys.W)) // move forward
+                    {
+                        GUC.Network.GameClient.Client.DoSetHeroState(NPCStates.MoveForward);
+                    }
+                    else if (InputHandler.IsPressed(VirtualKeys.Down) || InputHandler.IsPressed(VirtualKeys.S)) // move backward
+                    {
+                        //GUC.Network.GameClient.Client.DoSetHeroState(NPCStates.MoveBackward)
+                        ScriptAniJob job;
+                        if (TFFAClient.Client.Character.Model.TryGetAniJob((int)SetAnis.Attack2HDodge + inc, out job))
+                        {
+                            TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
+                        }
+                    }
+                    else // not moving
+                    {
+                        GUC.Network.GameClient.Client.DoSetHeroState(NPCStates.Stand);
+                    }
                 }
             }
             else

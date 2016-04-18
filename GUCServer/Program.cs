@@ -40,7 +40,7 @@ namespace GUC.Server
             {
                 const int updateRate = 8; //time between server ticks
 
-                const long nextInfoUpdateTime = 20 * TimeSpan.TicksPerSecond;
+                const long nextInfoUpdateTime = 1 * TimeSpan.TicksPerMinute;
                 long nextInfoUpdates = DateTime.UtcNow.Ticks + nextInfoUpdateTime;
 
                 long tickAverage = 0;

@@ -41,6 +41,8 @@ namespace GUC.Scripts
 
         public void StartOutgame()
         {
+            WinApi.Process.Write(new byte[] { 0xE9, 0x99, 0x04, 0x00, 0x00 }, 0x0067836C); // always do T_GOTHIT instead of T_STUMBLE/B when getting hit
+
             Client.Scripts.TFFA.InputControl.Init();
             //Client.Scripts.TFFA.MainMenu.Menu.Open();
             Logger.Log("Outgame started.");

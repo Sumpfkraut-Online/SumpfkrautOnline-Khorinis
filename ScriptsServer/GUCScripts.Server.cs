@@ -285,7 +285,7 @@ namespace GUC.Scripts
             itemDef.Material = Enumeration.ItemMaterials.Leather;
             itemDef.ItemType = ItemTypes.Armor;
             itemDef.VisualChange = "Armor_Diego.asc";
-            itemDef.Protection = 25;
+            itemDef.Protection = 27;
             itemDef.Model = m;
             itemDef.Create();
 
@@ -298,7 +298,7 @@ namespace GUC.Scripts
             itemDef.Material = Enumeration.ItemMaterials.Metal;
             itemDef.Model = m;
             itemDef.Damage = 44;
-            itemDef.Range = 90;
+            itemDef.Range = 95;
             itemDef.Create();
 
             // SÖLDNERRÜSTUNG
@@ -322,7 +322,7 @@ namespace GUC.Scripts
             itemDef.Material = Enumeration.ItemMaterials.Metal;
             itemDef.Damage = 42;
             itemDef.Model = m;
-            itemDef.Range = 70;
+            itemDef.Range = 75;
             itemDef.Create();
 
             // BANDITENRÜSTUNG
@@ -333,7 +333,7 @@ namespace GUC.Scripts
             itemDef.Material = Enumeration.ItemMaterials.Leather;
             itemDef.ItemType = ItemTypes.Armor;
             itemDef.VisualChange = "Armor_Bdt_H.asc";
-            itemDef.Protection = 25;
+            itemDef.Protection = 27;
             itemDef.Model = m;
             itemDef.Create();
         }

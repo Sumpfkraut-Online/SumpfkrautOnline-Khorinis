@@ -98,7 +98,9 @@ void LoadNETDLL()
 	LPCWSTR project = convertToChar(buf);
 	free(buf);
 
+
 	std::wstring projectDll = std::wstring(L"Multiplayer\\UntoldChapters\\") + project + std::wstring(L"\\GUC.dll");
+	
 	hr = pClrRuntimeHost->ExecuteInDefaultAppDomain(projectDll.c_str(), L"GUC.Client.Injection", L"Main", project, &result);
 	pClrRuntimeHost->Stop();
 
@@ -112,6 +114,7 @@ void LoadNETDLL()
 	if(hr != S_OK){
 		Error((wchar_t *)(std::wstring(L"DLL-Injection of ") + projectDll + std::wstring(L" failed!")).c_str());
 	}
+
 }
 
 int WINAPI DllMain(HINSTANCE hInst, DWORD reason, LPVOID reserved)

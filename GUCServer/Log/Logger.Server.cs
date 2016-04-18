@@ -50,7 +50,7 @@ namespace GUC.Log
         }
 
         static object lock_LogObject = new object();
-        static void print(object message, params object[] args)
+        public static void print(object message, params object[] args)
         {
             try
             {
@@ -70,13 +70,9 @@ namespace GUC.Log
                 {
                     foreach (String line in lines)
                     {
-                        Console.WriteLine("\r" + line.PadRight(Console.WindowWidth - 1));
+                        WriteNewLine(line);
                     }
-
-                    if (typedText.Length > 0)
-                    {
-                        Console.Write(">" + typedText);
-                    }
+                    WriteCurrentText();
                 }
             }
             catch (Exception e)
@@ -85,188 +81,152 @@ namespace GUC.Log
             }
         }
 
+        const int MaxPreviousTexts = 20;
+        static List<string> previousTexts = new List<string>(MaxPreviousTexts);
+        static int previousIndex = -1;
+
+        const string CmdLineMarker = ">";
         public static Action<string> OnCommand;
-        private static object lock_KeyObject = new object();
-        private static StringBuilder typedText = new StringBuilder();
-        private static String currentText = "";
-        private static List<String> previousText = new List<String>();
-        private static int maxPreviousText = 20;
-        private static int previousTextIndex = previousText.Count;
-        private static ConsoleColor consoleBGCol = Console.BackgroundColor;
-        private static ConsoleColor consoleFGCol = Console.ForegroundColor;
-        private static int[] cursorPosition = new int[] { 0, 0 }; // { left, top }
-        private static ConsoleColor cursorBGCol = consoleFGCol;
-        private static ConsoleColor cursorFGCol = consoleBGCol;
-        private static String CmdLineMarker = "";
+
+        static StringBuilder typedText = new StringBuilder();
+        static string currentText = typedText.ToString();
+        static int[] cursorPos = { 0, Console.CursorTop };
+
+        static void WriteCurrentText(bool updateTypedText = false)
+        {
+            int[] visPos = { CmdLineMarker.Length + cursorPos[0], cursorPos[1] };
+
+            visPos[1] += visPos[0] / Console.WindowWidth;
+            visPos[0] %= Console.WindowWidth;
+
+            Console.SetCursorPosition(0, cursorPos[1]);
+
+            if (updateTypedText)
+            {
+                int oldLen = currentText.Length;
+                currentText = typedText.ToString();
+                Console.Write(CmdLineMarker + currentText);
+                int diff = oldLen - currentText.Length;
+                if (diff > 0)
+                    Console.Write(new string(' ', diff+1));
+            }
+            else
+            {
+                Console.Write(CmdLineMarker + currentText);
+            }
+
+            Console.SetCursorPosition(visPos[0], visPos[1]);
+        }
+
+        static void WriteNewLine(string text)
+        {
+            Console.SetCursorPosition(0, cursorPos[1]);
+            Console.Write(text);
+            Console.Write(new string(' ', Console.WindowWidth - Console.CursorLeft));
+
+            cursorPos[1] += 1 + text.Length / Console.WindowWidth;
+        }
+
+        static object lock_KeyObject = new object();
         internal static void RunLog()
         {
-            cursorPosition[1] = Console.CursorTop;
-            ConsoleKeyInfo cki;
             while (true)
             {
-                Console.CursorVisible = false;
                 try
                 {
-                    cki = Console.ReadKey();
+                    WriteCurrentText(true);
+
+                    ConsoleKeyInfo cki = Console.ReadKey();
                     lock (lock_KeyObject)
                     {
                         switch (cki.Key)
                         {
                             case ConsoleKey.Enter:
-                                if (OnCommand != null)
+                                if (currentText.Length > 0)
                                 {
-                                    OnCommand(typedText.ToString());
-                                }
-                                previousText.Add(typedText.ToString());
-                                previousTextIndex++;
-                                while (previousText.Count > maxPreviousText)
-                                {
-                                    if (previousText.Count > 0)
+                                    if (OnCommand != null)
                                     {
-                                        previousText.RemoveAt(0);
-                                        previousTextIndex--;
+                                        OnCommand(currentText);
                                     }
-                                    else
-                                    {
-                                        break;
-                                    }
+
+                                    if (previousTexts.Count == MaxPreviousTexts)
+                                        previousTexts.RemoveAt(previousTexts.Count - 1);
+
+                                    previousTexts.Insert(0, currentText);
+                                    WriteNewLine(currentText);
+                                    typedText.Clear();
+                                    cursorPos[0] = 0;
                                 }
-                                typedText.Clear();
-                                cursorPosition[0] = 0;
+                                previousIndex = -1;
                                 break;
 
                             case ConsoleKey.Escape:
-                                Console.SetCursorPosition(0, 0);
                                 typedText.Clear();
-                                cursorPosition[0] = 0;
+                                cursorPos[0] = 0;
+                                previousIndex = -1;
                                 break;
 
                             case ConsoleKey.Backspace:
-                                if (typedText.Length > 0)
+                                if (cursorPos[0] > 0 && cursorPos[0] <= currentText.Length)
                                 {
-                                    if ((cursorPosition[0] - 1) >= 0)
-                                    {
-                                        typedText.Remove(cursorPosition[0] - 1, 1);
-                                        cursorPosition[0]--;
-                                        if (cursorPosition[0] < 0)
-                                        {
-                                            cursorPosition[0] = 0;
-                                        }
-                                    }
+                                    typedText.Remove(cursorPos[0] - 1, 1);
+                                    cursorPos[0]--;
                                 }
                                 break;
 
                             case ConsoleKey.Delete:
-                                if (typedText.Length > 0)
+                                if (cursorPos[0] >= 0 && cursorPos[0] < currentText.Length)
                                 {
-                                    if (cursorPosition[0] < typedText.Length)
-                                    {
-                                        typedText.Remove(cursorPosition[0], 1);
-                                    }
+                                    typedText.Remove(cursorPos[0], 1);
                                 }
                                 break;
 
                             case ConsoleKey.UpArrow:
-                                if (previousText.Count > 0)
+                                if (previousTexts.Count > 0 && previousIndex < previousTexts.Count - 1)
                                 {
-                                    previousTextIndex--;
-                                    if (previousTextIndex < 0)
-                                    {
-                                        previousTextIndex = 0;
-                                    }
+                                    previousIndex++;
                                     typedText.Clear();
-                                    typedText.Append(previousText[previousTextIndex]);
+                                    typedText.Append(previousTexts[previousIndex]);
+                                    cursorPos[0] = previousTexts[previousIndex].Length;
                                 }
                                 break;
                             case ConsoleKey.DownArrow:
-                                if (previousText.Count > 0)
+                                if (previousTexts.Count > 0 && previousIndex >= 0)
                                 {
-                                    previousTextIndex++;
-                                    if (previousTextIndex >= previousText.Count)
+                                    previousIndex--;
+                                    typedText.Clear();
+                                    if (previousIndex >= 0)
                                     {
-                                        previousTextIndex = previousText.Count;
-                                        typedText.Clear();
-                                        cursorPosition[0] = 0;
+                                        typedText.Append(previousTexts[previousIndex]);
+                                        cursorPos[0] = previousTexts[previousIndex].Length;
                                     }
                                     else
                                     {
-                                        typedText.Clear();
-                                        typedText.Append(previousText[previousTextIndex]);
+                                        cursorPos[0] = 0;
                                     }
-                                }
-                                else
-                                {
-                                    typedText.Clear();
                                 }
                                 break;
                             case ConsoleKey.LeftArrow:
-                                cursorPosition[0]--;
-                                if (cursorPosition[0] < 0)
+                                if (cursorPos[0] > 0)
                                 {
-                                    cursorPosition[0] = 0;
+                                    cursorPos[0]--;
                                 }
                                 break;
 
                             case ConsoleKey.RightArrow:
-                                cursorPosition[0]++;
-                                if (cursorPosition[0] > typedText.Length)
+                                if (cursorPos[0] < currentText.Length)
                                 {
-                                    cursorPosition[0] = typedText.Length;
+                                    cursorPos[0]++;
                                 }
                                 break;
 
                             default:
                                 if (cki.KeyChar != '\0')
                                 {
-                                    typedText.Insert(cursorPosition[0], cki.KeyChar);
-                                    cursorPosition[0]++;
+                                    typedText.Insert(cursorPos[0], cki.KeyChar);
+                                    cursorPos[0]++;
                                 }
                                 break;
-                        }
-
-
-                        //print(currentText.Length + " < " + cursorPosition[0] + "|" + cursorPosition[1]);
-
-                        // correct cursor position in respect line breaks
-                        //cursorPosition[1] = cursorPosition[0] / (Console.WindowWidth 
-                        //    + CmdLineMarker.Length);
-                        //cursorPosition[0] = cursorPosition[0] % (Console.WindowWidth 
-                        //    + CmdLineMarker.Length);
-                        currentText = typedText.ToString();
-
-                        //print(currentText);
-                        //print(currentText.Length + " < " + cursorPosition[0] + "|" + cursorPosition[1]);
-
-                        if (currentText.Length > 0)
-                        {
-                            //Console.Write("\r".PadRight(Console.WindowWidth) + "\r"
-                            //    + CmdLineMarker);
-                            Console.Write("\r" + CmdLineMarker);
-
-                            //Console.Write(currentText);
-
-                            if (cursorPosition[0] > 1)
-                            {
-                                Console.Write(currentText.Substring(0, cursorPosition[0] - 1));
-                            }
-                            Console.BackgroundColor = cursorBGCol;
-                            Console.ForegroundColor = cursorFGCol;
-                            if (cursorPosition[0] > 0)
-                            {
-                                Console.Write(currentText.Substring(cursorPosition[0] - 1, 1));
-                            }
-                            Console.BackgroundColor = consoleBGCol;
-                            Console.ForegroundColor = consoleFGCol;
-
-                            if (cursorPosition[0] < currentText.Length)
-                            {
-                                Console.Write(currentText.Substring(cursorPosition[0],
-                                currentText.Length - cursorPosition[0]));
-                            }
-                        }
-                        else
-                        {
-                            Console.Write("\n\r>");
                         }
                     }
                 }

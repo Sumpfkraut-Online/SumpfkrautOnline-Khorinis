@@ -29,6 +29,7 @@ namespace GUC.WorldObjects
             if (state == NPCStates.MoveForward)
             {
                 gVob.GetModel().StartAni(gVob.AniCtrl._t_runr_2_jump, 0);
+
                 //set some flags, see 0x6B1F1D: LOBYTE(aniCtrl->_zCAIPlayer_bitfield[0]) &= 0xF7u;
                 gVob.SetBodyState(8);
             }
@@ -131,6 +132,12 @@ namespace GUC.WorldObjects
             if (this.gVob == null)
                 return;
 
+            var gModel = gVob.GetModel();
+            var gAniCtrl = gVob.AniCtrl;
+
+            gModel.StopAni(gAniCtrl._t_strafel);
+            gModel.StopAni(gAniCtrl._t_strafer);
+
             this.gVob.HPMax = this.hpmax;
             this.gVob.HP = this.hp;
         }
@@ -151,6 +158,7 @@ namespace GUC.WorldObjects
 
             this.Update(GameTime.Ticks);
         }
+        
 
         internal void Update(long now)
         {
@@ -171,6 +179,9 @@ namespace GUC.WorldObjects
             this.ScriptObject.OnTick(now);
 
             if (this.IsDead)
+                return;
+
+            if (gVob.GetBodyState() == 8 || gVob.HumanAI.AboveFloor > 20)
                 return;
 
             if (this.IsInAnimation)
