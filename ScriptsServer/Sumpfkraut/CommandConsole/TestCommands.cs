@@ -333,7 +333,6 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
         public static void KillPlayers (object sender, string cmd, string[] param,
             out Dictionary<string, object> returnVal)
         {
-            PrintStatic(typeof(TestCommands), cmd + " -> " + string.Join(", ", param));
             StringBuilder successMsgSB = new StringBuilder();
             List<Network.GameClient> clients = PrepareClientList(param);
 
