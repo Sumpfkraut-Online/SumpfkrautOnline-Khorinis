@@ -126,9 +126,11 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
 
             Network.GameClient.ForEach(client => 
             {
-                index = charNames.IndexOf(client.Character.Name);
-
-                if (index > -1) { clients.Add(client); }
+                if (client.Character != null)
+                {
+                    index = charNames.IndexOf(client.Character.Name);
+                    if (index > -1) { clients.Add(client); }
+                }
             });
 
             return clients;
@@ -273,6 +275,8 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
         {
             StringBuilder successMsgSB = new StringBuilder();
             List<Network.GameClient> clients = PrepareClientList(param);
+            int clientID = -1;
+            string charName = "";
 
             if ((clients == null) || (clients.Count < 1))
             {
@@ -284,10 +288,12 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
                 successMsgSB.AppendFormat("Used {0} on players:", cmd);
                 for (var i = 0; i < clients.Count; i++)
                 {
+                    clientID = clients[i].ID;
+                    charName = clients[i].Character.Name;
                     clients[i].Ban();
                     if (!first) { successMsgSB.Append(","); }
                     else { first = false; }
-                    successMsgSB.AppendFormat("[{0}, {1}]", clients[i].ID, clients[i].Character.Name);
+                    successMsgSB.AppendFormat("[{0}, {1}]", clientID, charName);
                 }
             }
 
@@ -304,6 +310,8 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
         {
             StringBuilder successMsgSB = new StringBuilder();
             List<Network.GameClient> clients = PrepareClientList(param);
+            int clientID = -1;
+            string charName = "";
 
             if ((clients == null) || (clients.Count < 1))
             {
@@ -315,10 +323,12 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
                 successMsgSB.AppendFormat("Used {0} on players:", cmd);
                 for (var i = 0; i < clients.Count; i++)
                 {
+                    clientID = clients[i].ID;
+                    charName = clients[i].Character.Name;
                     clients[i].Kick();
                     if (!first) { successMsgSB.Append(","); }
                     else { first = false; }
-                    successMsgSB.AppendFormat("[{0}, {1}]", clients[i].ID, clients[i].Character.Name);
+                    successMsgSB.AppendFormat("[{0}, {1}]", clientID, charName);
                 }
             }
 
@@ -346,10 +356,13 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
                 successMsgSB.AppendFormat("Used {0} on players:", cmd);
                 for (var i = 0; i < clients.Count; i++)
                 {
-                    clients[i].Character.SetHealth(0);
-                    if (!first) { successMsgSB.Append(","); }
-                    else { first = false; }
-                    successMsgSB.AppendFormat("[{0}, {1}]", clients[i].ID, clients[i].Character.Name);
+                    if (clients[i].Character != null)
+                    {
+                        clients[i].Character.SetHealth(0);
+                        if (!first) { successMsgSB.Append(","); }
+                        else { first = false; }
+                        successMsgSB.AppendFormat("[{0}, {1}]", clients[i].ID, clients[i].Character.Name);
+                    }
                 }
             }
 
