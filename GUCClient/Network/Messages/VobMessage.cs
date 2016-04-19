@@ -12,7 +12,7 @@ namespace GUC.Client.Network.Messages
 {
     static class VobMessage
     {
-        const float MinPositionDistance = 9.0f;
+        const float MinPositionDistance = 10.0f;
         const float MinDirectionDifference = 0.01f;
 
         public static void ReadPosDirMessage(PacketReader stream)
@@ -32,7 +32,7 @@ namespace GUC.Client.Network.Messages
         }
 
         static long nextUpdate = 0;
-        const long updateTime = 1000000; // 100ms
+        const long updateTime = 800000; // 80ms
         static Vec3f lastPos;
         static Vec3f lastDir;
         public static void WritePosDirMessage(long now)

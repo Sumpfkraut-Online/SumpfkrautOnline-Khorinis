@@ -53,7 +53,7 @@ namespace GUC.Client.Scripts.Sumpfkraut
             }
             else if (key == VirtualKeys.Control)
             {
-                if (ScriptClient.Client.Character.State == NPCStates.MoveForward)
+                if (ScriptClient.Client.Character.State == MoveState.Forward)
                 {
                     // run attack
                     ScriptAniJob job;
@@ -132,15 +132,15 @@ namespace GUC.Client.Scripts.Sumpfkraut
             {
                 if (InputHandler.IsPressed(VirtualKeys.A)) // strafe left
                 {
-                    GUC.Network.GameClient.Client.DoSetHeroState(NPCStates.MoveLeft);
+                    GUC.Network.GameClient.Client.DoSetHeroState(MoveState.Left);
                 }
                 else if (InputHandler.IsPressed(VirtualKeys.D)) // strafe right
                 {
-                    GUC.Network.GameClient.Client.DoSetHeroState(NPCStates.MoveRight);
+                    GUC.Network.GameClient.Client.DoSetHeroState(MoveState.Right);
                 }
                 else if (InputHandler.IsPressed(VirtualKeys.Up) || InputHandler.IsPressed(VirtualKeys.W)) // move forward
                 {
-                    GUC.Network.GameClient.Client.DoSetHeroState(NPCStates.MoveForward);
+                    GUC.Network.GameClient.Client.DoSetHeroState(MoveState.Forward);
                 }
                 else if (InputHandler.IsPressed(VirtualKeys.Down) || InputHandler.IsPressed(VirtualKeys.S)) // move backward
                 {
@@ -153,7 +153,7 @@ namespace GUC.Client.Scripts.Sumpfkraut
                 }
                 else // not moving
                 {
-                    GUC.Network.GameClient.Client.DoSetHeroState(NPCStates.Stand);
+                    GUC.Network.GameClient.Client.DoSetHeroState(MoveState.Stand);
                 }
 
                 // Do turning

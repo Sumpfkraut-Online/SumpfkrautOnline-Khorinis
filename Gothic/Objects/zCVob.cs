@@ -117,6 +117,11 @@ namespace Gothic.Objects
             set { Process.Write(value, Address + VarOffsets.bitfield); }
         }
 
+        public zCCollisionObject CollObj
+        {
+            get { return new zCCollisionObject(Process.ReadInt(Address + VarOffsets.CollisionObject)); }
+        }
+
         public const int ByteSize = 0x120;
 
         public zCVob(int address)

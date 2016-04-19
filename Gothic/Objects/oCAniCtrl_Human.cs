@@ -37,6 +37,8 @@ namespace Gothic.Objects
 
             _t_runr_2_jump = 0x1190,
 
+            actionMode = 0x14C,
+
             wmode_last = 0x154;
         }
 
@@ -111,6 +113,7 @@ namespace Gothic.Objects
         public int _t_runr_2_jump { get { return Process.ReadInt(Address + VarOffsets._t_runr_2_jump); } }
 
         public int wmode_last { get { return Process.ReadInt(Address + VarOffsets.wmode_last); } }
+        public int actionMode { get { return Process.ReadInt(Address + VarOffsets.actionMode); } }
 
         public int HitTarget
         {

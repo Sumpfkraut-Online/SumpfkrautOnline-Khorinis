@@ -27,7 +27,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public ModelDef Model { get { return this.Definition.Model; } }
 
-        public NPCStates State { get { return this.BaseInst.State; } }
+        public MoveState State { get { return this.BaseInst.State; } }
 
 
         public bool UseCustoms = false;
@@ -49,7 +49,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             pConstruct();
         }
 
-        public void SetState(NPCStates state)
+        public void SetState(MoveState state)
         {
             this.BaseInst.SetState(state);
         }

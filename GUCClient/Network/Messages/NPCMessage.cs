@@ -17,7 +17,7 @@ namespace GUC.Client.Network.Messages
 
         #region States
 
-        public static void WriteState(NPC npc, NPCStates state)
+        public static void WriteMoveState(NPC npc, MoveState state)
         {
             PacketWriter stream = GameClient.SetupStream(NetworkIDs.NPCStateMessage);
             stream.Write((ushort)npc.ID);
@@ -25,10 +25,10 @@ namespace GUC.Client.Network.Messages
             GameClient.Send(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
         }
 
-        public static void ReadState(PacketReader stream)
+        public static void ReadMoveState(PacketReader stream)
         {
             int id = stream.ReadUShort();
-            NPCStates state = (NPCStates)stream.ReadByte();
+            MoveState state = (MoveState)stream.ReadByte();
 
             NPC npc;
             if (World.Current.TryGetVob(id, out npc))

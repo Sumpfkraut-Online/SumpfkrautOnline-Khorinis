@@ -94,49 +94,53 @@ namespace GUC.Log
 
         static void WriteCurrentText(bool updateTypedText = false)
         {
-            int[] visPos = { CmdLineMarker.Length + cursorPos[0], cursorPos[1] };
-
-            visPos[1] += visPos[0] / Console.WindowWidth;
-            visPos[0] %= Console.WindowWidth;
-
-            Console.SetCursorPosition(0, cursorPos[1]);
-
+            string text = CmdLineMarker;
             if (updateTypedText)
             {
                 int oldLen = currentText.Length;
                 currentText = typedText.ToString();
-                Console.Write(CmdLineMarker + currentText);
                 int diff = oldLen - currentText.Length;
+
+                text += currentText;
                 if (diff > 0)
-                    Console.Write(new string(' ', diff+1));
+                    text += new string(' ', diff);
             }
             else
             {
-                Console.Write(CmdLineMarker + currentText);
+                text += currentText;
             }
+            
+            Console.SetCursorPosition(0, cursorPos[1]);
+            Console.Write(text);
+            cursorPos[1] = Console.CursorTop - text.Length / Console.BufferWidth;
 
-            Console.SetCursorPosition(visPos[0], visPos[1]);
+            int visX = CmdLineMarker.Length + cursorPos[0];
+            int visY = cursorPos[1] + visX / Console.BufferWidth;
+            visX %= Console.BufferWidth;
+            Console.SetCursorPosition(visX, visY);
         }
 
         static void WriteNewLine(string text)
         {
             Console.SetCursorPosition(0, cursorPos[1]);
             Console.Write(text);
-            Console.Write(new string(' ', Console.WindowWidth - Console.CursorLeft));
-
-            cursorPos[1] += 1 + text.Length / Console.WindowWidth;
+            Console.Write(new string(' ', Console.BufferWidth - Console.CursorLeft));
+            cursorPos[1] = Console.CursorTop;
         }
 
         static object lock_KeyObject = new object();
         internal static void RunLog()
         {
+            for (int i = 0; i < 500; i++)
+                WriteNewLine("Test " + i);
+
             while (true)
             {
                 try
                 {
                     WriteCurrentText(true);
 
-                    ConsoleKeyInfo cki = Console.ReadKey();
+                    ConsoleKeyInfo cki = Console.ReadKey(true);
                     lock (lock_KeyObject)
                     {
                         switch (cki.Key)
@@ -155,6 +159,7 @@ namespace GUC.Log
                                     previousTexts.Insert(0, currentText);
                                     WriteNewLine(currentText);
                                     typedText.Clear();
+                                    currentText = string.Empty;
                                     cursorPos[0] = 0;
                                 }
                                 previousIndex = -1;
@@ -191,19 +196,19 @@ namespace GUC.Log
                                 }
                                 break;
                             case ConsoleKey.DownArrow:
-                                if (previousTexts.Count > 0 && previousIndex >= 0)
+                                if (previousIndex >= 0)
                                 {
                                     previousIndex--;
-                                    typedText.Clear();
-                                    if (previousIndex >= 0)
-                                    {
-                                        typedText.Append(previousTexts[previousIndex]);
-                                        cursorPos[0] = previousTexts[previousIndex].Length;
-                                    }
-                                    else
-                                    {
-                                        cursorPos[0] = 0;
-                                    }
+                                }
+                                typedText.Clear();
+                                if (previousIndex >= 0)
+                                {
+                                    typedText.Append(previousTexts[previousIndex]);
+                                    cursorPos[0] = previousTexts[previousIndex].Length;
+                                }
+                                else
+                                {
+                                    cursorPos[0] = 0;
                                 }
                                 break;
                             case ConsoleKey.LeftArrow:

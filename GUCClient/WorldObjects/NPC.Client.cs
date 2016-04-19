@@ -26,20 +26,31 @@ namespace GUC.WorldObjects
 
         partial void pJump()
         {
-            if (state == NPCStates.MoveForward)
+            if (state == MoveState.Forward)
             {
                 gVob.GetModel().StartAni(gVob.AniCtrl._t_runr_2_jump, 0);
 
                 //set some flags, see 0x6B1F1D: LOBYTE(aniCtrl->_zCAIPlayer_bitfield[0]) &= 0xF7u;
                 gVob.SetBodyState(8);
             }
-            else if (state == NPCStates.Stand)
+            else if (state == MoveState.Stand)
             {
                 //Just in case the npc is turning
                 //StopTurnAnis();
 
                 gVob.AniCtrl.JumpForward();
             }
+            gVob.SetPhysicsEnabled(true);
+
+            var ai = gVob.HumanAI;
+
+            var vec = new Gothic.Types.zVec3(ai.Address + 0x90);
+            var dir = GetDirection();
+            vec.X = 0;
+            vec.Y = 300.0f;
+            vec.Z = 0;
+            var rb = WinApi.Process.ReadInt(gvob.Address + 224);
+            WinApi.Process.THISCALL<WinApi.NullReturnCall>(rb, 0x5B66D0, vec);
         }
 
         #region Animations
@@ -95,7 +106,7 @@ namespace GUC.WorldObjects
 
         partial void pEndAni()
         {
-            if (this.state == NPCStates.MoveForward)
+            if (this.state == MoveState.Forward)
                 this.gVob.GetModel().StartAni(this.gVob.AniCtrl._s_walkl, 0);
             else
                 this.gVob.GetModel().StartAni(this.gVob.AniCtrl._s_walk, 0);
@@ -142,15 +153,15 @@ namespace GUC.WorldObjects
             this.gVob.HP = this.hp;
         }
 
-        partial void pSetState(NPCStates state)
+        partial void pSetState(MoveState state)
         {
             if (this.gVob == null)
                 return;
 
             if (!this.IsInAnimation)
-                if (this.state == NPCStates.MoveRight || this.state == NPCStates.MoveLeft)
+                if (this.state == MoveState.Right || this.state == MoveState.Left)
                 {
-                    if (state == NPCStates.MoveForward)
+                    if (state == MoveState.Forward)
                         this.gVob.GetModel().StartAni(this.gVob.AniCtrl._s_walkl, 0);
                     else
                         this.gVob.GetModel().StartAni(this.gVob.AniCtrl._s_walk, 0);
@@ -191,25 +202,25 @@ namespace GUC.WorldObjects
 
             switch (State)
             {
-                case NPCStates.MoveForward:
+                case MoveState.Forward:
                     gVob.AniCtrl._Forward();
                     break;
-                case NPCStates.MoveBackward:
+                case MoveState.Backward:
                     gVob.AniCtrl._Backward();
                     break;
-                case NPCStates.MoveRight:
+                case MoveState.Right:
                     if (!this.IsInAnimation && !gVob.GetModel().IsAniActive(gVob.GetModel().GetAniFromAniID(gVob.AniCtrl._t_strafer)))
                     {
                         gVob.GetModel().StartAni(gVob.AniCtrl._t_strafer, 0);
                     }
                     break;
-                case NPCStates.MoveLeft:
+                case MoveState.Left:
                     if (!this.IsInAnimation && !gVob.GetModel().IsAniActive(gVob.GetModel().GetAniFromAniID(gVob.AniCtrl._t_strafel)))
                     {
                         gVob.GetModel().StartAni(gVob.AniCtrl._t_strafel, 0);
                     }
                     break;
-                case NPCStates.Stand:
+                case MoveState.Stand:
                     gVob.AniCtrl._Stand();
                     break;
                 default:

@@ -15,8 +15,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         // TFFA
         public override void OnPosChanged()
         {
-            if (this.BaseInst.IsPlayer && !this.BaseInst.IsDead && this.BaseInst.GetPosition().Y < -400)
-                Server.Scripts.TFFA.TFFAGame.Kill((TFFA.TFFAClient)this.BaseInst.Client.ScriptObject);
+            //if (this.BaseInst.IsPlayer && !this.BaseInst.IsDead && this.BaseInst.GetPosition().Y < -400)
+            //    Server.Scripts.TFFA.TFFAGame.Kill((TFFA.TFFAClient)this.BaseInst.Client.ScriptObject);
         }
 
         public NPCInst(NPCDef def) : base(def, new WorldObjects.NPC())
@@ -75,7 +75,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 this.Jump();
         }
 
-        public void OnCmdMove(NPCStates state)
+        public void OnCmdMove(MoveState state)
         {
             //TFFA
             if (Server.Scripts.TFFA.TFFAGame.Status == TFFA.TFFAPhase.Waiting)
@@ -113,7 +113,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         void AbleCombo()
         {
             comboTimer.Stop();
-            if (this.State != NPCStates.Stand)
+            if (this.State != MoveState.Stand)
             {
                 this.StopAnimation();
             }

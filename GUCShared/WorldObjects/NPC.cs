@@ -30,7 +30,7 @@ namespace GUC.WorldObjects
             void EquipItem(int slot, Item item);
             void UnequipItem(Item item);
 
-            void SetState(NPCStates state);
+            void SetState(MoveState state);
             void Jump();
 
             void ApplyOverlay(Overlay overlay);
@@ -100,7 +100,7 @@ namespace GUC.WorldObjects
 
             if (hp <= 0)
             {
-                this.state = NPCStates.Stand;
+                this.state = MoveState.Stand;
                 this.currentAni = null;
                 this.aniTimer.Stop(true);
                 this.hp = 0;
@@ -118,11 +118,11 @@ namespace GUC.WorldObjects
 
         #region Movement / NPCStates
 
-        NPCStates state = NPCStates.Stand;
-        public NPCStates State { get { return this.state; } }
+        MoveState state = MoveState.Stand;
+        public MoveState State { get { return this.state; } }
 
-        partial void pSetState(NPCStates state);
-        public void SetState(NPCStates state)
+        partial void pSetState(MoveState state);
+        public void SetState(MoveState state)
         {
             if (this.IsDead)
                 return;
@@ -307,7 +307,7 @@ namespace GUC.WorldObjects
         {
             base.ReadProperties(stream);
 
-            this.state = (NPCStates)stream.ReadByte();
+            this.state = (MoveState)stream.ReadByte();
 
             this.hpmax = stream.ReadUShort();
             this.hp = stream.ReadUShort();
@@ -385,7 +385,7 @@ namespace GUC.WorldObjects
         {
             base.ReadProperties(stream);
 
-            this.state = (NPCStates)stream.ReadByte();
+            this.state = (MoveState)stream.ReadByte();
 
             this.hpmax = stream.ReadUShort();
             this.hp = stream.ReadUShort();
@@ -430,7 +430,7 @@ namespace GUC.WorldObjects
                 return;
 
             pJump();
-            this.state = NPCStates.MoveForward;
+            this.state = MoveState.Forward;
         }
 
         #region Overlays

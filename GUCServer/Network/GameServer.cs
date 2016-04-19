@@ -86,7 +86,7 @@ namespace GUC.Server.Network
                     break;
 
                 case NetworkIDs.NPCStateMessage:
-                    NPCMessage.ReadState(stream, client, client.character, client.character.World);
+                    NPCMessage.ReadMoveState(stream, client, client.character, client.character.World);
                     break;
 
                 case NetworkIDs.NPCApplyOverlayMessage:

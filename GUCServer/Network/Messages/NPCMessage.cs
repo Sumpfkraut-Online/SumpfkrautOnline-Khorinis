@@ -14,13 +14,13 @@ namespace GUC.Server.Network.Messages
     {
         #region States
 
-        public static void ReadState(PacketReader stream, GameClient client, NPC character, World world)
+        public static void ReadMoveState(PacketReader stream, GameClient client, NPC character, World world)
         {
             int id = stream.ReadUShort();
             NPC npc;
             if (world.TryGetVob(id, out npc))
             {
-                NPCStates state = (NPCStates)stream.ReadByte();
+                MoveState state = (MoveState)stream.ReadByte();
                 if (npc == character /*|| (client.VobControlledList.Contains(npc) && state <= NPCStates.MoveBackward)*/) //is it a controlled NPC?
                 {
                     if (npc.ScriptObject != null)
@@ -29,7 +29,7 @@ namespace GUC.Server.Network.Messages
             }
         }
 
-        public static void WriteState(NPC npc, NPCStates state)
+        public static void WriteMoveState(NPC npc, MoveState state)
         {
             PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCStateMessage);
             stream.Write((ushort)npc.ID);

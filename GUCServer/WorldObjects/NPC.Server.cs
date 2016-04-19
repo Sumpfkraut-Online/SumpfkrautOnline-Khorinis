@@ -20,7 +20,7 @@ namespace GUC.WorldObjects
 
         public partial interface IScriptNPC
         {
-            void OnCmdMove(NPCStates state);
+            void OnCmdMove(MoveState state);
             void OnCmdUseMob(MobInter mob);
             void OnCmdUseItem(Item item);
             void OnCmdDrawItem(Item item);
@@ -50,10 +50,10 @@ namespace GUC.WorldObjects
             NPCMessage.WriteJump(this);
         }
 
-        partial void pSetState(NPCStates state)
+        partial void pSetState(MoveState state)
         {
             if (this.isCreated)
-                NPCMessage.WriteState(this, state);
+                NPCMessage.WriteMoveState(this, state);
         }
 
         #region Cells

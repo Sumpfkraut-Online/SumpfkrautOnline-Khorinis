@@ -74,9 +74,9 @@ namespace GUC.Network
 
         #region Commands
 
-        NPCStates nextState = NPCStates.Stand;
-        const int DelayBetweenMessages = 1000000; //100ms
-        public void DoSetHeroState(NPCStates state)
+        MoveState nextState = MoveState.Stand;
+        const int DelayBetweenMessages = 800000; //80ms
+        public void DoSetHeroState(MoveState state)
         {
             if (this.character == null)
                 return;
@@ -84,27 +84,27 @@ namespace GUC.Network
             if (this.character.IsDead)
                 return;
 
-            NPCStates s = state;
+            MoveState s = state;
 
-            if (s == NPCStates.MoveForward)
+            if (s == MoveState.Forward)
             {
                 if (!character.gVob.AniCtrl.CheckEnoughSpaceMoveForward(false))
-                    s = NPCStates.Stand;
+                    s = MoveState.Stand;
             }
-            else if (s == NPCStates.MoveBackward)
+            else if (s == MoveState.Backward)
             {
                 if (!character.gVob.AniCtrl.CheckEnoughSpaceMoveBackward(false))
-                    s = NPCStates.Stand;
+                    s = MoveState.Stand;
             }
-            else if (s == NPCStates.MoveLeft)
+            else if (s == MoveState.Left)
             {
                 if (!character.gVob.AniCtrl.CheckEnoughSpaceMoveLeft(false))
-                    s = NPCStates.Stand;
+                    s = MoveState.Stand;
             }
-            else if (s == NPCStates.MoveRight)
+            else if (s == MoveState.Right)
             {
                 if (!character.gVob.AniCtrl.CheckEnoughSpaceMoveRight(false))
-                    s = NPCStates.Stand;
+                    s = MoveState.Stand;
             }
 
             if (this.nextState == s)
@@ -128,8 +128,8 @@ namespace GUC.Network
 
             if (now < this.character.nextStateUpdate)
                 return;
-            
-            NPCMessage.WriteState(this.character, nextState);
+
+            NPCMessage.WriteMoveState(this.character, nextState);
             this.character.nextStateUpdate = now + DelayBetweenMessages;
         }
 
@@ -148,7 +148,7 @@ namespace GUC.Network
                 nextAniUpdate = GameTime.Ticks + DelayBetweenMessages;
             }
         }
-        
+
         public void DoJump()
         {
             if (this.character == null)
@@ -179,9 +179,9 @@ namespace GUC.Network
         }
 
         #endregion
-        
+
         #region Hero
-        
+
         void ReadTakeControl(PacketReader stream)
         {
             int characterID = stream.ReadUShort();
@@ -201,7 +201,7 @@ namespace GUC.Network
                 hero.Disable();
                 oCGame.GetWorld().RemoveVob(hero);
             }
-            
+
             this.ScriptObject.SetControl(npc);
         }
 
@@ -342,7 +342,7 @@ namespace GUC.Network
 
                 // NPC Messages
                 case NetworkIDs.NPCStateMessage:
-                    NPCMessage.ReadState(stream);
+                    NPCMessage.ReadMoveState(stream);
                     break;
                 case NetworkIDs.NPCEquipMessage:
                     NPCMessage.ReadEquipMessage(stream);
@@ -454,17 +454,18 @@ namespace GUC.Network
                 abortInfo.SetBackTexture("Menu_Choice_Back.tga");
                 GUCVisualText visText = abortInfo.CreateText("Verbindung unterbrochen!");
                 visText.SetColor(ColorRGBA.Red);
-                
+
                 devInfo = new GUCVisual();
                 int zDist = devInfo.zView.FontY() + 2;
 
                 devInfo = GUCVisualText.Create("Ping", 0x2000, 0, true);
                 devInfo.CreateText("Received", 0x2000, zDist, true);
-                devInfo.CreateText("Sent", 0x2000, 2*zDist, true);
+                devInfo.CreateText("Sent", 0x2000, 2 * zDist, true);
 
                 devInfo.CreateText("Position", 0x2000, 3 * zDist, true);
                 devInfo.CreateText("Direction", 0x2000, 4 * zDist, true);
-                devInfo.CreateText("LedgeInfo", 0x2000, 5 * zDist, true);
+                devInfo.CreateText("", 0x2000, 5 * zDist, true);
+                devInfo.CreateText("", 0x2000, 6 * zDist, true);
 
                 for (int i = 0; i < devInfo.Texts.Count; i++)
                     devInfo.Texts[i].Format = GUCVisualText.TextFormat.Right;
@@ -581,7 +582,7 @@ namespace GUC.Network
                 lastInfoUpdate = GameTime.Ticks;
                 receivedBytes = 0;
                 sentBytes = 0;
-                
+
                 if (World.Current != null)
                 {
                     if (character != null)
@@ -595,6 +596,12 @@ namespace GUC.Network
                         devInfo.Texts[4].Text = "Dir: " + new Vec3f(oCGame.GetCameraVob().TrafoObjToWorld.Direction);
                     }
                 }
+            }
+
+            if (World.Current != null && character != null)
+            {
+                devInfo.Texts[5].Text = (character.gvob.CollObj.WaterLevel - character.gvob.CollObj.GroundLevel) > 5.0f ? "InWater" : "";
+                devInfo.Texts[6].Text = (character.gvob.BitField1 & zCVob.BitFlag0.physicsEnabled) != 0 ? "InAir" : "";
             }
 
             devInfo.Show();

@@ -30,8 +30,8 @@ namespace GUC.Scripts
 
             // HUMAN MODEL
             var m = new ModelDef("human", "humans.mds");
-            m.Radius = 40;
-            m.Height = 200;
+            m.Radius = 80;
+            m.Height = 180;
             
             Add2hAttacks(m);
             Add1hAttacks(m);

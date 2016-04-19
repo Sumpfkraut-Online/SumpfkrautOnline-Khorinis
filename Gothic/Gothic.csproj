@@ -69,6 +69,7 @@
     <Compile Include="Objects\Sky\zCOutdoorRainFX.cs" />
     <Compile Include="Objects\zCAIBase.cs" />
     <Compile Include="Objects\zCAIPlayer.cs" />
+    <Compile Include="Objects\zCCollisionObject.cs" />
     <Compile Include="Objects\zCWorld.cs" />
     <Compile Include="Sound\zCSndFX_MSS.cs" />
     <Compile Include="View\zCFont.cs" />

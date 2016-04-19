@@ -78,5 +78,15 @@ namespace Gothic.Objects
         {
             return Process.THISCALL<zTLedgeInfo>(Address, 0x50FCC0);
         }
+
+        public int WaterLevel
+        {
+            get { return Process.ReadInt(Address + 0x88); }
+        }
+
+        public float FeetY
+        {
+            get { return Process.ReadFloat(Address + 0x7C); }
+        }
     }
 }

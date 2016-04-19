@@ -68,7 +68,7 @@ namespace GUC.Client.Scripts.TFFA
             {
                 Gothic.Objects.oCNpcFocus.StartHighlightingFX(TFFAClient.Client.Character.BaseInst.gVob.GetFocusNpc());
 
-                if (TFFAClient.Client.Character.State == NPCStates.MoveForward)
+                if (TFFAClient.Client.Character.State == MoveState.Forward)
                 {
                     // run attack
                     ScriptAniJob job;
@@ -193,7 +193,7 @@ namespace GUC.Client.Scripts.TFFA
 
             if (GUC.Network.GameClient.Client.Character == null || TFFAClient.Status == TFFAPhase.Waiting)
                 return;
-            
+
             if (InputHandler.MouseDistX != 0)
             {
                 GUC.Network.GameClient.Client.Character.gVob.AniCtrl.Turn(InputHandler.MouseDistX * 0.05f, false);
@@ -217,19 +217,18 @@ namespace GUC.Client.Scripts.TFFA
 
                 if (GUC.Network.GameClient.Client.Character.gVob.HumanAI.AboveFloor <= 20)
                 {
-
                     TFFAClient.Client.Character.BaseInst.gVob.HumanAI.CheckFocusVob(0);
                     if (InputHandler.IsPressed(VirtualKeys.A)) // strafe left
                     {
-                        GUC.Network.GameClient.Client.DoSetHeroState(NPCStates.MoveLeft);
+                        GUC.Network.GameClient.Client.DoSetHeroState(MoveState.Left);
                     }
                     else if (InputHandler.IsPressed(VirtualKeys.D)) // strafe right
                     {
-                        GUC.Network.GameClient.Client.DoSetHeroState(NPCStates.MoveRight);
+                        GUC.Network.GameClient.Client.DoSetHeroState(MoveState.Right);
                     }
                     else if (InputHandler.IsPressed(VirtualKeys.Up) || InputHandler.IsPressed(VirtualKeys.W)) // move forward
                     {
-                        GUC.Network.GameClient.Client.DoSetHeroState(NPCStates.MoveForward);
+                        GUC.Network.GameClient.Client.DoSetHeroState(MoveState.Forward);
                     }
                     else if (InputHandler.IsPressed(VirtualKeys.Down) || InputHandler.IsPressed(VirtualKeys.S)) // move backward
                     {
@@ -242,7 +241,7 @@ namespace GUC.Client.Scripts.TFFA
                     }
                     else // not moving
                     {
-                        GUC.Network.GameClient.Client.DoSetHeroState(NPCStates.Stand);
+                        GUC.Network.GameClient.Client.DoSetHeroState(MoveState.Stand);
                     }
                 }
             }
