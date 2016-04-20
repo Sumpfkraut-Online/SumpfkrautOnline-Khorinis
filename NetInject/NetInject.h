@@ -16,7 +16,7 @@ struct NETINJECTPARAMS
 };
 
 void Error(wchar_t* text){
-	MessageBoxW(NULL,text,L"Error!", MB_ICONWARNING | MB_CANCELTRYCONTINUE | MB_DEFBUTTON2 );
+	MessageBoxW(NULL,text,L"Error!", MB_ICONWARNING | MB_OK | MB_DEFBUTTON2 );
 }
 
 wchar_t * convertToChar(char * c)
@@ -121,6 +121,7 @@ int WINAPI DllMain(HINSTANCE hInst, DWORD reason, LPVOID reserved)
 {
 	if(reason==DLL_PROCESS_ATTACH)
 	{
+		Error(L"NetInject attached.");
 		CreateThread(0, 0, (LPTHREAD_START_ROUTINE) LoadNETDLL, 0, 0, 0);		
 	}
 	return true;

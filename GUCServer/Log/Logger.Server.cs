@@ -131,9 +131,6 @@ namespace GUC.Log
         static object lock_KeyObject = new object();
         internal static void RunLog()
         {
-            for (int i = 0; i < 500; i++)
-                WriteNewLine("Test " + i);
-
             while (true)
             {
                 try
@@ -224,7 +221,6 @@ namespace GUC.Log
                                     cursorPos[0]++;
                                 }
                                 break;
-
                             default:
                                 if (cki.KeyChar != '\0')
                                 {

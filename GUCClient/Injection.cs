@@ -34,6 +34,8 @@ namespace GUC.Client
 
                 #region Some more editing
 
+                Process.Write(new byte[] { 0xEB, 0x15 }, 0x006B5A44); // don't start falling animation
+
                 // remove all gothic controls
                 Process.Write(new byte[] { 0xE9, 0x3E, 0x04, 0x00, 0x00 }, 0x004D3DF6);
                 Process.Write(new byte[] { 0xC3, 0xE8, 0x8B, 0xE6, 0xFF, 0xFF, 0xC3 }, 0x004D5700);

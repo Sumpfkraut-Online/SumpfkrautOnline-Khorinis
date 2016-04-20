@@ -17,7 +17,7 @@ namespace GUC.Enumeration
         Falling
     }
 
-    public enum NPCState
+    public enum EnvironmentState
     {
         None,
         InWater,
