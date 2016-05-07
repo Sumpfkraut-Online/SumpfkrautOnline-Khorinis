@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Types;
-using GUC.Network;
 using Gothic.Objects;
 using GUC.Enumeration;
 using GUC.Animations;
@@ -12,6 +11,7 @@ namespace GUC.WorldObjects
 {
     public partial class NPC
     {
+
         public partial interface IScriptNPC : IScriptVob
         {
             void OnTick(long now);
@@ -24,31 +24,51 @@ namespace GUC.WorldObjects
 
         internal long nextStateUpdate = 0;
 
-        partial void pJump()
+        EnvironmentState GetEnvState()
         {
-            if (state == MoveState.Forward)
-            {
-                gVob.GetModel().StartAni(gVob.AniCtrl._t_runr_2_jump, 0);
+            var ai = this.gVob.HumanAI;
+            var collObj = this.gvob.CollObj;
 
-                //set some flags, see 0x6B1F1D: LOBYTE(aniCtrl->_zCAIPlayer_bitfield[0]) &= 0xF7u;
-                gVob.SetBodyState(8);
-            }
-            else if (state == MoveState.Stand)
+            float waterY = collObj.WaterLevel;
+            if (waterY > ai.HeadY)
             {
-                //Just in case the npc is turning
-                //StopTurnAnis();
-
-                gVob.AniCtrl.JumpForward();
+                return EnvironmentState.Diving;
             }
-            gVob.SetPhysicsEnabled(true);
+            else if (waterY > ai.FeetY)
+            {
+                float waterDepth = waterY - collObj.GroundLevel;
+                if (waterDepth > 0)
+                {
+                    if (waterDepth > ai.WaterDepthSwim)
+                        return EnvironmentState.Swimming;
+                    else if (waterDepth > ai.WaterDepthWade)
+                        return EnvironmentState.Wading;
+                    return EnvironmentState.InWater;
+                }
+            }
+            else if ((this.gvob.BitField1 & zCVob.BitFlag0.physicsEnabled) != 0 || ai.AboveFloor > ai.StepHeight)
+            {
+                return EnvironmentState.InAir;
+            }
+
+            return EnvironmentState.None;
+        }
+
+        partial void pJump(Animation ani, int upVel, int fwdVel)
+        {
+            pStartAnimation(ani);
+
+            gvob.SetPhysicsEnabled(true);
 
             var ai = gVob.HumanAI;
+            ai.BitField &= ~(1 << 3);
+            gVob.SetBodyState(8);
 
             var vec = new Gothic.Types.zVec3(ai.Address + 0x90);
             var dir = GetDirection();
-            vec.X = 0;
-            vec.Y = 300.0f;
-            vec.Z = 0;
+            vec.X += dir.X * fwdVel;
+            vec.Z += dir.Z * fwdVel;
+            vec.Y += upVel;
             var rb = WinApi.Process.ReadInt(gvob.Address + 224);
             WinApi.Process.THISCALL<WinApi.NullReturnCall>(rb, 0x5B66D0, vec);
         }
@@ -85,12 +105,12 @@ namespace GUC.WorldObjects
             }
         }
 
-        partial void pStopAnimation(bool fadeOut)
+        partial void pStopAnimation(Animation ani, bool fadeOut)
         {
             if (this.gvob != null)
             {
                 var gModel = gVob.GetModel();
-                int id = gModel.GetAniIDFromAniName(currentAni.AniJob.Name);
+                int id = gModel.GetAniIDFromAniName(ani.AniJob.Name);
                 var activeAni = gModel.GetActiveAni(id);
 
                 if (fadeOut)
@@ -104,12 +124,28 @@ namespace GUC.WorldObjects
             }
         }
 
-        partial void pEndAni()
+        partial void pEndAni(Animation ani)
         {
-            if (this.state == MoveState.Forward)
-                this.gVob.GetModel().StartAni(this.gVob.AniCtrl._s_walkl, 0);
+            var gModel = gVob.GetModel();
+            int id = gModel.GetAniIDFromAniName(ani.AniJob.Name);
+            var activeAni = gModel.GetActiveAni(id);
+            if (activeAni.Address == 0)
+                return;
+
+            if (activeAni.ModelAni.Layer == 1)
+            {
+                if ((this.gvob.BitField1 & zCVob.BitFlag0.physicsEnabled) != 0) // gothic prob has already handled this anyway
+                {
+                    if (this.movement == MoveState.Forward)
+                        gModel.StartAni(this.gVob.AniCtrl._s_walkl, 0);
+                    else
+                        gModel.StartAni(this.gVob.AniCtrl._s_walk, 0);
+                }
+            }
             else
-                this.gVob.GetModel().StartAni(this.gVob.AniCtrl._s_walk, 0);
+            {
+                gModel.StopAni(activeAni);
+            }
         }
 
         #endregion
@@ -153,13 +189,13 @@ namespace GUC.WorldObjects
             this.gVob.HP = this.hp;
         }
 
-        partial void pSetState(MoveState state)
+        partial void pSetMovement(MoveState state)
         {
             if (this.gVob == null)
                 return;
 
-            if (!this.IsInAnimation)
-                if (this.state == MoveState.Right || this.state == MoveState.Left)
+            if (!this.IsInAnimation())
+                if (this.movement == MoveState.Right || this.movement == MoveState.Left)
                 {
                     if (state == MoveState.Forward)
                         this.gVob.GetModel().StartAni(this.gVob.AniCtrl._s_walkl, 0);
@@ -169,7 +205,7 @@ namespace GUC.WorldObjects
 
             this.Update(GameTime.Ticks);
         }
-        
+
 
         internal void Update(long now)
         {
@@ -186,36 +222,34 @@ namespace GUC.WorldObjects
                     StopTurnAnis();
                 }
             }*/
+            this.envState = GetEnvState();
 
             this.ScriptObject.OnTick(now);
 
-            if (this.IsDead)
+            if (this.IsDead || this.IsInAnimation())
                 return;
 
-            if (gVob.GetBodyState() == 8 || gVob.HumanAI.AboveFloor > 20)
-                return;
-
-            if (this.IsInAnimation)
-            {
-                return;
-            }
-
-            switch (State)
+            switch (Movement)
             {
                 case MoveState.Forward:
+                    var gModel = this.gVob.GetModel();
+                    if (gModel.IsAnimationActive("T_JUMP_2_STAND") != 0)
+                    {
+                        gModel.StartAni(this.gVob.AniCtrl._s_walkl, 0);
+                    }
                     gVob.AniCtrl._Forward();
                     break;
                 case MoveState.Backward:
                     gVob.AniCtrl._Backward();
                     break;
                 case MoveState.Right:
-                    if (!this.IsInAnimation && !gVob.GetModel().IsAniActive(gVob.GetModel().GetAniFromAniID(gVob.AniCtrl._t_strafer)))
+                    if (this.envState <= EnvironmentState.Wading && !gVob.GetModel().IsAniActive(gVob.GetModel().GetAniFromAniID(gVob.AniCtrl._t_strafer)))
                     {
                         gVob.GetModel().StartAni(gVob.AniCtrl._t_strafer, 0);
                     }
                     break;
                 case MoveState.Left:
-                    if (!this.IsInAnimation && !gVob.GetModel().IsAniActive(gVob.GetModel().GetAniFromAniID(gVob.AniCtrl._t_strafel)))
+                    if (this.envState <= EnvironmentState.Wading && !gVob.GetModel().IsAniActive(gVob.GetModel().GetAniFromAniID(gVob.AniCtrl._t_strafel)))
                     {
                         gVob.GetModel().StartAni(gVob.AniCtrl._t_strafel, 0);
                     }
@@ -227,6 +261,6 @@ namespace GUC.WorldObjects
                     break;
             }
         }
-        
+
     }
 }

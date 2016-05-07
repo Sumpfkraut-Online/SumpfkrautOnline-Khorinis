@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using RakNet;
 using GUC.Enumeration;
 using GUC.Network;
 using GUC.WorldObjects;
-using GUC.Server.WorldObjects.Cells;
 
 namespace GUC.Server.Network.Messages
 {
@@ -16,6 +14,7 @@ namespace GUC.Server.Network.Messages
         {
             var pos = stream.ReadCompressedPosition();
             var dir = stream.ReadCompressedDirection();
+            character.envState = (EnvironmentState)stream.ReadByte();
             character.UpdatePosition(pos, dir, client);
 
             character.ScriptObject.OnPosChanged();

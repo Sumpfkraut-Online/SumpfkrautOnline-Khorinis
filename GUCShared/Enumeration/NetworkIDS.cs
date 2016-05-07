@@ -51,6 +51,8 @@ namespace GUC.Enumeration
         NPCAniStartMessage,
         NPCAniStopMessage,
         NPCHealthMessage,
+        NPCJumpMessage,
+        NPCJumpVelMessage,
 
         //inventory
         InventoryAddMessage, // add item to player inventory
@@ -72,11 +74,6 @@ namespace GUC.Enumeration
         //mobs
         MobUseMessage,
         MobUnUseMessage,
-
-        //npcs
-        NPCJumpMessage,
-
-
 
         NPCDrawItemMessage,
         NPCDrawFistsMessage,

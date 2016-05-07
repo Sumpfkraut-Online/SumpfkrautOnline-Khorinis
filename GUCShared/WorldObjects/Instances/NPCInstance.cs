@@ -57,6 +57,7 @@ namespace GUC.WorldObjects.Instances
 
         /// <summary>The head texture of the NPC (byte).</summary>
         public int HeadTex = 0;
+
         #endregion
 
         #region Read & Write

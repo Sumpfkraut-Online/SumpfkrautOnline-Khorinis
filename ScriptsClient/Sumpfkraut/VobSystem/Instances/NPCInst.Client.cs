@@ -5,6 +5,7 @@ using System.Text;
 using GUC.Enumeration;
 using GUC.Network;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
+using GUC.Scripts.Sumpfkraut.Visuals;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
@@ -104,7 +105,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public void OnTick(long now)
         {
-            if (this.IsInAttackAni)
+            var fightAni = (ScriptAniJob)this.GetFightAni()?.Ani.AniJob.ScriptObject;
+            if (fightAni != null && fightAni.IsAttack)
             {
                 this.BaseInst.gVob.AniCtrl.ShowWeaponTrail();
             }

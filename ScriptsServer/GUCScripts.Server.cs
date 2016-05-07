@@ -36,6 +36,18 @@ namespace GUC.Scripts
             Add2hAttacks(m);
             Add1hAttacks(m);
 
+            ScriptAniJob aniJob = new ScriptAniJob("jumprun");
+            aniJob.BaseAniJob.ID = (int)SetAnis.JumpRun;
+            aniJob.AniName = "t_RunL_2_Jump";
+            aniJob.SetDefaultAni(new ScriptAni(8000000));
+            m.AddAniJob(aniJob);
+
+            aniJob = new ScriptAniJob("jumpfwd");
+            aniJob.BaseAniJob.ID = (int)SetAnis.JumpFwd;
+            aniJob.AniName = "T_STAND_2_JUMP";
+            aniJob.SetDefaultAni(new ScriptAni(9200000));
+            m.AddAniJob(aniJob);
+
             m.Create();
 
             // NPCs
@@ -135,7 +147,7 @@ namespace GUC.Scripts
             
             // 1h Parry
             aniJob = new ScriptAniJob("attack1hparry");
-            aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HParry;
+            aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HParry1;
             aniJob.AniName = "T_1HPARADE_0";
             model.AddAniJob(aniJob);
 
@@ -224,7 +236,7 @@ namespace GUC.Scripts
 
             // 2h Parry
             aniJob = new ScriptAniJob("attack2hparry");
-            aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HParry;
+            aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HParry1;
             aniJob.AniName = "T_2HPARADE_0";
             model.AddAniJob(aniJob);
 

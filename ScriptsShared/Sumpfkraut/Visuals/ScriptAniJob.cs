@@ -8,22 +8,8 @@ using GUC.Network;
 
 namespace GUC.Scripts.Sumpfkraut.Visuals
 {   
-    // create inherited classes for each type?
     public enum SetAnis
     {
-        Attack2HFwd1,
-        Attack2HFwd2,
-        Attack2HFwd3,
-        Attack2HFwd4,
-        Attack2HLeft,
-        Attack2HRight,
-        Attack2HRun,
-
-        Attack2HParry,
-        Attack2HDodge,
-
-
-
         Attack1HFwd1,
         Attack1HFwd2,
         Attack1HFwd3,
@@ -31,18 +17,38 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         Attack1HLeft,
         Attack1HRight,
         Attack1HRun,
-
-        Attack1HParry,
         Attack1HDodge,
+        Attack1HParry1,
+        Attack1HParry2,
+        Attack1HParry3,
+
+        Attack2HFwd1,
+        Attack2HFwd2,
+        Attack2HFwd3,
+        Attack2HFwd4,
+        Attack2HLeft,
+        Attack2HRight,
+        Attack2HRun,
+        Attack2HDodge,
+        Attack2HParry1,
+        Attack2HParry2,
+        Attack2HParry3,
+
+        JumpRun,
+        JumpFwd,
+        JumpUp
     }
 
     public partial class ScriptAniJob : ScriptObject, AniJob.IScriptAniJob
     {
         #region Properties
 
-        public bool IsFightMove { get { return this.ID >= (int)SetAnis.Attack2HFwd1 && this.ID <= (int)SetAnis.Attack1HDodge; } }
-        public bool IsAttack { get { return (this.ID >= (int)SetAnis.Attack2HFwd1 && this.ID <= (int)SetAnis.Attack2HRun) || (this.ID >= (int)SetAnis.Attack1HFwd1 && this.ID <= (int)SetAnis.Attack1HRun); } }
-        public bool IsCombo { get { return (this.ID >= (int)SetAnis.Attack2HFwd1 && this.ID <= (int)SetAnis.Attack2HFwd4) || (this.ID >= (int)SetAnis.Attack1HFwd1 && this.ID <= (int)SetAnis.Attack1HFwd4); } }
+        public bool IsFightMove { get { return this.ID >= (int)SetAnis.Attack1HFwd1 && this.ID <= (int)SetAnis.Attack2HParry3; } }
+        public bool IsAttack { get { return (this.ID >= (int)SetAnis.Attack1HFwd1 && this.ID <= (int)SetAnis.Attack1HRun) || (this.ID >= (int)SetAnis.Attack2HFwd1 && this.ID <= (int)SetAnis.Attack2HRun); } }
+        public bool IsAttackCombo { get { return (this.ID >= (int)SetAnis.Attack1HFwd1 && this.ID <= (int)SetAnis.Attack1HFwd4) || (this.ID >= (int)SetAnis.Attack2HFwd1 && this.ID <= (int)SetAnis.Attack2HFwd4); } }
+        public bool IsParade { get { return this.ID >= (int)SetAnis.Attack1HParry1 && this.ID <= (int)SetAnis.Attack1HParry3 || this.ID >= (int)SetAnis.Attack2HParry1 && this.ID <= (int)SetAnis.Attack2HParry3; } }
+        public bool IsDodge { get { return this.ID == (int)SetAnis.Attack1HDodge || this.ID == (int)SetAnis.Attack2HDodge; } }
+        public bool IsJump { get { return this.ID >= (int)SetAnis.JumpRun || this.ID <= (int)SetAnis.JumpUp; } }
 
         public bool IsCreated { get { return this.baseAniJob.IsCreated; } }
 

@@ -21,9 +21,10 @@ namespace GUC.Enumeration
     {
         None,
         InWater,
+        Wading,
+
         Swimming,
         Diving,
-
         InAir,
     }
 }

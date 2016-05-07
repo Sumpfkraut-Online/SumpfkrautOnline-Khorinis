@@ -16,6 +16,71 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class NPCInst : VobInst, NPC.IScriptNPC
     {
+        public enum AttackMove // sync with SetAnis
+        {
+            Fwd1,
+            Fwd2,
+            Fwd3,
+            Fwd4,
+
+            Left,
+            Right,
+
+            Run,
+
+            Dodge,
+            Parry1,
+            Parry2,
+            Parry3
+        }
+
+        public bool TryGetAttackFromMove(AttackMove attMove, out ScriptAniJob aniJob)
+        {
+            if (this.DrawnWeapon.ItemType == ItemTypes.Wep2H)
+            {
+                return this.Model.TryGetAniJob((int)attMove + 11, out aniJob);
+            }
+            else // 1h
+            {
+                return this.Model.TryGetAniJob((int)attMove, out aniJob);
+            }
+        }
+
+        public NPC.ActiveAni GetFightAni() // alternative: add a var and change on Start-/Stopanimation ?
+        {
+            NPC.ActiveAni aa = null;
+            this.BaseInst.ForEachActiveAni(a =>
+            {
+                if (((ScriptAniJob)a.Ani.AniJob.ScriptObject).IsFightMove)
+                {
+                    aa = a;
+                    return false;
+                }
+                return true;
+            });
+            return aa;
+        }
+
+        public NPC.ActiveAni GetJumpAni() // alternative: add a var and change on Start-/Stopanimation ?
+        {
+            NPC.ActiveAni aa = null;
+            this.BaseInst.ForEachActiveAni(a =>
+            {
+                if (((ScriptAniJob)a.Ani.AniJob.ScriptObject).IsJump)
+                {
+                    aa = a;
+                    return false;
+                }
+                return true;
+            });
+            return aa;
+        }
+
+        public bool IsInFightMove()
+        {
+            return GetFightAni() != null;
+        }
+
         public ItemInst DrawnWeapon;
         public ItemInst Armor;
 
@@ -27,8 +92,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public ModelDef Model { get { return this.Definition.Model; } }
 
-        public MoveState State { get { return this.BaseInst.State; } }
-
+        public MoveState Movement { get { return this.BaseInst.Movement; } }
+        public EnvironmentState Environment { get { return this.BaseInst.EnvState; } }
 
         public bool UseCustoms = false;
         public HumBodyTexs CustomBodyTex;
@@ -37,7 +102,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public HumVoices CustomVoice;
 
         public float Fatness = 0;
-        public Vec3f ModelScale = new Vec3f(1,1,1);
+        public Vec3f ModelScale = new Vec3f(1, 1, 1);
 
         public string CustomName = "";
 
@@ -51,12 +116,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public void SetState(MoveState state)
         {
-            this.BaseInst.SetState(state);
-        }
-
-        public void Jump()
-        {
-            this.BaseInst.Jump();
+            this.BaseInst.SetMovement(state);
         }
 
         #region Animations
@@ -107,16 +167,14 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             this.BaseInst.StartAnimation(ani.BaseAni, onStop);
         }
 
-        public void StopAnimation(bool fadeOut = false)
+        public void StopAnimation(NPC.ActiveAni ani, bool fadeOut = false)
         {
-            this.BaseInst.StopAnimation(fadeOut);
+            this.BaseInst.StopAnimation(ani, fadeOut);
         }
 
-        public bool IsInAni { get { return this.BaseInst.IsInAnimation; } }
-        public ScriptAni CurrentAni { get { return this.BaseInst.IsInAnimation ? (ScriptAni)this.BaseInst.CurrentAni.ScriptObject : null; } }
-
-        public bool IsInFightAni { get { return this.IsInAni && this.CurrentAni.AniJob.IsFightMove; } }
-        public bool IsInAttackAni { get { return this.IsInAni && this.CurrentAni.AniJob.IsAttack; } }
+        public bool IsInAni() { return this.BaseInst.IsInAnimation(); }
+        public NPC.ActiveAni GetActiveAniFromAniID(int aniID) { return this.BaseInst.GetActiveAniFromAniID(aniID); }
+        public NPC.ActiveAni GetActiveAniFromLayerID(int layerID) { return this.BaseInst.GetActiveAniFromLayerID(layerID); }
 
         #endregion
 
@@ -131,7 +189,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             // read everything the player needs to know about this npc
             // i.e. abilities, level, guild etc
         }
-        
+
         public void AddItem(Item item)
         {
             this.AddItem((ItemInst)item.ScriptObject);
@@ -231,6 +289,21 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 stream.Write(false);
             }
 
+        }
+
+        public void StartAniJump(Animation ani)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void StartAniJump(Animation ani, int upVelocity, int fwdVelocity)
+        {
+            this.StartAniJump((ScriptAni)ani.ScriptObject, upVelocity, fwdVelocity);
+        }
+
+        public void StartAniJump(ScriptAni ani, int upVelocity, int fwdVelocity, Action onStop = null)
+        {
+            this.BaseInst.StartAnimationJump(ani.BaseAni, upVelocity, fwdVelocity, onStop);
         }
     }
 }

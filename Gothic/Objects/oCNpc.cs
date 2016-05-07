@@ -345,10 +345,15 @@ namespace Gothic.Objects
             get { return new zString(Address + VarOffsets.name); }
         }
 
-
-        public void SetModelScale(zVec3 val)
+        public void SetModelScale(float x, float y, float z)
         {
-            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetModelScale, val);
+            using (zVec3 vec = zVec3.Create(x, y, z))
+                SetModelScale(vec);
+        }
+
+        public void SetModelScale(zVec3 vec)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetModelScale, vec);
         }
         public void SetFatness(float val)
         {

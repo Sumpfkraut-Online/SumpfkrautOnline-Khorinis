@@ -123,7 +123,7 @@ namespace GUC.Network
             if (this.character.IsDead)
                 return;
 
-            if (this.character.State == nextState)
+            if (this.character.Movement == nextState)
                 return;
 
             if (now < this.character.nextStateUpdate)
@@ -149,7 +149,7 @@ namespace GUC.Network
             }
         }
 
-        public void DoJump()
+        public void DoStartAniJump(AniJob job)
         {
             if (this.character == null)
                 return;
@@ -159,7 +159,7 @@ namespace GUC.Network
 
             if (GameTime.Ticks > nextAniUpdate)
             {
-                NPCMessage.WriteJump(this.character);
+                NPCMessage.WriteJump(job);
                 nextAniUpdate = GameTime.Ticks + DelayBetweenMessages;
             }
         }
@@ -372,6 +372,9 @@ namespace GUC.Network
                 case NetworkIDs.NPCJumpMessage:
                     NPCMessage.ReadJump(stream);
                     break;
+                case NetworkIDs.NPCJumpVelMessage:
+                    NPCMessage.ReadJumpVel(stream);
+                    break;
 
                 default:
                     Logger.LogWarning("Received message with invalid NetworkID! " + id);
@@ -382,7 +385,7 @@ namespace GUC.Network
         private GameClient()
         {
             clientInterface = RakPeer.GetInstance();
-
+            
             socketDescriptor = new SocketDescriptor();
             socketDescriptor.port = 0;
 
@@ -600,8 +603,8 @@ namespace GUC.Network
 
             if (World.Current != null && character != null)
             {
-                devInfo.Texts[5].Text = (character.gvob.CollObj.WaterLevel - character.gvob.CollObj.GroundLevel) > 5.0f ? "InWater" : "";
-                devInfo.Texts[6].Text = (character.gvob.BitField1 & zCVob.BitFlag0.physicsEnabled) != 0 ? "InAir" : "";
+                devInfo.Texts[5].Text = character.Movement.ToString();
+                devInfo.Texts[6].Text = character.EnvState.ToString();
             }
 
             devInfo.Show();

@@ -37,7 +37,7 @@ namespace GUC.Client.Scripts.Sumpfkraut
 
             if (GUC.Network.GameClient.Client.Character == null)
                 return;
-
+            /*
             if (key == VirtualKeys.P)
             {
                 using (var str = Gothic.Types.zString.Create("2H"))
@@ -53,7 +53,7 @@ namespace GUC.Client.Scripts.Sumpfkraut
             }
             else if (key == VirtualKeys.Control)
             {
-                if (ScriptClient.Client.Character.State == MoveState.Forward)
+                if (ScriptClient.Client.Character.Movement == MoveState.Forward)
                 {
                     // run attack
                     ScriptAniJob job;
@@ -107,7 +107,7 @@ namespace GUC.Client.Scripts.Sumpfkraut
                         ScriptClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
                     }
                 }
-            }
+            }*/
         }
 
         static void KeyUp(VirtualKeys key, long now)

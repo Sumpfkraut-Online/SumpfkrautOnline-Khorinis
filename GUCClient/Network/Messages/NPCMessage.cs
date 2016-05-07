@@ -42,10 +42,10 @@ namespace GUC.Client.Network.Messages
 
         #region Jumping
 
-        public static void WriteJump(NPC npc)
+        public static void WriteJump(AniJob job)
         {
             PacketWriter stream = GameClient.SetupStream(NetworkIDs.NPCJumpMessage);
-            stream.Write((ushort)npc.ID);
+            stream.Write((ushort)job.ID);
             GameClient.Send(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
         }
 
@@ -56,7 +56,34 @@ namespace GUC.Client.Network.Messages
             NPC npc;
             if (World.Current.TryGetVob(id, out npc))
             {
-                npc.ScriptObject.Jump();
+                AniJob job;
+                if (npc.Model.TryGetAni(stream.ReadUShort(), out job))
+                {
+                    Animation ani;
+                    if (npc.TryGetAniFromJob(job, out ani))
+                        npc.ScriptObject.StartAniJump(ani);
+                }
+            }
+        }
+
+        public static void ReadJumpVel(PacketReader stream)
+        {
+            int id = stream.ReadUShort();
+
+            NPC npc;
+            if (World.Current.TryGetVob(id, out npc))
+            {
+                AniJob job;
+                if (npc.Model.TryGetAni(stream.ReadUShort(), out job))
+                {
+                    Animation ani;
+                    if (npc.TryGetAniFromJob(job, out ani))
+                    {
+                        int upVel = stream.ReadUShort();
+                        int fwdVel = stream.ReadUShort();
+                        npc.ScriptObject.StartAniJump(ani, upVel, fwdVel);
+                    }
+                }
             }
         }
 
@@ -118,8 +145,12 @@ namespace GUC.Client.Network.Messages
             NPC npc;
             if (World.Current.TryGetVob(stream.ReadUShort(), out npc))
             {
-                bool fadeOut = stream.ReadBit();
-                npc.ScriptObject.StopAnimation(fadeOut);
+                int layerID = stream.ReadByte();
+                var ani = npc.GetActiveAniFromLayerID(layerID);
+                if (ani != null)
+                {
+                    npc.ScriptObject.StopAnimation(ani, stream.ReadBit());
+                }
             }
         }
 

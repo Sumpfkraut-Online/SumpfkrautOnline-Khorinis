@@ -42,23 +42,32 @@ namespace GUC.Server.Network.Messages
 
         #region Jumping
 
-        public static void ReadJump(PacketReader stream, GameClient client, NPC character, World world)
+        public static void ReadJump(PacketReader stream, NPC character)
         {
-            int id = stream.ReadUShort();
-            NPC npc;
-            if (world.TryGetVob(id, out npc))
+            AniJob job;
+            if (character.Model.TryGetAni(stream.ReadUShort(), out job))
             {
-                if (npc == character /*|| (client.VobControlledList.Contains(npc) && state <= NPCStates.MoveBackward)*/) //is it a controlled NPC?
-                {
-                    npc.ScriptObject.OnCmdJump();
-                }
+                Animation ani;
+                if (character.TryGetAniFromJob(job, out ani))
+                    character.ScriptObject.OnCmdAniJump(ani);
             }
         }
 
-        public static void WriteJump(NPC npc)
+        public static void WriteJump(NPC npc, Animation ani)
         {
             PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCJumpMessage);
             stream.Write((ushort)npc.ID);
+            stream.Write((ushort)ani.AniJob.ID);
+            npc.Cell.ForEachSurroundingClient(c => c.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
+        }
+
+        public static void WriteJump(NPC npc, Animation ani, int upVel, int fwdVel)
+        {
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCJumpVelMessage);
+            stream.Write((ushort)npc.ID);
+            stream.Write((ushort)ani.AniJob.ID);
+            stream.Write((ushort)upVel);
+            stream.Write((ushort)fwdVel);
             npc.Cell.ForEachSurroundingClient(c => c.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
         }
 
@@ -158,16 +167,17 @@ namespace GUC.Server.Network.Messages
             stream.Write((ushort)npc.ID);
             stream.Write((ushort)ani.AniJob.ID);
 
-            npc.Cell.ForEachSurroundingClient(c => c.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE, 'W'));
+            npc.Cell.ForEachSurroundingClient(c => c.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
         }
 
-        public static void WriteAniStop(NPC npc, bool fadeout)
+        public static void WriteAniStop(NPC npc, Animation ani, bool fadeout)
         {
             PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCAniStopMessage);
             stream.Write((ushort)npc.ID);
+            stream.Write((byte)ani.LayerID);
             stream.Write(fadeout);
 
-            npc.Cell.ForEachSurroundingClient(c => c.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE, 'W'));
+            npc.Cell.ForEachSurroundingClient(c => c.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
         }
 
         #endregion

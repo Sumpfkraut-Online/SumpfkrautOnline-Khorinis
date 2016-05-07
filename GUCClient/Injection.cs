@@ -25,7 +25,7 @@ namespace GUC.Client
 
                 Process.Write(new byte[] { 0xE9, 0x8C, 0x00, 0x00, 0x00 }, 0x0044AEDF); // skip visual vdfs init (vdfs32g.exe)
 
-                Process.SetWindowText("Gothic II - Untold Chapters");
+                Process.Write(new byte[] { 0xE9, 0xA3, 0x00, 0x00, 0x00 }, 0x42687F); // skip intro videos
 
                 hParser.AddHooks();
                 hGame.AddHooks();
@@ -42,7 +42,7 @@ namespace GUC.Client
 
                 Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90 }, 0x006C8A71); // remove freeLook controls
 
-                Process.Write(new byte[] { 0xD8, 0x1D, 0xB4, 0x04, 0x83, 0x00}, 0x006C873D); // reduce time gothic waits after the loading screen from 2500ms to 1000ms
+                Process.Write(new byte[] { 0xD8, 0x1D, 0xB4, 0x04, 0x83, 0x00 }, 0x006C873D); // reduce time gothic waits after the loading screen from 2500ms to 1000ms
 
                 Process.Write(18000.0f, 0x008BACD0); // spawnManager : insertrange
                 Process.Write(20000.0f, 0x008BACD4); // spawnManager : removerange
@@ -54,11 +54,11 @@ namespace GUC.Client
                 Process.Write((byte)0xC3, 0x006C1F60);
                 // Blocking Call Startup Scripts!
                 Process.Write((byte)0xC3, 0x006C1C70);
-                
+
                 Process.Write(new byte[] { 0xE9, 0xB0, 0x01, 0x00, 0x00 }, 0x0069C08B); // disable player AI
 
                 Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, 0x006B0896);// don't let oCAniCtrl_Human::CreateHit check whether the target is an enemy
-                
+
                 Process.Write((byte)0xC3, 0x0073E480);//Blocking oCNpc::ProcessNpc (Dive Damage etc)
                 Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, 0x0066CAC9);//Block Damage!
 

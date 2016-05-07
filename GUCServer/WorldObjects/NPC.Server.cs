@@ -30,7 +30,7 @@ namespace GUC.WorldObjects
             void OnCmdUnequipItem(Item item);
             void OnCmdAniStart(Animation ani);
             void OnCmdAniStop(bool fadeOut);
-            void OnCmdJump();
+            void OnCmdAniJump(Animation ani);
         }
 
         #endregion
@@ -45,12 +45,7 @@ namespace GUC.WorldObjects
             // send msg
         }
 
-        partial void pJump()
-        {
-            NPCMessage.WriteJump(this);
-        }
-
-        partial void pSetState(MoveState state)
+        partial void pSetMovement(MoveState state)
         {
             if (this.isCreated)
                 NPCMessage.WriteMoveState(this, state);
@@ -305,6 +300,19 @@ namespace GUC.WorldObjects
 
         #region Animations
 
+        public void StartAnimationJump(Animation ani, Action onStop = null)
+        {
+            if (PlayAni(ani, onStop))
+            {
+                NPCMessage.WriteJump(this, ani);
+            }
+        }
+
+        partial void pJump(Animation ani, int upVel, int fwdVel)
+        {
+            NPCMessage.WriteJump(this, ani, upVel, fwdVel);
+        }
+
         partial void pAddOverlay(Overlay overlay)
         {
             if (this.isCreated)
@@ -322,9 +330,9 @@ namespace GUC.WorldObjects
             NPCMessage.WriteAniStart(this, ani);
         }
 
-        partial void pStopAnimation(bool fadeOut)
+        partial void pStopAnimation(Animation ani,bool fadeOut)
         {
-            NPCMessage.WriteAniStop(this, fadeOut);
+            NPCMessage.WriteAniStop(this, ani, fadeOut);
         }
 
         #endregion
