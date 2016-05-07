@@ -154,8 +154,15 @@ namespace GUC.Animations
             if (overlay.Model != this.model)
                 throw new ArgumentException("Overlay is not for the same model!");
 
-            if (overlays == null)
+            if (overlays != null)
+            {
+                if (overlays.Count >= 254)
+                    throw new ArgumentException("Overlay maximum reached! " + byte.MaxValue);
+            }
+            else
+            {
                 overlays = new List<Animation>(1);
+            }
 
             overlays.Add(ani);
 
@@ -194,27 +201,33 @@ namespace GUC.Animations
             base.ReadProperties(stream);
             this.Name = stream.ReadString();
 
-            // baseAni
-            var ani = ScriptManager.Interface.CreateAnimation();
-            this.ScriptObject.SetDefaultAni(ani);
-            ani.ReadStream(stream);
-
-            // overlayAnis
-            int count = stream.ReadByte();
-            for (int i = 0; i < count; i++)
+            if (stream.ReadBit())
             {
-                int overlayID = stream.ReadByte();
+                // baseAni
+                var ani = ScriptManager.Interface.CreateAnimation();
+                this.ScriptObject.SetDefaultAni(ani);
+                ani.ReadStream(stream);
+            }
 
-                Overlay ov;
-                if (this.model.TryGetOverlay(overlayID, out ov))
+            if (stream.ReadBit())
+            {
+                // overlayAnis
+                int count = stream.ReadByte();
+                for (int i = 0; i < count; i++)
                 {
-                    ani = ScriptManager.Interface.CreateAnimation();
-                    this.ScriptObject.AddOverlayAni(ani, ov);
-                    ani.ReadStream(stream);
-                }
-                else
-                {
-                    throw new Exception("Unknown Overlay ID!");
+                    int overlayID = stream.ReadByte();
+
+                    Overlay ov;
+                    if (this.model.TryGetOverlay(overlayID, out ov))
+                    {
+                        var ani = ScriptManager.Interface.CreateAnimation();
+                        this.ScriptObject.AddOverlayAni(ani, ov);
+                        ani.ReadStream(stream);
+                    }
+                    else
+                    {
+                        throw new Exception("Unknown Overlay ID!");
+                    }
                 }
             }
         }
@@ -223,15 +236,24 @@ namespace GUC.Animations
         {
             base.WriteProperties(stream);
             stream.Write(this.Name);
-
-            this.DefaultAni.WriteStream(stream);
-
-            if (this.overlays == null)
+            
+            if (this.defaultAni == null)
             {
-                stream.Write((byte)0);
+                stream.Write(false);
             }
             else
             {
+                stream.Write(true);
+                this.defaultAni.WriteStream(stream);
+            }
+
+            if (this.overlays == null)
+            {
+                stream.Write(false);
+            }
+            else
+            {
+                stream.Write(true);
                 stream.Write((byte)this.overlays.Count);
                 for (int i = 0; i < this.overlays.Count; i++)
                 {

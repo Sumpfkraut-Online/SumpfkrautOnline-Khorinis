@@ -131,15 +131,18 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         public bool ContainsAniJob(string codeName)
         {
             if (codeName == null)
-                throw new ArgumentNullException("CodeName is null!");
+                return false;
 
-            return aniNames.ContainsKey(codeName);
+            return aniNames.ContainsKey(codeName.ToUpper());
         }
 
         public bool TryGetAniJob(string codeName, out ScriptAniJob job)
         {
             if (codeName == null)
-                throw new ArgumentNullException("CodeName is null!");
+            {
+                job = null;
+                return false;
+            }
 
             return aniNames.TryGetValue(codeName.ToUpper(), out job);
         }
@@ -155,6 +158,44 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         partial void pRemoveAniJob(ScriptAniJob aniJob)
         {
             aniNames.Remove(aniJob.CodeName);
+        }
+
+        #endregion
+
+        #region Overlays
+
+        Dictionary<string, ScriptOverlay> ovNames = new Dictionary<string, ScriptOverlay>();
+
+        public bool ContainsOverlay(string codeName)
+        {
+            if (codeName == null)
+                return false;
+
+            return ovNames.ContainsKey(codeName.ToUpper());
+        }
+
+        public bool TryGetOverlay(string codeName, out ScriptOverlay ov)
+        {
+            if (codeName == null)
+            {
+                ov = null;
+                return false;
+            }
+
+            return ovNames.TryGetValue(codeName.ToUpper(), out ov);
+        }
+
+        partial void pAddOverlay(ScriptOverlay overlay)
+        {
+            if (string.IsNullOrWhiteSpace(overlay.CodeName))
+                throw new ArgumentException("CodeName of ScriptOverlay is null or white space!");
+
+            ovNames.Add(overlay.CodeName, overlay);
+        }
+
+        partial void pRemoveOverlay(ScriptOverlay overlay)
+        {
+            ovNames.Remove(overlay.CodeName);
         }
 
         #endregion

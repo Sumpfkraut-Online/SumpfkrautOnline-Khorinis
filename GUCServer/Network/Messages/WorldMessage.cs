@@ -30,7 +30,7 @@ namespace GUC.Server.Network.Messages
 
         public static void WriteCellMessage(NetCell[] newCells, NetCell[] oldCells, int oldVobs, GameClient client)
         {
-            if (newCells[0] == null && oldCells[0] == null) return;
+            if (newCells[0] == null && (oldCells.Length == 0 || oldCells[0] == null)) return;
 
             PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldCellMessage);
 

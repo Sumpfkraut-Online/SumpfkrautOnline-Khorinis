@@ -41,6 +41,8 @@ namespace GUC.Scripting
         /// </summary>
         public long NextCallTime { get { return nextCallTime; } }
 
+        public long GetRemainingTicks() { return nextCallTime - GameTime.Ticks; }
+
         bool started = false;
         /// <summary>
         /// Returns whether the timer is running.

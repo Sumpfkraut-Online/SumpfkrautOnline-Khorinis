@@ -36,6 +36,8 @@ namespace GUC.Client.Hooks
         {
             try
             {
+                GameTime.Update();
+
                 if (!outgameStarted)
                 {
                     outgameStarted = true;
@@ -43,17 +45,11 @@ namespace GUC.Client.Hooks
                     ScriptManager.Interface.StartOutgame();
                 }
 
-                GameTime.Update();
-
                 GUCTimer.Update(GameTime.Ticks);
                 GameClient.Client.Update();
+
                 InputHandler.Update();
                 ScriptManager.Interface.Update(GameTime.Ticks);
-
-                if (InputHandler.IsPressed(WinApi.User.Enumeration.VirtualKeys.F1))
-                {
-                    oCGame.LoadGame(true, "NEWWORLD\\NEWWORLD.ZEN");
-                }
 
                 #region Gothic 
                 int address = Convert.ToInt32(message);
@@ -101,7 +97,7 @@ namespace GUC.Client.Hooks
                     ingameStarted = true;
                     ScriptManager.Interface.StartIngame();
                 }
-                
+
                 GameTime.Update();
                 WorldObjects.World.ForEach(w => { w.Clock.UpdateTime(); w.SkyCtrl.UpdateWeather(); });
                 GUCTimer.Update(GameTime.Ticks);
@@ -109,26 +105,11 @@ namespace GUC.Client.Hooks
                 InputHandler.Update();
                 ScriptManager.Interface.Update(GameTime.Ticks);
 
+                if (GameClient.Client.IsSpectating)
+                {
+                    GameClient.Client.UpdateSpectator(GameTime.Ticks);
+                }
                 GameClient.Client.UpdateCharacters(GameTime.Ticks);
-
-                if (InputHandler.IsPressed(WinApi.User.Enumeration.VirtualKeys.F4))
-                {
-                    Program.Exit();
-                }
-
-                if (InputHandler.IsPressed(WinApi.User.Enumeration.VirtualKeys.F6))
-                {
-                    int bitField = Process.ReadInt(GameClient.Client.Character.gVob.HumanAI.Address + 0x1204);
-                    if ((bitField & 0x10) != 0)
-                    {
-                        bitField &= ~0x10;
-                    }
-                    else
-                    {
-                        bitField |= 0x10;
-                    }
-                    Process.Write(bitField, GameClient.Client.Character.gVob.HumanAI.Address + 0x1204);
-                }
 
                 if (fpsWatch.IsRunning)
                 {

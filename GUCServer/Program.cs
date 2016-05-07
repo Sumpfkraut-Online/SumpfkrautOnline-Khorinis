@@ -22,9 +22,25 @@ namespace GUC.Server
 
                 ScriptManager.StartScripts("Scripts\\ServerScripts.dll");
 
+                new Thread(RunServer).Start();
+
+                Logger.RunLog();
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(e.Source + "<br>" + e.Message + "<br>" + e.StackTrace);
+                Logger.LogError("InnerException: " + e.InnerException.Source + "<br>" + e.InnerException.Message);
+            }
+            Console.ReadLine();
+        }
+
+        static void RunServer()
+        {
+            try
+            {
                 const int updateRate = 8; //time between server ticks
 
-                const long nextInfoUpdateTime = 20 * TimeSpan.TicksPerSecond;
+                const long nextInfoUpdateTime = 1 * TimeSpan.TicksPerMinute;
                 long nextInfoUpdates = DateTime.UtcNow.Ticks + nextInfoUpdateTime;
 
                 long tickAverage = 0;
@@ -33,6 +49,7 @@ namespace GUC.Server
 
                 Random rand = new Random();
                 Stopwatch watch = new Stopwatch();
+
                 while (true)
                 {
                     watch.Restart();
@@ -71,7 +88,6 @@ namespace GUC.Server
                 Logger.LogError(e.Source + "<br>" + e.Message + "<br>" + e.StackTrace);
                 Logger.LogError("InnerException: " + e.InnerException.Source + "<br>" + e.InnerException.Message);
             }
-            Console.ReadLine();
         }
     }
 }

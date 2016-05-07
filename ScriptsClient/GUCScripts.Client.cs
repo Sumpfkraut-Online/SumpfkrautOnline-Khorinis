@@ -8,8 +8,6 @@ using GUC.Scripting;
 using System.Reflection;
 using System.IO;
 using GUC.Client.Scripts.Sumpfkraut.Menus;
-using GUC.Client.Scripts.Sumpfkraut.Menus.MainMenus;
-using GUC.Client.Scripts.Sumpfkraut;
 
 namespace GUC.Scripts
 {
@@ -38,20 +36,24 @@ namespace GUC.Scripts
         public void Update(long ticks)
         {
             GUCMenu.UpdateMenus(ticks);
-            InputControl.Update(ticks);
+            Client.Scripts.TFFA.InputControl.Update(ticks);
         }
 
         public void StartOutgame()
         {
-            InputControl.Init();
-            MainMenu.Menu.Open();
+            WinApi.Process.Write(new byte[] { 0xE9, 0x99, 0x04, 0x00, 0x00 }, 0x0067836C); // always do T_GOTHIT instead of T_STUMBLE/B when getting hit
+
+            Client.Scripts.TFFA.InputControl.Init();
+            //Client.Scripts.TFFA.MainMenu.Menu.Open();
             Logger.Log("Outgame started.");
         }
 
         public void StartIngame()
         {
-            InputControl.Init();
-            MainMenu.CloseActiveMenus();
+            Client.Scripts.TFFA.InputControl.Init();
+            GUCMenu.CloseActiveMenus();
+            Gothic.Objects.oCNpcFocus.SetFocusMode(1);
+            Client.SoundHandler.SetPlayFightMusic(true);
             Ingame = true;
             Logger.Log("Ingame started.");
         }

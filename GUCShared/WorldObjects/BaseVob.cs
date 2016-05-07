@@ -30,6 +30,8 @@ namespace GUC.WorldObjects
         {
             void Spawn(World world);
             void Despawn();
+
+            void OnPosChanged();
         }
 
         /// <summary>
@@ -142,9 +144,12 @@ namespace GUC.WorldObjects
             if (this.instance == null)
                 throw new Exception("Vob has no Instance!");
 
+            if (this.ScriptObject == null)
+                throw new Exception("Vob has no ScriptObject!");
+
             if (this.isCreated)
                 throw new Exception("Vob is already spawned!");
-
+            
             this.pos = position;
             this.dir = direction;
 
@@ -154,6 +159,7 @@ namespace GUC.WorldObjects
             this.pSpawn();
 
             this.isCreated = true;
+
         }
 
         partial void pSpawn();
@@ -167,11 +173,13 @@ namespace GUC.WorldObjects
             if (!this.isCreated)
                 throw new Exception("Vob isn't spawned!");
 
+            Logger.Log("Despawn vob " + this.ID);
             this.isCreated = false;
+
+            pDespawn();
 
             this.world.RemoveVob(this);
             this.world = null;
-            pDespawn();
 
         }
         #endregion

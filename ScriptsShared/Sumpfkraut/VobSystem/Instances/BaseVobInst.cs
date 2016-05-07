@@ -8,6 +8,7 @@ using GUC.WorldObjects;
 using GUC.Enumeration;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
+using GUC.Types;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
@@ -33,6 +34,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #endregion
 
+        public virtual void OnPosChanged()
+        {
+        }
+
         protected BaseVobInst(BaseVob baseInst)
         {
             if (baseInst == null)
@@ -51,7 +56,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             this.baseInst.Spawn(world.BaseWorld);
         }
-        
+
+        public virtual void Spawn(WorldInst world, Vec3f pos, Vec3f dir)
+        {
+            this.baseInst.Spawn(world.BaseWorld, pos, dir);
+        }
+
         public virtual void Despawn()
         {
             baseInst.Despawn();

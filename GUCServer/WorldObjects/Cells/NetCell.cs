@@ -6,6 +6,7 @@ using GUC.Enumeration;
 using GUC.WorldObjects;
 using GUC.WorldObjects.Collections;
 using GUC.Network;
+using GUC.Types;
 
 namespace GUC.Server.WorldObjects.Cells
 {
@@ -71,5 +72,11 @@ namespace GUC.Server.WorldObjects.Cells
         }
 
         public const int NumSurroundingCells = 9;
+
+        public const int Size = 4500;
+        public static int[] GetCoords(Vec3f pos)
+        {
+            return WorldCell.GetCoords(pos, Size);
+        }
     }
 }

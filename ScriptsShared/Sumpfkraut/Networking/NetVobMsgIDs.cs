@@ -9,5 +9,6 @@ namespace GUC.Scripts.Sumpfkraut.Networking
     public enum NetVobMsgIDs : byte
     {
         HitMessage,
+        ParryMessage,
     }
 }

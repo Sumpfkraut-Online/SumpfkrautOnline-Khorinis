@@ -13,7 +13,7 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
         public void Load()
         {
             GUC.Client.Scripts.Sumpfkraut.Menus.GUCMenu.CloseActiveMenus();
-            oCGame.LoadGame(true, "NewWorld\\NewWorld_Part_City_01.zen");
+            oCGame.LoadGame(true, "OldWorld\\OldWorld.zen");
         }
     }
 }

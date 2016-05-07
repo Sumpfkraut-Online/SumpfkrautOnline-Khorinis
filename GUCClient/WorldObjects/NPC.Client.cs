@@ -12,6 +12,11 @@ namespace GUC.WorldObjects
 {
     public partial class NPC
     {
+        public partial interface IScriptNPC : IScriptVob
+        {
+            void OnTick(long now);
+        }
+
         public const long PositionUpdateTime = 1200000; //120ms
         public const long DirectionUpdateTime = PositionUpdateTime + 100000;
 
@@ -21,19 +26,31 @@ namespace GUC.WorldObjects
 
         partial void pJump()
         {
-            if (state == NPCStates.MoveForward)
+            if (state == MoveState.Forward)
             {
                 gVob.GetModel().StartAni(gVob.AniCtrl._t_runr_2_jump, 0);
+
                 //set some flags, see 0x6B1F1D: LOBYTE(aniCtrl->_zCAIPlayer_bitfield[0]) &= 0xF7u;
                 gVob.SetBodyState(8);
             }
-            else if (state == NPCStates.Stand)
+            else if (state == MoveState.Stand)
             {
                 //Just in case the npc is turning
                 //StopTurnAnis();
 
                 gVob.AniCtrl.JumpForward();
             }
+            gVob.SetPhysicsEnabled(true);
+
+            var ai = gVob.HumanAI;
+
+            var vec = new Gothic.Types.zVec3(ai.Address + 0x90);
+            var dir = GetDirection();
+            vec.X = 0;
+            vec.Y = 300.0f;
+            vec.Z = 0;
+            var rb = WinApi.Process.ReadInt(gvob.Address + 224);
+            WinApi.Process.THISCALL<WinApi.NullReturnCall>(rb, 0x5B66D0, vec);
         }
 
         #region Animations
@@ -89,13 +106,15 @@ namespace GUC.WorldObjects
 
         partial void pEndAni()
         {
-            if (this.state == NPCStates.MoveForward)
+            if (this.state == MoveState.Forward)
                 this.gVob.GetModel().StartAni(this.gVob.AniCtrl._s_walkl, 0);
             else
                 this.gVob.GetModel().StartAni(this.gVob.AniCtrl._s_walk, 0);
         }
 
         #endregion
+
+        #region Spawn
 
         public override void Spawn(World world, Vec3f position, Vec3f direction)
         {
@@ -109,6 +128,7 @@ namespace GUC.WorldObjects
             if (overlays != null)
                 for (int i = 0; i < overlays.Count; i++)
                     this.gVob.ApplyOverlay(overlays[i].Name);
+            gVob.Name.Set(this.Name);
         }
 
         partial void pDespawn()
@@ -116,22 +136,40 @@ namespace GUC.WorldObjects
             gVob.Disable();
         }
 
-        partial void pSetState(NPCStates state)
+        #endregion
+
+        partial void pSetHealth()
+        {
+            if (this.gVob == null)
+                return;
+
+            var gModel = gVob.GetModel();
+            var gAniCtrl = gVob.AniCtrl;
+
+            gModel.StopAni(gAniCtrl._t_strafel);
+            gModel.StopAni(gAniCtrl._t_strafer);
+
+            this.gVob.HPMax = this.hpmax;
+            this.gVob.HP = this.hp;
+        }
+
+        partial void pSetState(MoveState state)
         {
             if (this.gVob == null)
                 return;
 
             if (!this.IsInAnimation)
-                if (this.state == NPCStates.MoveRight || this.state == NPCStates.MoveLeft)
+                if (this.state == MoveState.Right || this.state == MoveState.Left)
                 {
-                    if (state == NPCStates.MoveForward)
+                    if (state == MoveState.Forward)
                         this.gVob.GetModel().StartAni(this.gVob.AniCtrl._s_walkl, 0);
                     else
                         this.gVob.GetModel().StartAni(this.gVob.AniCtrl._s_walk, 0);
                 }
 
-            this.Update(DateTime.UtcNow.Ticks);
+            this.Update(GameTime.Ticks);
         }
+        
 
         internal void Update(long now)
         {
@@ -149,395 +187,46 @@ namespace GUC.WorldObjects
                 }
             }*/
 
-            if (this.IsInAnimation)
+            this.ScriptObject.OnTick(now);
+
+            if (this.IsDead)
                 return;
+
+            if (gVob.GetBodyState() == 8 || gVob.HumanAI.AboveFloor > 20)
+                return;
+
+            if (this.IsInAnimation)
+            {
+                return;
+            }
 
             switch (State)
             {
-                case NPCStates.MoveForward:
+                case MoveState.Forward:
                     gVob.AniCtrl._Forward();
                     break;
-                case NPCStates.MoveBackward:
+                case MoveState.Backward:
                     gVob.AniCtrl._Backward();
                     break;
-                case NPCStates.MoveRight:
+                case MoveState.Right:
                     if (!this.IsInAnimation && !gVob.GetModel().IsAniActive(gVob.GetModel().GetAniFromAniID(gVob.AniCtrl._t_strafer)))
                     {
                         gVob.GetModel().StartAni(gVob.AniCtrl._t_strafer, 0);
                     }
                     break;
-                case NPCStates.MoveLeft:
+                case MoveState.Left:
                     if (!this.IsInAnimation && !gVob.GetModel().IsAniActive(gVob.GetModel().GetAniFromAniID(gVob.AniCtrl._t_strafel)))
                     {
                         gVob.GetModel().StartAni(gVob.AniCtrl._t_strafel, 0);
                     }
                     break;
-                case NPCStates.Stand:
+                case MoveState.Stand:
                     gVob.AniCtrl._Stand();
                     break;
                 default:
                     break;
             }
         }
-
-        #region Animation
-
-        /*public int TurnAnimation = 0;
-
-        public void AnimationStart(Animations ani)
-        {
-            using (zString z = zString.Create(Program.Process, ani.ToString()))
-            {
-                gVob.GetModel().StartAnimation(z);
-            }
-        }
-
-        public void AnimationStop(Animations ani)
-        {
-            using (zString z = zString.Create(Program.Process, ani.ToString()))
-            {
-                gVob.GetModel().StopAnimation(z);
-            }
-        }
-
-        public void AnimationFade(Animations ani)
-        {
-            using (zString z = zString.Create(Program.Process, ani.ToString()))
-            {
-                int id = gVob.GetModel().GetAniIDFromAniName(z);
-                gVob.GetModel().FadeOutAni(id);
-            }
-        }*/
-
-        #endregion
-
-        #region Equipment
-
-        /*public void EquipSlot(byte slot, Item item)
-        {
-            if (item != null && !item.Spawned)
-            {
-                item.Slot = slot;
-                if (UnequipSlot(slot))
-                {
-                    equippedSlots[slot] = item;
-                }
-                else
-                {
-                    equippedSlots.Add(slot, item);
-                }
-
-                if (Spawned)
-                {
-                    if (item.IsMeleeWeapon)
-                        gVob.EquipWeapon(item.gVob);
-                    else if (item.IsRangedWeapon)
-                        gVob.EquipFarWeapon(item.gVob);
-                    else if (item.IsArmor)
-                        gVob.EquipArmor(item.gVob);
-                    else
-                        gVob.EquipItem(item.gVob);
-                }
-            }
-        }
-
-        public bool UnequipSlot(byte slot)
-        {
-            Item item;
-            if (equippedSlots.TryGetValue(slot, out item))
-            {
-                item.Slot = 0;
-                if (Spawned)
-                {
-                    gVob.UnequipItem(item.gVob);
-                }
-                return true;
-            }
-            return false;
-        }*/
-
-        #endregion
-
-        /*public Vec3f lastDir;
-        public Vec3f nextDir;
-        public bool turning = false;
-        public long lastDirTime;
-
-        public void StartTurnAni(bool right)
-        {
-            zCModel model = gVob.GetModel();
-
-            if (model.IsAniActive(model.GetAniFromAniID(gAniCtrl._s_walk)))
-            {
-                if (right)
-                {
-                    TurnAnimation = gAniCtrl._t_turnr;
-                }
-                else
-                {
-                    TurnAnimation = gAniCtrl._t_turnl;
-                }
-            }
-            else if (model.IsAniActive(model.GetAniFromAniID(gAniCtrl._s_dive)))
-            {
-                if (right)
-                {
-                    TurnAnimation = gAniCtrl._t_diveturnr;
-                }
-                else
-                {
-                    TurnAnimation = gAniCtrl._t_diveturnl;
-                }
-            }
-            else if (model.IsAniActive(model.GetAniFromAniID(gAniCtrl._s_swim)))
-            {
-                if (right)
-                {
-                    TurnAnimation = gAniCtrl._t_swimturnr;
-                }
-                else
-                {
-                    TurnAnimation = gAniCtrl._t_swimturnl;
-                }
-            }
-            else
-            {
-                return;
-            }
-
-            model.StartAni(TurnAnimation, 0);
-        }
-
-        public void StopTurnAnis()
-        {
-            if (turning)
-            {
-                Direction = nextDir;
-                gVob.GetModel().FadeOutAni(TurnAnimation);
-                turning = false;
-            }
-        }
-
-        public long nextForwardUpdate = 0;
-        public long nextStandUpdate = 0;
-        public long nextBackwardUpdate = 0;
-        public long nextJumpUpdate = 0;
-
-        public bool DoJump = false;
-
-        public ControlCmd cmd = ControlCmd.Stop;
-        public uint cmdTargetVob;
-        public Vec3f cmdTargetPos;
-        public float cmdTargetRange;
-
-        public override void Update(long now)
-        {
-            if (cmd == ControlCmd.GoToVob)
-            {
-                zCEventMessage activeMsg = gVob.GetEM(0).GetActiveMsg();
-                if (activeMsg.Address == 0)
-                {
-                    Vob target = World.Vobs.Get(cmdTargetVob);
-                    if (target != null && target.Position.GetDistance(this.Position) > cmdTargetRange)
-                    {
-                        oCMsgMovement msg = oCMsgMovement.Create(Program.Process, oCMsgMovement.SubTypes.GotoVob, target.gVob);
-                        gVob.GetEM(0).StartMessage(msg, gVob);
-                    }
-                }
-                /*else if (activeMsg.VTBL == (int)zCObject.VobTypes.oCMsgMovement)
-                {
-                    oCMsgMovement movMsg = new oCMsgMovement(Program.Process, activeMsg.Address);
-                    if (movMsg.SubType == oCMsgMovement.SubTypes.GotoPos || movMsg.SubType == oCMsgMovement.SubTypes.GotoVob)
-                    {
-                        AbstractVob target = World.GetVobByID(cmdTargetVob);
-                        if (target != null && target.Position.GetDistance(this.Position) <= cmdTargetRange)
-                        {
-                            gVob.GetEM(0).KillMessages();
-                        }
-                    }
-                }*//*
-            }
-
-            if (this != Player.Hero)
-            {
-                if (turning) //turn!
-                {
-                    float diff = (float)(DateTime.UtcNow.Ticks - lastDirTime) / (float)DirectionUpdateTime;
-
-                    if (diff < 1.0f)
-                    {
-                        Direction = lastDir + (nextDir - lastDir) * diff;
-                    }
-                    else
-                    {
-                        StopTurnAnis();
-                    }
-                }
-
-                switch (State)
-                {
-                    case NPCState.MoveForward:
-                        gAniCtrl._Forward();
-                        break;
-                    case NPCState.MoveBackward:
-                        gAniCtrl._Backward();
-                        break;
-                    case NPCState.MoveRight:
-                        gVob.GetEM(0).KillMessages();
-                        gVob.DoStrafe(true);
-                        break;
-                    case NPCState.MoveLeft:
-                        gVob.GetEM(0).KillMessages();
-                        gVob.DoStrafe(false);
-                        break;
-                    case NPCState.Stand:
-                        gAniCtrl._Stand();
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-
-        public void DrawItem(Item item, bool fast)
-        {
-            if (item == null) return;
-
-            DrawnItem = item;
-
-            if (Spawned)
-            {
-                if (item == Item.Fists)
-                {
-                    if (fast)
-                    {
-                        gVob.SetToFistMode();
-                    }
-                    else
-                    {
-                        gVob.GetEM(0).StartMessage(oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.DrawWeapon, 0, 0), gVob);
-                    }
-                }
-                else
-                {
-                    //FIXME: Sneaky mode
-
-                    switch (item.Type)
-                    {
-                        case ItemType.Sword_1H:
-                        case ItemType.Blunt_1H:
-                            if (fast)
-                            {
-                                gVob.SetToFightMode(item.gVob, 3);
-                                //using (zString z = zString.Create(Program.Process, "1H"))
-                                //    gNpc.SetWeaponMode2(z);
-                            }
-                            else
-                            {
-                                gVob.GetEM(0).StartMessage(oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.DrawWeapon, 0, 0), gVob);
-                            }
-                            break;
-                        case ItemType.Sword_2H:
-                        case ItemType.Blunt_2H:
-                            if (fast)
-                            {
-                                using (zString z = zString.Create(Program.Process, "2H"))
-                                    gVob.SetWeaponMode2(z);
-                            }
-                            else
-                            {
-                                gVob.GetEM(0).StartMessage(oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.DrawWeapon, 0, 0), gVob);
-                            }
-                            break;
-                        case ItemType.Bow:
-                            if (fast)
-                            {
-                                using (zString z = zString.Create(Program.Process, "BOW"))
-                                    gVob.SetWeaponMode2(z);
-                            }
-                            else
-                            {
-                                gVob.GetEM(0).StartMessage(oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.DrawWeapon, 4, 0), gVob);
-                            }
-                            break;
-                        case ItemType.XBow:
-                            if (fast)
-                            {
-                                using (zString z = zString.Create(Program.Process, "CBOW"))
-                                    gVob.SetWeaponMode2(z);
-                            }
-                            else
-                            {
-                                gVob.GetEM(0).StartMessage(oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.DrawWeapon, 4, 0), gVob);
-                            }
-                            break;
-                        case ItemType.Armor:
-                            break;
-                        case ItemType.Ring:
-                            break;
-                        case ItemType.Amulet:
-                            break;
-                        case ItemType.Belt:
-                            break;
-                        case ItemType.Food_Huge:
-                        case ItemType.Food_Small:
-                        case ItemType.Drink:
-                        case ItemType.Potions:
-                            break;
-                        case ItemType.Document:
-                        case ItemType.Book:
-                            break;
-                        case ItemType.Rune:
-                        case ItemType.Scroll:
-                            break;
-                        case ItemType.Misc_Usable:
-                            break;
-                        case ItemType.Misc:
-                            break;
-                    }
-                }
-            }
-        }
-
-        public void UndrawItem(bool altRemove, bool fast)
-        {
-            Item item = DrawnItem;
-            if (item == null)
-                return;
-
-            if (item == Item.Fists || (item.Type >= ItemType.Sword_1H && item.Type <= ItemType.XBow) || item.Type == ItemType.Scroll || item.Type == ItemType.Rune)
-            {
-                if (fast)
-                {
-                    gVob.SetWeaponMode2(0);
-                    if (this == Player.Hero)
-                    {
-                        oCNpcFocus.SetFocusMode(Program.Process, 0);
-                    }
-                }
-                else
-                {
-                    if (altRemove && gAniCtrl.IsStanding())
-                    {
-                        gVob.GetEM(0).StartMessage(oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.RemoveWeapon1, gAniCtrl.wmode_last, 0), gVob);
-                        if (this != Player.Hero)
-                        {
-                            gVob.GetEM(0).StartMessage(oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.RemoveWeapon2, 0, 0), gVob);
-                        }
-                    }
-                    else
-                    {
-                        gVob.GetEM(0).StartMessage(oCMsgWeapon.Create(Program.Process, oCMsgWeapon.SubTypes.RemoveWeapon, 0, 0), gVob);
-                    }
-                }
-            }
-
-            DrawnItem = null;
-        }
-
-        public void DoMoveTo(Vec3f position, float distance)
-        {
-
-        }*/
+        
     }
 }

@@ -10,11 +10,15 @@ using GUC.Network;
 using GUC.Animations;
 using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
+using GUC.Types;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class NPCInst : VobInst, NPC.IScriptNPC
     {
+        public ItemInst DrawnWeapon;
+        public ItemInst Armor;
+
         #region Properties
 
         public new NPC BaseInst { get { return (NPC)base.BaseInst; } }
@@ -23,7 +27,19 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public ModelDef Model { get { return this.Definition.Model; } }
 
-        public NPCStates State { get { return this.BaseInst.State; } }
+        public MoveState State { get { return this.BaseInst.State; } }
+
+
+        public bool UseCustoms = false;
+        public HumBodyTexs CustomBodyTex;
+        public HumHeadMeshs CustomHeadMesh;
+        public HumHeadTexs CustomHeadTex;
+        public HumVoices CustomVoice;
+
+        public float Fatness = 0;
+        public Vec3f ModelScale = new Vec3f(1,1,1);
+
+        public string CustomName = "";
 
         #endregion
 
@@ -33,7 +49,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             pConstruct();
         }
 
-        public void SetState(NPCStates state)
+        public void SetState(MoveState state)
         {
             this.BaseInst.SetState(state);
         }
@@ -99,8 +115,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public bool IsInAni { get { return this.BaseInst.IsInAnimation; } }
         public ScriptAni CurrentAni { get { return this.BaseInst.IsInAnimation ? (ScriptAni)this.BaseInst.CurrentAni.ScriptObject : null; } }
 
-        public bool IsInFightAni { get { return this.CurrentAni.AniJob.IsFightMove; } }
-        public bool IsInAttackAni { get { return this.CurrentAni.AniJob.IsAttack; } }
+        public bool IsInFightAni { get { return this.IsInAni && this.CurrentAni.AniJob.IsFightMove; } }
+        public bool IsInAttackAni { get { return this.IsInAni && this.CurrentAni.AniJob.IsAttack; } }
 
         #endregion
 
@@ -146,6 +162,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             this.BaseInst.EquipItem(slot, item.BaseInst);
             pEquipItem(item);
+
+            //TFFA
+            if (slot == 1)
+                DrawnWeapon = item;
+            else if (slot == 0)
+                Armor = item;
         }
 
         public void UnequipItem(Item item)
@@ -158,6 +180,57 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             this.BaseInst.UnequipItem(item.BaseInst);
             pUnequipItem(item);
+            if (item == DrawnWeapon)
+                DrawnWeapon = null;
+        }
+
+        public void SetHealth(int hp)
+        {
+            this.SetHealth(hp, BaseInst.HPMax);
+        }
+
+        partial void pSetHealth(int hp, int hpmax);
+        public void SetHealth(int hp, int hpmax)
+        {
+            this.BaseInst.SetHealth(hp, hpmax);
+            pSetHealth(hp, hpmax);
+        }
+
+        public override void OnReadProperties(PacketReader stream)
+        {
+            base.OnReadProperties(stream);
+            UseCustoms = stream.ReadBit();
+            if (UseCustoms)
+            {
+                CustomBodyTex = (HumBodyTexs)stream.ReadByte();
+                CustomHeadMesh = (HumHeadMeshs)stream.ReadByte();
+                CustomHeadTex = (HumHeadTexs)stream.ReadByte();
+                CustomVoice = (HumVoices)stream.ReadByte();
+                Fatness = stream.ReadFloat();
+                ModelScale = stream.ReadVec3f();
+                CustomName = stream.ReadString();
+            }
+        }
+
+        public override void OnWriteProperties(PacketWriter stream)
+        {
+            base.OnWriteProperties(stream);
+            if (UseCustoms)
+            {
+                stream.Write(true);
+                stream.Write((byte)CustomBodyTex);
+                stream.Write((byte)CustomHeadMesh);
+                stream.Write((byte)CustomHeadTex);
+                stream.Write((byte)CustomVoice);
+                stream.Write(Fatness);
+                stream.Write(ModelScale);
+                stream.Write(CustomName);
+            }
+            else
+            {
+                stream.Write(false);
+            }
+
         }
     }
 }

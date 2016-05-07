@@ -29,6 +29,9 @@ namespace GUC.Client.Network.Messages
             }
             world.SkyCtrl.ScriptObject.SetRainTime(world.SkyCtrl.TargetTime, world.SkyCtrl.TargetWeight);
             world.SkyCtrl.ScriptObject.SetWeatherType(world.SkyCtrl.WeatherType);
+            var hero = Gothic.Objects.oCNpc.GetPlayer();
+            hero.Disable();
+            Gothic.oCGame.GetWorld().RemoveVob(hero);
 
             SendConfirmation();
         }

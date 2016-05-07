@@ -21,7 +21,8 @@ namespace Gothic
             public const int Save = 0x004616C0,
             GetSectionByName = 0x463000, ///<summary> zCOptionSection * __thiscall zCOption::GetSectionByName(class zSTRING const &, int) </summary>
             GetEntryByName = 0x462D10, ///<summary> zCOptionEntry * __thiscall zCOption::GetEntryByName(class zCOptionSection *, class zSTRING const &, int) </summary>
-            AddParameters = 0x463B00; ///<summary> int __thiscall zCOption::AddParameters(class zSTRING) </summary>
+            AddParameters = 0x463B00, ///<summary> int __thiscall zCOption::AddParameters(class zSTRING) </summary>
+            WriteBool_char = 0x461DE0; ///<summary> int __thiscall zCOption::WriteBool(class zSTRING const &, char const *, int, int) </summary>
         }
 
         public static zCOptionSection GetSectionByName(String name)

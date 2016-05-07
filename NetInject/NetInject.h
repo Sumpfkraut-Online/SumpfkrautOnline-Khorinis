@@ -16,7 +16,7 @@ struct NETINJECTPARAMS
 };
 
 void Error(wchar_t* text){
-	MessageBoxW(NULL,text,L"Error!", MB_ICONWARNING | MB_CANCELTRYCONTINUE | MB_DEFBUTTON2 );
+	MessageBoxW(NULL,text,L"Error!", MB_ICONWARNING | MB_OK | MB_DEFBUTTON2 );
 }
 
 wchar_t * convertToChar(char * c)
@@ -98,7 +98,9 @@ void LoadNETDLL()
 	LPCWSTR project = convertToChar(buf);
 	free(buf);
 
+
 	std::wstring projectDll = std::wstring(L"Multiplayer\\UntoldChapters\\") + project + std::wstring(L"\\GUC.dll");
+	
 	hr = pClrRuntimeHost->ExecuteInDefaultAppDomain(projectDll.c_str(), L"GUC.Client.Injection", L"Main", project, &result);
 	pClrRuntimeHost->Stop();
 
@@ -112,12 +114,14 @@ void LoadNETDLL()
 	if(hr != S_OK){
 		Error((wchar_t *)(std::wstring(L"DLL-Injection of ") + projectDll + std::wstring(L" failed!")).c_str());
 	}
+
 }
 
 int WINAPI DllMain(HINSTANCE hInst, DWORD reason, LPVOID reserved)
 {
 	if(reason==DLL_PROCESS_ATTACH)
 	{
+		Error(L"NetInject attached.");
 		CreateThread(0, 0, (LPTHREAD_START_ROUTINE) LoadNETDLL, 0, 0, 0);		
 	}
 	return true;

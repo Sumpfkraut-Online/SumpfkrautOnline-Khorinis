@@ -15,6 +15,12 @@ namespace GUC.Scripts
 {
     public partial class GUCScripts : ScriptInterface
     {
+        public bool OnClientConnection(Network.GameClient client)
+        {
+            new TFFA.TFFAClient(client); //Networking.ScriptClient(client);
+            return true;
+        }
+
         public Animations.AniJob CreateAniJob()
         {
             return new ScriptAniJob().BaseAniJob;
@@ -33,12 +39,6 @@ namespace GUC.Scripts
         public Models.Model CreateModel()
         {
             return new ModelDef().BaseDef;
-        }
-
-        public bool OnClientConnection(Network.GameClient client)
-        {
-            ScriptClient sc = new ScriptClient(client);
-            return true;
         }
 
         public WorldObjects.World CreateWorld()

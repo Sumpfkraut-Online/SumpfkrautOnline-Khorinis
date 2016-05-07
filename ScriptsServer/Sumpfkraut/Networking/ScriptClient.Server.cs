@@ -37,34 +37,11 @@ namespace GUC.Scripts.Sumpfkraut.Networking
             npc.ApplyOverlay(ov);*/
 
             SetControl(npc);
-            npc.Spawn(WorldInst.NewWorld);
+            npc.Spawn(WorldInst.Current);
         }
 
         public void OnReadIngameMsg(PacketReader stream)
         {
-            /*NPCInst newNPC = null;
-            this.baseClient.Character.World.ForEachVob(v =>
-            {
-                if (v.ID > baseClient.Character.ID && newNPC == null && v is WorldObjects.NPC && v != baseClient.Character)
-                {
-                    newNPC = (NPCInst)v.ScriptObject;
-                }
-            });
-
-            if (newNPC == null)
-            {
-                this.baseClient.Character.World.ForEachVob(v =>
-                {
-                    if (v.ID < baseClient.Character.ID && newNPC == null && v is WorldObjects.NPC && v != baseClient.Character)
-                    {
-                        newNPC = (NPCInst)v.ScriptObject;
-                    }
-                });
-            }
-            SetControl(newNPC);*/
-
-            //ItemInst apple = new ItemInst(ItemDef.Get<ItemDef>("apple"));
-            //baseClient.Character.Inventory.Add(apple.BaseInst);
         }
     }
 }

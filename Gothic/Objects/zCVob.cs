@@ -59,14 +59,23 @@ namespace Gothic.Objects
             RotateWorldY = 0x0061B830,
             SetHeadingAtLocal = 0x0061C860,
             SetHeadingAtWorld = 0x0061CBC0,
+            SetHeadingYWorld = 0x61C280,
+            SetHeadingYWorld_vob = 0x61C450,
+            SetHeadingYLocal = 0x61C1B0,
             ResetXZRotationsWorld = 0x0061C090,
             BeginMovement = 0x0061DA80,
+            RotateWorld = 0x0061B520,
             RotateWorldX = 0x0061B800,
             RotateWorldZ = 0x0061B860,
             RotateLocalX = 0x0061B6B0,
             RotateLocalZ = 0x0061B790,
             GetSectorNameVobIsIn = 0x00600AE0,
-            SetPhysicsEnabled = 0x0061D190;
+            SetPhysicsEnabled = 0x0061D190,
+            SetCollDetStat = 0x61CE50,
+            SetCollDetDyn = 0x61CF40,
+            MoveLocal = 0x61B3C0,
+            MoveWorld = 0x61B350,
+            SetSleeping = 0x602930;
         }
 
         /*public enum HookSize
@@ -108,6 +117,11 @@ namespace Gothic.Objects
             set { Process.Write(value, Address + VarOffsets.bitfield); }
         }
 
+        public zCCollisionObject CollObj
+        {
+            get { return new zCCollisionObject(Process.ReadInt(Address + VarOffsets.CollisionObject)); }
+        }
+
         public const int ByteSize = 0x120;
 
         public zCVob(int address)
@@ -117,6 +131,69 @@ namespace Gothic.Objects
 
         public zCVob()
         {
+        }
+
+        public void SetHeadingYLocal(float x, float y, float z)
+        {
+            using (zVec3 vec = zVec3.Create(x, y, z))
+                SetHeadingYLocal(vec);
+        }
+
+        public void SetHeadingYLocal(zVec3 vec)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetHeadingYLocal, vec);
+        }
+
+        public void MoveWorld(float x, float y, float z)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.MoveWorld, (FloatArg)x, (FloatArg)y, (FloatArg)z);
+        }
+
+        public void MoveLocal(float x, float y, float z)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.MoveLocal, (FloatArg)x, (FloatArg)y, (FloatArg)z);
+        }
+
+        public void SetCollDetDyn(bool arg)
+        {
+            Process.FASTCALL<NullReturnCall>(Address, arg ? 1 : 0, FuncAddresses.SetCollDetDyn);
+        }
+
+        public void SetCollDetStat(bool arg)
+        {
+            Process.FASTCALL<NullReturnCall>(Address, arg ? 1 : 0, FuncAddresses.SetCollDetStat);
+        }
+
+        public void SetSleeping(bool arg)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetSleeping, (BoolArg)arg);
+        }
+
+        public void SetAI(zCAIBase ai)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetAI, ai);
+        }
+
+        public void SetHeadingYWorld(float x, float y, float z)
+        {
+            using (zVec3 vec = zVec3.Create(x, y, z))
+                SetHeadingYWorld(vec);
+        }
+
+        public void SetHeadingYWorld(zVec3 vec)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetHeadingYWorld, vec);
+        }
+
+        public void SetHeadingYWorld(zCVob vob)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetHeadingYWorld_vob, vob);
+        }
+
+
+        public void RotateWorld(zVec3 ptr, float arg)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.RotateWorld, ptr, (FloatArg)arg);
         }
 
         public static zCVob Create()
@@ -164,6 +241,11 @@ namespace Gothic.Objects
             set { TrafoObjToWorld.Direction = value; }
         }
 
+        public zCAIBase callback_ai
+        {
+            get { return new zCAIBase(Process.ReadInt(Address + VarOffsets.callback_ai)); }
+        }
+
         public zTBBox3D BBox3D
         {
             get { return new zTBBox3D(Address + VarOffsets.bbox3D); }
@@ -204,10 +286,19 @@ namespace Gothic.Objects
         /// <summary>
         /// Freeze the game, when not completly loaded
         /// </summary>
-        /// <param name="angle"></param>
         public void RotateLocalY(float angle)
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.RotateLocalY, new FloatArg(angle));
+        }
+
+        public void RotateLocalX(float angle)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.RotateLocalX, new FloatArg(angle));
+        }
+
+        public void RotateLocalZ(float angle)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.RotateLocalZ, new FloatArg(angle));
         }
 
         public void RotateWorldY(float angle)

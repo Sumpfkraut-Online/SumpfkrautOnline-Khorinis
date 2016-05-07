@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.WorldObjects;
+using GUC.Types;
 
 namespace GUC.Network
 {
@@ -16,6 +17,7 @@ namespace GUC.Network
         public partial interface IScriptClient : IScriptGameObject
         {
             void SetControl(NPC npc);
+            void SetToSpectator(World world, Vec3f pos, Vec3f dir);
         }
 
         /// <summary>
@@ -36,16 +38,36 @@ namespace GUC.Network
 
         new public int ID { get { return base.ID; } }
 
+        Vec3f specPos, specDir;
+        World specWorld;
+        public World SpecWorld { get { return this.specWorld; } }
+        bool isSpectating = false;
+        public bool IsSpectating { get { return this.isSpectating; } }
+
         #endregion
 
         partial void pSetControl(NPC npc);
         public void SetControl(NPC npc)
         {
-            if (npc == null)
-                throw new ArgumentNullException("NPC is null!");
+            if (this.character == npc)
+                return;
 
             pSetControl(npc);
         }
+
+        /// <summary>
+        /// The client will lose control of its current NPC and move into spectator mode (free view).
+        /// </summary>
+        public void SetToSpectate(World world, Vec3f position, Vec3f direction)
+        {
+            if (world == null)
+                throw new Exception("World is null!");
+            if (!world.IsCreated)
+                throw new Exception("World is not created!");
+
+            pSetToSpectate(world, position, direction);
+        }
+        partial void pSetToSpectate(World world, Vec3f pos, Vec3f dir);
 
         #region Read & Write
 

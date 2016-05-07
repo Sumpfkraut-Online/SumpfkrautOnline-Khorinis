@@ -45,6 +45,7 @@
     <Compile Include="Objects\Meshes\zCModelAni.cs" />
     <Compile Include="Objects\Meshes\zCModelAniActive.cs" />
     <Compile Include="Objects\Meshes\zCVisual.cs" />
+    <Compile Include="Objects\oCAICamera.cs" />
     <Compile Include="Objects\oCAIHuman.cs" />
     <Compile Include="Objects\oCAniCtrl_Human.cs" />
     <Compile Include="Objects\oCItem.cs" />
@@ -58,6 +59,7 @@
     <Compile Include="Objects\oCMobLockable.cs" />
     <Compile Include="Objects\oCMobSwitch.cs" />
     <Compile Include="Objects\oCMobWheel.cs" />
+    <Compile Include="Objects\oCNpcFocus.cs" />
     <Compile Include="Objects\oCWorldTimer.cs" />
     <Compile Include="Objects\Sky\zCSkyControler.cs" />
     <Compile Include="Objects\Sky\zCSkyControler_Outdoor.cs" />
@@ -65,6 +67,9 @@
     <Compile Include="Objects\Sky\zCSkyLayerData.cs" />
     <Compile Include="Objects\Sky\zCSkyState.cs" />
     <Compile Include="Objects\Sky\zCOutdoorRainFX.cs" />
+    <Compile Include="Objects\zCAIBase.cs" />
+    <Compile Include="Objects\zCAIPlayer.cs" />
+    <Compile Include="Objects\zCCollisionObject.cs" />
     <Compile Include="Objects\zCWorld.cs" />
     <Compile Include="Sound\zCSndFX_MSS.cs" />
     <Compile Include="View\zCFont.cs" />

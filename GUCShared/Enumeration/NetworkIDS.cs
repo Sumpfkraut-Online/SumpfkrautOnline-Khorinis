@@ -21,6 +21,8 @@ namespace GUC.Enumeration
         ModelCreateMessage,
         ModelDeleteMessage,
         
+        SpectatorMessage,
+        SpecPosMessage,
         PlayerControlMessage, // npc control
         LoadWorldMessage, // for changing the world
 

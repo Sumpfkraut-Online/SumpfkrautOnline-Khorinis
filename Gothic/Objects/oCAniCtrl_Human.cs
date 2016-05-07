@@ -6,7 +6,7 @@ using WinApi;
 
 namespace Gothic.Objects
 {
-    public class oCAniCtrl_Human : zCObject // : zCAIPlayer
+    public class oCAniCtrl_Human : zCAIPlayer
     {
         new public abstract class VarOffsets : zCObject.VarOffsets
         {
@@ -37,6 +37,8 @@ namespace Gothic.Objects
 
             _t_runr_2_jump = 0x1190,
 
+            actionMode = 0x14C,
+
             wmode_last = 0x154;
         }
 
@@ -61,6 +63,8 @@ namespace Gothic.Objects
 
             RemoveWeapon2 = 0x006B33B0,
             SearchStandAni = 0x006A4D20,
+            CheckMeleeWeaponHitsLevel = 0x6B0CD0,
+            GetFightLimbs = 0x6AF1E0,
 
             HitCombo = 0x6B0260;
         }
@@ -109,6 +113,7 @@ namespace Gothic.Objects
         public int _t_runr_2_jump { get { return Process.ReadInt(Address + VarOffsets._t_runr_2_jump); } }
 
         public int wmode_last { get { return Process.ReadInt(Address + VarOffsets.wmode_last); } }
+        public int actionMode { get { return Process.ReadInt(Address + VarOffsets.actionMode); } }
 
         public int HitTarget
         {
@@ -127,12 +132,12 @@ namespace Gothic.Objects
             return Process.THISCALL<IntArg>(Address, FuncAddresses.RemoveWeapon2);
         }
 
-        public void SearchStandAni()
+        public void ShowWeaponTrail()
         {
-            SearchStandAni(false);
+            Process.THISCALL<NullReturnCall>(Address, 0x6AFE70);
         }
 
-        public void SearchStandAni(bool force)
+        public void SearchStandAni(bool force = false)
         {
             Process.THISCALL<IntArg>(Address, FuncAddresses.SearchStandAni, new BoolArg(force));
         }
@@ -236,6 +241,17 @@ namespace Gothic.Objects
         {
             Process.THISCALL<NullReturnCall>(Address, 0x6A5060);
         }
+
+        public void CheckMeleeWeaponHitsLevel(oCItem item)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.CheckMeleeWeaponHitsLevel, item);
+        }
+
+        public void GetFightLimbs()
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.GetFightLimbs);
+        }
+
 
         public void Turn(float amount, bool playAni)
         {

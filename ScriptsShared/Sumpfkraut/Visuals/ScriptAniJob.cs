@@ -21,14 +21,28 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
         Attack2HParry,
         Attack2HDodge,
+
+
+
+        Attack1HFwd1,
+        Attack1HFwd2,
+        Attack1HFwd3,
+        Attack1HFwd4,
+        Attack1HLeft,
+        Attack1HRight,
+        Attack1HRun,
+
+        Attack1HParry,
+        Attack1HDodge,
     }
 
     public partial class ScriptAniJob : ScriptObject, AniJob.IScriptAniJob
     {
         #region Properties
 
-        public bool IsFightMove { get { return this.ID >= 0 && this.ID <= (int)SetAnis.Attack2HDodge; } }
-        public bool IsAttack { get { return this.ID >= 0 && this.ID <= (int)SetAnis.Attack2HRun; } }
+        public bool IsFightMove { get { return this.ID >= (int)SetAnis.Attack2HFwd1 && this.ID <= (int)SetAnis.Attack1HDodge; } }
+        public bool IsAttack { get { return (this.ID >= (int)SetAnis.Attack2HFwd1 && this.ID <= (int)SetAnis.Attack2HRun) || (this.ID >= (int)SetAnis.Attack1HFwd1 && this.ID <= (int)SetAnis.Attack1HRun); } }
+        public bool IsCombo { get { return (this.ID >= (int)SetAnis.Attack2HFwd1 && this.ID <= (int)SetAnis.Attack2HFwd4) || (this.ID >= (int)SetAnis.Attack1HFwd1 && this.ID <= (int)SetAnis.Attack1HFwd4); } }
 
         public bool IsCreated { get { return this.baseAniJob.IsCreated; } }
 

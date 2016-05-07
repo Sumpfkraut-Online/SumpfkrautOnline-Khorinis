@@ -14,13 +14,13 @@ namespace GUC.Server.Network.Messages
     {
         #region States
 
-        public static void ReadState(PacketReader stream, GameClient client, NPC character, World world)
+        public static void ReadMoveState(PacketReader stream, GameClient client, NPC character, World world)
         {
             int id = stream.ReadUShort();
             NPC npc;
             if (world.TryGetVob(id, out npc))
             {
-                NPCStates state = (NPCStates)stream.ReadByte();
+                MoveState state = (MoveState)stream.ReadByte();
                 if (npc == character /*|| (client.VobControlledList.Contains(npc) && state <= NPCStates.MoveBackward)*/) //is it a controlled NPC?
                 {
                     if (npc.ScriptObject != null)
@@ -29,7 +29,7 @@ namespace GUC.Server.Network.Messages
             }
         }
 
-        public static void WriteState(NPC npc, NPCStates state)
+        public static void WriteMoveState(NPC npc, MoveState state)
         {
             PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCStateMessage);
             stream.Write((ushort)npc.ID);
@@ -50,8 +50,7 @@ namespace GUC.Server.Network.Messages
             {
                 if (npc == character /*|| (client.VobControlledList.Contains(npc) && state <= NPCStates.MoveBackward)*/) //is it a controlled NPC?
                 {
-                    if (npc.ScriptObject != null)
-                        npc.ScriptObject.Jump();
+                    npc.ScriptObject.OnCmdJump();
                 }
             }
         }
@@ -60,11 +59,12 @@ namespace GUC.Server.Network.Messages
         {
             PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCJumpMessage);
             stream.Write((ushort)npc.ID);
-
             npc.Cell.ForEachSurroundingClient(c => c.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
         }
 
         #endregion
+
+        #region Item drawing
 
         public static void WriteDrawItem(IEnumerable<GameClient> list, NPC npc, Item item, bool fast)
         {
@@ -90,6 +90,8 @@ namespace GUC.Server.Network.Messages
             foreach (Client client in list)
                 client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');*/
         }
+
+        #endregion
 
         #region Animation
 
@@ -201,5 +203,19 @@ namespace GUC.Server.Network.Messages
         }
 
         #endregion
+
+        #region Properties
+
+        public static void WriteHealthMessage(NPC npc)
+        {
+            var stream = GameServer.SetupStream(NetworkIDs.NPCHealthMessage);
+            stream.Write((ushort)npc.ID);
+            stream.Write((ushort)npc.HPMax);
+            stream.Write((ushort)npc.HP);
+            npc.Cell.ForEachSurroundingClient(client => client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
+        }
+
+        #endregion
+
     }
 }

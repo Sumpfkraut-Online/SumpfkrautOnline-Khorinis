@@ -34,7 +34,19 @@ namespace Gothic
             public const int OpenLoadscreen = 0x6C2690,
             LoadWorld = 0x6C90B0,
             LoadGame = 0x6C65A0,
+            GetCameraVob = 0x5DE7B0,
+            GetCameraAI = 0x5DE7A0,
             SetTime = 0x006C4DE0;
+        }
+
+        public static zCVob GetCameraVob()
+        {
+            return Process.THISCALL<zCVob>(GetGameAddress(), FuncAddresses.GetCameraVob);
+        }
+
+        public static oCAICamera GetCameraAI()
+        {
+            return Process.THISCALL<oCAICamera>(GetGameAddress(), FuncAddresses.GetCameraAI);
         }
 
         /// <summary>
@@ -44,7 +56,7 @@ namespace Gothic
         /// <param name="screenName">loading_'screenName'.tga</param>
         public static void OpenLoadscreen(bool useStandardTex, zString screenName)
         {
-            Process.THISCALL<NullReturnCall>(Process.ReadInt(ogame), FuncAddresses.OpenLoadscreen, new BoolArg(useStandardTex), screenName);
+            Process.THISCALL<NullReturnCall>(GetGameAddress(), FuncAddresses.OpenLoadscreen, new BoolArg(useStandardTex), screenName);
         }
 
         /// <summary>
@@ -60,7 +72,7 @@ namespace Gothic
 
         public static void LoadWorld(bool savegame_slot_new, zString worldName)
         {
-            Process.THISCALL<NullReturnCall>(Process.ReadInt(ogame), FuncAddresses.LoadWorld, new IntArg(savegame_slot_new == true ? -2 : 0), worldName);
+            Process.THISCALL<NullReturnCall>(GetGameAddress(), FuncAddresses.LoadWorld, new IntArg(savegame_slot_new == true ? -2 : 0), worldName);
         }
 
         public static void LoadWorld(bool savegame_slot_new, string worldName)
@@ -71,7 +83,7 @@ namespace Gothic
 
         public static void LoadGame(bool savegame_slot_new, zString worldName)
         {
-            Process.THISCALL<NullReturnCall>(Process.ReadInt(ogame), FuncAddresses.LoadGame, new IntArg(savegame_slot_new == true ? -2 : 0), worldName);
+            Process.THISCALL<NullReturnCall>(GetGameAddress(), FuncAddresses.LoadGame, new IntArg(savegame_slot_new == true ? -2 : 0), worldName);
         }
 
         public static void LoadGame(bool savegame_slot_new, string worldName)
@@ -82,17 +94,17 @@ namespace Gothic
 
         public static void SetTime(int day, int hour, int minute)
         {
-            Process.THISCALL<NullReturnCall>(Process.ReadInt(ogame), FuncAddresses.SetTime, new IntArg(day), new IntArg(hour), new IntArg(minute));
+            Process.THISCALL<NullReturnCall>(GetGameAddress(), FuncAddresses.SetTime, new IntArg(day), new IntArg(hour), new IntArg(minute));
         }
 
         public static zCWorld GetWorld()
         {
-            return new zCWorld(Process.ReadInt(Process.ReadInt(ogame) + VarOffsets.world));
+            return new zCWorld(Process.ReadInt(GetGameAddress() + VarOffsets.world));
         }
 
         public static oCWorldTimer WorldTimer
         {
-            get { return new oCWorldTimer(Process.ReadInt(Process.ReadInt(ogame) + VarOffsets.WorldTimer)); }
+            get { return new oCWorldTimer(Process.ReadInt(GetGameAddress() + VarOffsets.WorldTimer)); }
         }
     }
 }

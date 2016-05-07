@@ -14,6 +14,7 @@ namespace Gothic.Objects
             public const int NPC = 0x12C,
             fallDownDistanceY = 156,
             waterLevel = 136,
+            aboveFloor = 0x84,
             wmode = 336;
         }
         new public abstract class FuncAddresses : oCAniCtrl_Human.FuncAddresses
@@ -26,7 +27,8 @@ namespace Gothic.Objects
             InitAnimations = 0x006A4010,
             InitAllAnis = 0x006A5BF0,
             PC_Turnings = 0x0069A940,
-            StartFlyDamage = 0x69D940;
+            StartFlyDamage = 0x69D940,
+            CheckFocusVob = 0x0069B7A0;
         }
 
         public oCAIHuman()
@@ -57,6 +59,10 @@ namespace Gothic.Objects
             set { Process.Write(value, Address + VarOffsets.fallDownDistanceY); }
         }
 
+        public float AboveFloor
+        {
+            get { return Process.ReadFloat(Address + VarOffsets.aboveFloor); }
+        }
 
         public void Init(oCNpc npc)
         {
@@ -91,6 +97,16 @@ namespace Gothic.Objects
         public void StartFlyDamage(float arg1, zVec3 arg2)
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.StartFlyDamage, new FloatArg(arg1), arg2);
+        }
+
+        public void Moving()
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.Moving);
+        }
+
+        public void CheckFocusVob(int arg)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.CheckFocusVob, (IntArg)arg);
         }
     }
 }

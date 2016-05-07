@@ -63,11 +63,15 @@ namespace GUC.Server.Network
                     Logger.LogWarning("Client sent another ConnectionMessage. Kicked: {0} IP:{1}", client.guid.g, client.systemAddress);
                     break;
                 case NetworkIDs.LoadWorldMessage:
-                    client.Character.InsertInWorld();
+                    client.ConfirmLoadWorldMessage();
                     break;
                 case NetworkIDs.ScriptMessage:
-                    if (client.ScriptObject != null)
-                        client.ScriptObject.OnReadMenuMsg(pktReader);
+                    client.ScriptObject.OnReadMenuMsg(pktReader);
+                    break;
+
+                case NetworkIDs.SpecPosMessage:
+                    if (client.IsSpectating)
+                        SpectatorMessage.ReadPos(stream, client);
                     break;
 
                 // Ingame:
@@ -82,7 +86,7 @@ namespace GUC.Server.Network
                     break;
 
                 case NetworkIDs.NPCStateMessage:
-                    NPCMessage.ReadState(stream, client, client.character, client.character.World);
+                    NPCMessage.ReadMoveState(stream, client, client.character, client.character.World);
                     break;
 
                 case NetworkIDs.NPCApplyOverlayMessage:
@@ -97,6 +101,9 @@ namespace GUC.Server.Network
                     break;
                 case NetworkIDs.NPCAniStopMessage:
                     NPCMessage.ReadAniStop(stream, client.character);
+                    break;
+                case NetworkIDs.NPCJumpMessage:
+                    NPCMessage.ReadJump(stream, client, client.character, client.character.World);
                     break;
 
                 case NetworkIDs.InventoryEquipMessage:
@@ -116,7 +123,7 @@ namespace GUC.Server.Network
             client.PacketCount++;
             if (client.nextCheck < GameTime.Ticks)
             {
-                if (client.PacketCount >= 20)
+                if (client.PacketCount >= 40)
                 {
                     Logger.LogWarning("Client spammed too many packets. Kicked: {0} IP:{1}", client.guid.g, client.systemAddress);
                     DisconnectClient(client);
@@ -201,8 +208,9 @@ namespace GUC.Server.Network
                             {
                                 if (msgID > NetworkIDs.ScriptMessage && (client.Character == null || !client.Character.IsSpawned))
                                 {
-                                    Logger.LogWarning("Client sent {0} without being ingame. Kicked: {1} IP:{2}", msgID, p.guid, p.systemAddress);
-                                    DisconnectClient(client);
+                                    return;
+                                    //Logger.LogWarning("Client sent {0} without being ingame. Kicked: {1} IP:{2}", msgID, p.guid, p.systemAddress);
+                                    //DisconnectClient(client);
                                 }
                                 else
                                 {
@@ -231,6 +239,16 @@ namespace GUC.Server.Network
                         Logger.LogError("{0}: {1}: {2}\n{3}", (DefaultMessageIDTypes)p.data[0], e.Source, e.Message, e.StackTrace);
                     else
                         Logger.LogError("{0}: {1}\n{2}", e.Source, e.Message, e.StackTrace);
+
+                    GUC.WorldObjects.World.ForEach(world =>
+                    {
+                        Logger.Log("World (" + world.ID + ") Cells:");
+                        foreach (var cell in world.netCells.Values)
+                        {
+                            string clients = ""; cell.Clients.ForEach(c => clients += c.ID + ", "); if (clients.Length > 2) clients = clients.Remove(clients.Length - 2);
+                            Logger.Log(String.Format("({0},{1}): {2} Vobs, {3} Clients ({4})", cell.X, cell.Y, cell.Vobs.GetCount(), cell.Clients.Count, clients));
+                        }
+                    });
 
                     if (client == null)
                     {
@@ -261,9 +279,14 @@ namespace GUC.Server.Network
                     client.Character.Cell.Clients.Remove(ref client.cellID);
                 }
             }
+            if (client.IsSpectating)
+            {
+                client.SpecCell.Clients.Remove(ref client.cellID);
+                if (client.SpecCell.Vobs.GetCount() == 0 && client.SpecCell.Clients.Count == 0)
+                    client.SpecWorld.netCells.Remove(client.SpecCell.Coord);
+            }
 
-            if (client.ScriptObject != null)
-                client.ScriptObject.OnDisconnection();
+            client.ScriptObject.OnDisconnection();
 
             client.character = null;
 

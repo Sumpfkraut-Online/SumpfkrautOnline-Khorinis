@@ -30,7 +30,7 @@ namespace GUC.WorldObjects
             void EquipItem(int slot, Item item);
             void UnequipItem(Item item);
 
-            void SetState(NPCStates state);
+            void SetState(MoveState state);
             void Jump();
 
             void ApplyOverlay(Overlay overlay);
@@ -38,6 +38,8 @@ namespace GUC.WorldObjects
 
             void StartAnimation(Animation ani);
             void StopAnimation(bool fadeOut);
+
+            void SetHealth(int hp, int hpmax);
         }
 
         new public IScriptNPC ScriptObject
@@ -81,35 +83,50 @@ namespace GUC.WorldObjects
         int hp = 100;
         public int HP { get { return hp; } }
 
+        public bool IsDead { get { return this.hp == 0; } }
+
         public void SetHealth(int hp)
         {
             SetHealth(hp, this.hpmax);
         }
 
-        partial void pSetHealth(int hp, int hpmax);
+        partial void pSetHealth();
         public void SetHealth(int hp, int hpmax)
         {
-            if (hp < 0 || hp > ushort.MaxValue)
+            if (hp > ushort.MaxValue)
                 throw new ArgumentOutOfRangeException("HP is out of range! (0..65535) val: " + hp);
-            if (hpmax < 0 || hpmax > ushort.MaxValue)
-                throw new ArgumentOutOfRangeException("HPMax is out of range! (0..65535) val: " + hpmax);
+            if (hpmax <= 0 || hpmax > ushort.MaxValue)
+                throw new ArgumentOutOfRangeException("HPMax is out of range! (1..65535) val: " + hpmax);
 
-            this.hp = hp;
+            if (hp <= 0)
+            {
+                this.state = MoveState.Stand;
+                this.currentAni = null;
+                this.aniTimer.Stop(true);
+                this.hp = 0;
+            }
+            else
+            {
+                this.hp = hp;
+            }
             this.hpmax = hpmax;
 
-            pSetHealth(hp, hpmax);
+            pSetHealth();
         }
 
         #endregion
 
         #region Movement / NPCStates
 
-        NPCStates state = NPCStates.Stand;
-        public NPCStates State { get { return this.state; } }
+        MoveState state = MoveState.Stand;
+        public MoveState State { get { return this.state; } }
 
-        partial void pSetState(NPCStates state);
-        public void SetState(NPCStates state)
+        partial void pSetState(MoveState state);
+        public void SetState(MoveState state)
         {
+            if (this.IsDead)
+                return;
+
             pSetState(state);
             this.state = state;
         }
@@ -117,6 +134,9 @@ namespace GUC.WorldObjects
         partial void pFallDown();
         public void FallDown()
         {
+            if (this.IsDead)
+                return;
+
             pFallDown();
         }
 
@@ -254,6 +274,8 @@ namespace GUC.WorldObjects
         {
             base.WriteProperties(stream);
 
+            stream.Write((byte)this.state);
+
             stream.Write((ushort)hpmax);
             stream.Write((ushort)hp);
 
@@ -284,6 +306,8 @@ namespace GUC.WorldObjects
         internal void ReadTakeControl(PacketReader stream)
         {
             base.ReadProperties(stream);
+
+            this.state = (MoveState)stream.ReadByte();
 
             this.hpmax = stream.ReadUShort();
             this.hp = stream.ReadUShort();
@@ -329,6 +353,8 @@ namespace GUC.WorldObjects
         {
             base.WriteProperties(stream);
 
+            stream.Write((byte)this.state);
+
             stream.Write((ushort)hpmax);
             stream.Write((ushort)hp);
 
@@ -358,6 +384,8 @@ namespace GUC.WorldObjects
         protected override void ReadProperties(PacketReader stream)
         {
             base.ReadProperties(stream);
+
+            this.state = (MoveState)stream.ReadByte();
 
             this.hpmax = stream.ReadUShort();
             this.hp = stream.ReadUShort();
@@ -395,10 +423,14 @@ namespace GUC.WorldObjects
         partial void pJump();
         public void Jump()
         {
-            if (this.IsSpawned)
-            {
-                pJump();
-            }
+            if (!this.IsSpawned)
+                return;
+
+            if (this.IsDead)
+                return;
+
+            pJump();
+            this.state = MoveState.Forward;
         }
 
         #region Overlays
@@ -428,6 +460,9 @@ namespace GUC.WorldObjects
             if (overlay == null)
                 throw new ArgumentNullException("Overlay is null!");
 
+            if (this.IsDead)
+                return;
+
             if (overlays != null)
             {
                 if (overlays.Contains(overlay))
@@ -452,6 +487,9 @@ namespace GUC.WorldObjects
         {
             if (overlay == null)
                 throw new ArgumentNullException("Overlay is null!");
+
+            if (this.IsDead)
+                return;
 
             if (overlays == null || !overlays.Remove(overlay))
                 return;
@@ -495,7 +533,10 @@ namespace GUC.WorldObjects
 
             if (!this.IsSpawned)
                 throw new Exception("NPC is not spawned!");
-            
+
+            if (this.IsDead)
+                return;
+
             this.currentAni = ani;
             this.onStop = OnStop;
             aniTimer.SetInterval(ani.Duration);
@@ -544,6 +585,7 @@ namespace GUC.WorldObjects
         public override void Despawn()
         {
             pDespawn();
+            this.currentAni = null;
             this.aniTimer.Stop();
             base.Despawn();
         }

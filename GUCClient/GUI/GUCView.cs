@@ -60,21 +60,40 @@ namespace GUC.Client.GUI
         #endregion
 
         #region pixel virtual conversion
+
+        static bool iniRes = false;
         public static int[] GetScreenSize()
         {
-            //return new int[2] { Process.ReadInt(0x08DFC8), Process.ReadInt(0x08DFCC) };
-            return new int[] { 800, 600
-                //Convert.ToInt32(Gothic.zCOption.GetOption().getEntryValue("VIDEO", "zVidResFullscreenX")),
-                //Convert.ToInt32(Gothic.zCOption.GetOption().getEntryValue("VIDEO", "zVidResFullscreenY"))
-            };
+            var screen = Gothic.View.zCView.GetScreen();
+
+            var ret = new int[2] { screen.pSizeX, screen.pSizeY };
+
+            if (ret[0] > 0 && ret[1] > 0)
+            {
+                iniRes = false;
+            }
+            else
+            {
+                var sec = Gothic.zCOption.GetSectionByName("VIDEO");
+                ret[0] = Convert.ToInt32(sec.GetEntryByName("zVidResFullscreenX").VarValue.ToString());
+                ret[1] = Convert.ToInt32(sec.GetEntryByName("zVidResFullscreenY").VarValue.ToString());
+
+                if (!iniRes)
+                {
+                    Log.Logger.LogWarning("Couldn't find real resolution, using Gothic.ini resolution: " + ret[0] + "x" + ret[1]);
+                }
+                iniRes = true;
+            }
+            return ret;
         }
 
         public static int[] PixelToVirtual(int x, int y)
         {
+            var res = GetScreenSize();
             return new int[]
             {
-                x * 0x2000 / GetScreenSize()[0],
-                y * 0x2000 / GetScreenSize()[1]
+                x * 0x2000 / res[0],
+                y * 0x2000 / res[1]
             };
         }
 
@@ -91,11 +110,11 @@ namespace GUC.Client.GUI
         public static int StringPixelWidth(string str)
         {
             float size = 0;
-            float add;
             for (int i = 0; i < str.Length; i++)
             {
-                GothicChars.TryGetValue(str[i], out add);
-                size += add;
+                float add;
+                if (GothicChars.TryGetValue(str[i], out add))
+                    size += add;
             }
             return (int)size;
         }

@@ -46,7 +46,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GUCScripts.cs" />
-    <Compile Include="Sumpfkraut\FightSystem\Fight.cs" />
     <Compile Include="Sumpfkraut\Networking\NetVobMsgIDs.cs" />
     <Compile Include="Sumpfkraut\Networking\ScriptClient.cs" />
     <Compile Include="Sumpfkraut\ScriptObject.cs" />
@@ -72,6 +71,8 @@
     <Compile Include="Sumpfkraut\WorldSystem\ScriptSkyCtrl.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldDef.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldInst.cs" />
+    <Compile Include="TFFA\Enums.cs" />
+    <Compile Include="TFFA\TFFAClient.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GUCShared\GUCShared.csproj">

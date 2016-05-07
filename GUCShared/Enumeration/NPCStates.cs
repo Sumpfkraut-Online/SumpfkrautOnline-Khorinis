@@ -5,15 +5,25 @@ using System.Text;
 
 namespace GUC.Enumeration
 {
-    public enum NPCStates : byte
+    public enum MoveState
     {
-        //States:
         Stand,
 
-        MoveForward,
-        MoveBackward,
+        Forward,
+        Backward,
+        Left,
+        Right,
 
-        MoveLeft,
-        MoveRight
+        Falling
+    }
+
+    public enum EnvironmentState
+    {
+        None,
+        InWater,
+        Swimming,
+        Diving,
+
+        InAir,
     }
 }

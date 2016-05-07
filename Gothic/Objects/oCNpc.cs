@@ -483,17 +483,34 @@ namespace Gothic.Objects
 
         public void SetWeaponMode(int str)
         {
-            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetWeaponMode, new CallValue[] { new IntArg(str) });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetWeaponMode, new IntArg(str));
         }
 
         public void SetWeaponMode2(int str)
         {
-            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetWeaponMode2_Int, new CallValue[] { new IntArg(str) });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetWeaponMode2_Int, new IntArg(str));
         }
 
         public void SetWeaponMode2(zString str)
         {
-            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetWeaponMode2_Str, new CallValue[] { str });
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetWeaponMode2_Str, str);
+        }
+
+        public int GetWeaponMode()
+        {
+            return Process.THISCALL<IntArg>(Address, FuncAddresses.GetWeaponMode).Value;
+        }
+
+        public void DoDie(oCNpc killer)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.DoDie, killer);
+        }
+
+
+        public int Voice
+        {
+            get { return Process.ReadInt(Address + VarOffsets.voice); }
+            set { Process.Write(value, Address + VarOffsets.voice); }
         }
 
         /*
@@ -649,11 +666,6 @@ namespace Gothic.Objects
             get { return new zVec3(Process, Address + (int)Offsets.model_scale); }
         }
 
-        public int Voice
-        {
-            get { return Process.ReadInt(Address + (int)Offsets.voice); }
-            set { Process.Write(value, Address + (int)Offsets.voice); }
-        }
 
         public int VoiceIndex
         {

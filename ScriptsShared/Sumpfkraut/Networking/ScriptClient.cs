@@ -33,7 +33,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking
         #endregion
 
         #region Constructors
-
+        
         public ScriptClient(GameClient baseClient)
         {
             if (baseClient == null)
@@ -58,6 +58,11 @@ namespace GUC.Scripts.Sumpfkraut.Networking
         public void SetControl(NPCInst npc)
         {
             this.baseClient.SetControl(npc.BaseInst);
+        }
+
+        public void SetToSpectator(WorldObjects.World world, Types.Vec3f pos, Types.Vec3f dir)
+        {
+            throw new NotImplementedException();
         }
 
         #region Read & Write

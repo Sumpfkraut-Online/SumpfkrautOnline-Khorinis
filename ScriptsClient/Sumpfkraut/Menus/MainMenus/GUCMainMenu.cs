@@ -46,6 +46,8 @@ namespace GUC.Client.Scripts.Sumpfkraut.Menus.MainMenus
 
         #region Open & Close
 
+        protected bool isOpen = false;
+
         public override void Open()
         {
             CloseActiveMenus(); //main menus never overlap
@@ -74,6 +76,8 @@ namespace GUC.Client.Scripts.Sumpfkraut.Menus.MainMenus
             }
             CurrentItem.Select();
             UpdateHelpText();
+
+            isOpen = true;
         }
 
         public override void Close()
@@ -85,6 +89,8 @@ namespace GUC.Client.Scripts.Sumpfkraut.Menus.MainMenus
                 items[i].Hide();
 
             CurrentItem.Deselect();
+
+            isOpen = false;
         }
 
         #endregion

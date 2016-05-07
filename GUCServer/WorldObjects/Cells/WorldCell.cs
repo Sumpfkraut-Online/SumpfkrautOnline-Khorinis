@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.WorldObjects;
+using GUC.Types;
 
 namespace GUC.Server.WorldObjects.Cells
 {
@@ -24,6 +25,28 @@ namespace GUC.Server.WorldObjects.Cells
             this.x = x;
             this.y = y;
             this.coord = ((x << 16) | y & 0xFFFF);
+        }
+
+        protected static int[] GetCoords(Vec3f pos, int cellSize)
+        {
+            float unroundedX = pos.X / cellSize;
+            float unroundedZ = pos.Z / cellSize;
+
+            // calculate new cell indices
+            int x = (int)(pos.X >= 0 ? unroundedX + 0.5f : unroundedX - 0.5f);
+            int z = (int)(pos.Z >= 0 ? unroundedZ + 0.5f : unroundedZ - 0.5f);
+            
+            return new int[2] { x, z };
+        }
+
+        public static int GetCoordFromCoords(int x, int y)
+        {
+            if (x < short.MinValue || x > short.MaxValue || y < short.MinValue || y > short.MaxValue)
+            {
+                throw new Exception("Coords are out of cell range! " + x + " " + y);
+            }
+
+            return (x << 16) | y & 0xFFFF;
         }
     }
 }

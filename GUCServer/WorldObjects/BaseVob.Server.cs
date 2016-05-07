@@ -41,36 +41,11 @@ namespace GUC.WorldObjects
         }
 
         #region Cells
-        
-        protected int[] GetCellCoords(int cellSize)
-        {
-            Vec3f pos = this.GetPosition();
-
-            float unroundedX = pos.X / cellSize;
-            float unroundedZ = pos.Z / cellSize;
-
-            // calculate new cell indices
-            int x = (int)(pos.X >= 0 ? unroundedX + 0.5f : unroundedX - 0.5f);
-            int z = (int)(pos.Z >= 0 ? unroundedZ + 0.5f : unroundedZ - 0.5f);
-
-            if (x < short.MinValue || x > short.MaxValue || z < short.MinValue || z > short.MaxValue)
-            {
-                throw new Exception("Vob position is out of cell range!");
-            }
-
-            return new int[2] { x, z };//(x << 16) | z & 0xFFFF;
-        }
-
-        const int NetCellSize = 4500;
-        internal int[] GetNetCellCoords()
-        {
-            return GetCellCoords(NetCellSize);
-        }
 
         internal virtual void UpdatePosition(Vec3f newPos, Vec3f newDir, GameClient exclude)
         {
-            float unroundedX = newPos.X / NetCellSize;
-            float unroundedZ = newPos.Z / NetCellSize;
+            float unroundedX = newPos.X / NetCell.Size;
+            float unroundedZ = newPos.Z / NetCell.Size;
 
             // calculate new cell indices
             int x = (int)(newPos.X >= 0 ? unroundedX + 0.5f : unroundedX - 0.5f);
@@ -94,8 +69,6 @@ namespace GUC.WorldObjects
                 float zdiff = unroundedZ - this.Cell.Y;
                 if ((xdiff > 0.65f || xdiff < -0.65f) || (zdiff > 0.65f || zdiff < -0.65f))
                 {
-                    Log.Logger.Log("change cell to " + x + " " + z);
-
                     ChangeCells(x, z);
                     return;
                 }
@@ -106,8 +79,8 @@ namespace GUC.WorldObjects
             {
                 PacketWriter stream = GameServer.SetupStream(NetworkIDs.VobPosDirMessage);
                 stream.Write((ushort)this.ID);
-                stream.Write(this.pos);
-                stream.Write(this.dir);
+                stream.WriteCompressedPosition(this.pos);
+                stream.WriteCompressedDirection(this.dir);
                 this.Cell.ForEachSurroundingClient(c =>
                 {
                     if (c != exclude)
@@ -131,8 +104,8 @@ namespace GUC.WorldObjects
                         //Position updates in shared cells
                         PacketWriter stream = GameServer.SetupStream(NetworkIDs.VobPosDirMessage);
                         stream.Write((ushort)this.ID);
-                        stream.Write(this.pos);
-                        stream.Write(this.dir);
+                        stream.WriteCompressedPosition(this.pos);
+                        stream.WriteCompressedDirection(this.dir);
                         cell.Clients.ForEach(c =>
                         {
                             c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE, 'W');
@@ -193,7 +166,7 @@ namespace GUC.WorldObjects
             if (!this.IsStatic)
                 this.Cell.DynVobs.Remove(this, ref this.dynCellID, ref this.dynCellTypeID);
 
-            if (this.Cell.Vobs.GetCount() == 0)
+            if (this.Cell.Vobs.GetCount() == 0 && this.Cell.Clients.Count == 0)
                 this.world.netCells.Remove(this.Cell.Coord);
 
             this.Cell = null;
