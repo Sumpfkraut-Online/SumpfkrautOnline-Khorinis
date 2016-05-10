@@ -65,28 +65,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             this.comboTimer = new GUCTimer(AbleCombo);
         }
 
-        public void OnCmdAniJump(Animations.Animation ani)
-        {
-            //TFFA
-            if (Server.Scripts.TFFA.TFFAGame.Status == TFFA.TFFAPhase.Waiting)
-                return;
-
-            if (this.Environment >= EnvironmentState.Swimming)
-                return;
-
-            if (this.Environment == EnvironmentState.Wading && ani.AniJob.ID != (int)SetAnis.JumpUp)
-                return;
-
-            if (canCombo)
-            {
-                var aa = this.GetFightAni();
-                if (aa != null)
-                    this.StopAnimation(aa);
-            }
-
-            this.StartAniJump((ScriptAni)ani.ScriptObject, 250, 50);
-        }
-
         public void OnCmdMove(MoveState state)
         {
             //TFFA
@@ -217,13 +195,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             if (Server.Scripts.TFFA.TFFAGame.Status == TFFA.TFFAPhase.Waiting)
                 return;
 
-            int aniID = ani.AniJob.ID;
-            if (this.Environment > EnvironmentState.Wading && aniID != (int)SetAnis.Attack1HRun && aniID != (int)SetAnis.Attack2HRun)
-            {
-                return;
-            }
+            ScriptAni anim = (ScriptAni)ani.ScriptObject;
+            ScriptAniJob job = anim.AniJob;
 
-            if (this.GetJumpAni() != null && aniID != (int)SetAnis.Attack1HRun && aniID != (int)SetAnis.Attack2HRun) // is jumping
+            if ((this.Environment > EnvironmentState.Wading || this.GetJumpAni() != null) && !job.IsAttackRun)
             {
                 return;
             }
@@ -231,18 +206,17 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             if (!this.canCombo) // can't combo yet
                 return;
 
-            ScriptAni anim = (ScriptAni)ani.ScriptObject;
-            if (anim.AniJob.IsFightMove) // FIGHT MOVE
+            if (job.IsFightMove) // FIGHT MOVE
             {
-                if (anim.AniJob.IsAttack) // new move is an attack
+                if (job.IsAttack) // new move is an attack
                 {
                     ScriptAniJob curAni = (ScriptAniJob)this.GetFightAni()?.Ani.AniJob.ScriptObject;
                     if (curAni != null && curAni.IsAttack) // currently in an attack
                     {
-                        if (curAni == anim.AniJob) // same attack
+                        if (curAni == job) // same attack
                             return;
 
-                        if (curAni.IsAttackCombo && anim.AniJob.ID <= curAni.ID)
+                        if (curAni.IsAttackCombo && job.ID <= curAni.ID)
                             return;
                     }
 
@@ -250,19 +224,33 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     hitTimer.Start();
                 }
 
-                if (anim.AniJob.IsAttack)
+                if (job.IsAttack)
                 {
                     comboTimer.SetInterval(anim.ComboTime);
                     comboTimer.Start();
                 }
+
+                this.StartAnimation(anim, () => this.canCombo = true);
+                this.canCombo = false;
             }
             else if (this.IsInAni())
             {
                 return;
             }
+            else if (job.IsJump)
+            {
+                this.StartAniJump(anim, 50, 300);
+            }
+        }
 
-            this.StartAnimation(anim, () => this.canCombo = true);
-            this.canCombo = false;
+        public void OnCmdAniStart(Animations.Animation ani, object[] netArgs)
+        {
+            ScriptAni a = (ScriptAni)ani.ScriptObject;
+
+            if (a.AniJob.IsClimbing)
+            {
+                this.StartAniClimb(a, (WorldObjects.NPC.ClimbingLedge)netArgs[0]);
+            }
         }
 
         public void OnCmdAniStop(bool fadeOut)
@@ -274,6 +262,17 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             hitTimer.Stop();
             comboTimer.Stop();
             base.Despawn();
+        }
+
+        public void StartAniJump(ScriptAni ani, int fwdVelocity, int upVelocity)
+        {
+            this.BaseInst.StartAnimation(ani.BaseAni, null, fwdVelocity, upVelocity);
+        }
+
+        public void StartAniClimb(ScriptAni ani, WorldObjects.NPC.ClimbingLedge ledge)
+        {
+            this.BaseInst.StartAnimation(ani.BaseAni, () => this.canCombo = true, ledge);
+            this.canCombo = false;
         }
     }
 }

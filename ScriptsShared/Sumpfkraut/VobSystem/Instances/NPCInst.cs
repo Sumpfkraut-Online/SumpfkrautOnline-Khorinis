@@ -291,19 +291,35 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         }
 
-        public void StartAniJump(Animation ani)
+        public void OnWriteAniStartArgs(PacketWriter stream, AniJob job, object[] netArgs)
         {
-            throw new NotImplementedException();
+            ScriptAniJob j = (ScriptAniJob)job.ScriptObject;
+            if (j.IsJump)
+            {
+                stream.Write((ushort)(int)netArgs[0]);
+                stream.Write((ushort)(int)netArgs[1]);
+            }
+            else if (j.IsClimbing)
+            {
+                ((NPC.ClimbingLedge)netArgs[0]).WriteStream(stream);
+            }
         }
 
-        public void StartAniJump(Animation ani, int upVelocity, int fwdVelocity)
+        public void OnReadAniStartArgs(PacketReader stream, AniJob job, out object[] netArgs)
         {
-            this.StartAniJump((ScriptAni)ani.ScriptObject, upVelocity, fwdVelocity);
-        }
-
-        public void StartAniJump(ScriptAni ani, int upVelocity, int fwdVelocity, Action onStop = null)
-        {
-            this.BaseInst.StartAnimationJump(ani.BaseAni, upVelocity, fwdVelocity, onStop);
+            ScriptAniJob j = (ScriptAniJob)job.ScriptObject;
+            if (j.IsJump)
+            {
+                netArgs = new object[2] { (int)stream.ReadUShort(), (int)stream.ReadUShort() };
+            }
+            else if (j.IsClimbing)
+            {
+                netArgs = new object[1] { new NPC.ClimbingLedge(stream) };
+            }
+            else
+            {
+                netArgs = null;
+            }
         }
     }
 }

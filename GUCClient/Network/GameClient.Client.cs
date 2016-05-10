@@ -149,7 +149,7 @@ namespace GUC.Network
             }
         }
 
-        public void DoStartAniJump(AniJob job)
+        public void DoStartAni(AniJob job, params object[] netArgs)
         {
             if (this.character == null)
                 return;
@@ -159,7 +159,7 @@ namespace GUC.Network
 
             if (GameTime.Ticks > nextAniUpdate)
             {
-                NPCMessage.WriteJump(job);
+                NPCMessage.WriteAniStart(job, netArgs);
                 nextAniUpdate = GameTime.Ticks + DelayBetweenMessages;
             }
         }
@@ -361,19 +361,15 @@ namespace GUC.Network
                 case NetworkIDs.NPCAniStartMessage:
                     NPCMessage.ReadAniStart(stream);
                     break;
+                case NetworkIDs.NPCAniStartWithArgsMessage:
+                    NPCMessage.ReadAniStartWithArgs(stream);
+                    break;
                 case NetworkIDs.NPCAniStopMessage:
                     NPCMessage.ReadAniStop(stream);
                     break;
 
                 case NetworkIDs.NPCHealthMessage:
                     NPCMessage.ReadHealthMessage(stream);
-                    break;
-
-                case NetworkIDs.NPCJumpMessage:
-                    NPCMessage.ReadJump(stream);
-                    break;
-                case NetworkIDs.NPCJumpVelMessage:
-                    NPCMessage.ReadJumpVel(stream);
                     break;
 
                 default:

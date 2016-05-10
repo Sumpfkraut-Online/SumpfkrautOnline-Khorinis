@@ -82,6 +82,40 @@ namespace GUC.Client.Scripts.TFFA
 
             if (key == VirtualKeys.Menu) // JUMPING
             {
+                var ledge = Hero.BaseInst.DetectClimbingLedge();
+                if (ledge != null)
+                {
+                    float dist = ledge.Location.Y - Hero.BaseInst.gVob.HumanAI.FeetY;
+
+                    if (dist > 205) // CLIMB HIGH
+                    {
+                        ScriptAniJob job;
+                        if (Hero.Model.TryGetAniJob((int)SetAnis.ClimbHigh, out job))
+                        {
+                            TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob, ledge);
+                            return;
+                        }
+                    }
+                    else if (dist > 105) // CLIMB MID
+                    {
+                        ScriptAniJob job;
+                        if (Hero.Model.TryGetAniJob((int)SetAnis.ClimbMid, out job))
+                        {
+                            TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob, ledge);
+                            return;
+                        }
+                    }
+                    else if (dist > 60) // CLIMB LOW
+                    {
+                        ScriptAniJob job;
+                        if (Hero.Model.TryGetAniJob((int)SetAnis.ClimbLow, out job))
+                        {
+                            TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob, ledge);
+                            return;
+                        }
+                    }
+                }
+
                 if (Hero.Movement == MoveState.Forward)
                 {
                     ScriptAniJob job;
@@ -154,7 +188,7 @@ namespace GUC.Client.Scripts.TFFA
                     for (int i = (int)NPCInst.AttackMove.Parry1; i <= (int)NPCInst.AttackMove.Parry3; i++)
                         if (Hero.TryGetAttackFromMove((NPCInst.AttackMove)i, out job))
                             parries.Add(job);
-                    
+
                     TFFAClient.Client.BaseClient.DoStartAni(parries[random.Next(0, parries.Count)].BaseAniJob);
                 }
             }

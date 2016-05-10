@@ -39,56 +39,7 @@ namespace GUC.Client.Network.Messages
         }
 
         #endregion
-
-        #region Jumping
-
-        public static void WriteJump(AniJob job)
-        {
-            PacketWriter stream = GameClient.SetupStream(NetworkIDs.NPCJumpMessage);
-            stream.Write((ushort)job.ID);
-            GameClient.Send(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
-        }
-
-        public static void ReadJump(PacketReader stream)
-        {
-            int id = stream.ReadUShort();
-
-            NPC npc;
-            if (World.Current.TryGetVob(id, out npc))
-            {
-                AniJob job;
-                if (npc.Model.TryGetAni(stream.ReadUShort(), out job))
-                {
-                    Animation ani;
-                    if (npc.TryGetAniFromJob(job, out ani))
-                        npc.ScriptObject.StartAniJump(ani);
-                }
-            }
-        }
-
-        public static void ReadJumpVel(PacketReader stream)
-        {
-            int id = stream.ReadUShort();
-
-            NPC npc;
-            if (World.Current.TryGetVob(id, out npc))
-            {
-                AniJob job;
-                if (npc.Model.TryGetAni(stream.ReadUShort(), out job))
-                {
-                    Animation ani;
-                    if (npc.TryGetAniFromJob(job, out ani))
-                    {
-                        int upVel = stream.ReadUShort();
-                        int fwdVel = stream.ReadUShort();
-                        npc.ScriptObject.StartAniJump(ani, upVel, fwdVel);
-                    }
-                }
-            }
-        }
-
-        #endregion
-
+        
         #region Animations
 
         #region Overlays
@@ -140,6 +91,25 @@ namespace GUC.Client.Network.Messages
             }
         }
 
+        public static void ReadAniStartWithArgs(PacketReader stream)
+        {
+            NPC npc;
+            if (World.Current.TryGetVob(stream.ReadUShort(), out npc))
+            {
+                AniJob job;
+                if (npc.Model.TryGetAni(stream.ReadUShort(), out job))
+                {
+                    Animation ani;
+                    if (npc.TryGetAniFromJob(job, out ani))
+                    {
+                        object[] netArgs;
+                        npc.ScriptObject.OnReadAniStartArgs(stream, job, out netArgs);
+                        npc.ScriptObject.StartAnimation(ani, netArgs);
+                    }
+                }
+            }
+        }
+
         public static void ReadAniStop(PacketReader stream)
         {
             NPC npc;
@@ -154,10 +124,18 @@ namespace GUC.Client.Network.Messages
             }
         }
 
-        public static void WriteAniStart(AniJob ani)
+        public static void WriteAniStart(AniJob job)
         {
             PacketWriter stream = GameClient.SetupStream(NetworkIDs.NPCAniStartMessage);
-            stream.Write((ushort)ani.ID);
+            stream.Write((ushort)job.ID);
+            GameClient.Send(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
+        }
+
+        public static void WriteAniStart(AniJob job, object[] netArgs)
+        {
+            PacketWriter stream = GameClient.SetupStream(NetworkIDs.NPCAniStartWithArgsMessage);
+            stream.Write((ushort)job.ID);
+            GameClient.Client.character.ScriptObject.OnWriteAniStartArgs(stream, job, netArgs);
             GameClient.Send(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
         }
 

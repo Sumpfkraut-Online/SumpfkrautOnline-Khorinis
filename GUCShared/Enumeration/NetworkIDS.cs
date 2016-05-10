@@ -49,49 +49,14 @@ namespace GUC.Enumeration
         NPCApplyOverlayMessage,
         NPCRemoveOverlayMessage,
         NPCAniStartMessage,
+        NPCAniStartWithArgsMessage,
         NPCAniStopMessage,
         NPCHealthMessage,
-        NPCJumpMessage,
-        NPCJumpVelMessage,
 
         //inventory
         InventoryAddMessage, // add item to player inventory
         InventoryRemoveMessage, // remove item from player inventory
         InventoryEquipMessage,
         InventoryUnequipMessage,
-
-
-
-
-
-
-
-
-        PlayerPickUpItemMessage,
-        PlayerAttributeMSMessage,
-        PlayerAttributeMessage,
-                
-        //mobs
-        MobUseMessage,
-        MobUnUseMessage,
-
-        NPCDrawItemMessage,
-        NPCDrawFistsMessage,
-        
-        NPCStatBarMessage,
-
-        //instances
-        ItemInstanceMessage,
-        NPCInstanceMessage,
-
-        //inventory
-        InventoryAmountMessage, //remove
-        InventoryDropItemMessage,
-        InventoryUseItemMessage,
-
-        //controller stuff
-        ControlAddVobMessage,
-        ControlRemoveVobMessage,
-        ControlCmdMessage
     }
 }

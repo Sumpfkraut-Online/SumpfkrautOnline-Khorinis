@@ -27,21 +27,6 @@ namespace GUC.Server.Network.Messages
             client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I');
         }
 
-        public static void WriteAmountUpdate(GameClient client, Item item)
-        {
-            WriteAmountUpdate(client, item, item.Amount);
-        }
-
-        public static void WriteAmountUpdate(GameClient client, Item item, int amount)
-        {
-            PacketWriter stream = Network.GameServer.SetupStream(NetworkIDs.InventoryAmountMessage);
-            stream.Write(item.ID);
-            stream.Write((ushort)amount);
-            client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I');
-        }
-
-
-
         #region Equipment
 
         public static void WriteEquipMessage(NPC npc, Item item)

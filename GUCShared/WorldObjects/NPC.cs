@@ -15,6 +15,32 @@ namespace GUC.WorldObjects
 {
     public partial class NPC : Vob, ItemContainer.IContainer
     {
+        public partial class ClimbingLedge
+        {
+            Vec3f loc;
+            Vec3f norm;
+            Vec3f cont;
+            float maxMoveFwd;
+
+            public Vec3f Location { get { return this.loc; } }
+
+            public ClimbingLedge(PacketReader stream)
+            {
+                this.loc = stream.ReadVec3f();
+                this.norm = stream.ReadVec3f();
+                this.cont = stream.ReadVec3f();
+                this.maxMoveFwd = stream.ReadFloat();
+            }
+
+            public void WriteStream(PacketWriter stream)
+            {
+                stream.Write(loc);
+                stream.Write(norm);
+                stream.Write(cont);
+                stream.Write(maxMoveFwd);
+            }
+        }
+
         public override VobTypes VobType { get { return VobTypes.NPC; } }
 
         #region ScriptObject
@@ -38,10 +64,10 @@ namespace GUC.WorldObjects
             void StartAnimation(Animation ani);
             void StopAnimation(ActiveAni ani, bool fadeOut);
 
-            void StartAniJump(Animation ani);
-            void StartAniJump(Animation ani, int upVelocity, int fwdVelocity);
-
             void SetHealth(int hp, int hpmax);
+
+            void OnWriteAniStartArgs(PacketWriter stream, AniJob job, object[] netArgs);
+            void OnReadAniStartArgs(PacketReader stream, AniJob job, out object[] netArgs);
         }
 
         new public IScriptNPC ScriptObject
@@ -417,15 +443,6 @@ namespace GUC.WorldObjects
         #endregion
 
         #region Animations
-
-        partial void pJump(Animation ani, int upVel, int fwdVel);
-        public void StartAnimationJump(Animation ani, int upVelocity, int fwdVelocity, Action onStop = null)
-        {
-            if (PlayAni(ani, null))
-            {
-                pJump(ani, upVelocity, fwdVelocity);
-            }
-        }
 
         #region Overlays
         List<Overlay> overlays = null;

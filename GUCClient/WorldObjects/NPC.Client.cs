@@ -6,11 +6,90 @@ using GUC.Types;
 using Gothic.Objects;
 using GUC.Enumeration;
 using GUC.Animations;
+using Gothic.Types;
+using WinApi;
 
 namespace GUC.WorldObjects
 {
     public partial class NPC
     {
+        #region ScriptObject
+
+        public partial interface IScriptNPC : IScriptVob
+        {
+            void StartAnimation(Animation ani, object[] netArgs);
+        }
+
+        #endregion
+
+        public partial class ClimbingLedge
+        {
+            internal ClimbingLedge(zTLedgeInfo li)
+            {
+                this.loc = (Vec3f)li.Position;
+                this.norm = (Vec3f)li.Normal;
+                this.cont = (Vec3f)li.Cont;
+                this.maxMoveFwd = li.MaxMoveForward;
+            }
+
+            internal void SetLedgeInfo(zTLedgeInfo li)
+            {
+                li.Position.X = this.loc.X;
+                li.Position.Y = this.loc.Y;
+                li.Position.Z = this.loc.Z;
+
+                li.Normal.X = this.norm.X;
+                li.Normal.Y = this.norm.Y;
+                li.Normal.Z = this.norm.Z;
+
+                li.Cont.X = this.cont.X;
+                li.Cont.Y = this.cont.Y;
+                li.Cont.Z = this.cont.Z;
+
+                li.MaxMoveForward = this.maxMoveFwd;
+            }
+        }
+
+        public ClimbingLedge DetectClimbingLedge()
+        {
+            ClimbingLedge result;
+
+            var ai = this.gVob.HumanAI;
+
+            using (var dummy = zVec3.Create())
+                ai.DetectClimbUpLedge(dummy, true);
+
+            var li = ai.GetLedgeInfo();
+            if (li.Address != 0)
+            {
+                result = new ClimbingLedge(li);
+            }
+            else
+            {
+                result = null;
+            }
+            ai.ClearFoundLedge();
+
+            return result;
+        }
+
+        public void SetGClimbingLedge(ClimbingLedge ledge)
+        {
+            int ai = Process.Alloc(4).ToInt32();
+            Process.Write(this.gVob.HumanAI.Address, ai);
+
+            Process.THISCALL<NullReturnCall>(0x8D44E0, 0x512310, (IntArg)ai);
+            if ( Process.THISCALL<BoolArg>(0x8D44E0, 0x5123E0, (IntArg)ai))
+            {
+                var li = Process.THISCALL<zTLedgeInfo>(0x8D44E0, 0x512310, (IntArg)ai);
+                ledge.SetLedgeInfo(li);
+            }
+            else
+            {
+                throw new Exception("SetGClimbingLedge: GetDataDangerous failed!");
+            }
+        }
+
 
         public partial interface IScriptNPC : IScriptVob
         {
@@ -52,25 +131,6 @@ namespace GUC.WorldObjects
             }
 
             return EnvironmentState.None;
-        }
-
-        partial void pJump(Animation ani, int upVel, int fwdVel)
-        {
-            pStartAnimation(ani);
-
-            gvob.SetPhysicsEnabled(true);
-
-            var ai = gVob.HumanAI;
-            ai.BitField &= ~(1 << 3);
-            gVob.SetBodyState(8);
-
-            var vec = new Gothic.Types.zVec3(ai.Address + 0x90);
-            var dir = GetDirection();
-            vec.X += dir.X * fwdVel;
-            vec.Z += dir.Z * fwdVel;
-            vec.Y += upVel;
-            var rb = WinApi.Process.ReadInt(gvob.Address + 224);
-            WinApi.Process.THISCALL<WinApi.NullReturnCall>(rb, 0x5B66D0, vec);
         }
 
         #region Animations
@@ -134,7 +194,7 @@ namespace GUC.WorldObjects
 
             if (activeAni.ModelAni.Layer == 1)
             {
-                if ((this.gvob.BitField1 & zCVob.BitFlag0.physicsEnabled) != 0) // gothic prob has already handled this anyway
+                if ((this.gvob.BitField1 & zCVob.BitFlag0.physicsEnabled) == 0) // gothic prob has already handled this anyway
                 {
                     if (this.movement == MoveState.Forward)
                         gModel.StartAni(this.gVob.AniCtrl._s_walkl, 0);

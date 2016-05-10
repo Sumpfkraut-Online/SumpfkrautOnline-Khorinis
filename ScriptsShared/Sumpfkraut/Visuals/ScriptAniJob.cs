@@ -36,7 +36,11 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
         JumpRun,
         JumpFwd,
-        JumpUp
+        JumpUp,
+
+        ClimbLow,
+        ClimbMid,
+        ClimbHigh,
     }
 
     public partial class ScriptAniJob : ScriptObject, AniJob.IScriptAniJob
@@ -46,9 +50,11 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         public bool IsFightMove { get { return this.ID >= (int)SetAnis.Attack1HFwd1 && this.ID <= (int)SetAnis.Attack2HParry3; } }
         public bool IsAttack { get { return (this.ID >= (int)SetAnis.Attack1HFwd1 && this.ID <= (int)SetAnis.Attack1HRun) || (this.ID >= (int)SetAnis.Attack2HFwd1 && this.ID <= (int)SetAnis.Attack2HRun); } }
         public bool IsAttackCombo { get { return (this.ID >= (int)SetAnis.Attack1HFwd1 && this.ID <= (int)SetAnis.Attack1HFwd4) || (this.ID >= (int)SetAnis.Attack2HFwd1 && this.ID <= (int)SetAnis.Attack2HFwd4); } }
-        public bool IsParade { get { return this.ID >= (int)SetAnis.Attack1HParry1 && this.ID <= (int)SetAnis.Attack1HParry3 || this.ID >= (int)SetAnis.Attack2HParry1 && this.ID <= (int)SetAnis.Attack2HParry3; } }
+        public bool IsAttackRun { get { return this.ID == (int)SetAnis.Attack1HRun || this.ID == (int)SetAnis.Attack2HRun; } }
+        public bool IsParade { get { return (this.ID >= (int)SetAnis.Attack1HParry1 && this.ID <= (int)SetAnis.Attack1HParry3) || (this.ID >= (int)SetAnis.Attack2HParry1 && this.ID <= (int)SetAnis.Attack2HParry3); } }
         public bool IsDodge { get { return this.ID == (int)SetAnis.Attack1HDodge || this.ID == (int)SetAnis.Attack2HDodge; } }
-        public bool IsJump { get { return this.ID >= (int)SetAnis.JumpRun || this.ID <= (int)SetAnis.JumpUp; } }
+        public bool IsJump { get { return this.ID >= (int)SetAnis.JumpRun && this.ID <= (int)SetAnis.JumpUp; } }
+        public bool IsClimbing { get { return this.ID >= (int)SetAnis.ClimbLow && this.ID <= (int)SetAnis.ClimbHigh; } }
 
         public bool IsCreated { get { return this.baseAniJob.IsCreated; } }
 

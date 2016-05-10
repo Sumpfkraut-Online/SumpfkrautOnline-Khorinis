@@ -36,6 +36,7 @@ namespace GUC.Scripts
             Add2hAttacks(m);
             Add1hAttacks(m);
 
+            // JUMPS
             ScriptAniJob aniJob = new ScriptAniJob("jumprun");
             aniJob.BaseAniJob.ID = (int)SetAnis.JumpRun;
             aniJob.AniName = "t_RunL_2_Jump";
@@ -46,6 +47,25 @@ namespace GUC.Scripts
             aniJob.BaseAniJob.ID = (int)SetAnis.JumpFwd;
             aniJob.AniName = "T_STAND_2_JUMP";
             aniJob.SetDefaultAni(new ScriptAni(9200000));
+            m.AddAniJob(aniJob);
+
+            // CLIMBING
+            aniJob = new ScriptAniJob("climblow");
+            aniJob.BaseAniJob.ID = (int)SetAnis.ClimbLow;
+            aniJob.AniName = "T_STAND_2_JUMPUPLOW";
+            aniJob.SetDefaultAni(new ScriptAni(1200000 + 2000000 + 3200000));
+            m.AddAniJob(aniJob);
+
+            aniJob = new ScriptAniJob("climbmid");
+            aniJob.BaseAniJob.ID = (int)SetAnis.ClimbMid;
+            aniJob.AniName = "T_STAND_2_JUMPUPMID";
+            aniJob.SetDefaultAni(new ScriptAni(3200000 + 1200000 + 8000000));
+            m.AddAniJob(aniJob);
+
+            aniJob = new ScriptAniJob("climbhigh");
+            aniJob.BaseAniJob.ID = (int)SetAnis.ClimbHigh;
+            aniJob.AniName = "T_JUMP_2_HANG";
+            aniJob.SetDefaultAni(new ScriptAni(6800000 + 0 + 10000000));
             m.AddAniJob(aniJob);
 
             m.Create();

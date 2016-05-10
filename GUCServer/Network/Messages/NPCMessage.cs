@@ -40,68 +40,6 @@ namespace GUC.Server.Network.Messages
 
         #endregion
 
-        #region Jumping
-
-        public static void ReadJump(PacketReader stream, NPC character)
-        {
-            AniJob job;
-            if (character.Model.TryGetAni(stream.ReadUShort(), out job))
-            {
-                Animation ani;
-                if (character.TryGetAniFromJob(job, out ani))
-                    character.ScriptObject.OnCmdAniJump(ani);
-            }
-        }
-
-        public static void WriteJump(NPC npc, Animation ani)
-        {
-            PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCJumpMessage);
-            stream.Write((ushort)npc.ID);
-            stream.Write((ushort)ani.AniJob.ID);
-            npc.Cell.ForEachSurroundingClient(c => c.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
-        }
-
-        public static void WriteJump(NPC npc, Animation ani, int upVel, int fwdVel)
-        {
-            PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCJumpVelMessage);
-            stream.Write((ushort)npc.ID);
-            stream.Write((ushort)ani.AniJob.ID);
-            stream.Write((ushort)upVel);
-            stream.Write((ushort)fwdVel);
-            npc.Cell.ForEachSurroundingClient(c => c.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
-        }
-
-        #endregion
-
-        #region Item drawing
-
-        public static void WriteDrawItem(IEnumerable<GameClient> list, NPC npc, Item item, bool fast)
-        {
-            PacketWriter stream = Network.GameServer.SetupStream(NetworkIDs.NPCDrawItemMessage);
-            stream.Write(npc.ID);
-            stream.Write(fast);
-            //item.WriteEquipped(stream);
-
-            foreach (GameClient client in list)
-                client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
-        }
-
-        public static void WriteUndrawItem(IEnumerable<GameClient> list, NPC npc, bool fast, bool altRemove)
-        {
-            if (npc == null)
-                return;
-
-            /*PacketWriter stream = Network.GameServer.SetupStream(NetworkIDs.NPCUndrawItemMessage);
-            stream.Write(npc.ID);
-            stream.Write(fast);
-            stream.Write(altRemove);
-
-            foreach (Client client in list)
-                client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');*/
-        }
-
-        #endregion
-
         #region Animation
 
         #region Overlays
@@ -155,6 +93,21 @@ namespace GUC.Server.Network.Messages
             }
         }
 
+        public static void ReadAniStartWithArgs(PacketReader stream, NPC character)
+        {
+            AniJob job;
+            if (character.Model.TryGetAni(stream.ReadUShort(), out job))
+            {
+                Animation ani;
+                if (character.TryGetAniFromJob(job, out ani))
+                {
+                    object[] netArgs;
+                    character.ScriptObject.OnReadAniStartArgs(stream, job, out netArgs);
+                    character.ScriptObject.OnCmdAniStart(ani, netArgs);
+                }
+            }
+        }
+
         public static void ReadAniStop(PacketReader stream, NPC character)
         {
             character.ScriptObject.OnCmdAniStop(stream.ReadBit());
@@ -166,6 +119,17 @@ namespace GUC.Server.Network.Messages
             PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCAniStartMessage);
             stream.Write((ushort)npc.ID);
             stream.Write((ushort)ani.AniJob.ID);
+
+            npc.Cell.ForEachSurroundingClient(c => c.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
+        }
+
+        public static void WriteAniStart(NPC npc, Animation ani, object[] netArgs)
+        {
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCAniStartWithArgsMessage);
+            stream.Write((ushort)npc.ID);
+            stream.Write((ushort)ani.AniJob.ID);
+
+            npc.ScriptObject.OnWriteAniStartArgs(stream, ani.AniJob, netArgs);
 
             npc.Cell.ForEachSurroundingClient(c => c.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
         }
@@ -226,6 +190,5 @@ namespace GUC.Server.Network.Messages
         }
 
         #endregion
-
     }
 }

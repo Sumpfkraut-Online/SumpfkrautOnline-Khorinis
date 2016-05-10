@@ -56,10 +56,7 @@ namespace GUC.Client
                         Input.SetCursorPos(DefaultMousePosX, DefaultMousePosY);
                     }
                 }
-
-                //var res = GUI.GUCView.GetScreenSize();
-                //Input.SetCursorPos(res[0] / 2, res[1] / 2);
-
+                
                 for (int i = 1; i < keys.Length; i++)
                 {
                     VirtualKeys key = (VirtualKeys)i;

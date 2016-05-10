@@ -39,5 +39,6 @@ namespace GUC.WorldObjects
         public bool CDStatic { get { return Instance.CDStatic; } }
 
         #endregion
+
     }
 }

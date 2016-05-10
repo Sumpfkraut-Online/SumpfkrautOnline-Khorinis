@@ -66,6 +66,21 @@ namespace Gothic.Objects
         {
         }
 
+        public bool DetectClimbUpLedge(zVec3 resultPos, bool arg)
+        {
+            return Process.THISCALL<BoolArg>(Address, 0x50FD90, resultPos, (BoolArg)arg);
+        }
+
+        public zTLedgeInfo GetLedgeInfo()
+        {
+            return Process.THISCALL<zTLedgeInfo>(Address, 0x50FCC0);
+        }
+
+        public void ClearFoundLedge()
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x50FD20);
+        }
+
         public bool CheckEnoughSpaceMoveForward(bool arg)
         {
             return Process.THISCALL<BoolArg>(Address, 0x511700, (BoolArg)arg);
@@ -86,10 +101,6 @@ namespace Gothic.Objects
             return Process.THISCALL<BoolArg>(Address, 0x511790, (BoolArg)arg);
         }
 
-        public zTLedgeInfo GetLedgeInfo()
-        {
-            return Process.THISCALL<zTLedgeInfo>(Address, 0x50FCC0);
-        }
 
         public int WaterLevel
         {
