@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace GUC.Server.Scripts.Sumpfkraut.Database
+namespace GUC.Scripts.Sumpfkraut.Database
 {
     public class DBSecurity : GUC.Utilities.ExtendedObject
     {

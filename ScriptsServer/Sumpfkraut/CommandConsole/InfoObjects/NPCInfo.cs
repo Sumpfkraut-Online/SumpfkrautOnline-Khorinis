@@ -4,27 +4,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace GUC.Server.Scripts.Sumpfkraut.CommandConsole.InfoObjects
+namespace GUC.Scripts.Sumpfkraut.CommandConsole.InfoObjects
 {
-    public class NpcInfo : GUC.Utilities.ExtendedObject
+    public class NPCInfo : VobInfo
     {
 
-        new public static readonly String _staticName = "NpcInfo (static)";
+        new public static readonly string _staticName = "NPCInfo (static)";
 
 
 
-        public NpcInfo ()
+        public NPCInfo ()
         {
-            this._objName = "NpcInfo (default)";
+            this._objName = "NPCInfo (default)";
         }
 
 
 
-        public int id;
-        public String npcName;
-        public String mapName;
-        public Vec3f direction;
-        public Vec3f position;
+        public int HP;
+        public int HPMax;
+        public String NPCName;
+        public String MapName;
 
     }
 }

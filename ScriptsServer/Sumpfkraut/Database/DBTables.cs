@@ -7,7 +7,7 @@ using SQLiteDataReader = Mono.Data.Sqlite.SqliteDataReader;
 using SQLiteCommand = Mono.Data.Sqlite.SqliteCommand;
 //using SQLiteCommand = Mono.Data.Sqlite.SqliteCommand;
 
-namespace GUC.Server.Scripts.Sumpfkraut.Database
+namespace GUC.Scripts.Sumpfkraut.Database
 {
 
     public class DBTables : GUC.Utilities.ExtendedObject

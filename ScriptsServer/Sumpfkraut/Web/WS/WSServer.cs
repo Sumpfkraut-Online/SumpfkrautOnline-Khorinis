@@ -7,11 +7,11 @@ using Alchemy.Classes;
 using System.Net;
 using Newtonsoft.Json;
 using Alchemy.Handlers.WebSocket.rfc6455;
-using GUC.Server.Scripts.Sumpfkraut.Web.WS.Protocols;
-using GUC.Server.Scripts.Sumpfkraut.CommandConsole.InfoObjects;
+using GUC.Scripts.Sumpfkraut.Web.WS.Protocols;
+using GUC.Scripts.Sumpfkraut.CommandConsole.InfoObjects;
 using GUC.Server.WorldObjects;
 
-namespace GUC.Server.Scripts.Sumpfkraut.Web.WS
+namespace GUC.Scripts.Sumpfkraut.Web.WS
 {
     public class WSServer : GUC.Utilities.ExtendedObject
     {

@@ -5,8 +5,9 @@ using System.Text;
 using Mono.Data.Sqlite;
 using SQLiteDataReader = Mono.Data.Sqlite.SqliteDataReader;
 using SQLiteCommand = Mono.Data.Sqlite.SqliteCommand;
+using GUC.Server.Scripts;
 
-namespace GUC.Server.Scripts.Sumpfkraut.Database
+namespace GUC.Scripts.Sumpfkraut.Database
 {
     public class DBReader : GUC.Utilities.ExtendedObject
     {
