@@ -80,6 +80,10 @@ namespace GUC.Client
                             }
                             Process.Write(bitField, GUC.Network.GameClient.Client.Character.gVob.HumanAI.Address + 0x1204);
                         }
+                        else if (key == VirtualKeys.F6)
+                        {
+                            Gothic.System.zCRenderer.SetFogRange(1000, 3000, 0);
+                        }
 
                         if (!keys[i]) //newly pressed
                         {

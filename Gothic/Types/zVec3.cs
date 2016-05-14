@@ -88,5 +88,10 @@ namespace Gothic.Types
             get { return Process.ReadFloat(Address + 8); }
             set { Process.Write(value, Address + 8); }
         }
+
+        public override string ToString()
+        {
+            return string.Format("zVec3({0} {1} {2})", X, Y, Z);
+        }
     }
 }

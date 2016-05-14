@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using WinApi;
 using Gothic.Types;
+using Gothic.Objects.Meshes;
 
 namespace Gothic.Objects
 {
@@ -64,6 +65,22 @@ namespace Gothic.Objects
         public zCAIPlayer(int address)
             : base(address)
         {
+        }
+
+        public void LandAndStartAni(string aniName)
+        {
+            using (zString z = zString.Create(aniName))
+                this.LandAndStartAni(z);
+        }
+
+        public void LandAndStartAni(zString aniName)
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x511B10, aniName);
+        }
+
+        public void LandAndStartAni(zCModelAni ani)
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x511BC0, ani);
         }
 
         public bool DetectClimbUpLedge(zVec3 resultPos, bool arg)

@@ -295,7 +295,8 @@ namespace GUC.WorldObjects
                     var gModel = this.gVob.GetModel();
                     if (gModel.IsAnimationActive("T_JUMP_2_STAND") != 0)
                     {
-                        gModel.StartAni(this.gVob.AniCtrl._s_walkl, 0);
+                        var ai = this.gVob.HumanAI;
+                        ai.LandAndStartAni(gModel.GetAniFromAniID(ai._t_jump_2_runl));
                     }
                     gVob.AniCtrl._Forward();
                     break;

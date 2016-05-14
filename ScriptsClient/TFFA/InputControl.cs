@@ -46,6 +46,10 @@ namespace GUC.Client.Scripts.TFFA
             {
                 Scoreboard.Menu.Open();
             }
+            else if (key == VirtualKeys.C)
+            {
+                ShowClientIDs();
+            }
 
             if (TFFAClient.Client.Character == null)
                 return;
@@ -207,6 +211,10 @@ namespace GUC.Client.Scripts.TFFA
             {
                 Scoreboard.Menu.Close();
             }
+            else if (key == VirtualKeys.C)
+            {
+                HideClientIDs();
+            }
 
             if (GUC.Network.GameClient.Client.Character == null || TFFAClient.Status == TFFAPhase.Waiting)
                 return;
@@ -224,6 +232,8 @@ namespace GUC.Client.Scripts.TFFA
             {
                 return;
             }
+
+            UpdateClientIDs();
 
             if (GUC.Network.GameClient.Client.IsSpectating)
             {
@@ -364,7 +374,85 @@ namespace GUC.Client.Scripts.TFFA
 
                 npc.BaseInst.SetDirection(npcDir - diff);
             }
+        }
 
+        static bool clientsShown = false;
+        public static bool ClientsShown { get { return clientsShown; } }
+        static void ShowClientIDs()
+        {
+            if (clientsShown)
+                return;
+            clientsShown = true;
+            clientView.Show();
+
+            WorldObjects.World.Current.ForEachVob(v =>
+            {
+                if (v != TFFAClient.Client.Character?.BaseInst && v is WorldObjects.NPC)
+                {
+                    var npc = (NPCInst)v.ScriptObject;
+                    npc.BaseInst.gVob.Name.Set("(" + npc.visibleClientID + ") " + npc.CustomName);
+                }
+            });
+        }
+
+        static void HideClientIDs()
+        {
+            if (!clientsShown)
+                return;
+            clientsShown = false;
+            clientView.Hide();
+
+            WorldObjects.World.Current.ForEachVob(v =>
+            {
+                if (v != TFFAClient.Client.Character?.BaseInst && v is WorldObjects.NPC)
+                {
+                    var npc = (NPCInst)v.ScriptObject;
+                    npc.BaseInst.gVob.Name.Set(npc.CustomName);
+                }
+            });
+        }
+
+
+        static Client.GUI.GUCVisual clientView = new Client.GUI.GUCVisual();
+        static void UpdateClientIDs()
+        {
+            if (!clientsShown)
+                return;
+
+            int i = 0;
+
+            var hero = TFFAClient.Client.Character?.BaseInst;
+            WorldObjects.World.Current.ForEachVob(v =>
+            {
+                if (v is WorldObjects.NPC)
+                {
+                    if (hero == null || (v != hero && v.gVob.Address != hero.gVob.FocusVob.Address && hero.gVob.FreeLineOfSight(v.gVob)))
+                    {
+                        Client.GUI.GUCVisualText text;
+                        if (i == clientView.Texts.Count)
+                        {
+                            text = clientView.CreateText("", 0, 0, true);
+                            text.Format = Client.GUI.GUCVisualText.TextFormat.Center;
+                        }
+                        else
+                        {
+                            text = clientView.Texts[i++];
+                        }
+
+                        Vec3f pos = v.GetPosition();
+                        pos.Y += 100;
+
+                        text.Set3DPos(pos);
+                        var npc = (NPCInst)v.ScriptObject;
+                        text.Text = "(" + npc.visibleClientID + ") " + npc.CustomName;
+                    }
+                }
+            });
+
+            for (; i < clientView.Texts.Count; i++)
+            {
+                clientView.Texts[i].Text = "";
+            }
         }
     }
 }

@@ -518,6 +518,17 @@ namespace Gothic.Objects
             set { Process.Write(value, Address + VarOffsets.voice); }
         }
 
+
+        public bool CanSee(zCVob vob, bool surroundView)
+        {
+            return Process.THISCALL<BoolArg>(Address, FuncAddresses.CanSee, vob, (BoolArg)surroundView);
+        }
+
+        public bool FreeLineOfSight(zCVob vob)
+        {
+            return Process.THISCALL<BoolArg>(Address, 0x7418E0, vob);
+        }
+
         /*
         public static oCNpc StealNPC(Process process)
         {
@@ -1138,10 +1149,6 @@ namespace Gothic.Objects
             return Process.THISCALL<IntArg>(Address, FuncAddresses.GetFullBodyState);
         }
 
-        public int CanSee(zCVob vob, int arg)
-        {
-            return Process.THISCALL<IntArg>(Address, FuncAddresses.CanSee, new CallValue[] { vob, new IntArg(arg) }).Address;
-        }
 
         public int EV_RemoveWeapon(oCMsgWeapon msg)
         {

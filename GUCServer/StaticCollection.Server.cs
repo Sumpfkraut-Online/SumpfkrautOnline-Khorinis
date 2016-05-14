@@ -18,7 +18,7 @@ namespace GUC
                 {
                     int id = freeIDs[i];
                     freeIDs.RemoveAt(i);
-                    if (arr[i] == null) // because ServerScripts can set IDs manually
+                    if (arr[id] == null) // because ServerScripts can set IDs manually
                     {
                         obj.ID = id;
                         return;

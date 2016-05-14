@@ -40,10 +40,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CGameManager.cs" />
+    <Compile Include="Objects\Meshes\zCMaterial.cs" />
     <Compile Include="Objects\Meshes\zCMesh.cs" />
     <Compile Include="Objects\Meshes\zCModel.cs" />
     <Compile Include="Objects\Meshes\zCModelAni.cs" />
     <Compile Include="Objects\Meshes\zCModelAniActive.cs" />
+    <Compile Include="Objects\Meshes\zCPolygon.cs" />
+    <Compile Include="Objects\Meshes\zCVertex.cs" />
+    <Compile Include="Objects\Meshes\zCVertFeature.cs" />
     <Compile Include="Objects\Meshes\zCVisual.cs" />
     <Compile Include="Objects\oCAICamera.cs" />
     <Compile Include="Objects\oCAIHuman.cs" />
@@ -61,6 +65,7 @@
     <Compile Include="Objects\oCMobWheel.cs" />
     <Compile Include="Objects\oCNpcFocus.cs" />
     <Compile Include="Objects\oCWorldTimer.cs" />
+    <Compile Include="Objects\Sky\oCBarrier.cs" />
     <Compile Include="Objects\Sky\zCSkyControler.cs" />
     <Compile Include="Objects\Sky\zCSkyControler_Outdoor.cs" />
     <Compile Include="Objects\Sky\zCSkyLayer.cs" />
@@ -69,6 +74,7 @@
     <Compile Include="Objects\Sky\zCOutdoorRainFX.cs" />
     <Compile Include="Objects\zCAIBase.cs" />
     <Compile Include="Objects\zCAIPlayer.cs" />
+    <Compile Include="Objects\zCCamera.cs" />
     <Compile Include="Objects\zCCollisionObject.cs" />
     <Compile Include="Objects\zCWorld.cs" />
     <Compile Include="Sound\zCSndFX_MSS.cs" />

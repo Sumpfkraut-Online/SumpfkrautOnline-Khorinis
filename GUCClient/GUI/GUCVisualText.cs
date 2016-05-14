@@ -5,6 +5,7 @@ using System.Text;
 using Gothic.View;
 using GUC.Types;
 using Gothic.Types;
+using Gothic.Objects;
 
 namespace GUC.Client.GUI
 {
@@ -156,6 +157,39 @@ namespace GUC.Client.GUI
             vpos[0] = PixelToVirtualX(val) * 0x2000 / parentSize[0];
             viewText.PosX = vpos[0];
         }
+
+        public void SetPosY(int val)
+        {
+            vpos[1] = PixelToVirtualY(val) * 0x2000 / parentSize[1];
+            viewText.PosY = vpos[1];
+        }
+
+        public void Set3DPos(Vec3f pos)
+        {
+            if (zCCamera.GetCamAddr() == 0)
+                return;
+
+            using (var gPos = zVec3.Create())
+            {
+                pos.SetGVec(gPos);
+                using (var vec = zCCamera.CamMatrix * gPos)
+                {
+                    if (vec.Z > 0)
+                    {
+                        int x, y;
+                        zCCamera.Project(vec, out x, out y);
+                        this.SetPosX(x);
+                        this.SetPosY(y);
+                    }
+                    else
+                    {
+                        viewText.PosX = 0x2000;
+                        viewText.PosY = 0x2000;
+                    }
+                }
+            }
+        }
+
         #endregion
     }
 }

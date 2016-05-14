@@ -21,5 +21,12 @@ namespace GUC.Types
         {
             return new Vec3f(zVec);
         }
+
+        public void SetGVec(zVec3 zVec)
+        {
+            zVec.X = this.X;
+            zVec.Y = this.Y;
+            zVec.Z = this.Z;
+        }
     }
 }
