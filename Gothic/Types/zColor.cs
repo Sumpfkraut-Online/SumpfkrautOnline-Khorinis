@@ -73,5 +73,10 @@ namespace Gothic.Types
                 disposed = true;
             }
         }
+
+        public override string ToString()
+        {
+            return string.Format("zColor({0} {1} {2} {3}", R, G, B, A);
+        }
     }
 }

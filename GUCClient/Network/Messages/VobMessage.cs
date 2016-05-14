@@ -37,7 +37,7 @@ namespace GUC.Client.Network.Messages
         static Vec3f lastDir;
         public static void WritePosDirMessage(long now)
         {
-            BaseVob vob = GameClient.Client.character;
+            NPC vob = GameClient.Client.character;
 
             if (now < nextUpdate || vob == null)
                 return;
@@ -55,6 +55,7 @@ namespace GUC.Client.Network.Messages
 
             stream.WriteCompressedPosition(pos);
             stream.WriteCompressedDirection(vob.GetDirection());
+            stream.Write((byte)vob.EnvState);
             GameClient.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE);
 
             nextUpdate = now + updateTime;

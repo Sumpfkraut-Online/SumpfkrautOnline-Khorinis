@@ -7,6 +7,12 @@
 #include <metahost.h>
 #include <string>
 
+#include <iostream>
+#include <fstream>
+
+
+using namespace std;
+
 struct NETINJECTPARAMS
 {
 	char* dllName;
@@ -51,8 +57,6 @@ EXTERN_C __declspec(dllexport) void LoadNetDllEx(NETINJECTPARAMS* params)
 		hr = pMetaHost->GetRuntime(L"v4.0.30319", IID_ICLRRuntimeInfo, (LPVOID*)&pRuntimeInfo);
 		hr = pRuntimeInfo->GetInterface(CLSID_CLRRuntimeHost, IID_ICLRRuntimeHost, (LPVOID*)&pClrRuntimeHost);
 		hr = pClrRuntimeHost->Start();
-
-		//test(dllName, typeName, methodName);
 	}
 
 	hr = pClrRuntimeHost->ExecuteInDefaultAppDomain(dllName, typeName, methodName, ptrAddress, &result);
@@ -69,12 +73,9 @@ EXTERN_C __declspec(dllexport) void LoadNetDllEx(NETINJECTPARAMS* params)
 	delete[] typeName;
 	delete[] methodName;
 	delete[] ptrAddress;
-
-	/*delete pMetaHost;
-	delete pRuntimeInfo;*/
 }
 
-void LoadNETDLL()
+void StartGUC()
 {
 	ICLRMetaHost *pMetaHost = NULL;
     ICLRRuntimeInfo *pRuntimeInfo = NULL;
@@ -97,13 +98,11 @@ void LoadNETDLL()
 
 	LPCWSTR project = convertToChar(buf);
 	free(buf);
-
-
 	std::wstring projectDll = std::wstring(L"Multiplayer\\UntoldChapters\\") + project + std::wstring(L"\\GUC.dll");
-	
-	hr = pClrRuntimeHost->ExecuteInDefaultAppDomain(projectDll.c_str(), L"GUC.Client.Injection", L"Main", project, &result);
-	pClrRuntimeHost->Stop();
 
+	hr = pClrRuntimeHost->ExecuteInDefaultAppDomain(projectDll.c_str(), L"GUC.Client.Injection", L"Main", project, &result);
+
+	pClrRuntimeHost->Stop();
 	pRuntimeInfo->Release();
 	pMetaHost->Release();
 	pClrRuntimeHost->Release();
@@ -114,15 +113,13 @@ void LoadNETDLL()
 	if(hr != S_OK){
 		Error((wchar_t *)(std::wstring(L"DLL-Injection of ") + projectDll + std::wstring(L" failed!")).c_str());
 	}
-
 }
 
 int WINAPI DllMain(HINSTANCE hInst, DWORD reason, LPVOID reserved)
 {
 	if(reason==DLL_PROCESS_ATTACH)
 	{
-		Error(L"NetInject attached.");
-		CreateThread(0, 0, (LPTHREAD_START_ROUTINE) LoadNETDLL, 0, 0, 0);		
+		CreateThread(0, 0, (LPTHREAD_START_ROUTINE)StartGUC, 0, 0, 0);
 	}
 	return true;
 }

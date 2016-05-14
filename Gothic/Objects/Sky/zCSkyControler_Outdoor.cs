@@ -35,6 +35,13 @@ namespace Gothic.Objects.Sky
             public const int SetWeatherType = 0x005EB830;
         }
 
+        public oCBarrier Barrier { get { return new oCBarrier(Process.ReadInt(Address + 0x6BC)); } }
+        public bool bFadeInOut
+        {
+            get { return Process.ReadBool(Address + 0x6C0); }
+            set { Process.Write(value, Address + 0x6C0); }
+        }
+
         public void SetWeatherType(int type)
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetWeatherType, new IntArg(type));

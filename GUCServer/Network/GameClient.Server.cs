@@ -115,7 +115,6 @@ namespace GUC.Network
 
         #endregion
 
-
         internal void ConfirmLoadWorldMessage()
         {
             if (character != null)

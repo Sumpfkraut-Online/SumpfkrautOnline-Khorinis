@@ -10,31 +10,24 @@ namespace TempLauncher
 {
     class Program
     {
-        static void DebugWrite(string line)
-        {
-            File.AppendAllText("DebugInfo.txt", line + "\r\n");
-        }
-
         static void Main(string[] args)
         {
-            DebugWrite("TempLauncher.exe gestartet.");
-
-            while (true)
+            try
             {
-                try
+                if (!File.Exists("Server.txt"))
+                    File.WriteAllText("Server.txt", "127.0.0.1:9054");
+
+                if (!Directory.Exists("UntoldChapters"))
                 {
-                    if (!File.Exists("Server.txt"))
-                        File.WriteAllText("Server.txt", "127.0.0.1:9054");
+                    throw new DirectoryNotFoundException("'UntoldChapters' not found!");
+                }
+                if (!File.Exists("..\\Gothic2.exe"))
+                {
+                    throw new FileNotFoundException("'Gothic2.exe not found!");
+                }
 
-                    if (!Directory.Exists("UntoldChapters"))
-                    {
-                        throw new DirectoryNotFoundException("'UntoldChapters' not found!");
-                    }
-                    if (!File.Exists("..\\Gothic2.exe"))
-                    {
-                        throw new FileNotFoundException("'Gothic2.exe not found!");
-                    }
-
+                while (true)
+                {
                     Console.WriteLine("Tippe die Nummer des Projekts ein um es zu starten:");
 
                     string[] projectDirs = Directory.GetDirectories("UntoldChapters").Where(p =>
@@ -66,29 +59,26 @@ namespace TempLauncher
                     }
 
                     string projectName = projectDirs[num];
-                    DebugWrite("Projekt '" + projectName + "' gewählt.");
 
                     string address = File.ReadAllText("Server.txt");
-                    DebugWrite("IP: '" + address + "'");
 
                     ProcessStartInfo psi;
                     bool zSpy = false;
                     if (File.Exists("..\\..\\_work\\tools\\zSpy\\zSpy.exe"))
                     {
                         psi = new ProcessStartInfo();
+                        psi.FileName = Path.GetFullPath("..\\..\\_work\\tools\\zSpy\\zSpy.exe");
+
                         string logPath = Path.GetFullPath("UntoldChapters\\" + projectName + "\\Log");
                         if (!Directory.Exists(logPath))
                             Directory.CreateDirectory(logPath);
-
                         psi.WorkingDirectory = logPath;
 
-                        psi.FileName = Path.GetFullPath("..\\..\\_work\\tools\\zSpy\\zSpy.exe");
-                        Process.Start(psi);
+                        var spy = Process.Start(psi);
                         zSpy = true;
 
-                        DebugWrite("ZSpy gestartet.");
-
-                        System.Threading.Thread.Sleep(1500); // wait for zSpy to start
+                        spy.WaitForInputIdle(2000);
+                        // wait for zSpy to start
                     }
 
                     //Gothic starten
@@ -104,31 +94,25 @@ namespace TempLauncher
                     }
 
                     psi.FileName = Path.GetFullPath("..\\Gothic2.exe");
-                    DebugWrite("ProcessStartInfo erstellt.");
 
                     Process process = Process.Start(psi);
-                    DebugWrite("Gothic 2 gestartet. Handle: " + process.Handle + "\r\n");
 
                     string path = Path.GetFullPath("UntoldChapters\\" + projectName + "\\NetInject.dll");
-                    DebugWrite("Injiziere '" + path + "'.");
                     //dll injection
-                    
+
                     if (LoadLibary(process, path) == IntPtr.Zero)
                     {
-                        throw new Exception(Marshal.GetLastWin32Error().ToString());
+                        throw new Exception("Injection failed: " + Marshal.GetLastWin32Error());
                     }
-
-                    DebugWrite("TempLauncher finished.");
-                    DebugWrite("\r\n");
                 }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Source);
-                    Console.WriteLine(e.Message);
-                    Console.WriteLine(e.StackTrace);
-                }
-                Console.WriteLine();
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Source);
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
+            }
+            Console.WriteLine();
         }
 
         [Flags]
@@ -178,57 +162,41 @@ namespace TempLauncher
 
         public static IntPtr LoadLibary(Process process, String dll)
         {
-            if (process == null || dll == null || String.IsNullOrWhiteSpace(dll))
+            if (process == null || String.IsNullOrWhiteSpace(dll))
                 return IntPtr.Zero;
-
-            DebugWrite("Parameter OK.");
 
             byte[] dllb = Encoding.ASCII.GetBytes(dll);
             if (dllb == null || dllb.Length == 0)
                 return IntPtr.Zero;
 
-            string bytes = string.Empty;
-            for (int i = 0; i < dllb.Length; i++)
-            {
-                bytes += dllb[i].ToString("X2") + " "; 
-            }
-            DebugWrite("DLL-Bytes: '" + bytes.Remove(bytes.Length - 1) + "'");
-
             //Alloc
-            uint len = (uint)dllb.Length + 1;
-            IntPtr dllbPtr = VirtualAllocEx(process.Handle, IntPtr.Zero, len, AllocationType.Reserve | AllocationType.Commit, MemoryProtection.ReadWrite);
-            DebugWrite("DLL-Bytes-Pointer: " + dllbPtr.ToString("X4"));
+            IntPtr dllbPtr = VirtualAllocEx(process.Handle, IntPtr.Zero, (uint)dllb.Length, AllocationType.Reserve | AllocationType.Commit, MemoryProtection.ReadWrite);
             if (dllbPtr == IntPtr.Zero)
             {
-                throw new Exception(Marshal.GetLastWin32Error().ToString());
+                throw new Exception("VirtualAlloc: " + Marshal.GetLastWin32Error());
             }
 
             //Write dll name
             uint tmp = 0;
             bool b = WriteProcessMemory(process.Handle, dllbPtr, dllb, (uint)dllb.Length, out tmp);
-            DebugWrite("DLL-Name writing succeeded? " + b + "! Bytes written: " + tmp);
-            if (!b) {
-                throw new Exception(Marshal.GetLastWin32Error().ToString());
+            if (!b)
+            {
+                throw new Exception("WriteMemory: " + Marshal.GetLastWin32Error());
             }
 
             IntPtr moduleHandle = GetModuleHandle("kernel32.dll");
-            DebugWrite("Module Handle: " + moduleHandle.ToString("X4"));
             if (moduleHandle == IntPtr.Zero)
             {
-                throw new Exception(Marshal.GetLastWin32Error().ToString());
+                throw new Exception("GetModule: " + Marshal.GetLastWin32Error());
             }
 
             IntPtr loadlib = GetProcAddress(moduleHandle, "LoadLibraryA");
-            DebugWrite("LoadLibraryA address " + loadlib.ToString("X4"));
             if (loadlib == IntPtr.Zero)
             {
-                throw new Exception(Marshal.GetLastWin32Error().ToString());
+                throw new Exception("LoadLib: " + Marshal.GetLastWin32Error());
             }
 
-            IntPtr hThread = CreateRemoteThread(process.Handle, IntPtr.Zero, 0, loadlib, dllbPtr, 0, out tmp);
-            DebugWrite("Thread handle: " + hThread + " lpThreadID: " + tmp);
-
-            return hThread;
+            return CreateRemoteThread(process.Handle, IntPtr.Zero, 0, loadlib, dllbPtr, 0, out tmp);
         }
     }
 }

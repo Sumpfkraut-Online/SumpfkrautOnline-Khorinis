@@ -15,6 +15,32 @@ namespace GUC.WorldObjects
 {
     public partial class NPC : Vob, ItemContainer.IContainer
     {
+        public partial class ClimbingLedge
+        {
+            Vec3f loc;
+            Vec3f norm;
+            Vec3f cont;
+            float maxMoveFwd;
+
+            public Vec3f Location { get { return this.loc; } }
+
+            public ClimbingLedge(PacketReader stream)
+            {
+                this.loc = stream.ReadVec3f();
+                this.norm = stream.ReadVec3f();
+                this.cont = stream.ReadVec3f();
+                this.maxMoveFwd = stream.ReadFloat();
+            }
+
+            public void WriteStream(PacketWriter stream)
+            {
+                stream.Write(loc);
+                stream.Write(norm);
+                stream.Write(cont);
+                stream.Write(maxMoveFwd);
+            }
+        }
+
         public override VobTypes VobType { get { return VobTypes.NPC; } }
 
         #region ScriptObject
@@ -31,15 +57,17 @@ namespace GUC.WorldObjects
             void UnequipItem(Item item);
 
             void SetState(MoveState state);
-            void Jump();
 
             void ApplyOverlay(Overlay overlay);
             void RemoveOverlay(Overlay overlay);
 
             void StartAnimation(Animation ani);
-            void StopAnimation(bool fadeOut);
+            void StopAnimation(ActiveAni ani, bool fadeOut);
 
             void SetHealth(int hp, int hpmax);
+
+            void OnWriteAniStartArgs(PacketWriter stream, AniJob job, object[] netArgs);
+            void OnReadAniStartArgs(PacketReader stream, AniJob job, out object[] netArgs);
         }
 
         new public IScriptNPC ScriptObject
@@ -58,6 +86,9 @@ namespace GUC.WorldObjects
             set { base.Instance = value; }
         }
 
+        internal EnvironmentState envState = EnvironmentState.None;
+        public EnvironmentState EnvState { get { return this.envState; } }
+
         public string Name { get { return Instance.Name; } }
         public string BodyMesh { get { return Instance.BodyMesh; } }
         public int BodyTex { get { return Instance.BodyTex; } }
@@ -71,7 +102,6 @@ namespace GUC.WorldObjects
         public NPC()
         {
             this.inventory = new ItemContainer(this);
-            this.aniTimer = new GUCTimer(this.EndAni);
         }
 
         #endregion
@@ -83,7 +113,7 @@ namespace GUC.WorldObjects
         int hp = 100;
         public int HP { get { return hp; } }
 
-        public bool IsDead { get { return this.hp == 0; } }
+        public bool IsDead { get { return this.hp <= 0; } }
 
         public void SetHealth(int hp)
         {
@@ -100,9 +130,12 @@ namespace GUC.WorldObjects
 
             if (hp <= 0)
             {
-                this.state = MoveState.Stand;
-                this.currentAni = null;
-                this.aniTimer.Stop(true);
+                this.movement = MoveState.Stand;
+                this.ForEachActiveAni(aa =>
+                {
+                    aa.Timer.Stop();
+                    aa.Ani = null;
+                });
                 this.hp = 0;
             }
             else
@@ -116,28 +149,19 @@ namespace GUC.WorldObjects
 
         #endregion
 
-        #region Movement / NPCStates
+        #region Movement
 
-        MoveState state = MoveState.Stand;
-        public MoveState State { get { return this.state; } }
+        MoveState movement = MoveState.Stand;
+        public MoveState Movement { get { return this.movement; } }
 
-        partial void pSetState(MoveState state);
-        public void SetState(MoveState state)
+        partial void pSetMovement(MoveState state);
+        public void SetMovement(MoveState state)
         {
             if (this.IsDead)
                 return;
 
-            pSetState(state);
-            this.state = state;
-        }
-
-        partial void pFallDown();
-        public void FallDown()
-        {
-            if (this.IsDead)
-                return;
-
-            pFallDown();
+            pSetMovement(state);
+            this.movement = state;
         }
 
         #endregion
@@ -274,7 +298,7 @@ namespace GUC.WorldObjects
         {
             base.WriteProperties(stream);
 
-            stream.Write((byte)this.state);
+            stream.Write((byte)this.movement);
 
             stream.Write((ushort)hpmax);
             stream.Write((ushort)hp);
@@ -307,7 +331,7 @@ namespace GUC.WorldObjects
         {
             base.ReadProperties(stream);
 
-            this.state = (MoveState)stream.ReadByte();
+            this.movement = (MoveState)stream.ReadByte();
 
             this.hpmax = stream.ReadUShort();
             this.hp = stream.ReadUShort();
@@ -353,7 +377,7 @@ namespace GUC.WorldObjects
         {
             base.WriteProperties(stream);
 
-            stream.Write((byte)this.state);
+            stream.Write((byte)this.movement);
 
             stream.Write((ushort)hpmax);
             stream.Write((ushort)hp);
@@ -385,7 +409,7 @@ namespace GUC.WorldObjects
         {
             base.ReadProperties(stream);
 
-            this.state = (MoveState)stream.ReadByte();
+            this.movement = (MoveState)stream.ReadByte();
 
             this.hpmax = stream.ReadUShort();
             this.hp = stream.ReadUShort();
@@ -419,19 +443,6 @@ namespace GUC.WorldObjects
         #endregion
 
         #region Animations
-
-        partial void pJump();
-        public void Jump()
-        {
-            if (!this.IsSpawned)
-                return;
-
-            if (this.IsDead)
-                return;
-
-            pJump();
-            this.state = MoveState.Forward;
-        }
 
         #region Overlays
         List<Overlay> overlays = null;
@@ -499,13 +510,6 @@ namespace GUC.WorldObjects
 
         #endregion
 
-        GUCTimer aniTimer;
-        Action onStop;
-
-        Animation currentAni = null;
-        public Animation CurrentAni { get { return this.currentAni; } }
-        public bool IsInAnimation { get { return this.currentAni != null; } }
-
         public bool TryGetAniFromJob(AniJob job, out Animation ani)
         {
             if (overlays != null)
@@ -519,8 +523,74 @@ namespace GUC.WorldObjects
             return ani != null;
         }
 
-        partial void pStartAnimation(Animation ani);
-        public void StartAnimation(Animation ani, Action OnStop = null)
+        public class ActiveAni
+        {
+            NPC npc;
+            public NPC Npc { get { return this.npc; } }
+            GUCTimer timer;
+            internal GUCTimer Timer { get { return this.timer; } }
+
+            public Animation Ani { get; internal set; }
+            internal Action OnStop;
+
+            internal ActiveAni(NPC npc)
+            {
+                this.npc = npc;
+                this.timer = new GUCTimer(this.EndAni);
+            }
+
+            void EndAni()
+            {
+                npc.pEndAni(this.Ani);
+                this.timer.Stop();
+                this.Ani = null;
+                if (this.OnStop != null)
+                    this.OnStop();
+            }
+        }
+
+        List<ActiveAni> activeAnis = new List<ActiveAni>(1);
+
+        public void ForEachActiveAni(Action<ActiveAni> action)
+        {
+            for (int i = 0; i < activeAnis.Count; i++)
+                if (activeAnis[i].Ani != null)
+                    action(activeAnis[i]);
+        }
+
+        public void ForEachActiveAni(Predicate<ActiveAni> action)
+        {
+            for (int i = 0; i < activeAnis.Count; i++)
+                if (activeAnis[i].Ani != null)
+                    if (!action(activeAnis[i]))
+                        return;
+        }
+
+        public bool IsInAnimation()
+        {
+            for (int i = 0; i < activeAnis.Count; i++)
+                if (activeAnis[i].Ani != null)
+                    return true;
+            return false;
+        }
+
+        public ActiveAni GetActiveAniFromAniID(int aniID)
+        {
+            for (int i = 0; i < activeAnis.Count; i++)
+                if (activeAnis[i].Ani != null && activeAnis[i].Ani.AniJob.ID == aniID)
+                    return activeAnis[i];
+            return null;
+        }
+
+        public ActiveAni GetActiveAniFromLayerID(int layerID)
+        {
+            for (int i = 0; i < activeAnis.Count; i++)
+                if (activeAnis[i].Ani != null && activeAnis[i].Ani.LayerID == layerID)
+                    return activeAnis[i];
+            return null;
+        }
+
+        bool PlayAni(Animation ani, Action onStop)
         {
             if (ani == null)
                 throw new ArgumentNullException("Ani is null!");
@@ -535,36 +605,55 @@ namespace GUC.WorldObjects
                 throw new Exception("NPC is not spawned!");
 
             if (this.IsDead)
+                return false;
+
+            ActiveAni aa = null;
+            for (int i = 0; i < activeAnis.Count; i++)
+            {
+                aa = activeAnis[i];
+                if (activeAnis[i].Ani != null && activeAnis[i].Ani.LayerID == ani.LayerID)
+                {
+                    activeAnis[i].Timer.Stop(true);
+                    break;
+                }
+            }
+
+            if (aa == null)
+            {
+                aa = new ActiveAni(this);
+                activeAnis.Add(aa);
+            }
+
+            aa.Ani = ani;
+            aa.Timer.SetInterval(ani.Duration);
+            aa.OnStop = onStop;
+            aa.Timer.Start();
+            return true;
+        }
+
+        partial void pStartAnimation(Animation ani);
+        public void StartAnimation(Animation ani, Action onStop = null)
+        {
+            if (PlayAni(ani, onStop))
+            {
+                pStartAnimation(ani);
+            }
+        }
+
+        partial void pEndAni(Animation ani);
+        partial void pStopAnimation(Animation ani, bool fadeOut);
+        public void StopAnimation(ActiveAni ani, bool fadeOut = false)
+        {
+            if (ani == null)
                 return;
 
-            this.currentAni = ani;
-            this.onStop = OnStop;
-            aniTimer.SetInterval(ani.Duration);
-            aniTimer.Restart();
+            if (ani.Npc != this)
+                throw new ArgumentException("ActiveAni is not from this NPC!");
 
-            pStartAnimation(ani);
+            pStopAnimation(ani.Ani, fadeOut);
+            ani.Timer.Stop(true);
         }
 
-        partial void pStopAnimation(bool fadeOut);
-        public void StopAnimation(bool fadeOut = false)
-        {
-            if (!this.IsInAnimation)
-                return;
-
-            pStopAnimation(fadeOut);
-            aniTimer.Stop(true);
-            this.currentAni = null;
-        }
-
-        partial void pEndAni();
-        void EndAni()
-        {
-            pEndAni();
-            aniTimer.Stop();
-            this.currentAni = null;
-            if (this.onStop != null)
-                this.onStop();
-        }
 
         #endregion
 
@@ -573,7 +662,6 @@ namespace GUC.WorldObjects
         MobInter usedMob = null;
         public MobInter UsedMob { get { return this.usedMob; } }
 
-
         public void UseMob(MobInter mob)
         {
 
@@ -581,13 +669,20 @@ namespace GUC.WorldObjects
 
         #endregion
 
+        #region Spawn
+
         partial void pDespawn();
         public override void Despawn()
         {
             pDespawn();
-            this.currentAni = null;
-            this.aniTimer.Stop();
+            this.ForEachActiveAni(aa =>
+            {
+                aa.Timer.Stop();
+                aa.Ani = null;
+            });
             base.Despawn();
         }
+
+        #endregion
     }
 }

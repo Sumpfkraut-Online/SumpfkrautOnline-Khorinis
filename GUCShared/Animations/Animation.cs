@@ -22,9 +22,14 @@ namespace GUC.Animations
 
         #region Properties
 
+        /// <summary>
+        /// Layer number, pls sync with Gothic's animations. (byte)
+        /// </summary>
+        public int LayerID = 1;
+
         int duration = 0;
         /// <summary>
-        /// Duration of the animation in ms. (int)
+        /// Duration of the animation in ticks. (int)
         /// </summary>
         public int Duration
         {
@@ -81,12 +86,14 @@ namespace GUC.Animations
         {
             stream.Write(duration);
             stream.Write((ushort)startFrame);
+            stream.Write((byte)LayerID);
         }
 
         void ReadProperties(PacketReader stream)
         {
             this.duration = stream.ReadInt();
             this.startFrame = stream.ReadUShort();
+            this.LayerID = stream.ReadByte();
         }
 
         /// <summary>
@@ -98,10 +105,7 @@ namespace GUC.Animations
                 throw new ArgumentNullException("Stream is null!");
 
             this.WriteProperties(stream);
-            if (this.ScriptObject != null)
-            {
-                this.ScriptObject.OnWriteProperties(stream);
-            }
+            this.ScriptObject.OnWriteProperties(stream);
         }
 
         /// <summary>
@@ -113,10 +117,7 @@ namespace GUC.Animations
                 throw new ArgumentNullException("Stream is null!");
 
             this.ReadProperties(stream);
-            if (this.ScriptObject != null)
-            {
-                this.ScriptObject.OnReadProperties(stream);
-            }
+            this.ScriptObject.OnReadProperties(stream);
         }
 
         #endregion

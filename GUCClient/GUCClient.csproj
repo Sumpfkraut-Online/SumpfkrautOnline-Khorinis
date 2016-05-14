@@ -269,6 +269,7 @@
     <Compile Include="SplashScreen.xaml.cs">
       <DependentUpon>SplashScreen.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Types\Vec3f.Client.cs" />
     <Compile Include="Utilities\ExtendedObject.Client.cs" />
     <Compile Include="WorldObjects\BaseVob.Client.cs" />
     <Compile Include="StaticCollection.Client.cs" />

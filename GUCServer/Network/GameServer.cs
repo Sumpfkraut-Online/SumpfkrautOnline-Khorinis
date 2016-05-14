@@ -99,11 +99,11 @@ namespace GUC.Server.Network
                 case NetworkIDs.NPCAniStartMessage:
                     NPCMessage.ReadAniStart(stream, client.character);
                     break;
+                case NetworkIDs.NPCAniStartWithArgsMessage:
+                    NPCMessage.ReadAniStartWithArgs(stream, client.character);
+                    break;
                 case NetworkIDs.NPCAniStopMessage:
                     NPCMessage.ReadAniStop(stream, client.character);
-                    break;
-                case NetworkIDs.NPCJumpMessage:
-                    NPCMessage.ReadJump(stream, client, client.character, client.character.World);
                     break;
 
                 case NetworkIDs.InventoryEquipMessage:

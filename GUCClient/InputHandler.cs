@@ -56,10 +56,7 @@ namespace GUC.Client
                         Input.SetCursorPos(DefaultMousePosX, DefaultMousePosY);
                     }
                 }
-
-                //var res = GUI.GUCView.GetScreenSize();
-                //Input.SetCursorPos(res[0] / 2, res[1] / 2);
-
+                
                 for (int i = 1; i < keys.Length; i++)
                 {
                     VirtualKeys key = (VirtualKeys)i;
@@ -82,6 +79,10 @@ namespace GUC.Client
                                 bitField |= 0x10;
                             }
                             Process.Write(bitField, GUC.Network.GameClient.Client.Character.gVob.HumanAI.Address + 0x1204);
+                        }
+                        else if (key == VirtualKeys.F6)
+                        {
+                            Gothic.System.zCRenderer.SetFogRange(1000, 3000, 0);
                         }
 
                         if (!keys[i]) //newly pressed

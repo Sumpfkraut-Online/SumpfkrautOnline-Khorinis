@@ -123,7 +123,7 @@ namespace GUC.Network
             if (this.character.IsDead)
                 return;
 
-            if (this.character.State == nextState)
+            if (this.character.Movement == nextState)
                 return;
 
             if (now < this.character.nextStateUpdate)
@@ -149,7 +149,7 @@ namespace GUC.Network
             }
         }
 
-        public void DoJump()
+        public void DoStartAni(AniJob job, params object[] netArgs)
         {
             if (this.character == null)
                 return;
@@ -159,7 +159,7 @@ namespace GUC.Network
 
             if (GameTime.Ticks > nextAniUpdate)
             {
-                NPCMessage.WriteJump(this.character);
+                NPCMessage.WriteAniStart(job, netArgs);
                 nextAniUpdate = GameTime.Ticks + DelayBetweenMessages;
             }
         }
@@ -361,16 +361,15 @@ namespace GUC.Network
                 case NetworkIDs.NPCAniStartMessage:
                     NPCMessage.ReadAniStart(stream);
                     break;
+                case NetworkIDs.NPCAniStartWithArgsMessage:
+                    NPCMessage.ReadAniStartWithArgs(stream);
+                    break;
                 case NetworkIDs.NPCAniStopMessage:
                     NPCMessage.ReadAniStop(stream);
                     break;
 
                 case NetworkIDs.NPCHealthMessage:
                     NPCMessage.ReadHealthMessage(stream);
-                    break;
-
-                case NetworkIDs.NPCJumpMessage:
-                    NPCMessage.ReadJump(stream);
                     break;
 
                 default:
@@ -456,19 +455,12 @@ namespace GUC.Network
                 visText.SetColor(ColorRGBA.Red);
 
                 devInfo = new GUCVisual();
-                int zDist = devInfo.zView.FontY() + 2;
 
-                devInfo = GUCVisualText.Create("Ping", 0x2000, 0, true);
-                devInfo.CreateText("Received", 0x2000, zDist, true);
-                devInfo.CreateText("Sent", 0x2000, 2 * zDist, true);
-
-                devInfo.CreateText("Position", 0x2000, 3 * zDist, true);
-                devInfo.CreateText("Direction", 0x2000, 4 * zDist, true);
-                devInfo.CreateText("", 0x2000, 5 * zDist, true);
-                devInfo.CreateText("", 0x2000, 6 * zDist, true);
-
-                for (int i = 0; i < devInfo.Texts.Count; i++)
-                    devInfo.Texts[i].Format = GUCVisualText.TextFormat.Right;
+                for (int pos = 0; pos < 0x2000; pos += devInfo.zView.FontY() + 5)
+                {
+                    var t = devInfo.CreateText("", 0x2000, pos, true);
+                    t.Format = GUCVisualText.TextFormat.Right;
+                }
             }
 
             int counter = 0;
@@ -600,8 +592,8 @@ namespace GUC.Network
 
             if (World.Current != null && character != null)
             {
-                devInfo.Texts[5].Text = (character.gvob.CollObj.WaterLevel - character.gvob.CollObj.GroundLevel) > 5.0f ? "InWater" : "";
-                devInfo.Texts[6].Text = (character.gvob.BitField1 & zCVob.BitFlag0.physicsEnabled) != 0 ? "InAir" : "";
+                devInfo.Texts[5].Text = character.Movement.ToString();
+                devInfo.Texts[6].Text = character.EnvState.ToString();
             }
 
             devInfo.Show();

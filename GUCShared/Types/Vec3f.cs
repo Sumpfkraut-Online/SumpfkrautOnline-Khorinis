@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GUC.Types
 {
-    public struct Vec3f
+    public partial struct Vec3f
     {
         public float X;
         public float Y;
@@ -147,7 +147,7 @@ namespace GUC.Types
             return new Vec3f(data);
         }
 
-        public static implicit operator Vec3f(float value)
+        public static explicit operator Vec3f(float value)
         {
             return new Vec3f(value, value, value);
         }
@@ -209,8 +209,8 @@ namespace GUC.Types
 
         public override int GetHashCode()
         {
-            // fixme, this is bullshit
-            return this.ToArray().GetHashCode();
+            // FIXME
+            return 0;
         }
 
         #endregion

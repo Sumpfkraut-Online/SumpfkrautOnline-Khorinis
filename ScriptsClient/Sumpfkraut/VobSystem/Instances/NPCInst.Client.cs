@@ -5,6 +5,8 @@ using System.Text;
 using GUC.Enumeration;
 using GUC.Network;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
+using GUC.Scripts.Sumpfkraut.Visuals;
+using GUC.Types;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
@@ -104,10 +106,51 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public void OnTick(long now)
         {
-            if (this.IsInAttackAni)
+            var fightAni = (ScriptAniJob)this.GetFightAni()?.Ani.AniJob.ScriptObject;
+            if (fightAni != null && fightAni.IsAttack)
             {
                 this.BaseInst.gVob.AniCtrl.ShowWeaponTrail();
             }
+        }
+
+        public void StartAnimation(Animations.Animation ani, object[] netArgs)
+        {
+            ScriptAni a = (ScriptAni)ani.ScriptObject;
+
+            if (a.AniJob.IsJump)
+            {
+                this.StartAniJump(a, (int)netArgs[0], (int)netArgs[1]);
+            }
+            else if (a.AniJob.IsClimbing)
+            {
+                this.StartAniClimb(a, (WorldObjects.NPC.ClimbingLedge)netArgs[0]);
+            }
+        }
+
+        public void StartAniJump(ScriptAni ani, int fwdVelocity, int upVelocity)
+        {
+            this.StartAnimation(ani);
+
+            var ai = this.BaseInst.gVob.HumanAI;
+            ai.BitField &= ~(1 << 3);
+            this.BaseInst.gVob.SetBodyState(8);
+
+            var vel = new Gothic.Types.zVec3(ai.Address + 0x90);
+            var dir = this.BaseInst.GetDirection();
+
+            vel.X += dir.X * fwdVelocity;
+            vel.Z += dir.Z * fwdVelocity;
+            vel.Y += upVelocity;
+
+            this.BaseInst.SetPhysics(true);
+
+            this.BaseInst.SetVelocity((Vec3f)vel);
+        }
+
+        public void StartAniClimb(ScriptAni ani, WorldObjects.NPC.ClimbingLedge ledge)
+        {
+            this.BaseInst.SetGClimbingLedge(ledge);
+            this.StartAnimation(ani);
         }
     }
 }

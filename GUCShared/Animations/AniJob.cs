@@ -42,7 +42,7 @@ namespace GUC.Animations
 
         Animation defaultAni;
         /// <summary>
-        /// The base animation when no overlays are applied.
+        /// The base animation for when no overlays are applied.
         /// </summary>
         public Animation DefaultAni { get { return this.defaultAni; } }
 

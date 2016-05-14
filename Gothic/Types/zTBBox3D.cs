@@ -25,6 +25,5 @@ namespace Gothic.Types
         {
             get { return Max.Y - Min.Y; }
         }
-
     }
 }

@@ -345,10 +345,15 @@ namespace Gothic.Objects
             get { return new zString(Address + VarOffsets.name); }
         }
 
-
-        public void SetModelScale(zVec3 val)
+        public void SetModelScale(float x, float y, float z)
         {
-            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetModelScale, val);
+            using (zVec3 vec = zVec3.Create(x, y, z))
+                SetModelScale(vec);
+        }
+
+        public void SetModelScale(zVec3 vec)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetModelScale, vec);
         }
         public void SetFatness(float val)
         {
@@ -511,6 +516,17 @@ namespace Gothic.Objects
         {
             get { return Process.ReadInt(Address + VarOffsets.voice); }
             set { Process.Write(value, Address + VarOffsets.voice); }
+        }
+
+
+        public bool CanSee(zCVob vob, bool surroundView)
+        {
+            return Process.THISCALL<BoolArg>(Address, FuncAddresses.CanSee, vob, (BoolArg)surroundView);
+        }
+
+        public bool FreeLineOfSight(zCVob vob)
+        {
+            return Process.THISCALL<BoolArg>(Address, 0x7418E0, vob);
         }
 
         /*
@@ -1133,10 +1149,6 @@ namespace Gothic.Objects
             return Process.THISCALL<IntArg>(Address, FuncAddresses.GetFullBodyState);
         }
 
-        public int CanSee(zCVob vob, int arg)
-        {
-            return Process.THISCALL<IntArg>(Address, FuncAddresses.CanSee, new CallValue[] { vob, new IntArg(arg) }).Address;
-        }
 
         public int EV_RemoveWeapon(oCMsgWeapon msg)
         {

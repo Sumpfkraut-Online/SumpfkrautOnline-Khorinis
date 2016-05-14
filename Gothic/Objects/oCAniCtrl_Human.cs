@@ -36,6 +36,7 @@ namespace Gothic.Objects
             _t_strafer = 0x1034,
 
             _t_runr_2_jump = 0x1190,
+            _t_jump_2_runl = 0x1194,
 
             actionMode = 0x14C,
 
@@ -111,6 +112,7 @@ namespace Gothic.Objects
         public int _t_strafel { get { return Process.ReadInt(Address + VarOffsets._t_strafel); } }
 
         public int _t_runr_2_jump { get { return Process.ReadInt(Address + VarOffsets._t_runr_2_jump); } }
+        public int _t_jump_2_runl { get { return Process.ReadInt(Address + VarOffsets._t_jump_2_runl); } }
 
         public int wmode_last { get { return Process.ReadInt(Address + VarOffsets.wmode_last); } }
         public int actionMode { get { return Process.ReadInt(Address + VarOffsets.actionMode); } }
