@@ -37,8 +37,6 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
                 //{ "/TPTO", TestCommands.TeleportVobTo }, // teleport vob (to pos.) (TO DO)
             };
 
-
-
         public CommandConsole ()
         {
             SetObjName("CommandConsole (default)");
@@ -56,8 +54,6 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
         {
             Log.Logger.OnCommand -= HandleCommand;
         }
-
-
 
         public void HandleCommand (String commandText)
         {

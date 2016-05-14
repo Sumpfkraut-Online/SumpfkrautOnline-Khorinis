@@ -69,11 +69,6 @@ namespace GUC.Network
             clients.ForEach(action);
         }
 
-        public static void ForEach(Predicate<GameClient> predicate)
-        {
-            clients.ForEach(predicate);
-        }
-
         public static int GetCount() { return clients.Count; }
 
         public static bool TryGetClient(int id, out GameClient client)

@@ -12,17 +12,17 @@ namespace GUC.Server
 {
     static class Program
     {
+        static Thread game;
         static void Main(string[] args)
         {
-            //TCPStatus.Start();
-
             try
             {
                 GameServer.Start();
 
                 ScriptManager.StartScripts("Scripts\\ServerScripts.dll");
 
-                new Thread(RunServer).Start();
+                game = new Thread(RunServer);
+                game.Start();
 
                 Logger.RunLog();
             }
@@ -38,9 +38,9 @@ namespace GUC.Server
         {
             try
             {
-                const int updateRate = 8; //time between server ticks
+                const int updateRate = 8; //min time between server ticks
 
-                const long nextInfoUpdateTime = 1 * TimeSpan.TicksPerMinute;
+                const long nextInfoUpdateTime = 3 * TimeSpan.TicksPerMinute;
                 long nextInfoUpdates = DateTime.UtcNow.Ticks + nextInfoUpdateTime;
 
                 long tickAverage = 0;
@@ -86,7 +86,6 @@ namespace GUC.Server
             catch (Exception e)
             {
                 Logger.LogError(e.Source + "<br>" + e.Message + "<br>" + e.StackTrace);
-                Logger.LogError("InnerException: " + e.InnerException.Source + "<br>" + e.InnerException.Message);
             }
         }
     }
