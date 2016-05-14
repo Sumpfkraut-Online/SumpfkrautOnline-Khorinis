@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using GUC.Scripting;
 using GUC.Log;
-using Gothic;
 using GUC.Network;
 using WinApi;
 using Gothic.Types;
 using Gothic.System;
 using Gothic.View;
 using Gothic.Sound;
+using System.Threading;
+using GUC.Client.GUI;
 
 namespace GUC.Client.Hooks
 {
@@ -31,25 +32,59 @@ namespace GUC.Client.Hooks
 
         static bool outgameStarted = false;
 
+        static GUCVisual connectionVis = null;
+        static bool ShowConnectionAttempts(GameClient client)
+        {
+            if (!client.IsConnecting)
+            {
+                if (connectionVis != null)
+                {
+                    connectionVis.Hide();
+                }
+                return !client.IsConnected;
+            }
+            else
+            {
+                if (connectionVis == null)
+                {
+                    connectionVis = new GUCVisual();
+                    connectionVis.SetBackTexture("MENU_CHOICE_BACK.TGA");
+                    var text = connectionVis.CreateText("");
+                }
+                int[] screenSize = GUCView.GetScreenSize();
+                connectionVis.SetPosX(screenSize[0] / 2 - 200);
+                connectionVis.SetPosY(200);
+                connectionVis.SetSizeY(40);
+                connectionVis.SetSizeX(400);
+                connectionVis.Texts[0].Text = String.Format("Connecting to {0} ... ({1})", client.ServerAddress, client.ConnectionAttempts + 1);
+                connectionVis.Show();
+                return true;
+            }
+        }
+
         static System.Diagnostics.Stopwatch fpsWatch = new System.Diagnostics.Stopwatch();
         public static Int32 RunOutgame(String message)
         {
             try
             {
+                var client = GameClient.Client;
+                if (client == null) return 0;
+
                 GameTime.Update();
-
-                if (!outgameStarted)
-                {
-                    outgameStarted = true;
-                    ScriptManager.StartScripts(Program.ProjectPath + "Scripts\\ClientScripts.dll"); // Load Scripts
-                    ScriptManager.Interface.StartOutgame();
-                }
-
                 GUCTimer.Update(GameTime.Ticks);
-                GameClient.Client.Update();
-
                 InputHandler.Update();
-                ScriptManager.Interface.Update(GameTime.Ticks);
+
+                if (!ShowConnectionAttempts(client))
+                {
+                    if (!outgameStarted)
+                    {
+                        outgameStarted = true;
+                        ScriptManager.Interface.StartOutgame();
+                    }
+
+                    client.Update();
+                    ScriptManager.Interface.Update(GameTime.Ticks);
+                }
 
                 #region Gothic 
                 int address = Convert.ToInt32(message);
@@ -57,7 +92,6 @@ namespace GUC.Client.Hooks
                 int arg = Process.ReadInt(address + 4);
 
                 Process.CDECLCALL<NullReturnCall>(0x5053E0); // void __cdecl sysEvent(void)
-                Process.CDECLCALL<NullReturnCall>(0x7A55C0); // public: static void __cdecl zCInputCallback::GetInput(void)
 
                 using (zColor color = zColor.Create(0, 0, 0, 0))
                     zCRenderer.Vid_Clear(color, 3);
@@ -74,7 +108,7 @@ namespace GUC.Client.Hooks
                     long diff = 8 * TimeSpan.TicksPerMillisecond - fpsWatch.ElapsedTicks;
                     if (diff > 0)
                     {
-                        System.Threading.Thread.Sleep((int)(diff / TimeSpan.TicksPerMillisecond));
+                        Thread.Sleep((int)(diff / TimeSpan.TicksPerMillisecond));
                     }
                 }
                 fpsWatch.Restart();
@@ -92,60 +126,41 @@ namespace GUC.Client.Hooks
         {
             try
             {
-                if (!ingameStarted)
-                {
-                    ingameStarted = true;
-                    ScriptManager.Interface.StartIngame();
-                }
+                var client = GameClient.Client;
+                if (client == null) return 0;
 
                 GameTime.Update();
-                WorldObjects.World.ForEach(w => { w.Clock.UpdateTime(); w.SkyCtrl.UpdateWeather(); });
                 GUCTimer.Update(GameTime.Ticks);
-                GameClient.Client.Update();
                 InputHandler.Update();
-                ScriptManager.Interface.Update(GameTime.Ticks);
 
-                if (GameClient.Client.IsSpectating)
+                if (!ShowConnectionAttempts(client))
                 {
-                    GameClient.Client.UpdateSpectator(GameTime.Ticks);
+                    if (!ingameStarted)
+                    {
+                        ingameStarted = true;
+                        ScriptManager.Interface.StartIngame();
+                    }
+
+                    WorldObjects.World.ForEach(w => { w.Clock.UpdateTime(); w.SkyCtrl.UpdateWeather(); });
+                    client.Update();
+                    ScriptManager.Interface.Update(GameTime.Ticks);
+                    
+                    if (client.IsSpectating)
+                    {
+                        client.UpdateSpectator(GameTime.Ticks);
+                    }
+                    client.UpdateCharacters(GameTime.Ticks);
                 }
-                GameClient.Client.UpdateCharacters(GameTime.Ticks);
 
                 if (fpsWatch.IsRunning)
                 {
                     long diff = 8 * TimeSpan.TicksPerMillisecond - fpsWatch.ElapsedTicks;
                     if (diff > 0)
                     {
-                        System.Threading.Thread.Sleep((int)(diff / TimeSpan.TicksPerMillisecond));
+                        Thread.Sleep((int)(diff / TimeSpan.TicksPerMillisecond));
                     }
                 }
                 fpsWatch.Restart();
-
-                /*if ((WinApi.User.Input.GetAsyncKeyState(WinApi.User.Enumeration.VirtualKeys.F1) & 0x8001) == 0x8001 || (WinApi.User.Input.GetAsyncKeyState(WinApi.User.Enumeration.VirtualKeys.F1) & 0x8000) == 0x8000)
-                {
-                    //Process.THISCALL<NullReturnCall>(Process.ReadInt(oCGame.ogame), 0x6C9A50); //oCGame::Compile
-
-                    IntPtr ptr = Process.Alloc(4);
-                    Process.Write(2, ptr.ToInt32());
-
-                    int world = Process.ReadInt(Process.ReadInt(oCGame.ogame) + 8);
-
-                    Process.THISCALL<IntArg>(world, 0x62FB70, new IntArg(ptr.ToInt32()), new IntArg(0));
-
-                    Process.Free(ptr, 4);
-                }
-
-                if ((WinApi.User.Input.GetAsyncKeyState(WinApi.User.Enumeration.VirtualKeys.F2) & 0x8001) == 0x8001 || (WinApi.User.Input.GetAsyncKeyState(WinApi.User.Enumeration.VirtualKeys.F2) & 0x8000) == 0x8000)
-                {
-                    for (int i = 0; i < 1; i++)
-                    {
-                        var vob = zCVob.Create();
-                        vob.SetVisual("OW_Forest_Tree_V1.3ds");
-
-                        int world = Process.ReadInt(Process.ReadInt(oCGame.ogame) + 8);
-                        Process.THISCALL<IntArg>(world, 0x624810, vob);
-                    }
-                }*/
             }
             catch (Exception e)
             {

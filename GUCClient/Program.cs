@@ -45,6 +45,7 @@ namespace GUC.Client
         public static void Exit()
         {
             GameClient.Client.Disconnect();
+            Log.Logger.Log("Exiting...");
             Thread.Sleep(200);
             CGameManager.ExitGameVar = 1;
             zCOption.GetSectionByName("internal").GetEntryByName("gameAbnormalExit").VarValue.Set("0");

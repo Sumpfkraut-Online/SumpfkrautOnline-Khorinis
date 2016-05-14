@@ -439,9 +439,9 @@ namespace GUC.Server.Scripts.TFFA
             {
                 npc.ApplyOverlay(overlay);
             }
-            
-            client.SetControl(npc);
+
             npc.Spawn(WorldInst.Current, spawnPoint.Item1, spawnPoint.Item2);
+            client.SetControl(npc);
         }
 
         #endregion

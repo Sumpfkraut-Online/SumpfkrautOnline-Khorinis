@@ -285,8 +285,16 @@ namespace GUC.Client
 
                 Logger.Log("Hooking & editing of gothic process completed. (for now...)");
                 #endregion
+                
+                Scripting.ScriptManager.StartScripts(Program.ProjectPath + "Scripts\\ClientScripts.dll"); // Load Scripts
 
-                GameClient.Client.Connect();
+                string[] serverAddress = Environment.GetEnvironmentVariable("ServerAddress").Split(':');
+                if (serverAddress.Length != 2 || string.IsNullOrWhiteSpace(serverAddress[0]) || string.IsNullOrWhiteSpace(serverAddress[1]))
+                    throw new Exception("ServerAddress has wrong format!");
+                
+                string ip = serverAddress[0];
+                ushort port = Convert.ToUInt16(serverAddress[1]);
+                GameClient.Client.Connect(ip, port, Constants.VERSION);
 
                 while (true)
                 {

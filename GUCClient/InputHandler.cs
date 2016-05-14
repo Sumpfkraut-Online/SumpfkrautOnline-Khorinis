@@ -10,6 +10,29 @@ namespace GUC.Client
 {
     public static class InputHandler
     {
+        static Dictionary<VirtualKeys, Action> gucKeys = new Dictionary<VirtualKeys, Action>()
+        {
+            { VirtualKeys.F4, Program.Exit },
+            { VirtualKeys.F5, () =>
+                {
+                    var ai = GUC.Network.GameClient.Client?.character?.gVob?.HumanAI;
+                    if (ai != null)
+                    {
+                        int bitField = Process.ReadInt(ai.Address + 0x1204);
+                        if ((bitField & 0x10) != 0)
+                        {
+                            bitField &= ~0x10;
+                        }
+                        else
+                        {
+                            bitField |= 0x10;
+                        }
+                        Process.Write(bitField, ai.Address + 0x1204);
+                    }
+                }
+            }
+        };
+
         public static bool IsPressed(VirtualKeys key)
         {
             return keys[(int)key];
@@ -56,39 +79,19 @@ namespace GUC.Client
                         Input.SetCursorPos(DefaultMousePosX, DefaultMousePosY);
                     }
                 }
-                
+
                 for (int i = 1; i < keys.Length; i++)
                 {
                     VirtualKeys key = (VirtualKeys)i;
                     if ((Input.GetAsyncKeyState(key) & 0x8001) == 0x8001 || (Input.GetAsyncKeyState(key) & 0x8000) == 0x8000)
                     {
-                        if (key == VirtualKeys.F4)
-                        {
-                            Program.Exit();
-                            return;
-                        }
-                        else if (key == VirtualKeys.F5)
-                        {
-                            int bitField = Process.ReadInt(GUC.Network.GameClient.Client.Character.gVob.HumanAI.Address + 0x1204);
-                            if ((bitField & 0x10) != 0)
-                            {
-                                bitField &= ~0x10;
-                            }
-                            else
-                            {
-                                bitField |= 0x10;
-                            }
-                            Process.Write(bitField, GUC.Network.GameClient.Client.Character.gVob.HumanAI.Address + 0x1204);
-                        }
-                        else if (key == VirtualKeys.F6)
-                        {
-                            Gothic.System.zCRenderer.SetFogRange(1000, 3000, 0);
-                        }
-
                         if (!keys[i]) //newly pressed
                         {
                             keys[i] = true;
-                            if (OnKeyDown != null)
+                            Action gucAction;
+                            if (gucKeys.TryGetValue(key, out gucAction))
+                                gucAction();
+                            else if (OnKeyDown != null)
                                 OnKeyDown(key, ticks);
                         }
                     }
@@ -97,7 +100,7 @@ namespace GUC.Client
                         if (keys[i]) //release
                         {
                             keys[i] = false;
-                            if (OnKeyUp != null)
+                            if (!gucKeys.ContainsKey(key) && OnKeyUp != null)
                                 OnKeyUp(key, ticks);
                         }
                     }
@@ -121,9 +124,10 @@ namespace GUC.Client
                     {
                         if (keys[i]) //release
                         {
+                            VirtualKeys key = (VirtualKeys)i;
                             keys[i] = false;
-                            if (OnKeyUp != null)
-                                OnKeyUp((VirtualKeys)i, ticks);
+                            if (!gucKeys.ContainsKey(key) && OnKeyUp != null)
+                                OnKeyUp(key, ticks);
                         }
                     }
                 }

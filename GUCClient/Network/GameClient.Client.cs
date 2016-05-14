@@ -13,6 +13,7 @@ using GUC.WorldObjects;
 using Gothic.Objects;
 using Gothic;
 using GUC.Animations;
+using System.Threading;
 
 namespace GUC.Network
 {
@@ -391,42 +392,82 @@ namespace GUC.Network
             }
         }
 
-        long nextConnectionTry = 0;
-        int connectionTrys = 0;
-        internal void Connect()
+        bool isConnecting = false; internal bool IsConnecting { get { return this.isConnecting; } }
+        int connectionAttempts = 0; internal int ConnectionAttempts { get { return this.connectionAttempts; } }
+        string serverAddress; internal string ServerAddress { get { return this.serverAddress; } }
+        internal void Connect(string ip, ushort port, string pw)
         {
-            if (isConnected || nextConnectionTry > DateTime.UtcNow.Ticks)
-                return;
-
-            if (connectionTrys >= 10)
-                throw new Exception("Connection failed!");
-
             try
             {
-                Logger.Log("Trying to connect to the server.");
+                if (this.isConnected)
+                    return;
 
-                string[] serverAddress = Environment.GetEnvironmentVariable("ServerAddress").Split(':');
-                string ip = serverAddress[0];
-                ushort port = Convert.ToUInt16(serverAddress[1]);
+                this.isConnecting = true;
 
-                string pw = Constants.VERSION + "";
-                ConnectionAttemptResult res = clientInterface.Connect(ip, port, pw, pw.Length);
-                if (res != ConnectionAttemptResult.CONNECTION_ATTEMPT_STARTED)
+                this.serverAddress = ip + ":" + port;
+                Logger.Log("Trying to connect to " + serverAddress);
+
+                connectionAttempts = 0;
+                while (true)
                 {
-                    throw new Exception("Connection couldn't be established: " + res);
+                    ConnectionAttemptResult res = clientInterface.Connect(ip, port, pw, pw.Length);
+                    if (res != ConnectionAttemptResult.CONNECTION_ATTEMPT_STARTED)
+                    {
+                        throw new Exception("Connection couldn't be established: " + res);
+                    }
+
+                    Logger.Log(String.Format("Connection attempt {0} started.", ++connectionAttempts));
+                    
+                    while (true)
+                    {
+                        Packet packet = clientInterface.Receive();
+                        while (packet != null)
+                        {
+                            DefaultMessageIDTypes msgType = (DefaultMessageIDTypes)packet.data[0];
+                            clientInterface.DeallocatePacket(packet);
+
+                            switch (msgType)
+                            {
+                                case DefaultMessageIDTypes.ID_CONNECTION_REQUEST_ACCEPTED:
+                                    this.isConnected = true;
+                                    goto Label_ConnectionSuccess;
+                                case DefaultMessageIDTypes.ID_CONNECTION_ATTEMPT_FAILED:
+                                    goto Label_ConnectionFailed;
+                                case DefaultMessageIDTypes.ID_ALREADY_CONNECTED:
+                                    Logger.LogWarning("Already Connected!");
+                                    return;
+                                case DefaultMessageIDTypes.ID_CONNECTION_BANNED:
+                                    Logger.LogError("Client banned!");
+                                    return;
+                                case DefaultMessageIDTypes.ID_INVALID_PASSWORD:
+                                    Logger.LogError("Wrong password");
+                                    return;
+                                case DefaultMessageIDTypes.ID_INCOMPATIBLE_PROTOCOL_VERSION:
+                                    Logger.LogError("ID_INCOMPATIBLE_PROTOCOL_VERSION");
+                                    return;
+                                case DefaultMessageIDTypes.ID_NO_FREE_INCOMING_CONNECTIONS:
+                                    Logger.LogError("ID_NO_FREE_INCOMING_CONNECTIONS");
+                                    return;
+                            }
+                            
+                            packet = clientInterface.Receive();
+                        }
+                        Thread.Sleep(10);
+                    }
+                    Label_ConnectionFailed:
+                    Thread.Sleep(1000);
                 }
+                Label_ConnectionSuccess:
+                Logger.Log("Connection request accepted from server.");
                 clientInterface.SetOccasionalPing(true);
-
-                Logger.Log("Connection attempt started.");
-
+                ScriptManager.Interface.OnClientConnection(this);
+                ConnectionMessage.Write();
             }
             catch (Exception e)
             {
-                Logger.LogError("Verbindung fehlgeschlagen! " + e);
+                Logger.LogError("Verbindungsaufbau fehlgeschlagen! " + e);
             }
-
-            nextConnectionTry = DateTime.UtcNow.Ticks + 500 * TimeSpan.TicksPerMillisecond;
-            connectionTrys++;
+            this.isConnecting = false;
         }
 
         public void Disconnect()
@@ -478,32 +519,6 @@ namespace GUC.Network
 
                     switch (msgDefaultType)
                     {
-                        case DefaultMessageIDTypes.ID_CONNECTION_REQUEST_ACCEPTED:
-                            isConnected = true;
-                            connectionTrys = 0;
-                            Logger.Log("Connection request accepted from server.");
-                            ScriptManager.Interface.OnClientConnection(this);
-                            ConnectionMessage.Write();
-                            break;
-                        case DefaultMessageIDTypes.ID_CONNECTION_ATTEMPT_FAILED:
-                            Logger.LogError("Connection Failed!");
-                            isConnected = false;
-                            break;
-                        case DefaultMessageIDTypes.ID_ALREADY_CONNECTED:
-                            Logger.LogError("Already Connected!");
-                            break;
-                        case DefaultMessageIDTypes.ID_CONNECTION_BANNED:
-                            Logger.LogError("Client banned!");
-                            break;
-                        case DefaultMessageIDTypes.ID_INVALID_PASSWORD:
-                            Logger.LogError("Wrong password");
-                            break;
-                        case DefaultMessageIDTypes.ID_INCOMPATIBLE_PROTOCOL_VERSION:
-                            Logger.LogError("ID_INCOMPATIBLE_PROTOCOL_VERSION");
-                            break;
-                        case DefaultMessageIDTypes.ID_NO_FREE_INCOMING_CONNECTIONS:
-                            Logger.LogError("ID_NO_FREE_INCOMING_CONNECTIONS");
-                            break;
                         case DefaultMessageIDTypes.ID_DISCONNECTION_NOTIFICATION:
                         case DefaultMessageIDTypes.ID_CONNECTION_LOST:
                             isConnected = false;
