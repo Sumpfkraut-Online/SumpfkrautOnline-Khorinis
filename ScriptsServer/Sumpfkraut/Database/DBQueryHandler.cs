@@ -1,10 +1,10 @@
-﻿using GUC.Server.Scripts.Sumpfkraut.Database.DBQuerying;
+﻿using GUC.Scripts.Sumpfkraut.Database.DBQuerying;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace GUC.Server.Scripts.Sumpfkraut.Database
+namespace GUC.Scripts.Sumpfkraut.Database
 {
     public class DBQueryHandler : GUC.Utilities.Threading.AbstractRunnable
     {

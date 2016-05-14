@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Server.Scripts.Sumpfkraut.Database;
 using System.Threading;
 
-namespace GUC.Server.Scripts.Sumpfkraut.Database
+namespace GUC.Scripts.Sumpfkraut.Database
 {
     public class DBAgent : GUC.Utilities.Threading.AbstractRunnable
     {

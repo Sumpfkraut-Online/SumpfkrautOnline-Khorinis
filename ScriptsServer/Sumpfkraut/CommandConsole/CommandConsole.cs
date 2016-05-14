@@ -7,22 +7,26 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace GUC.Server.Scripts.Sumpfkraut.CommandConsole
+namespace GUC.Scripts.Sumpfkraut.CommandConsole
 {
     public class CommandConsole : GUC.Utilities.ExtendedObject
     {
 
-        new public static readonly String _staticName = "CommandConsole (static)";
+        new public static readonly string _staticName = "CommandConsole (static)";
 
         //protected Process consoleProcess;
         //protected bool canExecute = false;
 
 
-        public delegate void ProcessCommand (object sender, String cmd, String[] param, 
+        public delegate void ProcessCommand (object sender, string cmd, string[] param, 
             out Dictionary<string, object> returnVal);
-        public static readonly Dictionary<String, ProcessCommand> CmdToProcessFunc =
-            new Dictionary<String, ProcessCommand>()
+        public static readonly Dictionary<string, ProcessCommand> CmdToProcessFunc =
+            new Dictionary<string, ProcessCommand>()
             {
+                { "/GETPLAYERS", TestCommands.GetPlayerList },
+                { "/BAN", TestCommands.BanPlayers },
+                { "/KICK", TestCommands.KickPlayers },
+                { "/KILL", TestCommands.KillPlayers },
                 //{ "/G", TestCommands.SetIgTime }, // send global text-message (TO DO)
                 //{ "/GETPOS", TestCommands.SetIgTime }, // get pos. of youself or another player/vob? (TO DO)
                 //{ "/KILL", TestCommands.SetIgTime }, // kill vob in focus (TO DO)
@@ -32,8 +36,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.CommandConsole
                 //{ "/SPAWNITEM", TestCommands.SetIgTime }, // spawns item of (type + amount) at position (TO DO)
                 //{ "/TPTO", TestCommands.TeleportVobTo }, // teleport vob (to pos.) (TO DO)
             };
-
-
 
         public CommandConsole ()
         {
@@ -52,8 +54,6 @@ namespace GUC.Server.Scripts.Sumpfkraut.CommandConsole
         {
             Log.Logger.OnCommand -= HandleCommand;
         }
-
-
 
         public void HandleCommand (String commandText)
         {
