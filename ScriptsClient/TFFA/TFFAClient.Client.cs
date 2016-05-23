@@ -84,6 +84,10 @@ namespace GUC.Scripts.TFFA
                     case MenuMsgID.PhaseMsg:
                         Status = (TFFAPhase)stream.ReadByte();
                         PhaseInfo.info.SetState(Status);
+                        /*if (Status == TFFAPhase.Fight)
+                            GUC.Client.SoundHandler.SetPlayFightMusic(true);
+                        else
+                            GUC.Client.SoundHandler.SetPlayFightMusic(false);*/
                         break;
                 }
             }

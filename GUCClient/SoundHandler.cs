@@ -16,7 +16,7 @@ namespace GUC.Client
                 playFightMusic = play;
                 if (playFightMusic)
                 {
-                    Process.Write(new byte[] { 0xB8, 0x01, 0x00, 0x00, 0x00, 0xC3 }, 0x6C2D10);
+                    Process.Write(new byte[] { 0xB8, 0x02, 0x00, 0x00, 0x00, 0xC3 }, 0x6C2D10);
                 }
                 else
                 {

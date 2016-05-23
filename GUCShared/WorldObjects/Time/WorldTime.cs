@@ -85,7 +85,7 @@ namespace GUC.Types
         {
             return this.totalSeconds % SecondsPerDay % SecondsPerHour % SecondsPerMinute;
         }
-        
+
         #endregion
 
         #region Operators
@@ -224,6 +224,12 @@ namespace GUC.Types
         public override string ToString()
         {
             return this.totalSeconds.ToString();
+        }
+
+        public string ToString(bool onlySeconds)
+        {
+            if (onlySeconds) return this.ToString();
+            else return string.Format("WorldTime(day {0}, {1}:{2} : {3})", this.GetDay(), this.GetHour(), this.GetMinute(), this.GetSecond());
         }
 
         public override bool Equals(object obj)

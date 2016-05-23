@@ -45,10 +45,10 @@
     <Compile Include="Args\CharArg.cs" />
     <Compile Include="FileFormat\IniFile.cs" />
     <Compile Include="HIDDevice.cs" />
+    <Compile Include="Hook.cs" />
     <Compile Include="Win32\HID\HID.cs" />
     <Compile Include="Win32\HID\Structures\HidCaps.cs" />
     <Compile Include="Win32\HID\Structures\HID_Device.cs" />
-    <Compile Include="HookInfos.cs" />
     <Compile Include="InputReport.cs" />
     <Compile Include="Args\IntArg.cs" />
     <Compile Include="Win32\Kernel\DeviceIoControls.cs" />

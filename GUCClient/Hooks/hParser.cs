@@ -12,75 +12,51 @@ namespace GUC.Client.Hooks
 {
     static class hParser
     {
-        static bool _loadDatBlocked = false;
-        static HookInfos _infoLoadDat = null;
-
-        static HookInfos _infoLoadParserFile = null;
+        static bool inited = false;
         public static void AddHooks()
         {
-            if (_infoLoadDat != null)
+            if (inited)
                 return;
+            inited = true;
 
-            _infoLoadDat = Process.Hook(Program.GUCDll, typeof(hParser).GetMethod("hook_LoadDat"), 0x0078E900, 7, 1);
-            _infoLoadParserFile = Process.Hook(Program.GUCDll, typeof(hParser).GetMethod("hook_LoadParserFile"), 0x006C4BE0, 6, 1);
-
-            Process.Write(new byte[] { 0x33, 0xC0, 0xC2, 0x04, 0x00 }, _infoLoadParserFile.oldFuncInNewFunc.ToInt32());
+            Process.AddHook(hook_LoadDat, 0x0078E900, 7, 1);
+            var h = Process.AddHook(hook_LoadParserFile, 0x006C4BE0, 6, 1);
+            Process.Write(new byte[6] { 0x33, 0xC0, 0xC2, 0x04, 0x00, 0x00 }, h.OldInNewAddress); // block it
 
             Logger.Log("Added parser hooks.");
         }
 
-        static void BlockLoadDat()
-        {
-            if (_loadDatBlocked)
-                return;
-            _loadDatBlocked = true;
-
-            Process.Write(new byte[] { 0x33, 0xC0, 0xC2, 0x04, 0x00 }, _infoLoadDat.oldFuncInNewFunc.ToInt32());
-        }
-
-        static void UnblockLoadDat()
-        {
-            if (!_loadDatBlocked)
-                return;
-            _loadDatBlocked = false;
-
-            Process.Write(new byte[] { 0x6A, 0xFF, 0x68, 0x10, 0xA4 }, _infoLoadDat.oldFuncInNewFunc.ToInt32());
-        }
-
-        public static Int32 hook_LoadDat(String message)
+        static void hook_LoadDat(Hook hook)
         {
             try
             {
-                int address = Convert.ToInt32(message);
-                zString str = new zString(Process.ReadInt(address + 4));
+                zString str = new zString(hook.GetArgument(0));
                 string datName = str.ToString().Trim().ToUpper();
                 if (datName == "GOTHIC.DAT" || datName == "FIGHT.DAT" || datName == "MENU.DAT")
                 {
                     if (datName == "GOTHIC.DAT")
                         initDefaultScripts();
 
-                    BlockLoadDat();
+                    Process.Write(new byte[7] { 0x33, 0xC0, 0xC2, 0x04, 0x00, 0x00, 0x00 }, hook.OldInNewAddress); // block it
+                    Logger.Log("LoadDat: '{0}', blocked!", str);
                 }
                 else
                 {
-                    UnblockLoadDat();
+                    Process.Write(hook.GetOldCode(), hook.OldInNewAddress); // unblock it
+                    Logger.Log("LoadDat: '{0}'", str);
                 }
-                Logger.Log("LoadDat: '{0}', blocked: {1}", str, _loadDatBlocked);
             }
             catch (Exception ex)
             {
                 Logger.LogError(ex);
             }
-            return 0;
         }
-
         
-        public static Int32 hook_LoadParserFile(String message)
+        static void hook_LoadParserFile(Hook hook)
         {
             try
             {
-                int parameterAddress = Convert.ToInt32(message);
-                zString str = new zString(Process.ReadInt(parameterAddress + 4));
+                zString str = new zString(hook.GetArgument(0));
                 Logger.Log("LoadParserFile: " + str);
 
                 Process.THISCALL<NullReturnCall>(0xAB40C0, 0x00793100); //parser.reset
@@ -106,7 +82,6 @@ namespace GUC.Client.Hooks
             {
                 Logger.LogError(ex);
             }
-            return 0;
         }
 
         static String srcFile = null;
