@@ -247,6 +247,11 @@ namespace GUC.WorldObjects
 
             this.gVob.HPMax = this.hpmax;
             this.gVob.HP = this.hp;
+
+            if (this.hp == 0)
+            {
+                this.gVob.DoDie();
+            }
         }
 
         partial void pSetMovement(MoveState state)
