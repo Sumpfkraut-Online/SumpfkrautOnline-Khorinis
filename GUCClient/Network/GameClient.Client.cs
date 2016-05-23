@@ -424,8 +424,10 @@ namespace GUC.Network
 
         public void Disconnect()
         {
-            clientInterface.CloseConnection(clientInterface.GetSystemAddressFromIndex(0), true, 0);
-            isConnected = false;
+            this.clientInterface.CloseConnection(clientInterface.GetSystemAddressFromIndex(0), true, 0);
+            this.isConnected = false;
+            this.isConnecting = false;
+            this.isDisconnected = true;
         }
 
         long receivedBytes = 0;

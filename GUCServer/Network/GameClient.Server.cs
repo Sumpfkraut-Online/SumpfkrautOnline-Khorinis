@@ -160,13 +160,17 @@ namespace GUC.Network
                     this.character.client = null;
                     if (this.character.IsSpawned)
                     {
-                        this.character.World.RemoveFromPlayers(this);
                         this.character.Cell.Clients.Remove(ref this.cellID);
                     }
                 }
 
-                if (this.character == null || (this.character.IsSpawned && this.character.World != world))
+                if (this.character == null)
                 {
+                    WorldMessage.WriteLoadMessage(this, world);
+                }
+                else if (this.character.IsSpawned && this.character.World != world)
+                {
+                    this.character.World.RemoveFromPlayers(this);
                     WorldMessage.WriteLoadMessage(this, world);
                 }
                 else // just switch cells
@@ -216,7 +220,6 @@ namespace GUC.Network
                     this.character.client = null;
                     if (this.character.IsSpawned)
                     {
-                        this.character.World.RemoveFromPlayers(this);
                         this.character.Cell.Clients.Remove(ref this.cellID);
                     }
                 }
@@ -228,6 +231,7 @@ namespace GUC.Network
                     {
                         if (this.specWorld != npc.World)
                         {
+                            this.specWorld.RemoveFromPlayers(this);
                             WorldMessage.WriteLoadMessage(this, npc.World);
                         }
                         else
@@ -248,8 +252,13 @@ namespace GUC.Network
                     }
                     else
                     {
-                        if (this.character == null || this.character.World != npc.World)
+                        if (this.character == null)
                         {
+                            WorldMessage.WriteLoadMessage(this, npc.World);
+                        }
+                        else if (this.character.World != npc.World)
+                        {
+                            this.character.World.RemoveFromPlayers(this);
                             WorldMessage.WriteLoadMessage(this, npc.World);
                         }
                         else
@@ -262,8 +271,7 @@ namespace GUC.Network
                             this.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, '\0');
                         }
                     }
-
-                    npc.World.AddToPlayers(this);
+                    
                     npc.Cell.Clients.Add(this, ref this.cellID);
                 }
                 else // npc is not spawned remove all old vobs

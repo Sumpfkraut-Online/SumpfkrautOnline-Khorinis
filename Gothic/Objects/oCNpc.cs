@@ -506,11 +506,15 @@ namespace Gothic.Objects
             return Process.THISCALL<IntArg>(Address, FuncAddresses.GetWeaponMode).Value;
         }
 
-        public void DoDie(oCNpc killer)
-        {
-            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.DoDie, killer);
-        }
+        // public void DoDie(oCNpc killer) // argument is not used
+        // {
+        //     Process.THISCALL<NullReturnCall>(Address, FuncAddresses.DoDie, killer);
+        // }
 
+        public void DoDie()
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.DoDie, (IntArg)0);
+        }
 
         public int Voice
         {

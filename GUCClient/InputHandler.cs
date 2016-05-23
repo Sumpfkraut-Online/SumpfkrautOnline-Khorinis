@@ -10,7 +10,6 @@ namespace GUC.Client
 {
     public static class InputHandler
     {
-        static bool fightMusic = false;
         static Dictionary<VirtualKeys, Action> gucKeys = new Dictionary<VirtualKeys, Action>()
         {
             { VirtualKeys.F4, Program.Exit },
@@ -34,9 +33,11 @@ namespace GUC.Client
             },
             { VirtualKeys.F6, () =>
                 {
-                    Log.Logger.Log("PLAY FIGHT MUSIC: " + fightMusic);
-                    SoundHandler.SetPlayFightMusic(fightMusic);
-                    fightMusic = !fightMusic;
+                    var player = GUC.Network.GameClient.Client?.character?.gVob;
+                    if (player != null)
+                    {
+                        player.DoDie();
+                    }
                 }
             }
         };

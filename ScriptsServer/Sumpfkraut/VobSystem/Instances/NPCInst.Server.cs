@@ -15,8 +15,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         // TFFA
         public override void OnPosChanged()
         {
-            //if (this.BaseInst.IsPlayer && !this.BaseInst.IsDead && this.BaseInst.GetPosition().Y < -400)
-            //    Server.Scripts.TFFA.TFFAGame.Kill((TFFA.TFFAClient)this.BaseInst.Client.ScriptObject);
+            if (this.BaseInst.IsPlayer && !this.BaseInst.IsDead && this.BaseInst.GetPosition().Y < -400)
+                Server.Scripts.TFFA.TFFAGame.Kill((TFFA.TFFAClient)this.BaseInst.Client.ScriptObject);
         }
 
         public NPCInst(NPCDef def) : base(def, new WorldObjects.NPC())
