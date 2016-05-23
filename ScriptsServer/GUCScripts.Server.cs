@@ -99,9 +99,6 @@ namespace GUC.Scripts
             WorldInst.Current.Create();
             WorldInst.Current.Clock.SetTime(new Types.WorldTime(0, 8), 5.0f);
             WorldInst.Current.Clock.Start();
-
-            WorldInst.Current.SkyCtrl.StopRainTimer();
-            WorldInst.Current.SkyCtrl.SetRainTime(WorldInst.Current.Clock.Time, 1.0f);
         }
 
         void Add1hAttacks(ModelDef model)

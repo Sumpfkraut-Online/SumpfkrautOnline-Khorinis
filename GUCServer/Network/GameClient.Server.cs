@@ -135,6 +135,7 @@ namespace GUC.Network
                 });
                 WorldMessage.WriteCellMessage(arr, new NetCell[0], 0, this);
                 this.SpecCell.Clients.Add(this, ref this.cellID);
+                this.specWorld.AddToPlayers(this);
             }
             else
             {

@@ -32,12 +32,12 @@ namespace GUC.Server.Scripts.TFFA
 
         static List<Tuple<Vec3f, Vec3f>> ALSpawns = new List<Tuple<Vec3f, Vec3f>>()
         {
-            new Tuple<Vec3f, Vec3f>(new Vec3f(-3643, -268, -2608), new Vec3f(-0.297f, 0, 0.955f)),
-            new Tuple<Vec3f, Vec3f>(new Vec3f(-4090, -292, -2746), new Vec3f(0.267f, 0, 0.963f)),
-            new Tuple<Vec3f, Vec3f>(new Vec3f(-4983, -315, -3184), new Vec3f(0.646f, 0, 0.763f)),
-            new Tuple<Vec3f, Vec3f>(new Vec3f(-4603, -292, -2325), new Vec3f(0.462f, 0, 0.887f)),
-            new Tuple<Vec3f, Vec3f>(new Vec3f(-4732, -315, -3286), new Vec3f(-0.134f, 0, 0.991f)),
-            new Tuple<Vec3f, Vec3f>(new Vec3f(-3609, -232, -2306), new Vec3f(-0.996f, 0, -0.082f)),
+            new Tuple<Vec3f, Vec3f>(new Vec3f(-5352.223f , 251.3666f , -1174.69f), new Vec3f(0.3176593f , 0 , 0.9482043f)),
+            new Tuple<Vec3f, Vec3f>(new Vec3f(-5614.832f , 251.3338f , -835.5253f), new Vec3f(0.927043f , 0 , -0.3749532f)),
+            new Tuple<Vec3f, Vec3f>(new Vec3f(-5567.365f , 251.0296f , -251.2744f), new Vec3f(0.9848722f , 0 , 0.1732796f)),
+            new Tuple<Vec3f, Vec3f>(new Vec3f(-5424.19f , 249.4978f , 185.3704f), new Vec3f(0.333454f , 0 , -0.9427655f)),
+            new Tuple<Vec3f, Vec3f>(new Vec3f(-5217.961f , 251.48f , 722.0439f), new Vec3f(0.5184531f , 0 , -0.8551042f)),
+            new Tuple<Vec3f, Vec3f>(new Vec3f(-4914.649f , 250.9502f , -119.0678f), new Vec3f(-0.9691378f , 0 , 0.2465149f)),
         };
 
         static Dictionary<Team, List<TFFAClient>> Teams = new Dictionary<Team, List<TFFAClient>>()
@@ -64,10 +64,10 @@ namespace GUC.Server.Scripts.TFFA
             RemoveFromTeam(client);
             Teams[team].Add(client);
             client.Team = team;
-            
+
             if (team == Team.Spec)
                 client.BaseClient.SetToSpectate(WorldInst.Current.BaseWorld, new Vec3f(0, 300, 0), new Vec3f());
-            
+
             PacketWriter answer = GameClient.GetMenuMsgStream();
             answer.Write((byte)MenuMsgID.SelectTeam);
             answer.Write((byte)team);

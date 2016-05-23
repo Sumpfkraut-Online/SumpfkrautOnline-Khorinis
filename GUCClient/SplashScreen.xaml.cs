@@ -35,11 +35,12 @@ namespace GUC.Client
                                        0x33, 0xFF }, 0x004267F1);
 
             // jmp over everything else
-            Process.Write(new byte[] { 0xEB, 0x23 }, 0x004267FF);
+            Process.Write(new byte[] { 0xEB, 0x28 }, 0x004267FF);
 
-            //Process.Write((byte)0xEB, 0x00426872); //jump over closing message
 
-            Process.Hook("UntoldChapter\\DLL\\GUC.dll", typeof(SplashScreen).GetMethod("RemoveSplashScreen"), 0x42687F, 6, 0); // add hook to remove our splash screen
+            Process.Write(new byte[] { 0x83, 0xC4, 0x04 }, 0x426868);// add esp, 4 (original code)
+            Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, 0x42686B); // NOP everything else
+            Process.AddHook(RemoveSplashScreen, 0x42686B, 5, 0); // add hook to remove our splash screen
 
             Logger.Log("Gothic-SplashScreen hooked.");
         }
@@ -49,6 +50,9 @@ namespace GUC.Client
         {
             if (splash != null)
                 return;
+
+            EventWaitHandle wait = new EventWaitHandle(false, EventResetMode.ManualReset);
+
             try
             {
                 var appthread = new Thread(new ThreadStart(() =>
@@ -58,6 +62,7 @@ namespace GUC.Client
                         splash = new Application();
                         splash.ShutdownMode = ShutdownMode.OnExplicitShutdown;
                         splash.Run(new SplashScreen());
+                        wait.Set();
                     }
                     catch (Exception e)
                     {
@@ -68,6 +73,8 @@ namespace GUC.Client
                 appthread.SetApartmentState(ApartmentState.STA);
                 appthread.Start();
 
+                wait.WaitOne(1000);
+
                 Logger.Log("GUC-SplashScreen started.");
             }
             catch (Exception e2)
@@ -76,14 +83,15 @@ namespace GUC.Client
             }
         }
 
-        public static Int32 RemoveSplashScreen(String message = null)
+        static void RemoveSplashScreen(Hook hook)
         {
             if (splash == null)
-                return 0;
+                return;
+
+            Logger.Log("Close SplashScreen.");
 
             splash.Dispatcher.Invoke(new Action(() => splash.Shutdown()));
             splash = null;
-            return 0;
         }
     }
 }
