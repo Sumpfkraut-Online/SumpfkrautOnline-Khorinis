@@ -8,7 +8,6 @@ using GUC.Server.Network.Messages;
 using GUC.Network;
 using GUC.Server.Options;
 using GUC.Log;
-using GUC.WorldObjects.Collections;
 
 namespace GUC.Server.Network
 {
@@ -279,8 +278,10 @@ namespace GUC.Server.Network
                     client.Character.Cell.Clients.Remove(ref client.cellID);
                 }
             }
+
             if (client.IsSpectating)
             {
+                client.SpecWorld.RemoveFromPlayers(client);
                 client.SpecCell.Clients.Remove(ref client.cellID);
                 if (client.SpecCell.Vobs.GetCount() == 0 && client.SpecCell.Clients.Count == 0)
                     client.SpecWorld.netCells.Remove(client.SpecCell.Coord);

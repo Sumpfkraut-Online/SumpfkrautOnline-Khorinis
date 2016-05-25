@@ -121,5 +121,11 @@ namespace GUC.WorldObjects
             }
         }
         #endregion
+
+        /*~BaseVob()
+        {
+            gvob.refCtr--;
+            gvob.Dispose();
+        }*/
     }
 }

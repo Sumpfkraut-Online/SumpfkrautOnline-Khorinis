@@ -33,11 +33,7 @@ namespace GUC.Client
             },
             { VirtualKeys.F6, () =>
                 {
-                    var player = GUC.Network.GameClient.Client?.character?.gVob;
-                    if (player != null)
-                    {
-                        player.DoDie();
-                    }
+                    GC.Collect();
                 }
             }
         };

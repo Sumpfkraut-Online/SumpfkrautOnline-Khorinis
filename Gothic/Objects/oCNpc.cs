@@ -295,8 +295,13 @@ namespace Gothic.Objects
         new public static oCNpc Create()
         {
             int address = Process.CDECLCALL<IntArg>(0x0075FA00); //_CreateInstance()
-            Process.THISCALL<NullReturnCall>(address, 0x0072D950); //Konstruktor...
+            //Process.THISCALL<NullReturnCall>(address, 0x0072D950); //Konstruktor...
             return new oCNpc(address);
+        }
+
+        public override void Dispose()
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x72E3A0, (BoolArg)true);
         }
 
         public const int player = 0xAB2684;

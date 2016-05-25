@@ -64,8 +64,9 @@ namespace GUC.WorldObjects
 
         partial void pRemoveVob(BaseVob vob)
         {
-            oCGame.GetWorld().RemoveVob(vob.gVob);
-            vobAddr.Remove(vob.gvob.Address);
+            var gVob = vob.gvob;
+            oCGame.GetWorld().RemoveVob(gVob);
+            vobAddr.Remove(gVob.Address);
         }
     }
 }

@@ -6,6 +6,7 @@ using GUC.WorldObjects.Collections;
 using Gothic.Objects;
 using GUC.Types;
 using Gothic.Types;
+using GUC.Log;
 
 namespace GUC.WorldObjects
 {
