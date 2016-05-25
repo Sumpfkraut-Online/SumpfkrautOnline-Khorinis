@@ -275,13 +275,20 @@ namespace GUC.Client.Scripts.TFFA
             if (!InputHandler.IsPressed(VirtualKeys.Control) && !InputHandler.IsPressed(VirtualKeys.LeftButton))
             {
                 // Do turning
-                if (InputHandler.IsPressed(VirtualKeys.Left) || InputHandler.IsPressed(VirtualKeys.Q))
+                if (Hero.GetClimbAni() == null)
                 {
-                    Hero.BaseInst.gVob.AniCtrl.Turn(-2.5f, true);
-                }
-                else if (InputHandler.IsPressed(VirtualKeys.Right) || InputHandler.IsPressed(VirtualKeys.E))
-                {
-                    Hero.BaseInst.gVob.AniCtrl.Turn(2.5f, true);
+                    if (InputHandler.IsPressed(VirtualKeys.Left) || InputHandler.IsPressed(VirtualKeys.Q))
+                    {
+                        Hero.BaseInst.gVob.AniCtrl.Turn(-2.5f, true);
+                    }
+                    else if (InputHandler.IsPressed(VirtualKeys.Right) || InputHandler.IsPressed(VirtualKeys.E))
+                    {
+                        Hero.BaseInst.gVob.AniCtrl.Turn(2.5f, true);
+                    }
+                    else
+                    {
+                        Hero.BaseInst.gVob.AniCtrl.StopTurnAnis();
+                    }
                 }
                 else
                 {

@@ -9,7 +9,7 @@ using Gothic.Objects.Meshes;
 
 namespace Gothic.Objects
 {
-    public class zCVob : zCObject
+    public class zCVob : zCObject, IDisposable
     {
         new public abstract class VarOffsets : zCObject.VarOffsets
         {
@@ -199,8 +199,13 @@ namespace Gothic.Objects
         public static zCVob Create()
         {
             int address = Process.CDECLCALL<IntArg>(0x5FD940); //_CreateInstance()
-            Process.THISCALL<NullReturnCall>(address, 0x5FE1E0); //Konstruktor...
+            //Process.THISCALL<NullReturnCall>(address, 0x5FE1E0); //Konstruktor...
             return new zCVob(address);
+        }
+
+        public virtual void Dispose()
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x5FE440, (BoolArg)true);
         }
 
         public int Type

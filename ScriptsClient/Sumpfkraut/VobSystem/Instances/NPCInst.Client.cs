@@ -138,11 +138,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             var vel = new Gothic.Types.zVec3(ai.Address + 0x90);
             var dir = this.BaseInst.GetDirection();
 
-            vel.X += dir.X * fwdVelocity;
-            vel.Z += dir.Z * fwdVelocity;
-            vel.Y += upVelocity;
+            vel.X = dir.X * fwdVelocity;
+            vel.Z = dir.Z * fwdVelocity;
+            vel.Y = upVelocity;
 
-            this.BaseInst.SetPhysics(true);
+            //this.BaseInst.SetPhysics(true);
 
             this.BaseInst.SetVelocity((Vec3f)vel);
         }

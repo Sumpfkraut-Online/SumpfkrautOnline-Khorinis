@@ -76,6 +76,14 @@ namespace GUC.Network
             return data;
         }
 
+        public byte[] CopyData()
+        {
+            byte[] bytes = GetData();
+            byte[] ret = new byte[currentByte];
+            Array.Copy(bytes, ret, currentByte);
+            return ret;
+        }
+
         internal int GetLength()
         {
             return currentByte;

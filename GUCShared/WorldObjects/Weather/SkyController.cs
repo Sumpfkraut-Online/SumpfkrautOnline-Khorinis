@@ -85,7 +85,7 @@ namespace GUC.WorldObjects.Weather
 
             pSetRainTime();
 
-            Log.Logger.Log("SetRainTime: " + endTime.ToString(false) + " -> " + endWeight);
+            //Log.Logger.Log("SetRainTime: " + endTime.ToString(false) + " -> " + endWeight);
         }
 
         partial void pUpdateWeather();

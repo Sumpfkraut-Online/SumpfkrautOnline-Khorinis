@@ -76,6 +76,21 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             return aa;
         }
 
+        public NPC.ActiveAni GetClimbAni() // alternative: add a var and change on Start-/Stopanimation ?
+        {
+            NPC.ActiveAni aa = null;
+            this.BaseInst.ForEachActiveAni(a =>
+            {
+                if (((ScriptAniJob)a.Ani.AniJob.ScriptObject).IsClimbing)
+                {
+                    aa = a;
+                    return false;
+                }
+                return true;
+            });
+            return aa;
+        }
+
         public bool IsInFightMove()
         {
             return GetFightAni() != null;

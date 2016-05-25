@@ -422,8 +422,13 @@ namespace Gothic.Objects
         new public static oCItem Create()
         {
             int address = Process.CDECLCALL<IntArg>(0x714440); //_CreateInstance()
-            Process.THISCALL<NullReturnCall>(address, 0x00711290); //Konstruktor...
+            //Process.THISCALL<NullReturnCall>(address, 0x00711290); //Konstruktor...
             return new oCItem(address);
+        }
+
+        public override void Dispose()
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x711440, new BoolArg(true));
         }
 
         /*public static oCItem Create()
