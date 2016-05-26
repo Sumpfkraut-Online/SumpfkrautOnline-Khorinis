@@ -80,7 +80,7 @@ namespace GUC.WorldObjects
             Process.Write(this.gVob.HumanAI.Address, ai);
 
             Process.THISCALL<NullReturnCall>(0x8D44E0, 0x512310, (IntArg)ai);
-            if ( Process.THISCALL<BoolArg>(0x8D44E0, 0x5123E0, (IntArg)ai))
+            if (Process.THISCALL<BoolArg>(0x8D44E0, 0x5123E0, (IntArg)ai))
             {
                 var li = Process.THISCALL<zTLedgeInfo>(0x8D44E0, 0x512310, (IntArg)ai);
                 ledge.SetLedgeInfo(li);
@@ -195,7 +195,7 @@ namespace GUC.WorldObjects
 
             if (activeAni.ModelAni.Layer == 1)
             {
-                if ((this.gvob.BitField1 & zCVob.BitFlag0.physicsEnabled) == 0) // gothic prob has already handled this anyway
+                if (envState != EnvironmentState.InAir) // gothic prob has already handled this anyway
                 {
                     if (this.movement == MoveState.Forward)
                         gModel.StartAni(this.gVob.AniCtrl._s_walkl, 0);
@@ -292,34 +292,39 @@ namespace GUC.WorldObjects
 
             this.ScriptObject.OnTick(now);
 
-            if (this.IsDead || this.IsInAnimation())
+            if (this.IsDead || this.envState == EnvironmentState.InAir)
                 return;
 
             switch (Movement)
             {
                 case MoveState.Forward:
-                    var gModel = this.gVob.GetModel();
-                    if (gModel.IsAnimationActive("T_JUMP_2_STAND") != 0)
+                    if (this.GetActiveAniFromLayerID(0) == null)
                     {
-                        var ai = this.gVob.HumanAI;
-                        ai.LandAndStartAni(gModel.GetAniFromAniID(ai._t_jump_2_runl));
+                        var gModel = this.gVob.GetModel();
+                        if (gModel.IsAnimationActive("T_JUMP_2_STAND") != 0)
+                        {
+                            var ai = this.gVob.HumanAI;
+                            ai.LandAndStartAni(gModel.GetAniFromAniID(ai._t_jump_2_runl));
+                        }
+                        gVob.AniCtrl._Forward();
                     }
-                    gVob.AniCtrl._Forward();
                     break;
                 case MoveState.Backward:
                     gVob.AniCtrl._Backward();
                     break;
                 case MoveState.Right:
-                    if (this.envState <= EnvironmentState.Wading && !gVob.GetModel().IsAniActive(gVob.GetModel().GetAniFromAniID(gVob.AniCtrl._t_strafer)))
-                    {
-                        gVob.GetModel().StartAni(gVob.AniCtrl._t_strafer, 0);
-                    }
+                    if (!this.IsInAnimation())
+                        if (this.envState <= EnvironmentState.Wading && !gVob.GetModel().IsAniActive(gVob.GetModel().GetAniFromAniID(gVob.AniCtrl._t_strafer)))
+                        {
+                            gVob.GetModel().StartAni(gVob.AniCtrl._t_strafer, 0);
+                        }
                     break;
                 case MoveState.Left:
-                    if (this.envState <= EnvironmentState.Wading && !gVob.GetModel().IsAniActive(gVob.GetModel().GetAniFromAniID(gVob.AniCtrl._t_strafel)))
-                    {
-                        gVob.GetModel().StartAni(gVob.AniCtrl._t_strafel, 0);
-                    }
+                    if (!this.IsInAnimation())
+                        if (this.envState <= EnvironmentState.Wading && !gVob.GetModel().IsAniActive(gVob.GetModel().GetAniFromAniID(gVob.AniCtrl._t_strafel)))
+                        {
+                            gVob.GetModel().StartAni(gVob.AniCtrl._t_strafel, 0);
+                        }
                     break;
                 case MoveState.Stand:
                     gVob.AniCtrl._Stand();

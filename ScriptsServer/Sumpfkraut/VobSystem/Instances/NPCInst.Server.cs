@@ -174,7 +174,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                                         strm.Write((ushort)npc.ID);
                                         this.BaseInst.SendScriptVobStream(strm);
 
-                                        int damage = this.DrawnWeapon.Definition.Damage - target.Armor.Definition.Protection;
+                                        int damage = (this.DrawnWeapon.Definition.Damage + attackerAni.AttackBonus) - target.Armor.Definition.Protection;
+                                        if (this.GetJumpAni() != null || this.Environment == EnvironmentState.InAir) // Jump attaaaack!
+                                            damage += 5;
+
                                         if (damage > 0)
                                         {
                                             if (sOnHit != null)

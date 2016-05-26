@@ -547,6 +547,11 @@ namespace GUC.WorldObjects
                 if (this.OnStop != null)
                     this.OnStop();
             }
+
+            public float GetPercent()
+            {
+                return 1.0f - (float)(timer.NextCallTime - GameTime.Ticks) / (float)timer.Interval;
+            }
         }
 
         List<ActiveAni> activeAnis = new List<ActiveAni>(1);
@@ -610,9 +615,14 @@ namespace GUC.WorldObjects
             ActiveAni aa = null;
             for (int i = 0; i < activeAnis.Count; i++)
             {
-                aa = activeAnis[i];
-                if (activeAnis[i].Ani != null && activeAnis[i].Ani.LayerID == ani.LayerID)
+                if (activeAnis[i].Ani == null)
                 {
+                    aa = activeAnis[i];
+                    break;
+                }
+                else if (activeAnis[i].Ani.LayerID == ani.LayerID)
+                {
+                    aa = activeAnis[i];
                     activeAnis[i].Timer.Stop(true);
                     break;
                 }

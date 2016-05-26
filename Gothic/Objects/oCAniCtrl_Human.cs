@@ -35,8 +35,10 @@ namespace Gothic.Objects
             _t_strafel = 0x1030,
             _t_strafer = 0x1034,
 
+            _t_runl_2_jump = 0x118C,
             _t_runr_2_jump = 0x1190,
             _t_jump_2_runl = 0x1194,
+            _t_jump_2_stand = 0x106C,
 
             actionMode = 0x14C,
 
@@ -59,7 +61,7 @@ namespace Gothic.Objects
             PC_GoBackward = 0x6B1DC0,
 
             CreateHit = 0x6B0830,
-                
+
             Reset = 0x006A5080,
 
             RemoveWeapon2 = 0x006B33B0,
@@ -112,7 +114,9 @@ namespace Gothic.Objects
         public int _t_strafel { get { return Process.ReadInt(Address + VarOffsets._t_strafel); } }
 
         public int _t_runr_2_jump { get { return Process.ReadInt(Address + VarOffsets._t_runr_2_jump); } }
+        public int _t_runl_2_jump { get { return Process.ReadInt(Address + VarOffsets._t_runl_2_jump); } }
         public int _t_jump_2_runl { get { return Process.ReadInt(Address + VarOffsets._t_jump_2_runl); } }
+        public int _t_jump_2_stand { get { return Process.ReadInt(Address + VarOffsets._t_jump_2_stand); } }
 
         public int wmode_last { get { return Process.ReadInt(Address + VarOffsets.wmode_last); } }
         public int actionMode { get { return Process.ReadInt(Address + VarOffsets.actionMode); } }

@@ -190,6 +190,11 @@ namespace GUC.WorldObjects
             vobs.ForEach(action);
         }
 
+        public void ForEachVob(Predicate<BaseVob> predicate)
+        {
+            vobs.ForEach(predicate);
+        }
+
         public int GetVobCount()
         {
             return vobs.Count;

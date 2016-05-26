@@ -172,8 +172,7 @@ namespace GUC.WorldObjects
         {
             if (!this.isCreated)
                 throw new Exception("Vob isn't spawned!");
-
-            Logger.Log("Despawn vob " + this.ID);
+            
             this.isCreated = false;
 
             pDespawn();
