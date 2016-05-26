@@ -8,6 +8,8 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 {
     public partial class ScriptAniJob : ScriptObject, AniJob.IScriptAniJob
     {
+        public int AttackBonus = 0;
+
         string codeName;
         public string CodeName
         {

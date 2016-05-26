@@ -51,7 +51,7 @@ namespace GUC.Scripts
         public void StartIngame()
         {
             Client.Scripts.TFFA.InputControl.Init();
-            GUCMenu.CloseActiveMenus();
+            //GUCMenu.CloseActiveMenus();
             Gothic.Objects.oCNpcFocus.SetFocusMode(1);
             Ingame = true;
             Logger.Log("Ingame started.");

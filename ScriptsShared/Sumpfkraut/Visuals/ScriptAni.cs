@@ -17,6 +17,8 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         Animation baseAni;
         public Animation BaseAni { get { return this.baseAni; } }
 
+        public int Layer { get { return this.baseAni.LayerID; } set { this.baseAni.LayerID = value; } }
+
         /// <summary> Duration of the animation in ms. (int) </summary>
         public int Duration { get { return this.baseAni.Duration; } set { this.baseAni.Duration = value; } }
 

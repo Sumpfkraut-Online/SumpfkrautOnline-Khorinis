@@ -149,6 +149,7 @@ namespace GUC.Scripts
             aniJob = new ScriptAniJob("attack1hleft");
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HLeft;
             aniJob.AniName = "t_1hAttackL";
+            aniJob.AttackBonus = -1;
             model.AddAniJob(aniJob);
 
             ani = new ScriptAni(11600000); ani.ComboTime = 6000000; ani.HitTime = 2000000; aniJob.SetDefaultAni(ani);
@@ -160,6 +161,7 @@ namespace GUC.Scripts
             aniJob = new ScriptAniJob("attack1hright");
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HRight;
             aniJob.AniName = "t_1hAttackR";
+            aniJob.AttackBonus = -1;
             model.AddAniJob(aniJob);
 
             ani = new ScriptAni(11600000); ani.ComboTime = 6000000; ani.HitTime = 2000000; aniJob.SetDefaultAni(ani);
@@ -170,9 +172,10 @@ namespace GUC.Scripts
             aniJob = new ScriptAniJob("attack1hrun");
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HRun;
             aniJob.AniName = "t_1hAttackMove";
+            aniJob.AttackBonus = 5;
             model.AddAniJob(aniJob);
 
-            ani = new ScriptAni(11200000); ani.ComboTime = 11200000; ani.HitTime = 7000000; aniJob.SetDefaultAni(ani);
+            ani = new ScriptAni(11200000); ani.ComboTime = 11200000; ani.HitTime = 7000000; ani.Layer = 2; aniJob.SetDefaultAni(ani);
             
             // 1h Parry
             aniJob = new ScriptAniJob("attack1hparry");
@@ -238,6 +241,7 @@ namespace GUC.Scripts
             aniJob = new ScriptAniJob("attack2hleft");
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HLeft;
             aniJob.AniName = "t_2hAttackL";
+            aniJob.AttackBonus = -1;
             model.AddAniJob(aniJob);
 
             ani = new ScriptAni(14000000); ani.ComboTime = 7200000; ani.HitTime = 2400000; aniJob.SetDefaultAni(ani);
@@ -249,6 +253,7 @@ namespace GUC.Scripts
             aniJob = new ScriptAniJob("attack2hright");
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HRight;
             aniJob.AniName = "t_2hAttackR";
+            aniJob.AttackBonus = -1;
             model.AddAniJob(aniJob);
 
             ani = new ScriptAni(14000000); ani.ComboTime = 7200000; ani.HitTime = 2400000; aniJob.SetDefaultAni(ani);
@@ -259,9 +264,10 @@ namespace GUC.Scripts
             aniJob = new ScriptAniJob("attack2hrun");
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HRun;
             aniJob.AniName = "t_2hAttackMove";
+            aniJob.AttackBonus = 5;
             model.AddAniJob(aniJob);
 
-            ani = new ScriptAni(8800000); ani.ComboTime = 8800000; ani.HitTime = 6000000; aniJob.SetDefaultAni(ani);
+            ani = new ScriptAni(8800000); ani.ComboTime = 8800000; ani.HitTime = 6000000; ani.Layer = 2; aniJob.SetDefaultAni(ani);
 
             // 2h Parry
             aniJob = new ScriptAniJob("attack2hparry");

@@ -111,6 +111,19 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             {
                 this.BaseInst.gVob.AniCtrl.ShowWeaponTrail();
             }
+
+            var activeJumpAni = GetJumpAni();
+            if (activeJumpAni != null && activeJumpAni.GetPercent() >= 0.2f)
+            {
+                var gVob = this.BaseInst.gVob;
+                var ai = gVob.HumanAI;
+                if (((gVob.BitField1 & Gothic.Objects.zCVob.BitFlag0.physicsEnabled) != 0) && ai.AboveFloor <= 0)
+                {
+                    // LAND
+                    int id = this.Movement == MoveState.Forward ? ai._t_jump_2_runl : ai._t_jump_2_stand;
+                    ai.LandAndStartAni(gVob.GetModel().GetAniFromAniID(id));
+                }
+            }
         }
 
         public void StartAnimation(Animations.Animation ani, object[] netArgs)
@@ -133,7 +146,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
             var ai = this.BaseInst.gVob.HumanAI;
             ai.BitField &= ~(1 << 3);
-            this.BaseInst.gVob.SetBodyState(8);
+            //this.BaseInst.gVob.SetBodyState(8);
 
             var vel = new Gothic.Types.zVec3(ai.Address + 0x90);
             var dir = this.BaseInst.GetDirection();
@@ -142,7 +155,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             vel.Z = dir.Z * fwdVelocity;
             vel.Y = upVelocity;
 
-            //this.BaseInst.SetPhysics(true);
+            this.BaseInst.SetPhysics(true);
 
             this.BaseInst.SetVelocity((Vec3f)vel);
         }
