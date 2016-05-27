@@ -118,9 +118,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public float Fatness = 0;
         public Vec3f ModelScale = new Vec3f(1, 1, 1);
-
-        public string CustomName = "";
-
+        
         #endregion
 
         partial void pConstruct();
@@ -281,12 +279,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 CustomVoice = (HumVoices)stream.ReadByte();
                 Fatness = stream.ReadFloat();
                 ModelScale = stream.ReadVec3f();
-                CustomName = stream.ReadString();
-            }
-
-            if (stream.ReadBit())
-            {
-                this.visibleClientID = stream.ReadByte();
             }
         }
 
@@ -304,24 +296,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 stream.Write((byte)CustomVoice);
                 stream.Write(Fatness);
                 stream.Write(ModelScale);
-                stream.Write(CustomName);
             }
             else
             {
                 stream.Write(false);
             }
-
-#if D_SERVER
-            if (this.BaseInst.IsPlayer)
-            {
-                stream.Write(true);
-                stream.Write((byte)this.BaseInst.Client.ID);
-            }
-            else
-            {
-                stream.Write(false);
-            }
-#endif
         }
 
         public void OnWriteAniStartArgs(PacketWriter stream, AniJob job, object[] netArgs)

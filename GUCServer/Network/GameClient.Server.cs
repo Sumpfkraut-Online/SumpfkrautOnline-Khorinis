@@ -24,6 +24,7 @@ namespace GUC.Network
         {
             void OnReadMenuMsg(PacketReader stream);
             void OnReadIngameMsg(PacketReader stream);
+            void OnConnection();
             void OnDisconnection();
         }
 
@@ -42,6 +43,8 @@ namespace GUC.Network
             idColl.Add(this);
             clients.Add(this, ref this.collID);
 
+            this.ScriptObject.OnConnection();
+
             this.isCreated = true;
         }
 
@@ -51,6 +54,8 @@ namespace GUC.Network
                 throw new Exception("Client is not in the collection!");
 
             this.isCreated = false;
+
+            this.ScriptObject.OnDisconnection();
 
             idColl.Remove(this);
             clients.Remove(ref this.collID);

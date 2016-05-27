@@ -3,19 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Network;
+using GUC.Scripts.Sumpfkraut.Networking;
 using GUC.Client.Scripts.TFFA;
-using GUC.Scripts.Sumpfkraut.WorldSystem;
-using GUC.Types;
 
 namespace GUC.Scripts.TFFA
 {
-    partial class TFFAClient : GameClient.IScriptClient
+    partial class TFFAClient
     {
         public static TFFAPhase Status { get; private set; }
+        public static Team Winner { get; private set; }
 
-        public static TFFAClient Client { get { return GameClient.Client == null ? null : (TFFAClient)GameClient.Client.ScriptObject; } }
+        new public static TFFAClient Client { get { return (TFFAClient)ScriptClient.Client; } }
 
-        public void ReadScriptMsg(PacketReader stream)
+        static public ClientInfo Info { get; private set; }
+
+
+        public override void ReadScriptMsg(PacketReader stream)
         {
             try
             {
@@ -23,71 +26,125 @@ namespace GUC.Scripts.TFFA
                 Log.Logger.Log("Menu MSG: " + id);
                 switch (id)
                 {
-                    case MenuMsgID.OpenTeamMenu:
-                        int countSpec = stream.ReadByte();
-                        int countAL = stream.ReadByte();
-                        int countNL = stream.ReadByte();
-                        TeamMenu.Menu.SetCounts(countSpec, countAL, countNL);
-                        break;
-                    case MenuMsgID.OpenClassMenu:
-                        int tLight = stream.ReadByte();
-                        int tHeavy = stream.ReadByte();
-                        ClassMenu.Menu.SetCounts(tLight, tHeavy);
-                        break;
-                    case MenuMsgID.SelectTeam:
-                        this.Team = (Team)stream.ReadByte();
-                        this.Class = PlayerClass.None;
-                        if (this.Team != Team.Spec)
+                    case MenuMsgID.ClientInfoGroup:
+                        int thisID = stream.ReadByte();
+                        Status = (TFFAPhase)stream.ReadByte();
+                        if (Status != TFFAPhase.Fight)
+                            StatusMenu.Menu.StatusShow = true;
+                        int count = stream.ReadByte();
+                        for (int i = 0; i < count; i++)
                         {
-                            ClassMenu.Menu.Open();
+                            var c = ClientInfo.Read(stream);
+                            if (c.ID == thisID)
+                            {
+                                Info = c;
+                            }
                         }
-                        else
+                        ClassMenu.Menu.UpdateCounts();
+                        TeamMenu.Menu.UpdateCounts();
+                        Scoreboard.Menu.UpdateStats();
+                        break;
+                    case MenuMsgID.ClientConnect:
+                        ClientInfo.Read(stream);
+                        ClassMenu.Menu.UpdateCounts();
+                        TeamMenu.Menu.UpdateCounts();
+                        Scoreboard.Menu.UpdateStats();
+                        break;
+
+                    case MenuMsgID.ClientDisconnect:
+                        ClientInfo.ClientInfos.Remove(stream.ReadByte());
+                        ClassMenu.Menu.UpdateCounts();
+                        TeamMenu.Menu.UpdateCounts();
+                        Scoreboard.Menu.UpdateStats();
+                        break;
+
+                    case MenuMsgID.ClientTeam:
+                        int clientID = stream.ReadByte();
+                        ClientInfo ci;
+                        if (ClientInfo.ClientInfos.TryGetValue(clientID, out ci))
                         {
-                            TeamMenu.Menu.Open();
+                            ci.Team = (Team)stream.ReadByte();
+                            ci.Class = PlayerClass.None;
+                            if (ci == Info)
+                            {
+                                if (ci.Team != Team.Spec)
+                                {
+                                    ClassMenu.Menu.Open();
+                                }
+                                else
+                                {
+                                    TeamMenu.Menu.Open();
+                                }
+                            }
+                            TeamMenu.Menu.UpdateCounts();
+                            Scoreboard.Menu.UpdateStats();
                         }
                         break;
-                    case MenuMsgID.SelectClass:
+                    case MenuMsgID.ClientClass:
+                        clientID = stream.ReadByte();
+                        if (ClientInfo.ClientInfos.TryGetValue(clientID, out ci))
+                        {
+                            ci.Class = (PlayerClass)stream.ReadByte();
+                            ClassMenu.Menu.UpdateCounts();
+                            Scoreboard.Menu.UpdateStats();
+                        }
                         break;
-                    case MenuMsgID.SetName:
+                    case MenuMsgID.ClientName:
+                        clientID = stream.ReadByte();
+                        if (ClientInfo.ClientInfos.TryGetValue(clientID, out ci))
+                        {
+                            ci.Name = stream.ReadString();
+                            Scoreboard.Menu.UpdateNames();
+
+                            WorldObjects.NPC npc;
+                            if (WorldObjects.World.Current.TryGetVob(ci.CharID, out npc))
+                            {
+                                npc.gVob.Name.Set(InputControl.ClientsShown ? string.Format("({0}){1}", ci.ID, ci.Name) : ci.Name);
+                            }
+                        }
+                        break;
+                    case MenuMsgID.ClientNPC:
+                        clientID = stream.ReadByte();
+                        if (ClientInfo.ClientInfos.TryGetValue(clientID, out ci))
+                        {
+                            ci.CharID = stream.ReadUShort();
+                            
+                            WorldObjects.NPC npc;
+                            if (WorldObjects.World.Current.TryGetVob(ci.CharID, out npc))
+                            {
+                                npc.gVob.Name.Set(InputControl.ClientsShown ? string.Format("({0}){1}", ci.ID, ci.Name) : ci.Name);
+                            }
+                        }
                         break;
 
                     case MenuMsgID.OpenScoreboard:
                         int secs = stream.ReadInt();
-                        Scoreboard.Menu.SetTime(secs);
                         int alKills = stream.ReadByte();
-                        int count = stream.ReadByte();
-                        for (int i = 0; i < count; i++)
-                        {
-                            string name = stream.ReadString();
-                            int kills = stream.ReadSByte();
-                            int deaths = stream.ReadByte();
-                            int damage = stream.ReadUShort();
-                            Scoreboard.Menu.AddPlayer(Team.AL, name, kills, deaths, damage);
-                        }
                         int nlKills = stream.ReadByte();
                         count = stream.ReadByte();
                         for (int i = 0; i < count; i++)
                         {
-                            string name = stream.ReadString();
-                            int kills = stream.ReadSByte();
-                            int deaths = stream.ReadByte();
-                            int damage = stream.ReadUShort();
-                            Scoreboard.Menu.AddPlayer(Team.NL, name, kills, deaths, damage);
+                            ClientInfo.ReadScoreboardInfo(stream);
                         }
-                        Scoreboard.Menu.SetKills(alKills, nlKills);
+                        Scoreboard.Menu.UpdateStats(secs, alKills, nlKills);
                         break;
 
                     case MenuMsgID.WinMsg:
-                        Team winner = (Team)stream.ReadByte();
-                        Scoreboard.Menu.OpenWinner(winner);
+                        Status = TFFAPhase.End;
+                        Winner = (Team)stream.ReadByte();
+                        StatusMenu.Menu.StatusShow = true;
                         break;
                     case MenuMsgID.PhaseMsg:
                         Status = (TFFAPhase)stream.ReadByte();
-                        PhaseInfo.info.SetState(Status);
-                        /*if (Status == TFFAPhase.Fight)
-                            GUC.Client.SoundHandler.SetPlayFightMusic(true);
+                        Winner = Team.Spec;
+                        if (Status == TFFAPhase.Fight)
+                        {
+                            StatusMenu.Menu.StatusShow = false;
+                        }
                         else
-                            GUC.Client.SoundHandler.SetPlayFightMusic(false);*/
+                        {
+                            StatusMenu.Menu.StatusShow = true;
+                        }
                         break;
                 }
             }

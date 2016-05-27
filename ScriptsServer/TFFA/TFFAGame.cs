@@ -16,6 +16,10 @@ namespace GUC.Server.Scripts.TFFA
 {
     public static class TFFAGame
     {
+        const long ScoreboardUpdateTime = 1 * TimeSpan.TicksPerSecond;
+
+        const long RespawnTime = 10 * TimeSpan.TicksPerSecond;
+
         const long FightTime = 5 * TimeSpan.TicksPerMinute;
         const long WaitTime = 30 * TimeSpan.TicksPerSecond;
         const int KillsToWin = 30;
@@ -68,10 +72,7 @@ namespace GUC.Server.Scripts.TFFA
             if (team == Team.Spec)
                 client.BaseClient.SetToSpectate(WorldInst.Current.BaseWorld, new Vec3f(0, 300, 0), new Vec3f());
 
-            PacketWriter answer = GameClient.GetMenuMsgStream();
-            answer.Write((byte)MenuMsgID.SelectTeam);
-            answer.Write((byte)team);
-            client.BaseClient.SendMenuMsg(answer, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE);
+            client.SendTeamChanged();
         }
 
         public static void RemoveFromTeam(TFFAClient client)
@@ -88,55 +89,13 @@ namespace GUC.Server.Scripts.TFFA
                 client.Class = c;
                 if (status == TFFAPhase.Waiting && client.Team != Team.Spec)
                     SpawnNewPlayer(client);
+
+                client.SendClassChanged();
             }
         }
 
-        public static void UpdateStats()
+        public static void UpdateStats(TFFAClient single = null)
         {
-            // TEAM MENU STATS
-            if (teamMenuClients.Count > 0)
-            {
-                var stream = GameClient.GetMenuMsgStream();
-                stream.Write((byte)MenuMsgID.OpenTeamMenu);
-                stream.Write((byte)GetCount(Team.Spec));
-                stream.Write((byte)GetCount(Team.AL));
-                stream.Write((byte)GetCount(Team.NL));
-                for (int i = 0; i < teamMenuClients.Count; i++)
-                    teamMenuClients[i].BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.UNRELIABLE);
-            }
-
-            // CLASS MENU STATS
-            if (classMenuClients.Count > 0)
-            {
-                var stream = GameClient.GetMenuMsgStream();
-                stream.Write((byte)MenuMsgID.OpenClassMenu);
-                int lights = 0;
-                int heavies = 0;
-                var list = Teams[Team.AL];
-                for (int i = 0; i < list.Count; i++)
-                    if (list[i].Class == PlayerClass.Light) lights++;
-                    else if (list[i].Class == PlayerClass.Heavy) heavies++;
-                stream.Write((byte)lights);
-                stream.Write((byte)heavies);
-                for (int i = 0; i < classMenuClients.Count; i++)
-                    if (classMenuClients[i].Team == Team.AL)
-                        classMenuClients[i].BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.UNRELIABLE);
-
-                stream = GameClient.GetMenuMsgStream();
-                stream.Write((byte)MenuMsgID.OpenClassMenu);
-                lights = 0;
-                heavies = 0;
-                list = Teams[Team.NL];
-                for (int i = 0; i < list.Count; i++)
-                    if (list[i].Class == PlayerClass.Light) lights++;
-                    else if (list[i].Class == PlayerClass.Heavy) heavies++;
-                stream.Write((byte)lights);
-                stream.Write((byte)heavies);
-                for (int i = 0; i < classMenuClients.Count; i++)
-                    if (classMenuClients[i].Team == Team.NL)
-                        classMenuClients[i].BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.UNRELIABLE);
-            }
-
             if (scoreboardClients.Count > 0)
             {
                 var stream = GameClient.GetMenuMsgStream();
@@ -144,30 +103,41 @@ namespace GUC.Server.Scripts.TFFA
                 stream.Write((int)(gameTimer.GetRemainingTicks() / TimeSpan.TicksPerSecond));
 
                 stream.Write((byte)ALKills);
-                var list = Teams[Team.AL];
-                stream.Write((byte)list.Count);
-                for (int i = 0; i < list.Count; i++)
-                {
-                    stream.Write(list[i].Name);
-                    stream.Write((sbyte)list[i].Kills);
-                    stream.Write((byte)list[i].Deaths);
-                    stream.Write((ushort)list[i].Damage);
-                }
-
                 stream.Write((byte)NLKills);
-                list = Teams[Team.NL];
-                stream.Write((byte)list.Count);
-                for (int i = 0; i < list.Count; i++)
+
+                List<TFFAClient> team1 = Teams[Team.AL];
+                List<TFFAClient> team2 = Teams[Team.NL];
+
+                stream.Write((byte)(team1.Count + team2.Count));
+                for (int i = 0; i < team1.Count; i++)
                 {
-                    stream.Write(list[i].Name);
-                    stream.Write((sbyte)list[i].Kills);
-                    stream.Write((byte)list[i].Deaths);
-                    stream.Write((ushort)list[i].Damage);
+                    var c = team1[i];
+                    stream.Write((byte)c.ID);
+                    stream.Write((byte)c.Kills);
+                    stream.Write((byte)c.Deaths);
+                    stream.Write((ushort)c.Damage);
+                    stream.Write((ushort)c.BaseClient.GetLastPing());
                 }
 
+                for (int i = 0; i < team2.Count; i++)
+                {
+                    var c = team2[i];
+                    stream.Write((byte)c.ID);
+                    stream.Write((byte)c.Kills);
+                    stream.Write((byte)c.Deaths);
+                    stream.Write((ushort)c.Damage);
+                    stream.Write((ushort)c.BaseClient.GetLastPing());
+                }
 
-                for (int i = 0; i < scoreboardClients.Count; i++)
-                    scoreboardClients[i].BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.UNRELIABLE);
+                if (single == null || statUpdateTimer.GetRemainingTicks() < ScoreboardUpdateTime / 4) // 25% time left, just send it to everyone
+                {
+                    for (int i = 0; i < scoreboardClients.Count; i++)
+                        scoreboardClients[i].BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.UNRELIABLE);
+                }
+                else
+                {
+                    single.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.UNRELIABLE);
+                }
             }
         }
 
@@ -177,10 +147,10 @@ namespace GUC.Server.Scripts.TFFA
         {
             NPCInst.sOnHit += OnHit;
 
-            statUpdateTimer = new GUCTimer(10000000, UpdateStats);
+            statUpdateTimer = new GUCTimer(ScoreboardUpdateTime, () => UpdateStats());
             statUpdateTimer.Start();
 
-            respawnTimer = new GUCTimer(10 * TimeSpan.TicksPerSecond, RespawnPlayers);
+            respawnTimer = new GUCTimer(RespawnTime, RespawnPlayers);
             respawnTimer.Start();
 
 
@@ -302,15 +272,11 @@ namespace GUC.Server.Scripts.TFFA
         {
             Log.Logger.Log("End Phase");
             status = TFFAPhase.End;
-            var stream = GameClient.GetMenuMsgStream();
-            stream.Write((byte)MenuMsgID.PhaseMsg);
-            stream.Write((byte)status);
-            TFFAClient.ForEach(client => client.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE));
 
             if (ALKills > NLKills)
             {
                 Teams[Team.NL].ForEach(client => { if (client.Character != null) client.Character.SetHealth(0); });
-                stream = GameClient.GetMenuMsgStream();
+                var stream = GameClient.GetMenuMsgStream();
                 stream.Write((byte)MenuMsgID.WinMsg);
                 stream.Write((byte)Team.AL);
                 TFFAClient.ForEach(client => client.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE));
@@ -319,11 +285,18 @@ namespace GUC.Server.Scripts.TFFA
             else if (NLKills > ALKills)
             {
                 Teams[Team.AL].ForEach(client => { if (client.Character != null) client.Character.SetHealth(0); });
-                stream = GameClient.GetMenuMsgStream();
+                var stream = GameClient.GetMenuMsgStream();
                 stream.Write((byte)MenuMsgID.WinMsg);
                 stream.Write((byte)Team.NL);
                 TFFAClient.ForEach(client => client.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE));
                 Log.Logger.Log("TETRIANDOCH HAT GEWONNEN");
+            }
+            else
+            {
+                var stream = GameClient.GetMenuMsgStream();
+                stream.Write((byte)MenuMsgID.PhaseMsg);
+                stream.Write((byte)status);
+                TFFAClient.ForEach(client => client.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE));
             }
 
             gameTimer.SetInterval(10 * TimeSpan.TicksPerSecond);
@@ -331,8 +304,6 @@ namespace GUC.Server.Scripts.TFFA
             gameTimer.Restart();
         }
 
-        public static List<TFFAClient> teamMenuClients = new List<TFFAClient>();
-        public static List<TFFAClient> classMenuClients = new List<TFFAClient>();
         public static List<TFFAClient> scoreboardClients = new List<TFFAClient>();
 
         #region Respawn
@@ -386,9 +357,7 @@ namespace GUC.Server.Scripts.TFFA
             npc.Fatness = rand.Next(-100, 250) / 100.0f;
 
             npc.ModelScale = new Vec3f(rand.Next(95, 105) / 100.0f, rand.Next(95, 105) / 100.0f, rand.Next(95, 105) / 100.0f);
-
-            npc.CustomName = client.Name;
-
+            
             npc.UseCustoms = true;
 
             ItemInst weapon;
@@ -442,6 +411,7 @@ namespace GUC.Server.Scripts.TFFA
 
             npc.Spawn(WorldInst.Current, spawnPoint.Item1, spawnPoint.Item2);
             client.SetControl(npc);
+            client.SendNPCChanged();
         }
 
         #endregion

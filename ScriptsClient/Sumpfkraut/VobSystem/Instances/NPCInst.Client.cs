@@ -23,7 +23,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 this.BaseInst.gVob.SetAdditionalVisuals(HumBodyMeshs.HUM_BODY_NAKED0.ToString(), (int)CustomBodyTex, 0, CustomHeadMesh.ToString(), (int)CustomHeadTex, 0, -1);
                 this.BaseInst.gVob.Voice = (int)CustomVoice;
                 this.BaseInst.gVob.SetFatness(Fatness);
-                this.BaseInst.gVob.Name.Set(CustomName);
+            }
+
+            // TFFA
+            foreach (TFFA.ClientInfo ci in TFFA.ClientInfo.ClientInfos.Values)
+            {
+                if (ci.CharID == this.ID)
+                    this.BaseInst.gVob.Name.Set(Client.Scripts.TFFA.InputControl.ClientsShown ? string.Format("({0}){1}", ci.ID, ci.Name) : ci.Name);
             }
 
             this.BaseInst.ForEachEquippedItem(i => this.pEquipItem((ItemInst)i.ScriptObject));

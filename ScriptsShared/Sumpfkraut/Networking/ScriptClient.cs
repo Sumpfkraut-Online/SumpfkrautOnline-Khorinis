@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using GUC.Network;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using GUC.WorldObjects;
+using GUC.Types;
+using GUC.Scripts.Sumpfkraut.WorldSystem;
 
 namespace GUC.Scripts.Sumpfkraut.Networking
 {
@@ -12,10 +15,12 @@ namespace GUC.Scripts.Sumpfkraut.Networking
     {
         #region Properties
 
+        public int ID { get { return this.baseClient.ID; } }
+
         GameClient baseClient;
         public GameClient BaseClient { get { return this.baseClient; } }
 
-        public NPCInst Character { get { return (NPCInst)this.baseClient.Character.ScriptObject; } }
+        public NPCInst Character { get { return (NPCInst)this.baseClient.Character?.ScriptObject; } }
         
         #region dank rank
 
@@ -45,12 +50,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking
 
         #endregion
 
-        public void OnDisconnection()
-        {
-
-        }
-
-        public void SetControl(WorldObjects.NPC npc)
+        public void SetControl(NPC npc)
         {
             this.SetControl((NPCInst)npc.ScriptObject);
         }
@@ -60,9 +60,16 @@ namespace GUC.Scripts.Sumpfkraut.Networking
             this.baseClient.SetControl(npc.BaseInst);
         }
 
-        public void SetToSpectator(WorldObjects.World world, Types.Vec3f pos, Types.Vec3f dir)
+        public void SetToSpectator(World world, Vec3f pos, Vec3f dir)
         {
-            throw new NotImplementedException();
+            this.SetToSpectator((WorldInst)world.ScriptObject, pos, dir);
+        }
+
+        partial void pSetToSpectator(WorldInst world, Vec3f pos, Vec3f dir);
+        public void SetToSpectator(WorldInst world, Vec3f pos, Vec3f dir)
+        {
+            this.baseClient.SetToSpectate(world.BaseWorld, pos, dir);
+            pSetToSpectator(world, pos, dir);
         }
 
         #region Read & Write

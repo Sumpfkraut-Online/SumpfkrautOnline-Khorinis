@@ -133,7 +133,7 @@ namespace GUC.WorldObjects
                 this.movement = MoveState.Stand;
                 this.ForEachActiveAni(aa =>
                 {
-                    aa.Timer.Stop();
+                    aa.Timer.Stop(true);
                     aa.Ani = null;
                 });
                 this.hp = 0;

@@ -13,25 +13,45 @@ namespace GUC.Client.Scripts.TFFA
     {
         public static readonly TeamMenu Menu = new TeamMenu();
 
-        public void SetCounts(int tSpec, int tAL, int tNL)
+        public void UpdateCounts()
         {
+            if (!this.isOpen)
+                return;
+
+            bTeamAL.Text = "Team Gomez";
+            bTeamNL.Text = "Tetriandoch";
+            bTeamAL.Enabled = true;
+            bTeamNL.Enabled = true;
+
+            int tAL = 0, tNL = 0, spec = 0;
+
+            foreach (ClientInfo ci in ClientInfo.ClientInfos.Values)
+            {
+                if (ci.Team == Team.AL) tAL++;
+                else if (ci.Team == Team.NL) tNL++;
+                else spec++;
+            }
+
+            bSpec.Text = "Zuschauer: " + spec;
+
+            if (tAL == 0 && tNL == 0)
+                return;
+
             int al = tAL; int nl = tNL;
-            if (TFFAClient.Client.Team == Team.AL)
+            if (TFFAClient.Info.Team == Team.AL)
             {
                 al--;
             }
-            else if (TFFAClient.Client.Team == Team.NL)
+            else if (TFFAClient.Info.Team == Team.NL)
             {
                 nl--;
             }
 
-            bTeamAL.Text = "Team Gomez: " + tAL;
+            bTeamAL.Text += ": " + tAL;
             bTeamAL.Enabled = al <= nl;
 
-            bTeamNL.Text = "Tetriandoch: " + tNL;
+            bTeamNL.Text += ": " + tNL;
             bTeamNL.Enabled = al >= nl;
-
-            bSpec.Text = "Zuschauer: " + tSpec;
         }
 
         MainMenuButton bSpec, bTeamAL, bTeamNL;
@@ -54,11 +74,8 @@ namespace GUC.Client.Scripts.TFFA
             if (this.isOpen)
                 return;
 
-            PacketWriter stream = GameClient.Client.GetMenuMsgStream();
-            stream.Write((byte)MenuMsgID.OpenTeamMenu);
-            GameClient.Client.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.UNRELIABLE);
             base.Open();
-            PhaseInfo.info.Open();
+            UpdateCounts();
         }
 
         public override void Close()
@@ -66,20 +83,16 @@ namespace GUC.Client.Scripts.TFFA
             if (!this.isOpen)
                 return;
 
-            PacketWriter stream = GameClient.Client.GetMenuMsgStream();
-            stream.Write((byte)MenuMsgID.CloseTeamMenu);
-            GameClient.Client.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE);
             base.Close();
-            PhaseInfo.info.Close();
         }
 
         void SelectTeam(Team team)
         {
             Close();
-            if (TFFAClient.Client.Team != team)
+            if (TFFAClient.Info.Team != team)
             {
                 PacketWriter stream = GameClient.Client.GetMenuMsgStream();
-                stream.Write((byte)MenuMsgID.SelectTeam);
+                stream.Write((byte)MenuMsgID.ClientTeam);
                 stream.Write((byte)team);
                 GameClient.Client.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE);
             }

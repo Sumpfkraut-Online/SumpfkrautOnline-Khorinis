@@ -287,7 +287,7 @@ namespace GUC.Server.Network
                     client.SpecWorld.netCells.Remove(client.SpecCell.Coord);
             }
 
-            client.ScriptObject.OnDisconnection();
+            client.Delete();
 
             client.character = null;
 
@@ -295,7 +295,6 @@ namespace GUC.Server.Network
             clientDict.Remove(client.guid.g);
             client.guid.Dispose();
             client.systemAddress.Dispose();
-            client.Delete();
         }
 
         internal static PacketWriter SetupStream(NetworkIDs ID)

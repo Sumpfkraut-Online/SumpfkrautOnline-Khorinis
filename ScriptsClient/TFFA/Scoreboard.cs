@@ -6,79 +6,141 @@ using GUC.Client.GUI;
 using GUC.Network;
 using GUC.Scripts.TFFA;
 using GUC.Scripting;
+using GUC.Types;
 
 namespace GUC.Client.Scripts.TFFA
 {
     class Scoreboard
     {
+        static readonly ColorRGBA LineColor = new ColorRGBA(200, 200, 200);
+
+        class BoardLine
+        {
+            public GUCVisualText name, kills, deaths, damage, ping;
+
+            public ClientInfo Info { get; private set; }
+
+            public BoardLine(GUCVisual vis, int x, int y, bool white = false)
+            {
+                name = vis.CreateText("", x, y);
+                kills = vis.CreateText("", x + 130, y);
+                deaths = vis.CreateText("", x + 170, y);
+                damage = vis.CreateText("", x + 210, y);
+                ping = vis.CreateText("", x + 255, y);
+
+                if (!white)
+                    for (int i = vis.Texts.Count - 5; i < vis.Texts.Count; i++)
+                        vis.Texts[0].SetColor(LineColor);
+            }
+
+            public void Clear()
+            {
+                name.Text = "";
+                kills.Text = "";
+                deaths.Text = "";
+                damage.Text = "";
+                ping.Text = "";
+            }
+
+            public void SetInfo(ClientInfo info)
+            {
+                if (info == null)
+                    return;
+
+                this.Info = info;
+
+                SetName(info);
+                kills.Text = info.Kills.ToString();
+                deaths.Text = info.Deaths.ToString();
+                damage.Text = info.Damage.ToString();
+                ping.Text = info.Ping.ToString();
+            }
+
+            public void SetName(ClientInfo info)
+            {
+                string pn = InputControl.ClientsShown ? string.Format("({0}){1}", info.ID, info.Name) : info.Name;
+                while (GUCView.StringPixelWidth(pn) > 125)
+                    pn = pn.Remove(pn.Length - 1);
+
+                this.name.Text = pn;
+            }
+        }
+
+
         public static readonly Scoreboard Menu = new Scoreboard();
 
         GUCVisual back;
-        int alCount = 4;
-        int nlCount = 4;
-        GUCVisual alPlayers;
-        GUCVisual nlPlayers;
+        List<BoardLine> alPlayers = new List<BoardLine>();
+        List<BoardLine> nlPlayers = new List<BoardLine>();
         GUCVisual timer;
-        GUCVisual winner;
 
-        public void OpenWinner(Team winner)
+        const int nlXOffset = 330, alXOffset = 10, yOffset = 10, yDist = 20;
+
+        public void UpdateStats()
         {
-            Open();
-            openTime = GameTime.Ticks - 97500000L;
-            this.winner.Texts[0].Text = winner == Team.AL ? "!!! TEAM GOMEZ HAT GEWONNEN !!!" : "!!! TETRIANDOCH HAT GEWONNEN !!!";
-            closeTimer.SetInterval(100000000L);
-            closeTimer.Start();
+            int alCounter = 1, nlCounter = 1;
+
+            foreach (ClientInfo ci in ClientInfo.ClientInfos.Values.OrderByDescending(c => c.Kills))
+            {
+                BoardLine line;
+                if (ci.Team == Team.AL)
+                {
+                    if (alCounter >= alPlayers.Count)
+                    {
+                        line = new BoardLine(this.back, alXOffset, yOffset + yDist * alCounter);
+                        alPlayers.Add(line);
+                    }
+                    else
+                    {
+                        line = alPlayers[alCounter];
+                    }
+                    alCounter++;
+                }
+                else if (ci.Team == Team.NL)
+                {
+                    if (nlCounter >= nlPlayers.Count)
+                    {
+                        line = new BoardLine(this.back, nlXOffset, yOffset + yDist * nlCounter);
+                        nlPlayers.Add(line);
+                    }
+                    else
+                    {
+                        line = nlPlayers[nlCounter];
+                    }
+                    nlCounter++;
+                }
+                else
+                {
+                    continue;
+                }
+                line.SetInfo(ci);
+            }
+            
+            for (int i = alCounter + 1; i < alPlayers.Count; i++)
+                alPlayers[i].Clear();
+            for (int i = nlCounter + 1; i < nlPlayers.Count; i++)
+                nlPlayers[i].Clear();
         }
 
-        public void SetTime(int seconds)
+        public void UpdateStats(int seconds, int alKills, int nlKills)
         {
             timer.Texts[0].Text = seconds.ToString();
-            for (int i = 4; i < nlPlayers.Texts.Count; i++)
-                nlPlayers.Texts[i].Text = "";
-            for (int i = 4; i < alPlayers.Texts.Count; i++)
-                alPlayers.Texts[i].Text = "";
-            alCount = 4;
-            nlCount = 4;
-        }
-
-        public void SetKills(int alKills, int nlKills)
-        {
             timer.Texts[1].Text = alKills.ToString();
             timer.Texts[2].Text = nlKills.ToString();
+
+            UpdateStats();
         }
 
-        public void AddPlayer(Team team, string name, int kills, int deaths, int damage)
+        public void UpdateNames()
         {
-            int[] res = GUCView.GetScreenSize();
-            if (team == Team.AL)
+            for (int i = 1; i < alPlayers.Count; i++)
             {
-                if (alCount < alPlayers.Texts.Count)
-                {
-                    string pn = name;
-                    while (GUCView.StringPixelWidth(pn) > 140)
-                        pn = pn.Remove(pn.Length - 1);
-
-                    alPlayers.Texts[alCount++].Text = pn;
-                    alPlayers.Texts[alCount++].Text = kills.ToString();
-                    alPlayers.Texts[alCount++].Text = deaths.ToString();
-                    alPlayers.Texts[alCount++].Text = damage.ToString();
-                }
+                alPlayers[i].SetName(alPlayers[i].Info);
             }
-            else
+            for (int i = 1; i < nlPlayers.Count; i++)
             {
-                if (nlCount < nlPlayers.Texts.Count)
-                {
-                    string pn = name;
-                    while (GUCView.StringPixelWidth(pn) > 140)
-                        pn = pn.Remove(pn.Length - 1);
-
-                    nlPlayers.Texts[nlCount++].Text = pn;
-                    nlPlayers.Texts[nlCount++].Text = kills.ToString();
-                    nlPlayers.Texts[nlCount++].Text = deaths.ToString();
-                    nlPlayers.Texts[nlCount++].Text = damage.ToString();
-                }
+                alPlayers[i].SetName(alPlayers[i].Info);
             }
-
         }
 
         public Scoreboard()
@@ -97,39 +159,13 @@ namespace GUC.Client.Scripts.TFFA
             timer.CreateText("NLKILLS", res[0] / 2 + 150, res[1] / 2 - 260); timer.Texts[2].Format = GUCVisualText.TextFormat.Center; timer.Texts[2].SetColor(new Types.ColorRGBA(200, 200, 255));
             back.AddChild(timer);
 
-            winner = new GUCVisual();
-            winner.CreateTextCenterX("", res[1] / 2 - 290);
-            winner.Font = GUCView.Fonts.Menu;
-            winner.Texts[0].Format = GUCVisualText.TextFormat.Center;
-            back.AddChild(winner);
+            var line = new BoardLine(back, alXOffset, yOffset);
+            line.name.Text = "Name"; line.kills.Text = "K /"; line.deaths.Text = "D"; line.damage.Text = "DMG"; line.ping.Text = "Ping";
+            alPlayers.Add(line);
 
-            alPlayers = new GUCVisual();
-            alPlayers.CreateText("Name", res[0] / 2 - 300, res[1] / 2 - 220); alPlayers.Texts[0].SetColor(new Types.ColorRGBA(200, 200, 200));
-            alPlayers.CreateText("K", res[0] / 2 - 140, res[1] / 2 - 220); alPlayers.Texts[1].SetColor(new Types.ColorRGBA(200, 200, 200));
-            alPlayers.CreateText("D", res[0] / 2 - 100, res[1] / 2 - 220); alPlayers.Texts[2].SetColor(new Types.ColorRGBA(200, 200, 200));
-            alPlayers.CreateText("DMG", res[0] / 2 - 60, res[1] / 2 - 220); alPlayers.Texts[3].SetColor(new Types.ColorRGBA(200, 200, 200));
-            for (int i = 1; i < 20; i++)
-            {
-                alPlayers.CreateText("", res[0] / 2 - 300, res[1] / 2 - 220 + i * GUCView.FontsizeDefault);
-                alPlayers.CreateText("", res[0] / 2 - 140, res[1] / 2 - 220 + i * GUCView.FontsizeDefault);
-                alPlayers.CreateText("", res[0] / 2 - 100, res[1] / 2 - 220 + i * GUCView.FontsizeDefault);
-                alPlayers.CreateText("", res[0] / 2 - 60, res[1] / 2 - 220 + i * GUCView.FontsizeDefault);
-            }
-            back.AddChild(alPlayers);
-
-            nlPlayers = new GUCVisual();
-            nlPlayers.CreateText("Name", res[0] / 2 + 30, res[1] / 2 - 220); nlPlayers.Texts[0].SetColor(new Types.ColorRGBA(200, 200, 200));
-            nlPlayers.CreateText("K", res[0] / 2 + 180, res[1] / 2 - 220); nlPlayers.Texts[1].SetColor(new Types.ColorRGBA(200, 200, 200));
-            nlPlayers.CreateText("D", res[0] / 2 + 220, res[1] / 2 - 220); nlPlayers.Texts[2].SetColor(new Types.ColorRGBA(200, 200, 200));
-            nlPlayers.CreateText("DMG", res[0] / 2 + 260, res[1] / 2 - 220); nlPlayers.Texts[3].SetColor(new Types.ColorRGBA(200, 200, 200));
-            for (int i = 1; i < 20; i++)
-            {
-                nlPlayers.CreateText("", res[0] / 2 + 30, res[1] / 2 - 220 + i * GUCView.FontsizeDefault);
-                nlPlayers.CreateText("", res[0] / 2 + 180, res[1] / 2 - 220 + i * GUCView.FontsizeDefault);
-                nlPlayers.CreateText("", res[0] / 2 + 220, res[1] / 2 - 220 + i * GUCView.FontsizeDefault);
-                nlPlayers.CreateText("", res[0] / 2 + 260, res[1] / 2 - 220 + i * GUCView.FontsizeDefault);
-            }
-            back.AddChild(nlPlayers);
+            line = new BoardLine(back, nlXOffset, yOffset);
+            line.name.Text = "Name"; line.kills.Text = "K /"; line.deaths.Text = "D"; line.damage.Text = "DMG"; line.ping.Text = "Ping";
+            nlPlayers.Add(line);
         }
 
         bool isOpen = false;
@@ -141,7 +177,7 @@ namespace GUC.Client.Scripts.TFFA
                 closeTimer.Stop();
                 return;
             }
-        
+
             if (isOpen)
                 return;
 
@@ -150,7 +186,7 @@ namespace GUC.Client.Scripts.TFFA
             GameClient.Client.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.UNRELIABLE);
             back.Show();
 
-            PhaseInfo.info.Open();
+            StatusMenu.Menu.ScoreShow = true;
 
             openTime = GameTime.Ticks;
             isOpen = true;
@@ -174,9 +210,8 @@ namespace GUC.Client.Scripts.TFFA
             stream.Write((byte)MenuMsgID.CloseScoreboard);
             GameClient.Client.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE);
             back.Hide();
-            winner.Texts[0].Text = "";
-            
-            PhaseInfo.info.Close();
+
+            StatusMenu.Menu.ScoreShow = false;
             isOpen = false;
         }
     }

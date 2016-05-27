@@ -35,7 +35,7 @@ namespace GUC.Client.Scripts.TFFA
             Scoreboard.Menu.Close();
 
             base.Open();
-            bClass.Enabled = TFFAClient.Client != null && TFFAClient.Client.Team != Team.Spec;
+            bClass.Enabled = TFFAClient.Info != null && TFFAClient.Info.Team != Team.Spec;
 
             if (GUC.Scripts.GUCScripts.Ingame)
             {

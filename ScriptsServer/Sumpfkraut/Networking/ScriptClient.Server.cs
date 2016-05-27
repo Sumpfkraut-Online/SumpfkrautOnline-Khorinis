@@ -7,14 +7,25 @@ using GUC.Log;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
-using GUC.Scripts.Sumpfkraut.Visuals;
-using GUC.Enumeration;
 
 namespace GUC.Scripts.Sumpfkraut.Networking
 {
     public partial class ScriptClient : ScriptObject, GameClient.IScriptClient
     {
-        public void OnReadMenuMsg(PacketReader stream)
+        public static int GetCount()
+        {
+            return GameClient.GetCount();
+        }
+
+        public virtual void OnConnection()
+        {
+        }
+
+        public virtual void OnDisconnection()
+        {
+        }
+
+        public virtual void OnReadMenuMsg(PacketReader stream)
         {
             Logger.Log("Login!");
 
@@ -40,7 +51,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking
             npc.Spawn(WorldInst.Current);
         }
 
-        public void OnReadIngameMsg(PacketReader stream)
+        public virtual void OnReadIngameMsg(PacketReader stream)
         {
         }
     }

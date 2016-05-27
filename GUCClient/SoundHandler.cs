@@ -8,21 +8,21 @@ namespace GUC.Client
 {
     public static class SoundHandler
     {
-        static bool playFightMusic = false;
-        public static void SetPlayFightMusic(bool play)
+        public enum MusicType
         {
-            if (play != playFightMusic)
-            {
-                playFightMusic = play;
-                if (playFightMusic)
-                {
-                    Process.Write(new byte[] { 0xB8, 0x02, 0x00, 0x00, 0x00, 0xC3 }, 0x6C2D10);
-                }
-                else
-                {
-                    Process.Write(new byte[] { 0xB8, 0x00, 0x00, 0x00, 0x00, 0xC3 }, 0x6C2D10);
-                }
-            }
+            Normal,
+            Threat,
+            Fight
+        }
+
+        static MusicType type = MusicType.Normal;
+        public static void PlayMusicType(MusicType musicType)
+        {
+            if (musicType == type)
+                return;
+
+            musicType = type;
+            Process.Write(new byte[] { 0xB8, (byte)musicType, 0x00, 0x00, 0x00, 0xC3 }, 0x6C2D10);
         }
     }
 }
