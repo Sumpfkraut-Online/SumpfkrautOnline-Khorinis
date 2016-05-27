@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using WinApi;
+using GUC.Log;
 
 namespace GUC.Client
 {
@@ -15,14 +16,16 @@ namespace GUC.Client
             Fight
         }
 
-        static MusicType type = MusicType.Normal;
-        public static void PlayMusicType(MusicType musicType)
+        static MusicType currentMusicType = MusicType.Normal;
+        public static void PlayMusicType(MusicType type)
         {
-            if (musicType == type)
+            if (currentMusicType == type)
                 return;
 
-            musicType = type;
-            Process.Write(new byte[] { 0xB8, (byte)musicType, 0x00, 0x00, 0x00, 0xC3 }, 0x6C2D10);
+            currentMusicType = type;
+            Process.Write(new byte[] { 0xB8, (byte)type, 0x00, 0x00, 0x00, 0xC3 }, 0x6C2D10);
+
+            Logger.Log("SoundHandler: Player music type " + currentMusicType);
         }
     }
 }
