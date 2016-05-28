@@ -17,15 +17,20 @@ namespace GUC.Client
         }
 
         static MusicType currentMusicType = MusicType.Normal;
-        public static void PlayMusicType(MusicType type)
+
+        public static MusicType CurrentMusicType
         {
-            if (currentMusicType == type)
-                return;
+            get { return SoundHandler.currentMusicType; }
+            set
+            {
+                if (SoundHandler.currentMusicType == value)
+                    return;
 
-            currentMusicType = type;
-            Process.Write(new byte[] { 0xB8, (byte)type, 0x00, 0x00, 0x00, 0xC3 }, 0x6C2D10);
+                SoundHandler.currentMusicType = value;
+                Process.Write(new byte[] { 0xB8, (byte)value, 0x00, 0x00, 0x00, 0xC3 }, 0x6C2D10);
 
-            Logger.Log("SoundHandler: Player music type " + currentMusicType);
+                Logger.Log("SoundHandler: Play music type " + value);
+            }
         }
     }
 }

@@ -13,6 +13,7 @@ namespace GUC.Client.Scripts.TFFA
     class Scoreboard
     {
         static readonly ColorRGBA LineColor = new ColorRGBA(200, 200, 200);
+        static readonly ColorRGBA PlayerColor = new ColorRGBA(250, 255, 250);
 
         class BoardLine
         {
@@ -30,7 +31,7 @@ namespace GUC.Client.Scripts.TFFA
 
                 if (!white)
                     for (int i = vis.Texts.Count - 5; i < vis.Texts.Count; i++)
-                        vis.Texts[0].SetColor(LineColor);
+                        vis.Texts[i].SetColor(LineColor);
             }
 
             public void Clear()
@@ -54,6 +55,23 @@ namespace GUC.Client.Scripts.TFFA
                 deaths.Text = info.Deaths.ToString();
                 damage.Text = info.Damage.ToString();
                 ping.Text = info.Ping.ToString();
+
+                if (info == TFFAClient.Info)
+                {
+                    name.SetColor(PlayerColor);
+                    kills.SetColor(PlayerColor);
+                    deaths.SetColor(PlayerColor);
+                    damage.SetColor(PlayerColor);
+                    ping.SetColor(PlayerColor);
+                }
+                else
+                {
+                    name.SetColor(LineColor);
+                    kills.SetColor(LineColor);
+                    deaths.SetColor(LineColor);
+                    damage.SetColor(LineColor);
+                    ping.SetColor(LineColor);
+                }
             }
 
             public void SetName(ClientInfo info)
@@ -159,11 +177,11 @@ namespace GUC.Client.Scripts.TFFA
             timer.CreateText("NLKILLS", res[0] / 2 + 150, res[1] / 2 - 260); timer.Texts[2].Format = GUCVisualText.TextFormat.Center; timer.Texts[2].SetColor(new Types.ColorRGBA(200, 200, 255));
             back.AddChild(timer);
 
-            var line = new BoardLine(back, alXOffset, yOffset);
+            var line = new BoardLine(back, alXOffset, yOffset, true);
             line.name.Text = "Name"; line.kills.Text = "K /"; line.deaths.Text = "D"; line.damage.Text = "DMG"; line.ping.Text = "Ping";
             alPlayers.Add(line);
 
-            line = new BoardLine(back, nlXOffset, yOffset);
+            line = new BoardLine(back, nlXOffset, yOffset, true);
             line.name.Text = "Name"; line.kills.Text = "K /"; line.deaths.Text = "D"; line.damage.Text = "DMG"; line.ping.Text = "Ping";
             nlPlayers.Add(line);
         }

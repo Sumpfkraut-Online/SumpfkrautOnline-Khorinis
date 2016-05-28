@@ -98,6 +98,16 @@ namespace Gothic.Objects
             Process.THISCALL<NullReturnCall>(Address, 0x50FD20);
         }
 
+        public void Begin(zCVob vob)
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x50E750, vob);
+        }
+
+        public void End()
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x50E8F0);
+        }
+
         public bool CheckEnoughSpaceMoveForward(bool arg)
         {
             return Process.THISCALL<BoolArg>(Address, 0x511700, (BoolArg)arg);
@@ -150,6 +160,18 @@ namespace Gothic.Objects
         {
             get { return Process.ReadFloat(Address + VarOffsets.stepHeight); }
             set { Process.Write(value, Address + VarOffsets.stepHeight); }
+        }
+
+        public float MaxGroundAngleWalk
+        {
+            get { return Process.ReadFloat(Address + 0x4C); }
+            set { Process.Write(value, Address + 0x4C); }
+        }
+
+        public float MaxGroundAngleSlide2
+        {
+            get { return Process.ReadFloat(Address + 0x54); }
+            set { Process.Write(value, Address + 0x54); }
         }
     }
 }

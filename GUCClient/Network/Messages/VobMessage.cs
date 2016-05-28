@@ -12,7 +12,7 @@ namespace GUC.Client.Network.Messages
 {
     static class VobMessage
     {
-        const float MinPositionDistance = 10.0f;
+        const float MinPositionDistance = 12.0f;
         const float MinDirectionDifference = 0.01f;
 
         public static void ReadPosDirMessage(PacketReader stream)

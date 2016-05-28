@@ -72,7 +72,7 @@ namespace GUC.Client
 
             return Assembly.LoadFrom(projectPath + name + ".dll");
         }
-        
+
         static bool mained = false;
         public static int Main(string message)
         {
@@ -80,7 +80,7 @@ namespace GUC.Client
             {
                 if (mained) return 0;
                 mained = true;
-                
+
                 SetupProject();
 
                 SplashScreen.SetUpHooks();
@@ -137,6 +137,7 @@ namespace GUC.Client
 
                 // Load Scripts
                 Scripting.ScriptManager.StartScripts(Program.ProjectPath + "Scripts\\ClientScripts.dll");
+                
             }
             catch (Exception e)
             {

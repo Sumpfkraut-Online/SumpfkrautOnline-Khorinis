@@ -389,7 +389,7 @@ namespace WinApi
             return 0;
         }
 
-        public static Hook AddHook(HookCallback callback, int address, uint length, uint argCount)
+        public static Hook AddHook(HookCallback callback, int address, uint length, uint argCount = 0)
         {
             if (callback == null)
                 throw new ArgumentNullException("Callback is null!");

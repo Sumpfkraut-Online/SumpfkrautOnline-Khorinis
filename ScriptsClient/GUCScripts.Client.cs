@@ -73,7 +73,7 @@ namespace GUC.Scripts
                 if (fightMusicEnabled)
                 {
                     fightMusicEnabled = false;
-                    SoundHandler.PlayMusicType(SoundHandler.MusicType.Normal);
+                    SoundHandler.CurrentMusicType = SoundHandler.MusicType.Normal;
                 }
             }
             else
@@ -107,23 +107,20 @@ namespace GUC.Scripts
 
                 if (fightMusicEnabled)
                 {
-                    if (nearestEnemy > 1000)
+                    // enemy is too far away or hero is dead and no teammates are nearby
+                    if (nearestEnemy > 1000 || hero.BaseInst.IsDead && nearestTeammate > 1000) 
                     {
                         fightMusicEnabled = false;
-                        SoundHandler.PlayMusicType(SoundHandler.MusicType.Normal);
-                    }
-                    else if (hero.BaseInst.IsDead && nearestTeammate > 1000)
-                    {
-                        fightMusicEnabled = false;
-                        SoundHandler.PlayMusicType(SoundHandler.MusicType.Normal);
+                        SoundHandler.CurrentMusicType = SoundHandler.MusicType.Normal;
                     }
                 }
                 else
                 {
-                    if (nearestEnemy < 400)
+                    // enemy is close enough and hero is not dead or teammates are nearby
+                    if (nearestEnemy < 500 && (!hero.BaseInst.IsDead || nearestTeammate < 1000))
                     {
                         fightMusicEnabled = true;
-                        SoundHandler.PlayMusicType(SoundHandler.MusicType.Fight);
+                        SoundHandler.CurrentMusicType = SoundHandler.MusicType.Fight;
                     }
                 }
             }

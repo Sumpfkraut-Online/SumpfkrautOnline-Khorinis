@@ -12,6 +12,7 @@ namespace Gothic.Objects
         new public abstract class VarOffsets : zCVob.VarOffsets
         {
             public const int guild = 0x0230,
+            trueGuild = 0x766,
             hp_current = 0x1B8,
             hp_max = 0x1BC,
             mp_current = 0x1C0,
@@ -537,6 +538,18 @@ namespace Gothic.Objects
         {
             return Process.THISCALL<BoolArg>(Address, 0x7418E0, vob);
         }
+        
+        public int Guild
+        {
+            get { return Process.ReadInt(Address + VarOffsets.guild); }
+            set { Process.Write(value, Address + VarOffsets.guild); }
+        }
+
+        public int TrueGuild
+        {
+            get { return Process.ReadInt(Address + VarOffsets.trueGuild); }
+            set { Process.Write(value, Address + VarOffsets.trueGuild); }
+        }
 
         /*
         public static oCNpc StealNPC(Process process)
@@ -657,12 +670,6 @@ namespace Gothic.Objects
         {
             get { return Process.ReadInt(Address + (int)Offsets.flags); }
             set { Process.Write(value, Address + (int)Offsets.flags); }
-        }
-
-        public int Guild
-        {
-            get { return Process.ReadInt(Address + (int)Offsets.guild); }
-            set { Process.Write(value, Address + (int)Offsets.guild); }
         }
 
         public int WeaponMode
