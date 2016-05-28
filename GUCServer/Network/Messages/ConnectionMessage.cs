@@ -73,9 +73,6 @@ namespace GUC.Server.Network.Messages
                 }
 
                 client.Send(strm, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, '\0');
-
-                using (var fs = new System.IO.FileStream("dynamics", System.IO.FileMode.Create))
-                    fs.Write(strm.GetData(), 0, strm.GetLength());
             }
         }
     }

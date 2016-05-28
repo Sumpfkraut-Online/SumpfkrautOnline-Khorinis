@@ -15,14 +15,31 @@ namespace GUC.Client.Scripts.TFFA
 
         MainMenuButton bLight, bHeavy;
 
-        public void SetCounts(int tLight, int tHeavy)
+        public void UpdateCounts()
         {
-            SetTeam(TFFAClient.Client.Team);
+            if (!this.isOpen)
+                return;
+
+            SetTeam(TFFAClient.Info.Team);
+
+            int tLight = 0, tHeavy = 0;
+            foreach (ClientInfo ci in ClientInfo.ClientInfos.Values)
+            {
+                if (ci.Team == TFFAClient.Info.Team)
+                {
+                    if (ci.Class == PlayerClass.Light) tLight++;
+                    else if (ci.Class == PlayerClass.Heavy) tHeavy++;
+                }
+            }
+
+            if (tLight == 0 && tHeavy == 0)
+                return;
+
             bLight.Text += ": " + tLight;
             bHeavy.Text += ": " + tHeavy;
         }
 
-        void SetTeam(Team team)
+        public void SetTeam(Team team)
         {
             if (team == Team.AL)
             {
@@ -52,15 +69,11 @@ namespace GUC.Client.Scripts.TFFA
             if (this.isOpen)
                 return;
 
-            if (TFFAClient.Client.Team == Team.Spec)
+            if (TFFAClient.Info.Team == Team.Spec)
                 return;
 
-            PacketWriter stream = GameClient.Client.GetMenuMsgStream();
-            stream.Write((byte)MenuMsgID.OpenClassMenu);
-            GameClient.Client.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.UNRELIABLE);
             base.Open();
-            SetTeam(TFFAClient.Client.Team);
-            PhaseInfo.info.Open();
+            UpdateCounts();
         }
 
         public override void Close()
@@ -68,20 +81,16 @@ namespace GUC.Client.Scripts.TFFA
             if (!this.isOpen)
                 return;
 
-            PacketWriter stream = GameClient.Client.GetMenuMsgStream();
-            stream.Write((byte)MenuMsgID.CloseClassMenu);
-            GameClient.Client.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE);
             base.Close();
-            PhaseInfo.info.Close();
         }
 
         void SelectClass(PlayerClass c)
         {
-            if (TFFAClient.Client.Class == c)
+            if (TFFAClient.Info.Class == c)
                 return;
 
             PacketWriter stream = GameClient.Client.GetMenuMsgStream();
-            stream.Write((byte)MenuMsgID.SelectClass);
+            stream.Write((byte)MenuMsgID.ClientClass);
             stream.Write((byte)c);
             GameClient.Client.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE);
             Close();

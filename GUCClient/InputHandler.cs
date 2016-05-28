@@ -33,7 +33,6 @@ namespace GUC.Client
             },
             { VirtualKeys.F6, () =>
                 {
-                    GC.Collect();
                 }
             }
         };

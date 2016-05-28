@@ -34,6 +34,7 @@ namespace GUC.Network
             cam.SetAI(specCam);
             cam.SetPositionWorld(pos.ToArray());
             this.isSpectating = true;
+            this.character = null;
         }
 
         oCAICamera specCam = oCAICamera.Create();
@@ -593,15 +594,14 @@ namespace GUC.Network
                         devInfo.Texts[4].Text = "Dir: " + new Vec3f(oCGame.GetCameraVob().TrafoObjToWorld.Direction);
                     }
                     devInfo.Texts[5].Text = "Weather: " + World.current.SkyCtrl.CurrentWeight + " " + World.current.Clock.Time.ToString(false);
+
+                    if (character != null)
+                    {
+                        devInfo.Texts[7].Text = character.Movement.ToString();
+                        devInfo.Texts[8].Text = character.EnvState.ToString();
+                    }
                 }
             }
-
-            if (World.Current != null && character != null)
-            {
-                devInfo.Texts[6].Text = character.Movement.ToString();
-                devInfo.Texts[7].Text = character.EnvState.ToString();
-            }
-
             devInfo.Show();
         }
 

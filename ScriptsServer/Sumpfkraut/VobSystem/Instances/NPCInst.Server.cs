@@ -236,20 +236,21 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 this.StartAnimation(anim, () => this.canCombo = true);
                 this.canCombo = false;
             }
-            else if (this.IsInAni())
-            {
-                return;
-            }
             else if (job.IsJump)
             {
+                if (GetActiveAniFromLayerID(anim.Layer) != null)
+                    return;
+
                 this.StartAniJump(anim, 50, 300);
             }
         }
 
         public void OnCmdAniStart(Animations.Animation ani, object[] netArgs)
         {
-            ScriptAni a = (ScriptAni)ani.ScriptObject;
+            if (GetActiveAniFromLayerID(ani.LayerID) != null)
+                return;
 
+            ScriptAni a = (ScriptAni)ani.ScriptObject;
             if (a.AniJob.IsClimbing)
             {
                 this.StartAniClimb(a, (WorldObjects.NPC.ClimbingLedge)netArgs[0]);

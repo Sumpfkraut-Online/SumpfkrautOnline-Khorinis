@@ -30,16 +30,19 @@ namespace GUC.Scripts.TFFA
 
     public enum MenuMsgID
     {
-        OpenTeamMenu,
-        CloseTeamMenu,
-        OpenClassMenu,
-        CloseClassMenu,
-        SelectTeam,
-        SelectClass,
-        SetName,
-        OpenScoreboard,
-        CloseScoreboard,
+        ClientInfoGroup,
+        ClientConnect,
+        ClientDisconnect,
+        
+        ClientTeam,
+        ClientClass,
+        ClientName,
+        ClientNPC,
+
+        PhaseMsg,
         WinMsg,
-        PhaseMsg
+
+        OpenScoreboard,
+        CloseScoreboard
     }
 }

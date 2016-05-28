@@ -86,6 +86,9 @@ namespace GUC.Client.Scripts.TFFA
 
             if (key == VirtualKeys.Menu) // JUMPING
             {
+                if (Hero.GetClimbAni() != null || Hero.GetJumpAni() != null)
+                    return;
+
                 var ledge = Hero.BaseInst.DetectClimbingLedge();
                 if (ledge != null)
                 {
@@ -390,16 +393,22 @@ namespace GUC.Client.Scripts.TFFA
             if (clientsShown)
                 return;
             clientsShown = true;
+
+            Scoreboard.Menu.UpdateNames();
             clientView.Show();
 
-            WorldObjects.World.Current.ForEachVob(v =>
+            // Set gothic names
+            foreach (ClientInfo ci in ClientInfo.ClientInfos.Values)
             {
-                if (v != TFFAClient.Client.Character?.BaseInst && v is WorldObjects.NPC)
+                if (ci == TFFAClient.Info || ci.Team == Team.Spec)
+                    continue;
+
+                WorldObjects.NPC npc;
+                if (WorldObjects.World.Current.TryGetVob(ci.CharID, out npc))
                 {
-                    var npc = (NPCInst)v.ScriptObject;
-                    npc.BaseInst.gVob.Name.Set("(" + npc.visibleClientID + ") " + npc.CustomName);
+                    npc.gVob.Name.Set(string.Format("({0}){1}", ci.ID, ci.Name));
                 }
-            });
+            }
         }
 
         static void HideClientIDs()
@@ -407,16 +416,22 @@ namespace GUC.Client.Scripts.TFFA
             if (!clientsShown)
                 return;
             clientsShown = false;
+
+            Scoreboard.Menu.UpdateNames();
             clientView.Hide();
 
-            WorldObjects.World.Current.ForEachVob(v =>
+            // Set gothic names
+            foreach (ClientInfo ci in ClientInfo.ClientInfos.Values)
             {
-                if (v != TFFAClient.Client.Character?.BaseInst && v is WorldObjects.NPC)
+                if (ci == TFFAClient.Info || ci.Team == Team.Spec)
+                    continue;
+
+                WorldObjects.NPC npc;
+                if (WorldObjects.World.Current.TryGetVob(ci.CharID, out npc))
                 {
-                    var npc = (NPCInst)v.ScriptObject;
-                    npc.BaseInst.gVob.Name.Set(npc.CustomName);
+                    npc.gVob.Name.Set(ci.Name);
                 }
-            });
+            }
         }
 
 
@@ -426,17 +441,23 @@ namespace GUC.Client.Scripts.TFFA
             if (!clientsShown)
                 return;
 
-            int i = 0;
+            var gHero = TFFAClient.Client.Character?.BaseInst.gVob;
 
-            var hero = TFFAClient.Client.Character?.BaseInst;
-            WorldObjects.World.Current.ForEachVob(v =>
+            int i = 0;
+            foreach(ClientInfo ci in ClientInfo.ClientInfos.Values)
             {
-                if (v is WorldObjects.NPC)
+                if (ci == TFFAClient.Info || ci.Team == Team.Spec)
+                    continue;
+
+                WorldObjects.NPC npc;
+                if (WorldObjects.World.Current.TryGetVob(ci.CharID, out npc))
                 {
-                    if (hero == null || (v != hero && v.gVob.Address != hero.gVob.FocusVob.Address && hero.gVob.FreeLineOfSight(v.gVob)))
+                    var gNpc = npc.gVob;
+
+                    if (gHero == null || (gNpc.Address != gHero.FocusVob.Address && gHero.FreeLineOfSight(gNpc)))
                     {
                         Client.GUI.GUCVisualText text;
-                        if (i == clientView.Texts.Count)
+                        if (i >= clientView.Texts.Count)
                         {
                             text = clientView.CreateText("", 0, 0, true);
                             text.Format = Client.GUI.GUCVisualText.TextFormat.Center;
@@ -446,15 +467,14 @@ namespace GUC.Client.Scripts.TFFA
                             text = clientView.Texts[i++];
                         }
 
-                        Vec3f pos = v.GetPosition();
+                        Vec3f pos = (Vec3f)gNpc.Position;
                         pos.Y += 100;
 
                         text.Set3DPos(pos);
-                        var npc = (NPCInst)v.ScriptObject;
-                        text.Text = "(" + npc.visibleClientID + ") " + npc.CustomName;
+                        text.Text = string.Format("({0}){1}", ci.ID, ci.Name);
                     }
                 }
-            });
+            }
 
             for (; i < clientView.Texts.Count; i++)
             {

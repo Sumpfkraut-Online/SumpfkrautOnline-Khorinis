@@ -136,7 +136,7 @@
     <Compile Include="TFFA\InputControl.cs" />
     <Compile Include="TFFA\MainMenu.cs" />
     <Compile Include="TFFA\NameMenu.cs" />
-    <Compile Include="TFFA\PhaseInfo.cs" />
+    <Compile Include="TFFA\StatusMenu.cs" />
     <Compile Include="TFFA\Scoreboard.cs" />
     <Compile Include="TFFA\TeamMenu.cs" />
     <Compile Include="Sumpfkraut\Menus\PlayerInventory.cs" />
@@ -154,6 +154,7 @@
     <Compile Include="Sumpfkraut\VobSystem\Instances\VobInst.Client.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldInst.Client.cs" />
     <Compile Include="TFFA\TFFAClient.Client.cs" />
+    <Compile Include="TFFA\ClientInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GUCClient\GUCClient.csproj">

@@ -7,8 +7,12 @@ using GUC.Server.Scripts.TFFA;
 
 namespace GUC.Scripts.TFFA
 {
-    partial class TFFAClient : GameClient.IScriptClient
+    partial class TFFAClient
     {
+        public PlayerClass Class = PlayerClass.None;
+        public Team Team = Team.Spec;
+        public string Name = "Spieler";
+
         public int Kills = 0;
         public int Deaths = 0;
         public int Damage = 0;
@@ -18,51 +22,34 @@ namespace GUC.Scripts.TFFA
             GameClient.ForEach(gc => action((TFFAClient)gc.ScriptObject));
         }
 
-        partial void pConstruct()
+        public override void OnConnection()
         {
             TFFAGame.AddToTeam(this, Team.Spec, true);
-            var stream = GameClient.GetMenuMsgStream();
-            stream.Write((byte)MenuMsgID.PhaseMsg);
-            stream.Write((byte)TFFAGame.Status);
-            this.baseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE);
+            this.SendClientInfosToThis();
+            this.SendThisClientInfo();
         }
 
-        public void OnDisconnection()
+        public override void OnDisconnection()
         {
-            TFFAGame.RemoveFromTeam(this);
-            TFFAGame.teamMenuClients.Remove(this);
-            TFFAGame.classMenuClients.Remove(this);
+            this.SendDisconnect();
             TFFAGame.scoreboardClients.Remove(this);
+            TFFAGame.RemoveFromTeam(this);
             TFFAGame.Kill(this);
         }
 
-        public void OnReadMenuMsg(PacketReader stream)
+        public override void OnReadMenuMsg(PacketReader stream)
         {
             MenuMsgID id = (MenuMsgID)stream.ReadByte();
             switch (id)
             {
-                case MenuMsgID.OpenTeamMenu:
-                    TFFAGame.teamMenuClients.Add(this);
-                    TFFAGame.UpdateStats();
-                    break;
-                case MenuMsgID.CloseTeamMenu:
-                    TFFAGame.teamMenuClients.Remove(this);
-                    break;
-                case MenuMsgID.OpenClassMenu:
-                    TFFAGame.classMenuClients.Add(this);
-                    TFFAGame.UpdateStats();
-                    break;
-                case MenuMsgID.CloseClassMenu:
-                    TFFAGame.classMenuClients.Remove(this);
-                    break;
                 case MenuMsgID.OpenScoreboard:
                     TFFAGame.scoreboardClients.Add(this);
-                    TFFAGame.UpdateStats();
+                    TFFAGame.UpdateStats(this);
                     break;
                 case MenuMsgID.CloseScoreboard:
                     TFFAGame.scoreboardClients.Remove(this);
                     break;
-                case MenuMsgID.SelectTeam:
+                case MenuMsgID.ClientTeam:
                     Team team = (Team)stream.ReadByte();
                     if (team != this.Team)
                     {
@@ -85,26 +72,99 @@ namespace GUC.Scripts.TFFA
                             {
                                 if (nlCount > alCount)
                                     return;
-                            }     
+                            }
                         }
 
                         TFFAGame.AddToTeam(this, team);
                     }
                     break;
-                case MenuMsgID.SelectClass:
+                case MenuMsgID.ClientClass:
                     TFFAGame.SelectClass(this, (PlayerClass)stream.ReadByte());
                     break;
-                case MenuMsgID.SetName:
+                case MenuMsgID.ClientName:
                     string newName = stream.ReadString();
                     if (!string.IsNullOrWhiteSpace(newName))
                         this.Name = newName;
+                    this.SendNameChanged();
                     break;
             }
 
         }
 
-        public void OnReadIngameMsg(PacketReader stream)
+        public override void OnReadIngameMsg(PacketReader stream)
         {
+        }
+
+        void WriteClientSteam(PacketWriter stream)
+        {
+            stream.Write((byte)this.ID);
+            stream.Write((byte)this.Team);
+            stream.Write((byte)this.Class);
+            stream.Write(this.Character == null ? (ushort)0 : (ushort)this.Character.ID);
+            stream.Write(this.Name);
+        }
+
+        void SendThisClientInfo()
+        {
+            PacketWriter stream = GameClient.GetMenuMsgStream();
+            stream.Write((byte)MenuMsgID.ClientConnect);
+            this.WriteClientSteam(stream);
+            TFFAClient.ForEach(c => { if (c != this) c.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE_ORDERED); });
+        }
+
+        void SendClientInfosToThis()
+        {
+            PacketWriter stream = GameClient.GetMenuMsgStream();
+            stream.Write((byte)MenuMsgID.ClientInfoGroup);
+            stream.Write((byte)this.ID);
+            stream.Write((byte)TFFAGame.Status);
+            stream.Write((byte)TFFAClient.GetCount());
+            TFFAClient.ForEach(c => c.WriteClientSteam(stream));
+            this.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE_ORDERED);
+        }
+
+        void SendDisconnect()
+        {
+            PacketWriter stream = GameClient.GetMenuMsgStream();
+            stream.Write((byte)MenuMsgID.ClientDisconnect);
+            stream.Write((byte)this.ID);
+            TFFAClient.ForEach(c => c.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE_ORDERED));
+        }
+
+        public void SendTeamChanged()
+        {
+            PacketWriter stream = GameClient.GetMenuMsgStream();
+            stream.Write((byte)MenuMsgID.ClientTeam);
+            stream.Write((byte)this.ID);
+            stream.Write((byte)this.Team);
+            TFFAClient.ForEach(c => c.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE_ORDERED));
+        }
+
+        public void SendClassChanged()
+        {
+            PacketWriter stream = GameClient.GetMenuMsgStream();
+            stream.Write((byte)MenuMsgID.ClientClass);
+            stream.Write((byte)this.ID);
+            stream.Write((byte)this.Class);
+            TFFAClient.ForEach(c => c.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE_ORDERED));
+        }
+
+        public void SendNameChanged()
+        {
+            PacketWriter stream = GameClient.GetMenuMsgStream();
+            stream.Write((byte)MenuMsgID.ClientName);
+            stream.Write((byte)this.ID);
+            stream.Write(this.Name);
+            TFFAClient.ForEach(c => c.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE_ORDERED));
+        }
+
+        public void SendNPCChanged()
+        {
+            PacketWriter stream = GameClient.GetMenuMsgStream();
+            stream.Write((byte)MenuMsgID.ClientNPC);
+            stream.Write((byte)this.ID);
+            stream.Write((ushort)this.Character.ID);
+            TFFAClient.ForEach(c => c.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE_ORDERED));
         }
     }
 }

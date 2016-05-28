@@ -3,25 +3,33 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using WinApi;
+using GUC.Log;
 
 namespace GUC.Client
 {
     public static class SoundHandler
     {
-        static bool playFightMusic = false;
-        public static void SetPlayFightMusic(bool play)
+        public enum MusicType
         {
-            if (play != playFightMusic)
+            Normal,
+            Threat,
+            Fight
+        }
+
+        static MusicType currentMusicType = MusicType.Normal;
+
+        public static MusicType CurrentMusicType
+        {
+            get { return SoundHandler.currentMusicType; }
+            set
             {
-                playFightMusic = play;
-                if (playFightMusic)
-                {
-                    Process.Write(new byte[] { 0xB8, 0x02, 0x00, 0x00, 0x00, 0xC3 }, 0x6C2D10);
-                }
-                else
-                {
-                    Process.Write(new byte[] { 0xB8, 0x00, 0x00, 0x00, 0x00, 0xC3 }, 0x6C2D10);
-                }
+                if (SoundHandler.currentMusicType == value)
+                    return;
+
+                SoundHandler.currentMusicType = value;
+                Process.Write(new byte[] { 0xB8, (byte)value, 0x00, 0x00, 0x00, 0xC3 }, 0x6C2D10);
+
+                Logger.Log("SoundHandler: Play music type " + value);
             }
         }
     }

@@ -64,6 +64,7 @@ namespace Gothic.Objects
             SetHeadingYLocal = 0x61C1B0,
             ResetXZRotationsWorld = 0x0061C090,
             BeginMovement = 0x0061DA80,
+            EndMovement = 0x0061E0D0,
             RotateWorld = 0x0061B520,
             RotateWorldX = 0x0061B800,
             RotateWorldZ = 0x0061B860,
@@ -271,6 +272,11 @@ namespace Gothic.Objects
         public void BeginMovement()
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.BeginMovement);
+        }
+
+        public void EndMovement()
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.EndMovement, (IntArg)0);
         }
 
         public void ResetRotationsLocal()

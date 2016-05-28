@@ -8,6 +8,7 @@ using GUC.Scripting;
 using System.Reflection;
 using System.IO;
 using GUC.Client.Scripts.Sumpfkraut.Menus;
+using GUC.Client;
 
 namespace GUC.Scripts
 {
@@ -37,6 +38,7 @@ namespace GUC.Scripts
         {
             GUCMenu.UpdateMenus(ticks);
             Client.Scripts.TFFA.InputControl.Update(ticks);
+            CheckMusic();
         }
 
         public void StartOutgame()
@@ -44,7 +46,7 @@ namespace GUC.Scripts
             WinApi.Process.Write(new byte[] { 0xE9, 0x99, 0x04, 0x00, 0x00 }, 0x0067836C); // always do T_GOTHIT instead of T_STUMBLE/B when getting hit
 
             Client.Scripts.TFFA.InputControl.Init();
-            //Client.Scripts.TFFA.MainMenu.Menu.Open();
+            Client.Scripts.TFFA.MainMenu.Menu.Open();
             Logger.Log("Outgame started.");
         }
 
@@ -55,6 +57,73 @@ namespace GUC.Scripts
             Gothic.Objects.oCNpcFocus.SetFocusMode(1);
             Ingame = true;
             Logger.Log("Ingame started.");
+        }
+
+        bool fightMusicEnabled = false;
+        void CheckMusic()
+        {
+            if (!Ingame || TFFA.TFFAClient.Info == null)
+                return;
+
+            var heroTeam = TFFA.TFFAClient.Info.Team;
+            var hero = TFFA.TFFAClient.Client.Character;
+
+            if (TFFA.TFFAClient.Status != TFFA.TFFAPhase.Fight || heroTeam == TFFA.Team.Spec || hero == null)
+            {
+                if (fightMusicEnabled)
+                {
+                    fightMusicEnabled = false;
+                    SoundHandler.CurrentMusicType = SoundHandler.MusicType.Normal;
+                }
+            }
+            else
+            {
+                var gHero = hero.BaseInst.gVob;
+                var heroPos = hero.BaseInst.GetPosition();
+
+                float nearestEnemy = float.MaxValue;
+                float nearestTeammate = float.MaxValue;
+                foreach (TFFA.ClientInfo ci in TFFA.ClientInfo.ClientInfos.Values)
+                {
+                    if (ci.Team != TFFA.Team.Spec)
+                    {
+                        WorldObjects.NPC npc;
+                        if (WorldObjects.World.Current.TryGetVob(ci.CharID, out npc) && !npc.IsDead)
+                        {
+                            float distance = npc.GetPosition().GetDistance(heroPos);
+                            if (ci.Team == heroTeam)
+                            {
+                                if (distance < nearestTeammate)
+                                    nearestTeammate = distance;
+                            }
+                            else if (npc.gVob.FreeLineOfSight(gHero))
+                            {
+                                if (distance < nearestEnemy)
+                                    nearestEnemy = distance;
+                            }
+                        }
+                    }
+                }
+
+                if (fightMusicEnabled)
+                {
+                    // enemy is too far away or hero is dead and no teammates are nearby
+                    if (nearestEnemy > 1000 || hero.BaseInst.IsDead && nearestTeammate > 1000) 
+                    {
+                        fightMusicEnabled = false;
+                        SoundHandler.CurrentMusicType = SoundHandler.MusicType.Normal;
+                    }
+                }
+                else
+                {
+                    // enemy is close enough and hero is not dead or teammates are nearby
+                    if (nearestEnemy < 500 && (!hero.BaseInst.IsDead || nearestTeammate < 1000))
+                    {
+                        fightMusicEnabled = true;
+                        SoundHandler.CurrentMusicType = SoundHandler.MusicType.Fight;
+                    }
+                }
+            }
         }
     }
 }

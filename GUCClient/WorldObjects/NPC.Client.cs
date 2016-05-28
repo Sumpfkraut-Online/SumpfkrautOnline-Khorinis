@@ -275,6 +275,48 @@ namespace GUC.WorldObjects
 
         internal void Update(long now)
         {
+           /* if (this != Network.GameClient.Client.character)
+            {
+                if ((Process.ReadByte(this.gVob.CollObj.Address + 220) & 4) != 0)
+                    Logger.Log("Collision detection!");
+            }*/
+
+            /*double groundAngle = 0;
+            if (Process.ReadInt(gNpc.CollObj.Address + 208) != 0)
+            {
+                int normal = Process.ReadInt(gNpc.CollObj.Address + 208) + 12;
+                float x = Process.ReadFloat(normal + 4);
+                if (x < -1) x = -1;
+                else if (x > 1) x = 1;
+
+                groundAngle = Math.Acos(x);
+            }
+
+
+            bool test1 = (Process.ReadByte(gNpc.CollObj.Address + 220) & 2) != 0 || groundAngle >= Math.PI || groundAngle <= ai.MaxGroundAngleWalk || ai.AboveFloor >= ai.StepHeight;
+
+            bool test2 = (Process.ReadByte(Process.ReadInt(gNpc.Address + 224) + 256) & 4) == 4 || (Process.ReadByte(ai.Address + 0xBF) & 0xF0) == 32;
+
+            bool test3 = ai.AboveFloor > ai.StepHeight && ((Process.ReadByte(gNpc.CollObj.Address + 220) & 1) == 0) && ai.WaterLevel <= 1 && Process.ReadFloat(gNpc.CollObj.Address + 196) < ai.FeetY;
+
+            Client.GUI.GUCView.DebugText.Text = test1 + " " + test2 + " " + test3;
+
+            if (test1)
+            {
+                if (test2)
+                {
+                    if (test3)
+                    {
+                        Logger.Log("FLY");
+                    }
+                    else
+                    {
+                        Logger.Log("STAND");
+                    }
+                }
+            }*/
+
+
             /*if (turning) //turn!
             {
                 float diff = (float)(DateTime.UtcNow.Ticks - lastDirTime) / (float)DirectionUpdateTime;
@@ -288,50 +330,54 @@ namespace GUC.WorldObjects
                     StopTurnAnis();
                 }
             }*/
+
+
+
             this.envState = GetEnvState();
 
             this.ScriptObject.OnTick(now);
 
-            if (this.IsDead || this.envState == EnvironmentState.InAir)
-                return;
-
-            switch (Movement)
+            if (!this.IsDead && this.envState != EnvironmentState.InAir)
             {
-                case MoveState.Forward:
-                    if (this.GetActiveAniFromLayerID(0) == null)
-                    {
-                        var gModel = this.gVob.GetModel();
-                        if (gModel.IsAnimationActive("T_JUMP_2_STAND") != 0)
+                switch (Movement)
+                {
+                    case MoveState.Forward:
+                        if (this.GetActiveAniFromLayerID(0) == null)
                         {
-                            var ai = this.gVob.HumanAI;
-                            ai.LandAndStartAni(gModel.GetAniFromAniID(ai._t_jump_2_runl));
+                            var gModel = this.gVob.GetModel();
+                            if (gModel.IsAnimationActive("T_JUMP_2_STAND") != 0)
+                            {
+                                var ai = this.gVob.HumanAI;
+                                ai.LandAndStartAni(gModel.GetAniFromAniID(ai._t_jump_2_runl));
+                            }
+                            gVob.AniCtrl._Forward();
                         }
-                        gVob.AniCtrl._Forward();
-                    }
-                    break;
-                case MoveState.Backward:
-                    gVob.AniCtrl._Backward();
-                    break;
-                case MoveState.Right:
-                    if (!this.IsInAnimation())
-                        if (this.envState <= EnvironmentState.Wading && !gVob.GetModel().IsAniActive(gVob.GetModel().GetAniFromAniID(gVob.AniCtrl._t_strafer)))
-                        {
-                            gVob.GetModel().StartAni(gVob.AniCtrl._t_strafer, 0);
-                        }
-                    break;
-                case MoveState.Left:
-                    if (!this.IsInAnimation())
-                        if (this.envState <= EnvironmentState.Wading && !gVob.GetModel().IsAniActive(gVob.GetModel().GetAniFromAniID(gVob.AniCtrl._t_strafel)))
-                        {
-                            gVob.GetModel().StartAni(gVob.AniCtrl._t_strafel, 0);
-                        }
-                    break;
-                case MoveState.Stand:
-                    gVob.AniCtrl._Stand();
-                    break;
-                default:
-                    break;
+                        break;
+                    case MoveState.Backward:
+                        gVob.AniCtrl._Backward();
+                        break;
+                    case MoveState.Right:
+                        if (!this.IsInAnimation())
+                            if (this.envState <= EnvironmentState.Wading && !gVob.GetModel().IsAniActive(gVob.GetModel().GetAniFromAniID(gVob.AniCtrl._t_strafer)))
+                            {
+                                gVob.GetModel().StartAni(gVob.AniCtrl._t_strafer, 0);
+                            }
+                        break;
+                    case MoveState.Left:
+                        if (!this.IsInAnimation())
+                            if (this.envState <= EnvironmentState.Wading && !gVob.GetModel().IsAniActive(gVob.GetModel().GetAniFromAniID(gVob.AniCtrl._t_strafel)))
+                            {
+                                gVob.GetModel().StartAni(gVob.AniCtrl._t_strafel, 0);
+                            }
+                        break;
+                    case MoveState.Stand:
+                        gVob.AniCtrl._Stand();
+                        break;
+                    default:
+                        break;
+                }
             }
+
         }
     }
 }
