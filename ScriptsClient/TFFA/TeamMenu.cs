@@ -76,6 +76,19 @@ namespace GUC.Client.Scripts.TFFA
 
             base.Open();
             UpdateCounts();
+            if (TFFAClient.Info != null)
+            {
+                MainMenuButton set;
+                if (!bTeamAL.Enabled)
+                {
+                    set = bTeamNL;
+                }
+                else
+                {
+                    set = bTeamAL;
+                }
+                SetCursor(set);
+            }
         }
 
         public override void Close()

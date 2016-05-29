@@ -123,8 +123,8 @@ namespace GUC.Scripts
             model.AddAniJob(aniJob);
 
             ani = new ScriptAni(5200000); ani.StartFrame = 26; ani.ComboTime = 3200000; ani.HitTime = 3200000; aniJob.SetDefaultAni(ani);
-            ani = new ScriptAni(12500000); ani.StartFrame = 36; ani.ComboTime = 5200000; ani.HitTime = 2000000; aniJob.AddOverlayAni(ani, ov1);
-            ani = new ScriptAni(10800000); ani.StartFrame = 33; ani.ComboTime = 5200000; ani.HitTime = 2800000; aniJob.AddOverlayAni(ani, ov2);
+            ani = new ScriptAni(12500000); ani.StartFrame = 36; ani.ComboTime = 5200000; ani.HitTime = 1400000; aniJob.AddOverlayAni(ani, ov1);
+            ani = new ScriptAni(10800000); ani.StartFrame = 33; ani.ComboTime = 5200000; ani.HitTime = 1800000; aniJob.AddOverlayAni(ani, ov2);
 
 
             // 1h COMBO 3
@@ -133,8 +133,8 @@ namespace GUC.Scripts
             aniJob.AniName = "s_1hAttack";
             model.AddAniJob(aniJob);
 
-            ani = new ScriptAni(12500000); ani.StartFrame = 71; ani.ComboTime = 5200000; ani.HitTime = 2000000; aniJob.AddOverlayAni(ani, ov1);
-            ani = new ScriptAni(10800000); ani.StartFrame = 65; ani.ComboTime = 6800000; ani.HitTime = 4800000; aniJob.AddOverlayAni(ani, ov2);
+            ani = new ScriptAni(12500000); ani.StartFrame = 71; ani.ComboTime = 5200000; ani.HitTime = 1800000; aniJob.AddOverlayAni(ani, ov1);
+            ani = new ScriptAni(10800000); ani.StartFrame = 65; ani.ComboTime = 6800000; ani.HitTime = 3000000; aniJob.AddOverlayAni(ani, ov2);
             
             // 1h COMBO 4
             aniJob = new ScriptAniJob("attack1hfwd4");
@@ -142,8 +142,8 @@ namespace GUC.Scripts
             aniJob.AniName = "s_1hAttack";
             model.AddAniJob(aniJob);
 
-            ani = new ScriptAni(6400000); ani.StartFrame = 106; ani.ComboTime = 2400000; ani.HitTime = 2400000; aniJob.AddOverlayAni(ani, ov1);
-            ani = new ScriptAni(6400000); ani.StartFrame = 97; ani.ComboTime = 5600000; ani.HitTime = 5600000; aniJob.AddOverlayAni(ani, ov2);
+            ani = new ScriptAni(6400000); ani.StartFrame = 106; ani.ComboTime = 2400000; ani.HitTime = 2200000; aniJob.AddOverlayAni(ani, ov1);
+            ani = new ScriptAni(6400000); ani.StartFrame = 97; ani.ComboTime = 5600000; ani.HitTime = 4000000; aniJob.AddOverlayAni(ani, ov2);
             
             // 1h LEFT ATTACK
             aniJob = new ScriptAniJob("attack1hleft");
@@ -178,13 +178,30 @@ namespace GUC.Scripts
             ani = new ScriptAni(11200000); ani.ComboTime = 11200000; ani.HitTime = 7000000; ani.Layer = 2; aniJob.SetDefaultAni(ani);
             
             // 1h Parry
-            aniJob = new ScriptAniJob("attack1hparry");
+            aniJob = new ScriptAniJob("attack1hparry1");
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HParry1;
             aniJob.AniName = "T_1HPARADE_0";
             model.AddAniJob(aniJob);
 
             ani = new ScriptAni(5600000); ani.ComboTime = 5600000; aniJob.SetDefaultAni(ani);
             
+            // 1h Parry
+            aniJob = new ScriptAniJob("attack1hparry2");
+            aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HParry2;
+            aniJob.AniName = "T_1HPARADE_0_A2";
+            model.AddAniJob(aniJob);
+
+            ani = new ScriptAni(5600000); ani.ComboTime = 5600000; aniJob.SetDefaultAni(ani);
+
+            // 1h Parry
+            aniJob = new ScriptAniJob("attack1hparry3");
+            aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HParry3;
+            aniJob.AniName = "T_1HPARADE_0_A3";
+            model.AddAniJob(aniJob);
+
+            ani = new ScriptAni(5600000); ani.ComboTime = 5600000; aniJob.SetDefaultAni(ani);
+
+
             // 1h Dodge
             aniJob = new ScriptAniJob("attack1hdodge");
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HDodge;
@@ -216,8 +233,8 @@ namespace GUC.Scripts
             model.AddAniJob(aniJob);
 
             ani = new ScriptAni(6000000); ani.StartFrame = 31; ani.ComboTime = 4400000; ani.HitTime = 2300000; aniJob.SetDefaultAni(ani);
-            ani = new ScriptAni(14000000); ani.StartFrame = 40; ani.ComboTime = 8000000; ani.HitTime = 4000000; aniJob.AddOverlayAni(ani, ov1);
-            ani = new ScriptAni(11500000); ani.StartFrame = 41; ani.ComboTime = 6800000; ani.HitTime = 3600000; aniJob.AddOverlayAni(ani, ov2);
+            ani = new ScriptAni(14000000); ani.StartFrame = 40; ani.ComboTime = 8000000; ani.HitTime = 2500000; aniJob.AddOverlayAni(ani, ov1);
+            ani = new ScriptAni(11500000); ani.StartFrame = 41; ani.ComboTime = 6800000; ani.HitTime = 1800000; aniJob.AddOverlayAni(ani, ov2);
 
 
             // 2h COMBO 3
@@ -226,8 +243,8 @@ namespace GUC.Scripts
             aniJob.AniName = "s_2hAttack";
             model.AddAniJob(aniJob);
 
-            ani = new ScriptAni(7000000); ani.StartFrame = 80; ani.ComboTime = 7000000; ani.HitTime = 4000000; aniJob.AddOverlayAni(ani, ov1);
-            ani = new ScriptAni(13500000); ani.StartFrame = 81; ani.ComboTime = 8800000; ani.HitTime = 5600000; aniJob.AddOverlayAni(ani, ov2);
+            ani = new ScriptAni(7000000); ani.StartFrame = 80; ani.ComboTime = 7000000; ani.HitTime = 3000000; aniJob.AddOverlayAni(ani, ov1);
+            ani = new ScriptAni(13500000); ani.StartFrame = 81; ani.ComboTime = 8800000; ani.HitTime = 4000000; aniJob.AddOverlayAni(ani, ov2);
 
             // 2h COMBO 4
             aniJob = new ScriptAniJob("attack2hfwd4");
@@ -235,7 +252,7 @@ namespace GUC.Scripts
             aniJob.AniName = "s_2hAttack";
             model.AddAniJob(aniJob);
 
-            ani = new ScriptAni(7500000); ani.StartFrame = 126; ani.ComboTime = 7500000; ani.HitTime = 6800000; aniJob.AddOverlayAni(ani, ov2);
+            ani = new ScriptAni(7500000); ani.StartFrame = 126; ani.ComboTime = 7500000; ani.HitTime = 4000000; aniJob.AddOverlayAni(ani, ov2);
 
             // 2h LEFT ATTACK
             aniJob = new ScriptAniJob("attack2hleft");
@@ -270,9 +287,25 @@ namespace GUC.Scripts
             ani = new ScriptAni(8800000); ani.ComboTime = 8800000; ani.HitTime = 6000000; ani.Layer = 2; aniJob.SetDefaultAni(ani);
 
             // 2h Parry
-            aniJob = new ScriptAniJob("attack2hparry");
+            aniJob = new ScriptAniJob("attack2hparry1");
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HParry1;
             aniJob.AniName = "T_2HPARADE_0";
+            model.AddAniJob(aniJob);
+
+            ani = new ScriptAni(5600000); ani.ComboTime = 5600000; aniJob.SetDefaultAni(ani);
+
+            // 2h Parry
+            aniJob = new ScriptAniJob("attack2hparry2");
+            aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HParry2;
+            aniJob.AniName = "T_2HPARADE_0_A2";
+            model.AddAniJob(aniJob);
+
+            ani = new ScriptAni(5600000); ani.ComboTime = 5600000; aniJob.SetDefaultAni(ani);
+
+            // 2h Parry
+            aniJob = new ScriptAniJob("attack2hparry3");
+            aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HParry3;
+            aniJob.AniName = "T_2HPARADE_0_A3";
             model.AddAniJob(aniJob);
 
             ani = new ScriptAni(5600000); ani.ComboTime = 5600000; aniJob.SetDefaultAni(ani);

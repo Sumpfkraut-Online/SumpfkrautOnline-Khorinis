@@ -108,7 +108,7 @@ namespace GUC.Scripts
                 if (fightMusicEnabled)
                 {
                     // enemy is too far away or hero is dead and no teammates are nearby
-                    if (nearestEnemy > 1000 || hero.BaseInst.IsDead && nearestTeammate > 1000) 
+                    if (nearestEnemy > 1200 || hero.BaseInst.IsDead && nearestTeammate > 1200) 
                     {
                         fightMusicEnabled = false;
                         SoundHandler.CurrentMusicType = SoundHandler.MusicType.Normal;
@@ -117,7 +117,7 @@ namespace GUC.Scripts
                 else
                 {
                     // enemy is close enough and hero is not dead or teammates are nearby
-                    if (nearestEnemy < 500 && (!hero.BaseInst.IsDead || nearestTeammate < 1000))
+                    if (nearestEnemy < 700 && (!hero.BaseInst.IsDead || nearestTeammate < 1200))
                     {
                         fightMusicEnabled = true;
                         SoundHandler.CurrentMusicType = SoundHandler.MusicType.Fight;

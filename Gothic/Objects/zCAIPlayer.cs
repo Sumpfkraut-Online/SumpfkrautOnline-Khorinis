@@ -54,7 +54,8 @@ namespace Gothic.Objects
                 vob = 0x64,
                 feetY = 0x7C,
                 headY = 0x80,
-                waterLevel = 0x88;
+                waterLevel = 0x88,
+                bitfield = 0xB8;
         }
 
         public zCAIPlayer()
@@ -172,6 +173,12 @@ namespace Gothic.Objects
         {
             get { return Process.ReadFloat(Address + 0x54); }
             set { Process.Write(value, Address + 0x54); }
+        }
+
+        public int Bitfield0
+        {
+            get { return Process.ReadInt(Address + VarOffsets.bitfield); }
+            set { Process.Write(value, Address + VarOffsets.bitfield); }
         }
     }
 }

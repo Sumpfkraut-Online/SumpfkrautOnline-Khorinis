@@ -134,9 +134,9 @@ namespace GUC.Client.Scripts.TFFA
                 line.SetInfo(ci);
             }
             
-            for (int i = alCounter + 1; i < alPlayers.Count; i++)
+            for (int i = alCounter; i < alPlayers.Count; i++)
                 alPlayers[i].Clear();
-            for (int i = nlCounter + 1; i < nlPlayers.Count; i++)
+            for (int i = nlCounter; i < nlPlayers.Count; i++)
                 nlPlayers[i].Clear();
         }
 

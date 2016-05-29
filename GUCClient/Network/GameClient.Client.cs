@@ -32,7 +32,10 @@ namespace GUC.Network
         {
             var cam = oCGame.GetCameraVob();
             cam.SetAI(specCam);
+
             cam.SetPositionWorld(pos.ToArray());
+            using (var vec = Gothic.Types.zVec3.Create(dir.X, dir.Y, dir.Z))
+                cam.SetHeadingAtWorld(vec);
             this.isSpectating = true;
             this.character = null;
         }
@@ -184,6 +187,7 @@ namespace GUC.Network
 
         #region Hero
 
+        
         void ReadTakeControl(PacketReader stream)
         {
             int characterID = stream.ReadUShort();
@@ -194,21 +198,20 @@ namespace GUC.Network
             }
             npc.ReadTakeControl(stream);
 
-            Logger.Log("Take control of npc " + npc.ID);
-
-            // Remove the gothic hero if he's there
-            var hero = oCNpc.GetPlayer();
-            if (!World.Current.ContainsVobAddress(hero.Address))
-            {
-                hero.Disable();
-                oCGame.GetWorld().RemoveVob(hero);
-            }
-
+            Logger.Log("Taking control of npc " + npc.ID);
             this.ScriptObject.SetControl(npc);
         }
 
         partial void pSetControl(NPC npc)
         {
+            // Remove the gothic hero if he's there
+            oCNpc dummyHero = oCNpc.GetPlayer();
+            if (!World.Current.ContainsVobAddress(dummyHero.Address))
+            {
+                dummyHero.Disable();
+                oCGame.GetWorld().RemoveVob(dummyHero);
+            }
+
             this.character = npc;
             Character.gVob.SetAsPlayer();
             oCGame.GetCameraVob().SetAI(oCGame.GetCameraAI());
@@ -594,11 +597,11 @@ namespace GUC.Network
                         devInfo.Texts[4].Text = "Dir: " + new Vec3f(oCGame.GetCameraVob().TrafoObjToWorld.Direction);
                     }
                     devInfo.Texts[5].Text = "Weather: " + World.current.SkyCtrl.CurrentWeight + " " + World.current.Clock.Time.ToString(false);
-
+                    
                     if (character != null)
                     {
-                        devInfo.Texts[7].Text = character.Movement.ToString();
-                        devInfo.Texts[8].Text = character.EnvState.ToString();
+                        devInfo.Texts[6].Text = character.Movement.ToString();
+                        devInfo.Texts[7].Text = character.EnvState.ToString();
                     }
                 }
             }

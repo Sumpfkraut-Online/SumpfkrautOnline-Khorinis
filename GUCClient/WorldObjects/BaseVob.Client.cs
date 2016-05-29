@@ -71,7 +71,8 @@ namespace GUC.WorldObjects
 
             if (gvob != null)
             {
-                Vec3f zAxis = dir.Normalise();
+                gvob.SetHeadingAtWorld(dir.X, dir.Y, dir.Z);
+                /*Vec3f zAxis = dir.Normalise();
                 Vec3f up = new Vec3f(0.0f, 0.0f, 0.0f);
 
                 if (Math.Abs(zAxis.Y) > 0.5)
@@ -117,7 +118,7 @@ namespace GUC.WorldObjects
 
                 trafo[2] = zAxis.X;
                 trafo[6] = zAxis.Y;
-                trafo[10] = zAxis.Z;
+                trafo[10] = zAxis.Z;*/
             }
         }
         #endregion

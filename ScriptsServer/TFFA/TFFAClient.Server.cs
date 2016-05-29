@@ -100,7 +100,7 @@ namespace GUC.Scripts.TFFA
             stream.Write((byte)this.ID);
             stream.Write((byte)this.Team);
             stream.Write((byte)this.Class);
-            stream.Write(this.Character == null ? (ushort)0 : (ushort)this.Character.ID);
+            stream.Write(this.Character == null ? ushort.MaxValue : (ushort)this.Character.ID);
             stream.Write(this.Name);
         }
 

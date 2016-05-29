@@ -57,6 +57,8 @@ namespace Gothic.Objects
             ResetRotationsWorld = 0x0061C000,
             RotateLocalY = 0x0061B720,
             RotateWorldY = 0x0061B830,
+            SetHeadingLocal = 0x61C5E0,
+            SetHeadingWorld = 0x61C6B0,
             SetHeadingAtLocal = 0x0061C860,
             SetHeadingAtWorld = 0x0061CBC0,
             SetHeadingYWorld = 0x61C280,
@@ -186,6 +188,28 @@ namespace Gothic.Objects
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetHeadingYWorld, vec);
         }
 
+        public void SetHeadingWorld(float x, float y, float z)
+        {
+            using (zVec3 vec = zVec3.Create(x, y, z))
+                SetHeadingWorld(vec);
+        }
+
+        public void SetHeadingWorld(zVec3 vec)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetHeadingWorld, vec);
+        }
+
+        public void SetHeadingLocal(float x, float y, float z)
+        {
+            using (zVec3 vec = zVec3.Create(x, y, z))
+                SetHeadingLocal(vec);
+        }
+
+        public void SetHeadingLocal(zVec3 vec)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetHeadingLocal, vec);
+        }
+
         public void SetHeadingYWorld(zCVob vob)
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetHeadingYWorld_vob, vob);
@@ -246,6 +270,7 @@ namespace Gothic.Objects
             get { return TrafoObjToWorld.Direction; }
             set { TrafoObjToWorld.Direction = value; }
         }
+
 
         public zCAIBase callback_ai
         {
@@ -327,14 +352,21 @@ namespace Gothic.Objects
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.RotateWorldZ, new FloatArg(angle));
         }
 
-        public void SetHeadingAtLocal(zVec3 target)
+        public void SetHeadingAtLocal(zVec3 dir)
         {
-            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetHeadingAtLocal, target);
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetHeadingAtLocal, dir);
         }
 
-        public void SetHeadingAtWorld(zVec3 target)
+
+        public void SetHeadingAtWorld(float x, float y, float z)
         {
-            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetHeadingAtWorld, target);
+            using (zVec3 p = zVec3.Create(x, y, z))
+                SetHeadingAtWorld(p);
+        }
+
+        public void SetHeadingAtWorld(zVec3 dir)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetHeadingAtWorld, dir);
         }
 
         public void RemoveVobFromWorld()
