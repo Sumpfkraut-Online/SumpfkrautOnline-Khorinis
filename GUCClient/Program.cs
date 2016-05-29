@@ -119,7 +119,11 @@ namespace GUC.Client
                 // Blocking Call Startup Scripts!
                 Process.Write((byte)0xC3, 0x006C1C70);
 
+
+                Process.Write(new byte[] { 0xDC, 0x0D, 0x30, 0xEB, 0x82, 0x00 }, 0x0069C2DA); // bleed with < 25% health
+
                 Process.Write(new byte[] { 0xE9, 0xB0, 0x01, 0x00, 0x00 }, 0x0069C08B); // disable player AI
+                Process.Write(new byte[] { 0xE9, 0x89, 0, 0, 0, 0x90 }, 0x0069BFCB); // disable focus highlighting
 
                 Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, 0x006B0896);// don't let oCAniCtrl_Human::CreateHit check whether the target is an enemy
 
@@ -137,7 +141,6 @@ namespace GUC.Client
 
                 // Load Scripts
                 Scripting.ScriptManager.StartScripts(Program.ProjectPath + "Scripts\\ClientScripts.dll");
-                
             }
             catch (Exception e)
             {
@@ -145,7 +148,6 @@ namespace GUC.Client
             }
             return 0;
         }
-
         public static void Exit()
         {
             GameClient.Client.Disconnect();

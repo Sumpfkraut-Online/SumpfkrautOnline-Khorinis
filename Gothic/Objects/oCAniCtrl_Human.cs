@@ -127,7 +127,7 @@ namespace Gothic.Objects
             set { Process.Write(value, Address + VarOffsets.HitTarget); }
         }
 
-        public int BitField
+        public int AniCtrlBitfield
         {
             get { return Process.ReadInt(Address + VarOffsets.Bitfield); }
             set { Process.Write(value, Address + VarOffsets.Bitfield); }

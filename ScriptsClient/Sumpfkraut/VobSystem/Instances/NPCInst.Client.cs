@@ -151,7 +151,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             this.StartAnimation(ani);
 
             var ai = this.BaseInst.gVob.HumanAI;
-            ai.BitField &= ~(1 << 3);
+            ai.AniCtrlBitfield &= ~(1 << 3);
             //this.BaseInst.gVob.SetBodyState(8);
 
             var vel = new Gothic.Types.zVec3(ai.Address + 0x90);

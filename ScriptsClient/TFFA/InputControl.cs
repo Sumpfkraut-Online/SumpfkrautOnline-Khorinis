@@ -71,8 +71,6 @@ namespace GUC.Client.Scripts.TFFA
 
             if (key == VirtualKeys.Control || key == VirtualKeys.LeftButton)
             {
-                Gothic.Objects.oCNpcFocus.StartHighlightingFX(Hero.BaseInst.gVob.GetFocusNpc());
-
                 // RUN ATTACK
                 if (Hero.Movement == MoveState.Forward)
                 {
@@ -172,7 +170,7 @@ namespace GUC.Client.Scripts.TFFA
                         TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
                     }
                 }
-                else if (key == VirtualKeys.Left || key == VirtualKeys.Q) // LEFT ATTACK
+                else if (key == VirtualKeys.Left || key == VirtualKeys.A) // LEFT ATTACK
                 {
                     ScriptAniJob job;
                     if (Hero.TryGetAttackFromMove(NPCInst.AttackMove.Left, out job))
@@ -188,7 +186,7 @@ namespace GUC.Client.Scripts.TFFA
                         TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
                     }
                 }
-                else if (key == VirtualKeys.Down || key == VirtualKeys.A) // PARADE
+                else if (key == VirtualKeys.Down || key == VirtualKeys.S) // PARADE
                 {
                     ScriptAniJob job;
                     List<ScriptAniJob> parries = new List<ScriptAniJob>();
@@ -221,11 +219,6 @@ namespace GUC.Client.Scripts.TFFA
 
             if (GUC.Network.GameClient.Client.Character == null || TFFAClient.Status == TFFAPhase.Waiting)
                 return;
-
-            if (key == VirtualKeys.Control || key == VirtualKeys.LeftButton)
-            {
-                Gothic.Objects.oCNpcFocus.StopHighlightingFX();
-            }
         }
 
         public static void Update(long now)
@@ -269,31 +262,35 @@ namespace GUC.Client.Scripts.TFFA
                 return;
 
             NPCInst Hero = TFFAClient.Client.Character;
-
-            if (InputHandler.MouseDistX != 0)
-            {
-                Hero.BaseInst.gVob.AniCtrl.Turn(InputHandler.MouseDistX * 0.05f, false);
-            }
-
+            
             if (!InputHandler.IsPressed(VirtualKeys.Control) && !InputHandler.IsPressed(VirtualKeys.LeftButton))
             {
+
+                Gothic.Objects.oCNpcFocus.StopHighlightingFX();
+
                 // Do turning
+                bool stopTurning = true;
                 if (Hero.GetClimbAni() == null)
                 {
+                    if (InputHandler.MouseDistX != 0)
+                    {
+                        Hero.BaseInst.gVob.AniCtrl.Turn(InputHandler.MouseDistX * 0.05f, true);
+                        stopTurning = false;
+                    }
+
                     if (InputHandler.IsPressed(VirtualKeys.Left) || InputHandler.IsPressed(VirtualKeys.Q))
                     {
                         Hero.BaseInst.gVob.AniCtrl.Turn(-2.5f, true);
+                        stopTurning = false;
                     }
                     else if (InputHandler.IsPressed(VirtualKeys.Right) || InputHandler.IsPressed(VirtualKeys.E))
                     {
                         Hero.BaseInst.gVob.AniCtrl.Turn(2.5f, true);
-                    }
-                    else
-                    {
-                        Hero.BaseInst.gVob.AniCtrl.StopTurnAnis();
+                        stopTurning = false;
                     }
                 }
-                else
+                
+                if (stopTurning)
                 {
                     Hero.BaseInst.gVob.AniCtrl.StopTurnAnis();
                 }
@@ -327,6 +324,9 @@ namespace GUC.Client.Scripts.TFFA
             }
             else
             {
+                
+                    Gothic.Objects.oCNpcFocus.StartHighlightingFX(Hero.BaseInst.gVob.GetFocusNpc());
+
                 var fnpc = Hero.BaseInst.gVob.GetFocusNpc();
                 if (fnpc.Address == 0 || fnpc.HP <= 0)
                     Hero.BaseInst.gVob.HumanAI.CheckFocusVob(0);
@@ -444,7 +444,7 @@ namespace GUC.Client.Scripts.TFFA
             var gHero = TFFAClient.Client.Character?.BaseInst.gVob;
 
             int i = 0;
-            foreach(ClientInfo ci in ClientInfo.ClientInfos.Values)
+            foreach (ClientInfo ci in ClientInfo.ClientInfos.Values)
             {
                 if (ci == TFFAClient.Info || ci.Team == Team.Spec)
                     continue;

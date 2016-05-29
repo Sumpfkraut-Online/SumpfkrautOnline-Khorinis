@@ -70,7 +70,7 @@ namespace GUC.Server.Scripts.TFFA
             client.Team = team;
 
             if (team == Team.Spec)
-                client.BaseClient.SetToSpectate(WorldInst.Current.BaseWorld, new Vec3f(0, 300, 0), new Vec3f());
+                client.SetToSpectator(WorldInst.Current, new Vec3f(-3175.43f, 472.1683f, 1359.367f), new Vec3f(0.5502188f, -0.03141155f, -0.8344474f));
 
             client.SendTeamChanged();
         }
@@ -225,10 +225,10 @@ namespace GUC.Server.Scripts.TFFA
                 client.Deaths = 0;
                 client.Kills = 0;
                 client.Damage = 0;
-                ALKills = 0;
-                NLKills = 0;
             });
             RemoveAllPlayers();
+            ALKills = 0;
+            NLKills = 0;
 
             gameTimer.SetInterval(WaitTime);
             gameTimer.SetCallback(PhaseFight);
@@ -258,10 +258,10 @@ namespace GUC.Server.Scripts.TFFA
                 client.Deaths = 0;
                 client.Kills = 0;
                 client.Damage = 0;
-                ALKills = 0;
-                NLKills = 0;
             });
             RemoveAllPlayers();
+            ALKills = 0;
+            NLKills = 0;
 
             gameTimer.SetInterval(FightTime);
             gameTimer.SetCallback(PhaseEnd);

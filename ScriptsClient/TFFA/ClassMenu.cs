@@ -74,6 +74,18 @@ namespace GUC.Client.Scripts.TFFA
 
             base.Open();
             UpdateCounts();
+
+            /*if (TFFAClient.Info != null)
+            {
+                if (TFFAClient.Info.Class == PlayerClass.Heavy)
+                {
+                    SetCursor(bHeavy);
+                }
+                else
+                {
+                    SetCursor(bLight);
+                }
+            }*/
         }
 
         public override void Close()

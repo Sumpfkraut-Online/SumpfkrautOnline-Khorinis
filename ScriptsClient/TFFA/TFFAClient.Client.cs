@@ -86,7 +86,6 @@ namespace GUC.Scripts.TFFA
                         {
                             ci.Class = (PlayerClass)stream.ReadByte();
                             ClassMenu.Menu.UpdateCounts();
-                            Scoreboard.Menu.UpdateStats();
                         }
                         break;
                     case MenuMsgID.ClientName:

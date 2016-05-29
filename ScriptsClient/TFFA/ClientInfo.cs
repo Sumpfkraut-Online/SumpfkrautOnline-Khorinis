@@ -11,7 +11,7 @@ namespace GUC.Scripts.TFFA
         int id; public int ID { get { return this.id; } }
         public Team Team;
         public PlayerClass Class;
-        public int CharID;
+        public int CharID = ushort.MaxValue;
         public string Name;
 
         public int Kills = 0;
