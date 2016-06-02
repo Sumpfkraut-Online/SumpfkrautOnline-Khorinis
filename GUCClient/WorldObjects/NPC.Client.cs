@@ -242,17 +242,18 @@ namespace GUC.WorldObjects
             if (this.gVob == null)
                 return;
 
-            var gModel = gVob.GetModel();
+            /*var gModel = gVob.GetModel();
             var gAniCtrl = gVob.AniCtrl;
 
             gModel.StopAni(gAniCtrl._t_strafel);
-            gModel.StopAni(gAniCtrl._t_strafer);
+            gModel.StopAni(gAniCtrl._t_strafer);*/
 
             this.gVob.HPMax = this.hpmax;
             this.gVob.HP = this.hp;
 
             if (this.hp == 0)
             {
+                this.gVob.GetModel().StopAnisLayerRange(int.MinValue, int.MaxValue);
                 this.gVob.DoDie();
             }
         }

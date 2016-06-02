@@ -15,8 +15,9 @@ namespace GUC.Scripts.TFFA
 
         new public static TFFAClient Client { get { return (TFFAClient)ScriptClient.Client; } }
 
-        static public ClientInfo Info { get; private set; }
+        public static ClientInfo Info { get; private set; }
 
+        public static long PhaseEndTime { get; private set; }
 
         public override void ReadScriptMsg(PacketReader stream)
         {
@@ -31,6 +32,9 @@ namespace GUC.Scripts.TFFA
                         Status = (TFFAPhase)stream.ReadByte();
                         if (Status != TFFAPhase.Fight)
                             StatusMenu.Menu.StatusShow = true;
+
+                        PhaseEndTime = stream.ReadUInt() * TimeSpan.TicksPerSecond + GameTime.Ticks;
+
                         int count = stream.ReadByte();
                         for (int i = 0; i < count; i++)
                         {
@@ -117,7 +121,6 @@ namespace GUC.Scripts.TFFA
                         break;
 
                     case MenuMsgID.OpenScoreboard:
-                        int secs = stream.ReadInt();
                         int alKills = stream.ReadByte();
                         int nlKills = stream.ReadByte();
                         count = stream.ReadByte();
@@ -125,16 +128,18 @@ namespace GUC.Scripts.TFFA
                         {
                             ClientInfo.ReadScoreboardInfo(stream);
                         }
-                        Scoreboard.Menu.UpdateStats(secs, alKills, nlKills);
+                        Scoreboard.Menu.UpdateStats(alKills, nlKills);
                         break;
 
                     case MenuMsgID.WinMsg:
                         Status = TFFAPhase.End;
                         Winner = (Team)stream.ReadByte();
+                        PhaseEndTime = stream.ReadUInt() * TimeSpan.TicksPerSecond + GameTime.Ticks;
                         StatusMenu.Menu.StatusShow = true;
                         break;
                     case MenuMsgID.PhaseMsg:
                         Status = (TFFAPhase)stream.ReadByte();
+                        PhaseEndTime = stream.ReadUInt() * TimeSpan.TicksPerSecond + GameTime.Ticks;
                         Winner = Team.Spec;
                         if (Status == TFFAPhase.Fight)
                         {

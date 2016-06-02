@@ -20,8 +20,9 @@ namespace GUC.Server.Scripts.TFFA
 
         const long RespawnTime = 10 * TimeSpan.TicksPerSecond;
 
-        const long FightTime = 5 * TimeSpan.TicksPerMinute;
-        const long WaitTime = 30 * TimeSpan.TicksPerSecond;
+        const long FightTime = 6 * TimeSpan.TicksPerMinute;
+        const long WaitTime = 15 * TimeSpan.TicksPerSecond;
+        const long EndTime = 10 * TimeSpan.TicksPerSecond;
         const int KillsToWin = 30;
 
         static List<Tuple<Vec3f, Vec3f>> NLSpawns = new List<Tuple<Vec3f, Vec3f>>()
@@ -100,7 +101,6 @@ namespace GUC.Server.Scripts.TFFA
             {
                 var stream = GameClient.GetMenuMsgStream();
                 stream.Write((byte)MenuMsgID.OpenScoreboard);
-                stream.Write((int)(gameTimer.GetRemainingTicks() / TimeSpan.TicksPerSecond));
 
                 stream.Write((byte)ALKills);
                 stream.Write((byte)NLKills);
@@ -210,17 +210,30 @@ namespace GUC.Server.Scripts.TFFA
         static TFFAPhase status;
         public static TFFAPhase Status { get { return status; } }
 
+        public static uint GetPhaseSecsLeft()
+        {
+            return (uint)(gameTimer.GetRemainingTicks() / TimeSpan.TicksPerSecond);
+        }
+
+        static PacketWriter GetPhaseMsg()
+        {
+            var stream = GameClient.GetMenuMsgStream();
+            stream.Write((byte)MenuMsgID.PhaseMsg);
+            stream.Write((byte)status);
+            stream.Write((uint)(gameTimer.Interval / TimeSpan.TicksPerSecond));
+            return stream;
+        }
+
         static void PhaseWait()
         {
             Log.Logger.Log("Wait Phase");
             status = TFFAPhase.Waiting;
+            gameTimer.SetInterval(WaitTime);
+            gameTimer.SetCallback(PhaseFight);
 
             TFFAClient.ForEach(client =>
             {
-                var stream = GameClient.GetMenuMsgStream();
-                stream.Write((byte)MenuMsgID.PhaseMsg);
-                stream.Write((byte)status);
-                client.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE);
+                client.BaseClient.SendMenuMsg(GetPhaseMsg(), PktPriority.LOW_PRIORITY, PktReliability.RELIABLE);
                 AddToTeam(client, Team.Spec);
                 client.Deaths = 0;
                 client.Kills = 0;
@@ -230,8 +243,6 @@ namespace GUC.Server.Scripts.TFFA
             ALKills = 0;
             NLKills = 0;
 
-            gameTimer.SetInterval(WaitTime);
-            gameTimer.SetCallback(PhaseFight);
             gameTimer.Restart();
         }
 
@@ -247,13 +258,14 @@ namespace GUC.Server.Scripts.TFFA
         static void PhaseFight()
         {
             Log.Logger.Log("Fight Phase");
+
             status = TFFAPhase.Fight;
+            gameTimer.SetInterval(FightTime);
+            gameTimer.SetCallback(PhaseEnd);
+
             TFFAClient.ForEach(client =>
             {
-                var stream = GameClient.GetMenuMsgStream();
-                stream.Write((byte)MenuMsgID.PhaseMsg);
-                stream.Write((byte)status);
-                client.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE);
+                client.BaseClient.SendMenuMsg(GetPhaseMsg(), PktPriority.LOW_PRIORITY, PktReliability.RELIABLE);
                 SpawnNewPlayer(client);
                 client.Deaths = 0;
                 client.Kills = 0;
@@ -263,8 +275,6 @@ namespace GUC.Server.Scripts.TFFA
             ALKills = 0;
             NLKills = 0;
 
-            gameTimer.SetInterval(FightTime);
-            gameTimer.SetCallback(PhaseEnd);
             gameTimer.Restart();
         }
 
@@ -272,6 +282,8 @@ namespace GUC.Server.Scripts.TFFA
         {
             Log.Logger.Log("End Phase");
             status = TFFAPhase.End;
+            gameTimer.SetInterval(EndTime);
+            gameTimer.SetCallback(PhaseWait);
 
             if (ALKills > NLKills)
             {
@@ -279,6 +291,7 @@ namespace GUC.Server.Scripts.TFFA
                 var stream = GameClient.GetMenuMsgStream();
                 stream.Write((byte)MenuMsgID.WinMsg);
                 stream.Write((byte)Team.AL);
+                stream.Write((uint)(gameTimer.Interval / TimeSpan.TicksPerSecond));
                 TFFAClient.ForEach(client => client.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE));
                 Log.Logger.Log("TEAM GOMEZ HAT GEWONNEN");
             }
@@ -288,19 +301,16 @@ namespace GUC.Server.Scripts.TFFA
                 var stream = GameClient.GetMenuMsgStream();
                 stream.Write((byte)MenuMsgID.WinMsg);
                 stream.Write((byte)Team.NL);
+                stream.Write((uint)(gameTimer.Interval / TimeSpan.TicksPerSecond));
                 TFFAClient.ForEach(client => client.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE));
                 Log.Logger.Log("TETRIANDOCH HAT GEWONNEN");
             }
             else
             {
-                var stream = GameClient.GetMenuMsgStream();
-                stream.Write((byte)MenuMsgID.PhaseMsg);
-                stream.Write((byte)status);
+                var stream = GetPhaseMsg();
                 TFFAClient.ForEach(client => client.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE));
             }
 
-            gameTimer.SetInterval(10 * TimeSpan.TicksPerSecond);
-            gameTimer.SetCallback(PhaseWait);
             gameTimer.Restart();
         }
 

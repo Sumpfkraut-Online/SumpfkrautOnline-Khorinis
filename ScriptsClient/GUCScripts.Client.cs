@@ -59,70 +59,20 @@ namespace GUC.Scripts
             Logger.Log("Ingame started.");
         }
 
-        bool fightMusicEnabled = false;
+        const long FightMusicTime = 50 * TimeSpan.TicksPerSecond;
+
         void CheckMusic()
         {
             if (!Ingame || TFFA.TFFAClient.Info == null)
                 return;
 
-            var heroTeam = TFFA.TFFAClient.Info.Team;
-            var hero = TFFA.TFFAClient.Client.Character;
-
-            if (TFFA.TFFAClient.Status != TFFA.TFFAPhase.Fight || heroTeam == TFFA.Team.Spec || hero == null)
+            if (TFFA.TFFAClient.Status == TFFA.TFFAPhase.Fight && TFFA.TFFAClient.PhaseEndTime > 0 && TFFA.TFFAClient.PhaseEndTime - GameTime.Ticks < FightMusicTime)
             {
-                if (fightMusicEnabled)
-                {
-                    fightMusicEnabled = false;
-                    SoundHandler.CurrentMusicType = SoundHandler.MusicType.Normal;
-                }
+                SoundHandler.CurrentMusicType = SoundHandler.MusicType.Fight;
             }
             else
             {
-                var gHero = hero.BaseInst.gVob;
-                var heroPos = hero.BaseInst.GetPosition();
-
-                float nearestEnemy = float.MaxValue;
-                float nearestTeammate = float.MaxValue;
-                foreach (TFFA.ClientInfo ci in TFFA.ClientInfo.ClientInfos.Values)
-                {
-                    if (ci.Team != TFFA.Team.Spec)
-                    {
-                        WorldObjects.NPC npc;
-                        if (WorldObjects.World.Current.TryGetVob(ci.CharID, out npc) && !npc.IsDead)
-                        {
-                            float distance = npc.GetPosition().GetDistance(heroPos);
-                            if (ci.Team == heroTeam)
-                            {
-                                if (distance < nearestTeammate)
-                                    nearestTeammate = distance;
-                            }
-                            else if (npc.gVob.FreeLineOfSight(gHero))
-                            {
-                                if (distance < nearestEnemy)
-                                    nearestEnemy = distance;
-                            }
-                        }
-                    }
-                }
-
-                if (fightMusicEnabled)
-                {
-                    // enemy is too far away or hero is dead and no teammates are nearby
-                    if (nearestEnemy > 1200 || hero.BaseInst.IsDead && nearestTeammate > 1200) 
-                    {
-                        fightMusicEnabled = false;
-                        SoundHandler.CurrentMusicType = SoundHandler.MusicType.Normal;
-                    }
-                }
-                else
-                {
-                    // enemy is close enough and hero is not dead or teammates are nearby
-                    if (nearestEnemy < 700 && (!hero.BaseInst.IsDead || nearestTeammate < 1200))
-                    {
-                        fightMusicEnabled = true;
-                        SoundHandler.CurrentMusicType = SoundHandler.MusicType.Fight;
-                    }
-                }
+                SoundHandler.CurrentMusicType = SoundHandler.MusicType.Normal;
             }
         }
     }

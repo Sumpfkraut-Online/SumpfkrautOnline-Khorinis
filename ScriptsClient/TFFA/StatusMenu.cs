@@ -82,11 +82,11 @@ namespace GUC.Client.Scripts.TFFA
             back = new GUCVisual();
             back.Font = GUCView.Fonts.Menu;
 
-            status = back.CreateTextCenterX("", res[1] / 2 - 320);
+            status = back.CreateTextCenterX("", res[1] / 2 - 400);
             status.Format = GUCVisualText.TextFormat.Center;
             status.SetColor(Types.ColorRGBA.Green);
 
-            winner = back.CreateTextCenterX("", res[1] / 2 - 290);
+            winner = back.CreateTextCenterX("", res[1] / 2 - 370);
             winner.Format = GUCVisualText.TextFormat.Center;
         }
     }

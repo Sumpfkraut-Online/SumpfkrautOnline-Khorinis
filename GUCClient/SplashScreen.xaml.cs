@@ -6,6 +6,7 @@ using System.Windows;
 using WinApi;
 using System.Threading;
 using GUC.Log;
+using System.Windows.Media;
 
 namespace GUC.Client
 {
@@ -17,6 +18,15 @@ namespace GUC.Client
         public SplashScreen()
         {
             InitializeComponent();
+        }
+
+        protected override void OnRender(DrawingContext drawingContext)
+        {
+            base.OnRender(drawingContext);
+            if (WaitHandle != null)
+            {
+                WaitHandle.Set();
+            }
         }
 
         static bool hooked = false;
@@ -46,34 +56,30 @@ namespace GUC.Client
         }
 
         static Application splash = null;
+        public static EventWaitHandle WaitHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
         public static void Create()
         {
             if (splash != null)
                 return;
-
-            EventWaitHandle wait = new EventWaitHandle(false, EventResetMode.ManualReset);
-
+            
             try
             {
-                var appthread = new Thread(new ThreadStart(() =>
+                var appThread = new Thread(new ThreadStart(() =>
                 {
                     try
                     {
                         splash = new Application();
                         splash.ShutdownMode = ShutdownMode.OnExplicitShutdown;
                         splash.Run(new SplashScreen());
-                        wait.Set();
                     }
                     catch (Exception e)
                     {
                         Logger.LogError("GUC-SplashScreen Thread: " + e);
                     }
                 }));
-                appthread.IsBackground = true;
-                appthread.SetApartmentState(ApartmentState.STA);
-                appthread.Start();
-
-                wait.WaitOne(1000);
+                appThread.IsBackground = true;
+                appThread.SetApartmentState(ApartmentState.STA);
+                appThread.Start();
 
                 Logger.Log("GUC-SplashScreen started.");
             }
@@ -89,7 +95,7 @@ namespace GUC.Client
                 return;
 
             Logger.Log("Close SplashScreen.");
-
+            
             splash.Dispatcher.Invoke(new Action(() => splash.Shutdown()));
             splash = null;
         }

@@ -118,6 +118,7 @@ namespace GUC.Scripts.TFFA
             stream.Write((byte)MenuMsgID.ClientInfoGroup);
             stream.Write((byte)this.ID);
             stream.Write((byte)TFFAGame.Status);
+            stream.Write(TFFAGame.GetPhaseSecsLeft());
             stream.Write((byte)TFFAClient.GetCount());
             TFFAClient.ForEach(c => c.WriteClientSteam(stream));
             this.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE_ORDERED);

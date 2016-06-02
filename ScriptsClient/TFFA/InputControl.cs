@@ -223,9 +223,12 @@ namespace GUC.Client.Scripts.TFFA
 
         public static void Update(long now)
         {
+            Scoreboard.Menu.Update(now);
+
             GUCMenu activeMenu = GUCMenu.GetActiveMenus().ElementAtOrDefault(0);
             if (activeMenu != null)
             {
+                Scoreboard.Menu.Close();
                 return;
             }
 
@@ -255,6 +258,35 @@ namespace GUC.Client.Scripts.TFFA
                     cam.MoveWorld(dir.X, dir.Y, dir.Z);
                 }
 
+                if (InputHandler.IsPressed(VirtualKeys.A))
+                {
+                    var cam = Gothic.oCGame.GetCameraVob();
+                    var dir = new Vec3f(cam.Direction).Cross(new Vec3f(0, 1, 0));
+                    dir *= 20.0f;
+                    cam.MoveWorld(dir.X, dir.Y, dir.Z);
+                }
+                else if (InputHandler.IsPressed(VirtualKeys.D))
+                {
+                    var cam = Gothic.oCGame.GetCameraVob();
+                    var dir = new Vec3f(cam.Direction).Cross(new Vec3f(0, 1, 0));
+                    dir *= -20.0f;
+                    cam.MoveWorld(dir.X, dir.Y, dir.Z);
+                }
+
+                if (InputHandler.IsPressed(VirtualKeys.Space))
+                {
+                    var cam = Gothic.oCGame.GetCameraVob();
+                    var dir = new Vec3f(0, 1, 0);
+                    dir *= 20.0f;
+                    cam.MoveWorld(dir.X, dir.Y, dir.Z);
+                }
+                else if (InputHandler.IsPressed(VirtualKeys.C) || InputHandler.IsPressed(VirtualKeys.Control))
+                {
+                    var cam = Gothic.oCGame.GetCameraVob();
+                    var dir = new Vec3f(0, 1, 0);
+                    dir *= -20.0f;
+                    cam.MoveWorld(dir.X, dir.Y, dir.Z);
+                }
                 return;
             }
 
@@ -262,10 +294,17 @@ namespace GUC.Client.Scripts.TFFA
                 return;
 
             NPCInst Hero = TFFAClient.Client.Character;
-            
+
+            if (InputHandler.MouseDistY != 0)
+            {
+                var camAI = Gothic.oCGame.GetCameraAI();
+
+                float cur = WinApi.Process.ReadFloat(camAI.Address + 56);
+                WinApi.Process.Write(cur + InputHandler.MouseDistY * 0.035f, camAI.Address + 56);
+            }
+
             if (!InputHandler.IsPressed(VirtualKeys.Control) && !InputHandler.IsPressed(VirtualKeys.LeftButton))
             {
-
                 Gothic.Objects.oCNpcFocus.StopHighlightingFX();
 
                 // Do turning
@@ -274,8 +313,17 @@ namespace GUC.Client.Scripts.TFFA
                 {
                     if (InputHandler.MouseDistX != 0)
                     {
-                        Hero.BaseInst.gVob.AniCtrl.Turn(InputHandler.MouseDistX * 0.05f, true);
-                        stopTurning = false;
+                        float turn = InputHandler.MouseDistX * 0.05f;
+
+                        if (turn > 0.5f || turn < -0.5f)
+                        {
+                            Hero.BaseInst.gVob.AniCtrl.Turn(turn, true);
+                            stopTurning = false;
+                        }
+                        else
+                        {
+                            Hero.BaseInst.gVob.AniCtrl.Turn(turn, false);
+                        }
                     }
 
                     if (InputHandler.IsPressed(VirtualKeys.Left) || InputHandler.IsPressed(VirtualKeys.Q))
@@ -289,7 +337,7 @@ namespace GUC.Client.Scripts.TFFA
                         stopTurning = false;
                     }
                 }
-                
+
                 if (stopTurning)
                 {
                     Hero.BaseInst.gVob.AniCtrl.StopTurnAnis();
@@ -324,8 +372,8 @@ namespace GUC.Client.Scripts.TFFA
             }
             else
             {
-                
-                    Gothic.Objects.oCNpcFocus.StartHighlightingFX(Hero.BaseInst.gVob.GetFocusNpc());
+
+                Gothic.Objects.oCNpcFocus.StartHighlightingFX(Hero.BaseInst.gVob.GetFocusNpc());
 
                 var fnpc = Hero.BaseInst.gVob.GetFocusNpc();
                 if (fnpc.Address == 0 || fnpc.HP <= 0)
@@ -449,12 +497,13 @@ namespace GUC.Client.Scripts.TFFA
                 if (ci == TFFAClient.Info || ci.Team == Team.Spec)
                     continue;
 
+                var cam = Gothic.oCGame.GetCameraVob();
                 WorldObjects.NPC npc;
                 if (WorldObjects.World.Current.TryGetVob(ci.CharID, out npc))
                 {
                     var gNpc = npc.gVob;
 
-                    if (gHero == null || (gNpc.Address != gHero.FocusVob.Address && gHero.FreeLineOfSight(gNpc)))
+                    if (gHero == null || (gNpc.Address != gHero.FocusVob.Address && gNpc.FreeLineOfSight(cam)))
                     {
                         Client.GUI.GUCVisualText text;
                         if (i >= clientView.Texts.Count)
