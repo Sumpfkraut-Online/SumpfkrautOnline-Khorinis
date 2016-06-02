@@ -27,6 +27,7 @@ namespace Gothic.Objects
             AddVob = 0x00624810,
             InsertVobInWorld = 0x00780330,
             TraceRayNearestHit = 0x00621B80,
+            TraceRayFirstHit = 0x00621960,
             DisableVob = 0x00780460;
 
         }
@@ -318,7 +319,12 @@ namespace Gothic.Objects
 
         public int TraceRayNearestHit(zVec3 start, zVec3 end, zTraceRay rayType)
         {
-            return Process.FASTCALL<IntArg>(Address, start.Address, FuncAddresses.TraceRayNearestHit, end, new IntArg(0), new IntArg((int)rayType)).Value;
+            return Process.FASTCALL<IntArg>(Address, start.Address, FuncAddresses.TraceRayNearestHit, end, new IntArg(0), new IntArg((int)rayType));
+        }
+
+        public int TraceRayFirstHit(zVec3 start, zVec3 end, zTraceRay rayType)
+        {
+            return Process.FASTCALL<IntArg>(Address, start.Address, FuncAddresses.TraceRayFirstHit, end, new IntArg(0), new IntArg((int)rayType));
         }
 
         public const int ByteSize = 0x6258;

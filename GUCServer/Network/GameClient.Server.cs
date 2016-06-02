@@ -191,7 +191,7 @@ namespace GUC.Network
                 var stream = GameServer.SetupStream(NetworkIDs.SpectatorMessage);
                 stream.Write(pos);
                 stream.Write(dir);
-                this.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, '\0');
+                this.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, '\0');
 
                 this.specPos = pos;
                 this.specDir = dir;

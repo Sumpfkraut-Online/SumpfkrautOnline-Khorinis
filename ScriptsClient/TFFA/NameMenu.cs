@@ -18,7 +18,7 @@ namespace GUC.Client.Scripts.TFFA
         protected override void OnCreate()
         {
             Back.CreateTextCenterX("Namen eingeben", 70);
-            box = AddTextBox("Name:", "", 320, 240, 200, 100, MainMenu.Menu.Open);
+            box = AddTextBox("Name:", "", 320, 240, 240, 100, MainMenu.Menu.Open);
             OnEscape = MainMenu.Menu.Open;
         }
 

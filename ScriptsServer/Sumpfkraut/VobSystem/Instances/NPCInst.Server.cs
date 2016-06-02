@@ -12,11 +12,60 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class NPCInst
     {
+        const long TimeBeforeRegen = 10 * TimeSpan.TicksPerSecond;
+        const long RegenTime = 500 * TimeSpan.TicksPerMillisecond;
+        const int RegenHP = 5;
+
         // TFFA
+        Vec3f lastPos;
         public override void OnPosChanged()
         {
-            if (this.BaseInst.IsPlayer && !this.BaseInst.IsDead && this.BaseInst.GetPosition().Y < -400)
-                Server.Scripts.TFFA.TFFAGame.Kill((TFFA.TFFAClient)this.BaseInst.Client.ScriptObject);
+            Vec3f pos = this.BaseInst.GetPosition();
+            if (this.BaseInst.IsPlayer && !this.BaseInst.IsDead)
+            {
+                if (pos.Y < -400)
+                {
+                    Server.Scripts.TFFA.TFFAGame.Kill((TFFA.TFFAClient)this.BaseInst.Client.ScriptObject);
+                }
+                else
+                {
+                    if (pos.GetDistance(lastPos) < 20 && !this.IsInAni() && this.BaseInst.HP < this.BaseInst.HPMax) // not moving & hurt
+                    {
+                        if (!regenTimer.Started)
+                        {
+                            regenTimer.SetInterval(TimeBeforeRegen);
+                            regenTimer.Start();
+                        }
+                    }
+                    else
+                    {
+                        regenTimer.Stop();
+                    }
+                }
+            }
+            lastPos = pos;
+        }
+
+        GUCTimer regenTimer;
+        void Regenerate()
+        {
+            if (this.BaseInst.IsDead || this.IsInAni())
+            {
+                regenTimer.Stop();
+                return;
+            }
+
+            int hp = this.BaseInst.HP + RegenHP;
+            if (hp > this.BaseInst.HPMax)
+            {
+                hp = this.BaseInst.HPMax;
+                regenTimer.Stop();
+            }
+            else
+            {
+                regenTimer.SetInterval(RegenTime);
+            }
+            this.SetHealth(hp);
         }
 
         public NPCInst(NPCDef def) : base(def, new WorldObjects.NPC())
@@ -63,7 +112,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             this.hitTimer = new GUCTimer(CalcHit);
             this.comboTimer = new GUCTimer(AbleCombo);
+            this.regenTimer = new GUCTimer(Regenerate);
         }
+
 
         public void OnCmdMove(MoveState state)
         {
@@ -88,14 +139,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             if (hp <= 0)
             {
-                if (hitTimer.NextCallTime - GameTime.Ticks < 100000)
-                {
-                    hitTimer.Stop(true);
-                }
-                else
-                {
-                    hitTimer.Stop(false);
-                }
+                hitTimer.Stop(false);
                 comboTimer.Stop(false);
             }
         }
@@ -122,74 +166,85 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         void CalcHit()
         {
-            hitTimer.Stop();
-
-            ScriptAniJob attackerAni = (ScriptAniJob)this.GetFightAni()?.Ani.AniJob.ScriptObject;
-
-            Vec3f attPos = this.BaseInst.GetPosition();
-            Vec3f attDir = this.BaseInst.GetDirection();
-            float range = this.DrawnWeapon.Definition.Range + this.Model.Radius + ModelDef.LargestNPC.Radius;
-            this.BaseInst.World.ForEachNPCRoughInRange(attPos, range, npc =>
+            try
             {
-                NPCInst target = (NPCInst)npc.ScriptObject;
-                if (target != this && !target.BaseInst.IsDead)
+                hitTimer.Stop();
+
+                if (this.BaseInst.IsDead)
+                    return;
+
+                ScriptAniJob attackerAni = (ScriptAniJob)this.GetFightAni()?.Ani.AniJob.ScriptObject;
+
+                Vec3f attPos = this.BaseInst.GetPosition();
+                Vec3f attDir = this.BaseInst.GetDirection();
+                float range = this.DrawnWeapon.Definition.Range + this.Model.Radius + ModelDef.LargestNPC.Radius;
+                this.BaseInst.World.ForEachNPCRoughInRange(attPos, range, npc =>
                 {
-                    Vec3f targetPos = npc.GetPosition();
-                    Vec3f targetDir = npc.GetDirection();
-                    float realRange = this.DrawnWeapon.Definition.Range + this.Model.Radius + target.Model.Radius;
-
-                    ScriptAniJob targetAni = (ScriptAniJob)target.GetFightAni()?.Ani.AniJob.ScriptObject;
-
-                    if (targetAni != null && targetAni.IsDodge)
-                        realRange /= 2.0f;
-
-                    if ((targetPos - attPos).GetLength() <= realRange) // target is in range
+                    NPCInst target = (NPCInst)npc.ScriptObject;
+                    if (target != this && !target.BaseInst.IsDead)
                     {
-                        if (targetPos.Y + target.Model.Height / 2.0f >= attPos.Y && targetPos.Y - target.Model.Height / 2.0f <= attPos.Y) // same height
+                        Vec3f targetPos = npc.GetPosition();
+                        Vec3f targetDir = npc.GetDirection();
+                        float realRange = this.DrawnWeapon.Definition.Range + this.Model.Radius + target.Model.Radius;
+
+                        ScriptAniJob targetAni = (ScriptAniJob)target.GetFightAni()?.Ani.AniJob.ScriptObject;
+
+                        if (targetAni != null && targetAni.IsDodge)
+                            realRange /= 2.0f;
+
+                        if ((targetPos - attPos).GetLength() <= realRange) // target is in range
                         {
-                            Vec3f dir = (attPos - targetPos).Normalise();
-                            float dot = attDir.Z * dir.Z + dir.X * attDir.X;
-
-                            if (dot < -0.2f) // target is in front of attacker
+                            if (targetPos.Y + target.Model.Height / 2.0f >= attPos.Y && targetPos.Y - target.Model.Height / 2.0f <= attPos.Y) // same height
                             {
-                                float dist = attDir.X * (targetPos.Z - attPos.Z) - attDir.Z * (targetPos.X - attPos.X);
-                                dist = (float)Math.Sqrt(dist * dist / (attDir.X * attDir.X + attDir.Z * attDir.Z));
+                                Vec3f dir = (attPos - targetPos).Normalise();
+                                float dot = attDir.Z * dir.Z + dir.X * attDir.X;
 
-                                if (dist <= target.Model.Radius + 10.0f) // distance to attack direction is smaller than radius + 10
+                                if (dot < -0.2f) // target is in front of attacker
                                 {
-                                    dir = (targetPos - attPos).Normalise();
-                                    dot = targetDir.Z * dir.Z + dir.X * targetDir.X;
+                                    float dist = attDir.X * (targetPos.Z - attPos.Z) - attDir.Z * (targetPos.X - attPos.X);
+                                    dist = (float)Math.Sqrt(dist * dist / (attDir.X * attDir.X + attDir.Z * attDir.Z));
 
-                                    if (targetAni != null && targetAni.IsParade && dot <= -0.2f) // PARRY
+                                    if (dist <= target.Model.Radius + 10.0f) // distance to attack direction is smaller than radius + 10
                                     {
-                                        var strm = this.BaseInst.GetScriptVobStream();
-                                        strm.Write((byte)Networking.NetVobMsgIDs.ParryMessage);
-                                        strm.Write((ushort)npc.ID);
-                                        this.BaseInst.SendScriptVobStream(strm);
-                                    }
-                                    else // HIT
-                                    {
-                                        var strm = this.BaseInst.GetScriptVobStream();
-                                        strm.Write((byte)Networking.NetVobMsgIDs.HitMessage);
-                                        strm.Write((ushort)npc.ID);
-                                        this.BaseInst.SendScriptVobStream(strm);
+                                        dir = (targetPos - attPos).Normalise();
+                                        dot = targetDir.Z * dir.Z + dir.X * targetDir.X;
 
-                                        int damage = (this.DrawnWeapon.Definition.Damage + attackerAni.AttackBonus) - target.Armor.Definition.Protection;
-                                        if (this.GetJumpAni() != null || this.Environment == EnvironmentState.InAir) // Jump attaaaack!
-                                            damage += 5;
-
-                                        if (damage > 0)
+                                        if (targetAni != null && targetAni.IsParade && dot <= -0.2f) // PARRY
                                         {
-                                            if (sOnHit != null)
-                                                sOnHit(this, target, damage);
+                                            var strm = this.BaseInst.GetScriptVobStream();
+                                            strm.Write((byte)Networking.NetVobMsgIDs.ParryMessage);
+                                            strm.Write((ushort)npc.ID);
+                                            this.BaseInst.SendScriptVobStream(strm);
+                                        }
+                                        else // HIT
+                                        {
+                                            var strm = this.BaseInst.GetScriptVobStream();
+                                            strm.Write((byte)Networking.NetVobMsgIDs.HitMessage);
+                                            strm.Write((ushort)npc.ID);
+                                            this.BaseInst.SendScriptVobStream(strm);
+
+                                            int damage = (this.DrawnWeapon.Definition.Damage + attackerAni.AttackBonus) - target.Armor.Definition.Protection;
+                                            if (this.GetJumpAni() != null || this.Environment == EnvironmentState.InAir) // Jump attaaaack!
+                                                damage += 5;
+
+                                            if (damage > 0)
+                                            {
+                                                target.regenTimer.Stop();
+                                                if (sOnHit != null)
+                                                    sOnHit(this, target, damage);
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
                     }
-                }
-            });
+                });
+            }
+            catch (Exception e)
+            {
+                Log.Logger.Log("CalcHit of npc " + this.ID + " " + this.BaseInst.HP + " " + this.IsInAni() + " " + e);
+            }
         }
 
         public void OnCmdAniStart(Animations.Animation ani)

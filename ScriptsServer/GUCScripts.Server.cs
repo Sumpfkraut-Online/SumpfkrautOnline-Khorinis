@@ -97,7 +97,7 @@ namespace GUC.Scripts
             WorldInst.Current = new WorldInst(default(WorldDef));
             
             WorldInst.Current.Create();
-            WorldInst.Current.Clock.SetTime(new Types.WorldTime(0, 8), 5.0f);
+            WorldInst.Current.Clock.SetTime(new Types.WorldTime(0, 8), 10.0f);
             WorldInst.Current.Clock.Start();
         }
 

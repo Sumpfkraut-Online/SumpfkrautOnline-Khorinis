@@ -21,7 +21,7 @@ namespace GUC.Server.Network.Messages
             PacketWriter stream = GameServer.SetupStream(NetworkIDs.LoadWorldMessage);
             world.WriteStream(stream);
             stream.Write(world.Clock.Running);
-            client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
+            client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, '\0');
         }
 
         #endregion

@@ -81,6 +81,8 @@ namespace GUC.Client
                 if (mained) return 0;
                 mained = true;
 
+                Logger.Log("GUC started...");
+
                 SetupProject();
 
                 SplashScreen.SetUpHooks();
@@ -99,6 +101,7 @@ namespace GUC.Client
 
                 Process.Write(new byte[] { 0xEB, 0x15 }, 0x006B5A44); // don't start falling animation
 
+                Process.Write(new byte[] { 0xC2, 0x08, 0x00 }, 0x00735EB0); // don't drop unconscious
                 Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, 0x00736898); // don't drop weapons on death
 
                 // remove all gothic controls
@@ -141,6 +144,10 @@ namespace GUC.Client
 
                 // Load Scripts
                 Scripting.ScriptManager.StartScripts(Program.ProjectPath + "Scripts\\ClientScripts.dll");
+
+                Logger.Log("Waiting...");
+                SplashScreen.WaitHandle.WaitOne(3000);
+                SplashScreen.WaitHandle = null;
             }
             catch (Exception e)
             {

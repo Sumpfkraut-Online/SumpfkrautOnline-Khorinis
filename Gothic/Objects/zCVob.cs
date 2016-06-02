@@ -70,6 +70,7 @@ namespace Gothic.Objects
             RotateWorld = 0x0061B520,
             RotateWorldX = 0x0061B800,
             RotateWorldZ = 0x0061B860,
+            RotateLocal = 0x0061B610,
             RotateLocalX = 0x0061B6B0,
             RotateLocalZ = 0x0061B790,
             GetSectorNameVobIsIn = 0x00600AE0,
@@ -215,6 +216,10 @@ namespace Gothic.Objects
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetHeadingYWorld_vob, vob);
         }
 
+        public void RotateLocal(zVec3 ptr, float arg)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.RotateLocal, ptr, (FloatArg)arg);
+        }
 
         public void RotateWorld(zVec3 ptr, float arg)
         {
