@@ -43,6 +43,9 @@ namespace GUC.Scripts.TFFA
         WinMsg,
 
         OpenScoreboard,
-        CloseScoreboard
+        CloseScoreboard,
+
+        AllChat,
+        TeamChat
     }
 }

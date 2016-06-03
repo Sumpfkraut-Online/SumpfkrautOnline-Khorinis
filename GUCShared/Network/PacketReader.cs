@@ -59,7 +59,7 @@ namespace GUC.Network
                     int read = ds.Read(newData, currentByte, uncompressedLen);
                 }
             }
-            
+
             Buffer.BlockCopy(data, currentByte + compressedLen, newData, currentByte + uncompressedLen, length - currentByte - compressedLen);
 
             data = newData;
@@ -145,16 +145,17 @@ namespace GUC.Network
         char[] charArr = new char[MaxStringLength];
         public string ReadString()
         {
-            int len = (sbyte)data[currentByte++];
-            if (len < 0)
+            int byteLen = (sbyte)data[currentByte++];
+            
+            if (byteLen < 0)
             {
-                len = -(len | data[currentByte++] << 8);
+                byteLen = -(byteLen | data[currentByte++] << 8);
             }
 
-            dec.GetChars(data, currentByte, len, charArr, 0);
-            currentByte += len;
+            int charLen = dec.GetChars(data, currentByte, byteLen, charArr, 0);
+            currentByte += byteLen;
 
-            return new string(charArr, 0, len);
+            return new string(charArr, 0, charLen);
         }
 
         public Vec3f ReadVec3f()

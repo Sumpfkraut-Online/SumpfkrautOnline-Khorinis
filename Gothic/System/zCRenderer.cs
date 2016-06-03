@@ -40,5 +40,15 @@ namespace Gothic.System
         {
             Process.THISCALL<NullReturnCall>(GetRendererAddress(), 0x6521E0, new FloatArg(near), new FloatArg(far), new IntArg(mode));
         }
+
+        public static void FlushPolys()
+        {
+            Process.THISCALL<NullReturnCall>(GetRendererAddress(), 0x64DD10);
+        }
+
+        public static void SetZBufferWriteEnabled(bool enabled)
+        {
+            Process.THISCALL<NullReturnCall>(GetRendererAddress(), 0x6524E0, (BoolArg)enabled);
+        }
     }
 }

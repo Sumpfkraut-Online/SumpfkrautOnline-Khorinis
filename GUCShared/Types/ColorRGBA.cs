@@ -13,6 +13,7 @@ namespace GUC.Types
         public readonly static ColorRGBA Green = new ColorRGBA(0, 255, 0, 255);
         public readonly static ColorRGBA Blue = new ColorRGBA(0, 0, 255, 255);
         public readonly static ColorRGBA Grey = new ColorRGBA(155, 155, 155, 255);
+        public readonly static ColorRGBA Yellow = new ColorRGBA(255, 255, 0, 255);
 
         public byte R;
         public byte G;

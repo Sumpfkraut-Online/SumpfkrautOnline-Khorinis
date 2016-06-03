@@ -301,6 +301,7 @@ namespace GUC.Network
 
         const int MaxStringLength = short.MaxValue;
         char[] charArr = new char[MaxStringLength];
+        byte[] byteArr = new byte[2 * MaxStringLength];
         public void Write(string val)
         {
             if (val == null)
@@ -308,22 +309,25 @@ namespace GUC.Network
                 throw new ArgumentNullException("String is null!");
             }
 
-            int len = val.Length > MaxStringLength ? MaxStringLength : val.Length; // cut off everything > short.maxValue
+            int charLen = val.Length > MaxStringLength ? MaxStringLength : val.Length; // cut off everything > short.maxValue
+            
+            val.CopyTo(0, charArr, 0, charLen);
+            int byteLen = enc.GetBytes(charArr, 0, charLen, byteArr, 0, true);
 
-            if (len > 127)
+
+            if (byteLen > MaxStringLength)
+                byteLen = MaxStringLength;
+            
+            if (byteLen > 127)
             {
-                Write((short)-len);
+                Write((short)-byteLen);
             }
             else
             {
-                Write((sbyte)len);
+                Write((sbyte)byteLen);
             }
 
-            CheckRealloc(len);
-
-            val.CopyTo(0, charArr, 0, len);
-            enc.GetBytes(charArr, 0, len, data, currentByte, true);
-            currentByte += len;
+            Write(byteArr, 0, byteLen);
         }
 
         public void Write(Vec3f vec)

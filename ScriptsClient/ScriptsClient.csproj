@@ -123,6 +123,7 @@
     <Compile Include="Sumpfkraut\Menus\GUCMenu.cs" />
     <Compile Include="Sumpfkraut\Menus\MainMenus\CharCreationMenu.cs" />
     <Compile Include="Sumpfkraut\Menus\MainMenus\CharSelMenu.cs" />
+    <Compile Include="TFFA\ChatMenu.cs" />
     <Compile Include="TFFA\ClassMenu.cs" />
     <Compile Include="Sumpfkraut\Menus\MainMenus\ExitMenu.cs" />
     <Compile Include="Sumpfkraut\Menus\MainMenus\GUCMainMenu.cs" />
