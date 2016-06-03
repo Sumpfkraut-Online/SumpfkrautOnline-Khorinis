@@ -50,6 +50,16 @@ namespace GUC.Client.Scripts.TFFA
             {
                 ShowClientIDs();
             }
+            else if (key == VirtualKeys.T)
+            {
+                ChatMenu.Menu.TeamChat = false;
+                ChatMenu.Menu.Open();
+            }
+            else if (key == VirtualKeys.Z)
+            {
+                ChatMenu.Menu.TeamChat = true;
+                ChatMenu.Menu.Open();
+            }
 
             if (TFFAClient.Client.Character == null)
                 return;
@@ -280,7 +290,7 @@ namespace GUC.Client.Scripts.TFFA
                     dir *= 20.0f;
                     cam.MoveWorld(dir.X, dir.Y, dir.Z);
                 }
-                else if (InputHandler.IsPressed(VirtualKeys.C) || InputHandler.IsPressed(VirtualKeys.Control))
+                else if (InputHandler.IsPressed(VirtualKeys.Control))
                 {
                     var cam = Gothic.oCGame.GetCameraVob();
                     var dir = new Vec3f(0, 1, 0);
@@ -443,6 +453,7 @@ namespace GUC.Client.Scripts.TFFA
             clientsShown = true;
 
             Scoreboard.Menu.UpdateNames();
+            ChatMenu.Menu.UpdateLines();
             clientView.Show();
 
             // Set gothic names
@@ -466,6 +477,7 @@ namespace GUC.Client.Scripts.TFFA
             clientsShown = false;
 
             Scoreboard.Menu.UpdateNames();
+            ChatMenu.Menu.UpdateLines();
             clientView.Hide();
 
             // Set gothic names

@@ -2,20 +2,33 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using GUC.Log;
-using System.Reflection;
-using GUC.Client.Hooks;
-using GUC.Network;
 using WinApi;
 using Gothic.Objects.Sky;
+using Gothic.System;
+using Gothic.Objects;
 
 namespace GUC.Client
 {
-    static class Barrier
+    public static class Barrier
     {
-        public static int hook_Init(string message)
+        static bool hooked = false;
+        static void Hook()
         {
+            if (hooked)
+                return;
+            hooked = true;
+
+            Process.AddHook(Render, 0x6BB92A, 5);
+        }
+
+        static bool inited = false;
+        static void Init()
+        {
+            if (inited)
+                return;
+            inited = true;
+
             try
             {
                 var barrier = new zCSkyControler_Outdoor(zCSkyControler.ActiveSkyController.Address).Barrier;
@@ -25,7 +38,7 @@ namespace GUC.Client
                 mat.Color.R = 0xFF;
                 mat.Color.G = 0xFF;
                 mat.Color.B = 0xFF;
-                mat.Color.A = 0xFF;
+                mat.Color.A = barrierAlpha;
 
                 var mesh = barrier.FrontierMesh;
                 int numPolys = mesh.NumPolygons;
@@ -74,10 +87,70 @@ namespace GUC.Client
             {
                 Logger.LogError(e);
             }
-            return 0;
         }
-        
-        static int rndrCtAddr = 0;
+
+        static byte barrierAlpha = 0;
+        public static byte BarrierAlpha
+        {
+            get { return barrierAlpha; }
+            set
+            {
+                barrierAlpha = value;
+                if (inited)
+                {
+                    new zCSkyControler_Outdoor(zCSkyControler.ActiveSkyController.Address).Barrier.FrontierMesh.GetSomethingMaterial().Color.A = value;
+                }
+
+                if (!hooked)
+                    Hook();
+            }
+        }
+
+        static readonly int ptrArg = Process.Alloc(4).ToInt32();
+        static void Render(Hook hook)
+        {
+            try
+            {
+                if (!inited)
+                    Init();
+
+                var barrier = new zCSkyControler_Outdoor(zCSkyControler.ActiveSkyController.Address).Barrier;
+
+                if (barrierAlpha > 0)
+                {
+                    zCRenderer.SetZBufferWriteEnabled(true);
+                    zCCamera.SetFarClipZ(2000000.0f);
+
+                    int context = GetResetRenderContext();
+                    barrier.RenderLayer(context, 0, ptrArg);
+                    barrier.RenderLayer(context, 1, ptrArg);
+
+                    zCRenderer.FlushPolys();
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(e);
+            }
+        }
+
+        static readonly int renderContext = Process.Alloc(0x28).ToInt32();
+        static int GetResetRenderContext()
+        {
+            int activeCam = zCCamera.GetCamAddr();
+            int something = Process.ReadInt(activeCam + 2336);
+
+            Process.Write(-1, renderContext);
+            Process.Write(0/*something*/, renderContext + 4);
+            Process.Write(Process.ReadInt(something + 184), renderContext + 8);
+            Process.Write(activeCam, renderContext + 12);
+            Process.Write(zeros, renderContext + 16);
+
+            return renderContext;
+        }
+        static readonly byte[] zeros = Enumerable.Repeat<byte>(0x00, 0x28 - 16).ToArray();
+
+        /*static int rndrCtAddr = 0;
         public static int hook_Entry(string message)
         {
             try
@@ -226,9 +299,9 @@ namespace GUC.Client
         
         public static void Main(String message)
         {
-               // Process.Hook(Program.GUCDll, typeof(Injection).GetMethod("hook_Entry"), 0x6B9F30, 6, 4);
-              //  Process.Hook(Program.GUCDll, typeof(Injection).GetMethod("hook_Rndr"), 0x6B9F9C, 6, 0);
-               // Process.Hook(Program.GUCDll, typeof(Injection).GetMethod("hook_Init"), 0x6B94F9, 6, 0);
-        }
+              Process.Hook(Program.GUCDll, typeof(Injection).GetMethod("hook_Entry"), 0x6B9F30, 6, 4);
+              Process.Hook(Program.GUCDll, typeof(Injection).GetMethod("hook_Rndr"), 0x6B9F9C, 6, 0);
+              Process.Hook(Program.GUCDll, typeof(Injection).GetMethod("hook_Init"), 0x6B94F9, 6, 0);
+        }*/
     }
 }

@@ -41,5 +41,10 @@ namespace Gothic.Objects
         }
 
         public static zMat4 CamMatrix { get { return new zMat4(GetCamAddr() + 164); } }
+
+        public static void SetFarClipZ(float value)
+        {
+            Process.THISCALL<NullReturnCall>(GetCamAddr(), 0x54B200, (FloatArg)value);
+        }
     }
 }

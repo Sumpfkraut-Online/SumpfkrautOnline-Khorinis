@@ -43,5 +43,10 @@ namespace Gothic.Objects.Sky
             get { return Process.ReadInt(Address + 0xE8); }
             set { Process.Write(value, Address + 0xE8); }
         }
+
+        public void RenderLayer(int renderContext, int arg, int ptr)
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x6B9CF0, (IntArg)renderContext, (IntArg)arg, (IntArg)ptr);
+        }
     }
 }

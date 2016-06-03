@@ -150,6 +150,22 @@ namespace GUC.Scripts.TFFA
                             StatusMenu.Menu.StatusShow = true;
                         }
                         break;
+                    case MenuMsgID.AllChat:
+                        clientID = stream.ReadByte();
+                        if (ClientInfo.ClientInfos.TryGetValue(clientID, out ci))
+                        {
+                            string msg = stream.ReadString();
+                            ChatMenu.Menu.AddLine(ci, msg, false);
+                        }
+                        break;
+                    case MenuMsgID.TeamChat:
+                        clientID = stream.ReadByte();
+                        if (ClientInfo.ClientInfos.TryGetValue(clientID, out ci))
+                        {
+                            string msg = stream.ReadString();
+                            ChatMenu.Menu.AddLine(ci, msg, true);
+                        }
+                        break;
                 }
             }
             catch (Exception e)

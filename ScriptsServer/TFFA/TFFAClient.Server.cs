@@ -87,6 +87,14 @@ namespace GUC.Scripts.TFFA
                         this.Name = newName;
                     this.SendNameChanged();
                     break;
+                case MenuMsgID.AllChat:
+                    string msg = stream.ReadString();
+                    SendChatMessage(msg, false);
+                    break;
+                case MenuMsgID.TeamChat:
+                    msg = stream.ReadString();
+                    SendChatMessage(msg, true);
+                    break;
             }
 
         }
@@ -166,6 +174,25 @@ namespace GUC.Scripts.TFFA
             stream.Write((byte)this.ID);
             stream.Write((ushort)this.Character.ID);
             TFFAClient.ForEach(c => c.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE_ORDERED));
+        }
+
+        public void SendChatMessage(string message, bool onlyTeam)
+        {
+
+            Log.Logger.Log("Redirect chat message: '" + message + "'");
+
+            PacketWriter stream = GameClient.GetMenuMsgStream();
+            stream.Write((byte)(onlyTeam ? MenuMsgID.TeamChat : MenuMsgID.AllChat));
+            stream.Write((byte)this.ID);
+            stream.Write(message);
+            if (!onlyTeam)
+            {
+                TFFAClient.ForEach(c => c.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE_ORDERED));
+            }
+            else
+            {
+                TFFAClient.ForEach(c => { if (c.Team == this.Team) c.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE_ORDERED); });
+            }
         }
     }
 }
