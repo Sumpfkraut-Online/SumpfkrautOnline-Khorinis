@@ -7,6 +7,7 @@ using WinApi;
 using Gothic.Objects.Sky;
 using Gothic.System;
 using Gothic.Objects;
+using Gothic.Sound;
 
 namespace GUC.Client
 {
@@ -82,6 +83,8 @@ namespace GUC.Client
                         feat.maybeDefaultColor.A = (byte)alpha;
                     }
                 }
+
+                sound.isFixed = true;
             }
             catch (Exception e)
             {
@@ -106,6 +109,10 @@ namespace GUC.Client
             }
         }
 
+        public static bool PlaySound = true;
+        static readonly zCSndFX_MSS sound = zCSndSys_MSS.LoadSoundFX("MFX_BARRIERE_AMBIENT.WAV");
+        static long nextSoundTime = 0;
+
         static readonly int ptrArg = Process.Alloc(4).ToInt32();
         static void Render(Hook hook)
         {
@@ -126,6 +133,16 @@ namespace GUC.Client
                     barrier.RenderLayer(context, 1, ptrArg);
 
                     zCRenderer.FlushPolys();
+
+                    if (PlaySound)
+                    {
+                        long now = GameTime.Ticks;
+                        if (now >= nextSoundTime)
+                        {
+                            zCSndSys_MSS.PlaySound(sound, 0, 0, 2, 0);
+                            nextSoundTime = now + Randomizer.GetInt(500, 5000) * TimeSpan.TicksPerMillisecond;
+                        }
+                    }
                 }
             }
             catch (Exception e)
