@@ -371,7 +371,7 @@ namespace GUC.Network
 
         internal void Send(PacketWriter stream, PacketPriority pp, PacketReliability pr, char orderingChannel)
         {
-            GameServer.ServerInterface.Send(stream.GetData(), stream.GetLength(), pp, pr, orderingChannel, this.guid, false);
+            GameServer.ServerInterface.Send(stream.GetData(), stream.GetLength(), pp, pr, '\0'/*orderingChannel*/, this.guid, false);
         }
 
         public int GetLastPing()

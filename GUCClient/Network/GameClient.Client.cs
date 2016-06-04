@@ -574,7 +574,7 @@ namespace GUC.Network
                 {
                     pingText.SetColor(ColorRGBA.Red);
                 }
-
+                /*
                 // update kB/s text on screen
                 int kbs = (int)(receivedBytes);
                 devInfo.Texts[1].Text = ("Net received: " + kbs + "B/s");
@@ -603,7 +603,7 @@ namespace GUC.Network
                         devInfo.Texts[6].Text = character.Movement.ToString();
                         devInfo.Texts[7].Text = character.EnvState.ToString();
                     }
-                }
+                }*/
             }
             devInfo.Show();
         }

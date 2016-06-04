@@ -8,13 +8,38 @@ using GUC.Enumeration;
 using GUC.Types;
 using GUC.Scripts.TFFA;
 using GUC.Scripts.Sumpfkraut.Visuals;
-using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 
 namespace GUC.Client.Scripts.TFFA
 {
     static class InputControl
     {
+        static void FocusHook(WinApi.Hook hook)
+        {
+            WorldObjects.NPC self;
+            if (WorldObjects.World.Current.TryGetVobByAddress(hook.GetESI(), out self))
+            {
+                if (self != TFFAClient.Client.Character.BaseInst)
+                    return;
+
+                WorldObjects.NPC other;
+                if (WorldObjects.World.Current.TryGetVobByAddress(hook.GetEBP(), out other))
+                {
+                    foreach (ClientInfo ci in ClientInfo.ClientInfos.Values)
+                    {
+                        if (ci.CharID == other.ID)
+                        {
+                            if (ci.Team == TFFAClient.Info.Team && (InputHandler.IsPressed(VirtualKeys.Control) || InputHandler.IsPressed(VirtualKeys.LeftButton)))
+                            {
+                                hook.SetEBX(0); // Some kind of priority value (128, 129, 130)
+                            }
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
         static bool inited = false;
         public static void Init()
         {
@@ -26,9 +51,10 @@ namespace GUC.Client.Scripts.TFFA
 
             InputHandler.OnKeyDown += KeyDown;
             InputHandler.OnKeyUp += KeyUp;
-        }
 
-        static Random random = new Random();
+            WinApi.Process.AddHook(FocusHook, 0x733FB6, 5);
+        }
+        
         static void KeyDown(VirtualKeys key, long now)
         {
             GUCMenu activeMenu = GUCMenu.GetActiveMenus().ElementAtOrDefault(0);
@@ -204,7 +230,7 @@ namespace GUC.Client.Scripts.TFFA
                         if (Hero.TryGetAttackFromMove((NPCInst.AttackMove)i, out job))
                             parries.Add(job);
 
-                    TFFAClient.Client.BaseClient.DoStartAni(parries[random.Next(0, parries.Count)].BaseAniJob);
+                    TFFAClient.Client.BaseClient.DoStartAni(parries[Randomizer.GetInt(0, parries.Count)].BaseAniJob);
                 }
             }
         }

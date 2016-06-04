@@ -79,7 +79,7 @@ namespace GUC.Scripts
 
         static Random random = new Random("Scavenger".GetHashCode());
         static long barrierLastTime = GameTime.Ticks;
-        static long barrierNextTime = GameTime.Ticks + random.Next(180, 240) * TimeSpan.TicksPerSecond;
+        static long barrierNextTime = GameTime.Ticks + random.Next(180, 300) * TimeSpan.TicksPerSecond;
         static int barrierStatus = 0;
         static void CheckBarrier()
         {
@@ -90,7 +90,7 @@ namespace GUC.Scripts
                 if (barrierStatus == 1) // fade in
                 {
                     barrierStatus = 2;
-                    barrierNextTime = now + random.Next(10, 20) * TimeSpan.TicksPerSecond; // enabled time
+                    barrierNextTime = now + random.Next(6, 16) * TimeSpan.TicksPerSecond; // enabled time
                     barrierLastTime = now;
                 }
                 else if (barrierStatus == 2) // enabled
@@ -102,7 +102,7 @@ namespace GUC.Scripts
                 else if (barrierStatus == 3) // fade out
                 {
                     barrierStatus = 0;
-                    barrierNextTime = now + random.Next(120, 240) * TimeSpan.TicksPerSecond; // disabled time
+                    barrierNextTime = now + random.Next(180, 300) * TimeSpan.TicksPerSecond; // disabled time
                     barrierLastTime = now;
                 }
                 else // disabled

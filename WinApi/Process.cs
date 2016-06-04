@@ -409,11 +409,13 @@ namespace WinApi
                 }
             }
 
-            int eaxPtr = Alloc(20 + argCount * 4).ToInt32();
+            int eaxPtr = Alloc(28 + argCount * 4).ToInt32();
             int ebxPtr = eaxPtr + 4;
             int ecxPtr = ebxPtr + 4;
             int edxPtr = ecxPtr + 4;
             int ediPtr = edxPtr + 4;
+            int ebpPtr = ediPtr + 4;
+            int esiPtr = ebpPtr + 4;
 
             uint funcLen = 104 + argCount * 9 + length;
             int funcPtr = Alloc(funcLen).ToInt32();
@@ -425,11 +427,13 @@ namespace WinApi
             funcBytes.Add(0x89); funcBytes.Add(0x0D); funcBytes.AddRange(BitConverter.GetBytes(ecxPtr)); // mov [ecxPtr], ECX
             funcBytes.Add(0x89); funcBytes.Add(0x15); funcBytes.AddRange(BitConverter.GetBytes(edxPtr)); // mov [edxPtr], EDX
             funcBytes.Add(0x89); funcBytes.Add(0x3D); funcBytes.AddRange(BitConverter.GetBytes(ediPtr)); // mov [ediPtr], EDI
+            funcBytes.Add(0x89); funcBytes.Add(0x2D); funcBytes.AddRange(BitConverter.GetBytes(ebpPtr)); // mov [ebpPtr], EBP
+            funcBytes.Add(0x89); funcBytes.Add(0x35); funcBytes.AddRange(BitConverter.GetBytes(esiPtr)); // mov [esiPtr], ESI
 
             for (int i = 1; i <= argCount; i++)
             {
                 funcBytes.Add(0x8B); funcBytes.Add(0x44); funcBytes.Add(0x24); funcBytes.Add((byte)(4 * i)); // mov EAX, [esp + 4 * i]
-                funcBytes.Add(0xA3); funcBytes.AddRange(BitConverter.GetBytes(ediPtr + 4 * i)); // mov [ediPtr + 4*i], EAX
+                funcBytes.Add(0xA3); funcBytes.AddRange(BitConverter.GetBytes(esiPtr + 4 * i)); // mov [esiPtr + 4*i], EAX
             }
 
             // call .NET method
@@ -473,6 +477,8 @@ namespace WinApi
             funcBytes.Add(0x8B); funcBytes.Add(0x0D); funcBytes.AddRange(BitConverter.GetBytes(ecxPtr)); // mov ECX, [ecxPtr]
             funcBytes.Add(0x8B); funcBytes.Add(0x15); funcBytes.AddRange(BitConverter.GetBytes(edxPtr)); // mov EDX, [edxPtr]
             funcBytes.Add(0x8B); funcBytes.Add(0x3D); funcBytes.AddRange(BitConverter.GetBytes(ediPtr)); // mov EDI, [ediPtr]
+            funcBytes.Add(0x8B); funcBytes.Add(0x2D); funcBytes.AddRange(BitConverter.GetBytes(ebpPtr)); // mov EBP, [ebpPtr]
+            funcBytes.Add(0x8B); funcBytes.Add(0x35); funcBytes.AddRange(BitConverter.GetBytes(esiPtr)); // mov ESI, [esiPtr]
 
             // old code
             byte[] oldCode = ReadBytes(address, length);
