@@ -39,7 +39,7 @@ namespace GUC.Scripts
             GUCMenu.UpdateMenus(ticks);
             Client.Scripts.TFFA.InputControl.Update(ticks);
             CheckMusic();
-            //CheckBarrier();
+            CheckBarrier();
         }
 
         public void StartOutgame()
@@ -129,6 +129,14 @@ namespace GUC.Scripts
                 }
 
                 Client.Barrier.BarrierAlpha = value;
+                if (barrierStatus == 1 || barrierStatus == 2 || (barrierStatus == 3 && value > 70))
+                {
+                    Client.Barrier.PlaySound = true;
+                }
+                else
+                {
+                    Client.Barrier.PlaySound = false;
+                }
             }
         }
     }

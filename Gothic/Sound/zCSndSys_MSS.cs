@@ -52,5 +52,15 @@ namespace Gothic.Sound
         {
             Process.THISCALL<NullReturnCall>(GetZSound(), 0x004F1060, snd, vob, new IntArg(arg), new IntArg(sndParams));
         }
+
+        public static void PlaySound(zCSndFX_MSS snd, int arg)
+        {
+            Process.THISCALL<NullReturnCall>(GetZSound(), 0x004EF7B0, snd, new IntArg(arg));
+        }
+
+        public static void PlaySound(zCSndFX_MSS snd, int arg0, int arg1, float arg2, float arg3)
+        {
+            Process.THISCALL<NullReturnCall>(GetZSound(), 0x004F0B70, snd, (IntArg)arg0, (IntArg)arg1, (FloatArg)arg2, (FloatArg)arg3);
+        }
     }
 }

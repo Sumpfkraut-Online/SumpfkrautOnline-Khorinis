@@ -264,6 +264,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Randomizer.cs" />
     <Compile Include="Scripting\ScriptInterface.Client.cs" />
     <Compile Include="SoundHandler.cs" />
     <Compile Include="SplashScreen.xaml.cs">
