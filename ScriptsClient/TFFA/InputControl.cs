@@ -419,6 +419,8 @@ namespace GUC.Client.Scripts.TFFA
                 Hero.BaseInst.gVob.AniCtrl.StopTurnAnis();
             }
 
+            return;
+
             if (InputHandler.IsPressed(VirtualKeys.K))
             {
                 if (nextFwdTeleport < now)
