@@ -98,12 +98,18 @@ namespace WinApi
         public int GetEDI() { return Process.ReadInt(infoAddr + 16); }
         public void SetEDI(int value) { Process.Write(value, infoAddr + 16); }
 
+        public int GetEBP() { return Process.ReadInt(infoAddr + 20); }
+        public void SetEBP(int value) { Process.Write(value, infoAddr + 20); }
+
+        public int GetESI() { return Process.ReadInt(infoAddr + 24); }
+        public void SetESI(int value) { Process.Write(value, infoAddr + 24); }
+
         public int GetArgument(int index)
         {
             if (index < 0 || index >= argCount)
                 throw new IndexOutOfRangeException(string.Format("Argument index of '{0}' hook must be 0 <= index < {1}! (Is {2})", this.callback.Method.Name, this.argCount, index));
 
-            return Process.ReadInt(infoAddr + 20 + index * 4);
+            return Process.ReadInt(infoAddr + 28 + index * 4);
         }
     }
 }

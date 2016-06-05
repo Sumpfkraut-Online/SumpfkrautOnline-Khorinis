@@ -163,7 +163,7 @@ namespace GUC.Server.Scripts.TFFA
 
         public static void Kill(TFFAClient client)
         {
-            if (client.Character == null)
+            if (client.Character == null || client.Character.BaseInst.IsDead)
                 return;
 
             client.Character.SetHealth(0);

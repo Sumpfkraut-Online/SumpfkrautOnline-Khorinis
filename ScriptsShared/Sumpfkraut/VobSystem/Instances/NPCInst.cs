@@ -281,9 +281,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 ModelScale = stream.ReadVec3f();
             }
         }
-
-        public int visibleClientID = -1;
-
+        
         public override void OnWriteProperties(PacketWriter stream)
         {
             base.OnWriteProperties(stream);
