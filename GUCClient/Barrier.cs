@@ -125,6 +125,9 @@ namespace GUC.Client
 
                 if (barrierAlpha > 0)
                 {
+                    float farClipZ = Process.ReadFloat(zCCamera.GetCamAddr() + 2300);
+                    bool zBufferWriteEnabled = Process.ReadBool(zCRenderer.GetRendererAddress() + 1148);
+
                     zCRenderer.SetZBufferWriteEnabled(true);
                     zCCamera.SetFarClipZ(2000000.0f);
 
@@ -133,6 +136,9 @@ namespace GUC.Client
                     barrier.RenderLayer(context, 1, ptrArg);
 
                     zCRenderer.FlushPolys();
+
+                    zCCamera.SetFarClipZ(farClipZ);
+                    zCRenderer.SetZBufferWriteEnabled(zBufferWriteEnabled);
 
                     if (PlaySound)
                     {
