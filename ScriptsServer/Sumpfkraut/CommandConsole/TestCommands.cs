@@ -34,32 +34,66 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
                 { "rawText", "Failed to retrieve player list!" },
             };
 
-            List<object> playerInfo = new List<object>();
+            //List<object> playerInfo = new List<object>();
+            //Network.GameClient.ForEach(client =>
+            //{
+            //    PlayerInfo info = new PlayerInfo();
+
+            //    info.ClientID = client.ID;
+            //    //info.DriveHash = client.DriveHash;
+            //    //info.MacHash = client.MacHash;
+            //    //info.Ping = client.GetLastPing();
+
+            //    if (client.Character == null) { return; }
+
+            //    info.VobID = client.Character.ID;
+            //    //info.VobType = client.Character.VobType;
+            //    info.NPCName = client.Character.Name;
+            //    //info.MapName = "TESTWORLD";
+            //    info.Position = client.Character.GetPosition();
+            //    //info.Direction = client.Character.GetDirection();
+
+            //    playerInfo.Add(info);
+            //});
+
+            //returnVal = new Dictionary<string, object>
+            //{
+            //    { "type", WSProtocolType.chatData },
+            //    { "sender", "SERVER" },
+            //    { "rawText", "List of players: " },
+            //    { "data", playerInfo },
+            //};
+
+            //StringBuilder infoSB = new StringBuilder();
+            //infoSB.Append("List of players: ");
+            //TFFA.TFFAClient.ForEach(client =>
+            //{
+            //    infoSB.AppendFormat("[charID: {0}, charName: {1}], ", client.ID,
+            //        client.Name, client.Character);
+            //});
+            
+            StringBuilder infoSB = new StringBuilder();
+            infoSB.Append("List of players: ");
+            string sep = "";
             Network.GameClient.ForEach(client =>
             {
-                PlayerInfo info = new PlayerInfo();
+                infoSB.AppendFormat("{0}[clientID: {1}", sep, client.ID);
 
-                info.ClientID = client.ID;
-                info.DriveHash = client.DriveHash;
-                info.MacHash = client.MacHash;
-                info.Ping = client.GetLastPing();
+                if (client.Character != null)
+                {
+                    infoSB.AppendFormat(", charID: {0}, charName: {1}, charPos: {2}], ", client.Character.ID,
+                        client.Character.Name, client.Character.GetPosition());
+                }
 
-                info.VobID = client.Character.ID;
-                info.VobType = client.Character.VobType;
-                info.NPCName = client.Character.Name;
-                info.MapName = "TESTWORLD";
-                info.Position = client.Character.GetPosition();
-                info.Direction = client.Character.GetDirection();
-
-                playerInfo.Add(info);
+                infoSB.Append("]");
+                sep = ", ";
             });
 
             returnVal = new Dictionary<string, object>
             {
                 { "type", WSProtocolType.chatData },
                 { "sender", "SERVER" },
-                { "rawText", "List of players: " },
-                { "data", playerInfo },
+                { "rawText", infoSB.ToString() },
             };
         }
 
@@ -289,7 +323,8 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
                 for (var i = 0; i < clients.Count; i++)
                 {
                     clientID = clients[i].ID;
-                    charName = clients[i].Character.Name;
+                    if (clients[i].Character != null) { charName = clients[i].Character.Name; }
+                    else { charName = "?"; }
                     clients[i].Ban();
                     if (!first) { successMsgSB.Append(","); }
                     else { first = false; }
@@ -324,7 +359,8 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
                 for (var i = 0; i < clients.Count; i++)
                 {
                     clientID = clients[i].ID;
-                    charName = clients[i].Character.Name;
+                    if (clients[i].Character != null) { charName = clients[i].Character.Name; }
+                    else { charName = "?"; }
                     clients[i].Kick();
                     if (!first) { successMsgSB.Append(","); }
                     else { first = false; }

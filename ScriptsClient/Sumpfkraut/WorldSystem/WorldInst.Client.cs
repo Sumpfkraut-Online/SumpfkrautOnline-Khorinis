@@ -13,7 +13,7 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
         public void Load()
         {
             GUC.Client.Scripts.Sumpfkraut.Menus.GUCMenu.CloseActiveMenus();
-            oCGame.LoadGame(true, "OldWorld\\OldWorld.zen");
+            oCGame.LoadGame(true, "OLDWORLD\\OLDWORLD.ZEN");
         }
     }
 }
