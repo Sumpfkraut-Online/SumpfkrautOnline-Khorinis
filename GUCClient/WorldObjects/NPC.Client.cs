@@ -161,7 +161,9 @@ namespace GUC.WorldObjects
                 if (aniID > 0)
                 {
                     gModel.StartAni(aniID, 0);
-                    gModel.GetActiveAni(aniID).SetActFrame(ani.StartFrame);
+                    var activeAni = gModel.GetActiveAni(aniID);
+                    if (activeAni.Address != 0)
+                        activeAni.SetActFrame(ani.StartFrame);
                 }
             }
         }

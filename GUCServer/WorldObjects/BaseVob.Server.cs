@@ -180,7 +180,7 @@ namespace GUC.WorldObjects
             this.WriteStream(stream);
             this.Cell.ForEachSurroundingClient(c =>
             {
-                c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'W');
+                c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
             });
         }
 
@@ -190,7 +190,7 @@ namespace GUC.WorldObjects
             stream.Write((ushort)this.ID);
             this.Cell.ForEachSurroundingClient(c =>
             {
-                c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'W');
+                c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
             });
         }
 

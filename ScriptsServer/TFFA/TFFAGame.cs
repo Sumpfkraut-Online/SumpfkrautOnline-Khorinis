@@ -189,11 +189,12 @@ namespace GUC.Server.Scripts.TFFA
             TFFAClient tar = ((TFFAClient)target.BaseInst.Client.ScriptObject);
 
             int realDamage = att.Team == tar.Team ? (int)(damage * 0.5f) : damage;
-            target.SetHealth(target.BaseInst.HP - realDamage);
+            int newHP = target.BaseInst.HP - realDamage;
 
             if (att.Team != tar.Team)
                 att.Damage += damage;
-            if (target.BaseInst.HP <= 0)
+
+            if (newHP <= 0)
             {
                 if (att.Team != tar.Team)
                 {
@@ -204,6 +205,10 @@ namespace GUC.Server.Scripts.TFFA
                     att.Kills--;
                 }
                 Kill(tar);
+            }
+            else
+            {
+                target.SetHealth(newHP);
             }
         }
 
