@@ -319,7 +319,7 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
             TFFA.TFFAClient.ForEach(client =>
             {
                 if (!first) { infoSB.Append(", "); }
-                infoSB.AppendFormat("[clientID: {0}, clientName: {1}]]", client.ID,
+                infoSB.AppendFormat("[clientID: {0}, clientName: {1}]", client.ID,
                     client.Name);
             });
 
@@ -350,8 +350,7 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
                 for (var i = 0; i < clients.Count; i++)
                 {
                     clientID = clients[i].ID;
-                    if (clients[i].Character != null) { charName = clients[i].Name; }
-                    else { charName = "?"; }
+                    charName = clients[i].Name;
                     clients[i].BaseClient.Ban();
                     if (!first) { successMsgSB.Append(","); }
                     else { first = false; }
@@ -386,8 +385,7 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
                 for (var i = 0; i < clients.Count; i++)
                 {
                     clientID = clients[i].ID;
-                    if (clients[i].Character != null) { charName = clients[i].Name; }
-                    else { charName = "?"; }
+                    charName = clients[i].Name;
                     clients[i].BaseClient.Kick();
                     if (!first) { successMsgSB.Append(","); }
                     else { first = false; }
@@ -447,6 +445,12 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
                 { "rawText", "Failed to set ig-time!" },
             };
 
+            if (param.Length < 1)
+            {
+                returnVal["rawText"] += " Provide at least 1 command argument.";
+                return;
+            }
+
             WorldTime time = WorldInst.Current.Clock.Time;
             float rate = WorldInst.Current.Clock.Rate;
             bool timeReady = false, rateReady = false;
@@ -473,20 +477,36 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
                 { "rawText", "Failed to set ig-weathertype!" },
             };
 
+            if (param.Length < 1)
+            {
+                returnVal["rawText"] += " Provide at least 1 command argument.";
+                return;
+            }
+
             WeatherTypes weatherType = default(WeatherTypes);
-            int weatherInt = -1; 
-            bool parseSuccess = false;
-            if      (Enum.TryParse(param[0], out weatherType)) { parseSuccess = true; }
-            else if (int.TryParse(param[0], out weatherInt))
+            int weatherInt = -1;
+            bool success = false;
+            if (int.TryParse(param[0], out weatherInt))
             {
                 if (Enum.IsDefined(typeof(WeatherTypes), weatherInt))
                 {
                     weatherType = (WeatherTypes) weatherInt;
-                    parseSuccess = true;
+                    success = true;
                 }
             }
+            else if (Enum.TryParse(param[0], out weatherType))
+            {
+                success = true;
+            }
 
-            if (parseSuccess) { WorldInst.Current.SkyCtrl.SetWeatherType(weatherType); }
+            if (success)
+            {
+                WorldInst.Current.SkyCtrl.SetWeatherType(weatherType);
+                returnVal = new Dictionary<string, object>()
+                {
+                    { "rawText", string.Format("Set ig-weathertype to {0}.", weatherType) },
+                };
+            }
         }
 
         public static void SetIGRainTimeTFFA (object sender, string cmd, string[] param,
@@ -496,6 +516,12 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
             {
                 { "rawText", "Failed to set ig-raintime!" },
             };
+
+            if (param.Length < 1)
+            {
+                returnVal["rawText"] += " Provide at least 2 command arguments.";
+                return;
+            }
 
             WorldTime rainTime = default(WorldTime);
             float weight = 0f;
@@ -507,7 +533,14 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
                 if ((!rainTimeReady) && WorldTime.TryParseDayHourMin(param[i], out rainTime)) { rainTimeReady = true; }
             }
 
-            if (rainTimeReady && weightReady) { WorldInst.Current.SkyCtrl.SetRainTime(rainTime, weight); }
+            if (rainTimeReady && weightReady)
+            {
+                WorldInst.Current.SkyCtrl.SetRainTime(rainTime, weight);
+                returnVal = new Dictionary<string, object>()
+                {
+                    { "rawText", string.Format("Set rain at time {0} to weight {1}.", rainTime, weight) },
+                };
+            }
         }
 
     }
