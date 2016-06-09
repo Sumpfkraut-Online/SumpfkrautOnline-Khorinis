@@ -23,10 +23,13 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
         public static readonly Dictionary<string, ProcessCommand> CmdToProcessFunc =
             new Dictionary<string, ProcessCommand>()
             {
-                { "/GETPLAYERS", TestCommands.GetPlayerList },
-                { "/BAN", TestCommands.BanPlayers },
-                { "/KICK", TestCommands.KickPlayers },
-                { "/KILL", TestCommands.KillPlayers },
+                { "/GETPLAYERS", TestCommands.GetPlayerListTFFA },
+                { "/BAN", TestCommands.BanPlayersTFFA },
+                { "/KICK", TestCommands.KickPlayersTFFA },
+                { "/KILL", TestCommands.KillPlayersTFFA },
+                { "/SETTIME", TestCommands.SetIGTimeTFFA },
+                { "/SETWT", TestCommands.SetIGWeatherTypeTFFA },
+                { "/SETRAIN", TestCommands.SetIGRainTimeTFFA },
                 //{ "/G", TestCommands.SetIgTime }, // send global text-message (TO DO)
                 //{ "/GETPOS", TestCommands.SetIgTime }, // get pos. of youself or another player/vob? (TO DO)
                 //{ "/KILL", TestCommands.SetIgTime }, // kill vob in focus (TO DO)
