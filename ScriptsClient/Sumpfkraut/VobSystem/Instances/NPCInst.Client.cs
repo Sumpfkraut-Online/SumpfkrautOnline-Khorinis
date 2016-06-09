@@ -45,27 +45,24 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             switch (item.ItemType)
             {
                 case Definitions.ItemTypes.Wep1H:
-                    Log.Logger.Log("Equip 1H: " + item.BaseInst.Model.Visual);
                     item.BaseInst.gVob.MainFlag = Gothic.Objects.oCItem.MainFlags.ITEM_KAT_NF;
                     item.BaseInst.gVob.Flags = Gothic.Objects.oCItem.ItemFlags.ITEM_SWD;
                     item.BaseInst.gVob.Flags |= item.BaseInst.gVob.MainFlag;
                     this.BaseInst.gVob.EquipWeapon(item.BaseInst.gVob);
-                    using (var str = Gothic.Types.zString.Create("1H"))
-                        this.BaseInst.gVob.SetWeaponMode2(str);
+                    //using (var str = Gothic.Types.zString.Create("1H"))
+                    //    this.BaseInst.gVob.SetWeaponMode2(str);
                     break;
 
                 case Definitions.ItemTypes.Wep2H:
-                    Log.Logger.Log("Equip 2H: " + item.BaseInst.Model.Visual);
                     item.BaseInst.gVob.MainFlag = Gothic.Objects.oCItem.MainFlags.ITEM_KAT_NF;
                     item.BaseInst.gVob.Flags = Gothic.Objects.oCItem.ItemFlags.ITEM_2HD_SWD;
                     item.BaseInst.gVob.Flags |= item.BaseInst.gVob.MainFlag;
                     this.BaseInst.gVob.EquipWeapon(item.BaseInst.gVob);
-                    using (var str = Gothic.Types.zString.Create("2H"))
-                        this.BaseInst.gVob.SetWeaponMode2(str);
+                    //using (var str = Gothic.Types.zString.Create("2H"))
+                    //    this.BaseInst.gVob.SetWeaponMode2(str);
                     break;
 
                 case Definitions.ItemTypes.Armor:
-                    Log.Logger.Log("Equip Armor: " + item.BaseInst.Model.Visual);
                     item.BaseInst.gVob.MainFlag = Gothic.Objects.oCItem.MainFlags.ITEM_KAT_ARMOR;
                     item.BaseInst.gVob.VisualChange.Set(item.Definition.VisualChange);
                     item.BaseInst.gVob.Flags = 0;
@@ -140,7 +137,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             {
                 this.StartAniJump(a, (int)netArgs[0], (int)netArgs[1]);
             }
-            else if (a.AniJob.IsClimbing)
+            else if (a.AniJob.IsClimb)
             {
                 this.StartAniClimb(a, (WorldObjects.NPC.ClimbingLedge)netArgs[0]);
             }

@@ -51,10 +51,26 @@ namespace GUC.Animations
             get { return this.startFrame; }
             set
             {
-                if (startFrame < 0 || startFrame > ushort.MaxValue)
+                if (value < 0 || value > ushort.MaxValue)
                     throw new ArgumentOutOfRangeException("StartFrame is out of range! 0.." + ushort.MaxValue);
 
                 this.startFrame = value;
+            }
+        }
+
+        int endFrame = 0;
+        /// <summary>
+        /// At what frame the gothic animation should end. (ushort) EndFrame = 0 plays the whole animation
+        /// </summary>
+        public int EndFrame
+        {
+            get { return this.endFrame; }
+            set
+            {
+                if (value < 0 || value > ushort.MaxValue)
+                    throw new ArgumentOutOfRangeException("EndFrame is out of range! 0.." + ushort.MaxValue);
+
+                this.endFrame = value;
             }
         }
 
@@ -86,6 +102,7 @@ namespace GUC.Animations
         {
             stream.Write(duration);
             stream.Write((ushort)startFrame);
+            stream.Write((ushort)endFrame);
             stream.Write((byte)LayerID);
         }
 
@@ -93,6 +110,7 @@ namespace GUC.Animations
         {
             this.duration = stream.ReadInt();
             this.startFrame = stream.ReadUShort();
+            this.endFrame = stream.ReadUShort();
             this.LayerID = stream.ReadByte();
         }
 

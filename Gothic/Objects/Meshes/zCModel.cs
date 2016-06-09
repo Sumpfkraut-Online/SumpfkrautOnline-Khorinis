@@ -74,18 +74,18 @@ namespace Gothic.Objects.Meshes
 
         }
 
-        /* public zCModelPrototype ModelPrototype
-         {
-             get { return new zCModelPrototype(Process, Process.ReadInt(Process.ReadInt(Address + VarOffsets.ModelPrototype))); }
-             set { Process.Write(value.Address, Address + VarOffsets.ModelPrototype); }
-         }*/
+        public zCModelPrototype ModelPrototype
+        {
+            get { return new zCModelPrototype(Process.ReadInt(Address + VarOffsets.ModelPrototype)); }
+            //set { Process.Write(value.Address, Address + VarOffsets.ModelPrototype); }
+        }
 
         public zCVob Owner
         {
             get { return new zCVob(Process.ReadInt(Address + VarOffsets.Owner)); }
         }
 
-        /*public zTBBox3D BBox3D
+        public zTBBox3D BBox3D
         {
             get { return new zTBBox3D(Address + VarOffsets.BBox3D); }
         }
@@ -93,7 +93,7 @@ namespace Gothic.Objects.Meshes
         public zTBBox3D BBox3DLocal
         {
             get { return new zTBBox3D(Address + VarOffsets.BBox3DLocal); }
-        }*/
+        }
 
 
 

@@ -40,7 +40,7 @@ namespace Gothic.Objects.Meshes
         public static zCMaterial Create()
         {
             int ptr = Process.CDECLCALL<IntArg>(0x563D20); // createinstance
-            Process.THISCALL<NullReturnCall>(ptr, 0x563E00); // constructor
+            //Process.THISCALL<NullReturnCall>(ptr, 0x563E00); // constructor
             return new zCMaterial(ptr);
         }
     }

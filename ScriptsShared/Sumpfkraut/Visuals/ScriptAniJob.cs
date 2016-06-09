@@ -41,20 +41,47 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         ClimbLow,
         ClimbMid,
         ClimbHigh,
+
+        Draw1H,
+        Draw1HRun,
+        Draw2H,
+        Draw2HRun,
+
+        Undraw1H,
+        Undraw1HRun,
+        Undraw2H,
+        Undraw2HRun,
+    }
+
+    public enum AniType
+    {
+        Normal,
+        Fight,
+        FightAttack,
+        FightAttackCombo,
+        FightAttackRun,
+        FightParade,
+        FightDodge,
+        Jump,
+        Climb,
+        Draw,
+        Undraw
     }
 
     public partial class ScriptAniJob : ScriptObject, AniJob.IScriptAniJob
     {
         #region Properties
 
-        public bool IsFightMove { get { return this.ID >= (int)SetAnis.Attack1HFwd1 && this.ID <= (int)SetAnis.Attack2HParry3; } }
-        public bool IsAttack { get { return (this.ID >= (int)SetAnis.Attack1HFwd1 && this.ID <= (int)SetAnis.Attack1HRun) || (this.ID >= (int)SetAnis.Attack2HFwd1 && this.ID <= (int)SetAnis.Attack2HRun); } }
-        public bool IsAttackCombo { get { return (this.ID >= (int)SetAnis.Attack1HFwd1 && this.ID <= (int)SetAnis.Attack1HFwd4) || (this.ID >= (int)SetAnis.Attack2HFwd1 && this.ID <= (int)SetAnis.Attack2HFwd4); } }
-        public bool IsAttackRun { get { return this.ID == (int)SetAnis.Attack1HRun || this.ID == (int)SetAnis.Attack2HRun; } }
-        public bool IsParade { get { return (this.ID >= (int)SetAnis.Attack1HParry1 && this.ID <= (int)SetAnis.Attack1HParry3) || (this.ID >= (int)SetAnis.Attack2HParry1 && this.ID <= (int)SetAnis.Attack2HParry3); } }
-        public bool IsDodge { get { return this.ID == (int)SetAnis.Attack1HDodge || this.ID == (int)SetAnis.Attack2HDodge; } }
-        public bool IsJump { get { return this.ID >= (int)SetAnis.JumpRun && this.ID <= (int)SetAnis.JumpUp; } }
-        public bool IsClimbing { get { return this.ID >= (int)SetAnis.ClimbLow && this.ID <= (int)SetAnis.ClimbHigh; } }
+        public bool IsFightMove { get { return this.Type >= AniType.Fight && this.Type <= AniType.FightDodge; } }
+        public bool IsAttack { get { return this.Type >= AniType.FightAttack && this.Type <= AniType.FightAttackRun; } }
+        public bool IsAttackCombo { get { return this.Type == AniType.FightAttackCombo; } }
+        public bool IsAttackRun { get { return this.Type == AniType.FightAttackRun; } }
+        public bool IsParade { get { return this.Type == AniType.FightParade; } }
+        public bool IsDodge { get { return this.Type == AniType.FightDodge; } }
+        public bool IsJump { get { return this.Type == AniType.Jump; } }
+        public bool IsClimb { get { return this.Type == AniType.Climb; } }
+        public bool IsDraw { get { return this.Type == AniType.Draw; } }
+        public bool IsUndraw { get { return this.Type == AniType.Undraw; } }
 
         public bool IsCreated { get { return this.baseAniJob.IsCreated; } }
 
@@ -67,34 +94,17 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
         public int ID { get { return this.baseAniJob.ID; } set { this.baseAniJob.ID = value; } }
 
+        public AniType Type = AniType.Normal;
+
         #endregion
-
-        void ValidateAni(ScriptAni ani)
-        {
-            if (ani == null)
-                throw new Exception("Ani is null!");
-
-            if (this.IsFightMove)
-            {
-                if (ani.ComboTime > ani.Duration)
-                    throw new Exception("ComboTime > Duration");
-
-                if (this.IsAttack)
-                {
-                    if (ani.HitTime > ani.ComboTime)
-                        throw new Exception("HitTime > ComboTime");
-                }
-            }
-        }
-
+        
         public void SetDefaultAni(Animation ani)
         {
             this.SetDefaultAni((ScriptAni)ani.ScriptObject);
         }
 
-        public void SetDefaultAni(ScriptAni ani)
+        public virtual void SetDefaultAni(ScriptAni ani)
         {
-            ValidateAni(ani);
             this.baseAniJob.SetDefaultAni(ani.BaseAni);
         }
 
@@ -103,9 +113,8 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
             this.AddOverlayAni((ScriptAni)ani.ScriptObject, (ScriptOverlay)overlay.ScriptObject);
         }
 
-        public void AddOverlayAni(ScriptAni ani, ScriptOverlay ov)
+        public virtual void AddOverlayAni(ScriptAni ani, ScriptOverlay ov)
         {
-            ValidateAni(ani);
             this.baseAniJob.AddOverlayAni(ani.BaseAni, ov.BaseOverlay);
         }
 
@@ -133,10 +142,12 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
         public void OnReadProperties(PacketReader stream)
         {
+            this.Type = (AniType)stream.ReadByte();
         }
 
         public void OnWriteProperties(PacketWriter stream)
         {
+            stream.Write((byte)this.Type);
         }
 
         #endregion

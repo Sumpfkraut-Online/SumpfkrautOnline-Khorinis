@@ -178,9 +178,6 @@ namespace GUC.Scripts.TFFA
 
         public void SendChatMessage(string message, bool onlyTeam)
         {
-
-            Log.Logger.Log("Redirect chat message: '" + message + "'");
-
             PacketWriter stream = GameClient.GetMenuMsgStream();
             stream.Write((byte)(onlyTeam ? MenuMsgID.TeamChat : MenuMsgID.AllChat));
             stream.Write((byte)this.ID);

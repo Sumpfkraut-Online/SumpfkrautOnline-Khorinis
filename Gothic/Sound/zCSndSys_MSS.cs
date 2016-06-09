@@ -37,30 +37,60 @@ namespace Gothic.Sound
             return Process.THISCALL<zCSndFX_MSS>(GetZSound(), 0x004ED960, str);
         }
 
-        public static void PlaySound3D(zCSndFX_MSS snd, zCVob vob, int arg, int sndParams)
+        public static int PlaySound3D(zCSndFX_MSS snd, zCVob vob, int arg, zTSound3DParams param)
         {
-            Process.THISCALL<NullReturnCall>(GetZSound(), 0x004F10F0, snd, vob, new IntArg(arg), new IntArg(sndParams));
+            return Process.THISCALL<IntArg>(GetZSound(), 0x004F10F0, snd, vob, new IntArg(arg), param);
         }
 
-        public static void PlaySound3D(string snd, zCVob vob, int arg, int sndParams)
+        public static int PlaySound3D(string snd, zCVob vob, int arg, zTSound3DParams param)
         {
+            int ret;
             using (zString z = zString.Create(snd))
-                PlaySound3D(z, vob, arg, sndParams);
+                ret = PlaySound3D(z, vob, arg, param);
+            return ret;
         }
 
-        public static void PlaySound3D(zString snd, zCVob vob, int arg, int sndParams)
+        public static int PlaySound3D(zString snd, zCVob vob, int arg, zTSound3DParams param)
         {
-            Process.THISCALL<NullReturnCall>(GetZSound(), 0x004F1060, snd, vob, new IntArg(arg), new IntArg(sndParams));
+            return Process.THISCALL<IntArg>(GetZSound(), 0x004F1060, snd, vob, new IntArg(arg), param);
         }
 
-        public static void PlaySound(zCSndFX_MSS snd, int arg)
+        public static int PlaySound(zCSndFX_MSS snd, bool arg)
         {
-            Process.THISCALL<NullReturnCall>(GetZSound(), 0x004EF7B0, snd, new IntArg(arg));
+            return Process.THISCALL<IntArg>(GetZSound(), 0x004EF7B0, snd, new BoolArg(arg));
         }
 
-        public static void PlaySound(zCSndFX_MSS snd, int arg0, int arg1, float arg2, float arg3)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="snd"></param>
+        /// <param name="arg0"></param>
+        /// <param name="arg1"></param>
+        /// <param name="volume">0.0 to 2.0</param>
+        /// <param name="stereo">-1 for only left to +1 for only right</param>
+        public static int PlaySound(zCSndFX_MSS snd, bool arg0, int arg1, float volume, float stereo)
         {
-            Process.THISCALL<NullReturnCall>(GetZSound(), 0x004F0B70, snd, (IntArg)arg0, (IntArg)arg1, (FloatArg)arg2, (FloatArg)arg3);
+            return Process.THISCALL<IntArg>(GetZSound(), 0x004F0B70, snd, (BoolArg)arg0, (IntArg)arg1, (FloatArg)volume, (FloatArg)stereo);
+        }
+
+        public static bool UpdateSound3D(int sndIDPtr, zTSound3DParams param)
+        {
+            return Process.THISCALL<BoolArg>(GetZSound(), 0x4F2410, (IntArg)sndIDPtr, param);
+        }
+
+        public static void SetMasterVolume(float value)
+        {
+            Process.THISCALL<NullReturnCall>(GetZSound(), 0x004ED8E0, new FloatArg(value));
+        }
+
+        public static float GetMasterVolume()
+        {
+            return Process.THISCALL<FloatArg>(GetZSound(), 0x004ED730);
+        }
+
+        public static bool IsSoundActive(int sndIDPtr)
+        {
+            return Process.THISCALL<BoolArg>(GetZSound(), 0x4F3FD0, (IntArg)sndIDPtr);
         }
     }
 }

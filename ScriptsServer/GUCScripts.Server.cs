@@ -46,35 +46,30 @@ namespace GUC.Scripts
             Add1hAttacks(m);
 
             // JUMPS
-            ScriptAniJob aniJob = new ScriptAniJob("jumprun");
+            var aniJob = new ScriptAniJob("jumprun", new ScriptAni(8000000), AniType.Jump);
             aniJob.BaseAniJob.ID = (int)SetAnis.JumpRun;
             aniJob.AniName = "t_RunL_2_Jump";
-            aniJob.SetDefaultAni(new ScriptAni(8000000));
             m.AddAniJob(aniJob);
 
-            aniJob = new ScriptAniJob("jumpfwd");
+            aniJob = new ScriptAniJob("jumpfwd", new ScriptAni(9200000), AniType.Jump);
             aniJob.BaseAniJob.ID = (int)SetAnis.JumpFwd;
             aniJob.AniName = "T_STAND_2_JUMP";
-            aniJob.SetDefaultAni(new ScriptAni(9200000));
             m.AddAniJob(aniJob);
 
             // CLIMBING
-            aniJob = new ScriptAniJob("climblow");
+            aniJob = new ScriptAniJob("climblow", new ScriptAni(1200000 + 2000000 + 3200000), AniType.Climb);
             aniJob.BaseAniJob.ID = (int)SetAnis.ClimbLow;
             aniJob.AniName = "T_STAND_2_JUMPUPLOW";
-            aniJob.SetDefaultAni(new ScriptAni(1200000 + 2000000 + 3200000));
             m.AddAniJob(aniJob);
 
-            aniJob = new ScriptAniJob("climbmid");
+            aniJob = new ScriptAniJob("climbmid", new ScriptAni(3200000 + 1200000 + 8000000), AniType.Climb);
             aniJob.BaseAniJob.ID = (int)SetAnis.ClimbMid;
             aniJob.AniName = "T_STAND_2_JUMPUPMID";
-            aniJob.SetDefaultAni(new ScriptAni(3200000 + 1200000 + 8000000));
             m.AddAniJob(aniJob);
 
-            aniJob = new ScriptAniJob("climbhigh");
+            aniJob = new ScriptAniJob("climbhigh", new ScriptAni(6800000 + 0 + 10000000), AniType.Climb);
             aniJob.BaseAniJob.ID = (int)SetAnis.ClimbHigh;
             aniJob.AniName = "T_JUMP_2_HANG";
-            aniJob.SetDefaultAni(new ScriptAni(6800000 + 0 + 10000000));
             m.AddAniJob(aniJob);
 
             m.Create();
@@ -106,109 +101,118 @@ namespace GUC.Scripts
             var ov1 = new ScriptOverlay("1HST1", "Humans_1hST1"); model.AddOverlay(ov1);
             var ov2 = new ScriptOverlay("1HST2", "Humans_1hST2"); model.AddOverlay(ov2);
 
+            // Weapon drawing
+
+            ScriptAniJob aniJob = new ScriptAniJob("draw1h");
+            aniJob.BaseAniJob.ID = (int)SetAnis.Draw1H;
+            aniJob.AniName = "draw1h";
+            model.AddAniJob(aniJob);
+
+            var ani = new ScriptAni(4800000); aniJob.SetDefaultAni(ani);
+            ani = new ScriptAni(2800000); aniJob.AddOverlayAni(ani, ov1);
+            ani = new ScriptAni(2800000); aniJob.AddOverlayAni(ani, ov2);
+
+            aniJob = new ScriptAniJob("undraw1h");
+            aniJob.BaseAniJob.ID = (int)SetAnis.Undraw1H;
+            aniJob.AniName = "undraw1h";
+            model.AddAniJob(aniJob);
+
+            ani = new ScriptAni(4800000); aniJob.SetDefaultAni(ani);
+            ani = new ScriptAni(2800000); aniJob.AddOverlayAni(ani, ov1);
+            ani = new ScriptAni(2800000); aniJob.AddOverlayAni(ani, ov2);
+
             // 1h COMBO 1
-            ScriptAniJob aniJob = new ScriptAniJob("attack1hfwd1");
+            aniJob = new ScriptAniJob("attack1hfwd1", AniType.FightAttackCombo);
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HFwd1;
             aniJob.AniName = "s_1hAttack";
             model.AddAniJob(aniJob);
 
-            var ani = new ScriptAni(8400000); ani.ComboTime = 4400000; ani.HitTime = 2000000; aniJob.SetDefaultAni(ani);
-            ani = new ScriptAni(13200000); ani.ComboTime = 4400000; ani.HitTime = 1200000; aniJob.AddOverlayAni(ani, ov1);
-            ani = new ScriptAni(11200000); ani.ComboTime = 3600000; ani.HitTime = 1200000; aniJob.AddOverlayAni(ani, ov2);
+            aniJob.SetDefaultAni(ScriptAni.NewAttackAni(8400000, 2000000, 4400000));
+            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(13200000, 1200000, 4400000), ov1);
+            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(11200000, 1200000, 3600000), ov2);
             
             // 1h COMBO 2
-            aniJob = new ScriptAniJob("attack1hfwd2");
+            aniJob = new ScriptAniJob("attack1hfwd2", AniType.FightAttackCombo);
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HFwd2;
             aniJob.AniName = "s_1hAttack";
             model.AddAniJob(aniJob);
 
-            ani = new ScriptAni(5200000); ani.StartFrame = 26; ani.ComboTime = 3200000; ani.HitTime = 3200000; aniJob.SetDefaultAni(ani);
-            ani = new ScriptAni(12500000); ani.StartFrame = 36; ani.ComboTime = 5200000; ani.HitTime = 1400000; aniJob.AddOverlayAni(ani, ov1);
-            ani = new ScriptAni(10800000); ani.StartFrame = 33; ani.ComboTime = 5200000; ani.HitTime = 1800000; aniJob.AddOverlayAni(ani, ov2);
-
+            aniJob.SetDefaultAni(ScriptAni.NewAttackAni(5200000, 3200000, 3200000, 26));
+            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(12500000, 1400000, 5200000, 36), ov1);
+            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(10800000, 1800000, 5200000, 33), ov2);
 
             // 1h COMBO 3
-            aniJob = new ScriptAniJob("attack1hfwd3");
+            aniJob = new ScriptAniJob("attack1hfwd3", AniType.FightAttackCombo);
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HFwd3;
             aniJob.AniName = "s_1hAttack";
             model.AddAniJob(aniJob);
 
-            ani = new ScriptAni(12500000); ani.StartFrame = 71; ani.ComboTime = 5200000; ani.HitTime = 1800000; aniJob.AddOverlayAni(ani, ov1);
-            ani = new ScriptAni(10800000); ani.StartFrame = 65; ani.ComboTime = 6800000; ani.HitTime = 3000000; aniJob.AddOverlayAni(ani, ov2);
+            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(12500000, 1800000, 5200000, 71), ov1);
+            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(10800000, 3000000, 6800000, 65), ov2);
             
             // 1h COMBO 4
-            aniJob = new ScriptAniJob("attack1hfwd4");
+            aniJob = new ScriptAniJob("attack1hfwd4", AniType.FightAttackCombo);
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HFwd4;
             aniJob.AniName = "s_1hAttack";
             model.AddAniJob(aniJob);
 
-            ani = new ScriptAni(6400000); ani.StartFrame = 106; ani.ComboTime = 2400000; ani.HitTime = 2200000; aniJob.AddOverlayAni(ani, ov1);
-            ani = new ScriptAni(6400000); ani.StartFrame = 97; ani.ComboTime = 5600000; ani.HitTime = 4000000; aniJob.AddOverlayAni(ani, ov2);
-            
+            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(6400000, 2200000, 2400000, 106), ov1);
+            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(6400000, 4000000, 5600000, 97), ov2);
+
             // 1h LEFT ATTACK
-            aniJob = new ScriptAniJob("attack1hleft");
+            aniJob = new ScriptAniJob("attack1hleft", AniType.FightAttack);
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HLeft;
             aniJob.AniName = "t_1hAttackL";
             aniJob.AttackBonus = -2;
             model.AddAniJob(aniJob);
 
-            ani = new ScriptAni(11600000); ani.ComboTime = 6000000; ani.HitTime = 2000000; aniJob.SetDefaultAni(ani);
-            ani = new ScriptAni(9200000); ani.ComboTime = 4000000; ani.HitTime = 1600000; aniJob.AddOverlayAni(ani, ov1);
-            ani = new ScriptAni(7200000); ani.ComboTime = 3200000; ani.HitTime = 1200000; aniJob.AddOverlayAni(ani, ov2);
-
+            aniJob.SetDefaultAni(ScriptAni.NewAttackAni(11600000, 2000000, 6000000));
+            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(9200000, 1600000, 4000000), ov1);
+            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(7200000, 1200000, 3200000), ov2);
 
             // 1h RIGHT ATTACK
-            aniJob = new ScriptAniJob("attack1hright");
+            aniJob = new ScriptAniJob("attack1hright", AniType.FightAttack);
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HRight;
             aniJob.AniName = "t_1hAttackR";
             aniJob.AttackBonus = -2;
             model.AddAniJob(aniJob);
 
-            ani = new ScriptAni(11600000); ani.ComboTime = 6000000; ani.HitTime = 2000000; aniJob.SetDefaultAni(ani);
-            ani = new ScriptAni(9600000); ani.ComboTime = 4000000; ani.HitTime = 1600000; aniJob.AddOverlayAni(ani, ov1);
-            ani = new ScriptAni(7600000); ani.ComboTime = 3200000; ani.HitTime = 1200000; aniJob.AddOverlayAni(ani, ov2);
+            aniJob.SetDefaultAni(ScriptAni.NewAttackAni(11600000, 2000000, 6000000));
+            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(9200000, 1600000, 4000000), ov1);
+            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(7200000, 1200000, 3200000), ov2);
 
             // 1h RUN ATTACK
-            aniJob = new ScriptAniJob("attack1hrun");
+            aniJob = new ScriptAniJob("attack1hrun", AniType.FightAttackRun);
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HRun;
             aniJob.AniName = "t_1hAttackMove";
             aniJob.AttackBonus = 5;
             model.AddAniJob(aniJob);
 
-            ani = new ScriptAni(11200000); ani.ComboTime = 11200000; ani.HitTime = 7000000; ani.Layer = 2; aniJob.SetDefaultAni(ani);
+            ani = ScriptAni.NewAttackAni(11200000, 7000000); ani.Layer = 2; aniJob.SetDefaultAni(ani);
             
             // 1h Parry
-            aniJob = new ScriptAniJob("attack1hparry1");
+            aniJob = new ScriptAniJob("attack1hparry1", ScriptAni.NewFightAni(5600000), AniType.FightParade);
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HParry1;
             aniJob.AniName = "T_1HPARADE_0";
             model.AddAniJob(aniJob);
-
-            ani = new ScriptAni(5600000); ani.ComboTime = 5600000; aniJob.SetDefaultAni(ani);
             
             // 1h Parry
-            aniJob = new ScriptAniJob("attack1hparry2");
+            aniJob = new ScriptAniJob("attack1hparry2", ScriptAni.NewFightAni(5600000), AniType.FightParade);
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HParry2;
             aniJob.AniName = "T_1HPARADE_0_A2";
             model.AddAniJob(aniJob);
 
-            ani = new ScriptAni(5600000); ani.ComboTime = 5600000; aniJob.SetDefaultAni(ani);
-
             // 1h Parry
-            aniJob = new ScriptAniJob("attack1hparry3");
+            aniJob = new ScriptAniJob("attack1hparry3", ScriptAni.NewFightAni(5600000), AniType.FightParade);
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HParry3;
             aniJob.AniName = "T_1HPARADE_0_A3";
             model.AddAniJob(aniJob);
 
-            ani = new ScriptAni(5600000); ani.ComboTime = 5600000; aniJob.SetDefaultAni(ani);
-
-
             // 1h Dodge
-            aniJob = new ScriptAniJob("attack1hdodge");
+            aniJob = new ScriptAniJob("attack1hdodge", ScriptAni.NewFightAni(5200000), AniType.FightDodge);
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HDodge;
             aniJob.AniName = "T_1HPARADEJUMPB";
             model.AddAniJob(aniJob);
-
-            ani = new ScriptAni(5200000); ani.ComboTime = 5200000; aniJob.SetDefaultAni(ani);
         }
 
         void Add2hAttacks(ModelDef model)
@@ -217,106 +221,96 @@ namespace GUC.Scripts
             var ov2 = new ScriptOverlay("2HST2", "Humans_2hST2"); model.AddOverlay(ov2);
 
             // 2h COMBO 1
-            ScriptAniJob aniJob = new ScriptAniJob("attack2hfwd1");
+            ScriptAniJob aniJob = new ScriptAniJob("attack2hfwd1", AniType.FightAttackCombo);
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HFwd1;
             aniJob.AniName = "s_2hAttack";
             model.AddAniJob(aniJob);
 
-            var ani = new ScriptAni(10000000); ani.ComboTime = 5800000; ani.HitTime = 2800000; aniJob.SetDefaultAni(ani);
-            ani = new ScriptAni(13000000); ani.ComboTime = 6000000; ani.HitTime = 2000000; aniJob.AddOverlayAni(ani, ov1);
-            ani = new ScriptAni(13000000); ani.ComboTime = 4800000; ani.HitTime = 1600000; aniJob.AddOverlayAni(ani, ov2);
+            aniJob.SetDefaultAni(ScriptAni.NewAttackAni(10000000, 2800000, 5800000));
+            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(13000000, 2000000, 6000000), ov1);
+            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(13000000, 1600000, 4800000), ov2);
 
             // 2h COMBO 2
-            aniJob = new ScriptAniJob("attack2hfwd2");
+            aniJob = new ScriptAniJob("attack2hfwd2", AniType.FightAttackCombo);
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HFwd2;
             aniJob.AniName = "s_2hAttack";
             model.AddAniJob(aniJob);
 
-            ani = new ScriptAni(6000000); ani.StartFrame = 31; ani.ComboTime = 4400000; ani.HitTime = 2300000; aniJob.SetDefaultAni(ani);
-            ani = new ScriptAni(14000000); ani.StartFrame = 40; ani.ComboTime = 8000000; ani.HitTime = 2500000; aniJob.AddOverlayAni(ani, ov1);
-            ani = new ScriptAni(11500000); ani.StartFrame = 41; ani.ComboTime = 6800000; ani.HitTime = 1800000; aniJob.AddOverlayAni(ani, ov2);
-
+            aniJob.SetDefaultAni(ScriptAni.NewAttackAni(6000000, 2300000, 4400000, 31));
+            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(14000000, 2500000, 8000000, 40), ov1);
+            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(11500000, 1800000, 6800000, 41), ov2);
 
             // 2h COMBO 3
-            aniJob = new ScriptAniJob("attack2hfwd3");
+            aniJob = new ScriptAniJob("attack2hfwd3", AniType.FightAttackCombo);
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HFwd3;
             aniJob.AniName = "s_2hAttack";
             model.AddAniJob(aniJob);
-
-            ani = new ScriptAni(7000000); ani.StartFrame = 80; ani.ComboTime = 7000000; ani.HitTime = 3000000; aniJob.AddOverlayAni(ani, ov1);
-            ani = new ScriptAni(13500000); ani.StartFrame = 81; ani.ComboTime = 8800000; ani.HitTime = 4000000; aniJob.AddOverlayAni(ani, ov2);
+            
+            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(7000000, 3000000, 7000000, 80), ov1);
+            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(13500000, 4000000, 8800000, 81), ov2);
 
             // 2h COMBO 4
-            aniJob = new ScriptAniJob("attack2hfwd4");
+            aniJob = new ScriptAniJob("attack2hfwd4", AniType.FightAttackCombo);
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HFwd4;
             aniJob.AniName = "s_2hAttack";
             model.AddAniJob(aniJob);
 
-            ani = new ScriptAni(7500000); ani.StartFrame = 126; ani.ComboTime = 7500000; ani.HitTime = 4000000; aniJob.AddOverlayAni(ani, ov2);
+            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(7500000, 4000000, 7500000, 126), ov2);
 
             // 2h LEFT ATTACK
-            aniJob = new ScriptAniJob("attack2hleft");
+            aniJob = new ScriptAniJob("attack2hleft", AniType.FightAttack);
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HLeft;
             aniJob.AniName = "t_2hAttackL";
             aniJob.AttackBonus = -2;
             model.AddAniJob(aniJob);
 
-            ani = new ScriptAni(14000000); ani.ComboTime = 7200000; ani.HitTime = 2400000; aniJob.SetDefaultAni(ani);
-            ani = new ScriptAni(10700000); ani.ComboTime = 5600000; ani.HitTime = 2000000; aniJob.AddOverlayAni(ani, ov1);
-            ani = new ScriptAni(10200000); ani.ComboTime = 5600000; ani.HitTime = 2000000; aniJob.AddOverlayAni(ani, ov2);
-
+            aniJob.SetDefaultAni(ScriptAni.NewAttackAni(14000000, 2300000, 7200000));
+            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(10700000, 2000000, 5600000), ov1);
+            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(10200000, 2000000, 5600000), ov2);
 
             // 2h RIGHT ATTACK
-            aniJob = new ScriptAniJob("attack2hright");
+            aniJob = new ScriptAniJob("attack2hright", AniType.FightAttack);
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HRight;
             aniJob.AniName = "t_2hAttackR";
             aniJob.AttackBonus = -2;
             model.AddAniJob(aniJob);
 
-            ani = new ScriptAni(14000000); ani.ComboTime = 7200000; ani.HitTime = 2400000; aniJob.SetDefaultAni(ani);
-            ani = new ScriptAni(11600000); ani.ComboTime = 5600000; ani.HitTime = 2000000; aniJob.AddOverlayAni(ani, ov1);
-            ani = new ScriptAni(10600000); ani.ComboTime = 5600000; ani.HitTime = 2000000; aniJob.AddOverlayAni(ani, ov2);
+            aniJob.SetDefaultAni(ScriptAni.NewAttackAni(14000000, 2300000, 7200000));
+            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(10700000, 2000000, 5600000), ov1);
+            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(10200000, 2000000, 5600000), ov2);
 
             // 2h RUN ATTACK
-            aniJob = new ScriptAniJob("attack2hrun");
+            aniJob = new ScriptAniJob("attack2hrun", AniType.FightAttackRun);
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HRun;
             aniJob.AniName = "t_2hAttackMove";
             aniJob.AttackBonus = 5;
             model.AddAniJob(aniJob);
 
-            ani = new ScriptAni(8800000); ani.ComboTime = 8800000; ani.HitTime = 6000000; ani.Layer = 2; aniJob.SetDefaultAni(ani);
+            var ani = ScriptAni.NewAttackAni(8800000, 6000000); ani.Layer = 2; aniJob.SetDefaultAni(ani);
 
             // 2h Parry
-            aniJob = new ScriptAniJob("attack2hparry1");
+            aniJob = new ScriptAniJob("attack2hparry1", ScriptAni.NewFightAni(5600000), AniType.FightParade);
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HParry1;
             aniJob.AniName = "T_2HPARADE_0";
             model.AddAniJob(aniJob);
 
-            ani = new ScriptAni(5600000); ani.ComboTime = 5600000; aniJob.SetDefaultAni(ani);
-
             // 2h Parry
-            aniJob = new ScriptAniJob("attack2hparry2");
+            aniJob = new ScriptAniJob("attack2hparry2", ScriptAni.NewFightAni(5600000), AniType.FightParade);
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HParry2;
             aniJob.AniName = "T_2HPARADE_0_A2";
             model.AddAniJob(aniJob);
 
-            ani = new ScriptAni(5600000); ani.ComboTime = 5600000; aniJob.SetDefaultAni(ani);
-
             // 2h Parry
-            aniJob = new ScriptAniJob("attack2hparry3");
+            aniJob = new ScriptAniJob("attack2hparry3", ScriptAni.NewFightAni(5600000), AniType.FightParade);
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HParry3;
             aniJob.AniName = "T_2HPARADE_0_A3";
             model.AddAniJob(aniJob);
 
-            ani = new ScriptAni(5600000); ani.ComboTime = 5600000; aniJob.SetDefaultAni(ani);
-
             // 2h Dodge
-            aniJob = new ScriptAniJob("attack2hdodge");
+            aniJob = new ScriptAniJob("attack2hdodge", ScriptAni.NewFightAni(9200000), AniType.FightDodge);
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HDodge;
             aniJob.AniName = "T_2HPARADEJUMPB";
             model.AddAniJob(aniJob);
-
-            ani = new ScriptAni(9200000); ani.ComboTime = 9200000; aniJob.SetDefaultAni(ani);
         }
 
         void AddItems()
