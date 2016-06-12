@@ -49,8 +49,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     item.BaseInst.gVob.Flags = Gothic.Objects.oCItem.ItemFlags.ITEM_SWD;
                     item.BaseInst.gVob.Flags |= item.BaseInst.gVob.MainFlag;
                     this.BaseInst.gVob.EquipWeapon(item.BaseInst.gVob);
-                    //using (var str = Gothic.Types.zString.Create("1H"))
-                    //    this.BaseInst.gVob.SetWeaponMode2(str);
+                    using (var str = Gothic.Types.zString.Create("1H"))
+                        this.BaseInst.gVob.SetWeaponMode2(str);
                     break;
 
                 case Definitions.ItemTypes.Wep2H:
@@ -58,8 +58,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     item.BaseInst.gVob.Flags = Gothic.Objects.oCItem.ItemFlags.ITEM_2HD_SWD;
                     item.BaseInst.gVob.Flags |= item.BaseInst.gVob.MainFlag;
                     this.BaseInst.gVob.EquipWeapon(item.BaseInst.gVob);
-                    //using (var str = Gothic.Types.zString.Create("2H"))
-                    //    this.BaseInst.gVob.SetWeaponMode2(str);
+                    using (var str = Gothic.Types.zString.Create("2H"))
+                        this.BaseInst.gVob.SetWeaponMode2(str);
                     break;
 
                 case Definitions.ItemTypes.Armor:
