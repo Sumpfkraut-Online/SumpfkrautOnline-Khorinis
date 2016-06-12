@@ -306,7 +306,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 return;
 
             ScriptAni a = (ScriptAni)ani.ScriptObject;
-            if (a.AniJob.IsClimbing)
+            if (a.AniJob.IsClimb)
             {
                 this.StartAniClimb(a, (WorldObjects.NPC.ClimbingLedge)netArgs[0]);
             }

@@ -83,8 +83,6 @@ namespace GUC.Client
                         feat.maybeDefaultColor.A = (byte)alpha;
                     }
                 }
-
-                sound.isFixed = true;
             }
             catch (Exception e)
             {
@@ -110,7 +108,7 @@ namespace GUC.Client
         }
 
         public static bool PlaySound = true;
-        static readonly zCSndFX_MSS sound = zCSndSys_MSS.LoadSoundFX("MFX_BARRIERE_AMBIENT.WAV");
+        static readonly SoundInstance sound = new SoundInstance("MFX_BARRIERE_AMBIENT.WAV");
         static long nextSoundTime = 0;
 
         static readonly int ptrArg = Process.Alloc(4).ToInt32();
@@ -145,7 +143,7 @@ namespace GUC.Client
                         long now = GameTime.Ticks;
                         if (now >= nextSoundTime)
                         {
-                            zCSndSys_MSS.PlaySound(sound, 0, 0, 2, 0);
+                            SoundHandler.PlaySound(sound, 2);
                             nextSoundTime = now + Randomizer.GetInt(500, 5000) * TimeSpan.TicksPerMillisecond;
                         }
                     }

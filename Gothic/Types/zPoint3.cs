@@ -7,6 +7,8 @@ namespace Gothic.Types
 {
     public class zPoint3 : zClass
     {
+        public const int ByteSize = 12;
+
         public zPoint3(int address)
             : base(address)
         {

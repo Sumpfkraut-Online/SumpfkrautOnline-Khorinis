@@ -81,7 +81,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             NPC.ActiveAni aa = null;
             this.BaseInst.ForEachActiveAni(a =>
             {
-                if (((ScriptAniJob)a.Ani.AniJob.ScriptObject).IsClimbing)
+                if (((ScriptAniJob)a.Ani.AniJob.ScriptObject).IsClimb)
                 {
                     aa = a;
                     return false;
@@ -309,7 +309,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 stream.Write((ushort)(int)netArgs[0]);
                 stream.Write((ushort)(int)netArgs[1]);
             }
-            else if (j.IsClimbing)
+            else if (j.IsClimb)
             {
                 ((NPC.ClimbingLedge)netArgs[0]).WriteStream(stream);
             }
@@ -322,7 +322,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             {
                 netArgs = new object[2] { (int)stream.ReadUShort(), (int)stream.ReadUShort() };
             }
-            else if (j.IsClimbing)
+            else if (j.IsClimb)
             {
                 netArgs = new object[1] { new NPC.ClimbingLedge(stream) };
             }

@@ -122,6 +122,9 @@
     <Compile Include="..\GUCShared\Network\PacketWriter.cs">
       <Link>Network\PacketWriter.cs</Link>
     </Compile>
+    <Compile Include="..\GUCShared\Randomizer.cs">
+      <Link>Randomizer.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\Scripting\ScriptManager.cs">
       <Link>Scripting\ScriptManager.cs</Link>
     </Compile>

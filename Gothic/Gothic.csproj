@@ -45,6 +45,7 @@
     <Compile Include="Objects\Meshes\zCModel.cs" />
     <Compile Include="Objects\Meshes\zCModelAni.cs" />
     <Compile Include="Objects\Meshes\zCModelAniActive.cs" />
+    <Compile Include="Objects\Meshes\zCModelPrototype.cs" />
     <Compile Include="Objects\Meshes\zCPolygon.cs" />
     <Compile Include="Objects\Meshes\zCVertex.cs" />
     <Compile Include="Objects\Meshes\zCVertFeature.cs" />
@@ -78,6 +79,7 @@
     <Compile Include="Objects\zCCollisionObject.cs" />
     <Compile Include="Objects\zCWorld.cs" />
     <Compile Include="Sound\zCSndFX_MSS.cs" />
+    <Compile Include="Sound\zTSound3DParams.cs" />
     <Compile Include="View\zCFont.cs" />
     <Compile Include="View\zCViewDraw.cs" />
     <Compile Include="View\zCViewProgressBar.cs" />

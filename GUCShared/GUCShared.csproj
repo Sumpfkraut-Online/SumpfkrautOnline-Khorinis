@@ -55,6 +55,7 @@
     <Compile Include="Network\PacketReader.cs" />
     <Compile Include="Network\PacketWriter.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Randomizer.cs" />
     <Compile Include="Utilities\ExtendedObject.cs" />
     <Compile Include="Utilities\Threading\AbstractRunnable.cs" />
     <Compile Include="Utilities\Threading\Runnable.cs" />

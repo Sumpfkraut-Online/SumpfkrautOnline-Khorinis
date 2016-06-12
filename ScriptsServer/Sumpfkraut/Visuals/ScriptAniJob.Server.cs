@@ -23,14 +23,16 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
             }
         }
 
-        public ScriptAniJob(string codeName) : this()
+        public ScriptAniJob(string codeName, AniType type = AniType.Normal) : this()
         {
             this.CodeName = codeName;
+            this.Type = type;
         }
 
-        public ScriptAniJob(string codeName, ScriptAni defaultAni) : this(codeName)
+        public ScriptAniJob(string codeName, ScriptAni defaultAni, AniType type = AniType.Normal) : this(codeName)
         {
             this.SetDefaultAni(defaultAni);
+            this.Type = type;
         }
     }
 }

@@ -138,6 +138,7 @@ namespace GUC.Client.Hooks
                 GameTime.Update();
                 GUCTimer.Update(GameTime.Ticks);
                 InputHandler.Update();
+                SoundHandler.Update3DSounds();
                 client.Update();
                 WorldObjects.World.ForEach(w => { w.Clock.UpdateTime(); w.SkyCtrl.UpdateWeather(); });
 

@@ -7,6 +7,8 @@ namespace Gothic.Types
 {
     public class zTBBox3D : zClass
     {
+        public const int ByteSize = 24;
+
         public zTBBox3D(int address)
             : base(address)
         {

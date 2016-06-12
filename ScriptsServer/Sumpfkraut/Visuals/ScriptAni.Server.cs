@@ -12,11 +12,67 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         /// 
         /// </summary>
         /// <param name="duration">Duration in ms.</param>
-        /// <param name="startPercent">255 = 100%</param>
-        public ScriptAni(int duration, int startPercent = 0) : this()
+        public ScriptAni(int duration, int startFrame = 0) : this()
         {
             this.Duration = duration;
-            this.StartFrame = startPercent;
+            this.StartFrame = startFrame;
         }
+
+        #region FightAni
+
+        int comboTime = 0;
+        public int ComboTime
+        {
+            get { return this.comboTime; }
+            set
+            {
+                if (this.IsCreated)
+                    throw new Exception("ComboTime can't be changed when the object is created.");
+                this.comboTime = value;
+            }
+        }
+        
+        public static ScriptAni NewFightAni(int duration, int comboTime = 0, int startFrame = 0)
+        {
+            var ani = new ScriptAni(duration, startFrame);
+            ani.comboTime = comboTime == 0 ? duration : comboTime;
+            return ani;
+        }
+
+        #region AttackAni
+
+        int hitTime = 0;
+        public int HitTime
+        {
+            get { return this.hitTime; }
+            set
+            {
+                if (this.IsCreated)
+                    throw new Exception("HitTime can't be changed when the object is created.");
+                this.hitTime = value;
+            }
+        }
+
+        public static ScriptAni NewAttackAni(int duration, int hitTime = 0, int comboTime = 0, int startFrame = 0)
+        {
+            var ani = NewFightAni(duration, comboTime, startFrame);
+            ani.hitTime = hitTime == 0 ? duration : comboTime;
+            return ani;
+        }
+
+        #endregion
+
+        #endregion
+
+        #region DrawAni / UndrawAni
+
+        public static ScriptAni NewDrawAni(int duration, int drawFrame = 0, int startFrame = 0)
+        {
+            var ani = new ScriptAni(duration, startFrame);
+            ani.drawFrame = drawFrame == 0 ? startFrame : drawFrame;
+            return ani;
+        }
+
+        #endregion
     }
 }

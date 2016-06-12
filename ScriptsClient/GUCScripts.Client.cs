@@ -129,7 +129,7 @@ namespace GUC.Scripts
                 }
 
                 Client.Barrier.BarrierAlpha = value;
-                if (barrierStatus == 1 || barrierStatus == 2 || (barrierStatus == 3 && value > 70))
+                if (barrierStatus == 1 || barrierStatus == 2 || (barrierStatus == 3 && value > 75))
                 {
                     Client.Barrier.PlaySound = true;
                 }

@@ -11,10 +11,23 @@ namespace Gothic.Objects.Meshes
     {
         public abstract class VarOffsets
         {
-            public const int name = 0x024,//zString
-            id = 0x04C,//int
-            type = 0x0DC,//int -> zTMdl_AniType
-            pos = 0x0B8;//vec3
+            public const int name = 0x24,//zString
+            asc = 0x38,
+            id = 0x4C,//int
+            alias = 0x50,
+            layer = 0x6C,
+            blendInSpeed = 0x70,
+            blendOutSpeed = 0x74,
+            collVolumeScale = 0x90,
+            nextAni = 0x94,
+            nextAniName = 0x98,
+            aniEvents = 0xAC, // zCModelAniEvent*
+            fpsRate = 0xB0,
+            fpsRateSource = 0xB4,
+            numFrames = 0xD8,
+            numNodes = 0xDA,
+            type = 0xDC,//int -> zTMdl_AniType
+            pos = 0xB8;//vec3
         }
 
         public abstract class FuncAddresses
@@ -38,15 +51,20 @@ namespace Gothic.Objects.Meshes
 
         #region Fields
 
-        public zString AniName
+        public zString Name
         {
             get { return new zString(Address + VarOffsets.name); }
         }
 
+        public zString ASC
+        {
+            get { return new zString(Address + VarOffsets.asc); }
+        }
+
         public int Layer
         {
-            get { return Process.ReadInt(Address + 108); }
-            set { Process.Write(value, Address + 108); }
+            get { return Process.ReadInt(Address + VarOffsets.layer); }
+            set { Process.Write(value, Address + VarOffsets.layer); }
         }
 
         public int ID
@@ -55,19 +73,17 @@ namespace Gothic.Objects.Meshes
             set { Process.Write(value, Address + VarOffsets.id); }
         }
 
-        #endregion
-
-        public int GetAniID()
+        public int NumFrames
         {
-            return Process.THISCALL<IntArg>(Address, FuncAddresses.GetAniID).Value;
+            get { return Process.ReadUShort(Address + VarOffsets.numFrames); }
         }
 
-        /// <summary>
-        /// Klappt nicht, falsche Behandlung der Parameter? Nutze Feld, AniName
-        /// </summary>
-        public zString GetAniName()
+        #endregion
+
+        public static zCModelAni Create()
         {
-            return Process.THISCALL<zString>(Address, FuncAddresses.GetAniName);
+            int ptr = Process.CDECLCALL<IntArg>(0x576980); // createinstance
+            return new zCModelAni(ptr);
         }
     }
 }

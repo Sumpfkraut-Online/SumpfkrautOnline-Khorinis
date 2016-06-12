@@ -277,10 +277,40 @@ namespace GUC.WorldObjects
             this.Update(GameTime.Ticks);
         }
 
+        /*void UpdateAnimation(ActiveAni ani)
+        {
+            var gModel = gVob.GetModel();
+            var gAni = gModel.GetAniFromAniID(gModel.GetAniIDFromAniName(ani.Ani.AniJob.Name));
+            var gActiveAni = gModel.GetActiveAni(gAni);
+
+            if (gActiveAni.Address == 0)
+            {
+                gModel.StartAni(gAni, 0);
+                gActiveAni = gModel.GetActiveAni(gAni);
+                if (gActiveAni.Address == 0)
+                    return;
+            }
+
+            int startFrame = ani.Ani.StartFrame;
+            int endFrame = ani.Ani.EndFrame;
+            if (endFrame == 0)
+            {
+                endFrame = gAni.NumFrames;
+            }
+
+            float progressPercent = ani.GetPercent();
+
+            gActiveAni.SetActFrame(startFrame + (endFrame - startFrame) * progressPercent);
+
+            Logger.Log("Frame: " + (startFrame + (endFrame - startFrame) * progressPercent));
+        }*/
+
         internal void Update(long now)
         {
             if (gvob == null || gVob.HumanAI.Address == 0)
                 return;
+
+            //ForEachActiveAni(a => UpdateAnimation(a));
 
             this.envState = GetEnvState();
 
