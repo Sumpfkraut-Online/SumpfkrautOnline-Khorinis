@@ -419,7 +419,8 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
                 {
                     if (clients[i].Character != null)
                     {
-                        clients[i].Character.SetHealth(0);
+                        //clients[i].Character.SetHealth(0);
+                        Server.Scripts.TFFA.TFFAGame.Kill(clients[i], false);
                         if (!first) { successMsgSB.Append(","); }
                         else { first = false; }
                         successMsgSB.AppendFormat("[{0}, {1}]", clients[i].ID, clients[i].Name);
@@ -433,6 +434,87 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
                 { "sender", "SERVER" },
                 { "rawText", successMsgSB.ToString() },
             };
+        }
+
+
+
+        public static void SwitchTeamTFFA (object sender, string cmd, string[] param,
+            out Dictionary<string, object> returnVal)
+        {
+            returnVal = new Dictionary<string, object>()
+            {
+                { "rawText", "Wasn't able to switch teams" },
+            };
+
+            if (param.Length < 2)
+            {
+                returnVal["rawText"] += ": Provide at least 2 command arguments!";
+                return;
+            }
+
+            List<TFFA.TFFAClient> clients = PrepareClientListTFFA(new string[] { param[0] });
+            if (clients.Count < 1)
+            {
+                returnVal["rawText"] += string.Format(": {0} is no valid client!", param[0]);
+            }
+
+            TFFA.Team newTeam = TFFA.Team.Spec;
+            bool changeTeam = true;
+            switch (param[1].ToUpper())
+            {
+                case "AL":
+                    newTeam = TFFA.Team.AL;
+                    break;
+                case "NL":
+                    newTeam = TFFA.Team.NL;
+                    break;
+                case "SPEC":
+                    newTeam = TFFA.Team.Spec;
+                    break;
+                default:
+                    changeTeam = false;
+                    break;
+            }
+
+            if (changeTeam)
+            {
+                Server.Scripts.TFFA.TFFAGame.AddToTeam(clients[0], newTeam);
+            }
+        }
+
+        public static void SetPhaseTFFA (object sender, string cmd, string[] param,
+            out Dictionary<string, object> returnVal)
+        {
+            returnVal = new Dictionary<string, object>()
+            {
+                { "rawText", "Wasn't able to change gamephase" },
+            };
+
+            if (param.Length < 1)
+            {
+                returnVal["rawText"] += ": Provide at least 1 command argument!";
+                return;
+            }
+
+            switch (param[0].ToUpper())
+            {
+                case "WAIT":
+                    Server.Scripts.TFFA.TFFAGame.PhaseWait();
+                    returnVal["rawText"] = "Changed gamephase to waiting phase";
+                    break;
+                case "FIGHT":
+                    Server.Scripts.TFFA.TFFAGame.PhaseFight();
+                    returnVal["rawText"] = "Changed gamephase to fighting phase";
+                    break;
+                case "END":
+                    Server.Scripts.TFFA.TFFAGame.PhaseEnd();
+                    returnVal["rawText"] = "Changed gamephase to ending phase";
+                    break;
+                default:
+                    returnVal["rawText"] += string.Format(":{0} is an invalid command argument!", 
+                        param[0]);
+                    break;
+            }
         }
 
 

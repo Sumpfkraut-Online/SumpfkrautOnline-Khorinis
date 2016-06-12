@@ -25,7 +25,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             {
                 if (pos.Y < -400)
                 {
-                    Server.Scripts.TFFA.TFFAGame.Kill((TFFA.TFFAClient)this.BaseInst.Client.ScriptObject);
+                    Server.Scripts.TFFA.TFFAGame.Kill((TFFA.TFFAClient)this.BaseInst.Client.ScriptObject, true);
                 }
                 else
                 {

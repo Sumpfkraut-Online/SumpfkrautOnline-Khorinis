@@ -279,13 +279,15 @@ namespace GUC.Types
 
         public override string ToString()
         {
-            return this.totalSeconds.ToString();
+            return string.Format("WorldTime(day {0}, {1}:{2}:{3})", this.GetDay(), 
+                this.GetHour(), this.GetMinute(), this.GetSecond());
+            //return this.totalSeconds.ToString();
         }
 
         public string ToString(bool onlySeconds)
         {
             if (onlySeconds) return this.ToString();
-            else return string.Format("WorldTime(day {0}, {1}:{2} : {3})", this.GetDay(), this.GetHour(), this.GetMinute(), this.GetSecond());
+            else return this.ToString();
         }
 
         public override bool Equals(object obj)

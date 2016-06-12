@@ -34,7 +34,7 @@ namespace GUC.Scripts.TFFA
             this.SendDisconnect();
             TFFAGame.scoreboardClients.Remove(this);
             TFFAGame.RemoveFromTeam(this);
-            TFFAGame.Kill(this);
+            TFFAGame.Kill(this, false);
         }
 
         public override void OnReadMenuMsg(PacketReader stream)
