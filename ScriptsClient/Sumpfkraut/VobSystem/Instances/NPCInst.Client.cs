@@ -7,6 +7,7 @@ using GUC.Network;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.Types;
+using Gothic.Objects;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
@@ -32,43 +33,41 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     this.BaseInst.gVob.Name.Set(Client.Scripts.TFFA.InputControl.ClientsShown ? string.Format("({0}){1}", ci.ID, ci.Name) : ci.Name);
             }
 
-            this.BaseInst.ForEachEquippedItem(i => this.pEquipItem((ItemInst)i.ScriptObject));
+            this.BaseInst.ForEachEquippedItem(i => this.pEquipItem(i.Slot, (ItemInst)i.ScriptObject));
         }
 
-        partial void pEquipItem(ItemInst item)
+        #region Equipment
+
+        partial void pEquipItem(int slot, ItemInst item)
         {
             if (!this.IsSpawned)
                 return;
 
-            item.BaseInst.gVob.Material = (int)item.Definition.Material;
+            oCNpc gNpc = this.BaseInst.gVob;
+            oCItem gItem = item.BaseInst.gVob;
 
-            switch (item.ItemType)
+            if (item.BaseInst.IsEquipped)
             {
-                case Definitions.ItemTypes.Wep1H:
-                    item.BaseInst.gVob.MainFlag = Gothic.Objects.oCItem.MainFlags.ITEM_KAT_NF;
-                    item.BaseInst.gVob.Flags = Gothic.Objects.oCItem.ItemFlags.ITEM_SWD;
-                    item.BaseInst.gVob.Flags |= item.BaseInst.gVob.MainFlag;
-                    this.BaseInst.gVob.EquipWeapon(item.BaseInst.gVob);
-                    //using (var str = Gothic.Types.zString.Create("1H"))
-                    //    this.BaseInst.gVob.SetWeaponMode2(str);
+                pUnequipItem(item);
+            }
+
+            switch (slot)
+            {
+                case SlotNums.Sword:
+                    gNpc.PutInSlot(oCNpc.NPCNodes.Sword, gItem, true);
                     break;
 
-                case Definitions.ItemTypes.Wep2H:
-                    item.BaseInst.gVob.MainFlag = Gothic.Objects.oCItem.MainFlags.ITEM_KAT_NF;
-                    item.BaseInst.gVob.Flags = Gothic.Objects.oCItem.ItemFlags.ITEM_2HD_SWD;
-                    item.BaseInst.gVob.Flags |= item.BaseInst.gVob.MainFlag;
-                    this.BaseInst.gVob.EquipWeapon(item.BaseInst.gVob);
-                    //using (var str = Gothic.Types.zString.Create("2H"))
-                    //    this.BaseInst.gVob.SetWeaponMode2(str);
+                case SlotNums.Longsword:
+                    gNpc.PutInSlot(oCNpc.NPCNodes.Longsword, gItem, true);
                     break;
 
-                case Definitions.ItemTypes.Armor:
-                    item.BaseInst.gVob.MainFlag = Gothic.Objects.oCItem.MainFlags.ITEM_KAT_ARMOR;
-                    item.BaseInst.gVob.VisualChange.Set(item.Definition.VisualChange);
-                    item.BaseInst.gVob.Flags = 0;
-                    item.BaseInst.gVob.Flags |= item.BaseInst.gVob.MainFlag;
-                    item.BaseInst.gVob.Wear = 1; // WEAR_TORSO
-                    this.BaseInst.gVob.EquipArmor(item.BaseInst.gVob);
+                case SlotNums.Torso:
+                    gItem.VisualChange.Set(item.Definition.VisualChange);
+                    gNpc.PutInSlot(oCNpc.NPCNodes.Torso, gItem, true);
+                    break;
+
+                case SlotNums.Righthand:
+                    gNpc.PutInSlot(oCNpc.NPCNodes.RightHand, gItem, true);
                     break;
 
                 default:
@@ -78,8 +77,37 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         partial void pUnequipItem(ItemInst item)
         {
-            this.BaseInst.gVob.UnequipItem(item.BaseInst.gVob);
+            if (!this.IsSpawned)
+                return;
+
+            oCNpc gNpc = this.BaseInst.gVob;
+            oCItem gItem = item.BaseInst.gVob;
+
+            switch (item.BaseInst.Slot)
+            {
+                case SlotNums.Sword:
+                    gNpc.RemoveFromSlot(oCNpc.NPCNodes.Sword, true, true);
+                    break;
+
+                case SlotNums.Longsword:
+                    gNpc.RemoveFromSlot(oCNpc.NPCNodes.Longsword, true, true);
+                    break;
+
+                case SlotNums.Torso:
+                    gItem.VisualChange.Set(item.Definition.VisualChange);
+                    gNpc.RemoveFromSlot(oCNpc.NPCNodes.Torso, true, true);
+                    break;
+
+                case SlotNums.Righthand:
+                    gNpc.RemoveFromSlot(oCNpc.NPCNodes.RightHand, true, true);
+                    break;
+
+                default:
+                    break;
+            }
         }
+
+        #endregion
 
         public override void OnReadScriptVobMsg(PacketReader stream)
         {

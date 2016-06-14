@@ -153,7 +153,7 @@ namespace GUC.Server.Network.Messages
             PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCEquipMessage);
 
             stream.Write((ushort)npc.ID);
-            stream.Write((byte)item.Slot);
+            stream.Write((byte)item.slot);
             item.WriteEquipProperties(stream);
 
             npc.Cell.ForEachSurroundingClient(client =>
@@ -163,11 +163,11 @@ namespace GUC.Server.Network.Messages
             });
         }
 
-        public static void WriteUnequipMessage(NPC npc, int slot)
+        public static void WriteUnequipMessage(NPC npc, Item item)
         {
             PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCUnequipMessage);
             stream.Write((ushort)npc.ID);
-            stream.Write((byte)slot);
+            stream.Write((byte)item.ID);
 
             npc.Cell.ForEachSurroundingClient(client =>
             {
@@ -177,8 +177,8 @@ namespace GUC.Server.Network.Messages
         }
 
         #endregion
-
-        #region Properties
+        
+        #region Health
 
         public static void WriteHealthMessage(NPC npc)
         {

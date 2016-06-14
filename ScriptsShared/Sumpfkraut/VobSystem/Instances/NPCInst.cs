@@ -36,7 +36,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public bool TryGetAttackFromMove(AttackMove attMove, out ScriptAniJob aniJob)
         {
-            if (this.DrawnWeapon.ItemType == ItemTypes.Wep2H)
+            if (this.drawnWeapon == null)
+            {
+                aniJob = null;
+                return false;
+            }
+            else if (this.DrawnWeapon.ItemType == ItemTypes.Wep2H)
             {
                 return this.Model.TryGetAniJob((int)attMove + 11, out aniJob);
             }
@@ -96,9 +101,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             return GetFightAni() != null;
         }
 
-        public ItemInst DrawnWeapon;
-        public ItemInst Armor;
-
         #region Properties
 
         public new NPC BaseInst { get { return (NPC)base.BaseInst; } }
@@ -118,7 +120,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public float Fatness = 0;
         public Vec3f ModelScale = new Vec3f(1, 1, 1);
-        
+
         #endregion
 
         partial void pConstruct();
@@ -203,6 +205,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             // i.e. abilities, level, guild etc
         }
 
+        #region Inventory
+
         public void AddItem(Item item)
         {
             this.AddItem((ItemInst)item.ScriptObject);
@@ -223,22 +227,67 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             this.BaseInst.Inventory.Remove(item.BaseInst);
         }
 
+        #endregion
+
+        #region Equipment
+
+        ItemInst armor;
+        public ItemInst Armor { get { return this.armor; } }
+        ItemInst meleeWep;
+        public ItemInst MeleeWeapon { get { return this.meleeWep; } }
+
+        ItemInst drawnWeapon;
+        public ItemInst DrawnWeapon { get { return this.drawnWeapon; } }
+
+        public static class SlotNums
+        {
+            public const int Torso = 0,
+                Sword = 1,
+                Longsword = 2,
+                Righthand = 3;
+        }
+
         public void EquipItem(int slot, Item item)
         {
             this.EquipItem(slot, (ItemInst)item.ScriptObject);
         }
 
-        partial void pEquipItem(ItemInst item);
+        partial void pEquipItem(int slot, ItemInst item);
         public void EquipItem(int slot, ItemInst item)
         {
-            this.BaseInst.EquipItem(slot, item.BaseInst);
-            pEquipItem(item);
+            if (item.BaseInst.IsEquipped)
+            {
+                switch (item.BaseInst.Slot)
+                {
+                    case SlotNums.Torso:
+                        this.armor = null;
+                        break;
+                    case SlotNums.Sword:
+                    case SlotNums.Longsword:
+                        this.meleeWep = null;
+                        break;
+                    case SlotNums.Righthand:
+                        this.drawnWeapon = null;
+                        break;
+                }
+            }
 
-            //TFFA
-            if (slot == 1)
-                DrawnWeapon = item;
-            else if (slot == 0)
-                Armor = item;
+            switch (slot)
+            {
+                case SlotNums.Torso:
+                    this.armor = item;
+                    break;
+                case SlotNums.Sword:
+                case SlotNums.Longsword:
+                    this.meleeWep = item;
+                    break;
+                case SlotNums.Righthand:
+                    this.drawnWeapon = item;
+                    break;
+            }
+
+            pEquipItem(slot, item);
+            this.BaseInst.EquipItem(slot, item.BaseInst);
         }
 
         public void UnequipItem(Item item)
@@ -249,11 +298,41 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         partial void pUnequipItem(ItemInst item);
         public void UnequipItem(ItemInst item)
         {
-            this.BaseInst.UnequipItem(item.BaseInst);
+            switch (item.BaseInst.Slot)
+            {
+                case SlotNums.Torso:
+                    this.armor = null;
+                    break;
+                case SlotNums.Sword:
+                case SlotNums.Longsword:
+                    this.meleeWep = null;
+                    break;
+                case SlotNums.Righthand:
+                    this.drawnWeapon = null;
+                    break;
+            }
+
             pUnequipItem(item);
-            if (item == DrawnWeapon)
-                DrawnWeapon = null;
+            this.BaseInst.UnequipItem(item.BaseInst);
         }
+
+        public void EquipItem(ItemInst item)
+        {
+            switch (item.ItemType)
+            {
+                case ItemTypes.Armor:
+                    EquipItem(SlotNums.Torso, item);
+                    break;
+                case ItemTypes.Wep1H:
+                    EquipItem(SlotNums.Sword, item);
+                    break;
+                case ItemTypes.Wep2H:
+                    EquipItem(SlotNums.Longsword, item);
+                    break;
+            }
+        }
+
+        #endregion
 
         public void SetHealth(int hp)
         {
@@ -281,7 +360,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 ModelScale = stream.ReadVec3f();
             }
         }
-        
+
         public override void OnWriteProperties(PacketWriter stream)
         {
             base.OnWriteProperties(stream);

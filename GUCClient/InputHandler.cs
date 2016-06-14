@@ -11,7 +11,7 @@ namespace GUC.Client
     public static class InputHandler
     {
         static Gothic.Objects.Meshes.zCModelAni ani;
-        
+
         static Dictionary<VirtualKeys, Action> gucKeys = new Dictionary<VirtualKeys, Action>()
         {
             { VirtualKeys.F4, Program.Exit },
@@ -35,23 +35,14 @@ namespace GUC.Client
             },
             { VirtualKeys.F6, () =>
                 {
-                    var model = Gothic.Objects.oCNpc.GetPlayer().GetModel();
-
-                    Log.Logger.Log(model.GetAniFromAniID(model.GetAniIDFromAniName("S_RUNL")).NumFrames);                 
                 }
             },
             { VirtualKeys.F7, () =>
                 {
-                    //Log.Logger.Log("Try play new Animation:");
-
-                    //var model = Gothic.Objects.oCNpc.GetPlayer().GetModel();
-                    //model.StartAni(ani, 0);
                 }
             },
             { VirtualKeys.F8, () =>
                 {
-                    //var model = Gothic.Objects.oCNpc.GetPlayer().GetModel();
-                    //Log.Logger.Log(model.GetAniFromAniID(model.GetAniIDFromAniName("S_RUNL")).Address.ToString("X4"));
                 }
             }
         };

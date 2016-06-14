@@ -81,9 +81,10 @@ namespace GUC.WorldObjects
             }
         }
 
-        internal int slot = SLOTNUM_UNEQUIPPED;
+        public const int SlotNumUnused = 255;
+        internal int slot = SlotNumUnused;
         public int Slot { get { return this.slot; } }
-        public const int SLOTNUM_UNEQUIPPED = -1;
+        public bool IsEquipped { get { return this.slot != SlotNumUnused; } }
 
         public ItemContainer.IContainer Container { get; internal set; }
 

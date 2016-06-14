@@ -15,13 +15,13 @@ namespace GUC.WorldObjects.Collections
         /// <summary>
         /// The upper (excluded) limit for Items in an inventory (byte.MaxValue+1).
         /// </summary>
-        public const int MAX_ITEMS = 256;
+        public const int MaxItems = 256;
 
         IContainer owner;
         public IContainer Owner { get { return this.owner; } }
 
-        StaticCollection<Item> idColl = new StaticCollection<Item>(MAX_ITEMS);
-        DynamicCollection<Item> items = new DynamicCollection<Item>(MAX_ITEMS);
+        StaticCollection<Item> idColl = new StaticCollection<Item>(MaxItems);
+        DynamicCollection<Item> items = new DynamicCollection<Item>(MaxItems);
 
         internal ItemContainer(IContainer owner)
         {

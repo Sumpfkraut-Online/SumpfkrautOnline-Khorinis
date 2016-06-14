@@ -62,7 +62,7 @@ namespace GUC.Server.Scripts.TFFA
             if (!force && client.Team == team)
                 return;
 
-            Kill(client);
+            Kill(client, false);
 
             client.Class = PlayerClass.None;
 
@@ -85,7 +85,7 @@ namespace GUC.Server.Scripts.TFFA
         {
             if (client.Class != c)
             {
-                Kill(client);
+                Kill(client, false);
 
                 client.Class = c;
                 if (status == TFFAPhase.Waiting && client.Team != Team.Spec)
@@ -158,10 +158,10 @@ namespace GUC.Server.Scripts.TFFA
             PhaseFight();
         }
 
-        static int ALKills = 0;
-        static int NLKills = 0;
+        public static int ALKills = 0;
+        public static int NLKills = 0;
 
-        public static void Kill(TFFAClient client)
+        public static void Kill(TFFAClient client, bool changePoints)
         {
             if (client.Character == null || client.Character.BaseInst.IsDead)
                 return;
@@ -170,11 +170,15 @@ namespace GUC.Server.Scripts.TFFA
 
             if (status == TFFAPhase.Fight)
             {
-                client.Deaths++;
-                if (client.Team == Team.AL)
-                    NLKills++;
-                else if (client.Team == Team.NL)
-                    ALKills++;
+                if (changePoints)
+                {
+                    client.Deaths++;
+                    if (client.Team == Team.AL)
+                        NLKills++;
+                    else if (client.Team == Team.NL)
+                        ALKills++;
+                }
+                
                 if (ALKills >= KillsToWin || NLKills >= KillsToWin)
                     PhaseEnd();
             }
@@ -204,7 +208,7 @@ namespace GUC.Server.Scripts.TFFA
                 {
                     att.Kills--;
                 }
-                Kill(tar);
+                Kill(tar, true);
             }
             else
             {
@@ -229,7 +233,7 @@ namespace GUC.Server.Scripts.TFFA
             return stream;
         }
 
-        static void PhaseWait()
+        public static void PhaseWait()
         {
             Log.Logger.Log("Wait Phase");
             status = TFFAPhase.Waiting;
@@ -260,7 +264,7 @@ namespace GUC.Server.Scripts.TFFA
             });
         }
 
-        static void PhaseFight()
+        public static void PhaseFight()
         {
             Log.Logger.Log("Fight Phase");
 
@@ -283,7 +287,7 @@ namespace GUC.Server.Scripts.TFFA
             gameTimer.Restart();
         }
 
-        static void PhaseEnd()
+        public static void PhaseEnd()
         {
             Log.Logger.Log("End Phase");
             status = TFFAPhase.End;
@@ -414,10 +418,10 @@ namespace GUC.Server.Scripts.TFFA
             }
 
             npc.AddItem(weapon);
-            npc.EquipItem(1, weapon); // 1 = DrawnWeapon
+            npc.EquipItem(weapon); // 1 = DrawnWeapon
 
             npc.AddItem(armor);
-            npc.EquipItem(0, armor);
+            npc.EquipItem(armor);
 
             if (overlay != null)
             {

@@ -52,6 +52,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 
         public ItemTypes ItemType = ItemTypes.Misc;
 
+        public bool IsWeapon { get { return this.ItemType == ItemTypes.Wep1H || this.ItemType == ItemTypes.Wep2H; } }
+
         #endregion
 
         public ItemDef() : base(new ItemInstance())

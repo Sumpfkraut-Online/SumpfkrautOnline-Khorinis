@@ -217,19 +217,77 @@ namespace GUC.Types
                 time = new WorldTime(seconds);
                 return true;
             }
+
+            // day:hour:min-parsing
+            if (TryParseDayHourMin(s, out time)) { return true; }
+
             time = default(WorldTime);
             return false;
         }
 
+        public static bool TryParseDayHourMin (String timeString, out WorldTime igTime)
+        {
+            int day, hour, minute;
+            day = hour = minute = 0;
+
+            String[] timeStringArr;
+            int[] timeIntArr;
+
+            if (timeString == null)
+            {
+                igTime = default(WorldTime);
+                return false;
+            }
+
+            timeStringArr = timeString.Split(':');
+            if ((timeStringArr == null) || (timeStringArr.Length < 1))
+            {
+                igTime = default(WorldTime);
+                return false;
+            }
+
+            timeIntArr = new int[timeStringArr.Length];
+            int tempInt = -1;
+            for (int t = 0; t < timeStringArr.Length; t++)
+            {
+                if(!int.TryParse(timeStringArr[t], out tempInt))
+                {
+                    igTime = default(WorldTime);
+                    return false;
+                }
+
+                switch (t)
+                {
+                    case 0:
+                        day = tempInt;
+                        break;
+                    case 1:
+                        hour = tempInt;
+                        break;
+                    case 2:
+                        minute = tempInt;
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            igTime = new WorldTime(day, hour, minute);
+
+            return true;
+        }
+
         public override string ToString()
         {
-            return this.totalSeconds.ToString();
+            return string.Format("WorldTime(day {0}, {1}:{2}:{3})", this.GetDay(), 
+                this.GetHour(), this.GetMinute(), this.GetSecond());
+            //return this.totalSeconds.ToString();
         }
 
         public string ToString(bool onlySeconds)
         {
             if (onlySeconds) return this.ToString();
-            else return string.Format("WorldTime(day {0}, {1}:{2} : {3})", this.GetDay(), this.GetHour(), this.GetMinute(), this.GetSecond());
+            else return this.ToString();
         }
 
         public override bool Equals(object obj)

@@ -34,11 +34,11 @@ namespace GUC.Scripts.Sumpfkraut.Networking
 
             var item = new ItemInst(ItemDef.Get<ItemDef>("zweihander"));
             npc.AddItem(item);
-            npc.EquipItem(1, item);
+            npc.EquipItem(item);
 
             item = new ItemInst(ItemDef.Get<ItemDef>("itar_Garde"));
             npc.AddItem(item);
-            npc.EquipItem(0, item);
+            npc.EquipItem(item);
 
             /*ScriptOverlay ov;
             if (!npc.Definition.Model.TryGetOverlay(0, out ov))

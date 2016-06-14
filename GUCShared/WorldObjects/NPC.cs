@@ -175,14 +175,9 @@ namespace GUC.WorldObjects
 
         #region Equipment
 
-        public const int MAX_EQUIPPEDITEMS = 255;
-        Dictionary<int, Item> equippedSlots = new Dictionary<int, Item>();
+        Dictionary<int, Item> equippedItems = new Dictionary<int, Item>();
 
-        partial void pEquipItem(Item item);
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="slot">0-254</param>
+        partial void pEquipItem(int slot, Item item);
         public void EquipItem(int slot, Item item)
         {
             if (item == null)
@@ -190,18 +185,42 @@ namespace GUC.WorldObjects
 
             if (item.Container != this)
                 throw new ArgumentException("Item is not in this container!");
+            
+            if (slot < 0 || slot >= Item.SlotNumUnused)
+                throw new ArgumentOutOfRangeException("Slotnum must be greater or equal than zero and smaller than " + Item.SlotNumUnused);
 
-            if (slot < 0 || slot >= MAX_EQUIPPEDITEMS)
-                throw new ArgumentOutOfRangeException("Slotnum is out of range! 0.." + (MAX_EQUIPPEDITEMS - 1));
+            if (equippedItems.ContainsKey(slot))
+                throw new Exception("Slot is already in use!");
 
-            if (equippedSlots.ContainsKey(slot))
-                throw new ArgumentException("Slot is already equipped!");
+            if (item.IsEquipped)
+            {
+                if (item.slot == slot)
+                    return;
+
+                equippedItems.Remove(item.slot);
+            }
 
             item.slot = slot;
-            equippedSlots.Add(slot, item);
-            pEquipItem(item);
+            equippedItems.Add(slot, item);
+
+            pEquipItem(slot, item);
         }
 
+        public Item UnequipSlot(int slot)
+        {
+            Item item;
+            if (equippedItems.TryGetValue(slot, out item))
+            {
+                UnequipItem(item);
+                return item;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        partial void pUnequipItem(Item item);
         public void UnequipItem(Item item)
         {
             if (item == null)
@@ -210,34 +229,20 @@ namespace GUC.WorldObjects
             if (item.Container != this)
                 throw new ArgumentException("Item is not in this container!");
 
-            UnequipSlot(item.slot);
-        }
+            if (!item.IsEquipped)
+                throw new ArgumentException("Item is not equipped!");
 
-        partial void pUnequipItem(Item item);
-        public void UnequipSlot(int slot)
-        {
-            if (slot < 0 || slot >= MAX_EQUIPPEDITEMS)
-                throw new ArgumentOutOfRangeException("Slotnum is out of range! 0.." + (MAX_EQUIPPEDITEMS - 1));
+            pUnequipItem(item);
 
-            Item item;
-            if (equippedSlots.TryGetValue(slot, out item))
-            {
-                pUnequipItem(item);
-                item.slot = Item.SLOTNUM_UNEQUIPPED;
-                equippedSlots.Remove(slot);
-            }
+            equippedItems.Remove(item.slot);
+            item.slot = Item.SlotNumUnused;
         }
 
         #region Access
 
-        public bool IsSlotEquipped(int slot)
-        {
-            return equippedSlots.ContainsKey(slot);
-        }
-
         public bool TryGetEquippedItem(int slot, out Item item)
         {
-            return equippedSlots.TryGetValue(slot, out item);
+            return equippedItems.TryGetValue(slot, out item);
         }
 
         public void ForEachEquippedItem(Action<Item> action)
@@ -245,7 +250,7 @@ namespace GUC.WorldObjects
             if (action == null)
                 throw new ArgumentNullException("Action is null!");
 
-            foreach (Item item in equippedSlots.Values)
+            foreach(Item item in equippedItems.Values)
             {
                 action(item);
             }
@@ -259,7 +264,7 @@ namespace GUC.WorldObjects
             if (predicate == null)
                 throw new ArgumentNullException("Predicate is null!");
 
-            foreach (Item item in equippedSlots.Values)
+            foreach (Item item in equippedItems.Values)
             {
                 if (!predicate(item))
                     break;
@@ -269,24 +274,11 @@ namespace GUC.WorldObjects
         #endregion
 
         #endregion
-
-        #region Item drawing
-
-        Item drawnItem = null;
-        public Item DrawnItem { get { return this.drawnItem; } }
+        
+        #region Attack Mode
 
         bool isInAttackMode = false;
         public bool IsInAttackMode { get { return this.isInAttackMode; } }
-
-        /// <param name="item">null == fists</param>
-        public void DrawItem(Item item)
-        {
-
-        }
-
-        public void UndrawItem()
-        {
-        }
 
         #endregion
 
@@ -397,7 +389,7 @@ namespace GUC.WorldObjects
                 }
             }
 
-            stream.Write((byte)equippedSlots.Count);
+            stream.Write((byte)equippedItems.Count);
             ForEachEquippedItem(item =>
             {
                 stream.Write((byte)item.slot);
@@ -432,8 +424,8 @@ namespace GUC.WorldObjects
             count = stream.ReadByte();
             for (int i = 0; i < count; i++)
             {
-                Item item = (Item)ScriptManager.Interface.CreateVob(VobTypes.Item);
                 int slot = stream.ReadByte();
+                Item item = (Item)ScriptManager.Interface.CreateVob(VobTypes.Item);
                 item.ReadEquipProperties(stream);
                 this.ScriptObject.AddItem(item);
                 this.ScriptObject.EquipItem(slot, item);

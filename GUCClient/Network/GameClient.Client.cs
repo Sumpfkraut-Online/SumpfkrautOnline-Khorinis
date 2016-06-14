@@ -141,7 +141,7 @@ namespace GUC.Network
         long nextAniUpdate = 0;
         public void DoStartAni(AniJob job)
         {
-            if (this.character == null)
+            if (this.character == null || job == null)
                 return;
 
             if (this.character.IsDead)
@@ -156,7 +156,7 @@ namespace GUC.Network
 
         public void DoStartAni(AniJob job, params object[] netArgs)
         {
-            if (this.character == null)
+            if (this.character == null || job == null)
                 return;
 
             if (this.character.IsDead)
@@ -165,6 +165,39 @@ namespace GUC.Network
             if (GameTime.Ticks > nextAniUpdate)
             {
                 NPCMessage.WriteAniStart(job, netArgs);
+                nextAniUpdate = GameTime.Ticks + DelayBetweenMessages;
+            }
+        }
+        
+        public void DoEquipItem(int slot, Item item)
+        {
+            if (this.character == null || item == null)
+                return;
+
+            if (slot < 0 || slot >= Item.SlotNumUnused)
+                return;
+
+            if (this.character.IsDead || item.Container != this.character)
+                return;
+
+            if (GameTime.Ticks > nextAniUpdate)
+            {
+                InventoryMessage.WriteEquipMessage(slot, item);
+                nextAniUpdate = GameTime.Ticks + DelayBetweenMessages;
+            }
+        }
+
+        public void DoUnequipItem(Item item)
+        {
+            if (this.character == null || item == null)
+                return;
+
+            if (this.character.IsDead || item.Container != this.character)
+                return;
+
+            if (GameTime.Ticks > nextAniUpdate)
+            {
+                InventoryMessage.WriteUnequipMessage(item);
                 nextAniUpdate = GameTime.Ticks + DelayBetweenMessages;
             }
         }
@@ -186,7 +219,6 @@ namespace GUC.Network
         #endregion
 
         #region Hero
-
         
         void ReadTakeControl(PacketReader stream)
         {
@@ -348,11 +380,18 @@ namespace GUC.Network
                 case NetworkIDs.InventoryRemoveMessage:
                     InventoryMessage.ReadRemoveItem(stream);
                     break;
+                case NetworkIDs.InventoryEquipMessage:
+                    InventoryMessage.ReadEquipMessage(stream);
+                    break;
+                case NetworkIDs.InventoryUnequipMessage:
+                    InventoryMessage.ReadUnequipMessage(stream);
+                    break;
 
                 // NPC Messages
                 case NetworkIDs.NPCStateMessage:
                     NPCMessage.ReadMoveState(stream);
                     break;
+
                 case NetworkIDs.NPCEquipMessage:
                     NPCMessage.ReadEquipMessage(stream);
                     break;

@@ -149,6 +149,7 @@ namespace GUC.Client.Network.Messages
             if (World.Current.TryGetVob(stream.ReadUShort(), out npc))
             {
                 int slot = stream.ReadByte();
+
                 Item item = (Item)ScriptManager.Interface.CreateVob(VobTypes.Item);
                 item.ReadEquipProperties(stream);
                 npc.ScriptObject.EquipItem(slot, item);
@@ -161,7 +162,7 @@ namespace GUC.Client.Network.Messages
             if (World.Current.TryGetVob(stream.ReadUShort(), out npc))
             {
                 Item item;
-                if (npc.TryGetEquippedItem(stream.ReadByte(), out item))
+                if (npc.Inventory.TryGetItem(stream.ReadByte(), out item))
                 {
                     npc.ScriptObject.UnequipItem(item);
                 }
@@ -169,7 +170,7 @@ namespace GUC.Client.Network.Messages
         }
 
         #endregion
-
+        
         #region Properties
 
         public static void ReadHealthMessage(PacketReader stream)

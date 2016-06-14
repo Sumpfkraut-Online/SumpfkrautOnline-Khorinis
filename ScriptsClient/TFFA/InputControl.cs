@@ -9,6 +9,7 @@ using GUC.Types;
 using GUC.Scripts.TFFA;
 using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 
 namespace GUC.Client.Scripts.TFFA
 {
@@ -105,7 +106,26 @@ namespace GUC.Client.Scripts.TFFA
             if (TFFAClient.Status == TFFAPhase.Waiting)
                 return;
 
-            if (key == VirtualKeys.Control || key == VirtualKeys.LeftButton)
+            if (key == VirtualKeys.Space)
+            {
+                if (Hero.DrawnWeapon == null)
+                {
+                    Hero.BaseInst.ForEachEquippedItem(i =>
+                    {
+                        if (((ItemInst)i.ScriptObject).IsWeapon)
+                        {
+                            TFFAClient.Client.BaseClient.DoEquipItem(NPCInst.SlotNums.Righthand, i);
+                            return false;
+                        }
+                        return true;
+                    });
+                }
+                else
+                {
+                    TFFAClient.Client.BaseClient.DoEquipItem(NPCInst.SlotNums.Sword, Hero.DrawnWeapon.BaseInst);
+                }
+            }
+            else if (key == VirtualKeys.Control || key == VirtualKeys.LeftButton)
             {
                 // RUN ATTACK
                 if (Hero.Movement == MoveState.Forward)
@@ -117,8 +137,7 @@ namespace GUC.Client.Scripts.TFFA
                     }
                 }
             }
-
-            if (key == VirtualKeys.Menu) // JUMPING
+            else if (key == VirtualKeys.Menu) // JUMPING
             {
                 if (Hero.GetClimbAni() != null || Hero.GetJumpAni() != null)
                     return;
@@ -418,8 +437,6 @@ namespace GUC.Client.Scripts.TFFA
                     TurnToEnemy();
                 Hero.BaseInst.gVob.AniCtrl.StopTurnAnis();
             }
-
-            return;
 
             if (InputHandler.IsPressed(VirtualKeys.K))
             {

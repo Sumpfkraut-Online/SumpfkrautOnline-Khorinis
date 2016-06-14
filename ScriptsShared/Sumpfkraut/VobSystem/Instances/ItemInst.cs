@@ -15,9 +15,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public new WorldObjects.Item BaseInst { get { return (WorldObjects.Item)base.BaseInst; } }
         public new ItemDef Definition { get { return (ItemDef)base.Definition; } }
 
-        public int Slot { get { return this.BaseInst.Slot; } }
+        public bool IsEquipped { get { return this.BaseInst.IsEquipped; } }
 
         public ItemTypes ItemType { get { return this.Definition.ItemType; } }
+
+        public bool IsWeapon { get { return this.Definition.IsWeapon; } }
 
         #endregion
 

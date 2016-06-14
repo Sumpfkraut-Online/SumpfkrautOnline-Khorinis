@@ -31,19 +31,19 @@ namespace GUC.Server.Network.Messages
 
         public static void WriteEquipMessage(NPC npc, Item item)
         {
-            PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCEquipMessage);
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.InventoryEquipMessage);
 
             stream.Write((byte)item.ID);
-            stream.Write((byte)item.Slot);
+            stream.Write((byte)item.slot);
 
             npc.client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
         }
 
-        public static void WriteUnequipMessage(NPC npc, int slot)
+        public static void WriteUnequipMessage(NPC npc, Item item)
         {
-            PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCUnequipMessage);
-            
-            stream.Write((byte)slot);
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.InventoryUnequipMessage);
+
+            stream.Write((byte)item.ID);
 
             npc.client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
         }
@@ -51,7 +51,7 @@ namespace GUC.Server.Network.Messages
         public static void ReadEquipMessage(PacketReader stream, NPC character)
         {
             Item item;
-            if (character.TryGetEquippedItem(stream.ReadByte(), out item))
+            if (character.Inventory.TryGetItem(stream.ReadByte(), out item))
             {
                 character.ScriptObject.OnCmdEquipItem(stream.ReadByte(), item);
             }
@@ -60,11 +60,12 @@ namespace GUC.Server.Network.Messages
         public static void ReadUnequipMessage(PacketReader stream, NPC character)
         {
             Item item;
-            if (character.TryGetEquippedItem(stream.ReadByte(), out item))
+            if (character.Inventory.TryGetItem(stream.ReadByte(), out item))
             {
                 character.ScriptObject.OnCmdUnequipItem(item);
             }
         }
+
         #endregion
     }
 }

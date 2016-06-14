@@ -21,16 +21,18 @@ namespace GUC.WorldObjects
         public partial interface IScriptNPC
         {
             void OnCmdMove(MoveState state);
-            void OnCmdUseMob(MobInter mob);
-            void OnCmdUseItem(Item item);
-            void OnCmdDrawItem(Item item);
-            void OnCmdPickupItem(Item item);
-            void OnCmdDropItem(Item item);
             void OnCmdEquipItem(int slot, Item item);
             void OnCmdUnequipItem(Item item);
             void OnCmdAniStart(Animation ani);
             void OnCmdAniStart(Animation ani, object[] netArgs);
             void OnCmdAniStop(bool fadeOut);
+
+
+
+            void OnCmdUseMob(MobInter mob);
+            void OnCmdUseItem(Item item);
+            void OnCmdPickupItem(Item item);
+            void OnCmdDropItem(Item item);
         }
 
         #endregion
@@ -276,7 +278,7 @@ namespace GUC.WorldObjects
 
         #region Equipment
 
-        partial void pEquipItem(Item item)
+        partial void pEquipItem(int slot, Item item)
         {
             if (this.isCreated)
             {
@@ -290,9 +292,9 @@ namespace GUC.WorldObjects
         {
             if (this.isCreated)
             {
-                NPCMessage.WriteUnequipMessage(this, item.slot);
+                NPCMessage.WriteUnequipMessage(this, item);
                 if (this.IsPlayer)
-                    InventoryMessage.WriteUnequipMessage(this, item.slot);
+                    InventoryMessage.WriteUnequipMessage(this, item);
             }
         }
 
