@@ -75,12 +75,16 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public void OnCmdEquipItem(int slot, WorldObjects.Item item)
         {
-            throw new NotImplementedException();
+            ItemInst ii = (ItemInst)item.ScriptObject;
+
+            this.EquipItem(slot, ii);
         }
 
         public void OnCmdUnequipItem(WorldObjects.Item item)
         {
-            throw new NotImplementedException();
+            ItemInst ii = (ItemInst)item.ScriptObject;
+
+            this.UnequipItem(ii);
         }
 
         public void OnCmdUseMob(WorldObjects.Mobs.MobInter mob)
@@ -92,12 +96,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             throw new NotImplementedException();
         }
-
-        public void OnCmdDrawItem(WorldObjects.Item item)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public void OnCmdPickupItem(WorldObjects.Item item)
         {
             throw new NotImplementedException();

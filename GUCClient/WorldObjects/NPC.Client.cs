@@ -8,7 +8,6 @@ using GUC.Enumeration;
 using GUC.Animations;
 using Gothic.Types;
 using WinApi;
-using GUC.Log;
 
 namespace GUC.WorldObjects
 {

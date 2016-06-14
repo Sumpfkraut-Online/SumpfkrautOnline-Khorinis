@@ -160,8 +160,11 @@ namespace Gothic.Objects
             StartDialogAni = 0x00757DE0,
             GetInteractMob = 0x0074ACA0,
             ResetPos = 0x006824D0,
-            PutInSlot = 0x00749CB0,
-            RemoveFromSlot = 0x0074A270,
+            GetInvSlot_str = 0x00749AE0,
+            PutInSlot = 0x00749D80,
+            PutInSlot_str = 0x00749CB0,
+            RemoveFromSlot = 0x0074A340,
+            RemoveFromSlot_str = 0x0074A270,
             Equip = 0x00739C90,
             GetSpellBook = 0x0073EA00,
             GetActiveSpellNr = 0x0073CF60,
@@ -214,6 +217,20 @@ namespace Gothic.Objects
             AvoidShrink = 0x0072D250,
 
             EV_Strafe = 0x683DE0;
+        }
+
+        public abstract class NPCNodes
+        {
+            public static readonly zString Bow = new zString(0xAB1F48),
+                Crossbow = new zString(0xAB2114),
+                Helmet = new zString(0xAB1F04),
+                Jaws = new zString(0xAB2070),
+                LeftHand = new zString(0xAB2424),
+                Longsword = new zString(0xAB1F60),
+                RightHand = new zString(0xAB2148),
+                Shield = new zString(0xAB1E0C),
+                Sword = new zString(0xAB1EF0),
+                Torso = new zString(0xAB1FA0);
         }
 
         /*public enum HookSize : uint
@@ -466,7 +483,16 @@ namespace Gothic.Objects
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.RemoveOverlay, str);
         }
+        
+        public void Equip(oCItem item)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.Equip, item);
+        }
 
+        public void EquipItem(oCItem item)
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x7323C0, item);
+        }
 
         public void EquipArmor(oCItem item)
         {
@@ -549,6 +575,66 @@ namespace Gothic.Objects
         {
             get { return Process.ReadInt(Address + VarOffsets.trueGuild); }
             set { Process.Write(value, Address + VarOffsets.trueGuild); }
+        }
+
+        public zCVob RemoveFromSlot(string slot, bool arg0, bool arg1)
+        {
+            zCVob ret;
+            using (zString z = zString.Create(slot))
+                ret = RemoveFromSlot(z, arg0, arg1);
+            return ret;
+        }
+
+        public zCVob RemoveFromSlot(zString slot, bool arg0, bool arg1)
+        {
+            return Process.THISCALL<zCVob>(Address, FuncAddresses.RemoveFromSlot_str, slot, (BoolArg)arg0, (BoolArg)arg1);
+        }
+
+        public void PutInSlot(string slot, zCVob vob, bool arg)
+        {
+            using (zString z = zString.Create(slot))
+                PutInSlot(z, vob, arg);
+        }
+
+        public void PutInSlot(zString slot, zCVob vob, bool arg)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.PutInSlot_str, slot, vob, (BoolArg)arg);
+        }
+        
+        public int GetInvSlot(string slot)
+        {
+            int ret;
+            using (zString z = zString.Create(slot))
+                ret = GetInvSlot(z);
+            return ret;
+        }
+
+        public int GetInvSlot(zString slot)
+        {
+            return Process.THISCALL<IntArg>(Address, FuncAddresses.GetInvSlot_str, slot);
+        }
+
+        public void PutInSlot(int slotAddr, zCVob vob, bool arg)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.PutInSlot, (IntArg)slotAddr, vob, (BoolArg)arg);
+        }
+        
+        public oCItem PutInInv(oCItem item)
+        {
+            return Process.THISCALL<oCItem>(Address, FuncAddresses.PutInInv_Item, item);
+        }
+
+        public int CreateInvSlot(string slot)
+        {
+            int ret;
+            using (zString z = zString.Create(slot))
+                ret = CreateInvSlot(z);
+            return ret;
+        }
+
+        public int CreateInvSlot(zString slot)
+        {
+            return Process.THISCALL<IntArg>(Address, 0x749800, slot);
         }
 
         /*
@@ -1222,36 +1308,6 @@ namespace Gothic.Objects
             return Process.THISCALL<IntArg>(Address, FuncAddresses.GetActiveSpellLevel).Address;
         }
 
-        public void Equip(oCItem slot)
-        {
-            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.Equip, new CallValue[] { slot });
-        }
-
-        public void EquipItem(oCItem item)
-        {
-            Process.THISCALL<NullReturnCall>(Address, (uint)0x7323C0, new CallValue[] { item });
-        }
-
-        public void RemoveFromSlot(zString slot, int vob, int i)
-        {
-            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.RemoveFromSlot, new CallValue[] { slot, new IntArg(vob), new IntArg(i) });
-        }
-
-        public int GetInvSlot(zString slot)
-        {
-            return Process.THISCALL<IntArg>(Address, (uint)0x749AE0, new CallValue[] { slot });
-        }
-
-        public void PutInSlot(zString slot, zCVob vob, int i)
-        {
-            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.PutInSlot, new CallValue[] { slot, vob, new IntArg(i) });
-        }
-
-        public void PutInSlot(int slot, zCVob vob, int i)
-        {
-            Process.THISCALL<NullReturnCall>(Address, (uint)0x749D80, new CallValue[] { new IntArg(slot), vob, new IntArg(i) });
-        }
-
         public void ResetPos(zVec3 pos)
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.ResetPos, new CallValue[] { pos });
@@ -1343,13 +1399,6 @@ namespace Gothic.Objects
         public void OpenDeadNPC()
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.OpenDeadNPC);
-        }
-
-
-        public oCItem PutInInv(oCItem code)
-        {
-
-            return Process.THISCALL<oCItem>(Address, FuncAddresses.PutInInv_Item, new CallValue[] { code });
         }
 
         public oCItem PutInInv(zString code, int count)

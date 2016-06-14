@@ -56,7 +56,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         public static ScriptAni NewAttackAni(int duration, int hitTime = 0, int comboTime = 0, int startFrame = 0)
         {
             var ani = NewFightAni(duration, comboTime, startFrame);
-            ani.hitTime = hitTime == 0 ? duration : comboTime;
+            ani.hitTime = hitTime == 0 ? duration : hitTime;
             return ani;
         }
 

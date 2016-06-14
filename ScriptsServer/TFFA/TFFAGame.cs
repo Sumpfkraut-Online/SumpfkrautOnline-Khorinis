@@ -418,10 +418,10 @@ namespace GUC.Server.Scripts.TFFA
             }
 
             npc.AddItem(weapon);
-            npc.EquipItem(1, weapon); // 1 = DrawnWeapon
+            npc.EquipItem(weapon); // 1 = DrawnWeapon
 
             npc.AddItem(armor);
-            npc.EquipItem(0, armor);
+            npc.EquipItem(armor);
 
             if (overlay != null)
             {
