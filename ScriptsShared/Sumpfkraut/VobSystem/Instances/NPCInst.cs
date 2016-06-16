@@ -255,6 +255,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         partial void pEquipItem(int slot, ItemInst item);
         public void EquipItem(int slot, ItemInst item)
         {
+            pEquipItem(slot, item);
+
+            if (item.BaseInst.Slot == slot)
+                return;
+
             if (item.BaseInst.IsEquipped)
             {
                 switch (item.BaseInst.Slot)
@@ -286,7 +291,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     break;
             }
 
-            pEquipItem(slot, item);
             this.BaseInst.EquipItem(slot, item.BaseInst);
         }
 
@@ -298,6 +302,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         partial void pUnequipItem(ItemInst item);
         public void UnequipItem(ItemInst item)
         {
+            pUnequipItem(item);
+
             switch (item.BaseInst.Slot)
             {
                 case SlotNums.Torso:
@@ -312,7 +318,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     break;
             }
 
-            pUnequipItem(item);
             this.BaseInst.UnequipItem(item.BaseInst);
         }
 
@@ -392,6 +397,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             {
                 ((NPC.ClimbingLedge)netArgs[0]).WriteStream(stream);
             }
+            else if (j.IsDraw)
+            {
+                stream.Write((byte)(int)netArgs[0]);
+            }
         }
 
         public void OnReadAniStartArgs(PacketReader stream, AniJob job, out object[] netArgs)
@@ -405,10 +414,23 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             {
                 netArgs = new object[1] { new NPC.ClimbingLedge(stream) };
             }
+            else if (j.IsDraw)
+            {
+                netArgs = new object[1] { (int)stream.ReadByte() };
+            }
             else
             {
                 netArgs = null;
             }
+        }
+
+        partial void pSetFightMode(bool fightMode);
+        public void SetFightMode(bool fightMode)
+        {
+            this.BaseInst.SetFightMode(fightMode);
+            pSetFightMode(fightMode);
+
+            Log.Logger.Log("SetFightMode: " + fightMode);
         }
     }
 }

@@ -26,6 +26,7 @@ namespace GUC.WorldObjects
             void OnCmdAniStart(Animation ani);
             void OnCmdAniStart(Animation ani, object[] netArgs);
             void OnCmdAniStop(bool fadeOut);
+            void OnCmdSetFightMode(bool fightMode);
 
 
 
@@ -288,6 +289,14 @@ namespace GUC.WorldObjects
             }
         }
 
+        partial void pEquipSwitch(int slot, Item item)
+        {
+            if (this.isCreated)
+            {
+                NPCMessage.WriteEquipSwitchMessage(this, item);
+            }
+        }
+
         partial void pUnequipItem(Item item)
         {
             if (this.isCreated)
@@ -330,6 +339,22 @@ namespace GUC.WorldObjects
         partial void pStopAnimation(Animation ani,bool fadeOut)
         {
             NPCMessage.WriteAniStop(this, ani, fadeOut);
+        }
+
+        #endregion
+
+        #region Fight Mode
+
+        partial void pSetFightMode(bool fightMode)
+        {
+            if (fightMode)
+            {
+                NPCMessage.WriteSetFightMode(this);
+            }
+            else
+            {
+                NPCMessage.WriteUnsetFightMode(this);
+            }
         }
 
         #endregion

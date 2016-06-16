@@ -156,6 +156,19 @@ namespace GUC.Client.Network.Messages
             }
         }
 
+        public static void ReadEquipSwitchMessage(PacketReader stream)
+        {
+            NPC npc;
+            if (World.Current.TryGetVob(stream.ReadUShort(), out npc))
+            {
+                Item item;
+                if (npc.Inventory.TryGetItem(stream.ReadByte(), out item))
+                {
+                    npc.ScriptObject.EquipItem(stream.ReadByte(), item);
+                }
+            }
+        }
+
         public static void ReadUnequipMessage(PacketReader stream)
         {
             NPC npc;
@@ -182,6 +195,40 @@ namespace GUC.Client.Network.Messages
                 int hpmax = stream.ReadUShort();
                 int hp = stream.ReadUShort();
                 npc.ScriptObject.SetHealth(hp, hpmax);
+            }
+        }
+
+        #endregion
+
+        #region Fight Mode
+
+        public static void WriteSetFightModeMessage()
+        {
+            PacketWriter stream = GameClient.SetupStream(NetworkIDs.NPCSetFightModeMessage);
+            GameClient.Send(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
+        }
+
+        public static void WriteUnsetFightModeMessage()
+        {
+            PacketWriter stream = GameClient.SetupStream(NetworkIDs.NPCUnsetFightModeMessage);
+            GameClient.Send(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
+        }
+
+        public static void ReadSetFightModeMessage(PacketReader stream)
+        {
+            NPC npc;
+            if (World.Current.TryGetVob(stream.ReadUShort(), out npc))
+            {
+                npc.ScriptObject.SetFightMode(true);
+            }
+        }
+
+        public static void ReadUnsetFightModeMessage(PacketReader stream)
+        {
+            NPC npc;
+            if (World.Current.TryGetVob(stream.ReadUShort(), out npc))
+            {
+                npc.ScriptObject.SetFightMode(false);
             }
         }
 

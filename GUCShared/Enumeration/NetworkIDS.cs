@@ -45,6 +45,7 @@ namespace GUC.Enumeration
         // npcs 
         NPCStateMessage,
         NPCEquipMessage,
+        NPCEquipSwitchMessage,
         NPCUnequipMessage,
         NPCApplyOverlayMessage,
         NPCRemoveOverlayMessage,
@@ -52,6 +53,8 @@ namespace GUC.Enumeration
         NPCAniStartWithArgsMessage,
         NPCAniStopMessage,
         NPCHealthMessage,
+        NPCSetFightModeMessage,
+        NPCUnsetFightModeMessage,
 
         //inventory
         InventoryAddMessage, // add item to player inventory

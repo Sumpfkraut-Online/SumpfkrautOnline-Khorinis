@@ -66,10 +66,10 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
         #region DrawAni / UndrawAni
 
-        public static ScriptAni NewDrawAni(int duration, int drawFrame = 0, int startFrame = 0)
+        public static ScriptAni NewDrawAni(int duration, int drawTime = 0, int startFrame = 0)
         {
             var ani = new ScriptAni(duration, startFrame);
-            ani.drawFrame = drawFrame == 0 ? startFrame : drawFrame;
+            ani.drawTime = drawTime == 0 ? duration : drawTime;
             return ani;
         }
 

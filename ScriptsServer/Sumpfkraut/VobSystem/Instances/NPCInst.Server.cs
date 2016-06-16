@@ -87,6 +87,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             this.UnequipItem(ii);
         }
 
+        public void OnCmdSetFightMode(bool fightMode)
+        {
+            if (!this.BaseInst.IsDead)
+                this.SetFightMode(fightMode);
+        }
+
         public void OnCmdUseMob(WorldObjects.Mobs.MobInter mob)
         {
             throw new NotImplementedException();
@@ -96,7 +102,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             throw new NotImplementedException();
         }
-        
+
         public void OnCmdPickupItem(WorldObjects.Item item)
         {
             throw new NotImplementedException();
@@ -169,7 +175,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             {
                 hitTimer.Stop();
 
-                if (this.BaseInst.IsDead)
+                if (this.BaseInst.IsDead || this.drawnWeapon == null)
                     return;
 
                 ScriptAniJob attackerAni = (ScriptAniJob)this.GetFightAni()?.Ani.AniJob.ScriptObject;
@@ -309,6 +315,25 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             {
                 this.StartAniClimb(a, (WorldObjects.NPC.ClimbingLedge)netArgs[0]);
             }
+            else if (a.AniJob.IsDraw)
+            {
+                int itemID = (int)netArgs[0];
+                WorldObjects.Item item;
+                if (this.BaseInst.Inventory.TryGetItem(itemID, out item) && item.IsEquipped)
+                {
+                    this.StartAniDraw(a, (ItemInst)item.ScriptObject);
+                }
+            }
+            else if (a.AniJob.IsUndraw)
+            {
+                int itemID = (int)netArgs[0];
+                WorldObjects.Item item;
+                if (this.BaseInst.Inventory.TryGetItem(itemID, out item) && item.IsEquipped)
+                {
+                    this.StartAniUndraw(a, (ItemInst)item.ScriptObject);
+                }
+            }
+
         }
 
         public void OnCmdAniStop(bool fadeOut)
@@ -331,6 +356,16 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             this.BaseInst.StartAnimation(ani.BaseAni, () => this.canCombo = true, ledge);
             this.canCombo = false;
+        }
+
+        public void StartAniDraw(ScriptAni ani, ItemInst item)
+        {
+            this.BaseInst.StartAnimation(ani.BaseAni, null, item.ID);
+        }
+
+        public void StartAniUndraw(ScriptAni ani, ItemInst item)
+        {
+            this.BaseInst.StartAnimation(ani.BaseAni, null, item.ID);
         }
     }
 }

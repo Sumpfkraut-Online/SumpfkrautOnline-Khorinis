@@ -163,6 +163,17 @@ namespace GUC.Server.Network.Messages
             });
         }
 
+        public static void WriteEquipSwitchMessage(NPC npc, Item item)
+        {
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCEquipSwitchMessage);
+
+            stream.Write((ushort)npc.ID);
+            stream.Write((byte)item.ID);
+            stream.Write((byte)item.slot);
+
+            npc.Cell.ForEachSurroundingClient(client => client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
+        }
+
         public static void WriteUnequipMessage(NPC npc, Item item)
         {
             PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCUnequipMessage);
@@ -187,6 +198,34 @@ namespace GUC.Server.Network.Messages
             stream.Write((ushort)npc.HPMax);
             stream.Write((ushort)npc.HP);
             npc.Cell.ForEachSurroundingClient(client => client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
+        }
+
+        #endregion
+
+        #region Fight Mode
+
+        public static void WriteSetFightMode(NPC npc)
+        {
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCSetFightModeMessage);
+            stream.Write((ushort)npc.ID);
+            npc.Cell.ForEachSurroundingClient(client => client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
+        }
+
+        public static void WriteUnsetFightMode(NPC npc)
+        {
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCUnsetFightModeMessage);
+            stream.Write((ushort)npc.ID);
+            npc.Cell.ForEachSurroundingClient(client => client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
+        }
+
+        public static void ReadSetFightMode(PacketReader stream, NPC character)
+        {
+            character.ScriptObject.OnCmdSetFightMode(true);
+        }
+
+        public static void ReadUnsetFightMode(PacketReader stream, NPC character)
+        {
+            character.ScriptObject.OnCmdSetFightMode(false);
         }
 
         #endregion
