@@ -33,11 +33,11 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
         #region DrawAni / UndrawAni
 
-        int drawFrame = 0;
-        public int DrawFrame
+        int drawTime = 0;
+        public int DrawTime
         {
-            get { return this.drawFrame; }
-            set { this.drawFrame = value; }
+            get { return this.drawTime; }
+            set { this.drawTime = value; }
         }
 
         #endregion
@@ -56,24 +56,14 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
         public void OnReadProperties(PacketReader stream)
         {
-            switch (this.AniJob.Type)
-            {
-                case AniType.Draw:
-                case AniType.Undraw:
-                    this.drawFrame = stream.ReadUShort();
-                    break;
-            }
+            if (this.AniJob.IsDraw || this.AniJob.IsUndraw)
+                this.drawTime = stream.ReadInt();
         }
 
         public void OnWriteProperties(PacketWriter stream)
         {
-            switch (this.AniJob.Type)
-            {
-                case AniType.Draw:
-                case AniType.Undraw:
-                    stream.Write((ushort)this.drawFrame);
-                    break;
-            }
+            if (this.AniJob.IsDraw || this.AniJob.IsUndraw)
+                stream.Write(this.drawTime);
         }
 
         #endregion

@@ -59,7 +59,7 @@ namespace Gothic.Objects
             flags = 0x01B4,
             fatness = 0x07BC,
             model_scale = 0x07B0,
-            weaponMode = 0x250,
+            fmode = 0x250,
 
             InteractItem = 0x968,
             InteractItemState = 0x96C,
@@ -343,6 +343,12 @@ namespace Gothic.Objects
             using (zString zBodyMesh = zString.Create(bodyMesh))
             using (zString zHeadMesh = zString.Create(headMesh))
                 Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetAdditionalVisuals, zBodyMesh, new IntArg(bodyTex), new IntArg(skinColor), zHeadMesh, new IntArg(headTex), new IntArg(TeethTex), new IntArg(Armor));
+        }
+
+        public int FMode
+        {
+            get { return Process.ReadInt(Address + VarOffsets.fmode); }
+            set { Process.Write(value, Address + VarOffsets.fmode); }
         }
 
         public int HP

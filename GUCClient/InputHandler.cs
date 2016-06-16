@@ -10,8 +10,6 @@ namespace GUC.Client
 {
     public static class InputHandler
     {
-        static Gothic.Objects.Meshes.zCModelAni ani;
-
         static Dictionary<VirtualKeys, Action> gucKeys = new Dictionary<VirtualKeys, Action>()
         {
             { VirtualKeys.F4, Program.Exit },
@@ -41,7 +39,7 @@ namespace GUC.Client
                 {
                 }
             },
-            { VirtualKeys.F8, () =>
+            { VirtualKeys.F9, () =>
                 {
                 }
             }

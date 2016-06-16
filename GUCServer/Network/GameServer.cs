@@ -105,6 +105,13 @@ namespace GUC.Server.Network
                     NPCMessage.ReadAniStop(stream, client.character);
                     break;
 
+                case NetworkIDs.NPCSetFightModeMessage:
+                    NPCMessage.ReadSetFightMode(stream, client.character);
+                    break;
+                case NetworkIDs.NPCUnsetFightModeMessage:
+                    NPCMessage.ReadUnsetFightMode(stream, client.character);
+                    break;
+
                 case NetworkIDs.InventoryEquipMessage:
                     InventoryMessage.ReadEquipMessage(stream, client.character);
                     break;

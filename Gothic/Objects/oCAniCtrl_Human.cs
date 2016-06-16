@@ -69,7 +69,8 @@ namespace Gothic.Objects
             CheckMeleeWeaponHitsLevel = 0x6B0CD0,
             GetFightLimbs = 0x6AF1E0,
 
-            HitCombo = 0x6B0260;
+            HitCombo = 0x6B0260,
+            SetFightAnis = 0x6AAA40;
         }
 
         public abstract class BitFlag
@@ -258,10 +259,14 @@ namespace Gothic.Objects
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.GetFightLimbs);
         }
 
-
         public void Turn(float amount, bool playAni)
         {
             Process.THISCALL<NullReturnCall>(Address, 0x6AE540, new FloatArg(amount), new BoolArg(playAni));
+        }
+
+        public void SetFightAnis(int fmode)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetFightAnis, new IntArg(fmode));
         }
 
         /*public zString GetWalkModeZString()

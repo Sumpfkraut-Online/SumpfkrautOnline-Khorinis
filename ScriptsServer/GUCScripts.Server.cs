@@ -46,28 +46,28 @@ namespace GUC.Scripts
             Add1hAttacks(m);
 
             // JUMPS
-            var aniJob = new ScriptAniJob("jumprun", new ScriptAni(8000000), AniType.Jump);
+            var aniJob = new ScriptAniJob("jumprun", new ScriptAni(8000000));
             aniJob.BaseAniJob.ID = (int)SetAnis.JumpRun;
             aniJob.AniName = "t_RunL_2_Jump";
             m.AddAniJob(aniJob);
 
-            aniJob = new ScriptAniJob("jumpfwd", new ScriptAni(9200000), AniType.Jump);
+            aniJob = new ScriptAniJob("jumpfwd", new ScriptAni(9200000));
             aniJob.BaseAniJob.ID = (int)SetAnis.JumpFwd;
             aniJob.AniName = "T_STAND_2_JUMP";
             m.AddAniJob(aniJob);
 
             // CLIMBING
-            aniJob = new ScriptAniJob("climblow", new ScriptAni(1200000 + 2000000 + 3200000), AniType.Climb);
+            aniJob = new ScriptAniJob("climblow", new ScriptAni(1200000 + 2000000 + 3200000));
             aniJob.BaseAniJob.ID = (int)SetAnis.ClimbLow;
             aniJob.AniName = "T_STAND_2_JUMPUPLOW";
             m.AddAniJob(aniJob);
 
-            aniJob = new ScriptAniJob("climbmid", new ScriptAni(3200000 + 1200000 + 8000000), AniType.Climb);
+            aniJob = new ScriptAniJob("climbmid", new ScriptAni(3200000 + 1200000 + 8000000));
             aniJob.BaseAniJob.ID = (int)SetAnis.ClimbMid;
             aniJob.AniName = "T_STAND_2_JUMPUPMID";
             m.AddAniJob(aniJob);
 
-            aniJob = new ScriptAniJob("climbhigh", new ScriptAni(6800000 + 0 + 10000000), AniType.Climb);
+            aniJob = new ScriptAniJob("climbhigh", new ScriptAni(6800000 + 0 + 10000000));
             aniJob.BaseAniJob.ID = (int)SetAnis.ClimbHigh;
             aniJob.AniName = "T_JUMP_2_HANG";
             m.AddAniJob(aniJob);
@@ -108,21 +108,31 @@ namespace GUC.Scripts
             aniJob.AniName = "draw1h";
             model.AddAniJob(aniJob);
 
-            var ani = new ScriptAni(4800000); aniJob.SetDefaultAni(ani);
-            ani = new ScriptAni(2800000); aniJob.AddOverlayAni(ani, ov1);
-            ani = new ScriptAni(2800000); aniJob.AddOverlayAni(ani, ov2);
+            aniJob.SetDefaultAni(ScriptAni.NewDrawAni(6000000));
+            aniJob.AddOverlayAni(ScriptAni.NewDrawAni(4000000), ov1);
+            aniJob.AddOverlayAni(ScriptAni.NewDrawAni(4000000), ov2);
+
+            aniJob = new ScriptAniJob("draw1hrun", ScriptAni.NewDrawAni(9200000));
+            aniJob.BaseAniJob.ID = (int)SetAnis.Draw1HRun;
+            aniJob.AniName = "T_MOVE_2_1HMOVE";
+            model.AddAniJob(aniJob);
 
             aniJob = new ScriptAniJob("undraw1h");
             aniJob.BaseAniJob.ID = (int)SetAnis.Undraw1H;
             aniJob.AniName = "undraw1h";
             model.AddAniJob(aniJob);
 
-            ani = new ScriptAni(4800000); aniJob.SetDefaultAni(ani);
-            ani = new ScriptAni(2800000); aniJob.AddOverlayAni(ani, ov1);
-            ani = new ScriptAni(2800000); aniJob.AddOverlayAni(ani, ov2);
+            aniJob.SetDefaultAni(ScriptAni.NewDrawAni(6000000));
+            aniJob.AddOverlayAni(ScriptAni.NewDrawAni(4000000), ov1);
+            aniJob.AddOverlayAni(ScriptAni.NewDrawAni(4000000), ov2);
+
+            aniJob = new ScriptAniJob("undraw1hrun", ScriptAni.NewDrawAni(9200000));
+            aniJob.BaseAniJob.ID = (int)SetAnis.Undraw1HRun;
+            aniJob.AniName = "T_1HMOVE_2_MOVE";
+            model.AddAniJob(aniJob);
 
             // 1h COMBO 1
-            aniJob = new ScriptAniJob("attack1hfwd1", AniType.FightAttackCombo);
+            aniJob = new ScriptAniJob("attack1hfwd1");
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HFwd1;
             aniJob.AniName = "s_1hAttack";
             model.AddAniJob(aniJob);
@@ -132,7 +142,7 @@ namespace GUC.Scripts
             aniJob.AddOverlayAni(ScriptAni.NewAttackAni(11200000, 1200000, 3600000), ov2);
             
             // 1h COMBO 2
-            aniJob = new ScriptAniJob("attack1hfwd2", AniType.FightAttackCombo);
+            aniJob = new ScriptAniJob("attack1hfwd2");
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HFwd2;
             aniJob.AniName = "s_1hAttack";
             model.AddAniJob(aniJob);
@@ -142,7 +152,7 @@ namespace GUC.Scripts
             aniJob.AddOverlayAni(ScriptAni.NewAttackAni(10800000, 1800000, 5200000, 33), ov2);
 
             // 1h COMBO 3
-            aniJob = new ScriptAniJob("attack1hfwd3", AniType.FightAttackCombo);
+            aniJob = new ScriptAniJob("attack1hfwd3");
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HFwd3;
             aniJob.AniName = "s_1hAttack";
             model.AddAniJob(aniJob);
@@ -151,7 +161,7 @@ namespace GUC.Scripts
             aniJob.AddOverlayAni(ScriptAni.NewAttackAni(10800000, 3000000, 6800000, 65), ov2);
             
             // 1h COMBO 4
-            aniJob = new ScriptAniJob("attack1hfwd4", AniType.FightAttackCombo);
+            aniJob = new ScriptAniJob("attack1hfwd4");
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HFwd4;
             aniJob.AniName = "s_1hAttack";
             model.AddAniJob(aniJob);
@@ -160,7 +170,7 @@ namespace GUC.Scripts
             aniJob.AddOverlayAni(ScriptAni.NewAttackAni(6400000, 4000000, 5600000, 97), ov2);
 
             // 1h LEFT ATTACK
-            aniJob = new ScriptAniJob("attack1hleft", AniType.FightAttack);
+            aniJob = new ScriptAniJob("attack1hleft");
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HLeft;
             aniJob.AniName = "t_1hAttackL";
             aniJob.AttackBonus = -2;
@@ -171,7 +181,7 @@ namespace GUC.Scripts
             aniJob.AddOverlayAni(ScriptAni.NewAttackAni(7200000, 1200000, 3200000), ov2);
 
             // 1h RIGHT ATTACK
-            aniJob = new ScriptAniJob("attack1hright", AniType.FightAttack);
+            aniJob = new ScriptAniJob("attack1hright");
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HRight;
             aniJob.AniName = "t_1hAttackR";
             aniJob.AttackBonus = -2;
@@ -182,34 +192,34 @@ namespace GUC.Scripts
             aniJob.AddOverlayAni(ScriptAni.NewAttackAni(7200000, 1200000, 3200000), ov2);
 
             // 1h RUN ATTACK
-            aniJob = new ScriptAniJob("attack1hrun", AniType.FightAttackRun);
+            aniJob = new ScriptAniJob("attack1hrun");
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HRun;
             aniJob.AniName = "t_1hAttackMove";
             aniJob.AttackBonus = 5;
             model.AddAniJob(aniJob);
 
-            ani = ScriptAni.NewAttackAni(11200000, 7000000); ani.Layer = 2; aniJob.SetDefaultAni(ani);
+            var ani = ScriptAni.NewAttackAni(11200000, 7000000); ani.Layer = 2; aniJob.SetDefaultAni(ani);
             
             // 1h Parry
-            aniJob = new ScriptAniJob("attack1hparry1", ScriptAni.NewFightAni(5600000), AniType.FightParade);
+            aniJob = new ScriptAniJob("attack1hparry1", ScriptAni.NewFightAni(5600000));
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HParry1;
             aniJob.AniName = "T_1HPARADE_0";
             model.AddAniJob(aniJob);
             
             // 1h Parry
-            aniJob = new ScriptAniJob("attack1hparry2", ScriptAni.NewFightAni(5600000), AniType.FightParade);
+            aniJob = new ScriptAniJob("attack1hparry2", ScriptAni.NewFightAni(5600000));
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HParry2;
             aniJob.AniName = "T_1HPARADE_0_A2";
             model.AddAniJob(aniJob);
 
             // 1h Parry
-            aniJob = new ScriptAniJob("attack1hparry3", ScriptAni.NewFightAni(5600000), AniType.FightParade);
+            aniJob = new ScriptAniJob("attack1hparry3", ScriptAni.NewFightAni(5600000));
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HParry3;
             aniJob.AniName = "T_1HPARADE_0_A3";
             model.AddAniJob(aniJob);
 
             // 1h Dodge
-            aniJob = new ScriptAniJob("attack1hdodge", ScriptAni.NewFightAni(5200000), AniType.FightDodge);
+            aniJob = new ScriptAniJob("attack1hdodge", ScriptAni.NewFightAni(5200000));
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HDodge;
             aniJob.AniName = "T_1HPARADEJUMPB";
             model.AddAniJob(aniJob);
@@ -220,8 +230,38 @@ namespace GUC.Scripts
             var ov1 = new ScriptOverlay("2HST1", "Humans_2hST1"); model.AddOverlay(ov1);
             var ov2 = new ScriptOverlay("2HST2", "Humans_2hST2"); model.AddOverlay(ov2);
 
+            // Weapon drawing
+
+            ScriptAniJob aniJob = new ScriptAniJob("draw2h");
+            aniJob.BaseAniJob.ID = (int)SetAnis.Draw2H;
+            aniJob.AniName = "draw2h";
+            model.AddAniJob(aniJob);
+
+            aniJob.SetDefaultAni(ScriptAni.NewDrawAni(8000000));
+            aniJob.AddOverlayAni(ScriptAni.NewDrawAni(8000000), ov1);
+            aniJob.AddOverlayAni(ScriptAni.NewDrawAni(4000000), ov2);
+
+            aniJob = new ScriptAniJob("draw2hrun", ScriptAni.NewDrawAni(9200000));
+            aniJob.BaseAniJob.ID = (int)SetAnis.Draw2HRun;
+            aniJob.AniName = "T_MOVE_2_2HMOVE";
+            model.AddAniJob(aniJob);
+
+            aniJob = new ScriptAniJob("undraw2h");
+            aniJob.BaseAniJob.ID = (int)SetAnis.Undraw2H;
+            aniJob.AniName = "undraw2h";
+            model.AddAniJob(aniJob);
+
+            aniJob.SetDefaultAni(ScriptAni.NewDrawAni(8000000));
+            aniJob.AddOverlayAni(ScriptAni.NewDrawAni(8000000), ov1);
+            aniJob.AddOverlayAni(ScriptAni.NewDrawAni(4000000), ov2);
+
+            aniJob = new ScriptAniJob("undraw2hrun", ScriptAni.NewDrawAni(9200000));
+            aniJob.BaseAniJob.ID = (int)SetAnis.Undraw2HRun;
+            aniJob.AniName = "T_2HMOVE_2_MOVE";
+            model.AddAniJob(aniJob);
+
             // 2h COMBO 1
-            ScriptAniJob aniJob = new ScriptAniJob("attack2hfwd1", AniType.FightAttackCombo);
+            aniJob = new ScriptAniJob("attack2hfwd1");
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HFwd1;
             aniJob.AniName = "s_2hAttack";
             model.AddAniJob(aniJob);
@@ -231,7 +271,7 @@ namespace GUC.Scripts
             aniJob.AddOverlayAni(ScriptAni.NewAttackAni(13000000, 1600000, 4800000), ov2);
 
             // 2h COMBO 2
-            aniJob = new ScriptAniJob("attack2hfwd2", AniType.FightAttackCombo);
+            aniJob = new ScriptAniJob("attack2hfwd2");
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HFwd2;
             aniJob.AniName = "s_2hAttack";
             model.AddAniJob(aniJob);
@@ -241,7 +281,7 @@ namespace GUC.Scripts
             aniJob.AddOverlayAni(ScriptAni.NewAttackAni(11500000, 1800000, 6800000, 41), ov2);
 
             // 2h COMBO 3
-            aniJob = new ScriptAniJob("attack2hfwd3", AniType.FightAttackCombo);
+            aniJob = new ScriptAniJob("attack2hfwd3");
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HFwd3;
             aniJob.AniName = "s_2hAttack";
             model.AddAniJob(aniJob);
@@ -250,7 +290,7 @@ namespace GUC.Scripts
             aniJob.AddOverlayAni(ScriptAni.NewAttackAni(13500000, 4000000, 8800000, 81), ov2);
 
             // 2h COMBO 4
-            aniJob = new ScriptAniJob("attack2hfwd4", AniType.FightAttackCombo);
+            aniJob = new ScriptAniJob("attack2hfwd4");
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HFwd4;
             aniJob.AniName = "s_2hAttack";
             model.AddAniJob(aniJob);
@@ -258,7 +298,7 @@ namespace GUC.Scripts
             aniJob.AddOverlayAni(ScriptAni.NewAttackAni(7500000, 4000000, 7500000, 126), ov2);
 
             // 2h LEFT ATTACK
-            aniJob = new ScriptAniJob("attack2hleft", AniType.FightAttack);
+            aniJob = new ScriptAniJob("attack2hleft");
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HLeft;
             aniJob.AniName = "t_2hAttackL";
             aniJob.AttackBonus = -2;
@@ -269,7 +309,7 @@ namespace GUC.Scripts
             aniJob.AddOverlayAni(ScriptAni.NewAttackAni(10200000, 2000000, 5600000), ov2);
 
             // 2h RIGHT ATTACK
-            aniJob = new ScriptAniJob("attack2hright", AniType.FightAttack);
+            aniJob = new ScriptAniJob("attack2hright");
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HRight;
             aniJob.AniName = "t_2hAttackR";
             aniJob.AttackBonus = -2;
@@ -280,7 +320,7 @@ namespace GUC.Scripts
             aniJob.AddOverlayAni(ScriptAni.NewAttackAni(10200000, 2000000, 5600000), ov2);
 
             // 2h RUN ATTACK
-            aniJob = new ScriptAniJob("attack2hrun", AniType.FightAttackRun);
+            aniJob = new ScriptAniJob("attack2hrun");
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HRun;
             aniJob.AniName = "t_2hAttackMove";
             aniJob.AttackBonus = 5;
@@ -289,25 +329,25 @@ namespace GUC.Scripts
             var ani = ScriptAni.NewAttackAni(8800000, 6000000); ani.Layer = 2; aniJob.SetDefaultAni(ani);
 
             // 2h Parry
-            aniJob = new ScriptAniJob("attack2hparry1", ScriptAni.NewFightAni(5600000), AniType.FightParade);
+            aniJob = new ScriptAniJob("attack2hparry1", ScriptAni.NewFightAni(5600000));
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HParry1;
             aniJob.AniName = "T_2HPARADE_0";
             model.AddAniJob(aniJob);
 
             // 2h Parry
-            aniJob = new ScriptAniJob("attack2hparry2", ScriptAni.NewFightAni(5600000), AniType.FightParade);
+            aniJob = new ScriptAniJob("attack2hparry2", ScriptAni.NewFightAni(5600000));
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HParry2;
             aniJob.AniName = "T_2HPARADE_0_A2";
             model.AddAniJob(aniJob);
 
             // 2h Parry
-            aniJob = new ScriptAniJob("attack2hparry3", ScriptAni.NewFightAni(5600000), AniType.FightParade);
+            aniJob = new ScriptAniJob("attack2hparry3", ScriptAni.NewFightAni(5600000));
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HParry3;
             aniJob.AniName = "T_2HPARADE_0_A3";
             model.AddAniJob(aniJob);
 
             // 2h Dodge
-            aniJob = new ScriptAniJob("attack2hdodge", ScriptAni.NewFightAni(9200000), AniType.FightDodge);
+            aniJob = new ScriptAniJob("attack2hdodge", ScriptAni.NewFightAni(9200000));
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HDodge;
             aniJob.AniName = "T_2HPARADEJUMPB";
             model.AddAniJob(aniJob);

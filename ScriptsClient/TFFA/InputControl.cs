@@ -55,7 +55,8 @@ namespace GUC.Client.Scripts.TFFA
 
             WinApi.Process.AddHook(FocusHook, 0x733FB6, 5);
         }
-        
+
+        static int arg = 0;
         static void KeyDown(VirtualKeys key, long now)
         {
             GUCMenu activeMenu = GUCMenu.GetActiveMenus().ElementAtOrDefault(0);
@@ -106,23 +107,88 @@ namespace GUC.Client.Scripts.TFFA
             if (TFFAClient.Status == TFFAPhase.Waiting)
                 return;
 
-            if (key == VirtualKeys.Space)
+            if (key == VirtualKeys.N2)
+            {
+                TFFAClient.Client.BaseClient.DoSetFightMode(!Hero.BaseInst.IsInFightMode);
+            }
+            else if (key == VirtualKeys.N1)
+            {
+                if (Hero.DrawnWeapon == null)
+                {
+                    WorldObjects.Item wep;
+                    ScriptAniJob job;
+                    if (Hero.BaseInst.TryGetEquippedItem(NPCInst.SlotNums.Sword, out wep) && Hero.Model.TryGetAniJob(SetAnis.Draw1H, out job))
+                    {
+                        TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob, wep.ID);
+                    }
+                    else if (Hero.BaseInst.TryGetEquippedItem(NPCInst.SlotNums.Longsword, out wep) && Hero.Model.TryGetAniJob(SetAnis.Draw2H, out job))
+                    {
+                        TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob, wep.ID);
+                    }
+                }
+                else
+                {
+                    if (Hero.DrawnWeapon.ItemType == ItemTypes.Wep1H)
+                    {
+                        ScriptAniJob job;
+                        if (Hero.Model.TryGetAniJob(SetAnis.Undraw1H, out job))
+                        {
+                            TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob, Hero.DrawnWeapon.ID);
+                        }
+                    }
+                    else if (Hero.DrawnWeapon.ItemType == ItemTypes.Wep2H)
+                    {
+                        ScriptAniJob job;
+                        if (Hero.Model.TryGetAniJob(SetAnis.Undraw2H, out job))
+                        {
+                            TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob, Hero.DrawnWeapon.ID);
+                        }
+                    }
+                }
+            }
+            else if (key == VirtualKeys.Space)
             {
                 if (Hero.DrawnWeapon == null)
                 {
                     Hero.BaseInst.ForEachEquippedItem(i =>
                     {
-                        if (((ItemInst)i.ScriptObject).IsWeapon)
+                        ItemInst ii = (ItemInst)i.ScriptObject;
+                        if (ii.ItemType == ItemTypes.Wep1H)
                         {
-                            TFFAClient.Client.BaseClient.DoEquipItem(NPCInst.SlotNums.Righthand, i);
-                            return false;
+                            ScriptAniJob job;
+                            if (Hero.Model.TryGetAniJob(SetAnis.Draw1H, out job))
+                            {
+                                TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob, i.ID);
+                            }
                         }
-                        return true;
+                        else if (ii.ItemType == ItemTypes.Wep2H)
+                        {
+                            ScriptAniJob job;
+                            if (Hero.Model.TryGetAniJob(SetAnis.Draw2H, out job))
+                            {
+                                TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob, i.ID);
+                            }
+                        }
                     });
                 }
                 else
                 {
-                    TFFAClient.Client.BaseClient.DoEquipItem(NPCInst.SlotNums.Sword, Hero.DrawnWeapon.BaseInst);
+                    if (Hero.DrawnWeapon.ItemType == ItemTypes.Wep1H)
+                    {
+                        ScriptAniJob job;
+                        if (Hero.Model.TryGetAniJob(SetAnis.Undraw1H, out job))
+                        {
+                            TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob, Hero.DrawnWeapon.ID);
+                        }
+                    }
+                    else if (Hero.DrawnWeapon.ItemType == ItemTypes.Wep2H)
+                    {
+                        ScriptAniJob job;
+                        if (Hero.Model.TryGetAniJob(SetAnis.Undraw2H, out job))
+                        {
+                            TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob, Hero.DrawnWeapon.ID);
+                        }
+                    }
                 }
             }
             else if (key == VirtualKeys.Control || key == VirtualKeys.LeftButton)
@@ -243,6 +309,9 @@ namespace GUC.Client.Scripts.TFFA
                 }
                 else if (key == VirtualKeys.Down || key == VirtualKeys.S) // PARADE
                 {
+                    if (Hero.DrawnWeapon == null)
+                        return;
+
                     ScriptAniJob job;
                     List<ScriptAniJob> parries = new List<ScriptAniJob>();
                     for (int i = (int)NPCInst.AttackMove.Parry1; i <= (int)NPCInst.AttackMove.Parry3; i++)

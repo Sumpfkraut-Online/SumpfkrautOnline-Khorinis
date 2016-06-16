@@ -50,7 +50,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             {
                 pUnequipItem(item);
             }
-
+            
             switch (slot)
             {
                 case SlotNums.Sword:
@@ -79,7 +79,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             if (!this.IsSpawned)
                 return;
-
+            
             oCNpc gNpc = this.BaseInst.gVob;
             oCItem gItem = item.BaseInst.gVob;
 
@@ -137,6 +137,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public void OnTick(long now)
         {
+            UpdateFightStance();
+
             var fightAni = (ScriptAniJob)this.GetFightAni()?.Ani.AniJob.ScriptObject;
             if (fightAni != null && fightAni.IsAttack)
             {
@@ -169,6 +171,25 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             {
                 this.StartAniClimb(a, (WorldObjects.NPC.ClimbingLedge)netArgs[0]);
             }
+            else if (a.AniJob.IsDraw)
+            {
+                int itemID = (int)netArgs[0];
+                WorldObjects.Item item;
+                if (this.BaseInst.Inventory.TryGetItem(itemID, out item) && item.IsEquipped)
+                {
+                    this.StartAniDraw(a, (ItemInst)item.ScriptObject);
+                }
+            }
+            else if (a.AniJob.IsUndraw)
+            {
+                int itemID = (int)netArgs[0];
+                WorldObjects.Item item;
+                if (this.BaseInst.Inventory.TryGetItem(itemID, out item) && item.IsEquipped)
+                {
+                    this.StartAniUndraw(a, (ItemInst)item.ScriptObject);
+                }
+            }
+
         }
 
         public void StartAniJump(ScriptAni ani, int fwdVelocity, int upVelocity)
@@ -195,6 +216,54 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             this.BaseInst.SetGClimbingLedge(ledge);
             this.StartAnimation(ani);
+        }
+
+        public void StartAniDraw(ScriptAni ani, ItemInst item)
+        {
+            this.StartAnimation(ani);
+        }
+
+        public void StartAniUndraw(ScriptAni ani, ItemInst item)
+        {
+            this.StartAnimation(ani);
+        }
+
+        int fmode = 0;
+        void UpdateFightStance()
+        {
+            int fmode;
+            if (this.BaseInst.IsInFightMode)
+            {
+                if (this.drawnWeapon == null)
+                {
+                    fmode = 1; // fists
+                }
+                else
+                {
+                    if (this.drawnWeapon.ItemType == Definitions.ItemTypes.Wep1H)
+                        fmode = 3;
+                    else if (this.drawnWeapon.ItemType == Definitions.ItemTypes.Wep2H)
+                        fmode = 4;
+                    else
+                        fmode = 0;
+                }
+            }
+            else
+            {
+                fmode = 0;
+            }
+
+            if (this.fmode != fmode)
+            {
+                var gNpc = this.BaseInst.gVob;
+                var ai = gNpc.HumanAI;
+
+                gNpc.FMode = fmode;
+                ai.SetFightAnis(fmode);
+                ai.SetWalkMode(0);
+
+                this.fmode = fmode;
+            }
         }
     }
 }

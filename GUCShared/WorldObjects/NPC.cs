@@ -68,6 +68,8 @@ namespace GUC.WorldObjects
 
             void OnWriteAniStartArgs(PacketWriter stream, AniJob job, object[] netArgs);
             void OnReadAniStartArgs(PacketReader stream, AniJob job, out object[] netArgs);
+
+            void SetFightMode(bool fightMode);
         }
 
         new public IScriptNPC ScriptObject
@@ -177,6 +179,7 @@ namespace GUC.WorldObjects
 
         Dictionary<int, Item> equippedItems = new Dictionary<int, Item>();
 
+        partial void pEquipSwitch(int slot, Item item);
         partial void pEquipItem(int slot, Item item);
         public void EquipItem(int slot, Item item)
         {
@@ -190,7 +193,7 @@ namespace GUC.WorldObjects
                 throw new ArgumentOutOfRangeException("Slotnum must be greater or equal than zero and smaller than " + Item.SlotNumUnused);
 
             if (equippedItems.ContainsKey(slot))
-                throw new Exception("Slot is already in use!");
+                throw new ArgumentException("Slot is already in use!");
 
             if (item.IsEquipped)
             {
@@ -198,12 +201,18 @@ namespace GUC.WorldObjects
                     return;
 
                 equippedItems.Remove(item.slot);
+                item.slot = slot;
+                equippedItems.Add(slot, item);
+
+                pEquipSwitch(slot, item);
             }
+            else
+            {
+                item.slot = slot;
+                equippedItems.Add(slot, item);
 
-            item.slot = slot;
-            equippedItems.Add(slot, item);
-
-            pEquipItem(slot, item);
+                pEquipItem(slot, item);
+            }
         }
 
         public Item UnequipSlot(int slot)
@@ -275,10 +284,23 @@ namespace GUC.WorldObjects
 
         #endregion
         
-        #region Attack Mode
+        #region Fight Mode
 
-        bool isInAttackMode = false;
-        public bool IsInAttackMode { get { return this.isInAttackMode; } }
+        bool isInFightMode = false;
+        public bool IsInFightMode { get { return this.isInFightMode; } }
+
+        partial void pSetFightMode(bool fightMode);
+        public void SetFightMode(bool fightMode)
+        {
+            if (this.IsDead)
+                return;
+
+            if (this.isInFightMode == fightMode)
+                return;
+
+            pSetFightMode(fightMode);
+            this.isInFightMode = fightMode;
+        }
 
         #endregion
 

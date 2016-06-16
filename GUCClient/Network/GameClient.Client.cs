@@ -202,6 +202,28 @@ namespace GUC.Network
             }
         }
 
+        public void DoSetFightMode(bool fightMode)
+        {
+            if (this.character == null)
+                return;
+
+            if (this.character.IsDead || this.character.IsInFightMode == fightMode)
+                return;
+
+            if (GameTime.Ticks > nextAniUpdate)
+            {
+                if (fightMode)
+                {
+                    NPCMessage.WriteSetFightModeMessage();
+                }
+                else
+                {
+                    NPCMessage.WriteUnsetFightModeMessage();
+                }
+                nextAniUpdate = GameTime.Ticks + DelayBetweenMessages;
+            }
+        }
+
         #endregion
 
         #region Script Menu Message
@@ -395,6 +417,9 @@ namespace GUC.Network
                 case NetworkIDs.NPCEquipMessage:
                     NPCMessage.ReadEquipMessage(stream);
                     break;
+                case NetworkIDs.NPCEquipSwitchMessage:
+                    NPCMessage.ReadEquipSwitchMessage(stream);
+                    break;
                 case NetworkIDs.NPCUnequipMessage:
                     NPCMessage.ReadUnequipMessage(stream);
                     break;
@@ -418,6 +443,13 @@ namespace GUC.Network
 
                 case NetworkIDs.NPCHealthMessage:
                     NPCMessage.ReadHealthMessage(stream);
+                    break;
+                    
+                case NetworkIDs.NPCSetFightModeMessage:
+                    NPCMessage.ReadSetFightModeMessage(stream);
+                    break;
+                case NetworkIDs.NPCUnsetFightModeMessage:
+                    NPCMessage.ReadUnsetFightModeMessage(stream);
                     break;
 
                 default:
