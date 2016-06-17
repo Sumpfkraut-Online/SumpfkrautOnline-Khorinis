@@ -14,7 +14,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         Misc,
         Wep1H,
         Wep2H,
-        Armor
+        WepBow,
+        WepXBow,
+        Armor,
+        AmmoBow,
+        AmmoXBow,
     }
 
     public partial class ItemDef : VobDef, ItemInstance.IScriptItemInstance
@@ -52,7 +56,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 
         public ItemTypes ItemType = ItemTypes.Misc;
 
-        public bool IsWeapon { get { return this.ItemType == ItemTypes.Wep1H || this.ItemType == ItemTypes.Wep2H; } }
+        public bool IsWeapon { get { return this.ItemType >= ItemTypes.Wep1H && this.ItemType <= ItemTypes.WepXBow; } }
+        public bool IsWepRanged { get { return this.ItemType >= ItemTypes.WepBow && this.ItemType <= ItemTypes.WepXBow; } }
+        public bool IsWepMelee { get { return this.ItemType >= ItemTypes.Wep1H && this.ItemType <= ItemTypes.Wep2H; } }
 
         #endregion
 

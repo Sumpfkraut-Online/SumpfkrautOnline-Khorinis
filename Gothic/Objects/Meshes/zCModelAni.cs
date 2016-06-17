@@ -9,6 +9,8 @@ namespace Gothic.Objects.Meshes
 {
     public class zCModelAni : zClass
     {
+        public const int ByteSize = 0xE4;
+
         public abstract class VarOffsets
         {
             public const int name = 0x24,//zString
@@ -76,6 +78,11 @@ namespace Gothic.Objects.Meshes
         public int NumFrames
         {
             get { return Process.ReadUShort(Address + VarOffsets.numFrames); }
+        }
+
+        public bool IsReversed
+        {
+            get { return (Process.ReadByte(Address + 0xDC) & (1 << 6)) != 0; }
         }
 
         #endregion

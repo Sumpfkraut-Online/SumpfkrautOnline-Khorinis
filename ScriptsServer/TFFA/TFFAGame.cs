@@ -380,6 +380,7 @@ namespace GUC.Server.Scripts.TFFA
             npc.UseCustoms = true;
 
             ItemInst weapon;
+            ItemInst rangedWep;
             ItemInst armor;
             ScriptOverlay overlay;
             Tuple<Vec3f, Vec3f> spawnPoint;
@@ -390,12 +391,14 @@ namespace GUC.Server.Scripts.TFFA
                 {
                     weapon = new ItemInst(ItemDef.Get<ItemDef>("2hschwert"));
                     armor = new ItemInst(ItemDef.Get<ItemDef>("itar_Garde"));
+                    rangedWep = new ItemInst(ItemDef.Get<ItemDef>("itrw_crossbow"));
                     def.Model.TryGetOverlay("2HST2", out overlay);
                 }
                 else
                 {
                     weapon = new ItemInst(ItemDef.Get<ItemDef>("1hschwert"));
                     armor = new ItemInst(ItemDef.Get<ItemDef>("itar_schatten"));
+                    rangedWep = new ItemInst(ItemDef.Get<ItemDef>("itrw_crossbow"));
                     def.Model.TryGetOverlay("1HST2", out overlay);
                 }
                 spawnPoint = ALSpawns[rand.Next(0, 6)];
@@ -406,12 +409,14 @@ namespace GUC.Server.Scripts.TFFA
                 {
                     weapon = new ItemInst(ItemDef.Get<ItemDef>("2haxt"));
                     armor = new ItemInst(ItemDef.Get<ItemDef>("itar_söldner"));
+                    rangedWep = new ItemInst(ItemDef.Get<ItemDef>("itrw_longbow"));
                     def.Model.TryGetOverlay("2HST1", out overlay);
                 }
                 else
                 {
                     weapon = new ItemInst(ItemDef.Get<ItemDef>("1haxt"));
                     armor = new ItemInst(ItemDef.Get<ItemDef>("itar_bandit"));
+                    rangedWep = new ItemInst(ItemDef.Get<ItemDef>("itrw_longbow"));
                     def.Model.TryGetOverlay("1HST1", out overlay);
                 }
                 spawnPoint = NLSpawns[rand.Next(0, 6)];
@@ -419,6 +424,9 @@ namespace GUC.Server.Scripts.TFFA
 
             npc.AddItem(weapon);
             npc.EquipItem(weapon); // 1 = DrawnWeapon
+
+            npc.AddItem(rangedWep);
+            npc.EquipItem(rangedWep);
 
             npc.AddItem(armor);
             npc.EquipItem(armor);

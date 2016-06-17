@@ -158,7 +158,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             comboTimer.Stop();
             if (this.Movement != MoveState.Stand)
             {
-                this.StopAnimation(this.GetFightAni());
+                var aa = this.GetFightAni();
+                if (aa != null)
+                    this.StopAnimation(aa);
             }
             else
             {
@@ -261,25 +263,26 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             ScriptAni anim = (ScriptAni)ani.ScriptObject;
             ScriptAniJob job = anim.AniJob;
 
-            if ((this.Environment > EnvironmentState.Wading || this.GetJumpAni() != null) && !job.IsAttackRun)
-            {
-                return;
-            }
-
-            if (!this.canCombo) // can't combo yet
-                return;
-
             if (job.IsFightMove) // FIGHT MOVE
             {
+                if (!this.canCombo) // can't combo yet
+                    return;
+
+                if (this.GetDrawAni() != null || this.GetUndrawAni() != null || this.GetClimbAni() != null)
+                    return;
+
+                if (this.GetJumpAni() != null && !job.IsAttackRun)
+                    return;
+
                 if (job.IsAttack) // new move is an attack
                 {
-                    ScriptAniJob curAni = (ScriptAniJob)this.GetFightAni()?.Ani.AniJob.ScriptObject;
-                    if (curAni != null && curAni.IsAttack) // currently in an attack
+                    ScriptAniJob curFightAni = (ScriptAniJob)this.GetFightAni()?.Ani.AniJob.ScriptObject;
+                    if (curFightAni != null && curFightAni.IsAttack) // currently in an attack
                     {
-                        if (curAni == job) // same attack
+                        if (curFightAni == job) // same attack
                             return;
 
-                        if (curAni.IsAttackCombo && job.ID <= curAni.ID)
+                        if (curFightAni.IsAttackCombo && job.ID <= curFightAni.ID)
                             return;
                     }
 
@@ -287,17 +290,17 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     hitTimer.Start();
                 }
 
-                if (job.IsAttack)
-                {
-                    comboTimer.SetInterval(anim.ComboTime);
-                    comboTimer.Start();
-                }
+                comboTimer.SetInterval(anim.ComboTime);
+                comboTimer.Start();
 
                 this.StartAnimation(anim, () => this.canCombo = true);
                 this.canCombo = false;
             }
             else if (job.IsJump)
             {
+                if (this.Environment > EnvironmentState.Wading)
+                    return;
+
                 if (GetActiveAniFromLayerID(anim.Layer) != null)
                     return;
 
@@ -307,12 +310,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public void OnCmdAniStart(Animations.Animation ani, object[] netArgs)
         {
-            if (GetActiveAniFromLayerID(ani.LayerID) != null)
-                return;
-
             ScriptAni a = (ScriptAni)ani.ScriptObject;
             if (a.AniJob.IsClimb)
             {
+                if (this.IsInAni())
+                    return;
+
                 this.StartAniClimb(a, (WorldObjects.NPC.ClimbingLedge)netArgs[0]);
             }
             else if (a.AniJob.IsDraw)
@@ -321,7 +324,14 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 WorldObjects.Item item;
                 if (this.BaseInst.Inventory.TryGetItem(itemID, out item) && item.IsEquipped)
                 {
-                    this.StartAniDraw(a, (ItemInst)item.ScriptObject);
+                    var ii = (ItemInst)item.ScriptObject;
+                    ScriptAniJob job;
+                    ScriptAni drawAni;
+                    if (this.TryGetDrawFromType(ii.ItemType, out job, this.Movement != MoveState.Stand || this.Environment != EnvironmentState.None)
+                        && this.TryGetAniFromJob(job, out drawAni) && this.GetActiveAniFromLayerID(drawAni.Layer) == null)
+                    {
+                        this.StartAniDraw(drawAni, ii);
+                    }
                 }
             }
             else if (a.AniJob.IsUndraw)
@@ -330,10 +340,16 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 WorldObjects.Item item;
                 if (this.BaseInst.Inventory.TryGetItem(itemID, out item) && item.IsEquipped)
                 {
-                    this.StartAniUndraw(a, (ItemInst)item.ScriptObject);
+                    var ii = (ItemInst)item.ScriptObject;
+                    ScriptAniJob job;
+                    ScriptAni drawAni;
+                    if (this.TryGetUndrawFromType(ii.ItemType, out job, this.Movement != MoveState.Stand || this.Environment != EnvironmentState.None)
+                        && this.TryGetAniFromJob(job, out drawAni) && this.GetActiveAniFromLayerID(drawAni.Layer) == null)
+                    {
+                        this.StartAniUndraw(drawAni, ii);
+                    }
                 }
             }
-
         }
 
         public void OnCmdAniStop(bool fadeOut)
@@ -358,14 +374,54 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             this.canCombo = false;
         }
 
+        GUCTimer drawTimer = new GUCTimer();
+
         public void StartAniDraw(ScriptAni ani, ItemInst item)
         {
             this.BaseInst.StartAnimation(ani.BaseAni, null, item.ID);
+
+            drawTimer.SetInterval(ani.DrawTime);
+            drawTimer.SetCallback(() =>
+            {
+                drawTimer.Stop();
+
+                if (this.BaseInst.IsDead)
+                    return;
+
+                if (item.ItemType == ItemTypes.WepBow)
+                {
+                    this.EquipItem(SlotNums.Lefthand, item);
+                }
+                else
+                {
+                    this.EquipItem(SlotNums.Righthand, item);
+                }
+
+                if (item.IsWeapon)
+                    this.SetFightMode(true);
+            });
+
+            drawTimer.Start();
         }
 
         public void StartAniUndraw(ScriptAni ani, ItemInst item)
         {
             this.BaseInst.StartAnimation(ani.BaseAni, null, item.ID);
+
+            drawTimer.SetInterval(ani.DrawTime);
+            drawTimer.SetCallback(() =>
+            {
+                drawTimer.Stop();
+
+                if (this.BaseInst.IsDead)
+                    return;
+
+                this.EquipItem(item);
+                if (item.IsWeapon)
+                    this.SetFightMode(false);
+            });
+
+            drawTimer.Start();
         }
     }
 }

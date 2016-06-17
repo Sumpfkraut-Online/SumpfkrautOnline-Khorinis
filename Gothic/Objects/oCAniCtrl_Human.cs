@@ -249,6 +249,11 @@ namespace Gothic.Objects
             Process.THISCALL<NullReturnCall>(Address, 0x6A5060);
         }
 
+        public void StartAni(int ani, int nextAni)
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x6A3DC0);
+        }
+
         public void CheckMeleeWeaponHitsLevel(oCItem item)
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.CheckMeleeWeaponHitsLevel, item);

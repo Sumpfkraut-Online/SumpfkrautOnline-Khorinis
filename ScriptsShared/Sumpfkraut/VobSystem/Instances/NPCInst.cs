@@ -34,21 +34,71 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             Parry3
         }
 
+        public bool TryGetDrawFromType(ItemTypes type, out ScriptAniJob aniJob, bool running = false)
+        {
+            SetAnis aniID;
+            switch (type)
+            {
+                case ItemTypes.Wep1H:
+                    aniID = running ? SetAnis.Draw1HRun : SetAnis.Draw1H;
+                    break;
+                case ItemTypes.Wep2H:
+                    aniID = running ? SetAnis.Draw2HRun : SetAnis.Draw2H;
+                    break;
+                case ItemTypes.WepBow:
+                    aniID = running ? SetAnis.DrawBowRun : SetAnis.DrawBow;
+                    break;
+                case ItemTypes.WepXBow:
+                    aniID = running ? SetAnis.DrawXBowRun : SetAnis.DrawXBow;
+                    break;
+                default:
+                    aniJob = null;
+                    return false;
+            }
+
+            return this.Model.TryGetAniJob((int)aniID, out aniJob);
+        }
+
+        public bool TryGetUndrawFromType(ItemTypes type, out ScriptAniJob aniJob, bool running = false)
+        {
+            SetAnis aniID;
+            switch (type)
+            {
+                case ItemTypes.Wep1H:
+                    aniID = running ? SetAnis.Undraw1HRun : SetAnis.Undraw1H;
+                    break;
+                case ItemTypes.Wep2H:
+                    aniID = running ? SetAnis.Undraw2HRun : SetAnis.Undraw2H;
+                    break;
+                case ItemTypes.WepBow:
+                    aniID = running ? SetAnis.UndrawBowRun : SetAnis.UndrawBow;
+                    break;
+                case ItemTypes.WepXBow:
+                    aniID = running ? SetAnis.UndrawXBowRun : SetAnis.UndrawXBow;
+                    break;
+                default:
+                    aniJob = null;
+                    return false;
+            }
+
+            return this.Model.TryGetAniJob((int)aniID, out aniJob);
+        }
+
         public bool TryGetAttackFromMove(AttackMove attMove, out ScriptAniJob aniJob)
         {
-            if (this.drawnWeapon == null)
+            if (this.drawnWeapon != null)
             {
-                aniJob = null;
-                return false;
+                if (this.DrawnWeapon.ItemType == ItemTypes.Wep2H)
+                {
+                    return this.Model.TryGetAniJob((int)attMove + 11, out aniJob);
+                }
+                else if (this.DrawnWeapon.ItemType == ItemTypes.Wep1H)
+                {
+                    return this.Model.TryGetAniJob((int)attMove, out aniJob);
+                }
             }
-            else if (this.DrawnWeapon.ItemType == ItemTypes.Wep2H)
-            {
-                return this.Model.TryGetAniJob((int)attMove + 11, out aniJob);
-            }
-            else // 1h
-            {
-                return this.Model.TryGetAniJob((int)attMove, out aniJob);
-            }
+            aniJob = null;
+            return false;
         }
 
         public NPC.ActiveAni GetFightAni() // alternative: add a var and change on Start-/Stopanimation ?
@@ -87,6 +137,36 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             this.BaseInst.ForEachActiveAni(a =>
             {
                 if (((ScriptAniJob)a.Ani.AniJob.ScriptObject).IsClimb)
+                {
+                    aa = a;
+                    return false;
+                }
+                return true;
+            });
+            return aa;
+        }
+
+        public NPC.ActiveAni GetDrawAni() // alternative: add a var and change on Start-/Stopanimation ?
+        {
+            NPC.ActiveAni aa = null;
+            this.BaseInst.ForEachActiveAni(a =>
+            {
+                if (((ScriptAniJob)a.Ani.AniJob.ScriptObject).IsDraw)
+                {
+                    aa = a;
+                    return false;
+                }
+                return true;
+            });
+            return aa;
+        }
+
+        public NPC.ActiveAni GetUndrawAni() // alternative: add a var and change on Start-/Stopanimation ?
+        {
+            NPC.ActiveAni aa = null;
+            this.BaseInst.ForEachActiveAni(a =>
+            {
+                if (((ScriptAniJob)a.Ani.AniJob.ScriptObject).IsUndraw)
                 {
                     aa = a;
                     return false;
@@ -235,6 +315,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public ItemInst Armor { get { return this.armor; } }
         ItemInst meleeWep;
         public ItemInst MeleeWeapon { get { return this.meleeWep; } }
+        ItemInst rangedWep;
+        public ItemInst RangedWeapon { get { return this.rangedWep; } }
 
         ItemInst drawnWeapon;
         public ItemInst DrawnWeapon { get { return this.drawnWeapon; } }
@@ -244,7 +326,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             public const int Torso = 0,
                 Sword = 1,
                 Longsword = 2,
-                Righthand = 3;
+                Righthand = 3,
+                Lefthand = 4,
+                Bow = 5,
+                XBow = 6;
         }
 
         public void EquipItem(int slot, Item item)
@@ -271,7 +356,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     case SlotNums.Longsword:
                         this.meleeWep = null;
                         break;
+                    case SlotNums.Bow:
+                    case SlotNums.XBow:
+                        this.rangedWep = null;
+                        break;
                     case SlotNums.Righthand:
+                    case SlotNums.Lefthand:
                         this.drawnWeapon = null;
                         break;
                 }
@@ -286,7 +376,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 case SlotNums.Longsword:
                     this.meleeWep = item;
                     break;
+                case SlotNums.Bow:
+                case SlotNums.XBow:
+                    this.rangedWep = item;
+                    break;
                 case SlotNums.Righthand:
+                case SlotNums.Lefthand:
                     this.drawnWeapon = item;
                     break;
             }
@@ -313,7 +408,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 case SlotNums.Longsword:
                     this.meleeWep = null;
                     break;
+                case SlotNums.Bow:
+                case SlotNums.XBow:
+                    this.rangedWep = null;
+                    break;
                 case SlotNums.Righthand:
+                case SlotNums.Lefthand:
                     this.drawnWeapon = null;
                     break;
             }
@@ -333,6 +433,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     break;
                 case ItemTypes.Wep2H:
                     EquipItem(SlotNums.Longsword, item);
+                    break;
+                case ItemTypes.WepBow:
+                    EquipItem(SlotNums.Bow, item);
+                    break;
+                case ItemTypes.WepXBow:
+                    EquipItem(SlotNums.XBow, item);
                     break;
             }
         }
@@ -397,7 +503,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             {
                 ((NPC.ClimbingLedge)netArgs[0]).WriteStream(stream);
             }
-            else if (j.IsDraw)
+            else if (j.IsDraw || j.IsUndraw)
             {
                 stream.Write((byte)(int)netArgs[0]);
             }
@@ -414,7 +520,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             {
                 netArgs = new object[1] { new NPC.ClimbingLedge(stream) };
             }
-            else if (j.IsDraw)
+            else if (j.IsDraw || j.IsUndraw)
             {
                 netArgs = new object[1] { (int)stream.ReadByte() };
             }
@@ -429,8 +535,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             this.BaseInst.SetFightMode(fightMode);
             pSetFightMode(fightMode);
-
-            Log.Logger.Log("SetFightMode: " + fightMode);
         }
     }
 }
