@@ -19,6 +19,15 @@ namespace GUC.Client.Network.Messages
             item.ReadInventoryProperties(stream);
             GameClient.Client.character.ScriptObject.AddItem(item);
         }
+        
+        public static void ReadChangeItemAmount(PacketReader stream)
+        {
+            Item item;
+            if (GameClient.Client.character.Inventory.TryGetItem(stream.ReadByte(), out item))
+            {
+                item.ScriptObject.SetAmount(stream.ReadUShort());
+            }
+        }
 
         public static void ReadRemoveItem(PacketReader stream)
         {
@@ -63,7 +72,6 @@ namespace GUC.Client.Network.Messages
                 GameClient.Client.character.ScriptObject.UnequipItem(item);
             }
         }
-
         #endregion
     }
 }

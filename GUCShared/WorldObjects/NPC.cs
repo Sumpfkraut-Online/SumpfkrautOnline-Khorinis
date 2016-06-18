@@ -417,6 +417,8 @@ namespace GUC.WorldObjects
                 stream.Write((byte)item.slot);
                 item.WriteEquipProperties(stream);
             });
+
+            stream.Write(this.isInFightMode);
         }
 
         protected override void ReadProperties(PacketReader stream)
@@ -452,6 +454,8 @@ namespace GUC.WorldObjects
                 this.ScriptObject.AddItem(item);
                 this.ScriptObject.EquipItem(slot, item);
             }
+
+            this.isInFightMode = stream.ReadBit();
         }
 
         #endregion

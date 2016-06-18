@@ -56,7 +56,6 @@ namespace GUC.Scripts
             Client.Scripts.TFFA.MainMenu.Menu.Open();
             Client.Scripts.TFFA.ChatMenu.Menu.Show();
             //GUCMenu.CloseActiveMenus();
-            Gothic.Objects.oCNpcFocus.SetFocusMode(1);
             Ingame = true;
             Logger.Log("Ingame started.");
         }

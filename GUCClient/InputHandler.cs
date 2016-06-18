@@ -33,10 +33,12 @@ namespace GUC.Client
             },
             { VirtualKeys.F6, () =>
                 {
+                    GUC.Network.GameClient.Client.Character.gVob.GetModel().StartAni("t_BowAim_2_BowShoot".ToUpper(),0);
                 }
             },
             { VirtualKeys.F7, () =>
                 {
+                    GUC.Network.GameClient.Client.Character.gVob.GetModel().StartAni("s_BowShoot".ToUpper(),0);
                 }
             },
             { VirtualKeys.F9, () =>

@@ -248,20 +248,16 @@ namespace GUC.Server.Scripts.TFFA
                 client.Kills = 0;
                 client.Damage = 0;
             });
-            RemoveAllPlayers();
+            RemoveAllVobs();
             ALKills = 0;
             NLKills = 0;
 
             gameTimer.Restart();
         }
 
-        static void RemoveAllPlayers()
+        static void RemoveAllVobs()
         {
-            WorldInst.Current.BaseWorld.ForEachVob(v =>
-            {
-                if (v is GUC.WorldObjects.NPC && !((GUC.WorldObjects.NPC)v).IsPlayer)
-                    v.Despawn();
-            });
+            WorldInst.Current.BaseWorld.ForEachVob(v => v.Despawn());
         }
 
         public static void PhaseFight()
@@ -280,7 +276,7 @@ namespace GUC.Server.Scripts.TFFA
                 client.Kills = 0;
                 client.Damage = 0;
             });
-            RemoveAllPlayers();
+            RemoveAllVobs();
             ALKills = 0;
             NLKills = 0;
 
@@ -381,6 +377,7 @@ namespace GUC.Server.Scripts.TFFA
 
             ItemInst weapon;
             ItemInst rangedWep;
+            ItemInst ammo;
             ItemInst armor;
             ScriptOverlay overlay;
             Tuple<Vec3f, Vec3f> spawnPoint;
@@ -392,6 +389,7 @@ namespace GUC.Server.Scripts.TFFA
                     weapon = new ItemInst(ItemDef.Get<ItemDef>("2hschwert"));
                     armor = new ItemInst(ItemDef.Get<ItemDef>("itar_Garde"));
                     rangedWep = new ItemInst(ItemDef.Get<ItemDef>("itrw_crossbow"));
+                    ammo = new ItemInst(ItemDef.Get<ItemDef>("itrw_bolt"));
                     def.Model.TryGetOverlay("2HST2", out overlay);
                 }
                 else
@@ -399,6 +397,7 @@ namespace GUC.Server.Scripts.TFFA
                     weapon = new ItemInst(ItemDef.Get<ItemDef>("1hschwert"));
                     armor = new ItemInst(ItemDef.Get<ItemDef>("itar_schatten"));
                     rangedWep = new ItemInst(ItemDef.Get<ItemDef>("itrw_crossbow"));
+                    ammo = new ItemInst(ItemDef.Get<ItemDef>("itrw_bolt"));
                     def.Model.TryGetOverlay("1HST2", out overlay);
                 }
                 spawnPoint = ALSpawns[rand.Next(0, 6)];
@@ -410,6 +409,7 @@ namespace GUC.Server.Scripts.TFFA
                     weapon = new ItemInst(ItemDef.Get<ItemDef>("2haxt"));
                     armor = new ItemInst(ItemDef.Get<ItemDef>("itar_söldner"));
                     rangedWep = new ItemInst(ItemDef.Get<ItemDef>("itrw_longbow"));
+                    ammo = new ItemInst(ItemDef.Get<ItemDef>("itrw_arrow"));
                     def.Model.TryGetOverlay("2HST1", out overlay);
                 }
                 else
@@ -417,6 +417,7 @@ namespace GUC.Server.Scripts.TFFA
                     weapon = new ItemInst(ItemDef.Get<ItemDef>("1haxt"));
                     armor = new ItemInst(ItemDef.Get<ItemDef>("itar_bandit"));
                     rangedWep = new ItemInst(ItemDef.Get<ItemDef>("itrw_longbow"));
+                    ammo = new ItemInst(ItemDef.Get<ItemDef>("itrw_arrow"));
                     def.Model.TryGetOverlay("1HST1", out overlay);
                 }
                 spawnPoint = NLSpawns[rand.Next(0, 6)];
@@ -427,6 +428,10 @@ namespace GUC.Server.Scripts.TFFA
 
             npc.AddItem(rangedWep);
             npc.EquipItem(rangedWep);
+
+            ammo.BaseInst.SetAmount(5);
+            npc.AddItem(ammo);
+            npc.EquipItem(ammo);
 
             npc.AddItem(armor);
             npc.EquipItem(armor);

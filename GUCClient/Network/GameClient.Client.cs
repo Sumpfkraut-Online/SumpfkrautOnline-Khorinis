@@ -402,6 +402,9 @@ namespace GUC.Network
                 case NetworkIDs.InventoryRemoveMessage:
                     InventoryMessage.ReadRemoveItem(stream);
                     break;
+                case NetworkIDs.InventoryAmountMessage:
+                    InventoryMessage.ReadChangeItemAmount(stream);
+                    break;
                 case NetworkIDs.InventoryEquipMessage:
                     InventoryMessage.ReadEquipMessage(stream);
                     break;

@@ -20,9 +20,17 @@ namespace GUC.Server.Network.Messages
             client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I');
         }
 
+        public static void WriteChangeItemAmount(GameClient client, Item item, int amount)
+        {
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.InventoryAmountMessage);
+            stream.Write((byte)item.ID);
+            stream.Write((ushort)amount);
+            client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I');
+        }
+
         public static void WriteRemoveItem(GameClient client, Item item)
         {
-            PacketWriter stream = GameServer.SetupStream(NetworkIDs.InventoryAddMessage);
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.InventoryRemoveMessage);
             stream.Write((byte)item.ID);
             client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I');
         }

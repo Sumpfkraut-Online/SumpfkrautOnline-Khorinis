@@ -306,6 +306,44 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
                 this.StartAniJump(anim, 50, 300);
             }
+            else if (job.ID == (int)SetAnis.BowAim || job.ID == (int)SetAnis.XBowAim)
+            {
+                if (this.isAiming || this.IsInAni() || this.Environment > EnvironmentState.Wading || this.ammo == null)
+                    return;
+
+                this.StartAnimation(anim);
+            }
+            else if (job.ID == (int)SetAnis.BowLower || job.ID == (int)SetAnis.XBowLower)
+            {
+                if (!this.isAiming || this.IsInAni() || this.Environment > EnvironmentState.Wading || this.ammo == null)
+                    return;
+
+                this.StartAnimation(anim);
+            }
+            else if (job.ID == (int)SetAnis.BowReload || job.ID == (int)SetAnis.XBowReload)
+            {
+                // shoot projectile
+                int ammoNum = this.ammo.BaseInst.Amount - 1;
+                this.ammo.BaseInst.SetAmount(ammoNum);
+
+                if (ammoNum == 0)
+                {
+                    ScriptAniJob undrawJob;
+                    ScriptAni undraw;
+                    if (this.TryGetUndrawFromType(this.drawnWeapon.ItemType, out undrawJob) && this.TryGetAniFromJob(undrawJob, out undraw))
+                    {
+                        this.StartAniUndraw(undraw, this.drawnWeapon);
+                    }
+                    else
+                    {
+                        this.EquipItem(this.drawnWeapon);
+                    }
+                }
+                else
+                {
+                    this.StartAnimation(ani);
+                }
+            }
         }
 
         public void OnCmdAniStart(Animations.Animation ani, object[] netArgs)
@@ -356,11 +394,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
         }
 
-        public override void Despawn()
+        partial void pDespawn()
         {
+            drawTimer.Stop();
             hitTimer.Stop();
             comboTimer.Stop();
-            base.Despawn();
         }
 
         public void StartAniJump(ScriptAni ani, int fwdVelocity, int upVelocity)
@@ -378,6 +416,17 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public void StartAniDraw(ScriptAni ani, ItemInst item)
         {
+            if (item.IsWepRanged)
+            {
+                ItemInst ammo = this.ammo;
+                if ((ammo == null || ammo.BaseInst.Amount == 0
+                     || (item.ItemType == ItemTypes.WepBow && ammo.ItemType != ItemTypes.AmmoBow)
+                     || (item.ItemType == ItemTypes.WepXBow && ammo.ItemType != ItemTypes.AmmoXBow)))
+                {
+                    return;
+                }
+            }
+
             this.BaseInst.StartAnimation(ani.BaseAni, null, item.ID);
 
             drawTimer.SetInterval(ani.DrawTime);
@@ -390,11 +439,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
                 if (item.ItemType == ItemTypes.WepBow)
                 {
-                    this.EquipItem(SlotNums.Lefthand, item);
+                    this.EquipItem((int)SlotNums.Lefthand, item);
                 }
                 else
                 {
-                    this.EquipItem(SlotNums.Righthand, item);
+                    this.EquipItem((int)SlotNums.Righthand, item);
                 }
 
                 if (item.IsWeapon)

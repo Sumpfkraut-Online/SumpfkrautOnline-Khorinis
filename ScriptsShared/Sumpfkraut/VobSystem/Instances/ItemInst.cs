@@ -29,6 +29,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
         }
 
+        public void SetAmount(int amount)
+        {
+            this.BaseInst.SetAmount(amount);
+        }
+
         // Nur das Wichtigste was von aussen zu sehen ist!
         public void ReadEquipProperties(PacketReader stream)
         {

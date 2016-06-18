@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GUC.Enumeration;
 using GUC.WorldObjects;
-using GUC.WorldObjects.Mobs;
+using GUC.Scripting;
 using GUC.Network;
 using GUC.Animations;
 using GUC.Scripts.Sumpfkraut.Visuals;
@@ -16,6 +16,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class NPCInst : VobInst, NPC.IScriptNPC
     {
+        #region Ranged Weapons
+
+        bool isAiming = false;
+        public bool IsAiming { get { return this.isAiming; } }
+
+        #endregion
+        
         public enum AttackMove // sync with SetAnis
         {
             Fwd1,
@@ -256,9 +263,39 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             this.StartAnimation((ScriptAni)ani.ScriptObject);
         }
-
+        
         public void StartAnimation(ScriptAni ani, Action onStop = null)
         {
+            if (ani.AniJob.ID == (int)SetAnis.BowAim || ani.AniJob.ID == (int)SetAnis.XBowAim)
+            {
+                this.BaseInst.StartAnimation(ani.BaseAni, () =>
+                {
+                    if (this.BaseInst.IsDead)
+                        return;
+                    this.isAiming = true;
+                    if (onStop != null)
+                        onStop();
+                });
+                return;
+            }
+            else if (ani.AniJob.ID == (int)SetAnis.BowLower || ani.AniJob.ID == (int)SetAnis.XBowLower || ani.AniJob.IsUndraw)
+            {
+                this.isAiming = false;
+            }
+            else if (ani.AniJob.ID == (int)SetAnis.BowReload || ani.AniJob.ID == (int)SetAnis.XBowReload)
+            {
+                this.isAiming = false;
+                this.BaseInst.StartAnimation(ani.BaseAni, () =>
+                {
+                    if (this.BaseInst.IsDead)
+                        return;
+                    this.isAiming = true;
+                    if (onStop != null)
+                        onStop();
+                });
+                return;
+            }
+
             this.BaseInst.StartAnimation(ani.BaseAni, onStop);
         }
 
@@ -302,8 +339,21 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             this.RemoveItem((ItemInst)item.ScriptObject);
         }
 
+        partial void pRemoveItem(ItemInst item);
         public void RemoveItem(ItemInst item)
         {
+            if (this.armor == item)
+                this.armor = null;
+            else if (this.meleeWep == item)
+                this.meleeWep = null;
+            else if (this.rangedWep == item)
+                this.rangedWep = null;
+            else if (this.ammo == item)
+                this.ammo = null;
+            else if (this.drawnWeapon == item)
+                this.drawnWeapon = null;
+
+            pRemoveItem(item);
             this.BaseInst.Inventory.Remove(item.BaseInst);
         }
 
@@ -317,19 +367,23 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public ItemInst MeleeWeapon { get { return this.meleeWep; } }
         ItemInst rangedWep;
         public ItemInst RangedWeapon { get { return this.rangedWep; } }
+        ItemInst ammo;
+        public ItemInst Ammo { get { return this.ammo; } }
 
         ItemInst drawnWeapon;
         public ItemInst DrawnWeapon { get { return this.drawnWeapon; } }
 
-        public static class SlotNums
+        public enum SlotNums
         {
-            public const int Torso = 0,
-                Sword = 1,
-                Longsword = 2,
-                Righthand = 3,
-                Lefthand = 4,
-                Bow = 5,
-                XBow = 6;
+            Torso,
+            Sword,
+            Longsword,
+            Righthand,
+            Lefthand,
+            Bow,
+            XBow,
+            AmmoBow,
+            AmmoXBow
         }
 
         public void EquipItem(int slot, Item item)
@@ -347,7 +401,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
             if (item.BaseInst.IsEquipped)
             {
-                switch (item.BaseInst.Slot)
+                switch ((SlotNums)item.BaseInst.Slot)
                 {
                     case SlotNums.Torso:
                         this.armor = null;
@@ -360,6 +414,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     case SlotNums.XBow:
                         this.rangedWep = null;
                         break;
+                    case SlotNums.AmmoBow:
+                    case SlotNums.AmmoXBow:
+                        this.ammo = null;
+                        break;
                     case SlotNums.Righthand:
                     case SlotNums.Lefthand:
                         this.drawnWeapon = null;
@@ -367,7 +425,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 }
             }
 
-            switch (slot)
+            switch ((SlotNums)slot)
             {
                 case SlotNums.Torso:
                     this.armor = item;
@@ -379,6 +437,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 case SlotNums.Bow:
                 case SlotNums.XBow:
                     this.rangedWep = item;
+                    break;
+                case SlotNums.AmmoBow:
+                case SlotNums.AmmoXBow:
+                    this.ammo = item;
                     break;
                 case SlotNums.Righthand:
                 case SlotNums.Lefthand:
@@ -399,7 +461,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             pUnequipItem(item);
 
-            switch (item.BaseInst.Slot)
+            switch ((SlotNums)item.BaseInst.Slot)
             {
                 case SlotNums.Torso:
                     this.armor = null;
@@ -412,6 +474,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 case SlotNums.XBow:
                     this.rangedWep = null;
                     break;
+                case SlotNums.AmmoBow:
+                case SlotNums.AmmoXBow:
+                    this.ammo = null;
+                    break;
                 case SlotNums.Righthand:
                 case SlotNums.Lefthand:
                     this.drawnWeapon = null;
@@ -423,24 +489,36 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public void EquipItem(ItemInst item)
         {
+            SlotNums slot;
+
             switch (item.ItemType)
             {
                 case ItemTypes.Armor:
-                    EquipItem(SlotNums.Torso, item);
+                    slot = SlotNums.Torso;
                     break;
                 case ItemTypes.Wep1H:
-                    EquipItem(SlotNums.Sword, item);
+                    slot = SlotNums.Sword;
                     break;
                 case ItemTypes.Wep2H:
-                    EquipItem(SlotNums.Longsword, item);
+                    slot = SlotNums.Longsword;
                     break;
                 case ItemTypes.WepBow:
-                    EquipItem(SlotNums.Bow, item);
+                    slot = SlotNums.Bow;
                     break;
                 case ItemTypes.WepXBow:
-                    EquipItem(SlotNums.XBow, item);
+                    slot = SlotNums.XBow;
                     break;
+                case ItemTypes.AmmoBow:
+                    slot = SlotNums.AmmoBow;
+                    break;
+                case ItemTypes.AmmoXBow:
+                    slot = SlotNums.AmmoXBow;
+                    break;
+                default:
+                    return;
+
             }
+            EquipItem((int)slot, item);
         }
 
         #endregion
@@ -470,6 +548,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 Fatness = stream.ReadFloat();
                 ModelScale = stream.ReadVec3f();
             }
+
+            this.isAiming = stream.ReadBit();
         }
 
         public override void OnWriteProperties(PacketWriter stream)
@@ -489,6 +569,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             {
                 stream.Write(false);
             }
+
+            stream.Write(this.isAiming);
         }
 
         public void OnWriteAniStartArgs(PacketWriter stream, AniJob job, object[] netArgs)
@@ -535,6 +617,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             this.BaseInst.SetFightMode(fightMode);
             pSetFightMode(fightMode);
+        }
+
+        partial void pDespawn();
+        public override void Despawn()
+        {
+            pDespawn();
+            base.Despawn();
         }
     }
 }

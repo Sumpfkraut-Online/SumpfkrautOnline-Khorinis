@@ -59,6 +59,14 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         UndrawBowRun,
         UndrawXBow,
         UndrawXBowRun,
+
+        BowAim,
+        BowReload,
+        BowLower,
+
+        XBowAim,
+        XBowReload,
+        XBowLower,
     }
     
     public partial class ScriptAniJob : ScriptObject, AniJob.IScriptAniJob
