@@ -287,7 +287,10 @@ namespace GUC.Client.Scripts.TFFA
                                 ScriptAniJob job;
                                 if (Hero.Model.TryGetAniJob((int)SetAnis.BowReload, out job))
                                 {
-                                    TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
+                                    var focusNpc = Hero.BaseInst.gVob.GetFocusNpc();
+                                    Vec3f flyDir = focusNpc.Address == 0 ? Hero.BaseInst.GetDirection() : (new Vec3f(focusNpc.Position) - Hero.BaseInst.GetPosition());
+                                    flyDir = flyDir.Normalise();
+                                    TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob, GetFlyDistance(flyDir), flyDir);
                                 }
                             }
                             else if (Hero.DrawnWeapon.ItemType == ItemTypes.WepXBow)
@@ -295,7 +298,10 @@ namespace GUC.Client.Scripts.TFFA
                                 ScriptAniJob job;
                                 if (Hero.Model.TryGetAniJob((int)SetAnis.XBowReload, out job))
                                 {
-                                    TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
+                                    var focusNpc = Hero.BaseInst.gVob.GetFocusNpc();
+                                    Vec3f flyDir = focusNpc.Address == 0 ? Hero.BaseInst.GetDirection() : (new Vec3f(focusNpc.Position) - Hero.BaseInst.GetPosition());
+                                    flyDir = flyDir.Normalise();
+                                    TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob, GetFlyDistance(flyDir), flyDir);
                                 }
                             }
                         }
@@ -697,6 +703,34 @@ namespace GUC.Client.Scripts.TFFA
             {
                 clientView.Texts[i].Text = "";
             }
+        }
+
+        static int GetFlyDistance(Vec3f dir)
+        {
+            int distance = ushort.MaxValue;
+
+            var Hero = GUC.Network.GameClient.Client.Character;
+
+            Vec3f start = Hero.GetPosition();
+            start.Y += 30;
+
+            Vec3f end = start + dir * ushort.MaxValue;
+
+            using (var zStart = Gothic.Types.zVec3.Create(start.X, start.Y, start.Z))
+            using (var zEnd = Gothic.Types.zVec3.Create(end.X, end.Y, end.Z))
+            {
+                var gWorld = Gothic.oCGame.GetWorld();
+
+                if (gWorld.TraceRayNearestHit(zStart, zEnd, Gothic.Objects.zCWorld.zTraceRay.Ignore_Alpha | Gothic.Objects.zCWorld.zTraceRay.Ignore_Projectiles | Gothic.Objects.zCWorld.zTraceRay.Ignore_Vob_No_Collision | Gothic.Objects.zCWorld.zTraceRay.Ignore_NPC) != 0
+                    && gWorld.Raytrace_FoundHit != 0)
+                {
+                    distance = (int)start.GetDistance((Vec3f)gWorld.Raytrace_FoundIntersection);
+                    if (distance > ushort.MaxValue)
+                        distance = ushort.MaxValue;
+                }
+            }
+
+            return distance;
         }
     }
 }

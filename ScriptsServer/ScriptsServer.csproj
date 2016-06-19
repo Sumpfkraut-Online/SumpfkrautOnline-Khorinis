@@ -108,6 +108,9 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Definitions\NPCDef.cs">
       <Link>Sumpfkraut\VobSystem\Definitions\NPCDef.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Definitions\ProjDef.cs">
+      <Link>Sumpfkraut\VobSystem\Definitions\ProjDef.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Definitions\VobDef.cs">
       <Link>Sumpfkraut\VobSystem\Definitions\VobDef.cs</Link>
     </Compile>
@@ -119,6 +122,9 @@
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\NPCInst.cs">
       <Link>Sumpfkraut\VobSystem\Instances\NPCInst.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\ProjInst.cs">
+      <Link>Sumpfkraut\VobSystem\Instances\ProjInst.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\VobInst.cs">
       <Link>Sumpfkraut\VobSystem\Instances\VobInst.cs</Link>
@@ -190,10 +196,12 @@
     <Compile Include="Sumpfkraut\VobSystem\Definitions\BaseVobDef.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\ItemDef.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\NPCDef.Server.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\ProjDef.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\VobDef.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\BaseVobInst.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\ItemInst.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\NPCInst.Server.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\ProjInst.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\VobInst.Server.cs" />
     <Compile Include="Sumpfkraut\Web\WS\Enumeration.cs" />
     <Compile Include="Sumpfkraut\Web\WS\Protocols\AbstractWSProtocol.cs" />

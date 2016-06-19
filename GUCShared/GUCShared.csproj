@@ -70,6 +70,7 @@
     <Compile Include="StaticCollection.cs" />
     <Compile Include="WorldObjects\Collections\VobTypeObjectCollection.cs" />
     <Compile Include="WorldObjects\Instances\Mobs\MobBedInstance.cs" />
+    <Compile Include="WorldObjects\Instances\ProjectileInstance.cs" />
     <Compile Include="WorldObjects\Mobs\MobBed.cs" />
     <Compile Include="WorldObjects\BaseVob.cs" />
     <Compile Include="WorldObjects\Instances\BaseVobInstance.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="WorldObjects\Mobs\MobSwitch.cs" />
     <Compile Include="WorldObjects\Mobs\MobWheel.cs" />
     <Compile Include="WorldObjects\NPC.cs" />
+    <Compile Include="WorldObjects\Projectile.cs" />
     <Compile Include="WorldObjects\Vob.cs" />
     <Compile Include="WorldObjects\Weather\SkyController.cs" />
     <Compile Include="WorldObjects\World.cs" />

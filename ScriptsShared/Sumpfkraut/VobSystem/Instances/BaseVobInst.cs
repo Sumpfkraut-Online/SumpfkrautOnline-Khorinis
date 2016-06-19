@@ -32,6 +32,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public bool IsStatic { get { return baseInst.IsStatic; } }
         public bool IsSpawned { get { return baseInst.IsSpawned; } }
 
+        public WorldInst World { get { return (WorldInst)this.baseInst.World.ScriptObject; } }
+
         #endregion
 
         public virtual void OnPosChanged()

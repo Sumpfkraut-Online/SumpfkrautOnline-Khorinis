@@ -468,6 +468,11 @@ namespace GUC.Scripts
             itemDef.Model = m;
             itemDef.Create();
 
+            var projDef = new ProjDef("arrow");
+            projDef.Model = m;
+            projDef.Velocity = 0.0002f;
+            projDef.Create();
+
             // LANGBOGEN
             m = new ModelDef("itrw_longbow", "ItRw_Bow_M_01.mms");
             m.Create();
@@ -475,7 +480,7 @@ namespace GUC.Scripts
             itemDef.Name = "Langbogen";
             itemDef.Material = Enumeration.ItemMaterials.Wood;
             itemDef.ItemType = ItemTypes.WepBow;
-            itemDef.Damage = 20;
+            itemDef.Damage = 40;
             itemDef.Model = m;
             itemDef.Create();
 
@@ -489,6 +494,11 @@ namespace GUC.Scripts
             itemDef.Damage = 5;
             itemDef.Model = m;
             itemDef.Create();
+            
+            projDef = new ProjDef("bolt");
+            projDef.Model = m;
+            projDef.Velocity = 0.0002f;
+            projDef.Create();
 
             // ARMBRUST
             m = new ModelDef("itrw_crossbow", "ItRw_Crossbow_L_01.mms");
@@ -497,7 +507,7 @@ namespace GUC.Scripts
             itemDef.Name = "Armbrust";
             itemDef.Material = Enumeration.ItemMaterials.Wood;
             itemDef.ItemType = ItemTypes.WepXBow;
-            itemDef.Damage = 20;
+            itemDef.Damage = 40;
             itemDef.Model = m;
             itemDef.Create();
         }

@@ -62,10 +62,12 @@
     <Compile Include="Sumpfkraut\VobSystem\Definitions\BaseVobDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\ItemDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\NPCDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\ProjDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\VobDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\BaseVobInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\ItemInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\NPCInst.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\ProjInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\VobInst.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\ScriptClock.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\ScriptSkyCtrl.cs" />

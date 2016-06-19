@@ -22,7 +22,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public bool IsAiming { get { return this.isAiming; } }
 
         #endregion
-        
+
         public enum AttackMove // sync with SetAnis
         {
             Fwd1,
@@ -210,11 +210,15 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #endregion
 
+        #region Constructors
+
         partial void pConstruct();
         public NPCInst() : base(new NPC())
         {
             pConstruct();
         }
+
+        #endregion
 
         public void SetState(MoveState state)
         {
@@ -263,7 +267,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             this.StartAnimation((ScriptAni)ani.ScriptObject);
         }
-        
+
         public void StartAnimation(ScriptAni ani, Action onStop = null)
         {
             if (ani.AniJob.ID == (int)SetAnis.BowAim || ani.AniJob.ID == (int)SetAnis.XBowAim)
@@ -589,6 +593,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             {
                 stream.Write((byte)(int)netArgs[0]);
             }
+            else if (j.ID == (int)SetAnis.BowReload || j.ID == (int)SetAnis.XBowReload)
+            {
+                stream.Write((ushort)(int)netArgs[0]);
+                stream.Write((Vec3f)netArgs[1]);
+            }
         }
 
         public void OnReadAniStartArgs(PacketReader stream, AniJob job, out object[] netArgs)
@@ -605,6 +614,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             else if (j.IsDraw || j.IsUndraw)
             {
                 netArgs = new object[1] { (int)stream.ReadByte() };
+            }
+            else if (j.ID == (int)SetAnis.BowReload || j.ID == (int)SetAnis.XBowReload)
+            {
+                netArgs = new object[2] { (int)stream.ReadUShort(), stream.ReadVec3f() };
             }
             else
             {

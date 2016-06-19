@@ -183,10 +183,13 @@ namespace GUC.WorldObjects
         }
         #endregion
 
-
         public override string ToString()
         {
             return String.Format("({0}: {1})", this.ID, this.VobType);
+        }
+
+        internal virtual void OnTick(long now)
+        {
         }
     }
 }

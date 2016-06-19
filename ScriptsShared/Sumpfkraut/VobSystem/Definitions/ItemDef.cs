@@ -62,9 +62,17 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #endregion
 
+        #region Constructors
+
+        partial void pConstruct();
         public ItemDef() : base(new ItemInstance())
         {
+            pConstruct();
         }
+
+        #endregion
+
+        #region Read & Write
 
         public override void OnWriteProperties(PacketWriter stream)
         {
@@ -83,5 +91,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
             this.visualChange = stream.ReadString();
             this.Material = (ItemMaterials)stream.ReadByte();
         }
+
+        #endregion
     }
 }

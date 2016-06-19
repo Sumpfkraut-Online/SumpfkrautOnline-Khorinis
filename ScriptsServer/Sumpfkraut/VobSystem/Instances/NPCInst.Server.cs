@@ -168,6 +168,21 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             }
         }
 
+        public void Hit(int damage)
+        {
+            var strm = this.BaseInst.GetScriptVobStream();
+            strm.Write((byte)Networking.NetVobMsgIDs.HitMessage);
+            strm.Write((ushort)this.ID);
+            this.BaseInst.SendScriptVobStream(strm);
+            
+            if (damage > 0)
+            {
+                this.regenTimer.Stop();
+                if (sOnHit != null)
+                    sOnHit(this, this, damage);
+            }
+        }
+
         public delegate void OnHitHandler(NPCInst attacker, NPCInst target, int damage);
         public static event OnHitHandler sOnHit;
 
@@ -225,21 +240,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                                         }
                                         else // HIT
                                         {
-                                            var strm = this.BaseInst.GetScriptVobStream();
-                                            strm.Write((byte)Networking.NetVobMsgIDs.HitMessage);
-                                            strm.Write((ushort)npc.ID);
-                                            this.BaseInst.SendScriptVobStream(strm);
-
                                             int damage = (this.DrawnWeapon.Definition.Damage + attackerAni.AttackBonus) - target.Armor.Definition.Protection;
                                             if (this.GetJumpAni() != null || this.Environment == EnvironmentState.InAir) // Jump attaaaack!
                                                 damage += 5;
 
-                                            if (damage > 0)
-                                            {
-                                                target.regenTimer.Stop();
-                                                if (sOnHit != null)
-                                                    sOnHit(this, target, damage);
-                                            }
+                                            target.Hit(damage);
                                         }
                                     }
                                 }
@@ -320,30 +325,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
                 this.StartAnimation(anim);
             }
-            else if (job.ID == (int)SetAnis.BowReload || job.ID == (int)SetAnis.XBowReload)
-            {
-                // shoot projectile
-                int ammoNum = this.ammo.BaseInst.Amount - 1;
-                this.ammo.BaseInst.SetAmount(ammoNum);
-
-                if (ammoNum == 0)
-                {
-                    ScriptAniJob undrawJob;
-                    ScriptAni undraw;
-                    if (this.TryGetUndrawFromType(this.drawnWeapon.ItemType, out undrawJob) && this.TryGetAniFromJob(undrawJob, out undraw))
-                    {
-                        this.StartAniUndraw(undraw, this.drawnWeapon);
-                    }
-                    else
-                    {
-                        this.EquipItem(this.drawnWeapon);
-                    }
-                }
-                else
-                {
-                    this.StartAnimation(ani);
-                }
-            }
         }
 
         public void OnCmdAniStart(Animations.Animation ani, object[] netArgs)
@@ -386,6 +367,52 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     {
                         this.StartAniUndraw(drawAni, ii);
                     }
+                }
+            }
+            else if (a.AniJob.ID == (int)SetAnis.BowReload || a.AniJob.ID == (int)SetAnis.XBowReload)
+            {
+                int lifeDist = (int)netArgs[0];
+                Vec3f direction = ((Vec3f)netArgs[1]).Normalise();
+
+                ProjDef projDef;
+                if (this.ammo.ItemType == ItemTypes.AmmoBow)
+                {
+                    projDef = ProjDef.Get<ProjDef>("arrow");
+                }
+                else
+                {
+                    projDef = ProjDef.Get<ProjDef>("bolt");
+                }
+
+                ProjInst proj = new ProjInst(projDef);
+                proj.BaseInst.LifeDistance = lifeDist;
+                Vec3f projPos = this.BaseInst.GetPosition();
+                projPos.Y += 30;
+
+                proj.Damage = this.drawnWeapon.Definition.Damage + this.ammo.Definition.Damage;
+                proj.Shooter = this;
+
+                proj.Spawn(this.World, projPos, direction);
+
+                int ammoNum = this.ammo.BaseInst.Amount - 1;
+                this.ammo.BaseInst.SetAmount(ammoNum);
+
+                if (ammoNum == 0)
+                {
+                    ScriptAniJob undrawJob;
+                    ScriptAni undraw;
+                    if (this.TryGetUndrawFromType(this.drawnWeapon.ItemType, out undrawJob) && this.TryGetAniFromJob(undrawJob, out undraw))
+                    {
+                        this.StartAniUndraw(undraw, this.drawnWeapon);
+                    }
+                    else
+                    {
+                        this.EquipItem(this.drawnWeapon);
+                    }
+                }
+                else
+                {
+                    this.StartAnimation(ani);
                 }
             }
         }
