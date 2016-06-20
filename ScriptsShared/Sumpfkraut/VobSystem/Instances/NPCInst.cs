@@ -19,7 +19,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         #region Ranged Weapons
 
         bool isAiming = false;
-        public bool IsAiming { get { return this.isAiming; } }
+        public bool IsAiming { get { return this.isAiming; } set { this.isAiming = value; } }
 
         #endregion
 
