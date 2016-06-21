@@ -36,6 +36,11 @@ namespace Gothic.Objects.Meshes
         }
 
         public zColor Color { get { return new zColor(Address + 56); } }
+        public int MatGroup
+        {
+            get { return Process.ReadInt(Address + 0x40); }
+            set { Process.Write(value, Address + 0x40); }
+        }
 
         public static zCMaterial Create()
         {

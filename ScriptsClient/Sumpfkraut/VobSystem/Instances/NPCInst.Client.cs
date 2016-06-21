@@ -19,9 +19,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
         }
 
-        public override void Spawn(WorldInst world)
+        public override void Spawn(WorldInst world, Vec3f pos, Vec3f dir)
         {
-            base.Spawn(world);
+            base.Spawn(world, pos, dir);
             if (UseCustoms)
             {
                 using (var vec = Gothic.Types.zVec3.Create(ModelScale.X, 1, ModelScale.Z))
@@ -375,13 +375,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 }
                 else
                 {
-                    if (this.drawnWeapon.ItemType == Definitions.ItemTypes.Wep1H)
+                    if (this.drawnWeapon.ItemType == ItemTypes.Wep1H)
                         fmode = 3;
-                    else if (this.drawnWeapon.ItemType == Definitions.ItemTypes.Wep2H)
+                    else if (this.drawnWeapon.ItemType == ItemTypes.Wep2H)
                         fmode = 4;
-                    else if (this.drawnWeapon.ItemType == Definitions.ItemTypes.WepBow)
+                    else if (this.drawnWeapon.ItemType == ItemTypes.WepBow)
                         fmode = 5;
-                    else if (this.drawnWeapon.ItemType == Definitions.ItemTypes.WepXBow)
+                    else if (this.drawnWeapon.ItemType == ItemTypes.WepXBow)
                         fmode = 6;
                     else
                         fmode = 0;
@@ -396,18 +396,28 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             {
                 var gNpc = this.BaseInst.gVob;
                 var ai = gNpc.HumanAI;
-                int oldRunID = ai._s_walkl;
 
+                // check before changing animations, cause gothic only checks the current animation set
+                bool running = ai.IsRunning();
+                bool standing = ai.IsStanding();
+
+                // set fight mode & animations in gothic
                 gNpc.FMode = fmode;
                 ai.SetFightAnis(fmode);
                 ai.SetWalkMode(0);
 
+                // override active animations from the old animation set
                 var gModel = gNpc.GetModel();
-                if (gModel.GetActiveAni(oldRunID).Address != 0)
+                if (running)
                 {
                     gModel.StartAni(ai._s_walkl, 0);
                 }
+                else if (standing)
+                {
+                    gModel.StartAni(ai._s_walk, 0);
+                }
 
+                // sets focus and camera modes
                 if (this == Networking.ScriptClient.Client.Character)
                 {
                     gNpc.SetWeaponMode(fmode);

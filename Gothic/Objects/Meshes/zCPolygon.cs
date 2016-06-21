@@ -28,5 +28,10 @@ namespace Gothic.Objects.Meshes
         {
             return new zCVertex(Process.ReadInt(Process.ReadInt(Address) + 4 * index));
         }
+
+        public zCMaterial Material
+        {
+            get { return new zCMaterial(Process.ReadInt(Address + 0x18)); }
+        }
     }
 }

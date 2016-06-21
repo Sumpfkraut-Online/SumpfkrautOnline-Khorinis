@@ -33,7 +33,7 @@ namespace GUC.Network
             var cam = oCGame.GetCameraVob();
             cam.SetAI(specCam);
 
-            cam.SetPositionWorld(pos.ToArray());
+            cam.SetPositionWorld(pos.X, pos.Y, pos.Z);
             using (var vec = Gothic.Types.zVec3.Create(dir.X, dir.Y, dir.Z))
                 cam.SetHeadingAtWorld(vec);
             this.isSpectating = true;
@@ -60,7 +60,7 @@ namespace GUC.Network
             var pos = new Vec3f(cam.Position);
             if (VobMessage.ChangedCoord(ref pos.X) || VobMessage.ChangedCoord(ref pos.Y) || VobMessage.ChangedCoord(ref pos.Z))
             {
-                cam.SetPositionWorld(pos.ToArray());
+                cam.SetPositionWorld(pos.X, pos.Y, pos.Z);
             }
 
             if (now - specNextUpdate < TimeSpan.TicksPerSecond && pos.GetDistance(lastSpecPos) < 10)

@@ -6,6 +6,7 @@ using GUC.WorldObjects;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.Types;
+using GUC.Scripts.Sumpfkraut.WorldSystem;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
@@ -28,6 +29,24 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public ProjInst() : base(new Projectile())
         {
             pConstruct();
+        }
+
+        #endregion
+
+        #region Spawn / Despawn
+
+        partial void pSpawn(WorldInst world, Vec3f pos, Vec3f dir);
+        public override void Spawn(WorldInst world, Vec3f pos, Vec3f dir)
+        {
+            base.Spawn(world, pos, dir);
+            pSpawn(world, pos, dir);
+        }
+
+        partial void pDespawn();
+        public override void Despawn()
+        {
+            base.Despawn();
+            pDespawn();
         }
 
         #endregion

@@ -470,7 +470,7 @@ namespace GUC.Scripts
 
             var projDef = new ProjDef("arrow");
             projDef.Model = m;
-            projDef.Velocity = 0.0002f;
+            projDef.Velocity = 0.0003f;
             projDef.Create();
 
             // LANGBOGEN
@@ -497,7 +497,7 @@ namespace GUC.Scripts
             
             projDef = new ProjDef("bolt");
             projDef.Model = m;
-            projDef.Velocity = 0.0002f;
+            projDef.Velocity = 0.0003f;
             projDef.Create();
 
             // ARMBRUST

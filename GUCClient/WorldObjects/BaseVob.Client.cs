@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using Gothic.Objects;
 using GUC.Types;
-using Gothic.Types;
 using GUC.Network;
 
 namespace GUC.WorldObjects
@@ -24,109 +23,43 @@ namespace GUC.WorldObjects
         #endregion
 
         internal zCVob gvob;
-        public zCVob gVob { get {return gvob; } }
+        public zCVob gVob { get { return gvob; } }
 
-        #region Position
+        #region Position & Direction
 
-        public Vec3f GetPosition()
+        partial void pGetPosition()
         {
-            if (IsSpawned)
+            if (this.gvob != null)
             {
-                return (Vec3f)gVob.TrafoObjToWorld.Position;
-            }
-            else
-            {
-                return pos;
+                this.pos = (Vec3f)this.gvob.TrafoObjToWorld.Position;
             }
         }
 
-        public void SetPosition(Vec3f pos)
+        partial void pGetDirection()
         {
-            this.pos = pos;
-
-            if (gvob != null)
+            if (this.gvob != null)
             {
-                float[] arr = pos.ToArray();
-                gVob.TrafoObjToWorld.Position = arr;
-                gVob.SetPositionWorld(arr);
-                gVob.TrafoObjToWorld.Position = arr;
+                this.dir = (Vec3f)this.gvob.TrafoObjToWorld.Direction;
             }
         }
 
-        public Vec3f GetDirection()
+        partial void pSetPosition()
         {
-            if (IsSpawned)
+            if (this.gvob != null)
             {
-                return (Vec3f)gVob.TrafoObjToWorld.Direction;
-            }
-            else
-            {
-                return dir;
+                this.gvob.TrafoObjToWorld.Position = this.pos.ToArray();
+                this.gvob.SetPositionWorld(this.pos.X, this.pos.Y, this.pos.Z);
             }
         }
 
-        public void SetDirection(Vec3f dir)
+        partial void pSetDirection()
         {
-            this.dir = dir.IsNull() ? new Vec3f(0, 0, 1) : dir;
-
-            if (gvob != null)
+            if (this.gvob != null)
             {
-                gvob.SetHeadingAtWorld(dir.X, dir.Y, dir.Z);
-                /*Vec3f zAxis = dir.Normalise();
-                Vec3f up = new Vec3f(0.0f, 0.0f, 0.0f);
-
-                if (Math.Abs(zAxis.Y) > 0.5)
-                {
-                    if (zAxis.Y > 0)
-                        up.Z = -1.0f;
-                    else
-                        up.Z = 1.0f;
-                }
-                else if (Math.Abs(zAxis.X) < 0.0001 && Math.Abs(zAxis.Y) < 0.0001)
-                {
-                    if (zAxis.Y > -0.0001)
-                    {
-                        up.Y = 1.0f;
-                    }
-                    else
-                    {
-                        up.Y = -1.0f;
-                    }
-                }
-                else
-                {
-                    up.Y = 1.0f;
-                }
-
-                Vec3f xAxis = up.Cross(zAxis).Normalise();
-                Vec3f yAxis = zAxis.Cross(xAxis).Normalise();
-
-                zMat4 trafo = gVob.TrafoObjToWorld;
-
-                trafo[12] = 0;
-                trafo[13] = 0;
-                trafo[14] = 0;
-                trafo[15] = 1;
-
-                trafo[0] = xAxis.X;
-                trafo[4] = xAxis.Y;
-                trafo[8] = xAxis.Z;
-
-                trafo[1] = yAxis.X;
-                trafo[5] = yAxis.Y;
-                trafo[9] = yAxis.Z;
-
-                trafo[2] = zAxis.X;
-                trafo[6] = zAxis.Y;
-                trafo[10] = zAxis.Z;*/
+                this.gvob.SetHeadingAtWorld(this.dir.X, this.dir.Y, this.dir.Z);
             }
         }
+
         #endregion
-
-        /*~BaseVob()
-        {
-            gvob.refCtr--;
-            gvob.Dispose();
-        }*/
     }
 }

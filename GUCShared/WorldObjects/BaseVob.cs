@@ -78,10 +78,49 @@ namespace GUC.WorldObjects
         /// </summary>
         public bool IsSpawned { get { return this.isCreated; } }
 
+        #region Position & Direction
+
         protected Vec3f pos = new Vec3f(0, 0, 0);
         protected Vec3f dir = new Vec3f(0, 0, 1);
 
-        #endregion        
+        partial void pGetPosition();
+        public Vec3f GetPosition()
+        {
+            pGetPosition();
+            return new Vec3f(pos);
+        }
+
+        partial void pGetDirection();
+        public Vec3f GetDirection()
+        {
+            pGetDirection();
+            return new Vec3f(dir);
+        }
+
+        partial void pSetPosition();
+        public void SetPosition(Vec3f position)
+        {
+            this.pos = position;
+            pSetPosition();
+        }
+
+        partial void pSetDirection();
+        public void SetDirection(Vec3f direction)
+        {
+            if (direction.IsNull())
+            {
+                this.dir = new Vec3f(0, 0, 1);
+            }
+            else
+            {
+                this.dir = direction;
+            }
+            pSetDirection();
+        }
+
+        #endregion
+
+        #endregion
 
         #region Read & Write
 

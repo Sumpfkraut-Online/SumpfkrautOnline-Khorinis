@@ -240,7 +240,6 @@ namespace GUC.Server.Scripts.TFFA
             gameTimer.SetInterval(WaitTime);
             gameTimer.SetCallback(PhaseFight);
 
-            RemoveAllVobs();
             TFFAClient.ForEach(client =>
             {
                 client.BaseClient.SendMenuMsg(GetPhaseMsg(), PktPriority.LOW_PRIORITY, PktReliability.RELIABLE);
@@ -249,6 +248,7 @@ namespace GUC.Server.Scripts.TFFA
                 client.Kills = 0;
                 client.Damage = 0;
             });
+            RemoveAllVobs();
             ALKills = 0;
             NLKills = 0;
 
@@ -268,7 +268,6 @@ namespace GUC.Server.Scripts.TFFA
             gameTimer.SetInterval(FightTime);
             gameTimer.SetCallback(PhaseEnd);
 
-            RemoveAllVobs();
             TFFAClient.ForEach(client =>
             {
                 client.BaseClient.SendMenuMsg(GetPhaseMsg(), PktPriority.LOW_PRIORITY, PktReliability.RELIABLE);
@@ -277,6 +276,7 @@ namespace GUC.Server.Scripts.TFFA
                 client.Kills = 0;
                 client.Damage = 0;
             });
+            RemoveAllVobs();
             ALKills = 0;
             NLKills = 0;
 

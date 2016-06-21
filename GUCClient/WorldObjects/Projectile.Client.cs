@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Types;
+using Gothic.Types;
+using Gothic;
+using Gothic.Objects;
 
 namespace GUC.WorldObjects
 {
@@ -11,20 +14,22 @@ namespace GUC.WorldObjects
         partial void pOnTick(long now)
         {
             long flyTime = now - startTime;
+
             if (flyTime <= 0)
-                return;
+            {
+                this.SetPosition(startPos);
+                this.SetDirection(startDir.Cross(new Vec3f(0, 1, 0)).Normalise());
+            }
+            else
+            {
+                Vec3f curPos = GetTimedPosition(flyTime);
+                Vec3f curDir = (lastPos - curPos).Cross(new Vec3f(0, 1, 0)).Normalise();
 
-            Vec3f curPos = GetTimedPosition(flyTime);
-            Vec3f curDir = (lastPos - curPos).Cross(new Vec3f(0, 1, 0)).Normalise();
-            
-            float[] arr = curPos.ToArray();
-            this.gVob.TrafoObjToWorld.Position = arr;
-            this.gVob.SetPositionWorld(arr);
-            this.gVob.TrafoObjToWorld.Position = arr;
-            
-            gvob.SetHeadingAtWorld(curDir.X, curDir.Y, curDir.Z);
+                this.SetPosition(curPos);
+                this.SetDirection(curDir);
 
-            this.lastPos = curPos;
+                this.lastPos = curPos;
+            }
         }
     }
 }

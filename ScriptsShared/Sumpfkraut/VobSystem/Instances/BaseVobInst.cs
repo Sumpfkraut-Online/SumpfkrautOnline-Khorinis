@@ -34,6 +34,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public WorldInst World { get { return (WorldInst)this.baseInst.World.ScriptObject; } }
 
+        public Vec3f GetPosition() { return this.baseInst.GetPosition(); }
+        public Vec3f GetDirection() { return this.baseInst.GetDirection(); }
+
+        public void SetPosition(Vec3f position) { this.baseInst.SetPosition(position); }
+        public void SetDirection(Vec3f direction) { this.baseInst.SetDirection(direction); }
+
         #endregion
 
         public virtual void OnPosChanged()
@@ -53,10 +59,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             this.Spawn((WorldInst)world.ScriptObject);
         }
-        
-        public virtual void Spawn(WorldInst world)
+
+        public void Spawn(WorldInst world)
         {
-            this.baseInst.Spawn(world.BaseWorld);
+            this.Spawn(world, this.GetPosition(), this.GetDirection());
         }
 
         public virtual void Spawn(WorldInst world, Vec3f pos, Vec3f dir)

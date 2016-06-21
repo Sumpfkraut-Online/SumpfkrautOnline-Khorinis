@@ -61,6 +61,8 @@ namespace GUC.Client
         }
 
         static readonly List<Tuple<int, zTSound3DParams>> vobSounds = new List<Tuple<int, zTSound3DParams>>();
+        static readonly List<Tuple<int, zCVob, zTSound3DParams>> locSounds = new List<Tuple<int, zCVob, zTSound3DParams>>();
+        static readonly List<zCVob> sndVobs = new List<zCVob>();
 
         public static void PlaySound3D(SoundInstance sound, BaseVob vob, float range = -1.0f, float volume = 1.0f)
         {
@@ -79,6 +81,38 @@ namespace GUC.Client
             vobSounds.Add(new Tuple<int, zTSound3DParams>(idPtr, param));
         }
 
+        public static void PlaySound3D(SoundInstance sound, Vec3f location, float range = -1.0f, float volume = 1.0f)
+        {
+            if (sound == null)
+                throw new ArgumentNullException("Sound is null!");
+            
+            var param = zTSound3DParams.Create();
+            param.Volume = volume;
+            param.Radius = range;
+            param.IsAmbient = true;
+
+            zCVob vob;
+            if (sndVobs.Count == 0)
+            {
+                vob = zCVob.Create();
+            }
+            else
+            {
+                int index = sndVobs.Count - 1;
+                vob = sndVobs[index];
+                sndVobs.RemoveAt(index);
+            }
+
+            Gothic.oCGame.GetWorld().AddVob(vob);
+            vob.TrafoObjToWorld.Position = location.ToArray();
+            vob.SetPositionWorld(location.X, location.Y, location.Z);
+
+            int idPtr = Process.Alloc(4).ToInt32();
+            Process.Write(zCSndSys_MSS.PlaySound3D(sound.sfx, vob, 0, param), idPtr);
+
+            locSounds.Add(new Tuple<int, zCVob, zTSound3DParams>(idPtr, vob, param));
+        }
+
         internal static void Update3DSounds()
         {
             try
@@ -86,12 +120,30 @@ namespace GUC.Client
                 for (int i = vobSounds.Count - 1; i >= 0; i--)
                 {
                     var tup = vobSounds[i];
-
-                    if (!zCSndSys_MSS.UpdateSound3D(tup.Item1, tup.Item2))
+                    
+                    if (!zCSndSys_MSS.UpdateSound3D(tup.Item1, tup.Item2) && !zCSndSys_MSS.IsSoundActive(tup.Item1))
                     {
                         Process.Free(new IntPtr(tup.Item1), 4);
                         tup.Item2.Free();
                         vobSounds.RemoveAt(i);
+                    }
+                }
+
+                for (int i = locSounds.Count -1; i >= 0; i--)
+                {
+                    var tup = locSounds[i];
+
+                    if (!zCSndSys_MSS.UpdateSound3D(tup.Item1, tup.Item3) && !zCSndSys_MSS.IsSoundActive(tup.Item1))
+                    {
+                        Process.Free(new IntPtr(tup.Item1), 4);
+
+                        tup.Item2.RemoveVobFromWorld();
+                        sndVobs.Add(tup.Item2);
+                        //tup.Item2.refCtr--;
+                        //tup.Item2.Dispose();
+
+                        tup.Item3.Free();
+                        locSounds.RemoveAt(i);
                     }
                 }
             }

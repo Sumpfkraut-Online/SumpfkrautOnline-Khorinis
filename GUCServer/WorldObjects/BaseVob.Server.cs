@@ -13,31 +13,24 @@ namespace GUC.WorldObjects
 {
     public partial class BaseVob
     {
-
         public override void Update()
         {
             throw new NotImplementedException();
         }
 
-        public void SetPosition(Vec3f pos)
+        partial void pSetPosition()
         {
             throw new NotImplementedException();
         }
 
-        public Vec3f GetPosition()
+        partial void pSetDirection()
         {
-            return this.pos;
-        }
-
-        public void SetDirection(Vec3f dir)
-        {
-            Vec3f d = dir.IsNull() ? new Vec3f(0, 0, 1) : dir;
             throw new NotImplementedException();
         }
 
-        public Vec3f GetDirection()
+        public void SetPosDir(Vec3f position, Vec3f direction)
         {
-            return this.dir;
+            throw new NotImplementedException();
         }
 
         #region Cells
@@ -195,9 +188,7 @@ namespace GUC.WorldObjects
         }
 
         #endregion
-
-
-
+        
         public PacketWriter GetScriptVobStream()
         {
             if (!this.IsSpawned)

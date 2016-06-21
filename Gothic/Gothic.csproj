@@ -50,8 +50,11 @@
     <Compile Include="Objects\Meshes\zCVertex.cs" />
     <Compile Include="Objects\Meshes\zCVertFeature.cs" />
     <Compile Include="Objects\Meshes\zCVisual.cs" />
+    <Compile Include="Objects\oCAIArrow.cs" />
+    <Compile Include="Objects\oCAIArrowBase.cs" />
     <Compile Include="Objects\oCAICamera.cs" />
     <Compile Include="Objects\oCAIHuman.cs" />
+    <Compile Include="Objects\oCAISound.cs" />
     <Compile Include="Objects\oCAniCtrl_Human.cs" />
     <Compile Include="Objects\oCItem.cs" />
     <Compile Include="Objects\oCMob.cs" />

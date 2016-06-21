@@ -389,8 +389,6 @@ namespace GUC.Network
             GameServer.AddToBanList(this.SystemAddress);
         }
 
-
-
         internal void AddControlledVob(Vob vob)
         {
             /* VobControlledList.Add(vob);
