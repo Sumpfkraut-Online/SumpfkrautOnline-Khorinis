@@ -36,7 +36,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 strm.Write((ushort)target.ID);
                 this.BaseInst.SendScriptVobStream(strm);
 
-                target.Hit(Damage - target.Armor.Definition.Protection);
+                target.Hit(this.Shooter, Damage - target.Armor.Definition.Protection);
 
                 this.Despawn();
             }

@@ -208,8 +208,15 @@ namespace GUC.Network
         {
             if (npc == null)
             {
-                return;
-                throw new NotImplementedException();
+                // set old character to npc
+                if (this.character != null)
+                {
+                    this.character.client = null;
+                    if (this.character.IsSpawned)
+                    {
+                        this.character.Cell.Clients.Remove(ref this.cellID);
+                    }
+                }
             }
             else
             {

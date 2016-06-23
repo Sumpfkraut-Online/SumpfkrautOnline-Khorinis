@@ -113,7 +113,7 @@ namespace GUC.Server.Scripts.TFFA
                 {
                     var c = team1[i];
                     stream.Write((byte)c.ID);
-                    stream.Write((byte)c.Kills);
+                    stream.Write((sbyte)c.Kills);
                     stream.Write((byte)c.Deaths);
                     stream.Write((ushort)c.Damage);
                     stream.Write((ushort)c.BaseClient.GetLastPing());
@@ -123,16 +123,22 @@ namespace GUC.Server.Scripts.TFFA
                 {
                     var c = team2[i];
                     stream.Write((byte)c.ID);
-                    stream.Write((byte)c.Kills);
+                    stream.Write((sbyte)c.Kills);
                     stream.Write((byte)c.Deaths);
                     stream.Write((ushort)c.Damage);
                     stream.Write((ushort)c.BaseClient.GetLastPing());
                 }
 
-                if (single == null || statUpdateTimer.GetRemainingTicks() < ScoreboardUpdateTime / 4) // 25% time left, just send it to everyone
+                if (single == null)
                 {
                     for (int i = 0; i < scoreboardClients.Count; i++)
                         scoreboardClients[i].BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.UNRELIABLE);
+                }
+                else if (statUpdateTimer.GetRemainingTicks() < ScoreboardUpdateTime / 4)  // 25% time left, just send it to everyone
+                {
+                    for (int i = 0; i < scoreboardClients.Count; i++)
+                        scoreboardClients[i].BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.UNRELIABLE);
+                    statUpdateTimer.Restart();
                 }
                 else
                 {
@@ -248,16 +254,22 @@ namespace GUC.Server.Scripts.TFFA
                 client.Kills = 0;
                 client.Damage = 0;
             });
-            RemoveAllVobs();
+            RemoveAllNPCs();
             ALKills = 0;
             NLKills = 0;
 
             gameTimer.Restart();
         }
 
-        static void RemoveAllVobs()
+        static void RemoveAllNPCs()
         {
-            WorldInst.Current.BaseWorld.ForEachVob(v => v.Despawn());
+            WorldInst.Current.BaseWorld.ForEachVob(v =>
+           {
+               if (!(v is GUC.WorldObjects.NPC) || !((GUC.WorldObjects.NPC)v).IsPlayer)
+               {
+                   v.Despawn();
+               }
+           });
         }
 
         public static void PhaseFight()
@@ -276,7 +288,7 @@ namespace GUC.Server.Scripts.TFFA
                 client.Kills = 0;
                 client.Damage = 0;
             });
-            RemoveAllVobs();
+            RemoveAllNPCs();
             ALKills = 0;
             NLKills = 0;
 

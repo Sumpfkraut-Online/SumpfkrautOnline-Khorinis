@@ -168,7 +168,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             }
         }
 
-        public void Hit(int damage)
+        public void Hit(NPCInst attacker, int damage)
         {
             var strm = this.BaseInst.GetScriptVobStream();
             strm.Write((byte)Networking.NetVobMsgIDs.HitMessage);
@@ -179,7 +179,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             {
                 this.regenTimer.Stop();
                 if (sOnHit != null)
-                    sOnHit(this, this, damage);
+                    sOnHit(attacker, this, damage);
             }
         }
 
@@ -244,7 +244,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                                             if (this.GetJumpAni() != null || this.Environment == EnvironmentState.InAir) // Jump attaaaack!
                                                 damage += 5;
 
-                                            target.Hit(damage);
+                                            target.Hit(this, damage);
                                         }
                                     }
                                 }

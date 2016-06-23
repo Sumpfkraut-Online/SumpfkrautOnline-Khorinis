@@ -10,6 +10,7 @@ using GUC.Types;
 using GUC.Scripting;
 using Gothic.Objects;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
+using GUC.Client;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
@@ -152,6 +153,17 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #endregion
 
+        static readonly List<SoundInstance> hitSounds = new List<SoundInstance>()
+        {
+            new SoundInstance("CS_IAM_ME_FL"),
+            new SoundInstance("CS_IAM_ME_FL_A1"),
+            new SoundInstance("CS_IAM_ME_FL_A2"),
+            new SoundInstance("CS_IAM_ME_FL_A3"),
+            new SoundInstance("CS_IAM_ME_FL_A4")
+        };
+
+        static readonly Dictionary<string, SoundInstance> hitScreams = new Dictionary<string, SoundInstance>();
+
         public override void OnReadScriptVobMsg(PacketReader stream)
         {
             var msgID = (Networking.NetVobMsgIDs)stream.ReadByte();
@@ -159,10 +171,28 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             {
                 case Networking.NetVobMsgIDs.HitMessage:
                     var targetID = stream.ReadUShort();
-                    WorldObjects.BaseVob target;
+                    WorldObjects.NPC target;
                     if (WorldInst.Current.BaseWorld.TryGetVob(targetID, out target))
                     {
-                        this.BaseInst.gVob.AniCtrl.CreateHit(target.gVob);
+                        //this.BaseInst.gVob.AniCtrl.CreateHit(target.gVob);
+                        int index = Randomizer.GetInt(hitSounds.Count);
+                        SoundHandler.PlaySound3D(hitSounds[index], target);
+
+                        index = Randomizer.GetInt(6)-2;
+                        if (index > 0)
+                        {
+                            string str = string.Format("SVM_{0}_AARGH_{1}.WAV", (int)this.CustomVoice, index);
+                            SoundInstance scream;
+                            if (!hitScreams.TryGetValue(str, out scream))
+                            {
+                                scream = new SoundInstance(str);
+                                hitScreams.Add(str, scream);
+                            }
+                            SoundHandler.PlaySound3D(scream, target);
+                            Log.Logger.Log(str);
+                        }
+
+                        target.gVob.GetModel().StartAni("T_GOTHIT", 0);
                     }
                     break;
                 case Networking.NetVobMsgIDs.ParryMessage:
@@ -223,7 +253,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 }
 
                 var aa = gModel.GetActiveAni(aniID);
-                
+
                 if (this.isAiming)
                 {
                     if (aa.Address == 0)

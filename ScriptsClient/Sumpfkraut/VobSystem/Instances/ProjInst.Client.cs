@@ -14,12 +14,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
     public partial class ProjInst
     {
         static readonly SoundInstance sfx_shoot = new SoundInstance("BOWSHOOT");
-        static readonly SoundInstance sfx_wo_wo = new SoundInstance("CS_IHL_WO_WO.WAV");
-        static readonly SoundInstance sfx_wo_me = new SoundInstance("CS_IHL_WO_ME.WAV");
-        static readonly SoundInstance sfx_wo_st = new SoundInstance("CS_IHL_WO_ST.WAV");
-        static readonly SoundInstance sfx_wo_wa = new SoundInstance("CS_IHL_WO_WA.WAV");
-        static readonly SoundInstance sfx_wo_ea = new SoundInstance("CS_IHL_WO_EA.WAV");
-        static readonly SoundInstance sfx_wo_sa = new SoundInstance("CS_IHL_WO_SA.WAV");
+        static readonly SoundInstance sfx_wo_wo = new SoundInstance("CS_IHL_WO_WO");
+        static readonly SoundInstance sfx_wo_me = new SoundInstance("CS_IHL_WO_ME");
+        static readonly SoundInstance sfx_wo_st = new SoundInstance("CS_IHL_WO_ST");
+        static readonly SoundInstance sfx_wo_wa = new SoundInstance("CS_IHL_WO_WA");
+        static readonly SoundInstance sfx_wo_ea = new SoundInstance("CS_IHL_WO_EA");
+        static readonly SoundInstance sfx_wo_sa = new SoundInstance("CS_IHL_WO_SA");
 
         partial void pSpawn(WorldInst world, Vec3f pos, Vec3f dir)
         {
