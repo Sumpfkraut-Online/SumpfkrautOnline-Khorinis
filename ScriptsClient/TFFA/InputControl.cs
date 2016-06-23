@@ -56,7 +56,6 @@ namespace GUC.Client.Scripts.TFFA
             WinApi.Process.AddHook(FocusHook, 0x733FB6, 5);
         }
 
-        static int arg = 0;
         static void KeyDown(VirtualKeys key, long now)
         {
             GUCMenu activeMenu = GUCMenu.GetActiveMenus().ElementAtOrDefault(0);
@@ -89,10 +88,9 @@ namespace GUC.Client.Scripts.TFFA
                 ChatMenu.Menu.Open();
             }
 
-            if (TFFAClient.Client.Character == null)
-                return;
-
             NPCInst Hero = TFFAClient.Client.Character;
+            if (Hero == null || !Hero.IsSpawned)
+                return;
 
             if (key == VirtualKeys.P)
             {
@@ -107,89 +105,57 @@ namespace GUC.Client.Scripts.TFFA
             if (TFFAClient.Status == TFFAPhase.Waiting)
                 return;
 
-            if (key == VirtualKeys.N2)
-            {
-                TFFAClient.Client.BaseClient.DoSetFightMode(!Hero.BaseInst.IsInFightMode);
-            }
-            else if (key == VirtualKeys.N1)
+            if (key == VirtualKeys.N1)
             {
                 if (Hero.DrawnWeapon == null)
                 {
                     WorldObjects.Item wep;
                     ScriptAniJob job;
-                    if (Hero.BaseInst.TryGetEquippedItem(NPCInst.SlotNums.Sword, out wep) && Hero.Model.TryGetAniJob(SetAnis.Draw1H, out job))
+                    if (Hero.BaseInst.TryGetEquippedItem((int)NPCInst.SlotNums.Sword, out wep) && Hero.Model.TryGetAniJob((int)SetAnis.Draw1H, out job))
                     {
                         TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob, wep.ID);
                     }
-                    else if (Hero.BaseInst.TryGetEquippedItem(NPCInst.SlotNums.Longsword, out wep) && Hero.Model.TryGetAniJob(SetAnis.Draw2H, out job))
+                    else if (Hero.BaseInst.TryGetEquippedItem((int)NPCInst.SlotNums.Longsword, out wep) && Hero.Model.TryGetAniJob((int)SetAnis.Draw2H, out job))
                     {
                         TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob, wep.ID);
                     }
                 }
                 else
                 {
-                    if (Hero.DrawnWeapon.ItemType == ItemTypes.Wep1H)
+                    ScriptAniJob job;
+                    if (Hero.TryGetUndrawFromType(Hero.DrawnWeapon.ItemType, out job))
                     {
-                        ScriptAniJob job;
-                        if (Hero.Model.TryGetAniJob(SetAnis.Undraw1H, out job))
-                        {
-                            TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob, Hero.DrawnWeapon.ID);
-                        }
+                        TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob, Hero.DrawnWeapon.ID);
                     }
-                    else if (Hero.DrawnWeapon.ItemType == ItemTypes.Wep2H)
+                }
+            }
+            else if (key == VirtualKeys.N2)
+            {
+                if (Hero.DrawnWeapon == null)
+                {
+                    WorldObjects.Item wep;
+                    ScriptAniJob job;
+                    if (Hero.BaseInst.TryGetEquippedItem((int)NPCInst.SlotNums.Bow, out wep) && Hero.Model.TryGetAniJob((int)SetAnis.DrawBow, out job))
                     {
-                        ScriptAniJob job;
-                        if (Hero.Model.TryGetAniJob(SetAnis.Undraw2H, out job))
-                        {
-                            TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob, Hero.DrawnWeapon.ID);
-                        }
+                        TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob, wep.ID);
+                    }
+                    else if (Hero.BaseInst.TryGetEquippedItem((int)NPCInst.SlotNums.XBow, out wep) && Hero.Model.TryGetAniJob((int)SetAnis.DrawXBow, out job))
+                    {
+                        TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob, wep.ID);
+                    }
+                }
+                else
+                {
+                    ScriptAniJob job;
+                    if (Hero.TryGetUndrawFromType(Hero.DrawnWeapon.ItemType, out job))
+                    {
+                        TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob, Hero.DrawnWeapon.ID);
                     }
                 }
             }
             else if (key == VirtualKeys.Space)
             {
-                if (Hero.DrawnWeapon == null)
-                {
-                    Hero.BaseInst.ForEachEquippedItem(i =>
-                    {
-                        ItemInst ii = (ItemInst)i.ScriptObject;
-                        if (ii.ItemType == ItemTypes.Wep1H)
-                        {
-                            ScriptAniJob job;
-                            if (Hero.Model.TryGetAniJob(SetAnis.Draw1H, out job))
-                            {
-                                TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob, i.ID);
-                            }
-                        }
-                        else if (ii.ItemType == ItemTypes.Wep2H)
-                        {
-                            ScriptAniJob job;
-                            if (Hero.Model.TryGetAniJob(SetAnis.Draw2H, out job))
-                            {
-                                TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob, i.ID);
-                            }
-                        }
-                    });
-                }
-                else
-                {
-                    if (Hero.DrawnWeapon.ItemType == ItemTypes.Wep1H)
-                    {
-                        ScriptAniJob job;
-                        if (Hero.Model.TryGetAniJob(SetAnis.Undraw1H, out job))
-                        {
-                            TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob, Hero.DrawnWeapon.ID);
-                        }
-                    }
-                    else if (Hero.DrawnWeapon.ItemType == ItemTypes.Wep2H)
-                    {
-                        ScriptAniJob job;
-                        if (Hero.Model.TryGetAniJob(SetAnis.Undraw2H, out job))
-                        {
-                            TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob, Hero.DrawnWeapon.ID);
-                        }
-                    }
-                }
+
             }
             else if (key == VirtualKeys.Control || key == VirtualKeys.LeftButton)
             {
@@ -200,6 +166,25 @@ namespace GUC.Client.Scripts.TFFA
                     if (Hero.TryGetAttackFromMove(NPCInst.AttackMove.Run, out job))
                     {
                         TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
+                    }
+                }
+                else if (Hero.DrawnWeapon != null && Hero.DrawnWeapon.IsWepRanged && Hero.BaseInst.IsInFightMode)
+                {
+                    if (Hero.DrawnWeapon.ItemType == ItemTypes.WepBow)
+                    {
+                        ScriptAniJob job;
+                        if (Hero.Model.TryGetAniJob((int)SetAnis.BowAim, out job))
+                        {
+                            TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
+                        }
+                    }
+                    else if (Hero.DrawnWeapon.ItemType == ItemTypes.WepXBow)
+                    {
+                        ScriptAniJob job;
+                        if (Hero.Model.TryGetAniJob((int)SetAnis.XBowAim, out job))
+                        {
+                            TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
+                        }
                     }
                 }
             }
@@ -263,32 +248,63 @@ namespace GUC.Client.Scripts.TFFA
             {
                 if (key == VirtualKeys.Up || key == VirtualKeys.W)
                 {
-                    // FORWARD COMBOS
-                    ScriptAniJob job;
-                    if (Hero.TryGetAttackFromMove(NPCInst.AttackMove.Fwd1, out job) && Hero.GetActiveAniFromAniID(job.ID) != null)
+                    if (Hero.DrawnWeapon != null && Hero.BaseInst.IsInFightMode)
                     {
-                        if (Hero.TryGetAttackFromMove(NPCInst.AttackMove.Fwd2, out job))
+                        if (Hero.DrawnWeapon.IsWepMelee)
                         {
-                            TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
+                            // FORWARD COMBOS
+                            ScriptAniJob job;
+                            if (Hero.TryGetAttackFromMove(NPCInst.AttackMove.Fwd1, out job) && Hero.GetActiveAniFromAniID(job.ID) != null)
+                            {
+                                if (Hero.TryGetAttackFromMove(NPCInst.AttackMove.Fwd2, out job))
+                                {
+                                    TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
+                                }
+                            }
+                            else if (Hero.TryGetAttackFromMove(NPCInst.AttackMove.Fwd2, out job) && Hero.GetActiveAniFromAniID(job.ID) != null)
+                            {
+                                if (Hero.TryGetAttackFromMove(NPCInst.AttackMove.Fwd3, out job))
+                                {
+                                    TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
+                                }
+                            }
+                            else if (Hero.TryGetAttackFromMove(NPCInst.AttackMove.Fwd3, out job) && Hero.GetActiveAniFromAniID(job.ID) != null)
+                            {
+                                if (Hero.TryGetAttackFromMove(NPCInst.AttackMove.Fwd4, out job))
+                                {
+                                    TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
+                                }
+                            }
+                            else if (Hero.TryGetAttackFromMove(NPCInst.AttackMove.Fwd1, out job))
+                            {
+                                TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
+                            }
                         }
-                    }
-                    else if (Hero.TryGetAttackFromMove(NPCInst.AttackMove.Fwd2, out job) && Hero.GetActiveAniFromAniID(job.ID) != null)
-                    {
-                        if (Hero.TryGetAttackFromMove(NPCInst.AttackMove.Fwd3, out job))
+                        else if (Hero.DrawnWeapon.IsWepRanged && Hero.IsAiming)
                         {
-                            TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
+                            if (Hero.DrawnWeapon.ItemType == ItemTypes.WepBow)
+                            {
+                                ScriptAniJob job;
+                                if (Hero.Model.TryGetAniJob((int)SetAnis.BowReload, out job))
+                                {
+                                    var focusNpc = Hero.BaseInst.gVob.GetFocusNpc();
+                                    Vec3f flyDir = focusNpc.Address == 0 ? Hero.BaseInst.GetDirection() : (new Vec3f(focusNpc.Position) - Hero.BaseInst.GetPosition());
+                                    flyDir = flyDir.Normalise();
+                                    TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob, GetFlyDistance(flyDir), flyDir);
+                                }
+                            }
+                            else if (Hero.DrawnWeapon.ItemType == ItemTypes.WepXBow)
+                            {
+                                ScriptAniJob job;
+                                if (Hero.Model.TryGetAniJob((int)SetAnis.XBowReload, out job))
+                                {
+                                    var focusNpc = Hero.BaseInst.gVob.GetFocusNpc();
+                                    Vec3f flyDir = focusNpc.Address == 0 ? Hero.BaseInst.GetDirection() : (new Vec3f(focusNpc.Position) - Hero.BaseInst.GetPosition());
+                                    flyDir = flyDir.Normalise();
+                                    TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob, GetFlyDistance(flyDir), flyDir);
+                                }
+                            }
                         }
-                    }
-                    else if (Hero.TryGetAttackFromMove(NPCInst.AttackMove.Fwd3, out job) && Hero.GetActiveAniFromAniID(job.ID) != null)
-                    {
-                        if (Hero.TryGetAttackFromMove(NPCInst.AttackMove.Fwd4, out job))
-                        {
-                            TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
-                        }
-                    }
-                    else if (Hero.TryGetAttackFromMove(NPCInst.AttackMove.Fwd1, out job))
-                    {
-                        TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
                     }
                 }
                 else if (key == VirtualKeys.Left || key == VirtualKeys.A) // LEFT ATTACK
@@ -309,7 +325,7 @@ namespace GUC.Client.Scripts.TFFA
                 }
                 else if (key == VirtualKeys.Down || key == VirtualKeys.S) // PARADE
                 {
-                    if (Hero.DrawnWeapon == null)
+                    if (Hero.DrawnWeapon == null || !Hero.DrawnWeapon.IsWepMelee)
                         return;
 
                     ScriptAniJob job;
@@ -340,13 +356,19 @@ namespace GUC.Client.Scripts.TFFA
             {
                 HideClientIDs();
             }
-
-            if (GUC.Network.GameClient.Client.Character == null || TFFAClient.Status == TFFAPhase.Waiting)
-                return;
         }
 
         public static void Update(long now)
         {
+            if (TFFAClient.Client != null && TFFAClient.Client.Character != null && TFFAClient.Client.Character.Ammo != null)
+            {
+                Client.GUI.GUCView.DebugText.Text = TFFAClient.Client.Character.Ammo.Definition.Name + ": " + TFFAClient.Client.Character.Ammo.BaseInst.Amount;
+            }
+            else
+            {
+                Client.GUI.GUCView.DebugText.Text = "";
+            }
+
             Scoreboard.Menu.Update(now);
 
             GUCMenu activeMenu = GUCMenu.GetActiveMenus().ElementAtOrDefault(0);
@@ -414,11 +436,11 @@ namespace GUC.Client.Scripts.TFFA
                 return;
             }
 
-            if (GUC.Network.GameClient.Client.Character == null || TFFAClient.Status == TFFAPhase.Waiting)
-                return;
-
             NPCInst Hero = TFFAClient.Client.Character;
 
+            if (Hero == null || !Hero.IsSpawned || TFFAClient.Status == TFFAPhase.Waiting)
+                return;
+            
             if (InputHandler.MouseDistY != 0)
             {
                 var camAI = Gothic.oCGame.GetCameraAI();
@@ -482,16 +504,42 @@ namespace GUC.Client.Scripts.TFFA
                 }
                 else if (InputHandler.IsPressed(VirtualKeys.Down) || InputHandler.IsPressed(VirtualKeys.S)) // move backward
                 {
-                    //GUC.Network.GameClient.Client.DoSetHeroState(NPCStates.MoveBackward)
-                    ScriptAniJob job;
-                    if (Hero.TryGetAttackFromMove(NPCInst.AttackMove.Dodge, out job))
+                    if (Hero.DrawnWeapon != null && Hero.DrawnWeapon.IsWepMelee && Hero.BaseInst.IsInFightMode)
                     {
-                        TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
+                        ScriptAniJob job;
+                        if (Hero.TryGetAttackFromMove(NPCInst.AttackMove.Dodge, out job))
+                        {
+                            TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
+                        }
+                    }
+                    else
+                    {
+                        GUC.Network.GameClient.Client.DoSetHeroState(MoveState.Backward);
                     }
                 }
                 else // not moving
                 {
                     GUC.Network.GameClient.Client.DoSetHeroState(MoveState.Stand);
+                }
+
+                if (Hero.IsAiming && Hero.DrawnWeapon != null && Hero.DrawnWeapon.IsWepRanged && Hero.BaseInst.IsInFightMode)
+                {
+                    if (Hero.DrawnWeapon.ItemType == ItemTypes.WepBow)
+                    {
+                        ScriptAniJob job;
+                        if (Hero.Model.TryGetAniJob((int)SetAnis.BowLower, out job))
+                        {
+                            TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
+                        }
+                    }
+                    else if (Hero.DrawnWeapon.ItemType == ItemTypes.WepXBow)
+                    {
+                        ScriptAniJob job;
+                        if (Hero.Model.TryGetAniJob((int)SetAnis.XBowLower, out job))
+                        {
+                            TFFAClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
+                        }
+                    }
                 }
             }
             else
@@ -655,6 +703,34 @@ namespace GUC.Client.Scripts.TFFA
             {
                 clientView.Texts[i].Text = "";
             }
+        }
+
+        static int GetFlyDistance(Vec3f dir)
+        {
+            int distance = ushort.MaxValue;
+
+            var Hero = GUC.Network.GameClient.Client.Character;
+
+            Vec3f start = Hero.GetPosition();
+            start.Y += 30;
+
+            Vec3f end = start + dir * ushort.MaxValue;
+
+            using (var zStart = Gothic.Types.zVec3.Create(start.X, start.Y, start.Z))
+            using (var zEnd = Gothic.Types.zVec3.Create(end.X, end.Y, end.Z))
+            {
+                var gWorld = Gothic.oCGame.GetWorld();
+
+                if (gWorld.TraceRayNearestHit(zStart, zEnd, Gothic.Objects.zCWorld.zTraceRay.Ignore_Alpha | Gothic.Objects.zCWorld.zTraceRay.Ignore_Projectiles | Gothic.Objects.zCWorld.zTraceRay.Ignore_Vob_No_Collision | Gothic.Objects.zCWorld.zTraceRay.Ignore_NPC) != 0
+                    && gWorld.Raytrace_FoundHit != 0)
+                {
+                    distance = (int)start.GetDistance((Vec3f)gWorld.Raytrace_FoundIntersection);
+                    if (distance > ushort.MaxValue)
+                        distance = ushort.MaxValue;
+                }
+            }
+
+            return distance;
         }
     }
 }

@@ -66,6 +66,13 @@ namespace GUC.Types
             this.Z = z;
         }
 
+        public Vec3f(Vec3f vec)
+        {
+            this.X = vec.X;
+            this.Y = vec.Y;
+            this.Z = vec.Z;
+        }
+
         public void Reset()
         {
             this.X = 0;

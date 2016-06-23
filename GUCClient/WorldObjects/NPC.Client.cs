@@ -151,6 +151,8 @@ namespace GUC.WorldObjects
 
         #endregion
 
+        static List<Tuple<int, long>> aniTimes = new List<Tuple<int, long>>();
+
         partial void pStartAnimation(Animation ani)
         {
             if (this.gvob != null)
@@ -159,11 +161,29 @@ namespace GUC.WorldObjects
                 int aniID = gModel.GetAniIDFromAniName(ani.AniJob.Name);
                 if (aniID > 0)
                 {
-                    gModel.StartAni(aniID, 0);
-                    var activeAni = gModel.GetActiveAni(aniID);
-                    if (activeAni.Address != 0)
+                    var gAni = gModel.GetAniFromAniID(aniID);
+                    if (gAni.Address != 0)
                     {
-                        activeAni.SetActFrame(ani.StartFrame);
+                        gModel.StartAni(gAni, 0);
+
+                        var activeAni = gModel.GetActiveAni(gAni);
+                        if (activeAni.Address != 0)
+                        {
+                            if (!gAni.IsReversed)
+                            {
+                                activeAni.SetActFrame(ani.StartFrame);
+                            }
+                            else
+                            {
+                                activeAni.SetActFrame(gAni.NumFrames - ani.StartFrame);
+                            }
+                        }
+
+                        if (this == Network.GameClient.Client.character)
+                        {
+                            aniTimes.RemoveAll(t => t.Item1 == aniID);
+                            aniTimes.Add(new Tuple<int, long>(aniID, DateTime.UtcNow.Ticks));
+                        }
                     }
                 }
             }
@@ -208,7 +228,7 @@ namespace GUC.WorldObjects
             }
             else
             {
-                gModel.StopAni(activeAni);
+                gModel.FadeOutAni(activeAni);
             }
         }
 
@@ -317,38 +337,33 @@ namespace GUC.WorldObjects
 
             this.ScriptObject.OnTick(now);
 
-            if (!this.IsDead && this.envState != EnvironmentState.InAir)
+            if (!this.IsDead && this.envState != EnvironmentState.InAir && this.GetActiveAniFromLayerID(1) == null)
             {
                 switch (Movement)
                 {
                     case MoveState.Forward:
-                        if (this.GetActiveAniFromLayerID(0) == null)
+                        var gModel = this.gVob.GetModel();
+                        if (gModel.IsAnimationActive("T_JUMP_2_STAND") != 0)
                         {
-                            var gModel = this.gVob.GetModel();
-                            if (gModel.IsAnimationActive("T_JUMP_2_STAND") != 0)
-                            {
-                                var ai = this.gVob.HumanAI;
-                                ai.LandAndStartAni(gModel.GetAniFromAniID(ai._t_jump_2_runl));
-                            }
-                            gVob.AniCtrl._Forward();
+                            var ai = this.gVob.HumanAI;
+                            ai.LandAndStartAni(gModel.GetAniFromAniID(ai._t_jump_2_runl));
                         }
+                        gVob.AniCtrl._Forward();
                         break;
                     case MoveState.Backward:
                         gVob.AniCtrl._Backward();
                         break;
                     case MoveState.Right:
-                        if (!this.IsInAnimation())
-                            if (this.envState <= EnvironmentState.Wading && !gVob.GetModel().IsAniActive(gVob.GetModel().GetAniFromAniID(gVob.AniCtrl._t_strafer)))
-                            {
-                                gVob.GetModel().StartAni(gVob.AniCtrl._t_strafer, 0);
-                            }
+                        if (this.envState <= EnvironmentState.Wading && !gVob.GetModel().IsAniActive(gVob.GetModel().GetAniFromAniID(gVob.AniCtrl._t_strafer)))
+                        {
+                            gVob.GetModel().StartAni(gVob.AniCtrl._t_strafer, 0);
+                        }
                         break;
                     case MoveState.Left:
-                        if (!this.IsInAnimation())
-                            if (this.envState <= EnvironmentState.Wading && !gVob.GetModel().IsAniActive(gVob.GetModel().GetAniFromAniID(gVob.AniCtrl._t_strafel)))
-                            {
-                                gVob.GetModel().StartAni(gVob.AniCtrl._t_strafel, 0);
-                            }
+                        if (this.envState <= EnvironmentState.Wading && !gVob.GetModel().IsAniActive(gVob.GetModel().GetAniFromAniID(gVob.AniCtrl._t_strafel)))
+                        {
+                            gVob.GetModel().StartAni(gVob.AniCtrl._t_strafel, 0);
+                        }
                         break;
                     case MoveState.Stand:
                         gVob.AniCtrl._Stand();

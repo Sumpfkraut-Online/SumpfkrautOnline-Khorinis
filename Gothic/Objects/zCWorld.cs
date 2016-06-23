@@ -5,6 +5,7 @@ using WinApi;
 using Gothic.Types;
 using Gothic.Objects.Sky;
 using Gothic.View;
+using Gothic.Objects.Meshes;
 
 namespace Gothic.Objects
 {
@@ -197,6 +198,11 @@ namespace Gothic.Objects
         public int Raytrace_FoundHit
         {
             get { return Process.ReadInt(Address + VarOffsets.raytrace_foundHit); }
+        }
+
+        public zCPolygon Raytrace_FoundPoly
+        {
+            get { return new zCPolygon(Process.ReadInt(Address + VarOffsets.raytrace_foundPoly)); }
         }
 
         public zCVob Raytrace_FoundVob

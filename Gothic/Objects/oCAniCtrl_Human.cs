@@ -55,6 +55,7 @@ namespace Gothic.Objects
             SetAlwaysWalk = 0x006ABDB0,
             ToggleWalkMode = 0x006AD500,
             IsStanding = 0x6ADEE0,
+            IsRunning = 0x6AE200,
             JumpForward = 0x6B21E0,
             PC_JumpForward = 0x6B1E00,
             PC_GoForward = 0x6B1D70,
@@ -226,7 +227,12 @@ namespace Gothic.Objects
 
         public bool IsStanding()
         {
-            return Process.THISCALL<IntArg>(Address, FuncAddresses.IsStanding) > 0;
+            return Process.THISCALL<BoolArg>(Address, FuncAddresses.IsStanding);
+        }
+
+        public bool IsRunning()
+        {
+            return Process.THISCALL<BoolArg>(Address, FuncAddresses.IsRunning);
         }
 
         public bool CanParade(oCNpc npc)
@@ -247,6 +253,11 @@ namespace Gothic.Objects
         public void StartStandAni()
         {
             Process.THISCALL<NullReturnCall>(Address, 0x6A5060);
+        }
+
+        public void StartAni(int ani, int nextAni)
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x6A3DC0);
         }
 
         public void CheckMeleeWeaponHitsLevel(oCItem item)

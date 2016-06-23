@@ -17,6 +17,8 @@ namespace GUC.WorldObjects
 
         public partial interface IScriptItem : IScriptVob
         {
+            void SetAmount(int amount);
+
             void WriteEquipProperties(PacketWriter stream);
             void ReadEquipProperties(PacketReader stream);
 
@@ -66,18 +68,33 @@ namespace GUC.WorldObjects
         int amount = 1;
         public int Amount { get { return this.amount; } }
 
+        partial void pSetAmount(int amount);
         public void SetAmount(int amount)
         {
-            if (amount < 0 || amount >= MAX_AMOUNT)
+            if (amount >= MAX_AMOUNT)
             {
                 throw new Exception("Item amount is out of range! 0.." + MAX_AMOUNT);
             }
 
-            this.amount = amount;
-
-            if (this.Container != null)
+            pSetAmount(amount);
+            if (this.amount > 0)
             {
-                // send msg
+                this.amount = amount;
+            }
+            else
+            {
+                this.amount = 0;
+                if (this.IsSpawned)
+                {
+                    this.ScriptObject.Despawn();
+                }
+                else if (this.Container != null)
+                {
+                    if (this.Container is NPC)
+                    {
+                        ((NPC)this.Container).ScriptObject.RemoveItem(this);
+                    }
+                }
             }
         }
 

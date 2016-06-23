@@ -37,7 +37,7 @@ namespace GUC.WorldObjects
         }
 
         #endregion
-        
+
         public void UpdatePropertiesFast()
         {
 
@@ -58,7 +58,7 @@ namespace GUC.WorldObjects
 
         internal NPCCell npcCell = null;
         internal int npcCellID = -1;
-        
+
         void UpdateNPCCell()
         {
             int[] coords = NPCCell.GetCoords(this.pos);
@@ -336,7 +336,7 @@ namespace GUC.WorldObjects
             NPCMessage.WriteAniStart(this, ani);
         }
 
-        partial void pStopAnimation(Animation ani,bool fadeOut)
+        partial void pStopAnimation(Animation ani, bool fadeOut)
         {
             NPCMessage.WriteAniStop(this, ani, fadeOut);
         }
@@ -347,17 +347,17 @@ namespace GUC.WorldObjects
 
         partial void pSetFightMode(bool fightMode)
         {
-            if (fightMode)
-            {
-                NPCMessage.WriteSetFightMode(this);
-            }
-            else
-            {
-                NPCMessage.WriteUnsetFightMode(this);
-            }
+            if (this.IsSpawned)
+                if (fightMode)
+                {
+                    NPCMessage.WriteSetFightMode(this);
+                }
+                else
+                {
+                    NPCMessage.WriteUnsetFightMode(this);
+                }
         }
 
         #endregion
-
     }
 }

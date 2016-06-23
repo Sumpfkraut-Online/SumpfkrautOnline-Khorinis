@@ -151,7 +151,7 @@ namespace GUC.WorldObjects
                     NPCCell npcCell;
                     if (npcCells.TryGetValue(coord, out npcCell))
                     {
-                        npcCell.npcs.ForEach(npc => action(npc));
+                        npcCell.npcs.ForEach(action);
                     }
                 }
             }

@@ -186,6 +186,9 @@
     <Compile Include="..\GUCShared\WorldObjects\Instances\NPCInstance.cs">
       <Link>WorldObjects\Instances\NPCInstance.cs</Link>
     </Compile>
+    <Compile Include="..\GUCShared\WorldObjects\Instances\ProjectileInstance.cs">
+      <Link>WorldObjects\Instances\ProjectileInstance.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\WorldObjects\Instances\VobInstance.cs">
       <Link>WorldObjects\Instances\VobInstance.cs</Link>
     </Compile>
@@ -224,6 +227,9 @@
     </Compile>
     <Compile Include="..\GUCShared\WorldObjects\NPC.cs">
       <Link>WorldObjects\NPC.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\WorldObjects\Projectile.cs">
+      <Link>WorldObjects\Projectile.cs</Link>
     </Compile>
     <Compile Include="..\GUCShared\WorldObjects\Time\WorldClock.cs">
       <Link>WorldObjects\Time\WorldClock.cs</Link>
@@ -290,6 +296,7 @@
     <Compile Include="WorldObjects\Instances\Mobs\MobSwitchInstance.Client.cs" />
     <Compile Include="WorldObjects\Instances\Mobs\MobWheelInstance.Client.cs" />
     <Compile Include="WorldObjects\Instances\NPCInstance.Client.cs" />
+    <Compile Include="WorldObjects\Instances\ProjectileInstance.Client.cs" />
     <Compile Include="WorldObjects\Instances\VobInstance.Client.cs" />
     <Compile Include="WorldObjects\Item.Client.cs" />
     <Compile Include="WorldObjects\Mobs\Mob.Client.cs" />
@@ -303,6 +310,7 @@
     <Compile Include="WorldObjects\Mobs\MobSwitch.Client.cs" />
     <Compile Include="WorldObjects\Mobs\MobWheel.Client.cs" />
     <Compile Include="WorldObjects\NPC.Client.cs" />
+    <Compile Include="WorldObjects\Projectile.Client.cs" />
     <Compile Include="WorldObjects\Vob.Client.cs" />
     <Compile Include="WorldObjects\Weather\SkyController.Client.cs" />
     <Compile Include="WorldObjects\World.Client.cs" />

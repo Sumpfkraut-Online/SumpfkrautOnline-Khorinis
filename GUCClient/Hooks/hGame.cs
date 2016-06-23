@@ -140,7 +140,7 @@ namespace GUC.Client.Hooks
                 InputHandler.Update();
                 SoundHandler.Update3DSounds();
                 client.Update();
-                WorldObjects.World.ForEach(w => { w.Clock.UpdateTime(); w.SkyCtrl.UpdateWeather(); });
+                WorldObjects.World.ForEach(w => w.OnTick(GameTime.Ticks));
 
                 if (!ShowConnectionAttempts(client))
                 {

@@ -58,6 +58,7 @@ namespace GUC.Enumeration
 
         //inventory
         InventoryAddMessage, // add item to player inventory
+        InventoryAmountMessage,
         InventoryRemoveMessage, // remove item from player inventory
         InventoryEquipMessage,
         InventoryUnequipMessage,

@@ -7,15 +7,22 @@ using GUC.Network;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.Types;
+using GUC.Scripting;
 using Gothic.Objects;
+using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
+using GUC.Client;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class NPCInst
     {
-        public override void Spawn(WorldInst world)
+        partial void pRemoveItem(ItemInst item)
         {
-            base.Spawn(world);
+        }
+
+        public override void Spawn(WorldInst world, Vec3f pos, Vec3f dir)
+        {
+            base.Spawn(world, pos, dir);
             if (UseCustoms)
             {
                 using (var vec = Gothic.Types.zVec3.Create(ModelScale.X, 1, ModelScale.Z))
@@ -50,8 +57,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             {
                 pUnequipItem(item);
             }
-            
-            switch (slot)
+
+            switch ((SlotNums)slot)
             {
                 case SlotNums.Sword:
                     gNpc.PutInSlot(oCNpc.NPCNodes.Sword, gItem, true);
@@ -61,6 +68,14 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     gNpc.PutInSlot(oCNpc.NPCNodes.Longsword, gItem, true);
                     break;
 
+                case SlotNums.Bow:
+                    gNpc.PutInSlot(oCNpc.NPCNodes.Bow, gItem, true);
+                    break;
+
+                case SlotNums.XBow:
+                    gNpc.PutInSlot(oCNpc.NPCNodes.Crossbow, gItem, true);
+                    break;
+
                 case SlotNums.Torso:
                     gItem.VisualChange.Set(item.Definition.VisualChange);
                     gNpc.PutInSlot(oCNpc.NPCNodes.Torso, gItem, true);
@@ -68,8 +83,18 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
                 case SlotNums.Righthand:
                     gNpc.PutInSlot(oCNpc.NPCNodes.RightHand, gItem, true);
+                    if (item.ItemType == ItemTypes.WepXBow && this.ammo != null)
+                    {
+                        gNpc.PutInSlot(oCNpc.NPCNodes.LeftHand, ammo.BaseInst.gVob, true);
+                    }
                     break;
-
+                case SlotNums.Lefthand:
+                    gNpc.PutInSlot(oCNpc.NPCNodes.LeftHand, gItem, true);
+                    if (item.ItemType == ItemTypes.WepBow && this.ammo != null)
+                    {
+                        gNpc.PutInSlot(oCNpc.NPCNodes.RightHand, ammo.BaseInst.gVob, true);
+                    }
+                    break;
                 default:
                     break;
             }
@@ -79,11 +104,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             if (!this.IsSpawned)
                 return;
-            
+
             oCNpc gNpc = this.BaseInst.gVob;
             oCItem gItem = item.BaseInst.gVob;
 
-            switch (item.BaseInst.Slot)
+            switch ((SlotNums)item.BaseInst.Slot)
             {
                 case SlotNums.Sword:
                     gNpc.RemoveFromSlot(oCNpc.NPCNodes.Sword, true, true);
@@ -93,6 +118,14 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     gNpc.RemoveFromSlot(oCNpc.NPCNodes.Longsword, true, true);
                     break;
 
+                case SlotNums.Bow:
+                    gNpc.RemoveFromSlot(oCNpc.NPCNodes.Bow, true, true);
+                    break;
+
+                case SlotNums.XBow:
+                    gNpc.RemoveFromSlot(oCNpc.NPCNodes.Crossbow, true, true);
+                    break;
+
                 case SlotNums.Torso:
                     gItem.VisualChange.Set(item.Definition.VisualChange);
                     gNpc.RemoveFromSlot(oCNpc.NPCNodes.Torso, true, true);
@@ -100,6 +133,17 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
                 case SlotNums.Righthand:
                     gNpc.RemoveFromSlot(oCNpc.NPCNodes.RightHand, true, true);
+                    if (item.ItemType == ItemTypes.WepXBow)
+                    {
+                        gNpc.RemoveFromSlot(oCNpc.NPCNodes.LeftHand, true, true);
+                    }
+                    break;
+                case SlotNums.Lefthand:
+                    gNpc.RemoveFromSlot(oCNpc.NPCNodes.LeftHand, true, true);
+                    if (item.ItemType == ItemTypes.WepBow)
+                    {
+                        gNpc.RemoveFromSlot(oCNpc.NPCNodes.RightHand, true, true);
+                    }
                     break;
 
                 default:
@@ -109,6 +153,17 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #endregion
 
+        static readonly List<SoundInstance> hitSounds = new List<SoundInstance>()
+        {
+            new SoundInstance("CS_IAM_ME_FL"),
+            new SoundInstance("CS_IAM_ME_FL_A1"),
+            new SoundInstance("CS_IAM_ME_FL_A2"),
+            new SoundInstance("CS_IAM_ME_FL_A3"),
+            new SoundInstance("CS_IAM_ME_FL_A4")
+        };
+
+        static readonly Dictionary<string, SoundInstance> hitScreams = new Dictionary<string, SoundInstance>();
+
         public override void OnReadScriptVobMsg(PacketReader stream)
         {
             var msgID = (Networking.NetVobMsgIDs)stream.ReadByte();
@@ -116,10 +171,28 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             {
                 case Networking.NetVobMsgIDs.HitMessage:
                     var targetID = stream.ReadUShort();
-                    WorldObjects.BaseVob target;
+                    WorldObjects.NPC target;
                     if (WorldInst.Current.BaseWorld.TryGetVob(targetID, out target))
                     {
-                        this.BaseInst.gVob.AniCtrl.CreateHit(target.gVob);
+                        //this.BaseInst.gVob.AniCtrl.CreateHit(target.gVob);
+                        int index = Randomizer.GetInt(hitSounds.Count);
+                        SoundHandler.PlaySound3D(hitSounds[index], target);
+
+                        index = Randomizer.GetInt(6)-2;
+                        if (index > 0)
+                        {
+                            string str = string.Format("SVM_{0}_AARGH_{1}.WAV", (int)this.CustomVoice, index);
+                            SoundInstance scream;
+                            if (!hitScreams.TryGetValue(str, out scream))
+                            {
+                                scream = new SoundInstance(str);
+                                hitScreams.Add(str, scream);
+                            }
+                            SoundHandler.PlaySound3D(scream, target);
+                            Log.Logger.Log(str);
+                        }
+
+                        target.gVob.GetModel().StartAni("T_GOTHIT", 0);
                     }
                     break;
                 case Networking.NetVobMsgIDs.ParryMessage:
@@ -137,6 +210,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public void OnTick(long now)
         {
+            if (this.BaseInst.IsDead)
+                return;
+
             UpdateFightStance();
 
             var fightAni = (ScriptAniJob)this.GetFightAni()?.Ani.AniJob.ScriptObject;
@@ -150,11 +226,43 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             {
                 var gVob = this.BaseInst.gVob;
                 var ai = gVob.HumanAI;
-                if (((gVob.BitField1 & Gothic.Objects.zCVob.BitFlag0.physicsEnabled) != 0) && ai.AboveFloor <= 0)
+                if (((gVob.BitField1 & zCVob.BitFlag0.physicsEnabled) != 0) && ai.AboveFloor <= 0)
                 {
                     // LAND
                     int id = this.Movement == MoveState.Forward ? ai._t_jump_2_runl : ai._t_jump_2_stand;
                     ai.LandAndStartAni(gVob.GetModel().GetAniFromAniID(id));
+                }
+            }
+
+            if (this.drawnWeapon != null)
+            {
+                var gModel = this.BaseInst.gVob.GetModel();
+
+                int aniID;
+                if (this.DrawnWeapon.ItemType == ItemTypes.WepBow)
+                {
+                    aniID = gModel.GetAniIDFromAniName("S_BOWAIM");
+                }
+                else if (this.DrawnWeapon.ItemType == ItemTypes.WepXBow)
+                {
+                    aniID = gModel.GetAniIDFromAniName("S_CBOWAIM");
+                }
+                else
+                {
+                    return;
+                }
+
+                var aa = gModel.GetActiveAni(aniID);
+
+                if (this.isAiming)
+                {
+                    if (aa.Address == 0)
+                        gModel.StartAni(aniID, 0);
+                }
+                else
+                {
+                    if (aa.Address != 0)
+                        gModel.StopAni(aa);
                 }
             }
         }
@@ -218,14 +326,71 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             this.StartAnimation(ani);
         }
 
+        static Client.SoundInstance sfx_DrawGeneric = new Client.SoundInstance("wurschtel.wav");
+
+        static Client.SoundInstance sfx_DrawMetal = new Client.SoundInstance("Drawsound_ME.wav");
+        static Client.SoundInstance sfx_DrawWood = new Client.SoundInstance("Drawsound_WO.wav");
+
+        static Client.SoundInstance sfx_UndrawMetal = new Client.SoundInstance("Undrawsound_ME.wav");
+        static Client.SoundInstance sfx_UndrawWood = new Client.SoundInstance("Undrawsound_WO.wav");
+
+        GUCTimer drawTimer = new GUCTimer();
         public void StartAniDraw(ScriptAni ani, ItemInst item)
         {
             this.StartAnimation(ani);
+            if (item.IsWepMelee)
+            {
+                drawTimer.SetInterval(ani.DrawTime);
+                drawTimer.SetCallback(() =>
+                {
+                    drawTimer.Stop();
+                    if (this.BaseInst.IsDead)
+                        return;
+
+                    if (item.Definition.Material == ItemMaterials.Metal)
+                    {
+                        Client.SoundHandler.PlaySound3D(sfx_DrawMetal, this.BaseInst);
+                    }
+                    else if (item.Definition.Material == ItemMaterials.Wood)
+                    {
+                        Client.SoundHandler.PlaySound3D(sfx_DrawWood, this.BaseInst);
+                    }
+                    else
+                    {
+                        Client.SoundHandler.PlaySound3D(sfx_DrawGeneric, this.BaseInst);
+                    }
+                });
+                drawTimer.Start();
+            }
         }
 
         public void StartAniUndraw(ScriptAni ani, ItemInst item)
         {
             this.StartAnimation(ani);
+            if (item.IsWepMelee)
+            {
+                drawTimer.SetInterval(ani.DrawTime);
+                drawTimer.SetCallback(() =>
+                {
+                    drawTimer.Stop();
+                    if (this.BaseInst.IsDead)
+                        return;
+
+                    if (item.Definition.Material == ItemMaterials.Metal)
+                    {
+                        Client.SoundHandler.PlaySound3D(sfx_UndrawMetal, this.BaseInst);
+                    }
+                    else if (item.Definition.Material == ItemMaterials.Wood)
+                    {
+                        Client.SoundHandler.PlaySound3D(sfx_UndrawWood, this.BaseInst);
+                    }
+                    else
+                    {
+                        Client.SoundHandler.PlaySound3D(sfx_DrawGeneric, this.BaseInst);
+                    }
+                });
+                drawTimer.Start();
+            }
         }
 
         int fmode = 0;
@@ -240,10 +405,14 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 }
                 else
                 {
-                    if (this.drawnWeapon.ItemType == Definitions.ItemTypes.Wep1H)
+                    if (this.drawnWeapon.ItemType == ItemTypes.Wep1H)
                         fmode = 3;
-                    else if (this.drawnWeapon.ItemType == Definitions.ItemTypes.Wep2H)
+                    else if (this.drawnWeapon.ItemType == ItemTypes.Wep2H)
                         fmode = 4;
+                    else if (this.drawnWeapon.ItemType == ItemTypes.WepBow)
+                        fmode = 5;
+                    else if (this.drawnWeapon.ItemType == ItemTypes.WepXBow)
+                        fmode = 6;
                     else
                         fmode = 0;
                 }
@@ -258,12 +427,39 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 var gNpc = this.BaseInst.gVob;
                 var ai = gNpc.HumanAI;
 
+                // check before changing animations, cause gothic only checks the current animation set
+                bool running = ai.IsRunning();
+                bool standing = ai.IsStanding();
+
+                // set fight mode & animations in gothic
                 gNpc.FMode = fmode;
                 ai.SetFightAnis(fmode);
                 ai.SetWalkMode(0);
 
+                // override active animations from the old animation set
+                var gModel = gNpc.GetModel();
+                if (running)
+                {
+                    gModel.StartAni(ai._s_walkl, 0);
+                }
+                else if (standing)
+                {
+                    gModel.StartAni(ai._s_walk, 0);
+                }
+
+                // sets focus and camera modes
+                if (this == Networking.ScriptClient.Client.Character)
+                {
+                    gNpc.SetWeaponMode(fmode);
+                }
+
                 this.fmode = fmode;
             }
+        }
+
+        partial void pDespawn()
+        {
+            drawTimer.Stop();
         }
     }
 }

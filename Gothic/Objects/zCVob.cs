@@ -389,9 +389,9 @@ namespace Gothic.Objects
             return Process.FASTCALL<zCEventManager>(Address, x, FuncAddresses.GetEM);
         }
 
-        public void SetPositionWorld(float[] pos)
+        public void SetPositionWorld(float x, float y, float z)
         {
-            using (zVec3 p = zVec3.Create(pos[0], pos[1], pos[2]))
+            using (zVec3 p = zVec3.Create(x, y, z))
                 SetPositionWorld(p);
         }
         public void SetPositionWorld(zVec3 pos)

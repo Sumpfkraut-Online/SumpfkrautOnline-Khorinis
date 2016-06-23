@@ -52,7 +52,7 @@ namespace GUC.Scripts.TFFA
             ClientInfo ci;
             if (ClientInfos.TryGetValue(cid, out ci))
             {
-                ci.Kills = stream.ReadByte();
+                ci.Kills = stream.ReadSByte();
                 ci.Deaths = stream.ReadByte();
                 ci.Damage = stream.ReadUShort();
                 ci.Ping = stream.ReadUShort();

@@ -20,11 +20,18 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public ItemTypes ItemType { get { return this.Definition.ItemType; } }
 
         public bool IsWeapon { get { return this.Definition.IsWeapon; } }
+        public bool IsWepRanged { get { return this.Definition.IsWepRanged; } }
+        public bool IsWepMelee { get { return this.Definition.IsWepMelee; } }
 
         #endregion
 
         public ItemInst() : base(new WorldObjects.Item())
         {
+        }
+
+        public void SetAmount(int amount)
+        {
+            this.BaseInst.SetAmount(amount);
         }
 
         // Nur das Wichtigste was von aussen zu sehen ist!

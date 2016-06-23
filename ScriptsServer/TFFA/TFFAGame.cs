@@ -20,7 +20,7 @@ namespace GUC.Server.Scripts.TFFA
 
         const long RespawnTime = 10 * TimeSpan.TicksPerSecond;
 
-        const long FightTime = 6 * TimeSpan.TicksPerMinute;
+        const long FightTime = 10 * TimeSpan.TicksPerMinute;
         const long WaitTime = 15 * TimeSpan.TicksPerSecond;
         const long EndTime = 10 * TimeSpan.TicksPerSecond;
         const int KillsToWin = 30;
@@ -113,7 +113,7 @@ namespace GUC.Server.Scripts.TFFA
                 {
                     var c = team1[i];
                     stream.Write((byte)c.ID);
-                    stream.Write((byte)c.Kills);
+                    stream.Write((sbyte)c.Kills);
                     stream.Write((byte)c.Deaths);
                     stream.Write((ushort)c.Damage);
                     stream.Write((ushort)c.BaseClient.GetLastPing());
@@ -123,16 +123,22 @@ namespace GUC.Server.Scripts.TFFA
                 {
                     var c = team2[i];
                     stream.Write((byte)c.ID);
-                    stream.Write((byte)c.Kills);
+                    stream.Write((sbyte)c.Kills);
                     stream.Write((byte)c.Deaths);
                     stream.Write((ushort)c.Damage);
                     stream.Write((ushort)c.BaseClient.GetLastPing());
                 }
 
-                if (single == null || statUpdateTimer.GetRemainingTicks() < ScoreboardUpdateTime / 4) // 25% time left, just send it to everyone
+                if (single == null)
                 {
                     for (int i = 0; i < scoreboardClients.Count; i++)
                         scoreboardClients[i].BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.UNRELIABLE);
+                }
+                else if (statUpdateTimer.GetRemainingTicks() < ScoreboardUpdateTime / 4)  // 25% time left, just send it to everyone
+                {
+                    for (int i = 0; i < scoreboardClients.Count; i++)
+                        scoreboardClients[i].BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.UNRELIABLE);
+                    statUpdateTimer.Restart();
                 }
                 else
                 {
@@ -178,7 +184,7 @@ namespace GUC.Server.Scripts.TFFA
                     else if (client.Team == Team.NL)
                         ALKills++;
                 }
-                
+
                 if (ALKills >= KillsToWin || NLKills >= KillsToWin)
                     PhaseEnd();
             }
@@ -248,20 +254,22 @@ namespace GUC.Server.Scripts.TFFA
                 client.Kills = 0;
                 client.Damage = 0;
             });
-            RemoveAllPlayers();
+            RemoveAllNPCs();
             ALKills = 0;
             NLKills = 0;
 
             gameTimer.Restart();
         }
 
-        static void RemoveAllPlayers()
+        static void RemoveAllNPCs()
         {
             WorldInst.Current.BaseWorld.ForEachVob(v =>
-            {
-                if (v is GUC.WorldObjects.NPC && !((GUC.WorldObjects.NPC)v).IsPlayer)
-                    v.Despawn();
-            });
+           {
+               if (!(v is GUC.WorldObjects.NPC) || !((GUC.WorldObjects.NPC)v).IsPlayer)
+               {
+                   v.Despawn();
+               }
+           });
         }
 
         public static void PhaseFight()
@@ -280,7 +288,7 @@ namespace GUC.Server.Scripts.TFFA
                 client.Kills = 0;
                 client.Damage = 0;
             });
-            RemoveAllPlayers();
+            RemoveAllNPCs();
             ALKills = 0;
             NLKills = 0;
 
@@ -376,10 +384,12 @@ namespace GUC.Server.Scripts.TFFA
             npc.Fatness = rand.Next(-100, 250) / 100.0f;
 
             npc.ModelScale = new Vec3f(rand.Next(95, 105) / 100.0f, rand.Next(95, 105) / 100.0f, rand.Next(95, 105) / 100.0f);
-            
+
             npc.UseCustoms = true;
 
             ItemInst weapon;
+            ItemInst rangedWep;
+            ItemInst ammo;
             ItemInst armor;
             ScriptOverlay overlay;
             Tuple<Vec3f, Vec3f> spawnPoint;
@@ -390,12 +400,16 @@ namespace GUC.Server.Scripts.TFFA
                 {
                     weapon = new ItemInst(ItemDef.Get<ItemDef>("2hschwert"));
                     armor = new ItemInst(ItemDef.Get<ItemDef>("itar_Garde"));
+                    rangedWep = new ItemInst(ItemDef.Get<ItemDef>("itrw_crossbow"));
+                    ammo = new ItemInst(ItemDef.Get<ItemDef>("itrw_bolt"));
                     def.Model.TryGetOverlay("2HST2", out overlay);
                 }
                 else
                 {
                     weapon = new ItemInst(ItemDef.Get<ItemDef>("1hschwert"));
                     armor = new ItemInst(ItemDef.Get<ItemDef>("itar_schatten"));
+                    rangedWep = new ItemInst(ItemDef.Get<ItemDef>("itrw_crossbow"));
+                    ammo = new ItemInst(ItemDef.Get<ItemDef>("itrw_bolt"));
                     def.Model.TryGetOverlay("1HST2", out overlay);
                 }
                 spawnPoint = ALSpawns[rand.Next(0, 6)];
@@ -406,12 +420,16 @@ namespace GUC.Server.Scripts.TFFA
                 {
                     weapon = new ItemInst(ItemDef.Get<ItemDef>("2haxt"));
                     armor = new ItemInst(ItemDef.Get<ItemDef>("itar_söldner"));
+                    rangedWep = new ItemInst(ItemDef.Get<ItemDef>("itrw_longbow"));
+                    ammo = new ItemInst(ItemDef.Get<ItemDef>("itrw_arrow"));
                     def.Model.TryGetOverlay("2HST1", out overlay);
                 }
                 else
                 {
                     weapon = new ItemInst(ItemDef.Get<ItemDef>("1haxt"));
                     armor = new ItemInst(ItemDef.Get<ItemDef>("itar_bandit"));
+                    rangedWep = new ItemInst(ItemDef.Get<ItemDef>("itrw_longbow"));
+                    ammo = new ItemInst(ItemDef.Get<ItemDef>("itrw_arrow"));
                     def.Model.TryGetOverlay("1HST1", out overlay);
                 }
                 spawnPoint = NLSpawns[rand.Next(0, 6)];
@@ -419,6 +437,13 @@ namespace GUC.Server.Scripts.TFFA
 
             npc.AddItem(weapon);
             npc.EquipItem(weapon); // 1 = DrawnWeapon
+
+            npc.AddItem(rangedWep);
+            npc.EquipItem(rangedWep);
+
+            ammo.BaseInst.SetAmount(50);
+            npc.AddItem(ammo);
+            npc.EquipItem(ammo);
 
             npc.AddItem(armor);
             npc.EquipItem(armor);
@@ -434,5 +459,127 @@ namespace GUC.Server.Scripts.TFFA
         }
 
         #endregion
+
+
+        public static void SpawnDummy(TFFAClient client)
+        {
+            var def = BaseVobDef.Get<NPCDef>("player");
+            NPCInst npc = new NPCInst(def);
+
+            npc.CustomBodyTex = (HumBodyTexs)BodyTex++;
+            if (BodyTex == 4) BodyTex = 8;
+            if (BodyTex == 11) BodyTex = 0;
+
+            npc.CustomHeadMesh = (HumHeadMeshs)HeadMesh++;
+            if (HeadMesh == 6) HeadMesh = 0;
+
+            if (npc.CustomBodyTex == HumBodyTexs.M_Black)
+                npc.CustomHeadTex = (HumHeadTexs)rand.Next(129, 137);
+            else if (npc.CustomBodyTex == HumBodyTexs.M_Latino)
+                npc.CustomHeadTex = (HumHeadTexs)rand.Next(120, 129);
+            else if (npc.CustomBodyTex == HumBodyTexs.M_Pale)
+                npc.CustomHeadTex = (HumHeadTexs)rand.Next(41, 58);
+            else
+                npc.CustomHeadTex = (HumHeadTexs)rand.Next(58, 120);
+
+            npc.CustomVoice = (HumVoices)rand.Next(1, 15);
+            npc.Fatness = rand.Next(-100, 250) / 100.0f;
+
+            npc.ModelScale = new Vec3f(rand.Next(95, 105) / 100.0f, rand.Next(95, 105) / 100.0f, rand.Next(95, 105) / 100.0f);
+
+            npc.UseCustoms = true;
+
+            ItemInst weapon;
+            ItemInst rangedWep;
+            ItemInst ammo;
+            ItemInst armor;
+            ScriptOverlay overlay;
+
+            if (client.Team == Team.AL)
+            {
+                if (client.Class == PlayerClass.Heavy)
+                {
+                    weapon = new ItemInst(ItemDef.Get<ItemDef>("2hschwert"));
+                    armor = new ItemInst(ItemDef.Get<ItemDef>("itar_Garde"));
+                    rangedWep = new ItemInst(ItemDef.Get<ItemDef>("itrw_crossbow"));
+                    ammo = new ItemInst(ItemDef.Get<ItemDef>("itrw_bolt"));
+                    def.Model.TryGetOverlay("2HST2", out overlay);
+                }
+                else
+                {
+                    weapon = new ItemInst(ItemDef.Get<ItemDef>("1hschwert"));
+                    armor = new ItemInst(ItemDef.Get<ItemDef>("itar_schatten"));
+                    rangedWep = new ItemInst(ItemDef.Get<ItemDef>("itrw_crossbow"));
+                    ammo = new ItemInst(ItemDef.Get<ItemDef>("itrw_bolt"));
+                    def.Model.TryGetOverlay("1HST2", out overlay);
+                }
+            }
+            else
+            {
+                if (client.Class == PlayerClass.Heavy)
+                {
+                    weapon = new ItemInst(ItemDef.Get<ItemDef>("2haxt"));
+                    armor = new ItemInst(ItemDef.Get<ItemDef>("itar_söldner"));
+                    rangedWep = new ItemInst(ItemDef.Get<ItemDef>("itrw_longbow"));
+                    ammo = new ItemInst(ItemDef.Get<ItemDef>("itrw_arrow"));
+                    def.Model.TryGetOverlay("2HST1", out overlay);
+                }
+                else
+                {
+                    weapon = new ItemInst(ItemDef.Get<ItemDef>("1haxt"));
+                    armor = new ItemInst(ItemDef.Get<ItemDef>("itar_bandit"));
+                    rangedWep = new ItemInst(ItemDef.Get<ItemDef>("itrw_longbow"));
+                    ammo = new ItemInst(ItemDef.Get<ItemDef>("itrw_arrow"));
+                    def.Model.TryGetOverlay("1HST1", out overlay);
+                }
+            }
+
+            npc.AddItem(weapon);
+            npc.EquipItem(weapon); // 1 = DrawnWeapon
+
+            npc.AddItem(rangedWep);
+            npc.EquipItem(rangedWep);
+
+            ammo.BaseInst.SetAmount(50);
+            npc.AddItem(ammo);
+            npc.EquipItem(ammo);
+
+            npc.AddItem(armor);
+            npc.EquipItem(armor);
+
+            if (overlay != null)
+            {
+                npc.ApplyOverlay(overlay);
+            }
+
+
+            switch (Randomizer.GetInt(0, 6))
+            {
+                case 0:
+                case 1:
+                    npc.EquipItem((int)NPCInst.SlotNums.Righthand, npc.MeleeWeapon);
+                    npc.SetFightMode(true);
+                    break;
+                case 2:
+                case 3:
+                    if (npc.RangedWeapon.ItemType == ItemTypes.WepBow)
+                        npc.EquipItem((int)NPCInst.SlotNums.Lefthand, npc.RangedWeapon);
+                    else
+                        npc.EquipItem((int)NPCInst.SlotNums.Righthand, npc.RangedWeapon);
+                    npc.SetFightMode(true);
+                    break;
+                case 4:
+                case 5:
+                    if (npc.RangedWeapon.ItemType == ItemTypes.WepBow)
+                        npc.EquipItem((int)NPCInst.SlotNums.Lefthand, npc.RangedWeapon);
+                    else
+                        npc.EquipItem((int)NPCInst.SlotNums.Righthand, npc.RangedWeapon);
+                    npc.SetFightMode(true);
+                    npc.IsAiming = true;
+                    break;
+            }
+
+            npc.Spawn(WorldInst.Current, client.Character.BaseInst.GetPosition(), client.Character.BaseInst.GetDirection());
+        }
     }
 }

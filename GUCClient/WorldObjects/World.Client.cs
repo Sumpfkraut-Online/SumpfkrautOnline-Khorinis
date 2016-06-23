@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Network;
-using GUC.Enumeration;
-using RakNet;
 using Gothic;
-using Gothic.Objects;
+using GUC.Types;
 
 namespace GUC.WorldObjects
 {
@@ -53,20 +50,35 @@ namespace GUC.WorldObjects
 
         partial void pAddVob(BaseVob vob)
         {
+            Vec3f pos = vob.GetPosition();
+            Vec3f dir = vob.GetDirection();
+
             vob.gvob = vob.Instance.CreateVob(vob.gvob);
 
             oCGame.GetWorld().AddVob(vob.gVob);
             vobAddr.Add(vob.gvob.Address, vob);
 
-            vob.SetPosition(vob.GetPosition());
-            vob.SetDirection(vob.GetDirection());
+            vob.SetPosition(pos);
+            vob.SetDirection(dir);
         }
 
         partial void pRemoveVob(BaseVob vob)
         {
             var gVob = vob.gvob;
+
+            // update position & direction a last time
+            vob.GetPosition();
+            vob.GetDirection();
+
+            // remove vob from gothic world
             oCGame.GetWorld().RemoveVob(gVob);
+
+            // remove vob from guc vob address dictionary
             vobAddr.Remove(gVob.Address);
+
+            vob.gvob = null;
+
+            // FIXME: Free allocated memory
         }
     }
 }

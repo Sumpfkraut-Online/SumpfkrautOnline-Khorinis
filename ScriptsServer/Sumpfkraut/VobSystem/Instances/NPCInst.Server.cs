@@ -158,11 +158,28 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             comboTimer.Stop();
             if (this.Movement != MoveState.Stand)
             {
-                this.StopAnimation(this.GetFightAni());
+                var aa = this.GetFightAni();
+                if (aa != null)
+                    this.StopAnimation(aa);
             }
             else
             {
                 canCombo = true;
+            }
+        }
+
+        public void Hit(NPCInst attacker, int damage)
+        {
+            var strm = this.BaseInst.GetScriptVobStream();
+            strm.Write((byte)Networking.NetVobMsgIDs.HitMessage);
+            strm.Write((ushort)this.ID);
+            this.BaseInst.SendScriptVobStream(strm);
+            
+            if (damage > 0)
+            {
+                this.regenTimer.Stop();
+                if (sOnHit != null)
+                    sOnHit(attacker, this, damage);
             }
         }
 
@@ -223,21 +240,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                                         }
                                         else // HIT
                                         {
-                                            var strm = this.BaseInst.GetScriptVobStream();
-                                            strm.Write((byte)Networking.NetVobMsgIDs.HitMessage);
-                                            strm.Write((ushort)npc.ID);
-                                            this.BaseInst.SendScriptVobStream(strm);
-
                                             int damage = (this.DrawnWeapon.Definition.Damage + attackerAni.AttackBonus) - target.Armor.Definition.Protection;
                                             if (this.GetJumpAni() != null || this.Environment == EnvironmentState.InAir) // Jump attaaaack!
                                                 damage += 5;
 
-                                            if (damage > 0)
-                                            {
-                                                target.regenTimer.Stop();
-                                                if (sOnHit != null)
-                                                    sOnHit(this, target, damage);
-                                            }
+                                            target.Hit(this, damage);
                                         }
                                     }
                                 }
@@ -261,25 +268,26 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             ScriptAni anim = (ScriptAni)ani.ScriptObject;
             ScriptAniJob job = anim.AniJob;
 
-            if ((this.Environment > EnvironmentState.Wading || this.GetJumpAni() != null) && !job.IsAttackRun)
-            {
-                return;
-            }
-
-            if (!this.canCombo) // can't combo yet
-                return;
-
             if (job.IsFightMove) // FIGHT MOVE
             {
+                if (!this.canCombo) // can't combo yet
+                    return;
+
+                if (this.GetDrawAni() != null || this.GetUndrawAni() != null || this.GetClimbAni() != null)
+                    return;
+
+                if (this.GetJumpAni() != null && !job.IsAttackRun)
+                    return;
+
                 if (job.IsAttack) // new move is an attack
                 {
-                    ScriptAniJob curAni = (ScriptAniJob)this.GetFightAni()?.Ani.AniJob.ScriptObject;
-                    if (curAni != null && curAni.IsAttack) // currently in an attack
+                    ScriptAniJob curFightAni = (ScriptAniJob)this.GetFightAni()?.Ani.AniJob.ScriptObject;
+                    if (curFightAni != null && curFightAni.IsAttack) // currently in an attack
                     {
-                        if (curAni == job) // same attack
+                        if (curFightAni == job) // same attack
                             return;
 
-                        if (curAni.IsAttackCombo && job.ID <= curAni.ID)
+                        if (curFightAni.IsAttackCombo && job.ID <= curFightAni.ID)
                             return;
                     }
 
@@ -287,32 +295,46 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     hitTimer.Start();
                 }
 
-                if (job.IsAttack)
-                {
-                    comboTimer.SetInterval(anim.ComboTime);
-                    comboTimer.Start();
-                }
+                comboTimer.SetInterval(anim.ComboTime);
+                comboTimer.Start();
 
                 this.StartAnimation(anim, () => this.canCombo = true);
                 this.canCombo = false;
             }
             else if (job.IsJump)
             {
+                if (this.Environment > EnvironmentState.Wading)
+                    return;
+
                 if (GetActiveAniFromLayerID(anim.Layer) != null)
                     return;
 
                 this.StartAniJump(anim, 50, 300);
             }
+            else if (job.ID == (int)SetAnis.BowAim || job.ID == (int)SetAnis.XBowAim)
+            {
+                if (this.isAiming || this.IsInAni() || this.Environment > EnvironmentState.Wading || this.ammo == null)
+                    return;
+
+                this.StartAnimation(anim);
+            }
+            else if (job.ID == (int)SetAnis.BowLower || job.ID == (int)SetAnis.XBowLower)
+            {
+                if (!this.isAiming || this.IsInAni() || this.Environment > EnvironmentState.Wading || this.ammo == null)
+                    return;
+
+                this.StartAnimation(anim);
+            }
         }
 
         public void OnCmdAniStart(Animations.Animation ani, object[] netArgs)
         {
-            if (GetActiveAniFromLayerID(ani.LayerID) != null)
-                return;
-
             ScriptAni a = (ScriptAni)ani.ScriptObject;
             if (a.AniJob.IsClimb)
             {
+                if (this.IsInAni())
+                    return;
+
                 this.StartAniClimb(a, (WorldObjects.NPC.ClimbingLedge)netArgs[0]);
             }
             else if (a.AniJob.IsDraw)
@@ -321,7 +343,14 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 WorldObjects.Item item;
                 if (this.BaseInst.Inventory.TryGetItem(itemID, out item) && item.IsEquipped)
                 {
-                    this.StartAniDraw(a, (ItemInst)item.ScriptObject);
+                    var ii = (ItemInst)item.ScriptObject;
+                    ScriptAniJob job;
+                    ScriptAni drawAni;
+                    if (this.TryGetDrawFromType(ii.ItemType, out job, this.Movement != MoveState.Stand || this.Environment != EnvironmentState.None)
+                        && this.TryGetAniFromJob(job, out drawAni) && this.GetActiveAniFromLayerID(drawAni.Layer) == null)
+                    {
+                        this.StartAniDraw(drawAni, ii);
+                    }
                 }
             }
             else if (a.AniJob.IsUndraw)
@@ -330,21 +359,73 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 WorldObjects.Item item;
                 if (this.BaseInst.Inventory.TryGetItem(itemID, out item) && item.IsEquipped)
                 {
-                    this.StartAniUndraw(a, (ItemInst)item.ScriptObject);
+                    var ii = (ItemInst)item.ScriptObject;
+                    ScriptAniJob job;
+                    ScriptAni drawAni;
+                    if (this.TryGetUndrawFromType(ii.ItemType, out job, this.Movement != MoveState.Stand || this.Environment != EnvironmentState.None)
+                        && this.TryGetAniFromJob(job, out drawAni) && this.GetActiveAniFromLayerID(drawAni.Layer) == null)
+                    {
+                        this.StartAniUndraw(drawAni, ii);
+                    }
                 }
             }
+            else if (a.AniJob.ID == (int)SetAnis.BowReload || a.AniJob.ID == (int)SetAnis.XBowReload)
+            {
+                int lifeDist = (int)netArgs[0];
+                Vec3f direction = ((Vec3f)netArgs[1]).Normalise();
 
+                ProjDef projDef;
+                if (this.ammo.ItemType == ItemTypes.AmmoBow)
+                {
+                    projDef = ProjDef.Get<ProjDef>("arrow");
+                }
+                else
+                {
+                    projDef = ProjDef.Get<ProjDef>("bolt");
+                }
+
+                ProjInst proj = new ProjInst(projDef);
+                proj.BaseInst.LifeDistance = lifeDist;
+                Vec3f projPos = this.BaseInst.GetPosition();
+                projPos.Y += 30;
+
+                proj.Damage = this.drawnWeapon.Definition.Damage + this.ammo.Definition.Damage;
+                proj.Shooter = this;
+
+                proj.Spawn(this.World, projPos, direction);
+
+                int ammoNum = this.ammo.BaseInst.Amount - 1;
+                this.ammo.BaseInst.SetAmount(ammoNum);
+
+                if (ammoNum == 0)
+                {
+                    ScriptAniJob undrawJob;
+                    ScriptAni undraw;
+                    if (this.TryGetUndrawFromType(this.drawnWeapon.ItemType, out undrawJob) && this.TryGetAniFromJob(undrawJob, out undraw))
+                    {
+                        this.StartAniUndraw(undraw, this.drawnWeapon);
+                    }
+                    else
+                    {
+                        this.EquipItem(this.drawnWeapon);
+                    }
+                }
+                else
+                {
+                    this.StartAnimation(ani);
+                }
+            }
         }
 
         public void OnCmdAniStop(bool fadeOut)
         {
         }
 
-        public override void Despawn()
+        partial void pDespawn()
         {
+            drawTimer.Stop();
             hitTimer.Stop();
             comboTimer.Stop();
-            base.Despawn();
         }
 
         public void StartAniJump(ScriptAni ani, int fwdVelocity, int upVelocity)
@@ -358,14 +439,65 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             this.canCombo = false;
         }
 
+        GUCTimer drawTimer = new GUCTimer();
+
         public void StartAniDraw(ScriptAni ani, ItemInst item)
         {
+            if (item.IsWepRanged)
+            {
+                ItemInst ammo = this.ammo;
+                if ((ammo == null || ammo.BaseInst.Amount == 0
+                     || (item.ItemType == ItemTypes.WepBow && ammo.ItemType != ItemTypes.AmmoBow)
+                     || (item.ItemType == ItemTypes.WepXBow && ammo.ItemType != ItemTypes.AmmoXBow)))
+                {
+                    return;
+                }
+            }
+
             this.BaseInst.StartAnimation(ani.BaseAni, null, item.ID);
+
+            drawTimer.SetInterval(ani.DrawTime);
+            drawTimer.SetCallback(() =>
+            {
+                drawTimer.Stop();
+
+                if (this.BaseInst.IsDead)
+                    return;
+
+                if (item.ItemType == ItemTypes.WepBow)
+                {
+                    this.EquipItem((int)SlotNums.Lefthand, item);
+                }
+                else
+                {
+                    this.EquipItem((int)SlotNums.Righthand, item);
+                }
+
+                if (item.IsWeapon)
+                    this.SetFightMode(true);
+            });
+
+            drawTimer.Start();
         }
 
         public void StartAniUndraw(ScriptAni ani, ItemInst item)
         {
             this.BaseInst.StartAnimation(ani.BaseAni, null, item.ID);
+
+            drawTimer.SetInterval(ani.DrawTime);
+            drawTimer.SetCallback(() =>
+            {
+                drawTimer.Stop();
+
+                if (this.BaseInst.IsDead)
+                    return;
+
+                this.EquipItem(item);
+                if (item.IsWeapon)
+                    this.SetFightMode(false);
+            });
+
+            drawTimer.Start();
         }
     }
 }

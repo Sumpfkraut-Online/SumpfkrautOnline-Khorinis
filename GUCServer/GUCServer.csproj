@@ -203,6 +203,9 @@
     <Compile Include="..\GUCShared\WorldObjects\Instances\NPCInstance.cs">
       <Link>WorldObjects\Instances\NPCInstance.cs</Link>
     </Compile>
+    <Compile Include="..\GUCShared\WorldObjects\Instances\ProjectileInstance.cs">
+      <Link>WorldObjects\Instances\ProjectileInstance.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\WorldObjects\Instances\VobInstance.cs">
       <Link>WorldObjects\Instances\VobInstance.cs</Link>
     </Compile>
@@ -241,6 +244,9 @@
     </Compile>
     <Compile Include="..\GUCShared\WorldObjects\NPC.cs">
       <Link>WorldObjects\NPC.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\WorldObjects\Projectile.cs">
+      <Link>WorldObjects\Projectile.cs</Link>
     </Compile>
     <Compile Include="..\GUCShared\WorldObjects\Time\WorldClock.cs">
       <Link>WorldObjects\Time\WorldClock.cs</Link>
@@ -285,6 +291,7 @@
     <Compile Include="WorldObjects\Instances\BaseVobInstance.Server.cs" />
     <Compile Include="WorldObjects\Instances\Mobs\MobBedInstance.Server.cs" />
     <Compile Include="WorldObjects\Mobs\MobBed.Server.cs" />
+    <Compile Include="WorldObjects\Projectile.Server.cs" />
     <Compile Include="WorldObjects\Vob.Server.cs" />
     <Compile Include="WorldObjects\Item.Server.cs" />
     <Compile Include="WorldObjects\Instances\ItemInstance.Server.cs" />

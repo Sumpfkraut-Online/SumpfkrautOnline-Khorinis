@@ -11,6 +11,8 @@ namespace GUC.Enumeration
         NPC,
         Item,
 
+        Projectile,
+
         Mob,
         MobInter,
         MobFire,

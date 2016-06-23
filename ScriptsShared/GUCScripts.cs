@@ -60,6 +60,9 @@ namespace GUC.Scripts
                 case VobTypes.NPC:
                     vob = new NPCInst();
                     break;
+                case VobTypes.Projectile:
+                    vob = new ProjInst();
+                    break;
                 default:
                     throw new Exception("Unsupported VobType: " + type);
             }
@@ -80,6 +83,9 @@ namespace GUC.Scripts
                     break;
                 case VobTypes.Item:
                     def = new ItemDef();
+                    break;
+                case VobTypes.Projectile:
+                    def = new ProjDef();
                     break;
                 default:
                     throw new Exception("Unsupported VobType: " + type);
