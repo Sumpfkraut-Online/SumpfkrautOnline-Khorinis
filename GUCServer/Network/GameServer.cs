@@ -141,7 +141,7 @@ namespace GUC.Server.Network
 
 
         /**
-         *   Game loop which receives data from clients and redirects/reacts accordingly.
+         *   Gameloop which receives data from clients and redirects/reacts accordingly.
          *   In this surrounding loop data is received from individual clients and the server reacts depending 
          *   on the network message types (see class attributes for these types). This is done for each
          *   network message received by individual clients until there is no more (buffered) message
@@ -270,7 +270,6 @@ namespace GUC.Server.Network
             }
         }
 
-
         public static void DisconnectClient(GameClient client)
         {
             if (client == null)
@@ -302,6 +301,8 @@ namespace GUC.Server.Network
             clientDict.Remove(client.guid.g);
             client.guid.Dispose();
             client.systemAddress.Dispose();
+            //TODO
+            ChatMessage.SendPlayerDespawned(character.CustomName);
         }
 
         internal static PacketWriter SetupStream(NetworkIDs ID)

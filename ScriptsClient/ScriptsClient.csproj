@@ -125,6 +125,7 @@
     <Compile Include="GUCScripts.Client.cs" />
     <Compile Include="Sumpfkraut\InputControl.cs" />
     <Compile Include="Sumpfkraut\Menus\AnimationMenu.cs" />
+    <Compile Include="Sumpfkraut\Menus\ChatMenu.cs" />
     <Compile Include="Sumpfkraut\Menus\DropItemMenu.cs" />
     <Compile Include="Sumpfkraut\Menus\GUCMenu.cs" />
     <Compile Include="Sumpfkraut\Menus\MainMenus\CharCreationMenu.cs" />

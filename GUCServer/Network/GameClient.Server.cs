@@ -302,6 +302,9 @@ namespace GUC.Network
                     WorldMessage.WriteCellMessage(new NetCell[0], oldCells, oldVobCount, this);
                 }
 
+                //TODO
+                //ChatMessage.SendPlayerSpawned(npc.CustomName);
+
                 npc.client = this;
                 this.character = npc;
             }

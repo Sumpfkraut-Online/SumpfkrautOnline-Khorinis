@@ -21,6 +21,7 @@ namespace GUC.Client.GUI
 
         bool shown;
 
+        //TODO: umbenennen oder wat
         public static GUCVisual Create(string text, int x, int y)
         {
             //If you simply want one text line, use this.
@@ -130,6 +131,8 @@ namespace GUC.Client.GUI
                 shown = true;
             }
         }
+
+        //TODO
         //FIXME: Something's crashy here
         public override void Hide()
         {
@@ -149,10 +152,19 @@ namespace GUC.Client.GUI
             viewText.Color.B = color.B;
             viewText.Color.A = color.A;
         }
+
+        //TODO: öhm
+        public ColorRGBA GetColor()
+        {
+            return new ColorRGBA(viewText.Color.R,
+                viewText.Color.G,
+                viewText.Color.B,
+                viewText.Color.A);
+        }
         #endregion
 
-        #region Position & Size
-        public void SetPosX(int val)
+    #region Position & Size
+    public void SetPosX(int val)
         {
             vpos[0] = PixelToVirtualX(val) * 0x2000 / parentSize[0];
             viewText.PosX = vpos[0];

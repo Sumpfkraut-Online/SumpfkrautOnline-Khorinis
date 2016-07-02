@@ -6,6 +6,9 @@ using WinApi.User.Enumeration;
 
 namespace GUC.Client.Scripts.Sumpfkraut.Menus
 {
+
+    //TODO: public static ChatMenu Chat = ChatMenu.GetChat();
+    //https://github.com/Sumpfkraut-Online/SumpfkrautOnline-Khorinis/blob/492c6700c5f260f94bc9c61655e3b28b80bbbb7e/GMP/Menus/GUCMenus.cs
     abstract class GUCMenu
     {
         private static readonly List<GUCMenu> activeMenus = new List<GUCMenu>();

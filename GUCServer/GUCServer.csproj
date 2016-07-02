@@ -269,6 +269,7 @@
     <Compile Include="Animations\AniJob.Server.cs" />
     <Compile Include="Models\Model.Server.cs" />
     <Compile Include="Network\GameClient.Server.cs" />
+    <Compile Include="Network\Messages\ChatMessage.cs" />
     <Compile Include="Network\Messages\SpectatorMessage.cs" />
     <Compile Include="Network\Messages\TradeMessage.cs" />
     <Compile Include="Network\Messages\ConnectionMessage.cs" />
@@ -277,6 +278,7 @@
     <Compile Include="Network\Messages\VobMessage.cs" />
     <Compile Include="Network\Messages\WorldMessage.cs" />
     <Compile Include="Options\ServerOptions.cs" />
+    <Compile Include="Scripting\Chat.cs" />
     <Compile Include="Scripting\ScriptInterface.Server.cs" />
     <Compile Include="TCPStatus.cs" />
     <Compile Include="Utilities\ExtendedObject.Server.cs" />

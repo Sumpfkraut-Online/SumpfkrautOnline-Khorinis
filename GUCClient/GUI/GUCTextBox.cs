@@ -57,7 +57,7 @@ namespace GUC.Client.GUI
             {
                 input.Clear();
                 input.Append(value);
-                cursorPos = 0;
+                cursorPos = input.Length;
                 UpdateInputVisual();
             }
         }

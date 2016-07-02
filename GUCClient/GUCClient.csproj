@@ -248,6 +248,7 @@
     </Compile>
     <Compile Include="GUI\GUCInventory.cs" />
     <Compile Include="GUI\GUCTextBox.cs" />
+    <Compile Include="GUI\GUCTextList.cs" />
     <Compile Include="GUI\GUCView.cs" />
     <Compile Include="GUI\GUCVisual.cs" />
     <Compile Include="GUI\GUCVisualText.cs" />
@@ -260,6 +261,7 @@
     <Compile Include="Barrier.cs" />
     <Compile Include="InputHandler.cs" />
     <Compile Include="Network\GameClient.Client.cs" />
+    <Compile Include="Network\Messages\ChatMessage.cs" />
     <Compile Include="Network\Messages\ConnectionMessage.cs" />
     <Compile Include="Network\Messages\InstanceMessage.cs" />
     <Compile Include="Network\Messages\InventoryMessage.cs" />

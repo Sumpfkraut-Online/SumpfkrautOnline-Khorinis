@@ -62,5 +62,30 @@ namespace GUC.Enumeration
         InventoryRemoveMessage, // remove item from player inventory
         InventoryEquipMessage,
         InventoryUnequipMessage,
+        //TODO
+        //TradeMessage,
+        ChatMessage
+
+        /*
+        PlayerSpawn,
+        PlayerDespawn,
+
+        @@ -109,11 +110,14 @@ public enum ChatTextType : byte
+             OOCGlobal,
+             PM,
+             OOCEvent,
+            PlayerSpawn,
+            PlayerDespawn,
+             MAX_OOC,
+ 
+             //Add to both
+             _Error,
+            _Hint
+            _Hint,
+            _None,
+ 
+     }
+    */
+
     }
 }
