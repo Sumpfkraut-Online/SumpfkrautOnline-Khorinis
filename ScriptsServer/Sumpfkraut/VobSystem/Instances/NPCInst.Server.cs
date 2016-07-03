@@ -25,7 +25,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             {
                 if (pos.Y < -400)
                 {
-                    Server.Scripts.TFFA.TFFAGame.Kill((TFFA.TFFAClient)this.BaseInst.Client.ScriptObject, true);
+                    TFFA.TFFAGame.Kill((TFFA.TFFAClient)this.BaseInst.Client.ScriptObject, true);
                 }
                 else
                 {
@@ -124,7 +124,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public void OnCmdMove(MoveState state)
         {
             //TFFA
-            if (Server.Scripts.TFFA.TFFAGame.Status == TFFA.TFFAPhase.Waiting)
+            if (TFFA.TFFAGame.Status == TFFA.TFFAPhase.Waiting)
                 return;
 
             if (state == this.Movement)
@@ -262,7 +262,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public void OnCmdAniStart(Animations.Animation ani)
         {
             //TFFA
-            if (Server.Scripts.TFFA.TFFAGame.Status == TFFA.TFFAPhase.Waiting)
+            if (TFFA.TFFAGame.Status == TFFA.TFFAPhase.Waiting)
                 return;
 
             ScriptAni anim = (ScriptAni)ani.ScriptObject;

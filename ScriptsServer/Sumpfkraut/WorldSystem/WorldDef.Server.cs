@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace GUC.Server.Scripts.Sumpfkraut.WorldSystem
+namespace GUC.Scripts.Sumpfkraut.WorldSystem
 {
-    class WorldDef
+
+    public partial class WorldDef
     {
     }
+
 }

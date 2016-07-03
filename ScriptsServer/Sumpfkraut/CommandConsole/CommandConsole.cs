@@ -23,15 +23,15 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
         public static readonly Dictionary<string, ProcessCommand> CmdToProcessFunc =
             new Dictionary<string, ProcessCommand>()
             {
-                { "/GETPLAYERS", TestCommands.GetPlayerListTFFA },
-                { "/BAN", TestCommands.BanPlayersTFFA },
-                { "/KICK", TestCommands.KickPlayersTFFA },
-                { "/KILL", TestCommands.KillPlayersTFFA },
-                { "/SETTIME", TestCommands.SetIGTimeTFFA },
-                { "/SETWT", TestCommands.SetIGWeatherTypeTFFA },
-                { "/SETRAIN", TestCommands.SetIGRainTimeTFFA },
-                { "/SWITCHTEAM", TestCommands.SwitchTeamTFFA },
-                { "/SETPHASE", TestCommands.SetPhaseTFFA },
+                { "/GETPLAYERS", TFFA.TFFACommands.GetPlayerListTFFA },
+                { "/BAN", TFFA.TFFACommands.BanPlayersTFFA },
+                { "/KICK", TFFA.TFFACommands.KickPlayersTFFA },
+                { "/KILL", TFFA.TFFACommands.KillPlayersTFFA },
+                { "/SETTIME", TFFA.TFFACommands.SetIGTimeTFFA },
+                { "/SETWT", TFFA.TFFACommands.SetIGWeatherTypeTFFA },
+                { "/SETRAIN", TFFA.TFFACommands.SetIGRainTimeTFFA },
+                { "/SWITCHTEAM", TFFA.TFFACommands.SwitchTeamTFFA },
+                { "/SETPHASE", TFFA.TFFACommands.SetPhaseTFFA },
                 //{ "/G", TestCommands.SetIgTime }, // send global text-message (TO DO)
                 //{ "/GETPOS", TestCommands.SetIgTime }, // get pos. of youself or another player/vob? (TO DO)
                 //{ "/KILL", TestCommands.SetIgTime }, // kill vob in focus (TO DO)

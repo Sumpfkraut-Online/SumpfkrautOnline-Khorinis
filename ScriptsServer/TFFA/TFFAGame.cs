@@ -12,7 +12,7 @@ using GUC.Types;
 using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.Enumeration;
 
-namespace GUC.Server.Scripts.TFFA
+namespace GUC.Scripts.TFFA
 {
     public static class TFFAGame
     {
