@@ -8,7 +8,7 @@
     <ProjectGuid>{477C9B57-AD36-4CAC-998F-800C5A693C35}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GUC.Server.Scripts</RootNamespace>
+    <RootNamespace>GUC.Scripts</RootNamespace>
     <AssemblyName>ServerScripts</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
