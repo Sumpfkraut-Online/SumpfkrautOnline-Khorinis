@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Network;
+using GUC.Utilities;
 
 namespace GUC.Scripts.Sumpfkraut.WorldSystem
 {
-    public partial class WorldInst : ScriptObject, WorldObjects.World.IScriptWorld
+    public partial class WorldInst : ExtendedObject, WorldObjects.World.IScriptWorld
     {
+
         WorldObjects.World baseWorld;
         public WorldObjects.World BaseWorld { get { return baseWorld; } }
 
@@ -52,5 +54,6 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
             this.baseWorld.Delete();
             pDelete();
         }
+
     }
 }
