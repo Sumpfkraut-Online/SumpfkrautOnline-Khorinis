@@ -18,58 +18,57 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
 
         public static readonly Dictionary<string, List<DBTables.ColumnGetTypeInfo>> DBStructure =
             new Dictionary<string, List<DBTables.ColumnGetTypeInfo>>()
+        {
             {
+                "DefEffect", new List<DBTables.ColumnGetTypeInfo>
                 {
-                    "DefEffect", new List<DBTables.ColumnGetTypeInfo>
-                    {
-                        new DBTables.ColumnGetTypeInfo("DefEffectID", SQLiteGetTypeEnum.GetInt32),
-                        new DBTables.ColumnGetTypeInfo("ChangeDate", SQLiteGetTypeEnum.GetDateTime),
-                        new DBTables.ColumnGetTypeInfo("CreationDate", SQLiteGetTypeEnum.GetDateTime),
-                    }
-                },
+                    new DBTables.ColumnGetTypeInfo("DefEffectID", SQLiteGetTypeEnum.GetInt32),
+                    new DBTables.ColumnGetTypeInfo("ChangeDate", SQLiteGetTypeEnum.GetDateTime),
+                    new DBTables.ColumnGetTypeInfo("CreationDate", SQLiteGetTypeEnum.GetDateTime),
+                }
+            },
+            {
+                "DefChange", new List<DBTables.ColumnGetTypeInfo>
                 {
-                    "DefChange", new List<DBTables.ColumnGetTypeInfo>
-                    {
-                        new DBTables.ColumnGetTypeInfo("DefChangeID", SQLiteGetTypeEnum.GetInt32),
-                        new DBTables.ColumnGetTypeInfo("DefEffectID", SQLiteGetTypeEnum.GetInt32),
-                        new DBTables.ColumnGetTypeInfo("Func", SQLiteGetTypeEnum.GetInt32),
-                        new DBTables.ColumnGetTypeInfo("Params", SQLiteGetTypeEnum.GetString),
-                        new DBTables.ColumnGetTypeInfo("ChangeDate", SQLiteGetTypeEnum.GetDateTime),
-                        new DBTables.ColumnGetTypeInfo("CreationDate", SQLiteGetTypeEnum.GetDateTime),
-                    }
-                },
+                    new DBTables.ColumnGetTypeInfo("DefChangeID", SQLiteGetTypeEnum.GetInt32),
+                    new DBTables.ColumnGetTypeInfo("DefEffectID", SQLiteGetTypeEnum.GetInt32),
+                    new DBTables.ColumnGetTypeInfo("Func", SQLiteGetTypeEnum.GetInt32),
+                    new DBTables.ColumnGetTypeInfo("Params", SQLiteGetTypeEnum.GetString),
+                    new DBTables.ColumnGetTypeInfo("ChangeDate", SQLiteGetTypeEnum.GetDateTime),
+                    new DBTables.ColumnGetTypeInfo("CreationDate", SQLiteGetTypeEnum.GetDateTime),
+                }
+            },
+            {
+                "VobDef", new List<DBTables.ColumnGetTypeInfo>
                 {
-                    "VobDef", new List<DBTables.ColumnGetTypeInfo>
-                    {
-                        new DBTables.ColumnGetTypeInfo("VobDefID", SQLiteGetTypeEnum.GetInt32),
-                        new DBTables.ColumnGetTypeInfo("IsStatic", SQLiteGetTypeEnum.GetBoolean),
-                        new DBTables.ColumnGetTypeInfo("ChangeDate", SQLiteGetTypeEnum.GetDateTime),
-                        new DBTables.ColumnGetTypeInfo("CreationDate", SQLiteGetTypeEnum.GetDateTime),
-                    }
-                },
+                    new DBTables.ColumnGetTypeInfo("VobDefID", SQLiteGetTypeEnum.GetInt32),
+                    new DBTables.ColumnGetTypeInfo("IsStatic", SQLiteGetTypeEnum.GetBoolean),
+                    new DBTables.ColumnGetTypeInfo("ChangeDate", SQLiteGetTypeEnum.GetDateTime),
+                    new DBTables.ColumnGetTypeInfo("CreationDate", SQLiteGetTypeEnum.GetDateTime),
+                }
+            },
+            {
+                "VobDefEffect", new List<DBTables.ColumnGetTypeInfo>
                 {
-                    "VobDefEffect", new List<DBTables.ColumnGetTypeInfo>
-                    {
-                        new DBTables.ColumnGetTypeInfo("VobDefID", SQLiteGetTypeEnum.GetInt32),
-                        new DBTables.ColumnGetTypeInfo("DefEffectID", SQLiteGetTypeEnum.GetInt32),
-                    }
-                },
+                    new DBTables.ColumnGetTypeInfo("VobDefID", SQLiteGetTypeEnum.GetInt32),
+                    new DBTables.ColumnGetTypeInfo("DefEffectID", SQLiteGetTypeEnum.GetInt32),
+                }
+            },
+            {
+                "StaticDynamicJob", new List<DBTables.ColumnGetTypeInfo>
                 {
-                    "StaticDynamicJob", new List<DBTables.ColumnGetTypeInfo>
-                    {
-                        new DBTables.ColumnGetTypeInfo("JobID", SQLiteGetTypeEnum.GetInt32),
-                        new DBTables.ColumnGetTypeInfo("TableName", SQLiteGetTypeEnum.GetString),
-                        new DBTables.ColumnGetTypeInfo("Task", SQLiteGetTypeEnum.GetString),
-                        new DBTables.ColumnGetTypeInfo("ChangeDate", SQLiteGetTypeEnum.GetDateTime),
-                        new DBTables.ColumnGetTypeInfo("CreationDate", SQLiteGetTypeEnum.GetDateTime),
-                    }
-                },
-            };
+                    new DBTables.ColumnGetTypeInfo("JobID", SQLiteGetTypeEnum.GetInt32),
+                    new DBTables.ColumnGetTypeInfo("TableName", SQLiteGetTypeEnum.GetString),
+                    new DBTables.ColumnGetTypeInfo("Task", SQLiteGetTypeEnum.GetString),
+                    new DBTables.ColumnGetTypeInfo("ChangeDate", SQLiteGetTypeEnum.GetDateTime),
+                    new DBTables.ColumnGetTypeInfo("CreationDate", SQLiteGetTypeEnum.GetDateTime),
+                }
+            },
+        };
 
-        //public static readonly List<string> DBTableLoadOrder = DBStructure.Keys.ToList();
         public static readonly List<string> DBTableLoadOrder = new List<string>()
         {
-            "WorldEffect", "WorldChange", "StaticDynamicJob",
+            "DefEffect", "DefChange", "VobDef", "VobDefEffect", "StaticDynamicJob",
         };
 
         protected static List<List<DBTables.ColumnGetTypeInfo>> colGetTypeInfo = null;

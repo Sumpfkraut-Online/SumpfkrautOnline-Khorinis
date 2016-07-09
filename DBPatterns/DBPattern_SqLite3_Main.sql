@@ -46,7 +46,7 @@ BEGIN
     UPDATE WorldInst SET ChangeDate = CURRENT_TIMESTAMP WHERE WorldInstID = OLD.WorldInstID;
 END;
 
--- >> vob-effect-system << --
+-- >> effect-system (for VobDef-objects) << --
 --------------------------------------------------------------
 
 -- ids of effects which are applied to world- or vob-definitions --
@@ -67,24 +67,24 @@ BEGIN
 END;
 
 -- actual changes / attributes of vob-definitions --
-DROP TABLE IF EXISTS VobDefChange;
-CREATE TABLE IF NOT EXISTS VobDefChange 
+DROP TABLE IF EXISTS DefChange;
+CREATE TABLE IF NOT EXISTS DefChange 
 (
-    VobDefChangeID INTEGER NOT NULL,
+    DefChangeID INTEGER NOT NULL,
     DefEffectID INTEGER NOT NULL,
     Func INTEGER  NOT NULL,
     Params TEXT NOT NULL DEFAULT "",
     ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    CONSTRAINT VobDefChange_PK PRIMARY KEY (VobDefChangeID) 
+    CONSTRAINT DefChange_PK PRIMARY KEY (DefChangeID) 
     FOREIGN KEY (DefEffectID) REFERENCES DefEffect(DefEffectID)
 );
 
-CREATE TRIGGER Update_VobDefChange
+CREATE TRIGGER Update_DefChange
     AFTER UPDATE
-    ON VobDefChange
+    ON DefChange
 BEGIN
-    UPDATE VobDefChange SET ChangeDate = CURRENT_TIMESTAMP WHERE VobDefChangeID = OLD.VobDefChangeID;
+    UPDATE DefChange SET ChangeDate = CURRENT_TIMESTAMP WHERE DefChangeID = OLD.DefChangeID;
 END;
 
 -- >> vob-definitions (used globally in multiple worlds) << --
