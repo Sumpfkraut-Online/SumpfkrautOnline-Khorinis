@@ -7,7 +7,6 @@ using GUC.Scripts.Sumpfkraut.Database;
 
 namespace GUC.Scripts.Sumpfkraut.WorldSystem
 {
-
     public partial class WorldLoader
     {
 
@@ -113,6 +112,7 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
 
 
 
+        // load World from database
         partial void pLoad ()
         {
             // prepare data conversion parameters if it's still not done yet
@@ -130,7 +130,7 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
             {
                 StringBuilder commandSB = new StringBuilder();
 
-                // select columns in order (by their names)
+                // select columns in order (by their names) --> SELECT col1, col2, ... coln
                 commandSB.Append("SELECT ");
                 int lastColumnIndex = ColGetTypeInfo[t].Count - 1;
                 for (int c = 0; c < ColGetTypeInfo[t].Count; c++)
@@ -145,7 +145,7 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
                     }
                 }
 
-                // always sort by <nameOfTable>ID
+                // always sort by <nameOfTable>ID --> e.g. FROM WorldEffect WHERE 1 ORDER BY WorldEffectID;
                 commandSB.AppendFormat(" FROM {0} WHERE 1 ORDER BY {1}ID;", DBTableLoadOrder[t], 
                     DBTableLoadOrder[t]);
                 commandQueue.Add(commandSB.ToString());
@@ -158,6 +158,7 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
             dbAgent.Start();
         }
 
+        // generate a WorldDef-object from the retrieved sql-results
         protected void WorldDefFromSQLResults (GUC.Utilities.Threading.AbstractRunnable sender,
             DBAgent.FinishedQueueEventHandlerArgs e)
         {
@@ -180,6 +181,8 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
             };
         }
 
+        // actually apply all the world-parameters defined in the database 
+        // (like current and future weather, global effects, etc.)
         protected static void ApplyWorldEffects (ref WorldDef worldDef, ref List<List<List<object>>> sqlResults, 
             ref List<List<DBTables.ColumnGetTypeInfo>> colGetTypeInfo)
         {
@@ -187,5 +190,4 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
         }
 
     }
-
 }

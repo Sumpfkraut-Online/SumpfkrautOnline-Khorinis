@@ -67,24 +67,24 @@ BEGIN
 END;
 
 -- actual changes / attributes of vob-definitions --
-DROP TABLE IF EXISTS DefChange;
-CREATE TABLE IF NOT EXISTS DefChange 
+DROP TABLE IF EXISTS VobDefChange;
+CREATE TABLE IF NOT EXISTS VobDefChange 
 (
-    DefChangeID INTEGER NOT NULL,
+    VobDefChangeID INTEGER NOT NULL,
     DefEffectID INTEGER NOT NULL,
     Func INTEGER  NOT NULL,
     Params TEXT NOT NULL DEFAULT "",
     ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    CONSTRAINT DefChange_PK PRIMARY KEY (DefChangeID) 
+    CONSTRAINT VobDefChange_PK PRIMARY KEY (VobDefChangeID) 
     FOREIGN KEY (DefEffectID) REFERENCES DefEffect(DefEffectID)
 );
 
-CREATE TRIGGER Update_DefChange
+CREATE TRIGGER Update_VobDefChange
     AFTER UPDATE
-    ON DefChange
+    ON VobDefChange
 BEGIN
-    UPDATE DefChange SET ChangeDate = CURRENT_TIMESTAMP WHERE DefChangeID = OLD.DefChangeID;
+    UPDATE VobDefChange SET ChangeDate = CURRENT_TIMESTAMP WHERE VobDefChangeID = OLD.VobDefChangeID;
 END;
 
 -- >> vob-definitions (used globally in multiple worlds) << --
@@ -95,7 +95,7 @@ DROP TABLE IF EXISTS VobDef;
 CREATE TABLE IF NOT EXISTS VobDef 
 (
     VobDefID INTEGER NOT NULL,
-    IsStatic INTEGER DEFAULT 0 CHECK ((IsStatic == 0) OR (IsStatic == 1)), -- static objects are already uploaded for the clients to download on their local hard drive !!! MIGHT AS WELL SAVE IT AS ANOTHER EFFECT !!!
+    IsStatic INTEGER DEFAULT 0 CHECK ((IsStatic == 0) OR (IsStatic == 1)), -- static objects are already uploaded for the clients to download on their local hard drive !!! MIGHT AS WELL SAVE IT AS ANOTHER EFFECT ?!?
     ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT VobDef_PK PRIMARY KEY (VobDefID) 
@@ -117,6 +117,29 @@ CREATE TABLE IF NOT EXISTS VobDefEffect
     FOREIGN KEY (VobDefID) REFERENCES VobDef(VobDefID),
     FOREIGN KEY (DefEffectID) REFERENCES DefEffect(DefEffectID)
 );
+
+-- >> static and dynamic content management << --
+--------------------------------------------------------------
+
+-- list of "jobs" concerning switches between statis and dynamic content --
+DROP TABLE IF EXISTS StaticDynamicJob;
+CREATE TABLE IF NOT EXISTS StaticDynamicJob
+(
+    StaticDynamicJobID INTEGER NOT NULL,
+    TableName TEXT NOT NULL,
+    Task TEXT NOT NULL,
+    ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    CONSTRAINT StaticDynamicJob_PK PRIMARY KEY (StaticDynamicJobID)
+);
+
+CREATE TRIGGER Update_StaticDynamicJob
+    AFTER UPDATE
+    ON StaticDynamicJob
+BEGIN
+    UPDATE StaticDynamicJob SET ChangeDate = CURRENT_TIMESTAMP 
+        WHERE StaticDynamicJobID = OLD.StaticDynamicJobID;
+END;
 
 -- >> accounts << --
 --------------------------------------------------------------

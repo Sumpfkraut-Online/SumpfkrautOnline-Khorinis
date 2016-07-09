@@ -20,6 +20,7 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
 
         public WorldDef (WorldLoader loader)
         {
+            SetObjName("WorldLoader (default)");
             this.loader = loader;
         }
 

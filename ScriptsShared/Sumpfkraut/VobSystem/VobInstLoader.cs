@@ -5,18 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GUC.Scripts.Sumpfkraut.WorldSystem
+namespace GUC.Scripts.Sumpfkraut.VobSystem
 {
-    public partial class WorldLoader : ExtendedObject
+
+    public partial class VobInstLoader : ExtendedObject
     {
-
-        new public static readonly string _staticName = "WorldLoader (static)";
-
-
 
         partial void pLoad ();
         partial void pSave ();
         partial void pCreate ();
 
     }
+
 }
