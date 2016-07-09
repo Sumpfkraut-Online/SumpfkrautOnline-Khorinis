@@ -567,6 +567,7 @@ namespace GUC.Client.Scripts.TFFA
                     nextFwdTeleport = now + 150 * TimeSpan.TicksPerMillisecond;
                 }
             }
+
             if (InputHandler.IsPressed(VirtualKeys.F8))
             {
                 if (nextUpTeleport < now)

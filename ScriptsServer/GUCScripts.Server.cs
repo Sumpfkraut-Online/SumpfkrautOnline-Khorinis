@@ -415,7 +415,7 @@ namespace GUC.Scripts
             itemDef = new ItemDef("2haxt");
             itemDef.Name = "Söldneraxt";
             itemDef.ItemType = ItemTypes.Wep2H;
-            itemDef.Material = Enumeration.ItemMaterials.Wood;
+            itemDef.Material = Enumeration.ItemMaterials.Metal;
             itemDef.Model = m;
             itemDef.Damage = 44;
             itemDef.Range = 95;
@@ -480,7 +480,7 @@ namespace GUC.Scripts
             itemDef.Name = "Langbogen";
             itemDef.Material = Enumeration.ItemMaterials.Wood;
             itemDef.ItemType = ItemTypes.WepBow;
-            itemDef.Damage = 40;
+            itemDef.Damage = 32;
             itemDef.Model = m;
             itemDef.Create();
 
@@ -491,7 +491,7 @@ namespace GUC.Scripts
             itemDef.Name = "Bolzen";
             itemDef.Material = Enumeration.ItemMaterials.Wood;
             itemDef.ItemType = ItemTypes.AmmoXBow;
-            itemDef.Damage = 5;
+            itemDef.Damage = 6;
             itemDef.Model = m;
             itemDef.Create();
             
@@ -507,7 +507,7 @@ namespace GUC.Scripts
             itemDef.Name = "Armbrust";
             itemDef.Material = Enumeration.ItemMaterials.Wood;
             itemDef.ItemType = ItemTypes.WepXBow;
-            itemDef.Damage = 40;
+            itemDef.Damage = 32;
             itemDef.Model = m;
             itemDef.Create();
         }
