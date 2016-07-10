@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Network;
 using GUC.Scripting;
 using GUC.WorldObjects;
 using GUC.Enumeration;
 using RakNet;
 
-namespace GUC.Client.Network.Messages
+namespace GUC.Network.Messages
 {
     static class WorldMessage
     {

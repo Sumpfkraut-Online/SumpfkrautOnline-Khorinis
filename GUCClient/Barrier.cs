@@ -9,7 +9,7 @@ using Gothic.System;
 using Gothic.Objects;
 using Gothic.Sound;
 
-namespace GUC.Client
+namespace GUC
 {
     public static class Barrier
     {

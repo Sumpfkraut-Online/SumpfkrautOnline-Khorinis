@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Scripts.TFFA;
 using GUC.Network;
 using GUC.Scripting;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
@@ -12,7 +11,7 @@ using GUC.Types;
 using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.Enumeration;
 
-namespace GUC.Server.Scripts.TFFA
+namespace GUC.Scripts.TFFA
 {
     public static class TFFAGame
     {

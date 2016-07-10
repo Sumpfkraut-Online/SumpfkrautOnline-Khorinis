@@ -6,7 +6,7 @@ using WinApi;
 using WinApi.User;
 using WinApi.User.Enumeration;
 
-namespace GUC.Client
+namespace GUC
 {
     public static class InputHandler
     {

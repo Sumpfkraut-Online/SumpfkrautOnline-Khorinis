@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Types;
-using GUC.Server.WorldObjects.Cells;
+using GUC.WorldObjects.Cells;
 using GUC.Network;
-using GUC.Server.Network;
 using GUC.Enumeration;
 using RakNet;
 

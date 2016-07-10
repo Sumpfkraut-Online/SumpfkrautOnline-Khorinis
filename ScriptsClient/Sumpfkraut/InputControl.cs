@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using WinApi.User.Enumeration;
-using GUC.Client.Scripts.Sumpfkraut.Menus;
+using GUC.Scripts.Sumpfkraut.Menus;
 using GUC.Enumeration;
 using GUC.Types;
 using GUC.Scripts.Sumpfkraut.Networking;
 using GUC.Scripts.Sumpfkraut.Visuals;
 
-namespace GUC.Client.Scripts.Sumpfkraut
+namespace GUC.Scripts.Sumpfkraut
 {
     static class InputControl
     {

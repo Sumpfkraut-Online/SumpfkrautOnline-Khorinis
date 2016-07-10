@@ -5,11 +5,10 @@ using System.Text;
 using RakNet;
 using GUC.Enumeration;
 using GUC.Models;
-using GUC.Network;
 using GUC.WorldObjects.Instances;
 using GUC.Scripting;
 
-namespace GUC.Server.Network.Messages
+namespace GUC.Network.Messages
 {
     static class ConnectionMessage
     {

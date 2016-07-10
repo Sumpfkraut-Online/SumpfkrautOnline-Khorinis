@@ -5,10 +5,9 @@ using System.Text;
 using RakNet;
 using GUC.Enumeration;
 using GUC.WorldObjects;
-using GUC.Network;
 using GUC.Animations;
 
-namespace GUC.Server.Network.Messages
+namespace GUC.Network.Messages
 {
     static class NPCMessage
     {

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Client.GUI;
+using GUC.GUI;
 
-namespace GUC.Client.Scripts.Sumpfkraut.GUI.MainMenu
+namespace GUC.Scripts.Sumpfkraut.GUI.MainMenu
 {
     abstract class MainMenuItem : GUCView
     {

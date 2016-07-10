@@ -8,7 +8,7 @@
     <ProjectGuid>{27FA7C52-3C80-4B72-8FBB-BCAC0328236E}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GUC.Server</RootNamespace>
+    <RootNamespace>GUC</RootNamespace>
     <AssemblyName>GUC_Server</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>

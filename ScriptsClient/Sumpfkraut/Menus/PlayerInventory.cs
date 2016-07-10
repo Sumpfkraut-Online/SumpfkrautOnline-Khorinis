@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using WinApi.User.Enumeration;
-using GUC.Client.GUI;
+using GUC.GUI;
 using System.Collections.Specialized;
-using GUC.Client.Network.Messages;
+using GUC.Network.Messages;
 
-namespace GUC.Client.Menus
+namespace GUC.Scripts.Sumpfkraut.Menus
 {
     /*class PlayerInventory : GUCMenu
     {

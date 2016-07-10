@@ -7,7 +7,7 @@ using GUC.Types;
 using Gothic.Types;
 using Gothic.Objects;
 
-namespace GUC.Client.GUI
+namespace GUC.GUI
 {
     public class GUCVisualText : GUCView
     {

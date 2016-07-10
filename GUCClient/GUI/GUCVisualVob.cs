@@ -5,7 +5,7 @@ using System.Text;
 //using GUC.WorldObjects;
 using Gothic.Objects;
 
-namespace GUC.Client.GUI
+namespace GUC.GUI
 {
     public class GUCVisualVob : GUCVisual
     {

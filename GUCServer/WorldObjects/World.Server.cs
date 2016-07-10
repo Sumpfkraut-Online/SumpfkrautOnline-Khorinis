@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Server.Network;
-using GUC.Enumeration;
 using GUC.Network;
 using GUC.Types;
-using RakNet;
-using GUC.Server.WorldObjects.Cells;
+using GUC.WorldObjects.Cells;
 
 namespace GUC.WorldObjects
 {

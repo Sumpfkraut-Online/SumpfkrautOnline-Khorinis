@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using WinApi.User.Enumeration;
-using GUC.Client.GUI;
+using GUC.GUI;
 
-namespace GUC.Client.Menus
+namespace GUC.Scripts.Sumpfkraut.Menus
 {
     /*class DropItemMenu : GUCMenu
     {

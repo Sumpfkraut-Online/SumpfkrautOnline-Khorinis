@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Server.Network.Messages;
+using GUC.Network.Messages;
 
 namespace GUC.WorldObjects.Time
 {

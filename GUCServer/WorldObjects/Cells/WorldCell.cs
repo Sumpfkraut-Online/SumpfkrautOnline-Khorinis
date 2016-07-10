@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.WorldObjects;
 using GUC.Types;
 
-namespace GUC.Server.WorldObjects.Cells
+namespace GUC.WorldObjects.Cells
 {
     abstract class WorldCell
     {

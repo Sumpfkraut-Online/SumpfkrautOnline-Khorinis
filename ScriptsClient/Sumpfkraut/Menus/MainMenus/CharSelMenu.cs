@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Client.Network.Messages;
+using GUC.Network.Messages;
 using GUC.Network;
 
-namespace GUC.Client.Menus.MainMenus
+namespace GUC.Menus.MainMenus
 {
     /*class CharSelMenu : GUCMainMenu
     {

@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Enumeration;
-using GUC.WorldObjects;
 using GUC.WorldObjects.Collections;
 using GUC.Network;
 using GUC.Types;
 
-namespace GUC.Server.WorldObjects.Cells
+namespace GUC.WorldObjects.Cells
 {
     /// <summary>
     /// Big cell which includes all types of vobs of a world. Is used to transmit surrounding vobs to a client.

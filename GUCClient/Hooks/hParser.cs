@@ -8,7 +8,7 @@ using GUC.Log;
 using System.IO;
 using System.Reflection;
 
-namespace GUC.Client.Hooks
+namespace GUC.Hooks
 {
     static class hParser
     {

@@ -1,14 +1,11 @@
-﻿using GUC.Scripts.Sumpfkraut.CommandConsole.InfoObjects;
-using GUC.Scripts.Sumpfkraut.Web.WS.Protocols;
-using GUC.Server.WorldObjects;
-using GUC.Types;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Enumeration;
-using GUC.WorldObjects;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
+using GUC.Scripts.Sumpfkraut.Web.WS.Protocols;
+using GUC.Types;
 
 namespace GUC.Scripts.Sumpfkraut.CommandConsole
 {
@@ -420,7 +417,7 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
                     if (clients[i].Character != null)
                     {
                         //clients[i].Character.SetHealth(0);
-                        Server.Scripts.TFFA.TFFAGame.Kill(clients[i], false);
+                        Scripts.TFFA.TFFAGame.Kill(clients[i], false);
                         if (!first) { successMsgSB.Append(","); }
                         else { first = false; }
                         successMsgSB.AppendFormat("[{0}, {1}]", clients[i].ID, clients[i].Name);
@@ -478,7 +475,7 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
 
             if (changeTeam)
             {
-                Server.Scripts.TFFA.TFFAGame.AddToTeam(clients[0], newTeam);
+                Scripts.TFFA.TFFAGame.AddToTeam(clients[0], newTeam);
             }
         }
 
@@ -499,15 +496,15 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
             switch (param[0].ToUpper())
             {
                 case "WAIT":
-                    Server.Scripts.TFFA.TFFAGame.PhaseWait();
+                    Scripts.TFFA.TFFAGame.PhaseWait();
                     returnVal["rawText"] = "Changed gamephase to waiting phase";
                     break;
                 case "FIGHT":
-                    Server.Scripts.TFFA.TFFAGame.PhaseFight();
+                    Scripts.TFFA.TFFAGame.PhaseFight();
                     returnVal["rawText"] = "Changed gamephase to fighting phase";
                     break;
                 case "END":
-                    Server.Scripts.TFFA.TFFAGame.PhaseEnd();
+                    Scripts.TFFA.TFFAGame.PhaseEnd();
                     returnVal["rawText"] = "Changed gamephase to ending phase";
                     break;
                 default:

@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using GUC.Enumeration;
 using GUC.WorldObjects;
-using GUC.Network;
 using RakNet;
 using GUC.Animations;
 using GUC.Scripting;
 
-namespace GUC.Client.Network.Messages
+namespace GUC.Network.Messages
 {
     static class NPCMessage
     {
