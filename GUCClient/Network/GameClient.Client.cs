@@ -6,14 +6,13 @@ using RakNet;
 using GUC.Types;
 using GUC.Enumeration;
 using GUC.Log;
-using GUC.Client.GUI;
-using GUC.Client.Network.Messages;
+using GUC.GUI;
+using GUC.Network.Messages;
 using GUC.Scripting;
 using GUC.WorldObjects;
 using Gothic.Objects;
 using Gothic;
 using GUC.Animations;
-using GUC.Client;
 
 namespace GUC.Network
 {

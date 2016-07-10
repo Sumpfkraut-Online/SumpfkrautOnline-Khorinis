@@ -9,7 +9,7 @@ using GUC.WorldObjects;
 using GUC.Types;
 using Gothic.Objects;
 
-namespace GUC.Client
+namespace GUC
 {
     public class SoundInstance
     {

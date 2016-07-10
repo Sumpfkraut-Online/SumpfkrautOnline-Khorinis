@@ -9,10 +9,10 @@ using Gothic.Types;
 using System.Runtime.InteropServices;
 using GUC.Log;
 using WinApi;
-using GUC.Client.Hooks;
+using GUC.Hooks;
 using System.Reflection;
 
-namespace GUC.Client
+namespace GUC
 {
     //zCMesh::Load(class zSTRING const &, int)
     //( zCMesh::MergeMesh(class zCMesh *, class zMAT4 const &) ? )

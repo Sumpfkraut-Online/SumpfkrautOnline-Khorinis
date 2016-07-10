@@ -8,7 +8,7 @@ using GUC.Enumeration;
 using Gothic.View;
 using GUC.Types;
 
-namespace GUC.Client.GUI
+namespace GUC.GUI
 {
   /* public class GUCInventory : GUCView, InputReceiver
     {

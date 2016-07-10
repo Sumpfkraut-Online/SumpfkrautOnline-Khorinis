@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using GUC.Network;
 using GUC.Scripts.Sumpfkraut.Networking;
-using GUC.Client.Scripts.TFFA;
 
 namespace GUC.Scripts.TFFA
 {

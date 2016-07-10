@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Server.WorldObjects.Cells;
+using GUC.WorldObjects.Cells;
 using GUC.WorldObjects.Time;
-using GUC.Network;
 using RakNet;
 using GUC.Enumeration;
 using GUC.WorldObjects;
 using GUC.WorldObjects.Weather;
 
-namespace GUC.Server.Network.Messages
+namespace GUC.Network.Messages
 {
     static class WorldMessage
     {

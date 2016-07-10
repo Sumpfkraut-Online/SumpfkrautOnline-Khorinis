@@ -7,7 +7,7 @@ using System.Threading;
 using System.Net;
 using System.IO;
 
-namespace GUC.Server
+namespace GUC
 {
     public static class TCPStatus
     {

@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Client.GUI;
+using GUC.GUI;
 using GUC.Network;
-using GUC.Scripts.TFFA;
 using GUC.Scripting;
 using GUC.Types;
 
-namespace GUC.Client.Scripts.TFFA
+namespace GUC.Scripts.TFFA
 {
     class Scoreboard
     {

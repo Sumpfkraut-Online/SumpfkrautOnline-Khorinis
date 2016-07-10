@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using WinApi.User.Enumeration;
 
-namespace GUC.Client.Scripts.Sumpfkraut.Menus
+namespace GUC.Scripts.Sumpfkraut.Menus
 {
     abstract class GUCMenu
     {

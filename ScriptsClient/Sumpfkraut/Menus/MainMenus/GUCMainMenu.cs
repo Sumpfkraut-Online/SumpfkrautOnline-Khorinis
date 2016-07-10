@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Client.GUI;
-using GUC.Client.Scripts.Sumpfkraut.GUI.MainMenu;
+using GUC.GUI;
+using GUC.Scripts.Sumpfkraut.GUI.MainMenu;
 using WinApi.User.Enumeration;
 using GUC.Types;
 
 
-namespace GUC.Client.Scripts.Sumpfkraut.Menus.MainMenus
+namespace GUC.Scripts.Sumpfkraut.Menus.MainMenus
 {
     /// <summary>
     /// Recreation of the classic Gothic main menu.

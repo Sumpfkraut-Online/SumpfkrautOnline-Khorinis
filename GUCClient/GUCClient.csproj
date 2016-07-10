@@ -8,7 +8,7 @@
     <ProjectGuid>{C670CA0D-F27B-4745-9B76-B06882052E6B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GUC.Client</RootNamespace>
+    <RootNamespace>GUC</RootNamespace>
     <AssemblyName>GUC</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

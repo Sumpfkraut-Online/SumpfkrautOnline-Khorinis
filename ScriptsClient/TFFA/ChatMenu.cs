@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Client.Scripts.Sumpfkraut.Menus;
+using GUC.Scripts.Sumpfkraut.Menus;
 using WinApi.User.Enumeration;
-using GUC.Client.GUI;
-using GUC.Scripts.TFFA;
+using GUC.GUI;
 using GUC.Types;
 
-namespace GUC.Client.Scripts.TFFA
+namespace GUC.Scripts.TFFA
 {
     class ChatMenu : GUCMenu
     {

@@ -7,8 +7,7 @@ using GUC.Log;
 using GUC.Scripting;
 using System.Reflection;
 using System.IO;
-using GUC.Client.Scripts.Sumpfkraut.Menus;
-using GUC.Client;
+using GUC.Scripts.Sumpfkraut.Menus;
 
 namespace GUC.Scripts
 {
@@ -37,7 +36,7 @@ namespace GUC.Scripts
         public void Update(long ticks)
         {
             GUCMenu.UpdateMenus(ticks);
-            Client.Scripts.TFFA.InputControl.Update(ticks);
+            TFFA.InputControl.Update(ticks);
             CheckMusic();
             CheckBarrier();
         }
@@ -46,15 +45,15 @@ namespace GUC.Scripts
         {
             WinApi.Process.Write(new byte[] { 0xE9, 0x99, 0x04, 0x00, 0x00 }, 0x0067836C); // always do T_GOTHIT instead of T_STUMBLE/B when getting hit
 
-            Client.Scripts.TFFA.InputControl.Init();
+            TFFA.InputControl.Init();
             Logger.Log("Outgame started.");
         }
 
         public void StartIngame()
         {
-            Client.Scripts.TFFA.InputControl.Init();
-            Client.Scripts.TFFA.MainMenu.Menu.Open();
-            Client.Scripts.TFFA.ChatMenu.Menu.Show();
+            TFFA.InputControl.Init();
+            TFFA.MainMenu.Menu.Open();
+            TFFA.ChatMenu.Menu.Show();
             //GUCMenu.CloseActiveMenus();
             Ingame = true;
             Logger.Log("Ingame started.");
@@ -127,14 +126,14 @@ namespace GUC.Scripts
                     value = (byte)(255d * (double)(barrierNextTime - now) / (double)(barrierNextTime - barrierLastTime));
                 }
 
-                Client.Barrier.BarrierAlpha = value;
+                Barrier.BarrierAlpha = value;
                 if (barrierStatus == 1 || barrierStatus == 2 || (barrierStatus == 3 && value > 75))
                 {
-                    Client.Barrier.PlaySound = true;
+                    Barrier.PlaySound = true;
                 }
                 else
                 {
-                    Client.Barrier.PlaySound = false;
+                    Barrier.PlaySound = false;
                 }
             }
         }

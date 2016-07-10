@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Log;
-using GUC.Client;
 
 namespace GUC.Utilities
 {

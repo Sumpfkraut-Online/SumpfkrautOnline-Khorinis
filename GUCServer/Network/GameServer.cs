@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using RakNet;
 using GUC.Enumeration;
-using GUC.Server.Network.Messages;
-using GUC.Network;
-using GUC.Server.Options;
+using GUC.Network.Messages;
+using GUC.Options;
 using GUC.Log;
 
-namespace GUC.Server.Network
+namespace GUC.Network
 {
     public static class GameServer
     {

@@ -6,9 +6,8 @@ using RakNet;
 using GUC.WorldObjects;
 using GUC.Log;
 using GUC.Enumeration;
-using GUC.Server.Network;
-using GUC.Server.WorldObjects.Cells;
-using GUC.Server.Network.Messages;
+using GUC.WorldObjects.Cells;
+using GUC.Network.Messages;
 using GUC.Types;
 
 namespace GUC.Network

@@ -5,7 +5,7 @@ using System.Text;
 using WinApi.User.Enumeration;
 using WinApi;
 
-namespace GUC.Client.GUI
+namespace GUC.GUI
 {
     public interface InputReceiver
     {

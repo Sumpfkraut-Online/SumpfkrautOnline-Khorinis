@@ -11,9 +11,9 @@ using Gothic.System;
 using Gothic.View;
 using Gothic.Sound;
 using System.Threading;
-using GUC.Client.GUI;
+using GUC.GUI;
 
-namespace GUC.Client.Hooks
+namespace GUC.Hooks
 {
     static class hGame
     {

@@ -6,9 +6,9 @@ using System.Threading;
 using System.Diagnostics;
 using GUC.Scripting;
 using GUC.Log;
-using GUC.Server.Network;
+using GUC.Network;
 
-namespace GUC.Server
+namespace GUC
 {
     static class Program
     {

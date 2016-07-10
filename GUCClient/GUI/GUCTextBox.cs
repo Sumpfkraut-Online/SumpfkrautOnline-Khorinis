@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using WinApi.User.Enumeration;
 
-namespace GUC.Client.GUI
+namespace GUC.GUI
 {
     public class GUCTextBox : GUCView
     {

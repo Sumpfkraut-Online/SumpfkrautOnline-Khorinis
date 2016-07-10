@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Enumeration;
-using GUC.Server.Network;
 using RakNet;
 using GUC.Network;
 using GUC.WorldObjects.Mobs;
 using GUC.Types;
-using GUC.Server.Network.Messages;
-using GUC.Server.WorldObjects.Cells;
+using GUC.Network.Messages;
+using GUC.WorldObjects.Cells;
 using GUC.Animations;
 
 namespace GUC.WorldObjects

@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Network;
 using GUC.Types;
-using GUC.Server.WorldObjects.Cells;
+using GUC.WorldObjects.Cells;
 
-namespace GUC.Server.Network.Messages
+namespace GUC.Network.Messages
 {
     static class SpectatorMessage
     {

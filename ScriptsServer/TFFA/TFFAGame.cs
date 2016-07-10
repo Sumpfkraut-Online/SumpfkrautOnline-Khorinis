@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Scripts.TFFA;
 using GUC.Network;
 using GUC.Scripting;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;

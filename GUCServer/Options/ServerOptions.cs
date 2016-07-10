@@ -5,7 +5,7 @@ using System.Text;
 using GUC.Utilities;
 using System.IO;
 
-namespace GUC.Server.Options
+namespace GUC.Options
 {
     public class ServerOptions : XmlObj
     {

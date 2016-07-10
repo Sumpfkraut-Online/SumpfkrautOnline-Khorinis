@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace GUC.Client.Scripts.Sumpfkraut.Menus.MainMenus
+namespace GUC.Scripts.Sumpfkraut.Menus.MainMenus
 {
     class HelpRPMenu : GUCMainMenu
     {

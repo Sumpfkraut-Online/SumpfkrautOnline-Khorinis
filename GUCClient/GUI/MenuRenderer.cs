@@ -6,7 +6,7 @@ using Gothic.View;
 using Gothic.Objects;
 using WinApi;
 
-namespace GUC.Client.GUI
+namespace GUC.GUI
 {
     class MenuRenderer
     {

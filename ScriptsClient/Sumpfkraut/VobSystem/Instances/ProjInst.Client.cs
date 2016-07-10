@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Types;
-using GUC.Client;
 using Gothic.Types;
 using Gothic;
 using Gothic.Objects;

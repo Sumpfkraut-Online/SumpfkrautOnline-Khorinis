@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Gothic;
+using GUC.Scripts.Sumpfkraut.Menus;
 
 namespace GUC.Scripts.Sumpfkraut.WorldSystem
 {
@@ -12,7 +13,7 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
 
         public void Load()
         {
-            GUC.Client.Scripts.Sumpfkraut.Menus.GUCMenu.CloseActiveMenus();
+            GUCMenu.CloseActiveMenus();
             oCGame.LoadGame(true, "OLDWORLD\\OLDWORLD.ZEN");
         }
     }
