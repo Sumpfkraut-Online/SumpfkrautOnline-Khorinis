@@ -6,6 +6,7 @@ using Mono.Data.Sqlite;
 using SQLiteDataReader = Mono.Data.Sqlite.SqliteDataReader;
 using SQLiteCommand = Mono.Data.Sqlite.SqliteCommand;
 using SQLiteConnection = Mono.Data.Sqlite.SqliteConnection;
+
 namespace GUC.Scripts
 {
 	public class Sqlite

@@ -124,7 +124,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public void OnCmdMove(MoveState state)
         {
             //TFFA
-            if (Scripts.TFFA.TFFAGame.Status == TFFA.TFFAPhase.Waiting)
+            if (TFFA.TFFAGame.Status == TFFA.TFFAPhase.Waiting)
                 return;
 
             if (state == this.Movement)

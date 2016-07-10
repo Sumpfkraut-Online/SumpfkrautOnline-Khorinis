@@ -32,7 +32,7 @@ namespace GUC.Network
             {
                 socketDescriptor.port = Options.Port;
 
-                StartupResult res = ServerInterface.Startup(Options.Port, socketDescriptor, 1);
+                StartupResult res = ServerInterface.Startup(Options.Slots, socketDescriptor, 1);
                 if (res == StartupResult.RAKNET_STARTED)
                 {
                     Logger.Log("Server start listening on port " + Options.Port);

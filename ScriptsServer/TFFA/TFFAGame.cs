@@ -440,7 +440,16 @@ namespace GUC.Scripts.TFFA
             npc.AddItem(rangedWep);
             npc.EquipItem(rangedWep);
 
-            ammo.BaseInst.SetAmount(50);
+            int amount;
+            if (ammo.ItemType == ItemTypes.AmmoBow)
+            {
+                amount = 20;
+            }
+            else
+            {
+                amount = 15;
+            }
+            ammo.BaseInst.SetAmount(amount);
             npc.AddItem(ammo);
             npc.EquipItem(ammo);
 
@@ -539,7 +548,16 @@ namespace GUC.Scripts.TFFA
             npc.AddItem(rangedWep);
             npc.EquipItem(rangedWep);
 
-            ammo.BaseInst.SetAmount(50);
+            int amount;
+            if (ammo.ItemType == ItemTypes.AmmoBow)
+            {
+                amount = 20;
+            }
+            else
+            {
+                amount = 15;
+            }
+            ammo.BaseInst.SetAmount(amount);
             npc.AddItem(ammo);
             npc.EquipItem(ammo);
 
@@ -550,7 +568,6 @@ namespace GUC.Scripts.TFFA
             {
                 npc.ApplyOverlay(overlay);
             }
-
 
             switch (Randomizer.GetInt(0, 6))
             {
