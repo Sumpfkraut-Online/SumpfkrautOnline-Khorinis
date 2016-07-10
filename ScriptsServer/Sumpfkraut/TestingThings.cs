@@ -18,7 +18,16 @@ namespace GUC.Scripts.Sumpfkraut
         public static void Init ()
         {
             Logger.Log(Directory.GetCurrentDirectory());
-            //WorldSystem.WorldLoader worldLoader = new WorldSystem.WorldLoader("Hans", @"");
+
+            WorldSystem.WorldLoader worldLoader = new WorldSystem.WorldLoader(">>GOTCHA<<", 
+                Directory.GetCurrentDirectory() + @"\DB");
+            worldLoader.Load();
+
+            string bla = "Miami Vice";
+            Logger.Log(bla);
+
+            //Logger.Log(WorldSystem.WorldLoader.DBStructure["WorldEffect"]);
+
         }
 
     }

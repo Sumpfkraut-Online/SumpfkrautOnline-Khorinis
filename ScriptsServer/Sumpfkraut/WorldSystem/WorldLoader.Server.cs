@@ -113,11 +113,14 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
 
 
         // load World from database
+        public void Load () { pLoad(); }
         partial void pLoad ()
         {
             // prepare data conversion parameters if it's still not done yet
             if (colGetTypeInfo == null)
             {
+                colGetTypeInfo = new List<List<DBTables.ColumnGetTypeInfo>>();
+
                 for (int t = 0; t < DBTableLoadOrder.Count; t++)
                 {
                     colGetTypeInfo.Add(DBStructure[DBTableLoadOrder[t]]);
@@ -150,7 +153,10 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
                     DBTableLoadOrder[t]);
                 commandQueue.Add(commandSB.ToString());
             }
-            
+
+            foreach (string cmd in commandQueue) { MakeLog(cmd); }
+
+
             // send out a parallel working DBAgent which informs back when finished with the queue
             DBAgent dbAgent = new DBAgent(commandQueue, false);
             dbAgent.SetObjName(GetObjName() + "-DBAgent");
