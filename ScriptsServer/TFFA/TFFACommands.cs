@@ -7,7 +7,6 @@ using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Enumeration;
 using GUC.Scripts.Sumpfkraut.CommandConsole.InfoObjects;
 using GUC.Scripts.Sumpfkraut.Web.WS.Protocols;
-using GUC.Server.WorldObjects;
 using GUC.Types;
 
 namespace GUC.Scripts.TFFA
