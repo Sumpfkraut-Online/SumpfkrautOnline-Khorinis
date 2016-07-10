@@ -8,7 +8,7 @@ using WinApi.User.Enumeration;
 using GUC.Client.GUI;
 using GUC.Types;
 using GUC.Client.Network.Messages;
-using Gothic.zClasses;
+using GUC.Client.Scripts.Sumpfkraut.Menus;
 
 //TODO: replace 
 //messageListener.Add((byte)NetworkID.ChatMessage, ChatMessage.Read);
@@ -17,7 +17,7 @@ using Gothic.zClasses;
 //TODO: wo sind die gamestates? es fehlt dort noch { Menus.GUCMenus.Chat.Hotkey, Menus.GUCMenus.Chat.Open}
 //https://github.com/Sumpfkraut-Online/SumpfkrautOnline-Khorinis/blob/492c6700c5f260f94bc9c61655e3b28b80bbbb7e/GMP/States/GameState.cs
 
-namespace GUC.Client.Menus
+namespace GUC.Menus
 {
     class ChatMenu : GUCMenu
     {
@@ -180,7 +180,9 @@ namespace GUC.Client.Menus
 
         public void SendMessage(string text)
         {
-            zERROR.GetZErr(Program.Process).Report(2, 'G', "attempt sending " + text.ToString(), 0, "hGame.cs", 0);
+            //TODO
+            //zERROR.GetZErr(Program.Process).Report(2, 'G', "attempt sending " + text.ToString(), 0, "hGame.cs", 0);
+
             foreach (KeyValuePair<string, string> pair in CommandList)
             {
                 if (text.StartsWith(pair.Value))
@@ -261,7 +263,7 @@ namespace GUC.Client.Menus
             base.Close();
         }
 
-        public override void KeyPressed(VirtualKeys key)
+        public override void KeyDown(VirtualKeys key, long now)
         {
             if (key == CloseMenuKey)
             {
@@ -350,7 +352,8 @@ namespace GUC.Client.Menus
             {
                 if (textInput.Input.Length <= replaced.Length)
                 {
-                    zERROR.GetZErr(Program.Process).Report(2, 'G', "delete", 0, "hGame.cs", 0);
+                    //TODO
+                    //zERROR.GetZErr(Program.Process).Report(2, 'G', "delete", 0, "hGame.cs", 0);
                     textInput.Input = "";
                     replaced = "";
                 }

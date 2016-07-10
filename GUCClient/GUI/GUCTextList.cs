@@ -11,7 +11,7 @@ using GUC.Client.GUI;
 
 namespace GUC.Client.GUI
 {
-    class GUCTextList : GUCView
+    public class GUCTextList : GUCView
     {
         List<TextLine> TextList;
         GUCVisual bgTexture;
@@ -64,19 +64,22 @@ namespace GUC.Client.GUI
             {
                 if (size < width - 80)
                 {
-                    size += InputHandler.GetCharPixelWidth(c);
+                    //TODO:
+                    //size += InputHandler.GetCharPixelWidth(c);
                     counter++;
                 }
                 else
                 {
-                    zERROR.GetZErr(Program.Process).Report(2, 'G', "adding text: " + text.Substring(0, counter), 0, "hGame.cs", 0);
+                    //todo
+                    //zERROR.GetZErr(Program.Process).Report(2, 'G', "adding text: " + text.Substring(0, counter), 0, "hGame.cs", 0);
                     TextList.Add(new TextLine(text.Substring(0, counter), color));
                     text = "     " + text.Substring(counter + 1);
                     size = 0;
                     counter = 0;
                 }
             }
-            zERROR.GetZErr(Program.Process).Report(2, 'G', "adding text: " + text, 0, "hGame.cs", 0);
+            //TODO
+            //zERROR.GetZErr(Program.Process).Report(2, 'G', "adding text: " + text, 0, "hGame.cs", 0);
             TextList.Add(new TextLine(text, color));
 
             if (!Scrolled)

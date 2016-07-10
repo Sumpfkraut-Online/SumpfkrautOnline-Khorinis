@@ -146,28 +146,29 @@ namespace GUC.Client
             }
         }
 
-        public static int GetStringPixelWidth(string str)
-        {
-            double size = 0;
-            foreach (char c in str)
-            {
-                if (!InputHandler.AllChars.ContainsKey(c))
-                    continue;
+       // public static int GetStringPixelWidth(string str)
+       // {
+       //     double size = 0;
+       //     foreach (char c in str)
+       //     {
+       //         if (!InputHandler.AllChars.ContainsKey(c))
+       //             continue;
 
-                size += (double)InputHandler.AllChars[c];
-           }
+       //         size += (double)InputHandler.AllChars[c];
+       //    }
 
-            return (int)size;
-       }
+       //     return (int)size;
+       //}
 
-        public static int GetCharPixelWidth(char c)
-        {
-            if (!InputHandler.AllChars.ContainsKey(c))
-            {
-                zERROR.GetZErr(Program.Process).Report(2, 'G', "character not found:"+c.ToString() , 0, "hGame.cs", 0);
-                return 0;
-            }
-            return (int)InputHandler.AllChars[c];
-        }
+       // public static int GetCharPixelWidth(char c)
+       // {
+       //     if (!InputHandler.AllChars.ContainsKey(c))
+       //     {
+       //         //TODO
+       //         //zERROR.GetZErr(Program.Process).Report(2, 'G', "character not found:"+c.ToString() , 0, "hGame.cs", 0);
+       //         return 0;
+       //     }
+       //     return (int)InputHandler.AllChars[c];
+       // }
     }
 }

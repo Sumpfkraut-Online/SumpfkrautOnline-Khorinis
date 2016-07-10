@@ -278,7 +278,6 @@
     <Compile Include="Network\Messages\VobMessage.cs" />
     <Compile Include="Network\Messages\WorldMessage.cs" />
     <Compile Include="Options\ServerOptions.cs" />
-    <Compile Include="Scripting\Chat.cs" />
     <Compile Include="Scripting\ScriptInterface.Server.cs" />
     <Compile Include="TCPStatus.cs" />
     <Compile Include="Utilities\ExtendedObject.Server.cs" />

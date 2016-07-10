@@ -7,16 +7,187 @@ using GUC.Server.WorldObjects;
 using GUC.Server.Network.Messages;
 using GUC.Enumeration;
 using GUC.Types;
+using GUC.WorldObjects;
+
+
+//das obere irgendwo in die sumpfkrautskripts einfügen wahrscheinlich bei MenuMsgID:
+/*
+public enum SumpfkrautIDs
+    {
+        Msg1,
+        Msg2,
+        Msg3,
+        MaxMessages
+    }
+
+    public enum MenuMsgID
+    {
+        ClientInfoGroup = SumpfkrautIDs.MaxMessages,
+        ClientConnect,
+        ClientDisconnect,
+        
+        ClientTeam,
+        ClientClass,
+        ClientName,
+        ClientNPC,
+
+        PhaseMsg,
+        WinMsg,
+
+        OpenScoreboard,
+        CloseScoreboard,
+
+        AllChat,
+        TeamChat
+    }*/
 
 //TODO: messagelistener
 //MessageListener.Add((byte)NetworkID.ChatMessage, ChatMessage.Read);
 
+
+//aus client chatmessage.cs:
+/*
+public static void Read(BitStream stream)
+    {
+        ChatMenu chat = ChatMenu.GetChat();
+        ChatTextType chatType = (ChatTextType)stream.mReadByte();
+        string message = (string)stream.mReadString();
+
+        //TODO:
+        //zERROR.GetZErr(Program.Process).Report(2, 'G', "type: " + chatType.ToString() + " message: " + message, 0, "hGame.cs", 0);
+
+        switch (chatType)
+        {
+            // RP
+            case ChatTextType.Say:
+                chat.AddRPMessage(message, new Types.ColorRGBA(255, 255, 255));
+                break;
+            case ChatTextType.Shout:
+                chat.AddRPMessage(message, new Types.ColorRGBA(72, 118, 255));
+                break;
+            case ChatTextType.Whisper:
+                chat.AddRPMessage(message, new Types.ColorRGBA(131, 111, 255));
+                break;
+            case ChatTextType.Ambient:
+                chat.AddRPMessage(message, new Types.ColorRGBA(255, 127, 36));
+                break;
+            case ChatTextType.RPGlobal:
+                chat.AddRPMessage(message, new Types.ColorRGBA(255, 255, 255));
+                break;
+            case ChatTextType.RPEvent:
+                chat.AddRPMessage(message, new Types.ColorRGBA(255, 255, 255));
+                break;
+
+            // OOC
+            case ChatTextType.OOC:
+                chat.AddOOCMessage(message, new Types.ColorRGBA(255, 255, 255));
+                break;
+            case ChatTextType.OOCGlobal:
+                chat.AddOOCMessage(message, new Types.ColorRGBA(255, 255, 255));
+                break;
+            case ChatTextType.PM:
+                chat.AddOOCMessage(message, new Types.ColorRGBA(255, 255, 255));
+                break;
+            case ChatTextType.OOCEvent:
+                chat.AddOOCMessage(message, new Types.ColorRGBA(255, 255, 255));
+                break;
+            case ChatTextType.PlayerSpawn:
+                chat.Players.Add(message);
+                chat.AddOOCMessage(message + " ist dem Spiel beigetreten", new Types.ColorRGBA(255, 255, 255));
+                break;
+            case ChatTextType.PlayerDespawn:
+                chat.Players.Remove(message);
+                chat.AddOOCMessage(message + " hat das Spiel verlassen", new Types.ColorRGBA(255, 255, 255));
+                break;
+
+            // Added to both
+            case ChatTextType._Error:
+                chat.AddToShown(message, new Types.ColorRGBA(255, 0, 0));
+                break;
+            case ChatTextType._Hint:
+                chat.AddToShown(message, new Types.ColorRGBA(255, 0, 255));
+                break;
+        }
+    }
+
+    //siehe chatmenu.cs
+    //void SendMsg()
+    //{
+    //    var msg = textBox.Input;
+    //    if (string.IsNullOrWhiteSpace(msg))
+    //        return;
+
+    //    var stream = GUC.Network.GameClient.Client.GetMenuMsgStream();
+    //    stream.Write((byte)(TeamChat ? MenuMsgID.TeamChat : MenuMsgID.AllChat));
+    //    stream.Write(msg);
+    //    GUC.Network.GameClient.Client.SendMenuMsg(stream, GUC.Network.PktPriority.LOW_PRIORITY, GUC.Network.PktReliability.RELIABLE);
+    //}
+
+    public static void SendMessage(string message)
+    {
+        //zERROR.GetZErr(Program.Process).Report(2, 'G', "sending " + message.ToString(), 0, "hGame.cs", 0);
+
+        BitStream stream = Program.client.SetupSendStream(NetworkID.ChatMessage);
+        stream.mWrite(message);
+        Program.client.SendStream(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.UNRELIABLE);
+    }*/
+
+
+
+//aus server chatmessage.cs:
+/*
+public static void Read(BitStream stream, Client client)
+    {
+        string message = stream.mReadString();
+        Log.Logger.Log("received: " + message.ToString());
+        Chat chat = Chat.GetChat();
+        chat.MessageReceived(message, client.character);
+    }
+
+    public static void SendMessage(string message, NPC to, ChatTextType type)
+    {
+        Log.Logger.log("[SENDING TO " + to.CustomName + "]: " + message);
+        BitStream stream = Program.server.SetupStream(NetworkID.ChatMessage);
+        stream.mWrite((byte)type);
+        stream.mWrite(message);
+        Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I', to.client.guid, false);
+    }
+
+    public static void SendPlayerSpawned(string playerName)
+    {
+        BitStream stream = Program.server.SetupStream(NetworkID.ChatMessage);
+        stream.mWrite((byte)ChatTextType.PlayerSpawn);
+        stream.mWrite(playerName);
+        foreach (KeyValuePair<uint, NPC> pair in sWorld.PlayerDict)
+        {
+            if (pair.Value.client != null)
+                Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I', pair.Value.client.guid, false);
+        }
+    }
+
+    public static void SendPlayerDespawned(string playerName)
+    {
+        BitStream stream = Program.server.SetupStream(NetworkID.ChatMessage);
+        stream.mWrite((byte)ChatTextType.PlayerDespawn);
+        stream.mWrite(playerName);
+        foreach (KeyValuePair<uint, NPC> pair in sWorld.PlayerDict)
+        {
+            Program.server.ServerInterface.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'I', pair.Value.client.guid, false);
+        }
+    }
+
+
+*/
+
+using GUC.Network;
 namespace GUC.Server.Interface
 {
     public class Chat
     {
         public delegate void CommandDelegate(NPC player, string[] parameters);
-        Dictionary<uint, NPC> PlayerList = sWorld.PlayerDict;
+        var g = new GameClient()
+        Dictionary<uint, NPC> PlayerList = //sWorld.PlayerDict;
+
         Dictionary<string, Delegate> Commands = new Dictionary<string, Delegate>();
         Dictionary<string, string> CommandDescription = new Dictionary<string, string>();
 

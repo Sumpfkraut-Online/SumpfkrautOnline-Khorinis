@@ -172,6 +172,7 @@
     <Compile Include="Sumpfkraut\Alchemy\TCPServer.cs" />
     <Compile Include="Sumpfkraut\Alchemy\WebSocketClient.cs" />
     <Compile Include="Sumpfkraut\Alchemy\WebSocketServer.cs" />
+    <Compile Include="Sumpfkraut\Chat\Chat.cs" />
     <Compile Include="Sumpfkraut\CommandConsole\CommandConsole.cs" />
     <Compile Include="Sumpfkraut\CommandConsole\InfoObjects\AbstractInfo.cs" />
     <Compile Include="Sumpfkraut\CommandConsole\InfoObjects\NPCInfo.cs" />

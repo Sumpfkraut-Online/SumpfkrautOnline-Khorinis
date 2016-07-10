@@ -5,6 +5,7 @@ using System.Text;
 using WinApi.User.Enumeration;
 using WinApi;
 
+//TODO: her pixelbreite dings benutzen
 namespace GUC.Client.GUI
 {
     public interface InputReceiver
