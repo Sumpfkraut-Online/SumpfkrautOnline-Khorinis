@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using GUC.Utilities.Threading;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem
 {
@@ -78,7 +79,52 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
 
         partial void pLoad ()
         {
+            // prepare data conversion parameters if it's still not done yet
+            if (colGetTypeInfo == null)
+            {
+                for (int t = 0; t < DBTableLoadOrder.Count; t++)
+                {
+                    colGetTypeInfo.Add(DBStructure[DBTableLoadOrder[t]]);
+                }
+            }
+
+            // fill the queue of commands / subsequent sql-database-requests
+            List<string> commandQueue = new List<string>();
+            for (int t = 0; t < ColGetTypeInfo.Count; t++)
+            {
+                StringBuilder commandSB = new StringBuilder();
+
+                // select columns in order (by their names) --> SELECT col1, col2, ... coln
+                commandSB.Append("SELECT ");
+                int lastColumnIndex = ColGetTypeInfo[t].Count - 1;
+                for (int c = 0; c < ColGetTypeInfo[t].Count; c++)
+                {
+                    if (c != lastColumnIndex)
+                    {
+                        commandSB.Append(ColGetTypeInfo[t][c].colName + ",");
+                    }
+                    else
+                    {
+                        commandSB.Append(ColGetTypeInfo[t][c].colName);
+                    }
+                }
+
+                // always sort by <nameOfTable>ID --> e.g. FROM WorldEffect WHERE 1 ORDER BY WorldEffectID;
+                commandSB.AppendFormat(" FROM {0} WHERE 1 ORDER BY {1}ID;", DBTableLoadOrder[t], 
+                    DBTableLoadOrder[t]);
+                commandQueue.Add(commandSB.ToString());
+            }
             
+            // send out a parallel working DBAgent which informs back when finished with the queue
+            DBAgent dbAgent = new DBAgent(commandQueue, false);
+            dbAgent.SetObjName(GetObjName() + "-DBAgent");
+            dbAgent.FinishedQueue += VobDefFromSQLResults;
+            dbAgent.Start();
+        }
+
+        private void VobDefFromSQLResults (AbstractRunnable sender, DBAgent.FinishedQueueEventHandlerArgs e)
+        {
+            throw new NotImplementedException();
         }
 
     }

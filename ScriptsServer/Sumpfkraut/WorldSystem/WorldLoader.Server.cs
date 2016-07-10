@@ -100,11 +100,11 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
 
 
 
-        WorldLoader (string dbFilePath)
+        public WorldLoader (string dbFilePath)
             : this("WorldDef (default)", dbFilePath)
         { }
 
-        WorldLoader (string name, string dbFilePath)
+        public WorldLoader (string name, string dbFilePath)
         {
             SetObjName(name);
             this.dbFilePath = dbFilePath;

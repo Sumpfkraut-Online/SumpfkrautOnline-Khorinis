@@ -129,6 +129,12 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\VobInst.cs">
       <Link>Sumpfkraut\VobSystem\Instances\VobInst.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\VobDefLoader.cs">
+      <Link>Sumpfkraut\VobSystem\VobDefLoader.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\VobInstLoader.cs">
+      <Link>Sumpfkraut\VobSystem\VobInstLoader.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\WorldSystem\ScriptClock.cs">
       <Link>Sumpfkraut\WorldSystem\ScriptClock.cs</Link>
     </Compile>
@@ -192,6 +198,7 @@
     <Compile Include="Sumpfkraut\Database\DBTables.cs" />
     <Compile Include="Sumpfkraut\Database\Enumeration.cs" />
     <Compile Include="Sumpfkraut\Networking\ScriptClient.Server.cs" />
+    <Compile Include="Sumpfkraut\TestingThings.cs" />
     <Compile Include="Sumpfkraut\Visuals\ScriptAni.Server.cs" />
     <Compile Include="Sumpfkraut\Visuals\ScriptAniJob.Server.cs" />
     <Compile Include="Sumpfkraut\Visuals\ScriptOverlay.Server.cs" />
@@ -206,6 +213,7 @@
     <Compile Include="Sumpfkraut\VobSystem\Instances\NPCInst.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\ProjInst.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\VobInst.Server.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\VobDefLoader.Server.cs" />
     <Compile Include="Sumpfkraut\Web\WS\Enumeration.cs" />
     <Compile Include="Sumpfkraut\Web\WS\Protocols\AbstractWSProtocol.cs" />
     <Compile Include="Sumpfkraut\Web\WS\Protocols\Enumeration.cs" />
