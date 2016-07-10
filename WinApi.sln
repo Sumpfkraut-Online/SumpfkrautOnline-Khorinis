@@ -100,6 +100,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Overlays", "Overlays", "{C9
 		AnimationFiles\Overlays\Orcbiter.times = AnimationFiles\Overlays\Orcbiter.times
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DBPatterns", "DBPatterns", "{A7C8E0E3-1F33-49E5-9E0D-22C56935C08E}"
+	ProjectSection(SolutionItems) = preProject
+		DBPatterns\DBPattern_SqLite3_Main.sql = DBPatterns\DBPattern_SqLite3_Main.sql
+		DBPatterns\DBPattern_SqLite3_World.sql = DBPatterns\DBPattern_SqLite3_World.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
