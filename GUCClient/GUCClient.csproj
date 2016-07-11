@@ -246,13 +246,12 @@
     <Compile Include="..\GUCShared\WorldObjects\World.cs">
       <Link>WorldObjects\World.cs</Link>
     </Compile>
-    <Compile Include="GUI\GUCInventory.cs" />
     <Compile Include="GUI\GUCTextBox.cs" />
     <Compile Include="GUI\GUCView.cs" />
     <Compile Include="GUI\GUCVisual.cs" />
     <Compile Include="GUI\GUCVisualText.cs" />
-    <Compile Include="GUI\GUCVisualVob.cs" />
-    <Compile Include="GUI\MenuRenderer.cs" />
+    <Compile Include="GUI\GUC3DVisual.cs" />
+    <Compile Include="Hooks\hView.cs" />
     <Compile Include="Hooks\hGame.cs" />
     <Compile Include="Hooks\hParser.cs" />
     <Compile Include="Hooks\hPlayerVob.cs" />

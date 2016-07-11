@@ -7,7 +7,7 @@ using WinApi;
 using Gothic.Objects.Sky;
 using Gothic.System;
 using Gothic.Objects;
-using Gothic.Sound;
+using Gothic;
 
 namespace GUC
 {
@@ -99,7 +99,7 @@ namespace GUC
                 barrierAlpha = value;
                 if (inited)
                 {
-                    new zCSkyControler_Outdoor(zCSkyControler.ActiveSkyController.Address).Barrier.FrontierMesh.GetSomethingMaterial().Color.A = value;
+                    oCGame.GetWorld().SkyControlerOutdoor.Barrier.FrontierMesh.GetSomethingMaterial().Color.A = value;
                 }
 
                 if (!hooked)
@@ -119,7 +119,7 @@ namespace GUC
                 if (!inited)
                     Init();
 
-                var barrier = new zCSkyControler_Outdoor(zCSkyControler.ActiveSkyController.Address).Barrier;
+                var barrier = oCGame.GetWorld().SkyControlerOutdoor.Barrier;
 
                 if (barrierAlpha > 0)
                 {

@@ -193,9 +193,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public new NPC BaseInst { get { return (NPC)base.BaseInst; } }
 
         public new NPCDef Definition { get { return (NPCDef)base.Definition; } }
-
-        public ModelDef Model { get { return this.Definition.Model; } }
-
+        
         public MoveState Movement { get { return this.BaseInst.Movement; } }
         public EnvironmentState Environment { get { return this.BaseInst.EnvState; } }
 

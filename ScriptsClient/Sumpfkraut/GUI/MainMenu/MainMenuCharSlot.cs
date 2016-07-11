@@ -6,7 +6,7 @@ using GUC.Network;
 //using GUC.Scripts.Menus.MainMenus;
 using GUC.GUI;
 
-namespace GUC.Scripts.GUI.MainMenu
+namespace GUC.Scripts.Sumpfkraut.GUI.MainMenu
 {
    /* class MainMenuCharSlot : MainMenuItem
     {

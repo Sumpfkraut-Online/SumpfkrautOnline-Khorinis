@@ -116,6 +116,7 @@
     <Compile Include="..\ScriptsShared\TFFA\TFFAClient.cs">
       <Link>TFFA\TFFAClient.cs</Link>
     </Compile>
+    <Compile Include="Sumpfkraut\GUI\GUCInventory.cs" />
     <Compile Include="Sumpfkraut\GUI\MainMenu\MainMenuButton.cs" />
     <Compile Include="Sumpfkraut\GUI\MainMenu\MainMenuCharacter.cs" />
     <Compile Include="Sumpfkraut\GUI\MainMenu\MainMenuCharSlot.cs" />

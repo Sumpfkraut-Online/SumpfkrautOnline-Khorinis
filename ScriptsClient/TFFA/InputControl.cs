@@ -105,7 +105,11 @@ namespace GUC.Scripts.TFFA
             if (TFFAClient.Status == TFFAPhase.Waiting)
                 return;
 
-            if (key == VirtualKeys.N1)
+            if (key == VirtualKeys.I)
+            {
+                PlayerInventory.Menu.Open();
+            }
+            else if (key == VirtualKeys.N1)
             {
                 if (Hero.DrawnWeapon == null)
                 {

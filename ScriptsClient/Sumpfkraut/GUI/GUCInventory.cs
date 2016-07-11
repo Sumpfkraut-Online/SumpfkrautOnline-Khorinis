@@ -2,62 +2,72 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-//using GUC.WorldObjects;
 using WinApi.User.Enumeration;
-using GUC.Enumeration;
-using Gothic.View;
 using GUC.Types;
+using GUC.GUI;
+using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using GUC.WorldObjects.Collections;
 
-namespace GUC.GUI
+namespace GUC.Scripts.Sumpfkraut.GUI
 {
-  /* public class GUCInventory : GUCView, InputReceiver
+    public class GUCInventory : GUCView
     {
-        #region slot
-        const int slotSize = 70;
+        public const int DescriptionBoxWidth = 720;
+        public const int DescriptionBoxHeight = 162;
+        public const int SlotSize = 70;
+
+        #region Slot
 
         class Slot : GUCView
         {
             public GUCVisual back;
-            GUCVisualVob vis;
+            GUC3DVisual vis;
             GUCVisualText amount;
-            oCItem thisVob;
             bool shown = false;
 
-            string bgTex = "Inv_Slot.tga";
-            string bgHighlightedTex = "Inv_Slot_Highlighted.tga";
+            const string bgTex = "Inv_Slot.tga";
+            const string bgHighlightedTex = "Inv_Slot_Highlighted.tga";
 
             public Slot(int x, int y)
             {
-                back = new GUCVisual(x, y, slotSize, slotSize);
+                back = new GUCVisual(x, y, SlotSize, SlotSize);
                 back.SetBackTexture(bgTex);
 
-                vis = new GUCVisualVob(x, y, slotSize, slotSize);
-                thisVob = oCItem.Create(Program.Process);
-                vis.SetVob(thisVob);
+                vis = new GUC3DVisual(x, y, SlotSize, SlotSize);
 
-                amount = vis.CreateText("", slotSize - 5, slotSize - 5 - FontsizeDefault);
+                amount = vis.CreateText("", SlotSize - 5, SlotSize - 5 - FontsizeDefault);
                 amount.Format = GUCVisualText.TextFormat.Right;
             }
 
-            Item iItem = null;
-            public Item item
+            ItemInst item = null;
+            public ItemInst Item
             {
-                get { return iItem; }
+                get { return item; }
                 set
                 {
-                    iItem = value;
-
-                    if (iItem == null)
+                    item = value;
+                    if (item == null)
                     {
+                        vis.SetVisual(string.Empty);
                         vis.Hide();
                     }
                     else
                     {
-                        thisVob.SetVisual(iItem.Visual);
-                        thisVob.MainFlag = (int)iItem.mainFlags; //for proper item rotation
-                        thisVob.Flags = (int)iItem.flags;
-                        amount.Text = iItem.Amount > 1 ? iItem.Amount.ToString() : "";
-                        if (shown) vis.Show();
+                        vis.SetVisual(item.Model.Visual);
+                        int num = item.Amount;
+                        if (num > 1)
+                        {
+                            amount.Text = num.ToString();
+                        }
+                        else
+                        {
+                            amount.Text = string.Empty;
+                        }
+
+                        if (shown)
+                        {
+                            vis.Show();
+                        }
                     }
                 }
             }
@@ -65,19 +75,19 @@ namespace GUC.GUI
             public void Select()
             {
                 back.SetBackTexture(bgHighlightedTex);
-                Program.Process.Write(110, thisVob.Address + (int)oCItem.Offsets.inv_zbias);
+                //Process.Write(110, thisVob.Address + (int)oCItem.Offsets.inv_zbias);
             }
 
             public void Deselect()
             {
-                back.SetBackTexture(bgTex);
-                Program.Process.Write(0, thisVob.Address + (int)oCItem.Offsets.inv_zbias);
+                this.back.SetBackTexture(bgTex);
+                //Process.Write(0, thisVob.Address + (int)oCItem.Offsets.inv_zbias);
             }
 
             public override void Show()
             {
                 back.Show();
-                if (iItem != null)
+                if (item != null)
                 {
                     vis.Show();
                 }
@@ -91,38 +101,41 @@ namespace GUC.GUI
                 shown = false;
             }
         }
+
         #endregion
 
+        // info box on the top right
         GUCVisual rightBack;
         GUCVisual rightVis;
         GUCVisualText rightText;
         public string RightInfoBox;
 
+        // info box on the top left
         GUCVisual leftBack;
         GUCVisual leftVis;
         GUCVisualText leftText;
         public string LeftInfoBox;
 
+        // background
         GUCVisual back;
         Slot[,] slots;
-        Vec2i cursor = new Vec2i(0,0);
+
+        // cursor
+        Vec2i cursor = new Vec2i(0, 0);
         int startPos = 0; //for scrolling
 
+        // description
         GUCVisual descrBack;
-        GUCVisualVob descrVis;
-        oCItem descrVob;
+        GUC3DVisual descrVis;
 
         // next inventories
-        public GUCInventory left;
-        public GUCInventory right;
-
-        bool TradeAccepted = false; // AcceptedTradeBackgrounds shall not be unshown
-
+        public GUCInventory Left;
+        public GUCInventory Right;
 
         bool enabled = false;
         public bool Enabled
         {
-            get { return enabled; }
+            get { return this.enabled; }
             set
             {
                 enabled = value;
@@ -130,81 +143,81 @@ namespace GUC.GUI
                 {
                     SelectSlot();
                     back.Show();
-                    //zERROR.GetZErr(Program.Process).Report(2, 'G', "Inventory enabled in " + name, 0, "GUCInventory.cs", 0);
                     this.Show(); //to the front!
                 }
                 else
                 {
                     slots[cursor.X, cursor.Y].Deselect();
-                    if (!TradeAccepted)
-                    {
-                        back.Hide();
-                    }
+                    back.Hide();
                     descrBack.Hide();
                     descrVis.Hide();
                 }
             }
         }
 
-        public GUCInventory(int x, int y, int cols, int rows)
-            : this(x, y, cols, rows, "Inv_Back.tga")
-        {
+        #region Constructor
 
-        }
-
-        public GUCInventory(int x, int y, int cols, int rows, string backTex)
+        public GUCInventory(int x, int y, int cols, int rows, string backTex = "Inv_Back.tga")
         {
-            back = new GUCVisual(x, y, cols * slotSize, rows * slotSize);
+            // create the background
+            back = new GUCVisual(x, y, cols * SlotSize, rows * SlotSize);
             back.SetBackTexture(backTex);
+
+            // create the slots
             slots = new Slot[cols, rows];
             for (int i = 0; i < cols; i++)
             {
                 for (int j = 0; j < rows; j++)
                 {
-                    slots[i, j] = new Slot(x + i * slotSize, y + j * slotSize);
+                    slots[i, j] = new Slot(x + i * SlotSize, y + j * SlotSize);
                 }
             }
 
-            const int descrWidth = 720;
-            const int descrHeight = 162;
+            // create the description
             const int descrTextDist = FontsizeDefault - 3;
 
-            descrBack = new GUCVisual((GetScreenSize()[0] - descrWidth) / 2, GetScreenSize()[1] - descrHeight - 30, descrWidth, descrHeight);
-            descrBack.SetBackTexture(backTex);//"Inv_Desc.tga");
-            descrBack.CreateTextCenterX("", 10);
-            for (int i = 0; i < 6; i++)
+            descrBack = new GUCVisual((GetScreenSize()[0] - DescriptionBoxWidth) / 2, GetScreenSize()[1] - DescriptionBoxHeight - 30, DescriptionBoxWidth, DescriptionBoxHeight);
+            descrBack.SetBackTexture(backTex); // "Inv_Desc.tga");
+
+            descrBack.CreateTextCenterX("", 10); // title
+
+            for (int i = 0; i < 6; i++) // six info rows
             {
                 descrBack.CreateText("", 20, 60 + i * descrTextDist);
-                GUCVisualText count = descrBack.CreateText("", descrWidth - 20, 60 + i * descrTextDist);
+                GUCVisualText count = descrBack.CreateText("", DescriptionBoxWidth - 20, 60 + i * descrTextDist);
                 count.Format = GUCVisualText.TextFormat.Right;
             }
 
-            descrVis = new GUCVisualVob(GetScreenSize()[0] / 2 + 160, GetScreenSize()[1] - 128 - 48, 128, 128);
-            descrVob = oCItem.Create(Program.Process);
-            descrVis.SetVob(descrVob);
+            descrVis = new GUC3DVisual(GetScreenSize()[0] / 2 + 160, GetScreenSize()[1] - 128 - 48, 128, 128);
 
-            rightBack = new GUCVisual(x + (cols - 2) * slotSize, y - 20 - 35, 2 * slotSize, 35);
+            // create the right info box
+            rightBack = new GUCVisual(x + (cols - 2) * SlotSize, y - 20 - 35, 2 * SlotSize, 35);
             rightBack.SetBackTexture(backTex);
-            rightVis = new GUCVisual(x + (cols - 2) * slotSize, y - 20 - 35, 2 * slotSize, 35);
+            rightVis = new GUCVisual(x + (cols - 2) * SlotSize, y - 20 - 35, 2 * SlotSize, 35);
             rightVis.SetBackTexture("Inv_Title.tga");
             rightText = rightVis.CreateText("");
             RightInfoBox = "GOLD";
 
-            leftBack = new GUCVisual(x, y - 20 - 35, 2 * slotSize, 35);
+            // create the left info box
+            leftBack = new GUCVisual(x, y - 20 - 35, 2 * SlotSize, 35);
             leftBack.SetBackTexture(backTex);
-            leftVis = new GUCVisual(x, y - 20 - 35, 2 * slotSize, 35);
+            leftVis = new GUCVisual(x, y - 20 - 35, 2 * SlotSize, 35);
             leftVis.SetBackTexture("Inv_Title.tga");
             leftText = leftVis.CreateText("");
             LeftInfoBox = "WEIGHT";
         }
 
-        public Item selectedItem { get; protected set; }
+        #endregion
+
+        public ItemInst GetSelectedItem()
+        {
+            return slots[cursor.X, cursor.Y].Item;
+        }
 
         #region Navigation
 
         public void SetCursor(int x, int y)
         {
-            zERROR.GetZErr(Program.Process).Report(2, 'G', "Attempt to Set Cursor at " + x.ToString() + "/" + y.ToString() + " in " + this.ToString(), 0, "GUCInventory.cs", 0);
             if (enabled)
             {
                 slots[cursor.X, cursor.Y].Deselect();
@@ -215,20 +228,20 @@ namespace GUC.GUI
 
             if (newX < 0)
             {
-                if (left != null)
+                if (Left != null)
                 {
-                    left.EnterAt(left.slots.GetLength(0) - 1, y);
-                    left.Enabled = true;
+                    Left.EnterAt(Left.slots.GetLength(0) - 1, y);
+                    Left.Enabled = true;
                     this.Enabled = false;
                 }
                 newX = 0;
             }
-            else if (newX >= slots.GetLength(0) || (cursor.Y - newY == 0 && slots[newX, newY].item == null)) // moved to border or empty slot(make sure it was move in X)
+            else if (newX >= slots.GetLength(0) || (cursor.Y - newY == 0 && slots[newX, newY].Item == null)) // moved to border or empty slot(make sure it was move in X)
             {
-                if (right != null)
+                if (Right != null)
                 {
-                    right.EnterAt(0, y);
-                    right.Enabled = true;
+                    Right.EnterAt(0, y);
+                    Right.Enabled = true;
                     this.Enabled = false;
                 }
                 newX = slots.GetLength(0) - 1;
@@ -288,7 +301,6 @@ namespace GUC.GUI
 
         public void EnterAt(int x, int y)
         {
-            zERROR.GetZErr(Program.Process).Report(2, 'G', "EnterAT " + x.ToString() + "/" + y.ToString(), 0, "GUCInventory.cs", 0);
             // checks if the entered position is valid
             // sets cursor to the next valid position
             for (int X = x; X >= 0; --X)
@@ -297,9 +309,8 @@ namespace GUC.GUI
                 {
                     if (X < slots.GetLength(0) && Y < slots.GetLength(1))
                     {
-                        if (slots[X, Y].item != null)
+                        if (slots[X, Y].Item != null)
                         {
-                            zERROR.GetZErr(Program.Process).Report(2, 'G', "Slot available at " + X.ToString() + "/" + Y.ToString(), 0, "GUCInventory.cs", 0);
                             cursor.X = X;
                             cursor.Y = Y;
                             SelectSlot();
@@ -308,7 +319,7 @@ namespace GUC.GUI
                     }
                 }
             }
-            zERROR.GetZErr(Program.Process).Report(2, 'G', "Set default Slot", 0, "GUCInventory.cs", 0);
+
             cursor.X = 0;
             cursor.Y = 0;
             SelectSlot();
@@ -316,11 +327,11 @@ namespace GUC.GUI
 
         void SelectSlot()
         {
-            selectedItem = slots[cursor.X, cursor.Y].item;
-
             slots[cursor.X, cursor.Y].Select();
 
-            if (selectedItem == null)
+            ItemInst selItem = GetSelectedItem();
+
+            if (selItem == null)
             {
                 descrBack.Hide();
                 descrVis.Hide();
@@ -328,16 +339,16 @@ namespace GUC.GUI
             else
             {
                 //set description name
-                descrBack.Texts[0].Text = selectedItem.description;
+                descrBack.Texts[0].Text = selItem.Definition.Name;
 
                 //standard description
-                for (int i = 0; i < 4; i++)
+                /*for (int i = 0; i < 4; i++)
                 {
-                    descrBack.Texts[2 * i + 3].Text = selectedItem.text[i];
+                    descrBack.Texts[2 * i + 3].Text = selItem.text[i];
 
-                    if (selectedItem.count[i] > 0)
+                    if (selItem.count[i] > 0)
                     {
-                        descrBack.Texts[2 * i + 4].Text = selectedItem.count[i].ToString();
+                        descrBack.Texts[2 * i + 4].Text = selItem.count[i].ToString();
                     }
                     else
                     {
@@ -357,12 +368,10 @@ namespace GUC.GUI
 
                 //weight on bottom
                 descrBack.Texts[11].Text = "Gewicht:";
-                descrBack.Texts[12].Text = selectedItem.weight.ToString();
+                descrBack.Texts[12].Text = selectedItem.weight.ToString();*/
 
                 //visual vob
-                descrVob.SetVisual(selectedItem.Visual);
-                descrVob.MainFlag = (int)selectedItem.mainFlags;
-                descrVob.Flags = (int)selectedItem.flags;
+                descrVis.SetVisual(selItem.Model.Visual);
 
                 //show
                 descrVis.Show();
@@ -395,83 +404,44 @@ namespace GUC.GUI
 
         #endregion
 
-        List<Item> contents;
-        public void SetContents(Dictionary<uint, Item> items)
+        ItemContainer inventory = null;
+        public void SetContents(ItemContainer inventory)
         {
-            contents = items.Values.ToList();
-            contents.Sort(inventoryComparer); //sort items
+            this.inventory = inventory;
 
             if (enabled)
             {
-                SetCursor(cursor.X, cursor.Y); //update cursor // Mad: only if enabled
+                SetCursor(cursor.X, cursor.Y); //update cursor
             }
 
             UpdateSlots(); // update slot visuals
-
-            rightText.Text = GetInfoBoxValue(RightInfoBox);
-            leftText.Text = GetInfoBoxValue(LeftInfoBox);
         }
 
-        String GetInfoBoxValue(string text)
-        {
-            switch (text)
-            {
-                case "GOLD":
-                    Item gold = contents.Find(i => i.name == "Gold");
-                    return "Gold: " + (gold == null ? 0 : gold.Amount);
-                case "WEIGHT":
-                    int weight = 0;
-                    for (int i = 0; i < contents.Count; i++)
-                        weight += contents[i].weight * contents[i].Amount;
-                    return String.Format("{0}/{1}", weight, 100); //FIXME: Show capacity
-                default:
-                    return text;
-            }
-        }
-
-        public void SetAcceptStateColor(bool set)
-        {
-            // set == true -> set bg to accept state
-            // set == false -> sets bg to normal state
-            if (set)
-            {
-                TradeAccepted = true;
-                back.SetBackTexture("Inv_Back_Buy.tga");
-                leftBack.SetBackTexture("Inv_Back_Buy.tga");
-                rightBack.SetBackTexture("Inv_Back_Buy.tga");
-                back.Show();
-            }
-            else
-            {
-                TradeAccepted = false;
-                back.SetBackTexture("Inv_Back_Sell.tga");
-                leftBack.SetBackTexture("Inv_Back_Sell.tga");
-                rightBack.SetBackTexture("Inv_Back_Sell.tga");
-                if (!enabled)
-                {
-                    back.Hide();
-                }
-            }
-
-        }
-
+        List<ItemInst> contents = new List<ItemInst>();
         void UpdateSlots()
         {
+            contents.Clear();
+            if (this.inventory != null)
+                this.inventory.ForEachItem(item => contents.Add((ItemInst)item.ScriptObject));
+            contents.Sort(ItemSort);
+
             int i = startPos * slots.GetLength(0);
             for (int y = 0; y < slots.GetLength(1); y++)
                 for (int x = 0; x < slots.GetLength(0); x++)
                 {
                     if (i < contents.Count)
                     {
-                        slots[x, y].item = contents[i];
+                        slots[x, y].Item = contents[i];
                     }
                     else
                     {
-                        slots[x, y].item = null;
+                        slots[x, y].Item = null;
                     }
                     i++;
                 }
         }
+
+        #region Show & Hide
 
         public override void Show()
         {
@@ -503,35 +473,15 @@ namespace GUC.GUI
             leftVis.Hide();
         }
 
-        #region sorting
-
-        static List<int> sortList = new List<int>() { oCItem.MainFlags.ITEM_KAT_NF,
-                                                      oCItem.MainFlags.ITEM_KAT_FF,
-                                                      oCItem.MainFlags.ITEM_KAT_MUN,
-                                                      oCItem.MainFlags.ITEM_KAT_FOOD,
-                                                      oCItem.MainFlags.ITEM_KAT_RUNE,
-                                                      oCItem.MainFlags.ITEM_KAT_ARMOR,
-                                                      oCItem.MainFlags.ITEM_KAT_DOCS,
-                                                      oCItem.MainFlags.ITEM_KAT_POTIONS,
-                                                      oCItem.MainFlags.ITEM_KAT_MAGIC };
-
-        static InventoryComparer inventoryComparer = new InventoryComparer();
-        class InventoryComparer : IComparer<Item>
-        {
-            public int Compare(Item a, Item b)
-            {
-                int aIndex = sortList.IndexOf(a.mainFlags); // get sort priority
-                int bIndex = sortList.IndexOf(a.mainFlags); // get sort priority
-                if (aIndex < 0) aIndex = sortList.Count; // not in sortList, to the bottom
-                if (bIndex < 0) bIndex = sortList.Count; // not in sortList, to the bottom
-
-                //if (aIndex.CompareTo(bIndex) != 0)
-                //{
-                return aIndex.CompareTo(bIndex);
-                //}
-                //return a.count[0].CompareTo(b.count[0]); //just sort by something
-            }
-        }
         #endregion
-    }*/
+
+        #region Sorting
+
+        static int ItemSort(ItemInst item1, ItemInst item2)
+        {
+            return item1.ItemType.CompareTo(item2.ItemType);
+        }
+
+        #endregion
+    }
 }
