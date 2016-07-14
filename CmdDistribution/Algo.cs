@@ -9,7 +9,7 @@ namespace CmdDistribution
     static class Algo
     {
         public static Action<object> Print;
-        
+
         public class ClientInfo
         {
             public Client cl;
@@ -51,13 +51,14 @@ namespace CmdDistribution
 
             // create a list of all cells with multiple available clients and process all other cells
             List<Cell> connectedCells = CreatedConnectedCellList(cells);
-            
+
             // initial vob assignment
             for (int i = 0; i < connectedCells.Count; i++)
                 AssignVobs(connectedCells[i]);
-            
+
             // reshift the cells' vobs until there's no need for it anymore
-            for (int loop = 0; loop < 10; loop++) // performance tweak: don't shift too often
+            int x = 0;
+            for (int loop = 0; loop < 100; loop++) // performance tweak: don't shift too often
             {
                 bool changed = false;
                 for (int i = 0; i < connectedCells.Count; i++)
@@ -70,7 +71,11 @@ namespace CmdDistribution
 
                 if (!changed)
                     break;
+
+                x++;
             }
+
+            Print("Loops: " + x);
 
             // move the cells' vobs to their clients
             for (int i = 0; i < connectedCells.Count; i++)
@@ -110,13 +115,13 @@ namespace CmdDistribution
         static void AssignVobs(Cell cell)
         {
             List<ClientInfo> list = cell.AvailableClients;
-            
+
             int vobCount = cell.vobs.Count;
             while (vobCount > 0) // still vobs to assign
             {
                 // put the clients with lowest vob count into a list and return the difference to the next highest vob count
                 int difference = FindLowestAndNextHighest(list, lowest);
-                                
+
                 if (difference > vobCount / lowest.Count) // next highest vob count is beyond the cell's possibilities
                 {
                     for (int i = 0; i < lowest.Count; i++) // split evenly
@@ -154,13 +159,11 @@ namespace CmdDistribution
                 {
                     var client2 = list[j];
 
-                    // makes it much more exact, but needs much more loops too, as there will be shifted single vobs in the end
-                    //float f = (info.cl.ProbableVobs - other.cl.ProbableVobs) / 2.0f;
-                    //if (f > 0) f += 0.5f; 
-                    //else if (f < 0) f -= 0.5f;
+                    float f = (client1.cl.ProbableVobs - client2.cl.ProbableVobs) / 2.0f;
+                    if (f > 0) f += 0.5f;
+                    else if (f < 0) f -= 0.5f;
+                    int moveVobs = (int)f;
 
-                    int moveVobs = (client1.cl.ProbableVobs - client2.cl.ProbableVobs) / 2;
-                    
                     if (moveVobs > client1.vobNum)
                         moveVobs = client1.vobNum;
                     else if (moveVobs < -client2.vobNum)
@@ -172,7 +175,8 @@ namespace CmdDistribution
                         client2.vobNum += moveVobs;
                         client1.cl.ProbableVobs -= moveVobs;
                         client1.vobNum -= moveVobs;
-                        changed = true;
+                        if (moveVobs > 1 || moveVobs < -1)
+                            changed = true;
                     }
 
                 }
