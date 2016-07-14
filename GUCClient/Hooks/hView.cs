@@ -46,6 +46,7 @@ namespace GUC.Hooks
                     //add some light
                     Process.Write(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF }, vob.Address + zCVob.VarOffsets.lightColorStat);
                     Process.Write(1.0f, vob.Address + zCVob.VarOffsets.lightDirectionStat + 8);
+
                     //draw the vob
                     vob.RenderItem(rndrWorld, view, 0);
                 }

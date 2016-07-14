@@ -8,6 +8,7 @@ using GUC.Scripts.Sumpfkraut.GUI;
 using GUC.Scripts.Sumpfkraut.Networking;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Enumeration;
+using GUC.Scripts.Sumpfkraut.Visuals;
 
 namespace GUC.Scripts.Sumpfkraut.Menus
 {
@@ -70,6 +71,27 @@ namespace GUC.Scripts.Sumpfkraut.Menus
                     Close();
                     break;
                 case VirtualKeys.Menu: // DROP
+                    NPCInst player = ScriptClient.Client.Character;
+                    if (player != null)
+                    {
+                        ItemInst selItem = inv.GetSelectedItem();
+                        if (selItem != null)
+                        {
+                            ScriptAniJob dropJob;
+                            if (player.Model.TryGetAniJob((int)SetAnis.DropItem, out dropJob))
+                            {
+                                if (selItem.Amount > 1)
+                                {
+
+                                }
+                                else
+                                {
+                                    ScriptClient.Client.BaseClient.DoStartAni(dropJob.BaseAniJob, selItem);
+                                }
+                            }
+                        }
+                    }
+
                     /*if (inv.selectedItem == null)
                         return;
 

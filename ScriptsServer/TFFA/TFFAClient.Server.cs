@@ -38,17 +38,17 @@ namespace GUC.Scripts.TFFA
 
         public override void OnReadMenuMsg(PacketReader stream)
         {
-            MenuMsgID id = (MenuMsgID)stream.ReadByte();
+            TFFANetMsgID id = (TFFANetMsgID)stream.ReadByte();
             switch (id)
             {
-                case MenuMsgID.OpenScoreboard:
+                case TFFANetMsgID.OpenScoreboard:
                     TFFAGame.scoreboardClients.Add(this);
                     TFFAGame.UpdateStats(this);
                     break;
-                case MenuMsgID.CloseScoreboard:
+                case TFFANetMsgID.CloseScoreboard:
                     TFFAGame.scoreboardClients.Remove(this);
                     break;
-                case MenuMsgID.ClientTeam:
+                case TFFANetMsgID.ClientTeam:
                     Team team = (Team)stream.ReadByte();
                     if (team != this.Team)
                     {
@@ -77,20 +77,20 @@ namespace GUC.Scripts.TFFA
                         TFFAGame.AddToTeam(this, team);
                     }
                     break;
-                case MenuMsgID.ClientClass:
+                case TFFANetMsgID.ClientClass:
                     TFFAGame.SelectClass(this, (PlayerClass)stream.ReadByte());
                     break;
-                case MenuMsgID.ClientName:
+                case TFFANetMsgID.ClientName:
                     string newName = stream.ReadString();
                     if (!string.IsNullOrWhiteSpace(newName))
                         this.Name = newName;
                     this.SendNameChanged();
                     break;
-                case MenuMsgID.AllChat:
+                case TFFANetMsgID.AllChat:
                     string msg = stream.ReadString();
                     SendChatMessage(msg, false);
                     break;
-                case MenuMsgID.TeamChat:
+                case TFFANetMsgID.TeamChat:
                     msg = stream.ReadString();
                     SendChatMessage(msg, true);
                     break;
@@ -114,7 +114,7 @@ namespace GUC.Scripts.TFFA
         void SendThisClientInfo()
         {
             PacketWriter stream = GameClient.GetMenuMsgStream();
-            stream.Write((byte)MenuMsgID.ClientConnect);
+            stream.Write((byte)TFFANetMsgID.ClientConnect);
             this.WriteClientSteam(stream);
             TFFAClient.ForEach(c => { if (c != this) c.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE_ORDERED); });
         }
@@ -122,7 +122,7 @@ namespace GUC.Scripts.TFFA
         void SendClientInfosToThis()
         {
             PacketWriter stream = GameClient.GetMenuMsgStream();
-            stream.Write((byte)MenuMsgID.ClientInfoGroup);
+            stream.Write((byte)TFFANetMsgID.ClientInfoGroup);
             stream.Write((byte)this.ID);
             stream.Write((byte)TFFAGame.Status);
             stream.Write(TFFAGame.GetPhaseSecsLeft());
@@ -134,7 +134,7 @@ namespace GUC.Scripts.TFFA
         void SendDisconnect()
         {
             PacketWriter stream = GameClient.GetMenuMsgStream();
-            stream.Write((byte)MenuMsgID.ClientDisconnect);
+            stream.Write((byte)TFFANetMsgID.ClientDisconnect);
             stream.Write((byte)this.ID);
             TFFAClient.ForEach(c => c.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE_ORDERED));
         }
@@ -142,7 +142,7 @@ namespace GUC.Scripts.TFFA
         public void SendTeamChanged()
         {
             PacketWriter stream = GameClient.GetMenuMsgStream();
-            stream.Write((byte)MenuMsgID.ClientTeam);
+            stream.Write((byte)TFFANetMsgID.ClientTeam);
             stream.Write((byte)this.ID);
             stream.Write((byte)this.Team);
             TFFAClient.ForEach(c => c.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE_ORDERED));
@@ -151,7 +151,7 @@ namespace GUC.Scripts.TFFA
         public void SendClassChanged()
         {
             PacketWriter stream = GameClient.GetMenuMsgStream();
-            stream.Write((byte)MenuMsgID.ClientClass);
+            stream.Write((byte)TFFANetMsgID.ClientClass);
             stream.Write((byte)this.ID);
             stream.Write((byte)this.Class);
             TFFAClient.ForEach(c => c.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE_ORDERED));
@@ -160,7 +160,7 @@ namespace GUC.Scripts.TFFA
         public void SendNameChanged()
         {
             PacketWriter stream = GameClient.GetMenuMsgStream();
-            stream.Write((byte)MenuMsgID.ClientName);
+            stream.Write((byte)TFFANetMsgID.ClientName);
             stream.Write((byte)this.ID);
             stream.Write(this.Name);
             TFFAClient.ForEach(c => c.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE_ORDERED));
@@ -169,7 +169,7 @@ namespace GUC.Scripts.TFFA
         public void SendNPCChanged()
         {
             PacketWriter stream = GameClient.GetMenuMsgStream();
-            stream.Write((byte)MenuMsgID.ClientNPC);
+            stream.Write((byte)TFFANetMsgID.ClientNPC);
             stream.Write((byte)this.ID);
             stream.Write((ushort)this.Character.ID);
             TFFAClient.ForEach(c => c.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE_ORDERED));
@@ -178,7 +178,7 @@ namespace GUC.Scripts.TFFA
         public void SendChatMessage(string message, bool onlyTeam)
         {
             PacketWriter stream = GameClient.GetMenuMsgStream();
-            stream.Write((byte)(onlyTeam ? MenuMsgID.TeamChat : MenuMsgID.AllChat));
+            stream.Write((byte)(onlyTeam ? TFFANetMsgID.TeamChat : TFFANetMsgID.AllChat));
             stream.Write((byte)this.ID);
             stream.Write(message);
             if (!onlyTeam)

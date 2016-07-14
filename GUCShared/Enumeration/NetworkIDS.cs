@@ -62,5 +62,10 @@ namespace GUC.Enumeration
         InventoryRemoveMessage, // remove item from player inventory
         InventoryEquipMessage,
         InventoryUnequipMessage,
+
+        // ai commanding
+        CmdAddVobMessage,
+        CmdRemoveVobMessage,
+        CmdVobMessage
     }
 }

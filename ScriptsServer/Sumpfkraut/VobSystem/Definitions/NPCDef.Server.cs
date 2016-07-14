@@ -8,6 +8,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
     public partial class NPCDef
     {
+        public static NPCDef Get(string codeName)
+        {
+            return Get<NPCDef>(codeName);
+        }
+
         public NPCDef(string codeName) : base(new NPCInstance(), codeName)
         {
         }

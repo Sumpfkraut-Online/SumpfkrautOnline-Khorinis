@@ -5,6 +5,7 @@ using System.Text;
 using GUC.Types;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Sumpfkraut.Visuals;
+using GUC.Scripts.Sumpfkraut.Networking;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
@@ -32,11 +33,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             if (target != null)
             {
                 var strm = this.BaseInst.GetScriptVobStream();
-                strm.Write((byte)Networking.NetVobMsgIDs.HitMessage);
+                strm.Write((byte)NetWorldMsgID.HitMessage);
                 strm.Write((ushort)target.ID);
                 this.BaseInst.SendScriptVobStream(strm);
 
-                target.Hit(this.Shooter, Damage - target.Armor.Definition.Protection);
+                target.Hit(this.Shooter, Damage - (target.Armor == null ? 0 : target.Armor.Definition.Protection));
 
                 this.Despawn();
             }

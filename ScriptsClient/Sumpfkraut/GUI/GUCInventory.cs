@@ -28,6 +28,9 @@ namespace GUC.Scripts.Sumpfkraut.GUI
             const string bgTex = "Inv_Slot.tga";
             const string bgHighlightedTex = "Inv_Slot_Highlighted.tga";
 
+            const string eqTex = "Inv_Slot_Equipped.tga";
+            const string eqHighlightedTex = "Inv_Slot_Equipped_Highlighted.tga";
+
             public Slot(int x, int y)
             {
                 back = new GUCVisual(x, y, SlotSize, SlotSize);
@@ -45,43 +48,61 @@ namespace GUC.Scripts.Sumpfkraut.GUI
                 get { return item; }
                 set
                 {
-                    item = value;
-                    if (item == null)
+                    if (this.item != value)
                     {
-                        vis.SetVisual(string.Empty);
-                        vis.Hide();
-                    }
-                    else
-                    {
-                        vis.SetVisual(item.Model.Visual);
-                        int num = item.Amount;
-                        if (num > 1)
+                        item = value;
+                        UpdateBackTex();
+                        if (item == null)
                         {
-                            amount.Text = num.ToString();
+                            vis.SetVisual(string.Empty);
+                            vis.Hide();
                         }
                         else
                         {
-                            amount.Text = string.Empty;
-                        }
+                            vis.SetVisual(item.Model.Visual);
+                            int num = item.Amount;
+                            if (num > 1)
+                            {
+                                amount.Text = num.ToString();
+                            }
+                            else
+                            {
+                                amount.Text = string.Empty;
+                            }
 
-                        if (shown)
-                        {
-                            vis.Show();
+                            if (shown)
+                            {
+                                vis.Show();
+                            }
                         }
                     }
                 }
             }
 
-            public void Select()
+            bool isSelected = false;
+            public bool IsSelected
             {
-                back.SetBackTexture(bgHighlightedTex);
-                //Process.Write(110, thisVob.Address + (int)oCItem.Offsets.inv_zbias);
+                get { return this.isSelected; }
+                set
+                {
+                    if (this.isSelected != value)
+                    {
+                        this.isSelected = value;
+                        UpdateBackTex();
+                    }
+                }
             }
 
-            public void Deselect()
+            void UpdateBackTex()
             {
-                this.back.SetBackTexture(bgTex);
-                //Process.Write(0, thisVob.Address + (int)oCItem.Offsets.inv_zbias);
+                if (this.isSelected)
+                {
+                    back.SetBackTexture((item != null && item.IsEquipped) ? eqHighlightedTex : bgHighlightedTex);
+                }
+                else
+                {
+                    back.SetBackTexture((item != null && item.IsEquipped) ? eqTex : bgTex);
+                }
             }
 
             public override void Show()
@@ -147,7 +168,7 @@ namespace GUC.Scripts.Sumpfkraut.GUI
                 }
                 else
                 {
-                    slots[cursor.X, cursor.Y].Deselect();
+                    slots[cursor.X, cursor.Y].IsSelected = false;
                     back.Hide();
                     descrBack.Hide();
                     descrVis.Hide();
@@ -174,13 +195,12 @@ namespace GUC.Scripts.Sumpfkraut.GUI
             }
 
             // create the description
-            const int descrTextDist = FontsizeDefault - 3;
-
             descrBack = new GUCVisual((GetScreenSize()[0] - DescriptionBoxWidth) / 2, GetScreenSize()[1] - DescriptionBoxHeight - 30, DescriptionBoxWidth, DescriptionBoxHeight);
             descrBack.SetBackTexture(backTex); // "Inv_Desc.tga");
 
             descrBack.CreateTextCenterX("", 10); // title
 
+            const int descrTextDist = FontsizeDefault - 3;
             for (int i = 0; i < 6; i++) // six info rows
             {
                 descrBack.CreateText("", 20, 60 + i * descrTextDist);
@@ -220,7 +240,7 @@ namespace GUC.Scripts.Sumpfkraut.GUI
         {
             if (enabled)
             {
-                slots[cursor.X, cursor.Y].Deselect();
+                slots[cursor.X, cursor.Y].IsSelected = false;
             }
 
             int newX = x;
@@ -327,7 +347,7 @@ namespace GUC.Scripts.Sumpfkraut.GUI
 
         void SelectSlot()
         {
-            slots[cursor.X, cursor.Y].Select();
+            slots[cursor.X, cursor.Y].IsSelected = true;
 
             ItemInst selItem = GetSelectedItem();
 

@@ -151,7 +151,7 @@ namespace GUC.Scripts.TFFA
                 return;
 
             var stream = GUC.Network.GameClient.Client.GetMenuMsgStream();
-            stream.Write((byte)(TeamChat ? MenuMsgID.TeamChat : MenuMsgID.AllChat));
+            stream.Write((byte)(TeamChat ? TFFANetMsgID.TeamChat : TFFANetMsgID.AllChat));
             stream.Write(msg);
             GUC.Network.GameClient.Client.SendMenuMsg(stream, GUC.Network.PktPriority.LOW_PRIORITY, GUC.Network.PktReliability.RELIABLE);
         }

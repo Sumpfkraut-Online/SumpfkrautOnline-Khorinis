@@ -82,6 +82,24 @@ namespace GUC.Network
 
         #endregion
 
+        #region Commanding
+
+        partial void pAddToCmdList(Vob vob)
+        {
+            var stream = GameServer.SetupStream(NetworkIDs.CmdAddVobMessage);
+            stream.Write((ushort)vob.ID);
+            this.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, '\0');
+        }
+
+        partial void pRemoveFromCmdList(Vob vob)
+        {
+            var stream = GameServer.SetupStream(NetworkIDs.CmdRemoveVobMessage);
+            stream.Write((ushort)vob.ID);
+            this.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, '\0');
+        }
+
+        #endregion
+
         public override void Update()
         {
             throw new NotImplementedException();
@@ -393,29 +411,6 @@ namespace GUC.Network
         public void Ban()
         {
             GameServer.AddToBanList(this.SystemAddress);
-        }
-
-        internal void AddControlledVob(Vob vob)
-        {
-            /* VobControlledList.Add(vob);
-             vob.VobController = this;
-             PacketWriter stream = Network.Server.SetupStream(NetworkID.ControlAddVobMessage); stream.Write(vob.ID);
-             Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
-             Log.Logger.Log("AddCtrl: " + Character.ID + " " + vob.ID + ": " + vob.GetType().Name);
-
-             if (vob is NPC)
-             {
-                 ((NPC)vob).GoTo(this.Character, 500);
-             }*/
-        }
-
-        internal void RemoveControlledVob(Vob vob)
-        {
-            /*VobControlledList.Remove(vob);
-            vob.VobController = null;
-            PacketWriter stream = Network.Server.SetupStream(NetworkID.ControlRemoveVobMessage); stream.Write(vob.ID);
-            Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
-            Log.Logger.Log("RemoveCtrl: " + Character.ID + " " + vob.ID + ": " + vob.GetType().Name);*/
         }
 
         public static PacketWriter GetMenuMsgStream()

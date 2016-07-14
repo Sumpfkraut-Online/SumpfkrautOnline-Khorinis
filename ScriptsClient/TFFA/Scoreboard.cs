@@ -230,7 +230,7 @@ namespace GUC.Scripts.TFFA
                 return;
 
             PacketWriter stream = GameClient.Client.GetMenuMsgStream();
-            stream.Write((byte)MenuMsgID.OpenScoreboard);
+            stream.Write((byte)TFFANetMsgID.OpenScoreboard);
             GameClient.Client.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.UNRELIABLE);
             back.Show();
 
@@ -257,7 +257,7 @@ namespace GUC.Scripts.TFFA
             }
             closeTimer.Stop();
             PacketWriter stream = GameClient.Client.GetMenuMsgStream();
-            stream.Write((byte)MenuMsgID.CloseScoreboard);
+            stream.Write((byte)TFFANetMsgID.CloseScoreboard);
             GameClient.Client.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE);
             back.Hide();
 

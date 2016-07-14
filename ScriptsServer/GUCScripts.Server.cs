@@ -6,6 +6,7 @@ using System.Linq;
 using GUC.Log;
 using GUC.Scripting;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
+using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Scripts.Sumpfkraut.Visuals;
 
@@ -72,6 +73,12 @@ namespace GUC.Scripts
             aniJob = new ScriptAniJob("climbhigh", new ScriptAni(6800000 + 0 + 10000000));
             aniJob.BaseAniJob.ID = (int)SetAnis.ClimbHigh;
             aniJob.AniName = "T_JUMP_2_HANG";
+            m.AddAniJob(aniJob);
+
+            // DROP ITEM
+            aniJob = new ScriptAniJob("dropitem", new ScriptAni(5600000));
+            aniJob.BaseAniJob.ID = (int)SetAnis.DropItem;
+            aniJob.AniName = "dropItem";
             m.AddAniJob(aniJob);
 
             m.Create();

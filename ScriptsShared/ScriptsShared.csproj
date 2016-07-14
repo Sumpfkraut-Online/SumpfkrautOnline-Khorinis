@@ -46,7 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GUCScripts.cs" />
-    <Compile Include="Sumpfkraut\Networking\NetVobMsgIDs.cs" />
+    <Compile Include="Sumpfkraut\Networking\NetMsgIDs.cs" />
     <Compile Include="Sumpfkraut\Networking\ScriptClient.cs" />
     <Compile Include="Sumpfkraut\ScriptObject.cs" />
     <Compile Include="Sumpfkraut\Utilities\DateTimeUtil.cs" />

@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using WinApi;
 using Gothic.Types;
+using Gothic.Objects.Meshes;
 
 namespace Gothic.Objects
 {
-    public class oCItem : zCVob
+    public class oCItem : oCVob
     {
         new public class VarOffsets : zCVob.VarOffsets
         {
@@ -431,22 +432,15 @@ namespace Gothic.Objects
             Process.THISCALL<NullReturnCall>(Address, 0x711440, new BoolArg(true));
         }
 
-        /*public static oCItem Create()
+        public override void SetVisual(zCVisual vis)
         {
-            oCItem r = null;
-
-            IntPtr ptr = Process.Alloc(0x348);
-            zCClassDef.ObjectCreated(Process, ptr.ToInt32(), 0x00AB1168);
-            Process.THISCALL<NullReturnCall>((uint)ptr.ToInt32(), (int)0x00711290, new CallValue[] { });
-
-            r = new oCItem(Process, ptr.ToInt32());
-
-            return r;
+            Process.THISCALL<NullReturnCall>(Address, 0x711910, vis);
         }
 
-        public static zCClassDef getClassDef(Process process)
+        public static bool LightingSwell
         {
-            return new zCClassDef(process, 0x00AB1168);
-        }*/
+            get { return Process.ReadBool(0x8B745C); }
+            set { Process.Write(value, 0x8B745C); }
+        }
     }
 }

@@ -99,7 +99,7 @@ namespace GUC.Scripts.TFFA
             if (scoreboardClients.Count > 0)
             {
                 var stream = GameClient.GetMenuMsgStream();
-                stream.Write((byte)MenuMsgID.OpenScoreboard);
+                stream.Write((byte)TFFANetMsgID.OpenScoreboard);
 
                 stream.Write((byte)ALKills);
                 stream.Write((byte)NLKills);
@@ -191,14 +191,17 @@ namespace GUC.Scripts.TFFA
 
         static void OnHit(NPCInst attacker, NPCInst target, int damage)
         {
-            if (attacker.BaseInst.Client == null || target.BaseInst.Client == null)
+            if (!attacker.IsPlayer || !target.IsPlayer)
+            {
+                target.SetHealth(target.HP - damage);
                 return;
+            }
 
             TFFAClient att = ((TFFAClient)attacker.BaseInst.Client.ScriptObject);
             TFFAClient tar = ((TFFAClient)target.BaseInst.Client.ScriptObject);
 
             int realDamage = att.Team == tar.Team ? (int)(damage * 0.5f) : damage;
-            int newHP = target.BaseInst.HP - realDamage;
+            int newHP = target.HP - realDamage;
 
             if (att.Team != tar.Team)
                 att.Damage += damage;
@@ -232,7 +235,7 @@ namespace GUC.Scripts.TFFA
         static PacketWriter GetPhaseMsg()
         {
             var stream = GameClient.GetMenuMsgStream();
-            stream.Write((byte)MenuMsgID.PhaseMsg);
+            stream.Write((byte)TFFANetMsgID.PhaseMsg);
             stream.Write((byte)status);
             stream.Write((uint)(gameTimer.Interval / TimeSpan.TicksPerSecond));
             return stream;
@@ -292,6 +295,11 @@ namespace GUC.Scripts.TFFA
             NLKills = 0;
 
             gameTimer.Restart();
+
+
+            var dummyDef = NPCDef.Get("player");
+            var dummy = new NPCInst(dummyDef);
+            dummy.Spawn(WorldInst.Current, new Vec3f(-4727, 259, 518), new Vec3f(-0.5522485f, 0, -0.8336804f));
         }
 
         public static void PhaseEnd()
@@ -305,7 +313,7 @@ namespace GUC.Scripts.TFFA
             {
                 Teams[Team.NL].ForEach(client => { if (client.Character != null) client.Character.SetHealth(0); });
                 var stream = GameClient.GetMenuMsgStream();
-                stream.Write((byte)MenuMsgID.WinMsg);
+                stream.Write((byte)TFFANetMsgID.WinMsg);
                 stream.Write((byte)Team.AL);
                 stream.Write((uint)(gameTimer.Interval / TimeSpan.TicksPerSecond));
                 TFFAClient.ForEach(client => client.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE));
@@ -315,7 +323,7 @@ namespace GUC.Scripts.TFFA
             {
                 Teams[Team.AL].ForEach(client => { if (client.Character != null) client.Character.SetHealth(0); });
                 var stream = GameClient.GetMenuMsgStream();
-                stream.Write((byte)MenuMsgID.WinMsg);
+                stream.Write((byte)TFFANetMsgID.WinMsg);
                 stream.Write((byte)Team.NL);
                 stream.Write((uint)(gameTimer.Interval / TimeSpan.TicksPerSecond));
                 TFFAClient.ForEach(client => client.BaseClient.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE));

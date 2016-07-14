@@ -25,7 +25,7 @@ namespace GUC.GUI
 
         public void SetVisual(string name)
         {
-            vob.ItemVisual.Set(name);
+            vob.SetVisual(name);
         }
 
         public override void Show()

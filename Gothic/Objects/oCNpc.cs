@@ -7,7 +7,7 @@ using Gothic.Objects.Meshes;
 
 namespace Gothic.Objects
 {
-    public class oCNpc : zCVob
+    public class oCNpc : oCVob
     {
         new public abstract class VarOffsets : zCVob.VarOffsets
         {

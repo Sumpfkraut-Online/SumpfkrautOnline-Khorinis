@@ -46,6 +46,8 @@ namespace GUC.Network
 
         #endregion
 
+        #region Control
+
         partial void pSetControl(NPC npc);
         public void SetControl(NPC npc)
         {
@@ -55,6 +57,11 @@ namespace GUC.Network
             pSetControl(npc);
         }
 
+        #endregion
+
+        #region Spectate
+
+        partial void pSetToSpectate(World world, Vec3f pos, Vec3f dir);
         /// <summary>
         /// The client will lose control of its current NPC and move into spectator mode (free view).
         /// </summary>
@@ -67,7 +74,8 @@ namespace GUC.Network
 
             pSetToSpectate(world, position, direction);
         }
-        partial void pSetToSpectate(World world, Vec3f pos, Vec3f dir);
+
+        #endregion
 
         #region Read & Write
 
@@ -77,6 +85,42 @@ namespace GUC.Network
 
         protected override void WriteProperties(PacketWriter stream)
         {
+        }
+
+        #endregion
+
+        #region Commanding
+
+        List<Vob> cmdList = new List<Vob>();
+
+        partial void pAddToCmdList(Vob vob);
+        internal void AddToCmdList(Vob vob)
+        {
+            if (vob == null)
+                throw new ArgumentNullException("Vob is null!");
+
+            if (vob.Commander != null)
+                throw new ArgumentNullException("Vob commander is not null!");
+
+            cmdList.Add(vob);
+            vob.Commander = this;
+
+            pAddToCmdList(vob);
+        }
+
+        partial void pRemoveFromCmdList(Vob vob);
+        internal void RemoveFromCmdList(Vob vob)
+        {
+            if (vob == null)
+                throw new ArgumentNullException("Vob is null!");
+
+            if (vob.Commander != this)
+                throw new ArgumentNullException("Client is not commanding this vob!");
+
+            cmdList.Remove(vob);
+            vob.Commander = null;
+
+            pRemoveFromCmdList(vob);
         }
 
         #endregion
