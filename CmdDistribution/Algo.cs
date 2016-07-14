@@ -13,12 +13,14 @@ namespace CmdDistribution
         public class ClientInfo
         {
             public Client cl;
-            public int num;
+
+            // how many vobs this client will be assigned by this info's cell
+            public int vobNum;
 
             public ClientInfo(Client cl)
             {
                 this.cl = cl;
-                this.num = 0;
+                this.vobNum = 0;
             }
         }
 
@@ -29,7 +31,8 @@ namespace CmdDistribution
             public Client client;
             public List<Vob> vobs;
 
-            public List<ClientInfo> AdjoiningClients = new List<ClientInfo>(9);
+            // available clients and how many vobs they are assigned by this cell
+            public List<ClientInfo> AvailableClients = new List<ClientInfo>(9);
         }
 
         public class Client
@@ -37,6 +40,7 @@ namespace CmdDistribution
             public string ClientID;
             public List<Vob> CmdList = new List<Vob>();
 
+            // how many vobs this client will be assigned
             public int ProbableVobs = 0;
         }
 
@@ -72,15 +76,15 @@ namespace CmdDistribution
             for (int i = 0; i < connectedCells.Count; i++)
             {
                 Cell cell = connectedCells[i];
-                List<ClientInfo> clients = cell.AdjoiningClients;
+                List<ClientInfo> clients = cell.AvailableClients;
                 int vobIndex = 0;
                 for (int c = clients.Count - 1; c >= 0; c--)
                 {
                     ClientInfo ci = clients[c];
                     List<Vob> clientVobList = ci.cl.CmdList;
-                    clientVobList.Capacity += ci.num;
+                    clientVobList.Capacity += ci.vobNum;
 
-                    int max = vobIndex + ci.num;
+                    int max = vobIndex + ci.vobNum;
                     while (vobIndex < max)
                     {
                         clientVobList.Add(cell.vobs[vobIndex]);
@@ -105,7 +109,7 @@ namespace CmdDistribution
         static List<ClientInfo> lowest = new List<ClientInfo>(9);
         static void AssignVobs(Cell cell)
         {
-            List<ClientInfo> list = cell.AdjoiningClients;
+            List<ClientInfo> list = cell.AvailableClients;
             
             int vobCount = cell.vobs.Count;
             while (vobCount > 0) // still vobs to assign
@@ -118,9 +122,9 @@ namespace CmdDistribution
                     for (int i = 0; i < lowest.Count; i++) // split evenly
                     {
                         ClientInfo ci = lowest[i];
-                        ci.num = vobCount / (lowest.Count - i);
-                        ci.cl.ProbableVobs += ci.num;
-                        vobCount -= ci.num;
+                        ci.vobNum = vobCount / (lowest.Count - i);
+                        ci.cl.ProbableVobs += ci.vobNum;
+                        vobCount -= ci.vobNum;
                     }
                     return;
                 }
@@ -130,7 +134,7 @@ namespace CmdDistribution
                     for (int i = 0; i < lowest.Count; i++)
                     {
                         ClientInfo ci = lowest[i];
-                        ci.num = difference;
+                        ci.vobNum = difference;
                         ci.cl.ProbableVobs += difference;
                         vobCount -= difference;
                     }
@@ -140,7 +144,7 @@ namespace CmdDistribution
 
         static bool AdjustVobs(Cell cell)
         {
-            List<ClientInfo> list = cell.AdjoiningClients;
+            List<ClientInfo> list = cell.AvailableClients;
 
             bool changed = false;
             for (int i = 0; i < list.Count; i++)
@@ -157,17 +161,17 @@ namespace CmdDistribution
 
                     int moveVobs = (client1.cl.ProbableVobs - client2.cl.ProbableVobs) / 2;
                     
-                    if (moveVobs > client1.num)
-                        moveVobs = client1.num;
-                    else if (moveVobs < -client2.num)
-                        moveVobs = -client2.num;
+                    if (moveVobs > client1.vobNum)
+                        moveVobs = client1.vobNum;
+                    else if (moveVobs < -client2.vobNum)
+                        moveVobs = -client2.vobNum;
 
                     if (moveVobs != 0)
                     {
                         client2.cl.ProbableVobs += moveVobs;
-                        client2.num += moveVobs;
+                        client2.vobNum += moveVobs;
                         client1.cl.ProbableVobs -= moveVobs;
-                        client1.num -= moveVobs;
+                        client1.vobNum -= moveVobs;
                         changed = true;
                     }
 
@@ -223,7 +227,7 @@ namespace CmdDistribution
 
                     if (cell.vobs.Count == 0) continue;
 
-                    List<ClientInfo> clients = cell.AdjoiningClients;
+                    List<ClientInfo> clients = cell.AvailableClients;
                     for (int i = x - 1; i <= x + 1; i++)
                     {
                         if (i < 0 || i >= rows) continue;
