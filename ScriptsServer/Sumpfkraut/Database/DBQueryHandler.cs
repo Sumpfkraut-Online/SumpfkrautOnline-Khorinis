@@ -11,8 +11,8 @@ namespace GUC.Scripts.Sumpfkraut.Database
 
         new public static readonly String _staticName = "DBQueryHandler (static)";
 
-        protected String sqLiteDataSource;
-        public String GetSqLiteDataSource () { return this.sqLiteDataSource; }
+        protected String dataSource;
+        public String GetDataSource () { return this.dataSource; }
 
         protected List<AbstractDBQuery> queryQueue = new List<AbstractDBQuery>();
         protected object queryQueueLock = new object();
@@ -20,15 +20,15 @@ namespace GUC.Scripts.Sumpfkraut.Database
 
 
 
-        public DBQueryHandler (String sqLiteDataSource)
-            : this(true, sqLiteDataSource)
+        public DBQueryHandler (String dataSource)
+            : this(true, dataSource)
         { }
 
-        public DBQueryHandler (bool startOnCreate, String sqLiteDataSource)
+        public DBQueryHandler (bool startOnCreate, String dataSource)
             : base(startOnCreate, TimeSpan.Zero, false)
         {
             SetObjName("DBQueryHandler (default)");
-            this.sqLiteDataSource = sqLiteDataSource;
+            this.dataSource = dataSource;
         }
 
 
@@ -100,7 +100,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
                         nextQuery.ReturnResults(results);
                         break;
                     case DBReaderMode.saveData:
-                        DBReader.SaveToDB(nextQuery.GetSqlCommand(), this.sqLiteDataSource);
+                        DBReader.SaveToDB(nextQuery.GetSqlCommand(), this.dataSource);
                         nextQuery.ReturnResults(null);
                         break;
                     default:

@@ -19,15 +19,18 @@ namespace GUC.Scripts.Sumpfkraut
         {
             Logger.Log(Directory.GetCurrentDirectory());
 
-            WorldSystem.WorldLoader worldLoader = new WorldSystem.WorldLoader(">>GOTCHA<<", 
-                Directory.GetCurrentDirectory() + @"\DB");
-            worldLoader.Load();
+            //WorldSystem.WorldLoader worldLoader = new WorldSystem.WorldLoader(">>GOTCHA<<", 
+            //    Directory.GetCurrentDirectory() + @"\DB");
+            //worldLoader.Load();
 
-            string bla = "Miami Vice";
-            Logger.Log(bla);
+            //string bla = "Miami Vice";
+            //Logger.Log(bla);
 
             //Logger.Log(WorldSystem.WorldLoader.DBStructure["WorldEffect"]);
 
+            List<string> cmdList = new List<string> { "SELECT 1;" };
+            Database.DBAgent agentOrange = new Database.DBAgent(cmdList, false);
+            agentOrange.SetObjName("Agent Orange");
         }
 
     }
