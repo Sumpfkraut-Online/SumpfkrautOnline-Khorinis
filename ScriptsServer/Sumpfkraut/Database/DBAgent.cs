@@ -12,6 +12,8 @@ namespace GUC.Scripts.Sumpfkraut.Database
         new public static readonly string _staticName = "DBAgent (static)";
 
         protected string dataSource = null;
+        public string DataSource { get { return dataSource; } }
+
         protected List<String> commandQueue = new List<String>();
 
 
@@ -84,15 +86,16 @@ namespace GUC.Scripts.Sumpfkraut.Database
 
 
 
-        public DBAgent(List<String> commandQueue)
-            : this(commandQueue, true)
+        public DBAgent(string dataSource, List<String> commandQueue)
+            : this(dataSource, commandQueue, true)
         { }
 
-        public DBAgent(List<String> commandQueue, bool startOnCreate)
+        public DBAgent(string dataSource, List<String> commandQueue, bool startOnCreate)
             : base(false, new TimeSpan(0, 0, 0), true)
         {
+            this.dataSource = dataSource;
             this.commandQueue = commandQueue;
-
+            
             if (startOnCreate)
             {
                 this.Start();
@@ -113,10 +116,10 @@ namespace GUC.Scripts.Sumpfkraut.Database
             for (int i = 0; i < commandQueue.Count; i++)
             {
                 queryStartTime = DateTime.Now;
-                DBReader.LoadFromDB(ref sqlResults, commandQueue[i]);
+                DBReader.LoadFromDB(ref sqlResults, DataSource, commandQueue[i]);
                 queryEndTime = DateTime.Now;
 
-                ReceivedResultsEventArgs rse = new ReceivedResultsEventArgs(dataSource, commandQueue[i], 
+                ReceivedResultsEventArgs rse = new ReceivedResultsEventArgs(DataSource, commandQueue[i], 
                     queryStartTime, queryEndTime, sqlResults);
                 ReceivedResults.Invoke(this, rse);
 
@@ -128,7 +131,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
             queueEndTime = DateTime.Now;
 
             // send finishing event message to all listeners
-            FinishedQueueEventHandlerArgs fqe = new FinishedQueueEventHandlerArgs(dataSource, commandQueue, 
+            FinishedQueueEventHandlerArgs fqe = new FinishedQueueEventHandlerArgs(DataSource, commandQueue, 
                 queueStartTime, queueEndTime, sqlResults);
             FinishedQueue.Invoke(this, fqe);
             //this.Suspend();

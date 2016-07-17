@@ -9,10 +9,10 @@ namespace GUC.Scripts.Sumpfkraut.Database
     public class DBQueryHandler : GUC.Utilities.Threading.AbstractRunnable
     {
 
-        new public static readonly String _staticName = "DBQueryHandler (static)";
+        new public static readonly string _staticName = "DBQueryHandler (static)";
 
-        protected String dataSource;
-        public String GetDataSource () { return this.dataSource; }
+        protected string dataSource;
+        public string DataSource { get { return this.dataSource; } }
 
         protected List<AbstractDBQuery> queryQueue = new List<AbstractDBQuery>();
         protected object queryQueueLock = new object();
@@ -20,11 +20,11 @@ namespace GUC.Scripts.Sumpfkraut.Database
 
 
 
-        public DBQueryHandler (String dataSource)
+        public DBQueryHandler (string dataSource)
             : this(true, dataSource)
         { }
 
-        public DBQueryHandler (bool startOnCreate, String dataSource)
+        public DBQueryHandler (bool startOnCreate, string dataSource)
             : base(startOnCreate, TimeSpan.Zero, false)
         {
             SetObjName("DBQueryHandler (default)");
@@ -96,7 +96,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
                 switch (nextQuery.GetDBReaderMode())
                 {
                     case DBReaderMode.loadData:
-                        DBReader.LoadFromDB(ref results, nextQuery.GetSqlCommand());
+                        DBReader.LoadFromDB(ref results, DataSource, nextQuery.GetSqlCommand());
                         nextQuery.ReturnResults(results);
                         break;
                     case DBReaderMode.saveData:
@@ -104,7 +104,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
                         nextQuery.ReturnResults(null);
                         break;
                     default:
-                        MakeLogWarning(String.Format("Cannot contact database using invalid"
+                        MakeLogWarning(string.Format("Cannot contact database using invalid"
                             + " dbReaderMode {0}!", nextQuery.GetDBReaderMode()));
                         break;
                 }

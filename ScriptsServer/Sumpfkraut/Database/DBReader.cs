@@ -15,7 +15,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
 
         new public static readonly string _staticName = "DBReader (static)";
 
-        public static readonly string SqLiteDataSource = "Data Source=save.db";
+        public static readonly string DataSource = "Data Source=save.db";
 
         #endregion
 
@@ -41,22 +41,21 @@ namespace GUC.Scripts.Sumpfkraut.Database
          *   @param where is the optional string after the WHERE-statement in sql
          *   @param orderBy is the optional string after the ORDER BY-statement in sql
          */
-        public static void LoadFromDB (ref List<List<List<object>>> results,
-            string select = "", string from = "", string where = "", string orderBy = "",
-            string sqLiteDataSource = null)
+        public static void LoadFromDB (ref List<List<List<object>>> results, string dataSource, 
+            string select, string from, string where, string orderBy)
         { 
             string completeQuery = string.Format("SELECT {0} FROM {1} WHERE {2} ORDER BY {3};",
                 select, from, where, orderBy);
 
-            LoadFromDB(ref results, completeQuery, sqLiteDataSource);
+            LoadFromDB(ref results, completeQuery, dataSource);
         }
 
         public static void LoadFromDB (ref List<List<List<object>>> results,
-            string completeQuery, string sqLiteDataSource)
+            string completeQuery, string dataSource)
         {
             using (SqliteConnection con = new SqliteConnection())
             {
-                con.ConnectionString = sqLiteDataSource;
+                con.ConnectionString = dataSource;
                 con.Open();
 
                 // security check and close connection if necessary
@@ -124,18 +123,13 @@ namespace GUC.Scripts.Sumpfkraut.Database
             
         }
 
-        public static int SaveToDB (string completeQuery)
-        {
-            return SaveToDB(completeQuery, SqLiteDataSource);
-        }
-
-        public static int SaveToDB (string completeQuery, string sqLiteDataSource)
+        public static int SaveToDB (string dataSource, string completeQuery)
         {
             int changedRows = 0;
 
             using (SqliteConnection con = new SqliteConnection())
             {
-                con.ConnectionString = sqLiteDataSource;
+                con.ConnectionString = dataSource;
                 con.Open();
 
                 // security check and close connection if necessary

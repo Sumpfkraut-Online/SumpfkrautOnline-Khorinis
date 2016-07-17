@@ -158,7 +158,7 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
 
 
             // send out a parallel working DBAgent which informs back when finished with the queue
-            DBAgent dbAgent = new DBAgent(commandQueue, false);
+            DBAgent dbAgent = new DBAgent(DBFilePath, commandQueue, false);
             dbAgent.SetObjName(GetObjName() + "-DBAgent");
             dbAgent.FinishedQueue += WorldDefFromSQLResults;
             dbAgent.Start();

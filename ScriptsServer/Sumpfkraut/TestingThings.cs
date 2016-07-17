@@ -29,8 +29,9 @@ namespace GUC.Scripts.Sumpfkraut
             //Logger.Log(WorldSystem.WorldLoader.DBStructure["WorldEffect"]);
 
             List<string> cmdList = new List<string> { "SELECT 1;" };
-            Database.DBAgent agentOrange = new Database.DBAgent(cmdList, false);
+            Database.DBAgent agentOrange = new Database.DBAgent("BLA.db", cmdList, false);
             agentOrange.SetObjName("Agent Orange");
+            //agentOrange.Start();
         }
 
     }
