@@ -41,15 +41,19 @@ namespace GUC.WorldObjects
 
         partial void pAddVob(BaseVob vob)
         {
-            // find the cell for this vob
-            int[] coords = NetCell.GetCoords(vob.GetPosition());
-            NetCell cell = GetCellFromCoords(coords[0], coords[1]);
-            vob.AddToNetCell(cell);
+            if (!vob.IsStatic)
+            {
+                // find the cell for this vob
+                int[] coords = NetCell.GetCoords(vob.GetPosition());
+                NetCell cell = GetCellFromCoords(coords[0], coords[1]);
+                vob.AddToNetCell(cell);
+            }
         }
 
         partial void pRemoveVob(BaseVob vob)
         {
-            vob.RemoveFromNetCell();
+            if (!vob.IsStatic)
+                vob.RemoveFromNetCell();
         }
 
         #region WorldCells

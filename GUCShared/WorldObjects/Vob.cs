@@ -10,7 +10,7 @@ using GUC.Types;
 
 namespace GUC.WorldObjects
 {
-    public partial class Vob : BaseVob
+    public partial class Vob : CommandableVob
     {
         public override VobTypes VobType { get { return VobTypes.Vob; } }
 
@@ -41,16 +41,7 @@ namespace GUC.WorldObjects
         public bool CDStatic { get { return Instance.CDStatic; } }
 
         #endregion
-
-        #region Commandable
-
-        /// <summary>
-        /// The client which is used for positioning and pathfinding f.e. for NPCs or dropped items.
-        /// </summary>
-        public GameClient Commander { get; internal set; }
-
-        #endregion
-
+        
         #region Spawn & Despawn
 
         partial void pSpawn();

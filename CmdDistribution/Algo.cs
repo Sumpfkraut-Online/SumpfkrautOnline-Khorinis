@@ -57,8 +57,7 @@ namespace CmdDistribution
                 AssignVobs(connectedCells[i]);
 
             // reshift the cells' vobs until there's no need for it anymore
-            int x = 0;
-            for (int loop = 0; loop < 100; loop++) // performance tweak: don't shift too often
+            for (int loop = 0; loop < 10; loop++) // performance tweak: don't shift too often
             {
                 bool changed = false;
                 for (int i = 0; i < connectedCells.Count; i++)
@@ -71,11 +70,7 @@ namespace CmdDistribution
 
                 if (!changed)
                     break;
-
-                x++;
             }
-
-            Print("Loops: " + x);
 
             // move the cells' vobs to their clients
             for (int i = 0; i < connectedCells.Count; i++)

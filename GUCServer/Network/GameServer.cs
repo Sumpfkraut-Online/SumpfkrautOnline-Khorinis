@@ -245,16 +245,6 @@ namespace GUC.Network
                     else
                         Logger.LogError("{0}: {1}\n{2}", e.Source, e.Message, e.StackTrace);
 
-                    GUC.WorldObjects.World.ForEach(world =>
-                    {
-                        Logger.Log("World (" + world.ID + ") Cells:");
-                        foreach (var cell in world.netCells.Values)
-                        {
-                            string clients = ""; cell.Clients.ForEach(c => clients += c.ID + ", "); if (clients.Length > 2) clients = clients.Remove(clients.Length - 2);
-                            Logger.Log(String.Format("({0},{1}): {2} Vobs, {3} Clients ({4})", cell.X, cell.Y, cell.Vobs.GetCount(), cell.Clients.Count, clients));
-                        }
-                    });
-
                     if (client == null)
                     {
                         ServerInterface.CloseConnection(p.guid, false);
@@ -289,7 +279,7 @@ namespace GUC.Network
             {
                 client.SpecWorld.RemoveFromPlayers(client);
                 client.SpecCell.Clients.Remove(ref client.cellID);
-                if (client.SpecCell.Vobs.GetCount() == 0 && client.SpecCell.Clients.Count == 0)
+                if (client.SpecCell.DynVobs.GetCount() == 0 && client.SpecCell.Clients.Count == 0)
                     client.SpecWorld.netCells.Remove(client.SpecCell.Coord);
             }
 

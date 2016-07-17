@@ -273,7 +273,7 @@ namespace GUC.Network
                             this.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, '\0');
                         }
                         this.SpecCell.Clients.Remove(ref this.cellID);
-                        if (this.SpecCell.Vobs.GetCount() <= 0 && this.SpecCell.Clients.Count <= 0)
+                        if (this.SpecCell.DynVobs.GetCount() <= 0 && this.SpecCell.Clients.Count <= 0)
                             this.specWorld.netCells.Remove(this.SpecCell.Coord);
                         this.SpecCell = null;
                         this.specWorld = null;

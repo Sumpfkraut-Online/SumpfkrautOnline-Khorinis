@@ -9,13 +9,11 @@ using GUC.Types;
 namespace GUC.WorldObjects.Cells
 {
     /// <summary>
-    /// Big cell which includes all types of vobs of a world. Is used to transmit surrounding vobs to a client.
+    /// Big cell which includes dynamic vobs and clients. Is used to transmit surrounding vobs to a client.
     /// </summary>
     class NetCell : WorldCell
     {
-        public readonly VobTypeCollection<BaseVob> Vobs = new VobTypeCollection<BaseVob>();
         public readonly DynamicCollection<GameClient> Clients = new DynamicCollection<GameClient>();
-
         public readonly VobTypeCollection<BaseVob> DynVobs = new VobTypeCollection<BaseVob>();
 
         // NetCell[] surroundingCells = new NetCell[9];

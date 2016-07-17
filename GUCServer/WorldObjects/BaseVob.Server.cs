@@ -145,20 +145,22 @@ namespace GUC.WorldObjects
 
         internal virtual void AddToNetCell(NetCell cell)
         {
-            cell.Vobs.Add(this, ref this.cellID, ref this.cellTypeID);
-            if (!this.IsStatic)
-                cell.DynVobs.Add(this, ref this.dynCellID, ref this.dynCellTypeID);
+            if (this.IsStatic)
+                throw new Exception("Vob is static!");
+
+            cell.DynVobs.Add(this, ref this.dynCellID, ref this.dynCellTypeID);
 
             this.Cell = cell;
         }
 
         internal virtual void RemoveFromNetCell()
         {
-            this.Cell.Vobs.Remove(this, ref this.cellID, ref this.cellTypeID);
-            if (!this.IsStatic)
-                this.Cell.DynVobs.Remove(this, ref this.dynCellID, ref this.dynCellTypeID);
+            if (this.IsStatic)
+                throw new Exception("Vob is static!");
 
-            if (this.Cell.Vobs.GetCount() == 0 && this.Cell.Clients.Count == 0)
+            this.Cell.DynVobs.Remove(this, ref this.dynCellID, ref this.dynCellTypeID);
+
+            if (this.Cell.DynVobs.GetCount() == 0 && this.Cell.Clients.Count == 0)
                 this.world.netCells.Remove(this.Cell.Coord);
 
             this.Cell = null;
@@ -187,7 +189,7 @@ namespace GUC.WorldObjects
         }
 
         #endregion
-        
+
         public PacketWriter GetScriptVobStream()
         {
             if (!this.IsSpawned)
