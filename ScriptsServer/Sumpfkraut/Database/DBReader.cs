@@ -190,10 +190,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
                 int i = 0;
                 while (i < data.Length)
                 {
-                    if ((i + 1) >= data.Length)
-                    {
-                        break;
-                    }
+                    if ((i + 1) >= data.Length) { break; }
 
                     try
                     {
@@ -230,10 +227,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
                 int i = 0;
                 while (i < data.Length)
                 {
-                    if ((i + 1) >= data.Length)
-                    {
-                        break;
-                    }
+                    if ((i + 1) >= data.Length) { break; }
 
                     result[resultIndex] = data[i + 1];
                     resultIndex++;

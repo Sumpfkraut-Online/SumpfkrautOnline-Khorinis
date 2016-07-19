@@ -30,7 +30,15 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
 
 
 
-        
+        partial void pCreate ()
+        {
+            throw new NotImplementedException();
+        }
+
+        partial void pDelete ()
+        {
+            throw new NotImplementedException();
+        }
 
     }
 

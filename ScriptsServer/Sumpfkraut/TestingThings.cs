@@ -28,10 +28,23 @@ namespace GUC.Scripts.Sumpfkraut
 
             //Logger.Log(WorldSystem.WorldLoader.DBStructure["WorldEffect"]);
 
-            List<string> cmdList = new List<string> { "SELECT 1;" };
-            Database.DBAgent agentOrange = new Database.DBAgent("BLA.db", cmdList, false);
-            agentOrange.SetObjName("Agent Orange");
+            //List<string> cmdList = new List<string> { "SELECT 1;" };
+            //Database.DBAgent agentOrange = new Database.DBAgent("BLA.db", cmdList, false);
+            //agentOrange.SetObjName("Agent Orange");
             //agentOrange.Start();
+
+            //Logger.Log(Directory.Exists(@"Scripts"));
+            //Logger.Log(File.Exists(@"Scripts\Newtonsoft.Json.xml"));
+
+
+            //FileStream fs = File.Create(@"FileManagerTest.txt");
+            //Database.DBFileManager.DeleteFile(@"FileManagerTest.txt",
+            //    delegate (bool success)
+            //    {
+            //        if (success) { Logger.Log("<<<< HOOOOORRRRAAAYYYYYY! >>>"); }
+            //        else { Logger.Log("<<<< MEEEEEEEEEEEHHHHHH! >>>"); }
+            //    });
+
         }
 
     }

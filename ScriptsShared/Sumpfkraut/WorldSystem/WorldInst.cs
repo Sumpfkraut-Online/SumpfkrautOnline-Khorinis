@@ -10,6 +10,8 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
     public partial class WorldInst : ExtendedObject, WorldObjects.World.IScriptWorld
     {
 
+        new public static readonly string _staticName = "WorldInst (static)";
+
         WorldObjects.World baseWorld;
         public WorldObjects.World BaseWorld { get { return baseWorld; } }
 
@@ -22,14 +24,23 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
         ScriptSkyCtrl skyCtrl;
         public ScriptSkyCtrl SkyCtrl { get { return this.skyCtrl; } }
 
-        public WorldInst()
+
+
+        public WorldInst ()
+            : this("WorldInst (default)")
+        { }
+
+        public WorldInst (string objName)
         {
+            SetObjName(objName);
             this.baseWorld = new WorldObjects.World();
             this.baseWorld.ScriptObject = this;
 
             this.clock = new ScriptClock(this);
             this.skyCtrl = new ScriptSkyCtrl(this);
         }
+
+
 
         public void OnWriteProperties(PacketWriter stream)
         {
@@ -41,8 +52,8 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
             // read definition id
         }
 
-        partial void pCreate();
-        public void Create()
+        partial void pCreate ();
+        public void Create ()
         {
             this.baseWorld.Create();
             pCreate();
