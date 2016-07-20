@@ -36,7 +36,7 @@ namespace GUC.WorldObjects
             throw new NotImplementedException();
         }
 
-        internal Dictionary<int, NetCell> netCells = new Dictionary<int, NetCell>();
+        internal Dictionary<int, BigCell> netCells = new Dictionary<int, BigCell>();
         internal Dictionary<int, NPCCell> npcCells = new Dictionary<int, NPCCell>();
 
         partial void pAddVob(BaseVob vob)
@@ -44,8 +44,8 @@ namespace GUC.WorldObjects
             if (!vob.IsStatic)
             {
                 // find the cell for this vob
-                int[] coords = NetCell.GetCoords(vob.GetPosition());
-                NetCell cell = GetCellFromCoords(coords[0], coords[1]);
+                int[] coords = BigCell.GetCoords(vob.GetPosition());
+                BigCell cell = GetCellFromCoords(coords[0], coords[1]);
                 vob.AddToNetCell(cell);
             }
         }
@@ -58,23 +58,23 @@ namespace GUC.WorldObjects
 
         #region WorldCells
 
-        internal bool TryGetCellFromCoords(int x, int y, out NetCell cell)
+        internal bool TryGetCellFromCoords(int x, int y, out BigCell cell)
         {
-            if (x < short.MinValue || x > short.MaxValue || y < short.MinValue || y > short.MaxValue)
-            {
-                throw new Exception("Coords are out of cell range!");
-            }
-
             return this.netCells.TryGetValue((x << 16) | y & 0xFFFF, out cell);
         }
 
-        internal NetCell GetCellFromCoords(int x, int y)
+        internal BigCell GetCellFromCoords(int x, int y)
         {
-            NetCell cell;
+            if (x < short.MinValue || x > short.MaxValue || y < short.MinValue || y > short.MaxValue)
+            {
+                throw new Exception("Cell coords are out of world range!");
+            }
+
+            BigCell cell;
             if (!TryGetCellFromCoords(x, y, out cell))
             {
                 //create the new cell
-                cell = new NetCell(this, x, y);
+                cell = new BigCell(this, x, y);
                 netCells.Add((x << 16) | y & 0xFFFF, cell);
             }
 
@@ -82,7 +82,7 @@ namespace GUC.WorldObjects
         }
 
 
-        internal void ForEachSurroundingCell(int x, int y, Action<NetCell> action)
+        internal void ForEachSurroundingCell(int x, int y, Action<BigCell> action)
         {
             if (action == null)
                 throw new ArgumentNullException("Action is null!");
@@ -97,7 +97,7 @@ namespace GUC.WorldObjects
                     if (j < short.MinValue || j > short.MaxValue)
                         continue;
 
-                    NetCell cell;
+                    BigCell cell;
                     if (this.TryGetCellFromCoords(i, j, out cell))
                     {
                         action(cell);
@@ -156,6 +156,11 @@ namespace GUC.WorldObjects
                     }
                 }
             }
+        }
+
+        partial void pOnTick(long now)
+        {
+            BigCell.ProcessGuides(netCells.Values);
         }
     }
 }

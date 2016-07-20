@@ -14,7 +14,7 @@ namespace GUC.WorldObjects.Cells
         {
         }
 
-        public const int Size = 600;
+        public const int Size = 3000;
         public static int[] GetCoords(Vec3f pos)
         {
             return WorldCell.GetCoords(pos, Size);

@@ -82,21 +82,11 @@ namespace GUC.Network
 
         #endregion
 
-        #region Commanding
+        #region Vob Guiding
 
-        partial void pAddToCmdList(Vob vob)
-        {
-            var stream = GameServer.SetupStream(NetworkIDs.CmdAddVobMessage);
-            stream.Write((ushort)vob.ID);
-            this.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, '\0');
-        }
-
-        partial void pRemoveFromCmdList(Vob vob)
-        {
-            var stream = GameServer.SetupStream(NetworkIDs.CmdRemoveVobMessage);
-            stream.Write((ushort)vob.ID);
-            this.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, '\0');
-        }
+        internal List<GuidableVob> GuidedVobs = new List<GuidableVob>(100);
+        internal List<GuidableVob> NewGuidedVobs = new List<GuidableVob>(20);
+        internal int ProbableVobs = 0;
 
         #endregion
 
@@ -147,16 +137,16 @@ namespace GUC.Network
             {
                 this.isSpectating = true;
                 // Write surrounding vobs to this client
-                int[] coords = NetCell.GetCoords(specPos);
+                int[] coords = BigCell.GetCoords(specPos);
                 this.SpecCell = specWorld.GetCellFromCoords(coords[0], coords[1]);
-                NetCell[] arr = new NetCell[NetCell.NumSurroundingCells]; int i = 0;
+                BigCell[] arr = new BigCell[BigCell.NumSurroundingCells]; int i = 0;
                 SpecCell.ForEachSurroundingCell(cell =>
                 {
                     if (cell.DynVobs.GetCount() > 0)
                         arr[i++] = cell; // save for cell message
                 });
-                WorldMessage.WriteCellMessage(arr, new NetCell[0], 0, this);
-                this.SpecCell.Clients.Add(this, ref this.cellID);
+                WorldMessage.WriteCellMessage(arr, new BigCell[0], 0, this);
+                this.SpecCell.AddClient(this);
                 this.specWorld.AddToPlayers(this);
             }
             else
@@ -165,7 +155,7 @@ namespace GUC.Network
             }
         }
 
-        internal NetCell SpecCell;
+        internal BigCell SpecCell;
 
         partial void pSetToSpectate(World world, Vec3f pos, Vec3f dir)
         {
@@ -182,7 +172,7 @@ namespace GUC.Network
                     this.character.client = null;
                     if (this.character.IsSpawned)
                     {
-                        this.character.Cell.Clients.Remove(ref this.cellID);
+                        this.character.Cell.RemoveClient(this);
                     }
                 }
 
@@ -197,10 +187,10 @@ namespace GUC.Network
                 }
                 else // just switch cells
                 {
-                    int[] coords = NetCell.GetCoords(pos);
+                    int[] coords = BigCell.GetCoords(pos);
                     this.SpecCell = world.GetCellFromCoords(coords[0], coords[1]);
                     ChangeCells(character.Cell, this.SpecCell);
-                    this.SpecCell.Clients.Add(this, ref this.cellID);
+                    this.SpecCell.AddClient(this);
                     this.isSpectating = true;
                 }
                 this.character = null;
@@ -231,7 +221,7 @@ namespace GUC.Network
                     this.character.client = null;
                     if (this.character.IsSpawned)
                     {
-                        this.character.Cell.Clients.Remove(ref this.cellID);
+                        this.character.Cell.RemoveClient(this);
                     }
                 }
             }
@@ -249,7 +239,7 @@ namespace GUC.Network
                     this.character.client = null;
                     if (this.character.IsSpawned)
                     {
-                        this.character.Cell.Clients.Remove(ref this.cellID);
+                        this.character.Cell.RemoveClient(this);
                     }
                 }
 
@@ -272,8 +262,8 @@ namespace GUC.Network
                             npc.WriteTakeControl(stream);
                             this.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, '\0');
                         }
-                        this.SpecCell.Clients.Remove(ref this.cellID);
-                        if (this.SpecCell.DynVobs.GetCount() <= 0 && this.SpecCell.Clients.Count <= 0)
+                        this.SpecCell.RemoveClient(this);
+                        if (this.SpecCell.DynVobs.GetCount() <= 0 && this.SpecCell.ClientCount <= 0)
                             this.specWorld.netCells.Remove(this.SpecCell.Coord);
                         this.SpecCell = null;
                         this.specWorld = null;
@@ -301,11 +291,11 @@ namespace GUC.Network
                         }
                     }
                     
-                    npc.Cell.Clients.Add(this, ref this.cellID);
+                    npc.Cell.AddClient(this);
                 }
                 else // npc is not spawned remove all old vobs
                 {
-                    NetCell[] oldCells = new NetCell[NetCell.NumSurroundingCells];
+                    BigCell[] oldCells = new BigCell[BigCell.NumSurroundingCells];
                     int oldVobCount = 0; int i = 0;
                     this.character.Cell.ForEachSurroundingCell(cell =>
                     {
@@ -316,7 +306,7 @@ namespace GUC.Network
                             oldVobCount += count;
                         }
                     });
-                    WorldMessage.WriteCellMessage(new NetCell[0], oldCells, oldVobCount, this);
+                    WorldMessage.WriteCellMessage(new BigCell[0], oldCells, oldVobCount, this);
                 }
 
                 npc.client = this;
@@ -324,10 +314,10 @@ namespace GUC.Network
             }
         }
 
-        internal void ChangeCells(NetCell from, NetCell to)
+        internal void ChangeCells(BigCell from, BigCell to)
         {
             int i = 0;
-            NetCell[] oldCells = new NetCell[NetCell.NumSurroundingCells];
+            BigCell[] oldCells = new BigCell[BigCell.NumSurroundingCells];
             int oldVobCount = 0;
             from.ForEachSurroundingCell(cell =>
             {
@@ -344,7 +334,7 @@ namespace GUC.Network
 
             // new cells
             i = 0;
-            NetCell[] newCells = new NetCell[NetCell.NumSurroundingCells];
+            BigCell[] newCells = new BigCell[BigCell.NumSurroundingCells];
             to.ForEachSurroundingCell(cell =>
             {
                 if (cell.X > from.X + 1 || cell.X < from.X - 1 || cell.Y > from.Y + 1 || cell.Y < from.Y - 1)
@@ -359,10 +349,10 @@ namespace GUC.Network
             WorldMessage.WriteCellMessage(newCells, oldCells, oldVobCount, this);
         }
 
-        internal void ChangeCells(NetCell from, int x, int y)
+        internal void ChangeCells(BigCell from, int x, int y)
         {
             int i = 0;
-            NetCell[] oldCells = new NetCell[NetCell.NumSurroundingCells];
+            BigCell[] oldCells = new BigCell[BigCell.NumSurroundingCells];
             int oldVobCount = 0;
             from.ForEachSurroundingCell(cell =>
             {
@@ -378,7 +368,7 @@ namespace GUC.Network
 
             // new cells
             i = 0;
-            NetCell[] newCells = new NetCell[NetCell.NumSurroundingCells];
+            BigCell[] newCells = new BigCell[BigCell.NumSurroundingCells];
             from.World.ForEachSurroundingCell(x, y, cell =>
             {
                 if (!(cell.X <= from.X + 1 && cell.X >= from.X - 1 && cell.Y <= from.Y + 1 && cell.Y >= from.Y - 1))

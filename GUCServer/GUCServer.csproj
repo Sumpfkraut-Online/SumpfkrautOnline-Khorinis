@@ -164,8 +164,8 @@
     <Compile Include="..\GUCShared\WorldObjects\Collections\VobTypeObjectCollection.cs">
       <Link>WorldObjects\Collections\VobTypeObjectCollection.cs</Link>
     </Compile>
-    <Compile Include="..\GUCShared\WorldObjects\CommandableVob.cs">
-      <Link>WorldObjects\CommandableVob.cs</Link>
+    <Compile Include="..\GUCShared\WorldObjects\GuidableVob.cs">
+      <Link>WorldObjects\GuidableVob.cs</Link>
     </Compile>
     <Compile Include="..\GUCShared\WorldObjects\Instances\BaseVobInstance.cs">
       <Link>WorldObjects\Instances\BaseVobInstance.cs</Link>
@@ -286,11 +286,12 @@
     <Compile Include="Utilities\TestObject.cs" />
     <Compile Include="Utilities\Threading\TestRun.cs" />
     <Compile Include="WorldObjects\BaseVob.Server.cs" />
-    <Compile Include="WorldObjects\Cells\NetCell.cs" />
+    <Compile Include="WorldObjects\Cells\BigCell.cs" />
     <Compile Include="WorldObjects\Cells\NPCCell.cs" />
     <Compile Include="WorldObjects\Cells\WorldCell.cs" />
     <Compile Include="WorldObjects\Collections\ItemContainer.Server.cs" />
     <Compile Include="StaticCollection.Server.cs" />
+    <Compile Include="WorldObjects\GuidableVob.Server.cs" />
     <Compile Include="WorldObjects\Instances\BaseVobInstance.Server.cs" />
     <Compile Include="WorldObjects\Instances\Mobs\MobBedInstance.Server.cs" />
     <Compile Include="WorldObjects\Mobs\MobBed.Server.cs" />

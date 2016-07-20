@@ -243,7 +243,7 @@ namespace GUC.WorldObjects
             gVob.HP = this.hp;
             gVob.HPMax = this.hpmax;
             gVob.InitHumanAI();
-            gVob.Enable(pos.X, pos.Y, pos.Z);
+            //gVob.Enable(pos.X, pos.Y, pos.Z);
             if (this.Name == "Scavenger") gVob.SetToFistMode();
             if (overlays != null)
                 for (int i = 0; i < overlays.Count; i++)
@@ -255,7 +255,7 @@ namespace GUC.WorldObjects
 
         partial void pDespawn()
         {
-            gVob.Disable();
+            //gVob.Disable();
         }
 
         #endregion

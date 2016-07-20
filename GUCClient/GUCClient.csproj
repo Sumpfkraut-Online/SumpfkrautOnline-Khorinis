@@ -147,8 +147,8 @@
     <Compile Include="..\GUCShared\WorldObjects\Collections\VobTypeObjectCollection.cs">
       <Link>WorldObjects\Collections\VobTypeObjectCollection.cs</Link>
     </Compile>
-    <Compile Include="..\GUCShared\WorldObjects\CommandableVob.cs">
-      <Link>WorldObjects\CommandableVob.cs</Link>
+    <Compile Include="..\GUCShared\WorldObjects\GuidableVob.cs">
+      <Link>GuidableVob.cs</Link>
     </Compile>
     <Compile Include="..\GUCShared\WorldObjects\Instances\BaseVobInstance.cs">
       <Link>WorldObjects\Instances\BaseVobInstance.cs</Link>

@@ -64,8 +64,5 @@ namespace GUC.Enumeration
         InventoryUnequipMessage,
 
         // ai commanding
-        CmdAddVobMessage,
-        CmdRemoveVobMessage,
-        CmdVobMessage
     }
 }

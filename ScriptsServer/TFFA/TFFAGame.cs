@@ -150,17 +150,24 @@ namespace GUC.Scripts.TFFA
         static GUCTimer statUpdateTimer;
         static TFFAGame()
         {
-            NPCInst.sOnHit += OnHit;
+            try
+            {
+                NPCInst.sOnHit += OnHit;
 
-            statUpdateTimer = new GUCTimer(ScoreboardUpdateTime, () => UpdateStats());
-            statUpdateTimer.Start();
+                statUpdateTimer = new GUCTimer(ScoreboardUpdateTime, () => UpdateStats());
+                statUpdateTimer.Start();
 
-            respawnTimer = new GUCTimer(RespawnTime, RespawnPlayers);
-            respawnTimer.Start();
+                respawnTimer = new GUCTimer(RespawnTime, RespawnPlayers);
+                respawnTimer.Start();
 
 
-            gameTimer = new GUCTimer();
-            PhaseFight();
+                gameTimer = new GUCTimer();
+                PhaseFight();
+            }
+            catch (Exception e)
+            {
+                Log.Logger.LogError(e);
+            }
         }
 
         public static int ALKills = 0;
@@ -274,6 +281,7 @@ namespace GUC.Scripts.TFFA
            });
         }
 
+        static bool guide = true;
         public static void PhaseFight()
         {
             Log.Logger.Log("Fight Phase");
@@ -296,10 +304,14 @@ namespace GUC.Scripts.TFFA
 
             gameTimer.Restart();
 
-
             var dummyDef = NPCDef.Get("player");
-            var dummy = new NPCInst(dummyDef);
-            dummy.Spawn(WorldInst.Current, new Vec3f(-4727, 259, 518), new Vec3f(-0.5522485f, 0, -0.8336804f));
+            for (int i = 0; i < 100; i++)
+            {
+                var dummy = new NPCInst(dummyDef);
+                dummy.BaseInst.SetNeedsClientGuide(guide);
+                guide = !guide;
+                dummy.Spawn(WorldInst.Current, Randomizer.GetVec3fRad(new Vec3f(0,500,0), 500), new Vec3f(-0.5522485f, 0, -0.8336804f));
+            }
         }
 
         public static void PhaseEnd()
@@ -343,8 +355,7 @@ namespace GUC.Scripts.TFFA
         #region Respawn
 
         static GUCTimer respawnTimer;
-
-        static Random rand = new Random();
+        
         static void RespawnPlayers()
         {
             if (status != TFFAPhase.Fight)
@@ -379,18 +390,18 @@ namespace GUC.Scripts.TFFA
             if (HeadMesh == 6) HeadMesh = 0;
 
             if (npc.CustomBodyTex == HumBodyTexs.M_Black)
-                npc.CustomHeadTex = (HumHeadTexs)rand.Next(129, 137);
+                npc.CustomHeadTex = (HumHeadTexs)Randomizer.GetInt(129, 137);
             else if (npc.CustomBodyTex == HumBodyTexs.M_Latino)
-                npc.CustomHeadTex = (HumHeadTexs)rand.Next(120, 129);
+                npc.CustomHeadTex = (HumHeadTexs)Randomizer.GetInt(120, 129);
             else if (npc.CustomBodyTex == HumBodyTexs.M_Pale)
-                npc.CustomHeadTex = (HumHeadTexs)rand.Next(41, 58);
+                npc.CustomHeadTex = (HumHeadTexs)Randomizer.GetInt(41, 58);
             else
-                npc.CustomHeadTex = (HumHeadTexs)rand.Next(58, 120);
+                npc.CustomHeadTex = (HumHeadTexs)Randomizer.GetInt(58, 120);
 
-            npc.CustomVoice = (HumVoices)rand.Next(1, 15);
-            npc.Fatness = rand.Next(-100, 250) / 100.0f;
+            npc.CustomVoice = (HumVoices)Randomizer.GetInt(1, 15);
+            npc.Fatness = Randomizer.GetInt(-100, 250) / 100.0f;
 
-            npc.ModelScale = new Vec3f(rand.Next(95, 105) / 100.0f, rand.Next(95, 105) / 100.0f, rand.Next(95, 105) / 100.0f);
+            npc.ModelScale = new Vec3f(Randomizer.GetInt(95, 105) / 100.0f, Randomizer.GetInt(95, 105) / 100.0f, Randomizer.GetInt(95, 105) / 100.0f);
 
             npc.UseCustoms = true;
 
@@ -419,7 +430,7 @@ namespace GUC.Scripts.TFFA
                     ammo = new ItemInst(ItemDef.Get<ItemDef>("itrw_bolt"));
                     def.Model.TryGetOverlay("1HST2", out overlay);
                 }
-                spawnPoint = ALSpawns[rand.Next(0, 6)];
+                spawnPoint = ALSpawns[Randomizer.GetInt(0, 6)];
             }
             else
             {
@@ -439,7 +450,7 @@ namespace GUC.Scripts.TFFA
                     ammo = new ItemInst(ItemDef.Get<ItemDef>("itrw_arrow"));
                     def.Model.TryGetOverlay("1HST1", out overlay);
                 }
-                spawnPoint = NLSpawns[rand.Next(0, 6)];
+                spawnPoint = NLSpawns[Randomizer.GetInt(0, 6)];
             }
 
             npc.AddItem(weapon);
@@ -490,18 +501,18 @@ namespace GUC.Scripts.TFFA
             if (HeadMesh == 6) HeadMesh = 0;
 
             if (npc.CustomBodyTex == HumBodyTexs.M_Black)
-                npc.CustomHeadTex = (HumHeadTexs)rand.Next(129, 137);
+                npc.CustomHeadTex = (HumHeadTexs)Randomizer.GetInt(129, 137);
             else if (npc.CustomBodyTex == HumBodyTexs.M_Latino)
-                npc.CustomHeadTex = (HumHeadTexs)rand.Next(120, 129);
+                npc.CustomHeadTex = (HumHeadTexs)Randomizer.GetInt(120, 129);
             else if (npc.CustomBodyTex == HumBodyTexs.M_Pale)
-                npc.CustomHeadTex = (HumHeadTexs)rand.Next(41, 58);
+                npc.CustomHeadTex = (HumHeadTexs)Randomizer.GetInt(41, 58);
             else
-                npc.CustomHeadTex = (HumHeadTexs)rand.Next(58, 120);
+                npc.CustomHeadTex = (HumHeadTexs)Randomizer.GetInt(58, 120);
 
-            npc.CustomVoice = (HumVoices)rand.Next(1, 15);
-            npc.Fatness = rand.Next(-100, 250) / 100.0f;
+            npc.CustomVoice = (HumVoices)Randomizer.GetInt(1, 15);
+            npc.Fatness = Randomizer.GetInt(-100, 250) / 100.0f;
 
-            npc.ModelScale = new Vec3f(rand.Next(95, 105) / 100.0f, rand.Next(95, 105) / 100.0f, rand.Next(95, 105) / 100.0f);
+            npc.ModelScale = new Vec3f(Randomizer.GetInt(95, 105) / 100.0f, Randomizer.GetInt(95, 105) / 100.0f, Randomizer.GetInt(95, 105) / 100.0f);
 
             npc.UseCustoms = true;
 

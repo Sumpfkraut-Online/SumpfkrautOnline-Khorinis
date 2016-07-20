@@ -27,7 +27,7 @@ namespace GUC.Network.Messages
         
         #region Cells
 
-        public static void WriteCellMessage(NetCell[] newCells, NetCell[] oldCells, int oldVobs, GameClient client)
+        public static void WriteCellMessage(BigCell[] newCells, BigCell[] oldCells, int oldVobs, GameClient client)
         {
             if (newCells[0] == null && (oldCells.Length == 0 || oldCells[0] == null)) return;
 

@@ -271,15 +271,15 @@ namespace GUC.Network
                 if (client.character.IsSpawned)
                 {
                     client.character.World.RemoveFromPlayers(client);
-                    client.Character.Cell.Clients.Remove(ref client.cellID);
+                    client.Character.Cell.RemoveClient(client);
                 }
             }
 
             if (client.IsSpectating)
             {
                 client.SpecWorld.RemoveFromPlayers(client);
-                client.SpecCell.Clients.Remove(ref client.cellID);
-                if (client.SpecCell.DynVobs.GetCount() == 0 && client.SpecCell.Clients.Count == 0)
+                client.SpecCell.RemoveClient(client);
+                if (client.SpecCell.DynVobs.GetCount() == 0 && client.SpecCell.ClientCount == 0)
                     client.SpecWorld.netCells.Remove(client.SpecCell.Coord);
             }
 

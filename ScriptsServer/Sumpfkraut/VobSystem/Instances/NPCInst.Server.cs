@@ -27,12 +27,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             Vec3f pos = this.BaseInst.GetPosition();
             if (this.BaseInst.IsPlayer && !this.BaseInst.IsDead)
             {
-                if (pos.Y < -400)
+                /*if (pos.Y < -400)
                 {
                     TFFA.TFFAGame.Kill((TFFA.TFFAClient)this.BaseInst.Client.ScriptObject, true);
                 }
                 else
-                {
+                {*/
                     if (pos.GetDistance(lastPos) < 20 && !this.IsInAni() && this.BaseInst.HP < this.BaseInst.HPMax) // not moving & hurt
                     {
                         if (!regenTimer.Started)
@@ -45,7 +45,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     {
                         regenTimer.Stop();
                     }
-                }
+                //}
             }
             lastPos = pos;
         }

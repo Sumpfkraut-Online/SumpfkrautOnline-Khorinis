@@ -12,6 +12,52 @@ namespace GUC
 {
     static class Program
     {
+        class TimeStat
+        {
+            long tickCount;
+            long tickMax;
+            long counter;
+            Stopwatch watch;
+
+            public long Ticks { get { return this.tickCount; } }
+            public double Average { get { return (double)tickCount / (double)counter / (double)TimeSpan.TicksPerMillisecond; } }
+            public double Maximum { get { return (double)tickMax / (double)TimeSpan.TicksPerMillisecond; } }
+
+            public TimeStat()
+            {
+                watch = new Stopwatch();
+                this.Reset();
+            }
+
+            public void Start()
+            {
+                watch.Restart();
+            }
+
+            public long Stop()
+            {
+                watch.Stop();
+                long ticks = watch.ElapsedTicks;
+
+                this.tickCount += ticks;
+                counter++;
+
+                if (ticks > tickMax)
+                {
+                    tickMax = ticks;
+                }
+                return ticks;
+            }
+
+            public void Reset()
+            {
+                tickCount = 0;
+                counter = 0;
+                tickMax = 0;
+            }
+        }
+
+
         static Thread game;
         static void Main(string[] args)
         {
@@ -38,48 +84,55 @@ namespace GUC
         {
             try
             {
-                const int updateRate = 8; //min time between server ticks
+                const long updateRate = 10 * TimeSpan.TicksPerMillisecond; //min time between server ticks
 
-                const long nextInfoUpdateTime = 3 * TimeSpan.TicksPerMinute;
-                long nextInfoUpdates = DateTime.UtcNow.Ticks + nextInfoUpdateTime;
+                const long nextInfoUpdateInterval = 1 * TimeSpan.TicksPerMinute;
+                long nextInfoUpdateTime = GameTime.Ticks + nextInfoUpdateInterval;
 
-                long tickAverage = 0;
-                long tickCount = 0;
-                long tickMax = 0;
-
-                Random rand = new Random();
-                Stopwatch watch = new Stopwatch();
+                TimeStat timeAll = new TimeStat();
+                TimeStat timeWorlds = new TimeStat();
+                TimeStat timeTimers = new TimeStat();
+                TimeStat timePackets = new TimeStat();
 
                 while (true)
                 {
-                    watch.Restart();
+                    timeAll.Start();
 
                     GameTime.Update();
-                    GUC.WorldObjects.World.ForEach(w => w.OnTick(GameTime.Ticks));
+
+                    timeWorlds.Start();
+                    WorldObjects.World.ForEach(w => w.OnTick(GameTime.Ticks));
+                    timeWorlds.Stop();
+
+                    timeTimers.Start();
                     GUCTimer.Update(GameTime.Ticks); // move to new thread?
+                    timeTimers.Stop();
+
+                    timePackets.Start();
                     GameServer.Update(); //process received packets
+                    timePackets.Stop();
 
-                    if (nextInfoUpdates < GameTime.Ticks)
+                    if (nextInfoUpdateTime < GameTime.Ticks)
                     {
-                        tickAverage /= tickCount;
-                        Logger.Log("Tick rate info: {0:0.00}ms average, {1:0.00}ms max. Allocated RAM: {2:0.0}MB", (double)tickAverage / TimeSpan.TicksPerMillisecond, (double)tickMax / TimeSpan.TicksPerMillisecond, Process.GetCurrentProcess().PrivateMemorySize64 / 1048576d);
-                        nextInfoUpdates = GameTime.Ticks + nextInfoUpdateTime;
-                        tickMax = 0;
-                        tickAverage = 0;
-                        tickCount = 0;
+                        Logger.Log("");
+                        Logger.Log("Performance info: {0:0.00}ms average, {1:0.00}ms max. Allocated RAM: {2:0.0}MB", timeAll.Average, timeAll.Maximum, Process.GetCurrentProcess().PrivateMemorySize64 / 1048576d);
+                        Logger.Log("World & Vobs ({0}%): {1:0.00}ms average, {2:0.00}ms max.", 100 * timeWorlds.Ticks / timeAll.Ticks, timeWorlds.Average, timeWorlds.Maximum);
+                        Logger.Log("Timers ({0}%): {1:0.00}ms average, {2:0.00}ms max.", 100 * timeTimers.Ticks / timeAll.Ticks, timeTimers.Average, timeTimers.Maximum);
+                        Logger.Log("Packets ({0}%): {1:0.00}ms average, {2:0.00}ms max.", 100 * timePackets.Ticks / timeAll.Ticks, timePackets.Average, timePackets.Maximum);
+                        Logger.Log("");
+
+                        timeAll.Reset();
+                        timeWorlds.Reset();
+                        timeTimers.Reset();
+                        timePackets.Reset();
+
+                        nextInfoUpdateTime = GameTime.Ticks + nextInfoUpdateInterval;
                     }
 
-                    tickCount++;
-                    tickAverage += watch.ElapsedTicks;
-                    if (watch.ElapsedTicks > tickMax)
-                    {
-                        tickMax = watch.ElapsedTicks;
-                    }
-
-                    int diff = updateRate - (int)watch.ElapsedMilliseconds;
+                    long diff = (updateRate - timeAll.Stop()) / TimeSpan.TicksPerMillisecond;
                     if (diff > 0)
                     {
-                        Thread.Sleep(diff);
+                        Thread.Sleep((int)diff);
                     }
                 }
             }

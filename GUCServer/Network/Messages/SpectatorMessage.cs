@@ -13,8 +13,8 @@ namespace GUC.Network.Messages
         {
             Vec3f newPos = stream.ReadCompressedPosition();
 
-            float unroundedX = newPos.X / NetCell.Size;
-            float unroundedZ = newPos.Z / NetCell.Size;
+            float unroundedX = newPos.X / BigCell.Size;
+            float unroundedZ = newPos.Z / BigCell.Size;
 
             // calculate new cell indices
             int x = (int)(newPos.X >= 0 ? unroundedX + 0.5f : unroundedX - 0.5f);
@@ -35,13 +35,13 @@ namespace GUC.Network.Messages
                 float zdiff = unroundedZ - client.SpecCell.Y;
                 if ((xdiff > 0.65f || xdiff < -0.65f) || (zdiff > 0.65f || zdiff < -0.65f))
                 {
-                    client.SpecCell.Clients.Remove(ref client.cellID);
-                    if (client.SpecCell.DynVobs.GetCount() <= 0 && client.SpecCell.Clients.Count <= 0)
+                    client.SpecCell.RemoveClient(client);
+                    if (client.SpecCell.DynVobs.GetCount() <= 0 && client.SpecCell.ClientCount <= 0)
                         client.SpecWorld.netCells.Remove(client.SpecCell.Coord);
                     var newCell = client.SpecWorld.GetCellFromCoords(x, z);
                     client.ChangeCells(client.SpecCell, newCell);
                     client.SpecCell = newCell;
-                    newCell.Clients.Add(client, ref client.cellID);
+                    newCell.AddClient(client);
                 }
             }
         }

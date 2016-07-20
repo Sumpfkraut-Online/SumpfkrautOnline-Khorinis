@@ -7,6 +7,11 @@ namespace GUC.Types
 {
     public partial struct Vec3f
     {
+        public static Vec3f Null
+        {
+            get { return new Vec3f(0, 0, 0); }
+        }
+
         public float X;
         public float Y;
         public float Z;

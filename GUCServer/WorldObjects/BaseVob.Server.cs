@@ -36,8 +36,8 @@ namespace GUC.WorldObjects
 
         internal virtual void UpdatePosition(Vec3f newPos, Vec3f newDir, GameClient exclude)
         {
-            float unroundedX = newPos.X / NetCell.Size;
-            float unroundedZ = newPos.Z / NetCell.Size;
+            float unroundedX = newPos.X / BigCell.Size;
+            float unroundedZ = newPos.Z / BigCell.Size;
 
             // calculate new cell indices
             int x = (int)(newPos.X >= 0 ? unroundedX + 0.5f : unroundedX - 0.5f);
@@ -67,7 +67,7 @@ namespace GUC.WorldObjects
             }
 
             // still in the old cell, updates for everyone!
-            if (this.Cell.Clients.Count > 0)
+            if (this.Cell.ClientCount > 0)
             {
                 PacketWriter stream = GameServer.SetupStream(NetworkIDs.VobPosDirMessage);
                 stream.Write((ushort)this.ID);
@@ -85,12 +85,12 @@ namespace GUC.WorldObjects
 
         internal virtual void ChangeCells(int toX, int toY)
         {
-            NetCell from = this.Cell;
+            BigCell from = this.Cell;
             this.RemoveFromNetCell();
 
             from.ForEachSurroundingCell(cell =>
             {
-                if (cell.Clients.Count > 0)
+                if (cell.ClientCount > 0)
                     if (cell.X <= toX + 1 && cell.X >= toX - 1 && cell.Y <= toY + 1 && cell.Y >= toY - 1)
                     {
                         //Position updates in shared cells
@@ -98,7 +98,7 @@ namespace GUC.WorldObjects
                         stream.Write((ushort)this.ID);
                         stream.WriteCompressedPosition(this.pos);
                         stream.WriteCompressedDirection(this.dir);
-                        cell.Clients.ForEach(c =>
+                        cell.ForEachClient(c =>
                         {
                             c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE, 'W');
                         });
@@ -108,7 +108,7 @@ namespace GUC.WorldObjects
                         //deletion updates in old cells
                         PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldDespawnMessage);
                         stream.Write((ushort)this.ID);
-                        cell.Clients.ForEach(c =>
+                        cell.ForEachClient(c =>
                         {
                             c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
                         });
@@ -118,14 +118,14 @@ namespace GUC.WorldObjects
             // new cells
             this.world.ForEachSurroundingCell(toX, toY, cell =>
             {
-                if (cell.Clients.Count > 0)
+                if (cell.ClientCount > 0)
                     if (!(cell.X <= from.X + 1 && cell.X >= from.X - 1 && cell.Y <= from.Y + 1 && cell.Y >= from.Y - 1))
                     {
                         // spawn updates in the new cells
                         PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldSpawnMessage);
                         stream.Write((byte)this.VobType);
                         this.WriteStream(stream);
-                        cell.Clients.ForEach(c =>
+                        cell.ForEachClient(c =>
                         {
                             c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
                         });
@@ -141,9 +141,9 @@ namespace GUC.WorldObjects
         internal int dynCellID = -1;
         internal int dynCellTypeID = -1;
 
-        internal NetCell Cell = null;
+        internal BigCell Cell = null;
 
-        internal virtual void AddToNetCell(NetCell cell)
+        internal virtual void AddToNetCell(BigCell cell)
         {
             if (this.IsStatic)
                 throw new Exception("Vob is static!");
@@ -160,7 +160,7 @@ namespace GUC.WorldObjects
 
             this.Cell.DynVobs.Remove(this, ref this.dynCellID, ref this.dynCellTypeID);
 
-            if (this.Cell.DynVobs.GetCount() == 0 && this.Cell.Clients.Count == 0)
+            if (this.Cell.DynVobs.GetCount() == 0 && this.Cell.ClientCount == 0)
                 this.world.netCells.Remove(this.Cell.Coord);
 
             this.Cell = null;

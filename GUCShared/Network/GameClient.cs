@@ -99,11 +99,11 @@ namespace GUC.Network
             if (vob == null)
                 throw new ArgumentNullException("Vob is null!");
 
-            if (vob.Commander != null)
+            if (vob.Guide != null)
                 throw new ArgumentNullException("Vob commander is not null!");
 
             cmdList.Add(vob);
-            vob.Commander = this;
+            vob.Guide = this;
 
             pAddToCmdList(vob);
         }
@@ -114,11 +114,11 @@ namespace GUC.Network
             if (vob == null)
                 throw new ArgumentNullException("Vob is null!");
 
-            if (vob.Commander != this)
+            if (vob.Guide != this)
                 throw new ArgumentNullException("Client is not commanding this vob!");
 
             cmdList.Remove(vob);
-            vob.Commander = null;
+            vob.Guide = null;
 
             pRemoveFromCmdList(vob);
         }

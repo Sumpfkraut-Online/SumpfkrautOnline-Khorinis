@@ -90,12 +90,12 @@ namespace GUC.WorldObjects
             }
         }
 
-        internal override void AddToNetCell(NetCell cell)
+        internal override void AddToNetCell(BigCell cell)
         {
             base.AddToNetCell(cell);
             if (this.IsPlayer)
             {
-                cell.Clients.Add(this.client, ref this.client.cellID);
+                cell.AddClient(this.client);
             }
         }
 
@@ -103,7 +103,7 @@ namespace GUC.WorldObjects
         {
             if (this.IsPlayer)
             {
-                this.Cell.Clients.Remove(ref this.client.cellID);
+                this.Cell.RemoveClient(this.client);
             }
             base.RemoveFromNetCell();
         }
@@ -122,24 +122,24 @@ namespace GUC.WorldObjects
             }
             else
             {
-                NetCell from = this.Cell;
+                BigCell from = this.Cell;
                 this.RemoveFromNetCell();
 
                 int i = 0;
-                NetCell[] oldCells = new NetCell[NetCell.NumSurroundingCells];
+                BigCell[] oldCells = new BigCell[BigCell.NumSurroundingCells];
                 int oldVobCount = 0;
                 from.ForEachSurroundingCell(cell =>
                 {
                     if (cell.X <= toX + 1 && cell.X >= toX - 1 && cell.Y <= toY + 1 && cell.Y >= toY - 1)
                     {
-                        if (cell.Clients.Count > 0)
+                        if (cell.ClientCount > 0)
                         {
                             //Position updates in shared cells
                             PacketWriter stream = GameServer.SetupStream(NetworkIDs.VobPosDirMessage);
                             stream.Write((ushort)this.ID);
                             stream.WriteCompressedPosition(this.pos);
                             stream.WriteCompressedDirection(this.dir);
-                            cell.Clients.ForEach(c =>
+                            cell.ForEachClient(c =>
                             {
                                 c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE, 'W');
                             });
@@ -147,12 +147,12 @@ namespace GUC.WorldObjects
                     }
                     else
                     {
-                        if (cell.Clients.Count > 0)
+                        if (cell.ClientCount > 0)
                         {
                             //deletion updates in old cells
                             PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldDespawnMessage);
                             stream.Write((ushort)this.ID);
-                            cell.Clients.ForEach(c =>
+                            cell.ForEachClient(c =>
                             {
                                 c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
                             });
@@ -168,18 +168,18 @@ namespace GUC.WorldObjects
 
                 // new cells
                 i = 0;
-                NetCell[] newCells = new NetCell[NetCell.NumSurroundingCells];
+                BigCell[] newCells = new BigCell[BigCell.NumSurroundingCells];
                 this.world.ForEachSurroundingCell(toX, toY, cell =>
                 {
                     if (!(cell.X <= from.X + 1 && cell.X >= from.X - 1 && cell.Y <= from.Y + 1 && cell.Y >= from.Y - 1))
                     {
-                        if (cell.Clients.Count > 0)
+                        if (cell.ClientCount > 0)
                         {
                             // spawn updates in the new cells
                             PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldSpawnMessage);
                             stream.Write((byte)this.VobType);
                             this.WriteStream(stream);
-                            cell.Clients.ForEach(c =>
+                            cell.ForEachClient(c =>
                             {
                                 c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
                             });
@@ -241,14 +241,14 @@ namespace GUC.WorldObjects
         internal void InsertInWorld()
         {
             // Write surrounding vobs to this client
-            int[] coords = NetCell.GetCoords(this.pos);
-            NetCell[] arr = new NetCell[NetCell.NumSurroundingCells]; int i = 0;
+            int[] coords = BigCell.GetCoords(this.pos);
+            BigCell[] arr = new BigCell[BigCell.NumSurroundingCells]; int i = 0;
             this.world.ForEachSurroundingCell(coords[0], coords[1], cell =>
             {
                 if (cell.DynVobs.GetCount() > 0)
                     arr[i++] = cell; // save for cell message
             });
-            WorldMessage.WriteCellMessage(arr, new NetCell[0], 0, this.client);
+            WorldMessage.WriteCellMessage(arr, new BigCell[0], 0, this.client);
 
             if (!this.isCreated)
             {

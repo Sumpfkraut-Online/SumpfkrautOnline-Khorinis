@@ -206,11 +206,13 @@ namespace GUC.WorldObjects
 
         #endregion
 
+        partial void pOnTick(long now);
         internal void OnTick(long now)
         {
             this.Clock.UpdateTime();
             this.SkyCtrl.UpdateWeather();
             this.ForEachVob(v => v.OnTick(now));
+            pOnTick(now);
         }
     }
 }
