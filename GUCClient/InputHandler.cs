@@ -16,7 +16,7 @@ namespace GUC
             { VirtualKeys.F4, Program.Exit },
             { VirtualKeys.F5, () =>
                 {
-                    var ai = Network.GameClient.Client?.character?.gVob?.HumanAI;
+                    var ai = Network.GameClient.Client?.Character?.gVob?.HumanAI;
                     if (ai != null)
                     {
                         int bitField = Process.ReadInt(ai.Address + 0x1204);
@@ -41,7 +41,7 @@ namespace GUC
                         {
                             var pos = vob.GetPosition();
                             Log.Logger.Log("Teleport to vob " + vob.ID + " at " + pos);
-                            if (Network.GameClient.Client.character == null)
+                            if (Network.GameClient.Client.Character == null)
                             {
                                 if (Network.GameClient.Client.IsSpectating)
                                 {
@@ -50,7 +50,7 @@ namespace GUC
                             }
                             else
                             {
-                                Network.GameClient.Client.character.SetPosition(pos);
+                                Network.GameClient.Client.Character.SetPosition(pos);
                             }
                             return;
                         }

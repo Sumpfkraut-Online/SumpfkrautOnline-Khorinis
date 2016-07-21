@@ -39,12 +39,12 @@ namespace GUC.WorldObjects
 
         public void UpdatePropertiesFast()
         {
-
+            throw new NotImplementedException();
         }
 
         public void UpdateProperties()
         {
-            // send msg
+            throw new NotImplementedException();
         }
 
         partial void pSetMovement(MoveState state)
@@ -55,146 +55,8 @@ namespace GUC.WorldObjects
 
         #region Cells
 
-        internal NPCCell npcCell = null;
+        internal NPCCell NpcCell = null;
         internal int npcCellID = -1;
-
-        void UpdateNPCCell()
-        {
-            int[] coords = NPCCell.GetCoords(this.pos);
-
-            if (coords[0] < short.MinValue || coords[0] > short.MaxValue || coords[1] < short.MinValue || coords[1] > short.MaxValue)
-            {
-                throw new Exception("Coords are out of cell range!");
-            }
-
-            if (this.npcCell == null || this.npcCell.X != coords[0] || this.npcCell.Y != coords[1])
-            {
-                int coord = (coords[0] << 16) | coords[1] & 0xFFFF;
-
-                if (this.npcCell != null)
-                {
-                    this.npcCell.npcs.Remove(ref this.npcCellID);
-                    if (this.npcCell.npcs.Count <= 0)
-                        this.world.npcCells.Remove(this.npcCell.Coord);
-                }
-
-                NPCCell newCell;
-                if (!this.world.npcCells.TryGetValue(coord, out newCell))
-                {
-                    newCell = new NPCCell(this.world, coords[0], coords[1]);
-                    this.world.npcCells.Add(coord, newCell);
-                }
-
-                newCell.npcs.Add(this, ref this.npcCellID);
-                this.npcCell = newCell;
-            }
-        }
-
-        internal override void AddToNetCell(BigCell cell)
-        {
-            base.AddToNetCell(cell);
-            if (this.IsPlayer)
-            {
-                cell.AddClient(this.client);
-            }
-        }
-
-        internal override void RemoveFromNetCell()
-        {
-            if (this.IsPlayer)
-            {
-                this.Cell.RemoveClient(this.client);
-            }
-            base.RemoveFromNetCell();
-        }
-
-        internal override void UpdatePosition(Vec3f newPos, Vec3f newDir, GameClient exclude)
-        {
-            base.UpdatePosition(newPos, newDir, exclude);
-            this.UpdateNPCCell();
-        }
-
-        internal override void ChangeCells(int toX, int toY)
-        {
-            if (!this.IsPlayer)
-            {
-                base.ChangeCells(toX, toY);
-            }
-            else
-            {
-                BigCell from = this.Cell;
-                this.RemoveFromNetCell();
-
-                int i = 0;
-                BigCell[] oldCells = new BigCell[BigCell.NumSurroundingCells];
-                int oldVobCount = 0;
-                from.ForEachSurroundingCell(cell =>
-                {
-                    if (cell.X <= toX + 1 && cell.X >= toX - 1 && cell.Y <= toY + 1 && cell.Y >= toY - 1)
-                    {
-                        if (cell.ClientCount > 0)
-                        {
-                            //Position updates in shared cells
-                            PacketWriter stream = GameServer.SetupStream(NetworkIDs.VobPosDirMessage);
-                            stream.Write((ushort)this.ID);
-                            stream.WriteCompressedPosition(this.pos);
-                            stream.WriteCompressedDirection(this.dir);
-                            cell.ForEachClient(c =>
-                            {
-                                c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE, 'W');
-                            });
-                        }
-                    }
-                    else
-                    {
-                        if (cell.ClientCount > 0)
-                        {
-                            //deletion updates in old cells
-                            PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldDespawnMessage);
-                            stream.Write((ushort)this.ID);
-                            cell.ForEachClient(c =>
-                            {
-                                c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
-                            });
-                        }
-
-                        if (cell.DynVobs.GetCount() > 0)
-                        {
-                            oldCells[i++] = cell;
-                            oldVobCount += cell.DynVobs.GetCount();
-                        }
-                    }
-                });
-
-                // new cells
-                i = 0;
-                BigCell[] newCells = new BigCell[BigCell.NumSurroundingCells];
-                this.world.ForEachSurroundingCell(toX, toY, cell =>
-                {
-                    if (!(cell.X <= from.X + 1 && cell.X >= from.X - 1 && cell.Y <= from.Y + 1 && cell.Y >= from.Y - 1))
-                    {
-                        if (cell.ClientCount > 0)
-                        {
-                            // spawn updates in the new cells
-                            PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldSpawnMessage);
-                            stream.Write((byte)this.VobType);
-                            this.WriteStream(stream);
-                            cell.ForEachClient(c =>
-                            {
-                                c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
-                            });
-                        }
-
-                        if (cell.DynVobs.GetCount() > 0)
-                            newCells[i++] = cell;
-                    }
-                });
-
-                WorldMessage.WriteCellMessage(newCells, oldCells, oldVobCount, this.client);
-
-                this.AddToNetCell(this.world.GetCellFromCoords(toX, toY));
-            }
-        }
 
         #endregion
 
@@ -233,34 +95,20 @@ namespace GUC.WorldObjects
             else
             {
                 base.Spawn(world, position, direction);
-                this.UpdateNPCCell();
+                this.world.AddToNPCCells(this);
             }
         }
 
         // wait until the client has loaded the map
-        internal void InsertInWorld()
+        internal void SpawnPlayer()
         {
-            // Write surrounding vobs to this client
-            int[] coords = BigCell.GetCoords(this.pos);
-            BigCell[] arr = new BigCell[BigCell.NumSurroundingCells]; int i = 0;
-            this.world.ForEachSurroundingCell(coords[0], coords[1], cell =>
-            {
-                if (cell.DynVobs.GetCount() > 0)
-                    arr[i++] = cell; // save for cell message
-            });
-            WorldMessage.WriteCellMessage(arr, new BigCell[0], 0, this.client);
-
-            if (!this.isCreated)
-            {
-                base.Spawn(this.world, pos, dir);
-                this.UpdateNPCCell();
-                world.AddToPlayers(this.client);
-            }
-
             PacketWriter stream = GameServer.SetupStream(NetworkIDs.PlayerControlMessage);
             stream.Write((ushort)this.ID);
             this.WriteTakeControl(stream);
             this.Client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, '\0');
+
+            base.Spawn(world, this.pos, this.dir);
+            this.world.AddToNPCCells(this);
         }
 
         partial void pDespawn()
@@ -269,9 +117,7 @@ namespace GUC.WorldObjects
             {
                 this.client.SetControl(null);
             }
-            this.npcCell.npcs.Remove(ref this.npcCellID);
-            if (this.npcCell.npcs.Count <= 0)
-                this.npcCell.World.npcCells.Remove(this.npcCell.Coord);
+            this.world.RemoveFromNPCCells(this);
         }
 
         #endregion

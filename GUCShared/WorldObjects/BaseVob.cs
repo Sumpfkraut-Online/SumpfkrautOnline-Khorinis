@@ -98,23 +98,16 @@ namespace GUC.WorldObjects
         }
 
         partial void pSetPosition();
-        public void SetPosition(Vec3f position)
+        public virtual void SetPosition(Vec3f position)
         {
-            this.pos = position;
+            this.pos = position.CorrectPosition();
             pSetPosition();
         }
 
         partial void pSetDirection();
-        public void SetDirection(Vec3f direction)
+        public virtual void SetDirection(Vec3f direction)
         {
-            if (direction.IsNull())
-            {
-                this.dir = new Vec3f(0, 0, 1);
-            }
-            else
-            {
-                this.dir = direction;
-            }
+            this.dir = direction.CorrectDirection();
             pSetDirection();
         }
 
@@ -211,7 +204,7 @@ namespace GUC.WorldObjects
         {
             if (!this.isCreated)
                 throw new Exception("Vob isn't spawned!");
-            
+
             this.isCreated = false;
 
             pDespawn();

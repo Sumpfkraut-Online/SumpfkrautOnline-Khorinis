@@ -96,7 +96,8 @@ namespace GUC.Types
 
         public float GetLength()
         {
-            return (float)Math.Sqrt((double)this.X * (double)this.X + (double)this.Y * (double)this.Y + (double)this.Z * (double)this.Z);
+            //return (float)Math.Sqrt((double)this.X * (double)this.X + (double)this.Y * (double)this.Y + (double)this.Z * (double)this.Z);
+            return (float)Math.Sqrt(this.X * this.X + this.Y * this.Y + this.Z * this.Z);
         }
 
         public Vec3f Normalise()
@@ -226,5 +227,32 @@ namespace GUC.Types
         }
 
         #endregion
+        
+        internal Vec3f CorrectPosition()
+        {
+            Vec3f ret = new Vec3f();
+            if (this.X < -838860.8f) ret.X = -838860.8f;
+            else if (this.X > 838860.7f) ret.X = 838860.7f;
+            else ret.X = this.X;
+
+            if (this.Y < -838860.8f) ret.Y = -838860.8f;
+            else if (this.Y > 838860.7f) ret.Y = 838860.7f;
+            else ret.Y = this.Y;
+
+            if (this.Z < -838860.8f) ret.Z = -838860.8f;
+            else if (this.Z > 838860.7f) ret.Z = 838860.7f;
+            else ret.Z = this.Z;
+
+            return ret;
+        }
+
+        internal Vec3f CorrectDirection()
+        {
+            if (this.IsNull())
+            {
+                return new Vec3f(0, 0, 1);
+            }
+            return this.Normalise();
+        }
     }
 }

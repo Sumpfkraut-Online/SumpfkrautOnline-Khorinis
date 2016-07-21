@@ -182,7 +182,7 @@ namespace GUC.WorldObjects
 
         public bool TryGetVob<T>(int id, out T vob) where T : BaseVob
         {
-            return vobsByID.TryGet(id, out vob);
+            return vobsByID.TryGet<T>(id, out vob);
         }
 
         public void ForEachVob(Action<BaseVob> action)
@@ -190,15 +190,12 @@ namespace GUC.WorldObjects
             vobs.ForEach(action);
         }
 
-        public void ForEachVob(Predicate<BaseVob> predicate)
+        public void ForEachVobPredicate(Predicate<BaseVob> predicate)
         {
-            vobs.ForEach(predicate);
+            vobs.ForEachPredicate(predicate);
         }
 
-        public int GetVobCount()
-        {
-            return vobs.Count;
-        }
+        public int VobCount { get { return vobs.Count; } }
 
         #endregion
 

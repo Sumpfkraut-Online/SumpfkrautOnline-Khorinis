@@ -80,42 +80,42 @@ namespace GUC.Network
                     break;
 
                 case NetworkIDs.VobPosDirMessage:
-                    VobMessage.ReadPosDir(stream, client, client.character);
+                    VobMessage.ReadPosDir(stream, client, client.Character);
                     break;
 
                 case NetworkIDs.NPCStateMessage:
-                    NPCMessage.ReadMoveState(stream, client, client.character, client.character.World);
+                    NPCMessage.ReadMoveState(stream, client, client.Character, client.Character.World);
                     break;
 
                 case NetworkIDs.NPCApplyOverlayMessage:
-                    NPCMessage.ReadApplyOverlay(stream, client.character);
+                    NPCMessage.ReadApplyOverlay(stream, client.Character);
                     break;
                 case NetworkIDs.NPCRemoveOverlayMessage:
-                    NPCMessage.ReadRemoveOverlay(stream, client.character);
+                    NPCMessage.ReadRemoveOverlay(stream, client.Character);
                     break;
 
                 case NetworkIDs.NPCAniStartMessage:
-                    NPCMessage.ReadAniStart(stream, client.character);
+                    NPCMessage.ReadAniStart(stream, client.Character);
                     break;
                 case NetworkIDs.NPCAniStartWithArgsMessage:
-                    NPCMessage.ReadAniStartWithArgs(stream, client.character);
+                    NPCMessage.ReadAniStartWithArgs(stream, client.Character);
                     break;
                 case NetworkIDs.NPCAniStopMessage:
-                    NPCMessage.ReadAniStop(stream, client.character);
+                    NPCMessage.ReadAniStop(stream, client.Character);
                     break;
 
                 case NetworkIDs.NPCSetFightModeMessage:
-                    NPCMessage.ReadSetFightMode(stream, client.character);
+                    NPCMessage.ReadSetFightMode(stream, client.Character);
                     break;
                 case NetworkIDs.NPCUnsetFightModeMessage:
-                    NPCMessage.ReadUnsetFightMode(stream, client.character);
+                    NPCMessage.ReadUnsetFightMode(stream, client.Character);
                     break;
 
                 case NetworkIDs.InventoryEquipMessage:
-                    InventoryMessage.ReadEquipMessage(stream, client.character);
+                    InventoryMessage.ReadEquipMessage(stream, client.Character);
                     break;
                 case NetworkIDs.InventoryUnequipMessage:
-                    InventoryMessage.ReadUnequipMessage(stream, client.character);
+                    InventoryMessage.ReadUnequipMessage(stream, client.Character);
                     break;
 
                 default:
@@ -128,7 +128,7 @@ namespace GUC.Network
             client.PacketCount++;
             if (client.nextCheck < GameTime.Ticks)
             {
-                if (client.PacketCount >= 40)
+                if (client.PacketCount >= 100000000)
                 {
                     Logger.LogWarning("Client spammed too many packets. Kicked: {0} IP:{1}", client.guid.g, client.systemAddress);
                     DisconnectClient(client);
@@ -144,8 +144,7 @@ namespace GUC.Network
          *   In this surrounding loop data is received from individual clients and the server reacts depending 
          *   on the network message types (see class attributes for these types). This is done for each
          *   network message received by individual clients until there is no more (buffered) message
-         *   left. Character creation is done here on successful connection as well as the respective 
-         *   deletion of disconnect.
+         *   left.
          */
         internal static void Update()
         {
@@ -197,6 +196,13 @@ namespace GUC.Network
                                     {
                                         clientDict.Add(client.guid.g, client);
                                         client.Create();
+
+                                        for (int i = 0; i < 90; i++)
+                                        {
+                                            var dummy = new GameClient();
+                                            Scripting.ScriptManager.Interface.OnClientConnection(dummy);
+                                            dummy.Create();
+                                        }
                                     }
                                     else
                                     {
@@ -265,28 +271,8 @@ namespace GUC.Network
             if (client == null)
                 throw new ArgumentNullException("Client is null!");
 
-            if (client.character != null)
-            {
-                client.character.client = null;
-                if (client.character.IsSpawned)
-                {
-                    client.character.World.RemoveFromPlayers(client);
-                    client.Character.Cell.RemoveClient(client);
-                }
-            }
-
-            if (client.IsSpectating)
-            {
-                client.SpecWorld.RemoveFromPlayers(client);
-                client.SpecCell.RemoveClient(client);
-                if (client.SpecCell.DynVobs.GetCount() == 0 && client.SpecCell.ClientCount == 0)
-                    client.SpecWorld.netCells.Remove(client.SpecCell.Coord);
-            }
-
             client.Delete();
-
-            client.character = null;
-
+            
             ServerInterface.CloseConnection(client.guid, true);
             clientDict.Remove(client.guid.g);
             client.guid.Dispose();

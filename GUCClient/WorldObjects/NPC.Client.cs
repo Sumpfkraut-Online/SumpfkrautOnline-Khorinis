@@ -179,7 +179,7 @@ namespace GUC.WorldObjects
                             }
                         }
 
-                        if (this == Network.GameClient.Client.character)
+                        if (this == Network.GameClient.Client.Character)
                         {
                             aniTimes.RemoveAll(t => t.Item1 == aniID);
                             aniTimes.Add(new Tuple<int, long>(aniID, DateTime.UtcNow.Ticks));

@@ -29,6 +29,8 @@ namespace GUC.Network
 
         #endregion
 
+        bool fakeClient = false;
+
         #region Collection
 
         static StaticCollection<GameClient> idColl = new StaticCollection<GameClient>(200); // slots
@@ -52,12 +54,33 @@ namespace GUC.Network
             if (!this.isCreated)
                 throw new Exception("Client is not in the collection!");
 
-            this.isCreated = false;
+            if (this.character != null)
+            {
+                this.character.client = null;
+                if (this.character.IsSpawned)
+                {
+                    this.character.World.RemoveClient(this);
+                    this.Character.Cell.RemoveClient(this);
+                }
+            }
+            else if (this.isSpectating)
+            {
+                this.specWorld.RemoveClient(this);
+                this.SpecCell.RemoveClient(this);
 
-            this.ScriptObject.OnDisconnection();
+                this.specWorld.CheckCellRemove(this.SpecCell);
+                this.specWorld = null;
+                this.SpecCell = null;
+            }
+
+            this.isCreated = false;
 
             idColl.Remove(this);
             clients.Remove(ref this.collID);
+
+            this.ScriptObject.OnDisconnection();
+
+            this.character = null;
         }
 
         /// <summary>
@@ -65,7 +88,7 @@ namespace GUC.Network
         /// </summary>
         public static void ForEach(Predicate<GameClient> predicate)
         {
-            clients.ForEach(predicate);
+            clients.ForEachPredicate(predicate);
         }
 
         public static void ForEach(Action<GameClient> action)
@@ -79,14 +102,6 @@ namespace GUC.Network
         {
             return idColl.TryGet(id, out client);
         }
-
-        #endregion
-
-        #region Vob Guiding
-
-        internal List<GuidableVob> GuidedVobs = new List<GuidableVob>(100);
-        internal List<GuidableVob> NewGuidedVobs = new List<GuidableVob>(20);
-        internal int ProbableVobs = 0;
 
         #endregion
 
@@ -125,29 +140,103 @@ namespace GUC.Network
             this.systemAddress = new SystemAddress(systemAddress.ToString(), systemAddress.GetPort());
         }
 
+        internal GameClient()
+        {
+            this.fakeClient = true;
+        }
+
+        #endregion
+
+        #region Vob visibility
+
+        List<BaseVob> visibleVobs = new List<BaseVob>();
+
+        internal void AddVisibleVob(BaseVob vob)
+        {
+            visibleVobs.Add(vob);
+        }
+
+        internal void RemoveVisibleVob(BaseVob vob)
+        {
+            visibleVobs.Remove(vob);
+        }
+
+        void CleanVobList()
+        {
+            //FIXME: Send a single stream!
+
+            Vec3f pos = this.GetPosition();
+            for (int i = visibleVobs.Count - 1; i >= 0; i--)
+            {
+                if (visibleVobs[i].GetPosition().GetDistance(pos) > World.SpawnRemoveRange)
+                {
+                    PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldDespawnMessage);
+                    stream.Write((ushort)visibleVobs[i].ID);
+                    this.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
+
+                    visibleVobs[i].RemoveVisibleClient(this);
+                    visibleVobs.RemoveAt(i);
+                }
+            }
+        }
+
+        void UpdateVobList()
+        {
+            //FIXME: Send a single stream!
+
+            World world = this.GetWorld();
+            Vec3f pos = this.GetPosition();
+
+            if (visibleVobs.Count > 0)
+            {
+                world.ForEachDynVobRougher(pos, World.SpawnInsertRange, vob =>
+                {
+                    if (!visibleVobs.Contains(vob))
+                    {
+                        if (pos.GetDistance(vob.GetPosition()) < World.SpawnInsertRange)
+                        {
+                            visibleVobs.Add(vob);
+                            vob.AddVisibleClient(this);
+
+                            PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldSpawnMessage);
+                            stream.Write((byte)vob.VobType);
+                            vob.WriteStream(stream);
+                            this.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
+                        }
+                    }
+                });
+            }
+            else
+            {
+                world.ForEachDynVobRougher(pos, World.SpawnInsertRange, vob =>
+                {
+                    if (pos.GetDistance(vob.GetPosition()) < World.SpawnInsertRange)
+                    {
+                        visibleVobs.Add(vob);
+                        vob.AddVisibleClient(this);
+
+                        PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldSpawnMessage);
+                        stream.Write((byte)vob.VobType);
+                        vob.WriteStream(stream);
+                        this.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
+                    }
+                });
+            }
+        }
+
         #endregion
 
         internal void ConfirmLoadWorldMessage()
         {
             if (character != null)
             {
-                character.InsertInWorld();
+                JoinWorld(character.World, character.GetPosition());
+                character.SpawnPlayer();
             }
             else if (specWorld != null)
             {
                 this.isSpectating = true;
-                // Write surrounding vobs to this client
-                int[] coords = BigCell.GetCoords(specPos);
-                this.SpecCell = specWorld.GetCellFromCoords(coords[0], coords[1]);
-                BigCell[] arr = new BigCell[BigCell.NumSurroundingCells]; int i = 0;
-                SpecCell.ForEachSurroundingCell(cell =>
-                {
-                    if (cell.DynVobs.GetCount() > 0)
-                        arr[i++] = cell; // save for cell message
-                });
-                WorldMessage.WriteCellMessage(arr, new BigCell[0], 0, this);
-                this.SpecCell.AddClient(this);
-                this.specWorld.AddToPlayers(this);
+                JoinWorld(specWorld, specPos);
             }
             else
             {
@@ -155,14 +244,37 @@ namespace GUC.Network
             }
         }
 
+        #region Spectating
+
         internal BigCell SpecCell;
+
+        public void SetPosition(Vec3f pos)
+        {
+            this.SetPosition(pos, true);
+        }
+
+        internal void SetPosition(Vec3f pos, bool sendToClient)
+        {
+            this.specPos = pos.CorrectPosition();
+            this.specWorld.UpdateClientCell(this, this.specPos);
+            CleanVobList();
+            UpdateVobList();
+
+            if (!this.fakeClient)
+            {
+                ForEach(client =>
+                {
+                    if (client.fakeClient)
+                        client.SetPosition(Randomizer.GetVec3fRad(client.specPos, 50), false);
+                });
+            }
+        }
 
         partial void pSetToSpectate(World world, Vec3f pos, Vec3f dir)
         {
             if (this.isSpectating)
             {
                 return;
-                throw new NotImplementedException();
             }
             else
             {
@@ -182,16 +294,13 @@ namespace GUC.Network
                 }
                 else if (this.character.IsSpawned && this.character.World != world)
                 {
-                    this.character.World.RemoveFromPlayers(this);
+                    this.character.World.RemoveClient(this);
                     WorldMessage.WriteLoadMessage(this, world);
                 }
                 else // just switch cells
                 {
-                    int[] coords = BigCell.GetCoords(pos);
-                    this.SpecCell = world.GetCellFromCoords(coords[0], coords[1]);
-                    ChangeCells(character.Cell, this.SpecCell);
-                    this.SpecCell.AddClient(this);
                     this.isSpectating = true;
+                    JoinWorld(world, pos);
                 }
                 this.character = null;
 
@@ -203,12 +312,59 @@ namespace GUC.Network
                 this.specPos = pos;
                 this.specDir = dir;
                 this.specWorld = world;
+
             }
+        }
+
+        #endregion
+
+        void JoinWorld(World world, Vec3f pos)
+        {
+            if (!this.fakeClient)
+                ForEach(client =>
+                {
+                    if (client.fakeClient)
+                    {
+                        client.specPos = Randomizer.GetVec3fRad(pos, 20000);
+                        client.specWorld = world;
+                        client.isSpectating = true;
+                        client.JoinWorld(world, client.specPos);
+                    }
+                });
+
+            world.AddClientToCells(this);
+
+            world.ForEachDynVobRougher(pos, World.SpawnInsertRange, vob =>
+            {
+                if (vob.GetPosition().GetDistance(pos) < World.SpawnInsertRange)
+                {
+                    visibleVobs.Add(vob);
+                    vob.AddVisibleClient(this);
+                }
+            });
+
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldJoinMessage);
+            stream.Write((ushort)visibleVobs.Count);
+            for (int i = 0; i < visibleVobs.Count; i++)
+            {
+                stream.Write((byte)visibleVobs[i].VobType);
+                visibleVobs[i].WriteStream(stream);
+            }
+            this.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
+        }
+
+        void LeaveWorld(World world)
+        {
+            world.RemoveClientFromCells(this);
+
+            PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldLeaveMessage);
+            this.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
+
+            visibleVobs.Clear();
         }
 
         #region Player control
 
-        internal int worldID = -1;
         internal int cellID = -1;
 
         partial void pSetControl(NPC npc)
@@ -221,6 +377,7 @@ namespace GUC.Network
                     this.character.client = null;
                     if (this.character.IsSpawned)
                     {
+                        this.character.World.RemoveClient(this);
                         this.character.Cell.RemoveClient(this);
                     }
                 }
@@ -250,21 +407,20 @@ namespace GUC.Network
                     {
                         if (this.specWorld != npc.World)
                         {
-                            this.specWorld.RemoveFromPlayers(this);
+                            this.specWorld.RemoveClient(this);
                             WorldMessage.WriteLoadMessage(this, npc.World);
                         }
                         else
                         {
-                            this.ChangeCells(this.SpecCell, npc.Cell);
-
                             PacketWriter stream = GameServer.SetupStream(NetworkIDs.PlayerControlMessage);
                             stream.Write((ushort)npc.ID);
                             npc.WriteTakeControl(stream);
                             this.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, '\0');
                         }
+
                         this.SpecCell.RemoveClient(this);
-                        if (this.SpecCell.DynVobs.GetCount() <= 0 && this.SpecCell.ClientCount <= 0)
-                            this.specWorld.netCells.Remove(this.SpecCell.Coord);
+                        this.specWorld.CheckCellRemove(this.SpecCell);
+
                         this.SpecCell = null;
                         this.specWorld = null;
                         this.isSpectating = false;
@@ -277,12 +433,12 @@ namespace GUC.Network
                         }
                         else if (this.character.World != npc.World)
                         {
-                            this.character.World.RemoveFromPlayers(this);
+                            this.character.World.RemoveClient(this);
                             WorldMessage.WriteLoadMessage(this, npc.World);
                         }
                         else
                         {
-                            this.ChangeCells(this.character.Cell, npc.Cell);
+                            JoinWorld(npc.World, npc.GetPosition());
 
                             PacketWriter stream = GameServer.SetupStream(NetworkIDs.PlayerControlMessage);
                             stream.Write((ushort)npc.ID);
@@ -290,102 +446,30 @@ namespace GUC.Network
                             this.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, '\0');
                         }
                     }
-                    
+
                     npc.Cell.AddClient(this);
                 }
                 else // npc is not spawned remove all old vobs
                 {
-                    BigCell[] oldCells = new BigCell[BigCell.NumSurroundingCells];
-                    int oldVobCount = 0; int i = 0;
-                    this.character.Cell.ForEachSurroundingCell(cell =>
-                    {
-                        int count = cell.DynVobs.GetCount();
-                        if (count > 0)
-                        {
-                            oldCells[i++] = cell;
-                            oldVobCount += count;
-                        }
-                    });
-                    WorldMessage.WriteCellMessage(new BigCell[0], oldCells, oldVobCount, this);
+                    if (this.character != null)
+                        LeaveWorld(this.character.World);
+                    else if (this.isSpectating)
+                        LeaveWorld(this.specWorld);
                 }
 
                 npc.client = this;
-                this.character = npc;
             }
-        }
-
-        internal void ChangeCells(BigCell from, BigCell to)
-        {
-            int i = 0;
-            BigCell[] oldCells = new BigCell[BigCell.NumSurroundingCells];
-            int oldVobCount = 0;
-            from.ForEachSurroundingCell(cell =>
-            {
-                if (cell.X > to.X + 1 || cell.X < to.X - 1 || cell.Y > to.Y + 1 || cell.Y < to.Y - 1)
-                {
-                    int count = cell.DynVobs.GetCount();
-                    if (count > 0)
-                    {
-                        oldCells[i++] = cell;
-                        oldVobCount += count;
-                    }
-                }
-            });
-
-            // new cells
-            i = 0;
-            BigCell[] newCells = new BigCell[BigCell.NumSurroundingCells];
-            to.ForEachSurroundingCell(cell =>
-            {
-                if (cell.X > from.X + 1 || cell.X < from.X - 1 || cell.Y > from.Y + 1 || cell.Y < from.Y - 1)
-                {
-                    if (cell.DynVobs.GetCount() > 0)
-                    {
-                        newCells[i++] = cell;
-                    }
-                }
-            });
-
-            WorldMessage.WriteCellMessage(newCells, oldCells, oldVobCount, this);
-        }
-
-        internal void ChangeCells(BigCell from, int x, int y)
-        {
-            int i = 0;
-            BigCell[] oldCells = new BigCell[BigCell.NumSurroundingCells];
-            int oldVobCount = 0;
-            from.ForEachSurroundingCell(cell =>
-            {
-                if (!(cell.X <= x + 1 && cell.X >= x - 1 && cell.Y <= y + 1 && cell.Y >= y - 1))
-                {
-                    if (cell.DynVobs.GetCount() > 0)
-                    {
-                        oldCells[i++] = cell;
-                        oldVobCount += cell.DynVobs.GetCount();
-                    }
-                }
-            });
-
-            // new cells
-            i = 0;
-            BigCell[] newCells = new BigCell[BigCell.NumSurroundingCells];
-            from.World.ForEachSurroundingCell(x, y, cell =>
-            {
-                if (!(cell.X <= from.X + 1 && cell.X >= from.X - 1 && cell.Y <= from.Y + 1 && cell.Y >= from.Y - 1))
-                {
-                    if (cell.DynVobs.GetCount() > 0)
-                        newCells[i++] = cell;
-                }
-            });
-
-            WorldMessage.WriteCellMessage(newCells, oldCells, oldVobCount, this);
+            this.character = npc;
         }
 
         #endregion
 
+        #region Networking
+
         internal void Send(PacketWriter stream, PacketPriority pp, PacketReliability pr, char orderingChannel)
         {
-            GameServer.ServerInterface.Send(stream.GetData(), stream.GetLength(), pp, pr, '\0'/*orderingChannel*/, this.guid, false);
+            if (!fakeClient)
+                GameServer.ServerInterface.Send(stream.GetData(), stream.GetLength(), pp, pr, '\0'/*orderingChannel*/, this.guid, false);
         }
 
         public int GetLastPing()
@@ -393,13 +477,19 @@ namespace GUC.Network
             return GameServer.ServerInterface.GetLastPing(this.guid);
         }
 
-        public void Kick()
+        public void Disconnect()
         {
             GameServer.DisconnectClient(this);
         }
 
-        public void Ban()
+        public void Kick(string message = "")
         {
+            throw new NotImplementedException();
+        }
+
+        public void Ban(string message = "")
+        {
+            Kick(message);
             GameServer.AddToBanList(this.SystemAddress);
         }
 
@@ -412,5 +502,7 @@ namespace GUC.Network
         {
             this.Send(stream, (PacketPriority)pr, (PacketReliability)rl, 'M');
         }
+
+        #endregion
     }
 }

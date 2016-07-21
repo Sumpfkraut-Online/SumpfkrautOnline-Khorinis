@@ -31,7 +31,8 @@ namespace GUC.Enumeration
         ScriptVobMessage,
 
         // world & spawns
-        WorldCellMessage, // for changing cells
+        WorldJoinMessage,
+        WorldLeaveMessage,
         WorldSpawnMessage, // for spawning a vob in the world
         WorldDespawnMessage, // for despawning a vob in the world
         WorldTimeMessage, // to set the world's time
@@ -41,6 +42,8 @@ namespace GUC.Enumeration
 
         //vobs
         VobPosDirMessage, // updating position and direction of a vob
+        VobPosMessage,
+        VobDirMessage,
 
         // npcs 
         NPCStateMessage,

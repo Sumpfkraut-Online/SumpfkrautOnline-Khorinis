@@ -98,7 +98,7 @@ namespace GUC
         /// <summary>
         /// return FALSE to break the loop.
         /// </summary>
-        public void ForEach(Predicate<T> action)
+        public void ForEachPredicate(Predicate<T> action)
         {
             if (action == null)
                 throw new ArgumentNullException("Action is null!");

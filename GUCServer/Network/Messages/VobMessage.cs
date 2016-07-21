@@ -14,7 +14,7 @@ namespace GUC.Network.Messages
             var pos = stream.ReadCompressedPosition();
             var dir = stream.ReadCompressedDirection();
             character.envState = (EnvironmentState)stream.ReadByte();
-            character.UpdatePosition(pos, dir, client);
+            //character.SetPosDir(pos, dir, client);
 
             character.ScriptObject.OnPosChanged();
         }

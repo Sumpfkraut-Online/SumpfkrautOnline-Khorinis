@@ -50,6 +50,7 @@ namespace GUC.Network
 
         Vec3f lastSpecPos;
         static long specNextUpdate = 0;
+        const long SpecPosUpdateInterval = 2000000;
         internal void UpdateSpectator(long now)
         {
             if (now < specNextUpdate)
@@ -71,7 +72,7 @@ namespace GUC.Network
             stream.WriteCompressedPosition(pos);
             Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE);
 
-            specNextUpdate = now + 1000000;
+            specNextUpdate = now + SpecPosUpdateInterval;
         }
 
         #endregion
@@ -307,8 +308,8 @@ namespace GUC.Network
 
         void ReadMessage(NetworkIDs id, PacketReader stream)
         {
-            if (id != NetworkIDs.VobPosDirMessage && id != NetworkIDs.NPCStateMessage)
-                Logger.Log(id);
+            //if (id != NetworkIDs.VobPosDirMessage && id != NetworkIDs.NPCStateMessage)
+            //    Logger.Log(id);
 
             switch (id)
             {
@@ -367,14 +368,17 @@ namespace GUC.Network
                     break;
 
                 // World Messages
+                case NetworkIDs.WorldJoinMessage:
+                    WorldMessage.ReadJoinWorldMessage(stream);
+                    break;
+                case NetworkIDs.WorldLeaveMessage:
+                    WorldMessage.ReadLeaveWorldMessage(stream);
+                    break;
                 case NetworkIDs.WorldSpawnMessage:
                     WorldMessage.ReadVobSpawnMessage(stream);
                     break;
                 case NetworkIDs.WorldDespawnMessage:
                     WorldMessage.ReadVobDespawnMessage(stream);
-                    break;
-                case NetworkIDs.WorldCellMessage:
-                    WorldMessage.ReadCellMessage(stream);
                     break;
                 case NetworkIDs.WorldTimeMessage:
                     WorldMessage.ReadTimeMessage(stream);

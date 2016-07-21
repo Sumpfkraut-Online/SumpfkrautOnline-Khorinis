@@ -204,7 +204,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 Vec3f attPos = this.BaseInst.GetPosition();
                 Vec3f attDir = this.BaseInst.GetDirection();
                 float range = this.DrawnWeapon.Definition.Range + this.Model.Radius + ModelDef.LargestNPC.Radius;
-                this.BaseInst.World.ForEachNPCRoughInRange(attPos, range, npc =>
+                this.BaseInst.World.ForEachNPCRough(attPos, range, npc =>
                 {
                     NPCInst target = (NPCInst)npc.ScriptObject;
                     if (target != this && !target.BaseInst.IsDead)

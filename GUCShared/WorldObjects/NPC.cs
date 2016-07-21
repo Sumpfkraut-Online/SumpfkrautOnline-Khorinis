@@ -698,7 +698,7 @@ namespace GUC.WorldObjects
         #endregion
 
         #region Spawn
-
+        
         partial void pDespawn();
         public override void Despawn()
         {

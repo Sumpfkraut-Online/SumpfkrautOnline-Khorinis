@@ -33,14 +33,46 @@ namespace GUC.Network
 
         #region Properties
 
-        internal NPC character = null;
+        NPC character = null;
         public NPC Character { get { return this.character; } }
 
         new public int ID { get { return base.ID; } }
 
         Vec3f specPos, specDir;
+        /// <summary>
+        /// Returns the current spectator position or position of controlled NPC.
+        /// </summary>
+        public Vec3f GetPosition()
+        {
+            if (this.isSpectating)
+            {
+                return this.specPos;
+            }
+            return this.character.GetPosition();
+        }
+
+        /// <summary>
+        /// Returns the current spectator direction or direction of controlled NPC.
+        /// </summary>
+        public Vec3f GetDirection()
+        {
+            if (this.isSpectating)
+            {
+                return this.specDir;
+            }
+            return this.character.GetDirection();
+        }
+
         World specWorld;
-        public World SpecWorld { get { return this.specWorld; } }
+        public World GetWorld()
+        {
+            if (this.isSpectating)
+            {
+                return this.specWorld;
+            }
+            return this.character.World;
+        }
+
         bool isSpectating = false;
         public bool IsSpectating { get { return this.isSpectating; } }
 

@@ -36,7 +36,7 @@ namespace GUC.Network.Messages
         static Vec3f lastDir;
         public static void WritePosDirMessage(long now)
         {
-            NPC vob = GameClient.Client.character;
+            NPC vob = GameClient.Client.Character;
 
             if (now < nextUpdate || vob == null)
                 return;
@@ -59,7 +59,7 @@ namespace GUC.Network.Messages
 
             nextUpdate = now + updateTime;
 
-            GameClient.Client.character.ScriptObject.OnPosChanged();
+            GameClient.Client.Character.ScriptObject.OnPosChanged();
         }
 
         static Vec3f GetLimitedPosition(BaseVob vob)

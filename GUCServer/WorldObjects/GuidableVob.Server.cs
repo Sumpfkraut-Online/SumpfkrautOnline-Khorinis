@@ -24,29 +24,5 @@ namespace GUC.WorldObjects
 
             }
         }
-
-
-        partial void pSpawn(World world, Vec3f position, Vec3f direction)
-        {
-            if (this.needsClientGuide)
-            {
-                this.Cell.AddGuidableVob(this);
-            }
-        }
-
-        partial void pDespawn()
-        {
-            if (this.needsClientGuide)
-            {
-                if (this.Guide != null)
-                {
-
-                }
-                else
-                {
-                    this.Cell.RemoveGuidableVob(this);
-                }
-            }
-        }
     }
 }
