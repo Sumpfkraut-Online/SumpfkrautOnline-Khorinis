@@ -27,10 +27,14 @@ namespace GUC.Utilities.FileSystem
 
         public int Tries;
 
+        public delegate void ProtocollApplicationEventHandler (ref FileSystemProtocol protocol, 
+            ProtocolStatus status);
+        public event ProtocollApplicationEventHandler OnProtocolApplication;
+
 
 
         public FileSystemProtocol (FileSystemManipulation manipulation, string path, DateTime timestamp, 
-            int maxTries, List<object> options)
+            int maxTries, List<object> options, ProtocollApplicationEventHandler handler)
         {
             this.manipulation = manipulation;
             this.path = path;
@@ -38,6 +42,17 @@ namespace GUC.Utilities.FileSystem
             this.options = options;
             this.maxTries = maxTries;
             this.Tries = 0;
+            this.OnProtocolApplication = handler;
+        }
+
+
+
+        public void InvokeProtocollApplication (ProtocolStatus status)
+        {
+            if (OnProtocolApplication != null)
+            {
+                OnProtocolApplication.Invoke(ref this, status);
+            }
         }
 
 

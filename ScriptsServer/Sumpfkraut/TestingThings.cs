@@ -45,6 +45,10 @@ namespace GUC.Scripts.Sumpfkraut
             //        else { Logger.Log("<<<< MEEEEEEEEEEEHHHHHH! >>>"); }
             //    });
 
+            //List<int> myList = new List<int> { 0, 1, 3 };
+            //myList.Insert(3, 999);
+            //foreach (int i in myList) { Logger.Log(i); };
+
         }
 
     }
