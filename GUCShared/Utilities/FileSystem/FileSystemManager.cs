@@ -5,60 +5,72 @@ using System.Text;
 using GUC.Utilities;
 using System.IO;
 
-namespace GUC.Scripts.Sumpfkraut.Database
+namespace GUC.Utilities.FileSystem
 {
 
-    // a simple class to overwatch the folder-structure of all database-files
-    public class DBFileManager : ExtendedObject
+    public class FileSystemManager : Threading.AbstractRunnable
     {
 
-        new public static readonly string _staticName = "DBFileHandler (static)";
+        new public static readonly string _staticName = "FileSystemManager (static)";
+
+        public static List<FileSystemManager> managers = new List<FileSystemManager>();
 
 
 
-        protected static string rootDirectory = "";
-        public static void SetRootDirectory (string newRoot)
-        {
-            string oldRoot = rootDirectory;
-        }
-
-        protected static int deleteTries = 10;
-        public static int DeleteTries { get { return deleteTries; } }
-        public static void SetDeleteTries (int value) { deleteTries = value; }
-
-        protected static int deleteTimeout = 10;
-        public static int DeleteTimeout { get { return deleteTimeout; } }
-        public static void SetDeleteTimeout (int value) { deleteTimeout = value; }
-
-        protected static int createTries = 10;
-        public static int CreateTries { get { return createTries; } }
-        public static void SetCreateTries (int value) { createTries = value; }
-
-        protected static int createTimeout = 10;
-        public static int CreateTimeout { get { return createTimeout; } }
-        public static void SetCreateTimeout (int value) { createTimeout = value; }
-
-
-        //public DBFileManager ()
-        //    :this("DBFileManager (default)")
-        //{ }
-
-        //public DBFileManager (string objName)
-        //{
-        //    SetObjName(objName);
-        //}
-
-
+        protected List<FileSystemProtocol> protocolQueue;
 
         public delegate void CreateFileEventHandler (bool success);
+        public delegate void DeleteFileEventHandler (bool success);
+        public delegate void MoveFileEventHandler (bool success);
 
-        public static void CreateFile (string filePath, 
+        public delegate void CreateFolderEventHandler (bool success);
+        public delegate void DeleteFolderEventHandler (bool success);
+        public delegate void MoveFolderEventHandler (bool success);
+
+        protected int createTries = 10;
+        public int CreateTries { get { return createTries; } }
+        public void SetCreateTries (int value) { createTries = value; }
+
+        protected int createTimeout = 10;
+        public int CreateTimeout { get { return createTimeout; } }
+        public void SetCreateTimeout (int value) { createTimeout = value; }
+
+        protected int deleteTries = 10;
+        public int DeleteTries { get { return deleteTries; } }
+        public void SetDeleteTries (int value) { deleteTries = value; }
+
+        protected int deleteTimeout = 10;
+        public int DeleteTimeout { get { return deleteTimeout; } }
+        public void SetDeleteTimeout (int value) { deleteTimeout = value; }
+
+
+
+        public FileSystemManager (bool startOnCreate, TimeSpan timeout, bool runOnce)
+            : base(startOnCreate, timeout, runOnce)
+        {
+            SetObjName("FileSystemManager (default)");
+            protocolQueue = new List<FileSystemProtocol>();
+            managers.Add(this);
+        }
+
+
+
+        // stop thread as soon as possible and remove FileSystemManager from static list
+        public void Destroy ()
+        {
+            Suspend();
+            managers.Remove(this);
+        }
+
+        
+
+        public void CreateFile (string filePath, 
             CreateFileEventHandler createFileHandler = null)
         {
             CreateFile(filePath, CreateTries, CreateTimeout, createFileHandler);
         }
 
-        public static void CreateFile (string filePath, int tries, int tryTimeout, 
+        public void CreateFile (string filePath, int tries, int tryTimeout, 
             CreateFileEventHandler createFileHandler = null)
         {
             if (File.Exists(filePath))
@@ -73,7 +85,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
             }
         }
 
-        protected static void LoopCreate (string filePath, int tries, int tryTimeout, 
+        protected void LoopCreate (string filePath, int tries, int tryTimeout, 
             CreateFileEventHandler createFileHandler = null)
         {
             bool success = false;
@@ -92,7 +104,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
             if (createFileHandler != null) { createFileHandler(success); }
         }
 
-        public static bool TryCreateFile (string filePath)
+        public bool TryCreateFile (string filePath)
         {
             try
             {
@@ -105,15 +117,15 @@ namespace GUC.Scripts.Sumpfkraut.Database
             }
         }
 
-        public delegate void DeleteFileEventHandler (bool success);
+        
 
-        public static void DeleteFile (string filePath, 
+        public void DeleteFile (string filePath, 
             DeleteFileEventHandler deleteFileHandler = null)
         {
             DeleteFile(filePath, DeleteTries, DeleteTimeout, deleteFileHandler);
         }
 
-        public static void DeleteFile (string filePath, int tries, int tryTimeout, 
+        public void DeleteFile (string filePath, int tries, int tryTimeout, 
             DeleteFileEventHandler deleteFileHandler = null)
         {
             if (File.Exists(filePath))
@@ -128,7 +140,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
             }
         }
 
-        protected static void LoopDelete (string filePath, int tries, int tryTimeout, 
+        protected void LoopDelete (string filePath, int tries, int tryTimeout, 
             DeleteFileEventHandler deleteFileHandler = null)
         {
             bool success = false;
@@ -147,7 +159,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
             if (deleteFileHandler != null) { deleteFileHandler(success); }
         }
 
-        public static bool TryDeleteFile (string filePath)
+        public bool TryDeleteFile (string filePath)
         {
             try
             {
