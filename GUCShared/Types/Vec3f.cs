@@ -115,6 +115,11 @@ namespace GUC.Types
             return (this - value).GetLength();
         }
 
+        public float GetDistancePlanar(Vec3f value)
+        {
+            return (float)Math.Sqrt((this.X - value.X) * (this.X - value.X) + (this.Z - value.Z)*(this.Z - value.Z));
+        }
+
         public Vec3f Cross(Vec3f vec)
         {
             return new Vec3f(this.Y * vec.Z - this.Z * vec.Y,

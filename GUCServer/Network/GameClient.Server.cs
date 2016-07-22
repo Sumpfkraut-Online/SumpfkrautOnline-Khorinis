@@ -149,39 +149,55 @@ namespace GUC.Network
 
         #region Vob visibility
 
-        List<BaseVob> visibleVobs = new List<BaseVob>();
+        Dictionary<int, BaseVob> visibleVobs = new Dictionary<int, BaseVob>();
 
         internal void AddVisibleVob(BaseVob vob)
         {
-            visibleVobs.Add(vob);
+            visibleVobs.Add(vob.ID, vob);
         }
 
         internal void RemoveVisibleVob(BaseVob vob)
         {
-            visibleVobs.Remove(vob);
+            visibleVobs.Remove(vob.ID);
         }
 
+        public static System.Diagnostics.Stopwatch CleanWatch = new System.Diagnostics.Stopwatch();
+        static List<int> cleanList = new List<int>(100);
         void CleanVobList()
         {
             //FIXME: Send a single stream!
-
+            CleanWatch.Start();
             Vec3f pos = this.GetPosition();
-            for (int i = visibleVobs.Count - 1; i >= 0; i--)
-            {
-                if (visibleVobs[i].GetPosition().GetDistance(pos) > World.SpawnRemoveRange)
-                {
-                    PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldDespawnMessage);
-                    stream.Write((ushort)visibleVobs[i].ID);
-                    this.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
 
-                    visibleVobs[i].RemoveVisibleClient(this);
-                    visibleVobs.RemoveAt(i);
+            if (visibleVobs.Count > 0)
+            {
+                foreach(BaseVob vob in visibleVobs.Values)
+                {
+                    if (vob.GetPosition().GetDistancePlanar(pos) > World.SpawnRemoveRange)
+                    {
+                        PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldDespawnMessage);
+                        stream.Write((ushort)vob.ID);
+                        this.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
+
+                        vob.RemoveVisibleClient(this);
+                        cleanList.Add(vob.ID);
+                    }
                 }
+
+                for (int i = 0; i < cleanList.Count; i++)
+                {
+                    visibleVobs.Remove(cleanList[i]);
+                }
+                cleanList.Clear();
             }
+            CleanWatch.Stop();
         }
 
+
+        public static System.Diagnostics.Stopwatch UpdateWatch = new System.Diagnostics.Stopwatch();
         void UpdateVobList()
         {
+            UpdateWatch.Start();
             //FIXME: Send a single stream!
 
             World world = this.GetWorld();
@@ -191,11 +207,11 @@ namespace GUC.Network
             {
                 world.ForEachDynVobRougher(pos, World.SpawnInsertRange, vob =>
                 {
-                    if (!visibleVobs.Contains(vob))
+                    if (!visibleVobs.ContainsKey(vob.ID))
                     {
-                        if (pos.GetDistance(vob.GetPosition()) < World.SpawnInsertRange)
+                        if (pos.GetDistancePlanar(vob.GetPosition()) < World.SpawnInsertRange)
                         {
-                            visibleVobs.Add(vob);
+                            AddVisibleVob(vob);
                             vob.AddVisibleClient(this);
 
                             PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldSpawnMessage);
@@ -210,18 +226,20 @@ namespace GUC.Network
             {
                 world.ForEachDynVobRougher(pos, World.SpawnInsertRange, vob =>
                 {
-                    if (pos.GetDistance(vob.GetPosition()) < World.SpawnInsertRange)
+                    if (pos.GetDistancePlanar(vob.GetPosition()) < World.SpawnInsertRange)
                     {
-                        visibleVobs.Add(vob);
+                        AddVisibleVob(vob);
                         vob.AddVisibleClient(this);
 
                         PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldSpawnMessage);
                         stream.Write((byte)vob.VobType);
                         vob.WriteStream(stream);
-                        this.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
+                        //this.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
                     }
                 });
             }
+
+            UpdateWatch.Stop();
         }
 
         #endregion
@@ -253,6 +271,7 @@ namespace GUC.Network
             this.SetPosition(pos, true);
         }
 
+
         internal void SetPosition(Vec3f pos, bool sendToClient)
         {
             this.specPos = pos.CorrectPosition();
@@ -265,7 +284,7 @@ namespace GUC.Network
                 ForEach(client =>
                 {
                     if (client.fakeClient)
-                        client.SetPosition(Randomizer.GetVec3fRad(client.specPos, 50), false);
+                        client.SetPosition(Randomizer.GetVec3fRad(client.specPos, 250), false);
                 });
             }
         }
@@ -338,17 +357,17 @@ namespace GUC.Network
             {
                 if (vob.GetPosition().GetDistance(pos) < World.SpawnInsertRange)
                 {
-                    visibleVobs.Add(vob);
+                    AddVisibleVob(vob);
                     vob.AddVisibleClient(this);
                 }
             });
 
             PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldJoinMessage);
             stream.Write((ushort)visibleVobs.Count);
-            for (int i = 0; i < visibleVobs.Count; i++)
+            foreach (BaseVob vob in visibleVobs.Values)
             {
-                stream.Write((byte)visibleVobs[i].VobType);
-                visibleVobs[i].WriteStream(stream);
+                stream.Write((byte)vob.VobType);
+                vob.WriteStream(stream);
             }
             this.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
         }
@@ -360,7 +379,7 @@ namespace GUC.Network
             PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldLeaveMessage);
             this.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
 
-            visibleVobs.Clear();
+            //visibleVobs.Clear();
         }
 
         #region Player control

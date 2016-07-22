@@ -26,7 +26,7 @@ namespace GUC.WorldObjects
                 this.world.UpdateVobCell(this, this.pos);
                 CleanClientList();
 
-                if (visibleClients.Count > 0)
+                /*if (visibleClients.Count > 0)
                 {
                     PacketWriter stream = GameServer.SetupStream(NetworkIDs.VobPosMessage);
                     stream.Write(this.pos);
@@ -35,7 +35,7 @@ namespace GUC.WorldObjects
                     {
                         visibleClients[i].Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
                     }
-                }
+                }*/
 
                 UpdateClientList();
             }
@@ -45,7 +45,7 @@ namespace GUC.WorldObjects
         {
             if (this.isCreated && !this.IsStatic)
             {
-                if (visibleClients.Count > 0)
+                /*if (visibleClients.Count > 0)
                 {
                     PacketWriter stream = GameServer.SetupStream(NetworkIDs.VobDirMessage);
                     stream.Write(this.dir);
@@ -54,7 +54,7 @@ namespace GUC.WorldObjects
                     {
                         visibleClients[i].Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
                     }
-                }
+                }*/
             }
         }
 
@@ -70,7 +70,7 @@ namespace GUC.WorldObjects
                 this.world.UpdateVobCell(this, pos);
                 CleanClientList();
 
-                if (visibleClients.Count > 0)
+                /*if (visibleClients.Count > 0)
                 {
                     PacketWriter stream = GameServer.SetupStream(NetworkIDs.VobPosDirMessage);
                     stream.Write(pos);
@@ -80,7 +80,7 @@ namespace GUC.WorldObjects
                     {
                         visibleClients[i].Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
                     }
-                }
+                }*/
 
                 UpdateClientList();
             }
@@ -100,66 +100,63 @@ namespace GUC.WorldObjects
 
         partial void pDespawn()
         {
-            if (visibleClients.Count > 0)
+            /*PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldDespawnMessage);
+            stream.Write((ushort)this.ID);
+            ForEachVis(pair =>
             {
-                PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldDespawnMessage);
-                stream.Write((ushort)this.ID);
                 for (int i = visibleClients.Count - 1; i >= 0; i--)
                 {
                     visibleClients[i].Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
                     visibleClients[i].RemoveVisibleVob(this);
                 }
                 visibleClients.Clear();
-            }
+            });*/
         }
 
         #endregion
 
         #region Client visibility
 
-        List<GameClient> visibleClients = new List<GameClient>();
+        public void ForEachVisibleClient(Action<GameClient> action)
+        {
+
+        }
+
+        internal Dictionary<int, GameClient> visibleClients = new Dictionary<int, GameClient>();
 
         internal void AddVisibleClient(GameClient client)
         {
-            visibleClients.Add(client);
+            visibleClients.Add(client.ID, client);
         }
 
         internal void RemoveVisibleClient(GameClient client)
         {
-            visibleClients.Remove(client);
+            visibleClients.Remove(client.ID);
         }
 
-        internal void ForEachVisibleClient(Action<GameClient> action)
-        {
-            if (action == null) throw new ArgumentNullException("Action is null!");
-            for (int i = 0; i < visibleClients.Count; i++)
-                action(visibleClients[i]);
-        }
-
-        internal void ForEachVisibleClientPredicate(Predicate<GameClient> predicate)
-        {
-            if (predicate == null) throw new ArgumentNullException("Predicate is null!");
-            for (int i = 0; i < visibleClients.Count; i++)
-                if (!predicate(visibleClients[i]))
-                    break;
-        }
-
+        static List<int> cleanList = new List<int>();
         void CleanClientList()
         {
             if (visibleClients.Count > 0)
             {
                 PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldDespawnMessage);
                 stream.Write((ushort)this.ID);
-
-                for (int i = visibleClients.Count - 1; i >= 0; i--)
+                
+                foreach (GameClient client in visibleClients.Values)
                 {
-                    if (this.pos.GetDistance(visibleClients[i].GetPosition()) > World.SpawnRemoveRange)
+                    if (this.pos.GetDistance(client.GetPosition()) > World.SpawnRemoveRange)
                     {
-                        visibleClients[i].Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
-                        visibleClients[i].RemoveVisibleVob(this);
-                        visibleClients.RemoveAt(i);
+                        client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
+                        client.RemoveVisibleVob(this);
+                        cleanList.Add(client.ID);
                     }
                 }
+
+                for (int i = 0; i < cleanList.Count; i++)
+                {
+                    visibleClients.Remove(cleanList[i]);
+                }
+                cleanList.Clear();
             }
         }
 
@@ -171,11 +168,11 @@ namespace GUC.WorldObjects
             {
                 this.world.ForEachClientRougher(this, World.SpawnInsertRange, client =>
                 {
-                    if (!visibleClients.Contains(client))
+                    if (visibleClients.ContainsKey(client.ID))
                     {
                         if (this.pos.GetDistance(client.GetPosition()) < World.SpawnInsertRange)
                         {
-                            visibleClients.Add(client);
+                            this.AddVisibleClient(client);
                             client.AddVisibleVob(this);
 
                             if (stream == null)
@@ -195,7 +192,7 @@ namespace GUC.WorldObjects
                 {
                     if (this.pos.GetDistance(client.GetPosition()) < World.SpawnInsertRange)
                     {
-                        visibleClients.Add(client);
+                        this.AddVisibleClient(client);
                         client.AddVisibleVob(this);
 
                         if (stream == null)
