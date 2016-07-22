@@ -14,6 +14,13 @@ namespace GUC.Network
 {
     public partial class GameClient
     {
+        public bool fakeClient = false;
+
+        internal GameClient()
+        {
+            fakeClient = true;
+        }
+
         #region ScriptObject
 
         /// <summary>
@@ -148,6 +155,21 @@ namespace GUC.Network
                 WorldMessage.WriteCellMessage(arr, new BigCell[0], 0, this);
                 this.SpecCell.AddClient(this);
                 this.specWorld.AddToPlayers(this);
+
+                ForEach(client =>
+                {
+                    if (client.fakeClient)
+                    {
+                        client.isSpectating = true;
+                        client.specPos = Randomizer.GetVec3fRad(this.specPos, 20000);
+                        client.specWorld = this.specWorld;
+                        // Write surrounding vobs to this client
+                        coords = BigCell.GetCoords(client.specPos);
+                        client.SpecCell = client.specWorld.GetCellFromCoords(coords[0], coords[1]);
+                        client.SpecCell.AddClient(client);
+                        client.specWorld.AddToPlayers(client);
+                    }
+                });
             }
             else
             {
@@ -290,7 +312,7 @@ namespace GUC.Network
                             this.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, '\0');
                         }
                     }
-                    
+
                     npc.Cell.AddClient(this);
                 }
                 else // npc is not spawned remove all old vobs
@@ -385,7 +407,8 @@ namespace GUC.Network
 
         internal void Send(PacketWriter stream, PacketPriority pp, PacketReliability pr, char orderingChannel)
         {
-            GameServer.ServerInterface.Send(stream.GetData(), stream.GetLength(), pp, pr, '\0'/*orderingChannel*/, this.guid, false);
+            if (!fakeClient)
+                GameServer.ServerInterface.Send(stream.GetData(), stream.GetLength(), pp, pr, '\0'/*orderingChannel*/, this.guid, false);
         }
 
         public int GetLastPing()

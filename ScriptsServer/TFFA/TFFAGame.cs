@@ -304,13 +304,11 @@ namespace GUC.Scripts.TFFA
 
             gameTimer.Restart();
 
-            var dummyDef = NPCDef.Get("player");
-            for (int i = 0; i < 100; i++)
+            var dummyDef = ItemDef.Get<ItemDef>("ITAR_Garde");
+            for (int i = 0; i < 20000; i++)
             {
-                var dummy = new NPCInst(dummyDef);
-                dummy.BaseInst.SetNeedsClientGuide(guide);
-                guide = !guide;
-                dummy.Spawn(WorldInst.Current, Randomizer.GetVec3fRad(new Vec3f(0,500,0), 500), new Vec3f(-0.5522485f, 0, -0.8336804f));
+                var dummy = new ItemInst(dummyDef);
+                dummy.Spawn(WorldInst.Current, Randomizer.GetVec3fRad(new Vec3f(0, 500, 0), 50000), new Vec3f(-0.5522485f, 0, -0.8336804f));
             }
         }
 

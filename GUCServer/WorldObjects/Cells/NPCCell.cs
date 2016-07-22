@@ -17,7 +17,8 @@ namespace GUC.WorldObjects.Cells
         public const int Size = 3000;
         public static int[] GetCoords(Vec3f pos)
         {
-            return WorldCell.GetCoords(pos, Size);
+            Vec2i vec = WorldCell.GetCoords(pos, Size);
+            return new int[2] { vec.X, vec.Y };
         }
     }
 }

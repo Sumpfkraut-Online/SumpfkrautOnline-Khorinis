@@ -197,6 +197,13 @@ namespace GUC.Network
                                     {
                                         clientDict.Add(client.guid.g, client);
                                         client.Create();
+
+                                        for (int i = 0; i < 90; i++)
+                                        {
+                                            var dummy = new GameClient();
+                                            Scripting.ScriptManager.Interface.OnClientConnection(dummy);
+                                            dummy.Create();
+                                        }
                                     }
                                     else
                                     {

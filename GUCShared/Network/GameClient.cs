@@ -38,7 +38,7 @@ namespace GUC.Network
 
         new public int ID { get { return base.ID; } }
 
-        Vec3f specPos, specDir;
+        internal Vec3f specPos, specDir;
         World specWorld;
         public World SpecWorld { get { return this.specWorld; } }
         bool isSpectating = false;

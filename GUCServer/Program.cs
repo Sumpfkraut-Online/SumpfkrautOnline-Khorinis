@@ -37,7 +37,7 @@ namespace GUC
             public long Stop()
             {
                 watch.Stop();
-                long ticks = watch.ElapsedTicks;
+                long ticks = watch.Elapsed.Ticks;
 
                 this.tickCount += ticks;
                 counter++;
@@ -86,7 +86,7 @@ namespace GUC
             {
                 const long updateRate = 10 * TimeSpan.TicksPerMillisecond; //min time between server ticks
 
-                const long nextInfoUpdateInterval = 1 * TimeSpan.TicksPerMinute;
+                const long nextInfoUpdateInterval = 10 * TimeSpan.TicksPerSecond;
                 long nextInfoUpdateTime = GameTime.Ticks + nextInfoUpdateInterval;
 
                 TimeStat timeAll = new TimeStat();

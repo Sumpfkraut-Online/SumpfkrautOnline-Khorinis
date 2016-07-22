@@ -63,6 +63,7 @@ namespace GUC.Network.Messages
 
         public static void ReadCellMessage(PacketReader stream)
         {
+            return;
             for (int t = 0; t < (int)VobTypes.Maximum; t++)
             {
                 int vobCount = stream.ReadUShort();
