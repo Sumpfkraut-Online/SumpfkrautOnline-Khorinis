@@ -308,8 +308,8 @@ namespace GUC.Network
 
         void ReadMessage(NetworkIDs id, PacketReader stream)
         {
-            //if (id != NetworkIDs.VobPosDirMessage && id != NetworkIDs.NPCStateMessage)
-            //    Logger.Log(id);
+            if (id != NetworkIDs.VobPosDirMessage && id != NetworkIDs.NPCStateMessage)
+                Logger.Log(id);
 
             switch (id)
             {
@@ -368,6 +368,9 @@ namespace GUC.Network
                     break;
 
                 // World Messages
+                case NetworkIDs.WorldCellMessage:
+                    WorldMessage.ReadCellMessage(stream);
+                    break;
                 case NetworkIDs.WorldJoinMessage:
                     WorldMessage.ReadJoinWorldMessage(stream);
                     break;

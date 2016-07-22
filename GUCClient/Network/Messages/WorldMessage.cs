@@ -44,8 +44,7 @@ namespace GUC.Network.Messages
 
         public static void ReadJoinWorldMessage(PacketReader stream)
         {
-            int count = stream.ReadUShort();
-            for (int i = 0; i < count; i++)
+            for (int i = stream.ReadUShort(); i > 0; i--)
             {
                 ReadVobSpawnMessage(stream);
             }
@@ -59,6 +58,21 @@ namespace GUC.Network.Messages
         #endregion
 
         #region Spawns
+
+        public static void ReadCellMessage(PacketReader stream)
+        {
+            // remove vobs
+            for (int i = stream.ReadUShort(); i > 0; i--)
+            {
+                ReadVobDespawnMessage(stream);
+            }
+
+            // add vobs
+            for (int i = stream.ReadUShort(); i > 0; i--)
+            {
+                ReadVobSpawnMessage(stream);
+            }
+        }
 
         public static void ReadVobSpawnMessage(PacketReader stream)
         {

@@ -12,7 +12,7 @@ namespace GUC.WorldObjects
     {
         #region Spawn ranges
 
-        static float spawnInsertRange = 4000;
+        static float spawnInsertRange = 5000;
         static float spawnRemoveRange = 6000;
 
         public static float SpawnInsertRange
@@ -141,7 +141,7 @@ namespace GUC.WorldObjects
 
         #region Add & Remove
 
-        internal void CheckCellRemove(BigCell cell)
+        void CheckCellRemove(BigCell cell)
         {
             if (cell == null)
                 throw new ArgumentNullException("Cell is null!");
@@ -157,7 +157,7 @@ namespace GUC.WorldObjects
             if (client == null)
                 throw new ArgumentNullException("Client is null!");
 
-            Vec2i coords = BigCell.GetCoords(client.GetPosition());
+            Vec2i coords = BigCell.GetCoords(client.SpecGetPos());
             int coord = BigCell.GetCoordinate(coords.X, coords.Y);
             BigCell cell;
             if (!cells.TryGetValue(coord, out cell))

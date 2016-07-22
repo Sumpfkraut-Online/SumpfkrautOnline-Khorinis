@@ -86,46 +86,23 @@ namespace GUC
             {
                 const long updateRate = 10 * TimeSpan.TicksPerMillisecond; //min time between server ticks
 
-                const long nextInfoUpdateInterval = 10*TimeSpan.TicksPerSecond;
+                const long nextInfoUpdateInterval = 1 * TimeSpan.TicksPerMinute;
                 long nextInfoUpdateTime = GameTime.Ticks + nextInfoUpdateInterval;
 
                 TimeStat timeAll = new TimeStat();
-                TimeStat timeWorlds = new TimeStat();
-                TimeStat timeTimers = new TimeStat();
-                TimeStat timePackets = new TimeStat();
-
                 while (true)
                 {
                     timeAll.Start();
 
                     GameTime.Update();
-
-                    timeWorlds.Start();
                     WorldObjects.World.ForEach(w => w.OnTick(GameTime.Ticks));
-                    timeWorlds.Stop();
-
-                    timeTimers.Start();
                     GUCTimer.Update(GameTime.Ticks); // move to new thread?
-                    timeTimers.Stop();
-
-                    timePackets.Start();
                     GameServer.Update(); //process received packets
-                    timePackets.Stop();
 
                     if (nextInfoUpdateTime < GameTime.Ticks)
                     {
-                        Logger.Log("");
                         Logger.Log("Performance info: {0:0.00}ms average, {1:0.00}ms max. Allocated RAM: {2:0.0}MB", timeAll.Average, timeAll.Maximum, Process.GetCurrentProcess().PrivateMemorySize64 / 1048576d);
-                        Logger.Log("World & Vobs ({0}%): {1:0.00}ms average, {2:0.00}ms max.", 100 * timeWorlds.Ticks / timeAll.Ticks, timeWorlds.Average, timeWorlds.Maximum);
-                        Logger.Log("Timers ({0}%): {1:0.00}ms average, {2:0.00}ms max.", 100 * timeTimers.Ticks / timeAll.Ticks, timeTimers.Average, timeTimers.Maximum);
-                        Logger.Log("Packets ({0}%): {1:0.00}ms average, {2:0.00}ms max.", 100 * timePackets.Ticks / timeAll.Ticks, timePackets.Average, timePackets.Maximum);
-                        Logger.Log("");
-
                         timeAll.Reset();
-                        timeWorlds.Reset();
-                        timeTimers.Reset();
-                        timePackets.Reset();
-
                         nextInfoUpdateTime = GameTime.Ticks + nextInfoUpdateInterval;
                     }
 

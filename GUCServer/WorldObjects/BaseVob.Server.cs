@@ -144,12 +144,12 @@ namespace GUC.WorldObjects
                 
                 foreach (GameClient client in visibleClients.Values)
                 {
-                    if (this.pos.GetDistance(client.GetPosition()) > World.SpawnRemoveRange)
+                    /*if (this.pos.GetDistance(client.GetPosition()) > World.SpawnRemoveRange)
                     {
                         client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
                         client.RemoveVisibleVob(this);
                         cleanList.Add(client.ID);
-                    }
+                    }*/
                 }
 
                 for (int i = 0; i < cleanList.Count; i++)
@@ -170,7 +170,7 @@ namespace GUC.WorldObjects
                 {
                     if (visibleClients.ContainsKey(client.ID))
                     {
-                        if (this.pos.GetDistance(client.GetPosition()) < World.SpawnInsertRange)
+                        /*if (this.pos.GetDistance(client.GetPosition()) < World.SpawnInsertRange)
                         {
                             this.AddVisibleClient(client);
                             client.AddVisibleVob(this);
@@ -182,7 +182,7 @@ namespace GUC.WorldObjects
                                 this.WriteStream(stream);
                             }
                             client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
-                        }
+                        }*/
                     }
                 });
             }
@@ -190,7 +190,7 @@ namespace GUC.WorldObjects
             {
                 this.world.ForEachClientRougher(this, World.SpawnInsertRange, client =>
                 {
-                    if (this.pos.GetDistance(client.GetPosition()) < World.SpawnInsertRange)
+                    /*if (this.pos.GetDistance(client.GetPosition()) < World.SpawnInsertRange)
                     {
                         this.AddVisibleClient(client);
                         client.AddVisibleVob(this);
@@ -202,7 +202,7 @@ namespace GUC.WorldObjects
                             this.WriteStream(stream);
                         }
                         client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
-                    }
+                    }*/
                 });
             }
         }

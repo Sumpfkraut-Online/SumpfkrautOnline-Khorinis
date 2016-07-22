@@ -38,44 +38,6 @@ namespace GUC.Network
 
         new public int ID { get { return base.ID; } }
 
-        Vec3f specPos, specDir;
-        /// <summary>
-        /// Returns the current spectator position or position of controlled NPC.
-        /// </summary>
-        public Vec3f GetPosition()
-        {
-            if (this.isSpectating)
-            {
-                return this.specPos;
-            }
-            return this.character.GetPosition();
-        }
-
-        /// <summary>
-        /// Returns the current spectator direction or direction of controlled NPC.
-        /// </summary>
-        public Vec3f GetDirection()
-        {
-            if (this.isSpectating)
-            {
-                return this.specDir;
-            }
-            return this.character.GetDirection();
-        }
-
-        World specWorld;
-        public World GetWorld()
-        {
-            if (this.isSpectating)
-            {
-                return this.specWorld;
-            }
-            return this.character.World;
-        }
-
-        bool isSpectating = false;
-        public bool IsSpectating { get { return this.isSpectating; } }
-
         #endregion
 
         #region Control
@@ -93,6 +55,56 @@ namespace GUC.Network
 
         #region Spectate
 
+        Vec3f specPos, specDir;
+
+        World specWorld = null;
+        public World SpecWorld { get { return this.specWorld; } }
+
+        bool isSpectating = false;
+        public bool IsSpectating { get { return this.isSpectating; } }
+
+        #region Position & Direction
+
+        partial void pSpecGetPos();
+        public Vec3f SpecGetPos()
+        {
+            pSpecGetPos();
+            return this.specPos;
+        }
+
+        partial void pSpecGetDir();
+        public Vec3f SpecGetDir()
+        {
+            pSpecGetDir();
+            return this.specDir;
+        }
+
+        partial void pSpecSetPos();
+        public void SpecSetPos(Vec3f position)
+        {
+            this.specPos = position.CorrectPosition();
+            pSpecSetPos();
+        }
+
+        partial void pSpecSetDir();
+        public void SpecSetDir(Vec3f direction)
+        {
+            this.specDir = direction.CorrectDirection();
+            pSpecSetDir();
+        }
+
+        partial void pSpecSetPosDir();
+        public void SpecSetPosDir(Vec3f position, Vec3f direction)
+        {
+            this.specPos = position.CorrectPosition();
+            this.specDir = direction.CorrectDirection();
+            pSpecSetPosDir();
+        }
+
+        #endregion
+
+        #region Set to spectator mode
+        
         partial void pSetToSpectate(World world, Vec3f pos, Vec3f dir);
         /// <summary>
         /// The client will lose control of its current NPC and move into spectator mode (free view).
@@ -104,8 +116,19 @@ namespace GUC.Network
             if (!world.IsCreated)
                 throw new Exception("World is not created!");
 
-            pSetToSpectate(world, position, direction);
+            if (this.isSpectating && specWorld == world)
+            {
+                SpecSetPosDir(position, direction);
+                return;
+            }
+
+            this.specPos = position.CorrectPosition();
+            this.specDir = direction.CorrectDirection();
+
+            pSetToSpectate(world, specPos, specDir);
         }
+
+        #endregion
 
         #endregion
 
@@ -121,7 +144,7 @@ namespace GUC.Network
 
         #endregion
 
-        #region Commanding
+        #region Vob guiding
 
         List<Vob> cmdList = new List<Vob>();
 

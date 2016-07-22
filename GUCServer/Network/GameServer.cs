@@ -58,7 +58,7 @@ namespace GUC.Network
             {
                 case NetworkIDs.ConnectionMessage:
                     DisconnectClient(client);
-                    Logger.LogWarning("Client sent another ConnectionMessage. Kicked: {0} IP:{1}", client.guid.g, client.systemAddress);
+                    Logger.LogWarning("Client sent another ConnectionMessage. Kicked: {0} IP:{1}", client.ID, client.SystemAddress);
                     break;
                 case NetworkIDs.LoadWorldMessage:
                     client.ConfirmLoadWorldMessage();
@@ -119,21 +119,23 @@ namespace GUC.Network
                     break;
 
                 default:
-                    Logger.LogWarning("Client sent unknown NetworkID. Kicked: {0} IP:{1}", client.guid.g, client.systemAddress);
+                    Logger.LogWarning("Client sent unknown NetworkID. Kicked: {0} IP:{1}", client.ID, client.SystemAddress);
                     DisconnectClient(client);
                     return;
             }
 
             // flooding protection
             client.PacketCount++;
-            if (client.nextCheck < GameTime.Ticks)
+            long diff = GameTime.Ticks - client.LastCheck;
+            if (diff > 1000000)  // 100ms
             {
-                if (client.PacketCount >= 100000000)
+                if (diff / client.PacketCount < 25000)
                 {
-                    Logger.LogWarning("Client spammed too many packets. Kicked: {0} IP:{1}", client.guid.g, client.systemAddress);
+                    Logger.LogWarning("Client flooded packets. Kicked: {0} IP:{1}", client.ID, client.SystemAddress);
                     DisconnectClient(client);
+                    return;
                 }
-                client.nextCheck = GameTime.Ticks + 1000000; // 100ms
+                client.LastCheck = GameTime.Ticks;
                 client.PacketCount = 0;
             }
         }
@@ -168,7 +170,7 @@ namespace GUC.Network
                         case DefaultMessageIDTypes.ID_DISCONNECTION_NOTIFICATION:
                             if (client != null)
                             {
-                                Logger.Log("Client disconnected: {0} IP:{1}", p.guid, p.systemAddress);
+                                Logger.Log("Client disconnected: {0} IP:{1}", client.ID, client.SystemAddress);
                                 DisconnectClient(client);
                             }
                             else
@@ -194,15 +196,8 @@ namespace GUC.Network
                                 {
                                     if (ConnectionMessage.Read(pktReader, p.guid, p.systemAddress, out client))
                                     {
-                                        clientDict.Add(client.guid.g, client);
+                                        clientDict.Add(client.Guid.g, client);
                                         client.Create();
-
-                                        for (int i = 0; i < 90; i++)
-                                        {
-                                            var dummy = new GameClient();
-                                            Scripting.ScriptManager.Interface.OnClientConnection(dummy);
-                                            dummy.Create();
-                                        }
                                     }
                                     else
                                     {
@@ -217,7 +212,7 @@ namespace GUC.Network
                             }
                             else
                             {
-                                if (msgID > NetworkIDs.ScriptMessage && (client.Character == null || !client.Character.IsSpawned))
+                                if (msgID > NetworkIDs.ScriptMessage && (client.Character == null || !client.Character.IsSpawned) && !client.IsSpectating)
                                 {
                                     return;
                                     //Logger.LogWarning("Client sent {0} without being ingame. Kicked: {1} IP:{2}", msgID, p.guid, p.systemAddress);
@@ -265,18 +260,15 @@ namespace GUC.Network
             }
         }
 
-
         public static void DisconnectClient(GameClient client)
         {
             if (client == null)
                 throw new ArgumentNullException("Client is null!");
 
+            ServerInterface.CloseConnection(client.Guid, true);
+            clientDict.Remove(client.Guid.g);
+
             client.Delete();
-            
-            ServerInterface.CloseConnection(client.guid, true);
-            clientDict.Remove(client.guid.g);
-            client.guid.Dispose();
-            client.systemAddress.Dispose();
         }
 
         internal static PacketWriter SetupStream(NetworkIDs ID)
@@ -290,11 +282,13 @@ namespace GUC.Network
         public static void AddToBanList(string systemAddress)
         {
             ServerInterface.AddToBanList(systemAddress);
+            Logger.Log("IP banned: " + systemAddress);
         }
 
         public static void RemoveFromBanList(string systemAddress)
         {
             ServerInterface.RemoveFromBanList(systemAddress);
+            Logger.Log("IP unbanned: " + systemAddress);
         }
     }
 }

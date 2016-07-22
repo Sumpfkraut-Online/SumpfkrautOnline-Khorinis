@@ -87,14 +87,14 @@ namespace GUC.WorldObjects
         public Vec3f GetPosition()
         {
             pGetPosition();
-            return new Vec3f(pos);
+            return pos;
         }
 
         partial void pGetDirection();
         public Vec3f GetDirection()
         {
             pGetDirection();
-            return new Vec3f(dir);
+            return dir;
         }
 
         partial void pSetPosition();
@@ -191,7 +191,6 @@ namespace GUC.WorldObjects
             this.pSpawn();
 
             this.isCreated = true;
-
         }
 
         partial void pSpawn();

@@ -5,7 +5,6 @@ using System.Text;
 using GUC.Enumeration;
 using GUC.WorldObjects.Instances;
 using GUC.Models;
-using GUC.Network;
 using GUC.Types;
 
 namespace GUC.WorldObjects
