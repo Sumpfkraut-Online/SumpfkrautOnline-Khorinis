@@ -640,7 +640,8 @@ namespace GUC.Network
                 }
 
                 // update ping text on screen
-                GUCVisualText pingText = devInfo.Texts[0];
+                int devIndex = 0;
+                GUCVisualText pingText = devInfo.Texts[devIndex++];
                 pingText.Text = ("Ping: " + ping + "ms");
                 if (ping <= 120)
                 {
@@ -654,36 +655,39 @@ namespace GUC.Network
                 {
                     pingText.SetColor(ColorRGBA.Red);
                 }
-                /*
                 // update kB/s text on screen
                 int kbs = (int)(receivedBytes);
-                devInfo.Texts[1].Text = ("Net received: " + kbs + "B/s");
+                devInfo.Texts[devIndex++].Text = ("Net received: " + kbs + "B/s");
                 kbs = (int)(sentBytes);
-                devInfo.Texts[2].Text = ("Net Sent: " + kbs + "B/s");
+                devInfo.Texts[devIndex++].Text = ("Net Sent: " + kbs + "B/s");
                 lastInfoUpdate = GameTime.Ticks;
                 receivedBytes = 0;
                 sentBytes = 0;
 
                 if (World.Current != null)
                 {
+                    devIndex++;
+                    devInfo.Texts[devIndex++].Text = World.current.VobCount + " Vobs";
+
                     if (character != null)
                     {
-                        devInfo.Texts[3].Text = "Pos: " + character.GetPosition();
-                        devInfo.Texts[4].Text = "Dir: " + character.GetDirection();
+                        devInfo.Texts[devIndex++].Text = "Pos: " + character.GetPosition();
+                        devInfo.Texts[devIndex++].Text = "Dir: " + character.GetDirection();
                     }
                     else
                     {
-                        devInfo.Texts[3].Text = "Pos: " + new Vec3f(oCGame.GetCameraVob().TrafoObjToWorld.Position);
-                        devInfo.Texts[4].Text = "Dir: " + new Vec3f(oCGame.GetCameraVob().TrafoObjToWorld.Direction);
+                        devInfo.Texts[devIndex++].Text = "Pos: " + new Vec3f(oCGame.GetCameraVob().TrafoObjToWorld.Position);
+                        devInfo.Texts[devIndex++].Text = "Dir: " + new Vec3f(oCGame.GetCameraVob().TrafoObjToWorld.Direction);
                     }
-                    devInfo.Texts[5].Text = "Weather: " + World.current.SkyCtrl.CurrentWeight + " " + World.current.Clock.Time.ToString(false);
+                    devInfo.Texts[devIndex++].Text = "Weather: " + World.current.SkyCtrl.CurrentWeight + " " + World.current.Clock.Time.ToString(false);
                     
                     if (character != null)
                     {
-                        devInfo.Texts[6].Text = character.Movement.ToString();
-                        devInfo.Texts[7].Text = character.EnvState.ToString();
+                        devInfo.Texts[devIndex++].Text = character.Movement.ToString();
+                        devInfo.Texts[devIndex++].Text = character.EnvState.ToString();
                     }
-                }*/
+
+                }
             }
             devInfo.Show();
         }

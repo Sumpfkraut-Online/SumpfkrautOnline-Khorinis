@@ -58,6 +58,82 @@ namespace GUC.WorldObjects
         internal NPCCell NpcCell = null;
         internal int npcCellID = -1;
 
+        internal override void AddToCell(BigCell cell)
+        {
+            base.AddToCell(cell);
+            if (this.IsPlayer)
+                cell.AddClient(this.client);
+        }
+
+        internal override void RemoveFromCell()
+        {
+            if (this.IsPlayer)
+            {
+                this.Cell.RemoveClient(this.client);
+            }
+            base.RemoveFromCell();
+        }
+
+        #endregion
+
+        #region Positioning
+
+        public override void SetPosDir(Vec3f position, Vec3f direction)
+        {
+            this.SetPosDir(position, direction, true);
+        }
+
+        Vec3f lastPos = Vec3f.Null;
+        internal void SetPosDir(Vec3f position, Vec3f direction, bool sendToClient)
+        {
+            this.pos = position.CorrectPosition();
+            this.dir = direction.CorrectDirection();
+            if (this.isCreated && !this.IsStatic)
+            {
+                this.world.UpdateVobCell(this, pos);
+
+                bool updateVis;
+                if (lastPos.GetDistancePlanar(this.pos) > 100)
+                {
+                    updateVis = true;
+                    lastPos = this.pos;
+                    CleanClientList();
+                }
+                else
+                {
+                    updateVis = false;
+                }
+
+                if (visibleClients.Count > 0)
+                {
+                    PacketWriter stream = GameServer.SetupStream(NetworkIDs.VobPosDirMessage);
+                    stream.WriteCompressedPosition(pos);
+                    stream.WriteCompressedDirection(dir);
+
+                    if (this.IsPlayer && !sendToClient)
+                    {
+                        visibleClients.ForEach(client =>
+                        {
+                            if (client != this.client)
+                                client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
+                        });
+                    }
+                    else
+                    {
+                        visibleClients.ForEach(client => client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
+                    }
+                }
+
+                if (updateVis)
+                {
+                    UpdateClientList();
+
+                    if (this.IsPlayer)
+                        this.client.UpdateVobList(this.world, this.pos);
+                }
+            }
+        }
+
         #endregion
 
         #region Properties

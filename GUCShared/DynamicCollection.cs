@@ -88,7 +88,7 @@ namespace GUC
             if (action == null)
                 throw new ArgumentNullException("Action is null!");
 
-            for (int i = 0; i < arr.Length; i++)
+            for (int i = 0; i < idCounter; i++)
             {
                 if (arr[i] != null)
                     action(arr[i]);
@@ -103,7 +103,7 @@ namespace GUC
             if (action == null)
                 throw new ArgumentNullException("Action is null!");
 
-            for (int i = 0; i < arr.Length; i++)
+            for (int i = 0; i < idCounter; i++)
             {
                 if (arr[i] != null)
                 {

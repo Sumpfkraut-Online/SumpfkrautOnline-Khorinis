@@ -93,7 +93,7 @@ namespace GUC.WorldObjects
         Dictionary<int, BigCell> cells = new Dictionary<int, BigCell>();
 
         // for spectators
-        internal void UpdateClientCell(GameClient client, Vec3f pos)
+        internal void UpdateSpectatorCell(GameClient client, Vec3f pos)
         {
             if (client == null)
                 throw new ArgumentNullException("Client is null!");
@@ -124,8 +124,7 @@ namespace GUC.WorldObjects
             Vec2i coords = BigCell.GetCoords(pos);
             if (coords.X != vob.Cell.X || coords.Y != vob.Cell.Y)
             {
-                vob.Cell.RemoveDynVob(vob);
-                CheckCellRemove(vob.Cell);
+                vob.RemoveFromCell();
 
                 int coord = BigCell.GetCoordinate(coords.X, coords.Y);
                 BigCell cell;
@@ -134,14 +133,14 @@ namespace GUC.WorldObjects
                     cell = new BigCell(this, coords.X, coords.Y);
                     cells.Add(coord, cell);
                 }
-                cell.AddDynVob(vob);
-                vob.Cell = cell;
+
+                vob.AddToCell(cell);
             }
         }
 
         #region Add & Remove
 
-        void CheckCellRemove(BigCell cell)
+        internal void CheckCellRemove(BigCell cell)
         {
             if (cell == null)
                 throw new ArgumentNullException("Cell is null!");
@@ -152,7 +151,7 @@ namespace GUC.WorldObjects
             }
         }
 
-        internal void AddClientToCells(GameClient client)
+        internal void AddSpectatorToCells(GameClient client)
         {
             if (client == null)
                 throw new ArgumentNullException("Client is null!");
@@ -169,7 +168,7 @@ namespace GUC.WorldObjects
             client.SpecCell = cell;
         }
 
-        internal void RemoveClientFromCells(GameClient client)
+        internal void RemoveSpectatorFromCells(GameClient client)
         {
             if (client == null)
                 throw new ArgumentNullException("Client is null!");
@@ -192,8 +191,8 @@ namespace GUC.WorldObjects
                     cell = new BigCell(this, coords.X, coords.Y);
                     cells.Add(coord, cell);
                 }
-                cell.AddDynVob(vob);
-                vob.Cell = cell;
+
+                vob.AddToCell(cell);
             }
         }
 
@@ -201,9 +200,7 @@ namespace GUC.WorldObjects
         {
             if (!vob.IsStatic)
             {
-                vob.Cell.RemoveDynVob(vob);
-                CheckCellRemove(vob.Cell);
-                vob.Cell = null;
+                vob.RemoveFromCell();
             }
         }
 

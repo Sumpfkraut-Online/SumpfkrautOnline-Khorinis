@@ -13,7 +13,7 @@ namespace GUC.WorldObjects.Cells
     /// </summary>
     class BigCell : WorldCell
     {
-        public const int CellSize = 1000;
+        public const int CellSize = 2000;
 
         public BigCell(World world, int x, int y) : base(world, x, y)
         {

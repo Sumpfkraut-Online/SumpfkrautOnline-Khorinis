@@ -305,7 +305,7 @@ namespace GUC.Scripts.TFFA
             gameTimer.Restart();
 
             var dummyDef = ItemDef.Get<ItemDef>("ITAR_Garde");
-            for (int i = 0; i < 10000; i++)
+            for (int i = 0; i < 20000; i++)
             {
                 var dummy = new ItemInst(dummyDef);
                 //dummy.BaseInst.SetNeedsClientGuide(guide);

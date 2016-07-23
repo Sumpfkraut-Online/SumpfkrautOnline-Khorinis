@@ -185,7 +185,7 @@ namespace GUC.Network
                             }
                             else
                             {
-                                Logger.Log("Client connected: {0} IP:{1}", p.guid, p.systemAddress);
+                                Logger.Log("Client connected: IP:" + p.systemAddress);
                             }
                             break;
                         case DefaultMessageIDTypes.ID_USER_PACKET_ENUM:

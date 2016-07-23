@@ -90,6 +90,9 @@
     <Compile Include="..\GUCShared\GameTime.cs">
       <Link>GameTime.cs</Link>
     </Compile>
+    <Compile Include="..\GUCShared\GODictionary.cs">
+      <Link>GODictionary.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\Log\Logger.cs">
       <Link>Log\Logger.cs</Link>
     </Compile>

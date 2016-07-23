@@ -8,7 +8,7 @@ namespace GUC.WorldObjects.Cells
 {
     class NPCCell : WorldCell
     {
-        public const int CellSize = 1000;
+        public const int CellSize = 800;
         
         public NPCCell(World world, int x, int y) : base(world, x, y)
         {

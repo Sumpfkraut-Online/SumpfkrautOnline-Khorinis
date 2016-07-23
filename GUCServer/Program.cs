@@ -57,7 +57,6 @@ namespace GUC
             }
         }
 
-
         static Thread game;
         static void Main(string[] args)
         {
@@ -84,11 +83,13 @@ namespace GUC
         {
             try
             {
-                const long updateRate = 10 * TimeSpan.TicksPerMillisecond; //min time between server ticks
+                const long updateRate = 15 * TimeSpan.TicksPerMillisecond; //min time between server ticks
+                const long idleTimeSpan = 140000;
 
                 const long nextInfoUpdateInterval = 1 * TimeSpan.TicksPerMinute;
                 long nextInfoUpdateTime = GameTime.Ticks + nextInfoUpdateInterval;
 
+                Stopwatch gcWatch = new Stopwatch();
                 TimeStat timeAll = new TimeStat();
                 while (true)
                 {
@@ -106,7 +107,21 @@ namespace GUC
                         nextInfoUpdateTime = GameTime.Ticks + nextInfoUpdateInterval;
                     }
 
-                    long diff = (updateRate - timeAll.Stop()) / TimeSpan.TicksPerMillisecond;
+                    long diff = updateRate - timeAll.Stop();
+                    if (diff >= idleTimeSpan) // server is idling pretty much
+                    {
+                        gcWatch.Start();
+                        GC.Collect(); // do garbage collecting
+                        gcWatch.Stop();
+                        if (gcWatch.Elapsed.Ticks > idleTimeSpan)
+                        {
+                            Logger.Log("Forced GC Collection took way too long! {0:0.00}ms > {1:0.00}ms (Remove it?)", gcWatch.Elapsed.TotalMilliseconds, idleTimeSpan / (double)TimeSpan.TicksPerMillisecond);
+                        }
+                        diff -= gcWatch.ElapsedMilliseconds;
+                        gcWatch.Reset();
+                    }
+
+                    diff /= TimeSpan.TicksPerMillisecond;
                     if (diff > 0)
                     {
                         Thread.Sleep((int)diff);
