@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using GUC.Log;
+using GUC.Utilities.FileSystem;
 
 namespace GUC.Scripts.Sumpfkraut
 {
@@ -48,6 +49,38 @@ namespace GUC.Scripts.Sumpfkraut
             //List<int> myList = new List<int> { 0, 1, 3 };
             //myList.Insert(3, 999);
             //foreach (int i in myList) { Logger.Log(i); };
+
+
+            //List<int> myList = new List<int> { };
+            ////List<int> myList = new List<int> { 0, 1, 2, 3, 4, 5 };
+            //for (int i = myList.Count; i --> 0; )
+            //{
+            //    Logger.Log(i);
+            //}
+
+
+            FileSystemManager fsManager = new FileSystemManager("", true, TimeSpan.MinValue, false);
+            fsManager.SetObjName("MrBusiness");
+            fsManager.printStateControls = true;
+
+            fsManager.MoveFile(@"FileManagerTest.txt",
+                options: new List<object> { "FileManagerTest_GOTCHA.txt" },
+                handler: delegate (ref FileSystemProtocol protocol,
+               GUC.Utilities.FileSystem.Enumeration.ProtocolStatus status)
+               {
+                   Logger.Log(">>>> Gonna try this... <<<<");
+                   if (status == GUC.Utilities.FileSystem.Enumeration.ProtocolStatus.FinalSuccess)
+                   {
+                       Logger.Log(">>>> Yaayyyy! <<<<");
+                   }
+                   if (status == GUC.Utilities.FileSystem.Enumeration.ProtocolStatus.FinalFail)
+                   {
+                       Logger.Log(">>>> Owwwwww! <<<<");
+                   }
+                   return;
+               });
+
+
 
         }
 

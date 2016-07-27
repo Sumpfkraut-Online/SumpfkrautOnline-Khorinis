@@ -146,6 +146,18 @@
     <Compile Include="..\GUCShared\Utilities\ExtendedObject.cs">
       <Link>Utilities\ExtendedObject.cs</Link>
     </Compile>
+    <Compile Include="..\GUCShared\Utilities\FileSystem\Enumeration.cs">
+      <Link>Utilities\FileSystem\Enumeration.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\Utilities\FileSystem\FileSystemManager.cs">
+      <Link>Utilities\FileSystem\FileSystemManager.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\Utilities\FileSystem\FileSystemProtocol.cs">
+      <Link>Utilities\FileSystem\FileSystemProtocol.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\Utilities\FileSystem\ManipulationOption.cs">
+      <Link>Utilities\FileSystem\ManipulationOption.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\Utilities\Threading\AbstractRunnable.cs">
       <Link>Utilities\Threading\AbstractRunnable.cs</Link>
     </Compile>

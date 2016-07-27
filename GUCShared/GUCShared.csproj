@@ -60,6 +60,7 @@
     <Compile Include="Utilities\FileSystem\Enumeration.cs" />
     <Compile Include="Utilities\FileSystem\FileSystemManager.cs" />
     <Compile Include="Utilities\FileSystem\FileSystemProtocol.cs" />
+    <Compile Include="Utilities\FileSystem\ManipulationOption.cs" />
     <Compile Include="Utilities\Threading\AbstractRunnable.cs" />
     <Compile Include="Utilities\Threading\Runnable.cs" />
     <Compile Include="Utilities\XmlObj.cs" />

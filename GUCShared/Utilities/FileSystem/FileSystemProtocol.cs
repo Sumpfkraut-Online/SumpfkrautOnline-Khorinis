@@ -61,12 +61,14 @@ namespace GUC.Utilities.FileSystem
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendFormat("FileSystemProtocol: Manipulation = {0} | Path = {1} | Timestamp = {2} | " 
-                + "MaxTries = {3} | Options = [ ", manipulation, path, timestamp, maxTries);
-            foreach (object option in options)
+                + "MaxTries = {3}", manipulation, path, timestamp, maxTries);
+
+            if (options != null)
             {
-                sb.Append(option + ", ");
+                sb.Append(" | Options = [ ");
+                foreach (object option in options) { sb.Append(option + ", "); }
+                sb.Append(" ]");
             }
-            sb.Append(" ]");
 
             return sb.ToString();
         }
