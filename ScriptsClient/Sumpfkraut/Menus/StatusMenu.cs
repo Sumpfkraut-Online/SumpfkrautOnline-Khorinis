@@ -5,12 +5,15 @@ using System.Text;
 using GUC.Client.Menus.MainMenus;
 using WinApi.User.Enumeration;
 using GUC.Client.GUI;
+using GUC.Client.Scripts.Sumpfkraut.Menus.MainMenus;
 
 namespace GUC.Client.Menus
 {
-    /*class StatusMenu : GUCMainMenu
+    class StatusMenu : GUCMainMenu
     {
-        public VirtualKeys Hotkey = VirtualKeys.C;
+        public static readonly StatusMenu Menu = new StatusMenu();
+
+        public VirtualKeys Hotkey = VirtualKeys.H;
 
         GUCVisual stat;
 
@@ -32,6 +35,38 @@ namespace GUC.Client.Menus
         GUCVisualText protF;
         GUCVisualText protM;
 
+        //public StatusMenu()
+        //{
+        //    this.OnCreate();
+        //}
+
+        //TODO: das scheint nicht zu funktionieren, abwarten was shoden sagt
+        public override void KeyDown(VirtualKeys key, long now)
+        {
+            Log.Logger.Print("STATUSMENU KEYDOWN", "");
+            if(key == Hotkey)
+                this.Back.Show();
+
+            base.KeyDown(key, now);
+        }
+
+        public override void Open()
+        {
+            base.Open();
+        }
+
+        public override void Close()
+        {
+            base.Close();
+        }
+
+        //public override void Update(long now)
+        //{
+        //    base.Update(now);
+        //}
+
+        //TODO: die rechnung scheint nicht zu gehen zumindest bei 1280x1024 im fenstermodus
+        //TODO: translation
         protected override void OnCreate()
         {
             Back.SetBackTexture("STATUS_BACK.TGA");
@@ -40,13 +75,19 @@ namespace GUC.Client.Menus
             Back.AddChild(stat);
 
             // left side
-
             const int dist = GUCView.FontsizeDefault;
 
             GUCVisualText title = stat.CreateText("CHARAKTERPROFIL", 152, 59);
             title.Format = GUCVisualText.TextFormat.Center;
+
             const int cpyoffset = 84;
-            const int cpx1 = 39; const int cpx2 = 180;
+            const int cpx1 = 39;
+            const int cpx2 = 180;
+            const int atyoffset = 215;
+            const int trimdist = 4;
+            const int rsyoffset = 371;
+            const int rsx2 = 230;
+
             guild = stat.CreateText("Gildenlos", cpx1, cpyoffset); stat.CreateText("Stufe", cpx2, cpyoffset); level = stat.CreateText("0", cpx2+55, cpyoffset);
             stat.CreateText("Erfahrung", cpx1, cpyoffset + dist); exp = stat.CreateText("0", cpx2, cpyoffset + dist);
             stat.CreateText("Nächste Stufe", cpx1, cpyoffset + dist * 2); nextExp = stat.CreateText("500", cpx2, cpyoffset + dist * 2);
@@ -55,18 +96,18 @@ namespace GUC.Client.Menus
 
             title = stat.CreateText("ATTRIBUTE", 152, 190);
             title.Format = GUCVisualText.TextFormat.Center;
-            const int atyoffset = 215;
+            
             stat.CreateText("Stärke", cpx1, atyoffset); str = stat.CreateText("10/10", cpx2, atyoffset);
             stat.CreateText("Geschick", cpx1, atyoffset + dist); dex = stat.CreateText("10/10", cpx2, atyoffset + dist);
             stat.CreateText("Weisheit", cpx1, atyoffset + dist * 2); wis = stat.CreateText("10/10", cpx2, atyoffset + dist * 2);
-            const int trimdist = 4;
+            
             stat.CreateText("Lebensenergie", cpx1, trimdist + atyoffset + dist * 3); hp = stat.CreateText("100/100", cpx2, trimdist + atyoffset + dist * 3);
             stat.CreateText("Mana", cpx1, trimdist + atyoffset + dist * 4); mp = stat.CreateText("10/10", cpx2, trimdist + atyoffset + dist * 4);
             stat.CreateText("Ausdauer", cpx1, trimdist + atyoffset + dist * 5); ap = stat.CreateText("100/100", cpx2, trimdist + atyoffset + dist * 5);
 
             title = stat.CreateText("RÜSTUNGSSCHUTZ", 152, 347);
             title.Format = GUCVisualText.TextFormat.Center;
-            const int rsyoffset = 371; const int rsx2 = 230;
+            
             stat.CreateText("vor Waffen", cpx1, rsyoffset); protW = stat.CreateText("0", rsx2, rsyoffset);
             stat.CreateText("vor Geschossen", cpx1, rsyoffset + dist); protR = stat.CreateText("0", rsx2, rsyoffset + dist);
             stat.CreateText("vor Drachenfeuer", cpx1, rsyoffset + dist * 2); protF = stat.CreateText("0", rsx2, rsyoffset + dist * 2);
@@ -75,8 +116,10 @@ namespace GUC.Client.Menus
             // right side
 
             const int dist2 = GUCView.FontsizeMenu;
+            const int tx = 450;
+            const int ty1 = 80;
+            const int ty2 = 217;
 
-            const int tx = 450; const int ty1 = 80;
             title = stat.CreateText("TALENTE", tx, 59);
             title.Format = GUCVisualText.TextFormat.Center;      
             AddButton("Kampf", "", tx, ty1, null);
@@ -85,7 +128,7 @@ namespace GUC.Client.Menus
  
             title = stat.CreateText("FERTIGKEITEN", tx, 191);
             title.Format = GUCVisualText.TextFormat.Center;
-            const int ty2 = 217;
+
             AddButton("Handwerker", "", tx, ty2, null);
             AddButton("Waffenschmied", "", tx, ty2 + dist2, null);
             AddButton("Schmied", "", tx, ty2 + 2 * dist2, null);
@@ -94,5 +137,5 @@ namespace GUC.Client.Menus
             AddButton("Alchemist", "", tx, ty2 + 5 * dist2, null);
             AddButton("Gelehrter", "", tx, ty2 + 6 * dist2, null);
         }
-    }*/
+    }
 }

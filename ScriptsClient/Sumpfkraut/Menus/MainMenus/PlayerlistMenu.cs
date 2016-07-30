@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Client.GUI;
+using WinApi.User.Enumeration;
 
 namespace GUC.Client.Scripts.Sumpfkraut.Menus.MainMenus
 {
@@ -35,13 +36,14 @@ namespace GUC.Client.Scripts.Sumpfkraut.Menus.MainMenus
                 PlayerList.CreateText("SpielerName", 250, i * distance);
             }
             
-            AddButton("Zurück", "Zurück zum Hauptmenü.", 420, GUCMenus.Main.Open);
+            //TODO
+            //AddButton("Zurück", "Zurück zum Hauptmenü.", 420, GUCMenus.Main.Open);
             OnEscape = MainMenu.Menu.Open;
         }
 
-        public override void KeyPressed(WinApi.User.Enumeration.VirtualKeys key)
+        public override void KeyDown(VirtualKeys key, long now)
         {
-            base.KeyPressed(key);
+            base.KeyDown(key, now);
         }
     }
 }

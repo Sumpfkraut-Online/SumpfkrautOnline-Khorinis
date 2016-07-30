@@ -302,7 +302,7 @@ namespace GUC.Server.Network
             client.guid.Dispose();
             client.systemAddress.Dispose();
             //TODO
-            ChatMessage.SendPlayerDespawned(character.CustomName);
+            //ChatMessage.SendPlayerDespawned(character.CustomName);
         }
 
         internal static PacketWriter SetupStream(NetworkIDs ID)

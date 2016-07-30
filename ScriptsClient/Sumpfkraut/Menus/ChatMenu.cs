@@ -22,6 +22,7 @@ namespace GUC.Menus
     class ChatMenu : GUCMenu
     {
         static ChatMenu chatCtrl;
+
         public static ChatMenu GetChat()
         {
             if (chatCtrl == null)
@@ -30,6 +31,7 @@ namespace GUC.Menus
             }
             return chatCtrl;
         }
+
         public VirtualKeys Hotkey = VirtualKeys.Return;
         public VirtualKeys SendMessageKey = VirtualKeys.Return;
         public VirtualKeys CloseMenuKey = VirtualKeys.Escape;
@@ -67,6 +69,9 @@ namespace GUC.Menus
         bool highlighted;
         bool chatVisible;
         bool oocChatShown;
+
+        long KeepOpen; //TODO useless var
+        long KeepOpenMaxTime = 300000;
 
         public ChatMenu()
         {
@@ -188,7 +193,8 @@ namespace GUC.Menus
                 if (text.StartsWith(pair.Value))
                 {
                     text = pair.Key + text.Substring(pair.Value.Length);
-                    ChatMessage.SendMessage(text);
+                    //TODO
+                    //ChatMessage.SendMessage(text);
                     return;
                 }
             }
@@ -227,8 +233,8 @@ namespace GUC.Menus
             {
                 text = "/ooc " + text;
             }
-
-            ChatMessage.SendMessage(text);
+            //TODO
+            //ChatMessage.SendMessage(text);
         }
 
         public override void Open()
@@ -372,8 +378,11 @@ namespace GUC.Menus
             textInput.KeyPressed(key);
         }
 
-        long KeepOpen;
-        long KeepOpenMaxTime = 300000;
+        public override void KeyUp(VirtualKeys key, long now)
+        {
+
+        }
+
         public override void Update(long now)
         {
             textInput.Update(now);
@@ -408,8 +417,9 @@ namespace GUC.Menus
         // parameter control hard coded
         public bool UsedCommandCorrectly(string text)
         {
-            if (!Players.Contains(Client.WorldObjects.Player.Hero.Name))
-                Players.Add(Client.WorldObjects.Player.Hero.Name);
+            //TODO
+            //if (!Players.Contains(Client.WorldObjects.Player.Hero.Name))
+            //    Players.Add(Client.WorldObjects.Player.Hero.Name);
 
             // do any stuff to prevent messaging wrong commands
             string[] parameters = text.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);

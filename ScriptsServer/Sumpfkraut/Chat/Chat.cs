@@ -179,14 +179,16 @@ public static void Read(BitStream stream, Client client)
 
 */
 
+    //TODO TODO TODO
+    /*
 using GUC.Network;
 namespace GUC.Server.Interface
 {
     public class Chat
     {
         public delegate void CommandDelegate(NPC player, string[] parameters);
-        var g = new GameClient()
-        Dictionary<uint, NPC> PlayerList = //sWorld.PlayerDict;
+
+        Dictionary<uint, NPC> PlayerList;// = sWorld.PlayerDict; //TODO
 
         Dictionary<string, Delegate> Commands = new Dictionary<string, Delegate>();
         Dictionary<string, string> CommandDescription = new Dictionary<string, string>();
@@ -418,4 +420,4 @@ namespace GUC.Server.Interface
             AddCommand("/revive", "/revive [<player>]", revive);
         }
     }
-}
+}*/

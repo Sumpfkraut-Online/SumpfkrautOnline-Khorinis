@@ -87,6 +87,10 @@ namespace GUC.Client.Scripts.TFFA
                 ChatMenu.Menu.TeamChat = true;
                 ChatMenu.Menu.Open();
             }
+            else if (key == VirtualKeys.H)
+            {
+                GUC.Client.Menus.StatusMenu.Menu.Open();
+            }
 
             NPCInst Hero = TFFAClient.Client.Character;
             if (Hero == null || !Hero.IsSpawned)

@@ -283,6 +283,7 @@ namespace GUC.Client.Scripts.Sumpfkraut.Menus.MainMenus
         long arrowDownTime = 0;
         public override void KeyDown(VirtualKeys key, long now)
         {
+            Log.Logger.Print("GUCMAINMENU KEYDOWN", "");
             switch (key)
             {
                 case VirtualKeys.Return:
