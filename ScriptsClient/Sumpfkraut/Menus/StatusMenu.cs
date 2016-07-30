@@ -44,11 +44,6 @@ namespace GUC.Client.Menus
             base.KeyDown(key, now);
         }
 
-        public bool isOpened()
-        {
-            return this.isOpen;
-        }
-
         //TODO: die rechnung scheint nicht zu gehen zumindest bei 1280x1024 im fenstermodus
         //TODO: translation
         protected override void OnCreate()
