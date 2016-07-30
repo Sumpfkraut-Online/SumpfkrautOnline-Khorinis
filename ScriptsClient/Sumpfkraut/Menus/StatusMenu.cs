@@ -13,8 +13,6 @@ namespace GUC.Client.Menus
     {
         public static readonly StatusMenu Menu = new StatusMenu();
 
-        public VirtualKeys Hotkey = VirtualKeys.H;
-
         GUCVisual stat;
 
         GUCVisualText guild; GUCVisualText level;
@@ -35,35 +33,21 @@ namespace GUC.Client.Menus
         GUCVisualText protF;
         GUCVisualText protM;
 
-        //public StatusMenu()
-        //{
-        //    this.OnCreate();
-        //}
-
-        //TODO: das scheint nicht zu funktionieren, abwarten was shoden sagt
         public override void KeyDown(VirtualKeys key, long now)
         {
-            Log.Logger.Print("STATUSMENU KEYDOWN", "");
-            if(key == Hotkey)
-                this.Back.Show();
-
+            //keydown works only if the menu is active. so InputControl has to call open once and let the menu close itself
+            if (key == VirtualKeys.H)
+            {
+                StatusMenu.Menu.Close();
+                return;
+            }
             base.KeyDown(key, now);
         }
 
-        public override void Open()
+        public bool isOpened()
         {
-            base.Open();
+            return this.isOpen;
         }
-
-        public override void Close()
-        {
-            base.Close();
-        }
-
-        //public override void Update(long now)
-        //{
-        //    base.Update(now);
-        //}
 
         //TODO: die rechnung scheint nicht zu gehen zumindest bei 1280x1024 im fenstermodus
         //TODO: translation

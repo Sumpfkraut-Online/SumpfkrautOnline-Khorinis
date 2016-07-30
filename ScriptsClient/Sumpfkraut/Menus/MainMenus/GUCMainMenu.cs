@@ -12,6 +12,7 @@ namespace GUC.Client.Scripts.Sumpfkraut.Menus.MainMenus
 {
     /// <summary>
     /// Recreation of the classic Gothic main menu.
+    /// Attention: Keydown works only if the menu is active because of the implementatrion of InputControl (you should open the menu there and close it in your keydown implementation)
     /// </summary>
     abstract class GUCMainMenu : GUCMenu
     {
@@ -283,7 +284,6 @@ namespace GUC.Client.Scripts.Sumpfkraut.Menus.MainMenus
         long arrowDownTime = 0;
         public override void KeyDown(VirtualKeys key, long now)
         {
-            Log.Logger.Print("GUCMAINMENU KEYDOWN", "");
             switch (key)
             {
                 case VirtualKeys.Return:

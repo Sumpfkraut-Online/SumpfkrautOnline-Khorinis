@@ -6,6 +6,9 @@ using WinApi.User.Enumeration;
 
 namespace GUC.Client.Scripts.Sumpfkraut.Menus
 {
+    /// <summary>
+    /// Attention: Keydown in classes which inheritated from GUCMenu works only if the menu is active because of the implementatrion of InputControl (you should open the menu there and close it in your keydown implementation)
+    /// </summary>
     abstract class GUCMenu
     {
         private static readonly List<GUCMenu> activeMenus = new List<GUCMenu>();
