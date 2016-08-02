@@ -355,8 +355,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             else if (this.drawnWeapon == item)
                 this.drawnWeapon = null;
 
-            pRemoveItem(item);
             this.BaseInst.Inventory.Remove(item.BaseInst);
+            pRemoveItem(item);
         }
 
         #endregion

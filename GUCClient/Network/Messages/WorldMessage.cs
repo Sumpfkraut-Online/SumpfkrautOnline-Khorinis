@@ -83,11 +83,14 @@ namespace GUC.Network.Messages
 
         public static void ReadVobDespawnMessage(PacketReader stream)
         {
+            int id = stream.ReadUShort();
             BaseVob vob;
-            if (World.current.TryGetVob(stream.ReadUShort(), out vob))
+            if (World.current.TryGetVob(id, out vob))
             {
                 vob.ScriptObject.Despawn();
             }
+
+            GameClient.Client.guidedIDs.Remove(id);
         }
 
         #endregion

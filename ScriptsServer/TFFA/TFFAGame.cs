@@ -280,8 +280,7 @@ namespace GUC.Scripts.TFFA
                }
            });
         }
-
-        static bool guide = true;
+        
         public static void PhaseFight()
         {
             Log.Logger.Log("Fight Phase");
@@ -304,12 +303,11 @@ namespace GUC.Scripts.TFFA
 
             gameTimer.Restart();
 
-            var dummyDef = ItemDef.Get<ItemDef>("ITAR_Garde");
-            for (int i = 0; i < 20000; i++)
+            var dummyDef = NPCDef.Get("player");
+            for (int i = 0; i < 1000; i++)
             {
-                var dummy = new ItemInst(dummyDef);
-                //dummy.BaseInst.SetNeedsClientGuide(guide);
-                //guide = !guide;
+                var dummy = new NPCInst(dummyDef);
+                dummy.BaseInst.SetNeedsClientGuide(true);
                 dummy.Spawn(WorldInst.Current, Randomizer.GetVec3fRad(new Vec3f(0,500,0), 50000), new Vec3f(-0.5522485f, 0, -0.8336804f));
             }
         }

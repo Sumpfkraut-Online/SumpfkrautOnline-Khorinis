@@ -167,8 +167,8 @@
     <Compile Include="..\GUCShared\WorldObjects\Collections\VobTypeObjectCollection.cs">
       <Link>WorldObjects\Collections\VobTypeObjectCollection.cs</Link>
     </Compile>
-    <Compile Include="..\GUCShared\WorldObjects\GuidableVob.cs">
-      <Link>WorldObjects\GuidableVob.cs</Link>
+    <Compile Include="..\GUCShared\WorldObjects\GuidedVob.cs">
+      <Link>WorldObjects\GuidedVob.cs</Link>
     </Compile>
     <Compile Include="..\GUCShared\WorldObjects\Instances\BaseVobInstance.cs">
       <Link>WorldObjects\Instances\BaseVobInstance.cs</Link>
@@ -275,6 +275,7 @@
     <Compile Include="Animations\AniJob.Server.cs" />
     <Compile Include="Models\Model.Server.cs" />
     <Compile Include="Network\GameClient.Server.cs" />
+    <Compile Include="Network\Messages\GuideMessage.cs" />
     <Compile Include="Network\Messages\SpectatorMessage.cs" />
     <Compile Include="Network\Messages\TradeMessage.cs" />
     <Compile Include="Network\Messages\ConnectionMessage.cs" />
@@ -294,7 +295,7 @@
     <Compile Include="WorldObjects\Cells\WorldCell.cs" />
     <Compile Include="WorldObjects\Collections\ItemContainer.Server.cs" />
     <Compile Include="StaticCollection.Server.cs" />
-    <Compile Include="WorldObjects\GuidableVob.Server.cs" />
+    <Compile Include="WorldObjects\GuidedVob.Server.cs" />
     <Compile Include="WorldObjects\Instances\BaseVobInstance.Server.cs" />
     <Compile Include="WorldObjects\Instances\Mobs\MobBedInstance.Server.cs" />
     <Compile Include="WorldObjects\Mobs\MobBed.Server.cs" />

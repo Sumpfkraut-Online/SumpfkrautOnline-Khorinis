@@ -107,6 +107,12 @@ namespace GUC.Network
 
         #endregion
 
+        #region Vob guiding
+
+        internal GODictionary<GuidedVob> GuidedVobs = new GODictionary<GuidedVob>();
+
+        #endregion
+
         public override void Update()
         {
             throw new NotImplementedException();

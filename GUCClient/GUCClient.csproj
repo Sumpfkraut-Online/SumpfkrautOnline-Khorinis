@@ -150,8 +150,8 @@
     <Compile Include="..\GUCShared\WorldObjects\Collections\VobTypeObjectCollection.cs">
       <Link>WorldObjects\Collections\VobTypeObjectCollection.cs</Link>
     </Compile>
-    <Compile Include="..\GUCShared\WorldObjects\GuidableVob.cs">
-      <Link>GuidableVob.cs</Link>
+    <Compile Include="..\GUCShared\WorldObjects\GuidedVob.cs">
+      <Link>WorldObjects\GuidedVob.cs</Link>
     </Compile>
     <Compile Include="..\GUCShared\WorldObjects\Instances\BaseVobInstance.cs">
       <Link>WorldObjects\Instances\BaseVobInstance.cs</Link>
@@ -266,6 +266,7 @@
     <Compile Include="InputHandler.cs" />
     <Compile Include="Network\GameClient.Client.cs" />
     <Compile Include="Network\Messages\ConnectionMessage.cs" />
+    <Compile Include="Network\Messages\GuideMessage.cs" />
     <Compile Include="Network\Messages\InstanceMessage.cs" />
     <Compile Include="Network\Messages\InventoryMessage.cs" />
     <Compile Include="Network\Messages\ModelMessage.cs" />
@@ -288,6 +289,7 @@
     <Compile Include="WorldObjects\BaseVob.Client.cs" />
     <Compile Include="StaticCollection.Client.cs" />
     <Compile Include="WorldObjects\Collections\ItemContainer.Client.cs" />
+    <Compile Include="WorldObjects\GuidedVob.Client.cs" />
     <Compile Include="WorldObjects\Instances\BaseVobInstance.Client.cs" />
     <Compile Include="WorldObjects\Instances\ItemInstance.Client.cs" />
     <Compile Include="WorldObjects\Instances\Mobs\MobBedInstance.Client.cs" />

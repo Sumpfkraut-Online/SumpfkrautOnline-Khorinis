@@ -25,6 +25,13 @@ namespace GUC.Network
             void ReadScriptMsg(PacketReader stream);
         }
 
+        #region Guided vobs
+
+        internal HashSet<int> guidedIDs = new HashSet<int>();
+
+        #endregion
+
+
         #region Spectator
 
         partial void pSetToSpectate(World world, Vec3f pos, Vec3f dir)
@@ -57,11 +64,8 @@ namespace GUC.Network
                 return;
 
             var cam = oCGame.GetCameraVob();
-            var pos = new Vec3f(cam.Position);
-            if (VobMessage.ChangedCoord(ref pos.X) || VobMessage.ChangedCoord(ref pos.Y) || VobMessage.ChangedCoord(ref pos.Z))
-            {
-                cam.SetPositionWorld(pos.X, pos.Y, pos.Z);
-            }
+            var pos = new Vec3f(cam.Position).CorrectPosition();
+            cam.SetPositionWorld(pos.X, pos.Y, pos.Z);
 
             if (now - specNextUpdate < TimeSpan.TicksPerSecond && pos.GetDistance(lastSpecPos) < 10)
                 return;
@@ -120,7 +124,7 @@ namespace GUC.Network
             UpdateHeroState(GameTime.Ticks);
         }
 
-        void UpdateHeroState(long now)
+        internal void UpdateHeroState(long now)
         {
             if (this.character == null)
                 return;
@@ -168,7 +172,7 @@ namespace GUC.Network
                 nextAniUpdate = GameTime.Ticks + DelayBetweenMessages;
             }
         }
-        
+
         public void DoEquipItem(int slot, Item item)
         {
             if (this.character == null || item == null)
@@ -241,7 +245,7 @@ namespace GUC.Network
         #endregion
 
         #region Hero
-        
+
         void ReadTakeControl(PacketReader stream)
         {
             int characterID = stream.ReadUShort();
@@ -272,26 +276,6 @@ namespace GUC.Network
             this.isSpectating = false;
         }
 
-        #region Position updates
-
-        internal void UpdateCharacters(long now)
-        {
-            World.Current.ForEachVob(v =>
-            {
-                if (v is NPC)
-                    ((NPC)v).Update(now);
-            });
-
-            if (this.character == null || this.character.IsDead)
-                return;
-
-            VobMessage.WritePosDirMessage(now);
-
-            UpdateHeroState(now);
-        }
-
-        #endregion
-
         #endregion
 
         RakPeerInterface clientInterface = null;
@@ -308,7 +292,7 @@ namespace GUC.Network
 
         void ReadMessage(NetworkIDs id, PacketReader stream)
         {
-            if (id != NetworkIDs.VobPosDirMessage && id != NetworkIDs.NPCStateMessage)
+            if (id != NetworkIDs.VobPosDirMessage)
                 Logger.Log(id);
 
             switch (id)
@@ -453,12 +437,16 @@ namespace GUC.Network
                 case NetworkIDs.NPCHealthMessage:
                     NPCMessage.ReadHealthMessage(stream);
                     break;
-                    
+
                 case NetworkIDs.NPCSetFightModeMessage:
                     NPCMessage.ReadSetFightModeMessage(stream);
                     break;
                 case NetworkIDs.NPCUnsetFightModeMessage:
                     NPCMessage.ReadUnsetFightModeMessage(stream);
+                    break;
+
+                case NetworkIDs.GuideAddMessage:
+                    GuideMessage.ReadGuideAddMessage(stream);
                     break;
 
                 default:
@@ -668,6 +656,7 @@ namespace GUC.Network
                 {
                     devIndex++;
                     devInfo.Texts[devIndex++].Text = World.current.VobCount + " Vobs";
+                    devInfo.Texts[devIndex++].Text = guidedIDs.Count + " guided";
 
                     if (character != null)
                     {
@@ -680,7 +669,7 @@ namespace GUC.Network
                         devInfo.Texts[devIndex++].Text = "Dir: " + new Vec3f(oCGame.GetCameraVob().TrafoObjToWorld.Direction);
                     }
                     devInfo.Texts[devIndex++].Text = "Weather: " + World.current.SkyCtrl.CurrentWeight + " " + World.current.Clock.Time.ToString(false);
-                    
+
                     if (character != null)
                     {
                         devInfo.Texts[devIndex++].Text = character.Movement.ToString();

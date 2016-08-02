@@ -70,6 +70,8 @@ namespace GUC.Enumeration
         InventoryEquipMessage,
         InventoryUnequipMessage,
 
-        // ai commanding
+        // GuidedVobs
+        GuideAddMessage,
+
     }
 }

@@ -7,7 +7,7 @@ using GUC.Types;
 
 namespace GUC.WorldObjects
 {
-    public abstract partial class GuidableVob : BaseVob
+    public abstract partial class GuidedVob : BaseVob
     {
        /* public abstract class Command
         {

@@ -80,7 +80,7 @@ namespace GUC.Network
                     break;
 
                 case NetworkIDs.VobPosDirMessage:
-                    VobMessage.ReadPosDir(stream, client, client.Character);
+                    VobMessage.ReadPosDir(stream, client, client.IsSpectating ? client.SpecWorld : client.Character.World);
                     break;
 
                 case NetworkIDs.NPCStateMessage:
@@ -129,7 +129,7 @@ namespace GUC.Network
             long diff = GameTime.Ticks - client.LastCheck;
             if (diff > 1000000)  // 100ms
             {
-                if (diff / client.PacketCount < 25000)
+                if (diff / client.PacketCount < 0)//25000)
                 {
                     Logger.LogWarning("Client flooded packets. Kicked: {0} IP:{1}", client.ID, client.SystemAddress);
                     DisconnectClient(client);

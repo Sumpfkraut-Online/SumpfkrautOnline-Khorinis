@@ -64,14 +64,32 @@ namespace GUC.WorldObjects
         /// <summary>
         /// Set the position & direction of this vob
         /// </summary>
-        public virtual void SetPosDir(Vec3f position, Vec3f direction)
+        public void SetPosDir(Vec3f position, Vec3f direction)
+        {
+            SetPosDir(position, direction, null);
+        }
+
+        Vec3f lastPos;
+        internal void SetPosDir(Vec3f position, Vec3f direction, GameClient exclude)
         {
             this.pos = position.CorrectPosition();
             this.dir = direction.CorrectDirection();
+
             if (this.isCreated && !this.IsStatic)
             {
                 this.world.UpdateVobCell(this, pos);
-                CleanClientList();
+
+                bool updateVis;
+                if (lastPos.GetDistancePlanar(this.pos) > 100)
+                {
+                    updateVis = true;
+                    lastPos = this.pos;
+                    CleanClientList();
+                }
+                else
+                {
+                    updateVis = false;
+                }
 
                 if (visibleClients.Count > 0)
                 {
@@ -79,10 +97,23 @@ namespace GUC.WorldObjects
                     stream.WriteCompressedPosition(pos);
                     stream.WriteCompressedDirection(dir);
 
-                    visibleClients.ForEach(client => client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
+                    if (exclude == null)
+                    {
+                        visibleClients.ForEach(client => client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
+                    }
+                    else
+                    {
+                        visibleClients.ForEach(client =>
+                        {
+                            if (client != exclude) client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
+                        });
+                    }
                 }
 
-                UpdateClientList();
+                if (updateVis)
+                {
+                    UpdateClientList();
+                }
             }
         }
 
@@ -142,12 +173,12 @@ namespace GUC.WorldObjects
 
         protected GODictionary<GameClient> visibleClients = new GODictionary<GameClient>();
 
-        internal void AddVisibleClient(GameClient client)
+        internal virtual void AddVisibleClient(GameClient client)
         {
             visibleClients.Add(client);
         }
 
-        internal void RemoveVisibleClient(GameClient client)
+        internal virtual void RemoveVisibleClient(GameClient client)
         {
             visibleClients.Remove(client.ID);
         }
@@ -166,7 +197,7 @@ namespace GUC.WorldObjects
                     {
                         client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
                         client.RemoveVisibleVob(this);
-                        visibleClients.Remove(client.ID);
+                        RemoveVisibleClient(client);
                     }
                 });
             }
@@ -184,7 +215,7 @@ namespace GUC.WorldObjects
                     {
                         if (this.pos.GetDistance(client.IsSpectating ? client.SpecGetPos() : client.Character.GetPosition()) < World.SpawnInsertRange)
                         {
-                            this.AddVisibleClient(client);
+                            AddVisibleClient(client);
                             client.AddVisibleVob(this);
 
                             if (stream == null)
@@ -204,7 +235,7 @@ namespace GUC.WorldObjects
                 {
                     if (this.pos.GetDistance(client.IsSpectating ? client.SpecGetPos() : client.Character.GetPosition()) < World.SpawnInsertRange)
                     {
-                        this.AddVisibleClient(client);
+                        AddVisibleClient(client);
                         client.AddVisibleVob(this);
 
                         if (stream == null)
