@@ -30,6 +30,8 @@ namespace GUC.Scripts
             // -- command console --
             Sumpfkraut.CommandConsole.CommandConsole cmdConsole = new Sumpfkraut.CommandConsole.CommandConsole();
 
+            Sumpfkraut.AI.TestingAI.Test();
+
             Logger.Log("######################## Finished #########################");
         }
 
