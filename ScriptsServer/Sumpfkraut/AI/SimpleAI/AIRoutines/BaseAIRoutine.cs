@@ -19,6 +19,10 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIRoutines
             SetObjName("BaseAIRoutine (default)");
         }
 
+
+
+        public abstract void FollowRoutine (AIAgent aiAgent);
+
     }
 
 }

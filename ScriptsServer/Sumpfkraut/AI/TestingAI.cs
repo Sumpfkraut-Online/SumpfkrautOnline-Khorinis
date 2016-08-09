@@ -53,6 +53,40 @@ namespace GUC.Scripts.Sumpfkraut.AI
             //}
             //outerSW.Stop();
             //PrintStatic(typeof(TestingAI), "ticks: " + outerSW.ElapsedTicks + ", ms: " + outerSW.ElapsedMilliseconds);
+
+
+            //Stopwatch outerSW = new Stopwatch();
+            //int lapses = 1000000;
+            //int i = 0;
+
+            //i = 0;
+            //outerSW.Restart();
+            //while (i < lapses)
+            //{
+            //    i++;
+            //}
+            //outerSW.Stop();
+            //PrintStatic(typeof(TestingAI), "ticks: " + outerSW.ElapsedTicks + ", ms: " + outerSW.ElapsedMilliseconds
+            //    + "ms / lapse" + ((double) outerSW.ElapsedMilliseconds / lapses));
+
+            //object lockObj = new object();
+            //i = 0;
+            //outerSW.Restart();
+            //while (i < lapses)
+            //{
+            //    lock (lockObj) { }
+            //    i++;
+            //}
+            //outerSW.Stop();
+            //PrintStatic(typeof(TestingAI), "ticks: " + outerSW.ElapsedTicks + ", ms: " + outerSW.ElapsedMilliseconds
+            //    + "ms / lapse" + ((double) outerSW.ElapsedMilliseconds / lapses));
+
+
+            //SimpleAI.AIAgent agentBlack = new SimpleAI.AIAgent();
+            //object bla = agentBlack.AIPersonality.Bla;
+            //bla = null;
+            //Log.Logger.Log(">>>> " + bla);
+
         }
 
     }

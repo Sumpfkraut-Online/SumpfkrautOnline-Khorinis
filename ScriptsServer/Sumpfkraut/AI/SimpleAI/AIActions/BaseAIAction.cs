@@ -37,7 +37,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIActions
 
 
 
-        public BaseAIAction (Enumeration.AIActionType actionType, AITarget aiTarget)
+        public BaseAIAction (AITarget aiTarget)
         {
             SetObjName("BaseAIAction (default)");
             this.attributeLock = new object();

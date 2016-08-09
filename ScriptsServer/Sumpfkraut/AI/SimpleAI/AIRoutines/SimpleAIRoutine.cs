@@ -20,7 +20,10 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIRoutines
 
 
 
-
+        public void FollowRoutine (AIAgent aiAgent)
+        {
+            //AIPersonalities.BaseAIPersonality aiPersonality = aiAgent.Get
+        }
 
     }
 
