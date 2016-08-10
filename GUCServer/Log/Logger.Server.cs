@@ -4,11 +4,13 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Text.RegularExpressions;
+using GUC.Options;
 
 namespace GUC.Log
 {
     public static partial class Logger
     {
+
         const string LoggerPath = "Log";
         const string LoggerFile = "ServerLog.html";
 
@@ -143,21 +145,23 @@ namespace GUC.Log
                         switch (cki.Key)
                         {
                             case ConsoleKey.Enter:
-                                if (currentText.Length > 0)
+                                string text = currentText;
+                                if (text.Length > 0)
                                 {
-                                    if (OnCommand != null)
-                                    {
-                                        OnCommand(currentText);
-                                    }
-
                                     if (previousTexts.Count == MaxPreviousTexts)
                                         previousTexts.RemoveAt(previousTexts.Count - 1);
 
-                                    previousTexts.Insert(0, currentText);
-                                    WriteNewLine(currentText);
+                                    previousTexts.Insert(0, text);
+                                    WriteNewLine(text);
+
                                     typedText.Clear();
                                     currentText = string.Empty;
                                     cursorPos[0] = 0;
+
+                                    if (!ServerOptions.ProcessCmd(text) && OnCommand != null)
+                                    {
+                                        OnCommand(text);
+                                    }
                                 }
                                 previousIndex = -1;
                                 break;
