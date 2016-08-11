@@ -10,9 +10,6 @@ namespace FilePacker
     class PackDir : PackObject
     {
         public bool IsEmpty = false;
-        public PackDir(string name) : base(name)
-        {
-        }
 
         public override void Write(BinaryWriter header, Stream pack, string folder)
         {

@@ -18,6 +18,8 @@ using System.ComponentModel;
 using System.Threading;
 using System.Net.NetworkInformation;
 using System.Security.Cryptography;
+using System.Windows.Threading;
+using FilePacker;
 
 namespace GUCLauncher
 {
@@ -261,7 +263,7 @@ namespace GUCLauncher
                     if (stream.WriteAsync(NetIDRefresh, 0, 1).Wait(1000))
                     {
                         byte[] buf = new byte[byte.MaxValue];
-                        if (stream.ReadAsync(buf, 0, 3).Wait(1000))
+                        if (stream.ReadAsync(buf, 0, 4).Wait(1000))
                         {
                             int count = buf[0];
                             int slots = buf[1];
@@ -274,6 +276,7 @@ namespace GUCLauncher
 
                                 item.Ping = new Ping().Send(item.IP, 1000).RoundtripTime.ToString();
                                 item.Name = Encoding.UTF8.GetString(buf, 0, nameLen);
+
                                 item.Players = count + "/" + slots;
                                 item.HasPW = pw > 0;
                                 return;
@@ -312,13 +315,14 @@ namespace GUCLauncher
         #region Start Project
 
         ServerListItem selectedProject = null;
-        private void bStart_Click(object sender, RoutedEventArgs e)
+        private void bConnect_Click(object sender, RoutedEventArgs e)
         {
             if (lvServerList.SelectedIndex < 0)
                 return;
 
             selectedProject = (ServerListItem)lvServerList.SelectedItem;
 
+            lPWWrong.Content = null;
             TryOpenProjectPage();
         }
 
@@ -374,7 +378,7 @@ namespace GUCLauncher
                         if (buf[0] == 0)
                         {
                             // falsches PW
-                            Title = "Falsches Passwort";
+                            lPWWrong.Content = "Falsches Passwort!";
                             client.Close();
                             ShowPasswordPage();
                             return;
@@ -385,7 +389,6 @@ namespace GUCLauncher
                             if (stream.ReadAsync(buf, 0, byteLen).Wait(1000))
                             {
                                 dlLink = Encoding.UTF8.GetString(buf, 0, byteLen);
-                                Title = dlLink;
                                 client.Close();
                                 ShowProjectPage();
                                 return;
@@ -401,12 +404,114 @@ namespace GUCLauncher
 
         void ShowProjectPage()
         {
-            lProjectTitle.Content = selectedProject.Name;
-            lProjectIP.Content = selectedProject.IP;
+            try
+            {
+                lProjectTitle.Content = selectedProject.Name;
+                lProjectIP.Content = selectedProject.IP;
 
-            tabControl.SelectedIndex = 1;
+                tabControl.SelectedIndex = 1;
+
+                progressBar.Value = 0;
+
+                ThreadPool.QueueUserWorkItem(CheckForUpdates);
+            }
+            catch (Exception e)
+            {
+                File.WriteAllText("exceptions.txt", e.ToString());
+            }
         }
 
         #endregion
+
+        void bBack_Click(object sender, RoutedEventArgs e)
+        {
+            ShowServerList();
+        }
+
+        void SetProgress(double value)
+        {
+            Dispatcher.Invoke(() => progressBar.Value = value, DispatcherPriority.Render);
+        }
+
+        void SetProgressText(string text)
+        {
+            Dispatcher.Invoke(() => lUpdate.Content = text, DispatcherPriority.Render);
+        }
+
+        void SetWebsite(string text)
+        {
+
+        }
+
+        void SetInfoText(string text)
+        {
+            Dispatcher.Invoke(() => textBlock.Text = text, DispatcherPriority.Render);
+        }
+
+        void SetImage(byte[] data)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                using (MemoryStream ms = new MemoryStream(data))
+                {
+                    try
+                    {
+                        // try to create the image
+                        BitmapImage bmi = new BitmapImage();
+                        bmi.BeginInit();
+                        bmi.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
+                        bmi.CacheOption = BitmapCacheOption.OnLoad;
+                        bmi.UriSource = null;
+                        bmi.StreamSource = ms;
+                        bmi.EndInit();
+                        bmi.Freeze();
+
+                        // update the image
+                        image.Source = bmi;
+                    }
+                    catch
+                    {
+                    }
+                }
+            }, DispatcherPriority.Render);
+        }
+        
+        void CheckForUpdates(object arg)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(dlLink))
+                {
+                    SetProgressText("Server disabled automatic updates.");
+                    SetProgress(100);
+                    return;
+                }
+
+                SetProgressText("Connecting to update server...");
+                // load the information file
+                Stream stream;
+                double percent = 0;
+                if (Download.TryGetStream(dlLink, out stream, value => { percent = value * 0.9; SetProgress(percent); }))
+                {
+                    SetProgressText("Loading update infos...");
+                    InfoPack info = new InfoPack();
+                    info.Read(stream, value => SetProgress(value * (100 - percent) + percent));
+                    SetInfoText(info.InfoText);
+                    SetImage(info.ImageData);
+
+                    SetProgressText("Finished.");
+                }
+                else
+                {
+                    SetProgressText("Could not connect to update server.");
+                    SetProgress(100);
+                    return;
+                }
+            }
+            catch (Exception e)
+            {
+                File.WriteAllText("exceptions.txt", e.ToString());
+            }
+        }
     }
 }

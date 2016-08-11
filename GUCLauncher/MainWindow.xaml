@@ -33,13 +33,20 @@
                 <TextBox x:Name="tbAddIP" HorizontalAlignment="Left" Height="26" Margin="86,279,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="165"/>
                 <Button x:Name="bAddServer" Content="Add Server" HorizontalAlignment="Left" Height="26" Margin="256,279,0,0" VerticalAlignment="Top" Width="110" Click="bAddServer_Click"/>
                 <Button x:Name="bRemoveServer" Content="Remove Server" HorizontalAlignment="Left" Height="41" Margin="753,130,0,0" VerticalAlignment="Top" Width="140" Click="bRemoveServer_Click"/>
-                <Button x:Name="bStart" Content="Start" HorizontalAlignment="Left" Height="54" Margin="753,190,0,0" VerticalAlignment="Top" Width="140" Click="bStart_Click"/>
+                <Button x:Name="bConnect" Content="Connect" HorizontalAlignment="Left" Height="54" Margin="753,190,0,0" VerticalAlignment="Top" Width="140" Click="bConnect_Click"/>
             </Grid>
         </TabItem>
         <TabItem Header="Start">
             <Grid Background="#FFE5E5E5">
-                <Label x:Name="lProjectTitle" Content="Projekt" HorizontalAlignment="Left" Height="43" Margin="271,10,0,0" VerticalAlignment="Top" Width="362" HorizontalContentAlignment="Center" FontSize="24"/>
-                <Label x:Name="lProjectIP" Content="IP" HorizontalAlignment="Left" Height="23" Margin="271,53,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" Width="370"/>
+                <Label x:Name="lProjectTitle" Content="Projekt" HorizontalAlignment="Left" Height="43" Margin="245.204,10,0,0" VerticalAlignment="Top" Width="362" HorizontalContentAlignment="Center" FontSize="24" Grid.Column="1"/>
+                <Label x:Name="lProjectIP" Content="IP" HorizontalAlignment="Left" Height="23" Margin="245.204,53,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" Width="370" Grid.Column="1"/>
+                <ProgressBar x:Name="progressBar" HorizontalAlignment="Left" Height="31" Margin="10,321,0,0" VerticalAlignment="Top" Width="892" Grid.ColumnSpan="2"/>
+                <Image x:Name="image" HorizontalAlignment="Left" Height="190" Margin="2.204,81,0,0" VerticalAlignment="Top" Width="350" Grid.Column="1"/>
+                <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Height="190" Margin="518.204,81,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Width="358" Grid.Column="1"/>
+                <Button x:Name="bStart" Content="Start" HorizontalAlignment="Left" Height="49" Margin="357.204,92,0,0" VerticalAlignment="Top" Width="156" Grid.Column="1"/>
+                <Button x:Name="bWebsite" Content="Open Website" HorizontalAlignment="Left" Height="48" Margin="357,146,0,0" VerticalAlignment="Top" Width="156"/>
+                <Button x:Name="bBack1" Content="Back" HorizontalAlignment="Left" Height="43" Margin="357,228,0,0" VerticalAlignment="Top" Width="156"/>
+                <Label x:Name="lUpdate" Content="" HorizontalAlignment="Left" Height="27" Margin="10,294,0,0" VerticalAlignment="Top" Width="605"/>
             </Grid>
         </TabItem>
         <TabItem Header="PW">
@@ -49,6 +56,8 @@
                 <Label x:Name="lPWInput" Content="Passwort eingeben:" HorizontalAlignment="Left" Height="26" Margin="354,139,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" Width="201"/>
                 <TextBox x:Name="tbPWInput" HorizontalAlignment="Left" Height="23" Margin="354,170,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="201"/>
                 <Button x:Name="bPWOK" Content="OK" HorizontalAlignment="Left" Height="31" Margin="414,213,0,0" VerticalAlignment="Top" Width="88" Click="bPasswordOK_Click"/>
+                <Label x:Name="lPWWrong" Content="" HorizontalAlignment="Left" Margin="354,267,0,0" VerticalAlignment="Top" Width="201" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                <Button x:Name="bBack2" Content="Back" HorizontalAlignment="Left" Height="25" Margin="387,310,0,0" VerticalAlignment="Top" Width="133" Click="bBack_Click"/>
             </Grid>
         </TabItem>
     </TabControl>

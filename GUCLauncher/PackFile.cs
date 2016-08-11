@@ -14,10 +14,9 @@ namespace FilePacker
         const int BufferSize = 4096;
         static readonly byte[] buffer = new byte[BufferSize];
 
-        public PackFile(string name) : base(name)
-        {
-        }
-
+        int offset;
+        byte[] hash;
+        
         public override void Write(BinaryWriter header, Stream pack, string folder)
         {
             // Write file information into the header (Type, Name, Offset, Hash).
@@ -41,5 +40,13 @@ namespace FilePacker
                 header.Write(md5.Hash, 0, 16);
             }
         }
+
+        public override void Read(BinaryReader header)
+        {
+            base.Read(header);
+            this.offset = header.ReadInt32();
+            this.hash = header.ReadBytes(16);
+        }
+
     }
 }

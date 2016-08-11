@@ -36,7 +36,8 @@ namespace FilePacker
             for (int i = 0; i < dirs.Length; i++)
             {
                 // search all directories
-                var dir = new PackDir(dirs[i].Name);
+                var dir = new PackDir();
+                dir.Name = dirs[i].Name;
                 objectList.Add(dir);
                 if (!Search(Path.Combine(path, dirs[i].Name)))
                 {
@@ -48,7 +49,8 @@ namespace FilePacker
             for (int i = 0; i < files.Length; i++)
             {
                 // add files
-                var file = new PackFile(files[i].Name);
+                var file = new PackFile();
+                file.Name = files[i].Name;
                 objectList.Add(file);
                 last = file;
             }
@@ -64,7 +66,7 @@ namespace FilePacker
             }
         }
 
-        public void Write(BinaryWriter header, Action<int> SetPercent)
+        public void Write(BinaryWriter header, Action<double> SetPercent)
         {
             header.Write(name);
             header.Write(URL);
@@ -76,14 +78,14 @@ namespace FilePacker
             }
         }
 
-        int WriteObjects(BinaryWriter header, Stream s, int index, string path, Action<int> SetPercent)
+        int WriteObjects(BinaryWriter header, Stream s, int index, string path, Action<double> SetPercent)
         {
             while (index < objectList.Count)
             {
                 PackObject obj = objectList[index];
 
                 obj.Write(header, s, path);
-                SetPercent(100 * (index+1) / objectList.Count);
+                SetPercent(100d * (index+1) / objectList.Count);
 
                 if (obj is PackDir && !((PackDir)obj).IsEmpty)
                 { // object is a non-empty folder, go deeper
@@ -96,6 +98,18 @@ namespace FilePacker
                 index++;
             }
             return index;
+        }
+
+        public void Read(BinaryReader br, Action<double> SetPercent)
+        {
+            this.name = br.ReadString();
+            this.URL = br.ReadString();
+
+            int count = br.ReadInt32();
+            for (int i = 0; i < count; i++)
+            {
+                objectList.Add(PackObject.ReadNew(br));
+            }
         }
     }
 }

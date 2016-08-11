@@ -19,7 +19,7 @@ namespace FilePacker
 
         public readonly List<DataPack> Packs = new List<DataPack>();
 
-        public void Build(Action<int> SetPercent)
+        public void Build(Action<double> SetPercent)
         {
             using (MemoryStream ms = new MemoryStream(2048))
             using (BinaryWriter bw = new BinaryWriter(ms, Encoding.UTF8))
@@ -41,6 +41,30 @@ namespace FilePacker
                 using (DeflateStream ds = new DeflateStream(fs, CompressionLevel.Optimal))
                 {
                     ms.CopyTo(ds);
+                }
+            }
+        }
+
+        public void Read(Stream stream, Action<double> SetPercent)
+        {
+            using (DeflateStream ds = new DeflateStream(stream, CompressionMode.Decompress))
+            using (BinaryReader br = new BinaryReader(ds, Encoding.UTF8))
+            {
+                this.Website = br.ReadString();
+                SetPercent(5);
+                this.InfoText = br.ReadString();
+                SetPercent(15);
+
+                int byteLen = br.ReadInt32();
+                this.ImageData = br.ReadBytes(byteLen);
+                SetPercent(50);
+
+                int count = br.ReadInt32();
+                for (int i = 0; i < count; i++)
+                {
+                    DataPack pack = new DataPack();
+                    pack.Read(br, SetPercent);
+                    SetPercent((i + 1d) / count * 50 + 50);
                 }
             }
         }

@@ -56,9 +56,12 @@ namespace FilePacker
         SaveFileDialog saveDlg;
         OpenFileDialog loadDlg;
 
-        void bNew_Click(object sender, RoutedEventArgs e)
+        void bNew_Click(object sender, RoutedEventArgs e) 
         {
+            // Basically a reset
+
             current = new InfoPack();
+            tbWebsite.Text = "";
             tbInfoText.Text = "";
             tbImage.Text = "";
             image.Source = null;
@@ -72,11 +75,13 @@ namespace FilePacker
 
         void tbInfoText_TextChanged(object sender, TextChangedEventArgs e)
         {
+            // Update the Information Text
             current.InfoText = tbInfoText.Text;
         }
 
         void bImageBrowse_Click(object sender, RoutedEventArgs e)
         {
+            // Browse for an image
             if (imgDlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 SetImage(imgDlg.FileName);
@@ -89,10 +94,13 @@ namespace FilePacker
             {
                 try
                 {
+                    // read all the bytes
                     byte[] data = File.ReadAllBytes(path);
 
                     ms.Write(data, 0, data.Length);
                     ms.Position = 0;
+
+                    // try to create the image
                     BitmapImage bmi = new BitmapImage();
                     bmi.BeginInit();
                     bmi.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
@@ -102,6 +110,7 @@ namespace FilePacker
                     bmi.EndInit();
                     bmi.Freeze();
 
+                    // update the image
                     image.Source = bmi;
                     current.ImageData = data;
                     tbImage.Text = path;
@@ -114,6 +123,8 @@ namespace FilePacker
 
         void bNewPack_Click(object sender, RoutedEventArgs e)
         {
+            // Adds a new Data Pack
+
             string name = tbDataPackName.Text;
             string url = tbDataPackURL.Text;
             string folder = tbDataPackFolder.Text;
@@ -126,7 +137,7 @@ namespace FilePacker
                 pack.Folder = folder;
                 pack.LoadFolder();
                 listBox.Items.Add(pack);
-                listBox.SelectedIndex = listBox.Items.Count - 1;
+                listBox.SelectedIndex = listBox.Items.Count - 1; // select the new packet
 
                 current.Packs.Add(pack);
             }
@@ -134,6 +145,7 @@ namespace FilePacker
 
         void bBrowsePack_Click(object sender, RoutedEventArgs e)
         {
+            // Browse for a folder from which to load files
             if (folderDlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 tbDataPackFolder.Text = folderDlg.SelectedPath;
@@ -146,16 +158,18 @@ namespace FilePacker
             {
                 PackObject obj = list[index];
 
+                // create and add a visual item for the TreeView-Control
                 TreeViewItem item = new TreeViewItem();
                 item.Header = obj.Name;
                 coll.Add(item);
 
                 if (obj is PackDir && !((PackDir)obj).IsEmpty)
                 {
+                    // item is a non-empty folder
                     index = SetTreeView(item.Items, list, index + 1);
                 }
 
-                if (obj.IsLast)
+                if (obj.IsLast) // last item in this folder, back out
                     break;
 
                 index++;
@@ -165,6 +179,7 @@ namespace FilePacker
 
         void listBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            // Data Pack is selected, update the View-Controls
             if (listBox.SelectedIndex >= 0)
             {
                 DataPack pack = (DataPack)listBox.SelectedItem;
@@ -180,6 +195,7 @@ namespace FilePacker
 
         void bRemovePack_Click(object sender, RoutedEventArgs e)
         {
+            // Remove a Data Pack from the list
             if (listBox.SelectedIndex >= 0)
             {
                 DataPack pack = (DataPack)listBox.SelectedItem;
@@ -190,40 +206,21 @@ namespace FilePacker
 
         void bBuild_Click(object sender, RoutedEventArgs e)
         {
+            // Build the packets!
             current.Build(i => Title = i + "%");
         }
 
-        void Window_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            tabControl.Width = e.NewSize.Width - 130;
-            tabControl.Height = e.NewSize.Height - 58;
-
-            tbInfoText.Width = tabControl.Width - 25;
-            tbInfoText.Height = tabControl.Height - 48;
-
-            tbImage.Width = tabControl.Width - 95;
-            image.Width = tabControl.Width - 25;
-            image.Height = tabControl.Height - 78;
-
-            listBox.Height = tabControl.Height - 48;
-            tbDataPackName.Width = tabControl.Width - 242;
-            tbDataPackFolder.Width = tabControl.Width - 305;
-            tbDataPackURL.Width = tabControl.Width - 242;
-            treeView.Width = tabControl.Width - 242;
-            treeView.Height = tabControl.Height - 164;
-
-            bNewPack.Width = bRemovePack.Width = (tabControl.Width - 250) / 2;
-        }
-
-
         void bSave_Click(object sender, RoutedEventArgs e)
         {
+            // Saves the current settings / preferences to a file
+
             if (saveDlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 using (FileStream fs = new FileStream(saveDlg.FileName, FileMode.Create, FileAccess.Write))
                 using (DeflateStream ds = new DeflateStream(fs, CompressionLevel.Optimal))
                 using (BinaryWriter bw = new BinaryWriter(ds, Encoding.UTF8))
                 {
+                    bw.Write(tbWebsite.Text);
                     bw.Write(tbInfoText.Text);
                     bw.Write(tbImage.Text);
                     bw.Write(current.Packs.Count);
@@ -239,14 +236,17 @@ namespace FilePacker
 
         private void bLoad_Click(object sender, RoutedEventArgs e)
         {
+            // Loads saved settings / preferences from a file
+
             if (loadDlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                bNew_Click(null, null);
+                bNew_Click(null, null); // Reset
 
                 using (FileStream fs = new FileStream(loadDlg.FileName, FileMode.Open, FileAccess.Read))
                 using (DeflateStream ds = new DeflateStream(fs, CompressionMode.Decompress))
                 using (BinaryReader br = new BinaryReader(ds, Encoding.UTF8))
                 {
+                    current.Website = br.ReadString(); tbWebsite.Text = current.Website;
                     current.InfoText = br.ReadString(); tbInfoText.Text = current.InfoText;
                     SetImage(br.ReadString());
 
@@ -264,6 +264,34 @@ namespace FilePacker
                     }
                 }
             }
+        }
+
+        void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            tabControl.Width = e.NewSize.Width - 130;
+            tabControl.Height = e.NewSize.Height - 58;
+
+            tbWebsite.Width = tabControl.Width - 25;
+            tbInfoText.Width = tabControl.Width - 25;
+            tbInfoText.Height = tabControl.Height - 80;
+
+            tbImage.Width = tabControl.Width - 95;
+            image.Width = tabControl.Width - 25;
+            image.Height = tabControl.Height - 78;
+
+            listBox.Height = tabControl.Height - 48;
+            tbDataPackName.Width = tabControl.Width - 242;
+            tbDataPackFolder.Width = tabControl.Width - 305;
+            tbDataPackURL.Width = tabControl.Width - 242;
+            treeView.Width = tabControl.Width - 242;
+            treeView.Height = tabControl.Height - 164;
+
+            bNewPack.Width = bRemovePack.Width = (tabControl.Width - 250) / 2;
+        }
+
+        void tbWebsite_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            current.Website = tbWebsite.Text;
         }
     }
 }
