@@ -14,9 +14,25 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIObservations
 
 
 
-        public BaseAIObservation ()
+        protected object attributeLock;
+
+        protected AITarget aiTarget;
+        public AITarget AITarget { get { return aiTarget; } }
+        public void SetAITarget (AITarget value)
         {
-            SetObjName("BaseAIObservation (default)");
+            lock (attributeLock)
+            {
+                this.aiTarget = value;
+            }
+        }
+
+
+
+        public BaseAIObservation (AITarget aiTarget)
+        {
+            //SetObjName("BaseAIObservation (default)");
+            this.attributeLock = new object();
+            this.aiTarget = aiTarget;
         }
 
     }

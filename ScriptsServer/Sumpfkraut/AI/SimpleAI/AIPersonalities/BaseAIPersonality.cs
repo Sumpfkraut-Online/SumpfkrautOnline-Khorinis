@@ -15,9 +15,6 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
 
 
-        protected object bla;
-        public object Bla { get { return bla; } }
-
         protected AIMemory aiMemory;
         public AIMemory AIMemory { get { return aiMemory; } }
 
@@ -34,6 +31,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
 
         abstract public void Init (AIMemory aiMemory, BaseAIRoutine aiRoutine);
+        abstract public void MakeActiveObservation (AIAgent aiAgent);
         abstract public void ProcessActions (AIAgent aiAgent);
         abstract public void ProcessObservations (AIAgent aiAgent);
         

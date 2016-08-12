@@ -18,15 +18,20 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
 
         protected object attributeLock;
 
+        protected List<WorldObjects.BaseVob> aiClients;
+        public List<WorldObjects.BaseVob> AIClients { get { return aiClients; } }
+
+
         protected BaseAIPersonality aiPersonality;
         public BaseAIPersonality AIPersonality { get { return aiPersonality; } }
 
 
 
-        public AIAgent (BaseAIPersonality aiPersonality = null)
+        public AIAgent (List<WorldObjects.BaseVob> aiClients, BaseAIPersonality aiPersonality = null)
         {
             SetObjName("AIAgent (default)");
             this.attributeLock = new object();
+            this.aiClients = aiClients ?? new List<WorldObjects.BaseVob>();
             this.aiPersonality = aiPersonality ?? new SimpleAIPersonality();
         }
 

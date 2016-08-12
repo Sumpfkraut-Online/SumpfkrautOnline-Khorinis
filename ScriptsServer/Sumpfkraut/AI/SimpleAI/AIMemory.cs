@@ -17,10 +17,12 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
 
 
         protected object aiActionLock;
-        protected object aiObservationLock;
-
         protected List<BaseAIAction> aiActions;
+        protected Dictionary<Type, int> indexByActionType;
+
+        protected object aiObservationLock;
         protected List<BaseAIObservation> aiObservations;
+        protected Dictionary<Type, int> indexByObservationType;
 
 
 
@@ -28,9 +30,12 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
         {
             SetObjName("AIMemory (default)");
             this.aiActionLock = new object();
-            this.aiObservationLock = new object();
             this.aiActions = new List<BaseAIAction>();
+            this.indexByActionType = new Dictionary<Type, int>();
+
+            this.aiObservationLock = new object();
             this.aiObservations = new List<BaseAIObservation>();
+            this.indexByObservationType = new Dictionary<Type, int>();
         }
 
 
@@ -39,31 +44,38 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
         {
             lock (aiActionLock)
             {
-                aiActions.Add(aiAction);
+                int index;
+                if (indexByActionType.TryGetValue(aiAction.GetType(), out index))
+                {
+                    aiActions.Insert(index, aiAction);
+                }
+                else { aiActions.Add(aiAction); }
             }
         }
 
-        public void AddAIActions (IEnumerable<BaseAIAction> newActions)
+        public void AddAIActions (List<BaseAIAction> newActions)
         {
-            lock (aiActionLock)
+            for (int i = 0; i < newActions.Count; i++)
             {
-                aiActions.AddRange(newActions);
+                AddAIAction(newActions[i]);
             }
         }
 
         public void AddAIObservation (BaseAIObservation aiObservation)
         {
-            lock (aiObservationLock)
+            int index;
+            if (indexByObservationType.TryGetValue(aiObservation.GetType(), out index))
             {
-                aiObservations.Add(aiObservation);
+                aiObservations.Insert(index, aiObservation);
             }
+            else { aiObservations.Add(aiObservation); }
         }
 
-        public void AddAIObservations (IEnumerable<BaseAIObservation> newObservations)
+        public void AddAIObservations (List<BaseAIObservation> newObservations)
         {
-            lock (aiObservationLock)
+            for (int i = 0; i < newObservations.Count; i++)
             {
-                aiObservations.AddRange(newObservations);
+                AddAIObservation(newObservations[i]);
             }
         }
 
