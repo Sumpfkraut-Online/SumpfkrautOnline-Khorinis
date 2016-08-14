@@ -12,44 +12,58 @@ namespace FilePacker
     /// </summary>
     class DataPack
     {
-        string name = string.Empty;
+        string name;
         public string Name { get { return this.name; } set { this.name = value; } }
-        public string URL = string.Empty;
-        public string Folder = string.Empty;
-        public readonly List<PackObject> objectList = new List<PackObject>();
+        public string URL;
+        public string Folder;
 
-        public void LoadFolder()
+        readonly List<PackObject> list = new List<PackObject>();
+
+        public void Write(BinaryWriter header)
         {
-            // Load all files from a folder and its sub-folders.
+            list.Clear();
+            Search(list, new DirectoryInfo(Folder));
 
-            objectList.Clear();
-            Search(Folder);
+            using (FileStream fs = new FileStream(name + ".bin", FileMode.Create, FileAccess.Write))
+            {
+                foreach (PackFile file in list.Where(fi => fi is PackFile).OrderByDescending(fi => fi.Info.LastWriteTimeUtc).Cast<PackFile>())
+                {
+                    file.Write(fs);
+                }
+            }
+
+            //header.Write(name);
+            header.Write(URL);
+            header.Write(list.Count);
+            for (int i = 0; i < list.Count; i++)
+            {
+                list[i].WriteHeader(header);
+            }
         }
 
-        bool Search(string path)
+        bool Search(List<PackObject> list, DirectoryInfo current)
         {
-            DirectoryInfo current = new DirectoryInfo(path);
-            DirectoryInfo[] dirs = current.GetDirectories();
-            FileInfo[] files = current.GetFiles();
-
             PackObject last = null;
+
+            DirectoryInfo[] dirs = current.GetDirectories();
             for (int i = 0; i < dirs.Length; i++)
             {
                 // search all directories
-                var dir = new PackDir(dirs[i].Name);
-                objectList.Add(dir);
-                if (!Search(Path.Combine(path, dirs[i].Name)))
-                {
-                    dir.IsEmpty = true;
-                }
+                var dir = new PackDir(dirs[i]);
+                list.Add(dir);
+
+                if (!Search(list, dirs[i])) 
+                    list.RemoveAt(list.Count - 1); // don't add empty folders
+
                 last = dir;
             }
 
+            FileInfo[] files = current.GetFiles();
             for (int i = 0; i < files.Length; i++)
             {
                 // add files
-                var file = new PackFile(files[i].Name);
-                objectList.Add(file);
+                var file = new PackFile(files[i]);
+                list.Add(file);
                 last = file;
             }
 
@@ -64,38 +78,31 @@ namespace FilePacker
             }
         }
 
-        public void Write(BinaryWriter header, Action<int> SetPercent)
+        public void Read(BinaryReader br)
         {
-            header.Write(name);
-            header.Write(URL);
-            header.Write(objectList.Count);
+            //this.name = br.ReadString();
+            this.URL = br.ReadString();
 
-            using (FileStream fs = new FileStream(name + ".bin", FileMode.Create, FileAccess.Write))
-            {
-                WriteObjects(header, fs, 0, Folder, SetPercent);
-            }
+            list.Clear();
+            int count = br.ReadInt32();
+            ReadObjects(br, "", count);
         }
 
-        int WriteObjects(BinaryWriter header, Stream s, int index, string path, Action<int> SetPercent)
+        void ReadObjects(BinaryReader br, string path, int count)
         {
-            while (index < objectList.Count)
+            while (list.Count < count)
             {
-                PackObject obj = objectList[index];
-
-                obj.Write(header, s, path);
-                SetPercent(100 * (index+1) / objectList.Count);
-
-                if (obj is PackDir && !((PackDir)obj).IsEmpty)
-                { // object is a non-empty folder, go deeper
-                    index = WriteObjects(header, s, index + 1, Path.Combine(path, obj.Name), SetPercent);
+                PackObject p = PackObject.ReadNew(br, path);
+                list.Add(p);
+                
+                if (p is PackDir)
+                {
+                    ReadObjects(br, p.Info.FullName, count);
                 }
 
-                if (obj.IsLast) // last object in this folder, back out!
-                    break;
-
-                index++;
+                if (p.IsLast)
+                    return;
             }
-            return index;
         }
     }
 }

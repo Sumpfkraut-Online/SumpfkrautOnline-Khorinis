@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 using System.Windows.Media.Imaging;
 using System.IO;
 using System.Windows.Controls;
@@ -56,7 +58,7 @@ namespace FilePacker
         SaveFileDialog saveDlg;
         OpenFileDialog loadDlg;
 
-        void bNew_Click(object sender, RoutedEventArgs e) 
+        void bNew_Click(object sender, RoutedEventArgs e)
         {
             // Basically a reset
 
@@ -129,13 +131,16 @@ namespace FilePacker
             string url = tbDataPackURL.Text;
             string folder = tbDataPackFolder.Text;
 
-            if (!string.IsNullOrWhiteSpace(name) && !string.IsNullOrWhiteSpace(url) && Directory.Exists(folder))
+            if (!string.IsNullOrWhiteSpace(name)
+                && !string.IsNullOrWhiteSpace(url)
+                && Directory.Exists(folder)
+                && current.Packs.Find(p => string.Compare(p.Name, name, true) == 0) == null)
             {
                 DataPack pack = new DataPack();
                 pack.Name = name;
                 pack.URL = url;
                 pack.Folder = folder;
-                pack.LoadFolder();
+
                 listBox.Items.Add(pack);
                 listBox.SelectedIndex = listBox.Items.Count - 1; // select the new packet
 
@@ -152,46 +157,129 @@ namespace FilePacker
             }
         }
 
-        int SetTreeView(ItemCollection coll, List<PackObject> list, int index)
-        {
-            while (index < list.Count)
-            {
-                PackObject obj = list[index];
-
-                // create and add a visual item for the TreeView-Control
-                TreeViewItem item = new TreeViewItem();
-                item.Header = obj.Name;
-                coll.Add(item);
-
-                if (obj is PackDir && !((PackDir)obj).IsEmpty)
-                {
-                    // item is a non-empty folder
-                    index = SetTreeView(item.Items, list, index + 1);
-                }
-
-                if (obj.IsLast) // last item in this folder, back out
-                    break;
-
-                index++;
-            }
-            return index;
-        }
-
         void listBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // Data Pack is selected, update the View-Controls
             if (listBox.SelectedIndex >= 0)
             {
                 DataPack pack = (DataPack)listBox.SelectedItem;
-
                 tbDataPackName.Text = pack.Name;
                 tbDataPackFolder.Text = pack.Folder;
                 tbDataPackURL.Text = pack.URL;
-
-                treeView.Items.Clear();
-                SetTreeView(treeView.Items, pack.objectList, 0);
             }
         }
+
+        #region TreeView
+
+        class TVDir : TVFile
+        {
+            new public DirectoryInfo Info
+            {
+                get { return (DirectoryInfo)this.info; }
+                set { this.info = value; }
+            }
+
+            public TVDir(DirectoryInfo info) : base(info)
+            {
+                LoadFakeEntries();
+            }
+
+            bool expanded = false;
+            protected override void OnExpanded(RoutedEventArgs e)
+            {
+                if (!expanded)
+                {
+                    ((MainWindow)GetWindow(this)).LoadTreeViewItem(this.Items, this.Info);
+                    base.OnExpanded(e);
+                    expanded = true;
+                }
+            }
+
+            protected override void OnCollapsed(RoutedEventArgs e)
+            {
+                if (expanded)
+                {
+                    this.Items.Clear();
+                    this.LoadFakeEntries();
+                    base.OnCollapsed(e);
+                    expanded = false;
+                }
+            }
+
+            public void LoadFakeEntries()
+            {
+                try
+                {
+                    if (this.Info.GetFileSystemInfos().Length > 0)
+                        this.Items.Add(null);
+                }
+                catch { }
+            }
+        }
+
+        class TVFile : TreeViewItem
+        {
+            protected FileSystemInfo info;
+            public FileSystemInfo Info { get { return this.info; } }
+            public TVFile(FileSystemInfo info)
+            {
+                this.info = info;
+                this.Header = info.Name;
+            }
+        }
+
+        void tbDataPackFolder_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (e.Changes.Count > 0)
+            {
+                SetTreeViewFolder(tbDataPackFolder.Text);
+            }
+        }
+
+        void SetTreeViewFolder(string path)
+        {
+            LoadTreeViewItem(treeView.Items, new DirectoryInfo(path));
+        }
+
+        Thread tvFillThread;
+        void LoadTreeViewItem(ItemCollection items, DirectoryInfo info)
+        {
+            if (tvFillThread != null)
+            {
+                tvFillThread.Abort();
+                tvFillThread.Join();
+            }
+
+            Dispatcher.Invoke(() => items.Clear(), DispatcherPriority.Background); // if this was not dispatched, the dispatcher would add items after clear.
+            if (!info.Exists)
+                return;
+
+            tvFillThread = new Thread(() =>
+            {
+                try
+                {
+                    foreach (DirectoryInfo dir in info.EnumerateDirectories())
+                    {
+                        Dispatcher.Invoke(() => items.Add(new TVDir(dir)), DispatcherPriority.Background);
+                        Thread.Sleep(1); // give the ui thread time to breathe
+                    }
+
+                    foreach (FileInfo file in info.EnumerateFiles())
+                    {
+                        Dispatcher.Invoke(() => items.Add(new TVFile(file)), DispatcherPriority.Background);
+                        Thread.Sleep(1); // give the ui thread time to breathe
+                    }
+                }
+                catch (Exception e)
+                {
+                    if (!(e is ThreadAbortException || e is TaskCanceledException))
+                        File.WriteAllText("exceptions.txt", e.ToString());
+                }
+            });
+            tvFillThread.Start();
+        }
+
+        #endregion
 
         void bRemovePack_Click(object sender, RoutedEventArgs e)
         {
@@ -207,7 +295,7 @@ namespace FilePacker
         void bBuild_Click(object sender, RoutedEventArgs e)
         {
             // Build the packets!
-            current.Build(i => Title = i + "%");
+            current.Build(str => Title = str);
         }
 
         void bSave_Click(object sender, RoutedEventArgs e)
@@ -258,7 +346,6 @@ namespace FilePacker
                         pack.Folder = br.ReadString();
                         pack.URL = br.ReadString();
 
-                        pack.LoadFolder();
                         listBox.Items.Add(pack);
                         current.Packs.Add(pack);
                     }
@@ -293,5 +380,6 @@ namespace FilePacker
         {
             current.Website = tbWebsite.Text;
         }
+
     }
 }

@@ -36,7 +36,7 @@
                     <Button x:Name="bNewPack" Content="New" HorizontalAlignment="Left" Height="28" Margin="227,94,0,0" VerticalAlignment="Top" Width="197" Click="bNewPack_Click"/>
                     <Button x:Name="bRemovePack" Content="Remove" HorizontalAlignment="Right" Height="28" Margin="0,94,10,0" VerticalAlignment="Top" Width="199" Click="bRemovePack_Click"/>
                     <TextBox x:Name="tbDataPackURL" HorizontalAlignment="Left" Height="23" Margin="227,66,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="401" ToolTip="Data Pack URL"/>
-                    <TextBox x:Name="tbDataPackFolder" HorizontalAlignment="Left" Height="23" Margin="227,38,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="339" ToolTip="Data Pack Folder"/>
+                    <TextBox x:Name="tbDataPackFolder" HorizontalAlignment="Left" Height="23" Margin="227,38,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="339" ToolTip="Data Pack Folder" TextChanged="tbDataPackFolder_TextChanged"/>
                     <Button x:Name="bBrowsePack" Content="Browse" HorizontalAlignment="Right" Height="23" Margin="0,38,10,0" VerticalAlignment="Top" Width="57" Click="bBrowsePack_Click"/>
                     <Label x:Name="label3" Content="URL" HorizontalAlignment="Left" Height="23" Margin="176,66,0,0" VerticalAlignment="Top" Width="46" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                     <TextBox x:Name="tbDataPackName" HorizontalAlignment="Left" Height="23" Margin="227,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="401" ToolTip="Data Pack Name"/>

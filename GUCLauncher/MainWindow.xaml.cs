@@ -20,6 +20,7 @@ using System.Net.NetworkInformation;
 using System.Security.Cryptography;
 using System.Windows.Threading;
 using FilePacker;
+using System.Diagnostics;
 
 namespace GUCLauncher
 {
@@ -40,6 +41,8 @@ namespace GUCLauncher
                 }
 
                 LoadServerList();
+
+                ThreadPool.SetMaxThreads(16, 16);
             }
             catch (Exception e)
             {
@@ -437,12 +440,7 @@ namespace GUCLauncher
         {
             Dispatcher.Invoke(() => lUpdate.Content = text, DispatcherPriority.Render);
         }
-
-        void SetWebsite(string text)
-        {
-
-        }
-
+        
         void SetInfoText(string text)
         {
             Dispatcher.Invoke(() => textBlock.Text = text, DispatcherPriority.Render);
@@ -475,7 +473,8 @@ namespace GUCLauncher
                 }
             }, DispatcherPriority.Render);
         }
-        
+
+        InfoPack current = new InfoPack();
         void CheckForUpdates(object arg)
         {
             try
@@ -494,10 +493,10 @@ namespace GUCLauncher
                 if (Download.TryGetStream(dlLink, out stream, value => { percent = value * 0.9; SetProgress(percent); }))
                 {
                     SetProgressText("Loading update infos...");
-                    InfoPack info = new InfoPack();
-                    info.Read(stream, value => SetProgress(value * (100 - percent) + percent));
-                    SetInfoText(info.InfoText);
-                    SetImage(info.ImageData);
+                    current = new InfoPack();
+                    current.Read(stream, value => SetProgress(value * (100 - percent) + percent));
+                    SetInfoText(current.InfoText);
+                    SetImage(current.ImageData);
 
                     SetProgressText("Finished.");
                 }
@@ -511,6 +510,22 @@ namespace GUCLauncher
             catch (Exception e)
             {
                 File.WriteAllText("exceptions.txt", e.ToString());
+            }
+        }
+        
+        void bWebsite_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(current.Website))
+                return;
+
+            Uri uri;
+            if (Uri.TryCreate(current.Website, UriKind.Absolute, out uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
+            {
+                try
+                {
+                    Process.Start(current.Website);
+                }
+                catch { }
             }
         }
     }

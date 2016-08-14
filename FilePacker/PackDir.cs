@@ -9,20 +9,12 @@ namespace FilePacker
 {
     class PackDir : PackObject
     {
-        public bool IsEmpty = false;
-        public PackDir(string name) : base(name)
+        public override PackObjectType POType { get { return PackObjectType.Directory; } }
+
+        new public DirectoryInfo Info { get { return (DirectoryInfo)this.info; } }
+
+        public PackDir(DirectoryInfo info) : base(info)
         {
-        }
-
-        public override void Write(BinaryWriter header, Stream pack, string folder)
-        {
-            // write directory information into the header (Type, Name).
-
-            int type = IsEmpty ? PackType.Directory_Empty : PackType.Directory;
-            if (this.IsLast) type |= 4;
-
-            header.Write((byte)type);
-            header.Write(Name);
         }
     }
 }

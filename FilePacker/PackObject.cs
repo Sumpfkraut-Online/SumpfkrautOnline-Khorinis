@@ -9,21 +9,56 @@ namespace FilePacker
 {
     abstract class PackObject
     {
-        protected static class PackType
+        public enum PackObjectType
         {
-            public const int File = 0,
-            Directory = 1,
-            Directory_Empty = 2;
+            File,
+            Directory
         }
 
-        public string Name;
+        public abstract PackObjectType POType { get; }
+
+        protected FileSystemInfo info;
+        public FileSystemInfo Info { get { return this.info; } }
+        public string Name { get { return this.info.Name; } }
         public bool IsLast;
-
-        public PackObject(string name)
+  
+        public PackObject(FileSystemInfo info)
         {
-            this.Name = name;
+            this.info = info;
         }
+        
+        public virtual void WriteHeader(BinaryWriter header)
+        {
+            if (this.IsLast)
+            {
+                header.Write((byte)((int)this.POType | 2));
+            }
+            else
+            {
+                header.Write((byte)this.POType);
+            }
+            
+            header.Write(this.Name);
+        }
+        
+        public static PackObject ReadNew(BinaryReader br, string path)
+        {
+            int type = br.ReadByte();
+            string name = Path.Combine(path, br.ReadString());
 
-        public abstract void Write(BinaryWriter header, Stream pack, string folder);
+            if ((type & ~2) == (int)PackObjectType.File)
+            {
+                PackFile file = new PackFile(new FileInfo(name));
+                file.ReadHeader(br);
+                file.IsLast = (type & 2) > 0;
+                return file;
+            }
+            else
+            {
+                PackDir dir = new PackDir(new DirectoryInfo(name));
+                dir.IsLast = (type & 2) > 0;
+                return dir;
+            }
+        }
     }
 }

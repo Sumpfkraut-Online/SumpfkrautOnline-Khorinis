@@ -11,25 +11,28 @@ namespace FilePacker
 {
     class PackFile : PackObject
     {
-        const int BufferSize = 4096;
-        static readonly byte[] buffer = new byte[BufferSize];
+        public override PackObjectType POType { get { return PackObjectType.File; } }
 
-        public PackFile(string name) : base(name)
+        new public FileInfo Info { get { return (FileInfo)this.info; } }
+
+        public PackFile(FileInfo info) : base(info)
         {
         }
 
-        public override void Write(BinaryWriter header, Stream pack, string folder)
+        int offset;
+        byte[] hash;
+
+        const int BufferSize = 4096;
+        static readonly byte[] buffer = new byte[BufferSize];
+        public void Write(Stream pack)
         {
-            // Write file information into the header (Type, Name, Offset, Hash).
             // Compress file into Data Pack.
 
-            header.Write((byte)(this.IsLast ? 4 : 0));
-            header.Write(Name);
-            header.Write((int)pack.Position);
+            this.offset = (int)pack.Position;
 
             using (MD5 md5 = new MD5CryptoServiceProvider())
             using (DeflateStream stream = new DeflateStream(pack, CompressionLevel.Optimal, true))
-            using (FileStream fs = new FileStream(Path.Combine(folder, Name), FileMode.Open, FileAccess.Read))
+            using (FileStream fs = Info.OpenRead())
             {
                 int readLen;
                 while ((readLen = fs.Read(buffer, 0, BufferSize)) > 0)
@@ -38,8 +41,21 @@ namespace FilePacker
                     stream.Write(buffer, 0, readLen);
                 }
                 md5.TransformFinalBlock(buffer, 0, 0);
-                header.Write(md5.Hash, 0, 16);
+                this.hash = md5.Hash;
             }
         }
+
+        public override void WriteHeader(BinaryWriter header)
+        {
+            base.WriteHeader(header);
+            header.Write(this.offset);
+            header.Write(this.hash);
+        }
+
+         public void ReadHeader(BinaryReader header)
+         {
+             this.offset = header.ReadInt32();
+             this.hash = header.ReadBytes(16);
+         }
     }
 }
