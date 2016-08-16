@@ -136,6 +136,12 @@ namespace FilePacker
                 && Directory.Exists(folder)
                 && current.Packs.Find(p => string.Compare(p.Name, name, true) == 0) == null)
             {
+                if (current.Packs.Count == byte.MaxValue)
+                {
+                    Title = "Can't add more that 255 packs!";
+                    return;
+                }
+
                 DataPack pack = new DataPack();
                 pack.Name = name;
                 pack.URL = url;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.IO;
 
 namespace FilePacker
@@ -19,10 +19,12 @@ namespace FilePacker
 
         readonly List<PackObject> list = new List<PackObject>();
 
-        public void Write(BinaryWriter header)
+        public void Write(PacketStream header)
         {
             list.Clear();
             Search(list, new DirectoryInfo(Folder));
+            if (list.Count > ushort.MaxValue)
+                throw new Exception("Pack has more than 65535 files/directories!");
 
             using (FileStream fs = new FileStream(name + ".bin", FileMode.Create, FileAccess.Write))
             {
@@ -30,11 +32,11 @@ namespace FilePacker
                 {
                     file.Write(fs);
                 }
+                header.Write((int)fs.Length);
             }
-
-            //header.Write(name);
-            header.Write(URL);
-            header.Write(list.Count);
+            
+            header.WriteStringShort(URL);
+            header.WriteUShort(list.Count);
             for (int i = 0; i < list.Count; i++)
             {
                 list[i].WriteHeader(header);
@@ -52,7 +54,7 @@ namespace FilePacker
                 var dir = new PackDir(dirs[i]);
                 list.Add(dir);
 
-                if (!Search(list, dirs[i])) 
+                if (!Search(list, dirs[i]))
                     list.RemoveAt(list.Count - 1); // don't add empty folders
 
                 last = dir;
@@ -78,31 +80,51 @@ namespace FilePacker
             }
         }
 
-        public void Read(BinaryReader br)
+        int fileSize;
+        public List<PackFile> CheckList = new List<PackFile>();
+        public List<PackFile> NeededList = new List<PackFile>();
+
+        public int Read(PacketStream header)
         {
-            //this.name = br.ReadString();
-            this.URL = br.ReadString();
+            this.fileSize = header.ReadInt();
+            this.URL = header.ReadStringShort();
 
             list.Clear();
-            int count = br.ReadInt32();
-            ReadObjects(br, "", count);
+            CheckList.Clear();
+
+            int count = header.ReadUShort();
+            return ReadObjects(header, "", count, 0);
         }
 
-        void ReadObjects(BinaryReader br, string path, int count)
+        int ReadObjects(PacketStream header, string path, int count, int checkBytes)
         {
             while (list.Count < count)
             {
-                PackObject p = PackObject.ReadNew(br, path);
+                PackObject p = PackObject.ReadNew(header, path);
                 list.Add(p);
-                
+
                 if (p is PackDir)
                 {
-                    ReadObjects(br, p.Info.FullName, count);
+                    checkBytes = ReadObjects(header, Path.Combine(path, p.Name), count, checkBytes);
+                }
+                else
+                {
+                    checkBytes += ((PackFile)p).PreCheck(CheckList, NeededList);
                 }
 
                 if (p.IsLast)
-                    return;
+                    break;
             }
+            return checkBytes;
+        }
+
+        public void EndCheck(Action<int> AddBytes)
+        {
+            for (int i = 0; i < CheckList.Count; i++)
+                if (CheckList[i].Check(AddBytes))
+                    NeededList.Add(CheckList[i]);
+
+            CheckList = null;
         }
     }
 }

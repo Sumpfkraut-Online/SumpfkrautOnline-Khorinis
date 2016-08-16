@@ -27,36 +27,37 @@ namespace FilePacker
             this.info = info;
         }
         
-        public virtual void WriteHeader(BinaryWriter header)
+        public virtual void WriteHeader(PacketStream header)
         {
             if (this.IsLast)
             {
-                header.Write((byte)((int)this.POType | 2));
+                header.WriteByte((int)this.POType | 2);
             }
             else
             {
-                header.Write((byte)this.POType);
+                header.WriteByte((int)this.POType);
             }
             
-            header.Write(this.Name);
+            header.WriteStringShort(this.Name);
         }
         
-        public static PackObject ReadNew(BinaryReader br, string path)
+        public static PackObject ReadNew(PacketStream stream, string path)
         {
-            int type = br.ReadByte();
-            string name = Path.Combine(path, br.ReadString());
+            int type = stream.ReadByte();
+            string name = Path.Combine(path, stream.ReadStringShort());
+            bool isLast = (type & 2) > 0;
 
             if ((type & ~2) == (int)PackObjectType.File)
             {
                 PackFile file = new PackFile(new FileInfo(name));
-                file.ReadHeader(br);
-                file.IsLast = (type & 2) > 0;
+                file.ReadHeader(stream);
+                file.IsLast = isLast;
                 return file;
             }
             else
             {
                 PackDir dir = new PackDir(new DirectoryInfo(name));
-                dir.IsLast = (type & 2) > 0;
+                dir.IsLast = isLast;
                 return dir;
             }
         }

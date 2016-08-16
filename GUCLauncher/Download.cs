@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Net;
 using System.IO;
 using System.Diagnostics;
@@ -27,11 +27,12 @@ namespace GUCLauncher
                     var result = request.BeginGetResponse(null, null);
 
                     Stopwatch watch = Stopwatch.StartNew();
-                    double diff;
-                    while ((diff = TimeOut - watch.Elapsed.TotalMilliseconds) >= 0 && !result.IsCompleted)
+                    double elapsed;
+                    while ((elapsed = watch.Elapsed.TotalMilliseconds) <= TimeOut && !result.IsCompleted)
                     {
-                        if (SetProgress != null)
-                            SetProgress((1d - diff / TimeOut) * 100);
+                        if (SetProgress != null) 
+                            SetProgress(100 * Math.Sqrt(elapsed / TimeOut)); // do some fake progress while connecting
+                        Thread.Sleep(1);
                     }
 
                     var response = request.EndGetResponse(result);
@@ -39,8 +40,9 @@ namespace GUCLauncher
                     return stream != null;
                 }
             }
-            catch
+            catch (Exception e)
             {
+                File.WriteAllText("exceptions.txt", e.ToString());
             }
 
             stream = null;

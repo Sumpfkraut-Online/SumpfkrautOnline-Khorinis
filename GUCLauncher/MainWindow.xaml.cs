@@ -318,7 +318,7 @@ namespace GUCLauncher
         #region Start Project
 
         ServerListItem selectedProject = null;
-        private void bConnect_Click(object sender, RoutedEventArgs e)
+        void bConnect_Click(object sender, RoutedEventArgs e)
         {
             if (lvServerList.SelectedIndex < 0)
                 return;
@@ -415,7 +415,10 @@ namespace GUCLauncher
                 tabControl.SelectedIndex = 1;
 
                 progressBar.Value = 0;
-
+                image.Source = null;
+                textBlock.Text = null;
+                bWebsite.IsEnabled = false;
+                SetStartButton(StartButtonSetting.Disabled);
                 ThreadPool.QueueUserWorkItem(CheckForUpdates);
             }
             catch (Exception e)
@@ -431,24 +434,43 @@ namespace GUCLauncher
             ShowServerList();
         }
 
-        void SetProgress(double value)
+        enum StartButtonSetting
         {
-            Dispatcher.Invoke(() => progressBar.Value = value, DispatcherPriority.Render);
+            Disabled,
+            Update,
+            Start
         }
 
-        void SetProgressText(string text)
+        void SetStartButton(StartButtonSetting setting)
         {
-            Dispatcher.Invoke(() => lUpdate.Content = text, DispatcherPriority.Render);
-        }
-        
-        void SetInfoText(string text)
-        {
-            Dispatcher.Invoke(() => textBlock.Text = text, DispatcherPriority.Render);
+            switch (setting)
+            {
+                case StartButtonSetting.Disabled:
+                    bStart.IsEnabled = false;
+                    bStart.Content = "Start";
+                    bStart.Click -= ClickStart;
+                    bStart.Click -= ClickUpdate;
+                    break;
+                case StartButtonSetting.Update:
+                    bStart.IsEnabled = true;
+                    bStart.Content = "Update";
+                    bStart.Click -= ClickStart;
+                    bStart.Click += ClickUpdate;
+                    break;
+                case StartButtonSetting.Start:
+                    bStart.IsEnabled = true;
+                    bStart.Content = "Start";
+                    bStart.Click += ClickStart;
+                    bStart.Click -= ClickUpdate;
+                    break;
+            }
         }
 
         void SetImage(byte[] data)
         {
-            Dispatcher.Invoke(() =>
+            if (data == null || data.Length == 0)
+                image.Source = null;
+            else
             {
                 using (MemoryStream ms = new MemoryStream(data))
                 {
@@ -471,7 +493,7 @@ namespace GUCLauncher
                     {
                     }
                 }
-            }, DispatcherPriority.Render);
+            }
         }
 
         InfoPack current = new InfoPack();
@@ -481,29 +503,63 @@ namespace GUCLauncher
             {
                 if (string.IsNullOrWhiteSpace(dlLink))
                 {
-                    SetProgressText("Server disabled automatic updates.");
-                    SetProgress(100);
+                    Dispatcher.Invoke(() =>
+                    {
+                        lUpdate.Content = "Server disabled automatic updates.";
+                        progressBar.Value = 100;
+                    });
                     return;
                 }
 
-                SetProgressText("Connecting to update server...");
+                Dispatcher.Invoke(() => lUpdate.Content = "Connecting to update server...");
                 // load the information file
                 Stream stream;
                 double percent = 0;
-                if (Download.TryGetStream(dlLink, out stream, value => { percent = value * 0.9; SetProgress(percent); }))
+                if (Download.TryGetStream(dlLink, out stream, value =>
                 {
-                    SetProgressText("Loading update infos...");
+                    percent = value * 0.70;
+                    Dispatcher.Invoke(() => progressBar.Value = percent);
+                }))
+                {
+                    Dispatcher.Invoke(() => lUpdate.Content = "Loading update infos...");
                     current = new InfoPack();
-                    current.Read(stream, value => SetProgress(value * (100 - percent) + percent));
-                    SetInfoText(current.InfoText);
-                    SetImage(current.ImageData);
+                    int oldPercent = 0;
+                    current.Read(stream, UpdateUI,
+                    value =>
+                    {
+                        int newPercent = (int)(value * (100 - percent) + percent);
+                        if (newPercent != oldPercent)
+                        {
+                            oldPercent = newPercent;
+                            Dispatcher.Invoke(() => progressBar.Value = newPercent);
+                        }
+                    },
+                    str =>
+                    {
+                        Dispatcher.Invoke(() => lUpdate.Content = str);
+                    });
 
-                    SetProgressText("Finished.");
+                    Dispatcher.Invoke(() =>
+                    {
+                        if (current.NeedsUpdate())
+                        {
+                            SetStartButton(StartButtonSetting.Update);
+                            lUpdate.Content = "Update needed.";
+                        }
+                        else
+                        {
+                            SetStartButton(StartButtonSetting.Start);
+                            lUpdate.Content = "Finished.";
+                        }
+                    });
                 }
                 else
                 {
-                    SetProgressText("Could not connect to update server.");
-                    SetProgress(100);
+                    Dispatcher.Invoke(() =>
+                    {
+                        lUpdate.Content = "Could not connect to update server.";
+                        progressBar.Value = 100;
+                    });
                     return;
                 }
             }
@@ -512,21 +568,54 @@ namespace GUCLauncher
                 File.WriteAllText("exceptions.txt", e.ToString());
             }
         }
-        
+
+        void UpdateUI(InfoPack.UpdateUIEnum type)
+        {
+            switch (type)
+            {
+                case InfoPack.UpdateUIEnum.Website:
+                    if (IsValidLink(current.Website))
+                        Dispatcher.Invoke(() => bWebsite.IsEnabled = true);
+                    break;
+                case InfoPack.UpdateUIEnum.InfoText:
+                    Dispatcher.Invoke(() => textBlock.Text = current.InfoText);
+                    break;
+                case InfoPack.UpdateUIEnum.Image:
+                    Dispatcher.Invoke(() => SetImage(current.ImageData));
+                    break;
+            }
+        }
+
+        bool IsValidLink(string url)
+        {
+            if (!string.IsNullOrWhiteSpace(current.Website))
+            {
+                Uri uri;
+                if (Uri.TryCreate(current.Website, UriKind.Absolute, out uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         void bWebsite_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(current.Website))
-                return;
-
-            Uri uri;
-            if (Uri.TryCreate(current.Website, UriKind.Absolute, out uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
+            try
             {
-                try
-                {
-                    Process.Start(current.Website);
-                }
-                catch { }
+                Process.Start(current.Website);
             }
+            catch { }
+        }
+
+
+        void ClickUpdate(object sender, RoutedEventArgs e)
+        {
+            progressBar.Value = 0;
+        }
+
+        void ClickStart(object sender, RoutedEventArgs e)
+        {
         }
     }
 }

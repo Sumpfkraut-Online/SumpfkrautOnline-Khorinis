@@ -69,6 +69,9 @@
     <Compile Include="..\FilePacker\PackDir.cs">
       <Link>PackDir.cs</Link>
     </Compile>
+    <Compile Include="..\FilePacker\PacketStream.cs">
+      <Link>PacketStream.cs</Link>
+    </Compile>
     <Compile Include="..\FilePacker\PackFile.cs">
       <Link>PackFile.cs</Link>
     </Compile>

@@ -73,6 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="PackDir.cs" />
+    <Compile Include="PacketStream.cs" />
     <Compile Include="PackFile.cs" />
     <Compile Include="PackObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">

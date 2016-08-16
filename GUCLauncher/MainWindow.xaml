@@ -42,10 +42,10 @@
                 <Label x:Name="lProjectIP" Content="IP" HorizontalAlignment="Left" Height="23" Margin="245.204,53,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" Width="370" Grid.Column="1"/>
                 <ProgressBar x:Name="progressBar" HorizontalAlignment="Left" Height="31" Margin="10,321,0,0" VerticalAlignment="Top" Width="892" Grid.ColumnSpan="2"/>
                 <Image x:Name="image" HorizontalAlignment="Left" Height="190" Margin="2.204,81,0,0" VerticalAlignment="Top" Width="350" Grid.Column="1"/>
-                <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Height="190" Margin="518.204,81,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Width="358" Grid.Column="1"/>
+                <TextBox x:Name="textBlock" HorizontalAlignment="Left" Height="190" Margin="518.204,81,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="358" Grid.Column="1" VerticalScrollBarVisibility="Auto" IsReadOnly="True"/>
                 <Button x:Name="bStart" Content="Start" HorizontalAlignment="Left" Height="49" Margin="357.204,92,0,0" VerticalAlignment="Top" Width="156" Grid.Column="1"/>
                 <Button x:Name="bWebsite" Content="Open Website" HorizontalAlignment="Left" Height="48" Margin="357,146,0,0" VerticalAlignment="Top" Width="156" Click="bWebsite_Click"/>
-                <Button x:Name="bBack1" Content="Back" HorizontalAlignment="Left" Height="43" Margin="357,228,0,0" VerticalAlignment="Top" Width="156"/>
+                <Button x:Name="bBack1" Content="Back" HorizontalAlignment="Left" Height="43" Margin="357,228,0,0" VerticalAlignment="Top" Width="156" Click="bBack_Click"/>
                 <Label x:Name="lUpdate" Content="" HorizontalAlignment="Left" Height="27" Margin="10,294,0,0" VerticalAlignment="Top" Width="605"/>
             </Grid>
         </TabItem>
