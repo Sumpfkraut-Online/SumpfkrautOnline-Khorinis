@@ -52,14 +52,15 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                 if (aiClients[c].GetType() == typeof(WorldObjects.NPC))
                 {
                     npc = (NPCInst) aiClients[c];
-                    //npc.World.ForEachNPCRoughInRange(npc, attackRadius, delegate (WorldObjects.NPC nearNPC) 
-                    //{
-                    //    // mark every player as a threat / enemy
-                    //    if (nearNPC.IsPlayer)
-                    //    {
-                    //        enemies.Add(nearNPC);
-                    //    }
-                    //});
+                    npc.World.BaseWorld.ForEachNPCRoughInRange(npc.BaseInst, attackRadius, 
+                        delegate (WorldObjects.NPC nearNPC)
+                    {
+                        // mark every player a threat / enemy
+                        if (nearNPC.IsPlayer)
+                        {
+                            enemies.Add((VobInst) nearNPC.ScriptObject);
+                        }
+                    });
                 }
             }
             
@@ -94,8 +95,8 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                         if (aiClients[c].GetType() == typeof(WorldObjects.NPC))
                         {
                             npc = (NPCInst) aiClients[c];
-                            NPCInst bla = new NPCInst();
-
+                            // !!! TO DO !!!
+                            // go to enemy or prepare attack (draw weapon) or start / proceeed attack animation
                         }
                     }
                 }
