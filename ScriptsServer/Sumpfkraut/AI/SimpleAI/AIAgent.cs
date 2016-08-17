@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities;
 using GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIRoutines;
+using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 
 namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
 {
@@ -18,8 +19,8 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
 
         protected object attributeLock;
 
-        protected List<WorldObjects.BaseVob> aiClients;
-        public List<WorldObjects.BaseVob> AIClients { get { return aiClients; } }
+        protected List<VobInst> aiClients;
+        public List<VobInst> AIClients { get { return aiClients; } }
 
 
         protected BaseAIPersonality aiPersonality;
@@ -27,12 +28,12 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
 
 
 
-        public AIAgent (List<WorldObjects.BaseVob> aiClients, BaseAIPersonality aiPersonality = null)
+        public AIAgent (List<VobInst> aiClients, BaseAIPersonality aiPersonality = null)
         {
             SetObjName("AIAgent (default)");
             this.attributeLock = new object();
-            this.aiClients = aiClients ?? new List<WorldObjects.BaseVob>();
-            this.aiPersonality = aiPersonality ?? new SimpleAIPersonality();
+            this.aiClients = aiClients ?? new List<VobInst>();
+            this.aiPersonality = aiPersonality ?? new SimpleAIPersonality(0f);
         }
 
 

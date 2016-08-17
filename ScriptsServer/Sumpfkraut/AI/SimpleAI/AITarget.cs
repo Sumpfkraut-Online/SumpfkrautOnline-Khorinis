@@ -1,4 +1,5 @@
-﻿using GUC.Utilities;
+﻿using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using GUC.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,16 +15,16 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
 
 
 
-        public List<WorldObjects.BaseVob> vobTargets;
+        public List<VobInst> vobTargets;
 
 
 
-        public AITarget (WorldObjects.BaseVob vobTarget)
+        public AITarget (VobInst vobTarget)
         {
-            this.vobTargets = new List<WorldObjects.BaseVob>() { vobTarget };
+            this.vobTargets = new List<VobInst>() { vobTarget };
         }
 
-        public AITarget (List<WorldObjects.BaseVob> vobTargets)
+        public AITarget (List<VobInst> vobTargets)
         {
             this.vobTargets = vobTargets;
         }
