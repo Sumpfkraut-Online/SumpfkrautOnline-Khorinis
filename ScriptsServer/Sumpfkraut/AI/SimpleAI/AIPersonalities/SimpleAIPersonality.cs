@@ -96,10 +96,19 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
                     for (int c = 0; c < aiClients.Count; c++)
                     {
-                        // attack or approach enemy
+                        // simply hit the enemy by magical means without necessary physical contact :D
                         if (aiClients[c].GetType() == typeof(NPCInst))
                         {
                             npc = (NPCInst) aiClients[c];
+                            for (int e = 0; e < enemies.Count; e++)
+                            {
+                                try
+                                {
+                                    //((NPCInst) enemies[e]).Hit(npc, 1);
+                                    Print(">>>>>> BAAAAAAAM! <<<<<<");
+                                }
+                                catch (Exception ex) { }
+                            }
                             
                             // !!! TO DO !!!
                             // go to enemy or prepare attack (draw weapon) or start / proceeed attack animation
