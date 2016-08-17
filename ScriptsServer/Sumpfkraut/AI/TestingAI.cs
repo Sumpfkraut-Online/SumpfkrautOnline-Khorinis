@@ -94,19 +94,39 @@ namespace GUC.Scripts.Sumpfkraut.AI
 
 
 
-            // single threaded AIManager-handling
-            AIManager aiManager01 = new AIManager(false, false, new TimeSpan(0, 0, 0, 0, 10));
+            // multi-threaded AIManager-handling
+            AIManager aiManager01 = new AIManager(false, false, new TimeSpan(0, 0, 0, 0, 250));
             aiManager01.SetObjName("aiManager01");
             aiManager01.Start();
 
-            NPCDef npcDef01 = new NPCDef();
-            npcDef01.SetObjName("npcDef01");
+            //NPCDef npcDef01 = new NPCDef();
+            //npcDef01.SetObjName("npcDef01");
+            //npcDef01.Name = "npcDef01";
+            //Visuals.ModelDef npcModel01;
+            //PrintStatic(typeof(TestingAI), Visuals.ModelDef.TryGetModel("human", out npcModel01));
+            //npcDef01.Model = npcModel01;
+            //npcDef01.Create();
+
+            Visuals.ModelDef npcModel01;
+            PrintStatic(typeof(TestingAI), Visuals.ModelDef.TryGetModel("human", out npcModel01));
+            
+
+            NPCDef npcDef01 = new NPCDef("npcDef01");
             npcDef01.Name = "npcDef01";
+            npcDef01.Model = npcModel01;
+            npcDef01.BodyMesh = Enumeration.HumBodyMeshs.HUM_BODY_NAKED0.ToString();
+            npcDef01.BodyTex = (int)Enumeration.HumBodyTexs.G1Hero;
+            npcDef01.HeadMesh = Enumeration.HumHeadMeshs.HUM_HEAD_PONY.ToString();
+            npcDef01.HeadTex = (int)Enumeration.HumHeadTexs.Face_N_Player;
             npcDef01.Create();
+
             NPCInst npcInst01 = new NPCInst(npcDef01);
             npcInst01.SetObjName("npcInst01");
-            npcInst01.Fatness = 2.0f;
             npcInst01.Spawn(WorldSystem.WorldInst.Current);
+
+            NPCInst npcInst02 = new NPCInst(npcDef01);
+            npcInst02.SetObjName("npcInst02");
+            npcInst02.Spawn(WorldSystem.WorldInst.Current);
 
             AIAgent aiAgent01 = new AIAgent(new List<VobInst> { npcInst01 });
             aiAgent01.SetObjName("aiAgent01");

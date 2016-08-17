@@ -33,10 +33,47 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
             SetObjName("AIAgent (default)");
             this.attributeLock = new object();
             this.aiClients = aiClients ?? new List<VobInst>();
-            this.aiPersonality = aiPersonality ?? new SimpleAIPersonality(0f);
+            if (aiPersonality == null)
+            {
+                this.aiPersonality = new SimpleAIPersonality(0f);
+                this.aiPersonality.Init(new AIMemory(), new SimpleAIRoutine());
+            }
+            else
+            {
+                this.aiPersonality = aiPersonality;
+            }
         }
 
 
+
+        public bool HasAIClient (VobInst aiClient)
+        {
+            return aiClients.Contains(aiClient);
+        }
+
+        public bool HasAIClient (WorldObjects.Vob baseVob)
+        {
+            bool hasAIClient = false;
+            for (int i = 0; i < aiClients.Count; i++)
+            {
+                if (aiClients[i].BaseInst == baseVob)
+                {
+                    hasAIClient = true;
+                    break;
+                }
+            }
+            return hasAIClient;
+        }
+
+
+
+        public void MakeActiveObservation ()
+        {
+            lock (attributeLock)
+            {
+                aiPersonality.MakeActiveObservation(this);
+            }
+        }
 
         public void ProcessActions ()
         {
@@ -59,6 +96,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
         {
             lock (attributeLock)
             {
+                MakeActiveObservation();
                 ProcessObservations();
                 ProcessActions();
             }

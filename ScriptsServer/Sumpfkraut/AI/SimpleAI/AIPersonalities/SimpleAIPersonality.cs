@@ -49,21 +49,26 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
             for (int c = 0; c < aiClients.Count; c++)
             {
-                if (aiClients[c].GetType() == typeof(WorldObjects.NPC))
+                if (aiClients[c].GetType() == typeof(NPCInst))
                 {
                     npc = (NPCInst) aiClients[c];
                     npc.World.BaseWorld.ForEachNPCRoughInRange(npc.BaseInst, attackRadius, 
                         delegate (WorldObjects.NPC nearNPC)
                     {
-                        // mark every player a threat / enemy
-                        if (nearNPC.IsPlayer)
+                        if (aiAgent.HasAIClient(nearNPC))
                         {
                             enemies.Add((VobInst) nearNPC.ScriptObject);
                         }
+                        //// mark every player a threat / enemy
+                        //if (nearNPC.IsPlayer)
+                        //{
+                        //    enemies.Add((VobInst) nearNPC.ScriptObject);
+                        //}
                     });
                 }
             }
-            
+
+            Print(enemies.Count);
             if (enemies.Count > 0)
             {
                 aiMemory.AddAIObservation(new EnemyAIObservation(new AITarget(enemies)));
@@ -86,15 +91,16 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                     List<VobInst> aiClients = aiAgent.AIClients;
                     List<VobInst> enemies = aiAction.AITarget.vobTargets;
                     NPCInst npc;
-
-                    if (enemies.Count < 0) { break; }
+                    
+                    if (enemies.Count < 1) { break; }
 
                     for (int c = 0; c < aiClients.Count; c++)
                     {
                         // attack or approach enemy
-                        if (aiClients[c].GetType() == typeof(WorldObjects.NPC))
+                        if (aiClients[c].GetType() == typeof(NPCInst))
                         {
                             npc = (NPCInst) aiClients[c];
+                            
                             // !!! TO DO !!!
                             // go to enemy or prepare attack (draw weapon) or start / proceeed attack animation
                         }
@@ -150,9 +156,9 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                         closestEnemyIndex = e;
                     }
                 }
-
+                
                 // formulate action to attack closest enemy, overriding all previous actions
-                if (closestEnemyIndex > 0)
+                if (closestEnemyIndex > -1)
                 {
                     List<BaseAIAction> newAIActions = new List<BaseAIAction> { new AttackAIAction(
                         new AITarget( enemies.vobTargets[closestEnemyIndex] )) };

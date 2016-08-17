@@ -66,7 +66,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
 
         public void SubscribeAIAgent (AIAgent aiAgent)
         {
-            if (aiAgents.Contains(aiAgent))
+            if (!aiAgents.Contains(aiAgent))
             {
                 aiAgents.Add(aiAgent);
             }
