@@ -266,6 +266,9 @@ namespace FilePacker
                 {
                     foreach (DirectoryInfo dir in info.EnumerateDirectories())
                     {
+                        if (string.Compare(dir.Name, "user", true) == 0) // don't add "user" folders
+                            continue;
+
                         Dispatcher.Invoke(() => items.Add(new TVDir(dir)), DispatcherPriority.Background);
                         Thread.Sleep(1); // give the ui thread time to breathe
                     }

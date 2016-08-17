@@ -60,35 +60,24 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="..\FilePacker\DataPack.cs">
-      <Link>DataPack.cs</Link>
-    </Compile>
-    <Compile Include="..\FilePacker\InfoPack.cs">
-      <Link>InfoPack.cs</Link>
-    </Compile>
-    <Compile Include="..\FilePacker\PackDir.cs">
-      <Link>PackDir.cs</Link>
-    </Compile>
-    <Compile Include="..\FilePacker\PacketStream.cs">
-      <Link>PacketStream.cs</Link>
-    </Compile>
-    <Compile Include="..\FilePacker\PackFile.cs">
-      <Link>PackFile.cs</Link>
-    </Compile>
-    <Compile Include="..\FilePacker\PackObject.cs">
-      <Link>PackObject.cs</Link>
-    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DataPack.cs" />
     <Compile Include="Download.cs" />
+    <Compile Include="DownloadJob.cs" />
+    <Compile Include="InfoPack.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PackDir.cs" />
+    <Compile Include="PacketStream.cs" />
+    <Compile Include="PackFile.cs" />
+    <Compile Include="PackObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

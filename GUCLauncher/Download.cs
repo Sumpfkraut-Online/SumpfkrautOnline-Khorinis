@@ -13,7 +13,7 @@ namespace GUCLauncher
     {
         public const double TimeOut = 3000;
 
-        public static bool TryGetStream(string url, out Stream stream, Action<double> SetProgress = null)
+        public static WebResponse GetResponse(string url, Action<float> SetProgress = null)
         {
             try
             {
@@ -23,7 +23,7 @@ namespace GUCLauncher
                     HttpWebRequest request = WebRequest.CreateHttp(uri);
                     request.UseDefaultCredentials = true;
                     request.Proxy = null;
-
+                    
                     var result = request.BeginGetResponse(null, null);
 
                     Stopwatch watch = Stopwatch.StartNew();
@@ -31,13 +31,11 @@ namespace GUCLauncher
                     while ((elapsed = watch.Elapsed.TotalMilliseconds) <= TimeOut && !result.IsCompleted)
                     {
                         if (SetProgress != null) 
-                            SetProgress(100 * Math.Sqrt(elapsed / TimeOut)); // do some fake progress while connecting
+                            SetProgress((float)Math.Sqrt(elapsed / TimeOut)); // do some fake progress while connecting
                         Thread.Sleep(1);
                     }
 
-                    var response = request.EndGetResponse(result);
-                    stream = response.GetResponseStream();
-                    return stream != null;
+                    return request.EndGetResponse(result);
                 }
             }
             catch (Exception e)
@@ -45,8 +43,39 @@ namespace GUCLauncher
                 File.WriteAllText("exceptions.txt", e.ToString());
             }
 
-            stream = null;
-            return false;
+            return null;
+        }
+
+        public static WebResponse GetResponse(string url, int from, int to)
+        {
+            try
+            {
+                Uri uri;
+                if (Uri.TryCreate(url, UriKind.Absolute, out uri))
+                {
+                    HttpWebRequest request = WebRequest.CreateHttp(uri);
+                    request.UseDefaultCredentials = true;
+                    request.Proxy = null;
+                    request.AddRange(from, to);
+
+                    var result = request.BeginGetResponse(null, null);
+
+                    Stopwatch watch = Stopwatch.StartNew();
+                    double elapsed;
+                    while ((elapsed = watch.Elapsed.TotalMilliseconds) <= TimeOut && !result.IsCompleted)
+                    {
+                        Thread.Sleep(1);
+                    }
+
+                    return request.EndGetResponse(result);
+                }
+            }
+            catch (Exception e)
+            {
+                File.WriteAllText("exceptions.txt", e.ToString());
+            }
+
+            return null;
         }
     }
 }

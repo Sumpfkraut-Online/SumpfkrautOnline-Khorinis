@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.IO;
 
-namespace FilePacker
+namespace GUCLauncher
 {
     /// <summary>
     /// A Data Pack. Contains compressed files.
@@ -135,7 +135,8 @@ namespace FilePacker
             return this.neededList.Count > 0;
         }
 
-        public void DoUpdate()
+        List<DownloadJob> jobs = new List<DownloadJob>();
+        public int PreUpdate()
         {
             List<PackObject> sortList = new List<PackObject>(list);
             sortList.Sort(SortOffsets);
@@ -159,11 +160,33 @@ namespace FilePacker
                 ((PackFile)sortList[i]).CompressedSize = nextOffset - ((PackFile)sortList[i]).offset;
             }
 
+            neededList.Sort(SortOffsets);
+
+            jobs.Clear();
+            int bytesToLoad = 0;
             for (int i = 0; i < neededList.Count; i++)
             {
+                DownloadJob job = new DownloadJob();
+                job.Files.Add(neededList[i]);
+                bytesToLoad += neededList[i].CompressedSize;
 
+                for (int j = i + 1; j < neededList.Count; j++)
+                {
+                    if (neededList[j].offset - (neededList[i].offset + neededList[i].CompressedSize) < 500000)
+                    {
+                        job.Files.Add(neededList[j]);
+                        bytesToLoad += neededList[j].CompressedSize;
+                        i = j;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                jobs.Add(job);
             }
 
+            return bytesToLoad;
         }
 
         static int SortOffsets(PackObject p1, PackObject p2)
@@ -176,6 +199,12 @@ namespace FilePacker
                 return ((PackFile)p1).offset.CompareTo(((PackFile)p2).offset);
             }
             return 0;
+        }
+
+        public void DoUpdate(Action<int> AddBytes)
+        {
+            for (int i = 0; i < jobs.Count; i++)
+                jobs[i].Load(this.URL, AddBytes);
         }
     }
 }

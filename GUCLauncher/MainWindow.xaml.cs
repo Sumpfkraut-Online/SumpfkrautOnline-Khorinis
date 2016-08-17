@@ -19,7 +19,6 @@ using System.Threading;
 using System.Net.NetworkInformation;
 using System.Security.Cryptography;
 using System.Windows.Threading;
-using FilePacker;
 using System.Diagnostics;
 
 namespace GUCLauncher
@@ -496,6 +495,16 @@ namespace GUCLauncher
             }
         }
 
+        float oldPercent = 0;
+        void SetPercent(float percent)
+        {
+            if ((int)((oldPercent - percent) * 1000) != 0)
+            {
+                Dispatcher.Invoke(() => progressBar.Value = percent * 100);
+                oldPercent = percent;
+            }
+        }
+
         InfoPack current = new InfoPack();
         void CheckForUpdates(object arg)
         {
@@ -513,54 +522,50 @@ namespace GUCLauncher
 
                 Dispatcher.Invoke(() => lUpdate.Content = "Connecting to update server...");
                 // load the information file
-                Stream stream;
-                double percent = 0;
-                if (Download.TryGetStream(dlLink, out stream, value =>
+                float percent = 0;
+                using (var response = Download.GetResponse(dlLink, value =>
                 {
-                    percent = value * 0.70;
-                    Dispatcher.Invoke(() => progressBar.Value = percent);
+                    percent = value * 0.70f;
+                    SetPercent(percent);
                 }))
                 {
-                    Dispatcher.Invoke(() => lUpdate.Content = "Loading update infos...");
-                    current = new InfoPack();
-                    int oldPercent = 0;
-                    current.Read(stream, UpdateUI,
-                    value =>
+                    Stream stream;
+                    if (response != null && (stream = response.GetResponseStream()) != null)
                     {
-                        int newPercent = (int)(value * (100 - percent) + percent);
-                        if (newPercent != oldPercent)
+                        Dispatcher.Invoke(() => lUpdate.Content = "Loading update infos...");
+                        current = new InfoPack();
+                        current.Read(stream, UpdateUI,
+                        value =>
                         {
-                            oldPercent = newPercent;
-                            Dispatcher.Invoke(() => progressBar.Value = newPercent);
-                        }
-                    },
-                    str =>
-                    {
-                        Dispatcher.Invoke(() => lUpdate.Content = str);
-                    });
+                            SetPercent(value * (1 - percent) + percent);
+                        },
+                        str =>
+                        {
+                            Dispatcher.Invoke(() => lUpdate.Content = str);
+                        });
 
-                    Dispatcher.Invoke(() =>
-                    {
-                        if (current.NeedsUpdate())
+                        Dispatcher.Invoke(() =>
                         {
-                            SetStartButton(StartButtonSetting.Update);
-                            lUpdate.Content = "Update needed.";
-                        }
-                        else
-                        {
-                            SetStartButton(StartButtonSetting.Start);
-                            lUpdate.Content = "Finished.";
-                        }
-                    });
-                }
-                else
-                {
-                    Dispatcher.Invoke(() =>
+                            if (current.NeedsUpdate())
+                            {
+                                SetStartButton(StartButtonSetting.Update);
+                                lUpdate.Content = "Update needed.";
+                            }
+                            else
+                            {
+                                SetStartButton(StartButtonSetting.Start);
+                                lUpdate.Content = "Finished.";
+                            }
+                        });
+                    }
+                    else
                     {
-                        lUpdate.Content = "Could not connect to update server.";
-                        progressBar.Value = 100;
-                    });
-                    return;
+                        Dispatcher.Invoke(() =>
+                        {
+                            lUpdate.Content = "Could not connect to update server.";
+                            progressBar.Value = 100;
+                        });
+                    }
                 }
             }
             catch (Exception e)
@@ -611,7 +616,22 @@ namespace GUCLauncher
 
         void ClickUpdate(object sender, RoutedEventArgs e)
         {
+            SetStartButton(StartButtonSetting.Disabled);
             progressBar.Value = 0;
+            lUpdate.Content = "Preparing update...";
+
+            ThreadPool.QueueUserWorkItem(o =>
+            {
+                current.DoUpdate(SetPercent,
+                str =>
+                {
+                    Dispatcher.Invoke(() => lUpdate.Content = str);
+                });
+                Dispatcher.Invoke(() =>
+                {
+                    SetStartButton(StartButtonSetting.Start);
+                });
+            });
         }
 
         void ClickStart(object sender, RoutedEventArgs e)

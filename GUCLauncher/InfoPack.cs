@@ -6,7 +6,7 @@ using System.Threading;
 using System.IO;
 using System.IO.Compression;
 
-namespace FilePacker
+namespace GUCLauncher
 {
     /// <summary>
     /// The Information Packet. Consists of a text, a background image and a list of all Data Packs and their File-Infos (Type,Name,Hash,Offset).
@@ -124,10 +124,30 @@ namespace FilePacker
             return false;
         }
 
-        public void DoUpdate()
+        public void DoUpdate(Action<float> SetPercent, Action<string> SetStatus)
         {
+            int bytesToLoad = 0;
             for (int i = 0; i < Packs.Count; i++)
-                Packs[i].DoUpdate();
+                bytesToLoad += Packs[i].PreUpdate();
+
+            int doneBytes = 0;
+            
+            int lastUpdate = int.MinValue;
+
+            for (int i = 0; i < Packs.Count; i++)
+                Packs[i].DoUpdate(value =>
+                {
+                    doneBytes += value;
+                    SetPercent((float)doneBytes / bytesToLoad);
+                    int currentUpdate = doneBytes / 100000;
+                    if (currentUpdate > lastUpdate)
+                    {
+                        SetStatus(string.Format("Updating... ({0:0.0}MB / {1:0.0}MB)", currentUpdate / 10f, bytesToLoad / 1000000f));
+                        lastUpdate = currentUpdate;
+                    }
+                });
+
+            SetStatus("Finished.");
         }
     }
 

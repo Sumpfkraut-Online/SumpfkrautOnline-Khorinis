@@ -7,7 +7,7 @@ using System.Threading;
 using System.IO.Compression;
 using System.Security.Cryptography;
 
-namespace FilePacker
+namespace GUCLauncher
 {
     class PackFile : PackObject
     {
