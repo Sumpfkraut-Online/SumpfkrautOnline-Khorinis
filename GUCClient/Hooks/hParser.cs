@@ -92,8 +92,8 @@ namespace GUC.Hooks
             if (!Directory.Exists(dPath))
                 Directory.CreateDirectory(dPath);
 
-            String[] arr = new String[] { "GUC.Client.Resources.Constants.d", "GUC.Client.Resources.Classes.d", "GUC.Client.Resources.AI_Constants.d",
-                "GUC.Client.Resources.BodyStates.d", "GUC.Client.Resources.Focus.d", "GUC.Client.Resources.Species.d", "GUC.Client.Resources.NPC_Default.d" };
+            String[] arr = new String[] { "GUC.Resources.Constants.d", "GUC.Resources.Classes.d", "GUC.Resources.AI_Constants.d",
+                "GUC.Resources.BodyStates.d", "GUC.Resources.Focus.d", "GUC.Resources.Species.d", "GUC.Resources.NPC_Default.d" };
 
             zString str = null;
             String fileList = "";
@@ -103,7 +103,7 @@ namespace GUC.Hooks
                 {
                     using (var sr = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream(internalFile), Encoding.Default))
                     {
-                        String file = dPath + "\\" + internalFile.Substring("GUC.Client.Resources.".Length);
+                        String file = dPath + "\\" + internalFile.Substring("GUC.Resources.".Length);
                         File.WriteAllText(file, sr.ReadToEnd(), Encoding.Default);
                         fileList += Path.GetFileName(file.ToUpper()) + "\r\n";
 
