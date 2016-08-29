@@ -52,6 +52,14 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                 if (aiClients[c].GetType() == typeof(NPCInst))
                 {
                     npc = (NPCInst) aiClients[c];
+                    if (npc == null) { Print("npc == null");  return; }
+                    if (npc.BaseInst == null) { Print("npc.BaseInst == null");  return; }
+                    if (npc.BaseInst.World == null) { Print("npc.BaseInst.World == null");  return; }
+                    if (npc.BaseInst.World.ScriptObject == null) { Print("npc.BaseInst.World.ScriptObject == null");  return; }
+                    if (npc.World == null) { Print("npc.World == null");  return; }
+                    if (npc.World.BaseWorld == null) { Print("npc.World.BaseWorld == null"); return; }
+                    Print("OINK");
+
                     npc.World.BaseWorld.ForEachNPCRoughInRange(npc.BaseInst, attackRadius, 
                         delegate (WorldObjects.NPC nearNPC)
                     {
@@ -68,7 +76,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                 }
             }
 
-            Print(enemies.Count);
+            //Print(enemies.Count);
             if (enemies.Count > 0)
             {
                 aiMemory.AddAIObservation(new EnemyAIObservation(new AITarget(enemies)));
@@ -105,13 +113,26 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                                 try
                                 {
                                     //((NPCInst) enemies[e]).Hit(npc, 1);
-                                    Print(">>>>>> BAAAAAAAM! <<<<<<");
+                                    //Print(">>>>>> BAAAAAAAM! <<<<<<");
+                                    //WorldObjects.NPC.ActiveAni jumpAni = npc.GetJumpAni();
+                                    //if (jumpAni != null)
+                                    //{
+                                    //    npc.StartAniJump((Visuals.ScriptAni) jumpAni.Ani.AniJob, 0, 10);
+                                    //}
+
+                                    Visuals.ScriptAniJob scriptAniJob;
+                                    npc.Model.TryGetAniJob((int) Visuals.SetAnis.JumpFwd, out scriptAniJob);
+                                    if (scriptAniJob != null)
+                                    {
+                                        npc.StartAniJump(scriptAniJob.DefaultAni, 0, 10);
+                                    }
+
+                                    // !!! TO DO !!!
+                                    // go to enemy or prepare attack (draw weapon) 
+                                    // or start / proceeed attack animation
                                 }
                                 catch (Exception ex) { }
                             }
-                            
-                            // !!! TO DO !!!
-                            // go to enemy or prepare attack (draw weapon) or start / proceeed attack animation
                         }
                     }
                 }
