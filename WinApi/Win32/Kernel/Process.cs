@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace WinApi.Kernel
 {
-    public class Process
+    public class ProcessImports
     {
         public enum ProcessAccess : uint
         {

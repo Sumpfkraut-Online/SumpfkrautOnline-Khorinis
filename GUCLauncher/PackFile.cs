@@ -24,33 +24,6 @@ namespace GUCLauncher
 
         const int BufferSize = 8192;
         static readonly byte[] buffer = new byte[BufferSize];
-        public void Write(Stream pack)
-        {
-            // Compress file into Data Pack.
-
-            this.offset = (int)pack.Position;
-
-            using (MD5 md5 = new MD5CryptoServiceProvider())
-            using (DeflateStream stream = new DeflateStream(pack, CompressionLevel.Optimal, true))
-            using (FileStream fs = Info.OpenRead())
-            {
-                int readLen;
-                while ((readLen = fs.Read(buffer, 0, BufferSize)) > 0)
-                {
-                    md5.TransformBlock(buffer, 0, readLen, buffer, 0);
-                    stream.Write(buffer, 0, readLen);
-                }
-                md5.TransformFinalBlock(buffer, 0, 0);
-                this.hash = md5.Hash;
-            }
-        }
-
-        public override void WriteHeader(PacketStream header)
-        {
-            base.WriteHeader(header);
-            header.Write(this.offset);
-            header.WriteBytes(this.hash);
-        }
 
         public void ReadHeader(PacketStream header)
         {

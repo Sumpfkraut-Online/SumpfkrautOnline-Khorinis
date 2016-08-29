@@ -51,7 +51,7 @@ namespace GUC.Hooks
                 Logger.LogError(ex);
             }
         }
-        
+
         static void hook_LoadParserFile(Hook hook)
         {
             try
@@ -65,15 +65,15 @@ namespace GUC.Hooks
                 Process.THISCALL<NullReturnCall>(0xAB40C0, 0x00793440, new IntArg(0)); //parser.enabletreesave(0)
 
                 initDefaultScripts();
-                
+
                 using (zString z = zString.Create("C_NPC"))
                     Process.THISCALL<NullReturnCall>(0xAB40C0, 0x00794730, z, new IntArg(0x120)); // parser.AddClassOffset
 
                 using (zString z = zString.Create("C_ITEM"))
                     Process.THISCALL<NullReturnCall>(0xAB40C0, 0x00794730, z, new IntArg(0x120)); // parser.AddClassOffset
-                
+
                 zString mainfile = new zString(0xAB40C0 + 0x2074);
-                    mainfile.Set(srcFile);
+                mainfile.Set("GUC.SRC");
 
                 Process.THISCALL<NullReturnCall>(0xAB40C0, 0x007900E0); //parser.createPCode
                 Process.THISCALL<NullReturnCall>(0xAB40C0, 0x0078E730); //parser.error
@@ -87,7 +87,7 @@ namespace GUC.Hooks
         static String srcFile = null;
         static void initDefaultScripts()
         {
-            string dPath = Program.ProjectPath + "Daedalus";
+            string dPath = Path.Combine(Program.ProjectPath, "Daedalus");
 
             if (!Directory.Exists(dPath))
                 Directory.CreateDirectory(dPath);
@@ -101,10 +101,12 @@ namespace GUC.Hooks
             {
                 try
                 {
-                    using (var sr = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream(internalFile), Encoding.Default))
+                    using (var rs = Assembly.GetExecutingAssembly().GetManifestResourceStream(internalFile))
                     {
-                        String file = dPath + "\\" + internalFile.Substring("GUC.Resources.".Length);
-                        File.WriteAllText(file, sr.ReadToEnd(), Encoding.Default);
+                        string file = Path.Combine(dPath, internalFile.Substring("GUC.Resources.".Length));
+                        using (var fs = new FileStream("file", FileMode.Create, FileAccess.Write))
+                            rs.CopyTo(fs);
+
                         fileList += Path.GetFileName(file.ToUpper()) + "\r\n";
 
                         //using (str = zString.Create(file.ToUpper()))
@@ -118,14 +120,14 @@ namespace GUC.Hooks
             }
 
 
-            String file_FileList = dPath + "\\GUC.src";
+            string file_FileList = Path.Combine(dPath, "GUC.src");
             srcFile = file_FileList;
             File.WriteAllText(file_FileList, fileList);
 
             Logger.Log("Parse " + file_FileList);
             using (str = zString.Create(file_FileList.ToUpper()))
                 Process.THISCALL<NullReturnCall>(0xAB40C0, 0x0078EE20, str);
-            
+
             using (zString z = zString.Create("C_NPC"))
             {
                 int symbol = Process.THISCALL<IntArg>(0xAB40C0, 0x007938D0, z); // parser.GetSymbol
@@ -137,7 +139,7 @@ namespace GUC.Hooks
                 int symbol = Process.THISCALL<IntArg>(0xAB40C0, 0x007938D0, z); // parser.GetSymbol
                 Process.THISCALL<NullReturnCall>(symbol, 0x007A2F40, new IntArg(0x120)); //parsymbol.SetClassOffset
             }
-            
+
             Logger.Log("Startup-Scripts-parsed!");
         }
     }

@@ -57,7 +57,6 @@ namespace GUCLauncher
                             while ((left = Files[i + 1].offset - pos) > 0)
                             {
                                 int read = stream.Read(buf, 0, left > BufferSize ? BufferSize : left);
-                                AddBytes(read);
                                 pos += read;
                             }
                         }

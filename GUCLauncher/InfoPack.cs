@@ -19,45 +19,6 @@ namespace GUCLauncher
 
         public readonly List<DataPack> Packs = new List<DataPack>();
 
-        public void Build(Action<string> SetState = null)
-        {
-            if (SetState != null) SetState("Writing header...");
-
-            using (MemoryStream ms = new MemoryStream(64000))
-            using (PacketStream stream = new PacketStream(ms))
-            {
-                stream.WriteStringShort(Website);
-                stream.WriteStringLong(InfoText);
-
-                stream.Write(ImageData.Length);
-                stream.WriteBytes(ImageData);
-
-                stream.WriteByte(Packs.Count);
-                for (int i = 0; i < Packs.Count; i++)
-                {
-                    if (SetState != null)
-                        SetState(string.Format("Writing '{0}' Pack ({1}/{2}) ...", Packs[i].Name, i + 1, Packs.Count));
-
-                    Packs[i].Write(stream);
-                }
-
-                if (SetState != null)
-                    SetState("Finishing header...");
-
-                ms.Position = 0;
-                using (FileStream fs = new FileStream("info.bin", FileMode.Create, FileAccess.Write))
-                using (DeflateStream ds = new DeflateStream(fs, CompressionLevel.Optimal))
-                {
-                    fs.Write(BitConverter.GetBytes((int)ms.Length), 0, 4);
-                    ms.CopyTo(ds);
-                }
-            }
-
-            GC.Collect();
-            if (SetState != null)
-                SetState("Finished.");
-        }
-
         public enum UpdateUIEnum
         {
             Website,
@@ -65,7 +26,7 @@ namespace GUCLauncher
             Image
         }
 
-        public void Read(Stream stream, Action<UpdateUIEnum> UpdateUI, Action<float> SetPercent, Action<string> SetStatus)
+        public void Read(Stream stream, string path, Action<UpdateUIEnum> UpdateUI, Action<float> SetPercent, Action<string> SetStatus)
         {
             Packs.Clear();
 
@@ -96,7 +57,7 @@ namespace GUCLauncher
                     {
                         SetStatus(string.Format("Reading data packs ({0}/{1})...", i+1, count));
                         DataPack pack = new DataPack();
-                        checkBytes += pack.Read(header);
+                        checkBytes += pack.Read(header, path);
                         Packs.Add(pack);
                     }
 

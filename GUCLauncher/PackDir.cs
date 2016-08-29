@@ -15,6 +15,8 @@ namespace GUCLauncher
 
         public PackDir(DirectoryInfo info) : base(info)
         {
+            if (info.Name[0] == '.')
+                throw new ArgumentException("Directory tries to escape!");
         }
     }
 }

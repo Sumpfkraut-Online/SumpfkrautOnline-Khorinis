@@ -15,79 +15,14 @@ namespace GUCLauncher
         string name;
         public string Name { get { return this.name; } set { this.name = value; } }
         public string URL;
-        public string Folder;
 
         readonly List<PackObject> list = new List<PackObject>();
-
-        public void Write(PacketStream header)
-        {
-            list.Clear();
-            Search(list, new DirectoryInfo(Folder));
-            if (list.Count > ushort.MaxValue)
-                throw new Exception("Pack has more than 65535 files/directories!");
-
-            using (FileStream fs = new FileStream(name + ".bin", FileMode.Create, FileAccess.Write))
-            {
-                foreach (PackFile file in list.Where(fi => fi is PackFile).OrderByDescending(fi => fi.Info.LastWriteTimeUtc).Cast<PackFile>())
-                {
-                    file.Write(fs);
-                }
-                header.Write((int)fs.Length);
-            }
-
-            header.WriteStringShort(URL);
-            header.WriteUShort(list.Count);
-            for (int i = 0; i < list.Count; i++)
-            {
-                list[i].WriteHeader(header);
-            }
-        }
-
-        bool Search(List<PackObject> list, DirectoryInfo current)
-        {
-            PackObject last = null;
-
-            DirectoryInfo[] dirs = current.GetDirectories();
-            for (int i = 0; i < dirs.Length; i++)
-            {
-                if (string.Compare(dirs[i].Name, "user", true) == 0) // ignore "user" folders
-                    continue;
-
-                // search all directories
-                var dir = new PackDir(dirs[i]);
-                list.Add(dir);
-
-                if (!Search(list, dirs[i]))
-                    list.RemoveAt(list.Count - 1); // don't add empty folders
-
-                last = dir;
-            }
-
-            FileInfo[] files = current.GetFiles();
-            for (int i = 0; i < files.Length; i++)
-            {
-                // add files
-                var file = new PackFile(files[i]);
-                list.Add(file);
-                last = file;
-            }
-
-            if (last == null)
-            {
-                return false;
-            }
-            else
-            {
-                last.IsLast = true; // last item in this folder is marked
-                return true;
-            }
-        }
 
         int fileSize;
         List<PackFile> checkList = new List<PackFile>();
         List<PackFile> neededList = new List<PackFile>();
 
-        public int Read(PacketStream header)
+        public int Read(PacketStream header, string path)
         {
             this.fileSize = header.ReadInt();
             this.URL = header.ReadStringShort();
@@ -96,7 +31,7 @@ namespace GUCLauncher
             checkList.Clear();
 
             int count = header.ReadUShort();
-            return ReadObjects(header, "", count, 0);
+            return ReadObjects(header, path, count, 0);
         }
 
         int ReadObjects(PacketStream header, string path, int count, int checkBytes)
@@ -143,21 +78,27 @@ namespace GUCLauncher
 
             for (int i = 0; i < sortList.Count; i++)
             {
-                if (!(sortList[i] is PackFile))
-                    continue;
+                if ((sortList[i] is PackFile))
+                {
+                    int nextOffset = -1;
+                    for (int j = i + 1; j < sortList.Count; j++)
+                        if (sortList[j] is PackFile)
+                        {
+                            nextOffset = ((PackFile)sortList[j]).offset;
+                            break;
+                        }
 
-                int nextOffset = -1;
-                for (int j = i + 1; j < sortList.Count; j++)
-                    if (sortList[j] is PackFile)
-                    {
-                        nextOffset = ((PackFile)sortList[j]).offset;
-                        break;
-                    }
+                    if (nextOffset < 0)
+                        nextOffset = fileSize;
 
-                if (nextOffset < 0)
-                    nextOffset = fileSize;
-
-                ((PackFile)sortList[i]).CompressedSize = nextOffset - ((PackFile)sortList[i]).offset;
+                    ((PackFile)sortList[i]).CompressedSize = nextOffset - ((PackFile)sortList[i]).offset;
+                }
+                else
+                {
+                    DirectoryInfo info = ((PackDir)sortList[i]).Info;
+                    if (!info.Exists)
+                        info.Create();
+                }
             }
 
             neededList.Sort(SortOffsets);

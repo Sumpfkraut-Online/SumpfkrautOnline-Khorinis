@@ -20,8 +20,7 @@ namespace GUC.Hooks
         static bool inited = false;
         public static void AddHooks()
         {
-            if (inited)
-                return;
+            if (inited) return;
             inited = true;
 
             // hook outgame loop and kick out the original menus
@@ -60,7 +59,7 @@ namespace GUC.Hooks
                 connectionVis.SetPosY(200);
                 connectionVis.SetSizeY(40);
                 connectionVis.SetSizeX(400);
-                connectionVis.Texts[0].Text = string.Format("Connecting to '{0}:{1}' ... ({2})", Program.ServerAddress, Program.ServerPort, client.ConnectionAttempts);
+                connectionVis.Texts[0].Text = string.Format("Connecting to '{0}:{1}' ... ({2})", Program.ServerIP, Program.ServerPort, client.ConnectionAttempts);
                 connectionVis.Show();
                 return true;
             }

@@ -26,21 +26,7 @@ namespace GUCLauncher
         {
             this.info = info;
         }
-        
-        public virtual void WriteHeader(PacketStream header)
-        {
-            if (this.IsLast)
-            {
-                header.WriteByte((int)this.POType | 2);
-            }
-            else
-            {
-                header.WriteByte((int)this.POType);
-            }
-            
-            header.WriteStringShort(this.Name);
-        }
-        
+
         public static PackObject ReadNew(PacketStream stream, string path)
         {
             int type = stream.ReadByte();
