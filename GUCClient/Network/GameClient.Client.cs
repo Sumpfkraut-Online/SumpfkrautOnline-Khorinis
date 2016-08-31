@@ -480,7 +480,7 @@ namespace GUC.Network
 
                 this.isConnecting = true;
 
-                ConnectionAttemptResult res = clientInterface.Connect(Program.ServerIP, Program.ServerPort, Constants.VERSION, Constants.VERSION.Length);
+                ConnectionAttemptResult res = clientInterface.Connect(Program.ServerIP, Program.ServerPort, null, 0);
                 if (res != ConnectionAttemptResult.CONNECTION_ATTEMPT_STARTED)
                 {
                     throw new Exception("Connection couldn't be established: " + res);

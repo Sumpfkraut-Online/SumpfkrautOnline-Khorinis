@@ -24,6 +24,8 @@ namespace GUCLauncher
 
         static string gothicPath;
         public static string GothicPath { get { return gothicPath; } }
+        public static string GothicApp { get { return Path.Combine(gothicPath, G2App); } }
+        public static string zSpyApp { get { return Path.Combine(gothicPath, @"_work\tools\zSpy\zSpy.exe"); } }
 
         static ItemCollection items;
 
@@ -68,7 +70,7 @@ namespace GUCLauncher
             {
                 using (StreamReader sr = new StreamReader(ConfigFile))
                 {
-                    gothicPath = sr.ReadLine();
+                    gothicPath = Path.GetFullPath(sr.ReadLine());
                     while (!sr.EndOfStream)
                     {
                         var item = ServerListItem.ReadNew(sr);
@@ -109,29 +111,27 @@ namespace GUCLauncher
 
         #region Check Gothic
 
+        const string G2App = @"System\Gothic2.exe";
+
         static void CheckGothicPath()
         {
-            System.Windows.Forms.OpenFileDialog dlg = null;
-            string fileName = gothicPath;
+            System.Windows.Forms.FolderBrowserDialog dlg = null;
+            string path = gothicPath;
 
             while (true)
             {
-                if (!File.Exists(fileName))
+                if (!File.Exists(Path.Combine(path, G2App)))
                 {
-                    if (fileName != null)
+                    if (path != null)
                     {
                         MessageBox.Show("Could not find Gothic2.exe, browse pls", "broooowse", MessageBoxButton.OK);
                     }
 
                     if (dlg == null)
                     {
-                        dlg = new System.Windows.Forms.OpenFileDialog();
-                        dlg.CheckFileExists = true;
-                        dlg.CheckPathExists = true;
-                        dlg.Multiselect = false;
-                        dlg.InitialDirectory = Directory.GetCurrentDirectory();
-                        dlg.Filter = "Application|*.exe";
-                        dlg.Title = "Gothic2.exe suchen";
+                        dlg = new System.Windows.Forms.FolderBrowserDialog();
+                        dlg.SelectedPath = Directory.Exists(path) ? path : Directory.GetCurrentDirectory();
+                        dlg.Description = "Gothic 2 Ordner suchen";
                     }
 
                     if (dlg.ShowDialog() != System.Windows.Forms.DialogResult.OK)
@@ -140,23 +140,23 @@ namespace GUCLauncher
                         return;
                     }
 
-                    fileName = dlg.FileName;
+                    path = dlg.SelectedPath;
                 }
 
-                if (IsGothic2(fileName))
+                if (IsGothic2(Path.Combine(path, G2App)))
                 {
                     break;
                 }
                 else
                 {
                     MessageBox.Show("Chosen application is not Gothic2 2.6.0.0!", "Wrong version!", MessageBoxButton.OK);
-                    fileName = null;
+                    path = null;
                 }
             }
 
-            if (string.Compare(gothicPath, fileName, true) != 0)
+            if (string.Compare(gothicPath, path, true) != 0)
             {
-                gothicPath = fileName;
+                gothicPath = path;
                 Save();
             }
         }

@@ -20,10 +20,12 @@ namespace GUC
 
     public static class Program
     {
+        static string gothicPath;
         static string projectPath;
         static string serverIP;
         static ushort serverPort;
 
+        public static string GothicPath { get { return gothicPath; } }
         public static string ProjectPath { get { return projectPath; } }
         public static string ServerIP { get { return serverIP; } }
         public static ushort ServerPort { get { return serverPort; } }
@@ -35,9 +37,13 @@ namespace GUC
 
         static void SetupProject()
         {
-            projectPath = Environment.GetEnvironmentVariable("GUCProjectFolder");
-            if (string.IsNullOrWhiteSpace(projectPath))
-                throw new Exception("Project folder environment variable is null or empty!");
+            gothicPath = Environment.GetEnvironmentVariable("GUCGothicPath");
+            if (string.IsNullOrWhiteSpace(gothicPath) || !Directory.Exists(gothicPath))
+                throw new Exception("Gothic folder environment variable is null or not found!");
+
+            projectPath = Environment.GetEnvironmentVariable("GUCProjectPath");
+            if (string.IsNullOrWhiteSpace(projectPath) || !Directory.Exists(projectPath))
+                throw new Exception("Project folder environment variable is null or not found!");
 
             serverIP = Environment.GetEnvironmentVariable("GUCServerIP");
             if (string.IsNullOrWhiteSpace(serverIP))
@@ -76,10 +82,10 @@ namespace GUC
                 Logger.Log("GUC started...");
 
                 SetupProject();
-
+                
                 SplashScreen.SetUpHooks();
                 SplashScreen.Create();
-
+                
                 Process.Write(new byte[] { 0xE9, 0x8C, 0x00, 0x00, 0x00 }, 0x0044AEDF); // skip visual vdfs init (vdfs32g.exe)
                 Process.Write(new byte[] { 0xE9, 0xA3, 0x00, 0x00, 0x00 }, 0x42687F); // skip intro videos
 

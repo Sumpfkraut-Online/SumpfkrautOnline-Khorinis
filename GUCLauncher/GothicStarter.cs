@@ -11,33 +11,45 @@ namespace GUCLauncher
 {
     static class GothicStarter
     {
-        public static void Start(string projectFolder, string ip, ushort port)
+        public static void Start(string folder, string ip, ushort port)
         {
-            string folder = Path.GetFullPath(projectFolder);
-            string dllName = Path.Combine(folder, "GUC.dll");
+            string projectFolder = Path.GetFullPath(folder);
+            string dllName = Path.Combine(projectFolder, "GUC.dll");
+            string g2App = Configuration.GothicApp;
+            string zSpyApp = Configuration.zSpyApp;
 
             if (!File.Exists(dllName))
             {
                 throw new FileNotFoundException(dllName + " not found!");
             }
 
-            if (!File.Exists(Configuration.GothicPath))
+            if (!File.Exists(g2App))
             {
-                throw new FileNotFoundException(Configuration.GothicPath + " not found!");
+                throw new FileNotFoundException(g2App + " not found!");
             }
 
-            if (!Configuration.IsGothic2(Configuration.GothicPath))
+            if (!Configuration.IsGothic2(g2App))
             {
-                throw new Exception(Configuration.GothicPath + " is wrong version!");
+                throw new Exception(g2App + " is wrong version!");
             }
 
-            ProcessStartInfo psi = new ProcessStartInfo(Configuration.GothicPath);
-            psi.UseShellExecute = false;
-            psi.EnvironmentVariables.Add("GUCProjectFolder", folder);
-            psi.EnvironmentVariables.Add("GUCServerIP", ip);
-            psi.EnvironmentVariables.Add("GUCServerPort", port.ToString());
+            ProcessStartInfo g2Psi = new ProcessStartInfo(g2App);
+            
+            if (File.Exists(zSpyApp))
+            {
+                ProcessStartInfo zSpyPsi = new ProcessStartInfo(zSpyApp);
+                zSpyPsi.WorkingDirectory = Path.GetFullPath(Path.Combine(projectFolder, "Log"));
+                Process.Start(zSpyPsi);
+                g2Psi.Arguments = "-zlog:5,s";
+            }
 
-            Process process = Process.Start(psi);
+            g2Psi.UseShellExecute = false;
+            g2Psi.EnvironmentVariables.Add("GUCProjectPath", projectFolder);
+            g2Psi.EnvironmentVariables.Add("GUCServerIP", ip);
+            g2Psi.EnvironmentVariables.Add("GUCServerPort", port.ToString());
+            g2Psi.EnvironmentVariables.Add("GUCGothicPath", Configuration.GothicPath);
+
+            Process process = Process.Start(g2Psi);
             SuspendProcess(process);
 
             Inject(process, dllName);
