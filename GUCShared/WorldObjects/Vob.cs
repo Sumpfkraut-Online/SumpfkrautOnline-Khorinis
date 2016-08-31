@@ -9,7 +9,7 @@ using GUC.Types;
 
 namespace GUC.WorldObjects
 {
-    public partial class Vob : GuidedVob
+    public partial class Vob : VobGuiding.GuidedVob
     {
         public override VobTypes VobType { get { return VobTypes.Vob; } }
 

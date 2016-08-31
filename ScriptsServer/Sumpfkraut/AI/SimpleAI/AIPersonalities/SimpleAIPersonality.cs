@@ -52,7 +52,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                 if (aiClients[c].GetType() == typeof(NPCInst))
                 {
                     npc = (NPCInst) aiClients[c];
-                    npc.World.BaseWorld.ForEachNPCRoughInRange(npc.BaseInst, attackRadius, 
+                    npc.World.BaseWorld.ForEachNPCRough(npc.BaseInst, attackRadius, 
                         delegate (WorldObjects.NPC nearNPC)
                     {
                         if (aiAgent.HasAIClient(nearNPC))

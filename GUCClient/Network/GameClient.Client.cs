@@ -30,8 +30,7 @@ namespace GUC.Network
         internal HashSet<int> guidedIDs = new HashSet<int>();
 
         #endregion
-
-
+        
         #region Spectator
 
         partial void pSetToSpectate(World world, Vec3f pos, Vec3f dir)
@@ -447,6 +446,18 @@ namespace GUC.Network
 
                 case NetworkIDs.GuideAddMessage:
                     GuideMessage.ReadGuideAddMessage(stream);
+                    break;
+                case NetworkIDs.GuideAddCmdMessage:
+                    GuideMessage.ReadGuideAddCmdMessage(stream);
+                    break;
+                case NetworkIDs.GuideRemoveMessage:
+                    GuideMessage.ReadGuideRemoveMessage(stream);
+                    break;
+                case NetworkIDs.GuideSetCmdMessage:
+                    GuideMessage.ReadGuideSetCmdMessage(stream);
+                    break;
+                case NetworkIDs.GuideRemoveCmdMessage:
+                    GuideMessage.ReadGuideRemoveCmdMessage(stream);
                     break;
 
                 default:

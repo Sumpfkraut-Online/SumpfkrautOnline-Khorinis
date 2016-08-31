@@ -7,7 +7,7 @@ using GUC.Network;
 using GUC.Enumeration;
 using RakNet;
 
-namespace GUC.WorldObjects
+namespace GUC.WorldObjects.VobGuiding
 {
     public partial class GuidedVob : BaseVob
     {

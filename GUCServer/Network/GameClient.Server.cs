@@ -9,6 +9,7 @@ using GUC.Enumeration;
 using GUC.WorldObjects.Cells;
 using GUC.Network.Messages;
 using GUC.Types;
+using GUC.WorldObjects.VobGuiding;
 
 namespace GUC.Network
 {

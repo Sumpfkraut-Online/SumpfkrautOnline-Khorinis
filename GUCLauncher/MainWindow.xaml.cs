@@ -133,15 +133,22 @@ namespace GUCLauncher
 
         #region Start Project
         
-        void bConnect_Click(object sender, RoutedEventArgs e)
+        void bConnect_Click(object sender, RoutedEventArgs args)
         {
-            if (lvServerList.SelectedIndex < 0)
-                return;
-            
-            lPWWrong.Content = null;
+            try
+            {
+                if (lvServerList.SelectedIndex < 0)
+                    return;
 
-            ServerListItem item = (ServerListItem)lvServerList.SelectedItem;
-            TryOpenProjectPage(item, item.Password);
+                lPWWrong.Content = null;
+
+                ServerListItem item = (ServerListItem)lvServerList.SelectedItem;
+                TryOpenProjectPage(item, item.Password);
+            }
+            catch (Exception e)
+            {
+                ShowException(e);
+            }
         }
 
         #endregion
@@ -207,38 +214,37 @@ namespace GUCLauncher
                 var stream = client.GetStream();
                 byte[] buf = new byte[byte.MaxValue];
                 buf[0] = 1;
-                if (password != null)
-                {
-                    Array.Copy(password, 0, buf, 1, 16);
-                }
 
-                if (stream.WriteAsync(buf, 0, 17).Wait(1000))
+                if (stream.WriteAsync(buf, 0, 1).Wait(1000))
                 {
-                    if (stream.ReadAsync(buf, 0, 1).Wait(1000))
+                    if (!item.HasPW || stream.WriteAsync(password, 0, 16).Wait(1000))
                     {
-                        if (buf[0] == 0)
+                        if (stream.ReadAsync(buf, 0, 1).Wait(1000))
                         {
-                            // wrong password
-                            item.Password = null;
-                            Configuration.Save();
-
-                            client.Close();
-                            ShowPasswordPage(item, true);
-                            return;
-                        }
-                        else if (stream.ReadAsync(buf, 0, 1).Wait(1000))
-                        {
-                            // correct password!
-                            item.Password = password;
-                            Configuration.Save();
-
-                            int byteLen = buf[0];
-                            if (stream.ReadAsync(buf, 0, byteLen).Wait(1000))
+                            if (buf[0] == 0)
                             {
-                                dlLink = Encoding.UTF8.GetString(buf, 0, byteLen);
+                                // wrong password
+                                item.Password = null;
+                                Configuration.Save();
+
                                 client.Close();
-                                ShowProjectPage(item);
+                                ShowPasswordPage(item, true);
                                 return;
+                            }
+                            else if (stream.ReadAsync(buf, 0, 1).Wait(1000))
+                            {
+                                // correct password!
+                                item.Password = password;
+                                Configuration.Save();
+
+                                int byteLen = buf[0];
+                                if (stream.ReadAsync(buf, 0, byteLen).Wait(1000))
+                                {
+                                    dlLink = Encoding.UTF8.GetString(buf, 0, byteLen);
+                                    client.Close();
+                                    ShowProjectPage(item);
+                                    return;
+                                }
                             }
                         }
                     }

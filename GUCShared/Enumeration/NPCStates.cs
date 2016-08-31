@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GUC.Enumeration
 {
-    public enum MoveState
+    public enum MoveState : byte
     {
         Stand,
 
@@ -17,7 +17,7 @@ namespace GUC.Enumeration
         Falling
     }
 
-    public enum EnvironmentState
+    public enum EnvironmentState : byte
     {
         None,
         InWater,

@@ -273,7 +273,7 @@ namespace GUC.WorldObjects
             if (!this.IsSpawned)
                 throw new Exception("Vob is not ingame!");
 
-            //this.Cell.ForEachSurroundingClient(c => c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
+            ForEachVisibleClient(c => c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
         }
 
         #endregion
