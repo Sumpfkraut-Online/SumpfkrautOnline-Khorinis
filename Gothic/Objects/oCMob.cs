@@ -7,7 +7,7 @@ using Gothic.Types;
 
 namespace Gothic.Objects
 {
-    public class oCMob : zCVob
+    public class oCMob : oCVob
     {
         new public abstract class VarOffsets : zCVob.VarOffsets
         {
@@ -74,7 +74,7 @@ namespace Gothic.Objects
         public new static oCMob Create()
         {
             int address = Process.CDECLCALL<IntArg>(0x718590); //_CreateInstance()
-            Process.THISCALL<NullReturnCall>(address, 0x71B8F0); //Konstruktor...
+            //Process.THISCALL<NullReturnCall>(address, 0x71B8F0); //Konstruktor...
             return new oCMob(address);
         }
     }

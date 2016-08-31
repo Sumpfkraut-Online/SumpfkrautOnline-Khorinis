@@ -134,7 +134,7 @@ namespace GUC.Network.Messages
         {
             PacketWriter stream = GameClient.SetupStream(NetworkIDs.NPCAniStartWithArgsMessage);
             stream.Write((ushort)job.ID);
-            GameClient.Client.character.ScriptObject.OnWriteAniStartArgs(stream, job, netArgs);
+            GameClient.Client.Character.ScriptObject.OnWriteAniStartArgs(stream, job, netArgs);
             GameClient.Send(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.UNRELIABLE);
         }
 

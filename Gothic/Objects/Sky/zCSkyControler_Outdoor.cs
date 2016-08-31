@@ -16,7 +16,7 @@ namespace Gothic.Objects.Sky
         {
         }
 
-        public abstract class VarOffsets
+        public abstract new class VarOffsets
         {
             public const int Layer0 = 1448,
             Layer1 = 1472,

@@ -107,6 +107,9 @@
     <Compile Include="..\GUCShared\GameTime.cs">
       <Link>GameTime.cs</Link>
     </Compile>
+    <Compile Include="..\GUCShared\GODictionary.cs">
+      <Link>GODictionary.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\Log\Logger.cs">
       <Link>Log\Logger.cs</Link>
     </Compile>
@@ -163,6 +166,9 @@
     </Compile>
     <Compile Include="..\GUCShared\WorldObjects\Collections\VobTypeObjectCollection.cs">
       <Link>WorldObjects\Collections\VobTypeObjectCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\WorldObjects\GuidedVob.cs">
+      <Link>WorldObjects\GuidedVob.cs</Link>
     </Compile>
     <Compile Include="..\GUCShared\WorldObjects\Instances\BaseVobInstance.cs">
       <Link>WorldObjects\Instances\BaseVobInstance.cs</Link>
@@ -269,6 +275,7 @@
     <Compile Include="Animations\AniJob.Server.cs" />
     <Compile Include="Models\Model.Server.cs" />
     <Compile Include="Network\GameClient.Server.cs" />
+    <Compile Include="Network\Messages\GuideMessage.cs" />
     <Compile Include="Network\Messages\SpectatorMessage.cs" />
     <Compile Include="Network\Messages\TradeMessage.cs" />
     <Compile Include="Network\Messages\ConnectionMessage.cs" />
@@ -278,16 +285,17 @@
     <Compile Include="Network\Messages\WorldMessage.cs" />
     <Compile Include="Options\ServerOptions.cs" />
     <Compile Include="Scripting\ScriptInterface.Server.cs" />
-    <Compile Include="TCPStatus.cs" />
+    <Compile Include="TCPListener.cs" />
     <Compile Include="Utilities\ExtendedObject.Server.cs" />
     <Compile Include="Utilities\TestObject.cs" />
     <Compile Include="Utilities\Threading\TestRun.cs" />
     <Compile Include="WorldObjects\BaseVob.Server.cs" />
-    <Compile Include="WorldObjects\Cells\NetCell.cs" />
+    <Compile Include="WorldObjects\Cells\BigCell.cs" />
     <Compile Include="WorldObjects\Cells\NPCCell.cs" />
     <Compile Include="WorldObjects\Cells\WorldCell.cs" />
     <Compile Include="WorldObjects\Collections\ItemContainer.Server.cs" />
     <Compile Include="StaticCollection.Server.cs" />
+    <Compile Include="WorldObjects\GuidedVob.Server.cs" />
     <Compile Include="WorldObjects\Instances\BaseVobInstance.Server.cs" />
     <Compile Include="WorldObjects\Instances\Mobs\MobBedInstance.Server.cs" />
     <Compile Include="WorldObjects\Mobs\MobBed.Server.cs" />

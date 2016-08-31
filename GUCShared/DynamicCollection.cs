@@ -88,7 +88,7 @@ namespace GUC
             if (action == null)
                 throw new ArgumentNullException("Action is null!");
 
-            for (int i = 0; i < arr.Length; i++)
+            for (int i = 0; i < idCounter; i++)
             {
                 if (arr[i] != null)
                     action(arr[i]);
@@ -98,12 +98,12 @@ namespace GUC
         /// <summary>
         /// return FALSE to break the loop.
         /// </summary>
-        public void ForEach(Predicate<T> action)
+        public void ForEachPredicate(Predicate<T> action)
         {
             if (action == null)
                 throw new ArgumentNullException("Action is null!");
 
-            for (int i = 0; i < arr.Length; i++)
+            for (int i = 0; i < idCounter; i++)
             {
                 if (arr[i] != null)
                 {

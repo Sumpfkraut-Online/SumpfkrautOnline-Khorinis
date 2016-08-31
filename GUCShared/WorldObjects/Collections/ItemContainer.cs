@@ -96,7 +96,7 @@ namespace GUC.WorldObjects.Collections
         /// </summary>
         public void ForEachItem(Predicate<Item> action)
         {
-            items.ForEach(action);
+            items.ForEachPredicate(action);
         }
 
         #endregion

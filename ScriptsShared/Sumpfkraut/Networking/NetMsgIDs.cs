@@ -6,9 +6,19 @@ using System.Threading.Tasks;
 
 namespace GUC.Scripts.Sumpfkraut.Networking
 {
-    public enum NetVobMsgIDs : byte
+    public enum NetMsgID
     {
+        MaxMessages
+    }
+
+    public enum NetWorldMsgID // byte
+    {
+        // Npc commands
+        DropItem,
+        DropItemAmount,
+
         HitMessage,
         ParryMessage,
+        MaxWorldMessages
     }
 }

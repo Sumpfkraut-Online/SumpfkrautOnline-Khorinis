@@ -23,28 +23,23 @@ namespace GUC.WorldObjects.Cells
             this.world = world;
             this.x = x;
             this.y = y;
-            this.coord = ((x << 16) | y & 0xFFFF);
+            this.coord = GetCoordinate(x, y);
         }
 
-        protected static int[] GetCoords(Vec3f pos, int cellSize)
+        protected static Vec2i GetCoords(Vec3f pos, int cellSize)
         {
             float unroundedX = pos.X / cellSize;
             float unroundedZ = pos.Z / cellSize;
 
-            // calculate new cell indices
+            // calculate cell indices
             int x = (int)(pos.X >= 0 ? unroundedX + 0.5f : unroundedX - 0.5f);
             int z = (int)(pos.Z >= 0 ? unroundedZ + 0.5f : unroundedZ - 0.5f);
-            
-            return new int[2] { x, z };
+
+            return new Vec2i(x, z);
         }
 
-        public static int GetCoordFromCoords(int x, int y)
+        public static int GetCoordinate(int x, int y)
         {
-            if (x < short.MinValue || x > short.MaxValue || y < short.MinValue || y > short.MaxValue)
-            {
-                throw new Exception("Coords are out of cell range! " + x + " " + y);
-            }
-
             return (x << 16) | y & 0xFFFF;
         }
     }

@@ -7,7 +7,7 @@ using GUC.Enumeration;
 using WinApi.User.Enumeration;
 using GUC.GUI;
 
-namespace GUC.Scripts.MainMenu
+namespace GUC.Scripts.Sumpfkraut.GUI.MainMenu
 {
     /*class MainMenuCharacter : MainMenuItem, InputReceiver
     {

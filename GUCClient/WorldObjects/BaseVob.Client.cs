@@ -31,7 +31,7 @@ namespace GUC.WorldObjects
         {
             if (this.gvob != null)
             {
-                this.pos = (Vec3f)this.gvob.TrafoObjToWorld.Position;
+                this.pos = ((Vec3f)this.gvob.TrafoObjToWorld.Position).CorrectPosition();
             }
         }
 
@@ -39,7 +39,7 @@ namespace GUC.WorldObjects
         {
             if (this.gvob != null)
             {
-                this.dir = (Vec3f)this.gvob.TrafoObjToWorld.Direction;
+                this.dir = ((Vec3f)this.gvob.TrafoObjToWorld.Direction).CorrectDirection();
             }
         }
 

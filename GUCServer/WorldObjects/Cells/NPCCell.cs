@@ -8,16 +8,51 @@ namespace GUC.WorldObjects.Cells
 {
     class NPCCell : WorldCell
     {
-        public readonly DynamicCollection<NPC> npcs = new DynamicCollection<NPC>();
-
+        public const int CellSize = 800;
+        
         public NPCCell(World world, int x, int y) : base(world, x, y)
         {
         }
 
-        public const int Size = 600;
-        public static int[] GetCoords(Vec3f pos)
+        #region NPCs
+
+        DynamicCollection<NPC> npcs = new DynamicCollection<NPC>();
+
+        #region Add & Remove
+
+        public void AddNPC(NPC npc)
         {
-            return WorldCell.GetCoords(pos, Size);
+            npcs.Add(npc, ref npc.npcCellID);
+        }
+
+        public void RemoveNPC(NPC npc)
+        {
+            npcs.Remove(ref npc.npcCellID);
+        }
+
+        #endregion
+
+        #region Access
+
+        public void ForEachNPC(Action<NPC> action)
+        {
+            npcs.ForEach(action);
+        }
+
+        public void ForEachNPCPredicate(Predicate<NPC> predicate)
+        {
+            npcs.ForEachPredicate(predicate);
+        }
+
+        public int NPCCount { get { return npcs.Count; } }
+
+        #endregion
+
+        #endregion
+
+        public static Vec2i GetCoords(Vec3f pos)
+        {
+            return WorldCell.GetCoords(pos, CellSize);
         }
     }
 }

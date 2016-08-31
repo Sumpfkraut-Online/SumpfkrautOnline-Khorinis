@@ -90,6 +90,9 @@
     <Compile Include="..\GUCShared\GameTime.cs">
       <Link>GameTime.cs</Link>
     </Compile>
+    <Compile Include="..\GUCShared\GODictionary.cs">
+      <Link>GODictionary.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\Log\Logger.cs">
       <Link>Log\Logger.cs</Link>
     </Compile>
@@ -146,6 +149,9 @@
     </Compile>
     <Compile Include="..\GUCShared\WorldObjects\Collections\VobTypeObjectCollection.cs">
       <Link>WorldObjects\Collections\VobTypeObjectCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\WorldObjects\GuidedVob.cs">
+      <Link>WorldObjects\GuidedVob.cs</Link>
     </Compile>
     <Compile Include="..\GUCShared\WorldObjects\Instances\BaseVobInstance.cs">
       <Link>WorldObjects\Instances\BaseVobInstance.cs</Link>
@@ -246,21 +252,22 @@
     <Compile Include="..\GUCShared\WorldObjects\World.cs">
       <Link>WorldObjects\World.cs</Link>
     </Compile>
-    <Compile Include="GUI\GUCInventory.cs" />
     <Compile Include="GUI\GUCTextBox.cs" />
     <Compile Include="GUI\GUCView.cs" />
     <Compile Include="GUI\GUCVisual.cs" />
     <Compile Include="GUI\GUCVisualText.cs" />
-    <Compile Include="GUI\GUCVisualVob.cs" />
-    <Compile Include="GUI\MenuRenderer.cs" />
+    <Compile Include="GUI\GUC3DVisual.cs" />
+    <Compile Include="Hooks\hView.cs" />
     <Compile Include="Hooks\hGame.cs" />
     <Compile Include="Hooks\hParser.cs" />
     <Compile Include="Hooks\hPlayerVob.cs" />
     <Compile Include="Hooks\hWeather.cs" />
     <Compile Include="Barrier.cs" />
+    <Compile Include="Hooks\hFile.cs" />
     <Compile Include="InputHandler.cs" />
     <Compile Include="Network\GameClient.Client.cs" />
     <Compile Include="Network\Messages\ConnectionMessage.cs" />
+    <Compile Include="Network\Messages\GuideMessage.cs" />
     <Compile Include="Network\Messages\InstanceMessage.cs" />
     <Compile Include="Network\Messages\InventoryMessage.cs" />
     <Compile Include="Network\Messages\ModelMessage.cs" />
@@ -283,6 +290,7 @@
     <Compile Include="WorldObjects\BaseVob.Client.cs" />
     <Compile Include="StaticCollection.Client.cs" />
     <Compile Include="WorldObjects\Collections\ItemContainer.Client.cs" />
+    <Compile Include="WorldObjects\GuidedVob.Client.cs" />
     <Compile Include="WorldObjects\Instances\BaseVobInstance.Client.cs" />
     <Compile Include="WorldObjects\Instances\ItemInstance.Client.cs" />
     <Compile Include="WorldObjects\Instances\Mobs\MobBedInstance.Client.cs" />

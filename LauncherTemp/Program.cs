@@ -283,7 +283,7 @@ namespace TempLauncher
             IntPtr dllPath = Alloc(process, (uint)(dllBytes.Length + 1));
             Write(process, dllPath, dllBytes);
             
-            byte[] typeBytes = Encoding.Unicode.GetBytes("GUC.Client.Program");
+            byte[] typeBytes = Encoding.Unicode.GetBytes("GUC.Program");
             IntPtr typeName = Alloc(process, (uint)(typeBytes.Length + 1));
             Write(process, typeName, typeBytes);
 

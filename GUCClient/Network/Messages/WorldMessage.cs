@@ -11,7 +11,7 @@ namespace GUC.Network.Messages
 {
     static class WorldMessage
     {
-        #region World Loading
+        #region World Loading & Joining
 
         public static void ReadLoadWorldMessage(PacketReader stream)
         {
@@ -28,6 +28,7 @@ namespace GUC.Network.Messages
             }
             world.SkyCtrl.ScriptObject.SetRainTime(world.SkyCtrl.TargetTime, world.SkyCtrl.TargetWeight);
             world.SkyCtrl.ScriptObject.SetWeatherType(world.SkyCtrl.WeatherType);
+
             var hero = Gothic.Objects.oCNpc.GetPlayer();
             hero.Disable();
             Gothic.oCGame.GetWorld().RemoveVob(hero);
@@ -41,9 +42,37 @@ namespace GUC.Network.Messages
             GameClient.Send(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE);
         }
 
+        public static void ReadJoinWorldMessage(PacketReader stream)
+        {
+            for (int i = stream.ReadUShort(); i > 0; i--)
+            {
+                ReadVobSpawnMessage(stream);
+            }
+        }
+
+        public static void ReadLeaveWorldMessage(PacketReader stream)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
 
-        #region Spawns & Cells
+        #region Spawns
+
+        public static void ReadCellMessage(PacketReader stream)
+        {
+            // remove vobs
+            for (int i = stream.ReadUShort(); i > 0; i--)
+            {
+                ReadVobDespawnMessage(stream);
+            }
+
+            // add vobs
+            for (int i = stream.ReadUShort(); i > 0; i--)
+            {
+                ReadVobSpawnMessage(stream);
+            }
+        }
 
         public static void ReadVobSpawnMessage(PacketReader stream)
         {
@@ -54,34 +83,14 @@ namespace GUC.Network.Messages
 
         public static void ReadVobDespawnMessage(PacketReader stream)
         {
+            int id = stream.ReadUShort();
             BaseVob vob;
-            if (World.current.TryGetVob(stream.ReadUShort(), out vob))
+            if (World.current.TryGetVob(id, out vob))
             {
                 vob.ScriptObject.Despawn();
             }
-        }
 
-        public static void ReadCellMessage(PacketReader stream)
-        {
-            for (int t = 0; t < (int)VobTypes.Maximum; t++)
-            {
-                int vobCount = stream.ReadUShort();
-                for (int i = 0; i < vobCount; i++)
-                {
-                    BaseVob vob = ScriptManager.Interface.CreateVob((VobTypes)t);
-                    vob.ReadStream(stream);
-                    vob.ScriptObject.Spawn(World.current);
-                }
-            }
-            int delCount = stream.ReadUShort();
-            for (int i = 0; i < delCount; i++)
-            {
-                BaseVob vob;
-                if (World.Current.TryGetVob(stream.ReadUShort(), out vob))
-                {
-                    vob.ScriptObject.Despawn();
-                }
-            }
+            GameClient.Client.guidedIDs.Remove(id);
         }
 
         #endregion

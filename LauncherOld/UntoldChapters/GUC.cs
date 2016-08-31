@@ -55,10 +55,10 @@ namespace Launcher2
             //dll injection
             try
             {
-                if (WinApi.Process.LoadLibary(process, dll) == IntPtr.Zero)
+                /*if (WinApi.Process.LoadLibary(process, dll) == IntPtr.Zero)
                 {
                     throw new Exception(System.Runtime.InteropServices.Marshal.GetLastWin32Error().ToString());
-                }
+                }*/
             }
             catch (Exception e)
             {

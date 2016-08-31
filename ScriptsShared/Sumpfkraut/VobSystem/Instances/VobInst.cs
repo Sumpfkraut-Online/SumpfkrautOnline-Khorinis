@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using GUC.Network;
+using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.WorldObjects;
+using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
@@ -14,8 +14,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public new Vob BaseInst { get { return (Vob)base.BaseInst; } }
 
+        public new VobDef Definition { get { return (VobDef)base.Definition; } }
+
+        public ModelDef Model { get { return this.Definition.Model; } }
+
         #endregion
-        
+
         public VobInst() : this(new Vob())
         {
         }

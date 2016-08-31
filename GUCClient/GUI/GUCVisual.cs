@@ -7,10 +7,11 @@ using Gothic.Types;
 
 namespace GUC.GUI
 {
+    /// <summary>
+    /// Basically like Gothic's zCView but with more functions and pixel position support.
+    /// </summary>
     public class GUCVisual : GUCView
     {
-        /*Basically like Gothic's zCView but with more functions and pixel position support.*/
-
         protected zCView thisView;
         public zCView zView { get { return thisView; } }
 
@@ -19,16 +20,34 @@ namespace GUC.GUI
         protected bool shown = false;
         public bool Shown { get { return shown; } }
 
+        /// <summary>
+        /// Fullscreen.
+        /// </summary>
         public GUCVisual()
             : this(0, 0, 0x2000, 0x2000, true)
-        { //fullscreen
+        {
         }
 
+        /// <summary>
+        /// Uses pixels as standard.
+        /// </summary>
+        /// <param name="x">Left</param>
+        /// <param name="y">Top</param>
+        /// <param name="w">Width</param>
+        /// <param name="h">Height</param>
         public GUCVisual(int x, int y, int w, int h)
             : this(x, y, w, h, false)
-        {//use pixels as standard
+        {
         }
 
+        /// <summary>
+        /// Can use pixels or virtuals.
+        /// </summary>
+        /// <param name="x">Left</param>
+        /// <param name="y">Top</param>
+        /// <param name="w">Width</param>
+        /// <param name="h">Height</param>
+        /// <param name="virtuals">True to use virtuals (8192x8192 for any screensize).</param>
         public GUCVisual(int x, int y, int w, int h, bool virtuals)
             : this(x, y, w, h, virtuals, null)
         {
