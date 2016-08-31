@@ -7,6 +7,7 @@ using System.Diagnostics;
 using GUC.Scripting;
 using GUC.Log;
 using GUC.Network;
+using GUC.Options;
 
 namespace GUC
 {
@@ -58,16 +59,23 @@ namespace GUC
         }
 
         static Thread game;
+        static Thread tcpListener;
         static void Main(string[] args)
         {
             try
             {
+                ServerOptions.Load();
+                Console.Title = ServerOptions.ServerName;
+
                 GameServer.Start();
 
                 ScriptManager.StartScripts("Scripts\\ServerScripts.dll");
 
                 game = new Thread(RunServer);
                 game.Start();
+
+                tcpListener = new Thread(TCPListener.Run);
+                tcpListener.Start();
 
                 Logger.RunLog();
             }
@@ -84,12 +92,10 @@ namespace GUC
             try
             {
                 const long updateRate = 15 * TimeSpan.TicksPerMillisecond; //min time between server ticks
-                const long idleTimeSpan = 140000;
 
                 const long nextInfoUpdateInterval = 1 * TimeSpan.TicksPerMinute;
                 long nextInfoUpdateTime = GameTime.Ticks + nextInfoUpdateInterval;
-
-                Stopwatch gcWatch = new Stopwatch();
+                
                 TimeStat timeAll = new TimeStat();
                 while (true)
                 {

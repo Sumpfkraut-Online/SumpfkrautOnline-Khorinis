@@ -20,39 +20,37 @@ namespace GUC
 
     public static class Program
     {
-        static string projectName;
+        static string gothicPath;
         static string projectPath;
-        static string serverAddress;
+        static string serverIP;
+        static ushort serverPort;
 
-        public static string ProjectName { get { return projectName; } }
+        public static string GothicPath { get { return gothicPath; } }
         public static string ProjectPath { get { return projectPath; } }
-        public static string ServerAddress { get { return serverAddress; } }
-        public const ushort ServerPort = 9054;
+        public static string ServerIP { get { return serverIP; } }
+        public static ushort ServerPort { get { return serverPort; } }
+
+        public static string GetFullPath(params string[] paths)
+        {
+            return Path.Combine(projectPath, Path.Combine(paths));
+        }
 
         static void SetupProject()
         {
-            projectName = Environment.GetEnvironmentVariable("GUCProject");
-            if (string.IsNullOrWhiteSpace(projectName))
-                throw new Exception("Project name environment variable is null or empty!");
+            gothicPath = Environment.GetEnvironmentVariable("GUCGothicPath");
+            if (string.IsNullOrWhiteSpace(gothicPath) || !Directory.Exists(gothicPath))
+                throw new Exception("Gothic folder environment variable is null or not found!");
 
-            serverAddress = Environment.GetEnvironmentVariable("ServerAddress");
-            if (string.IsNullOrWhiteSpace(serverAddress))
-                throw new Exception("Server address environment variable is null or empty!");
+            projectPath = Environment.GetEnvironmentVariable("GUCProjectPath");
+            if (string.IsNullOrWhiteSpace(projectPath) || !Directory.Exists(projectPath))
+                throw new Exception("Project folder environment variable is null or not found!");
 
-            string current = Path.GetFullPath(Environment.CurrentDirectory); // It's Gothic2/System when the process starts, Gothic2/ afterwards.
+            serverIP = Environment.GetEnvironmentVariable("GUCServerIP");
+            if (string.IsNullOrWhiteSpace(serverIP))
+                throw new Exception("Server IP environment variable is null or empty!");
 
-            if (File.Exists(current + "\\Gothic2.exe"))
-            { // Gothic2/System/
-                projectPath = Path.GetFullPath(current + "\\Multiplayer\\UntoldChapters\\" + projectName + "\\");
-            }
-            else if (File.Exists(current + "\\System\\Gothic2.exe"))
-            { // Gothic2/
-                projectPath = Path.GetFullPath(current + "\\System\\Multiplayer\\UntoldChapters\\" + projectName + "\\");
-            }
-            else
-            {
-                throw new Exception("Gothic 2 not found!");
-            }
+            if (!ushort.TryParse(Environment.GetEnvironmentVariable("GUCServerPort"), out serverPort))
+                throw new Exception("Could not parse server port environment variable to ushort!");
 
             AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;
         }
@@ -70,7 +68,7 @@ namespace GUC
                 return Assembly.Load(buffer);
             }
 
-            return Assembly.LoadFrom(projectPath + name + ".dll");
+            return Assembly.LoadFrom(Path.Combine(projectPath, name + ".dll"));
         }
 
         static bool mained = false;
@@ -84,14 +82,15 @@ namespace GUC
                 Logger.Log("GUC started...");
 
                 SetupProject();
-
+                
                 SplashScreen.SetUpHooks();
                 SplashScreen.Create();
-
+                
                 Process.Write(new byte[] { 0xE9, 0x8C, 0x00, 0x00, 0x00 }, 0x0044AEDF); // skip visual vdfs init (vdfs32g.exe)
                 Process.Write(new byte[] { 0xE9, 0xA3, 0x00, 0x00, 0x00 }, 0x42687F); // skip intro videos
 
                 // add hooks
+                hFile.AddHooks();
                 hParser.AddHooks();
                 hGame.AddHooks();
                 hWeather.AddHooks();
@@ -144,7 +143,7 @@ namespace GUC
                 #endregion
 
                 // Load Scripts
-                Scripting.ScriptManager.StartScripts(Program.ProjectPath + "Scripts\\ClientScripts.dll");
+                Scripting.ScriptManager.StartScripts(Path.Combine(projectPath, "Scripts", "ClientScripts.dll"));
 
                 Logger.Log("Waiting...");
                 SplashScreen.WaitHandle.WaitOne(3000);
@@ -156,6 +155,7 @@ namespace GUC
             }
             return 0;
         }
+
         public static void Exit()
         {
             GameClient.Client.Disconnect();

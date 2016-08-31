@@ -12,8 +12,6 @@ namespace GUC.Network
 {
     public static class GameServer
     {
-        internal readonly static ServerOptions Options = ServerOptions.Init();
-
         readonly static Dictionary<ulong, GameClient> clientDict = new Dictionary<ulong, GameClient>();
 
         internal readonly static RakPeerInterface ServerInterface = RakPeer.GetInstance();
@@ -30,24 +28,23 @@ namespace GUC.Network
 
             using (SocketDescriptor socketDescriptor = new SocketDescriptor())
             {
-                socketDescriptor.port = Options.Port;
+                socketDescriptor.port = ServerOptions.Port;
 
-                StartupResult res = ServerInterface.Startup(Options.Slots, socketDescriptor, 1);
+                StartupResult res = ServerInterface.Startup(ServerOptions.Slots, socketDescriptor, 1);
                 if (res == StartupResult.RAKNET_STARTED)
                 {
-                    Logger.Log("Server start listening on port " + Options.Port);
+                    Logger.Log("Server start listening on port " + ServerOptions.Port);
                 }
                 else
                 {
                     throw new Exception("RakNet startup failed: " + res.ToString());
                 }
-                ServerInterface.SetMaximumIncomingConnections(Options.Slots);
+                ServerInterface.SetMaximumIncomingConnections(ServerOptions.Slots);
                 ServerInterface.SetOccasionalPing(true);
-
-                string pw = Constants.VERSION + Options.Password;
-                if (pw.Length > 0)
+                
+                if (ServerOptions.Password != null)
                 {
-                    ServerInterface.SetIncomingPassword(pw, pw.Length);
+                    ServerInterface.SetIncomingPassword(ServerOptions.Password, 16);
                 }
             }
         }

@@ -98,7 +98,7 @@ namespace GUC.Scripts.TFFA
                 {
                     string str = Hero.BaseInst.GetPosition() + " " + Hero.BaseInst.GetDirection() + "\r\n";
                     Log.Logger.Log(str);
-                    System.IO.File.AppendAllText(Program.ProjectPath + "SavedLocations.txt", str);
+                    System.IO.File.AppendAllText(System.IO.Path.Combine(Program.ProjectPath, "SavedLocations.txt"), str);
                 }
             }
 

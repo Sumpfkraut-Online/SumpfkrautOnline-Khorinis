@@ -480,13 +480,13 @@ namespace GUC.Network
 
                 this.isConnecting = true;
 
-                ConnectionAttemptResult res = clientInterface.Connect(Program.ServerAddress, Program.ServerPort, Constants.VERSION, Constants.VERSION.Length);
+                ConnectionAttemptResult res = clientInterface.Connect(Program.ServerIP, Program.ServerPort, null, 0);
                 if (res != ConnectionAttemptResult.CONNECTION_ATTEMPT_STARTED)
                 {
                     throw new Exception("Connection couldn't be established: " + res);
                 }
 
-                Logger.Log("Connection attempt {0} to '{1}:{2}' started.", ++connectionAttempts, Program.ServerAddress, Program.ServerPort);
+                Logger.Log("Connection attempt {0} to '{1}:{2}' started.", ++connectionAttempts, Program.ServerIP, Program.ServerPort);
             }
             catch (Exception e)
             {

@@ -34,7 +34,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Threading
 
         public AbstractRunnable (bool startOnCreate, TimeSpan timeout, bool runOnce)
         {
-            SetObjName("AbstractRunnable (default)");
+            //SetObjName("AbstractRunnable (default)");
             this.printStateControls = false;
             this.timeout = timeout;
             if ((this.timeout == TimeSpan.MinValue) || (this.timeout < TimeSpan.Zero))
