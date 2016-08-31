@@ -70,7 +70,8 @@
     <Compile Include="WorldObjects\Collections\ItemContainer.cs" />
     <Compile Include="StaticCollection.cs" />
     <Compile Include="WorldObjects\Collections\VobTypeObjectCollection.cs" />
-    <Compile Include="WorldObjects\GuidedVob.cs" />
+    <Compile Include="WorldObjects\VobGuiding\GuideCmd.cs" />
+    <Compile Include="WorldObjects\VobGuiding\GuidedVob.cs" />
     <Compile Include="WorldObjects\Instances\Mobs\MobBedInstance.cs" />
     <Compile Include="WorldObjects\Instances\ProjectileInstance.cs" />
     <Compile Include="WorldObjects\Mobs\MobBed.cs" />

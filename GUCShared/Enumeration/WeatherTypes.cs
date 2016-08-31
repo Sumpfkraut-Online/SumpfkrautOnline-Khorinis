@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GUC.Enumeration
 {
-    public enum WeatherTypes
+    public enum WeatherTypes : byte
     {
         Snow,
         Rain,

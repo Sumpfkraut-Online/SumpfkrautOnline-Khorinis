@@ -150,9 +150,6 @@
     <Compile Include="..\GUCShared\WorldObjects\Collections\VobTypeObjectCollection.cs">
       <Link>WorldObjects\Collections\VobTypeObjectCollection.cs</Link>
     </Compile>
-    <Compile Include="..\GUCShared\WorldObjects\GuidedVob.cs">
-      <Link>WorldObjects\GuidedVob.cs</Link>
-    </Compile>
     <Compile Include="..\GUCShared\WorldObjects\Instances\BaseVobInstance.cs">
       <Link>WorldObjects\Instances\BaseVobInstance.cs</Link>
     </Compile>
@@ -246,6 +243,12 @@
     <Compile Include="..\GUCShared\WorldObjects\Vob.cs">
       <Link>WorldObjects\Vob.cs</Link>
     </Compile>
+    <Compile Include="..\GUCShared\WorldObjects\VobGuiding\GuideCmd.cs">
+      <Link>WorldObjects\VobGuiding\GuideCmd.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\WorldObjects\VobGuiding\GuidedVob.cs">
+      <Link>WorldObjects\VobGuiding\GuidedVob.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\WorldObjects\Weather\SkyController.cs">
       <Link>WorldObjects\Weather\SkyController.cs</Link>
     </Compile>
@@ -290,7 +293,7 @@
     <Compile Include="WorldObjects\BaseVob.Client.cs" />
     <Compile Include="StaticCollection.Client.cs" />
     <Compile Include="WorldObjects\Collections\ItemContainer.Client.cs" />
-    <Compile Include="WorldObjects\GuidedVob.Client.cs" />
+    <Compile Include="WorldObjects\VobGuiding\GuidedVob.Client.cs" />
     <Compile Include="WorldObjects\Instances\BaseVobInstance.Client.cs" />
     <Compile Include="WorldObjects\Instances\ItemInstance.Client.cs" />
     <Compile Include="WorldObjects\Instances\Mobs\MobBedInstance.Client.cs" />

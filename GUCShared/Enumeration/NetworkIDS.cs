@@ -72,6 +72,10 @@ namespace GUC.Enumeration
 
         // GuidedVobs
         GuideAddMessage,
+        GuideAddCmdMessage,
+        GuideRemoveMessage,
+        GuideSetCmdMessage,
+        GuideRemoveCmdMessage,
 
     }
 }

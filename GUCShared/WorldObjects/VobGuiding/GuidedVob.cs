@@ -5,27 +5,13 @@ using System.Text;
 using GUC.Network;
 using GUC.Types;
 
-namespace GUC.WorldObjects
+namespace GUC.WorldObjects.VobGuiding
 {
     public abstract partial class GuidedVob : BaseVob
     {
-       /* public abstract class Command
-        {
-            protected abstract void WriteStream(PacketWriter stream);
-            protected abstract void ReadStream(PacketReader stream);
-        }
-
-        public abstract class TargetCommand : Command
-        {
-            BaseVob target;
-            public BaseVob Target { get { return this.target; } }
-
-            public TargetCommand(BaseVob target)
-            {
-                this.target = target;
-            }
-        }*/
-
+        GuideCmd currentCmd;
+        public GuideCmd CurrentCommand { get { return this.currentCmd; } }
+        
         internal GameClient Guide;
 
         partial void pSpawn(World world, Vec3f position, Vec3f direction);

@@ -5,7 +5,7 @@ using System.Text;
 using GUC.Network;
 using GUC.Network.Messages;
 
-namespace GUC.WorldObjects
+namespace GUC.WorldObjects.VobGuiding
 {
     public abstract partial class GuidedVob
     {
@@ -30,27 +30,42 @@ namespace GUC.WorldObjects
 
             if (this.IsSpawned)
             {
-                throw new NotImplementedException();
                 if (this.needsClientGuide)
                 {
                     this.Guide = FindNewGuide();
-                    this.Guide.GuidedVobs.Add(this);
+                    if (this.Guide != null)
+                    {
+                        this.Guide.GuidedVobs.Add(this);
+                        GuideMessage.WriteAddGuidableMessage(this.Guide, this);
+                    }
                 }
                 else
                 {
-                    this.Guide.GuidedVobs.Remove(this.ID);
-                    this.Guide = null;
+                    if (this.Guide != null)
+                    {
+                        this.Guide.GuidedVobs.Remove(this.ID);
+                        GuideMessage.WriteRemoveGuidableMessage(this.Guide, this);
+                        this.Guide = null;
+                    }
                 }
             }
         }
 
         internal override void AddVisibleClient(GameClient client)
         {
-            base.AddVisibleClient(client);            
+            base.AddVisibleClient(client);
             
-            // if client.GuidedVobs.Count < this.Guide.GuidedVobs.Count
-            if (this.needsClientGuide && this.Guide == null)
+            if (this.needsClientGuide)
             {
+                if (this.Guide != null)
+                {   // check if the new client has less guided vobs than our current guide
+                    if (client.GuidedVobs.Count > this.Guide.GuidedVobs.Count)
+                        return;
+
+                    this.Guide.GuidedVobs.Remove(this.ID);
+                    GuideMessage.WriteRemoveGuidableMessage(this.Guide, this);
+                }
+
                 this.Guide = client;
                 this.Guide.GuidedVobs.Add(this);
                 GuideMessage.WriteAddGuidableMessage(this.Guide, this);
@@ -82,6 +97,15 @@ namespace GUC.WorldObjects
                     best = client;
             });
             return best;
+        }
+
+        public void SetGuideCommand(GuideCmd cmd)
+        {
+            this.currentCmd = cmd;
+            if (this.Guide != null)
+            {
+                GuideMessage.WriteGuidableCmdMessage(this.Guide, this);
+            }
         }
     }
 }
