@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using GUC.Log;
 using System.Security.Cryptography;
+using System.Collections.ObjectModel;
 
 namespace GUC.Options
 {
@@ -83,7 +84,8 @@ namespace GUC.Options
         #region Password
 
         static byte[] password = null;
-        public static byte[] Password { get { return password; } }
+        public static ReadOnlyCollection<byte> Password { get; private set; }
+
         public static void SetPassword(string newPassword, bool save = true)
         {
             byte[] newHash;
@@ -106,11 +108,16 @@ namespace GUC.Options
             if (newHash == null || newHash.Length != 16)
             {
                 password = null;
+                Password = null;
+                Network.GameServer.ServerInterface.SetIncomingPassword(default(string), 0);
                 Logger.Log("Password removed.");
             }
             else
             {
                 password = newHash;
+                Password = new ReadOnlyCollection<byte>(password);
+                string pwStr = Convert.ToBase64String(password);
+                Network.GameServer.ServerInterface.SetIncomingPassword(pwStr, pwStr.Length);
                 Logger.Log("Password is set.");
             }
 

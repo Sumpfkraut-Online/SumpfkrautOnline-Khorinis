@@ -129,20 +129,20 @@ namespace GUC
                                 stream.WriteTimeOut(statusInfo, 0, statusInfoLen);
                                 break;
                             case 1:
-                                if (ServerOptions.Password != null)
+                                if (stream.ReadTimeOut(buf, 0, 16))
                                 {
-                                    if (!stream.ReadTimeOut(buf, 0, 16))
-                                        break;
-
-                                    for (int i = 0; i < 16; i++)
-                                        if (buf[i] != ServerOptions.Password[i])
-                                        {
-                                            buf[0] = 0;
-                                            stream.WriteTimeOut(buf, 0, 1);
-                                            goto default;
-                                        }
+                                    if (ServerOptions.Password != null)
+                                    {
+                                        for (int i = 0; i < 16; i++)
+                                            if (buf[i] != ServerOptions.Password[i])
+                                            {
+                                                buf[0] = 0;
+                                                stream.WriteTimeOut(buf, 0, 1);
+                                                goto default;
+                                            }
+                                    }
+                                    stream.WriteTimeOut(downloadInfo, 0, downloadInfoLen);
                                 }
-                                stream.WriteTimeOut(downloadInfo, 0, downloadInfoLen);
                                 break;
                             default:
                                 break;

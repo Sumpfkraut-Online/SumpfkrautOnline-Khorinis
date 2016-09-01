@@ -132,7 +132,7 @@ namespace GUCLauncher
         #endregion
 
         #region Start Project
-        
+
         void bConnect_Click(object sender, RoutedEventArgs args)
         {
             try
@@ -170,7 +170,7 @@ namespace GUCLauncher
         {
             lPWTitle.Content = item.Name;
             lPWIP.Content = item.IP;
-            
+
             if (wrongPW)
             {
                 lPWWrong.Content = "Falsches Passwort!";
@@ -215,36 +215,35 @@ namespace GUCLauncher
                 byte[] buf = new byte[byte.MaxValue];
                 buf[0] = 1;
 
-                if (stream.WriteAsync(buf, 0, 1).Wait(1000))
+                if (password != null)
                 {
-                    if (!item.HasPW || stream.WriteAsync(password, 0, 16).Wait(1000))
+                    Array.Copy(password, 0, buf, 1, 16);
+                }
+
+                if (stream.WriteAsync(buf, 0, 17).Wait(1000))
+                {
+                    if (stream.ReadAsync(buf, 0, 1).Wait(1000))
                     {
-                        if (stream.ReadAsync(buf, 0, 1).Wait(1000))
+                        if (buf[0] == 0)
                         {
-                            if (buf[0] == 0)
-                            {
-                                // wrong password
-                                item.Password = null;
-                                Configuration.Save();
+                            // wrong password
+                            client.Close();
+                            ShowPasswordPage(item, true);
+                            return;
+                        }
+                        else if (stream.ReadAsync(buf, 0, 1).Wait(1000))
+                        {
+                            // correct password!
+                            item.Password = password;
+                            Configuration.Save();
 
+                            int byteLen = buf[0];
+                            if (stream.ReadAsync(buf, 0, byteLen).Wait(1000))
+                            {
+                                dlLink = Encoding.UTF8.GetString(buf, 0, byteLen);
                                 client.Close();
-                                ShowPasswordPage(item, true);
+                                ShowProjectPage(item);
                                 return;
-                            }
-                            else if (stream.ReadAsync(buf, 0, 1).Wait(1000))
-                            {
-                                // correct password!
-                                item.Password = password;
-                                Configuration.Save();
-
-                                int byteLen = buf[0];
-                                if (stream.ReadAsync(buf, 0, byteLen).Wait(1000))
-                                {
-                                    dlLink = Encoding.UTF8.GetString(buf, 0, byteLen);
-                                    client.Close();
-                                    ShowProjectPage(item);
-                                    return;
-                                }
                             }
                         }
                     }
@@ -370,6 +369,7 @@ namespace GUCLauncher
                     Dispatcher.Invoke(() =>
                     {
                         lUpdate.Content = "Server disabled automatic updates.";
+                        SetStartButton(StartButtonSetting.Start);
                         progressBar.Value = 100;
                     });
                     return;
@@ -470,7 +470,7 @@ namespace GUCLauncher
         }
 
 
-        void ClickUpdate(object sender, RoutedEventArgs e)
+        void ClickUpdate(object sender, RoutedEventArgs args)
         {
             SetStartButton(StartButtonSetting.Disabled);
             progressBar.Value = 0;
@@ -490,24 +490,25 @@ namespace GUCLauncher
                         SetStartButton(StartButtonSetting.Start);
                     });
                 }
-                catch (Exception e2)
+                catch (Exception e)
                 {
-                    if (!(e2 is ThreadAbortException || e2 is TaskCanceledException))
-                        ShowException(e2);
+                    if (!(e is ThreadAbortException || e is TaskCanceledException))
+                        ShowException(e);
                 }
             });
             updateThread.Start();
         }
 
-        void ClickStart(object sender, RoutedEventArgs e)
+        void ClickStart(object sender, RoutedEventArgs args)
         {
             try
             {
-                GothicStarter.Start(Configuration.ActiveProject.GetFolder(), Configuration.ActiveProject.IP, Configuration.ActiveProject.Port);
+                var project = Configuration.ActiveProject;
+                GothicStarter.Start(project.GetFolder(), project.IP, project.Port, project.Password);
             }
-            catch (Exception e2)
+            catch (Exception e)
             {
-                ShowException(e2);
+                ShowException(e);
             }
         }
 

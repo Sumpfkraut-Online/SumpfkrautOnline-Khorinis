@@ -24,11 +24,13 @@ namespace GUC
         static string projectPath;
         static string serverIP;
         static ushort serverPort;
+        static string password;
 
         public static string GothicPath { get { return gothicPath; } }
         public static string ProjectPath { get { return projectPath; } }
         public static string ServerIP { get { return serverIP; } }
         public static ushort ServerPort { get { return serverPort; } }
+        public static string Password { get { return password; } }
 
         public static string GetFullPath(params string[] paths)
         {
@@ -47,10 +49,14 @@ namespace GUC
 
             serverIP = Environment.GetEnvironmentVariable("GUCServerIP");
             if (string.IsNullOrWhiteSpace(serverIP))
-                throw new Exception("Server IP environment variable is null or empty!");
+                throw new Exception("Server IP environment variable is null or white space!");
 
             if (!ushort.TryParse(Environment.GetEnvironmentVariable("GUCServerPort"), out serverPort))
                 throw new Exception("Could not parse server port environment variable to ushort!");
+            
+            password = Environment.GetEnvironmentVariable("GUCServerPassword");
+            if (string.IsNullOrWhiteSpace(password))
+                password = null;
 
             AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;
         }
