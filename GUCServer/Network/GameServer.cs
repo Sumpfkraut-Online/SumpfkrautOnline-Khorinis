@@ -41,10 +41,11 @@ namespace GUC.Network
                 }
                 ServerInterface.SetMaximumIncomingConnections(ServerOptions.Slots);
                 ServerInterface.SetOccasionalPing(true);
-                
+                                
                 if (ServerOptions.Password != null)
                 {
-                    ServerInterface.SetIncomingPassword(ServerOptions.Password, 16);
+                    string pwStr = Convert.ToBase64String(ServerOptions.Password.ToArray());
+                    ServerInterface.SetIncomingPassword(pwStr, pwStr.Length);
                 }
             }
         }
