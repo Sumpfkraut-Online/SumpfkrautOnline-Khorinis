@@ -102,6 +102,7 @@ namespace GUC
                 hWeather.AddHooks();
                 hPlayerVob.AddHooks();
                 hView.AddHooks();
+                hNpc.AddHooks();
 
                 #region Some more editing
 

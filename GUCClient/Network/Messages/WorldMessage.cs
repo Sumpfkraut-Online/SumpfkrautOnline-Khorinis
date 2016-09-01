@@ -6,6 +6,7 @@ using GUC.Scripting;
 using GUC.WorldObjects;
 using GUC.Enumeration;
 using RakNet;
+using GUC.WorldObjects.VobGuiding;
 
 namespace GUC.Network.Messages
 {
@@ -79,6 +80,12 @@ namespace GUC.Network.Messages
             BaseVob vob = ScriptManager.Interface.CreateVob((VobTypes)stream.ReadByte());
             vob.ReadStream(stream);
             vob.ScriptObject.Spawn(World.current);
+
+            GuideCmd cmd;
+            if (vob is GuidedVob && GameClient.Client.guidedIDs.TryGetValue(vob.ID, out cmd))
+            {
+                ((GuidedVob)vob).SetGuideCommand(cmd);
+            }
         }
 
         public static void ReadVobDespawnMessage(PacketReader stream)

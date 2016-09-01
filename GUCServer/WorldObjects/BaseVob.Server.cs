@@ -78,6 +78,8 @@ namespace GUC.WorldObjects
             if (this.isCreated && !this.IsStatic)
             {
                 this.world.UpdateVobCell(this, pos);
+                if (this is NPC)
+                    this.world.UpdateNPCCell((NPC)this, pos);
 
                 bool updateVis;
                 if (lastPos.GetDistancePlanar(this.pos) > 100)

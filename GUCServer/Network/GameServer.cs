@@ -82,7 +82,7 @@ namespace GUC.Network
                     break;
 
                 case NetworkIDs.NPCStateMessage:
-                    NPCMessage.ReadMoveState(stream, client, client.Character, client.Character.World);
+                    NPCMessage.ReadMoveState(stream, client, client.Character, client.IsSpectating ? client.SpecWorld : client.Character.World);
                     break;
 
                 case NetworkIDs.NPCApplyOverlayMessage:

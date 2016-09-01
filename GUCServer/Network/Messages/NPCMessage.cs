@@ -20,7 +20,7 @@ namespace GUC.Network.Messages
             if (world.TryGetVob(id, out npc))
             {
                 MoveState state = (MoveState)stream.ReadByte();
-                if (npc == character /*|| (client.VobControlledList.Contains(npc) && state <= NPCStates.MoveBackward)*/) //is it a controlled NPC?
+                if (npc == character || (client.GuidedVobs.Contains(id) && state <= MoveState.Forward)) //is it a controlled NPC?
                 {
                     if (npc.ScriptObject != null)
                         npc.ScriptObject.OnCmdMove(state);

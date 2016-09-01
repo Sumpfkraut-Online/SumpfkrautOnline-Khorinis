@@ -40,6 +40,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CGameManager.cs" />
+    <Compile Include="Objects\EventManager\oCMsgMovement.cs" />
+    <Compile Include="Objects\EventManager\oCNpcMessage.cs" />
     <Compile Include="Objects\Meshes\zCMaterial.cs" />
     <Compile Include="Objects\Meshes\zCMesh.cs" />
     <Compile Include="Objects\Meshes\zCModel.cs" />

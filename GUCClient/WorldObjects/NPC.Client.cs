@@ -10,20 +10,51 @@ using Gothic.Types;
 using WinApi;
 using GUC.Network;
 using RakNet;
+using GUC.Network.Messages;
 
 namespace GUC.WorldObjects
 {
     public partial class NPC
     {
+        public static NPC Hero { get { return GameClient.Client.Character; } }
+
+        MoveState nextState = MoveState.Stand;
+        const int DelayBetweenMessages = 800000; //80ms
+        internal void DoSetState(MoveState state)
+        {
+            if (this.IsDead)
+                return;
+                        
+            if (this.nextState == state)
+                return;
+            
+            this.nextState = state;
+            this.nextStateUpdate = 0;
+            UpdateNextState(GameTime.Ticks);
+        }
+
+        void UpdateNextState(long now)
+        {
+            if (this.IsDead)
+                return;
+
+            if (this.movement == nextState)
+                return;
+
+            if (now < this.nextStateUpdate)
+                return;
+
+            NPCMessage.WriteMoveState(this, nextState);
+            this.nextStateUpdate = now + DelayBetweenMessages;
+        }
+
+
         protected override void UpdateGuidePos(long now)
         {
             if (now < guidedNextUpdate)
                 return;
-
-            if (this == GameClient.Client.Character)
-                UpdateGuidedNPCPosition(now, 800000, 12, 0.01f); // update our hero better
-            else
-                UpdateGuidedNPCPosition(now, 1200000, 16, 0.02f);
+            
+            UpdateGuidedNPCPosition(now, 1200000, 16, 0.02f);
         }
 
         void UpdateGuidedNPCPosition(long now, long interval, float minPosDist, float minDirDist)
@@ -367,10 +398,15 @@ namespace GUC.WorldObjects
             if (gvob == null || gVob.HumanAI.Address == 0)
                 return;
 
+            if (this == Hero)
+                UpdateGuidedNPCPosition(now, 800000, 12, 0.01f); // update our hero better
+
             base.OnTick(now);
             //ForEachActiveAni(a => UpdateAnimation(a));
 
             this.envState = GetEnvState();
+
+            this.UpdateNextState(now);
 
             this.ScriptObject.OnTick(now);
 

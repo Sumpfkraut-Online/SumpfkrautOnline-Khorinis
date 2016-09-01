@@ -260,6 +260,7 @@
     <Compile Include="GUI\GUCVisual.cs" />
     <Compile Include="GUI\GUCVisualText.cs" />
     <Compile Include="GUI\GUC3DVisual.cs" />
+    <Compile Include="Hooks\hNpc.cs" />
     <Compile Include="Hooks\hView.cs" />
     <Compile Include="Hooks\hGame.cs" />
     <Compile Include="Hooks\hParser.cs" />
@@ -293,6 +294,7 @@
     <Compile Include="WorldObjects\BaseVob.Client.cs" />
     <Compile Include="StaticCollection.Client.cs" />
     <Compile Include="WorldObjects\Collections\ItemContainer.Client.cs" />
+    <Compile Include="WorldObjects\VobGuiding\GuideCmd.Client.cs" />
     <Compile Include="WorldObjects\VobGuiding\GuidedVob.Client.cs" />
     <Compile Include="WorldObjects\Instances\BaseVobInstance.Client.cs" />
     <Compile Include="WorldObjects\Instances\ItemInstance.Client.cs" />
