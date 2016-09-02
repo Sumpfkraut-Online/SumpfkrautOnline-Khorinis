@@ -15,16 +15,12 @@ namespace GUC
 
         static int GetPrime(int min)
         {
-            int ret = ushort.MaxValue;
             for (int i = 0; i < primes.Length; i++)
             {
                 if (primes[i] > min)
-                {
-                    ret = primes[i];
-                    break;
-                }
+                    return primes[i];
             }
-            return ret;
+            return ushort.MaxValue+1;
         }
 
         struct Entry
@@ -88,7 +84,7 @@ namespace GUC
         {
             this.capacity = GetPrime(capacity);
             buckets = new int[this.capacity];
-            for (int i = 0; i < buckets.Length; i++) buckets[i] = -1;
+            for (int i = 0; i < this.capacity; i++) buckets[i] = -1;
             entries = new Entry[this.capacity];
             freeList = -1;
         }
@@ -97,7 +93,7 @@ namespace GUC
         {
             if (buckets != null)
             {
-                for (int i = 0; i < buckets.Length; i++) buckets[i] = -1;
+                for (int i = 0; i < this.capacity; i++) buckets[i] = -1;
                 Array.Clear(entries, 0, count);
                 freeList = -1;
                 count = 0;
@@ -109,7 +105,7 @@ namespace GUC
         {
             if (id >= 0 && id <= ushort.MaxValue && buckets != null)
             {
-                for (int i = buckets[id % buckets.Length]; i >= 0; i = entries[i].next)
+                for (int i = buckets[id % this.capacity]; i >= 0; i = entries[i].next)
                 {
                     if (entries[i].id == id)
                     {
@@ -137,7 +133,7 @@ namespace GUC
             if (buckets == null)
                 Initialize(1);
 
-            int targetBucket = id % buckets.Length;
+            int targetBucket = id % this.capacity;
 
             for (int i = buckets[targetBucket]; i >= 0; i = entries[i].next)
             {
@@ -165,7 +161,7 @@ namespace GUC
                 if (count == entries.Length)
                 {
                     Resize();
-                    targetBucket = id % buckets.Length;
+                    targetBucket = id % this.capacity;
                 }
                 index = count;
                 count++;
@@ -187,7 +183,7 @@ namespace GUC
             this.capacity = GetPrime(this.capacity);
 
             int[] newBuckets = new int[this.capacity];
-            for (int i = 0; i < newBuckets.Length; i++) newBuckets[i] = -1;
+            for (int i = 0; i < this.capacity; i++) newBuckets[i] = -1;
             Entry[] newEntries = new Entry[this.capacity];
             Array.Copy(entries, 0, newEntries, 0, count);
 
@@ -211,7 +207,7 @@ namespace GUC
 
             if (buckets != null)
             {
-                int bucket = id % buckets.Length;
+                int bucket = id % this.capacity;
 
                 int last = -1;
                 for (int i = buckets[bucket]; i >= 0; last = i, i = entries[i].next)
@@ -243,7 +239,7 @@ namespace GUC
         {
             if (buckets != null && count > 0)
             {
-                for (int i = buckets[id % buckets.Length]; i >= 0; i = entries[i].next)
+                for (int i = buckets[id % this.capacity]; i >= 0; i = entries[i].next)
                 {
                     if (entries[i].id == id)
                     {

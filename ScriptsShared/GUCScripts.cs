@@ -102,6 +102,8 @@ namespace GUC.Scripts
             {
                 case CommandType.GoToPos:
                     return new GoToPosCommand();
+                case CommandType.GoToVob:
+                    return new GoToVobCommand();
                 default:
                     throw new Exception("Unsupported guide command type: " + type);
             }

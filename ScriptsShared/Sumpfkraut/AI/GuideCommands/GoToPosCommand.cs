@@ -25,14 +25,18 @@ namespace GUC.Scripts.Sumpfkraut.AI.GuideCommands
         Vec3f destination;
         public Vec3f Destination { get { return this.destination; } }
 
+#if D_CLIENT
         public override void ReadStream(PacketReader stream)
         {
             this.destination = stream.ReadVec3f();
         }
+#endif
 
+#if D_SERVER
         public override void WriteStream(PacketWriter stream)
         {
             stream.Write(this.destination);
         }
+#endif
     }
 }

@@ -47,24 +47,30 @@ namespace GUC.Network.Messages
             cmd.ReadStream(stream);
 
             int id = stream.ReadUShort();
-            GameClient.Client.guidedIDs[id] = cmd;
-
-            GuidedVob vob;
-            if (World.current.TryGetVob(id, out vob))
+            if (GameClient.Client.guidedIDs.ContainsKey(id))
             {
-                vob.SetGuideCommand(cmd);
+                GameClient.Client.guidedIDs[id] = cmd;
+
+                GuidedVob vob;
+                if (World.current.TryGetVob(id, out vob))
+                {
+                    vob.SetGuideCommand(cmd);
+                }
             }
         }
 
         public static void ReadGuideRemoveCmdMessage(PacketReader stream)
         {
             int id = stream.ReadUShort();
-            GameClient.Client.guidedIDs[id] = null;
-
-            GuidedVob vob;
-            if (World.current.TryGetVob(id, out vob))
+            if (GameClient.Client.guidedIDs.ContainsKey(id))
             {
-                vob.SetGuideCommand(null);
+                GameClient.Client.guidedIDs[id] = null;
+
+                GuidedVob vob;
+                if (World.current.TryGetVob(id, out vob))
+                {
+                    vob.SetGuideCommand(null);
+                }
             }
         }
     }

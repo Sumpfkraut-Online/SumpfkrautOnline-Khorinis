@@ -27,6 +27,12 @@ namespace Gothic.Objects
             hc_bow = 484,
             hc_crossbow = 488,
 
+            targetVob = 0x4D4,
+            rbtBitfield = 0x4C4,
+            rbtTimer = 0x4EC,
+            targetPos = 0x4C8,
+            rbtMaxTargetDist = 0x4E4,
+
             enemy = 0x498,
             talents_array = 0x0568,
             name = 0x0124,
@@ -357,6 +363,35 @@ namespace Gothic.Objects
             set { Process.Write(value, Address + VarOffsets.hp_current); }
         }
 
+        public int RbtBitfield
+        {
+            get { return Process.ReadInt(Address + VarOffsets.rbtBitfield); }
+            set { Process.Write(value, Address + VarOffsets.rbtBitfield); }
+        }
+
+        public float RbtMaxTargetDist
+        {
+            get { return Process.ReadFloat(Address + VarOffsets.rbtMaxTargetDist); }
+            set { Process.Write(value, Address + VarOffsets.rbtMaxTargetDist); }
+        }
+
+        public float RbtTimer
+        {
+            get { return Process.ReadFloat(Address + VarOffsets.rbtTimer); }
+            set { Process.Write(value, Address + VarOffsets.rbtTimer); }
+        }
+
+        public zCVob TargetVob
+        {
+            get { return new zCVob(Process.ReadInt(Address + VarOffsets.targetVob)); }
+            set { Process.Write(value.Address, Address + VarOffsets.targetVob); }
+        }
+
+        public zVec3 TargetPos
+        {
+            get { return new zVec3(Address + VarOffsets.targetPos); }
+        }
+
         public int HPMax
         {
             get { return Process.ReadInt(Address + VarOffsets.hp_max); }
@@ -641,6 +676,31 @@ namespace Gothic.Objects
         public int CreateInvSlot(zString slot)
         {
             return Process.THISCALL<IntArg>(Address, 0x749800, slot);
+        }
+
+        public int RbtGotoFollowPosition()
+        {
+            return Process.THISCALL<IntArg>(Address, 0x688450);
+        }
+
+        public int RobustTrace()
+        {
+            return Process.THISCALL<IntArg>(Address, 0x686960);
+        }
+
+        public void RbtReset()
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x686560);
+        }
+
+        public void RbtUpdate(zVec3 vec, zCVob vob)
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x686690, vec, vob);
+        }
+
+        public int GotoFightPosition()
+        {
+            return Process.THISCALL<IntArg>(Address, 0x67FFC0);
         }
 
         /*

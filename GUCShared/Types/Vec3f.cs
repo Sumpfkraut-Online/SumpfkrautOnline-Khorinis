@@ -235,7 +235,7 @@ namespace GUC.Types
         
         internal Vec3f CorrectPosition()
         {
-            Vec3f ret = new Vec3f();
+            Vec3f ret;
             if (this.X < -838860.8f) ret.X = -838860.8f;
             else if (this.X > 838860.7f) ret.X = 838860.7f;
             else ret.X = this.X;

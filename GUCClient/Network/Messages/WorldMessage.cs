@@ -86,6 +86,18 @@ namespace GUC.Network.Messages
             {
                 ((GuidedVob)vob).SetGuideCommand(cmd);
             }
+
+            /*foreach (GuideCmd tcmd in GameClient.Client.guidedIDs.Values)
+            {
+                if (tcmd is TargetCmd && ((TargetCmd)tcmd).Target.ID == vob.ID)
+                {
+                    if (!(((TargetCmd)tcmd).Target is DummyVob))
+                        throw new Exception("Wanna overspawn a non-dummy-vob.");
+
+                    ((TargetCmd)tcmd).target.Despawn();
+                    ((TargetCmd)tcmd).target = vob;
+                }
+            }*/
         }
 
         public static void ReadVobDespawnMessage(PacketReader stream)
@@ -98,6 +110,22 @@ namespace GUC.Network.Messages
             }
 
             GameClient.Client.guidedIDs.Remove(id);
+
+            /*foreach (GuideCmd tcmd in GameClient.Client.guidedIDs.Values)
+            {
+                if (tcmd is TargetCmd && ((TargetCmd)tcmd).Target.ID == id)
+                {
+                    if ((((TargetCmd)tcmd).Target is DummyVob))
+                        throw new Exception("Wanna despawn a dummy-vob.");
+
+                    DummyVob dummy = new DummyVob();
+                    dummy.Instance = DummyVobInstance.Instance;
+                    dummy.ID = id;
+                    dummy.Spawn(World.current);
+
+                    ((TargetCmd)tcmd).target = dummy;
+                }
+            }*/
         }
 
         #endregion

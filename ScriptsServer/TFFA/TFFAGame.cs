@@ -280,7 +280,8 @@ namespace GUC.Scripts.TFFA
                }
            });
         }
-        
+
+        static NPCInst[] dummies;
         public static void PhaseFight()
         {
             Log.Logger.Log("Fight Phase");
@@ -303,13 +304,10 @@ namespace GUC.Scripts.TFFA
 
             gameTimer.Restart();
 
-            var dummyDef = NPCDef.Get("player");
-            for (int i = 0; i < 10000; i++)
+            dummies = new NPCInst[10000];
+            for (int i = 0; i < dummies.Length; i++)
             {
-                var dummy = new NPCInst(dummyDef);
-                dummy.BaseInst.SetNeedsClientGuide(true);
-                dummy.BaseInst.SetGuideCommand(new Sumpfkraut.AI.GuideCommands.GoToPosCommand());
-                dummy.Spawn(WorldInst.Current, Randomizer.GetVec3fRad(new Vec3f(0,500,0), 100000), new Vec3f(-0.5522485f, 0, -0.8336804f));
+                dummies[i] = SpawnDummy(Randomizer.GetVec3fRad(new Vec3f(0, 500, 0), 100000), new Vec3f(-0.5522485f, 0, -0.8336804f));
             }
         }
 
@@ -482,12 +480,20 @@ namespace GUC.Scripts.TFFA
             npc.Spawn(WorldInst.Current, spawnPoint.Item1, spawnPoint.Item2);
             client.SetControl(npc);
             client.SendNPCChanged();
+
+            var cmd = new Sumpfkraut.AI.GuideCommands.GoToVobCommand(npc);
+            for (int i = 0; i < dummies.Length; i++)
+            {
+                dummies[i].BaseInst.SetGuideCommand(cmd);
+                dummies[i].BaseInst.SetNeedsClientGuide(true);
+            }
+            
         }
 
         #endregion
 
 
-        public static void SpawnDummy(TFFAClient client)
+        public static NPCInst SpawnDummy(Vec3f pos, Vec3f dir)
         {
             var def = BaseVobDef.Get<NPCDef>("player");
             NPCInst npc = new NPCInst(def);
@@ -521,9 +527,11 @@ namespace GUC.Scripts.TFFA
             ItemInst armor;
             ScriptOverlay overlay;
 
-            if (client.Team == Team.AL)
+            Team team = (Team)Randomizer.GetInt(1, 3);
+            PlayerClass cl = (PlayerClass)Randomizer.GetInt(1, 3);
+            if (team == Team.AL)
             {
-                if (client.Class == PlayerClass.Heavy)
+                if (cl == PlayerClass.Heavy)
                 {
                     weapon = new ItemInst(ItemDef.Get<ItemDef>("2hschwert"));
                     armor = new ItemInst(ItemDef.Get<ItemDef>("itar_Garde"));
@@ -542,7 +550,7 @@ namespace GUC.Scripts.TFFA
             }
             else
             {
-                if (client.Class == PlayerClass.Heavy)
+                if (cl == PlayerClass.Heavy)
                 {
                     weapon = new ItemInst(ItemDef.Get<ItemDef>("2haxt"));
                     armor = new ItemInst(ItemDef.Get<ItemDef>("itar_söldner"));
@@ -587,7 +595,7 @@ namespace GUC.Scripts.TFFA
                 npc.ApplyOverlay(overlay);
             }
 
-            switch (Randomizer.GetInt(0, 6))
+            switch (Randomizer.GetInt(0, 5))
             {
                 case 0:
                 case 1:
@@ -602,7 +610,7 @@ namespace GUC.Scripts.TFFA
                         npc.EquipItem((int)NPCInst.SlotNums.Righthand, npc.RangedWeapon);
                     npc.SetFightMode(true);
                     break;
-                case 4:
+                /*case 4:
                 case 5:
                     if (npc.RangedWeapon.ItemType == ItemTypes.WepBow)
                         npc.EquipItem((int)NPCInst.SlotNums.Lefthand, npc.RangedWeapon);
@@ -610,10 +618,11 @@ namespace GUC.Scripts.TFFA
                         npc.EquipItem((int)NPCInst.SlotNums.Righthand, npc.RangedWeapon);
                     npc.SetFightMode(true);
                     npc.IsAiming = true;
-                    break;
+                    break;*/
             }
 
-            npc.Spawn(WorldInst.Current, client.Character.BaseInst.GetPosition(), client.Character.BaseInst.GetDirection());
+            npc.Spawn(WorldInst.Current, pos, dir);
+            return npc;
         }
     }
 }

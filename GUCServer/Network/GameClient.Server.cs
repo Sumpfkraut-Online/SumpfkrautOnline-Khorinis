@@ -110,7 +110,38 @@ namespace GUC.Network
 
         #region Vob guiding
 
-        internal GODictionary<GuidedVob> GuidedVobs = new GODictionary<GuidedVob>();
+        internal GODictionary<GuidedVob> GuidedVobs = new GODictionary<GuidedVob>(20);
+        
+        class IntBox { public int Count = 1; }
+        Dictionary<int, IntBox> guideTargets = new Dictionary<int, IntBox>(5);
+        internal void AddGuideTarget(BaseVob vob)
+        {
+            IntBox box;
+            if (guideTargets.TryGetValue(vob.ID, out box))
+            {
+                box.Count++;
+            }
+            else
+            {
+                guideTargets.Add(vob.ID, new IntBox());
+                if (!visibleVobs.Contains(vob.ID))
+                    vob.targetOf.Add(this);
+            }
+        }
+
+        internal void RemoveGuideTarget(BaseVob vob)
+        {
+            IntBox box;
+            if (guideTargets.TryGetValue(vob.ID, out box))
+            {
+                box.Count--;
+                if (box.Count == 0)
+                {
+                    guideTargets.Remove(vob.ID);
+                    vob.targetOf.Remove(this);
+                }
+            }
+        }
 
         #endregion
 
@@ -168,13 +199,16 @@ namespace GUC.Network
         internal void AddVisibleVob(BaseVob vob)
         {
             visibleVobs.Add(vob);
+            vob.targetOf.Remove(this);
         }
 
         internal void RemoveVisibleVob(BaseVob vob)
         {
             visibleVobs.Remove(vob.ID);
+            if (guideTargets.ContainsKey(vob.ID))
+                vob.targetOf.Add(this);
         }
-        
+
         internal void UpdateVobList(World world, Vec3f pos)
         {
             int removeCount = 0, addCount = 0;

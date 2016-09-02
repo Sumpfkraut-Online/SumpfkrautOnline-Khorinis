@@ -30,45 +30,20 @@ namespace GUC.WorldObjects.VobGuiding
 
             if (this.IsSpawned)
             {
-                if (this.needsClientGuide)
-                {
-                    this.Guide = FindNewGuide();
-                    if (this.Guide != null)
-                    {
-                        this.Guide.GuidedVobs.Add(this);
-                        GuideMessage.WriteAddGuidableMessage(this.Guide, this);
-                    }
-                }
-                else
-                {
-                    if (this.Guide != null)
-                    {
-                        this.Guide.GuidedVobs.Remove(this.ID);
-                        GuideMessage.WriteRemoveGuidableMessage(this.Guide, this);
-                        this.Guide = null;
-                    }
-                }
+                SetGuide(this.needsClientGuide ? FindNewGuide() : null);
             }
         }
 
         internal override void AddVisibleClient(GameClient client)
         {
             base.AddVisibleClient(client);
-            
+
             if (this.needsClientGuide)
             {
-                if (this.Guide != null)
-                {   // check if the new client has less guided vobs than our current guide
-                    if (client.GuidedVobs.Count > this.Guide.GuidedVobs.Count)
-                        return;
-
-                    this.Guide.GuidedVobs.Remove(this.ID);
-                    GuideMessage.WriteRemoveGuidableMessage(this.Guide, this);
+                if (this.Guide == null || client.GuidedVobs.Count < this.Guide.GuidedVobs.Count)
+                {
+                    SetGuide(client);
                 }
-
-                this.Guide = client;
-                this.Guide.GuidedVobs.Add(this);
-                GuideMessage.WriteAddGuidableMessage(this.Guide, this);
             }
         }
 
@@ -78,13 +53,7 @@ namespace GUC.WorldObjects.VobGuiding
 
             if (this.Guide == client)
             {
-                client.GuidedVobs.Remove(this.ID);
-                this.Guide = FindNewGuide();
-                if (this.Guide != null)
-                {
-                    this.Guide.GuidedVobs.Add(this);
-                    GuideMessage.WriteAddGuidableMessage(this.Guide, this);
-                }
+                SetGuide(FindNewGuide(), false); // don't send the guide remove msg, since the despawn msg is already handling it
             }
         }
 
@@ -101,11 +70,55 @@ namespace GUC.WorldObjects.VobGuiding
 
         public void SetGuideCommand(GuideCmd cmd)
         {
-            this.currentCmd = cmd;
+            if (this.currentCmd == cmd)
+                return;
+
             if (this.Guide != null)
             {
-                GuideMessage.WriteGuidableCmdMessage(this.Guide, this);
+                if (this.currentCmd is TargetCmd)
+                {
+                    this.Guide.RemoveGuideTarget(((TargetCmd)this.currentCmd).Target);
+                }
+                if (cmd is TargetCmd)
+                {
+                    TargetCmd targetCmd = (TargetCmd)cmd;
+                    this.Guide.AddGuideTarget(((TargetCmd)cmd).Target);
+                }
+                GuideMessage.WriteGuidableCmdMessage(this.Guide, this, cmd);
             }
+
+            this.currentCmd = cmd;
+        }
+
+        void SetGuide(GameClient client, bool sendRemove = true)
+        {
+            if (this.Guide == client)
+                return;
+
+            if (this.Guide != null)
+            {
+                this.Guide.GuidedVobs.Remove(this.ID);
+                if (sendRemove)
+                {
+                    GuideMessage.WriteRemoveGuidableMessage(this.Guide, this);
+                }
+                if (this.currentCmd is TargetCmd)
+                {
+                    this.Guide.RemoveGuideTarget(((TargetCmd)this.currentCmd).Target);
+                }
+            }
+
+            if (client != null)
+            {
+                client.GuidedVobs.Add(this);
+                GuideMessage.WriteAddGuidableMessage(client, this, this.currentCmd);
+                if (this.currentCmd is TargetCmd)
+                {
+                    client.AddGuideTarget(((TargetCmd)this.currentCmd).Target);
+                }
+            }
+
+            this.Guide = client;
         }
     }
 }

@@ -7,6 +7,7 @@ using GUC.WorldObjects.Cells;
 using GUC.Network;
 using GUC.Enumeration;
 using RakNet;
+using GUC.WorldObjects.VobGuiding;
 
 namespace GUC.WorldObjects
 {
@@ -16,6 +17,12 @@ namespace GUC.WorldObjects
         {
             throw new NotImplementedException();
         }
+
+        #region Vob guiding
+
+        internal List<GameClient> targetOf = new List<GameClient>();
+
+        #endregion
 
         #region Position & Direction
 
@@ -101,15 +108,18 @@ namespace GUC.WorldObjects
 
                     if (exclude == null)
                     {
-                        visibleClients.ForEach(client => client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
+                        visibleClients.ForEach(client => client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE, 'W'));
                     }
                     else
                     {
                         visibleClients.ForEach(client =>
                         {
-                            if (client != exclude) client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
+                            if (client != exclude) client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE, 'W');
                         });
                     }
+
+                    for (int i = 0; i < targetOf.Count; i++)
+                        targetOf[i].Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE, 'W');
                 }
 
                 if (updateVis)
