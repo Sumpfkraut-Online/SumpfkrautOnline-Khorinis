@@ -101,7 +101,7 @@ namespace GUC.Scripts.TFFA
                 return;
 
             PacketWriter stream = GameClient.Client.GetMenuMsgStream();
-            stream.Write((byte)MenuMsgID.ClientClass);
+            stream.Write((byte)TFFANetMsgID.ClientClass);
             stream.Write((byte)c);
             GameClient.Client.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE);
             Close();

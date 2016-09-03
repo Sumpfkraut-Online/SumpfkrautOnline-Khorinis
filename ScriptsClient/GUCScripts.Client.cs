@@ -46,6 +46,7 @@ namespace GUC.Scripts
             WinApi.Process.Write(new byte[] { 0xE9, 0x99, 0x04, 0x00, 0x00 }, 0x0067836C); // always do T_GOTHIT instead of T_STUMBLE/B when getting hit
 
             TFFA.InputControl.Init();
+
             Logger.Log("Outgame started.");
         }
 
@@ -74,10 +75,9 @@ namespace GUC.Scripts
                 SoundHandler.CurrentMusicType = SoundHandler.MusicType.Normal;
             }
         }
-
-        static Random random = new Random("Scavenger".GetHashCode());
+        
         static long barrierLastTime = GameTime.Ticks;
-        static long barrierNextTime = GameTime.Ticks + random.Next(180, 300) * TimeSpan.TicksPerSecond;
+        static long barrierNextTime = GameTime.Ticks + Randomizer.GetInt(180, 300) * TimeSpan.TicksPerSecond;
         static int barrierStatus = 0;
         static void CheckBarrier()
         {
@@ -88,25 +88,25 @@ namespace GUC.Scripts
                 if (barrierStatus == 1) // fade in
                 {
                     barrierStatus = 2;
-                    barrierNextTime = now + random.Next(6, 16) * TimeSpan.TicksPerSecond; // enabled time
+                    barrierNextTime = now + Randomizer.GetInt(6, 16) * TimeSpan.TicksPerSecond; // enabled time
                     barrierLastTime = now;
                 }
                 else if (barrierStatus == 2) // enabled
                 {
                     barrierStatus = 3;
-                    barrierNextTime = now + random.Next(3, 10) * TimeSpan.TicksPerSecond; // fade out time
+                    barrierNextTime = now + Randomizer.GetInt(3, 10) * TimeSpan.TicksPerSecond; // fade out time
                     barrierLastTime = now;
                 }
                 else if (barrierStatus == 3) // fade out
                 {
                     barrierStatus = 0;
-                    barrierNextTime = now + random.Next(180, 300) * TimeSpan.TicksPerSecond; // disabled time
+                    barrierNextTime = now + Randomizer.GetInt(180, 300) * TimeSpan.TicksPerSecond; // disabled time
                     barrierLastTime = now;
                 }
                 else // disabled
                 {
                     barrierStatus = 1;
-                    barrierNextTime = now + random.Next(3, 10) * TimeSpan.TicksPerSecond; // fade in time
+                    barrierNextTime = now + Randomizer.GetInt(3, 10) * TimeSpan.TicksPerSecond; // fade in time
                     barrierLastTime = now;
                 }
             }

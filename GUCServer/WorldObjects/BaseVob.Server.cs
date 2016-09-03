@@ -7,6 +7,7 @@ using GUC.WorldObjects.Cells;
 using GUC.Network;
 using GUC.Enumeration;
 using RakNet;
+using GUC.WorldObjects.VobGuiding;
 
 namespace GUC.WorldObjects
 {
@@ -17,177 +18,255 @@ namespace GUC.WorldObjects
             throw new NotImplementedException();
         }
 
+        #region Vob guiding
+
+        internal List<GameClient> targetOf = new List<GameClient>();
+
+        #endregion
+
+        #region Position & Direction
+
         partial void pSetPosition()
         {
             throw new NotImplementedException();
+
+            if (this.isCreated && !this.IsStatic)
+            {
+                this.world.UpdateVobCell(this, this.pos);
+
+                /*if (visibleClients.Count > 0)
+                {
+                    PacketWriter stream = GameServer.SetupStream(NetworkIDs.VobPosMessage);
+                    stream.Write(this.pos);
+
+                    for (int i = 0; i < visibleClients.Count; i++)
+                    {
+                        visibleClients[i].Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
+                    }
+                }*/
+
+                UpdateClientList();
+            }
         }
 
         partial void pSetDirection()
         {
             throw new NotImplementedException();
+
+            if (this.isCreated && !this.IsStatic)
+            {
+                /*if (visibleClients.Count > 0)
+                {
+                    PacketWriter stream = GameServer.SetupStream(NetworkIDs.VobDirMessage);
+                    stream.Write(this.dir);
+
+                    for (int i = 0; i < visibleClients.Count; i++)
+                    {
+                        visibleClients[i].Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
+                    }
+                }*/
+            }
         }
 
+        /// <summary>
+        /// Set the position & direction of this vob
+        /// </summary>
         public void SetPosDir(Vec3f position, Vec3f direction)
         {
-            throw new NotImplementedException();
+            SetPosDir(position, direction, null);
         }
+
+        Vec3f lastPos;
+        internal void SetPosDir(Vec3f position, Vec3f direction, GameClient exclude)
+        {
+            this.pos = position.CorrectPosition();
+            this.dir = direction.CorrectDirection();
+
+            if (this.isCreated && !this.IsStatic)
+            {
+                this.world.UpdateVobCell(this, pos);
+                if (this is NPC)
+                    this.world.UpdateNPCCell((NPC)this, pos);
+
+                bool updateVis;
+                if (lastPos.GetDistancePlanar(this.pos) > 100)
+                {
+                    updateVis = true;
+                    lastPos = this.pos;
+                    CleanClientList();
+                }
+                else
+                {
+                    updateVis = false;
+                }
+
+                if (visibleClients.Count > 0)
+                {
+                    PacketWriter stream = GameServer.SetupStream(NetworkIDs.VobPosDirMessage);
+                    stream.Write((ushort)this.ID);
+                    stream.WriteCompressedPosition(pos);
+                    stream.WriteCompressedDirection(dir);
+
+                    if (exclude == null)
+                    {
+                        visibleClients.ForEach(client => client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE, 'W'));
+                    }
+                    else
+                    {
+                        visibleClients.ForEach(client =>
+                        {
+                            if (client != exclude) client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE, 'W');
+                        });
+                    }
+
+                    for (int i = 0; i < targetOf.Count; i++)
+                        targetOf[i].Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE, 'W');
+                }
+
+                if (updateVis)
+                {
+                    UpdateClientList();
+                }
+            }
+        }
+
+        #endregion
 
         #region Cells
 
-        internal virtual void UpdatePosition(Vec3f newPos, Vec3f newDir, GameClient exclude)
+        internal int CellID = -1;
+        BigCell cell;
+        internal BigCell Cell { get { return this.cell; } }
+
+        internal virtual void AddToCell(BigCell cell)
         {
-            float unroundedX = newPos.X / NetCell.Size;
-            float unroundedZ = newPos.Z / NetCell.Size;
+            this.cell = cell;
+            this.cell.AddDynVob(this);
+        }
 
-            // calculate new cell indices
-            int x = (int)(newPos.X >= 0 ? unroundedX + 0.5f : unroundedX - 0.5f);
-            int z = (int)(newPos.Z >= 0 ? unroundedZ + 0.5f : unroundedZ - 0.5f);
+        internal virtual void RemoveFromCell()
+        {
+            this.cell.RemoveDynVob(this);
+            this.world.CheckCellRemove(this.cell);
+            this.cell = null;
+        }
 
-            if (x < short.MinValue || x > short.MaxValue || z < short.MinValue || z > short.MaxValue)
+        #endregion
+
+        #region Spawn & Despawn
+
+        partial void pSpawn()
+        {
+            UpdateClientList();
+        }
+
+        partial void pDespawn()
+        {
+            if (visibleClients.Count > 0)
             {
-                throw new Exception("Vob position is out of cell range!");
-            }
-
-            int coord = (x << 16) | z & 0xFFFF;
-
-            this.pos = newPos;
-            this.dir = newDir;
-
-            // Vob moved to a new cell
-            if (this.Cell.Coord != coord)
-            {
-                // Check whether we're at least > 15% inside: 0.5f == between 2 cells
-                float xdiff = unroundedX - this.Cell.X;
-                float zdiff = unroundedZ - this.Cell.Y;
-                if ((xdiff > 0.65f || xdiff < -0.65f) || (zdiff > 0.65f || zdiff < -0.65f))
-                {
-                    ChangeCells(x, z);
-                    return;
-                }
-            }
-
-            // still in the old cell, updates for everyone!
-            if (this.Cell.Clients.Count > 0)
-            {
-                PacketWriter stream = GameServer.SetupStream(NetworkIDs.VobPosDirMessage);
+                PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldDespawnMessage);
                 stream.Write((ushort)this.ID);
-                stream.WriteCompressedPosition(this.pos);
-                stream.WriteCompressedDirection(this.dir);
-                this.Cell.ForEachSurroundingClient(c =>
+                visibleClients.ForEach(client =>
                 {
-                    if (c != exclude)
+                    client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
+                    client.RemoveVisibleVob(this);
+                });
+                visibleClients.Clear();
+            }
+        }
+
+        #endregion
+
+        #region Client visibility
+
+        internal void ForEachVisibleClient(Action<GameClient> action)
+        {
+            visibleClients.ForEach(action);
+        }
+
+        protected GODictionary<GameClient> visibleClients = new GODictionary<GameClient>();
+
+        internal virtual void AddVisibleClient(GameClient client)
+        {
+            visibleClients.Add(client);
+        }
+
+        internal virtual void RemoveVisibleClient(GameClient client)
+        {
+            visibleClients.Remove(client.ID);
+        }
+
+        protected void CleanClientList()
+        {
+            // Remove clients which are out of range now
+            if (visibleClients.Count > 0)
+            {
+                PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldDespawnMessage);
+                stream.Write((ushort)this.ID);
+
+                visibleClients.ForEach(client =>
+                {
+                    if (this.pos.GetDistance(client.IsSpectating ? client.SpecGetPos() : client.Character.GetPosition()) > World.SpawnRemoveRange)
                     {
-                        c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE, 'W');
+                        client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
+                        client.RemoveVisibleVob(this);
+                        RemoveVisibleClient(client);
                     }
                 });
             }
         }
 
-        internal virtual void ChangeCells(int toX, int toY)
+        protected void UpdateClientList()
         {
-            NetCell from = this.Cell;
-            this.RemoveFromNetCell();
-
-            from.ForEachSurroundingCell(cell =>
+            PacketWriter stream = null;
+            // add clients which are in range
+            if (visibleClients.Count > 0)
             {
-                if (cell.Clients.Count > 0)
-                    if (cell.X <= toX + 1 && cell.X >= toX - 1 && cell.Y <= toY + 1 && cell.Y >= toY - 1)
+                this.world.ForEachClientRougher(this.pos, World.SpawnInsertRange, client =>
+                {
+                    if (!visibleClients.Contains(client.ID))
                     {
-                        //Position updates in shared cells
-                        PacketWriter stream = GameServer.SetupStream(NetworkIDs.VobPosDirMessage);
-                        stream.Write((ushort)this.ID);
-                        stream.WriteCompressedPosition(this.pos);
-                        stream.WriteCompressedDirection(this.dir);
-                        cell.Clients.ForEach(c =>
+                        if (this.pos.GetDistance(client.IsSpectating ? client.SpecGetPos() : client.Character.GetPosition()) < World.SpawnInsertRange)
                         {
-                            c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE, 'W');
-                        });
+                            AddVisibleClient(client);
+                            client.AddVisibleVob(this);
+
+                            if (stream == null)
+                            {
+                                stream = GameServer.SetupStream(NetworkIDs.WorldSpawnMessage);
+                                stream.Write((byte)this.VobType);
+                                this.WriteStream(stream);
+                            }
+                            client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
+                        }
                     }
-                    else
+                });
+            }
+            else
+            {
+                this.world.ForEachClientRougher(this.pos, World.SpawnInsertRange, client =>
+                {
+                    if (this.pos.GetDistance(client.IsSpectating ? client.SpecGetPos() : client.Character.GetPosition()) < World.SpawnInsertRange)
                     {
-                        //deletion updates in old cells
-                        PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldDespawnMessage);
-                        stream.Write((ushort)this.ID);
-                        cell.Clients.ForEach(c =>
+                        AddVisibleClient(client);
+                        client.AddVisibleVob(this);
+
+                        if (stream == null)
                         {
-                            c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
-                        });
+                            stream = GameServer.SetupStream(NetworkIDs.WorldSpawnMessage);
+                            stream.Write((byte)this.VobType);
+                            this.WriteStream(stream);
+                        }
+                        client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
                     }
-            });
-
-            // new cells
-            this.world.ForEachSurroundingCell(toX, toY, cell =>
-            {
-                if (cell.Clients.Count > 0)
-                    if (!(cell.X <= from.X + 1 && cell.X >= from.X - 1 && cell.Y <= from.Y + 1 && cell.Y >= from.Y - 1))
-                    {
-                        // spawn updates in the new cells
-                        PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldSpawnMessage);
-                        stream.Write((byte)this.VobType);
-                        this.WriteStream(stream);
-                        cell.Clients.ForEach(c =>
-                        {
-                            c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
-                        });
-                    }
-            });
-
-            this.AddToNetCell(this.world.GetCellFromCoords(toX, toY));
-        }
-
-        internal int cellID = -1;
-        internal int cellTypeID = -1;
-
-        internal int dynCellID = -1;
-        internal int dynCellTypeID = -1;
-
-        internal NetCell Cell = null;
-
-        internal virtual void AddToNetCell(NetCell cell)
-        {
-            cell.Vobs.Add(this, ref this.cellID, ref this.cellTypeID);
-            if (!this.IsStatic)
-                cell.DynVobs.Add(this, ref this.dynCellID, ref this.dynCellTypeID);
-
-            this.Cell = cell;
-        }
-
-        internal virtual void RemoveFromNetCell()
-        {
-            this.Cell.Vobs.Remove(this, ref this.cellID, ref this.cellTypeID);
-            if (!this.IsStatic)
-                this.Cell.DynVobs.Remove(this, ref this.dynCellID, ref this.dynCellTypeID);
-
-            if (this.Cell.Vobs.GetCount() == 0 && this.Cell.Clients.Count == 0)
-                this.world.netCells.Remove(this.Cell.Coord);
-
-            this.Cell = null;
-        }
-
-        partial void pSpawn()
-        {
-            //Send creation message to all players in surrounding cells
-            PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldSpawnMessage);
-            stream.Write((byte)this.VobType);
-            this.WriteStream(stream);
-            this.Cell.ForEachSurroundingClient(c =>
-            {
-                c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
-            });
-        }
-
-        partial void pDespawn()
-        {
-            PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldDespawnMessage);
-            stream.Write((ushort)this.ID);
-            this.Cell.ForEachSurroundingClient(c =>
-            {
-                c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
-            });
+                });
+            }
         }
 
         #endregion
-        
+
+        #region Script streams
+
         public PacketWriter GetScriptVobStream()
         {
             if (!this.IsSpawned)
@@ -207,7 +286,9 @@ namespace GUC.WorldObjects
             if (!this.IsSpawned)
                 throw new Exception("Vob is not ingame!");
 
-            this.Cell.ForEachSurroundingClient(c => c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
+            ForEachVisibleClient(c => c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
         }
+
+        #endregion
     }
 }

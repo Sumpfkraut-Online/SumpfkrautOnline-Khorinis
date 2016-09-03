@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GUC.Scripts.Sumpfkraut.Networking;
 
 namespace GUC.Scripts.TFFA
 {
@@ -28,9 +29,9 @@ namespace GUC.Scripts.TFFA
         Heavy
     }
 
-    public enum MenuMsgID
+    public enum TFFANetMsgID
     {
-        ClientInfoGroup,
+        ClientInfoGroup = NetMsgID.MaxMessages,
         ClientConnect,
         ClientDisconnect,
         
@@ -48,4 +49,5 @@ namespace GUC.Scripts.TFFA
         AllChat,
         TeamChat
     }
+
 }

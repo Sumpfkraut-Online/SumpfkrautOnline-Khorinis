@@ -40,6 +40,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CGameManager.cs" />
+    <Compile Include="Objects\EventManager\oCMsgMovement.cs" />
+    <Compile Include="Objects\EventManager\oCNpcMessage.cs" />
     <Compile Include="Objects\Meshes\zCMaterial.cs" />
     <Compile Include="Objects\Meshes\zCMesh.cs" />
     <Compile Include="Objects\Meshes\zCModel.cs" />
@@ -68,6 +70,7 @@
     <Compile Include="Objects\oCMobSwitch.cs" />
     <Compile Include="Objects\oCMobWheel.cs" />
     <Compile Include="Objects\oCNpcFocus.cs" />
+    <Compile Include="Objects\oCVob.cs" />
     <Compile Include="Objects\oCWorldTimer.cs" />
     <Compile Include="Objects\Sky\oCBarrier.cs" />
     <Compile Include="Objects\Sky\zCSkyControler.cs" />

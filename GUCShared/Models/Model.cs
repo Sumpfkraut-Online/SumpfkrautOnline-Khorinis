@@ -102,7 +102,7 @@ namespace GUC.Models
 
         public static void ForEach(Predicate<Model> predicate)
         {
-            models.ForEach(predicate);
+            models.ForEachPredicate(predicate);
         }
 
         public static int GetCount()
@@ -117,7 +117,7 @@ namespace GUC.Models
 
         public static void ForEachDynamic(Predicate<Model> predicate)
         {
-            dynModels.ForEach(predicate);
+            dynModels.ForEachPredicate(predicate);
         }
 
         public static int GetCountDynamics()
@@ -269,7 +269,7 @@ namespace GUC.Models
 
         public void ForEachAni(Predicate<AniJob> predicate)
         {
-            aniJobs.ForEach(predicate);
+            aniJobs.ForEachPredicate(predicate);
         }
 
         public int GetAniCount() { return aniJobs.Count; }
@@ -283,7 +283,7 @@ namespace GUC.Models
 
         public void ForEachDynamicAni(Predicate<AniJob> predicate)
         {
-            dynJobs.ForEach(predicate);
+            dynJobs.ForEachPredicate(predicate);
         }
 
         public int GetDynamicAniCount() { return dynJobs.Count; }
@@ -372,7 +372,7 @@ namespace GUC.Models
 
         public void ForEachOverlay(Predicate<Overlay> predicate)
         {
-            overlays.ForEach(predicate);
+            overlays.ForEachPredicate(predicate);
         }
 
         public int GetOverlayCount() { return overlays.Count; }
@@ -386,7 +386,7 @@ namespace GUC.Models
 
         public void ForEachDynamicOverlay(Predicate<Overlay> predicate)
         {
-            dynOvs.ForEach(predicate);
+            dynOvs.ForEachPredicate(predicate);
         }
 
         public int GetDynamicOverlayCount() { return dynOvs.Count; }

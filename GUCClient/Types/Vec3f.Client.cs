@@ -8,14 +8,12 @@ namespace GUC.Types
 {
     public partial struct Vec3f
     {
-
         public Vec3f(zVec3 zVec)
         {
             this.X = zVec.X;
             this.Y = zVec.Y;
             this.Z = zVec.Z;
         }
-
 
         public static explicit operator Vec3f(zVec3 zVec)
         {
@@ -27,6 +25,11 @@ namespace GUC.Types
             zVec.X = this.X;
             zVec.Y = this.Y;
             zVec.Z = this.Z;
+        }
+
+        public zVec3 CreateGVec()
+        {
+            return zVec3.Create(this.X, this.Y, this.Z);
         }
     }
 }

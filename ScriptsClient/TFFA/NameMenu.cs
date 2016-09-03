@@ -27,7 +27,7 @@ namespace GUC.Scripts.TFFA
             if (!string.IsNullOrWhiteSpace(newName) && newName != TFFAClient.Info.Name)
             {
                 PacketWriter stream = GameClient.Client.GetMenuMsgStream();
-                stream.Write((byte)MenuMsgID.ClientName);
+                stream.Write((byte)TFFANetMsgID.ClientName);
                 stream.Write(newName);
                 GameClient.Client.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE);
             }

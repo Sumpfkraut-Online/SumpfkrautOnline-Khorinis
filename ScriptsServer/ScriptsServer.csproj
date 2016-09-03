@@ -60,8 +60,17 @@
     <Compile Include="..\ScriptsShared\GUCScripts.cs">
       <Link>GUCScripts.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptsShared\Sumpfkraut\Networking\NetVobMsgIDs.cs">
-      <Link>Sumpfkraut\Networking\NetVobMsgIDs.cs</Link>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\AI\GuideCommands\CommandType.cs">
+      <Link>Sumpfkraut\AI\GuideCommands\CommandType.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\AI\GuideCommands\GoToPosCommand.cs">
+      <Link>Sumpfkraut\AI\GuideCommands\GoToPosCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\AI\GuideCommands\GoToVobCommand.cs">
+      <Link>Sumpfkraut\AI\GuideCommands\GoToVobCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Networking\NetMsgIDs.cs">
+      <Link>Sumpfkraut\Networking\NetMsgIDs.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\Networking\ScriptClient.cs">
       <Link>Sumpfkraut\Networking\ScriptClient.cs</Link>

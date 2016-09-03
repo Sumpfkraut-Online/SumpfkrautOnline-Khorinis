@@ -5,10 +5,11 @@ using System.Text;
 using GUC.Enumeration;
 using GUC.WorldObjects.Instances;
 using GUC.Models;
+using GUC.Types;
 
 namespace GUC.WorldObjects
 {
-    public partial class Vob : BaseVob
+    public partial class Vob : VobGuiding.GuidedVob
     {
         public override VobTypes VobType { get { return VobTypes.Vob; } }
 
@@ -39,6 +40,23 @@ namespace GUC.WorldObjects
         public bool CDStatic { get { return Instance.CDStatic; } }
 
         #endregion
+        
+        #region Spawn & Despawn
 
+        partial void pSpawn();
+        public override void Spawn(World world, Vec3f position, Vec3f direction)
+        {
+            base.Spawn(world, position, direction);
+            pSpawn();
+        }
+
+        partial void pDespawn();
+        public override void Despawn()
+        {
+            base.Despawn();
+            pDespawn();
+        }
+
+        #endregion
     }
 }

@@ -9,45 +9,6 @@ namespace WinApi
 {
     public static class Process
     {
-        #region Injection
-
-        /// <summary>
-        /// Inject a dll into the process
-        /// </summary>
-        /// <param name="process"></param>
-        /// <param name="dll"></param>
-        /// <returns></returns>
-        public static IntPtr LoadLibary(System.Diagnostics.Process process, String dll)
-        {
-            if (process == null || dll == null || String.IsNullOrWhiteSpace(dll))
-                return IntPtr.Zero;
-
-            byte[] dllb = Encoding.ASCII.GetBytes(dll);
-            if (dllb == null || dllb.Length == 0)
-                return IntPtr.Zero;
-
-            //Alloc
-            uint len = (uint)dllb.Length + 1;
-            IntPtr dllbPtr = Kernel.Process.VirtualAllocEx(process.Handle, IntPtr.Zero, len, Kernel.Process.AllocationType.Reserve | Kernel.Process.AllocationType.Commit, Kernel.Process.MemoryProtection.ReadWrite);
-            if (dllbPtr == IntPtr.Zero)
-            {
-                Kernel.Error.GetLastError();
-            }
-
-            //Write dll name
-            uint tmp = 0;
-            if (!Kernel.Process.WriteProcessMemory(process.Handle, dllbPtr, dllb, (uint)dllb.Length, out tmp))
-            {
-                Error.GetLastError();
-            }
-
-            IntPtr loadlib = Kernel.Process.GetProcAddress(WinApi.Kernel.Process.GetModuleHandle("kernel32.dll"), "LoadLibraryA");
-
-            return Kernel.Process.CreateRemoteThread(process.Handle, IntPtr.Zero, 0, loadlib, dllbPtr, 0, out tmp);
-        }
-
-        #endregion
-
         #region Initialization
 
         static IntPtr Handle = GetThisHandle();
@@ -57,10 +18,10 @@ namespace WinApi
         {
             ProcessID = (uint)System.Diagnostics.Process.GetCurrentProcess().Id;
             System.Diagnostics.Process.EnterDebugMode();
-            IntPtr retH = Kernel.Process.OpenProcess((uint)Kernel.Process.ProcessAccess.PROCESS_ALL_ACCESS, false, ProcessID);
+            IntPtr retH = Kernel.ProcessImports.OpenProcess((uint)Kernel.ProcessImports.ProcessAccess.PROCESS_ALL_ACCESS, false, ProcessID);
             if (retH == IntPtr.Zero)
             {
-                Kernel.Error.GetLastError();
+                Error.GetLastError();
             }
             return retH;
         }
@@ -70,15 +31,15 @@ namespace WinApi
 
         public static bool VirtualProtect(int address, uint size)
         {
-            Kernel.Process.MemoryProtection k;
-            return Kernel.Process.VirtualProtect(new IntPtr(address), size, Kernel.Process.MemoryProtection.ExecuteReadWrite, out k);
+            Kernel.ProcessImports.MemoryProtection k;
+            return Kernel.ProcessImports.VirtualProtect(new IntPtr(address), size, Kernel.ProcessImports.MemoryProtection.ExecuteReadWrite, out k);
         }
 
         public static IntPtr Alloc(uint size)
         {
             if (size == 0)
                 return IntPtr.Zero;
-            IntPtr ptr = Kernel.Process.VirtualAllocEx(Handle, IntPtr.Zero, size, WinApi.Kernel.Process.AllocationType.Reserve | WinApi.Kernel.Process.AllocationType.Commit, WinApi.Kernel.Process.MemoryProtection.ReadWrite);
+            IntPtr ptr = Kernel.ProcessImports.VirtualAllocEx(Handle, IntPtr.Zero, size, WinApi.Kernel.ProcessImports.AllocationType.Reserve | WinApi.Kernel.ProcessImports.AllocationType.Commit, WinApi.Kernel.ProcessImports.MemoryProtection.ReadWrite);
             if (ptr == IntPtr.Zero)
                 Error.GetLastError();
 
@@ -89,10 +50,10 @@ namespace WinApi
         {
             if (ptr == IntPtr.Zero || size == 0)
                 return false;
-            if (!WinApi.Kernel.Process.VirtualFreeEx(Handle, ptr, (uint)size, Kernel.Process.AllocationType.Decommit))
-                Kernel.Error.GetLastError();
-            if (!WinApi.Kernel.Process.VirtualFreeEx(Handle, ptr, 0, Kernel.Process.AllocationType.Release))
-                Kernel.Error.GetLastError();
+            if (!ProcessImports.VirtualFreeEx(Handle, ptr, (uint)size, ProcessImports.AllocationType.Decommit))
+                Error.GetLastError();
+            if (!ProcessImports.VirtualFreeEx(Handle, ptr, 0, ProcessImports.AllocationType.Release))
+                Error.GetLastError();
 
             return true;
         }
@@ -111,7 +72,7 @@ namespace WinApi
 
             IntPtr byteWritten = IntPtr.Zero;
             IntPtr ptr = new IntPtr(obj);
-            if (!Kernel.Process.WriteProcessMemory(Handle, new IntPtr(position), out ptr, 4, out byteWritten))
+            if (!Kernel.ProcessImports.WriteProcessMemory(Handle, new IntPtr(position), out ptr, 4, out byteWritten))
                 Error.GetLastError();
 
             return (uint)byteWritten.ToInt32();
@@ -138,7 +99,7 @@ namespace WinApi
                 throw new Exception("Write position is 0!");
 
             uint byteWritten = 0;
-            if (!Kernel.Process.WriteProcessMemory(Handle, new IntPtr(position), obj, (uint)obj.Length, out byteWritten))
+            if (!Kernel.ProcessImports.WriteProcessMemory(Handle, new IntPtr(position), obj, (uint)obj.Length, out byteWritten))
                 Error.GetLastError();
 
             return byteWritten;
@@ -154,11 +115,11 @@ namespace WinApi
             if (position == 0)
                 throw new Exception("Process.Read position is 0!");
 
-            IntPtr rw = IntPtr.Zero;
-            IntPtr puffer = IntPtr.Zero;
-            if (!Kernel.Process.ReadProcessMemory(Handle, new IntPtr(position), out puffer, new UIntPtr(sizeof(int)), out rw))
+            IntPtr rw;
+            IntPtr puffer;
+            if (!ProcessImports.ReadProcessMemory(Handle, new IntPtr(position), out puffer, new UIntPtr(4), out rw))
                 Error.GetLastError();
-            return (int)puffer.ToInt32();
+            return puffer.ToInt32();
         }
 
         public static byte ReadByte(int position)
@@ -183,7 +144,7 @@ namespace WinApi
 
             byte[] bytes = new byte[count];
             UInt32 size = 0;
-            if (!Kernel.Process.ReadProcessMemory(Handle, new IntPtr(position), bytes, count, ref size))
+            if (!ProcessImports.ReadProcessMemory(Handle, new IntPtr(position), bytes, count, ref size))
                 Error.GetLastError();
             return bytes;
         }
@@ -530,14 +491,14 @@ namespace WinApi
 
         public static bool SetWindowText(String text)
         {
-            return Kernel.Process.SetWindowText(Handle, text);
+            return ProcessImports.SetWindowText(Handle, text);
         }
 
         public static String GetWindowText()
         {
-            int length = Kernel.Process.GetWindowTextLength(Handle);
+            int length = ProcessImports.GetWindowTextLength(Handle);
             StringBuilder sb = new StringBuilder(length + 1);
-            Kernel.Process.GetWindowText(Handle, sb, sb.Capacity);
+            ProcessImports.GetWindowText(Handle, sb, sb.Capacity);
             return sb.ToString();
         }
 

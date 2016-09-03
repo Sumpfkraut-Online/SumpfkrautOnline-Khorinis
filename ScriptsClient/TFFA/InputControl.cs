@@ -98,14 +98,18 @@ namespace GUC.Scripts.TFFA
                 {
                     string str = Hero.BaseInst.GetPosition() + " " + Hero.BaseInst.GetDirection() + "\r\n";
                     Log.Logger.Log(str);
-                    System.IO.File.AppendAllText(Program.ProjectPath + "SavedLocations.txt", str);
+                    System.IO.File.AppendAllText(System.IO.Path.Combine(Program.ProjectPath, "SavedLocations.txt"), str);
                 }
             }
 
             if (TFFAClient.Status == TFFAPhase.Waiting)
                 return;
 
-            if (key == VirtualKeys.N1)
+            if (key == VirtualKeys.I)
+            {
+                PlayerInventory.Menu.Open();
+            }
+            else if (key == VirtualKeys.N1)
             {
                 if (Hero.DrawnWeapon == null)
                 {

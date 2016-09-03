@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GUC.Scripts.Sumpfkraut.Networking
+namespace GUC.Scripts.Sumpfkraut.AI.GuideCommands
 {
-    public enum NetVobMsgIDs : byte
+    enum CommandType : byte
     {
-        HitMessage,
-        ParryMessage,
+        GoToPos,
+        GoToVob,
     }
 }

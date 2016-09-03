@@ -5,7 +5,7 @@ using System.Text;
 using GUC.Network.Messages;
 using GUC.Network;
 
-namespace GUC.Menus.MainMenus
+namespace GUC.Scripts.Sumpfkraut.Menus.MainMenus
 {
     /*class CharSelMenu : GUCMainMenu
     {

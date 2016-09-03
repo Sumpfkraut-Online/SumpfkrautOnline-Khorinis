@@ -13,6 +13,7 @@ using GUC.WorldObjects;
 using Gothic.Objects;
 using Gothic;
 using GUC.Animations;
+using GUC.WorldObjects.VobGuiding;
 
 namespace GUC.Network
 {
@@ -25,6 +26,12 @@ namespace GUC.Network
             void ReadScriptMsg(PacketReader stream);
         }
 
+        #region Guided vobs
+
+        internal Dictionary<int, GuideCmd> guidedIDs = new Dictionary<int, GuideCmd>(100);
+
+        #endregion
+        
         #region Spectator
 
         partial void pSetToSpectate(World world, Vec3f pos, Vec3f dir)
@@ -50,17 +57,15 @@ namespace GUC.Network
 
         Vec3f lastSpecPos;
         static long specNextUpdate = 0;
+        const long SpecPosUpdateInterval = 2000000;
         internal void UpdateSpectator(long now)
         {
             if (now < specNextUpdate)
                 return;
 
             var cam = oCGame.GetCameraVob();
-            var pos = new Vec3f(cam.Position);
-            if (VobMessage.ChangedCoord(ref pos.X) || VobMessage.ChangedCoord(ref pos.Y) || VobMessage.ChangedCoord(ref pos.Z))
-            {
-                cam.SetPositionWorld(pos.X, pos.Y, pos.Z);
-            }
+            var pos = new Vec3f(cam.Position).CorrectPosition();
+            cam.SetPositionWorld(pos.X, pos.Y, pos.Z);
 
             if (now - specNextUpdate < TimeSpan.TicksPerSecond && pos.GetDistance(lastSpecPos) < 10)
                 return;
@@ -71,14 +76,13 @@ namespace GUC.Network
             stream.WriteCompressedPosition(pos);
             Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE);
 
-            specNextUpdate = now + 1000000;
+            specNextUpdate = now + SpecPosUpdateInterval;
         }
 
         #endregion
 
         #region Commands
-
-        MoveState nextState = MoveState.Stand;
+        
         const int DelayBetweenMessages = 800000; //80ms
         public void DoSetHeroState(MoveState state)
         {
@@ -111,30 +115,7 @@ namespace GUC.Network
                     s = MoveState.Stand;
             }
 
-            if (this.nextState == s)
-                return;
-
-            this.nextState = s;
-            this.character.nextStateUpdate = 0;
-            UpdateHeroState(GameTime.Ticks);
-        }
-
-        void UpdateHeroState(long now)
-        {
-            if (this.character == null)
-                return;
-
-            if (this.character.IsDead)
-                return;
-
-            if (this.character.Movement == nextState)
-                return;
-
-            if (now < this.character.nextStateUpdate)
-                return;
-
-            NPCMessage.WriteMoveState(this.character, nextState);
-            this.character.nextStateUpdate = now + DelayBetweenMessages;
+            this.character.DoSetState(s);
         }
 
         long nextAniUpdate = 0;
@@ -167,7 +148,7 @@ namespace GUC.Network
                 nextAniUpdate = GameTime.Ticks + DelayBetweenMessages;
             }
         }
-        
+
         public void DoEquipItem(int slot, Item item)
         {
             if (this.character == null || item == null)
@@ -240,7 +221,7 @@ namespace GUC.Network
         #endregion
 
         #region Hero
-        
+
         void ReadTakeControl(PacketReader stream)
         {
             int characterID = stream.ReadUShort();
@@ -271,26 +252,6 @@ namespace GUC.Network
             this.isSpectating = false;
         }
 
-        #region Position updates
-
-        internal void UpdateCharacters(long now)
-        {
-            World.Current.ForEachVob(v =>
-            {
-                if (v is NPC)
-                    ((NPC)v).Update(now);
-            });
-
-            if (this.character == null || this.character.IsDead)
-                return;
-
-            VobMessage.WritePosDirMessage(now);
-
-            UpdateHeroState(now);
-        }
-
-        #endregion
-
         #endregion
 
         RakPeerInterface clientInterface = null;
@@ -307,7 +268,7 @@ namespace GUC.Network
 
         void ReadMessage(NetworkIDs id, PacketReader stream)
         {
-            if (id != NetworkIDs.VobPosDirMessage && id != NetworkIDs.NPCStateMessage)
+            if (id != NetworkIDs.VobPosDirMessage)
                 Logger.Log(id);
 
             switch (id)
@@ -367,14 +328,20 @@ namespace GUC.Network
                     break;
 
                 // World Messages
+                case NetworkIDs.WorldCellMessage:
+                    WorldMessage.ReadCellMessage(stream);
+                    break;
+                case NetworkIDs.WorldJoinMessage:
+                    WorldMessage.ReadJoinWorldMessage(stream);
+                    break;
+                case NetworkIDs.WorldLeaveMessage:
+                    WorldMessage.ReadLeaveWorldMessage(stream);
+                    break;
                 case NetworkIDs.WorldSpawnMessage:
                     WorldMessage.ReadVobSpawnMessage(stream);
                     break;
                 case NetworkIDs.WorldDespawnMessage:
                     WorldMessage.ReadVobDespawnMessage(stream);
-                    break;
-                case NetworkIDs.WorldCellMessage:
-                    WorldMessage.ReadCellMessage(stream);
                     break;
                 case NetworkIDs.WorldTimeMessage:
                     WorldMessage.ReadTimeMessage(stream);
@@ -446,12 +413,28 @@ namespace GUC.Network
                 case NetworkIDs.NPCHealthMessage:
                     NPCMessage.ReadHealthMessage(stream);
                     break;
-                    
+
                 case NetworkIDs.NPCSetFightModeMessage:
                     NPCMessage.ReadSetFightModeMessage(stream);
                     break;
                 case NetworkIDs.NPCUnsetFightModeMessage:
                     NPCMessage.ReadUnsetFightModeMessage(stream);
+                    break;
+
+                case NetworkIDs.GuideAddMessage:
+                    GuideMessage.ReadGuideAddMessage(stream);
+                    break;
+                case NetworkIDs.GuideAddCmdMessage:
+                    GuideMessage.ReadGuideAddCmdMessage(stream);
+                    break;
+                case NetworkIDs.GuideRemoveMessage:
+                    GuideMessage.ReadGuideRemoveMessage(stream);
+                    break;
+                case NetworkIDs.GuideSetCmdMessage:
+                    GuideMessage.ReadGuideSetCmdMessage(stream);
+                    break;
+                case NetworkIDs.GuideRemoveCmdMessage:
+                    GuideMessage.ReadGuideRemoveCmdMessage(stream);
                     break;
 
                 default:
@@ -484,14 +467,16 @@ namespace GUC.Network
                     return;
 
                 this.isConnecting = true;
+                
 
-                ConnectionAttemptResult res = clientInterface.Connect(Program.ServerAddress, Program.ServerPort, Constants.VERSION, Constants.VERSION.Length);
+                ConnectionAttemptResult res = clientInterface.Connect(Program.ServerIP, Program.ServerPort, Program.Password, Program.Password == null ? 0 : Program.Password.Length);
+                
                 if (res != ConnectionAttemptResult.CONNECTION_ATTEMPT_STARTED)
                 {
                     throw new Exception("Connection couldn't be established: " + res);
                 }
 
-                Logger.Log("Connection attempt {0} to '{1}:{2}' started.", ++connectionAttempts, Program.ServerAddress, Program.ServerPort);
+                Logger.Log("Connection attempt {0} to '{1}:{2}' started.", ++connectionAttempts, Program.ServerIP, Program.ServerPort);
             }
             catch (Exception e)
             {
@@ -633,7 +618,8 @@ namespace GUC.Network
                 }
 
                 // update ping text on screen
-                GUCVisualText pingText = devInfo.Texts[0];
+                int devIndex = 0;
+                GUCVisualText pingText = devInfo.Texts[devIndex++];
                 pingText.Text = ("Ping: " + ping + "ms");
                 if (ping <= 120)
                 {
@@ -647,36 +633,40 @@ namespace GUC.Network
                 {
                     pingText.SetColor(ColorRGBA.Red);
                 }
-                /*
                 // update kB/s text on screen
                 int kbs = (int)(receivedBytes);
-                devInfo.Texts[1].Text = ("Net received: " + kbs + "B/s");
+                devInfo.Texts[devIndex++].Text = ("Net received: " + kbs + "B/s");
                 kbs = (int)(sentBytes);
-                devInfo.Texts[2].Text = ("Net Sent: " + kbs + "B/s");
+                devInfo.Texts[devIndex++].Text = ("Net Sent: " + kbs + "B/s");
                 lastInfoUpdate = GameTime.Ticks;
                 receivedBytes = 0;
                 sentBytes = 0;
 
                 if (World.Current != null)
                 {
+                    devIndex++;
+                    devInfo.Texts[devIndex++].Text = World.current.VobCount + " Vobs";
+                    devInfo.Texts[devIndex++].Text = guidedIDs.Count + " guided";
+
                     if (character != null)
                     {
-                        devInfo.Texts[3].Text = "Pos: " + character.GetPosition();
-                        devInfo.Texts[4].Text = "Dir: " + character.GetDirection();
+                        devInfo.Texts[devIndex++].Text = "Pos: " + character.GetPosition();
+                        devInfo.Texts[devIndex++].Text = "Dir: " + character.GetDirection();
                     }
                     else
                     {
-                        devInfo.Texts[3].Text = "Pos: " + new Vec3f(oCGame.GetCameraVob().TrafoObjToWorld.Position);
-                        devInfo.Texts[4].Text = "Dir: " + new Vec3f(oCGame.GetCameraVob().TrafoObjToWorld.Direction);
+                        devInfo.Texts[devIndex++].Text = "Pos: " + new Vec3f(oCGame.GetCameraVob().TrafoObjToWorld.Position);
+                        devInfo.Texts[devIndex++].Text = "Dir: " + new Vec3f(oCGame.GetCameraVob().TrafoObjToWorld.Direction);
                     }
-                    devInfo.Texts[5].Text = "Weather: " + World.current.SkyCtrl.CurrentWeight + " " + World.current.Clock.Time.ToString(false);
-                    
+                    devInfo.Texts[devIndex++].Text = "Weather: " + World.current.SkyCtrl.CurrentWeight + " " + World.current.Clock.Time.ToString(false);
+
                     if (character != null)
                     {
-                        devInfo.Texts[6].Text = character.Movement.ToString();
-                        devInfo.Texts[7].Text = character.EnvState.ToString();
+                        devInfo.Texts[devIndex++].Text = character.Movement.ToString();
+                        devInfo.Texts[devIndex++].Text = character.EnvState.ToString();
                     }
-                }*/
+
+                }
             }
             devInfo.Show();
         }

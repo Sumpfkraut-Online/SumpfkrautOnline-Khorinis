@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using GUC.Types;
 
 namespace GUC
 {
@@ -60,6 +61,30 @@ namespace GUC
         public static double GetDouble()
         {
             return rand.NextDouble();
+        }
+
+        public static double GetDouble(double maxValue)
+        {
+            return rand.NextDouble() * maxValue;
+        }
+
+        public static double GetDouble(double minValue, double maxValue)
+        {
+            return rand.NextDouble() * (maxValue - minValue) + minValue;
+        }
+        
+        public static Vec3f GetVec3fRad(Vec3f pos, float radius)
+        {
+            float x = (float)GetDouble(-radius, radius);
+            double zMax = Math.Sqrt(radius * radius - x * x);
+            float z = (float)GetDouble(-zMax, zMax);
+
+            return new Vec3f(pos.X + x, pos.Y, pos.Z + z);
+        }
+
+        public static Vec3f GetVec3fBox(Vec3f pos, float xLen, float yLen)
+        {
+            return new Vec3f(pos.X + (float)GetDouble(-xLen, xLen), pos.Y, pos.Z + (float)GetDouble(-yLen, yLen));
         }
     }
 }

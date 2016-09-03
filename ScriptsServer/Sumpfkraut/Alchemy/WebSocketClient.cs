@@ -335,7 +335,7 @@ namespace Alchemy
 
             for (var index = 0; index < bytes.Length; index++)
             {
-                bytes[index] = (byte) random.Next(0, 255);
+                bytes[index] = (byte)random.Next(0, 255);
             }
 
             return Convert.ToBase64String(bytes);

@@ -10,6 +10,7 @@ using GUC.Types;
 using GUC.Scripting;
 using Gothic.Objects;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
+using GUC.Scripts.Sumpfkraut.Networking;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
@@ -167,10 +168,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public override void OnReadScriptVobMsg(PacketReader stream)
         {
-            var msgID = (Networking.NetVobMsgIDs)stream.ReadByte();
+            var msgID = (NetWorldMsgID)stream.ReadByte();
             switch (msgID)
             {
-                case Networking.NetVobMsgIDs.HitMessage:
+                case NetWorldMsgID.HitMessage:
                     var targetID = stream.ReadUShort();
                     WorldObjects.NPC target;
                     if (WorldInst.Current.BaseWorld.TryGetVob(targetID, out target))
@@ -196,7 +197,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                         target.gVob.GetModel().StartAni("T_GOTHIT", 0);
                     }
                     break;
-                case Networking.NetVobMsgIDs.ParryMessage:
+                case NetWorldMsgID.ParryMessage:
                     targetID = stream.ReadUShort();
                     WorldObjects.NPC targetNPC;
                     if (WorldInst.Current.BaseWorld.TryGetVob(targetID, out targetNPC))

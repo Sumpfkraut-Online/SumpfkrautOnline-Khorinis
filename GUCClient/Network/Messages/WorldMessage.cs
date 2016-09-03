@@ -6,12 +6,13 @@ using GUC.Scripting;
 using GUC.WorldObjects;
 using GUC.Enumeration;
 using RakNet;
+using GUC.WorldObjects.VobGuiding;
 
 namespace GUC.Network.Messages
 {
     static class WorldMessage
     {
-        #region World Loading
+        #region World Loading & Joining
 
         public static void ReadLoadWorldMessage(PacketReader stream)
         {
@@ -28,6 +29,7 @@ namespace GUC.Network.Messages
             }
             world.SkyCtrl.ScriptObject.SetRainTime(world.SkyCtrl.TargetTime, world.SkyCtrl.TargetWeight);
             world.SkyCtrl.ScriptObject.SetWeatherType(world.SkyCtrl.WeatherType);
+
             var hero = Gothic.Objects.oCNpc.GetPlayer();
             hero.Disable();
             Gothic.oCGame.GetWorld().RemoveVob(hero);
@@ -41,47 +43,89 @@ namespace GUC.Network.Messages
             GameClient.Send(stream, PacketPriority.IMMEDIATE_PRIORITY, PacketReliability.RELIABLE);
         }
 
+        public static void ReadJoinWorldMessage(PacketReader stream)
+        {
+            for (int i = stream.ReadUShort(); i > 0; i--)
+            {
+                ReadVobSpawnMessage(stream);
+            }
+        }
+
+        public static void ReadLeaveWorldMessage(PacketReader stream)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
 
-        #region Spawns & Cells
+        #region Spawns
+
+        public static void ReadCellMessage(PacketReader stream)
+        {
+            // remove vobs
+            for (int i = stream.ReadUShort(); i > 0; i--)
+            {
+                ReadVobDespawnMessage(stream);
+            }
+
+            // add vobs
+            for (int i = stream.ReadUShort(); i > 0; i--)
+            {
+                ReadVobSpawnMessage(stream);
+            }
+        }
 
         public static void ReadVobSpawnMessage(PacketReader stream)
         {
             BaseVob vob = ScriptManager.Interface.CreateVob((VobTypes)stream.ReadByte());
             vob.ReadStream(stream);
             vob.ScriptObject.Spawn(World.current);
+
+            GuideCmd cmd;
+            if (vob is GuidedVob && GameClient.Client.guidedIDs.TryGetValue(vob.ID, out cmd))
+            {
+                ((GuidedVob)vob).SetGuideCommand(cmd);
+            }
+
+            /*foreach (GuideCmd tcmd in GameClient.Client.guidedIDs.Values)
+            {
+                if (tcmd is TargetCmd && ((TargetCmd)tcmd).Target.ID == vob.ID)
+                {
+                    if (!(((TargetCmd)tcmd).Target is DummyVob))
+                        throw new Exception("Wanna overspawn a non-dummy-vob.");
+
+                    ((TargetCmd)tcmd).target.Despawn();
+                    ((TargetCmd)tcmd).target = vob;
+                }
+            }*/
         }
 
         public static void ReadVobDespawnMessage(PacketReader stream)
         {
+            int id = stream.ReadUShort();
             BaseVob vob;
-            if (World.current.TryGetVob(stream.ReadUShort(), out vob))
+            if (World.current.TryGetVob(id, out vob))
             {
                 vob.ScriptObject.Despawn();
             }
-        }
 
-        public static void ReadCellMessage(PacketReader stream)
-        {
-            for (int t = 0; t < (int)VobTypes.Maximum; t++)
+            GameClient.Client.guidedIDs.Remove(id);
+
+            /*foreach (GuideCmd tcmd in GameClient.Client.guidedIDs.Values)
             {
-                int vobCount = stream.ReadUShort();
-                for (int i = 0; i < vobCount; i++)
+                if (tcmd is TargetCmd && ((TargetCmd)tcmd).Target.ID == id)
                 {
-                    BaseVob vob = ScriptManager.Interface.CreateVob((VobTypes)t);
-                    vob.ReadStream(stream);
-                    vob.ScriptObject.Spawn(World.current);
+                    if ((((TargetCmd)tcmd).Target is DummyVob))
+                        throw new Exception("Wanna despawn a dummy-vob.");
+
+                    DummyVob dummy = new DummyVob();
+                    dummy.Instance = DummyVobInstance.Instance;
+                    dummy.ID = id;
+                    dummy.Spawn(World.current);
+
+                    ((TargetCmd)tcmd).target = dummy;
                 }
-            }
-            int delCount = stream.ReadUShort();
-            for (int i = 0; i < delCount; i++)
-            {
-                BaseVob vob;
-                if (World.Current.TryGetVob(stream.ReadUShort(), out vob))
-                {
-                    vob.ScriptObject.Despawn();
-                }
-            }
+            }*/
         }
 
         #endregion

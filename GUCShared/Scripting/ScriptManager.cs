@@ -10,6 +10,7 @@ using GUC.Animations;
 using GUC.Models;
 using GUC.Enumeration;
 using GUC.WorldObjects.Instances;
+using GUC.WorldObjects.VobGuiding;
 
 namespace GUC.Scripting
 {
@@ -23,6 +24,7 @@ namespace GUC.Scripting
         BaseVob CreateVob(VobTypes type);
         BaseVobInstance CreateInstance(VobTypes type);
         World CreateWorld();
+        GuideCmd CreateGuideCmd(byte type);
     }
 
     static class ScriptManager

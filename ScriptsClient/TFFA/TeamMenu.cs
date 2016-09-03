@@ -104,7 +104,7 @@ namespace GUC.Scripts.TFFA
             if (TFFAClient.Info.Team != team)
             {
                 PacketWriter stream = GameClient.Client.GetMenuMsgStream();
-                stream.Write((byte)MenuMsgID.ClientTeam);
+                stream.Write((byte)TFFANetMsgID.ClientTeam);
                 stream.Write((byte)team);
                 GameClient.Client.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE);
             }

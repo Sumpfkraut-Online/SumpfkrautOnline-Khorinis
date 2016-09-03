@@ -87,34 +87,27 @@ namespace GUC.WorldObjects
         public Vec3f GetPosition()
         {
             pGetPosition();
-            return new Vec3f(pos);
+            return pos;
         }
 
         partial void pGetDirection();
         public Vec3f GetDirection()
         {
             pGetDirection();
-            return new Vec3f(dir);
+            return dir;
         }
 
         partial void pSetPosition();
-        public void SetPosition(Vec3f position)
+        public virtual void SetPosition(Vec3f position)
         {
-            this.pos = position;
+            this.pos = position.CorrectPosition();
             pSetPosition();
         }
 
         partial void pSetDirection();
-        public void SetDirection(Vec3f direction)
+        public virtual void SetDirection(Vec3f direction)
         {
-            if (direction.IsNull())
-            {
-                this.dir = new Vec3f(0, 0, 1);
-            }
-            else
-            {
-                this.dir = direction;
-            }
+            this.dir = direction.CorrectDirection();
             pSetDirection();
         }
 
@@ -156,6 +149,15 @@ namespace GUC.WorldObjects
 
         #region Spawn
 
+        public delegate void OnSpawnHandler(BaseVob vob, World world, Vec3f pos, Vec3f dir);
+        public delegate void OnDespawnHandler(BaseVob vob);
+
+        public static event OnSpawnHandler sOnSpawn = null;
+        public static event OnDespawnHandler sOnDespawn = null;
+
+        public event OnSpawnHandler OnSpawn = null;
+        public event OnDespawnHandler OnDespawn = null;
+
         /// <summary>
         /// Spawns the Vob in the given world.
         /// </summary>
@@ -188,7 +190,7 @@ namespace GUC.WorldObjects
 
             if (this.isCreated)
                 throw new Exception("Vob is already spawned!");
-            
+
             this.pos = position;
             this.dir = direction;
 
@@ -199,6 +201,10 @@ namespace GUC.WorldObjects
 
             this.isCreated = true;
 
+            if (this.OnSpawn != null)
+                this.OnSpawn(this, world, position, direction);
+            if (sOnSpawn != null)
+                sOnSpawn(this, world, position, direction);
         }
 
         partial void pSpawn();
@@ -211,7 +217,7 @@ namespace GUC.WorldObjects
         {
             if (!this.isCreated)
                 throw new Exception("Vob isn't spawned!");
-            
+
             this.isCreated = false;
 
             pDespawn();
@@ -219,6 +225,10 @@ namespace GUC.WorldObjects
             this.world.RemoveVob(this);
             this.world = null;
 
+            if (this.OnDespawn != null)
+                this.OnDespawn(this);
+            if (sOnDespawn != null)
+                sOnDespawn(this);
         }
         #endregion
 

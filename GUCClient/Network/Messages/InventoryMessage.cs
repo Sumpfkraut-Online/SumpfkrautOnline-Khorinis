@@ -16,13 +16,13 @@ namespace GUC.Network.Messages
             Item item = (Item)ScriptManager.Interface.CreateVob(VobTypes.Item);
             item.ID = stream.ReadByte();
             item.ReadInventoryProperties(stream);
-            GameClient.Client.character.ScriptObject.AddItem(item);
+            GameClient.Client.Character.ScriptObject.AddItem(item);
         }
         
         public static void ReadChangeItemAmount(PacketReader stream)
         {
             Item item;
-            if (GameClient.Client.character.Inventory.TryGetItem(stream.ReadByte(), out item))
+            if (GameClient.Client.Character.Inventory.TryGetItem(stream.ReadByte(), out item))
             {
                 item.ScriptObject.SetAmount(stream.ReadUShort());
             }
@@ -31,9 +31,9 @@ namespace GUC.Network.Messages
         public static void ReadRemoveItem(PacketReader stream)
         {
             Item item;
-            if (GameClient.Client.character.Inventory.TryGetItem(stream.ReadByte(), out item))
+            if (GameClient.Client.Character.Inventory.TryGetItem(stream.ReadByte(), out item))
             {
-                GameClient.Client.character.ScriptObject.RemoveItem(item);
+                GameClient.Client.Character.ScriptObject.RemoveItem(item);
             }
         }
 
@@ -57,18 +57,18 @@ namespace GUC.Network.Messages
         public static void ReadEquipMessage(PacketReader stream)
         {
             Item item;
-            if (GameClient.Client.character.Inventory.TryGetItem(stream.ReadByte(), out item))
+            if (GameClient.Client.Character.Inventory.TryGetItem(stream.ReadByte(), out item))
             {
-                GameClient.Client.character.ScriptObject.EquipItem(stream.ReadByte(), item);
+                GameClient.Client.Character.ScriptObject.EquipItem(stream.ReadByte(), item);
             }
         }
 
         public static void ReadUnequipMessage(PacketReader stream)
         {
             Item item;
-            if (GameClient.Client.character.Inventory.TryGetItem(stream.ReadByte(), out item))
+            if (GameClient.Client.Character.Inventory.TryGetItem(stream.ReadByte(), out item))
             {
-                GameClient.Client.character.ScriptObject.UnequipItem(item);
+                GameClient.Client.Character.ScriptObject.UnequipItem(item);
             }
         }
         #endregion

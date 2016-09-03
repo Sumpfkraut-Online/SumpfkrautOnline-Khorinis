@@ -33,18 +33,14 @@ namespace GUC.Network
 
         #region Properties
 
-        internal NPC character = null;
+        NPC character = null;
         public NPC Character { get { return this.character; } }
 
         new public int ID { get { return base.ID; } }
 
-        Vec3f specPos, specDir;
-        World specWorld;
-        public World SpecWorld { get { return this.specWorld; } }
-        bool isSpectating = false;
-        public bool IsSpectating { get { return this.isSpectating; } }
-
         #endregion
+
+        #region Control
 
         partial void pSetControl(NPC npc);
         public void SetControl(NPC npc)
@@ -55,6 +51,61 @@ namespace GUC.Network
             pSetControl(npc);
         }
 
+        #endregion
+
+        #region Spectate
+
+        Vec3f specPos, specDir;
+
+        World specWorld = null;
+        public World SpecWorld { get { return this.specWorld; } }
+
+        bool isSpectating = false;
+        public bool IsSpectating { get { return this.isSpectating; } }
+
+        #region Position & Direction
+
+        partial void pSpecGetPos();
+        public Vec3f SpecGetPos()
+        {
+            pSpecGetPos();
+            return this.specPos;
+        }
+
+        partial void pSpecGetDir();
+        public Vec3f SpecGetDir()
+        {
+            pSpecGetDir();
+            return this.specDir;
+        }
+
+        partial void pSpecSetPos();
+        public void SpecSetPos(Vec3f position)
+        {
+            this.specPos = position.CorrectPosition();
+            pSpecSetPos();
+        }
+
+        partial void pSpecSetDir();
+        public void SpecSetDir(Vec3f direction)
+        {
+            this.specDir = direction.CorrectDirection();
+            pSpecSetDir();
+        }
+
+        partial void pSpecSetPosDir();
+        public void SpecSetPosDir(Vec3f position, Vec3f direction)
+        {
+            this.specPos = position.CorrectPosition();
+            this.specDir = direction.CorrectDirection();
+            pSpecSetPosDir();
+        }
+
+        #endregion
+
+        #region Set to spectator mode
+        
+        partial void pSetToSpectate(World world, Vec3f pos, Vec3f dir);
         /// <summary>
         /// The client will lose control of its current NPC and move into spectator mode (free view).
         /// </summary>
@@ -65,9 +116,21 @@ namespace GUC.Network
             if (!world.IsCreated)
                 throw new Exception("World is not created!");
 
-            pSetToSpectate(world, position, direction);
+            if (this.isSpectating && specWorld == world)
+            {
+                SpecSetPosDir(position, direction);
+                return;
+            }
+
+            this.specPos = position.CorrectPosition();
+            this.specDir = direction.CorrectDirection();
+
+            pSetToSpectate(world, specPos, specDir);
         }
-        partial void pSetToSpectate(World world, Vec3f pos, Vec3f dir);
+
+        #endregion
+
+        #endregion
 
         #region Read & Write
 
@@ -77,6 +140,42 @@ namespace GUC.Network
 
         protected override void WriteProperties(PacketWriter stream)
         {
+        }
+
+        #endregion
+
+        #region Vob guiding
+
+        List<Vob> cmdList = new List<Vob>();
+
+        partial void pAddToCmdList(Vob vob);
+        internal void AddToCmdList(Vob vob)
+        {
+            if (vob == null)
+                throw new ArgumentNullException("Vob is null!");
+
+            if (vob.Guide != null)
+                throw new ArgumentNullException("Vob commander is not null!");
+
+            cmdList.Add(vob);
+            vob.Guide = this;
+
+            pAddToCmdList(vob);
+        }
+
+        partial void pRemoveFromCmdList(Vob vob);
+        internal void RemoveFromCmdList(Vob vob)
+        {
+            if (vob == null)
+                throw new ArgumentNullException("Vob is null!");
+
+            if (vob.Guide != this)
+                throw new ArgumentNullException("Client is not commanding this vob!");
+
+            cmdList.Remove(vob);
+            vob.Guide = null;
+
+            pRemoveFromCmdList(vob);
         }
 
         #endregion

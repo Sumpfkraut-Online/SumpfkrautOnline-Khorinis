@@ -48,8 +48,13 @@ namespace Gothic.Objects
         new public abstract class VarOffsets : zCAIBase.VarOffsets
         {
             public const int stepHeight = 0x2C,
+                jumpUpMinCeil = 0x30,
                 waterDepthWade = 0x34,
                 waterDepthSwim = 0x38,
+                yMaxSwimClimbOut = 0x3C,
+                forceJumpUp = 0x40,
+                yMaxJumpLow = 0x44,
+                yMaxJumpMid = 0x48,
                 centerPos = 70,
                 vob = 0x64,
                 feetY = 0x7C,
@@ -156,11 +161,35 @@ namespace Gothic.Objects
             get { return Process.ReadFloat(Address + VarOffsets.waterDepthWade); }
             set { Process.Write(value, Address + VarOffsets.waterDepthWade); }
         }
-
+        
         public float StepHeight
         {
             get { return Process.ReadFloat(Address + VarOffsets.stepHeight); }
             set { Process.Write(value, Address + VarOffsets.stepHeight); }
+        }
+
+        public float ForceJumpUp
+        {
+            get { return Process.ReadFloat(Address + VarOffsets.forceJumpUp); }
+            set { Process.Write(value, Address + VarOffsets.forceJumpUp); }
+        }
+
+        public float JumpUpMinCeil
+        {
+            get { return Process.ReadFloat(Address + VarOffsets.jumpUpMinCeil); }
+            set { Process.Write(value, Address + VarOffsets.jumpUpMinCeil); }
+        }
+
+        public float YMaxJumpLow
+        {
+            get { return Process.ReadFloat(Address + VarOffsets.yMaxJumpLow); }
+            set { Process.Write(value, Address + VarOffsets.yMaxJumpLow); }
+        }
+
+        public float YMaxJumpMid
+        {
+            get { return Process.ReadFloat(Address + VarOffsets.yMaxJumpMid); }
+            set { Process.Write(value, Address + VarOffsets.yMaxJumpMid); }
         }
 
         public float MaxGroundAngleWalk

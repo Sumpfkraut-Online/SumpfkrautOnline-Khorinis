@@ -19,8 +19,7 @@ namespace Launcher2
             len = length;
             pos = 0;
         }
-
-
+        
         /*
         protected override void Dispose(bool disposing)
         {

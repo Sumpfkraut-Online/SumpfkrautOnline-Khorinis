@@ -8,11 +8,78 @@ using GUC.Enumeration;
 using GUC.Animations;
 using Gothic.Types;
 using WinApi;
+using GUC.Network;
+using RakNet;
+using GUC.Network.Messages;
 
 namespace GUC.WorldObjects
 {
     public partial class NPC
     {
+        public static NPC Hero { get { return GameClient.Client.Character; } }
+
+        MoveState nextState = MoveState.Stand;
+        const int DelayBetweenMessages = 800000; //80ms
+        internal void DoSetState(MoveState state)
+        {
+            if (this.IsDead)
+                return;
+                        
+            if (this.nextState == state)
+                return;
+            
+            this.nextState = state;
+            this.nextStateUpdate = 0;
+            UpdateNextState(GameTime.Ticks);
+        }
+
+        void UpdateNextState(long now)
+        {
+            if (this.IsDead)
+                return;
+
+            if (this.movement == nextState)
+                return;
+
+            if (now < this.nextStateUpdate)
+                return;
+
+            NPCMessage.WriteMoveState(this, nextState);
+            this.nextStateUpdate = now + DelayBetweenMessages;
+        }
+
+
+        protected override void UpdateGuidePos(long now)
+        {
+            if (now < guidedNextUpdate)
+                return;
+            
+            UpdateGuidedNPCPosition(now, 1200000, 16, 0.02f);
+        }
+
+        void UpdateGuidedNPCPosition(long now, long interval, float minPosDist, float minDirDist)
+        {
+            Vec3f pos = this.GetPosition();
+            Vec3f dir = this.GetDirection();
+            if (now - guidedNextUpdate < TimeSpan.TicksPerSecond && // send at least once per second
+                pos.GetDistance(guidedLastPos) < minPosDist && dir.GetDistance(guidedLastDir) < minDirDist)
+                return;
+
+            guidedLastPos = pos;
+            guidedLastDir = dir;
+
+            PacketWriter stream = GameClient.SetupStream(NetworkIDs.VobPosDirMessage);
+            stream.Write((ushort)this.ID);
+            stream.WriteCompressedPosition(pos);
+            stream.WriteCompressedDirection(dir);
+            stream.Write((byte)this.envState);
+            GameClient.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE);
+
+            guidedNextUpdate = now + interval;
+
+            this.ScriptObject.OnPosChanged();
+        }
+
         #region ScriptObject
 
         public partial interface IScriptNPC : IScriptVob
@@ -179,7 +246,7 @@ namespace GUC.WorldObjects
                             }
                         }
 
-                        if (this == Network.GameClient.Client.character)
+                        if (this == Network.GameClient.Client.Character)
                         {
                             aniTimes.RemoveAll(t => t.Item1 == aniID);
                             aniTimes.Add(new Tuple<int, long>(aniID, DateTime.UtcNow.Ticks));
@@ -243,7 +310,7 @@ namespace GUC.WorldObjects
             gVob.HP = this.hp;
             gVob.HPMax = this.hpmax;
             gVob.InitHumanAI();
-            gVob.Enable(pos.X, pos.Y, pos.Z);
+            //gVob.Enable(pos.X, pos.Y, pos.Z);
             if (this.Name == "Scavenger") gVob.SetToFistMode();
             if (overlays != null)
                 for (int i = 0; i < overlays.Count; i++)
@@ -255,7 +322,7 @@ namespace GUC.WorldObjects
 
         partial void pDespawn()
         {
-            gVob.Disable();
+            //gVob.Disable();
         }
 
         #endregion
@@ -295,7 +362,7 @@ namespace GUC.WorldObjects
                         this.gVob.GetModel().StartAni(this.gVob.AniCtrl._s_walk, 0);
                 }
 
-            this.Update(GameTime.Ticks);
+            this.OnTick(GameTime.Ticks);
         }
 
         /*void UpdateAnimation(ActiveAni ani)
@@ -325,15 +392,21 @@ namespace GUC.WorldObjects
 
             Logger.Log("Frame: " + (startFrame + (endFrame - startFrame) * progressPercent));
         }*/
-
-        internal void Update(long now)
+        
+        internal override void OnTick(long now)
         {
             if (gvob == null || gVob.HumanAI.Address == 0)
                 return;
 
+            if (this == Hero)
+                UpdateGuidedNPCPosition(now, 800000, 12, 0.01f); // update our hero better
+
+            base.OnTick(now);
             //ForEachActiveAni(a => UpdateAnimation(a));
 
             this.envState = GetEnvState();
+
+            this.UpdateNextState(now);
 
             this.ScriptObject.OnTick(now);
 

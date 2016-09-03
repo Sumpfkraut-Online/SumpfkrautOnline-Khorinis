@@ -15,17 +15,16 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
         {
             rainTimer = new GUCTimer(2 * TimeSpan.TicksPerMinute, OnRainChange);
         }
-
-        Random rand = new Random();
+        
         void OnRainChange()
         {
-            if (rand.Next(0, 3) == 0)
+            if (Randomizer.GetInt(0, 3) == 0)
             {
-                SetRainTime(this.World.Clock.Time + rand.Next(60, 360), (float)rand.NextDouble()); // rain
+                SetRainTime(this.World.Clock.Time + Randomizer.GetInt(60, 360), (float)Randomizer.GetDouble()); // rain
             }
             else
             {
-                SetRainTime(this.World.Clock.Time + rand.Next(60, 360), 0.0f); // sun
+                SetRainTime(this.World.Clock.Time + Randomizer.GetInt(60, 360), 0.0f); // sun
             }
         }
 
