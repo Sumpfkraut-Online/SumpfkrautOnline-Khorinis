@@ -15,6 +15,7 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
         {
             GUCMenu.CloseActiveMenus();
             oCGame.LoadGame(true, "OLDWORLD\\OLDWORLD.ZEN");
+            //oCGame.LoadGame(true, "NEWWkORLD\\NEWWORLD.ZEN");
         }
     }
 }

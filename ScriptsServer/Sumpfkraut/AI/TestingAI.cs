@@ -8,6 +8,7 @@ using GUC.Scripts.Sumpfkraut.AI.SimpleAI;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Utilities.Threading;
+using GUC.Scripts.Sumpfkraut.Networking;
 
 namespace GUC.Scripts.Sumpfkraut.AI
 {
@@ -103,7 +104,6 @@ namespace GUC.Scripts.Sumpfkraut.AI
             Visuals.ModelDef npcModel01;
             PrintStatic(typeof(TestingAI), Visuals.ModelDef.TryGetModel("human", out npcModel01));
 
-
             NPCDef npcDef01 = new NPCDef("npcDef01");
             npcDef01.Name = "npcDef01";
             npcDef01.Model = npcModel01;
@@ -115,11 +115,15 @@ namespace GUC.Scripts.Sumpfkraut.AI
 
             NPCInst npcInst01 = new NPCInst(npcDef01);
             npcInst01.SetObjName("npcInst01");
-            npcInst01.Spawn(WorldSystem.WorldInst.Current);
+            npcInst01.Spawn(WorldSystem.WorldInst.Current, 
+                new Types.Vec3f(10f, 10f, 1000f), new Types.Vec3f(1f, 0f, 0f));
+            //npcInst01.SetPosition(new Types.Vec3f(0f, 0f, 0f));
 
             NPCInst npcInst02 = new NPCInst(npcDef01);
             npcInst02.SetObjName("npcInst02");
-            npcInst02.Spawn(WorldSystem.WorldInst.Current);
+            npcInst02.Spawn(WorldSystem.WorldInst.Current, 
+                new Types.Vec3f(10f, 10f, 1000f), new Types.Vec3f(1f, 0f, 0f));
+            //npcInst02.SetPosition(new Types.Vec3f(0f, 0f, 0f));
 
             AIAgent aiAgent01 = new AIAgent(new List<VobInst> { npcInst01 });
             aiAgent01.SetObjName("aiAgent01");

@@ -158,9 +158,9 @@ namespace GUC.Scripts.TFFA
             respawnTimer = new GUCTimer(RespawnTime, RespawnPlayers);
             respawnTimer.Start();
 
-
+            // !!! DEACTIVATED THAT CODE TO BYPASS TFFA-CYCLE WHICH MESSES WITH VOBS DURING TESTS !!!
             gameTimer = new GUCTimer();
-            PhaseFight();
+            //PhaseFight();
         }
 
         public static int ALKills = 0;

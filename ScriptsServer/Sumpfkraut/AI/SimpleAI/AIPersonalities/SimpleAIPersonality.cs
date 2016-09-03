@@ -2,6 +2,7 @@
 using GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIObservations;
 using GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIRoutines;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using GUC.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,6 +40,85 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             this.aiMemory = aiMemory ?? new AIMemory();
             this.aiRoutine = aiRoutine ?? new SimpleAIRoutine();
         }
+
+
+
+        // moving around
+
+        public void Run (Vec3f direction)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Walk (Vec3f direction)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Jump (int forwardVelocity, int upVelocity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ClimbLedge (WorldObjects.NPC.ClimbingLedge ledge)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void TurnAround (Vec3f direction, float angularVelocity)
+        {
+            throw new NotImplementedException();
+        }
+
+
+
+        // combat actions
+
+        public void Attack (Vec3f direction)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Attack (VobInst target)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Attack (List<VobInst> targets)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DefendAgainst (VobInst defendedVob, VobInst aggressor)
+        {
+            throw new NotImplementedException();
+        }
+
+
+
+        // non-hostile actions
+
+        public void Idle ()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void EquipItem (ItemInst item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UnequipItem (ItemInst item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DrawWeapon (ItemInst item)
+        {
+            throw new NotImplementedException();
+        }
+
+
 
         // can be run anytime to let the aiClients recognize their surrounding actively
         public override void MakeActiveObservation (AIAgent aiAgent)
@@ -124,9 +204,10 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                                     npc.Model.TryGetAniJob((int) Visuals.SetAnis.JumpFwd, out scriptAniJob);
                                     if (scriptAniJob != null)
                                     {
-                                        npc.StartAniJump(scriptAniJob.DefaultAni, 0, 10);
+                                        npc.StartAniJump(scriptAniJob.DefaultAni, 0, 1);
+                                        Print("npc.IsSpawned = " + npc.GetPosition());
                                     }
-
+                                    
                                     // !!! TO DO !!!
                                     // go to enemy or prepare attack (draw weapon) 
                                     // or start / proceeed attack animation
