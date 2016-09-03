@@ -41,12 +41,14 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
-    <Folder Include="Sumpfkraut\AI\" />
     <Folder Include="Sumpfkraut\VobSystem\Definitions\Mobs\" />
     <Folder Include="Sumpfkraut\VobSystem\Instances\Mobs\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GUCScripts.cs" />
+    <Compile Include="Sumpfkraut\AI\GuideCommands\CommandType.cs" />
+    <Compile Include="Sumpfkraut\AI\GuideCommands\GoToPosCommand.cs" />
+    <Compile Include="Sumpfkraut\AI\GuideCommands\GoToVobCommand.cs" />
     <Compile Include="Sumpfkraut\Networking\NetMsgIDs.cs" />
     <Compile Include="Sumpfkraut\Networking\ScriptClient.cs" />
     <Compile Include="Sumpfkraut\ScriptObject.cs" />

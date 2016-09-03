@@ -260,6 +260,7 @@
     <Compile Include="GUI\GUCVisual.cs" />
     <Compile Include="GUI\GUCVisualText.cs" />
     <Compile Include="GUI\GUC3DVisual.cs" />
+    <Compile Include="Hooks\hNpc.cs" />
     <Compile Include="Hooks\hView.cs" />
     <Compile Include="Hooks\hGame.cs" />
     <Compile Include="Hooks\hParser.cs" />

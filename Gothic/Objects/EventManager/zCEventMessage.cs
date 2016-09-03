@@ -26,10 +26,8 @@ namespace Gothic.Objects.EventManager
 
         public ushort SubType
         {
-            get
-            {
-                return Process.ReadUShort(Address + VarOffsets.SubType);
-            }
+            get { return Process.ReadUShort(Address + VarOffsets.SubType); }
+            set { Process.Write(value, Address + VarOffsets.SubType); }
         }
 
         public bool InCutscene

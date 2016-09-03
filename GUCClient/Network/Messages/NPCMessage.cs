@@ -12,8 +12,6 @@ namespace GUC.Network.Messages
 {
     static class NPCMessage
     {
-        const int DelayBetweenMessages = 1500000; //150ms
-
         #region States
 
         public static void WriteMoveState(NPC npc, MoveState state)

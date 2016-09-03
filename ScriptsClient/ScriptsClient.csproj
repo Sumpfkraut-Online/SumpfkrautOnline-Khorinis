@@ -47,6 +47,15 @@
     <Compile Include="..\ScriptsShared\GUCScripts.cs">
       <Link>GUCScripts.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\AI\GuideCommands\CommandType.cs">
+      <Link>Sumpfkraut\AI\GuideCommands\CommandType.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\AI\GuideCommands\GoToPosCommand.cs">
+      <Link>Sumpfkraut\AI\GuideCommands\GoToPosCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\AI\GuideCommands\GoToVobCommand.cs">
+      <Link>Sumpfkraut\AI\GuideCommands\GoToVobCommand.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\Networking\NetMsgIDs.cs">
       <Link>Sumpfkraut\Networking\NetMsgIDs.cs</Link>
     </Compile>
@@ -116,6 +125,8 @@
     <Compile Include="..\ScriptsShared\TFFA\TFFAClient.cs">
       <Link>TFFA\TFFAClient.cs</Link>
     </Compile>
+    <Compile Include="Sumpfkraut\AI\GuideCommands\GoToPosCommand.Client.cs" />
+    <Compile Include="Sumpfkraut\AI\GuideCommands\GoToVobCommand.Client.cs" />
     <Compile Include="Sumpfkraut\GUI\GUCInventory.cs" />
     <Compile Include="Sumpfkraut\GUI\MainMenu\MainMenuButton.cs" />
     <Compile Include="Sumpfkraut\GUI\MainMenu\MainMenuCharacter.cs" />

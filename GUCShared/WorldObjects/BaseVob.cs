@@ -149,6 +149,15 @@ namespace GUC.WorldObjects
 
         #region Spawn
 
+        public delegate void OnSpawnHandler(BaseVob vob, World world, Vec3f pos, Vec3f dir);
+        public delegate void OnDespawnHandler(BaseVob vob);
+
+        public static event OnSpawnHandler sOnSpawn = null;
+        public static event OnDespawnHandler sOnDespawn = null;
+
+        public event OnSpawnHandler OnSpawn = null;
+        public event OnDespawnHandler OnDespawn = null;
+
         /// <summary>
         /// Spawns the Vob in the given world.
         /// </summary>
@@ -181,7 +190,7 @@ namespace GUC.WorldObjects
 
             if (this.isCreated)
                 throw new Exception("Vob is already spawned!");
-            
+
             this.pos = position;
             this.dir = direction;
 
@@ -191,6 +200,11 @@ namespace GUC.WorldObjects
             this.pSpawn();
 
             this.isCreated = true;
+
+            if (this.OnSpawn != null)
+                this.OnSpawn(this, world, position, direction);
+            if (sOnSpawn != null)
+                sOnSpawn(this, world, position, direction);
         }
 
         partial void pSpawn();
@@ -211,6 +225,10 @@ namespace GUC.WorldObjects
             this.world.RemoveVob(this);
             this.world = null;
 
+            if (this.OnDespawn != null)
+                this.OnDespawn(this);
+            if (sOnDespawn != null)
+                sOnDespawn(this);
         }
         #endregion
 

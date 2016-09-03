@@ -13,6 +13,7 @@ using GUC.WorldObjects;
 using Gothic.Objects;
 using Gothic;
 using GUC.Animations;
+using GUC.WorldObjects.VobGuiding;
 
 namespace GUC.Network
 {
@@ -27,7 +28,7 @@ namespace GUC.Network
 
         #region Guided vobs
 
-        internal HashSet<int> guidedIDs = new HashSet<int>();
+        internal Dictionary<int, GuideCmd> guidedIDs = new Dictionary<int, GuideCmd>(100);
 
         #endregion
         
@@ -81,8 +82,7 @@ namespace GUC.Network
         #endregion
 
         #region Commands
-
-        MoveState nextState = MoveState.Stand;
+        
         const int DelayBetweenMessages = 800000; //80ms
         public void DoSetHeroState(MoveState state)
         {
@@ -115,30 +115,7 @@ namespace GUC.Network
                     s = MoveState.Stand;
             }
 
-            if (this.nextState == s)
-                return;
-
-            this.nextState = s;
-            this.character.nextStateUpdate = 0;
-            UpdateHeroState(GameTime.Ticks);
-        }
-
-        internal void UpdateHeroState(long now)
-        {
-            if (this.character == null)
-                return;
-
-            if (this.character.IsDead)
-                return;
-
-            if (this.character.Movement == nextState)
-                return;
-
-            if (now < this.character.nextStateUpdate)
-                return;
-
-            NPCMessage.WriteMoveState(this.character, nextState);
-            this.character.nextStateUpdate = now + DelayBetweenMessages;
+            this.character.DoSetState(s);
         }
 
         long nextAniUpdate = 0;

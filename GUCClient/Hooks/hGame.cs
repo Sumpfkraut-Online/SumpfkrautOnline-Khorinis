@@ -155,10 +155,6 @@ namespace GUC.Hooks
                     {
                         client.UpdateSpectator(GameTime.Ticks);
                     }
-                    else if (client.Character != null)
-                    {
-                        client.UpdateHeroState(GameTime.Ticks);
-                    }
                 }
 
                 if (fpsWatch.IsRunning)

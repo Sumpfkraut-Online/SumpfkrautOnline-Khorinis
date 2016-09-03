@@ -11,19 +11,19 @@ namespace GUC.Network.Messages
     static class GuideMessage
     {
         static PacketWriter guideWriter = new PacketWriter(100);
-        public static void WriteAddGuidableMessage(GameClient client, GuidedVob vob)
+        public static void WriteAddGuidableMessage(GameClient client, GuidedVob vob, GuideCmd cmd)
         {
             guideWriter.Write((byte)DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
 
-            if (vob.CurrentCommand == null)
+            if (cmd == null)
             {
                 guideWriter.Write((byte)NetworkIDs.GuideAddMessage);
             }
             else
             {
                 guideWriter.Write((byte)NetworkIDs.GuideAddCmdMessage);
-                guideWriter.Write(vob.CurrentCommand.CmdType);
-                vob.CurrentCommand.WriteStream(guideWriter);
+                guideWriter.Write(cmd.CmdType);
+                cmd.WriteStream(guideWriter);
             }
 
             guideWriter.Write((ushort)vob.ID);
@@ -31,19 +31,19 @@ namespace GUC.Network.Messages
             guideWriter.Reset();
         }
 
-        public static void WriteGuidableCmdMessage(GameClient client, GuidedVob vob)
+        public static void WriteGuidableCmdMessage(GameClient client, GuidedVob vob, GuideCmd cmd)
         {
             guideWriter.Write((byte)DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
 
-            if (vob.CurrentCommand == null)
+            if (cmd == null)
             {
                 guideWriter.Write((byte)NetworkIDs.GuideRemoveCmdMessage);
             }
             else
             {
                 guideWriter.Write((byte)NetworkIDs.GuideSetCmdMessage);
-                guideWriter.Write(vob.CurrentCommand.CmdType);
-                vob.CurrentCommand.WriteStream(guideWriter);
+                guideWriter.Write(cmd.CmdType);
+                cmd.WriteStream(guideWriter);
             }
 
             guideWriter.Write((ushort)vob.ID);

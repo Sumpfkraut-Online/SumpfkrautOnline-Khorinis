@@ -11,6 +11,19 @@ namespace GUC.WorldObjects.VobGuiding
 {
     public partial class GuidedVob : BaseVob
     {
+        internal override void OnTick(long now)
+        {
+            base.OnTick(now);
+
+            if (!GameClient.Client.guidedIDs.ContainsKey(this.ID))
+                return;
+
+            if (this.currentCmd != null)
+                this.currentCmd.Update(this, now);
+            
+            UpdateGuidePos(now);
+        }
+
         const long updateInterval = 1500000; // 150ms
 
         const float MinPositionDistance = 20.0f;
@@ -19,14 +32,6 @@ namespace GUC.WorldObjects.VobGuiding
         protected Vec3f guidedLastPos;
         protected Vec3f guidedLastDir;
         protected long guidedNextUpdate;
-
-        internal override void OnTick(long now)
-        {
-            base.OnTick(now);
-            //if (this.Guide == GameClient.Client)
-            //if (GameClient.Client.guidedIDs.Contains(this.ID))
-                UpdateGuidePos(now);
-        }
 
         protected virtual void UpdateGuidePos(long now)
         {
@@ -47,10 +52,24 @@ namespace GUC.WorldObjects.VobGuiding
             stream.WriteCompressedPosition(pos);
             stream.WriteCompressedDirection(dir);
             GameClient.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE);
-
+            
             guidedNextUpdate = now + updateInterval;
 
             this.ScriptObject.OnPosChanged();
+        }
+        
+        internal void SetGuideCommand(GuideCmd cmd)
+        {
+            if (cmd != this.currentCmd)
+            {
+                if (this.currentCmd != null)
+                    this.currentCmd.Stop(this);
+
+                this.currentCmd = cmd;
+
+                if (this.currentCmd != null)
+                    this.currentCmd.Start(this);
+            }
         }
     }
 }

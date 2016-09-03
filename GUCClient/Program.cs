@@ -76,7 +76,7 @@ namespace GUC
 
             return Assembly.LoadFrom(Path.Combine(projectPath, name + ".dll"));
         }
-
+        
         static bool mained = false;
         public static int Main(string message)
         {
@@ -94,6 +94,9 @@ namespace GUC
                 
                 Process.Write(new byte[] { 0xE9, 0x8C, 0x00, 0x00, 0x00 }, 0x0044AEDF); // skip visual vdfs init (vdfs32g.exe)
                 Process.Write(new byte[] { 0xE9, 0xA3, 0x00, 0x00, 0x00 }, 0x42687F); // skip intro videos
+                
+                Process.AddHook(h => Logger.Log("Need jump"), 0x687688, 6);
+                Process.AddHook(h => Logger.Log("Do jump"), 0x6876E1, 6);
 
                 // add hooks
                 hFile.AddHooks();
@@ -102,6 +105,7 @@ namespace GUC
                 hWeather.AddHooks();
                 hPlayerVob.AddHooks();
                 hView.AddHooks();
+                hNpc.AddHooks();
 
                 #region Some more editing
 
@@ -145,6 +149,9 @@ namespace GUC
                 //Process.VirtualProtect(0x007792E0, 40);
                 Process.Write(new byte[] { 0x33, 0xC0, 0xC2, 0x04, 0x00 }, 0x007792E0);//Block deleting of dead characters!
 
+                Process.Write(new byte[] { 0xB8, 0x01, 0x00, 0x00, 0x00, 0xC3 }, 0x7425A0); // oCNpc::IsAPlayer always true
+                Process.Write(new byte[] { 0x31, 0xC0, 0xC3 }, 0x76D8A0); // oCNpc_States::IsInRoutine always false
+                
                 Logger.Log("Hooking & editing of gothic process completed. (for now...)");
                 #endregion
 
