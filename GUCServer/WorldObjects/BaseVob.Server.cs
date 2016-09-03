@@ -103,6 +103,7 @@ namespace GUC.WorldObjects
                 if (visibleClients.Count > 0)
                 {
                     PacketWriter stream = GameServer.SetupStream(NetworkIDs.VobPosDirMessage);
+                    stream.Write((ushort)this.ID);
                     stream.WriteCompressedPosition(pos);
                     stream.WriteCompressedDirection(dir);
 

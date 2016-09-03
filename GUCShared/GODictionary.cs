@@ -33,7 +33,7 @@ namespace GUC
         int[] buckets;
         Entry[] entries;
         int count;
-        public int Count { get { return this.count; } }
+        public int Count { get { return this.count - this.freeCount; } }
 
         int freeCount;
         int freeList;

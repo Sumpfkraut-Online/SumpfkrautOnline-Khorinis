@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.Network;
 using GUC.Network.Messages;
+using GUC.Types;
 
 namespace GUC.WorldObjects.VobGuiding
 {
@@ -12,12 +13,31 @@ namespace GUC.WorldObjects.VobGuiding
         bool needsClientGuide = false;
         public bool NeedsClientGuide { get { return this.needsClientGuide; } }
 
+        internal override void OnTick(long now)
+        {
+            base.OnTick(now);
+
+            if (this.Guide != null && this.Guide.Character != null)
+            {
+                if (!(this.currentCmd is TargetCmd) || ((TargetCmd)this.currentCmd).Target != this.Guide.Character)
+                    SetGuideCommand(Scripting.ScriptManager.Interface.GetTestCmd(this.Guide.Character));
+            }
+        }
+
+        partial void pSpawn(World world, Vec3f position, Vec3f direction)
+        {
+            if (this.needsClientGuide)
+            {
+                SetGuide(FindNewGuide());
+            }
+        }
+
         partial void pDespawn()
         {
             if (this.Guide != null)
             {
-                this.Guide.GuidedVobs.Remove(this.ID);
-                this.Guide = null;
+                SetGuideCommand(null);
+                SetGuide(null, false);
             }
         }
 
@@ -40,7 +60,7 @@ namespace GUC.WorldObjects.VobGuiding
 
             if (this.needsClientGuide)
             {
-                if (this.Guide == null || client.GuidedVobs.Count < this.Guide.GuidedVobs.Count)
+                if (this.Guide == null || (client.GuidedVobs.Count + 1) < this.Guide.GuidedVobs.Count) // balance the guide vobs
                 {
                     SetGuide(client);
                 }

@@ -14,6 +14,11 @@ namespace GUC.Scripts
 {
     public partial class GUCScripts : ScriptInterface
     {
+        public WorldObjects.VobGuiding.TargetCmd GetTestCmd(WorldObjects.BaseVob target)
+        {
+            return new GUC.Scripts.Sumpfkraut.AI.GuideCommands.GoToVobCommand((BaseVobInst)target.ScriptObject);
+        }
+
         public GUCScripts()
         {
             Logger.Log("######## Initalise SumpfkrautOnline ServerScripts #########");

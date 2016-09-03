@@ -18,9 +18,6 @@ namespace GUC.WorldObjects.Instances
             ret.Name.Set(Name);
             ret.SetAdditionalVisuals(BodyMesh, BodyTex, 0, HeadMesh, HeadTex, 0, -1);
 
-            ret.Guild = 1;
-            ret.InitHumanAI();
-
             return ret;
         }
     }

@@ -48,6 +48,7 @@ namespace GUC.WorldObjects.VobGuiding
         public override void WriteStream(PacketWriter stream)
         {
             stream.Write((ushort)target.ID);
+            stream.Write(target.GetPosition());
         }
 #endif
 
@@ -94,7 +95,8 @@ namespace GUC.WorldObjects.VobGuiding
 
         public override void ReadStream(PacketReader stream)
         {
-            targetID = stream.ReadUShort();
+            this.targetID = stream.ReadUShort();
+            this.sentDest = stream.ReadVec3f();
         }
 
         public override void Start(GuidedVob vob)

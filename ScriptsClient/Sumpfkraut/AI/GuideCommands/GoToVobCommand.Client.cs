@@ -40,6 +40,9 @@ namespace GUC.Scripts.Sumpfkraut.AI.GuideCommands
                 gVob.RbtUpdate(vec, new Gothic.Objects.zCVob(0));
 
             gVob.RobustTrace();
+
+            // improve -> use gVob.RbtGotoFollowPosition();
+            // or start an oCMsgMovement with SubTypes.GoRoute on gVob->failurePossibility >= 100
         }
     }
 }

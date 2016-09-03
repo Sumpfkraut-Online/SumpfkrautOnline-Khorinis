@@ -304,10 +304,11 @@ namespace GUC.Scripts.TFFA
 
             gameTimer.Restart();
 
-            dummies = new NPCInst[10000];
+            dummies = new NPCInst[1000];
             for (int i = 0; i < dummies.Length; i++)
             {
-                dummies[i] = SpawnDummy(Randomizer.GetVec3fRad(new Vec3f(0, 500, 0), 100000), new Vec3f(-0.5522485f, 0, -0.8336804f));
+                dummies[i] = SpawnDummy(Randomizer.GetVec3fRad(new Vec3f(0, 500, 0), 50000), new Vec3f(-0.5522485f, 0, -0.8336804f));
+                dummies[i].BaseInst.SetNeedsClientGuide(true);
             }
         }
 
@@ -481,13 +482,12 @@ namespace GUC.Scripts.TFFA
             client.SetControl(npc);
             client.SendNPCChanged();
 
-            var cmd = new Sumpfkraut.AI.GuideCommands.GoToVobCommand(npc);
+            /*var cmd = new Sumpfkraut.AI.GuideCommands.GoToVobCommand(npc);
             for (int i = 0; i < dummies.Length; i++)
             {
                 dummies[i].BaseInst.SetGuideCommand(cmd);
                 dummies[i].BaseInst.SetNeedsClientGuide(true);
-            }
-            
+            }*/
         }
 
         #endregion
