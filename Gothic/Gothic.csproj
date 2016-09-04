@@ -71,6 +71,7 @@
     <Compile Include="Objects\oCMobWheel.cs" />
     <Compile Include="Objects\oCNpcFocus.cs" />
     <Compile Include="Objects\oCVob.cs" />
+    <Compile Include="Objects\oCWorld.cs" />
     <Compile Include="Objects\oCWorldTimer.cs" />
     <Compile Include="Objects\Sky\oCBarrier.cs" />
     <Compile Include="Objects\Sky\zCSkyControler.cs" />

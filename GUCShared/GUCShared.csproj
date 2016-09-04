@@ -67,6 +67,7 @@
     <Compile Include="Types\Vec3f.cs" />
     <Compile Include="DynamicCollection.cs" />
     <Compile Include="GODictionary.cs" />
+    <Compile Include="WorldObjects\AnimatedVob\AnimatedVob.cs" />
     <Compile Include="WorldObjects\Collections\ItemContainer.cs" />
     <Compile Include="StaticCollection.cs" />
     <Compile Include="WorldObjects\Collections\VobTypeObjectCollection.cs" />

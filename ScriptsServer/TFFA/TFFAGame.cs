@@ -19,7 +19,7 @@ namespace GUC.Scripts.TFFA
 
         const long RespawnTime = 10 * TimeSpan.TicksPerSecond;
 
-        const long FightTime = 10 * TimeSpan.TicksPerMinute;
+        const long FightTime = 6 * TimeSpan.TicksPerMinute;
         const long WaitTime = 15 * TimeSpan.TicksPerSecond;
         const long EndTime = 10 * TimeSpan.TicksPerSecond;
         const int KillsToWin = 30;

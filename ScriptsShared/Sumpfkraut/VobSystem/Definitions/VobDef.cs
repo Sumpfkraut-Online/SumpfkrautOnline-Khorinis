@@ -21,6 +21,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
             get { return (ModelDef)this.BaseDef.Model.ScriptObject; }
             set { this.BaseDef.Model = value.BaseDef; }
         }
+
         public bool CDDyn { get { return BaseDef.CDDyn; } set { BaseDef.CDDyn = value; } }
         public bool CDStatic { get { return BaseDef.CDStatic; } set { BaseDef.CDStatic = value; } }
 

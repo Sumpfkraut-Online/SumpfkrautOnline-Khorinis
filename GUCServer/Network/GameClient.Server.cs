@@ -461,12 +461,12 @@ namespace GUC.Network
                 }
                 else if (this.character != null)
                 {
-                    this.character.client = null;
                     if (this.character.IsSpawned)
                     {
                         this.character.World.RemoveClient(this);
                         this.character.Cell.RemoveClient(this);
                     }
+                    this.character.client = null;
                 }
                 this.LeaveWorld();
             }
@@ -478,34 +478,30 @@ namespace GUC.Network
                     return;
                 }
 
-                // set old character to npc
-                if (this.character != null)
-                {
-                    this.character.client = null;
-                    if (this.character.IsSpawned)
-                    {
-                        this.character.Cell.RemoveClient(this);
-                    }
-                }
-
                 // npc is already in the world, set to player
                 if (npc.IsSpawned)
                 {
                     if (this.isSpectating)
                     {
-                        this.specWorld.RemoveClient(this);
-                        this.specWorld.RemoveSpectatorFromCells(this);
-                        this.isSpectating = false;
-
                         if (this.specWorld != npc.World)
                         {
+                            this.specWorld.RemoveClient(this);
+                            this.specWorld.RemoveSpectatorFromCells(this);
+
+                            this.visibleVobs.ForEach(v => v.RemoveVisibleClient(this));
+                            this.visibleVobs.Clear();
+
                             WorldMessage.WriteLoadMessage(this, npc.World);
                         }
-                        else // same world, just update cells
+                        else // same world
                         {
+                            if (npc.Cell != this.SpecCell)
+                            {
+                                this.specWorld.RemoveSpectatorFromCells(this);
+                                npc.Cell.AddClient(this);
+                            }
+
                             npc.client = this;
-                            npc.World.AddClient(this);
-                            npc.Cell.AddClient(this);
                             UpdateVobList(npc.World, npc.GetPosition());
 
                             PacketWriter stream = GameServer.SetupStream(NetworkIDs.PlayerControlMessage);
@@ -514,26 +510,37 @@ namespace GUC.Network
                             this.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, '\0');
                         }
 
-                        this.specWorld = null;
+                        this.specWorld = null; 
+                        this.isSpectating = false;
                     }
                     else
                     {
-                        if (this.character == null)
+                        if (this.character == null) // has been in the main menu probably
                         {
                             WorldMessage.WriteLoadMessage(this, npc.World);
                         }
-                        else if (this.character.World != npc.World)
+                        else if (this.character.World != npc.World) // different world
                         {
-                            if (this.character.IsSpawned)
+                            if (this.character.IsSpawned) // just to be sure
+                            {
                                 this.character.World.RemoveClient(this);
+                                this.character.Cell.RemoveClient(this);
+
+                                this.visibleVobs.ForEach(v => v.RemoveVisibleClient(this));
+                                this.visibleVobs.Clear();
+                            }
                             WorldMessage.WriteLoadMessage(this, npc.World);
                         }
-                        else
+                        else // same world
                         {
+                            if (this.character.Cell != npc.Cell)
+                            {
+                                this.character.Cell.RemoveClient(this);
+                                npc.Cell.AddClient(this);
+                            }
+
                             npc.client = this;
-                            npc.World.AddClient(this);
-                            npc.Cell.AddClient(this);
-                            JoinWorld(npc.World, npc.GetPosition());
+                            UpdateVobList(npc.World, npc.GetPosition());
 
                             PacketWriter stream = GameServer.SetupStream(NetworkIDs.PlayerControlMessage);
                             stream.Write((ushort)npc.ID);
@@ -548,6 +555,7 @@ namespace GUC.Network
                     {
                         this.specWorld.RemoveClient(this);
                         this.specWorld.RemoveSpectatorFromCells(this);
+                        this.specWorld = null;
                         this.isSpectating = false;
                         LeaveWorld();
                     }

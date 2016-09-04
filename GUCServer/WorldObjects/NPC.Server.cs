@@ -75,12 +75,19 @@ namespace GUC.WorldObjects
         }
 
         #endregion
-        
+
         #region Properties
 
-        internal GameClient client = null;
+        internal GameClient client;
+        /// <summary> The client which is controlling this npc. </summary>
         public GameClient Client { get { return client; } }
-        public bool IsPlayer { get { return Client != null; } }
+
+        /// <summary> Returns true if this npc is controlled by a client. </summary>
+        public bool IsPlayer { get { return client != null; } }
+        
+        #endregion
+
+        #region Health
 
         partial void pSetHealth()
         {
@@ -92,6 +99,10 @@ namespace GUC.WorldObjects
 
         #region Spawn
 
+        /// <summary> 
+        /// Spawns the NPC in the given world at the given position & direction.
+        /// If the NPC is a player, the spawn will be postponed until the client has loaded the map. 
+        /// </summary>
         public override void Spawn(World world, Vec3f position, Vec3f direction)
         {
             if (this.IsPlayer)
@@ -99,23 +110,30 @@ namespace GUC.WorldObjects
                 if (world == null)
                     throw new ArgumentNullException("World is null!");
 
+                if (this.instance == null)
+                    throw new Exception("Vob has no Instance!");
+
+                if (this.ScriptObject == null)
+                    throw new Exception("Vob has no ScriptObject!");
+
                 if (this.isCreated)
                     throw new Exception("Vob is already spawned!");
 
-                this.pos = position;
-                this.dir = direction;
+                this.pos = position.CorrectPosition();
+                this.dir = direction.CorrectDirection();
                 this.world = world;
 
+                // wait until the client has loaded the map
                 WorldMessage.WriteLoadMessage(this.client, world); // tell the client to change worlds first
             }
             else
             {
                 base.Spawn(world, position, direction);
-                this.world.AddToNPCCells(this);
+                world.AddToNPCCells(this);
             }
         }
 
-        // wait until the client has loaded the map
+        // spawn the client's character
         internal void SpawnPlayer()
         {
             PacketWriter stream = GameServer.SetupStream(NetworkIDs.PlayerControlMessage);
@@ -123,11 +141,11 @@ namespace GUC.WorldObjects
             this.WriteTakeControl(stream);
             this.Client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, '\0');
 
-            base.Spawn(world, this.pos, this.dir);
-            this.world.AddToNPCCells(this);
+            base.Spawn(this.world, this.pos, this.dir);
+            world.AddToNPCCells(this);
         }
 
-        partial void pDespawn()
+        partial void pBeforeDespawn()
         {
             if (this.IsPlayer)
             {

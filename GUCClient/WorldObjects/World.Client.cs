@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Gothic;
+using Gothic.Objects;
 using GUC.Types;
 
 namespace GUC.WorldObjects
 {
     public partial class World
     {
+        internal static World current;
+        public static World Current { get { return current; } }
+
         #region ScriptObject
 
         public partial interface IScriptWorld : IScriptGameObject
@@ -18,15 +22,17 @@ namespace GUC.WorldObjects
 
         #endregion
 
-        internal static World current = null;
-        public static World Current { get { return World.current; } }
+        #region Properties
 
+        /// <summary> The correlating gothic-object of this world. </summary>
+        public zCWorld gWorld { get { return oCGame.GetWorld(); } }
+
+        #endregion
+
+        #region Gothic-Object Address Dictionary
+
+        // Dictionary with all addresses of gothic-objects in this world.
         Dictionary<int, BaseVob> vobAddr = new Dictionary<int, BaseVob>();
-
-        public bool ContainsVobAddress(int address)
-        {
-            return vobAddr.ContainsKey(address);
-        }
 
         public bool TryGetVobByAddress(int address, out BaseVob vob)
         {
@@ -48,37 +54,34 @@ namespace GUC.WorldObjects
             return false;
         }
 
-        partial void pAddVob(BaseVob vob)
+        #endregion
+
+        #region Add & Remove
+
+        partial void pAfterAddVob(BaseVob vob)
         {
-            Vec3f pos = vob.GetPosition();
-            Vec3f dir = vob.GetDirection();
+            // add the vob to the gothic world
+            gWorld.AddVob(vob.gVob);
 
-            vob.gvob = vob.Instance.CreateVob(vob.gvob);
-
-            oCGame.GetWorld().AddVob(vob.gVob);
-            vobAddr.Add(vob.gvob.Address, vob);
-
-            vob.SetPosition(pos);
-            vob.SetDirection(dir);
+            // add the gothic-object's address to the dictionary
+            vobAddr.Add(vob.gVob.Address, vob);
         }
 
-        partial void pRemoveVob(BaseVob vob)
+        partial void pBeforeRemoveVob(BaseVob vob)
         {
-            var gVob = vob.gvob;
+            var gVob = vob.gVob;
 
-            // update position & direction a last time
+            // update position & direction one last time
             vob.GetPosition();
             vob.GetDirection();
 
-            // remove vob from gothic world
-            oCGame.GetWorld().RemoveVob(gVob);
+            // remove gothic-object from the gothic-world
+            gWorld.RemoveVob(gVob);
 
-            // remove vob from guc vob address dictionary
+            // remove the gothic-object's address from the dictionary
             vobAddr.Remove(gVob.Address);
-
-            vob.gvob = null;
-
-            // FIXME: Free allocated memory
         }
+
+        #endregion
     }
 }
