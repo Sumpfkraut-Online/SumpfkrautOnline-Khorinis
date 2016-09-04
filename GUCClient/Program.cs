@@ -53,7 +53,7 @@ namespace GUC
 
             if (!ushort.TryParse(Environment.GetEnvironmentVariable("GUCServerPort"), out serverPort))
                 throw new Exception("Could not parse server port environment variable to ushort!");
-            
+
             password = Environment.GetEnvironmentVariable("GUCServerPassword");
             if (string.IsNullOrWhiteSpace(password))
                 password = null;
@@ -76,7 +76,7 @@ namespace GUC
 
             return Assembly.LoadFrom(Path.Combine(projectPath, name + ".dll"));
         }
-        
+
         static bool mained = false;
         public static int Main(string message)
         {
@@ -88,15 +88,12 @@ namespace GUC
                 Logger.Log("GUC started...");
 
                 SetupProject();
-                
+
                 SplashScreen.SetUpHooks();
                 SplashScreen.Create();
-                
-                Process.Write(new byte[] { 0xE9, 0x8C, 0x00, 0x00, 0x00 }, 0x0044AEDF); // skip visual vdfs init (vdfs32g.exe)
+
+                Process.Write(new byte[] { 0xE9, 0x8C, 0x00, 0x00, 0x00 }, 0x44AEDF); // skip visual vdfs init (vdfs32g.exe)
                 Process.Write(new byte[] { 0xE9, 0xA3, 0x00, 0x00, 0x00 }, 0x42687F); // skip intro videos
-                
-                Process.AddHook(h => Logger.Log("Need jump"), 0x687688, 6);
-                Process.AddHook(h => Logger.Log("Do jump"), 0x6876E1, 6);
 
                 // add hooks
                 hFile.AddHooks();
@@ -151,7 +148,10 @@ namespace GUC
 
                 Process.Write(new byte[] { 0xB8, 0x01, 0x00, 0x00, 0x00, 0xC3 }, 0x7425A0); // oCNpc::IsAPlayer always true
                 Process.Write(new byte[] { 0x31, 0xC0, 0xC3 }, 0x76D8A0); // oCNpc_States::IsInRoutine always false
-                
+
+                Process.Write(new byte[] { 0xEB, 0x21 }, 0x69C247); // oCAIHuman::DoAI -> skip perception check
+                Process.Write(new byte[] { 0x31, 0xC0, 0xC3 }, 0x76D1A0); // oCNpc_States::DoAIState -> skip and return false
+
                 Logger.Log("Hooking & editing of gothic process completed. (for now...)");
                 #endregion
 

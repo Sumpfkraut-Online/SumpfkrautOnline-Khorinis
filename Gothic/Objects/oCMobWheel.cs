@@ -20,8 +20,13 @@ namespace Gothic.Objects
         public new static oCMobWheel Create()
         {
             int address = Process.CDECLCALL<IntArg>(0x719B90, null); //_CreateInstance()
-            Process.THISCALL<NullReturnCall>(address, 0x726FA0, null); //Konstruktor...
+            //Process.THISCALL<NullReturnCall>(address, 0x726FA0, null); //Konstruktor...
             return new oCMobWheel(address);
+        }
+
+        public override void Dispose()
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x7270A0, new BoolArg(true));
         }
     }
 }

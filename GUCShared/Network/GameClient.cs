@@ -33,10 +33,12 @@ namespace GUC.Network
 
         #region Properties
 
-        NPC character = null;
+        NPC character;
         public NPC Character { get { return this.character; } }
 
         new public int ID { get { return base.ID; } }
+
+        World loadedWorld;
 
         #endregion
 

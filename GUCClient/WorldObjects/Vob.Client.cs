@@ -19,7 +19,7 @@ namespace GUC.WorldObjects
 
         public void SetVelocity(Vec3f vel)
         {
-            var rb = WinApi.Process.ReadInt(gvob.Address + 224);
+            var rb = WinApi.Process.ReadInt(gVob.Address + 224);
             using (zVec3 vec = zVec3.Create(vel.X, vel.Y, vel.Z))
                 WinApi.Process.THISCALL<WinApi.NullReturnCall>(rb, 0x5B66D0, vec);
         }

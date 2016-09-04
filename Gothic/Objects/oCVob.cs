@@ -6,7 +6,7 @@ using WinApi;
 
 namespace Gothic.Objects
 {
-    public class oCVob : zCVob
+    public abstract class oCVob : zCVob
     {
         public oCVob()
         {
@@ -15,6 +15,11 @@ namespace Gothic.Objects
         public oCVob(int address)
             : base(address)
         {
+        }
+
+        public override void Dispose()
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x77B6E0, (BoolArg)true);
         }
     }
 }

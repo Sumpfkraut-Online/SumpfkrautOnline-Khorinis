@@ -40,6 +40,11 @@ namespace Gothic.Objects
             : base(address)
         {
         }
+        
+        public override void Dispose()
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x695290, (BoolArg)true);
+        }
 
         public oCNpc NPC
         {

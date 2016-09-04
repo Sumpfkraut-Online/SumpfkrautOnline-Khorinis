@@ -25,8 +25,13 @@ namespace Gothic.Objects
         new public static oCMobDoor Create()
         {
             int address = Process.CDECLCALL<IntArg>(0x71A250); //_CreateInstance()
-            Process.THISCALL<NullReturnCall>(address, 0x7269B0); //Konstruktor...
+            //Process.THISCALL<NullReturnCall>(address, 0x7269B0); //Konstruktor...
             return new oCMobDoor(address);
+        }
+
+        public override void Dispose()
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x726B80, new BoolArg(true));
         }
     }
 }

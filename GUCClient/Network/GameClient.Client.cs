@@ -238,14 +238,6 @@ namespace GUC.Network
 
         partial void pSetControl(NPC npc)
         {
-            // Remove the gothic hero if he's there
-            oCNpc dummyHero = oCNpc.GetPlayer();
-            if (!World.Current.ContainsVobAddress(dummyHero.Address))
-            {
-                dummyHero.Disable();
-                oCGame.GetWorld().RemoveVob(dummyHero);
-            }
-
             this.character = npc;
             Character.gVob.SetAsPlayer();
             oCGame.GetCameraVob().SetAI(oCGame.GetCameraAI());

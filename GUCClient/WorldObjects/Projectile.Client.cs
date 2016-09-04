@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Types;
-using Gothic.Types;
-using Gothic;
-using Gothic.Objects;
 
 namespace GUC.WorldObjects
 {

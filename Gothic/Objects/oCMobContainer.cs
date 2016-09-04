@@ -49,8 +49,14 @@ namespace Gothic.Objects
         new public static oCMobContainer Create()
         {
             int address = Process.CDECLCALL<IntArg>(0x719440); //_CreateInstance()
-            Process.THISCALL<NullReturnCall>(address, 0x7257E0); //Konstruktor...
+            //Process.THISCALL<NullReturnCall>(address, 0x7257E0); //Konstruktor...
             return new oCMobContainer(address);
+        }
+
+
+        public override void Dispose()
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x725970, new BoolArg(true));
         }
 
         /*public List<oCItem> getItemList()

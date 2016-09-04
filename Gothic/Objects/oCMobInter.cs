@@ -60,8 +60,13 @@ namespace Gothic.Objects
         public new static oCMobInter Create()
         {
             int address = Process.CDECLCALL<IntArg>(0x7187E0); //_CreateInstance()
-            Process.THISCALL<NullReturnCall>(address, 0x71D010); //Konstruktor...
+            //Process.THISCALL<NullReturnCall>(address, 0x71D010); //Konstruktor...
             return new oCMobInter(address);
+        }
+
+        public override void Dispose()
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x71D1A0, new BoolArg(true));
         }
 
         public int State

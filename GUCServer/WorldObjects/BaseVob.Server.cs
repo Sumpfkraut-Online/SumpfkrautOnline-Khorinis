@@ -155,12 +155,12 @@ namespace GUC.WorldObjects
 
         #region Spawn & Despawn
 
-        partial void pSpawn()
+        partial void pAfterSpawn(World world, Vec3f position, Vec3f direction)
         {
             UpdateClientList();
         }
 
-        partial void pDespawn()
+        partial void pBeforeDespawn()
         {
             if (visibleClients.Count > 0)
             {

@@ -12,7 +12,18 @@ namespace GUC.WorldObjects.VobGuiding
     {
         bool needsClientGuide = false;
         public bool NeedsClientGuide { get { return this.needsClientGuide; } }
-        
+
+        internal override void OnTick(long now)
+        {
+            base.OnTick(now);
+
+            if (this.Guide != null && this.Guide.Character != null)
+            {
+                if (!(this.currentCmd is TargetCmd) || ((TargetCmd)this.currentCmd).Target != this.Guide.Character)
+                    SetGuideCommand(Scripting.ScriptManager.Interface.GetTestCmd(this.Guide.Character));
+            }
+        }
+
         partial void pSpawn(World world, Vec3f position, Vec3f direction)
         {
             if (this.needsClientGuide)
@@ -82,21 +93,32 @@ namespace GUC.WorldObjects.VobGuiding
             if (this.currentCmd == cmd)
                 return;
 
+            if (this.currentCmd is TargetCmd)
+            {
+                BaseVob target = ((TargetCmd)this.currentCmd).Target;
+                target.OnDespawn -= OnTargetDespawn;
+                if (this.Guide != null)
+                    this.Guide.RemoveGuideTarget(target);
+            }
+            if (cmd is TargetCmd)
+            {
+                BaseVob target = ((TargetCmd)cmd).Target;
+                target.OnDespawn += OnTargetDespawn;
+                if (this.Guide != null)
+                    this.Guide.AddGuideTarget(target);
+            }
+
             if (this.Guide != null)
             {
-                if (this.currentCmd is TargetCmd)
-                {
-                    this.Guide.RemoveGuideTarget(((TargetCmd)this.currentCmd).Target);
-                }
-                if (cmd is TargetCmd)
-                {
-                    TargetCmd targetCmd = (TargetCmd)cmd;
-                    this.Guide.AddGuideTarget(((TargetCmd)cmd).Target);
-                }
                 GuideMessage.WriteGuidableCmdMessage(this.Guide, this, cmd);
             }
 
             this.currentCmd = cmd;
+        }
+
+        void OnTargetDespawn(BaseVob vob)
+        {
+            SetGuideCommand(null);
         }
 
         void SetGuide(GameClient client, bool sendRemove = true)

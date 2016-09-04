@@ -94,6 +94,11 @@ namespace Gothic.Objects
         {
         }
 
+        public override void Dispose()
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x6A3C50, (BoolArg)true);
+        }
+
         public int _t_hitfrun { get { return Process.ReadInt(Address + VarOffsets._t_hitfrun); } }
         public int _t_hitf { get { return Process.ReadInt(Address + VarOffsets._t_hitf); } }
         public int _t_hitr { get { return Process.ReadInt(Address + VarOffsets._t_hitr); } }

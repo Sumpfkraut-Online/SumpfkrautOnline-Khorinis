@@ -7,7 +7,7 @@ using WinApi;
 
 namespace Gothic.Objects
 {
-    public class zCObject : zClass
+    public class zCObject : zClass, IDisposable
     {
         public abstract class VarOffsets
         {
@@ -418,6 +418,16 @@ namespace Gothic.Objects
         public zString ObjectName
         {
             get { return new zString(Address + VarOffsets.objectName); }
+        }
+        
+        public virtual void Dispose()
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x401EF0, (BoolArg)true);
+        }
+
+        public void AnyDispose()
+        {
+            Process.THISCALL<NullReturnCall>(Address, Process.ReadInt(Process.ReadInt(this.Address) + 0x12), (BoolArg)true);
         }
     }
 }

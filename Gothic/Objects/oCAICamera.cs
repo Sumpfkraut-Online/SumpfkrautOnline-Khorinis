@@ -22,9 +22,12 @@ namespace Gothic.Objects
 
         public static oCAICamera Create()
         {
-            int address = Process.CDECLCALL<IntArg>(0x69E760); //_CreateInstance()
-            Process.THISCALL<NullReturnCall>(address, 0x69DD00); //Konstruktor...
-            return new oCAICamera(address);
+            return new oCAICamera(Process.CDECLCALL<IntArg>(0x69E760));
+        }
+        
+        public override void Dispose()
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x69DE60, (BoolArg)true);
         }
     }
 }

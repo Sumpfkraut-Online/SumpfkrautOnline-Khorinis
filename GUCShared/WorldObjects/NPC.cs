@@ -179,7 +179,7 @@ namespace GUC.WorldObjects
 
         Dictionary<int, Item> equippedItems = new Dictionary<int, Item>();
 
-        partial void pEquipSwitch(int slot, Item item);
+        partial void pEquipSwitch(int slot, Item item); 
         partial void pEquipItem(int slot, Item item);
         public void EquipItem(int slot, Item item)
         {
@@ -195,11 +195,12 @@ namespace GUC.WorldObjects
             if (equippedItems.ContainsKey(slot))
                 throw new ArgumentException("Slot is already in use!");
 
-            if (item.IsEquipped)
+            if (item.IsEquipped) 
             {
                 if (item.slot == slot)
                     return;
 
+                // switching slots
                 equippedItems.Remove(item.slot);
                 item.slot = slot;
                 equippedItems.Add(slot, item);
@@ -698,17 +699,21 @@ namespace GUC.WorldObjects
         #endregion
 
         #region Spawn
-        
-        partial void pDespawn();
+
+        partial void pBeforeDespawn();
+        partial void pAfterDespawn();
         public override void Despawn()
         {
-            pDespawn();
+            pBeforeDespawn();
+
+            base.Despawn();
             this.ForEachActiveAni(aa =>
             {
                 aa.Timer.Stop();
                 aa.Ani = null;
             });
-            base.Despawn();
+
+            pAfterDespawn();
         }
 
         #endregion
