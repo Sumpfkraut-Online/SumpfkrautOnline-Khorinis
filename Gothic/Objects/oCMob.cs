@@ -9,6 +9,8 @@ namespace Gothic.Objects
 {
     public class oCMob : oCVob
     {
+        new public const int ByteSize = 0x188;
+
         new public abstract class VarOffsets : zCVob.VarOffsets
         {
             public const int Model = 0x0C8,
@@ -76,6 +78,11 @@ namespace Gothic.Objects
             int address = Process.CDECLCALL<IntArg>(0x718590); //_CreateInstance()
             //Process.THISCALL<NullReturnCall>(address, 0x71B8F0); //Konstruktor...
             return new oCMob(address);
+        }
+
+        public override void Dispose()
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x71BA30, new BoolArg(true));
         }
     }
 }

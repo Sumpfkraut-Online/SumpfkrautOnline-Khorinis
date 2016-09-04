@@ -22,5 +22,10 @@ namespace Gothic.Objects
         {
             Process.THISCALL<NullReturnCall>(Address, 0x6A0420, vob);
         }
+
+        public override void Dispose()
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x6A0250, (BoolArg)true);
+        }
     }
 }

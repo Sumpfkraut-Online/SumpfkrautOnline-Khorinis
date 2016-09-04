@@ -120,7 +120,7 @@ namespace GUC.WorldObjects
         {
             if (vob == null)
                 throw new ArgumentNullException("Vob is null!");
-            
+
             Vec2i coords = BigCell.GetCoords(pos);
             if (coords.X != vob.Cell.X || coords.Y != vob.Cell.Y)
             {
@@ -178,7 +178,7 @@ namespace GUC.WorldObjects
             client.SpecCell = null;
         }
 
-        partial void pAddVob(BaseVob vob)
+        partial void pAfterAddVob(BaseVob vob)
         {
             if (!vob.IsStatic)
             {
@@ -196,7 +196,7 @@ namespace GUC.WorldObjects
             }
         }
 
-        partial void pRemoveVob(BaseVob vob)
+        partial void pBeforeRemoveVob(BaseVob vob)
         {
             if (!vob.IsStatic)
             {
@@ -207,7 +207,7 @@ namespace GUC.WorldObjects
         #endregion
 
         #region Access
-        
+
         #region Dynamic Vobs
 
         /// <summary>
@@ -347,7 +347,7 @@ namespace GUC.WorldObjects
         #endregion
 
         #endregion
-        
+
         #region NPC Cells
 
         Dictionary<int, NPCCell> npcCells = new Dictionary<int, NPCCell>();
@@ -410,7 +410,7 @@ namespace GUC.WorldObjects
         #endregion
 
         #region Access
-        
+
         /// <summary>
         /// 1000 ingame units accuracy
         /// </summary>

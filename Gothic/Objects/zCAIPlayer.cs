@@ -209,5 +209,10 @@ namespace Gothic.Objects
             get { return Process.ReadInt(Address + VarOffsets.bitfield); }
             set { Process.Write(value, Address + VarOffsets.bitfield); }
         }
+
+        public override void Dispose()
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x50C740, new BoolArg(true));
+        }
     }
 }

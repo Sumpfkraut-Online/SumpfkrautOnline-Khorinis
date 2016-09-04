@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:GUC"
-             mc:Ignorable="d" Width="600" Height="200" IsTabStop="False" Focusable="False" Topmost="True" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" AllowsTransparency="True" WindowStyle="None" ShowInTaskbar="False">
+             mc:Ignorable="d" Width="600" Height="200" IsTabStop="False" Focusable="False" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" AllowsTransparency="True" WindowStyle="None" ShowInTaskbar="False">
     <Window.Background>
         <ImageBrush ImageSource="Resources/Splash.png" Stretch="Uniform"/>
     </Window.Background>

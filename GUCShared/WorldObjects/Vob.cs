@@ -35,27 +35,11 @@ namespace GUC.WorldObjects
             set { base.Instance = value; }
         }
 
+        /// <summary> The model of this vob's instance. </summary>
         public Model Model { get { return Instance.Model; } }
+        
         public bool CDDyn { get { return Instance.CDDyn; } }
         public bool CDStatic { get { return Instance.CDStatic; } }
-
-        #endregion
-        
-        #region Spawn & Despawn
-
-        partial void pSpawn();
-        public override void Spawn(World world, Vec3f position, Vec3f direction)
-        {
-            base.Spawn(world, position, direction);
-            pSpawn();
-        }
-
-        partial void pDespawn();
-        public override void Despawn()
-        {
-            base.Despawn();
-            pDespawn();
-        }
 
         #endregion
     }

@@ -8,17 +8,6 @@ namespace GUC.WorldObjects
 {
     public partial class Vob
     {
-        partial void pSpawn()
-        {
-        }
 
-        partial void pDespawn()
-        {
-        }
-
-        internal void FindNewCommander()
-        {
-            
-        }
     }
 }

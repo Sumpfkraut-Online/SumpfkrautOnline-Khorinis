@@ -9,7 +9,7 @@ using Gothic.Objects.Meshes;
 
 namespace Gothic.Objects
 {
-    public class zCWorld : zCObject, IDisposable
+    public class zCWorld : zCObject
     {
         public zCWorld(int address)
             : base(address)
@@ -73,7 +73,7 @@ namespace Gothic.Objects
             Ignore_Alpha = 1 << 8,
             Test_Water = 1 << 9,
             Test_2Sided = 1 << 10,
-            Ignore_NPC =  1 << 11,
+            Ignore_NPC = 1 << 11,
             FirstHit = 1 << 12, //nicht unbedingt der nächste sondern Irgendein Schnittpunkt
             Test_HelperVisuals = 1 << 13,
             Ignore_Projectiles = 1 << 14
@@ -105,7 +105,7 @@ namespace Gothic.Objects
             List<zCVob> vobs = new List<zCVob>();
 
             zCListSort<zCVob> vobList = this.VobList;
-            
+
             do
             {
                 zCVob vob = vobList.Data;
@@ -129,10 +129,10 @@ namespace Gothic.Objects
         {
             do
             {
-                
+
                 if (tree.Data != null && tree.Data.Address != 0)
                 {
-                    
+
                     zCVob.gVobTypes type = tree.Data.VTBL;
                     bool isInList = false;
                     foreach (zCVob.gVobTypes vt in types)
@@ -143,7 +143,7 @@ namespace Gothic.Objects
                             break;
                         }
                     }
-                    
+
                     if (isInList)
                     {
                         if (!list.ContainsKey(type))
@@ -156,7 +156,7 @@ namespace Gothic.Objects
                 {
                     getAllVobObjects(ref list, tree.FirstChild, types);
                 }
-                
+
 
             } while ((tree = tree.Next).Address != 0);
         }
@@ -177,7 +177,7 @@ namespace Gothic.Objects
 
                 if (tree.Data != null && tree.Data.Address != 0)
                 {
-                        list.Add(tree.Data);
+                    list.Add(tree.Data);
                 }
 
                 if (tree.FirstChild != null && tree.FirstChild.Address != 0)
@@ -222,7 +222,7 @@ namespace Gothic.Objects
 
         public zCSkyControler ActiveSkyControler
         {
-            get { return new zCSkyControler(Process.ReadInt(Address+VarOffsets.activeSkyControler)); }
+            get { return new zCSkyControler(Process.ReadInt(Address + VarOffsets.activeSkyControler)); }
             set { Process.Write(value.Address, Address + VarOffsets.activeSkyControler); }
         }
 
@@ -338,24 +338,13 @@ namespace Gothic.Objects
         public static zCWorld Create()
         {
             int address = Process.CDECLCALL<IntArg>(0x61F9B0); //_CreateInstance()
-            Process.THISCALL<NullReturnCall>(address, 0x61FA40); //Konstruktor...
+            //Process.THISCALL<NullReturnCall>(address, 0x61FA40); //Konstruktor...
             return new zCWorld(address);
         }
 
-        private bool disposed = false;
-        public void Dispose()
+        public override void Dispose()
         {
-            Dispose(true);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!this.disposed)
-            {
-                Process.THISCALL<NullReturnCall>(Address, 0x006200F0);
-                Process.Free(new IntPtr(Address), ByteSize);
-                disposed = true;
-            }
+            Process.THISCALL<NullReturnCall>(Address, 0x620080, (BoolArg)true);
         }
     }
 }

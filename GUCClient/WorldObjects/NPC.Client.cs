@@ -16,10 +16,15 @@ namespace GUC.WorldObjects
 {
     public partial class NPC
     {
+        /// <summary> The npc the client is controlling. </summary>
         public static NPC Hero { get { return GameClient.Client.Character; } }
 
+        #region Move State Update
+
+        const int StateMessageInterval = 800000; //80ms
+
         MoveState nextState = MoveState.Stand;
-        const int DelayBetweenMessages = 800000; //80ms
+        long nextStateUpdate = 0;
         internal void DoSetState(MoveState state)
         {
             if (this.IsDead)
@@ -45,9 +50,12 @@ namespace GUC.WorldObjects
                 return;
 
             NPCMessage.WriteMoveState(this, nextState);
-            this.nextStateUpdate = now + DelayBetweenMessages;
+            this.nextStateUpdate = now + StateMessageInterval;
         }
 
+        #endregion
+
+        #region Vob Guiding
 
         protected override void UpdateGuidePos(long now)
         {
@@ -80,14 +88,19 @@ namespace GUC.WorldObjects
             this.ScriptObject.OnPosChanged();
         }
 
+        #endregion
+
         #region ScriptObject
 
         public partial interface IScriptNPC : IScriptVob
         {
             void StartAnimation(Animation ani, object[] netArgs);
+            void OnTick(long now);
         }
 
         #endregion
+
+        #region Climbing
 
         public partial class ClimbingLedge
         {
@@ -157,23 +170,21 @@ namespace GUC.WorldObjects
             }
         }
 
+        #endregion
 
-        public partial interface IScriptNPC : IScriptVob
-        {
-            void OnTick(long now);
-        }
+        #region Properties
 
-        public const long PositionUpdateTime = 1200000; //120ms
-        public const long DirectionUpdateTime = PositionUpdateTime + 100000;
-
+        /// <summary> The correlated gothic-object of this npc. </summary>
         new public oCNpc gVob { get { return (oCNpc)base.gVob; } }
 
-        internal long nextStateUpdate = 0;
+        #endregion
+
+        #region Environment State
 
         EnvironmentState GetEnvState()
         {
             var ai = this.gVob.HumanAI;
-            var collObj = this.gvob.CollObj;
+            var collObj = this.gVob.CollObj;
 
             float waterY = collObj.WaterLevel;
             if (waterY > ai.HeadY)
@@ -192,7 +203,7 @@ namespace GUC.WorldObjects
                     return EnvironmentState.InWater;
                 }
             }
-            else if ((this.gvob.BitField1 & zCVob.BitFlag0.physicsEnabled) != 0 || ai.AboveFloor > ai.StepHeight)
+            else if ((this.gVob.BitField1 & zCVob.BitFlag0.physicsEnabled) != 0 || ai.AboveFloor > ai.StepHeight)
             {
                 return EnvironmentState.InAir;
             }
@@ -200,19 +211,35 @@ namespace GUC.WorldObjects
             return EnvironmentState.None;
         }
 
+        #endregion
+
+        #region Equipment
+
+        partial void pEquipItem(int slot, Item item)
+        {
+            item.CreateGVob();
+        }
+        
+        partial void pUnequipItem(Item item)
+        {
+            item.DestroyGVob();
+        }
+
+        #endregion
+
         #region Animations
 
         #region Overlays
 
         partial void pAddOverlay(Overlay overlay)
         {
-            if (this.gvob != null)
+            if (this.gVob != null)
                 this.gVob.ApplyOverlay(overlay.Name);
         }
 
         partial void pRemoveOverlay(Overlay overlay)
         {
-            if (this.gvob != null)
+            if (this.gVob != null)
                 this.gVob.ApplyOverlay(overlay.Name);
         }
 
@@ -222,7 +249,7 @@ namespace GUC.WorldObjects
 
         partial void pStartAnimation(Animation ani)
         {
-            if (this.gvob != null)
+            if (this.gVob != null)
             {
                 var gModel = this.gVob.GetModel();
                 int aniID = gModel.GetAniIDFromAniName(ani.AniJob.Name);
@@ -258,7 +285,7 @@ namespace GUC.WorldObjects
 
         partial void pStopAnimation(Animation ani, bool fadeOut)
         {
-            if (this.gvob != null)
+            if (this.gVob != null)
             {
                 var gModel = gVob.GetModel();
                 int id = gModel.GetAniIDFromAniName(ani.AniJob.Name);
@@ -303,29 +330,29 @@ namespace GUC.WorldObjects
 
         #region Spawn
 
+        /// <summary> Spawns the NPC in the given world at the given position & direction. </summary>
         public override void Spawn(World world, Vec3f position, Vec3f direction)
         {
             base.Spawn(world, position, direction);
 
             gVob.HP = this.hp;
             gVob.HPMax = this.hpmax;
+
+            gVob.Guild = 1;
             gVob.InitHumanAI();
-            //gVob.Enable(pos.X, pos.Y, pos.Z);
-            if (this.Name == "Scavenger") gVob.SetToFistMode();
+            
             if (overlays != null)
                 for (int i = 0; i < overlays.Count; i++)
                     this.gVob.ApplyOverlay(overlays[i].Name);
+
             gVob.Name.Set(this.Name);
 
-            gVob.HumanAI.Bitfield0 &= ~4;
-        }
-
-        partial void pDespawn()
-        {
-            //gVob.Disable();
+            gVob.HumanAI.Bitfield0 &= ~4; // some shitty flag which makes npcs always check their ground
         }
 
         #endregion
+
+        #region Health
 
         partial void pSetHealth()
         {
@@ -348,6 +375,10 @@ namespace GUC.WorldObjects
             }
         }
 
+        #endregion
+
+        #region Move State
+
         partial void pSetMovement(MoveState state)
         {
             if (this.gVob == null)
@@ -364,6 +395,8 @@ namespace GUC.WorldObjects
 
             this.OnTick(GameTime.Ticks);
         }
+
+        #endregion
 
         /*void UpdateAnimation(ActiveAni ani)
         {
@@ -392,10 +425,10 @@ namespace GUC.WorldObjects
 
             Logger.Log("Frame: " + (startFrame + (endFrame - startFrame) * progressPercent));
         }*/
-        
+
         internal override void OnTick(long now)
         {
-            if (gvob == null || gVob.HumanAI.Address == 0)
+            if (gVob == null || gVob.HumanAI.Address == 0)
                 return;
 
             if (this == Hero)
@@ -445,7 +478,6 @@ namespace GUC.WorldObjects
                         break;
                 }
             }
-
         }
     }
 }

@@ -17,6 +17,11 @@ namespace Gothic.Objects
         {
         }
 
+        public override void Dispose()
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x54D230, new BoolArg(true));
+        }
+
         public float GroundLevel
         {
             get { return Process.ReadFloat(Address + 192); }

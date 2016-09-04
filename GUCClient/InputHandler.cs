@@ -10,7 +10,6 @@ namespace GUC
 {
     public static class InputHandler
     {
-        static ushort curVobID = 0;
         static Dictionary<VirtualKeys, Action> gucKeys = new Dictionary<VirtualKeys, Action>()
         {
             { VirtualKeys.F4, Program.Exit },
@@ -34,34 +33,9 @@ namespace GUC
             },
             { VirtualKeys.F6, () =>
                 {
-                    for (int i = 0; i < ushort.MaxValue; i++)
-                    {
-                        WorldObjects.BaseVob vob;
-                        if (WorldObjects.World.current.TryGetVob(curVobID++, out vob))
-                        {
-                            var pos = vob.GetPosition();
-                            Log.Logger.Log("Teleport to vob " + vob.ID + " at " + pos);
-                            if (Network.GameClient.Client.Character == null)
-                            {
-                                if (Network.GameClient.Client.IsSpectating)
-                                {
-                                    Gothic.oCGame.GetCameraVob().SetPositionWorld(pos.X, pos.Y, pos.Z);
-                                }
-                            }
-                            else
-                            {
-                                Network.GameClient.Client.Character.SetPosition(pos);
-                            }
-                            return;
-                        }
-                    }
                 }
             },
             { VirtualKeys.F7, () =>
-                {
-                }
-            },
-            { VirtualKeys.F9, () =>
                 {
                 }
             }
