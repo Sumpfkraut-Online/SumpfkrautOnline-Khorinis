@@ -19,7 +19,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\GothicII\System\Multiplayer\UntoldChapters\SumpfkrautOnline\</OutputPath>
+    <OutputPath>..\GothicII\localhost-9054\</OutputPath>
     <DefineConstants>TRACE;DEBUG;D_CLIENT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -27,7 +27,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\GothicII\System\Multiplayer\UntoldChapters\SumpfkrautOnline\</OutputPath>
+    <OutputPath>..\GothicII\localhost-9054\</OutputPath>
     <DefineConstants>TRACE;D_CLIENT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>

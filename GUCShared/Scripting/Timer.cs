@@ -8,6 +8,8 @@ namespace GUC.Scripting
 {
     public class GUCTimer
     {
+        #region Static Loop
+
         static DynamicCollection<GUCTimer> timerList = new DynamicCollection<GUCTimer>();
 
         internal static void Update(long now)
@@ -24,6 +26,8 @@ namespace GUC.Scripting
                 }
             });
         }
+
+        #endregion
 
         #region Properties
 
@@ -42,6 +46,14 @@ namespace GUC.Scripting
         public long NextCallTime { get { return nextCallTime; } }
 
         public long GetRemainingTicks() { return nextCallTime - GameTime.Ticks; }
+
+        long startTime = 0;
+        /// <summary>
+        /// DateTime.UtcNow.Ticks from the timer's last call.
+        /// </summary>
+        public long StartTime { get { return this.startTime; } }
+
+        public long GetElapsedTicks() { return GameTime.Ticks - startTime; }
 
         bool started = false;
         /// <summary>
@@ -73,6 +85,7 @@ namespace GUC.Scripting
 
         void SetNextCallTime(long now)
         {
+            startTime = now;
             nextCallTime = now + interval;
         }
 

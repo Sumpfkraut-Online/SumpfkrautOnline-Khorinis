@@ -49,6 +49,11 @@ namespace GUC.Enumeration
         VobDirMessage,
         VobPosDirMessage, // updating position and direction of a vob
 
+        // animated vobs
+        AniStartMessage,
+        AniStartWithArgsMessage,
+        AniStopMessage,
+
         // npcs 
         NPCStateMessage,
         NPCEquipMessage,

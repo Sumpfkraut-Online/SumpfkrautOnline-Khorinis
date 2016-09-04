@@ -76,12 +76,12 @@ namespace GUC.WorldObjects
         static StaticCollection<World> worldsByID = new StaticCollection<World>(); // all the worlds accessible by ID
         static DynamicCollection<World> worlds = new DynamicCollection<World>(); // all worlds for fast foreach loops
 
-        /// <summary> Checks whether this object is added to the static world collection. </summary>
+        /// <summary> Checks whether this object is added to the static World collection. </summary>
         public bool IsCreated { get { return this.isCreated; } }
 
         #region Create & Delete
 
-        /// <summary> Adds this object to the static world collection. </summary>
+        /// <summary> Adds this object to the static World collection. </summary>
         public void Create()
         {
             if (this.isCreated)
@@ -93,7 +93,7 @@ namespace GUC.WorldObjects
             this.isCreated = true;
         }
 
-        /// <summary> Removes this object from the static world collection. </summary>
+        /// <summary> Removes this object from the static World collection. </summary>
         public void Delete()
         {
             if (!this.isCreated)
@@ -109,26 +109,29 @@ namespace GUC.WorldObjects
 
         #region Access
 
-        /// <summary> Gets a world by ID from the static world collection. </summary>
+        /// <summary> Gets a World by ID from the static World collection. </summary>
         public static bool TryGetWorld(int id, out World world)
         {
             return worldsByID.TryGet(id, out world);
         }
 
-        /// <summary> Loops through all worlds in the static world collection. </summary>
+        /// <summary> Loops through all Worlds in the static World collection. </summary>
         public static void ForEach(Action<World> action)
         {
             worlds.ForEach(action);
         }
 
-        /// <summary> Loops through all worlds in the static world collection. The predicate can return FALSE to BREAK the loop. Else return true. </summary>
+        /// <summary> 
+        /// Loops through all Worlds in the static World collection. 
+        /// Let the predicate return FALSE to BREAK the loop.
+        /// </summary>
         public static void ForEachPredicate(Predicate<World> predicate)
         {
             worlds.ForEachPredicate(predicate);
         }
 
-        /// <summary> Gets the count of worlds in the static world collection. </summary>
-        public static int WorldCount { get { return worlds.Count; } }
+        /// <summary> Gets the count of Worlds in the static World collection. </summary>
+        public static int Count { get { return worlds.Count; } }
 
         #endregion
 

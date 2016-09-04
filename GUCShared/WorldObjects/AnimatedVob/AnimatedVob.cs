@@ -60,7 +60,7 @@ namespace GUC.WorldObjects.AnimatedVob
         {
             if (overlay == null)
                 throw new ArgumentNullException("Overlay is null!");
-            
+
             if (overlays == null || !overlays.Remove(overlay))
                 return;
 
@@ -71,6 +71,9 @@ namespace GUC.WorldObjects.AnimatedVob
 
         #region Get Animation
 
+        /// <summary>
+        /// Checks this Vob's applied Overlays and returns the right Animation or null.
+        /// </summary>
         public bool TryGetAniFromJob(AniJob job, out Animation ani)
         {
             if (overlays != null)
@@ -87,6 +90,8 @@ namespace GUC.WorldObjects.AnimatedVob
 
         #region Active Animation
 
+        partial void pEndAni(Animation ani);
+
         public class ActiveAni
         {
             AnimatedVob vob;
@@ -94,10 +99,13 @@ namespace GUC.WorldObjects.AnimatedVob
             public AnimatedVob Vob { get { return this.vob; } }
 
             GUCTimer timer;
-            internal GUCTimer Timer { get { return this.timer; } }
 
-            public Animation Ani { get; internal set; }
-            internal Action OnStop;
+            float fps;
+            Animation ani;
+            public Animation Ani { get { return this.ani; } }
+            
+            Action onStop;
+            public Action OnStop { get { return this.onStop; } }
 
             internal ActiveAni(AnimatedVob vob)
             {
@@ -109,18 +117,42 @@ namespace GUC.WorldObjects.AnimatedVob
             {
                 vob.pEndAni(this.Ani);
                 this.timer.Stop();
-                this.Ani = null;
+                this.ani = null;
                 if (this.OnStop != null)
                     this.OnStop();
             }
 
-            public float GetPercent()
+            public float GetCurrentFrame()
             {
-                return 1.0f - (float)(timer.NextCallTime - GameTime.Ticks) / (float)timer.Interval;
+                float numFrames = ani.GetFrameNum();
+                if (numFrames > 0)
+                {
+                    return (float)timer.GetElapsedTicks() / (float)TimeSpan.TicksPerSecond * fps / numFrames;
+                }
+                return 0;
+            }
+
+            internal void Start(Animation ani, float fps, Action onStop)
+            {
+                this.ani = ani;
+                this.fps = fps;
+                this.onStop = onStop;
+
+                float numFrames = ani.GetFrameNum();
+                if (numFrames > 0)
+                {
+                    timer.SetInterval((long)(numFrames / fps * TimeSpan.TicksPerSecond));
+                    timer.Start();
+                }
+            }
+
+            internal void Stop()
+            {
+                timer.Stop(true);
             }
         }
 
-        List<ActiveAni> activeAnis = new List<ActiveAni>(1);
+        List<ActiveAni> activeAnis = new List<ActiveAni>();
 
         public void ForEachActiveAni(Action<ActiveAni> action)
         {
@@ -156,15 +188,33 @@ namespace GUC.WorldObjects.AnimatedVob
         public ActiveAni GetActiveAniFromLayerID(int layerID)
         {
             for (int i = 0; i < activeAnis.Count; i++)
-                if (activeAnis[i].Ani != null && activeAnis[i].Ani.LayerID == layerID)
+                if (activeAnis[i].Ani != null && activeAnis[i].Ani.Layer == layerID)
                     return activeAnis[i];
             return null;
         }
 
         #endregion
-
-        bool PlayAni(Animation ani, Action onStop)
+        
+        public void StartAnimation(Animation ani, Action onStop = null)
         {
+            if (ani == null)
+                throw new ArgumentNullException("Ani is null!");
+
+            StartAnimation(ani, ani.FPS, onStop);
+        }
+
+        partial void pStartAnimation(Animation ani, float fps);
+        public void StartAnimation(Animation ani, float fps, Action onStop = null)
+        {
+            PlayAni(ani, fps, onStop);
+            pStartAnimation(ani, fps);
+        }
+
+        void PlayAni(Animation ani, float fps, Action onStop)
+        {
+            if (!this.IsSpawned)
+                throw new Exception("AnimatedVob is not spawned!");
+
             if (ani == null)
                 throw new ArgumentNullException("Ani is null!");
 
@@ -172,50 +222,37 @@ namespace GUC.WorldObjects.AnimatedVob
                 throw new ArgumentException("Ani is from no AniJob!");
 
             if (ani.AniJob.Model != this.Model)
-                throw new ArgumentException("Ani is not for this NPC's Model!");
+                throw new ArgumentException("AniJob is not for this NPC's Model!");
 
-            if (!this.IsSpawned)
-                throw new Exception("NPC is not spawned!");
-            
+            if (fps <= 0)
+                throw new ArgumentException("FPS has to be greater than zero!");
+
+            // search a free ActiveAni
             ActiveAni aa = null;
             for (int i = 0; i < activeAnis.Count; i++)
             {
-                if (activeAnis[i].Ani == null)
+                if (activeAnis[i].Ani == null) // this ActiveAni is unused
                 {
                     aa = activeAnis[i];
-                    break;
+                    // continue to search, maybe there's an active ani with the same layer
                 }
-                else if (activeAnis[i].Ani.LayerID == ani.LayerID)
+                else if (activeAnis[i].Ani.Layer == ani.Layer) // same layer, stop this animation
                 {
                     aa = activeAnis[i];
-                    activeAnis[i].Timer.Stop(true);
+                    aa.Stop(); // stop this animation
                     break;
                 }
             }
 
-            if (aa == null)
+            if (aa == null) // no free ActiveAni, create a new one
             {
                 aa = new ActiveAni(this);
                 activeAnis.Add(aa);
             }
 
-            aa.Ani = ani;
-            aa.Timer.SetInterval(ani.Duration);
-            aa.OnStop = onStop;
-            aa.Timer.Start();
-            return true;
+            aa.Start(ani, fps, onStop);
         }
 
-        partial void pStartAnimation(Animation ani);
-        public void StartAnimation(Animation ani, Action onStop = null)
-        {
-            if (PlayAni(ani, onStop))
-            {
-                pStartAnimation(ani);
-            }
-        }
-
-        partial void pEndAni(Animation ani);
         partial void pStopAnimation(Animation ani, bool fadeOut);
         public void StopAnimation(ActiveAni ani, bool fadeOut = false)
         {
@@ -226,7 +263,7 @@ namespace GUC.WorldObjects.AnimatedVob
                 throw new ArgumentException("ActiveAni is not from this Vob!");
 
             pStopAnimation(ani.Ani, fadeOut);
-            ani.Timer.Stop(true);
+            ani.Stop();
         }
     }
 }

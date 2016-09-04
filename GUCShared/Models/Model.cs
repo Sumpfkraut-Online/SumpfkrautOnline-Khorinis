@@ -8,6 +8,9 @@ using GUC.Animations;
 
 namespace GUC.Models
 {
+    /// <summary>
+    /// A GUC Model consists of a Gothic-Visual-String, a collection of Animation-Overlays and a collection of Animation-Jobs.
+    /// </summary>
     public partial class Model : GameObject
     {
         #region ScriptObject
@@ -40,9 +43,11 @@ namespace GUC.Models
 
         #region Create & Delete
 
+        /// <summary> Checks whether this object is added to the static Model collection. </summary>
         public bool IsCreated { get { return this.isCreated; } }
 
         partial void pCreate();
+        /// <summary> Adds this object to the static Model collection. </summary>
         public void Create()
         {
             if (this.isCreated)
@@ -57,20 +62,21 @@ namespace GUC.Models
                 dynModels.Add(this, ref this.dynID);
             }
 
-            pCreate();
-
             this.isCreated = true;
+
+            pCreate();
         }
 
         partial void pDelete();
+        /// <summary> Removes this object from the static Model collection. </summary>
         public void Delete()
         {
             if (!this.isCreated)
                 throw new ArgumentException("Model is not in the collection!");
+            
+            pDelete();
 
             this.isCreated = false;
-
-            pDelete();
 
             idColl.Remove(this);
             models.Remove(ref this.collID);
@@ -85,45 +91,58 @@ namespace GUC.Models
 
         #region Access
 
+        /// <summary> Checks whether the static Model collection contains an object with the specified ID. </summary>
         public static bool Contains(int id)
         {
             return idColl.ContainsID(id);
         }
 
+        /// <summary> Gets a Model by ID from the static Model collection. </summary>
         public static bool TryGet(int id, out Model model)
         {
             return idColl.TryGet(id, out model);
         }
 
+
+
+
+        /// <summary> Loops through all Models in the static Model collection. </summary>
         public static void ForEach(Action<Model> action)
         {
             models.ForEach(action);
         }
 
-        public static void ForEach(Predicate<Model> predicate)
+        /// <summary> 
+        /// Loops through all Models in the static Model collection. 
+        /// Let the predicate return FALSE to BREAK the loop.
+        /// </summary>
+        public static void ForEachPredicate(Predicate<Model> predicate)
         {
             models.ForEachPredicate(predicate);
         }
 
-        public static int GetCount()
-        {
-            return models.Count;
-        }
+        /// <summary> Gets the count of Models in the static Model collection. </summary>
+        public static int Count { get { return models.Count; } }
 
+
+
+        /// <summary> Loops through all dynamic Models in the static Model collection. </summary>
         public static void ForEachDynamic(Action<Model> action)
         {
             dynModels.ForEach(action);
         }
 
-        public static void ForEachDynamic(Predicate<Model> predicate)
+        /// <summary> 
+        /// Loops through all dynamic Models in the static Model collection. 
+        /// Let the predicate return FALSE to BREAK the loop.
+        /// </summary>
+        public static void ForEachDynamicPredicate(Predicate<Model> predicate)
         {
             dynModels.ForEachPredicate(predicate);
         }
 
-        public static int GetCountDynamics()
-        {
-            return dynModels.Count;
-        }
+        /// <summary> Gets the count of dynamic Models in the static Model collection. </summary>
+        public static int CountDynamic { get { return dynModels.Count; } }
 
         #endregion
 
@@ -138,7 +157,16 @@ namespace GUC.Models
         public string Visual
         {
             get { return this.visual; }
-            set { if (value == null) this.visual = ""; else this.visual = value.ToUpper(); }
+            set
+            {
+                if (this.IsCreated)
+                    throw new NotSupportedException("Can't change value when the Model is already created!");
+
+                if (value == null)
+                    this.visual = "";
+                else
+                    this.visual = value.ToUpper();
+            }
         }
 
         #endregion
@@ -165,7 +193,7 @@ namespace GUC.Models
             for (int i = 0; i < count; i++)
             {
                 var job = ScriptManager.Interface.CreateAniJob();
-                job.SetModel(this); // meh
+                job.SetModel(this); // meh, so this AniJob can find its Overlays
                 job.ReadStream(stream);
                 job.SetModel(null);
                 this.ScriptObject.AddAniJob(job);
@@ -203,6 +231,7 @@ namespace GUC.Models
         #region Add & Remove
 
         partial void pAddAniJob(AniJob job);
+        /// <summary> Adds an AniJob to this Model. </summary>
         public void AddAniJob(AniJob job)
         {
             if (job == null)
@@ -210,6 +239,9 @@ namespace GUC.Models
 
             if (job.IsCreated)
                 throw new ArgumentException("AniJob is already added to another Model!");
+
+            if (job.NextAni != null && job.NextAni.Model != this)
+                throw new ArgumentException("AniJob's NextAni is for a different Model!");
             
             aniIDs.Add(job);
             aniJobs.Add(job, ref job.collID);

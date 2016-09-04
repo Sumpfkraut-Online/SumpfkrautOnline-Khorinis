@@ -137,7 +137,7 @@ namespace GUC.Network.Messages
         {
             PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCAniStopMessage);
             stream.Write((ushort)npc.ID);
-            stream.Write((byte)ani.LayerID);
+            stream.Write((byte)ani.Layer);
             stream.Write(fadeout);
 
             npc.ForEachVisibleClient(c => c.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));

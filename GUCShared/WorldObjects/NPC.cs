@@ -609,7 +609,7 @@ namespace GUC.WorldObjects
         public ActiveAni GetActiveAniFromLayerID(int layerID)
         {
             for (int i = 0; i < activeAnis.Count; i++)
-                if (activeAnis[i].Ani != null && activeAnis[i].Ani.LayerID == layerID)
+                if (activeAnis[i].Ani != null && activeAnis[i].Ani.Layer == layerID)
                     return activeAnis[i];
             return null;
         }
@@ -639,7 +639,7 @@ namespace GUC.WorldObjects
                     aa = activeAnis[i];
                     break;
                 }
-                else if (activeAnis[i].Ani.LayerID == ani.LayerID)
+                else if (activeAnis[i].Ani.Layer == ani.Layer)
                 {
                     aa = activeAnis[i];
                     activeAnis[i].Timer.Stop(true);
