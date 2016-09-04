@@ -18,6 +18,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\GothicII\Scripts\</OutputPath>
+    <OutputPath>..\bin\localhost-9054\Scripts\</OutputPath>
     <DefineConstants>TRACE;DEBUG;D_CLIENT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -26,6 +27,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\GothicII\Scripts\</OutputPath>
+    <OutputPath>..\bin\localhost-9054\Scripts\</OutputPath>
     <DefineConstants>TRACE;D_CLIENT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>

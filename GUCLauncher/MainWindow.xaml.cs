@@ -485,6 +485,7 @@ namespace GUCLauncher
                     {
                         Dispatcher.Invoke(() => lUpdate.Content = str);
                     });
+
                     Dispatcher.Invoke(() =>
                     {
                         SetStartButton(StartButtonSetting.Start);

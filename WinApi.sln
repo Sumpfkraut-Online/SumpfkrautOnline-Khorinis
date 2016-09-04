@@ -96,8 +96,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Overlays", "Overlays", "{C9
 		AnimationFiles\Overlays\Orcbiter.times = AnimationFiles\Overlays\Orcbiter.times
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CmdDistribution", "CmdDistribution\CmdDistribution.csproj", "{8B20BC75-99FC-4358-9E84-CB32998EEB36}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUCLauncher", "GUCLauncher\GUCLauncher.csproj", "{A9006DD2-A155-4194-82FB-BD1533BE9B07}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilePacker", "FilePacker\FilePacker.csproj", "{8ABD57D5-E390-4106-875F-BE2ABFA8ABEE}"
