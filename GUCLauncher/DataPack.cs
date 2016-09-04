@@ -16,7 +16,7 @@ namespace GUCLauncher
         public string Name { get { return this.name; } set { this.name = value; } }
         public string URL;
 
-        readonly List<PackObject> list = new List<PackObject>();
+        readonly List<PackObject> contents = new List<PackObject>();
 
         int fileSize;
         List<PackFile> checkList = new List<PackFile>();
@@ -27,7 +27,7 @@ namespace GUCLauncher
             this.fileSize = header.ReadInt();
             this.URL = header.ReadStringShort();
 
-            list.Clear();
+            contents.Clear();
             checkList.Clear();
 
             int count = header.ReadUShort();
@@ -36,10 +36,10 @@ namespace GUCLauncher
 
         int ReadObjects(PacketStream header, string path, int count, int checkBytes)
         {
-            while (list.Count < count)
+            while (contents.Count < count)
             {
                 PackObject p = PackObject.ReadNew(header, path);
-                list.Add(p);
+                contents.Add(p);
 
                 if (p is PackDir)
                 {
@@ -73,38 +73,46 @@ namespace GUCLauncher
         List<DownloadJob> jobs = new List<DownloadJob>();
         public int PreUpdate()
         {
-            List<PackObject> sortList = new List<PackObject>(list);
-            sortList.Sort(SortOffsets);
+            List<PackFile> fileList = new List<PackFile>(contents.Count);
 
-            for (int i = 0; i < sortList.Count; i++)
+            // create directories and sort them out
+            for (int i = 0; i < contents.Count; i++)
             {
-                if ((sortList[i] is PackFile))
-                {
-                    int nextOffset = -1;
-                    for (int j = i + 1; j < sortList.Count; j++)
-                        if (sortList[j] is PackFile)
-                        {
-                            nextOffset = ((PackFile)sortList[j]).offset;
-                            break;
-                        }
-
-                    if (nextOffset < 0)
-                        nextOffset = fileSize;
-
-                    ((PackFile)sortList[i]).CompressedSize = nextOffset - ((PackFile)sortList[i]).offset;
-                }
+                if (contents[i] is PackFile)
+                    fileList.Add((PackFile)contents[i]);
                 else
                 {
-                    DirectoryInfo info = ((PackDir)sortList[i]).Info;
+                    DirectoryInfo info = ((PackDir)contents[i]).Info;
                     if (!info.Exists)
                         info.Create();
                 }
             }
 
+            // sort file list by offsets
+            fileList.Sort(SortOffsets);
+
+            // calculate the sizes of all files
+            for (int i = 0; i < fileList.Count; i++)
+            {
+                int nextOffset;
+                if (i + 1 < fileList.Count)
+                {
+                    nextOffset = fileList[i + 1].offset;
+                }
+                else
+                {
+                    nextOffset = fileSize;
+                }
+
+                fileList[i].CompressedSize = nextOffset - fileList[i].offset;
+            }
+
+            // sort needed files by offsets
             neededList.Sort(SortOffsets);
 
             jobs.Clear();
             int bytesToLoad = 0;
+            // create job list
             for (int i = 0; i < neededList.Count; i++)
             {
                 DownloadJob job = new DownloadJob();
@@ -113,7 +121,7 @@ namespace GUCLauncher
 
                 for (int j = i + 1; j < neededList.Count; j++)
                 {
-                    if (neededList[j].offset - (neededList[i].offset + neededList[i].CompressedSize) < 500000)
+                    if (neededList[j].offset - (neededList[i].offset + neededList[i].CompressedSize) < 500000) // if the next file is within 500kb, don't stop the connection
                     {
                         job.Files.Add(neededList[j]);
                         bytesToLoad += neededList[j].CompressedSize;
@@ -130,16 +138,9 @@ namespace GUCLauncher
             return bytesToLoad;
         }
 
-        static int SortOffsets(PackObject p1, PackObject p2)
+        static int SortOffsets(PackFile p1, PackFile p2)
         {
-            if (p1 is PackFile)
-            {
-                if (p2 is PackDir)
-                    return 0;
-
-                return ((PackFile)p1).offset.CompareTo(((PackFile)p2).offset);
-            }
-            return 0;
+            return p1.offset.CompareTo(p2.offset);
         }
 
         public void DoUpdate(Action<int> AddBytes)

@@ -55,7 +55,7 @@ namespace GUCLauncher
                     int checkBytes = 0;
                     for (int i = 0; i < count; i++)
                     {
-                        SetStatus(string.Format("Reading data packs ({0}/{1})...", i+1, count));
+                        SetStatus(string.Format("Reading data packs ({0}/{1})...", i + 1, count));
                         DataPack pack = new DataPack();
                         checkBytes += pack.Read(header, path);
                         Packs.Add(pack);
@@ -65,7 +65,7 @@ namespace GUCLauncher
                     for (int i = 0; i < count; i++)
                     {
                         SetStatus(string.Format("Checking data packs ({0}/{1})...", i + 1, count));
-                        Packs[i].EndCheck(value => 
+                        Packs[i].EndCheck(value =>
                         {
                             doneBytes += value;
                             SetPercent(0.4f + 0.6f * doneBytes / checkBytes);
@@ -90,9 +90,9 @@ namespace GUCLauncher
             int bytesToLoad = 0;
             for (int i = 0; i < Packs.Count; i++)
                 bytesToLoad += Packs[i].PreUpdate();
-
-            int doneBytes = 0;
             
+            int doneBytes = 0;
+
             int lastUpdate = int.MinValue;
 
             for (int i = 0; i < Packs.Count; i++)
