@@ -204,7 +204,9 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                                     npc.Model.TryGetAniJob((int) Visuals.SetAnis.JumpFwd, out scriptAniJob);
                                     if (scriptAniJob != null)
                                     {
-                                        npc.StartAniJump(scriptAniJob.DefaultAni, 0, 1);
+                                        if (npc.GetJumpAni() != null) { continue; }
+                                        
+                                        npc.StartAniJump(scriptAniJob.DefaultAni, 50, 50);
                                         Print("npc.IsSpawned = " + npc.GetPosition());
                                     }
                                     
@@ -212,7 +214,10 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                                     // go to enemy or prepare attack (draw weapon) 
                                     // or start / proceeed attack animation
                                 }
-                                catch (Exception ex) { }
+                                catch (Exception ex)
+                                {
+                                    MakeLogWarning(ex);
+                                }
                             }
                         }
                     }

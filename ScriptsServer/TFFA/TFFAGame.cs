@@ -159,9 +159,9 @@ namespace GUC.Scripts.TFFA
 
                 respawnTimer = new GUCTimer(RespawnTime, RespawnPlayers);
                 respawnTimer.Start();
-                
+
                 gameTimer = new GUCTimer();
-                PhaseFight();
+                //PhaseFight();
             }
             catch (Exception e)
             {

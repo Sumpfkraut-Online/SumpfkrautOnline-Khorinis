@@ -41,8 +41,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             }
 
             this.BaseInst.ForEachEquippedItem(i => this.pEquipItem(i.Slot, (ItemInst)i.ScriptObject));
-
-            Log.Logger.Log(">>>> SPAWN <<<<");
         }
 
         #region Equipment
@@ -462,7 +460,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         partial void pDespawn()
         {
             drawTimer.Stop();
-            Log.Logger.Log(">>>> DESPAWN <<<<");
         }
     }
 }

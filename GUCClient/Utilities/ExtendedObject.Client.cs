@@ -55,19 +55,19 @@ namespace GUC.Utilities
             switch (msgType)
             {
                 case 0:
-                    Logger.Log(gothicErrLocation);
+                    Logger.Log(msg);
                     break;
                 case 1:
-                    Logger.Log(gothicErrLocation);
+                    Logger.Log(msg);
                     break;
                 case 2:
-                    Logger.Log(gothicErrLocation);
+                    Logger.Log(msg);
                     break;
                 case 3:
-                    Logger.LogWarning(gothicErrLocation);
+                    Logger.LogWarning(msg);
                     break;
                 default:
-                    Logger.Log(gothicErrLocation);
+                    Logger.Log(msg);
                     break;
             }
         }

@@ -115,14 +115,16 @@ namespace GUC.Scripts.Sumpfkraut.AI
 
             NPCInst npcInst01 = new NPCInst(npcDef01);
             npcInst01.SetObjName("npcInst01");
+            npcInst01.BaseInst.SetNeedsClientGuide(true);
             npcInst01.Spawn(WorldSystem.WorldInst.Current, 
-                new Types.Vec3f(10f, 10f, 1000f), new Types.Vec3f(1f, 0f, 0f));
+                new Types.Vec3f(100f, 1000f, 0f), new Types.Vec3f(1f, 0f, 0f));
             //npcInst01.SetPosition(new Types.Vec3f(0f, 0f, 0f));
 
             NPCInst npcInst02 = new NPCInst(npcDef01);
             npcInst02.SetObjName("npcInst02");
+            npcInst02.BaseInst.SetNeedsClientGuide(true);
             npcInst02.Spawn(WorldSystem.WorldInst.Current, 
-                new Types.Vec3f(10f, 10f, 1000f), new Types.Vec3f(1f, 0f, 0f));
+                new Types.Vec3f(0f, 1000f, 0f), new Types.Vec3f(1f, 0f, 0f));
             //npcInst02.SetPosition(new Types.Vec3f(0f, 0f, 0f));
 
             AIAgent aiAgent01 = new AIAgent(new List<VobInst> { npcInst01 });

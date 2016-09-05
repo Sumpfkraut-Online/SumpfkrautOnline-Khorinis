@@ -22,7 +22,6 @@ namespace GUC.Scripts
         public GUCScripts()
         {
             Logger.Log("######## Initalise SumpfkrautOnline ServerScripts #########");
-
             AddSomeDefs();
 
             CreateTestWorld();

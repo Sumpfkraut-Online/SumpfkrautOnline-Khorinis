@@ -427,6 +427,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         partial void pDespawn()
         {
+            Log.Logger.Log(">>>>>> DESPAWN <<<<<<");
             drawTimer.Stop();
             hitTimer.Stop();
             comboTimer.Stop();
