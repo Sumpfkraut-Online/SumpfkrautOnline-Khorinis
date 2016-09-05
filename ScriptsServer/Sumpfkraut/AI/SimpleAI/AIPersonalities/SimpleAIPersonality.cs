@@ -140,7 +140,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                     if (npc.World.BaseWorld == null) { Print("npc.World.BaseWorld == null"); return; }
                     Print("OINK");
 
-                    npc.World.BaseWorld.ForEachNPCRoughInRange(npc.BaseInst, attackRadius, 
+                    npc.World.BaseWorld.ForEachNPCRough(npc.BaseInst, attackRadius, 
                         delegate (WorldObjects.NPC nearNPC)
                     {
                         if (aiAgent.HasAIClient(nearNPC))
