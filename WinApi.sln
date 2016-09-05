@@ -100,6 +100,28 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUCLauncher", "GUCLauncher\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilePacker", "FilePacker\FilePacker.csproj", "{8ABD57D5-E390-4106-875F-BE2ABFA8ABEE}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "bin", "bin", "{E14EEC51-997D-42C1-B54E-5B94AB34C716}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{C76E58DD-8E4F-4622-9B7E-29798F4ED4D5}"
+	ProjectSection(SolutionItems) = preProject
+		bin\Server\RakNet.dll = bin\Server\RakNet.dll
+		bin\Server\RakNetSwig.dll = bin\Server\RakNetSwig.dll
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "localhost-9054", "localhost-9054", "{A5EDEB45-0E7B-4BB6-A70E-CC78842FE7F7}"
+	ProjectSection(SolutionItems) = preProject
+		bin\localhost-9054\RakNet.dll = bin\localhost-9054\RakNet.dll
+		bin\localhost-9054\RakNetSwig.dll = bin\localhost-9054\RakNetSwig.dll
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{BEEE4328-91CB-4DD8-BB6A-9BCB4D432FC6}"
+	ProjectSection(SolutionItems) = preProject
+		bin\Server\Scripts\Mono.Data.Sqlite.dll = bin\Server\Scripts\Mono.Data.Sqlite.dll
+		bin\Server\Scripts\Newtonsoft.Json.dll = bin\Server\Scripts\Newtonsoft.Json.dll
+		bin\Server\Scripts\Newtonsoft.Json.xml = bin\Server\Scripts\Newtonsoft.Json.xml
+		bin\Server\Scripts\sqlite3.dll = bin\Server\Scripts\sqlite3.dll
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -519,5 +541,8 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C9393256-12C6-4205-A717-20E8660B0227} = {5FA4D28D-8CD8-4BA8-BC25-4800F17768A9}
+		{C76E58DD-8E4F-4622-9B7E-29798F4ED4D5} = {E14EEC51-997D-42C1-B54E-5B94AB34C716}
+		{A5EDEB45-0E7B-4BB6-A70E-CC78842FE7F7} = {E14EEC51-997D-42C1-B54E-5B94AB34C716}
+		{BEEE4328-91CB-4DD8-BB6A-9BCB4D432FC6} = {C76E58DD-8E4F-4622-9B7E-29798F4ED4D5}
 	EndGlobalSection
 EndGlobal
