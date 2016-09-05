@@ -12,7 +12,10 @@ namespace GUC.WorldObjects.VobGuiding
         GuideCmd currentCmd;
         public GuideCmd CurrentCommand { get { return this.currentCmd; } }
         
+        public bool IsGuided { get { return this.Guide != null; } }
+
         internal GameClient Guide;
+
 
         partial void pSpawn(World world, Vec3f position, Vec3f direction);
         public override void Spawn(World world, Vec3f position, Vec3f direction)
