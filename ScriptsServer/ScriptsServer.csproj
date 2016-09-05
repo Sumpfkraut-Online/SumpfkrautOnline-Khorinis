@@ -43,7 +43,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Data.Sqlite">
-      <HintPath>..\GothicII\System\Multiplayer\UntoldChapters\SumpfkrautOnline\Server\Scripts\Mono.Data.Sqlite.dll</HintPath>
+      <HintPath>..\Sqlite\Mono.Data.Sqlite.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -258,6 +258,10 @@
     <None Include="Sumpfkraut\packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Sqlite\sqlite3.dll">
+      <Link>sqlite3.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="Sumpfkraut\Database\BACKUP_SO-K_SQLite.sql" />
     <Content Include="Sumpfkraut\Database\SO-K_SQLite.sql" />
   </ItemGroup>

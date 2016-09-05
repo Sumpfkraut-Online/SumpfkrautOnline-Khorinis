@@ -1,5 +1,14 @@
+Everything you need will be compiled & copied into the "bin" folder.
 
-Animation time files for the ServerScripts Animation-System.
-Install like the following path:
+Server files can be found in "bin/Server/*".
+Client files can be found in "bin/localhost-9054/*".
+The Launcher can be found in "bin/*".
+The Filepacker can be found in "bin/FilePacker/*".
 
-Gothic 2\System\UntoldChapter\Server\Animations\Overlays\
+How to start and connect to a local server:
+1. Start "bin/Server/GUC_Server.exe" to start the server.
+2. Start "bin/GUCLauncher.exe" to start the launcher.
+(3. On the first start, search and select your Gothic 2 folder in the opened folder browser.)
+4. Add the server "localhost:9054" to the server list.
+5. Choose the localhost-server from the server list and press "Connect".
+6. Press "Start" to start the GUC-Gothic-Client.

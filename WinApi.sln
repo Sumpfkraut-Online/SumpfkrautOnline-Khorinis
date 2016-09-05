@@ -122,6 +122,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{BEEE
 		bin\Server\Scripts\sqlite3.dll = bin\Server\Scripts\sqlite3.dll
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RakNet", "RakNet", "{C065D94C-2DA0-4803-AD39-963C17290E44}"
+	ProjectSection(SolutionItems) = preProject
+		RakNet\RakNet.dll = RakNet\RakNet.dll
+		RakNet\RakNetSwig.dll = RakNet\RakNetSwig.dll
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

@@ -39,9 +39,8 @@
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="RakNetSwig, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\GothicII\System\UntoldChapter\DLL\RakNetSwig.dll</HintPath>
+    <Reference Include="RakNetSwig">
+      <HintPath>..\RakNet\RakNetSwig.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
@@ -372,7 +371,12 @@
   <ItemGroup>
     <Resource Include="Resources\Splash.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="..\RakNet\RakNet.dll">
+      <Link>RakNet.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
