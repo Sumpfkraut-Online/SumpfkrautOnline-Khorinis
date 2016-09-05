@@ -19,6 +19,7 @@ namespace GUCLauncher
             int from = Files[0].offset;
             int to = Files[Files.Count - 1].offset + Files[Files.Count - 1].CompressedSize;
             int length = to - from;
+
             using (var response = Download.GetResponse(url, from, to))
             {
                 Stream stream;

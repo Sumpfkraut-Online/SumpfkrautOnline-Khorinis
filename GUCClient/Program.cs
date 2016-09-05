@@ -42,8 +42,9 @@ namespace GUC
             gothicPath = Environment.GetEnvironmentVariable("GUCGothicPath");
             if (string.IsNullOrWhiteSpace(gothicPath) || !Directory.Exists(gothicPath))
                 throw new Exception("Gothic folder environment variable is null or not found!");
-
+            
             projectPath = Environment.GetEnvironmentVariable("GUCProjectPath");
+            
             if (string.IsNullOrWhiteSpace(projectPath) || !Directory.Exists(projectPath))
                 throw new Exception("Project folder environment variable is null or not found!");
 
