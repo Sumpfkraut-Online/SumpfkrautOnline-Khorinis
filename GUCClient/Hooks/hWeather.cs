@@ -35,7 +35,7 @@ namespace GUC.Hooks
                 if (lastTime > 0)
                 {
                     long diff = now - lastTime;
-                    double t = 10500d / World.current.SkyCtrl.CurrentWeight;
+                    double t = 10500d / World.Current.WeatherCtrl.CurrentWeight;
 
                     num = (int)(diff / t);
                     lastTime = now - (int)(diff % t);

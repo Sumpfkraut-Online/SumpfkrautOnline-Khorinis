@@ -5,77 +5,74 @@ using System.Text;
 using GUC.WorldObjects.Instances;
 using GUC.Network;
 using GUC.Types;
-using GUC.Enumeration;
+using GUC.GameObjects;
 using GUC.WorldObjects.Collections;
-using GUC.Log;
 
 namespace GUC.WorldObjects
 {
     /// <summary>
-    /// The lowermost VobObject.
+    /// The lowermost Vob-Object.
     /// </summary>
-    public abstract partial class BaseVob : GameObject, VobTypeObject
+    public abstract partial class BaseVob : IDObject, VobTypeObject
     {
-        /// <summary>
-        /// The VobType of this Vob.
-        /// </summary>
-        public abstract VobTypes VobType { get; }
-
         #region ScriptObject
 
-        /// <summary>
-        /// The underlying ScriptObject interface for all Vobs.
-        /// </summary>
+        /// <summary> The underlying ScriptObject interface for all Vobs. </summary>
         public partial interface IScriptBaseVob : IScriptGameObject
         {
             void Spawn(World world);
             void Despawn();
-
-            void OnPosChanged();
         }
+        
+        /// <summary> The ScriptObject of this Vob. </summary>
+        public new IScriptBaseVob ScriptObject { get { return (IScriptBaseVob)base.ScriptObject; } }
 
-        /// <summary>
-        /// The ScriptObject of this Vob.
-        /// </summary>
-        public new IScriptBaseVob ScriptObject
+        #endregion
+
+        #region Constructors
+
+        public BaseVob(IScriptBaseVob scriptObject) : base(scriptObject)
         {
-            get { return (IScriptBaseVob)base.ScriptObject; }
-            set { base.ScriptObject = value; }
         }
 
         #endregion
 
         #region Properties
 
-        /// <summary>
-        /// The Instance of this object.
-        /// </summary>
-        public BaseVobInstance Instance
-        {
-            get { return this.instance; }
-            set
-            {
-                if (this.isCreated)
-                {
-                    throw new Exception("Can't change the Instance of spawned vobs!");
-                }
-                this.instance = value;
-            }
-        }
-        protected BaseVobInstance instance;
+        /// <summary> The VobType of this Vob. </summary>
+        public abstract VobTypes VobType { get; }
 
-        /// <summary>
-        /// The world this Vob is currently in.
-        /// </summary>
-        public World World
+        #region Vob Instance
+
+        BaseVobInstance instance;
+        /// <summary> The Instance of this object. </summary>
+        public BaseVobInstance Instance { get { return this.instance; } set { SetInstance(value); } }
+
+        public virtual Type InstanceType { get { return typeof(BaseVobInstance); } }
+
+        protected void SetInstance(BaseVobInstance instance)
         {
-            get { return this.world; }
+            CanChangeNow();
+
+            if (instance == null)
+                throw new ArgumentNullException("Instance is null!");
+
+            if (instance.GetType() != InstanceType)
+                throw new ArgumentException(string.Format("Instance must be of type {0}! Is {1}.", InstanceType, instance.GetType()));
+
+            if (!instance.IsCreated)
+                throw new ArgumentException("Instance is not created!");
+
+            this.instance = instance;
         }
+
+        #endregion
+
         protected World world;
+        /// <summary> The World this Vob is currently in. </summary>
+        public World World { get { return this.world; } }
 
-        /// <summary>
-        /// Checks whether this Vob is spawned.
-        /// </summary>
+        /// <summary> Checks whether this Vob is spawned. </summary>
         public bool IsSpawned { get { return this.isCreated; } }
 
         #region Position & Direction
@@ -84,6 +81,7 @@ namespace GUC.WorldObjects
         protected Vec3f dir = new Vec3f(0, 0, 1);
 
         partial void pGetPosition();
+        /// <summary> Gets the position of this Vob </summary>
         public Vec3f GetPosition()
         {
             pGetPosition();
@@ -91,6 +89,7 @@ namespace GUC.WorldObjects
         }
 
         partial void pGetDirection();
+        /// <summary> Gets the direction of this Vob </summary>
         public Vec3f GetDirection()
         {
             pGetDirection();
@@ -98,6 +97,7 @@ namespace GUC.WorldObjects
         }
 
         partial void pSetPosition();
+        /// <summary> Sets the position of this Vob </summary>
         public virtual void SetPosition(Vec3f position)
         {
             this.pos = position.CorrectPosition();
@@ -105,10 +105,62 @@ namespace GUC.WorldObjects
         }
 
         partial void pSetDirection();
+        /// <summary> Sets the direction of this Vob </summary>
         public virtual void SetDirection(Vec3f direction)
         {
             this.dir = direction.CorrectDirection();
             pSetDirection();
+        }
+
+        #endregion
+
+        #region Environment
+
+        public struct Environment
+        {
+            bool inAir;
+            /// <summary> Whether the vob is in air. </summary>
+            public bool InAir { get { return this.inAir; } }
+            float waterLevel;
+            /// <summary> Returns the vob's relative water level to its height. [0..1] </summary>
+            public float WaterLevel { get { return this.waterLevel; } }
+            float waterDepth;
+            /// <summary> Returns the vob's relative water depth to its height. [0..1] </summary>
+            public float WaterDepth { get { return this.waterDepth; } }
+
+            internal Environment(bool inAir, float waterLevel, float waterDepth)
+            {
+                this.inAir = inAir;
+                this.waterLevel = waterLevel;
+                this.waterDepth = waterDepth;
+            }
+
+            public static bool operator ==(Environment env1, Environment env2)
+            {
+                if (env1.inAir != env2.inAir)
+                    return false;
+
+                if (Math.Abs(env1.waterDepth - env2.waterDepth) >= 0.01f)
+                    return false;
+
+                if (Math.Abs(env1.waterLevel - env2.waterLevel) >= 0.01f)
+                    return false;
+
+                return true;
+            }
+
+            public static bool operator != (Environment env1, Environment env2)
+            {
+                return !(env1 == env2);
+            }
+        }
+
+        protected Environment environment;
+        partial void pGetEnvironment();
+        public virtual Environment GetEnvironment()
+        {
+            pGetEnvironment();
+            return this.environment;
         }
 
         #endregion
@@ -120,7 +172,7 @@ namespace GUC.WorldObjects
         protected override void WriteProperties(PacketWriter stream)
         {
             base.WriteProperties(stream);
-            stream.Write((ushort)this.Instance.ID); // MAX_ID
+            stream.Write((ushort)this.instance.ID);
             stream.Write(this.pos);
             stream.Write(this.dir);
         }
@@ -129,17 +181,13 @@ namespace GUC.WorldObjects
         {
             base.ReadProperties(stream);
 
-            int instanceID = stream.ReadUShort(); // MAX_ID
+            int instanceID = stream.ReadUShort();
             BaseVobInstance inst;
             if (!BaseVobInstance.TryGet(instanceID, out inst))
             {
                 throw new Exception("Instance ID not found! " + instanceID);
             }
-            else if (inst.VobType != this.VobType)
-            {
-                throw new Exception("Instance is for a different VobType!");
-            }
-            this.instance = inst;
+            SetInstance(inst);
 
             this.pos = stream.ReadVec3f();
             this.dir = stream.ReadVec3f();
@@ -236,14 +284,14 @@ namespace GUC.WorldObjects
             pAfterDespawn();
         }
         #endregion
+        
+        internal virtual void OnTick(long now)
+        {
+        }
 
         public override string ToString()
         {
-            return String.Format("({0}: {1})", this.ID, this.VobType);
-        }
-
-        internal virtual void OnTick(long now)
-        {
+            return string.Format("({0}: {1})", this.ID, this.GetType());
         }
     }
 }

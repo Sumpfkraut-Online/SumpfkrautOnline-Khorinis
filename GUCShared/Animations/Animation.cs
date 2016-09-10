@@ -5,25 +5,40 @@ using System.Text;
 using GUC.Network;
 using GUC.Scripting;
 using GUC.Models;
+using GUC.GameObjects;
 
 namespace GUC.Animations
 {
     /// <summary>
     /// An Animation of an Overlay contains frame and layer information for the animation system.
     /// </summary>
-    public class Animation
+    public class Animation : GameObject
     {
         #region ScriptObject
 
-        public interface IScriptAnimation : GameObject.IScriptGameObject
+        public interface IScriptAnimation : IScriptGameObject
         {
         }
 
-        public IScriptAnimation ScriptObject;
+        new public IScriptAnimation ScriptObject { get { return (IScriptAnimation)base.ScriptObject; } }
+
+        #endregion
+
+        #region Constructors
+
+        public Animation(IScriptAnimation scriptObject) : base(scriptObject)
+        {
+        }
 
         #endregion
 
         #region Properties
+
+        void CanChangeNow()
+        {
+            if (this.aniJob != null && this.aniJob.ModelInstance != null && this.aniJob.ModelInstance.IsCreated)
+                throw new NotSupportedException("Can't change value when the Animation's ModelInstace is already created!");
+        }
 
         int layer = 1;
         /// <summary>
@@ -35,8 +50,7 @@ namespace GUC.Animations
             get { return this.layer; }
             set
             {
-                if (this.IsCreated)
-                    throw new NotSupportedException("Can't change value when the Animation is already created!");
+                CanChangeNow();
                 if (value < 0 || value > byte.MaxValue)
                     throw new ArgumentOutOfRangeException("Layer id needs to be in range of [0..255]! Is " + value);
 
@@ -53,8 +67,7 @@ namespace GUC.Animations
             get { return this.startFrame; }
             set
             {
-                if (this.IsCreated)
-                    throw new NotSupportedException("Can't change value when the Animation is already created!");
+                CanChangeNow();
                 if (value < 0)
                     throw new ArgumentOutOfRangeException("StartFrame needs to be greater than or zero! Is " + value);
 
@@ -71,8 +84,7 @@ namespace GUC.Animations
             get { return this.endFrame; }
             set
             {
-                if (this.IsCreated)
-                    throw new NotSupportedException("Can't change value when the Animation is already created!");
+                CanChangeNow();
                 if (value < 0)
                     throw new ArgumentOutOfRangeException("EndFrame needs to be greater than or zero! Is " + value);
 
@@ -89,8 +101,7 @@ namespace GUC.Animations
             get { return this.fps; }
             set
             {
-                if (this.IsCreated)
-                    throw new NotSupportedException("Can't change value when the Animation is already created!");
+                CanChangeNow();
                 if (value <= 0)
                     throw new ArgumentOutOfRangeException("FPS needs to be greater than zero! Is " + value);
 
@@ -106,13 +117,14 @@ namespace GUC.Animations
         /// <summary> Calculates the duration of this animation in ticks (1/10000ms). </summary>
         public long GetDuration()
         {
-            return GetDuration(this.fps);
+            return GetDuration(1.0f);
         }
 
         /// <summary> Calculates the duration of this animation in ticks (1/10000ms). </summary>
-        public long GetDuration(float fps)
+        /// <param name="fpsMult"> Frame speed multiplier. </param>
+        public long GetDuration(float fpsMult)
         {
-            return (long)((this.endFrame - this.startFrame) / fps * TimeSpan.TicksPerSecond);
+            return (long)((this.endFrame - this.startFrame) / (fps * fpsMult) * TimeSpan.TicksPerSecond);
         }
 
         Overlay overlay;
@@ -142,15 +154,7 @@ namespace GUC.Animations
 
         #region Read & Write
 
-        void WriteProperties(PacketWriter stream)
-        {
-            stream.Write((byte)Layer);
-            stream.Write(startFrame);
-            stream.Write(endFrame);
-            stream.Write(fps);
-        }
-
-        void ReadProperties(PacketReader stream)
+        protected override void ReadProperties(PacketReader stream)
         {
             this.Layer = stream.ReadByte();
             this.startFrame = stream.ReadFloat();
@@ -158,28 +162,12 @@ namespace GUC.Animations
             this.fps = stream.ReadFloat();
         }
 
-        /// <summary>
-        /// Writes all base & script properties into the stream.
-        /// </summary>
-        public void WriteStream(PacketWriter stream)
+        protected override void WriteProperties(PacketWriter stream)
         {
-            if (stream == null)
-                throw new ArgumentNullException("Stream is null!");
-
-            this.WriteProperties(stream);
-            this.ScriptObject.OnWriteProperties(stream);
-        }
-
-        /// <summary>
-        /// Reads all base & script properties into the object.
-        /// </summary>
-        public void ReadStream(PacketReader stream)
-        {
-            if (stream == null)
-                throw new ArgumentNullException("Stream is null!");
-
-            this.ReadProperties(stream);
-            this.ScriptObject.OnReadProperties(stream);
+            stream.Write((byte)Layer);
+            stream.Write(startFrame);
+            stream.Write(endFrame);
+            stream.Write(fps);
         }
 
         #endregion

@@ -137,7 +137,7 @@ namespace GUC.Scripts.Sumpfkraut.Menus.MainMenus
         }
         #endregion
 
-       /* #region Character & Character list
+        #region Character & Character list
 
         protected MainMenuCharacter AddCharacter(int x, int y, int w, int h)
         {
@@ -153,7 +153,7 @@ namespace GUC.Scripts.Sumpfkraut.Menus.MainMenus
             items.Add(c);
             return c;
         }
-
+        /*
         protected CharListHandle AddCharList(int x, int y, int lines, MainMenuCharacter character, Action OnCharSelect, Action OnEmptySelect)
         {
             MainMenuCharSlot[] arr = new MainMenuCharSlot[lines];
@@ -191,7 +191,7 @@ namespace GUC.Scripts.Sumpfkraut.Menus.MainMenus
         }
 
         #endregion
-
+        */
         #region Choices
         protected MainMenuChoice AddChoice(string title, string help, int x, int y, Dictionary<int, string> choices, bool sorted, Action OnActivate, Action OnChange)
         {
@@ -199,7 +199,7 @@ namespace GUC.Scripts.Sumpfkraut.Menus.MainMenus
             items.Add(c);
             return c;
         }
-        #endregion*/
+        #endregion
 
         #endregion
 
@@ -220,6 +220,8 @@ namespace GUC.Scripts.Sumpfkraut.Menus.MainMenus
             helpText.Text = Text;
             helpTextNextUpdateTime = DateTime.UtcNow.Ticks + 2 * TimeSpan.TicksPerSecond;
         }
+        #endregion
+
         #endregion
 
         #region Navigation

@@ -9,10 +9,24 @@ namespace GUC.WorldObjects.VobGuiding
 {
     public abstract partial class GuidedVob : BaseVob
     {
+        #region Constructors
+
+        public GuidedVob(IScriptBaseVob scriptObject) : base (scriptObject)
+        {
+        }
+
+        #endregion
+
+        #region Properties
+
         GuideCmd currentCmd;
         public GuideCmd CurrentCommand { get { return this.currentCmd; } }
         
-        internal GameClient Guide;
+        internal GameClient guide;
+
+        #endregion
+
+        #region Spawn & Despawn
 
         partial void pSpawn(World world, Vec3f position, Vec3f direction);
         public override void Spawn(World world, Vec3f position, Vec3f direction)
@@ -27,5 +41,7 @@ namespace GUC.WorldObjects.VobGuiding
             pDespawn();
             base.Despawn();
         }
+
+        #endregion
     }
 }

@@ -13,8 +13,9 @@ namespace GUC.WorldObjects.Instances
         public override zCVob CreateVob(zCVob vob = null)
         {
             zCVob ret = vob == null ? zCVob.Create() : vob;
-            zCVisual vis = zCVisual.LoadVisual(this.Model.Visual);
+            zCVisual vis = zCVisual.LoadVisual(this.ModelInstance.Visual);
             ret.SetVisual(vis);
+
             if (CDDyn) ret.BitField1 |= (int)zCVob.BitFlag0.collDetectionDynamic;
             else ret.BitField1 &= ~(int)zCVob.BitFlag0.collDetectionDynamic;
 

@@ -3,29 +3,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Gothic.Objects;
+using GUC.Network;
+using GUC.Types;
+using GUC.WorldObjects.ItemContainers;
 
 namespace GUC.WorldObjects
 {
     public partial class Item
     {
+        #region Network Messages
+
+        new internal static class Messages
+        {
+            public static void ReadChangeItemAmount(PacketReader stream)
+            {
+                Item item;
+                if (NPCInventory.PlayerInventory.TryGetItem(stream.ReadByte(), out item))
+                {
+                    item.ScriptObject.SetAmount(stream.ReadUShort());
+                }
+            }
+        }
+
+        #endregion
+
         new public oCItem gVob { get { return (oCItem)base.gVob; } }
 
-        internal void CreateGVob()
-        {
-            this.gvob = this.instance.CreateVob();
-        }
-
-        internal void DestroyGVob()
-        {
-            // we are finished with this gothic object, decrease the reference counter
-            int refCtr = gvob.refCtr - 1;
-            gvob.refCtr = refCtr;
-
-            // Free the gothic object if no references are left, otherwise gothic will free it
-            if (refCtr <= 0)
-                gvob.Dispose();
-
-            gvob = null;
-        }
     }
 }

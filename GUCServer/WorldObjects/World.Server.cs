@@ -5,11 +5,37 @@ using System.Text;
 using GUC.Network;
 using GUC.Types;
 using GUC.WorldObjects.Cells;
+using GUC.GameObjects.Collections;
 
 namespace GUC.WorldObjects
 {
     public partial class World
     {
+        #region Network Messages
+
+        internal static class Messages
+        {
+            #region Load & Leave
+
+            public static void WriteLoadWorld(GameClient client, World world)
+            {
+                PacketWriter stream = GameServer.SetupStream(ServerMessages.LoadWorldMessage);
+                world.WriteStream(stream);
+                stream.Write(world.Clock.IsRunning);
+                client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, '\0');
+            }
+
+            public static void WriteLeaveWorld(GameClient client)
+            {
+                PacketWriter stream = GameServer.SetupStream(ServerMessages.WorldLeaveMessage);
+                client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'W');
+            }
+
+            #endregion
+        }
+
+        #endregion
+
         #region Spawn ranges
 
         static float spawnInsertRange = 5000;
@@ -46,12 +72,7 @@ namespace GUC.WorldObjects
         }
 
         #endregion
-
-        public override void Update()
-        {
-            throw new NotImplementedException();
-        }
-
+        
         #region Clients
 
         DynamicCollection<GameClient> clients = new DynamicCollection<GameClient>();

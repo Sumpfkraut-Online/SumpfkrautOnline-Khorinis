@@ -5,13 +5,14 @@ using System.Text;
 using GUC.Network;
 using GUC.Scripting;
 using GUC.Models;
+using GUC.GameObjects;
 
 namespace GUC.Animations
 {
     /// <summary>
     /// An Animation-Job is a collection of Animations of different Overlays for the same Gothic-Animation-String.
     /// </summary>
-    public partial class AniJob : GameObject
+    public partial class AniJob : IDObject
     {
         #region ScriptObject
 
@@ -23,15 +24,25 @@ namespace GUC.Animations
             void RemoveOverlayAni(Animation ani);
         }
 
-        new public IScriptAniJob ScriptObject
+        new public IScriptAniJob ScriptObject { get { return (IScriptAniJob)base.ScriptObject; } }
+
+        #endregion
+
+        #region Constructors
+
+        public AniJob(IScriptAniJob scriptObject) : base(scriptObject)
         {
-            get { return (IScriptAniJob)base.ScriptObject; }
-            set { base.ScriptObject = value; }
         }
 
         #endregion
 
         #region Properties
+
+        void CheckModelCreated()
+        {
+            if (this.ModelInstance != null && this.ModelInstance.IsCreated)
+                throw new NotSupportedException("Can't change value when the AniJob's ModelInstance is already created!");
+        }
 
         string name = "";
         /// <summary>
@@ -42,8 +53,7 @@ namespace GUC.Animations
             get { return this.name; }
             set
             {
-                if (this.IsCreated)
-                    throw new NotSupportedException("Can't change value when the AniJob is already created!");
+                CheckModelCreated();
 
                 if (value == null)
                     this.name = "";
@@ -58,21 +68,21 @@ namespace GUC.Animations
         /// </summary>
         public Animation DefaultAni { get { return this.defaultAni; } }
 
-        Model model;
+        ModelInstance modelInstance;
         /// <summary>
         /// The associated model of this animation.
         /// </summary>
-        public Model Model { get { return this.model; } }
+        public ModelInstance ModelInstance { get { return this.modelInstance; } }
 
         /// <summary>
         /// Is true when this is added to a model.
         /// </summary>
         public bool IsCreated { get { return this.isCreated; } }
 
-        internal void SetModel(Model model)
+        internal void SetModel(ModelInstance modelInstance)
         {
-            this.model = model;
-            this.isCreated = model != null;
+            this.modelInstance = modelInstance;
+            this.isCreated = modelInstance != null;
         }
 
         AniJob nextAni;
@@ -85,8 +95,7 @@ namespace GUC.Animations
             get { return this.nextAni; }
             set
             {
-                if (this.IsCreated)
-                    throw new NotSupportedException("Can't change value when the AniJob is already created!");
+                CheckModelCreated();
 
                 this.nextAni = value;
             }
@@ -118,8 +127,7 @@ namespace GUC.Animations
         /// </summary>
         public void SetDefaultAni(Animation ani)
         {
-            if (this.IsCreated)
-                throw new NotSupportedException("Can't change value when the AniJob is already created!");
+            CheckModelCreated();
 
             ValidateAnimation(ani);
 
@@ -211,15 +219,14 @@ namespace GUC.Animations
         /// </summary>
         public void AddOverlayAni(Animation ani, Overlay overlay)
         {
-            if (this.IsCreated)
-                throw new NotSupportedException("Can't add an Animation when the AniJob is already created!");
+            CheckModelCreated();
 
             ValidateAnimation(ani);
 
             if (overlay == null)
                 throw new ArgumentNullException("Overlay is null!");
 
-            if (overlay.Model != this.model)
+            if (overlay.Model != this.modelInstance)
                 throw new ArgumentException("Overlay is not for the same model!");
 
             if (overlays != null)
@@ -244,6 +251,8 @@ namespace GUC.Animations
         /// </summary>
         public void RemoveOverlayAni(Animation ani)
         {
+            CheckModelCreated();
+
             if (ani == null)
                 throw new ArgumentNullException("Animation is null!");
 
@@ -252,7 +261,7 @@ namespace GUC.Animations
 
             if (ani.Overlay == null)
                 throw new ArgumentException("Animation is no Overlay-Animation!");
-
+            
             overlays.Remove(ani);
             ani.SetAniJob(null, null);
 
@@ -287,7 +296,7 @@ namespace GUC.Animations
                     int overlayID = stream.ReadByte();
 
                     Overlay ov;
-                    if (this.model.TryGetOverlay(overlayID, out ov))
+                    if (this.modelInstance.TryGetOverlay(overlayID, out ov))
                     {
                         var ani = ScriptManager.Interface.CreateAnimation();
                         this.ScriptObject.AddOverlayAni(ani, ov);

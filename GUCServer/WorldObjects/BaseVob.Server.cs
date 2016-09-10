@@ -5,18 +5,42 @@ using System.Text;
 using GUC.Types;
 using GUC.WorldObjects.Cells;
 using GUC.Network;
-using GUC.Enumeration;
-using RakNet;
-using GUC.WorldObjects.VobGuiding;
+using GUC.GameObjects.Collections;
 
 namespace GUC.WorldObjects
 {
     public partial class BaseVob
     {
-        public override void Update()
+        #region Network Messages
+
+        internal static class Messages
         {
-            throw new NotImplementedException();
+            public static void WriteSetPosDir(BaseVob vob, GameClient exclude)
+            {
+                PacketWriter stream = GameServer.SetupStream(ServerMessages.VobPosDirMessage);
+                stream.Write((ushort)vob.ID);
+                stream.WriteCompressedPosition(vob.pos);
+                stream.WriteCompressedDirection(vob.dir);
+                
+                if (exclude == null)
+                {
+                    vob.visibleClients.ForEach(client => client.Send(stream, PktPriority.Low, PktReliability.Unreliable, 'W'));
+                }
+                else
+                {
+                    vob.visibleClients.ForEach(client =>
+                    {
+                        if (client != exclude)
+                            client.Send(stream, PktPriority.Low, PktReliability.Unreliable, 'W');
+                    });
+                }
+
+                for (int i = 0; i < vob.targetOf.Count; i++)
+                    vob.targetOf[i].Send(stream, PktPriority.Low, PktReliability.Unreliable, 'W');
+            }
         }
+
+        #endregion
 
         #region Vob guiding
 
@@ -41,7 +65,7 @@ namespace GUC.WorldObjects
 
                     for (int i = 0; i < visibleClients.Count; i++)
                     {
-                        visibleClients[i].Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
+                        visibleClients[i].Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'W');
                     }
                 }*/
 
@@ -62,7 +86,7 @@ namespace GUC.WorldObjects
 
                     for (int i = 0; i < visibleClients.Count; i++)
                     {
-                        visibleClients[i].Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
+                        visibleClients[i].Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'W');
                     }
                 }*/
             }
@@ -100,27 +124,9 @@ namespace GUC.WorldObjects
                     updateVis = false;
                 }
 
-                if (visibleClients.Count > 0)
+                if (visibleClients.Count > 0 || targetOf.Count > 0)
                 {
-                    PacketWriter stream = GameServer.SetupStream(NetworkIDs.VobPosDirMessage);
-                    stream.Write((ushort)this.ID);
-                    stream.WriteCompressedPosition(pos);
-                    stream.WriteCompressedDirection(dir);
-
-                    if (exclude == null)
-                    {
-                        visibleClients.ForEach(client => client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE, 'W'));
-                    }
-                    else
-                    {
-                        visibleClients.ForEach(client =>
-                        {
-                            if (client != exclude) client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE, 'W');
-                        });
-                    }
-
-                    for (int i = 0; i < targetOf.Count; i++)
-                        targetOf[i].Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE, 'W');
+                    Messages.WriteSetPosDir(this, exclude);
                 }
 
                 if (updateVis)
@@ -164,11 +170,11 @@ namespace GUC.WorldObjects
         {
             if (visibleClients.Count > 0)
             {
-                PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldDespawnMessage);
+                PacketWriter stream = GameServer.SetupStream(ServerMessages.VobDespawnMessage);
                 stream.Write((ushort)this.ID);
                 visibleClients.ForEach(client =>
                 {
-                    client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
+                    client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'W');
                     client.RemoveVisibleVob(this);
                 });
                 visibleClients.Clear();
@@ -201,14 +207,14 @@ namespace GUC.WorldObjects
             // Remove clients which are out of range now
             if (visibleClients.Count > 0)
             {
-                PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldDespawnMessage);
+                PacketWriter stream = GameServer.SetupStream(ServerMessages.VobDespawnMessage);
                 stream.Write((ushort)this.ID);
 
                 visibleClients.ForEach(client =>
                 {
                     if (this.pos.GetDistance(client.IsSpectating ? client.SpecGetPos() : client.Character.GetPosition()) > World.SpawnRemoveRange)
                     {
-                        client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
+                        client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'W');
                         client.RemoveVisibleVob(this);
                         RemoveVisibleClient(client);
                     }
@@ -233,11 +239,11 @@ namespace GUC.WorldObjects
 
                             if (stream == null)
                             {
-                                stream = GameServer.SetupStream(NetworkIDs.WorldSpawnMessage);
+                                stream = GameServer.SetupStream(ServerMessages.VobSpawnMessage);
                                 stream.Write((byte)this.VobType);
                                 this.WriteStream(stream);
                             }
-                            client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
+                            client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'W');
                         }
                     }
                 });
@@ -253,11 +259,11 @@ namespace GUC.WorldObjects
 
                         if (stream == null)
                         {
-                            stream = GameServer.SetupStream(NetworkIDs.WorldSpawnMessage);
+                            stream = GameServer.SetupStream(ServerMessages.VobSpawnMessage);
                             stream.Write((byte)this.VobType);
                             this.WriteStream(stream);
                         }
-                        client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
+                        client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'W');
                     }
                 });
             }
@@ -272,7 +278,7 @@ namespace GUC.WorldObjects
             if (!this.IsSpawned)
                 throw new Exception("Vob is not ingame!");
 
-            var strm = GameServer.SetupStream(NetworkIDs.ScriptVobMessage);
+            var strm = GameServer.SetupStream(ServerMessages.ScriptVobMessage);
             strm.Write((ushort)this.ID);
 
             return strm;
@@ -286,7 +292,7 @@ namespace GUC.WorldObjects
             if (!this.IsSpawned)
                 throw new Exception("Vob is not ingame!");
 
-            ForEachVisibleClient(c => c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
+            ForEachVisibleClient(c => c.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'W'));
         }
 
         #endregion

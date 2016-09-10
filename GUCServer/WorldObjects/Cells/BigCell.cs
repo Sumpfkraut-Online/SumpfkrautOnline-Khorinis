@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.WorldObjects.Collections;
+using GUC.GameObjects.Collections;
 using GUC.Network;
 using GUC.Types;
 

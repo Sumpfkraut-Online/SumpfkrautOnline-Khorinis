@@ -8,23 +8,38 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
     public abstract partial class BaseVobDef
     {
-        static Dictionary<string, BaseVobDef> nameDict = new Dictionary<string, BaseVobDef>();
+        #region Constructors
+
+        public BaseVobDef(string codeName) : this()
+        {
+            this.CodeName = codeName;
+        }
+
+        #endregion
+
+        static Dictionary<string, BaseVobDef> nameDict = new Dictionary<string, BaseVobDef>(StringComparer.OrdinalIgnoreCase);
         public static T Get<T>(string codeName) where T : BaseVobDef
         {
             BaseVobDef ret;
-            nameDict.TryGetValue(codeName.ToUpper(), out ret);
-            return (T)ret;
+            if (nameDict.TryGetValue(codeName, out ret) && ret is T)
+            {
+                return (T)ret;
+            }
+            return null;
         }
 
         string codeName;
-        public string CodeName { get { return codeName; } }
-
-        protected BaseVobDef(BaseVobInstance baseDef, string codeName) : this(baseDef)
+        public string CodeName
         {
-            if (string.IsNullOrWhiteSpace(codeName))
-                throw new ArgumentException("CodeName is null or white space!");
-
-            this.codeName = codeName.Trim().ToUpper();
+            get { return codeName; }
+            set
+            {
+                if (this.IsCreated)
+                    throw new NotSupportedException("Can't change CodeName when the Definition is already added to the static collection!");
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentException("CodeName is null or white space!");
+                this.codeName = value;
+            }
         }
 
         partial void pCreate()

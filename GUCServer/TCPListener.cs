@@ -125,7 +125,7 @@ namespace GUC
                         switch (buf[0])
                         {
                             case 0:
-                                statusInfo[0] = (byte)GameClient.GetCount();
+                                statusInfo[0] = (byte)GameClient.Count;
                                 stream.WriteTimeOut(statusInfo, 0, statusInfoLen);
                                 break;
                             case 1:

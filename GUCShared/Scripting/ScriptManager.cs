@@ -8,23 +8,23 @@ using GUC.Network;
 using GUC.WorldObjects;
 using GUC.Animations;
 using GUC.Models;
-using GUC.Enumeration;
 using GUC.WorldObjects.Instances;
 using GUC.WorldObjects.VobGuiding;
+using GUC.Types;
 
 namespace GUC.Scripting
 {
     public partial interface ScriptInterface
     {
-        bool OnClientConnection(GameClient client);
+        GameClient CreateClient();
         Overlay CreateOverlay();
         AniJob CreateAniJob();
         Animation CreateAnimation();
-        Model CreateModel();
+        ModelInstance CreateModelInstance();
         BaseVob CreateVob(VobTypes type);
         BaseVobInstance CreateInstance(VobTypes type);
         World CreateWorld();
-        GuideCmd CreateGuideCmd(byte type);
+        GuideCmd CreateGuideCommand(byte type);
     }
 
     static class ScriptManager
@@ -42,10 +42,10 @@ namespace GUC.Scripting
                 asm = Assembly.LoadFile(Path.GetFullPath(path));
                 Interface = (ScriptInterface)asm.CreateInstance("GUC.Scripts.GUCScripts");
             }
-            catch (ReflectionTypeLoadException ex)
+            catch (ReflectionTypeLoadException refException)
             {
                 StringBuilder sb = new StringBuilder();
-                foreach (Exception exSub in ex.LoaderExceptions)
+                foreach (Exception exSub in refException.LoaderExceptions)
                 {
                     sb.AppendLine(exSub.Message);
                     FileNotFoundException exFileNotFound = exSub as FileNotFoundException;

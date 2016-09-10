@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.WorldObjects.Instances.Mobs;
-using GUC.Enumeration;
-using GUC.Network;
+using GUC.Models;
+using GUC.Types;
 
 namespace GUC.WorldObjects.Mobs
 {
@@ -17,18 +17,30 @@ namespace GUC.WorldObjects.Mobs
         public partial interface IScriptMobSwitch : IScriptMobInter
         {
         }
+        
+        /// <summary>  The ScriptObject of this object. </summary>
+        public new IScriptMobSwitch ScriptObject { get { return (IScriptMobSwitch)base.ScriptObject; } }
 
-        new public IScriptMobSwitch ScriptObject
+        #endregion
+
+
+        #region Constructors
+
+        public MobSwitch(Model.IScriptModel scriptModel, IScriptMobSwitch scriptObject) : base(scriptModel, scriptObject)
         {
-            get { return (IScriptMobSwitch)base.ScriptObject; }
-            set { base.ScriptObject = value; }
         }
 
         #endregion
 
         #region Properties
 
-        new public MobSwitchInstance Instance { get { return (MobSwitchInstance)base.Instance; } }
+        public override Type InstanceType { get { return typeof(MobSwitchInstance); } }
+        /// <summary> The Instance of this object. </summary>
+        new public MobSwitchInstance Instance
+        {
+            get { return (MobSwitchInstance)base.Instance; }
+            set { SetInstance(value); }
+        }
 
         #endregion
 

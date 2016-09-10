@@ -16,12 +16,12 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
 
         partial void pCreate()
         {
-            this.skyCtrl.StartRainTimer();
+            this.Weather.StartRainTimer();
         }
 
         partial void pDelete()
         {
-            this.skyCtrl.StopRainTimer();
+            this.Weather.StopRainTimer();
         }
     }
 }

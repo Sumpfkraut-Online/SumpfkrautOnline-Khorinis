@@ -3,170 +3,321 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Network;
-using GUC.Scripting;
+using GUC.WorldObjects;
 using GUC.Animations;
+using GUC.GameObjects;
 
 namespace GUC.Models
 {
-    /// <summary>
-    /// A GUC Model consists of a Gothic-Visual-String, a collection of Animation-Overlays and a collection of Animation-Jobs.
-    /// </summary>
     public partial class Model : GameObject
     {
         #region ScriptObject
 
-        public interface IScriptModel : IScriptGameObject
+        public partial interface IScriptModel : IScriptGameObject
         {
-            void Create();
-            void Delete();
-
-            void AddOverlay(Overlay overlay);
+            void ApplyOverlay(Overlay overlay);
             void RemoveOverlay(Overlay overlay);
 
-            void AddAniJob(AniJob aniJob);
-            void RemoveAniJob(AniJob aniJob);
+            void StartAnimation(AniJob ani, float fpsMult);
+            void StopAnimation(ActiveAni ani, bool fadeOut);
         }
 
-        new public IScriptModel ScriptObject
-        {
-            get { return (IScriptModel)base.ScriptObject; }
-            set { base.ScriptObject = value; }
-        }
+        public new IScriptModel ScriptObject { get { return (IScriptModel)base.ScriptObject; } }
 
         #endregion
 
-        #region Collection
+        #region Constructors
 
-        static StaticCollection<Model> idColl = new StaticCollection<Model>();
-        static DynamicCollection<Model> models = new DynamicCollection<Model>();
-        static DynamicCollection<Model> dynModels = new DynamicCollection<Model>();
-
-        #region Create & Delete
-
-        /// <summary> Checks whether this object is added to the static Model collection. </summary>
-        public bool IsCreated { get { return this.isCreated; } }
-
-        partial void pCreate();
-        /// <summary> Adds this object to the static Model collection. </summary>
-        public void Create()
+        partial void pConstruct();
+        internal Model(Vob vob, IScriptModel scriptObject) : base(scriptObject)
         {
-            if (this.isCreated)
-                throw new ArgumentException("Model is already in the collection!");
+            if (vob == null)
+                throw new ArgumentNullException("Vob is null!");
 
-            idColl.Add(this);
-
-            models.Add(this, ref this.collID);
-
-            if (!this.IsStatic)
-            {
-                dynModels.Add(this, ref this.dynID);
-            }
-
-            this.isCreated = true;
-
-            pCreate();
+            this.vob = vob;
+            pConstruct();
         }
-
-        partial void pDelete();
-        /// <summary> Removes this object from the static Model collection. </summary>
-        public void Delete()
-        {
-            if (!this.isCreated)
-                throw new ArgumentException("Model is not in the collection!");
-            
-            pDelete();
-
-            this.isCreated = false;
-
-            idColl.Remove(this);
-            models.Remove(ref this.collID);
-
-            if (!this.IsStatic)
-            {
-                dynModels.Remove(ref this.dynID);
-            }
-        }
-
-        #endregion
-
-        #region Access
-
-        /// <summary> Checks whether the static Model collection contains an object with the specified ID. </summary>
-        public static bool Contains(int id)
-        {
-            return idColl.ContainsID(id);
-        }
-
-        /// <summary> Gets a Model by ID from the static Model collection. </summary>
-        public static bool TryGet(int id, out Model model)
-        {
-            return idColl.TryGet(id, out model);
-        }
-
-
-
-
-        /// <summary> Loops through all Models in the static Model collection. </summary>
-        public static void ForEach(Action<Model> action)
-        {
-            models.ForEach(action);
-        }
-
-        /// <summary> 
-        /// Loops through all Models in the static Model collection. 
-        /// Let the predicate return FALSE to BREAK the loop.
-        /// </summary>
-        public static void ForEachPredicate(Predicate<Model> predicate)
-        {
-            models.ForEachPredicate(predicate);
-        }
-
-        /// <summary> Gets the count of Models in the static Model collection. </summary>
-        public static int Count { get { return models.Count; } }
-
-
-
-        /// <summary> Loops through all dynamic Models in the static Model collection. </summary>
-        public static void ForEachDynamic(Action<Model> action)
-        {
-            dynModels.ForEach(action);
-        }
-
-        /// <summary> 
-        /// Loops through all dynamic Models in the static Model collection. 
-        /// Let the predicate return FALSE to BREAK the loop.
-        /// </summary>
-        public static void ForEachDynamicPredicate(Predicate<Model> predicate)
-        {
-            dynModels.ForEachPredicate(predicate);
-        }
-
-        /// <summary> Gets the count of dynamic Models in the static Model collection. </summary>
-        public static int CountDynamic { get { return dynModels.Count; } }
-
-        #endregion
 
         #endregion
 
         #region Properties
 
-        string visual = "";
-        /// <summary>
-        /// The Gothic visual of this Model. (case insensitive)
-        /// </summary>
-        public string Visual
-        {
-            get { return this.visual; }
-            set
-            {
-                if (this.IsCreated)
-                    throw new NotSupportedException("Can't change value when the Model is already created!");
+        Vob vob;
+        /// <summary> The Vob of this Model. </summary>
+        public Vob Vob { get { return this.vob; } }
 
-                if (value == null)
-                    this.visual = "";
-                else
-                    this.visual = value.ToUpper();
+        public ModelInstance Instance { get { return this.vob.ModelInstance; } }
+
+        #endregion
+        
+        #region Overlays
+
+        List<Overlay> overlays;
+
+        #region IsOverlayApplied
+
+        /// <summary> Checks whether the overlay with the given id is applied. </summary>
+        /// <param name="id">[0..255]</param>
+        public bool IsOverlayApplied(int id)
+        {
+            if (overlays != null)
+                for (int i = 0; i < overlays.Count; i++)
+                    if (overlays[i].ID == id)
+                        return true;
+
+            return false;
+        }
+
+        /// <summary> Checks whether the specified overlay is applied. </summary>
+        public bool IsOverlayApplied(Overlay overlay)
+        {
+            if (overlay == null)
+                throw new ArgumentNullException("Overlay is null!");
+
+            if (overlays != null)
+                return overlays.Contains(overlay);
+            return false;
+        }
+
+        #endregion
+
+        #region Apply & Remove
+
+        partial void pAddOverlay(Overlay overlay);
+        /// <summary> Applies an overlay to this vob. </summary>
+        public void ApplyOverlay(Overlay overlay)
+        {
+            if (overlay == null)
+                throw new ArgumentNullException("Overlay is null!");
+
+            if (overlays != null)
+            {
+                if (overlays.Contains(overlay))
+                    return;
+                //overlays.Remove(overlay); // so it's on top
+                overlays.Add(overlay);
             }
+            else
+            {
+                overlays = new List<Overlay>() { overlay };
+            }
+            pAddOverlay(overlay);
+        }
+
+        partial void pRemoveOverlay(Overlay overlay);
+        /// <summary> Removes the specified overlay. </summary>
+        public void RemoveOverlay(Overlay overlay)
+        {
+            if (overlay == null)
+                throw new ArgumentNullException("Overlay is null!");
+
+            if (overlays == null || !overlays.Remove(overlay))
+                return;
+
+            pRemoveOverlay(overlay);
+        }
+
+        /// <summary> Removes an overlay with the given id. </summary>
+        /// <param name="id">[0..255]</param>
+        public void RemoveOverlay(int id)
+        {
+            if (overlays != null)
+                for (int i = 0; i < overlays.Count; i++)
+                    if (overlays[i].ID == id)
+                    {
+                        pRemoveOverlay(overlays[i]);
+                        overlays.RemoveAt(i);
+                        return;
+                    }
+        }
+
+        #endregion
+
+        /// <summary> Checks this Vob's applied Overlays and returns the right Animation or null for the specified AniJob. </summary>
+        public bool TryGetAniFromJob(AniJob job, out Animation ani)
+        {
+            if (overlays != null)
+                for (int i = 0; i < overlays.Count; i++)
+                {
+                    if (job.TryGetOverlayAni(overlays[i], out ani))
+                        return true;
+                }
+            ani = job.DefaultAni;
+            return ani != null;
+        }
+
+        #endregion
+
+        #region Active Animation
+
+        partial void pEndAni(Animation ani);
+        internal void EndAni(Animation ani)
+        {
+            pEndAni(ani);
+        }
+        
+        List<ActiveAni> activeAnis = new List<ActiveAni>();
+
+        #region Access
+
+        /// <summary> Loops through all active animations of this vob. </summary>
+        public void ForEachActiveAni(Action<ActiveAni> action)
+        {
+            if (action == null)
+                throw new ArgumentNullException("Action is null!");
+
+            for (int i = 0; i < activeAnis.Count; i++)
+                if (activeAnis[i].Ani != null)
+                    action(activeAnis[i]);
+        }
+
+        /// <summary>
+        /// Loops through all active animations of this vob.
+        /// Let the predicate return FALSE to BREAK the loop.
+        /// </summary>
+        public void ForEachActiveAniPredicate(Predicate<ActiveAni> predicate)
+        {
+            if (predicate == null)
+                throw new ArgumentNullException("Predicate is null!");
+
+            for (int i = 0; i < activeAnis.Count; i++)
+                if (activeAnis[i].Ani != null)
+                    if (!predicate(activeAnis[i]))
+                        return;
+        }
+
+        /// <summary> Checks whether this vob is in any animation. </summary>
+        public bool IsInAnimation()
+        {
+            for (int i = 0; i < activeAnis.Count; i++)
+                if (activeAnis[i].Ani != null)
+                    return true;
+            return false;
+        }
+
+        /// <summary> Returns an ActiveAni-Object or null of the given Animation-ID. </summary>
+        public ActiveAni GetActiveAniFromAniID(int aniID)
+        {
+            for (int i = 0; i < activeAnis.Count; i++)
+                if (activeAnis[i].Ani != null && activeAnis[i].Ani.AniJob.ID == aniID)
+                    return activeAnis[i];
+            return null;
+        }
+
+        /// <summary> Returns an ActiveAni-Object or null of the given Animation. </summary>
+        public ActiveAni GetActiveAniFromAni(Animation ani)
+        {
+            for (int i = 0; i < activeAnis.Count; i++)
+                if (activeAnis[i].Ani != null && activeAnis[i].Ani == ani)
+                    return activeAnis[i];
+            return null;
+        }
+
+        /// <summary> Returns an ActiveAni-Object or null of the given AniJob. </summary>
+        public ActiveAni GetActiveAniFromAniJob(AniJob aniJob)
+        {
+            for (int i = 0; i < activeAnis.Count; i++)
+                if (activeAnis[i].Ani != null && activeAnis[i].Ani.AniJob == aniJob)
+                    return activeAnis[i];
+            return null;
+        }
+
+        /// <summary> Returns an ActiveAni-Object or null of the given Animation-Layer. </summary>
+        /// <param name="layer">[0..255]</param>
+        public ActiveAni GetActiveAniFromLayerID(int layer)
+        {
+            for (int i = 0; i < activeAnis.Count; i++)
+                if (activeAnis[i].Ani != null && activeAnis[i].Ani.Layer == layer)
+                    return activeAnis[i];
+            return null;
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Start & Stop Animation
+
+        /// <summary> 
+        /// Starts the given AniJob and calls onStop at the end of the animation. 
+        /// Returns a handle to the active animation or null if the animation can't be played (f.e. by not having the right overlays applied).
+        /// </summary>
+        public ActiveAni StartAnimation(AniJob aniJob, Action onStop = null)
+        {
+            return StartAnimation(aniJob, 1.0f, onStop);
+        }
+
+        partial void pStartAnimation(ActiveAni aa, float fpsMult);
+        /// <summary> 
+        /// Starts the given AniJob with the given frame speed multiplier value and calls onStop at the end of the animation. 
+        /// Returns false if the AniJob can't be played (f.e not the right overlays applied). 
+        /// </summary>
+        public ActiveAni StartAnimation(AniJob aniJob, float fpsMult, Action onStop = null)
+        {
+            ActiveAni aa = PlayAni(aniJob, fpsMult, onStop);
+            pStartAnimation(aa, fpsMult);
+            return aa;
+        }
+
+        ActiveAni PlayAni(AniJob aniJob, float fpsMult, Action onStop)
+        {
+            if (!this.vob.IsSpawned)
+                throw new Exception("Vob is not spawned!");
+
+            if (aniJob == null)
+                throw new ArgumentNullException("AniJob is null!");
+
+            if (aniJob.ModelInstance != this.Instance)
+                throw new ArgumentException("AniJob is not for this Model!");
+
+            if (fpsMult <= 0)
+                throw new ArgumentException("Frame speed multiplier has to be greater than zero!");
+
+            Animation ani;
+            if (!TryGetAniFromJob(aniJob, out ani))
+                return null;
+
+            // search a free ActiveAni
+            ActiveAni aa = null;
+            for (int i = 0; i < activeAnis.Count; i++)
+            {
+                if (activeAnis[i].Ani == null) // this ActiveAni is unused
+                {
+                    aa = activeAnis[i];
+                    // continue to search, maybe there's an active ani with the same layer
+                }
+                else if (activeAnis[i].Ani.Layer == ani.Layer) // same layer, stop this animation
+                {
+                    aa = activeAnis[i];
+                    aa.Stop(); // stop this animation
+                    break;
+                }
+            }
+
+            if (aa == null) // no free ActiveAni, create a new one
+            {
+                aa = new ActiveAni(this);
+                activeAnis.Add(aa);
+            }
+
+            aa.Start(ani, fpsMult, onStop);
+            return aa;
+        }
+
+        partial void pStopAnimation(ActiveAni aa, bool fadeOut);
+        public void StopAnimation(ActiveAni ani, bool fadeOut = false)
+        {
+            if (ani == null)
+                throw new ArgumentNullException("ActiveAni is null!");
+
+            if (ani.Ani == null)
+                return;
+
+            if (ani.Model != this)
+                throw new ArgumentException("ActiveAni is not from this Model!");
+
+            pStopAnimation(ani, fadeOut);
+            ani.Stop();
         }
 
         #endregion
@@ -175,255 +326,43 @@ namespace GUC.Models
 
         protected override void ReadProperties(PacketReader stream)
         {
-            base.ReadProperties(stream);
+            // FIXME: Read active overlays & animations
 
-            this.Visual = stream.ReadString();
-
-            // overlays
+            // read applied overlays
             int count = stream.ReadByte();
             for (int i = 0; i < count; i++)
             {
-                var ov = ScriptManager.Interface.CreateOverlay();
-                ov.ReadStream(stream);
-                this.ScriptObject.AddOverlay(ov);
-            }
-
-            // anijobs
-            count = stream.ReadUShort();
-            for (int i = 0; i < count; i++)
-            {
-                var job = ScriptManager.Interface.CreateAniJob();
-                job.SetModel(this); // meh, so this AniJob can find its Overlays
-                job.ReadStream(stream);
-                job.SetModel(null);
-                this.ScriptObject.AddAniJob(job);
+                Overlay ov;
+                int id = stream.ReadByte();
+                if (this.Instance.TryGetOverlay(id, out ov))
+                {
+                    this.ScriptObject.ApplyOverlay(ov);
+                }
+                else
+                {
+                    throw new Exception("Overlay not found: " + id);
+                }
             }
         }
 
         protected override void WriteProperties(PacketWriter stream)
         {
-            base.WriteProperties(stream);
+            // FIXME: Write active overlays & animations
 
-            stream.Write(this.Visual);
-
-            // overlays
-            stream.Write((byte)this.overlays.Count);
-            dynOvs.ForEach(ov => ov.WriteStream(stream));
-
-            // anijobs
-            stream.Write((ushort)this.dynJobs.Count);
-            dynJobs.ForEach(job => job.WriteStream(stream));
-        }
-
-        #endregion
-
-        #region Animations
-
-        /// <summary>
-        /// The upper excluded limit for animations of a model. (ushort.MaxValue + 1)
-        /// </summary>
-        public const int MaxAnimations = 65536;
-
-        StaticCollection<AniJob> aniIDs = new StaticCollection<AniJob>();
-        DynamicCollection<AniJob> aniJobs = new DynamicCollection<AniJob>();
-        DynamicCollection<AniJob> dynJobs = new DynamicCollection<AniJob>();
-
-        #region Add & Remove
-
-        partial void pAddAniJob(AniJob job);
-        /// <summary> Adds an AniJob to this Model. </summary>
-        public void AddAniJob(AniJob job)
-        {
-            if (job == null)
-                throw new ArgumentNullException("AniJob is null!");
-
-            if (job.IsCreated)
-                throw new ArgumentException("AniJob is already added to another Model!");
-
-            if (job.NextAni != null && job.NextAni.Model != this)
-                throw new ArgumentException("AniJob's NextAni is for a different Model!");
-            
-            aniIDs.Add(job);
-            aniJobs.Add(job, ref job.collID);
-            dynJobs.Add(job, ref job.dynID);
-
-            pAddAniJob(job);
-
-            job.SetModel(this);
-        }
-
-        partial void pRemoveAniJob(AniJob job);
-        public void RemoveAniJob(AniJob job)
-        {
-            if (job == null)
-                throw new ArgumentNullException("AniJob is null!");
-
-            if (job.Model != this)
-                throw new Exception("AniJob is not from this Model!");
-
-            job.SetModel(null);
-
-            aniIDs.Remove(job);
-            aniJobs.Remove(ref job.collID);
-            dynJobs.Remove(ref job.dynID);
-
-            pRemoveAniJob(job);
-        }
-
-        #endregion
-
-        #region Access
-
-        public bool ContainsAni(int id)
-        {
-            if (id < 0 || id >= MaxAnimations)
+            // applied overlays
+            if (this.overlays == null)
             {
-                throw new ArgumentOutOfRangeException("ID is out of range! 0.." + MaxAnimations);
+                stream.Write((byte)0);
             }
-            return aniIDs.ContainsID(id);
-        }
-
-        public bool TryGetAni(int id, out AniJob job)
-        {
-            if (id < 0 || id >= MaxAnimations)
+            else
             {
-                throw new ArgumentOutOfRangeException("ID is out of range! 0.." + MaxAnimations);
+                stream.Write((byte)overlays.Count);
+                for (int i = 0; i < overlays.Count; i++)
+                {
+                    stream.Write((byte)overlays[i].ID);
+                }
             }
-            return aniIDs.TryGet(id, out job);
         }
-
-
-
-        public void ForEachAni(Action<AniJob> action)
-        {
-            aniJobs.ForEach(action);
-        }
-
-        public void ForEachAni(Predicate<AniJob> predicate)
-        {
-            aniJobs.ForEachPredicate(predicate);
-        }
-
-        public int GetAniCount() { return aniJobs.Count; }
-
-
-
-        public void ForEachDynamicAni(Action<AniJob> action)
-        {
-            dynJobs.ForEach(action);
-        }
-
-        public void ForEachDynamicAni(Predicate<AniJob> predicate)
-        {
-            dynJobs.ForEachPredicate(predicate);
-        }
-
-        public int GetDynamicAniCount() { return dynJobs.Count; }
-
-        #endregion
-
-        #endregion
-
-        #region Overlays
-
-        /// <summary>
-        /// The upper excluded limit for overlays of a model. (byte.MaxValue + 1)
-        /// </summary>
-        public const int MaxOverlays = 256;
-
-        StaticCollection<Overlay> ovIDs = new StaticCollection<Overlay>(MaxOverlays);
-        DynamicCollection<Overlay> overlays = new DynamicCollection<Overlay>(MaxOverlays);
-        DynamicCollection<Overlay> dynOvs = new DynamicCollection<Overlay>(MaxOverlays);
-
-        #region Add & Remove
-
-        partial void pAddOverlay(Overlay overlay);
-        public void AddOverlay(Overlay overlay)
-        {
-            if (overlay == null)
-                throw new ArgumentNullException("Overlay is null!");
-
-            if (overlay.IsCreated)
-                throw new ArgumentException("Overlay is already added to another Model!");
-
-            ovIDs.Add(overlay);
-            overlays.Add(overlay, ref overlay.collID);
-            dynOvs.Add(overlay, ref overlay.dynID);
-
-            pAddOverlay(overlay);
-
-            overlay.SetModel(this);
-        }
-
-        partial void pRemoveOverlay(Overlay overlay);
-        public void RemoveOverlay(Overlay overlay)
-        {
-            if (overlay == null)
-                throw new ArgumentNullException("Overlay is null!");
-
-            if (overlay.Model != this)
-                throw new Exception("Overlay is not from this Model!");
-
-            overlay.SetModel(null);
-
-            ovIDs.Remove(overlay);
-            overlays.Remove(ref overlay.collID);
-            dynOvs.Remove(ref overlay.dynID);
-
-            pRemoveOverlay(overlay);
-        }
-
-        #endregion
-
-        #region Access
-
-        public bool ContainsOverlay(int id)
-        {
-            if (id < 0 || id >= MaxOverlays)
-            {
-                throw new ArgumentOutOfRangeException("ID is out of range! 0.." + MaxOverlays);
-            }
-            return aniIDs.ContainsID(id);
-        }
-
-        public bool TryGetOverlay(int id, out Overlay overlay)
-        {
-            if (id < 0 || id >= MaxOverlays)
-            {
-                throw new ArgumentOutOfRangeException("ID is out of range! 0.." + MaxOverlays);
-            }
-            return ovIDs.TryGet(id, out overlay);
-        }
-
-
-
-        public void ForEachOverlay(Action<Overlay> action)
-        {
-            overlays.ForEach(action);
-        }
-
-        public void ForEachOverlay(Predicate<Overlay> predicate)
-        {
-            overlays.ForEachPredicate(predicate);
-        }
-
-        public int GetOverlayCount() { return overlays.Count; }
-
-
-
-        public void ForEachDynamicOverlay(Action<Overlay> action)
-        {
-            dynOvs.ForEach(action);
-        }
-
-        public void ForEachDynamicOverlay(Predicate<Overlay> predicate)
-        {
-            dynOvs.ForEachPredicate(predicate);
-        }
-
-        public int GetDynamicOverlayCount() { return dynOvs.Count; }
-
-        #endregion
 
         #endregion
     }

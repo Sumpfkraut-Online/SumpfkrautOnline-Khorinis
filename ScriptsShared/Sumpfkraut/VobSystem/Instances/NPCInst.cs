@@ -3,315 +3,63 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using GUC.Enumeration;
+using GUC.Scripts.Sumpfkraut.VobSystem.Instances.ItemContainers;
 using GUC.WorldObjects;
-using GUC.Scripting;
 using GUC.Network;
-using GUC.Animations;
 using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Types;
+using GUC.WorldObjects.ItemContainers;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
-    public partial class NPCInst : VobInst, NPC.IScriptNPC
+    public partial class NPCInst : VobInst, NPC.IScriptNPC, ScriptInventory.IContainer
     {
-        #region Ranged Weapons
+        #region Constructors
 
-        bool isAiming = false;
-        public bool IsAiming { get { return this.isAiming; } set { this.isAiming = value; } }
+        partial void pConstruct();
+        public NPCInst()
+        {
+            pConstruct();
+        }
+
+        protected override BaseVob CreateVob()
+        {
+            return new NPC(new ScriptInventory(this), new ModelInst(this), this);
+        }
 
         #endregion
 
-        public enum AttackMove // sync with SetAnis
-        {
-            Fwd1,
-            Fwd2,
-            Fwd3,
-            Fwd4,
-
-            Left,
-            Right,
-
-            Run,
-
-            Dodge,
-            Parry1,
-            Parry2,
-            Parry3
-        }
-
-        public bool TryGetDrawFromType(ItemTypes type, out ScriptAniJob aniJob, bool running = false)
-        {
-            SetAnis aniID;
-            switch (type)
-            {
-                case ItemTypes.Wep1H:
-                    aniID = running ? SetAnis.Draw1HRun : SetAnis.Draw1H;
-                    break;
-                case ItemTypes.Wep2H:
-                    aniID = running ? SetAnis.Draw2HRun : SetAnis.Draw2H;
-                    break;
-                case ItemTypes.WepBow:
-                    aniID = running ? SetAnis.DrawBowRun : SetAnis.DrawBow;
-                    break;
-                case ItemTypes.WepXBow:
-                    aniID = running ? SetAnis.DrawXBowRun : SetAnis.DrawXBow;
-                    break;
-                default:
-                    aniJob = null;
-                    return false;
-            }
-
-            return this.Model.TryGetAniJob((int)aniID, out aniJob);
-        }
-
-        public bool TryGetUndrawFromType(ItemTypes type, out ScriptAniJob aniJob, bool running = false)
-        {
-            SetAnis aniID;
-            switch (type)
-            {
-                case ItemTypes.Wep1H:
-                    aniID = running ? SetAnis.Undraw1HRun : SetAnis.Undraw1H;
-                    break;
-                case ItemTypes.Wep2H:
-                    aniID = running ? SetAnis.Undraw2HRun : SetAnis.Undraw2H;
-                    break;
-                case ItemTypes.WepBow:
-                    aniID = running ? SetAnis.UndrawBowRun : SetAnis.UndrawBow;
-                    break;
-                case ItemTypes.WepXBow:
-                    aniID = running ? SetAnis.UndrawXBowRun : SetAnis.UndrawXBow;
-                    break;
-                default:
-                    aniJob = null;
-                    return false;
-            }
-
-            return this.Model.TryGetAniJob((int)aniID, out aniJob);
-        }
-
-        public bool TryGetAttackFromMove(AttackMove attMove, out ScriptAniJob aniJob)
-        {
-            if (this.drawnWeapon != null)
-            {
-                if (this.DrawnWeapon.ItemType == ItemTypes.Wep2H)
-                {
-                    return this.Model.TryGetAniJob((int)attMove + 11, out aniJob);
-                }
-                else if (this.DrawnWeapon.ItemType == ItemTypes.Wep1H)
-                {
-                    return this.Model.TryGetAniJob((int)attMove, out aniJob);
-                }
-            }
-            aniJob = null;
-            return false;
-        }
-
-        public NPC.ActiveAni GetFightAni() // alternative: add a var and change on Start-/Stopanimation ?
-        {
-            NPC.ActiveAni aa = null;
-            this.BaseInst.ForEachActiveAni(a =>
-            {
-                if (((ScriptAniJob)a.Ani.AniJob.ScriptObject).IsFightMove)
-                {
-                    aa = a;
-                    return false;
-                }
-                return true;
-            });
-            return aa;
-        }
-
-        public NPC.ActiveAni GetJumpAni() // alternative: add a var and change on Start-/Stopanimation ?
-        {
-            NPC.ActiveAni aa = null;
-            this.BaseInst.ForEachActiveAni(a =>
-            {
-                if (((ScriptAniJob)a.Ani.AniJob.ScriptObject).IsJump)
-                {
-                    aa = a;
-                    return false;
-                }
-                return true;
-            });
-            return aa;
-        }
-
-        public NPC.ActiveAni GetClimbAni() // alternative: add a var and change on Start-/Stopanimation ?
-        {
-            NPC.ActiveAni aa = null;
-            this.BaseInst.ForEachActiveAni(a =>
-            {
-                if (((ScriptAniJob)a.Ani.AniJob.ScriptObject).IsClimb)
-                {
-                    aa = a;
-                    return false;
-                }
-                return true;
-            });
-            return aa;
-        }
-
-        public NPC.ActiveAni GetDrawAni() // alternative: add a var and change on Start-/Stopanimation ?
-        {
-            NPC.ActiveAni aa = null;
-            this.BaseInst.ForEachActiveAni(a =>
-            {
-                if (((ScriptAniJob)a.Ani.AniJob.ScriptObject).IsDraw)
-                {
-                    aa = a;
-                    return false;
-                }
-                return true;
-            });
-            return aa;
-        }
-
-        public NPC.ActiveAni GetUndrawAni() // alternative: add a var and change on Start-/Stopanimation ?
-        {
-            NPC.ActiveAni aa = null;
-            this.BaseInst.ForEachActiveAni(a =>
-            {
-                if (((ScriptAniJob)a.Ani.AniJob.ScriptObject).IsUndraw)
-                {
-                    aa = a;
-                    return false;
-                }
-                return true;
-            });
-            return aa;
-        }
-
-        public bool IsInFightMove()
-        {
-            return GetFightAni() != null;
-        }
-
         #region Properties
 
-        public new NPC BaseInst { get { return (NPC)base.BaseInst; } }
+        new public NPC BaseInst { get { return (NPC)base.BaseInst; } }
+        public ItemInventory BaseInventory { get { return BaseInst.Inventory; } }
 
-        public new NPCDef Definition { get { return (NPCDef)base.Definition; } }
+        public new NPCDef Definition { get { return (NPCDef)base.Definition; } set { base.Definition = value; } }
         
-        public MoveState Movement { get { return this.BaseInst.Movement; } }
-        public EnvironmentState Environment { get { return this.BaseInst.EnvState; } }
+        public NPCMovement Movement { get { return this.BaseInst.Movement; } }
+        public BaseVob.Environment Environment { get { return this.BaseInst.GetEnvironment(); } }
+
+        public bool IsDead { get { return this.BaseInst.IsDead; } }
+
+        public int HP { get { return this.BaseInst.HP; } }
 
         public bool UseCustoms = false;
         public HumBodyTexs CustomBodyTex;
         public HumHeadMeshs CustomHeadMesh;
         public HumHeadTexs CustomHeadTex;
         public HumVoices CustomVoice;
-
-        public float Fatness = 0;
-        public Vec3f ModelScale = new Vec3f(1, 1, 1);
-
-        #endregion
-
-        #region Constructors
-
-        partial void pConstruct();
-        public NPCInst() : base(new NPC())
-        {
-            pConstruct();
-        }
+        public float CustomFatness = 0;
+        public Vec3f CustomScale = new Vec3f(1, 1, 1);
+        public string CustomName;
 
         #endregion
-
-        public void SetState(MoveState state)
+        
+        public void SetState(NPCMovement state)
         {
-            this.BaseInst.SetMovement(state);
+            //this.BaseInst.SetMovement(state);
         }
-
-        #region Animations
-
-        #region Overlays
-
-        public void ApplyOverlay(Overlay overlay)
-        {
-            this.ApplyOverlay((ScriptOverlay)overlay.ScriptObject);
-        }
-
-        public void ApplyOverlay(ScriptOverlay overlay)
-        {
-            this.BaseInst.ApplyOverlay(overlay.BaseOverlay);
-        }
-
-        public void RemoveOverlay(Overlay overlay)
-        {
-            this.RemoveOverlay((ScriptOverlay)overlay.ScriptObject);
-        }
-
-        public void RemoveOverlay(ScriptOverlay overlay)
-        {
-            this.BaseInst.RemoveOverlay(overlay.BaseOverlay);
-        }
-
-        #endregion
-
-        public bool TryGetAniFromJob(ScriptAniJob job, out ScriptAni ani)
-        {
-            Animation baseAni;
-            if (this.BaseInst.TryGetAniFromJob(job.BaseAniJob, out baseAni))
-            {
-                ani = (ScriptAni)baseAni.ScriptObject;
-                return true;
-            }
-            ani = null;
-            return false;
-        }
-
-        public void StartAnimation(Animation ani)
-        {
-            this.StartAnimation((ScriptAni)ani.ScriptObject);
-        }
-
-        public void StartAnimation(ScriptAni ani, Action onStop = null)
-        {
-            if (ani.AniJob.ID == (int)SetAnis.BowAim || ani.AniJob.ID == (int)SetAnis.XBowAim)
-            {
-                this.BaseInst.StartAnimation(ani.BaseAni, () =>
-                {
-                    if (this.BaseInst.IsDead)
-                        return;
-                    this.isAiming = true;
-                    if (onStop != null)
-                        onStop();
-                });
-                return;
-            }
-            else if (ani.AniJob.ID == (int)SetAnis.BowLower || ani.AniJob.ID == (int)SetAnis.XBowLower || ani.AniJob.IsUndraw)
-            {
-                this.isAiming = false;
-            }
-            else if (ani.AniJob.ID == (int)SetAnis.BowReload || ani.AniJob.ID == (int)SetAnis.XBowReload)
-            {
-                this.isAiming = false;
-                this.BaseInst.StartAnimation(ani.BaseAni, () =>
-                {
-                    if (this.BaseInst.IsDead)
-                        return;
-                    this.isAiming = true;
-                    if (onStop != null)
-                        onStop();
-                });
-                return;
-            }
-
-            this.BaseInst.StartAnimation(ani.BaseAni, onStop);
-        }
-
-        public void StopAnimation(NPC.ActiveAni ani, bool fadeOut = false)
-        {
-            this.BaseInst.StopAnimation(ani, fadeOut);
-        }
-
-        public bool IsInAni() { return this.BaseInst.IsInAnimation(); }
-        public NPC.ActiveAni GetActiveAniFromAniID(int aniID) { return this.BaseInst.GetActiveAniFromAniID(aniID); }
-        public NPC.ActiveAni GetActiveAniFromLayerID(int layerID) { return this.BaseInst.GetActiveAniFromLayerID(layerID); }
-
-        #endregion
-
+        
         public void OnWriteTakeControl(PacketWriter stream)
         {
             // write everything the player needs to know about this npc
@@ -323,44 +71,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             // read everything the player needs to know about this npc
             // i.e. abilities, level, guild etc
         }
-
-        #region Inventory
-
-        public void AddItem(Item item)
-        {
-            this.AddItem((ItemInst)item.ScriptObject);
-        }
-
-        public void AddItem(ItemInst item)
-        {
-            this.BaseInst.Inventory.Add(item.BaseInst);
-        }
-
-        public void RemoveItem(Item item)
-        {
-            this.RemoveItem((ItemInst)item.ScriptObject);
-        }
-
-        partial void pRemoveItem(ItemInst item);
-        public void RemoveItem(ItemInst item)
-        {
-            if (this.armor == item)
-                this.armor = null;
-            else if (this.meleeWep == item)
-                this.meleeWep = null;
-            else if (this.rangedWep == item)
-                this.rangedWep = null;
-            else if (this.ammo == item)
-                this.ammo = null;
-            else if (this.drawnWeapon == item)
-                this.drawnWeapon = null;
-
-            this.BaseInst.Inventory.Remove(item.BaseInst);
-            pRemoveItem(item);
-        }
-
-        #endregion
-
+        
         #region Equipment
 
         ItemInst armor;
@@ -374,7 +85,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         ItemInst drawnWeapon;
         public ItemInst DrawnWeapon { get { return this.drawnWeapon; } }
-
+        
         public enum SlotNums
         {
             Torso,
@@ -525,6 +236,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #endregion
 
+        #region Health
+
         public void SetHealth(int hp)
         {
             this.SetHealth(hp, BaseInst.HPMax);
@@ -537,6 +250,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             pSetHealth(hp, hpmax);
         }
 
+        #endregion
+
         public override void OnReadProperties(PacketReader stream)
         {
             base.OnReadProperties(stream);
@@ -547,11 +262,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 CustomHeadMesh = (HumHeadMeshs)stream.ReadByte();
                 CustomHeadTex = (HumHeadTexs)stream.ReadByte();
                 CustomVoice = (HumVoices)stream.ReadByte();
-                Fatness = stream.ReadFloat();
-                ModelScale = stream.ReadVec3f();
+                CustomFatness = stream.ReadFloat();
+                CustomScale = stream.ReadVec3f();
+                CustomName = stream.ReadString();
             }
-
-            this.isAiming = stream.ReadBit();
         }
 
         public override void OnWriteProperties(PacketWriter stream)
@@ -564,64 +278,17 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 stream.Write((byte)CustomHeadMesh);
                 stream.Write((byte)CustomHeadTex);
                 stream.Write((byte)CustomVoice);
-                stream.Write(Fatness);
-                stream.Write(ModelScale);
+                stream.Write(CustomFatness);
+                stream.Write(CustomScale);
+                stream.Write(CustomName == null ? "" : CustomName);
             }
             else
             {
                 stream.Write(false);
             }
-
-            stream.Write(this.isAiming);
         }
 
-        public void OnWriteAniStartArgs(PacketWriter stream, AniJob job, object[] netArgs)
-        {
-            ScriptAniJob j = (ScriptAniJob)job.ScriptObject;
-            if (j.IsJump)
-            {
-                stream.Write((ushort)(int)netArgs[0]);
-                stream.Write((ushort)(int)netArgs[1]);
-            }
-            else if (j.IsClimb)
-            {
-                ((NPC.ClimbingLedge)netArgs[0]).WriteStream(stream);
-            }
-            else if (j.IsDraw || j.IsUndraw)
-            {
-                stream.Write((byte)(int)netArgs[0]);
-            }
-            else if (j.ID == (int)SetAnis.BowReload || j.ID == (int)SetAnis.XBowReload)
-            {
-                stream.Write((ushort)(int)netArgs[0]);
-                stream.Write((Vec3f)netArgs[1]);
-            }
-        }
-
-        public void OnReadAniStartArgs(PacketReader stream, AniJob job, out object[] netArgs)
-        {
-            ScriptAniJob j = (ScriptAniJob)job.ScriptObject;
-            if (j.IsJump)
-            {
-                netArgs = new object[2] { (int)stream.ReadUShort(), (int)stream.ReadUShort() };
-            }
-            else if (j.IsClimb)
-            {
-                netArgs = new object[1] { new NPC.ClimbingLedge(stream) };
-            }
-            else if (j.IsDraw || j.IsUndraw)
-            {
-                netArgs = new object[1] { (int)stream.ReadByte() };
-            }
-            else if (j.ID == (int)SetAnis.BowReload || j.ID == (int)SetAnis.XBowReload)
-            {
-                netArgs = new object[2] { (int)stream.ReadUShort(), stream.ReadVec3f() };
-            }
-            else
-            {
-                netArgs = null;
-            }
-        }
+        #region FightMode
 
         partial void pSetFightMode(bool fightMode);
         public void SetFightMode(bool fightMode)
@@ -629,6 +296,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             this.BaseInst.SetFightMode(fightMode);
             pSetFightMode(fightMode);
         }
+
+        #endregion
 
         partial void pDespawn();
         public override void Despawn()

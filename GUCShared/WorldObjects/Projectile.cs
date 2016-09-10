@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Enumeration;
+
 using GUC.WorldObjects.Instances;
 using GUC.Models;
 using GUC.Types;
@@ -18,30 +18,36 @@ namespace GUC.WorldObjects
         public partial interface IScriptProjectile : IScriptBaseVob
         {
         }
+        
+        public new IScriptProjectile ScriptObject { get { return (IScriptProjectile)base.ScriptObject; } }
 
-        public new IScriptProjectile ScriptObject
+        #endregion
+
+        #region Constructors
+
+        public Projectile(IScriptProjectile scriptObject) : base(scriptObject)
         {
-            get { return (IScriptProjectile)base.ScriptObject; }
-            set { base.ScriptObject = value; }
         }
 
         #endregion
 
         #region Properties
 
+        public override Type InstanceType { get { return typeof(ProjectileInstance); } }
         new public ProjectileInstance Instance
         {
             get { return (ProjectileInstance)base.Instance; }
-            set { base.Instance = value; }
+            set { SetInstance(value); }
         }
 
-        public Model Model { get { return this.Instance.Model; } }
+        public ModelInstance Model { get { return this.Instance.Model; } }
         public float Velocity { get { return this.Instance.Velocity; } }
 
+        /// <summary> Projectiles are always dynamic! Will throw a NotSupportedException when set. </summary>
         public override bool IsStatic
         {
             get { return false; }
-            set { throw new Exception("Projectiles are dynamic!"); }
+            set { throw new NotSupportedException("Projectiles are dynamic!"); }
         }
 
         #endregion
@@ -68,12 +74,16 @@ namespace GUC.WorldObjects
 
         #endregion
 
+        #region OnTick
+
         partial void pOnTick(long now);
         internal override void OnTick(long now)
         {
             pOnTick(now);
         }
-        
+
+        #endregion
+
         Vec3f GetTimedPosition(long flyTime)
         {
             return startPos + (startDir * Velocity) * flyTime;

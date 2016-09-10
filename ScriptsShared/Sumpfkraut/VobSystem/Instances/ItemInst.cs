@@ -5,15 +5,31 @@ using System.Text;
 using System.Threading.Tasks;
 using GUC.Network;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
+using GUC.WorldObjects;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class ItemInst : VobInst, WorldObjects.Item.IScriptItem
     {
+        #region Constructors
+
+        partial void pConstruct();
+        public ItemInst()
+        {
+            pConstruct();
+        }
+
+        protected override BaseVob CreateVob()
+        {
+            return new Item(new Visuals.ModelInst(this), this);
+        }
+
+        #endregion
+
         #region Properties
 
-        public new WorldObjects.Item BaseInst { get { return (WorldObjects.Item)base.BaseInst; } }
-        public new ItemDef Definition { get { return (ItemDef)base.Definition; } }
+        public new Item BaseInst { get { return (Item)base.BaseInst; } }
+        public new ItemDef Definition { get { return (ItemDef)base.Definition; } set { base.Definition = value; } }
 
         public int Amount { get { return this.BaseInst.Amount; } }
 
@@ -27,9 +43,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #endregion
 
-        public ItemInst() : base(new WorldObjects.Item())
-        {
-        }
 
         public void SetAmount(int amount)
         {
@@ -45,8 +58,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
         }
 
-
-        // Alles schreiben was man über dieses Item wissen muss
+        // Alles schreiben was der Besitzer über dieses Item wissen muss
         public void WriteInventoryProperties(PacketWriter stream)
         {
         }

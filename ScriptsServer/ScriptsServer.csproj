@@ -62,6 +62,15 @@
     <Compile Include="..\ScriptsShared\GUCScripts.cs">
       <Link>GUCScripts.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Left4Gothic\CharacterInfo.cs">
+      <Link>Left4Gothic\CharacterInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Left4Gothic\L4Client.cs">
+      <Link>Left4Gothic\L4Client.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Left4Gothic\ScriptMessageIDs.cs">
+      <Link>Left4Gothic\ScriptMessageIDs.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\AI\GuideCommands\CommandType.cs">
       <Link>Sumpfkraut\AI\GuideCommands\CommandType.cs</Link>
     </Compile>
@@ -71,11 +80,11 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\AI\GuideCommands\GoToVobCommand.cs">
       <Link>Sumpfkraut\AI\GuideCommands\GoToVobCommand.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptsShared\Sumpfkraut\Networking\NetMsgIDs.cs">
-      <Link>Sumpfkraut\Networking\NetMsgIDs.cs</Link>
-    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\Networking\ScriptClient.cs">
       <Link>Sumpfkraut\Networking\ScriptClient.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Networking\ScriptMessageIDs.cs">
+      <Link>Sumpfkraut\Networking\ScriptMessageIDs.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\ScriptObject.cs">
       <Link>Sumpfkraut\ScriptObject.cs</Link>
@@ -98,8 +107,14 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\Threading\TestRunnable.cs">
       <Link>Sumpfkraut\Utilities\Threading\TestRunnable.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Visuals\HumanVisuals.cs">
+      <Link>Sumpfkraut\Visuals\HumanVisuals.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\Visuals\ModelDef.cs">
       <Link>Sumpfkraut\Visuals\ModelDef.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Visuals\ModelInst.cs">
+      <Link>Sumpfkraut\Visuals\ModelInst.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\Visuals\ScriptAni.cs">
       <Link>Sumpfkraut\Visuals\ScriptAni.cs</Link>
@@ -128,6 +143,9 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\BaseVobInst.cs">
       <Link>Sumpfkraut\VobSystem\Instances\BaseVobInst.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\ItemContainers\ScriptInventory.cs">
+      <Link>Sumpfkraut\VobSystem\Instances\ItemContainers\ScriptInventory.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\ItemInst.cs">
       <Link>Sumpfkraut\VobSystem\Instances\ItemInst.cs</Link>
     </Compile>
@@ -140,11 +158,14 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\VobInst.cs">
       <Link>Sumpfkraut\VobSystem\Instances\VobInst.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\WorldSystem\ScriptBarrierCtrl.cs">
+      <Link>Sumpfkraut\WorldSystem\ScriptBarrierCtrl.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\WorldSystem\ScriptClock.cs">
       <Link>Sumpfkraut\WorldSystem\ScriptClock.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptsShared\Sumpfkraut\WorldSystem\ScriptSkyCtrl.cs">
-      <Link>Sumpfkraut\WorldSystem\ScriptSkyCtrl.cs</Link>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\WorldSystem\ScriptWeatherCtrl.cs">
+      <Link>Sumpfkraut\WorldSystem\ScriptWeatherCtrl.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\WorldSystem\WorldDef.cs">
       <Link>Sumpfkraut\WorldSystem\WorldDef.cs</Link>
@@ -152,12 +173,7 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\WorldSystem\WorldInst.cs">
       <Link>Sumpfkraut\WorldSystem\WorldInst.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptsShared\TFFA\Enums.cs">
-      <Link>TFFA\Enums.cs</Link>
-    </Compile>
-    <Compile Include="..\ScriptsShared\TFFA\TFFAClient.cs">
-      <Link>TFFA\TFFAClient.cs</Link>
-    </Compile>
+    <Compile Include="Left4Gothic\L4Client.Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sqlite.cs" />
     <Compile Include="GUCScripts.Server.cs" />
@@ -202,6 +218,9 @@
     <Compile Include="Sumpfkraut\CommandConsole\InfoObjects\PlayerInfo.cs" />
     <Compile Include="Sumpfkraut\CommandConsole\InfoObjects\VobInfo.cs" />
     <Compile Include="Sumpfkraut\CommandConsole\TestCommands.cs" />
+    <Compile Include="Sumpfkraut\Daedalus\AniParser.cs" />
+    <Compile Include="Sumpfkraut\Daedalus\ItemParser.cs" />
+    <Compile Include="Sumpfkraut\Daedalus\Parser.cs" />
     <Compile Include="Sumpfkraut\Database\DBAgent.cs" />
     <Compile Include="Sumpfkraut\Database\DBQueryHandler.cs" />
     <Compile Include="Sumpfkraut\Database\DBQuerying\AbstractDBQuery.cs" />
@@ -236,12 +255,9 @@
     <Compile Include="Sumpfkraut\Web\WS\WSResponse.cs" />
     <Compile Include="Sumpfkraut\Web\WS\WSServer.cs" />
     <Compile Include="Sumpfkraut\Web\WS\WSUser.cs" />
-    <Compile Include="Sumpfkraut\WorldSystem\ScriptSkyCtrl.Server.cs" />
+    <Compile Include="Sumpfkraut\WorldSystem\ScriptWeatherCtrl.Server.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldDef.Server.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldInst.Server.cs" />
-    <Compile Include="TFFA\TFFACommands.cs" />
-    <Compile Include="TFFA\TFFAGame.cs" />
-    <Compile Include="TFFA\TFFAClient.Server.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GUCServer\GUCServer.csproj">

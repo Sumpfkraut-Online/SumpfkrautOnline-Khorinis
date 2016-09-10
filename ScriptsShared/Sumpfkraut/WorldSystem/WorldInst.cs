@@ -11,22 +11,26 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
         WorldObjects.World baseWorld;
         public WorldObjects.World BaseWorld { get { return baseWorld; } }
 
-        WorldDef definition = null;
-        public WorldDef Definition { get { return definition; } }
+        WorldDef definition;
+        public WorldDef Definition
+        {
+            get { return this.definition; }
+            set
+            {
+                if (this.IsCreated)
+                    throw new ArgumentNullException("Can't change the definition when the object is already added to the static collection!");
+                this.definition = value;
+            }
+        }
 
-        ScriptClock clock;
-        public ScriptClock Clock { get { return this.clock; } }
-
-        ScriptSkyCtrl skyCtrl;
-        public ScriptSkyCtrl SkyCtrl { get { return this.skyCtrl; } }
+        public bool IsCreated { get { return this.baseWorld.IsCreated; } }
+        public ScriptClock Clock { get { return (ScriptClock)this.baseWorld.Clock.ScriptObject; } }
+        public ScriptWeatherCtrl Weather { get { return (ScriptWeatherCtrl)this.baseWorld.WeatherCtrl.ScriptObject; } }
+        public ScriptBarrierCtrl Barrier { get { return (ScriptBarrierCtrl)this.baseWorld.BarrierCtrl.ScriptObject; } }
 
         public WorldInst()
         {
-            this.baseWorld = new WorldObjects.World();
-            this.baseWorld.ScriptObject = this;
-
-            this.clock = new ScriptClock(this);
-            this.skyCtrl = new ScriptSkyCtrl(this);
+            this.baseWorld = new WorldObjects.World(new ScriptClock(this), new ScriptWeatherCtrl(this), new ScriptBarrierCtrl(this), this);
         }
 
         public void OnWriteProperties(PacketWriter stream)

@@ -23,7 +23,7 @@ namespace GUC.Hooks
             Logger.Log("Added zCView hooks.");
         }
 
-        public static Dictionary<int, oCItem> VobRenderList = new Dictionary<int, oCItem>();
+        public static Dictionary<int, zCVob> VobRenderList = new Dictionary<int, zCVob>();
 
         static zCWorld rndrWorld = null;
 
@@ -32,7 +32,7 @@ namespace GUC.Hooks
             try
             {
                 int viewAddr = hook.GetECX();
-                oCItem vob;
+                zCVob vob;
                 if (VobRenderList.TryGetValue(viewAddr, out vob))
                 {
                     if (rndrWorld == null)
@@ -48,7 +48,7 @@ namespace GUC.Hooks
                     Process.Write(1.0f, vob.Address + zCVob.VarOffsets.lightDirectionStat + 8);
 
                     //draw the vob
-                    vob.RenderItem(rndrWorld, view, 0);
+                    new oCItem(vob.Address).RenderItem(rndrWorld, view, 0);
                 }
             }
             catch (Exception e)

@@ -58,7 +58,7 @@ namespace GUC
             }
         }
 
-        static Thread game;
+        static Thread server;
         static Thread tcpListener;
         static void Main(string[] args)
         {
@@ -66,13 +66,11 @@ namespace GUC
             {
                 ServerOptions.Load();
                 Console.Title = ServerOptions.ServerName;
-
-                GameServer.Start();
-
+                
                 ScriptManager.StartScripts("Scripts\\ServerScripts.dll");
 
-                game = new Thread(RunServer);
-                game.Start();
+                server = new Thread(RunServer);
+                server.Start();
 
                 tcpListener = new Thread(TCPListener.Run);
                 tcpListener.Start();
@@ -102,9 +100,9 @@ namespace GUC
                     timeAll.Start();
 
                     GameTime.Update();
-                    WorldObjects.World.ForEach(w => w.OnTick(GameTime.Ticks));
                     GUCTimer.Update(GameTime.Ticks); // move to new thread?
                     GameServer.Update(); //process received packets
+                    WorldObjects.World.ForEach(w => w.OnTick(GameTime.Ticks));
 
                     if (nextInfoUpdateTime < GameTime.Ticks)
                     {

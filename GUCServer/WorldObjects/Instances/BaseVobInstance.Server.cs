@@ -2,42 +2,44 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Enumeration;
-using RakNet;
 using GUC.Network;
 
 namespace GUC.WorldObjects.Instances
 {
     public abstract partial class BaseVobInstance
     {
-        public override void Update()
-        {
-            throw new NotImplementedException();
-        }
+        #region Network Messages
 
-        partial void pCreate()
+        internal static class Messages
         {
-            if (!this.IsStatic)
+            public static void WriteCreate(BaseVobInstance instance)
             {
-                var stream = GameServer.SetupStream(NetworkIDs.InstanceCreateMessage);
+                var stream = GameServer.SetupStream(ServerMessages.VobInstanceCreateMessage);
+                stream.Write((byte)instance.VobType);
+                instance.WriteStream(stream);
+                GameClient.ForEach(c => c.Send(stream, PktPriority.Low, PktReliability.Reliable, '\0'));
+            }
 
-                stream.Write((byte)this.VobType);
-                this.WriteStream(stream);
-
-                GameClient.ForEach(c => c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, '\0'));
+            public static void WriteDelete(BaseVobInstance instance)
+            {
+                var stream = GameServer.SetupStream(ServerMessages.VobInstanceDeleteMessage);
+                stream.Write((ushort)instance.ID);
+                GameClient.ForEach(c => c.Send(stream, PktPriority.Low, PktReliability.Reliable, '\0'));
             }
         }
 
-        partial void pDelete()
+        #endregion
+
+        partial void pAfterCreate()
         {
             if (!this.IsStatic)
-            {
-                var stream = GameServer.SetupStream(NetworkIDs.InstanceDeleteMessage);
+                Messages.WriteCreate(this);
+        }
 
-                stream.Write((ushort)this.ID);
-
-                GameClient.ForEach(c => c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, '\0'));
-            }
+        partial void pBeforeDelete()
+        {
+            if (!this.IsStatic)
+                Messages.WriteDelete(this);
         }
     }
 }

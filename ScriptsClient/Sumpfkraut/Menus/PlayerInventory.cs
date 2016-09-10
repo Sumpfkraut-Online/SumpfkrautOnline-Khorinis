@@ -7,7 +7,7 @@ using GUC.GUI;
 using GUC.Scripts.Sumpfkraut.GUI;
 using GUC.Scripts.Sumpfkraut.Networking;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
-using GUC.Enumeration;
+
 using GUC.Scripts.Sumpfkraut.Visuals;
 
 namespace GUC.Scripts.Sumpfkraut.Menus
@@ -34,7 +34,7 @@ namespace GUC.Scripts.Sumpfkraut.Menus
 
         public void UpdateContents()
         {
-            inv.SetContents(ScriptClient.Client.Character?.BaseInst.Inventory);
+            //inv.SetContents(ScriptClient.Client.Character?.BaseInst.Inventory);
         }
 
         public override void Open()
@@ -43,11 +43,11 @@ namespace GUC.Scripts.Sumpfkraut.Menus
             if (player == null)
                 return;
 
-            if (player.Movement != MoveState.Stand || player.Environment > EnvironmentState.Wading)
-                return;
+            //if (player.Movement != MoveState.Stand || player.Environment > EnvironmentState.Wading)
+            //    return;
 
             base.Open();
-            inv.SetContents(player.BaseInst.Inventory);
+            //inv.SetContents(player.BaseInst.Inventory);
             inv.Show();
             inv.Enabled = true;
         }
@@ -74,7 +74,7 @@ namespace GUC.Scripts.Sumpfkraut.Menus
                     NPCInst player = ScriptClient.Client.Character;
                     if (player != null)
                     {
-                        ItemInst selItem = inv.GetSelectedItem();
+                        /*ItemInst selItem = inv.GetSelectedItem();
                         if (selItem != null)
                         {
                             ScriptAniJob dropJob;
@@ -89,7 +89,7 @@ namespace GUC.Scripts.Sumpfkraut.Menus
                                     ScriptClient.Client.BaseClient.DoStartAni(dropJob.BaseAniJob, selItem);
                                 }
                             }
-                        }
+                        }*/
                     }
 
                     /*if (inv.selectedItem == null)

@@ -6,11 +6,11 @@ using GUC.Network;
 using Gothic;
 using System.IO;
 using Gothic.Types;
-using System.Runtime.InteropServices;
 using GUC.Log;
 using WinApi;
 using GUC.Hooks;
 using System.Reflection;
+using System.Management;
 
 namespace GUC
 {
@@ -153,6 +153,8 @@ namespace GUC
                 Process.Write(new byte[] { 0xEB, 0x21 }, 0x69C247); // oCAIHuman::DoAI -> skip perception check
                 Process.Write(new byte[] { 0x31, 0xC0, 0xC3 }, 0x76D1A0); // oCNpc_States::DoAIState -> skip and return false
 
+                Process.Nop(7, 0x4A059C); // don't load dialogcams.zen
+
                 Logger.Log("Hooking & editing of gothic process completed. (for now...)");
                 #endregion
 
@@ -172,13 +174,46 @@ namespace GUC
 
         public static void Exit()
         {
-            GameClient.Client.Disconnect();
+            GameClient.Disconnect();
             Logger.Log("Exiting...");
             Thread.Sleep(200);
             CGameManager.ExitGameVar = 1;
             zCOption.GetSectionByName("internal").GetEntryByName("gameAbnormalExit").VarValue.Set("0");
             zCOption.Save(zString.Create("Gothic.ini")); // don't dispose this zString or crashes will happen
             //Process.CDECLCALL<NullReturnCall>(0x00425F30); // ExitGameFunc
+        }
+        
+        public static string GetSignature(uint y)
+        {
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM Win32_DiskDrive");
+            foreach (ManagementObject obj in searcher.Get())
+            {
+                if ((uint)obj["Index"] == y)
+                {
+                    object sign = obj["Signature"];
+                    if (sign != null && !string.IsNullOrWhiteSpace(sign.ToString()))
+                        return sign.ToString();
+                }
+            }
+            return "";
+        }
+
+        public static string GetMacAddress()
+        {
+            ManagementClass adapter = new ManagementClass("Win32_NetworkAdapter");
+            ManagementObjectCollection collection = adapter.GetInstances();
+            foreach (ManagementObject MO in collection)
+            {
+                if (MO != null)
+                {
+                    object obj = MO["MacAddress"];
+                    if (obj != null && !string.IsNullOrWhiteSpace(obj.ToString()))
+                    {
+                        return obj.ToString();
+                    }
+                }
+            }
+            return "";
         }
     }
 }

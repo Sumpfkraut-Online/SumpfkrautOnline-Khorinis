@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Enumeration;
 using GUC.Models;
 using GUC.Network;
+using GUC.Types;
 
 namespace GUC.WorldObjects.Instances
 {
@@ -18,17 +18,21 @@ namespace GUC.WorldObjects.Instances
         {
         }
 
-        public new IScriptProjectileInstance ScriptObject
+        public new IScriptProjectileInstance ScriptObject { get { return (IScriptProjectileInstance)base.ScriptObject; } }
+
+        #endregion
+
+        #region Constructors
+
+        public ProjectileInstance(IScriptProjectileInstance scriptObject) : base(scriptObject)
         {
-            get { return (IScriptProjectileInstance)base.ScriptObject; }
-            set { base.ScriptObject = value; }
         }
 
         #endregion
 
         #region Properties
 
-        public Model Model;
+        public ModelInstance Model;
 
         float velocity = 0.01f;
         public float Velocity
@@ -66,7 +70,7 @@ namespace GUC.WorldObjects.Instances
             base.ReadProperties(stream);
 
             int modelID = stream.ReadUShort();
-            if (!Model.TryGet(modelID, out this.Model))
+            if (!ModelInstance.TryGet(modelID, out this.Model))
             {
                 throw new Exception("Model not found! " + modelID);
             }

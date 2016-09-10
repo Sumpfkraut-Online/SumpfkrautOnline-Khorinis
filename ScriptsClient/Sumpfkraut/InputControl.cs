@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using WinApi.User.Enumeration;
 using GUC.Scripts.Sumpfkraut.Menus;
-using GUC.Enumeration;
 using GUC.Types;
 using GUC.Scripts.Sumpfkraut.Networking;
 using GUC.Scripts.Sumpfkraut.Visuals;
+using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using GUC.WorldObjects;
 
 namespace GUC.Scripts.Sumpfkraut
 {
@@ -34,80 +35,6 @@ namespace GUC.Scripts.Sumpfkraut
                 activeMenu.KeyDown(key, now);
                 return;
             }
-
-            if (GUC.Network.GameClient.Client.Character == null)
-                return;
-            /*
-            if (key == VirtualKeys.P)
-            {
-                using (var str = Gothic.Types.zString.Create("2H"))
-                    ScriptClient.Client.Character.BaseInst.gVob.SetWeaponMode2(str);
-            }
-            else if (key == VirtualKeys.Menu)
-            {
-            }
-            else if (key == VirtualKeys.F1)
-            {
-                GUC.Network.GameClient.Client.Character.gVob.GetModel().StartAni("S_FALL", 0);
-                GUC.Network.GameClient.Client.Character.gVob.SetPhysicsEnabled(true);
-            }
-            else if (key == VirtualKeys.Control)
-            {
-                if (ScriptClient.Client.Character.Movement == MoveState.Forward)
-                {
-                    // run attack
-                    ScriptAniJob job;
-                    if (ScriptClient.Client.Character.Model.TryGetAniJob((int)SetAnis.Attack2HRun, out job))
-                    {
-                        ScriptClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
-                    }
-                }
-            }
-            else if (InputHandler.IsPressed(VirtualKeys.Control))
-            {
-                if (key == VirtualKeys.Up)
-                {
-                    ScriptAniJob job;
-                    if (ScriptClient.Client.Character.CurrentAni != null)
-                    {
-                        int curID = ScriptClient.Client.Character.CurrentAni.AniJob.ID;
-                        if (curID >= (int)SetAnis.Attack2HFwd1 && curID < (int)SetAnis.Attack2HFwd4
-                            && ScriptClient.Client.Character.Model.TryGetAniJob(curID + 1, out job))
-                        {
-                            ScriptClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
-                            return;
-                        }
-                    }
-                    if (ScriptClient.Client.Character.Model.TryGetAniJob((int)SetAnis.Attack2HFwd1, out job))
-                    {
-                        ScriptClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
-                    }
-                }
-                else if (key == VirtualKeys.Left)
-                {
-                    ScriptAniJob job;
-                    if (ScriptClient.Client.Character.Model.TryGetAniJob((int)SetAnis.Attack2HLeft, out job))
-                    {
-                        ScriptClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
-                    }
-                }
-                else if (key == VirtualKeys.Right)
-                {
-                    ScriptAniJob job;
-                    if (ScriptClient.Client.Character.Model.TryGetAniJob((int)SetAnis.Attack2HRight, out job))
-                    {
-                        ScriptClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
-                    }
-                }
-                else if (key == VirtualKeys.Down)
-                {
-                    ScriptAniJob job;
-                    if (ScriptClient.Client.Character.Model.TryGetAniJob((int)SetAnis.Attack2HParry, out job))
-                    {
-                        ScriptClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
-                    }
-                }
-            }*/
         }
 
         static void KeyUp(VirtualKeys key, long now)
@@ -118,71 +45,65 @@ namespace GUC.Scripts.Sumpfkraut
                 activeMenu.KeyUp(key, now);
                 return;
             }
-
-            if (GUC.Network.GameClient.Client.Character == null)
-                return;
         }
 
         public static void Update(long now)
         {
-            if (GUC.Network.GameClient.Client.Character == null)
+            var hero = NPCInst.Hero;
+
+            if (hero == null)
                 return;
 
             if (!InputHandler.IsPressed(VirtualKeys.Control))
             {
                 if (InputHandler.IsPressed(VirtualKeys.A)) // strafe left
                 {
-                    GUC.Network.GameClient.Client.DoSetHeroState(MoveState.Left);
+                    hero.SetMovement(NPCMovement.Left);
                 }
                 else if (InputHandler.IsPressed(VirtualKeys.D)) // strafe right
                 {
-                    GUC.Network.GameClient.Client.DoSetHeroState(MoveState.Right);
+                    hero.SetMovement(NPCMovement.Right);
                 }
                 else if (InputHandler.IsPressed(VirtualKeys.Up) || InputHandler.IsPressed(VirtualKeys.W)) // move forward
                 {
-                    GUC.Network.GameClient.Client.DoSetHeroState(MoveState.Forward);
+                    hero.SetMovement(NPCMovement.Forward);
                 }
                 else if (InputHandler.IsPressed(VirtualKeys.Down) || InputHandler.IsPressed(VirtualKeys.S)) // move backward
                 {
-                    //GUC.Network.GameClient.Client.DoSetHeroState(NPCStates.MoveBackward)
-                    ScriptAniJob job;
-                    if (ScriptClient.Client.Character.Model.TryGetAniJob((int)SetAnis.Attack2HDodge, out job))
-                    {
-                        ScriptClient.Client.BaseClient.DoStartAni(job.BaseAniJob);
-                    }
+                    hero.SetMovement(NPCMovement.Backward);
                 }
                 else // not moving
                 {
-                    GUC.Network.GameClient.Client.DoSetHeroState(MoveState.Stand);
+                    hero.SetMovement(NPCMovement.Stand);
                 }
 
                 // Do turning
                 if (InputHandler.IsPressed(VirtualKeys.Left) || InputHandler.IsPressed(VirtualKeys.Q))
                 {
-                    GUC.Network.GameClient.Client.Character.gVob.AniCtrl.Turn(-2.5f, true);
+                    hero.BaseInst.gVob.AniCtrl.Turn(-2.5f, true);
                 }
                 else if (InputHandler.IsPressed(VirtualKeys.Right) || InputHandler.IsPressed(VirtualKeys.E))
                 {
-                    GUC.Network.GameClient.Client.Character.gVob.AniCtrl.Turn(2.5f, true);
+                    hero.BaseInst.gVob.AniCtrl.Turn(2.5f, true);
                 }
                 else
                 {
-                    GUC.Network.GameClient.Client.Character.gVob.AniCtrl.StopTurnAnis();
+                    hero.BaseInst.gVob.AniCtrl.StopTurnAnis();
                 }
             }
             else
             {
-                GUC.Network.GameClient.Client.Character.gVob.AniCtrl.StopTurnAnis();
+                hero.BaseInst.gVob.AniCtrl.StopTurnAnis();
             }
 
             if (InputHandler.IsPressed(VirtualKeys.K))
             {
                 if (nextFwdTeleport < now)
                 {
-                    Vec3f pos = GUC.Network.GameClient.Client.Character.GetPosition();
-                    Vec3f dir = GUC.Network.GameClient.Client.Character.GetDirection();
+                    Vec3f pos = hero.GetPosition();
+                    Vec3f dir = hero.GetDirection();
                     pos += dir * 125.0f;
-                    GUC.Network.GameClient.Client.Character.SetPosition(pos);
+                    hero.SetPosition(pos);
 
                     nextFwdTeleport = now + 150 * TimeSpan.TicksPerMillisecond;
                 }
@@ -191,10 +112,10 @@ namespace GUC.Scripts.Sumpfkraut
             {
                 if (nextUpTeleport < now)
                 {
-                    Vec3f pos = GUC.Network.GameClient.Client.Character.GetPosition();
+                    Vec3f pos = hero.GetPosition();
                     pos.Y += 200.0f;
-                    GUC.Network.GameClient.Client.Character.SetPosition(pos);
-                    GUC.Network.GameClient.Client.Character.gVob.SetPhysicsEnabled(false);
+                    hero.SetPosition(pos);
+                    hero.BaseInst.gVob.SetPhysicsEnabled(false);
 
                     nextUpTeleport = now + 150 * TimeSpan.TicksPerMillisecond;
                 }

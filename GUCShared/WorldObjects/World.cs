@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Network;
-using GUC.WorldObjects.Time;
-using GUC.WorldObjects.Weather;
+using GUC.WorldObjects.WorldGlobals;
+using GUC.GameObjects;
+using GUC.GameObjects.Collections;
+using GUC.Types;
 
 namespace GUC.WorldObjects
 {
-    public partial class World : GameObject
+    public partial class World : IDObject
     {
         #region ScriptObject
 
@@ -16,10 +18,18 @@ namespace GUC.WorldObjects
         {
         }
 
-        public new IScriptWorld ScriptObject
+        public new IScriptWorld ScriptObject { get { return (IScriptWorld)base.ScriptObject; } }
+
+        #endregion
+
+        #region Constructors
+
+        public World(WorldClock.IScriptWorldClock scriptClock, WeatherController.IScriptWeatherController scriptWeatherController, 
+            BarrierController.IScriptBarrierController scriptBarrierController, IScriptWorld scriptObject) : base(scriptObject)
         {
-            get { return (IScriptWorld)base.ScriptObject; }
-            set { base.ScriptObject = value; }
+            this.clock = new WorldClock(this, scriptClock);
+            this.weatherCtrl = new WeatherController(this, scriptWeatherController);
+            this.barrierCtrl = new BarrierController(this, scriptBarrierController);
         }
 
         #endregion
@@ -37,19 +47,13 @@ namespace GUC.WorldObjects
         /// <summary> Controls the time. </summary>
         public WorldClock Clock { get { return this.clock; } }
 
-        SkyController skyCtrl;
+        WeatherController weatherCtrl;
         /// <summary> Controls the wheather. </summary>
-        public SkyController SkyCtrl { get { return this.skyCtrl; } }
+        public WeatherController WeatherCtrl { get { return this.weatherCtrl; } }
 
-        #endregion
-
-        #region Constructors
-
-        public World()
-        {
-            this.clock = new WorldClock(this);
-            this.skyCtrl = new SkyController(this);
-        }
+        BarrierController barrierCtrl;
+        /// <summary> Controls the barrier. </summary>
+        public BarrierController BarrierCtrl { get { return this.barrierCtrl; } }
 
         #endregion
 
@@ -57,14 +61,16 @@ namespace GUC.WorldObjects
 
         protected override void ReadProperties(PacketReader stream)
         {
-            this.clock.ReadStream(stream);
-            this.skyCtrl.ReadStream(stream);
+            this.Clock.ReadStream(stream);
+            this.WeatherCtrl.ReadStream(stream);
+            this.BarrierCtrl.ReadStream(stream);
         }
 
         protected override void WriteProperties(PacketWriter stream)
         {
-            this.clock.WriteStream(stream);
-            this.skyCtrl.WriteStream(stream);
+            this.Clock.WriteStream(stream);
+            this.WeatherCtrl.WriteStream(stream);
+            this.BarrierCtrl.WriteStream(stream);
         }
 
         #endregion
@@ -134,6 +140,11 @@ namespace GUC.WorldObjects
         public static int Count { get { return worlds.Count; } }
 
         #endregion
+
+        internal static void UpdateWorlds(long now)
+        {
+            worlds.ForEach(w => w.OnTick(now));
+        }
 
         #endregion
 
@@ -220,13 +231,18 @@ namespace GUC.WorldObjects
 
         #endregion
 
+        #region OnTick
+
         partial void pOnTick(long now);
         internal void OnTick(long now)
         {
             this.Clock.UpdateTime();
-            this.SkyCtrl.UpdateWeather();
-            this.ForEachVob(v => v.OnTick(now));
+            this.WeatherCtrl.UpdateWeight();
+            this.BarrierCtrl.UpdateWeight();
+            this.vobs.ForEach(v => v.OnTick(now));
             pOnTick(now);
         }
+
+        #endregion
     }
 }

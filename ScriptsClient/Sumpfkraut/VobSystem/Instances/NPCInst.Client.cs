@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Enumeration;
 using GUC.Network;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Scripts.Sumpfkraut.Visuals;
@@ -11,13 +10,20 @@ using GUC.Scripting;
 using Gothic.Objects;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Sumpfkraut.Networking;
+using GUC.WorldObjects;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class NPCInst
     {
-        partial void pRemoveItem(ItemInst item)
+        public static NPCInst Hero { get { return (NPCInst)NPC.Hero?.ScriptObject; } }
+
+        public void SetMovement(NPCMovement state)
         {
+            if (state == this.Movement)
+                return;
+
+            BaseInst.SetMovement(state);
         }
 
         public override void Spawn(WorldInst world, Vec3f pos, Vec3f dir)
@@ -25,19 +31,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             base.Spawn(world, pos, dir);
             if (UseCustoms)
             {
-                using (var vec = Gothic.Types.zVec3.Create(ModelScale.X, 1, ModelScale.Z))
+                using (var vec = Gothic.Types.zVec3.Create(CustomScale.X, 1, CustomScale.Z))
                     this.BaseInst.gVob.SetModelScale(vec);
 
                 this.BaseInst.gVob.SetAdditionalVisuals(HumBodyMeshs.HUM_BODY_NAKED0.ToString(), (int)CustomBodyTex, 0, CustomHeadMesh.ToString(), (int)CustomHeadTex, 0, -1);
                 this.BaseInst.gVob.Voice = (int)CustomVoice;
-                this.BaseInst.gVob.SetFatness(Fatness);
-            }
-
-            // TFFA
-            foreach (TFFA.ClientInfo ci in TFFA.ClientInfo.ClientInfos.Values)
-            {
-                if (ci.CharID == this.ID)
-                    this.BaseInst.gVob.Name.Set(TFFA.InputControl.ClientsShown ? string.Format("({0}){1}", ci.ID, ci.Name) : ci.Name);
+                this.BaseInst.gVob.SetFatness(CustomFatness);
+                this.BaseInst.gVob.Name.Set(CustomName);
             }
 
             this.BaseInst.ForEachEquippedItem(i => this.pEquipItem(i.Slot, (ItemInst)i.ScriptObject));
@@ -166,10 +166,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public override void OnReadScriptVobMsg(PacketReader stream)
         {
-            var msgID = (NetWorldMsgID)stream.ReadByte();
+            var msgID = (ScriptVobMessageIDs)stream.ReadByte();
             switch (msgID)
             {
-                case NetWorldMsgID.HitMessage:
+                case ScriptVobMessageIDs.HitMessage:
                     var targetID = stream.ReadUShort();
                     WorldObjects.NPC target;
                     if (WorldInst.Current.BaseWorld.TryGetVob(targetID, out target))
@@ -195,7 +195,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                         target.gVob.GetModel().StartAni("T_GOTHIT", 0);
                     }
                     break;
-                case NetWorldMsgID.ParryMessage:
+                case ScriptVobMessageIDs.ParryMessage:
                     targetID = stream.ReadUShort();
                     WorldObjects.NPC targetNPC;
                     if (WorldInst.Current.BaseWorld.TryGetVob(targetID, out targetNPC))
@@ -210,7 +210,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public void OnTick(long now)
         {
-            if (this.BaseInst.IsDead)
+            /*if (this.BaseInst.IsDead)
                 return;
 
             UpdateFightStance();
@@ -264,12 +264,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     if (aa.Address != 0)
                         gModel.StopAni(aa);
                 }
-            }
+            }*/
         }
 
         public void StartAnimation(Animations.Animation ani, object[] netArgs)
         {
-            ScriptAni a = (ScriptAni)ani.ScriptObject;
+            /*ScriptAni a = (ScriptAni)ani.ScriptObject;
 
             if (a.AniJob.IsJump)
             {
@@ -296,13 +296,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 {
                     this.StartAniUndraw(a, (ItemInst)item.ScriptObject);
                 }
-            }
+            }*/
 
         }
 
         public void StartAniJump(ScriptAni ani, int fwdVelocity, int upVelocity)
         {
-            this.StartAnimation(ani);
+            /*this.StartAnimation(ani);
 
             var ai = this.BaseInst.gVob.HumanAI;
             ai.AniCtrlBitfield &= ~(1 << 3);
@@ -317,13 +317,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
             this.BaseInst.SetPhysics(true);
 
-            this.BaseInst.SetVelocity((Vec3f)vel);
+            this.BaseInst.SetVelocity((Vec3f)vel);*/
         }
 
         public void StartAniClimb(ScriptAni ani, WorldObjects.NPC.ClimbingLedge ledge)
         {
-            this.BaseInst.SetGClimbingLedge(ledge);
-            this.StartAnimation(ani);
+            /*this.BaseInst.SetGClimbingLedge(ledge);
+            this.StartAnimation(ani);*/
         }
 
         static SoundInstance sfx_DrawGeneric = new SoundInstance("wurschtel.wav");
@@ -337,7 +337,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         GUCTimer drawTimer = new GUCTimer();
         public void StartAniDraw(ScriptAni ani, ItemInst item)
         {
-            this.StartAnimation(ani);
+            /*this.StartAnimation(ani);
             if (item.IsWepMelee)
             {
                 drawTimer.SetInterval(ani.DrawTime);
@@ -361,12 +361,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     }
                 });
                 drawTimer.Start();
-            }
+            }*/
         }
 
         public void StartAniUndraw(ScriptAni ani, ItemInst item)
         {
-            this.StartAnimation(ani);
+            /*this.StartAnimation(ani);
             if (item.IsWepMelee)
             {
                 drawTimer.SetInterval(ani.DrawTime);
@@ -390,7 +390,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     }
                 });
                 drawTimer.Start();
-            }
+            }*/
         }
 
         int fmode = 0;

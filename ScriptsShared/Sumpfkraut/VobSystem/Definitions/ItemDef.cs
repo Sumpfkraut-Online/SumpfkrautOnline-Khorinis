@@ -2,12 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Enumeration;
+
 using GUC.Network;
 using GUC.WorldObjects.Instances;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
+    public enum ItemMaterials : byte
+    {
+        Wood = 0,
+        Stone = 1,
+        Metal = 2,
+        Leather = 3,
+        Clay = 4,
+        Glass = 5
+    }
+
     // create an inherited class for each type ?
     public enum ItemTypes : byte
     {
@@ -43,7 +53,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         public string Effect
         {
             get { return this.effect; }
-            set { this.effect = value == null ? "" : value.ToUpper(); }
+            set { this.effect = value == null ? "" : value.ToUpperInvariant(); }
         }
 
         string visualChange = "";
@@ -51,7 +61,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         public string VisualChange
         {
             get { return this.visualChange; }
-            set { this.visualChange = value == null ? "" : value.ToUpper(); }
+            set { this.visualChange = value == null ? "" : value.ToUpperInvariant(); }
         }
 
         public ItemTypes ItemType = ItemTypes.Misc;
@@ -64,8 +74,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #region Constructors
 
+        protected override BaseVobInstance CreateVobInstance()
+        {
+            return new ItemInstance(this);
+        }
+
         partial void pConstruct();
-        public ItemDef() : base(new ItemInstance())
+        public ItemDef()
         {
             pConstruct();
         }

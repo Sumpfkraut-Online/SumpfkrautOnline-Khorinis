@@ -14,8 +14,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
     {
         #region Properties
 
-        public new Projectile BaseInst { get { return (Projectile)base.BaseInst; } }
-        public new ProjDef Definition { get { return (ProjDef)base.Definition; } }
+        new public Projectile BaseInst { get { return (Projectile)base.BaseInst; } }
+        new public ProjDef Definition { get { return (ProjDef)base.Definition; } set { base.Definition = value; } }
 
         public ModelDef Model { get { return this.Definition.Model; } }
         public float Velocity { get { return this.Definition.Velocity; } }
@@ -25,10 +25,14 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         #region Constructors
 
         partial void pConstruct();
-        
-        public ProjInst() : base(new Projectile())
+        public ProjInst()
         {
             pConstruct();
+        }
+
+        protected override BaseVob CreateVob()
+        {
+            return new Projectile(this);
         }
 
         #endregion

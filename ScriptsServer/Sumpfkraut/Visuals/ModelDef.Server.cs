@@ -10,7 +10,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
     {
         #region Collection
 
-        static Dictionary<string, ModelDef> names = new Dictionary<string, ModelDef>();
+        static Dictionary<string, ModelDef> names = new Dictionary<string, ModelDef>(StringComparer.OrdinalIgnoreCase);
 
         // By Names
 
@@ -27,12 +27,26 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
             if (codeName == null)
                 throw new ArgumentNullException("CodeName is null!");
 
-            return names.TryGetValue(codeName.ToUpper(), out model);
+            return names.TryGetValue(codeName, out model);
         }
 
         #endregion
 
         #region Properties
+
+        AniCatalog catalog;
+        public AniCatalog Catalog { get { return this.catalog; } }
+
+        public void SetAniCatalog(AniCatalog catalog)
+        {
+            if (this.catalog != null)
+                this.ForEachAniJob(job => catalog.RemoveJob(job));
+
+            this.catalog = catalog;
+
+            if (this.catalog != null)
+                this.ForEachAniJob(job => catalog.AddJob(job));
+        }
 
         string codeName;
         public string CodeName
@@ -43,7 +57,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                 if (this.IsCreated)
                     throw new Exception("CodeName can't be changed when the object is created!");
 
-                this.codeName = value == null ? "" : value.ToUpper();
+                this.codeName = value;
             }
         }
 
@@ -78,14 +92,14 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
         #region Constructors
 
-        public ModelDef(string codeName) : this()
+        public ModelDef(string codeName) : this(codeName, null)
         {
-            this.CodeName = codeName;
         }
 
-        public ModelDef(string codeName, string visual) : this(codeName)
+        public ModelDef(string codeName, string visual) : this()
         {
             this.Visual = visual;
+            this.CodeName = codeName;
         }
 
         #endregion
@@ -111,7 +125,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
             if (this == LargestNPC)
             {
                 ModelDef newLargestNPC = null;
-                Models.Model.ForEach(m =>
+                Models.ModelInstance.ForEach(m =>
                 {
                     ModelDef model = (ModelDef)m.ScriptObject;
                     if (model != this && model.IsNPCModel() && model.radius > this.radius)
@@ -122,10 +136,10 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         }
 
         #endregion
-
+        
         #region Animations
 
-        Dictionary<string, ScriptAniJob> aniNames = new Dictionary<string, ScriptAniJob>();
+        Dictionary<string, ScriptAniJob> aniNames = new Dictionary<string, ScriptAniJob>(StringComparer.OrdinalIgnoreCase);
 
         // By Names
 
@@ -134,7 +148,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
             if (codeName == null)
                 return false;
 
-            return aniNames.ContainsKey(codeName.ToUpper());
+            return aniNames.ContainsKey(codeName);
         }
 
         public bool TryGetAniJob(string codeName, out ScriptAniJob job)
@@ -145,8 +159,10 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                 return false;
             }
 
-            return aniNames.TryGetValue(codeName.ToUpper(), out job);
+            return aniNames.TryGetValue(codeName, out job);
         }
+
+        #region Add & Remove
 
         partial void pAddAniJob(ScriptAniJob aniJob)
         {
@@ -155,32 +171,38 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
             aniNames.Add(aniJob.CodeName, aniJob);
 
-            if (Catalog != null)
-                Catalog.AddJob(aniJob);
+            if (catalog != null)
+                catalog.AddJob(aniJob);
         }
 
         partial void pRemoveAniJob(ScriptAniJob aniJob)
         {
             if (aniNames.Remove(aniJob.CodeName))
             {
-                if (Catalog != null)
-                    Catalog.RemoveJob(aniJob);
+                if (catalog != null)
+                    catalog.RemoveJob(aniJob);
             }
+        }
+        
+        #endregion
 
+        public void ForEachAniJob(Action<ScriptAniJob> action)
+        {
+            this.baseDef.ForEachAniJob(job => action((ScriptAniJob)job.ScriptObject));
         }
 
         #endregion
 
         #region Overlays
 
-        Dictionary<string, ScriptOverlay> ovNames = new Dictionary<string, ScriptOverlay>();
+        Dictionary<string, ScriptOverlay> ovNames = new Dictionary<string, ScriptOverlay>(StringComparer.OrdinalIgnoreCase);
 
         public bool ContainsOverlay(string codeName)
         {
             if (codeName == null)
                 return false;
 
-            return ovNames.ContainsKey(codeName.ToUpper());
+            return ovNames.ContainsKey(codeName);
         }
 
         public bool TryGetOverlay(string codeName, out ScriptOverlay ov)
@@ -191,7 +213,17 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                 return false;
             }
 
-            return ovNames.TryGetValue(codeName.ToUpper(), out ov);
+            return ovNames.TryGetValue(codeName, out ov);
+        }
+
+        public void ForEachOverlay(Action<ScriptOverlay> action)
+        {
+            this.baseDef.ForEachOverlay(o => action((ScriptOverlay)o.ScriptObject));
+        }
+
+        public void ForEachOverlayPredicate(Predicate<ScriptOverlay> predicate)
+        {
+            this.baseDef.ForEachOverlayPredicate(o => { return predicate((ScriptOverlay)o.ScriptObject); });
         }
 
         partial void pAddOverlay(ScriptOverlay overlay)
@@ -206,12 +238,6 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         {
             ovNames.Remove(overlay.CodeName);
         }
-
-        #endregion
-
-        #region Animation Catalog
-
-        public AniCatalog Catalog;
 
         #endregion
     }

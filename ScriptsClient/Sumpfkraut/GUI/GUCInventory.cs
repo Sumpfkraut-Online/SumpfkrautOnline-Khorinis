@@ -59,7 +59,7 @@ namespace GUC.Scripts.Sumpfkraut.GUI
                         }
                         else
                         {
-                            vis.SetVisual(item.Model.Visual);
+                            vis.SetVisual(item.ModelDef.Visual);
                             int num = item.Amount;
                             if (num > 1)
                             {
@@ -391,7 +391,7 @@ namespace GUC.Scripts.Sumpfkraut.GUI
                 descrBack.Texts[12].Text = selectedItem.weight.ToString();*/
 
                 //visual vob
-                descrVis.SetVisual(selItem.Model.Visual);
+                descrVis.SetVisual(selItem.ModelDef.Visual);
 
                 //show
                 descrVis.Show();
@@ -424,8 +424,8 @@ namespace GUC.Scripts.Sumpfkraut.GUI
 
         #endregion
 
-        ItemContainer inventory = null;
-        public void SetContents(ItemContainer inventory)
+        VobSystem.Instances.ItemContainers.ScriptInventory inventory = null;
+        public void SetContents(VobSystem.Instances.ItemContainers.ScriptInventory inventory)
         {
             this.inventory = inventory;
 
@@ -441,8 +441,8 @@ namespace GUC.Scripts.Sumpfkraut.GUI
         void UpdateSlots()
         {
             contents.Clear();
-            if (this.inventory != null)
-                this.inventory.ForEachItem(item => contents.Add((ItemInst)item.ScriptObject));
+            //if (this.inventory != null)
+                //this.inventory.ForEachItem(item => contents.Add((ItemInst)item.ScriptObject));
             contents.Sort(ItemSort);
 
             int i = startPos * slots.GetLength(0);

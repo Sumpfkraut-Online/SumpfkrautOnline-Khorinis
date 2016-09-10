@@ -5,6 +5,9 @@ using System.Text;
 
 namespace GUC.Types
 {
+    /// <summary>
+    /// A 3-dimensional float Vector. Y is the up-axis.
+    /// </summary>
     public partial struct Vec3f
     {
         public static Vec3f Null

@@ -5,27 +5,37 @@ using System.Text;
 using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.WorldObjects;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
+using GUC.Models;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class VobInst : BaseVobInst, Vob.IScriptVob
     {
+        #region Constructors
+
+        partial void pConstruct();
+        public VobInst()
+        {
+            pConstruct();
+        }
+
+        protected override BaseVob CreateVob()
+        {
+            return new Vob(new ModelInst(this), this);
+        }
+
+        #endregion
+
         #region Properties
 
         public new Vob BaseInst { get { return (Vob)base.BaseInst; } }
 
-        public new VobDef Definition { get { return (VobDef)base.Definition; } }
+        public ModelInst ModelInst { get { return (ModelInst)this.BaseInst.Model.ScriptObject; } }
 
-        public ModelDef Model { get { return this.Definition.Model; } }
+        new public VobDef Definition { get { return (VobDef)base.Definition; } set { base.Definition = value; } }
+        public ModelDef ModelDef { get { return this.Definition.Model; } }
 
         #endregion
 
-        public VobInst() : this(new Vob())
-        {
-        }
-
-        protected VobInst(Vob baseInst) : base(baseInst)
-        {
-        }
     }
 }

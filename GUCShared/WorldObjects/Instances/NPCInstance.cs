@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Network;
-using GUC.Enumeration;
-using GUC.WorldObjects.Collections;
+using GUC.Types;
 
 namespace GUC.WorldObjects.Instances
 {
@@ -18,10 +17,14 @@ namespace GUC.WorldObjects.Instances
         {
         }
 
-        public new IScriptNPCInstance ScriptObject
+        public new IScriptNPCInstance ScriptObject { get { return (IScriptNPCInstance)base.ScriptObject; } }
+
+        #endregion
+
+        #region Constructors
+
+        public NPCInstance(IScriptNPCInstance scriptObject) : base(scriptObject)
         {
-            get { return (IScriptNPCInstance)base.ScriptObject; }
-            set { base.ScriptObject = value; }
         }
 
         #endregion
@@ -33,30 +36,61 @@ namespace GUC.WorldObjects.Instances
         public string Name
         {
             get { return this.name; }
-            set { if (value == null) this.name = ""; else this.name = value; }
+            set
+            {
+                CanChangeNow();
+                this.name = value == null ? "" : value;
+            }
         }
 
-        protected string bodyMesh = "";
+        string bodyMesh = "";
         /// <summary>The body mesh of the NPC (case insensitive).</summary>
         public string BodyMesh
         {
             get { return bodyMesh; }
-            set { if (value == null) this.bodyMesh = ""; else this.bodyMesh = value.ToUpper(); }
+            set
+            {
+                CanChangeNow();
+                this.bodyMesh = value == null ? "" : value.ToUpperInvariant();
+            }
         }
 
-        /// <summary>The body texture of the NPC (byte).</summary>
-        public int BodyTex = 0;
+        int bodyTex;
+        /// <summary>The body texture of the NPC. (byte)</summary>
+        public int BodyTex
+        {
+            get { return this.bodyTex; }
+            set
+            {
+                CanChangeNow();
+                this.bodyTex = value;
+            }
+        }
+        
 
-        protected string headMesh = "";
+        string headMesh = "";
         /// <summary>The head mesh of the NPC (case insensitive).</summary>
         public string HeadMesh
         {
             get { return headMesh; }
-            set { if (value == null) this.headMesh = ""; else this.headMesh = value.ToUpper(); }
+            set
+            {
+                CanChangeNow();
+                this.headMesh = value == null ? "" : value.ToUpperInvariant();
+            }
         }
 
-        /// <summary>The head texture of the NPC (byte).</summary>
-        public int HeadTex = 0;
+        int headTex;
+        /// <summary>The head texture of the NPC. (byte)</summary>
+        public int HeadTex
+        {
+            get { return this.headTex; }
+            set
+            {
+                CanChangeNow();
+                this.headTex = value;
+            }
+        }
 
         #endregion
 
@@ -66,22 +100,22 @@ namespace GUC.WorldObjects.Instances
         {
             base.WriteProperties(stream);
 
-            stream.Write(Name);
-            stream.Write(BodyMesh);
-            stream.Write((byte)BodyTex);
-            stream.Write(HeadMesh);
-            stream.Write((byte)HeadTex);
+            stream.Write(name);
+            stream.Write(bodyMesh);
+            stream.Write((byte)bodyTex);
+            stream.Write(headMesh);
+            stream.Write((byte)headTex);
         }
 
         protected override void ReadProperties(PacketReader stream)
         {
             base.ReadProperties(stream);
 
-            this.Name = stream.ReadString();
-            this.BodyMesh = stream.ReadString();
-            this.BodyTex = stream.ReadByte();
-            this.HeadMesh = stream.ReadString();
-            this.HeadTex = stream.ReadByte();
+            this.name = stream.ReadString();
+            this.bodyMesh = stream.ReadString();
+            this.bodyTex = stream.ReadByte();
+            this.headMesh = stream.ReadString();
+            this.headTex = stream.ReadByte();
         }
 
         #endregion

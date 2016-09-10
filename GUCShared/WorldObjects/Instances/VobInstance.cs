@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Enumeration;
 using GUC.Network;
 using GUC.Models;
+using GUC.Types;
 
 namespace GUC.WorldObjects.Instances
 {
@@ -17,28 +17,56 @@ namespace GUC.WorldObjects.Instances
         public partial interface IScriptVobInstance : IScriptBaseVobInstance
         {
         }
+        
+        /// <summary> The ScriptObject of this object. </summary>
+        public new IScriptVobInstance ScriptObject { get { return (IScriptVobInstance)base.ScriptObject; } }
 
-        public new IScriptVobInstance ScriptObject
+        #endregion
+
+        #region Constructors
+
+        public VobInstance(IScriptVobInstance scriptObject) : base(scriptObject)
         {
-            get { return (IScriptVobInstance)base.ScriptObject; }
-            set { base.ScriptObject = value; }
         }
 
         #endregion
 
         #region Properties
+
+        ModelInstance modelInstance;
+        public ModelInstance ModelInstance
+        {
+            get { return this.modelInstance; }
+            set
+            {
+                CanChangeNow();
+                this.modelInstance = value;
+            }
+        }
+
+        bool cddyn = true;
+        /// <summary> Gothic-Collision-Detection against dynamic Gothic-Vobs. </summary>
+        public bool CDDyn
+        {
+            get { return this.cddyn; }
+            set
+            {
+                CanChangeNow();
+                this.cddyn = value;
+            }
+        }
         
-        public Model Model;
-        
-        /// <summary>
-        /// Gothic-collision against dynamic Vobs.
-        /// </summary>
-        public bool CDDyn = true;
-        
-        /// <summary>
-        /// Gothic-collision against static Vobs.
-        /// </summary>
-        public bool CDStatic = true;
+        bool cdstatic = true;
+        /// <summary> Gothic-Collision-Detection against static Gothic-Vobs. </summary>
+        public bool CDStatic
+        {
+            get { return this.cdstatic; }
+            set
+            {
+                CanChangeNow();
+                this.cdstatic = value;
+            }
+        }
 
         #endregion
 
@@ -46,8 +74,8 @@ namespace GUC.WorldObjects.Instances
 
         public override void Create()
         {
-            if (this.Model == null)
-                throw new NullReferenceException("Model is null!");
+            if (this.ModelInstance == null)
+                throw new NullReferenceException("ModelInstance is null!");
 
             base.Create();
         }
@@ -60,9 +88,9 @@ namespace GUC.WorldObjects.Instances
         {
             base.WriteProperties(stream);
 
-            stream.Write((ushort)this.Model.ID);
-            stream.Write(this.CDDyn);
-            stream.Write(this.CDStatic);
+            stream.Write((ushort)this.modelInstance.ID);
+            stream.Write(this.cddyn);
+            stream.Write(this.cdstatic);
         }
 
         protected override void ReadProperties(PacketReader stream)
@@ -70,12 +98,12 @@ namespace GUC.WorldObjects.Instances
             base.ReadProperties(stream);
 
             int modelID = stream.ReadUShort();
-            if (!Model.TryGet(modelID, out this.Model))
+            if (!ModelInstance.TryGet(modelID, out this.modelInstance))
             {
                 throw new Exception("Model not found! " + modelID);
             }
-            this.CDDyn = stream.ReadBit();
-            this.CDStatic = stream.ReadBit();
+            this.cddyn = stream.ReadBit();
+            this.cdstatic = stream.ReadBit();
         }
 
         #endregion

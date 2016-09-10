@@ -2,56 +2,136 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Enumeration;
-using RakNet;
 using GUC.Network;
 using GUC.WorldObjects.Mobs;
 using GUC.Types;
-using GUC.Network.Messages;
 using GUC.WorldObjects.Cells;
 using GUC.Animations;
+using GUC.WorldObjects.ItemContainers;
 
 namespace GUC.WorldObjects
 {
-    public partial class NPC
+    public partial class NPC : Vob, ItemContainer
     {
-        #region ScriptObject
+        #region Network Messages
 
-        public partial interface IScriptNPC
+        new internal static class Messages
         {
-            void OnCmdMove(MoveState state);
-            void OnCmdEquipItem(int slot, Item item);
-            void OnCmdUnequipItem(Item item);
-            void OnCmdAniStart(Animation ani);
-            void OnCmdAniStart(Animation ani, object[] netArgs);
-            void OnCmdAniStop(bool fadeOut);
-            void OnCmdSetFightMode(bool fightMode);
+            #region Equipment
 
+            public static void WriteEquipAdd(NPC npc, Item item)
+            {
+                PacketWriter stream = GameServer.SetupStream(ServerMessages.NPCEquipAddMessage);
+                stream.Write((ushort)npc.ID);
+                stream.Write((byte)item.slot);
+                item.WriteEquipProperties(stream);
 
+                if (npc.IsPlayer)
+                {
+                    npc.ForEachVisibleClient(client =>
+                    {
+                        if (client != npc.client)
+                            client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'W');
+                    });
 
-            void OnCmdUseMob(MobInter mob);
-            void OnCmdUseItem(Item item);
-            void OnCmdPickupItem(Item item);
-            void OnCmdDropItem(Item item);
+                    // just send the id to this player
+                    stream = GameServer.SetupStream(ServerMessages.PlayerNPCEquipAddMessage);
+                    stream.Write((byte)item.ID);
+                    stream.Write((byte)item.slot);
+                    npc.client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'W');
+                }
+                else
+                {
+                    npc.ForEachVisibleClient(client => client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'W'));
+                }
+            }
+
+            public static void WriteEquipSwitch(NPC npc, Item item)
+            {
+                PacketWriter stream = GameServer.SetupStream(ServerMessages.NPCEquipSwitchMessage);
+                stream.Write((ushort)npc.ID);
+                stream.Write((byte)item.ID);
+                stream.Write((byte)item.slot);
+                npc.ForEachVisibleClient(client => client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'W'));
+            }
+
+            public static void WriteEquipRemove(NPC npc, Item item)
+            {
+                PacketWriter stream = GameServer.SetupStream(ServerMessages.NPCEquipRemoveMessage);
+                stream.Write((ushort)npc.ID);
+                stream.Write((byte)item.ID);
+                npc.ForEachVisibleClient(client => client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'W'));
+            }
+
+            #endregion
+
+            #region Health
+
+            public static void WriteHealth(NPC npc)
+            {
+                var stream = GameServer.SetupStream(ServerMessages.NPCHealthMessage);
+                stream.Write((ushort)npc.ID);
+                stream.Write((ushort)npc.HPMax);
+                stream.Write((ushort)npc.HP);
+                npc.ForEachVisibleClient(client => client.Send(stream, PktPriority.High, PktReliability.ReliableOrdered, 'W'));
+            }
+
+            #endregion
+
+            #region Fight Mode
+
+            public static void WriteFightMode(NPC npc, bool fightMode)
+            {
+                PacketWriter stream = GameServer.SetupStream(fightMode ? ServerMessages.NPCFightModeSetMessage : ServerMessages.NPCFightModeUnsetMessage);
+                stream.Write((ushort)npc.ID);
+                npc.ForEachVisibleClient(client => client.Send(stream, PktPriority.High, PktReliability.ReliableOrdered, 'W'));
+            }
+
+            #endregion
+
+            #region Positions
+
+            public static void ReadPosDir(PacketReader stream, GameClient client, World world)
+            {
+                int id = stream.ReadUShort();
+                NPC npc;
+                if (world.TryGetVob(id, out npc))
+                {
+                    var pos = stream.ReadCompressedPosition();
+                    var dir = stream.ReadCompressedDirection();
+                    int bitfield = stream.ReadShort();
+
+                    bool inAir = (bitfield & 0x8000) != 0;
+                    NPCMovement movement = (NPCMovement)((bitfield >> 12) & 0x7);
+                    float waterDepth = ((bitfield >> 6) & 0x3F) / (float)0x3F;
+                    float waterLevel = (bitfield & 0x3F) / (float)0x3F;
+                    Environment env = new Environment(inAir, waterLevel, waterDepth);
+                    
+                    npc.movement = movement;
+                    npc.environment = env;
+
+                    npc.SetPosDir(pos, dir, client);
+                    //vob.ScriptObject.OnPosChanged();
+
+                    if (npc == client.Character)
+                    {
+                        client.UpdateVobList(world, pos);
+                    }
+                }
+            }
+
+            #endregion
         }
 
         #endregion
 
-        public void UpdatePropertiesFast()
+        #region ScriptObject
+
+        public partial interface IScriptNPC
         {
-            throw new NotImplementedException();
         }
 
-        public void UpdateProperties()
-        {
-            throw new NotImplementedException();
-        }
-
-        partial void pSetMovement(MoveState state)
-        {
-            if (this.isCreated)
-                NPCMessage.WriteMoveState(this, state);
-        }
+        #endregion
 
         #region Cells
 
@@ -84,7 +164,7 @@ namespace GUC.WorldObjects
 
         /// <summary> Returns true if this npc is controlled by a client. </summary>
         public bool IsPlayer { get { return client != null; } }
-        
+
         #endregion
 
         #region Health
@@ -92,7 +172,7 @@ namespace GUC.WorldObjects
         partial void pSetHealth()
         {
             if (this.isCreated)
-                NPCMessage.WriteHealthMessage(this);
+                Messages.WriteHealth(this);
         }
 
         #endregion
@@ -110,7 +190,7 @@ namespace GUC.WorldObjects
                 if (world == null)
                     throw new ArgumentNullException("World is null!");
 
-                if (this.instance == null)
+                if (this.Instance == null)
                     throw new Exception("Vob has no Instance!");
 
                 if (this.ScriptObject == null)
@@ -124,7 +204,7 @@ namespace GUC.WorldObjects
                 this.world = world;
 
                 // wait until the client has loaded the map
-                WorldMessage.WriteLoadMessage(this.client, world); // tell the client to change worlds first
+                World.Messages.WriteLoadWorld(this.client, world); // tell the client to change worlds first
             }
             else
             {
@@ -136,13 +216,11 @@ namespace GUC.WorldObjects
         // spawn the client's character
         internal void SpawnPlayer()
         {
-            PacketWriter stream = GameServer.SetupStream(NetworkIDs.PlayerControlMessage);
-            stream.Write((ushort)this.ID);
-            this.WriteTakeControl(stream);
-            this.Client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, '\0');
-
+            this.world.AddClient(this.client);
             base.Spawn(this.world, this.pos, this.dir);
             world.AddToNPCCells(this);
+
+            GameClient.Messages.WritePlayerControl(this.client, this);
         }
 
         partial void pBeforeDespawn()
@@ -161,63 +239,19 @@ namespace GUC.WorldObjects
         partial void pEquipItem(int slot, Item item)
         {
             if (this.isCreated)
-            {
-                NPCMessage.WriteEquipMessage(this, item);
-                if (this.IsPlayer)
-                    InventoryMessage.WriteEquipMessage(this, item);
-            }
+                Messages.WriteEquipAdd(this, item);
         }
 
         partial void pEquipSwitch(int slot, Item item)
         {
             if (this.isCreated)
-            {
-                NPCMessage.WriteEquipSwitchMessage(this, item);
-            }
+                Messages.WriteEquipSwitch(this, item);
         }
 
         partial void pUnequipItem(Item item)
         {
             if (this.isCreated)
-            {
-                NPCMessage.WriteUnequipMessage(this, item);
-                if (this.IsPlayer)
-                    InventoryMessage.WriteUnequipMessage(this, item);
-            }
-        }
-
-        #endregion
-
-        #region Animations
-
-        partial void pAddOverlay(Overlay overlay)
-        {
-            if (this.isCreated)
-                NPCMessage.WriteApplyOverlayMessage(this, overlay);
-        }
-
-        partial void pRemoveOverlay(Overlay overlay)
-        {
-            if (this.isCreated)
-                NPCMessage.WriteRemoveOverlayMessage(this, overlay);
-        }
-
-        public void StartAnimation(Animation ani, Action onStop, params object[] netArgs)
-        {
-            if (this.PlayAni(ani, onStop))
-            {
-                NPCMessage.WriteAniStart(this, ani, netArgs);
-            }
-        }
-
-        partial void pStartAnimation(Animation ani)
-        {
-            NPCMessage.WriteAniStart(this, ani);
-        }
-
-        partial void pStopAnimation(Animation ani, bool fadeOut)
-        {
-            NPCMessage.WriteAniStop(this, ani, fadeOut);
+                Messages.WriteEquipRemove(this, item);
         }
 
         #endregion
@@ -227,14 +261,7 @@ namespace GUC.WorldObjects
         partial void pSetFightMode(bool fightMode)
         {
             if (this.IsSpawned)
-                if (fightMode)
-                {
-                    NPCMessage.WriteSetFightMode(this);
-                }
-                else
-                {
-                    NPCMessage.WriteUnsetFightMode(this);
-                }
+                Messages.WriteFightMode(this, fightMode);
         }
 
         #endregion
