@@ -15,7 +15,14 @@ namespace GUC.Scripts.Sumpfkraut.Networking
     // commands the client can send
     public enum ScriptCommandMessageIDs : byte
     {
+        AttackForward,
+        AttackLeft,
+        AttackRight,
 
+        Parry,
+        Dodge,
+
+        Jump
     }
 
     // messages concerning the events or states of a vob in the world, sent by the server

@@ -5,6 +5,7 @@ using System.Text;
 using GUC.Network;
 using GUC.Types;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
+using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 
 namespace GUC.Scripts.Sumpfkraut.Networking
 {
@@ -27,6 +28,25 @@ namespace GUC.Scripts.Sumpfkraut.Networking
 
         public virtual void ReadScriptMessage(PacketReader stream)
         {
+        }
+
+        public virtual void ReadScriptCommandMessage(PacketReader stream, WorldObjects.VobGuiding.GuidedVob vob)
+        {
+            if (!(vob is WorldObjects.NPC))
+                return;
+
+            NPCInst npc = (NPCInst)vob.ScriptObject;
+
+            ScriptCommandMessageIDs id = (ScriptCommandMessageIDs)stream.ReadByte();
+            switch (id)
+            {
+                case ScriptCommandMessageIDs.Jump:
+                    npc.DoJump();
+                    break;
+                case ScriptCommandMessageIDs.AttackForward:
+                    npc.DoFightMove(NPCInst.FightMoves.Fwd);
+                    break;
+            }
         }
     }
 }

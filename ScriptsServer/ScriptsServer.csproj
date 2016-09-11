@@ -219,8 +219,13 @@
     <Compile Include="Sumpfkraut\CommandConsole\InfoObjects\VobInfo.cs" />
     <Compile Include="Sumpfkraut\CommandConsole\TestCommands.cs" />
     <Compile Include="Sumpfkraut\Daedalus\AniParser.cs" />
-    <Compile Include="Sumpfkraut\Daedalus\ItemParser.cs" />
+    <Compile Include="Sumpfkraut\Daedalus\ConstParser.cs" />
+    <Compile Include="Sumpfkraut\Daedalus\DDLClasses.cs" />
+    <Compile Include="Sumpfkraut\Daedalus\FuncParser.cs" />
+    <Compile Include="Sumpfkraut\Daedalus\InstanceParser.cs" />
     <Compile Include="Sumpfkraut\Daedalus\Parser.cs" />
+    <Compile Include="Sumpfkraut\Daedalus\PrototypeParser.cs" />
+    <Compile Include="Sumpfkraut\Daedalus\DDLValueTypes.cs" />
     <Compile Include="Sumpfkraut\Database\DBAgent.cs" />
     <Compile Include="Sumpfkraut\Database\DBQueryHandler.cs" />
     <Compile Include="Sumpfkraut\Database\DBQuerying\AbstractDBQuery.cs" />

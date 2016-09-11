@@ -33,10 +33,41 @@ namespace GUC
             },
             { VirtualKeys.F6, () =>
                 {
+                    var npc = Gothic.Objects.oCNpc.Create();
+                    npc.SetVisual("HUMANS.MDS");
+                    npc.SetAdditionalVisuals("hum_body_Naked0", 9, 0, "Hum_Head_Pony", 2, 0, -1);
+                    npc.HP = 10;
+                    npc.HPMax = 10;
+                    npc.Name.Set("TESTCHARAKTER");
+                    npc.InitHumanAI();
+                    Gothic.oCGame.GetWorld().AddVob(npc);
+
+                    if (Network.GameClient.Client.Character != null)
+                    {
+                        using (var zvec = Network.GameClient.Client.Character.GetPosition().CreateGVec())
+                        {
+                            npc.TrafoObjToWorld.Position = Network.GameClient.Client.Character.GetPosition().ToArray();
+                            npc.SetPositionWorld(zvec);
+                        }
+                    }
                 }
             },
             { VirtualKeys.F7, () =>
                 {
+                    var item = Gothic.Objects.oCItem.Create();
+                    item.ItemVisual.Set("ITFO_APPLE.3DS");
+                    item.Name.Set("APFEL");
+                    item.Instance = 1;
+                    Gothic.oCGame.GetWorld().AddVob(item);
+
+                    if (Network.GameClient.Client.Character != null)
+                    {
+                        using (var zvec = Network.GameClient.Client.Character.GetPosition().CreateGVec())
+                        {
+                            item.TrafoObjToWorld.Position = Network.GameClient.Client.Character.GetPosition().ToArray();
+                            item.SetPositionWorld(zvec);
+                        }
+                    }
                 }
             }
         };

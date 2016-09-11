@@ -30,45 +30,42 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         #endregion
 
         public NPCCatalog AniCatalog { get { return (NPCCatalog)this.ModelDef?.Catalog; } }
-                
+
         #region Jumps
 
-        public enum JumpTypes
+        public void DoJump(bool jumpUp = false)
         {
-            Fwd,
-            Run,
-            Up
-        }
-
-        ActiveAni jumpAni;
-        public void DoJump(JumpTypes type)
-        {
-            if (AniCatalog == null)
-                return;
-
-            if (this.jumpAni != null || this.IsDead /*|| this.Environment == WorldObjects.EnvironmentState.InAir*/)
+            if (this.IsDead || this.BaseInst.GetEnvironment().InAir)
                 return;
 
             ScriptAniJob job;
-            switch (type)
+            if (jumpUp)
             {
-                case JumpTypes.Fwd:
-                    job = AniCatalog.Jumps.Fwd;
-                    break;
-                case JumpTypes.Run:
+                job = AniCatalog.Jumps.Up;
+            }
+            else
+            {
+                if (this.Movement == NPCMovement.Forward)
+                {
                     job = AniCatalog.Jumps.Run;
-                    break;
-                case JumpTypes.Up:
-                    job = AniCatalog.Jumps.Up;
-                    break;
-                default:
+                }
+                else if (this.Movement == NPCMovement.Stand)
+                {
+                    job = AniCatalog.Jumps.Fwd;
+                }
+                else
+                {
                     return;
+                }
             }
 
             if (job == null)
                 return;
             
-            jumpAni = this.ModelInst.StartAnimation(job, () => jumpAni = null);
+            if (this.BaseInst.Model.GetActiveAniFromLayerID(1) != null)
+                return;
+
+            this.ModelInst.StartAnimation(job);
         }
 
         #endregion
@@ -85,11 +82,43 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             Dodge,
             Parry
         }
-
-        ActiveAni fightAni;
+        
         public void DoFightMove(FightMoves move)
         {
+            if (this.IsDead || this.BaseInst.GetEnvironment().InAir)
+                return;
 
+            var catalog = AniCatalog.FightFist;
+            
+            if (this.BaseInst.Model.GetActiveAniFromLayerID(1) != null)
+                return;
+
+            ScriptAniJob job;
+            switch (move)
+            {
+                case FightMoves.Fwd:
+                    job = catalog.Fwd;
+                    break;
+                case FightMoves.Left:
+                    job = catalog.Left;
+                    break;
+                case FightMoves.Right:
+                    job = catalog.Right;
+                    break;
+                case FightMoves.Parry:
+                    job = catalog.Parry1;
+                    break;
+                case FightMoves.Dodge:
+                    job = catalog.Dodge;
+                    break;
+                default:
+                    return;
+            }
+
+            if (job == null)
+                return;
+
+            this.ModelInst.StartAnimation(job, 2.0f);
         }
 
         #endregion
@@ -102,15 +131,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public bool IsPlayer { get { return this.BaseInst.IsPlayer; } }
 
-        
-
-
         partial void pSetHealth(int hp, int hpmax)
         {
             if (hp <= 0)
             {
-               // hitTimer.Stop(false);
-               // comboTimer.Stop(false);
+                // hitTimer.Stop(false);
+                // comboTimer.Stop(false);
             }
         }
 

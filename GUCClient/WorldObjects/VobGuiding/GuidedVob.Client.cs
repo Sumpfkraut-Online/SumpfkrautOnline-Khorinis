@@ -13,27 +13,9 @@ namespace GUC.WorldObjects.VobGuiding
     {
         #region Network Messages
 
-        internal static class Messages
+        new internal static class Messages
         {
             #region Positions
-            
-            public static void ReadPosDirMessage(PacketReader stream)
-            {
-                int id = stream.ReadUShort();
-
-                BaseVob vob;
-                if (World.Current.TryGetVob(id, out vob))
-                {
-                    vob.SetPosition(stream.ReadCompressedPosition());
-                    vob.SetDirection(stream.ReadCompressedDirection());
-
-                    //vob.ScriptObject.OnPosChanged();
-                }
-                else
-                {
-                    TargetCmd.CheckPos(id, stream.ReadCompressedPosition());
-                }
-            }
 
             public static void WritePosDirMessage(GuidedVob vob, Vec3f pos, Vec3f dir, Environment env)
             {
@@ -57,32 +39,50 @@ namespace GUC.WorldObjects.VobGuiding
 
             public static void ReadGuideAddMessage(PacketReader stream)
             {
-                GameClient.Client.guidedIDs.Add(stream.ReadUShort(), null);
+                int id = stream.ReadUShort();
+
+                // add id to the dictionary
+                GameClient.Client.guidedIDs.Add(id, null);
+
+                // check if the vob is in the world
+                GuidedVob vob;
+                if (World.Current.TryGetVob(id, out vob))
+                {
+                    vob.guide = GameClient.Client;
+                }
             }
 
             public static void ReadGuideAddCmdMessage(PacketReader stream)
             {
+                // read the guide command
                 var cmd = ScriptManager.Interface.CreateGuideCommand(stream.ReadByte());
                 cmd.ReadStream(stream);
+
                 int id = stream.ReadUShort();
+                // add id to the dictionary
                 GameClient.Client.guidedIDs.Add(id, cmd);
 
+                // check if the vob is in the world
                 GuidedVob vob;
                 if (World.Current.TryGetVob(id, out vob))
                 {
                     vob.SetGuideCommand(cmd);
+                    vob.guide = GameClient.Client;
                 }
             }
 
             public static void ReadGuideRemoveMessage(PacketReader stream)
             {
                 int id = stream.ReadUShort();
+                // remove id from the dictionary
                 GameClient.Client.guidedIDs.Remove(id);
 
+                // check if the vob is in the world
                 GuidedVob vob;
                 if (World.Current.TryGetVob(id, out vob))
                 {
                     vob.SetGuideCommand(null);
+                    vob.guide = null;
                 }
             }
 
@@ -123,18 +123,12 @@ namespace GUC.WorldObjects.VobGuiding
         }
 
         #endregion
-
-        #region Client Commands
-
-
-
-        #endregion
-
+        
         internal override void OnTick(long now)
         {
             base.OnTick(now);
 
-            if (!GameClient.Client.guidedIDs.ContainsKey(this.ID))
+            if (this.guide != GameClient.Client)
                 return;
 
             if (this.currentCmd != null)
@@ -143,10 +137,10 @@ namespace GUC.WorldObjects.VobGuiding
             UpdateGuidePos(now);
         }
 
-        const long updateInterval = 1500000; // 150ms
+        const long updateInterval = 1400000; // 140ms
 
-        const float MinPositionDistance = 20.0f;
-        const float MinDirectionDifference = 0.05f;
+        const float MinPositionDistance = 18.0f;
+        const float MinDirectionDifference = 0.06f;
 
         protected Vec3f guidedLastPos;
         protected Vec3f guidedLastDir;
@@ -206,13 +200,18 @@ namespace GUC.WorldObjects.VobGuiding
             if (GameClient.Client.guidedIDs.TryGetValue(this.ID, out cmd))
             {
                 this.SetGuideCommand(cmd);
+                this.guide = GameClient.Client;
             }
         }
 
-        /*partial void pDespawn()
+        partial void pDespawn()
         {
             // GameClient.Client.guidedIDs.Remove(id);  is already done in the VobDespawnMessage
-        }*/
+            if (GameClient.Client.guidedIDs.ContainsKey(this.ID))
+            {
+                this.guide = null;
+            }
+        }
 
         #endregion
     }

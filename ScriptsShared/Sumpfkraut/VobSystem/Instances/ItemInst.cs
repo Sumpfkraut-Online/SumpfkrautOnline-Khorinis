@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using GUC.Network;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
+using GUC.Scripts.Sumpfkraut.WorldSystem;
+using GUC.Types;
 using GUC.WorldObjects;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
@@ -65,6 +67,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public void ReadInventoryProperties(PacketReader stream)
         {
+        }
+
+        partial void pSpawn();
+        public override void Spawn(WorldInst world, Vec3f pos, Vec3f dir)
+        {
+            base.Spawn(world, pos, dir);
+            pSpawn();
         }
     }
 }

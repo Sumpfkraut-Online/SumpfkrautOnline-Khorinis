@@ -20,6 +20,7 @@ namespace GUC.Network
 
         ScriptMessage,
         ScriptCommandMessage,
+        ScriptCommandHeroMessage, // saves 2 whole bytes, yayy
 
         GuidedVobMessage,
         GuidedNPCMessage,

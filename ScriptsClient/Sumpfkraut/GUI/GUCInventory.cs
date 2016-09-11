@@ -441,8 +441,8 @@ namespace GUC.Scripts.Sumpfkraut.GUI
         void UpdateSlots()
         {
             contents.Clear();
-            //if (this.inventory != null)
-                //this.inventory.ForEachItem(item => contents.Add((ItemInst)item.ScriptObject));
+            if (this.inventory != null)
+                this.inventory.ForEachItem(item => contents.Add(item));
             contents.Sort(ItemSort);
 
             int i = startPos * slots.GetLength(0);

@@ -59,6 +59,12 @@ namespace GUC.Network
                 case ClientMessages.GuidedNPCMessage:
                     WorldObjects.NPC.Messages.ReadPosDir(stream, client, client.World);
                     break;
+                case ClientMessages.ScriptCommandMessage:
+                    GameClient.Messages.ReadScriptCommandMessage(stream, client, client.World, false);
+                    break;
+                case ClientMessages.ScriptCommandHeroMessage:
+                    GameClient.Messages.ReadScriptCommandMessage(stream, client, client.World, true);
+                    break;
 
                 default:
                     Logger.LogWarning("Client sent unknown NetworkID '{0}'. Kicked: {1} IP:{2}", id, client.ID, client.SystemAddress);

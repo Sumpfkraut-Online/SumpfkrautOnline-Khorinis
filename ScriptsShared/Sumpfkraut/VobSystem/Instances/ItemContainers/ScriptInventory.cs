@@ -40,6 +40,16 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances.ItemContainers
 
         #region Add & Remove Items
 
+        public void ForEachItem(Action<ItemInst> action)
+        {
+            BaseInst.ForEach(i => action((ItemInst)i.ScriptObject));
+        }
+
+        public void ForEachItemPredicate(Predicate<ItemInst> predicate)
+        {
+            BaseInst.ForEachPredicate(i => { return predicate((ItemInst)i.ScriptObject); });
+        }
+
         public void AddItem(Item item)
         {
             AddItem((ItemInst)item.ScriptObject);

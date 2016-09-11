@@ -54,9 +54,11 @@ namespace GUC.Scripts
         {
             Sumpfkraut.InputControl.Init();
 
+            Gothic.Objects.oCNpcFocus.SetFocusMode(0);
             GUCMenu.CloseActiveMenus();
             Ingame = true;
             Logger.Log("Ingame started.");
+
         }
 
         /*const long FightMusicTime = 50 * TimeSpan.TicksPerSecond;

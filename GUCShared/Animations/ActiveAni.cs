@@ -60,10 +60,17 @@ namespace GUC.Animations
             float numFrames = ani.GetFrameNum();
             if (numFrames > 0)
             {
+                
                 return (float)timer.GetElapsedTicks() / (float)TimeSpan.TicksPerSecond * (ani.FPS * fpsMult) / numFrames;
             }
             return 0;
         }
+
+        public float GetPercent()
+        {
+            return timer.Started ? (float)timer.GetElapsedTicks() / timer.Interval : 0;
+        }
+
 
         internal void Start(Animation ani, float fpsMult, Action onStop)
         {

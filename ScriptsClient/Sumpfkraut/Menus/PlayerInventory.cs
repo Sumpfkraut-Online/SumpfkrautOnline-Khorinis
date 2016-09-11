@@ -7,8 +7,7 @@ using GUC.GUI;
 using GUC.Scripts.Sumpfkraut.GUI;
 using GUC.Scripts.Sumpfkraut.Networking;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
-
-using GUC.Scripts.Sumpfkraut.Visuals;
+using GUC.Types;
 
 namespace GUC.Scripts.Sumpfkraut.Menus
 {
@@ -34,7 +33,7 @@ namespace GUC.Scripts.Sumpfkraut.Menus
 
         public void UpdateContents()
         {
-            //inv.SetContents(ScriptClient.Client.Character?.BaseInst.Inventory);
+            inv.SetContents(NPCInst.Hero?.Inventory);
         }
 
         public override void Open()
@@ -43,11 +42,15 @@ namespace GUC.Scripts.Sumpfkraut.Menus
             if (player == null)
                 return;
 
-            //if (player.Movement != MoveState.Stand || player.Environment > EnvironmentState.Wading)
-            //    return;
+            var env = player.Environment;
+            if (env.InAir)
+                return;
+
+            if (player.Movement != NPCMovement.Stand)
+                player.SetMovement(NPCMovement.Stand);
 
             base.Open();
-            //inv.SetContents(player.BaseInst.Inventory);
+            inv.SetContents(player.Inventory);
             inv.Show();
             inv.Enabled = true;
         }

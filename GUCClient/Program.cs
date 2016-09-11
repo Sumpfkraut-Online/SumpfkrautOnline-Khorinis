@@ -77,6 +77,7 @@ namespace GUC
 
             return Assembly.LoadFrom(Path.Combine(projectPath, name + ".dll"));
         }
+        
 
         static bool mained = false;
         public static int Main(string message)
@@ -97,14 +98,14 @@ namespace GUC
                 Process.Write(new byte[] { 0xE9, 0xA3, 0x00, 0x00, 0x00 }, 0x42687F); // skip intro videos
 
                 // add hooks
-                hFile.AddHooks();
+                //hFile.AddHooks();
                 hParser.AddHooks();
                 hGame.AddHooks();
                 hWeather.AddHooks();
                 hPlayerVob.AddHooks();
                 hView.AddHooks();
                 hNpc.AddHooks();
-
+                
                 #region Some more editing
 
                 Process.Write(new byte[] { 0xEB, 0x15 }, 0x006B5A44); // don't start falling animation

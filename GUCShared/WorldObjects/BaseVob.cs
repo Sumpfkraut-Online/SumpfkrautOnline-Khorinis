@@ -284,9 +284,11 @@ namespace GUC.WorldObjects
             pAfterDespawn();
         }
         #endregion
-        
+
+        partial void pOnTick(long now);
         internal virtual void OnTick(long now)
         {
+            pOnTick(now);
         }
 
         public override string ToString()

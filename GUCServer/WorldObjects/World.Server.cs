@@ -38,8 +38,8 @@ namespace GUC.WorldObjects
 
         #region Spawn ranges
 
-        static float spawnInsertRange = 5000;
-        static float spawnRemoveRange = 6000;
+        static float spawnInsertRange = 4000;
+        static float spawnRemoveRange = 5000;
 
         public static float SpawnInsertRange
         {

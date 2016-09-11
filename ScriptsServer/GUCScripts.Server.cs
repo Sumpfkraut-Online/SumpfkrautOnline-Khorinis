@@ -9,7 +9,6 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Scripts.Sumpfkraut.Visuals;
-using System.Reflection;
 
 namespace GUC.Scripts
 {
@@ -19,8 +18,18 @@ namespace GUC.Scripts
         {
             Logger.Log("######## Initalise SumpfkrautOnline ServerScripts #########");
 
-            //Sumpfkraut.Daedalus.AniParser.ReadMDSFiles();
-            Sumpfkraut.Daedalus.ItemParser.ParseItems();
+            Sumpfkraut.Daedalus.AniParser.ReadMDSFiles();
+            Sumpfkraut.Daedalus.ConstParser.ParseConstValues();
+            Sumpfkraut.Daedalus.FuncParser.ParseConstValues();
+            Sumpfkraut.Daedalus.PrototypeParser.ParsePrototypes();
+            Sumpfkraut.Daedalus.InstanceParser.ParseInstances();
+
+            Sumpfkraut.Daedalus.InstanceParser.AddInstances();
+
+            Sumpfkraut.Daedalus.ConstParser.Free();
+            Sumpfkraut.Daedalus.FuncParser.Free();
+            Sumpfkraut.Daedalus.PrototypeParser.Free();
+            Sumpfkraut.Daedalus.InstanceParser.Free();
 
             AddSomeDefs();
 
@@ -43,52 +52,15 @@ namespace GUC.Scripts
 
 
         void AddSomeDefs()
-        {            
+        {
             //AddItems();
 
             // HUMAN MODEL
-            var m = new ModelDef("human", "humans.mds");
+            ModelDef m;
+            ModelDef.TryGetModel("humans", out m);
+            m.Delete(); // hurr durr
             m.Radius = 80;
             m.Height = 180;
-            
-            /*Add2hAttacks(m);
-            Add1hAttacks(m);
-            AddBowAnis(m);
-            AddXBowAnis(m);
-
-            // JUMPS
-            var aniJob = new ScriptAniJob("jumprun", new ScriptAni(8000000));
-            aniJob.BaseAniJob.ID = (int)SetAnis.JumpRun;
-            aniJob.AniName = "t_RunL_2_Jump";
-            m.AddAniJob(aniJob);
-
-            aniJob = new ScriptAniJob("jumpfwd", new ScriptAni(9200000));
-            aniJob.BaseAniJob.ID = (int)SetAnis.JumpFwd;
-            aniJob.AniName = "T_STAND_2_JUMP";
-            m.AddAniJob(aniJob);
-
-            // CLIMBING
-            aniJob = new ScriptAniJob("climblow", new ScriptAni(1200000 + 2000000 + 3200000));
-            aniJob.BaseAniJob.ID = (int)SetAnis.ClimbLow;
-            aniJob.AniName = "T_STAND_2_JUMPUPLOW";
-            m.AddAniJob(aniJob);
-
-            aniJob = new ScriptAniJob("climbmid", new ScriptAni(3200000 + 1200000 + 8000000));
-            aniJob.BaseAniJob.ID = (int)SetAnis.ClimbMid;
-            aniJob.AniName = "T_STAND_2_JUMPUPMID";
-            m.AddAniJob(aniJob);
-
-            aniJob = new ScriptAniJob("climbhigh", new ScriptAni(6800000 + 0 + 10000000));
-            aniJob.BaseAniJob.ID = (int)SetAnis.ClimbHigh;
-            aniJob.AniName = "T_JUMP_2_HANG";
-            m.AddAniJob(aniJob);
-
-            // DROP ITEM
-            aniJob = new ScriptAniJob("dropitem", new ScriptAni(5600000));
-            aniJob.BaseAniJob.ID = (int)SetAnis.DropItem;
-            aniJob.AniName = "dropItem";
-            m.AddAniJob(aniJob);*/
-
             m.Create();
 
             // NPCs
@@ -116,11 +88,26 @@ namespace GUC.Scripts
         {
             WorldDef wDef = new WorldDef();
             WorldInst.Current = new WorldInst(default(WorldDef));
-            
+
             WorldInst.Current.Create();
             WorldInst.Current.Clock.SetTime(new Types.WorldTime(0, 8), 10.0f);
             WorldInst.Current.Clock.Start();
             
+            for (int i = 0; i < WorldObjects.Instances.BaseVobInstance.GetCount(); i++)
+            {
+                BaseVobInst inst;
+                BaseVobDef def;
+                if (BaseVobDef.TryGetDef(i, out def))
+                {
+                    if (def is ItemDef)
+                        inst = new ItemInst((ItemDef)def);
+                    else if (def is NPCDef)
+                        inst = new NPCInst((NPCDef)def);
+                    else continue;
+                }
+                else continue;
+                inst.Spawn(WorldInst.Current, Utilities.Randomizer.GetVec3fRad(new Types.Vec3f(0, 1000, 0), 10000), Utilities.Randomizer.GetVec3fRad(new Types.Vec3f(0, 0, 0), 1).Normalise());
+            }
         }
 
         void Add1hAttacks(ModelDef model)

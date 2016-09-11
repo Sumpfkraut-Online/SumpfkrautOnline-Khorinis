@@ -15,29 +15,6 @@ namespace GUC.WorldObjects
 
         internal static class Messages
         {
-            public static void WriteSetPosDir(BaseVob vob, GameClient exclude)
-            {
-                PacketWriter stream = GameServer.SetupStream(ServerMessages.VobPosDirMessage);
-                stream.Write((ushort)vob.ID);
-                stream.WriteCompressedPosition(vob.pos);
-                stream.WriteCompressedDirection(vob.dir);
-                
-                if (exclude == null)
-                {
-                    vob.visibleClients.ForEach(client => client.Send(stream, PktPriority.Low, PktReliability.Unreliable, 'W'));
-                }
-                else
-                {
-                    vob.visibleClients.ForEach(client =>
-                    {
-                        if (client != exclude)
-                            client.Send(stream, PktPriority.Low, PktReliability.Unreliable, 'W');
-                    });
-                }
-
-                for (int i = 0; i < vob.targetOf.Count; i++)
-                    vob.targetOf[i].Send(stream, PktPriority.Low, PktReliability.Unreliable, 'W');
-            }
         }
 
         #endregion
@@ -126,7 +103,7 @@ namespace GUC.WorldObjects
 
                 if (visibleClients.Count > 0 || targetOf.Count > 0)
                 {
-                    Messages.WriteSetPosDir(this, exclude);
+                    this.WritePosDirMessage(exclude);
                 }
 
                 if (updateVis)
@@ -134,6 +111,30 @@ namespace GUC.WorldObjects
                     UpdateClientList();
                 }
             }
+        }
+
+        protected virtual void WritePosDirMessage(GameClient exclude)
+        {
+            PacketWriter stream = GameServer.SetupStream(ServerMessages.VobPosDirMessage);
+            stream.Write((ushort)this.ID);
+            stream.WriteCompressedPosition(this.pos);
+            stream.WriteCompressedDirection(this.dir);
+
+            if (exclude == null)
+            {
+                this.visibleClients.ForEach(client => client.Send(stream, PktPriority.Low, PktReliability.Unreliable, 'W'));
+            }
+            else
+            {
+                this.visibleClients.ForEach(client =>
+                {
+                    if (client != exclude)
+                        client.Send(stream, PktPriority.Low, PktReliability.Unreliable, 'W');
+                });
+            }
+
+            for (int i = 0; i < this.targetOf.Count; i++)
+                this.targetOf[i].Send(stream, PktPriority.Low, PktReliability.Unreliable, 'W');
         }
 
         #endregion

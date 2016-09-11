@@ -95,7 +95,7 @@ namespace GUC.WorldObjects
             {
                 int id = stream.ReadUShort();
                 NPC npc;
-                if (world.TryGetVob(id, out npc))
+                if (world.TryGetVob(id, out npc) && (npc.guide == client || npc.client == client))
                 {
                     var pos = stream.ReadCompressedPosition();
                     var dir = stream.ReadCompressedDirection();
@@ -164,6 +164,35 @@ namespace GUC.WorldObjects
 
         /// <summary> Returns true if this npc is controlled by a client. </summary>
         public bool IsPlayer { get { return client != null; } }
+
+        #endregion
+
+        #region Position & Direction
+
+        protected override void WritePosDirMessage(GameClient exclude)
+        {
+            PacketWriter stream = GameServer.SetupStream(ServerMessages.NPCPosDirMessage);
+            stream.Write((ushort)this.ID);
+            stream.WriteCompressedPosition(this.pos);
+            stream.WriteCompressedDirection(this.dir);
+            stream.Write((byte)this.movement);
+
+            if (exclude == null)
+            {
+                this.visibleClients.ForEach(client => client.Send(stream, PktPriority.Low, PktReliability.Unreliable, 'W'));
+            }
+            else
+            {
+                this.visibleClients.ForEach(client =>
+                {
+                    if (client != exclude)
+                        client.Send(stream, PktPriority.Low, PktReliability.Unreliable, 'W');
+                });
+            }
+
+            for (int i = 0; i < this.targetOf.Count; i++)
+                this.targetOf[i].Send(stream, PktPriority.Low, PktReliability.Unreliable, 'W');
+        }
 
         #endregion
 

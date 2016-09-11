@@ -132,6 +132,24 @@ namespace GUC.Network
                     throw new Exception("Unallowed LoadWorldMessage");
                 }
             }
+
+            public static void ReadScriptCommandMessage(PacketReader stream, GameClient client, World world, bool hero)
+            {
+                GuidedVob vob;
+                if (hero)
+                {
+                    vob = client.character;
+                }
+                else
+                {
+                    world.TryGetVob(stream.ReadUShort(), out vob);
+                }
+
+                if (vob == null)
+                    return;
+
+                client.ScriptObject.ReadScriptCommandMessage(stream, vob);
+            }
         }
 
         #endregion
@@ -146,6 +164,7 @@ namespace GUC.Network
             bool IsAllowedToConnect();
 
             void ReadScriptMessage(PacketReader stream);
+            void ReadScriptCommandMessage(PacketReader stream, GuidedVob vob);
         }
 
         #endregion

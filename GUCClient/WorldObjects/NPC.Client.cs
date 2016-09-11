@@ -103,6 +103,27 @@ namespace GUC.WorldObjects
 
             #region Position Updates
 
+            public static void ReadPosDirMessage(PacketReader stream)
+            {
+                int id = stream.ReadUShort();
+
+                NPC npc;
+                if (World.Current.TryGetVob(id, out npc))
+                {
+                    Vec3f newPos = stream.ReadCompressedPosition();
+                    Vec3f newDir = stream.ReadCompressedDirection();
+                    npc.Interpolate(newPos, newDir);
+
+                    npc.ScriptObject.SetMovement((NPCMovement)stream.ReadByte());
+
+                    //vob.ScriptObject.OnPosChanged();
+                }
+                else
+                {
+                    VobGuiding.TargetCmd.CheckPos(id, stream.ReadCompressedPosition());
+                }
+            }
+
             public static void WritePosDirMessage(NPC npc, Vec3f pos, Vec3f dir, Environment env)
             {
                 PacketWriter stream = GameClient.SetupStream(ClientMessages.GuidedNPCMessage);
@@ -133,15 +154,15 @@ namespace GUC.WorldObjects
             var hero = Hero;
             if (hero == null)
                 return;
-
-            hero.UpdateGuidedNPCPosition(now, 800000, 12, 0.01f); // update our hero better
+            
+            hero.UpdateGuidedNPCPosition(now, 800000, 10, 0.02f); // update our hero better
         }
-        
+
         #region Vob Guiding
 
         protected override void UpdateGuidePos(long now)
         {
-            UpdateGuidedNPCPosition(now, 1200000, 16, 0.02f);
+            UpdateGuidedNPCPosition(now, 1200000, 14, 0.04f);
         }
 
         NPCMovement guidedLastMovement;
@@ -157,7 +178,7 @@ namespace GUC.WorldObjects
             if (now - guidedNextUpdate < TimeSpan.TicksPerSecond)
             {
                 // nothing really changed, only update every second
-                if (guidedLastMovement == this.movement 
+                if (guidedLastMovement == this.movement
                     && pos.GetDistance(guidedLastPos) < minPosDist
                     && dir.GetDistance(guidedLastDir) < minDirDist
                     && env == guidedLastEnv)
@@ -283,7 +304,7 @@ namespace GUC.WorldObjects
         {
             item.CreateGVob();
         }
-        
+
         partial void pUnequipItem(Item item)
         {
             item.DeleteGVob();
@@ -303,6 +324,9 @@ namespace GUC.WorldObjects
 
             gVob.Guild = 1;
             gVob.InitHumanAI();
+
+            if (string.Compare(this.ModelInstance.Visual, "humans.mds", true) != 0)
+                gVob.SetToFistMode();
 
             gVob.Name.Set(this.Name);
 
@@ -346,7 +370,7 @@ namespace GUC.WorldObjects
         #endregion
 
         #region Move State
-        
+
         public void SetMovement(NPCMovement state)
         {
             if (this.movement == state)
@@ -363,38 +387,12 @@ namespace GUC.WorldObjects
 
             this.movement = state;
 
+            guidedNextUpdate = 0;
             this.OnTick(GameTime.Ticks);
         }
 
         #endregion
 
-        /*void UpdateAnimation(ActiveAni ani)
-        {
-            var gModel = gVob.GetModel();
-            var gAni = gModel.GetAniFromAniID(gModel.GetAniIDFromAniName(ani.Ani.AniJob.Name));
-            var gActiveAni = gModel.GetActiveAni(gAni);
-
-            if (gActiveAni.Address == 0)
-            {
-                gModel.StartAni(gAni, 0);
-                gActiveAni = gModel.GetActiveAni(gAni);
-                if (gActiveAni.Address == 0)
-                    return;
-            }
-
-            int startFrame = ani.Ani.StartFrame;
-            int endFrame = ani.Ani.EndFrame;
-            if (endFrame == 0)
-            {
-                endFrame = gAni.NumFrames;
-            }
-
-            float progressPercent = ani.GetPercent();
-
-            gActiveAni.SetActFrame(startFrame + (endFrame - startFrame) * progressPercent);
-
-            Logger.Log("Frame: " + (startFrame + (endFrame - startFrame) * progressPercent));
-        }*/
 
         internal override void OnTick(long now)
         {
@@ -402,8 +400,8 @@ namespace GUC.WorldObjects
                 return;
 
             base.OnTick(now);
-            //ForEachActiveAni(a => UpdateAnimation(a));
-            
+            this.Model.UpdateAnimations(now);
+
             //this.ScriptObject.OnTick(now);
 
             if (!this.IsDead && this.Model.GetActiveAniFromLayerID(1) == null)

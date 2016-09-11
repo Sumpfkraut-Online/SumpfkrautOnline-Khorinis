@@ -285,6 +285,7 @@ namespace GUC.Network
                     if (Client.character != null)
                     {
                         devInfo.Texts[devIndex++].Text = Client.character.Movement.ToString();
+                        devInfo.Texts[devIndex++].Text = Client.character.gVob.FocusVob.Address.ToString("X4");
                     }
                 }
             }
@@ -299,7 +300,7 @@ namespace GUC.Network
 
         static void ReadMessage(ServerMessages id, PacketReader stream)
         {
-            if (id != ServerMessages.VobPosDirMessage)
+            if (id != ServerMessages.VobPosDirMessage && id != ServerMessages.NPCPosDirMessage)
                 Logger.Log(id);
 
             switch (id)
@@ -373,6 +374,7 @@ namespace GUC.Network
                     Client.ReadPlayerControlMessage(stream);
                     break;
 
+                // World Messages
                 case ServerMessages.WorldJoinMessage:
                     World.Messages.ReadJoinWorld(stream);
                     break;
@@ -400,11 +402,40 @@ namespace GUC.Network
                     WorldObjects.WorldGlobals.WorldClock.Messages.ReadTimeStart(stream, false);
                     break;
 
+                // Vob Messages
                 case ServerMessages.VobSpawnMessage:
                     World.Messages.ReadVobSpawn(stream);
                     break;
                 case ServerMessages.VobDespawnMessage:
                     World.Messages.ReadVobDespawnMessage(stream);
+                    break;
+                case ServerMessages.VobPosDirMessage:
+                    BaseVob.Messages.ReadPosDirMessage(stream);
+                    break;
+
+                // NPC Messages
+                case ServerMessages.NPCPosDirMessage:
+                    NPC.Messages.ReadPosDirMessage(stream);
+                    break;
+
+                // Model Messages
+                case ServerMessages.ModelAniStartMessage:
+                    Model.Messages.ReadAniStart(stream);
+                    break;
+                case ServerMessages.ModelAniStartFPSMessage:
+                    Model.Messages.ReadAniStartFPS(stream);
+                    break;
+                case ServerMessages.ModelAniStopMessage:
+                    Model.Messages.ReadAniStop(stream, false);
+                    break;
+                case ServerMessages.ModelAniFadeMessage:
+                    Model.Messages.ReadAniStop(stream, true);
+                    break;
+                case ServerMessages.ModelOverlayAddMessage:
+                    Model.Messages.ReadOverlay(stream, true);
+                    break;
+                case ServerMessages.ModelOverlayRemoveMessage:
+                    Model.Messages.ReadOverlay(stream, false);
                     break;
 
                 default:
@@ -551,14 +582,30 @@ namespace GUC.Network
 
         #region Script Command Message
 
-        public static PacketWriter GetScriptCommandMessageStream()
+        public static PacketWriter GetScriptCommandMessageStream(GuidedVob vob)
         {
-            return SetupStream(ClientMessages.ScriptCommandMessage);
+            if (vob == null)
+                throw new ArgumentNullException("Vob is null!");
+
+            if (vob == Client.character)
+            {
+                return SetupStream(ClientMessages.ScriptCommandHeroMessage);
+            }
+            else if (Client == vob.guide)
+            {
+                var stream = SetupStream(ClientMessages.ScriptCommandMessage);
+                stream.Write((ushort)vob.ID);
+                return stream;
+            }
+            else
+            {
+                throw new ArgumentException("Vob is not controlled by this character!");
+            }
         }
 
-        public static void SendScriptCommandMessage(PacketWriter stream, PktPriority priority, PktReliability reliability)
+        public static void SendScriptCommandMessage(PacketWriter stream, PktPriority priority)
         {
-            Send(stream, priority, reliability, 'C');
+            Send(stream, priority, PktReliability.Unreliable, 'C');
         }
 
         #endregion

@@ -34,6 +34,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         new public NPC BaseInst { get { return (NPC)base.BaseInst; } }
         public ItemInventory BaseInventory { get { return BaseInst.Inventory; } }
+        public ScriptInventory Inventory { get { return (ScriptInventory)BaseInventory.ScriptObject; } }
 
         public new NPCDef Definition { get { return (NPCDef)base.Definition; } set { base.Definition = value; } }
         

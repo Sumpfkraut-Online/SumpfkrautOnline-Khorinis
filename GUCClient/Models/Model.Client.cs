@@ -18,7 +18,7 @@ namespace GUC.Models
         {
             #region Overlays
 
-            public static void ReadAddOverlay(PacketReader stream)
+            public static void ReadOverlay(PacketReader stream, bool add)
             {
                 int id = stream.ReadUShort();
 
@@ -30,24 +30,14 @@ namespace GUC.Models
                     Overlay ov;
                     if (model.Instance.TryGetOverlay(stream.ReadByte(), out ov))
                     {
-                        model.ScriptObject.ApplyOverlay(ov);
-                    }
-                }
-            }
-
-            public static void ReadRemoveOverlay(PacketReader stream)
-            {
-                int id = stream.ReadUShort();
-
-                Vob vob;
-                if (World.Current.TryGetVob(id, out vob))
-                {
-                    Model model = vob.Model;
-
-                    Overlay ov;
-                    if (model.Instance.TryGetOverlay(stream.ReadByte(), out ov))
-                    {
-                        model.ScriptObject.RemoveOverlay(ov);
+                        if (add)
+                        {
+                            model.ScriptObject.ApplyOverlay(ov);
+                        }
+                        else
+                        {
+                            model.ScriptObject.RemoveOverlay(ov);
+                        }
                     }
                 }
             }
@@ -55,26 +45,14 @@ namespace GUC.Models
             #endregion
 
             #region Animations
-            
-            public static void ReadAniStart(PacketReader stream)
-            {
-                Vob vob;
-                if (World.Current.TryGetVob(stream.ReadUShort(), out vob))
-                {
-                    Model model = vob.Model;
-
-                    AniJob job;
-                    if (model.Instance.TryGetAniJob(stream.ReadUShort(), out job))
-                    {
-                        model.ScriptObject.StartAnimation(job, 1.0f);
-                    }
-                }
-            }
 
             public static void ReadAniStartFPS(PacketReader stream)
             {
-                float fpsMult = stream.ReadFloat();
+                ReadAniStart(stream, stream.ReadFloat());
+            }
 
+            public static void ReadAniStart(PacketReader stream, float fpsMult = 1.0f)
+            {
                 Vob vob;
                 if (World.Current.TryGetVob(stream.ReadUShort(), out vob))
                 {
@@ -254,5 +232,41 @@ namespace GUC.Models
         }
 
         #endregion
+
+        internal void UpdateAnimations(long now)
+        {
+            if (!(this.vob is NPC))
+                return;
+
+            var gModel = ((NPC)vob).gVob.GetModel();
+
+            for (int i = 0; i < activeAnis.Count; i++)
+            {
+                var aa = activeAnis[i];
+                if (aa.Ani == null)
+                    continue;
+
+                int gAniID = gModel.GetAniIDFromAniName(aa.AniJob.Name);
+                var gAni = gModel.GetAniFromAniID(gAniID);
+                if (gAni.Address == 0)
+                    continue;
+
+                var gActiveAni = gModel.GetActiveAni(gAni);
+                if (gActiveAni.Address == 0)
+                {
+                    gModel.StartAni(gAni, 0);
+                    gActiveAni = gModel.GetActiveAni(gAni);
+                    if (gActiveAni.Address == 0)
+                        continue;
+                }
+
+                float startFrame = aa.Ani.StartFrame;
+                float endFrame = aa.Ani.EndFrame;
+
+                float percent = aa.GetPercent();
+
+                gActiveAni.SetActFrame(startFrame + (endFrame - startFrame) * percent);
+            }
+        }
     }
 }

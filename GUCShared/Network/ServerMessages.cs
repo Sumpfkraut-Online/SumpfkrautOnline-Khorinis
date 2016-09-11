@@ -77,7 +77,7 @@ namespace GUC.Network
         ModelOverlayRemoveMessage,
 
         // npcs 
-        NPCStateMessage, // ???
+        NPCPosDirMessage, // updating position and direction of a npc
 
         NPCHealthMessage,
         NPCFightModeSetMessage,

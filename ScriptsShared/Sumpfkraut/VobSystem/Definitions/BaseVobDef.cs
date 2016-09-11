@@ -54,5 +54,17 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 
         public virtual void OnWriteProperties(PacketWriter stream) { }
         public virtual void OnReadProperties(PacketReader stream) { }
+
+        public static bool TryGetDef<T>(int id, out T def) where T : BaseVobDef
+        {
+            BaseVobInstance instance;
+            if (BaseVobInstance.TryGet(id, out instance) && instance.ScriptObject is T)
+            {
+                def = (T)instance.ScriptObject;
+                return true;
+            }
+            def = default(T);
+            return false;
+        }
     }
 }

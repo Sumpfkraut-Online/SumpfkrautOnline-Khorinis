@@ -35,6 +35,27 @@ namespace GUC.Scripts.Sumpfkraut
                 activeMenu.KeyDown(key, now);
                 return;
             }
+
+            var hero = NPCInst.Hero;
+
+            if (hero == null)
+                return;
+
+            if (key == VirtualKeys.Menu)
+            {
+                hero.SendCommand(ScriptCommandMessageIDs.Jump);
+            }
+            else if (key == VirtualKeys.Tab)
+            {
+                PlayerInventory.Menu.Open();
+            }
+            else if (InputHandler.IsPressed(VirtualKeys.Control))
+            {
+                if (key == VirtualKeys.W || key == VirtualKeys.Up)
+                {
+                    hero.SendCommand(ScriptCommandMessageIDs.AttackForward);
+                }
+            }
         }
 
         static void KeyUp(VirtualKeys key, long now)
@@ -49,6 +70,13 @@ namespace GUC.Scripts.Sumpfkraut
 
         public static void Update(long now)
         {
+            GUCMenu activeMenu = GUCMenu.GetActiveMenus().ElementAtOrDefault(0);
+            if (activeMenu != null)
+            {
+                activeMenu.Update(now);
+                return;
+            }
+
             var hero = NPCInst.Hero;
 
             if (hero == null)
@@ -56,6 +84,8 @@ namespace GUC.Scripts.Sumpfkraut
 
             if (!InputHandler.IsPressed(VirtualKeys.Control))
             {
+                hero.BaseInst.gVob.HumanAI.CheckFocusVob(1);
+
                 if (InputHandler.IsPressed(VirtualKeys.A)) // strafe left
                 {
                     hero.SetMovement(NPCMovement.Left);

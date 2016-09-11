@@ -17,7 +17,7 @@ namespace GUC.WorldObjects.VobGuiding
             {
                 int id = stream.ReadUShort();
                 GuidedVob vob;
-                if (world.TryGetVob(id, out vob))
+                if (world.TryGetVob(id, out vob) && vob.guide == client)
                 {
                     var pos = stream.ReadCompressedPosition();
                     var dir = stream.ReadCompressedDirection();

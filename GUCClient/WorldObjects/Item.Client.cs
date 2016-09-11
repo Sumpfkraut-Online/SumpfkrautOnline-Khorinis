@@ -29,5 +29,22 @@ namespace GUC.WorldObjects
 
         new public oCItem gVob { get { return (oCItem)base.gVob; } }
 
+        bool dropped = false;
+        internal override void OnTick(long now)
+        {
+            base.OnTick(now);
+
+            if (!dropped && NPC.Hero != null)
+            {
+                dropped = true;
+                Vec3f pos = this.GetPosition();
+                Vec3f dir = this.GetDirection();
+
+                NPC.Hero.gVob.DoDropVob(this.gVob);
+
+                this.SetPosition(pos);
+                this.SetDirection(dir);
+            }
+        }
     }
 }

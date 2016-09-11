@@ -18,6 +18,23 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
     {
         public static NPCInst Hero { get { return (NPCInst)NPC.Hero?.ScriptObject; } }
 
+        #region Commands
+
+        const long CommandInterval = 100000; // 10ms
+        long nextCommandTime = 0;
+        public void SendCommand(ScriptCommandMessageIDs cmd)
+        {
+            if (nextCommandTime > GameTime.Ticks)
+                return; // don't spam
+
+            var stream = GameClient.GetScriptCommandMessageStream(this.BaseInst);
+            stream.Write((byte)cmd);
+            GameClient.SendScriptCommandMessage(stream, PktPriority.High);
+            nextCommandTime = GameTime.Ticks + CommandInterval;
+        }
+
+        #endregion
+
         public void SetMovement(NPCMovement state)
         {
             if (state == this.Movement)
