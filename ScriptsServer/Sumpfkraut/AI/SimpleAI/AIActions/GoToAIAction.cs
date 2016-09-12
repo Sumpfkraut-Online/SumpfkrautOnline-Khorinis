@@ -5,21 +5,19 @@ using System.Text;
 
 namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIActions
 {
-
-    public class AttackAIAction : BaseAIAction
+    public class GoToAIAction : BaseAIAction
     {
 
         new public static readonly string _staticName = "AttackAIAction (static)";
 
 
 
-        public AttackAIAction (AITarget aiTarget)
+        public GoToAIAction (AITarget aiTarget)
             : base(aiTarget)
         {
-            SetObjName("AttackAIAction (default)");
-            actionType = Enumeration.AiActionType.AttackAIAction;
+            SetObjName("GoToAIAction (default)");
+            actionType = Enumeration.AiActionType.GoToAIAction;
         }
 
     }
-
 }

@@ -21,6 +21,8 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
         protected BaseAIRoutine aiRoutine;
         public BaseAIRoutine AIRoutine { get { return aiRoutine; } }
 
+        protected DateTime lastTick;
+        public DateTime LastTick { get { return lastTick; } }
 
 
         public BaseAIPersonality ()

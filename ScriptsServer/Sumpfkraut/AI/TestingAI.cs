@@ -9,6 +9,7 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Utilities.Threading;
 using GUC.Scripts.Sumpfkraut.Networking;
+using GUC.Scripts.Sumpfkraut.Visuals;
 
 namespace GUC.Scripts.Sumpfkraut.AI
 {
@@ -17,6 +18,44 @@ namespace GUC.Scripts.Sumpfkraut.AI
     {
 
         new public static readonly string _staticName = "TestingAI (static)";
+
+
+
+        public static List<string> ArmorCodes = new List<string>() {
+            "itar_schatten", "itar_Garde",
+            "itar_bandit", "itar_söldner"
+        };
+
+        public static List<string> WeaponCodes_1H = new List<string>() {
+            "1hschwert", "1haxt",
+            "2hschwert", "2haxt"
+        };
+
+        public static List<string> WeaponCodes_2H = new List<string>() {
+            "2hschwert", "2haxt"
+        };
+
+        public static List<string> MeleeOverlayCodes = new List<string>() {
+            "1HS2", "2HS1",
+        };
+
+        public static List<string> WeaponCodes_Bow = new List<string>() {
+            "itrw_longbow",
+        };
+
+        public static List<string> WeaponCodes_Crossbow = new List<string>() {
+            "itrw_crossbow",
+        };
+
+        public static List<string> AmmoCodes_Bow = new List<string>() {
+            "itrw_arrow"
+        };
+
+        public static List<string> AmmoCodes_Crossbow = new List<string>() {
+            "itrw_bolt",
+        };
+
+
 
         public static void Test ()
         {
@@ -101,35 +140,61 @@ namespace GUC.Scripts.Sumpfkraut.AI
             aiManager01.SetObjName("aiManager01");
             aiManager01.Start();
 
-            Visuals.ModelDef npcModel01;
-            PrintStatic(typeof(TestingAI), Visuals.ModelDef.TryGetModel("human", out npcModel01));
 
-            NPCDef npcDef01 = new NPCDef("npcDef01");
-            npcDef01.Name = "npcDef01";
-            npcDef01.Model = npcModel01;
-            npcDef01.BodyMesh = Enumeration.HumBodyMeshs.HUM_BODY_NAKED0.ToString();
-            npcDef01.BodyTex = (int) Enumeration.HumBodyTexs.G1Hero;
-            npcDef01.HeadMesh = Enumeration.HumHeadMeshs.HUM_HEAD_PONY.ToString();
-            npcDef01.HeadTex = (int) Enumeration.HumHeadTexs.Face_N_Player;
-            npcDef01.Create();
+            List<NPCDef> dummyDefinitions = new List<NPCDef>();
+            List<NPCInst> dummyInstances = new List<NPCInst>();
+            List<int> dummyIDs = new List<int>();
 
-            NPCInst npcInst01 = new NPCInst(npcDef01);
-            npcInst01.SetObjName("npcInst01");
-            npcInst01.BaseInst.SetNeedsClientGuide(true);
-            npcInst01.Spawn(WorldSystem.WorldInst.Current, 
-                new Types.Vec3f(100f, 1000f, 0f), new Types.Vec3f(1f, 0f, 0f));
-            //npcInst01.SetPosition(new Types.Vec3f(0f, 0f, 0f));
+            int spawnAmount = 100;
+            int indexDigits = (int) Math.Floor(Math.Log10(50) + 1);
+            Types.Vec3f[] spawnRange = new Types.Vec3f[] {
+                new Types.Vec3f(-2000f, 1000f, -2000f),
+                new Types.Vec3f(2000f, 1000f, 2000f)};
+            Types.Vec3f spawnRangeDiff = spawnRange[1] - spawnRange[0];
 
-            NPCInst npcInst02 = new NPCInst(npcDef01);
-            npcInst02.SetObjName("npcInst02");
-            npcInst02.BaseInst.SetNeedsClientGuide(true);
-            npcInst02.Spawn(WorldSystem.WorldInst.Current, 
-                new Types.Vec3f(0f, 1000f, 0f), new Types.Vec3f(1f, 0f, 0f));
-            //npcInst02.SetPosition(new Types.Vec3f(0f, 0f, 0f));
+            Random random = new Random();
 
-            AIAgent aiAgent01 = new AIAgent(new List<VobInst> { npcInst01 });
-            aiAgent01.SetObjName("aiAgent01");
-            aiManager01.SubscribeAIAgent(aiAgent01);
+            NPCDef tempDef = null;
+            for (int i = 0; i < spawnAmount; i++)
+            {
+                tempDef = CreateDummyDef("NPCDef_" + i.ToString("D" + indexDigits), random);
+                if (tempDef != null)
+                {
+                    dummyDefinitions.Add(tempDef);
+                    dummyIDs.Add(i);
+                }
+            }
+
+            NPCInst tempInst = null;
+            Types.Vec3f spawnLocation;
+
+            AIAgent aiAgent;
+            AIMemory aiMemory;
+            SimpleAI.AIRoutines.SimpleAIRoutine aiRoutine;
+            SimpleAI.AIPersonalities.SimpleAIPersonality aiPersonality;
+
+            for (int i = 0; i < dummyIDs.Count; i++)
+            {
+                spawnLocation = new Types.Vec3f(
+                    (float) (spawnRange[0].X + (random.NextDouble() * spawnRangeDiff.X)),
+                    (float) (spawnRange[0].Y + (random.NextDouble() * spawnRangeDiff.Y)),
+                    (float) (spawnRange[0].Z + (random.NextDouble() * spawnRangeDiff.Z)));
+                tempInst = CreateDummyInst(dummyDefinitions[i], "NPCInst_" + dummyIDs[i].ToString("D" + indexDigits),
+                    spawnLocation, random);
+                if (tempInst != null)
+                {
+                    dummyInstances.Add(tempInst);
+
+                    aiMemory = new AIMemory();
+                    aiRoutine = new SimpleAI.AIRoutines.SimpleAIRoutine();
+                    aiPersonality = new SimpleAI.AIPersonalities.SimpleAIPersonality(20000f, 1f);
+                    aiPersonality.Init(aiMemory, aiRoutine);
+                    aiAgent = new AIAgent(new List<VobInst> { tempInst }, aiPersonality);
+                    aiAgent.SetObjName(tempInst.GetObjName());
+                    aiManager01.SubscribeAIAgent(aiAgent);
+                    MakeLogStatic(typeof(TestingAI), "Created dummy-npc " + tempInst.GetObjName());
+                }
+            }
 
             PrintStatic(typeof(TestingAI), "-----------------------------------");
 
@@ -152,6 +217,116 @@ namespace GUC.Scripts.Sumpfkraut.AI
             //runTest.Start();
 
 
+        }
+
+
+
+        public static T RandomEnumValue<T> ()
+        {
+            var v = Enum.GetValues (typeof (T));
+            return (T) v.GetValue (new Random ().Next(v.Length));
+        }
+
+        public static NPCDef CreateDummyDef (string name, Random random)
+        {
+            random = random ?? new Random();
+            NPCDef npcDef = null;
+            Visuals.ModelDef model;
+            if (Visuals.ModelDef.TryGetModel("human", out model))
+            {
+                npcDef = new NPCDef(name);
+                npcDef.Name = name;
+                npcDef.Model = model;
+                npcDef.BodyMesh = Enumeration.HumBodyMeshs.HUM_BODY_NAKED0.ToString();
+                //npcDef.BodyMesh = RandomEnumValue<Enumeration.HumBodyMeshs>().ToString();
+                npcDef.BodyTex = (int) RandomEnumValue<Enumeration.HumBodyTexs>();
+                npcDef.HeadMesh = RandomEnumValue<Enumeration.HumHeadMeshs>().ToString();
+                npcDef.HeadTex = (int) RandomEnumValue<Enumeration.HumHeadTexs>();
+                npcDef.Create();
+
+                //Log.Logger.Log(name);
+                //Log.Logger.Log(npcDef.BodyTex);
+                //Log.Logger.Log(npcDef.HeadMesh);
+                //Log.Logger.Log(npcDef.HeadTex);
+            }
+            else
+            {
+                MakeLogWarningStatic(typeof(TestingAI), "Failed to generate dummy definition in ai tests!");
+            }
+            
+            return npcDef;
+        }
+
+        public static NPCInst CreateDummyInst (NPCDef npcDef, string name, Types.Vec3f spawnPosition, Random random)
+        {
+            random = random ?? new Random();
+
+            int guild = random.Next(0, 2);
+            int armorType = random.Next(0, 4);
+            int meleeType = random.Next(0, 4);
+            int rangedType = random.Next(0, 2);
+
+            NPCInst npcInst = null;
+            npcInst = new NPCInst(npcDef);
+            npcInst.SetObjName(name);
+            npcInst.BaseInst.SetNeedsClientGuide(true);
+
+            ItemInst armor = null, weapon = null, rangeWeapon = null, ammo = null;
+            int ammoAmount;
+            ScriptOverlay overlay = null;
+            bool overlayExists = false;
+
+            armor = new ItemInst(ItemDef.Get<ItemDef>( ArmorCodes[random.Next(0, ArmorCodes.Count)] ));
+
+            // melee weapon
+            if (random.Next(0, 2) == 0)
+            {
+                // 1H-weapon
+                weapon = new ItemInst(ItemDef.Get<ItemDef>( WeaponCodes_1H[random.Next(0, WeaponCodes_1H.Count)] ));
+                overlayExists = npcInst.Model.TryGetOverlay("1HST2", out overlay);
+            }
+            else
+            {
+                // 2H-weapon
+                weapon = new ItemInst(ItemDef.Get<ItemDef>( WeaponCodes_2H[random.Next(0, WeaponCodes_2H.Count)] ));
+                overlayExists = npcInst.Model.TryGetOverlay("2HST1", out overlay);
+            }
+
+            // ranged weapon
+            if (random.Next(0, 2) == 0)
+            {
+                // bow
+                rangeWeapon = new ItemInst(ItemDef.Get<ItemDef>( WeaponCodes_Bow[random.Next(0, WeaponCodes_Bow.Count)] ));
+                ammo = new ItemInst(ItemDef.Get<ItemDef>( AmmoCodes_Bow[random.Next(0, AmmoCodes_Bow.Count)] ));
+            }
+            else
+            {
+                // crossbow
+                rangeWeapon = new ItemInst(ItemDef.Get<ItemDef>( WeaponCodes_Crossbow[random.Next(0, WeaponCodes_Crossbow.Count)] ));
+                ammo = new ItemInst(ItemDef.Get<ItemDef>( AmmoCodes_Crossbow[random.Next(0, AmmoCodes_Crossbow.Count)] ));
+            }
+
+            ammoAmount = random.Next(10, 500 + 1);
+            ammo.BaseInst.SetAmount(ammoAmount);
+
+            npcInst.AddItem(weapon);
+            npcInst.EquipItem(weapon); // 1 = DrawnWeapon
+
+            npcInst.AddItem(rangeWeapon);
+            npcInst.EquipItem(rangeWeapon);
+
+            npcInst.AddItem(ammo);
+            npcInst.EquipItem(ammo);
+
+            npcInst.AddItem(armor);
+            npcInst.EquipItem(armor);
+
+            if (overlayExists) { npcInst.ApplyOverlay(overlay); }
+
+            npcInst.Spawn(WorldSystem.WorldInst.Current, 
+                spawnPosition, new Types.Vec3f(1f, 0f, 0f));
+
+            return npcInst;
         }
 
     }

@@ -17,24 +17,33 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
         new public static readonly string _staticName = "SimpleAIPersonality (static)";
 
 
+        
+        // maps VobInst to GuideCmd which is used by the GUC to let clients calculate 
+        // movement paths to a destination and guide the vob to it
+        protected Dictionary<VobInst, GUC.WorldObjects.VobGuiding.GuideCmd> guideCmdByVobInst =
+            new Dictionary<VobInst, WorldObjects.VobGuiding.GuideCmd>() { };
 
-        // is not null if there is a guide command active to automatically
-        // guide the vobs / npcs to  a specified destination
-        protected GUC.WorldObjects.VobGuiding.GuideCmd guideCommand;
-
-        protected float attackRadius;
-        public float AttackRadius { get { return this.attackRadius; } }
-        public void SetAttackRadius (float value)
+        protected float aggressionRadius;
+        public float AggressionRadius { get { return this.aggressionRadius; } }
+        public void SetAggressionRadius (float value)
         {
-            this.attackRadius = value;
+            this.aggressionRadius = value;
+        }
+
+        protected float turnAroundVelocity;
+        public float TurnAroundVelocity { get { return this.turnAroundVelocity; } }
+        public void SetAroundTurnVelocity (float value)
+        {
+            this.turnAroundVelocity = value;
         }
 
 
 
-        public SimpleAIPersonality (float attackRadius)
+        public SimpleAIPersonality (float aggressionRadius, float turnAroundVelocity)
         {
             SetObjName("SimpleAIPersonality (default)");
-            this.attackRadius = attackRadius;
+            this.aggressionRadius = aggressionRadius;
+            this.turnAroundVelocity = turnAroundVelocity;
         }
 
 
@@ -43,6 +52,8 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
         {
             this.aiMemory = aiMemory ?? new AIMemory();
             this.aiRoutine = aiRoutine ?? new SimpleAIRoutine();
+            this.lastTick = DateTime.Now;
+            this.guideCmdByVobInst = new Dictionary<VobInst, WorldObjects.VobGuiding.GuideCmd>() { };
         }
 
 
@@ -50,10 +61,35 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
         
         // utility
 
-        public bool TryFindClosestTarget (VobInst vob, AITarget aiTarget, out VobInst closestTarget)
+        public static bool TryFindClosestTarget (VobInst vob, AITarget aiTarget, out VobInst closestTarget)
         {
             closestTarget = null;
-            List<VobInst> vobTargets = aiTarget.vobTargets;
+            List<VobInst> vobTargets = aiTarget.VobTargets;
+            int closestTargetIndex = -1;
+            float closestTargetRange = float.MaxValue;
+            float currTargetRange = float.MaxValue;
+
+            for (int t = 0; t < vobTargets.Count; t++)
+            {
+                currTargetRange = vob.GetPosition().GetDistance(vobTargets[t].GetPosition());
+                if (currTargetRange <= closestTargetRange)
+                {
+                    closestTargetIndex = t;
+                    closestTargetRange = currTargetRange;
+                }
+            }
+
+            if (closestTargetIndex == -1) { return false; }
+            else
+            {
+                closestTarget = vobTargets[closestTargetIndex];
+                return true;
+            }
+        }
+
+        public static bool TryFindClosestTarget (VobInst vob, List<VobInst> vobTargets, out VobInst closestTarget)
+        {
+            closestTarget = null;
             int closestTargetIndex = -1;
             float closestTargetRange = float.MaxValue;
             float currTargetRange = float.MaxValue;
@@ -96,14 +132,30 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             throw new NotImplementedException();
         }
 
+        public void GoTo (VobInst guided, Vec3f position)
+        {
+            // initialize new guide and remove old one from GUC-memory automatically
+            AI.GuideCommands.GoToPosCommand cmd = new AI.GuideCommands.GoToPosCommand(position);
+            guided.BaseInst.SetGuideCommand(cmd);
+            // replace possible old guide from script-memory or insert new value
+            guideCmdByVobInst[guided] = cmd;
+        }
+
+        public void GoTo (VobInst guided, VobInst target)
+        {
+            // initialize new guide and remove old one from GUC-memory automatically
+            AI.GuideCommands.GoToVobCommand cmd = new AI.GuideCommands.GoToVobCommand(target);
+            guided.BaseInst.SetGuideCommand(cmd);
+            // replace possible old guide from script-memory or insert new value
+            guideCmdByVobInst[guided] = cmd;
+        }
+        
         public void GoTo (AIAgent aiAgent, Vec3f position)
         {
             List<VobInst> aiClients = aiAgent.AIClients;
             for (int i = 0; i < aiClients.Count; i++)
             {
-                AI.GuideCommands.GoToPosCommand cmd = new AI.GuideCommands.GoToPosCommand(position);
-                aiClients[i].BaseInst.SetGuideCommand(cmd);
-                guideCommand = cmd;
+                GoTo(aiClients[i], position);
             }
         }
 
@@ -112,15 +164,22 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             List<VobInst> aiClients = aiAgent.AIClients;
             for (int i = 0; i < aiClients.Count; i++)
             {
-                AI.GuideCommands.GoToVobCommand cmd = new AI.GuideCommands.GoToVobCommand(target);
-                aiClients[i].BaseInst.SetGuideCommand(cmd);
-                guideCommand = cmd;
+                GoTo(aiClients[i], target);
             }
         }
 
-        public void Follow (AIAgent aiAgent, AITarget aiTarget)
+        public void GoTo (AIAgent aiAgent, AITarget aiTarget)
         {
-            throw new NotImplementedException();
+            // let each client follow its nearest VobInst from aiTarget respectively
+            List<VobInst> followers = aiAgent.AIClients;
+            VobInst closestTarget = null;
+            for (int f = 0; f < followers.Count; f++)
+            {
+                if (TryFindClosestTarget(followers[f], aiTarget, out closestTarget))
+                {
+                    GoTo(followers[f], closestTarget);
+                }
+            }
         }
 
         public void Jump (AIAgent aiAgent, int forwardVelocity, int upVelocity)
@@ -133,9 +192,18 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             throw new NotImplementedException();
         }
 
+        public void TurnAround (VobInst guided, Vec3f direction, float angularVelocity)
+        {
+            guided.BaseInst.SetDirection(direction);
+        }
+
         public void TurnAround (AIAgent aiAgent, Vec3f direction, float angularVelocity)
         {
-            throw new NotImplementedException();
+            List<VobInst> aiClients = aiAgent.AIClients;
+            for (int c = 0; c < aiClients.Count; c++)
+            {
+                TurnAround(aiClients[c], direction, angularVelocity);
+            }
         }
 
 
@@ -159,42 +227,50 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             // e.g. take weapons, animation movements into account
             float fightDistance = totalRadius;
 
-            if (distance <= totalRadius)
+            if (aggressorType == typeof(NPCInst))
             {
-                if (aggressorType == typeof(NPCInst))
+                NPCInst aggressorNPC = (NPCInst) aggressor;
+
+                if (aggressorNPC.DrawnWeapon == null)
                 {
-                    NPCInst aggressorNPC = (NPCInst) aggressor;
+                    // TODO: draw weapon first if necessary
+                }
+
+                if (distance > totalRadius)
+                {
+                    // approach first to be able to strike at closer distance
+                    Print(aggressor.GetObjName() + " approaches " + target.GetObjName());
+                    GoTo(aggressor, target);
+                }
+                else
+                {
+                    // close enough to strike target
+                    Print(aggressor.GetObjName() + " attacks " + target.GetObjName());
 
                     // do not interrupt an ongoing fight ani
                     if (aggressorNPC.GetFightAni() != null) { return; }
 
-                    if (aggressorNPC.DrawnWeapon == null)
-                    {
-                        // TODO: draw weapon first if necessary
-                    }
-
                     Visuals.ScriptAniJob scriptAniJob;
                     aggressorNPC.Model.TryGetAniJob((int) Visuals.SetAnis.Attack1HFwd1, out scriptAniJob);
                     if (scriptAniJob != null)
-                    {                                       
-                        aggressorNPC.
-                        Print("npc.IsSpawned = " + npc.GetPosition());
+                    {
+                        aggressorNPC.StartAnimation(scriptAniJob.BaseAniJob.DefaultAni);
                     }
                 }
-                else
-                {
-                    // do nothiing you liveless object!!
-                }
+            }
+            else
+            { 
+                // Do nothing, you lifeless object ! 
             }
         }
 
         public void Attack (AIAgent aiAgent, AITarget aiTarget)
         {
             List<VobInst> aiClients = aiAgent.AIClients;
-            List<VobInst> targets = aiTarget.vobTargets;
+            List<VobInst> targets = aiTarget.VobTargets;
             VobInst closestTarget = null;
 
-            if (aiTarget.vobTargets.Count < 1) { return; }
+            if (aiTarget.VobTargets.Count < 1) { return; }
 
             // for now, let each aiClient attack its closest foe
             for (int c = 0; c < aiClients.Count; c++)
@@ -241,39 +317,27 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
         public override void MakeActiveObservation (AIAgent aiAgent)
         {
             List<VobInst> aiClients = aiAgent.AIClients;
-            NPCInst npc;
+            VobInst currVob;
             List<VobInst> enemies = new List<VobInst>();
 
             for (int c = 0; c < aiClients.Count; c++)
             {
                 if (aiClients[c].GetType() == typeof(NPCInst))
                 {
-                    npc = (NPCInst) aiClients[c];
-                    if (npc == null) { Print("npc == null");  return; }
-                    if (npc.BaseInst == null) { Print("npc.BaseInst == null");  return; }
-                    if (npc.BaseInst.World == null) { Print("npc.BaseInst.World == null");  return; }
-                    if (npc.BaseInst.World.ScriptObject == null) { Print("npc.BaseInst.World.ScriptObject == null");  return; }
-                    if (npc.World == null) { Print("npc.World == null");  return; }
-                    if (npc.World.BaseWorld == null) { Print("npc.World.BaseWorld == null"); return; }
-                    Print("OINK");
+                    currVob = aiClients[c];
 
-                    npc.World.BaseWorld.ForEachNPCRough(npc.BaseInst, attackRadius, 
+                    // find all enemies in the radius of aggression
+                    currVob.World.BaseWorld.ForEachNPCRough(currVob.BaseInst, aggressionRadius, 
                         delegate (WorldObjects.NPC nearNPC)
                     {
-                        if (aiAgent.HasAIClient(nearNPC))
+                        if (!aiAgent.HasAIClient(nearNPC))
                         {
                             enemies.Add((VobInst) nearNPC.ScriptObject);
                         }
-                        //// mark every player a threat / enemy
-                        //if (nearNPC.IsPlayer)
-                        //{
-                        //    enemies.Add((VobInst) nearNPC.ScriptObject);
-                        //}
                     });
                 }
             }
 
-            //Print(enemies.Count);
             if (enemies.Count > 0)
             {
                 aiMemory.AddAIObservation(new EnemyAIObservation(new AITarget(enemies)));
@@ -283,63 +347,65 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
         public override void ProcessActions (AIAgent aiAgent)
         {
             List<BaseAIAction> aiActions = aiMemory.GetAIActions();
-            BaseAIAction aiAction = null;
 
-            for (int i = 0; i < aiActions.Count; i++)
+            if (aiActions.Count < 1) { return; }
+
+            BaseAIAction aiAction = aiActions[0]; // current action
+            AIActions.Enumeration.AiActionType actionType = aiAction.ActionType;
+
+            switch (actionType)
             {
-                aiAction = aiActions[i];
-                // attack if there is a spotted enemy nearby
-                if (aiAction.GetType() == typeof(AttackAIAction))
-                {
-                    // do not control again, if enemy is still in radius
-                    // simply attack the calculated nearest enemy
-                    List<VobInst> aiClients = aiAgent.AIClients;
-                    List<VobInst> enemies = aiAction.AITarget.vobTargets;
-                    NPCInst npc;
-                    
-                    if (enemies.Count < 1) { break; }
-
-                    for (int c = 0; c < aiClients.Count; c++)
-                    {
-                        // simply hit the enemy by magical means without necessary physical contact :D
-                        if (aiClients[c].GetType() == typeof(NPCInst))
-                        {
-                            npc = (NPCInst) aiClients[c];
-                            for (int e = 0; e < enemies.Count; e++)
-                            {
-                                try
-                                {
-                                    //((NPCInst) enemies[e]).Hit(npc, 1);
-                                    //Print(">>>>>> BAAAAAAAM! <<<<<<");
-                                    //WorldObjects.NPC.ActiveAni jumpAni = npc.GetJumpAni();
-                                    //if (jumpAni != null)
-                                    //{
-                                    //    npc.StartAniJump((Visuals.ScriptAni) jumpAni.Ani.AniJob, 0, 10);
-                                    //}
-
-                                    Visuals.ScriptAniJob scriptAniJob;
-                                    npc.Model.TryGetAniJob((int) Visuals.SetAnis.JumpFwd, out scriptAniJob);
-                                    if (scriptAniJob != null)
-                                    {
-                                        if (npc.GetJumpAni() != null) { continue; }
-                                        
-                                        npc.StartAniJump(scriptAniJob.DefaultAni, 50, 50);
-                                        Print("npc.IsSpawned = " + npc.GetPosition());
-                                    }
-                                    
-                                    // !!! TO DO !!!
-                                    // go to enemy or prepare attack (draw weapon) 
-                                    // or start / proceeed attack animation
-                                }
-                                catch (Exception ex)
-                                {
-                                    MakeLogWarning(ex);
-                                }
-                            }
-                        }
-                    }
-                }
+                case AIActions.Enumeration.AiActionType.GoToAIAction:
+                    GoTo(aiAgent, aiAction.AITarget);
+                    break;
+                case AIActions.Enumeration.AiActionType.FollowAIAction:
+                    GoTo(aiAgent, aiAction.AITarget);
+                    break;
+                case AIActions.Enumeration.AiActionType.AttackAIAction:
+                    Attack(aiAgent, aiAction.AITarget);
+                    break;
             }
+
+            //for (int i = 0; i < aiActions.Count; i++)
+            //{
+            //    aiAction = aiActions[i];
+                // attack if there is a spotted enemy nearby
+                //if (aiAction.GetType() == typeof(AttackAIAction))
+                //{
+                    //// do not control again, if enemy is still in radius
+                    //// simply attack the calculated nearest enemy
+                    //List<VobInst> aiClients = aiAgent.AIClients;
+                    //List<VobInst> enemies = aiAction.AITarget.vobTargets;
+                    //NPCInst npc;
+                    
+                    //if (enemies.Count < 1) { break; }
+
+                    //for (int c = 0; c < aiClients.Count; c++)
+                    //{
+                    //    // simply hit the enemy by magical means without necessary physical contact :D
+                    //    if (aiClients[c].GetType() == typeof(NPCInst))
+                    //    {
+                    //        npc = (NPCInst) aiClients[c];
+                    //        try
+                    //        {
+                    //            Visuals.ScriptAniJob scriptAniJob;
+                    //            npc.Model.TryGetAniJob((int) Visuals.SetAnis.JumpFwd, out scriptAniJob);
+                    //            if (scriptAniJob != null)
+                    //            {
+                    //                if (npc.GetJumpAni() != null) { continue; }
+
+                    //                npc.StartAniJump(scriptAniJob.DefaultAni, 50, 50);
+                    //                Print("npc.IsSpawned = " + npc.GetPosition());
+                    //            }
+                    //        }
+                    //        catch (Exception ex)
+                    //        {
+                    //            MakeLogWarning(ex);
+                    //        }
+                    //    }
+                    //}
+                //}
+            //}
         }
 
         public override void ProcessObservations (AIAgent aiAgent)
@@ -348,55 +414,25 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             if (aiAgent.AIClients.Count < 1) { return; }
 
             List<BaseAIObservation> aiObservations = aiMemory.GetAIObservations();
-            AITarget enemies = null;
+            List<VobInst> enemies = new List<VobInst>();
 
+            // search all observations for enemies nearby and add them to the list of targets
             for (int i = 0; i < aiObservations.Count; i++)
             {
                 if (aiObservations[i].GetType() == typeof(EnemyAIObservation))
                 {
-                    enemies = aiObservations[i].AITarget;
-                    break;
+                    enemies.AddRange(aiObservations[i].AITarget.VobTargets);
                 }
             }
 
-            if (enemies != null)
+            // reset the observations after retrieving all necessary info
+            aiObservations.Clear();
+
+            if (enemies.Count > 0)
             {
-                // find enemy who is closest to arithm. center of aiClient-group
-                List<VobInst> aiClients = aiAgent.AIClients;
-                List<VobInst> enemyVobs = enemies.vobTargets;
-                int closestEnemyIndex = -1;
-                float closestEnemyRange = float.MaxValue;
-                float tempRange = 0f;
-                Types.Vec3f tempPosition;
-                Types.Vec3f aiClientCenter = new Types.Vec3f(0f, 0f, 0f);
-
-                foreach (VobInst aiClient in aiClients)
-                {
-                    aiClientCenter += aiClient.GetPosition();
-                }
-                aiClientCenter.X /= (float) aiClients.Count;
-                aiClientCenter.Y /= (float) aiClients.Count;
-                aiClientCenter.Z /= (float) aiClients.Count;
-                
-                for (int e = 0; e < enemyVobs.Count; e++)
-                {
-                    tempPosition = enemyVobs[e].GetPosition();
-                    tempRange = tempPosition.GetDistance(aiClientCenter);
-
-                    if (tempRange < closestEnemyRange)
-                    {
-                        closestEnemyRange = tempRange;
-                        closestEnemyIndex = e;
-                    }
-                }
-                
-                // formulate action to attack closest enemy, overriding all previous actions
-                if (closestEnemyIndex > -1)
-                {
-                    List<BaseAIAction> newAIActions = new List<BaseAIAction> { new AttackAIAction(
-                        new AITarget( enemies.vobTargets[closestEnemyIndex] )) };
+                List<BaseAIAction> newAIActions = new List<BaseAIAction> { new AttackAIAction(
+                        new AITarget( enemies )) };
                     aiMemory.SetAIActions(newAIActions);
-                }
             }
         }
 
