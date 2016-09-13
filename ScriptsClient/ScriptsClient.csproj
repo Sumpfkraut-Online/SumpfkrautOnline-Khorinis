@@ -147,6 +147,8 @@
     <Compile Include="Left4Gothic\L4Client.Client.cs" />
     <Compile Include="Sumpfkraut\AI\GuideCommands\GoToPosCommand.Client.cs" />
     <Compile Include="Sumpfkraut\AI\GuideCommands\GoToVobCommand.Client.cs" />
+    <Compile Include="Sumpfkraut\Controls\KeyBinds.cs" />
+    <Compile Include="Sumpfkraut\Controls\PlayerControl.cs" />
     <Compile Include="Sumpfkraut\GUI\GUCInventory.cs" />
     <Compile Include="Sumpfkraut\GUI\MainMenu\MainMenuButton.cs" />
     <Compile Include="Sumpfkraut\GUI\MainMenu\MainMenuCharacter.cs" />
@@ -155,12 +157,13 @@
     <Compile Include="Sumpfkraut\GUI\MainMenu\MainMenuItem.cs" />
     <Compile Include="Sumpfkraut\GUI\MainMenu\MainMenuTextBox.cs" />
     <Compile Include="GUCScripts.Client.cs" />
-    <Compile Include="Sumpfkraut\InputControl.cs" />
+    <Compile Include="Sumpfkraut\Controls\InputControl.cs" />
     <Compile Include="Sumpfkraut\Menus\AnimationMenu.cs" />
     <Compile Include="Sumpfkraut\Menus\DropItemMenu.cs" />
     <Compile Include="Sumpfkraut\Menus\GUCMenu.cs" />
     <Compile Include="Sumpfkraut\Menus\MainMenus\CharCreationMenu.cs" />
     <Compile Include="Sumpfkraut\Menus\MainMenus\CharSelMenu.cs" />
+    <Compile Include="Sumpfkraut\Options\ClientOptions.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\ProjInst.Client.cs" />
     <Compile Include="Sumpfkraut\Menus\MainMenus\ExitMenu.cs" />
     <Compile Include="Sumpfkraut\Menus\MainMenus\GUCMainMenu.cs" />

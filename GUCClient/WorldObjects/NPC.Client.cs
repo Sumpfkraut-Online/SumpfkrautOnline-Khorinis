@@ -206,6 +206,7 @@ namespace GUC.WorldObjects
         public partial interface IScriptNPC : IScriptVob
         {
             void SetMovement(NPCMovement state);
+            void OnTick(long now);
         }
 
         #endregion
@@ -402,7 +403,7 @@ namespace GUC.WorldObjects
             base.OnTick(now);
             this.Model.UpdateAnimations(now);
 
-            //this.ScriptObject.OnTick(now);
+            this.ScriptObject.OnTick(now);
 
             if (!this.IsDead && this.Model.GetActiveAniFromLayerID(1) == null)
             {
@@ -439,6 +440,12 @@ namespace GUC.WorldObjects
                         break;
                 }
             }
+        }
+
+        public override void Throw(Vec3f velocity)
+        {
+            var aiVel = new zVec3(this.gVob.HumanAI.Address + 0x90);
+            base.Throw((Vec3f)aiVel + velocity);
         }
     }
 }

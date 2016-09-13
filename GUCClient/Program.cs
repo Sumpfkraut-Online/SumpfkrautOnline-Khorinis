@@ -11,6 +11,7 @@ using WinApi;
 using GUC.Hooks;
 using System.Reflection;
 using System.Management;
+using System.Runtime.Serialization;
 
 namespace GUC
 {
@@ -32,6 +33,11 @@ namespace GUC
         public static ushort ServerPort { get { return serverPort; } }
         public static string Password { get { return password; } }
 
+        public static string GetFullPath(string path)
+        {
+            return Path.Combine(projectPath, path);
+        }
+
         public static string GetFullPath(params string[] paths)
         {
             return Path.Combine(projectPath, Path.Combine(paths));
@@ -42,9 +48,9 @@ namespace GUC
             gothicPath = Environment.GetEnvironmentVariable("GUCGothicPath");
             if (string.IsNullOrWhiteSpace(gothicPath) || !Directory.Exists(gothicPath))
                 throw new Exception("Gothic folder environment variable is null or not found!");
-            
+
             projectPath = Environment.GetEnvironmentVariable("GUCProjectPath");
-            
+
             if (string.IsNullOrWhiteSpace(projectPath) || !Directory.Exists(projectPath))
                 throw new Exception("Project folder environment variable is null or not found!");
 
@@ -77,7 +83,6 @@ namespace GUC
 
             return Assembly.LoadFrom(Path.Combine(projectPath, name + ".dll"));
         }
-        
 
         static bool mained = false;
         public static int Main(string message)
@@ -105,7 +110,7 @@ namespace GUC
                 hPlayerVob.AddHooks();
                 hView.AddHooks();
                 hNpc.AddHooks();
-                
+
                 #region Some more editing
 
                 Process.Write(new byte[] { 0xEB, 0x15 }, 0x006B5A44); // don't start falling animation
@@ -148,7 +153,7 @@ namespace GUC
                 //Process.VirtualProtect(0x007792E0, 40);
                 Process.Write(new byte[] { 0x33, 0xC0, 0xC2, 0x04, 0x00 }, 0x007792E0);//Block deleting of dead characters!
 
-                Process.Write(new byte[] { 0xB8, 0x01, 0x00, 0x00, 0x00, 0xC3 }, 0x7425A0); // oCNpc::IsAPlayer always true
+                //Process.Write(new byte[] { 0xB8, 0x01, 0x00, 0x00, 0x00, 0xC3 }, 0x7425A0); // oCNpc::IsAPlayer always true, DON'T DO THIS or bullshit will happen (like getting the hero's focus mode resetted because another npc sets his weaponmode)
                 Process.Write(new byte[] { 0x31, 0xC0, 0xC3 }, 0x76D8A0); // oCNpc_States::IsInRoutine always false
 
                 Process.Write(new byte[] { 0xEB, 0x21 }, 0x69C247); // oCAIHuman::DoAI -> skip perception check
@@ -183,7 +188,7 @@ namespace GUC
             zCOption.Save(zString.Create("Gothic.ini")); // don't dispose this zString or crashes will happen
             //Process.CDECLCALL<NullReturnCall>(0x00425F30); // ExitGameFunc
         }
-        
+
         public static string GetSignature(uint y)
         {
             ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM Win32_DiskDrive");

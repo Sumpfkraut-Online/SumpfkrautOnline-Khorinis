@@ -67,6 +67,7 @@ namespace GUC.Network
         VobSpawnMessage, // for spawning a vob in the world
         VobDespawnMessage, // for despawning a vob in the world
         VobPosDirMessage, // updating position and direction of a vob
+        VobThrowMessage,
 
         // models
         ModelAniStartMessage,

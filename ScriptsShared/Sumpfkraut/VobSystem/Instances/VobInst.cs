@@ -5,8 +5,7 @@ using System.Text;
 using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.WorldObjects;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
-using GUC.Models;
-
+using GUC.Types;
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class VobInst : BaseVobInst, Vob.IScriptVob
@@ -37,5 +36,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #endregion
 
+        public void Throw(Vec3f velocity)
+        {
+            this.BaseInst.Throw(velocity);
+        }
     }
 }

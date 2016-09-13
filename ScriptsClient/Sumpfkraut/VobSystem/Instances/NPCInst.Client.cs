@@ -227,18 +227,18 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public void OnTick(long now)
         {
-            /*if (this.BaseInst.IsDead)
+            if (this.IsDead)
                 return;
 
             UpdateFightStance();
 
-            var fightAni = (ScriptAniJob)this.GetFightAni()?.Ani.AniJob.ScriptObject;
+            /*var fightAni = (ScriptAniJob)this.GetFightAni()?.Ani.AniJob.ScriptObject;
             if (fightAni != null && fightAni.IsAttack)
             {
                 this.BaseInst.gVob.AniCtrl.ShowWeaponTrail();
-            }
+            }*/
 
-            var activeJumpAni = GetJumpAni();
+            /*var activeJumpAni = GetJumpAni();
             if (activeJumpAni != null && activeJumpAni.GetPercent() >= 0.2f)
             {
                 var gVob = this.BaseInst.gVob;
@@ -249,9 +249,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     int id = this.Movement == MoveState.Forward ? ai._t_jump_2_runl : ai._t_jump_2_stand;
                     ai.LandAndStartAni(gVob.GetModel().GetAniFromAniID(id));
                 }
-            }
+            }*/
 
-            if (this.drawnWeapon != null)
+            /*if (this.drawnWeapon != null)
             {
                 var gModel = this.BaseInst.gVob.GetModel();
 

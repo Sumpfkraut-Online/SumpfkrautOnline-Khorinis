@@ -8,7 +8,7 @@ namespace GUC
 {
     public static class Randomizer
     {
-        static readonly Random rand = new Random(42);
+        static readonly Random rand = new Random("Scavenger".GetHashCode());
 
         /// <summary>
         /// Gibt eine nicht negative Zufallszahl zurück.

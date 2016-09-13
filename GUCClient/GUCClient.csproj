@@ -151,6 +151,9 @@
     <Compile Include="..\GUCShared\Utilities\Threading\Runnable.cs">
       <Link>Utilities\Threading\Runnable.cs</Link>
     </Compile>
+    <Compile Include="..\GUCShared\Utilities\XMLHelper.cs">
+      <Link>Utilities\XMLHelper.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\WorldObjects\BaseVob.cs">
       <Link>WorldObjects\BaseVob.cs</Link>
     </Compile>
@@ -287,6 +290,7 @@
     <Compile Include="Hooks\hWeather.cs" />
     <Compile Include="Hooks\hBarrier.cs" />
     <Compile Include="Hooks\hFile.cs" />
+    <Compile Include="Hooks\VDFS\hFileSystem.cs" />
     <Compile Include="InputHandler.cs" />
     <Compile Include="Models\Model.Client.cs" />
     <Compile Include="Models\ModelInstance.Client.cs" />
@@ -391,6 +395,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

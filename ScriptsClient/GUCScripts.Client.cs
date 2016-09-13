@@ -36,7 +36,7 @@ namespace GUC.Scripts
         public void Update(long ticks)
         {
             GUCMenu.UpdateMenus(ticks);
-            Sumpfkraut.InputControl.Update(ticks);
+            Sumpfkraut.Controls.InputControl.Update(ticks);
             //CheckMusic();
         }
 
@@ -45,16 +45,17 @@ namespace GUC.Scripts
             //WinApi.Process.Write(new byte[] { 0xE9, 0x99, 0x04, 0x00, 0x00 }, 0x0067836C); // always do T_GOTHIT instead of T_STUMBLE/B when getting hit
 
             Left4Gothic.CharCreationMenu.Menu.Open();
-            Sumpfkraut.InputControl.Init();
+            Sumpfkraut.Controls.InputControl.Init();
+            
 
             Logger.Log("Outgame started.");
         }
 
         public void StartIngame()
         {
-            Sumpfkraut.InputControl.Init();
+            Sumpfkraut.Controls.InputControl.Init();
 
-            Gothic.Objects.oCNpcFocus.SetFocusMode(0);
+            Gothic.Objects.oCNpcFocus.SetFocusMode(1);
             GUCMenu.CloseActiveMenus();
             Ingame = true;
             Logger.Log("Ingame started.");

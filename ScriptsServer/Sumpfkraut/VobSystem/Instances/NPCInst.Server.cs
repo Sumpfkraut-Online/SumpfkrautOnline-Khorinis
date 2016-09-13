@@ -66,6 +66,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 return;
 
             this.ModelInst.StartAnimation(job);
+            Vec3f velocity = this.GetDirection();
+            velocity.Y = 500;
+            velocity.X *= 250;
+            velocity.Z *= 250;
+            this.Throw(velocity);
         }
 
         #endregion

@@ -10,6 +10,7 @@ namespace WinApi.User.Enumeration
     public enum VirtualKeys
         : ushort
     {
+        None = 0x00,
         /// <summary></summary>
         LeftButton = 0x01,
         /// <summary></summary>

@@ -412,6 +412,9 @@ namespace GUC.Network
                 case ServerMessages.VobPosDirMessage:
                     BaseVob.Messages.ReadPosDirMessage(stream);
                     break;
+                case ServerMessages.VobThrowMessage:
+                    Vob.Messages.ReadThrow(stream);
+                    break;
 
                 // NPC Messages
                 case ServerMessages.NPCPosDirMessage:
@@ -436,6 +439,23 @@ namespace GUC.Network
                     break;
                 case ServerMessages.ModelOverlayRemoveMessage:
                     Model.Messages.ReadOverlay(stream, false);
+                    break;
+
+                // vob guiding
+                case ServerMessages.GuideAddCmdMessage:
+                    GuidedVob.Messages.ReadGuideAddCmdMessage(stream);
+                    break;
+                case ServerMessages.GuideAddMessage:
+                    GuidedVob.Messages.ReadGuideAddMessage(stream);
+                    break;
+                case ServerMessages.GuideRemoveCmdMessage:
+                    GuidedVob.Messages.ReadGuideRemoveCmdMessage(stream);
+                    break;
+                case ServerMessages.GuideRemoveMessage:
+                    GuidedVob.Messages.ReadGuideRemoveMessage(stream);
+                    break;
+                case ServerMessages.GuideSetCmdMessage:
+                    GuidedVob.Messages.ReadGuideSetCmdMessage(stream);
                     break;
 
                 default:

@@ -9,9 +9,100 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Scripts.Sumpfkraut.Visuals;
+using GUC.Utilities;
 
 namespace GUC.Scripts
 {
+
+    interface IProbabilityItems
+    {
+        List<ItemInst> GetItems();
+    }
+
+    class ProbItemGroup : IProbabilityItems
+    {
+        public struct BucketPair
+        {
+            public IProbabilityItems Bucket;
+            public float Probability;
+        }
+
+        public List<BucketPair> pairs = new List<BucketPair>();
+
+        public void Add(IProbabilityItems item, float probability)
+        {
+            BucketPair pair = new BucketPair();
+            pair.Bucket = item;
+            pair.Probability = probability;
+            pairs.Add(pair);
+        }
+
+        public virtual List<ItemInst> GetItems()
+        {
+            List<ItemInst> result = new List<ItemInst>();
+            foreach (BucketPair pair in pairs)
+            {
+                if (pair.Probability == 1.0f || Randomizer.GetDouble() >= pair.Probability)
+                {
+                    result.AddRange(pair.Bucket.GetItems());
+                }
+            }
+            return result;
+        }
+    }
+
+    class ProbItemGroupSingle : ProbItemGroup  // gibt ein item von vielen zurück
+    {
+        public override List<ItemInst> GetItems()
+        {
+            double prob = Randomizer.GetDouble();
+            foreach (BucketPair pair in pairs)
+            {
+                if (prob < pair.Probability)
+                    return pair.Bucket.GetItems();
+                prob -= pair.Probability;
+            }
+            throw new Exception("Sum of all probabilities is < 1!");
+        }
+    }
+
+    class ProbItem : IProbabilityItems // gibt ein item zufälliger anzahl zurück
+    {
+        public ItemDef itemDef;
+
+        public int minAmount = 1; // 1 bis maxAmount
+        public int maxAmount = 1; // minAmount bis unendlich
+        public double exponent = 1; // Exponent der Wahrscheinlichkeit für exponentielle Verteilung
+
+        public ProbItem(ItemDef def, int min = 1, int max = 1, double expo = 1)
+        {
+            this.itemDef = def;
+            this.minAmount = min;
+            this.maxAmount = max;
+            this.exponent = expo;
+        }
+
+        public List<ItemInst> GetItems()
+        {
+            int amount;
+            int diff = maxAmount - minAmount;
+            if (diff > 0)
+            {
+                amount = minAmount + (int)(diff * Math.Pow(Randomizer.GetDouble(), exponent));
+            }
+            else
+            {
+                amount = minAmount;
+            }
+
+            ItemInst inst = new ItemInst(itemDef);
+            inst.SetAmount(amount);
+            return new List<ItemInst>() { inst };
+        }
+    }
+
+
+
     public partial class GUCScripts : ScriptInterface
     {
         public GUCScripts()
@@ -92,7 +183,7 @@ namespace GUC.Scripts
             WorldInst.Current.Create();
             WorldInst.Current.Clock.SetTime(new Types.WorldTime(0, 8), 10.0f);
             WorldInst.Current.Clock.Start();
-            
+
             for (int i = 0; i < WorldObjects.Instances.BaseVobInstance.GetCount(); i++)
             {
                 BaseVobInst inst;
@@ -104,9 +195,10 @@ namespace GUC.Scripts
                     else if (def is NPCDef)
                         inst = new NPCInst((NPCDef)def);
                     else continue;
+
+                    ((WorldObjects.VobGuiding.GuidedVob)inst.BaseInst).SetNeedsClientGuide(true);
+                    inst.Spawn(WorldInst.Current, Randomizer.GetVec3fRad(new Types.Vec3f(0, 1500, 0), 30000), Randomizer.GetVec3fRad(new Types.Vec3f(0, 0, 0), 1).Normalise());
                 }
-                else continue;
-                inst.Spawn(WorldInst.Current, Utilities.Randomizer.GetVec3fRad(new Types.Vec3f(0, 1000, 0), 10000), Utilities.Randomizer.GetVec3fRad(new Types.Vec3f(0, 0, 0), 1).Normalise());
             }
         }
 

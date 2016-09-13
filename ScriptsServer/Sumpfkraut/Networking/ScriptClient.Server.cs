@@ -40,7 +40,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking
             ScriptCommandMessageIDs id = (ScriptCommandMessageIDs)stream.ReadByte();
             switch (id)
             {
-                case ScriptCommandMessageIDs.Jump:
+                case ScriptCommandMessageIDs.JumpFwd:
                     npc.DoJump();
                     break;
                 case ScriptCommandMessageIDs.AttackForward:

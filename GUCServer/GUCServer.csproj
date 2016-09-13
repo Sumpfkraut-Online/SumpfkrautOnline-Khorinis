@@ -162,6 +162,9 @@
     <Compile Include="..\GUCShared\Utilities\Threading\Runnable.cs">
       <Link>Utilities\Threading\Runnable.cs</Link>
     </Compile>
+    <Compile Include="..\GUCShared\Utilities\XMLHelper.cs">
+      <Link>Utilities\XMLHelper.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\WorldObjects\BaseVob.cs">
       <Link>WorldObjects\BaseVob.cs</Link>
     </Compile>

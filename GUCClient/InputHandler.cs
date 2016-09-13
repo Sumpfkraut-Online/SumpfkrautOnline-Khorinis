@@ -5,9 +5,11 @@ using System.Text;
 using WinApi;
 using WinApi.User;
 using WinApi.User.Enumeration;
+using GUC.Utilities;
 
 namespace GUC
 {
+
     public static class InputHandler
     {
         static Dictionary<VirtualKeys, Action> gucKeys = new Dictionary<VirtualKeys, Action>()
@@ -54,23 +56,18 @@ namespace GUC
             },
             { VirtualKeys.F7, () =>
                 {
-                    var item = Gothic.Objects.oCItem.Create();
-                    item.ItemVisual.Set("ITFO_APPLE.3DS");
-                    item.Name.Set("APFEL");
-                    item.Instance = 1;
-                    Gothic.oCGame.GetWorld().AddVob(item);
-
-                    if (Network.GameClient.Client.Character != null)
+                    if (sword == null)
                     {
-                        using (var zvec = Network.GameClient.Client.Character.GetPosition().CreateGVec())
-                        {
-                            item.TrafoObjToWorld.Position = Network.GameClient.Client.Character.GetPosition().ToArray();
-                            item.SetPositionWorld(zvec);
-                        }
+                        sword = Gothic.Objects.oCItem.Create();
+                        sword.ItemVisual.Set("ItMw_060_2h_sword_01.3DS");
                     }
+                    if (WorldObjects.NPC.Hero != null)
+                    WorldObjects.NPC.Hero.gVob.PutInSlot(Gothic.Objects.oCNpc.NPCNodes.RightHand, sword, true);
+                    WorldObjects.NPC.Hero.gVob.ApplyOverlay("Humans_2hST2.mds");
                 }
             }
         };
+        static Gothic.Objects.oCItem sword;
 
         public static bool IsPressed(VirtualKeys key)
         {

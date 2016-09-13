@@ -16,6 +16,7 @@ namespace GUC.WorldObjects
 
         public partial interface IScriptVob : IScriptBaseVob
         {
+            void Throw(Vec3f velocity);
         }
         
         public new IScriptVob ScriptObject { get { return (IScriptVob)base.ScriptObject; } }
@@ -73,5 +74,11 @@ namespace GUC.WorldObjects
         }
 
         #endregion
+
+        partial void pThrow(Vec3f velocity);
+        public virtual void Throw(Vec3f velocity)
+        {
+            pThrow(velocity);
+        }
     }
 }
