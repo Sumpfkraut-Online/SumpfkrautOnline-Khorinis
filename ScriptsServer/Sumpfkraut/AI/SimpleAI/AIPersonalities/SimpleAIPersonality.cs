@@ -239,13 +239,13 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                 if (distance > totalRadius)
                 {
                     // approach first to be able to strike at closer distance
-                    Print(aggressor.GetObjName() + " approaches " + target.GetObjName());
+                    //Print(aggressor.GetObjName() + " approaches " + target.GetObjName());
                     GoTo(aggressor, target);
                 }
                 else
                 {
                     // close enough to strike target
-                    Print(aggressor.GetObjName() + " attacks " + target.GetObjName());
+                    //Print(aggressor.GetObjName() + " attacks " + target.GetObjName());
 
                     // do not interrupt an ongoing fight ani
                     if (aggressorNPC.GetFightAni() != null) { return; }

@@ -15,6 +15,9 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
         public static List<AIManager> aiManagers = new List<AIManager>();
         public static List<AIManager> aiManagers_SingleThreaded = new List<AIManager>();
 
+        protected bool isActive;
+        public bool IsActive { get { return isActive; } }
+
         protected bool useSingleThread = false;
         public void SetUseSingleThread (bool useSingleThread, bool restart = false)
         {
@@ -53,6 +56,32 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
 
 
 
+        public override void Abort ()
+        {
+            isActive = false;
+            if (!useSingleThread) { base.Abort(); }
+        }
+
+        public override void Resume ()
+        {
+            isActive = true;
+            if (!useSingleThread) { base.Resume(); }
+        }
+
+        public override void Start ()
+        {
+            isActive = true;
+            if (!useSingleThread) { base.Start(); }
+        }
+
+        public override void Suspend ()
+        {
+            isActive = false;
+            if (!useSingleThread) { base.Suspend(); }
+        }
+
+
+
         public void SubscribeAIManager ()
         {
             if (!aiManagers.Contains(this)) { aiManagers.Add(this); }
@@ -83,9 +112,12 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
 
         public static void RunAllSingleThreaded ()
         {
-            for (int i = 0; i < aiManagers.Count; i++)
+            for (int i = 0; i < aiManagers_SingleThreaded.Count; i++)
             {
-                aiManagers[i].Run();
+                if (aiManagers_SingleThreaded[i].IsActive)
+                {
+                    aiManagers_SingleThreaded[i].Run();
+                }
             }
         }
 

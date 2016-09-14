@@ -134,9 +134,7 @@ namespace GUC.Scripts.Sumpfkraut.AI
 
 
 
-
-            // multi-threaded AIManager-handling
-            AIManager aiManager01 = new AIManager(false, false, new TimeSpan(0, 0, 0, 0, 500));
+            AIManager aiManager01 = new AIManager(true, false, new TimeSpan(0, 0, 0, 0, 500));
             aiManager01.SetObjName("aiManager01");
             aiManager01.Start();
 
@@ -145,7 +143,7 @@ namespace GUC.Scripts.Sumpfkraut.AI
             List<NPCInst> dummyInstances = new List<NPCInst>();
             List<int> dummyIDs = new List<int>();
 
-            int spawnAmount = 100;
+            int spawnAmount = 50;
             int indexDigits = (int) Math.Floor(Math.Log10(50) + 1);
             Types.Vec3f[] spawnRange = new Types.Vec3f[] {
                 new Types.Vec3f(-2000f, 1000f, -2000f),
@@ -216,7 +214,12 @@ namespace GUC.Scripts.Sumpfkraut.AI
             //};
             //runTest.Start();
 
-
+            //string testJson = Newtonsoft.Json.JsonConvert.SerializeObject(new TestClass(999, 777));
+            ////Log.Logger.Log(testJson);
+            //TestClass testClass = Newtonsoft.Json.JsonConvert.DeserializeObject<TestClass>(testJson);
+            //Log.Logger.Log(testClass.ToString());
+            //Log.Logger.Log(testClass.PrivInt.ToString());
+            //Log.Logger.Log(testClass.pubInt.ToString());
         }
 
 
@@ -329,6 +332,26 @@ namespace GUC.Scripts.Sumpfkraut.AI
             return npcInst;
         }
 
+
+
+
+        //public class TestClass
+        //{
+
+        //    private int privInt;
+        //    public int PrivInt { get { return privInt; } }
+
+        //    [Newtonsoft.Json.JsonIgnore]
+        //    public int pubInt;
+
+        //    public TestClass (int privInt, int pubInt)
+        //    {
+        //        this.privInt = privInt;
+        //        this.pubInt = pubInt;
+        //    }
+
+        //}
+        
     }
 
 }

@@ -11,7 +11,7 @@ using GUC.Options;
 
 namespace GUC
 {
-    static class Program
+    public static class Program
     {
         class TimeStat
         {
@@ -58,6 +58,8 @@ namespace GUC
             }
         }
 
+
+        
         static Thread game;
         static Thread tcpListener;
         static void Main(string[] args)
@@ -87,6 +89,8 @@ namespace GUC
             Console.ReadLine();
         }
 
+        public delegate void OnTickEventHandler ();
+        public static event OnTickEventHandler OnTick;
         static void RunServer()
         {
             try
@@ -102,6 +106,8 @@ namespace GUC
                     timeAll.Start();
 
                     GameTime.Update();
+                    if (OnTick != null) { OnTick(); }
+
                     WorldObjects.World.ForEach(w => w.OnTick(GameTime.Ticks));
                     GUCTimer.Update(GameTime.Ticks); // move to new thread?
                     GameServer.Update(); //process received packets
