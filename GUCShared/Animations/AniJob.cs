@@ -101,10 +101,28 @@ namespace GUC.Animations
             }
         }
 
+        int layer = 1;
+        /// <summary>
+        /// Layer number, sync with Gothic's animations pls. [0..255]
+        /// Default is 1.
+        /// </summary>
+        public int Layer
+        {
+            get { return this.layer; }
+            set
+            {
+                CheckModelCreated();
+                if (value < 0 || value > byte.MaxValue)
+                    throw new ArgumentOutOfRangeException("Layer id needs to be in range of [0..255]! Is " + value);
+
+                this.layer = value;
+            }
+        }
+
         #endregion
 
         #region Validate Animation
-        
+
         void ValidateAnimation(Animation ani)
         {
             if (ani == null)
@@ -278,6 +296,7 @@ namespace GUC.Animations
         {
             base.ReadProperties(stream);
             this.Name = stream.ReadString();
+            this.Layer = stream.ReadByte();
 
             if (stream.ReadBit())
             {
@@ -313,7 +332,8 @@ namespace GUC.Animations
         protected override void WriteProperties(PacketWriter stream)
         {
             base.WriteProperties(stream);
-            stream.Write(this.Name);
+            stream.Write(this.name);
+            stream.Write((byte)this.layer);
             
             if (this.defaultAni == null)
             {

@@ -24,8 +24,6 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         Animation baseAni;
         public Animation BaseAni { get { return this.baseAni; } }
 
-        public int Layer { get { return this.baseAni.Layer; } set { this.baseAni.Layer = value; } }
-
         /// <summary> Frame speed </summary>
         public float FPS { get { return this.baseAni.FPS; } set { this.baseAni.FPS = value; } }
         

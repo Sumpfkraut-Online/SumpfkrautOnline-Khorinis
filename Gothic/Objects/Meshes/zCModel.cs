@@ -41,7 +41,8 @@ namespace Gothic.Objects.Meshes
             LoadVisualVirtual = 0x00578760,
             GetAniIDFromAniName = 0x00612070,
             RemoveMeshLibAll = 0x0057E3D0,
-            SetModelScale = 0x0057DC30;
+            SetModelScale = 0x0057DC30,
+            SetMeshLibTexture = 0x57E1D0;
         }
 
         /*public enum FuncSize : uint
@@ -76,7 +77,7 @@ namespace Gothic.Objects.Meshes
 
         public zCModelPrototype ModelPrototype
         {
-            get { return new zCModelPrototype(Process.ReadInt(Address + VarOffsets.ModelPrototype)); }
+            get { return new zCModelPrototype(Process.ReadInt(Process.ReadInt(Address + VarOffsets.ModelPrototype))); } // zCArray actually
             //set { Process.Write(value.Address, Address + VarOffsets.ModelPrototype); }
         }
 
@@ -271,5 +272,18 @@ namespace Gothic.Objects.Meshes
 
             return v;
         }
+
+        public void SetMeshLibTexture(string texture, int arg1, int arg2, string part)
+        {
+            using (zString zTex = zString.Create(texture))
+            using (zString zPart = zString.Create(part))
+                Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetMeshLibTexture, zTex, (IntArg)arg1, (IntArg)arg2, zPart);
+        }
+
+        public void SetMeshLibTexture(zString texture, int arg1, int arg2, zString part)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetMeshLibTexture, texture, (IntArg)arg1, (IntArg)arg2, part);
+        }
+
     }
 }

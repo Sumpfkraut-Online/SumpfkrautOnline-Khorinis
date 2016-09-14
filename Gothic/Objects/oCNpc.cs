@@ -708,6 +708,16 @@ namespace Gothic.Objects
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.DoDropVob, vob);
         }
 
+        public void SetHead()
+        {
+            Process.THISCALL<IntArg>(Address, FuncAddresses.SetHead);
+        }
+
+        public void InitModel()
+        {
+            Process.THISCALL<IntArg>(Address, FuncAddresses.InitModel);
+        }
+
         /*
         public static oCNpc StealNPC(Process process)
         {
@@ -1341,16 +1351,6 @@ namespace Gothic.Objects
         public void PerceptionCheck()
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.PerceptionCheck);
-        }
-
-        public void SetHead()
-        {
-            Process.THISCALL<IntArg>(Address, FuncAddresses.SetHead);
-        }
-
-        public void InitModel()
-        {
-            Process.THISCALL<IntArg>(Address, FuncAddresses.InitModel);
         }
 
 

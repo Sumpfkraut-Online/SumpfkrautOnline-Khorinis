@@ -56,7 +56,7 @@ namespace GUC.Scripts.Sumpfkraut.Daedalus
         public void HandleTextBody(string text)
         {
             using (MemoryStream ms = new MemoryStream())
-            using (StreamWriter sw = new StreamWriter(ms, Encoding.UTF7))
+            using (StreamWriter sw = new StreamWriter(ms, Encoding.Default))
             {
                 sw.Write(text);
                 sw.Flush();

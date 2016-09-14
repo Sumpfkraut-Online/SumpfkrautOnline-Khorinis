@@ -290,7 +290,10 @@
     <Compile Include="Hooks\hWeather.cs" />
     <Compile Include="Hooks\hBarrier.cs" />
     <Compile Include="Hooks\hFile.cs" />
+    <Compile Include="Hooks\VDFS\FileHandle.cs" />
     <Compile Include="Hooks\VDFS\hFileSystem.cs" />
+    <Compile Include="Hooks\VDFS\VDFSArchive.cs" />
+    <Compile Include="Hooks\VDFS\VDFSFileInfo.cs" />
     <Compile Include="InputHandler.cs" />
     <Compile Include="Models\Model.Client.cs" />
     <Compile Include="Models\ModelInstance.Client.cs" />

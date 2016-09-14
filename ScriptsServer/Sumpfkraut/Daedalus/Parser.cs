@@ -16,7 +16,7 @@ namespace GUC.Scripts.Sumpfkraut.Daedalus
             if (!stream.CanRead)
                 throw new ArgumentException("Stream is not readable!");
 
-            sr = new StreamReader(stream, Encoding.UTF7);
+            sr = new StreamReader(stream, Encoding.Default);
             sb = new StringBuilder();
         }
 

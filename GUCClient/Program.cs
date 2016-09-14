@@ -26,21 +26,34 @@ namespace GUC
         static string serverIP;
         static ushort serverPort;
         static string password;
+        static string gothicRootPath;
 
         public static string GothicPath { get { return gothicPath; } }
+        public static string GothicRootPath { get { return gothicPath; } }
         public static string ProjectPath { get { return projectPath; } }
         public static string ServerIP { get { return serverIP; } }
         public static ushort ServerPort { get { return serverPort; } }
         public static string Password { get { return password; } }
 
-        public static string GetFullPath(string path)
+        public static string GetProjectPath(string path)
         {
             return Path.Combine(projectPath, path);
         }
 
-        public static string GetFullPath(params string[] paths)
+        public static string GetGothicPath(string path)
         {
-            return Path.Combine(projectPath, Path.Combine(paths));
+            return Path.Combine(gothicPath, path);
+        }
+
+        public static string GetGothicRootPath(string path)
+        {
+            return Path.Combine(gothicRootPath, path);
+        }
+        
+        static void SetRootPathHook(Hook hook)
+        {
+            gothicRootPath = Gothic.System.zFile.s_rootPathString.ToString();
+            Logger.Log("Set root to: " + gothicRootPath);
         }
 
         static void SetupProject()
@@ -48,9 +61,12 @@ namespace GUC
             gothicPath = Environment.GetEnvironmentVariable("GUCGothicPath");
             if (string.IsNullOrWhiteSpace(gothicPath) || !Directory.Exists(gothicPath))
                 throw new Exception("Gothic folder environment variable is null or not found!");
+            
+            Process.AddHook(SetRootPathHook, 0x44235E, 7);
+            Process.AddHook(SetRootPathHook, 0x44237A, 7);
+            gothicRootPath = Path.Combine(gothicPath, "SYSTEM");
 
             projectPath = Environment.GetEnvironmentVariable("GUCProjectPath");
-
             if (string.IsNullOrWhiteSpace(projectPath) || !Directory.Exists(projectPath))
                 throw new Exception("Project folder environment variable is null or not found!");
 
@@ -95,7 +111,7 @@ namespace GUC
                 Logger.Log("GUC started...");
 
                 SetupProject();
-
+                
                 SplashScreen.SetUpHooks();
                 SplashScreen.Create();
 
@@ -103,7 +119,7 @@ namespace GUC
                 Process.Write(new byte[] { 0xE9, 0xA3, 0x00, 0x00, 0x00 }, 0x42687F); // skip intro videos
 
                 // add hooks
-                //hFile.AddHooks();
+                Hooks.VDFS.hFileSystem.AddHooks();
                 hParser.AddHooks();
                 hGame.AddHooks();
                 hWeather.AddHooks();

@@ -227,7 +227,7 @@ namespace GUC.Models
         public ActiveAni GetActiveAniFromLayerID(int layer)
         {
             for (int i = 0; i < activeAnis.Count; i++)
-                if (activeAnis[i].Ani != null && activeAnis[i].Ani.Layer == layer)
+                if (activeAnis[i].Ani != null && activeAnis[i].AniJob.Layer == layer)
                     return activeAnis[i];
             return null;
         }
@@ -286,7 +286,7 @@ namespace GUC.Models
                     aa = activeAnis[i];
                     // continue to search, maybe there's an active ani with the same layer
                 }
-                else if (activeAnis[i].Ani.Layer == ani.Layer) // same layer, stop this animation
+                else if (activeAnis[i].AniJob.Layer == aniJob.Layer) // same layer, stop this animation
                 {
                     aa = activeAnis[i];
                     aa.Stop(); // stop this animation

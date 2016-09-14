@@ -25,6 +25,8 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
         public int ID { get { return this.baseAniJob.ID; } set { this.baseAniJob.ID = value; } }
 
+        public int Layer { get { return this.baseAniJob.Layer; } set { this.baseAniJob.Layer = value; } }
+
         #endregion
 
         public void SetDefaultAni(Animation ani)

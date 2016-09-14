@@ -40,24 +40,6 @@ namespace GUC.Animations
                 throw new NotSupportedException("Can't change value when the Animation's ModelInstace is already created!");
         }
 
-        int layer = 1;
-        /// <summary>
-        /// Layer number, sync with Gothic's animations pls. [0..255]
-        /// Default is 1.
-        /// </summary>
-        public int Layer
-        {
-            get { return this.layer; }
-            set
-            {
-                CanChangeNow();
-                if (value < 0 || value > byte.MaxValue)
-                    throw new ArgumentOutOfRangeException("Layer id needs to be in range of [0..255]! Is " + value);
-
-                this.layer = value;
-            }
-        }
-
         float startFrame = 0;
         /// <summary>
         /// From which frame the gothic animation should start.
@@ -156,7 +138,6 @@ namespace GUC.Animations
 
         protected override void ReadProperties(PacketReader stream)
         {
-            this.Layer = stream.ReadByte();
             this.startFrame = stream.ReadFloat();
             this.endFrame = stream.ReadFloat();
             this.fps = stream.ReadFloat();
@@ -164,7 +145,6 @@ namespace GUC.Animations
 
         protected override void WriteProperties(PacketWriter stream)
         {
-            stream.Write((byte)Layer);
             stream.Write(startFrame);
             stream.Write(endFrame);
             stream.Write(fps);

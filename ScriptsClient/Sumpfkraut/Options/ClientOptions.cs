@@ -21,7 +21,7 @@ namespace GUC.Scripts.Sumpfkraut.Options
 
         public static void Save()
         {
-            XMLHelper.SaveObject<Options>(options, Program.GetFullPath(FilePath));
+            XMLHelper.SaveObject<Options>(options, Program.GetProjectPath(FilePath));
         }
 
         public static void Load()

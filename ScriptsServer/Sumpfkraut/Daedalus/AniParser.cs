@@ -164,10 +164,10 @@ namespace GUC.Scripts.Sumpfkraut.Daedalus
                 modelDef.AddAniJob(aniJob);
                 newJobs++;
             }
+            aniJob.Layer = layer;
 
             ScriptAni ani = new ScriptAni(startFrame, endFrame);
             ani.FPS = fps;
-            ani.Layer = layer;
             if (overlay == null)
             {
                 aniJob.SetDefaultAni(ani);

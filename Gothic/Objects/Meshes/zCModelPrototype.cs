@@ -20,6 +20,11 @@ namespace Gothic.Objects.Meshes
 
         }
 
+        public abstract class VarOffsets
+        {
+            public const int Mesh = 0x80;
+        }
+
         public zCModelAni SearchAni(string aniName)
         {
             zCModelAni ret;
@@ -41,6 +46,11 @@ namespace Gothic.Objects.Meshes
         public void AddAni(zCModelAni ani)
         {
             Process.THISCALL<NullReturnCall>(Address, 0x589DB0, ani);
+        }
+
+        public zString Mesh
+        {
+            get { return new zString(Address + VarOffsets.Mesh); }
         }
     }
 }

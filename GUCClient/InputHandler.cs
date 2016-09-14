@@ -36,12 +36,14 @@ namespace GUC
             { VirtualKeys.F6, () =>
                 {
                     var npc = Gothic.Objects.oCNpc.Create();
-                    npc.SetVisual("HUMANS.MDS");
-                    npc.SetAdditionalVisuals("hum_body_Naked0", 9, 0, "Hum_Head_Pony", 2, 0, -1);
+                    npc.SetVisual("itfo_apple.3ds");
+                    //npc.SetAdditionalVisuals("hum_body_Naked0", 9, 0, "Hum_Head_Pony", 2, 0, -1);
                     npc.HP = 10;
                     npc.HPMax = 10;
                     npc.Name.Set("TESTCHARAKTER");
                     npc.InitHumanAI();
+                    npc.InitModel();
+                    npc.SetAdditionalVisuals(npc.GetModel().ModelPrototype.Mesh.ToString(), 0, 0, "", 0, 0, -1);
                     Gothic.oCGame.GetWorld().AddVob(npc);
 
                     if (Network.GameClient.Client.Character != null)

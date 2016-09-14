@@ -34,8 +34,6 @@ namespace Gothic.Types
             }
         }
 
-        
-
         #region Gothic Methods
 
         public abstract class FuncAddresses
@@ -147,7 +145,7 @@ namespace Gothic.Types
         public override string ToString()
         {
             byte[] arr = Process.ReadBytes(this.PTR, (uint)this.Length);
-            return Encoding.ASCII.GetString(arr);
+            return Encoding.Default.GetString(arr);
         }
     }
 }
