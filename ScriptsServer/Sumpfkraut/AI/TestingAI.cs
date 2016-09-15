@@ -132,6 +132,17 @@ namespace GUC.Scripts.Sumpfkraut.AI
             //Log.Logger.Log(">>>> " + bla);
 
 
+            List<int> a = new List<int> { 0, 1, 2, 3, 4 };
+            List<int> b = new List<int> { 2, 3, 4, 5, 6 };
+            IEnumerable<int> c = a.Union(b);
+            List<int> d = c.ToList();
+
+            for (int i = 0; i < d.Count; i++)
+            {
+                Log.Logger.Log(d[i]);
+            }
+
+
 
 
             AIManager aiManager01 = new AIManager(true, false, new TimeSpan(0, 0, 0, 0, 500));
@@ -143,7 +154,7 @@ namespace GUC.Scripts.Sumpfkraut.AI
             List<NPCInst> dummyInstances = new List<NPCInst>();
             List<int> dummyIDs = new List<int>();
 
-            int spawnAmount = 50;
+            int spawnAmount = 10;
             int indexDigits = (int) Math.Floor(Math.Log10(50) + 1);
             Types.Vec3f[] spawnRange = new Types.Vec3f[] {
                 new Types.Vec3f(-2000f, 1000f, -2000f),

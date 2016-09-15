@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using GUC.Scripts.Sumpfkraut.AI.GuideCommands;
 
 namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 {
@@ -20,8 +21,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
         
         // maps VobInst to GuideCmd which is used by the GUC to let clients calculate 
         // movement paths to a destination and guide the vob to it
-        protected Dictionary<VobInst, GUC.WorldObjects.VobGuiding.GuideCmd> guideCmdByVobInst =
-            new Dictionary<VobInst, WorldObjects.VobGuiding.GuideCmd>() { };
+        protected Dictionary<VobInst, GuideCommandInfo> guideCommandByVobInst;
 
         protected float aggressionRadius;
         public float AggressionRadius { get { return this.aggressionRadius; } }
@@ -53,7 +53,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             this.aiMemory = aiMemory ?? new AIMemory();
             this.aiRoutine = aiRoutine ?? new SimpleAIRoutine();
             this.lastTick = DateTime.Now;
-            this.guideCmdByVobInst = new Dictionary<VobInst, WorldObjects.VobGuiding.GuideCmd>() { };
+            this.guideCommandByVobInst = new Dictionary<VobInst, GuideCommandInfo>();
         }
 
 
@@ -111,6 +111,21 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                 return true;
             }
         }
+
+        protected void SubscribeGuideCommand (GuideCommandInfo guideCmdInfo)
+        {
+            guideCommandByVobInst[guideCmdInfo.GuidedVobInst] = guideCmdInfo;
+        }
+
+        protected void UnsubscribeGuideCommand (GuideCommandInfo guideCmdInfo)
+        {
+            guideCommandByVobInst.Remove(guideCmdInfo.GuidedVobInst);
+        }
+
+        protected void UnsubscribeGuideCommand (VobInst guided)
+        {
+            guideCommandByVobInst.Remove(guided);
+        }
         
         
         
@@ -134,20 +149,54 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
         public void GoTo (VobInst guided, Vec3f position)
         {
+            // find out if there already is an existing, similar guide-command 
+            // and recycle it if possible before assigning a new one (costly on client-side)
+            GuideCommandInfo oldInfo;
+            if (guideCommandByVobInst.TryGetValue(guided, out oldInfo))
+            {
+                if (oldInfo.GuideCommand.CmdType == (byte) CommandType.GoToPos)
+                {
+                    if ( ((GoToPosCommand) oldInfo.GuideCommand).Destination.Equals(position) )
+                    {
+                        oldInfo.UpdateInfo(oldInfo.GuideCommand, oldInfo.GuidedVobInst, DateTime.MaxValue);
+                        return;
+                    }
+                }
+            }
+            
             // initialize new guide and remove old one from GUC-memory automatically
-            AI.GuideCommands.GoToPosCommand cmd = new AI.GuideCommands.GoToPosCommand(position);
+            GoToPosCommand cmd = new GoToPosCommand(position);
             guided.BaseInst.SetGuideCommand(cmd);
             // replace possible old guide from script-memory or insert new value
-            guideCmdByVobInst[guided] = cmd;
+            GuideCommandInfo info = new GuideCommandInfo(cmd, guided);
+            SubscribeGuideCommand(info);
         }
 
         public void GoTo (VobInst guided, VobInst target)
         {
+            // find out if there already is an existing, similar guide-command 
+            // and recycle it if possible before assigning a new one (costly on client-side)
+            GuideCommandInfo oldInfo;
+            if (guideCommandByVobInst.TryGetValue(guided, out oldInfo))
+            {
+                if (oldInfo.GuideCommand.CmdType == (byte) CommandType.GoToVob)
+                {
+                    if ( ((GoToVobCommand) oldInfo.GuideCommand).Target.Equals(target) )
+                    {
+                        Print("Same target.");
+                        oldInfo.UpdateInfo(oldInfo.GuideCommand, oldInfo.GuidedVobInst, DateTime.MaxValue);
+                        return;
+                    }
+                }
+            }
+
+            Print("New target.");
             // initialize new guide and remove old one from GUC-memory automatically
-            AI.GuideCommands.GoToVobCommand cmd = new AI.GuideCommands.GoToVobCommand(target);
+            GoToVobCommand cmd = new GoToVobCommand(target);
             guided.BaseInst.SetGuideCommand(cmd);
             // replace possible old guide from script-memory or insert new value
-            guideCmdByVobInst[guided] = cmd;
+            GuideCommandInfo info = new GuideCommandInfo(cmd, guided);
+            SubscribeGuideCommand(info);
         }
         
         public void GoTo (AIAgent aiAgent, Vec3f position)
@@ -408,6 +457,8 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             //}
         }
 
+
+        // create AIAction- from AIObservation-objects
         public override void ProcessObservations (AIAgent aiAgent)
         {
             // do nothing, if not aiClient is defined (shouldn't happen but oh well)
@@ -421,7 +472,8 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             {
                 if (aiObservations[i].GetType() == typeof(EnemyAIObservation))
                 {
-                    enemies.AddRange(aiObservations[i].AITarget.VobTargets);
+                    // only add those enemies which aren't already there
+                    enemies = enemies.Union(aiObservations[i].AITarget.VobTargets).ToList();
                 }
             }
 

@@ -159,6 +159,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sqlite.cs" />
     <Compile Include="GUCScripts.Server.cs" />
+    <Compile Include="Sumpfkraut\AI\GuideCommands\GuideCommandInfo.cs" />
     <Compile Include="Sumpfkraut\AI\SimpleAI\AIActions\AttackAIAction.cs" />
     <Compile Include="Sumpfkraut\AI\SimpleAI\AIActions\BaseAIAction.cs" />
     <Compile Include="Sumpfkraut\AI\SimpleAI\AIActions\Enumeration.cs" />
