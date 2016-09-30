@@ -30,7 +30,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking
         {
         }
 
-        public virtual void ReadScriptCommandMessage(PacketReader stream, WorldObjects.VobGuiding.GuidedVob vob)
+        public virtual void ReadScriptRequestMessage(PacketReader stream, WorldObjects.VobGuiding.GuidedVob vob)
         {
             if (!(vob is WorldObjects.NPC))
                 return;
@@ -45,6 +45,11 @@ namespace GUC.Scripts.Sumpfkraut.Networking
                     break;
                 case ScriptCommandMessageIDs.AttackForward:
                     npc.DoFightMove(NPCInst.FightMoves.Fwd);
+                    break;
+                case ScriptCommandMessageIDs.DropItem:
+                    byte itemID = stream.ReadByte();
+                    ushort amount = stream.ReadUShort();
+                    npc.DropItem(itemID, amount);
                     break;
             }
         }

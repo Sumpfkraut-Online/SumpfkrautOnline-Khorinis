@@ -93,7 +93,7 @@ namespace GUC.Network
         PlayerNPCEquipAddMessage, 
         PlayerInvAddItemMessage, // add item to player inventory
         PlayerInvRemoveItemMessage, // remove item from player inventory
-        PlayerItemAmountMessage,
+        PlayerItemAmountChangedMessage,
 
         // GuidedVobs
         GuideAddMessage,

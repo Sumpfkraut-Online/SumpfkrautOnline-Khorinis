@@ -148,7 +148,7 @@ namespace GUC.Network
                 if (vob == null)
                     return;
 
-                client.ScriptObject.ReadScriptCommandMessage(stream, vob);
+                client.ScriptObject.ReadScriptRequestMessage(stream, vob);
             }
         }
 
@@ -164,7 +164,7 @@ namespace GUC.Network
             bool IsAllowedToConnect();
 
             void ReadScriptMessage(PacketReader stream);
-            void ReadScriptCommandMessage(PacketReader stream, GuidedVob vob);
+            void ReadScriptRequestMessage(PacketReader stream, GuidedVob vob);
         }
 
         #endregion

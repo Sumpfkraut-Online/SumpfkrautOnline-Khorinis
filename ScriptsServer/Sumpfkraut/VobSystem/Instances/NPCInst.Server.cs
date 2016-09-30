@@ -9,6 +9,8 @@ using GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs;
 using GUC.Types;
 using GUC.Scripts.Sumpfkraut.Networking;
 using GUC.Animations;
+using GUC.WorldObjects;
+using GUC.WorldObjects.Instances;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
@@ -73,6 +75,34 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             this.Throw(velocity);
         }
 
+        #endregion
+
+        #region ItemHandling
+        public void DropItem(byte itemID, ushort amount)
+        {
+            ItemInst item = Inventory.GetItem(itemID);
+            if (item == null)
+                return;
+
+            ModelInst.StartAnimation(this.AniCatalog.DropItem);
+
+            int newAmount = item.Amount-amount;
+            int droppedItemAmount;
+            if(newAmount >= 0)
+            {
+                item.SetAmount(newAmount);
+                droppedItemAmount = amount;
+            }
+            else
+            {
+                item.SetAmount(0);
+                droppedItemAmount = item.Amount;
+            }
+
+            ItemInst newItem = new ItemInst(item.Definition);
+            newItem.SetAmount(droppedItemAmount);
+            newItem.Spawn(this.World, this.GetPosition(), this.GetDirection());
+        }
         #endregion
 
         #region Fight Moves

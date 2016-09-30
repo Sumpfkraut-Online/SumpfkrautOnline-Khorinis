@@ -36,8 +36,23 @@ namespace GUC.Scripts.Sumpfkraut.Menus
             inv.SetContents(NPCInst.Hero?.Inventory);
         }
 
+        public void UpdateAmountEventMethod(ItemInst item, int amount)
+        {
+            // UpdateContents();
+            inv.UpdateAmounts();
+        }
+
+        public void UpdateInventory(ItemInst item)
+        {
+            UpdateContents();
+        }
+
         public override void Open()
         {
+            ItemInst.OnSetAmount += UpdateAmountEventMethod;
+            VobSystem.Instances.ItemContainers.ScriptInventory.OnAddItem += UpdateInventory;
+            VobSystem.Instances.ItemContainers.ScriptInventory.OnRemoveItem += UpdateInventory;
+
             NPCInst player = ScriptClient.Client.Character;
             if (player == null)
                 return;
@@ -57,6 +72,10 @@ namespace GUC.Scripts.Sumpfkraut.Menus
 
         public override void Close()
         {
+            ItemInst.OnSetAmount -= UpdateAmountEventMethod;
+            VobSystem.Instances.ItemContainers.ScriptInventory.OnAddItem -= UpdateInventory;
+            VobSystem.Instances.ItemContainers.ScriptInventory.OnRemoveItem -= UpdateInventory;
+
             base.Close();
             inv.Hide();
         }
@@ -73,26 +92,37 @@ namespace GUC.Scripts.Sumpfkraut.Menus
                 case VirtualKeys.Tab:
                     Close();
                     break;
-                case VirtualKeys.Menu: // DROP
+                case VirtualKeys.L: // DROP
                     NPCInst player = ScriptClient.Client.Character;
                     if (player != null)
                     {
-                        /*ItemInst selItem = inv.GetSelectedItem();
+                        ItemInst selItem = inv.GetSelectedItem();
                         if (selItem != null)
                         {
-                            ScriptAniJob dropJob;
-                            if (player.Model.TryGetAniJob((int)SetAnis.DropItem, out dropJob))
-                            {
-                                if (selItem.Amount > 1)
-                                {
+                            /*Animations.AniJob dropJob = 
+                             player.StartAniJump(ani, 10, 10);
+                             player.ModelInst.StartAnimation(dropJob, 0.2f);
+                             if (player.Model.TryGetAniJob((int)SetAnis.DropItem, out dropJob))
+                             {
+                                 if (selItem.Amount > 1)
+                                 {
 
-                                }
-                                else
-                                {
-                                    ScriptClient.Client.BaseClient.DoStartAni(dropJob.BaseAniJob, selItem);
-                                }
+                                 }
+                                 else
+                                 {
+                                     ScriptClient.Client.BaseClient.DoStartAni(dropJob.BaseAniJob, selItem);
+                                 }
+                             }
+                         */
+                         if (selItem.Amount > 1)
+                            {
+                                DropItemMenu.Menu.Open(selItem);
                             }
-                        }*/
+                         else if(selItem.Amount == 1)
+                            {
+                                player.RequestDropItem(selItem,1);
+                            }
+                        }
                     }
 
                     /*if (inv.selectedItem == null)

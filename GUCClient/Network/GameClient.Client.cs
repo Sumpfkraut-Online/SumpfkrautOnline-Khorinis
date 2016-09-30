@@ -402,6 +402,17 @@ namespace GUC.Network
                     WorldObjects.WorldGlobals.WorldClock.Messages.ReadTimeStart(stream, false);
                     break;
 
+                case ServerMessages.PlayerInvAddItemMessage:
+                    WorldObjects.ItemContainers.NPCInventory.Messages.ReadAddItem(stream);
+                    break;
+                case ServerMessages.PlayerInvRemoveItemMessage:
+                    WorldObjects.ItemContainers.NPCInventory.Messages.ReadRemoveItem(stream);
+                    break;
+                case ServerMessages.PlayerItemAmountChangedMessage:
+                    WorldObjects.Item.Messages.ReadItemAmountChangedMessage(stream);
+                    break;
+
+
                 // Vob Messages
                 case ServerMessages.VobSpawnMessage:
                     World.Messages.ReadVobSpawn(stream);
