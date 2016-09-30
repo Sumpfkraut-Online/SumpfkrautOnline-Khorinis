@@ -13,7 +13,6 @@ using GUC.Utilities;
 
 namespace GUC.Scripts
 {
-
     interface IProbabilityItems
     {
         List<ItemInst> GetItems();
@@ -109,6 +108,7 @@ namespace GUC.Scripts
         {
             Logger.Log("######## Initalise SumpfkrautOnline ServerScripts #########");
 
+            
             Sumpfkraut.Daedalus.AniParser.ReadMDSFiles();
             Sumpfkraut.Daedalus.ConstParser.ParseConstValues();
             Sumpfkraut.Daedalus.FuncParser.ParseConstValues();
@@ -121,7 +121,7 @@ namespace GUC.Scripts
             Sumpfkraut.Daedalus.FuncParser.Free();
             Sumpfkraut.Daedalus.PrototypeParser.Free();
             Sumpfkraut.Daedalus.InstanceParser.Free();
-
+            
             AddSomeDefs();
 
             CreateTestWorld();
@@ -134,6 +134,17 @@ namespace GUC.Scripts
 
             // -- command console --
             Sumpfkraut.CommandConsole.CommandConsole cmdConsole = new Sumpfkraut.CommandConsole.CommandConsole();
+
+            /*ModelDef m = new ModelDef("2hschwert", "ItMw_060_2h_sword_01.3DS");
+            m.Create();
+            ItemDef itemDef = new ItemDef("2hschwert");
+            itemDef.Name = "Zweihänder";
+            itemDef.ItemType = ItemTypes.Wep2H;
+            itemDef.Material = ItemMaterials.Metal;
+            itemDef.Model = m;
+            itemDef.Range = 110;
+            itemDef.Damage = 42;
+            itemDef.Create(); */
 
             //Sumpfkraut.AI.TestingAI.Test();
 
@@ -148,8 +159,14 @@ namespace GUC.Scripts
 
             // HUMAN MODEL
             ModelDef m;
-            ModelDef.TryGetModel("humans", out m);
-            m.Delete(); // hurr durr
+            if (ModelDef.TryGetModel("humans", out m))
+            {
+                m.Delete(); // hurr durr
+            }
+            else
+            {
+                m = new ModelDef("humans", "humans.mds");
+            }
             m.Radius = 80;
             m.Height = 180;
             m.Create();
