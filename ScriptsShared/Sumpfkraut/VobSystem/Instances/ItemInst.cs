@@ -45,10 +45,15 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #endregion
 
+        public delegate void SetAmountHandler(ItemInst item, int amount);
+        public static event SetAmountHandler OnSetAmount;
 
         public void SetAmount(int amount)
         {
             this.BaseInst.SetAmount(amount);
+            if (OnSetAmount != null)
+                OnSetAmount(this, amount);
+
         }
 
         // Nur das Wichtigste was von aussen zu sehen ist!

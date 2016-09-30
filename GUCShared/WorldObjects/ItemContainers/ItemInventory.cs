@@ -84,9 +84,9 @@ namespace GUC.WorldObjects.ItemContainers
                 throw new ArgumentException("Item is in a different container!");
             }
 
+            item.Container = null;
             idColl.Remove(item);
             items.Remove(ref item.collID);
-            item.Container = null;
 
             pAfterRemove(item);
         }

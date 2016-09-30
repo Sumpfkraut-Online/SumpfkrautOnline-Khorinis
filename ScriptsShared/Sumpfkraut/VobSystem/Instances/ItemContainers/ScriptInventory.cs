@@ -17,6 +17,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances.ItemContainers
             ItemInventory BaseInventory { get; }
         }
 
+        public delegate void RemoveItemHandler(ItemInst item);
+        public static event RemoveItemHandler OnRemoveItem;
+
+        public delegate void AddItemHandler(ItemInst item);
+        public static event AddItemHandler OnAddItem;
+
         #region Constructors
 
         public ScriptInventory(IContainer owner)
@@ -63,11 +69,23 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances.ItemContainers
         public void AddItem(ItemInst item)
         {
             BaseInst.Add(item.BaseInst);
+            if (OnAddItem != null)
+                OnAddItem(item);
         }
 
         public void RemoveItem(ItemInst item)
         {
             BaseInst.Remove(item.BaseInst);
+            if (OnRemoveItem != null)
+                OnRemoveItem(item);
+        }
+
+        public ItemInst GetItem(int id)
+        {
+            Item item;
+            BaseInst.TryGetItem(id, out item);
+            ItemInst itemInst = (ItemInst)item.ScriptObject;
+            return itemInst;
         }
 
         #endregion

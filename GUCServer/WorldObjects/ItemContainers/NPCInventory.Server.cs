@@ -38,7 +38,7 @@ namespace GUC.WorldObjects.ItemContainers
                 Messages.WritePlayerAddItem(this.Owner.client, item);
         }
         
-        partial void pRemove(Item item)
+        partial void pRemoveBefore(Item item)
         {
             if (this.Owner.IsPlayer && this.Owner.IsSpawned)
                 Messages.WritePlayerRemoveItem(this.Owner.client, item);
