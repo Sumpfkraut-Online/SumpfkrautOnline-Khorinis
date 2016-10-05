@@ -37,7 +37,7 @@ namespace GUC.Network.Messages
             GuidedVob vob;
             if (World.current.TryGetVob(id, out vob))
             {
-                vob.SetGuideCommand(null);
+                vob.RemoveGuideCommand();
             }
         }
 
@@ -69,7 +69,7 @@ namespace GUC.Network.Messages
                 GuidedVob vob;
                 if (World.current.TryGetVob(id, out vob))
                 {
-                    vob.SetGuideCommand(null);
+                    vob.RemoveGuideCommand();
                 }
             }
         }

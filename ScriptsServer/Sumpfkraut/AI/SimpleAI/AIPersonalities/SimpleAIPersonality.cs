@@ -183,14 +183,14 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                 {
                     if ( ((GoToVobCommand) oldInfo.GuideCommand).Target.Equals(target) )
                     {
-                        Print("Same target.");
+                        //Print("Same target.");
                         oldInfo.UpdateInfo(oldInfo.GuideCommand, oldInfo.GuidedVobInst, DateTime.MaxValue);
                         return;
                     }
                 }
             }
 
-            Print("New target.");
+            //Print("New target.");
             // initialize new guide and remove old one from GUC-memory automatically
             GoToVobCommand cmd = new GoToVobCommand(target);
             guided.BaseInst.SetGuideCommand(cmd);
@@ -379,7 +379,12 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                     currVob.World.BaseWorld.ForEachNPCRough(currVob.BaseInst, aggressionRadius, 
                         delegate (WorldObjects.NPC nearNPC)
                     {
-                        if (!aiAgent.HasAIClient(nearNPC))
+                        //if (!aiAgent.HasAIClient(nearNPC))
+                        //{
+                        //    enemies.Add((VobInst) nearNPC.ScriptObject);
+                        //}
+
+                        if (nearNPC.IsPlayer)
                         {
                             enemies.Add((VobInst) nearNPC.ScriptObject);
                         }

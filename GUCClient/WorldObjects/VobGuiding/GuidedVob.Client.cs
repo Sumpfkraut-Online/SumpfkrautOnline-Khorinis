@@ -71,5 +71,10 @@ namespace GUC.WorldObjects.VobGuiding
                     this.currentCmd.Start(this);
             }
         }
+
+        internal void RemoveGuideCommand ()
+        {
+            SetGuideCommand(null);
+        }
     }
 }

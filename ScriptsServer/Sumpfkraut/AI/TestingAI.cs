@@ -132,15 +132,15 @@ namespace GUC.Scripts.Sumpfkraut.AI
             //Log.Logger.Log(">>>> " + bla);
 
 
-            List<int> a = new List<int> { 0, 1, 2, 3, 4 };
-            List<int> b = new List<int> { 2, 3, 4, 5, 6 };
-            IEnumerable<int> c = a.Union(b);
-            List<int> d = c.ToList();
+            //List<int> a = new List<int> { 0, 1, 2, 3, 4 };
+            //List<int> b = new List<int> { 2, 3, 4, 5, 6 };
+            //IEnumerable<int> c = a.Union(b);
+            //List<int> d = c.ToList();
 
-            for (int i = 0; i < d.Count; i++)
-            {
-                Log.Logger.Log(d[i]);
-            }
+            //for (int i = 0; i < d.Count; i++)
+            //{
+            //    Log.Logger.Log(d[i]);
+            //}
 
 
 
