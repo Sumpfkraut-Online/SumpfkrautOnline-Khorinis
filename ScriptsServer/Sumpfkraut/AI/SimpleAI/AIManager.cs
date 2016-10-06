@@ -15,6 +15,32 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
         public static List<AIManager> aiManagers = new List<AIManager>();
         public static List<AIManager> aiManagers_SingleThreaded = new List<AIManager>();
 
+        // total number of all AIAgents of all susbsribed AIManagers
+        protected static long totalAIAgents = 0;
+        public static long TotalAIAgents { get { return totalAIAgents; } }
+        // lock for changing the total number of AIAgents of all AIManagers
+        protected static object totalAIAgentsLock = new object();
+
+        protected static void AddTotalAgents (long value)
+        {
+            lock (totalAIAgentsLock) { totalAIAgents += value; }
+        }
+
+        // total number of all (in this ai-cycle) simulated AIAgents of all susbsribed susbsribed AIManagers
+        protected static long totalSimulated = 0;
+        public static long TotalSimulated { get { return totalSimulated; } }
+        // lock for changing the total number of (in this ai-cycle) simulated AIAgents of all susbsribed AIManagers
+        protected static object totalSimulatedLock = new object();
+
+        protected static void AddTotalSimulated (long value)
+        {
+            lock (totalSimulatedLock) { totalSimulated += value; }
+        }
+
+
+
+        protected bool isSubscribed;
+
         protected bool isActive;
         public bool IsActive { get { return isActive; } }
 
@@ -25,7 +51,10 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
             if (useSingleThread)
             {
                 Suspend();
-                if (!aiManagers_SingleThreaded.Contains(this)) { aiManagers_SingleThreaded.Add(this); }
+                if ((isSubscribed) && (!aiManagers_SingleThreaded.Contains(this)))
+                {
+                    aiManagers_SingleThreaded.Add(this);
+                }
             }
             else
             {
@@ -34,7 +63,10 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
             }
         }
 
-        protected List<AIAgent> aiAgents = new List<AIAgent>();
+        protected List<AIAgent> aiAgents;
+
+        // index-ranges of this.aiAgents which have already been simulated in the current ai-cycle
+        protected List<Types.Vec2i> simulatedRanges;
 
         protected object runLock;
 
@@ -49,6 +81,8 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
         {
             SetObjName("AIManager (default)");
             runLock = new object();
+            aiAgents = new List<AIAgent>();
+            isSubscribed = false;
 
             SubscribeAIManager();
             SetUseSingleThread(useSingleThread);
@@ -84,13 +118,21 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
 
         public void SubscribeAIManager ()
         {
-            if (!aiManagers.Contains(this)) { aiManagers.Add(this); }
+            if (!aiManagers.Contains(this))
+            {
+                aiManagers.Add(this);
+                if (useSingleThread) { aiManagers_SingleThreaded.Add(this); }
+                isSubscribed = true;
+                AddTotalAgents(this.aiAgents.Count);
+            }
         }
 
         public void UnsubscribeAIManager ()
         {
             aiManagers.Remove(this);
             aiManagers_SingleThreaded.Remove(this);
+            isSubscribed = false;
+            AddTotalAgents(-this.aiAgents.Count);
         }
 
         public void SubscribeAIAgent (AIAgent aiAgent)
@@ -98,14 +140,16 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
             if (!aiAgents.Contains(aiAgent))
             {
                 aiAgents.Add(aiAgent);
+                if (isSubscribed) { AddTotalAgents(1L); }
             }
         }
 
         public void UnsubscribeAIAgent (AIAgent aiAgent)
         {
-            aiAgents.Remove(aiAgent);
             // removing it this way may throw an exception when iteration in Run-method 
             // reaches this aiAgent
+            aiAgents.Remove(aiAgent);
+            if (isSubscribed) { AddTotalAgents(-1L); }
         }
 
 
