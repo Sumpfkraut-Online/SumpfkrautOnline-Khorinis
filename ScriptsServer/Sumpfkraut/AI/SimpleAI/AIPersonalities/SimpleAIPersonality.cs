@@ -183,17 +183,16 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                 {
                     if ( ((GoToVobCommand) oldInfo.GuideCommand).Target.Equals(target) )
                     {
-                        //Print("Same target.");
                         oldInfo.UpdateInfo(oldInfo.GuideCommand, oldInfo.GuidedVobInst, DateTime.MaxValue);
                         return;
                     }
                 }
             }
 
-            //Print("New target.");
             // initialize new guide and remove old one from GUC-memory automatically
             GoToVobCommand cmd = new GoToVobCommand(target);
             guided.BaseInst.SetGuideCommand(cmd);
+            
             // replace possible old guide from script-memory or insert new value
             GuideCommandInfo info = new GuideCommandInfo(cmd, guided);
             SubscribeGuideCommand(info);
@@ -274,7 +273,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             // some sort of effective distance at which attacks can be conducted
             // modify as much as needed to enhance the combat ai
             // e.g. take weapons, animation movements into account
-            float fightDistance = totalRadius;
+            float fightDistance = 1f;
 
             if (aggressorType == typeof(NPCInst))
             {
@@ -285,14 +284,17 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                     // TODO: draw weapon first if necessary
                 }
 
-                if (distance > totalRadius)
+                Print(distance);
+                if (distance > fightDistance)
                 {
+                    Print("GoTo");
                     // approach first to be able to strike at closer distance
                     //Print(aggressor.GetObjName() + " approaches " + target.GetObjName());
                     GoTo(aggressor, target);
                 }
                 else
                 {
+                    Print("Attack");
                     // close enough to strike target
                     //Print(aggressor.GetObjName() + " attacks " + target.GetObjName());
 
@@ -318,7 +320,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             List<VobInst> aiClients = aiAgent.AIClients;
             List<VobInst> targets = aiTarget.VobTargets;
             VobInst closestTarget = null;
-
+            
             if (aiTarget.VobTargets.Count < 1) { return; }
 
             // for now, let each aiClient attack its closest foe
@@ -379,15 +381,15 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                     currVob.World.BaseWorld.ForEachNPCRough(currVob.BaseInst, aggressionRadius, 
                         delegate (WorldObjects.NPC nearNPC)
                     {
-                        //if (!aiAgent.HasAIClient(nearNPC))
-                        //{
-                        //    enemies.Add((VobInst) nearNPC.ScriptObject);
-                        //}
-
-                        if (nearNPC.IsPlayer)
+                        if (!aiAgent.HasAIClient(nearNPC))
                         {
                             enemies.Add((VobInst) nearNPC.ScriptObject);
                         }
+
+                        //if (nearNPC.IsPlayer)
+                        //{
+                        //    enemies.Add((VobInst) nearNPC.ScriptObject);
+                        //}
                     });
                 }
             }
@@ -406,7 +408,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
             BaseAIAction aiAction = aiActions[0]; // current action
             AIActions.Enumeration.AiActionType actionType = aiAction.ActionType;
-
+            
             switch (actionType)
             {
                 case AIActions.Enumeration.AiActionType.GoToAIAction:
