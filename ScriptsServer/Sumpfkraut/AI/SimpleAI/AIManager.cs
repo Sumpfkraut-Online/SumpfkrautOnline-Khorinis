@@ -62,22 +62,22 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
 
         protected static readonly TimeSpan totalSimulationThreshold = new TimeSpan (0, 0, 10);
 
-        protected static TimeSpan totalSimulationCycle = new TimeSpan(0, 0, 1);
-        public static TimeSpan TotalSimulationCycle { get { return totalSimulationCycle; } }
-        public static void SetTotalSimulationCycle (TimeSpan value)
+        protected static TimeSpan aiCicleTime = new TimeSpan(0, 0, 1);
+        public static TimeSpan AICycleTime { get { return aiCicleTime; } }
+        public static void SetAICycleTime (TimeSpan value)
         {
             if (value <= TimeSpan.Zero)
             {
                 MakeLogWarningStatic(typeof(AIManager), 
-                    "Cannot change totalSimulationCycle to <= TimeSpan.Zero! Using old value...");
+                    "Cannot change aiCicleTime to <= TimeSpan.Zero! Using old value...");
             }
             if (value > new TimeSpan(0, 0, 10))
             {
                 MakeLogWarningStatic(typeof(AIManager), String.Format(
-                    "Long aim for totalSimulationCycle of {0} detected, exceeding threshold of {1}.",
+                    "Long aim for aiCicleTime of {0} detected, exceeding threshold of {1}.",
                     value, totalSimulationThreshold));
             }
-            totalSimulationCycle = value;
+            aiCicleTime = value;
         }
 
 
@@ -208,7 +208,8 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
             // removing it this way may throw an exception when iteration in Run-method 
             // reaches this aiAgent
             aiAgents.Remove(aiAgent);
-            if (isSubscribed) {
+            if (isSubscribed)
+            {
                 AddTotalAIAgents(-1);
                 if (useSingleThread) { AddTotalAIAgentsSinglethreaded(-1); }
             }
@@ -216,17 +217,41 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
 
 
 
+        // entry point to run all singlethreaded AIManagers on one thread
         public static void RunAllSinglethreaded ()
         {
-            for (int i = 0; i < aiManagers_SingleThreaded.Count; i++)
+            try
             {
-                if (aiManagers_SingleThreaded[i].IsActive)
+                // agents to simulate per servertick (of theoretical length) to fullfill own rate of ai-cicle
+                // (note: maybe find a shorter, more elegant version to an equation with multiple type conversions)
+                // (sum_agents [] / time_aiCycle [ms]) * (updateRate [ticks] * tps [ticks / ms])
+                //  =       simulationRate             *                  time
+                int agentsToSimulate = (int) Math.Ceiling(
+                    (((double) TotalAIAgentsSinglethreaded) / AICycleTime.TotalMilliseconds)
+                    * ((double) Program.UpdateRate / (double) TimeSpan.TicksPerMillisecond)
+                    );
+                int simNext = agentsToSimulate;
+
+                for (int i = 0; i < aiManagers_SingleThreaded.Count; i++)
                 {
-                    aiManagers_SingleThreaded[i].RunSinglethreaded();
+                    if (aiManagers_SingleThreaded[i].IsActive)
+                    {
+                        simNext -= aiManagers_SingleThreaded[i].RunSinglethreaded(simNext);
+                        if (simNext <= 0)
+                        {
+                            
+                        }
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                MakeLogErrorStatic(typeof(AIManager), "Exception thrown in method RunAllSinglethreaded:"
+                    + ex);
             }
         }
 
+        // standard run method if an AIManagers runs on it's own thread
         public override void Run ()
         {
             int simulatedAgents = 0;
@@ -250,60 +275,87 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
         }
 
 
-        // Run-method for singlethreaded AIManager-instances
-        public void RunSinglethreaded ()
+        // run method for singlethreaded AIManager-instances
+        public int RunSinglethreaded (int maxAgents)
         {
-            int controlAfterAgents = 10;
             int tempSimulated = 0;
-            Stopwatch controlSW = new Stopwatch();
-            Stopwatch agentSW = new Stopwatch();
+            int loopLimit = maxAgents;
+            if (aiAgents.Count < maxAgents) { loopLimit = aiAgents.Count; }
 
-            lock (runLock)
+            try
             {
-                // take the global mean to calculate the milliseconds per simulated agent
-                // and substract a ceiled value (to be safe) to cope with time discrepancies
-                int msPerAgent = (((int) TotalSimulationCycle.TotalMilliseconds) / TotalAIAgentsSinglethreaded)
-                    -  ((int) Math.Ceiling((float) simulationTimeDiscrepancy / TotalAIAgentsSinglethreaded));
-                int actualSleepTime = msPerAgent;
-
-                try
+                lock (runLock)
                 {
-                    controlSW.Start();
-                    for (int i = 0; i < aiAgents.Count; i++)
+                    for (int i = 0; i < loopLimit; i++)
                     {
-                        agentSW.Restart();
-
                         aiAgents[i].Act();
                         totalSimulated++;
                         tempSimulated++;
-
-                        // update discrepancy and sleeptime after specified amount of simulated AIAgents
-                        if ((i % controlAfterAgents) == 0)
-                        {
-                            controlSW.Stop();
-                            simulatedAgentDiscrepancy += (int) Math.Ceiling(
-                                ((double) controlSW.ElapsedMilliseconds) / ((double) tempSimulated))
-                                - msPerAgent;
-                            // take the global mean to calculate the milliseconds per simulated agent
-                            // and substract a ceiled value (to be safe) to cope with time discrepancies
-                            msPerAgent = (((int) TotalSimulationCycle.TotalMilliseconds) / TotalAIAgentsSinglethreaded)
-                                -  ((int) Math.Ceiling((float) simulationTimeDiscrepancy / TotalAIAgentsSinglethreaded));
-                            tempSimulated = 0;
-                            controlSW.Restart();
-                        }
-
-                        agentSW.Stop(); 
-
-                        actualSleepTime = msPerAgent - ((int) agentSW.ElapsedMilliseconds);
-                        if (actualSleepTime > 0) { System.Threading.Thread.Sleep(msPerAgent); }
                     }
                 }
-                catch (Exception ex)
-                {
-                    MakeLogError(ex);
-                }
             }
+            catch (Exception ex)
+            {
+                MakeLogError(ex);
+            }
+
+            return tempSimulated;
         }
+
+        //// Run-method for singlethreaded AIManager-instances
+        //public void RunSinglethreaded ()
+        //{
+        //    int controlAfterAgents = 10;
+        //    int tempSimulated = 0;
+        //    Stopwatch controlSW = new Stopwatch();
+        //    Stopwatch agentSW = new Stopwatch();
+
+        //    lock (runLock)
+        //    {
+        //        // take the global mean to calculate the milliseconds per simulated agent
+        //        // and substract a ceiled value (to be safe) to cope with time discrepancies
+        //        int msPerAgent = (((int) AICycleTime.TotalMilliseconds) / TotalAIAgentsSinglethreaded)
+        //            -  ((int) Math.Ceiling((float) simulationTimeDiscrepancy / TotalAIAgentsSinglethreaded));
+        //        int actualSleepTime = msPerAgent;
+
+        //        try
+        //        {
+        //            controlSW.Start();
+        //            for (int i = 0; i < aiAgents.Count; i++)
+        //            {
+        //                agentSW.Restart();
+
+        //                aiAgents[i].Act();
+        //                totalSimulated++;
+        //                tempSimulated++;
+
+        //                // update discrepancy and sleeptime after specified amount of simulated AIAgents
+        //                if ((i % controlAfterAgents) == 0)
+        //                {
+        //                    controlSW.Stop();
+        //                    simulatedAgentDiscrepancy += (int) Math.Ceiling(
+        //                        ((double) controlSW.ElapsedMilliseconds) / ((double) tempSimulated))
+        //                        - msPerAgent;
+        //                    // take the global mean to calculate the milliseconds per simulated agent
+        //                    // and substract a ceiled value (to be safe) to cope with time discrepancies
+        //                    msPerAgent = (((int) AICycleTime.TotalMilliseconds) / TotalAIAgentsSinglethreaded)
+        //                        -  ((int) Math.Ceiling((float) simulationTimeDiscrepancy / TotalAIAgentsSinglethreaded));
+        //                    tempSimulated = 0;
+        //                    controlSW.Restart();
+        //                }
+
+        //                agentSW.Stop(); 
+
+        //                actualSleepTime = msPerAgent - ((int) agentSW.ElapsedMilliseconds);
+        //                if (actualSleepTime > 0) { System.Threading.Thread.Sleep(msPerAgent); }
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            MakeLogError(ex);
+        //        }
+        //    }
+        //}
 
     }
 

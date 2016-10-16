@@ -13,6 +13,18 @@ namespace GUC
 {
     public static class Program
     {
+
+        private static long updateRate = 0L;
+        public static long UpdateRate { get { return updateRate; } }
+
+        private static long timeTillNextUpdate = 0L;
+        public static long TimeTillNextUpdate { get { return timeTillNextUpdate; } }
+
+        private static TimeStat timeAll = new TimeStat();
+        public static long CurrentElapsedTicks { get { return timeAll.Ticks; } }
+
+
+
         class TimeStat
         {
             long tickCount;
@@ -95,12 +107,11 @@ namespace GUC
         {
             try
             {
-                const long updateRate = 15 * TimeSpan.TicksPerMillisecond; //min time between server ticks
+                updateRate = 15 * TimeSpan.TicksPerMillisecond; //min time between server ticks
 
                 const long nextInfoUpdateInterval = 1 * TimeSpan.TicksPerMinute;
                 long nextInfoUpdateTime = GameTime.Ticks + nextInfoUpdateInterval;
                 
-                TimeStat timeAll = new TimeStat();
                 while (true)
                 {
                     timeAll.Start();
@@ -119,10 +130,10 @@ namespace GUC
                         nextInfoUpdateTime = GameTime.Ticks + nextInfoUpdateInterval;
                     }
 
-                    long diff = (updateRate - timeAll.Stop())/ TimeSpan.TicksPerMillisecond;
-                    if (diff > 0)
+                    timeTillNextUpdate = (updateRate - timeAll.Stop()) / TimeSpan.TicksPerMillisecond;
+                    if (timeTillNextUpdate > 0)
                     {
-                        Thread.Sleep((int)diff);
+                        Thread.Sleep((int) timeTillNextUpdate);
                     }
                 }
             }
