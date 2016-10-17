@@ -391,7 +391,6 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
                             simulatedAgents++;
                             currRangeNext++;
                         }
-                        currRangeNext = currRangeEnd;
 
                         if (remainingRanges.Count > 1) { remainingRanges.RemoveAt(0); }
                         else
