@@ -8,14 +8,15 @@ using GUC.Scripts.Sumpfkraut.GUI;
 using GUC.Scripts.Sumpfkraut.Networking;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Types;
+using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 
 namespace GUC.Scripts.Sumpfkraut.Menus
 {
     class PlayerInventory : GUCMenu
     {
         public static readonly PlayerInventory Menu = new PlayerInventory();
-
         GUCInventory inv;
+        NPCInst player;
 
         public PlayerInventory()
         {
@@ -29,6 +30,7 @@ namespace GUC.Scripts.Sumpfkraut.Menus
             rows = (screenSize[1] - GUCInventory.DescriptionBoxHeight - y) / GUCInventory.SlotSize;
 
             inv = new GUCInventory(x, y, cols, rows);
+            player = ScriptClient.Client.Character;
         }
 
         public void UpdateContents()
@@ -38,7 +40,6 @@ namespace GUC.Scripts.Sumpfkraut.Menus
 
         public void UpdateAmountEventMethod(ItemInst item, int amount)
         {
-            // UpdateContents();
             inv.UpdateAmounts();
         }
 
@@ -47,13 +48,17 @@ namespace GUC.Scripts.Sumpfkraut.Menus
             UpdateContents();
         }
 
+        public void UpdateEquipment()
+        {
+            inv.UpdateEquipment();
+        }
+
         public override void Open()
         {
             ItemInst.OnSetAmount += UpdateAmountEventMethod;
             VobSystem.Instances.ItemContainers.ScriptInventory.OnAddItem += UpdateInventory;
             VobSystem.Instances.ItemContainers.ScriptInventory.OnRemoveItem += UpdateInventory;
 
-            NPCInst player = ScriptClient.Client.Character;
             if (player == null)
                 return;
 
@@ -93,11 +98,10 @@ namespace GUC.Scripts.Sumpfkraut.Menus
                     Close();
                     break;
                 case VirtualKeys.L: // DROP
-                    NPCInst player = ScriptClient.Client.Character;
                     if (player != null)
                     {
-                        ItemInst selItem = inv.GetSelectedItem();
-                        if (selItem != null)
+                        ItemInst selectedItem = inv.GetSelectedItem();
+                        if (selectedItem != null)
                         {
                             /*Animations.AniJob dropJob = 
                              player.StartAniJump(ani, 10, 10);
@@ -114,30 +118,38 @@ namespace GUC.Scripts.Sumpfkraut.Menus
                                  }
                              }
                          */
-                         if (selItem.Amount > 1)
+                         if (selectedItem.Amount > 1)
                             {
-                                DropItemMenu.Menu.Open(selItem);
+                                DropItemMenu.Menu.Open(selectedItem);
                             }
-                         else if(selItem.Amount == 1)
+                         else if(selectedItem.Amount == 1)
                             {
-                                player.RequestDropItem(selItem,1);
+                                player.RequestDropItem(selectedItem,1);
                             }
                         }
-                    }
-
-                    /*if (inv.selectedItem == null)
-                        return;
-
-                    if (inv.selectedItem.Amount > 1)
-                        GUCMenus.InputNumber.Open(InventoryMessage.WriteDropItem, inv.selectedItem, inv.selectedItem.Amount);
-                    else
-                        InventoryMessage.WriteDropItem(inv.selectedItem, 1);*/
+                    }  
                     break;
                 case VirtualKeys.Control: // USE
-                    /*if (inv.selectedItem == null)
+                    ItemInst selItem = inv.GetSelectedItem();
+                    if (selItem == null)
                         return;
 
-                    InventoryMessage.WriteUseItem(inv.selectedItem);*/
+                    switch(selItem.ItemType)
+                    {
+                        case ItemTypes.Wep1H:
+                        case ItemTypes.Wep2H:
+                        case ItemTypes.WepBow:
+                        case ItemTypes.WepXBow:
+                        case ItemTypes.Armor:
+                            if (selItem.IsEquipped)
+                                player.RequestUnequipItem(selItem);
+                            else
+                                player.RequestEquipItem(selItem);
+                            break;
+                        default:
+                            player.RequestUseItem(selItem);
+                            break;
+                    }
                     break;
                 default:
                     inv.KeyPressed(key);

@@ -30,6 +30,9 @@ namespace GUC.Scripts.Sumpfkraut.Networking
 
         TakeItem,
         DropItem,
+        EquipItem,
+        UnequipItem,
+        UseItem,
     }
 
     // messages concerning the events or states of a vob in the world, sent by the server

@@ -45,7 +45,17 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
             // item handling
             { "t_IGet_2_Stand", "TakeItem" },
             { "t_IDrop_2_Stand", "DropItem" },
-
+            { "t_HORN_Stand_2_S0", "ItemHandling.BlowHorn" },
+            { "t_potionfast_Stand_2_S0", "ItemHandling.DrinkPotion" },
+            { "t_Food_S0_2_Stand", "ItemHandling.EatSmall" },
+            { "t_FoodHuge_S0_2_Stand", "ItemHandling.EatLarge" },
+            { "t_RICE_Stand_2_S0", "ItemHandling.EatRice" },
+            { "t_Meat_Stand_2_S0", "ItemHandling.EatMutton" },
+            { "t_FIRESPIT_Stand_2_S0", "ItemHandling.FireSpit" },
+            { "t_LUTE_Stand_2_S0", "ItemHandling.PlayLute" },
+            { "t_MAP_Stand_2_S0", "ItemHandling.ReadScroll" },
+            { "t_JOINT_Stand_2_S0", "ItemHandling.SmokeAJoint" },
+            { "s_FIRESPIT_S2", "ItemHandling.UseTorch" },
         };
 
         public class FightAnis : AniCatalog
@@ -72,10 +82,26 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
             public ScriptAniJob Up { get; private set; }
         }
 
+        public class ItemHandlingAnis : AniCatalog
+        {
+            public ScriptAniJob BlowHorn { get; private set; }
+            public ScriptAniJob DrinkPotion { get; private set; }
+            public ScriptAniJob EatLarge { get; private set; }
+            public ScriptAniJob EatSmall { get; private set; }
+            public ScriptAniJob EatRice { get; private set; }
+            public ScriptAniJob EatMutton { get; private set; }
+            public ScriptAniJob FireSpit { get; private set; }
+            public ScriptAniJob PlayLute { get; private set; }
+            public ScriptAniJob ReadScroll { get; private set; }
+            public ScriptAniJob SmokeAJoint { get; private set; }
+            public ScriptAniJob UseTorch { get; private set; }
+        }
+
         public ScriptAniJob TakeItem { get; private set; }
         public ScriptAniJob DropItem { get; private set; }
 
         public JumpAnis Jumps { get; private set; }
+        public ItemHandlingAnis ItemHandling { get; private set; }
 
         public NPCCatalog()
         {
@@ -83,6 +109,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
             Fight1H = new FightAnis();
             Fight2H = new FightAnis();
             Jumps = new JumpAnis();
+            ItemHandling = new ItemHandlingAnis();
         }
     }
 }

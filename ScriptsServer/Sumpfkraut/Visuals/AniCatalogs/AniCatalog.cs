@@ -23,6 +23,10 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
                     {
                         catalog.SetProperty(prop, job, false);
                     }
+                    else
+                    {
+                        Log.Logger.Log("AniParser: Couldn't find property '{0}' for animation '{1}'.", propName, job.AniName);
+                    }
                 }
             }
             return false;

@@ -93,7 +93,7 @@ namespace GUC.Scripts.Sumpfkraut.GUI
                 }
             }
 
-            void UpdateBackTex()
+            public void UpdateBackTex()
             {
                 if (this.isSelected)
                 {
@@ -460,6 +460,15 @@ namespace GUC.Scripts.Sumpfkraut.GUI
                 }
         }
 
+        public void UpdateEquipment()
+        {
+            for (int y = 0; y < slots.GetLength(1); y++)
+                for (int x = 0; x < slots.GetLength(0); x++)
+                {
+                    slots[x, y].UpdateBackTex();
+                }
+        }
+
         List<ItemInst> contents = new List<ItemInst>();
         void UpdateSlots()
         {
@@ -476,6 +485,7 @@ namespace GUC.Scripts.Sumpfkraut.GUI
                     {
                         slots[x, y].Item = contents[i];
                         slots[x, y].UpdateSlotAmount();
+                        slots[x, y].UpdateBackTex();
                     }
                     else
                     {

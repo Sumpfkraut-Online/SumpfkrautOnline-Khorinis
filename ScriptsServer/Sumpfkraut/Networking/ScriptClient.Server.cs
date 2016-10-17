@@ -51,6 +51,15 @@ namespace GUC.Scripts.Sumpfkraut.Networking
                     ushort amount = stream.ReadUShort();
                     npc.DropItem(itemID, amount);
                     break;
+                case ScriptCommandMessageIDs.EquipItem:
+                    npc.EquipItem(stream.ReadByte());
+                    break;
+                case ScriptCommandMessageIDs.UnequipItem:
+                    npc.UnequipItem(stream.ReadByte());
+                    break;
+                case ScriptCommandMessageIDs.UseItem:
+                    npc.UseItem(stream.ReadByte());
+                    break;
             }
         }
     }

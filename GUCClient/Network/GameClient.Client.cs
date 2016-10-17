@@ -402,17 +402,6 @@ namespace GUC.Network
                     WorldObjects.WorldGlobals.WorldClock.Messages.ReadTimeStart(stream, false);
                     break;
 
-                case ServerMessages.PlayerInvAddItemMessage:
-                    WorldObjects.ItemContainers.NPCInventory.Messages.ReadAddItem(stream);
-                    break;
-                case ServerMessages.PlayerInvRemoveItemMessage:
-                    WorldObjects.ItemContainers.NPCInventory.Messages.ReadRemoveItem(stream);
-                    break;
-                case ServerMessages.PlayerItemAmountChangedMessage:
-                    WorldObjects.Item.Messages.ReadItemAmountChangedMessage(stream);
-                    break;
-
-
                 // Vob Messages
                 case ServerMessages.VobSpawnMessage:
                     World.Messages.ReadVobSpawn(stream);
@@ -430,6 +419,23 @@ namespace GUC.Network
                 // NPC Messages
                 case ServerMessages.NPCPosDirMessage:
                     NPC.Messages.ReadPosDirMessage(stream);
+                    break;
+                case ServerMessages.NPCEquipRemoveMessage:
+                    NPC.Messages.ReadUnequipMessage(stream);
+                    break;
+
+                // Player Messages
+                case ServerMessages.PlayerNPCEquipAddMessage:
+                    NPC.Messages.ReadPlayerEquipMessage(stream);
+                    break;
+                case ServerMessages.PlayerInvAddItemMessage:
+                    WorldObjects.ItemContainers.NPCInventory.Messages.ReadAddItem(stream);
+                    break;
+                case ServerMessages.PlayerInvRemoveItemMessage:
+                    WorldObjects.ItemContainers.NPCInventory.Messages.ReadRemoveItem(stream);
+                    break;
+                case ServerMessages.PlayerItemAmountChangedMessage:
+                    WorldObjects.Item.Messages.ReadItemAmountChangedMessage(stream);
                     break;
 
                 // Model Messages
@@ -451,6 +457,9 @@ namespace GUC.Network
                 case ServerMessages.ModelOverlayRemoveMessage:
                     Model.Messages.ReadOverlay(stream, false);
                     break;
+                case ServerMessages.ModelInstanceCreateMessage:
+                    // TODO: whatever has to be done
+                    break;
 
                 // vob guiding
                 case ServerMessages.GuideAddCmdMessage:
@@ -467,6 +476,9 @@ namespace GUC.Network
                     break;
                 case ServerMessages.GuideSetCmdMessage:
                     GuidedVob.Messages.ReadGuideSetCmdMessage(stream);
+                    break;
+                case ServerMessages.VobInstanceCreateMessage:
+                    // TODO: whatever has to be done
                     break;
 
                 default:

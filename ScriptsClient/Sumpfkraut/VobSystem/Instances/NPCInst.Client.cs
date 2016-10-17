@@ -55,6 +55,30 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             Request(stream);
         }
 
+        public void RequestEquipItem(ItemInst item)
+        {
+            var stream = GameClient.GetScriptCommandMessageStream(this.BaseInst);
+            stream.Write((byte)ScriptCommandMessageIDs.EquipItem);
+            stream.Write((ushort)item.ID);
+            Request(stream);
+        }
+
+        public void RequestUnequipItem(ItemInst item)
+        {
+            var stream = GameClient.GetScriptCommandMessageStream(this.BaseInst);
+            stream.Write((byte)ScriptCommandMessageIDs.UnequipItem);
+            stream.Write((ushort)item.ID);
+            Request(stream);
+        }
+
+        public void RequestUseItem(ItemInst item)
+        {
+            var stream = GameClient.GetScriptCommandMessageStream(this.BaseInst);
+            stream.Write((byte)ScriptCommandMessageIDs.UseItem);
+            stream.Write((ushort)item.ID);
+            Request(stream);
+        }
+
         private void Request(PacketWriter stream)
         {
             if (nextCommandTime > GameTime.Ticks)
@@ -101,9 +125,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             oCNpc gNpc = this.BaseInst.gVob;
             oCItem gItem = item.BaseInst.gVob;
 
-            if (item.BaseInst.IsEquipped)
+           if (item.BaseInst.IsEquipped)
             {
-                pUnequipItem(item);
+                pBeginUnequipItem(item);
             }
 
             switch ((SlotNums)slot)
@@ -146,9 +170,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 default:
                     break;
             }
+            Menus.PlayerInventory.Menu.UpdateEquipment();
         }
 
-        partial void pUnequipItem(ItemInst item)
+        partial void pBeginUnequipItem(ItemInst item)
         {
             if (!this.IsSpawned)
                 return;
@@ -197,6 +222,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 default:
                     break;
             }
+        }
+
+        partial void pAfterUnequipItem(ItemInst item)
+        {
+            Menus.PlayerInventory.Menu.UpdateEquipment();
         }
 
         #endregion

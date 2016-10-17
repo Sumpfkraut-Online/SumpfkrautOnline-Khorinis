@@ -7,6 +7,7 @@ using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.Scripting;
 using GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs;
 using GUC.Types;
+using GUC.Log;
 using GUC.Scripts.Sumpfkraut.Networking;
 using GUC.Animations;
 using GUC.WorldObjects;
@@ -74,7 +75,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             velocity.Z *= 250;
             this.Throw(velocity);
         }
-
         #endregion
 
         #region ItemHandling
@@ -83,6 +83,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             ItemInst item = Inventory.GetItem(itemID);
             if (item == null)
                 return;
+            if (item.IsEquipped)
+                UnequipItem(item);
 
             ModelInst.StartAnimation(this.AniCatalog.DropItem);
 
@@ -102,6 +104,73 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             ItemInst newItem = new ItemInst(item.Definition);
             newItem.SetAmount(droppedItemAmount);
             newItem.Spawn(this.World, this.GetPosition(), this.GetDirection());
+        }
+
+        public void EquipItem(byte itemID)
+        {
+            ItemInst item = Inventory.GetItem(itemID);
+            if (item == null)
+                return;
+            if(!item.IsEquipped)
+                EquipItem(item);
+        }
+
+        public void UnequipItem(byte itemID)
+        {
+            ItemInst item = Inventory.GetItem(itemID);
+            if (item == null)
+                return;
+
+            if (item.IsEquipped)
+                UnequipItem(item);
+        }
+
+        public void UseItem(byte itemID)
+        {
+            ItemInst item = Inventory.GetItem(itemID);
+            if (item == null)
+                return;
+
+            if (this.ModelInst.BaseInst.IsInAnimation())
+                return;
+
+            if (this.Environment.InAir)
+                return;
+
+            if (this.Movement != NPCMovement.Stand)
+                return;
+
+            switch(item.ItemType)
+            {
+                case ItemTypes.SmallEatable:              
+                    this.ModelInst.StartAnimation(AniCatalog.ItemHandling.EatSmall, () => this.UnequipItem(item));
+                    this.EquipItem((int)SlotNums.Lefthand, item);
+                    break;
+                case ItemTypes.LargeEatable:
+                    this.ModelInst.StartAnimation(AniCatalog.ItemHandling.EatLarge, () => this.UnequipItem(item));
+                    this.EquipItem((int)SlotNums.Lefthand, item);
+                    break;
+                case ItemTypes.Mutton:
+                    this.ModelInst.StartAnimation(AniCatalog.ItemHandling.EatMutton, () => this.UnequipItem(item));
+                    this.EquipItem((int)SlotNums.Lefthand, item);
+                    break;
+                case ItemTypes.Rice:
+                    this.ModelInst.StartAnimation(AniCatalog.ItemHandling.EatRice, () => this.UnequipItem(item));
+                    this.EquipItem((int)SlotNums.Lefthand, item);
+                    break;
+                case ItemTypes.Drinkable:
+                    this.ModelInst.StartAnimation(AniCatalog.ItemHandling.DrinkPotion, () => this.UnequipItem(item));
+                    this.EquipItem((int)SlotNums.Lefthand, item);
+                    break;
+                case ItemTypes.Readable:
+                    this.ModelInst.StartAnimation(AniCatalog.ItemHandling.ReadScroll, () => this.UnequipItem(item));
+                    this.EquipItem((int)SlotNums.Lefthand, item);
+                    break;
+                case ItemTypes.Torch:
+                    this.ModelInst.StartAnimation(AniCatalog.ItemHandling.UseTorch, () => this.UnequipItem(item));
+                    this.EquipItem((int)SlotNums.Lefthand, item);
+                    break;
+            }
         }
         #endregion
 
