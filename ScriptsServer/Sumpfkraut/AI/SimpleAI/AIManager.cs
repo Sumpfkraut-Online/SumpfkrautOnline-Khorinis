@@ -54,16 +54,21 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
             lock (totalSimulatedLock) { totalSimulated += value; }
         }
 
+        protected static void SetTotalSimulated (int value)
+        {
+            lock (totalSimulatedLock) { totalSimulated = value; }
+        }
+
         protected static int simulatedAgentDiscrepancy = 0;
         public static int SimulatedAgentDiscrepancy { get { return simulatedAgentDiscrepancy; } }
 
         protected static int simulationTimeDiscrepancy = 0;
         public static int SimulationTimeDiscrepancy { get { return simulationTimeDiscrepancy; } }
 
-        protected static readonly TimeSpan totalSimulationThreshold = new TimeSpan (0, 0, 10);
+        protected static readonly TimeSpan totalSimulationThreshold = new TimeSpan(0, 0, 10);
 
-        protected static TimeSpan aiCicleTime = new TimeSpan(0, 0, 1);
-        public static TimeSpan AICycleTime { get { return aiCicleTime; } }
+        protected static TimeSpan aiCycleTime = new TimeSpan(0, 0, 1);
+        public static TimeSpan AICycleTime { get { return aiCycleTime; } }
         public static void SetAICycleTime (TimeSpan value)
         {
             if (value <= TimeSpan.Zero)
@@ -77,8 +82,10 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
                     "Long aim for aiCicleTime of {0} detected, exceeding threshold of {1}.",
                     value, totalSimulationThreshold));
             }
-            aiCicleTime = value;
+            aiCycleTime = value;
         }
+
+        protected static Stopwatch aiCycleStopwatch = new Stopwatch();
 
 
 
@@ -114,6 +121,8 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
 
         // index-ranges of this.aiAgents which have already been simulated in the current ai-cycle
         protected List<Types.Vec2i> simulatedRanges;
+        // index ranges of this.aiAgents which still need to be simulated in the current ai-cycle
+        protected List<Types.Vec2i> remainingRanges;
 
         protected object runLock;
 
@@ -129,10 +138,19 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
             SetObjName("AIManager (default)");
             runLock = new object();
             aiAgents = new List<AIAgent>();
+            remainingRanges = new List<Types.Vec2i> { new Types.Vec2i(0, 0) };
             isSubscribed = false;
 
             SubscribeAIManager();
             SetUseSingleThread(useSingleThread);
+        }
+
+
+
+        // initialize by register to the program tick event
+        public static void InitStatic ()
+        {
+            Program.OnTick += RunAllSinglethreaded;
         }
 
 
@@ -165,53 +183,92 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
 
         public void SubscribeAIManager ()
         {
-            if (!aiManagers.Contains(this))
+            lock (runLock)
             {
-                aiManagers.Add(this);
-                AddTotalAIAgents(this.aiAgents.Count);
-                if (useSingleThread)
+                if (!aiManagers.Contains(this))
                 {
-                    aiManagers_SingleThreaded.Add(this);
-                    AddTotalAIAgentsSinglethreaded(this.aiAgents.Count);
+                    aiManagers.Add(this);
+                    AddTotalAIAgents(this.aiAgents.Count);
+                    if (useSingleThread)
+                    {
+                        aiManagers_SingleThreaded.Add(this);
+                        AddTotalAIAgentsSinglethreaded(this.aiAgents.Count);
+                    }
+                    isSubscribed = true;
                 }
-                isSubscribed = true;
             }
         }
 
         public void UnsubscribeAIManager ()
         {
-            aiManagers.Remove(this);
-            AddTotalAIAgents(-this.aiAgents.Count);
-            if (useSingleThread)
+            lock (runLock)
             {
-                aiManagers_SingleThreaded.Remove(this);
-                AddTotalAIAgentsSinglethreaded(-this.aiAgents.Count);
+                aiManagers.Remove(this);
+                AddTotalAIAgents(-this.aiAgents.Count);
+                if (useSingleThread)
+                {
+                    aiManagers_SingleThreaded.Remove(this);
+                    AddTotalAIAgentsSinglethreaded(-this.aiAgents.Count);
+                }
+                isSubscribed = false;
             }
-            isSubscribed = false;
         }
 
         public void SubscribeAIAgent (AIAgent aiAgent)
         {
-            if (!aiAgents.Contains(aiAgent))
+            lock (runLock)
             {
-                aiAgents.Add(aiAgent);
-                if (isSubscribed)
+                if (!aiAgents.Contains(aiAgent))
                 {
-                    AddTotalAIAgents(1);
-                    if (useSingleThread) { AddTotalAIAgentsSinglethreaded(1); }
+                    aiAgents.Add(aiAgent);
+                    if (isSubscribed)
+                    {
+                        AddTotalAIAgents(1);
+                        if (useSingleThread) { AddTotalAIAgentsSinglethreaded(1); }
+                    }
+
+                    // extend the remaining simulation range by 1 new agent added too the bunch
+                    int lastIndex = remainingRanges.Count - 1;
+                    if (lastIndex >= 0)
+                    {
+                        remainingRanges[lastIndex] = new Types.Vec2i(
+                            remainingRanges[lastIndex].X, 
+                            remainingRanges[lastIndex].Y + 1);
+                    }
                 }
             }
         }
 
         public void UnsubscribeAIAgent (AIAgent aiAgent)
         {
-            // removing it this way may throw an exception when iteration in Run-method 
-            // reaches this aiAgent
-            aiAgents.Remove(aiAgent);
-            if (isSubscribed)
+            lock (runLock)
             {
-                AddTotalAIAgents(-1);
-                if (useSingleThread) { AddTotalAIAgentsSinglethreaded(-1); }
+                int aiAgentIndex = aiAgents.IndexOf(aiAgent);
+                
+                aiAgents.RemoveAt(aiAgentIndex);
+                if (isSubscribed)
+                {
+                    AddTotalAIAgents(-1);
+                    if (useSingleThread) { AddTotalAIAgentsSinglethreaded(-1); }
+                }
+
+                // if removed agent is part of a range of agents that still has to be simulated,
+                // then correct the respective range-entry for the next run-tick of the manager
+                int rangeIndex = -1;
+                for (int i = 0; i < remainingRanges.Count; i++)
+                {
+                    if ((remainingRanges[i].X <= aiAgentIndex) 
+                        && (remainingRanges[i].Y >= aiAgentIndex))
+                    {
+                        rangeIndex = i;
+                    }
+                }
+                if (rangeIndex >= 0)
+                {
+                    remainingRanges[rangeIndex] = new Types.Vec2i(
+                        remainingRanges[rangeIndex].X, 
+                        remainingRanges[rangeIndex].Y - 1);
+                }
             }
         }
 
@@ -222,6 +279,24 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
         {
             try
             {
+                if (TotalSimulated >= TotalAIAgents)
+                {
+                    aiCycleStopwatch.Stop();
+                    if (aiCycleStopwatch.Elapsed.Ticks < AICycleTime.Ticks)
+                    {
+                        // continue idling until the time of the ai-cycle expires
+                        aiCycleStopwatch.Start();
+                        return;
+                    }
+                    else
+                    {
+                        // begin new cycle when current cycle simulated all agents (singlethreaded)
+                        // as well as the cycle-time expires
+                        SetTotalSimulated(0);
+                        aiCycleStopwatch.Restart();
+                    }
+                }
+
                 // agents to simulate per servertick (of theoretical length) to fullfill own rate of ai-cicle
                 // (note: maybe find a shorter, more elegant version to an equation with multiple type conversions)
                 // (sum_agents [] / time_aiCycle [ms]) * (updateRate [ticks] * tps [ticks / ms])
@@ -231,15 +306,30 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
                     * ((double) Program.UpdateRate / (double) TimeSpan.TicksPerMillisecond)
                     );
                 int simNext = agentsToSimulate;
+                int tempSimulated;
+                bool tempAllSimulated = true;
 
+
+                // simulate agents until the quota is met or no agents remain to be simulated
                 for (int i = 0; i < aiManagers_SingleThreaded.Count; i++)
                 {
+                    // use the last AIManager again if it was not depleted of agents to simulate
+                    if (!tempAllSimulated) { i--; }
+
                     if (aiManagers_SingleThreaded[i].IsActive)
                     {
-                        simNext -= aiManagers_SingleThreaded[i].RunSinglethreaded(simNext);
+                        // the current AIManagers returns how many AIAgents it managed to simulate
+                        // --> substract it from the total amount to manage this tick
+                        aiManagers_SingleThreaded[i].RunSinglethreaded(simNext, 
+                            out tempSimulated, out tempAllSimulated);
+                        simNext -= tempSimulated;
+
                         if (simNext <= 0)
                         {
-                            
+                            // nothing to simulate anymore
+                            // adding and removing AIAgents during this method-run might cause
+                            // some AIAgents to be postponed to the next simulation cycle
+                            return;
                         }
                     }
                 }
@@ -276,30 +366,54 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
 
 
         // run method for singlethreaded AIManager-instances
-        public int RunSinglethreaded (int maxAgents)
+        public void RunSinglethreaded (int maxAgents, out int simulatedAgents, out bool allSimulated)
         {
-            int tempSimulated = 0;
+            simulatedAgents = 0;
+            allSimulated = false;
             int loopLimit = maxAgents;
             if (aiAgents.Count < maxAgents) { loopLimit = aiAgents.Count; }
+
+            int currRangeNext, currRangeEnd;
 
             try
             {
                 lock (runLock)
                 {
-                    for (int i = 0; i < loopLimit; i++)
+                    while (simulatedAgents < loopLimit)
                     {
-                        aiAgents[i].Act();
-                        totalSimulated++;
-                        tempSimulated++;
+                        currRangeNext = remainingRanges[0].X;
+                        currRangeEnd = remainingRanges[0].Y;
+
+                        while (currRangeNext <= currRangeEnd)
+                        {
+                            aiAgents[currRangeNext].Act();
+                            totalSimulated++;
+                            simulatedAgents++;
+                            currRangeNext++;
+                        }
+                        currRangeNext = currRangeEnd;
+
+                        if (remainingRanges.Count > 1) { remainingRanges.RemoveAt(0); }
+                        else
+                        {
+                            remainingRanges[0] = new Types.Vec2i(0, 0);
+                            allSimulated = true;
+                            return;
+                        }
                     }
+                    
+                    //for (int i = 0; i < loopLimit; i++)
+                    //{
+                    //    aiAgents[i].Act();
+                    //    totalSimulated++;
+                    //    tempSimulated++;
+                    //}
                 }
             }
             catch (Exception ex)
             {
                 MakeLogError(ex);
             }
-
-            return tempSimulated;
         }
 
         //// Run-method for singlethreaded AIManager-instances

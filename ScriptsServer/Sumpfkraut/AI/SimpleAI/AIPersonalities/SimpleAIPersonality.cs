@@ -284,7 +284,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                     // TODO: draw weapon first if necessary
                 }
 
-                Print(distance);
+                //Print(distance);
                 if (distance > fightDistance)
                 {
                     Print("GoTo");
