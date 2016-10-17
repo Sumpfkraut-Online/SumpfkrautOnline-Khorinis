@@ -94,7 +94,8 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
         protected bool isActive;
         public bool IsActive { get { return isActive; } }
 
-        protected bool useSingleThread = false;
+        protected bool useSingleThread;
+        public bool UseSingleThread { get { return useSingleThread; } }
         public void SetUseSingleThread (bool useSingleThread, bool restart = false)
         {
             if (useSingleThread)
@@ -124,6 +125,16 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
         // index ranges of this.aiAgents which still need to be simulated in the current ai-cycle
         protected List<Types.Vec2i> remainingRanges;
 
+        public void ResetRemainingRanges ()
+        {
+            lock (runLock)
+            {
+                remainingRanges.Clear();
+                if (aiAgents.Count < 1) { remainingRanges.Add(new Types.Vec2i(-1, -1)); }
+                else { remainingRanges.Add(new Types.Vec2i(0, aiAgents.Count - 1)); }
+            }
+        }
+
         protected object runLock;
 
 
@@ -133,16 +144,18 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
         { }
 
         public AIManager (bool useSingleThread, bool startOnCreate, TimeSpan timeout)
-            : base(startOnCreate, timeout, false)
+            : base(false, timeout, false)
         {
             SetObjName("AIManager (default)");
             runLock = new object();
             aiAgents = new List<AIAgent>();
-            remainingRanges = new List<Types.Vec2i> { new Types.Vec2i(0, 0) };
+            remainingRanges = new List<Types.Vec2i> { new Types.Vec2i(-1, -1) };
             isSubscribed = false;
 
             SubscribeAIManager();
             SetUseSingleThread(useSingleThread);
+
+            if (startOnCreate) { Start(); }
         }
 
 
@@ -151,6 +164,15 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
         public static void InitStatic ()
         {
             Program.OnTick += RunAllSinglethreaded;
+        }
+
+        // run this before every singlethreaded ai-cycle to let the AIManagers reset themselves
+        public static void CleanForNextSinglethreadedCycle ()
+        {
+            for (int i = 0; i < aiManagers.Count; i++)
+            {
+                aiManagers[i].ResetRemainingRanges();
+            }
         }
 
 
@@ -229,11 +251,24 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
 
                     // extend the remaining simulation range by 1 new agent added too the bunch
                     int lastIndex = remainingRanges.Count - 1;
+
                     if (lastIndex >= 0)
                     {
-                        remainingRanges[lastIndex] = new Types.Vec2i(
+                        if (remainingRanges[lastIndex].X < 0)
+                        {
+                            remainingRanges[lastIndex] = new Types.Vec2i(0, remainingRanges[lastIndex].Y + 1);
+                        }
+                        else
+                        {
+                            remainingRanges[lastIndex] = new Types.Vec2i(
                             remainingRanges[lastIndex].X, 
                             remainingRanges[lastIndex].Y + 1);
+                        }
+                        
+                    }
+                    else
+                    {
+                        remainingRanges[lastIndex] = new Types.Vec2i(0, 0);
                     }
                 }
             }
@@ -245,29 +280,39 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
             {
                 int aiAgentIndex = aiAgents.IndexOf(aiAgent);
                 
-                aiAgents.RemoveAt(aiAgentIndex);
-                if (isSubscribed)
+                if (aiAgentIndex >= 0)
                 {
-                    AddTotalAIAgents(-1);
-                    if (useSingleThread) { AddTotalAIAgentsSinglethreaded(-1); }
-                }
-
-                // if removed agent is part of a range of agents that still has to be simulated,
-                // then correct the respective range-entry for the next run-tick of the manager
-                int rangeIndex = -1;
-                for (int i = 0; i < remainingRanges.Count; i++)
-                {
-                    if ((remainingRanges[i].X <= aiAgentIndex) 
-                        && (remainingRanges[i].Y >= aiAgentIndex))
+                    aiAgents.RemoveAt(aiAgentIndex);
+                    if (isSubscribed)
                     {
-                        rangeIndex = i;
+                        AddTotalAIAgents(-1);
+                        if (useSingleThread) { AddTotalAIAgentsSinglethreaded(-1); }
                     }
-                }
-                if (rangeIndex >= 0)
-                {
-                    remainingRanges[rangeIndex] = new Types.Vec2i(
-                        remainingRanges[rangeIndex].X, 
-                        remainingRanges[rangeIndex].Y - 1);
+
+                    // if removed agent is part of a range of agents that still has to be simulated,
+                    // then correct the respective range-entry for the next run-tick of the manager
+                    int rangeIndex = -1;
+                    for (int i = 0; i < remainingRanges.Count; i++)
+                    {
+                        if ((remainingRanges[i].X <= aiAgentIndex) 
+                            && (remainingRanges[i].Y >= aiAgentIndex))
+                        {
+                            rangeIndex = i;
+                        }
+                    }
+
+                    if ((aiAgentIndex == 0) && (aiAgents.Count < 1))
+                    {
+                        // if this AIAgent was the very last one, reset the remainingRanges
+                        remainingRanges.Clear();
+                        remainingRanges.Add(new Types.Vec2i(-1, -1));
+                    }
+                    else if (rangeIndex >= 0)
+                    {
+                        remainingRanges[rangeIndex] = new Types.Vec2i(
+                            remainingRanges[rangeIndex].X, 
+                            remainingRanges[rangeIndex].Y - 1);
+                    }
                 }
             }
         }
@@ -293,6 +338,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
                         // begin new cycle when current cycle simulated all agents (singlethreaded)
                         // as well as the cycle-time expires
                         SetTotalSimulated(0);
+                        CleanForNextSinglethreadedCycle();
                         aiCycleStopwatch.Restart();
                     }
                 }
@@ -323,6 +369,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
                         aiManagers_SingleThreaded[i].RunSinglethreaded(simNext, 
                             out tempSimulated, out tempAllSimulated);
                         simNext -= tempSimulated;
+                        //Log.Logger.Log(tempSimulated);
 
                         if (simNext <= 0)
                         {
@@ -379,6 +426,13 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
             {
                 lock (runLock)
                 {
+                    if (remainingRanges[0].X < -1)
+                    {
+                        // return early because no agents have to be simulated
+                        allSimulated = true;
+                        return;
+                    }
+
                     while (simulatedAgents < loopLimit)
                     {
                         currRangeNext = remainingRanges[0].X;
@@ -386,6 +440,13 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
 
                         while (currRangeNext <= currRangeEnd)
                         {
+                            if (simulatedAgents >= loopLimit)
+                            {
+                                // return early if the maximum number of agents to simulate
+                                // this tick / turn is reached
+                                remainingRanges[0] = new Types.Vec2i(currRangeNext, currRangeEnd);
+                                return;
+                            }
                             aiAgents[currRangeNext].Act();
                             totalSimulated++;
                             simulatedAgents++;
@@ -395,7 +456,8 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
                         if (remainingRanges.Count > 1) { remainingRanges.RemoveAt(0); }
                         else
                         {
-                            remainingRanges[0] = new Types.Vec2i(0, 0);
+                            // reset the remainingRanges if no agents remain to be simulated
+                            remainingRanges[0] = new Types.Vec2i(-1, -1);
                             allSimulated = true;
                             return;
                         }
