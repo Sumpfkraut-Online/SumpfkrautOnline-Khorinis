@@ -5,10 +5,9 @@ using System.Text;
 using RakNet;
 using GUC.Enumeration;
 using GUC.WorldObjects;
-using GUC.Network;
 using GUC.Animations;
 
-namespace GUC.Server.Network.Messages
+namespace GUC.Network.Messages
 {
     static class NPCMessage
     {
@@ -21,7 +20,7 @@ namespace GUC.Server.Network.Messages
             if (world.TryGetVob(id, out npc))
             {
                 MoveState state = (MoveState)stream.ReadByte();
-                if (npc == character /*|| (client.VobControlledList.Contains(npc) && state <= NPCStates.MoveBackward)*/) //is it a controlled NPC?
+                if (npc == character || (client.GuidedVobs.Contains(id) && state <= MoveState.Forward)) //is it a controlled NPC?
                 {
                     if (npc.ScriptObject != null)
                         npc.ScriptObject.OnCmdMove(state);
@@ -35,7 +34,7 @@ namespace GUC.Server.Network.Messages
             stream.Write((ushort)npc.ID);
             stream.Write((byte)state);
 
-            npc.Cell.ForEachSurroundingClient(c => c.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
+            npc.ForEachVisibleClient(c => c.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
         }
 
         #endregion
@@ -68,7 +67,7 @@ namespace GUC.Server.Network.Messages
             stream.Write((ushort)npc.ID);
             stream.Write((byte)overlay.ID);
 
-            npc.Cell.ForEachSurroundingClient(c => c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'W'));
+            npc.ForEachVisibleClient(c => c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'W'));
         }
 
         public static void WriteRemoveOverlayMessage(NPC npc, Overlay overlay)
@@ -77,7 +76,7 @@ namespace GUC.Server.Network.Messages
             stream.Write((ushort)npc.ID);
             stream.Write((byte)overlay.ID);
 
-            npc.Cell.ForEachSurroundingClient(c => c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'W'));
+            npc.ForEachVisibleClient(c => c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE, 'W'));
         }
 
         #endregion
@@ -120,7 +119,7 @@ namespace GUC.Server.Network.Messages
             stream.Write((ushort)npc.ID);
             stream.Write((ushort)ani.AniJob.ID);
 
-            npc.Cell.ForEachSurroundingClient(c => c.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
+            npc.ForEachVisibleClient(c => c.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
         }
 
         public static void WriteAniStart(NPC npc, Animation ani, object[] netArgs)
@@ -131,7 +130,7 @@ namespace GUC.Server.Network.Messages
 
             npc.ScriptObject.OnWriteAniStartArgs(stream, ani.AniJob, netArgs);
 
-            npc.Cell.ForEachSurroundingClient(c => c.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
+            npc.ForEachVisibleClient(c => c.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
         }
 
         public static void WriteAniStop(NPC npc, Animation ani, bool fadeout)
@@ -141,7 +140,7 @@ namespace GUC.Server.Network.Messages
             stream.Write((byte)ani.LayerID);
             stream.Write(fadeout);
 
-            npc.Cell.ForEachSurroundingClient(c => c.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
+            npc.ForEachVisibleClient(c => c.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
         }
 
         #endregion
@@ -156,7 +155,7 @@ namespace GUC.Server.Network.Messages
             stream.Write((byte)item.slot);
             item.WriteEquipProperties(stream);
 
-            npc.Cell.ForEachSurroundingClient(client =>
+            npc.ForEachVisibleClient(client =>
             {
                 if (client != npc.client)
                     client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
@@ -171,7 +170,7 @@ namespace GUC.Server.Network.Messages
             stream.Write((byte)item.ID);
             stream.Write((byte)item.slot);
 
-            npc.Cell.ForEachSurroundingClient(client => client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
+            npc.ForEachVisibleClient(client => client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
         }
 
         public static void WriteUnequipMessage(NPC npc, Item item)
@@ -180,7 +179,7 @@ namespace GUC.Server.Network.Messages
             stream.Write((ushort)npc.ID);
             stream.Write((byte)item.ID);
 
-            npc.Cell.ForEachSurroundingClient(client =>
+            npc.ForEachVisibleClient(client =>
             {
                 if (client != npc.client)
                     client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
@@ -197,7 +196,7 @@ namespace GUC.Server.Network.Messages
             stream.Write((ushort)npc.ID);
             stream.Write((ushort)npc.HPMax);
             stream.Write((ushort)npc.HP);
-            npc.Cell.ForEachSurroundingClient(client => client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
+            npc.ForEachVisibleClient(client => client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
         }
 
         #endregion
@@ -208,14 +207,14 @@ namespace GUC.Server.Network.Messages
         {
             PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCSetFightModeMessage);
             stream.Write((ushort)npc.ID);
-            npc.Cell.ForEachSurroundingClient(client => client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
+            npc.ForEachVisibleClient(client => client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
         }
 
         public static void WriteUnsetFightMode(NPC npc)
         {
             PacketWriter stream = GameServer.SetupStream(NetworkIDs.NPCUnsetFightModeMessage);
             stream.Write((ushort)npc.ID);
-            npc.Cell.ForEachSurroundingClient(client => client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
+            npc.ForEachVisibleClient(client => client.Send(stream, PacketPriority.HIGH_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W'));
         }
 
         public static void ReadSetFightMode(PacketReader stream, NPC character)

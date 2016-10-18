@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 using Alchemy.Handlers.WebSocket.rfc6455;
 using GUC.Scripts.Sumpfkraut.Web.WS.Protocols;
 using GUC.Scripts.Sumpfkraut.CommandConsole.InfoObjects;
-using GUC.Server.WorldObjects;
+using GUC.WorldObjects;
 
 namespace GUC.Scripts.Sumpfkraut.Web.WS
 {

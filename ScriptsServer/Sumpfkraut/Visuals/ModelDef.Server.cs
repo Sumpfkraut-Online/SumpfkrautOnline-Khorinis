@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs;
 
 namespace GUC.Scripts.Sumpfkraut.Visuals
 {
@@ -153,11 +154,19 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                 throw new ArgumentException("CodeName of ScriptAniJob is null or white space!");
 
             aniNames.Add(aniJob.CodeName, aniJob);
+
+            if (Catalog != null)
+                Catalog.AddJob(aniJob);
         }
 
         partial void pRemoveAniJob(ScriptAniJob aniJob)
         {
-            aniNames.Remove(aniJob.CodeName);
+            if (aniNames.Remove(aniJob.CodeName))
+            {
+                if (Catalog != null)
+                    Catalog.RemoveJob(aniJob);
+            }
+
         }
 
         #endregion
@@ -197,6 +206,12 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         {
             ovNames.Remove(overlay.CodeName);
         }
+
+        #endregion
+
+        #region Animation Catalog
+
+        public AniCatalog Catalog;
 
         #endregion
     }

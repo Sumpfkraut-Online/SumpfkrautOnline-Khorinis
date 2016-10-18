@@ -4,17 +4,14 @@ using System.Linq;
 using System.Text;
 using RakNet;
 using GUC.Enumeration;
-using GUC.Server.Network.Messages;
-using GUC.Network;
-using GUC.Server.Options;
+using GUC.Network.Messages;
+using GUC.Options;
 using GUC.Log;
 
-namespace GUC.Server.Network
+namespace GUC.Network
 {
     public static class GameServer
     {
-        internal readonly static ServerOptions Options = ServerOptions.Init();
-
         readonly static Dictionary<ulong, GameClient> clientDict = new Dictionary<ulong, GameClient>();
 
         internal readonly static RakPeerInterface ServerInterface = RakPeer.GetInstance();
@@ -31,24 +28,24 @@ namespace GUC.Server.Network
 
             using (SocketDescriptor socketDescriptor = new SocketDescriptor())
             {
-                socketDescriptor.port = Options.Port;
+                socketDescriptor.port = ServerOptions.Port;
 
-                StartupResult res = ServerInterface.Startup(Options.Port, socketDescriptor, 1);
+                StartupResult res = ServerInterface.Startup(ServerOptions.Slots, socketDescriptor, 1);
                 if (res == StartupResult.RAKNET_STARTED)
                 {
-                    Logger.Log("Server start listening on port " + Options.Port);
+                    Logger.Log("Server start listening on port " + ServerOptions.Port);
                 }
                 else
                 {
                     throw new Exception("RakNet startup failed: " + res.ToString());
                 }
-                ServerInterface.SetMaximumIncomingConnections(Options.Slots);
+                ServerInterface.SetMaximumIncomingConnections(ServerOptions.Slots);
                 ServerInterface.SetOccasionalPing(true);
-
-                string pw = Constants.VERSION + Options.Password;
-                if (pw.Length > 0)
+                                
+                if (ServerOptions.Password != null)
                 {
-                    ServerInterface.SetIncomingPassword(pw, pw.Length);
+                    string pwStr = Convert.ToBase64String(ServerOptions.Password.ToArray());
+                    ServerInterface.SetIncomingPassword(pwStr, pwStr.Length);
                 }
             }
         }
@@ -59,7 +56,7 @@ namespace GUC.Server.Network
             {
                 case NetworkIDs.ConnectionMessage:
                     DisconnectClient(client);
-                    Logger.LogWarning("Client sent another ConnectionMessage. Kicked: {0} IP:{1}", client.guid.g, client.systemAddress);
+                    Logger.LogWarning("Client sent another ConnectionMessage. Kicked: {0} IP:{1}", client.ID, client.SystemAddress);
                     break;
                 case NetworkIDs.LoadWorldMessage:
                     client.ConfirmLoadWorldMessage();
@@ -81,60 +78,62 @@ namespace GUC.Server.Network
                     break;
 
                 case NetworkIDs.VobPosDirMessage:
-                    VobMessage.ReadPosDir(stream, client, client.character);
+                    VobMessage.ReadPosDir(stream, client, client.IsSpectating ? client.SpecWorld : client.Character.World);
                     break;
 
                 case NetworkIDs.NPCStateMessage:
-                    NPCMessage.ReadMoveState(stream, client, client.character, client.character.World);
+                    NPCMessage.ReadMoveState(stream, client, client.Character, client.IsSpectating ? client.SpecWorld : client.Character.World);
                     break;
 
                 case NetworkIDs.NPCApplyOverlayMessage:
-                    NPCMessage.ReadApplyOverlay(stream, client.character);
+                    NPCMessage.ReadApplyOverlay(stream, client.Character);
                     break;
                 case NetworkIDs.NPCRemoveOverlayMessage:
-                    NPCMessage.ReadRemoveOverlay(stream, client.character);
+                    NPCMessage.ReadRemoveOverlay(stream, client.Character);
                     break;
 
                 case NetworkIDs.NPCAniStartMessage:
-                    NPCMessage.ReadAniStart(stream, client.character);
+                    NPCMessage.ReadAniStart(stream, client.Character);
                     break;
                 case NetworkIDs.NPCAniStartWithArgsMessage:
-                    NPCMessage.ReadAniStartWithArgs(stream, client.character);
+                    NPCMessage.ReadAniStartWithArgs(stream, client.Character);
                     break;
                 case NetworkIDs.NPCAniStopMessage:
-                    NPCMessage.ReadAniStop(stream, client.character);
+                    NPCMessage.ReadAniStop(stream, client.Character);
                     break;
 
                 case NetworkIDs.NPCSetFightModeMessage:
-                    NPCMessage.ReadSetFightMode(stream, client.character);
+                    NPCMessage.ReadSetFightMode(stream, client.Character);
                     break;
                 case NetworkIDs.NPCUnsetFightModeMessage:
-                    NPCMessage.ReadUnsetFightMode(stream, client.character);
+                    NPCMessage.ReadUnsetFightMode(stream, client.Character);
                     break;
 
                 case NetworkIDs.InventoryEquipMessage:
-                    InventoryMessage.ReadEquipMessage(stream, client.character);
+                    InventoryMessage.ReadEquipMessage(stream, client.Character);
                     break;
                 case NetworkIDs.InventoryUnequipMessage:
-                    InventoryMessage.ReadUnequipMessage(stream, client.character);
+                    InventoryMessage.ReadUnequipMessage(stream, client.Character);
                     break;
 
                 default:
-                    Logger.LogWarning("Client sent unknown NetworkID. Kicked: {0} IP:{1}", client.guid.g, client.systemAddress);
+                    Logger.LogWarning("Client sent unknown NetworkID. Kicked: {0} IP:{1}", client.ID, client.SystemAddress);
                     DisconnectClient(client);
                     return;
             }
 
             // flooding protection
             client.PacketCount++;
-            if (client.nextCheck < GameTime.Ticks)
+            long diff = GameTime.Ticks - client.LastCheck;
+            if (diff > 1000000)  // 100ms
             {
-                if (client.PacketCount >= 40)
+                if (diff / client.PacketCount < 0)//25000)
                 {
-                    Logger.LogWarning("Client spammed too many packets. Kicked: {0} IP:{1}", client.guid.g, client.systemAddress);
+                    Logger.LogWarning("Client flooded packets. Kicked: {0} IP:{1}", client.ID, client.SystemAddress);
                     DisconnectClient(client);
+                    return;
                 }
-                client.nextCheck = GameTime.Ticks + 1000000; // 100ms
+                client.LastCheck = GameTime.Ticks;
                 client.PacketCount = 0;
             }
         }
@@ -145,8 +144,7 @@ namespace GUC.Server.Network
          *   In this surrounding loop data is received from individual clients and the server reacts depending 
          *   on the network message types (see class attributes for these types). This is done for each
          *   network message received by individual clients until there is no more (buffered) message
-         *   left. Character creation is done here on successful connection as well as the respective 
-         *   deletion of disconnect.
+         *   left.
          */
         internal static void Update()
         {
@@ -170,7 +168,7 @@ namespace GUC.Server.Network
                         case DefaultMessageIDTypes.ID_DISCONNECTION_NOTIFICATION:
                             if (client != null)
                             {
-                                Logger.Log("Client disconnected: {0} IP:{1}", p.guid, p.systemAddress);
+                                Logger.Log("Client disconnected: {0} IP:{1}", client.ID, client.SystemAddress);
                                 DisconnectClient(client);
                             }
                             else
@@ -185,7 +183,7 @@ namespace GUC.Server.Network
                             }
                             else
                             {
-                                Logger.Log("Client connected: {0} IP:{1}", p.guid, p.systemAddress);
+                                Logger.Log("Client connected: IP:" + p.systemAddress);
                             }
                             break;
                         case DefaultMessageIDTypes.ID_USER_PACKET_ENUM:
@@ -196,7 +194,7 @@ namespace GUC.Server.Network
                                 {
                                     if (ConnectionMessage.Read(pktReader, p.guid, p.systemAddress, out client))
                                     {
-                                        clientDict.Add(client.guid.g, client);
+                                        clientDict.Add(client.Guid.g, client);
                                         client.Create();
                                     }
                                     else
@@ -212,7 +210,7 @@ namespace GUC.Server.Network
                             }
                             else
                             {
-                                if (msgID > NetworkIDs.ScriptMessage && (client.Character == null || !client.Character.IsSpawned))
+                                if (msgID > NetworkIDs.ScriptMessage && (client.Character == null || !client.Character.IsSpawned) && !client.IsSpectating)
                                 {
                                     return;
                                     //Logger.LogWarning("Client sent {0} without being ingame. Kicked: {1} IP:{2}", msgID, p.guid, p.systemAddress);
@@ -246,16 +244,6 @@ namespace GUC.Server.Network
                     else
                         Logger.LogError("{0}: {1}\n{2}", e.Source, e.Message, e.StackTrace);
 
-                    GUC.WorldObjects.World.ForEach(world =>
-                    {
-                        Logger.Log("World (" + world.ID + ") Cells:");
-                        foreach (var cell in world.netCells.Values)
-                        {
-                            string clients = ""; cell.Clients.ForEach(c => clients += c.ID + ", "); if (clients.Length > 2) clients = clients.Remove(clients.Length - 2);
-                            Logger.Log(String.Format("({0},{1}): {2} Vobs, {3} Clients ({4})", cell.X, cell.Y, cell.Vobs.GetCount(), cell.Clients.Count, clients));
-                        }
-                    });
-
                     if (client == null)
                     {
                         ServerInterface.CloseConnection(p.guid, false);
@@ -270,38 +258,15 @@ namespace GUC.Server.Network
             }
         }
 
-
         public static void DisconnectClient(GameClient client)
         {
             if (client == null)
                 throw new ArgumentNullException("Client is null!");
 
-            if (client.character != null)
-            {
-                client.character.client = null;
-                if (client.character.IsSpawned)
-                {
-                    client.character.World.RemoveFromPlayers(client);
-                    client.Character.Cell.Clients.Remove(ref client.cellID);
-                }
-            }
-
-            if (client.IsSpectating)
-            {
-                client.SpecWorld.RemoveFromPlayers(client);
-                client.SpecCell.Clients.Remove(ref client.cellID);
-                if (client.SpecCell.Vobs.GetCount() == 0 && client.SpecCell.Clients.Count == 0)
-                    client.SpecWorld.netCells.Remove(client.SpecCell.Coord);
-            }
+            ServerInterface.CloseConnection(client.Guid, true);
+            clientDict.Remove(client.Guid.g);
 
             client.Delete();
-
-            client.character = null;
-
-            ServerInterface.CloseConnection(client.guid, true);
-            clientDict.Remove(client.guid.g);
-            client.guid.Dispose();
-            client.systemAddress.Dispose();
         }
 
         internal static PacketWriter SetupStream(NetworkIDs ID)
@@ -315,11 +280,13 @@ namespace GUC.Server.Network
         public static void AddToBanList(string systemAddress)
         {
             ServerInterface.AddToBanList(systemAddress);
+            Logger.Log("IP banned: " + systemAddress);
         }
 
         public static void RemoveFromBanList(string systemAddress)
         {
             ServerInterface.RemoveFromBanList(systemAddress);
+            Logger.Log("IP unbanned: " + systemAddress);
         }
     }
 }

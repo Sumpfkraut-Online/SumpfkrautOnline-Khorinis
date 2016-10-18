@@ -7,6 +7,7 @@ using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.Scripting;
 using GUC.Enumeration;
 using GUC.Types;
+using GUC.Scripts.Sumpfkraut.Networking;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
@@ -16,6 +17,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         const long RegenTime = 500 * TimeSpan.TicksPerMillisecond;
         const int RegenHP = 5;
 
+        public bool IsPlayer { get { return this.BaseInst.IsPlayer; } }
+        public int HP { get { return this.BaseInst.HP; } }
+
         // TFFA
         Vec3f lastPos;
         public override void OnPosChanged()
@@ -23,12 +27,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             Vec3f pos = this.BaseInst.GetPosition();
             if (this.BaseInst.IsPlayer && !this.BaseInst.IsDead)
             {
-                if (pos.Y < -400)
+                /*if (pos.Y < -400)
                 {
                     TFFA.TFFAGame.Kill((TFFA.TFFAClient)this.BaseInst.Client.ScriptObject, true);
                 }
                 else
-                {
+                {*/
                     if (pos.GetDistance(lastPos) < 20 && !this.IsInAni() && this.BaseInst.HP < this.BaseInst.HPMax) // not moving & hurt
                     {
                         if (!regenTimer.Started)
@@ -41,7 +45,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     {
                         regenTimer.Stop();
                     }
-                }
+                //}
             }
             lastPos = pos;
         }
@@ -171,7 +175,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public void Hit(NPCInst attacker, int damage)
         {
             var strm = this.BaseInst.GetScriptVobStream();
-            strm.Write((byte)Networking.NetVobMsgIDs.HitMessage);
+            strm.Write((byte)NetWorldMsgID.HitMessage);
             strm.Write((ushort)this.ID);
             this.BaseInst.SendScriptVobStream(strm);
             
@@ -200,7 +204,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 Vec3f attPos = this.BaseInst.GetPosition();
                 Vec3f attDir = this.BaseInst.GetDirection();
                 float range = this.DrawnWeapon.Definition.Range + this.Model.Radius + ModelDef.LargestNPC.Radius;
-                this.BaseInst.World.ForEachNPCRoughInRange(attPos, range, npc =>
+                this.BaseInst.World.ForEachNPCRough(attPos, range, npc =>
                 {
                     NPCInst target = (NPCInst)npc.ScriptObject;
                     if (target != this && !target.BaseInst.IsDead)
@@ -234,13 +238,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                                         if (targetAni != null && targetAni.IsParade && dot <= -0.2f) // PARRY
                                         {
                                             var strm = this.BaseInst.GetScriptVobStream();
-                                            strm.Write((byte)Networking.NetVobMsgIDs.ParryMessage);
+                                            strm.Write((byte)NetWorldMsgID.ParryMessage);
                                             strm.Write((ushort)npc.ID);
                                             this.BaseInst.SendScriptVobStream(strm);
                                         }
                                         else // HIT
                                         {
-                                            int damage = (this.DrawnWeapon.Definition.Damage + attackerAni.AttackBonus) - target.Armor.Definition.Protection;
+                                            int damage = (this.DrawnWeapon.Definition.Damage + attackerAni.AttackBonus) - (target.Armor == null ? 0 : target.Armor.Definition.Protection);
                                             if (this.GetJumpAni() != null || this.Environment == EnvironmentState.InAir) // Jump attaaaack!
                                                 damage += 5;
 
@@ -423,6 +427,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         partial void pDespawn()
         {
+            Log.Logger.Log(">>>>>> DESPAWN <<<<<<");
             drawTimer.Stop();
             hitTimer.Stop();
             comboTimer.Stop();

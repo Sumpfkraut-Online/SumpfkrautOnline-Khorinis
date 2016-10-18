@@ -6,7 +6,7 @@ using WinApi;
 using WinApi.User;
 using WinApi.User.Enumeration;
 
-namespace GUC.Client
+namespace GUC
 {
     public static class InputHandler
     {
@@ -15,7 +15,7 @@ namespace GUC.Client
             { VirtualKeys.F4, Program.Exit },
             { VirtualKeys.F5, () =>
                 {
-                    var ai = GUC.Network.GameClient.Client?.character?.gVob?.HumanAI;
+                    var ai = Network.GameClient.Client?.Character?.gVob?.HumanAI;
                     if (ai != null)
                     {
                         int bitField = Process.ReadInt(ai.Address + 0x1204);
@@ -36,10 +36,6 @@ namespace GUC.Client
                 }
             },
             { VirtualKeys.F7, () =>
-                {
-                }
-            },
-            { VirtualKeys.F9, () =>
                 {
                 }
             }

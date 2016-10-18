@@ -28,8 +28,6 @@ namespace Gothic.Objects
 
         }
 
-        #region methods
-
         public void SetDay(int day)
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetDay, new IntArg(day));
@@ -44,6 +42,5 @@ namespace Gothic.Objects
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.Timer);
         }
-        #endregion
     }
 }

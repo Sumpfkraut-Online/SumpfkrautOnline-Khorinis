@@ -7,6 +7,11 @@ namespace GUC.Types
 {
     public partial struct Vec3f
     {
+        public static Vec3f Null
+        {
+            get { return new Vec3f(0, 0, 0); }
+        }
+
         public float X;
         public float Y;
         public float Z;
@@ -91,7 +96,8 @@ namespace GUC.Types
 
         public float GetLength()
         {
-            return (float)Math.Sqrt((double)this.X * (double)this.X + (double)this.Y * (double)this.Y + (double)this.Z * (double)this.Z);
+            //return (float)Math.Sqrt((double)this.X * (double)this.X + (double)this.Y * (double)this.Y + (double)this.Z * (double)this.Z);
+            return (float)Math.Sqrt(this.X * this.X + this.Y * this.Y + this.Z * this.Z);
         }
 
         public Vec3f Normalise()
@@ -107,6 +113,11 @@ namespace GUC.Types
         public float GetDistance(Vec3f value)
         {
             return (this - value).GetLength();
+        }
+
+        public float GetDistancePlanar(Vec3f value)
+        {
+            return (float)Math.Sqrt((this.X - value.X) * (this.X - value.X) + (this.Z - value.Z)*(this.Z - value.Z));
         }
 
         public Vec3f Cross(Vec3f vec)
@@ -143,6 +154,11 @@ namespace GUC.Types
         public static Vec3f operator -(Vec3f a, Vec3f b)
         {
             return new Vec3f(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
+        }
+
+        public static Vec3f operator /(Vec3f a, float factor)
+        {
+            return new Vec3f(a.X / factor, a.Y / factor, a.Z / factor);
         }
 
         #endregion
@@ -221,5 +237,32 @@ namespace GUC.Types
         }
 
         #endregion
+        
+        internal Vec3f CorrectPosition()
+        {
+            Vec3f ret;
+            if (this.X < -838860.8f) ret.X = -838860.8f;
+            else if (this.X > 838860.7f) ret.X = 838860.7f;
+            else ret.X = this.X;
+
+            if (this.Y < -838860.8f) ret.Y = -838860.8f;
+            else if (this.Y > 838860.7f) ret.Y = 838860.7f;
+            else ret.Y = this.Y;
+
+            if (this.Z < -838860.8f) ret.Z = -838860.8f;
+            else if (this.Z > 838860.7f) ret.Z = 838860.7f;
+            else ret.Z = this.Z;
+
+            return ret;
+        }
+
+        internal Vec3f CorrectDirection()
+        {
+            if (this.IsNull())
+            {
+                return new Vec3f(0, 0, 1);
+            }
+            return this.Normalise();
+        }
     }
 }

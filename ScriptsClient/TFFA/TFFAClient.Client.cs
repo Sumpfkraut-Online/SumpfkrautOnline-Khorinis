@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using GUC.Network;
 using GUC.Scripts.Sumpfkraut.Networking;
-using GUC.Client.Scripts.TFFA;
 
 namespace GUC.Scripts.TFFA
 {
@@ -23,11 +22,11 @@ namespace GUC.Scripts.TFFA
         {
             try
             {
-                MenuMsgID id = (MenuMsgID)stream.ReadByte();
+                TFFANetMsgID id = (TFFANetMsgID)stream.ReadByte();
                 Log.Logger.Log("Menu MSG: " + id);
                 switch (id)
                 {
-                    case MenuMsgID.ClientInfoGroup:
+                    case TFFANetMsgID.ClientInfoGroup:
                         int thisID = stream.ReadByte();
                         Status = (TFFAPhase)stream.ReadByte();
                         if (Status != TFFAPhase.Fight)
@@ -48,21 +47,21 @@ namespace GUC.Scripts.TFFA
                         TeamMenu.Menu.UpdateCounts();
                         Scoreboard.Menu.UpdateStats();
                         break;
-                    case MenuMsgID.ClientConnect:
+                    case TFFANetMsgID.ClientConnect:
                         ClientInfo.Read(stream);
                         ClassMenu.Menu.UpdateCounts();
                         TeamMenu.Menu.UpdateCounts();
                         Scoreboard.Menu.UpdateStats();
                         break;
 
-                    case MenuMsgID.ClientDisconnect:
+                    case TFFANetMsgID.ClientDisconnect:
                         ClientInfo.ClientInfos.Remove(stream.ReadByte());
                         ClassMenu.Menu.UpdateCounts();
                         TeamMenu.Menu.UpdateCounts();
                         Scoreboard.Menu.UpdateStats();
                         break;
 
-                    case MenuMsgID.ClientTeam:
+                    case TFFANetMsgID.ClientTeam:
                         int clientID = stream.ReadByte();
                         ClientInfo ci;
                         if (ClientInfo.ClientInfos.TryGetValue(clientID, out ci))
@@ -84,7 +83,7 @@ namespace GUC.Scripts.TFFA
                             Scoreboard.Menu.UpdateStats();
                         }
                         break;
-                    case MenuMsgID.ClientClass:
+                    case TFFANetMsgID.ClientClass:
                         clientID = stream.ReadByte();
                         if (ClientInfo.ClientInfos.TryGetValue(clientID, out ci))
                         {
@@ -92,7 +91,7 @@ namespace GUC.Scripts.TFFA
                             ClassMenu.Menu.UpdateCounts();
                         }
                         break;
-                    case MenuMsgID.ClientName:
+                    case TFFANetMsgID.ClientName:
                         clientID = stream.ReadByte();
                         if (ClientInfo.ClientInfos.TryGetValue(clientID, out ci))
                         {
@@ -106,7 +105,7 @@ namespace GUC.Scripts.TFFA
                             }
                         }
                         break;
-                    case MenuMsgID.ClientNPC:
+                    case TFFANetMsgID.ClientNPC:
                         clientID = stream.ReadByte();
                         if (ClientInfo.ClientInfos.TryGetValue(clientID, out ci))
                         {
@@ -120,7 +119,7 @@ namespace GUC.Scripts.TFFA
                         }
                         break;
 
-                    case MenuMsgID.OpenScoreboard:
+                    case TFFANetMsgID.OpenScoreboard:
                         int alKills = stream.ReadByte();
                         int nlKills = stream.ReadByte();
                         count = stream.ReadByte();
@@ -131,13 +130,13 @@ namespace GUC.Scripts.TFFA
                         Scoreboard.Menu.UpdateStats(alKills, nlKills);
                         break;
 
-                    case MenuMsgID.WinMsg:
+                    case TFFANetMsgID.WinMsg:
                         Status = TFFAPhase.End;
                         Winner = (Team)stream.ReadByte();
                         PhaseEndTime = stream.ReadUInt() * TimeSpan.TicksPerSecond + GameTime.Ticks;
                         StatusMenu.Menu.StatusShow = true;
                         break;
-                    case MenuMsgID.PhaseMsg:
+                    case TFFANetMsgID.PhaseMsg:
                         Status = (TFFAPhase)stream.ReadByte();
                         PhaseEndTime = stream.ReadUInt() * TimeSpan.TicksPerSecond + GameTime.Ticks;
                         Winner = Team.Spec;
@@ -150,7 +149,7 @@ namespace GUC.Scripts.TFFA
                             StatusMenu.Menu.StatusShow = true;
                         }
                         break;
-                    case MenuMsgID.AllChat:
+                    case TFFANetMsgID.AllChat:
                         clientID = stream.ReadByte();
                         if (ClientInfo.ClientInfos.TryGetValue(clientID, out ci))
                         {
@@ -158,7 +157,7 @@ namespace GUC.Scripts.TFFA
                             ChatMenu.Menu.AddLine(ci, msg, false);
                         }
                         break;
-                    case MenuMsgID.TeamChat:
+                    case TFFANetMsgID.TeamChat:
                         clientID = stream.ReadByte();
                         if (ClientInfo.ClientInfos.TryGetValue(clientID, out ci))
                         {

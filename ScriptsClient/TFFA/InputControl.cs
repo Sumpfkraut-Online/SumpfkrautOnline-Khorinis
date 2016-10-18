@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using WinApi.User.Enumeration;
-using GUC.Client.Scripts.Sumpfkraut.Menus;
+using GUC.Scripts.Sumpfkraut.Menus;
 using GUC.Enumeration;
 using GUC.Types;
-using GUC.Scripts.TFFA;
 using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
+using GUC.GUI;
 
-namespace GUC.Client.Scripts.TFFA
+namespace GUC.Scripts.TFFA
 {
     static class InputControl
     {
@@ -98,14 +98,18 @@ namespace GUC.Client.Scripts.TFFA
                 {
                     string str = Hero.BaseInst.GetPosition() + " " + Hero.BaseInst.GetDirection() + "\r\n";
                     Log.Logger.Log(str);
-                    System.IO.File.AppendAllText(Program.ProjectPath + "SavedLocations.txt", str);
+                    System.IO.File.AppendAllText(System.IO.Path.Combine(Program.ProjectPath, "SavedLocations.txt"), str);
                 }
             }
 
             if (TFFAClient.Status == TFFAPhase.Waiting)
                 return;
 
-            if (key == VirtualKeys.N1)
+            if (key == VirtualKeys.I)
+            {
+                PlayerInventory.Menu.Open();
+            }
+            else if (key == VirtualKeys.N1)
             {
                 if (Hero.DrawnWeapon == null)
                 {
@@ -362,11 +366,11 @@ namespace GUC.Client.Scripts.TFFA
         {
             if (TFFAClient.Client != null && TFFAClient.Client.Character != null && TFFAClient.Client.Character.Ammo != null)
             {
-                Client.GUI.GUCView.DebugText.Text = TFFAClient.Client.Character.Ammo.Definition.Name + ": " + TFFAClient.Client.Character.Ammo.BaseInst.Amount;
+                GUCView.DebugText.Text = TFFAClient.Client.Character.Ammo.Definition.Name + ": " + TFFAClient.Client.Character.Ammo.BaseInst.Amount;
             }
             else
             {
-                Client.GUI.GUCView.DebugText.Text = "";
+                GUCView.DebugText.Text = "";
             }
 
             Scoreboard.Menu.Update(now);
@@ -567,6 +571,7 @@ namespace GUC.Client.Scripts.TFFA
                     nextFwdTeleport = now + 150 * TimeSpan.TicksPerMillisecond;
                 }
             }
+
             if (InputHandler.IsPressed(VirtualKeys.F8))
             {
                 if (nextUpTeleport < now)
@@ -657,7 +662,7 @@ namespace GUC.Client.Scripts.TFFA
         }
 
 
-        static Client.GUI.GUCVisual clientView = new Client.GUI.GUCVisual();
+        static GUCVisual clientView = new GUCVisual();
         static void UpdateClientIDs()
         {
             if (!clientsShown)
@@ -679,11 +684,11 @@ namespace GUC.Client.Scripts.TFFA
 
                     if (gHero == null || (gNpc.Address != gHero.FocusVob.Address && gNpc.FreeLineOfSight(cam)))
                     {
-                        Client.GUI.GUCVisualText text;
+                        GUCVisualText text;
                         if (i >= clientView.Texts.Count)
                         {
                             text = clientView.CreateText("", 0, 0, true);
-                            text.Format = Client.GUI.GUCVisualText.TextFormat.Center;
+                            text.Format = GUCVisualText.TextFormat.Center;
                         }
                         else
                         {

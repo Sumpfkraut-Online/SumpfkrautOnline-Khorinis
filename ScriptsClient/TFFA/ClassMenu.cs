@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Client.Scripts.Sumpfkraut.GUI.MainMenu;
-using GUC.Client.Scripts.Sumpfkraut.Menus.MainMenus;
-using GUC.Scripts.TFFA;
+using GUC.Scripts.Sumpfkraut.GUI.MainMenu;
+using GUC.Scripts.Sumpfkraut.Menus.MainMenus;
 using GUC.Network;
 
-namespace GUC.Client.Scripts.TFFA
+namespace GUC.Scripts.TFFA
 {
     class ClassMenu : GUCMainMenu
     {
@@ -102,7 +101,7 @@ namespace GUC.Client.Scripts.TFFA
                 return;
 
             PacketWriter stream = GameClient.Client.GetMenuMsgStream();
-            stream.Write((byte)MenuMsgID.ClientClass);
+            stream.Write((byte)TFFANetMsgID.ClientClass);
             stream.Write((byte)c);
             GameClient.Client.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE);
             Close();

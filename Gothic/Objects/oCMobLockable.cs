@@ -6,7 +6,7 @@ using Gothic.Types;
 
 namespace Gothic.Objects
 {
-    public class oCMobLockable : oCMobInter
+    public abstract class oCMobLockable : oCMobInter
     {
         new public abstract class VarOffsets : oCMobInter.VarOffsets
         {

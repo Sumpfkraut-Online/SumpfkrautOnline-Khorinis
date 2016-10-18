@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Client.GUI;
+using GUC.GUI;
 using GUC.Network;
-using GUC.Scripts.TFFA;
 using GUC.Scripting;
 using GUC.Types;
 
-namespace GUC.Client.Scripts.TFFA
+namespace GUC.Scripts.TFFA
 {
     class Scoreboard
     {
@@ -231,7 +230,7 @@ namespace GUC.Client.Scripts.TFFA
                 return;
 
             PacketWriter stream = GameClient.Client.GetMenuMsgStream();
-            stream.Write((byte)MenuMsgID.OpenScoreboard);
+            stream.Write((byte)TFFANetMsgID.OpenScoreboard);
             GameClient.Client.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.UNRELIABLE);
             back.Show();
 
@@ -258,7 +257,7 @@ namespace GUC.Client.Scripts.TFFA
             }
             closeTimer.Stop();
             PacketWriter stream = GameClient.Client.GetMenuMsgStream();
-            stream.Write((byte)MenuMsgID.CloseScoreboard);
+            stream.Write((byte)TFFANetMsgID.CloseScoreboard);
             GameClient.Client.SendMenuMsg(stream, PktPriority.LOW_PRIORITY, PktReliability.RELIABLE);
             back.Hide();
 

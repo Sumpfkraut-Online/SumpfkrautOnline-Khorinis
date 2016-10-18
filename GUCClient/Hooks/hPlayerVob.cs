@@ -6,7 +6,7 @@ using WinApi;
 using Gothic.Objects;
 using GUC.Log;
 
-namespace GUC.Client.Hooks
+namespace GUC.Hooks
 {
     static class hPlayerVob
     {

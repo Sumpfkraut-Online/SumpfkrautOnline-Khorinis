@@ -8,7 +8,7 @@ using System.Threading;
 using GUC.Log;
 using System.Windows.Media;
 
-namespace GUC.Client
+namespace GUC
 {
     /// <summary>
     /// Interaktionslogik für UserControl1.xaml

@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Client.Scripts.Sumpfkraut.Menus;
+using GUC.Scripts.Sumpfkraut.Menus;
 using WinApi.User.Enumeration;
-using GUC.Client.GUI;
-using GUC.Scripts.TFFA;
+using GUC.GUI;
 using GUC.Types;
 
-namespace GUC.Client.Scripts.TFFA
+namespace GUC.Scripts.TFFA
 {
     class ChatMenu : GUCMenu
     {
@@ -152,7 +151,7 @@ namespace GUC.Client.Scripts.TFFA
                 return;
 
             var stream = GUC.Network.GameClient.Client.GetMenuMsgStream();
-            stream.Write((byte)(TeamChat ? MenuMsgID.TeamChat : MenuMsgID.AllChat));
+            stream.Write((byte)(TeamChat ? TFFANetMsgID.TeamChat : TFFANetMsgID.AllChat));
             stream.Write(msg);
             GUC.Network.GameClient.Client.SendMenuMsg(stream, GUC.Network.PktPriority.LOW_PRIORITY, GUC.Network.PktReliability.RELIABLE);
         }

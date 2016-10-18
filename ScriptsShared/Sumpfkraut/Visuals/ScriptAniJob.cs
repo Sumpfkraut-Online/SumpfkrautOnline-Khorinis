@@ -67,6 +67,8 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         XBowAim,
         XBowReload,
         XBowLower,
+
+        DropItem
     }
     
     public partial class ScriptAniJob : ScriptObject, AniJob.IScriptAniJob

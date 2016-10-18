@@ -26,25 +26,19 @@ namespace GUC.WorldObjects
 
         #region Properties
 
-        /// <summary>
-        /// This is always false for Worlds.
-        /// </summary>
+        /// <summary> This is always false for Worlds. Will throw a NotSupportedException when set! </summary>
         public override bool IsStatic
         {
-            get
-            {
-                return false;
-            }
-            set
-            {
-                throw new Exception("Worlds can only be dynamic!");
-            }
+            get { return false; }
+            set { throw new NotSupportedException("Worlds can only be dynamic!"); }
         }
 
         WorldClock clock;
+        /// <summary> Controls the time. </summary>
         public WorldClock Clock { get { return this.clock; } }
 
         SkyController skyCtrl;
+        /// <summary> Controls the wheather. </summary>
         public SkyController SkyCtrl { get { return this.skyCtrl; } }
 
         #endregion
@@ -75,17 +69,19 @@ namespace GUC.WorldObjects
 
         #endregion
 
-        #region Collection
+        #region Collections
 
-        #region WorldCollection
+        #region World Collection
 
-        static StaticCollection<World> worldsByID = new StaticCollection<World>();
-        static DynamicCollection<World> worlds = new DynamicCollection<World>();
+        static StaticCollection<World> worldsByID = new StaticCollection<World>(); // all the worlds accessible by ID
+        static DynamicCollection<World> worlds = new DynamicCollection<World>(); // all worlds for fast foreach loops
 
+        /// <summary> Checks whether this object is added to the static world collection. </summary>
         public bool IsCreated { get { return this.isCreated; } }
 
         #region Create & Delete
 
+        /// <summary> Adds this object to the static world collection. </summary>
         public void Create()
         {
             if (this.isCreated)
@@ -97,13 +93,14 @@ namespace GUC.WorldObjects
             this.isCreated = true;
         }
 
+        /// <summary> Removes this object from the static world collection. </summary>
         public void Delete()
         {
             if (!this.isCreated)
                 throw new ArgumentException("World is not in the collection!");
-            
+
             this.isCreated = false;
-            
+
             worldsByID.Remove(this);
             worlds.Remove(ref this.collID);
         }
@@ -112,33 +109,40 @@ namespace GUC.WorldObjects
 
         #region Access
 
+        /// <summary> Gets a world by ID from the static world collection. </summary>
         public static bool TryGetWorld(int id, out World world)
         {
             return worldsByID.TryGet(id, out world);
         }
 
+        /// <summary> Loops through all worlds in the static world collection. </summary>
         public static void ForEach(Action<World> action)
         {
             worlds.ForEach(action);
         }
 
-        public static int GetCount()
+        /// <summary> Loops through all worlds in the static world collection. The predicate can return FALSE to BREAK the loop. Else return true. </summary>
+        public static void ForEachPredicate(Predicate<World> predicate)
         {
-            return worlds.Count;
+            worlds.ForEachPredicate(predicate);
         }
 
-        #endregion
+        /// <summary> Gets the count of worlds in the static world collection. </summary>
+        public static int WorldCount { get { return worlds.Count; } }
 
         #endregion
 
-        #region VobCollection
+        #endregion
 
-        StaticCollection<BaseVob> vobsByID = new StaticCollection<BaseVob>();
-        DynamicCollection<BaseVob> vobs = new DynamicCollection<BaseVob>();
+        #region Vob Collection
+
+        StaticCollection<BaseVob> vobsByID = new StaticCollection<BaseVob>(); // all the vobs accessible by ID
+        DynamicCollection<BaseVob> vobs = new DynamicCollection<BaseVob>(); // all vobs for fast foreach loops
 
         #region Add & Remove
 
-        partial void pAddVob(BaseVob vob);
+        partial void pBeforeAddVob(BaseVob vob);
+        partial void pAfterAddVob(BaseVob vob);
         internal void AddVob(BaseVob vob)
         {
             if (vob == null)
@@ -150,13 +154,16 @@ namespace GUC.WorldObjects
             if (vob.Instance == null)
                 throw new ArgumentException("Vob has no instance!");
 
-            vobsByID.Add(vob);
+            pBeforeAddVob(vob);
+
+            vobsByID.Add(vob); // sets or checks the vob ID on the server
             vobs.Add(vob, ref vob.collID);
 
-            pAddVob(vob);
+            pAfterAddVob(vob);
         }
 
-        partial void pRemoveVob(BaseVob vob);
+        partial void pBeforeRemoveVob(BaseVob vob);
+        partial void pAfterRemoveVob(BaseVob vob);
         internal void RemoveVob(BaseVob vob)
         {
             if (vob == null)
@@ -165,40 +172,44 @@ namespace GUC.WorldObjects
             if (vob.World != this)
                 throw new ArgumentException("Vob is not in this world!");
 
-            pRemoveVob(vob);
+            pBeforeRemoveVob(vob);
 
-            vobsByID.Remove(vob);
+            vobsByID.Remove(vob); // sets the vob ID to -1 on the server!!!
             vobs.Remove(ref vob.collID);
+
+            pAfterRemoveVob(vob);
         }
 
         #endregion
 
         #region Access
 
+        /// <summary> Gets a vob by ID from this world. </summary>
         public bool TryGetVob(int id, out BaseVob vob)
         {
             return vobsByID.TryGet(id, out vob);
         }
 
+        /// <summary> Gets a vob of the specific type by ID from this world. </summary>
         public bool TryGetVob<T>(int id, out T vob) where T : BaseVob
         {
-            return vobsByID.TryGet(id, out vob);
+            return vobsByID.TryGet<T>(id, out vob);
         }
 
+        /// <summary> Loops through all vobs in this world. </summary>
         public void ForEachVob(Action<BaseVob> action)
         {
             vobs.ForEach(action);
         }
 
-        public void ForEachVob(Predicate<BaseVob> predicate)
+        /// <summary> Loops through all vobs in this world. The predicate can return FALSE to BREAK the loop. Else return true. </summary>
+        public void ForEachVobPredicate(Predicate<BaseVob> predicate)
         {
-            vobs.ForEach(predicate);
+            vobs.ForEachPredicate(predicate);
         }
 
-        public int GetVobCount()
-        {
-            return vobs.Count;
-        }
+        /// <summary> Gets the count of vobs in this world. </summary>
+        public int VobCount { get { return vobs.Count; } }
 
         #endregion
 
@@ -206,11 +217,13 @@ namespace GUC.WorldObjects
 
         #endregion
 
+        partial void pOnTick(long now);
         internal void OnTick(long now)
         {
             this.Clock.UpdateTime();
             this.SkyCtrl.UpdateWeather();
             this.ForEachVob(v => v.OnTick(now));
+            pOnTick(now);
         }
     }
 }

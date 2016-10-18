@@ -5,9 +5,9 @@ using System.Text;
 using GUC.Network;
 using GUC.Enumeration;
 using WinApi.User.Enumeration;
-using GUC.Client.GUI;
+using GUC.GUI;
 
-namespace GUC.Client.Scripts.MainMenu
+namespace GUC.Scripts.Sumpfkraut.GUI.MainMenu
 {
     /*class MainMenuCharacter : MainMenuItem, InputReceiver
     {

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Network;
 using GUC.Enumeration;
 using RakNet;
 using GUC.Scripting;
@@ -11,7 +10,7 @@ using System.Management;
 using GUC.Models;
 using GUC.WorldObjects.Instances;
 
-namespace GUC.Client.Network.Messages
+namespace GUC.Network.Messages
 {
     static class ConnectionMessage
     {

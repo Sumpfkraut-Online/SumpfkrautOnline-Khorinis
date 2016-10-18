@@ -19,7 +19,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\GothicII\System\UntoldChapter\DLL\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -27,7 +27,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\GothicII\System\UntoldChapter\DLL\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -70,9 +70,13 @@
     <Compile Include="Types\Vec2i.cs" />
     <Compile Include="Types\Vec3f.cs" />
     <Compile Include="DynamicCollection.cs" />
+    <Compile Include="GODictionary.cs" />
+    <Compile Include="WorldObjects\AnimatedVob\AnimatedVob.cs" />
     <Compile Include="WorldObjects\Collections\ItemContainer.cs" />
     <Compile Include="StaticCollection.cs" />
     <Compile Include="WorldObjects\Collections\VobTypeObjectCollection.cs" />
+    <Compile Include="WorldObjects\VobGuiding\GuideCmd.cs" />
+    <Compile Include="WorldObjects\VobGuiding\GuidedVob.cs" />
     <Compile Include="WorldObjects\Instances\Mobs\MobBedInstance.cs" />
     <Compile Include="WorldObjects\Instances\ProjectileInstance.cs" />
     <Compile Include="WorldObjects\Mobs\MobBed.cs" />

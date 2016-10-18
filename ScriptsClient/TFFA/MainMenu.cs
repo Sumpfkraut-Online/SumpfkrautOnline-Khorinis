@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Client.Scripts.Sumpfkraut.Menus.MainMenus;
-using GUC.Client.Scripts.Sumpfkraut.GUI.MainMenu;
-using GUC.Scripts.TFFA;
+using GUC.Scripts.Sumpfkraut.Menus.MainMenus;
+using GUC.Scripts.Sumpfkraut.GUI.MainMenu;
 
-namespace GUC.Client.Scripts.TFFA
+namespace GUC.Scripts.TFFA
 {
     class MainMenu : GUCMainMenu
     {

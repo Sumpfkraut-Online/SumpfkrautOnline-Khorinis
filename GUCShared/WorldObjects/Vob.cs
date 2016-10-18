@@ -5,10 +5,11 @@ using System.Text;
 using GUC.Enumeration;
 using GUC.WorldObjects.Instances;
 using GUC.Models;
+using GUC.Types;
 
 namespace GUC.WorldObjects
 {
-    public partial class Vob : BaseVob
+    public partial class Vob : VobGuiding.GuidedVob
     {
         public override VobTypes VobType { get { return VobTypes.Vob; } }
 
@@ -34,11 +35,12 @@ namespace GUC.WorldObjects
             set { base.Instance = value; }
         }
 
+        /// <summary> The model of this vob's instance. </summary>
         public Model Model { get { return Instance.Model; } }
+        
         public bool CDDyn { get { return Instance.CDDyn; } }
         public bool CDStatic { get { return Instance.CDStatic; } }
 
         #endregion
-
     }
 }

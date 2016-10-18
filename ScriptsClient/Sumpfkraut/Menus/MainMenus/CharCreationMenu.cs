@@ -6,7 +6,7 @@ using GUC.Enumeration;
 using GUC.Network;
 using WinApi.User.Enumeration;
 
-namespace GUC.Client.Menus.MainMenus
+namespace GUC.Scripts.Sumpfkraut.Menus.MainMenus
 {
     /*class CharCreationMenu : GUCMainMenu
     {

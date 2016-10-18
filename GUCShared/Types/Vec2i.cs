@@ -47,6 +47,7 @@ namespace GUC.Types
             this.X = 0;
             this.Y = 0;
         }
+
         public int this[int i]
         {
             get
@@ -148,7 +149,8 @@ namespace GUC.Types
 
         public override int GetHashCode()
         {
-            return (new int[2] { this.X, this.Y }).GetHashCode();
+            //FIXME
+            return 0;
         }
 
         public override string ToString()

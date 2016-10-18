@@ -9,7 +9,7 @@ using GUC.WorldObjects;
 using GUC.Types;
 using Gothic.Objects;
 
-namespace GUC.Client
+namespace GUC
 {
     public class SoundInstance
     {
@@ -76,7 +76,7 @@ namespace GUC.Client
             param.Radius = range;
             param.IsAmbient = true;            
             int idPtr = Process.Alloc(4).ToInt32();
-            Process.Write(zCSndSys_MSS.PlaySound3D(sound.sfx, vob.gvob, 0, param), idPtr);
+            Process.Write(zCSndSys_MSS.PlaySound3D(sound.sfx, vob.gVob, 0, param), idPtr);
 
             vobSounds.Add(new Tuple<int, zTSound3DParams>(idPtr, param));
         }

@@ -6,6 +6,7 @@ using System.Linq;
 using GUC.Log;
 using GUC.Scripting;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
+using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Scripts.Sumpfkraut.Visuals;
 
@@ -13,10 +14,14 @@ namespace GUC.Scripts
 {
     public partial class GUCScripts : ScriptInterface
     {
+        public WorldObjects.VobGuiding.TargetCmd GetTestCmd(WorldObjects.BaseVob target)
+        {
+            return new Sumpfkraut.AI.GuideCommands.GoToVobCommand((BaseVobInst)target.ScriptObject);
+        }
+
         public GUCScripts()
         {
             Logger.Log("######## Initalise SumpfkrautOnline ServerScripts #########");
-
             AddSomeDefs();
 
             CreateTestWorld();
@@ -30,7 +35,7 @@ namespace GUC.Scripts
             // -- command console --
             Sumpfkraut.CommandConsole.CommandConsole cmdConsole = new Sumpfkraut.CommandConsole.CommandConsole();
 
-            Sumpfkraut.TestingThings.Init();
+            Sumpfkraut.AI.TestingAI.Test();
 
             Logger.Log("######################## Finished #########################");
         }
@@ -74,6 +79,12 @@ namespace GUC.Scripts
             aniJob = new ScriptAniJob("climbhigh", new ScriptAni(6800000 + 0 + 10000000));
             aniJob.BaseAniJob.ID = (int)SetAnis.ClimbHigh;
             aniJob.AniName = "T_JUMP_2_HANG";
+            m.AddAniJob(aniJob);
+
+            // DROP ITEM
+            aniJob = new ScriptAniJob("dropitem", new ScriptAni(5600000));
+            aniJob.BaseAniJob.ID = (int)SetAnis.DropItem;
+            aniJob.AniName = "dropItem";
             m.AddAniJob(aniJob);
 
             m.Create();
@@ -417,7 +428,7 @@ namespace GUC.Scripts
             itemDef = new ItemDef("2haxt");
             itemDef.Name = "Söldneraxt";
             itemDef.ItemType = ItemTypes.Wep2H;
-            itemDef.Material = Enumeration.ItemMaterials.Wood;
+            itemDef.Material = Enumeration.ItemMaterials.Metal;
             itemDef.Model = m;
             itemDef.Damage = 44;
             itemDef.Range = 95;
@@ -482,7 +493,7 @@ namespace GUC.Scripts
             itemDef.Name = "Langbogen";
             itemDef.Material = Enumeration.ItemMaterials.Wood;
             itemDef.ItemType = ItemTypes.WepBow;
-            itemDef.Damage = 40;
+            itemDef.Damage = 32;
             itemDef.Model = m;
             itemDef.Create();
 
@@ -493,7 +504,7 @@ namespace GUC.Scripts
             itemDef.Name = "Bolzen";
             itemDef.Material = Enumeration.ItemMaterials.Wood;
             itemDef.ItemType = ItemTypes.AmmoXBow;
-            itemDef.Damage = 5;
+            itemDef.Damage = 6;
             itemDef.Model = m;
             itemDef.Create();
             
@@ -509,7 +520,7 @@ namespace GUC.Scripts
             itemDef.Name = "Armbrust";
             itemDef.Material = Enumeration.ItemMaterials.Wood;
             itemDef.ItemType = ItemTypes.WepXBow;
-            itemDef.Damage = 40;
+            itemDef.Damage = 32;
             itemDef.Model = m;
             itemDef.Create();
         }

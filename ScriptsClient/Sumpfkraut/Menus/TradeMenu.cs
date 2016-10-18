@@ -9,10 +9,10 @@ using GUC.Types;
 
 using GUC.Network;
 using GUC.Enumeration;
-using GUC.Client.GUI;
-using GUC.Client.Network.Messages;
+using GUC.GUI;
+using GUC.Network.Messages;
 
-namespace GUC.Client.Menus
+namespace GUC.Scripts.Sumpfkraut.Menus
 {
     /*class TradeMenu : GUCMenu
     {

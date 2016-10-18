@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Network;
-//using GUC.Client.Scripts.Menus.MainMenus;
-using GUC.Client.GUI;
+//using GUC.Scripts.Menus.MainMenus;
+using GUC.GUI;
 
-namespace GUC.Client.Scripts.GUI.MainMenu
+namespace GUC.Scripts.Sumpfkraut.GUI.MainMenu
 {
    /* class MainMenuCharSlot : MainMenuItem
     {

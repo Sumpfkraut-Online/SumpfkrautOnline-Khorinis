@@ -31,8 +31,11 @@ namespace GUC.Network
     public class PacketWriter
     {
         const int StandardCapacity = 32000;
-
-        int currentByte;
+        
+        /// <summary>
+        /// Be careful when you set this manually!
+        /// </summary>
+        internal int CurrentByte;
 
         int currentBitByte;
         int bitsWritten;
@@ -62,7 +65,7 @@ namespace GUC.Network
 
         internal void Reset()
         {
-            currentByte = 0;
+            CurrentByte = 0;
             currentBitByte = -1;
 
             bitsWritten = 0;
@@ -79,24 +82,24 @@ namespace GUC.Network
         public byte[] CopyData()
         {
             byte[] bytes = GetData();
-            byte[] ret = new byte[currentByte];
-            Array.Copy(bytes, ret, currentByte);
+            byte[] ret = new byte[CurrentByte];
+            Array.Copy(bytes, ret, CurrentByte);
             return ret;
         }
 
         internal int GetLength()
         {
-            return currentByte;
+            return CurrentByte;
         }
 
         void CheckRealloc(int add)
         {
-            int neededLen = currentByte + add;
+            int neededLen = CurrentByte + add;
             if (neededLen >= capacity)
             {
                 capacity = StandardCapacity * (int)((float)neededLen / (float)StandardCapacity + 1.0f);
                 byte[] newData = new byte[capacity];
-                Buffer.BlockCopy(data, 0, newData, 0, currentByte);
+                Buffer.BlockCopy(data, 0, newData, 0, CurrentByte);
                 data = newData;
             }
         }
@@ -109,7 +112,7 @@ namespace GUC.Network
             if (!compress)
             {
                 //save data and reset;
-                SCurrentByte = currentByte;
+                SCurrentByte = CurrentByte;
                 SCurrentBitByte = currentBitByte;
                 SBitsWritten = bitsWritten;
                 SBitByte = bitByte;
@@ -131,7 +134,7 @@ namespace GUC.Network
                 //FIXME: Redo without stream + better performance
                 using (MemoryStream ms = new MemoryStream())
                 {
-                    int uncompressedLen = currentByte - SCurrentByte;
+                    int uncompressedLen = CurrentByte - SCurrentByte;
 
                     using (DeflateStream ds = new DeflateStream(ms, CompressionMode.Compress, true))
                     {
@@ -140,7 +143,7 @@ namespace GUC.Network
                     int compressedLen = (int)ms.Length;
 
                     //switch current byte back
-                    currentByte = SCurrentByte;
+                    CurrentByte = SCurrentByte;
 
                     //write lengths
                     Write(uncompressedLen);
@@ -148,9 +151,9 @@ namespace GUC.Network
 
                     //read compressed
                     ms.Position = 0;
-                    ms.Read(data, currentByte, compressedLen);
+                    ms.Read(data, CurrentByte, compressedLen);
 
-                    currentByte += compressedLen;
+                    CurrentByte += compressedLen;
 
                     //switch rest back too
                     currentBitByte = SCurrentBitByte;
@@ -171,14 +174,14 @@ namespace GUC.Network
             if (currentBitByte == -1)
             {
                 //CheckRealloc(1); // except when the capacity is 0 this is useless
-                currentBitByte = currentByte++;
+                currentBitByte = CurrentByte++;
             }
 
             if (bitsWritten == 8) // old byte is full
             {
                 CheckRealloc(1);
                 data[currentBitByte] = (byte)bitByte;
-                currentBitByte = currentByte++;
+                currentBitByte = CurrentByte++;
                 bitsWritten = 0;
                 bitByte = 0;
             }
@@ -201,102 +204,102 @@ namespace GUC.Network
         public void Write(sbyte val)
         {
             CheckRealloc(1);
-            data[currentByte++] = (byte)val;
+            data[CurrentByte++] = (byte)val;
         }
 
         public void Write(byte val)
         {
             CheckRealloc(1);
-            data[currentByte++] = val;
+            data[CurrentByte++] = val;
         }
 
         public void Write(short val)
         {
             CheckRealloc(2);
-            data[currentByte++] = (byte)val;
-            data[currentByte++] = (byte)(val >> 8);
+            data[CurrentByte++] = (byte)val;
+            data[CurrentByte++] = (byte)(val >> 8);
         }
 
         public void Write(ushort val)
         {
             CheckRealloc(2);
-            data[currentByte++] = (byte)val;
-            data[currentByte++] = (byte)(val >> 8);
+            data[CurrentByte++] = (byte)val;
+            data[CurrentByte++] = (byte)(val >> 8);
         }
 
         public void Write(int val)
         {
             CheckRealloc(4);
-            data[currentByte++] = (byte)val;
-            data[currentByte++] = (byte)(val >> 8);
-            data[currentByte++] = (byte)(val >> 16);
-            data[currentByte++] = (byte)(val >> 24);
+            data[CurrentByte++] = (byte)val;
+            data[CurrentByte++] = (byte)(val >> 8);
+            data[CurrentByte++] = (byte)(val >> 16);
+            data[CurrentByte++] = (byte)(val >> 24);
         }
 
         public void Write(uint val)
         {
             CheckRealloc(4);
-            data[currentByte++] = (byte)val;
-            data[currentByte++] = (byte)(val >> 8);
-            data[currentByte++] = (byte)(val >> 16);
-            data[currentByte++] = (byte)(val >> 24);
+            data[CurrentByte++] = (byte)val;
+            data[CurrentByte++] = (byte)(val >> 8);
+            data[CurrentByte++] = (byte)(val >> 16);
+            data[CurrentByte++] = (byte)(val >> 24);
         }
 
         public void Write(long val)
         {
             CheckRealloc(8);
-            data[currentByte++] = (byte)val;
-            data[currentByte++] = (byte)(val >> 8);
-            data[currentByte++] = (byte)(val >> 16);
-            data[currentByte++] = (byte)(val >> 24);
-            data[currentByte++] = (byte)(val >> 32);
-            data[currentByte++] = (byte)(val >> 40);
-            data[currentByte++] = (byte)(val >> 48);
-            data[currentByte++] = (byte)(val >> 56);
+            data[CurrentByte++] = (byte)val;
+            data[CurrentByte++] = (byte)(val >> 8);
+            data[CurrentByte++] = (byte)(val >> 16);
+            data[CurrentByte++] = (byte)(val >> 24);
+            data[CurrentByte++] = (byte)(val >> 32);
+            data[CurrentByte++] = (byte)(val >> 40);
+            data[CurrentByte++] = (byte)(val >> 48);
+            data[CurrentByte++] = (byte)(val >> 56);
         }
 
         public void Write(ulong val)
         {
             CheckRealloc(8);
-            data[currentByte++] = (byte)val;
-            data[currentByte++] = (byte)(val >> 8);
-            data[currentByte++] = (byte)(val >> 16);
-            data[currentByte++] = (byte)(val >> 24);
-            data[currentByte++] = (byte)(val >> 32);
-            data[currentByte++] = (byte)(val >> 40);
-            data[currentByte++] = (byte)(val >> 48);
-            data[currentByte++] = (byte)(val >> 56);
+            data[CurrentByte++] = (byte)val;
+            data[CurrentByte++] = (byte)(val >> 8);
+            data[CurrentByte++] = (byte)(val >> 16);
+            data[CurrentByte++] = (byte)(val >> 24);
+            data[CurrentByte++] = (byte)(val >> 32);
+            data[CurrentByte++] = (byte)(val >> 40);
+            data[CurrentByte++] = (byte)(val >> 48);
+            data[CurrentByte++] = (byte)(val >> 56);
         }
 
         public void Write(float val)
         {
             CheckRealloc(4);
             byte[] arr = BitConverter.GetBytes(val);
-            data[currentByte++] = arr[0];
-            data[currentByte++] = arr[1];
-            data[currentByte++] = arr[2];
-            data[currentByte++] = arr[3];
+            data[CurrentByte++] = arr[0];
+            data[CurrentByte++] = arr[1];
+            data[CurrentByte++] = arr[2];
+            data[CurrentByte++] = arr[3];
         }
 
         public void Write(double val)
         {
             CheckRealloc(8);
             byte[] arr = BitConverter.GetBytes(val);
-            data[currentByte++] = arr[0];
-            data[currentByte++] = arr[1];
-            data[currentByte++] = arr[2];
-            data[currentByte++] = arr[3];
-            data[currentByte++] = arr[4];
-            data[currentByte++] = arr[5];
-            data[currentByte++] = arr[6];
-            data[currentByte++] = arr[7];
+            data[CurrentByte++] = arr[0];
+            data[CurrentByte++] = arr[1];
+            data[CurrentByte++] = arr[2];
+            data[CurrentByte++] = arr[3];
+            data[CurrentByte++] = arr[4];
+            data[CurrentByte++] = arr[5];
+            data[CurrentByte++] = arr[6];
+            data[CurrentByte++] = arr[7];
         }
 
         public void Write(byte[] arr, int startIndex, int length)
         {
             CheckRealloc(length);
-            Buffer.BlockCopy(arr, startIndex, data, currentByte, length);
-            currentByte += length;
+            Buffer.BlockCopy(arr, startIndex, data, CurrentByte, length);
+            CurrentByte += length;
         }
 
         const int MaxStringLength = short.MaxValue;
@@ -334,31 +337,31 @@ namespace GUC.Network
         {
             CheckRealloc(12);
             byte[] arr = BitConverter.GetBytes(vec.X);
-            data[currentByte++] = arr[0];
-            data[currentByte++] = arr[1];
-            data[currentByte++] = arr[2];
-            data[currentByte++] = arr[3];
+            data[CurrentByte++] = arr[0];
+            data[CurrentByte++] = arr[1];
+            data[CurrentByte++] = arr[2];
+            data[CurrentByte++] = arr[3];
 
             arr = BitConverter.GetBytes(vec.Y);
-            data[currentByte++] = arr[0];
-            data[currentByte++] = arr[1];
-            data[currentByte++] = arr[2];
-            data[currentByte++] = arr[3];
+            data[CurrentByte++] = arr[0];
+            data[CurrentByte++] = arr[1];
+            data[CurrentByte++] = arr[2];
+            data[CurrentByte++] = arr[3];
 
             arr = BitConverter.GetBytes(vec.Z);
-            data[currentByte++] = arr[0];
-            data[currentByte++] = arr[1];
-            data[currentByte++] = arr[2];
-            data[currentByte++] = arr[3];
+            data[CurrentByte++] = arr[0];
+            data[CurrentByte++] = arr[1];
+            data[CurrentByte++] = arr[2];
+            data[CurrentByte++] = arr[3];
         }
 
         public void Write(ColorRGBA color)
         {
             CheckRealloc(4);
-            data[currentByte++] = color.R;
-            data[currentByte++] = color.G;
-            data[currentByte++] = color.B;
-            data[currentByte++] = color.A;
+            data[CurrentByte++] = color.R;
+            data[CurrentByte++] = color.G;
+            data[CurrentByte++] = color.B;
+            data[CurrentByte++] = color.A;
         }
 
         /*
@@ -380,9 +383,9 @@ namespace GUC.Network
 
         void WriteInt24(int val)
         {
-            data[currentByte++] = (byte)val;
-            data[currentByte++] = (byte)(val >> 8);
-            data[currentByte++] = (byte)(val >> 16);
+            data[CurrentByte++] = (byte)val;
+            data[CurrentByte++] = (byte)(val >> 8);
+            data[CurrentByte++] = (byte)(val >> 16);
         }
 
         /// <summary>
@@ -390,9 +393,9 @@ namespace GUC.Network
         /// </summary>
         public void WriteCompressedDirection(Vec3f direction)
         {
-            data[currentByte++] = (byte)(direction.X * 127.0f);
-            data[currentByte++] = (byte)(direction.Y * 127.0f);
-            data[currentByte++] = (byte)(direction.Z * 127.0f);
+            data[CurrentByte++] = (byte)(direction.X * 127.0f);
+            data[CurrentByte++] = (byte)(direction.Y * 127.0f);
+            data[CurrentByte++] = (byte)(direction.Z * 127.0f);
         }
 
         #endregion

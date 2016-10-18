@@ -63,7 +63,11 @@ namespace GUC.Animations
             this.isCreated = model != null;
         }
 
+        public AniJob NextAni;
+
         #endregion
+
+        #region Default Animation
 
         partial void pSetDefaultAni(Animation ani);
         public void SetDefaultAni(Animation ani)
@@ -81,6 +85,8 @@ namespace GUC.Animations
             ani.SetAniJob(this, null);
             pSetDefaultAni(ani);
         }
+
+        #endregion
 
         #region Overlays
 

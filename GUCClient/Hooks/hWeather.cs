@@ -6,7 +6,7 @@ using WinApi;
 using GUC.Log;
 using GUC.WorldObjects;
 
-namespace GUC.Client.Hooks
+namespace GUC.Hooks
 {
     static class hWeather
     {

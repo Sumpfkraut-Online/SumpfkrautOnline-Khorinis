@@ -10,7 +10,7 @@ using GUC.Types;
 using GUC.Scripting;
 using Gothic.Objects;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
-using GUC.Client;
+using GUC.Scripts.Sumpfkraut.Networking;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
@@ -37,7 +37,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             foreach (TFFA.ClientInfo ci in TFFA.ClientInfo.ClientInfos.Values)
             {
                 if (ci.CharID == this.ID)
-                    this.BaseInst.gVob.Name.Set(Client.Scripts.TFFA.InputControl.ClientsShown ? string.Format("({0}){1}", ci.ID, ci.Name) : ci.Name);
+                    this.BaseInst.gVob.Name.Set(TFFA.InputControl.ClientsShown ? string.Format("({0}){1}", ci.ID, ci.Name) : ci.Name);
             }
 
             this.BaseInst.ForEachEquippedItem(i => this.pEquipItem(i.Slot, (ItemInst)i.ScriptObject));
@@ -166,10 +166,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public override void OnReadScriptVobMsg(PacketReader stream)
         {
-            var msgID = (Networking.NetVobMsgIDs)stream.ReadByte();
+            var msgID = (NetWorldMsgID)stream.ReadByte();
             switch (msgID)
             {
-                case Networking.NetVobMsgIDs.HitMessage:
+                case NetWorldMsgID.HitMessage:
                     var targetID = stream.ReadUShort();
                     WorldObjects.NPC target;
                     if (WorldInst.Current.BaseWorld.TryGetVob(targetID, out target))
@@ -195,7 +195,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                         target.gVob.GetModel().StartAni("T_GOTHIT", 0);
                     }
                     break;
-                case Networking.NetVobMsgIDs.ParryMessage:
+                case NetWorldMsgID.ParryMessage:
                     targetID = stream.ReadUShort();
                     WorldObjects.NPC targetNPC;
                     if (WorldInst.Current.BaseWorld.TryGetVob(targetID, out targetNPC))
@@ -326,13 +326,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             this.StartAnimation(ani);
         }
 
-        static Client.SoundInstance sfx_DrawGeneric = new Client.SoundInstance("wurschtel.wav");
+        static SoundInstance sfx_DrawGeneric = new SoundInstance("wurschtel.wav");
 
-        static Client.SoundInstance sfx_DrawMetal = new Client.SoundInstance("Drawsound_ME.wav");
-        static Client.SoundInstance sfx_DrawWood = new Client.SoundInstance("Drawsound_WO.wav");
+        static SoundInstance sfx_DrawMetal = new SoundInstance("Drawsound_ME.wav");
+        static SoundInstance sfx_DrawWood = new SoundInstance("Drawsound_WO.wav");
 
-        static Client.SoundInstance sfx_UndrawMetal = new Client.SoundInstance("Undrawsound_ME.wav");
-        static Client.SoundInstance sfx_UndrawWood = new Client.SoundInstance("Undrawsound_WO.wav");
+        static SoundInstance sfx_UndrawMetal = new SoundInstance("Undrawsound_ME.wav");
+        static SoundInstance sfx_UndrawWood = new SoundInstance("Undrawsound_WO.wav");
 
         GUCTimer drawTimer = new GUCTimer();
         public void StartAniDraw(ScriptAni ani, ItemInst item)
@@ -349,15 +349,15 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
                     if (item.Definition.Material == ItemMaterials.Metal)
                     {
-                        Client.SoundHandler.PlaySound3D(sfx_DrawMetal, this.BaseInst);
+                        SoundHandler.PlaySound3D(sfx_DrawMetal, this.BaseInst);
                     }
                     else if (item.Definition.Material == ItemMaterials.Wood)
                     {
-                        Client.SoundHandler.PlaySound3D(sfx_DrawWood, this.BaseInst);
+                        SoundHandler.PlaySound3D(sfx_DrawWood, this.BaseInst);
                     }
                     else
                     {
-                        Client.SoundHandler.PlaySound3D(sfx_DrawGeneric, this.BaseInst);
+                        SoundHandler.PlaySound3D(sfx_DrawGeneric, this.BaseInst);
                     }
                 });
                 drawTimer.Start();
@@ -378,15 +378,15 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
                     if (item.Definition.Material == ItemMaterials.Metal)
                     {
-                        Client.SoundHandler.PlaySound3D(sfx_UndrawMetal, this.BaseInst);
+                        SoundHandler.PlaySound3D(sfx_UndrawMetal, this.BaseInst);
                     }
                     else if (item.Definition.Material == ItemMaterials.Wood)
                     {
-                        Client.SoundHandler.PlaySound3D(sfx_UndrawWood, this.BaseInst);
+                        SoundHandler.PlaySound3D(sfx_UndrawWood, this.BaseInst);
                     }
                     else
                     {
-                        Client.SoundHandler.PlaySound3D(sfx_DrawGeneric, this.BaseInst);
+                        SoundHandler.PlaySound3D(sfx_DrawGeneric, this.BaseInst);
                     }
                 });
                 drawTimer.Start();

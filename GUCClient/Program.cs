@@ -9,10 +9,10 @@ using Gothic.Types;
 using System.Runtime.InteropServices;
 using GUC.Log;
 using WinApi;
-using GUC.Client.Hooks;
+using GUC.Hooks;
 using System.Reflection;
 
-namespace GUC.Client
+namespace GUC
 {
     //zCMesh::Load(class zSTRING const &, int)
     //( zCMesh::MergeMesh(class zCMesh *, class zMAT4 const &) ? )
@@ -20,39 +20,44 @@ namespace GUC.Client
 
     public static class Program
     {
-        static string projectName;
+        static string gothicPath;
         static string projectPath;
-        static string serverAddress;
+        static string serverIP;
+        static ushort serverPort;
+        static string password;
 
-        public static string ProjectName { get { return projectName; } }
+        public static string GothicPath { get { return gothicPath; } }
         public static string ProjectPath { get { return projectPath; } }
-        public static string ServerAddress { get { return serverAddress; } }
-        public const ushort ServerPort = 9054;
+        public static string ServerIP { get { return serverIP; } }
+        public static ushort ServerPort { get { return serverPort; } }
+        public static string Password { get { return password; } }
+
+        public static string GetFullPath(params string[] paths)
+        {
+            return Path.Combine(projectPath, Path.Combine(paths));
+        }
 
         static void SetupProject()
         {
-            projectName = Environment.GetEnvironmentVariable("GUCProject");
-            if (string.IsNullOrWhiteSpace(projectName))
-                throw new Exception("Project name environment variable is null or empty!");
+            gothicPath = Environment.GetEnvironmentVariable("GUCGothicPath");
+            if (string.IsNullOrWhiteSpace(gothicPath) || !Directory.Exists(gothicPath))
+                throw new Exception("Gothic folder environment variable is null or not found!");
+            
+            projectPath = Environment.GetEnvironmentVariable("GUCProjectPath");
+            
+            if (string.IsNullOrWhiteSpace(projectPath) || !Directory.Exists(projectPath))
+                throw new Exception("Project folder environment variable is null or not found!");
 
-            serverAddress = Environment.GetEnvironmentVariable("ServerAddress");
-            if (string.IsNullOrWhiteSpace(serverAddress))
-                throw new Exception("Server address environment variable is null or empty!");
+            serverIP = Environment.GetEnvironmentVariable("GUCServerIP");
+            if (string.IsNullOrWhiteSpace(serverIP))
+                throw new Exception("Server IP environment variable is null or white space!");
 
-            string current = Path.GetFullPath(Environment.CurrentDirectory); // It's Gothic2/System when the process starts, Gothic2/ afterwards.
+            if (!ushort.TryParse(Environment.GetEnvironmentVariable("GUCServerPort"), out serverPort))
+                throw new Exception("Could not parse server port environment variable to ushort!");
 
-            if (File.Exists(current + "\\Gothic2.exe"))
-            { // Gothic2/System/
-                projectPath = Path.GetFullPath(current + "\\Multiplayer\\UntoldChapters\\" + projectName + "\\");
-            }
-            else if (File.Exists(current + "\\System\\Gothic2.exe"))
-            { // Gothic2/
-                projectPath = Path.GetFullPath(current + "\\System\\Multiplayer\\UntoldChapters\\" + projectName + "\\");
-            }
-            else
-            {
-                throw new Exception("Gothic 2 not found!");
-            }
+            password = Environment.GetEnvironmentVariable("GUCServerPassword");
+            if (string.IsNullOrWhiteSpace(password))
+                password = null;
 
             AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;
         }
@@ -70,7 +75,7 @@ namespace GUC.Client
                 return Assembly.Load(buffer);
             }
 
-            return Assembly.LoadFrom(projectPath + name + ".dll");
+            return Assembly.LoadFrom(Path.Combine(projectPath, name + ".dll"));
         }
 
         static bool mained = false;
@@ -88,14 +93,17 @@ namespace GUC.Client
                 SplashScreen.SetUpHooks();
                 SplashScreen.Create();
 
-                Process.Write(new byte[] { 0xE9, 0x8C, 0x00, 0x00, 0x00 }, 0x0044AEDF); // skip visual vdfs init (vdfs32g.exe)
+                Process.Write(new byte[] { 0xE9, 0x8C, 0x00, 0x00, 0x00 }, 0x44AEDF); // skip visual vdfs init (vdfs32g.exe)
                 Process.Write(new byte[] { 0xE9, 0xA3, 0x00, 0x00, 0x00 }, 0x42687F); // skip intro videos
 
                 // add hooks
+                hFile.AddHooks();
                 hParser.AddHooks();
                 hGame.AddHooks();
                 hWeather.AddHooks();
                 hPlayerVob.AddHooks();
+                hView.AddHooks();
+                hNpc.AddHooks();
 
                 #region Some more editing
 
@@ -139,11 +147,17 @@ namespace GUC.Client
                 //Process.VirtualProtect(0x007792E0, 40);
                 Process.Write(new byte[] { 0x33, 0xC0, 0xC2, 0x04, 0x00 }, 0x007792E0);//Block deleting of dead characters!
 
+                Process.Write(new byte[] { 0xB8, 0x01, 0x00, 0x00, 0x00, 0xC3 }, 0x7425A0); // oCNpc::IsAPlayer always true
+                Process.Write(new byte[] { 0x31, 0xC0, 0xC3 }, 0x76D8A0); // oCNpc_States::IsInRoutine always false
+
+                Process.Write(new byte[] { 0xEB, 0x21 }, 0x69C247); // oCAIHuman::DoAI -> skip perception check
+                Process.Write(new byte[] { 0x31, 0xC0, 0xC3 }, 0x76D1A0); // oCNpc_States::DoAIState -> skip and return false
+
                 Logger.Log("Hooking & editing of gothic process completed. (for now...)");
                 #endregion
 
                 // Load Scripts
-                Scripting.ScriptManager.StartScripts(Program.ProjectPath + "Scripts\\ClientScripts.dll");
+                Scripting.ScriptManager.StartScripts(Path.Combine(projectPath, "Scripts", "ClientScripts.dll"));
 
                 Logger.Log("Waiting...");
                 SplashScreen.WaitHandle.WaitOne(3000);
@@ -155,6 +169,7 @@ namespace GUC.Client
             }
             return 0;
         }
+
         public static void Exit()
         {
             GameClient.Client.Disconnect();

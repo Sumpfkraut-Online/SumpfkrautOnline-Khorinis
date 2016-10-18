@@ -22,7 +22,6 @@ namespace GUC.Enumeration
         ModelDeleteMessage,
         
         SpectatorMessage,
-        SpecPosMessage,
         PlayerControlMessage, // npc control
         LoadWorldMessage, // for changing the world
 
@@ -30,8 +29,14 @@ namespace GUC.Enumeration
         ScriptMessage,
         ScriptVobMessage,
 
+        SpecPosMessage,
+        SpecDirMessage,
+        SpecPosDirMessage,
+
         // world & spawns
-        WorldCellMessage, // for changing cells
+        WorldCellMessage, // when switching world cells
+        WorldJoinMessage, // only vobs to spawn
+        WorldLeaveMessage, // remove all spawned vobs
         WorldSpawnMessage, // for spawning a vob in the world
         WorldDespawnMessage, // for despawning a vob in the world
         WorldTimeMessage, // to set the world's time
@@ -40,6 +45,8 @@ namespace GUC.Enumeration
         WorldWeatherTypeMessage, // rain & snow
 
         //vobs
+        VobPosMessage,
+        VobDirMessage,
         VobPosDirMessage, // updating position and direction of a vob
 
         // npcs 
@@ -62,5 +69,13 @@ namespace GUC.Enumeration
         InventoryRemoveMessage, // remove item from player inventory
         InventoryEquipMessage,
         InventoryUnequipMessage,
+
+        // GuidedVobs
+        GuideAddMessage,
+        GuideAddCmdMessage,
+        GuideRemoveMessage,
+        GuideSetCmdMessage,
+        GuideRemoveCmdMessage,
+
     }
 }

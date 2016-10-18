@@ -10,6 +10,8 @@ using GUC.Enumeration;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
+using GUC.WorldObjects.VobGuiding;
+using GUC.Scripts.Sumpfkraut.AI.GuideCommands;
 
 namespace GUC.Scripts
 {
@@ -92,6 +94,19 @@ namespace GUC.Scripts
             }
 
             return def.BaseDef;
+        }
+
+        public GuideCmd CreateGuideCmd(byte type)
+        {
+            switch ((CommandType)type)
+            {
+                case CommandType.GoToPos:
+                    return new GoToPosCommand();
+                case CommandType.GoToVob:
+                    return new GoToVobCommand();
+                default:
+                    throw new Exception("Unsupported guide command type: " + type);
+            }
         }
     }
 }

@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Enumeration;
-using GUC.Server.Network;
 using RakNet;
 using GUC.Network;
 using GUC.WorldObjects.Mobs;
 using GUC.Types;
-using GUC.Server.Network.Messages;
-using GUC.Server.WorldObjects.Cells;
+using GUC.Network.Messages;
+using GUC.WorldObjects.Cells;
 using GUC.Animations;
 
 namespace GUC.WorldObjects
@@ -40,12 +39,12 @@ namespace GUC.WorldObjects
 
         public void UpdatePropertiesFast()
         {
-
+            throw new NotImplementedException();
         }
 
         public void UpdateProperties()
         {
-            // send msg
+            throw new NotImplementedException();
         }
 
         partial void pSetMovement(MoveState state)
@@ -56,154 +55,39 @@ namespace GUC.WorldObjects
 
         #region Cells
 
-        internal NPCCell npcCell = null;
+        internal NPCCell NpcCell = null;
         internal int npcCellID = -1;
 
-        void UpdateNPCCell()
+        internal override void AddToCell(BigCell cell)
         {
-            int[] coords = NPCCell.GetCoords(this.pos);
-
-            if (coords[0] < short.MinValue || coords[0] > short.MaxValue || coords[1] < short.MinValue || coords[1] > short.MaxValue)
-            {
-                throw new Exception("Coords are out of cell range!");
-            }
-
-            if (this.npcCell == null || this.npcCell.X != coords[0] || this.npcCell.Y != coords[1])
-            {
-                int coord = (coords[0] << 16) | coords[1] & 0xFFFF;
-
-                if (this.npcCell != null)
-                {
-                    this.npcCell.npcs.Remove(ref this.npcCellID);
-                    if (this.npcCell.npcs.Count <= 0)
-                        this.world.npcCells.Remove(this.npcCell.Coord);
-                }
-
-                NPCCell newCell;
-                if (!this.world.npcCells.TryGetValue(coord, out newCell))
-                {
-                    newCell = new NPCCell(this.world, coords[0], coords[1]);
-                    this.world.npcCells.Add(coord, newCell);
-                }
-
-                newCell.npcs.Add(this, ref this.npcCellID);
-                this.npcCell = newCell;
-            }
-        }
-
-        internal override void AddToNetCell(NetCell cell)
-        {
-            base.AddToNetCell(cell);
+            base.AddToCell(cell);
             if (this.IsPlayer)
-            {
-                cell.Clients.Add(this.client, ref this.client.cellID);
-            }
+                cell.AddClient(this.client);
         }
 
-        internal override void RemoveFromNetCell()
+        internal override void RemoveFromCell()
         {
             if (this.IsPlayer)
             {
-                this.Cell.Clients.Remove(ref this.client.cellID);
+                this.Cell.RemoveClient(this.client);
             }
-            base.RemoveFromNetCell();
-        }
-
-        internal override void UpdatePosition(Vec3f newPos, Vec3f newDir, GameClient exclude)
-        {
-            base.UpdatePosition(newPos, newDir, exclude);
-            this.UpdateNPCCell();
-        }
-
-        internal override void ChangeCells(int toX, int toY)
-        {
-            if (!this.IsPlayer)
-            {
-                base.ChangeCells(toX, toY);
-            }
-            else
-            {
-                NetCell from = this.Cell;
-                this.RemoveFromNetCell();
-
-                int i = 0;
-                NetCell[] oldCells = new NetCell[NetCell.NumSurroundingCells];
-                int oldVobCount = 0;
-                from.ForEachSurroundingCell(cell =>
-                {
-                    if (cell.X <= toX + 1 && cell.X >= toX - 1 && cell.Y <= toY + 1 && cell.Y >= toY - 1)
-                    {
-                        if (cell.Clients.Count > 0)
-                        {
-                            //Position updates in shared cells
-                            PacketWriter stream = GameServer.SetupStream(NetworkIDs.VobPosDirMessage);
-                            stream.Write((ushort)this.ID);
-                            stream.WriteCompressedPosition(this.pos);
-                            stream.WriteCompressedDirection(this.dir);
-                            cell.Clients.ForEach(c =>
-                            {
-                                c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE, 'W');
-                            });
-                        }
-                    }
-                    else
-                    {
-                        if (cell.Clients.Count > 0)
-                        {
-                            //deletion updates in old cells
-                            PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldDespawnMessage);
-                            stream.Write((ushort)this.ID);
-                            cell.Clients.ForEach(c =>
-                            {
-                                c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
-                            });
-                        }
-
-                        if (cell.DynVobs.GetCount() > 0)
-                        {
-                            oldCells[i++] = cell;
-                            oldVobCount += cell.DynVobs.GetCount();
-                        }
-                    }
-                });
-
-                // new cells
-                i = 0;
-                NetCell[] newCells = new NetCell[NetCell.NumSurroundingCells];
-                this.world.ForEachSurroundingCell(toX, toY, cell =>
-                {
-                    if (!(cell.X <= from.X + 1 && cell.X >= from.X - 1 && cell.Y <= from.Y + 1 && cell.Y >= from.Y - 1))
-                    {
-                        if (cell.Clients.Count > 0)
-                        {
-                            // spawn updates in the new cells
-                            PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldSpawnMessage);
-                            stream.Write((byte)this.VobType);
-                            this.WriteStream(stream);
-                            cell.Clients.ForEach(c =>
-                            {
-                                c.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
-                            });
-                        }
-
-                        if (cell.DynVobs.GetCount() > 0)
-                            newCells[i++] = cell;
-                    }
-                });
-
-                WorldMessage.WriteCellMessage(newCells, oldCells, oldVobCount, this.client);
-
-                this.AddToNetCell(this.world.GetCellFromCoords(toX, toY));
-            }
+            base.RemoveFromCell();
         }
 
         #endregion
 
         #region Properties
 
-        internal GameClient client = null;
+        internal GameClient client;
+        /// <summary> The client which is controlling this npc. </summary>
         public GameClient Client { get { return client; } }
-        public bool IsPlayer { get { return Client != null; } }
+
+        /// <summary> Returns true if this npc is controlled by a client. </summary>
+        public bool IsPlayer { get { return client != null; } }
+        
+        #endregion
+
+        #region Health
 
         partial void pSetHealth()
         {
@@ -215,6 +99,10 @@ namespace GUC.WorldObjects
 
         #region Spawn
 
+        /// <summary> 
+        /// Spawns the NPC in the given world at the given position & direction.
+        /// If the NPC is a player, the spawn will be postponed until the client has loaded the map. 
+        /// </summary>
         public override void Spawn(World world, Vec3f position, Vec3f direction)
         {
             if (this.IsPlayer)
@@ -222,57 +110,48 @@ namespace GUC.WorldObjects
                 if (world == null)
                     throw new ArgumentNullException("World is null!");
 
+                if (this.instance == null)
+                    throw new Exception("Vob has no Instance!");
+
+                if (this.ScriptObject == null)
+                    throw new Exception("Vob has no ScriptObject!");
+
                 if (this.isCreated)
                     throw new Exception("Vob is already spawned!");
 
-                this.pos = position;
-                this.dir = direction;
+                this.pos = position.CorrectPosition();
+                this.dir = direction.CorrectDirection();
                 this.world = world;
 
+                // wait until the client has loaded the map
                 WorldMessage.WriteLoadMessage(this.client, world); // tell the client to change worlds first
             }
             else
             {
                 base.Spawn(world, position, direction);
-                this.UpdateNPCCell();
+                world.AddToNPCCells(this);
             }
         }
 
-        // wait until the client has loaded the map
-        internal void InsertInWorld()
+        // spawn the client's character
+        internal void SpawnPlayer()
         {
-            // Write surrounding vobs to this client
-            int[] coords = NetCell.GetCoords(this.pos);
-            NetCell[] arr = new NetCell[NetCell.NumSurroundingCells]; int i = 0;
-            this.world.ForEachSurroundingCell(coords[0], coords[1], cell =>
-            {
-                if (cell.DynVobs.GetCount() > 0)
-                    arr[i++] = cell; // save for cell message
-            });
-            WorldMessage.WriteCellMessage(arr, new NetCell[0], 0, this.client);
-
-            if (!this.isCreated)
-            {
-                base.Spawn(this.world, pos, dir);
-                this.UpdateNPCCell();
-                world.AddToPlayers(this.client);
-            }
-
             PacketWriter stream = GameServer.SetupStream(NetworkIDs.PlayerControlMessage);
             stream.Write((ushort)this.ID);
             this.WriteTakeControl(stream);
             this.Client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, '\0');
+
+            base.Spawn(this.world, this.pos, this.dir);
+            world.AddToNPCCells(this);
         }
 
-        partial void pDespawn()
+        partial void pBeforeDespawn()
         {
             if (this.IsPlayer)
             {
                 this.client.SetControl(null);
             }
-            this.npcCell.npcs.Remove(ref this.npcCellID);
-            if (this.npcCell.npcs.Count <= 0)
-                this.npcCell.World.npcCells.Remove(this.npcCell.Coord);
+            this.world.RemoveFromNPCCells(this);
         }
 
         #endregion

@@ -8,7 +8,7 @@
     <ProjectGuid>{C670CA0D-F27B-4745-9B76-B06882052E6B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GUC.Client</RootNamespace>
+    <RootNamespace>GUC</RootNamespace>
     <AssemblyName>GUC</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -19,7 +19,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\GothicII\System\Multiplayer\UntoldChapters\SumpfkrautOnline\</OutputPath>
+    <OutputPath>..\bin\localhost-9054\</OutputPath>
     <DefineConstants>TRACE;DEBUG;D_CLIENT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -27,7 +27,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\GothicII\System\Multiplayer\UntoldChapters\SumpfkrautOnline\</OutputPath>
+    <OutputPath>..\bin\localhost-9054\</OutputPath>
     <DefineConstants>TRACE;D_CLIENT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -37,9 +37,8 @@
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="RakNetSwig, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\GothicII\System\UntoldChapter\DLL\RakNetSwig.dll</HintPath>
+    <Reference Include="RakNetSwig">
+      <HintPath>..\RakNet\RakNetSwig.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
@@ -89,6 +88,9 @@
     </Compile>
     <Compile Include="..\GUCShared\GameTime.cs">
       <Link>GameTime.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\GODictionary.cs">
+      <Link>GODictionary.cs</Link>
     </Compile>
     <Compile Include="..\GUCShared\Log\Logger.cs">
       <Link>Log\Logger.cs</Link>
@@ -240,27 +242,35 @@
     <Compile Include="..\GUCShared\WorldObjects\Vob.cs">
       <Link>WorldObjects\Vob.cs</Link>
     </Compile>
+    <Compile Include="..\GUCShared\WorldObjects\VobGuiding\GuideCmd.cs">
+      <Link>WorldObjects\VobGuiding\GuideCmd.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\WorldObjects\VobGuiding\GuidedVob.cs">
+      <Link>WorldObjects\VobGuiding\GuidedVob.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\WorldObjects\Weather\SkyController.cs">
       <Link>WorldObjects\Weather\SkyController.cs</Link>
     </Compile>
     <Compile Include="..\GUCShared\WorldObjects\World.cs">
       <Link>WorldObjects\World.cs</Link>
     </Compile>
-    <Compile Include="GUI\GUCInventory.cs" />
     <Compile Include="GUI\GUCTextBox.cs" />
     <Compile Include="GUI\GUCView.cs" />
     <Compile Include="GUI\GUCVisual.cs" />
     <Compile Include="GUI\GUCVisualText.cs" />
-    <Compile Include="GUI\GUCVisualVob.cs" />
-    <Compile Include="GUI\MenuRenderer.cs" />
+    <Compile Include="GUI\GUC3DVisual.cs" />
+    <Compile Include="Hooks\hNpc.cs" />
+    <Compile Include="Hooks\hView.cs" />
     <Compile Include="Hooks\hGame.cs" />
     <Compile Include="Hooks\hParser.cs" />
     <Compile Include="Hooks\hPlayerVob.cs" />
     <Compile Include="Hooks\hWeather.cs" />
     <Compile Include="Barrier.cs" />
+    <Compile Include="Hooks\hFile.cs" />
     <Compile Include="InputHandler.cs" />
     <Compile Include="Network\GameClient.Client.cs" />
     <Compile Include="Network\Messages\ConnectionMessage.cs" />
+    <Compile Include="Network\Messages\GuideMessage.cs" />
     <Compile Include="Network\Messages\InstanceMessage.cs" />
     <Compile Include="Network\Messages\InventoryMessage.cs" />
     <Compile Include="Network\Messages\ModelMessage.cs" />
@@ -282,7 +292,7 @@
     <Compile Include="Utilities\ExtendedObject.Client.cs" />
     <Compile Include="WorldObjects\BaseVob.Client.cs" />
     <Compile Include="StaticCollection.Client.cs" />
-    <Compile Include="WorldObjects\Collections\ItemContainer.Client.cs" />
+    <Compile Include="WorldObjects\VobGuiding\GuidedVob.Client.cs" />
     <Compile Include="WorldObjects\Instances\BaseVobInstance.Client.cs" />
     <Compile Include="WorldObjects\Instances\ItemInstance.Client.cs" />
     <Compile Include="WorldObjects\Instances\Mobs\MobBedInstance.Client.cs" />
@@ -359,7 +369,12 @@
   <ItemGroup>
     <Resource Include="Resources\Splash.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="..\RakNet\RakNet.dll">
+      <Link>RakNet.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
