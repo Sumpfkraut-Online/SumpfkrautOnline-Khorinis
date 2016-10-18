@@ -164,69 +164,67 @@ namespace GUC.Scripts.Sumpfkraut.AI
 
 
 
-            AIManager.InitStatic();
-            AIManager aiManager01 = new AIManager(true, false, new TimeSpan(0, 0, 0, 0, 500));
-            aiManager01.SetObjName("aiManager01");
-            aiManager01.Start();
-
-
-            List<NPCDef> dummyDefinitions = new List<NPCDef>();
-            List<NPCInst> dummyInstances = new List<NPCInst>();
-            List<int> dummyIDs = new List<int>();
-
-            int spawnAmount = 10;
-            int indexDigits = (int) Math.Floor(Math.Log10(50) + 1);
-            Types.Vec3f[] spawnRange = new Types.Vec3f[] {
-                new Types.Vec3f(-2000f, 1000f, -2000f),
-                new Types.Vec3f(2000f, 1000f, 2000f)};
-            Types.Vec3f spawnRangeDiff = spawnRange[1] - spawnRange[0];
-
-            Random random = new Random();
-
-            NPCDef tempDef = null;
-            for (int i = 0; i < spawnAmount; i++)
-            {
-                tempDef = CreateDummyDef("NPCDef_" + i.ToString("D" + indexDigits), random);
-                if (tempDef != null)
-                {
-                    dummyDefinitions.Add(tempDef);
-                    dummyIDs.Add(i);
-                }
-            }
-
-            NPCInst tempInst = null;
-            Types.Vec3f spawnLocation;
-
-            AIAgent aiAgent;
-            AIMemory aiMemory;
-            SimpleAI.AIRoutines.SimpleAIRoutine aiRoutine;
-            SimpleAI.AIPersonalities.SimpleAIPersonality aiPersonality;
-
-            for (int i = 0; i < dummyIDs.Count; i++)
-            {
-                spawnLocation = new Types.Vec3f(
-                    (float) (spawnRange[0].X + (random.NextDouble() * spawnRangeDiff.X)),
-                    (float) (spawnRange[0].Y + (random.NextDouble() * spawnRangeDiff.Y)),
-                    (float) (spawnRange[0].Z + (random.NextDouble() * spawnRangeDiff.Z)));
-                tempInst = CreateDummyInst(dummyDefinitions[i], "NPCInst_" + dummyIDs[i].ToString("D" + indexDigits),
-                    spawnLocation, random);
-                if (tempInst != null)
-                {
-                    dummyInstances.Add(tempInst);
-
-                    aiMemory = new AIMemory();
-                    aiRoutine = new SimpleAI.AIRoutines.SimpleAIRoutine();
-                    aiPersonality = new SimpleAI.AIPersonalities.SimpleAIPersonality(20000f, 1f);
-                    aiPersonality.Init(aiMemory, aiRoutine);
-                    aiPersonality.SetObjName(tempInst.GetObjName());
-                    aiAgent = new AIAgent(new List<VobInst> { tempInst }, aiPersonality);
-                    aiAgent.SetObjName(tempInst.GetObjName());
-                    aiManager01.SubscribeAIAgent(aiAgent);
-                    MakeLogStatic(typeof(TestingAI), "Created dummy-npc " + tempInst.GetObjName());
-                }
-            }
-
+            //AIManager.InitStatic();
+            //AIManager aiManager01 = new AIManager(true, false, new TimeSpan(0, 0, 0, 0, 500));
+            //aiManager01.SetObjName("aiManager01");
             //aiManager01.Start();
+
+
+            //List<NPCDef> dummyDefinitions = new List<NPCDef>();
+            //List<NPCInst> dummyInstances = new List<NPCInst>();
+            //List<int> dummyIDs = new List<int>();
+
+            //int spawnAmount = 10;
+            //int indexDigits = (int) Math.Floor(Math.Log10(50) + 1);
+            //Types.Vec3f[] spawnRange = new Types.Vec3f[] {
+            //    new Types.Vec3f(-2000f, 1000f, -2000f),
+            //    new Types.Vec3f(2000f, 1000f, 2000f)};
+            //Types.Vec3f spawnRangeDiff = spawnRange[1] - spawnRange[0];
+
+            //Random random = new Random();
+
+            //NPCDef tempDef = null;
+            //for (int i = 0; i < spawnAmount; i++)
+            //{
+            //    tempDef = CreateDummyDef("NPCDef_" + i.ToString("D" + indexDigits), random);
+            //    if (tempDef != null)
+            //    {
+            //        dummyDefinitions.Add(tempDef);
+            //        dummyIDs.Add(i);
+            //    }
+            //}
+
+            //NPCInst tempInst = null;
+            //Types.Vec3f spawnLocation;
+
+            //AIAgent aiAgent;
+            //AIMemory aiMemory;
+            //SimpleAI.AIRoutines.SimpleAIRoutine aiRoutine;
+            //SimpleAI.AIPersonalities.SimpleAIPersonality aiPersonality;
+
+            //for (int i = 0; i < dummyIDs.Count; i++)
+            //{
+            //    spawnLocation = new Types.Vec3f(
+            //        (float) (spawnRange[0].X + (random.NextDouble() * spawnRangeDiff.X)),
+            //        (float) (spawnRange[0].Y + (random.NextDouble() * spawnRangeDiff.Y)),
+            //        (float) (spawnRange[0].Z + (random.NextDouble() * spawnRangeDiff.Z)));
+            //    tempInst = CreateDummyInst(dummyDefinitions[i], "NPCInst_" + dummyIDs[i].ToString("D" + indexDigits),
+            //        spawnLocation, random);
+            //    if (tempInst != null)
+            //    {
+            //        dummyInstances.Add(tempInst);
+
+            //        aiMemory = new AIMemory();
+            //        aiRoutine = new SimpleAI.AIRoutines.SimpleAIRoutine();
+            //        aiPersonality = new SimpleAI.AIPersonalities.SimpleAIPersonality(20000f, 1f);
+            //        aiPersonality.Init(aiMemory, aiRoutine);
+            //        aiPersonality.SetObjName(tempInst.GetObjName());
+            //        aiAgent = new AIAgent(new List<VobInst> { tempInst }, aiPersonality);
+            //        aiAgent.SetObjName(tempInst.GetObjName());
+            //        aiManager01.SubscribeAIAgent(aiAgent);
+            //        MakeLogStatic(typeof(TestingAI), "Created dummy-npc " + tempInst.GetObjName());
+            //    }
+            //}
 
 
 
