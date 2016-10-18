@@ -100,11 +100,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DBPatterns", "DBPatterns", 
 	ProjectSection(SolutionItems) = preProject
 		DBPatterns\DBPattern_SqLite3_Main.sql = DBPatterns\DBPattern_SqLite3_Main.sql
 		DBPatterns\DBPattern_SqLite3_World.sql = DBPatterns\DBPattern_SqLite3_World.sql
+	EndProjectSection
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUCLauncher", "GUCLauncher\GUCLauncher.csproj", "{A9006DD2-A155-4194-82FB-BD1533BE9B07}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilePacker", "FilePacker\FilePacker.csproj", "{8ABD57D5-E390-4106-875F-BE2ABFA8ABEE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "bin", "bin", "{E14EEC51-997D-42C1-B54E-5B94AB34C716}"
+	ProjectSection(SolutionItems) = preProject
+		DBPatterns\DBPattern_SqLite3_Main.sql = DBPatterns\DBPattern_SqLite3_Main.sql
+		DBPatterns\DBPattern_SqLite3_World.sql = DBPatterns\DBPattern_SqLite3_World.sql
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{C76E58DD-8E4F-4622-9B7E-29798F4ED4D5}"
 	ProjectSection(SolutionItems) = preProject

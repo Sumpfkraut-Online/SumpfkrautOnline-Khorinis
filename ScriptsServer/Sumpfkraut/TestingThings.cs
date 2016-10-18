@@ -18,7 +18,7 @@ namespace GUC.Scripts.Sumpfkraut
 
         public static void Init ()
         {
-            Logger.Log(Directory.GetCurrentDirectory());
+            //Logger.Log(Directory.GetCurrentDirectory());
 
             //WorldSystem.WorldLoader worldLoader = new WorldSystem.WorldLoader(">>GOTCHA<<", 
             //    Directory.GetCurrentDirectory() + @"\DB");
@@ -59,26 +59,26 @@ namespace GUC.Scripts.Sumpfkraut
             //}
 
 
-            FileSystemManager fsManager = new FileSystemManager("", true, TimeSpan.MinValue, false);
-            fsManager.SetObjName("MrBusiness");
-            fsManager.printStateControls = true;
+            //FileSystemManager fsManager = new FileSystemManager("", true, TimeSpan.MinValue, false);
+            //fsManager.SetObjName("MrBusiness");
+            //fsManager.printStateControls = true;
 
-            fsManager.MoveFile(@"FileManagerTest.txt",
-                options: new List<object> { "FileManagerTest_GOTCHA.txt" },
-                handler: delegate (ref FileSystemProtocol protocol,
-               GUC.Utilities.FileSystem.Enumeration.ProtocolStatus status)
-               {
-                   Logger.Log(">>>> Gonna try this... <<<<");
-                   if (status == GUC.Utilities.FileSystem.Enumeration.ProtocolStatus.FinalSuccess)
-                   {
-                       Logger.Log(">>>> Yaayyyy! <<<<");
-                   }
-                   if (status == GUC.Utilities.FileSystem.Enumeration.ProtocolStatus.FinalFail)
-                   {
-                       Logger.Log(">>>> Owwwwww! <<<<");
-                   }
-                   return;
-               });
+            //fsManager.MoveFile(@"FileManagerTest.txt",
+            //    options: new List<object> { "FileManagerTest_GOTCHA.txt" },
+            //    handler: delegate (ref FileSystemProtocol protocol,
+            //   GUC.Utilities.FileSystem.Enumeration.ProtocolStatus status)
+            //   {
+            //       Logger.Log(">>>> Gonna try this... <<<<");
+            //       if (status == GUC.Utilities.FileSystem.Enumeration.ProtocolStatus.FinalSuccess)
+            //       {
+            //           Logger.Log(">>>> Yaayyyy! <<<<");
+            //       }
+            //       if (status == GUC.Utilities.FileSystem.Enumeration.ProtocolStatus.FinalFail)
+            //       {
+            //           Logger.Log(">>>> Owwwwww! <<<<");
+            //       }
+            //       return;
+            //   });
 
 
 
