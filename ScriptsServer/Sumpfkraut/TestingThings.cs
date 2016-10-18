@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using GUC.Log;
 using GUC.Utilities.FileSystem;
+using GUC.Scripts.Sumpfkraut.Database;
+using Mono.Data.Sqlite;
 
 namespace GUC.Scripts.Sumpfkraut
 {
@@ -20,8 +22,25 @@ namespace GUC.Scripts.Sumpfkraut
         {
             //Logger.Log(Directory.GetCurrentDirectory());
 
-            //WorldSystem.WorldLoader worldLoader = new WorldSystem.WorldLoader(">>GOTCHA<<", 
-            //    Directory.GetCurrentDirectory() + @"\DB");
+
+            //DBReader.SaveToDB(Directory.GetCurrentDirectory() + @"\DB\someDB.db",
+            //    @"DROP TABLE IF EXISTS WorldEffect;
+            //    CREATE TABLE IF NOT EXISTS WorldEffect
+            //    (
+            //        WorldEffectID INTEGER NOT NULL,
+            //        ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            //        CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            //        CONSTRAINT WorldEffect_PK PRIMARY KEY (WorldEffectID)
+            //    );");
+
+            //List<List<List<object>>> results = new List<List<List<object>>>();
+            //DBReader.LoadFromDB(ref results, "SELECT 1;", Directory.GetCurrentDirectory() + @"\DB\myDB.db");
+
+
+
+
+            //WorldSystem.WorldLoader worldLoader = new WorldSystem.WorldLoader(">>GOTCHA<<",
+            //    Directory.GetCurrentDirectory() + @"\DB\someDB.sqlite");
             //worldLoader.Load();
 
             //string bla = "Miami Vice";
@@ -59,9 +78,9 @@ namespace GUC.Scripts.Sumpfkraut
             //}
 
 
-            //FileSystemManager fsManager = new FileSystemManager("", true, TimeSpan.MinValue, false);
-            //fsManager.SetObjName("MrBusiness");
-            //fsManager.printStateControls = true;
+            FileSystemManager fsManager = new FileSystemManager("", true, TimeSpan.MinValue, false);
+            fsManager.SetObjName("MrBusiness");
+            fsManager.printStateControls = true;
 
             //fsManager.MoveFile(@"FileManagerTest.txt",
             //    options: new List<object> { "FileManagerTest_GOTCHA.txt" },
@@ -79,6 +98,13 @@ namespace GUC.Scripts.Sumpfkraut
             //       }
             //       return;
             //   });
+
+
+
+
+
+
+
 
 
 

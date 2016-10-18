@@ -55,7 +55,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
         {
             using (SqliteConnection con = new SqliteConnection())
             {
-                con.ConnectionString = dataSource;
+                con.ConnectionString = string.Format("Data Source={0};", dataSource);
                 con.Open();
 
                 // security check and close connection if necessary
@@ -129,7 +129,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
 
             using (SqliteConnection con = new SqliteConnection())
             {
-                con.ConnectionString = dataSource;
+                con.ConnectionString = string.Format("Data Source={0};", dataSource);
                 con.Open();
 
                 // security check and close connection if necessary

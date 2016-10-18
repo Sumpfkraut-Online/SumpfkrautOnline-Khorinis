@@ -116,7 +116,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
             for (int i = 0; i < commandQueue.Count; i++)
             {
                 queryStartTime = DateTime.Now;
-                DBReader.LoadFromDB(ref sqlResults, DataSource, commandQueue[i]);
+                DBReader.LoadFromDB(ref sqlResults, commandQueue[i], DataSource);
                 queryEndTime = DateTime.Now;
 
                 ReceivedResultsEventArgs rse = new ReceivedResultsEventArgs(DataSource, commandQueue[i], 

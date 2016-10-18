@@ -96,11 +96,11 @@ namespace GUC.Scripts.Sumpfkraut.Database
                 switch (nextQuery.GetDBReaderMode())
                 {
                     case DBReaderMode.loadData:
-                        DBReader.LoadFromDB(ref results, DataSource, nextQuery.GetSqlCommand());
+                        DBReader.LoadFromDB(ref results, nextQuery.GetSqlCommand(), DataSource);
                         nextQuery.ReturnResults(results);
                         break;
                     case DBReaderMode.saveData:
-                        DBReader.SaveToDB(nextQuery.GetSqlCommand(), this.dataSource);
+                        DBReader.SaveToDB(this.dataSource, nextQuery.GetSqlCommand());
                         nextQuery.ReturnResults(null);
                         break;
                     default:
