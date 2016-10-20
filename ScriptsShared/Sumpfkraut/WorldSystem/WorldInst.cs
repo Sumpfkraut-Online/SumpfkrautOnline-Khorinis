@@ -3,35 +3,44 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Network;
+using GUC.Utilities;
 
 namespace GUC.Scripts.Sumpfkraut.WorldSystem
 {
-    public partial class WorldInst : ScriptObject, WorldObjects.World.IScriptWorld
+    public partial class WorldInst : ExtendedObject, WorldObjects.World.IScriptWorld
     {
+
+        new public static readonly string _staticName = "WorldInst (static)";
+
         WorldObjects.World baseWorld;
         public WorldObjects.World BaseWorld { get { return baseWorld; } }
 
-        WorldDef definition;
-        public WorldDef Definition
-        {
-            get { return this.definition; }
-            set
-            {
-                if (this.IsCreated)
-                    throw new ArgumentNullException("Can't change the definition when the object is already added to the static collection!");
-                this.definition = value;
-            }
-        }
+        WorldDef definition = null;
+        public WorldDef Definition { get { return definition; } }
 
-        public bool IsCreated { get { return this.baseWorld.IsCreated; } }
-        public ScriptClock Clock { get { return (ScriptClock)this.baseWorld.Clock.ScriptObject; } }
-        public ScriptWeatherCtrl Weather { get { return (ScriptWeatherCtrl)this.baseWorld.WeatherCtrl.ScriptObject; } }
-        public ScriptBarrierCtrl Barrier { get { return (ScriptBarrierCtrl)this.baseWorld.BarrierCtrl.ScriptObject; } }
+        ScriptClock clock;
+        public ScriptClock Clock { get { return this.clock; } }
+
+        ScriptSkyCtrl skyCtrl;
+        public ScriptSkyCtrl SkyCtrl { get { return this.skyCtrl; } }
+
+
 
         public WorldInst()
+            : this("WorldInst (default)")
+        { }
+
+        public WorldInst(string objName)
         {
-            this.baseWorld = new WorldObjects.World(new ScriptClock(this), new ScriptWeatherCtrl(this), new ScriptBarrierCtrl(this), this);
+            SetObjName(objName);
+            this.baseWorld = new WorldObjects.World();
+            this.baseWorld.ScriptObject = this;
+
+            this.clock = new ScriptClock(this);
+            this.skyCtrl = new ScriptSkyCtrl(this);
         }
+
+
 
         public void OnWriteProperties(PacketWriter stream)
         {
@@ -56,5 +65,6 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
             this.baseWorld.Delete();
             pDelete();
         }
+
     }
 }

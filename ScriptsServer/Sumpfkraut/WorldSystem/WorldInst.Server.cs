@@ -9,19 +9,28 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
     {
         public static WorldInst Current;
 
-        public WorldInst(WorldDef def) : this()
+
+
+        public WorldInst(WorldDef def)
+            : this("WorldInst (default)")
+        { }
+
+        public WorldInst(WorldDef def, string objName)
+            : this(objName)
         {
             this.definition = def;
         }
 
+
+
         partial void pCreate()
         {
-            this.Weather.StartRainTimer();
+            skyCtrl.StartRainTimer();
         }
 
         partial void pDelete()
         {
-            this.Weather.StopRainTimer();
+            skyCtrl.StopRainTimer();
         }
     }
 }
