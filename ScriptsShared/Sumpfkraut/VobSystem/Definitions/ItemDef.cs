@@ -26,6 +26,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         Wep2H,
         WepBow,
         WepXBow,
+        MAXWEAPON,
+
         Armor,
         AmmoBow,
         AmmoXBow,

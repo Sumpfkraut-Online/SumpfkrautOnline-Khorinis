@@ -81,6 +81,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public ItemInst MeleeWeapon { get { return this.meleeWep; } }
         ItemInst rangedWep;
         public ItemInst RangedWeapon { get { return this.rangedWep; } }
+        ItemInst lastUsedWep;
+        public ItemInst LastUsedWeapon { get { return this.lastUsedWep; } set { this.lastUsedWep = value; } }
         ItemInst ammo;
         public ItemInst Ammo { get { return this.ammo; } }
 

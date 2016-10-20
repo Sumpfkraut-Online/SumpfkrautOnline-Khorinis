@@ -56,6 +56,10 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
             { "t_MAP_Stand_2_S0", "ItemHandling.ReadScroll" },
             { "t_JOINT_Stand_2_S0", "ItemHandling.SmokeAJoint" },
             { "s_FIRESPIT_S2", "ItemHandling.UseTorch" },
+
+            // 1h draw weapon
+            { "t_Run_2_1h", "Draw1H" },
+            { "t_1h_2_1hRun", "Conceal1H" }, // wron ani here
         };
 
         public class FightAnis : AniCatalog
@@ -99,6 +103,8 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
 
         public ScriptAniJob TakeItem { get; private set; }
         public ScriptAniJob DropItem { get; private set; }
+        public ScriptAniJob Draw1H { get; private set; }
+        public ScriptAniJob Conceal1H { get; private set; }
 
         public JumpAnis Jumps { get; private set; }
         public ItemHandlingAnis ItemHandling { get; private set; }

@@ -13,13 +13,16 @@ namespace GUC.Scripts.Sumpfkraut.Networking
     }
 
     // commands the client can send
-    public enum ScriptCommandMessageIDs : byte
+    public enum ScriptRequestMessageIDs : byte
     {
         JumpFwd,
         JumpUp,
         Climb,
 
         MaxGuidedMessages, // everything above can be used by guided vobs & the hero, everything below is hero exclusive
+
+        DrawFists,
+        DrawWeapon,
 
         AttackForward,
         AttackLeft,

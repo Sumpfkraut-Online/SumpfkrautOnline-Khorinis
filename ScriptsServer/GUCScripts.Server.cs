@@ -133,18 +133,7 @@ namespace GUC.Scripts
             wsServer.Start();
 
             // -- command console --
-            Sumpfkraut.CommandConsole.CommandConsole cmdConsole = new Sumpfkraut.CommandConsole.CommandConsole();
-
-            /*ModelDef m = new ModelDef("2hschwert", "ItMw_060_2h_sword_01.3DS");
-            m.Create();
-            ItemDef itemDef = new ItemDef("2hschwert");
-            itemDef.Name = "Zweihänder";
-            itemDef.ItemType = ItemTypes.Wep2H;
-            itemDef.Material = ItemMaterials.Metal;
-            itemDef.Model = m;
-            itemDef.Range = 110;
-            itemDef.Damage = 42;
-            itemDef.Create(); */
+            Sumpfkraut.CommandConsole.CommandConsole cmdConsole = new Sumpfkraut.CommandConsole.CommandConsole(); 
 
             //Sumpfkraut.AI.TestingAI.Test();
 
@@ -480,9 +469,9 @@ namespace GUC.Scripts
             model.AddAniJob(aniJob);*/
         }
 
-        /*void AddItems()
+       void AddItems()
         {
-            //ZWEIHANDER
+        /*    //ZWEIHANDER
             ModelDef m = new ModelDef("2hschwert", "ItMw_060_2h_sword_01.3DS");
             m.Create();
             ItemDef itemDef = new ItemDef("2hschwert");
@@ -630,8 +619,8 @@ namespace GUC.Scripts
             itemDef.ItemType = ItemTypes.WepXBow;
             itemDef.Damage = 32;
             itemDef.Model = m;
-            itemDef.Create();
-        }*/
+            itemDef.Create();*/
+        }
 
         void AddBowAnis(ModelDef model)
         {

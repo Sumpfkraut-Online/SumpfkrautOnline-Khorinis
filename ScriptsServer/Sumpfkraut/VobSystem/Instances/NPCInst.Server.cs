@@ -111,6 +111,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             ItemInst item = Inventory.GetItem(itemID);
             if (item == null)
                 return;
+
             if(!item.IsEquipped)
                 EquipItem(item);
         }
@@ -193,6 +194,22 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 return;
 
             var catalog = AniCatalog.FightFist;
+            if (this.DrawnWeapon != null)
+            {
+                switch (this.DrawnWeapon.ItemType)
+                {
+                    case ItemTypes.Wep1H:
+                        catalog = AniCatalog.Fight1H;
+                        break;
+                    case ItemTypes.Wep2H:
+                        catalog = AniCatalog.Fight2H;
+                        break;
+                    case ItemTypes.WepBow:
+                        break;
+                    case ItemTypes.WepXBow:
+                        break;
+                }
+            }
             
             if (this.BaseInst.Model.GetActiveAniFromLayerID(1) != null)
                 return;
@@ -222,14 +239,58 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             if (job == null)
                 return;
 
-            this.ModelInst.StartAnimation(job, 2.0f);
+            this.ModelInst.StartAnimation(job, 1.0f);
         }
 
         #endregion
 
         #region Weapon Drawing
 
+        public void DrawWeapon(byte itemID)
+        {
+            if (this.BaseInst.IsInFightMode)
+            {
+                if (this.DrawnWeapon != null)
+                {
+                    ItemInst weapon = this.DrawnWeapon;
+                    this.ModelInst.StartAnimation(this.AniCatalog.Conceal1H, () =>
+                    {
+                        this.UnequipItem(weapon); // take weapon from hand
+                        this.EquipItem(weapon); // place weapon into parking slot
+                    });
+                }
+                this.SetFightMode(false);
+            }
+            else
+            {
+                ItemInst item = Inventory.GetItem((int)itemID);
+                if (item == null)
+                    return;
+                this.UnequipItem(item); // take weapon from parking slot
+                this.EquipItem((int)SlotNums.Righthand, item); // put weapon into hand
+                this.ModelInst.StartAnimation(this.AniCatalog.Draw1H, () => this.SetFightMode(true));
+            }
 
+        }
+
+        public void DrawFists()
+        {
+            if (this.BaseInst.IsInFightMode)
+            {
+                if (this.DrawnWeapon != null)
+                {
+                    this.UnequipItem(this.DrawnWeapon);
+                }
+                else
+                {
+                    this.SetFightMode(false);
+                }
+            }
+            else
+            {
+                this.SetFightMode(true);
+            }
+        }
 
         #endregion
 

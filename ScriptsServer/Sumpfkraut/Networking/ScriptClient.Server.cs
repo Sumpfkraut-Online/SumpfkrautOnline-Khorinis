@@ -6,6 +6,7 @@ using GUC.Network;
 using GUC.Types;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using static GUC.Scripts.Sumpfkraut.VobSystem.Instances.NPCInst;
 
 namespace GUC.Scripts.Sumpfkraut.Networking
 {
@@ -37,27 +38,45 @@ namespace GUC.Scripts.Sumpfkraut.Networking
 
             NPCInst npc = (NPCInst)vob.ScriptObject;
 
-            ScriptCommandMessageIDs id = (ScriptCommandMessageIDs)stream.ReadByte();
+            ScriptRequestMessageIDs id = (ScriptRequestMessageIDs)stream.ReadByte();
             switch (id)
             {
-                case ScriptCommandMessageIDs.JumpFwd:
+                case ScriptRequestMessageIDs.JumpFwd:
                     npc.DoJump();
                     break;
-                case ScriptCommandMessageIDs.AttackForward:
+                case ScriptRequestMessageIDs.DrawFists:
+                    npc.DrawFists();
+                    break;
+                case ScriptRequestMessageIDs.DrawWeapon:
+                    npc.DrawWeapon(stream.ReadByte());
+                    break;
+                case ScriptRequestMessageIDs.AttackForward:
                     npc.DoFightMove(NPCInst.FightMoves.Fwd);
                     break;
-                case ScriptCommandMessageIDs.DropItem:
+                case ScriptRequestMessageIDs.AttackLeft:
+                    npc.DoFightMove(NPCInst.FightMoves.Left);
+                    break;
+                    case ScriptRequestMessageIDs.AttackRight:
+                    npc.DoFightMove(NPCInst.FightMoves.Right);
+                    break;
+                case ScriptRequestMessageIDs.Parry:
+                    npc.DoFightMove(NPCInst.FightMoves.Parry);
+                    break;
+                case ScriptRequestMessageIDs.Dodge:
+                    npc.DoFightMove(NPCInst.FightMoves.Dodge);
+                    break;
+                case ScriptRequestMessageIDs.DropItem:
                     byte itemID = stream.ReadByte();
                     ushort amount = stream.ReadUShort();
                     npc.DropItem(itemID, amount);
                     break;
-                case ScriptCommandMessageIDs.EquipItem:
+                case ScriptRequestMessageIDs.EquipItem:
                     npc.EquipItem(stream.ReadByte());
                     break;
-                case ScriptCommandMessageIDs.UnequipItem:
+                case ScriptRequestMessageIDs.UnequipItem:
                     npc.UnequipItem(stream.ReadByte());
                     break;
-                case ScriptCommandMessageIDs.UseItem:
+                case ScriptRequestMessageIDs.UseItem:
                     npc.UseItem(stream.ReadByte());
                     break;
             }

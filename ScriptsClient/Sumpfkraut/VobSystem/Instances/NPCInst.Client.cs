@@ -27,7 +27,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         const long CommandInterval = 100000; // 10ms
         long nextCommandTime = 0;
-        public void SendCommand(ScriptCommandMessageIDs cmd)
+        public void SendCommand(ScriptRequestMessageIDs cmd)
         {
             if (nextCommandTime > GameTime.Ticks)
                 return; // don't spam
@@ -41,7 +41,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public void RequestDropItem(ItemInst item, int amount)
         {
             var stream = GameClient.GetScriptCommandMessageStream(this.BaseInst);
-            stream.Write((byte)ScriptCommandMessageIDs.DropItem);
+            stream.Write((byte)ScriptRequestMessageIDs.DropItem);
             stream.Write((byte)item.ID);
             stream.Write((ushort)amount);
             Request(stream);
@@ -50,7 +50,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public void RequestTakeItem(ItemInst item)
         {
             var stream = GameClient.GetScriptCommandMessageStream(this.BaseInst);
-            stream.Write((byte)ScriptCommandMessageIDs.TakeItem);
+            stream.Write((byte)ScriptRequestMessageIDs.TakeItem);
             stream.Write((ushort)item.ID);
             Request(stream);
         }
@@ -58,7 +58,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public void RequestEquipItem(ItemInst item)
         {
             var stream = GameClient.GetScriptCommandMessageStream(this.BaseInst);
-            stream.Write((byte)ScriptCommandMessageIDs.EquipItem);
+            stream.Write((byte)ScriptRequestMessageIDs.EquipItem);
             stream.Write((ushort)item.ID);
             Request(stream);
         }
@@ -66,7 +66,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public void RequestUnequipItem(ItemInst item)
         {
             var stream = GameClient.GetScriptCommandMessageStream(this.BaseInst);
-            stream.Write((byte)ScriptCommandMessageIDs.UnequipItem);
+            stream.Write((byte)ScriptRequestMessageIDs.UnequipItem);
             stream.Write((ushort)item.ID);
             Request(stream);
         }
@@ -74,8 +74,30 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public void RequestUseItem(ItemInst item)
         {
             var stream = GameClient.GetScriptCommandMessageStream(this.BaseInst);
-            stream.Write((byte)ScriptCommandMessageIDs.UseItem);
+            stream.Write((byte)ScriptRequestMessageIDs.UseItem);
             stream.Write((ushort)item.ID);
+            Request(stream);
+        }
+
+        public void RequestAttack(ScriptRequestMessageIDs ID)
+        {
+            var stream = GameClient.GetScriptCommandMessageStream(this.BaseInst);
+            stream.Write((byte)ID);
+            Request(stream);
+        }
+
+        public void RequestDrawWeapon(ItemInst item)
+        {
+            var stream = GameClient.GetScriptCommandMessageStream(this.BaseInst);
+            stream.Write((byte)ScriptRequestMessageIDs.DrawWeapon);
+            stream.Write((byte)item.ID);
+            Request(stream);
+        }
+
+        public void RequestDrawFists()
+        {
+            var stream = GameClient.GetScriptCommandMessageStream(this.BaseInst);
+            stream.Write((byte)ScriptRequestMessageIDs.DrawFists);
             Request(stream);
         }
 

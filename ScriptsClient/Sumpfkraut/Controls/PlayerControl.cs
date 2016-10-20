@@ -31,16 +31,62 @@ namespace GUC.Scripts.Sumpfkraut.Controls
             {
                 if (KeyBind.Action.IsPressed())
                 {
-                    hero.SendCommand(ScriptCommandMessageIDs.AttackForward);
+                    hero.RequestAttack(ScriptRequestMessageIDs.AttackForward);
+                }
+            }
+            else if(KeyBind.TurnLeft.IsPressed())
+            {
+                if (KeyBind.Action.IsPressed())
+                {
+                    hero.RequestAttack(ScriptRequestMessageIDs.AttackLeft);
+                }
+            }
+            else if(KeyBind.TurnRight.IsPressed())
+            {
+                if (KeyBind.Action.IsPressed())
+                {
+                    hero.RequestAttack(ScriptRequestMessageIDs.AttackRight);
+                }
+            }
+            else if(KeyBind.MoveBack.IsPressed())
+            {
+                if (KeyBind.Action.IsPressed())
+                {
+                    hero.RequestAttack(ScriptRequestMessageIDs.Parry);
                 }
             }
             else if (KeyBind.Jump.Contains(key))
             {
-                hero.SendCommand(ScriptCommandMessageIDs.JumpFwd);
+                hero.SendCommand(ScriptRequestMessageIDs.JumpFwd);
             }
             else if (KeyBind.Inventory.Contains(key))
             {
                 PlayerInventory.Menu.Open();
+            }
+            else if (KeyBind.DrawWeapon.Contains(key))
+            {
+                if (hero.LastUsedWeapon != null)
+                {
+                    hero.RequestDrawWeapon(hero.LastUsedWeapon);
+                }
+                else if (hero.MeleeWeapon != null)
+                {
+                    hero.LastUsedWeapon = hero.MeleeWeapon;
+                    hero.RequestDrawWeapon(hero.MeleeWeapon);
+                }
+                else if (hero.RangedWeapon != null)
+                {
+                    hero.LastUsedWeapon = hero.RangedWeapon;
+                    hero.RequestDrawWeapon(hero.RangedWeapon);
+                }
+                else
+                {
+                    hero.RequestDrawFists();
+                }
+            }
+            else if (KeyBind.DrawFists.Contains(key))
+            {
+                hero.RequestDrawFists();
             }
         }
 

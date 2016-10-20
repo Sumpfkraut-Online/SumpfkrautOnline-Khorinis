@@ -420,8 +420,17 @@ namespace GUC.Network
                 case ServerMessages.NPCPosDirMessage:
                     NPC.Messages.ReadPosDirMessage(stream);
                     break;
+                case ServerMessages.NPCEquipAddMessage:
+                    NPC.Messages.ReadEquipMessage(stream);
+                    break;
                 case ServerMessages.NPCEquipRemoveMessage:
                     NPC.Messages.ReadUnequipMessage(stream);
+                    break;
+                case ServerMessages.NPCFightModeSetMessage:
+                    NPC.Messages.ReadFightMode(stream, true);
+                    break;
+                case ServerMessages.NPCFightModeUnsetMessage:
+                    NPC.Messages.ReadFightMode(stream, false);
                     break;
 
                 // Player Messages
