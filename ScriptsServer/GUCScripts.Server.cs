@@ -9,119 +9,19 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Scripts.Sumpfkraut.Visuals;
-using GUC.Utilities;
 
 namespace GUC.Scripts
 {
-    interface IProbabilityItems
-    {
-        List<ItemInst> GetItems();
-    }
-
-    class ProbItemGroup : IProbabilityItems
-    {
-        public struct BucketPair
-        {
-            public IProbabilityItems Bucket;
-            public float Probability;
-        }
-
-        public List<BucketPair> pairs = new List<BucketPair>();
-
-        public void Add(IProbabilityItems item, float probability)
-        {
-            BucketPair pair = new BucketPair();
-            pair.Bucket = item;
-            pair.Probability = probability;
-            pairs.Add(pair);
-        }
-
-        public virtual List<ItemInst> GetItems()
-        {
-            List<ItemInst> result = new List<ItemInst>();
-            foreach (BucketPair pair in pairs)
-            {
-                if (pair.Probability == 1.0f || Randomizer.GetDouble() >= pair.Probability)
-                {
-                    result.AddRange(pair.Bucket.GetItems());
-                }
-            }
-            return result;
-        }
-    }
-
-    class ProbItemGroupSingle : ProbItemGroup  // gibt ein item von vielen zurück
-    {
-        public override List<ItemInst> GetItems()
-        {
-            double prob = Randomizer.GetDouble();
-            foreach (BucketPair pair in pairs)
-            {
-                if (prob < pair.Probability)
-                    return pair.Bucket.GetItems();
-                prob -= pair.Probability;
-            }
-            throw new Exception("Sum of all probabilities is < 1!");
-        }
-    }
-
-    class ProbItem : IProbabilityItems // gibt ein item zufälliger anzahl zurück
-    {
-        public ItemDef itemDef;
-
-        public int minAmount = 1; // 1 bis maxAmount
-        public int maxAmount = 1; // minAmount bis unendlich
-        public double exponent = 1; // Exponent der Wahrscheinlichkeit für exponentielle Verteilung
-
-        public ProbItem(ItemDef def, int min = 1, int max = 1, double expo = 1)
-        {
-            this.itemDef = def;
-            this.minAmount = min;
-            this.maxAmount = max;
-            this.exponent = expo;
-        }
-
-        public List<ItemInst> GetItems()
-        {
-            int amount;
-            int diff = maxAmount - minAmount;
-            if (diff > 0)
-            {
-                amount = minAmount + (int)(diff * Math.Pow(Randomizer.GetDouble(), exponent));
-            }
-            else
-            {
-                amount = minAmount;
-            }
-
-            ItemInst inst = new ItemInst(itemDef);
-            inst.SetAmount(amount);
-            return new List<ItemInst>() { inst };
-        }
-    }
-
-
-
     public partial class GUCScripts : ScriptInterface
     {
+        public WorldObjects.VobGuiding.TargetCmd GetTestCmd(WorldObjects.BaseVob target)
+        {
+            return new Sumpfkraut.AI.GuideCommands.GoToVobCommand((BaseVobInst)target.ScriptObject);
+        }
+
         public GUCScripts()
         {
             Logger.Log("######## Initalise SumpfkrautOnline ServerScripts #########");
-
-            
-            Sumpfkraut.Daedalus.AniParser.ReadMDSFiles();
-            Sumpfkraut.Daedalus.ConstParser.ParseConstValues();
-            Sumpfkraut.Daedalus.FuncParser.ParseConstValues();
-            Sumpfkraut.Daedalus.PrototypeParser.ParsePrototypes();
-            Sumpfkraut.Daedalus.InstanceParser.ParseInstances();
-
-            Sumpfkraut.Daedalus.InstanceParser.AddInstances();
-
-            Sumpfkraut.Daedalus.ConstParser.Free();
-            Sumpfkraut.Daedalus.FuncParser.Free();
-            Sumpfkraut.Daedalus.PrototypeParser.Free();
-            Sumpfkraut.Daedalus.InstanceParser.Free();
-            
             AddSomeDefs();
 
             CreateTestWorld();
@@ -133,51 +33,72 @@ namespace GUC.Scripts
             wsServer.Start();
 
             // -- command console --
-            Sumpfkraut.CommandConsole.CommandConsole cmdConsole = new Sumpfkraut.CommandConsole.CommandConsole(); 
+            Sumpfkraut.CommandConsole.CommandConsole cmdConsole = new Sumpfkraut.CommandConsole.CommandConsole();
 
-            //Sumpfkraut.AI.TestingAI.Test();
+            Sumpfkraut.TestingThings.Init();
+            Sumpfkraut.AI.TestingAI.Test();
 
             Logger.Log("######################## Finished #########################");
         }
 
-
-
         void AddSomeDefs()
         {
-            //AddItems();
+            AddItems();
 
             // HUMAN MODEL
-            ModelDef m;
-            if (ModelDef.TryGetModel("humans", out m))
-            {
-                m.Delete(); // hurr durr
-            }
-            else
-            {
-                m = new ModelDef("humans", "humans.mds");
-            }
+            var m = new ModelDef("human", "humans.mds");
             m.Radius = 80;
             m.Height = 180;
+
+            Add2hAttacks(m);
+            Add1hAttacks(m);
+            AddBowAnis(m);
+            AddXBowAnis(m);
+
+            // JUMPS
+            var aniJob = new ScriptAniJob("jumprun", new ScriptAni(8000000));
+            aniJob.BaseAniJob.ID = (int)SetAnis.JumpRun;
+            aniJob.AniName = "t_RunL_2_Jump";
+            m.AddAniJob(aniJob);
+
+            aniJob = new ScriptAniJob("jumpfwd", new ScriptAni(9200000));
+            aniJob.BaseAniJob.ID = (int)SetAnis.JumpFwd;
+            aniJob.AniName = "T_STAND_2_JUMP";
+            m.AddAniJob(aniJob);
+
+            // CLIMBING
+            aniJob = new ScriptAniJob("climblow", new ScriptAni(1200000 + 2000000 + 3200000));
+            aniJob.BaseAniJob.ID = (int)SetAnis.ClimbLow;
+            aniJob.AniName = "T_STAND_2_JUMPUPLOW";
+            m.AddAniJob(aniJob);
+
+            aniJob = new ScriptAniJob("climbmid", new ScriptAni(3200000 + 1200000 + 8000000));
+            aniJob.BaseAniJob.ID = (int)SetAnis.ClimbMid;
+            aniJob.AniName = "T_STAND_2_JUMPUPMID";
+            m.AddAniJob(aniJob);
+
+            aniJob = new ScriptAniJob("climbhigh", new ScriptAni(6800000 + 0 + 10000000));
+            aniJob.BaseAniJob.ID = (int)SetAnis.ClimbHigh;
+            aniJob.AniName = "T_JUMP_2_HANG";
+            m.AddAniJob(aniJob);
+
+            // DROP ITEM
+            aniJob = new ScriptAniJob("dropitem", new ScriptAni(5600000));
+            aniJob.BaseAniJob.ID = (int)SetAnis.DropItem;
+            aniJob.AniName = "dropItem";
+            m.AddAniJob(aniJob);
+
             m.Create();
 
             // NPCs
 
-            NPCDef npcDef = new NPCDef("maleplayer");
+            NPCDef npcDef = new NPCDef("player");
             npcDef.Name = "Spieler";
             npcDef.Model = m;
-            npcDef.BodyMesh = HumBodyMeshs.HUM_BODY_NAKED0.ToString();
-            npcDef.BodyTex = (int)HumBodyTexs.G1Hero;
-            npcDef.HeadMesh = HumHeadMeshs.HUM_HEAD_PONY.ToString();
-            npcDef.HeadTex = (int)HumHeadTexs.Face_N_Player;
-            npcDef.Create();
-
-            npcDef = new NPCDef("femaleplayer");
-            npcDef.Name = "Spielerin";
-            npcDef.Model = m;
-            npcDef.BodyMesh = HumBodyMeshs.HUM_BODY_BABE0.ToString();
-            npcDef.BodyTex = (int)HumBodyTexs.F_Babe1;
-            npcDef.HeadMesh = HumHeadMeshs.HUM_HEAD_BABE.ToString();
-            npcDef.HeadTex = (int)HumHeadTexs.FaceBabe_B_RedLocks;
+            npcDef.BodyMesh = Enumeration.HumBodyMeshs.HUM_BODY_NAKED0.ToString();
+            npcDef.BodyTex = (int)Enumeration.HumBodyTexs.G1Hero;
+            npcDef.HeadMesh = Enumeration.HumHeadMeshs.HUM_HEAD_PONY.ToString();
+            npcDef.HeadTex = (int)Enumeration.HumHeadTexs.Face_N_Player;
             npcDef.Create();
         }
 
@@ -189,28 +110,11 @@ namespace GUC.Scripts
             WorldInst.Current.Create();
             WorldInst.Current.Clock.SetTime(new Types.WorldTime(0, 8), 10.0f);
             WorldInst.Current.Clock.Start();
-
-            for (int i = 0; i < WorldObjects.Instances.BaseVobInstance.GetCount(); i++)
-            {
-                BaseVobInst inst;
-                BaseVobDef def;
-                if (BaseVobDef.TryGetDef(i, out def))
-                {
-                    if (def is ItemDef)
-                        inst = new ItemInst((ItemDef)def);
-                    else if (def is NPCDef)
-                        inst = new NPCInst((NPCDef)def);
-                    else continue;
-
-                    ((WorldObjects.VobGuiding.GuidedVob)inst.BaseInst).SetNeedsClientGuide(true);
-                    inst.Spawn(WorldInst.Current, Randomizer.GetVec3fRad(new Types.Vec3f(0, 1500, 0), 30000), Randomizer.GetVec3fRad(new Types.Vec3f(0, 0, 0), 1).Normalise());
-                }
-            }
         }
 
         void Add1hAttacks(ModelDef model)
         {
-            /*var ov1 = new ScriptOverlay("1HST1", "Humans_1hST1"); model.AddOverlay(ov1);
+            var ov1 = new ScriptOverlay("1HST1", "Humans_1hST1"); model.AddOverlay(ov1);
             var ov2 = new ScriptOverlay("1HST2", "Humans_1hST2"); model.AddOverlay(ov2);
 
             // Weapon drawing
@@ -254,7 +158,7 @@ namespace GUC.Scripts
             aniJob.SetDefaultAni(ScriptAni.NewAttackAni(8400000, 2000000, 4400000));
             aniJob.AddOverlayAni(ScriptAni.NewAttackAni(13200000, 1200000, 4400000), ov1);
             aniJob.AddOverlayAni(ScriptAni.NewAttackAni(11200000, 1200000, 3600000), ov2);
-            
+
             // 1h COMBO 2
             aniJob = new ScriptAniJob("attack1hfwd2");
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HFwd2;
@@ -273,7 +177,7 @@ namespace GUC.Scripts
 
             aniJob.AddOverlayAni(ScriptAni.NewAttackAni(12500000, 1800000, 5200000, 71), ov1);
             aniJob.AddOverlayAni(ScriptAni.NewAttackAni(10800000, 3000000, 6800000, 65), ov2);
-            
+
             // 1h COMBO 4
             aniJob = new ScriptAniJob("attack1hfwd4");
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HFwd4;
@@ -313,13 +217,13 @@ namespace GUC.Scripts
             model.AddAniJob(aniJob);
 
             ani = ScriptAni.NewAttackAni(11200000, 7000000); ani.Layer = 2; aniJob.SetDefaultAni(ani);
-            
+
             // 1h Parry
             aniJob = new ScriptAniJob("attack1hparry1", ScriptAni.NewFightAni(5600000));
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HParry1;
             aniJob.AniName = "T_1HPARADE_0";
             model.AddAniJob(aniJob);
-            
+
             // 1h Parry
             aniJob = new ScriptAniJob("attack1hparry2", ScriptAni.NewFightAni(5600000));
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HParry2;
@@ -336,12 +240,12 @@ namespace GUC.Scripts
             aniJob = new ScriptAniJob("attack1hdodge", ScriptAni.NewFightAni(5200000));
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HDodge;
             aniJob.AniName = "T_1HPARADEJUMPB";
-            model.AddAniJob(aniJob);*/
+            model.AddAniJob(aniJob);
         }
 
         void Add2hAttacks(ModelDef model)
         {
-            /*var ov1 = new ScriptOverlay("2HST1", "Humans_2hST1"); model.AddOverlay(ov1);
+            var ov1 = new ScriptOverlay("2HST1", "Humans_2hST1"); model.AddOverlay(ov1);
             var ov2 = new ScriptOverlay("2HST2", "Humans_2hST2"); model.AddOverlay(ov2);
 
             // Weapon drawing
@@ -401,7 +305,7 @@ namespace GUC.Scripts
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HFwd3;
             aniJob.AniName = "s_2hAttack";
             model.AddAniJob(aniJob);
-            
+
             aniJob.AddOverlayAni(ScriptAni.NewAttackAni(7000000, 3000000, 7000000, 80), ov1);
             aniJob.AddOverlayAni(ScriptAni.NewAttackAni(13500000, 4000000, 8800000, 81), ov2);
 
@@ -466,18 +370,18 @@ namespace GUC.Scripts
             aniJob = new ScriptAniJob("attack2hdodge", ScriptAni.NewFightAni(9200000));
             aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HDodge;
             aniJob.AniName = "T_2HPARADEJUMPB";
-            model.AddAniJob(aniJob);*/
+            model.AddAniJob(aniJob);
         }
 
-       void AddItems()
+        void AddItems()
         {
-        /*    //ZWEIHANDER
+            //ZWEIHANDER
             ModelDef m = new ModelDef("2hschwert", "ItMw_060_2h_sword_01.3DS");
             m.Create();
             ItemDef itemDef = new ItemDef("2hschwert");
             itemDef.Name = "Zweihänder";
             itemDef.ItemType = ItemTypes.Wep2H;
-            itemDef.Material = ItemMaterials.Metal;
+            itemDef.Material = Enumeration.ItemMaterials.Metal;
             itemDef.Model = m;
             itemDef.Range = 110;
             itemDef.Damage = 42;
@@ -488,7 +392,7 @@ namespace GUC.Scripts
             m.Create();
             itemDef = new ItemDef("ITAR_Garde");
             itemDef.Name = "Gardistenrüstung";
-            itemDef.Material = ItemMaterials.Leather;
+            itemDef.Material = Enumeration.ItemMaterials.Leather;
             itemDef.ItemType = ItemTypes.Armor;
             itemDef.Protection = 30;
             itemDef.VisualChange = "Armor_Bloodwyn_ADDON.asc";
@@ -501,7 +405,7 @@ namespace GUC.Scripts
             itemDef = new ItemDef("1hschwert");
             itemDef.Name = "Breitschwert";
             itemDef.ItemType = ItemTypes.Wep1H;
-            itemDef.Material = ItemMaterials.Metal;
+            itemDef.Material = Enumeration.ItemMaterials.Metal;
             itemDef.Model = m;
             itemDef.Damage = 40;
             itemDef.Range = 90;
@@ -512,7 +416,7 @@ namespace GUC.Scripts
             m.Create();
             itemDef = new ItemDef("ITAR_Schatten");
             itemDef.Name = "Schattenrüstung";
-            itemDef.Material = ItemMaterials.Leather;
+            itemDef.Material = Enumeration.ItemMaterials.Leather;
             itemDef.ItemType = ItemTypes.Armor;
             itemDef.VisualChange = "Armor_Diego.asc";
             itemDef.Protection = 27;
@@ -525,7 +429,7 @@ namespace GUC.Scripts
             itemDef = new ItemDef("2haxt");
             itemDef.Name = "Söldneraxt";
             itemDef.ItemType = ItemTypes.Wep2H;
-            itemDef.Material = ItemMaterials.Metal;
+            itemDef.Material = Enumeration.ItemMaterials.Metal;
             itemDef.Model = m;
             itemDef.Damage = 44;
             itemDef.Range = 95;
@@ -536,7 +440,7 @@ namespace GUC.Scripts
             m.Create();
             itemDef = new ItemDef("ITAR_Söldner");
             itemDef.Name = "Söldnerrüstung";
-            itemDef.Material = ItemMaterials.Leather;
+            itemDef.Material = Enumeration.ItemMaterials.Leather;
             itemDef.ItemType = ItemTypes.Armor;
             itemDef.VisualChange = "Armor_Sld_M.asc";
             itemDef.Protection = 30;
@@ -549,7 +453,7 @@ namespace GUC.Scripts
             itemDef = new ItemDef("1haxt");
             itemDef.Name = "Grobes Kriegsbeil";
             itemDef.ItemType = ItemTypes.Wep1H;
-            itemDef.Material = ItemMaterials.Wood;
+            itemDef.Material = Enumeration.ItemMaterials.Wood;
             itemDef.Damage = 42;
             itemDef.Model = m;
             itemDef.Range = 75;
@@ -560,7 +464,7 @@ namespace GUC.Scripts
             m.Create();
             itemDef = new ItemDef("ITAR_bandit");
             itemDef.Name = "Banditenrüstung";
-            itemDef.Material = ItemMaterials.Leather;
+            itemDef.Material = Enumeration.ItemMaterials.Leather;
             itemDef.ItemType = ItemTypes.Armor;
             itemDef.VisualChange = "Armor_Bdt_H.asc";
             itemDef.Protection = 27;
@@ -572,7 +476,7 @@ namespace GUC.Scripts
             m.Create();
             itemDef = new ItemDef("itrw_arrow");
             itemDef.Name = "Pfeil";
-            itemDef.Material = ItemMaterials.Wood;
+            itemDef.Material = Enumeration.ItemMaterials.Wood;
             itemDef.ItemType = ItemTypes.AmmoBow;
             itemDef.Damage = 5;
             itemDef.Model = m;
@@ -588,7 +492,7 @@ namespace GUC.Scripts
             m.Create();
             itemDef = new ItemDef("itrw_longbow");
             itemDef.Name = "Langbogen";
-            itemDef.Material = ItemMaterials.Wood;
+            itemDef.Material = Enumeration.ItemMaterials.Wood;
             itemDef.ItemType = ItemTypes.WepBow;
             itemDef.Damage = 32;
             itemDef.Model = m;
@@ -599,12 +503,12 @@ namespace GUC.Scripts
             m.Create();
             itemDef = new ItemDef("itrw_Bolt");
             itemDef.Name = "Bolzen";
-            itemDef.Material = ItemMaterials.Wood;
+            itemDef.Material = Enumeration.ItemMaterials.Wood;
             itemDef.ItemType = ItemTypes.AmmoXBow;
             itemDef.Damage = 6;
             itemDef.Model = m;
             itemDef.Create();
-            
+
             projDef = new ProjDef("bolt");
             projDef.Model = m;
             projDef.Velocity = 0.0003f;
@@ -615,16 +519,16 @@ namespace GUC.Scripts
             m.Create();
             itemDef = new ItemDef("itrw_crossbow");
             itemDef.Name = "Armbrust";
-            itemDef.Material = ItemMaterials.Wood;
+            itemDef.Material = Enumeration.ItemMaterials.Wood;
             itemDef.ItemType = ItemTypes.WepXBow;
             itemDef.Damage = 32;
             itemDef.Model = m;
-            itemDef.Create();*/
+            itemDef.Create();
         }
 
         void AddBowAnis(ModelDef model)
         {
-            /*var ov1 = new ScriptOverlay("BowT1", "Humans_BowT1"); model.AddOverlay(ov1);
+            var ov1 = new ScriptOverlay("BowT1", "Humans_BowT1"); model.AddOverlay(ov1);
             var ov2 = new ScriptOverlay("BowT2", "Humans_BowT2"); model.AddOverlay(ov2);
 
             // Weapon drawing
@@ -670,7 +574,7 @@ namespace GUC.Scripts
             aniJob.SetDefaultAni(new ScriptAni(4000000));
             aniJob.AddOverlayAni(new ScriptAni(4000000), ov1);
             aniJob.AddOverlayAni(new ScriptAni(4000000), ov2);
-            
+
             // RELOADING
 
             aniJob = new ScriptAniJob("bowreload");
@@ -691,12 +595,12 @@ namespace GUC.Scripts
 
             aniJob.SetDefaultAni(new ScriptAni(4000000));
             aniJob.AddOverlayAni(new ScriptAni(4000000), ov1);
-            aniJob.AddOverlayAni(new ScriptAni(4000000), ov2);*/
+            aniJob.AddOverlayAni(new ScriptAni(4000000), ov2);
         }
 
         void AddXBowAnis(ModelDef model)
         {
-            /*var ov1 = new ScriptOverlay("XBowT1", "Humans_CBowT1"); model.AddOverlay(ov1);
+            var ov1 = new ScriptOverlay("XBowT1", "Humans_CBowT1"); model.AddOverlay(ov1);
             var ov2 = new ScriptOverlay("XBowT2", "Humans_CBowT2"); model.AddOverlay(ov2);
 
             // Weapon drawing
@@ -742,7 +646,7 @@ namespace GUC.Scripts
             aniJob.SetDefaultAni(new ScriptAni(1600000));
             aniJob.AddOverlayAni(new ScriptAni(2000000), ov1);
             aniJob.AddOverlayAni(new ScriptAni(2000000), ov2);
-            
+
             // RELOADING
 
             aniJob = new ScriptAniJob("Xbowreload");
@@ -763,7 +667,7 @@ namespace GUC.Scripts
 
             aniJob.SetDefaultAni(new ScriptAni(1600000));
             aniJob.AddOverlayAni(new ScriptAni(2000000), ov1);
-            aniJob.AddOverlayAni(new ScriptAni(2000000), ov2);*/
+            aniJob.AddOverlayAni(new ScriptAni(2000000), ov2);
         }
     }
 }

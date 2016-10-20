@@ -13,6 +13,18 @@ namespace GUC
 {
     public static class Program
     {
+
+        private static long updateRate = 0L;
+        public static long UpdateRate { get { return updateRate; } }
+
+        private static long timeTillNextUpdate = 0L;
+        public static long TimeTillNextUpdate { get { return timeTillNextUpdate; } }
+
+        private static TimeStat timeAll = new TimeStat();
+        public static long CurrentElapsedTicks { get { return timeAll.Ticks; } }
+
+
+
         class TimeStat
         {
             long tickCount;
@@ -58,7 +70,9 @@ namespace GUC
             }
         }
 
-        static Thread server;
+
+
+        static Thread game;
         static Thread tcpListener;
         static void Main(string[] args)
         {
@@ -66,11 +80,13 @@ namespace GUC
             {
                 ServerOptions.Load();
                 Console.Title = ServerOptions.ServerName;
-                
+
+                GameServer.Start();
+
                 ScriptManager.StartScripts("Scripts\\ServerScripts.dll");
 
-                server = new Thread(RunServer);
-                server.Start();
+                game = new Thread(RunServer);
+                game.Start();
 
                 tcpListener = new Thread(TCPListener.Run);
                 tcpListener.Start();
@@ -85,24 +101,27 @@ namespace GUC
             Console.ReadLine();
         }
 
+        public delegate void OnTickEventHandler();
+        public static event OnTickEventHandler OnTick;
         static void RunServer()
         {
             try
             {
-                const long updateRate = 15 * TimeSpan.TicksPerMillisecond; //min time between server ticks
+                updateRate = 15 * TimeSpan.TicksPerMillisecond; //min time between server ticks
 
                 const long nextInfoUpdateInterval = 1 * TimeSpan.TicksPerMinute;
                 long nextInfoUpdateTime = GameTime.Ticks + nextInfoUpdateInterval;
-                
-                TimeStat timeAll = new TimeStat();
+
                 while (true)
                 {
                     timeAll.Start();
 
                     GameTime.Update();
+                    if (OnTick != null) { OnTick(); }
+
+                    WorldObjects.World.ForEach(w => w.OnTick(GameTime.Ticks));
                     GUCTimer.Update(GameTime.Ticks); // move to new thread?
                     GameServer.Update(); //process received packets
-                    WorldObjects.World.UpdateWorlds(GameTime.Ticks);
 
                     if (nextInfoUpdateTime < GameTime.Ticks)
                     {
@@ -111,10 +130,10 @@ namespace GUC
                         nextInfoUpdateTime = GameTime.Ticks + nextInfoUpdateInterval;
                     }
 
-                    long diff = (updateRate - timeAll.Stop())/ TimeSpan.TicksPerMillisecond;
-                    if (diff > 0)
+                    timeTillNextUpdate = (updateRate - timeAll.Stop()) / TimeSpan.TicksPerMillisecond;
+                    if (timeTillNextUpdate > 0)
                     {
-                        Thread.Sleep((int)diff);
+                        Thread.Sleep((int)timeTillNextUpdate);
                     }
                 }
             }
