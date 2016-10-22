@@ -4,18 +4,131 @@ using System.Linq;
 using System.Text;
 using GUC.Types;
 using GUC.Network;
-using GUC.Enumeration;
-using RakNet;
+using GUC.Scripting;
+
 
 namespace GUC.WorldObjects.VobGuiding
 {
     public partial class GuidedVob : BaseVob
     {
+        #region Network Messages
+
+        new internal static class Messages
+        {
+            #region Positions
+
+            public static void WritePosDirMessage(GuidedVob vob, Vec3f pos, Vec3f dir, Environment env)
+            {
+                PacketWriter stream = GameClient.SetupStream(ClientMessages.GuidedVobMessage);
+                stream.Write((ushort)vob.ID);
+                stream.WriteCompressedPosition(pos);
+                stream.WriteCompressedDirection(dir);
+
+                // compress environment
+                int bitfield = env.InAir ? 0x8000 : 0;
+                bitfield |= (int)(env.WaterDepth * 0x7F) << 8;
+                bitfield |= (int)(env.WaterLevel * 0xFF);
+                stream.Write((short)bitfield);
+
+                GameClient.Send(stream, PktPriority.Low, PktReliability.Unreliable);
+            }
+
+            #endregion
+
+            #region Add & Remove & Set Cmds
+
+            public static void ReadGuideAddMessage(PacketReader stream)
+            {
+                int id = stream.ReadUShort();
+
+                // add id to the dictionary
+                GameClient.Client.guidedIDs.Add(id, null);
+
+                // check if the vob is in the world
+                GuidedVob vob;
+                if (World.Current.TryGetVob(id, out vob))
+                {
+                    vob.guide = GameClient.Client;
+                }
+            }
+
+            public static void ReadGuideAddCmdMessage(PacketReader stream)
+            {
+                // read the guide command
+                var cmd = ScriptManager.Interface.CreateGuideCommand(stream.ReadByte());
+                cmd.ReadStream(stream);
+
+                int id = stream.ReadUShort();
+                // add id to the dictionary
+                GameClient.Client.guidedIDs.Add(id, cmd);
+
+                // check if the vob is in the world
+                GuidedVob vob;
+                if (World.Current.TryGetVob(id, out vob))
+                {
+                    vob.SetGuideCommand(cmd);
+                    vob.guide = GameClient.Client;
+                }
+            }
+
+            public static void ReadGuideRemoveMessage(PacketReader stream)
+            {
+                int id = stream.ReadUShort();
+                // remove id from the dictionary
+                GameClient.Client.guidedIDs.Remove(id);
+
+                // check if the vob is in the world
+                GuidedVob vob;
+                if (World.Current.TryGetVob(id, out vob))
+                {
+                    vob.SetGuideCommand(null);
+                    vob.guide = null;
+                }
+            }
+
+            public static void ReadGuideSetCmdMessage(PacketReader stream)
+            {
+                var cmd = ScriptManager.Interface.CreateGuideCommand(stream.ReadByte());
+                cmd.ReadStream(stream);
+
+                int id = stream.ReadUShort();
+                if (GameClient.Client.guidedIDs.ContainsKey(id))
+                {
+                    GameClient.Client.guidedIDs[id] = cmd;
+
+                    GuidedVob vob;
+                    if (World.Current.TryGetVob(id, out vob))
+                    {
+                        vob.SetGuideCommand(cmd);
+                    }
+                }
+            }
+
+            public static void ReadGuideRemoveCmdMessage(PacketReader stream)
+            {
+                int id = stream.ReadUShort();
+                if (GameClient.Client.guidedIDs.ContainsKey(id))
+                {
+                    GameClient.Client.guidedIDs[id] = null;
+
+                    GuidedVob vob;
+                    if (World.Current.TryGetVob(id, out vob))
+                    {
+                        vob.SetGuideCommand(null);
+                    }
+                }
+            }
+
+            #endregion
+        }
+
+        #endregion
+
         internal override void OnTick(long now)
         {
             base.OnTick(now);
 
-            if (!GameClient.Client.guidedIDs.ContainsKey(this.ID))
+            if (this.guide != GameClient.Client)
                 return;
 
             if (this.currentCmd != null)
@@ -24,13 +137,14 @@ namespace GUC.WorldObjects.VobGuiding
             UpdateGuidePos(now);
         }
 
-        const long updateInterval = 1500000; // 150ms
+        const long updateInterval = 1400000; // 140ms
 
-        const float MinPositionDistance = 20.0f;
-        const float MinDirectionDifference = 0.05f;
+        const float MinPositionDistance = 18.0f;
+        const float MinDirectionDifference = 0.06f;
 
         protected Vec3f guidedLastPos;
         protected Vec3f guidedLastDir;
+        protected Environment guidedLastEnv;
         protected long guidedNextUpdate;
 
         protected virtual void UpdateGuidePos(long now)
@@ -40,22 +154,28 @@ namespace GUC.WorldObjects.VobGuiding
 
             Vec3f pos = this.GetPosition();
             Vec3f dir = this.GetDirection();
-            if (now - guidedNextUpdate < TimeSpan.TicksPerSecond && // send at least once per second
-                pos.GetDistance(guidedLastPos) < MinPositionDistance && dir.GetDistance(guidedLastDir) < MinDirectionDifference)
-                return;
+            Environment env = this.GetEnvironment();
+
+            if (now - guidedNextUpdate < TimeSpan.TicksPerSecond)
+            {
+                // nothing really changed, only update every second
+                if (pos.GetDistance(guidedLastPos) < MinPositionDistance
+                    && dir.GetDistance(guidedLastDir) < MinDirectionDifference
+                    && env == guidedLastEnv)
+                {
+                    return;
+                }
+            }
 
             guidedLastPos = pos;
             guidedLastDir = dir;
+            guidedLastEnv = env;
 
-            PacketWriter stream = GameClient.SetupStream(NetworkIDs.VobPosDirMessage);
-            stream.Write((ushort)this.ID);
-            stream.WriteCompressedPosition(pos);
-            stream.WriteCompressedDirection(dir);
-            GameClient.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.UNRELIABLE);
+            Messages.WritePosDirMessage(this, pos, dir, env);
 
             guidedNextUpdate = now + updateInterval;
 
-            this.ScriptObject.OnPosChanged();
+            //this.ScriptObject.OnPosChanged();
         }
 
         internal void SetGuideCommand(GuideCmd cmd)
@@ -72,9 +192,27 @@ namespace GUC.WorldObjects.VobGuiding
             }
         }
 
-        internal void RemoveGuideCommand()
+        #region Spawn & Despawn
+
+        partial void pSpawn(World world, Vec3f position, Vec3f direction)
         {
-            SetGuideCommand(null);
+            GuideCmd cmd;
+            if (GameClient.Client.guidedIDs.TryGetValue(this.ID, out cmd))
+            {
+                this.SetGuideCommand(cmd);
+                this.guide = GameClient.Client;
+            }
         }
+
+        partial void pDespawn()
+        {
+            // GameClient.Client.guidedIDs.Remove(id);  is already done in the VobDespawnMessage
+            if (GameClient.Client.guidedIDs.ContainsKey(this.ID))
+            {
+                this.guide = null;
+            }
+        }
+
+        #endregion
     }
 }

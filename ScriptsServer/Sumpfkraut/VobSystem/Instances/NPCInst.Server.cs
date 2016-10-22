@@ -5,151 +5,303 @@ using System.Text;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.Scripting;
-using GUC.Enumeration;
+using GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs;
 using GUC.Types;
+using GUC.Log;
 using GUC.Scripts.Sumpfkraut.Networking;
+using GUC.Animations;
+using GUC.WorldObjects;
+using GUC.WorldObjects.Instances;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class NPCInst
     {
-        const long TimeBeforeRegen = 10 * TimeSpan.TicksPerSecond;
-        const long RegenTime = 500 * TimeSpan.TicksPerMillisecond;
-        const int RegenHP = 5;
+        #region Constructors
 
-        public bool IsPlayer { get { return this.BaseInst.IsPlayer; } }
-        public int HP { get { return this.BaseInst.HP; } }
-
-        // TFFA
-        Vec3f lastPos;
-        public override void OnPosChanged()
+        public NPCInst(NPCDef def) : this()
         {
-            Vec3f pos = this.BaseInst.GetPosition();
-            if (this.BaseInst.IsPlayer && !this.BaseInst.IsDead)
-            {
-                /*if (pos.Y < -400)
-                {
-                    TFFA.TFFAGame.Kill((TFFA.TFFAClient)this.BaseInst.Client.ScriptObject, true);
-                }
-                else
-                {*/
-                if (pos.GetDistance(lastPos) < 20 && !this.IsInAni() && this.BaseInst.HP < this.BaseInst.HPMax) // not moving & hurt
-                {
-                    if (!regenTimer.Started)
-                    {
-                        regenTimer.SetInterval(TimeBeforeRegen);
-                        regenTimer.Start();
-                    }
-                }
-                else
-                {
-                    regenTimer.Stop();
-                }
-                //}
-            }
-            lastPos = pos;
-        }
-
-        GUCTimer regenTimer;
-        void Regenerate()
-        {
-            if (this.BaseInst.IsDead || this.IsInAni())
-            {
-                regenTimer.Stop();
-                return;
-            }
-
-            int hp = this.BaseInst.HP + RegenHP;
-            if (hp > this.BaseInst.HPMax)
-            {
-                hp = this.BaseInst.HPMax;
-                regenTimer.Stop();
-            }
-            else
-            {
-                regenTimer.SetInterval(RegenTime);
-            }
-            this.SetHealth(hp);
-        }
-
-        public NPCInst(NPCDef def) : base(def, new WorldObjects.NPC())
-        {
-            pConstruct();
-        }
-
-        public void OnCmdEquipItem(int slot, WorldObjects.Item item)
-        {
-            ItemInst ii = (ItemInst)item.ScriptObject;
-
-            this.EquipItem(slot, ii);
-        }
-
-        public void OnCmdUnequipItem(WorldObjects.Item item)
-        {
-            ItemInst ii = (ItemInst)item.ScriptObject;
-
-            this.UnequipItem(ii);
-        }
-
-        public void OnCmdSetFightMode(bool fightMode)
-        {
-            if (!this.BaseInst.IsDead)
-                this.SetFightMode(fightMode);
-        }
-
-        public void OnCmdUseMob(WorldObjects.Mobs.MobInter mob)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void OnCmdUseItem(WorldObjects.Item item)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void OnCmdPickupItem(WorldObjects.Item item)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void OnCmdDropItem(WorldObjects.Item item)
-        {
-            throw new NotImplementedException();
+            this.Definition = def;
         }
 
         partial void pConstruct()
         {
-            this.hitTimer = new GUCTimer(CalcHit);
-            this.comboTimer = new GUCTimer(AbleCombo);
-            this.regenTimer = new GUCTimer(Regenerate);
+            //this.hitTimer = new GUCTimer(CalcHit);
+            //this.comboTimer = new GUCTimer(AbleCombo);
         }
 
+        #endregion
 
-        public void OnCmdMove(MoveState state)
+        public NPCCatalog AniCatalog { get { return (NPCCatalog)this.ModelDef?.Catalog; } }
+
+        #region Jumps
+
+        public void DoJump(bool jumpUp = false)
         {
-            //TFFA
-            if (TFFA.TFFAGame.Status == TFFA.TFFAPhase.Waiting)
+            if (this.IsDead || this.BaseInst.GetEnvironment().InAir)
                 return;
 
-            if (state == this.Movement)
-                return;
-
-            if (canCombo)
+            ScriptAniJob job;
+            if (jumpUp)
             {
-                var aa = this.GetFightAni();
-                if (aa != null)
-                    this.StopAnimation(aa);
+                job = AniCatalog.Jumps.Up;
+            }
+            else
+            {
+                if (this.Movement == NPCMovement.Forward)
+                {
+                    job = AniCatalog.Jumps.Run;
+                }
+                else if (this.Movement == NPCMovement.Stand)
+                {
+                    job = AniCatalog.Jumps.Fwd;
+                }
+                else
+                {
+                    return;
+                }
             }
 
-            this.SetState(state);
+            if (job == null)
+                return;
+
+            if (this.BaseInst.Model.GetActiveAniFromLayerID(1) != null)
+                return;
+
+            this.ModelInst.StartAnimation(job);
+            Vec3f velocity = this.GetDirection();
+            velocity.Y = 500;
+            velocity.X *= 250;
+            velocity.Z *= 250;
+            this.Throw(velocity);
         }
+        #endregion
+
+        #region ItemHandling
+        public void DropItem(byte itemID, ushort amount)
+        {
+            ItemInst item = Inventory.GetItem(itemID);
+            if (item == null)
+                return;
+            if (item.IsEquipped)
+                UnequipItem(item);
+
+            ModelInst.StartAnimation(this.AniCatalog.DropItem);
+
+            int newAmount = item.Amount - amount;
+            int droppedItemAmount;
+            if (newAmount >= 0)
+            {
+                item.SetAmount(newAmount);
+                droppedItemAmount = amount;
+            }
+            else
+            {
+                item.SetAmount(0);
+                droppedItemAmount = item.Amount;
+            }
+
+            ItemInst newItem = new ItemInst(item.Definition);
+            newItem.SetAmount(droppedItemAmount);
+            newItem.Spawn(this.World, this.GetPosition(), this.GetDirection());
+        }
+
+        public void EquipItem(byte itemID)
+        {
+            ItemInst item = Inventory.GetItem(itemID);
+            if (item == null)
+                return;
+
+            if (!item.IsEquipped)
+                EquipItem(item);
+        }
+
+        public void UnequipItem(byte itemID)
+        {
+            ItemInst item = Inventory.GetItem(itemID);
+            if (item == null)
+                return;
+
+            if (item.IsEquipped)
+                UnequipItem(item);
+        }
+
+        public void UseItem(byte itemID)
+        {
+            ItemInst item = Inventory.GetItem(itemID);
+            if (item == null)
+                return;
+
+            if (this.ModelInst.BaseInst.IsInAnimation())
+                return;
+
+            if (this.Environment.InAir)
+                return;
+
+            if (this.Movement != NPCMovement.Stand)
+                return;
+
+            switch (item.ItemType)
+            {
+                case ItemTypes.SmallEatable:
+                    this.ModelInst.StartAnimation(AniCatalog.ItemHandling.EatSmall, () => this.UnequipItem(item));
+                    this.EquipItem((int)SlotNums.Lefthand, item);
+                    break;
+                case ItemTypes.LargeEatable:
+                    this.ModelInst.StartAnimation(AniCatalog.ItemHandling.EatLarge, () => this.UnequipItem(item));
+                    this.EquipItem((int)SlotNums.Lefthand, item);
+                    break;
+                case ItemTypes.Mutton:
+                    this.ModelInst.StartAnimation(AniCatalog.ItemHandling.EatMutton, () => this.UnequipItem(item));
+                    this.EquipItem((int)SlotNums.Lefthand, item);
+                    break;
+                case ItemTypes.Rice:
+                    this.ModelInst.StartAnimation(AniCatalog.ItemHandling.EatRice, () => this.UnequipItem(item));
+                    this.EquipItem((int)SlotNums.Lefthand, item);
+                    break;
+                case ItemTypes.Drinkable:
+                    this.ModelInst.StartAnimation(AniCatalog.ItemHandling.DrinkPotion, () => this.UnequipItem(item));
+                    this.EquipItem((int)SlotNums.Lefthand, item);
+                    break;
+                case ItemTypes.Readable:
+                    this.ModelInst.StartAnimation(AniCatalog.ItemHandling.ReadScroll, () => this.UnequipItem(item));
+                    this.EquipItem((int)SlotNums.Lefthand, item);
+                    break;
+                case ItemTypes.Torch:
+                    this.ModelInst.StartAnimation(AniCatalog.ItemHandling.UseTorch, () => this.UnequipItem(item));
+                    this.EquipItem((int)SlotNums.Lefthand, item);
+                    break;
+            }
+        }
+        #endregion
+
+        #region Fight Moves
+
+        public enum FightMoves
+        {
+            Fwd,
+            Left,
+            Right,
+            Run,
+
+            Dodge,
+            Parry
+        }
+
+        public void DoFightMove(FightMoves move)
+        {
+            if (this.IsDead || this.BaseInst.GetEnvironment().InAir)
+                return;
+
+            var catalog = AniCatalog.FightFist;
+            if (this.DrawnWeapon != null)
+            {
+                switch (this.DrawnWeapon.ItemType)
+                {
+                    case ItemTypes.Wep1H:
+                        catalog = AniCatalog.Fight1H;
+                        break;
+                    case ItemTypes.Wep2H:
+                        catalog = AniCatalog.Fight2H;
+                        break;
+                    case ItemTypes.WepBow:
+                        break;
+                    case ItemTypes.WepXBow:
+                        break;
+                }
+            }
+
+            if (this.BaseInst.Model.GetActiveAniFromLayerID(1) != null)
+                return;
+
+            ScriptAniJob job;
+            switch (move)
+            {
+                case FightMoves.Fwd:
+                    job = catalog.Fwd;
+                    break;
+                case FightMoves.Left:
+                    job = catalog.Left;
+                    break;
+                case FightMoves.Right:
+                    job = catalog.Right;
+                    break;
+                case FightMoves.Parry:
+                    job = catalog.Parry1;
+                    break;
+                case FightMoves.Dodge:
+                    job = catalog.Dodge;
+                    break;
+                default:
+                    return;
+            }
+
+            if (job == null)
+                return;
+
+            this.ModelInst.StartAnimation(job, 1.0f);
+        }
+
+        #endregion
+
+        #region Weapon Drawing
+
+        public void DrawWeapon(byte itemID)
+        {
+            if (this.BaseInst.IsInFightMode)
+            {
+                if (this.DrawnWeapon != null)
+                {
+                    ItemInst weapon = this.DrawnWeapon;
+                    this.ModelInst.StartAnimation(this.AniCatalog.Conceal1H, () =>
+                    {
+                        this.UnequipItem(weapon); // take weapon from hand
+                        this.EquipItem(weapon); // place weapon into parking slot
+                    });
+                }
+                this.SetFightMode(false);
+            }
+            else
+            {
+                ItemInst item = Inventory.GetItem((int)itemID);
+                if (item == null)
+                    return;
+                this.UnequipItem(item); // take weapon from parking slot
+                this.EquipItem((int)SlotNums.Righthand, item); // put weapon into hand
+                this.ModelInst.StartAnimation(this.AniCatalog.Draw1H, () => this.SetFightMode(true));
+            }
+
+        }
+
+        public void DrawFists()
+        {
+            if (this.BaseInst.IsInFightMode)
+            {
+                if (this.DrawnWeapon != null)
+                {
+                    this.UnequipItem(this.DrawnWeapon);
+                }
+                else
+                {
+                    this.SetFightMode(false);
+                }
+            }
+            else
+            {
+                this.SetFightMode(true);
+            }
+        }
+
+        #endregion
+
+        public bool IsPlayer { get { return this.BaseInst.IsPlayer; } }
 
         partial void pSetHealth(int hp, int hpmax)
         {
             if (hp <= 0)
             {
-                hitTimer.Stop(false);
-                comboTimer.Stop(false);
+                // hitTimer.Stop(false);
+                // comboTimer.Stop(false);
             }
         }
 
@@ -157,7 +309,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         GUCTimer comboTimer;
         bool canCombo = true;
 
-        void AbleCombo()
+        /*void AbleCombo()
         {
             comboTimer.Stop();
             if (this.Movement != MoveState.Stand)
@@ -178,10 +330,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             strm.Write((byte)NetWorldMsgID.HitMessage);
             strm.Write((ushort)this.ID);
             this.BaseInst.SendScriptVobStream(strm);
-
+            
             if (damage > 0)
             {
-                this.regenTimer.Stop();
                 if (sOnHit != null)
                     sOnHit(attacker, this, damage);
             }
@@ -261,248 +412,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             {
                 Log.Logger.Log("CalcHit of npc " + this.ID + " " + this.BaseInst.HP + " " + this.IsInAni() + " " + e);
             }
-        }
+        }*/
 
-        public void OnCmdAniStart(Animations.Animation ani)
-        {
-            //TFFA
-            if (TFFA.TFFAGame.Status == TFFA.TFFAPhase.Waiting)
-                return;
 
-            ScriptAni anim = (ScriptAni)ani.ScriptObject;
-            ScriptAniJob job = anim.AniJob;
 
-            if (job.IsFightMove) // FIGHT MOVE
-            {
-                if (!this.canCombo) // can't combo yet
-                    return;
-
-                if (this.GetDrawAni() != null || this.GetUndrawAni() != null || this.GetClimbAni() != null)
-                    return;
-
-                if (this.GetJumpAni() != null && !job.IsAttackRun)
-                    return;
-
-                if (job.IsAttack) // new move is an attack
-                {
-                    ScriptAniJob curFightAni = (ScriptAniJob)this.GetFightAni()?.Ani.AniJob.ScriptObject;
-                    if (curFightAni != null && curFightAni.IsAttack) // currently in an attack
-                    {
-                        if (curFightAni == job) // same attack
-                            return;
-
-                        if (curFightAni.IsAttackCombo && job.ID <= curFightAni.ID)
-                            return;
-                    }
-
-                    hitTimer.SetInterval(anim.HitTime);
-                    hitTimer.Start();
-                }
-
-                comboTimer.SetInterval(anim.ComboTime);
-                comboTimer.Start();
-
-                this.StartAnimation(anim, () => this.canCombo = true);
-                this.canCombo = false;
-            }
-            else if (job.IsJump)
-            {
-                if (this.Environment > EnvironmentState.Wading)
-                    return;
-
-                if (GetActiveAniFromLayerID(anim.Layer) != null)
-                    return;
-
-                this.StartAniJump(anim, 50, 300);
-            }
-            else if (job.ID == (int)SetAnis.BowAim || job.ID == (int)SetAnis.XBowAim)
-            {
-                if (this.isAiming || this.IsInAni() || this.Environment > EnvironmentState.Wading || this.ammo == null)
-                    return;
-
-                this.StartAnimation(anim);
-            }
-            else if (job.ID == (int)SetAnis.BowLower || job.ID == (int)SetAnis.XBowLower)
-            {
-                if (!this.isAiming || this.IsInAni() || this.Environment > EnvironmentState.Wading || this.ammo == null)
-                    return;
-
-                this.StartAnimation(anim);
-            }
-        }
-
-        public void OnCmdAniStart(Animations.Animation ani, object[] netArgs)
-        {
-            ScriptAni a = (ScriptAni)ani.ScriptObject;
-            if (a.AniJob.IsClimb)
-            {
-                if (this.IsInAni())
-                    return;
-
-                this.StartAniClimb(a, (WorldObjects.NPC.ClimbingLedge)netArgs[0]);
-            }
-            else if (a.AniJob.IsDraw)
-            {
-                int itemID = (int)netArgs[0];
-                WorldObjects.Item item;
-                if (this.BaseInst.Inventory.TryGetItem(itemID, out item) && item.IsEquipped)
-                {
-                    var ii = (ItemInst)item.ScriptObject;
-                    ScriptAniJob job;
-                    ScriptAni drawAni;
-                    if (this.TryGetDrawFromType(ii.ItemType, out job, this.Movement != MoveState.Stand || this.Environment != EnvironmentState.None)
-                        && this.TryGetAniFromJob(job, out drawAni) && this.GetActiveAniFromLayerID(drawAni.Layer) == null)
-                    {
-                        this.StartAniDraw(drawAni, ii);
-                    }
-                }
-            }
-            else if (a.AniJob.IsUndraw)
-            {
-                int itemID = (int)netArgs[0];
-                WorldObjects.Item item;
-                if (this.BaseInst.Inventory.TryGetItem(itemID, out item) && item.IsEquipped)
-                {
-                    var ii = (ItemInst)item.ScriptObject;
-                    ScriptAniJob job;
-                    ScriptAni drawAni;
-                    if (this.TryGetUndrawFromType(ii.ItemType, out job, this.Movement != MoveState.Stand || this.Environment != EnvironmentState.None)
-                        && this.TryGetAniFromJob(job, out drawAni) && this.GetActiveAniFromLayerID(drawAni.Layer) == null)
-                    {
-                        this.StartAniUndraw(drawAni, ii);
-                    }
-                }
-            }
-            else if (a.AniJob.ID == (int)SetAnis.BowReload || a.AniJob.ID == (int)SetAnis.XBowReload)
-            {
-                int lifeDist = (int)netArgs[0];
-                Vec3f direction = ((Vec3f)netArgs[1]).Normalise();
-
-                ProjDef projDef;
-                if (this.ammo.ItemType == ItemTypes.AmmoBow)
-                {
-                    projDef = ProjDef.Get<ProjDef>("arrow");
-                }
-                else
-                {
-                    projDef = ProjDef.Get<ProjDef>("bolt");
-                }
-
-                ProjInst proj = new ProjInst(projDef);
-                proj.BaseInst.LifeDistance = lifeDist;
-                Vec3f projPos = this.BaseInst.GetPosition();
-                projPos.Y += 30;
-
-                proj.Damage = this.drawnWeapon.Definition.Damage + this.ammo.Definition.Damage;
-                proj.Shooter = this;
-
-                proj.Spawn(this.World, projPos, direction);
-
-                int ammoNum = this.ammo.BaseInst.Amount - 1;
-                this.ammo.BaseInst.SetAmount(ammoNum);
-
-                if (ammoNum == 0)
-                {
-                    ScriptAniJob undrawJob;
-                    ScriptAni undraw;
-                    if (this.TryGetUndrawFromType(this.drawnWeapon.ItemType, out undrawJob) && this.TryGetAniFromJob(undrawJob, out undraw))
-                    {
-                        this.StartAniUndraw(undraw, this.drawnWeapon);
-                    }
-                    else
-                    {
-                        this.EquipItem(this.drawnWeapon);
-                    }
-                }
-                else
-                {
-                    this.StartAnimation(ani);
-                }
-            }
-        }
-
-        public void OnCmdAniStop(bool fadeOut)
-        {
-        }
-
-        partial void pDespawn()
-        {
-            Log.Logger.Log(">>>>>> DESPAWN <<<<<<");
-            drawTimer.Stop();
-            hitTimer.Stop();
-            comboTimer.Stop();
-        }
-
-        public void StartAniJump(ScriptAni ani, int fwdVelocity, int upVelocity)
-        {
-            this.BaseInst.StartAnimation(ani.BaseAni, null, fwdVelocity, upVelocity);
-        }
-
-        public void StartAniClimb(ScriptAni ani, WorldObjects.NPC.ClimbingLedge ledge)
-        {
-            this.BaseInst.StartAnimation(ani.BaseAni, () => this.canCombo = true, ledge);
-            this.canCombo = false;
-        }
-
-        GUCTimer drawTimer = new GUCTimer();
-
-        public void StartAniDraw(ScriptAni ani, ItemInst item)
-        {
-            if (item.IsWepRanged)
-            {
-                ItemInst ammo = this.ammo;
-                if ((ammo == null || ammo.BaseInst.Amount == 0
-                     || (item.ItemType == ItemTypes.WepBow && ammo.ItemType != ItemTypes.AmmoBow)
-                     || (item.ItemType == ItemTypes.WepXBow && ammo.ItemType != ItemTypes.AmmoXBow)))
-                {
-                    return;
-                }
-            }
-
-            this.BaseInst.StartAnimation(ani.BaseAni, null, item.ID);
-
-            drawTimer.SetInterval(ani.DrawTime);
-            drawTimer.SetCallback(() =>
-            {
-                drawTimer.Stop();
-
-                if (this.BaseInst.IsDead)
-                    return;
-
-                if (item.ItemType == ItemTypes.WepBow)
-                {
-                    this.EquipItem((int)SlotNums.Lefthand, item);
-                }
-                else
-                {
-                    this.EquipItem((int)SlotNums.Righthand, item);
-                }
-
-                if (item.IsWeapon)
-                    this.SetFightMode(true);
-            });
-
-            drawTimer.Start();
-        }
-
-        public void StartAniUndraw(ScriptAni ani, ItemInst item)
-        {
-            this.BaseInst.StartAnimation(ani.BaseAni, null, item.ID);
-
-            drawTimer.SetInterval(ani.DrawTime);
-            drawTimer.SetCallback(() =>
-            {
-                drawTimer.Stop();
-
-                if (this.BaseInst.IsDead)
-                    return;
-
-                this.EquipItem(item);
-                if (item.IsWeapon)
-                    this.SetFightMode(false);
-            });
-
-            drawTimer.Start();
-        }
     }
 }
