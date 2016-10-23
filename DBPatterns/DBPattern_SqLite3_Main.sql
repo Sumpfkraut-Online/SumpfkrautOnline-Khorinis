@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS WorldInst
     Description Text DEFAULT "", -- optional description
     ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of last change made
     CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of creation
-    CONSTRAINT WorlDef_PK PRIMARY KEY (WorldInstID)
+    CONSTRAINT WorldInst_PK PRIMARY KEY (WorldInstID)
 );
 
 CREATE TRIGGER Update_WorldInst
@@ -117,6 +117,46 @@ CREATE TABLE IF NOT EXISTS VobDefEffect
     FOREIGN KEY (VobDefID) REFERENCES VobDef(VobDefID),
     FOREIGN KEY (DefEffectID) REFERENCES DefEffect(DefEffectID)
 );
+
+-- >> models and animations << --
+--------------------------------------------------------------
+
+-- list of ModelDef --
+DROP TABLE IF EXISTS ModelDef;
+CREATE TABLE IF NOT EXISTS ModelDef 
+(
+    ModelDefID INTEGER NOT NULL, -- unique primary key id
+    ModelDefName Text NOT NULL, -- descriptive name
+    IsStatic INTEGER DEFAULT 0 CHECK ((IsStatic == 0) OR (IsStatic == 1)), -- static objects are already uploaded for the clients to download on their local hard drive !!! MIGHT AS WELL SAVE IT AS ANOTHER EFFECT ?!?
+    Visual Text NOT NULL, -- Gothic visual name
+    ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of last change made
+    CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of creation
+    CONSTRAINT ModelDef_PK PRIMARY KEY (ModelDefID)
+);
+
+CREATE TRIGGER Update_ModelDef
+    AFTER UPDATE
+    ON ModelDef
+BEGIN
+    UPDATE ModelDef SET ChangeDate = CURRENT_TIMESTAMP WHERE ModelDef = OLD.ModelDef;
+END;
+
+-- list of ScriptAni --
+DROP TABLE IF EXISTS ScriptAni;
+CREATE TABLE IF NOT EXISTS ScriptAni 
+(
+    ScriptAniID INTEGER NOT NULL, -- unique primary key id
+    ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of last change made
+    CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of creation
+    CONSTRAINT ModelDef_PK PRIMARY KEY (ModelDefID)
+);
+
+CREATE TRIGGER Update_ModelDef
+    AFTER UPDATE
+    ON ScriptAni
+BEGIN
+    UPDATE ScriptAni SET ChangeDate = CURRENT_TIMESTAMP WHERE ScriptAni = OLD.ScriptAni;
+END;
 
 -- >> static and dynamic content management << --
 --------------------------------------------------------------
