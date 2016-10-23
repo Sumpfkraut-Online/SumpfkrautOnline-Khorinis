@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using RakNet;
-using GUC.Enumeration;
-using GUC.Network.Messages;
 using GUC.Options;
 using GUC.Log;
 
@@ -19,13 +17,8 @@ namespace GUC.Network
         readonly static PacketReader pktReader = new PacketReader();
         readonly static PacketWriter pktWriter = new PacketWriter(128000);
 
-        static bool started = false;
-        internal static void Start()
+        static GameServer()
         {
-            if (started)
-                return;
-            started = true;
-
             using (SocketDescriptor socketDescriptor = new SocketDescriptor())
             {
                 socketDescriptor.port = ServerOptions.Port;
@@ -33,7 +26,7 @@ namespace GUC.Network
                 StartupResult res = ServerInterface.Startup(ServerOptions.Slots, socketDescriptor, 1);
                 if (res == StartupResult.RAKNET_STARTED)
                 {
-                    Logger.Log("Server start listening on port " + ServerOptions.Port);
+                    Logger.Log("Server starts RakNet on port " + ServerOptions.Port);
                 }
                 else
                 {
@@ -41,7 +34,7 @@ namespace GUC.Network
                 }
                 ServerInterface.SetMaximumIncomingConnections(ServerOptions.Slots);
                 ServerInterface.SetOccasionalPing(true);
-                                
+
                 if (ServerOptions.Password != null)
                 {
                     string pwStr = Convert.ToBase64String(ServerOptions.Password.ToArray());
@@ -50,91 +43,33 @@ namespace GUC.Network
             }
         }
 
-        static void ReadMessage(NetworkIDs id, GameClient client, PacketReader stream)
+        static void ReadUserMessage(ClientMessages id, GameClient client, PacketReader stream)
         {
             switch (id)
             {
-                case NetworkIDs.ConnectionMessage:
-                    DisconnectClient(client);
-                    Logger.LogWarning("Client sent another ConnectionMessage. Kicked: {0} IP:{1}", client.ID, client.SystemAddress);
+                case ClientMessages.WorldLoadedMessage:
+                    GameClient.Messages.ReadLoadWorldMessage(stream, client);
                     break;
-                case NetworkIDs.LoadWorldMessage:
-                    client.ConfirmLoadWorldMessage();
+                case ClientMessages.ScriptMessage:
+                    client.ScriptObject.ReadScriptMessage(stream);
                     break;
-                case NetworkIDs.ScriptMessage:
-                    client.ScriptObject.OnReadMenuMsg(pktReader);
+                case ClientMessages.GuidedVobMessage:
+                    WorldObjects.VobGuiding.GuidedVob.Messages.ReadPosDir(stream, client, client.World);
                     break;
-
-                case NetworkIDs.SpecPosMessage:
-                    if (client.IsSpectating)
-                        SpectatorMessage.ReadPos(stream, client);
+                case ClientMessages.GuidedNPCMessage:
+                    WorldObjects.NPC.Messages.ReadPosDir(stream, client, client.World);
                     break;
-
-                // Ingame:
-
-                case NetworkIDs.ScriptVobMessage:
-                    if (client.ScriptObject != null)
-                        client.ScriptObject.OnReadIngameMsg(pktReader);
+                case ClientMessages.ScriptCommandMessage:
+                    GameClient.Messages.ReadScriptCommandMessage(stream, client, client.World, false);
                     break;
-
-                case NetworkIDs.VobPosDirMessage:
-                    VobMessage.ReadPosDir(stream, client, client.IsSpectating ? client.SpecWorld : client.Character.World);
-                    break;
-
-                case NetworkIDs.NPCStateMessage:
-                    NPCMessage.ReadMoveState(stream, client, client.Character, client.IsSpectating ? client.SpecWorld : client.Character.World);
-                    break;
-
-                case NetworkIDs.NPCApplyOverlayMessage:
-                    NPCMessage.ReadApplyOverlay(stream, client.Character);
-                    break;
-                case NetworkIDs.NPCRemoveOverlayMessage:
-                    NPCMessage.ReadRemoveOverlay(stream, client.Character);
-                    break;
-
-                case NetworkIDs.NPCAniStartMessage:
-                    NPCMessage.ReadAniStart(stream, client.Character);
-                    break;
-                case NetworkIDs.NPCAniStartWithArgsMessage:
-                    NPCMessage.ReadAniStartWithArgs(stream, client.Character);
-                    break;
-                case NetworkIDs.NPCAniStopMessage:
-                    NPCMessage.ReadAniStop(stream, client.Character);
-                    break;
-
-                case NetworkIDs.NPCSetFightModeMessage:
-                    NPCMessage.ReadSetFightMode(stream, client.Character);
-                    break;
-                case NetworkIDs.NPCUnsetFightModeMessage:
-                    NPCMessage.ReadUnsetFightMode(stream, client.Character);
-                    break;
-
-                case NetworkIDs.InventoryEquipMessage:
-                    InventoryMessage.ReadEquipMessage(stream, client.Character);
-                    break;
-                case NetworkIDs.InventoryUnequipMessage:
-                    InventoryMessage.ReadUnequipMessage(stream, client.Character);
+                case ClientMessages.ScriptCommandHeroMessage:
+                    GameClient.Messages.ReadScriptCommandMessage(stream, client, client.World, true);
                     break;
 
                 default:
-                    Logger.LogWarning("Client sent unknown NetworkID. Kicked: {0} IP:{1}", client.ID, client.SystemAddress);
+                    Logger.LogWarning("Client sent unknown NetworkID '{0}'. Kicked: {1} IP:{2}", id, client.ID, client.SystemAddress);
                     DisconnectClient(client);
                     return;
-            }
-
-            // flooding protection
-            client.PacketCount++;
-            long diff = GameTime.Ticks - client.LastCheck;
-            if (diff > 1000000)  // 100ms
-            {
-                if (diff / client.PacketCount < 0)//25000)
-                {
-                    Logger.LogWarning("Client flooded packets. Kicked: {0} IP:{1}", client.ID, client.SystemAddress);
-                    DisconnectClient(client);
-                    return;
-                }
-                client.LastCheck = GameTime.Ticks;
-                client.PacketCount = 0;
             }
         }
 
@@ -148,113 +83,100 @@ namespace GUC.Network
          */
         internal static void Update()
         {
-            Packet p = ServerInterface.Receive();
             GameClient client = null;
-            NetworkIDs msgID;
-            DefaultMessageIDTypes msgDefaultType;
 
-            while (p != null)
+            Packet packet;
+            while ((packet = ServerInterface.Receive()) != null)
             {
                 try
                 {
-                    pktReader.Load(p.data, (int)p.length);
+                    clientDict.TryGetValue(packet.guid.g, out client);
 
-                    clientDict.TryGetValue(p.guid.g, out client);
+                    pktReader.Load(packet.data, (int)packet.length);
+                    ClientMessages id = (ClientMessages)pktReader.ReadByte();
 
-                    msgDefaultType = (DefaultMessageIDTypes)pktReader.ReadByte();
-                    switch (msgDefaultType)
+                    switch (id)
                     {
-                        case DefaultMessageIDTypes.ID_CONNECTION_LOST:
-                        case DefaultMessageIDTypes.ID_DISCONNECTION_NOTIFICATION:
+                        case ClientMessages.RakNet_ConnectionLost:
+                        case ClientMessages.RakNet_DisconnectionNotification:
                             if (client != null)
                             {
-                                Logger.Log("Client disconnected: {0} IP:{1}", client.ID, client.SystemAddress);
+                                Logger.Log("Client disconnected: {0} IP: {1}", client.ID, client.SystemAddress);
                                 DisconnectClient(client);
                             }
                             else
                             {
-                                ServerInterface.CloseConnection(p.guid, false); //just to be sure
+                                ServerInterface.CloseConnection(packet.guid, false); //just to be sure
                             }
                             break;
-                        case DefaultMessageIDTypes.ID_NEW_INCOMING_CONNECTION:
-                            if (client != null) //there is already someone with this GUID. Should not happen.
+                        case ClientMessages.RakNet_NewIncomingConnection:
+                            if (client != null) //there is already someone with this GUID. Should never happen.
                             {
-                                throw new Exception("Duplicate RakNet-GUID!" + p.guid);
+                                throw new Exception("Duplicate RakNet-GUID! " + packet.guid);
                             }
                             else
                             {
-                                Logger.Log("Client connected: IP:" + p.systemAddress);
+                                Logger.Log("Client connected: IP: " + packet.systemAddress);
                             }
                             break;
-                        case DefaultMessageIDTypes.ID_USER_PACKET_ENUM:
-                            msgID = (NetworkIDs)pktReader.ReadByte();
+                        default:
                             if (client == null)
                             {
-                                if (msgID == NetworkIDs.ConnectionMessage) //sends mac & drive string, should always be sent first
+                                if (id == ClientMessages.ConnectionMessage) //sends mac & drive string, should always be sent first
                                 {
-                                    if (ConnectionMessage.Read(pktReader, p.guid, p.systemAddress, out client))
+                                    if (GameClient.Messages.ReadConnection(pktReader, packet.guid, packet.systemAddress, out client))
                                     {
                                         clientDict.Add(client.Guid.g, client);
                                         client.Create();
                                     }
                                     else
                                     {
-                                        DisconnectClient(client);
+                                        Logger.LogWarning("Client was not allowed to connect: {0}", packet.systemAddress);
+                                        ServerInterface.CloseConnection(packet.guid, false);
                                     }
                                 }
                                 else
                                 {
-                                    Logger.LogWarning("Client sent {0} before ConnectionMessage. Kicked: {1} IP:{2}", msgID, p.guid, p.systemAddress);
-                                    ServerInterface.CloseConnection(p.guid, false);
+                                    Logger.LogWarning("Client sent {0} before ConnectionMessage. Kicked IP: {1}", id, packet.systemAddress);
+                                    ServerInterface.CloseConnection(packet.guid, false);
                                 }
                             }
                             else
                             {
-                                if (msgID > NetworkIDs.ScriptMessage && (client.Character == null || !client.Character.IsSpawned) && !client.IsSpectating)
+                                if (id > ClientMessages.ScriptMessage && !client.IsIngame)
                                 {
-                                    return;
                                     //Logger.LogWarning("Client sent {0} without being ingame. Kicked: {1} IP:{2}", msgID, p.guid, p.systemAddress);
                                     //DisconnectClient(client);
+                                    break;
                                 }
                                 else
                                 {
-                                    ReadMessage(msgID, client, pktReader);
+                                    ReadUserMessage(id, client, pktReader);
                                 }
-                            }
-                            break;
-                        default:
-                            Logger.LogWarning("Received unused DefaultMessageIDType {0}. Kicked: {1} IP:{2}", msgDefaultType, p.guid, p.systemAddress);
-                            if (client == null)
-                            {
-                                ServerInterface.CloseConnection(p.guid, false);
-                            }
-                            else
-                            {
-                                DisconnectClient(client);
                             }
                             break;
                     }
                 }
                 catch (Exception e)
                 {
-                    if (p.length >= 2)
-                        Logger.LogError("{0} {1}: {2}: {3}\n{4}", (DefaultMessageIDTypes)p.data[0], (NetworkIDs)p.data[1], e.Source, e.Message, e.StackTrace);
-                    else if (p.length >= 1)
-                        Logger.LogError("{0}: {1}: {2}\n{3}", (DefaultMessageIDTypes)p.data[0], e.Source, e.Message, e.StackTrace);
+                    if (packet.length > 0)
+                        Logger.LogError("{0}: {1}: {2}\n{3}", (ClientMessages)packet.data[0], e.Source, e.Message, e.StackTrace);
                     else
                         Logger.LogError("{0}: {1}\n{2}", e.Source, e.Message, e.StackTrace);
 
                     if (client == null)
                     {
-                        ServerInterface.CloseConnection(p.guid, false);
+                        ServerInterface.CloseConnection(packet.guid, false);
                     }
                     else
                     {
                         DisconnectClient(client);
                     }
                 }
-                ServerInterface.DeallocatePacket(p);
-                p = ServerInterface.Receive();
+                finally
+                {
+                    ServerInterface.DeallocatePacket(packet);
+                }
             }
         }
 
@@ -269,10 +191,9 @@ namespace GUC.Network
             client.Delete();
         }
 
-        internal static PacketWriter SetupStream(NetworkIDs ID)
+        internal static PacketWriter SetupStream(ServerMessages ID)
         {
             pktWriter.Reset();
-            pktWriter.Write((byte)DefaultMessageIDTypes.ID_USER_PACKET_ENUM);
             pktWriter.Write((byte)ID);
             return pktWriter;
         }

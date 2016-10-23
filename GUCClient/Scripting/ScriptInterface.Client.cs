@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Network;
-using GUC.Enumeration;
 using GUC.WorldObjects.Instances;
 using GUC.WorldObjects;
 using GUC.Models;

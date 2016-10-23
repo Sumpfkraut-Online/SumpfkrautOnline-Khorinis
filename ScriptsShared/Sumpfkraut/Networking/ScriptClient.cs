@@ -13,6 +13,15 @@ namespace GUC.Scripts.Sumpfkraut.Networking
 {
     public partial class ScriptClient : ScriptObject, GameClient.IScriptClient
     {
+        #region Constructors
+
+        public ScriptClient()
+        {
+            this.baseClient = new GameClient(this);
+        }
+
+        #endregion
+
         #region Properties
 
         public int ID { get { return this.baseClient.ID; } }
@@ -21,44 +30,39 @@ namespace GUC.Scripts.Sumpfkraut.Networking
         public GameClient BaseClient { get { return this.baseClient; } }
 
         public NPCInst Character { get { return (NPCInst)this.baseClient.Character?.ScriptObject; } }
-        
-        #region dank rank
 
-        public enum ClientRank
+        #endregion
+
+        #region Connection
+
+        partial void pOnConnect();
+        public virtual void OnConnection()
         {
-            Statist,
-            Supporter,
-            Admin
+            pOnConnect();
         }
 
-        public ClientRank Rank = ClientRank.Statist;
-
-        #endregion
-
-        #endregion
-
-        #region Constructors
-        
-        public ScriptClient(GameClient baseClient)
+        public virtual void OnDisconnection()
         {
-            if (baseClient == null)
-                throw new ArgumentNullException("BaseClient is null!");
 
-            this.baseClient = baseClient;
-            this.baseClient.ScriptObject = this;
         }
 
         #endregion
+
+        #region NPC Control
 
         public void SetControl(NPC npc)
         {
             this.SetControl((NPCInst)npc.ScriptObject);
         }
 
-        public void SetControl(NPCInst npc)
+        public virtual void SetControl(NPCInst npc)
         {
             this.baseClient.SetControl(npc.BaseInst);
         }
+
+        #endregion
+
+        #region Spectator
 
         public void SetToSpectator(World world, Vec3f pos, Vec3f dir)
         {
@@ -71,6 +75,8 @@ namespace GUC.Scripts.Sumpfkraut.Networking
             this.baseClient.SetToSpectate(world.BaseWorld, pos, dir);
             pSetToSpectator(world, pos, dir);
         }
+
+        #endregion
 
         #region Read & Write
 

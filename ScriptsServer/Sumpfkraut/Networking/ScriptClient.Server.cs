@@ -3,56 +3,86 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Network;
-using GUC.Log;
-using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
-using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using GUC.Types;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
+using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using static GUC.Scripts.Sumpfkraut.VobSystem.Instances.NPCInst;
 
 namespace GUC.Scripts.Sumpfkraut.Networking
 {
     public partial class ScriptClient : ScriptObject, GameClient.IScriptClient
     {
+        public bool IsAllowedToConnect()
+        {
+            return true;
+        }
+
+        partial void pOnConnect()
+        {
+            this.SetToSpectator(WorldInst.Current, new Vec3f(), new Vec3f(0, 0, 1));
+        }
+
         public static int GetCount()
         {
-            return GameClient.GetCount();
+            return GameClient.Count;
         }
 
-        public virtual void OnConnection()
+        public virtual void ReadScriptMessage(PacketReader stream)
         {
         }
 
-        public virtual void OnDisconnection()
+        public virtual void ReadScriptRequestMessage(PacketReader stream, WorldObjects.VobGuiding.GuidedVob vob)
         {
-        }
+            if (!(vob is WorldObjects.NPC))
+                return;
 
-        public virtual void OnReadMenuMsg(PacketReader stream)
-        {
-            Logger.Log("Login!");
+            NPCInst npc = (NPCInst)vob.ScriptObject;
 
-            NPCDef def = BaseVobDef.Get<NPCDef>("player");
-            NPCInst npc = new NPCInst(def);
-
-            var item = new ItemInst(ItemDef.Get<ItemDef>("zweihander"));
-            npc.AddItem(item);
-            npc.EquipItem(item);
-
-            item = new ItemInst(ItemDef.Get<ItemDef>("itar_Garde"));
-            npc.AddItem(item);
-            npc.EquipItem(item);
-
-            /*ScriptOverlay ov;
-            if (!npc.Definition.Model.TryGetOverlay(0, out ov))
+            ScriptRequestMessageIDs id = (ScriptRequestMessageIDs)stream.ReadByte();
+            switch (id)
             {
-                throw new Exception("Wo ist nur das Overlay hin?");
+                case ScriptRequestMessageIDs.JumpFwd:
+                    npc.DoJump();
+                    break;
+                case ScriptRequestMessageIDs.DrawFists:
+                    npc.DrawFists();
+                    break;
+                case ScriptRequestMessageIDs.DrawWeapon:
+                    npc.DrawWeapon(stream.ReadByte());
+                    break;
+                case ScriptRequestMessageIDs.AttackForward:
+                    npc.DoFightMove(NPCInst.FightMoves.Fwd);
+                    break;
+                case ScriptRequestMessageIDs.AttackLeft:
+                    npc.DoFightMove(NPCInst.FightMoves.Left);
+                    break;
+                    case ScriptRequestMessageIDs.AttackRight:
+                    npc.DoFightMove(NPCInst.FightMoves.Right);
+                    break;
+                case ScriptRequestMessageIDs.Parry:
+                    npc.DoFightMove(NPCInst.FightMoves.Parry);
+                    break;
+                case ScriptRequestMessageIDs.Dodge:
+                    npc.DoFightMove(NPCInst.FightMoves.Dodge);
+                    break;
+                case ScriptRequestMessageIDs.DropItem:
+                    byte itemID = stream.ReadByte();
+                    ushort amount = stream.ReadUShort();
+                    npc.DropItem(itemID, amount);
+                    break;
+                case ScriptRequestMessageIDs.EquipItem:
+                    npc.EquipItem(stream.ReadByte());
+                    break;
+                case ScriptRequestMessageIDs.UnequipItem:
+                    npc.UnequipItem(stream.ReadByte());
+                    break;
+                case ScriptRequestMessageIDs.UseItem:
+                    npc.UseItem(stream.ReadByte());
+                    break;
+                default:
+                    Log.Logger.Log("Received Script RequestMessage with invalid ID: " + id.ToString());
+                    break;
             }
-            npc.ApplyOverlay(ov);*/
-
-            SetControl(npc);
-            npc.Spawn(WorldInst.Current);
-        }
-
-        public virtual void OnReadIngameMsg(PacketReader stream)
-        {
         }
     }
 }

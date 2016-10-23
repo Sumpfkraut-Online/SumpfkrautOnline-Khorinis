@@ -2,50 +2,38 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Network;
-using GUC.Enumeration;
+using Gothic.Objects;
 using WinApi.User.Enumeration;
 using GUC.GUI;
+using WinApi;
+using GUC.Types;
+using Gothic.Types;
 
 namespace GUC.Scripts.Sumpfkraut.GUI.MainMenu
 {
-    /*class MainMenuCharacter : MainMenuItem, InputReceiver
+    class MainMenuCharacter : MainMenuItem, InputReceiver
     {
-        GUCVisualVob vis;
-
-        AccCharInfo info;
-        public AccCharInfo Info
+        GUC3DVisual vis;
+        
+        public void SetAdditionalVisuals(string bodyMesh, int bodyTex, string headMesh, int headTex)
         {
-            get { return info; }
-            set
-            {
-                
-                info = value;
-                if (value != null)
-                {
-                    thisNpc.SetAdditionalVisuals(((HumBodyMeshs)info.BodyMesh).ToString(), info.BodyTex, 0,
-                                                 ((HumHeadMeshs)info.HeadMesh).ToString(), info.HeadTex, 0, -1);
-
-                    using (zVec3 vec = zVec3.Create(Program.Process))
-                    {
-                        vec.X = info.BodyWidth;
-                        vec.Y = info.BodyHeight;
-                        vec.Z = info.BodyWidth;
-                        thisNpc.SetModelScale(vec);
-                    }
-                    thisNpc.SetFatness(info.Fatness);
-
-                    vis.SetVob(thisVob);
-                }
-                else
-                {
-                    vis.SetVob(null);
-                }
-            }
+            thisVob.SetAdditionalVisuals(bodyMesh, bodyTex, 0, headMesh, headTex, 0, -1);
         }
 
-        zCVob thisVob;
-        oCNpc thisNpc { get { return new oCNpc(Program.Process, thisVob.Address); } }
+        public void SetScale(Vec3f scale)
+        {
+            using (zVec3 vec = scale.CreateGVec())
+            {
+                thisVob.SetModelScale(vec);
+            }
+        }
+        
+        public void SetFatness(float fatness)
+        {
+            thisVob.SetFatness(fatness);
+        }
+        
+        oCNpc thisVob;
 
         int rotation = 180;
 
@@ -54,17 +42,24 @@ namespace GUC.Scripts.Sumpfkraut.GUI.MainMenu
         public MainMenuCharacter(string help, int x, int y, int w, int h)
         {
             HelpText = help;
-            vis = new GUCVisualVob(x, y, w, h);
-            thisVob = zCVob.Create(Program.Process);
-            thisVob.SetVisual("HUMANS.MDS");
-            Program.Process.Write(140, thisVob.Address + (int)oCItem.Offsets.inv_zbias);
-            Program.Process.Write(rotation, thisVob.Address + (int)oCItem.Offsets.inv_roty);
-            Info = new AccCharInfo();
+            
+            thisVob = oCNpc.Create();
+
+            vis = new GUC3DVisual(x, y, w, h);
+            vis.SetVob(thisVob);
+
+            Process.Write(140, thisVob.Address + oCItem.VarOffsets.inv_zbias);
+            Process.Write(rotation, thisVob.Address + oCItem.VarOffsets.inv_roty);
 
             leftArrow = new GUCVisual(x + 150, y + h / 2 - 40, 15, 20);
             leftArrow.SetBackTexture("L.TGA");
             rightArrow = new GUCVisual(x + w - 170, y + h / 2 - 40, 15, 20);
             rightArrow.SetBackTexture("R.TGA");
+        }
+
+        public void SetVisual(string visual)
+        {
+            thisVob.SetVisual(visual.ToUpperInvariant());
         }
 
         public override void Show()
@@ -100,7 +95,7 @@ namespace GUC.Scripts.Sumpfkraut.GUI.MainMenu
                 rotation -= 5;
             } else return;
 
-            Program.Process.Write(rotation, thisVob.Address + (int)oCItem.Offsets.inv_roty);
+            Process.Write(rotation, thisVob.Address + oCItem.VarOffsets.inv_roty);
         }
-    }*/
+    }
 }

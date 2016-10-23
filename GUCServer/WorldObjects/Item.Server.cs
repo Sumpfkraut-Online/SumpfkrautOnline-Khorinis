@@ -2,32 +2,26 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Network.Messages;
+using GUC.Network;
 
 namespace GUC.WorldObjects
 {
     public partial class Item : Vob
     {
+        #region Network Messages
 
-        /*public override void Delete()
+        new internal static class Messages
         {
-            if (Container != null)
+            public static void WriteChangeItemAmount(GameClient client, Item item)
             {
-                Container.Inventory.Remove(this);
+                PacketWriter stream = GameServer.SetupStream(ServerMessages.PlayerItemAmountChangedMessage);
+                stream.Write((byte)item.ID);
+                stream.Write((ushort)item.amount);
+                client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'I');
             }
-            base.Delete();
         }
 
-        internal override void WriteSpawnMessage(IEnumerable<Client> list)
-        {
-            PacketWriter stream = GameServer.SetupStream(NetworkIDs.WorldItemSpawnMessage);
-            this.WriteSpawnProperties(stream);
-
-            foreach (Client client in list)
-            {
-                client.Send(stream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, 'W');
-            }
-        }*/
+        #endregion
 
         partial void pSetAmount(int amount)
         {
@@ -36,14 +30,7 @@ namespace GUC.WorldObjects
                 NPC owner = (NPC)this.Container;
                 if (owner.IsPlayer)
                 {
-                    if (amount > 0)
-                    {
-                        InventoryMessage.WriteChangeItemAmount(owner.client, this, amount);
-                    }
-                    else
-                    {
-                        InventoryMessage.WriteRemoveItem(owner.client, this);
-                    }
+                    Messages.WriteChangeItemAmount(owner.client, this);
                 }
             }
         }

@@ -19,8 +19,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
         public ScriptOverlay()
         {
-            this.baseOv = new Overlay();
-            this.baseOv.ScriptObject = this;
+            this.baseOv = new Overlay(this);
         }
 
         public void OnReadProperties(PacketReader stream)

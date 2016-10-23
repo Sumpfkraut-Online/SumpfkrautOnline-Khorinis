@@ -8,7 +8,7 @@ namespace GUC.Scripts.Sumpfkraut.Menus
 {
     abstract class GUCMenu
     {
-        private static readonly List<GUCMenu> activeMenus = new List<GUCMenu>();
+        static readonly List<GUCMenu> activeMenus = new List<GUCMenu>();
         public static IEnumerable<GUCMenu> GetActiveMenus() { return activeMenus; }
 
         public static void UpdateMenus(long now)

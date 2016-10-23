@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.WorldObjects.Instances.Mobs;
-using GUC.Enumeration;
-using GUC.Network;
+using GUC.Models;
+using GUC.Types;
 
 namespace GUC.WorldObjects.Mobs
 {
@@ -17,21 +17,33 @@ namespace GUC.WorldObjects.Mobs
         public partial interface IScriptMobLadder : IScriptMobInter
         {
         }
+        
+        /// <summary>  The ScriptObject of this object. </summary>
+        public new IScriptMobLadder ScriptObject { get { return (IScriptMobLadder)base.ScriptObject; } }
 
-        new public IScriptMobLadder ScriptObject
+        #endregion
+
+
+        #region Constructors
+
+        public MobLadder(Model.IScriptModel scriptModel, IScriptMobLadder scriptObject) : base(scriptModel, scriptObject)
         {
-            get { return (IScriptMobLadder)base.ScriptObject; }
-            set { base.ScriptObject = value; }
         }
 
         #endregion
 
         #region Properties
 
-        new public MobLadderInstance Instance { get { return (MobLadderInstance)base.Instance; } }
+        public override Type InstanceType { get { return typeof(MobLadderInstance); } }
+        /// <summary> The Instance of this object. </summary>
+        new public MobLadderInstance Instance
+        {
+            get { return (MobLadderInstance)base.Instance; }
+            set { SetInstance(value); }
+        }
 
         #endregion
-        
+
         #region Read & Write
 
         #endregion

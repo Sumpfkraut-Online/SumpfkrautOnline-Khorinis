@@ -18,6 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
+    <OutputPath>..\GothicII\localhost-9054\</OutputPath>
     <OutputPath>..\bin\localhost-9054\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -26,6 +27,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
+    <OutputPath>..\GothicII\localhost-9054\</OutputPath>
     <OutputPath>..\bin\localhost-9054\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -87,6 +89,9 @@
     <Compile Include="Objects\zCWorld.cs" />
     <Compile Include="Sound\zCSndFX_MSS.cs" />
     <Compile Include="Sound\zTSound3DParams.cs" />
+    <Compile Include="System\zFile.cs" />
+    <Compile Include="System\zFile_File.cs" />
+    <Compile Include="System\zFile_VDFS.cs" />
     <Compile Include="View\zCFont.cs" />
     <Compile Include="View\zCViewDraw.cs" />
     <Compile Include="View\zCViewProgressBar.cs" />

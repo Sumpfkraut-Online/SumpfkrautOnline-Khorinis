@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Enumeration;
 using GUC.Network;
-using GUC.WorldObjects.Collections;
+using GUC.Types;
 
 namespace GUC.WorldObjects.Instances.Mobs
 {
@@ -18,10 +17,14 @@ namespace GUC.WorldObjects.Instances.Mobs
         {
         }
 
-        public new IScriptMobInterInstance ScriptObject
+        public new IScriptMobInterInstance ScriptObject { get { return (IScriptMobInterInstance)base.ScriptObject; } }
+
+        #endregion
+
+        #region Constructors
+
+        public MobInterInstance(IScriptMobInterInstance scriptObject) : base(scriptObject)
         {
-            get { return (IScriptMobInterInstance)base.ScriptObject; }
-            set { base.ScriptObject = value; }
         }
 
         #endregion

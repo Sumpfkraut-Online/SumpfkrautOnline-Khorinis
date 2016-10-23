@@ -6,11 +6,12 @@ using GUC.Network;
 using Gothic;
 using System.IO;
 using Gothic.Types;
-using System.Runtime.InteropServices;
 using GUC.Log;
 using WinApi;
 using GUC.Hooks;
 using System.Reflection;
+using System.Management;
+using System.Runtime.Serialization;
 
 namespace GUC
 {
@@ -25,16 +26,34 @@ namespace GUC
         static string serverIP;
         static ushort serverPort;
         static string password;
+        static string gothicRootPath;
 
         public static string GothicPath { get { return gothicPath; } }
+        public static string GothicRootPath { get { return gothicPath; } }
         public static string ProjectPath { get { return projectPath; } }
         public static string ServerIP { get { return serverIP; } }
         public static ushort ServerPort { get { return serverPort; } }
         public static string Password { get { return password; } }
 
-        public static string GetFullPath(params string[] paths)
+        public static string GetProjectPath(string path)
         {
-            return Path.Combine(projectPath, Path.Combine(paths));
+            return Path.Combine(projectPath, path);
+        }
+
+        public static string GetGothicPath(string path)
+        {
+            return Path.Combine(gothicPath, path);
+        }
+
+        public static string GetGothicRootPath(string path)
+        {
+            return Path.Combine(gothicRootPath, path);
+        }
+        
+        static void SetRootPathHook(Hook hook)
+        {
+            gothicRootPath = Gothic.System.zFile.s_rootPathString.ToString();
+            Logger.Log("Set root to: " + gothicRootPath);
         }
 
         static void SetupProject()
@@ -43,8 +62,11 @@ namespace GUC
             if (string.IsNullOrWhiteSpace(gothicPath) || !Directory.Exists(gothicPath))
                 throw new Exception("Gothic folder environment variable is null or not found!");
             
+            Process.AddHook(SetRootPathHook, 0x44235E, 7);
+            Process.AddHook(SetRootPathHook, 0x44237A, 7);
+            gothicRootPath = Path.Combine(gothicPath, "SYSTEM");
+
             projectPath = Environment.GetEnvironmentVariable("GUCProjectPath");
-            
             if (string.IsNullOrWhiteSpace(projectPath) || !Directory.Exists(projectPath))
                 throw new Exception("Project folder environment variable is null or not found!");
 
@@ -89,7 +111,7 @@ namespace GUC
                 Logger.Log("GUC started...");
 
                 SetupProject();
-
+                
                 SplashScreen.SetUpHooks();
                 SplashScreen.Create();
 
@@ -97,7 +119,7 @@ namespace GUC
                 Process.Write(new byte[] { 0xE9, 0xA3, 0x00, 0x00, 0x00 }, 0x42687F); // skip intro videos
 
                 // add hooks
-                hFile.AddHooks();
+                //Hooks.VDFS.hFileSystem.AddHooks();
                 hParser.AddHooks();
                 hGame.AddHooks();
                 hWeather.AddHooks();
@@ -147,11 +169,13 @@ namespace GUC
                 //Process.VirtualProtect(0x007792E0, 40);
                 Process.Write(new byte[] { 0x33, 0xC0, 0xC2, 0x04, 0x00 }, 0x007792E0);//Block deleting of dead characters!
 
-                Process.Write(new byte[] { 0xB8, 0x01, 0x00, 0x00, 0x00, 0xC3 }, 0x7425A0); // oCNpc::IsAPlayer always true
+                //Process.Write(new byte[] { 0xB8, 0x01, 0x00, 0x00, 0x00, 0xC3 }, 0x7425A0); // oCNpc::IsAPlayer always true, DON'T DO THIS or bullshit will happen (like getting the hero's focus mode resetted because another npc sets his weaponmode)
                 Process.Write(new byte[] { 0x31, 0xC0, 0xC3 }, 0x76D8A0); // oCNpc_States::IsInRoutine always false
 
                 Process.Write(new byte[] { 0xEB, 0x21 }, 0x69C247); // oCAIHuman::DoAI -> skip perception check
                 Process.Write(new byte[] { 0x31, 0xC0, 0xC3 }, 0x76D1A0); // oCNpc_States::DoAIState -> skip and return false
+
+                Process.Nop(7, 0x4A059C); // don't load dialogcams.zen
 
                 Logger.Log("Hooking & editing of gothic process completed. (for now...)");
                 #endregion
@@ -172,13 +196,46 @@ namespace GUC
 
         public static void Exit()
         {
-            GameClient.Client.Disconnect();
+            GameClient.Disconnect();
             Logger.Log("Exiting...");
             Thread.Sleep(200);
             CGameManager.ExitGameVar = 1;
             zCOption.GetSectionByName("internal").GetEntryByName("gameAbnormalExit").VarValue.Set("0");
             zCOption.Save(zString.Create("Gothic.ini")); // don't dispose this zString or crashes will happen
             //Process.CDECLCALL<NullReturnCall>(0x00425F30); // ExitGameFunc
+        }
+
+        public static string GetSignature(uint y)
+        {
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM Win32_DiskDrive");
+            foreach (ManagementObject obj in searcher.Get())
+            {
+                if ((uint)obj["Index"] == y)
+                {
+                    object sign = obj["Signature"];
+                    if (sign != null && !string.IsNullOrWhiteSpace(sign.ToString()))
+                        return sign.ToString();
+                }
+            }
+            return "";
+        }
+
+        public static string GetMacAddress()
+        {
+            ManagementClass adapter = new ManagementClass("Win32_NetworkAdapter");
+            ManagementObjectCollection collection = adapter.GetInstances();
+            foreach (ManagementObject MO in collection)
+            {
+                if (MO != null)
+                {
+                    object obj = MO["MacAddress"];
+                    if (obj != null && !string.IsNullOrWhiteSpace(obj.ToString()))
+                    {
+                        return obj.ToString();
+                    }
+                }
+            }
+            return "";
         }
     }
 }

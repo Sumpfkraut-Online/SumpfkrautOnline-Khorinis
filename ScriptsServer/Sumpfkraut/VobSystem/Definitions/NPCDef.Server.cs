@@ -13,8 +13,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
             return Get<NPCDef>(codeName);
         }
 
-        public NPCDef(string codeName) : base(new NPCInstance(), codeName)
+        public NPCDef(string codeName) : this()
         {
+            this.CodeName = codeName;
         }
     }
 }
