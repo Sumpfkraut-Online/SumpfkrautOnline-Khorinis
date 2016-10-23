@@ -18,7 +18,7 @@ namespace GUC.Hooks.VDFS
             public int Day { get { return (Value >> 16) & 0x1F; } } // 5 bits
             public int Month { get { return (Value >> 21) & 0xF; } } // 4 bits
             public int Year { get { return 1980 + (Value >> 25) & 0x7F; } } // 7 bits
-            
+
             public TimeStamp(int value)
             {
                 this.Value = value;
@@ -56,7 +56,7 @@ namespace GUC.Hooks.VDFS
         {
             public const int NameLength = 64;
 
-            public char[] Name;
+            public string Name;
             public uint JumpTo; // Dirs = child entry's number, Files = data offset
             public uint Size;
             public uint Type;
@@ -67,7 +67,7 @@ namespace GUC.Hooks.VDFS
 
             public Entry(BinaryReader br)
             {
-                this.Name = br.ReadChars(NameLength);
+                this.Name = new string(br.ReadChars(NameLength)).TrimEnd(' ');
                 this.JumpTo = br.ReadUInt32();
                 this.Size = br.ReadUInt32();
                 this.Type = br.ReadUInt32();
@@ -78,27 +78,39 @@ namespace GUC.Hooks.VDFS
             public bool IsLastEntry { get { return (this.Type & AttributeLastEntry) == AttributeLastEntry; } }
         }
 
-        Header header;
+        public static Dictionary<string, VDFSDirectoryInfo> vDirs = new Dictionary<string, VDFSDirectoryInfo>(StringComparer.OrdinalIgnoreCase);
+        public static Dictionary<string, VDFSFileInfo> vFiles = new Dictionary<string, VDFSFileInfo>(StringComparer.OrdinalIgnoreCase);
+
+        TimeStamp timeStamp;
         FileInfo fileInfo;
         public FileInfo FileInfo { get { return this.fileInfo; } }
         bool projectVDFS;
-        int fileCount;
-        public int FileCount { get { return this.fileCount; } }
 
-        public VDFSArchive(FileInfo info, Dictionary<string, VDFSFileInfo> fileDict, bool projectVDFS)
+        public VDFSArchive(FileInfo info, bool projectVDFS)
         {
             this.fileInfo = info;
             this.projectVDFS = projectVDFS;
             using (Stream stream = info.OpenRead())
-            using (BinaryReader br = new BinaryReader(stream, Encoding.UTF7))
+            using (BinaryReader br = new BinaryReader(stream, Encoding.Default))
             {
-                this.header = new Header(br);
-                ReadEntry(br, "", fileDict);
+                this.timeStamp = new Header(br).TimeStamp;
+                ReadEntry(br, "", null);
             }
         }
 
-        void ReadEntry(BinaryReader br, string path, Dictionary<string, VDFSFileInfo> fileDict)
+        void ReadEntry(BinaryReader br, string name, VDFSDirectoryInfo parent)
         {
+            string path = parent == null ? name : Path.Combine(parent.Path, name);
+
+            VDFSDirectoryInfo dir;
+            if (!vDirs.TryGetValue(path, out dir))
+            {
+                dir = new VDFSDirectoryInfo(path);
+                if (parent != null)
+                    parent.SubDirectories.Add(dir);
+                vDirs.Add(path, dir);
+            }
+
             List<Entry> directories = new List<Entry>(1);
             Entry entry;
             do
@@ -110,96 +122,49 @@ namespace GUC.Hooks.VDFS
                 }
                 else
                 {
-                    string filePath = CombinePaths(path, entry.Name);
-                    if (filePath != null)
-                    {
-                        VDFSFileInfo other;
-                        if (fileDict.TryGetValue(filePath, out other))
-                        {
-                            // there is already a file with that path
-                            if (this.projectVDFS) // this one is more important
-                            {
-                                if (other.Archive.projectVDFS)
-                                {
-                                    if (other.Archive.header.TimeStamp.Value < this.header.TimeStamp.Value)
-                                    { // this file is newer
-                                        fileDict[filePath] = new VDFSFileInfo(filePath, this, entry.JumpTo, entry.Size); // replace
-                                        other.Archive.fileCount--;
-                                        this.fileCount++;
-                                    }
-                                    else
-                                    { // this file is older
-                                        continue;
-                                    }
-                                }
-                                else
-                                {
-                                    fileDict[filePath] = new VDFSFileInfo(filePath, this, entry.JumpTo, entry.Size); // replace
-                                    other.Archive.fileCount--;
-                                    this.fileCount++;
-                                }
-                            }
-                            else
-                            {
-                                if (other.Archive.projectVDFS)
-                                {
-                                    continue;
-                                }
-                                else
-                                {
-                                    if (other.Archive.header.TimeStamp.Value < this.header.TimeStamp.Value)
-                                    { // this file is newer
-                                        fileDict[filePath] = new VDFSFileInfo(filePath, this, entry.JumpTo, entry.Size); // replace 
-                                        other.Archive.fileCount--;
-                                        this.fileCount++;
-                                    }
-                                    else
-                                    { // this file is older
-                                        continue;
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            fileDict.Add(filePath, new VDFSFileInfo(filePath, this, entry.JumpTo, entry.Size));
-                            this.fileCount++;
-                        }
-                    }
+                    AddFile(dir, entry);
                 }
             } while (!entry.IsLastEntry);
 
             for (int i = 0; i < directories.Count; i++)
             {
-                string dirPath = CombinePaths(path, entry.Name);
-                if (dirPath != null)
-                {
-                    ReadEntry(br, dirPath, fileDict);
-                }
+                ReadEntry(br, directories[i].Name, dir);
             }
         }
 
-        readonly static StringBuilder pathBuilder = new StringBuilder(256);
-        string CombinePaths(string path, char[] name)
+        void AddFile(VDFSDirectoryInfo dir, Entry entry)
         {
-            int length;
-            for (length = Entry.NameLength - 1; length > 0; length--)
-            {
-                if (!char.IsWhiteSpace(name[length]))
-                {
-                    break;
-                }
-                else if (length == 0)
-                {
-                    return null; // empty name 
-                }
-            }
+            string filePath = Path.Combine(dir.Path, entry.Name);
 
-            pathBuilder.Clear();
-            pathBuilder.Append(path);
-            pathBuilder.Append('\\');
-            pathBuilder.Append(name, 0, length + 1);
-            return pathBuilder.ToString();
+            VDFSFileInfo other;
+            if (vFiles.TryGetValue(filePath, out other))
+            {// there is already a file with that path
+                if (this.projectVDFS) // this one is more important
+                {
+                    if (other.Archive.projectVDFS)
+                    {
+                        if (other.Archive.timeStamp.Value < this.timeStamp.Value)
+                        { // this file is newer
+                            other.SetSource(this, entry.JumpTo, entry.Size); // replace
+                        }
+                    }
+                    else
+                    {
+                        other.SetSource(this, entry.JumpTo, entry.Size); // replace
+                    }
+                }
+                else if (!other.Archive.projectVDFS && other.Archive.timeStamp.Value < this.timeStamp.Value)
+                {// this file is newer
+                    other.SetSource(this, entry.JumpTo, entry.Size); // replace 
+                }
+
+            }
+            else
+            {
+                VDFSFileInfo file = new VDFSFileInfo(filePath, dir, this, entry.JumpTo, entry.Size);
+                vFiles.Add(filePath, file);
+                dir.FileNames.Add(entry.Name, file);
+            }
         }
     }
 }

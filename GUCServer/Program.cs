@@ -8,6 +8,7 @@ using GUC.Scripting;
 using GUC.Log;
 using GUC.Network;
 using GUC.Options;
+using System.Collections;
 
 namespace GUC
 {
@@ -64,7 +65,7 @@ namespace GUC
         {
             try
             {
-                ServerOptions.Load();
+                    ServerOptions.Load();
                 Console.Title = ServerOptions.ServerName;
 
                 ScriptManager.StartScripts("Scripts\\ServerScripts.dll");
