@@ -16,9 +16,18 @@ namespace GUC.Hooks.VDFS
         uint size;
         public uint Size { get { return this.size; } }
 
-        public VDFSFileInfo(string path, VDFSArchive archive, uint offset, uint size)
+        VDFSDirectoryInfo dirInfo;
+        public VDFSDirectoryInfo DirectoryInfo { get { return this.dirInfo; } }
+
+        public VDFSFileInfo(string path, VDFSDirectoryInfo dirInfo, VDFSArchive archive, uint offset, uint size)
         {
             this.path = path;
+            this.dirInfo = dirInfo;
+            SetSource(archive, offset, size);
+        }
+
+        public void SetSource(VDFSArchive archive, uint offset, uint size)
+        {
             this.archive = archive;
             this.offset = offset;
             this.size = size;

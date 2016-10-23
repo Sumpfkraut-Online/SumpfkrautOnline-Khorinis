@@ -95,11 +95,16 @@ namespace WinApi
 
         public static uint Write(byte[] obj, int position)
         {
+            return Write(obj, obj.Length, position);
+        }
+
+        public static uint Write(byte[] obj, int count, int position)
+        {
             if (position == 0)
                 throw new ArgumentException("Write position is 0!");
 
             uint byteWritten;
-            if (!ProcessImports.WriteProcessMemory(Handle, new IntPtr(position), obj, (uint)obj.Length, out byteWritten))
+            if (!ProcessImports.WriteProcessMemory(Handle, new IntPtr(position), obj, (uint)count, out byteWritten))
                 Error.GetLastError();
 
             return byteWritten;

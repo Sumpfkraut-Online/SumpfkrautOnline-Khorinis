@@ -8,6 +8,7 @@ using GUC.Scripting;
 using GUC.Log;
 using GUC.Network;
 using GUC.Options;
+using System.Collections;
 
 namespace GUC
 {
@@ -64,9 +65,9 @@ namespace GUC
         {
             try
             {
-                ServerOptions.Load();
+                    ServerOptions.Load();
                 Console.Title = ServerOptions.ServerName;
-                
+
                 ScriptManager.StartScripts("Scripts\\ServerScripts.dll");
 
                 server = new Thread(RunServer);
@@ -93,7 +94,7 @@ namespace GUC
 
                 const long nextInfoUpdateInterval = 1 * TimeSpan.TicksPerMinute;
                 long nextInfoUpdateTime = GameTime.Ticks + nextInfoUpdateInterval;
-                
+
                 TimeStat timeAll = new TimeStat();
                 while (true)
                 {
@@ -111,7 +112,7 @@ namespace GUC
                         nextInfoUpdateTime = GameTime.Ticks + nextInfoUpdateInterval;
                     }
 
-                    long diff = (updateRate - timeAll.Stop())/ TimeSpan.TicksPerMillisecond;
+                    long diff = (updateRate - timeAll.Stop()) / TimeSpan.TicksPerMillisecond;
                     if (diff > 0)
                     {
                         Thread.Sleep((int)diff);

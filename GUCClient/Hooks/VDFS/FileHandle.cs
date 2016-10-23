@@ -13,7 +13,10 @@ namespace GUC.Hooks.VDFS
         void Close();
         void Seek(long position);
         long GetSize();
-        int Read(int ptr, int count);
+        int Read(byte[] buf, int offset, int count);
+        long GetPos();
+
+        string GetFileName();
     }
 
     class FileHandle : IFileHandle
@@ -47,12 +50,19 @@ namespace GUC.Hooks.VDFS
             return info.Length;
         }
 
-        public int Read(int ptr, int count)
+        public int Read(byte[] buf, int offset, int count)
         {
-            byte[] buf = new byte[count];
-            int readBytes = stream.Read(buf, 0, count);
-            Process.Write(buf, ptr);
-            return readBytes;
+            return stream.Read(buf, offset, count);
+        }
+
+        public long GetPos()
+        {
+            return stream.Position;
+        }
+
+        public string GetFileName()
+        {
+            return info.Name;
         }
     }
 
@@ -88,12 +98,20 @@ namespace GUC.Hooks.VDFS
             return info.Size;
         }
 
-        public int Read(int ptr, int count)
+        public int Read(byte[] buf, int offset, int count)
         {
-            byte[] buf = new byte[count];
-            int readBytes = stream.Read(buf, 0, count);
-            Process.Write(buf, ptr);
-            return readBytes;
+            long rest = GetSize() - GetPos();
+            return stream.Read(buf, offset, count > rest ? (int)rest : count);
+        }
+
+        public long GetPos()
+        {
+            return stream.Position - info.Offset;
+        }
+
+        public string GetFileName()
+        {
+            return Path.GetFileName(info.Path);
         }
     }
 }
