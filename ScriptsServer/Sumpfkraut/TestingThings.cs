@@ -22,8 +22,27 @@ namespace GUC.Scripts.Sumpfkraut
         {
             //Logger.Log(Directory.GetCurrentDirectory());
 
+            //string dbFilePath = Directory.GetCurrentDirectory() + @"\DB\someDB.db";
+            //string dataSource = "data source=" + Directory.GetCurrentDirectory() + @"\DB\someDB.db";
+            //Logger.Log("-------> " + dbFilePath);
+            //SqliteConnection.CreateFile(Directory.GetCurrentDirectory() + @"\DB\someDB.db");
 
-            //DBReader.SaveToDB(Directory.GetCurrentDirectory() + @"\DB\someDB.db",
+            //List<List<List<object>>> results = new List<List<List<object>>>();
+            //DBReader.LoadFromDB(ref results, "SELECT 1;", dataSource);
+            //Logger.Log(results[0][0][0]);
+
+            //List<List<List<object>>> results = new List<List<List<object>>>();
+            //DBReader.LoadFromDB(ref results,  @"DROP TABLE IF EXISTS WorldEffect;
+            //    CREATE TABLE IF NOT EXISTS WorldEffect
+            //    (
+            //        WorldEffectID INTEGER NOT NULL,
+            //        ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            //        CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            //        CONSTRAINT WorldEffect_PK PRIMARY KEY (WorldEffectID)
+            //    );", dataSource);
+            //Logger.Log(results[0][0][0]);
+
+            //DBReader.SaveToDB("data source=" + Directory.GetCurrentDirectory() + @"\DB\someDB.db",
             //    @"DROP TABLE IF EXISTS WorldEffect;
             //    CREATE TABLE IF NOT EXISTS WorldEffect
             //    (
@@ -33,18 +52,25 @@ namespace GUC.Scripts.Sumpfkraut
             //        CONSTRAINT WorldEffect_PK PRIMARY KEY (WorldEffectID)
             //    );");
 
-            //List<List<List<object>>> results = new List<List<List<object>>>();
-            //DBReader.LoadFromDB(ref results, "SELECT 1;", Directory.GetCurrentDirectory() + @"\DB\myDB.db");
 
+
+            //string dataSource = string.Format("data source=\"{0}\"", 
+            //    "\\DB\\someDB.db");
+
+            //Log.Logger.Log(">>>>> " + dataSource);
+
+            //List<List<List<object>>> results = new List<List<List<object>>>();
+            //DBReader.LoadFromDB(ref results, "SELECT 1;", dataSource);
+
+            //Mono.Data.Sqlite.SqliteConnectionStringBuilder csb = new Mono.Data.Sqlite.SqliteConnectionStringBuilder();
+            //csb.DataSource = Directory.GetCurrentDirectory() + @"\DB\someDB.db";
+            //Log.Logger.Log(">>>>> " + csb.ConnectionString);
 
 
 
             //WorldSystem.WorldLoader worldLoader = new WorldSystem.WorldLoader(">>GOTCHA<<",
             //    Directory.GetCurrentDirectory() + @"\DB\someDB.sqlite");
             //worldLoader.Load();
-
-            //string bla = "Miami Vice";
-            //Logger.Log(bla);
 
             //Logger.Log(WorldSystem.WorldLoader.DBStructure["WorldEffect"]);
 

@@ -55,7 +55,9 @@ namespace GUC.Scripts.Sumpfkraut.Database
         {
             using (SqliteConnection con = new SqliteConnection())
             {
-                con.ConnectionString = string.Format("Data Source={0};", dataSource);
+                con.ConnectionString = dataSource;
+                //con.ConnectionString = string.Format("Data Source={0};", dataSource);
+                //PrintStatic(typeof(DBReader), con.ConnectionString);
                 con.Open();
 
                 // security check and close connection if necessary
@@ -129,7 +131,8 @@ namespace GUC.Scripts.Sumpfkraut.Database
 
             using (SqliteConnection con = new SqliteConnection())
             {
-                con.ConnectionString = string.Format("Data Source={0};", dataSource);
+                con.ConnectionString = dataSource;
+                //con.ConnectionString = string.Format("Data Source={0};", dataSource);
                 con.Open();
 
                 // security check and close connection if necessary
@@ -146,14 +149,14 @@ namespace GUC.Scripts.Sumpfkraut.Database
                     return changedRows;
                 }
 
-                using (SQLiteCommand cmd = new SQLiteCommand(Sqlite.getSqlite().connection))
+                using (SQLiteCommand cmd = new SQLiteCommand(completeQuery, con))
                 {
                     cmd.CommandText = completeQuery;
 
                     SQLiteDataReader rdr = null;
                     try
                     {
-                        changedRows = cmd.ExecuteNonQuery();
+                        cmd.ExecuteReader();
                     }
                     catch (Exception ex)
                     {
