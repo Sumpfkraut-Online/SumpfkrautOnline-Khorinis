@@ -416,6 +416,14 @@ namespace GUC.Network
                     Vob.Messages.ReadThrow(stream);
                     break;
 
+                // ScriptVobMessages
+                case ServerMessages.ScriptVobMessage:
+                    ushort vobID = stream.ReadUShort();
+                    BaseVob vob;
+                    World.Current.TryGetVob((int)vobID, out vob);
+                    Client.ScriptObject.ReadScriptVobMessage(stream, vob);
+                    break;
+
                 // NPC Messages
                 case ServerMessages.NPCPosDirMessage:
                     NPC.Messages.ReadPosDirMessage(stream);
@@ -431,6 +439,9 @@ namespace GUC.Network
                     break;
                 case ServerMessages.NPCFightModeUnsetMessage:
                     NPC.Messages.ReadFightMode(stream, false);
+                    break;
+                case ServerMessages.NPCHealthMessage:
+                    NPC.Messages.ReadHealth(stream);
                     break;
 
                 // Player Messages

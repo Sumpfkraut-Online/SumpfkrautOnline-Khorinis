@@ -265,6 +265,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             this.SetHealth(hp, BaseInst.HPMax);
         }
 
+        public int GetHealth()
+        {
+            return this.BaseInst.HP;
+        }
+
         partial void pSetHealth(int hp, int hpmax);
         public void SetHealth(int hp, int hpmax)
         {

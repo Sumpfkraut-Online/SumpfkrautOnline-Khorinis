@@ -58,8 +58,8 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
             { "s_FIRESPIT_S2", "ItemHandling.UseTorch" },
 
             // 1h draw weapon
-            { "t_Run_2_1h", "Draw1H" },
-            { "t_1h_2_1hRun", "Conceal1H" }, // wron ani here
+            { "t_draw1H", "Draw1H" },
+            { "t_undraw1H", "Undraw1H" }, // wrong ani here
         };
 
         public class FightAnis : AniCatalog
@@ -104,7 +104,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
         public ScriptAniJob TakeItem { get; private set; }
         public ScriptAniJob DropItem { get; private set; }
         public ScriptAniJob Draw1H { get; private set; }
-        public ScriptAniJob Conceal1H { get; private set; }
+        public ScriptAniJob Undraw1H { get; private set; }
 
         public JumpAnis Jumps { get; private set; }
         public ItemHandlingAnis ItemHandling { get; private set; }

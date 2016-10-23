@@ -79,6 +79,9 @@ namespace GUC.Scripts.Sumpfkraut.Networking
                 case ScriptRequestMessageIDs.UseItem:
                     npc.UseItem(stream.ReadByte());
                     break;
+                default:
+                    Log.Logger.Log("Received Script RequestMessage with invalid ID: " + id.ToString());
+                    break;
             }
         }
     }
