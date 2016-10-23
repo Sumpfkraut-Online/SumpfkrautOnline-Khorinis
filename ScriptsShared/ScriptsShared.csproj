@@ -86,8 +86,6 @@
     <Compile Include="Sumpfkraut\WorldSystem\WorldDef.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldInst.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldLoader.cs" />
-    <Compile Include="TFFA\Enums.cs" />
-    <Compile Include="TFFA\TFFAClient.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GUCShared\GUCShared.csproj">

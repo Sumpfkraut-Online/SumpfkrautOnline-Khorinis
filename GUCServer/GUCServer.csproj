@@ -162,8 +162,6 @@
     <Compile Include="..\GUCShared\Utilities\FileSystem\FileSystemProtocol.cs">
       <Link>Utilities\FileSystem\FileSystemProtocol.cs</Link>
     </Compile>
-    <Compile Include="..\GUCShared\Utilities\FileSystem\ManipulationOption.cs">
-      <Link>Utilities\FileSystem\ManipulationOption.cs</Link>
     <Compile Include="..\GUCShared\Utilities\StringExtensions.cs">
       <Link>Utilities\StringExtensions.cs</Link>
     </Compile>

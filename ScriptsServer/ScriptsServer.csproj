@@ -161,8 +161,6 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\VobDefLoader.cs">
       <Link>Sumpfkraut\VobSystem\VobDefLoader.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\VobInstLoader.cs">
-      <Link>Sumpfkraut\VobSystem\VobInstLoader.cs</Link>
     <Compile Include="..\ScriptsShared\Sumpfkraut\WorldSystem\ScriptBarrierCtrl.cs">
       <Link>Sumpfkraut\WorldSystem\ScriptBarrierCtrl.cs</Link>
     </Compile>
@@ -180,12 +178,6 @@
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\WorldSystem\WorldLoader.cs">
       <Link>Sumpfkraut\WorldSystem\WorldLoader.cs</Link>
-    </Compile>
-    <Compile Include="..\ScriptsShared\TFFA\Enums.cs">
-      <Link>TFFA\Enums.cs</Link>
-    </Compile>
-    <Compile Include="..\ScriptsShared\TFFA\TFFAClient.cs">
-      <Link>TFFA\TFFAClient.cs</Link>
     </Compile>
     <Compile Include="Left4Gothic\L4Client.Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -284,8 +276,6 @@
     <Compile Include="Sumpfkraut\WorldSystem\WorldDef.Server.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldInst.Server.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldLoader.Server.cs" />
-    <Compile Include="TFFA\TFFACommands.cs" />
-    <Compile Include="TFFA\TFFAClient.Server.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GUCServer\GUCServer.csproj">

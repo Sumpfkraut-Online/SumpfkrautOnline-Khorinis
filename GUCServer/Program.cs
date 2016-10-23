@@ -14,6 +14,15 @@ namespace GUC
 {
     public static class Program
     {
+        private static long updateRate = 0L;
+        public static long UpdateRate { get { return updateRate; } }
+
+        private static long timeTillNextUpdate = 0L;
+        public static long TimeTillNextUpdate { get { return timeTillNextUpdate; } }
+
+        private static TimeStat timeAll = new TimeStat();
+        public static long CurrentElapsedTicks { get { return timeAll.Ticks; } }
+
         class TimeStat
         {
             long tickCount;
@@ -65,7 +74,7 @@ namespace GUC
         {
             try
             {
-                    ServerOptions.Load();
+                ServerOptions.Load();
                 Console.Title = ServerOptions.ServerName;
 
                 ScriptManager.StartScripts("Scripts\\ServerScripts.dll");
@@ -86,6 +95,8 @@ namespace GUC
             Console.ReadLine();
         }
 
+        public delegate void OnTickEventHandler();
+        public static event OnTickEventHandler OnTick;
         static void RunServer()
         {
             try
@@ -101,9 +112,12 @@ namespace GUC
                     timeAll.Start();
 
                     GameTime.Update();
+                    if (OnTick != null) { OnTick(); }
+
                     GUCTimer.Update(GameTime.Ticks); // move to new thread?
                     GameServer.Update(); //process received packets
-                    WorldObjects.World.UpdateWorlds(GameTime.Ticks);
+                    //WorldObjects.World.UpdateWorlds(GameTime.Ticks);
+                    WorldObjects.World.ForEach(w => w.OnTick(GameTime.Ticks));
 
                     if (nextInfoUpdateTime < GameTime.Ticks)
                     {

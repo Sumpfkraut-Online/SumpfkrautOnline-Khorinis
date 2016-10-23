@@ -145,12 +145,6 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\WorldSystem\WorldLoader.cs">
       <Link>Sumpfkraut\WorldSystem\WorldLoader.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptsShared\TFFA\Enums.cs">
-      <Link>TFFA\Enums.cs</Link>
-    </Compile>
-    <Compile Include="..\ScriptsShared\TFFA\TFFAClient.cs">
-      <Link>TFFA\TFFAClient.cs</Link>
-    </Compile>
     <Compile Include="Left4Gothic\CharCreationMenu.cs" />
     <Compile Include="Left4Gothic\CCExitMenu.cs" />
     <Compile Include="Left4Gothic\L4Client.Client.cs" />

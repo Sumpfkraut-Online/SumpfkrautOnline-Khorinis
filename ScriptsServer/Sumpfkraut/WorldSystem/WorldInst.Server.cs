@@ -14,6 +14,12 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
             this.definition = def;
         }
 
+        public WorldInst(WorldDef def, string objName)
+           : this(objName)
+        {
+            this.definition = def;
+        }
+
         partial void pCreate()
         {
             this.Weather.StartRainTimer();
