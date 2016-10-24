@@ -10,9 +10,9 @@ DROP TABLE IF EXISTS WorldDef;
 CREATE TABLE IF NOT EXISTS WorldDef 
 (
     WorldDefID INTEGER NOT NULL, -- unique primary key id
-    WorldDefName Text NOT NULL, -- descriptive name
-    FilePath Text NOT NULL, -- relative path to the corresponding SqLite-file
-    Description Text DEFAULT "", -- optional description
+    WorldDefName TEXT NOT NULL, -- descriptive name
+    FilePath TEXT NOT NULL, -- relative path to the corresponding SqLite-file
+    Description TEXT DEFAULT "", -- optional description
     ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of last change made
     CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of creation
     CONSTRAINT WorlDef_PK PRIMARY KEY (WorldDefID) 
@@ -30,10 +30,10 @@ DROP TABLE IF EXISTS WorldInst;
 CREATE TABLE IF NOT EXISTS WorldInst 
 (
     WorldInstID INTEGER NOT NULL, -- unique primary key id
-    WorldInstName Text NOT NULL, -- descriptive name
+    WorldInstName TEXT NOT NULL, -- descriptive name
     WorldDefID INTEGER NOT NULL, -- origin, this WorldInst relates to (uses content of WorldDef)
-    FilePath Text NOT NULL, -- relative path to the corresponding SqLite-file
-    Description Text DEFAULT "", -- optional description
+    FilePath TEXT NOT NULL, -- relative path to the corresponding SqLite-file
+    Description TEXT DEFAULT "", -- optional description
     ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of last change made
     CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of creation
     CONSTRAINT WorldInst_PK PRIMARY KEY (WorldInstID)
@@ -126,9 +126,9 @@ DROP TABLE IF EXISTS ModelDef;
 CREATE TABLE IF NOT EXISTS ModelDef 
 (
     ModelDefID INTEGER NOT NULL, -- unique primary key id
-    ModelDefName Text NOT NULL, -- descriptive name
+    ModelDefName TEXT NOT NULL, -- descriptive name
     IsStatic INTEGER DEFAULT 0 CHECK ((IsStatic == 0) OR (IsStatic == 1)), -- static objects are already uploaded for the clients to download on their local hard drive !!! MIGHT AS WELL SAVE IT AS ANOTHER EFFECT ?!?
-    Visual Text NOT NULL, -- Gothic visual name
+    Visual TEXT NOT NULL, -- Gothic visual name
     ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of last change made
     CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of creation
     CONSTRAINT ModelDef_PK PRIMARY KEY (ModelDefID)
@@ -141,21 +141,71 @@ BEGIN
     UPDATE ModelDef SET ChangeDate = CURRENT_TIMESTAMP WHERE ModelDef = OLD.ModelDef;
 END;
 
+-- list of ScriptOverlay --
+DROP TABLE IF EXISTS ScriptOverlay;
+CREATE TABLE IF NOT EXISTS ScriptOverlay 
+(
+    ScriptOverlayID INTEGER NOT NULL, -- unique primary key id
+    ModelDefID INTEGER NOT NULL,
+    CodeName TEXT NOT NULL,
+    ScriptOverlayName TEXT NOT NULL, -- descriptive name
+    ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of last change made
+    CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of creation
+    CONSTRAINT ScriptOverlay_PK PRIMARY KEY (ScriptOverlayID),
+    FOREIGN KEY (ModelDefID) REFERENCES ModelDef(ModelDefID)
+);
+
+CREATE TRIGGER Update_ScriptOverlay
+    AFTER UPDATE
+    ON ScriptOverlay
+BEGIN
+    UPDATE ScriptOverlay SET ChangeDate = CURRENT_TIMESTAMP WHERE ScriptOverlayID = OLD.ScriptOverlayID;
+END;
+
 -- list of ScriptAni --
 DROP TABLE IF EXISTS ScriptAni;
 CREATE TABLE IF NOT EXISTS ScriptAni 
 (
     ScriptAniID INTEGER NOT NULL, -- unique primary key id
+    ScriptOverlayID INTEGER NOT NULL,
+    ScriptAnyJobID INTEGER NOT NULL,
+    Layer INTEGER NOT NULL,
+    Duration INTEGER NOT NULL,
+    StartFrame INTEGER NOT NULL,
+    EndFrame INTEGER NOT NULL,
     ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of last change made
     CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of creation
-    CONSTRAINT ModelDef_PK PRIMARY KEY (ModelDefID)
+    CONSTRAINT ScriptAni_PK PRIMARY KEY (ScriptAniID),
+    FOREIGN KEY (ScriptOverlayID) REFERENCES ScriptOverlay(ScriptOverlayID),
+    FOREIGN KEY (ScriptAnyJobID) REFERENCES ScriptAnyJob(ScriptAnyJobID)
 );
 
-CREATE TRIGGER Update_ModelDef
+CREATE TRIGGER Update_ScriptAni
     AFTER UPDATE
     ON ScriptAni
 BEGIN
-    UPDATE ScriptAni SET ChangeDate = CURRENT_TIMESTAMP WHERE ScriptAni = OLD.ScriptAni;
+    UPDATE ScriptAni SET ChangeDate = CURRENT_TIMESTAMP WHERE ScriptAniID = OLD.ScriptAniID;
+END;
+
+-- list of ScriptAniJob--
+DROP TABLE IF EXISTS ScriptAniJob;
+CREATE TABLE IF NOT EXISTS ScriptAniJob 
+(
+    ScriptAniJobD INTEGER NOT NULL, -- unique primary key id
+    ScriptAniID INTEGER NOT NULL,
+    AniName TEXT NOT NULL,
+    AniJobType INTEGER NOT NULL,
+    ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of last change made
+    CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of creation
+    CONSTRAINT ScriptAniJob_PK PRIMARY KEY (ScriptAniJobID),
+    FOREIGN KEY (ScriptAniID) REFERENCES ScriptAni(ScriptAniID)
+);
+
+CREATE TRIGGER Update_ScriptOverlay
+    AFTER UPDATE
+    ON ScriptAniJob
+BEGIN
+    UPDATE ScriptAniJob SET ChangeDate = CURRENT_TIMESTAMP WHERE ScriptAniJobID = OLD.ScriptAniJobID;
 END;
 
 -- >> static and dynamic content management << --
