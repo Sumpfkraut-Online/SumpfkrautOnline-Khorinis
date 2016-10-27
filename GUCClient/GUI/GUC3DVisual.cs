@@ -21,7 +21,12 @@ namespace GUC.GUI
             zView.FillZ = true;
         }
 
-        oCItem vob = oCItem.Create();
+        zCVob vob = zCVob.Create();
+
+        public void SetVob(zCVob vob)
+        {
+            this.vob = vob;
+        }
 
         public void SetVisual(string name)
         {

@@ -34,28 +34,36 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="RakNetSwig">
+      <HintPath>..\RakNet\RakNetSwig.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Animations\ActiveAni.cs" />
     <Compile Include="Animations\AniJob.cs" />
     <Compile Include="Animations\Animation.cs" />
     <Compile Include="Animations\Overlay.cs" />
-    <Compile Include="Enumeration\HumanVisuals.cs" />
-    <Compile Include="Enumeration\NPCStates.cs" />
-    <Compile Include="Enumeration\VobTypes.cs" />
-    <Compile Include="Enumeration\ItemEnums.cs" />
-    <Compile Include="Enumeration\NetworkIDS.cs" />
-    <Compile Include="Enumeration\WeatherTypes.cs" />
+    <Compile Include="Network\ClientMessages.cs" />
+    <Compile Include="Network\PacketEnums.cs" />
+    <Compile Include="Types\NPCMovement.cs" />
+    <Compile Include="Utilities\StringExtensions.cs" />
+    <Compile Include="Utilities\XMLHelper.cs" />
+    <Compile Include="WorldObjects\ItemContainers\NPCInventory.cs" />
+    <Compile Include="Types\VobTypes.cs" />
+    <Compile Include="Network\ServerMessages.cs" />
+    <Compile Include="Types\WeatherTypes.cs" />
+    <Compile Include="GameObjects\GameObject.cs" />
     <Compile Include="GameTime.cs" />
     <Compile Include="Log\Logger.cs" />
     <Compile Include="Models\Model.cs" />
+    <Compile Include="Models\ModelInstance.cs" />
     <Compile Include="Network\GameClient.cs" />
     <Compile Include="Network\PacketReader.cs" />
     <Compile Include="Network\PacketWriter.cs" />
-    <Compile Include="Constants.cs" />
-    <Compile Include="Randomizer.cs" />
+    <Compile Include="Utilities\Randomizer.cs" />
     <Compile Include="Utilities\ExtendedObject.cs" />
     <Compile Include="Utilities\FileSystem\Enumeration.cs" />
     <Compile Include="Utilities\FileSystem\FileSystemManager.cs" />
@@ -63,17 +71,16 @@
     <Compile Include="Utilities\FileSystem\ManipulationOption.cs" />
     <Compile Include="Utilities\Threading\AbstractRunnable.cs" />
     <Compile Include="Utilities\Threading\Runnable.cs" />
-    <Compile Include="Utilities\XmlObj.cs" />
     <Compile Include="Scripting\ScriptManager.cs" />
     <Compile Include="Scripting\Timer.cs" />
     <Compile Include="Types\ColorRGBA.cs" />
     <Compile Include="Types\Vec2i.cs" />
     <Compile Include="Types\Vec3f.cs" />
-    <Compile Include="DynamicCollection.cs" />
-    <Compile Include="GODictionary.cs" />
-    <Compile Include="WorldObjects\AnimatedVob\AnimatedVob.cs" />
-    <Compile Include="WorldObjects\Collections\ItemContainer.cs" />
-    <Compile Include="StaticCollection.cs" />
+    <Compile Include="GameObjects\Collections\DynamicCollection.cs" />
+    <Compile Include="GameObjects\Collections\IDODictionary.cs" />
+    <Compile Include="WorldObjects\ItemContainers\ItemContainer.cs" />
+    <Compile Include="WorldObjects\ItemContainers\ItemInventory.cs" />
+    <Compile Include="GameObjects\Collections\StaticCollection.cs" />
     <Compile Include="WorldObjects\Collections\VobTypeObjectCollection.cs" />
     <Compile Include="WorldObjects\VobGuiding\GuideCmd.cs" />
     <Compile Include="WorldObjects\VobGuiding\GuidedVob.cs" />
@@ -107,11 +114,13 @@
     <Compile Include="WorldObjects\NPC.cs" />
     <Compile Include="WorldObjects\Projectile.cs" />
     <Compile Include="WorldObjects\Vob.cs" />
-    <Compile Include="WorldObjects\Weather\SkyController.cs" />
+    <Compile Include="WorldObjects\WorldGlobals\BarrierController.cs" />
+    <Compile Include="WorldObjects\WorldGlobals\SkyController.cs" />
     <Compile Include="WorldObjects\World.cs" />
-    <Compile Include="GameObject.cs" />
-    <Compile Include="WorldObjects\Time\WorldTime.cs" />
-    <Compile Include="WorldObjects\Time\WorldClock.cs" />
+    <Compile Include="GameObjects\IDObject.cs" />
+    <Compile Include="WorldObjects\WorldGlobals\WeatherController.cs" />
+    <Compile Include="Types\WorldTime.cs" />
+    <Compile Include="WorldObjects\WorldGlobals\WorldClock.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

@@ -87,7 +87,7 @@ namespace GUC.Hooks
         static void initDefaultScripts()
         {
             
-            string dPath = Program.GetFullPath(@"_work\data\scripts");
+            string dPath = Path.GetFullPath(@"_work\data\scripts");
 
             if (!Directory.Exists(dPath))
                 Directory.CreateDirectory(dPath);

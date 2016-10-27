@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Network;
-using GUC.Enumeration;
+using GUC.Types;
 
 namespace GUC.WorldObjects.Instances.Mobs
 {
@@ -17,10 +17,14 @@ namespace GUC.WorldObjects.Instances.Mobs
         {
         }
 
-        public new IScriptMobFireInstance ScriptObject
+        public new IScriptMobFireInstance ScriptObject { get { return (IScriptMobFireInstance)base.ScriptObject; } }
+
+        #endregion
+
+        #region Constructors
+
+        public MobFireInstance(IScriptMobFireInstance scriptObject) : base(scriptObject)
         {
-            get { return (IScriptMobFireInstance)base.ScriptObject; }
-            set { base.ScriptObject = value; }
         }
 
         #endregion

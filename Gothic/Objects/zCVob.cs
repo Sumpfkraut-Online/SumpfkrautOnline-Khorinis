@@ -233,7 +233,7 @@ namespace Gothic.Objects
             return new zCVob(address);
         }
 
-        public virtual void Dispose()
+        public override void Dispose()
         {
             Process.THISCALL<NullReturnCall>(Address, 0x5FE440, (BoolArg)true);
         }
@@ -241,6 +241,7 @@ namespace Gothic.Objects
         public int Type
         {
             get { return Process.ReadInt(Address + VarOffsets.type); }
+            set { Process.Write(value, Address + VarOffsets.type); }
         }
 
         public virtual void SetVisual(zCVisual vis)

@@ -37,8 +37,12 @@ namespace GUCLauncher
             
             if (File.Exists(zSpyApp))
             {
+                string logFolder = Path.GetFullPath(Path.Combine(projectFolder, "Log"));
+                if (!Directory.Exists(logFolder))
+                    Directory.CreateDirectory(logFolder);
+
                 ProcessStartInfo zSpyPsi = new ProcessStartInfo(zSpyApp);
-                zSpyPsi.WorkingDirectory = Path.GetFullPath(Path.Combine(projectFolder, "Log"));
+                zSpyPsi.WorkingDirectory = logFolder;
                 Process.Start(zSpyPsi);
                 g2Psi.Arguments = "-zlog:5,s";
             }

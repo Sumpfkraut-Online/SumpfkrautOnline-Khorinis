@@ -5,10 +5,11 @@ using System.Text;
 using GUC.Models;
 using GUC.Network;
 using GUC.Scripting;
+using GUC.GameObjects;
 
 namespace GUC.Animations
 {
-    public partial class Overlay : GameObject
+    public partial class Overlay : IDObject
     {
         #region ScriptObject
 
@@ -16,10 +17,14 @@ namespace GUC.Animations
         {
         }
 
-        new public IScriptOverlay ScriptObject
+        new public IScriptOverlay ScriptObject { get { return (IScriptOverlay)base.ScriptObject; } }
+
+        #endregion
+
+        #region Constructors
+
+        public Overlay(IScriptOverlay scriptObject) : base(scriptObject)
         {
-            get { return (IScriptOverlay)base.ScriptObject; }
-            set { base.ScriptObject = value; }
         }
 
         #endregion
@@ -33,21 +38,28 @@ namespace GUC.Animations
         public string Name
         {
             get { return this.name; }
-            set { if (value == null) this.name = ""; else this.name = value.ToUpper(); }
+            set
+            {
+                CanChangeNow();
+                if (value == null)
+                    this.name = "";
+                else
+                    this.name = value.ToUpper();
+            }
         }
 
-        Model model;
+        ModelInstance model;
         /// <summary>
         /// The associated model of this overlay.
         /// </summary>
-        public Model Model { get { return this.model; } }
+        public ModelInstance Model { get { return this.model; } }
 
         /// <summary>
         /// Is true when this is added to a model.
         /// </summary>
         public bool IsCreated { get { return this.isCreated; } }
 
-        internal void SetModel(Model model)
+        internal void SetModel(ModelInstance model)
         {
             this.model = model;
             this.isCreated = model != null;

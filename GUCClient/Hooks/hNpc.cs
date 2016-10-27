@@ -5,7 +5,6 @@ using System.Text;
 using GUC.Log;
 using WinApi;
 using GUC.WorldObjects;
-using GUC.Enumeration;
 
 namespace GUC.Hooks
 {
@@ -40,9 +39,9 @@ namespace GUC.Hooks
             int npcAddr = hook.GetESI();
 
             NPC npc;
-            if (World.current.TryGetVobByAddress(npcAddr, out npc))
+            if (World.Current.TryGetVobByAddress(npcAddr, out npc))
             {
-                npc.DoSetState(MoveState.Forward);
+                //npc.DoSetState(MoveState.Forward);
             }
         }
 
@@ -51,9 +50,9 @@ namespace GUC.Hooks
             int npcAddr = hook.GetESI();
 
             NPC npc;
-            if (World.current.TryGetVobByAddress(npcAddr, out npc))
+            if (World.Current.TryGetVobByAddress(npcAddr, out npc))
             {
-                npc.DoSetState(MoveState.Stand);
+                //npc.DoSetState(MoveState.Stand);
             }
         }
     }

@@ -22,7 +22,7 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
         public static readonly Dictionary<string, ProcessCommand> CmdToProcessFunc =
             new Dictionary<string, ProcessCommand>()
             {
-                { "/GETPLAYERS", TFFA.TFFACommands.GetPlayerListTFFA },
+                /*{ "/GETPLAYERS", TFFA.TFFACommands.GetPlayerListTFFA },
                 { "/BAN", TFFA.TFFACommands.BanPlayersTFFA },
                 { "/KICK", TFFA.TFFACommands.KickPlayersTFFA },
                 { "/KILL", TFFA.TFFACommands.KillPlayersTFFA },
@@ -30,7 +30,7 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
                 { "/SETWT", TFFA.TFFACommands.SetIGWeatherTypeTFFA },
                 { "/SETRAIN", TFFA.TFFACommands.SetIGRainTimeTFFA },
                 { "/SWITCHTEAM", TFFA.TFFACommands.SwitchTeamTFFA },
-                { "/SETPHASE", TFFA.TFFACommands.SetPhaseTFFA },
+                { "/SETPHASE", TFFA.TFFACommands.SetPhaseTFFA },*/
                 //{ "/G", TestCommands.SetIgTime }, // send global text-message (TO DO)
                 //{ "/GETPOS", TestCommands.SetIgTime }, // get pos. of youself or another player/vob? (TO DO)
                 //{ "/KILL", TestCommands.SetIgTime }, // kill vob in focus (TO DO)

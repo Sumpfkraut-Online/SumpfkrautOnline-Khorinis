@@ -16,6 +16,7 @@ namespace GUC.Network
 
         byte[] data;
         int length;
+        public int Length { get { return this.length; } }
 
         internal PacketReader()
         {
@@ -40,7 +41,7 @@ namespace GUC.Network
 
         #region Decompressing
 
-        internal void Decompress()
+        /*internal void Decompress()
         {
             int uncompressedLen = ReadInt();
             int compressedLen = ReadInt();
@@ -64,7 +65,7 @@ namespace GUC.Network
 
             data = newData;
             length = newLen;
-        }
+        }*/
 
         #endregion
 
@@ -139,6 +140,13 @@ namespace GUC.Network
         {
             Buffer.BlockCopy(data, currentByte, arr, startIndex, length);
             currentByte += length;
+        }
+
+        public byte[] ReadBytes(int count)
+        {
+            byte[] ret = new byte[count];
+            Read(ret, 0, count);
+            return ret;
         }
 
         const int MaxStringLength = short.MaxValue;

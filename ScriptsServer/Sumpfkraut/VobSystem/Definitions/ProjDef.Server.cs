@@ -8,8 +8,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
     public partial class ProjDef
     {
-        public ProjDef(string codeName) : base(new ProjectileInstance(), codeName)
+        public ProjDef(string codeName) : this()
         {
+            this.CodeName = codeName;
         }
     }
 }

@@ -5,87 +5,125 @@ using System.Text;
 using GUC.Network;
 using GUC.Scripting;
 using GUC.Models;
+using GUC.GameObjects;
 
 namespace GUC.Animations
 {
-    public class Animation
+    /// <summary>
+    /// An Animation of an Overlay contains frame and layer information for the animation system.
+    /// </summary>
+    public class Animation : GameObject
     {
         #region ScriptObject
 
-        public interface IScriptAnimation : GameObject.IScriptGameObject
+        public interface IScriptAnimation : IScriptGameObject
         {
         }
 
-        public IScriptAnimation ScriptObject;
+        new public IScriptAnimation ScriptObject { get { return (IScriptAnimation)base.ScriptObject; } }
+
+        #endregion
+
+        #region Constructors
+
+        public Animation(IScriptAnimation scriptObject) : base(scriptObject)
+        {
+        }
 
         #endregion
 
         #region Properties
 
-        /// <summary>
-        /// Layer number, pls sync with Gothic's animations. (byte)
-        /// </summary>
-        public int LayerID = 1;
-
-        int duration = 0;
-        /// <summary>
-        /// Duration of the animation in ticks. (int)
-        /// </summary>
-        public int Duration
+        void CanChangeNow()
         {
-            get { return this.duration; }
-            set
-            {
-                if (value < 0)
-                    throw new ArgumentOutOfRangeException("Duration can't be < 0!");
-                this.duration = value;
-            }
+            if (this.aniJob != null && this.aniJob.ModelInstance != null && this.aniJob.ModelInstance.IsCreated)
+                throw new NotSupportedException("Can't change value when the Animation's ModelInstace is already created!");
         }
 
-        int startFrame = 0;
+        float startFrame = 0;
         /// <summary>
-        /// From which frame the gothic animation should start. (ushort)
+        /// From which frame the gothic animation should start.
         /// </summary>
-        public int StartFrame
+        public float StartFrame
         {
             get { return this.startFrame; }
             set
             {
-                if (value < 0 || value > ushort.MaxValue)
-                    throw new ArgumentOutOfRangeException("StartFrame is out of range! 0.." + ushort.MaxValue);
+                CanChangeNow();
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException("StartFrame needs to be greater than or zero! Is " + value);
 
                 this.startFrame = value;
             }
         }
 
-        int endFrame = 0;
+        float endFrame = 0;
         /// <summary>
-        /// At what frame the gothic animation should end. (ushort) EndFrame = 0 plays the whole animation
+        /// At what frame the gothic animation should end. EndFrame = 0 plays the whole animation
         /// </summary>
-        public int EndFrame
+        public float EndFrame
         {
             get { return this.endFrame; }
             set
             {
-                if (value < 0 || value > ushort.MaxValue)
-                    throw new ArgumentOutOfRangeException("EndFrame is out of range! 0.." + ushort.MaxValue);
+                CanChangeNow();
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException("EndFrame needs to be greater than or zero! Is " + value);
 
                 this.endFrame = value;
             }
         }
 
+        float fps = 25;
+        /// <summary>
+        /// The the frame speed.
+        /// </summary>
+        public float FPS
+        {
+            get { return this.fps; }
+            set
+            {
+                CanChangeNow();
+                if (value <= 0)
+                    throw new ArgumentOutOfRangeException("FPS needs to be greater than zero! Is " + value);
+
+                this.fps = value;
+            }
+        }
+
+        /// <summary>
+        /// The number of frames of this Animation.
+        /// </summary>
+        public float GetFrameNum() { return this.endFrame - this.startFrame; }
+
+        /// <summary> Calculates the duration of this animation in ticks (1/10000ms). </summary>
+        public long GetDuration()
+        {
+            return GetDuration(1.0f);
+        }
+
+        /// <summary> Calculates the duration of this animation in ticks (1/10000ms). </summary>
+        /// <param name="fpsMult"> Frame speed multiplier. </param>
+        public long GetDuration(float fpsMult)
+        {
+            return (long)((this.endFrame - this.startFrame) / (fps * fpsMult) * TimeSpan.TicksPerSecond);
+        }
+
         Overlay overlay;
         /// <summary>
-        /// The overlay of this animation.
+        /// The Overlay of this Animation.
         /// </summary>
         public Overlay Overlay { get { return this.overlay; } }
 
         AniJob aniJob;
         /// <summary>
-        /// The associated AniJob of this animation.
+        /// The associated AniJob of this Animation.
         /// </summary>
         public AniJob AniJob { get { return this.aniJob; } }
 
+        /// <summary>
+        /// Is true if this Animation is added to an AniJob.
+        /// </summary>
         public bool IsCreated { get { return this.aniJob != null; } }
 
         internal void SetAniJob(AniJob job, Overlay overlay)
@@ -98,44 +136,18 @@ namespace GUC.Animations
 
         #region Read & Write
 
-        void WriteProperties(PacketWriter stream)
+        protected override void ReadProperties(PacketReader stream)
         {
-            stream.Write(duration);
-            stream.Write((ushort)startFrame);
-            stream.Write((ushort)endFrame);
-            stream.Write((byte)LayerID);
+            this.startFrame = stream.ReadFloat();
+            this.endFrame = stream.ReadFloat();
+            this.fps = stream.ReadFloat();
         }
 
-        void ReadProperties(PacketReader stream)
+        protected override void WriteProperties(PacketWriter stream)
         {
-            this.duration = stream.ReadInt();
-            this.startFrame = stream.ReadUShort();
-            this.endFrame = stream.ReadUShort();
-            this.LayerID = stream.ReadByte();
-        }
-
-        /// <summary>
-        /// Writes all base & script properties into the stream.
-        /// </summary>
-        public void WriteStream(PacketWriter stream)
-        {
-            if (stream == null)
-                throw new ArgumentNullException("Stream is null!");
-
-            this.WriteProperties(stream);
-            this.ScriptObject.OnWriteProperties(stream);
-        }
-
-        /// <summary>
-        /// Reads all base & script properties into the object.
-        /// </summary>
-        public void ReadStream(PacketReader stream)
-        {
-            if (stream == null)
-                throw new ArgumentNullException("Stream is null!");
-
-            this.ReadProperties(stream);
-            this.ScriptObject.OnReadProperties(stream);
+            stream.Write(startFrame);
+            stream.Write(endFrame);
+            stream.Write(fps);
         }
 
         #endregion

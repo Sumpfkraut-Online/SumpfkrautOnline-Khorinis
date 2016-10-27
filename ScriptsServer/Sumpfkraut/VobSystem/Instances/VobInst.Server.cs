@@ -8,12 +8,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class VobInst
     {
-        public VobInst(VobDef def) : this(def, new WorldObjects.Vob())
+        public VobInst(VobDef def) : this()
         {
-        }
-        
-        protected VobInst(VobDef def, WorldObjects.Vob baseInst) : base(def, baseInst)
-        {
+            this.Definition = def;
         }
     }
 }

@@ -95,14 +95,29 @@ namespace WinApi
 
         public static uint Write(byte[] obj, int position)
         {
-            if (position == 0)
-                throw new Exception("Write position is 0!");
+            return Write(obj, obj.Length, position);
+        }
 
-            uint byteWritten = 0;
-            if (!Kernel.ProcessImports.WriteProcessMemory(Handle, new IntPtr(position), obj, (uint)obj.Length, out byteWritten))
+        public static uint Write(byte[] obj, int count, int position)
+        {
+            if (position == 0)
+                throw new ArgumentException("Write position is 0!");
+
+            uint byteWritten;
+            if (!ProcessImports.WriteProcessMemory(Handle, new IntPtr(position), obj, (uint)count, out byteWritten))
                 Error.GetLastError();
 
             return byteWritten;
+        }
+
+        public static uint Nop(int count, int position)
+        {
+            byte[] buf = new byte[count];
+            for (int i = 0; i < count; i++)
+                buf[i] = 0x90;
+
+            return Write(buf, position);
+
         }
 
         public static bool ReadBool(int position)
@@ -147,6 +162,18 @@ namespace WinApi
             if (!ProcessImports.ReadProcessMemory(Handle, new IntPtr(position), bytes, count, ref size))
                 Error.GetLastError();
             return bytes;
+        }
+
+        public static uint Read(int position, byte[] buffer, uint count)
+        {
+            if (position == 0)
+                throw new Exception("Process.Read position is 0!");
+            
+            uint bytesRead = 0;
+            if (!ProcessImports.ReadProcessMemory(Handle, new IntPtr(position), buffer, count, ref bytesRead))
+                Error.GetLastError();
+
+            return bytesRead;
         }
 
         #endregion
@@ -378,7 +405,7 @@ namespace WinApi
             int ebpPtr = ediPtr + 4;
             int esiPtr = ebpPtr + 4;
 
-            uint funcLen = 104 + argCount * 9 + length;
+            uint funcLen = 108 + argCount * 9 + length;
             int funcPtr = Alloc(funcLen).ToInt32();
             List<byte> funcBytes = new List<byte>((int)funcLen);
 
@@ -399,6 +426,9 @@ namespace WinApi
 
             // call .NET method
             funcBytes.Add(0x60);//pushad
+
+            funcBytes.Add(0x66);//pushf
+            funcBytes.Add(0x9C);
 
             // find hook ID
             int id = hooks.Length;
@@ -429,6 +459,9 @@ namespace WinApi
 
             funcBytes.Add(0x8B); funcBytes.Add(0x0D); funcBytes.AddRange(BitConverter.GetBytes(runtimeInterface)); // mov ECX, [runtimeInterface]
             funcBytes.Add(0xFF); funcBytes.Add(0x51); funcBytes.Add(0x2C);// call [ECX+0x2C]
+            
+            funcBytes.Add(0x66);//popf
+            funcBytes.Add(0x9D);
 
             funcBytes.Add(0x61);//popad
 
