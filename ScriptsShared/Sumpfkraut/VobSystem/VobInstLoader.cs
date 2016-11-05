@@ -11,6 +11,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
     public partial class VobInstLoader : ExtendedObject
     {
 
+        new public static readonly string _staticName = "VobInstLoader (static)";
+
         partial void pLoad ();
         partial void pSave ();
         partial void pCreate ();

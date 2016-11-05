@@ -181,10 +181,10 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
             //VobSystem.VobInstLoader vobInstLoader = new VobSystem.VobInstLoader(ref worldDef);
             //vobInstLoader.Start();
             //vobInstLoader.FinishedLoading += delegate (object sender, FinishedLoadingArgs e)
-            {
-                // release control over sqlResults on finishing line
-                sqlResultInUse = false;
-            };
+            //{
+            //    // release control over sqlResults on finishing line
+            //    sqlResultInUse = false;
+            //};
         }
 
         // actually apply all the world-parameters defined in the database 
