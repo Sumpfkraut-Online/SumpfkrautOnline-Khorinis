@@ -34,7 +34,11 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
                         new DBTables.ColumnGetTypeInfo("WorldChangeID", SQLiteGetTypeEnum.GetInt32),
                         new DBTables.ColumnGetTypeInfo("WorldEffectID", SQLiteGetTypeEnum.GetInt32),
                         new DBTables.ColumnGetTypeInfo("Func", SQLiteGetTypeEnum.GetInt32),
-                        new DBTables.ColumnGetTypeInfo("Params", SQLiteGetTypeEnum.GetString),
+                        new DBTables.ColumnGetTypeInfo("Param0", SQLiteGetTypeEnum.GetString),
+                        new DBTables.ColumnGetTypeInfo("Param1", SQLiteGetTypeEnum.GetString),
+                        new DBTables.ColumnGetTypeInfo("Param2", SQLiteGetTypeEnum.GetString),
+                        new DBTables.ColumnGetTypeInfo("Param3", SQLiteGetTypeEnum.GetString),
+                        new DBTables.ColumnGetTypeInfo("Param4", SQLiteGetTypeEnum.GetString),
                         new DBTables.ColumnGetTypeInfo("ChangeDate", SQLiteGetTypeEnum.GetDateTime),
                         new DBTables.ColumnGetTypeInfo("CreationDate", SQLiteGetTypeEnum.GetDateTime),
                     }
@@ -53,7 +57,11 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
                         new DBTables.ColumnGetTypeInfo("InstChangeID", SQLiteGetTypeEnum.GetInt32),
                         new DBTables.ColumnGetTypeInfo("InstEffectID", SQLiteGetTypeEnum.GetInt32),
                         new DBTables.ColumnGetTypeInfo("Func", SQLiteGetTypeEnum.GetInt32),
-                        new DBTables.ColumnGetTypeInfo("Params", SQLiteGetTypeEnum.GetString),
+                        new DBTables.ColumnGetTypeInfo("Param0", SQLiteGetTypeEnum.GetString),
+                        new DBTables.ColumnGetTypeInfo("Param1", SQLiteGetTypeEnum.GetString),
+                        new DBTables.ColumnGetTypeInfo("Param2", SQLiteGetTypeEnum.GetString),
+                        new DBTables.ColumnGetTypeInfo("Param3", SQLiteGetTypeEnum.GetString),
+                        new DBTables.ColumnGetTypeInfo("Param4", SQLiteGetTypeEnum.GetString),
                         new DBTables.ColumnGetTypeInfo("ChangeDate", SQLiteGetTypeEnum.GetDateTime),
                         new DBTables.ColumnGetTypeInfo("CreationDate", SQLiteGetTypeEnum.GetDateTime),
                     }
@@ -149,8 +157,19 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
                 }
 
                 // always sort by <nameOfTable>ID --> e.g. FROM WorldEffect WHERE 1 ORDER BY WorldEffectID;
-                commandSB.AppendFormat(" FROM {0} WHERE 1 ORDER BY {1}ID;", DBTableLoadOrder[t], 
-                    DBTableLoadOrder[t]);
+                if (t < ColGetTypeInfo.Count - 1)
+                {
+                    commandSB.AppendFormat(" FROM {0} WHERE 1 ORDER BY {1}ID;", DBTableLoadOrder[t],
+                        DBTableLoadOrder[t]);
+                }
+                else
+                {
+                    // last must always be the static-dynamic-job
+                    // filter out only those of the world itself (not the vobs)
+                    commandSB.AppendFormat(" FROM {0} WHERE {1} ORDER BY {2}ID;", DBTableLoadOrder[t],
+                        "TableName == WorldEffect OR TableName == WorldChange", DBTableLoadOrder[t]);
+                }
+                
                 commandQueue.Add(commandSB.ToString());
             }
 

@@ -121,7 +121,8 @@ namespace GUC.Scripts.Sumpfkraut.Database
 
                 ReceivedResultsEventArgs rse = new ReceivedResultsEventArgs(DataSource, commandQueue[i], 
                     queryStartTime, queryEndTime, sqlResults);
-                ReceivedResults.Invoke(this, rse);
+
+                if (ReceivedResults != null) { ReceivedResults.Invoke(this, rse); }
 
                 if (waitHandle != null)
                 {
@@ -133,7 +134,8 @@ namespace GUC.Scripts.Sumpfkraut.Database
             // send finishing event message to all listeners
             FinishedQueueEventHandlerArgs fqe = new FinishedQueueEventHandlerArgs(DataSource, commandQueue, 
                 queueStartTime, queueEndTime, sqlResults);
-            FinishedQueue.Invoke(this, fqe);
+
+            if (FinishedQueue != null) { FinishedQueue.Invoke(this, fqe); }
             //this.Suspend();
         } 
 
