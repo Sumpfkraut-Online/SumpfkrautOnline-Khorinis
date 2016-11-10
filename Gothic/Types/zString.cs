@@ -144,8 +144,13 @@ namespace Gothic.Types
 
         public override string ToString()
         {
-            byte[] arr = Process.ReadBytes(this.PTR, (uint)this.Length);
-            return Encoding.Default.GetString(arr);
+            int ptr = this.PTR;
+            int len = this.Length;
+            if (ptr != 0 && len > 0)
+            {
+                return Encoding.Default.GetString(Process.ReadBytes(ptr, (uint)len));
+            }
+            return string.Empty;
         }
     }
 }

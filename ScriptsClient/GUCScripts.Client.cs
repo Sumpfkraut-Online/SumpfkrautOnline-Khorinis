@@ -44,7 +44,7 @@ namespace GUC.Scripts
         {
             //WinApi.Process.Write(new byte[] { 0xE9, 0x99, 0x04, 0x00, 0x00 }, 0x0067836C); // always do T_GOTHIT instead of T_STUMBLE/B when getting hit
 
-            Left4Gothic.CharCreationMenu.Menu.Open();
+            //Left4Gothic.CharCreationMenu.Menu.Open();
             Sumpfkraut.Controls.InputControl.Init();
             
 

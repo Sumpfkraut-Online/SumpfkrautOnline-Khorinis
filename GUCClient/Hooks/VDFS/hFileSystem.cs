@@ -13,18 +13,38 @@ namespace GUC.Hooks.VDFS
     {
         public static void AddHooks()
         {
-            /*Process.AddHook(h => Logger.Log("Exists " + new zString(h.GetECX() + 0x60)), 0x449020, 6);
+            // Process.AddHook(h => Logger.Log("Exists " + new zString(h.GetECX() + 0x60)), 0x449020, 6);
 
-            Process.AddHook(h => Logger.Log("Open " + new zString(h.GetECX() + 0x60)), 0x449120, 6);
+            /*Process.AddHook(h =>
+            {
+                string p = Path.GetFileName(new zString(h.GetECX() + 0x60).ToString());
+                Logger.Log("Open '" + p + "'");
+            }, 0x449120, 6);
 
-            Process.AddHook(h => Logger.Log("Close "), 0x4493A8, 5);
+            Process.AddHook(h =>
+            {
+                Logger.Log("Close ");
+            }, 0x4493A8, 5);
 
-            Process.AddHook(h => Logger.Log("Read 1 "+ new zString(h.GetECX() + 0x60)), 0x44A8D0, 6, 1);
-            Process.AddHook(h => Logger.Log("ReadSize " + h.GetArgument(1) + " " + new zString(h.GetECX() + 0x60)), 0x44ABF0, 6, 2);
+            
 
-            Process.AddHook(h => Logger.Log("Search " + new zString(h.GetArgument(0))), 0x449E80, 6, 3);
+            Process.AddHook(h =>
+            {
+                string p = Path.GetFileName(new zString(h.GetECX() + 0x60).ToString());
+                if (p == "STARTSCREEN-C.TEX")
+                    Logger.Log("ReadString ");
+            }, 0x44A8D0, 6, 1);
 
-            Process.AddHook(h => Logger.Log("Destruct " + new zString(h.GetECX() + 0x60)), 0x448ED0, 7);*/
+            Process.AddHook(h =>
+            {
+                string p = Path.GetFileName(new zString(h.GetECX() + 0x60).ToString());
+                if (p == "STARTSCREEN-C.TEX")
+                    Logger.Log("ReadSize " + h.GetArgument(1));
+            }, 0x44ABF0, 6, 2);
+
+            // Process.AddHook(h => Logger.Log("Search " + new zString(h.GetArgument(0))), 0x449E80, 6, 3);*/
+
+            //Process.AddHook(h => Logger.Log("Destruct " + new zString(h.GetECX() + 0x60)), 0x448ED0, 7);
 
             var h = Process.AddHook(InitFileSystem, 0x558CC8, 5);
             Process.Nop(5, h.OldInNewAddress);
@@ -50,7 +70,7 @@ namespace GUC.Hooks.VDFS
             h = Process.AddHook(VDFS_Size, 0x449410, 5);
             Process.Write(new byte[5] { 0xC3, 0x90, 0x90, 0x90, 0x90 }, h.OldInNewAddress);
 
-            h = Process.AddHook(VDFS_Read, 0x44A8D0, 6, 1);
+            h = Process.AddHook(VDFS_ReadString, 0x44A8D0, 6, 1);
             Process.Write(new byte[6] { 0xC2, 0x04, 0x00, 0x90, 0x90, 0x90 }, h.OldInNewAddress);
 
             h = Process.AddHook(VDFS_ReadSize, 0x44ABF0, 6, 2);
@@ -74,7 +94,7 @@ namespace GUC.Hooks.VDFS
 
             Logger.Log("Added file system hooks.");
 
-            //System.Threading.Thread.Sleep(15000);
+            //System.Threading.Thread.Sleep(12000);
         }
 
         static Dictionary<string, VDFSDirectoryInfo> vDirs { get { return VDFSArchive.vDirs; } }
@@ -163,21 +183,31 @@ namespace GUC.Hooks.VDFS
             return path;
         }
 
+        static string GetZFilePath(int address)
+        {
+            string path = new zString(address + 0x60).ToString();
+            if (path.Length > 0 && path[0] != '\\') // ayy lmao
+            {
+                return Gothic.System.zFile.s_virtPathString + path;
+            }
+            return path;
+        }
+
         static void VDFS_Exists(Hook hook)
         {
-            string path = GetPath(new zString(hook.GetECX() + 0x60).ToString());
+            string path = GetPath(GetZFilePath(hook.GetECX()));
             if (!string.IsNullOrWhiteSpace(path))
             {
                 if ((vFiles.Count > 0 && vFiles.ContainsKey(path))
                     || File.Exists(Program.GetProjectPath(path))
                     || File.Exists(Program.GetGothicRootPath(path)))
                 {
-                    Logger.Log("Exists: " + path);
+                    //Logger.Log("Exists: " + path);
                     hook.SetEAX(1);
                     return;
                 }
             }
-            Logger.Log("Not Existing: " + path);
+            //Logger.Log("Not Existing: " + path);
             hook.SetEAX(0);
         }
 
@@ -193,7 +223,7 @@ namespace GUC.Hooks.VDFS
                 return;
             }
 
-            string path = GetPath(new zString(self + 0x60).ToString());
+            string path = GetPath(GetZFilePath(self));
             if (string.IsNullOrWhiteSpace(path))
             {
                 Logger.Log("Path is null or white space!");
@@ -217,7 +247,7 @@ namespace GUC.Hooks.VDFS
                 else
                 {
                     fullPath = new FileInfo(Program.GetGothicRootPath(path));
-                    
+
                     if (fullPath.Exists)
                     {
                         fileHandle = new FileHandle(fullPath);
@@ -236,7 +266,7 @@ namespace GUC.Hooks.VDFS
             hook.SetEAX(0);
             Process.Write(true, self + 0x29FC);
             Process.Write(true, self + 0x8C);
-            Logger.Log("Open " + path);
+            Logger.Log("Open " + self.ToString("X4") + " " + path);
         }
 
         static void VDFS_Close(Hook hook)
@@ -250,7 +280,7 @@ namespace GUC.Hooks.VDFS
                 openedFiles.Remove(self);
                 Process.Write(false, self + 0x29FC);
                 Process.Write(false, self + 0x8C);
-                Logger.Log("Close");
+                //Logger.Log("Close " + self.ToString("X4") + " ");
             }
             //hook.SetEAX(0);
         }
@@ -267,7 +297,9 @@ namespace GUC.Hooks.VDFS
             }
 
             long pos = (long)hook.GetArgument(0);// | ((long)hook.GetArgument(1) << 32);
-            Logger.Log("Seek: " + pos);
+
+           // Logger.Log("Seek: " + pos + " " + self.ToString("X4"));
+
             handle.Seek(pos);
             hook.SetEAX(0);
         }
@@ -284,7 +316,7 @@ namespace GUC.Hooks.VDFS
             }
 
             long pos = handle.GetPos();
-            Logger.Log("Pos: " + pos);
+            //Logger.Log("Pos: " + self.ToString("X4") + " " + pos);
             //hook.SetEDX((int)(pos >> 32));
             hook.SetEAX((int)pos);
         }
@@ -301,13 +333,13 @@ namespace GUC.Hooks.VDFS
             }
 
             long size = handle.GetSize();
-            Logger.Log("Size: " + size);
+            //Logger.Log("Size: " + size);
             //hook.SetEDX((int)(size >> 32));
             hook.SetEAX((int)size);
         }
 
         // Reads until 0x0A
-        static void VDFS_Read(Hook hook)
+        static void VDFS_ReadString(Hook hook)
         {
             int self = hook.GetECX();
 
@@ -325,15 +357,25 @@ namespace GUC.Hooks.VDFS
                 if (handle.Read(buf, index, 1) == 0)
                     break;
 
-                if (buf[index] == 0x0A)
+                if (buf[index] == 0x0A) // \n break
+                {
+                    index++;
                     break;
+                }
 
                 index++;
             }
-            
-            Logger.Log("ReadString");
+
+            /*string p = Path.GetFileName(new zString(self + 0x60).ToString());
+            if (p == "NPC_DEFAULT.D")
+            {
+                Logger.Log("ReadString " + self.ToString("X4") + " " + p);
+                using (FileStream fs = new FileStream("npcdef.d", FileMode.Append, FileAccess.Write))
+                    fs.Write(buf, 0, index);
+            }*/
 
             Process.Write(buf, index + 1, hook.GetArgument(0));
+
             hook.SetEAX(0);
         }
 
@@ -350,14 +392,24 @@ namespace GUC.Hooks.VDFS
 
             int ptr = hook.GetArgument(0);
             long count = (long)hook.GetArgument(1);// | ((long)hook.GetArgument(2) << 32);
-            Logger.Log("Read: " + count);
+            //Logger.Log("Read: " + count + " " + self.ToString("X4") + " " + Path.GetFileName(new zString(self + 0x60).ToString()));
+
+            if (count <= 0)
+                return;
 
             byte[] buffer = new byte[count];
             int read = handle.Read(buffer, 0, (int)count);
-            if (read > 0)
-                Process.Write(buffer, read, ptr);
+            Process.Write(buffer, (int)count, ptr);
+            
+            /*string p = Path.GetFileName(new zString(self + 0x60).ToString());
+            if (p == "NPC_DEFAULT.D")
+            {
+                Logger.Log("Read " + count + " " + self.ToString("X4") + " " + p);
+                using (FileStream fs = new FileStream("npcdef.d", FileMode.Append, FileAccess.Write))
+                    fs.Write(buffer, 0, read);
+            }*/
 
-            hook.SetEAX(0);
+            hook.SetEAX(read);
         }
 
         static void VDFS_SearchFile(Hook hook)
@@ -379,7 +431,8 @@ namespace GUC.Hooks.VDFS
                     {
                         new zString(hook.GetECX() + 0x60).Set(fi.Path);
                         hook.SetEAX(0);
-                        return;
+                        Logger.Log("Result: '" + new zString(hook.GetECX() + 0x60) + "'");
+                        //return;
                     }
                 }
             }
@@ -392,7 +445,8 @@ namespace GUC.Hooks.VDFS
                 {
                     new zString(hook.GetECX() + 0x60).Set(GetPath(fi.FullName));
                     hook.SetEAX(0);
-                    return;
+                    Logger.Log("Result: '" + new zString(hook.GetECX() + 0x60) + "'");
+                    //return;
                 }
             }
 
@@ -404,11 +458,13 @@ namespace GUC.Hooks.VDFS
                 {
                     new zString(hook.GetECX() + 0x60).Set(GetPath(fi.FullName));
                     hook.SetEAX(0);
-                    return;
+                    Logger.Log("Result: '" + new zString(hook.GetECX() + 0x60) + "'");
+                    //return;
                 }
             }
 
-            hook.SetEAX(0);
+
+            hook.SetEAX(0x138B);
         }
 
 
