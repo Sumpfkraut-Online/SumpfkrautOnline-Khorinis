@@ -114,12 +114,9 @@ namespace GUC
                 
                 SplashScreen.SetUpHooks();
                 SplashScreen.Create();
-
-                Process.Write(new byte[] { 0xE9, 0x8C, 0x00, 0x00, 0x00 }, 0x44AEDF); // skip visual vdfs init (vdfs32g.exe)
-                Process.Write(new byte[] { 0xE9, 0xA3, 0x00, 0x00, 0x00 }, 0x42687F); // skip intro videos
-
+                
                 // add hooks
-                Hooks.VDFS.hFileSystem.AddHooks();
+                hFileSystem.AddHooks();
                 hParser.AddHooks();
                 hGame.AddHooks();
                 hWeather.AddHooks();
@@ -129,6 +126,10 @@ namespace GUC
 
                 #region Some more editing
 
+                Process.Write(new byte[] { 0xE9, 0xA3, 0x00, 0x00, 0x00 }, 0x42687F); // skip intro videos
+
+                Process.Write(new byte[] { 0xEB, 0x35 }, 0x00424EE2); // don't init savegame manager
+                
                 Process.Write(new byte[] { 0xEB, 0x15 }, 0x006B5A44); // don't start falling animation
 
                 Process.Write(new byte[] { 0xC2, 0x08, 0x00 }, 0x00735EB0); // don't drop unconscious

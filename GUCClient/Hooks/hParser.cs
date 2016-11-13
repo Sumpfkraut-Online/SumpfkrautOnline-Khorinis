@@ -83,10 +83,10 @@ namespace GUC.Hooks
                 Logger.LogError(ex);
             }
         }
-        
+
         static void initDefaultScripts()
         {
-            string dPath = Path.GetFullPath(@"_work\data\scripts");
+            string dPath = Program.GetProjectPath(@"_work\data\scripts");
 
             if (!Directory.Exists(dPath))
                 Directory.CreateDirectory(dPath);
@@ -123,7 +123,7 @@ namespace GUC.Hooks
 
             Logger.Log("Parse " + file_FileList);
             using (zString str = zString.Create("GUC.src"))
-                Process.THISCALL<NullReturnCall>(0xAB40C0, 0x0078EE20, str);
+                Process.THISCALL<NullReturnCall>(0xAB40C0, 0x0078EE20, str); // zCParse::ParseSource
 
             using (zString z = zString.Create("C_NPC"))
             {

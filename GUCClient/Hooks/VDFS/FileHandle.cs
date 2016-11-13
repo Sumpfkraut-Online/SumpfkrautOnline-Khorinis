@@ -15,7 +15,6 @@ namespace GUC.Hooks.VDFS
         long GetSize();
         int Read(byte[] buf, int offset, int count);
         long GetPos();
-
         string GetFileName();
     }
 
@@ -31,7 +30,7 @@ namespace GUC.Hooks.VDFS
 
         public void Open()
         {
-            this.stream = info.OpenRead();
+            this.stream = new BufferedStream(info.OpenRead());
         }
 
         public void Close()
@@ -78,7 +77,7 @@ namespace GUC.Hooks.VDFS
 
         public void Open()
         {
-            this.stream = info.Archive.FileInfo.OpenRead();
+            this.stream = new BufferedStream(info.Archive.FileInfo.OpenRead());
             this.Seek(0);
         }
 

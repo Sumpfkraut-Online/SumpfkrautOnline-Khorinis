@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using WinApi.Kernel;
 using System.Runtime.InteropServices;
-using System.Reflection;
 
 namespace WinApi
 {
@@ -377,7 +376,22 @@ namespace WinApi
             return 0;
         }
 
-        public static Hook AddHook(HookCallback callback, int address, uint length, uint argCount = 0)
+        public enum RegisterFlags
+        {
+            None = 0,
+
+            EAX = 1,
+            EBX = 2,
+            ECX = 4,
+            EDX = 8,
+            EDI = 16,
+            EBP = 32,
+            ESI = 64,
+
+            ALL = EAX | EBX | ECX | EDX | EDI | EBP | ESI
+        }
+
+        public static Hook AddHook(HookCallback callback, int address, uint length, uint argCount = 0, RegisterFlags registers = RegisterFlags.None)
         {
             if (callback == null)
                 throw new ArgumentNullException("Callback is null!");
@@ -464,6 +478,13 @@ namespace WinApi
             funcBytes.Add(0x9D);
 
             funcBytes.Add(0x61);//popad
+
+            // copy arguments back
+            for (int i = 1; i <= argCount; i++)
+            {
+                funcBytes.Add(0xA1); funcBytes.AddRange(BitConverter.GetBytes(esiPtr + 4 * i)); // mov EAX, [esiPtr + 4*i]
+                funcBytes.Add(0x89); funcBytes.Add(0x44); funcBytes.Add(0xE4); funcBytes.Add((byte)(4 * i)); // mov [esp + 4 * i], EAX
+            }
 
             // copy registers back
             funcBytes.Add(0xA1); funcBytes.AddRange(BitConverter.GetBytes(eaxPtr)); // mov EAX, [eaxPtr]

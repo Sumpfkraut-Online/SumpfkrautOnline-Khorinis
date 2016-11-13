@@ -81,7 +81,7 @@ namespace GUC.Hooks
                 GUCTimer.Update(GameTime.Ticks);
                 GameClient.Update();
                 InputHandler.Update();
-
+                
                 if (!ShowConnectionAttempts())
                 {
                     if (!outgameStarted)

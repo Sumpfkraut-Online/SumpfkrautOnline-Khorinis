@@ -111,5 +111,13 @@ namespace WinApi
 
             return Process.ReadInt(infoAddr + 28 + index * 4);
         }
+
+        public void SetArgument(int index, int value)
+        {
+            if (index < 0 || index >= argCount)
+                throw new IndexOutOfRangeException(string.Format("Argument index of '{0}' hook must be 0 <= index < {1}! (Is {2})", this.callback.Method.Name, this.argCount, index));
+
+            Process.Write(value, infoAddr + 28 + index * 4);
+        }
     }
 }
