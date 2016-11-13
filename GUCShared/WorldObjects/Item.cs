@@ -74,7 +74,7 @@ namespace GUC.WorldObjects
                 throw new Exception("Item amount is out of range! 0.." + MAX_AMOUNT);
             }
 
-            if (this.amount > 0)
+            if (amount > 0)
             {
                 this.amount = amount;
                 pSetAmount(amount);

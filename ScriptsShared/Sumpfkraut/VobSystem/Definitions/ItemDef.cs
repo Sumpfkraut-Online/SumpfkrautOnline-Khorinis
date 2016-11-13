@@ -26,9 +26,20 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         Wep2H,
         WepBow,
         WepXBow,
+        MAXWEAPON,
+
         Armor,
         AmmoBow,
         AmmoXBow,
+        Drinkable,
+        SmallEatable,
+        LargeEatable,
+        Rice,
+        Mutton,
+        Readable,
+        Torch,
+        Joint,
+        Slutable,
     }
 
     public partial class ItemDef : VobDef, ItemInstance.IScriptItemInstance

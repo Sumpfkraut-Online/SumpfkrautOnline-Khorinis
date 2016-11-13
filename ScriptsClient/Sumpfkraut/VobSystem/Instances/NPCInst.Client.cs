@@ -18,11 +18,16 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
     {
         public static NPCInst Hero { get { return (NPCInst)NPC.Hero?.ScriptObject; } }
 
-        #region Commands
+        #region Requests / Commands
+
+        /*
+        basis -> item = iteminstance <- scripts
+        basis -> iteminstance = itemdefinition <- scripts
+        */
 
         const long CommandInterval = 100000; // 10ms
         long nextCommandTime = 0;
-        public void SendCommand(ScriptCommandMessageIDs cmd)
+        public void SendCommand(ScriptRequestMessageIDs cmd)
         {
             if (nextCommandTime > GameTime.Ticks)
                 return; // don't spam
@@ -31,6 +36,78 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             stream.Write((byte)cmd);
             GameClient.SendScriptCommandMessage(stream, PktPriority.High);
             nextCommandTime = GameTime.Ticks + CommandInterval;
+        }
+
+        public void RequestDropItem(ItemInst item, int amount)
+        {
+            var stream = GameClient.GetScriptCommandMessageStream(this.BaseInst);
+            stream.Write((byte)ScriptRequestMessageIDs.DropItem);
+            stream.Write((byte)item.ID);
+            stream.Write((ushort)amount);
+            Request(stream);
+        }
+
+        public void RequestTakeItem(ItemInst item)
+        {
+            var stream = GameClient.GetScriptCommandMessageStream(this.BaseInst);
+            stream.Write((byte)ScriptRequestMessageIDs.TakeItem);
+            stream.Write((ushort)item.ID);
+            Request(stream);
+        }
+
+        public void RequestEquipItem(ItemInst item)
+        {
+            var stream = GameClient.GetScriptCommandMessageStream(this.BaseInst);
+            stream.Write((byte)ScriptRequestMessageIDs.EquipItem);
+            stream.Write((ushort)item.ID);
+            Request(stream);
+        }
+
+        public void RequestUnequipItem(ItemInst item)
+        {
+            var stream = GameClient.GetScriptCommandMessageStream(this.BaseInst);
+            stream.Write((byte)ScriptRequestMessageIDs.UnequipItem);
+            stream.Write((ushort)item.ID);
+            Request(stream);
+        }
+
+        public void RequestUseItem(ItemInst item)
+        {
+            var stream = GameClient.GetScriptCommandMessageStream(this.BaseInst);
+            stream.Write((byte)ScriptRequestMessageIDs.UseItem);
+            stream.Write((ushort)item.ID);
+            Request(stream);
+        }
+
+        public void RequestAttack(ScriptRequestMessageIDs ID)
+        {
+            var stream = GameClient.GetScriptCommandMessageStream(this.BaseInst);
+            stream.Write((byte)ID);
+            Request(stream);
+        }
+
+        public void RequestDrawWeapon(ItemInst item)
+        {
+            var stream = GameClient.GetScriptCommandMessageStream(this.BaseInst);
+            stream.Write((byte)ScriptRequestMessageIDs.DrawWeapon);
+            stream.Write((byte)item.ID);
+            Request(stream);
+        }
+
+        public void RequestDrawFists()
+        {
+            var stream = GameClient.GetScriptCommandMessageStream(this.BaseInst);
+            stream.Write((byte)ScriptRequestMessageIDs.DrawFists);
+            Request(stream);
+        }
+
+        private void Request(PacketWriter stream)
+        {
+            if (nextCommandTime > GameTime.Ticks)
+                return; // don't spam
+            nextCommandTime = GameTime.Ticks + CommandInterval;
+
+            GameClient.SendScriptCommandMessage(stream, PktPriority.High);
         }
 
         #endregion
@@ -70,9 +147,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             oCNpc gNpc = this.BaseInst.gVob;
             oCItem gItem = item.BaseInst.gVob;
 
-            if (item.BaseInst.IsEquipped)
+           if (item.BaseInst.IsEquipped)
             {
-                pUnequipItem(item);
+                pBeginUnequipItem(item);
             }
 
             switch ((SlotNums)slot)
@@ -115,9 +192,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 default:
                     break;
             }
+            Menus.PlayerInventory.Menu.UpdateEquipment();
         }
 
-        partial void pUnequipItem(ItemInst item)
+        partial void pBeginUnequipItem(ItemInst item)
         {
             if (!this.IsSpawned)
                 return;
@@ -166,6 +244,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 default:
                     break;
             }
+        }
+
+        partial void pAfterUnequipItem(ItemInst item)
+        {
+            Menus.PlayerInventory.Menu.UpdateEquipment();
         }
 
         #endregion
@@ -238,53 +321,53 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 this.BaseInst.gVob.AniCtrl.ShowWeaponTrail();
             }*/
 
-            /*var activeJumpAni = GetJumpAni();
-            if (activeJumpAni != null && activeJumpAni.GetPercent() >= 0.2f)
+        /*var activeJumpAni = GetJumpAni();
+        if (activeJumpAni != null && activeJumpAni.GetPercent() >= 0.2f)
+        {
+            var gVob = this.BaseInst.gVob;
+            var ai = gVob.HumanAI;
+            if (((gVob.BitField1 & zCVob.BitFlag0.physicsEnabled) != 0) && ai.AboveFloor <= 0)
             {
-                var gVob = this.BaseInst.gVob;
-                var ai = gVob.HumanAI;
-                if (((gVob.BitField1 & zCVob.BitFlag0.physicsEnabled) != 0) && ai.AboveFloor <= 0)
-                {
-                    // LAND
-                    int id = this.Movement == MoveState.Forward ? ai._t_jump_2_runl : ai._t_jump_2_stand;
-                    ai.LandAndStartAni(gVob.GetModel().GetAniFromAniID(id));
-                }
-            }*/
+                // LAND
+                int id = this.Movement == MoveState.Forward ? ai._t_jump_2_runl : ai._t_jump_2_stand;
+                ai.LandAndStartAni(gVob.GetModel().GetAniFromAniID(id));
+            }
+        }*/
 
-            /*if (this.drawnWeapon != null)
+        /*if (this.drawnWeapon != null)
+        {
+            var gModel = this.BaseInst.gVob.GetModel();
+
+            int aniID;
+            if (this.DrawnWeapon.ItemType == ItemTypes.WepBow)
             {
-                var gModel = this.BaseInst.gVob.GetModel();
+                aniID = gModel.GetAniIDFromAniName("S_BOWAIM");
+            }
+            else if (this.DrawnWeapon.ItemType == ItemTypes.WepXBow)
+            {
+                aniID = gModel.GetAniIDFromAniName("S_CBOWAIM");
+            }
+            else
+            {
+                return;
+            }
 
-                int aniID;
-                if (this.DrawnWeapon.ItemType == ItemTypes.WepBow)
-                {
-                    aniID = gModel.GetAniIDFromAniName("S_BOWAIM");
-                }
-                else if (this.DrawnWeapon.ItemType == ItemTypes.WepXBow)
-                {
-                    aniID = gModel.GetAniIDFromAniName("S_CBOWAIM");
-                }
-                else
-                {
-                    return;
-                }
+            var aa = gModel.GetActiveAni(aniID);
 
-                var aa = gModel.GetActiveAni(aniID);
+            if (this.isAiming)
+            {
+                if (aa.Address == 0)
+                    gModel.StartAni(aniID, 0);
+            }
+            else
+            {
+                if (aa.Address != 0)
+                    gModel.StopAni(aa);
+            }
+        }*/
+    }
 
-                if (this.isAiming)
-                {
-                    if (aa.Address == 0)
-                        gModel.StartAni(aniID, 0);
-                }
-                else
-                {
-                    if (aa.Address != 0)
-                        gModel.StopAni(aa);
-                }
-            }*/
-        }
-
-        public void StartAnimation(Animations.Animation ani, object[] netArgs)
+    public void StartAnimation(Animations.Animation ani, object[] netArgs)
         {
             /*ScriptAni a = (ScriptAni)ani.ScriptObject;
 

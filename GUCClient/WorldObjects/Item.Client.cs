@@ -15,7 +15,7 @@ namespace GUC.WorldObjects
 
         new internal static class Messages
         {
-            public static void ReadChangeItemAmount(PacketReader stream)
+            public static void ReadItemAmountChangedMessage(PacketReader stream)
             {
                 Item item;
                 if (NPCInventory.PlayerInventory.TryGetItem(stream.ReadByte(), out item))

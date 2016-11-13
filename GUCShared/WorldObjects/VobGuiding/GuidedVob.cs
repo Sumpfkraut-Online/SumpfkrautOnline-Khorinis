@@ -11,7 +11,7 @@ namespace GUC.WorldObjects.VobGuiding
     {
         #region Constructors
 
-        public GuidedVob(IScriptBaseVob scriptObject) : base (scriptObject)
+        public GuidedVob(IScriptBaseVob scriptObject) : base(scriptObject)
         {
         }
 
@@ -21,7 +21,7 @@ namespace GUC.WorldObjects.VobGuiding
 
         GuideCmd currentCmd;
         public GuideCmd CurrentCommand { get { return this.currentCmd; } }
-        
+
         internal GameClient guide;
 
         #endregion

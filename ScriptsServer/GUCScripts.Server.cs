@@ -13,7 +13,6 @@ using GUC.Utilities;
 
 namespace GUC.Scripts
 {
-
     interface IProbabilityItems
     {
         List<ItemInst> GetItems();
@@ -109,6 +108,7 @@ namespace GUC.Scripts
         {
             Logger.Log("######## Initalise SumpfkrautOnline ServerScripts #########");
 
+
             Sumpfkraut.Daedalus.AniParser.ReadMDSFiles();
             Sumpfkraut.Daedalus.ConstParser.ParseConstValues();
             Sumpfkraut.Daedalus.FuncParser.ParseConstValues();
@@ -148,8 +148,14 @@ namespace GUC.Scripts
 
             // HUMAN MODEL
             ModelDef m;
-            ModelDef.TryGetModel("humans", out m);
-            m.Delete(); // hurr durr
+            if (ModelDef.TryGetModel("humans", out m))
+            {
+                m.Delete(); // hurr durr
+            }
+            else
+            {
+                m = new ModelDef("humans", "humans.mds");
+            }
             m.Radius = 80;
             m.Height = 180;
             m.Create();
@@ -463,158 +469,158 @@ namespace GUC.Scripts
             model.AddAniJob(aniJob);*/
         }
 
-        /*void AddItems()
+        void AddItems()
         {
-            //ZWEIHANDER
-            ModelDef m = new ModelDef("2hschwert", "ItMw_060_2h_sword_01.3DS");
-            m.Create();
-            ItemDef itemDef = new ItemDef("2hschwert");
-            itemDef.Name = "Zweihänder";
-            itemDef.ItemType = ItemTypes.Wep2H;
-            itemDef.Material = ItemMaterials.Metal;
-            itemDef.Model = m;
-            itemDef.Range = 110;
-            itemDef.Damage = 42;
-            itemDef.Create();
+            /*    //ZWEIHANDER
+                ModelDef m = new ModelDef("2hschwert", "ItMw_060_2h_sword_01.3DS");
+                m.Create();
+                ItemDef itemDef = new ItemDef("2hschwert");
+                itemDef.Name = "Zweihänder";
+                itemDef.ItemType = ItemTypes.Wep2H;
+                itemDef.Material = ItemMaterials.Metal;
+                itemDef.Model = m;
+                itemDef.Range = 110;
+                itemDef.Damage = 42;
+                itemDef.Create();
 
-            // GARDERÜSTUNG
-            m = new ModelDef("ITAR_Garde", "ItAr_Bloodwyn_ADDON.3ds");
-            m.Create();
-            itemDef = new ItemDef("ITAR_Garde");
-            itemDef.Name = "Gardistenrüstung";
-            itemDef.Material = ItemMaterials.Leather;
-            itemDef.ItemType = ItemTypes.Armor;
-            itemDef.Protection = 30;
-            itemDef.VisualChange = "Armor_Bloodwyn_ADDON.asc";
-            itemDef.Model = m;
-            itemDef.Create();
+                // GARDERÜSTUNG
+                m = new ModelDef("ITAR_Garde", "ItAr_Bloodwyn_ADDON.3ds");
+                m.Create();
+                itemDef = new ItemDef("ITAR_Garde");
+                itemDef.Name = "Gardistenrüstung";
+                itemDef.Material = ItemMaterials.Leather;
+                itemDef.ItemType = ItemTypes.Armor;
+                itemDef.Protection = 30;
+                itemDef.VisualChange = "Armor_Bloodwyn_ADDON.asc";
+                itemDef.Model = m;
+                itemDef.Create();
 
-            //EINHANDER
-            m = new ModelDef("1hschwert", "Itmw_025_1h_Mil_Sword_broad_01.3DS");
-            m.Create();
-            itemDef = new ItemDef("1hschwert");
-            itemDef.Name = "Breitschwert";
-            itemDef.ItemType = ItemTypes.Wep1H;
-            itemDef.Material = ItemMaterials.Metal;
-            itemDef.Model = m;
-            itemDef.Damage = 40;
-            itemDef.Range = 90;
-            itemDef.Create();
+                //EINHANDER
+                m = new ModelDef("1hschwert", "Itmw_025_1h_Mil_Sword_broad_01.3DS");
+                m.Create();
+                itemDef = new ItemDef("1hschwert");
+                itemDef.Name = "Breitschwert";
+                itemDef.ItemType = ItemTypes.Wep1H;
+                itemDef.Material = ItemMaterials.Metal;
+                itemDef.Model = m;
+                itemDef.Damage = 40;
+                itemDef.Range = 90;
+                itemDef.Create();
 
-            // SCHATTENRÜSTUNG
-            m = new ModelDef("ITAR_Schatten", "ItAr_Diego.3ds");
-            m.Create();
-            itemDef = new ItemDef("ITAR_Schatten");
-            itemDef.Name = "Schattenrüstung";
-            itemDef.Material = ItemMaterials.Leather;
-            itemDef.ItemType = ItemTypes.Armor;
-            itemDef.VisualChange = "Armor_Diego.asc";
-            itemDef.Protection = 27;
-            itemDef.Model = m;
-            itemDef.Create();
+                // SCHATTENRÜSTUNG
+                m = new ModelDef("ITAR_Schatten", "ItAr_Diego.3ds");
+                m.Create();
+                itemDef = new ItemDef("ITAR_Schatten");
+                itemDef.Name = "Schattenrüstung";
+                itemDef.Material = ItemMaterials.Leather;
+                itemDef.ItemType = ItemTypes.Armor;
+                itemDef.VisualChange = "Armor_Diego.asc";
+                itemDef.Protection = 27;
+                itemDef.Model = m;
+                itemDef.Create();
 
-            //ZWEIHAND AXT
-            m = new ModelDef("2haxt", "ItMw_060_2h_axe_heavy_01.3DS");
-            m.Create();
-            itemDef = new ItemDef("2haxt");
-            itemDef.Name = "Söldneraxt";
-            itemDef.ItemType = ItemTypes.Wep2H;
-            itemDef.Material = ItemMaterials.Metal;
-            itemDef.Model = m;
-            itemDef.Damage = 44;
-            itemDef.Range = 95;
-            itemDef.Create();
+                //ZWEIHAND AXT
+                m = new ModelDef("2haxt", "ItMw_060_2h_axe_heavy_01.3DS");
+                m.Create();
+                itemDef = new ItemDef("2haxt");
+                itemDef.Name = "Söldneraxt";
+                itemDef.ItemType = ItemTypes.Wep2H;
+                itemDef.Material = ItemMaterials.Metal;
+                itemDef.Model = m;
+                itemDef.Damage = 44;
+                itemDef.Range = 95;
+                itemDef.Create();
 
-            // SÖLDNERRÜSTUNG
-            m = new ModelDef("ITAR_Söldner", "ItAr_Sld_M.3ds");
-            m.Create();
-            itemDef = new ItemDef("ITAR_Söldner");
-            itemDef.Name = "Söldnerrüstung";
-            itemDef.Material = ItemMaterials.Leather;
-            itemDef.ItemType = ItemTypes.Armor;
-            itemDef.VisualChange = "Armor_Sld_M.asc";
-            itemDef.Protection = 30;
-            itemDef.Model = m;
-            itemDef.Create();
+                // SÖLDNERRÜSTUNG
+                m = new ModelDef("ITAR_Söldner", "ItAr_Sld_M.3ds");
+                m.Create();
+                itemDef = new ItemDef("ITAR_Söldner");
+                itemDef.Name = "Söldnerrüstung";
+                itemDef.Material = ItemMaterials.Leather;
+                itemDef.ItemType = ItemTypes.Armor;
+                itemDef.VisualChange = "Armor_Sld_M.asc";
+                itemDef.Protection = 30;
+                itemDef.Model = m;
+                itemDef.Create();
 
-            //EINHAND AXT
-            m = new ModelDef("1haxt", "ItMw_025_1h_sld_axe_01.3DS");
-            m.Create();
-            itemDef = new ItemDef("1haxt");
-            itemDef.Name = "Grobes Kriegsbeil";
-            itemDef.ItemType = ItemTypes.Wep1H;
-            itemDef.Material = ItemMaterials.Wood;
-            itemDef.Damage = 42;
-            itemDef.Model = m;
-            itemDef.Range = 75;
-            itemDef.Create();
+                //EINHAND AXT
+                m = new ModelDef("1haxt", "ItMw_025_1h_sld_axe_01.3DS");
+                m.Create();
+                itemDef = new ItemDef("1haxt");
+                itemDef.Name = "Grobes Kriegsbeil";
+                itemDef.ItemType = ItemTypes.Wep1H;
+                itemDef.Material = ItemMaterials.Wood;
+                itemDef.Damage = 42;
+                itemDef.Model = m;
+                itemDef.Range = 75;
+                itemDef.Create();
 
-            // BANDITENRÜSTUNG
-            m = new ModelDef("ITAR_bandit", "ItAr_Bdt_H.3ds");
-            m.Create();
-            itemDef = new ItemDef("ITAR_bandit");
-            itemDef.Name = "Banditenrüstung";
-            itemDef.Material = ItemMaterials.Leather;
-            itemDef.ItemType = ItemTypes.Armor;
-            itemDef.VisualChange = "Armor_Bdt_H.asc";
-            itemDef.Protection = 27;
-            itemDef.Model = m;
-            itemDef.Create();
+                // BANDITENRÜSTUNG
+                m = new ModelDef("ITAR_bandit", "ItAr_Bdt_H.3ds");
+                m.Create();
+                itemDef = new ItemDef("ITAR_bandit");
+                itemDef.Name = "Banditenrüstung";
+                itemDef.Material = ItemMaterials.Leather;
+                itemDef.ItemType = ItemTypes.Armor;
+                itemDef.VisualChange = "Armor_Bdt_H.asc";
+                itemDef.Protection = 27;
+                itemDef.Model = m;
+                itemDef.Create();
 
-            // PFEIL
-            m = new ModelDef("itrw_arrow", "ItRw_Arrow.3ds");
-            m.Create();
-            itemDef = new ItemDef("itrw_arrow");
-            itemDef.Name = "Pfeil";
-            itemDef.Material = ItemMaterials.Wood;
-            itemDef.ItemType = ItemTypes.AmmoBow;
-            itemDef.Damage = 5;
-            itemDef.Model = m;
-            itemDef.Create();
+                // PFEIL
+                m = new ModelDef("itrw_arrow", "ItRw_Arrow.3ds");
+                m.Create();
+                itemDef = new ItemDef("itrw_arrow");
+                itemDef.Name = "Pfeil";
+                itemDef.Material = ItemMaterials.Wood;
+                itemDef.ItemType = ItemTypes.AmmoBow;
+                itemDef.Damage = 5;
+                itemDef.Model = m;
+                itemDef.Create();
 
-            var projDef = new ProjDef("arrow");
-            projDef.Model = m;
-            projDef.Velocity = 0.0003f;
-            projDef.Create();
+                var projDef = new ProjDef("arrow");
+                projDef.Model = m;
+                projDef.Velocity = 0.0003f;
+                projDef.Create();
 
-            // LANGBOGEN
-            m = new ModelDef("itrw_longbow", "ItRw_Bow_M_01.mms");
-            m.Create();
-            itemDef = new ItemDef("itrw_longbow");
-            itemDef.Name = "Langbogen";
-            itemDef.Material = ItemMaterials.Wood;
-            itemDef.ItemType = ItemTypes.WepBow;
-            itemDef.Damage = 32;
-            itemDef.Model = m;
-            itemDef.Create();
+                // LANGBOGEN
+                m = new ModelDef("itrw_longbow", "ItRw_Bow_M_01.mms");
+                m.Create();
+                itemDef = new ItemDef("itrw_longbow");
+                itemDef.Name = "Langbogen";
+                itemDef.Material = ItemMaterials.Wood;
+                itemDef.ItemType = ItemTypes.WepBow;
+                itemDef.Damage = 32;
+                itemDef.Model = m;
+                itemDef.Create();
 
-            // BOLZEN
-            m = new ModelDef("itrw_bolt", "ItRw_Bolt.3ds");
-            m.Create();
-            itemDef = new ItemDef("itrw_Bolt");
-            itemDef.Name = "Bolzen";
-            itemDef.Material = ItemMaterials.Wood;
-            itemDef.ItemType = ItemTypes.AmmoXBow;
-            itemDef.Damage = 6;
-            itemDef.Model = m;
-            itemDef.Create();
-            
-            projDef = new ProjDef("bolt");
-            projDef.Model = m;
-            projDef.Velocity = 0.0003f;
-            projDef.Create();
+                // BOLZEN
+                m = new ModelDef("itrw_bolt", "ItRw_Bolt.3ds");
+                m.Create();
+                itemDef = new ItemDef("itrw_Bolt");
+                itemDef.Name = "Bolzen";
+                itemDef.Material = ItemMaterials.Wood;
+                itemDef.ItemType = ItemTypes.AmmoXBow;
+                itemDef.Damage = 6;
+                itemDef.Model = m;
+                itemDef.Create();
 
-            // ARMBRUST
-            m = new ModelDef("itrw_crossbow", "ItRw_Crossbow_L_01.mms");
-            m.Create();
-            itemDef = new ItemDef("itrw_crossbow");
-            itemDef.Name = "Armbrust";
-            itemDef.Material = ItemMaterials.Wood;
-            itemDef.ItemType = ItemTypes.WepXBow;
-            itemDef.Damage = 32;
-            itemDef.Model = m;
-            itemDef.Create();
-        }*/
+                projDef = new ProjDef("bolt");
+                projDef.Model = m;
+                projDef.Velocity = 0.0003f;
+                projDef.Create();
+
+                // ARMBRUST
+                m = new ModelDef("itrw_crossbow", "ItRw_Crossbow_L_01.mms");
+                m.Create();
+                itemDef = new ItemDef("itrw_crossbow");
+                itemDef.Name = "Armbrust";
+                itemDef.Material = ItemMaterials.Wood;
+                itemDef.ItemType = ItemTypes.WepXBow;
+                itemDef.Damage = 32;
+                itemDef.Model = m;
+                itemDef.Create();*/
+        }
 
         void AddBowAnis(ModelDef model)
         {

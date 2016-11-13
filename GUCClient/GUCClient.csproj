@@ -370,6 +370,10 @@
       <Project>{82655F73-CF7C-4416-9313-BD657AD8F05F}</Project>
       <Name>Gothic</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ScriptsServer\ScriptsServer.csproj">
+      <Project>{477C9B57-AD36-4CAC-998F-800C5A693C35}</Project>
+      <Name>ScriptsServer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WinApi\WinApi.csproj">
       <Project>{52793B3F-130C-4B05-8333-1529981DE780}</Project>
       <Name>WinApi</Name>
@@ -400,7 +404,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Network\Messages\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

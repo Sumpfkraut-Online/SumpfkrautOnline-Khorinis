@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Network;
+using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 
 namespace GUC.Scripts.Sumpfkraut.Networking
 {
@@ -26,6 +27,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking
 
         public virtual void ReadScriptVobMessage(PacketReader stream, WorldObjects.BaseVob vob)
         {
+            NPCInst.Hero.OnReadScriptVobMsg(stream);
         }
     }
 }

@@ -17,6 +17,8 @@ namespace GUC.Scripts.Sumpfkraut.Controls
         public readonly static KeyBind Inventory = new KeyBind(VirtualKeys.Tab, VirtualKeys.I);
         public readonly static KeyBind TurnLeft = new KeyBind(VirtualKeys.Q, VirtualKeys.Left);
         public readonly static KeyBind TurnRight = new KeyBind(VirtualKeys.E, VirtualKeys.Right);
+        public readonly static KeyBind DrawWeapon = new KeyBind(VirtualKeys.Space);
+        public readonly static KeyBind DrawFists = new KeyBind(VirtualKeys.OEM5);
 
         //[JsonIgnore]
         VirtualKeys defaultKey1;

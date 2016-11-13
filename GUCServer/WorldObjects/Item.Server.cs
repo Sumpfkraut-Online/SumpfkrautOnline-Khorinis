@@ -14,7 +14,7 @@ namespace GUC.WorldObjects
         {
             public static void WriteChangeItemAmount(GameClient client, Item item)
             {
-                PacketWriter stream = GameServer.SetupStream(ServerMessages.PlayerItemAmountMessage);
+                PacketWriter stream = GameServer.SetupStream(ServerMessages.PlayerItemAmountChangedMessage);
                 stream.Write((byte)item.ID);
                 stream.Write((ushort)item.amount);
                 client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'I');

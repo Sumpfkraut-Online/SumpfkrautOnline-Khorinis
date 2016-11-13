@@ -35,6 +35,30 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
             }
         }
 
+        int attackBonus;
+        public int AttackBonus { get { return this.attackBonus; } set { this.attackBonus = value; } }
+
+        #region Animation Type Validation
+        public enum AniTypes
+        {
+            Dodge,
+            Parade,
+        }
+
+        AniTypes aniType;
+        public AniTypes AniType
+        {
+            get { return this.aniType; }
+            set
+            {
+                this.aniType = value;
+            }
+        }
+
+        public bool IsDodge { get { return this.AniType == AniTypes.Dodge; } }
+        public bool IsParade { get { return this.AniType == AniTypes.Parade; } }
+        #endregion
+
         public ScriptAniJob(string codeName) : this()
         {
             this.CodeName = codeName;

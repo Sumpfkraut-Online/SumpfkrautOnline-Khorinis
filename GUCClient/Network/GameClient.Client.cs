@@ -416,9 +416,46 @@ namespace GUC.Network
                     Vob.Messages.ReadThrow(stream);
                     break;
 
+                // ScriptVobMessages
+                case ServerMessages.ScriptVobMessage:
+                    ushort vobID = stream.ReadUShort();
+                    BaseVob vob;
+                    World.Current.TryGetVob((int)vobID, out vob);
+                    Client.ScriptObject.ReadScriptVobMessage(stream, vob);
+                    break;
+
                 // NPC Messages
                 case ServerMessages.NPCPosDirMessage:
                     NPC.Messages.ReadPosDirMessage(stream);
+                    break;
+                case ServerMessages.NPCEquipAddMessage:
+                    NPC.Messages.ReadEquipMessage(stream);
+                    break;
+                case ServerMessages.NPCEquipRemoveMessage:
+                    NPC.Messages.ReadUnequipMessage(stream);
+                    break;
+                case ServerMessages.NPCFightModeSetMessage:
+                    NPC.Messages.ReadFightMode(stream, true);
+                    break;
+                case ServerMessages.NPCFightModeUnsetMessage:
+                    NPC.Messages.ReadFightMode(stream, false);
+                    break;
+                case ServerMessages.NPCHealthMessage:
+                    NPC.Messages.ReadHealth(stream);
+                    break;
+
+                // Player Messages
+                case ServerMessages.PlayerNPCEquipAddMessage:
+                    NPC.Messages.ReadPlayerEquipMessage(stream);
+                    break;
+                case ServerMessages.PlayerInvAddItemMessage:
+                    WorldObjects.ItemContainers.NPCInventory.Messages.ReadAddItem(stream);
+                    break;
+                case ServerMessages.PlayerInvRemoveItemMessage:
+                    WorldObjects.ItemContainers.NPCInventory.Messages.ReadRemoveItem(stream);
+                    break;
+                case ServerMessages.PlayerItemAmountChangedMessage:
+                    WorldObjects.Item.Messages.ReadItemAmountChangedMessage(stream);
                     break;
 
                 // Model Messages
@@ -440,6 +477,9 @@ namespace GUC.Network
                 case ServerMessages.ModelOverlayRemoveMessage:
                     Model.Messages.ReadOverlay(stream, false);
                     break;
+                case ServerMessages.ModelInstanceCreateMessage:
+                    // TODO: whatever has to be done
+                    break;
 
                 // vob guiding
                 case ServerMessages.GuideAddCmdMessage:
@@ -456,6 +496,9 @@ namespace GUC.Network
                     break;
                 case ServerMessages.GuideSetCmdMessage:
                     GuidedVob.Messages.ReadGuideSetCmdMessage(stream);
+                    break;
+                case ServerMessages.VobInstanceCreateMessage:
+                    // TODO: whatever has to be done
                     break;
 
                 default:

@@ -123,7 +123,7 @@ namespace GUC.WorldObjects.VobGuiding
         }
 
         #endregion
-        
+
         internal override void OnTick(long now)
         {
             base.OnTick(now);

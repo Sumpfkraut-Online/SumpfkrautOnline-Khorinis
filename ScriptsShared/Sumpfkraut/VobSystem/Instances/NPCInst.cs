@@ -81,6 +81,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public ItemInst MeleeWeapon { get { return this.meleeWep; } }
         ItemInst rangedWep;
         public ItemInst RangedWeapon { get { return this.rangedWep; } }
+        ItemInst lastUsedWep;
+        public ItemInst LastUsedWeapon { get { return this.lastUsedWep; } set { this.lastUsedWep = value; } }
         ItemInst ammo;
         public ItemInst Ammo { get { return this.ammo; } }
 
@@ -89,15 +91,24 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         
         public enum SlotNums
         {
-            Torso,
+
             Sword,
-            Longsword,
-            Righthand,
-            Lefthand,
             Bow,
+            RuneSlot3,
+            RuneSlot4,
+            RuneSlot5,
+            RuneSlot6,
+            RuneSlot7,
+            RuneSlot8,
+            RuneSlot9,
+            RuneSlot0,
+            Longsword,
             XBow,
             AmmoBow,
-            AmmoXBow
+            AmmoXBow,
+            Torso,
+            Righthand,
+            Lefthand,
         }
 
         public void EquipItem(int slot, Item item)
@@ -108,8 +119,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         partial void pEquipItem(int slot, ItemInst item);
         public void EquipItem(int slot, ItemInst item)
         {
-            pEquipItem(slot, item);
-
             if (item.BaseInst.Slot == slot)
                 return;
 
@@ -142,27 +151,38 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             switch ((SlotNums)slot)
             {
                 case SlotNums.Torso:
+                    if (this.armor != null)
+                        UnequipItem(this.armor);
                     this.armor = item;
                     break;
                 case SlotNums.Sword:
                 case SlotNums.Longsword:
+                    if (this.meleeWep != null)
+                        UnequipItem(this.meleeWep);
                     this.meleeWep = item;
                     break;
                 case SlotNums.Bow:
                 case SlotNums.XBow:
+                    if (this.rangedWep != null)
+                        UnequipItem(this.rangedWep);
                     this.rangedWep = item;
                     break;
                 case SlotNums.AmmoBow:
                 case SlotNums.AmmoXBow:
+                    if (this.ammo != null)
+                        UnequipItem(this.ammo);
                     this.ammo = item;
                     break;
                 case SlotNums.Righthand:
                 case SlotNums.Lefthand:
+                    if (this.drawnWeapon!= null)
+                        UnequipItem(this.drawnWeapon);
                     this.drawnWeapon = item;
                     break;
             }
 
             this.BaseInst.EquipItem(slot, item.BaseInst);
+            pEquipItem(slot, item);
         }
 
         public void UnequipItem(Item item)
@@ -170,11 +190,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             this.UnequipItem((ItemInst)item.ScriptObject);
         }
 
-        partial void pUnequipItem(ItemInst item);
+        partial void pBeginUnequipItem(ItemInst item);
+        partial void pAfterUnequipItem(ItemInst item);
         public void UnequipItem(ItemInst item)
         {
-            pUnequipItem(item);
-
             switch ((SlotNums)item.BaseInst.Slot)
             {
                 case SlotNums.Torso:
@@ -198,7 +217,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     break;
             }
 
+            pBeginUnequipItem(item);
             this.BaseInst.UnequipItem(item.BaseInst);
+            pAfterUnequipItem(item);
         }
 
         public void EquipItem(ItemInst item)
@@ -242,6 +263,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public void SetHealth(int hp)
         {
             this.SetHealth(hp, BaseInst.HPMax);
+        }
+
+        public int GetHealth()
+        {
+            return this.BaseInst.HP;
         }
 
         partial void pSetHealth(int hp, int hpmax);
