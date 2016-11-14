@@ -61,6 +61,10 @@ namespace GUC.Scripts.Sumpfkraut.Controls
             }
             else if (KeyBind.Inventory.Contains(key))
             {
+                if (hero.DrawnWeapon != null)
+                {
+                    hero.RequestDrawWeapon(hero.LastUsedWeapon);
+                }
                 PlayerInventory.Menu.Open();
             }
             else if (KeyBind.DrawWeapon.Contains(key))
