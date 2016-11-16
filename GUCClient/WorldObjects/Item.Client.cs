@@ -3,29 +3,48 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Gothic.Objects;
+using GUC.Network;
+using GUC.Types;
+using GUC.WorldObjects.ItemContainers;
 
 namespace GUC.WorldObjects
 {
     public partial class Item
     {
-        new public oCItem gVob { get { return (oCItem)base.gVob; } }
+        #region Network Messages
 
-        internal void CreateGVob()
+        new internal static class Messages
         {
-            this.gvob = this.instance.CreateVob();
+            public static void ReadItemAmountChangedMessage(PacketReader stream)
+            {
+                Item item;
+                if (NPCInventory.PlayerInventory.TryGetItem(stream.ReadByte(), out item))
+                {
+                    item.ScriptObject.SetAmount(stream.ReadUShort());
+                }
+            }
         }
 
-        internal void DestroyGVob()
+        #endregion
+
+        new public oCItem gVob { get { return (oCItem)base.gVob; } }
+
+        bool dropped = false;
+        internal override void OnTick(long now)
         {
-            // we are finished with this gothic object, decrease the reference counter
-            int refCtr = gvob.refCtr - 1;
-            gvob.refCtr = refCtr;
+            base.OnTick(now);
 
-            // Free the gothic object if no references are left, otherwise gothic will free it
-            if (refCtr <= 0)
-                gvob.Dispose();
+            if (!dropped && NPC.Hero != null)
+            {
+                dropped = true;
+                Vec3f pos = this.GetPosition();
+                Vec3f dir = this.GetDirection();
 
-            gvob = null;
+                NPC.Hero.gVob.DoDropVob(this.gVob);
+
+                this.SetPosition(pos);
+                this.SetDirection(dir);
+            }
         }
     }
 }

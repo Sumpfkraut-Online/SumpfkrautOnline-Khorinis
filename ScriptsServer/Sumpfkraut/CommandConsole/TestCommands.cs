@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Enumeration;
+
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Scripts.Sumpfkraut.Web.WS.Protocols;
 using GUC.Types;
@@ -264,7 +264,7 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
         }
         
 
-
+        /*
         private static List<TFFA.TFFAClient> GetAllClientsTFFA ()
         {
             List<TFFA.TFFAClient> clients = new List<TFFA.TFFAClient>();
@@ -580,7 +580,7 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
 
             if (success)
             {
-                WorldInst.Current.SkyCtrl.SetWeatherType(weatherType);
+                WorldInst.Current.Weather.SetWeatherType(weatherType);
                 returnVal = new Dictionary<string, object>()
                 {
                     { "rawText", string.Format("Set ig-weathertype to {0}.", weatherType) },
@@ -614,13 +614,13 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
 
             if (rainTimeReady && weightReady)
             {
-                WorldInst.Current.SkyCtrl.SetRainTime(rainTime, weight);
+                WorldInst.Current.Weather.SetNextWeight(rainTime, weight);
                 returnVal = new Dictionary<string, object>()
                 {
                     { "rawText", string.Format("Set rain at time {0} to weight {1}.", rainTime, weight) },
                 };
             }
-        }
+        }*/
         
     }
 }

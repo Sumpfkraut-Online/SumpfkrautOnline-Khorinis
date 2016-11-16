@@ -109,7 +109,7 @@ namespace GUC.WorldObjects.VobGuiding
             }
             cmdList.Add(this);
 
-            World.current.TryGetVob(targetID, out target);
+            World.Current.TryGetVob(targetID, out target);
         }
 
         public override void Stop(GuidedVob vob)

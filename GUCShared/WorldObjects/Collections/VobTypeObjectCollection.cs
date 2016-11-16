@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Enumeration;
+using GUC.GameObjects.Collections;
+using GUC.Types;
 
 namespace GUC.WorldObjects.Collections
 {

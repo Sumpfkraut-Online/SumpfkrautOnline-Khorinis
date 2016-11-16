@@ -46,10 +46,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GUCScripts.cs" />
+    <Compile Include="Left4Gothic\CharacterInfo.cs" />
+    <Compile Include="Left4Gothic\L4Client.cs" />
+    <Compile Include="Left4Gothic\ScriptMessageIDs.cs" />
     <Compile Include="Sumpfkraut\AI\GuideCommands\CommandType.cs" />
     <Compile Include="Sumpfkraut\AI\GuideCommands\GoToPosCommand.cs" />
     <Compile Include="Sumpfkraut\AI\GuideCommands\GoToVobCommand.cs" />
-    <Compile Include="Sumpfkraut\Networking\NetMsgIDs.cs" />
+    <Compile Include="Sumpfkraut\Networking\ScriptMessageIDs.cs" />
     <Compile Include="Sumpfkraut\Networking\ScriptClient.cs" />
     <Compile Include="Sumpfkraut\ScriptObject.cs" />
     <Compile Include="Sumpfkraut\Utilities\DateTimeUtil.cs" />
@@ -58,29 +61,31 @@
     <Compile Include="Sumpfkraut\Utilities\Threading\IRunnable.cs" />
     <Compile Include="Sumpfkraut\Utilities\Threading\Runnable.cs" />
     <Compile Include="Sumpfkraut\Utilities\Threading\TestRunnable.cs" />
+    <Compile Include="Sumpfkraut\Visuals\ModelInst.cs" />
     <Compile Include="Sumpfkraut\Visuals\ScriptAniJob.cs" />
     <Compile Include="Sumpfkraut\Visuals\ScriptOverlay.cs" />
     <Compile Include="Sumpfkraut\Visuals\ModelDef.cs" />
     <Compile Include="Sumpfkraut\Visuals\ScriptAni.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\BaseVobDef.cs" />
+    <Compile Include="Sumpfkraut\Visuals\HumanVisuals.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\ItemDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\NPCDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\ProjDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\VobDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\BaseVobInst.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\ItemContainers\ScriptInventory.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\ItemInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\NPCInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\ProjInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\VobInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\VobDefLoader.cs" />
     <Compile Include="Sumpfkraut\VobSystem\VobInstLoader.cs" />
+    <Compile Include="Sumpfkraut\WorldSystem\ScriptBarrierCtrl.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\ScriptClock.cs" />
-    <Compile Include="Sumpfkraut\WorldSystem\ScriptSkyCtrl.cs" />
+    <Compile Include="Sumpfkraut\WorldSystem\ScriptWeatherCtrl.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldDef.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldInst.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldLoader.cs" />
-    <Compile Include="TFFA\Enums.cs" />
-    <Compile Include="TFFA\TFFAClient.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GUCShared\GUCShared.csproj">

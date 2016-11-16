@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GUC.Network;
 using GUC.WorldObjects;
-using GUC.Enumeration;
+
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Types;
@@ -18,41 +18,36 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         // GUC - Base - Object
         BaseVob baseInst;
-        public BaseVob BaseInst { get { return baseInst; } }
+        public BaseVob BaseInst { get { return this.baseInst; } }
 
         // Definition 
         public BaseVobDef Definition
         {
-            get { return (BaseVobDef)baseInst.Instance.ScriptObject; }
-            set { baseInst.Instance = value.BaseDef; }
+            get { return (BaseVobDef)BaseInst.Instance.ScriptObject; }
+            set { BaseInst.Instance = value.BaseDef; }
         }
 
-        public int ID { get { return baseInst.ID; } }
-        public VobTypes VobType { get { return baseInst.VobType; } }
-        public bool IsStatic { get { return baseInst.IsStatic; } }
-        public bool IsSpawned { get { return baseInst.IsSpawned; } }
+        public int ID { get { return BaseInst.ID; } }
+        public VobTypes VobType { get { return BaseInst.VobType; } }
+        public bool IsStatic { get { return BaseInst.IsStatic; } }
+        public bool IsSpawned { get { return BaseInst.IsSpawned; } }
 
-        public WorldInst World { get { return (WorldInst)this.baseInst.World.ScriptObject; } }
+        public WorldInst World { get { return (WorldInst)this.BaseInst.World.ScriptObject; } }
 
-        public Vec3f GetPosition() { return this.baseInst.GetPosition(); }
-        public Vec3f GetDirection() { return this.baseInst.GetDirection(); }
+        public Vec3f GetPosition() { return this.BaseInst.GetPosition(); }
+        public Vec3f GetDirection() { return this.BaseInst.GetDirection(); }
 
-        public void SetPosition(Vec3f position) { this.baseInst.SetPosition(position); }
-        public void SetDirection(Vec3f direction) { this.baseInst.SetDirection(direction); }
+        public void SetPosition(Vec3f position) { this.BaseInst.SetPosition(position); }
+        public void SetDirection(Vec3f direction) { this.BaseInst.SetDirection(direction); }
 
         #endregion
 
-        public virtual void OnPosChanged()
+        protected abstract BaseVob CreateVob();
+        public BaseVobInst()
         {
-        }
-
-        protected BaseVobInst(BaseVob baseInst)
-        {
-            if (baseInst == null)
-                throw new ArgumentNullException("BaseInst is null!");
-
-            this.baseInst = baseInst;
-            this.baseInst.ScriptObject = this;
+            this.baseInst = CreateVob();
+            if (this.baseInst == null)
+                throw new Exception("BaseInst is null!");
         }
 
         public void Spawn(World world)
@@ -67,12 +62,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public virtual void Spawn(WorldInst world, Vec3f pos, Vec3f dir)
         {
-            this.baseInst.Spawn(world.BaseWorld, pos, dir);
+            this.BaseInst.Spawn(world.BaseWorld, pos, dir);
         }
 
         public virtual void Despawn()
         {
-            baseInst.Despawn();
+            BaseInst.Despawn();
         }
 
         public virtual void OnReadProperties(PacketReader stream)

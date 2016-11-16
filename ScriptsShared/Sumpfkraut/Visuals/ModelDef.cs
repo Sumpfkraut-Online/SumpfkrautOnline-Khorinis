@@ -9,12 +9,12 @@ using GUC.Animations;
 
 namespace GUC.Scripts.Sumpfkraut.Visuals
 {
-    public partial class ModelDef : ScriptObject, Model.IScriptModel
+    public partial class ModelDef : ScriptObject, ModelInstance.IScriptModelInstance
     {
         #region Properties
 
-        Model baseDef;
-        public Model BaseDef { get { return baseDef; } }
+        ModelInstance baseDef;
+        public ModelInstance BaseDef { get { return baseDef; } }
 
         public int ID { get { return baseDef.ID; } }
         public bool IsStatic { get { return baseDef.IsStatic; } }
@@ -30,13 +30,13 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
         public static bool Contains(int id)
         {
-            return Models.Model.Contains(id);
+            return ModelInstance.Contains(id);
         }
 
         public static bool TryGetModel(int id, out ModelDef model)
         {
-            Models.Model m;
-            if (Models.Model.TryGet(id, out m))
+            ModelInstance m;
+            if (ModelInstance.TryGet(id, out m))
             {
                 model = (ModelDef)m.ScriptObject;
                 return true;
@@ -49,17 +49,17 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
         public static void ForEachModel(Action<ModelDef> action)
         {
-            Models.Model.ForEach(m => action((ModelDef)m.ScriptObject));
+            ModelInstance.ForEach(m => action((ModelDef)m.ScriptObject));
         }
 
-        public static void ForEachModel(Predicate<ModelDef> predicate)
+        public static void ForEachModelPredicate(Predicate<ModelDef> predicate)
         {
-            Models.Model.ForEach(m => predicate((ModelDef)m.ScriptObject));
+            ModelInstance.ForEachPredicate(m => predicate((ModelDef)m.ScriptObject));
         }
 
         public int GetCount()
         {
-            return Models.Model.GetCount();
+            return ModelInstance.Count;
         }
 
         #endregion
@@ -68,8 +68,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
         public ModelDef()
         {
-            this.baseDef = new Model();
-            this.baseDef.ScriptObject = this;
+            this.baseDef = new ModelInstance(this);
         }
 
         #endregion
@@ -104,87 +103,11 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
         #endregion
 
-        #region Animations
-
-        public void AddAniJob(AniJob aniJob)
-        {
-            AddAniJob((ScriptAniJob)aniJob.ScriptObject);
-        }
-
-        partial void pAddAniJob(ScriptAniJob aniJob);
-        public void AddAniJob(ScriptAniJob aniJob)
-        {
-            if (aniJob == null)
-                throw new ArgumentNullException("ScriptAniJob is null!");
-
-            this.baseDef.AddAniJob(aniJob.BaseAniJob);
-            pAddAniJob(aniJob);
-        }
-
-        public void RemoveAniJob(AniJob aniJob)
-        {
-            RemoveAniJob((ScriptAniJob)aniJob.ScriptObject);
-        }
-
-        partial void pRemoveAniJob(ScriptAniJob aniJob);
-        public void RemoveAniJob(ScriptAniJob aniJob)
-        {
-            if (aniJob == null)
-                throw new ArgumentNullException("ScriptAniJob is null!");
-
-            this.baseDef.RemoveAniJob(aniJob.BaseAniJob);
-            pRemoveAniJob(aniJob);
-        }
-
-        public bool ContainsAniJob(int id)
-        {
-            return this.baseDef.ContainsAni(id);
-        }
-
-        public bool TryGetAniJob(int id, out ScriptAniJob job)
-        {
-            Animations.AniJob a;
-            if (this.baseDef.TryGetAni(id, out a))
-            {
-                job = (ScriptAniJob)a.ScriptObject;
-                return true;
-            }
-            job = null;
-            return false;
-        }
-
-        public void ForEachAniJob(Action<ScriptAniJob> action)
-        {
-            this.baseDef.ForEachAni(j => action((ScriptAniJob)j.ScriptObject));
-        }
-
-        public void ForEachAniJob(Predicate<ScriptAniJob> predicate)
-        {
-            this.baseDef.ForEachAni(j => predicate((ScriptAniJob)j.ScriptObject));
-        }
-
-        public int GetAniJobCount()
-        {
-            return this.baseDef.GetAniCount();
-        }
-
-        #endregion
-
         #region Overlays
-        
+
         public void AddOverlay(Overlay overlay)
         {
             AddOverlay((ScriptOverlay)overlay.ScriptObject);
-        }
-
-        partial void pAddOverlay(ScriptOverlay overlay);
-        public void AddOverlay(ScriptOverlay overlay)
-        {
-            if (overlay == null)
-                throw new ArgumentNullException("ScriptOverlay is null!");
-
-            this.baseDef.AddOverlay(overlay.BaseOverlay);
-            pAddOverlay(overlay);
         }
 
         public void RemoveOverlay(Overlay overlay)
@@ -192,46 +115,44 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
             RemoveOverlay((ScriptOverlay)overlay.ScriptObject);
         }
 
+        partial void pAddOverlay(ScriptOverlay overlay);
+        public void AddOverlay(ScriptOverlay overlay)
+        {
+            this.baseDef.AddOverlay(overlay.BaseOverlay);
+        }
+
         partial void pRemoveOverlay(ScriptOverlay overlay);
         public void RemoveOverlay(ScriptOverlay overlay)
         {
-            if (overlay == null)
-                throw new ArgumentNullException("ScriptOverlay is null!");
-
             this.baseDef.RemoveOverlay(overlay.BaseOverlay);
-            pRemoveOverlay(overlay);
         }
 
-        public bool ContainsOverlay(int id)
+        #endregion
+        
+        #region Animations
+
+        public void AddAniJob(AniJob aniJob)
         {
-            return this.baseDef.ContainsAni(id);
+            AddAniJob((ScriptAniJob)aniJob.ScriptObject);
         }
 
-        public bool TryGetOverlay(int id, out ScriptOverlay overlay)
+        public void RemoveAniJob(AniJob aniJob)
         {
-            Animations.Overlay a;
-            if (this.baseDef.TryGetOverlay(id, out a))
-            {
-                overlay = (ScriptOverlay)a.ScriptObject;
-                return true;
-            }
-            overlay = null;
-            return false;
+            RemoveAniJob((ScriptAniJob)aniJob.ScriptObject);
         }
 
-        public void ForEachOverlay(Action<ScriptOverlay> action)
+        partial void pAddAniJob(ScriptAniJob aniJob);
+        public void AddAniJob(ScriptAniJob aniJob)
         {
-            this.baseDef.ForEachOverlay(o => action((ScriptOverlay)o.ScriptObject));
+            this.baseDef.AddAniJob(aniJob.BaseAniJob);
+            pAddAniJob(aniJob);
         }
 
-        public void ForEachOverlay(Predicate<ScriptOverlay> predicate)
+        partial void pRemoveAniJob(ScriptAniJob aniJob);
+        public void RemoveAniJob(ScriptAniJob aniJob)
         {
-            this.baseDef.ForEachOverlay(o => predicate((ScriptOverlay)o.ScriptObject));
-        }
-
-        public int GetOverlayCount()
-        {
-            return this.baseDef.GetOverlayCount();
+            this.baseDef.RemoveAniJob(aniJob.BaseAniJob);
+            pRemoveAniJob(aniJob);
         }
 
         #endregion

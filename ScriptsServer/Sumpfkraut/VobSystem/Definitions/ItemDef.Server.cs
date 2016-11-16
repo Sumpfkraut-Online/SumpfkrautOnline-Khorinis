@@ -12,8 +12,14 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         public int Damage = 0;
         public int Protection = 0;
 
-        public ItemDef(string codeName) : base(new ItemInstance(), codeName)
+        public ItemDef(string codeName) : this()
         {
+            this.CodeName = codeName;
+        }
+
+        public static ItemDef Get(string codeName)
+        {
+            return Get<ItemDef>(codeName);
         }
     }
 }

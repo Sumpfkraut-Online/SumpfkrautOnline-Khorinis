@@ -6,21 +6,21 @@ using System.Threading.Tasks;
 using GUC.Scripting;
 using GUC.Scripts.Sumpfkraut.Networking;
 using GUC.Scripts.Sumpfkraut.Visuals;
-using GUC.Enumeration;
+using GUC.Types;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.WorldObjects.VobGuiding;
 using GUC.Scripts.Sumpfkraut.AI.GuideCommands;
+using GUC.WorldObjects;
 
 namespace GUC.Scripts
 {
     public partial class GUCScripts : ScriptInterface
     {
-        public bool OnClientConnection(Network.GameClient client)
+        public Network.GameClient CreateClient()
         {
-            new TFFA.TFFAClient(client); //Networking.ScriptClient(client);
-            return true;
+            return new Left4Gothic.L4Client().BaseClient;//new ScriptClient().BaseClient;
         }
 
         public Animations.AniJob CreateAniJob()
@@ -38,17 +38,17 @@ namespace GUC.Scripts
             return new ScriptOverlay().BaseOverlay;
         }
 
-        public Models.Model CreateModel()
+        public Models.ModelInstance CreateModelInstance()
         {
             return new ModelDef().BaseDef;
         }
 
-        public WorldObjects.World CreateWorld()
+        public World CreateWorld()
         {
             return new WorldInst().BaseWorld;
         }
 
-        public WorldObjects.BaseVob CreateVob(VobTypes type)
+        public BaseVob CreateVob(VobTypes type)
         {
             BaseVobInst vob;
             switch (type)
@@ -96,7 +96,7 @@ namespace GUC.Scripts
             return def.BaseDef;
         }
 
-        public GuideCmd CreateGuideCmd(byte type)
+        public GuideCmd CreateGuideCommand(byte type)
         {
             switch ((CommandType)type)
             {

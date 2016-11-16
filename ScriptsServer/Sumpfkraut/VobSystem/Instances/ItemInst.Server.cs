@@ -8,8 +8,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class ItemInst
     {
-        public ItemInst(ItemDef def) : base(def, new WorldObjects.Item())
+        public ItemInst(ItemDef def) : this()
         {
+            this.Definition = def;
         }
     }
 }

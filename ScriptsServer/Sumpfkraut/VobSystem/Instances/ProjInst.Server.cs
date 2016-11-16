@@ -14,8 +14,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public NPCInst Shooter;
         public int Damage;
 
-        public ProjInst(ProjDef def) : base(def, new WorldObjects.Projectile())
+        public ProjInst(ProjDef def) : this()
         {
+            this.Definition = def;
         }
 
         public void UpdatePos(Vec3f newPos, Vec3f oldPos)
@@ -33,11 +34,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             if (target != null)
             {
                 var strm = this.BaseInst.GetScriptVobStream();
-                strm.Write((byte)NetWorldMsgID.HitMessage);
+                strm.Write((byte)ScriptVobMessageIDs.HitMessage);
                 strm.Write((ushort)target.ID);
                 this.BaseInst.SendScriptVobStream(strm);
 
-                target.Hit(this.Shooter, Damage - (target.Armor == null ? 0 : target.Armor.Definition.Protection));
+                //target.Hit(this.Shooter, Damage - (target.Armor == null ? 0 : target.Armor.Definition.Protection));
 
                 this.Despawn();
             }

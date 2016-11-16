@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using GUC.WorldObjects;
 using GUC.Types;
+using GUC.GameObjects;
 
 namespace GUC.Network
 {
-    public partial class GameClient : GameObject
+    public partial class GameClient : IDObject
     {
         #region ScriptObject
 
@@ -16,17 +17,24 @@ namespace GUC.Network
         /// </summary>
         public partial interface IScriptClient : IScriptGameObject
         {
+            void OnConnection();
+            void OnDisconnection();
+
             void SetControl(NPC npc);
             void SetToSpectator(World world, Vec3f pos, Vec3f dir);
         }
 
         /// <summary>
-        /// The ScriptObject of this Vob.
+        /// The ScriptObject of this object.
         /// </summary>
-        public new IScriptClient ScriptObject
+        public new IScriptClient ScriptObject { get { return (IScriptClient)base.ScriptObject; } }
+
+        #endregion
+
+        #region Constructors
+
+        public GameClient(IScriptClient scriptObject) : base(scriptObject)
         {
-            get { return (IScriptClient)base.ScriptObject; }
-            set { base.ScriptObject = value; }
         }
 
         #endregion
@@ -38,13 +46,29 @@ namespace GUC.Network
 
         new public int ID { get { return base.ID; } }
 
-        World loadedWorld;
+        public bool IsIngame { get { return (this.character != null && this.character.IsSpawned) || this.isSpectating; } }
+
+        /// <summary>
+        /// Returns the world this client's character is in or this client is spectating.
+        /// </summary>
+        public World World
+        {
+            get
+            {
+                if (this.character != null)
+                    return this.character.World;
+                else if (this.isSpectating)
+                    return this.specWorld;
+                return null;
+            }
+        }
 
         #endregion
 
         #region Control
 
         partial void pSetControl(NPC npc);
+        /// <summary> Lets this client take control of the given NPC. Can be null. </summary>
         public void SetControl(NPC npc)
         {
             if (this.character == npc)
@@ -59,7 +83,7 @@ namespace GUC.Network
 
         Vec3f specPos, specDir;
 
-        World specWorld = null;
+        World specWorld;
         public World SpecWorld { get { return this.specWorld; } }
 
         bool isSpectating = false;
@@ -106,7 +130,7 @@ namespace GUC.Network
         #endregion
 
         #region Set to spectator mode
-        
+
         partial void pSetToSpectate(World world, Vec3f pos, Vec3f dir);
         /// <summary>
         /// The client will lose control of its current NPC and move into spectator mode (free view).
@@ -142,42 +166,6 @@ namespace GUC.Network
 
         protected override void WriteProperties(PacketWriter stream)
         {
-        }
-
-        #endregion
-
-        #region Vob guiding
-
-        List<Vob> cmdList = new List<Vob>();
-
-        partial void pAddToCmdList(Vob vob);
-        internal void AddToCmdList(Vob vob)
-        {
-            if (vob == null)
-                throw new ArgumentNullException("Vob is null!");
-
-            if (vob.Guide != null)
-                throw new ArgumentNullException("Vob commander is not null!");
-
-            cmdList.Add(vob);
-            vob.Guide = this;
-
-            pAddToCmdList(vob);
-        }
-
-        partial void pRemoveFromCmdList(Vob vob);
-        internal void RemoveFromCmdList(Vob vob)
-        {
-            if (vob == null)
-                throw new ArgumentNullException("Vob is null!");
-
-            if (vob.Guide != this)
-                throw new ArgumentNullException("Client is not commanding this vob!");
-
-            cmdList.Remove(vob);
-            vob.Guide = null;
-
-            pRemoveFromCmdList(vob);
         }
 
         #endregion

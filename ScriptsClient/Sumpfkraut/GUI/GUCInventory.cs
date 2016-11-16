@@ -59,7 +59,11 @@ namespace GUC.Scripts.Sumpfkraut.GUI
                         }
                         else
                         {
-                            vis.SetVisual(item.Model.Visual);
+                            vis.SetVisual(item.ModelDef.Visual);
+                            if (shown)
+                            {
+                                vis.Show();
+                            }
                             int num = item.Amount;
                             if (num > 1)
                             {
@@ -69,13 +73,9 @@ namespace GUC.Scripts.Sumpfkraut.GUI
                             {
                                 amount.Text = string.Empty;
                             }
-
-                            if (shown)
-                            {
-                                vis.Show();
-                            }
                         }
                     }
+                    
                 }
             }
 
@@ -93,7 +93,7 @@ namespace GUC.Scripts.Sumpfkraut.GUI
                 }
             }
 
-            void UpdateBackTex()
+            public void UpdateBackTex()
             {
                 if (this.isSelected)
                 {
@@ -105,12 +105,26 @@ namespace GUC.Scripts.Sumpfkraut.GUI
                 }
             }
 
+            public void UpdateSlotAmount()
+            {
+                int num = item != null ? item.Amount : -1;
+                if (num > 1)
+                {
+                    amount.Text = num.ToString();
+                }
+                else
+                {
+                    amount.Text = string.Empty;
+                }
+            }
+
             public override void Show()
             {
                 back.Show();
                 if (item != null)
                 {
                     vis.Show();
+                    UpdateSlotAmount();
                 }
                 shown = true;
             }
@@ -391,7 +405,7 @@ namespace GUC.Scripts.Sumpfkraut.GUI
                 descrBack.Texts[12].Text = selectedItem.weight.ToString();*/
 
                 //visual vob
-                descrVis.SetVisual(selItem.Model.Visual);
+                descrVis.SetVisual(selItem.ModelDef.Visual);
 
                 //show
                 descrVis.Show();
@@ -424,8 +438,8 @@ namespace GUC.Scripts.Sumpfkraut.GUI
 
         #endregion
 
-        ItemContainer inventory = null;
-        public void SetContents(ItemContainer inventory)
+        VobSystem.Instances.ItemContainers.ScriptInventory inventory = null;
+        public void SetContents(VobSystem.Instances.ItemContainers.ScriptInventory inventory)
         {
             this.inventory = inventory;
 
@@ -437,12 +451,30 @@ namespace GUC.Scripts.Sumpfkraut.GUI
             UpdateSlots(); // update slot visuals
         }
 
+        public void UpdateAmounts()
+        {
+            for (int y = 0; y < slots.GetLength(1); y++)
+                for (int x = 0; x < slots.GetLength(0); x++)
+                {
+                    slots[x, y].UpdateSlotAmount();
+                }
+        }
+
+        public void UpdateEquipment()
+        {
+            for (int y = 0; y < slots.GetLength(1); y++)
+                for (int x = 0; x < slots.GetLength(0); x++)
+                {
+                    slots[x, y].UpdateBackTex();
+                }
+        }
+
         List<ItemInst> contents = new List<ItemInst>();
         void UpdateSlots()
         {
             contents.Clear();
             if (this.inventory != null)
-                this.inventory.ForEachItem(item => contents.Add((ItemInst)item.ScriptObject));
+                this.inventory.ForEachItem(item => contents.Add(item));
             contents.Sort(ItemSort);
 
             int i = startPos * slots.GetLength(0);
@@ -452,6 +484,8 @@ namespace GUC.Scripts.Sumpfkraut.GUI
                     if (i < contents.Count)
                     {
                         slots[x, y].Item = contents[i];
+                        slots[x, y].UpdateSlotAmount();
+                        slots[x, y].UpdateBackTex();
                     }
                     else
                     {

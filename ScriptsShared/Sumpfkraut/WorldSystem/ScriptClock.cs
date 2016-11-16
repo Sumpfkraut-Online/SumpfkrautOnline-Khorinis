@@ -4,28 +4,53 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GUC.Network;
+using GUC.WorldObjects.WorldGlobals;
 using GUC.Types;
-using GUC.WorldObjects.Time;
 
 namespace GUC.Scripts.Sumpfkraut.WorldSystem
 {
-    public class ScriptClock : WorldClock.IScriptWorldClock
+    public partial class ScriptClock : WorldClock.IScriptWorldClock
     {
-        WorldClock baseClock;
-        public WorldClock BaseClock { get { return this.baseClock; } }
+        #region Constructors
 
-        public WorldTime Time { get { return this.baseClock.Time; } }
-        public float Rate { get { return this.baseClock.Rate; } }
-
-        public WorldInst World { get { return (WorldInst)this.baseClock.World.ScriptObject; } }
-
-        // SetTime etc
-
+        partial void pConstruct();
         public ScriptClock(WorldInst world)
         {
-            this.baseClock = world.BaseWorld.Clock;
-            this.baseClock.ScriptObject = this;
+            if (world == null)
+                throw new ArgumentNullException("World is null!");
+            this.world = world;
+            pConstruct();
         }
+
+        #endregion
+
+        #region Properties
+
+        WorldInst world;
+        public WorldInst World { get { return this.world; } }
+        public WorldClock BaseClock { get { return this.world.BaseWorld.Clock; } }
+
+        public WorldTime Time { get { return BaseClock.Time; } }
+        public float Rate { get { return BaseClock.Rate; } }
+
+        #endregion
+
+        public void SetTime(WorldTime time, float rate)
+        {
+            BaseClock.SetTime(time, rate);
+        }
+
+        public void Start()
+        {
+            BaseClock.Start();
+        }
+
+        public void Stop()
+        {
+            BaseClock.Stop();
+        }
+
+        #region Read & Write
 
         public void OnReadProperties(PacketReader stream)
         {
@@ -35,19 +60,6 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
         {
         }
 
-        public void SetTime(WorldTime time, float rate)
-        {
-            this.baseClock.SetTime(time, rate);
-        }
-
-        public void Start()
-        {
-            this.baseClock.Start();
-        }
-
-        public void Stop()
-        {
-            this.baseClock.Stop();
-        }
+        #endregion
     }
 }

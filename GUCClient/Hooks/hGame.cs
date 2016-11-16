@@ -12,6 +12,7 @@ using Gothic.View;
 using Gothic.Sound;
 using System.Threading;
 using GUC.GUI;
+using GUC.WorldObjects;
 
 namespace GUC.Hooks
 {
@@ -36,16 +37,16 @@ namespace GUC.Hooks
         static bool outgameStarted = false;
 
         static GUCVisual connectionVis = null;
-        static bool ShowConnectionAttempts(GameClient client)
+        static bool ShowConnectionAttempts()
         {
-            if (client.IsDisconnected)
+            if (GameClient.IsDisconnected)
                 return true;
 
-            if (!client.IsConnected)
+            if (!GameClient.IsConnected)
             {
-                if (!client.IsConnecting)
+                if (!GameClient.IsConnecting)
                 {
-                    client.Connect();
+                    GameClient.Connect();
                 }
 
                 if (connectionVis == null)
@@ -59,7 +60,7 @@ namespace GUC.Hooks
                 connectionVis.SetPosY(200);
                 connectionVis.SetSizeY(40);
                 connectionVis.SetSizeX(400);
-                connectionVis.Texts[0].Text = string.Format("Connecting to '{0}:{1}' ... ({2})", Program.ServerIP, Program.ServerPort, client.ConnectionAttempts);
+                connectionVis.Texts[0].Text = string.Format("Connecting to '{0}:{1}' ... ({2})", Program.ServerIP, Program.ServerPort, GameClient.ConnectionAttempts);
                 connectionVis.Show();
                 return true;
             }
@@ -68,7 +69,7 @@ namespace GUC.Hooks
             {
                 connectionVis.Hide();
             }
-            return !client.IsConnected;
+            return !GameClient.IsConnected;
         }
 
         static System.Diagnostics.Stopwatch fpsWatch = new System.Diagnostics.Stopwatch();
@@ -76,15 +77,12 @@ namespace GUC.Hooks
         {
             try
             {
-                var client = GameClient.Client;
-                if (client == null) return;
-
                 GameTime.Update();
                 GUCTimer.Update(GameTime.Ticks);
+                GameClient.Update();
                 InputHandler.Update();
-                client.Update();
 
-                if (!ShowConnectionAttempts(client))
+                if (!ShowConnectionAttempts())
                 {
                     if (!outgameStarted)
                     {
@@ -131,17 +129,13 @@ namespace GUC.Hooks
         {
             try
             {
-                var client = GameClient.Client;
-                if (client == null) return;
-
                 GameTime.Update();
                 GUCTimer.Update(GameTime.Ticks);
+                GameClient.Update();
                 InputHandler.Update();
                 SoundHandler.Update3DSounds();
-                client.Update();
-                WorldObjects.World.ForEach(w => w.OnTick(GameTime.Ticks));
 
-                if (!ShowConnectionAttempts(client))
+                if (!ShowConnectionAttempts())
                 {
                     if (!ingameStarted)
                     {
@@ -151,10 +145,13 @@ namespace GUC.Hooks
 
                     ScriptManager.Interface.Update(GameTime.Ticks);
 
-                    if (client.IsSpectating)
+                    if (GameClient.Client.IsIngame)
                     {
-                        client.UpdateSpectator(GameTime.Ticks);
+                        World.UpdateWorlds(GameTime.Ticks);
                     }
+
+                    GameClient.UpdateSpectator(GameTime.Ticks);
+                    NPC.UpdateHero(GameTime.Ticks);
                 }
 
                 if (fpsWatch.IsRunning)

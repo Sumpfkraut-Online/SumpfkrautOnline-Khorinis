@@ -702,6 +702,21 @@ namespace Gothic.Objects
         {
             return Process.THISCALL<IntArg>(Address, 0x67FFC0);
         }
+        
+        public void DoDropVob(zCVob vob)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.DoDropVob, vob);
+        }
+
+        public void SetHead()
+        {
+            Process.THISCALL<IntArg>(Address, FuncAddresses.SetHead);
+        }
+
+        public void InitModel()
+        {
+            Process.THISCALL<IntArg>(Address, FuncAddresses.InitModel);
+        }
 
         /*
         public static oCNpc StealNPC(Process process)
@@ -1338,16 +1353,6 @@ namespace Gothic.Objects
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.PerceptionCheck);
         }
 
-        public void SetHead()
-        {
-            Process.THISCALL<IntArg>(Address, FuncAddresses.SetHead);
-        }
-
-        public void InitModel()
-        {
-            Process.THISCALL<IntArg>(Address, FuncAddresses.InitModel);
-        }
-
 
         public void CloseSteal()
         {
@@ -1567,12 +1572,6 @@ namespace Gothic.Objects
         public void CheckUnconscious()
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.CheckUnconscious);
-        }
-
-
-        public void DoDropVob(zCVob vob)
-        {
-            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.DoDropVob, new CallValue[] { vob });
         }
 
         public void DoTakeVob(zCVob vob)

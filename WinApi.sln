@@ -15,50 +15,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUCShared", "GUCShared\GUCS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptsServer", "ScriptsServer\ScriptsServer.csproj", "{477C9B57-AD36-4CAC-998F-800C5A693C35}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AnimationFiles", "AnimationFiles", "{5FA4D28D-8CD8-4BA8-BC25-4800F17768A9}"
-	ProjectSection(SolutionItems) = preProject
-		AnimationFiles\Alligator.times = AnimationFiles\Alligator.times
-		AnimationFiles\Blattcrawler.times = AnimationFiles\Blattcrawler.times
-		AnimationFiles\Bloodfly.times = AnimationFiles\Bloodfly.times
-		AnimationFiles\Crawler.times = AnimationFiles\Crawler.times
-		AnimationFiles\Demon.times = AnimationFiles\Demon.times
-		AnimationFiles\Draconian.times = AnimationFiles\Draconian.times
-		AnimationFiles\Dragon.times = AnimationFiles\Dragon.times
-		AnimationFiles\Dragon_Rock.times = AnimationFiles\Dragon_Rock.times
-		AnimationFiles\DragonSnapper.times = AnimationFiles\DragonSnapper.times
-		AnimationFiles\FireShadow.times = AnimationFiles\FireShadow.times
-		AnimationFiles\Giant_Bug.times = AnimationFiles\Giant_Bug.times
-		AnimationFiles\Giant_Rat.times = AnimationFiles\Giant_Rat.times
-		AnimationFiles\Gobbo.times = AnimationFiles\Gobbo.times
-		AnimationFiles\Golem.times = AnimationFiles\Golem.times
-		AnimationFiles\Harpie.times = AnimationFiles\Harpie.times
-		AnimationFiles\HumanS.times = AnimationFiles\HumanS.times
-		AnimationFiles\Irrlicht.times = AnimationFiles\Irrlicht.times
-		AnimationFiles\Keiler.times = AnimationFiles\Keiler.times
-		AnimationFiles\Lurker.times = AnimationFiles\Lurker.times
-		AnimationFiles\Meatbug.times = AnimationFiles\Meatbug.times
-		AnimationFiles\Molerat.times = AnimationFiles\Molerat.times
-		AnimationFiles\Orc.times = AnimationFiles\Orc.times
-		AnimationFiles\Razor.times = AnimationFiles\Razor.times
-		AnimationFiles\Scavenger.times = AnimationFiles\Scavenger.times
-		AnimationFiles\ScavengerGL.times = AnimationFiles\ScavengerGL.times
-		AnimationFiles\Shadow.times = AnimationFiles\Shadow.times
-		AnimationFiles\Sheep.times = AnimationFiles\Sheep.times
-		AnimationFiles\Snapper.times = AnimationFiles\Snapper.times
-		AnimationFiles\StoneGuardian.times = AnimationFiles\StoneGuardian.times
-		AnimationFiles\StonePuma.times = AnimationFiles\StonePuma.times
-		AnimationFiles\SwampDrone.times = AnimationFiles\SwampDrone.times
-		AnimationFiles\SwampGolem.times = AnimationFiles\SwampGolem.times
-		AnimationFiles\SwampRat.times = AnimationFiles\SwampRat.times
-		AnimationFiles\Swampshark.times = AnimationFiles\Swampshark.times
-		AnimationFiles\SwampZombie.times = AnimationFiles\SwampZombie.times
-		AnimationFiles\Swarm.times = AnimationFiles\Swarm.times
-		AnimationFiles\Troll.times = AnimationFiles\Troll.times
-		AnimationFiles\Waran.times = AnimationFiles\Waran.times
-		AnimationFiles\Wolf.times = AnimationFiles\Wolf.times
-		AnimationFiles\Zombie.times = AnimationFiles\Zombie.times
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptsClient", "ScriptsClient\ScriptsClient.csproj", "{A46549EC-1747-4E96-B7F0-A7A18B312DA5}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C670CA0D-F27B-4745-9B76-B06882052E6B} = {C670CA0D-F27B-4745-9B76-B06882052E6B}
@@ -514,11 +470,5 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{C9393256-12C6-4205-A717-20E8660B0227} = {5FA4D28D-8CD8-4BA8-BC25-4800F17768A9}
-		{C76E58DD-8E4F-4622-9B7E-29798F4ED4D5} = {E14EEC51-997D-42C1-B54E-5B94AB34C716}
-		{A5EDEB45-0E7B-4BB6-A70E-CC78842FE7F7} = {E14EEC51-997D-42C1-B54E-5B94AB34C716}
-		{BEEE4328-91CB-4DD8-BB6A-9BCB4D432FC6} = {C76E58DD-8E4F-4622-9B7E-29798F4ED4D5}
 	EndGlobalSection
 EndGlobal

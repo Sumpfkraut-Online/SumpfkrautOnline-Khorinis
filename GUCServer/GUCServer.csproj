@@ -35,6 +35,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
+    <OutputPath>..\GothicII\Server\</OutputPath>
     <OutputPath>..\bin\Server\</OutputPath>
     <DefineConstants>TRACE;DEBUG;D_SERVER</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -44,6 +45,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
+    <OutputPath>..\GothicII\Server\</OutputPath>
     <OutputPath>..\bin\Server\</OutputPath>
     <DefineConstants>TRACE;D_SERVER</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -67,6 +69,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\GUCShared\Animations\ActiveAni.cs">
+      <Link>Animations\ActiveAni.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\Animations\AniJob.cs">
       <Link>Animations\AniJob.cs</Link>
     </Compile>
@@ -76,44 +81,35 @@
     <Compile Include="..\GUCShared\Animations\Overlay.cs">
       <Link>Animations\Overlay.cs</Link>
     </Compile>
-    <Compile Include="..\GUCShared\Constants.cs">
-      <Link>Constants.cs</Link>
+    <Compile Include="..\GUCShared\GameObjects\Collections\DynamicCollection.cs">
+      <Link>GameObjects\Collections\DynamicCollection.cs</Link>
     </Compile>
-    <Compile Include="..\GUCShared\DynamicCollection.cs">
-      <Link>DynamicCollection.cs</Link>
+    <Compile Include="..\GUCShared\GameObjects\Collections\IDODictionary.cs">
+      <Link>GameObjects\Collections\IDODictionary.cs</Link>
     </Compile>
-    <Compile Include="..\GUCShared\Enumeration\HumanVisuals.cs">
-      <Link>Enumeration\HumanVisuals.cs</Link>
+    <Compile Include="..\GUCShared\GameObjects\Collections\StaticCollection.cs">
+      <Link>GameObjects\Collections\StaticCollection.cs</Link>
     </Compile>
-    <Compile Include="..\GUCShared\Enumeration\ItemEnums.cs">
-      <Link>Enumeration\ItemEnums.cs</Link>
+    <Compile Include="..\GUCShared\GameObjects\GameObject.cs">
+      <Link>GameObjects\GameObject.cs</Link>
     </Compile>
-    <Compile Include="..\GUCShared\Enumeration\NetworkIDS.cs">
-      <Link>Enumeration\NetworkIDS.cs</Link>
-    </Compile>
-    <Compile Include="..\GUCShared\Enumeration\NPCStates.cs">
-      <Link>Enumeration\NPCStates.cs</Link>
-    </Compile>
-    <Compile Include="..\GUCShared\Enumeration\VobTypes.cs">
-      <Link>Enumeration\VobTypes.cs</Link>
-    </Compile>
-    <Compile Include="..\GUCShared\Enumeration\WeatherTypes.cs">
-      <Link>Enumeration\WeatherTypes.cs</Link>
-    </Compile>
-    <Compile Include="..\GUCShared\GameObject.cs">
-      <Link>GameObject.cs</Link>
+    <Compile Include="..\GUCShared\GameObjects\IDObject.cs">
+      <Link>GameObjects\IDObject.cs</Link>
     </Compile>
     <Compile Include="..\GUCShared\GameTime.cs">
       <Link>GameTime.cs</Link>
-    </Compile>
-    <Compile Include="..\GUCShared\GODictionary.cs">
-      <Link>GODictionary.cs</Link>
     </Compile>
     <Compile Include="..\GUCShared\Log\Logger.cs">
       <Link>Log\Logger.cs</Link>
     </Compile>
     <Compile Include="..\GUCShared\Models\Model.cs">
       <Link>Models\Model.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\Models\ModelInstance.cs">
+      <Link>Models\ModelInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\Network\ClientMessages.cs">
+      <Link>Network\ClientMessages.cs</Link>
     </Compile>
     <Compile Include="..\GUCShared\Network\GameClient.cs">
       <Link>Network\GameClient.cs</Link>
@@ -124,8 +120,8 @@
     <Compile Include="..\GUCShared\Network\PacketWriter.cs">
       <Link>Network\PacketWriter.cs</Link>
     </Compile>
-    <Compile Include="..\GUCShared\Randomizer.cs">
-      <Link>Randomizer.cs</Link>
+    <Compile Include="..\GUCShared\Network\ServerMessages.cs">
+      <Link>Network\ServerMessages.cs</Link>
     </Compile>
     <Compile Include="..\GUCShared\Scripting\ScriptManager.cs">
       <Link>Scripting\ScriptManager.cs</Link>
@@ -133,17 +129,26 @@
     <Compile Include="..\GUCShared\Scripting\Timer.cs">
       <Link>Scripting\Timer.cs</Link>
     </Compile>
-    <Compile Include="..\GUCShared\StaticCollection.cs">
-      <Link>StaticCollection.cs</Link>
-    </Compile>
     <Compile Include="..\GUCShared\Types\ColorRGBA.cs">
       <Link>Types\ColorRGBA.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\Types\NPCMovement.cs">
+      <Link>Types\NPCMovement.cs</Link>
     </Compile>
     <Compile Include="..\GUCShared\Types\Vec2i.cs">
       <Link>Types\Vec2i.cs</Link>
     </Compile>
     <Compile Include="..\GUCShared\Types\Vec3f.cs">
       <Link>Types\Vec3f.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\Types\VobTypes.cs">
+      <Link>Types\VobTypes.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\Types\WeatherTypes.cs">
+      <Link>Types\WeatherTypes.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\Types\WorldTime.cs">
+      <Link>Types\WorldTime.cs</Link>
     </Compile>
     <Compile Include="..\GUCShared\Utilities\ExtendedObject.cs">
       <Link>Utilities\ExtendedObject.cs</Link>
@@ -157,8 +162,8 @@
     <Compile Include="..\GUCShared\Utilities\FileSystem\FileSystemProtocol.cs">
       <Link>Utilities\FileSystem\FileSystemProtocol.cs</Link>
     </Compile>
-    <Compile Include="..\GUCShared\Utilities\FileSystem\ManipulationOption.cs">
-      <Link>Utilities\FileSystem\ManipulationOption.cs</Link>
+    <Compile Include="..\GUCShared\Utilities\StringExtensions.cs">
+      <Link>Utilities\StringExtensions.cs</Link>
     </Compile>
     <Compile Include="..\GUCShared\Utilities\Threading\AbstractRunnable.cs">
       <Link>Utilities\Threading\AbstractRunnable.cs</Link>
@@ -166,14 +171,11 @@
     <Compile Include="..\GUCShared\Utilities\Threading\Runnable.cs">
       <Link>Utilities\Threading\Runnable.cs</Link>
     </Compile>
-    <Compile Include="..\GUCShared\Utilities\XmlObj.cs">
-      <Link>Utilities\XmlObj.cs</Link>
+    <Compile Include="..\GUCShared\Utilities\XMLHelper.cs">
+      <Link>Utilities\XMLHelper.cs</Link>
     </Compile>
     <Compile Include="..\GUCShared\WorldObjects\BaseVob.cs">
       <Link>WorldObjects\BaseVob.cs</Link>
-    </Compile>
-    <Compile Include="..\GUCShared\WorldObjects\Collections\ItemContainer.cs">
-      <Link>WorldObjects\Collections\ItemContainer.cs</Link>
     </Compile>
     <Compile Include="..\GUCShared\WorldObjects\Collections\VobTypeObjectCollection.cs">
       <Link>WorldObjects\Collections\VobTypeObjectCollection.cs</Link>
@@ -226,6 +228,15 @@
     <Compile Include="..\GUCShared\WorldObjects\Item.cs">
       <Link>WorldObjects\Item.cs</Link>
     </Compile>
+    <Compile Include="..\GUCShared\WorldObjects\ItemContainers\ItemContainer.cs">
+      <Link>WorldObjects\ItemContainers\ItemContainer.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\WorldObjects\ItemContainers\ItemInventory.cs">
+      <Link>WorldObjects\ItemContainers\ItemInventory.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\WorldObjects\ItemContainers\NPCInventory.cs">
+      <Link>WorldObjects\ItemContainers\NPCInventory.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\WorldObjects\Mobs\Mob.cs">
       <Link>WorldObjects\Mobs\Mob.cs</Link>
     </Compile>
@@ -262,12 +273,6 @@
     <Compile Include="..\GUCShared\WorldObjects\Projectile.cs">
       <Link>WorldObjects\Projectile.cs</Link>
     </Compile>
-    <Compile Include="..\GUCShared\WorldObjects\Time\WorldClock.cs">
-      <Link>WorldObjects\Time\WorldClock.cs</Link>
-    </Compile>
-    <Compile Include="..\GUCShared\WorldObjects\Time\WorldTime.cs">
-      <Link>WorldObjects\Time\WorldTime.cs</Link>
-    </Compile>
     <Compile Include="..\GUCShared\WorldObjects\Vob.cs">
       <Link>WorldObjects\Vob.cs</Link>
     </Compile>
@@ -277,38 +282,39 @@
     <Compile Include="..\GUCShared\WorldObjects\VobGuiding\GuidedVob.cs">
       <Link>WorldObjects\VobGuiding\GuidedVob.cs</Link>
     </Compile>
-    <Compile Include="..\GUCShared\WorldObjects\Weather\SkyController.cs">
-      <Link>WorldObjects\Weather\SkyController.cs</Link>
-    </Compile>
     <Compile Include="..\GUCShared\WorldObjects\World.cs">
       <Link>WorldObjects\World.cs</Link>
     </Compile>
-    <Compile Include="Animations\Overlay.Server.cs" />
-    <Compile Include="GameObject.Server.cs" />
+    <Compile Include="..\GUCShared\WorldObjects\WorldGlobals\BarrierController.cs">
+      <Link>WorldObjects\WorldGlobals\BarrierController.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\WorldObjects\WorldGlobals\SkyController.cs">
+      <Link>WorldObjects\WorldGlobals\SkyController.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\WorldObjects\WorldGlobals\WeatherController.cs">
+      <Link>WorldObjects\WorldGlobals\WeatherController.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\WorldObjects\WorldGlobals\WorldClock.cs">
+      <Link>WorldObjects\WorldGlobals\WorldClock.cs</Link>
+    </Compile>
     <Compile Include="Log\Logger.Server.cs" />
-    <Compile Include="Animations\AniJob.Server.cs" />
     <Compile Include="Models\Model.Server.cs" />
+    <Compile Include="Models\ModelInstance.Server.cs" />
     <Compile Include="Network\GameClient.Server.cs" />
-    <Compile Include="Network\Messages\GuideMessage.cs" />
-    <Compile Include="Network\Messages\SpectatorMessage.cs" />
     <Compile Include="Network\Messages\TradeMessage.cs" />
-    <Compile Include="Network\Messages\ConnectionMessage.cs" />
-    <Compile Include="Network\Messages\InventoryMessage.cs" />
-    <Compile Include="Network\Messages\NPCMessage.cs" />
-    <Compile Include="Network\Messages\VobMessage.cs" />
-    <Compile Include="Network\Messages\WorldMessage.cs" />
+    <Compile Include="Network\PacketEnums.cs" />
     <Compile Include="Options\ServerOptions.cs" />
     <Compile Include="Scripting\ScriptInterface.Server.cs" />
     <Compile Include="TCPListener.cs" />
     <Compile Include="Utilities\ExtendedObject.Server.cs" />
-    <Compile Include="Utilities\TestObject.cs" />
+    <Compile Include="Utilities\Randomizer.cs" />
     <Compile Include="Utilities\Threading\TestRun.cs" />
     <Compile Include="WorldObjects\BaseVob.Server.cs" />
     <Compile Include="WorldObjects\Cells\BigCell.cs" />
     <Compile Include="WorldObjects\Cells\NPCCell.cs" />
     <Compile Include="WorldObjects\Cells\WorldCell.cs" />
-    <Compile Include="WorldObjects\Collections\ItemContainer.Server.cs" />
-    <Compile Include="StaticCollection.Server.cs" />
+    <Compile Include="WorldObjects\ItemContainers\NPCInventory.Server.cs" />
+    <Compile Include="GameObjects\Collections\StaticCollection.Server.cs" />
     <Compile Include="WorldObjects\VobGuiding\GuidedVob.Server.cs" />
     <Compile Include="WorldObjects\Instances\BaseVobInstance.Server.cs" />
     <Compile Include="WorldObjects\Instances\Mobs\MobBedInstance.Server.cs" />
@@ -337,9 +343,10 @@
     <Compile Include="WorldObjects\Instances\Mobs\MobWheelInstance.Server.cs" />
     <Compile Include="WorldObjects\NPC.Server.cs" />
     <Compile Include="WorldObjects\Instances\NPCInstance.Server.cs" />
-    <Compile Include="WorldObjects\Weather\SkyController.Server.cs" />
+    <Compile Include="WorldObjects\WorldGlobals\BarrierController.Server.cs" />
+    <Compile Include="WorldObjects\WorldGlobals\WeatherController.Server.cs" />
     <Compile Include="WorldObjects\World.Server.cs" />
-    <Compile Include="WorldObjects\Time\WorldClock.Server.cs" />
+    <Compile Include="WorldObjects\WorldGlobals\WorldClock.Server.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Network\GameServer.cs" />
@@ -352,7 +359,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

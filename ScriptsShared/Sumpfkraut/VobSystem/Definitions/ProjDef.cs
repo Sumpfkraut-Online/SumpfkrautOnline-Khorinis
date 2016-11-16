@@ -10,6 +10,21 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
     public partial class ProjDef : BaseVobDef, ProjectileInstance.IScriptProjectileInstance
     {
+        #region Constructors
+
+        partial void pConstruct();
+        public ProjDef()
+        {
+            pConstruct();
+        }
+
+        protected override BaseVobInstance CreateVobInstance()
+        {
+            return new ProjectileInstance(this);
+        }
+
+        #endregion
+
         #region Properties
 
         new public ProjectileInstance BaseDef { get { return (ProjectileInstance)base.BaseDef; } }
@@ -28,14 +43,5 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #endregion
 
-        #region Constructors
-
-        partial void pConstruct();
-        public ProjDef() : base(new ProjectileInstance())
-        {
-            pConstruct();
-        }
-
-        #endregion
     }
 }

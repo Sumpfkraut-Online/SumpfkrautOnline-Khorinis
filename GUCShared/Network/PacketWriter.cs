@@ -6,28 +6,6 @@ using System.IO.Compression;
 
 namespace GUC.Network
 {
-    public enum PktPriority
-    {
-        IMMEDIATE_PRIORITY = 0,
-        HIGH_PRIORITY = 1,
-        MEDIUM_PRIORITY = 2,
-        LOW_PRIORITY = 3,
-        NUMBER_OF_PRIORITIES = 4
-    }
-
-    public enum PktReliability
-    {
-        UNRELIABLE = 0,
-        UNRELIABLE_SEQUENCED = 1,
-        RELIABLE = 2,
-        RELIABLE_ORDERED = 3,
-        RELIABLE_SEQUENCED = 4,
-        UNRELIABLE_WITH_ACK_RECEIPT = 5,
-        RELIABLE_WITH_ACK_RECEIPT = 6,
-        RELIABLE_ORDERED_WITH_ACK_RECEIPT = 7,
-        NUMBER_OF_RELIABILITIES = 8
-    }
-
     public class PacketWriter
     {
         const int StandardCapacity = 32000;
@@ -45,11 +23,11 @@ namespace GUC.Network
         byte[] data;
         int capacity;
 
-        //saved data when in compress mode
+        /*//saved data when in compress mode
         int SCurrentByte;
         int SCurrentBitByte;
         int SBitsWritten;
-        int SBitByte;
+        int SBitByte;*/
 
         internal PacketWriter() : this(StandardCapacity)
         {
@@ -74,7 +52,7 @@ namespace GUC.Network
 
         internal byte[] GetData()
         {
-            StopCompressing();
+            //StopCompressing();
             FlushBits();
             return data;
         }
@@ -105,7 +83,7 @@ namespace GUC.Network
         }
 
         #region Compressing
-
+        /*
         bool compress = false;
         internal void StartCompressing()
         {
@@ -164,7 +142,7 @@ namespace GUC.Network
                 compress = false;
             }
         }
-
+        */
         #endregion
 
         #region Writing Methods

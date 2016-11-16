@@ -8,9 +8,8 @@ using WinApi.User.Enumeration;
 using GUC.Types;
 
 using GUC.Network;
-using GUC.Enumeration;
+
 using GUC.GUI;
-using GUC.Network.Messages;
 
 namespace GUC.Scripts.Sumpfkraut.Menus
 {

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Scripts.Sumpfkraut.AI.GuideCommands;
+using GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs;
 
 namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 {
@@ -268,7 +269,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             Type aggressorType = aggressor.GetType();
             Type targetType = target.GetType();
             float distance = aggressor.GetPosition().GetDistance(target.GetPosition());
-            float totalRadius = aggressor.Model.Radius + target.Model.Radius;
+            float totalRadius = aggressor.ModelDef.Radius + target.ModelDef.Radius;
 
             // some sort of effective distance at which attacks can be conducted
             // modify as much as needed to enhance the combat ai
@@ -302,10 +303,12 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                     if (aggressorNPC.GetFightAni() != null) { return; }
 
                     Visuals.ScriptAniJob scriptAniJob;
-                    aggressorNPC.Model.TryGetAniJob((int) Visuals.SetAnis.Attack1HFwd1, out scriptAniJob);
+                    NPCCatalog.FightAnis AniCatalog = new NPCCatalog.FightAnis();
+                    //aggressorNPC.ModelDef.TryGetAniJob((int) Visuals.SetAnis.Attack1HFwd1, out scriptAniJob);
+                    scriptAniJob = AniCatalog.Fwd;
                     if (scriptAniJob != null)
                     {
-                        aggressorNPC.StartAnimation(scriptAniJob.BaseAniJob.DefaultAni);
+                        aggressorNPC.ModelInst.StartAnimation(scriptAniJob);
                     }
                 }
             }

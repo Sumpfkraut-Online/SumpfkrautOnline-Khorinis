@@ -275,11 +275,11 @@ namespace GUC.Scripts.Sumpfkraut.AI
                 npcDef = new NPCDef(name);
                 npcDef.Name = name;
                 npcDef.Model = model;
-                npcDef.BodyMesh = Enumeration.HumBodyMeshs.HUM_BODY_NAKED0.ToString();
+                npcDef.BodyMesh = HumBodyMeshs.HUM_BODY_NAKED0.ToString();
                 //npcDef.BodyMesh = RandomEnumValue<Enumeration.HumBodyMeshs>().ToString();
-                npcDef.BodyTex = (int) RandomEnumValue<Enumeration.HumBodyTexs>();
-                npcDef.HeadMesh = RandomEnumValue<Enumeration.HumHeadMeshs>().ToString();
-                npcDef.HeadTex = (int) RandomEnumValue<Enumeration.HumHeadTexs>();
+                npcDef.BodyTex = (int) RandomEnumValue<HumBodyTexs>();
+                npcDef.HeadMesh = RandomEnumValue<HumHeadMeshs>().ToString();
+                npcDef.HeadTex = (int) RandomEnumValue<HumHeadTexs>();
                 npcDef.Create();
 
                 //Log.Logger.Log(name);
@@ -321,13 +321,13 @@ namespace GUC.Scripts.Sumpfkraut.AI
             {
                 // 1H-weapon
                 weapon = new ItemInst(ItemDef.Get<ItemDef>( WeaponCodes_1H[random.Next(0, WeaponCodes_1H.Count)] ));
-                overlayExists = npcInst.Model.TryGetOverlay("1HST2", out overlay);
+                overlayExists = npcInst.ModelDef.TryGetOverlay("1HST2", out overlay);
             }
             else
             {
                 // 2H-weapon
                 weapon = new ItemInst(ItemDef.Get<ItemDef>( WeaponCodes_2H[random.Next(0, WeaponCodes_2H.Count)] ));
-                overlayExists = npcInst.Model.TryGetOverlay("2HST1", out overlay);
+                overlayExists = npcInst.ModelDef.TryGetOverlay("2HST1", out overlay);
             }
 
             // ranged weapon
@@ -347,19 +347,19 @@ namespace GUC.Scripts.Sumpfkraut.AI
             ammoAmount = random.Next(10, 500 + 1);
             ammo.BaseInst.SetAmount(ammoAmount);
 
-            npcInst.AddItem(weapon);
+            npcInst.Inventory.AddItem(weapon);
             npcInst.EquipItem(weapon); // 1 = DrawnWeapon
 
-            npcInst.AddItem(rangeWeapon);
+            npcInst.Inventory.AddItem(rangeWeapon);
             npcInst.EquipItem(rangeWeapon);
 
-            npcInst.AddItem(ammo);
+            npcInst.Inventory.AddItem(ammo);
             npcInst.EquipItem(ammo);
 
-            npcInst.AddItem(armor);
+            npcInst.Inventory.AddItem(armor);
             npcInst.EquipItem(armor);
 
-            if (overlayExists) { npcInst.ApplyOverlay(overlay); }
+            if (overlayExists) { npcInst.ModelInst.ApplyOverlay(overlay); }
 
             npcInst.Spawn(WorldSystem.WorldInst.Current, 
                 spawnPosition, new Types.Vec3f(1f, 0f, 0f));
