@@ -172,18 +172,32 @@ CREATE TABLE IF NOT EXISTS ScriptAni
 (
     ScriptAniID INTEGER NOT NULL, -- unique primary key id
     ScriptOverlayID INTEGER NOT NULL,
-    ScriptAnyJobID INTEGER NOT NULL,
+    ScriptAniJobID INTEGER NOT NULL,
     Layer INTEGER NOT NULL,
     Duration INTEGER NOT NULL,
     StartFrame INTEGER NOT NULL,
     EndFrame INTEGER NOT NULL,
-	PrevAniID INTEGER DEFAULT NULL,
-	NextAniID INTEGER DEFAULT NULL,
     ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of last change made
     CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of creation
-    CONSTRAINT ScriptAni_PK PRIMARY KEY (ScriptAniID),
-    FOREIGN KEY (ScriptOverlayID) REFERENCES ScriptOverlay(ScriptOverlayID),
-    FOREIGN KEY (ScriptAnyJobID) REFERENCES ScriptAnyJob(ScriptAnyJobID)
+    CONSTRAINT ScriptAni_PK PRIMARY KEY (ScriptAniID)
+);
+
+CREATE TRIGGER Update_ScriptAni
+    AFTER UPDATE
+    ON ScriptAni
+BEGIN
+    UPDATE ScriptAni SET ChangeDate = CURRENT_TIMESTAMP WHERE ScriptAniID = OLD.ScriptAniID;
+END;
+
+-- ActionFrameList --
+DROP TABLE IF EXISTS ActionFrameList;
+CREATE TABLE IF NOT EXISTS ActionFrameList 
+(
+    ScriptAniID INTEGER NOT NULL, -- unique primary key id
+    FrameList TEXT NOT NULL,
+    ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of last change made
+    CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of creation
+    CONSTRAINT ScriptAni_PK PRIMARY KEY (ScriptAniID)
 );
 
 CREATE TRIGGER Update_ScriptAni
@@ -199,8 +213,11 @@ CREATE TABLE IF NOT EXISTS ScriptAniJob
 (
     ScriptAniJobD INTEGER NOT NULL, -- unique primary key id
     ScriptAniID INTEGER NOT NULL,
-    AniName TEXT NOT NULL,
+	AniName TEXT NOT NULL,
+	CodeName TEXT NOT NULL,
     AniJobType INTEGER NOT NULL,
+	PrevCodeName TEXT DEFAULT NULL,
+	NextCodeName TEXT DEFAULT NULL,
     ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of last change made
     CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of creation
     CONSTRAINT ScriptAniJob_PK PRIMARY KEY (ScriptAniJobID),

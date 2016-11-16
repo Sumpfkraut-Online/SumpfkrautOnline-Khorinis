@@ -68,9 +68,9 @@ namespace GUC.Scripts.Sumpfkraut
 
 
 
-            WorldSystem.WorldLoader worldLoader = new WorldSystem.WorldLoader(">>GOTCHA<<",
-                Directory.GetCurrentDirectory() + @"\DB\someDB.db");
-            worldLoader.Load();
+            //WorldSystem.WorldLoader worldLoader = new WorldSystem.WorldLoader(">>GOTCHA<<",
+            //    Directory.GetCurrentDirectory() + @"\DB\someDB.db");
+            //worldLoader.Load();
 
             //Logger.Log(WorldSystem.WorldLoader.DBStructure["WorldEffect"]);
 
@@ -129,7 +129,7 @@ namespace GUC.Scripts.Sumpfkraut
 
 
 
-
+            new EffectSystem.EffectHandlers.SomeEffectHandler("Esel", null);
 
 
 
