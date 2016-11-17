@@ -259,33 +259,48 @@ namespace GUC.Scripts.Sumpfkraut.GUI
 
             int newX = x;
             int newY = y;
+            int shownCount = contents.Count - startPos * slots.GetLength(0);
 
             if (newX < 0)
             {
+                newX = 0;
                 if (Left != null)
                 {
+                    // enter another inventory
                     Left.EnterAt(Left.slots.GetLength(0) - 1, y);
                     Left.Enabled = true;
                     this.Enabled = false;
                 }
-                newX = 0;
+                else if(newY > 0)
+                {
+                    // switch to the very right and 1 row up, like Gothic
+                    newX = slots.GetLength(0) - 1;
+                    newY--;
+                }
+                
             }
             else if (newX >= slots.GetLength(0) || (cursor.Y - newY == 0 && slots[newX, newY].Item == null)) // moved to border or empty slot(make sure it was move in X)
             {
+                newX = slots.GetLength(0) - 1;
                 if (Right != null)
                 {
                     Right.EnterAt(0, y);
                     Right.Enabled = true;
                     this.Enabled = false;
                 }
-                newX = slots.GetLength(0) - 1;
+                else if(newY < shownCount / slots.GetLength(0))
+                {
+                    // switch to the very left and 1 row down, like Gothic
+                    newY++;
+                    newX = 0;
+                }
             }
 
             if (contents.Count > 0)
             {
                 if (newY < 0)
                 {
-                    newY = 0;
+                   newY = 0;
                     if (startPos > 0)
                     {
                         startPos--; //scroll up
@@ -297,7 +312,7 @@ namespace GUC.Scripts.Sumpfkraut.GUI
                 }
                 else if (newY >= slots.GetLength(1))
                 {
-                    newY = slots.GetLength(1) - 1;
+                   newY = slots.GetLength(1) - 1;
                     if (contents.Count > (startPos + slots.GetLength(1)) * slots.GetLength(0))
                     {
                         startPos++; //there are more items outside our current view, scroll down
@@ -308,13 +323,26 @@ namespace GUC.Scripts.Sumpfkraut.GUI
                     }
                 }
 
-                int shownCount = contents.Count - startPos * slots.GetLength(0);
                 if (shownCount < newY * slots.GetLength(0) + newX + 1) //cursor position is beyond the item list
                 {
-                    newY = shownCount / slots.GetLength(0);
-                    newX = shownCount % slots.GetLength(0) - 1;
-
-                    if (newX < 0) newX = slots.GetLength(0) - 1;
+                    if (shownCount % slots.GetLength(0) - 1 > newX)
+                    {
+                        // pressing 'down' results in moving to the right border
+                        newY--;
+                        newX++;
+                    }
+                    else
+                    {
+                        newX = shownCount % slots.GetLength(0) - 1;
+                        newY = shownCount / slots.GetLength(0);
+                        if (newX < 0)
+                        {
+                            // X == -1 -> set to the very right
+                            // Y is now one row to much => -1
+                            newX = slots.GetLength(0) - 1;
+                            newY--;
+                        }
+                    }
                 }
             }
             else
@@ -443,12 +471,12 @@ namespace GUC.Scripts.Sumpfkraut.GUI
         {
             this.inventory = inventory;
 
+            UpdateSlots(); // update slot visuals
+
             if (enabled)
             {
                 SetCursor(cursor.X, cursor.Y); //update cursor
             }
-
-            UpdateSlots(); // update slot visuals
         }
 
         public void UpdateAmounts()
