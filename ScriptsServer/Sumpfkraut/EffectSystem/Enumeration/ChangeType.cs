@@ -10,8 +10,14 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration
     {
         Undefined,
         
-        // changes influencing their own surrounding effect
+        // changes influencing their own effect-container
         Effect_Name_Set,
+
+        // often synchronized attributes
+
+        // event driven
+
+        // crafting
     }
 
 }

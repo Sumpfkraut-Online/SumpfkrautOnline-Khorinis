@@ -248,6 +248,7 @@
     <Compile Include="Sumpfkraut\Database\DBTables.cs" />
     <Compile Include="Sumpfkraut\Database\Enumeration.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Change.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\AnotherEffectHandler.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\SomeEffectHandler.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Effect.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\BaseEffectHandler.cs" />

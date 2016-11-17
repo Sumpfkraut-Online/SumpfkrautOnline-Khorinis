@@ -20,6 +20,8 @@ namespace GUC.Scripts.Sumpfkraut
 
         public static void Init ()
         {
+            Logger.Log("****** TestingThings *************************************");
+
             //Logger.Log(Directory.GetCurrentDirectory());
 
             //string dbFilePath = Directory.GetCurrentDirectory() + @"\DB\someDB.db";
@@ -128,11 +130,16 @@ namespace GUC.Scripts.Sumpfkraut
 
 
 
+            new EffectSystem.EffectHandlers.SomeEffectHandler("SomeEffectHandler", null);
+            new EffectSystem.EffectHandlers.AnotherEffectHandler("AnotherEffectHandler", null);
+            new EffectSystem.EffectHandlers.AnotherEffectHandler("AnotherEffectHandler", null);
+            new EffectSystem.EffectHandlers.AnotherEffectHandler("AnotherEffectHandler", null);
 
-            new EffectSystem.EffectHandlers.SomeEffectHandler("Esel", null);
-
-
-
+            //Logger.Log(EffectSystem.EffectHandlers.BaseEffectHandler.isInitialized 
+            //    == EffectSystem.EffectHandlers.AnotherEffectHandler.isInitialized);
+            //Logger.Log(EffectSystem.EffectHandlers.BaseEffectHandler.isInitialized);
+            //Logger.Log(EffectSystem.EffectHandlers.SomeEffectHandler.isInitialized);
+            //Logger.Log(EffectSystem.EffectHandlers.AnotherEffectHandler.isInitialized);
 
         }
 

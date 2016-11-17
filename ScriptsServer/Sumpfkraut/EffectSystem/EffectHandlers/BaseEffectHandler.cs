@@ -12,7 +12,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
     {
 
         new public static readonly string _staticName = "EffectHandler (static)";
-        protected static bool isInitialized = false;
 
         
 
@@ -22,17 +21,16 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
 
+        static BaseEffectHandler ()
+        {
+            // nothing to initialize here
+        }
+        
         // base constructor that must be called for clean initialization
         public BaseEffectHandler (string objName, List<Effect> effects)
         {
             if (objName == null) { SetObjName("EffectHandler (default)"); }
             else { SetObjName(objName); }
-
-            if (!isInitialized)
-            {
-                this.Init();
-                isInitialized = true;
-            }
 
             eventNameToChange = new Dictionary<string, List<Change>>();
             this.effects = effects ?? new List<Effect>();
@@ -54,18 +52,17 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         public int RemoveEffect (string effectName)
         {
             int index = -1;
-            Effect effect = null;
             lock (effectLock)
             {
                 for (int i = 0; i < effects.Count; i++)
                 {
-                    List<Change> changes = effects[i].Changes;
-                    for (int c = 0; c < changes.Count; c++)
+                    if (effects[i].EffectName == effectName)
                     {
-                        if (changes[c].ChangeType == )
+                        index = i;
+                        effects[index].Dispose();
+                        effects.RemoveAt(index);
                     }
                 }
-                if (effects != null) { index = RemoveEffect(effect); }
             }
             return index;
         }
@@ -76,18 +73,62 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             lock (effectLock)
             {
                 index = effects.IndexOf(effect);
-                if (index > -1) { effects.RemoveAt(index); }
+                if (index > -1)
+                {
+                    effects.RemoveAt(index);
+                    effects[index].Dispose();
+                }
             }
             return index;
         }
 
 
 
-        // register all listeners to their respective events in VobInst- or World-classes
-        // ( must be defined in every child class! )
-        virtual public void Init ()
+        protected void ApplyEffect (Effect effect, bool reverse = false)
+        {
+            // handle changes relevant for the effect itself before the rest
+            // (define the rest in child classes)
+            List<Change> changes = effect.Changes;
+            for (int c = 0; c < changes.Count; c++)
+            {
+                switch (changes[c].ChangeType)
+                {
+                    case Enumeration.ChangeType.Effect_Name_Set:
+                        object[] parameters = changes[c].Parameters;
+                        if (reverse) { effect.SetEffectName(Effect.DefaultEffectName); }
+                        else
+                        {
+                            if (parameters.Length > 0) { effect.SetEffectName(changes[c].Parameters[0].ToString()); }
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+
+            ApplyEffectInner(effect, reverse);
+        }
+
+        virtual protected void ApplyEffectInner (Effect effect, bool reverse = false)
         {
             throw new NotImplementedException();
+        }
+
+        protected void ReverseEffects (Effect[] effects)
+        {
+            for (int i = 0; i < effects.Length; i++)
+            {
+                if (effects[i].EffectHandler == this)
+                {
+                    ReverseEffect(effects[i]);
+                }
+            }
+        }
+
+        virtual protected void ReverseEffect (Effect effect)
+        {
+            ApplyEffect(effect, true);
         }
 
     }

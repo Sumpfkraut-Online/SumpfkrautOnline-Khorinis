@@ -11,14 +11,18 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
     {
 
         protected EffectHandlers.BaseEffectHandler effectHandler;
+        public EffectHandlers.BaseEffectHandler EffectHandler { get { return effectHandler; } }
 
         protected List<Change> changes;
         public List<Change> Changes { get { return changes; } }
 
         protected static string defaultEffectName = "";
+        public static string DefaultEffectName { get { return defaultEffectName; } }
+
         protected string effectName;
         public string EffectName { get { return this.effectName; } }
-
+        public void SetEffectName (string effectName) { this.effectName = effectName; }
+        
         protected object changeLock;
 
 
@@ -34,7 +38,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
         }
 
 
-
+        // !!! might as well let the EventHandler do this in the near future !!!
         protected void ApplyEffectSpecifics (bool reverse)
         {
             for (int i = 0; i < changes.Count; i++)
@@ -43,6 +47,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             }
         }
 
+        // !!! might as well let the EventHandler do this in the near future !!!
         protected void ApplyEffectSpecifics (Change change, bool reverse)
         {
             switch (change.ChangeType)
@@ -108,7 +113,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
 
         public void Dispose ()
         {
-            // inform the EffectHandler that there is an effect to be reversed
+            // destroy all upward references to let the garbage collection take care of the rest
+            effectHandler = null;
         }
 
     }

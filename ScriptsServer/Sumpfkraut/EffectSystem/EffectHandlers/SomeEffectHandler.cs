@@ -11,9 +11,15 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
     {
 
         new public static readonly string _staticName = "SomeEffectHandler (static)";
-        new protected static bool isInitialized = false;
 
 
+
+        static SomeEffectHandler ()
+        {
+            PrintStatic(typeof(SomeEffectHandler), "Start subscribing listeners to events...");
+            // to do
+            PrintStatic(typeof(SomeEffectHandler), "Finished subscribing listeners to events...");
+        }
 
         public SomeEffectHandler (List<Effect> effects)
             : this("SomeEffectHandler (default)", effects)
@@ -25,13 +31,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
 
-        override public void Init ()
+        protected override void ApplyEffectInner (Effect effect, bool reverse = false)
         {
-            PrintStatic(typeof(SomeEffectHandler), "Start subscribing listeners to events...");
-
-            // to do
-
-            PrintStatic(typeof(SomeEffectHandler), "Finished subscribing listeners to events...");
+            Print("Apply what? Naaaa!");
         }
 
     }
