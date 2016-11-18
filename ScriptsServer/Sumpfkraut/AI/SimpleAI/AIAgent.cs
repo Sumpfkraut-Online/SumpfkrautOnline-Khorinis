@@ -35,7 +35,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
             this.aiClients = aiClients ?? new List<VobInst>();
             if (aiPersonality == null)
             {
-                this.aiPersonality = new SimpleAIPersonality(0f);
+                this.aiPersonality = new SimpleAIPersonality(0f, 1f);
                 this.aiPersonality.Init(new AIMemory(), new SimpleAIRoutine());
             }
             else

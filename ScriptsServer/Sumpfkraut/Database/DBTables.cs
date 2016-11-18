@@ -23,17 +23,35 @@ namespace GUC.Scripts.Sumpfkraut.Database
                 this.colName = colName;
                 this.getType = getType;
             }
+
+            public override string ToString ()
+            {
+                return String.Format("Sql-column with colName = {0} and getType = {1}", colName, getType);
+            }
         }
 
 
 
-        new public static readonly String _staticName = "DBTables (static)";
+        new public static readonly string _staticName = "DBTables (static)";
         new protected String _objName = "DBTables (default)";
         
 
-        
+        /// <summary>
+        /// Converts results of a sql-query from string- to their respective datatypes.
+        /// </summary>
+        /// <param name="sqlResults">the result of the sql-query</param>
+        /// <param name="colGetTypeInfo">a predefined list of information concerning the sql-column 
+        /// (name + datatype)</param>
+        /// <returns></returns>
         public static bool ConvertSQLResults (ref List<List<List<object>>> sqlResults, 
             ref List<ColumnGetTypeInfo> colGetTypeInfo)
+        {
+            List<List<ColumnGetTypeInfo>> _colGetTypeInfo = new List<List<ColumnGetTypeInfo>> { colGetTypeInfo };
+            return ConvertSQLResults(ref sqlResults, ref _colGetTypeInfo, true);
+        }
+
+        public static bool ConvertSQLResults (ref List<List<List<object>>> sqlResults, 
+            ref List<List<ColumnGetTypeInfo>> colGetTypeInfo, bool noLengthComparison)
         {
             bool allConverted = true;
             object tempEntry = null;
@@ -41,6 +59,11 @@ namespace GUC.Scripts.Sumpfkraut.Database
             int row = 0;
             int col = 0;
 
+            if ((!noLengthComparison) && (sqlResults.Count != colGetTypeInfo.Count))
+            {
+                MakeLogErrorStatic(typeof(DBTables), "ConvertSQLResults: Lists sqlResults and colGetTypeInfo "
+                    + "are not of same length! Aborting conversion.");
+            }
 
             // iterating results (resulted by multiplay statements seperated by ; in sql-command)
             while (res < sqlResults.Count)
@@ -59,7 +82,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
                         }
                         else if (sqlResults[res][row][col].GetType() == typeof(DBNull))
                         {
-                            // DBNull is aa little unheady because it would need additional type-checks later
+                            // DBNull is a little unheady because it would need additional type-checks later
                             // use null instead
                             sqlResults[res][row][col] = null;
                         }
@@ -67,8 +90,8 @@ namespace GUC.Scripts.Sumpfkraut.Database
                         {
                             // everything else should be a string and somehow convertable
                             tempEntry = sqlResults[res][row][col].ToString();
-                            if (DBTables.SqlStringToData((string) tempEntry, 
-                                colGetTypeInfo[col].getType, 
+                            if (SqlStringToData((string) tempEntry, 
+                                colGetTypeInfo[res][col].getType, 
                                 ref tempEntry))
                             {
                                 sqlResults[res][row][col] = tempEntry;
@@ -80,8 +103,8 @@ namespace GUC.Scripts.Sumpfkraut.Database
                                 MakeLogErrorStatic(typeof(DBTables), String.Format(
                                     "ConvertSQLResults: Could not convert {0}" 
                                     + "from String to type {1} for column {2}!", 
-                                    tempEntry, colGetTypeInfo[col].getType, 
-                                    colGetTypeInfo[col].colName));
+                                    tempEntry, colGetTypeInfo[res][col].getType, 
+                                    colGetTypeInfo[res][col].colName));
 
                                 allConverted = false;
                             }

@@ -9,6 +9,11 @@ namespace GUC.Scripts.Sumpfkraut.Database
     public class DBAgent : GUC.Utilities.Threading.AbstractRunnable
     {
 
+        new public static readonly string _staticName = "DBAgent (static)";
+
+        protected string dataSource = null;
+        public string DataSource { get { return dataSource; } }
+
         protected List<String> commandQueue = new List<String>();
 
 
@@ -18,25 +23,62 @@ namespace GUC.Scripts.Sumpfkraut.Database
         public event ReceivedResultsEventHandler ReceivedResults;
         public class ReceivedResultsEventArgs : EventArgs
         {
-            private DateTime timestamp;
-            public DateTime GetTimestamp() { return this.timestamp; }
+            protected string dataSource;
+            public string DataSource { get { return dataSource; } }
 
-            private int queueIndex;
-            public int GetQueueIndex() { return this.queueIndex; }
+            protected string sqlCommand;
+            public string SQLCommand { get { return sqlCommand; } }
 
-            private List<List<List<object>>> results;
-            public List<List<List<object>>> GetResults() { return this.results; }
+            protected DateTime startTime;
+            public DateTime StartTime { get { return startTime; } }
 
-            public ReceivedResultsEventArgs(int queueIndex, List<List<List<object>>> results)
+            protected DateTime endTime;
+            public DateTime EndTime { get { return endTime; } }
+
+            protected List<List<List<object>>> sqlResults;
+            public List<List<List<object>>> GetSQLResults() { return sqlResults; }
+
+            public ReceivedResultsEventArgs (string dataSource, string sqlCommand, 
+                DateTime startTime, DateTime endTime, List<List<List<object>>> sqlResults)
             {
-                this.timestamp = DateTime.Now;
-                this.queueIndex = queueIndex;
-                this.results = results;
+                this.dataSource = dataSource;
+                this.sqlCommand = sqlCommand;
+                this.startTime = startTime;
+                this.endTime = endTime;
+                this.sqlResults = sqlResults;
             }
         }
 
-        public delegate void FinishedQueueEventHandler(GUC.Utilities.Threading.AbstractRunnable sender);
+        public delegate void FinishedQueueEventHandler(GUC.Utilities.Threading.AbstractRunnable sender,
+            FinishedQueueEventHandlerArgs e);
         public event FinishedQueueEventHandler FinishedQueue;
+        public class FinishedQueueEventHandlerArgs
+        {
+            protected string dataSource;
+            public string DataSource { get { return dataSource; } }
+
+            protected DateTime startTime;
+            public DateTime StartTime { get { return startTime; } }
+
+            protected DateTime endTime;
+            public DateTime EndTime { get { return endTime; } }
+
+            protected List<string> commandQueue;
+            public List<string> CommandQueue { get { return commandQueue; } }
+
+            protected List<List<List<object>>> sqlResults;
+            public List<List<List<object>>> GetSQLResults() { return sqlResults; }
+
+            public FinishedQueueEventHandlerArgs (string dataSource, List<string> commandQueue, 
+                DateTime startTime, DateTime endTime, List<List<List<object>>> sqlResults)
+            {
+                this.dataSource = dataSource;
+                this.commandQueue = commandQueue;
+                this.startTime = startTime;
+                this.endTime = endTime;
+                this.sqlResults = sqlResults;
+            }
+        }
 
         // used to alarm another thread when a queue is finished
         // in case the alarmed thread is waiting to continue afterwards
@@ -44,15 +86,16 @@ namespace GUC.Scripts.Sumpfkraut.Database
 
 
 
-        public DBAgent(List<String> commandQueue)
-            : this(commandQueue, true)
+        public DBAgent(string dataSource, List<String> commandQueue)
+            : this(dataSource, commandQueue, true)
         { }
 
-        public DBAgent(List<String> commandQueue, bool startOnCreate)
+        public DBAgent(string dataSource, List<String> commandQueue, bool startOnCreate)
             : base(false, new TimeSpan(0, 0, 0), true)
         {
+            this.dataSource = dataSource;
             this.commandQueue = commandQueue;
-
+            
             if (startOnCreate)
             {
                 this.Start();
@@ -65,20 +108,32 @@ namespace GUC.Scripts.Sumpfkraut.Database
         {
             base.Run();
 
+            List<List<List<object>>> sqlResults = new List<List<List<object>>>();
+            DateTime queueStartTime, queueEndTime, queryStartTime, queryEndTime;
+
             // iterate over commandQueue and communicating with DB while invoking the events
+            queueStartTime = DateTime.Now;
             for (int i = 0; i < commandQueue.Count; i++)
             {
-                List<List<List<object>>> results = new List<List<List<object>>>();
-                DBReader.LoadFromDB(ref results, commandQueue[i]);
-                ReceivedResultsEventArgs e = new ReceivedResultsEventArgs(i, results);
-                ReceivedResults.Invoke(this, e);
+                queryStartTime = DateTime.Now;
+                DBReader.LoadFromDB(ref sqlResults, DataSource, commandQueue[i]);
+                queryEndTime = DateTime.Now;
+
+                ReceivedResultsEventArgs rse = new ReceivedResultsEventArgs(DataSource, commandQueue[i], 
+                    queryStartTime, queryEndTime, sqlResults);
+                ReceivedResults.Invoke(this, rse);
+
                 if (waitHandle != null)
                 {
                     waitHandle.Set();
                 }
             }
+            queueEndTime = DateTime.Now;
 
-            FinishedQueue.Invoke(this);
+            // send finishing event message to all listeners
+            FinishedQueueEventHandlerArgs fqe = new FinishedQueueEventHandlerArgs(DataSource, commandQueue, 
+                queueStartTime, queueEndTime, sqlResults);
+            FinishedQueue.Invoke(this, fqe);
             //this.Suspend();
         } 
 

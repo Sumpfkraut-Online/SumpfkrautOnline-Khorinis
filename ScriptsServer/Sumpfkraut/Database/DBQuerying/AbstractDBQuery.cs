@@ -10,6 +10,9 @@ namespace GUC.Scripts.Sumpfkraut.Database.DBQuerying
 
         new public static readonly String _staticName = "AbstractDBQuery (static)";
 
+        protected string dataSource = null;
+        public string DataSource { get { return dataSource; } }
+
         protected String sqlCommand;
         public String GetSqlCommand () { return this.sqlCommand; }
 
@@ -18,13 +21,14 @@ namespace GUC.Scripts.Sumpfkraut.Database.DBQuerying
 
 
 
-        public AbstractDBQuery (String sqlCommand)
-            : this(sqlCommand, DBReaderMode.loadData)
+        public AbstractDBQuery (string dataSource, string sqlCommand)
+            : this(dataSource, sqlCommand, DBReaderMode.loadData)
         { }
 
-        public AbstractDBQuery (String sqlCommand, DBReaderMode dbReaderMode)
+        public AbstractDBQuery (string dataSource, string sqlCommand, DBReaderMode dbReaderMode)
         {
             SetObjName("AbstractDBQuery (default)");
+            this.dataSource = dataSource;
             this.sqlCommand = sqlCommand;
             this.dbReaderMode = dbReaderMode;
         }
@@ -38,10 +42,10 @@ namespace GUC.Scripts.Sumpfkraut.Database.DBQuerying
             switch (dbReaderMode)
             {
                 case DBReaderMode.loadData:
-                    DBReader.LoadFromDB(ref results, sqlCommand);
+                    DBReader.LoadFromDB(ref results, DataSource, sqlCommand);
                     break;
                 case DBReaderMode.saveData:
-                    DBReader.SaveToDB(sqlCommand);
+                    DBReader.SaveToDB(DataSource, sqlCommand);
                     break;
                 default:
                     MakeLogWarning("Invalid dbReaderMode=" + dbReaderMode 

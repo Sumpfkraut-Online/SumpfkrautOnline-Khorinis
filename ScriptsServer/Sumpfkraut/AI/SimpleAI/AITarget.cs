@@ -15,18 +15,18 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
 
 
 
-        public List<VobInst> vobTargets;
+        public List<VobInst> VobTargets;
 
 
 
         public AITarget (VobInst vobTarget)
         {
-            this.vobTargets = new List<VobInst>() { vobTarget };
+            this.VobTargets = new List<VobInst>() { vobTarget };
         }
 
         public AITarget (List<VobInst> vobTargets)
         {
-            this.vobTargets = vobTargets;
+            this.VobTargets = vobTargets;
         }
 
     }

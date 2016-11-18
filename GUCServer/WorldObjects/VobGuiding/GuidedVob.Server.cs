@@ -105,7 +105,7 @@ namespace GUC.WorldObjects.VobGuiding
         {
             if (this.guide != null)
             {
-                SetGuideCommand(null);
+                RemoveGuideCommand();
                 SetGuide(null, false);
             }
         }
@@ -185,9 +185,14 @@ namespace GUC.WorldObjects.VobGuiding
             this.currentCmd = cmd;
         }
 
-        void OnTargetDespawn(BaseVob vob)
+        public void RemoveGuideCommand ()
         {
             SetGuideCommand(null);
+        }
+
+        void OnTargetDespawn(BaseVob vob)
+        {
+            RemoveGuideCommand();
         }
 
         void SetGuide(GameClient client, bool sendRemove = true)

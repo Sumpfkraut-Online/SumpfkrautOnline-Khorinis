@@ -8,23 +8,23 @@ namespace GUC.Scripts.Sumpfkraut.Database.DBQuerying
     public class DBQuery : AbstractDBQuery
     {
 
-        new public static readonly String _staticName = "DBQuery (static)";
+        new public static readonly string _staticName = "DBQuery (static)";
 
         public Action<List<List<List<object>>>> callback;
 
 
 
-        public DBQuery (string sqlCommand, 
+        public DBQuery (string dataSource, string sqlCommand, 
             Action<List<List<List<object>>>> callback)
-            : base(sqlCommand)
+            : base(dataSource, sqlCommand)
         {
             SetObjName("DBQuery (default)");
             this.callback = callback;
         }
 
-        public DBQuery (string sqlCommand, DBReaderMode dbReaderMode,
+        public DBQuery (string dataSource, string sqlCommand, DBReaderMode dbReaderMode,
             Action<List<List<List<object>>>> callback)
-            : base(sqlCommand, dbReaderMode)
+            : base(dataSource, sqlCommand, dbReaderMode)
         {
             SetObjName("DBQuery (default)");
             this.callback = callback;
@@ -46,26 +46,26 @@ namespace GUC.Scripts.Sumpfkraut.Database.DBQuerying
     public class DBQuery<T1> : AbstractDBQuery
     {
 
-        new public static readonly String _staticName = "DBQuery<T1> (static)";
+        new public static readonly string _staticName = "DBQuery<T1> (static)";
 
         public Action<List<List<List<object>>>, T1> callback;
         T1 arg1;
 
 
-        public DBQuery (string sqlCommand, 
+        public DBQuery (string dataSource, string sqlCommand, 
             Action<List<List<List<object>>>, T1> callback, 
             T1 arg1)
-            : base(sqlCommand)
+            : base(dataSource, sqlCommand)
         {
             this._objName = "DBQuery<T1> (default)";
             this.callback = callback;
             this.arg1 = arg1;
         }
 
-        public DBQuery (string sqlCommand, DBReaderMode dbReaderMode,
+        public DBQuery (string dataSource, string sqlCommand, DBReaderMode dbReaderMode,
             Action<List<List<List<object>>>, T1> callback, 
             T1 arg1)
-            : base(sqlCommand, dbReaderMode)
+            : base(dataSource, sqlCommand, dbReaderMode)
         {
             this._objName = "DBQuery<T1> (default)";
             this.callback = callback;
@@ -88,17 +88,17 @@ namespace GUC.Scripts.Sumpfkraut.Database.DBQuerying
     public class DBQuery<T1, T2> : AbstractDBQuery
     {
 
-        new public static readonly String _staticName = "DBQuery<T1, T2> (static)";
+        new public static readonly string _staticName = "DBQuery<T1, T2> (static)";
 
         public Action<List<List<List<object>>>, T1, T2> callback;
         T1 arg1;
         T2 arg2;
 
 
-        public DBQuery (string sqlCommand, 
+        public DBQuery (string dataSource, string sqlCommand, 
             Action<List<List<List<object>>>, T1, T2> callback, 
             T1 arg1, T2 arg2)
-            : base(sqlCommand)
+            : base(dataSource, sqlCommand)
         {
             this._objName = "DBQuery<T1, T2> (default)";
             this.callback = callback;
@@ -106,10 +106,10 @@ namespace GUC.Scripts.Sumpfkraut.Database.DBQuerying
             this.arg2 = arg2;
         }
 
-        public DBQuery (string sqlCommand, DBReaderMode dbReaderMode,
+        public DBQuery (string dataSource, string sqlCommand, DBReaderMode dbReaderMode,
             Action<List<List<List<object>>>, T1, T2> callback, 
             T1 arg1, T2 arg2)
-            : base(sqlCommand, dbReaderMode)
+            : base(dataSource, sqlCommand, dbReaderMode)
         {
             this._objName = "DBQuery<T1, T2> (default)";
             this.callback = callback;

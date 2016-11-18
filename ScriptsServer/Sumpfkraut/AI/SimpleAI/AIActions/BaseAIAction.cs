@@ -13,6 +13,9 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIActions
 
 
 
+        protected Enumeration.AiActionType actionType;
+        public Enumeration.AiActionType ActionType { get { return actionType; } }
+
         protected object attributeLock;
 
         protected AITarget aiTarget;

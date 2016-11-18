@@ -78,11 +78,14 @@
     <Compile Include="Sumpfkraut\VobSystem\Instances\NPCInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\ProjInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\VobInst.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\VobDefLoader.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\VobInstLoader.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\ScriptBarrierCtrl.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\ScriptClock.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\ScriptWeatherCtrl.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldDef.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldInst.cs" />
+    <Compile Include="Sumpfkraut\WorldSystem\WorldLoader.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GUCShared\GUCShared.csproj">

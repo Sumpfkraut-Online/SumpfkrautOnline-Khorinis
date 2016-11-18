@@ -12,7 +12,7 @@ using GUC.Types;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
-    public abstract partial class BaseVobInst : ScriptObject, BaseVob.IScriptBaseVob
+    public abstract partial class BaseVobInst : GUC.Utilities.ExtendedObject, BaseVob.IScriptBaseVob
     {
         #region Properties
 

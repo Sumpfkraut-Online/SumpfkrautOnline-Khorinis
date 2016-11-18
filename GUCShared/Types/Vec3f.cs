@@ -159,6 +159,11 @@ namespace GUC.Types
             return new Vec3f(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
         }
 
+        public static Vec3f operator /(Vec3f a, float factor)
+        {
+            return new Vec3f(a.X / factor, a.Y / factor, a.Z / factor);
+        }
+
         #endregion
 
         #region Conversion

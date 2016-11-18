@@ -44,7 +44,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Threading
             this.runOnce = runOnce;
             this.resetEvent = new ManualResetEvent(true);
             this.thread = new Thread(this._Run);
-            this.Start();
+            if (startOnCreate) { this.Start(); }
         }
 
 
