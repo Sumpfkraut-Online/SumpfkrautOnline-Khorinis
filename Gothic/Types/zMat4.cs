@@ -54,7 +54,7 @@ namespace Gothic.Types
             {
                 if (index >= 0 && index < 16)
                 {
-                    Process.Write(value, Address + 4 * index);
+                    Process.Write(Address + 4 * index, value);
                 }
                 else
                 {

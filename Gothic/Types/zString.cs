@@ -79,31 +79,31 @@ namespace Gothic.Types
         public int VTBL
         {
             get { return Process.ReadInt(Address + VarOffsets.VTBL); }
-            set { Process.Write(value, Address + VarOffsets.VTBL); }
+            set { Process.Write(Address + VarOffsets.VTBL, value); }
         }
 
         public int ALLOCATER
         {
             get { return Process.ReadInt(this.Address + VarOffsets.Allocater); }
-            set { Process.Write(value, this.Address + VarOffsets.Allocater); }
+            set { Process.Write(this.Address + VarOffsets.Allocater, value); }
         }
 
         public int PTR
         {
             get { return Process.ReadInt(this.Address + VarOffsets.Ptr); }
-            set { Process.Write(value, this.Address + VarOffsets.Ptr); }
+            set { Process.Write(this.Address + VarOffsets.Ptr, value); }
         }
 
         public int Length
         {
             get { return Process.ReadInt(this.Address + VarOffsets.Length); }
-            set { Process.Write(value, this.Address + VarOffsets.Length); }
+            set { Process.Write(this.Address + VarOffsets.Length, value); }
         }
 
         public int Res
         {
             get { return Process.ReadInt(this.Address + VarOffsets.Res); }
-            set { Process.Write(value, this.Address + VarOffsets.Res); }
+            set { Process.Write(this.Address + VarOffsets.Res, value); }
         }
 
         #endregion
@@ -117,10 +117,10 @@ namespace Gothic.Types
 
             if (arr.Length > 0)
             {
-                Process.Write(arr, charArr.ToInt32());
+                Process.Write(charArr.ToInt32(), arr);
             }
 
-            Process.Write(new byte[] { 0 }, charArr.ToInt32() + arr.Length);
+            Process.Write(charArr.ToInt32() + arr.Length, (byte)0);
             Process.THISCALL<NullReturnCall>(stringArr.ToInt32(), FuncAddresses.ConstructorConstChar, (IntArg)charArr.ToInt32());
             Process.Free(charArr, (uint)arr.Length + 1);
 
@@ -134,10 +134,10 @@ namespace Gothic.Types
 
             if (arr.Length > 0)
             {
-                Process.Write(arr, charArr.ToInt32());
+                Process.Write(charArr.ToInt32(), arr);
             }
 
-            Process.Write(new byte[] { 0 }, charArr.ToInt32() + arr.Length);
+            Process.Write(charArr.ToInt32() + arr.Length, (byte)0);
             Process.THISCALL<zString>(Address, FuncAddresses.OperatorAssignConstChar, (IntArg)charArr.ToInt32());
             Process.Free(charArr, (uint)str.Length + 1);
         }

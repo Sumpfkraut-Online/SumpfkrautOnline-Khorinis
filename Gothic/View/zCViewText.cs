@@ -51,7 +51,7 @@ namespace Gothic.View
         public zCFont Font
         {
             get { return new zCFont(Process.ReadInt(Address + VarOffsets.font)); }
-            set { Process.Write(value.Address, Address + VarOffsets.font); }
+            set { Process.Write(Address + VarOffsets.font, value.Address); }
         }
 
         public zColor Color
@@ -62,25 +62,25 @@ namespace Gothic.View
         public int PosX
         {
             get { return Process.ReadInt(Address + VarOffsets.PosX); }
-            set { Process.Write(value, Address + VarOffsets.PosX); }
+            set { Process.Write(Address + VarOffsets.PosX, value); }
         }
 
         public int PosY
         {
             get { return Process.ReadInt(Address + VarOffsets.PosY); }
-            set { Process.Write(value, Address + VarOffsets.PosY); }
+            set { Process.Write(Address + VarOffsets.PosY, value); }
         }
 
         public float Timer
         {
             get { return Process.ReadFloat(Address + VarOffsets.timer); }
-            set { Process.Write(value, Address + VarOffsets.timer); }
+            set { Process.Write(Address + VarOffsets.timer, value); }
         }
 
         public int Timed
         {
             get { return Process.ReadInt(Address + VarOffsets.timed); }
-            set { Process.Write(value, Address + VarOffsets.timed); }
+            set { Process.Write(Address + VarOffsets.timed, value); }
         }
 
         public zString Text

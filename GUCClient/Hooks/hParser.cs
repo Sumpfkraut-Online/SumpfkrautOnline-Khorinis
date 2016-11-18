@@ -19,30 +19,33 @@ namespace GUC.Hooks
                 return;
             inited = true;
 
-            Process.AddHook(hook_LoadDat, 0x0078E900, 7, 1);
-            var h = Process.AddHook(hook_LoadParserFile, 0x006C4BE0, 6, 1);
-            Process.Write(new byte[6] { 0x33, 0xC0, 0xC2, 0x04, 0x00, 0x00 }, h.OldInNewAddress); // block it
+            Process.AddHook(hook_LoadDat, 0x0078E900, 7);
+
+            var h = Process.AddHook(hook_LoadParserFile, 0x006C4BE0, 6);
+            Process.Write(h.OldInNewAddress, 0x33, 0xC0, 0xC2, 0x04, 0x00, 0x00); // block it
 
             Logger.Log("Added parser hooks.");
         }
-
-        static void hook_LoadDat(Hook hook)
+        
+        static void hook_LoadDat(Hook hook, RegisterMemory rmem)
         {
             try
             {
-                zString str = new zString(hook.GetArgument(0));
+                zString str = new zString(rmem[0]);
+                
                 string datName = str.ToString().Trim().ToUpper();
+                Logger.Log("Hook loaddat: " + datName);
                 if (datName == "GOTHIC.DAT" || datName == "FIGHT.DAT" || datName == "MENU.DAT")
                 {
                     if (datName == "GOTHIC.DAT")
                         initDefaultScripts();
 
-                    Process.Write(new byte[7] { 0x33, 0xC0, 0xC2, 0x04, 0x00, 0x00, 0x00 }, hook.OldInNewAddress); // block it
+                    Process.Write(hook.OldInNewAddress, 0x33, 0xC0, 0xC2, 0x04, 0x00, 0x00, 0x00); // block it
                     Logger.Log("LoadDat: '{0}', blocked!", str);
                 }
                 else
                 {
-                    Process.Write(hook.GetOldCode(), hook.OldInNewAddress); // unblock it
+                    hook.RestoreOldInNewCode(); // unblock it
                     Logger.Log("LoadDat: '{0}'", str);
                 }
             }
@@ -51,12 +54,12 @@ namespace GUC.Hooks
                 Logger.LogError(ex);
             }
         }
-
-        static void hook_LoadParserFile(Hook hook)
+        
+        static void hook_LoadParserFile(Hook hook, RegisterMemory rmem)
         {
             try
             {
-                zString str = new zString(hook.GetArgument(0));
+                zString str = new zString(rmem[0]);
                 Logger.Log("LoadParserFile: " + str);
 
                 Process.THISCALL<NullReturnCall>(0xAB40C0, 0x00793100); //parser.reset

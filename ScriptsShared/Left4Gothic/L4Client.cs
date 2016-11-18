@@ -11,9 +11,9 @@ namespace GUC.Scripts.Left4Gothic
     partial class L4Client : ScriptClient
     {
         partial void pOnConnect();
-        /*public override void OnConnection()
+        public override void OnConnection()
         {
             pOnConnect();
-        }*/
+        }
     }
 }

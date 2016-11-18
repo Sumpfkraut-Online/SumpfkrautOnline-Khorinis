@@ -48,8 +48,8 @@ namespace GUC.Scripts.Sumpfkraut.GUI.MainMenu
             vis = new GUC3DVisual(x, y, w, h);
             vis.SetVob(thisVob);
 
-            Process.Write(140, thisVob.Address + oCItem.VarOffsets.inv_zbias);
-            Process.Write(rotation, thisVob.Address + oCItem.VarOffsets.inv_roty);
+            Process.Write(thisVob.Address + oCItem.VarOffsets.inv_zbias, 140);
+            Process.Write(thisVob.Address + oCItem.VarOffsets.inv_roty, rotation);
 
             leftArrow = new GUCVisual(x + 150, y + h / 2 - 40, 15, 20);
             leftArrow.SetBackTexture("L.TGA");
@@ -95,7 +95,7 @@ namespace GUC.Scripts.Sumpfkraut.GUI.MainMenu
                 rotation -= 5;
             } else return;
 
-            Process.Write(rotation, thisVob.Address + oCItem.VarOffsets.inv_roty);
+            Process.Write(thisVob.Address + oCItem.VarOffsets.inv_roty, rotation);
         }
     }
 }

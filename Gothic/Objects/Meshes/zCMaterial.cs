@@ -21,7 +21,7 @@ namespace Gothic.Objects.Meshes
         public int AlphaFunc
         {
             get { return Process.ReadInt(Address + 116); }
-            set { Process.Write(value, Address + 116); }
+            set { Process.Write(Address + 116, value); }
         }
 
         public void SetTexture(string str)
@@ -39,7 +39,7 @@ namespace Gothic.Objects.Meshes
         public int MatGroup
         {
             get { return Process.ReadInt(Address + 0x40); }
-            set { Process.Write(value, Address + 0x40); }
+            set { Process.Write(Address + 0x40, value); }
         }
 
         public static zCMaterial Create()

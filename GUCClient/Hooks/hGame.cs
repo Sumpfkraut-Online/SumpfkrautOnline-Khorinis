@@ -25,11 +25,11 @@ namespace GUC.Hooks
             inited = true;
 
             // hook outgame loop and kick out the original menus
-            var h = Process.AddHook(RunOutgame, 0x004292D0, 7, 1);
-            Process.Write(new byte[7] { 0xC2, 0x04, 0x00, 0x90, 0x90, 0x90, 0x90 }, h.OldInNewAddress);
+            var h = Process.AddHook(RunOutgame, 0x004292D0, 7);
+            Process.Write(h.OldInNewAddress, 0xC2, 0x04, 0x00);
 
             // hook ingame loop
-            Process.AddHook(RunIngame, 0x006C86A0, 7, 0);
+            Process.AddHook(RunIngame, 0x006C86A0, 7);
 
             Logger.Log("Added game loop hooks.");
         }
@@ -73,7 +73,7 @@ namespace GUC.Hooks
         }
 
         static System.Diagnostics.Stopwatch fpsWatch = new System.Diagnostics.Stopwatch();
-        static void RunOutgame(Hook hook)
+        static void RunOutgame(Hook hook, RegisterMemory rmem)
         {
             try
             {
@@ -125,7 +125,7 @@ namespace GUC.Hooks
         }
 
         static bool ingameStarted = false;
-        static void RunIngame(Hook hook)
+        static void RunIngame(Hook hook, RegisterMemory rmem)
         {
             try
             {

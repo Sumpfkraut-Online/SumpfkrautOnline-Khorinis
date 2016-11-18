@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 using System.Threading;
 using GUC.Network;
 using Gothic;
@@ -11,7 +12,7 @@ using WinApi;
 using GUC.Hooks;
 using System.Reflection;
 using System.Management;
-using System.Runtime.Serialization;
+using System.Runtime.InteropServices;
 
 namespace GUC
 {
@@ -50,8 +51,9 @@ namespace GUC
             return Path.Combine(gothicRootPath, path);
         }
         
-        static void SetRootPathHook(Hook hook)
+        static void SetRootPathHook(Hook hook, RegisterMemory rmem)
         {
+            //Logger.LogWarning("Set root!");
             gothicRootPath = Gothic.System.zFile.s_rootPathString.ToString();
             Logger.Log("Set root to: " + gothicRootPath);
         }
@@ -99,7 +101,7 @@ namespace GUC
 
             return Assembly.LoadFrom(Path.Combine(projectPath, name + ".dll"));
         }
-
+        
         static bool mained = false;
         public static int Main(string message)
         {
@@ -108,10 +110,10 @@ namespace GUC
                 if (mained) return 0;
                 mained = true;
 
-                Logger.Log("GUC started...");
+                Logger.Log("GUC started...");      
 
                 SetupProject();
-                
+
                 SplashScreen.SetUpHooks();
                 SplashScreen.Create();
                 
@@ -119,64 +121,65 @@ namespace GUC
                 hFileSystem.AddHooks();
                 hParser.AddHooks();
                 hGame.AddHooks();
-                hWeather.AddHooks();
                 hPlayerVob.AddHooks();
+                hWeather.AddHooks();
                 hView.AddHooks();
                 hNpc.AddHooks();
 
                 #region Some more editing
 
-                Process.Write(new byte[] { 0xE9, 0xA3, 0x00, 0x00, 0x00 }, 0x42687F); // skip intro videos
+                Process.Write(0x42687F, 0xE9, 0xA3, 0x00, 0x00, 0x00); // skip intro videos
 
-                Process.Write(new byte[] { 0xEB, 0x35 }, 0x00424EE2); // don't init savegame manager
-                
-                Process.Write(new byte[] { 0xEB, 0x15 }, 0x006B5A44); // don't start falling animation
+                Process.Write(0x00424EE2, 0xEB, 0x35); // don't init savegame manager
+                Process.Write(0x5DEA4B, (byte)0xC3); // don't init output units
 
-                Process.Write(new byte[] { 0xC2, 0x08, 0x00 }, 0x00735EB0); // don't drop unconscious
-                Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, 0x00736898); // don't drop weapons on death
+                Process.Write(0x006B5A44, 0xEB, 0x15); // don't start falling animation
+
+                Process.Write(0x00735EB0, 0xC2, 0x08, 0x00); // don't drop unconscious
+                Process.Nop(0x00736898, 7); // don't drop weapons on death
 
                 // remove all gothic controls
-                Process.Write(new byte[] { 0xE9, 0x3E, 0x04, 0x00, 0x00 }, 0x004D3DF6);
-                Process.Write(new byte[] { 0xC3, 0xE8, 0x8B, 0xE6, 0xFF, 0xFF, 0xC3 }, 0x004D5700);
-                Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90 }, 0x006C8A71); // remove freeLook controls
+                Process.Write(0x004D3DF6, 0xE9, 0x3E, 0x04, 0x00, 0x00);
+                Process.Write(0x004D5700, 0xC3, 0xE8, 0x8B, 0xE6, 0xFF, 0xFF, 0xC3);
+                Process.Nop(0x006C8A71, 5); // remove freeLook controls
 
-                Process.Write(new byte[] { 0xD8, 0x1D, 0xB4, 0x04, 0x83, 0x00 }, 0x006C873D); // reduce time gothic waits after the loading screen from 2500ms to 1000ms
+                Process.Write(0x006C873D, 0xD8, 0x1D, 0xB4, 0x04, 0x83, 0x00); // reduce time gothic waits after the loading screen from 2500ms to 1000ms
 
-                Process.Write(18000.0f, 0x008BACD0); // spawnManager : insertrange
-                Process.Write(20000.0f, 0x008BACD4); // spawnManager : removerange
+                Process.Write(0x008BACD0, 18000.0f); // spawnManager : insertrange
+                Process.Write(0x008BACD4, 20000.0f); // spawnManager : removerange
 
                 // Make rain drops being blocked by vobs!
-                Process.Write((byte)0xE0, 0x5E227A);
+                Process.Write(0x5E227A, (byte)0xE0);
 
                 // Blocking Call Init Scripts!
-                Process.Write((byte)0xC3, 0x006C1F60);
+                Process.Write(0x006C1F60, (byte)0xC3);
                 // Blocking Call Startup Scripts!
-                Process.Write((byte)0xC3, 0x006C1C70);
+                Process.Write(0x006C1C70, (byte)0xC3);
 
 
-                Process.Write(new byte[] { 0xDC, 0x0D, 0x30, 0xEB, 0x82, 0x00 }, 0x0069C2DA); // bleed with < 25% health
+                Process.Write(0x0069C2DA, 0xDC, 0x0D, 0x30, 0xEB, 0x82, 0x00); // bleed with < 25% health
 
-                Process.Write(new byte[] { 0xE9, 0xB0, 0x01, 0x00, 0x00 }, 0x0069C08B); // disable player AI
-                Process.Write(new byte[] { 0xE9, 0x89, 0, 0, 0, 0x90 }, 0x0069BFCB); // disable focus highlighting
+                Process.Write(0x0069C08B, 0xE9, 0xB0, 0x01, 0x00, 0x00); // disable player AI
+                Process.Write(0x0069BFCB, 0xE9, 0x89, 0, 0, 0, 0x90); // disable focus highlighting
 
-                Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, 0x006B0896);// don't let oCAniCtrl_Human::CreateHit check whether the target is an enemy
+                Process.Nop(0x006B0896, 12); // don't let oCAniCtrl_Human::CreateHit check whether the target is an enemy
 
-                Process.Write((byte)0xC3, 0x0073E480);//Blocking oCNpc::ProcessNpc (Dive Damage etc)
-                Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, 0x0066CAC9);//Block Damage!
+                Process.Write(0x0073E480, (byte)0xC3);//Blocking oCNpc::ProcessNpc (Dive Damage etc)
+                Process.Write(0x0066CAC9, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90);//Block Damage!
 
                 // Blocking time!
-                Process.Write((byte)0xC3, 0x00780D80);
+                Process.Write(0x00780D80, (byte)0xC3);
 
                 //Process.VirtualProtect(0x007792E0, 40);
-                Process.Write(new byte[] { 0x33, 0xC0, 0xC2, 0x04, 0x00 }, 0x007792E0);//Block deleting of dead characters!
+                Process.Write(0x007792E0, 0x33, 0xC0, 0xC2, 0x04, 0x00);//Block deleting of dead characters!
 
                 //Process.Write(new byte[] { 0xB8, 0x01, 0x00, 0x00, 0x00, 0xC3 }, 0x7425A0); // oCNpc::IsAPlayer always true, DON'T DO THIS or bullshit will happen (like getting the hero's focus mode resetted because another npc sets his weaponmode)
-                Process.Write(new byte[] { 0x31, 0xC0, 0xC3 }, 0x76D8A0); // oCNpc_States::IsInRoutine always false
+                Process.Write(0x76D8A0, 0x31, 0xC0, 0xC3); // oCNpc_States::IsInRoutine always false
 
-                Process.Write(new byte[] { 0xEB, 0x21 }, 0x69C247); // oCAIHuman::DoAI -> skip perception check
-                Process.Write(new byte[] { 0x31, 0xC0, 0xC3 }, 0x76D1A0); // oCNpc_States::DoAIState -> skip and return false
+                Process.Write(0x69C247, 0xEB, 0x21); // oCAIHuman::DoAI -> skip perception check
+                Process.Write(0x76D1A0, 0x31, 0xC0, 0xC3); // oCNpc_States::DoAIState -> skip and return false
 
-                Process.Nop(7, 0x4A059C); // don't load dialogcams.zen
+                Process.Nop(0x4A059C, 7); // don't load dialogcams.zen
 
                 Logger.Log("Hooking & editing of gothic process completed. (for now...)");
                 #endregion
@@ -194,6 +197,7 @@ namespace GUC
             }
             return 0;
         }
+        
 
         public static void Exit()
         {

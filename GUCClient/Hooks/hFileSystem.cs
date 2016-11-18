@@ -6,32 +6,222 @@ using GUC.Log;
 using WinApi;
 using System.IO;
 using Gothic.Types;
+using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
+using Microsoft.Win32.SafeHandles;
 
 namespace GUC.Hooks
 {
     static class hFileSystem
     {
+        // helper class for FindFirst -> FindNext -> FindClose
+        class FindFileInfo
+        {
+            [DllImport("kernel32.dll", CharSet = CharSet.Ansi)]
+            static extern IntPtr FindFirstFile(string lpFileName, out WIN32_FIND_DATA lpFindFileData);
+
+            [DllImport("kernel32.dll", CharSet = CharSet.Ansi)]
+            static extern bool FindNextFile(IntPtr hFindFile, out WIN32_FIND_DATA lpFindFileData);
+
+            [DllImport("kernel32.dll", SetLastError = true)]
+            static extern bool FindClose(IntPtr hFindFile);
+
+            [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+            struct WIN32_FIND_DATA
+            {
+                public uint dwFileAttributes;
+                public System.Runtime.InteropServices.ComTypes.FILETIME ftCreationTime;
+                public System.Runtime.InteropServices.ComTypes.FILETIME ftLastAccessTime;
+                public System.Runtime.InteropServices.ComTypes.FILETIME ftLastWriteTime;
+                public uint nFileSizeHigh;
+                public uint nFileSizeLow;
+                public uint dwReserved0;
+                public uint dwReserved1;
+                [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
+                public string cFileName;
+                [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 14)]
+                public string cAlternateFileName;
+            }
+
+            // Gothic called FindFirst, check the project folder first
+            public static FindFileInfo First(string originalPath)
+            {
+                string projectPath = GetProjectFilePath(originalPath);
+                if (!string.IsNullOrWhiteSpace(projectPath))
+                {
+                    IntPtr result = FindFirstFile(projectPath, out Data);
+                    if (result.ToInt32() != -1)
+                    { // found something
+                        return new FindFileInfo(result, originalPath);
+                    }
+                }
+                return null;
+            }
+
+            // Gothic called FindNext
+            public bool Next()
+            {
+                // check if there's a result with the current handle
+                bool result = FindNextFile(handlePtr, out Data);
+
+                if (!result && searchingProjectFolder) // no result & haven't searched the original path yet?
+                {
+                    // continue searching in the original path
+                    this.handlePtr = FindFirstFile(this.originalPath, out Data);
+                    if (this.HandlePtr != -1)
+                    {
+                        searchingProjectFolder = false;
+                        return true;
+                    }
+                }
+                return result;
+            }
+
+            // Gothic called FindClose
+            public bool Close()
+            {
+                // close the project folder handle
+                bool result = FindClose(this.projectPtr);
+
+                // close the current handle (gothic folder), if it's active
+                if (!this.searchingProjectFolder)
+                    result = FindClose(this.handlePtr);
+
+                return result;
+            }
+
+            IntPtr projectPtr;
+            IntPtr handlePtr;
+            public int HandlePtr { get { return this.handlePtr.ToInt32(); } }
+            string originalPath;
+            bool searchingProjectFolder;
+
+            public FindFileInfo(IntPtr handle, string path)
+            {
+                this.projectPtr = handle;
+                this.handlePtr = handle;
+                this.originalPath = path;
+                this.searchingProjectFolder = true;
+            }
+
+            static WIN32_FIND_DATA Data;
+            public static string CurrentFileName { get { return string.Copy(Data.cFileName); } }
+            static byte[] DataArr;
+            static IntPtr DataPtr;
+
+            static FindFileInfo()
+            {
+                Data = new WIN32_FIND_DATA();
+                int size = Marshal.SizeOf(Data);
+                DataArr = new byte[size];
+                DataPtr = Marshal.AllocHGlobal(size);
+            }
+
+            // write the last WIN32_FIND_DATA
+            public static void WriteData(int ptr)
+            {
+                Marshal.StructureToPtr(Data, DataPtr, true);
+                Marshal.Copy(DataPtr, DataArr, 0, DataArr.Length);
+                Process.Write(ptr, DataArr);
+            }
+        }
+
+        // Dictionary of FindFile-Handles
+        static Dictionary<int, FindFileInfo> FindFileTable = new Dictionary<int, FindFileInfo>();
+
+        static void File_FindFirst(Hook hook, RegisterMemory mem)
+        {
+            int pathPtr = Process.ReadInt(mem[Registers.EBP] + 0x8); // char*
+            int dataPtr = mem[Registers.EBP] - 0x140; // WIN32_FIND_DATA
+
+            string path = ReadString(pathPtr);
+
+            // check if the project folder returns us a handle
+            FindFileInfo info = FindFileInfo.First(path);
+            if (info != null)
+            {
+                // files found in the project folder!
+                FindFileTable.Add(info.HandlePtr, info);
+                FindFileInfo.WriteData(dataPtr);
+                mem[Registers.EAX] = info.HandlePtr;
+
+                hook.SetSkipOldCode(true);
+            }
+            else // nothing found
+            {
+                hook.SetSkipOldCode(false);
+            }
+        }
+
+        static void File_FindNext(Hook hook, RegisterMemory mem)
+        {
+            int ebp = mem[Registers.EBP];
+            int handlePtr = Process.ReadInt(ebp + 0x8); // findfile handle
+            int dataPtr = ebp - 0x140; // WIN32_FIND_DATA
+
+            FindFileInfo info;
+            if (FindFileTable.TryGetValue(handlePtr, out info))
+            {
+                // this is one of our handles
+                bool result = info.Next();
+                FindFileInfo.WriteData(dataPtr);
+                mem[Registers.EAX] = result ? 1 : 0;
+
+                hook.SetSkipOldCode(true);
+            }
+            else
+            {
+                hook.SetSkipOldCode(false);
+            }
+        }
+
+        static void File_FindClose(Hook hook, RegisterMemory mem)
+        {
+            int handlePtr = mem[0]; // findfile handle
+
+            FindFileInfo info;
+            if (FindFileTable.TryGetValue(handlePtr, out info))
+            {
+                // this is one of our handles
+                mem[Registers.EAX] = info.Close() ? 1 : 0;
+                FindFileTable.Remove(handlePtr);
+
+                hook.SetSkipOldCode(true);
+
+            }
+            else
+            {
+                hook.SetSkipOldCode(false);
+            }
+        }
+
         public static void AddHooks()
         {
             Process.AddHook(BeginInit, 0x44AFD3, 7);
             Process.AddHook(EndInit, 0x44AFE2, 5);
 
-            Process.AddHook(VDFS_Open, 0x44920F, 5);
-            Process.AddHook(VDFS_Exists, 0x449077, 6);
+            Process.AddHook(VDFS_Open, 0x44920F, 5); // open
+            Process.AddHook(VDFS_Exists, 0x44909B, 6); // Exists
 
-            Process.AddHook(File_Open, 0x7D2010, 6, 2); // fopen
-            Process.AddHook(File_Exists, 0x7D197A, 10, 1); // fexists
+            var h = Process.AddHook(File_Open, 0x7D2010, 6); // fopen
+            Process.Write(h.OldInNewAddress, (byte)0xC3);
 
-            //Process.AddHook(SearchFile, 0x446AC0, 7, 2);
+            h = Process.AddHook(File_Exists, 0x7D197A, 0xA); // fexists
+            h.SetSkipOldCode(true);
 
-            Process.Write(new byte[] { 0xE9, 0x8C, 0x00, 0x00, 0x00 }, 0x44AEDF); // skip visual vdfs init (vdfs32g.exe)
-            Process.Write(new byte[] { 0xE9, 0x96, 0x02, 0x00, 0x00 }, 0x00470846); // skip forced vdfs intialization
+            Process.Write(0x44AEDF, 0xE9, 0x8C, 0x00, 0x00, 0x00); // skip visual vdfs init (vdfs32g.exe)
+            Process.Write(0x00470846, 0xE9, 0x96, 0x02, 0x00, 0x00); // skip forced vdfs intialization
+
+            Process.AddHook(File_FindFirst, 0x7D2517, 0xA);
+            Process.AddHook(File_FindNext, 0x7D25E3, 0xA);
+            Process.AddHook(File_FindClose, 0x7D269B, 0xA);
 
             Logger.Log("Added new file system hooks.");
         }
 
-        const string BackupEnding = ".backup";
-        static void BeginInit(Hook hook)
+
+        const string BackupEnding = ".guc_backup";
+        public static void BeginInit(Hook hook, RegisterMemory mem)
         {
             string vdfsPath = Program.GetGothicRootPath("vdfs.cfg");
             string backupPath = vdfsPath + BackupEnding;
@@ -39,17 +229,18 @@ namespace GUC.Hooks
             if (!File.Exists(vdfsPath))
                 Logger.LogError("FileSystem BeginInit: '{0}' not found!", vdfsPath);
 
-            // delete old backup in case it's there
-            if (File.Exists(backupPath))
-                File.Delete(backupPath);
-
-            // save the original
-            File.Move(vdfsPath, vdfsPath + BackupEnding);
+            // if there's still an old file, it's probably the original. So only move if it's not there.
+            if (!File.Exists(backupPath))
+            {
+                // save the original
+                File.Move(vdfsPath, vdfsPath + BackupEnding);
+            }
 
             // write our own file
             using (FileStream fs = new FileStream(vdfsPath, FileMode.Create, FileAccess.Write))
             using (StreamWriter sw = new StreamWriter(fs))
             {
+                sw.WriteLine("// Generated by the GUC.\n// You might find the original under the name 'vdfs.cfg.guc_backup'.");
                 sw.WriteLine("[VDFS]");
                 sw.WriteLine(Path.Combine(Program.GothicRootPath, "data", "*.vdf"));
                 sw.WriteLine(Path.Combine(Program.ProjectPath, "data", "*.vdf"));
@@ -57,10 +248,10 @@ namespace GUC.Hooks
                 sw.WriteLine("[END]");
             }
 
-            // set dates of project's vdfs?
+            // fixme ? set dates of project's vdfs so they're preferred
         }
 
-        static void EndInit(Hook hook)
+        static void EndInit(Hook hook, RegisterMemory mem)
         {
             string vdfsPath = Program.GetGothicRootPath("vdfs.cfg");
             string backupPath = vdfsPath + BackupEnding;
@@ -74,212 +265,126 @@ namespace GUC.Hooks
 
             // put the backup back in place
             File.Move(backupPath, vdfsPath);
-
-
         }
 
         const int VDF_VIRTUAL = 1;
         const int VDF_PHYSICAL = 2;
 
+        // turns a path from Gothic into a path to the project's folder
         static string GetProjectFilePath(string path)
         {
             if (path.Length > 0)
             {
+                if (path.StartsWith(Program.GothicRootPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    path = path.Substring(Program.GothicRootPath.Length);
+                }
+
                 if (path[0] == '\\')
                 {
                     path = path.Substring(1);
                 }
-                else if (path.StartsWith(Program.GothicRootPath, StringComparison.OrdinalIgnoreCase))
-                {
-                    path = path.Substring(Program.GothicRootPath.Length);
-                }
+
                 return Program.GetProjectPath(path);
             }
 
             return path;
         }
 
-        static void CheckChangeToProjectPath(zString path)
+        static void VDFS_Open(Hook hook, RegisterMemory mem)
         {
-            string projectPath = GetProjectFilePath(path.ToString());
-            if (File.Exists(projectPath))
-            {
-                path.Set(projectPath);
-            }
-        }
-
-        static void VDFS_Open(Hook hook)
-        {
-            zString path = new zString(hook.GetEAX());
+            zString path = new zString(mem[Registers.EAX]);
 
             // check if it exists in vdfs
-            if (FileExistsVirtual(path))
+            int filePtr = mem[Registers.ESI];
+            if (Process.THISCALL<BoolArg>(filePtr, 0x449020) && Process.ReadInt(filePtr + 0x2A00) == VDF_VIRTUAL)
                 return;
 
             // check if it's in the project's folder
-            CheckChangeToProjectPath(path);
+            string projectPath = GetProjectFilePath(path.ToString());
+            if (File.Exists(projectPath))
+                path.Set(projectPath);
         }
 
-        static bool FileExistsVirtual(zString path)
-        {
-            int vdfExistsPtr = Process.ReadInt(0x82E66C); // function ptr
-            return Process.CDECLCALL<IntArg>(vdfExistsPtr, (IntArg)path.PTR, (IntArg)VDF_VIRTUAL) == VDF_VIRTUAL; // _vdf_exists
-        }
-
-
-        static List<byte> stringList = new List<byte>(400);
+        // reads a char* from the process
         static string ReadString(int ptr)
         {
-            stringList.Clear();
+            if (ptr == 0)
+                return "";
 
-            byte readByte;
-            while ((readByte = Process.ReadByte(ptr++)) != 0)
-                stringList.Add(readByte);
-
-            return Encoding.Default.GetString(stringList.ToArray());
-        }
-
-        static void VDFS_Exists(Hook hook)
-        {
-            zString path = new zString(hook.GetEAX());
-
-            if (FileExistsVirtual(path)) // fixme ? duplicate VDF_Exists-Check, gothic does one after this
-                return;
-
-            // check if it's in the project's folder
-            CheckChangeToProjectPath(path);
-        }
-
-        static zString filePointer = zString.Create("");
-        static void File_Open(Hook hook)
-        {
-            string path = ReadString(hook.GetArgument(0));
-            if (path.EndsWith("MSSSOFT.M3D", StringComparison.OrdinalIgnoreCase)) // makes problems cause it's not using the hooked fopen method or smth
-                return;
-
-            string parms = ReadString(hook.GetArgument(1));
-
-            string projectPath = GetProjectFilePath(path);
-            if (parms.Contains('w') || parms.Contains('a')) // write or append
+            byte[] arr;
+            using (MemoryStream ms = new MemoryStream(400))
             {
-                string dir = Path.GetDirectoryName(projectPath);
-                if (!Directory.Exists(dir))
-                    Directory.CreateDirectory(dir);
-            }
-            else if (!File.Exists(projectPath)) // read : no such file in the project folder
-            {
-                return;
+                byte readByte;
+                while ((readByte = Process.ReadByte(ptr++)) != 0)
+                    ms.WriteByte(readByte);
+
+                arr = ms.ToArray();
             }
 
-            filePointer.Set(projectPath);
-            hook.SetArgument(0, filePointer.PTR);
+            return Encoding.Default.GetString(arr.ToArray());
         }
 
-        static void File_Exists(Hook hook)
+        static void VDFS_Exists(Hook hook, RegisterMemory mem)
         {
-            string path = ReadString(hook.GetArgument(0));
+            string path = ReadString(mem[Registers.EDI]);
+            int result = mem[Registers.EAX];
+
+            if (result != 0)
+                return; // gothic has found something
+
+            if (string.IsNullOrWhiteSpace(path))
+                return;
+
+            path = GetProjectFilePath(path);
+            if (File.Exists(path))
+                mem[Registers.EAX] = VDF_PHYSICAL;
+        }
+        
+        static void File_Open(Hook hook, RegisterMemory mem)
+        {
+            int arg0 = mem[0];
+            int arg1 = mem[1];
+
+            string path = ReadString(arg0);
+            if (!path.EndsWith("MSSSOFT.M3D", StringComparison.OrdinalIgnoreCase)) // makes problems 
+            {
+                string parms = ReadString(arg1);
+
+                string projectPath = GetProjectFilePath(path);
+                if (parms.Contains('w') || parms.Contains('a')) // write or append
+                {
+                    string dir = Path.GetDirectoryName(projectPath);
+                    if (!Directory.Exists(dir))
+                        Directory.CreateDirectory(dir);
+
+                    using (zString z = zString.Create(projectPath))
+                        mem[Registers.EAX] = Process.CDECLCALL<IntArg>(0x7D1FDF, (IntArg)z.PTR, (IntArg)arg1, (IntArg)0x40); // call our own paths
+                    return;
+                }
+                else if (File.Exists(projectPath)) // read : no such file in the project folder
+                {
+                    using (zString z = zString.Create(projectPath))
+                        mem[Registers.EAX] = Process.CDECLCALL<IntArg>(0x7D1FDF, (IntArg)z.PTR, (IntArg)arg1, (IntArg)0x40); // call our own paths
+                    return;
+                }
+            }
+            mem[Registers.EAX] = Process.CDECLCALL<IntArg>(0x7D1FDF, (IntArg)arg0, (IntArg)arg1, (IntArg)0x40); // just call it like it was meant to be
+        }
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Ansi, SetLastError = true)]
+        static extern uint GetFileAttributes(string lpFileName);
+
+        static void File_Exists(Hook hook, RegisterMemory mem)
+        {
+            string path = ReadString(mem[0]);
 
             string projectPath = GetProjectFilePath(path);
             if (File.Exists(projectPath))
-            {
-                filePointer.Set(projectPath);
-                hook.SetArgument(0, filePointer.PTR);
-            }
-        }
+                path = projectPath;
 
-        static bool blockedSearchFile = false;
-        // searches for a physical file
-        static void SearchFile(Hook hook)
-        {
-            zString name = new zString(hook.GetArgument(0));
-            zString path = new zString(hook.GetArgument(1));
-
-
-            // check project folder first
-            string projectPath = GetProjectFilePath(path.ToString());
-            DirectoryInfo dir = new DirectoryInfo(projectPath);
-
-            //Logger.LogWarning(path + " " + new zString(hook.GetArgument(0)));
-
-            // check whether the folder exists in project directory
-            if (dir.Exists)
-            {
-                string foundFilePath = null;
-
-                // get search pattern / filename
-                string fileName = name.ToString().TrimStart('\\', '/');
-                if (!fileName.EndsWith("MSSSOFT.M3D", StringComparison.OrdinalIgnoreCase))
-                {
-                    // check whether there are folders in front of the file path
-                    int index = fileName.IndexOfAny(new char[] { '\\', '/' });
-                    if (index >= 0)
-                    {
-                        // extract the first folder
-                        string firstFolder = fileName.Remove(index);
-                        fileName = fileName.Substring(index + 1);
-
-                        // search for the first folder
-                        foreach (DirectoryInfo subdir in dir.EnumerateDirectories(firstFolder, SearchOption.AllDirectories))
-                        {
-                            // check whether the path is right
-                            string filePath = Path.Combine(subdir.FullName, fileName);
-                            if (File.Exists(filePath))
-                                foundFilePath = filePath;
-                        }
-                    }
-                    else
-                    {
-                        // just search for the file
-                        FileInfo fi = dir.EnumerateFiles(fileName, SearchOption.AllDirectories).FirstOrDefault();
-                        if (fi != null)
-                            foundFilePath = fi.FullName;
-                    }
-
-                    if (foundFilePath != null)
-                    {
-                        if (!blockedSearchFile)
-                        {
-                            // block
-                            Process.Write(new byte[] { 0xC2, 0x0C, 0x00 }, hook.OldInNewAddress); // retn    
-                            blockedSearchFile = true;
-                        }
-                        
-                        SetZFilePath(hook.GetECX(), foundFilePath.Substring(Program.ProjectPath.Length));
-                        hook.SetEAX(0);
-                        return;
-
-
-                    }
-                }
-            }
-
-            if (blockedSearchFile)
-            {
-                // unblock
-                Process.Write(hook.GetOldCode(), hook.OldInNewAddress);
-                blockedSearchFile = false;
-            }
-        }
-
-        static void SetZFilePath(int filePtr, string path)
-        {
-            Logger.Log("Found file: " + path);
-
-            using (var z = zString.Create(path.ToUpperInvariant()))
-                Process.THISCALL<NullReturnCall>(filePtr, 0x4455D0, (IntArg)z.VTBL, (IntArg)z.ALLOCATER, (IntArg)z.PTR, (IntArg)z.Length, (IntArg)z.Res);
-
-            //Logger.LogWarning(Process.THISCALL<IntArg>(filePtr, 0x449D20).Value.ToString("X4"));
-
-            /* new zString(filePtr + 0x10).Set(Path.GetDirectoryName(path).Substring(2) + "\\"); // \something\
-             new zString(filePtr + 0x74).Set(Path.GetDirectoryName(path) + "\\"); // D:\path\
-             new zString(filePtr + 0x24).Set(path.Remove(1)); // D
-             new zString(filePtr + 0x4C).Set(Path.GetExtension(path).Substring(1)); // txt
-             new zString(filePtr + 0x38).Set(Path.GetFileNameWithoutExtension(path)); // test
-
-             new zString(filePtr + 0x60).Set(path); // path
-
-             Process.THISCALL<NullReturnCall>(filePtr, 0x445360); // SetCompletePath*/
-
+            int attr = (int)GetFileAttributes(path);
+            mem[Registers.EAX] = attr;
         }
     }
 }

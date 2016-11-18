@@ -46,7 +46,7 @@ namespace Gothic.Types
             if (index < 0 || index >= GetCount())
                 return;
 
-            Process.Write(val.Address, Process.ReadInt(Address) + index * 4);
+            Process.Write(Process.ReadInt(Address) + index * 4, val.Address);
         }
 
         public T get(int index, int size)

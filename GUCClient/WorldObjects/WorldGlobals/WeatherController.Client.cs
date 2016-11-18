@@ -42,7 +42,7 @@ namespace GUC.WorldObjects.WorldGlobals
                 int m_enuWeather = Process.ReadInt(address + 0x30);
                 if (m_enuWeather != (int)this.type)
                 {
-                    Process.Write((int)this.type, address + 0x30);
+                    Process.Write(address + 0x30, (int)this.type);
                     int rainAddr = Process.ReadInt(address + zCSkyControler_Outdoor.VarOffsets.outdoorRainFX);
                     if (rainAddr != 0)
                     {

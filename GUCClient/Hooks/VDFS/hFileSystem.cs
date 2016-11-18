@@ -272,8 +272,8 @@ namespace GUC.Hooks.VDFS
             fileHandle.Open();
             openedFiles.Add(self, fileHandle);
             hook.SetEAX(0);
-            Process.Write(true, self + 0x29FC);
-            Process.Write(true, self + 0x8C);
+            Process.Write(self + 0x29FC, true);
+            Process.Write(self + 0x8C, true);
             Logger.Log("Open " + self.ToString("X4") + " " + path);
 
             string p = Path.GetFileName(new zString(self + 0x60).ToString());
@@ -439,7 +439,7 @@ namespace GUC.Hooks.VDFS
                         Buffer = new byte[count];
 
                     int read = handle.Read(Buffer, 0, (int)count);
-                    Process.Write(Buffer, (int)count, ptr);
+                    Process.Write(ptr, Buffer, (int)count);
 
                     hook.SetEAX(read);
                     return;
