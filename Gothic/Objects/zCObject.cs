@@ -406,13 +406,13 @@ namespace Gothic.Objects
         public gVobTypes VTBL
         {
             get { return (gVobTypes)Process.ReadInt(Address + VarOffsets.vtbl); }
-            set { Process.Write((int)value, Address + VarOffsets.vtbl); }
+            set { Process.Write(Address + VarOffsets.vtbl, (int)value); }
         }
 
         public int refCtr
         {
             get { return Process.ReadInt(Address + VarOffsets.refCtr); }
-            set { Process.Write(value, Address + VarOffsets.refCtr); }
+            set { Process.Write(Address + VarOffsets.refCtr, value); }
         }
 
         public zString ObjectName

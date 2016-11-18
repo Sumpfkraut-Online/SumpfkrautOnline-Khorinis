@@ -39,7 +39,7 @@ namespace Gothic.Objects.Sky
         public bool bFadeInOut
         {
             get { return Process.ReadBool(Address + 0x6C0); }
-            set { Process.Write(value, Address + 0x6C0); }
+            set { Process.Write(Address + 0x6C0, value); }
         }
 
         public void SetWeatherType(int type)
@@ -81,19 +81,19 @@ namespace Gothic.Objects.Sky
         public float StartRainTime
         {
             get { return Process.ReadFloat(Address + VarOffsets.StartRainTime); }
-            set { Process.Write(value, Address + VarOffsets.StartRainTime); }
+            set { Process.Write(Address + VarOffsets.StartRainTime, value); }
         }
 
         public float EndRainTime
         {
             get { return Process.ReadFloat(Address + VarOffsets.EndRainTime); }
-            set { Process.Write(value, Address + VarOffsets.EndRainTime); }
+            set { Process.Write(Address + VarOffsets.EndRainTime, value); }
         }
 
         public float OutdoorRainFXWeight
         {
             get { return Process.ReadFloat(Address + 0x69C); }
-            set { Process.Write(value, Address + 0x69C); }
+            set { Process.Write(Address + 0x69C, value); }
         }
 
         public zCSkyState MasterState
@@ -122,7 +122,7 @@ namespace Gothic.Objects.Sky
         public bool RenderLightning
         {
             get { return Process.ReadBool(Address + VarOffsets.renderLightning); }
-            set { Process.Write(value, Address + VarOffsets.renderLightning); }
+            set { Process.Write(Address + VarOffsets.renderLightning, value); }
         }
     }
 }

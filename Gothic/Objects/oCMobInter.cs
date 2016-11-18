@@ -72,7 +72,7 @@ namespace Gothic.Objects
         public int State
         {
             get { return  Process.ReadInt(Address + VarOffsets.state); }
-            set { Process.Write(value, Address + VarOffsets.state); }
+            set { Process.Write(Address + VarOffsets.state, value); }
         }
 
         public int StateNum
@@ -88,19 +88,19 @@ namespace Gothic.Objects
         public bool Rewind
         {
             get { return Process.ReadBool(Address + VarOffsets.rewind); }
-            set { Process.Write(value, Address + VarOffsets.rewind); }
+            set { Process.Write(Address + VarOffsets.rewind, value); }
         }
 
         public int Bitfield
         {
             get { return Process.ReadInt(Address + 0x20C); }
-            set { Process.Write(value, Address + 0x20C); }
+            set { Process.Write(Address + 0x20C, value); }
         }
 
         public int StateAniID
         {
             get { return Process.ReadInt(Address + VarOffsets.stateAni); }
-            set { Process.Write(value, Address + VarOffsets.stateAni); }
+            set { Process.Write(Address + VarOffsets.stateAni, value); }
         }
 
         public int StateNPCAniID

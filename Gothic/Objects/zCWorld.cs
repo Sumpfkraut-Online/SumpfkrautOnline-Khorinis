@@ -192,7 +192,7 @@ namespace Gothic.Objects
         public bool IsInventoryWorld
         {
             get { return Process.ReadBool(Address + VarOffsets.m_bIsInventoryWorld); }
-            set { Process.Write(value, Address + VarOffsets.m_bIsInventoryWorld); }
+            set { Process.Write(Address + VarOffsets.m_bIsInventoryWorld, value); }
         }
 
         public int Raytrace_FoundHit
@@ -223,13 +223,13 @@ namespace Gothic.Objects
         public zCSkyControler ActiveSkyControler
         {
             get { return new zCSkyControler(Process.ReadInt(Address + VarOffsets.activeSkyControler)); }
-            set { Process.Write(value.Address, Address + VarOffsets.activeSkyControler); }
+            set { Process.Write(Address + VarOffsets.activeSkyControler, value.Address); }
         }
 
         public zCSkyControler_Outdoor SkyControlerOutdoor
         {
             get { return new zCSkyControler_Outdoor(Process.ReadInt(Address + VarOffsets.skyControlerOutdoor)); }
-            set { Process.Write(value.Address, Address + VarOffsets.skyControlerOutdoor); }
+            set { Process.Write(Address + VarOffsets.skyControlerOutdoor, value.Address); }
         }
 
         public zCTree<zCVob> GlobalVobTree

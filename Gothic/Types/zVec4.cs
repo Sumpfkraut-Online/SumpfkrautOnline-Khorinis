@@ -55,7 +55,7 @@ namespace Gothic.Types
             {
                 if (index >= 0 && index < 4)
                 {
-                    Process.Write(value, Address + 4 * index);
+                    Process.Write(Address + 4 * index, value);
                 }
                 throw new ArgumentException("zVec4 set index is outside of range: " + index);
             }
@@ -64,25 +64,25 @@ namespace Gothic.Types
         public float X 
         {
             get { return Process.ReadFloat(Address); }
-            set { Process.Write(value, Address); }
+            set { Process.Write(Address, value); }
         }
 
         public float Y
         {
             get { return Process.ReadFloat(Address + 4); }
-            set { Process.Write(value, Address + 4); }
+            set { Process.Write(Address + 4, value); }
         }
 
         public float Z
         {
             get { return Process.ReadFloat(Address + 8); }
-            set { Process.Write(value, Address + 8); }
+            set { Process.Write(Address + 8, value); }
         }
 
         public float W
         {
             get { return Process.ReadFloat(Address + 12); }
-            set { Process.Write(value, Address + 12); }
+            set { Process.Write(Address + 12, value); }
         }
     }
 }

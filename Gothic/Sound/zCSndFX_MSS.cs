@@ -22,13 +22,13 @@ namespace Gothic.Sound
         public bool isFixed
         {
             get { return Process.ReadBool(Address + 104); }
-            set { Process.Write(value, Address + 104); }
+            set { Process.Write(Address + 104, value); }
         }
 
         public float Volume
         {
             get { return Process.ReadFloat(Address + 84); }
-            set { Process.Write(value, Address + 84); }
+            set { Process.Write(Address + 84, value); }
         }
     }
 }

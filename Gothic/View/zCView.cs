@@ -108,7 +108,7 @@ namespace Gothic.View
         public bool FillZ
         {
             get { return Process.ReadInt(Address + VarOffsets.m_bFillZ) >= 1; }
-            set { Process.Write(value ? 1 : 0, Address + VarOffsets.m_bFillZ); }
+            set { Process.Write(Address + VarOffsets.m_bFillZ, value); }
         }
 
         public void Top()
@@ -124,7 +124,7 @@ namespace Gothic.View
         public zCFont Font
         {
             get { return new zCFont(Process.ReadInt(Address + VarOffsets.font)); }
-            set { Process.Write(value.Address, Address + VarOffsets.font); }
+            set { Process.Write(Address + VarOffsets.font, value.Address); }
         }
 
         public zCList<zCViewText> TextLines
@@ -143,7 +143,7 @@ namespace Gothic.View
         }
         public static void WriteDebug(int debug)
         {
-            Process.Write(debug, 0xAB6474);
+            Process.Write(0xAB6474, debug);
         }
 
         public static zCView Create(int x, int y, int width, int height, zTviewID type)

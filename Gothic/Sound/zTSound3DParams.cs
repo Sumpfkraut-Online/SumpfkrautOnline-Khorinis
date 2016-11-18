@@ -46,7 +46,7 @@ namespace Gothic.Sound
         public int Int0
         {
             get { return Process.ReadInt(this.Address); }
-            set { Process.Write(value, this.Address); }
+            set { Process.Write(this.Address, value); }
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace Gothic.Sound
         public float Volume
         {
             get { return Process.ReadFloat(this.Address+4); }
-            set { Process.Write(value, this.Address + 4); }
+            set { Process.Write(this.Address + 4, value); }
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace Gothic.Sound
         public float Radius
         {
             get { return Process.ReadFloat(this.Address + 8); }
-            set { Process.Write(value, this.Address + 8); }
+            set { Process.Write(this.Address + 8, value); }
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace Gothic.Sound
         public int Int3
         {
             get { return Process.ReadInt(this.Address + 12); }
-            set { Process.Write(value, this.Address + 12); }
+            set { Process.Write(this.Address + 12, value); }
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace Gothic.Sound
         public int Int4
         {
             get { return Process.ReadInt(this.Address + 16); }
-            set { Process.Write(value, this.Address + 16); }
+            set { Process.Write(this.Address + 16, value); }
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace Gothic.Sound
         public float Flt5
         {
             get { return Process.ReadFloat(this.Address + 20); }
-            set { Process.Write(value, this.Address + 20); }
+            set { Process.Write(this.Address + 20, value); }
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace Gothic.Sound
         public bool IsAmbient
         {
             get { return Process.ReadBool(this.Address + 24); }
-            set { Process.Write(value, this.Address + 24); }
+            set { Process.Write(this.Address + 24, value); }
         }
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace Gothic.Sound
         public float Flt7
         {
             get { return Process.ReadFloat(this.Address + 28); }
-            set { Process.Write(value, this.Address + 28); }
+            set { Process.Write(this.Address + 28, value); }
         }
     }
 }

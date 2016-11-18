@@ -78,7 +78,7 @@ namespace Gothic.Objects
         public bool IsLocked
         {
             get { return Process.ReadBool(Address + VarOffsets.IsLocked); }
-            set { Process.Write(value, Address + VarOffsets.IsLocked); }
+            set { Process.Write(Address + VarOffsets.IsLocked, value); }
         }
 
         public zString keyInstance

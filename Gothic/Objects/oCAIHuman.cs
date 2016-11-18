@@ -49,19 +49,19 @@ namespace Gothic.Objects
         public oCNpc NPC
         {
             get { return new oCNpc(Process.ReadInt(Address + VarOffsets.NPC)); }
-            set { Process.Write(value.Address, Address + VarOffsets.NPC); }
+            set { Process.Write(Address + VarOffsets.NPC, value.Address); }
         }
 
         public int WMode
         {
             get { return Process.ReadInt(Address + VarOffsets.wmode); }
-            set { Process.Write(value, Address + VarOffsets.wmode); }
+            set { Process.Write(Address + VarOffsets.wmode, value); }
         }
 
         public float FallDownDistanceY
         {
             get { return Process.ReadFloat(Address + VarOffsets.fallDownDistanceY); }
-            set { Process.Write(value, Address + VarOffsets.fallDownDistanceY); }
+            set { Process.Write(Address + VarOffsets.fallDownDistanceY, value); }
         }
 
         public float AboveFloor

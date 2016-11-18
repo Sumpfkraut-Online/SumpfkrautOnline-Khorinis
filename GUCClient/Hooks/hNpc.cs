@@ -16,27 +16,17 @@ namespace GUC.Hooks
             if (inited) return;
             inited = true;
 
-            var emptyBuf = Enumerable.Repeat<byte>(0x90, 0xB).ToArray();
-
-            var hook = Process.AddHook(RbtForwardHook, 0x687B71, 0xB);
-            Process.Write(emptyBuf, hook.OldInNewAddress);
-
-
-            hook = Process.AddHook(RbtStandHook, 0x683BEA, 0xB);
-            Process.Write(emptyBuf, hook.OldInNewAddress);
-
-            hook = Process.AddHook(RbtStandHook, 0x686AF8, 0xB);
-            Process.Write(emptyBuf, hook.OldInNewAddress);
-
-            hook = Process.AddHook(RbtStandHook, 0x686B62, 0xB);
-            Process.Write(emptyBuf, hook.OldInNewAddress);
+            Process.AddHook(RbtForwardHook, 0x687B71, 0xB).SetSkipOldCode(true);
+            Process.AddHook(RbtStandHook, 0x683BEA, 0xB).SetSkipOldCode(true);
+            Process.AddHook(RbtStandHook, 0x686AF8, 0xB).SetSkipOldCode(true);
+            Process.AddHook(RbtStandHook, 0x686B62, 0xB).SetSkipOldCode(true);
 
             Logger.Log("Added npc hooks.");
         }
 
-        static void RbtForwardHook(Hook hook)
+        static void RbtForwardHook(Hook hook, RegisterMemory rmem)
         {
-            int npcAddr = hook.GetESI();
+            int npcAddr = rmem[Registers.ESI];
 
             NPC npc;
             if (World.Current.TryGetVobByAddress(npcAddr, out npc))
@@ -45,9 +35,9 @@ namespace GUC.Hooks
             }
         }
 
-        static void RbtStandHook(Hook hook)
+        static void RbtStandHook(Hook hook, RegisterMemory rmem)
         {
-            int npcAddr = hook.GetESI();
+            int npcAddr = rmem[Registers.ESI];
 
             NPC npc;
             if (World.Current.TryGetVobByAddress(npcAddr, out npc))

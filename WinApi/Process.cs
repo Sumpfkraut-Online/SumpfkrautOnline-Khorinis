@@ -3,43 +3,117 @@ using System.Collections.Generic;
 using System.Text;
 using WinApi.Kernel;
 using System.Runtime.InteropServices;
-using System.Reflection;
+using System.IO;
 
 namespace WinApi
 {
+    public enum FlagRegisters
+    {
+        CF = 0,
+        PF = 2,
+        AF = 4,
+        ZF = 6,
+        SF = 7,
+        OF = 11,
+    }
+
+    public enum Registers // PUSHAD ORDER !!!
+    {
+        EDI,
+        ESI,
+        EBP,
+        ESP, 
+        EBX, 
+        EDX, 
+        ECX, 
+        EAX
+    }
+    
     public static class Process
     {
         #region Initialization
 
-        static IntPtr Handle = GetThisHandle();
+        static IntPtr Handle;
         static uint ProcessID;
 
-        static IntPtr GetThisHandle()
+        static Process()
         {
-            ProcessID = (uint)System.Diagnostics.Process.GetCurrentProcess().Id;
-            System.Diagnostics.Process.EnterDebugMode();
-            IntPtr retH = Kernel.ProcessImports.OpenProcess((uint)Kernel.ProcessImports.ProcessAccess.PROCESS_ALL_ACCESS, false, ProcessID);
-            if (retH == IntPtr.Zero)
+            try
             {
-                Error.GetLastError();
+                ProcessID = (uint)System.Diagnostics.Process.GetCurrentProcess().Id;
+                System.Diagnostics.Process.EnterDebugMode();
+                Handle = ProcessImports.OpenProcess((uint)ProcessImports.ProcessAccess.PROCESS_ALL_ACCESS, false, ProcessID);
+                if (Handle == IntPtr.Zero)
+                    Error.GetLastError();
+
+                Guid CLSID_CLRRuntimeHost = new Guid(0x90F1A06E, 0x7712, 0x4762, 0x86, 0xB5, 0x7A, 0x5E, 0xBA, 0x6B, 0xDB, 0x02);
+                Guid IID_ICLRRuntimeHost = new Guid(0x90F1A06C, 0x7712, 0x4762, 0x86, 0xB5, 0x7A, 0x5E, 0xBA, 0x6B, 0xDB, 0x02);
+
+                runtimeInterface = RuntimeEnvironment.GetRuntimeInterfaceAsIntPtr(CLSID_CLRRuntimeHost, IID_ICLRRuntimeHost).ToInt32();
+                if (runtimeInterface == 0)
+                    throw new Exception("Runtime interface not found!");
+
+                IntPtr user32Handle = ProcessImports.GetModuleHandle("user32.dll");
+                if (user32Handle == IntPtr.Zero)
+                    Error.GetLastError("GetModuleHandle user32.dll");
+
+                IntPtr wptr = ProcessImports.GetProcAddress(user32Handle, "wsprintfW");
+                if (wptr == IntPtr.Zero)
+                    Error.GetLastError("GetProcAddress wsprintfW");
+
+                wsprintfWPtr = wptr.ToInt32();
+                wsprintfWTypeArg = AllocString("%p");
+                hookArg_DLLPath = AllocString(typeof(Process).Assembly.Location);
+                hookArg_Namespace = AllocString(typeof(Process).FullName);
+                hookArg_MethodName = AllocString(typeof(Process).GetMethod("ApiHook").Name);
+                hookArg_Result = Alloc(4).ToInt32();
             }
-            return retH;
+            catch (Exception e)
+            {
+                MessageBox(IntPtr.Zero, e.ToString(), "WinApi Exception!", 0);
+            }
         }
+
+        static int wsprintfWPtr;
+        static int wsprintfWTypeArg;
+        static readonly int hookArg_DLLPath;
+        static readonly int hookArg_Namespace;
+        static readonly int hookArg_MethodName;
+        static readonly int hookArg_Result;
+
+
+        #endregion
+
+        #region Utils
+
+        static int AllocString(string str, Encoding enc = null)
+        {
+            byte[] bytes = (enc == null ? Encoding.Unicode : enc).GetBytes(str + "\0");
+            int ptr = Alloc((uint)bytes.Length).ToInt32();
+            Write(ptr, bytes);
+            return ptr;
+        }
+
+        static void FreeString(int address, string str, Encoding enc = null)
+        {
+            Free(new IntPtr(address), (uint)(enc == null ? Encoding.Unicode : enc).GetByteCount(str + "\0"));
+        }
+
         #endregion
 
         #region Memory Methods
 
         public static bool VirtualProtect(int address, uint size)
         {
-            Kernel.ProcessImports.MemoryProtection k;
-            return Kernel.ProcessImports.VirtualProtect(new IntPtr(address), size, Kernel.ProcessImports.MemoryProtection.ExecuteReadWrite, out k);
+            ProcessImports.MemoryProtection k;
+            return ProcessImports.VirtualProtect(new IntPtr(address), size, ProcessImports.MemoryProtection.ExecuteReadWrite, out k);
         }
 
         public static IntPtr Alloc(uint size)
         {
             if (size == 0)
                 return IntPtr.Zero;
-            IntPtr ptr = Kernel.ProcessImports.VirtualAllocEx(Handle, IntPtr.Zero, size, WinApi.Kernel.ProcessImports.AllocationType.Reserve | WinApi.Kernel.ProcessImports.AllocationType.Commit, WinApi.Kernel.ProcessImports.MemoryProtection.ReadWrite);
+            IntPtr ptr = ProcessImports.VirtualAllocEx(Handle, IntPtr.Zero, size, ProcessImports.AllocationType.Reserve | ProcessImports.AllocationType.Commit, ProcessImports.MemoryProtection.ReadWrite);
             if (ptr == IntPtr.Zero)
                 Error.GetLastError();
 
@@ -50,7 +124,7 @@ namespace WinApi
         {
             if (ptr == IntPtr.Zero || size == 0)
                 return false;
-            if (!ProcessImports.VirtualFreeEx(Handle, ptr, (uint)size, ProcessImports.AllocationType.Decommit))
+            if (!ProcessImports.VirtualFreeEx(Handle, ptr, size, ProcessImports.AllocationType.Decommit))
                 Error.GetLastError();
             if (!ProcessImports.VirtualFreeEx(Handle, ptr, 0, ProcessImports.AllocationType.Release))
                 Error.GetLastError();
@@ -58,119 +132,128 @@ namespace WinApi
             return true;
         }
 
-        #region Write & Read
+        #region Write
 
-        public static uint Write(bool obj, int position)
+        public static uint Write(int address, bool value)
         {
-            return Write(obj == true ? 1 : 0, position);
+            return Write(address, value ? 1 : 0);
         }
 
-        public static uint Write(int obj, int position)
+        public static uint Write(int address, int value)
         {
-            if (position == 0)
-                throw new Exception("Process.Write position is 0!");
+            if (address == 0)
+                throw new Exception("Write position is 0!");
 
             IntPtr byteWritten = IntPtr.Zero;
-            IntPtr ptr = new IntPtr(obj);
-            if (!Kernel.ProcessImports.WriteProcessMemory(Handle, new IntPtr(position), out ptr, 4, out byteWritten))
+            IntPtr ptr = new IntPtr(value);
+            if (!ProcessImports.WriteProcessMemory(Handle, new IntPtr(address), out ptr, 4, out byteWritten))
                 Error.GetLastError();
 
             return (uint)byteWritten.ToInt32();
         }
 
-        public static uint Write(byte obj, int position)
+        public static uint Write(int address, byte value)
         {
-            return Write(new byte[1] { obj }, position);
+            return Write(address, new byte[1] { value });
         }
 
-        public static uint Write(float obj, int position)
+        public static uint Write(int address, float value)
         {
-            return Write(BitConverter.GetBytes(obj), position);
+            return Write(address, BitConverter.GetBytes(value));
         }
 
-        public static uint Write(ushort obj, int position)
+        public static uint Write(int address, short value)
         {
-            return Write(BitConverter.GetBytes(obj), position);
+            return Write(address, BitConverter.GetBytes(value));
         }
 
-        public static uint Write(byte[] obj, int position)
+        public static uint Write(int address, ushort value)
         {
-            return Write(obj, obj.Length, position);
+            return Write(address, BitConverter.GetBytes(value));
         }
 
-        public static uint Write(byte[] obj, int count, int position)
+        public static uint Write(int address, params byte[] bytes)
         {
-            if (position == 0)
-                throw new ArgumentException("Write position is 0!");
+            return Write(address, bytes, bytes.Length);
+        }
+
+        public static uint Write(int address, byte[] arr, int count)
+        {
+            if (address == 0)
+                throw new ArgumentException("Write address is 0!");
 
             uint byteWritten;
-            if (!ProcessImports.WriteProcessMemory(Handle, new IntPtr(position), obj, (uint)count, out byteWritten))
+            if (!ProcessImports.WriteProcessMemory(Handle, new IntPtr(address), arr, (uint)count, out byteWritten))
                 Error.GetLastError();
 
             return byteWritten;
         }
 
-        public static uint Nop(int count, int position)
+        public static uint Nop(int address, int count)
         {
             byte[] buf = new byte[count];
             for (int i = 0; i < count; i++)
                 buf[i] = 0x90;
 
-            return Write(buf, position);
+            return Write(address, buf);
 
         }
 
-        public static bool ReadBool(int position)
+        #endregion
+
+        #region Read
+
+        public static bool ReadBool(int address)
         {
-            return ReadInt(position) != 0;
+            return ReadInt(address) != 0;
         }
 
-        public static int ReadInt(int position)
+        public static int ReadInt(int address)
         {
-            if (position == 0)
-                throw new Exception("Process.Read position is 0!");
+            if (address == 0)
+                throw new Exception("Read address is 0!");
 
             IntPtr rw;
             IntPtr puffer;
-            if (!ProcessImports.ReadProcessMemory(Handle, new IntPtr(position), out puffer, new UIntPtr(4), out rw))
+            if (!ProcessImports.ReadProcessMemory(Handle, new IntPtr(address), out puffer, new UIntPtr(4), out rw))
                 Error.GetLastError();
             return puffer.ToInt32();
         }
 
-        public static byte ReadByte(int position)
+        public static byte ReadByte(int address)
         {
-            return ReadBytes(position, 1)[0];
+            return ReadBytes(address, 1)[0];
         }
 
-        public static float ReadFloat(int position)
+        public static float ReadFloat(int address)
         {
-            return BitConverter.ToSingle(ReadBytes(position, 4), 0);
+            return BitConverter.ToSingle(ReadBytes(address, 4), 0);
         }
 
-        public static ushort ReadUShort(int position)
+        public static short ReadShort(int address)
         {
-            return BitConverter.ToUInt16(ReadBytes(position, 2), 0);
+            return BitConverter.ToInt16(ReadBytes(address, 2), 0);
         }
 
-        public static byte[] ReadBytes(int position, uint count)
+        public static ushort ReadUShort(int address)
         {
-            if (position == 0)
-                throw new Exception("Process.Read position is 0!");
-
-            byte[] bytes = new byte[count];
-            UInt32 size = 0;
-            if (!ProcessImports.ReadProcessMemory(Handle, new IntPtr(position), bytes, count, ref size))
-                Error.GetLastError();
-            return bytes;
+            return BitConverter.ToUInt16(ReadBytes(address, 2), 0);
         }
 
-        public static uint Read(int position, byte[] buffer, uint count)
+        public static byte[] ReadBytes(int address, uint count)
         {
-            if (position == 0)
-                throw new Exception("Process.Read position is 0!");
-            
+            byte[] arr = new byte[count];
+            Read(address, arr, count);
+            return arr;
+        }
+
+        public static uint Read(int address, byte[] buffer, uint count)
+        {
+            if (address == 0)
+                throw new Exception("Read address is 0!");
+
             uint bytesRead = 0;
-            if (!ProcessImports.ReadProcessMemory(Handle, new IntPtr(position), buffer, count, ref bytesRead))
+            if (!ProcessImports.ReadProcessMemory(Handle, new IntPtr(address), buffer, count, ref bytesRead))
                 Error.GetLastError();
 
             return bytesRead;
@@ -181,6 +264,10 @@ namespace WinApi
         #endregion
 
         #region Calls
+
+        // fixme ?
+        //[UnmanagedFunctionPointer(CallingConvention.StdCall)]
+        //delegate void STDCallHandler(int arg0);
 
         enum CALLTYPE
         {
@@ -294,7 +381,7 @@ namespace WinApi
             list.Add(0xC3);//RTN
 
             //Write the new function
-            Write(list.ToArray(), baseadress.ToInt32());
+            Write(baseadress.ToInt32(), list.ToArray());
 
             //Call the new function
             call mc = (call)Marshal.GetDelegateForFunctionPointer(baseadress, typeof(call));
@@ -320,64 +407,55 @@ namespace WinApi
 
         #region Hooks
 
-        static Hook[] hooks = new Hook[0];
-
-        static readonly int runtimeInterface;
-        static readonly int hookArg_DLLPath;
-        static readonly int hookArg_Namespace;
-        static readonly int hookArg_MethodName;
-        static readonly int hookArg_Result;
-
-        static Process()
-        {
-            Guid CLSID_CLRRuntimeHost = new Guid(0x90F1A06E, 0x7712, 0x4762, 0x86, 0xB5, 0x7A, 0x5E, 0xBA, 0x6B, 0xDB, 0x02);
-            Guid IID_ICLRRuntimeHost = new Guid(0x90F1A06C, 0x7712, 0x4762, 0x86, 0xB5, 0x7A, 0x5E, 0xBA, 0x6B, 0xDB, 0x02);
-
-            runtimeInterface = RuntimeEnvironment.GetRuntimeInterfaceAsIntPtr(CLSID_CLRRuntimeHost, IID_ICLRRuntimeHost).ToInt32();
-            if (runtimeInterface == 0) throw new Exception("Runtime interface not found!");
-
-            hookArg_DLLPath = AllocUnicodeString(typeof(Process).Assembly.Location);
-            hookArg_Namespace = AllocUnicodeString(typeof(Process).FullName);
-            hookArg_MethodName = AllocUnicodeString(typeof(Process).GetMethod("ApiHook").Name);
-            hookArg_Result = Alloc(4).ToInt32();
-        }
-
-        static int AllocUnicodeString(string str)
-        {
-            byte[] bytes = Encoding.Unicode.GetBytes(str);
-            int ptr = Alloc((uint)(bytes.Length + 1)).ToInt32();
-            Write(bytes, ptr);
-            return ptr;
-        }
-
-        static void FreeUnicodeString(int address, string str)
-        {
-            Free(new IntPtr(address), (uint)Encoding.Unicode.GetByteCount(str) + 1);
-        }
+        static int runtimeInterface;
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        static extern int MessageBox(IntPtr hWnd, String text, String caption, int options);
+        public static extern int MessageBox(IntPtr hWnd, String text, String caption, int options);
 
+        static List<Hook> hooks = new List<Hook>();
+        
         public static int ApiHook(string message)
         {
             try
             {
-                int hookID;
-                if (int.TryParse(message, out hookID) && hookID >= 0 && hookID < hooks.Length)
+                int address;
+                if (!int.TryParse(message, System.Globalization.NumberStyles.AllowHexSpecifier, System.Globalization.CultureInfo.CurrentCulture, out address))
+                    return 0;
+
+                int espValue = ReadInt(address + 0x12);
+
+                int hookID = ReadInt(espValue);  
+                if (hookID >= 0 && hookID < hooks.Count)
                 {
-                    var hook = hooks[hookID];
-                    if (hook != null)
-                        hook.Callback(hook);
+                    Hook hook = hooks[hookID];
+                    hook.Callback(hook, new RegisterMemory(espValue + 4, hook));
+                }
+                else
+                {
+                    throw new Exception(hookID + " HookID is out of range! 0.." + hooks.Count);
                 }
             }
             catch (Exception e)
             {
-                MessageBox(IntPtr.Zero, e.ToString(), "Error", 0);
+                MessageBox(IntPtr.Zero, e.ToString(), "ApiHook catched exception!", 0);
             }
             return 0;
         }
 
-        public static Hook AddHook(HookCallback callback, int address, uint length, uint argCount = 0)
+        /* 
+
+         Hooks work like this:         
+         1. Allocate a small memory location
+         2. Write the hex address of the memory location into it (wchar)
+         3. Copy registers & arguments into the memory location
+         4. Call the .NET method via CLR with the memory location pointer as argument
+         5. Copy registers & arguments from the memory location
+         6. Free the memory location
+
+        */
+
+
+        public static Hook AddHook(HookCallback callback, int address, uint length)
         {
             if (callback == null)
                 throw new ArgumentNullException("Callback is null!");
@@ -386,139 +464,140 @@ namespace WinApi
             if (length < 5)
                 throw new ArgumentException("Length is < 5!");
 
-            // Check if there's already a hook
-            for (int i = 0; i < hooks.Length; i++)
-            {
-                if (hooks[i] == null) continue;
-                if ((address >= hooks[i].HookAddress && address < hooks[i].HookAddress + hooks[i].HookLength) ||
-                    (address + length >= hooks[i].HookAddress && address + length < hooks[i].HookAddress + hooks[i].HookLength))
-                {
-                    throw new Exception(callback.Method.Name + " hook address is already taken by " + hooks[i].Callback.Method.Name);
-                }
-            }
+            // calculate size of memory location
 
-            int eaxPtr = Alloc(28 + argCount * 4).ToInt32();
-            int ebxPtr = eaxPtr + 4;
-            int ecxPtr = ebxPtr + 4;
-            int edxPtr = ecxPtr + 4;
-            int ediPtr = edxPtr + 4;
-            int ebpPtr = ediPtr + 4;
-            int esiPtr = ebpPtr + 4;
+            const byte memoryLen = 2 * (8 + 1)  // written address (wchar)
+                                     + 4;        // esp address
 
-            uint funcLen = 108 + argCount * 9 + length;
-            int funcPtr = Alloc(funcLen).ToInt32();
-            List<byte> funcBytes = new List<byte>((int)funcLen);
+            uint funcLen = 92 + length;
 
-            // save registers and arguments
-            funcBytes.Add(0xA3); funcBytes.AddRange(BitConverter.GetBytes(eaxPtr)); // mov [eaxPtr], EAX
-            funcBytes.Add(0x89); funcBytes.Add(0x1D); funcBytes.AddRange(BitConverter.GetBytes(ebxPtr)); // mov [ebxPtr], EBX
-            funcBytes.Add(0x89); funcBytes.Add(0x0D); funcBytes.AddRange(BitConverter.GetBytes(ecxPtr)); // mov [ecxPtr], ECX
-            funcBytes.Add(0x89); funcBytes.Add(0x15); funcBytes.AddRange(BitConverter.GetBytes(edxPtr)); // mov [edxPtr], EDX
-            funcBytes.Add(0x89); funcBytes.Add(0x3D); funcBytes.AddRange(BitConverter.GetBytes(ediPtr)); // mov [ediPtr], EDI
-            funcBytes.Add(0x89); funcBytes.Add(0x2D); funcBytes.AddRange(BitConverter.GetBytes(ebpPtr)); // mov [ebpPtr], EBP
-            funcBytes.Add(0x89); funcBytes.Add(0x35); funcBytes.AddRange(BitConverter.GetBytes(esiPtr)); // mov [esiPtr], ESI
-
-            for (int i = 1; i <= argCount; i++)
-            {
-                funcBytes.Add(0x8B); funcBytes.Add(0x44); funcBytes.Add(0x24); funcBytes.Add((byte)(4 * i)); // mov EAX, [esp + 4 * i]
-                funcBytes.Add(0xA3); funcBytes.AddRange(BitConverter.GetBytes(esiPtr + 4 * i)); // mov [esiPtr + 4*i], EAX
-            }
-
-            // call .NET method
-            funcBytes.Add(0x60);//pushad
-
-            funcBytes.Add(0x66);//pushf
-            funcBytes.Add(0x9C);
-
-            // find hook ID
-            int id = hooks.Length;
-            for (int i = 0; i < hooks.Length; i++)
-            {
-                if (hooks[i] == null)
-                {
-                    id = i;
-                    break;
-                }
-            }
-
-            // reallocation needed
-            if (id == hooks.Length)
-            {
-                Hook[] newArr = new Hook[hooks.Length + 1];
-                Array.Copy(hooks, newArr, hooks.Length);
-                hooks = newArr;
-            }
-
-            int idAddress = AllocUnicodeString(id.ToString());
-            funcBytes.Add(0x68); funcBytes.AddRange(BitConverter.GetBytes(hookArg_Result)); // PUSH arg5
-            funcBytes.Add(0x68); funcBytes.AddRange(BitConverter.GetBytes(idAddress)); // PUSH arg4 
-            funcBytes.Add(0x68); funcBytes.AddRange(BitConverter.GetBytes(hookArg_MethodName)); // PUSH arg3
-            funcBytes.Add(0x68); funcBytes.AddRange(BitConverter.GetBytes(hookArg_Namespace)); // PUSH arg2
-            funcBytes.Add(0x68); funcBytes.AddRange(BitConverter.GetBytes(hookArg_DLLPath)); // PUSH arg1
-            funcBytes.Add(0x68); funcBytes.AddRange(BitConverter.GetBytes(runtimeInterface)); // PUSH this
-
-            funcBytes.Add(0x8B); funcBytes.Add(0x0D); funcBytes.AddRange(BitConverter.GetBytes(runtimeInterface)); // mov ECX, [runtimeInterface]
-            funcBytes.Add(0xFF); funcBytes.Add(0x51); funcBytes.Add(0x2C);// call [ECX+0x2C]
+            Hook result;
+            int hookID = hooks.Count;
             
-            funcBytes.Add(0x66);//popf
-            funcBytes.Add(0x9D);
+            int funcPtr = Alloc(funcLen).ToInt32();
+            using (MemoryStream ms = new MemoryStream((int)funcLen))
+            using (BinaryWriter bw = new BinaryWriter(ms))
+            {
+                // push registers, flags and hook id
+                bw.Write((byte)0x60); // pushad, EAX, ECX, EDX, EBX, EBP, ESP (original value), EBP, ESI, and EDI
+                
+                bw.Write((byte)0x66); // pushf 
+                bw.Write((byte)0x9C);
 
-            funcBytes.Add(0x61);//popad
+                bw.Write((byte)0x68); // push hookID
+                bw.Write(hookID);
 
-            // copy registers back
-            funcBytes.Add(0xA1); funcBytes.AddRange(BitConverter.GetBytes(eaxPtr)); // mov EAX, [eaxPtr]
-            funcBytes.Add(0x8B); funcBytes.Add(0x1D); funcBytes.AddRange(BitConverter.GetBytes(ebxPtr)); // mov EBX, [ebxPtr]
-            funcBytes.Add(0x8B); funcBytes.Add(0x0D); funcBytes.AddRange(BitConverter.GetBytes(ecxPtr)); // mov ECX, [ecxPtr]
-            funcBytes.Add(0x8B); funcBytes.Add(0x15); funcBytes.AddRange(BitConverter.GetBytes(edxPtr)); // mov EDX, [edxPtr]
-            funcBytes.Add(0x8B); funcBytes.Add(0x3D); funcBytes.AddRange(BitConverter.GetBytes(ediPtr)); // mov EDI, [ediPtr]
-            funcBytes.Add(0x8B); funcBytes.Add(0x2D); funcBytes.AddRange(BitConverter.GetBytes(ebpPtr)); // mov EBP, [ebpPtr]
-            funcBytes.Add(0x8B); funcBytes.Add(0x35); funcBytes.AddRange(BitConverter.GetBytes(esiPtr)); // mov ESI, [esiPtr]
+                // save esp
+                bw.Write((byte)0x89); // mov esi, esp
+                bw.Write((byte)0xE6);
 
-            // old code
-            byte[] oldCode = ReadBytes(address, length);
-            Hook h = new Hook((uint)id, idAddress, address, callback, eaxPtr, funcPtr, funcLen, funcPtr + funcBytes.Count, oldCode, argCount);
-            hooks[id] = h;
-            funcBytes.AddRange(oldCode);
+                // alloc memory location
+                bw.Write((byte)0x6A); // push memoryLen
+                bw.Write(memoryLen);
 
-            // jmp back
-            funcBytes.Add(0xE9); funcBytes.AddRange(BitConverter.GetBytes((int)(address + length) - (funcPtr + funcBytes.Count + 4)));
+                bw.Write((byte)0xFF); // call [malloc] (imported)
+                bw.Write((byte)0x15);
+                bw.Write(0x0082E30C);
+                
+                /*bw.Write((byte)0x85); // test eax, eax
+                bw.Write((byte)0xC0);
 
-            // write hook function
-            Write(funcBytes.ToArray(), funcPtr);
+                bw.Write((byte)0x74); // je to popf
+                bw.Write((byte)0x00); // FILL ME*/
 
-            // write hook jmp
-            byte[] hookJmp = new byte[length];
-            hookJmp[0] = 0xE9;
-            byte[] jmpAddr = BitConverter.GetBytes(funcPtr - (address + 5));
-            hookJmp[1] = jmpAddr[0];
-            hookJmp[2] = jmpAddr[1];
-            hookJmp[3] = jmpAddr[2];
-            hookJmp[4] = jmpAddr[3];
+                // save memory address
+                bw.Write((byte)0x8B); // mov ebp, eax
+                bw.Write((byte)0xE8);
+                
+                // write memory address as wchar into memory location
+                bw.Write((byte)0x50); // push eax
 
-            for (int i = 5; i < length; i++) // doesn't matter actually, but some programs like CheatEngine can't handle 0x00 instead of 0x90
-                hookJmp[i] = 0x90;
+                bw.Write((byte)0x68); // push L"%p"
+                bw.Write(wsprintfWTypeArg);
 
-            Write(hookJmp, address);
+                bw.Write((byte)0x50); // push eax
 
-            return h;
+                bw.Write((byte)0xE8); // call wsprintfWPtr
+                bw.Flush(); ms.Flush();
+                bw.Write(wsprintfWPtr - (funcPtr + (int)ms.Length + 4));
+
+                // write ESP into memory location
+                bw.Write((byte)0x89); // mov [ebp + 18], esi
+                bw.Write((byte)0x75);
+                bw.Write((byte)0x12);
+
+                // call .NET method
+                bw.Write((byte)0x68); // push result (arg5)
+                bw.Write(hookArg_Result);
+
+                bw.Write((byte)0x55); // push ebp (memory location ptr = arg4)
+
+                bw.Write((byte)0x68); // push result (arg3)
+                bw.Write(hookArg_MethodName);
+
+                bw.Write((byte)0x68); // push result (arg2)
+                bw.Write(hookArg_Namespace);
+
+                bw.Write((byte)0x68); // push result (arg1)
+                bw.Write(hookArg_DLLPath);
+
+                bw.Write((byte)0x68); // push this (arg0 = runtimeInterface)
+                bw.Write(runtimeInterface);
+
+                bw.Write((byte)0x8B); // mov ECX, [runtimeInterface]
+                bw.Write((byte)0x0D);
+                bw.Write(runtimeInterface);
+
+                bw.Write((byte)0xFF); // call [ECX+0x2C] https://msdn.microsoft.com/de-de/library/ms164411(v=vs.110).aspx
+                bw.Write((byte)0x51);
+                bw.Write((byte)0x2C);
+                
+                // free memory location
+                bw.Write((byte)0x55); // push ebp (memory location ptr)
+
+                bw.Write((byte)0xFF); // call [free] (imported)
+                bw.Write((byte)0x15);
+                bw.Write(0x0082E308);
+                
+                bw.Write((byte)0x83); // add esp, 24 -> flag push
+                bw.Write((byte)0xC4);
+                bw.Write((byte)0x18);
+
+                // pop registers & flags
+                bw.Write((byte)0x66); // popf
+                bw.Write((byte)0x9D);
+
+                bw.Write((byte)0x61); // popad
+
+                // write old code
+                byte[] oldCode = ReadBytes(address, length);
+                bw.Write(oldCode);
+                
+                // write jump back
+                bw.Write((byte)0xE9);
+                bw.Write((address + length) - (funcPtr + funcLen - 4));
+
+                // write whole function
+                Write(funcPtr, ms.ToArray());
+
+                ms.Position = 0;
+                ms.SetLength(0);
+
+                // write hook jmp
+                bw.Write((byte)0xE9);
+                bw.Write(funcPtr - (address + 5));
+                for (int i = 5; i < length; i++)
+                    bw.Write((byte)0x90);
+
+                Write(address, ms.ToArray());
+
+                result = new Hook(address, callback, funcPtr, funcLen, funcPtr + (int)(funcLen - 9 - length), oldCode);
+            }
+
+            hooks.Add(result);
+            return result;
         }
 
-        public static void RemoveHook(Hook hook)
-        {
-            hooks[hook.ID] = null;
-
-            // write old code
-            Write(hook.GetOldCode(), hook.HookAddress);
-
-            // free hook function
-            Free(new IntPtr(hook.NewCodeAddress), (uint)hook.NewCodeLength);
-
-            // free info 
-            Free(new IntPtr(hook.InfoAddress), 20 + 4 * hook.ArgumentCount);
-
-            // free id
-            FreeUnicodeString(hook.IDAddress, hook.ID.ToString());
-        }
 
         #endregion
 

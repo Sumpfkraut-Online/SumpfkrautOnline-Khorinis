@@ -32,8 +32,8 @@ namespace Gothic.System
 
             IntPtr filenamePtr = Process.Alloc((uint)(filename.Length + 1));
             byte[] arr = Encoding.UTF8.GetBytes(filename);
-            Process.Write(arr, filenamePtr.ToInt32());
-            Process.Write(0, filenamePtr.ToInt32() + arr.Length);
+            Process.Write(filenamePtr.ToInt32(), arr);
+            Process.Write(filenamePtr.ToInt32() + arr.Length, (byte)0);
 
             int x = Process.THISCALL<IntArg>(StaticVarAddresses.zerr, FuncAddresses.ReportByLevel, (IntArg)type, (IntArg)0, messageStr, (IntArg)level, (IntArg)0, (IntArg)line, (IntArg)filenamePtr.ToInt32(), (IntArg)0);
 
