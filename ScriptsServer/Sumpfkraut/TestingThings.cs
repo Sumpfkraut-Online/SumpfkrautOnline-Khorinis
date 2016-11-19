@@ -130,10 +130,10 @@ namespace GUC.Scripts.Sumpfkraut
 
 
 
-            new EffectSystem.EffectHandlers.SomeEffectHandler("SomeEffectHandler", null);
-            new EffectSystem.EffectHandlers.AnotherEffectHandler("AnotherEffectHandler", null);
-            new EffectSystem.EffectHandlers.AnotherEffectHandler("AnotherEffectHandler", null);
-            new EffectSystem.EffectHandlers.AnotherEffectHandler("AnotherEffectHandler", null);
+            //new EffectSystem.EffectHandlers.SomeEffectHandler("SomeEffectHandler", null);
+            //new EffectSystem.EffectHandlers.AnotherEffectHandler("AnotherEffectHandler", null);
+            //new EffectSystem.EffectHandlers.AnotherEffectHandler("AnotherEffectHandler", null);
+            //new EffectSystem.EffectHandlers.AnotherEffectHandler("AnotherEffectHandler", null);
 
             //Logger.Log(EffectSystem.EffectHandlers.BaseEffectHandler.isInitialized 
             //    == EffectSystem.EffectHandlers.AnotherEffectHandler.isInitialized);
