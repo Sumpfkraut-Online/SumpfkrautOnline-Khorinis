@@ -141,6 +141,8 @@ namespace GUC.Scripts.Sumpfkraut
             //Logger.Log(EffectSystem.EffectHandlers.SomeEffectHandler.isInitialized);
             //Logger.Log(EffectSystem.EffectHandlers.AnotherEffectHandler.isInitialized);
 
+            //
+
         }
 
     }
