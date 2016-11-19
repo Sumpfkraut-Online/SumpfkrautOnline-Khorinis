@@ -21,7 +21,7 @@ namespace Gothic.System
         public static bool VDFSInitialized
         {
             get { return Process.ReadBool(0x8C34C4); }
-            set { Process.Write(value, 0x8C34C4); }
+            set { Process.Write(0x8C34C4, value); }
         }
     }
 }

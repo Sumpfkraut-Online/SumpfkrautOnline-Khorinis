@@ -118,7 +118,7 @@ namespace Gothic.Objects
         public int BitField1
         {
             get { return Process.ReadInt(Address + VarOffsets.bitfield); }
-            set { Process.Write(value, Address + VarOffsets.bitfield); }
+            set { Process.Write(Address + VarOffsets.bitfield, value); }
         }
 
         public zCCollisionObject CollObj
@@ -241,7 +241,7 @@ namespace Gothic.Objects
         public int Type
         {
             get { return Process.ReadInt(Address + VarOffsets.type); }
-            set { Process.Write(value, Address + VarOffsets.type); }
+            set { Process.Write(Address + VarOffsets.type, value); }
         }
 
         public virtual void SetVisual(zCVisual vis)
@@ -291,13 +291,13 @@ namespace Gothic.Objects
         public zCVisual Visual
         {
             get { return new zCVisual(Process.ReadInt(Address + VarOffsets.visual)); }
-            set { Process.Write(value.Address, Address + VarOffsets.visual); }
+            set { Process.Write(Address + VarOffsets.visual, value.Address); }
         }
 
         public zCEventManager EventManager
         {
             get { return new zCEventManager(Process.ReadInt(Address + VarOffsets.eventManager)); }
-            set { Process.Write(value.Address, Address + VarOffsets.eventManager); }
+            set { Process.Write(Address + VarOffsets.eventManager, value.Address); }
         }
 
         public void BeginMovement()

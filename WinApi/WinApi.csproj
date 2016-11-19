@@ -48,6 +48,7 @@
     <Compile Include="FileFormat\IniFile.cs" />
     <Compile Include="HIDDevice.cs" />
     <Compile Include="Hook.cs" />
+    <Compile Include="RegisterMemory.cs" />
     <Compile Include="Win32\HID\HID.cs" />
     <Compile Include="Win32\HID\Structures\HidCaps.cs" />
     <Compile Include="Win32\HID\Structures\HID_Device.cs" />
@@ -60,7 +61,6 @@
     <Compile Include="Win32\Kernel\Exception\WindowNotFoundException.cs" />
     <Compile Include="Win32\Kernel\File.cs" />
     <Compile Include="Win32\Kernel\Process.cs" />
-    <Compile Include="NETINJECTPARAMS.cs" />
     <Compile Include="OutputReport.cs" />
     <Compile Include="Report.cs" />
     <Compile Include="Win32\SetupApi\ClassDev.cs" />

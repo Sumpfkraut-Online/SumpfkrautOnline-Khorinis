@@ -17,16 +17,15 @@ namespace GUC.Hooks
             inited = true;
 
             // hook hero creating
-            Process.Write(new byte[] { 0xE9, 0xBD, 0x00, 0x00, 0x00 }, 0x006C434B);
+            Process.Write(0x006C434B, 0xE9, 0xBD, 0x00, 0x00, 0x00);
 
-            var h = Process.AddHook(CreatePlayerVob, 0x006C440D, 5, 0);
-            Process.Write(new byte[5] { 0x90, 0x90, 0x90, 0x90, 0x90 }, h.OldInNewAddress);
-            Process.Write(new byte[] { 0xEB, 0x67 }, 0x006C4662); //skip instance check
+            Process.AddHook(CreatePlayerVob, 0x006C440D, 5).SetSkipOldCode(true);
+            Process.Write(0x006C4662, 0xEB, 0x67); //skip instance check
 
             Logger.Log("Added player hero creation hooks.");
         }
 
-        static void CreatePlayerVob(Hook hook)
+        static void CreatePlayerVob(Hook hook, RegisterMemory rmem)
         {
             try
             {
@@ -40,7 +39,7 @@ namespace GUC.Hooks
                 player.HPMax = 10;
                 player.HP = 10;
 
-                hook.SetEAX(player.Address);
+                rmem[Registers.EAX] = player.Address;
             }
             catch (Exception e)
             {

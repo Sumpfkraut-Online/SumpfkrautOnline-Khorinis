@@ -40,17 +40,17 @@ namespace GUC
 
             // remove creation of the splash screen
             // copy important code to the top
-            Process.Write(new byte[] { 0x8B, 0xE9,
-                                       0xC7, 0x05, 0xD4, 0xDC, 0x8C, 0x00, 0x30, 0x5F, 0x42, 0x00,
-                                       0x33, 0xFF }, 0x004267F1);
+            Process.Write(0x004267F1, 0x8B, 0xE9,
+                                      0xC7, 0x05, 0xD4, 0xDC, 0x8C, 0x00, 0x30, 0x5F, 0x42, 0x00,
+                                      0x33, 0xFF);
 
             // jmp over everything else
-            Process.Write(new byte[] { 0xEB, 0x28 }, 0x004267FF);
+            Process.Write(0x004267FF, 0xEB, 0x28);
 
 
-            Process.Write(new byte[] { 0x83, 0xC4, 0x04 }, 0x426868);// add esp, 4 (original code)
-            Process.Write(new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, 0x42686B); // NOP everything else
-            Process.AddHook(RemoveSplashScreen, 0x42686B, 5, 0); // add hook to remove our splash screen
+            Process.Write(0x426868, 0x83, 0xC4, 0x04);// add esp, 4 (original code)
+            Process.Nop(0x42686B, 20); // NOP everything else
+            Process.AddHook(RemoveSplashScreen, 0x42686B, 5); // add hook to remove our splash screen
 
             Logger.Log("Gothic-SplashScreen hooked.");
         }
@@ -89,7 +89,7 @@ namespace GUC
             }
         }
 
-        static void RemoveSplashScreen(Hook hook)
+        static void RemoveSplashScreen(Hook hook, RegisterMemory rmem)
         {
             if (splash == null)
                 return;

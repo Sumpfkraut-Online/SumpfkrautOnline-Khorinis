@@ -36,7 +36,7 @@ namespace Gothic
         public static int ExitGameVar
         {
             get { return Process.ReadInt(Process.ReadInt(gameMan) + VarOffsets.exitGame); }
-            set { Process.Write(value, Process.ReadInt(gameMan) + VarOffsets.exitGame); }
+            set { Process.Write(Process.ReadInt(gameMan) + VarOffsets.exitGame, value); }
         }
 
         public static void ExitGame()

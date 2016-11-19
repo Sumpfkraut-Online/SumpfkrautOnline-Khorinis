@@ -163,7 +163,7 @@ namespace Gothic.Objects
         {
             if (id >= 6)
                 throw new ArgumentException("id => 0-5");
-            Process.Write(value, Address + VarOffsets.count + 4 * id);
+            Process.Write(Address + VarOffsets.count + 4 * id, value);
         }
 
         public void setText(int id, String value)
@@ -177,28 +177,28 @@ namespace Gothic.Objects
         {
             if (id >= 8)
                 throw new ArgumentException("id => 0-7");
-            Process.Write(value, Address + VarOffsets.damage + 4 * id);
+            Process.Write(Address + VarOffsets.damage + 4 * id, value);
         }
 
         public void setProtection(int id, int value)
         {
             if (id >= 8)
                 throw new ArgumentException("id => 0-7");
-            Process.Write(value, Address + VarOffsets.protection + 4 * id);
+            Process.Write(Address + VarOffsets.protection + 4 * id, value);
         }
 
         public void setConditionalAttribute(int id, int value)
         {
             if (id >= 3)
                 throw new ArgumentException("id => 0-2");
-            Process.Write(value, Address + VarOffsets.cond_atr + 4 * id);
+            Process.Write(Address + VarOffsets.cond_atr + 4 * id, value);
         }
 
         public void setConditionalValue(int id, int value)
         {
             if (id >= 3)
                 throw new ArgumentException("id => 0-2");
-            Process.Write(value, Address + VarOffsets.cond_value + 4 * id);
+            Process.Write(Address + VarOffsets.cond_value + 4 * id, value);
         }
 
         public void CreateVisual()
@@ -253,117 +253,80 @@ namespace Gothic.Objects
         public int VisualSkin
         {
             get { return Process.ReadInt(Address + VarOffsets.visual_skin); }
-            set { Process.Write(value, Address + VarOffsets.visual_skin); }
+            set { Process.Write(Address + VarOffsets.visual_skin, value); }
         }
 
         public int HP
         {
             get { return Process.ReadInt(Address + VarOffsets.hp); }
-            set { Process.Write(value, Address + VarOffsets.hp); }
+            set { Process.Write(Address + VarOffsets.hp, value); }
         }
 
         public int HPMax
         {
             get { return Process.ReadInt(Address + VarOffsets.hp_max); }
-            set { Process.Write(value, Address + VarOffsets.hp_max); }
+            set { Process.Write(Address + VarOffsets.hp_max, value); }
         }
 
         public int Wear
         {
             get { return Process.ReadInt(Address + VarOffsets.wear); }
-            set { Process.Write(value, Address + VarOffsets.wear); }
+            set { Process.Write(Address + VarOffsets.wear, value); }
         }
 
         public int Material
         {
             get { return Process.ReadInt(Address + VarOffsets.material); }
-            set { Process.Write(value, Address + VarOffsets.material); }
+            set { Process.Write(Address + VarOffsets.material, value); }
         }
 
         public int Munition
         {
             get { return Process.ReadInt(Address + VarOffsets.munition); }
-            set { Process.Write(value, Address + VarOffsets.munition); }
+            set { Process.Write(Address + VarOffsets.munition, value); }
         }
 
         public int DamageType
         {
             get { return Process.ReadInt(Address + VarOffsets.damageType); }
-            set { Process.Write(value, Address + VarOffsets.damageType); }
+            set { Process.Write(Address + VarOffsets.damageType, value); }
         }
 
         public int DamageTotal
         {
             get { return Process.ReadInt(Address + VarOffsets.damageTotal); }
-            set { Process.Write(value, Address + VarOffsets.damageTotal); }
+            set { Process.Write(Address + VarOffsets.damageTotal, value); }
         }
 
         public int Value
         {
             get { return Process.ReadInt(Address + VarOffsets.value); }
-            set { Process.Write(value, Address + VarOffsets.value); }
+            set { Process.Write(Address + VarOffsets.value, value); }
         }
 
         public int Amount
         {
             get { return Process.ReadInt(Address + VarOffsets.amount); }
-            set { Process.Write(value, Address + VarOffsets.amount); }
+            set { Process.Write(Address + VarOffsets.amount, value); }
         }
 
         public int MainFlag
         {
             get { return Process.ReadInt(Address + VarOffsets.mainflag); }
-            set { Process.Write(value, Address + VarOffsets.mainflag); }
+            set { Process.Write(Address + VarOffsets.mainflag, value); }
         }
 
         public int Flags
         {
             get { return Process.ReadInt(Address + VarOffsets.flags); }
-            set { Process.Write(value, Address + VarOffsets.flags); }
+            set { Process.Write(Address + VarOffsets.flags, value); }
         }
 
         public int Range
         {
             get { return Process.ReadInt(Address + VarOffsets.range); }
-            set { Process.Write(value, Address + VarOffsets.range); }
+            set { Process.Write(Address + VarOffsets.range, value); }
         }
-
-        public int CondAtr1
-        {
-            get { return Process.ReadInt(Address + VarOffsets.cond_atr); }
-            set { Process.Write(value, Address + VarOffsets.cond_atr); }
-        }
-
-        public int CondAtr2
-        {
-            get { return Process.ReadInt(Address + VarOffsets.cond_atr + 4); }
-            set { Process.Write(value, Address + VarOffsets.cond_atr + 4); }
-        }
-
-        public int CondAtr3
-        {
-            get { return Process.ReadInt(Address + VarOffsets.cond_atr + 8); }
-            set { Process.Write(value, Address + VarOffsets.cond_atr + 8); }
-        }
-
-        public int CondValue1
-        {
-            get { return Process.ReadInt(Address + VarOffsets.cond_value); }
-            set { Process.Write(value, Address + VarOffsets.cond_value); }
-        }
-
-        public int CondValue2
-        {
-            get { return Process.ReadInt(Address + VarOffsets.cond_value + 4); }
-            set { Process.Write(value, Address + VarOffsets.cond_value + 4); }
-        }
-
-        public int CondValue3
-        {
-            get { return Process.ReadInt(Address + VarOffsets.cond_value + 8); }
-            set { Process.Write(value, Address + VarOffsets.cond_value + 8); }
-        }
-
 
 
 
@@ -404,13 +367,13 @@ namespace Gothic.Objects
         public int Spell
         {
             get { return Process.ReadInt(Address + VarOffsets.spell); }
-            set { Process.Write(value, Address + VarOffsets.spell); }
+            set { Process.Write(Address + VarOffsets.spell, value); }
         }
 
         public int Instance
         {
             get { return Process.ReadInt(Address + VarOffsets.instance); }
-            set { Process.Write(value, Address + VarOffsets.instance); }
+            set { Process.Write(Address + VarOffsets.instance, value); }
         }
 
         public void RenderItem(zCWorld world, View.zCView view, float x)
@@ -440,7 +403,7 @@ namespace Gothic.Objects
         public static bool LightingSwell
         {
             get { return Process.ReadBool(0x8B745C); }
-            set { Process.Write(value, 0x8B745C); }
+            set { Process.Write(0x8B745C, value); }
         }
     }
 }

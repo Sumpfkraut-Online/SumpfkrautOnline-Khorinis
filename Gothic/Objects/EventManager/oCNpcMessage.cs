@@ -42,7 +42,7 @@ namespace Gothic.Objects.EventManager
             }
             set
             {
-                Process.Write(value, Address + VarOffsets.Attributes);
+                Process.Write(Address + VarOffsets.Attributes, value);
             }
         }
         public bool HighPriority

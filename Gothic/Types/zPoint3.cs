@@ -23,19 +23,19 @@ namespace Gothic.Types
         public float X 
         {
             get { return Process.ReadFloat(Address); }
-            set { Process.Write(value, Address); }
+            set { Process.Write(Address, value); }
         }
 
         public float Y
         {
             get { return Process.ReadFloat(Address + 4); }
-            set { Process.Write(value, Address + 4); }
+            set { Process.Write(Address + 4, value); }
         }
 
         public float Z
         {
             get { return Process.ReadFloat(Address + 8); }
-            set { Process.Write(value, Address + 8); }
+            set { Process.Write(Address + 8, value); }
         }
     }
 }

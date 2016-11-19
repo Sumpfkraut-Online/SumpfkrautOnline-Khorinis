@@ -66,13 +66,13 @@ namespace Gothic.Objects.Meshes
         public int Layer
         {
             get { return Process.ReadInt(Address + VarOffsets.layer); }
-            set { Process.Write(value, Address + VarOffsets.layer); }
+            set { Process.Write(Address + VarOffsets.layer, value); }
         }
 
         public int ID
         {
             get { return Process.ReadInt(Address + VarOffsets.id); }
-            set { Process.Write(value, Address + VarOffsets.id); }
+            set { Process.Write(Address + VarOffsets.id, value); }
         }
 
         public int NumFrames

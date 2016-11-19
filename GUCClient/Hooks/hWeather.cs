@@ -18,14 +18,14 @@ namespace GUC.Hooks
             if (inited) return;
             inited = true;
 
-            var h = Process.AddHook(hook_ParticleMaximum, 0x005E2049, 8, 0);
-            Process.Write(BitConverter.GetBytes(0x005E23EC - (h.OldInNewAddress + 8)), h.OldInNewAddress + 4); // readjust JLE
+            var h = Process.AddHook(hook_ParticleMaximum, 0x005E2049, 8);
+            Process.Write(h.OldInNewAddress + 4, BitConverter.GetBytes(0x005E23EC - (h.OldInNewAddress + 8))); // re-adjust JLE
 
-            Process.Write(new byte[] { 0xE9, 0x8D, 0x00, 0x00, 0x00 }, 0x005EAF54); // jmp over rain weight calculation
+            Process.Write(0x005EAF54, 0xE9, 0x8D, 0x00, 0x00, 0x00); // jmp over rain weight calculation
         }
 
         static long lastTime = 0;
-        static void hook_ParticleMaximum(Hook hook)
+        static void hook_ParticleMaximum(Hook hook, RegisterMemory rmem)
         {
             try
             {
@@ -49,7 +49,7 @@ namespace GUC.Hooks
                 if (num > MaxDropsPerFrame)
                     num = MaxDropsPerFrame;
 
-                hook.SetEDI(num);
+                rmem[Registers.EDI] = num;
             }
             catch (Exception e)
             {
