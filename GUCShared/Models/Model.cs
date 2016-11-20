@@ -6,6 +6,7 @@ using GUC.Network;
 using GUC.WorldObjects;
 using GUC.Animations;
 using GUC.GameObjects;
+using System.Collections;
 
 namespace GUC.Models
 {
@@ -49,7 +50,7 @@ namespace GUC.Models
         public ModelInstance Instance { get { return this.vob.ModelInstance; } }
 
         #endregion
-        
+
         #region Overlays
 
         List<Overlay> overlays;
@@ -155,7 +156,7 @@ namespace GUC.Models
         {
             pEndAni(ani);
         }
-        
+
         List<ActiveAni> activeAnis = new List<ActiveAni>();
 
         #region Access
@@ -242,9 +243,9 @@ namespace GUC.Models
         /// Starts the given AniJob and calls onStop at the end of the animation. 
         /// Returns a handle to the active animation or null if the animation can't be played (f.e. by not having the right overlays applied).
         /// </summary>
-        public ActiveAni StartAnimation(AniJob aniJob, Action onStop = null)
+        public ActiveAni StartAnimation(AniJob aniJob)
         {
-            return StartAnimation(aniJob, 1.0f, onStop);
+            return StartAnimation(aniJob, 1.0f, null);
         }
 
         partial void pStartAnimation(ActiveAni aa, float fpsMult);
@@ -252,14 +253,14 @@ namespace GUC.Models
         /// Starts the given AniJob with the given frame speed multiplier value and calls onStop at the end of the animation. 
         /// Returns false if the AniJob can't be played (f.e not the right overlays applied). 
         /// </summary>
-        public ActiveAni StartAnimation(AniJob aniJob, float fpsMult, Action onStop = null)
+        public ActiveAni StartAnimation(AniJob aniJob, float fpsMult, FrameActionPair[] pairs)
         {
-            ActiveAni aa = PlayAni(aniJob, fpsMult, onStop);
+            ActiveAni aa = PlayAni(aniJob, fpsMult, pairs);
             pStartAnimation(aa, fpsMult);
             return aa;
         }
-
-        ActiveAni PlayAni(AniJob aniJob, float fpsMult, Action onStop)
+        
+        ActiveAni PlayAni(AniJob aniJob, float fpsMult, FrameActionPair[] pairs)
         {
             if (!this.vob.IsSpawned)
                 throw new Exception("Vob is not spawned!");
@@ -300,7 +301,7 @@ namespace GUC.Models
                 activeAnis.Add(aa);
             }
 
-            aa.Start(ani, fpsMult, onStop);
+            aa.Start(ani, fpsMult, pairs);
             return aa;
         }
 
@@ -365,5 +366,15 @@ namespace GUC.Models
         }
 
         #endregion
+
+        partial void pOnTick(long now);
+        internal void OnTick(long now)
+        {
+            for (int i = 0; i < activeAnis.Count; i++)
+                if (activeAnis[i].Ani != null)
+                    activeAnis[i].OnTick(now);
+
+            pOnTick(now);
+        }
     }
 }

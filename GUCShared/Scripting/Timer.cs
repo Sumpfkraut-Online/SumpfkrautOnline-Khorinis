@@ -11,28 +11,91 @@ namespace GUC.Scripting
     {
         #region Static Loop
 
-        static DynamicCollection<GUCTimer> timerList = new DynamicCollection<GUCTimer>();
+        static GUCTimer[] activeTimers = new GUCTimer[100];
+        static int lastActiveTimer = -1; // index of the last add active timer
 
         internal static void Update(long now)
         {
-            timerList.ForEach(timer =>
+            int i = 0;
+            while (i <= lastActiveTimer)
             {
-                if (timer.nextCallTime <= now)
+                GUCTimer current = activeTimers[i];
+                if (current.nextCallTime <= now)
                 {
-                    timer.callback();
-                    if (timer.started) // still running?
+                    current.callback();
+                    if (current.started)
                     {
-                        timer.SetNextCallTime(now);
+                        current.SetNextCallTime(now);
+                    }
+                    else
+                    {
+                        continue; // timer has stopped and was replaced by the lastActiveTimer
                     }
                 }
-            });
+                i++;
+            }
+        }
+
+        #endregion
+
+        #region Start & Stop
+
+        public void Start()
+        {
+            if (!started)
+            {
+                if (this.callback == null)
+                    throw new NullReferenceException("Callback is null!");
+
+                this.started = true;
+                this.index = ++lastActiveTimer;
+
+                if (index >= activeTimers.Length)
+                {
+                    GUCTimer[] newArr = new GUCTimer[2 * activeTimers.Length];
+                    Array.Copy(activeTimers, newArr, activeTimers.Length);
+                    activeTimers = newArr;
+                }
+
+                activeTimers[this.index] = this;
+                this.SetNextCallTime(GameTime.Ticks);
+            }
+        }
+
+        public void Stop(bool fire = false)
+        {
+            if (started)
+            {
+                started = false;
+
+                activeTimers[this.index] = this.index != lastActiveTimer ? activeTimers[lastActiveTimer] : null;
+                lastActiveTimer--;
+                
+                if (fire)
+                {
+                    callback();
+                }
+            }
+        }
+
+        public void Restart(bool fire = false)
+        {
+            if (started)
+            {
+                if (fire) callback();
+                SetNextCallTime(GameTime.Ticks);
+            }
+            else
+            {
+                this.Start();
+            }
         }
 
         #endregion
 
         #region Properties
-
-        int id = -1;
+        
+        int index;
 
         long interval;
         /// <summary>
@@ -112,49 +175,6 @@ namespace GUC.Scripting
         public GUCTimer(Action callback)
         {
             SetCallback(callback);
-        }
-
-        #endregion
-
-        #region Start & Stop
-
-        public void Start()
-        {
-            if (!started)
-            {
-                if (this.callback == null)
-                    throw new NullReferenceException("Callback is null!");
-
-                started = true;
-                timerList.Add(this, ref this.id);
-                SetNextCallTime(GameTime.Ticks);
-            }
-        }
-
-        public void Stop(bool fire = false)
-        {
-            if (started)
-            {
-                started = false;
-                timerList.Remove(ref this.id);
-                if (fire)
-                {
-                    callback();
-                }
-            }
-        }
-
-        public void Restart(bool fire = false)
-        {
-            if (started)
-            {
-                if (fire) callback();
-                SetNextCallTime(GameTime.Ticks);
-            }
-            else
-            {
-                this.Start();
-            }
         }
 
         #endregion

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinApi", "WinApi\WinApi.csproj", "{52793B3F-130C-4B05-8333-1529981DE780}"
 EndProject
@@ -22,77 +22,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptsClient", "ScriptsCli
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptsShared", "ScriptsShared\ScriptsShared.csproj", "{B9C52BDA-4F73-4E5B-BFC7-A0EEA6A3F9A9}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Overlays", "Overlays", "{C9393256-12C6-4205-A717-20E8660B0227}"
-	ProjectSection(SolutionItems) = preProject
-		AnimationFiles\Overlays\Firewaran.times = AnimationFiles\Overlays\Firewaran.times
-		AnimationFiles\Overlays\Golem_Firegolem.times = AnimationFiles\Overlays\Golem_Firegolem.times
-		AnimationFiles\Overlays\Golem_Icegolem.times = AnimationFiles\Overlays\Golem_Icegolem.times
-		AnimationFiles\Overlays\Humans_1hST1.times = AnimationFiles\Overlays\Humans_1hST1.times
-		AnimationFiles\Overlays\Humans_1hST2.times = AnimationFiles\Overlays\Humans_1hST2.times
-		AnimationFiles\Overlays\Humans_2hST1.times = AnimationFiles\Overlays\Humans_2hST1.times
-		AnimationFiles\Overlays\Humans_2hST2.times = AnimationFiles\Overlays\Humans_2hST2.times
-		AnimationFiles\Overlays\Humans_Acrobatic.times = AnimationFiles\Overlays\Humans_Acrobatic.times
-		AnimationFiles\Overlays\HumanS_Arrogance.times = AnimationFiles\Overlays\HumanS_Arrogance.times
-		AnimationFiles\Overlays\Humans_Babe.times = AnimationFiles\Overlays\Humans_Babe.times
-		AnimationFiles\Overlays\Humans_BowT1.times = AnimationFiles\Overlays\Humans_BowT1.times
-		AnimationFiles\Overlays\Humans_BowT2.times = AnimationFiles\Overlays\Humans_BowT2.times
-		AnimationFiles\Overlays\Humans_CBowT1.times = AnimationFiles\Overlays\Humans_CBowT1.times
-		AnimationFiles\Overlays\Humans_CBowT2.times = AnimationFiles\Overlays\Humans_CBowT2.times
-		AnimationFiles\Overlays\HumanS_Flee.times = AnimationFiles\Overlays\HumanS_Flee.times
-		AnimationFiles\Overlays\Humans_Mage.times = AnimationFiles\Overlays\Humans_Mage.times
-		AnimationFiles\Overlays\HumanS_Militia.times = AnimationFiles\Overlays\HumanS_Militia.times
-		AnimationFiles\Overlays\HumanS_Relaxed.times = AnimationFiles\Overlays\HumanS_Relaxed.times
-		AnimationFiles\Overlays\Humans_Skeleton.times = AnimationFiles\Overlays\Humans_Skeleton.times
-		AnimationFiles\Overlays\Humans_Skeleton_Fly.times = AnimationFiles\Overlays\Humans_Skeleton_Fly.times
-		AnimationFiles\Overlays\HumanS_Sprint.times = AnimationFiles\Overlays\HumanS_Sprint.times
-		AnimationFiles\Overlays\HumanS_Swim.times = AnimationFiles\Overlays\HumanS_Swim.times
-		AnimationFiles\Overlays\Humans_Tired.times = AnimationFiles\Overlays\Humans_Tired.times
-		AnimationFiles\Overlays\Humans_Torch.times = AnimationFiles\Overlays\Humans_Torch.times
-		AnimationFiles\Overlays\Orc_Torch.times = AnimationFiles\Overlays\Orc_Torch.times
-		AnimationFiles\Overlays\Orcbiter.times = AnimationFiles\Overlays\Orcbiter.times
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DBPatterns", "DBPatterns", "{A7C8E0E3-1F33-49E5-9E0D-22C56935C08E}"
-	ProjectSection(SolutionItems) = preProject
-		DBPatterns\DBPattern_SqLite3_Main.sql = DBPatterns\DBPattern_SqLite3_Main.sql
-		DBPatterns\DBPattern_SqLite3_World.sql = DBPatterns\DBPattern_SqLite3_World.sql
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUCLauncher", "GUCLauncher\GUCLauncher.csproj", "{A9006DD2-A155-4194-82FB-BD1533BE9B07}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilePacker", "FilePacker\FilePacker.csproj", "{8ABD57D5-E390-4106-875F-BE2ABFA8ABEE}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "bin", "bin", "{E14EEC51-997D-42C1-B54E-5B94AB34C716}"
-	ProjectSection(SolutionItems) = preProject
-		DBPatterns\DBPattern_SqLite3_Main.sql = DBPatterns\DBPattern_SqLite3_Main.sql
-		DBPatterns\DBPattern_SqLite3_World.sql = DBPatterns\DBPattern_SqLite3_World.sql
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{C76E58DD-8E4F-4622-9B7E-29798F4ED4D5}"
-	ProjectSection(SolutionItems) = preProject
-		bin\Server\RakNet.dll = bin\Server\RakNet.dll
-		bin\Server\RakNetSwig.dll = bin\Server\RakNetSwig.dll
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "localhost-9054", "localhost-9054", "{A5EDEB45-0E7B-4BB6-A70E-CC78842FE7F7}"
-	ProjectSection(SolutionItems) = preProject
-		bin\localhost-9054\RakNet.dll = bin\localhost-9054\RakNet.dll
-		bin\localhost-9054\RakNetSwig.dll = bin\localhost-9054\RakNetSwig.dll
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{BEEE4328-91CB-4DD8-BB6A-9BCB4D432FC6}"
-	ProjectSection(SolutionItems) = preProject
-		bin\Server\Scripts\Mono.Data.Sqlite.dll = bin\Server\Scripts\Mono.Data.Sqlite.dll
-		bin\Server\Scripts\Newtonsoft.Json.dll = bin\Server\Scripts\Newtonsoft.Json.dll
-		bin\Server\Scripts\Newtonsoft.Json.xml = bin\Server\Scripts\Newtonsoft.Json.xml
-		bin\Server\Scripts\sqlite3.dll = bin\Server\Scripts\sqlite3.dll
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RakNet", "RakNet", "{C065D94C-2DA0-4803-AD39-963C17290E44}"
-	ProjectSection(SolutionItems) = preProject
-		RakNet\RakNet.dll = RakNet\RakNet.dll
-		RakNet\RakNetSwig.dll = RakNet\RakNetSwig.dll
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

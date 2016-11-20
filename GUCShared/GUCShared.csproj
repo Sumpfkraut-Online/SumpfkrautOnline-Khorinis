@@ -45,6 +45,7 @@
     <Compile Include="Animations\ActiveAni.cs" />
     <Compile Include="Animations\AniJob.cs" />
     <Compile Include="Animations\Animation.cs" />
+    <Compile Include="Animations\FrameActionPair.cs" />
     <Compile Include="Animations\Overlay.cs" />
     <Compile Include="Network\ClientMessages.cs" />
     <Compile Include="Network\PacketEnums.cs" />

@@ -393,16 +393,12 @@ namespace GUC.WorldObjects
         }
 
         #endregion
-
-
-        internal override void OnTick(long now)
+        
+        partial void pOnTick(long now)
         {
             if (gVob == null || gVob.HumanAI.Address == 0)
                 return;
-
-            base.OnTick(now);
-            this.Model.UpdateAnimations(now);
-
+            
             this.ScriptObject.OnTick(now);
 
             if (!this.IsDead && this.Model.GetActiveAniFromLayerID(1) == null)

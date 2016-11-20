@@ -66,6 +66,9 @@
     <Compile Include="..\GUCShared\Animations\Animation.cs">
       <Link>Animations\Animation.cs</Link>
     </Compile>
+    <Compile Include="..\GUCShared\Animations\FrameActionPair.cs">
+      <Link>Animations\FrameActionPair.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\Animations\Overlay.cs">
       <Link>Animations\Overlay.cs</Link>
     </Compile>
