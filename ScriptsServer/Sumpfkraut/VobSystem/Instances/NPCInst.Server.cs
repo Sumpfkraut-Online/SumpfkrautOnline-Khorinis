@@ -96,7 +96,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             if (item.IsEquipped)
                 UnequipItem(item);
 
-            ModelInst.StartAnimation(this.AniCatalog.DropItem);
+            ModelInst.StartAnimation(this.AniCatalog.ItemHandling.DropItem);
 
             int newAmount = item.Amount - amount;
             int droppedItemAmount;
@@ -125,6 +125,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             if (item == null)
                 return;
 
+            // -> effectsystem
+            if (this.ModelInst.BaseInst.IsInAnimation())
+                return;
+
             if (!item.IsEquipped)
                 EquipItem(item);
         }
@@ -133,6 +137,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             ItemInst item = Inventory.GetItem(itemID);
             if (item == null)
+                return;
+
+            // -> effectsystem
+            if (this.ModelInst.BaseInst.IsInAnimation())
                 return;
 
             if (item.IsEquipped)
@@ -157,7 +165,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             switch (item.ItemType)
             {
                 case ItemTypes.SmallEatable:
-                    this.ModelInst.StartAnimation(AniCatalog.ItemHandling.EatSmall, () => this.UnequipItem(item));
+                    // TODO: eat item zu bestimmtem frame aufrufen
+                    this.ModelInst.StartAnimation(AniCatalog.ItemHandling.EatSmall, () => { this.UnequipItem(item); this.EatItem(item); });
                     this.EquipItem((int)SlotNums.Lefthand, item);
                     break;
                 case ItemTypes.LargeEatable:
@@ -185,6 +194,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     this.EquipItem((int)SlotNums.Lefthand, item);
                     break;
             }
+        }
+
+        public void EatItem(ItemInst item)
+        {
+
         }
         #endregion
 
@@ -265,16 +279,34 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public void DrawWeapon(byte itemID)
         {
+            // -> effectsystem
+            if (this.ModelInst.BaseInst.IsInAnimation())
+                return;
+
+            NPCCatalog.DrawWeaponAnis catalog;
             if (this.BaseInst.IsInFightMode)
             {
                 if (this.DrawnWeapon != null)
                 {
                     ItemInst weapon = this.DrawnWeapon;
-                    this.ModelInst.StartAnimation(this.AniCatalog.Undraw1H, () =>
+                    catalog = GetDrawWeaponCatalog(weapon.ItemType);
+                    // weapon draw while running or when standing
+                    if (this.Movement == NPCMovement.Forward || this.Movement == NPCMovement.Left || this.Movement == NPCMovement.Right)
                     {
-                        this.UnequipItem(weapon); // take weapon from hand
-                        this.EquipItem(weapon); // place weapon into parking slot
-                    });
+                        this.ModelInst.StartAnimation(catalog.UndrawWhileRunning, 0.1f, () =>
+                        {
+                            this.UnequipItem(weapon); // take weapon from hand
+                            this.EquipItem(weapon); // place weapon into parking slot
+                        });
+                    }
+                    else
+                    {
+                        this.ModelInst.StartAnimation(catalog.Undraw, 0.1f, () =>
+                        {
+                            this.UnequipItem(weapon); // take weapon from hand
+                            this.EquipItem(weapon); // place weapon into parking slot
+                        });
+                    }
                 }
                 this.SetFightMode(false);
             }
@@ -285,7 +317,16 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     return;
                 this.UnequipItem(item); // take weapon from parking slot
                 this.EquipItem((int)SlotNums.Righthand, item); // put weapon into hand
-                this.ModelInst.StartAnimation(this.AniCatalog.Draw1H, () => this.SetFightMode(true));
+                catalog = GetDrawWeaponCatalog(item.ItemType); // get animationset for the correct draw animation
+
+                if (this.Movement == NPCMovement.Forward || this.Movement == NPCMovement.Left || this.Movement == NPCMovement.Right)
+                {
+                    this.ModelInst.StartAnimation(catalog.DrawWhileRunning, 0.1f, () => this.SetFightMode(true));
+                }
+                else
+                {
+                    this.ModelInst.StartAnimation(catalog.Draw, 0.1f, () => this.SetFightMode(true));
+                }
             }
 
         }
@@ -315,6 +356,27 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public ScriptAniJob GetFightAni()
         {
             return fightAni;
+        }
+
+        public NPCCatalog.DrawWeaponAnis GetDrawWeaponCatalog(ItemTypes itemType)
+        {
+            switch (itemType)
+            {
+                case ItemTypes.Wep1H:
+                    return AniCatalog.Draw1H;
+                case ItemTypes.Wep2H:
+                    return AniCatalog.Draw2H;
+                case ItemTypes.WepBow:
+                    return AniCatalog.DrawBow;
+                case ItemTypes.WepXBow:
+                    return AniCatalog.DrawXBow;
+                case ItemTypes.Rune:
+                    return AniCatalog.DrawMagic;
+                case ItemTypes.Scroll:
+                    return AniCatalog.DrawMagic;
+                default:
+                    return AniCatalog.Draw1H;
+            }
         }
         #endregion
 
