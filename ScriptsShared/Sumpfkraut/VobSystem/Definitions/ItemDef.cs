@@ -40,6 +40,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         Torch,
         Joint,
         Slutable,
+
+        Rune,
+        Scroll,
     }
 
     public partial class ItemDef : VobDef, ItemInstance.IScriptItemInstance
