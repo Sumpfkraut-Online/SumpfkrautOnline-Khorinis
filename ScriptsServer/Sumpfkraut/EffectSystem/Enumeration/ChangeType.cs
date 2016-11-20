@@ -14,6 +14,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration
         Effect_Name_Set,
 
         // often synchronized attributes
+        Vob_Name_Set,
 
         // event driven
 

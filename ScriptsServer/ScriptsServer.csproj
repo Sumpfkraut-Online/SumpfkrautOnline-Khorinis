@@ -252,6 +252,10 @@
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\SomeEffectHandler.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Effect.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\BaseEffectHandler.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\VobDefEffectHandler.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\VobInstEffectHandler.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\WorldDefEffectHandler.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\WorldInstEffectHandler.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Enumeration\ChangeType.cs" />
     <Compile Include="Sumpfkraut\Networking\ScriptClient.Server.cs" />
     <Compile Include="Sumpfkraut\TestingThings.cs" />
