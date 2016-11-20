@@ -29,7 +29,7 @@ namespace GUC
                         {
                             bitField |= 0x10;
                         }
-                        Process.Write(bitField, ai.Address + 0x1204);
+                        Process.Write(ai.Address + 0x1204, bitField);
                     }
                 }
             },

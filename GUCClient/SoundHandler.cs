@@ -41,7 +41,7 @@ namespace GUC
                     return;
 
                 SoundHandler.currentMusicType = value;
-                Process.Write(new byte[] { 0xB8, (byte)value, 0x00, 0x00, 0x00, 0xC3 }, 0x6C2D10);
+                Process.Write(0x6C2D10, 0xB8, (byte)value, 0x00, 0x00, 0x00, 0xC3);
 
                 Logger.Log("SoundHandler: Play music type " + value);
             }
@@ -120,7 +120,7 @@ namespace GUC
             param.Radius = range;
             param.IsAmbient = true;
             int idPtr = Process.Alloc(4).ToInt32();
-            Process.Write(zCSndSys_MSS.PlaySound3D(sound.sfx, vob.gVob, 0, param), idPtr);
+            Process.Write(idPtr, zCSndSys_MSS.PlaySound3D(sound.sfx, vob.gVob, 0, param));
 
             vobSounds.Add(new ActiveSound(idPtr, param, sound));
         }
@@ -155,7 +155,7 @@ namespace GUC
             vob.SetPositionWorld(location.X, location.Y, location.Z);
 
             int idPtr = Process.Alloc(4).ToInt32();
-            Process.Write(zCSndSys_MSS.PlaySound3D(sound.sfx, vob, 0, param), idPtr);
+            Process.Write(idPtr, zCSndSys_MSS.PlaySound3D(sound.sfx, vob, 0, param));
 
             locSounds.Add(new ActiveSound(idPtr, param, sound, vob));
         }

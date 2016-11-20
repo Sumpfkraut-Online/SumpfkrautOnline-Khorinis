@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -24,6 +24,9 @@
     <DefineConstants>TRACE;DEBUG;D_CLIENT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,7 +37,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
@@ -282,6 +287,7 @@
     <Compile Include="GUI\GUCVisual.cs" />
     <Compile Include="GUI\GUCVisualText.cs" />
     <Compile Include="GUI\GUC3DVisual.cs" />
+    <Compile Include="Hooks\hFileSystem.cs" />
     <Compile Include="Hooks\hNpc.cs" />
     <Compile Include="Hooks\hView.cs" />
     <Compile Include="Hooks\hGame.cs" />
@@ -289,12 +295,6 @@
     <Compile Include="Hooks\hPlayerVob.cs" />
     <Compile Include="Hooks\hWeather.cs" />
     <Compile Include="Hooks\hBarrier.cs" />
-    <Compile Include="Hooks\hFile.cs" />
-    <Compile Include="Hooks\VDFS\FileHandle.cs" />
-    <Compile Include="Hooks\VDFS\hFileSystem.cs" />
-    <Compile Include="Hooks\VDFS\VDFSArchive.cs" />
-    <Compile Include="Hooks\VDFS\VDFSDirectoryInfo.cs" />
-    <Compile Include="Hooks\VDFS\VDFSFileInfo.cs" />
     <Compile Include="InputHandler.cs" />
     <Compile Include="Models\Model.Client.cs" />
     <Compile Include="Models\ModelInstance.Client.cs" />
@@ -368,10 +368,6 @@
     <ProjectReference Include="..\Gothic\Gothic.csproj">
       <Project>{82655F73-CF7C-4416-9313-BD657AD8F05F}</Project>
       <Name>Gothic</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ScriptsServer\ScriptsServer.csproj">
-      <Project>{477C9B57-AD36-4CAC-998F-800C5A693C35}</Project>
-      <Name>ScriptsServer</Name>
     </ProjectReference>
     <ProjectReference Include="..\WinApi\WinApi.csproj">
       <Project>{52793B3F-130C-4B05-8333-1529981DE780}</Project>

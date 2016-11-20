@@ -131,13 +131,13 @@ namespace Gothic.Objects
         public int HitTarget
         {
             get { return Process.ReadInt(Address + VarOffsets.HitTarget); }
-            set { Process.Write(value, Address + VarOffsets.HitTarget); }
+            set { Process.Write(Address + VarOffsets.HitTarget, value); }
         }
 
         public int AniCtrlBitfield
         {
             get { return Process.ReadInt(Address + VarOffsets.Bitfield); }
-            set { Process.Write(value, Address + VarOffsets.Bitfield); }
+            set { Process.Write(Address + VarOffsets.Bitfield, value); }
         }
 
         public int RemoveWeapon2()

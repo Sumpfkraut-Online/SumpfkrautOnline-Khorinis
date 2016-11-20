@@ -26,19 +26,19 @@ namespace Gothic.Objects.Sky
         public static zCSkyControler ActiveSkyController
         {
             get { return new zCSkyControler(Process.ReadInt(activeSkyController)); }
-            set { Process.Write(value.Address, activeSkyController); }
+            set { Process.Write(activeSkyController, value.Address); }
         }
 
         public static int SkyEffectsEnabled
         {
             get { return Process.ReadInt(0x008A5DB0); }
-            set { Process.Write(value, 0x008A5DB0); }
+            set { Process.Write(0x008A5DB0, value); }
         }
 
         public int m_enuWeather
         {
             get { return Process.ReadInt(Address + VarOffsets.WeatherType); }
-            set { Process.Write(value, Address + VarOffsets.WeatherType); }
+            set { Process.Write(Address + VarOffsets.WeatherType, value); }
         }
     }
 }

@@ -6,7 +6,6 @@ using GUC.Network;
 using GUC.Types;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
-using static GUC.Scripts.Sumpfkraut.VobSystem.Instances.NPCInst;
 
 namespace GUC.Scripts.Sumpfkraut.Networking
 {

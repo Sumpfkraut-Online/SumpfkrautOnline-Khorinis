@@ -354,37 +354,37 @@ namespace Gothic.Objects
         public int FMode
         {
             get { return Process.ReadInt(Address + VarOffsets.fmode); }
-            set { Process.Write(value, Address + VarOffsets.fmode); }
+            set { Process.Write(Address + VarOffsets.fmode, value); }
         }
 
         public int HP
         {
             get { return Process.ReadInt(Address + VarOffsets.hp_current); }
-            set { Process.Write(value, Address + VarOffsets.hp_current); }
+            set { Process.Write(Address + VarOffsets.hp_current, value); }
         }
 
         public int RbtBitfield
         {
             get { return Process.ReadInt(Address + VarOffsets.rbtBitfield); }
-            set { Process.Write(value, Address + VarOffsets.rbtBitfield); }
+            set { Process.Write(Address + VarOffsets.rbtBitfield, value); }
         }
 
         public float RbtMaxTargetDist
         {
             get { return Process.ReadFloat(Address + VarOffsets.rbtMaxTargetDist); }
-            set { Process.Write(value, Address + VarOffsets.rbtMaxTargetDist); }
+            set { Process.Write(Address + VarOffsets.rbtMaxTargetDist, value); }
         }
 
         public float RbtTimer
         {
             get { return Process.ReadFloat(Address + VarOffsets.rbtTimer); }
-            set { Process.Write(value, Address + VarOffsets.rbtTimer); }
+            set { Process.Write(Address + VarOffsets.rbtTimer, value); }
         }
 
         public zCVob TargetVob
         {
             get { return new zCVob(Process.ReadInt(Address + VarOffsets.targetVob)); }
-            set { Process.Write(value.Address, Address + VarOffsets.targetVob); }
+            set { Process.Write(Address + VarOffsets.targetVob, value.Address); }
         }
 
         public zVec3 TargetPos
@@ -395,13 +395,13 @@ namespace Gothic.Objects
         public int HPMax
         {
             get { return Process.ReadInt(Address + VarOffsets.hp_max); }
-            set { Process.Write(value, Address + VarOffsets.hp_max); }
+            set { Process.Write(Address + VarOffsets.hp_max, value); }
         }
 
         public int Instance
         {
             get { return Process.ReadInt(Address + VarOffsets.instance); }
-            set { Process.Write(value, Address + VarOffsets.instance); }
+            set { Process.Write(Address + VarOffsets.instance, value); }
         }
 
         public zString Name
@@ -458,13 +458,13 @@ namespace Gothic.Objects
         public oCAIHuman HumanAI
         {
             get { return new oCAIHuman(Process.ReadInt(Address + VarOffsets.HumanAI)); }
-            set { Process.Write(value.Address, Address + VarOffsets.HumanAI); }
+            set { Process.Write(Address + VarOffsets.HumanAI, value.Address); }
         }
 
         public zCVob FocusVob
         {
             get { return new zCVob(Process.ReadInt(Address + VarOffsets.FocusVob)); }
-            set { Process.Write(value.Address, Address + VarOffsets.FocusVob); }
+            set { Process.Write(Address + VarOffsets.FocusVob, value.Address); }
         }
 
         public oCNpc GetFocusNpc()
@@ -475,7 +475,7 @@ namespace Gothic.Objects
         public oCAniCtrl_Human AniCtrl
         {
             get { return new oCAniCtrl_Human(Process.ReadInt(Address + VarOffsets.AniCtrl)); }
-            set { Process.Write(value.Address, Address + VarOffsets.AniCtrl); }
+            set { Process.Write(Address + VarOffsets.AniCtrl, value.Address); }
         }
 
         public zCModel GetModel()
@@ -592,7 +592,7 @@ namespace Gothic.Objects
         public int Voice
         {
             get { return Process.ReadInt(Address + VarOffsets.voice); }
-            set { Process.Write(value, Address + VarOffsets.voice); }
+            set { Process.Write(Address + VarOffsets.voice, value); }
         }
 
 
@@ -609,13 +609,13 @@ namespace Gothic.Objects
         public int Guild
         {
             get { return Process.ReadInt(Address + VarOffsets.guild); }
-            set { Process.Write(value, Address + VarOffsets.guild); }
+            set { Process.Write(Address + VarOffsets.guild, value); }
         }
 
         public int TrueGuild
         {
             get { return Process.ReadInt(Address + VarOffsets.trueGuild); }
-            set { Process.Write(value, Address + VarOffsets.trueGuild); }
+            set { Process.Write(Address + VarOffsets.trueGuild, value); }
         }
 
         public zCVob RemoveFromSlot(string slot, bool arg0, bool arg1)

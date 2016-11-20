@@ -33,25 +33,25 @@ namespace Gothic.Types
         public byte B
         {
             get { return Process.ReadByte(Address + 0); }
-            set { Process.Write(value, Address + 0); }
+            set { Process.Write(Address + 0, (byte)value); }
         }
 
         public byte G
         {
             get { return Process.ReadByte(Address + 1); }
-            set { Process.Write(value, Address + 1); }
+            set { Process.Write(Address + 1, (byte)value); }
         }
 
         public byte R
         {
             get { return Process.ReadByte(Address + 2); }
-            set { Process.Write(value, Address + 2); }
+            set { Process.Write(Address + 2, (byte)value); }
         }
 
         public byte A
         {
             get { return Process.ReadByte(Address + 3); }
-            set { Process.Write(value, Address + 3); }
+            set { Process.Write(Address + 3, (byte)value); }
         }
 
         public override uint ValueLength()

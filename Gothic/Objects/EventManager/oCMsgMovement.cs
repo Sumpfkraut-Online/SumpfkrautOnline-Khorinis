@@ -73,7 +73,7 @@ namespace Gothic.Objects.EventManager
         public int Animation
         {
             get { return Process.ReadInt(Address + VarOffsets.ani); }
-            set { Process.Write(value, Address + VarOffsets.ani); }
+            set { Process.Write(Address + VarOffsets.ani, value); }
         }
     }
 }

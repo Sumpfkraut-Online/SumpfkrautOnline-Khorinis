@@ -39,7 +39,7 @@ namespace Gothic.Objects
         public float MaxMoveForward
         {
             get { return Process.ReadFloat(Address + 36); }
-            set { Process.Write(value, Address + 36); }
+            set { Process.Write(Address + 36, value); }
         }
     }
 
@@ -153,61 +153,61 @@ namespace Gothic.Objects
         public float WaterDepthSwim
         {
             get { return Process.ReadFloat(Address + VarOffsets.waterDepthSwim); }
-            set { Process.Write(value, Address + VarOffsets.waterDepthSwim); }
+            set { Process.Write(Address + VarOffsets.waterDepthSwim, value); }
         }
 
         public float WaterDepthWade
         {
             get { return Process.ReadFloat(Address + VarOffsets.waterDepthWade); }
-            set { Process.Write(value, Address + VarOffsets.waterDepthWade); }
+            set { Process.Write(Address + VarOffsets.waterDepthWade, value); }
         }
         
         public float StepHeight
         {
             get { return Process.ReadFloat(Address + VarOffsets.stepHeight); }
-            set { Process.Write(value, Address + VarOffsets.stepHeight); }
+            set { Process.Write(Address + VarOffsets.stepHeight, value); }
         }
 
         public float ForceJumpUp
         {
             get { return Process.ReadFloat(Address + VarOffsets.forceJumpUp); }
-            set { Process.Write(value, Address + VarOffsets.forceJumpUp); }
+            set { Process.Write(Address + VarOffsets.forceJumpUp, value); }
         }
 
         public float JumpUpMinCeil
         {
             get { return Process.ReadFloat(Address + VarOffsets.jumpUpMinCeil); }
-            set { Process.Write(value, Address + VarOffsets.jumpUpMinCeil); }
+            set { Process.Write(Address + VarOffsets.jumpUpMinCeil, value); }
         }
 
         public float YMaxJumpLow
         {
             get { return Process.ReadFloat(Address + VarOffsets.yMaxJumpLow); }
-            set { Process.Write(value, Address + VarOffsets.yMaxJumpLow); }
+            set { Process.Write(Address + VarOffsets.yMaxJumpLow, value); }
         }
 
         public float YMaxJumpMid
         {
             get { return Process.ReadFloat(Address + VarOffsets.yMaxJumpMid); }
-            set { Process.Write(value, Address + VarOffsets.yMaxJumpMid); }
+            set { Process.Write(Address + VarOffsets.yMaxJumpMid, value); }
         }
 
         public float MaxGroundAngleWalk
         {
             get { return Process.ReadFloat(Address + 0x4C); }
-            set { Process.Write(value, Address + 0x4C); }
+            set { Process.Write(Address + 0x4C, value); }
         }
 
         public float MaxGroundAngleSlide2
         {
             get { return Process.ReadFloat(Address + 0x54); }
-            set { Process.Write(value, Address + 0x54); }
+            set { Process.Write(Address + 0x54, value); }
         }
 
         public int Bitfield0
         {
             get { return Process.ReadInt(Address + VarOffsets.bitfield); }
-            set { Process.Write(value, Address + VarOffsets.bitfield); }
+            set { Process.Write(Address + VarOffsets.bitfield, value); }
         }
 
         public override void Dispose()

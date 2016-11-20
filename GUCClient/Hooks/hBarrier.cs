@@ -113,7 +113,7 @@ namespace GUC.Hooks
         static long nextSoundTime = 0;
 
         static readonly int ptrArg = Process.Alloc(4).ToInt32();
-        static void Render(Hook hook)
+        static void Render(Hook hook, RegisterMemory rmem)
         {
             try
             {
@@ -162,11 +162,11 @@ namespace GUC.Hooks
             int activeCam = zCCamera.GetCamAddr();
             int something = Process.ReadInt(activeCam + 2336);
 
-            Process.Write(-1, renderContext);
-            Process.Write(0/*something*/, renderContext + 4);
-            Process.Write(Process.ReadInt(something + 184), renderContext + 8);
-            Process.Write(activeCam, renderContext + 12);
-            Process.Write(zeros, renderContext + 16);
+            Process.Write(renderContext , -1);
+            Process.Write(renderContext + 4, 0/*something*/);
+            Process.Write(renderContext + 8, Process.ReadInt(something + 184));
+            Process.Write(renderContext + 12, activeCam);
+            Process.Write(renderContext + 16, zeros);
 
             return renderContext;
         }

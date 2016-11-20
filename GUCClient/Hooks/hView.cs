@@ -18,7 +18,7 @@ namespace GUC.Hooks
                 return;
             inited = true;
 
-            Process.AddHook(OnDrawItems, 0x7A6750, 5, 0);
+            Process.AddHook(OnDrawItems, 0x7A6750, 5);
 
             Logger.Log("Added zCView hooks.");
         }
@@ -27,11 +27,11 @@ namespace GUC.Hooks
 
         static zCWorld rndrWorld = null;
 
-        static void OnDrawItems(Hook hook)
+        static void OnDrawItems(Hook hook, RegisterMemory rmem)
         {
             try
             {
-                int viewAddr = hook.GetECX();
+                int viewAddr = rmem[Registers.ECX];
                 zCVob vob;
                 if (VobRenderList.TryGetValue(viewAddr, out vob))
                 {
@@ -44,8 +44,8 @@ namespace GUC.Hooks
                     zCView view = new zCView(viewAddr);
 
                     //add some light
-                    Process.Write(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF }, vob.Address + zCVob.VarOffsets.lightColorStat);
-                    Process.Write(1.0f, vob.Address + zCVob.VarOffsets.lightDirectionStat + 8);
+                    Process.Write(vob.Address + zCVob.VarOffsets.lightColorStat, 0xFF, 0xFF, 0xFF, 0xFF);
+                    Process.Write(vob.Address + zCVob.VarOffsets.lightDirectionStat + 8, 1.0f);
 
                     //draw the vob
                     new oCItem(vob.Address).RenderItem(rndrWorld, view, 0);

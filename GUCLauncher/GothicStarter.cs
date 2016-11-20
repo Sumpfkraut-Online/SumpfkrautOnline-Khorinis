@@ -58,7 +58,7 @@ namespace GUCLauncher
             SuspendProcess(process);
 
             Inject(process, dllName);
-
+            
             ResumeProcess(process);
         }
 
