@@ -266,7 +266,6 @@ namespace GUC.Models
                 float percent = gAni.IsReversed ? (1 - aa.GetProgress()) : aa.GetProgress();
                 
                 gActiveAni.SetActFrame(startFrame + (endFrame - startFrame) * percent);
-
             }
         }
     }

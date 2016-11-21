@@ -287,7 +287,7 @@ namespace GUC.Animations
 
             if (ani.Overlay == null)
                 throw new ArgumentException("Animation is no Overlay-Animation!");
-            
+
             overlays.Remove(ani);
             ani.SetAniJob(null, null);
 
@@ -305,6 +305,13 @@ namespace GUC.Animations
             base.ReadProperties(stream);
             this.Name = stream.ReadString();
             this.Layer = stream.ReadByte();
+            if (stream.ReadBit())
+            {
+                // baseAni
+                AniJob next;
+                this.modelInstance.TryGetAniJob(stream.ReadUShort(), out next);
+                this.nextAni = next;
+            }
 
             if (stream.ReadBit())
             {
@@ -342,7 +349,16 @@ namespace GUC.Animations
             base.WriteProperties(stream);
             stream.Write(this.name);
             stream.Write((byte)this.layer);
-            
+            if (this.nextAni != null)
+            {
+                stream.Write(true);
+                stream.Write((ushort)this.nextAni.ID);
+            }
+            else
+            {
+                stream.Write(false);
+            }
+
             if (this.defaultAni == null)
             {
                 stream.Write(false);
