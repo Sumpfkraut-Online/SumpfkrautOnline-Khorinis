@@ -17,7 +17,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
             { "t_FistParade_0", "FightFist.Parry1" },
             { "t_FistParadeJumpB", "FightFist.Dodge" },
 
-            // 1h attacks
+            // 1H Handling
             { "s_1HAttack", "Fight1H.Fwd" },
             { "t_1HAttackL", "Fight1H.Left" },
             { "t_1HAttackR", "Fight1H.Right" },
@@ -43,8 +43,8 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
             { "t_Stand_2_JumpUp", "Jumps.Up" },
 
             // item handling
-            { "t_IGet_2_Stand", "TakeItem" },
-            { "t_IDrop_2_Stand", "DropItem" },
+            { "t_IGet_2_Stand", "ItemHandling.TakeItem" },
+            { "t_IDrop_2_Stand", "ItemHandling.DropItem" },
             { "t_HORN_Stand_2_S0", "ItemHandling.BlowHorn" },
             { "t_potionfast_Stand_2_S0", "ItemHandling.DrinkPotion" },
             { "t_Food_S0_2_Stand", "ItemHandling.EatSmall" },
@@ -57,11 +57,30 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
             { "t_JOINT_Stand_2_S0", "ItemHandling.SmokeAJoint" },
             { "s_FIRESPIT_S2", "ItemHandling.UseTorch" },
 
-            // 1h draw weapon
-            { "t_draw1H", "Draw1H" },
-            { "t_undraw1H", "Undraw1H" }, // wrong ani here
+            // Weapon Drawing
+            { "sok_draw1H", "Draw1H.Draw" },
+            { "sok_undraw1H", "Draw1H.Undraw" },
+            { "t_Move_2_1hMove", "Draw1H.DrawWhileRunning" },
+            { "t_1hMove_2_Move", "Draw1H.UndrawWhileRunning" },
+
+            { "sok_draw2H", "Draw2H.Draw" },
+            { "sok_undraw2H", "Draw2H.Undraw" },
+            { "t_Move_2_2hMove", "Draw2H.DrawWhileRunning" },
+            { "t_2hMove_2_Move", "Draw2H.UndrawWhileRunning" },
+
+            { "sok_drawBow", "DrawBow.Draw" },
+            { "sok_undrawBow", "DrawBow.Undraw" },
+            { "t_Move_2_BowMove", "DrawBow.DrawWhileRunning" },
+            { "t_BowMove_2_Move", "DrawBow.UndrawWhileRunning" },
+
+            { "sok_drawXBow", "DrawXBow.Draw" },
+            { "sok_undrawXBow", "DrawXBow.Undraw" },
+            { "t_Move_2_CBowMove", "DrawXBow.DrawWhileRunning" },
+            { "t_CBowMove_2_Move", "DrawXBow.UndrawWhileRunning" },
+
         };
 
+        #region FightAnis
         public class FightAnis : AniCatalog
         {
             public ScriptAniJob Fwd { get; private set; }
@@ -74,20 +93,41 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
             public ScriptAniJob Parry2 { get; private set; }
             public ScriptAniJob Parry3 { get; private set; }
         }
-
         public FightAnis FightFist { get; private set; }
         public FightAnis Fight1H { get; private set; }
         public FightAnis Fight2H { get; private set; }
+        #endregion
 
+        #region Jumps
         public class JumpAnis : AniCatalog
         {
             public ScriptAniJob Run { get; private set; }
             public ScriptAniJob Fwd { get; private set; }
             public ScriptAniJob Up { get; private set; }
         }
+        public JumpAnis Jumps { get; private set; }
+        #endregion
 
+        #region Weapondrawing
+        public class DrawWeaponAnis : AniCatalog
+        {
+            public ScriptAniJob Draw { get; private set; }
+            public ScriptAniJob Undraw { get; private set; }
+            public ScriptAniJob DrawWhileRunning { get; private set; }
+            public ScriptAniJob UndrawWhileRunning { get; private set; }
+        }
+        public DrawWeaponAnis Draw1H { get; private set; }
+        public DrawWeaponAnis Draw2H { get; private set; }
+        public DrawWeaponAnis DrawBow { get; private set; }
+        public DrawWeaponAnis DrawXBow { get; private set; }
+        public DrawWeaponAnis DrawMagic { get; private set; }
+        #endregion
+
+        #region Itemhandling
         public class ItemHandlingAnis : AniCatalog
         {
+            public ScriptAniJob TakeItem { get; private set; }
+            public ScriptAniJob DropItem { get; private set; }
             public ScriptAniJob BlowHorn { get; private set; }
             public ScriptAniJob DrinkPotion { get; private set; }
             public ScriptAniJob EatLarge { get; private set; }
@@ -100,14 +140,8 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
             public ScriptAniJob SmokeAJoint { get; private set; }
             public ScriptAniJob UseTorch { get; private set; }
         }
-
-        public ScriptAniJob TakeItem { get; private set; }
-        public ScriptAniJob DropItem { get; private set; }
-        public ScriptAniJob Draw1H { get; private set; }
-        public ScriptAniJob Undraw1H { get; private set; }
-
-        public JumpAnis Jumps { get; private set; }
         public ItemHandlingAnis ItemHandling { get; private set; }
+        #endregion
 
         public NPCCatalog()
         {
@@ -116,6 +150,11 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
             Fight2H = new FightAnis();
             Jumps = new JumpAnis();
             ItemHandling = new ItemHandlingAnis();
+            Draw1H = new DrawWeaponAnis();
+            Draw2H = new DrawWeaponAnis();
+            DrawBow = new DrawWeaponAnis();
+            DrawXBow = new DrawWeaponAnis();
+            DrawMagic = new DrawWeaponAnis();
         }
     }
 }
