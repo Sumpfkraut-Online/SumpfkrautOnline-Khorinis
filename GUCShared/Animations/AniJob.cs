@@ -97,6 +97,12 @@ namespace GUC.Animations
             {
                 CheckModelCreated();
 
+                if (value != null)
+                {
+                    if (value.layer != this.layer)
+                        throw new ArgumentException("NextAni has to have the same layer! " + value.name + " " + this.name);
+                }
+
                 this.nextAni = value;
             }
         }
@@ -114,6 +120,8 @@ namespace GUC.Animations
                 CheckModelCreated();
                 if (value < 0 || value > byte.MaxValue)
                     throw new ArgumentOutOfRangeException("Layer id needs to be in range of [0..255]! Is " + value);
+                if (this.nextAni != null && this.nextAni.layer != value)
+                    throw new ArgumentException("NextAni has to have the same layer! " + this.nextAni.name + " " + this.name);
 
                 this.layer = value;
             }

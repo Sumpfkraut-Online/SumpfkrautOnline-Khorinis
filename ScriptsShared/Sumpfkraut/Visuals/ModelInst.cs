@@ -67,16 +67,26 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         {
 
         }
-
-        public ActiveAni StartAnimation(ScriptAniJob aniJob, Action onStop = null)
+        
+        public ActiveAni StartAnimation(ScriptAniJob aniJob, Action onStop)
         {
-            return StartAnimation(aniJob, 1.0f, onStop);
+            return StartAnimation(aniJob, 1.0f, FrameActionPair.OnEnd(onStop));
         }
 
-        public ActiveAni StartAnimation(ScriptAniJob aniJob, float fpsMult, Action onStop = null)
+        public ActiveAni StartAnimation(ScriptAniJob aniJob, float fpsMult, Action onStop)
         {
-            return this.BaseInst.StartAnimation(aniJob.BaseAniJob, fpsMult, onStop);
-        }        
+            return this.StartAnimation(aniJob, fpsMult, FrameActionPair.OnEnd(onStop));
+        }
+
+        public ActiveAni StartAnimation(ScriptAniJob aniJob, params FrameActionPair[] pairs)
+        {
+            return StartAnimation(aniJob, 1.0f, pairs);
+        }
+
+        public ActiveAni StartAnimation(ScriptAniJob aniJob, float fpsMult, params FrameActionPair[] pairs)
+        {
+            return this.BaseInst.StartAnimation(aniJob.BaseAniJob, fpsMult, pairs);
+        }
 
         #endregion
 
