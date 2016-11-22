@@ -53,6 +53,9 @@ namespace GUC.Animations
             get { return this.name; }
             set
             {
+                if (this.name == value)
+                    return;
+
                 CheckModelCreated();
 
                 if (value == null)
@@ -83,24 +86,74 @@ namespace GUC.Animations
         {
             this.modelInstance = modelInstance;
             this.isCreated = modelInstance != null;
+            this.NextAni = null;
+        }
+
+        int nextAniID = -1;
+        public int NextAniID
+        {
+            get { return this.nextAniID; }
+            set
+            {
+                if (this.nextAniID == value)
+                    return;
+
+                CheckModelCreated();
+
+                this.nextAniID = value;
+                CheckForNextAni();
+            }
+        }
+
+        void CheckForNextAni()
+        {
+            if (this.modelInstance != null)
+            {
+                this.modelInstance.TryGetAniJob(this.nextAniID, out this.nextAni);
+                if (this.nextAni != null)
+                {
+                    if (this.nextAni.layer != this.layer)
+                        throw new Exception("NextAni has different layer! " + this.name + " -> " + this.nextAni.name);
+                    if (this.nextAni.modelInstance != this.modelInstance)
+                        throw new Exception("NextAni is for different Model! " + this.name + " -> " + this.nextAni.name);
+                }
+            }
         }
 
         AniJob nextAni;
         /// <summary>
         /// The AniJob which will be played immediately after this AniJob's animation ends.
-        /// Declared OnStop-Actions in the AnimatedVob's play start will be postponed to the last played Animation.
+        /// Declared FrameActionPairs in the AnimatedVob's play start will be continued up to the played Animation.
         /// </summary>
         public AniJob NextAni
         {
-            get { return this.nextAni; }
+            get
+            {
+                if (this.nextAni == null)
+                {
+                    CheckForNextAni();
+                }
+                return this.nextAni;
+            }
             set
             {
+                if (this.nextAni == value)
+                    return;
+                
                 CheckModelCreated();
 
                 if (value != null)
                 {
                     if (value.layer != this.layer)
-                        throw new ArgumentException("NextAni has to have the same layer! " + value.name + " " + this.name);
+                        throw new Exception("NextAni has different layer! " + this.name + " -> " + value.name);
+                    if (value.modelInstance != this.modelInstance)
+                        throw new Exception("NextAni is for different Model! " + this.name + " -> " + value.name);
+
+                    this.nextAniID = value.ID;
+                }
+                else
+                {
+                    this.nextAniID = -1;
                 }
 
                 this.nextAni = value;
@@ -117,11 +170,14 @@ namespace GUC.Animations
             get { return this.layer; }
             set
             {
+                if (this.layer == value)
+                    return;
+
                 CheckModelCreated();
                 if (value < 0 || value > byte.MaxValue)
                     throw new ArgumentOutOfRangeException("Layer id needs to be in range of [0..255]! Is " + value);
                 if (this.nextAni != null && this.nextAni.layer != value)
-                    throw new ArgumentException("NextAni has to have the same layer! " + this.nextAni.name + " " + this.name);
+                    throw new Exception("NextAni has different layer! " + this.name + " -> " + this.nextAni.name);
 
                 this.layer = value;
             }
@@ -307,10 +363,7 @@ namespace GUC.Animations
             this.Layer = stream.ReadByte();
             if (stream.ReadBit())
             {
-                // baseAni
-                AniJob next;
-                this.modelInstance.TryGetAniJob(stream.ReadUShort(), out next);
-                this.nextAni = next;
+                this.NextAniID = stream.ReadUShort();
             }
 
             if (stream.ReadBit())
