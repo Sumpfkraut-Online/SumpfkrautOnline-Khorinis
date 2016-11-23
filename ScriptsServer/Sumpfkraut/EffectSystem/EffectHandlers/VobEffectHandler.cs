@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Reflection;
+using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 {
@@ -16,17 +18,19 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
         static VobEffectHandler ()
         {
-            PrintStatic(typeof(SomeEffectHandler), "Start subscribing listeners to events...");
+            PrintStatic(typeof(VobEffectHandler), "Start subscribing listeners to events...");
             // to do
-            PrintStatic(typeof(SomeEffectHandler), "Finished subscribing listeners to events...");
+            PrintStatic(typeof(VobEffectHandler), "Finished subscribing listeners to events...");
         }
 
-        public VobEffectHandler (List<Effect> effects)
-            : this("VobEffectHandler (default)", effects)
+
+
+        public VobEffectHandler (List<Effect> effects, object linkedObject)
+            : this("VobEffectHandler (default)", effects, linkedObject)
         { }
 
-        public VobEffectHandler (string objName, List<Effect> effects) 
-            : base(objName, effects)
+        public VobEffectHandler (string objName, List<Effect> effects, object linkedObject) 
+            : base(objName, effects, linkedObject)
         { }
 
 

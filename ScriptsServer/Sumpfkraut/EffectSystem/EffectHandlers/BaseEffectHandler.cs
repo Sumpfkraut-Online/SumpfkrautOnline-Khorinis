@@ -13,7 +13,14 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
         new public static readonly string _staticName = "EffectHandler (static)";
 
-        
+
+
+        protected object linkedObject;
+        public T GetLinkedObject<T> () { return (T) linkedObject; }
+
+        protected Type linkedObjectType;
+        public Type LinkedObjectType { get { return linkedObjectType; } }
+        public void SetLinkedObjectType (Type linkedObjectType) { this.linkedObjectType = linkedObjectType; }
 
         protected List<Effect> effects;
         protected Dictionary<string, List<Change>> eventNameToChange;
@@ -27,10 +34,13 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         }
         
         // base constructor that must be called for clean initialization
-        public BaseEffectHandler (string objName, List<Effect> effects)
+        public BaseEffectHandler (string objName, List<Effect> effects, object linkedObject, Type linkedObjectType = null)
         {
             if (objName == null) { SetObjName("EffectHandler (default)"); }
             else { SetObjName(objName); }
+
+            this.linkedObject = linkedObject;
+            this.linkedObjectType = linkedObjectType ?? linkedObject.GetType();
 
             eventNameToChange = new Dictionary<string, List<Change>>();
             this.effects = effects ?? new List<Effect>();
