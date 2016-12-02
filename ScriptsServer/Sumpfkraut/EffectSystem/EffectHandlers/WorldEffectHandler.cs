@@ -18,7 +18,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         static WorldEffectHandler ()
         {
             PrintStatic(typeof(WorldEffectHandler), "Start subscribing listeners to events...");
+            
             // to do
+
             PrintStatic(typeof(WorldEffectHandler), "Finished subscribing listeners to events...");
         }
 

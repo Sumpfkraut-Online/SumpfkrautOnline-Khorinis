@@ -19,17 +19,27 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         static VobEffectHandler ()
         {
             PrintStatic(typeof(VobEffectHandler), "Start subscribing listeners to events...");
+
             // to do
+
             PrintStatic(typeof(VobEffectHandler), "Finished subscribing listeners to events...");
         }
 
 
 
-        public VobEffectHandler (List<Effect> effects, object linkedObject)
+        public VobEffectHandler (List<Effect> effects, VobDef linkedObject)
             : this("VobEffectHandler (default)", effects, linkedObject)
         { }
 
-        public VobEffectHandler (string objName, List<Effect> effects, object linkedObject) 
+        public VobEffectHandler (List<Effect> effects, VobInst linkedObject)
+            : this("VobEffectHandler (default)", effects, linkedObject)
+        { }
+
+        public VobEffectHandler (string objName, List<Effect> effects, VobDef linkedObject) 
+            : base(objName, effects, linkedObject)
+        { }
+
+        public VobEffectHandler (string objName, List<Effect> effects, VobInst linkedObject) 
             : base(objName, effects, linkedObject)
         { }
 
@@ -37,7 +47,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
         protected override void ApplyEffectInner (Effect effect, bool reverse = false)
         {
-            Print("Apply what? Naaaa!");
+            throw new NotImplementedException();
         }
 
     }

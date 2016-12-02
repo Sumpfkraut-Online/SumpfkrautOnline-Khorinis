@@ -8,6 +8,9 @@ using GUC.Log;
 using GUC.Utilities.FileSystem;
 using GUC.Scripts.Sumpfkraut.Database;
 using Mono.Data.Sqlite;
+using GUC.Scripts.Sumpfkraut.EffectSystem;
+using System.Diagnostics;
+using System.Reflection;
 
 namespace GUC.Scripts.Sumpfkraut
 {
@@ -142,11 +145,104 @@ namespace GUC.Scripts.Sumpfkraut
             //Logger.Log(EffectSystem.EffectHandlers.AnotherEffectHandler.isInitialized);
 
 
-            EffectSystem.EffectHandlers.VobEffectHandler eh = 
-                new EffectSystem.EffectHandlers.VobEffectHandler(null, new Random());
-            Logger.Log("-------> " + eh.LinkedObjectType);
+            //EffectSystem.EffectHandlers.VobEffectHandler eh =
+            //    new EffectSystem.EffectHandlers.VobEffectHandler(null, new VobSystem.Instances.VobInst());
+            //Logger.Log("-------> " + eh.LinkedObjectType);
 
+            //EffectSystem.EffectDelegateReference delRef = 
+            //    new EffectSystem.EffectDelegateReference(null, null);
+
+
+
+            //Change change1 = new Change(EffectSystem.Enumeration.ChangeType.Effect_Name_Set, new object[] { 1, 2, 3, 4, 5, 6 });
+            //Change change2 = new Change(EffectSystem.Enumeration.ChangeType.Effect_Name_Set, new object[] { 1, 2, 3, 4, 5, 6 });
+            //Logger.Log("### " + (change1 == change2));
+
+            //bool check;
+            //int[] lapsesSteps = new int[] { 1, 10, 100, 1000, 1000, 10000, 100000, 1000000 };
+            //int tempLapses = 0;
+            //List<long> elapsedTicks = new List<long>();
+
+            //Stopwatch sw = Stopwatch.StartNew();
+            //for (int s = 0; s < lapsesSteps.Length; s++)
+            //{
+            //    tempLapses = lapsesSteps[s];
+            //    for (int l = 0; l < tempLapses; l++)
+            //    {
+            //        check = change1 == change2;
+            //    }
+            //    sw.Stop();
+            //    elapsedTicks.Add(sw.ElapsedTicks);
+            //    sw.Restart();
+            //}
+
+            //sw.Stop();
+            //for (int i = 0; i < elapsedTicks.Count; i++)
+            //{
+            //    Logger.Log("### " + elapsedTicks[i] + " " + ((double) elapsedTicks[i] / TimeSpan.TicksPerMillisecond));
+            //}
+
+
+
+            //Process currentProcess = System.Diagnostics.Process.GetCurrentProcess();
+            //long totalBytesOfMemoryUsed = currentProcess.WorkingSet64;
+            //Logger.Log("==> " + totalBytesOfMemoryUsed);
+
+            //List<Change> changeList = new List<Change>();
+            //for (int i = 0; i < 10000000; i++)
+            //{
+            //    changeList.Add(new Change(EffectSystem.Enumeration.ChangeType.Undefined, new object[0]));
+            //    if ((i % 1000000) == 0)
+            //    {
+            //        Logger.Log("==> " + totalBytesOfMemoryUsed);
+            //    }
+            //}
+            //changeList = null;
+            //System.Threading.Thread.Sleep(1000);
+            //Logger.Log("==> " + totalBytesOfMemoryUsed);
+
+            //Effect effect = new Effect(null, new List<Change>() { new Change(), new Change() });
+            //PropertyInfo info = effect.GetType().GetProperty("Changes");
+            //List<Change> changes = (List<Change>) info.GetValue(effect, null);
+            //Logger.Log("===> " + changes.Count);
+
+
+            //Change change1 = new Change(null, EffectSystem.Enumeration.ChangeType.Undefined, 
+            //    new object[] { 1, false, "mh?" }, new Type[] { typeof(int), typeof(bool), typeof(string) });
+            //Change change2 = new Change(null, EffectSystem.Enumeration.ChangeType.Undefined, 
+            //    new object[] { 2, true, "masdasdh?" }, new Type[] { typeof(int), typeof(bool), typeof(string) });
+            //Change change3 = new Change(null, EffectSystem.Enumeration.ChangeType.Undefined, 
+            //    new object[] { 1, false, "mh?" }, new Type[] { typeof(int), typeof(bool), typeof(string) });
+
+            //List<Change> myList = new List<Change> { change1, change2, change3 };
+
+            //myList.Remove(new Change(null, EffectSystem.Enumeration.ChangeType.Undefined,
+            //    new object[] { 1, false, "mh?" }, new Type[] { typeof(int), typeof(bool), typeof(string) }));
+
+            //foreach (Change c in myList)
+            //{
+            //    Logger.Log(c);
+            //}
+
+
+            //MAndM.Bla[1] = new Change(null, EffectSystem.Enumeration.ChangeType.Undefined,
+            //    new object[1], new Type[] { typeof(object) });
+            //Logger.Log(MAndM.Bla[1]);
+
+
+
+            //List<int> l1 = new List<int>() { 1, 3, 6, 7, 8 };
+            //List<int> l2 = new List<int>() { 2, 3, 4, 5, 6, 7, 9, 10};
+            //List<int> l3 = l1.Union(l2).ToList();
+            //l3.Sort();
+            //foreach (int i in l3) { Logger.Log(i); }
         }
 
     }
+
+    //public class MAndM
+    //{
+    //    protected static Dictionary<int, Change> bla = new Dictionary<int, Change>();
+    //    public static Dictionary<int, Change> Bla { get { return bla; } }
+    //}
 }

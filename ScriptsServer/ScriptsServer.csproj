@@ -254,7 +254,11 @@
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\NPCEffectHandler.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\VobEffectHandler.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\WorldEffectHandler.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Enumeration\ChangeDestination.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Enumeration\ChangeType.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\TotalChange.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\TotalEffectCalculation\TEC_Base.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\TotalEffectCalculation\TEC_Effect_Name.cs" />
     <Compile Include="Sumpfkraut\Networking\ScriptClient.Server.cs" />
     <Compile Include="Sumpfkraut\TestingThings.cs" />
     <Compile Include="Sumpfkraut\Visuals\AniCatalogs\AniCatalog.cs" />
@@ -294,6 +298,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Sumpfkraut\EffectSystem\Changes\" />
     <Folder Include="Sumpfkraut\VobSystem\Definitions\Mobs\" />
     <Folder Include="Sumpfkraut\VobSystem\Instances\Mobs\" />
   </ItemGroup>

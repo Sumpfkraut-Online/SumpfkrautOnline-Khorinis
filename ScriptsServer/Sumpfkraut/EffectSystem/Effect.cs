@@ -10,20 +10,26 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
     public class Effect : ExtendedObject
     {
 
+        new public static readonly string _staticName = "Effect (static)";
+
+
+
         protected EffectHandlers.BaseEffectHandler effectHandler;
         public EffectHandlers.BaseEffectHandler EffectHandler { get { return effectHandler; } }
 
         protected List<Change> changes;
         public List<Change> Changes { get { return changes; } }
 
+        protected Dictionary<Enumeration.ChangeDestination, List<Change>> changeDestinationToChanges;
+
         protected static string defaultEffectName = "";
         public static string DefaultEffectName { get { return defaultEffectName; } }
+
+        protected object changeLock;
 
         protected string effectName;
         public string EffectName { get { return this.effectName; } }
         public void SetEffectName (string effectName) { this.effectName = effectName; }
-        
-        protected object changeLock;
 
 
 
@@ -34,6 +40,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             this.effectHandler = effectHandler;
             this.changes = changes ?? new List<Change>();
             this.effectName = defaultEffectName;
+            this.changeDestinationToChanges = new Dictionary<Enumeration.ChangeDestination, List<Change>>();
             ApplyEffectSpecifics(false);
         }
 

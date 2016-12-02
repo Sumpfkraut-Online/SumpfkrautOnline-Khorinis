@@ -19,7 +19,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         static ItemEffectHandler ()
         {
             PrintStatic(typeof(ItemEffectHandler), "Start subscribing listeners to events...");
-            // to do
+
+            ItemInst.OnSetAmount += OnSetAmount;
+
             PrintStatic(typeof(ItemEffectHandler), "Finished subscribing listeners to events...");
         }
 
@@ -43,10 +45,34 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
 
+        public static void OnSetAmount (ItemInst itemInst, int amount)
+        {
+            throw new NotImplementedException();
+        }
+
+
+
         protected override void ApplyEffectInner (Effect effect, bool reverse = false)
         {
             Print("Apply what? Naaaa!");
+            
+            Type lot = LinkedObjectType;
+
+            if      (LinkedObjectType == typeof(ItemDef))
+            {
+                // ...
+            }
+            else if (LinkedObjectType == typeof(ItemInst))
+            {
+                ItemInst lo = GetLinkedObject<ItemInst>();
+                // ...
+            }
+            else
+            {
+                Print("Screwed :D");
+            }
         }
+        
 
     }
 

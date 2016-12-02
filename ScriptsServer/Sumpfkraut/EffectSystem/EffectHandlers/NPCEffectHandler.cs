@@ -19,10 +19,11 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         static NPCEffectHandler ()
         {
             PrintStatic(typeof(NPCEffectHandler), "Start subscribing listeners to events...");
-            // to do
+
+            NPCInst.sOnHit += OnHit;
+
             PrintStatic(typeof(NPCEffectHandler), "Finished subscribing listeners to events...");
         }
-
 
 
         public NPCEffectHandler (List<Effect> effects, NPCDef linkedObject)
@@ -40,6 +41,13 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         public NPCEffectHandler (string objName, List<Effect> effects, NPCInst linkedObject) 
             : base(objName, effects, linkedObject)
         { }
+
+
+
+        private static void OnHit (NPCInst attacker, NPCInst target, int damage)
+        {
+            throw new NotImplementedException();
+        }
 
 
 
