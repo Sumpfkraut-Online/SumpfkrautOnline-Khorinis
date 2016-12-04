@@ -248,6 +248,8 @@
     <Compile Include="Sumpfkraut\Database\DBTables.cs" />
     <Compile Include="Sumpfkraut\Database\Enumeration.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Change.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Changes\BaseChange.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Changes\Change_Effect_Name.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Effect.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\BaseEffectHandler.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\ItemEffectHandler.cs" />
@@ -298,7 +300,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Sumpfkraut\EffectSystem\Changes\" />
     <Folder Include="Sumpfkraut\VobSystem\Definitions\Mobs\" />
     <Folder Include="Sumpfkraut\VobSystem\Instances\Mobs\" />
   </ItemGroup>

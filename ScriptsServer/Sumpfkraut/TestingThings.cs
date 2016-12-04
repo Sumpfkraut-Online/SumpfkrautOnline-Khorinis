@@ -11,6 +11,7 @@ using Mono.Data.Sqlite;
 using GUC.Scripts.Sumpfkraut.EffectSystem;
 using System.Diagnostics;
 using System.Reflection;
+using GUC.Scripts.Sumpfkraut.EffectSystem.Changes;
 
 namespace GUC.Scripts.Sumpfkraut
 {
@@ -236,6 +237,28 @@ namespace GUC.Scripts.Sumpfkraut
             //List<int> l3 = l1.Union(l2).ToList();
             //l3.Sort();
             //foreach (int i in l3) { Logger.Log(i); }
+
+
+
+            ////SomeClass o = new SomeClass(new object[0]);
+            //SomeClass o = SomeClass.Create(new object[0]);
+            //Logger.Log("===> " + (o == null));
+            //Logger.Log("===> " + o);
+            ////Logger.Log("===> " + o.parameters);
+
+
+            //object o = "Banannanana";
+            //Logger.Log("===> " + o.GetType());
+
+            //SomeClass.ParameterTypeCheck(new object[] { "s", 'c', 1, false });
+
+
+            Change_Effect_Name o = Change_Effect_Name.Create(null, EffectSystem.Enumeration.ChangeType.Undefined, new object[0]);
+            Logger.Log("===> " + (o));
+            
+
+
+            Logger.Log("===> !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
 
     }
@@ -245,4 +268,36 @@ namespace GUC.Scripts.Sumpfkraut
     //    protected static Dictionary<int, Change> bla = new Dictionary<int, Change>();
     //    public static Dictionary<int, Change> Bla { get { return bla; } }
     //}
+
+    public class SomeClass
+    {
+        public object[] parameters;
+
+        public SomeClass (object[] parameters)
+        {
+            this.parameters = parameters;
+            if (parameters.Length < 1)
+            {
+                throw new Exception("parameters of Length < 1 are invalid!");
+            }
+        }
+
+        public static SomeClass Create (object[] parameters)
+        {
+            if (parameters.Length < 1) { return null; }
+            return new SomeClass(parameters);
+        }
+
+        public static void ParameterTypeCheck (object[] parameters)
+        {
+            foreach (object o in parameters) { Logger.Log("===> " + o.GetType()); }
+        }
+    }
+
+    public class AnotherClass : SomeClass
+    {
+        public AnotherClass (object[] parameters) : base(parameters)
+        { }
+    }
+
 }
