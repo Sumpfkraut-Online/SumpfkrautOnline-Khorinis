@@ -13,6 +13,11 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 
         new public static readonly string _staticName = "Change_Effect_Name (static)";
 
+        new public static readonly ChangeType[] supportedChangeTypes = new ChangeType[]
+        {
+            ChangeType.Effect_Name_Set
+        };
+
         new public static readonly Type[] parameterTypes = new Type[] 
         {
             typeof(string)
@@ -31,32 +36,35 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
         new public static Change_Effect_Name Create (Effect effect, ChangeType changeType, object[] parameters)
         {
             if (!CreateCheckBasics(effect, changeType, parameters, parameterTypes)) { return null; }
+
             return new Change_Effect_Name(effect, changeType, parameters);
         }
 
 
 
+        // became useless because there is not only 1 effect but more and they will be assigned names seperately
         public override void CalculateTotalChange (BaseEffectHandler effectHandler)
         {
+            // grab the last effect name and use it
             try
             {
                 string finalName = "";
                 TotalChange totalChange;
-                Dictionary<ChangeDestination, TotalChange> destinationToToal = effectHandler.DestinationToTotal;
 
-                if (!destinationToToal.TryGetValue(
+                if (!effectHandler.DestinationToTotal.TryGetValue(
                     ChangeDestination.Effect_Name, out totalChange))
                 {
                     return;
                 }
+                if (totalChange == null) { return; }
 
-                Change lastChange = totalChange.Components.Last();
+                BaseChange lastChange = totalChange.Components.Last();
                 if (lastChange.Parameters.Length > 0)
                 {
                     finalName = totalChange.Components.Last().Parameters[0].ToString();
                 }
 
-                totalChange.Total.SetParametersComplete(new string[] { finalName }, new Type[] { typeof(string) });
+                totalChange.Total.SetParameters(new string[] { finalName });
             }
             catch (Exception ex)
             {

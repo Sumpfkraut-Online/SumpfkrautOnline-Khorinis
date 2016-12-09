@@ -247,9 +247,10 @@
     <Compile Include="Sumpfkraut\Database\DBSecurity.cs" />
     <Compile Include="Sumpfkraut\Database\DBTables.cs" />
     <Compile Include="Sumpfkraut\Database\Enumeration.cs" />
-    <Compile Include="Sumpfkraut\EffectSystem\Change.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Changes\BaseChange.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Changes\Change_Effect_Name.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Destinations\BaseDestination.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Destinations\Dest_Effect.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Effect.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\BaseEffectHandler.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\ItemEffectHandler.cs" />
@@ -258,9 +259,7 @@
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\WorldEffectHandler.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Enumeration\ChangeDestination.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Enumeration\ChangeType.cs" />
-    <Compile Include="Sumpfkraut\EffectSystem\TotalChange.cs" />
-    <Compile Include="Sumpfkraut\EffectSystem\TotalEffectCalculation\TEC_Base.cs" />
-    <Compile Include="Sumpfkraut\EffectSystem\TotalEffectCalculation\TEC_Effect_Name.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Changes\TotalChange.cs" />
     <Compile Include="Sumpfkraut\Networking\ScriptClient.Server.cs" />
     <Compile Include="Sumpfkraut\TestingThings.cs" />
     <Compile Include="Sumpfkraut\Visuals\AniCatalogs\AniCatalog.cs" />

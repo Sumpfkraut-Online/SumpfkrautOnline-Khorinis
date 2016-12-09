@@ -1,4 +1,5 @@
-﻿using GUC.Utilities;
+﻿using GUC.Scripts.Sumpfkraut.EffectSystem.Changes;
+using GUC.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +31,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         public void SetLinkedObjectType (Type linkedObjectType) { this.linkedObjectType = linkedObjectType; }
 
         protected List<Effect> effects;
-        protected Dictionary<string, List<Change>> eventNameToChange;
+        protected Dictionary<string, List<BaseChange>> eventNameToChange;
         protected object effectLock;
 
         protected Dictionary<Enumeration.ChangeDestination, TotalChange> destinationToTotal;
@@ -62,7 +63,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             this.linkedObject = linkedObject;
             this.linkedObjectType = linkedObjectType ?? linkedObject.GetType();
 
-            eventNameToChange = new Dictionary<string, List<Change>>();
+            eventNameToChange = new Dictionary<string, List<BaseChange>>();
             this.effects = effects ?? new List<Effect>();
             this.destinationToTotal = new Dictionary<Enumeration.ChangeDestination, TotalChange>();
             this.destinationToEffects = new Dictionary<Enumeration.ChangeDestination, List<Effect>>();
@@ -77,7 +78,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         {
             int index = -1;
             CalculateTotal calcTotal;
-            List<Change> changes;
+            List<BaseChange> changes;
             List<Enumeration.ChangeDestination> destinations;
 
             lock (effectLock)
@@ -149,8 +150,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
         protected void ApplyEffect (Effect effect, bool reverse = false)
         {
-            
-
             //// handle changes relevant for the effect itself before the rest
             //// (define the rest in child classes)
             //List<Change> changes = effect.Changes;
@@ -198,14 +197,30 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
 
-        public void AddToTotalChange (Change change)
+        public void AddToTotalChange (BaseChange change)
         {
             //Enumeration.ChangeDestination destination =
         }
 
-        public void AddToTotalChange (Change change, Enumeration.ChangeDestination destination)
+        public void AddToTotalChange (BaseChange change, Enumeration.ChangeDestination destination)
         {
-            
+            TotalChange totalChange;
+            if (!destinationToTotal.TryGetValue(destination, out totalChange)) { return; }
+
+            totalChange.AddChange(change);
+        }
+
+        public void RemoveFromTotalChange (BaseChange change)
+        {
+            TotalChange totalChange;
+            if (!destinationToTotal.TryGetValue(destination, out totalChange)) { return; }
+
+            totalChange.RemoveChange(change);
+        }
+
+        public void RemoveFromTotalChange (BaseChange change, Enumeration.ChangeDestination destination)
+        {
+
         }
 
     }

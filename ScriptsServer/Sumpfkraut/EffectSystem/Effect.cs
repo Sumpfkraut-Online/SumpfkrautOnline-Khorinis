@@ -1,4 +1,5 @@
-﻿using GUC.Utilities;
+﻿using GUC.Scripts.Sumpfkraut.EffectSystem.Changes;
+using GUC.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,10 +18,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
         protected EffectHandlers.BaseEffectHandler effectHandler;
         public EffectHandlers.BaseEffectHandler EffectHandler { get { return effectHandler; } }
 
-        protected List<Change> changes;
-        public List<Change> Changes { get { return changes; } }
+        protected List<BaseChange> changes;
+        public List<BaseChange> Changes { get { return changes; } }
 
-        protected Dictionary<Enumeration.ChangeDestination, List<Change>> changeDestinationToChanges;
+        protected Dictionary<Enumeration.ChangeDestination, List<BaseChange>> changeDestinationToChanges;
 
         protected static string defaultEffectName = "";
         public static string DefaultEffectName { get { return defaultEffectName; } }
@@ -33,56 +34,26 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
 
 
 
-        public Effect (EffectHandlers.BaseEffectHandler effectHandler, List<Change> changes = null)
+        public Effect (EffectHandlers.BaseEffectHandler effectHandler, List<BaseChange> changes = null)
         {
             SetObjName("Effect (default)");
             changeLock = new object();
             this.effectHandler = effectHandler;
-            this.changes = changes ?? new List<Change>();
+            this.changes = changes ?? new List<BaseChange>();
             this.effectName = defaultEffectName;
-            this.changeDestinationToChanges = new Dictionary<Enumeration.ChangeDestination, List<Change>>();
-            ApplyEffectSpecifics(false);
-        }
-
-
-        // !!! might as well let the EventHandler do this in the near future !!!
-        protected void ApplyEffectSpecifics (bool reverse)
-        {
-            for (int i = 0; i < changes.Count; i++)
-            {
-                ApplyEffectSpecifics(changes[i], reverse);
-            }
-        }
-
-        // !!! might as well let the EventHandler do this in the near future !!!
-        protected void ApplyEffectSpecifics (Change change, bool reverse)
-        {
-            switch (change.ChangeType)
-            {
-                case Enumeration.ChangeType.Effect_Name_Set:
-                    object[] parameters = change.Parameters;
-                    if (reverse) { this.effectName = defaultEffectName; }
-                    else
-                    {
-                        if (parameters.Length > 0) { effectName = change.Parameters[0].ToString(); }
-                    }
-                    break;
-
-                default:
-                    break;
-            }
+            this.changeDestinationToChanges = new Dictionary<Enumeration.ChangeDestination, List<BaseChange>>();
         }
 
 
 
-        public int AddChange (Change change)
+        public int AddChange (BaseChange change)
         {
             int index = -1;
             lock (changeLock)
             {
                 changes.Add(change);
                 index = changes.Count;
-                ApplyEffectSpecifics(change, false);
+                effectHandler.AddToTotalChange(change);
             }
             return index;
         }
@@ -96,7 +67,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
                 {
                     if (changes[i].ChangeType == changeType)
                     {
-                        ApplyEffectSpecifics(changes[i], true);
+                        effectHandler.RemoveFromTotalChange(changes[i]);
                         index = i;
                         changes.RemoveAt(i);
                         break;

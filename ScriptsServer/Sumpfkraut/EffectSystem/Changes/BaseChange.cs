@@ -13,20 +13,42 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 
         new public static readonly string _staticName = "BaseChange (static)";
 
+        public static readonly Enumeration.ChangeType[] supportedChangeTypes = new Enumeration.ChangeType[] { };
         public static readonly Type[] parameterTypes = new Type[] { };
 
 
 
         // effect to which this change belongs
-        private Effect effect;
+        protected Effect effect;
         public Effect Effect { get { return effect; } }
         public void SetEffect (Effect effect) { this.effect = effect; }
 
-        private Enumeration.ChangeType changeType;
+        protected Enumeration.ChangeType changeType;
         public Enumeration.ChangeType ChangeType { get { return this.changeType; } }
 
-        private object[] parameters;
+        protected object[] parameters;
         public object[] Parameters { get { return this.parameters; } }
+        public void SetParameters(object[] parameters)
+        {
+            if (!(parameters.Length <= parameterTypes.Length))
+            {
+                MakeLogWarning("Not enough items in array paramterTypes to describe the types of given paramters.");
+                return;
+            }
+
+            for (int p = 0; p < parameterTypes.Length; p++)
+            {
+                if (parameters[p].GetType() != parameterTypes[p])
+                {
+                    MakeLogWarning(String.Format("Parameter {0} of type {1} does not match "
+                        + "the required type of {2} in SetParameters.", parameters[p], 
+                        parameters[p].GetType(), parameterTypes[p]));
+                    return;
+                }
+            }
+
+            this.parameters = parameters;
+        }
 
 
 
