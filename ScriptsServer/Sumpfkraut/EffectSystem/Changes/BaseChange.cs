@@ -52,7 +52,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 
 
 
-        public BaseChange (Effect effect, Enumeration.ChangeType changeType, object[] parameters)
+        protected BaseChange (Effect effect, Enumeration.ChangeType changeType, object[] parameters)
         {
             //SetObjName("BaseChange (default)");
             this.effect = effect;

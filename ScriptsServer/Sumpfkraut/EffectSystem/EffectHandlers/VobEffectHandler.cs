@@ -45,7 +45,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
 
-        protected override void ApplyEffectInner (Effect effect, bool reverse = false)
+        protected override void ApplyEffect (Effect effect, bool reverse = false)
         {
             throw new NotImplementedException();
         }

@@ -14,6 +14,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
         new public static readonly string _staticName = "EffectHandler (static)";
 
+        // map ChangeType to influenced ChangeDestinations
         public static Dictionary<Enumeration.ChangeType, List<Enumeration.ChangeDestination>> changeTypeToDestinations =
             new Dictionary<Enumeration.ChangeType, List<Enumeration.ChangeDestination>>() { };
 
@@ -74,7 +75,22 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
 
-        public int AddEffect (Effect effect)
+        public void AddEffects (Effect[] effects)
+        {
+            for (int e = 0; e < effects.Length; e++)
+            {
+                AddEffect(effects[e], false);
+            }
+            lock (effectLock)
+            {
+                // to do
+                
+            }
+        }
+        
+        // adds effect to the internal management and recalculate the TotalChanges if recalculateTotals is true
+        // setting recalculateTotals to false can be used to postpone the costly recalculation until all changes are added
+        public int AddEffect (Effect effect, bool recalculateTotals = true)
         {
             int index = -1;
             CalculateTotal calcTotal;
@@ -86,6 +102,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                 effects.Add(effect);
                 index = effects.Count;
                 changes = effect.Changes;
+
+                if (!recalculateTotals) { return index; }
 
                 // calculate new TotalChanges of all affected ChangeDestinations
                 for (int c = 0; c < changes.Count; c++)
@@ -125,6 +143,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                     if (effects[i].EffectName == effectName)
                     {
                         index = i;
+                        ReverseEffect(effects[index]);
                         effects[index].Dispose();
                         effects.RemoveAt(index);
                     }
@@ -141,40 +160,26 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                 index = effects.IndexOf(effect);
                 if (index > -1)
                 {
-                    effects.RemoveAt(index);
+                    ReverseEffect(effects[index]);
                     effects[index].Dispose();
+                    effects.RemoveAt(index);
                 }
             }
             return index;
         }
 
-        protected void ApplyEffect (Effect effect, bool reverse = false)
+        protected void ApplyEffects (Effect[] effects)
         {
-            //// handle changes relevant for the effect itself before the rest
-            //// (define the rest in child classes)
-            //List<Change> changes = effect.Changes;
-            //for (int c = 0; c < changes.Count; c++)
-            //{
-            //    switch (changes[c].ChangeType)
-            //    {
-            //        case Enumeration.ChangeType.Effect_Name_Set:
-            //            object[] parameters = changes[c].Parameters;
-            //            if (reverse) { effect.SetEffectName(Effect.DefaultEffectName); }
-            //            else
-            //            {
-            //                if (parameters.Length > 0) { effect.SetEffectName(changes[c].Parameters[0].ToString()); }
-            //            }
-            //            break;
-
-            //        default:
-            //            break;
-            //    }
-            //}
-
-            ApplyEffectInner(effect, reverse);
+            for (int i = 0; i < effects.Length; i++)
+            {
+                if (effects[i].EffectHandler == this)
+                {
+                    ApplyEffect(effects[i]);
+                }
+            }
         }
 
-        virtual protected void ApplyEffectInner (Effect effect, bool reverse = false)
+        virtual protected void ApplyEffect (Effect effect, bool reverse = false)
         {
             throw new NotImplementedException();
         }
@@ -197,30 +202,93 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
 
-        public void AddToTotalChange (BaseChange change)
+        public void AddToTotalChanges (BaseChange change)
         {
-            //Enumeration.ChangeDestination destination =
+            List<Enumeration.ChangeDestination> destinations;
+            if (!changeTypeToDestinations.TryGetValue(change.ChangeType, out destinations)) { return; }
+
+            for (int d = 0; d < destinations.Count; d++)
+            {
+                try
+                {
+                    destinationToTotal[destinations[d]].AddChange(change);
+                }
+                catch (Exception ex) { Print(ex); }
+            }
         }
 
-        public void AddToTotalChange (BaseChange change, Enumeration.ChangeDestination destination)
-        {
-            TotalChange totalChange;
-            if (!destinationToTotal.TryGetValue(destination, out totalChange)) { return; }
+        //public void AddToTotalChange (BaseChange change, Enumeration.ChangeDestination destination)
+        //{
+        //    TotalChange totalChange;
+        //    if (!destinationToTotal.TryGetValue(destination, out totalChange)) { return; }
 
-            totalChange.AddChange(change);
+        //    totalChange.AddChange(change);
+        //}
+
+        public void RemoveFromTotalChanges (BaseChange change)
+        {
+            List<Enumeration.ChangeDestination> destinations;
+            if (!changeTypeToDestinations.TryGetValue(change.ChangeType, out destinations)) { return; }
+
+            for (int d = 0; d < destinations.Count; d++)
+            {
+                try
+                {
+                    destinationToTotal[destinations[d]].RemoveChange(change);
+                }
+                catch (Exception ex) { Print(ex); }
+            }
         }
 
-        public void RemoveFromTotalChange (BaseChange change)
-        {
-            TotalChange totalChange;
-            if (!destinationToTotal.TryGetValue(destination, out totalChange)) { return; }
 
-            totalChange.RemoveChange(change);
+
+        public bool TryGetDestinations (List<Effect> effects, out List<Enumeration.ChangeDestination> destinations)
+        {
+            destinations = null;
+            List<Enumeration.ChangeDestination> allDestinations = new List<Enumeration.ChangeDestination>();
+            List<Enumeration.ChangeDestination> tempDestinations;
+
+            for (int e = 0; e < effects.Count; e++)
+            {
+                if (TryGetDestinations(effects[e].Changes, out tempDestinations))
+                {
+                    allDestinations.Union(tempDestinations);
+                }
+            }
+
+            if (allDestinations.Count < 1) { return false; }
+            destinations = allDestinations;
+            return true;
         }
 
-        public void RemoveFromTotalChange (BaseChange change, Enumeration.ChangeDestination destination)
+        public bool TryGetDestinations (Effect effect, out List<Enumeration.ChangeDestination> destinations)
         {
+            return TryGetDestinations(effect.Changes, out destinations);
+        }
 
+        public bool TryGetDestinations (List<BaseChange> changes, out List<Enumeration.ChangeDestination> destinations)
+        {
+            destinations = null;
+            List<Enumeration.ChangeDestination> allDestinations = new List<Enumeration.ChangeDestination>();
+            List<Enumeration.ChangeDestination> tempDestinations;
+
+            for (int c = 0; c < changes.Count; c++)
+            {
+                if (TryGetDestinations(changes[c], out tempDestinations))
+                {
+                    allDestinations.Union(tempDestinations);
+                    tempDestinations = null;
+                }
+            }
+
+            if (allDestinations.Count < 1) { return false; }
+            destinations = allDestinations;
+            return true;
+        }
+
+        public bool TryGetDestinations (BaseChange change, out List<Enumeration.ChangeDestination> destinations)
+        {
+            return changeTypeToDestinations.TryGetValue(change.ChangeType, out destinations);
         }
 
     }

@@ -53,7 +53,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             {
                 changes.Add(change);
                 index = changes.Count;
-                effectHandler.AddToTotalChange(change);
+                effectHandler.AddToTotalChanges(change);
             }
             return index;
         }
@@ -67,7 +67,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
                 {
                     if (changes[i].ChangeType == changeType)
                     {
-                        effectHandler.RemoveFromTotalChange(changes[i]);
+                        effectHandler.RemoveFromTotalChanges(changes[i]);
                         index = i;
                         changes.RemoveAt(i);
                         break;

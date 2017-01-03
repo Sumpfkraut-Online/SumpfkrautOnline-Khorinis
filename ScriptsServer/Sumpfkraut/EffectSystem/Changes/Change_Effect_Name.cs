@@ -25,7 +25,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 
 
 
-        public Change_Effect_Name (Effect effect, ChangeType changeType, object[] parameters) 
+        protected Change_Effect_Name (Effect effect, ChangeType changeType, object[] parameters) 
             : base(effect, changeType, parameters)
         {
             SetObjName("Change_Effect_Name (default)");
@@ -33,10 +33,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 
 
 
+        // use this method to create the objects
         new public static Change_Effect_Name Create (Effect effect, ChangeType changeType, object[] parameters)
         {
             if (!CreateCheckBasics(effect, changeType, parameters, parameterTypes)) { return null; }
-
             return new Change_Effect_Name(effect, changeType, parameters);
         }
 

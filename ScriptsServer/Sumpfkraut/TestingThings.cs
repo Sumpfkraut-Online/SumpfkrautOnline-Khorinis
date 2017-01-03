@@ -254,8 +254,9 @@ namespace GUC.Scripts.Sumpfkraut
 
 
             Change_Effect_Name o = Change_Effect_Name.Create(null, EffectSystem.Enumeration.ChangeType.Undefined, new object[0]);
+            Logger.Log("===> " + (o == null));
             Logger.Log("===> " + (o));
-            
+
 
 
             Logger.Log("===> !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
