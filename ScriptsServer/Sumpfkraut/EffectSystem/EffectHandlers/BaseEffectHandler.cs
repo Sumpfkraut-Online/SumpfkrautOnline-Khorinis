@@ -75,7 +75,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
 
-        public void AddEffects (List<Effect> effects)
+        public void AddEffects (List<Effect> effects, bool allowDuplicate)
         {
             List<Enumeration.ChangeDestination> destinations;
 
@@ -83,7 +83,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             {
                 for (int e = 0; e < effects.Count; e++)
                 {
-                    AddEffect(effects[e], false);
+                    AddEffect(effects[e], allowDuplicate, false);
                 }
                 
                 if (TryGetDestinations(effects, out destinations))
@@ -95,15 +95,18 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         
         // adds effect to the internal management and recalculate the TotalChanges if recalculateTotals is true
         // setting recalculateTotals to false can be used to postpone the costly recalculation until all changes are added
-        public int AddEffect (Effect effect, bool recalculateTotals = true)
+        public int AddEffect (Effect effect, bool allowDuplicate, bool recalculateTotals = true)
         {
             int index = -1;
             List<Enumeration.ChangeDestination> destinations;
 
             lock (effectLock)
             {
+                if ((!allowDuplicate) && (effects.Contains(effect))) { return -1; }
+                
                 effects.Add(effect);
                 index = effects.Count;
+                AddToTotalChanges(effect.Changes);
 
                 if (!recalculateTotals) { return index; }
 
@@ -137,7 +140,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             }
         }
 
-        public int RemoveEffect (string effectName)
+        public int RemoveEffect (string effectName, bool recalculateTotals = true)
         {
             int index = -1;
             lock (effectLock)
@@ -147,7 +150,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                     if (effects[i].EffectName == effectName)
                     {
                         index = i;
-                        ReverseEffect(effects[index]);
+                        RemoveFromTotalChanges(effects[index].Changes);
                         effects[index].Dispose();
                         effects.RemoveAt(index);
                     }
@@ -156,7 +159,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             return index;
         }
 
-        public int RemoveEffect (Effect effect)
+        public int RemoveEffect (Effect effect, bool recalculateTotals = true)
         {
             int index = -1;
             lock (effectLock)
@@ -164,13 +167,15 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                 index = effects.IndexOf(effect);
                 if (index > -1)
                 {
-                    ReverseEffect(effects[index]);
+                    RemoveFromTotalChanges(effects[index].Changes);
                     effects[index].Dispose();
                     effects.RemoveAt(index);
                 }
             }
             return index;
         }
+
+
 
         //protected void ApplyEffects (List<Effect> effects)
         //{
@@ -207,18 +212,46 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
         // perhaps make this protected and adding a slower, less direct method for Effects to use ???
+        public void AddToTotalChanges (List<BaseChange> changes)
+        {
+            lock (effectLock)
+            {
+                for (int c = 0; c < changes.Count; c++)
+                {
+                    AddToTotalChanges(changes[c]);
+                }
+            }
+        }
+            
+        // perhaps make this protected and adding a slower, less direct method for Effects to use ???
         public void AddToTotalChanges (BaseChange change)
         {
             List<Enumeration.ChangeDestination> destinations;
-            if (!changeTypeToDestinations.TryGetValue(change.ChangeType, out destinations)) { return; }
 
-            for (int d = 0; d < destinations.Count; d++)
+            lock (effectLock)
             {
-                try
+                if (!changeTypeToDestinations.TryGetValue(change.ChangeType, out destinations)) { return; }
+
+                for (int d = 0; d < destinations.Count; d++)
                 {
-                    destinationToTotal[destinations[d]].AddChange(change);
+                    try
+                    {
+                        destinationToTotal[destinations[d]].AddChange(change);
+                    }
+                    catch (Exception ex) { Print(ex); }
                 }
-                catch (Exception ex) { Print(ex); }
+            }
+        }
+
+        // perhaps make this protected and adding a slower, less direct method for Effects to use ???
+        public void RemoveFromTotalChanges (List<BaseChange> changes)
+        {
+            lock (effectLock)
+            {
+                for (int c = 0; c < changes.Count; c++)
+                {
+                    RemoveFromTotalChanges(changes[c]);
+                }
             }
         }
 
@@ -226,15 +259,19 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         public void RemoveFromTotalChanges (BaseChange change)
         {
             List<Enumeration.ChangeDestination> destinations;
-            if (!changeTypeToDestinations.TryGetValue(change.ChangeType, out destinations)) { return; }
 
-            for (int d = 0; d < destinations.Count; d++)
+            lock (effectLock)
             {
-                try
+                if (!changeTypeToDestinations.TryGetValue(change.ChangeType, out destinations)) { return; }
+
+                for (int d = 0; d < destinations.Count; d++)
                 {
-                    destinationToTotal[destinations[d]].RemoveChange(change);
+                    try
+                    {
+                        destinationToTotal[destinations[d]].RemoveChange(change);
+                    }
+                    catch (Exception ex) { Print(ex); }
                 }
-                catch (Exception ex) { Print(ex); }
             }
         }
 
