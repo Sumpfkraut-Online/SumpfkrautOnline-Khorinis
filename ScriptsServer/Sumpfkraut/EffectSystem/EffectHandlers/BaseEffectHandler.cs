@@ -20,11 +20,11 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             new Dictionary<ChangeType, List<ChangeDestination>>() { };
 
         public delegate void CalculateTotalChange (BaseEffectHandler effectHandler);
-        public static Dictionary<ChangeDestination, CalculateTotalChange> destToCalcTotal =
+        protected static Dictionary<ChangeDestination, CalculateTotalChange> destToCalcTotal =
             new Dictionary<ChangeDestination, CalculateTotalChange>() { };
 
         public delegate void ApplyTotalChange (BaseEffectHandler effectHandler);
-        public static Dictionary<ChangeDestination, ApplyTotalChange> destToApplyTotal =
+        protected static Dictionary<ChangeDestination, ApplyTotalChange> destToApplyTotal =
             new Dictionary<ChangeDestination, ApplyTotalChange>() { };
 
 
@@ -37,14 +37,13 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         public void SetLinkedObjectType (Type linkedObjectType) { this.linkedObjectType = linkedObjectType; }
 
         protected List<Effect> effects;
-        protected Dictionary<string, List<BaseChange>> eventNameToChange;
         protected object effectLock;
 
         protected Dictionary<ChangeDestination, TotalChange> destToTotalChange;
         public Dictionary<ChangeDestination, TotalChange> DestToTotalChange { get { return destToTotalChange; } }
 
-        protected Dictionary<ChangeDestination, List<Effect>> destinationToEffects;
-        public Dictionary<ChangeDestination, List<Effect>> DestinationToEffects{ get { return destinationToEffects; } }
+        protected Dictionary<ChangeDestination, List<Effect>> destToEffects;
+        public Dictionary<ChangeDestination, List<Effect>> DestToEffects{ get { return destToEffects; } }
 
 
 
@@ -64,10 +63,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             this.linkedObject = linkedObject;
             this.linkedObjectType = linkedObjectType ?? linkedObject.GetType();
 
-            eventNameToChange = new Dictionary<string, List<BaseChange>>();
             this.effects = effects ?? new List<Effect>();
             this.destToTotalChange = new Dictionary<ChangeDestination, TotalChange>();
-            this.destinationToEffects = new Dictionary<ChangeDestination, List<Effect>>();
+            this.destToEffects = new Dictionary<ChangeDestination, List<Effect>>();
 
             // initial sorting
         }
