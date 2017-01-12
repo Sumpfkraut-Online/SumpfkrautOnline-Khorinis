@@ -240,19 +240,11 @@ namespace GUC.Models
 
         public bool ContainsAni(int id)
         {
-            if (id < 0 || id >= MaxAnimations)
-            {
-                throw new ArgumentOutOfRangeException("ID is out of range! 0.." + MaxAnimations);
-            }
             return aniIDs.ContainsID(id);
         }
 
         public bool TryGetAniJob(int id, out AniJob job)
         {
-            if (id < 0 || id >= MaxAnimations)
-            {
-                throw new ArgumentOutOfRangeException("ID is out of range! 0.." + MaxAnimations);
-            }
             return aniIDs.TryGet(id, out job);
         }
 
@@ -347,19 +339,11 @@ namespace GUC.Models
 
         public bool ContainsOverlay(int id)
         {
-            if (id < 0 || id >= MaxOverlays)
-            {
-                throw new ArgumentOutOfRangeException("ID is out of range! 0.." + MaxOverlays);
-            }
             return aniIDs.ContainsID(id);
         }
 
         public bool TryGetOverlay(int id, out Overlay overlay)
         {
-            if (id < 0 || id >= MaxOverlays)
-            {
-                throw new ArgumentOutOfRangeException("ID is out of range! 0.." + MaxOverlays);
-            }
             return ovIDs.TryGet(id, out overlay);
         }
 

@@ -161,6 +161,7 @@ namespace GUC.Scripts
             {
                 m = new ModelDef("humans", "humans.mds");
             }
+
             m.Radius = 80;
             m.Height = 180;
             m.Create();

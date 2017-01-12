@@ -233,7 +233,7 @@ namespace GUC.Models
 
         #endregion
 
-        internal void UpdateAnimations(long now)
+        partial void pOnTick(long now)
         {
             if (!(this.vob is NPC))
                 return;
@@ -263,13 +263,9 @@ namespace GUC.Models
                 float startFrame = aa.Ani.StartFrame;
                 float endFrame = aa.Ani.EndFrame;
 
-                float percent = aa.GetPercent();
-
-                if(!gAni.IsReversed)
-                    gActiveAni.SetActFrame(startFrame + (endFrame - startFrame) * percent);
-                else
-                    gActiveAni.SetActFrame(startFrame + (endFrame - startFrame) * (1 - percent));
-
+                float percent = gAni.IsReversed ? (1 - aa.GetProgress()) : aa.GetProgress();
+                
+                gActiveAni.SetActFrame(startFrame + (endFrame - startFrame) * percent);
             }
         }
     }

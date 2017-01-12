@@ -395,6 +395,14 @@ namespace GUC.WorldObjects
         }
 
         #endregion
+
+        partial void pOnTick(long now);
+        internal override void OnTick(long now)
+        {
+            base.OnTick(now);
+            pOnTick(now);
+            this.Model.OnTick(now); // update animations
+        }
     }
     
 }
