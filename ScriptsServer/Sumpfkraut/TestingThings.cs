@@ -12,6 +12,8 @@ using GUC.Scripts.Sumpfkraut.EffectSystem;
 using System.Diagnostics;
 using System.Reflection;
 using GUC.Scripts.Sumpfkraut.EffectSystem.Changes;
+using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
+using GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration;
 
 namespace GUC.Scripts.Sumpfkraut
 {
@@ -265,7 +267,23 @@ namespace GUC.Scripts.Sumpfkraut
             //Logger.Log("===> " + (o));
 
 
+            //foreach (KeyValuePair<ChangeType, List<ChangeDestination>> keyVal 
+            //    in BaseEffectHandler.changeTypeToDestinations)
+            //{
+            //    Logger.Log("~~> " + keyVal.Key + ": " + keyVal.Value);
+            //}
 
+            //foreach (KeyValuePair<ChangeDestination, BaseEffectHandler.CalculateTotalChange> keyVal 
+            //    in BaseEffectHandler.destToCalcTotal)
+            //{
+            //    Logger.Log("~~> " + keyVal.Key + ": " + keyVal.Value);
+            //}
+
+            //foreach (KeyValuePair<ChangeDestination, BaseEffectHandler.ApplyTotalChange> keyVal 
+            //    in BaseEffectHandler.destToApplyTotal)
+            //{
+            //    Logger.Log("~~> " + keyVal.Key + ": " + keyVal.Value);
+            //}
 
 
             Logger.Log("===> !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");

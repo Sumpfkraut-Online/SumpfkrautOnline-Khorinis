@@ -39,10 +39,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         protected List<Effect> effects;
         protected object effectLock;
 
-        protected Dictionary<ChangeDestination, TotalChange> destToTotalChange;
+        public Dictionary<ChangeDestination, TotalChange> destToTotalChange;
         public Dictionary<ChangeDestination, TotalChange> DestToTotalChange { get { return destToTotalChange; } }
 
-        protected Dictionary<ChangeDestination, List<Effect>> destToEffects;
+        public Dictionary<ChangeDestination, List<Effect>> destToEffects;
         public Dictionary<ChangeDestination, List<Effect>> DestToEffects{ get { return destToEffects; } }
 
 
@@ -82,7 +82,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
         protected static void RegisterDestination (Type destType, bool printNotice)
         {
-            List<ChangeType> supportedCT;
+            ChangeType[] supportedCT;
             ChangeDestination cd;
             List<ChangeDestination> destinations;
             CalculateTotalChange calcTotalChange;
@@ -90,7 +90,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
             try
             {
-                supportedCT = (List<ChangeType>) destType.GetField("supportedChangeTypes").GetValue(null);
+                supportedCT = (ChangeType[]) destType.GetField("supportedChangeTypes").GetValue(null);
                 cd = (ChangeDestination) destType.GetField("changeDestination").GetValue(null);
 
                 calcTotalChange = (CalculateTotalChange) Delegate.CreateDelegate(typeof(CalculateTotalChange), 
@@ -102,7 +102,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                 destToCalcTotal.Add(cd, calcTotalChange);
                 destToApplyTotal.Add(cd, applyTotalChange);
 
-                for (int i = 0; i < supportedCT.Count; i++)
+                for (int i = 0; i < supportedCT.Length; i++)
                 {
                     if ((changeTypeToDestinations.TryGetValue(supportedCT[i], out destinations))
                             && (!destinations.Contains(cd)))
@@ -137,13 +137,14 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                 if (TryGetDestinations(effects, out destinations))
                 {
                     RecalculateTotals(destinations);
+                    ReapplyTotals(destinations);
                 }
             }
         }
         
         // adds effect to the internal management and recalculate the TotalChanges if recalculateTotals is true
         // setting recalculateTotals to false can be used to postpone the costly recalculation until all changes are added
-        public int AddEffect (Effect effect, bool allowDuplicate, bool recalculateTotals = true)
+        public int AddEffect (Effect effect, bool allowDuplicate, bool recalcAndApplyTotals = true)
         {
             int index = -1;
             List<ChangeDestination> destinations;
@@ -156,7 +157,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                 index = effects.Count;
                 AddToTotalChanges(effect.Changes);
 
-                if (!recalculateTotals) { return index; }
+                if (!recalcAndApplyTotals) { return index; }
 
                 if (!TryGetDestinations(effect, out destinations))
                 {
@@ -165,6 +166,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                 }
 
                 RecalculateTotals(destinations);
+                ReapplyTotals(destinations);
             }
 
             return index;
@@ -184,13 +186,17 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                 if (TryGetDestinations(effects, out destinations))
                 {
                     RecalculateTotals(destinations);
+                    ReapplyTotals(destinations);
                 }
             }
         }
 
-        public int RemoveEffect (string effectName, bool recalculateTotals = true)
+        public int RemoveEffect (string effectName, bool recalcAndApplyTotals = true)
         {
             int index = -1;
+            Effect effect = null;
+            List<ChangeDestination> destinations;
+
             lock (effectLock)
             {
                 for (int i = 0; i < effects.Count; i++)
@@ -198,27 +204,66 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                     if (effects[i].EffectName == effectName)
                     {
                         index = i;
-                        RemoveFromTotalChanges(effects[index].Changes);
-                        effects[index].Dispose();
-                        effects.RemoveAt(index);
+                        effect = effects[index];
+                        break;
                     }
                 }
+
+                // if effect wasn't there in the first place --> do nothing
+                if (index < 0) { return index; }
+
+                if (!recalcAndApplyTotals)
+                {
+                    RemoveFromTotalChanges(effects[index].Changes);
+                    effects[index].Dispose();
+                    effects.RemoveAt(index);
+                    return index;
+                }
+
+                if (!TryGetDestinations(effect, out destinations))
+                {
+                    MakeLogWarning(string.Format("Couldn't find ChangeDestinations for Effect: {1}", effect));
+                    return index;
+                }
+
+                RecalculateTotals(destinations);
+                ReapplyTotals(destinations);
+                RemoveFromTotalChanges(effects[index].Changes);
+                effects[index].Dispose();
+                effects.RemoveAt(index);
             }
             return index;
         }
 
-        public int RemoveEffect (Effect effect, bool recalculateTotals = true)
+        public int RemoveEffect (Effect effect, bool recalcAndApplyTotals = true)
         {
             int index = -1;
+            List<ChangeDestination> destinations;
+
             lock (effectLock)
             {
                 index = effects.IndexOf(effect);
-                if (index > -1)
+
+                if (index < 0) { return index; }
+
+                if (!recalcAndApplyTotals)
                 {
                     RemoveFromTotalChanges(effects[index].Changes);
                     effects[index].Dispose();
                     effects.RemoveAt(index);
                 }
+
+                if (!TryGetDestinations(effect, out destinations))
+                {
+                    MakeLogWarning(string.Format("Couldn't find ChangeDestinations for Effect: {1}", effect));
+                    return index;
+                }
+
+                RecalculateTotals(destinations);
+                ReapplyTotals(destinations);
+                RemoveFromTotalChanges(effects[index].Changes);
+                effects[index].Dispose();
+                effects.RemoveAt(index);
             }
             return index;
         }
@@ -395,6 +440,29 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                 if (destToCalcTotal.TryGetValue(destination, out calcTotal))
                 {
                     calcTotal(this);
+                }
+            }
+        }
+
+        public void ReapplyTotals (List<ChangeDestination> destinations)
+        {
+            lock (effectLock)
+            {
+                for (int d = 0; d < destinations.Count; d++)
+                {
+                    ReapplyTotal(destinations[d]);
+                }
+            }
+        }
+
+        public void ReapplyTotal (ChangeDestination destination)
+        {
+            ApplyTotalChange applyTotal;
+            lock (effectLock)
+            {
+                if (destToApplyTotal.TryGetValue(destination, out applyTotal))
+                {
+                    applyTotal(this);
                 }
             }
         }

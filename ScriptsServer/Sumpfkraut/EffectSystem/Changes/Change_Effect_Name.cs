@@ -42,40 +42,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
             return new Change_Effect_Name(effect, changeType, parameters);
         }
 
-
-
-        // became useless because there is not only 1 effect but more and they will be assigned names seperately
-        public override void CalculateTotalChange (BaseEffectHandler effectHandler)
-        {
-            // grab the last effect name and use it
-            try
-            {
-                string finalName = "";
-                TotalChange totalChange;
-
-                if (!effectHandler.DestToTotalChange.TryGetValue(
-                    ChangeDestination.Effect_Name, out totalChange))
-                {
-                    return;
-                }
-                if (totalChange == null) { return; }
-
-                BaseChange lastChange = totalChange.Components.Last();
-                if (lastChange.Parameters.Length > 0)
-                {
-                    finalName = totalChange.Components.Last().Parameters[0].ToString();
-                }
-
-                totalChange.Total.SetParameters(new string[] { finalName });
-            }
-            catch (Exception ex)
-            {
-                MakeLogErrorStatic(typeof(Change_Effect_Name), ex);
-            }
-        }
-
-        
-
     }
 
 }
