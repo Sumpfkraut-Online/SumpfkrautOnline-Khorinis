@@ -23,6 +23,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
             typeof(string)
         };
 
+        new public static List<ChangeDestination> influencedDestinations = new List<ChangeDestination>();
+
 
 
         protected Change_Effect_Name (Effect effect, ChangeType changeType, object[] parameters) 
@@ -51,7 +53,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
                 string finalName = "";
                 TotalChange totalChange;
 
-                if (!effectHandler.DestinationToTotal.TryGetValue(
+                if (!effectHandler.DestToTotalChange.TryGetValue(
                     ChangeDestination.Effect_Name, out totalChange))
                 {
                     return;

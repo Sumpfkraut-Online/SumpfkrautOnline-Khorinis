@@ -1,4 +1,5 @@
 ﻿using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
+using GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration;
 using GUC.Utilities;
 using System;
 using System.Collections.Generic;
@@ -13,8 +14,11 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 
         new public static readonly string _staticName = "BaseChange (static)";
 
-        public static readonly Enumeration.ChangeType[] supportedChangeTypes = new Enumeration.ChangeType[] { };
+        public static readonly ChangeType[] supportedChangeTypes = new ChangeType[] { };
         public static readonly Type[] parameterTypes = new Type[] { };
+
+        // will be filled up automatically by EffectHandlers due to information from initialized Destinations
+        public static List<ChangeDestination> influencedDestinations = new List<ChangeDestination>();
 
 
 
@@ -23,8 +27,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
         public Effect Effect { get { return effect; } }
         public void SetEffect (Effect effect) { this.effect = effect; }
 
-        protected Enumeration.ChangeType changeType;
-        public Enumeration.ChangeType ChangeType { get { return this.changeType; } }
+        protected ChangeType changeType;
+        public ChangeType ChangeType { get { return this.changeType; } }
 
         protected object[] parameters;
         public object[] Parameters { get { return this.parameters; } }
@@ -52,9 +56,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 
 
 
-        protected BaseChange (Effect effect, Enumeration.ChangeType changeType, object[] parameters)
+        protected BaseChange (Effect effect, ChangeType changeType, object[] parameters)
         {
-            //SetObjName("BaseChange (default)");
             this.effect = effect;
             this.changeType = changeType;
             this.parameters = parameters;
@@ -62,16 +65,16 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 
 
 
-        public static BaseChange Create (Effect effect, Enumeration.ChangeType changeType, object[] parameters)
+        public static BaseChange Create (Effect effect, ChangeType changeType, object[] parameters)
         {
             return null;
         }
 
-        public static bool CreateCheckBasics (Effect effect, Enumeration.ChangeType changeType, 
+        public static bool CreateCheckBasics (Effect effect, ChangeType changeType, 
             object[] parameters, Type[] types)
         {
             if (effect == null) { return false; }
-            if (changeType == Enumeration.ChangeType.Undefined) { return false; }
+            if (changeType == ChangeType.Undefined) { return false; }
             if (parameters == null) { return false; }
             if (parameters.Length < types.Length) { return false; }
             for (int t = 0; t < types.Length; t++)
@@ -97,25 +100,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
             sb.Append("]]");
             return sb.ToString();
         }
-
-        //public static bool operator ==(BaseChange c1, BaseChange c2) 
-        //{
-        //    if ((c1.changeType == c2.changeType) 
-        //        && (c1.parameters.Length == c2.parameters.Length))
-        //    {
-        //        for (int i = 0; i < c1.parameters.Length; i++)
-        //        {
-        //            if (!c2.parameters.Contains(c1.parameters[i])) { return false; }
-        //        }
-        //        return true;
-        //    }
-        //    else { return false; }
-        //}
-
-        //public static bool operator !=(BaseChange c1, BaseChange c2)
-        //{
-        //    return !(c1 == c2);
-        //}
 
     }
 

@@ -45,10 +45,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
 
-        protected override void ApplyEffect (Effect effect, bool reverse = false)
-        {
-            throw new NotImplementedException();
-        }
+        //protected override void ApplyEffect (Effect effect, bool reverse = false)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
     }
 

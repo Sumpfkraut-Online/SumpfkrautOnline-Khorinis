@@ -1,4 +1,5 @@
 ﻿using GUC.Scripts.Sumpfkraut.EffectSystem.Changes;
+using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 using GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 
         new public static readonly string _staticName = "Dest_Effect (static)";
 
+        new public static readonly ChangeDestination changeDestination = ChangeDestination.Effect_Name;
+
         new public static readonly ChangeType[] supportedChangeTypes = new ChangeType[]
         {
             ChangeType.Effect_Name_Set
@@ -20,14 +23,29 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 
 
 
-        public static void ApplyEffectNames (EffectHandlers.BaseEffectHandler effectHandler)
+        // make sure, the destination makes itself known to its related changes
+        static Dest_Effect ()
+        {
+            Change_Effect_Name.influencedDestinations.Add(ChangeDestination.Effect_Name);
+        }
+
+
+
+        new public static void CalculateTotalChange (BaseEffectHandler effectHandler)
+        {
+            // because multiple effects can be registered on one effectHandler,
+            // there is no need to actually calculate a TotalChange
+            // (see ApplyTotalChange for the individual treatment of each Change in TotalChange.components)
+        }
+
+        new public static void ApplyTotalChange (BaseEffectHandler effectHandler)
         {
             // assuming that the EffectName is only set --> set it in the respective effect of each change
             try
             {
                 TotalChange totalChange;
 
-                if (!effectHandler.DestinationToTotal.TryGetValue(
+                if (!effectHandler.DestToTotalChange.TryGetValue(
                     ChangeDestination.Effect_Name, out totalChange))
                 {
                     return;
@@ -42,7 +60,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
             }
             catch (Exception ex)
             {
-                MakeLogErrorStatic(typeof(Dest_Effect), ex);
+                MakeLogErrorStatic(typeof(Dest_Effect), "Error while applying TotalChange: " + ex);
             }
         }
 

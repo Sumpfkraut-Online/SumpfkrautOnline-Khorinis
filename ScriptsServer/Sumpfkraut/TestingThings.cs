@@ -253,9 +253,16 @@ namespace GUC.Scripts.Sumpfkraut
             //SomeClass.ParameterTypeCheck(new object[] { "s", 'c', 1, false });
 
 
-            Change_Effect_Name o = Change_Effect_Name.Create(null, EffectSystem.Enumeration.ChangeType.Undefined, new object[0]);
-            Logger.Log("===> " + (o == null));
-            Logger.Log("===> " + (o));
+            //FieldInfo info = typeof(SomeClass).GetField("someList");
+            //List<int> val = (List<int>) info.GetValue(null);
+            //foreach (int i in val) { Logger.Log(i); }
+
+
+
+
+            //Change_Effect_Name o = Change_Effect_Name.Create(null, EffectSystem.Enumeration.ChangeType.Undefined, new object[0]);
+            //Logger.Log("===> " + (o == null));
+            //Logger.Log("===> " + (o));
 
 
 
@@ -274,7 +281,15 @@ namespace GUC.Scripts.Sumpfkraut
 
     public class SomeClass
     {
+
+        public static readonly List<int> someList = new List<int> { 9, 1, 8, 2, 7, 3, 6, 4, 5 };
+
         public object[] parameters;
+
+        static SomeClass ()
+        {
+            SomeMethod();
+        }
 
         public SomeClass (object[] parameters)
         {
@@ -295,6 +310,12 @@ namespace GUC.Scripts.Sumpfkraut
         {
             foreach (object o in parameters) { Logger.Log("===> " + o.GetType()); }
         }
+
+        public static void SomeMethod ()
+        {
+            Logger.Log("OINK");
+        }
+
     }
 
     public class AnotherClass : SomeClass
