@@ -86,9 +86,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 
 
 
-
-        public abstract void CalculateTotalChange (BaseEffectHandler effectHandler);
-
         public override string ToString ()
         {
             StringBuilder sb = new StringBuilder();
