@@ -17,6 +17,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration
         Vob_Name_Set,
 
         // event driven
+        World_Clock_Time_Set,
+        World_Clock_Rate_Set,
+        World_Clock_IsRunning_Set,
 
         // crafting
     }

@@ -14,7 +14,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 
         new public static readonly string _staticName = "BaseChange (static)";
 
-        public static readonly ChangeType[] supportedChangeTypes = new ChangeType[] { };
+        //public static readonly ChangeType[] supportedChangeTypes = new ChangeType[] { };
         public static readonly Type[] parameterTypes = new Type[] { };
 
         // will be filled up automatically by EffectHandlers due to information from initialized Destinations

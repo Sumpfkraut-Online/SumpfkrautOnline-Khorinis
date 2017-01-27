@@ -13,10 +13,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 
         new public static readonly string _staticName = "Change_Effect_Name (static)";
 
-        new public static readonly ChangeType[] supportedChangeTypes = new ChangeType[]
-        {
-            ChangeType.Effect_Name_Set
-        };
+        //new public static readonly ChangeType[] supportedChangeTypes = new ChangeType[]
+        //{
+        //    ChangeType.Effect_Name_Set
+        //};
 
         new public static readonly Type[] parameterTypes = new Type[] 
         {
