@@ -1,0 +1,328 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{477C9B57-AD36-4CAC-998F-800C5A693C35}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GUC.Scripts</RootNamespace>
+    <AssemblyName>ServerScripts</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\GothicII\Server\Scripts\</OutputPath>
+    <OutputPath>..\bin\Server\Scripts\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;D_SERVER</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\GothicII\Server\Scripts\</OutputPath>
+    <OutputPath>..\bin\Server\Scripts\</OutputPath>
+    <DefineConstants>TRACE;D_SERVER</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Mono.Data.Sqlite, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\libs\Mono.Data.Sqlite.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\ScriptsShared\GUCScripts.cs">
+      <Link>GUCScripts.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Left4Gothic\CharacterInfo.cs">
+      <Link>Left4Gothic\CharacterInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Left4Gothic\L4Client.cs">
+      <Link>Left4Gothic\L4Client.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Left4Gothic\ScriptMessageIDs.cs">
+      <Link>Left4Gothic\ScriptMessageIDs.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\AI\GuideCommands\CommandType.cs">
+      <Link>Sumpfkraut\AI\GuideCommands\CommandType.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\AI\GuideCommands\GoToPosCommand.cs">
+      <Link>Sumpfkraut\AI\GuideCommands\GoToPosCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\AI\GuideCommands\GoToVobCommand.cs">
+      <Link>Sumpfkraut\AI\GuideCommands\GoToVobCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Networking\ScriptClient.cs">
+      <Link>Sumpfkraut\Networking\ScriptClient.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Networking\ScriptMessageIDs.cs">
+      <Link>Sumpfkraut\Networking\ScriptMessageIDs.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\ScriptObject.cs">
+      <Link>Sumpfkraut\ScriptObject.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\DateTimeUtil.cs">
+      <Link>Sumpfkraut\Utilities\DateTimeUtil.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\StringUtil.cs">
+      <Link>Sumpfkraut\Utilities\StringUtil.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\Threading\AbstractRunnable.cs">
+      <Link>Sumpfkraut\Utilities\Threading\AbstractRunnable.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\Threading\IRunnable.cs">
+      <Link>Sumpfkraut\Utilities\Threading\IRunnable.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\Threading\Runnable.cs">
+      <Link>Sumpfkraut\Utilities\Threading\Runnable.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\Threading\TestRunnable.cs">
+      <Link>Sumpfkraut\Utilities\Threading\TestRunnable.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Visuals\HumanVisuals.cs">
+      <Link>Sumpfkraut\Visuals\HumanVisuals.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Visuals\ModelDef.cs">
+      <Link>Sumpfkraut\Visuals\ModelDef.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Visuals\ModelInst.cs">
+      <Link>Sumpfkraut\Visuals\ModelInst.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Visuals\ScriptAni.cs">
+      <Link>Sumpfkraut\Visuals\ScriptAni.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Visuals\ScriptAniJob.cs">
+      <Link>Sumpfkraut\Visuals\ScriptAniJob.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Visuals\ScriptOverlay.cs">
+      <Link>Sumpfkraut\Visuals\ScriptOverlay.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Definitions\BaseVobDef.cs">
+      <Link>Sumpfkraut\VobSystem\Definitions\BaseVobDef.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Definitions\ItemDef.cs">
+      <Link>Sumpfkraut\VobSystem\Definitions\ItemDef.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Definitions\NPCDef.cs">
+      <Link>Sumpfkraut\VobSystem\Definitions\NPCDef.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Definitions\ProjDef.cs">
+      <Link>Sumpfkraut\VobSystem\Definitions\ProjDef.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Definitions\VobDef.cs">
+      <Link>Sumpfkraut\VobSystem\Definitions\VobDef.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\BaseVobInst.cs">
+      <Link>Sumpfkraut\VobSystem\Instances\BaseVobInst.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\ItemContainers\ScriptInventory.cs">
+      <Link>Sumpfkraut\VobSystem\Instances\ItemContainers\ScriptInventory.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\ItemInst.cs">
+      <Link>Sumpfkraut\VobSystem\Instances\ItemInst.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\NPCInst.cs">
+      <Link>Sumpfkraut\VobSystem\Instances\NPCInst.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\ProjInst.cs">
+      <Link>Sumpfkraut\VobSystem\Instances\ProjInst.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\VobInst.cs">
+      <Link>Sumpfkraut\VobSystem\Instances\VobInst.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\VobDefLoader.cs">
+      <Link>Sumpfkraut\VobSystem\VobDefLoader.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\WorldSystem\ScriptBarrierCtrl.cs">
+      <Link>Sumpfkraut\WorldSystem\ScriptBarrierCtrl.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\WorldSystem\ScriptClock.cs">
+      <Link>Sumpfkraut\WorldSystem\ScriptClock.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\WorldSystem\ScriptWeatherCtrl.cs">
+      <Link>Sumpfkraut\WorldSystem\ScriptWeatherCtrl.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\WorldSystem\WorldDef.cs">
+      <Link>Sumpfkraut\WorldSystem\WorldDef.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\WorldSystem\WorldInst.cs">
+      <Link>Sumpfkraut\WorldSystem\WorldInst.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\WorldSystem\WorldLoader.cs">
+      <Link>Sumpfkraut\WorldSystem\WorldLoader.cs</Link>
+    </Compile>
+    <Compile Include="Left4Gothic\L4Client.Server.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sqlite.cs" />
+    <Compile Include="GUCScripts.Server.cs" />
+    <Compile Include="Sumpfkraut\AI\GuideCommands\GuideCommandInfo.cs" />
+    <Compile Include="Sumpfkraut\AI\SimpleAI\AIActions\AttackAIAction.cs" />
+    <Compile Include="Sumpfkraut\AI\SimpleAI\AIActions\BaseAIAction.cs" />
+    <Compile Include="Sumpfkraut\AI\SimpleAI\AIActions\Enumeration.cs" />
+    <Compile Include="Sumpfkraut\AI\SimpleAI\AIActions\GoToAIAction.cs" />
+    <Compile Include="Sumpfkraut\AI\SimpleAI\AIAgent.cs" />
+    <Compile Include="Sumpfkraut\AI\SimpleAI\AIManager.cs" />
+    <Compile Include="Sumpfkraut\AI\SimpleAI\AIMemory.cs" />
+    <Compile Include="Sumpfkraut\AI\SimpleAI\AIObservations\BaseAIObservation.cs" />
+    <Compile Include="Sumpfkraut\AI\SimpleAI\AIObservations\EnemyAIObservation.cs" />
+    <Compile Include="Sumpfkraut\AI\SimpleAI\AIPersonalities\BaseAIPersonality.cs" />
+    <Compile Include="Sumpfkraut\AI\SimpleAI\AIPersonalities\SimpleAIPersonality.cs" />
+    <Compile Include="Sumpfkraut\AI\SimpleAI\AIRoutines\BaseAIRoutine.cs" />
+    <Compile Include="Sumpfkraut\AI\SimpleAI\AIRoutines\SimpleAIRoutine.cs" />
+    <Compile Include="Sumpfkraut\AI\SimpleAI\AITarget.cs" />
+    <Compile Include="Sumpfkraut\AI\TestingAI.cs" />
+    <Compile Include="Sumpfkraut\Alchemy\AccessPolicyServer.cs" />
+    <Compile Include="Sumpfkraut\Alchemy\Classes\Context.cs" />
+    <Compile Include="Sumpfkraut\Alchemy\Classes\Header.cs" />
+    <Compile Include="Sumpfkraut\Alchemy\Classes\Response.cs" />
+    <Compile Include="Sumpfkraut\Alchemy\Classes\UserContext.cs" />
+    <Compile Include="Sumpfkraut\Alchemy\Handlers\Authentication.cs" />
+    <Compile Include="Sumpfkraut\Alchemy\Handlers\Handler.cs" />
+    <Compile Include="Sumpfkraut\Alchemy\Handlers\IAuthentication.cs" />
+    <Compile Include="Sumpfkraut\Alchemy\Handlers\WebSocket\DataFrame.cs" />
+    <Compile Include="Sumpfkraut\Alchemy\Handlers\WebSocket\hybi00\Authentication.cs" />
+    <Compile Include="Sumpfkraut\Alchemy\Handlers\WebSocket\hybi00\DataFrame.cs" />
+    <Compile Include="Sumpfkraut\Alchemy\Handlers\WebSocket\hybi00\Handler.cs" />
+    <Compile Include="Sumpfkraut\Alchemy\Handlers\WebSocket\hybi00\Handshakes.cs" />
+    <Compile Include="Sumpfkraut\Alchemy\Handlers\WebSocket\rfc6455\Authentication.cs" />
+    <Compile Include="Sumpfkraut\Alchemy\Handlers\WebSocket\rfc6455\DataFrame.cs" />
+    <Compile Include="Sumpfkraut\Alchemy\Handlers\WebSocket\rfc6455\FrameHeader.cs" />
+    <Compile Include="Sumpfkraut\Alchemy\Handlers\WebSocket\rfc6455\Handler.cs" />
+    <Compile Include="Sumpfkraut\Alchemy\Handlers\WebSocket\rfc6455\Handshakes.cs" />
+    <Compile Include="Sumpfkraut\Alchemy\Handlers\WebSocket\WebSocketHandler.cs" />
+    <Compile Include="Sumpfkraut\Alchemy\TCPServer.cs" />
+    <Compile Include="Sumpfkraut\Alchemy\WebSocketClient.cs" />
+    <Compile Include="Sumpfkraut\Alchemy\WebSocketServer.cs" />
+    <Compile Include="Sumpfkraut\CommandConsole\CommandConsole.cs" />
+    <Compile Include="Sumpfkraut\CommandConsole\InfoObjects\AbstractInfo.cs" />
+    <Compile Include="Sumpfkraut\CommandConsole\InfoObjects\NPCInfo.cs" />
+    <Compile Include="Sumpfkraut\CommandConsole\InfoObjects\PlayerInfo.cs" />
+    <Compile Include="Sumpfkraut\CommandConsole\InfoObjects\VobInfo.cs" />
+    <Compile Include="Sumpfkraut\CommandConsole\TestCommands.cs" />
+    <Compile Include="Sumpfkraut\Daedalus\AniParser.cs" />
+    <Compile Include="Sumpfkraut\Daedalus\ConstParser.cs" />
+    <Compile Include="Sumpfkraut\Daedalus\DDLClasses.cs" />
+    <Compile Include="Sumpfkraut\Daedalus\FuncParser.cs" />
+    <Compile Include="Sumpfkraut\Daedalus\InstanceParser.cs" />
+    <Compile Include="Sumpfkraut\Daedalus\Parser.cs" />
+    <Compile Include="Sumpfkraut\Daedalus\PrototypeParser.cs" />
+    <Compile Include="Sumpfkraut\Daedalus\DDLValueTypes.cs" />
+    <Compile Include="Sumpfkraut\Database\DBAgent.cs" />
+    <Compile Include="Sumpfkraut\Database\DBFileManager.cs" />
+    <Compile Include="Sumpfkraut\Database\DBQueryHandler.cs" />
+    <Compile Include="Sumpfkraut\Database\DBQuerying\AbstractDBQuery.cs" />
+    <Compile Include="Sumpfkraut\Database\DBQuerying\DBBackupQuery.cs" />
+    <Compile Include="Sumpfkraut\Database\DBQuerying\DBQuery.cs" />
+    <Compile Include="Sumpfkraut\Database\DBQuerying\IDBQuery.cs" />
+    <Compile Include="Sumpfkraut\Database\DBReader.cs" />
+    <Compile Include="Sumpfkraut\Database\DBSecurity.cs" />
+    <Compile Include="Sumpfkraut\Database\DBTables.cs" />
+    <Compile Include="Sumpfkraut\Database\Enumeration.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Changes\BaseChange.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Changes\Change.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Changes\Changes_Effect.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Changes\Change_Effect_Name.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Changes\Change_World_Time.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Destinations\BaseDestination.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Destinations\Dest_Effect_Name.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Destinations\Dest_World_TimeChange.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Effect.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\BaseEffectHandler.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\ItemEffectHandler.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\NPCEffectHandler.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\VobEffectHandler.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\WorldEffectHandler.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Enumeration\ChangeDestination.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Enumeration\ChangeType.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Changes\TotalChange.cs" />
+    <Compile Include="Sumpfkraut\Networking\ScriptClient.Server.cs" />
+    <Compile Include="Sumpfkraut\TestingThings.cs" />
+    <Compile Include="Sumpfkraut\Visuals\AniCatalogs\AniCatalog.cs" />
+    <Compile Include="Sumpfkraut\Visuals\AniCatalogs\NPCCatalog.cs" />
+    <Compile Include="Sumpfkraut\Visuals\ScriptAni.Server.cs" />
+    <Compile Include="Sumpfkraut\Visuals\ScriptAniJob.Server.cs" />
+    <Compile Include="Sumpfkraut\Visuals\ScriptOverlay.Server.cs" />
+    <Compile Include="Sumpfkraut\Visuals\ModelDef.Server.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\BaseVobDef.Server.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\ItemDef.Server.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\NPCDef.Server.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\ProjDef.Server.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\VobDef.Server.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\BaseVobInst.Server.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\ItemInst.Server.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\NPCInst.Server.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\ProjInst.Server.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\VobInst.Server.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\VobDefLoader.Server.cs" />
+    <Compile Include="Sumpfkraut\Web\WS\Enumeration.cs" />
+    <Compile Include="Sumpfkraut\Web\WS\Protocols\AbstractWSProtocol.cs" />
+    <Compile Include="Sumpfkraut\Web\WS\Protocols\Enumeration.cs" />
+    <Compile Include="Sumpfkraut\Web\WS\Protocols\WSChatProtocol.cs" />
+    <Compile Include="Sumpfkraut\Web\WS\WSResponse.cs" />
+    <Compile Include="Sumpfkraut\Web\WS\WSServer.cs" />
+    <Compile Include="Sumpfkraut\Web\WS\WSUser.cs" />
+    <Compile Include="Sumpfkraut\WorldSystem\ScriptWeatherCtrl.Server.cs" />
+    <Compile Include="Sumpfkraut\WorldSystem\WorldDef.Server.cs" />
+    <Compile Include="Sumpfkraut\WorldSystem\WorldInst.Server.cs" />
+    <Compile Include="Sumpfkraut\WorldSystem\WorldLoader.Server.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GUCServer\GUCServer.csproj">
+      <Project>{27FA7C52-3C80-4B72-8FBB-BCAC0328236E}</Project>
+      <Name>GUCServer</Name>
+      <Private>False</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Sumpfkraut\VobSystem\Definitions\Mobs\" />
+    <Folder Include="Sumpfkraut\VobSystem\Instances\Mobs\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Sumpfkraut\packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Sqlite\sqlite3.dll">
+      <Link>sqlite3.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Content Include="Sumpfkraut\Database\BACKUP_SO-K_SQLite.sql" />
+    <Content Include="Sumpfkraut\Database\SO-K_SQLite.sql" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
