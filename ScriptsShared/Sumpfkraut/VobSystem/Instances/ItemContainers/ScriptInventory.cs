@@ -15,6 +15,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances.ItemContainers
         public interface IContainer
         {
             ItemInventory BaseInventory { get; }
+            ScriptInventory Inventory { get; }
         }
 
         public delegate void RemoveItemHandler(ItemInst item);

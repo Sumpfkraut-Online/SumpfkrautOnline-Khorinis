@@ -18,9 +18,9 @@ namespace GUC.Network
 
         WorldLoadedMessage,
 
-        ScriptMessage,
-        ScriptCommandMessage,
-        ScriptCommandHeroMessage, // saves 2 whole bytes, yayy
+        ScriptMessage, // generic script message (menus etc)
+        ScriptCommandMessage, // command sent from any npc
+        ScriptCommandHeroMessage, // command sent from the hero
 
         GuidedVobMessage,
         GuidedNPCMessage,

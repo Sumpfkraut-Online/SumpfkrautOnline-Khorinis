@@ -151,5 +151,16 @@ namespace GUC.WorldObjects
         }
 
         #endregion
+
+        /// <summary>
+        /// Despawn or remove from inventory
+        /// </summary>
+        public void Remove()
+        {
+            if (this.IsSpawned)
+                this.Despawn();
+            else if (this.Container != null)
+                this.Container.Inventory.Remove(this);
+        }
     }
 }

@@ -78,7 +78,7 @@ namespace GUC.Scripts.Sumpfkraut.Menus
                 if (amount != 0)
                 {
                     amount = amount > maxAmount ? maxAmount : amount;
-                    player.RequestDropItem(item, amount);
+                    NPCInst.Requests.DropItem(player, item, amount);
                 }
                 Close();
             }

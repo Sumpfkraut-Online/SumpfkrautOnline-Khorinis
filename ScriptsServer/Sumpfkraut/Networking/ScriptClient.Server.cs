@@ -32,55 +32,17 @@ namespace GUC.Scripts.Sumpfkraut.Networking
 
         public virtual void ReadScriptRequestMessage(PacketReader stream, WorldObjects.VobGuiding.GuidedVob vob)
         {
-            if (!(vob is WorldObjects.NPC))
-                return;
-
-            NPCInst npc = (NPCInst)vob.ScriptObject;
-
             ScriptRequestMessageIDs id = (ScriptRequestMessageIDs)stream.ReadByte();
-            switch (id)
+
+            if (id > ScriptRequestMessageIDs.MaxGuidedMessages && vob != this.Character.BaseInst)
             {
-                case ScriptRequestMessageIDs.JumpFwd:
-                    npc.DoJump();
-                    break;
-                case ScriptRequestMessageIDs.DrawFists:
-                    npc.DrawFists();
-                    break;
-                case ScriptRequestMessageIDs.DrawWeapon:
-                    npc.DrawWeapon(stream.ReadByte());
-                    break;
-                case ScriptRequestMessageIDs.AttackForward:
-                    npc.DoFightMove(NPCInst.FightMoves.Fwd);
-                    break;
-                case ScriptRequestMessageIDs.AttackLeft:
-                    npc.DoFightMove(NPCInst.FightMoves.Left);
-                    break;
-                    case ScriptRequestMessageIDs.AttackRight:
-                    npc.DoFightMove(NPCInst.FightMoves.Right);
-                    break;
-                case ScriptRequestMessageIDs.Parry:
-                    npc.DoFightMove(NPCInst.FightMoves.Parry);
-                    break;
-                case ScriptRequestMessageIDs.Dodge:
-                    npc.DoFightMove(NPCInst.FightMoves.Dodge);
-                    break;
-                case ScriptRequestMessageIDs.DropItem:
-                    byte itemID = stream.ReadByte();
-                    ushort amount = stream.ReadUShort();
-                    npc.DropItem(itemID, amount);
-                    break;
-                case ScriptRequestMessageIDs.EquipItem:
-                    npc.EquipItem(stream.ReadByte());
-                    break;
-                case ScriptRequestMessageIDs.UnequipItem:
-                    npc.UnequipItem(stream.ReadByte());
-                    break;
-                case ScriptRequestMessageIDs.UseItem:
-                    npc.UseItem(stream.ReadByte());
-                    break;
-                default:
-                    Log.Logger.Log("Received Script RequestMessage with invalid ID: " + id.ToString());
-                    break;
+                return; // client sent a request for a bot which is only allowed for players
+            }
+
+            if (id < ScriptRequestMessageIDs.MaxNPCRequests)
+            {
+                if (vob is WorldObjects.NPC)
+                    NPCInst.Requests.ReadRequest(id, stream, ((NPCInst)vob.ScriptObject));
             }
         }
     }

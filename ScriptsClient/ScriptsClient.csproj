@@ -166,6 +166,7 @@
     <Compile Include="Sumpfkraut\Menus\GUCMenu.cs" />
     <Compile Include="Sumpfkraut\Menus\MainMenus\CharCreationMenu.cs" />
     <Compile Include="Sumpfkraut\Menus\MainMenus\CharSelMenu.cs" />
+    <Compile Include="Sumpfkraut\Networking\Requests\NPCRequestSender.cs" />
     <Compile Include="Sumpfkraut\Options\ClientOptions.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\ProjInst.Client.cs" />
     <Compile Include="Sumpfkraut\Menus\MainMenus\ExitMenu.cs" />
