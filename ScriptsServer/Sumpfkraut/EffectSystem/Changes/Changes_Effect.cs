@@ -38,7 +38,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
         // use this method to create the objects
         new public static Changes_Effect Create (Effect effect, ChangeType changeType, object[] parameters)
         {
-            if (!CreateCheckBasics(effect, changeType, parameters, parameterTypes)) { return null; }
+            if (!CheckCreateBasics(effect, changeType, parameters, parameterTypes)) { return null; }
             return new Changes_Effect(effect, changeType, parameters);
         }
 

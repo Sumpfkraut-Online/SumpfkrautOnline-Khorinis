@@ -13,10 +13,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 
         new public static readonly string _staticName = "Change_Effect_Name (static)";
 
-        //new public static readonly ChangeType[] supportedChangeTypes = new ChangeType[]
-        //{
-        //    ChangeType.Effect_Name_Set
-        //};
+        new public static readonly ChangeType[] includedChangeTypes = new ChangeType[]
+        {
+            ChangeType.Effect_Name_Set
+        };
 
         new public static readonly Type[] parameterTypes = new Type[] 
         {
@@ -38,7 +38,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
         // use this method to create the objects
         new public static Change_Effect_Name Create (Effect effect, ChangeType changeType, object[] parameters)
         {
-            if (!CreateCheckBasics(effect, changeType, parameters, parameterTypes)) { return null; }
+            if (!CheckCreateBasics(effect, changeType, parameters, parameterTypes)) { return null; }
             return new Change_Effect_Name(effect, changeType, parameters);
         }
 

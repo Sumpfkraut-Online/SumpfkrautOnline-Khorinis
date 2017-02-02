@@ -8,14 +8,16 @@ using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 {
 
-    public class Change_World_Time : BaseChange
+    public class Change_World_Clock : BaseChange
     {
 
         new public static readonly string _staticName = "Change_Effect_Name (static)";
 
-        new public static readonly ChangeType[] supportedChangeTypes = new ChangeType[]
+        new public static readonly ChangeType[] includedChangeTypes = new ChangeType[]
         {
-            ChangeType.Effect_Name_Set
+            ChangeType.World_Clock_Time_Set,
+            ChangeType.World_Clock_Rate_Set,
+            ChangeType.World_Clock_IsRunning_Set
         };
 
         new public static readonly Type[] parameterTypes = new Type[] 
@@ -27,19 +29,19 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 
 
 
-        protected Change_World_Time (Effect effect, ChangeType changeType, object[] parameters) 
+        protected Change_World_Clock (Effect effect, ChangeType changeType, object[] parameters) 
             : base(effect, changeType, parameters)
         {
-            SetObjName("Change_World_Time (default)");
+            SetObjName("Change_World_Clock (default)");
         }
 
 
 
         // use this method to create the objects
-        new public static Change_Effect_Name Create (Effect effect, ChangeType changeType, object[] parameters)
+        new public static Change_World_Clock Create (Effect effect, ChangeType changeType, object[] parameters)
         {
-            if (!CreateCheckBasics(effect, changeType, parameters, parameterTypes)) { return null; }
-            return new Change_Effect_Name(effect, changeType, parameters);
+            if (!CheckCreateBasics(effect, changeType, parameters, parameterTypes)) { return null; }
+            return new Change_World_Clock(effect, changeType, parameters);
         }
 
     }

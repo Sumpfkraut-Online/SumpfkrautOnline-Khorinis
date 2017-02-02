@@ -286,6 +286,10 @@ namespace GUC.Scripts.Sumpfkraut
             //}
 
 
+
+            ClassB.SomeStaticMethod();
+
+
             
 
             Logger.Log("===> !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
@@ -298,6 +302,16 @@ namespace GUC.Scripts.Sumpfkraut
     //    protected static Dictionary<int, Change> bla = new Dictionary<int, Change>();
     //    public static Dictionary<int, Change> Bla { get { return bla; } }
     //}
+
+    public class ClassA
+    {
+        public static void SomeStaticMethod () { Logger.Log("SomeStaticMethod"); }
+    }
+
+    public class ClassB : ClassA
+    {
+
+    }
 
     public class SomeClass
     {

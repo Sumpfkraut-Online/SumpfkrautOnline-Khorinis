@@ -251,7 +251,7 @@
     <Compile Include="Sumpfkraut\EffectSystem\Changes\Change.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Changes\Changes_Effect.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Changes\Change_Effect_Name.cs" />
-    <Compile Include="Sumpfkraut\EffectSystem\Changes\Change_World_Time.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Changes\Change_World_Clock.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Destinations\BaseDestination.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Destinations\Dest_Effect_Name.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Destinations\Dest_World_TimeChange.cs" />
