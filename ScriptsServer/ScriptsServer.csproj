@@ -42,8 +42,9 @@
     </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Mono.Data.Sqlite">
-      <HintPath>..\Sqlite\Mono.Data.Sqlite.dll</HintPath>
+    <Reference Include="Mono.Data.Sqlite, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\libs\Mono.Data.Sqlite.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -247,6 +248,23 @@
     <Compile Include="Sumpfkraut\Database\DBTables.cs" />
     <Compile Include="Sumpfkraut\Database\Enumeration.cs" />
     <Compile Include="Sumpfkraut\Networking\Requests\NPCRequestReceiver.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Changes\BaseChange.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Changes\Change.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Changes\Changes_Effect.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Changes\Change_Effect_Name.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Changes\Change_World_Clock.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Destinations\BaseDestination.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Destinations\Dest_Effect_Name.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Destinations\Dest_World_TimeChange.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Effect.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\BaseEffectHandler.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\ItemEffectHandler.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\NPCEffectHandler.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\VobEffectHandler.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\WorldEffectHandler.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Enumeration\ChangeDestination.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Enumeration\ChangeType.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Changes\TotalChange.cs" />
     <Compile Include="Sumpfkraut\Networking\ScriptClient.Server.cs" />
     <Compile Include="Sumpfkraut\TestingThings.cs" />
     <Compile Include="Sumpfkraut\Visuals\AniCatalogs\AniCatalog.cs" />

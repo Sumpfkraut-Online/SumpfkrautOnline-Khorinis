@@ -33,7 +33,7 @@ namespace GUC.WorldObjects
         #endregion
 
         #region Properties
-
+        
         /// <summary> The VobType of this Vob. </summary>
         public override VobTypes VobType { get { return VobTypes.Vob; } }
 

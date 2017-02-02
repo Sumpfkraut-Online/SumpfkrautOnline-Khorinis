@@ -42,7 +42,7 @@ namespace GUC.Scripts.Sumpfkraut.Database.DBQuerying
             switch (dbReaderMode)
             {
                 case DBReaderMode.loadData:
-                    DBReader.LoadFromDB(ref results, DataSource, sqlCommand);
+                    DBReader.LoadFromDB(ref results, sqlCommand, DataSource);
                     break;
                 case DBReaderMode.saveData:
                     DBReader.SaveToDB(DataSource, sqlCommand);

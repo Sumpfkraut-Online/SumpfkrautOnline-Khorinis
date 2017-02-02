@@ -6,6 +6,14 @@ using System.Linq;
 using System.Text;
 using GUC.Log;
 using GUC.Utilities.FileSystem;
+using GUC.Scripts.Sumpfkraut.Database;
+using Mono.Data.Sqlite;
+using GUC.Scripts.Sumpfkraut.EffectSystem;
+using System.Diagnostics;
+using System.Reflection;
+using GUC.Scripts.Sumpfkraut.EffectSystem.Changes;
+using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
+using GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration;
 
 namespace GUC.Scripts.Sumpfkraut
 {
@@ -18,14 +26,59 @@ namespace GUC.Scripts.Sumpfkraut
 
         public static void Init ()
         {
+            Logger.Log("****** TestingThings *************************************");
+
             //Logger.Log(Directory.GetCurrentDirectory());
 
-            //WorldSystem.WorldLoader worldLoader = new WorldSystem.WorldLoader(">>GOTCHA<<", 
-            //    Directory.GetCurrentDirectory() + @"\DB");
-            //worldLoader.Load();
+            //string dbFilePath = Directory.GetCurrentDirectory() + @"\DB\someDB.db";
+            //string dataSource = "data source=" + Directory.GetCurrentDirectory() + @"\DB\someDB.db";
+            //Logger.Log("-------> " + dbFilePath);
+            //SqliteConnection.CreateFile(Directory.GetCurrentDirectory() + @"\DB\someDB.db");
 
-            //string bla = "Miami Vice";
-            //Logger.Log(bla);
+            //List<List<List<object>>> results = new List<List<List<object>>>();
+            //DBReader.LoadFromDB(ref results, "SELECT 1;", dataSource);
+            //Logger.Log(results[0][0][0]);
+
+            //List<List<List<object>>> results = new List<List<List<object>>>();
+            //DBReader.LoadFromDB(ref results,  @"DROP TABLE IF EXISTS WorldEffect;
+            //    CREATE TABLE IF NOT EXISTS WorldEffect
+            //    (
+            //        WorldEffectID INTEGER NOT NULL,
+            //        ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            //        CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            //        CONSTRAINT WorldEffect_PK PRIMARY KEY (WorldEffectID)
+            //    );", dataSource);
+            //Logger.Log(results[0][0][0]);
+
+            //DBReader.SaveToDB("data source=" + Directory.GetCurrentDirectory() + @"\DB\someDB.db",
+            //    @"DROP TABLE IF EXISTS WorldEffect;
+            //    CREATE TABLE IF NOT EXISTS WorldEffect
+            //    (
+            //        WorldEffectID INTEGER NOT NULL,
+            //        ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            //        CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            //        CONSTRAINT WorldEffect_PK PRIMARY KEY (WorldEffectID)
+            //    );");
+
+
+
+            //string dataSource = string.Format("data source=\"{0}\"", 
+            //    "\\DB\\someDB.db");
+
+            //Log.Logger.Log(">>>>> " + dataSource);
+
+            //List<List<List<object>>> results = new List<List<List<object>>>();
+            //DBReader.LoadFromDB(ref results, "SELECT 1;", dataSource);
+
+            //Mono.Data.Sqlite.SqliteConnectionStringBuilder csb = new Mono.Data.Sqlite.SqliteConnectionStringBuilder();
+            //csb.DataSource = Directory.GetCurrentDirectory() + @"\DB\someDB.db";
+            //Log.Logger.Log(">>>>> " + csb.ConnectionString);
+
+
+
+            //WorldSystem.WorldLoader worldLoader = new WorldSystem.WorldLoader(">>GOTCHA<<",
+            //    Directory.GetCurrentDirectory() + @"\DB\someDB.db");
+            //worldLoader.Load();
 
             //Logger.Log(WorldSystem.WorldLoader.DBStructure["WorldEffect"]);
 
@@ -82,7 +135,227 @@ namespace GUC.Scripts.Sumpfkraut
 
 
 
+
+            //new EffectSystem.EffectHandlers.SomeEffectHandler("SomeEffectHandler", null);
+            //new EffectSystem.EffectHandlers.AnotherEffectHandler("AnotherEffectHandler", null);
+            //new EffectSystem.EffectHandlers.AnotherEffectHandler("AnotherEffectHandler", null);
+            //new EffectSystem.EffectHandlers.AnotherEffectHandler("AnotherEffectHandler", null);
+
+            //Logger.Log(EffectSystem.EffectHandlers.BaseEffectHandler.isInitialized 
+            //    == EffectSystem.EffectHandlers.AnotherEffectHandler.isInitialized);
+            //Logger.Log(EffectSystem.EffectHandlers.BaseEffectHandler.isInitialized);
+            //Logger.Log(EffectSystem.EffectHandlers.SomeEffectHandler.isInitialized);
+            //Logger.Log(EffectSystem.EffectHandlers.AnotherEffectHandler.isInitialized);
+
+
+            //EffectSystem.EffectHandlers.VobEffectHandler eh =
+            //    new EffectSystem.EffectHandlers.VobEffectHandler(null, new VobSystem.Instances.VobInst());
+            //Logger.Log("-------> " + eh.LinkedObjectType);
+
+            //EffectSystem.EffectDelegateReference delRef = 
+            //    new EffectSystem.EffectDelegateReference(null, null);
+
+
+
+            //Change change1 = new Change(EffectSystem.Enumeration.ChangeType.Effect_Name_Set, new object[] { 1, 2, 3, 4, 5, 6 });
+            //Change change2 = new Change(EffectSystem.Enumeration.ChangeType.Effect_Name_Set, new object[] { 1, 2, 3, 4, 5, 6 });
+            //Logger.Log("### " + (change1 == change2));
+
+            //bool check;
+            //int[] lapsesSteps = new int[] { 1, 10, 100, 1000, 1000, 10000, 100000, 1000000 };
+            //int tempLapses = 0;
+            //List<long> elapsedTicks = new List<long>();
+
+            //Stopwatch sw = Stopwatch.StartNew();
+            //for (int s = 0; s < lapsesSteps.Length; s++)
+            //{
+            //    tempLapses = lapsesSteps[s];
+            //    for (int l = 0; l < tempLapses; l++)
+            //    {
+            //        check = change1 == change2;
+            //    }
+            //    sw.Stop();
+            //    elapsedTicks.Add(sw.ElapsedTicks);
+            //    sw.Restart();
+            //}
+
+            //sw.Stop();
+            //for (int i = 0; i < elapsedTicks.Count; i++)
+            //{
+            //    Logger.Log("### " + elapsedTicks[i] + " " + ((double) elapsedTicks[i] / TimeSpan.TicksPerMillisecond));
+            //}
+
+
+
+            //Process currentProcess = System.Diagnostics.Process.GetCurrentProcess();
+            //long totalBytesOfMemoryUsed = currentProcess.WorkingSet64;
+            //Logger.Log("==> " + totalBytesOfMemoryUsed);
+
+            //List<Change> changeList = new List<Change>();
+            //for (int i = 0; i < 10000000; i++)
+            //{
+            //    changeList.Add(new Change(EffectSystem.Enumeration.ChangeType.Undefined, new object[0]));
+            //    if ((i % 1000000) == 0)
+            //    {
+            //        Logger.Log("==> " + totalBytesOfMemoryUsed);
+            //    }
+            //}
+            //changeList = null;
+            //System.Threading.Thread.Sleep(1000);
+            //Logger.Log("==> " + totalBytesOfMemoryUsed);
+
+            //Effect effect = new Effect(null, new List<Change>() { new Change(), new Change() });
+            //PropertyInfo info = effect.GetType().GetProperty("Changes");
+            //List<Change> changes = (List<Change>) info.GetValue(effect, null);
+            //Logger.Log("===> " + changes.Count);
+
+
+            //Change change1 = new Change(null, EffectSystem.Enumeration.ChangeType.Undefined, 
+            //    new object[] { 1, false, "mh?" }, new Type[] { typeof(int), typeof(bool), typeof(string) });
+            //Change change2 = new Change(null, EffectSystem.Enumeration.ChangeType.Undefined, 
+            //    new object[] { 2, true, "masdasdh?" }, new Type[] { typeof(int), typeof(bool), typeof(string) });
+            //Change change3 = new Change(null, EffectSystem.Enumeration.ChangeType.Undefined, 
+            //    new object[] { 1, false, "mh?" }, new Type[] { typeof(int), typeof(bool), typeof(string) });
+
+            //List<Change> myList = new List<Change> { change1, change2, change3 };
+
+            //myList.Remove(new Change(null, EffectSystem.Enumeration.ChangeType.Undefined,
+            //    new object[] { 1, false, "mh?" }, new Type[] { typeof(int), typeof(bool), typeof(string) }));
+
+            //foreach (Change c in myList)
+            //{
+            //    Logger.Log(c);
+            //}
+
+
+            //MAndM.Bla[1] = new Change(null, EffectSystem.Enumeration.ChangeType.Undefined,
+            //    new object[1], new Type[] { typeof(object) });
+            //Logger.Log(MAndM.Bla[1]);
+
+
+
+            //List<int> l1 = new List<int>() { 1, 3, 6, 7, 8 };
+            //List<int> l2 = new List<int>() { 2, 3, 4, 5, 6, 7, 9, 10};
+            //List<int> l3 = l1.Union(l2).ToList();
+            //l3.Sort();
+            //foreach (int i in l3) { Logger.Log(i); }
+
+
+
+            ////SomeClass o = new SomeClass(new object[0]);
+            //SomeClass o = SomeClass.Create(new object[0]);
+            //Logger.Log("===> " + (o == null));
+            //Logger.Log("===> " + o);
+            ////Logger.Log("===> " + o.parameters);
+
+
+            //object o = "Banannanana";
+            //Logger.Log("===> " + o.GetType());
+
+            //SomeClass.ParameterTypeCheck(new object[] { "s", 'c', 1, false });
+
+
+            //FieldInfo info = typeof(SomeClass).GetField("someList");
+            //List<int> val = (List<int>) info.GetValue(null);
+            //foreach (int i in val) { Logger.Log(i); }
+
+
+
+
+            //Change_Effect_Name o = Change_Effect_Name.Create(null, EffectSystem.Enumeration.ChangeType.Undefined, new object[0]);
+            //Logger.Log("===> " + (o == null));
+            //Logger.Log("===> " + (o));
+
+
+            //foreach (KeyValuePair<ChangeType, List<ChangeDestination>> keyVal 
+            //    in BaseEffectHandler.changeTypeToDestinations)
+            //{
+            //    Logger.Log("~~> " + keyVal.Key + ": " + keyVal.Value);
+            //}
+
+            //foreach (KeyValuePair<ChangeDestination, BaseEffectHandler.CalculateTotalChange> keyVal 
+            //    in BaseEffectHandler.destToCalcTotal)
+            //{
+            //    Logger.Log("~~> " + keyVal.Key + ": " + keyVal.Value);
+            //}
+
+            //foreach (KeyValuePair<ChangeDestination, BaseEffectHandler.ApplyTotalChange> keyVal 
+            //    in BaseEffectHandler.destToApplyTotal)
+            //{
+            //    Logger.Log("~~> " + keyVal.Key + ": " + keyVal.Value);
+            //}
+
+
+
+            ClassB.SomeStaticMethod();
+
+
+            
+
+            Logger.Log("===> !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
 
     }
+
+    //public class MAndM
+    //{
+    //    protected static Dictionary<int, Change> bla = new Dictionary<int, Change>();
+    //    public static Dictionary<int, Change> Bla { get { return bla; } }
+    //}
+
+    public class ClassA
+    {
+        public static void SomeStaticMethod () { Logger.Log("SomeStaticMethod"); }
+    }
+
+    public class ClassB : ClassA
+    {
+
+    }
+
+    public class SomeClass
+    {
+
+        public static readonly List<int> someList = new List<int> { 9, 1, 8, 2, 7, 3, 6, 4, 5 };
+
+        public object[] parameters;
+
+        static SomeClass ()
+        {
+            SomeMethod();
+        }
+
+        public SomeClass (object[] parameters)
+        {
+            this.parameters = parameters;
+            if (parameters.Length < 1)
+            {
+                throw new Exception("parameters of Length < 1 are invalid!");
+            }
+        }
+
+        public static SomeClass Create (object[] parameters)
+        {
+            if (parameters.Length < 1) { return null; }
+            return new SomeClass(parameters);
+        }
+
+        public static void ParameterTypeCheck (object[] parameters)
+        {
+            foreach (object o in parameters) { Logger.Log("===> " + o.GetType()); }
+        }
+
+        public static void SomeMethod ()
+        {
+            Logger.Log("OINK");
+        }
+
+    }
+
+    public class AnotherClass : SomeClass
+    {
+        public AnotherClass (object[] parameters) : base(parameters)
+        { }
+    }
+
 }

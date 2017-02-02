@@ -41,96 +41,184 @@ namespace GUC.Scripts.Sumpfkraut.Database
          *   @param where is the optional string after the WHERE-statement in sql
          *   @param orderBy is the optional string after the ORDER BY-statement in sql
          */
-        public static void LoadFromDB (ref List<List<List<object>>> results, string dataSource, 
+        public static bool LoadFromDB (ref List<List<List<object>>> results, string dataSource, 
             string select, string from, string where, string orderBy)
         { 
             string completeQuery = string.Format("SELECT {0} FROM {1} WHERE {2} ORDER BY {3};",
                 select, from, where, orderBy);
 
-            LoadFromDB(ref results, completeQuery, dataSource);
+            return  LoadFromDB(ref results, completeQuery, dataSource);
         }
 
-        public static void LoadFromDB (ref List<List<List<object>>> results,
+        public static bool LoadFromDB (ref List<List<List<object>>> results,
             string completeQuery, string dataSource)
         {
-            using (SqliteConnection con = new SqliteConnection())
+            SqliteConnection con = new SqliteConnection();
+            con.ConnectionString = dataSource;
+            try { con.Open(); }
+            catch (Exception ex)
             {
-                con.ConnectionString = dataSource;
-                con.Open();
-
-                // security check and close connection if necessary
-                if (!DBSecurity.IsSecureSQLCommand(completeQuery))
-                {
-                    MakeLogWarningStatic(typeof(DBReader), 
-                        "LoadFromDB: Prevented forwarding of insecure sql-command: " 
-                        + completeQuery);
-                    if (con.State.ToString() == "Open")
-                    {
-                        con.Close();
-                        con.Dispose();
-                    }
-                    return;
-                }
-
-                using (SQLiteCommand cmd = new SQLiteCommand(completeQuery, con))
-                {
-                    SQLiteDataReader rdr = null;
-                    try
-                    {
-                        rdr = cmd.ExecuteReader();
-                        if (rdr == null) { return; }
-                        if (!rdr.HasRows) { return; }
-
-                        // temporary array to put all data of a row into
-                        object[] rowArr = null;
-
-                        do
-                        {
-                            // add new result-list
-                            results.Add(new List<List<object>>());
-                            while (rdr.Read())
-                            {
-                                // create and fill array of the temporary data row
-                                rowArr = new object[rdr.FieldCount];
-                                rdr.GetValues(rowArr);
-                                results[results.Count - 1].Add(new List<object>(rowArr));
-                            }
-                        }
-                        while (rdr.NextResult());
-
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new Exception("LoadFromDB: Could not execute SQLiteDataReader: " + ex);
-                    }
-                    finally
-                    {
-                        if (rdr != null)
-                        {
-                            rdr.Close();
-                            rdr.Dispose();
-                        }
-                    }
-                }
-
-                // close connection if still opened
+                MakeLogErrorStatic(typeof(DBReader), ex);
                 if (con.State.ToString() == "Open")
                 {
                     con.Close();
                     con.Dispose();
                 }
+                return false;
             }
-            
+
+            // security check and close connection if necessary
+            if (!DBSecurity.IsSecureSQLCommand(completeQuery))
+            {
+                MakeLogWarningStatic(typeof(DBReader),
+                    "LoadFromDB: Prevented forwarding of insecure sql-command: "
+                    + completeQuery);
+
+                return false;
+            }
+
+            using (SQLiteCommand cmd = new SQLiteCommand(completeQuery, con))
+            {
+                SQLiteDataReader rdr = null;
+                try
+                {
+                    rdr = cmd.ExecuteReader();
+                    if (rdr == null) { return false; }
+                    if (!rdr.HasRows) { return true; }
+
+                    // temporary array to put all data of a row into
+                    object[] rowArr = null;
+
+                    do
+                    {
+                        // add new result-list
+                        results.Add(new List<List<object>>());
+                        while (rdr.Read())
+                        {
+                            // create and fill array of the temporary data row
+                            rowArr = new object[rdr.FieldCount];
+                            rdr.GetValues(rowArr);
+                            results[results.Count - 1].Add(new List<object>(rowArr));
+                        }
+                    }
+                    while (rdr.NextResult());
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("LoadFromDB: Could not execute SQLiteDataReader: " + ex);
+                }
+                finally
+                {
+                    if (rdr != null)
+                    {
+                        rdr.Close();
+                        rdr.Dispose();
+                    }
+                }
+            }
+
+            // close connection if still opened
+            if (con.State.ToString() == "Open")
+            {
+                con.Close();
+                con.Dispose();
+            }
+
+            //using (SqliteConnection con = new SqliteConnection())
+            //{
+            //    con.ConnectionString = dataSource;
+            //    try { con.Open(); }
+            //    catch (Exception ex)
+            //    {
+            //        MakeLogErrorStatic(typeof(DBReader), ex);
+            //        if (con.State.ToString() == "Open")
+            //        {
+            //            con.Close();
+            //            con.Dispose();
+            //        }
+
+            //        return false;
+            //    }
+
+            //    // security check and close connection if necessary
+            //    if (!DBSecurity.IsSecureSQLCommand(completeQuery))
+            //    {
+            //        MakeLogWarningStatic(typeof(DBReader),
+            //            "LoadFromDB: Prevented forwarding of insecure sql-command: "
+            //            + completeQuery);
+
+            //        return false;
+            //    }
+
+            //    using (SQLiteCommand cmd = new SQLiteCommand(completeQuery, con))
+            //    {
+            //        SQLiteDataReader rdr = null;
+            //        try
+            //        {
+            //            rdr = cmd.ExecuteReader();
+            //            if (rdr == null) { return false; }
+            //            if (!rdr.HasRows) { return true; }
+
+            //            // temporary array to put all data of a row into
+            //            object[] rowArr = null;
+
+            //            do
+            //            {
+            //                // add new result-list
+            //                results.Add(new List<List<object>>());
+            //                while (rdr.Read())
+            //                {
+            //                    // create and fill array of the temporary data row
+            //                    rowArr = new object[rdr.FieldCount];
+            //                    rdr.GetValues(rowArr);
+            //                    results[results.Count - 1].Add(new List<object>(rowArr));
+            //                }
+            //            }
+            //            while (rdr.NextResult());
+            //        }
+            //        catch (Exception ex)
+            //        {
+            //            throw new Exception("LoadFromDB: Could not execute SQLiteDataReader: " + ex);
+            //        }
+            //        finally
+            //        {
+            //            if (rdr != null)
+            //            {
+            //                rdr.Close();
+            //                rdr.Dispose();
+            //            }
+            //        }
+            //    }
+
+            //    // close connection if still opened
+            //    if (con.State.ToString() == "Open")
+            //    {
+            //        con.Close();
+            //        con.Dispose();
+            //    }
+            //}
+
+            // everything went without errors thrown
+            return true;
         }
 
-        public static int SaveToDB (string dataSource, string completeQuery)
+        public static bool SaveToDB (string dataSource, string completeQuery)
         {
-            int changedRows = 0;
-
             using (SqliteConnection con = new SqliteConnection())
             {
                 con.ConnectionString = dataSource;
-                con.Open();
+                try { con.Open(); }
+                catch (Exception ex)
+                {
+                    MakeLogErrorStatic(typeof(DBReader), ex);
+                    if (con.State.ToString() == "Open")
+                    {
+                        con.Close();
+                        con.Dispose();
+                    }
+
+                    return false;
+                }
 
                 // security check and close connection if necessary
                 if (!DBSecurity.IsSecureSQLCommand(completeQuery))
@@ -138,22 +226,18 @@ namespace GUC.Scripts.Sumpfkraut.Database
                     MakeLogWarningStatic(typeof(DBReader),
                         "SaveToDB: Prevented forwarding of insecure sql-command: "
                         + completeQuery);
-                    if (con.State.ToString() == "Open")
-                    {
-                        con.Close();
-                        con.Dispose();
-                    }
-                    return changedRows;
+
+                    return false;
                 }
 
-                using (SQLiteCommand cmd = new SQLiteCommand(Sqlite.getSqlite().connection))
+                using (SQLiteCommand cmd = new SQLiteCommand(completeQuery, con))
                 {
                     cmd.CommandText = completeQuery;
 
                     SQLiteDataReader rdr = null;
                     try
                     {
-                        changedRows = cmd.ExecuteNonQuery();
+                        cmd.ExecuteReader();
                     }
                     catch (Exception ex)
                     {
@@ -169,7 +253,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
                 }
             }
 
-            return changedRows;
+            return true;
         }
 
         #endregion

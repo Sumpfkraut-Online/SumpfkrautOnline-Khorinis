@@ -29,7 +29,11 @@ CREATE TABLE IF NOT EXISTS WorldChange
     WorldChangeID INTEGER NOT NULL,
     WorldEffectID INTEGER NOT NULL,
     Func INTEGER  NOT NULL,
-    Params TEXT NOT NULL DEFAULT "",
+    Param0 TEXT NOT NULL DEFAULT "",
+	Param1 TEXT NOT NULL DEFAULT "",
+	Param2 TEXT NOT NULL DEFAULT "",
+	Param3 TEXT NOT NULL DEFAULT "",
+	Param4 TEXT NOT NULL DEFAULT "",
     ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT WorldChange_PK PRIMARY KEY (WorldChangeID) 
@@ -46,7 +50,7 @@ END;
 -- >> vob-effect-system << --
 --------------------------------------------------------------
 
--- ids of effects which are applied to world- or vob-instinitions --
+-- ids of effects which are applied to world- or vob-instances --
 DROP TABLE IF EXISTS InstEffect;
 CREATE TABLE IF NOT EXISTS InstEffect 
 (
@@ -63,14 +67,18 @@ BEGIN
     UPDATE InstEffect SET ChangeDate = CURRENT_TIMESTAMP WHERE InstEffectID = OLD.InstEffectID;
 END;
 
--- actual changes / attributes of vob-instinitions --
+-- actual changes / attributes of vob-instances --
 DROP TABLE IF EXISTS InstChange;
 CREATE TABLE IF NOT EXISTS InstChange 
 (
     InstChangeID INTEGER NOT NULL,
     InstEffectID INTEGER NOT NULL,
     Func INTEGER  NOT NULL,
-    Params TEXT NOT NULL DEFAULT "",
+    Param0 TEXT NOT NULL DEFAULT "",
+	Param1 TEXT NOT NULL DEFAULT "",
+	Param2 TEXT NOT NULL DEFAULT "",
+	Param3 TEXT NOT NULL DEFAULT "",
+	Param4 TEXT NOT NULL DEFAULT "",
     ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT InstChange_PK PRIMARY KEY (InstChangeID) 
