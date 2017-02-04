@@ -52,7 +52,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
                 }
                 if (totalChange == null) { return; }
 
-                List<BaseChange> components = totalChange.Components;
+                List<BaseChangeInit> components = totalChange.Components;
                 for (int c = 0; c < components.Count; c++)
                 {
                     components[c].Effect.SetEffectName((string) components[c].Parameters[0]);

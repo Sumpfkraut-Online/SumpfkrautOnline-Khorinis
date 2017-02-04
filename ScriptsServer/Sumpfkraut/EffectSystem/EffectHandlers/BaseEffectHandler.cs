@@ -305,7 +305,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
         // perhaps make this protected and adding a slower, less direct method for Effects to use ???
-        public void AddToTotalChanges (List<BaseChange> changes)
+        public void AddToTotalChanges (List<BaseChangeInit> changes)
         {
             lock (effectLock)
             {
@@ -317,7 +317,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         }
             
         // perhaps make this protected and adding a slower, less direct method for Effects to use ???
-        public void AddToTotalChanges (BaseChange change)
+        public void AddToTotalChanges (BaseChangeInit change)
         {
             List<ChangeDestination> destinations;
 
@@ -337,7 +337,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         }
 
         // perhaps make this protected and adding a slower, less direct method for Effects to use ???
-        public void RemoveFromTotalChanges (List<BaseChange> changes)
+        public void RemoveFromTotalChanges (List<BaseChangeInit> changes)
         {
             lock (effectLock)
             {
@@ -349,7 +349,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         }
 
         // perhaps make this protected and adding a slower, less direct method for Effects to use ???
-        public void RemoveFromTotalChanges (BaseChange change)
+        public void RemoveFromTotalChanges (BaseChangeInit change)
         {
             List<ChangeDestination> destinations;
 
@@ -394,7 +394,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             return TryGetDestinations(effect.Changes, out destinations);
         }
 
-        public bool TryGetDestinations (List<BaseChange> changes, out List<ChangeDestination> destinations)
+        public bool TryGetDestinations (List<BaseChangeInit> changes, out List<ChangeDestination> destinations)
         {
             destinations = null;
             List<ChangeDestination> allDestinations = new List<ChangeDestination>();
@@ -414,7 +414,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             return true;
         }
 
-        public bool TryGetDestinations (BaseChange change, out List<ChangeDestination> destinations)
+        public bool TryGetDestinations (BaseChangeInit change, out List<ChangeDestination> destinations)
         {
             return changeTypeToDestinations.TryGetValue(change.ChangeType, out destinations);
         }

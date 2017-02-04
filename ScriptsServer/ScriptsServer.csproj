@@ -247,14 +247,11 @@
     <Compile Include="Sumpfkraut\Database\DBSecurity.cs" />
     <Compile Include="Sumpfkraut\Database\DBTables.cs" />
     <Compile Include="Sumpfkraut\Database\Enumeration.cs" />
-    <Compile Include="Sumpfkraut\EffectSystem\Changes\BaseChange.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Changes\BaseChangeInit.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Changes\Change.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Changes\Changes_Effect.cs" />
-    <Compile Include="Sumpfkraut\EffectSystem\Changes\Change_Effect_Name.cs" />
-    <Compile Include="Sumpfkraut\EffectSystem\Changes\Change_World_Clock.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Destinations\BaseDestination.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Destinations\Dest_Effect_Name.cs" />
-    <Compile Include="Sumpfkraut\EffectSystem\Destinations\Dest_World_TimeChange.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Effect.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\BaseEffectHandler.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\ItemEffectHandler.cs" />

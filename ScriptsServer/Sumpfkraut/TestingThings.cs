@@ -287,7 +287,7 @@ namespace GUC.Scripts.Sumpfkraut
 
 
 
-            ClassB.SomeStaticMethod();
+            //ClassB.SomeStaticMethod();
 
 
             

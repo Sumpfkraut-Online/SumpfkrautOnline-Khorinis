@@ -15,12 +15,12 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 
 
 
-        protected List<BaseChange> components;
-        public List<BaseChange> Components { get { return components; } }
+        protected List<BaseChangeInit> components;
+        public List<BaseChangeInit> Components { get { return components; } }
 
-        protected BaseChange total;
-        public BaseChange Total { get { return total; } }
-        public void SetTotal (BaseChange total)
+        protected BaseChangeInit total;
+        public BaseChangeInit Total { get { return total; } }
+        public void SetTotal (BaseChangeInit total)
         {
             lock (totalChangeLock)
             {
@@ -44,7 +44,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
         public TotalChange ()
         {
             SetObjName("TotalChange (default)");
-            components = new List<BaseChange>();
+            components = new List<BaseChangeInit>();
             totalChangeLock = new object();
             lastComponentUpdate = DateTime.Now;
             lastTotalUpdate = DateTime.Now;
@@ -52,7 +52,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 
 
 
-        public void AddChange (BaseChange change)
+        public void AddChange (BaseChangeInit change)
         {
             lock (totalChangeLock)
             {
@@ -62,7 +62,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
             }
         }
 
-        public void RemoveChange (BaseChange change)
+        public void RemoveChange (BaseChangeInit change)
         {
             lock (totalChangeLock)
             {
