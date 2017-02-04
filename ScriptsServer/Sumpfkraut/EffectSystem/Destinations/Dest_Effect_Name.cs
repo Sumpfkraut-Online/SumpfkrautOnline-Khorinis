@@ -9,7 +9,7 @@ using System.Text;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 {
 
-    public class Dest_Effect_Name : BaseDestination
+    public class Dest_Effect_Name : BaseDestinationInit
     {
 
         new public static readonly string _staticName = "Dest_Effect (static)";

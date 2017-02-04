@@ -15,8 +15,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
         new public static readonly string _staticName = "BaseChangeInit (static)";
         // static representative of the class (do not change it in any way after instantiation!)
         public static BaseChangeInit representative;
-        // will be filled up automatically by EffectHandlers due to information from initialized Destinations
-        public static List<List<ChangeDestination>> influencedDestinations = new List<List<ChangeDestination>>();
 
         protected List<ChangeType> includedChangeTypes;
         protected List<List<Type>> parameterTypeLists;
@@ -27,8 +25,15 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
             return parameterTypeLists[index];
         }
 
+        // will be filled up automatically by EffectHandlers due to information from initialized Destinations
+        public List<List<ChangeDestination>> influencedDestinations;
+
+
+
         public BaseChangeInit ()
         {
+            influencedDestinations = new List<List<ChangeDestination>>();
+
             if (includedChangeTypes == null)
             {
                 includedChangeTypes = new List<ChangeType>();
