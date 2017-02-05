@@ -49,7 +49,7 @@ namespace Gothic.Types
                     return val;
                 }
                 idx++;
-            } while ((temp = listTemp.Next) != 0)
+            } while ((temp = listTemp.Next) != 0);
 
             return null;
         }
