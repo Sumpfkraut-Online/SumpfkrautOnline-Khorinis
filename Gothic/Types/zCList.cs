@@ -39,7 +39,7 @@ namespace Gothic.Types
             int temp = this.Address;
             uint idx = 0;
 
-            while ((temp = listTemp.Next) != 0)
+            do
             {
                 listTemp = new zCList<T>(temp);
                 if (idx == index)
@@ -49,7 +49,7 @@ namespace Gothic.Types
                     return val;
                 }
                 idx++;
-            }
+            } while ((temp = listTemp.Next) != 0)
 
             return null;
         }
