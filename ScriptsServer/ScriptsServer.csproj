@@ -251,7 +251,8 @@
     <Compile Include="Sumpfkraut\EffectSystem\Changes\Change.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Changes\ChangeInit_Effect.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Destinations\BaseDestInit.cs" />
-    <Compile Include="Sumpfkraut\EffectSystem\Destinations\DesInit_Effect.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Destinations\DestInit_Effect.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Destinations\DestinationInfo.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Effect.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\BaseEffectHandler.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\ItemEffectHandler.cs" />

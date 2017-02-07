@@ -86,7 +86,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 
 
         // add or change existing included type of change and its respective parametertypes
-        protected void AddOrChangeDefinition (ChangeType changeType, List<Type> parameterTypes)
+        protected void AddOrChange (ChangeType changeType, List<Type> parameterTypes)
         {
             int index = includedChangeTypes.IndexOf(changeType);
             if (index < 0)

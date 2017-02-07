@@ -28,30 +28,39 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 
         protected List<object> parameters;
         public List<object> Parameters { get { return parameters; } }
-        public void SetParameters(List<object> parameters)
+        public bool SetParameters(List<object> parameters)
         {
             List<Type> pTypes = GetParameterTypes();
             if (!(parameters.Count < pTypes.Count))
             {
                 MakeLogWarning("Not enough items in array paramterTypes to describe the types of given paramters.");
-                return;
+                return false;
             }
 
             for (int p = 0; p < pTypes.Count; p++)
             {
                 if (parameters[p].GetType() != pTypes[p])
                 {
-                    MakeLogWarning(String.Format("Parameter {0} of type {1} does not match "
+                    MakeLogWarning(string.Format("Parameter {0} of type {1} does not match "
                         + "the required type of {2} in SetParameters.", parameters[p], 
                         parameters[p].GetType(), pTypes[p]));
-                    return;
+                    return false;
                 }
             }
 
+            // remove unused, provided parameters
+            parameters.RemoveRange(pTypes.Count - 1, parameters.Count - pTypes.Count);
             this.parameters = parameters;
+            return true;
         }
 
 
+
+        protected Change (Effect effect, ChangeType changeType)
+        {
+            this.effect = effect;
+            this.changeType = changeType;
+        }
 
         protected Change (Effect effect, ChangeType changeType, List<object> parameters)
         {
@@ -60,28 +69,29 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
             this.parameters = parameters;
         }
 
-
-
-        public static Change Create (Effect effect, ChangeType changeType, object[] parameters)
+        public static Change Create (Effect effect, ChangeType changeType, List<object> parameters)
         {
-            return null;
-        }
-
-        public static bool CheckCreateBasics (Effect effect, ChangeType changeType, 
-            List<object> parameters, List<Type> types)
-        {
-            if (effect == null) { return false; }
-            if (changeType == ChangeType.Undefined) { return false; }
-            if (parameters == null) { return false; }
-            if (parameters.Count < types.Count) { return false; }
-            for (int t = 0; t < types.Count; t++)
-            {
-                if (parameters[t].GetType() != types[t]) { return false; }
-            }
-            return true;
+            Change change = new Change(effect, changeType);
+            if (!change.SetParameters(parameters)) { return null; }
+            return change;
         }
 
 
+
+
+        //public static bool CheckCreateBasics (Effect effect, ChangeType changeType, 
+        //    List<object> parameters, List<Type> types)
+        //{
+        //    if (effect == null) { return false; }
+        //    if (changeType == ChangeType.Undefined) { return false; }
+        //    if (parameters == null) { return false; }
+        //    if (parameters.Count < types.Count) { return false; }
+        //    for (int t = 0; t < types.Count; t++)
+        //    {
+        //        if (parameters[t].GetType() != types[t]) { return false; }
+        //    }
+        //    return true;
+        //}
 
         public override string ToString ()
         {

@@ -51,7 +51,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         {
             // register all necessary destinations by providing their type
             // (only register those which are not already registered beforehand by a parent class' static constructor)
-            RegisterDestination(typeof(Destinations.DesInit_Effect), "CTC_Name", "ATC_Name", true);
+            RegisterDestination(typeof(Destinations.DestInit_Effect), "CTC_Name", "ATC_Name", true);
         }
         
         // base constructor that must be called for clean initialization

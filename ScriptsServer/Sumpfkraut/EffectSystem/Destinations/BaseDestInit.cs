@@ -14,9 +14,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
     {
 
         new public static readonly string _staticName = "BaseDestinationInit (static)";
+        protected static Dictionary<ChangeDestination, DestinationInfo> changeDestinationToInfo;
         public static BaseDestInit representative;
 
-        protected ChangeDestination changeDestination = ChangeDestination.Undefined;
+        protected ChangeDestination changeDestination;
         public ChangeDestination ChangeDestination { get { return changeDestination; } }
 
         // this is mostly used to clarify which types of changes are relevant for the application
@@ -30,19 +31,17 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
         public List<ApplyTotalChange> GetApplyTotalChanges () { return applyTotalChanges; }
 
 
-
         static BaseDestInit ()
         {
-            // always create own representativ
+            // init changeDestinationToInfo which is used by all children
+            changeDestinationToInfo = new Dictionary<ChangeDestination, DestinationInfo>();
+            // always create own representative
             representative = new BaseDestInit();
+            representative.SetObjName("BaseDestInit");
         }
-
-
 
         protected BaseDestInit ()
         {
-            changeDestination = ChangeDestination.Undefined;
-
             if (supportedChangeTypeLists == null)
             {
                 supportedChangeTypeLists = new List<List<ChangeType>>();
@@ -64,22 +63,23 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 
 
 
-        protected void AddSupportedChangeType (ChangeType changeType)
+        protected void AddOrChange (ChangeDestination changeDestination, List<ChangeType> supportedChangeTypes,
+            CalculateTotalChange calculateTotalChange, ApplyTotalChange applyTotalChange)
         {
-            if (supportedChangeTypeLists.Contains(changeType)) { return; }
-            supportedChangeTypeLists.Add(changeType);
-        }
-
-        protected void AddCalculateTotalChange (CalculateTotalChange calcTotalChange)
-        {
-            if (calculateTotalChanges.Contains(calcTotalChange)) { return; }
-            calculateTotalChanges.Add(calcTotalChange);
-        }
-
-        protected void AddApplyTotalChange (ApplyTotalChange applyTotalChange)
-        {
-            if (applyTotalChanges.Contains(applyTotalChange)) { return; }
-            applyTotalChanges.Add(applyTotalChange);
+            DestinationInfo info;
+            if (changeDestinationToInfo.TryGetValue(changeDestination, out info))
+            {
+                MakeLogWarning("Overwriting changeDestination: " + changeDestination);
+                info.supportedChangeTypes = supportedChangeTypes;
+                info.calculateTotalChange = calculateTotalChange;
+                info.applyTotalChange = applyTotalChange;
+            }
+            else
+            {
+                info = new DestinationInfo(changeDestination, supportedChangeTypes,
+                    calculateTotalChange, applyTotalChange);
+                changeDestinationToInfo.Add(changeDestination, info);
+            }
         }
 
     }
