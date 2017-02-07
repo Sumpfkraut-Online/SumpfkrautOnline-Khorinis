@@ -14,6 +14,7 @@ using System.Reflection;
 using GUC.Scripts.Sumpfkraut.EffectSystem.Changes;
 using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 using GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration;
+using GUC.Scripts.Sumpfkraut.EffectSystem.Destinations;
 
 namespace GUC.Scripts.Sumpfkraut
 {
@@ -267,30 +268,31 @@ namespace GUC.Scripts.Sumpfkraut
             //Logger.Log("===> " + (o));
 
 
-            //foreach (KeyValuePair<ChangeType, List<ChangeDestination>> keyVal 
-            //    in BaseEffectHandler.changeTypeToDestinations)
-            //{
-            //    Logger.Log("~~> " + keyVal.Key + ": " + keyVal.Value);
-            //}
-
-            //foreach (KeyValuePair<ChangeDestination, BaseEffectHandler.CalculateTotalChange> keyVal 
-            //    in BaseEffectHandler.destToCalcTotal)
-            //{
-            //    Logger.Log("~~> " + keyVal.Key + ": " + keyVal.Value);
-            //}
-
-            //foreach (KeyValuePair<ChangeDestination, BaseEffectHandler.ApplyTotalChange> keyVal 
-            //    in BaseEffectHandler.destToApplyTotal)
-            //{
-            //    Logger.Log("~~> " + keyVal.Key + ": " + keyVal.Value);
-            //}
 
 
 
-            //ClassB.SomeStaticMethod();
+            //var bla = DestInit_Effect.representative;
+
+            foreach (KeyValuePair<ChangeType, List<ChangeDestination>> keyVal
+                in BaseEffectHandler.changeTypeToDestinations)
+            {
+                Logger.Log("~~> " + keyVal.Key + ": " + keyVal.Value);
+            }
+
+            foreach (KeyValuePair<ChangeDestination, BaseEffectHandler.CalculateTotalChange> keyVal
+                in BaseEffectHandler.GetDestToCalcTotal())
+            {
+                Logger.Log("~~> " + keyVal.Key + ": " + keyVal.Value);
+            }
+
+            foreach (KeyValuePair<ChangeDestination, BaseEffectHandler.ApplyTotalChange> keyVal
+                in BaseEffectHandler.GetDestToApplyTotal())
+            {
+                Logger.Log("~~> " + keyVal.Key + ": " + keyVal.Value);
+            }
 
 
-            
+
 
             Logger.Log("===> !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }

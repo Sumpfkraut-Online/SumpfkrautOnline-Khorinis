@@ -23,10 +23,18 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         public delegate void CalculateTotalChange (BaseEffectHandler effectHandler);
         protected static Dictionary<ChangeDestination, CalculateTotalChange> destToCalcTotal =
             new Dictionary<ChangeDestination, CalculateTotalChange>() { };
+        public static Dictionary<ChangeDestination, CalculateTotalChange> GetDestToCalcTotal ()
+        {
+            return destToCalcTotal;
+        }
 
         public delegate void ApplyTotalChange (BaseEffectHandler effectHandler);
         protected static Dictionary<ChangeDestination, ApplyTotalChange> destToApplyTotal =
             new Dictionary<ChangeDestination, ApplyTotalChange>() { };
+        public static Dictionary<ChangeDestination, ApplyTotalChange> GetDestToApplyTotal ()
+        {
+            return destToApplyTotal;
+        }
 
 
 
@@ -52,7 +60,11 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         {
             // register all necessary destinations by providing their type
             // (only register those which are not already registered beforehand by a parent class' static constructor)
-            RegisterDestination(ChangeDestination.Effect_Name);
+            //RegisterDestination(ChangeDestination.Effect_Name);
+            var info;
+
+            RegisterDestination(new DestinationInfo(ChangeDestination.Effect_Name, 
+                ))
         }
         
         // base constructor that must be called for clean initialization
@@ -70,6 +82,42 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         }
 
 
+
+        protected static bool RegisterDestination (DestinationInfo info)
+        {
+            List<ChangeDestination> destinations;
+            try
+            {
+                destToCalcTotal.Add(info.changeDestination, info.calculateTotalChange);
+                destToApplyTotal.Add(info.changeDestination, info.applyTotalChange);
+
+                for (int i = 0; i < info.supportedChangeTypes.Count; i++)
+                {
+                    if ((changeTypeToDestinations.TryGetValue(info.supportedChangeTypes[i], out destinations))
+                            && (!destinations.Contains(info.changeDestination)))
+                    {
+                        destinations.Add(ChangeDestination.Effect_Name);
+                    }
+                    else
+                    {
+                        changeTypeToDestinations.Add(info.supportedChangeTypes[i], 
+                            new List<ChangeDestination>() { info.changeDestination });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MakeLogErrorStatic(typeof(BaseEffectHandler), "Failed to register ChangeDestination " 
+                    + info.changeDestination + " : " + ex);
+
+                // clear already reigstered values after unfinished registration
+                // TO DO
+
+                return false;
+            }
+
+            return true;
+        }
 
         protected static bool RegisterDestination (ChangeDestination cd)
         {
