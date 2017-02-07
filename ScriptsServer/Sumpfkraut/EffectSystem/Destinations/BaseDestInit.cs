@@ -17,18 +17,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
         protected static Dictionary<ChangeDestination, DestinationInfo> changeDestinationToInfo;
         public static BaseDestInit representative;
 
-        protected ChangeDestination changeDestination;
-        public ChangeDestination ChangeDestination { get { return changeDestination; } }
-
-        // this is mostly used to clarify which types of changes are relevant for the application
-        protected List<List<ChangeType>> supportedChangeTypeLists;
-        public List<List<ChangeType>>  SupportedChangeTypeLists { get { return supportedChangeTypeLists; } }
-
-        protected List<CalculateTotalChange> calculateTotalChanges;
-        public List<CalculateTotalChange> GetCalculateTotalChanges () { return calculateTotalChanges; }
-
-        protected List<ApplyTotalChange> applyTotalChanges;
-        public List<ApplyTotalChange> GetApplyTotalChanges () { return applyTotalChanges; }
 
 
         static BaseDestInit ()
@@ -42,26 +30,15 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 
         protected BaseDestInit ()
         {
-            if (supportedChangeTypeLists == null)
-            {
-                supportedChangeTypeLists = new List<List<ChangeType>>();
-                MakeLogWarning("Missing supportedChangeTypes in subsclass-constructor of BaseDestinationInit!");
-            }
-
-            if (calculateTotalChanges == null)
-            {
-                calculateTotalChanges = new List<CalculateTotalChange>();
-                MakeLogWarning("Missing calculateTotalChanges in subsclass-constructor of BaseDestinationInit!");
-            }
-
-            if (applyTotalChanges == null)
-            {
-                applyTotalChanges = new List<ApplyTotalChange>();
-                MakeLogWarning("Missing applyTotalChanges in subsclass-constructor of BaseDestinationInit!");
-            }
+ 
         }
 
 
+
+        public static bool TryGetDestinationInfo (ChangeDestination changeDestination, out DestinationInfo info)
+        {
+            return changeDestinationToInfo.TryGetValue(changeDestination, out info);
+        }
 
         protected void AddOrChange (ChangeDestination changeDestination, List<ChangeType> supportedChangeTypes,
             CalculateTotalChange calculateTotalChange, ApplyTotalChange applyTotalChange)

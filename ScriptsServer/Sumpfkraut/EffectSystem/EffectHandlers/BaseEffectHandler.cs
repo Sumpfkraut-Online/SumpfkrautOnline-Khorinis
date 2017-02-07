@@ -1,4 +1,5 @@
 ﻿using GUC.Scripts.Sumpfkraut.EffectSystem.Changes;
+using GUC.Scripts.Sumpfkraut.EffectSystem.Destinations;
 using GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration;
 using GUC.Utilities;
 using System;
@@ -51,7 +52,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         {
             // register all necessary destinations by providing their type
             // (only register those which are not already registered beforehand by a parent class' static constructor)
-            RegisterDestination(typeof(Destinations.DestInit_Effect), "CTC_Name", "ATC_Name", true);
+            RegisterDestination(ChangeDestination.Effect_Name);
         }
         
         // base constructor that must be called for clean initialization
@@ -70,49 +71,93 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
 
-        protected static void RegisterDestination (Type destType, 
-            string calcTotalName, string applyTotalName,
-            bool printNotice)
+        protected static bool RegisterDestination (ChangeDestination cd)
         {
-            ChangeType[] supportedCT;
-            ChangeDestination cd;
+            DestinationInfo info; 
             List<ChangeDestination> destinations;
-            CalculateTotalChange calcTotalChange;
-            ApplyTotalChange applyTotalChange;
+            if (!BaseDestInit.TryGetDestinationInfo(cd, out info))
+            {
+                MakeLogErrorStatic(typeof(BaseEffectHandler), "Could not register ChangeDestination "
+                    + cd + " because there are not entries for it.");
+                return false;
+            }
 
             try
             {
-                supportedCT = (ChangeType[]) destType.GetField("supportedChangeTypes").GetValue(null);
-                cd = (ChangeDestination) destType.GetField("changeDestination").GetValue(null);
+                destToCalcTotal.Add(cd, info.calculateTotalChange);
+                destToApplyTotal.Add(cd, info.applyTotalChange);
 
-                calcTotalChange = (CalculateTotalChange) Delegate.CreateDelegate(typeof(CalculateTotalChange), 
-                    destType.GetMethod(calcTotalName));
-
-                applyTotalChange = (ApplyTotalChange) Delegate.CreateDelegate(typeof(ApplyTotalChange), 
-                    destType.GetMethod(applyTotalName));
-
-                destToCalcTotal.Add(cd, calcTotalChange);
-                destToApplyTotal.Add(cd, applyTotalChange);
-
-                for (int i = 0; i < supportedCT.Length; i++)
+                for (int i = 0; i < info.supportedChangeTypes.Count; i++)
                 {
-                    if ((changeTypeToDestinations.TryGetValue(supportedCT[i], out destinations))
+                    if ((changeTypeToDestinations.TryGetValue(info.supportedChangeTypes[i], out destinations))
                             && (!destinations.Contains(cd)))
                     {
                         destinations.Add(ChangeDestination.Effect_Name);
                     }
                     else
                     {
-                        changeTypeToDestinations.Add(supportedCT[i], new List<ChangeDestination>() { cd });
+                        changeTypeToDestinations.Add(info.supportedChangeTypes[i], 
+                            new List<ChangeDestination>() { cd });
                     }
                 }
             }
             catch (Exception ex)
             {
-                MakeLogErrorStatic(typeof(BaseEffectHandler), "Failed to register destination: " + ex);
-                //MakeLogErrorStatic(typeof(BaseEffectHandler), "Terminating server start...");
+                MakeLogErrorStatic(typeof(BaseEffectHandler), "Failed to register ChangeDestination " 
+                    + cd + " : " + ex);
+
+                // clear already reigstered values after unfinished registration
+                // TO DO
+
+                return false;
             }
+
+            return true;
         }
+
+        //protected static void RegisterDestination (Type destType, 
+        //    string calcTotalName, string applyTotalName,
+        //    bool printNotice)
+        //{
+        //    ChangeType[] supportedCT;
+        //    ChangeDestination cd;
+        //    List<ChangeDestination> destinations;
+        //    CalculateTotalChange calcTotalChange;
+        //    ApplyTotalChange applyTotalChange;
+
+        //    try
+        //    {
+        //        supportedCT = (ChangeType[]) destType.GetField("supportedChangeTypes").GetValue(null);
+        //        cd = (ChangeDestination) destType.GetField("changeDestination").GetValue(null);
+
+        //        calcTotalChange = (CalculateTotalChange) Delegate.CreateDelegate(typeof(CalculateTotalChange), 
+        //            destType.GetMethod(calcTotalName));
+
+        //        applyTotalChange = (ApplyTotalChange) Delegate.CreateDelegate(typeof(ApplyTotalChange), 
+        //            destType.GetMethod(applyTotalName));
+
+        //        destToCalcTotal.Add(cd, calcTotalChange);
+        //        destToApplyTotal.Add(cd, applyTotalChange);
+
+        //        for (int i = 0; i < supportedCT.Length; i++)
+        //        {
+        //            if ((changeTypeToDestinations.TryGetValue(supportedCT[i], out destinations))
+        //                    && (!destinations.Contains(cd)))
+        //            {
+        //                destinations.Add(ChangeDestination.Effect_Name);
+        //            }
+        //            else
+        //            {
+        //                changeTypeToDestinations.Add(supportedCT[i], new List<ChangeDestination>() { cd });
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MakeLogErrorStatic(typeof(BaseEffectHandler), "Failed to register destination: " + ex);
+        //        //MakeLogErrorStatic(typeof(BaseEffectHandler), "Terminating server start...");
+        //    }
+        //}
 
 
 
