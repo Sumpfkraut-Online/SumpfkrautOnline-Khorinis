@@ -12,7 +12,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
     public class DestInit_Effect : BaseDestInit
     {
 
-        new public static readonly string _staticName = "DesInit_Effect (static)";
+        new public static readonly string _staticName = "DestInit_Effect (static)";
         new public static DestInit_Effect representative;
 
 
@@ -20,14 +20,12 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
         // make sure, the destination makes itself known to its related changes
         static DestInit_Effect ()
         {
-            Log.Logger.Log("DestInit_Effect (static)");
             representative = new DestInit_Effect();
         }
 
         protected DestInit_Effect ()
         {
-            Log.Logger.Log("DestInit_Effect");
-            SetObjName("DesInit_Effect");
+            SetObjName("DestInit_Effect");
 
             AddOrChange(ChangeDestination.Effect_Name, new List<ChangeType>() { ChangeType.Effect_Name_Set }, 
                 CTC_Name, ATC_Name);

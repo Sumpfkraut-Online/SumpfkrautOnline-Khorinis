@@ -13,7 +13,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
     public class BaseDestInit : ExtendedObject
     {
 
-        new public static readonly string _staticName = "BaseDestinationInit (static)";
+        new public static readonly string _staticName = "BaseDestInit (static)";
         protected static Dictionary<ChangeDestination, DestinationInfo> changeDestinationToInfo;
         public static BaseDestInit representative;
 
@@ -21,7 +21,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 
         static BaseDestInit ()
         {
-            Log.Logger.Log("BaseDestInit (static)");
             // init changeDestinationToInfo which is used by all children
             changeDestinationToInfo = new Dictionary<ChangeDestination, DestinationInfo>();
             // always create own representative
@@ -30,15 +29,12 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
         }
 
         protected BaseDestInit ()
-        {
-            Log.Logger.Log("BaseDestInit");
-        }
+        { }
 
 
 
         public static bool TryGetDestinationInfo (ChangeDestination changeDestination, out DestinationInfo info)
         {
-            MakeLogStatic(typeof(BaseDestInit), changeDestinationToInfo.Keys.Count);
             return changeDestinationToInfo.TryGetValue(changeDestination, out info);
         }
 

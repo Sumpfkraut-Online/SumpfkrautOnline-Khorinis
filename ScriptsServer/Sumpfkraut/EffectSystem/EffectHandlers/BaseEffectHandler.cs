@@ -60,11 +60,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         {
             // register all necessary destinations by providing their type
             // (only register those which are not already registered beforehand by a parent class' static constructor)
-            //RegisterDestination(ChangeDestination.Effect_Name);
-            var info;
-
-            RegisterDestination(new DestinationInfo(ChangeDestination.Effect_Name, 
-                ))
+            RegisterDestination(ChangeDestination.Effect_Name, DestInit_Effect.representative);
         }
         
         // base constructor that must be called for clean initialization
@@ -83,43 +79,47 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
 
-        protected static bool RegisterDestination (DestinationInfo info)
-        {
-            List<ChangeDestination> destinations;
-            try
-            {
-                destToCalcTotal.Add(info.changeDestination, info.calculateTotalChange);
-                destToApplyTotal.Add(info.changeDestination, info.applyTotalChange);
+        //protected static bool RegisterDestination (DestinationInfo info)
+        //{
+        //    List<ChangeDestination> destinations;
+        //    try
+        //    {
+        //        destToCalcTotal.Add(info.changeDestination, info.calculateTotalChange);
+        //        destToApplyTotal.Add(info.changeDestination, info.applyTotalChange);
 
-                for (int i = 0; i < info.supportedChangeTypes.Count; i++)
-                {
-                    if ((changeTypeToDestinations.TryGetValue(info.supportedChangeTypes[i], out destinations))
-                            && (!destinations.Contains(info.changeDestination)))
-                    {
-                        destinations.Add(ChangeDestination.Effect_Name);
-                    }
-                    else
-                    {
-                        changeTypeToDestinations.Add(info.supportedChangeTypes[i], 
-                            new List<ChangeDestination>() { info.changeDestination });
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MakeLogErrorStatic(typeof(BaseEffectHandler), "Failed to register ChangeDestination " 
-                    + info.changeDestination + " : " + ex);
+        //        for (int i = 0; i < info.supportedChangeTypes.Count; i++)
+        //        {
+        //            if ((changeTypeToDestinations.TryGetValue(info.supportedChangeTypes[i], out destinations))
+        //                    && (!destinations.Contains(info.changeDestination)))
+        //            {
+        //                destinations.Add(ChangeDestination.Effect_Name);
+        //            }
+        //            else
+        //            {
+        //                changeTypeToDestinations.Add(info.supportedChangeTypes[i], 
+        //                    new List<ChangeDestination>() { info.changeDestination });
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MakeLogErrorStatic(typeof(BaseEffectHandler), "Failed to register ChangeDestination " 
+        //            + info.changeDestination + " : " + ex);
 
-                // clear already reigstered values after unfinished registration
-                // TO DO
+        //        // clear already reigstered values after unfinished registration
+        //        // TO DO
 
-                return false;
-            }
+        //        return false;
+        //    }
 
-            return true;
-        }
+        //    return true;
+        //}
 
-        protected static bool RegisterDestination (ChangeDestination cd)
+        // register necessary function for ToalChange calculation and application
+        // cd: ChangeDestination to register to
+        // destInit: representative object of the class which should contain the desired TotalChange-functions
+        //           (only used to trigger static initialization of the class if still necessary)
+        protected static bool RegisterDestination (ChangeDestination cd, BaseDestInit destInitRepresentative)
         {
             DestinationInfo info; 
             List<ChangeDestination> destinations;
