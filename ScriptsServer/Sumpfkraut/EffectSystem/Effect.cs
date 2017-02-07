@@ -18,10 +18,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
         protected EffectHandlers.BaseEffectHandler effectHandler;
         public EffectHandlers.BaseEffectHandler EffectHandler { get { return effectHandler; } }
 
-        protected List<BaseChangeInit> changes;
-        public List<BaseChangeInit> Changes { get { return changes; } }
+        protected List<Change> changes;
+        public List<Change> Changes { get { return changes; } }
 
-        protected Dictionary<Enumeration.ChangeDestination, List<BaseChangeInit>> changeDestinationToChanges;
+        protected Dictionary<Enumeration.ChangeDestination, List<Change>> changeDestinationToChanges;
 
         protected static string defaultEffectName = "";
         public static string DefaultEffectName { get { return defaultEffectName; } }
@@ -34,19 +34,19 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
 
 
 
-        public Effect (EffectHandlers.BaseEffectHandler effectHandler, List<BaseChangeInit> changes = null)
+        public Effect (EffectHandlers.BaseEffectHandler effectHandler, List<Change> changes = null)
         {
             SetObjName("Effect (default)");
             changeLock = new object();
             this.effectHandler = effectHandler;
-            this.changes = changes ?? new List<BaseChangeInit>();
+            this.changes = changes ?? new List<Change>();
             this.effectName = defaultEffectName;
-            this.changeDestinationToChanges = new Dictionary<Enumeration.ChangeDestination, List<BaseChangeInit>>();
+            this.changeDestinationToChanges = new Dictionary<Enumeration.ChangeDestination, List<Change>>();
         }
 
 
 
-        public int AddChange (BaseChangeInit change)
+        public int AddChange (Change change)
         {
             int index = -1;
             lock (changeLock)

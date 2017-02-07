@@ -9,36 +9,47 @@ using System.Text;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 {
 
-    public class Dest_Effect_Name : BaseDestinationInit
+    public class DesInit_Effect : BaseDestInit
     {
 
-        new public static readonly string _staticName = "Dest_Effect (static)";
+        new public static readonly string _staticName = "DesInit_Effect (static)";
 
-        new public static readonly ChangeDestination changeDestination = ChangeDestination.Effect_Name;
+        //new public static readonly ChangeDestination changeDestination = ChangeDestination.Effect_Name;
 
-        new public static readonly ChangeType[] supportedChangeTypes = new ChangeType[]
-        {
-            ChangeType.Effect_Name_Set
-        };
+        //new public static readonly ChangeType[] supportedChangeTypes = new ChangeType[]
+        //{
+        //    ChangeType.Effect_Name_Set
+        //};
 
 
 
         // make sure, the destination makes itself known to its related changes
-        static Dest_Effect_Name ()
+        static DesInit_Effect ()
         {
-            Change_Effect_Name.influencedDestinations.Add(ChangeDestination.Effect_Name);
+            //ChangeInit_Effect.representative.influencedDestinations.Add(ChangeDestination.Effect_Name);
         }
 
 
 
-        new public static void CalculateTotalChange (BaseEffectHandler effectHandler)
+        protected DesInit_Effect ()
+        {
+            SetObjName("DesInit_Effect");
+
+            AddSupportedChangeType(ChangeType.Effect_Name_Set);
+            AddCalculateTotalChange(CTC_Name);
+            AddApplyTotalChange(ATC_Name);
+        }
+
+
+
+        new public static void CTC_Name (BaseEffectHandler effectHandler)
         {
             // because multiple effects can be registered on one effectHandler,
             // there is no need to actually calculate a TotalChange
             // (see ApplyTotalChange for the individual treatment of each Change in TotalChange.components)
         }
 
-        new public static void ApplyTotalChange (BaseEffectHandler effectHandler)
+        new public static void ATC_Name (BaseEffectHandler effectHandler)
         {
             // assuming that the EffectName is only set --> set it in the respective effect of each change
             try
@@ -52,7 +63,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
                 }
                 if (totalChange == null) { return; }
 
-                List<BaseChangeInit> components = totalChange.Components;
+                List<Change> components = totalChange.Components;
                 for (int c = 0; c < components.Count; c++)
                 {
                     components[c].Effect.SetEffectName((string) components[c].Parameters[0]);
