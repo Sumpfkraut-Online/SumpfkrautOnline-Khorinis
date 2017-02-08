@@ -5,8 +5,6 @@ using GUC.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 {
@@ -60,7 +58,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         {
             // register all necessary destinations by providing their type
             // (only register those which are not already registered beforehand by a parent class' static constructor)
-            RegisterDestination(ChangeDestination.Effect_Name, DestInit_Effect.representative);
+            RegisterDestination(ChangeDestination.Effect_Name);
         }
         
         // base constructor that must be called for clean initialization
@@ -79,47 +77,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
 
-        //protected static bool RegisterDestination (DestinationInfo info)
-        //{
-        //    List<ChangeDestination> destinations;
-        //    try
-        //    {
-        //        destToCalcTotal.Add(info.changeDestination, info.calculateTotalChange);
-        //        destToApplyTotal.Add(info.changeDestination, info.applyTotalChange);
-
-        //        for (int i = 0; i < info.supportedChangeTypes.Count; i++)
-        //        {
-        //            if ((changeTypeToDestinations.TryGetValue(info.supportedChangeTypes[i], out destinations))
-        //                    && (!destinations.Contains(info.changeDestination)))
-        //            {
-        //                destinations.Add(ChangeDestination.Effect_Name);
-        //            }
-        //            else
-        //            {
-        //                changeTypeToDestinations.Add(info.supportedChangeTypes[i], 
-        //                    new List<ChangeDestination>() { info.changeDestination });
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MakeLogErrorStatic(typeof(BaseEffectHandler), "Failed to register ChangeDestination " 
-        //            + info.changeDestination + " : " + ex);
-
-        //        // clear already reigstered values after unfinished registration
-        //        // TO DO
-
-        //        return false;
-        //    }
-
-        //    return true;
-        //}
-
         // register necessary function for ToalChange calculation and application
         // cd: ChangeDestination to register to
-        // destInit: representative object of the class which should contain the desired TotalChange-functions
-        //           (only used to trigger static initialization of the class if still necessary)
-        protected static bool RegisterDestination (ChangeDestination cd, BaseDestInit destInitRepresentative)
+        protected static bool RegisterDestination (ChangeDestination cd)
         {
             DestInitInfo info; 
             List<ChangeDestination> destinations;

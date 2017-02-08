@@ -26,8 +26,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
         {
             SetObjName("DestInit_Vob");
 
-            AddOrChange(ChangeDestination.Effect_Name, new List<ChangeType>() { ChangeType.Vob_CodeName_Set },
-                CTC_CodeName, ATC_CodeName);
+            
         }
 
         public void CTC_CodeName (BaseEffectHandler effectHandler)

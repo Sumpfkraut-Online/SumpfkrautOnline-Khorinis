@@ -65,7 +65,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             {
                 for (int i = 0; i < changes.Count; i++)
                 {
-                    if (changes[i].ChangeType == changeType)
+                    if (changes[i].GetChangeType() == changeType)
                     {
                         effectHandler.RemoveFromTotalChanges(changes[i]);
                         index = i;

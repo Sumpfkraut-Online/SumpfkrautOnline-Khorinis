@@ -42,7 +42,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
         // add or change existing included type of change and its respective parametertypes
         protected void AddOrChange (ChangeInitInfo inputInfo)
         {
-            MakeLog("Initializing ChangeType " + inputInfo.ChangeType);
+            //MakeLog("Initializing ChangeType " + inputInfo.ChangeType);
 
             ChangeInitInfo info;
             if (changeTypeToInfo.TryGetValue(inputInfo.ChangeType, out info))

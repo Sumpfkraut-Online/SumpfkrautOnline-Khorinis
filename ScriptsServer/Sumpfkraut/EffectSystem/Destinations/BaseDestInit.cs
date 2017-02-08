@@ -41,7 +41,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 
         protected void AddOrChange (DestInitInfo inputInfo)
         {
-            MakeLog("Initializing changeDestination " + inputInfo.ChangeDestination);
+            //MakeLog("Initializing changeDestination " + inputInfo.ChangeDestination);
 
             DestInitInfo info;
             if (changeDestinationToInfo.TryGetValue(inputInfo.ChangeDestination, out info))
@@ -54,6 +54,13 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
             else
             {
                 changeDestinationToInfo.Add(inputInfo.ChangeDestination, inputInfo);
+            }
+
+            // trigger static initialization of the necessary BaseChangeInit-classes
+            int i;
+            for (i = 0; i < inputInfo.SupportedChangeTypes.Count; i++)
+            {
+                
             }
         }
 

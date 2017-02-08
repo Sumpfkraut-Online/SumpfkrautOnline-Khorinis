@@ -27,8 +27,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
         {
             SetObjName("DestInit_Effect");
 
-            AddOrChange(ChangeDestination.Effect_Name, new List<ChangeType>() { ChangeType.Effect_Name_Set }, 
-                CTC_Name, ATC_Name);
+            AddOrChange(new DestInitInfo(ChangeDestination.Effect_Name, new List<ChangeType>() { ChangeType.Effect_Name_Set }, 
+                CTC_Name, ATC_Name));
         }
 
 
@@ -57,7 +57,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
                 List<Change> components = totalChange.Components;
                 for (int c = 0; c < components.Count; c++)
                 {
-                    components[c].Effect.SetEffectName((string) components[c].Parameters[0]);
+                    components[c].GetEffect().SetEffectName((string) components[c].GetParameters()[0]);
                 }
             }
             catch (Exception ex)

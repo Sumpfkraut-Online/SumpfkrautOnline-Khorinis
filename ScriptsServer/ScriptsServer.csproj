@@ -249,9 +249,11 @@
     <Compile Include="Sumpfkraut\Database\Enumeration.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Changes\BaseChangeInit.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Changes\Change.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Changes\ChangeInitializer.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Changes\ChangeInitInfo.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Changes\ChangeInit_Effect.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Destinations\BaseDestInit.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Destinations\DestInitializer.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Destinations\DestInit_Effect.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Destinations\DestInitInfo.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Destinations\DestInit_Vob.cs" />

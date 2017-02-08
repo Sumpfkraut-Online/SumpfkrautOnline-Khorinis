@@ -12,6 +12,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
     public class Change : ExtendedObject
     {
 
+        new public static readonly string _staticName = "Change (static)";
+
         // effect to which this change belongs
         protected Effect effect;
         public Effect GetEffect () { return effect; }
@@ -54,6 +56,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 
         protected Change (ChangeInitInfo changeInitInfo, Effect effect)
         {
+            SetObjName("Change (default)");
             this.changeInitInfo = changeInitInfo;
             this.effect = effect;
             this.parameters = new List<object>(changeInitInfo.ParameterTypes.Count);

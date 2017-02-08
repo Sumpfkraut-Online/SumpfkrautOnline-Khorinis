@@ -273,26 +273,39 @@ namespace GUC.Scripts.Sumpfkraut
 
             //var bla = DestInit_Effect.representative;
 
-            Logger.Log("~~> changeTypeToDestinations <<<<<<<<<<<<<<<<<<<");
-            foreach (KeyValuePair<ChangeType, List<ChangeDestination>> keyVal
-                in BaseEffectHandler.changeTypeToDestinations)
-            {
-                Logger.Log("~~> " + keyVal.Key + ": " + keyVal.Value);
-            }
-            
-            Logger.Log("~~> GetDestToCalcTotal <<<<<<<<<<<<<<<<<<<");
-            foreach (KeyValuePair<ChangeDestination, BaseEffectHandler.CalculateTotalChange> keyVal
-                in BaseEffectHandler.GetDestToCalcTotal())
-            {
-                Logger.Log("~~> " + keyVal.Key + ": " + keyVal.Value);
-            }
+            //Logger.Log("~~> changeTypeToDestinations <<<<<<<<<<<<<<<<<<<");
+            //foreach (KeyValuePair<ChangeType, List<ChangeDestination>> keyVal
+            //    in BaseEffectHandler.changeTypeToDestinations)
+            //{
+            //    Logger.Log("~~> " + keyVal.Key + ": " + keyVal.Value);
+            //}
 
-            Logger.Log("~~> GetDestToApplyTotal <<<<<<<<<<<<<<<<<<<");
-            foreach (KeyValuePair<ChangeDestination, BaseEffectHandler.ApplyTotalChange> keyVal
-                in BaseEffectHandler.GetDestToApplyTotal())
-            {
-                Logger.Log("~~> " + keyVal.Key + ": " + keyVal.Value);
-            }
+            //Logger.Log("~~> GetDestToCalcTotal <<<<<<<<<<<<<<<<<<<");
+            //foreach (KeyValuePair<ChangeDestination, BaseEffectHandler.CalculateTotalChange> keyVal
+            //    in BaseEffectHandler.GetDestToCalcTotal())
+            //{
+            //    Logger.Log("~~> " + keyVal.Key + ": " + keyVal.Value);
+            //}
+
+            //Logger.Log("~~> GetDestToApplyTotal <<<<<<<<<<<<<<<<<<<");
+            //foreach (KeyValuePair<ChangeDestination, BaseEffectHandler.ApplyTotalChange> keyVal
+            //    in BaseEffectHandler.GetDestToApplyTotal())
+            //{
+            //    Logger.Log("~~> " + keyVal.Key + ": " + keyVal.Value);
+            //}
+
+
+
+            ChangeInitializer.Init();
+            DestInitializer.Init();
+
+            //ChangeInitInfo info;
+            //BaseChangeInit.TryGetChangeInitInfo(ChangeType.Effect_Name_Set, out info);
+            //Effect e = new Effect(null);
+            //Change c = Change.Create(info, e, new List<object>() { "MyEffect" });
+            //VobEffectHandler eh = new VobEffectHandler("MyEffectHandler", null, new VobSystem.Definitions.VobDef());
+            //Logger.Log(e.EffectName); 
+            
 
 
 

@@ -19,6 +19,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
         static ChangeInit_Effect ()
         {
             representative = new ChangeInit_Effect();
+            representative.SetObjName("ChangeInit_Effect");
         }
 
 
@@ -26,11 +27,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
         public ChangeInit_Effect ()
             : base()
         {
-            SetObjName("ChangeInit_Effect");
-
-            includedChangeTypes = new List<ChangeType>();
-            parameterTypeLists = new List<List<Type>>();
-
             // add all types of changes and their corresponding parameter types
 
             AddOrChange(new ChangeInitInfo(ChangeType.Effect_Name_Set, new List<Type>()
