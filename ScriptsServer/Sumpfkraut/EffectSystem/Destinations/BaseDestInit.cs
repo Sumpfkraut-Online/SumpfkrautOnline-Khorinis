@@ -14,7 +14,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
     {
 
         new public static readonly string _staticName = "BaseDestInit (static)";
-        protected static Dictionary<ChangeDestination, DestinationInfo> changeDestinationToInfo;
+        protected static Dictionary<ChangeDestination, DestInitInfo> changeDestinationToInfo;
+        // static representative of the class (do not change it in any way after instantiation!)
         public static BaseDestInit representative;
 
 
@@ -22,7 +23,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
         static BaseDestInit ()
         {
             // init changeDestinationToInfo which is used by all children
-            changeDestinationToInfo = new Dictionary<ChangeDestination, DestinationInfo>();
+            changeDestinationToInfo = new Dictionary<ChangeDestination, DestInitInfo>();
             // always create own representative
             representative = new BaseDestInit();
             representative.SetObjName("BaseDestInit");
@@ -33,30 +34,26 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 
 
 
-        public static bool TryGetDestinationInfo (ChangeDestination changeDestination, out DestinationInfo info)
+        public static bool TryGetDestInitInfo (ChangeDestination changeDestination, out DestInitInfo info)
         {
             return changeDestinationToInfo.TryGetValue(changeDestination, out info);
         }
 
-        protected void AddOrChange (ChangeDestination changeDestination, List<ChangeType> supportedChangeTypes,
-            CalculateTotalChange calculateTotalChange, ApplyTotalChange applyTotalChange)
+        protected void AddOrChange (DestInitInfo inputInfo)
         {
-            DestinationInfo info;
+            MakeLog("Initializing changeDestination " + inputInfo.ChangeDestination);
 
-            MakeLog("Initializing changeDestination " + changeDestination);
-
-            if (changeDestinationToInfo.TryGetValue(changeDestination, out info))
+            DestInitInfo info;
+            if (changeDestinationToInfo.TryGetValue(inputInfo.ChangeDestination, out info))
             {
-                MakeLogWarning("Overwriting changeDestination: " + changeDestination);
-                info.supportedChangeTypes = supportedChangeTypes;
-                info.calculateTotalChange = calculateTotalChange;
-                info.applyTotalChange = applyTotalChange;
+                MakeLogWarning("Overwriting entry for ChangeDestination " + inputInfo.ChangeDestination);
+                info.SupportedChangeTypes = inputInfo.SupportedChangeTypes;
+                info.CalculateTotalChange = inputInfo.CalculateTotalChange;
+                info.ApplyTotalChange = inputInfo.ApplyTotalChange;
             }
             else
             {
-                info = new DestinationInfo(changeDestination, supportedChangeTypes,
-                    calculateTotalChange, applyTotalChange);
-                changeDestinationToInfo.Add(changeDestination, info);
+                changeDestinationToInfo.Add(inputInfo.ChangeDestination, inputInfo);
             }
         }
 

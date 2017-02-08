@@ -15,6 +15,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration
         Effect_Parent_Add,                  // add parent effect to inherit Changes from
 
         // often synchronized attributes
+        Vob_CodeName_Set,                   // codename of the VobDef with no whitespace and underscore as seperator
         Vob_Name_Set,                       // displayed name of a vob
 
         // event driven

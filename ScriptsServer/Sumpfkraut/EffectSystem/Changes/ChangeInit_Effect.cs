@@ -33,10 +33,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 
             // add all types of changes and their corresponding parameter types
 
-            AddOrChange(ChangeType.Effect_Name_Set, new List<Type>()
+            AddOrChange(new ChangeInitInfo(ChangeType.Effect_Name_Set, new List<Type>()
             {
                 typeof(string),
-            });
+            }, null));
         }
 
     }

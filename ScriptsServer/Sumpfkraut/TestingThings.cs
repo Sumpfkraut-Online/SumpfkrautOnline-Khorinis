@@ -273,18 +273,21 @@ namespace GUC.Scripts.Sumpfkraut
 
             //var bla = DestInit_Effect.representative;
 
+            Logger.Log("~~> changeTypeToDestinations <<<<<<<<<<<<<<<<<<<");
             foreach (KeyValuePair<ChangeType, List<ChangeDestination>> keyVal
                 in BaseEffectHandler.changeTypeToDestinations)
             {
                 Logger.Log("~~> " + keyVal.Key + ": " + keyVal.Value);
             }
-
+            
+            Logger.Log("~~> GetDestToCalcTotal <<<<<<<<<<<<<<<<<<<");
             foreach (KeyValuePair<ChangeDestination, BaseEffectHandler.CalculateTotalChange> keyVal
                 in BaseEffectHandler.GetDestToCalcTotal())
             {
                 Logger.Log("~~> " + keyVal.Key + ": " + keyVal.Value);
             }
 
+            Logger.Log("~~> GetDestToApplyTotal <<<<<<<<<<<<<<<<<<<");
             foreach (KeyValuePair<ChangeDestination, BaseEffectHandler.ApplyTotalChange> keyVal
                 in BaseEffectHandler.GetDestToApplyTotal())
             {

@@ -121,9 +121,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         //           (only used to trigger static initialization of the class if still necessary)
         protected static bool RegisterDestination (ChangeDestination cd, BaseDestInit destInitRepresentative)
         {
-            DestinationInfo info; 
+            DestInitInfo info; 
             List<ChangeDestination> destinations;
-            if (!BaseDestInit.TryGetDestinationInfo(cd, out info))
+            if (!BaseDestInit.TryGetDestInitInfo(cd, out info))
             {
                 MakeLogErrorStatic(typeof(BaseEffectHandler), "Could not register ChangeDestination "
                     + cd + " because there are not entries for it.");
@@ -132,19 +132,19 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
             try
             {
-                destToCalcTotal.Add(cd, info.calculateTotalChange);
-                destToApplyTotal.Add(cd, info.applyTotalChange);
+                destToCalcTotal.Add(cd, info.CalculateTotalChange);
+                destToApplyTotal.Add(cd, info.ApplyTotalChange);
 
-                for (int i = 0; i < info.supportedChangeTypes.Count; i++)
+                for (int i = 0; i < info.SupportedChangeTypes.Count; i++)
                 {
-                    if ((changeTypeToDestinations.TryGetValue(info.supportedChangeTypes[i], out destinations))
+                    if ((changeTypeToDestinations.TryGetValue(info.SupportedChangeTypes[i], out destinations))
                             && (!destinations.Contains(cd)))
                     {
                         destinations.Add(ChangeDestination.Effect_Name);
                     }
                     else
                     {
-                        changeTypeToDestinations.Add(info.supportedChangeTypes[i], 
+                        changeTypeToDestinations.Add(info.SupportedChangeTypes[i], 
                             new List<ChangeDestination>() { cd });
                     }
                 }
@@ -409,7 +409,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
             lock (effectLock)
             {
-                if (!changeTypeToDestinations.TryGetValue(change.ChangeType, out destinations)) { return; }
+                if (!changeTypeToDestinations.TryGetValue(change.GetChangeType(), out destinations)) { return; }
 
                 for (int d = 0; d < destinations.Count; d++)
                 {
@@ -417,7 +417,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                     {
                         destToTotalChange[destinations[d]].AddChange(change);
                     }
-                    catch (Exception ex) { Print(ex); }
+                    catch (Exception ex) { MakeLogError(ex); }
                 }
             }
         }
@@ -441,7 +441,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
             lock (effectLock)
             {
-                if (!changeTypeToDestinations.TryGetValue(change.ChangeType, out destinations)) { return; }
+                if (!changeTypeToDestinations.TryGetValue(change.GetChangeType(), out destinations)) { return; }
 
                 for (int d = 0; d < destinations.Count; d++)
                 {
@@ -449,7 +449,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                     {
                         destToTotalChange[destinations[d]].RemoveChange(change);
                     }
-                    catch (Exception ex) { Print(ex); }
+                    catch (Exception ex) { MakeLogError(ex); }
                 }
             }
         }
@@ -502,7 +502,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
         public bool TryGetDestinations (Change change, out List<ChangeDestination> destinations)
         {
-            return changeTypeToDestinations.TryGetValue(change.ChangeType, out destinations);
+            return changeTypeToDestinations.TryGetValue(change.GetChangeType(), out destinations);
         }
 
 

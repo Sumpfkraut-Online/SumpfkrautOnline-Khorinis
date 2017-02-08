@@ -14,20 +14,16 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 
         // effect to which this change belongs
         protected Effect effect;
-        public Effect Effect { get { return effect; } }
+        public Effect GetEffect () { return effect; }
         public void SetEffect (Effect value) { effect = value; }
 
-        protected int changeInitIndex;
-        protected BaseChangeInit changeInit;
-        public BaseChangeInit ChangeInit;
-
-        protected ChangeType changeType;
-        public ChangeType ChangeType { get { return changeType; } }
-
-        public List<Type> GetParameterTypes () { return changeInit.GetParameterTypeLists()[changeInitIndex]; }
+        protected ChangeInitInfo changeInitInfo;
+        public ChangeInitInfo GetChangeInitInfo () { return changeInitInfo; }
+        public ChangeType GetChangeType () { return changeInitInfo.ChangeType; }
+        public List<Type> GetParameterTypes () { return changeInitInfo.ParameterTypes; }
 
         protected List<object> parameters;
-        public List<object> Parameters { get { return parameters; } }
+        public List<object> GetParameters () { return parameters; }
         public bool SetParameters(List<object> parameters)
         {
             List<Type> pTypes = GetParameterTypes();
@@ -56,48 +52,39 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 
 
 
-        protected Change (Effect effect, ChangeType changeType)
+        protected Change (ChangeInitInfo changeInitInfo, Effect effect)
         {
+            this.changeInitInfo = changeInitInfo;
             this.effect = effect;
-            this.changeType = changeType;
+            this.parameters = new List<object>(changeInitInfo.ParameterTypes.Count);
         }
 
-        protected Change (Effect effect, ChangeType changeType, List<object> parameters)
+        public static Change Create (ChangeInitInfo changeInitInfo, Effect effect, List<object> parameters)
         {
-            this.effect = effect;
-            this.changeType = changeType;
-            this.parameters = parameters;
-        }
-
-        public static Change Create (Effect effect, ChangeType changeType, List<object> parameters)
-        {
-            Change change = new Change(effect, changeType);
-            if (!change.SetParameters(parameters)) { return null; }
+            if (changeInitInfo == null)
+            {
+                MakeLogWarningStatic(typeof(Change), 
+                    "Aborting Create because insufficient changeInitInfo was provided!");
+                return null;
+            }
+            Change change = new Change(changeInitInfo, effect);
+            if (!change.SetParameters(parameters))
+            {
+                MakeLogWarningStatic(typeof(Change), 
+                    "Aborting Create because insufficient parameters were provided!");
+                return null;
+            }
             return change;
         }
 
 
 
-
-        //public static bool CheckCreateBasics (Effect effect, ChangeType changeType, 
-        //    List<object> parameters, List<Type> types)
-        //{
-        //    if (effect == null) { return false; }
-        //    if (changeType == ChangeType.Undefined) { return false; }
-        //    if (parameters == null) { return false; }
-        //    if (parameters.Count < types.Count) { return false; }
-        //    for (int t = 0; t < types.Count; t++)
-        //    {
-        //        if (parameters[t].GetType() != types[t]) { return false; }
-        //    }
-        //    return true;
-        //}
-
         public override string ToString ()
         {
             List<Type> parameterTypes = GetParameterTypes();
             StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("{0} [effect: {1}, changeType: {2}, parameters: [", GetObjName(), effect, changeType);
+            sb.AppendFormat("{0} [effect: {1}, changeType: {2}, parameters: [", GetObjName(), effect, 
+                changeInitInfo.ChangeType);
             for (int i = 0; i < parameters.Count; i++)
             {
                 sb.AppendFormat("{0}: ({1}) {2}, ", i, parameterTypes[i], parameters[i]);
