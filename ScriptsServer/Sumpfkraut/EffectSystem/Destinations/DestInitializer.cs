@@ -19,6 +19,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
             Type t = typeof(DestInitializer);
 
             MakeLogStatic(t, "Initializing... " + DestInit_Effect._staticName);
+            MakeLogStatic(t, "Initializing... " + DestInit_Vob._staticName);
             // ...
         }
 

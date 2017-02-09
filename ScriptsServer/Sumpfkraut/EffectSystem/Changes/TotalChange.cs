@@ -20,6 +20,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 
         protected Change total;
         public Change Total { get { return total; } }
+        // always set the value with this method to also create a timestamp
         public void SetTotal (Change total)
         {
             lock (totalChangeLock)

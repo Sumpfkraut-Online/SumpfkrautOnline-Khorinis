@@ -46,13 +46,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
             try
             {
                 TotalChange totalChange;
-
-                if (!effectHandler.DestToTotalChange.TryGetValue(
-                    ChangeDestination.Effect_Name, out totalChange))
-                {
-                    return;
-                }
-                if (totalChange == null) { return; }
+                if (!effectHandler.TryGetTotalChange(ChangeDestination.Effect_Name, out totalChange))
+                { return; }
 
                 List<Change> components = totalChange.Components;
                 for (int c = 0; c < components.Count; c++)
@@ -60,10 +55,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
                     components[c].GetEffect().SetEffectName((string) components[c].GetParameters()[0]);
                 }
             }
-            catch (Exception ex)
-            {
-                MakeLogError("Error while applying TotalChange via ATC_Name: " + ex);
-            }
+            catch (Exception ex) { MakeLogError("Error while applying TotalChange via ATC_Name: " + ex); }
         }
 
     }

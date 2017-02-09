@@ -15,8 +15,12 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         new public static readonly string _staticName = "EffectHandler (static)";
 
         // map ChangeType to influenced ChangeDestinations
-        public static Dictionary<ChangeType, List<ChangeDestination>> changeTypeToDestinations =
+        protected static Dictionary<ChangeType, List<ChangeDestination>> changeTypeToDestinations =
             new Dictionary<ChangeType, List<ChangeDestination>>() { };
+        public static Dictionary<ChangeType, List<ChangeDestination>> GetChangeTypeToDestinations ()
+        {
+            return changeTypeToDestinations;
+        }
 
         public delegate void CalculateTotalChange (BaseEffectHandler effectHandler);
         protected static Dictionary<ChangeDestination, CalculateTotalChange> destToCalcTotal =
@@ -37,6 +41,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
         protected object linkedObject;
+        public object GetLinkedObject () { return linkedObject; }
         public T GetLinkedObject<T> () { return (T) linkedObject; }
 
         protected Type linkedObjectType;
@@ -46,11 +51,25 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         protected List<Effect> effects;
         protected object effectLock;
 
-        public Dictionary<ChangeDestination, TotalChange> destToTotalChange;
-        public Dictionary<ChangeDestination, TotalChange> DestToTotalChange { get { return destToTotalChange; } }
+        protected Dictionary<ChangeDestination, TotalChange> destToTotalChange;
+        public Dictionary<ChangeDestination, TotalChange> GetDestToTotalChange () { return destToTotalChange; }
+        public bool TryGetTotalChange (ChangeDestination changeDestination, out TotalChange totalChange)
+        {
+            lock (effectLock)
+            {
+                return destToTotalChange.TryGetValue(changeDestination, out totalChange);
+            }
+        }
 
-        public Dictionary<ChangeDestination, List<Effect>> destToEffects;
-        public Dictionary<ChangeDestination, List<Effect>> DestToEffects{ get { return destToEffects; } }
+        protected Dictionary<ChangeDestination, List<Effect>> destToEffects;
+        public Dictionary<ChangeDestination, List<Effect>> GetDestToEffects () { return destToEffects; }
+        public bool TryGetEffects (ChangeDestination changeDestination, out List<Effect> effects)
+        {
+            lock (effectLock)
+            {
+                return destToEffects.TryGetValue(changeDestination, out effects);
+            }
+        }
 
 
 
@@ -122,50 +141,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
             return true;
         }
-
-        //protected static void RegisterDestination (Type destType, 
-        //    string calcTotalName, string applyTotalName,
-        //    bool printNotice)
-        //{
-        //    ChangeType[] supportedCT;
-        //    ChangeDestination cd;
-        //    List<ChangeDestination> destinations;
-        //    CalculateTotalChange calcTotalChange;
-        //    ApplyTotalChange applyTotalChange;
-
-        //    try
-        //    {
-        //        supportedCT = (ChangeType[]) destType.GetField("supportedChangeTypes").GetValue(null);
-        //        cd = (ChangeDestination) destType.GetField("changeDestination").GetValue(null);
-
-        //        calcTotalChange = (CalculateTotalChange) Delegate.CreateDelegate(typeof(CalculateTotalChange), 
-        //            destType.GetMethod(calcTotalName));
-
-        //        applyTotalChange = (ApplyTotalChange) Delegate.CreateDelegate(typeof(ApplyTotalChange), 
-        //            destType.GetMethod(applyTotalName));
-
-        //        destToCalcTotal.Add(cd, calcTotalChange);
-        //        destToApplyTotal.Add(cd, applyTotalChange);
-
-        //        for (int i = 0; i < supportedCT.Length; i++)
-        //        {
-        //            if ((changeTypeToDestinations.TryGetValue(supportedCT[i], out destinations))
-        //                    && (!destinations.Contains(cd)))
-        //            {
-        //                destinations.Add(ChangeDestination.Effect_Name);
-        //            }
-        //            else
-        //            {
-        //                changeTypeToDestinations.Add(supportedCT[i], new List<ChangeDestination>() { cd });
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MakeLogErrorStatic(typeof(BaseEffectHandler), "Failed to register destination: " + ex);
-        //        //MakeLogErrorStatic(typeof(BaseEffectHandler), "Terminating server start...");
-        //    }
-        //}
 
 
 

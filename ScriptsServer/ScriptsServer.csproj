@@ -252,6 +252,7 @@
     <Compile Include="Sumpfkraut\EffectSystem\Changes\ChangeInitializer.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Changes\ChangeInitInfo.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Changes\ChangeInit_Effect.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Changes\ChangeInit_Vob.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Destinations\BaseDestInit.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Destinations\DestInitializer.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Destinations\DestInit_Effect.cs" />
