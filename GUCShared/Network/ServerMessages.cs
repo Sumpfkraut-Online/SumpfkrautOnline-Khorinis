@@ -43,8 +43,8 @@ namespace GUC.Network
         LoadWorldMessage, // for changing the world
 
         // Messages for Scripts
-        ScriptMessage,
-        ScriptVobMessage,
+        ScriptMessage, // generic script message (menus, global effects etc.)
+        ScriptVobMessage, // script message concerning a single vob
         
         // world & spawns
         WorldCellMessage, // when moving in the world, sends a list of vobs to despawn and a list of vobs to spawn

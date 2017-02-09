@@ -17,12 +17,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class NPCInst
     {
+        public static readonly Networking.Requests.NPCRequestReceiver Requests = new Networking.Requests.NPCRequestReceiver();
 
         private ScriptAniJob fightAni;
         public ScriptAniJob FightAnimation { get { return this.fightAni; } private set { this.fightAni = value; } }
         GUCTimer hitTimer;
-        GUCTimer comboTimer;
-        bool canCombo = true;
 
         #region Constructors
 
@@ -35,7 +34,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             this.isJumping = false;
             this.hitTimer = new GUCTimer(CalcHit);
-            this.comboTimer = new GUCTimer(AbleCombo);
         }
 
         #endregion
@@ -43,80 +41,71 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public NPCCatalog AniCatalog { get { return (NPCCatalog)this.ModelDef?.Catalog; } }
 
         #region Jumps
+
         bool isJumping;
         public bool IsJumping { get { return this.isJumping; } }
-        public void DoJump(bool jumpUp = false)
+
+        /// <summary>
+        /// Starts a jump animation, throws the npc with velocity and sets IsJumping to true for the time of the animation.
+        /// </summary>
+        /// <param name="move"></param>
+        /// <param name="velocity"></param>
+        public void DoJump(JumpMoves move, Vec3f velocity)
         {
-            if (this.IsDead || this.BaseInst.GetEnvironment().InAir)
-                return;
+            //if (this.IsDead || this.BaseInst.GetEnvironment().InAir)
+            //    return;
 
             ScriptAniJob job;
-            if (jumpUp)
+            switch (move)
             {
-                job = AniCatalog.Jumps.Up;
-            }
-            else
-            {
-                if (this.Movement == NPCMovement.Forward)
-                {
-                    job = AniCatalog.Jumps.Run;
-                }
-                else if (this.Movement == NPCMovement.Stand)
-                {
+                case JumpMoves.Fwd:
                     job = AniCatalog.Jumps.Fwd;
-                }
-                else
-                {
+                    break;
+                case JumpMoves.Run:
+                    job = AniCatalog.Jumps.Run;
+                    break;
+                case JumpMoves.Up:
+                    job = AniCatalog.Jumps.Up;
+                    break;
+                default:
+                    Logger.Log("Not existing jump move: " + move);
                     return;
-                }
             }
 
             if (job == null)
                 return;
 
-            if (this.BaseInst.Model.GetActiveAniFromLayerID(1) != null)
-                return;
-
             this.isJumping = true;
+            // fixme: stop as soon as npc hits ground?
             this.ModelInst.StartAnimation(job, () => this.isJumping = false);
-            Vec3f velocity = this.GetDirection();
-            velocity.Y = 500;
-            velocity.X *= 250;
-            velocity.Z *= 250;
             this.Throw(velocity);
         }
+
         #endregion
 
-        #region ItemHandling
-        public void DropItem(byte itemID, ushort amount)
+        #region Drop & Take
+
+        /// <summary>
+        /// Starts a drop animation and drops any item in front of the npc
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="amount"></param>
+        public void DropItem(ItemInst item, int amount, float offset = 50)
         {
-            ItemInst item = Inventory.GetItem(itemID);
             if (item == null)
                 return;
-            if (item.IsEquipped)
-                UnequipItem(item);
 
-            ModelInst.StartAnimation(this.AniCatalog.ItemHandling.DropItem);
+            //if (item.Container != this)
+            //    return;
 
-            int newAmount = item.Amount - amount;
-            int droppedItemAmount;
-            if (newAmount >= 0)
-            {
-                item.SetAmount(newAmount);
-                droppedItemAmount = amount;
-            }
-            else
-            {
-                item.SetAmount(0);
-                droppedItemAmount = item.Amount;
-            }
-
-            ItemInst newItem = new ItemInst(item.Definition);
-            newItem.SetAmount(droppedItemAmount);
+            item = item.Split(amount);
+            
             Vec3f spawnPos = this.GetPosition();
             Vec3f spawnDir = this.GetDirection();
-            spawnPos += spawnDir * 50;
-            newItem.Spawn(this.World, spawnPos, spawnDir);
+            spawnPos += spawnDir * offset;
+
+            // fixme: drop item at the item drop frame
+            ModelInst.StartAnimation(this.AniCatalog.ItemHandling.DropItem, () => item.Spawn(this.World, spawnPos, spawnDir));
         }
 
         public void EquipItem(byte itemID)
@@ -124,10 +113,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             ItemInst item = Inventory.GetItem(itemID);
             if (item == null)
                 return;
-
-            // -> effectsystem
-            if (this.ModelInst.BaseInst.IsInAnimation())
-                return;
+            
+            //if (this.ModelInst.BaseInst.IsInAnimation())
+            //    return;
 
             if (!item.IsEquipped)
                 EquipItem(item);
@@ -204,16 +192,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #region Fight Moves
 
-        public enum FightMoves
-        {
-            Fwd,
-            Left,
-            Right,
-            Run,
 
-            Dodge,
-            Parry
-        }
 
         public void DoFightMove(FightMoves move)
         {
@@ -261,12 +240,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
             if (job == null)
                 return;
-            hitTimer.SetCallback(() => {
+            hitTimer.SetCallback(() =>
+            {
                 this.CalcHit();
                 hitTimer.Stop();
             });
             // Frames / FPS * 0.5
-            hitTimer.SetInterval( TimeSpan.TicksPerMillisecond * 250);
+            hitTimer.SetInterval(TimeSpan.TicksPerMillisecond * 250);
             hitTimer.Start();
 
             this.FightAnimation = job;
@@ -407,9 +387,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             }
         }
 
-       void AbleCombo()
+        void AbleCombo()
         {
-            comboTimer.Stop();
+            //comboTimer.Stop();
             if (this.Movement != NPCMovement.Stand)
             {
                 /*if (this.FightAnimation != null)
@@ -417,7 +397,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             }
             else
             {
-                canCombo = true;
+                //canCombo = true;
             }
         }
 

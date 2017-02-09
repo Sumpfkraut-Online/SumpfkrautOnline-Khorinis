@@ -16,101 +16,14 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class NPCInst
     {
-        public static NPCInst Hero { get { return (NPCInst)NPC.Hero?.ScriptObject; } }
+        public static readonly Networking.Requests.NPCRequestSender Requests = new Networking.Requests.NPCRequestSender();
 
-        #region Requests / Commands
+        public static NPCInst Hero { get { return (NPCInst)NPC.Hero?.ScriptObject; } }
 
         /*
         basis -> item = iteminstance <- scripts
         basis -> iteminstance = itemdefinition <- scripts
         */
-
-        const long CommandInterval = 100000; // 10ms
-        long nextCommandTime = 0;
-        public void SendCommand(ScriptRequestMessageIDs cmd)
-        {
-            if (nextCommandTime > GameTime.Ticks)
-                return; // don't spam
-
-            var stream = GameClient.GetScriptCommandMessageStream(this.BaseInst);
-            stream.Write((byte)cmd);
-            GameClient.SendScriptCommandMessage(stream, PktPriority.High);
-            nextCommandTime = GameTime.Ticks + CommandInterval;
-        }
-
-        public void RequestDropItem(ItemInst item, int amount)
-        {
-            var stream = GameClient.GetScriptCommandMessageStream(this.BaseInst);
-            stream.Write((byte)ScriptRequestMessageIDs.DropItem);
-            stream.Write((byte)item.ID);
-            stream.Write((ushort)amount);
-            Request(stream);
-        }
-
-        public void RequestTakeItem(ItemInst item)
-        {
-            var stream = GameClient.GetScriptCommandMessageStream(this.BaseInst);
-            stream.Write((byte)ScriptRequestMessageIDs.TakeItem);
-            stream.Write((ushort)item.ID);
-            Request(stream);
-        }
-
-        public void RequestEquipItem(ItemInst item)
-        {
-            var stream = GameClient.GetScriptCommandMessageStream(this.BaseInst);
-            stream.Write((byte)ScriptRequestMessageIDs.EquipItem);
-            stream.Write((ushort)item.ID);
-            Request(stream);
-        }
-
-        public void RequestUnequipItem(ItemInst item)
-        {
-            var stream = GameClient.GetScriptCommandMessageStream(this.BaseInst);
-            stream.Write((byte)ScriptRequestMessageIDs.UnequipItem);
-            stream.Write((ushort)item.ID);
-            Request(stream);
-        }
-
-        public void RequestUseItem(ItemInst item)
-        {
-            var stream = GameClient.GetScriptCommandMessageStream(this.BaseInst);
-            stream.Write((byte)ScriptRequestMessageIDs.UseItem);
-            stream.Write((ushort)item.ID);
-            Request(stream);
-        }
-
-        public void RequestAttack(ScriptRequestMessageIDs ID)
-        {
-            var stream = GameClient.GetScriptCommandMessageStream(this.BaseInst);
-            stream.Write((byte)ID);
-            Request(stream);
-        }
-
-        public void RequestDrawWeapon(ItemInst item)
-        {
-            var stream = GameClient.GetScriptCommandMessageStream(this.BaseInst);
-            stream.Write((byte)ScriptRequestMessageIDs.DrawWeapon);
-            stream.Write((byte)item.ID);
-            Request(stream);
-        }
-
-        public void RequestDrawFists()
-        {
-            var stream = GameClient.GetScriptCommandMessageStream(this.BaseInst);
-            stream.Write((byte)ScriptRequestMessageIDs.DrawFists);
-            Request(stream);
-        }
-
-        private void Request(PacketWriter stream)
-        {
-            if (nextCommandTime > GameTime.Ticks)
-                return; // don't spam
-            nextCommandTime = GameTime.Ticks + CommandInterval;
-
-            GameClient.SendScriptCommandMessage(stream, PktPriority.High);
-        }
-
-        #endregion
 
         public void SetMovement(NPCMovement state)
         {

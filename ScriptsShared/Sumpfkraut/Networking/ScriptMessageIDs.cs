@@ -16,6 +16,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking
     public enum ScriptRequestMessageIDs : byte
     {
         JumpFwd,
+        JumpRun,
         JumpUp,
         Climb,
 
@@ -27,6 +28,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking
         AttackForward,
         AttackLeft,
         AttackRight,
+        AttackRun,
 
         Parry,
         Dodge,
@@ -36,6 +38,8 @@ namespace GUC.Scripts.Sumpfkraut.Networking
         EquipItem,
         UnequipItem,
         UseItem,
+
+        MaxNPCRequests,
     }
 
     // messages concerning the events or states of a vob in the world, sent by the server

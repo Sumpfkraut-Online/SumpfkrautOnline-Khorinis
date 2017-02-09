@@ -15,6 +15,24 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class NPCInst : VobInst, NPC.IScriptNPC, ScriptInventory.IContainer
     {
+        public enum JumpMoves
+        {
+            Fwd,
+            Run,
+            Up
+        }
+
+        public enum FightMoves
+        {
+            Fwd,
+            Left,
+            Right,
+            Run,
+
+            Dodge,
+            Parry
+        }
+
         #region Constructors
 
         partial void pConstruct();

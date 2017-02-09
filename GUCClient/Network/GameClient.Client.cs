@@ -642,36 +642,7 @@ namespace GUC.Network
         }
 
         #endregion
-
-        #region Script Command Message
-
-        public static PacketWriter GetScriptCommandMessageStream(GuidedVob vob)
-        {
-            if (vob == null)
-                throw new ArgumentNullException("Vob is null!");
-
-            if (vob == Client.character)
-            {
-                return SetupStream(ClientMessages.ScriptCommandHeroMessage);
-            }
-            else if (Client == vob.guide)
-            {
-                var stream = SetupStream(ClientMessages.ScriptCommandMessage);
-                stream.Write((ushort)vob.ID);
-                return stream;
-            }
-            else
-            {
-                throw new ArgumentException("Vob is not controlled by this character!");
-            }
-        }
-
-        public static void SendScriptCommandMessage(PacketWriter stream, PktPriority priority)
-        {
-            Send(stream, priority, PktReliability.Unreliable, 'C');
-        }
-
-        #endregion
+        
         
         internal static PacketWriter SetupStream(ClientMessages id)
         {

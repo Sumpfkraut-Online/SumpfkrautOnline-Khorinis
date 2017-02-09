@@ -146,6 +146,33 @@ namespace GUC.WorldObjects
 
         #endregion
 
+        #region Script Command Message
+
+        public PacketWriter GetScriptCommandStream()
+        {
+            if (this == Hero)
+            {
+                return GameClient.SetupStream(ClientMessages.ScriptCommandHeroMessage);
+            }
+            else if (this.guide != null)
+            {
+                var stream = GameClient.SetupStream(ClientMessages.ScriptCommandMessage);
+                stream.Write((ushort)this.ID);
+                return stream;
+            }
+            else
+            {
+                throw new ArgumentException("Vob is not guided by client!");
+            }
+        }
+
+        public static void SendScriptCommand(PacketWriter stream, PktPriority priority)
+        {
+            GameClient.Send(stream, priority, PktReliability.Unreliable, 'C');
+        }
+
+        #endregion
+
         /// <summary> The npc the client is controlling. </summary>
         public static NPC Hero { get { return GameClient.Client.Character; } }
 
@@ -374,6 +401,9 @@ namespace GUC.WorldObjects
 
         public void SetMovement(NPCMovement state)
         {
+            if (this.guide == null) // we're not guiding this npc
+                return;
+
             if (this.movement == state)
                 return;
 
