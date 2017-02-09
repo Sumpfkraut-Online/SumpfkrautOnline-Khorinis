@@ -29,7 +29,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
         {
             SetObjName("DestInit_Vob");
 
-            
+            AddOrChange(new DestInitInfo(ChangeDestination.Vob_CodeName, new List<ChangeType>() { ChangeType.Vob_CodeName_Set }, 
+                CTC_CodeName, ATC_CodeName));
         }
 
         public void CTC_CodeName (BaseEffectHandler effectHandler)
@@ -61,8 +62,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
             {
                 TotalChange totalChange = null;
                 if (!effectHandler.TryGetTotalChange(ChangeDestination.Effect_Name, out totalChange)) { return; }
-
-                // apply
 
                 var linkedObj = effectHandler.GetLinkedObject();
                 if      (linkedObj is VobDef)
