@@ -238,7 +238,6 @@
     <Compile Include="Sumpfkraut\Daedalus\DDLValueTypes.cs" />
     <Compile Include="Sumpfkraut\Database\DBAgent.cs" />
     <Compile Include="Sumpfkraut\Database\DBFileManager.cs" />
-    <Compile Include="Sumpfkraut\Database\DBQueryHandler.cs" />
     <Compile Include="Sumpfkraut\Database\DBQuerying\AbstractDBQuery.cs" />
     <Compile Include="Sumpfkraut\Database\DBQuerying\DBBackupQuery.cs" />
     <Compile Include="Sumpfkraut\Database\DBQuerying\DBQuery.cs" />
