@@ -249,7 +249,6 @@
     <Compile Include="Sumpfkraut\Database\Enumeration.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Changes\BaseChangeInit.cs" />
     <Compile Include="Sumpfkraut\Networking\Requests\NPCRequestReceiver.cs" />
-    <Compile Include="Sumpfkraut\EffectSystem\Changes\BaseChange.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Changes\Change.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Changes\ChangeInitializer.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Changes\ChangeInitInfo.cs" />

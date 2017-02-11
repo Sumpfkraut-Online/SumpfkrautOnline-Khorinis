@@ -199,11 +199,13 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
             lock (effectLock)
             {
+                // first remove effects without recalculating and reapplying the TotalChanges
                 for (int e = 0; e < effects.Count; e++)
                 {
-                    RemoveEffect(effects[e]);
+                    RemoveEffect(effects[e], false);
                 }
                 
+                // recalc and reapply TotalChanges in one swoop                
                 if (TryGetDestinations(effects, out destinations))
                 {
                     RecalculateTotals(destinations);
@@ -215,8 +217,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         public int RemoveEffect (string effectName, bool recalcAndApplyTotals = true)
         {
             int index = -1;
-            Effect effect = null;
-            List<ChangeDestination> destinations;
 
             lock (effectLock)
             {
@@ -225,33 +225,11 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                     if (effects[i].EffectName == effectName)
                     {
                         index = i;
-                        effect = effects[index];
                         break;
                     }
                 }
 
-                // if effect wasn't there in the first place --> do nothing
-                if (index < 0) { return index; }
-
-                if (!recalcAndApplyTotals)
-                {
-                    RemoveFromTotalChanges(effects[index].Changes);
-                    effects[index].Dispose();
-                    effects.RemoveAt(index);
-                    return index;
-                }
-
-                if (!TryGetDestinations(effect, out destinations))
-                {
-                    MakeLogWarning(string.Format("Couldn't find ChangeDestinations for Effect: {1}", effect));
-                    return index;
-                }
-
-                RecalculateTotals(destinations);
-                ReapplyTotals(destinations);
-                RemoveFromTotalChanges(effects[index].Changes);
-                effects[index].Dispose();
-                effects.RemoveAt(index);
+                RemoveEffect(index, recalcAndApplyTotals);
             }
             return index;
         }
@@ -259,19 +237,33 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         public int RemoveEffect (Effect effect, bool recalcAndApplyTotals = true)
         {
             int index = -1;
-            List<ChangeDestination> destinations;
-
             lock (effectLock)
             {
                 index = effects.IndexOf(effect);
+                RemoveEffect(index, recalcAndApplyTotals);
+            }
+            return index;
+        }
 
-                if (index < 0) { return index; }
+        protected int RemoveEffect (int index, bool recalcAndApplyTotals = true)
+        {
+            Effect effect;
+            List<ChangeDestination> destinations;
+            lock (effectLock)
+            {
+                // if effect wasn't there in the first place --> do nothing
+                if (index < 0) { return -1; }
+
+                effect = effects[index];
 
                 if (!recalcAndApplyTotals)
                 {
+                    // if no recalculation and reapplicaiton of influenced TotalChanges wanted
+                    // => simply remove and dispose
                     RemoveFromTotalChanges(effects[index].Changes);
                     effects[index].Dispose();
                     effects.RemoveAt(index);
+                    return index;
                 }
 
                 if (!TryGetDestinations(effect, out destinations))
@@ -280,48 +272,15 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                     return index;
                 }
 
+                // remove and dispose to let garbage collect + recalculate and reapply TotalChanges
+                RemoveFromTotalChanges(effects[index].Changes);
+                effect.Dispose();
+                effects.RemoveAt(index);
                 RecalculateTotals(destinations);
                 ReapplyTotals(destinations);
-                RemoveFromTotalChanges(effects[index].Changes);
-                effects[index].Dispose();
-                effects.RemoveAt(index);
             }
             return index;
         }
-
-
-
-        //protected void ApplyEffects (List<Effect> effects)
-        //{
-        //    for (int i = 0; i < effects.Count; i++)
-        //    {
-        //        if (effects[i].EffectHandler == this)
-        //        {
-        //            ApplyEffect(effects[i]);
-        //        }
-        //    }
-        //}
-
-        //virtual protected void ApplyEffect (Effect effect, bool reverse = false)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //protected void ReverseEffects (List<Effect> effects)
-        //{
-        //    for (int i = 0; i < effects.Count; i++)
-        //    {
-        //        if (effects[i].EffectHandler == this)
-        //        {
-        //            ReverseEffect(effects[i]);
-        //        }
-        //    }
-        //}
-
-        //virtual protected void ReverseEffect (Effect effect)
-        //{
-        //    ApplyEffect(effect, true);
-        //}
 
 
 
