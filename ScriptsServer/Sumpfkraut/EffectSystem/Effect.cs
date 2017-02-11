@@ -31,6 +31,29 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
 
         protected object changeLock;
 
+        protected string globalID;
+        public string GlobalID { get { return this.globalID; } }
+        public void SetGlobalID (string globalID)
+        {
+            // remove former global effect
+            RemoveGlobalEffect(this.globalID);
+            AddGlobalEffect(globalID, this, true);
+        }
+
+        protected Effect parent;
+        public Effect GetParent () { return this.parent; }
+        public bool AddParent (Effect effect)
+        {
+            // if not already done induce AddChild on parent es well
+        }
+
+        protected List<Effect> children;
+        public List<Effect> GetChildren () { return children; }
+        public bool AddChild (Effect child)
+        {
+            // if not already done induce AddParent on child as well
+        }
+
         protected string effectName;
         public string EffectName { get { return this.effectName; } }
         public void SetEffectName (string effectName) { this.effectName = effectName; }
@@ -45,30 +68,49 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             this.changes = changes ?? new List<Change>();
             this.effectName = defaultEffectName;
             this.changeDestinationToChanges = new Dictionary<Enumeration.ChangeDestination, List<Change>>();
+            this.globalID = null;
+            this.parent = null;
+            this.children = new List<Effect>();
         }
 
 
 
-        public static bool AddGlobalEffect (string codeName, Effect effect, bool replace = false)
+        public static bool AddGlobalEffect (string globalID, Effect effect, bool replace = true)
         {
             lock (globalLock)
             {
-                if (globalEffects.ContainsKey(codeName))
+                if (globalEffects.ContainsKey(globalID))
                 {
                     if (!replace) { return false; }
-                    globalEffects[codeName] = effect;
+                    globalEffects[globalID] = effect;
                     return true;
                 }
-                globalEffects.Add(codeName, effect);
+                globalEffects.Add(globalID, effect);
             }
             return true;
         }
 
-        public static bool RemoveGlobalEffect (string codeName)
+        public static bool GlobalEffectExists (string globalID)
         {
             lock (globalLock)
             {
-                return globalEffects.Remove(codeName);
+                return globalEffects.ContainsKey(globalID);
+            }
+        }
+
+        public static bool GlobalEffectExists (Effect effect)
+        {
+            lock (globalLock)
+            {
+                return globalEffects.ContainsValue(effect);
+            }
+        }
+
+        public static bool RemoveGlobalEffect (string globalID)
+        {
+            lock (globalLock)
+            {
+                return globalEffects.Remove(globalID);
             }
         }
 
@@ -98,9 +140,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             return remKeys.Count - failedRemovals;
         }
 
-        public static bool TryGetGlobalEffect (string codeName, out Effect effect)
+        public static bool TryGetGlobalEffect (string globalID, out Effect effect)
         {
-            return globalEffects.TryGetValue(codeName, out effect);
+            return globalEffects.TryGetValue(globalID, out effect);
         }
 
 
