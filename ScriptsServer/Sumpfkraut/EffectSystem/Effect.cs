@@ -12,6 +12,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
     {
 
         new public static readonly string _staticName = "Effect (static)";
+        protected static object globalLock;
+
+        protected static Dictionary<string, Effect> globalEffects = new Dictionary<string, Effect>();
 
 
 
@@ -42,6 +45,62 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             this.changes = changes ?? new List<Change>();
             this.effectName = defaultEffectName;
             this.changeDestinationToChanges = new Dictionary<Enumeration.ChangeDestination, List<Change>>();
+        }
+
+
+
+        public static bool AddGlobalEffect (string codeName, Effect effect, bool replace = false)
+        {
+            lock (globalLock)
+            {
+                if (globalEffects.ContainsKey(codeName))
+                {
+                    if (!replace) { return false; }
+                    globalEffects[codeName] = effect;
+                    return true;
+                }
+                globalEffects.Add(codeName, effect);
+            }
+            return true;
+        }
+
+        public static bool RemoveGlobalEffect (string codeName)
+        {
+            lock (globalLock)
+            {
+                return globalEffects.Remove(codeName);
+            }
+        }
+
+        // remove 1 or all siblings of the provided effect from the global effects
+        // and return the number of successfully removed entries
+        public static int RemoveGlobalEffect (Effect effect, bool all = true)
+        {
+            var remKeys = new List<string>();
+            int failedRemovals = 0;
+            lock (globalLock)
+            {
+                foreach (var keyVal in globalEffects)
+                {
+                    if ((keyVal.Value == effect))
+                    {
+                        remKeys.Add(keyVal.Key);
+                        if (!all) { break; }
+                    }
+                }
+
+                int i;
+                for (i = 0; i < remKeys.Count; i++)
+                {
+                    if (!RemoveGlobalEffect(remKeys[i])) { failedRemovals++; }
+                }
+            }
+            return remKeys.Count - failedRemovals;
+        }
+
+        public static bool TryGetGlobalEffect (string codeName, out Effect effect)
+        {
+            return globalEffects.TryGetValue(codeName, out effect);
         }
 
 
