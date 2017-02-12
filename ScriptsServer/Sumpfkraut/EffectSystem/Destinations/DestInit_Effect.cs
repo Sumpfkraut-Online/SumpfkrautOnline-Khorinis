@@ -32,12 +32,20 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
             SetObjName("DestInit_Effect");
 
             AddOrChange(new DestInitInfo(ChangeDestination.Effect_GlobalID, 
+                new List<ChangeType>() { ChangeType.Effect_Child_Add }, 
+                CTC_Child, ATC_Child));
+
+            AddOrChange(new DestInitInfo(ChangeDestination.Effect_GlobalID, 
                 new List<ChangeType>() { ChangeType.Effect_GlobalID_Set }, 
                 CTC_GlobalID, ATC_GlobalID));
 
             AddOrChange(new DestInitInfo(ChangeDestination.Effect_Name, 
                 new List<ChangeType>() { ChangeType.Effect_Name_Set }, 
                 CTC_Name, ATC_Name));
+
+            AddOrChange(new DestInitInfo(ChangeDestination.Effect_Parent, 
+                new List<ChangeType>() { ChangeType.Effect_Parent_Add }, 
+                CTC_Parent, ATC_Parent));
         }
 
 
