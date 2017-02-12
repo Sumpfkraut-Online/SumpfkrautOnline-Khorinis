@@ -22,7 +22,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
         public EffectHandlers.BaseEffectHandler EffectHandler { get { return effectHandler; } }
 
         protected List<Change> changes;
-        public List<Change> Changes { get { return changes; } }
+        public List<Change> GetChanges () { return changes; }
 
         protected Dictionary<Enumeration.ChangeDestination, List<Change>> changeDestinationToChanges;
 
@@ -32,7 +32,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
         protected object changeLock;
 
         protected string globalID;
-        public string GlobalID { get { return this.globalID; } }
+        public string GetGlobalID () { return globalID; }
         public void SetGlobalID (string globalID)
         {
             // remove former global effect
@@ -40,18 +40,41 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             AddGlobalEffect(globalID, this, true);
         }
 
-        protected Effect parent;
-        public Effect GetParent () { return this.parent; }
-        public bool AddParent (Effect effect)
+        protected List<Effect> parents;
+        public List<Effect> GetParents () { return parents; }
+        public bool AddParent (Effect parent)
         {
+            if (parents.Contains(parent)) { return true; }
+            parents.Add(parent);
+
+            // add the parent's Changes
+            AddChanges(parent.GetChanges());
+
             // if not already done induce AddChild on parent es well
+            var parentChildren = parent.GetChildren();
+            if (!parentChildren.Contains(this)) { parent.AddChild(this); }
+            return true;
+        }
+        public bool ContainsParent (Effect parent)
+        {
+            return parents.Contains(parent);
         }
 
         protected List<Effect> children;
         public List<Effect> GetChildren () { return children; }
         public bool AddChild (Effect child)
         {
+            if (children.Contains(child)) { return true; }
+            children.Add(child);
+
             // if not already done induce AddParent on child as well
+            var childParents = child.GetParents();
+            if (!childParents.Contains(this)) { child.AddParent(this); }
+            return true;
+        }
+        public bool ContainsChild (Effect child)
+        {
+            return children.Contains(child);
         }
 
         protected string effectName;
@@ -69,7 +92,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             this.effectName = defaultEffectName;
             this.changeDestinationToChanges = new Dictionary<Enumeration.ChangeDestination, List<Change>>();
             this.globalID = null;
-            this.parent = null;
+            this.parents = new List<Effect>();
             this.children = new List<Effect>();
         }
 
@@ -146,6 +169,15 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
         }
 
 
+
+        public void AddChanges (List<Change> cl)
+        {
+            lock (changeLock)
+            {
+                changes.AddRange(cl);
+                effectHandler.AddToTotalChanges(cl);
+            }
+        }
 
         public int AddChange (Change change)
         {

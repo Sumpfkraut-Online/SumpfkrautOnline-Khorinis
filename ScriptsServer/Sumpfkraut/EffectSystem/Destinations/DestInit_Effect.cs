@@ -42,6 +42,40 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 
 
 
+        public void CTC_Child (BaseEffectHandler effectHandler)
+        {
+            // because multiple effects can be registered on one effectHandler,
+            // there is no need to actually calculate a TotalChange
+            // (see ApplyTotalChange for the individual treatment of each Change in TotalChange.components)
+        }
+
+        public void ATC_Child (BaseEffectHandler effectHandler)
+        {
+            try
+            {
+                TotalChange totalChange;
+                if (!effectHandler.TryGetTotalChange(ChangeDestination.Effect_Child, out totalChange))
+                { return; }
+
+                Effect effect;
+                Effect child;
+                string childGlobalID;
+                List<Change> components = totalChange.Components;
+                for (int c = 0; c < components.Count; c++)
+                {
+                    effect = components[c].GetEffect();
+                    childGlobalID = (string) components[c].GetParameters()[0];
+                    if (!Effect.TryGetGlobalEffect(childGlobalID, out child))
+                    {
+                        MakeLogWarning("Did not find effect behind globalID " + childGlobalID
+                            + " to add as child effect in ATC_Child");
+                    }
+                    effect.AddChild(child);
+                }
+            }
+            catch (Exception ex) { MakeLogError("Error while applying TotalChange via ATC_Name: " + ex); }
+        }
+
         public void CTC_GlobalID (BaseEffectHandler effectHandler)
         {
             // because multiple effects can be registered on one effectHandler,
@@ -56,21 +90,16 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
                 TotalChange totalChange;
                 if (!effectHandler.TryGetTotalChange(ChangeDestination.Effect_Name, out totalChange))
                 { return; }
- 
-                var components = totalChange.Components;
-                Effect effect;
 
-                if (components.Count > 0)
+                Effect effect;
+                string globalID;
+                var components = totalChange.Components;
+                int i;
+                for (i = 0; i < components.Count; i++)
                 {
-                    effect = components[components.Count - 1].GetEffect();
-                    if (Effect.GlobalEffectExists(effect.))
-                }
-                for (int c = 0; c < components.Count; c++)
-                {
-                    // allow only 1 copy of the effect in the globals
-                    
-                    
-                    //components[c].GetEffect().SetEffectName((string) components[c].GetParameters()[0]);
+                    effect = components[i].GetEffect();
+                    globalID = (string) components[i].GetParameters()[0];
+                    if (globalID != null) { Effect.AddGlobalEffect(globalID, effect); }
                 }
             }
             catch (Exception ex) { MakeLogError("Error while applying TotalChange via ATC_Name: " + ex); }
@@ -96,6 +125,40 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
                 for (int c = 0; c < components.Count; c++)
                 {
                     components[c].GetEffect().SetEffectName((string) components[c].GetParameters()[0]);
+                }
+            }
+            catch (Exception ex) { MakeLogError("Error while applying TotalChange via ATC_Name: " + ex); }
+        }
+
+        public void CTC_Parent (BaseEffectHandler effectHandler)
+        {
+            // because multiple effects can be registered on one effectHandler,
+            // there is no need to actually calculate a TotalChange
+            // (see ApplyTotalChange for the individual treatment of each Change in TotalChange.components)
+        }
+
+        public void ATC_Parent (BaseEffectHandler effectHandler)
+        {
+            try
+            {
+                TotalChange totalChange;
+                if (!effectHandler.TryGetTotalChange(ChangeDestination.Effect_Parent, out totalChange))
+                { return; }
+
+                Effect effect;
+                Effect parent;
+                string parentGlobalID;
+                List<Change> components = totalChange.Components;
+                for (int c = 0; c < components.Count; c++)
+                {
+                    effect = components[c].GetEffect();
+                    parentGlobalID = (string) components[c].GetParameters()[0];
+                    if (!Effect.TryGetGlobalEffect(parentGlobalID, out parent))
+                    {
+                        MakeLogWarning("Did not find effect behind globalID " + parentGlobalID
+                            + " to add as parent effect in ATC_Parent");
+                    }
+                    effect.AddParent(parent);
                 }
             }
             catch (Exception ex) { MakeLogError("Error while applying TotalChange via ATC_Name: " + ex); }

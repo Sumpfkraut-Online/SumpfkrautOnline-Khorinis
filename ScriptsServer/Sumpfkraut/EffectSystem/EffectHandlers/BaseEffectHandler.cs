@@ -176,7 +176,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                 
                 effects.Add(effect);
                 index = effects.Count;
-                AddToTotalChanges(effect.Changes);
+                AddToTotalChanges(effect.GetChanges());
 
                 if (!recalcAndApplyTotals) { return index; }
 
@@ -260,7 +260,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                 {
                     // if no recalculation and reapplicaiton of influenced TotalChanges wanted
                     // => simply remove and dispose
-                    RemoveFromTotalChanges(effects[index].Changes);
+                    RemoveFromTotalChanges(effects[index].GetChanges());
                     effects[index].Dispose();
                     effects.RemoveAt(index);
                     return index;
@@ -273,7 +273,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                 }
 
                 // remove and dispose to let garbage collect + recalculate and reapply TotalChanges
-                RemoveFromTotalChanges(effects[index].Changes);
+                RemoveFromTotalChanges(effects[index].GetChanges());
                 effect.Dispose();
                 effects.RemoveAt(index);
                 RecalculateTotals(destinations);
@@ -358,7 +358,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
             for (int e = 0; e < effects.Count; e++)
             {
-                if (TryGetDestinations(effects[e].Changes, out tempDestinations))
+                if (TryGetDestinations(effects[e].GetChanges(), out tempDestinations))
                 {
                     allDestinations.Union(tempDestinations);
                 }
@@ -371,7 +371,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
         public bool TryGetDestinations (Effect effect, out List<ChangeDestination> destinations)
         {
-            return TryGetDestinations(effect.Changes, out destinations);
+            return TryGetDestinations(effect.GetChanges(), out destinations);
         }
 
         public bool TryGetDestinations (List<Change> changes, out List<ChangeDestination> destinations)
