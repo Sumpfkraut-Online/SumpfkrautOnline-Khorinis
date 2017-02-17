@@ -29,8 +29,21 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
         {
             SetObjName("DestInit_Vob");
 
-            AddOrChange(new DestInitInfo(ChangeDestination.Vob_CodeName, new List<ChangeType>() { ChangeType.Vob_CodeName_Set }, 
+            AddOrChange(new DestInitInfo(ChangeDestination.Vob_CodeName, 
+                new List<ChangeType>() { ChangeType.Vob_CodeName_Set }, 
                 CTC_CodeName, ATC_CodeName));
+
+            AddOrChange(new DestInitInfo(ChangeDestination.Vob_Name, 
+                new List<ChangeType>() { ChangeType.Vob_Name_Set }, 
+                CTC_Name, ATC_Name));
+
+            AddOrChange(new DestInitInfo(ChangeDestination.Vob_VobDefType, 
+                new List<ChangeType>() { ChangeType.Vob_VobDefType_Set }, 
+                CTC_VobDefType, ATC_VobDefType));
+
+            AddOrChange(new DestInitInfo(ChangeDestination.Vob_VobInstType, 
+                new List<ChangeType>() { ChangeType.Vob_VobInstType_Set }, 
+                CTC_VobInstType, ATC_VobInstType));
         }
 
         public void CTC_CodeName (BaseEffectHandler effectHandler)
@@ -44,10 +57,12 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
                 if (!BaseChangeInit.TryGetChangeInitInfo(ChangeType.Vob_CodeName_Set, out info))
                 {
                     MakeLogError("Tried to calculate TotalChange with non-initialized ChangeType "
-                        + ChangeDestination.Vob_CodeName);
+                        + ChangeType.Vob_CodeName_Set);
                     return;
                 }
 
+                // stop here when there are no Changes to process
+                if (totalChange.Components.Count < 1) { return; }
                 // last codeName counts
                 tc = Change.Create(info, null, 
                     new List<object>() { totalChange.Components[totalChange.Components.Count - 1] });
@@ -76,6 +91,89 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
                 }
             }
             catch (Exception ex) { MakeLogError("Error while applying TotalChange via ATC_CodeName: " + ex); }
+        }
+
+        public void CTC_Name (BaseEffectHandler effectHandler)
+        {
+            // TO DO
+        }
+
+        public void ATC_Name (BaseEffectHandler effectHandler)
+        {
+            // TO DO
+        }
+
+        public void CTC_VobDefType (BaseEffectHandler effectHandler)
+        {
+            try
+            {
+                TotalChange totalChange = null;
+                Change tc;
+                ChangeInitInfo info;
+                if (!effectHandler.TryGetTotalChange(ChangeDestination.Vob_VobDefType, out totalChange)) { return; }
+                if (!BaseChangeInit.TryGetChangeInitInfo(ChangeType.Vob_VobDefType_Set, out info))
+                {
+                    MakeLogError("Tried to calculate TotalChange via CTC_VobDefType with non-initialized ChangeType "
+                        + ChangeType.Vob_VobDefType_Set);
+                    return;
+                }
+
+                // last component counts as long as the linkedObject still isn't set
+                // (changing it afterwards is not possible)
+                object linkedObject = effectHandler.GetLinkedObject();
+                if (linkedObject != null) { return; }
+
+                // stop here when there are no Changes to process
+                if (totalChange.Components.Count < 1) { return; }
+                // last codeName counts
+                tc = Change.Create(info, null, 
+                    new List<object>() { totalChange.Components[totalChange.Components.Count - 1] });
+                totalChange.SetTotal(tc);
+            }
+            catch (Exception ex) { MakeLogError("Error while caclulating TotalChange via CTC_VobDefType: " + ex); }
+        }
+
+        public void ATC_VobDefType (BaseEffectHandler effectHandler)
+        {
+            // no application necessary because VobDefType is only used 
+            // when creating a new instance of VobDef, not afterwards
+
+        }
+
+        public void CTC_VobInstType (BaseEffectHandler effectHandler)
+        {
+            try
+            {
+                TotalChange totalChange = null;
+                Change tc;
+                ChangeInitInfo info;
+                if (!effectHandler.TryGetTotalChange(ChangeDestination.Vob_VobInstType, out totalChange)) { return; }
+                if (!BaseChangeInit.TryGetChangeInitInfo(ChangeType.Vob_VobInstType_Set, out info))
+                {
+                    MakeLogError("Tried to calculate TotalChange via CTC_VobInstType with non-initialized ChangeType "
+                        + ChangeType.Vob_VobInstType_Set);
+                    return;
+                }
+
+                // last component counts as long as the linkedObject still isn't set
+                // (changing it afterwards is not possible)
+                object linkedObject = effectHandler.GetLinkedObject();
+                if (linkedObject != null) { return; }
+
+                // stop here when there are no Changes to process
+                if (totalChange.Components.Count < 1) { return; }
+                // last codeName counts
+                tc = Change.Create(info, null, 
+                    new List<object>() { totalChange.Components[totalChange.Components.Count - 1] });
+                totalChange.SetTotal(tc);
+            }
+            catch (Exception ex) { MakeLogError("Error while caclulating TotalChange via CTC_VobInstType: " + ex); }
+        }
+
+        public void ATC_VobInstType (BaseEffectHandler effectHandler)
+        {
+            // no application necessary because VobInstType is only used 
+            // when creating a new instance of VobInst, not afterwards
         }
 
     }

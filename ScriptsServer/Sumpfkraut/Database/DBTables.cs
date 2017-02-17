@@ -44,14 +44,14 @@ namespace GUC.Scripts.Sumpfkraut.Database
         /// (name + datatype)</param>
         /// <returns></returns>
         public static bool ConvertSQLResults (ref List<List<List<object>>> sqlResults, 
-            ref List<ColumnGetTypeInfo> colGetTypeInfo)
+            List<ColumnGetTypeInfo> colGetTypeInfo)
         {
             List<List<ColumnGetTypeInfo>> _colGetTypeInfo = new List<List<ColumnGetTypeInfo>> { colGetTypeInfo };
-            return ConvertSQLResults(ref sqlResults, ref _colGetTypeInfo, true);
+            return ConvertSQLResults(ref sqlResults, _colGetTypeInfo, true);
         }
 
         public static bool ConvertSQLResults (ref List<List<List<object>>> sqlResults, 
-            ref List<List<ColumnGetTypeInfo>> colGetTypeInfo, bool noLengthComparison)
+            List<List<ColumnGetTypeInfo>> colGetTypeInfo, bool noLengthComparison = false)
         {
             bool allConverted = true;
             object tempEntry = null;

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using GUC.Scripts.Sumpfkraut.VobSystem.Enumeration;
 
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 {
@@ -31,7 +32,22 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 
             AddOrChange(new ChangeInitInfo(ChangeType.Vob_CodeName_Set, new List<Type>()
             {
-                typeof(string),
+                typeof(string),                 // codeName
+            }, null));
+
+            AddOrChange(new ChangeInitInfo(ChangeType.Vob_Name_Set, new List<Type>()
+            {
+                typeof(string),                 // vob-name
+            }, null));
+
+            AddOrChange(new ChangeInitInfo(ChangeType.Vob_VobDefType_Set, new List<Type>()
+            {
+                typeof(VobDefType),             // type of vob-definition
+            }, null));
+
+            AddOrChange(new ChangeInitInfo(ChangeType.Vob_VobInstType_Set, new List<Type>()
+            {
+                typeof(VobInstType),             // type of vob-instance
             }, null));
         }
 

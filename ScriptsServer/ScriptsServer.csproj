@@ -247,6 +247,10 @@
     <Compile Include="Sumpfkraut\Database\DBTables.cs" />
     <Compile Include="Sumpfkraut\Database\Enumeration.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Changes\BaseChangeInit.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\EffectLoader.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\EffectLoaders\BaseEffectLoader.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\EffectLoaders\EffectLoader.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\EffectLoaders\VobEffectLoader.cs" />
     <Compile Include="Sumpfkraut\Networking\Requests\NPCRequestReceiver.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Changes\Change.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Changes\ChangeInitializer.cs" />
@@ -280,6 +284,8 @@
     <Compile Include="Sumpfkraut\VobSystem\Definitions\NPCDef.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\ProjDef.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\VobDef.Server.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Enumeration\VobDefType.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Enumeration\VobInstType.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\BaseVobInst.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\ItemInst.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\NPCInst.Server.cs" />
@@ -306,7 +312,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Sumpfkraut\EffectSystem\EffectLoaders\" />
     <Folder Include="Sumpfkraut\VobSystem\Definitions\Mobs\" />
     <Folder Include="Sumpfkraut\VobSystem\Instances\Mobs\" />
   </ItemGroup>
