@@ -25,23 +25,23 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         }
 
 
-        public NPCEffectHandler (List<Effect> effects, NPCDef linkedObject)
-            : this("NPCEffectHandler (default)", effects, linkedObject)
+        public NPCEffectHandler (List<Effect> effects, NPCDef host)
+            : this("NPCEffectHandler (default)", effects, host)
         { }
 
-        public NPCEffectHandler (List<Effect> effects, NPCInst linkedObject)
-            : this("NPCEffectHandler (default)", effects, linkedObject)
+        public NPCEffectHandler (List<Effect> effects, NPCInst host)
+            : this("NPCEffectHandler (default)", effects, host)
         { }
 
-        public NPCEffectHandler (string objName, List<Effect> effects, NPCDef linkedObject) 
-            : base(objName, effects, linkedObject)
+        public NPCEffectHandler (string objName, List<Effect> effects, NPCDef host) 
+            : base(objName, effects, host)
         { }
 
-        public NPCEffectHandler (string objName, List<Effect> effects, NPCInst linkedObject) 
-            : base(objName, effects, linkedObject)
+        public NPCEffectHandler (string objName, List<Effect> effects, NPCInst host) 
+            : base(objName, effects, host)
         { }
 
-        public NPCInst Self { get { return (NPCInst)this.linkedObject; } }
+        public NPCInst Self { get { return (NPCInst)this.host; } }
 
         private static void OnHit (NPCInst attacker, NPCInst target, int damage)
         {

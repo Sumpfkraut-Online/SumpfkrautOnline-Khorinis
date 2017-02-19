@@ -40,13 +40,13 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
 
-        protected object linkedObject;
-        public object GetLinkedObject () { return linkedObject; }
-        public T GetLinkedObject<T> () { return (T) linkedObject; }
+        protected object host;
+        public object GetHost () { return host; }
+        public T GetHost<T> () { return (T) host; }
 
-        protected Type linkedObjectType;
-        public Type LinkedObjectType { get { return linkedObjectType; } }
-        public void SetLinkedObjectType (Type linkedObjectType) { this.linkedObjectType = linkedObjectType; }
+        protected Type hostType;
+        public Type HostType { get { return hostType; } }
+        public void SetHostType (Type hostType) { this.hostType = hostType; }
 
         protected List<Effect> effects;
         protected object effectLock;
@@ -83,13 +83,13 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         }
         
         // base constructor that must be called for clean initialization
-        public BaseEffectHandler (string objName, List<Effect> effects, object linkedObject, Type linkedObjectType = null)
+        public BaseEffectHandler (string objName, List<Effect> effects, object host, Type hostType = null)
         {
             if (objName == null) { SetObjName("EffectHandler (default)"); }
             else { SetObjName(objName); }
 
-            this.linkedObject = linkedObject;
-            this.linkedObjectType = linkedObjectType ?? linkedObject.GetType();
+            this.host = host;
+            this.hostType = hostType ?? host.GetType();
 
             this.effects = effects ?? new List<Effect>();
             this.destToTotalChange = new Dictionary<ChangeDestination, TotalChange>();

@@ -27,20 +27,20 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
 
-        public ItemEffectHandler (List<Effect> effects, ItemDef linkedObject)
-            : this("ItemEffectHandler (default)", effects, linkedObject)
+        public ItemEffectHandler (List<Effect> effects, ItemDef host)
+            : this("ItemEffectHandler (default)", effects, host)
         { }
 
-        public ItemEffectHandler (List<Effect> effects, ItemInst linkedObject)
-            : this("ItemEffectHandler (default)", effects, linkedObject)
+        public ItemEffectHandler (List<Effect> effects, ItemInst host)
+            : this("ItemEffectHandler (default)", effects, host)
         { }
 
-        public ItemEffectHandler (string objName, List<Effect> effects, ItemDef linkedObject) 
-            : base(objName, effects, linkedObject)
+        public ItemEffectHandler (string objName, List<Effect> effects, ItemDef host) 
+            : base(objName, effects, host)
         { }
 
-        public ItemEffectHandler (string objName, List<Effect> effects, ItemInst linkedObject) 
-            : base(objName, effects, linkedObject)
+        public ItemEffectHandler (string objName, List<Effect> effects, ItemInst host) 
+            : base(objName, effects, host)
         { }
 
 
@@ -56,15 +56,15 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         //{
         //    Print("Apply what? Naaaa!");
             
-        //    Type lot = LinkedObjectType;
+        //    Type lot = HostType;
 
-        //    if      (LinkedObjectType == typeof(ItemDef))
+        //    if      (HostType == typeof(ItemDef))
         //    {
         //        // ...
         //    }
-        //    else if (LinkedObjectType == typeof(ItemInst))
+        //    else if (HostType == typeof(ItemInst))
         //    {
-        //        ItemInst lo = GetLinkedObject<ItemInst>();
+        //        ItemInst lo = GetHost<ItemInst>();
         //        // ...
         //    }
         //    else

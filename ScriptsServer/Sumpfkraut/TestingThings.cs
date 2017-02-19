@@ -151,7 +151,7 @@ namespace GUC.Scripts.Sumpfkraut
 
             //EffectSystem.EffectHandlers.VobEffectHandler eh =
             //    new EffectSystem.EffectHandlers.VobEffectHandler(null, new VobSystem.Instances.VobInst());
-            //Logger.Log("-------> " + eh.LinkedObjectType);
+            //Logger.Log("-------> " + eh.HostType);
 
             //EffectSystem.EffectDelegateReference delRef = 
             //    new EffectSystem.EffectDelegateReference(null, null);

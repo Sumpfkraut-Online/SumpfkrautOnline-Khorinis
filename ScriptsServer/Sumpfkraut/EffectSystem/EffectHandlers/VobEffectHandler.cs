@@ -30,23 +30,21 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
 
-        public VobEffectHandler (List<Effect> effects, VobDef linkedObject)
-            : this("VobEffectHandler (default)", effects, linkedObject)
+        public VobEffectHandler (List<Effect> effects, VobDef host)
+            : this("VobEffectHandler (default)", effects, host)
         { }
 
-        public VobEffectHandler (List<Effect> effects, VobInst linkedObject)
-            : this("VobEffectHandler (default)", effects, linkedObject)
+        public VobEffectHandler (List<Effect> effects, VobInst host)
+            : this("VobEffectHandler (default)", effects, host)
         { }
 
-        public VobEffectHandler (string objName, List<Effect> effects, VobDef linkedObject) 
-            : base(objName, effects, linkedObject)
+        public VobEffectHandler (string objName, List<Effect> effects, VobDef host) 
+            : base(objName, effects, host)
         { }
 
-        public VobEffectHandler (string objName, List<Effect> effects, VobInst linkedObject) 
-            : base(objName, effects, linkedObject)
+        public VobEffectHandler (string objName, List<Effect> effects, VobInst host) 
+            : base(objName, effects, host)
         { }
-
-
 
         //protected override void ApplyEffect (Effect effect, bool reverse = false)
         //{
