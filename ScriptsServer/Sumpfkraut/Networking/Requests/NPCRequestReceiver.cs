@@ -10,10 +10,10 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
 {
     public class NPCRequestReceiver
     {
-        public event Action<NPCInst, NPCInst.JumpMoves> OnJump;
+        public event Action<NPCInst, JumpMoves> OnJump;
         public event Action<NPCInst> OnDrawFists;
         public event Action<NPCInst, ItemInst> OnDrawWeapon;
-        public event Action<NPCInst, NPCInst.FightMoves> OnFightMove;
+        public event Action<NPCInst, FightMoves> OnFightMove;
         public event Action<NPCInst, ItemInst, int> OnDropItem;
         public event Action<NPCInst, ItemInst> OnEquipItem;
         public event Action<NPCInst, ItemInst> OnUnequipItem;
@@ -26,15 +26,15 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
             {
                 case ScriptRequestMessageIDs.JumpFwd:
                     if (OnJump != null)
-                        OnJump(npc, NPCInst.JumpMoves.Fwd);
+                        OnJump(npc, JumpMoves.Fwd);
                     break;
                 case ScriptRequestMessageIDs.JumpRun:
                     if (OnJump != null)
-                        OnJump(npc, NPCInst.JumpMoves.Run);
+                        OnJump(npc, JumpMoves.Run);
                     break;
                 case ScriptRequestMessageIDs.JumpUp:
                     if (OnJump != null)
-                        OnJump(npc, NPCInst.JumpMoves.Up);
+                        OnJump(npc, JumpMoves.Up);
                     break;
 
                 case ScriptRequestMessageIDs.DrawFists:
@@ -48,23 +48,23 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
 
                 case ScriptRequestMessageIDs.AttackForward:
                     if (OnFightMove != null)
-                        OnFightMove(npc, NPCInst.FightMoves.Fwd);
+                        OnFightMove(npc, FightMoves.Fwd);
                     break;
                 case ScriptRequestMessageIDs.AttackLeft:
                     if (OnFightMove != null)
-                        OnFightMove(npc, NPCInst.FightMoves.Left);
+                        OnFightMove(npc, FightMoves.Left);
                     break;
                 case ScriptRequestMessageIDs.AttackRight:
                     if (OnFightMove != null)
-                        OnFightMove(npc, NPCInst.FightMoves.Right);
+                        OnFightMove(npc, FightMoves.Right);
                     break;
                 case ScriptRequestMessageIDs.Parry:
                     if (OnFightMove != null)
-                        OnFightMove(npc, NPCInst.FightMoves.Parry);
+                        OnFightMove(npc, FightMoves.Parry);
                     break;
                 case ScriptRequestMessageIDs.Dodge:
                     if (OnFightMove != null)
-                        OnFightMove(npc, NPCInst.FightMoves.Dodge);
+                        OnFightMove(npc, FightMoves.Dodge);
                     break;
 
                 case ScriptRequestMessageIDs.DropItem:

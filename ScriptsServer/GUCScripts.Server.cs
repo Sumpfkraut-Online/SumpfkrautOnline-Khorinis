@@ -112,7 +112,6 @@ namespace GUC.Scripts
         {
             Logger.Log("######## Initalise SumpfkrautOnline ServerScripts #########");
 
-
             Sumpfkraut.Daedalus.AniParser.ReadMDSFiles();
             Sumpfkraut.Daedalus.ConstParser.ParseConstValues();
             Sumpfkraut.Daedalus.FuncParser.ParseConstValues();

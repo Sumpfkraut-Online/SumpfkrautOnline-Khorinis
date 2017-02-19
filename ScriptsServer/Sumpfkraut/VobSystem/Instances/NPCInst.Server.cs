@@ -194,7 +194,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
 
 
-        public void DoFightMove(FightMoves move)
+        public void DoFightMove(FightMoves move, int fwdCombo = 0)
         {
             if (this.IsDead || this.BaseInst.GetEnvironment().InAir)
                 return;
@@ -240,6 +240,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
             if (job == null)
                 return;
+
             hitTimer.SetCallback(() =>
             {
                 this.CalcHit();

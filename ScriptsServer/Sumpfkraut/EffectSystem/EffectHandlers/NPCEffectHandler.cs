@@ -8,7 +8,6 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 {
-
     public class NPCEffectHandler : VobEffectHandler
     {
 
@@ -42,14 +41,18 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             : base(objName, effects, linkedObject)
         { }
 
-
+        public NPCInst Self { get { return (NPCInst)this.linkedObject; } }
 
         private static void OnHit (NPCInst attacker, NPCInst target, int damage)
         {
             throw new NotImplementedException();
         }
 
-
+        public void DoAttack(FightMoves move)
+        {
+            if (Self.IsDead)
+                return;
+        }
 
         //protected override void ApplyEffect (Effect effect, bool reverse = false)
         //{

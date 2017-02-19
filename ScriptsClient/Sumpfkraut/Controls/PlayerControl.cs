@@ -31,33 +31,33 @@ namespace GUC.Scripts.Sumpfkraut.Controls
             {
                 if (KeyBind.Action.IsPressed())
                 {
-                    NPCInst.Requests.Attack(hero, NPCInst.FightMoves.Fwd);
+                    NPCInst.Requests.Attack(hero, FightMoves.Fwd);
                 }
             }
             else if(KeyBind.TurnLeft.IsPressed())
             {
                 if (KeyBind.Action.IsPressed())
                 {
-                    NPCInst.Requests.Attack(hero, NPCInst.FightMoves.Left);
+                    NPCInst.Requests.Attack(hero, FightMoves.Left);
                 }
             }
             else if(KeyBind.TurnRight.IsPressed())
             {
                 if (KeyBind.Action.IsPressed())
                 {
-                    NPCInst.Requests.Attack(hero, NPCInst.FightMoves.Right);
+                    NPCInst.Requests.Attack(hero, FightMoves.Right);
                 }
             }
             else if(KeyBind.MoveBack.IsPressed())
             {
                 if (KeyBind.Action.IsPressed())
                 {
-                    NPCInst.Requests.Attack(hero, NPCInst.FightMoves.Parry);
+                    NPCInst.Requests.Attack(hero, FightMoves.Parry);
                 }
             }
             else if (KeyBind.Jump.Contains(key))
             {
-                NPCInst.Requests.Jump(hero, NPCInst.JumpMoves.Fwd);
+                NPCInst.Requests.Jump(hero, JumpMoves.Fwd);
             }
             else if (KeyBind.Inventory.Contains(key))
             {
