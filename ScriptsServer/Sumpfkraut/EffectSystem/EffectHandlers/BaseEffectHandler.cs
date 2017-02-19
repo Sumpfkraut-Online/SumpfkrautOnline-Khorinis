@@ -1,11 +1,10 @@
 ﻿using GUC.Scripts.Sumpfkraut.EffectSystem.Changes;
+using GUC.Scripts.Sumpfkraut.EffectSystem.Destinations;
 using GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration;
 using GUC.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 {
@@ -16,20 +15,33 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         new public static readonly string _staticName = "EffectHandler (static)";
 
         // map ChangeType to influenced ChangeDestinations
-        public static Dictionary<ChangeType, List<ChangeDestination>> changeTypeToDestinations =
+        protected static Dictionary<ChangeType, List<ChangeDestination>> changeTypeToDestinations =
             new Dictionary<ChangeType, List<ChangeDestination>>() { };
+        public static Dictionary<ChangeType, List<ChangeDestination>> GetChangeTypeToDestinations ()
+        {
+            return changeTypeToDestinations;
+        }
 
         public delegate void CalculateTotalChange (BaseEffectHandler effectHandler);
         protected static Dictionary<ChangeDestination, CalculateTotalChange> destToCalcTotal =
             new Dictionary<ChangeDestination, CalculateTotalChange>() { };
+        public static Dictionary<ChangeDestination, CalculateTotalChange> GetDestToCalcTotal ()
+        {
+            return destToCalcTotal;
+        }
 
         public delegate void ApplyTotalChange (BaseEffectHandler effectHandler);
         protected static Dictionary<ChangeDestination, ApplyTotalChange> destToApplyTotal =
             new Dictionary<ChangeDestination, ApplyTotalChange>() { };
+        public static Dictionary<ChangeDestination, ApplyTotalChange> GetDestToApplyTotal ()
+        {
+            return destToApplyTotal;
+        }
 
 
 
         protected object linkedObject;
+        public object GetLinkedObject () { return linkedObject; }
         public T GetLinkedObject<T> () { return (T) linkedObject; }
 
         protected Type linkedObjectType;
@@ -39,11 +51,25 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         protected List<Effect> effects;
         protected object effectLock;
 
-        public Dictionary<ChangeDestination, TotalChange> destToTotalChange;
-        public Dictionary<ChangeDestination, TotalChange> DestToTotalChange { get { return destToTotalChange; } }
+        protected Dictionary<ChangeDestination, TotalChange> destToTotalChange;
+        public Dictionary<ChangeDestination, TotalChange> GetDestToTotalChange () { return destToTotalChange; }
+        public bool TryGetTotalChange (ChangeDestination changeDestination, out TotalChange totalChange)
+        {
+            lock (effectLock)
+            {
+                return destToTotalChange.TryGetValue(changeDestination, out totalChange);
+            }
+        }
 
-        public Dictionary<ChangeDestination, List<Effect>> destToEffects;
-        public Dictionary<ChangeDestination, List<Effect>> DestToEffects{ get { return destToEffects; } }
+        protected Dictionary<ChangeDestination, List<Effect>> destToEffects;
+        public Dictionary<ChangeDestination, List<Effect>> GetDestToEffects () { return destToEffects; }
+        public bool TryGetEffects (ChangeDestination changeDestination, out List<Effect> effects)
+        {
+            lock (effectLock)
+            {
+                return destToEffects.TryGetValue(changeDestination, out effects);
+            }
+        }
 
 
 
@@ -51,7 +77,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         {
             // register all necessary destinations by providing their type
             // (only register those which are not already registered beforehand by a parent class' static constructor)
-            RegisterDestination(typeof(Destinations.Dest_Effect_Name), true);
+            PrintStatic(typeof(BaseEffectHandler), "Start subscribing ChangeDestinations and EventHandler...");
+            RegisterDestination(ChangeDestination.Effect_Name);
+            PrintStatic(typeof(BaseEffectHandler), "Finished subscribing ChangeDestinations and EventHandler...");
         }
         
         // base constructor that must be called for clean initialization
@@ -66,59 +94,54 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             this.effects = effects ?? new List<Effect>();
             this.destToTotalChange = new Dictionary<ChangeDestination, TotalChange>();
             this.destToEffects = new Dictionary<ChangeDestination, List<Effect>>();
-
-            // initial sorting
         }
 
 
 
-        protected static void RegisterDestinations (List<Type> destTypes, bool printNotice)
+        // register necessary function for ToalChange calculation and application
+        // cd: ChangeDestination to register to
+        protected static bool RegisterDestination (ChangeDestination cd)
         {
-            for (int d = 0; d < destTypes.Count; d++)
-            {
-                RegisterDestination(destTypes[d], printNotice);
-            }
-        }
-
-        protected static void RegisterDestination (Type destType, bool printNotice)
-        {
-            ChangeType[] supportedCT;
-            ChangeDestination cd;
+            DestInitInfo info; 
             List<ChangeDestination> destinations;
-            CalculateTotalChange calcTotalChange;
-            ApplyTotalChange applyTotalChange;
+            if (!BaseDestInit.TryGetDestInitInfo(cd, out info))
+            {
+                MakeLogErrorStatic(typeof(BaseEffectHandler), "Could not register ChangeDestination "
+                    + cd + " because there are not entries for it.");
+                return false;
+            }
 
             try
             {
-                supportedCT = (ChangeType[]) destType.GetField("supportedChangeTypes").GetValue(null);
-                cd = (ChangeDestination) destType.GetField("changeDestination").GetValue(null);
+                destToCalcTotal.Add(cd, info.CalculateTotalChange);
+                destToApplyTotal.Add(cd, info.ApplyTotalChange);
 
-                calcTotalChange = (CalculateTotalChange) Delegate.CreateDelegate(typeof(CalculateTotalChange), 
-                    destType.GetMethod("CalculateTotalChange"));
-
-                applyTotalChange = (ApplyTotalChange) Delegate.CreateDelegate(typeof(ApplyTotalChange), 
-                    destType.GetMethod("ApplyTotalChange"));
-
-                destToCalcTotal.Add(cd, calcTotalChange);
-                destToApplyTotal.Add(cd, applyTotalChange);
-
-                for (int i = 0; i < supportedCT.Length; i++)
+                for (int i = 0; i < info.SupportedChangeTypes.Count; i++)
                 {
-                    if ((changeTypeToDestinations.TryGetValue(supportedCT[i], out destinations))
+                    if ((changeTypeToDestinations.TryGetValue(info.SupportedChangeTypes[i], out destinations))
                             && (!destinations.Contains(cd)))
                     {
                         destinations.Add(ChangeDestination.Effect_Name);
                     }
                     else
                     {
-                        changeTypeToDestinations.Add(supportedCT[i], new List<ChangeDestination>() { cd });
+                        changeTypeToDestinations.Add(info.SupportedChangeTypes[i], 
+                            new List<ChangeDestination>() { cd });
                     }
                 }
             }
             catch (Exception ex)
             {
-                MakeLogErrorStatic(typeof(BaseEffectHandler), "Failed to register destination: " + ex);
+                MakeLogErrorStatic(typeof(BaseEffectHandler), "Failed to register ChangeDestination " 
+                    + cd + " : " + ex);
+
+                // clear already reigstered values after unfinished registration
+                // TO DO
+
+                return false;
             }
+
+            return true;
         }
 
 
@@ -155,7 +178,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                 
                 effects.Add(effect);
                 index = effects.Count;
-                AddToTotalChanges(effect.Changes);
+                AddToTotalChanges(effect.GetChanges());
 
                 if (!recalcAndApplyTotals) { return index; }
 
@@ -178,11 +201,13 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
             lock (effectLock)
             {
+                // first remove effects without recalculating and reapplying the TotalChanges
                 for (int e = 0; e < effects.Count; e++)
                 {
-                    RemoveEffect(effects[e]);
+                    RemoveEffect(effects[e], false);
                 }
                 
+                // recalc and reapply TotalChanges in one swoop                
                 if (TryGetDestinations(effects, out destinations))
                 {
                     RecalculateTotals(destinations);
@@ -194,8 +219,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         public int RemoveEffect (string effectName, bool recalcAndApplyTotals = true)
         {
             int index = -1;
-            Effect effect = null;
-            List<ChangeDestination> destinations;
 
             lock (effectLock)
             {
@@ -204,33 +227,11 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                     if (effects[i].EffectName == effectName)
                     {
                         index = i;
-                        effect = effects[index];
                         break;
                     }
                 }
 
-                // if effect wasn't there in the first place --> do nothing
-                if (index < 0) { return index; }
-
-                if (!recalcAndApplyTotals)
-                {
-                    RemoveFromTotalChanges(effects[index].Changes);
-                    effects[index].Dispose();
-                    effects.RemoveAt(index);
-                    return index;
-                }
-
-                if (!TryGetDestinations(effect, out destinations))
-                {
-                    MakeLogWarning(string.Format("Couldn't find ChangeDestinations for Effect: {1}", effect));
-                    return index;
-                }
-
-                RecalculateTotals(destinations);
-                ReapplyTotals(destinations);
-                RemoveFromTotalChanges(effects[index].Changes);
-                effects[index].Dispose();
-                effects.RemoveAt(index);
+                RemoveEffect(index, recalcAndApplyTotals);
             }
             return index;
         }
@@ -238,19 +239,33 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         public int RemoveEffect (Effect effect, bool recalcAndApplyTotals = true)
         {
             int index = -1;
-            List<ChangeDestination> destinations;
-
             lock (effectLock)
             {
                 index = effects.IndexOf(effect);
+                RemoveEffect(index, recalcAndApplyTotals);
+            }
+            return index;
+        }
 
-                if (index < 0) { return index; }
+        protected int RemoveEffect (int index, bool recalcAndApplyTotals = true)
+        {
+            Effect effect;
+            List<ChangeDestination> destinations;
+            lock (effectLock)
+            {
+                // if effect wasn't there in the first place --> do nothing
+                if (index < 0) { return -1; }
+
+                effect = effects[index];
 
                 if (!recalcAndApplyTotals)
                 {
-                    RemoveFromTotalChanges(effects[index].Changes);
+                    // if no recalculation and reapplicaiton of influenced TotalChanges wanted
+                    // => simply remove and dispose
+                    RemoveFromTotalChanges(effects[index].GetChanges());
                     effects[index].Dispose();
                     effects.RemoveAt(index);
+                    return index;
                 }
 
                 if (!TryGetDestinations(effect, out destinations))
@@ -259,53 +274,20 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                     return index;
                 }
 
+                // remove and dispose to let garbage collect + recalculate and reapply TotalChanges
+                RemoveFromTotalChanges(effects[index].GetChanges());
+                effect.Dispose();
+                effects.RemoveAt(index);
                 RecalculateTotals(destinations);
                 ReapplyTotals(destinations);
-                RemoveFromTotalChanges(effects[index].Changes);
-                effects[index].Dispose();
-                effects.RemoveAt(index);
             }
             return index;
         }
 
 
 
-        //protected void ApplyEffects (List<Effect> effects)
-        //{
-        //    for (int i = 0; i < effects.Count; i++)
-        //    {
-        //        if (effects[i].EffectHandler == this)
-        //        {
-        //            ApplyEffect(effects[i]);
-        //        }
-        //    }
-        //}
-
-        //virtual protected void ApplyEffect (Effect effect, bool reverse = false)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //protected void ReverseEffects (List<Effect> effects)
-        //{
-        //    for (int i = 0; i < effects.Count; i++)
-        //    {
-        //        if (effects[i].EffectHandler == this)
-        //        {
-        //            ReverseEffect(effects[i]);
-        //        }
-        //    }
-        //}
-
-        //virtual protected void ReverseEffect (Effect effect)
-        //{
-        //    ApplyEffect(effect, true);
-        //}
-
-
-
         // perhaps make this protected and adding a slower, less direct method for Effects to use ???
-        public void AddToTotalChanges (List<BaseChange> changes)
+        public void AddToTotalChanges (List<Change> changes)
         {
             lock (effectLock)
             {
@@ -317,13 +299,13 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         }
             
         // perhaps make this protected and adding a slower, less direct method for Effects to use ???
-        public void AddToTotalChanges (BaseChange change)
+        public void AddToTotalChanges (Change change)
         {
             List<ChangeDestination> destinations;
 
             lock (effectLock)
             {
-                if (!changeTypeToDestinations.TryGetValue(change.ChangeType, out destinations)) { return; }
+                if (!changeTypeToDestinations.TryGetValue(change.GetChangeType(), out destinations)) { return; }
 
                 for (int d = 0; d < destinations.Count; d++)
                 {
@@ -331,13 +313,13 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                     {
                         destToTotalChange[destinations[d]].AddChange(change);
                     }
-                    catch (Exception ex) { Print(ex); }
+                    catch (Exception ex) { MakeLogError(ex); }
                 }
             }
         }
 
         // perhaps make this protected and adding a slower, less direct method for Effects to use ???
-        public void RemoveFromTotalChanges (List<BaseChange> changes)
+        public void RemoveFromTotalChanges (List<Change> changes)
         {
             lock (effectLock)
             {
@@ -349,13 +331,13 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         }
 
         // perhaps make this protected and adding a slower, less direct method for Effects to use ???
-        public void RemoveFromTotalChanges (BaseChange change)
+        public void RemoveFromTotalChanges (Change change)
         {
             List<ChangeDestination> destinations;
 
             lock (effectLock)
             {
-                if (!changeTypeToDestinations.TryGetValue(change.ChangeType, out destinations)) { return; }
+                if (!changeTypeToDestinations.TryGetValue(change.GetChangeType(), out destinations)) { return; }
 
                 for (int d = 0; d < destinations.Count; d++)
                 {
@@ -363,22 +345,22 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                     {
                         destToTotalChange[destinations[d]].RemoveChange(change);
                     }
-                    catch (Exception ex) { Print(ex); }
+                    catch (Exception ex) { MakeLogError(ex); }
                 }
             }
         }
 
 
 
-        public bool TryGetDestinations (List<Effect> effects, out List<Enumeration.ChangeDestination> destinations)
+        public bool TryGetDestinations (List<Effect> effects, out List<ChangeDestination> destinations)
         {
             destinations = null;
-            List<ChangeDestination> allDestinations = new List<Enumeration.ChangeDestination>();
+            List<ChangeDestination> allDestinations = new List<ChangeDestination>();
             List<ChangeDestination> tempDestinations;
 
             for (int e = 0; e < effects.Count; e++)
             {
-                if (TryGetDestinations(effects[e].Changes, out tempDestinations))
+                if (TryGetDestinations(effects[e].GetChanges(), out tempDestinations))
                 {
                     allDestinations.Union(tempDestinations);
                 }
@@ -391,10 +373,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
         public bool TryGetDestinations (Effect effect, out List<ChangeDestination> destinations)
         {
-            return TryGetDestinations(effect.Changes, out destinations);
+            return TryGetDestinations(effect.GetChanges(), out destinations);
         }
 
-        public bool TryGetDestinations (List<BaseChange> changes, out List<ChangeDestination> destinations)
+        public bool TryGetDestinations (List<Change> changes, out List<ChangeDestination> destinations)
         {
             destinations = null;
             List<ChangeDestination> allDestinations = new List<ChangeDestination>();
@@ -414,9 +396,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             return true;
         }
 
-        public bool TryGetDestinations (BaseChange change, out List<ChangeDestination> destinations)
+        public bool TryGetDestinations (Change change, out List<ChangeDestination> destinations)
         {
-            return changeTypeToDestinations.TryGetValue(change.ChangeType, out destinations);
+            return changeTypeToDestinations.TryGetValue(change.GetChangeType(), out destinations);
         }
 
 

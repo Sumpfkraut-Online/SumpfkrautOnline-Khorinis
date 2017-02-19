@@ -17,7 +17,7 @@ namespace GUC.Utilities.Threading
         protected EventWaitHandle resetEvent;
         public TimeSpan timeout;
         public bool runOnce;
-        public AutoResetEvent waitHandle = new AutoResetEvent(false);
+        public AutoResetEvent waitHandle;
 
 
         public AbstractRunnable () 
@@ -34,7 +34,6 @@ namespace GUC.Utilities.Threading
 
         public AbstractRunnable (bool startOnCreate, TimeSpan timeout, bool runOnce)
         {
-            SetObjName("AbstractRunnable (default)");
             this.printStateControls = false;
             this.timeout = timeout;
             if ((this.timeout == TimeSpan.MinValue) || (this.timeout < TimeSpan.Zero))
@@ -57,11 +56,11 @@ namespace GUC.Utilities.Threading
         {
             try
             {
-                if (this.printStateControls)
+                if (printStateControls)
                 {
                     Print("Aborting thread...");
                 }
-                this.thread.Abort();
+                thread.Abort();
             }
             catch (Exception ex)
             {
@@ -86,11 +85,11 @@ namespace GUC.Utilities.Threading
         {
             try
             {
-                if (this.printStateControls)
+                if (printStateControls)
                 {
                     Print("Resuming thread...");
                 }
-                this.resetEvent.Set();
+                resetEvent.Set();
             }
             catch (Exception ex)
             {
@@ -102,13 +101,13 @@ namespace GUC.Utilities.Threading
         {
             try
             {
-                if (this.printStateControls)
+                if (printStateControls)
                 {
                     Print("Starting thread...");
                 }
-                if (this.thread.ThreadState == ThreadState.Unstarted)
+                if (thread.ThreadState == ThreadState.Unstarted)
                 {
-                    this.thread.Start();
+                    thread.Start();
                 }
             }
             catch (Exception ex)
@@ -121,12 +120,12 @@ namespace GUC.Utilities.Threading
         {
             try
             {
-                if (this.printStateControls)
+                if (printStateControls)
                 {
                     Print("Suspending thread...");
                 }
                 //this.resetEvent.WaitOne(Timeout.Infinite);
-                this.resetEvent.Reset();
+                resetEvent.Reset();
             }
             catch (Exception ex)
             {
@@ -140,15 +139,15 @@ namespace GUC.Utilities.Threading
 
             while (true)
             {
-                this.resetEvent.WaitOne(Timeout.Infinite);
+                resetEvent.WaitOne(Timeout.Infinite);
 
-                this.Run();
+                Run();
 
-                if (this.runOnce)
+                if (runOnce)
                 {
-                    this.resetEvent.Reset();
+                    resetEvent.Reset();
                 }
-                Thread.Sleep(this.timeout);
+                Thread.Sleep(timeout);
 
                 //waitHandle.WaitOne();
                 //this.Run();

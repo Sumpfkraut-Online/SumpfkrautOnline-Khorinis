@@ -124,7 +124,7 @@ namespace GUC.Scripts.Sumpfkraut.Menus
                             }
                          else if(selectedItem.Amount == 1)
                             {
-                                player.RequestDropItem(selectedItem,1);
+                                NPCInst.Requests.DropItem(player, selectedItem, 1);
                             }
                         }
                     }  
@@ -147,12 +147,12 @@ namespace GUC.Scripts.Sumpfkraut.Menus
                         case ItemTypes.WepXBow:
                         case ItemTypes.Armor:
                             if (selItem.IsEquipped)
-                                player.RequestUnequipItem(selItem);
+                                NPCInst.Requests.UnequipItem(player, selItem);
                             else
-                                player.RequestEquipItem(selItem);
+                                NPCInst.Requests.EquipItem(player, selItem);
                             break;
                         default:
-                            player.RequestUseItem(selItem);
+                            NPCInst.Requests.UseItem(player, selItem);
                             break;
                     }
                     break;

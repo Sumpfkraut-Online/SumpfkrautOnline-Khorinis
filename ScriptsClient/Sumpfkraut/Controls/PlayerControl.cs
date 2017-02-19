@@ -31,39 +31,39 @@ namespace GUC.Scripts.Sumpfkraut.Controls
             {
                 if (KeyBind.Action.IsPressed())
                 {
-                    hero.RequestAttack(ScriptRequestMessageIDs.AttackForward);
+                    NPCInst.Requests.Attack(hero, NPCInst.FightMoves.Fwd);
                 }
             }
             else if(KeyBind.TurnLeft.IsPressed())
             {
                 if (KeyBind.Action.IsPressed())
                 {
-                    hero.RequestAttack(ScriptRequestMessageIDs.AttackLeft);
+                    NPCInst.Requests.Attack(hero, NPCInst.FightMoves.Left);
                 }
             }
             else if(KeyBind.TurnRight.IsPressed())
             {
                 if (KeyBind.Action.IsPressed())
                 {
-                    hero.RequestAttack(ScriptRequestMessageIDs.AttackRight);
+                    NPCInst.Requests.Attack(hero, NPCInst.FightMoves.Right);
                 }
             }
             else if(KeyBind.MoveBack.IsPressed())
             {
                 if (KeyBind.Action.IsPressed())
                 {
-                    hero.RequestAttack(ScriptRequestMessageIDs.Parry);
+                    NPCInst.Requests.Attack(hero, NPCInst.FightMoves.Parry);
                 }
             }
             else if (KeyBind.Jump.Contains(key))
             {
-                hero.SendCommand(ScriptRequestMessageIDs.JumpFwd);
+                NPCInst.Requests.Jump(hero, NPCInst.JumpMoves.Fwd);
             }
             else if (KeyBind.Inventory.Contains(key))
             {
                 if (hero.DrawnWeapon != null)
                 {
-                    hero.RequestDrawWeapon(hero.LastUsedWeapon);
+                    NPCInst.Requests.DrawWeapon(hero, hero.LastUsedWeapon);
                 }
                 PlayerInventory.Menu.Open();
             }
@@ -71,26 +71,26 @@ namespace GUC.Scripts.Sumpfkraut.Controls
             {
                 if (hero.LastUsedWeapon != null)
                 {
-                    hero.RequestDrawWeapon(hero.LastUsedWeapon);
+                    NPCInst.Requests.DrawWeapon(hero, hero.LastUsedWeapon);
                 }
                 else if (hero.MeleeWeapon != null)
                 {
                     hero.LastUsedWeapon = hero.MeleeWeapon;
-                    hero.RequestDrawWeapon(hero.MeleeWeapon);
+                    NPCInst.Requests.DrawWeapon(hero, hero.MeleeWeapon);
                 }
                 else if (hero.RangedWeapon != null)
                 {
                     hero.LastUsedWeapon = hero.RangedWeapon;
-                    hero.RequestDrawWeapon(hero.RangedWeapon);
+                    NPCInst.Requests.DrawWeapon(hero, hero.RangedWeapon);
                 }
                 else
                 {
-                    hero.RequestDrawFists();
+                    NPCInst.Requests.DrawFists(hero);
                 }
             }
             else if (KeyBind.DrawFists.Contains(key))
             {
-                hero.RequestDrawFists();
+                NPCInst.Requests.DrawFists(hero);
             }
         }
 

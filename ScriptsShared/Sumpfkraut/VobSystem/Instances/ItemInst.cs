@@ -43,6 +43,14 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public bool IsWepRanged { get { return this.Definition.IsWepRanged; } }
         public bool IsWepMelee { get { return this.Definition.IsWepMelee; } }
 
+        public ItemContainers.ScriptInventory.IContainer Container
+        {
+            get
+            {
+                return ((ItemContainers.ScriptInventory)this.BaseInst.Container.Inventory.ScriptObject).Owner;
+            }
+        }
+
         #endregion
 
         public delegate void SetAmountHandler(ItemInst item, int amount);
@@ -79,6 +87,14 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             base.Spawn(world, pos, dir);
             pSpawn();
+        }
+
+        /// <summary>
+        /// Removes the item from the world or a container.
+        /// </summary>
+        public void Remove()
+        {
+            this.BaseInst.Remove();
         }
     }
 }
