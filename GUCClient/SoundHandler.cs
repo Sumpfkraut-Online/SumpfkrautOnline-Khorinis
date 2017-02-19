@@ -91,9 +91,9 @@ namespace GUC
 
             for (int i = 0; i < locSounds.Count; i++)
             {
-                if (vobSounds[i].sfx == sound || vobSounds[i].sfx.sfx.Address == sound.sfx.Address)
+                if (locSounds[i].sfx == sound || locSounds[i].sfx.sfx.Address == sound.sfx.Address)
                 {
-                    if (GameTime.Ticks - vobSounds[i].startTime < 50 * TimeSpan.TicksPerMillisecond)
+                    if (GameTime.Ticks - locSounds[i].startTime < 50 * TimeSpan.TicksPerMillisecond)
                         return false;
                 }
             }
