@@ -11,10 +11,13 @@ namespace GUC.Scripts.Sumpfkraut.Database
 
         new public static readonly string _staticName = "DBAgent (static)";
 
+        protected bool useAsyncMode;
+        bool running;
+
         protected string dataSource = null;
         public string DataSource { get { return dataSource; } }
 
-        protected List<String> commandQueue = new List<String>();
+        protected List<string> commandQueue = new List<string>();
 
 
 
@@ -86,28 +89,65 @@ namespace GUC.Scripts.Sumpfkraut.Database
 
 
 
-        public DBAgent(string dataSource, List<String> commandQueue)
-            : this(dataSource, commandQueue, true)
+        public DBAgent(string dataSource, List<string> commandQueue, bool useAsyncMode = true)
+            : this(dataSource, commandQueue, true, useAsyncMode)
         { }
 
-        public DBAgent(string dataSource, List<String> commandQueue, bool startOnCreate)
+        public DBAgent(string dataSource, List<string> commandQueue, bool startOnCreate, bool useAsyncMode = true)
             : base(false, new TimeSpan(0, 0, 0), true)
         {
+            SetObjName("AbstractRunnable (default)");
             this.dataSource = dataSource;
             this.commandQueue = commandQueue;
+            this.useAsyncMode = useAsyncMode;
+            this.running = false;
             
             if (startOnCreate)
             {
-                this.Start();
+                Start();
             }
         }
 
 
 
-        public override void Run()
+        public override void Abort ()
         {
-            base.Run();
+            running = false;
+            if (useAsyncMode) { base.Abort(); }
+            if (printStateControls) { Print("Aborting run..."); }
+        }
 
+        public override void Reset ()
+        {
+            if (useAsyncMode) { base.Reset(); }
+            Suspend();
+            Resume();
+        }
+
+        public override void Resume ()
+        {
+            if (useAsyncMode) { base.Resume(); }
+            if (printStateControls) { Print("Resuming run..."); }
+            if (!running) { Start(); }
+        }
+
+        public override void Start ()
+        {
+            running = true;
+            if (useAsyncMode) { base.Start(); }
+            if (printStateControls) { Print("Starting run..."); }
+            Run();
+        }
+
+        public override void Suspend ()
+        {
+            running = false;
+            if (useAsyncMode) { base.Suspend(); }
+            if (printStateControls) { Print("Suspending run..."); }
+        }
+
+        public override void Run ()
+        {
             List<List<List<object>>> sqlResults = new List<List<List<object>>>();
             DateTime queueStartTime, queueEndTime, queryStartTime, queryEndTime;
 
@@ -115,6 +155,12 @@ namespace GUC.Scripts.Sumpfkraut.Database
             queueStartTime = DateTime.Now;
             for (int i = 0; i < commandQueue.Count; i++)
             {
+                if (running == false)
+                {
+                    // if aborted or suspended, exit even in midst of commandQueue
+                    if (waitHandle != null) { waitHandle.Set(); }
+                    return;
+                }
                 queryStartTime = DateTime.Now;
                 DBReader.LoadFromDB(ref sqlResults, commandQueue[i], DataSource);
                 queryEndTime = DateTime.Now;
@@ -124,10 +170,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
 
                 if (ReceivedResults != null) { ReceivedResults.Invoke(this, rse); }
 
-                if (waitHandle != null)
-                {
-                    waitHandle.Set();
-                }
+                if (waitHandle != null) { waitHandle.Set(); }
             }
             queueEndTime = DateTime.Now;
 
@@ -136,7 +179,6 @@ namespace GUC.Scripts.Sumpfkraut.Database
                 queueStartTime, queueEndTime, sqlResults);
 
             if (FinishedQueue != null) { FinishedQueue.Invoke(this, fqe); }
-            //this.Suspend();
         } 
 
     }

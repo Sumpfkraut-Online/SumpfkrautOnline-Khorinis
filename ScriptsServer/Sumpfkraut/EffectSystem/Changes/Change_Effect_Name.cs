@@ -8,7 +8,7 @@ using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 {
 
-    public class Change_Effect_Name : BaseChange
+    public class Change_Effect_Name : BaseChangeInit
     {
 
         new public static readonly string _staticName = "Change_Effect_Name (static)";

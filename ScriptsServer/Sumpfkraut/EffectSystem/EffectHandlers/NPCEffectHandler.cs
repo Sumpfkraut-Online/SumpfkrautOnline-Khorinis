@@ -17,11 +17,11 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
         static NPCEffectHandler ()
         {
-            PrintStatic(typeof(NPCEffectHandler), "Start subscribing listeners to events...");
+            PrintStatic(typeof(BaseEffectHandler), "Start subscribing ChangeDestinations and EventHandler...");
 
             NPCInst.sOnHit += OnHit;
 
-            PrintStatic(typeof(NPCEffectHandler), "Finished subscribing listeners to events...");
+            PrintStatic(typeof(BaseEffectHandler), "Finished subscribing ChangeDestinations and EventHandler...");
         }
 
 
@@ -47,7 +47,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         {
             throw new NotImplementedException();
         }
-
+        
         public void DoAttack(FightMoves move)
         {
             if (Self.IsDead)
@@ -58,7 +58,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         //{
         //    Print("Apply what? Naaaa!");
         //}
-
+        
     }
 
 }

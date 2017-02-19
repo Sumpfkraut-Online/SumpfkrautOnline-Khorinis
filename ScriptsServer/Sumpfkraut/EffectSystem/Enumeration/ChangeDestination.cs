@@ -11,10 +11,16 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration
         Undefined,
         
         // changes influencing their own effect-container
+        Effect_Child,
+        Effect_GlobalID,
         Effect_Name,
+        Effect_Parent,
 
         // often synchronized attributes
+        Vob_CodeName,
         Vob_Name,
+        Vob_VobDefType,
+        Vob_VobInstType,
 
         // event driven
 
