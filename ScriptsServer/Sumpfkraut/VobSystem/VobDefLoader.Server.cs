@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using GUC.Utilities.Threading;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
+using GUC.Scripts.Sumpfkraut.EffectSystem;
+using GUC.Scripts.Sumpfkraut.VobSystem.Enumeration;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem
 {
@@ -129,6 +131,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
         {
             try
             {
+                Effect effect;
                 VobDef vobDef;
 
                 // convert the received database-results
@@ -179,7 +182,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
                     }
 
                     // create VobDef and apply all changes
-                    
+                    effect = new Effect(null);
                 }
             }
             catch (Exception ex)
@@ -236,6 +239,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
             }
 
             if (changeRows.Count < 1) { return false; }
+            return true;
+        }
+
+        protected bool TryFindVobDefType (List<List<object>> changeRows, out VobDefType vobDefType)
+        {
+            vobDefType = VobDefType.Undefined;
+
             return true;
         }
 

@@ -146,7 +146,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
 
-        public void AddEffects (List<Effect> effects, bool allowDuplicate)
+        public void AddEffects (List<Effect> effects)
         {
             List<ChangeDestination> destinations;
 
@@ -154,7 +154,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             {
                 for (int e = 0; e < effects.Count; e++)
                 {
-                    AddEffect(effects[e], allowDuplicate, false);
+                    AddEffect(effects[e], false);
                 }
                 
                 if (TryGetDestinations(effects, out destinations))
@@ -167,14 +167,14 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         
         // adds effect to the internal management and recalculate the TotalChanges if recalculateTotals is true
         // setting recalculateTotals to false can be used to postpone the costly recalculation until all changes are added
-        public int AddEffect (Effect effect, bool allowDuplicate, bool recalcAndApplyTotals = true)
+        public int AddEffect (Effect effect, bool recalcAndApplyTotals = true)
         {
             int index = -1;
             List<ChangeDestination> destinations;
 
             lock (effectLock)
             {
-                if ((!allowDuplicate) && (effects.Contains(effect))) { return -1; }
+                if (effects.Contains(effect)) { return -1; }
                 
                 effects.Add(effect);
                 index = effects.Count;
