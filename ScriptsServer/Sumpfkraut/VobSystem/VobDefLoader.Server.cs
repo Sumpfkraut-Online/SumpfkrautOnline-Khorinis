@@ -7,6 +7,7 @@ using GUC.Utilities.Threading;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Sumpfkraut.EffectSystem;
 using GUC.Scripts.Sumpfkraut.VobSystem.Enumeration;
+using GUC.Scripts.Sumpfkraut.EffectSystem.Changes;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem
 {
@@ -131,9 +132,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
         {
             try
             {
-                Effect effect;
-                VobDef vobDef;
-
                 // convert the received database-results
                 List<List<List<object>>> sqlResults = e.GetSQLResults();
                 DBTables.ConvertSQLResults(ref sqlResults, ColGetTypeInfo);
@@ -159,36 +157,113 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
                 List<DBTables.ColumnGetTypeInfo> cgt_StaticDynamicJob = ColGetTypeInfo[i_StaticDynamicJob];
                 List<List<object>> tableStaticDynamicJob = sqlResults[ DBTableLoadOrder.IndexOf("StaticDynamicJob") ];
 
-                int vdr;                                // row-index in tableVobDef
-                int vobDefID;                           // column-entry VoDefID
-                List<int> effectIDs = null;             // effectIDs that belong to the VobDef
-                List<List<object>> changeRows = null;   // rows from ChangeDef-table that belong to the VobDef
 
-                for (vdr = 0; vdr < tableVobDef.Count; vdr++)
+                Dictionary<int, List<int>> hostIDToEffectIDs = new Dictionary<int, List<int>>(tableVobDef.Count);
+                // effectID --> Tuple<changeID, changeRowIndex>
+                Dictionary<int, List<Tuple<int, int>>> effectIDToChangeInfo = 
+                    new Dictionary<int, List<Tuple<int, int>>> (tableDefEffect.Count);
+                List<int> tempIDs;
+                 List<Tuple<int, int>> changeInfo;
+                int hostID, effectID, changeID;
+
+                for (int i = 0; i < tableVobDefEffect.Count; i++)
                 {
-                    vobDefID = (int) tableVobDef[vdr][0];
-
-                    // search for ids od effects that belong to the VobDef with the given id
-                    if (!TryFilterEffectIDsBySearchID(vobDefID, tableVobDefEffect, out effectIDs))
+                    hostID = (int) tableVobDefEffect[i][0];
+                    effectID = (int) tableVobDefEffect[i][1];
+                    if (hostIDToEffectIDs.TryGetValue(hostID, out tempIDs))
                     {
-                        MakeLogWarning("No effects found to define VobDef with VobDefID: " + vobDefID);
-                        continue;
+                        tempIDs.Add(effectID);
                     }
-                    // search respective rows from DefChange which are related to the found effects with their ids
-                    if (!TryFilterChangeRowsByEffectIDs(effectIDs, tableDefChange, out changeRows))
+                    else
                     {
-                        MakeLogWarning("No changes found to define VobDef with VobDefID: " + vobDefID);
-                        continue;
+                        tempIDs = new List<int>() { effectID };
+                        hostIDToEffectIDs.Add(hostID, tempIDs);
                     }
-
-                    // create VobDef and apply all changes
-                    effect = new Effect(null);
                 }
+
+                for (int i = 0; i < tableDefChange.Count; i++)
+                {
+                    effectID = (int) tableDefChange[i][0];
+                    changeID = (int) tableDefChange[i][1];
+                    if (effectIDToChangeInfo.TryGetValue(effectID, out changeInfo))
+                    {
+                        changeInfo.Add(Tuple.Create(changeID, i));
+                    }
+                    else
+                    {
+                        changeInfo = new List<Tuple<int, int>>() { Tuple.Create(changeID, i) };
+                        effectIDToChangeInfo.Add(effectID, changeInfo);
+                    }
+                }
+
+
+                //List<Change> changes;
+                //List<int> failedChangeIndices;
+                //Effect effect;
+                //List<Effect> effects;
+                //VobDef vobDef;
+                //int vdr;                                // row-index in tableVobDef
+                //int vobDefID;                           // column-entry VoDefID
+                //List<int> effectIDs = null;             // effectIDs that belong to the VobDef
+                //List<List<object>> changeRows = null;   // rows from ChangeDef-table that belong to the VobDef
+
+                //for (vdr = 0; vdr < tableVobDef.Count; vdr++)
+                //{
+                //    vobDefID = (int) tableVobDef[vdr][0];
+
+                //    // search for ids od effects that belong to the VobDef with the given id
+                //    if (!TryFilterEffectIDsBySearchID(vobDefID, tableVobDefEffect, out effectIDs))
+                //    {
+                //        MakeLogWarning("No effects found to define VobDef with VobDefID: " + vobDefID);
+                //        continue;
+                //    }
+
+                //    // create effects from their changes in succession
+                //    int i;
+                //    for (i = 0; i < effectIDs.Count; i++)
+                //    {
+                //        // search respective rows from DefChange which are related to the found effects with their ids
+                //        if (!TryFilterChangeRowsByEffectID(effectIDs[i], tableDefChange, out changeRows))
+                //        {
+                //            MakeLogWarning("No changes found to define VobDef with VobDefID: " + vobDefID);
+                //            continue;
+                //        }
+
+                //        // create changes
+                //        changes = null;
+                //        failedChangeIndices = ChangesFromRows(changeRows, out changes);
+                //        if (failedChangeIndices.Count > 0)
+                //        {
+                //            MakeLogWarning(string.Format("Failed to initialize {0} of {1} changes from changeRows "
+                //                + "for VobDefID = {2}! Their ChangeTypes or parameters might be insufficient or not supported", 
+                //                failedChangeIndices.Count, changeRows.Count, vobDefID));
+                //        }
+
+                //        // create VobDef and apply all changes
+                //        effect = new Effect(null);
+                        
+                //    }
+                    
+                //}
             }
             catch (Exception ex)
             {
                 MakeLogError("Failed to finish generating VodDef-objects from sqlResults: " + ex);
             }
+        }
+
+        protected List<int> ChangesFromRows (List<List<object>> changeRows, out List<Change> changes)
+        {
+            List<int> failedIndices = new List<int>();
+            changes = new List<Change>();
+
+            int i;
+            for (i = 0; i < changeRows.Count; i++)
+            {
+
+            }
+
+            return failedIndices;
         }
 
         // search all "rows" in searchTable which begin with the provided searchID 
