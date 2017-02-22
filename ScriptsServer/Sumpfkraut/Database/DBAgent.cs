@@ -170,8 +170,6 @@ namespace GUC.Scripts.Sumpfkraut.Database
                     queryStartTime, queryEndTime, sqlResults);
 
                 if (ReceivedResults != null) { ReceivedResults.Invoke(this, rse); }
-
-                if (waitHandle != null) { waitHandle.Set(); }
             }
             queueEndTime = DateTime.Now;
 
@@ -180,6 +178,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
                 queueStartTime, queueEndTime, sqlResults);
 
             if (FinishedQueue != null) { FinishedQueue.Invoke(this, fqe); }
+            if (waitHandle != null) { waitHandle.Set(); }
         } 
 
     }

@@ -1,4 +1,5 @@
 ﻿using GUC.Scripts.Sumpfkraut.Database;
+using GUC.Scripts.Sumpfkraut.EffectSystem.Changes;
 using GUC.Utilities;
 using GUC.Utilities.Threading;
 using System;
@@ -32,7 +33,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
                 {
                     new DBTables.ColumnGetTypeInfo("DefChangeID", SQLiteGetTypeEnum.GetInt32),
                     new DBTables.ColumnGetTypeInfo("DefEffectID", SQLiteGetTypeEnum.GetInt32),
-                    new DBTables.ColumnGetTypeInfo("Func", SQLiteGetTypeEnum.GetInt32),
+                    new DBTables.ColumnGetTypeInfo("ChangeType", SQLiteGetTypeEnum.GetInt32),
                     new DBTables.ColumnGetTypeInfo("Params", SQLiteGetTypeEnum.GetString),
                     new DBTables.ColumnGetTypeInfo("ChangeDate", SQLiteGetTypeEnum.GetDateTime),
                     new DBTables.ColumnGetTypeInfo("CreationDate", SQLiteGetTypeEnum.GetDateTime),
@@ -57,7 +58,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             public DateTime endTime;
 
             public List<List<List<object>>> sqlResults;
-            public List<Effect> effects;
+            public Dictionary<int, Effect> effectsByID;
         }
 
 
@@ -71,10 +72,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             lock (loadLock) { dbFilePath = value; }
         }
 
-        protected List<Effect> effects;
-        public List<Effect> GetLastEffects ()
+        protected Dictionary<int, Effect> effectsByID;
+        public Dictionary<int, Effect> GetLastEffectsByID ()
         {
-            lock (loadLock) { return effects; }
+            lock (loadLock) { return effectsByID; }
         }
 
         protected List<List<List<object>>> sqlResults;
@@ -98,7 +99,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             lock (loadLock)
             {
                 sqlResults = null;
-                effects = null;
+                effectsByID = null;
             }
         }
 
@@ -155,7 +156,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
 
                 // hand all loadResults to a possibly defined handler-function
                 e.sqlResults = sqlResults;
-                e.effects = effects;
+                e.effectsByID = effectsByID;
                 e.endTime = DateTime.Now;
                 handler?.Invoke(e);
             }
@@ -163,25 +164,50 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
 
         public void EffectsFromSQLResults (AbstractRunnable sender, FinishedQueueEventHandlerArgs e)
         {
-            lock (loadLock)
+            try
             {
-                // return if there is nothing to process
-                if ((sqlResults == null) || (sqlResults.Count < 2)) { return; }
+                lock (loadLock)
+                {
+                    sqlResults = e.GetSQLResults();
 
-                // convert the data-strings to their respective types
-                DBTables.ConvertSQLResults(sqlResults, colGetTypeInfo);
+                    // return if there is nothing to process
+                    if ((sqlResults == null) || (sqlResults.Count < 2)) { return; }
 
-                int i_DefEffect = DBTableLoadOrder.IndexOf("DefEffect");
-                List<DBTables.ColumnGetTypeInfo> cgt_DefEffect = ColGetTypeInfo[i_DefEffect];
-                List<List<object>> tableDefEffect = sqlResults[ DBTableLoadOrder.IndexOf("DefEffect") ];
+                    // convert the data-strings to their respective types
+                    DBTables.ConvertSQLResults(sqlResults, colGetTypeInfo);
 
-                int i_DefChange = DBTableLoadOrder.IndexOf("DefChange");
-                List<DBTables.ColumnGetTypeInfo> cgt_DefChange = ColGetTypeInfo[i_DefChange];
-                List<List<object>> tableDefChange = sqlResults[ DBTableLoadOrder.IndexOf("DefChange") ];
+                    int i_DefEffect = DBTableLoadOrder.IndexOf("DefEffect");
+                    List<DBTables.ColumnGetTypeInfo> cgt_DefEffect = ColGetTypeInfo[i_DefEffect];
+                    List<List<object>> tableEffect = sqlResults[ DBTableLoadOrder.IndexOf("DefEffect") ];
 
+                    int i_DefChange = DBTableLoadOrder.IndexOf("DefChange");
+                    List<DBTables.ColumnGetTypeInfo> cgt_DefChange = ColGetTypeInfo[i_DefChange];
+                    List<List<object>> tableChange = sqlResults[ DBTableLoadOrder.IndexOf("DefChange") ];
 
+                    // create the Effects without assigning them an EffectHandler (must be done in external routine)
+                    effectsByID = new Dictionary<int, Effect>();
+                    Effect effect = null;
+                    Change change = null;
+                    int effectID;
+                    for (int i = 0; i < tableChange.Count; i++)
+                    {
+                        effectID = (int) tableChange[i][1];
+                        change = Change.Create();
 
-
+                        if (effectsByID.TryGetValue(effectID, out effect))
+                        {
+                            effect.AddChange(change);
+                        }
+                        else
+                        {
+                            effect = new Effect(null, new List<Change>() { change });
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MakeLogError("Error while converting sqlResults to Effects: " + ex);
             }
         }
 
