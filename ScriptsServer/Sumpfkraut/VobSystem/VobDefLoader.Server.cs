@@ -158,26 +158,28 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
                 List<List<object>> tableStaticDynamicJob = sqlResults[ DBTableLoadOrder.IndexOf("StaticDynamicJob") ];
 
 
-                Dictionary<int, List<int>> hostIDToEffectIDs = new Dictionary<int, List<int>>(tableVobDef.Count);
+                List<Effect> effects = new List<Effect>(); ;
+                Dictionary<int, List<Tuple<int, Effect>>> hostIDToEffectInfo = 
+                    new Dictionary<int, List<Tuple<int, Effect>>>(tableVobDef.Count);
                 // effectID --> Tuple<changeID, changeRowIndex>
                 Dictionary<int, List<Tuple<int, int>>> effectIDToChangeInfo = 
                     new Dictionary<int, List<Tuple<int, int>>> (tableDefEffect.Count);
-                List<int> tempIDs;
-                 List<Tuple<int, int>> changeInfo;
+                List<Tuple<int, Effect>> effectInfo;
+                List<Tuple<int, int>> changeInfo;
                 int hostID, effectID, changeID;
 
                 for (int i = 0; i < tableVobDefEffect.Count; i++)
                 {
                     hostID = (int) tableVobDefEffect[i][0];
                     effectID = (int) tableVobDefEffect[i][1];
-                    if (hostIDToEffectIDs.TryGetValue(hostID, out tempIDs))
+                    if (hostIDToEffectInfo.TryGetValue(hostID, out effectInfo))
                     {
-                        tempIDs.Add(effectID);
+                        effectInfo.Add(Tuple.Create(effectID, new Effect(null)));
                     }
                     else
                     {
-                        tempIDs = new List<int>() { effectID };
-                        hostIDToEffectIDs.Add(hostID, tempIDs);
+                        effectInfo = new List<Tuple<int, Effect>>() { Tuple.Create(effectID, new Effect(null)) };
+                        hostIDToEffectInfo.Add(hostID, effectInfo);
                     }
                 }
 

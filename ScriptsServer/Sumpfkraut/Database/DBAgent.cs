@@ -101,6 +101,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
             this.commandQueue = commandQueue;
             this.useAsyncMode = useAsyncMode;
             this.running = false;
+            this.waitHandle = new AutoResetEvent(false);
             
             if (startOnCreate)
             {

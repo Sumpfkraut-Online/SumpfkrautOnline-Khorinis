@@ -43,14 +43,14 @@ namespace GUC.Scripts.Sumpfkraut.Database
         /// <param name="colGetTypeInfo">a predefined list of information concerning the sql-column 
         /// (name + datatype)</param>
         /// <returns></returns>
-        public static bool ConvertSQLResults (ref List<List<List<object>>> sqlResults, 
+        public static bool ConvertSQLResults (List<List<List<object>>> sqlResults, 
             List<ColumnGetTypeInfo> colGetTypeInfo)
         {
             List<List<ColumnGetTypeInfo>> _colGetTypeInfo = new List<List<ColumnGetTypeInfo>> { colGetTypeInfo };
-            return ConvertSQLResults(ref sqlResults, _colGetTypeInfo, true);
+            return ConvertSQLResults(sqlResults, _colGetTypeInfo, true);
         }
 
-        public static bool ConvertSQLResults (ref List<List<List<object>>> sqlResults, 
+        public static bool ConvertSQLResults (List<List<List<object>>> sqlResults, 
             List<List<ColumnGetTypeInfo>> colGetTypeInfo, bool noLengthComparison = false)
         {
             bool allConverted = true;
