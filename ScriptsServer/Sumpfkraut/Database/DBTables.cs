@@ -16,9 +16,9 @@ namespace GUC.Scripts.Sumpfkraut.Database
         public struct ColumnGetTypeInfo
         {
             public String colName;
-            public SQLiteGetTypeEnum getType;
+            public SQLiteGetType getType;
 
-            public ColumnGetTypeInfo (String colName, SQLiteGetTypeEnum getType)
+            public ColumnGetTypeInfo (String colName, SQLiteGetType getType)
             {
                 this.colName = colName;
                 this.getType = getType;
@@ -92,7 +92,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
                             tempEntry = sqlResults[res][row][col].ToString();
                             if (SqlStringToData((string) tempEntry, 
                                 colGetTypeInfo[res][col].getType, 
-                                ref tempEntry))
+                                out tempEntry))
                             {
                                 sqlResults[res][row][col] = tempEntry;
                             }
@@ -120,21 +120,21 @@ namespace GUC.Scripts.Sumpfkraut.Database
             return allConverted;
         }
 
-        public static void SqlColumnInfo (Dictionary<String, SQLiteGetTypeEnum> getTypeByColumn,
+        public static void SqlColumnInfo (Dictionary<String, SQLiteGetType> getTypeByColumn,
             out List<ColumnGetTypeInfo> colGetTypes)
         {
             colGetTypes = new List<ColumnGetTypeInfo>();
-            foreach (KeyValuePair<String, SQLiteGetTypeEnum> keyValPair in getTypeByColumn)
+            foreach (KeyValuePair<String, SQLiteGetType> keyValPair in getTypeByColumn)
             {
                 colGetTypes.Add(new ColumnGetTypeInfo(keyValPair.Key, keyValPair.Value));
             }
         }
 
-        public static void SqlColumnInfo (ref Dictionary<String, SQLiteGetTypeEnum> getTypeByColumn,
+        public static void SqlColumnInfo (ref Dictionary<String, SQLiteGetType> getTypeByColumn,
             out List<ColumnGetTypeInfo> colGetTypes)
         {
             colGetTypes = new List<ColumnGetTypeInfo>();
-            foreach (KeyValuePair<String, SQLiteGetTypeEnum> keyValPair in getTypeByColumn)
+            foreach (KeyValuePair<String, SQLiteGetType> keyValPair in getTypeByColumn)
             {
                 colGetTypes.Add(new ColumnGetTypeInfo(keyValPair.Key, keyValPair.Value));
             }
@@ -147,13 +147,13 @@ namespace GUC.Scripts.Sumpfkraut.Database
          *   @param get is the hint on the final data type of the conversion
          *   @param output is the object where the resulting type-converted string will be stored into
          */
-        public static bool SqlStringToData (string sqlString, SQLiteGetTypeEnum get, ref object output)
+        public static bool SqlStringToData (string sqlString, SQLiteGetType get, out object output)
         {
             if (sqlString != null)
             {
                 switch (get)
                 {
-                    case (SQLiteGetTypeEnum.GetBoolean):
+                    case (SQLiteGetType.GetBoolean):
                         bool outBool = false;
                         if (bool.TryParse(sqlString, out outBool))
                         {
@@ -176,7 +176,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
                                 + "' with " + get + " in SqlStringToData.");
                             break;
                         }
-                    case (SQLiteGetTypeEnum.GetByte):
+                    case (SQLiteGetType.GetByte):
                         byte outByte = 0;
                         if (byte.TryParse(sqlString, out outByte))
                         {
@@ -189,7 +189,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
                                 + "' with " + get + " in SqlStringToData.");
                             break;
                         }
-                    case (SQLiteGetTypeEnum.GetChar):
+                    case (SQLiteGetType.GetChar):
                         char outChar = '0';
                         if (char.TryParse(sqlString, out outChar))
                         {
@@ -202,7 +202,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
                                 + "' with " + get + " in SqlStringToData.");
                             break;
                         }
-                    case (SQLiteGetTypeEnum.GetDateTime):
+                    case (SQLiteGetType.GetDateTime):
                         DateTime outDateTime = new DateTime();
                         if (DateTime.TryParse(sqlString, out outDateTime))
                         {
@@ -215,7 +215,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
                                 + "' with " + get + " in SqlStringToData.");
                             break;
                         }
-                    case (SQLiteGetTypeEnum.GetDecimal):
+                    case (SQLiteGetType.GetDecimal):
                         decimal outDecimal = 0;
                         if (decimal.TryParse(sqlString, out outDecimal))
                         {
@@ -228,7 +228,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
                                 + "' with " + get + " in SqlStringToData.");
                             break;
                         }
-                    case (SQLiteGetTypeEnum.GetDouble):
+                    case (SQLiteGetType.GetDouble):
                         double outDouble = 0;
                         if (double.TryParse(sqlString, out outDouble))
                         {
@@ -241,7 +241,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
                                 + "' with " + get + " in SqlStringToData.");
                             break;
                         }
-                    case (SQLiteGetTypeEnum.GetFloat):
+                    case (SQLiteGetType.GetFloat):
                         float outFloat = 0;
                         if (float.TryParse(sqlString, out outFloat))
                         {
@@ -254,7 +254,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
                                 + "' with " + get + " in SqlStringToData.");
                             break;
                         }
-                    case (SQLiteGetTypeEnum.GetGuid):
+                    case (SQLiteGetType.GetGuid):
                         Guid outGuid = Guid.Empty;
                         if (Guid.TryParse(sqlString, out outGuid))
                         {
@@ -267,7 +267,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
                                 + "' with " + get + " in SqlStringToData.");
                             break;
                         }
-                    case (SQLiteGetTypeEnum.GetInt16):
+                    case (SQLiteGetType.GetInt16):
                         Int16 outInt16 = 0;
                         if (Int16.TryParse(sqlString, out outInt16))
                         {
@@ -280,7 +280,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
                                 + "' with " + get + " in SqlStringToData.");
                             break;
                         }
-                    case (SQLiteGetTypeEnum.GetInt32):
+                    case (SQLiteGetType.GetInt32):
                         Int32 outInt32 = 0;
                         if (Int32.TryParse(sqlString, out outInt32))
                         {
@@ -293,7 +293,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
                                 + "' with " + get + " in SqlStringToData.");
                             break;
                         }
-                    case (SQLiteGetTypeEnum.GetInt64):
+                    case (SQLiteGetType.GetInt64):
                         Int64 outInt64 = 0;
                         if (Int64.TryParse(sqlString, out outInt64))
                         {
@@ -306,7 +306,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
                                 + "' with " + get + " in SqlStringToData.");
                             break;
                         }
-                    case (SQLiteGetTypeEnum.GetString):
+                    case (SQLiteGetType.GetString):
                         output = sqlString;
                         return true;
                     default:
@@ -316,6 +316,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
                 }
             }
 
+            output = null;
             return false;
         }
 

@@ -16,7 +16,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
     /**
     *   Enum of the supported SQLite-Get-Types, used internally 
     */
-    public enum SQLiteGetTypeEnum
+    public enum SQLiteGetType
     {
         GetBoolean          = 0,
         GetByte             = 1,

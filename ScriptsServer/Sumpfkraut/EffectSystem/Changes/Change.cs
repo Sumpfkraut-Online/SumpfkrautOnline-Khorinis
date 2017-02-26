@@ -54,15 +54,26 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 
 
 
-        protected Change (ChangeInitInfo changeInitInfo, Effect effect)
+        protected Change (ChangeInitInfo changeInitInfo)
         {
             SetObjName("Change (default)");
             this.changeInitInfo = changeInitInfo;
-            this.effect = effect;
             this.parameters = new List<object>(changeInitInfo.ParameterTypes.Count);
         }
 
-        public static Change Create (ChangeInitInfo changeInitInfo, Effect effect, List<object> parameters)
+        public static Change Create (ChangeType changeType, List<object> parameters)
+        {
+            ChangeInitInfo changeInitInfo;
+            if (!BaseChangeInit.TryGetChangeInitInfo(changeType, out changeInitInfo))
+            {
+                MakeLogErrorStatic(typeof(Change), "Aborting Create because there exist no ChangeInitInfo "
+                    + "for unsupported changeType " + changeType + "!");
+                return null;
+            }
+            return Create(changeInitInfo, parameters);
+        }
+
+        public static Change Create (ChangeInitInfo changeInitInfo, List<object> parameters)
         {
             if (changeInitInfo == null)
             {
@@ -70,7 +81,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
                     "Aborting Create because insufficient changeInitInfo was provided!");
                 return null;
             }
-            Change change = new Change(changeInitInfo, effect);
+            Change change = new Change(changeInitInfo);
             if (!change.SetParameters(parameters))
             {
                 MakeLogWarningStatic(typeof(Change), 

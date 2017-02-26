@@ -1,5 +1,6 @@
 ﻿using GUC.Scripts.Sumpfkraut.Database;
 using GUC.Scripts.Sumpfkraut.EffectSystem.Changes;
+using GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration;
 using GUC.Utilities;
 using GUC.Utilities.Threading;
 using System;
@@ -17,26 +18,28 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
 
         new public static readonly string _staticName = "EffectLoader (static)";
 
+        public static char[] defaultParamsSeperator = new char[] { ';' };
+
         public static readonly Dictionary<string, List<DBTables.ColumnGetTypeInfo>> DBStructure =
             new Dictionary<string, List<DBTables.ColumnGetTypeInfo>>()
         {
             {
                 "DefEffect", new List<DBTables.ColumnGetTypeInfo>
                 {
-                    new DBTables.ColumnGetTypeInfo("DefEffectID", SQLiteGetTypeEnum.GetInt32),
-                    new DBTables.ColumnGetTypeInfo("ChangeDate", SQLiteGetTypeEnum.GetDateTime),
-                    new DBTables.ColumnGetTypeInfo("CreationDate", SQLiteGetTypeEnum.GetDateTime),
+                    new DBTables.ColumnGetTypeInfo("DefEffectID", SQLiteGetType.GetInt32),
+                    new DBTables.ColumnGetTypeInfo("ChangeDate", SQLiteGetType.GetDateTime),
+                    new DBTables.ColumnGetTypeInfo("CreationDate", SQLiteGetType.GetDateTime),
                 }
             },
             {
                 "DefChange", new List<DBTables.ColumnGetTypeInfo>
                 {
-                    new DBTables.ColumnGetTypeInfo("DefChangeID", SQLiteGetTypeEnum.GetInt32),
-                    new DBTables.ColumnGetTypeInfo("DefEffectID", SQLiteGetTypeEnum.GetInt32),
-                    new DBTables.ColumnGetTypeInfo("ChangeType", SQLiteGetTypeEnum.GetInt32),
-                    new DBTables.ColumnGetTypeInfo("Params", SQLiteGetTypeEnum.GetString),
-                    new DBTables.ColumnGetTypeInfo("ChangeDate", SQLiteGetTypeEnum.GetDateTime),
-                    new DBTables.ColumnGetTypeInfo("CreationDate", SQLiteGetTypeEnum.GetDateTime),
+                    new DBTables.ColumnGetTypeInfo("DefChangeID", SQLiteGetType.GetInt32),
+                    new DBTables.ColumnGetTypeInfo("DefEffectID", SQLiteGetType.GetInt32),
+                    new DBTables.ColumnGetTypeInfo("ChangeType", SQLiteGetType.GetString),
+                    new DBTables.ColumnGetTypeInfo("Params", SQLiteGetType.GetString),
+                    new DBTables.ColumnGetTypeInfo("ChangeDate", SQLiteGetType.GetDateTime),
+                    new DBTables.ColumnGetTypeInfo("CreationDate", SQLiteGetType.GetDateTime),
                 }
             },
         };
@@ -188,11 +191,30 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
                     effectsByID = new Dictionary<int, Effect>();
                     Effect effect = null;
                     Change change = null;
-                    int effectID;
+                    int effectID, changeID;
+                    ChangeType changeType;
+                    string paramsString = null;
+                    List<object> parameters = null;
                     for (int i = 0; i < tableChange.Count; i++)
                     {
+                        changeID = (int) tableChange[i][0];
                         effectID = (int) tableChange[i][1];
-                        change = Change.Create();
+                        if (!Enum.TryParse((string) tableChange[i][2], out changeType))
+                        {
+                            MakeLogError(string.Format("Received unsupported ChangeType {0} "
+                                + "from database! Aborting initialization of Change with ID {1}.",
+                                tableChange[i][2], changeID));
+                            continue;
+                        }
+                        paramsString = (string) tableChange[i][3];
+                        if (!TryParseParameters(paramsString, bla, out parameters)
+                        {
+                            MakeLogError("Aborting initialization of Change because an error occured "
+                                + "while parsing respective parameters!");
+                            continue;
+                        }
+
+                        change = Change.Create(changeType, parameters);
 
                         if (effectsByID.TryGetValue(effectID, out effect))
                         {
@@ -209,6 +231,52 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             {
                 MakeLogError("Error while converting sqlResults to Effects: " + ex);
             }
+        }
+
+        public bool TryParseParameters (string parameterString, List<SQLiteGetType> types, 
+            out List<object> parameters)
+        {
+            return TryParseParameters(parameterString, types, out parameters, defaultParamsSeperator);
+        }
+
+        public bool TryParseParameters (string parameterString, List<SQLiteGetType> types, 
+            out List<object> parameters, string seperator)
+        {
+            return TryParseParameters(parameterString, types, out parameters, seperator);
+        }
+
+        public bool TryParseParameters (string parameterString, List<SQLiteGetType> types, 
+            out List<object> parameters, char[] seperator)
+        {
+            parameters = null;
+            string[] splitted = parameterString.Split(seperator);
+            if (types == null)
+            {
+                MakeLogError("Aborting TryParseParameters because parameter parameterTypes is null!");
+                return false;
+            }
+            if (types.Count < splitted.Length)
+            {
+                MakeLogError("Aborting TryParseParameters because the amount of parameterTypes is insufficient: " 
+                    + types.Count + " instead of the required " + splitted.Length + ". ");
+            }
+
+            parameters = new List<object>(splitted.Length);
+            object p;
+            SQLiteGetType t;
+            for (int i = 0; i < splitted.Length; i++)
+            {
+                t = types[i];
+                if (!DBTables.SqlStringToData(splitted[i], t, out p))
+                {
+                    MakeLogError(string.Format("Aborting TryParseParameters because Params[{0}]" 
+                        + "couldn't be converted according to applied SQLiteGetType {1}",
+                        splitted[i], types[i]));
+                }
+                parameters[i] = p;
+            }
+
+            return true;
         }
 
     }
