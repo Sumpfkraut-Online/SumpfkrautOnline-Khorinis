@@ -15,10 +15,10 @@ namespace GUC.Scripts.Sumpfkraut.Database
 
         public struct ColumnGetTypeInfo
         {
-            public String colName;
+            public string colName;
             public SQLiteGetType getType;
 
-            public ColumnGetTypeInfo (String colName, SQLiteGetType getType)
+            public ColumnGetTypeInfo (string colName, SQLiteGetType getType)
             {
                 this.colName = colName;
                 this.getType = getType;
@@ -26,14 +26,14 @@ namespace GUC.Scripts.Sumpfkraut.Database
 
             public override string ToString ()
             {
-                return String.Format("Sql-column with colName = {0} and getType = {1}", colName, getType);
+                return string.Format("Sql-column with colName = {0} and getType = {1}", colName, getType);
             }
         }
 
 
 
         new public static readonly string _staticName = "DBTables (static)";
-        new protected String _objName = "DBTables (default)";
+        new protected string _objName = "DBTables (default)";
         
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
                         {
                             // everything else should be a string and somehow convertable
                             tempEntry = sqlResults[res][row][col].ToString();
-                            if (SqlStringToData((string) tempEntry, 
+                            if (TrySqlStringToData((string) tempEntry, 
                                 colGetTypeInfo[res][col].getType, 
                                 out tempEntry))
                             {
@@ -120,21 +120,21 @@ namespace GUC.Scripts.Sumpfkraut.Database
             return allConverted;
         }
 
-        public static void SqlColumnInfo (Dictionary<String, SQLiteGetType> getTypeByColumn,
+        public static void SqlColumnInfo (Dictionary<string, SQLiteGetType> getTypeByColumn,
             out List<ColumnGetTypeInfo> colGetTypes)
         {
             colGetTypes = new List<ColumnGetTypeInfo>();
-            foreach (KeyValuePair<String, SQLiteGetType> keyValPair in getTypeByColumn)
+            foreach (KeyValuePair<string, SQLiteGetType> keyValPair in getTypeByColumn)
             {
                 colGetTypes.Add(new ColumnGetTypeInfo(keyValPair.Key, keyValPair.Value));
             }
         }
 
-        public static void SqlColumnInfo (ref Dictionary<String, SQLiteGetType> getTypeByColumn,
+        public static void SqlColumnInfo (ref Dictionary<string, SQLiteGetType> getTypeByColumn,
             out List<ColumnGetTypeInfo> colGetTypes)
         {
             colGetTypes = new List<ColumnGetTypeInfo>();
-            foreach (KeyValuePair<String, SQLiteGetType> keyValPair in getTypeByColumn)
+            foreach (KeyValuePair<string, SQLiteGetType> keyValPair in getTypeByColumn)
             {
                 colGetTypes.Add(new ColumnGetTypeInfo(keyValPair.Key, keyValPair.Value));
             }
@@ -147,11 +147,11 @@ namespace GUC.Scripts.Sumpfkraut.Database
          *   @param get is the hint on the final data type of the conversion
          *   @param output is the object where the resulting type-converted string will be stored into
          */
-        public static bool SqlStringToData (string sqlString, SQLiteGetType get, out object output)
+        public static bool TrySqlStringToData (string sqlString, SQLiteGetType t, out object output)
         {
             if (sqlString != null)
             {
-                switch (get)
+                switch (t)
                 {
                     case (SQLiteGetType.GetBoolean):
                         bool outBool = false;
@@ -173,7 +173,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
                         else
                         {
                             Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
-                                + "' with " + get + " in SqlStringToData.");
+                                + "' with " + t + " in SqlStringToData.");
                             break;
                         }
                     case (SQLiteGetType.GetByte):
@@ -186,7 +186,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
                         else
                         {
                             Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
-                                + "' with " + get + " in SqlStringToData.");
+                                + "' with " + t + " in SqlStringToData.");
                             break;
                         }
                     case (SQLiteGetType.GetChar):
@@ -199,7 +199,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
                         else
                         {
                             Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
-                                + "' with " + get + " in SqlStringToData.");
+                                + "' with " + t + " in SqlStringToData.");
                             break;
                         }
                     case (SQLiteGetType.GetDateTime):
@@ -212,7 +212,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
                         else
                         {
                             Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
-                                + "' with " + get + " in SqlStringToData.");
+                                + "' with " + t + " in SqlStringToData.");
                             break;
                         }
                     case (SQLiteGetType.GetDecimal):
@@ -225,7 +225,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
                         else
                         {
                             Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
-                                + "' with " + get + " in SqlStringToData.");
+                                + "' with " + t + " in SqlStringToData.");
                             break;
                         }
                     case (SQLiteGetType.GetDouble):
@@ -238,7 +238,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
                         else
                         {
                             Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
-                                + "' with " + get + " in SqlStringToData.");
+                                + "' with " + t + " in SqlStringToData.");
                             break;
                         }
                     case (SQLiteGetType.GetFloat):
@@ -251,7 +251,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
                         else
                         {
                             Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
-                                + "' with " + get + " in SqlStringToData.");
+                                + "' with " + t + " in SqlStringToData.");
                             break;
                         }
                     case (SQLiteGetType.GetGuid):
@@ -264,12 +264,12 @@ namespace GUC.Scripts.Sumpfkraut.Database
                         else
                         {
                             Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
-                                + "' with " + get + " in SqlStringToData.");
+                                + "' with " + t + " in SqlStringToData.");
                             break;
                         }
                     case (SQLiteGetType.GetInt16):
-                        Int16 outInt16 = 0;
-                        if (Int16.TryParse(sqlString, out outInt16))
+                        short outInt16 = 0;
+                        if (short.TryParse(sqlString, out outInt16))
                         {
                             output = outInt16;
                             return true;
@@ -277,12 +277,12 @@ namespace GUC.Scripts.Sumpfkraut.Database
                         else
                         {
                             Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
-                                + "' with " + get + " in SqlStringToData.");
+                                + "' with " + t + " in SqlStringToData.");
                             break;
                         }
                     case (SQLiteGetType.GetInt32):
-                        Int32 outInt32 = 0;
-                        if (Int32.TryParse(sqlString, out outInt32))
+                        int outInt32 = 0;
+                        if (int.TryParse(sqlString, out outInt32))
                         {
                             output = outInt32;
                             return true;
@@ -290,12 +290,12 @@ namespace GUC.Scripts.Sumpfkraut.Database
                         else
                         {
                             Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
-                                + "' with " + get + " in SqlStringToData.");
+                                + "' with " + t + " in SqlStringToData.");
                             break;
                         }
                     case (SQLiteGetType.GetInt64):
-                        Int64 outInt64 = 0;
-                        if (Int64.TryParse(sqlString, out outInt64))
+                        long outInt64 = 0;
+                        if (long.TryParse(sqlString, out outInt64))
                         {
                             output = outInt64;
                             return true;
@@ -303,7 +303,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
                         else
                         {
                             Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
-                                + "' with " + get + " in SqlStringToData.");
+                                + "' with " + t + " in SqlStringToData.");
                             break;
                         }
                     case (SQLiteGetType.GetString):
@@ -311,7 +311,180 @@ namespace GUC.Scripts.Sumpfkraut.Database
                         return true;
                     default:
                         Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
-                                + "' with " + get + " in SqlStringToData because this datatype is not supported.");
+                                + "' with " + t + " in SqlStringToData because this datatype is not supported.");
+                        break;
+                }
+            }
+
+            output = null;
+            return false;
+        }
+
+        public static bool TrySqlStringToData (string sqlString, Type t, out object output)
+        {
+            if (sqlString != null)
+            {
+                switch (t.ToString())
+                {
+                    case ("bool"):
+                        bool outBool = false;
+                        if (bool.TryParse(sqlString, out outBool))
+                        {
+                            output = outBool;
+                            return true;
+                        }
+                        else if (sqlString.Equals("0"))
+                        {
+                            output = false;
+                            return true;
+                        }
+                        else if (sqlString.Equals("1"))
+                        {
+                            output = true;
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + t + " in SqlStringToData.");
+                            break;
+                        }
+                    case ("byte"):
+                        byte outByte = 0;
+                        if (byte.TryParse(sqlString, out outByte))
+                        {
+                            output = outByte;
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + t + " in SqlStringToData.");
+                            break;
+                        }
+                    case ("char"):
+                        char outChar = '0';
+                        if (char.TryParse(sqlString, out outChar))
+                        {
+                            output = outChar;
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + t + " in SqlStringToData.");
+                            break;
+                        }
+                    case ("DateTime"):
+                        DateTime outDateTime = new DateTime();
+                        if (DateTime.TryParse(sqlString, out outDateTime))
+                        {
+                            output = outDateTime;
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + t + " in SqlStringToData.");
+                            break;
+                        }
+                    case ("decimal"):
+                        decimal outDecimal = 0;
+                        if (decimal.TryParse(sqlString, out outDecimal))
+                        {
+                            output = outDecimal;
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + t + " in SqlStringToData.");
+                            break;
+                        }
+                    case ("double"):
+                        double outDouble = 0;
+                        if (double.TryParse(sqlString, out outDouble))
+                        {
+                            output = outDouble;
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + t + " in SqlStringToData.");
+                            break;
+                        }
+                    case ("float"):
+                        float outFloat = 0;
+                        if (float.TryParse(sqlString, out outFloat))
+                        {
+                            output = outFloat;
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + t + " in SqlStringToData.");
+                            break;
+                        }
+                    case ("Guid"):
+                        Guid outGuid = Guid.Empty;
+                        if (Guid.TryParse(sqlString, out outGuid))
+                        {
+                            output = outGuid;
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + t + " in SqlStringToData.");
+                            break;
+                        }
+                    case ("short"):
+                        short outInt16 = 0;
+                        if (short.TryParse(sqlString, out outInt16))
+                        {
+                            output = outInt16;
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + t + " in SqlStringToData.");
+                            break;
+                        }
+                    case ("int"):
+                        int outInt32 = 0;
+                        if (int.TryParse(sqlString, out outInt32))
+                        {
+                            output = outInt32;
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + t + " in SqlStringToData.");
+                            break;
+                        }
+                    case ("long"):
+                        long outInt64 = 0;
+                        if (long.TryParse(sqlString, out outInt64))
+                        {
+                            output = outInt64;
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + t + " in SqlStringToData.");
+                            break;
+                        }
+                    case ("string"):
+                        output = sqlString;
+                        return true;
+                    default:
+                        Log.Logger.LogError("Could not convert sql-result-string '" + sqlString 
+                                + "' with " + t + " in SqlStringToData because this datatype is not supported.");
                         break;
                 }
             }
