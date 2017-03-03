@@ -97,6 +97,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
 
 
 
+        // simply null loaded sqlResults and effectsByID
         public void DropResults ()
         {
             lock (loadLock)
@@ -106,6 +107,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             }
         }
 
+        // fill in effectsByID-property and optionally invoke a handler to 
+        // directly use the results after finished loading
         public void Load (string dbFilePath, bool useAsyncMode = false, FinishedLoadingHandler handler = null)
         {
             FinishedLoadingHandlerArgs e = new FinishedLoadingHandlerArgs();
@@ -113,6 +116,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
    
             lock (loadLock)
             {
+                // drop all previous results in one fell swoop
+                DropResults();
+
                 // prepare data conversion parameters if it's still not done yet (done only once per server run)
                 if (colGetTypeInfo == null)
                 {
@@ -195,7 +201,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
                     ChangeType changeType;
                     string paramsString = null;
                     List<object> parameters = null;
-                    List<Type> parameterTypes = null;
                     ChangeInitInfo changeInitInfo = null;
                     for (int i = 0; i < tableChange.Count; i++)
                     {
@@ -259,6 +264,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             return TryParseParameters(parameterString, types, out parameters, seperator);
         }
 
+        // try parse parameter-string into a List of usable paramters of their respective types
         public bool TryParseParameters (string parameterString, List<Type> types, 
             out List<object> parameters, char[] seperator)
         {
