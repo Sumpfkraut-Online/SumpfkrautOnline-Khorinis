@@ -14,13 +14,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
     public partial class VobDefLoader
     {
 
-        protected string dbFilePath = null;
-        public string DBFilePath { get { return this.dbFilePath; } }
-
-        protected List<List<List<object>>> sqlResults = null;
-        protected bool sqlResultInUse = false;
-        public void DropSQLResult () { if (!sqlResultInUse) { sqlResults = null; } }
-
         public static readonly Dictionary<string, List<DBTables.ColumnGetTypeInfo>> DBStructure =
             new Dictionary<string, List<DBTables.ColumnGetTypeInfo>>()
         {
@@ -83,6 +76,33 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
 
 
 
+        protected object loadLock;
+
+        protected string dbFilePath = null;
+        public string DBFilePath { get { return dbFilePath; } }
+
+        protected string effectTableName = null;
+        public string GetEffectTableName () { return effectTableName; }
+        public void SetEffectTableName (string value)
+        {
+            lock (loadLock) { effectTableName = value; }
+        }
+
+        protected string changeTableName = null;
+        public string GetChangeTableName () { return changeTableName; }
+        public void SetChangeTableName (string value)
+        {
+            lock (loadLock) { changeTableName = value; }
+        }
+
+        protected List<List<List<object>>> sqlResults;
+        public List<List<List<object>>> GetLastSQLResults ()
+        {
+            lock (loadLock) { return sqlResults; }
+        }
+
+
+
         partial void pLoad ()
         {
             // prepare data conversion parameters if it's still not done yet (done only once per server run)
@@ -137,66 +157,69 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
                 DBTables.ConvertSQLResults(sqlResults, ColGetTypeInfo);
 
                 // database tables: "DefEffect", "DefChange", "VobDef", "VobDefEffect", "StaticDynamicJob"
-                int i_DefEffect = DBTableLoadOrder.IndexOf("DefEffect");
-                List<DBTables.ColumnGetTypeInfo> cgt_DefEffect = ColGetTypeInfo[i_DefEffect];
-                List<List<object>> tableDefEffect = sqlResults[ DBTableLoadOrder.IndexOf("DefEffect") ];
+                //int i_DefEffect = DBTableLoadOrder.IndexOf("DefEffect");
+                //List<DBTables.ColumnGetTypeInfo> cgt_DefEffect = ColGetTypeInfo[i_DefEffect];
+                //List<List<object>> tableDefEffect = sqlResults[ DBTableLoadOrder.IndexOf("DefEffect") ];
 
-                int i_DefChange = DBTableLoadOrder.IndexOf("DefChange");
-                List<DBTables.ColumnGetTypeInfo> cgt_DefChange = ColGetTypeInfo[i_DefChange];
-                List<List<object>> tableDefChange = sqlResults[ DBTableLoadOrder.IndexOf("DefChange") ];
+                //int i_DefChange = DBTableLoadOrder.IndexOf("DefChange");
+                //List<DBTables.ColumnGetTypeInfo> cgt_DefChange = ColGetTypeInfo[i_DefChange];
+                //List<List<object>> tableDefChange = sqlResults[ DBTableLoadOrder.IndexOf("DefChange") ];
 
                 int i_VobDef = DBTableLoadOrder.IndexOf("VobDef");
                 List<DBTables.ColumnGetTypeInfo> cgt_VobDef = ColGetTypeInfo[i_VobDef];
-                List<List<object>> tableVobDef = sqlResults[ DBTableLoadOrder.IndexOf("VobDef") ];
+                List<List<object>> tableVobDef = sqlResults[DBTableLoadOrder.IndexOf("VobDef")];
 
-                int i_VobDefEffect= DBTableLoadOrder.IndexOf("VobDefEffect");
+                int i_VobDefEffect = DBTableLoadOrder.IndexOf("VobDefEffect");
                 List<DBTables.ColumnGetTypeInfo> cgt_VobDefEffect = ColGetTypeInfo[i_VobDefEffect];
-                List<List<object>> tableVobDefEffect = sqlResults[ DBTableLoadOrder.IndexOf("VobDefEffect") ];
+                List<List<object>> tableVobDefEffect = sqlResults[DBTableLoadOrder.IndexOf("VobDefEffect")];
 
-                int i_StaticDynamicJob = DBTableLoadOrder.IndexOf("StaticDynamicJob");
-                List<DBTables.ColumnGetTypeInfo> cgt_StaticDynamicJob = ColGetTypeInfo[i_StaticDynamicJob];
-                List<List<object>> tableStaticDynamicJob = sqlResults[ DBTableLoadOrder.IndexOf("StaticDynamicJob") ];
+                //int i_StaticDynamicJob = DBTableLoadOrder.IndexOf("StaticDynamicJob");
+                //List<DBTables.ColumnGetTypeInfo> cgt_StaticDynamicJob = ColGetTypeInfo[i_StaticDynamicJob];
+                //List<List<object>> tableStaticDynamicJob = sqlResults[ DBTableLoadOrder.IndexOf("StaticDynamicJob") ];
 
 
-                List<Effect> effects = new List<Effect>(); ;
-                Dictionary<int, List<Tuple<int, Effect>>> hostIDToEffectInfo = 
-                    new Dictionary<int, List<Tuple<int, Effect>>>(tableVobDef.Count);
-                // effectID --> Tuple<changeID, changeRowIndex>
-                Dictionary<int, List<Tuple<int, int>>> effectIDToChangeInfo = 
-                    new Dictionary<int, List<Tuple<int, int>>> (tableDefEffect.Count);
-                List<Tuple<int, Effect>> effectInfo;
-                List<Tuple<int, int>> changeInfo;
-                int hostID, effectID, changeID;
+                List<Effect> effects = new List<Effect>();
+                EffectLoader effectLoader = new EffectLoader(dbFilePath, "Vob")
 
-                for (int i = 0; i < tableVobDefEffect.Count; i++)
-                {
-                    hostID = (int) tableVobDefEffect[i][0];
-                    effectID = (int) tableVobDefEffect[i][1];
-                    if (hostIDToEffectInfo.TryGetValue(hostID, out effectInfo))
-                    {
-                        effectInfo.Add(Tuple.Create(effectID, new Effect(null)));
-                    }
-                    else
-                    {
-                        effectInfo = new List<Tuple<int, Effect>>() { Tuple.Create(effectID, new Effect(null)) };
-                        hostIDToEffectInfo.Add(hostID, effectInfo);
-                    }
-                }
 
-                for (int i = 0; i < tableDefChange.Count; i++)
-                {
-                    effectID = (int) tableDefChange[i][0];
-                    changeID = (int) tableDefChange[i][1];
-                    if (effectIDToChangeInfo.TryGetValue(effectID, out changeInfo))
-                    {
-                        changeInfo.Add(Tuple.Create(changeID, i));
-                    }
-                    else
-                    {
-                        changeInfo = new List<Tuple<int, int>>() { Tuple.Create(changeID, i) };
-                        effectIDToChangeInfo.Add(effectID, changeInfo);
-                    }
-                }
+                //Dictionary<int, List<Tuple<int, Effect>>> hostIDToEffectInfo = 
+                //    new Dictionary<int, List<Tuple<int, Effect>>>(tableVobDef.Count);
+                //// effectID --> Tuple<changeID, changeRowIndex>
+                //Dictionary<int, List<Tuple<int, int>>> effectIDToChangeInfo = 
+                //    new Dictionary<int, List<Tuple<int, int>>> (tableDefEffect.Count);
+                //List<Tuple<int, Effect>> effectInfo;
+                //List<Tuple<int, int>> changeInfo;
+                //int hostID, effectID, changeID;
+
+                //for (int i = 0; i < tableVobDefEffect.Count; i++)
+                //{
+                //    hostID = (int) tableVobDefEffect[i][0];
+                //    effectID = (int) tableVobDefEffect[i][1];
+                //    if (hostIDToEffectInfo.TryGetValue(hostID, out effectInfo))
+                //    {
+                //        effectInfo.Add(Tuple.Create(effectID, new Effect(null)));
+                //    }
+                //    else
+                //    {
+                //        effectInfo = new List<Tuple<int, Effect>>() { Tuple.Create(effectID, new Effect(null)) };
+                //        hostIDToEffectInfo.Add(hostID, effectInfo);
+                //    }
+                //}
+
+                //for (int i = 0; i < tableDefChange.Count; i++)
+                //{
+                //    effectID = (int) tableDefChange[i][0];
+                //    changeID = (int) tableDefChange[i][1];
+                //    if (effectIDToChangeInfo.TryGetValue(effectID, out changeInfo))
+                //    {
+                //        changeInfo.Add(Tuple.Create(changeID, i));
+                //    }
+                //    else
+                //    {
+                //        changeInfo = new List<Tuple<int, int>>() { Tuple.Create(changeID, i) };
+                //        effectIDToChangeInfo.Add(effectID, changeInfo);
+                //    }
+                //}
 
 
                 //List<Change> changes;

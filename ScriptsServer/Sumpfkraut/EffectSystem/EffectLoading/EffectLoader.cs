@@ -9,11 +9,12 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using static GUC.Scripts.Sumpfkraut.Database.DBAgent;
+using static GUC.Scripts.Sumpfkraut.Database.DBTables;
 
 namespace GUC.Scripts.Sumpfkraut.EffectSystem
 {
 
-    public class EffectLoader : ExtendedObject
+    public class EffectLoader : BaseObjectLoader
     {
 
         new public static readonly string _staticName = "EffectLoader (static)";
@@ -24,7 +25,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             new Dictionary<string, List<DBTables.ColumnGetTypeInfo>>()
         {
             {
-                "DefEffect", new List<DBTables.ColumnGetTypeInfo>
+                "Effect", new List<DBTables.ColumnGetTypeInfo>
                 {
                     new DBTables.ColumnGetTypeInfo("DefEffectID", SQLiteGetType.GetInt32),
                     new DBTables.ColumnGetTypeInfo("ChangeDate", SQLiteGetType.GetDateTime),
@@ -32,7 +33,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
                 }
             },
             {
-                "DefChange", new List<DBTables.ColumnGetTypeInfo>
+                "Change", new List<DBTables.ColumnGetTypeInfo>
                 {
                     new DBTables.ColumnGetTypeInfo("DefChangeID", SQLiteGetType.GetInt32),
                     new DBTables.ColumnGetTypeInfo("DefEffectID", SQLiteGetType.GetInt32),
@@ -47,32 +48,31 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
         // fixed load order when accessing the database tables
         public static readonly List<string> DBTableLoadOrder = new List<string>()
         {
-            "DefEffect", "DefChange"
+            "Effect", "Change"
         };
 
-        // uses DBTableLoadOrder and arranges the GetTypeInfos for result-data-conversion for later reusability
-        protected static List<List<DBTables.ColumnGetTypeInfo>> colGetTypeInfo = null;
-        public static List<List<DBTables.ColumnGetTypeInfo>> ColGetTypeInfo { get { return colGetTypeInfo; } }
-
-        public delegate void FinishedLoadingHandler (FinishedLoadingHandlerArgs e);
-        public class FinishedLoadingHandlerArgs
+        public delegate void FinishedLoadingEffectsHandler (FinishedLoadingEffectsArgs e);
+        public class FinishedLoadingEffectsArgs : FinishedLoadingArgs
         {
-            public DateTime startTime;
-            public DateTime endTime;
-
-            public List<List<List<object>>> sqlResults;
             public Dictionary<int, Effect> effectsByID;
         }
 
 
 
-        protected object loadLock;
+        new public event FinishedLoadingHandler FinishedLoading;
 
-        protected string dbFilePath = null;
-        public string GetDBFilePath () { return this.dbFilePath; }
-        public void SetDBFilePath (string value)
+        protected string effectTableName = null;
+        public string GetEffectTableName () { return effectTableName; }
+        public void SetEffectTableName (string value)
         {
-            lock (loadLock) { dbFilePath = value; }
+            lock (loadLock) { effectTableName = value; }
+        }
+
+        protected string changeTableName = null;
+        public string GetChangeTableName () { return changeTableName; }
+        public void SetChangeTableName (string value)
+        {
+            lock (loadLock) { changeTableName = value; }
         }
 
         protected Dictionary<int, Effect> effectsByID;
@@ -81,24 +81,19 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             lock (loadLock) { return effectsByID; }
         }
 
-        protected List<List<List<object>>> sqlResults;
-        public List<List<List<object>>> GetLastSQLResults ()
+
+
+        public EffectLoader (string dbFilePath, string effectTableName, string changeTableName)
+            : base ("EffectLoader", dbFilePath, DBStructure, DBTableLoadOrder)
         {
-            lock (loadLock) { return sqlResults; }
-        }
-
-
-
-        public EffectLoader (string dbFilePath)
-        {
-            SetObjName("EffectLoader");
-            SetDBFilePath(dbFilePath);
+            SetEffectTableName(effectTableName);
+            SetChangeTableName(changeTableName);
         }
 
 
 
         // simply null loaded sqlResults and effectsByID
-        public void DropResults ()
+        new public void DropResults ()
         {
             lock (loadLock)
             {
@@ -107,53 +102,21 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             }
         }
 
-        // fill in effectsByID-property and optionally invoke a handler to 
-        // directly use the results after finished loading
-        public void Load (string dbFilePath, bool useAsyncMode = false, FinishedLoadingHandler handler = null)
+
+
+        public override void Load (bool useAsyncMode = false)
         {
-            FinishedLoadingHandlerArgs e = new FinishedLoadingHandlerArgs();
+            FinishedLoadingEffectsArgs e = new FinishedLoadingEffectsArgs();
             e.startTime = DateTime.Now;
    
             lock (loadLock)
             {
+                PrepareColGetTypeInfo();
                 // drop all previous results in one fell swoop
-                DropResults();
-
-                // prepare data conversion parameters if it's still not done yet (done only once per server run)
-                if (colGetTypeInfo == null)
-                {
-                    for (int t = 0; t < DBTableLoadOrder.Count; t++)
-                    {
-                        colGetTypeInfo.Add(DBStructure[DBTableLoadOrder[t]]);
-                    }
-                }
+                DropResults();  
 
                 // fill the queue of commands / subsequent sql-database-requests
-                List<string> commandQueue = new List<string>();
-                for (int t = 0; t < ColGetTypeInfo.Count; t++)
-                {
-                    StringBuilder commandSB = new StringBuilder();
-
-                    // select columns in order (by their names) --> SELECT col1, col2, ... coln
-                    commandSB.Append("SELECT ");
-                    int lastColumnIndex = ColGetTypeInfo[t].Count - 1;
-                    for (int c = 0; c < ColGetTypeInfo[t].Count; c++)
-                    {
-                        if (c != lastColumnIndex)
-                        {
-                            commandSB.Append(ColGetTypeInfo[t][c].colName + ",");
-                        }
-                        else
-                        {
-                            commandSB.Append(ColGetTypeInfo[t][c].colName);
-                        }
-                    }
-
-                    // always sort by <nameOfTable>ID --> e.g. FROM WorldEffect WHERE 1 ORDER BY WorldEffectID;
-                    commandSB.AppendFormat(" FROM {0} WHERE 1 ORDER BY {1}ID;", DBTableLoadOrder[t], 
-                        DBTableLoadOrder[t]);
-                    commandQueue.Add(commandSB.ToString());
-                }
+                List<string> commandQueue = PrepareLoadCommandQueue();
 
                 // send out DBAgent which might work asynchronously
                 // ...use AutoResetEvent for that case (forces thread to wait until continue is signalled)
@@ -167,8 +130,44 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
                 e.sqlResults = sqlResults;
                 e.effectsByID = effectsByID;
                 e.endTime = DateTime.Now;
-                handler?.Invoke(e);
+                //handler?.Invoke(e);
+                FinishedLoading(this, e);
             }
+        }
+
+        public List<string> PrepareLoadCommandQueue ()
+        {
+            // assumes that colGetTypeInfo[0] and colGetTypeInfo[1] represent
+            // the effect- and the change-tables respectively
+            return new List<string>()
+            {
+                PrepareLoadCommand(GetEffectTableName(), colGetTypeInfo[0]),
+                PrepareLoadCommand(GetChangeTableName(), colGetTypeInfo[1])
+            };
+        }
+
+        public string PrepareLoadCommand (string tableName, List<ColumnGetTypeInfo> getTypeInfos)
+        {
+            StringBuilder commandSB = new StringBuilder();
+
+            // select columns in order (by their names) --> SELECT col1, col2, ... coln
+            commandSB.Append("SELECT ");
+            int lastColumnIndex = getTypeInfos.Count - 1;
+            for (int c = 0; c < getTypeInfos.Count; c++)
+            {
+                if (c != lastColumnIndex)
+                {
+                    commandSB.Append(getTypeInfos[c].colName + ",");
+                }
+                else
+                {
+                    commandSB.Append(getTypeInfos[c].colName);
+                }
+            }
+
+            commandSB.AppendFormat(" FROM {0} WHERE 1 ORDER BY {0}ID;", tableName);
+
+            return commandSB.ToString();
         }
 
         public void EffectsFromSQLResults (AbstractRunnable sender, FinishedQueueEventHandlerArgs e)
@@ -186,11 +185,11 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
                     DBTables.ConvertSQLResults(sqlResults, colGetTypeInfo);
 
                     int i_DefEffect = DBTableLoadOrder.IndexOf("DefEffect");
-                    List<DBTables.ColumnGetTypeInfo> cgt_DefEffect = ColGetTypeInfo[i_DefEffect];
+                    List<DBTables.ColumnGetTypeInfo> cgt_DefEffect = colGetTypeInfo[i_DefEffect];
                     List<List<object>> tableEffect = sqlResults[ DBTableLoadOrder.IndexOf("DefEffect") ];
 
                     int i_DefChange = DBTableLoadOrder.IndexOf("DefChange");
-                    List<DBTables.ColumnGetTypeInfo> cgt_DefChange = ColGetTypeInfo[i_DefChange];
+                    List<DBTables.ColumnGetTypeInfo> cgt_DefChange = colGetTypeInfo[i_DefChange];
                     List<List<object>> tableChange = sqlResults[ DBTableLoadOrder.IndexOf("DefChange") ];
 
                     // create the Effects without assigning them an EffectHandler (must be done in external routine)
