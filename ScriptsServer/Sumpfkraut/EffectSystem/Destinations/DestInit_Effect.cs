@@ -96,7 +96,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
             try
             {
                 TotalChange totalChange;
-                if (!effectHandler.TryGetTotalChange(ChangeDestination.Effect_Name, out totalChange))
+                if (!effectHandler.TryGetTotalChange(ChangeDestination.Effect_GlobalID, out totalChange))
                 { return; }
 
                 Effect effect;

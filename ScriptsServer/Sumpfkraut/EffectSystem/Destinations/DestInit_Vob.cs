@@ -64,7 +64,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
                 // stop here when there are no Changes to process
                 if (totalChange.Components.Count < 1) { return; }
                 // last codeName counts
-                tc = Change.Create(info, null, 
+                tc = Change.Create(info, 
                     new List<object>() { totalChange.Components[totalChange.Components.Count - 1] });
                 totalChange.SetTotal(tc);
             }
@@ -126,7 +126,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
                 // stop here when there are no Changes to process
                 if (totalChange.Components.Count < 1) { return; }
                 // last codeName counts
-                tc = Change.Create(info, null, 
+                tc = Change.Create(info,
                     new List<object>() { totalChange.Components[totalChange.Components.Count - 1] });
                 totalChange.SetTotal(tc);
             }
@@ -163,7 +163,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
                 // stop here when there are no Changes to process
                 if (totalChange.Components.Count < 1) { return; }
                 // last codeName counts
-                tc = Change.Create(info, null, 
+                tc = Change.Create(info, 
                     new List<object>() { totalChange.Components[totalChange.Components.Count - 1] });
                 totalChange.SetTotal(tc);
             }

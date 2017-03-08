@@ -190,7 +190,7 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
             // convert the sql-query-results from string to their respective datatypes
             sqlResultInUse = true;
             sqlResults = e.GetSQLResults();
-            DBTables.ConvertSQLResults(ref sqlResults, colGetTypeInfo, false);
+            DBTables.ConvertSQLResults(sqlResults, colGetTypeInfo, false);
 
             // construct the WorldDef-object according to the converted sql-data
             worldDef = new WorldDef(this);

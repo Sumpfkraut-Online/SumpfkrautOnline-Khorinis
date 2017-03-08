@@ -96,7 +96,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
 
 
 
-        public Effect (EffectHandlers.BaseEffectHandler effectHandler, List<Change> changes = null)
+        public Effect (EffectHandlers.BaseEffectHandler effectHandler = null, List<Change> changes = null)
         {
             SetObjName("Effect (default)");
             changeLock = new object();

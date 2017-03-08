@@ -68,8 +68,8 @@ namespace GUC.Scripts.Sumpfkraut.Database
             // iterating results (resulted by multiplay statements seperated by ; in sql-command)
             while (res < sqlResults.Count)
             {
-                // iterating data-rows
                 row = 0;
+                // iterating data-rows
                 while (row < sqlResults[res].Count)
                 {
                     // iterating data-columns
@@ -112,9 +112,11 @@ namespace GUC.Scripts.Sumpfkraut.Database
  
                         col++;
                     }
-
+                    
                     row++;
                 }
+
+                res++;
             }
             
             return allConverted;
@@ -479,7 +481,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
                                 + "' with " + t + " in SqlStringToData.");
                             break;
                         }
-                    case ("string"):
+                    case ("System.String"):
                         output = sqlString;
                         return true;
                     default:

@@ -9,7 +9,7 @@ using System.Linq;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 {
 
-    public abstract class BaseEffectHandler : ExtendedObject
+    public class BaseEffectHandler : ExtendedObject
     {
 
         new public static readonly string _staticName = "EffectHandler (static)";
@@ -78,7 +78,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             // register all necessary destinations by providing their type
             // (only register those which are not already registered beforehand by a parent class' static constructor)
             PrintStatic(typeof(BaseEffectHandler), "Start subscribing ChangeDestinations and EventHandler...");
+            RegisterDestination(ChangeDestination.Effect_Child);
+            RegisterDestination(ChangeDestination.Effect_GlobalID);
             RegisterDestination(ChangeDestination.Effect_Name);
+            RegisterDestination(ChangeDestination.Effect_Parent);
             PrintStatic(typeof(BaseEffectHandler), "Finished subscribing ChangeDestinations and EventHandler...");
         }
         
@@ -89,7 +92,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             else { SetObjName(objName); }
 
             this.linkedObject = linkedObject;
-            this.linkedObjectType = linkedObjectType ?? linkedObject.GetType();
+            if ((linkedObjectType != null) || (linkedObject != null))
+            {
+                this.linkedObjectType = linkedObjectType ?? linkedObject.GetType();
+            }
 
             this.effects = effects ?? new List<Effect>();
             this.destToTotalChange = new Dictionary<ChangeDestination, TotalChange>();

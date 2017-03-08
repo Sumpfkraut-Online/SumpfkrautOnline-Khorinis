@@ -224,6 +224,7 @@
     <Compile Include="Sumpfkraut\Daedalus\Parser.cs" />
     <Compile Include="Sumpfkraut\Daedalus\PrototypeParser.cs" />
     <Compile Include="Sumpfkraut\Daedalus\DDLValueTypes.cs" />
+    <Compile Include="Sumpfkraut\Database\BaseObjectLoader.cs" />
     <Compile Include="Sumpfkraut\Database\DBAgent.cs" />
     <Compile Include="Sumpfkraut\Database\DBFileManager.cs" />
     <Compile Include="Sumpfkraut\Database\DBQuerying\AbstractDBQuery.cs" />

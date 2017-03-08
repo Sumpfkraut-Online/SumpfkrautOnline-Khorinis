@@ -179,7 +179,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
 
 
                 List<Effect> effects = new List<Effect>();
-                EffectLoader effectLoader = new EffectLoader(dbFilePath, "Vob")
+                //EffectLoader effectLoader = new EffectLoader(dbFilePath, "Vob");
 
 
                 //Dictionary<int, List<Tuple<int, Effect>>> hostIDToEffectInfo = 

@@ -196,7 +196,7 @@ CREATE TABLE IF NOT EXISTS ActionFrameList
     CONSTRAINT ScriptAni_PK PRIMARY KEY (ScriptAniID)
 );
 
-CREATE TRIGGER Update_ScriptAni
+CREATE TRIGGER Update_ActionFrameList
     AFTER UPDATE
     ON ScriptAni
 BEGIN
@@ -207,7 +207,7 @@ END;
 DROP TABLE IF EXISTS ScriptAniJob;
 CREATE TABLE IF NOT EXISTS ScriptAniJob 
 (
-    ScriptAniJobD INTEGER NOT NULL, -- unique primary key id
+    ScriptAniJobID INTEGER NOT NULL, -- unique primary key id
     ScriptAniID INTEGER NOT NULL,
 	AniName TEXT NOT NULL,
 	CodeName TEXT NOT NULL,
@@ -220,7 +220,7 @@ CREATE TABLE IF NOT EXISTS ScriptAniJob
     FOREIGN KEY (ScriptAniID) REFERENCES ScriptAni(ScriptAniID)
 );
 
-CREATE TRIGGER Update_ScriptOverlay
+CREATE TRIGGER Update_ScriptAniJob
     AFTER UPDATE
     ON ScriptAniJob
 BEGIN

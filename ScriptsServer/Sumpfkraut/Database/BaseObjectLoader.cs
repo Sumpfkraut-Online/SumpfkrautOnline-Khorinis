@@ -8,21 +8,20 @@ using static GUC.Scripts.Sumpfkraut.Database.DBTables;
 namespace GUC.Scripts.Sumpfkraut.Database
 {
 
+    public delegate void FinishedLoadingHandler (object sender, FinishedLoadingArgs e);
+    public class FinishedLoadingArgs : EventArgs
+    {
+        public DateTime startTime;
+        public DateTime endTime;
+        public List<List<List<object>>> sqlResults;
+    }
+
     public abstract partial class BaseObjectLoader : GUC.Utilities.ExtendedObject
     {
 
         new public static readonly string _staticName = "BaseObjectLoader (static)";
 
 
-
-        public delegate void FinishedLoadingHandler (object sender, FinishedLoadingArgs e);
-        public event FinishedLoadingHandler FinishedLoading;
-        public class FinishedLoadingArgs : EventArgs
-        {
-            public DateTime startTime;
-            public DateTime endTime;
-            public List<List<List<object>>> sqlResults;
-        }
 
         protected object loadLock;
 
@@ -109,7 +108,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
             }
         }
 
-        public abstract void Load (bool useAsyncMode = false);
+        public abstract void Load (bool useAsyncMode);
 
     }
 

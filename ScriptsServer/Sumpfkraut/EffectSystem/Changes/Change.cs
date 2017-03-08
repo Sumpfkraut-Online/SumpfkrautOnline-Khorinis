@@ -29,11 +29,12 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
         public bool SetParameters(List<object> parameters)
         {
             List<Type> pTypes = GetParameterTypes();
-            if (!(parameters.Count < pTypes.Count))
-            {
-                MakeLogWarning("Not enough items in array paramterTypes to describe the types of given paramters.");
-                return false;
-            }
+            //if (pTypes.Count < parameters.Count)
+            //{
+            //    MakeLogWarning("Not enough items in array paramterTypes to describe the types of all given parameters."
+            //        + " Need " + pTypes.Count + " items instead of " + parameters.Count);
+            //    return false;
+            //}
 
             for (int p = 0; p < pTypes.Count; p++)
             {
@@ -56,7 +57,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 
         protected Change (ChangeInitInfo changeInitInfo)
         {
-            SetObjName("Change (default)");
+            SetObjName("Change");
             this.changeInitInfo = changeInitInfo;
             this.parameters = new List<object>(changeInitInfo.ParameterTypes.Count);
         }
