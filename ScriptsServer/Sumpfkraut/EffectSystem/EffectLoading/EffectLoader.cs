@@ -58,7 +58,31 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             public Dictionary<int, Effect> effectsByID;
         }
 
+        public struct IntChangePair
+        {
+            public int Number;
+            public Change Change;
 
+            public IntChangePair (int number, Change change)
+            {
+                Number = number;
+                Change = change;
+            }
+        }
+
+        public struct IntPair
+        {
+            public int Number1;
+            public int Number2;
+
+            public IntPair (int number1, int number2)
+            {
+                Number1 = number1;
+                Number2 = number2;
+            }
+        }
+
+        
 
         protected string effectTableName = null;
         public string GetEffectTableName () { return effectTableName; }
@@ -145,6 +169,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
         {
             // assumes that colGetTypeInfo[0] and colGetTypeInfo[1] represent
             // the effect- and the change-tables respectively
+            // returns the data well sorted by the database framework (according to sql-order by)
             return new List<string>()
             {
                 PrepareLoadCommand(GetEffectTableName(), colGetTypeInfo[0]),
@@ -202,20 +227,18 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
                     var tableEffect = sqlResults[ DBTableLoadOrder.IndexOf("Effect") ];
                     var tableChange = sqlResults[ DBTableLoadOrder.IndexOf("Change") ];
 
-                    List<Tuple<int, Change>> effectIDAndChange = null;
+                    List<IntChangePair> effectIDAndChange = null;
                     if (!TryGenerateChanges(tableChange, out effectIDAndChange))
                     {
                         MakeLogError("Aborting effect generation due to"
                             + " failed generation of Changes from raw database-data!");
                         return;
                     }
-                    // sort effectID-Change-tuples by effectID
-                    //effectIDAndChange = effectIDAndChange.OrderBy(x => x.Item1).ToList();
-
-                    // create the Effects without assigning them an EffectHandler (must be done in external routine)
 
                     // create a dummy EffectHandler to register possible global Effects
                     var globalsEH = new BaseEffectHandler("TempGlobalsEffectHandler", null, null);
+
+                    // create the Effects without assigning them an EffectHandler (must be done in external routine)
 
                     //if (!TryGenerateEmptyEffects(tableEffect, out effectsByID))
                     //{
@@ -253,64 +276,82 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             // no return value necessary because final results, effectsByID, is already saved as property in the loader
         }
 
-        protected bool TryGenerateEffects ()
+        protected bool TryGenerateEffects (List<IntChangePair> effectIDAndChange, 
+            out Dictionary<int, Effect> effectsByID)
         {
+            effectsByID = new Dictionary<int, Effect>();
+            int newlyCreated = 0;
+            List<IntPair> targetRanges = new List<IntPair>() { new IntPair(0, effectIDAndChange.Count - 1) };
+            List<IntPair> failedRanges = null;
+
+            // as long as it succeeds to generate new Effects, proceed in doing so
+            // until hopefully all Effects are generated
+            do
+            {
+                newlyCreated = GenerateEffects(effectIDAndChange, effectsByID, out failedRanges, targetRanges);
+                targetRanges = failedRanges;
+            }
+            while (newlyCreated > 0);
+
             return true;
         }
 
-        //protected bool TryFillInEffects (Dictionary<int, Effect> effectsByID, 
-        //    List<Tuple<int, Change>> effectIDAndChange, out List<int> failedEffectIDs)
-        //{
-        //    failedEffectIDs = new List<int>();
+        protected int GenerateEffects (List<IntChangePair> effectIDAndChange, 
+            Dictionary<int, Effect> effectsByID, out List<IntPair> failedRanges,
+            List<IntPair> targetRanges = null)
+        {
+            int created = 0;
+            failedRanges = new List<IntPair>();
+            // return if there is nothing to process
+            if (effectIDAndChange.Count < 1) { return created; }
+            // if targetRanges is not specified, use the whole of effectIDAndChange
+            targetRanges = targetRanges ?? new List<IntPair>() { new IntPair(0, effectIDAndChange.Count) };
 
-        //    int prevRemaining = 0;
-        //    int currRemaining = 0;
-        //    int currEffectID;
-        //    Change currChange;
-        //    Effect currEffect;
-        //    for (int i = 0; i < effectIDAndChange.Count; i++)
-        //    {
-        //        currEffectID = effectIDAndChange[i].Item1;
-        //        currChange = effectIDAndChange[i].Item2;
-        //        if (!effectsByID.TryGetValue(currEffectID, out currEffect)) { continue; }
-        //    }
-        //    while ((currRemaining > 0) && (currRemaining < prevRemaining))
-        //    {
+            int currEffectID = -1;
+            int effectStart, effectEnd = -1;
+            Effect currEffect = null;
+            Change currChange = null;
+            ChangeType currChangeType = ChangeType.Undefined;
 
-        //    }
+            for (int r = 0; r < targetRanges.Count; r++)
+            {
+                for (int i = targetRanges[r].Number1; i <= targetRanges[r].Number2; i++)
+                {
+                    if (effectIDAndChange[i].Number != currEffectID)
+                    {
+                        effectEnd = i - 1;
 
+                        // save previously accumulated Effect and go on with the next
+                        if (currEffect != null) { effectsByID.Add(currEffectID, currEffect); }
+                        currEffectID = effectIDAndChange[i].Number;
+                        currEffect = new Effect();
 
-        //    return true;
-        //}
+                        effectStart = i;
+                    }
 
-        //protected bool TryGenerateEmptyEffects (List<List<object>> tableEffect, 
-        //    out Dictionary<int, Effect> effectsByID)
-        //{
-        //    effectsByID = new Dictionary<int, Effect>();
-        //    int effectID;
+                    // detect if effect has to be postponed
+                    currChange = effectIDAndChange[i].Change;
+                    currChangeType = currChange.GetChangeType();
+                    switch (currChangeType)
+                    {
+                        case ChangeType.
+                    }
 
-        //    try
-        //    {
-        //        for (int i = 0; i < tableEffect.Count; i++)
-        //        {
-        //            effectID = (int) tableEffect[i][0];
-        //            effectsByID.Add(effectID, new Effect());
-        //        }
-        //    }
-        //    catch (InvalidCastException ex)
-        //    {
-        //        MakeLogError("Aborting generation of empty effects because first column"
-        //            + " of effect table failed to cast to int: " + ex);
-        //        return false;
-        //    }
+                    // add the change
+                    if (currEffect.AddChange(effectIDAndChange[i].Change) == -1)
+                    {
+                        // wasn't added
+                    }
+                }
+            }
 
-        //    return true;
-        //}
+            return created;
+        }
 
         protected bool TryGenerateChanges (List<List<object>> tableChange, 
-            out List<Tuple<int, Change>> effectIDAndChange)
+            out List<IntChangePair> effectIDAndChange)
         {
-            effectIDAndChange = new List<Tuple<int, Change>>();
+            effectIDAndChange = new List<IntChangePair>();
             Change change = null;
             int effectID, changeID;
             ChangeType changeType;
@@ -352,7 +393,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
 
                         // finally create the change
                         change = Change.Create(changeType, parameters);
-                        effectIDAndChange.Add(Tuple.Create(effectID, change));
+                        effectIDAndChange.Add(new IntChangePair(effectID, change));
                     }
                 }
             }
