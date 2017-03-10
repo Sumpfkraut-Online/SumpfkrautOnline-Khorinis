@@ -72,12 +72,8 @@ CREATE TABLE IF NOT EXISTS DefChange
 (
     DefChangeID INTEGER NOT NULL,
     DefEffectID INTEGER NOT NULL,
-    Func INTEGER  NOT NULL,
-    Param0 TEXT NOT NULL DEFAULT "",
-	Param1 TEXT NOT NULL DEFAULT "",
-	Param2 TEXT NOT NULL DEFAULT "",
-	Param3 TEXT NOT NULL DEFAULT "",
-	Param4 TEXT NOT NULL DEFAULT "",
+    ChangeType TEXT  NOT NULL,
+    Params TEXT NOT NULL DEFAULT "",
     ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT DefChange_PK PRIMARY KEY (DefChangeID) 
@@ -200,7 +196,7 @@ CREATE TABLE IF NOT EXISTS ActionFrameList
     CONSTRAINT ScriptAni_PK PRIMARY KEY (ScriptAniID)
 );
 
-CREATE TRIGGER Update_ScriptAni
+CREATE TRIGGER Update_ActionFrameList
     AFTER UPDATE
     ON ScriptAni
 BEGIN
@@ -211,7 +207,7 @@ END;
 DROP TABLE IF EXISTS ScriptAniJob;
 CREATE TABLE IF NOT EXISTS ScriptAniJob 
 (
-    ScriptAniJobD INTEGER NOT NULL, -- unique primary key id
+    ScriptAniJobID INTEGER NOT NULL, -- unique primary key id
     ScriptAniID INTEGER NOT NULL,
 	AniName TEXT NOT NULL,
 	CodeName TEXT NOT NULL,
@@ -224,7 +220,7 @@ CREATE TABLE IF NOT EXISTS ScriptAniJob
     FOREIGN KEY (ScriptAniID) REFERENCES ScriptAni(ScriptAniID)
 );
 
-CREATE TRIGGER Update_ScriptOverlay
+CREATE TRIGGER Update_ScriptAniJob
     AFTER UPDATE
     ON ScriptAniJob
 BEGIN
