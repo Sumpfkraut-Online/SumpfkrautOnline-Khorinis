@@ -29,10 +29,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
         {
             // add all types of changes and their corresponding parameter types
 
-            AddOrChange(new ChangeInitInfo(ChangeType.Effect_Child_Add, new List<Type>()
-            {
-                typeof(string),         // child's globalID 
-            }, null));
+            //AddOrChange(new ChangeInitInfo(ChangeType.Effect_Child_Add, new List<Type>()
+            //{
+            //    typeof(string),         // child's globalID 
+            //}, null));
 
             AddOrChange(new ChangeInitInfo(ChangeType.Effect_GlobalID_Set, new List<Type>()
             {

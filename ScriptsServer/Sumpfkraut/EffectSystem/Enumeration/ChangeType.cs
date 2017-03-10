@@ -11,7 +11,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration
         Undefined,                          // do not use it normally (might be useful in checking, though)
         
         // changes influencing their own effect-container
-        Effect_Child_Add,                   // add child effect to pass changes to (can only add global effects)
+        //Effect_Child_Add,                   // add child effect to pass changes to (can only add global effects)
         Effect_GlobalID_Set,                // name / id of an effect for global access
         Effect_Name_Set,                    // set the name of an effect
         Effect_Parent_Add,                  // add parent effect to inherit Changes from  (can only add global effects)

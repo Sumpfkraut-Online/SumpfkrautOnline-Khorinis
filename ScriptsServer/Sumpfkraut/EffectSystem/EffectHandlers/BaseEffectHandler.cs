@@ -78,7 +78,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             // register all necessary destinations by providing their type
             // (only register those which are not already registered beforehand by a parent class' static constructor)
             PrintStatic(typeof(BaseEffectHandler), "Start subscribing ChangeDestinations and EventHandler...");
-            RegisterDestination(ChangeDestination.Effect_Child);
+            //RegisterDestination(ChangeDestination.Effect_Child);
             RegisterDestination(ChangeDestination.Effect_GlobalID);
             RegisterDestination(ChangeDestination.Effect_Name);
             RegisterDestination(ChangeDestination.Effect_Parent);
@@ -88,7 +88,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         // base constructor that must be called for clean initialization
         public BaseEffectHandler (string objName, List<Effect> effects, object linkedObject, Type linkedObjectType = null)
         {
-            if (objName == null) { SetObjName("EffectHandler (default)"); }
+            if (objName == null) { SetObjName("EffectHandler"); }
             else { SetObjName(objName); }
 
             this.linkedObject = linkedObject;
