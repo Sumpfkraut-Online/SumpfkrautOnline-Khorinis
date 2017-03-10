@@ -15,10 +15,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
         new public static readonly string _staticName = "DestInit_Effect (static)";
         new public static DestInit_Effect representative;
 
-        static TotalChange tc_GlobalID;
-        static TotalChange tc_Name;
-        static TotalChange tc_Parent;
-
 
 
         // make sure, the destination makes itself known to its related changes

@@ -309,7 +309,13 @@ namespace GUC.Scripts.Sumpfkraut
             var effectLoader = new EffectLoader(@"Data Source=DB\TEST_Main_01.db", "DefEffect", "DefChange");
             effectLoader.Load(true, (EffectLoader.FinishedLoadingEffectsArgs e) => 
             {
-                Log.Logger.Log("~~~~~~~~> " + (e.effectsByID == null));
+                if (e.effectsByID != null)
+                {
+                    foreach (var keyVal in e.effectsByID)
+                    {
+                        Log.Logger.Log("~~~~~~~~> " + keyVal.Key + ": " + keyVal.Key);
+                    }
+                }
                 //foreach (var keyVal in e.effectsByID)
                 //{
                 //    Log.Logger.Log(keyVal.Key + ": " + keyVal.Value);

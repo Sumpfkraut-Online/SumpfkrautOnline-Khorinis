@@ -316,8 +316,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
         protected bool TryGenerateEffect (Dictionary<int, Effect> effectsByID, EffectChanges ec)
         {
             var effect = new Effect();
-            effect.AddChanges(ec.Changes);
-            effectsByID.Add(ec.EffectID, effect);
 
             var dependencies = FindDependencies(ec);
             if (ContainsUnresolvedDependencies(dependencies)) { return false; }
