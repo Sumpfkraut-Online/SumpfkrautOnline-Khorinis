@@ -313,7 +313,7 @@ namespace GUC.Scripts.Sumpfkraut
                 {
                     foreach (var keyVal in e.effectsByID)
                     {
-                        Log.Logger.Log("~~~~~~~~> " + keyVal.Key + ": " + keyVal.Key);
+                        Log.Logger.Log("~~~~~~~~> " + keyVal.Key + ": " + keyVal.Value.GetGlobalID());
                     }
                 }
                 //foreach (var keyVal in e.effectsByID)

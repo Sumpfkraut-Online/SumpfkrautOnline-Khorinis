@@ -269,7 +269,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             List<int> remainingIndices = null;
             do
             {
-                remainingIndices = GenerateEffects(effectsByID, effectChanges, remainingIndices);
+                remainingIndices = GenerateEffects(effectsByID, effectChanges, 
+                    globalsEH, remainingIndices);
             }
             while ((remainingIndices.Count > 0) && (remainingIndices.Count < lastRemainingCount));
 
@@ -281,7 +282,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
         // create and add effects to effectsByID using effectChanges
         // returns List of unfinished / postponed / failed indices in effectChanges
         protected List<int> GenerateEffects (Dictionary<int, Effect> effectsByID, 
-            List<EffectChanges> effectChanges, List<int> targetIndices = null)
+            List<EffectChanges> effectChanges, BaseEffectHandler globalsEH,
+            List<int> targetIndices = null)
         {
             var failedIndices = new List<int>();
 
@@ -298,7 +300,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
                         failedIndices.Add(index);
                         continue;
                     }
-                    if (!TryGenerateEffect(effectsByID, effectChanges[index])) { failedIndices.Add(index); }
+                    if (!TryGenerateEffect(effectsByID, effectChanges[index], 
+                        globalsEH)) { failedIndices.Add(index); }
                 }
             }
             else
@@ -306,25 +309,27 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
                 // whole List will be iterated without any target indices specified
                 for (int i = 0; i < effectChanges.Count; i++)
                 {
-                    if (!TryGenerateEffect(effectsByID, effectChanges[i])) { failedIndices.Add(i); }
+                    if (!TryGenerateEffect(effectsByID, effectChanges[i], 
+                        globalsEH)) { failedIndices.Add(i); }
                 }
             }
 
             return failedIndices;
         }
 
-        protected bool TryGenerateEffect (Dictionary<int, Effect> effectsByID, EffectChanges ec)
+        protected bool TryGenerateEffect (Dictionary<int, Effect> effectsByID, EffectChanges ec, 
+            BaseEffectHandler globalsEH)
         {
             var effect = new Effect();
+            globalsEH = globalsEH ?? new BaseEffectHandler("globalsEH", null, null);
 
             var dependencies = FindDependencies(ec);
             if (ContainsUnresolvedDependencies(dependencies)) { return false; }
-            else
-            {
-                effect = new Effect();
-                effect.AddChanges(ec.Changes);
-                effectsByID.Add(ec.EffectID, effect);
-            }
+
+            effect = new Effect();
+            effect.AddChanges(ec.Changes);
+            effectsByID.Add(ec.EffectID, effect);
+            if (DetectIsGlobal(ec)) { globalsEH.AddEffect(effect); }
 
             return true;
         }
@@ -360,6 +365,19 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             bool check = false;
 
             return check;
+        }
+
+        protected bool DetectIsGlobal (EffectChanges ec)
+        {
+            for (int i = 0; i < ec.Changes.Count; i++)
+            {
+                if (ec.Changes[i].GetChangeType() == ChangeType.Effect_GlobalID_Set)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
         
         protected bool TryGenerateChanges (List<List<object>> tableChange, 
