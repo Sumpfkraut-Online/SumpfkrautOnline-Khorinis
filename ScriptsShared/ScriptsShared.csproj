@@ -52,6 +52,38 @@
     <Compile Include="Sumpfkraut\AI\GuideCommands\CommandType.cs" />
     <Compile Include="Sumpfkraut\AI\GuideCommands\GoToPosCommand.cs" />
     <Compile Include="Sumpfkraut\AI\GuideCommands\GoToVobCommand.cs" />
+    <Compile Include="Sumpfkraut\Database\BaseObjectLoader.cs" />
+    <Compile Include="Sumpfkraut\Database\DBAgent.cs" />
+    <Compile Include="Sumpfkraut\Database\DBFileManager.cs" />
+    <Compile Include="Sumpfkraut\Database\DBQuerying\AbstractDBQuery.cs" />
+    <Compile Include="Sumpfkraut\Database\DBQuerying\DBBackupQuery.cs" />
+    <Compile Include="Sumpfkraut\Database\DBQuerying\DBQuery.cs" />
+    <Compile Include="Sumpfkraut\Database\DBQuerying\IDBQuery.cs" />
+    <Compile Include="Sumpfkraut\Database\DBReader.cs" />
+    <Compile Include="Sumpfkraut\Database\DBSecurity.cs" />
+    <Compile Include="Sumpfkraut\Database\DBTables.cs" />
+    <Compile Include="Sumpfkraut\Database\Enumeration.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Changes\BaseChangeInit.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Changes\Change.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Changes\ChangeInitializer.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Changes\ChangeInitInfo.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Changes\ChangeInit_Effect.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Changes\ChangeInit_Vob.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Changes\TotalChange.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Destinations\BaseDestInit.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Destinations\DestInitializer.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Destinations\DestInitInfo.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Destinations\DestInit_Effect.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Destinations\DestInit_Vob.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Effect.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\BaseEffectHandler.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\ItemEffectHandler.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\NPCEffectHandler.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\VobEffectHandler.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\WorldEffectHandler.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\EffectLoading\EffectLoader.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Enumeration\ChangeDestination.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Enumeration\ChangeType.cs" />
     <Compile Include="Sumpfkraut\Networking\ScriptMessageIDs.cs" />
     <Compile Include="Sumpfkraut\Networking\ScriptClient.cs" />
     <Compile Include="Sumpfkraut\ScriptObject.cs" />
@@ -72,6 +104,8 @@
     <Compile Include="Sumpfkraut\VobSystem\Definitions\NPCDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\ProjDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\VobDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Enumeration\VobDefType.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Enumeration\VobInstType.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\BaseVobInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\ItemContainers\ScriptInventory.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\ItemInst.cs" />
@@ -92,6 +126,10 @@
       <Project>{a896eadc-459c-4f6d-8b16-86b0a0f0f6a8}</Project>
       <Name>GUCShared</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Sumpfkraut\Database\BACKUP_SO-K_SQLite.sql" />
+    <Content Include="Sumpfkraut\Database\SO-K_SQLite.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
