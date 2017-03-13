@@ -52,6 +52,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -188,6 +189,9 @@
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\DateTimeUtil.cs">
       <Link>Sumpfkraut\Utilities\DateTimeUtil.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\Geometry\InGeometry.cs">
+      <Link>Sumpfkraut\Utilities\Geometry\InGeometry.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\StringUtil.cs">
       <Link>Sumpfkraut\Utilities\StringUtil.cs</Link>

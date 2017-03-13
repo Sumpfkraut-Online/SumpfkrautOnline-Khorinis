@@ -38,6 +38,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Geometry
                     if ((polygon[nextIndex].Y > point.Y) 
                         && (CalcLeftness(point, polygon[i], polygon[nextIndex]) > 0))
                     {
+                        // winds counterclockwise around point
                         wn++;
                     }
                 }
@@ -46,6 +47,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Geometry
                     if ((polygon[nextIndex].Y <= point.Y) 
                         && (CalcLeftness(point, polygon[i], polygon[nextIndex]) < 0))
                     {
+                        // winds clockwise around point
                         wn--;
                     }
                 }

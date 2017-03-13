@@ -15,6 +15,7 @@ using GUC.Scripts.Sumpfkraut.EffectSystem.Changes;
 using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 using GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration;
 using GUC.Scripts.Sumpfkraut.EffectSystem.Destinations;
+using System.Drawing;
 
 namespace GUC.Scripts.Sumpfkraut
 {
@@ -295,6 +296,23 @@ namespace GUC.Scripts.Sumpfkraut
             //}
 
 
+            //Point p1 = new Point(0, 0);
+            //List<Point> poly1 = new List<Point>()
+            //{
+            //    new Point(1, 1),
+            //    new Point(-1, 1),
+            //    new Point(-1, -1),
+            //    new Point(1, -1),
+            //};
+            //for (int i = 0; i < poly1.Count; i++)
+            //{
+            //    poly1[i] = new Point(-poly1[i].X, poly1[i].Y);
+            //}
+
+            //foreach (var p in poly1) { Log.Logger.Log("[" + p.X + " | " + p.Y + "]"); }
+            //Log.Logger.Log(Utilities.Geometry.InGeometry.CalcWindingNumber2D(p1, poly1));
+
+
 
             ChangeInitializer.Init();
             DestInitializer.Init();
@@ -306,21 +324,17 @@ namespace GUC.Scripts.Sumpfkraut
             //VobEffectHandler eh = new VobEffectHandler("MyEffectHandler", null, new VobSystem.Definitions.VobDef());
             //Logger.Log(e.EffectName); 
 
-            var effectLoader = new EffectLoader(@"Data Source=DB\TEST_Main_01.db", "DefEffect", "DefChange");
-            effectLoader.Load(true, (EffectLoader.FinishedLoadingEffectsArgs e) => 
-            {
-                if (e.effectsByID != null)
-                {
-                    foreach (var keyVal in e.effectsByID)
-                    {
-                        Log.Logger.Log("~~~~~~~~> " + keyVal.Key + ": " + keyVal.Value.GetGlobalID());
-                    }
-                }
-                //foreach (var keyVal in e.effectsByID)
-                //{
-                //    Log.Logger.Log(keyVal.Key + ": " + keyVal.Value);
-                //}
-            });
+            //var effectLoader = new EffectLoader(@"Data Source=DB\TEST_Main_01.db", "DefEffect", "DefChange");
+            //effectLoader.Load(true, (EffectLoader.FinishedLoadingEffectsArgs e) => 
+            //{
+            //    if (e.effectsByID != null)
+            //    {
+            //        foreach (var keyVal in e.effectsByID)
+            //        {
+            //            Log.Logger.Log("~~~~~~~~> " + keyVal.Key + ": " + keyVal.Value.GetGlobalID());
+            //        }
+            //    }
+            //});
             
 
 
