@@ -56,26 +56,6 @@ namespace GUC.Scripts.Sumpfkraut.Database
             lock (loadLock) { return sqlResults; }
         }
 
-        //protected string effectTableName = null;
-        //public string GetEffectTableName () { return effectTableName; }
-        //public void SetEffectTableName (string value)
-        //{
-        //    lock (loadLock) { effectTableName = value; }
-        //}
-
-        //protected string changeTableName = null;
-        //public string GetChangeTableName () { return changeTableName; }
-        //public void SetChangeTableName (string value)
-        //{
-        //    lock (loadLock) { changeTableName = value; }
-        //}
-
-        //protected Dictionary<int, Effect> effectsByID;
-        //public Dictionary<int, Effect> GetLastEffectsByID ()
-        //{
-        //    lock (loadLock) { return effectsByID; }
-        //}
-
 
 
         protected BaseObjectLoader (string objName, string dbFilePath, 

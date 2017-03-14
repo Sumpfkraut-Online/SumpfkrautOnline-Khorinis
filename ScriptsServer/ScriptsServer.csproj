@@ -349,7 +349,6 @@
     <Compile Include="Sumpfkraut\VobSystem\Instances\NPCInst.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\ProjInst.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\VobInst.Server.cs" />
-    <Compile Include="Sumpfkraut\VobSystem\VobDefLoader.Server.cs" />
     <Compile Include="Sumpfkraut\Web\WS\Enumeration.cs" />
     <Compile Include="Sumpfkraut\Web\WS\Protocols\AbstractWSProtocol.cs" />
     <Compile Include="Sumpfkraut\Web\WS\Protocols\Enumeration.cs" />
