@@ -10,6 +10,7 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.Utilities;
+using GUC.Scripts.Sumpfkraut.Crafting;
 
 namespace GUC.Scripts
 {
@@ -141,6 +142,9 @@ namespace GUC.Scripts
 
             Sumpfkraut.TestingThings.Init();
             //Sumpfkraut.AI.TestingAI.Test();
+
+            Crafting crafter = new Crafting();
+            //crafter.Craft(1);
 
             Logger.Log("######################## Finished #########################");
         }
