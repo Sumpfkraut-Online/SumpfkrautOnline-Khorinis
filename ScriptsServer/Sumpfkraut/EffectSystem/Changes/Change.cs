@@ -29,11 +29,12 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
         public bool SetParameters(List<object> parameters)
         {
             List<Type> pTypes = GetParameterTypes();
-            if (!(parameters.Count < pTypes.Count))
-            {
-                MakeLogWarning("Not enough items in array paramterTypes to describe the types of given paramters.");
-                return false;
-            }
+            //if (pTypes.Count < parameters.Count)
+            //{
+            //    MakeLogWarning("Not enough items in array paramterTypes to describe the types of all given parameters."
+            //        + " Need " + pTypes.Count + " items instead of " + parameters.Count);
+            //    return false;
+            //}
 
             for (int p = 0; p < pTypes.Count; p++)
             {
@@ -54,15 +55,26 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 
 
 
-        protected Change (ChangeInitInfo changeInitInfo, Effect effect)
+        protected Change (ChangeInitInfo changeInitInfo)
         {
-            SetObjName("Change (default)");
+            SetObjName("Change");
             this.changeInitInfo = changeInitInfo;
-            this.effect = effect;
             this.parameters = new List<object>(changeInitInfo.ParameterTypes.Count);
         }
 
-        public static Change Create (ChangeInitInfo changeInitInfo, Effect effect, List<object> parameters)
+        public static Change Create (ChangeType changeType, List<object> parameters)
+        {
+            ChangeInitInfo changeInitInfo;
+            if (!BaseChangeInit.TryGetChangeInitInfo(changeType, out changeInitInfo))
+            {
+                MakeLogErrorStatic(typeof(Change), "Aborting Create because there exist no ChangeInitInfo "
+                    + "for unsupported changeType " + changeType + "!");
+                return null;
+            }
+            return Create(changeInitInfo, parameters);
+        }
+
+        public static Change Create (ChangeInitInfo changeInitInfo, List<object> parameters)
         {
             if (changeInitInfo == null)
             {
@@ -70,7 +82,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
                     "Aborting Create because insufficient changeInitInfo was provided!");
                 return null;
             }
-            Change change = new Change(changeInitInfo, effect);
+            Change change = new Change(changeInitInfo);
             if (!change.SetParameters(parameters))
             {
                 MakeLogWarningStatic(typeof(Change), 

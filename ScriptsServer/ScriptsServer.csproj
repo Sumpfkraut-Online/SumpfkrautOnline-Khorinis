@@ -96,18 +96,6 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\StringUtil.cs">
       <Link>Sumpfkraut\Utilities\StringUtil.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\Threading\AbstractRunnable.cs">
-      <Link>Sumpfkraut\Utilities\Threading\AbstractRunnable.cs</Link>
-    </Compile>
-    <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\Threading\IRunnable.cs">
-      <Link>Sumpfkraut\Utilities\Threading\IRunnable.cs</Link>
-    </Compile>
-    <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\Threading\Runnable.cs">
-      <Link>Sumpfkraut\Utilities\Threading\Runnable.cs</Link>
-    </Compile>
-    <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\Threading\TestRunnable.cs">
-      <Link>Sumpfkraut\Utilities\Threading\TestRunnable.cs</Link>
-    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\Visuals\HumanVisuals.cs">
       <Link>Sumpfkraut\Visuals\HumanVisuals.cs</Link>
     </Compile>
@@ -238,6 +226,7 @@
     <Compile Include="Sumpfkraut\Daedalus\Parser.cs" />
     <Compile Include="Sumpfkraut\Daedalus\PrototypeParser.cs" />
     <Compile Include="Sumpfkraut\Daedalus\DDLValueTypes.cs" />
+    <Compile Include="Sumpfkraut\Database\BaseObjectLoader.cs" />
     <Compile Include="Sumpfkraut\Database\DBAgent.cs" />
     <Compile Include="Sumpfkraut\Database\DBFileManager.cs" />
     <Compile Include="Sumpfkraut\Database\DBQuerying\AbstractDBQuery.cs" />
@@ -249,10 +238,7 @@
     <Compile Include="Sumpfkraut\Database\DBTables.cs" />
     <Compile Include="Sumpfkraut\Database\Enumeration.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Changes\BaseChangeInit.cs" />
-    <Compile Include="Sumpfkraut\EffectSystem\EffectLoader.cs" />
-    <Compile Include="Sumpfkraut\EffectSystem\EffectLoaders\BaseEffectLoader.cs" />
-    <Compile Include="Sumpfkraut\EffectSystem\EffectLoaders\EffectLoader.cs" />
-    <Compile Include="Sumpfkraut\EffectSystem\EffectLoaders\VobEffectLoader.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\EffectLoading\EffectLoader.cs" />
     <Compile Include="Sumpfkraut\Networking\Requests\NPCRequestReceiver.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Changes\Change.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Changes\ChangeInitializer.cs" />

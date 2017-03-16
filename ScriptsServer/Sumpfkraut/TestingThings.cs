@@ -305,6 +305,22 @@ namespace GUC.Scripts.Sumpfkraut
             //Change c = Change.Create(info, e, new List<object>() { "MyEffect" });
             //VobEffectHandler eh = new VobEffectHandler("MyEffectHandler", null, new VobSystem.Definitions.VobDef());
             //Logger.Log(e.EffectName); 
+
+            var effectLoader = new EffectLoader(@"Data Source=DB\TEST_Main_01.db", "DefEffect", "DefChange");
+            effectLoader.Load(true, (EffectLoader.FinishedLoadingEffectsArgs e) => 
+            {
+                if (e.effectsByID != null)
+                {
+                    foreach (var keyVal in e.effectsByID)
+                    {
+                        Log.Logger.Log("~~~~~~~~> " + keyVal.Key + ": " + keyVal.Value.GetGlobalID());
+                    }
+                }
+                //foreach (var keyVal in e.effectsByID)
+                //{
+                //    Log.Logger.Log(keyVal.Key + ": " + keyVal.Value);
+                //}
+            });
             
 
 

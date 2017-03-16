@@ -1,9 +1,9 @@
-﻿using GUC.Scripts.Sumpfkraut.Utilities.Threading;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using GUC.Utilities.Threading;
 
 namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
 {

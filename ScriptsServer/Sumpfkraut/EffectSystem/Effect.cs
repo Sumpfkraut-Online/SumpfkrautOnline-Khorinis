@@ -19,7 +19,20 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
 
 
         protected EffectHandlers.BaseEffectHandler effectHandler;
-        public EffectHandlers.BaseEffectHandler EffectHandler { get { return effectHandler; } }
+        public EffectHandlers.BaseEffectHandler GetEffectHandler () { return effectHandler; }
+        public void SetEffectHandler (EffectHandlers.BaseEffectHandler value)
+        {
+            lock (changeLock)
+            {
+                if (effectHandler == value) { return; }
+                if (effectHandler != null)
+                {
+                    effectHandler.RemoveEffect(this);
+                }
+                effectHandler = value;
+                value.AddEffect(this);
+            }
+        }
 
         protected List<Change> changes;
         public List<Change> GetChanges () { return changes; }
@@ -83,7 +96,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
 
 
 
-        public Effect (EffectHandlers.BaseEffectHandler effectHandler, List<Change> changes = null)
+        public Effect (EffectHandlers.BaseEffectHandler effectHandler = null, List<Change> changes = null)
         {
             SetObjName("Effect (default)");
             changeLock = new object();
@@ -175,7 +188,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             lock (changeLock)
             {
                 changes.AddRange(cl);
-                effectHandler.AddToTotalChanges(cl);
+                if (effectHandler != null) { effectHandler.AddToTotalChanges(cl); }
             }
         }
 
@@ -186,7 +199,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             {
                 changes.Add(change);
                 index = changes.Count;
-                effectHandler.AddToTotalChanges(change);
+                if (effectHandler != null) { effectHandler.AddToTotalChanges(change); }
             }
             return index;
         }
@@ -200,7 +213,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
                 {
                     if (changes[i].GetChangeType() == changeType)
                     {
-                        effectHandler.RemoveFromTotalChanges(changes[i]);
+                        if (effectHandler != null) { effectHandler.RemoveFromTotalChanges(changes[i]); }
                         index = i;
                         changes.RemoveAt(i);
                         break;
@@ -210,21 +223,13 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             return index;
         }
 
-        //public int RemoveChange (Enumeration.ChangeType changeType, int amount = -1)
-        //{
-        //    int totallyRemoved = 0;
-        //    lock (changeLock)
-        //    {
-        //        totallyRemoved = changes.RemoveAll(change => change.ChangeType == changeType);
-        //    }
-        //    return totallyRemoved;
-        //}
 
 
-
+        // destroy all upward references to let the garbage collection take care of the rest
         public void Dispose ()
         {
-            // destroy all upward references to let the garbage collection take care of the rest
+            if (effectHandler == null) { return; }
+            effectHandler.RemoveEffect(this);
             effectHandler = null;
         }
 

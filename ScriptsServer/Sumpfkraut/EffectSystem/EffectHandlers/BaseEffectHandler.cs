@@ -9,7 +9,7 @@ using System.Linq;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 {
 
-    public abstract class BaseEffectHandler : ExtendedObject
+    public class BaseEffectHandler : ExtendedObject
     {
 
         new public static readonly string _staticName = "EffectHandler (static)";
@@ -78,18 +78,24 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             // register all necessary destinations by providing their type
             // (only register those which are not already registered beforehand by a parent class' static constructor)
             PrintStatic(typeof(BaseEffectHandler), "Start subscribing ChangeDestinations and EventHandler...");
+            //RegisterDestination(ChangeDestination.Effect_Child);
+            RegisterDestination(ChangeDestination.Effect_GlobalID);
             RegisterDestination(ChangeDestination.Effect_Name);
+            RegisterDestination(ChangeDestination.Effect_Parent);
             PrintStatic(typeof(BaseEffectHandler), "Finished subscribing ChangeDestinations and EventHandler...");
         }
         
         // base constructor that must be called for clean initialization
         public BaseEffectHandler (string objName, List<Effect> effects, object linkedObject, Type linkedObjectType = null)
         {
-            if (objName == null) { SetObjName("EffectHandler (default)"); }
+            if (objName == null) { SetObjName("EffectHandler"); }
             else { SetObjName(objName); }
 
             this.linkedObject = linkedObject;
-            this.linkedObjectType = linkedObjectType ?? linkedObject.GetType();
+            if ((linkedObjectType != null) || (linkedObject != null))
+            {
+                this.linkedObjectType = linkedObjectType ?? linkedObject.GetType();
+            }
 
             this.effects = effects ?? new List<Effect>();
             this.destToTotalChange = new Dictionary<ChangeDestination, TotalChange>();
@@ -146,7 +152,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
 
-        public void AddEffects (List<Effect> effects, bool allowDuplicate)
+        public void AddEffects (List<Effect> effects)
         {
             List<ChangeDestination> destinations;
 
@@ -154,7 +160,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             {
                 for (int e = 0; e < effects.Count; e++)
                 {
-                    AddEffect(effects[e], allowDuplicate, false);
+                    AddEffect(effects[e], false);
                 }
                 
                 if (TryGetDestinations(effects, out destinations))
@@ -167,14 +173,14 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         
         // adds effect to the internal management and recalculate the TotalChanges if recalculateTotals is true
         // setting recalculateTotals to false can be used to postpone the costly recalculation until all changes are added
-        public int AddEffect (Effect effect, bool allowDuplicate, bool recalcAndApplyTotals = true)
+        public int AddEffect (Effect effect, bool recalcAndApplyTotals = true)
         {
             int index = -1;
             List<ChangeDestination> destinations;
 
             lock (effectLock)
             {
-                if ((!allowDuplicate) && (effects.Contains(effect))) { return -1; }
+                if (effects.Contains(effect)) { return -1; }
                 
                 effects.Add(effect);
                 index = effects.Count;
