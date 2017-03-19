@@ -52,10 +52,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             "Effect", "Change"
         };
 
-        public delegate void FinishedLoadingEffectsHandler (FinishedLoadingEffectsArgs e);
+        public delegate void FinishedLoadingEffectsHandler (object sender, FinishedLoadingEffectsArgs e);
         public partial class FinishedLoadingEffectsArgs : FinishedLoadingArgs
         {
-            public Dictionary<int, Effect> effectsByID;
+            public Dictionary<int, Effect> EffectsByID;
         }
 
         public static List<ChangeType> DependencyChangeTypes = new List<ChangeType>()
@@ -91,10 +91,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             lock (loadLock) { changeTableName = value; }
         }
 
-        protected Dictionary<int, Effect> effectsByID;
-        public Dictionary<int, Effect> GetLastEffectsByID ()
+        protected Dictionary<int, Effect> effectByID;
+        public Dictionary<int, Effect> GetLastEffectByID ()
         {
-            lock (loadLock) { return effectsByID; }
+            lock (loadLock) { return effectByID; }
         }
 
 
@@ -114,7 +114,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             lock (loadLock)
             {
                 sqlResults = null;
-                effectsByID = null;
+                effectByID = null;
             }
         }
 
@@ -125,15 +125,15 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             lock (loadLock)
             {
                 FinishedLoadingEffectsArgs e = new FinishedLoadingEffectsArgs();
-                e.startTime = DateTime.Now;
+                e.StartTime = DateTime.Now;
 
                 Load(useAsyncMode);
 
                 // hand all loadResults to a possibly defined handler-function
-                e.sqlResults = sqlResults;
-                e.effectsByID = effectsByID;
-                e.endTime = DateTime.Now;
-                handler?.Invoke(e);
+                e.SqlResults = sqlResults;
+                e.EffectsByID = effectByID;
+                e.EndTime = DateTime.Now;
+                handler?.Invoke(this, e);
             }
         }
 
@@ -227,7 +227,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
                     }
 
                     List<int> failedIndices;
-                    if (!TryGenerateEffects(effectChanges, out effectsByID, out failedIndices))
+                    if (!TryGenerateEffects(effectChanges, out effectByID, out failedIndices))
                     {
                         StringBuilder sb = new StringBuilder();
                         sb.Append("Failed to generate Effects with [temporary index | EffectID]: ");

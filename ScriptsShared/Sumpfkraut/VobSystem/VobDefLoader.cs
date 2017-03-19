@@ -52,6 +52,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
             "VobDef", "VobDefEffect",
         };
 
+        public delegate void FinishedLoadingVobDefHandler (object sender, FinishedLoadingVobDefsArgs e);
+        public partial class FinishedLoadingVobDefsArgs : FinishedLoadingArgs
+        {
+            public Dictionary<int, VobDef> VobDefByID;
+        }
+
 
 
         public static readonly string DefaultEffectTableName = "DefEffect";
@@ -70,6 +76,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
             lock (loadLock) { changeTableName = value; }
         }
 
+        protected Dictionary<int, VobDef> vobDefByID;
+        public Dictionary<int, VobDef> GetLastVobDefByID ()
+        {
+            lock (loadLock) { return vobDefByID; }
+        }
+
 
 
         public VobDefLoader (string dbFilePath, 
@@ -82,6 +94,22 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
         }
 
 
+
+        public void Load (bool useAsyncMode, FinishedLoadingVobDefHandler handler)
+        {
+            lock (loadLock)
+            {
+                var e = new FinishedLoadingVobDefsArgs();
+                e.StartTime = DateTime.Now;
+                
+                Load(useAsyncMode);
+
+                e.SqlResults = sqlResults;
+                e.VobDefByID = vobDefByID;
+                e.EndTime = DateTime.Now;
+                handler?.Invoke(this, e);
+            }
+        }
 
         public override void Load (bool useAsyncMode)
         {
@@ -129,7 +157,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
             dbAgent.Start();
         }
 
-        protected void VobDefFromSQLResults (AbstractRunnable sender, DBAgent.FinishedQueueEventHandlerArgs e)
+        protected void VobDefFromSQLResults (AbstractRunnable s, DBAgent.FinishedQueueEventHandlerArgs e)
         {
             try
             {
@@ -146,17 +174,21 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
                 List<DBTables.ColumnGetTypeInfo> cgt_VobDefEffect = cgi[i_VobDefEffect];
                 List<List<object>> tableVobDefEffect = sqlResults[DBTableLoadOrder.IndexOf("VobDefEffect")];
 
-
-                List<Effect> effects;
+                Dictionary<int, Effect> effectByID = null;
                 //EffectLoader effectLoader = new EffectLoader(dbFilePath, "Vob");
                 EffectLoader effectLoader = new EffectLoader(GetDBFilePath(), "DefEffect", "DefChange");
-                effectLoader.Load(true, (EffectLoader.FinishedLoadingEffectsArgs eff) =>
+                effectLoader.Load(true, (object sender, EffectLoader.FinishedLoadingEffectsArgs eff) =>
                 {
-                    if (eff.effectsByID != null)
-                    {
-                        
-                    }
+                    effectByID = eff.EffectsByID;
                 });
+
+                if ((effectByID == null) || (effectByID.Count < 1))
+                {
+                    MakeLogError("Aborting generation of VobDef because no Effects were loaded!");
+                    return;
+                }
+
+                // find out type of VobDef, dependencies and maybe create it and add all the Effects or postpone
             }
             catch (Exception ex)
             {
@@ -164,9 +196,44 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
             }
         }
 
-        protected bool TryFindVobDefType (List<List<object>> changeRows, out VobDefType vobDefType)
+        public bool TryFindVobDefType (Dictionary<int, Effect> effectByID, out VobDefType vobDefType)
         {
             vobDefType = VobDefType.Undefined;
+            if (effectByID == null)
+            {
+                MakeLogWarning("Provided null-value for effectByID in TryFindVobDefType!");
+                return false;
+            }
+            return TryFindVobDefType(effectByID, effectByID.Keys.ToList(), out vobDefType);
+        }
+        
+        public bool TryFindVobDefType (Dictionary<int, Effect> effectByID, List<int> effectIDs, 
+            out VobDefType vobDefType)
+        {
+            // checks, checks, checks
+            vobDefType = VobDefType.Undefined;
+            if (effectByID == null)
+            {
+                MakeLogWarning("Provided null-value for effectByID in TryFindVobDefType!");
+                return false;
+            }
+            if (effectByID.Count < 1)
+            {
+                MakeLogWarning("Provided empty effectByID in TryFindVobDefType!");
+                return false;
+            }
+            if (effectIDs == null)
+            {
+                MakeLogWarning("Provided null-value for effectIDs in TryFindVobDefType!");
+                return false;
+            }
+            if (effectIDs.Count < 1)
+            {
+                MakeLogWarning("Provided empty effectIDs in TryFindVobDefType!");
+                return false;
+            }
+            
+            
 
             return true;
         }

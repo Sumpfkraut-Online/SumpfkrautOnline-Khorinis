@@ -11,9 +11,9 @@ namespace GUC.Scripts.Sumpfkraut.Database
     public delegate void FinishedLoadingHandler (object sender, FinishedLoadingArgs e);
     public partial class FinishedLoadingArgs : EventArgs
     {
-        public DateTime startTime;
-        public DateTime endTime;
-        public List<List<List<object>>> sqlResults;
+        public DateTime StartTime;
+        public DateTime EndTime;
+        public List<List<List<object>>> SqlResults;
     }
 
     public abstract partial class BaseObjectLoader : GUC.Utilities.ExtendedObject
