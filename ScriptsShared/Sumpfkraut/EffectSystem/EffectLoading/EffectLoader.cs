@@ -63,14 +63,14 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             ChangeType.Effect_Parent_Add,
         };
 
-        public partial struct EffectChanges
+        public partial struct IDAndChanges
         {
-            public int EffectID;
+            public int ID;
             public List<Change> Changes;
 
-            public EffectChanges (int effectID, List<Change> changes)
+            public IDAndChanges (int id, List<Change> changes)
             {
-                EffectID = effectID;
+                ID = id;
                 Changes = changes ?? new List<Change>();
             }
         }
@@ -218,8 +218,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
                     var tableEffect = sqlResults[ DBTableLoadOrder.IndexOf("Effect") ];
                     var tableChange = sqlResults[ DBTableLoadOrder.IndexOf("Change") ];
 
-                    List<EffectChanges> effectChanges = null;
-                    if (!TryGenerateChanges(tableChange, out effectChanges))
+                    List<IDAndChanges> idAndChangesList = null;
+                    if (!TryGenerateIDAndChanges(tableChange, out idAndChangesList))
                     {
                         MakeLogError("Aborting effect generation due to"
                             + " failed generation of Changes from raw database-data!");
@@ -227,7 +227,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
                     }
 
                     List<int> failedIndices;
-                    if (!TryGenerateEffects(effectChanges, out effectByID, out failedIndices))
+                    if (!TryGenerateEffects(idAndChangesList, out effectByID, out failedIndices))
                     {
                         StringBuilder sb = new StringBuilder();
                         sb.Append("Failed to generate Effects with [temporary index | EffectID]: ");
@@ -236,7 +236,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
                             sb.Append("[");
                             sb.Append(i);
                             sb.Append("|");
-                            if ((failedIndices[i] < 0) || (failedIndices[i] > (effectChanges.Count - 1)))
+                            if ((failedIndices[i] < 0) || (failedIndices[i] > (idAndChangesList.Count - 1)))
                             {
                                 sb.Append("?");
                             }
@@ -257,7 +257,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             // no return value necessary because final results, effectsByID, is already saved as property in the loader
         }
 
-        protected bool TryGenerateEffects (List<EffectChanges> effectChanges, 
+        protected bool TryGenerateEffects (List<IDAndChanges> idAndChangesList, 
             out Dictionary<int, Effect> effectsByID, out List<int> failedIndices)
         {
             // create a dummy EffectHandler to register possible global Effects
@@ -269,20 +269,25 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             List<int> remainingIndices = null;
             do
             {
-                remainingIndices = GenerateEffects(effectsByID, effectChanges, 
+                remainingIndices = GenerateEffects(effectsByID, idAndChangesList, 
                     globalsEH, remainingIndices);
             }
             while ((remainingIndices.Count > 0) && (remainingIndices.Count < lastRemainingCount));
 
             // the still remaining indices failed to be resolved
-            if (remainingIndices.Count > 0) { failedIndices = remainingIndices; }
+            if (remainingIndices.Count > 0)
+            {
+                failedIndices = remainingIndices;
+                return false;
+            }
+
             return true;
         }
 
-        // create and add effects to effectsByID using effectChanges
-        // returns List of unfinished / postponed / failed indices in effectChanges
+        // create and add effects to effectsByID using idAndChangesList
+        // returns List of unfinished / postponed / failed indices in idAndChangesList
         protected List<int> GenerateEffects (Dictionary<int, Effect> effectsByID, 
-            List<EffectChanges> effectChanges, BaseEffectHandler globalsEH,
+            List<IDAndChanges> idAndChangesList, BaseEffectHandler globalsEH,
             List<int> targetIndices = null)
         {
             var failedIndices = new List<int>();
@@ -294,22 +299,22 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
                 for (int i = 0; i < targetIndices.Count; i++)
                 {
                     index = targetIndices[i];
-                    if ((index < 0) || (index > (effectChanges.Count - 1)))
+                    if ((index < 0) || (index > (idAndChangesList.Count - 1)))
                     {
                         MakeLogWarning("Out of bounds index " + index + " in GenerateEffects!");
                         failedIndices.Add(index);
                         continue;
                     }
-                    if (!TryGenerateEffect(effectsByID, effectChanges[index], 
+                    if (!TryGenerateEffect(effectsByID, idAndChangesList[index], 
                         globalsEH)) { failedIndices.Add(index); }
                 }
             }
             else
             {
                 // whole List will be iterated without any target indices specified
-                for (int i = 0; i < effectChanges.Count; i++)
+                for (int i = 0; i < idAndChangesList.Count; i++)
                 {
-                    if (!TryGenerateEffect(effectsByID, effectChanges[i], 
+                    if (!TryGenerateEffect(effectsByID, idAndChangesList[i], 
                         globalsEH)) { failedIndices.Add(i); }
                 }
             }
@@ -317,7 +322,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             return failedIndices;
         }
 
-        protected bool TryGenerateEffect (Dictionary<int, Effect> effectsByID, EffectChanges ec, 
+        protected bool TryGenerateEffect (Dictionary<int, Effect> effectsByID, IDAndChanges ec, 
             BaseEffectHandler globalsEH)
         {
             var effect = new Effect();
@@ -328,13 +333,13 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
 
             effect = new Effect();
             effect.AddChanges(ec.Changes);
-            effectsByID.Add(ec.EffectID, effect);
+            effectsByID.Add(ec.ID, effect);
             if (DetectIsGlobal(ec)) { globalsEH.AddEffect(effect); }
 
             return true;
         }
 
-        protected List<Change> FindDependencies (EffectChanges ec)
+        protected List<Change> FindDependencies (IDAndChanges ec)
         {
             var dependencies = new List<Change>();
             Change change;
@@ -367,7 +372,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             return check;
         }
 
-        protected bool DetectIsGlobal (EffectChanges ec)
+        protected bool DetectIsGlobal (IDAndChanges ec)
         {
             for (int i = 0; i < ec.Changes.Count; i++)
             {
@@ -380,10 +385,12 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             return false;
         }
         
-        protected bool TryGenerateChanges (List<List<object>> tableChange, 
-            out List<EffectChanges> effectChanges)
+        protected bool TryGenerateIDAndChanges (List<List<object>> tableChange, 
+            out List<IDAndChanges> idAndChangesList)
         {
-            effectChanges = new List<EffectChanges>();
+            idAndChangesList = new List<IDAndChanges>();
+            if ((tableChange == null) || (tableChange.Count < 1)) { return false; }
+
             Change change = null;
             int effectID, changeID;
             ChangeType changeType;
@@ -425,13 +432,13 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
 
                         // finally create the change
                         change = Change.Create(changeType, parameters);
-                        if ((effectChanges.Count > 0) && (effectID == effectChanges[effectChanges.Count - 1].EffectID))
+                        if ((idAndChangesList.Count > 0) && (effectID == idAndChangesList[idAndChangesList.Count - 1].ID))
                         {
-                            effectChanges[i].Changes.Add(change);
+                            idAndChangesList[i].Changes.Add(change);
                         }
                         else
                         {
-                            effectChanges.Add(new EffectChanges(effectID, new List<Change>() { change }));
+                            idAndChangesList.Add(new IDAndChanges(effectID, new List<Change>() { change }));
                         }
                     }
                 }

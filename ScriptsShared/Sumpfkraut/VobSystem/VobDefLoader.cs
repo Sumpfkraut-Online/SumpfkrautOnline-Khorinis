@@ -9,6 +9,7 @@ using GUC.Scripts.Sumpfkraut.EffectSystem;
 using GUC.Scripts.Sumpfkraut.VobSystem.Enumeration;
 using GUC.Scripts.Sumpfkraut.EffectSystem.Changes;
 using GUC.Utilities;
+using GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem
 {
@@ -56,6 +57,23 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
         public partial class FinishedLoadingVobDefsArgs : FinishedLoadingArgs
         {
             public Dictionary<int, VobDef> VobDefByID;
+        }
+
+        public static List<ChangeType> DependencyChangeTypes = new List<ChangeType>()
+        {
+            ChangeType.Effect_Parent_Add,
+        };
+
+        public partial struct IDAndEffectIDs
+        {
+            public int ID;
+            public List<int> EffectIDs;
+
+            public IDAndEffectIDs (int id, List<int> effectIDs)
+            {
+                ID = id;
+                EffectIDs = effectIDs ?? new List<int>();
+            }
         }
 
 
@@ -188,7 +206,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
                     return;
                 }
 
-                // find out type of VobDef, dependencies and maybe create it and add all the Effects or postpone
+                if (!TryGenerateVobDef(tableVobDefEffect, effectByID, out vobDefByID))
+                {
+                    MakeLogError("Generation of VobDef failed!");
+                    return;
+                }
             }
             catch (Exception ex)
             {
@@ -196,7 +218,119 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
             }
         }
 
-        public bool TryFindVobDefType (Dictionary<int, Effect> effectByID, out VobDefType vobDefType)
+        protected bool TryGenerateVobDefs (List<List<object>> tableVobDefEffect, Dictionary<int, Effect> effectByID, 
+            out Dictionary<int, VobDef> vobDefByID, out List<int> failedIndices)
+        {
+            // find out type of VobDef, dependencies and maybe create it and add all the Effects or postpone
+            vobDefByID = new Dictionary<int, VobDef>(tableVobDefEffect.Count);
+            failedIndices = null;
+
+            List<IDAndEffectIDs> idAndEffectIDList = null;
+            if (!TryGenerateIDAndEffectIDList(tableVobDefEffect, out idAndEffectIDList))
+            {
+                MakeLogWarning("The provided parameter tableVobDefEffect was either null "
+                    + "or didn't contain any elements!");
+            }
+
+            int lastRemainingCount = int.MaxValue;
+            List<int> remainingIndices = null;
+            do
+            {
+                remainingIndices = GenerateVobDef(vobDefByID, idAndEffectIDList, 
+                    effectByID, remainingIndices);
+            }
+            while ((remainingIndices.Count > 0) && (remainingIndices.Count < lastRemainingCount));
+
+            // the still remaining indices failed to be resolved
+            if (remainingIndices.Count > 0)
+            {
+                failedIndices = remainingIndices;
+                return false;
+            }
+
+            return true;
+        }
+
+        protected List<int> GenerateVobDef (Dictionary<int, VobDef> vobDefByID,
+            List<IDAndEffectIDs> idAndEffectIDList, Dictionary<int, Effect> effectByID,
+            List<int> targetIndices)
+        {
+            List<int> failedIndices = null;
+
+            if (targetIndices != null)
+            {
+                // use specified indices to iterate over
+                int index;
+                for (int i = 0; i < targetIndices.Count; i++)
+                {
+                    index = targetIndices[i];
+                    if ((index < 0) || (index > (idAndEffectIDList.Count - 1)))
+                    {
+                        MakeLogWarning("Out of bounds index " + index + " in GenerateVobDef!");
+                        failedIndices.Add(index);
+                        continue;
+                    }
+                    if (!TryGenerateVobDef(vobDefByID, idAndEffectIDList[index], 
+                        effectByID)) { failedIndices.Add(index); }
+                }
+            }
+            else
+            {
+                // whole List will be iterated without any target indices specified
+                for (int i = 0; i < idAndEffectIDList.Count; i++)
+                {
+                    if (!TryGenerateVobDef(vobDefByID, idAndEffectIDList[i], 
+                        effectByID)) { failedIndices.Add(i); }
+                }
+            }
+
+            return failedIndices;
+        }
+
+        protected bool TryGenerateVobDef (Dictionary<int, VobDef> vobDefByID,
+            IDAndEffectIDs idAndEffect, Dictionary<int, Effect> effectByID)
+        {
+            return true;
+        }
+
+        protected bool TryGenerateIDAndEffectIDList (List<List<object>> tableVobDefEffect, 
+            out List<IDAndEffectIDs> idAndEffectIDs)
+        {
+            idAndEffectIDs = new List<IDAndEffectIDs>(tableVobDefEffect.Count);
+            if ((tableVobDefEffect == null) || (tableVobDefEffect.Count < 1)) { return false; }
+
+            int id;
+            int effectID;
+            try
+            {
+                lock (loadLock)
+                {
+                    for (int i = 0; i < tableVobDefEffect.Count; i++)
+                    {
+                        id = (int) tableVobDefEffect[i][0];
+                        effectID = (int) tableVobDefEffect[i][1];
+                        
+                        if ((idAndEffectIDs.Count > 0) && (idAndEffectIDs[idAndEffectIDs.Count - 1].ID == id))
+                        {
+                            idAndEffectIDs[idAndEffectIDs.Count - 1].EffectIDs.Add(effectID);
+                        }
+                        else
+                        {
+                            idAndEffectIDs.Add(new IDAndEffectIDs(id, new List<int>() { effectID }));
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MakeLogError(ex);
+                return false;
+            }
+
+            return true;
+        }
+
+        protected bool TryFindVobDefType (Dictionary<int, Effect> effectByID, out VobDefType vobDefType)
         {
             vobDefType = VobDefType.Undefined;
             if (effectByID == null)
@@ -207,7 +341,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
             return TryFindVobDefType(effectByID, effectByID.Keys.ToList(), out vobDefType);
         }
         
-        public bool TryFindVobDefType (Dictionary<int, Effect> effectByID, List<int> effectIDs, 
+        protected bool TryFindVobDefType (Dictionary<int, Effect> effectByID, List<int> effectIDs, 
             out VobDefType vobDefType)
         {
             // checks, checks, checks
@@ -232,8 +366,37 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
                 MakeLogWarning("Provided empty effectIDs in TryFindVobDefType!");
                 return false;
             }
-            
-            
+
+            int effectID;
+            Effect effect = null;
+            for (int e = 0; e < effectIDs.Count; e++)
+            {
+                effectID = effectIDs[e];
+                if (!effectByID.TryGetValue(effectID, out effect)) { continue; }
+                if (TryFindVobDefType(effect, out vobDefType)) { break; }
+            }
+
+            return true;
+        }
+
+        protected bool TryFindVobDefType (Effect effect, out VobDefType vobDefType)
+        {
+            vobDefType = VobDefType.Undefined;
+            foreach (var change in effect.GetChanges())
+            {
+                if (change.GetChangeType() == ChangeType.Vob_VobDefType_Set)
+                {
+                    try
+                    {
+                        vobDefType = (VobDefType) change.GetParameters()[0];
+                        break;
+                    }
+                    catch (Exception ex)
+                    {
+                        MakeLogError(ex);
+                    }
+                }
+            }
 
             return true;
         }
