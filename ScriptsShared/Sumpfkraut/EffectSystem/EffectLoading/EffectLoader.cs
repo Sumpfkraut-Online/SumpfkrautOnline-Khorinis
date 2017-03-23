@@ -367,9 +367,30 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
 
         protected bool ContainsUnresolvedDependencies (List<Change> dependencies)
         {
-            bool check = false;
+            if ((dependencies == null) || (dependencies.Count < 1)) { return false; }
 
-            return check;
+            ChangeType changeType;
+            try
+            {
+                for (int i = 0; i < dependencies.Count; i++)
+                {
+                    changeType = dependencies[i].GetChangeType();
+                    switch (changeType)
+                    {
+                        case ChangeType.Effect_Parent_Add:
+                            string parentGlobalID = (string) dependencies[i].GetParameters()[0];
+                            if (!Effect.GlobalEffectExists(parentGlobalID)) { return true; }
+                            break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MakeLogError(ex);
+                return true;
+            }
+
+            return false;
         }
 
         protected bool DetectIsGlobal (IDAndChanges ec)

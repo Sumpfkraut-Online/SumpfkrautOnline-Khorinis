@@ -288,9 +288,89 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
         }
 
         protected bool TryGenerateVobDef (Dictionary<int, VobDef> vobDefByID,
-            IDAndEffectIDs idAndEffect, Dictionary<int, Effect> effectByID)
+            IDAndEffectIDs idAndEffectIDs, Dictionary<int, Effect> effectByID)
         {
+            Effect effect;
+            foreach (var effectID in idAndEffectIDs.EffectIDs)
+            {
+                if (effectByID.TryGetValue(effectID, out effect))
+                {
+                    if (ContainsUnresolvedDependencies(effect)) { return false; }
+                }
+            }
+
+            VobDefType vobDefType;
+            if (!TryFindVobDefType(effectByID, idAndEffectIDs.EffectIDs, out vobDefType))
+            {
+                MakeLogError("Couldn't find VobDefType for VobDef of id: " + idAndEffectIDs.ID);
+            }
+
+            VobDef vobDef;
+            switch (vobDefType)
+            {
+                case VobDefType.VobDef:
+                    vobDef = new VobDef();
+                    break;
+                case VobDefType.ItemDef:
+                    vobDef = new ItemDef();
+                    break;
+                case VobDefType.NPCDef:
+                    vobDef = new NPCDef();
+                    break;
+            }
+
+            // add all Effects to the new vob
+
             return true;
+        }
+
+        protected bool ContainsUnresolvedDependencies (List<Effect> dependencies)
+        {
+            // TO DO when VobDef are able to inherit from each other
+
+            //if ((dependencies == null) || (dependencies.Count < 1)) { return false; }
+
+            //foreach (var effect in dependencies)
+            //{
+            //    if (ContainsUnresolvedDependencies(effect.GetChanges())) { return true; }
+            //}
+
+            return false;
+        }
+
+        protected bool ContainsUnresolvedDependencies (Effect effect)
+        {
+            if (effect == null) { return false; }
+            return ContainsUnresolvedDependencies(effect.GetChanges());
+        } 
+
+        protected bool ContainsUnresolvedDependencies (List<Change> dependencies)
+        {
+            if ((dependencies == null) || (dependencies.Count < 1)) { return false; }
+
+            ChangeType changeType;
+            try
+            {
+                for (int i = 0; i < dependencies.Count; i++)
+                {
+                    changeType = dependencies[i].GetChangeType();
+                    switch (changeType)
+                    {
+                        // TO DO when VobDef are able to inherit from each other
+                        //case ChangeType.:
+                        //    string parentGlobalID = (string) dependencies[i].GetParameters()[0];
+                        //    if (!Effect.GlobalEffectExists(parentGlobalID)) { return true; }
+                        //    break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MakeLogError(ex);
+                return true;
+            }
+
+            return false;
         }
 
         protected bool TryGenerateIDAndEffectIDList (List<List<object>> tableVobDefEffect, 
