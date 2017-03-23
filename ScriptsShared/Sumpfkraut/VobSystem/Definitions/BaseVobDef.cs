@@ -7,6 +7,7 @@ using GUC.WorldObjects;
 using GUC.WorldObjects.Instances;
 using GUC.Network;
 using GUC.Types;
+using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
@@ -35,6 +36,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         public VobTypes VobType { get { return BaseDef.VobType; } }
         public bool IsStatic { get { return BaseDef.IsStatic; } }
         public bool IsCreated { get { return baseDef.IsCreated; } }
+
+        protected VobEffectHandler effectHandler;
+        public VobEffectHandler GetEffectHandler () { return effectHandler; }
 
         #endregion
 

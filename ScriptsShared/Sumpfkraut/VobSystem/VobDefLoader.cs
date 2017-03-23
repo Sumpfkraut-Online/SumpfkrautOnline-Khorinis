@@ -10,6 +10,7 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Enumeration;
 using GUC.Scripts.Sumpfkraut.EffectSystem.Changes;
 using GUC.Utilities;
 using GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration;
+using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem
 {
@@ -206,9 +207,37 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
                     return;
                 }
 
-                if (!TryGenerateVobDef(tableVobDefEffect, effectByID, out vobDefByID))
+                List<IDAndEffectIDs> idAndEffectIDList = null;
+                if (!TryGenerateIDAndEffectIDList(tableVobDefEffect, out idAndEffectIDList))
+                {
+                    MakeLogWarning("The provided parameter tableVobDefEffect was either null "
+                        + "or didn't contain any elements!");
+                }
+
+                List<int> failedIndices;
+                if (!TryGenerateVobDefs(idAndEffectIDList, effectByID, out vobDefByID, out failedIndices))
                 {
                     MakeLogError("Generation of VobDef failed!");
+
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("Failed to generate VobDef with [temporary index | VobDefID]: ");
+                    for (int i = 0; i < failedIndices.Count; i++)
+                    {
+                        sb.Append("[");
+                        sb.Append(i);
+                        sb.Append("|");
+                        if ((failedIndices[i] < 0) || (failedIndices[i] > (idAndEffectIDList.Count - 1)))
+                        {
+                            sb.Append("?");
+                        }
+                        else
+                        {
+                            sb.Append(failedIndices[i]);
+                        }
+                        sb.Append("],");
+                    }
+                    MakeLogError(sb.ToString());
+
                     return;
                 }
             }
@@ -218,19 +247,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
             }
         }
 
-        protected bool TryGenerateVobDefs (List<List<object>> tableVobDefEffect, Dictionary<int, Effect> effectByID, 
+        protected bool TryGenerateVobDefs (List<IDAndEffectIDs> idAndEffectIDList, Dictionary<int, Effect> effectByID, 
             out Dictionary<int, VobDef> vobDefByID, out List<int> failedIndices)
         {
             // find out type of VobDef, dependencies and maybe create it and add all the Effects or postpone
-            vobDefByID = new Dictionary<int, VobDef>(tableVobDefEffect.Count);
+            vobDefByID = new Dictionary<int, VobDef>(idAndEffectIDList.Count);
             failedIndices = null;
-
-            List<IDAndEffectIDs> idAndEffectIDList = null;
-            if (!TryGenerateIDAndEffectIDList(tableVobDefEffect, out idAndEffectIDList))
-            {
-                MakeLogWarning("The provided parameter tableVobDefEffect was either null "
-                    + "or didn't contain any elements!");
-            }
 
             int lastRemainingCount = int.MaxValue;
             List<int> remainingIndices = null;
@@ -291,11 +313,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
             IDAndEffectIDs idAndEffectIDs, Dictionary<int, Effect> effectByID)
         {
             Effect effect;
+            List<Effect> effects = new List<Effect>();
             foreach (var effectID in idAndEffectIDs.EffectIDs)
             {
                 if (effectByID.TryGetValue(effectID, out effect))
                 {
                     if (ContainsUnresolvedDependencies(effect)) { return false; }
+                    effects.Add(effect);
                 }
             }
 
@@ -305,7 +329,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
                 MakeLogError("Couldn't find VobDefType for VobDef of id: " + idAndEffectIDs.ID);
             }
 
-            VobDef vobDef;
+            VobDef vobDef = null;
             switch (vobDefType)
             {
                 case VobDefType.VobDef:
@@ -317,9 +341,15 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
                 case VobDefType.NPCDef:
                     vobDef = new NPCDef();
                     break;
+                default:
+                    MakeLogError("The VobDefType " + vobDefType + " is not supported by the loading process!");
+                    return false;
             }
 
-            // add all Effects to the new vob
+            // get the effectHander and hand all effects to it
+            // (do not recalc and apply them for now but and the end)
+            VobEffectHandler effectHandler = vobDef.GetEffectHandler();
+            effectHandler.AddEffects(effects, false);
 
             return true;
         }

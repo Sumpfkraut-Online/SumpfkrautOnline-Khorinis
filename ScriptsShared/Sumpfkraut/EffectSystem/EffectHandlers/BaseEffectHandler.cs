@@ -152,7 +152,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
 
-        public void AddEffects (List<Effect> effects)
+        public void AddEffects (List<Effect> effects, bool recalcAndApplyTotals = true)
         {
             List<ChangeDestination> destinations;
 
@@ -163,7 +163,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                     AddEffect(effects[e], false);
                 }
                 
-                if (TryGetDestinations(effects, out destinations))
+                if (recalcAndApplyTotals && TryGetDestinations(effects, out destinations))
                 {
                     RecalculateTotals(destinations);
                     ReapplyTotals(destinations);
@@ -409,10 +409,11 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
 
-        public void RecalculateTotals (List<ChangeDestination> destinations)
+        public void RecalculateTotals (List<ChangeDestination> destinations = null)
         {
             lock (effectLock)
             {
+                destinations = destinations ?? destToCalcTotal.Keys.ToList();
                 for (int d = 0; d < destinations.Count; d++)
                 {
                     RecalculateTotal(destinations[d]);
@@ -432,10 +433,11 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             }
         }
 
-        public void ReapplyTotals (List<ChangeDestination> destinations)
+        public void ReapplyTotals (List<ChangeDestination> destinations = null)
         {
             lock (effectLock)
             {
+                destinations = destinations ?? destToApplyTotal.Keys.ToList();
                 for (int d = 0; d < destinations.Count; d++)
                 {
                     ReapplyTotal(destinations[d]);
