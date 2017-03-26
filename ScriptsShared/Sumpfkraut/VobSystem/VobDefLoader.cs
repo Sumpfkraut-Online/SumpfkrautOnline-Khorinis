@@ -347,9 +347,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
             }
 
             // get the effectHander and hand all effects to it
-            // (do not recalc and apply them for now but and the end)
             VobEffectHandler effectHandler = vobDef.GetEffectHandler();
-            effectHandler.AddEffects(effects, false);
+            effectHandler.AddEffects(effects, true);
 
             return true;
         }
