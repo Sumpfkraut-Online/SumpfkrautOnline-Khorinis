@@ -1,4 +1,5 @@
-﻿using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
+﻿using GUC.Scripts.Sumpfkraut.EffectSystem.Changes;
+using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 using GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration;
 using GUC.Utilities;
 using System;
@@ -34,15 +35,21 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 
 
 
-        public static bool TryGetDestInitInfo (ChangeDestination changeDestination, out DestInitInfo info)
+        public static bool TryGetDestInitInfo (ChangeDestination changeDest, out DestInitInfo info)
         {
-            return changeDestinationToInfo.TryGetValue(changeDestination, out info);
+            return changeDestinationToInfo.TryGetValue(changeDest, out info);
+        }
+
+        public static bool TryGetTotalChange (BaseEffectHandler effectHandler, ChangeDestination changeDest,
+            out TotalChange totalChange)
+        {
+            totalChange = null;
+            if (effectHandler.TryGetTotalChange(changeDest, out totalChange)) { return true; }
+            return false;
         }
 
         protected void AddOrChange (DestInitInfo inputInfo)
         {
-            //MakeLog("Initializing changeDestination " + inputInfo.ChangeDestination);
-
             DestInitInfo info;
             if (changeDestinationToInfo.TryGetValue(inputInfo.ChangeDestination, out info))
             {

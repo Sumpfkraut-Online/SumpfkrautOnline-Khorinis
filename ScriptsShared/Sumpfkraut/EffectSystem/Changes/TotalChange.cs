@@ -1,4 +1,5 @@
-﻿using GUC.Utilities;
+﻿using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
+using GUC.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,26 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
         new public static readonly string _staticName = "TotalChange (static)";
 
 
+
+        protected BaseEffectHandler.CalculateTotalChange calcFunction;
+        public BaseEffectHandler.CalculateTotalChange GetCalcFunction ()
+        {
+            lock (totalChangeLock) { return calcFunction; }
+        }
+        public void SetCalcFunction (BaseEffectHandler.CalculateTotalChange val)
+        {
+            lock (totalChangeLock) { calcFunction = val; }
+        }
+
+        protected BaseEffectHandler.ApplyTotalChange applyFunction;
+        public BaseEffectHandler.ApplyTotalChange GetApplyFunction ()
+        {
+            lock (totalChangeLock) { return applyFunction; }
+        }
+        public void SetApplyFunction (BaseEffectHandler.ApplyTotalChange val)
+        {
+            lock (totalChangeLock) { applyFunction = val; }
+        }
 
         protected List<Change> components;
         public List<Change> Components { get { return components; } }
@@ -41,6 +62,13 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
         public DateTime LastComponentUpdate { get { return this.lastComponentUpdate; } }
 
 
+        public TotalChange (BaseEffectHandler.CalculateTotalChange calcFunction, 
+            BaseEffectHandler.ApplyTotalChange applyFunction)
+            : this()
+        {
+            this.calcFunction = calcFunction;
+            this.applyFunction = applyFunction;
+        }
 
         public TotalChange ()
         {

@@ -20,7 +20,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         {
             PrintStatic(typeof(BaseEffectHandler), "Start subscribing ChangeDestinations and EventHandler...");
 
-            NPCInst.sOnHit += OnHit;
+            //NPCInst.sOnHit += OnHit;
 
             PrintStatic(typeof(BaseEffectHandler), "Finished subscribing ChangeDestinations and EventHandler...");
         }

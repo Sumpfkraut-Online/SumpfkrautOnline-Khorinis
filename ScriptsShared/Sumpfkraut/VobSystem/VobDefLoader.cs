@@ -376,29 +376,29 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
 
         protected bool ContainsUnresolvedDependencies (List<Change> dependencies)
         {
-            if ((dependencies == null) || (dependencies.Count < 1)) { return false; }
+            //if ((dependencies == null) || (dependencies.Count < 1)) { return false; }
 
-            ChangeType changeType;
-            try
-            {
-                for (int i = 0; i < dependencies.Count; i++)
-                {
-                    changeType = dependencies[i].GetChangeType();
-                    switch (changeType)
-                    {
-                        // TO DO when VobDef are able to inherit from each other
-                        //case ChangeType.:
-                        //    string parentGlobalID = (string) dependencies[i].GetParameters()[0];
-                        //    if (!Effect.GlobalEffectExists(parentGlobalID)) { return true; }
-                        //    break;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MakeLogError(ex);
-                return true;
-            }
+            //ChangeType changeType;
+            //try
+            //{
+            //    for (int i = 0; i < dependencies.Count; i++)
+            //    {
+            //        changeType = dependencies[i].GetChangeType();
+            //        switch (changeType)
+            //        {
+            //            // TO DO when VobDef are able to inherit from each other
+            //            case ChangeType.:
+            //                string parentGlobalID = (string) dependencies[i].GetParameters()[0];
+            //                if (!Effect.GlobalEffectExists(parentGlobalID)) { return true; }
+            //                break;
+            //        }
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    MakeLogError(ex);
+            //    return true;
+            //}
 
             return false;
         }

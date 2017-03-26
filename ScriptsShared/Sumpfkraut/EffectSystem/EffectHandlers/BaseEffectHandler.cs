@@ -22,7 +22,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             return changeTypeToDestinations;
         }
 
-        public delegate void CalculateTotalChange (BaseEffectHandler effectHandler);
+        public delegate void CalculateTotalChange (BaseEffectHandler effectHandler, TotalChange totalChange);
         protected static Dictionary<ChangeDestination, CalculateTotalChange> destToCalcTotal =
             new Dictionary<ChangeDestination, CalculateTotalChange>() { };
         public static Dictionary<ChangeDestination, CalculateTotalChange> GetDestToCalcTotal ()
@@ -30,7 +30,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             return destToCalcTotal;
         }
 
-        public delegate void ApplyTotalChange (BaseEffectHandler effectHandler);
+        public delegate void ApplyTotalChange (BaseEffectHandler effectHandler, TotalChange totalChange);
         protected static Dictionary<ChangeDestination, ApplyTotalChange> destToApplyTotal =
             new Dictionary<ChangeDestination, ApplyTotalChange>() { };
         public static Dictionary<ChangeDestination, ApplyTotalChange> GetDestToApplyTotal ()
@@ -308,6 +308,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         public void AddToTotalChanges (Change change)
         {
             List<ChangeDestination> destinations;
+            TotalChange tc;
 
             lock (effectLock)
             {
@@ -315,11 +316,30 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
                 for (int d = 0; d < destinations.Count; d++)
                 {
-                    try
+                    if (destToTotalChange.TryGetValue(destinations[d], out tc))
                     {
-                        destToTotalChange[destinations[d]].AddChange(change);
+                        // if a TotalChange already exists, simply add the Change to it
+                        tc.AddChange(change);
                     }
-                    catch (Exception ex) { MakeLogError(ex); }
+                    else
+                    {
+                        // if not present, create the TotalChange and then add the Change to it
+                        CalculateTotalChange calcTotal;
+                        ApplyTotalChange applyTotal;
+                        if (destToCalcTotal.TryGetValue(destinations[d], out calcTotal)
+                            && destToApplyTotal.TryGetValue(destinations[d], out applyTotal))
+                        {
+                            tc = new TotalChange();
+                            tc.SetCalcFunction(calcTotal);
+                            tc.SetApplyFunction(applyTotal);
+                            tc.AddChange(change);
+                        }
+                        else
+                        {
+                            MakeLogError("Requested non-registered ChangeDestination in AddToTotalChanges: " 
+                                + destinations[d]);
+                        }    
+                    }
                 }
             }
         }
@@ -423,12 +443,12 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
         public void RecalculateTotal (ChangeDestination destination)
         {
-            CalculateTotalChange calcTotal;
+            TotalChange tc;
             lock (effectLock)
             {
-                if (destToCalcTotal.TryGetValue(destination, out calcTotal))
+                if (destToTotalChange.TryGetValue(destination, out tc))
                 {
-                    calcTotal(this);
+                    tc.GetCalcFunction()(this, tc);
                 }
             }
         }
@@ -447,12 +467,12 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
         public void ReapplyTotal (ChangeDestination destination)
         {
-            ApplyTotalChange applyTotal;
+            TotalChange tc;
             lock (effectLock)
             {
-                if (destToApplyTotal.TryGetValue(destination, out applyTotal))
+                if (destToTotalChange.TryGetValue(destination, out tc))
                 {
-                    applyTotal(this);
+                    tc.GetApplyFunction()(this, tc);
                 }
             }
         }
