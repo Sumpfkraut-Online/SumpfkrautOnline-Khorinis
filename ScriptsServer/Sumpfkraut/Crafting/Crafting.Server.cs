@@ -13,12 +13,12 @@ namespace GUC.Scripts.Sumpfkraut.Crafting
     {
 
         /// <summary>
-        /// The key is a representation of a crafting property(CP), the value a dictionary with recipes related to this CP.
+        /// The key is a a crafting property(CP), the value a list with recipes craftable with this CP.
         /// </summary>
-        Dictionary<int, Dictionary<int, Recipe>> RecipeLists = new Dictionary<int, Dictionary<int, Recipe>>();
+        Dictionary<int, List<Recipe>> RecipeLists = new Dictionary<int, List<Recipe>>();
 
         /// <summary>
-        /// Prop
+        /// The strings are crafting property names from the DB and the corresponding integer is the numeric representation for the RecipeList Dict.
         /// </summary>
         Dictionary<string, int> Properties = new Dictionary<string, int>();
 
@@ -39,10 +39,17 @@ namespace GUC.Scripts.Sumpfkraut.Crafting
             Log.Logger.Log("NPC Health is " + npc.GetHealth()); */
         }
 
+        /// <summary>
+        /// Prints an information log into server console
+        /// </summary>
+        public void Info()
+        {
+            Log.Logger.Log("Crafting currently stores xy Recipes with " + nrOfProperties + " different Crafting Properties");
+        }
 
         public void Craft(NPCInst craftsmen, int recipeID, int craftingProperty)
         {
-            Dictionary<int, Recipe> RecipeList;
+            List<Recipe> RecipeList;
             RecipeLists.TryGetValue(craftingProperty, out RecipeList);
             if(RecipeList == null)
             {
@@ -51,7 +58,7 @@ namespace GUC.Scripts.Sumpfkraut.Crafting
             }
 
             Recipe r;
-            RecipeList.TryGetValue(recipeID, out r);
+            r = RecipeList.ElementAt(recipeID);
             if (r == null)
             {
                 throw new Exception("Crafting: Couldn't find a Recipe! (CP=" + craftingProperty + ")(rID=" + recipeID + ")");
@@ -87,6 +94,29 @@ namespace GUC.Scripts.Sumpfkraut.Crafting
         public void CreateRecipeLists()
         {
             // create delegate with actions parsed from db strings
+            //while new entry =>
+            string craftingProperty = "";
+            int craftingProbertyNumber = 0;
+            if(!Properties.ContainsKey(craftingProperty))
+            {
+                // get ID
+                craftingProbertyNumber = nrOfProperties;
+                // relate craftingproperty string to number
+                Properties.Add(craftingProperty, craftingProbertyNumber);
+                // create new empty recipe list
+                RecipeLists.Add(craftingProbertyNumber, new List<Recipe>());
+                // increase for next entry
+                nrOfProperties++;
+
+            }
+            else
+            {
+                craftingProbertyNumber = Properties[craftingProperty];
+            }
+            // our new recipe
+            Recipe r = new Recipe(1, "trank_test", 1, "", "", "", "", "", true, 0, 0);
+            // add recipe to correct list
+            RecipeLists[craftingProbertyNumber].Add(r);
         }
 
     }

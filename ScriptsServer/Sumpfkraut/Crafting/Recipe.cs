@@ -12,6 +12,9 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 
     Codename - string
         Zur Identifikation für uns
+
+    Description - string
+        Information shown in crafting menu
         
     RecipeStep - int
         Jedes Rezept kann aus mehreren aufeinandernfolgenden Schritten bestehen
@@ -21,13 +24,6 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 
     Conditions
         Bedingungen die zu erfüllen sind, damit das Rezept verfügbar ist
-
-    TimeToCraft - int
-        Zeit in ms wie lange die Crafting animation abgespielt werden muss
-        (Bei Minigame eventuell irrelevant)
-
-    MinigameId - short
-        Falls es ein Minispiel gibt, hier die ID dazu
 
     Euductlist - string
         Liste an nötigen Gegenständen für das Crafting
@@ -47,13 +43,16 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 
     CanCancel
         Regelung was passiert, wenn der der Vorgang abgebrochen wird bevor das Crafting vollendet ist
-            - Edukte zurückerhalten - Fortschritt an item behalten
-            - Edukte zurückerhalten - Fortschritt an item verloren
-            - Edukte verlieren
+            - Edukte zurückerhalten - Fortschritt an item behalten => TRUE
+            - Edukte zurückerhalten - Fortschritt an item verloren => FALSE
+            - Edukte verlieren => NULL 
 
-    Default NULL - ansonsten
-    
+    TimeToCraft - int
+        Zeit in ms wie lange die Crafting animation abgespielt werden muss
+        (Bei Minigame eventuell irrelevant)
 
+    MinigameId - short
+        Falls es ein Minispiel gibt, hier die ID dazu
 */
 
 
@@ -65,7 +64,8 @@ namespace GUC.Scripts.Sumpfkraut.Crafting
         public int uniqueID;
         public string description;
         
-        public Recipe(int ID, string codename, int step)
+        public Recipe(int ID, string codename, int step, string craftingProperties, string conditions, string eductList, string productList, string effectList,
+            bool canCancel, int timeToCraft, int minigameID )
         {
             // create item use actions, create item create actions, create effects
             uniqueID = ID;
