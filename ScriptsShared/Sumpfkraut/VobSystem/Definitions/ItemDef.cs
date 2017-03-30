@@ -96,6 +96,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         partial void pConstruct();
         public ItemDef()
         {
+            effectHandler = effectHandler ?? new EffectSystem.EffectHandlers.ItemEffectHandler(null, this);
             pConstruct();
         }
 

@@ -40,7 +40,8 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
 
         public WorldInst (string objName)
         {
-            this.baseWorld = new WorldObjects.World(new ScriptClock(this), new ScriptWeatherCtrl(this), new ScriptBarrierCtrl(this), this);
+            this.baseWorld = new WorldObjects.World(new ScriptClock(this), 
+                new ScriptWeatherCtrl(this), new ScriptBarrierCtrl(this), this);
         }
 
 

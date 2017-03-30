@@ -330,6 +330,8 @@
     <Compile Include="Sumpfkraut\Daedalus\Parser.cs" />
     <Compile Include="Sumpfkraut\Daedalus\PrototypeParser.cs" />
     <Compile Include="Sumpfkraut\Daedalus\DDLValueTypes.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Destinations\DestInit_Effect.Server.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Destinations\DestInit_Vob.Server.cs" />
     <Compile Include="Sumpfkraut\Networking\Requests\NPCRequestReceiver.cs" />
     <Compile Include="Sumpfkraut\Networking\ScriptClient.Server.cs" />
     <Compile Include="Sumpfkraut\TestingThings.cs" />

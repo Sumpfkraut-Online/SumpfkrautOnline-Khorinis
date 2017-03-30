@@ -9,6 +9,7 @@ using GUC.WorldObjects;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Types;
+using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
@@ -39,6 +40,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public void SetPosition(Vec3f position) { this.BaseInst.SetPosition(position); }
         public void SetDirection(Vec3f direction) { this.BaseInst.SetDirection(direction); }
+
+        protected VobEffectHandler effectHandler;
+        public VobEffectHandler GetEffectHandler () { return effectHandler; }
 
         #endregion
 

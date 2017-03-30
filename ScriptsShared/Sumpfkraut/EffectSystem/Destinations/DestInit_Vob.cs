@@ -46,126 +46,26 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
                 CTC_VobInstType, ATC_VobInstType));
         }
 
-        public void CTC_CodeName (BaseEffectHandler eh, TotalChange tc)
-        {
-            try
-            {
-                Change finalChange;
-                ChangeInitInfo info;
-                if (!BaseChangeInit.TryGetChangeInitInfo(ChangeType.Vob_CodeName_Set, out info))
-                {
-                    MakeLogError("Tried to calculate TotalChange with non-initialized ChangeType "
-                        + ChangeType.Vob_CodeName_Set);
-                    return;
-                }
 
-                // stop here when there are no Changes to process
-                if (tc.Components.Count < 1) { return; }
-                // last codeName counts
-                finalChange = Change.Create(info, 
-                    new List<object>() { tc.Components[tc.Components.Count - 1] });
-                tc.SetTotal(finalChange);
-            }
-            catch (Exception ex) { MakeLogError("Error while caclulating TotalChange via CTC_CodeName: " + ex); }
-        }
+        partial void pCTC_CodeName (BaseEffectHandler eh, TotalChange tc);
+        public void CTC_CodeName (BaseEffectHandler eh, TotalChange tc) { pCTC_CodeName(eh, tc); }
+        partial void pATC_CodeName (BaseEffectHandler eh, TotalChange tc);
+        public void ATC_CodeName (BaseEffectHandler eh, TotalChange tc) { pATC_CodeName(eh, tc); }
 
-        public void ATC_CodeName (BaseEffectHandler eh, TotalChange tc)
-        {
-            try
-            {
-                var linkedObj = eh.GetLinkedObject();
-                if      (linkedObj is VobDef)
-                {
-                    linkedObj = linkedObj as VobDef;
-                    // set the codeName
-                }
-                else if (linkedObj is VobInst)
-                {
-                    linkedObj = linkedObj as VobInst;
-                    // set the codeName
-                }
-            }
-            catch (Exception ex) { MakeLogError("Error while applying TotalChange via ATC_CodeName: " + ex); }
-        }
+        partial void pCTC_Name (BaseEffectHandler eh, TotalChange tc);
+        public void CTC_Name (BaseEffectHandler eh, TotalChange tc) { pCTC_Name(eh, tc); }
+        partial void pATC_Name (BaseEffectHandler eh, TotalChange tc);
+        public void ATC_Name (BaseEffectHandler eh, TotalChange tc) { pATC_Name(eh, tc); }
 
-        public void CTC_Name (BaseEffectHandler eh, TotalChange tc)
-        {
-            // TO DO
-        }
+        partial void pCTC_VobDefType (BaseEffectHandler eh, TotalChange tc);
+        public void CTC_VobDefType (BaseEffectHandler eh, TotalChange tc) { pCTC_VobDefType(eh, tc); }
+        partial void pATC_VobDefType (BaseEffectHandler eh, TotalChange tc);
+        public void ATC_VobDefType (BaseEffectHandler eh, TotalChange tc) { pATC_VobDefType(eh, tc); }
 
-        public void ATC_Name (BaseEffectHandler eh, TotalChange tc)
-        {
-            // TO DO
-        }
-
-        public void CTC_VobDefType (BaseEffectHandler eh, TotalChange tc)
-        {
-            try
-            {
-                Change finalChange;
-                ChangeInitInfo info;
-                if (!BaseChangeInit.TryGetChangeInitInfo(ChangeType.Vob_VobDefType_Set, out info))
-                {
-                    MakeLogError("Tried to calculate TotalChange via CTC_VobDefType with non-initialized ChangeType "
-                        + ChangeType.Vob_VobDefType_Set);
-                    return;
-                }
-
-                // last component counts as long as the linkedObject still isn't set
-                // (changing it afterwards is not possible)
-                object linkedObject = eh.GetLinkedObject();
-                if (linkedObject != null) { return; }
-
-                // stop here when there are no Changes to process
-                if (tc.Components.Count < 1) { return; }
-                // last codeName counts
-                finalChange = Change.Create(info,
-                    new List<object>() { tc.Components[tc.Components.Count - 1] });
-                tc.SetTotal(finalChange);
-            }
-            catch (Exception ex) { MakeLogError("Error while caclulating TotalChange via CTC_VobDefType: " + ex); }
-        }
-
-        public void ATC_VobDefType (BaseEffectHandler eh, TotalChange tc)
-        {
-            // no application necessary because VobDefType is only used 
-            // when creating a new instance of VobDef, not afterwards
-
-        }
-
-        public void CTC_VobInstType (BaseEffectHandler eh, TotalChange tc)
-        {
-            try
-            {
-                Change finalChange;
-                ChangeInitInfo info;
-                if (!BaseChangeInit.TryGetChangeInitInfo(ChangeType.Vob_VobInstType_Set, out info))
-                {
-                    MakeLogError("Tried to calculate TotalChange via CTC_VobInstType with non-initialized ChangeType "
-                        + ChangeType.Vob_VobInstType_Set);
-                    return;
-                }
-
-                // last component counts as long as the linkedObject still isn't set
-                // (changing it afterwards is not possible)
-                object linkedObject = eh.GetLinkedObject();
-                if (linkedObject != null) { return; }
-
-                // stop here when there are no Changes to process
-                if (tc.Components.Count < 1) { return; }
-                // last codeName counts
-                finalChange = Change.Create(info, 
-                    new List<object>() { tc.Components[tc.Components.Count - 1] });
-                tc.SetTotal(finalChange);
-            }
-            catch (Exception ex) { MakeLogError("Error while caclulating TotalChange via CTC_VobInstType: " + ex); }
-        }
-
-        public void ATC_VobInstType (BaseEffectHandler eh, TotalChange tc)
-        {
-            // no application necessary because VobInstType is only used 
-            // when creating a new instance of VobInst, not afterwards
-        }
+        partial void pCTC_VobInstType (BaseEffectHandler eh, TotalChange tc);
+        public void CTC_VobInstType (BaseEffectHandler eh, TotalChange tc) { pCTC_VobInstType(eh, tc); }
+        partial void pATC_VobInstType (BaseEffectHandler eh, TotalChange tc);
+        public void ATC_VobInstType (BaseEffectHandler eh, TotalChange tc) { pATC_VobInstType(eh, tc); }
 
     }
 
