@@ -1,10 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Mono.Data.Sqlite;
-using SQLiteDataReader = Mono.Data.Sqlite.SqliteDataReader;
-using SQLiteCommand = Mono.Data.Sqlite.SqliteCommand;
 //using SQLiteCommand = Mono.Data.Sqlite.SqliteCommand;
 
 namespace GUC.Scripts.Sumpfkraut.Database

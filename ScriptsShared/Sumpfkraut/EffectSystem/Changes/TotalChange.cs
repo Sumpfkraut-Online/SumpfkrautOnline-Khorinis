@@ -40,7 +40,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
         public List<Change> Components { get { return components; } }
 
         protected Change total;
-        public Change Total { get { return total; } }
+        public Change GetTotal ()
+        {
+            lock (totalChangeLock) { return total; }
+        }
         // always set the value with this method to also create a timestamp
         public void SetTotal (Change total)
         {

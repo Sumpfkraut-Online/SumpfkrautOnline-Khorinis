@@ -281,7 +281,7 @@ namespace GUC.WorldObjects
 
             var strm = GameServer.SetupStream(ServerMessages.ScriptVobMessage);
             strm.Write((ushort)this.ID);
-
+            
             return strm;
         }
 
