@@ -18,11 +18,11 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
         static NPCEffectHandler ()
         {
-            PrintStatic(typeof(BaseEffectHandler), "Start subscribing ChangeDestinations and EventHandler...");
+            PrintStatic(typeof(NPCEffectHandler), "Start subscribing ChangeDestinations and EventHandler...");
 
             //NPCInst.sOnHit += OnHit;
 
-            PrintStatic(typeof(BaseEffectHandler), "Finished subscribing ChangeDestinations and EventHandler...");
+            PrintStatic(typeof(NPCEffectHandler), "Finished subscribing ChangeDestinations and EventHandler...");
         }
 
 

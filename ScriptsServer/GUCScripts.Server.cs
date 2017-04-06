@@ -112,6 +112,8 @@ namespace GUC.Scripts
         {
             Logger.Log("######## Initalise SumpfkrautOnline ServerScripts #########");
 
+            Sumpfkraut.EffectSystem.Changes.ChangeInitializer.Init();
+            Sumpfkraut.EffectSystem.Destinations.DestInitializer.Init();
 
             Sumpfkraut.Daedalus.AniParser.ReadMDSFiles();
             Sumpfkraut.Daedalus.ConstParser.ParseConstValues();

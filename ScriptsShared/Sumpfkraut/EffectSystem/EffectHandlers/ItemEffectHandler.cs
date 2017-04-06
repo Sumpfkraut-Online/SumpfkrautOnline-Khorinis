@@ -49,31 +49,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         {
             throw new NotImplementedException();
         }
-
-
-
-        //protected override void ApplyEffect (Effect effect, bool reverse = false)
-        //{
-        //    Print("Apply what? Naaaa!");
-            
-        //    Type lot = LinkedObjectType;
-
-        //    if      (LinkedObjectType == typeof(ItemDef))
-        //    {
-        //        // ...
-        //    }
-        //    else if (LinkedObjectType == typeof(ItemInst))
-        //    {
-        //        ItemInst lo = GetLinkedObject<ItemInst>();
-        //        // ...
-        //    }
-        //    else
-        //    {
-        //        Print("Screwed :D");
-        //    }
-        //}
         
-
     }
 
 }

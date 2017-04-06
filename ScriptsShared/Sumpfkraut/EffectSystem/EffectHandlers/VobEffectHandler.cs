@@ -18,14 +18,14 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
         static VobEffectHandler ()
         {
-            PrintStatic(typeof(BaseEffectHandler), "Start subscribing ChangeDestinations and EventHandler...");
+            PrintStatic(typeof(VobEffectHandler), "Start subscribing ChangeDestinations and EventHandler...");
 
             RegisterDestination(Enumeration.ChangeDestination.Vob_CodeName);
             RegisterDestination(Enumeration.ChangeDestination.Vob_Name);
             RegisterDestination(Enumeration.ChangeDestination.Vob_VobDefType);
             RegisterDestination(Enumeration.ChangeDestination.Vob_VobInstType);
 
-            PrintStatic(typeof(BaseEffectHandler), "Finished subscribing ChangeDestinations and EventHandler...");
+            PrintStatic(typeof(VobEffectHandler), "Finished subscribing ChangeDestinations and EventHandler...");
         }
 
 

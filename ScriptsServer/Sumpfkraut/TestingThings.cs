@@ -24,7 +24,7 @@ namespace GUC.Scripts.Sumpfkraut
 
         new public static readonly string _staticName = "TestingThings (static)";
 
-
+        
 
         public static void Init ()
         {
@@ -314,8 +314,8 @@ namespace GUC.Scripts.Sumpfkraut
 
 
 
-            ChangeInitializer.Init();
-            DestInitializer.Init();
+
+            
 
             //ChangeInitInfo info;
             //BaseChangeInit.TryGetChangeInitInfo(ChangeType.Effect_Name_Set, out info);

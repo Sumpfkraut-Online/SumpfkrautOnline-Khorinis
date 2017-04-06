@@ -83,6 +83,7 @@
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\VobEffectHandler.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\WorldEffectHandler.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\EffectLoading\EffectLoader.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\EffectNetworking.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Enumeration\ChangeDestination.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Enumeration\ChangeType.cs" />
     <Compile Include="Sumpfkraut\Networking\ScriptMessageIDs.cs" />

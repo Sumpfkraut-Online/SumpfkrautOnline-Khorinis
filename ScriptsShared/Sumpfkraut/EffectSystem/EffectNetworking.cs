@@ -30,7 +30,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
                 Write = write;
                 Read = read;
             }
-
         }
 
         public static readonly Dictionary<Type, ReadWriteObject> TypeToRW = 

@@ -204,6 +204,24 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             return index;
         }
 
+        //public int MergeChange (Change change)
+        //{
+        //    int index = -1;
+        //    lock (changeLock)
+        //    {
+        //        // try find the last Change of the same ChangeType and merge the provided Change in
+        //        for (int i = changes.Count - 1; i > -1; i--)
+        //        {
+        //            XXXX
+        //            return i;
+        //        }
+        //        // if no Change of that ChangeType exists, simply add it
+        //        index = AddChange(change);
+        //    }
+
+        //    return index;
+        //}
+
         public int RemoveChange (Enumeration.ChangeType changeType)
         {
             int index = 0;
