@@ -57,6 +57,11 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
         partial void pATC_Parent (BaseEffectHandler eh, TotalChange tc);
         public void ATC_Parent (BaseEffectHandler eh, TotalChange tc) { pATC_Parent(eh, tc); }
 
+        partial void pCTC_PermanentFlag (BaseEffectHandler eh, TotalChange tc);
+        public void CTC_PermanentFlag (BaseEffectHandler eh, TotalChange tc) { pCTC_PermanentFlag(eh, tc); }
+        partial void pATC_PermanentFlag (BaseEffectHandler eh, TotalChange tc);
+        public void ATC_PermanentFlag (BaseEffectHandler eh, TotalChange tc) { pATC_PermanentFlag(eh, tc); }
+
     }
 
 }

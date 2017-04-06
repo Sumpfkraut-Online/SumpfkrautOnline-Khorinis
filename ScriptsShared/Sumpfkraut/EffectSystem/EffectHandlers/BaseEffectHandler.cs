@@ -86,6 +86,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                 TotalChange tc;
                 if (!TryGetTotalChange(cd, out tc)) { return false; }
                 fc = tc.GetTotal();
+                if (fc == null) { return false; }
                 return true;
             }
         }
@@ -229,9 +230,20 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             List<ChangeDestination> destinations;
             lock (effectLock)
             {
-                if (effects.Contains(effect)) { return -1; }
-                effects.Add(effect);
-                index = effects.Count;
+                if (effect.GetPermanentFlag())
+                {
+                    // will be added to the permanent Effect at index 0
+                    effects[0].AddChanges(effect.GetChanges());
+                    index = 0;
+                }
+                else
+                {
+                    // will be added as new Effect at the end
+                    if (effects.Contains(effect)) { return -1; }
+                    effects.Add(effect);
+                    index = effects.Count;
+                }
+                
                 AddToTotalChanges(effect.GetChanges());
 
                 if (!recalcAndApplyTotals) { return index; }
@@ -275,7 +287,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             {
                 for (int i = 0; i < effects.Count; i++)
                 {
-                    if (effects[i].EffectName == effectName)
+                    if (effects[i].GetEffectName() == effectName)
                     {
                         index = i;
                         break;
@@ -294,7 +306,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             lock (effectLock)
             {
                 index = effects.IndexOf(effect);
-                RemoveEffect(index, recalcAndApplyTotals);
+                // only remove if it's not the permanent Effect... You can't touch this :)
+                if (index > 0) { RemoveEffect(index, recalcAndApplyTotals); }
             }
             return index;
         }
@@ -305,8 +318,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             List<ChangeDestination> destinations;
             lock (effectLock)
             {
-                // if effect wasn't there in the first place --> do nothing
-                if (index < 0) { return -1; }
+                // if effect wasn't there in the first place or permanent index is targeted --> do nothing
+                if (index < 1) { return -1; }
 
                 effect = effects[index];
 

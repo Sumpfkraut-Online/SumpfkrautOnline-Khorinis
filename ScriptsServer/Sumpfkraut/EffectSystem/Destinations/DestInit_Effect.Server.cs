@@ -33,7 +33,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
                     if (globalID != null) { Effect.AddGlobalEffect(globalID, effect); }
                 }
             }
-            catch (Exception ex) { MakeLogError("Error while applying TotalChange via ATC_Name: " + ex); }
+            catch (Exception ex) { MakeLogError("Error while applying TotalChange via pATC_GlobalID: " + ex); }
         }
 
         partial void pCTC_Name (BaseEffectHandler eh, TotalChange tc)
@@ -84,7 +84,19 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
                     effect.AddParent(parent);
                 }
             }
-            catch (Exception ex) { MakeLogError("Error while applying TotalChange via ATC_Name: " + ex); }
+            catch (Exception ex) { MakeLogError("Error while applying TotalChange via pATC_Parent: " + ex); }
+        }
+
+        partial void pCTC_PermanentFlag (BaseEffectHandler eh, TotalChange tc)
+        {
+            // there is no need to actually calculate a TotalChange
+            // because multiple effects can be registered on one effectHandler,
+            // (see ApplyTotalChange for the individual treatment of each Change in TotalChange.components)
+        }
+
+        partial void pATC_PermanentFlag (BaseEffectHandler eh, TotalChange tc)
+        {
+            // do nothing because permanent Effects are dealt with when being added to EffectHandlers automatically
         }
 
     }

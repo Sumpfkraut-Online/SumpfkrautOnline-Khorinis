@@ -18,6 +18,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
 
 
 
+        protected object changeLock;
+
         protected EffectHandlers.BaseEffectHandler effectHandler;
         public EffectHandlers.BaseEffectHandler GetEffectHandler () { return effectHandler; }
         public void SetEffectHandler (EffectHandlers.BaseEffectHandler value)
@@ -41,8 +43,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
 
         protected static string defaultEffectName = "";
         public static string DefaultEffectName { get { return defaultEffectName; } }
-
-        protected object changeLock;
 
         protected string globalID;
         public string GetGlobalID () { return globalID; }
@@ -91,8 +91,23 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
         }
 
         protected string effectName;
-        public string EffectName { get { return this.effectName; } }
+        public string GetEffectName () { return effectName; }
         public void SetEffectName (string effectName) { this.effectName = effectName; }
+
+        public bool GetPermanentFlag ()
+        {
+            lock (changeLock)
+            {
+                foreach (var c in changes)
+                {
+                    if (c.GetChangeType() == Enumeration.ChangeType.Effect_PermanentFlag_Set)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
 
 
 

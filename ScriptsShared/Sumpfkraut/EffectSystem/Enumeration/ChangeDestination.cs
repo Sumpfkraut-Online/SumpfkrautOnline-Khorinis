@@ -15,6 +15,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration
         Effect_GlobalID,
         Effect_Name,
         Effect_Parent,
+        Effect_PermanentFlag,
 
         // often synchronized attributes
         Vob_CodeName,
