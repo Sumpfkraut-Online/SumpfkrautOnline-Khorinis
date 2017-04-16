@@ -94,28 +94,27 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
         public string GetEffectName () { return effectName; }
         public void SetEffectName (string effectName) { this.effectName = effectName; }
 
-        public bool GetPermanentFlag ()
-        {
-            lock (changeLock)
-            {
-                foreach (var c in changes)
-                {
-                    if (c.GetChangeType() == Enumeration.ChangeType.Effect_PermanentFlag_Set)
-                    {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        }
+        //public bool GetPermanentFlag ()
+        //{
+        //    lock (changeLock)
+        //    {
+        //        foreach (var c in changes)
+        //        {
+        //            if (c.GetChangeType() == Enumeration.ChangeType.Effect_PermanentFlag_Set)
+        //            {
+        //                return true;
+        //            }
+        //        }
+        //        return false;
+        //    }
+        //}
 
 
 
-        public Effect (EffectHandlers.BaseEffectHandler effectHandler = null, List<Change> changes = null)
+        public Effect (List<Change> changes = null)
         {
             SetObjName("Effect (default)");
             changeLock = new object();
-            this.effectHandler = effectHandler;
             this.changes = changes ?? new List<Change>();
             this.effectName = defaultEffectName;
             this.changeDestinationToChanges = new Dictionary<Enumeration.ChangeDestination, List<Change>>();
@@ -202,21 +201,66 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
         {
             lock (changeLock)
             {
+                //bool setsPermanentFlag = cl.Any(cus => cus.GetChangeType() 
+                //    == Enumeration.ChangeType.Effect_PermanentFlag_Set);
+
+                //if ((!GetPermanentFlag()) && setsPermanentFlag)
+                //{
+
+                //}
                 changes.AddRange(cl);
-                if (effectHandler != null) { effectHandler.AddToTotalChanges(cl); }
+                DateTime subDate;
+                if (effectHandler != null)
+                {
+                    if (effectHandler.TryGetSubscriptionDate(this, out subDate))
+                    {
+                        effectHandler.AddToTotalChanges(cl, subDate);
+                    }
+                    else
+                    {
+                        MakeLogError("Effect was not properly subscribed in EffectHandler!");
+                    }
+                }
             }
         }
 
-        public int AddChange (Change change)
+        public int AddChange (Change c)
         {
             int index = -1;
             lock (changeLock)
             {
-                changes.Add(change);
+                changes.Add(c);
                 index = changes.Count;
-                if (effectHandler != null) { effectHandler.AddToTotalChanges(change); }
+                DateTime subDate;
+                if (effectHandler != null)
+                {
+                    if (effectHandler.TryGetSubscriptionDate(this, out subDate))
+                    {
+                        effectHandler.AddToTotalChanges(c, subDate);
+                    }
+                    else
+                    {
+                        MakeLogError("Effect was not properly subscribed in EffectHandler!");
+                    }
+                }
             }
             return index;
+        }
+
+        // remove all Changes vom this Effect
+        // (can be used to reset the Changes, rearrange them, etc.)
+        public int ClearChanges ()
+        {
+            int amount;
+
+            lock (changeLock)
+            {
+                amount = changes.Count;
+                if (effectHandler != null) { effectHandler.RemoveFromTotalChanges(changes); }
+                changes.Clear();
+            }
+
+            return amount;
         }
 
         //public int MergeChange (Change change)

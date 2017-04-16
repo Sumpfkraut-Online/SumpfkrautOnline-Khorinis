@@ -44,8 +44,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
                 typeof(string),         // parent's globalID
             }, null));
 
-            AddOrChange(new ChangeInitInfo(ChangeType.Effect_PermanentFlag_Set, new List<Type>()
-            { }, null));
+            //AddOrChange(new ChangeInitInfo(ChangeType.Effect_PermanentFlag_Set, new List<Type>()
+            //{ }, null));
         }
 
     }

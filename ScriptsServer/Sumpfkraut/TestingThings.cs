@@ -313,6 +313,9 @@ namespace GUC.Scripts.Sumpfkraut
             //Log.Logger.Log(Utilities.Geometry.InGeometry.CalcWindingNumber2D(p1, poly1));
 
 
+            //var dt1 = DateTime.Now;
+            //var dt2 = DateTime.Now;
+            //Logger.Log(dt1.Ticks + " <-> " + dt2.Ticks);
 
 
             

@@ -16,6 +16,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 
 
 
+        protected object totalChangeLock;
+
         protected BaseEffectHandler.CalculateTotalChange calcFunction;
         public BaseEffectHandler.CalculateTotalChange GetCalcFunction ()
         {
@@ -39,6 +41,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
         protected List<Change> components;
         public List<Change> Components { get { return components; } }
 
+        protected List<DateTime> subscriptionDates;
+
         protected Change total;
         public Change GetTotal ()
         {
@@ -53,8 +57,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
                 this.lastTotalUpdate = DateTime.Now;
             }
         }
-
-        protected object totalChangeLock;
 
         // time of last recalculation / setting of the total change 
         protected DateTime lastTotalUpdate;
@@ -76,23 +78,38 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
         public TotalChange ()
         {
             SetObjName("TotalChange (default)");
-            components = new List<Change>();
             totalChangeLock = new object();
+            components = new List<Change>();
+            subscriptionDates = new List<DateTime>();
             lastComponentUpdate = DateTime.Now;
             lastTotalUpdate = DateTime.Now;
         }
 
 
 
-        public void AddChange (Change change)
+        public void AddChange (Change change, DateTime subDate)
         {
             lock (totalChangeLock)
             {
-                if (components.Contains(change)) { return; }
-                components.Add(change);
+                var index = 0;
+                for (int i = subscriptionDates.Count - 1; i > -1; i--)
+                {
+                    if (subscriptionDates[i] < subDate) { index = i; }
+                }
+                components.Insert(index, change);
                 lastComponentUpdate = DateTime.Now;
             }
         }
+
+        //public void AddChange (Change change)
+        //{
+        //    lock (totalChangeLock)
+        //    {
+        //        if (components.Contains(change)) { return; }
+        //        components.Add(change);
+        //        lastComponentUpdate = DateTime.Now;
+        //    }
+        //}
 
         public void RemoveChange (Change change)
         {
@@ -101,6 +118,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
                 int index = components.IndexOf(change);
                 if (index < 0) { return; }
                 components.RemoveAt(index);
+                subscriptionDates.RemoveAt(index);
                 lastComponentUpdate = DateTime.Now;
             }
         }

@@ -15,7 +15,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration
         Effect_GlobalID_Set,                // name / id of an effect for global access
         Effect_Name_Set,                    // set the name of an effect
         Effect_Parent_Add,                  // add parent effect to inherit Changes from  (can only add global effects)
-        Effect_PermanentFlag_Set,           // flagged Effects are added to the permanent Effect at index 0 in EffectHandler-objects
+        //Effect_PermanentFlag_Set,           // flagged Effects are added to the permanent Effect at index 0 in EffectHandler-objects
 
         // often synchronized attributes
         Vob_CodeName_Set,                   // codename of the VobDef with no whitespace and underscore as seperator
