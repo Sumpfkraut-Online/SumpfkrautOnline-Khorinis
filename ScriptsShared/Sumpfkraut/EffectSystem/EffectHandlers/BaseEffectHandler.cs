@@ -140,10 +140,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             this.effectToSubDate = new Dictionary<Effect, DateTime>();
             this.destToTotalChange = new Dictionary<ChangeDestination, TotalChange>();
             this.destToEffects = new Dictionary<ChangeDestination, List<Effect>>();
-
-            //// always add first Effect which is used to merge in Effects permanently
-            //// (only their Changes are added to the permanent, 1st Effect)
-            //this.effects.Add(new Effect(this, null));
         }
 
 

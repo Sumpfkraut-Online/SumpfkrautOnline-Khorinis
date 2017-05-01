@@ -329,7 +329,6 @@ namespace GUC.Scripts.Sumpfkraut
             //var someList = new List<int> { };
             //someList.Insert(0, 999);
             //foreach (var e in someList) { Logger.Log(e); }
-
             
 
             //ChangeInitInfo info;

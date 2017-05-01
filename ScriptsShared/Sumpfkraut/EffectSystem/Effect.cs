@@ -196,7 +196,12 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
 
                 // add dates of subscription of each Change on this Effect
                 var changeSubDates = new List<DateTime>(cl.Count);
-                ListUtil.Populate(changeSubDates, DateTime.Now);
+                var changeBaseSubDate = DateTime.Now;
+                ListUtil.Populate(changeSubDates, changeBaseSubDate);
+                for (int i = 0; i < changeSubDates.Count; i++)
+                {
+                    changeSubDates[i] = new DateTime(changeBaseSubDate.Ticks + i);
+                }
                 this.changeSubDates.AddRange(changeSubDates);
 
                 // use date when the Effect itself was added to it's EffectHandler
