@@ -1,4 +1,5 @@
 ﻿using GUC.Scripts.Sumpfkraut.EffectSystem.Changes;
+using GUC.Scripts.Sumpfkraut.Utilities;
 using GUC.Utilities;
 using System;
 using System.Collections.Generic;
@@ -37,7 +38,11 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
         }
 
         protected List<Change> changes;
-        public List<Change> GetChanges () { return changes; }
+        public List<Change> GetChanges () { lock (changeLock) { return changes; } }
+
+        // dates when changes were subscribed
+        protected List<DateTime> changeSubDates;
+        public List<DateTime> GetChangeSubDates (){ lock (changeLock) { return changeSubDates; } }
 
         protected Dictionary<Enumeration.ChangeDestination, List<Change>> changeDestinationToChanges;
 
@@ -93,21 +98,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
         protected string effectName;
         public string GetEffectName () { return effectName; }
         public void SetEffectName (string effectName) { this.effectName = effectName; }
-
-        //public bool GetPermanentFlag ()
-        //{
-        //    lock (changeLock)
-        //    {
-        //        foreach (var c in changes)
-        //        {
-        //            if (c.GetChangeType() == Enumeration.ChangeType.Effect_PermanentFlag_Set)
-        //            {
-        //                return true;
-        //            }
-        //        }
-        //        return false;
-        //    }
-        //}
 
 
 
@@ -201,20 +191,22 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
         {
             lock (changeLock)
             {
-                //bool setsPermanentFlag = cl.Any(cus => cus.GetChangeType() 
-                //    == Enumeration.ChangeType.Effect_PermanentFlag_Set);
-
-                //if ((!GetPermanentFlag()) && setsPermanentFlag)
-                //{
-
-                //}
+                // add all Changes
                 changes.AddRange(cl);
-                DateTime subDate;
+
+                // add dates of subscription of each Change on this Effect
+                var changeSubDates = new List<DateTime>(cl.Count);
+                ListUtil.Populate(changeSubDates, DateTime.Now);
+                this.changeSubDates.AddRange(changeSubDates);
+
+                // use date when the Effect itself was added to it's EffectHandler
+                // to inform the TotalChange(s)
+                DateTime effectSubDate;
                 if (effectHandler != null)
                 {
-                    if (effectHandler.TryGetSubscriptionDate(this, out subDate))
+                    if (effectHandler.TryGetEffectSubDate(this, out effectSubDate))
                     {
-                        effectHandler.AddToTotalChanges(cl, subDate);
+                        effectHandler.AddToTotalChanges(cl, effectSubDate, changeSubDates);
                     }
                     else
                     {
@@ -229,14 +221,15 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             int index = -1;
             lock (changeLock)
             {
+                var changeSubDate = DateTime.Now;
                 changes.Add(c);
                 index = changes.Count;
-                DateTime subDate;
+                DateTime effectSubDate;
                 if (effectHandler != null)
                 {
-                    if (effectHandler.TryGetSubscriptionDate(this, out subDate))
+                    if (effectHandler.TryGetEffectSubDate(this, out effectSubDate))
                     {
-                        effectHandler.AddToTotalChanges(c, subDate);
+                        effectHandler.AddToTotalChanges(c, effectSubDate, changeSubDate);
                     }
                     else
                     {
@@ -258,28 +251,11 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
                 amount = changes.Count;
                 if (effectHandler != null) { effectHandler.RemoveFromTotalChanges(changes); }
                 changes.Clear();
+                changeSubDates.Clear();
             }
 
             return amount;
         }
-
-        //public int MergeChange (Change change)
-        //{
-        //    int index = -1;
-        //    lock (changeLock)
-        //    {
-        //        // try find the last Change of the same ChangeType and merge the provided Change in
-        //        for (int i = changes.Count - 1; i > -1; i--)
-        //        {
-        //            XXXX
-        //            return i;
-        //        }
-        //        // if no Change of that ChangeType exists, simply add it
-        //        index = AddChange(change);
-        //    }
-
-        //    return index;
-        //}
 
         public int RemoveChange (Enumeration.ChangeType changeType)
         {
@@ -293,6 +269,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
                         if (effectHandler != null) { effectHandler.RemoveFromTotalChanges(changes[i]); }
                         index = i;
                         changes.RemoveAt(i);
+                        changeSubDates.RemoveAt(i);
                         break;
                     }
                 }

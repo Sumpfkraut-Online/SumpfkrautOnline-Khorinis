@@ -1,14 +1,21 @@
-﻿using System;
+﻿using GUC.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace GUC.Scripts.Sumpfkraut.Utilities
 {
-    public class StringUtil : ScriptObject
+    public class StringUtil : ExtendedObject
     {
 
-        new public static readonly string _staticName = "StringUtil (static)"; 
+        new public static readonly string _staticName = "StringUtil (s)";
+
+
+
+        protected StringUtil () { }
+             
+
 
         public static string Concatenate<T>(IEnumerable<T> source, string delimiter)
         {

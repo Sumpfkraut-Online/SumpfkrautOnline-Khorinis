@@ -16,6 +16,7 @@ using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 using GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration;
 using GUC.Scripts.Sumpfkraut.EffectSystem.Destinations;
 using System.Drawing;
+using GUC.Scripts.Sumpfkraut.Utilities;
 
 namespace GUC.Scripts.Sumpfkraut
 {
@@ -317,6 +318,17 @@ namespace GUC.Scripts.Sumpfkraut
             //var dt2 = DateTime.Now;
             //Logger.Log(dt1.Ticks + " <-> " + dt2.Ticks);
 
+            //var arr1 = new int[2];
+            //var arr2 = ArrayUtil.Populate(arr1, 555, true);
+            //Logger.Log(arr1[0] + " " + arr2[0] + " " + (arr1 == arr2));
+
+            //var list1 = new List<int> { 0, 0 };
+            //var list2 = ListUtil.Populate(list1, 555, true);
+            //Logger.Log(list1[0] + " " + list2[0] + " " + (list1 == list2));
+
+            //var someList = new List<int> { };
+            //someList.Insert(0, 999);
+            //foreach (var e in someList) { Logger.Log(e); }
 
             
 

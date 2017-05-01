@@ -69,12 +69,12 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             }
         }
 
-        protected Dictionary<Effect, DateTime> effectToSubscriptionDate;
-        public bool TryGetSubscriptionDate (Effect effect, out DateTime sd)
+        protected Dictionary<Effect, DateTime> effectToSubDate;
+        public bool TryGetEffectSubDate (Effect effect, out DateTime sd)
         {
             lock (effectLock)
             {
-                return effectToSubscriptionDate.TryGetValue(effect, out sd);
+                return effectToSubDate.TryGetValue(effect, out sd);
             }
         }
 
@@ -137,7 +137,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             }
 
             this.effects = effects ?? new List<Effect>();
-            this.effectToSubscriptionDate = new Dictionary<Effect, DateTime>();
+            this.effectToSubDate = new Dictionary<Effect, DateTime>();
             this.destToTotalChange = new Dictionary<ChangeDestination, TotalChange>();
             this.destToEffects = new Dictionary<ChangeDestination, List<Effect>>();
 
@@ -240,28 +240,16 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             List<ChangeDestination> destinations;
             lock (effectLock)
             {
-                //if (effect.GetPermanentFlag())
-                //{
-                //    // will be added to the permanent Effect at index 0
-                //    effects[0].AddChanges(effect.GetChanges());
-                //    index = 0;
-                //}
-                //else
-                //{
-                //    // will be added as new Effect at the end
-                //    if (effects.Contains(effect)) { return -1; }
-                //    effects.Add(effect);
-                //    index = effects.Count;
-                //}
-
                 // will be added as new Effect at the end
                 if (effects.Contains(effect)) { return -1; }
                 effects.Add(effect);
                 index = effects.Count;
+
+                // set subscription date for the new Effect
                 var subDate = DateTime.Now;
-                effectToSubscriptionDate.Add(effect, subDate);
+                effectToSubDate.Add(effect, subDate);
                 
-                AddToTotalChanges(effect.GetChanges(), subDate);
+                AddToTotalChanges(effect.GetChanges(), subDate, effect.GetChangeSubDates());
 
                 if (!recalcAndApplyTotals) { return index; }
                 if (!TryGetDestinations(effect, out destinations))
@@ -348,7 +336,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                     RemoveFromTotalChanges(effects[index].GetChanges());
                     effects[index].Dispose();
                     effects.RemoveAt(index);
-                    effectToSubscriptionDate.Remove(effect);
+                    effectToSubDate.Remove(effect);
                     return index;
                 }
 
@@ -371,19 +359,19 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
         // perhaps make this protected and adding a slower, less direct method for Effects to use ???
-        public void AddToTotalChanges (List<Change> changes, DateTime subDate)
+        public void AddToTotalChanges (List<Change> changes, DateTime effectSubDate, List<DateTime> changeSubDates)
         {
             lock (effectLock)
             {
                 for (int c = 0; c < changes.Count; c++)
                 {
-                    AddToTotalChanges(changes[c], subDate);
+                    AddToTotalChanges(changes[c], effectSubDate, changeSubDates[c]);
                 }
             }
         }
             
         // perhaps make this protected and adding a slower, less direct method for Effects to use ???
-        public void AddToTotalChanges (Change change, DateTime subDate)
+        public void AddToTotalChanges (Change change, DateTime effectSubDate, DateTime changeSubDate)
         {
             List<ChangeDestination> destinations;
             TotalChange tc;
@@ -397,7 +385,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                     if (destToTotalChange.TryGetValue(destinations[d], out tc))
                     {
                         // if a TotalChange already exists, simply add the Change to it
-                        tc.AddChange(change, subDate);
+                        tc.AddChange(change, effectSubDate, changeSubDate);
                     }
                     else
                     {
@@ -410,7 +398,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                             tc = new TotalChange();
                             tc.SetCalcFunction(calcTotal);
                             tc.SetApplyFunction(applyTotal);
-                            tc.AddChange(change, subDate);
+                            tc.AddChange(change, effectSubDate, changeSubDate);
                         }
                         else
                         {
