@@ -83,6 +83,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
             totalChangeLock = new object();
             components = new List<Change>();
             effectSubDates = new List<DateTime>();
+            changeSubDates = new List<DateTime>();
             lastComponentUpdate = DateTime.Now;
             lastTotalUpdate = DateTime.Now;
         }
@@ -121,6 +122,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
                 if (index < 0) { return; }
                 components.RemoveAt(index);
                 effectSubDates.RemoveAt(index);
+                changeSubDates.RemoveAt(index);
                 lastComponentUpdate = DateTime.Now;
             }
         }
