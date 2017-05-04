@@ -30,6 +30,16 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
         {
             // add all types of changes and their corresponding parameter types
 
+            AddOrChange(new ChangeInitInfo(ChangeType.Vob_CDDyn_Set, new List<Type>()
+            {
+                typeof(bool),                   // active or not
+            }, null));
+
+            AddOrChange(new ChangeInitInfo(ChangeType.Vob_CDStatic_Set, new List<Type>()
+            {
+                typeof(bool),                   // active or not
+            }, null));
+
             AddOrChange(new ChangeInitInfo(ChangeType.Vob_CodeName_Set, new List<Type>()
             {
                 typeof(string),                 // codeName

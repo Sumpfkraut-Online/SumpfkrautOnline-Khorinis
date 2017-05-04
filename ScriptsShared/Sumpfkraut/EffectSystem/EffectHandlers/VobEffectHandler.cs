@@ -22,8 +22,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
             RegisterDestination(Enumeration.ChangeDestination.Vob_CodeName);
             RegisterDestination(Enumeration.ChangeDestination.Vob_Name);
-            //RegisterDestination(Enumeration.ChangeDestination.Vob_VobDefType);
-            //RegisterDestination(Enumeration.ChangeDestination.Vob_VobInstType);
+            RegisterDestination(Enumeration.ChangeDestination.Vob_VobType);
 
             PrintStatic(typeof(VobEffectHandler), "Finished subscribing ChangeDestinations and EventHandler...");
         }

@@ -18,11 +18,11 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration
         //Effect_PermanentFlag_Set,           // flagged Effects are added to the permanent Effect at index 0 in EffectHandler-objects
 
         // often synchronized attributes
+        Vob_CDDyn_Set,                      // cdDyn of Gothic-engine (collision detection with dynamical environment)
+        Vob_CDStatic_Set,                   // cdStatic of Gothic-engine (collision detection with static world mesh)
         Vob_CodeName_Set,                   // codename of the VobDef with no whitespace and underscore as seperator
         Vob_Name_Set,                       // displayed name of a vob
         Vob_VobType_Set,                    // type of vob (replacing VobDefType and VobInstType?)
-        //Vob_VobDefType_Set,                 // type of vob-definition (see VobSystem.Enumeration.VobDefType)
-        //Vob_VobInstType_Set,                // type of vob-instance (see VobSystem.Enumeration.VobInstType)
 
         // event driven
         World_Clock_Time_Set,               // set the clock time to specific value

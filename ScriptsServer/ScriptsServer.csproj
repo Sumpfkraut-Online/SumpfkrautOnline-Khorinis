@@ -235,11 +235,8 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Definitions\VobDef.cs">
       <Link>Sumpfkraut\VobSystem\Definitions\VobDef.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Enumeration\VobDefType.cs">
-      <Link>Sumpfkraut\VobSystem\Enumeration\VobDefType.cs</Link>
-    </Compile>
-    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Enumeration\VobInstType.cs">
-      <Link>Sumpfkraut\VobSystem\Enumeration\VobInstType.cs</Link>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Enumeration\VobType.cs">
+      <Link>Sumpfkraut\VobSystem\Enumeration\VobType.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\BaseVobInst.cs">
       <Link>Sumpfkraut\VobSystem\Instances\BaseVobInst.cs</Link>

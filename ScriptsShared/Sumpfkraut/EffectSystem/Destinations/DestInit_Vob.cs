@@ -17,6 +17,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
         new public static readonly string _staticName = "DestInit_Vob (static)";
         new public static DestInit_Vob representative;
 
+        public static readonly bool Default_CDDyn = false;
+        public static readonly bool Default_CDStatic = false;
+
 
 
         // make sure, the destination makes itself known to its related changes
@@ -28,6 +31,14 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
         protected DestInit_Vob ()
         {
             SetObjName("DestInit_Vob");
+
+            AddOrChange(new DestInitInfo(ChangeDestination.Vob_CDDyn, 
+                new List<ChangeType>() { ChangeType.Vob_CDDyn_Set }, 
+                CTC_CDDyn, ATC_CDDyn));
+
+            AddOrChange(new DestInitInfo(ChangeDestination.Vob_CDStatic, 
+                new List<ChangeType>() { ChangeType.Vob_CDStatic_Set }, 
+                CTC_CDStatic, ATC_CDStatic));
 
             AddOrChange(new DestInitInfo(ChangeDestination.Vob_CodeName, 
                 new List<ChangeType>() { ChangeType.Vob_CodeName_Set }, 
@@ -43,6 +54,17 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
         }
 
 
+        
+        partial void pCTC_CDDyn (BaseEffectHandler eh, TotalChange tc);
+        public void CTC_CDDyn (BaseEffectHandler eh, TotalChange tc) { pCTC_CDDyn(eh, tc); }
+        partial void pATC_CDDyn (BaseEffectHandler eh, TotalChange tc);
+        public void ATC_CDDyn (BaseEffectHandler eh, TotalChange tc) { pATC_CDDyn(eh, tc); }
+
+        partial void pCTC_CDStatic (BaseEffectHandler eh, TotalChange tc);
+        public void CTC_CDStatic (BaseEffectHandler eh, TotalChange tc) { pCTC_CDStatic(eh, tc); }
+        partial void pATC_CDStatic (BaseEffectHandler eh, TotalChange tc);
+        public void ATC_CDStatic (BaseEffectHandler eh, TotalChange tc) { pATC_CDStatic(eh, tc); }
+
         partial void pCTC_CodeName (BaseEffectHandler eh, TotalChange tc);
         public void CTC_CodeName (BaseEffectHandler eh, TotalChange tc) { pCTC_CodeName(eh, tc); }
         partial void pATC_CodeName (BaseEffectHandler eh, TotalChange tc);
@@ -57,16 +79,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
         public void CTC_VobType (BaseEffectHandler eh, TotalChange tc) { pCTC_VobType(eh, tc); }
         partial void pATC_VobType (BaseEffectHandler eh, TotalChange tc);
         public void ATC_VobType (BaseEffectHandler eh, TotalChange tc) { pATC_VobType(eh, tc); }
-
-        //partial void pCTC_VobDefType (BaseEffectHandler eh, TotalChange tc);
-        //public void CTC_VobDefType (BaseEffectHandler eh, TotalChange tc) { pCTC_VobDefType(eh, tc); }
-        //partial void pATC_VobDefType (BaseEffectHandler eh, TotalChange tc);
-        //public void ATC_VobDefType (BaseEffectHandler eh, TotalChange tc) { pATC_VobDefType(eh, tc); }
-
-        //partial void pCTC_VobInstType (BaseEffectHandler eh, TotalChange tc);
-        //public void CTC_VobInstType (BaseEffectHandler eh, TotalChange tc) { pCTC_VobInstType(eh, tc); }
-        //partial void pATC_VobInstType (BaseEffectHandler eh, TotalChange tc);
-        //public void ATC_VobInstType (BaseEffectHandler eh, TotalChange tc) { pATC_VobInstType(eh, tc); }
 
     }
 

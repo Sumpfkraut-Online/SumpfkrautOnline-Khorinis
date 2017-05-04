@@ -18,11 +18,11 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration
         Effect_PermanentFlag,
 
         // often synchronized attributes
+        Vob_CDDyn,
+        Vob_CDStatic,
         Vob_CodeName,
         Vob_Name,
         Vob_VobType,
-        //Vob_VobDefType,
-        //Vob_VobInstType,
 
         // event driven
 
