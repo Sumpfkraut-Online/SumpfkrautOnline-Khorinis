@@ -2,18 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Enumeration
 {
 
-    public enum VobDefType : int
+    public enum VobType : int
     {
 
         Undefined,
-        VobDef,
-        ItemDef,
-        NPCDef,
-        MobDef,
+        Vob,
+        Item,
+        NPC,
+        Mob,
 
     }
 

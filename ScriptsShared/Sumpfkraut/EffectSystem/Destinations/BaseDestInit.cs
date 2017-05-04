@@ -35,19 +35,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 
 
 
-        public static bool TryGetDestInitInfo (ChangeDestination changeDest, out DestInitInfo info)
-        {
-            return changeDestinationToInfo.TryGetValue(changeDest, out info);
-        }
-
-        public static bool TryGetTotalChange (BaseEffectHandler effectHandler, ChangeDestination changeDest,
-            out TotalChange totalChange)
-        {
-            totalChange = null;
-            if (effectHandler.TryGetTotalChange(changeDest, out totalChange)) { return true; }
-            return false;
-        }
-
         protected void AddOrChange (DestInitInfo inputInfo)
         {
             DestInitInfo info;
@@ -69,6 +56,38 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
             {
                 
             }
+        }
+
+        public static bool TryGetDestInitInfo (ChangeDestination changeDest, out DestInitInfo info)
+        {
+            return changeDestinationToInfo.TryGetValue(changeDest, out info);
+        }
+
+        public static bool TryGetTotalChange (BaseEffectHandler effectHandler, ChangeDestination changeDest,
+            out TotalChange totalChange)
+        {
+            totalChange = null;
+            if (effectHandler.TryGetTotalChange(changeDest, out totalChange)) { return true; }
+            return false;
+        }
+
+
+
+
+        // make sure, that ChangeType was properly registered or show an error message if not
+        // while retrieving the ChangeInitInfo for the parameter types
+        public bool ValidateChangeInit (ChangeType changeType, out ChangeInitInfo info)
+        {
+            if (BaseChangeInit.TryGetChangeInitInfo(ChangeType.Vob_CodeName_Set, out info))
+            {
+                return true;
+            }
+            else
+            {
+                MakeLogError("Tried to calculate TotalChange with non-initialized ChangeType "
+                    + changeType);
+                return false;
+            }   
         }
 
     }

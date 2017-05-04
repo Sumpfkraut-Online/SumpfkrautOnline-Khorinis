@@ -20,8 +20,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration
         // often synchronized attributes
         Vob_CodeName,
         Vob_Name,
-        Vob_VobDefType,
-        Vob_VobInstType,
+        Vob_VobType,
+        //Vob_VobDefType,
+        //Vob_VobInstType,
 
         // event driven
 

@@ -37,13 +37,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
                 new List<ChangeType>() { ChangeType.Vob_Name_Set }, 
                 CTC_Name, ATC_Name));
 
-            AddOrChange(new DestInitInfo(ChangeDestination.Vob_VobDefType, 
-                new List<ChangeType>() { ChangeType.Vob_VobDefType_Set }, 
-                CTC_VobDefType, ATC_VobDefType));
-
-            AddOrChange(new DestInitInfo(ChangeDestination.Vob_VobInstType, 
-                new List<ChangeType>() { ChangeType.Vob_VobInstType_Set }, 
-                CTC_VobInstType, ATC_VobInstType));
+            AddOrChange(new DestInitInfo(ChangeDestination.Vob_VobType, 
+                new List<ChangeType>() { ChangeType.Vob_VobType_Set }, 
+                CTC_VobType, ATC_VobType));
         }
 
 
@@ -57,15 +53,20 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
         partial void pATC_Name (BaseEffectHandler eh, TotalChange tc);
         public void ATC_Name (BaseEffectHandler eh, TotalChange tc) { pATC_Name(eh, tc); }
 
-        partial void pCTC_VobDefType (BaseEffectHandler eh, TotalChange tc);
-        public void CTC_VobDefType (BaseEffectHandler eh, TotalChange tc) { pCTC_VobDefType(eh, tc); }
-        partial void pATC_VobDefType (BaseEffectHandler eh, TotalChange tc);
-        public void ATC_VobDefType (BaseEffectHandler eh, TotalChange tc) { pATC_VobDefType(eh, tc); }
+        partial void pCTC_VobType (BaseEffectHandler eh, TotalChange tc);
+        public void CTC_VobType (BaseEffectHandler eh, TotalChange tc) { pCTC_VobType(eh, tc); }
+        partial void pATC_VobType (BaseEffectHandler eh, TotalChange tc);
+        public void ATC_VobType (BaseEffectHandler eh, TotalChange tc) { pATC_VobType(eh, tc); }
 
-        partial void pCTC_VobInstType (BaseEffectHandler eh, TotalChange tc);
-        public void CTC_VobInstType (BaseEffectHandler eh, TotalChange tc) { pCTC_VobInstType(eh, tc); }
-        partial void pATC_VobInstType (BaseEffectHandler eh, TotalChange tc);
-        public void ATC_VobInstType (BaseEffectHandler eh, TotalChange tc) { pATC_VobInstType(eh, tc); }
+        //partial void pCTC_VobDefType (BaseEffectHandler eh, TotalChange tc);
+        //public void CTC_VobDefType (BaseEffectHandler eh, TotalChange tc) { pCTC_VobDefType(eh, tc); }
+        //partial void pATC_VobDefType (BaseEffectHandler eh, TotalChange tc);
+        //public void ATC_VobDefType (BaseEffectHandler eh, TotalChange tc) { pATC_VobDefType(eh, tc); }
+
+        //partial void pCTC_VobInstType (BaseEffectHandler eh, TotalChange tc);
+        //public void CTC_VobInstType (BaseEffectHandler eh, TotalChange tc) { pCTC_VobInstType(eh, tc); }
+        //partial void pATC_VobInstType (BaseEffectHandler eh, TotalChange tc);
+        //public void ATC_VobInstType (BaseEffectHandler eh, TotalChange tc) { pATC_VobInstType(eh, tc); }
 
     }
 

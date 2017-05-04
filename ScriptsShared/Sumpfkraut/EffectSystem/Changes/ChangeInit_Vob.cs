@@ -40,14 +40,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
                 typeof(string),                 // vob-name
             }, null));
 
-            AddOrChange(new ChangeInitInfo(ChangeType.Vob_VobDefType_Set, new List<Type>()
+            AddOrChange(new ChangeInitInfo(ChangeType.Vob_VobType_Set, new List<Type>()
             {
-                typeof(VobDefType),             // type of vob-definition
-            }, null));
-
-            AddOrChange(new ChangeInitInfo(ChangeType.Vob_VobInstType_Set, new List<Type>()
-            {
-                typeof(VobInstType),             // type of vob-instance
+                typeof(VobType),                // type of vob
             }, null));
         }
 

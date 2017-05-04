@@ -11,26 +11,21 @@ using System.Text;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 {
 
-    public partial class DestInit_Vob
+    public partial class DestInit_Vob : BaseDestInit
     {
 
         partial void pCTC_CodeName (BaseEffectHandler eh, TotalChange tc)
         {
             try
             {
-                Change finalChange;
-                ChangeInitInfo info;
-                if (!BaseChangeInit.TryGetChangeInitInfo(ChangeType.Vob_CodeName_Set, out info))
-                {
-                    MakeLogError("Tried to calculate TotalChange with non-initialized ChangeType "
-                        + ChangeType.Vob_CodeName_Set);
-                    return;
-                }
-
                 // stop here when there are no Changes to process
                 if (tc.Components.Count < 1) { return; }
-                // last codeName counts
-                finalChange = Change.Create(info, 
+
+                ChangeInitInfo info;
+                if (!ValidateChangeInit(ChangeType.Vob_CodeName_Set, out info)) { return; }
+
+                // last entry counts
+                var finalChange = Change.Create(info, 
                     new List<object>() { tc.Components[tc.Components.Count - 1] });
                 tc.SetTotal(finalChange);
             }
@@ -44,13 +39,13 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
                 var linkedObj = eh.GetLinkedObject();
                 if      (linkedObj is VobDef)
                 {
-                    linkedObj = linkedObj as VobDef;
-                    // set the codeName
+                    var vobDef = linkedObj as VobDef;
+                    vobDef.CodeName = (string) tc.GetTotal().GetParameters()[0];
                 }
                 else if (linkedObj is VobInst)
                 {
-                    linkedObj = linkedObj as VobInst;
-                    // set the codeName
+                    var vobInst = linkedObj as VobInst;
+                    // ??? TO DO if codeName should be changable for a VobInst
                 }
             }
             catch (Exception ex) { MakeLogError("Error while applying TotalChange via ATC_CodeName: " + ex); }
@@ -58,81 +53,64 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 
         partial void pCTC_Name (BaseEffectHandler eh, TotalChange tc)
         {
-            // TO DO
+            try
+            {
+                // stop here when there are no Changes to process
+                if (tc.Components.Count < 1) { return; }
+
+                ChangeInitInfo info;
+                if (!ValidateChangeInit(ChangeType.Vob_Name_Set, out info)) { return; }
+
+                // last entry counts
+                var finalChange = Change.Create(info, 
+                    new List<object>() { tc.Components[tc.Components.Count - 1] });
+                tc.SetTotal(finalChange);
+            }
+            catch (Exception ex) { MakeLogError("Error while caclulating TotalChange via pCTC_Name: " + ex); }
         }
 
         partial void pATC_Name (BaseEffectHandler eh, TotalChange tc)
         {
-            // TO DO
+            try
+            {
+                var linkedObj = eh.GetLinkedObject();
+                if      (linkedObj is VobDef)
+                {
+                    var vobDef = linkedObj as VobDef;
+                    // TO DO when there is the possiblity to change the name in VobSystem
+                }
+                else if (linkedObj is VobInst)
+                {
+                    var vobInst = linkedObj as VobInst;
+                    // TO DO when there is the possiblity to change the name in VobSystem
+                }
+            }
+            catch (Exception ex) { MakeLogError("Error while applying TotalChange via pATC_Name: " + ex); }
         }
 
-        partial void pCTC_VobDefType (BaseEffectHandler eh, TotalChange tc)
+        partial void pCTC_VobType (BaseEffectHandler eh, TotalChange tc)
         {
             try
             {
-                Change finalChange;
-                ChangeInitInfo info;
-                if (!BaseChangeInit.TryGetChangeInitInfo(ChangeType.Vob_VobDefType_Set, out info))
-                {
-                    MakeLogError("Tried to calculate TotalChange via CTC_VobDefType with non-initialized ChangeType "
-                        + ChangeType.Vob_VobDefType_Set);
-                    return;
-                }
-
-                // last component counts as long as the linkedObject still isn't set
-                // (changing it afterwards is not possible)
-                object linkedObject = eh.GetLinkedObject();
-                if (linkedObject != null) { return; }
-
                 // stop here when there are no Changes to process
                 if (tc.Components.Count < 1) { return; }
-                // last codeName counts
-                finalChange = Change.Create(info,
+
+                ChangeInitInfo info;
+                if (!ValidateChangeInit(ChangeType.Vob_VobType_Set, out info)) { return; }
+
+                // TO DO: only change VobType if the linked object is actually able to !!!
+                // last entry counts
+                var finalChange = Change.Create(info, 
                     new List<object>() { tc.Components[tc.Components.Count - 1] });
                 tc.SetTotal(finalChange);
             }
-            catch (Exception ex) { MakeLogError("Error while caclulating TotalChange via CTC_VobDefType: " + ex); }
+            catch (Exception ex) { MakeLogError("Error while caclulating TotalChange via pCTC_VobType: " + ex); }
         }
 
-        partial void pATC_VobDefType (BaseEffectHandler eh, TotalChange tc)
+        partial void pATC_VobType (BaseEffectHandler eh, TotalChange tc)
         {
-            // no application necessary because VobDefType is only used 
-            // when creating a new instance of VobDef, not afterwards
-
-        }
-
-        partial void pCTC_VobInstType (BaseEffectHandler eh, TotalChange tc)
-        {
-            try
-            {
-                Change finalChange;
-                ChangeInitInfo info;
-                if (!BaseChangeInit.TryGetChangeInitInfo(ChangeType.Vob_VobInstType_Set, out info))
-                {
-                    MakeLogError("Tried to calculate TotalChange via CTC_VobInstType with non-initialized ChangeType "
-                        + ChangeType.Vob_VobInstType_Set);
-                    return;
-                }
-
-                // last component counts as long as the linkedObject still isn't set
-                // (changing it afterwards is not possible)
-                object linkedObject = eh.GetLinkedObject();
-                if (linkedObject != null) { return; }
-
-                // stop here when there are no Changes to process
-                if (tc.Components.Count < 1) { return; }
-                // last codeName counts
-                finalChange = Change.Create(info, 
-                    new List<object>() { tc.Components[tc.Components.Count - 1] });
-                tc.SetTotal(finalChange);
-            }
-            catch (Exception ex) { MakeLogError("Error while caclulating TotalChange via CTC_VobInstType: " + ex); }
-        }
-
-        partial void pATC_VobInstType (BaseEffectHandler eh, TotalChange tc)
-        {
-            // no application necessary because VobInstType is only used 
-            // when creating a new instance of VobInst, not afterwards
+            // TO DO: switch VobType of linekd object if possible 
+            //        (or simply refrain from changes after creation completely)
         }
 
     }

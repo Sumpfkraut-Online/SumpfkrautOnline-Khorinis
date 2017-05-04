@@ -8,7 +8,7 @@ using System.Text;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 {
 
-    public partial class DestInit_Effect
+    public partial class DestInit_Effect : BaseDestInit
     {
         
         partial void pCTC_GlobalID (BaseEffectHandler eh, TotalChange tc)
