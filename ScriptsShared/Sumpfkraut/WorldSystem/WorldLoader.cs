@@ -10,7 +10,7 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
     public partial class WorldLoader : ExtendedObject
     {
 
-        new public static readonly string _staticName = "WorldLoader (static)";
+        new public static readonly string _staticName = "WorldLoader (s)";
 
 
 

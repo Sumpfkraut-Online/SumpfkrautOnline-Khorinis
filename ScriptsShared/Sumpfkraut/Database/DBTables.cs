@@ -27,7 +27,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
 
 
 
-        new public static readonly string _staticName = "DBTables (static)";
+        new public static readonly string _staticName = "DBTables (s)";
         new protected string _objName = "DBTables (default)";
         
 

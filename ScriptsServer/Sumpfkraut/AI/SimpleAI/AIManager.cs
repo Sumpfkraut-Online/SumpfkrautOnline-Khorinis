@@ -11,7 +11,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
     public class AIManager : AbstractRunnable
     {
 
-        new public static readonly string _staticName = "AIManager (static)";
+        new public static readonly string _staticName = "AIManager (s)";
 
         public static List<AIManager> aiManagers = new List<AIManager>();
         public static List<AIManager> aiManagers_SingleThreaded = new List<AIManager>();
@@ -146,7 +146,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
         public AIManager (bool useSingleThread, bool startOnCreate, TimeSpan timeout)
             : base(false, timeout, false)
         {
-            SetObjName("AIManager (default)");
+            SetObjName("AIManager");
             runLock = new object();
             aiAgents = new List<AIAgent>();
             remainingRanges = new List<Types.Vec2i> { new Types.Vec2i(-1, -1) };

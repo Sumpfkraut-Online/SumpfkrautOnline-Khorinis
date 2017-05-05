@@ -12,7 +12,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
     public partial class Change : ExtendedObject
     {
 
-        new public static readonly string _staticName = "Change (static)";
+        new public static readonly string _staticName = "Change (s)";
 
         // effect to which this change belongs
         protected Effect effect;

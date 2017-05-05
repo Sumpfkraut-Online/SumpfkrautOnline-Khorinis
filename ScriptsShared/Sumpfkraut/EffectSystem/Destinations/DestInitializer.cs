@@ -20,6 +20,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 
             MakeLogStatic(t, "Initializing... " + DestInit_Effect._staticName);
             MakeLogStatic(t, "Initializing... " + DestInit_Vob._staticName);
+            MakeLogStatic(t, "Initializing... " + DestInit_NamedVob._staticName);
+            MakeLogStatic(t, "Initializing... " + DestInit_NPC._staticName);
             // ...
         }
 

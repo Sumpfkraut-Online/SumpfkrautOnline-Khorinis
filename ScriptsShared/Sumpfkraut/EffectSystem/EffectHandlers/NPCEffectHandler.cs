@@ -12,7 +12,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
     public partial class NPCEffectHandler : VobEffectHandler
     {
 
-        new public static readonly string _staticName = "NPCEffectHandler (static)";
+        new public static readonly string _staticName = "NPCEffectHandler (s)";
 
 
 

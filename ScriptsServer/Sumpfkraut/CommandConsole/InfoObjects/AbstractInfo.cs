@@ -8,7 +8,7 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole.InfoObjects
     public class AbstractInfo : GUC.Utilities.ExtendedObject
     {
 
-        new public static readonly String _staticName = "AbstractInfo (static)";
+        new public static readonly String _staticName = "AbstractInfo (s)";
 
 
 

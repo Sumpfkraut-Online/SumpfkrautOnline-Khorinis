@@ -9,13 +9,14 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
     public partial class VobDef : BaseVobDef, VobInstance.IScriptVobInstance
     {
-        new public static readonly String _staticName = "VobDef (static)";
+        new public static readonly string _staticName = "VobDef (s)";
 
         #region Constructors
 
         partial void pConstruct();
         public VobDef()
         {
+            SetObjName("VobDef");
             effectHandler = effectHandler ?? new EffectSystem.EffectHandlers.VobEffectHandler(null, this);
             pConstruct();
         }

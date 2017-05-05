@@ -11,7 +11,7 @@ namespace GUC.Utilities
 
         #region attributes
 
-        public static readonly String _staticName = "ExtendedObject (static)";
+        public static readonly String _staticName = "ExtendedObject (s)";
 
         protected String _objName;
         public virtual String GetObjName ()
@@ -31,7 +31,7 @@ namespace GUC.Utilities
 
         public ExtendedObject ()
         {
-            SetObjName("ExtendedObject (default)");
+            SetObjName("ExtendedObject");
         }
 
         #endregion

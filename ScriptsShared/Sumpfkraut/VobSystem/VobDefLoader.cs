@@ -323,26 +323,29 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
                 }
             }
 
-            VobDefType vobDefType;
-            if (!TryFindVobDefType(effectByID, idAndEffectIDs.EffectIDs, out vobDefType))
+            VobType vobType;
+            if (!TryFindVobDefType(effectByID, idAndEffectIDs.EffectIDs, out vobType))
             {
                 MakeLogError("Couldn't find VobDefType for VobDef of id: " + idAndEffectIDs.ID);
             }
 
             VobDef vobDef = null;
-            switch (vobDefType)
+            switch (vobType)
             {
-                case VobDefType.VobDef:
+                case VobType.Vob:
                     vobDef = new VobDef();
                     break;
-                case VobDefType.ItemDef:
+                case VobType.NamedVob:
+                    vobDef = new NamedVobDef();
+                    break;
+                case VobType.Item:
                     vobDef = new ItemDef();
                     break;
-                case VobDefType.NPCDef:
+                case VobType.NPC:
                     vobDef = new NPCDef();
                     break;
                 default:
-                    MakeLogError("The VobDefType " + vobDefType + " is not supported by the loading process!");
+                    MakeLogError("The VobType " + vobType + " is not supported by the loading process!");
                     return false;
             }
 
@@ -439,40 +442,40 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
             return true;
         }
 
-        protected bool TryFindVobDefType (Dictionary<int, Effect> effectByID, out VobDefType vobDefType)
+        protected bool TryFindVobType (Dictionary<int, Effect> effectByID, out VobType vobType)
         {
-            vobDefType = VobDefType.Undefined;
+            vobType = VobType.Undefined;
             if (effectByID == null)
             {
-                MakeLogWarning("Provided null-value for effectByID in TryFindVobDefType!");
+                MakeLogWarning("Provided null-value for effectByID in TryFindVobType!");
                 return false;
             }
-            return TryFindVobDefType(effectByID, effectByID.Keys.ToList(), out vobDefType);
+            return TryFindVobDefType(effectByID, effectByID.Keys.ToList(), out vobType);
         }
         
         protected bool TryFindVobDefType (Dictionary<int, Effect> effectByID, List<int> effectIDs, 
-            out VobDefType vobDefType)
+            out VobType vobType)
         {
             // checks, checks, checks
-            vobDefType = VobDefType.Undefined;
+            vobType = VobType.Undefined;
             if (effectByID == null)
             {
-                MakeLogWarning("Provided null-value for effectByID in TryFindVobDefType!");
+                MakeLogWarning("Provided null-value for effectByID in TryFindVobType!");
                 return false;
             }
             if (effectByID.Count < 1)
             {
-                MakeLogWarning("Provided empty effectByID in TryFindVobDefType!");
+                MakeLogWarning("Provided empty effectByID in TryFindVobType!");
                 return false;
             }
             if (effectIDs == null)
             {
-                MakeLogWarning("Provided null-value for effectIDs in TryFindVobDefType!");
+                MakeLogWarning("Provided null-value for effectIDs in TryFindVobType!");
                 return false;
             }
             if (effectIDs.Count < 1)
             {
-                MakeLogWarning("Provided empty effectIDs in TryFindVobDefType!");
+                MakeLogWarning("Provided empty effectIDs in TryFindVobType!");
                 return false;
             }
 
@@ -482,22 +485,22 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
             {
                 effectID = effectIDs[e];
                 if (!effectByID.TryGetValue(effectID, out effect)) { continue; }
-                if (TryFindVobDefType(effect, out vobDefType)) { break; }
+                if (TryFindVobDefType(effect, out vobType)) { break; }
             }
 
             return true;
         }
 
-        protected bool TryFindVobDefType (Effect effect, out VobDefType vobDefType)
+        protected bool TryFindVobDefType (Effect effect, out VobType vobType)
         {
-            vobDefType = VobDefType.Undefined;
+            vobType = VobType.Undefined;
             foreach (var change in effect.GetChanges())
             {
-                if (change.GetChangeType() == ChangeType.Vob_VobDefType_Set)
+                if (change.GetChangeType() == ChangeType.Vob_VobType_Set)
                 {
                     try
                     {
-                        vobDefType = (VobDefType) change.GetParameters()[0];
+                        vobType = (VobType) change.GetParameters()[0];
                         break;
                     }
                     catch (Exception ex)

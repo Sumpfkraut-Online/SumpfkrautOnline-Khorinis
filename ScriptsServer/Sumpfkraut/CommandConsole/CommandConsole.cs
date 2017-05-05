@@ -11,7 +11,7 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
     public class CommandConsole : GUC.Utilities.ExtendedObject
     {
 
-        new public static readonly string _staticName = "CommandConsole (static)";
+        new public static readonly string _staticName = "CommandConsole (s)";
 
         //protected Process consoleProcess;
         //protected bool canExecute = false;
@@ -43,7 +43,7 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
 
         public CommandConsole ()
         {
-            SetObjName("CommandConsole (default)");
+            SetObjName("CommandConsole");
             SubscribeOnConsole();
         }
 

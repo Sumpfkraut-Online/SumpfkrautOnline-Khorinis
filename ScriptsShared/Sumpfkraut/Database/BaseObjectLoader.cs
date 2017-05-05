@@ -19,7 +19,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
     public abstract partial class BaseObjectLoader : GUC.Utilities.ExtendedObject
     {
 
-        new public static readonly string _staticName = "BaseObjectLoader (static)";
+        new public static readonly string _staticName = "BaseObjectLoader (s)";
 
 
 

@@ -12,6 +12,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Enumeration
 
         Undefined,
         Vob,
+        NamedVob,
         Item,
         NPC,
         Mob,

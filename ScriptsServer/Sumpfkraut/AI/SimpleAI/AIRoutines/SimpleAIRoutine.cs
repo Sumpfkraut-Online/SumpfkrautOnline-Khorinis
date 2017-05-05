@@ -9,13 +9,13 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIRoutines
     public class SimpleAIRoutine : BaseAIRoutine
     {
 
-        new public static readonly string _staticName = "SimpleAIRoutine (static)";
+        new public static readonly string _staticName = "SimpleAIRoutine (s)";
 
 
 
         public SimpleAIRoutine ()
         {
-            SetObjName("SimpleAIRoutine (default)");
+            SetObjName("SimpleAIRoutine");
         }
 
 

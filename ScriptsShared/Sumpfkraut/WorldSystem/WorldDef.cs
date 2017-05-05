@@ -11,7 +11,7 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
     public partial class WorldDef : ExtendedObject
     {
 
-        new public static readonly string _staticName = "WorldDef (static)";
+        new public static readonly string _staticName = "WorldDef (s)";
 
         protected WorldLoader loader = null;
         public WorldLoader Loader { get { return this.loader; } }

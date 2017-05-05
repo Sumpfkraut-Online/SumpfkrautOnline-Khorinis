@@ -11,7 +11,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
     public abstract class BaseAIPersonality : ExtendedObject
     {
 
-        new public static readonly string _staticName = "BaseAIPersonality (static) ";
+        new public static readonly string _staticName = "BaseAIPersonality (s) ";
 
 
 
@@ -27,7 +27,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
         public BaseAIPersonality ()
         {
-            SetObjName("BaseAIPersonality (default)");
+            SetObjName("BaseAIPersonality");
         }
 
 

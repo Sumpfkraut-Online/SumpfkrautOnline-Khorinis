@@ -10,7 +10,7 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole.InfoObjects
     public class VobInfo : GUC.Utilities.ExtendedObject
     {
 
-        new public static readonly string _staticName = "VobInfo (static)";
+        new public static readonly string _staticName = "VobInfo (s)";
 
 
 

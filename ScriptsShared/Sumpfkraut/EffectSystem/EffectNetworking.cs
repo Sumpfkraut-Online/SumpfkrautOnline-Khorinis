@@ -16,7 +16,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
     public class EffectNetworking : ExtendedObject
     {
 
-        new public static readonly string _staticName = "EffectNetworking (static)";
+        new public static readonly string _staticName = "EffectNetworking (s)";
 
         public delegate void WriteObject (PacketWriter pw, object obj);
         public delegate object ReadObject (PacketReader pr);

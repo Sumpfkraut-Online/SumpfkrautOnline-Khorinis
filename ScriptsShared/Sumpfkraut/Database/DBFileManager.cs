@@ -12,7 +12,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
     public partial class DBFileManager : ExtendedObject
     {
 
-        new public static readonly string _staticName = "DBFileHandler (static)";
+        new public static readonly string _staticName = "DBFileHandler (s)";
 
 
 

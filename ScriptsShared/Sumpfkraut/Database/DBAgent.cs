@@ -9,7 +9,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
     public partial class DBAgent : GUC.Utilities.Threading.AbstractRunnable
     {
 
-        new public static readonly string _staticName = "DBAgent (static)";
+        new public static readonly string _staticName = "DBAgent (s)";
 
         protected bool useAsyncMode;
         bool running;
@@ -96,7 +96,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
         public DBAgent(string dataSource, List<string> commandQueue, bool startOnCreate, bool useAsyncMode = true)
             : base(false, new TimeSpan(0, 0, 0), true)
         {
-            SetObjName("AbstractRunnable (default)");
+            SetObjName("AbstractRunnable");
             this.dataSource = dataSource;
             this.commandQueue = commandQueue;
             this.useAsyncMode = useAsyncMode;

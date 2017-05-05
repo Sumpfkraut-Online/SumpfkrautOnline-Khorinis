@@ -11,7 +11,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
     public partial class WorldEffectHandler : BaseEffectHandler
     {
 
-        new public static readonly string _staticName = "WorldEffectHandler (static)";
+        new public static readonly string _staticName = "WorldEffectHandler (s)";
 
 
 

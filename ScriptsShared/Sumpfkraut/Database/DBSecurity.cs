@@ -9,7 +9,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
     public partial class DBSecurity : GUC.Utilities.ExtendedObject
     {
 
-        new public static readonly String _staticName = "DBSecurity (static)";
+        new public static readonly String _staticName = "DBSecurity (s)";
         new protected String _objName = "DBSecurity (default)";
 
 

@@ -17,7 +17,7 @@ namespace GUC.Scripts.Sumpfkraut.AI
     public class TestingAI : ExtendedObject
     {
 
-        new public static readonly string _staticName = "TestingAI (static)";
+        new public static readonly string _staticName = "TestingAI (s)";
 
 
 

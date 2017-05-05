@@ -12,7 +12,7 @@ namespace GUC.Utilities.FileSystem
     public class FileSystemManager : Threading.AbstractRunnable
     {
 
-        new public static readonly string _staticName = "FileSystemManager (static)";
+        new public static readonly string _staticName = "FileSystemManager (s)";
 
         public static List<FileSystemManager> managerList = new List<FileSystemManager>();
 
@@ -83,7 +83,7 @@ namespace GUC.Utilities.FileSystem
         public FileSystemManager (string root, bool startOnCreate, TimeSpan timeout, bool runOnce)
             : base(startOnCreate, timeout, runOnce)
         {
-            SetObjName("FileSystemManager (default)");
+            SetObjName("FileSystemManager");
             this.root = root;
             this.protocolQueue = new List<FileSystemProtocol>();
             this.protocolQueueLock = new object();

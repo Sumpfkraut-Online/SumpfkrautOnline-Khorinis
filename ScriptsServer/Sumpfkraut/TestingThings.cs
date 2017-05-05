@@ -23,7 +23,7 @@ namespace GUC.Scripts.Sumpfkraut
     public class TestingThings : ExtendedObject
     {
 
-        new public static readonly string _staticName = "TestingThings (static)";
+        new public static readonly string _staticName = "TestingThings (s)";
 
         
 

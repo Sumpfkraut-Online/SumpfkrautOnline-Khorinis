@@ -1,8 +1,6 @@
 ﻿using GUC.Scripts.Sumpfkraut.EffectSystem.Changes;
 using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 using GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration;
-using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
-using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +12,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
     public partial class DestInit_Vob : BaseDestInit
     {
 
-        new public static readonly string _staticName = "DestInit_Vob (static)";
+        new public static readonly string _staticName = "DestInit_Vob (s)";
         new public static DestInit_Vob representative;
 
         public static readonly bool Default_CDDyn = false;
@@ -43,10 +41,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
             AddOrChange(new DestInitInfo(ChangeDestination.Vob_CodeName, 
                 new List<ChangeType>() { ChangeType.Vob_CodeName_Set }, 
                 CTC_CodeName, ATC_CodeName));
-
-            AddOrChange(new DestInitInfo(ChangeDestination.Vob_Name, 
-                new List<ChangeType>() { ChangeType.Vob_Name_Set }, 
-                CTC_Name, ATC_Name));
 
             AddOrChange(new DestInitInfo(ChangeDestination.Vob_VobType, 
                 new List<ChangeType>() { ChangeType.Vob_VobType_Set }, 

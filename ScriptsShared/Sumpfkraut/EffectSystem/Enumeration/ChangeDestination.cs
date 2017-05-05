@@ -11,20 +11,25 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration
         Undefined,
         
         // changes influencing their own effect-container
-        //Effect_Child,
         Effect_GlobalID,
         Effect_Name,
         Effect_Parent,
-        Effect_PermanentFlag,
 
         // often synchronized attributes
         Vob_CDDyn,
         Vob_CDStatic,
         Vob_CodeName,
-        Vob_Name,
         Vob_VobType,
 
+        NamedVob_Name,
+
+        NPC_BodyMesh,
+        NPC_BodyText,
+        NPC_HeadMesh,
+        NPC_HeadText,
+
         // event driven
+        World_Clock,
 
         // crafting
     }

@@ -10,7 +10,7 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
     public partial class WorldInst : ExtendedObject, WorldObjects.World.IScriptWorld
     {
 
-        new public static readonly string _staticName = "WorldInst (static)";
+        new public static readonly string _staticName = "WorldInst (s)";
 
         WorldObjects.World baseWorld;
         public WorldObjects.World BaseWorld { get { return baseWorld; } }

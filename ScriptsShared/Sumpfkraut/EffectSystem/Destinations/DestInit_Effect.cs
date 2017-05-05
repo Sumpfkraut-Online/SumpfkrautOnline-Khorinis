@@ -12,7 +12,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
     public partial class DestInit_Effect : BaseDestInit
     {
 
-        new public static readonly string _staticName = "DestInit_Effect (static)";
+        new public static readonly string _staticName = "DestInit_Effect (s)";
         new public static DestInit_Effect representative;
 
 

@@ -8,7 +8,7 @@ namespace GUC.Scripts.Sumpfkraut.Database.DBQuerying
     public abstract partial class AbstractDBQuery : GUC.Utilities.ExtendedObject, IDBQuery
     {
 
-        new public static readonly String _staticName = "AbstractDBQuery (static)";
+        new public static readonly String _staticName = "AbstractDBQuery (s)";
 
         protected string dataSource = null;
         public string DataSource { get { return dataSource; } }
@@ -27,7 +27,7 @@ namespace GUC.Scripts.Sumpfkraut.Database.DBQuerying
 
         public AbstractDBQuery (string dataSource, string sqlCommand, DBReaderMode dbReaderMode)
         {
-            SetObjName("AbstractDBQuery (default)");
+            SetObjName("AbstractDBQuery");
             this.dataSource = dataSource;
             this.sqlCommand = sqlCommand;
             this.dbReaderMode = dbReaderMode;

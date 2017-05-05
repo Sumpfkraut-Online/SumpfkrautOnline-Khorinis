@@ -13,7 +13,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
     public class AIAgent : ExtendedObject
     {
 
-        new public static readonly string _staticName = "AIAgent (static)";
+        new public static readonly string _staticName = "AIAgent (s)";
 
 
 
@@ -30,7 +30,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
 
         public AIAgent (List<VobInst> aiClients, BaseAIPersonality aiPersonality = null)
         {
-            SetObjName("AIAgent (default)");
+            SetObjName("AIAgent");
             this.attributeLock = new object();
             this.aiClients = aiClients ?? new List<VobInst>();
             if (aiPersonality == null)

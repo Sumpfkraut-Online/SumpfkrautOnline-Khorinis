@@ -9,7 +9,7 @@ namespace GUC.Utilities.Threading
     public class Runnable : AbstractRunnable
     {
 
-        new public static readonly string _staticName = "Runnable (static)"; 
+        new public static readonly string _staticName = "Runnable (s)"; 
 
         public delegate void InitEventHandler (Runnable sender);
         public InitEventHandler OnInit;
@@ -24,7 +24,7 @@ namespace GUC.Utilities.Threading
         public Runnable (bool startOnCreate, TimeSpan timeout, bool runOnce)
             : base(startOnCreate, timeout, runOnce)
         {
-            SetObjName("Runnable (default)");
+            SetObjName("Runnable");
         }
 
 

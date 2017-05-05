@@ -16,7 +16,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
     public class SimpleAIPersonality : BaseAIPersonality
     {
 
-        new public static readonly string _staticName = "SimpleAIPersonality (static)";
+        new public static readonly string _staticName = "SimpleAIPersonality (s)";
 
 
         
@@ -42,7 +42,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
         public SimpleAIPersonality (float aggressionRadius, float turnAroundVelocity)
         {
-            SetObjName("SimpleAIPersonality (default)");
+            SetObjName("SimpleAIPersonality");
             this.aggressionRadius = aggressionRadius;
             this.turnAroundVelocity = turnAroundVelocity;
         }

@@ -12,7 +12,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
     public partial class VobEffectHandler : BaseEffectHandler
     {
 
-        new public static readonly string _staticName = "VobEffectHandler (static)";
+        new public static readonly string _staticName = "VobEffectHandler (s)";
 
 
 
@@ -21,7 +21,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             PrintStatic(typeof(VobEffectHandler), "Start subscribing ChangeDestinations and EventHandler...");
 
             RegisterDestination(Enumeration.ChangeDestination.Vob_CodeName);
-            RegisterDestination(Enumeration.ChangeDestination.Vob_Name);
             RegisterDestination(Enumeration.ChangeDestination.Vob_VobType);
 
             PrintStatic(typeof(VobEffectHandler), "Finished subscribing ChangeDestinations and EventHandler...");

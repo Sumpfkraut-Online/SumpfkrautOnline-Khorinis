@@ -45,19 +45,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         Scroll,
     }
 
-    public partial class ItemDef : VobDef, ItemInstance.IScriptItemInstance
+    public partial class ItemDef : NamedVobDef, ItemInstance.IScriptItemInstance
     {
         #region Properties
 
         new public ItemInstance BaseDef { get { return (ItemInstance)base.BaseDef; } }
-
-        string name = "";
-        /// <summary>The standard name of this item.</summary>
-        public string Name
-        {
-            get { return this.name; }
-            set { this.name = value == null ? "" : value; }
-        }
 
         /// <summary>The material of this item. Controls the dropping sound.</summary>
         public ItemMaterials Material = ItemMaterials.Wood;

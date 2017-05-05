@@ -9,7 +9,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Threading
     public abstract class AbstractRunnable : ScriptObject, IRunnable
     {
 
-        new public static readonly string _staticName = "AbstractRunnable (static)"; 
+        new public static readonly string _staticName = "AbstractRunnable (s)"; 
 
         public bool printStateControls;
 
@@ -34,7 +34,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Threading
 
         public AbstractRunnable (bool startOnCreate, TimeSpan timeout, bool runOnce)
         {
-            //SetObjName("AbstractRunnable (default)");
+            //SetObjName("AbstractRunnable");
             this.printStateControls = false;
             this.timeout = timeout;
             if ((this.timeout == TimeSpan.MinValue) || (this.timeout < TimeSpan.Zero))
