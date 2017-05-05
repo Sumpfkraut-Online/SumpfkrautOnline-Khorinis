@@ -11,7 +11,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
     {
         new public NPCInstance BaseDef { get { return (NPCInstance)base.BaseDef; } }
 
-        public string Name
+        new public string Name
         {
             get { return this.name; }
             set { BaseDef.Name = value; this.name = value; }

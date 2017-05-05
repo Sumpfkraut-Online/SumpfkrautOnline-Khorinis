@@ -20,7 +20,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
         static ChangeInit_NamedVob ()
         {
             representative = new ChangeInit_NamedVob();
-            representative.SetObjName("ChangeInit_Vob");
+            representative.SetObjName("ChangeInit_NamedVob");
         }
 
 
@@ -30,7 +30,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
         {
             // add all types of changes and their corresponding parameter types
 
-            AddOrChange(new ChangeInitInfo(ChangeType.Vob_Name_Set, new List<Type>()
+            AddOrChange(new ChangeInitInfo(ChangeType.NamedVob_Name_Set, new List<Type>()
             {
                 typeof(string),                 // vob-name
             }, null));

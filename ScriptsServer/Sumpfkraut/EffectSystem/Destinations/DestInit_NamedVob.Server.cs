@@ -37,12 +37,12 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
             try
             {
                 var linkedObj = eh.GetLinkedObject();
-                if      (linkedObj is VobDef)
+                if      (linkedObj is NamedVobDef)
                 {
-                    var vobDef = linkedObj as VobDef;
-                    // TO DO when there is the possiblity to change the name in VobSystem
+                    var vobDef = linkedObj as NamedVobDef;
+                    vobDef.Name = (string) tc.GetTotal().GetParameters()[0];
                 }
-                else if (linkedObj is VobInst)
+                else if (linkedObj is NamedVobInst)
                 {
                     var vobInst = linkedObj as VobInst;
                     // TO DO when there is the possiblity to change the name in VobSystem
