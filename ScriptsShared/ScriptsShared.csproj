@@ -69,6 +69,7 @@
     <Compile Include="Sumpfkraut\EffectSystem\Changes\ChangeInitializer.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Changes\ChangeInitInfo.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Changes\ChangeInit_Effect.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Changes\ChangeInit_Item.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Changes\ChangeInit_NamedVob.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Changes\ChangeInit_NPC.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Changes\ChangeInit_Vob.cs" />
@@ -77,6 +78,7 @@
     <Compile Include="Sumpfkraut\EffectSystem\Destinations\DestInitializer.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Destinations\DestInitInfo.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Destinations\DestInit_Effect.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Destinations\DestInit_Item.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Destinations\DestInit_NamedVob.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Destinations\DestInit_NPC.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Destinations\DestInit_Vob.cs" />
@@ -102,7 +104,6 @@
     <Compile Include="Sumpfkraut\Utilities\Threading\AbstractRunnable.cs" />
     <Compile Include="Sumpfkraut\Utilities\Threading\IRunnable.cs" />
     <Compile Include="Sumpfkraut\Utilities\Threading\Runnable.cs" />
-    <Compile Include="Sumpfkraut\Utilities\Threading\TestRunnable.cs" />
     <Compile Include="Sumpfkraut\Visuals\ModelInst.cs" />
     <Compile Include="Sumpfkraut\Visuals\ScriptAniJob.cs" />
     <Compile Include="Sumpfkraut\Visuals\ScriptOverlay.cs" />

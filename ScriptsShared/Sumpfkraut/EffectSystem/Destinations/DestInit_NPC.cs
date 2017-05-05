@@ -27,17 +27,17 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
         {
             SetObjName("DestInit_NPC");
 
-            //AddOrChange(new DestInitInfo(ChangeDestination.Vob_CDDyn, 
-            //    new List<ChangeType>() { ChangeType.Vob_CDDyn_Set }, 
-            //    CTC_CDDyn, ATC_CDDyn));
+            AddOrChange(new DestInitInfo(ChangeDestination.NPC_TestPoison,
+                new List<ChangeType>() { ChangeType.NPC_TestPoison_Add },
+                CTC_TestPoison, ATC_TestPoison));
         }
 
 
-        
-        //partial void pCTC_CDDyn (BaseEffectHandler eh, TotalChange tc);
-        //public void CTC_CDDyn (BaseEffectHandler eh, TotalChange tc) { pCTC_CDDyn(eh, tc); }
-        //partial void pATC_CDDyn (BaseEffectHandler eh, TotalChange tc);
-        //public void ATC_CDDyn (BaseEffectHandler eh, TotalChange tc) { pATC_CDDyn(eh, tc); }
+
+        partial void pCTC_TestPoison (BaseEffectHandler eh, TotalChange tc);
+        public void CTC_TestPoison (BaseEffectHandler eh, TotalChange tc) { pCTC_TestPoison(eh, tc); }
+        partial void pATC_TestPoison (BaseEffectHandler eh, TotalChange tc);
+        public void ATC_TestPoison (BaseEffectHandler eh, TotalChange tc) { pATC_TestPoison(eh, tc); }
 
     }
 

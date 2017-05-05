@@ -130,6 +130,15 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Changes\ChangeInit_Effect.cs">
       <Link>Sumpfkraut\EffectSystem\Changes\ChangeInit_Effect.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Changes\ChangeInit_Item.cs">
+      <Link>Sumpfkraut\EffectSystem\Changes\ChangeInit_Item.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Changes\ChangeInit_NamedVob.cs">
+      <Link>Sumpfkraut\EffectSystem\Changes\ChangeInit_NamedVob.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Changes\ChangeInit_NPC.cs">
+      <Link>Sumpfkraut\EffectSystem\Changes\ChangeInit_NPC.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Changes\ChangeInit_Vob.cs">
       <Link>Sumpfkraut\EffectSystem\Changes\ChangeInit_Vob.cs</Link>
     </Compile>
@@ -147,6 +156,9 @@
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Destinations\DestInit_Effect.cs">
       <Link>Sumpfkraut\EffectSystem\Destinations\DestInit_Effect.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Destinations\DestInit_Item.cs">
+      <Link>Sumpfkraut\EffectSystem\Destinations\DestInit_Item.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Destinations\DestInit_NamedVob.cs">
       <Link>Sumpfkraut\EffectSystem\Destinations\DestInit_NamedVob.cs</Link>
@@ -349,6 +361,7 @@
     <Compile Include="Sumpfkraut\Daedalus\PrototypeParser.cs" />
     <Compile Include="Sumpfkraut\Daedalus\DDLValueTypes.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Destinations\DestInit_Effect.Server.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\Destinations\DestInit_Item.Server.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Destinations\DestInit_NamedVob.Server.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Destinations\DestInit_Vob.Server.cs" />
     <Compile Include="Sumpfkraut\Networking\Requests\NPCRequestReceiver.cs" />

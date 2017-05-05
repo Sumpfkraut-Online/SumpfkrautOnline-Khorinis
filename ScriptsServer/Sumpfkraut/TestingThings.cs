@@ -17,6 +17,7 @@ using GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration;
 using GUC.Scripts.Sumpfkraut.EffectSystem.Destinations;
 using System.Drawing;
 using GUC.Scripts.Sumpfkraut.Utilities;
+using System.Threading;
 
 namespace GUC.Scripts.Sumpfkraut
 {
@@ -329,6 +330,34 @@ namespace GUC.Scripts.Sumpfkraut
             //var someList = new List<int> { };
             //someList.Insert(0, 999);
             //foreach (var e in someList) { Logger.Log(e); }
+
+            //var outer = 0;
+            //Action action = () => 
+            //{
+            //    var inner = 0;
+            //    while (inner < 10)
+            //    {
+            //        Logger.Log(++outer);
+            //        inner++;
+            //    }
+            //};
+
+            //var operation = new ThreadStart(action);
+            //var thread = new Thread(operation);
+            //thread.Start();
+
+            //Action<int> pAction = (int num) => 
+            //{
+            //    var inner = 0;
+            //    while (inner < num)
+            //    {
+            //        Logger.Log(++outer);
+            //        inner++;
+            //    }
+            //};
+            //var pOperation = new ParameterizedThreadStart(obj => pAction((int)obj));
+            //var pThread = new Thread(pOperation);
+            //pThread.Start(0);
             
 
             //ChangeInitInfo info;
@@ -349,6 +378,8 @@ namespace GUC.Scripts.Sumpfkraut
             //        }
             //    }
             //});
+
+         
             
 
 

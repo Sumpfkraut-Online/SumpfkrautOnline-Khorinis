@@ -23,10 +23,15 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration
 
         NamedVob_Name,
 
+        Item_Material,
+
         NPC_BodyMesh,
         NPC_BodyText,
         NPC_HeadMesh,
         NPC_HeadText,
+
+        // over-time effects
+        NPC_TestPoison,
 
         // event driven
         World_Clock,

@@ -23,11 +23,16 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration
 
         NamedVob_Name_Set,                  //named of a vob (typically is the display name when used in child classes)
 
+        Item_Material_Set,                  // item material (important for ingame sounds of that object)
+
         NPC_BodyMesh_Set,                   // body mesh variation (only for NPCs)
         NPC_BodyTex_Set,                    // body texture variation (only for NPCs)
         NPC_HeadMesh_Set,                   // head mesh variation (only for NPCs)
         NPC_HeadTex_Set,                    // head texture varation (only for NPCs)
 
+        // over-time effects
+        NPC_TestPoison_Add,
+        
         // event driven
         World_Clock_Time_Set,               // set the clock time to specific value
         World_Clock_Rate_Set,               // set the rate at which the clock time changes

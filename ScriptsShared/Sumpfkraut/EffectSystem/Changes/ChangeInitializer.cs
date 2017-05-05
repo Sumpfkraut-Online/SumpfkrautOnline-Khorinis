@@ -20,6 +20,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 
             MakeLogStatic(t, "Initializing... " + ChangeInit_Effect._staticName);
             MakeLogStatic(t, "Initializing... " + ChangeInit_Vob._staticName);
+            MakeLogStatic(t, "Initializing... " + ChangeInit_NamedVob._staticName);
+            MakeLogStatic(t, "Initializing... " + ChangeInit_Item._staticName);
+            MakeLogStatic(t, "Initializing... " + ChangeInit_NPC._staticName);
             // ...
         }
 
