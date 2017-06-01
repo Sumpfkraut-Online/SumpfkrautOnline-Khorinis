@@ -152,6 +152,8 @@
     <Compile Include="Sumpfkraut\AI\GuideCommands\GoToVobCommand.Client.cs" />
     <Compile Include="Sumpfkraut\Controls\KeyBinds.cs" />
     <Compile Include="Sumpfkraut\Controls\PlayerControl.cs" />
+    <Compile Include="Sumpfkraut\GUI\Crafting\CraftingMenu.cs" />
+    <Compile Include="Sumpfkraut\GUI\GUCDialog.cs" />
     <Compile Include="Sumpfkraut\GUI\GUCInventory.cs" />
     <Compile Include="Sumpfkraut\GUI\MainMenu\MainMenuButton.cs" />
     <Compile Include="Sumpfkraut\GUI\MainMenu\MainMenuCharacter.cs" />

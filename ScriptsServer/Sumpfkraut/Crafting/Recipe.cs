@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+
 /* DB Structure
     Tabelle: Recipe
 
@@ -22,8 +22,9 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
     NecessaryProperties - string
         Eigenschaften die ein Vob besitzen muss, damit an diesem Vob das Rezept ausgeführt werden kann
 
-    Conditions
+    Condition - string - method name
         Bedingungen die zu erfüllen sind, damit das Rezept verfügbar ist
+        Condition wird als methoden name angeben der aufgerufen wird
 
     Euductlist - string
         Liste an nötigen Gegenständen für das Crafting
@@ -53,6 +54,9 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 
     MinigameId - short
         Falls es ein Minispiel gibt, hier die ID dazu
+
+    NEU Recipe control -
+ 
 */
 
 
@@ -63,32 +67,68 @@ namespace GUC.Scripts.Sumpfkraut.Crafting
 
         public int uniqueID;
         public string description;
-        
-        public Recipe(int ID, string codename, int step, string craftingProperties, string conditions, string eductList, string productList, string effectList,
+
+        string codename;
+        public string Codename { get { return codename; } }
+
+        string[] conditionParameters;
+
+        string effect;
+        public string Effect { get { return effect; } }
+
+        public Conditions.Condition CheckRequiredCondition;
+        public Effects.Effect ApplyEffects;
+
+        public Recipe(int ID, string codename, int step, string craftingProperties, string conditionMethod, string eductList, string productList, string effectMethod,
             bool canCancel, int timeToCraft, int minigameID )
         {
             // create item use actions, create item create actions, create effects
             uniqueID = ID;
-        }
 
-        public bool CheckRequiredConditions(NPCInst craftsmen)
-        {
-            return true;
+            // retrieve parameters for functioncall by DB string
+            string[] condition = conditionMethod.Split(',');
+            for(int i = 1; i < condition.Length; i++)
+            {
+                conditionParameters[i - 1] = condition[i];
+            }
+
+            // condition[0] contains the method name
+            Conditions.conditionDict.TryGetValue(condition[0], out CheckRequiredCondition);
+            if (CheckRequiredCondition == null)
+            {
+                RecipeError("Couldn't find a crafting condition method named " + condition[0]);
+            }
+
+            // retrieve parameters for functioncall by DB string
+            string[] effect = effectMethod.Split(',');
+            for (int i = 1; i < effect.Length; i++)
+            {
+                conditionParameters[i - 1] = condition[i];
+            }
+
+            // effect[0] contains the method name
+            Effects.effectDict.TryGetValue(effect[0], out ApplyEffects);
+            if (CheckRequiredCondition == null)
+            {
+                RecipeError("Couldn't find a effect method named " + effect[0]);
+            }
+
         }
 
         public bool CheckRequiredMaterials(NPCInst craftsmen)
         {
+            // parse string to materials?
             return true;
         }
 
-        public void CreateProducts(NPCInst craftsmen)
+        public bool CreateProducts(NPCInst craftsmen)
         {
-            
+            return true;   
         }
 
-        public void ApplyEffects(NPCInst craftsmen)
+        void RecipeError(string err)
         {
-
+            throw new Exception("ERROR: Crafting: " + err + " to create recipe " + codename);
         }
     }
 }

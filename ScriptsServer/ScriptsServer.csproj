@@ -217,6 +217,8 @@
     <Compile Include="Sumpfkraut\CommandConsole\InfoObjects\VobInfo.cs" />
     <Compile Include="Sumpfkraut\CommandConsole\TestCommands.cs" />
     <Compile Include="Sumpfkraut\Crafting\Crafting.Server.cs" />
+    <Compile Include="Sumpfkraut\Crafting\Conditions.cs" />
+    <Compile Include="Sumpfkraut\Crafting\Effects.cs" />
     <Compile Include="Sumpfkraut\Crafting\Recipe.cs" />
     <Compile Include="Sumpfkraut\Daedalus\AniParser.cs" />
     <Compile Include="Sumpfkraut\Daedalus\ConstParser.cs" />
