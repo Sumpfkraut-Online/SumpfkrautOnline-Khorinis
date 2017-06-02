@@ -131,6 +131,9 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Changes\ChangeInit_Vob.cs">
       <Link>Sumpfkraut\EffectSystem\Changes\ChangeInit_Vob.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Changes\ChangeInit_World.cs">
+      <Link>Sumpfkraut\EffectSystem\Changes\ChangeInit_World.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Changes\TotalChange.cs">
       <Link>Sumpfkraut\EffectSystem\Changes\TotalChange.cs</Link>
     </Compile>
@@ -157,6 +160,9 @@
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Destinations\DestInit_Vob.cs">
       <Link>Sumpfkraut\EffectSystem\Destinations\DestInit_Vob.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Destinations\DestInit_World.cs">
+      <Link>Sumpfkraut\EffectSystem\Destinations\DestInit_World.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Effect.cs">
       <Link>Sumpfkraut\EffectSystem\Effect.cs</Link>

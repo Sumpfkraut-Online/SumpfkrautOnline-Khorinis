@@ -19,6 +19,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
             Type t = typeof(ChangeInitializer);
 
             MakeLogStatic(t, "Initializing... " + ChangeInit_Effect._staticName);
+
+            MakeLogStatic(t, "Initializing... " + ChangeInit_World._staticName);
+
             MakeLogStatic(t, "Initializing... " + ChangeInit_Vob._staticName);
             MakeLogStatic(t, "Initializing... " + ChangeInit_NamedVob._staticName);
             MakeLogStatic(t, "Initializing... " + ChangeInit_Item._staticName);

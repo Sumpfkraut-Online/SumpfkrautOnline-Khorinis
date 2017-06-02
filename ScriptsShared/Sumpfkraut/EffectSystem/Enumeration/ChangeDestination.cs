@@ -34,7 +34,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration
         NPC_TestPoison,
 
         // event driven
-        World_Clock,
+        World_Clock_IsRunning,
+        World_Clock_Rate,
+        World_Clock_Time,
 
         // crafting
     }

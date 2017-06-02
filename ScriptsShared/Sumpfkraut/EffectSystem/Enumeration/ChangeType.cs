@@ -34,9 +34,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration
         NPC_TestPoison_Add,
         
         // event driven
-        World_Clock_Time_Set,               // set the clock time to specific value
-        World_Clock_Rate_Set,               // set the rate at which the clock time changes
         World_Clock_IsRunning_Set,          // start, resume or stop the clock / time of a world
+        World_Clock_Rate_Set,               // set the rate at which the clock time changes
+        World_Clock_Time_Set,               // set the clock time to specific value
 
         // crafting
     }

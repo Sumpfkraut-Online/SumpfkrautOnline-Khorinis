@@ -358,7 +358,14 @@ namespace GUC.Scripts.Sumpfkraut
             //var pOperation = new ParameterizedThreadStart(obj => pAction((int)obj));
             //var pThread = new Thread(pOperation);
             //pThread.Start(0);
+
+
             
+
+
+
+
+
 
             //ChangeInitInfo info;
             //BaseChangeInit.TryGetChangeInitInfo(ChangeType.Effect_Name_Set, out info);
@@ -379,15 +386,11 @@ namespace GUC.Scripts.Sumpfkraut
             //    }
             //});
 
-         
-            
-
-
-
-
             Logger.Log("===> !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
 
     }
+
+    
 
 }

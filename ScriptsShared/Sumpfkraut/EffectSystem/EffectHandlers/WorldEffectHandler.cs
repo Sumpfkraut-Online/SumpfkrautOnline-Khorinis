@@ -19,7 +19,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         {
             PrintStatic(typeof(WorldEffectHandler), "Start subscribing listeners to events...");
             
-            // to do
+            RegisterDestination(Enumeration.ChangeDestination.World_Clock_IsRunning);
+            RegisterDestination(Enumeration.ChangeDestination.World_Clock_Rate);
+            RegisterDestination(Enumeration.ChangeDestination.World_Clock_Time);
 
             PrintStatic(typeof(WorldEffectHandler), "Finished subscribing listeners to events...");
         }
@@ -41,13 +43,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         public WorldEffectHandler (string objName, List<Effect> effects, WorldInst linkedObject) 
             : base(objName, effects, linkedObject)
         { }
-
-
-
-        //protected override void ApplyEffect (Effect effect, bool reverse = false)
-        //{
-        //    Print("Apply what? Naaaa!");
-        //}
 
     }
 

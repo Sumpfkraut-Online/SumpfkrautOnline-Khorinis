@@ -96,7 +96,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
         public DBAgent(string dataSource, List<string> commandQueue, bool startOnCreate, bool useAsyncMode = true)
             : base(false, new TimeSpan(0, 0, 0), true)
         {
-            SetObjName("AbstractRunnable");
+            SetObjName("DBAgent");
             this.dataSource = dataSource;
             this.commandQueue = commandQueue;
             this.useAsyncMode = useAsyncMode;
