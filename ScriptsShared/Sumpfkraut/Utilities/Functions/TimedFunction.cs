@@ -4,11 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GUC.Scripts.Sumpfkraut.Utilities.Actions
+namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 {
 
-    public class TimedAction
+    public class TimedFunction
     {
+
+        // used to lock changes on the TimedAction-object
+        protected object _lock;
 
         // Action to be performed with any number of parameters provided 
         // (convertion of objects to their respective types necessary for
@@ -16,62 +19,59 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Actions
         // function scope to define parameters which then can be used by the
         // Action as inner function with access to that scope
         // ... which prevents garbage collection / closing of the surrounding scope)
-        protected Action<object[]> action;
-        public Action<object[]> GetAction () { lock (actionLock) { return action; } }
-        public void SetAction (Action<object[]> value) { lock (actionLock) { action = value; } }
-
-        // used to lock changes on the TimedAction-object
-        protected object actionLock;
+        protected Func<object[], object[]> func;
+        public Func<object[], object[]> GetFunc () { lock (_lock) { return func; } }
+        public void SetFunc (Func<object[], object[]> value) { lock (_lock) { func = value; } }
 
         protected bool hasSpecifiedTimes;
         public bool HasSpecificTimes { get { return hasSpecifiedTimes; } }
         protected DateTime[] specifiedTimes;
-        public DateTime[] GetSpecifiedTimes () { lock (actionLock) { return specifiedTimes; } }
+        public DateTime[] GetSpecifiedTimes () { lock (_lock) { return specifiedTimes; } }
 
         public bool hasIntervals;
         public bool HasIntervals { get { return hasIntervals; } }
         protected TimeSpan[] intervals;
-        public TimeSpan[] GetIntervals () { lock (actionLock) { return intervals; } }
+        public TimeSpan[] GetIntervals () { lock (_lock) { return intervals; } }
 
         public bool hasStart;
         public bool HasStart { get { return hasStart; } }
         protected DateTime start;
-        public DateTime GetStart () { lock (actionLock) { return start; } }
+        public DateTime GetStart () { lock (_lock) { return start; } }
 
         public bool hasEnd;
         public bool HasEnd { get { return hasEnd; } }
         protected DateTime end;
-        public DateTime GetEnd () { lock (actionLock) { return end; } }
+        public DateTime GetEnd () { lock (_lock) { return end; } }
 
 
 
         // run the action as soon as possible a single time
-        public TimedAction ()
+        public TimedFunction ()
             : this(null, null, DateTime.Now, DateTime.Now)
         { }
 
         // run at specified times until they all passed away
-        public TimedAction (DateTime[] specifiedTimes)
+        public TimedFunction (DateTime[] specifiedTimes)
             : this(specifiedTimes, null, DateTime.MinValue, DateTime.MaxValue)
         { }
 
         // run at specified times in a certain time range
-        public TimedAction (DateTime[] specifiedTimes, Tuple<DateTime, DateTime> startEnd)
+        public TimedFunction (DateTime[] specifiedTimes, Tuple<DateTime, DateTime> startEnd)
             : this(specifiedTimes, null, startEnd.Item1, startEnd.Item2)
         { }
 
         // run endlessly at given intervals
-        public TimedAction (TimeSpan[] intervals)
+        public TimedFunction (TimeSpan[] intervals)
             : this(null, intervals, DateTime.MinValue, DateTime.MaxValue)
         { }
 
         // run at given intervals in a certain time range
-        public TimedAction (TimeSpan[] intervals,  Tuple<DateTime, DateTime> startEnd)
+        public TimedFunction (TimeSpan[] intervals,  Tuple<DateTime, DateTime> startEnd)
             : this(null, intervals, startEnd.Item1, startEnd.Item2)
         { }
 
         // general constructor
-        public TimedAction (DateTime[] specifiedTimes, TimeSpan[] intervals, 
+        public TimedFunction (DateTime[] specifiedTimes, TimeSpan[] intervals, 
             DateTime start, DateTime end)
         {
             if (specifiedTimes != null)
@@ -86,6 +86,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Actions
             }
             this.start = start;
             this.end = end;
+            _lock = new object();
         }
 
     }
