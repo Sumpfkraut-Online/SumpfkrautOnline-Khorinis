@@ -8,6 +8,15 @@
         public TimedFunction[] NewTF;
         public bool ReplaceAll;
 
+
+
+        public MI_ReplaceRangel (TimedFunction[] oldTF, TimedFunction[] newTF, bool replaceAll)
+        {
+            OldTF = oldTF;
+            NewTF = newTF;
+            ReplaceAll = replaceAll;
+        }
+
     }
 
 }

@@ -2,9 +2,6 @@
 using GUC.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 {
@@ -37,11 +34,11 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 
 
 
-        public void AddAction (Action a)
+        public void Add (TimedFunction f, bool allowDuplicate)
         {
             lock (bufferLock)
             {
-                
+                buffer.Add(new MI_Add(f, allowDuplicate));
             }
         }
 
@@ -59,10 +56,10 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                         else if (type == typeof(MI_AddRange)) { Buffer_AddRange((MI_AddRange)item); }
                         else if (type == typeof(MI_Remove)) { Buffer_Remove((MI_Remove)item); }
                         else if (type == typeof(MI_RemoveRange)) { Buffer_RemoveRange((MI_RemoveRange)item); }
-                        else if (type == typeof(MI_RemoveExceptTimeRange))
-                            { Buffer_RemoveExceptTimeRange((MI_RemoveExceptTimeRange)item); }
-                        else if (type == typeof(MI_RemoveInTimeRange))
-                            { Buffer_RemoveInTimeRange((MI_RemoveInTimeRange)item); }
+                        //else if (type == typeof(MI_RemoveExceptTimeRange))
+                        //    { Buffer_RemoveExceptTimeRange((MI_RemoveExceptTimeRange)item); }
+                        //else if (type == typeof(MI_RemoveInTimeRange))
+                        //    { Buffer_RemoveInTimeRange((MI_RemoveInTimeRange)item); }
                         else if (type == typeof(MI_Replace)) { Buffer_Replace((MI_Replace)item); }
                         else if (type == typeof(MI_ReplaceRangel)) { Buffer_ReplaceRange((MI_ReplaceRangel)item); }
                     }
@@ -78,12 +75,15 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 
         protected void Buffer_Add (MI_Add ia)
         {
-            timedFunctions.Add(ia.TF);
+            if (!(ia.AllowDuplicate && timedFunctions.Contains(ia.TF))) { timedFunctions.Add(ia.TF); }
         }
 
         protected void Buffer_AddRange (MI_AddRange ia)
         {
-            timedFunctions.AddRange(ia.TF);
+            for (int i = 0; i < ia.TF.Length; i++)
+            {
+                if (!(ia.AllowDuplicate && timedFunctions.Contains(ia.TF[i]))) { timedFunctions.Add(ia.TF[i]); }
+            }
         }
 
         protected void Buffer_Remove (MI_Remove ia)

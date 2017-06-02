@@ -1,11 +1,21 @@
-﻿namespace GUC.Scripts.Sumpfkraut.Utilities.Functions.ManagerInteraction
+﻿using System;
+
+namespace GUC.Scripts.Sumpfkraut.Utilities.Functions.ManagerInteraction
 {
 
     public struct MI_RemoveInTimeRange : IManagerInteraction
     {
 
-        public System.DateTime Start;
-        public System.DateTime End;
+        public DateTime Start;
+        public DateTime End;
+
+
+
+        public MI_RemoveInTimeRange (DateTime start, DateTime end)
+        {
+            Start = start;
+            End = end;
+        }
 
     }
 

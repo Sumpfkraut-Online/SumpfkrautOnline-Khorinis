@@ -7,6 +7,14 @@
         public TimedFunction TF;
         public bool RemoveAll;
 
+
+
+        public MI_Remove (TimedFunction tf, bool removeAll)
+        {
+            TF = tf;
+            RemoveAll = removeAll;
+        }
+
     }
 
 }

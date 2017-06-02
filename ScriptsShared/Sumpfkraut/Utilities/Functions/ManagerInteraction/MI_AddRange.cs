@@ -5,6 +5,15 @@
     {
 
         public TimedFunction[] TF;
+        public bool AllowDuplicate;
+
+
+
+        public MI_AddRange (TimedFunction[] tf, bool allowDuplicate)
+        {
+            TF = tf;
+            AllowDuplicate = allowDuplicate;
+        }
 
     }
 
