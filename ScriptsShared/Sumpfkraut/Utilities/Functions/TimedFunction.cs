@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GUC.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,8 +8,12 @@ using System.Threading.Tasks;
 namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 {
 
-    public class TimedFunction
+    public class TimedFunction : ExtendedObject
     {
+
+        new public static readonly string _staticName = "TimedFunction (s)";
+
+
 
         // used to lock changes on the TimedAction-object
         protected object _lock;
@@ -23,57 +28,72 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         public Func<object[], object[]> GetFunc () { lock (_lock) { return func; } }
         public void SetFunc (Func<object[], object[]> value) { lock (_lock) { func = value; } }
 
+        // state of parameters used by the surrounded function as well as passed to it if invoked again
+        // (provide starter set of parameters if necessary)
+        protected object[] parameters;
+        public object[] GetParameters () { lock (_lock) { return parameters; } }
+        public void SetParameters (object[] value) { lock (_lock) { parameters = value; } }
+
+        protected long numberOfInvokes;
+        public long GetNumberOfInvokes () { lock (_lock) { return numberOfInvokes; } }
+        public void SetNumberOfInvokes (long value) { lock (_lock) { numberOfInvokes = value; } }
+        public void IterateNumberOfInvokes () { lock (_lock) { numberOfInvokes++; } }
+
+        protected bool hasMaxInvokes;
+        public bool HasMaxInvokes { get { return hasMaxInvokes; } }
+        protected long maxInvokes;
+        public long GetMaxInvokes () { return maxInvokes; }
+
         protected bool hasSpecifiedTimes;
         public bool HasSpecificTimes { get { return hasSpecifiedTimes; } }
         protected DateTime[] specifiedTimes;
-        public DateTime[] GetSpecifiedTimes () { lock (_lock) { return specifiedTimes; } }
+        public DateTime[] GetSpecifiedTimes () { return specifiedTimes; }
 
-        public bool hasIntervals;
+        protected bool hasIntervals;
         public bool HasIntervals { get { return hasIntervals; } }
         protected TimeSpan[] intervals;
-        public TimeSpan[] GetIntervals () { lock (_lock) { return intervals; } }
+        public TimeSpan[] GetIntervals () { return intervals; }
 
-        public bool hasStart;
-        public bool HasStart { get { return hasStart; } }
-        protected DateTime start;
-        public DateTime GetStart () { lock (_lock) { return start; } }
-
-        public bool hasEnd;
-        public bool HasEnd { get { return hasEnd; } }
-        protected DateTime end;
-        public DateTime GetEnd () { lock (_lock) { return end; } }
+        protected bool hasStartEnd;
+        public bool HasStartEnd { get { return hasStartEnd; } }
+        protected Tuple<DateTime, DateTime> startEnd;
+        public Tuple<DateTime, DateTime> GetStartEnd () { return startEnd; }
+        public DateTime GetStart () { return startEnd.Item1; }
+        public DateTime GetEnd () { return startEnd.Item2; }
 
 
 
         // run the action as soon as possible a single time
         public TimedFunction ()
-            : this(null, null, DateTime.Now, DateTime.Now)
+            : this(null, null, null)
         { }
 
         // run at specified times until they all passed away
         public TimedFunction (DateTime[] specifiedTimes)
-            : this(specifiedTimes, null, DateTime.MinValue, DateTime.MaxValue)
+            : this(specifiedTimes, null, null)
         { }
 
         // run at specified times in a certain time range
         public TimedFunction (DateTime[] specifiedTimes, Tuple<DateTime, DateTime> startEnd)
-            : this(specifiedTimes, null, startEnd.Item1, startEnd.Item2)
+            : this(specifiedTimes, null, startEnd)
         { }
 
         // run endlessly at given intervals
         public TimedFunction (TimeSpan[] intervals)
-            : this(null, intervals, DateTime.MinValue, DateTime.MaxValue)
+            : this(null, intervals, null)
         { }
 
         // run at given intervals in a certain time range
         public TimedFunction (TimeSpan[] intervals,  Tuple<DateTime, DateTime> startEnd)
-            : this(null, intervals, startEnd.Item1, startEnd.Item2)
+            : this(null, intervals, startEnd)
         { }
 
         // general constructor
         public TimedFunction (DateTime[] specifiedTimes, TimeSpan[] intervals, 
-            DateTime start, DateTime end)
+            Tuple<DateTime, DateTime> startEnd)
         {
+            SetObjName("TimedFunction");
+            _lock = new object();
             if (specifiedTimes != null)
             {
                 hasSpecifiedTimes = true;
@@ -84,9 +104,11 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                 hasIntervals = true;
                 this.intervals = intervals;
             }
-            this.start = start;
-            this.end = end;
-            _lock = new object();
+            if (startEnd != null)
+            {
+                hasStartEnd = true;
+                this.startEnd = startEnd;
+            }
         }
 
     }

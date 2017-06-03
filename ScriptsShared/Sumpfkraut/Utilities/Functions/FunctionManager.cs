@@ -13,8 +13,8 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 
 
 
-        protected object runLock;
-        protected object bufferLock;
+        protected object _runLock;
+        protected object _bufferLock;
 
         protected bool isRunning = false;
         public bool IsRunning { get { return isRunning; } }
@@ -27,8 +27,8 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         public FunctionManager ()
         {
             SetObjName("FunctionManager");
-            runLock = new object();
-            bufferLock = new object();
+            _runLock = new object();
+            _bufferLock = new object();
             timedFunctions = new List<TimedFunction>();
         }
 
@@ -36,17 +36,67 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 
         public void Add (TimedFunction f, bool allowDuplicate)
         {
-            lock (bufferLock)
+            lock (_bufferLock)
             {
                 buffer.Add(new MI_Add(f, allowDuplicate));
             }
         }
 
-        protected void ProcessBuffer ()
+        public void Add (TimedFunction[] f, bool allowDuplicate)
         {
-            lock (runLock)
+            lock (_bufferLock)
             {
-                lock (bufferLock)
+                buffer.Add(new MI_AddRange(f, allowDuplicate));
+            }
+        }
+
+        public void Clear ()
+        {
+            lock (_bufferLock)
+            {
+                buffer.Add(new MI_Clear());
+            }
+        }
+
+        public void Remove (TimedFunction f, bool removeAll)
+        {
+            lock (_bufferLock)
+            {
+                buffer.Add(new MI_Remove(f, removeAll));
+            }
+        }
+
+        public void Remove (TimedFunction[] f, bool removeAll)
+        {
+            lock (_bufferLock)
+            {
+                buffer.Add(new MI_RemoveRange(f, removeAll));
+            }
+        }
+
+        public void Replace (TimedFunction oldTF, TimedFunction newTF, bool replaceAll)
+        {
+            lock (_bufferLock)
+            {
+                buffer.Add(new MI_Replace(oldTF, newTF, replaceAll));
+            }
+        }
+
+        public void Replace (TimedFunction[] oldTF, TimedFunction[] newTF, bool replaceAll)
+        {
+            lock (_bufferLock)
+            {
+                buffer.Add(new MI_ReplaceRange(oldTF, newTF, replaceAll));
+            }
+        }
+
+
+
+        public void IntegrateBuffer ()
+        {
+            lock (_runLock)
+            {
+                lock (_bufferLock)
                 {
                     foreach (var item in buffer)
                     {
@@ -61,7 +111,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                         //else if (type == typeof(MI_RemoveInTimeRange))
                         //    { Buffer_RemoveInTimeRange((MI_RemoveInTimeRange)item); }
                         else if (type == typeof(MI_Replace)) { Buffer_Replace((MI_Replace)item); }
-                        else if (type == typeof(MI_ReplaceRangel)) { Buffer_ReplaceRange((MI_ReplaceRangel)item); }
+                        else if (type == typeof(MI_ReplaceRange)) { Buffer_ReplaceRange((MI_ReplaceRange)item); }
                     }
                     buffer.Clear();
                 }
@@ -142,7 +192,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             } 
         }
 
-        protected void Buffer_ReplaceRange (MI_ReplaceRangel ia)
+        protected void Buffer_ReplaceRange (MI_ReplaceRange ia)
         {
             int index;
             int maxLength = ia.OldTF.Length;
@@ -169,9 +219,62 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 
 
 
+        public List<TimedFunction> FindNextFunctions ()
+        {
+            var next = new List<TimedFunction>();
+
+            // find better infrastructure than a single list (which becomes cpu-costly when growing bigger
+            // and when often changed internally)
+            // ...
+
+            return next;
+        }
+
+        public void InvokeNextFunctions (List<TimedFunction> next)
+        {
+            foreach (var item in next)
+            {
+                InvokeTimedFunction(item);
+            }
+        }
+
+        protected void InvokeTimedFunction (TimedFunction tf)
+        {
+            try
+            {
+                tf.SetParameters( tf.GetFunc()(tf.GetParameters()) );
+                tf.IterateNumberOfInvokes();
+            }
+            catch (Exception ex)
+            {
+                MakeLogError(ex);
+            }
+        }
+
+        public bool IsExpired (TimedFunction tf)
+        {
+            bool isOutdated = true;
+            var now = DateTime.Now;
+
+            if (tf.HasStartEnd && (tf.GetEnd() > now)) { isOutdated = false; }
+            else if (tf.HasSpecificTimes)
+            {
+                var specifiedTimes = tf.GetSpecifiedTimes();
+                for (int i = 0; i < specifiedTimes.Length; i++)
+                {
+                    if (specifiedTimes[i] > now) { isOutdated = false; break; }
+                }
+            }
+            else if (tf.HasMaxInvokes && (tf.GetNumberOfInvokes() < tf.GetMaxInvokes())) { isOutdated = false; }
+
+            return isOutdated;
+        }
+
+
+
         public void Start ()
         {
-            lock (runLock)
+            lock (_runLock)
             {
                 isRunning = true;
                 Run();
@@ -180,21 +283,23 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 
         public void Resume ()
         {
-            lock (runLock) { if (!isRunning) { Start(); } }
+            lock (_runLock) { if (!isRunning) { Start(); } }
         }
 
         public void Stop ()
         {
-            lock (runLock) { isRunning = false; }
+            lock (_runLock) { isRunning = false; }
         }
 
         public void Run ()
         {
             while (isRunning)
             {
-                lock (runLock)
+                lock (_runLock)
                 {
-                    
+                    lock (_bufferLock) { IntegrateBuffer(); }
+                    var next = FindNextFunctions();
+                    InvokeNextFunctions(next);
                 }
             }
         }
