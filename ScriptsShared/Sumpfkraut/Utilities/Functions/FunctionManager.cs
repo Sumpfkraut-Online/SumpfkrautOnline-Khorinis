@@ -19,7 +19,10 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         protected bool isRunning = false;
         public bool IsRunning { get { return isRunning; } }
 
+        // find better infrastructure than a single list (which becomes cpu-costly when growing bigger
+            // and when often changed internally) .... !!!!
         protected List<TimedFunction> timedFunctions;
+
         protected List<IManagerInteraction> buffer;
 
 
@@ -219,22 +222,62 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 
 
 
-        public List<TimedFunction> FindNextFunctions ()
+        public List<TimedFunction> FindDueFunctions ()
         {
-            var next = new List<TimedFunction>();
-
-            // find better infrastructure than a single list (which becomes cpu-costly when growing bigger
-            // and when often changed internally)
-            // ...
-
-            return next;
+            return FindDueFunctions(DateTime.Now);
         }
 
-        public void InvokeNextFunctions (List<TimedFunction> next)
+        public List<TimedFunction> FindDueFunctions (DateTime now)
         {
-            foreach (var item in next)
+            var due = new List<TimedFunction>();
+
+            lock (_runLock)
             {
-                InvokeTimedFunction(item);
+                foreach (var item in timedFunctions)
+                {
+                    if (IsDue(item, now)) { due.Add(item); }
+                }
+            }
+
+            return due;
+        }
+
+        public bool IsDue (TimedFunction tf)
+        {
+            return IsDue(tf, DateTime.Now);
+        }
+
+        public bool IsDue (TimedFunction tf, DateTime now)
+        {
+            if (tf.HasMaxInvocations && (tf.GetInvocations() < tf.GetMaxInvocations())) { return false; }
+            if (tf.HasStartEnd)
+            {
+                if (tf.GetStart() < now) { return false; }
+                if (tf.GetEnd() > now) { return false; }
+            }
+
+            if (tf.HasSpecifiedTimes)
+            {
+                foreach (var t in tf.GetSpecifiedTimes()) { if (t >= now) { return true; } }
+            }
+            if (tf.HasIntervals)
+            {
+                var lastIntervalIndex = tf.GetLastIntervalIndex();
+                var lastIntervalTime = tf.GetLastIntervalTime();
+                if ((lastIntervalTime + tf.GetIntervals()[lastIntervalIndex]) <= now) { return true; }
+            }
+
+            return false;
+        }
+
+        public void InvokeTimedFunctions (List<TimedFunction> tf)
+        {
+            lock (_runLock)
+            {
+                foreach (var item in tf)
+                {
+                    InvokeTimedFunction(item);
+                }
             }
         }
 
@@ -243,7 +286,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             try
             {
                 tf.SetParameters( tf.GetFunc()(tf.GetParameters()) );
-                tf.IterateNumberOfInvokes();
+                tf.IterateInvocations();
             }
             catch (Exception ex)
             {
@@ -251,13 +294,27 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             }
         }
 
+        public int RemoveExpiredFunctions ()
+        {
+            var count = 0;
+            Predicate<TimedFunction> predicate = (TimedFunction tf) => { return IsExpired(tf); };
+
+            lock (_runLock) { count = timedFunctions.RemoveAll(predicate); }
+
+            return count;
+        }
+
         public bool IsExpired (TimedFunction tf)
         {
+            return IsExpired(tf, DateTime.Now);
+        }
+
+        public bool IsExpired (TimedFunction tf, DateTime now)
+        {
             bool isOutdated = true;
-            var now = DateTime.Now;
 
             if (tf.HasStartEnd && (tf.GetEnd() > now)) { isOutdated = false; }
-            else if (tf.HasSpecificTimes)
+            else if (tf.HasSpecifiedTimes)
             {
                 var specifiedTimes = tf.GetSpecifiedTimes();
                 for (int i = 0; i < specifiedTimes.Length; i++)
@@ -265,7 +322,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                     if (specifiedTimes[i] > now) { isOutdated = false; break; }
                 }
             }
-            else if (tf.HasMaxInvokes && (tf.GetNumberOfInvokes() < tf.GetMaxInvokes())) { isOutdated = false; }
+            else if (tf.HasMaxInvocations && (tf.GetInvocations() < tf.GetMaxInvocations())) { isOutdated = false; }
 
             return isOutdated;
         }
@@ -298,8 +355,9 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                 lock (_runLock)
                 {
                     lock (_bufferLock) { IntegrateBuffer(); }
-                    var next = FindNextFunctions();
-                    InvokeNextFunctions(next);
+                    var due = FindDueFunctions();
+                    InvokeTimedFunctions(due);
+                    RemoveExpiredFunctions();
                 }
             }
         }

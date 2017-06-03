@@ -34,18 +34,18 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         public object[] GetParameters () { lock (_lock) { return parameters; } }
         public void SetParameters (object[] value) { lock (_lock) { parameters = value; } }
 
-        protected long numberOfInvokes;
-        public long GetNumberOfInvokes () { lock (_lock) { return numberOfInvokes; } }
-        public void SetNumberOfInvokes (long value) { lock (_lock) { numberOfInvokes = value; } }
-        public void IterateNumberOfInvokes () { lock (_lock) { numberOfInvokes++; } }
+        protected long invocations;
+        public long GetInvocations () { lock (_lock) { return invocations; } }
+        public void SetInvocations (long value) { lock (_lock) { invocations = value; } }
+        public void IterateInvocations() { lock (_lock) { invocations++; } }
 
-        protected bool hasMaxInvokes;
-        public bool HasMaxInvokes { get { return hasMaxInvokes; } }
-        protected long maxInvokes;
-        public long GetMaxInvokes () { return maxInvokes; }
+        protected bool hasMaxInvocations;
+        public bool HasMaxInvocations { get { return hasMaxInvocations; } }
+        protected long maxInvocations;
+        public long GetMaxInvocations () { return maxInvocations; }
 
         protected bool hasSpecifiedTimes;
-        public bool HasSpecificTimes { get { return hasSpecifiedTimes; } }
+        public bool HasSpecifiedTimes { get { return hasSpecifiedTimes; } }
         protected DateTime[] specifiedTimes;
         public DateTime[] GetSpecifiedTimes () { return specifiedTimes; }
 
@@ -53,6 +53,33 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         public bool HasIntervals { get { return hasIntervals; } }
         protected TimeSpan[] intervals;
         public TimeSpan[] GetIntervals () { return intervals; }
+
+        protected DateTime lastIntervalTime;
+        public DateTime GetLastIntervalTime () { lock (_lock) { return lastIntervalTime; } }
+        public void SetLastIntervalTime (DateTime value) { lock (_lock) { lastIntervalTime = value; } }
+
+        protected int lastIntervalIndex;
+        public int GetLastIntervalIndex () { lock (_lock) { return lastIntervalIndex; } }
+        public void SetLastIntervalIndex (int value)
+        {
+            lock (_lock)
+            {
+                if      (value < 0)                 { lastIntervalIndex = intervals.Length - 1; }
+                else if (value < intervals.Length)  { lastIntervalIndex = value; }
+                else                                { lastIntervalIndex = 0;  }
+            }
+        }
+        public int NextIntervalIndex ()
+        {
+            int index;
+            lock (_lock)
+            {
+                index = lastIntervalIndex + 1;
+                if (index >= intervals.Length) { index = 0; }
+            }
+
+            return index;
+        }
 
         protected bool hasStartEnd;
         public bool HasStartEnd { get { return hasStartEnd; } }
