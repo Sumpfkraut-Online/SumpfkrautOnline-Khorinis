@@ -359,7 +359,13 @@ namespace GUC.Scripts.Sumpfkraut
             //var pThread = new Thread(pOperation);
             //pThread.Start(0);
 
-
+            //var hs = new HashSet<string>();
+            //hs.Add("Kuchen");
+            //hs.Add("Gel");
+            //hs.Add("Zahnbürste");
+            //hs.Add("Kuchen");
+            //hs.Add("Kuchen");
+            //foreach (var item in hs) { Logger.Print(item); }
             
 
 

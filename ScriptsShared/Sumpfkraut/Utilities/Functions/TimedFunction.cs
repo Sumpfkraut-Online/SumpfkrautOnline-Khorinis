@@ -37,7 +37,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         protected long invocations;
         public long GetInvocations () { lock (_lock) { return invocations; } }
         public void SetInvocations (long value) { lock (_lock) { invocations = value; } }
-        public void IterateInvocations() { lock (_lock) { invocations++; } }
+        public void IterateInvocations () { lock (_lock) { invocations++; } }
 
         protected bool hasMaxInvocations;
         public bool HasMaxInvocations { get { return hasMaxInvocations; } }
@@ -64,9 +64,9 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         {
             lock (_lock)
             {
-                if      (value < 0)                 { lastIntervalIndex = intervals.Length - 1; }
-                else if (value < intervals.Length)  { lastIntervalIndex = value; }
-                else                                { lastIntervalIndex = 0;  }
+                if (value < 0) { lastIntervalIndex = intervals.Length - 1; }
+                else if (value < intervals.Length) { lastIntervalIndex = value; }
+                else { lastIntervalIndex = 0; }
             }
         }
         public int NextIntervalIndex ()
@@ -111,12 +111,12 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         { }
 
         // run at given intervals in a certain time range
-        public TimedFunction (TimeSpan[] intervals,  Tuple<DateTime, DateTime> startEnd)
+        public TimedFunction (TimeSpan[] intervals, Tuple<DateTime, DateTime> startEnd)
             : this(null, intervals, startEnd)
         { }
 
         // general constructor
-        public TimedFunction (DateTime[] specifiedTimes, TimeSpan[] intervals, 
+        public TimedFunction (DateTime[] specifiedTimes, TimeSpan[] intervals,
             Tuple<DateTime, DateTime> startEnd)
         {
             SetObjName("TimedFunction");
@@ -136,6 +136,47 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                 hasStartEnd = true;
                 this.startEnd = startEnd;
             }
+        }
+
+
+
+        // TimedFunctions creates copy of itself
+        public TimedFunction CreateCopy ()
+        {
+            TimedFunction copy;
+            lock (_lock)
+            {
+                copy = new TimedFunction(specifiedTimes, intervals, startEnd);
+                copy.SetObjName(GetObjName());
+            }
+            return copy;
+        }
+
+
+
+        public static bool HaveEqualAttributes (TimedFunction tf1, TimedFunction tf2) 
+        {
+            if (    (tf1.GetType()              != tf2.GetType()) 
+                ||  (tf1.GetObjName()           != tf2.GetObjName())
+                ||  (tf1.GetFunc()              != tf2.GetFunc())
+                ||  (tf1.GetParameters()        != tf2.GetParameters())
+                ||  (tf1.GetMaxInvocations()    != tf2.GetMaxInvocations())
+                ||  (tf1.GetInvocations()       != tf2.GetInvocations())
+                ||  (tf1.GetStart()             != tf2.GetStart())
+                ||  (tf1.GetEnd()               != tf2.GetEnd())
+                ||  (tf1.GetSpecifiedTimes()    != tf2.GetSpecifiedTimes())
+                ||  (tf1.GetIntervals()         != tf2.GetIntervals())
+                ||  (tf1.GetLastIntervalIndex() != tf2.GetLastIntervalIndex())
+                ||  (tf1.GetLastIntervalTime()  != tf2.GetLastIntervalTime()) )
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public bool HasEqualAttributes (TimedFunction tf)
+        {
+            return HaveEqualAttributes(this, tf);
         }
 
     }

@@ -19,11 +19,12 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         protected bool isRunning = false;
         public bool IsRunning { get { return isRunning; } }
 
-        // find better infrastructure than a single list (which becomes cpu-costly when growing bigger
-            // and when often changed internally) .... !!!!
-        protected List<TimedFunction> timedFunctions;
+        protected Dictionary<TimedFunction, int> storage;
+        //protected List<TimedFunction> storage;
+        protected List<IManagerInteraction> storageBuffer;
 
-        protected List<IManagerInteraction> buffer;
+        protected SortedDictionary<DateTime, TimedFunction> schedule;
+        //protected SortedList<DateTime, TimedFunction> scheduleBuffer;
 
 
 
@@ -32,24 +33,26 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             SetObjName("FunctionManager");
             _runLock = new object();
             _bufferLock = new object();
-            timedFunctions = new List<TimedFunction>();
+            storage = new Dictionary<TimedFunction, int>();
+            storageBuffer = new List<IManagerInteraction>();
+            schedule = new SortedDictionary<DateTime, TimedFunction>();
         }
 
 
 
-        public void Add (TimedFunction f, bool allowDuplicate)
+        public void Add (TimedFunction f, int amount, bool allowDuplicate)
         {
             lock (_bufferLock)
             {
-                buffer.Add(new MI_Add(f, allowDuplicate));
+                storageBuffer.Add(new MI_Add(f, amount, allowDuplicate));
             }
         }
 
-        public void Add (TimedFunction[] f, bool allowDuplicate)
+        public void Add (TimedFunction[] f, int amount, bool allowDuplicate)
         {
             lock (_bufferLock)
             {
-                buffer.Add(new MI_AddRange(f, allowDuplicate));
+                storageBuffer.Add(new MI_AddRange(f, amount, allowDuplicate));
             }
         }
 
@@ -57,39 +60,39 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         {
             lock (_bufferLock)
             {
-                buffer.Add(new MI_Clear());
+                storageBuffer.Add(new MI_Clear());
             }
         }
 
-        public void Remove (TimedFunction f, bool removeAll)
+        public void Remove (TimedFunction f, bool removeAll, int amount)
         {
             lock (_bufferLock)
             {
-                buffer.Add(new MI_Remove(f, removeAll));
+                storageBuffer.Add(new MI_Remove(f, removeAll, amount));
             }
         }
 
-        public void Remove (TimedFunction[] f, bool removeAll)
+        public void Remove (TimedFunction[] f, bool removeAll, int amount)
         {
             lock (_bufferLock)
             {
-                buffer.Add(new MI_RemoveRange(f, removeAll));
+                storageBuffer.Add(new MI_RemoveRange(f, removeAll, amount));
             }
         }
 
-        public void Replace (TimedFunction oldTF, TimedFunction newTF, bool replaceAll)
+        public void Replace (TimedFunction oldTF, TimedFunction newTF, bool replaceAll, int amount)
         {
             lock (_bufferLock)
             {
-                buffer.Add(new MI_Replace(oldTF, newTF, replaceAll));
+                storageBuffer.Add(new MI_Replace(oldTF, newTF, replaceAll, amount));
             }
         }
 
-        public void Replace (TimedFunction[] oldTF, TimedFunction[] newTF, bool replaceAll)
+        public void Replace (TimedFunction[] oldTF, TimedFunction[] newTF, bool replaceAll, int amount)
         {
             lock (_bufferLock)
             {
-                buffer.Add(new MI_ReplaceRange(oldTF, newTF, replaceAll));
+                storageBuffer.Add(new MI_ReplaceRange(oldTF, newTF, replaceAll, amount));
             }
         }
 
@@ -101,7 +104,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             {
                 lock (_bufferLock)
                 {
-                    foreach (var item in buffer)
+                    foreach (var item in storageBuffer)
                     {
                         Type type = item.GetType();
                         if      (type == typeof(MI_Clear)) { Buffer_Clear(); }
@@ -116,107 +119,95 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                         else if (type == typeof(MI_Replace)) { Buffer_Replace((MI_Replace)item); }
                         else if (type == typeof(MI_ReplaceRange)) { Buffer_ReplaceRange((MI_ReplaceRange)item); }
                     }
-                    buffer.Clear();
+                    storageBuffer.Clear();
                 }
             }
         }
 
         protected void Buffer_Clear ()
         {
-            timedFunctions.Clear();
+            storage.Clear();
         }
 
-        protected void Buffer_Add (MI_Add ia)
+        protected void Buffer_Add (MI_Add action)
         {
-            if (!(ia.AllowDuplicate && timedFunctions.Contains(ia.TF))) { timedFunctions.Add(ia.TF); }
+            if (storage.ContainsKey(action.TF)) { storage[action.TF] = storage[action.TF] + action.Amount; }
+            else                                { storage.Add(action.TF, action.Amount); }
         }
 
-        protected void Buffer_AddRange (MI_AddRange ia)
+        protected void Buffer_AddRange (MI_AddRange action)
         {
-            for (int i = 0; i < ia.TF.Length; i++)
+            for (int i = 0; i < action.TF.Length; i++)
             {
-                if (!(ia.AllowDuplicate && timedFunctions.Contains(ia.TF[i]))) { timedFunctions.Add(ia.TF[i]); }
+                Buffer_Add(new MI_Add(action.TF[i], action.Amount, action.AllowDuplicate));
             }
         }
 
-        protected void Buffer_Remove (MI_Remove ia)
+        protected void Buffer_Remove (MI_Remove action)
         {
-            if (ia.RemoveAll)
+            if (action.RemoveAll)
             {
-                timedFunctions.RemoveAll((TimedFunction tf) => { return tf == ia.TF; });
+                storage.Remove(action.TF);
             }
             else
             {
-                timedFunctions.Remove(ia.TF);
+                if (storage.ContainsKey(action.TF))
+                {
+                    storage[action.TF] = storage[action.TF] - action.Amount;
+                    if (storage[action.TF] <= 0)
+                    {
+                        Buffer_Remove(new MI_Remove(action.TF, action.RemoveAll, action.Amount));
+                        return;
+                    }
+                }
             }
         }
 
-        protected void Buffer_RemoveRange (MI_RemoveRange ia)
+        protected void Buffer_RemoveRange (MI_RemoveRange action)
         {
-            for (int i = 0; i < ia.TF.Length; i++)
+            for (int i = 0; i < action.TF.Length; i++)
             {
-                if (ia.RemoveAll)
-                {
-                    timedFunctions.RemoveAll((TimedFunction tf) => { return tf == ia.TF[i]; });
-                }
-                else
-                {
-                    timedFunctions.Remove(ia.TF[i]);
-                }
+                Buffer_Remove(new MI_Remove(action.TF[i], action.RemoveAll, action.Amount));
             }
         }
 
-        protected void Buffer_RemoveExceptTimeRange (MI_RemoveExceptTimeRange ia)
+        protected void Buffer_RemoveExceptTimeRange (MI_RemoveExceptTimeRange action)
         {
             throw new NotImplementedException();    
         }
 
-        protected void Buffer_RemoveInTimeRange (MI_RemoveInTimeRange ia)
+        protected void Buffer_RemoveInTimeRange (MI_RemoveInTimeRange action)
         {
             throw new NotImplementedException();
         }
 
-        protected void Buffer_Replace (MI_Replace ia)
+        protected void Buffer_Replace (MI_Replace action)
         {
-            int index;
-            if (ia.ReplaceAll)
+            int amount = 1;
+            if (action.ReplaceAll)
             {
-                do
+                if (storage.TryGetValue(action.OldTF, out amount))
                 {
-                    index = timedFunctions.IndexOf(ia.OldTF);
-                    if (index > -1) { timedFunctions[index] = ia.NewTF; }
+                    Buffer_Remove(new MI_Remove(action.OldTF, true, -1));
                 }
-                while (index > -1);
+                amount = action.HasAmount ? action.Amount : amount;
+                Buffer_Add(new MI_Add(action.NewTF, amount, true));
             }
             else
             {
-                index = timedFunctions.IndexOf(ia.OldTF);
-                if (index > -1) { timedFunctions[index] = ia.NewTF; }
-            } 
+                amount = action.HasAmount ? action.Amount : 1;
+                Buffer_Remove(new MI_Remove(action.OldTF, false, amount));
+                Buffer_Add(new MI_Add(action.NewTF, amount, true));
+            }
         }
 
-        protected void Buffer_ReplaceRange (MI_ReplaceRange ia)
+        protected void Buffer_ReplaceRange (MI_ReplaceRange action)
         {
-            int index;
-            int maxLength = ia.OldTF.Length;
-            if (ia.OldTF.Length > ia.NewTF.Length) { maxLength = ia.NewTF.Length; }
+            int maxLength = action.OldTF.Length <= action.NewTF.Length ? action.OldTF.Length : action.NewTF.Length;
 
-            for (int o = 0; o < maxLength; o++)
+            for (int i = 0; i < maxLength; i++)
             {
-                if (ia.ReplaceAll)
-                {
-                    do
-                    {
-                        index = timedFunctions.IndexOf(ia.OldTF[o]);
-                        if (index > -1) { timedFunctions[index] = ia.NewTF[o]; }
-                    }
-                    while (index > -1);
-                }
-                else
-                {
-                    index = timedFunctions.IndexOf(ia.OldTF[o]);
-                    if (index > -1) { timedFunctions[index] = ia.NewTF[o]; }
-                }
+                Buffer_Replace(new MI_Replace(action.OldTF[i], action.NewTF[i], action.ReplaceAll, action.Amount));
             }
         }
 
@@ -233,7 +224,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 
             lock (_runLock)
             {
-                foreach (var item in timedFunctions)
+                foreach (var item in storage)
                 {
                     if (IsDue(item, now)) { due.Add(item); }
                 }
@@ -297,9 +288,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         public int RemoveExpiredFunctions ()
         {
             var count = 0;
-            Predicate<TimedFunction> predicate = (TimedFunction tf) => { return IsExpired(tf); };
-
-            lock (_runLock) { count = timedFunctions.RemoveAll(predicate); }
+            lock (_runLock) { count = storage.RemoveAll(IsExpired); }
 
             return count;
         }
