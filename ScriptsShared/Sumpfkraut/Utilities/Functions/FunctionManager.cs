@@ -2,6 +2,7 @@
 using GUC.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 {
@@ -20,11 +21,8 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         public bool IsRunning { get { return isRunning; } }
 
         protected Dictionary<TimedFunction, int> storage;
-        //protected List<TimedFunction> storage;
         protected List<IManagerInteraction> storageBuffer;
-
-        protected SortedDictionary<DateTime, TimedFunction> schedule;
-        //protected SortedList<DateTime, TimedFunction> scheduleBuffer;
+        protected SortedDictionary<DateTime, List<ScheduleProtocol>> schedule;
 
 
 
@@ -35,7 +33,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             _bufferLock = new object();
             storage = new Dictionary<TimedFunction, int>();
             storageBuffer = new List<IManagerInteraction>();
-            schedule = new SortedDictionary<DateTime, TimedFunction>();
+            schedule = new SortedDictionary<DateTime, List<ScheduleProtocol>>();
         }
 
 
@@ -213,84 +211,114 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 
 
 
-        public List<TimedFunction> FindDueFunctions ()
+        //public List<TimedFunction> FindDueFunctions ()
+        //{
+        //    return FindDueFunctions(DateTime.Now);
+        //}
+
+        //public List<TimedFunction> FindDueFunctions (DateTime now)
+        //{
+        //    var due = new List<TimedFunction>();
+
+        //    lock (_runLock)
+        //    {
+        //        foreach (var item in storage)
+        //        {
+        //            if (IsDue(item, now)) { due.Add(item); }
+        //        }
+        //    }
+
+        //    return due;
+        //}
+
+        //public bool IsDue (TimedFunction tf)
+        //{
+        //    return IsDue(tf, DateTime.Now);
+        //}
+
+        //public bool IsDue (TimedFunction tf, DateTime now)
+        //{
+        //    if (tf.HasMaxInvocations && (tf.GetInvocations() < tf.GetMaxInvocations())) { return false; }
+        //    if (tf.HasStartEnd)
+        //    {
+        //        if (tf.GetStart() < now) { return false; }
+        //        if (tf.GetEnd() > now) { return false; }
+        //    }
+
+        //    if (tf.HasSpecifiedTimes)
+        //    {
+        //        foreach (var t in tf.GetSpecifiedTimes()) { if (t >= now) { return true; } }
+        //    }
+        //    if (tf.HasIntervals)
+        //    {
+        //        var lastIntervalIndex = tf.GetLastIntervalIndex();
+        //        var lastIntervalTime = tf.GetLastIntervalTime();
+        //        if ((lastIntervalTime + tf.GetIntervals()[lastIntervalIndex]) <= now) { return true; }
+        //    }
+
+        //    return false;
+        //}
+
+        //public void InvokeTimedFunctions (List<TimedFunction> tf)
+        //{
+        //    lock (_runLock)
+        //    {
+        //        foreach (var item in tf)
+        //        {
+        //            InvokeTimedFunction(item);
+        //        }
+        //    }
+        //}
+
+        //protected void InvokeTimedFunction (TimedFunction tf)
+        //{
+        //    try
+        //    {
+        //        tf.SetParameters( tf.GetFunc()(tf.GetParameters()) );
+        //        tf.IterateInvocations();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MakeLogError(ex);
+        //    }
+        //}
+
+        //public int RemoveExpiredFunctions ()
+        //{
+        //    var count = 0;
+        //    lock (_runLock) { count = storage.RemoveAll(IsExpired); }
+
+        //    return count;
+        //}
+
+        protected bool TryCreateNextProtocol (ScheduleProtocol old, out ScheduleProtocol next)
         {
-            return FindDueFunctions(DateTime.Now);
+            int callAmount = 0;
+            // TO DO
+            next = new ScheduleProtocol(old.TF, callAmount);
+            return true;
         }
 
-        public List<TimedFunction> FindDueFunctions (DateTime now)
+        protected int InvokeProtocol (ScheduleProtocol protocol)
         {
-            var due = new List<TimedFunction>();
+            int invokes = 0;
 
-            lock (_runLock)
-            {
-                foreach (var item in storage)
-                {
-                    if (IsDue(item, now)) { due.Add(item); }
-                }
-            }
-
-            return due;
-        }
-
-        public bool IsDue (TimedFunction tf)
-        {
-            return IsDue(tf, DateTime.Now);
-        }
-
-        public bool IsDue (TimedFunction tf, DateTime now)
-        {
-            if (tf.HasMaxInvocations && (tf.GetInvocations() < tf.GetMaxInvocations())) { return false; }
-            if (tf.HasStartEnd)
-            {
-                if (tf.GetStart() < now) { return false; }
-                if (tf.GetEnd() > now) { return false; }
-            }
-
-            if (tf.HasSpecifiedTimes)
-            {
-                foreach (var t in tf.GetSpecifiedTimes()) { if (t >= now) { return true; } }
-            }
-            if (tf.HasIntervals)
-            {
-                var lastIntervalIndex = tf.GetLastIntervalIndex();
-                var lastIntervalTime = tf.GetLastIntervalTime();
-                if ((lastIntervalTime + tf.GetIntervals()[lastIntervalIndex]) <= now) { return true; }
-            }
-
-            return false;
-        }
-
-        public void InvokeTimedFunctions (List<TimedFunction> tf)
-        {
-            lock (_runLock)
-            {
-                foreach (var item in tf)
-                {
-                    InvokeTimedFunction(item);
-                }
-            }
-        }
-
-        protected void InvokeTimedFunction (TimedFunction tf)
-        {
             try
             {
-                tf.SetParameters( tf.GetFunc()(tf.GetParameters()) );
-                tf.IterateInvocations();
+                var tf = protocol.TF;
+                for (int i = 0; i < protocol.CallAmount; i++)
+                {
+                    tf.SetParameters( tf.GetFunc()(tf.GetParameters()) );
+                    tf.IterateInvocations();
+                    invokes++;
+                }
             }
             catch (Exception ex)
             {
                 MakeLogError(ex);
             }
-        }
 
-        public int RemoveExpiredFunctions ()
-        {
-            var count = 0;
-            lock (_runLock) { count = storage.RemoveAll(IsExpired); }
-
-            return count;
+            return invokes;
         }
 
         public bool IsExpired (TimedFunction tf)
@@ -300,36 +328,27 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 
         public bool IsExpired (TimedFunction tf, DateTime now)
         {
-            bool isOutdated = true;
+            bool isExpired = true;
 
-            if (tf.HasStartEnd && (tf.GetEnd() > now)) { isOutdated = false; }
+            if (tf.HasStartEnd && (tf.GetEnd() > now)) { isExpired = false; }
             else if (tf.HasSpecifiedTimes)
             {
                 var specifiedTimes = tf.GetSpecifiedTimes();
                 for (int i = 0; i < specifiedTimes.Length; i++)
                 {
-                    if (specifiedTimes[i] > now) { isOutdated = false; break; }
+                    if (specifiedTimes[i] > now) { isExpired = false; break; }
                 }
             }
-            else if (tf.HasMaxInvocations && (tf.GetInvocations() < tf.GetMaxInvocations())) { isOutdated = false; }
+            else if (tf.HasMaxInvocations && (tf.GetInvocations() < tf.GetMaxInvocations())) { isExpired = false; }
 
-            return isOutdated;
+            return isExpired;
         }
 
 
 
         public void Start ()
         {
-            lock (_runLock)
-            {
-                isRunning = true;
-                Run();
-            }
-        }
-
-        public void Resume ()
-        {
-            lock (_runLock) { if (!isRunning) { Start(); } }
+            lock (_runLock) { isRunning = true; }
         }
 
         public void Stop ()
@@ -337,16 +356,34 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             lock (_runLock) { isRunning = false; }
         }
 
+
+
         public void Run ()
         {
-            while (isRunning)
+            if (isRunning)
             {
                 lock (_runLock)
                 {
                     lock (_bufferLock) { IntegrateBuffer(); }
-                    var due = FindDueFunctions();
-                    InvokeTimedFunctions(due);
-                    RemoveExpiredFunctions();
+
+                    ScheduleProtocol newProtocol;
+                    var now = DateTime.Now;
+                    var first = schedule.First();
+                    while ((schedule.Count > 0) && (first.Key <= now))
+                    {
+                        foreach (var oldProtocol in first.Value)
+                        {
+                            InvokeProtocol(oldProtocol);
+                            // get possible protocol that should follow the old one
+                            // and add it to the schedule
+                            if (TryCreateNextProtocol(oldProtocol, out newProtocol))
+                            {
+
+                            }
+                        }
+
+                        first = schedule.First();
+                    }
                 }
             }
         }

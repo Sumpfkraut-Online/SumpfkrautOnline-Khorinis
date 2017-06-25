@@ -108,6 +108,7 @@
     <Compile Include="Sumpfkraut\Utilities\Functions\ManagerInteraction\MI_Remove.cs" />
     <Compile Include="Sumpfkraut\Utilities\Functions\ManagerInteraction\MI_Replace.cs" />
     <Compile Include="Sumpfkraut\Utilities\Functions\ManagerInteraction\MI_ReplaceRange.cs" />
+    <Compile Include="Sumpfkraut\Utilities\Functions\ScheduleProtocol.cs" />
     <Compile Include="Sumpfkraut\Utilities\Functions\TimedFunction.cs" />
     <Compile Include="Sumpfkraut\Utilities\ArrayUtil.cs" />
     <Compile Include="Sumpfkraut\Utilities\DateTimeUtil.cs" />

@@ -366,9 +366,32 @@ namespace GUC.Scripts.Sumpfkraut
             //hs.Add("Kuchen");
             //hs.Add("Kuchen");
             //foreach (var item in hs) { Logger.Print(item); }
-            
 
 
+
+
+
+
+            var sd = new SortedDictionary<DateTime, int>();
+            var max = 1000000;
+            var checkDate = DateTime.MinValue.AddDays(max / 2);
+
+
+            for (int i = 0; i < max; i++)
+            {
+                sd.Add(DateTime.MinValue.AddDays(i), i);
+            }
+
+            var sw = Stopwatch.StartNew();
+            var first = sd.First();
+            while (first.Key <= checkDate)
+            {
+                sd.Remove(first.Key);
+                first = sd.First();
+            }
+            sw.Stop();
+
+            Logger.Print(sw.ElapsedMilliseconds);
 
 
 
@@ -391,6 +414,11 @@ namespace GUC.Scripts.Sumpfkraut
             //        }
             //    }
             //});
+
+
+
+
+
 
             Logger.Log("===> !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
