@@ -211,99 +211,36 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 
 
 
-        //public List<TimedFunction> FindDueFunctions ()
-        //{
-        //    return FindDueFunctions(DateTime.Now);
-        //}
-
-        //public List<TimedFunction> FindDueFunctions (DateTime now)
-        //{
-        //    var due = new List<TimedFunction>();
-
-        //    lock (_runLock)
-        //    {
-        //        foreach (var item in storage)
-        //        {
-        //            if (IsDue(item, now)) { due.Add(item); }
-        //        }
-        //    }
-
-        //    return due;
-        //}
-
-        //public bool IsDue (TimedFunction tf)
-        //{
-        //    return IsDue(tf, DateTime.Now);
-        //}
-
-        //public bool IsDue (TimedFunction tf, DateTime now)
-        //{
-        //    if (tf.HasMaxInvocations && (tf.GetInvocations() < tf.GetMaxInvocations())) { return false; }
-        //    if (tf.HasStartEnd)
-        //    {
-        //        if (tf.GetStart() < now) { return false; }
-        //        if (tf.GetEnd() > now) { return false; }
-        //    }
-
-        //    if (tf.HasSpecifiedTimes)
-        //    {
-        //        foreach (var t in tf.GetSpecifiedTimes()) { if (t >= now) { return true; } }
-        //    }
-        //    if (tf.HasIntervals)
-        //    {
-        //        var lastIntervalIndex = tf.GetLastIntervalIndex();
-        //        var lastIntervalTime = tf.GetLastIntervalTime();
-        //        if ((lastIntervalTime + tf.GetIntervals()[lastIntervalIndex]) <= now) { return true; }
-        //    }
-
-        //    return false;
-        //}
-
-        //public void InvokeTimedFunctions (List<TimedFunction> tf)
-        //{
-        //    lock (_runLock)
-        //    {
-        //        foreach (var item in tf)
-        //        {
-        //            InvokeTimedFunction(item);
-        //        }
-        //    }
-        //}
-
-        //protected void InvokeTimedFunction (TimedFunction tf)
-        //{
-        //    try
-        //    {
-        //        tf.SetParameters( tf.GetFunc()(tf.GetParameters()) );
-        //        tf.IterateInvocations();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MakeLogError(ex);
-        //    }
-        //}
-
-        //public int RemoveExpiredFunctions ()
-        //{
-        //    var count = 0;
-        //    lock (_runLock) { count = storage.RemoveAll(IsExpired); }
-
-        //    return count;
-        //}
-
         protected bool TryCreateNextProtocol (DateTime referenceTime, ScheduleProtocol old, out ScheduleProtocol next)
         {
-            DateTime nextTime;
+            DateTime nextTime = DateTime.MinValue;
             next = new ScheduleProtocol();
             int callAmount = 0;
-            // TO DO
+
             // detect max invocations
             if (old.TF.HasMaxInvocations && (old.TF.GetInvocations() >= old.TF.GetMaxInvocations())) { return false; }
             // detect start and end
             if (old.TF.HasStartEnd && (old.TF.GetEnd() <= referenceTime)) { return false; }
-            // detect set times
-
+            // determine possible next specified time
+            if (old.TF.HasSpecifiedTimes && old.TF.HasSpecifiedTimesLeft())
+            {
+                sdsadasd
+                //var specifiedTimes = old.TF.GetSpecifiedTimes();
+                //foreach (var st in specifiedTimes)
+                //{
+                //    if (st >= referenceTime)
+                //    {
+                //        nextTime = st;
+                //        break;
+                //    }
+                //}
+            }
             // detect interval
+            if (old.TF.HasIntervals)
+            {
+                old.TF.Get
+                if (nextTime != DateTime.MinValue) { }
+            }
 
             next = new ScheduleProtocol(old.TF, callAmount);
             return true;
@@ -366,8 +303,6 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             lock (_runLock) { isRunning = false; }
         }
 
-
-
         public void Run ()
         {
             if (isRunning)
@@ -376,14 +311,15 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                 {
                     lock (_bufferLock) { IntegrateBuffer(); }
 
+                    KeyValuePair<DateTime, List<ScheduleProtocol>> first;
                     ScheduleProtocol newProtocol;
+
                     var now = DateTime.Now;
-                    var first = schedule.First();
-                    if ((schedule.Count < 1) && (first.Key > now)) { return; }
+                    if ((schedule.Count < 1) && (schedule.First().Key > now)) { return; }
 
                     do
                     {
-                        // reduntant on first loop but allows using while-check below to avoid exceptions
+                        // grab the first and thus next list of protocols in the chronologically series
                         first = schedule.First();
                         // remove first schedule entry now that we have it's data
                         schedule.Remove(first.Key);

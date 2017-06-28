@@ -34,21 +34,59 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         public object[] GetParameters () { lock (_lock) { return parameters; } }
         public void SetParameters (object[] value) { lock (_lock) { parameters = value; } }
 
+        // option whether to guarentee due calls of the function although it might have reached it's end DateTime
+        protected bool preserveDueInvocations;
+        public bool GetPreserveDueInvocations () { lock (_lock) { return preserveDueInvocations; } }
+        public void SetPreserveDueInvocations (bool value) { lock (_lock) { preserveDueInvocations = value; } }
+
+        // how many times the TimedFunction was invoked already
         protected long invocations;
         public long GetInvocations () { lock (_lock) { return invocations; } }
         public void SetInvocations (long value) { lock (_lock) { invocations = value; } }
         public void IterateInvocations () { lock (_lock) { invocations++; } }
 
+        // max limit to invocations
         protected bool hasMaxInvocations;
         public bool HasMaxInvocations { get { return hasMaxInvocations; } }
         protected long maxInvocations;
         public long GetMaxInvocations () { return maxInvocations; }
 
+        // crisp DateTimes at which to call the function
         protected bool hasSpecifiedTimes;
         public bool HasSpecifiedTimes { get { return hasSpecifiedTimes; } }
         protected DateTime[] specifiedTimes;
         public DateTime[] GetSpecifiedTimes () { return specifiedTimes; }
 
+        // to remember which specified times have already been processed
+        protected int lastSpecifiedTimeIndex;
+        public int GetLastSpecifiedTimeIndex () { lock (_lock) { return lastSpecifiedTimeIndex; } }
+        public int SpecifiedTimesLeft ()
+        {
+            var amount = 0;
+            lock (_lock)
+            {
+                amount = (specifiedTimes.Length - 1) - lastSpecifiedTimeIndex;
+                amount = amount < 0 ? 0 : amount;
+            }
+
+            return amount;
+        }
+        public bool HasSpecifiedTimesLeft () { lock (_lock) { return SpecifiedTimesLeft() > 0; } }
+        public DateTime GetLastSpecifiedTime () { lock (_lock) { return specifiedTimes[lastSpecifiedTimeIndex]; } }
+        public int IterateSpecifiedTimeIndex ()
+        {
+            int index = -1;
+            lock (_lock)
+            {
+                index = lastSpecifiedTimeIndex + 1;
+                if (!(index < specifiedTimes.Length)) { index = specifiedTimes.Length - 1; }
+                lastSpecifiedTimeIndex = index;
+            }
+
+            return index;
+        }
+
+        // repeating intervals (can be broke out of by using maxInvocations, startEnd or self-delting TimedFunction-bodies)
         protected bool hasIntervals;
         public bool HasIntervals { get { return hasIntervals; } }
         protected TimeSpan[] intervals;
@@ -69,18 +107,20 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                 else { lastIntervalIndex = 0; }
             }
         }
-        public int NextIntervalIndex ()
+        public int IterateIntervalIndex ()
         {
-            int index;
+            int index = -1;
             lock (_lock)
             {
                 index = lastIntervalIndex + 1;
-                if (index >= intervals.Length) { index = 0; }
+                if (!(index < intervals.Length)) { index = 0; }
+                lastIntervalIndex = index;
             }
 
             return index;
         }
 
+        // crisp DateTimes at which to start and end the use of that TimedFunction
         protected bool hasStartEnd;
         public bool HasStartEnd { get { return hasStartEnd; } }
         protected Tuple<DateTime, DateTime> startEnd;
