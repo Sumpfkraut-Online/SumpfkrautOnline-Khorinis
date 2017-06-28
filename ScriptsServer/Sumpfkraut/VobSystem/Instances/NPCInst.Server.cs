@@ -52,9 +52,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         /// <param name="velocity"></param>
         public void DoJump(JumpMoves move, Vec3f velocity)
         {
-            //if (this.IsDead || this.BaseInst.GetEnvironment().InAir)
-            //    return;
-
             ScriptAniJob job;
             switch (move)
             {

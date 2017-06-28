@@ -40,9 +40,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
 
-        protected object host;
-        public object GetHost () { return host; }
-        public T GetHost<T> () { return (T) host; }
+        object host;
+        public object Host { get { return this.host; } }
 
         protected Type hostType;
         public Type HostType { get { return hostType; } }

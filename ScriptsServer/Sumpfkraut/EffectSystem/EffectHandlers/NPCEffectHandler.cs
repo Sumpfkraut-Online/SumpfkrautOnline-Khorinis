@@ -23,35 +23,39 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
             PrintStatic(typeof(BaseEffectHandler), "Finished subscribing ChangeDestinations and EventHandler...");
         }
-
-
-        public NPCEffectHandler (List<Effect> effects, NPCDef host)
-            : this("NPCEffectHandler (default)", effects, host)
-        { }
+        
 
         public NPCEffectHandler (List<Effect> effects, NPCInst host)
             : this("NPCEffectHandler (default)", effects, host)
         { }
-
-        public NPCEffectHandler (string objName, List<Effect> effects, NPCDef host) 
-            : base(objName, effects, host)
-        { }
-
+        
         public NPCEffectHandler (string objName, List<Effect> effects, NPCInst host) 
             : base(objName, effects, host)
         { }
-
-        public NPCInst Self { get { return (NPCInst)this.host; } }
+        
+        new public NPCInst Host { get { return (NPCInst)base.Host; } }
 
         private static void OnHit (NPCInst attacker, NPCInst target, int damage)
         {
             throw new NotImplementedException();
         }
-        
-        public void DoAttack(FightMoves move)
+
+
+        public void Jump(JumpMoves move)
         {
-            if (Self.IsDead)
+            if (Host.IsDead || Host.Environment.InAir)
                 return;
+
+            if (Host.ModelInst.IsInAnimation())
+                return;
+        }
+        
+        public void FightMove(FightMoves move)
+        {
+            if (Host.IsDead)
+                return;
+
+            Host.DoFightMove(move, 0);
         }
 
         //protected override void ApplyEffect (Effect effect, bool reverse = false)

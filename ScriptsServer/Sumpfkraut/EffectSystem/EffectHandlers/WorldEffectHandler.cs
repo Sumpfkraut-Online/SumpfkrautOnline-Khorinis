@@ -25,18 +25,12 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         }
 
 
-
-        public WorldEffectHandler (List<Effect> effects, WorldDef host)
-            : this("WorldEffectHandler (default)", effects, host)
-        { }
+        new public WorldInst Host { get { return (WorldInst)base.Host; } }
 
         public WorldEffectHandler (List<Effect> effects, WorldInst host)
             : this("WorldEffectHandler (default)", effects, host)
         { }
-
-        public WorldEffectHandler (string objName, List<Effect> effects, WorldDef host) 
-            : base(objName, effects, host)
-        { }
+        
 
         public WorldEffectHandler (string objName, List<Effect> effects, WorldInst host) 
             : base(objName, effects, host)

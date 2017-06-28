@@ -13,35 +13,24 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
     {
 
         new public static readonly string _staticName = "VobEffectHandler (static)";
-
-
-
+        
         static VobEffectHandler ()
         {
             PrintStatic(typeof(BaseEffectHandler), "Start subscribing ChangeDestinations and EventHandler...");
 
             RegisterDestination(Enumeration.ChangeDestination.Vob_CodeName);
             RegisterDestination(Enumeration.ChangeDestination.Vob_Name);
-            RegisterDestination(Enumeration.ChangeDestination.Vob_VobDefType);
             RegisterDestination(Enumeration.ChangeDestination.Vob_VobInstType);
 
             PrintStatic(typeof(BaseEffectHandler), "Finished subscribing ChangeDestinations and EventHandler...");
         }
-
-
-
-        public VobEffectHandler (List<Effect> effects, VobDef host)
-            : this("VobEffectHandler (default)", effects, host)
-        { }
+        
+        new public VobInst Host { get { return (VobInst)base.Host; } }
 
         public VobEffectHandler (List<Effect> effects, VobInst host)
             : this("VobEffectHandler (default)", effects, host)
         { }
-
-        public VobEffectHandler (string objName, List<Effect> effects, VobDef host) 
-            : base(objName, effects, host)
-        { }
-
+        
         public VobEffectHandler (string objName, List<Effect> effects, VobInst host) 
             : base(objName, effects, host)
         { }

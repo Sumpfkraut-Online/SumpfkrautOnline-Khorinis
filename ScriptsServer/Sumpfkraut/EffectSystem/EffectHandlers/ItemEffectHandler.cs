@@ -26,17 +26,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         }
 
 
-
-        public ItemEffectHandler (List<Effect> effects, ItemDef host)
-            : this("ItemEffectHandler (default)", effects, host)
-        { }
+        new public ItemInst Host { get { return (ItemInst)base.Host; } }
 
         public ItemEffectHandler (List<Effect> effects, ItemInst host)
             : this("ItemEffectHandler (default)", effects, host)
-        { }
-
-        public ItemEffectHandler (string objName, List<Effect> effects, ItemDef host) 
-            : base(objName, effects, host)
         { }
 
         public ItemEffectHandler (string objName, List<Effect> effects, ItemInst host) 

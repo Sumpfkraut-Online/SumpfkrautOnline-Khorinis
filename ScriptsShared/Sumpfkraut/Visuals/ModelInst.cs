@@ -88,6 +88,11 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
             return this.BaseInst.StartAnimation(aniJob.BaseAniJob, fpsMult, pairs);
         }
 
+        public bool IsInAnimation()
+        {
+            return this.BaseInst.IsInAnimation();
+        }
+
         #endregion
 
         #region Read & Write
