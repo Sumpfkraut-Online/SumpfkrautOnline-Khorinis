@@ -372,27 +372,35 @@ namespace GUC.Scripts.Sumpfkraut
 
 
 
-            var sd = new SortedDictionary<DateTime, int>();
-            var max = 1000000;
-            var checkDate = DateTime.MinValue.AddDays(max / 2);
+            //var sd = new SortedDictionary<DateTime, int>();
+            //var max = 1000000;
+            //var checkDate = DateTime.MinValue.AddDays(max / 2);
 
 
-            for (int i = 0; i < max; i++)
-            {
-                sd.Add(DateTime.MinValue.AddDays(i), i);
-            }
+            //for (int i = 0; i < max; i++)
+            //{
+            //    sd.Add(DateTime.MinValue.AddDays(i), i);
+            //}
 
-            var sw = Stopwatch.StartNew();
-            var first = sd.First();
-            while (first.Key <= checkDate)
-            {
-                sd.Remove(first.Key);
-                first = sd.First();
-            }
-            sw.Stop();
+            //var sw = Stopwatch.StartNew();
+            //var first = sd.First();
+            //while (first.Key <= checkDate)
+            //{
+            //    sd.Remove(first.Key);
+            //    first = sd.First();
+            //}
+            //sw.Stop();
 
-            Logger.Print(sw.ElapsedMilliseconds);
+            //Logger.Print(sw.ElapsedMilliseconds);
 
+
+            //var list1 = new List<string>() { "Banana", "Joe" };
+            //var list2 = list1;
+            //var list3 = list1.ToList();
+            //list3.Add("Humbug");
+            //PrintStatic(typeof(TestingThings), list1 == list2);
+            //PrintStatic(typeof(TestingThings), list1 == list3);
+            //foreach (var e in list1) { PrintStatic(typeof(TestingThings), e); }
 
 
 

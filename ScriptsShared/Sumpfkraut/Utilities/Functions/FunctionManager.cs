@@ -291,10 +291,20 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         //    return count;
         //}
 
-        protected bool TryCreateNextProtocol (ScheduleProtocol old, out ScheduleProtocol next)
+        protected bool TryCreateNextProtocol (DateTime referenceTime, ScheduleProtocol old, out ScheduleProtocol next)
         {
+            DateTime nextTime;
+            next = new ScheduleProtocol();
             int callAmount = 0;
             // TO DO
+            // detect max invocations
+            if (old.TF.HasMaxInvocations && (old.TF.GetInvocations() >= old.TF.GetMaxInvocations())) { return false; }
+            // detect start and end
+            if (old.TF.HasStartEnd && (old.TF.GetEnd() <= referenceTime)) { return false; }
+            // detect set times
+
+            // detect interval
+
             next = new ScheduleProtocol(old.TF, callAmount);
             return true;
         }
@@ -369,21 +379,30 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                     ScheduleProtocol newProtocol;
                     var now = DateTime.Now;
                     var first = schedule.First();
-                    while ((schedule.Count > 0) && (first.Key <= now))
+                    if ((schedule.Count < 1) && (first.Key > now)) { return; }
+
+                    do
                     {
-                        foreach (var oldProtocol in first.Value)
+                        // reduntant on first loop but allows using while-check below to avoid exceptions
+                        first = schedule.First();
+                        // remove first schedule entry now that we have it's data
+                        schedule.Remove(first.Key);
+                        // create a copy of the first point in time of the schedule
+                        var protocols = first.Value.ToArray();
+
+                        foreach (var oldProtocol in protocols)
                         {
                             InvokeProtocol(oldProtocol);
                             // get possible protocol that should follow the old one
                             // and add it to the schedule
-                            if (TryCreateNextProtocol(oldProtocol, out newProtocol))
+                            if (TryCreateNextProtocol(now, oldProtocol, out newProtocol))
                             {
-
+                                // add possible new protocol to the schedule
+                                Buffer_Add(new MI_Add(newProtocol.TF, newProtocol.CallAmount, true));
                             }
                         }
-
-                        first = schedule.First();
                     }
+                    while ((schedule.Count > 0) && (first.Key <= now));
                 }
             }
         }
