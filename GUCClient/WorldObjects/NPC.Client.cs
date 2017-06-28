@@ -401,7 +401,7 @@ namespace GUC.WorldObjects
 
         public void SetMovement(NPCMovement state)
         {
-            if (this.guide == null) // we're not guiding this npc
+            if (this != Hero && this.guide == null) // we're not guiding this npc
                 return;
 
             if (this.movement == state)

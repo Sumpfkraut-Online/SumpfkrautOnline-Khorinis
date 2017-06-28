@@ -31,6 +31,7 @@ namespace GUC.WorldObjects.VobGuiding
                 stream.Write((short)bitfield);
 
                 GameClient.Send(stream, PktPriority.Low, PktReliability.Unreliable);
+
             }
 
             #endregion

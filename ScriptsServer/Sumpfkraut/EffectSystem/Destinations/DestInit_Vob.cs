@@ -78,7 +78,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
                 TotalChange totalChange = null;
                 if (!effectHandler.TryGetTotalChange(ChangeDestination.Effect_Name, out totalChange)) { return; }
 
-                var linkedObj = effectHandler.GetHost();
+                var linkedObj = effectHandler.Host;
                 if      (linkedObj is VobDef)
                 {
                     linkedObj = linkedObj as VobDef;
@@ -120,7 +120,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 
                 // last component counts as long as the host still isn't set
                 // (changing it afterwards is not possible)
-                object host = effectHandler.GetHost();
+                object host = effectHandler.Host;
                 if (host != null) { return; }
 
                 // stop here when there are no Changes to process
@@ -157,7 +157,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 
                 // last component counts as long as the host still isn't set
                 // (changing it afterwards is not possible)
-                object host = effectHandler.GetHost();
+                object host = effectHandler.Host;
                 if (host != null) { return; }
 
                 // stop here when there are no Changes to process

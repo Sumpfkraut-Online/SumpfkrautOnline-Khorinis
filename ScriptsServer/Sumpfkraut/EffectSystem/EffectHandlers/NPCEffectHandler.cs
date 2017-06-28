@@ -41,13 +41,15 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         }
 
 
-        public void Jump(JumpMoves move)
+        public void TryJump(JumpMoves move)
         {
             if (Host.IsDead || Host.Environment.InAir)
                 return;
 
             if (Host.ModelInst.IsInAnimation())
                 return;
+
+            Host.DoJump(move, Host.GetDirection() * 100f + new Types.Vec3f(0, 500, 0));
         }
         
         public void FightMove(FightMoves move)

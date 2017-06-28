@@ -113,7 +113,7 @@ namespace GUC.Scripts
             Logger.Log("######## Initalise SumpfkrautOnline ServerScripts #########");
 
             Sumpfkraut.Daedalus.AniParser.ReadMDSFiles();
-            Sumpfkraut.Daedalus.ConstParser.ParseConstValues();
+            /*Sumpfkraut.Daedalus.ConstParser.ParseConstValues();
             Sumpfkraut.Daedalus.FuncParser.ParseConstValues();
             Sumpfkraut.Daedalus.PrototypeParser.ParsePrototypes();
             Sumpfkraut.Daedalus.InstanceParser.ParseInstances();
@@ -123,9 +123,12 @@ namespace GUC.Scripts
             Sumpfkraut.Daedalus.ConstParser.Free();
             Sumpfkraut.Daedalus.FuncParser.Free();
             Sumpfkraut.Daedalus.PrototypeParser.Free();
-            Sumpfkraut.Daedalus.InstanceParser.Free();
+            Sumpfkraut.Daedalus.InstanceParser.Free();*/
 
             AddSomeDefs();
+
+            NPCInst.Requests.OnJump += (npc, m) => npc.EffectHandler.TryJump(m) ;
+            //NPCInst.Requests.OnDrawFists += (npc) => npc.EffectHandler.TryJump(m);
 
             CreateTestWorld();
 
@@ -138,13 +141,12 @@ namespace GUC.Scripts
             // -- command console --
             Sumpfkraut.CommandConsole.CommandConsole cmdConsole = new Sumpfkraut.CommandConsole.CommandConsole();
 
-            Sumpfkraut.TestingThings.Init();
+            //Sumpfkraut.TestingThings.Init();
             //Sumpfkraut.AI.TestingAI.Test();
 
             Logger.Log("######################## Finished #########################");
         }
-
-
+        
 
         void AddSomeDefs()
         {
@@ -195,7 +197,7 @@ namespace GUC.Scripts
             WorldInst.Current.Clock.SetTime(new Types.WorldTime(0, 8), 10.0f);
             WorldInst.Current.Clock.Start();
 
-            for (int i = 0; i < WorldObjects.Instances.BaseVobInstance.GetCount(); i++)
+            /*for (int i = 0; i < WorldObjects.Instances.BaseVobInstance.GetCount(); i++)
             {
                 BaseVobInst inst;
                 BaseVobDef def;
@@ -210,7 +212,7 @@ namespace GUC.Scripts
                     ((WorldObjects.VobGuiding.GuidedVob)inst.BaseInst).SetNeedsClientGuide(true);
                     inst.Spawn(WorldInst.Current, Randomizer.GetVec3fRad(new Types.Vec3f(0, 1500, 0), 30000), Randomizer.GetVec3fRad(new Types.Vec3f(0, 0, 0), 1).Normalise());
                 }
-            }
+            }*/
         }
 
         void Add1hAttacks(ModelDef model)

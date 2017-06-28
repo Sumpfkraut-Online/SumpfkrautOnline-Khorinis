@@ -9,15 +9,20 @@ using GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs;
 using GUC.Types;
 using GUC.Log;
 using GUC.Scripts.Sumpfkraut.Networking;
-using GUC.Animations;
-using GUC.WorldObjects;
-using GUC.WorldObjects.Instances;
+using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class NPCInst
     {
         public static readonly Networking.Requests.NPCRequestReceiver Requests = new Networking.Requests.NPCRequestReceiver();
+
+
+        new public NPCEffectHandler EffectHandler { get { return (NPCEffectHandler)base.EffectHandler; } }
+        protected override BaseEffectHandler CreateHandler()
+        {
+            return new NPCEffectHandler(null, null, this);
+        }
 
         private ScriptAniJob fightAni;
         public ScriptAniJob FightAnimation { get { return this.fightAni; } private set { this.fightAni = value; } }

@@ -42,12 +42,15 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #endregion
 
+        partial void pConstruct();
         protected abstract BaseVob CreateVob();
         public BaseVobInst()
         {
             this.baseInst = CreateVob();
             if (this.baseInst == null)
                 throw new Exception("BaseInst is null!");
+
+            pConstruct();
         }
 
         public void Spawn(World world)

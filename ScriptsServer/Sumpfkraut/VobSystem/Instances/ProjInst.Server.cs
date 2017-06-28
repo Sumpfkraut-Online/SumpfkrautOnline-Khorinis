@@ -6,11 +6,17 @@ using GUC.Types;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.Scripts.Sumpfkraut.Networking;
+using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class ProjInst
     {
+        protected override BaseEffectHandler CreateHandler()
+        {
+            throw new NotImplementedException();
+        }
+
         public NPCInst Shooter;
         public int Damage;
 
