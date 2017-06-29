@@ -16,6 +16,11 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
 
+        new protected NPCDef linkedObject;
+        new public NPCDef GetLinkedObject () { return linkedObject; }
+
+
+
         static NPCDefEffectHandler ()
         {
             PrintStatic(typeof(NPCDefEffectHandler), "Start subscribing ChangeDestinations and EventHandler...");

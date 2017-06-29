@@ -25,6 +25,11 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
 
+        new protected ItemDef linkedObject;
+        new public ItemDef GetLinkedObject () { return linkedObject; }
+
+
+
         public ItemDefEffectHandler (List<Effect> effects, ItemDef linkedObject)
             : this("ItemDefEffectHandler", effects, linkedObject)
         { }

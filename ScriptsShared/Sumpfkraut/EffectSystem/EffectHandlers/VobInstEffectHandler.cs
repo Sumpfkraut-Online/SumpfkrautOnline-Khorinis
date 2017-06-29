@@ -16,6 +16,11 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
 
+        new protected VobInst linkedObject;
+        new public VobInst GetLinkedObject () { return linkedObject; }
+
+
+
         static VobInstEffectHandler ()
         {
             PrintStatic(typeof(VobInstEffectHandler), "Start subscribing ChangeDestinations and EventHandler...");

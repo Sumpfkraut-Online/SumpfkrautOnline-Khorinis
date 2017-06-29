@@ -15,6 +15,11 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
 
+        new protected WorldDef linkedObject;
+        new public WorldDef GetLinkedObject () { return linkedObject; }
+
+
+
         static WorldDefEffectHandler ()
         {
             PrintStatic(typeof(WorldDefEffectHandler), "Start subscribing listeners to events...");
