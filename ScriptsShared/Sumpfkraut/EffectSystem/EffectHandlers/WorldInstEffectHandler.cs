@@ -8,39 +8,39 @@ using GUC.Scripts.Sumpfkraut.WorldSystem;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 {
 
-    public partial class WorldEffectHandler : BaseEffectHandler
+    public partial class WorldInstEffectHandler : BaseEffectHandler
     {
 
         new public static readonly string _staticName = "WorldEffectHandler (s)";
 
 
 
-        static WorldEffectHandler ()
+        static WorldInstEffectHandler ()
         {
-            PrintStatic(typeof(WorldEffectHandler), "Start subscribing listeners to events...");
+            PrintStatic(typeof(WorldInstEffectHandler), "Start subscribing listeners to events...");
             
             RegisterDestination(Enumeration.ChangeDestination.World_Clock_IsRunning);
             RegisterDestination(Enumeration.ChangeDestination.World_Clock_Rate);
             RegisterDestination(Enumeration.ChangeDestination.World_Clock_Time);
 
-            PrintStatic(typeof(WorldEffectHandler), "Finished subscribing listeners to events...");
+            PrintStatic(typeof(WorldInstEffectHandler), "Finished subscribing listeners to events...");
         }
 
 
 
-        public WorldEffectHandler (List<Effect> effects, WorldDef linkedObject)
+        public WorldInstEffectHandler (List<Effect> effects, WorldDef linkedObject)
             : this("WorldEffectHandler (default)", effects, linkedObject)
         { }
 
-        public WorldEffectHandler (List<Effect> effects, WorldInst linkedObject)
+        public WorldInstEffectHandler (List<Effect> effects, WorldInst linkedObject)
             : this("WorldEffectHandler (default)", effects, linkedObject)
         { }
 
-        public WorldEffectHandler (string objName, List<Effect> effects, WorldDef linkedObject) 
+        public WorldInstEffectHandler (string objName, List<Effect> effects, WorldDef linkedObject) 
             : base(objName, effects, linkedObject)
         { }
 
-        public WorldEffectHandler (string objName, List<Effect> effects, WorldInst linkedObject) 
+        public WorldInstEffectHandler (string objName, List<Effect> effects, WorldInst linkedObject) 
             : base(objName, effects, linkedObject)
         { }
 

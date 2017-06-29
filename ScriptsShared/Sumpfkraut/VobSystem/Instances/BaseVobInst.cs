@@ -41,8 +41,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public void SetPosition(Vec3f position) { this.BaseInst.SetPosition(position); }
         public void SetDirection(Vec3f direction) { this.BaseInst.SetDirection(direction); }
 
-        protected VobEffectHandler effectHandler;
-        public VobEffectHandler GetEffectHandler () { return effectHandler; }
+        protected VobInstEffectHandler effectHandler;
+        public VobInstEffectHandler GetEffectHandler () { return effectHandler; }
 
         #endregion
 

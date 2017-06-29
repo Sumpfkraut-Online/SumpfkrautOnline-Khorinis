@@ -232,7 +232,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             // detect interval
             if (old.TF.HasIntervals)
             {
-                old.TF.Get
+                // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! old.TF.Get
                 if (nextTime != DateTime.MinValue) { }
             }
 

@@ -26,7 +26,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         partial void pConstruct();
         public NPCDef()
         {
-            effectHandler = effectHandler ?? new EffectSystem.EffectHandlers.NPCEffectHandler(null, this);
+            effectHandler = effectHandler ?? new EffectSystem.EffectHandlers.NPCInstEffectHandler(null, this);
             pConstruct();
         }
 

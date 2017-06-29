@@ -170,20 +170,35 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\BaseEffectHandler.cs">
       <Link>Sumpfkraut\EffectSystem\EffectHandlers\BaseEffectHandler.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\ItemEffectHandler.cs">
-      <Link>Sumpfkraut\EffectSystem\EffectHandlers\ItemEffectHandler.cs</Link>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\ItemDefEffectHandler.cs">
+      <Link>Sumpfkraut\EffectSystem\EffectHandlers\ItemDefEffectHandler.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\NamedVobEffectHandler.cs">
-      <Link>Sumpfkraut\EffectSystem\EffectHandlers\NamedVobEffectHandler.cs</Link>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\ItemInstEffectHandler.cs">
+      <Link>Sumpfkraut\EffectSystem\EffectHandlers\ItemInstEffectHandler.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\NPCEffectHandler.cs">
-      <Link>Sumpfkraut\EffectSystem\EffectHandlers\NPCEffectHandler.cs</Link>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\NamedVobDefEffectHandler.cs">
+      <Link>Sumpfkraut\EffectSystem\EffectHandlers\NamedVobDefEffectHandler.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\VobEffectHandler.cs">
-      <Link>Sumpfkraut\EffectSystem\EffectHandlers\VobEffectHandler.cs</Link>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\NamedVobInstEffectHandler.cs">
+      <Link>Sumpfkraut\EffectSystem\EffectHandlers\NamedVobInstEffectHandler.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\WorldEffectHandler.cs">
-      <Link>Sumpfkraut\EffectSystem\EffectHandlers\WorldEffectHandler.cs</Link>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\NPCDefEffectHandler.cs">
+      <Link>Sumpfkraut\EffectSystem\EffectHandlers\NPCDefEffectHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\NPCInstEffectHandler.cs">
+      <Link>Sumpfkraut\EffectSystem\EffectHandlers\NPCInstEffectHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\VobDefEffectHandler.cs">
+      <Link>Sumpfkraut\EffectSystem\EffectHandlers\VobDefEffectHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\VobInstEffectHandler.cs">
+      <Link>Sumpfkraut\EffectSystem\EffectHandlers\VobInstEffectHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\WorldDefEffectHandler.cs">
+      <Link>Sumpfkraut\EffectSystem\EffectHandlers\WorldDefEffectHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\WorldInstEffectHandler.cs">
+      <Link>Sumpfkraut\EffectSystem\EffectHandlers\WorldInstEffectHandler.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectLoading\EffectLoader.cs">
       <Link>Sumpfkraut\EffectSystem\EffectLoading\EffectLoader.cs</Link>

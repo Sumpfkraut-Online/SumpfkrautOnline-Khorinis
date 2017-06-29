@@ -37,8 +37,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         public bool IsStatic { get { return BaseDef.IsStatic; } }
         public bool IsCreated { get { return baseDef.IsCreated; } }
 
-        protected VobEffectHandler effectHandler;
-        public VobEffectHandler GetEffectHandler () { return effectHandler; }
+        protected VobInstEffectHandler effectHandler;
+        public VobInstEffectHandler GetEffectHandler () { return effectHandler; }
 
         #endregion
 

@@ -27,7 +27,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         partial void pConstruct();
         public NamedVobDef()
         {
-            effectHandler = effectHandler ?? new EffectSystem.EffectHandlers.NamedVobEffectHandler(null, this);
+            effectHandler = effectHandler ?? new EffectSystem.EffectHandlers.NamedVobInstEffectHandler(null, this);
             pConstruct();
         }
 
