@@ -215,25 +215,19 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         {
             DateTime nextTime = DateTime.MinValue;
             next = new ScheduleProtocol();
-            int callAmount = 0;
+            var isDue = false;
+            var preserveDue = true;
+            var callAmount = 0;
 
             // detect max invocations
             if (old.TF.HasMaxInvocations && (old.TF.GetInvocations() >= old.TF.GetMaxInvocations())) { return false; }
             // detect start and end
-            if (old.TF.HasStartEnd && (old.TF.GetEnd() <= referenceTime)) { return false; }
+            if (old.TF.HasStartEnd && (old.TF.GetEnd() <= referenceTime)) { isDue = true; }
             // determine possible next specified time
             if (old.TF.HasSpecifiedTimes && old.TF.HasSpecifiedTimesLeft())
             {
-                sdsadasd
-                //var specifiedTimes = old.TF.GetSpecifiedTimes();
-                //foreach (var st in specifiedTimes)
-                //{
-                //    if (st >= referenceTime)
-                //    {
-                //        nextTime = st;
-                //        break;
-                //    }
-                //}
+                old.TF.IterateSpecifiedTimeIndex();
+                nextTime = old.TF.GetLastSpecifiedTime();
             }
             // detect interval
             if (old.TF.HasIntervals)

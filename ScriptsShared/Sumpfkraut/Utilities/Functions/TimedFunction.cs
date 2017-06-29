@@ -161,6 +161,9 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         {
             SetObjName("TimedFunction");
             _lock = new object();
+
+            preserveDueInvocations = true;
+
             if (specifiedTimes != null)
             {
                 hasSpecifiedTimes = true;
