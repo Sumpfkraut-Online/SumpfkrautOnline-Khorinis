@@ -29,15 +29,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             : this("VobDefEffectHandler", effects, linkedObject)
         { }
 
-        public VobDefEffectHandler (List<Effect> effects, VobInst linkedObject)
-            : this("VobDefEffectHandler", effects, linkedObject)
-        { }
-
         public VobDefEffectHandler (string objName, List<Effect> effects, VobDef linkedObject) 
-            : base(objName, effects, linkedObject)
-        { }
-
-        public VobDefEffectHandler (string objName, List<Effect> effects, VobInst linkedObject) 
             : base(objName, effects, linkedObject)
         { }
 

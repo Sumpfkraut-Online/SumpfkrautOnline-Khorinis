@@ -29,15 +29,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             : this("ItemDefEffectHandler", effects, linkedObject)
         { }
 
-        public ItemDefEffectHandler (List<Effect> effects, ItemInst linkedObject)
-            : this("ItemDefEffectHandler", effects, linkedObject)
-        { }
-
         public ItemDefEffectHandler (string objName, List<Effect> effects, ItemDef linkedObject) 
-            : base(objName, effects, linkedObject)
-        { }
-
-        public ItemDefEffectHandler (string objName, List<Effect> effects, ItemInst linkedObject) 
             : base(objName, effects, linkedObject)
         { }
         

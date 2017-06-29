@@ -27,16 +27,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
 
-        public ItemInstEffectHandler (List<Effect> effects, ItemDef linkedObject)
-            : this("ItemInstEffectHandler", effects, linkedObject)
-        { }
-
         public ItemInstEffectHandler (List<Effect> effects, ItemInst linkedObject)
             : this("ItemInstEffectHandler", effects, linkedObject)
-        { }
-
-        public ItemInstEffectHandler (string objName, List<Effect> effects, ItemDef linkedObject) 
-            : base(objName, effects, linkedObject)
         { }
 
         public ItemInstEffectHandler (string objName, List<Effect> effects, ItemInst linkedObject) 

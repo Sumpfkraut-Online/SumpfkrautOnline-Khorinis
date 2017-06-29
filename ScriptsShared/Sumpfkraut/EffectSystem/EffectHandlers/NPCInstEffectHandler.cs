@@ -26,16 +26,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         }
 
 
-        public NPCInstEffectHandler (List<Effect> effects, NPCDef linkedObject)
-            : this("NPCInstEffectHandler", effects, linkedObject)
-        { }
 
         public NPCInstEffectHandler (List<Effect> effects, NPCInst linkedObject)
             : this("NPCInstEffectHandler", effects, linkedObject)
-        { }
-
-        public NPCInstEffectHandler (string objName, List<Effect> effects, NPCDef linkedObject) 
-            : base(objName, effects, linkedObject)
         { }
 
         public NPCInstEffectHandler (string objName, List<Effect> effects, NPCInst linkedObject) 
