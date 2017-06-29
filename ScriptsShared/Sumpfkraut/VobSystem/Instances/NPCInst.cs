@@ -38,6 +38,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         partial void pConstruct();
         public NPCInst()
         {
+            SetObjName("NPCInst");
             effectHandler = effectHandler ?? new EffectSystem.EffectHandlers.NPCInstEffectHandler(null, this);
             pConstruct();
         }
@@ -50,6 +51,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         #endregion
 
         #region Properties
+
+        new public static readonly string _staticName = "NPCInst (s)";
+
+
 
         new public NPC BaseInst { get { return (NPC)base.BaseInst; } }
         public ItemInventory BaseInventory { get { return BaseInst.Inventory; } }

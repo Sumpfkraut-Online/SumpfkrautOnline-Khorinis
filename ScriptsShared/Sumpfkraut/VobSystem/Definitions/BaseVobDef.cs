@@ -19,6 +19,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         partial void pConstruct();
         public BaseVobDef()
         {
+            SetObjName("BaseVobDef");
             this.baseDef = CreateVobInstance();
             if (baseDef == null)
                 throw new ArgumentNullException("BaseDef is null!");
@@ -29,6 +30,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #region Properties
 
+        new public static readonly string _staticName = "BaseVobDef (s)";
+
+
+
+        protected BaseEffectHandler effectHandler;
+        public BaseEffectHandler GetEffectHandler () { return effectHandler; }
+
         BaseVobInstance baseDef;
         public BaseVobInstance BaseDef { get { return this.baseDef; } }
 
@@ -36,9 +44,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         public VobTypes VobType { get { return BaseDef.VobType; } }
         public bool IsStatic { get { return BaseDef.IsStatic; } }
         public bool IsCreated { get { return baseDef.IsCreated; } }
-
-        protected VobInstEffectHandler effectHandler;
-        public VobInstEffectHandler GetEffectHandler () { return effectHandler; }
 
         #endregion
 

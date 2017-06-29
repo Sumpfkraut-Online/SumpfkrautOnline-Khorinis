@@ -15,6 +15,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         partial void pConstruct();
         public ProjDef()
         {
+            SetObjName("ProjDef");
             pConstruct();
         }
 
@@ -26,6 +27,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         #endregion
 
         #region Properties
+
+        new public static readonly string _staticName = "ProjDef (s)";
 
         new public ProjectileInstance BaseDef { get { return (ProjectileInstance)base.BaseDef; } }
 

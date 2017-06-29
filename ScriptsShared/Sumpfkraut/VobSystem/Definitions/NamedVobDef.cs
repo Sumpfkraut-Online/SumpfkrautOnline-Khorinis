@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 
 
 
+        new protected NamedVobDefEffectHandler effectHandler;
+        new public NamedVobDefEffectHandler GetEffectHandler () { return effectHandler; }
+
         protected string name = "";
         /// <summary>The standard name of this named vob.</summary>
         public string Name
@@ -27,7 +31,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         partial void pConstruct();
         public NamedVobDef()
         {
-            effectHandler = effectHandler ?? new EffectSystem.EffectHandlers.NamedVobInstEffectHandler(null, this);
+            SetObjName("NamedVobDef");
+            effectHandler = effectHandler ?? new EffectSystem.EffectHandlers.NamedVobDefEffectHandler(null, this);
             pConstruct();
         }
 

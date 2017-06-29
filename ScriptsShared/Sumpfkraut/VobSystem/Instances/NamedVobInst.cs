@@ -6,24 +6,20 @@ using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.WorldObjects;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Types;
+using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
 
     public partial class NamedVobInst : VobInst, Vob.IScriptVob
     {
-
-        new public static readonly string _staticName = "NamedVobInst (s)";
-
-
-
         #region Constructors
 
         partial void pConstruct();
         public NamedVobInst()
         {
             SetObjName("NamedVobInst");
-            effectHandler = effectHandler ?? new EffectSystem.EffectHandlers.VobInstEffectHandler(null, this);
+            effectHandler = effectHandler ?? new EffectSystem.EffectHandlers.NamedVobInstEffectHandler(null, this);
             pConstruct();
         }
 
@@ -35,6 +31,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         #endregion
 
         #region Properties
+
+        new public static readonly string _staticName = "NamedVobInst (s)";
+
+
+
+        new protected NamedVobInstEffectHandler effectHandler;
+        new public NamedVobInstEffectHandler GetEffectHandler () { return effectHandler; }
 
         new public NamedVobDef Definition { get { return (NamedVobDef)base.Definition; } set { base.Definition = value; } }
 

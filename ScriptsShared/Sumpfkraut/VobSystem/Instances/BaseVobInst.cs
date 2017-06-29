@@ -17,6 +17,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
     {
         #region Properties
 
+        new public static readonly string _staticName = "BaseVobInst (s)";
+
+
+
+        protected BaseEffectHandler effectHandler;
+        public BaseEffectHandler GetEffectHandler () { return effectHandler; }
+
         // GUC - Base - Object
         BaseVob baseInst;
         public BaseVob BaseInst { get { return this.baseInst; } }
@@ -41,14 +48,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public void SetPosition(Vec3f position) { this.BaseInst.SetPosition(position); }
         public void SetDirection(Vec3f direction) { this.BaseInst.SetDirection(direction); }
 
-        protected VobInstEffectHandler effectHandler;
-        public VobInstEffectHandler GetEffectHandler () { return effectHandler; }
-
         #endregion
 
         protected abstract BaseVob CreateVob();
         public BaseVobInst()
         {
+            SetObjName("BaseVobInst");
             this.baseInst = CreateVob();
             if (this.baseInst == null)
                 throw new Exception("BaseInst is null!");
