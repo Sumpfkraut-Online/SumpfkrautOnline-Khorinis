@@ -12,8 +12,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
     public partial class NamedVobInstEffectHandler : VobInstEffectHandler
     {
 
-        new protected NamedVobInst linkedObject;
-        new public NamedVobInst GetLinkedObject () { return linkedObject; }
+        new protected NamedVobInst host;
+        new public NamedVobInst GetHost() { return host; }
 
 
 
@@ -28,12 +28,12 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
 
-        public NamedVobInstEffectHandler (List<Effect> effects, NamedVobInst linkedObject)
-            : this("NamedVobInstEffectHandler", effects, linkedObject)
+        public NamedVobInstEffectHandler (List<Effect> effects, NamedVobInst host)
+            : this("NamedVobInstEffectHandler", effects, host)
         { }
 
-        public NamedVobInstEffectHandler (string objName, List<Effect> effects, NamedVobInst linkedObject) 
-            : base(objName, effects, linkedObject)
+        public NamedVobInstEffectHandler (string objName, List<Effect> effects, NamedVobInst host) 
+            : base(objName, effects, host)
         { }
 
     }
