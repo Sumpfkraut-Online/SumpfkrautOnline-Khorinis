@@ -12,17 +12,16 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
     public partial class ItemDefEffectHandler : NamedVobDefEffectHandler
     {
 
+        new public ItemDef Host { get { return (ItemDef) host; } }
+
+
+
         static ItemDefEffectHandler ()
         {
             PrintStatic(typeof(ItemDefEffectHandler), "Start subscribing listeners to events...");
 
             PrintStatic(typeof(ItemDefEffectHandler), "Finished subscribing listeners to events...");
         }
-
-
-
-        new protected ItemDef host;
-        new public ItemDef GetHost () { return host; }
 
 
 

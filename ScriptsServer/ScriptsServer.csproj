@@ -232,6 +232,45 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\DateTimeUtil.cs">
       <Link>Sumpfkraut\Utilities\DateTimeUtil.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\Functions\FunctionManager.cs">
+      <Link>Sumpfkraut\Utilities\Functions\FunctionManager.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\Functions\ManagerInteraction\IManagerInteraction.cs">
+      <Link>Sumpfkraut\Utilities\Functions\ManagerInteraction\IManagerInteraction.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\Functions\ManagerInteraction\MI_Add.cs">
+      <Link>Sumpfkraut\Utilities\Functions\ManagerInteraction\MI_Add.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\Functions\ManagerInteraction\MI_AddRange.cs">
+      <Link>Sumpfkraut\Utilities\Functions\ManagerInteraction\MI_AddRange.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\Functions\ManagerInteraction\MI_Clear.cs">
+      <Link>Sumpfkraut\Utilities\Functions\ManagerInteraction\MI_Clear.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\Functions\ManagerInteraction\MI_Remove.cs">
+      <Link>Sumpfkraut\Utilities\Functions\ManagerInteraction\MI_Remove.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\Functions\ManagerInteraction\MI_RemoveExceptTimeRange.cs">
+      <Link>Sumpfkraut\Utilities\Functions\ManagerInteraction\MI_RemoveExceptTimeRange.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\Functions\ManagerInteraction\MI_RemoveInTimeRange.cs">
+      <Link>Sumpfkraut\Utilities\Functions\ManagerInteraction\MI_RemoveInTimeRange.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\Functions\ManagerInteraction\MI_RemoveRange.cs">
+      <Link>Sumpfkraut\Utilities\Functions\ManagerInteraction\MI_RemoveRange.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\Functions\ManagerInteraction\MI_Replace.cs">
+      <Link>Sumpfkraut\Utilities\Functions\ManagerInteraction\MI_Replace.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\Functions\ManagerInteraction\MI_ReplaceRange.cs">
+      <Link>Sumpfkraut\Utilities\Functions\ManagerInteraction\MI_ReplaceRange.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\Functions\ScheduleProtocol.cs">
+      <Link>Sumpfkraut\Utilities\Functions\ScheduleProtocol.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\Functions\TimedFunction.cs">
+      <Link>Sumpfkraut\Utilities\Functions\TimedFunction.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\Geometry\InGeometry.cs">
       <Link>Sumpfkraut\Utilities\Geometry\InGeometry.cs</Link>
     </Compile>

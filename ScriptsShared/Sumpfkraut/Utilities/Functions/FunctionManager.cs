@@ -311,7 +311,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                     ScheduleProtocol newProtocol;
 
                     var now = DateTime.Now;
-                    if ((schedule.Count < 1) && (schedule.First().Key > now)) { return; }
+                    if ((schedule.Count < 1) || (schedule.First().Key > now)) { return; }
 
                     do
                     {

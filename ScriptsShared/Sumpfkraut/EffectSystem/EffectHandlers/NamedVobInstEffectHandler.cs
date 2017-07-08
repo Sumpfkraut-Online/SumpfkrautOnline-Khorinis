@@ -12,8 +12,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
     public partial class NamedVobInstEffectHandler : VobInstEffectHandler
     {
 
-        new protected NamedVobInst host;
-        new public NamedVobInst GetHost() { return host; }
+        new public NamedVobInst Host { get { return (NamedVobInst) host; } }
 
 
 

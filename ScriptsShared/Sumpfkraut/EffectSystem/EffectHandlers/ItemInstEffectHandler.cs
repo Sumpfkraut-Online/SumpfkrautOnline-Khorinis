@@ -12,6 +12,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
     public partial class ItemInstEffectHandler : VobInstEffectHandler
     {
 
+        new public ItemInst Host { get { return (ItemInst) host; } }
+
+
+
         static ItemInstEffectHandler ()
         {
             PrintStatic(typeof(ItemInstEffectHandler), "Start subscribing listeners to events...");
@@ -20,11 +24,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
             PrintStatic(typeof(ItemInstEffectHandler), "Finished subscribing listeners to events...");
         }
-
-
-
-        new protected ItemInst host;
-        new public ItemInst GetHost() { return host; }
 
 
 

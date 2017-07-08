@@ -18,6 +18,7 @@ using GUC.Scripts.Sumpfkraut.EffectSystem.Destinations;
 using System.Drawing;
 using GUC.Scripts.Sumpfkraut.Utilities;
 using System.Threading;
+using GUC.Scripts.Sumpfkraut.Utilities.Functions;
 
 namespace GUC.Scripts.Sumpfkraut
 {
@@ -26,22 +27,14 @@ namespace GUC.Scripts.Sumpfkraut
 
         public class O
         {
-            public int number;
-
-            public void ChangeNumber () { number = -1; Logger.Print(number); }
+            
         }
 
         public class A : O
         {
-            new public int number;
-            public A ()
-            {
-                this.number = 222;
-                base.number = 111;
-            }
 
-            new public void ChangeNumber () { number = -2; Logger.Print(number); }
-            public void ChangeBaseNumber () { base.number = -1; Logger.Print(base.number); }
+
+            public A () { }
         }
 
         public class B : O
@@ -321,145 +314,36 @@ namespace GUC.Scripts.Sumpfkraut
             //}
 
 
-            //Point p1 = new Point(0, 0);
-            //List<Point> poly1 = new List<Point>()
+
+
+
+
+
+
+
+            //var startTime = DateTime.Now;
+
+            //var timeSpans1 = new TimeSpan[]
             //{
-            //    new Point(1, 1),
-            //    new Point(-1, 1),
-            //    new Point(-1, -1),
-            //    new Point(1, -1),
-            //};
-            //for (int i = 0; i < poly1.Count; i++)
-            //{
-            //    poly1[i] = new Point(-poly1[i].X, poly1[i].Y);
-            //}
-
-            //foreach (var p in poly1) { Log.Logger.Log("[" + p.X + " | " + p.Y + "]"); }
-            //Log.Logger.Log(Utilities.Geometry.InGeometry.CalcWindingNumber2D(p1, poly1));
-
-
-            //var dt1 = DateTime.Now;
-            //var dt2 = DateTime.Now;
-            //Logger.Log(dt1.Ticks + " <-> " + dt2.Ticks);
-
-            //var arr1 = new int[2];
-            //var arr2 = ArrayUtil.Populate(arr1, 555, true);
-            //Logger.Log(arr1[0] + " " + arr2[0] + " " + (arr1 == arr2));
-
-            //var list1 = new List<int> { 0, 0 };
-            //var list2 = ListUtil.Populate(list1, 555, true);
-            //Logger.Log(list1[0] + " " + list2[0] + " " + (list1 == list2));
-
-            //var someList = new List<int> { };
-            //someList.Insert(0, 999);
-            //foreach (var e in someList) { Logger.Log(e); }
-
-            //var outer = 0;
-            //Action action = () => 
-            //{
-            //    var inner = 0;
-            //    while (inner < 10)
-            //    {
-            //        Logger.Log(++outer);
-            //        inner++;
-            //    }
+            //    new TimeSpan(0, 0, 0, 0, 500),
+            //    new TimeSpan(0, 0, 0, 1, 0),
+            //    new TimeSpan(0, 0, 0, 2, 0)
             //};
 
-            //var operation = new ThreadStart(action);
-            //var thread = new Thread(operation);
-            //thread.Start();
-
-            //Action<int> pAction = (int num) => 
+            //var tf1 = new TimedFunction(timeSpans1, new Tuple<DateTime, DateTime>(DateTime.Now, DateTime.Now.AddSeconds(10)));
+            //tf1.SetFunc( (object[] param) => 
             //{
-            //    var inner = 0;
-            //    while (inner < num)
-            //    {
-            //        Logger.Log(++outer);
-            //        inner++;
-            //    }
-            //};
-            //var pOperation = new ParameterizedThreadStart(obj => pAction((int)obj));
-            //var pThread = new Thread(pOperation);
-            //pThread.Start(0);
+            //    Logger.Print((startTime - DateTime.Now).Milliseconds);
+            //    return param;
+            //} );
 
-            //var hs = new HashSet<string>();
-            //hs.Add("Kuchen");
-            //hs.Add("Gel");
-            //hs.Add("Zahnbürste");
-            //hs.Add("Kuchen");
-            //hs.Add("Kuchen");
-            //foreach (var item in hs) { Logger.Print(item); }
+            //var fm = new FunctionManager();
+            //fm.Start();
 
+            //fm.Add(tf1, 1, true);
 
-
-
-
-
-            //var sd = new SortedDictionary<DateTime, int>();
-            //var max = 1000000;
-            //var checkDate = DateTime.MinValue.AddDays(max / 2);
-
-
-            //for (int i = 0; i < max; i++)
-            //{
-            //    sd.Add(DateTime.MinValue.AddDays(i), i);
-            //}
-
-            //var sw = Stopwatch.StartNew();
-            //var first = sd.First();
-            //while (first.Key <= checkDate)
-            //{
-            //    sd.Remove(first.Key);
-            //    first = sd.First();
-            //}
-            //sw.Stop();
-
-            //Logger.Print(sw.ElapsedMilliseconds);
-
-
-            //var list1 = new List<string>() { "Banana", "Joe" };
-            //var list2 = list1;
-            //var list3 = list1.ToList();
-            //list3.Add("Humbug");
-            //PrintStatic(typeof(TestingThings), list1 == list2);
-            //PrintStatic(typeof(TestingThings), list1 == list3);
-            //foreach (var e in list1) { PrintStatic(typeof(TestingThings), e); }
-
-
-            //var sw = new Stopwatch();
-            //var rep = 100000000;
-            //O obj = new B();
-
-            //sw.Restart();
-            //for (int i = 0; i < rep; i++)
-            //{
-            //    if      (obj is A) { var a = (A) obj; } // I know but my condition will take care of that...
-            //    else if (obj is B) { var b = (B) obj; }
-            //}
-            //sw.Stop();
-            //var elapsed1 = sw.ElapsedTicks;
-
-            //sw.Restart();
-            //for (int i = 0; i < rep; i++)
-            //{
-            //    var a = obj as A;
-            //    if (a != null) { }
-            //    var b = obj as B;
-            //    if (b != null) { }
-            //}
-            //sw.Stop();
-            //var elapsed2 = sw.ElapsedTicks;
-
-            //Logger.Print(elapsed1 + " <--> " + elapsed2);
-            //Logger.Print((elapsed1 - elapsed2));
-            //Logger.Print((elapsed1 / elapsed2));
-
-
-
-            //var a = new A();
-            //Logger.Print(a.GetType().Name);
-            //Logger.Print(typeof(A).Name);
-
+            //Program.OnTick += fm.Run;
+            
 
 
 

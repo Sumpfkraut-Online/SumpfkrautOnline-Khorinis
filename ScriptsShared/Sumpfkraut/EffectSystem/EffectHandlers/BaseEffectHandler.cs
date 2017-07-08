@@ -41,12 +41,12 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         protected object effectLock;
 
         protected object host;
-        public object GetHost () { return host; }
+        public object Host { get { return host; } }
         public T GetHost<T> () { return (T) host; }
 
         protected Type hostType;
         public Type HostType { get { return hostType; } }
-        public void SetHostType (Type value) { hostType = value; }
+        //public void SetHostType (Type value) { hostType = value; }
 
         protected List<Effect> effects;
         public List<Effect> GetEffects ()

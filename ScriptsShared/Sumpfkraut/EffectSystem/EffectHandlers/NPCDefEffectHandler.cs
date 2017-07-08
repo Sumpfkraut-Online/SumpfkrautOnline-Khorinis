@@ -12,8 +12,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
     public partial class NPCDefEffectHandler : NamedVobDefEffectHandler
     {
 
-        new protected NPCDef host;
-        new public NPCDef GetHost () { return host; }
+        new public NPCDef Host { get { return (NPCDef) host; } }
 
 
 

@@ -11,8 +11,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
     public partial class WorldInstEffectHandler : BaseEffectHandler
     {
 
-        new protected WorldInst host;
-        new public WorldInst GetHost () { return host; }
+        new public WorldInst Host { get { return (WorldInst) host; } }
 
 
 

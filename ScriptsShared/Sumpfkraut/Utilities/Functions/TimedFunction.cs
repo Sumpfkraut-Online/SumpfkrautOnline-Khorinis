@@ -277,34 +277,39 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 
 
 
-        // TimedFunctions creates copy of itself
-        public TimedFunction CreateCopy ()
-        {
-            TimedFunction copy;
-            lock (_lock)
-            {
-                copy = new TimedFunction(specifiedTimes, intervals, startEnd);
-                copy.SetObjName(GetObjName());
-            }
-            return copy;
-        }
+        //// TimedFunctions creates copy of itself
+        //public TimedFunction CreateCopy ()
+        //{
+        //    TimedFunction copy;
+        //    lock (_lock)
+        //    {
+        //        copy = new TimedFunction(specifiedTimes, intervals, startEnd);
+        //        copy.SetObjName(GetObjName());
+        //    }
+        //    return copy;
+        //}
 
 
 
         public static bool HaveEqualAttributes (TimedFunction tf1, TimedFunction tf2) 
         {
-            if (    (tf1.GetType()              != tf2.GetType()) 
-                ||  (tf1.GetObjName()           != tf2.GetObjName())
-                ||  (tf1.GetFunc()              != tf2.GetFunc())
-                ||  (tf1.GetParameters()        != tf2.GetParameters())
-                ||  (tf1.GetMaxInvocations()    != tf2.GetMaxInvocations())
-                ||  (tf1.GetInvocations()       != tf2.GetInvocations())
-                ||  (tf1.GetStart()             != tf2.GetStart())
-                ||  (tf1.GetEnd()               != tf2.GetEnd())
-                ||  (tf1.GetSpecifiedTimes()    != tf2.GetSpecifiedTimes())
-                ||  (tf1.GetIntervals()         != tf2.GetIntervals())
-                ||  (tf1.GetLastIntervalIndex() != tf2.GetLastIntervalIndex())
-                ||  (tf1.GetLastIntervalTime()  != tf2.GetLastIntervalTime()) )
+            if (    (tf1.GetType()                      != tf2.GetType()) 
+                ||  (tf1.GetObjName()                   != tf2.GetObjName())
+                ||  (tf1.GetPreserveDueInvocations()    != tf2.GetPreserveDueInvocations())
+                ||  (tf1.GetFunc()                      != tf2.GetFunc())
+                ||  (tf1.GetParameters()                != tf2.GetParameters())
+                ||  (tf1.HasMaxInvocations              != tf2.HasMaxInvocations)
+                ||  (tf1.GetMaxInvocations()            != tf2.GetMaxInvocations())
+                ||  (tf1.GetInvocations()               != tf2.GetInvocations())
+                ||  (tf1.HasStartEnd                    != tf2.HasStartEnd)
+                ||  (tf1.GetStart()                     != tf2.GetStart())
+                ||  (tf1.GetEnd()                       != tf2.GetEnd())
+                ||  (tf1.HasSpecifiedTimes              != tf2.HasSpecifiedTimes)
+                ||  (tf1.GetSpecifiedTimes()            != tf2.GetSpecifiedTimes())
+                ||  (tf1.GetLastSpecifiedTimeIndex()    != tf2.GetLastSpecifiedTimeIndex())
+                ||  (tf1.GetIntervals()                 != tf2.GetIntervals())
+                ||  (tf1.GetLastIntervalIndex()         != tf2.GetLastIntervalIndex())
+                ||  (tf1.GetLastIntervalTime()          != tf2.GetLastIntervalTime()) )
             {
                 return false;
             }
