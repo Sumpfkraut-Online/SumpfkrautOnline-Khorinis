@@ -39,7 +39,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         protected long invocations;
         public long GetInvocations () { lock (_lock) { return invocations; } }
         public void SetInvocations (long value) { lock (_lock) { invocations = value; } }
-        public void IterateInvocations () { lock (_lock) { invocations++; } }
+        public void IterateInvocations (int it) { lock (_lock) { invocations += it; } }
 
         // max limit to invocations
         protected bool hasMaxInvocations;
@@ -52,6 +52,37 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         public bool HasSpecifiedTimes { get { return hasSpecifiedTimes; } }
         protected DateTime[] specifiedTimes;
         public DateTime[] GetSpecifiedTimes () { return specifiedTimes; }
+        public bool TryGetLastSpecifiedTime (out DateTime last)
+        {
+            lock (_lock)
+            {
+                if ((!HasSpecifiedTimes) || (!HasSpecifiedTimesLeft))
+                {
+                    last = DateTime.MinValue;
+                    return false;
+                }
+
+                last =  specifiedTimes[lastSpecifiedTimeIndex];
+                return true;
+            }
+        }
+        public bool TryGetNextSpecifiedTime (out DateTime next)
+        {
+            lock (_lock)
+            {
+                if ((!HasSpecifiedTimes) || (!HasSpecifiedTimesLeft))
+                {
+                    next = DateTime.MinValue;
+                    return false;
+                }
+
+                // push the index only further to return it to it's previous state after receiving the residing value
+                IterateSpecifiedTimeIndex(1);
+                next =  specifiedTimes[lastSpecifiedTimeIndex];
+                IterateSpecifiedTimeIndex(-1);
+                return true;
+            }
+        }
 
         // to remember which specified times have already been processed
         protected int lastSpecifiedTimeIndex;
@@ -67,14 +98,13 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 
             return amount;
         }
-        public bool HasSpecifiedTimesLeft () { lock (_lock) { return SpecifiedTimesLeft() > 0; } }
-        public DateTime GetLastSpecifiedTime () { lock (_lock) { return specifiedTimes[lastSpecifiedTimeIndex]; } }
-        public int IterateSpecifiedTimeIndex ()
+        public bool HasSpecifiedTimesLeft { get { lock (_lock) { return SpecifiedTimesLeft() > 0; } } }
+        public int IterateSpecifiedTimeIndex (int it)
         {
             int index = -1;
             lock (_lock)
             {
-                index = lastSpecifiedTimeIndex + 1;
+                index = lastSpecifiedTimeIndex + it;
                 if (!(index < specifiedTimes.Length)) { index = specifiedTimes.Length - 1; }
                 lastSpecifiedTimeIndex = index;
             }
@@ -87,6 +117,37 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         public bool HasIntervals { get { return hasIntervals; } }
         protected TimeSpan[] intervals;
         public TimeSpan[] GetIntervals () { return intervals; }
+        public bool TryGetLastInterval (out TimeSpan last)
+        {
+            lock (_lock)
+            {
+                if (!HasIntervals)
+                {
+                    last = TimeSpan.MinValue;
+                    return false;
+                }
+
+                last =  intervals[lastIntervalIndex];
+                return true;
+            }
+        }
+        public bool TryGetNextInterval(out TimeSpan next)
+        {
+            lock (_lock)
+            {
+                if (!HasIntervals)
+                {
+                    next = TimeSpan.MinValue;
+                    return false;
+                }
+
+                // push the index only further to return it to it's previous state after receiving the residing value
+                IterateIntervalIndex(1);
+                next =  intervals[lastIntervalIndex];
+                IterateIntervalIndex(-1);
+                return true;
+            }
+        }
 
         protected DateTime lastIntervalTime;
         public DateTime GetLastIntervalTime () { lock (_lock) { return lastIntervalTime; } }
@@ -103,12 +164,12 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                 else { lastIntervalIndex = 0; }
             }
         }
-        public int IterateIntervalIndex ()
+        public int IterateIntervalIndex (int it)
         {
             int index = -1;
             lock (_lock)
             {
-                index = lastIntervalIndex + 1;
+                index = lastIntervalIndex + it;
                 if (!(index < intervals.Length)) { index = 0; }
                 lastIntervalIndex = index;
             }

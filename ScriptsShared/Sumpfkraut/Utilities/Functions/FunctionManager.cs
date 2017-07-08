@@ -212,12 +212,12 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             DateTime nextTime = DateTime.MinValue;
             next = new ScheduleProtocol();
             var isExpired = false;
-            var preserveExpired = true;
+            var preserveExpired = old.TF.GetPreserveDueInvocations();
             var callAmount = 0;
 
             // detect max invocations
             if (old.TF.HasMaxInvocations && (old.TF.GetInvocations() >= old.TF.GetMaxInvocations())) { return false; }
-            // detect start and end
+            // detect expiration through end date
             if (old.TF.HasStartEnd && (old.TF.GetEnd() <= referenceTime)) { isExpired = true; }
             // determine possible next specified time
             if (old.TF.HasSpecifiedTimes && old.TF.HasSpecifiedTimesLeft())
