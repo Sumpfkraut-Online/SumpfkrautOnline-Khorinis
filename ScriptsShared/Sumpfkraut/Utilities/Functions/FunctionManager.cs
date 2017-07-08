@@ -209,27 +209,22 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 
         protected bool TryCreateNextProtocol (DateTime referenceTime, ScheduleProtocol old, out ScheduleProtocol next)
         {
-            DateTime nextTime = DateTime.MinValue;
+            DateTime nextTime;
             next = new ScheduleProtocol();
-            var isExpired = false;
             var preserveExpired = old.TF.GetPreserveDueInvocations();
             var callAmount = 0;
 
             // detect max invocations
             if (old.TF.HasMaxInvocations && (old.TF.GetInvocations() >= old.TF.GetMaxInvocations())) { return false; }
-            // detect expiration through end date
-            if (old.TF.HasStartEnd && (old.TF.GetEnd() <= referenceTime)) { isExpired = true; }
+
             // determine possible next specified time
-            if (old.TF.HasSpecifiedTimes && old.TF.HasSpecifiedTimesLeft())
-            {
-                old.TF.IterateSpecifiedTimeIndex();
-                nextTime = old.TF.GetLastSpecifiedTime();
-            }
+            old.TF.TryGetNextSpecifiedTime(out nextTime);
+
             // detect interval
-            if (old.TF.HasIntervals)
+            TimeSpan lastInterval;
+            if (old.TF.TryGetLastInterval(out lastInterval))
             {
-                // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! old.TF.Get
-                if (nextTime != DateTime.MinValue) { }
+                
             }
 
             next = new ScheduleProtocol(old.TF, callAmount);
@@ -246,7 +241,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                 for (int i = 0; i < protocol.CallAmount; i++)
                 {
                     tf.SetParameters( tf.GetFunc()(tf.GetParameters()) );
-                    tf.IterateInvocations();
+                    tf.IterateInvocations(1);
                     invokes++;
                 }
             }

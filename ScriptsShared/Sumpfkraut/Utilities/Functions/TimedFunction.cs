@@ -184,6 +184,17 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         public Tuple<DateTime, DateTime> GetStartEnd () { return startEnd; }
         public DateTime GetStart () { return startEnd.Item1; }
         public DateTime GetEnd () { return startEnd.Item2; }
+        public bool HasStarted () { return HasStarted(DateTime.Now); }
+        public bool HasStarted (DateTime referenceTime)
+        {
+            return ((!HasStartEnd) || (referenceTime <= GetStart()));
+        }
+        public bool HasExpired () { return HasExpired(DateTime.Now); }
+        public bool HasExpired (DateTime referenceTime)
+        {
+            if (!hasStartEnd) { return false; }
+            return referenceTime > GetEnd();
+        }
 
 
 
