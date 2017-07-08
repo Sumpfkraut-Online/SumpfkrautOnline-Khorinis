@@ -24,9 +24,32 @@ namespace GUC.Scripts.Sumpfkraut
     public class TestingThings : ExtendedObject
     {
 
-        new public static readonly string _staticName = "TestingThings (s)";
+        public class O
+        {
+            public int number;
 
-        
+            public void ChangeNumber () { number = -1; Logger.Print(number); }
+        }
+
+        public class A : O
+        {
+            new public int number;
+            public A ()
+            {
+                this.number = 222;
+                base.number = 111;
+            }
+
+            new public void ChangeNumber () { number = -2; Logger.Print(number); }
+            public void ChangeBaseNumber () { base.number = -1; Logger.Print(base.number); }
+        }
+
+        public class B : O
+        {
+            public B () { }
+        }
+
+
 
         public static void Init ()
         {
@@ -401,6 +424,46 @@ namespace GUC.Scripts.Sumpfkraut
             //PrintStatic(typeof(TestingThings), list1 == list2);
             //PrintStatic(typeof(TestingThings), list1 == list3);
             //foreach (var e in list1) { PrintStatic(typeof(TestingThings), e); }
+
+
+            //var sw = new Stopwatch();
+            //var rep = 100000000;
+            //O obj = new B();
+
+            //sw.Restart();
+            //for (int i = 0; i < rep; i++)
+            //{
+            //    if      (obj is A) { var a = (A) obj; } // I know but my condition will take care of that...
+            //    else if (obj is B) { var b = (B) obj; }
+            //}
+            //sw.Stop();
+            //var elapsed1 = sw.ElapsedTicks;
+
+            //sw.Restart();
+            //for (int i = 0; i < rep; i++)
+            //{
+            //    var a = obj as A;
+            //    if (a != null) { }
+            //    var b = obj as B;
+            //    if (b != null) { }
+            //}
+            //sw.Stop();
+            //var elapsed2 = sw.ElapsedTicks;
+
+            //Logger.Print(elapsed1 + " <--> " + elapsed2);
+            //Logger.Print((elapsed1 - elapsed2));
+            //Logger.Print((elapsed1 / elapsed2));
+
+
+
+            //var a = new A();
+            //Logger.Print(a.GetType().Name);
+            //Logger.Print(typeof(A).Name);
+
+
+
+
+
 
 
 

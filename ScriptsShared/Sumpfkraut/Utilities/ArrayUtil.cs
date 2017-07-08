@@ -11,10 +11,6 @@ namespace GUC.Scripts.Sumpfkraut.Utilities
     public class ArrayUtil : ExtendedObject
     {
 
-        public static readonly string _staticName = "ArrayUtil (s)";
-
-
-
         protected ArrayUtil () { }
 
 

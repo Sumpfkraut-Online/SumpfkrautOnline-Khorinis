@@ -12,8 +12,6 @@ namespace GUC.Utilities.FileSystem
     public class FileSystemManager : Threading.AbstractRunnable
     {
 
-        new public static readonly string _staticName = "FileSystemManager (s)";
-
         public static List<FileSystemManager> managerList = new List<FileSystemManager>();
 
         public static readonly int StandardCreateTries = 10;

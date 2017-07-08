@@ -8,10 +8,11 @@ using GUC.WorldObjects.Instances;
 using GUC.Network;
 using GUC.Types;
 using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
+using GUC.Utilities;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
-    public abstract partial class BaseVobDef : ScriptObject, BaseVobInstance.IScriptBaseVobInstance
+    public abstract partial class BaseVobDef : ExtendedObject, BaseVobInstance.IScriptBaseVobInstance
     {
         #region Constructors
 
@@ -29,10 +30,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         #endregion
 
         #region Properties
-
-        new public static readonly string _staticName = "BaseVobDef (s)";
-
-
 
         protected BaseEffectHandler effectHandler;
         public BaseEffectHandler GetEffectHandler () { return effectHandler; }

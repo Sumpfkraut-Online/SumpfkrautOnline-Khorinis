@@ -12,10 +12,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
     public partial class VobDefEffectHandler : BaseEffectHandler
     {
 
-        new public static readonly string _staticName = "VobDefEffectHandler (s)";
-
-
-
         new protected VobDef linkedObject;
         new public VobDef GetLinkedObject () { return linkedObject; }
 

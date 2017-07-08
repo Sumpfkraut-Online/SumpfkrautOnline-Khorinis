@@ -11,10 +11,6 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
     public class TimedFunction : ExtendedObject
     {
 
-        new public static readonly string _staticName = "TimedFunction (s)";
-
-
-
         // used to lock changes on the TimedAction-object
         protected object _lock;
 

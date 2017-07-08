@@ -11,12 +11,6 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
     public class CommandConsole : GUC.Utilities.ExtendedObject
     {
 
-        new public static readonly string _staticName = "CommandConsole (s)";
-
-        //protected Process consoleProcess;
-        //protected bool canExecute = false;
-
-
         public delegate void ProcessCommand (object sender, string cmd, string[] param, 
             out Dictionary<string, object> returnVal);
         public static readonly Dictionary<string, ProcessCommand> CmdToProcessFunc =

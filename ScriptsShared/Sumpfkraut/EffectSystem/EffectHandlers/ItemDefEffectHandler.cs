@@ -12,10 +12,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
     public partial class ItemDefEffectHandler : NamedVobDefEffectHandler
     {
 
-        new public static readonly string _staticName = "ItemDefEffectHandler (s)";
-
-
-
         static ItemDefEffectHandler ()
         {
             PrintStatic(typeof(ItemDefEffectHandler), "Start subscribing listeners to events...");

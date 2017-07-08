@@ -10,10 +10,6 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
     public class FunctionManager : ExtendedObject
     {
 
-        new public static readonly string _staticName = "FunctionManager (s)";
-
-
-
         protected object _runLock;
         protected object _bufferLock;
 
@@ -215,14 +211,14 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         {
             DateTime nextTime = DateTime.MinValue;
             next = new ScheduleProtocol();
-            var isDue = false;
-            var preserveDue = true;
+            var isExpired = false;
+            var preserveExpired = true;
             var callAmount = 0;
 
             // detect max invocations
             if (old.TF.HasMaxInvocations && (old.TF.GetInvocations() >= old.TF.GetMaxInvocations())) { return false; }
             // detect start and end
-            if (old.TF.HasStartEnd && (old.TF.GetEnd() <= referenceTime)) { isDue = true; }
+            if (old.TF.HasStartEnd && (old.TF.GetEnd() <= referenceTime)) { isExpired = true; }
             // determine possible next specified time
             if (old.TF.HasSpecifiedTimes && old.TF.HasSpecifiedTimesLeft())
             {

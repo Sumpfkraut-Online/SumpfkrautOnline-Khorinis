@@ -33,10 +33,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #region Properties
 
-        new public static readonly string _staticName = "ItemInst (s)";
-
-
-
         new protected ItemInstEffectHandler effectHandler;
         new public ItemInstEffectHandler GetEffectHandler () { return effectHandler; }
 

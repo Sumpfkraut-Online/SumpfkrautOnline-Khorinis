@@ -52,10 +52,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #region Properties
 
-        new public static readonly string _staticName = "NPCInst (s)";
-
-
-
         new public NPC BaseInst { get { return (NPC)base.BaseInst; } }
         public ItemInventory BaseInventory { get { return BaseInst.Inventory; } }
         public ScriptInventory Inventory { get { return (ScriptInventory)BaseInventory.ScriptObject; } }

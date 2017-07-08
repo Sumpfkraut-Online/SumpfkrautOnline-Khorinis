@@ -11,10 +11,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
     public partial class WorldInstEffectHandler : BaseEffectHandler
     {
 
-        new public static readonly string _staticName = "WorldEffectHandler (s)";
-
-
-
         new protected WorldInst linkedObject;
         new public WorldInst GetLinkedObject () { return linkedObject; }
 

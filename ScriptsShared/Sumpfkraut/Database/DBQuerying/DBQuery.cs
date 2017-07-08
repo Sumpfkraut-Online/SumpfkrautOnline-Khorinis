@@ -8,8 +8,6 @@ namespace GUC.Scripts.Sumpfkraut.Database.DBQuerying
     public partial class DBQuery : AbstractDBQuery
     {
 
-        new public static readonly string _staticName = "DBQuery (s)";
-
         public Action<List<List<List<object>>>> callback;
 
 
@@ -45,8 +43,6 @@ namespace GUC.Scripts.Sumpfkraut.Database.DBQuerying
 
     public class DBQuery<T1> : AbstractDBQuery
     {
-
-        new public static readonly string _staticName = "DBQuery<T1> (s)";
 
         public Action<List<List<List<object>>>, T1> callback;
         T1 arg1;
@@ -87,8 +83,6 @@ namespace GUC.Scripts.Sumpfkraut.Database.DBQuerying
 
     public class DBQuery<T1, T2> : AbstractDBQuery
     {
-
-        new public static readonly string _staticName = "DBQuery<T1, T2> (s)";
 
         public Action<List<List<List<object>>>, T1, T2> callback;
         T1 arg1;

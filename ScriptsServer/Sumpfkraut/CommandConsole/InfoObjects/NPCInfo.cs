@@ -9,10 +9,6 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole.InfoObjects
     public class NPCInfo : VobInfo
     {
 
-        new public static readonly string _staticName = "NPCInfo (s)";
-
-
-
         public NPCInfo ()
         {
             this._objName = "NPCInfo (default)";

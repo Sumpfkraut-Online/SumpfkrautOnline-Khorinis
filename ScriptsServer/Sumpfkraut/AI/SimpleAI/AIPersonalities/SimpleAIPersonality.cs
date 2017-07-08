@@ -16,10 +16,6 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
     public class SimpleAIPersonality : BaseAIPersonality
     {
 
-        new public static readonly string _staticName = "SimpleAIPersonality (s)";
-
-
-        
         // maps VobInst to GuideCmd which is used by the GUC to let clients calculate 
         // movement paths to a destination and guide the vob to it
         protected Dictionary<VobInst, GuideCommandInfo> guideCommandByVobInst;

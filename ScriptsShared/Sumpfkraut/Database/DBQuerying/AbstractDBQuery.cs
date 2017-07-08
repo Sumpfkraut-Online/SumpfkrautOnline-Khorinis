@@ -8,8 +8,6 @@ namespace GUC.Scripts.Sumpfkraut.Database.DBQuerying
     public abstract partial class AbstractDBQuery : GUC.Utilities.ExtendedObject, IDBQuery
     {
 
-        new public static readonly String _staticName = "AbstractDBQuery (s)";
-
         protected string dataSource = null;
         public string DataSource { get { return dataSource; } }
 

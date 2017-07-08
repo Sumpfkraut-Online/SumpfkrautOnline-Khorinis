@@ -9,10 +9,6 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIActions
     public abstract class BaseAIAction : ExtendedObject
     {
 
-        new public static readonly string _staticName = "BaseAIAction (s)";
-
-
-
         protected Enumeration.AiActionType actionType;
         public Enumeration.AiActionType ActionType { get { return actionType; } }
 

@@ -9,11 +9,6 @@ namespace GUC.Scripts.Sumpfkraut.Database
     public partial class DBSecurity : GUC.Utilities.ExtendedObject
     {
 
-        new public static readonly String _staticName = "DBSecurity (s)";
-        new protected String _objName = "DBSecurity (default)";
-
-
-
         // search patterns to filter out malicious code in sql-commands to prevent sql-injection, etc.
         // according to http://www.symantec.com/connect/articles/detection-sql-injection-and-cross-site-scripting-attacks 
         private static string pattern_sqlMeta_1 = @"/(\%27)|(\')|(\-\-)|(\%23)|(#)/ix";

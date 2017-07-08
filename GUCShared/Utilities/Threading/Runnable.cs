@@ -9,8 +9,6 @@ namespace GUC.Utilities.Threading
     public class Runnable : AbstractRunnable
     {
 
-        new public static readonly string _staticName = "Runnable (s)"; 
-
         public delegate void InitEventHandler (Runnable sender);
         public InitEventHandler OnInit;
 

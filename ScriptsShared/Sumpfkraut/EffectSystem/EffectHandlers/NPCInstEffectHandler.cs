@@ -12,10 +12,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
     public partial class NPCInstEffectHandler : VobInstEffectHandler
     {
 
-        new public static readonly string _staticName = "NPCInstEffectHandler (s)";
-
-
-
         new protected NPCInst linkedObject;
         new public NPCInst GetLinkedObject () { return linkedObject; }
 

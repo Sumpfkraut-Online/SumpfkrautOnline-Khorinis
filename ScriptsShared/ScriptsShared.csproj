@@ -102,7 +102,6 @@
     <Compile Include="Sumpfkraut\EffectSystem\Enumeration\ChangeType.cs" />
     <Compile Include="Sumpfkraut\Networking\ScriptMessageIDs.cs" />
     <Compile Include="Sumpfkraut\Networking\ScriptClient.cs" />
-    <Compile Include="Sumpfkraut\ScriptObject.cs" />
     <Compile Include="Sumpfkraut\Utilities\Functions\ManagerInteraction\MI_AddRange.cs" />
     <Compile Include="Sumpfkraut\Utilities\Functions\ManagerInteraction\MI_RemoveRange.cs" />
     <Compile Include="Sumpfkraut\Utilities\Functions\ManagerInteraction\MI_Add.cs" />

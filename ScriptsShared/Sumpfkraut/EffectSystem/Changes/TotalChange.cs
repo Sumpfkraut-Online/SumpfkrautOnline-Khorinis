@@ -12,10 +12,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
     public partial class TotalChange : ExtendedObject
     {
 
-        new public static readonly string _staticName = "TotalChange (s)";
-
-
-
         protected object totalChangeLock;
 
         protected BaseEffectHandler.CalculateTotalChange calcFunction;

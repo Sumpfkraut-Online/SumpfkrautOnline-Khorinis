@@ -28,8 +28,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #region Properties
 
-        new public static readonly string _staticName = "ProjDef (s)";
-
         new public ProjectileInstance BaseDef { get { return (ProjectileInstance)base.BaseDef; } }
 
         public ModelDef Model

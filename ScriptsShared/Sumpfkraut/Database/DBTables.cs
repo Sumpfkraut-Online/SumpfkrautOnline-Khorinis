@@ -27,9 +27,6 @@ namespace GUC.Scripts.Sumpfkraut.Database
 
 
 
-        new public static readonly string _staticName = "DBTables (s)";
-        new protected string _objName = "DBTables (default)";
-        
 
         /// <summary>
         /// Converts results of a sql-query from string- to their respective datatypes.

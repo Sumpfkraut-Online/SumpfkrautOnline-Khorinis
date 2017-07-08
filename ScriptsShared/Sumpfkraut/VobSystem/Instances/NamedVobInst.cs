@@ -32,10 +32,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #region Properties
 
-        new public static readonly string _staticName = "NamedVobInst (s)";
-
-
-
         new protected NamedVobInstEffectHandler effectHandler;
         new public NamedVobInstEffectHandler GetEffectHandler () { return effectHandler; }
 

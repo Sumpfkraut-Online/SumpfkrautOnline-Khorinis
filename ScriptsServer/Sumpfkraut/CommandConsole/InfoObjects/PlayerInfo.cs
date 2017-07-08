@@ -8,10 +8,6 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole.InfoObjects
     public class PlayerInfo : NPCInfo
     {
 
-        new public static readonly string _staticName = "PlayerInfo (s)";
-
-
-
         public PlayerInfo ()
         {
             this._objName = "PlayerInfo (default)";

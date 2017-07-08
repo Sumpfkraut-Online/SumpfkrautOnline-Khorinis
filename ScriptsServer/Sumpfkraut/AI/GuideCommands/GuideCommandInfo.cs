@@ -11,10 +11,6 @@ namespace GUC.Scripts.Sumpfkraut.AI.GuideCommands
     public class GuideCommandInfo : GUC.Utilities.ExtendedObject
     {
 
-        new public static readonly string _staticName = "SimpleAIPersonality (s)";
-
-
-
         private GuideCmd guideCommand;
         public GuideCmd GuideCommand { get { return this.guideCommand; } }
 

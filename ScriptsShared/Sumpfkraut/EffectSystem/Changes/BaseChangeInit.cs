@@ -12,7 +12,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
     public partial class BaseChangeInit : ExtendedObject
     {
 
-        new public static readonly string _staticName = "BaseChangeInit (s)";
         protected static Dictionary<ChangeType, ChangeInitInfo> changeTypeToInfo;
         // static representative of the class (do not change it in any way after instantiation!)
         public static BaseChangeInit representative;

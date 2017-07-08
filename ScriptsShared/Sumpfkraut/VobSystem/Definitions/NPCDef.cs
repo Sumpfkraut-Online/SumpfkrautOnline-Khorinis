@@ -11,10 +11,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
     public partial class NPCDef : NamedVobDef, NPCInstance.IScriptNPCInstance
     {
 
-        new public static readonly string _staticName = "NPCDef";
-
-
-
         new protected NPCDefEffectHandler effectHandler;
         new public NPCDefEffectHandler GetEffectHandler () { return effectHandler; }
 

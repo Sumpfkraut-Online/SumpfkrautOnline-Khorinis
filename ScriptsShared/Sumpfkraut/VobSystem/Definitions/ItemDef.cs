@@ -52,10 +52,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
     {
         #region Properties
 
-        new public static readonly string _staticName = "ItemDef (s)";
-
-
-
         new protected ItemDefEffectHandler effectHandler;
         new public ItemDefEffectHandler GetEffectHandler () { return effectHandler; }
 

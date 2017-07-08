@@ -13,7 +13,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
     public partial class DestInit_World : BaseDestInit
     {
 
-        new public static readonly string _staticName = "DestInit_World (s)";
         new public static DestInit_World representative;
 
 

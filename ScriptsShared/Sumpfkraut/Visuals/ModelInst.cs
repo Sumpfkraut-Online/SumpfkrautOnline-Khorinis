@@ -7,10 +7,11 @@ using GUC.Animations;
 using GUC.Models;
 using GUC.Network;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using GUC.Utilities;
 
 namespace GUC.Scripts.Sumpfkraut.Visuals
 {
-    public partial class ModelInst : ScriptObject, Model.IScriptModel
+    public partial class ModelInst : ExtendedObject, Model.IScriptModel
     {
         #region Constructors
 

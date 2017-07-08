@@ -11,10 +11,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
     public partial class NamedVobDef : VobDef
     {
 
-        new public static readonly string _staticName = "NamedVobDef (s)";
-
-
-
         new protected NamedVobDefEffectHandler effectHandler;
         new public NamedVobDefEffectHandler GetEffectHandler () { return effectHandler; }
 

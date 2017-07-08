@@ -12,10 +12,6 @@ namespace GUC.Scripts.Sumpfkraut.Database
     public partial class DBFileManager : ExtendedObject
     {
 
-        new public static readonly string _staticName = "DBFileHandler (s)";
-
-
-
         protected static string rootDirectory = "";
         public static void SetRootDirectory (string newRoot)
         {

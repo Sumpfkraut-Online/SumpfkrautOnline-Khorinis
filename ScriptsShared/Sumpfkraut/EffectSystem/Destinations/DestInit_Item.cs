@@ -13,7 +13,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
     public partial class DestInit_Item : BaseDestInit
     {
 
-        new public static readonly string _staticName = "DestInit_Item (s)";
         new public static DestInit_Item representative;
 
         public static readonly ItemMaterials Default_Material = ItemMaterials.Wood;

@@ -12,7 +12,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
     public partial class DestInit_NamedVob : BaseDestInit
     {
 
-        new public static readonly string _staticName = "DestInit_NamedVob (s)";
         new public static DestInit_NamedVob representative;
 
         public static readonly string Default_Name = "";

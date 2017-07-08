@@ -12,8 +12,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
     public partial class BaseEffectHandler : ExtendedObject
     {
 
-        new public static readonly string _staticName = "BaseEffectHandler (s)";
-
         // map ChangeType to influenced ChangeDestinations
         protected static Dictionary<ChangeType, List<ChangeDestination>> changeTypeToDestinations =
             new Dictionary<ChangeType, List<ChangeDestination>>() { };

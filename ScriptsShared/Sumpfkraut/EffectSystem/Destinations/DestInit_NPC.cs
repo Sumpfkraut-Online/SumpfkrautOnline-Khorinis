@@ -12,7 +12,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
     public partial class DestInit_NPC : BaseDestInit
     {
 
-        new public static readonly string _staticName = "DestInit_NPC (s)";
         new public static DestInit_NPC representative;
 
 

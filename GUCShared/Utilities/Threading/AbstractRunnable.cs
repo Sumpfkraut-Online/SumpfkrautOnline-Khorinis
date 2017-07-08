@@ -9,8 +9,6 @@ namespace GUC.Utilities.Threading
     public abstract class AbstractRunnable : ExtendedObject
     {
 
-        new public static readonly string _staticName = "AbstractRunnable (s)"; 
-
         public bool printStateControls;
 
         protected Thread thread; // the thread, on which the object operates

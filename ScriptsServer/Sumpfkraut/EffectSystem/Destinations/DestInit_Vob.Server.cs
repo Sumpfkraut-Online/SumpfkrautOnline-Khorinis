@@ -39,7 +39,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
             try
             {
                 var linkedObj = eh.GetLinkedObject();
-                if      (linkedObj is VobDef)
+                if (linkedObj is VobDef)
                 {
                     var vobDef = linkedObj as VobDef;
                     vobDef.CDDyn = (bool) tc.GetTotal().GetParameters()[0];
@@ -77,7 +77,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
             try
             {
                 var linkedObj = eh.GetLinkedObject();
-                if      (linkedObj is VobDef)
+                if (linkedObj is VobDef)
                 {
                     var vobDef = linkedObj as VobDef;
                     vobDef.CDStatic = (bool) tc.GetTotal().GetParameters()[0];
@@ -101,7 +101,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
                 if (!ValidateChangeInit(ChangeType.Vob_CodeName_Set, out info)) { return; }
 
                 // last entry counts
-                var finalChange = Change.Create(info, 
+                var finalChange = Change.Create(info,
                     new List<object>() { tc.Components[tc.Components.Count - 1] });
                 tc.SetTotal(finalChange);
             }
@@ -113,7 +113,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
             try
             {
                 var linkedObj = eh.GetLinkedObject();
-                if      (linkedObj is VobDef)
+                if (linkedObj is VobDef)
                 {
                     var vobDef = linkedObj as VobDef;
                     vobDef.CodeName = (string) tc.GetTotal().GetParameters()[0];
@@ -139,7 +139,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 
                 // TO DO: only change VobType if the linked object is actually able to !!!
                 // last entry counts
-                var finalChange = Change.Create(info, 
+                var finalChange = Change.Create(info,
                     new List<object>() { tc.Components[tc.Components.Count - 1] });
                 tc.SetTotal(finalChange);
             }

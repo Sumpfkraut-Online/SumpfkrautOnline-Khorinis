@@ -14,10 +14,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
     {
         #region Properties
 
-        new public static readonly string _staticName = "ProjInst (s)";
-
-
-
         new public Projectile BaseInst { get { return (Projectile)base.BaseInst; } }
         new public ProjDef Definition { get { return (ProjDef)base.Definition; } set { base.Definition = value; } }
 

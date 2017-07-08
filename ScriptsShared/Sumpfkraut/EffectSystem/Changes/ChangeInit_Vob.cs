@@ -11,8 +11,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
     public partial class ChangeInit_Vob : BaseChangeInit
     {
 
-        new public static readonly string _staticName = "ChangeInit_Vob (s)";
-
         new public static ChangeInit_Vob representative;
 
 

@@ -12,10 +12,6 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
     public class AIMemory : ExtendedObject
     {
 
-        new public static readonly string _staticName = "AIMemory (s)";
-
-
-
         protected object aiActionLock;
         protected List<BaseAIAction> aiActions;
         protected Dictionary<Type, int> indexByActionType;

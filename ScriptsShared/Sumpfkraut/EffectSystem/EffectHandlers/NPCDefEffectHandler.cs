@@ -12,10 +12,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
     public partial class NPCDefEffectHandler : NamedVobDefEffectHandler
     {
 
-        new public static readonly string _staticName = "NPCDefEffectHandler (s)";
-
-
-
         new protected NPCDef linkedObject;
         new public NPCDef GetLinkedObject () { return linkedObject; }
 

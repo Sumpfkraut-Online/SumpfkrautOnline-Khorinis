@@ -9,8 +9,6 @@ namespace GUC.Scripts.Sumpfkraut.Database
     public partial class DBAgent : GUC.Utilities.Threading.AbstractRunnable
     {
 
-        new public static readonly string _staticName = "DBAgent (s)";
-
         protected bool useAsyncMode;
         bool running;
 
