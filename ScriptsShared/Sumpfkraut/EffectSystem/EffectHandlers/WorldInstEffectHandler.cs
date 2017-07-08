@@ -11,8 +11,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
     public partial class WorldInstEffectHandler : BaseEffectHandler
     {
 
-        new protected WorldInst linkedObject;
-        new public WorldInst GetLinkedObject () { return linkedObject; }
+        new protected WorldInst host;
+        new public WorldInst GetHost () { return host; }
 
 
 
@@ -29,12 +29,12 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
 
-        public WorldInstEffectHandler (List<Effect> effects, WorldInst linkedObject)
-            : this("WorldEffectHandler (default)", effects, linkedObject)
+        public WorldInstEffectHandler (List<Effect> effects, WorldInst host)
+            : this("WorldEffectHandler (default)", effects, host)
         { }
 
-        public WorldInstEffectHandler (string objName, List<Effect> effects, WorldInst linkedObject) 
-            : base(objName, effects, linkedObject)
+        public WorldInstEffectHandler (string objName, List<Effect> effects, WorldInst host) 
+            : base(objName, effects, host)
         { }
 
     }

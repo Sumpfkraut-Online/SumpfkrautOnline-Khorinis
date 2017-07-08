@@ -23,17 +23,17 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
 
-        new protected ItemInst linkedObject;
-        new public ItemInst GetLinkedObject () { return linkedObject; }
+        new protected ItemInst host;
+        new public ItemInst GetHost() { return host; }
 
 
 
-        public ItemInstEffectHandler (List<Effect> effects, ItemInst linkedObject)
-            : this("ItemInstEffectHandler", effects, linkedObject)
+        public ItemInstEffectHandler (List<Effect> effects, ItemInst host)
+            : this("ItemInstEffectHandler", effects, host)
         { }
 
-        public ItemInstEffectHandler (string objName, List<Effect> effects, ItemInst linkedObject) 
-            : base(objName, effects, linkedObject)
+        public ItemInstEffectHandler (string objName, List<Effect> effects, ItemInst host) 
+            : base(objName, effects, host)
         { }
 
 

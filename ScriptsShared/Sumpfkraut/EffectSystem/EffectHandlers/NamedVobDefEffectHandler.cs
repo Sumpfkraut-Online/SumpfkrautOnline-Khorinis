@@ -12,8 +12,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
     public partial class NamedVobDefEffectHandler : VobDefEffectHandler
     {
 
-        new protected NamedVobDef linkedObject;
-        new public NamedVobDef GetLinkedObject () { return linkedObject; }
+        new protected NamedVobDef host;
+        new public NamedVobDef GetHost () { return host; }
 
 
 
@@ -26,12 +26,12 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
 
-        public NamedVobDefEffectHandler (List<Effect> effects, NamedVobDef linkedObject)
-            : this("NamedVobDefEffectHandler", effects, linkedObject)
+        public NamedVobDefEffectHandler (List<Effect> effects, NamedVobDef host)
+            : this("NamedVobDefEffectHandler", effects, host)
         { }
 
-        public NamedVobDefEffectHandler (string objName, List<Effect> effects, NamedVobDef linkedObject) 
-            : base(objName, effects, linkedObject)
+        public NamedVobDefEffectHandler (string objName, List<Effect> effects, NamedVobDef host) 
+            : base(objName, effects, host)
         { }
 
 

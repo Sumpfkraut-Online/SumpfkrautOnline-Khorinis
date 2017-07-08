@@ -12,8 +12,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
     public partial class NPCDefEffectHandler : NamedVobDefEffectHandler
     {
 
-        new protected NPCDef linkedObject;
-        new public NPCDef GetLinkedObject () { return linkedObject; }
+        new protected NPCDef host;
+        new public NPCDef GetHost () { return host; }
 
 
 
@@ -26,12 +26,12 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
 
-        public NPCDefEffectHandler (List<Effect> effects, NPCDef linkedObject)
-            : this("NPCDefEffectHandler", effects, linkedObject)
+        public NPCDefEffectHandler (List<Effect> effects, NPCDef host)
+            : this("NPCDefEffectHandler", effects, host)
         { }
 
-        public NPCDefEffectHandler (string objName, List<Effect> effects, NPCDef linkedObject) 
-            : base(objName, effects, linkedObject)
+        public NPCDefEffectHandler (string objName, List<Effect> effects, NPCDef host) 
+            : base(objName, effects, host)
         { }
 
     }

@@ -12,8 +12,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
     public partial class NPCInstEffectHandler : VobInstEffectHandler
     {
 
-        new protected NPCInst linkedObject;
-        new public NPCInst GetLinkedObject () { return linkedObject; }
+        new protected NPCInst host;
+        new public NPCInst GetHost () { return host; }
 
 
 
@@ -28,12 +28,12 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
 
 
-        public NPCInstEffectHandler (List<Effect> effects, NPCInst linkedObject)
-            : this("NPCInstEffectHandler", effects, linkedObject)
+        public NPCInstEffectHandler (List<Effect> effects, NPCInst host)
+            : this("NPCInstEffectHandler", effects, host)
         { }
 
-        public NPCInstEffectHandler (string objName, List<Effect> effects, NPCInst linkedObject) 
-            : base(objName, effects, linkedObject)
+        public NPCInstEffectHandler (string objName, List<Effect> effects, NPCInst host) 
+            : base(objName, effects, host)
         { }
 
 
