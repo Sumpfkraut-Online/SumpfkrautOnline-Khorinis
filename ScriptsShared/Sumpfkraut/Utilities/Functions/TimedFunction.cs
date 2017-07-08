@@ -40,6 +40,32 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         public long GetInvocations () { lock (_lock) { return invocations; } }
         public void SetInvocations (long value) { lock (_lock) { invocations = value; } }
         public void IterateInvocations (int it) { lock (_lock) { invocations += it; } }
+        public bool HasInvocationsLeft
+        {
+            get
+            {
+                lock (_lock)
+                {
+                    if (!HasMaxInvocations) { return true; }
+                    return (maxInvocations - invocations) > 0;
+                }
+            }
+        }
+        public bool TryGetInvocationsLeft (out long left)
+        {
+            lock (_lock)
+            {
+                if (!HasMaxInvocations)
+                {
+                    left = long.MaxValue;
+                    return true;
+                }
+                left = maxInvocations - invocations;
+                left = left < 0 ? 0 : left;
+                if (left > 0) { return true; }
+                else { return false; }
+            }
+        }
 
         // max limit to invocations
         protected bool hasMaxInvocations;

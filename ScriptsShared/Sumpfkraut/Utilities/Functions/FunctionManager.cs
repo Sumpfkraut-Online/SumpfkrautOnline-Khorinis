@@ -211,23 +211,34 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         {
             DateTime nextTime;
             next = new ScheduleProtocol();
-            var preserveExpired = old.TF.GetPreserveDueInvocations();
             var callAmount = 0;
 
-            // detect max invocations
-            if (old.TF.HasMaxInvocations && (old.TF.GetInvocations() >= old.TF.GetMaxInvocations())) { return false; }
+            // detect invocation limit
+            if (!old.TF.HasInvocationsLeft) { return false; }
+
+            // time limits
+            var hasExpired = old.TF.HasExpired(referenceTime);
+            var preserveExpired = old.TF.GetPreserveDueInvocations();
+            // if expiration date reached and no intent to preserve possible left out invocations
+            if (hasExpired && (!preserveExpired)) { return false; }
 
             // determine possible next specified time
             old.TF.TryGetNextSpecifiedTime(out nextTime);
 
-            // detect interval
+            // detect interval and compare with possible previous specified time
             TimeSpan lastInterval;
             if (old.TF.TryGetLastInterval(out lastInterval))
             {
-                
+                var lastIntervalTime = old.TF.GetLastIntervalTime();
+                var nextIntervalTime = lastIntervalTime + lastInterval;
+                // only take intervals into account which would have been invocated in the meantime
+                if(nextIntervalTime <= old.TF.GetEnd())
+                {
+                    nextTime = nextTime < nextIntervalTime ? nextTime : nextIntervalTime;
+                }
             }
 
-            next = new ScheduleProtocol(old.TF, callAmount);
+            next = new ScheduleProtocol(nextTime, old.TF, callAmount);
             return true;
         }
 

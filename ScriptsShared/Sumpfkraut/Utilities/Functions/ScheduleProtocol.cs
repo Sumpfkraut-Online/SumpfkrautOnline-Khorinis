@@ -10,13 +10,15 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
     public struct ScheduleProtocol
     {
 
+        public DateTime InvocationTime;
         public TimedFunction TF;
         public int CallAmount;
 
 
 
-        public ScheduleProtocol (TimedFunction tf, int callAmount)
+        public ScheduleProtocol (DateTime invocationTime, TimedFunction tf, int callAmount)
         {
+            InvocationTime = invocationTime;
             TF = tf;
             CallAmount = callAmount;
         }
