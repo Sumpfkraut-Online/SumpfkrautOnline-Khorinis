@@ -121,12 +121,25 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         protected void Buffer_Clear ()
         {
             storage.Clear();
+            schedule.Clear();
         }
 
         protected void Buffer_Add (MI_Add action)
         {
-            if (storage.ContainsKey(action.TF)) { storage[action.TF] = storage[action.TF] + action.Amount; }
-            else                                { storage.Add(action.TF, action.Amount); }
+            if (storage.ContainsKey(action.TF))
+            {
+                storage[action.TF] = storage[action.TF] + action.Amount;
+
+                schedule.Values.Where((List<ScheduleProtocol> lst) => 
+                {
+                    var sp = lst.Where((ScheduleProtocol p) => { return p.TF == action.TF; }).ToArray();
+                    return sp.Length > 0;
+                });
+            }
+            else
+            {
+                storage.Add(action.TF, action.Amount);
+            }
         }
 
         protected void Buffer_AddRange (MI_AddRange action)

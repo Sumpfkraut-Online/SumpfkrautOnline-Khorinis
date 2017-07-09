@@ -181,29 +181,7 @@ namespace GUC.Scripts.Sumpfkraut
             //Change change2 = new Change(EffectSystem.Enumeration.ChangeType.Effect_Name_Set, new object[] { 1, 2, 3, 4, 5, 6 });
             //Logger.Log("### " + (change1 == change2));
 
-            //bool check;
-            //int[] lapsesSteps = new int[] { 1, 10, 100, 1000, 1000, 10000, 100000, 1000000 };
-            //int tempLapses = 0;
-            //List<long> elapsedTicks = new List<long>();
 
-            //Stopwatch sw = Stopwatch.StartNew();
-            //for (int s = 0; s < lapsesSteps.Length; s++)
-            //{
-            //    tempLapses = lapsesSteps[s];
-            //    for (int l = 0; l < tempLapses; l++)
-            //    {
-            //        check = change1 == change2;
-            //    }
-            //    sw.Stop();
-            //    elapsedTicks.Add(sw.ElapsedTicks);
-            //    sw.Restart();
-            //}
-
-            //sw.Stop();
-            //for (int i = 0; i < elapsedTicks.Count; i++)
-            //{
-            //    Logger.Log("### " + elapsedTicks[i] + " " + ((double) elapsedTicks[i] / TimeSpan.TicksPerMillisecond));
-            //}
 
 
 
@@ -254,30 +232,6 @@ namespace GUC.Scripts.Sumpfkraut
 
 
 
-            //List<int> l1 = new List<int>() { 1, 3, 6, 7, 8 };
-            //List<int> l2 = new List<int>() { 2, 3, 4, 5, 6, 7, 9, 10};
-            //List<int> l3 = l1.Union(l2).ToList();
-            //l3.Sort();
-            //foreach (int i in l3) { Logger.Log(i); }
-
-
-
-            ////SomeClass o = new SomeClass(new object[0]);
-            //SomeClass o = SomeClass.Create(new object[0]);
-            //Logger.Log("===> " + (o == null));
-            //Logger.Log("===> " + o);
-            ////Logger.Log("===> " + o.parameters);
-
-
-            //object o = "Banannanana";
-            //Logger.Log("===> " + o.GetType());
-
-            //SomeClass.ParameterTypeCheck(new object[] { "s", 'c', 1, false });
-
-
-            //FieldInfo info = typeof(SomeClass).GetField("someList");
-            //List<int> val = (List<int>) info.GetValue(null);
-            //foreach (int i in val) { Logger.Log(i); }
 
 
 
@@ -315,6 +269,40 @@ namespace GUC.Scripts.Sumpfkraut
 
 
 
+
+
+
+            //var timeSpans1 = new TimeSpan[]
+            //{
+            //    new TimeSpan(0, 0, 0, 0, 500),
+            //    new TimeSpan(0, 0, 0, 1, 0),
+            //    new TimeSpan(0, 0, 0, 2, 0)
+            //};
+
+            //var tf1 = new TimedFunction(timeSpans1, new Tuple<DateTime, DateTime>(DateTime.Now, DateTime.Now.AddSeconds(10)));
+            //tf1.SetFunc((object[] param) =>
+            //{
+            //    return param;
+            //});
+            //var tf2 = new TimedFunction(timeSpans1, new Tuple<DateTime, DateTime>(DateTime.Now, DateTime.Now.AddSeconds(10)));
+            //tf1.SetFunc((object[] param) =>
+            //{
+            //    return param;
+            //});
+            //var tf3 = tf2;
+
+            //Logger.Print(tf1 == tf2);
+            //Logger.Print(tf2 == tf3);
+            //Logger.Print(tf1.HasEqualAttributes(tf3));
+
+            //var dict = new Dictionary<TimedFunction, int>();
+
+
+            //var arr1 = new int[] { 1, 2, 3, 4, 5 };
+            //var arr2 = new int[] { 1, 2, 3, 4, 5 };
+
+            //Logger.Print(arr1 == arr2);
+            //Logger.Print(arr1.Equals(arr2));
 
 
 

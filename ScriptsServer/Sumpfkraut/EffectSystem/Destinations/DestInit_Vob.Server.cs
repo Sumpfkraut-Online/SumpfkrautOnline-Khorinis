@@ -38,7 +38,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
         {
             try
             {
-                var linkedObj = eh.GetHost();
+                var linkedObj = eh.Host;
                 if (linkedObj is VobDef)
                 {
                     var vobDef = linkedObj as VobDef;
@@ -76,7 +76,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
         {
             try
             {
-                var linkedObj = eh.GetHost();
+                var linkedObj = eh.Host;
                 if (linkedObj is VobDef)
                 {
                     var vobDef = linkedObj as VobDef;
@@ -112,7 +112,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
         {
             try
             {
-                var linkedObj = eh.GetHost();
+                var linkedObj = eh.Host;
                 if (linkedObj is VobDef)
                 {
                     var vobDef = linkedObj as VobDef;
