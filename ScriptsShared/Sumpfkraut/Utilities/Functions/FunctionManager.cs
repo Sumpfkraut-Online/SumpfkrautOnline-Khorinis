@@ -18,7 +18,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 
         protected Dictionary<TimedFunction, int> storage;
         protected List<IManagerInteraction> storageBuffer;
-        protected SortedDictionary<DateTime, List<ScheduleProtocol>> schedule;
+        protected SortedDictionary<DateTime, List<TimedFunction>> schedule;
 
 
 
@@ -29,7 +29,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             _bufferLock = new object();
             storage = new Dictionary<TimedFunction, int>();
             storageBuffer = new List<IManagerInteraction>();
-            schedule = new SortedDictionary<DateTime, List<ScheduleProtocol>>();
+            schedule = new SortedDictionary<DateTime, List<TimedFunction>>();
         }
 
 
@@ -129,16 +129,16 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             if (storage.ContainsKey(action.TF))
             {
                 storage[action.TF] = storage[action.TF] + action.Amount;
-
-                schedule.Values.Where((List<ScheduleProtocol> lst) => 
-                {
-                    var sp = lst.Where((ScheduleProtocol p) => { return p.TF == action.TF; }).ToArray();
-                    return sp.Length > 0;
-                });
             }
             else
             {
-                storage.Add(action.TF, action.Amount);
+                // only add to storage and schedule if not already expired
+                DateTime nextTime;
+                if (TryFindNextInvocation(DateTime.Now, action.TF, out nextTime))
+                {
+                    storage.Add(action.TF, action.Amount);
+                    AddToSchedule(nextTime, action.TF);
+                }
             }
         }
 
@@ -163,7 +163,8 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                     storage[action.TF] = storage[action.TF] - action.Amount;
                     if (storage[action.TF] <= 0)
                     {
-                        Buffer_Remove(new MI_Remove(action.TF, action.RemoveAll, action.Amount));
+                        storage.Remove(action.TF);
+                        RemoveFromSchedule(action.TF);
                         return;
                     }
                 }
@@ -220,49 +221,111 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 
 
 
-        protected bool TryCreateNextProtocol (DateTime referenceTime, ScheduleProtocol old, out ScheduleProtocol next)
+        // only use in internally in Run-method
+        protected void AddToSchedule (DateTime time, TimedFunction tf)
         {
-            DateTime nextTime;
-            next = new ScheduleProtocol();
-            var callAmount = 0;
+            if (schedule.ContainsKey(time))
+            {
+                // only add to schedule if not already there
+                // (would result in duplicate invocations at the same time otherwise!)
+                var timedFunctions = schedule[time];
+                if (!timedFunctions.Contains(tf)) { timedFunctions.Add(tf); }
+            }
+            else
+            {
+                schedule.Add(time, new List<TimedFunction>() { tf });
+            }
+        }
+
+        // only use in internally in Run-method
+        protected bool RemoveFromSchedule (TimedFunction tf)
+        {
+            // get copy of all schedule times (keys)
+            var times = schedule.Keys.ToArray();
+            // iterate and search for the right one
+            foreach (var t in times)
+            {
+                if (RemoveFromSchedule(t, tf)) { return true; }
+            }
+
+            return false;
+        }
+
+        // only use in internally in Run-method
+        protected bool RemoveFromSchedule (DateTime time, TimedFunction tf)
+        {
+            List<TimedFunction> timedFunctions;
+            if (schedule.TryGetValue(time, out timedFunctions))
+            {
+                // possibly remove the schedule entry if it would'nt contain any TimedFunctions anyway
+                if (timedFunctions.Count < 2) { schedule.Remove(time); }
+                else { timedFunctions.Remove(tf); }
+                return true;
+            }
+
+            return false;
+        }
+
+
+
+        // only use in internally in Run-method
+        protected bool TryFindNextInvocation (DateTime referenceTime, TimedFunction tf, out DateTime nextTime)
+        {
+            var success = false;
+            // set to max. DateTime first to ease comparisons later
+            nextTime = DateTime.MaxValue;
 
             // detect invocation limit
-            if (!old.TF.HasInvocationsLeft) { return false; }
+            if (!tf.HasInvocationsLeft) { return success; }
 
             // time limits
-            var hasExpired = old.TF.HasExpired(referenceTime);
-            var preserveExpired = old.TF.GetPreserveDueInvocations();
+            var hasExpired = tf.HasExpired(referenceTime);
+            var preserveExpired = tf.GetPreserveDueInvocations();
             // if expiration date reached and no intent to preserve possible left out invocations
-            if (hasExpired && (!preserveExpired)) { return false; }
+            if (hasExpired && (!preserveExpired)) { return success; }
 
             // determine possible next specified time
-            old.TF.TryGetNextSpecifiedTime(out nextTime);
+            success = tf.TryGetNextSpecifiedTime(out nextTime);
 
             // detect interval and compare with possible previous specified time
             TimeSpan lastInterval;
-            if (old.TF.TryGetLastInterval(out lastInterval))
+            if (tf.TryGetLastInterval(out lastInterval))
             {
-                var lastIntervalTime = old.TF.GetLastIntervalTime();
+                var lastIntervalTime = tf.GetLastIntervalTime();
                 var nextIntervalTime = lastIntervalTime + lastInterval;
                 // only take intervals into account which would have been invocated in the meantime
-                if(nextIntervalTime <= old.TF.GetEnd())
+                if(nextIntervalTime <= tf.GetEnd())
                 {
-                    nextTime = nextTime < nextIntervalTime ? nextTime : nextIntervalTime;
+                    if (nextIntervalTime < nextTime)
+                    {
+                        nextTime = nextIntervalTime;
+                        success = true;
+                    }
                 }
             }
 
-            next = new ScheduleProtocol(nextTime, old.TF, callAmount);
-            return true;
+            return success;
         }
 
-        protected int InvokeProtocol (ScheduleProtocol protocol)
+        // only use in internally in Run-method
+        protected int InvokeFunction (TimedFunction tf)
+        {
+            int callAmount;
+            if (storage.TryGetValue(tf, out callAmount))
+            {
+                return InvokeFunction(tf, callAmount);
+            }
+            else { return 0; }
+        }
+
+        // only use in internally in Run-method
+        protected int InvokeFunction (TimedFunction tf, int callAmount)
         {
             int invokes = 0;
 
             try
             {
-                var tf = protocol.TF;
-                for (int i = 0; i < protocol.CallAmount; i++)
+                for (int i = 0; i < callAmount; i++)
                 {
                     tf.SetParameters( tf.GetFunc()(tf.GetParameters()) );
                     tf.IterateInvocations(1);
@@ -275,29 +338,6 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             }
 
             return invokes;
-        }
-
-        public bool IsExpired (TimedFunction tf)
-        {
-            return IsExpired(tf, DateTime.Now);
-        }
-
-        public bool IsExpired (TimedFunction tf, DateTime now)
-        {
-            bool isExpired = true;
-
-            if (tf.HasStartEnd && (tf.GetEnd() > now)) { isExpired = false; }
-            else if (tf.HasSpecifiedTimes)
-            {
-                var specifiedTimes = tf.GetSpecifiedTimes();
-                for (int i = 0; i < specifiedTimes.Length; i++)
-                {
-                    if (specifiedTimes[i] > now) { isExpired = false; break; }
-                }
-            }
-            else if (tf.HasMaxInvocations && (tf.GetInvocations() < tf.GetMaxInvocations())) { isExpired = false; }
-
-            return isExpired;
         }
 
 
@@ -320,34 +360,39 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                 {
                     lock (_bufferLock) { IntegrateBuffer(); }
 
-                    KeyValuePair<DateTime, List<ScheduleProtocol>> first;
-                    ScheduleProtocol newProtocol;
+                    KeyValuePair<DateTime, List<TimedFunction>> first;
 
                     var now = DateTime.Now;
+                    var lastTime = DateTime.MinValue;
                     if ((schedule.Count < 1) || (schedule.First().Key > now)) { return; }
 
                     do
                     {
                         // grab the first and thus next list of protocols in the chronologically series
                         first = schedule.First();
+                        lastTime = first.Key;
                         // remove first schedule entry now that we have it's data
-                        schedule.Remove(first.Key);
+                        schedule.Remove(lastTime);
                         // create a copy of the first point in time of the schedule
-                        var protocols = first.Value.ToArray();
+                        var timedFunctions = first.Value.ToArray();
 
-                        foreach (var oldProtocol in protocols)
+                        DateTime nextTime;
+                        foreach (var tf in timedFunctions)
                         {
-                            InvokeProtocol(oldProtocol);
-                            // get possible protocol that should follow the old one
-                            // and add it to the schedule
-                            if (TryCreateNextProtocol(now, oldProtocol, out newProtocol))
+                            // determine if to create a new schedule-entry in a later point in time
+                            if (TryFindNextInvocation(now, tf, out nextTime))
                             {
-                                // add possible new protocol to the schedule
-                                Buffer_Add(new MI_Add(newProtocol.TF, newProtocol.CallAmount, true));
+                                AddToSchedule(nextTime, tf);
+                            }
+                            else
+                            {
+                                // if no further schedule entry possible, remove the expired TimedFunction entirely
+                                // (removal in schedule happened right before already)
+                                storage.Remove(tf);
                             }
                         }
                     }
-                    while ((schedule.Count > 0) && (first.Key <= now));
+                    while ((schedule.Count > 0) && (lastTime <= now));
                 }
             }
         }

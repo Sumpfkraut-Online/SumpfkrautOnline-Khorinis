@@ -254,9 +254,6 @@
     <Compile Include="..\scriptsshared\sumpfkraut\utilities\functions\managerinteraction\MI_ReplaceRange.cs">
       <Link>Utilities\Functions\ManagerInteraction\MI_ReplaceRange.cs</Link>
     </Compile>
-    <Compile Include="..\scriptsshared\sumpfkraut\utilities\functions\ScheduleProtocol.cs">
-      <Link>Utilities\Functions\ScheduleProtocol.cs</Link>
-    </Compile>
     <Compile Include="..\scriptsshared\sumpfkraut\utilities\functions\TimedFunction.cs">
       <Link>Utilities\Functions\TimedFunction.cs</Link>
     </Compile>
