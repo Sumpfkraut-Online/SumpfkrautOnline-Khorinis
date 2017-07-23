@@ -37,7 +37,6 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
 
         public CommandConsole ()
         {
-            SetObjName("CommandConsole");
             SubscribeOnConsole();
         }
 

@@ -10,15 +10,17 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
     public partial class VobDef : BaseVobDef, VobInstance.IScriptVobInstance
     {
-
         #region Constructors
 
         partial void pConstruct();
         public VobDef()
         {
-            SetObjName("VobDef");
-            effectHandler = effectHandler ?? new EffectSystem.EffectHandlers.VobDefEffectHandler(null, this);
             pConstruct();
+        }
+
+        protected override BaseEffectHandler CreateHandler()
+        {
+            return new VobDefEffectHandler(null, null, this);
         }
 
         protected override BaseVobInstance CreateVobInstance()
@@ -29,10 +31,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         #endregion
 
         #region Properties
-
-        new protected VobDefEffectHandler effectHandler;
-        new public VobDefEffectHandler GetEffectHandler () { return effectHandler; }
-
+        
+        new public VobDefEffectHandler EffectHandler { get { return (VobDefEffectHandler)base.EffectHandler; } }
         new public VobInstance BaseDef { get { return (VobInstance)base.BaseDef; } }
         
         public ModelDef Model

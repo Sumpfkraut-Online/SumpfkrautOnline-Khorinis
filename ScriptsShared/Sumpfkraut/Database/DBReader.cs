@@ -21,7 +21,6 @@ namespace GUC.Scripts.Sumpfkraut.Database
 
         public DBReader ()
         {
-            SetObjName("DBReader");
         }
         
         

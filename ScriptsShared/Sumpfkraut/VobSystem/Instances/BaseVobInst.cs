@@ -17,12 +17,15 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
     {
         #region Properties
 
-        protected BaseEffectHandler effectHandler;
-        public BaseEffectHandler GetEffectHandler () { return effectHandler; }
+        // Effect Handler
+        BaseEffectHandler effectHandler;
+        public BaseEffectHandler EffectHandler { get { return effectHandler; } }
+        protected abstract BaseEffectHandler CreateHandler();
 
         // GUC - Base - Object
         BaseVob baseInst;
         public BaseVob BaseInst { get { return this.baseInst; } }
+        protected abstract BaseVob CreateVob();
 
         // Definition 
         public BaseVobDef Definition
@@ -46,17 +49,25 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #endregion
 
+        #region Constructors
+
         partial void pConstruct();
-        protected abstract BaseVob CreateVob();
         public BaseVobInst()
         {
-            SetObjName("BaseVobInst");
             this.baseInst = CreateVob();
             if (this.baseInst == null)
-                throw new Exception("BaseInst is null!");
+                throw new NullReferenceException("BaseInst is null!");
+
+            this.effectHandler = CreateHandler();
+            if (this.effectHandler == null)
+                throw new NullReferenceException("Effect Handler is null!");
 
             pConstruct();
         }
+
+        #endregion
+
+        #region Spawn & Despawn
 
         public void Spawn(World world)
         {
@@ -77,6 +88,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             BaseInst.Despawn();
         }
+
+        #endregion
 
         public virtual void OnReadProperties(PacketReader stream)
         {

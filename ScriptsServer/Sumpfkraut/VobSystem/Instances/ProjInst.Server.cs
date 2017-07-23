@@ -12,11 +12,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class ProjInst
     {
-        protected override BaseEffectHandler CreateHandler()
-        {
-            throw new NotImplementedException();
-        }
-
         public NPCInst Shooter;
         public int Damage;
 

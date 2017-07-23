@@ -25,7 +25,6 @@ namespace GUC.Scripts.Sumpfkraut.Database.DBQuerying
 
         public AbstractDBQuery (string dataSource, string sqlCommand, DBReaderMode dbReaderMode)
         {
-            SetObjName("AbstractDBQuery");
             this.dataSource = dataSource;
             this.sqlCommand = sqlCommand;
             this.dbReaderMode = dbReaderMode;

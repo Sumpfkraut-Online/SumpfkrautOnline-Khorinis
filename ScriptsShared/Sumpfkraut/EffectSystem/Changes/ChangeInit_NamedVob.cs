@@ -18,7 +18,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
         static ChangeInit_NamedVob ()
         {
             representative = new ChangeInit_NamedVob();
-            representative.SetObjName("ChangeInit_NamedVob");
         }
 
 

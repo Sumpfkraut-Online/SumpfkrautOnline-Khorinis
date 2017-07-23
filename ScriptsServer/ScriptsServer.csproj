@@ -422,6 +422,7 @@
     <Compile Include="Sumpfkraut\EffectSystem\Destinations\DestInit_Item.Server.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Destinations\DestInit_NamedVob.Server.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Destinations\DestInit_Vob.Server.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\NPCInstEffectHandler.Server.cs" />
     <Compile Include="Sumpfkraut\Networking\Requests\NPCRequestReceiver.cs" />
     <Compile Include="Sumpfkraut\Networking\ScriptClient.Server.cs" />
     <Compile Include="Sumpfkraut\TestingThings.cs" />

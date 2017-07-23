@@ -24,8 +24,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 
         protected DestInit_NPC ()
         {
-            SetObjName("DestInit_NPC");
-
             AddOrChange(new DestInitInfo(ChangeDestination.NPC_TestPoison,
                 new List<ChangeType>() { ChangeType.NPC_TestPoison_Add },
                 CTC_TestPoison, ATC_TestPoison));

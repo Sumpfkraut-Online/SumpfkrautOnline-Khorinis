@@ -27,8 +27,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 
         protected DestInit_Item ()
         {
-            SetObjName("DestInit_Item");
-
             AddOrChange(new DestInitInfo(ChangeDestination.Item_Material, 
                 new List<ChangeType>() { ChangeType.Item_Material_Set }, 
                 CTC_Material, ATC_Material));

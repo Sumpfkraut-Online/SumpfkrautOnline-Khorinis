@@ -102,7 +102,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
 
         public Effect (List<Change> changes = null)
         {
-            SetObjName("Effect");
             changeLock = new object();
             this.changes = changes ?? new List<Change>();
             this.effectName = defaultEffectName;

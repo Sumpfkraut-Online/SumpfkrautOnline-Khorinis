@@ -40,6 +40,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
         protected object effectLock;
 
+        // target object of effects
         protected object host;
         public object Host { get { return host; } }
         public T GetHost<T> () { return (T) host; }
@@ -125,8 +126,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         // base constructor that must be called for clean initialization
         public BaseEffectHandler (string objName, List<Effect> effects, object host, Type hostType = null)
         {
-            if (objName == null) { SetObjName("EffectHandler"); }
-            else { SetObjName(objName); }
+            SetObjName(objName);
 
             this.host = host;
             if ((hostType != null) || (host != null))

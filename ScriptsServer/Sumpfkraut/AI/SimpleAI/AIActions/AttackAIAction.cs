@@ -12,7 +12,6 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIActions
         public AttackAIAction (AITarget aiTarget)
             : base(aiTarget)
         {
-            SetObjName("AttackAIAction");
             actionType = Enumeration.AiActionType.AttackAIAction;
         }
 

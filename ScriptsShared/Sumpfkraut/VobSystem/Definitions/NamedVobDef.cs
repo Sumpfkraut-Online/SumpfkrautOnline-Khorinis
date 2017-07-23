@@ -4,15 +4,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GUC.WorldObjects.Instances;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
 
     public partial class NamedVobDef : VobDef
     {
+        #region Constructor
+        
+        partial void pConstruct();
+        public NamedVobDef()
+        {
+            pConstruct();
+        }
 
-        new protected NamedVobDefEffectHandler effectHandler;
-        new public NamedVobDefEffectHandler GetEffectHandler () { return effectHandler; }
+        protected override BaseEffectHandler CreateHandler()
+        {
+            return new NamedVobDefEffectHandler(null, null, this);
+        }
+
+        #endregion
+
+        #region Properties
+        
+        new public NamedVobDefEffectHandler EffectHandler { get { return (NamedVobDefEffectHandler)base.EffectHandler; } }
 
         protected string name = "";
         /// <summary>The standard name of this named vob.</summary>
@@ -22,16 +38,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
             set { this.name = value ?? ""; }
         }
 
-
-
-        partial void pConstruct();
-        public NamedVobDef()
-        {
-            SetObjName("NamedVobDef");
-            effectHandler = effectHandler ?? new EffectSystem.EffectHandlers.NamedVobDefEffectHandler(null, this);
-            pConstruct();
-        }
-
+        #endregion
     }
 
 }

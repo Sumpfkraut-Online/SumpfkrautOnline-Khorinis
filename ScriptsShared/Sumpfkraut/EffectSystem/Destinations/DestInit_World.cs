@@ -25,8 +25,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 
         protected DestInit_World ()
         {
-            SetObjName("DestInit_World");
-
             AddOrChange(new DestInitInfo(ChangeDestination.World_Clock_IsRunning,
                 new List<ChangeType>() { ChangeType.World_Clock_IsRunning_Set },
                 CTC_Clock_IsRunning, ATC_Clock_IsRunning));

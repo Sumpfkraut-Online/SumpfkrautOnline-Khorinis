@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GUC.WorldObjects.Instances;
 using GUC.Scripts.Sumpfkraut.Visuals;
+using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
@@ -15,13 +16,17 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         partial void pConstruct();
         public ProjDef()
         {
-            SetObjName("ProjDef");
             pConstruct();
         }
 
         protected override BaseVobInstance CreateVobInstance()
         {
             return new ProjectileInstance(this);
+        }
+
+        protected override BaseEffectHandler CreateHandler()
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

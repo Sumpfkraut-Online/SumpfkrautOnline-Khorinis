@@ -24,7 +24,6 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
 
         public AIMemory ()
         {
-            SetObjName("AIMemory");
             this.aiActionLock = new object();
             this.aiActions = new List<BaseAIAction>();
             this.indexByActionType = new Dictionary<Type, int>();

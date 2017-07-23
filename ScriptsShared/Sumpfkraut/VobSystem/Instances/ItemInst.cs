@@ -19,8 +19,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         partial void pConstruct();
         public ItemInst()
         {
-            SetObjName("ItemInst");
-            effectHandler = effectHandler ?? new EffectSystem.EffectHandlers.ItemInstEffectHandler(null, this);
             pConstruct();
         }
 
@@ -29,12 +27,16 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             return new Item(new Visuals.ModelInst(this), this);
         }
 
+        protected override BaseEffectHandler CreateHandler()
+        {
+            return new ItemInstEffectHandler(null, null, this);
+        }
+
         #endregion
 
         #region Properties
-
-        new protected ItemInstEffectHandler effectHandler;
-        new public ItemInstEffectHandler GetEffectHandler () { return effectHandler; }
+        
+        new public ItemInstEffectHandler EffectHandler { get { return (ItemInstEffectHandler)base.EffectHandler; } }
 
         public new Item BaseInst { get { return (Item)base.BaseInst; } }
         public new ItemDef Definition { get { return (ItemDef)base.Definition; } set { base.Definition = value; } }
@@ -70,7 +72,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         }
 
-        // Nur das Wichtigste was von aussen zu sehen ist!
+        // Nur das Wichtigste was von aussen als Ausrüstung zu sehen ist!
         public void ReadEquipProperties(PacketReader stream)
         {
         }

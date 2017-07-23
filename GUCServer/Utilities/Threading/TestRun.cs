@@ -11,7 +11,6 @@ namespace GUC.Utilities.Threading
         public TestRun (bool startOnCreate, TimeSpan timeout, bool runOnce)
             : base(false, timeout, runOnce)
         {
-            SetObjName("TestRun");
             printStateControls = true;
 
             if (startOnCreate)

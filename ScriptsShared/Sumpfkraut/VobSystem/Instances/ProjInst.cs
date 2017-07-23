@@ -7,6 +7,7 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.Types;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
+using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
@@ -27,13 +28,17 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         partial void pConstruct();
         public ProjInst()
         {
-            SetObjName("ProjInst");
             pConstruct();
         }
 
         protected override BaseVob CreateVob()
         {
             return new Projectile(this);
+        }
+
+        protected override BaseEffectHandler CreateHandler()
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

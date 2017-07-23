@@ -112,8 +112,8 @@ namespace GUC.Scripts
         {
             Logger.Log("######## Initalise SumpfkrautOnline ServerScripts #########");
 
-            Sumpfkraut.EffectSystem.Changes.ChangeInitializer.Init();
-            Sumpfkraut.EffectSystem.Destinations.DestInitializer.Init();
+            //Sumpfkraut.EffectSystem.Changes.ChangeInitializer.Init();
+            //Sumpfkraut.EffectSystem.Destinations.DestInitializer.Init();
 
             Sumpfkraut.Daedalus.AniParser.ReadMDSFiles();
             Sumpfkraut.Daedalus.ConstParser.ParseConstValues();
@@ -128,20 +128,22 @@ namespace GUC.Scripts
             Sumpfkraut.Daedalus.PrototypeParser.Free();
             Sumpfkraut.Daedalus.InstanceParser.Free();
 
+            NPCInst.Requests.OnJump += (npc, move) => npc.EffectHandler.TryJump(move);
+
+
             AddSomeDefs();
 
             CreateTestWorld();
 
             // -- Websocket-Server --
             Sumpfkraut.Web.WS.WSServer wsServer = new Sumpfkraut.Web.WS.WSServer();
-            wsServer.SetObjName("WSServer");
             wsServer.Init();
             wsServer.Start();
 
             // -- command console --
             Sumpfkraut.CommandConsole.CommandConsole cmdConsole = new Sumpfkraut.CommandConsole.CommandConsole();
 
-            Sumpfkraut.TestingThings.Init();
+            //Sumpfkraut.TestingThings.Init();
             //Sumpfkraut.AI.TestingAI.Test();
 
             Logger.Log("######################## Finished #########################");

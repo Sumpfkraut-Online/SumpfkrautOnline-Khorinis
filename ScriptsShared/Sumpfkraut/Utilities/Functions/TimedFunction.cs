@@ -257,7 +257,6 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         public TimedFunction (DateTime[] specifiedTimes, TimeSpan[] intervals,
             Tuple<DateTime, DateTime> startEnd)
         {
-            SetObjName("TimedFunction");
             _lock = new object();
 
             preserveDueInvocations = true;

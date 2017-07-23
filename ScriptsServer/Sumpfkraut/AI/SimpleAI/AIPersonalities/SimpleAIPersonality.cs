@@ -38,7 +38,6 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
         public SimpleAIPersonality (float aggressionRadius, float turnAroundVelocity)
         {
-            SetObjName("SimpleAIPersonality");
             this.aggressionRadius = aggressionRadius;
             this.turnAroundVelocity = turnAroundVelocity;
         }

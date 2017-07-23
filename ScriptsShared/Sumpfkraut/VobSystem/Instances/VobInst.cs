@@ -17,8 +17,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         partial void pConstruct();
         public VobInst()
         {
-            SetObjName("VobInst");
-            effectHandler = effectHandler ?? new EffectSystem.EffectHandlers.VobInstEffectHandler(null, this);
             pConstruct();
         }
 
@@ -27,12 +25,16 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             return new Vob(new ModelInst(this), this);
         }
 
+        protected override BaseEffectHandler CreateHandler()
+        {
+            return new VobInstEffectHandler(null, null, this);
+        }
+
         #endregion
 
         #region Properties
 
-        new protected VobInstEffectHandler effectHandler;
-        new public VobInstEffectHandler GetEffectHandler () { return effectHandler; }
+        new public VobInstEffectHandler EffectHandler { get { return (VobInstEffectHandler)base.EffectHandler; } }
 
         public new Vob BaseInst { get { return (Vob)base.BaseInst; } }
 

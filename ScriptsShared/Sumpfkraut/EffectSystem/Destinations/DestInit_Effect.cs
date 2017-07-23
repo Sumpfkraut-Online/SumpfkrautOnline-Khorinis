@@ -24,8 +24,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 
         protected DestInit_Effect ()
         {
-            SetObjName("DestInit_Effect");
-
             AddOrChange(new DestInitInfo(ChangeDestination.Effect_GlobalID, 
                 new List<ChangeType>() { ChangeType.Effect_GlobalID_Set }, 
                 CTC_GlobalID, ATC_GlobalID));

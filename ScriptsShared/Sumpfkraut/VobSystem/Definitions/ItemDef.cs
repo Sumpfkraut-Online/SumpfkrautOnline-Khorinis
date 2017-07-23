@@ -51,9 +51,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
     public partial class ItemDef : NamedVobDef, ItemInstance.IScriptItemInstance
     {
         #region Properties
-
-        new protected ItemDefEffectHandler effectHandler;
-        new public ItemDefEffectHandler GetEffectHandler () { return effectHandler; }
+        
+        new public ItemDefEffectHandler EffectHandler { get { return (ItemDefEffectHandler)base.EffectHandler; } }
 
         new public ItemInstance BaseDef { get { return (ItemInstance)base.BaseDef; } }
 
@@ -85,18 +84,21 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         #endregion
 
         #region Constructors
+        
+        partial void pConstruct();
+        public ItemDef()
+        {
+            pConstruct();
+        }
+
+        protected override BaseEffectHandler CreateHandler()
+        {
+            return new ItemDefEffectHandler(null, null, this);
+        }
 
         protected override BaseVobInstance CreateVobInstance()
         {
             return new ItemInstance(this);
-        }
-
-        partial void pConstruct();
-        public ItemDef()
-        {
-            SetObjName("ItemDef");
-            effectHandler = effectHandler ?? new EffectSystem.EffectHandlers.ItemDefEffectHandler(null, this);
-            pConstruct();
         }
 
         #endregion

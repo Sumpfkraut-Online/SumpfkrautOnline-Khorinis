@@ -10,6 +10,7 @@ using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Types;
 using GUC.WorldObjects.ItemContainers;
+using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
@@ -33,14 +34,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
     public partial class NPCInst : VobInst, NPC.IScriptNPC, ScriptInventory.IContainer
     {
-
         #region Constructors
 
         partial void pConstruct();
         public NPCInst()
         {
-            SetObjName("NPCInst");
-            effectHandler = effectHandler ?? new EffectSystem.EffectHandlers.NPCInstEffectHandler(null, this);
             pConstruct();
         }
 
@@ -49,9 +47,16 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             return new NPC(new ScriptInventory(this), new ModelInst(this), this);
         }
 
+        protected override BaseEffectHandler CreateHandler()
+        {
+            return new NPCInstEffectHandler(null, null, this);
+        }
+
         #endregion
 
         #region Properties
+        
+        new public NPCInstEffectHandler EffectHandler { get { return (NPCInstEffectHandler)base.EffectHandler; } }
 
         new public NPC BaseInst { get { return (NPC)base.BaseInst; } }
         public ItemInventory BaseInventory { get { return BaseInst.Inventory; } }

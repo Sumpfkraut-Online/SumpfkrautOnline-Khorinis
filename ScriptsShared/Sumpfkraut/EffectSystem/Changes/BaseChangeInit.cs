@@ -25,7 +25,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 
             // always create own representative in inheriting classes
             representative = new BaseChangeInit();
-            representative.SetObjName("BaseChangeInit");
         }
 
         protected BaseChangeInit ()
