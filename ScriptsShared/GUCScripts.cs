@@ -20,7 +20,7 @@ namespace GUC.Scripts
     {
         public Network.GameClient CreateClient()
         {
-            return new Left4Gothic.L4Client().BaseClient;//new ScriptClient().BaseClient;
+            return new Arena.ArenaClient().BaseClient; //new ScriptClient().BaseClient;
         }
 
         public Animations.AniJob CreateAniJob()

@@ -50,6 +50,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\ScriptsShared\Arena\ArenaClient.cs">
+      <Link>Arena\ArenaClient.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Arena\ScriptMessages.cs">
+      <Link>Arena\ScriptMessages.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\GUCScripts.cs">
       <Link>GUCScripts.cs</Link>
     </Compile>
@@ -351,6 +357,7 @@
     <Compile Include="Sumpfkraut\AI\GuideCommands\GoToVobCommand.Client.cs" />
     <Compile Include="Sumpfkraut\Controls\KeyBinds.cs" />
     <Compile Include="Sumpfkraut\Controls\PlayerControl.cs" />
+    <Compile Include="Sumpfkraut\Controls\SpectatorControl.cs" />
     <Compile Include="Sumpfkraut\GUI\GUCInventory.cs" />
     <Compile Include="Sumpfkraut\GUI\MainMenu\MainMenuButton.cs" />
     <Compile Include="Sumpfkraut\GUI\MainMenu\MainMenuCharacter.cs" />

@@ -49,6 +49,8 @@
     <Folder Include="Sumpfkraut\VobSystem\Instances\Mobs\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Arena\ArenaClient.cs" />
+    <Compile Include="Arena\ScriptMessages.cs" />
     <Compile Include="GUCScripts.cs" />
     <Compile Include="Left4Gothic\CharacterInfo.cs" />
     <Compile Include="Left4Gothic\L4Client.cs" />

@@ -32,6 +32,10 @@ namespace GUC.Scripts.Sumpfkraut.Networking
 
         public NPCInst Character { get { return (NPCInst)this.baseClient.Character?.ScriptObject; } }
 
+        /// <summary> Spawned or specating in a world. </summary>
+        public bool IsIngame { get { return this.baseClient.IsIngame; } }
+        public bool IsSpecating { get { return this.baseClient.IsSpectating; } }
+
         #endregion
 
         #region Connection

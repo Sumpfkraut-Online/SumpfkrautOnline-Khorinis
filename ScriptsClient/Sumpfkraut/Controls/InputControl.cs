@@ -38,6 +38,8 @@ namespace GUC.Scripts.Sumpfkraut.Controls
             
             if (NPCInst.Hero != null)
                 PlayerControl.KeyDown(NPCInst.Hero, key, now);
+            else if (ScriptClient.Client.IsSpecating)
+                SpectatorControl.KeyDown(key, now);
         }
 
         static void KeyUp(VirtualKeys key, long now)
@@ -51,6 +53,8 @@ namespace GUC.Scripts.Sumpfkraut.Controls
 
             if (NPCInst.Hero != null)
                 PlayerControl.KeyUp(NPCInst.Hero, key, now);
+            else if (ScriptClient.Client.IsSpecating)
+                SpectatorControl.KeyUp(key, now);
         }
 
         public static void Update(long now)
@@ -64,6 +68,8 @@ namespace GUC.Scripts.Sumpfkraut.Controls
 
             if (NPCInst.Hero != null)
                 PlayerControl.Update(NPCInst.Hero, now);
+            else if (ScriptClient.Client.IsSpecating)
+                SpectatorControl.Update(now);
         }
     }
 }

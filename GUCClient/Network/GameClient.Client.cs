@@ -585,9 +585,9 @@ namespace GUC.Network
 
             lastSpecPos = pos;
 
-            /*PacketWriter stream = SetupStream(ServerMessages.SpecPosMessage);
+            PacketWriter stream = SetupStream(ClientMessages.SpecatorPosMessage);
             stream.WriteCompressedPosition(pos);
-            Send(stream, PktPriority.Low, PktReliability.Unreliable);*/
+            Send(stream, PktPriority.Low, PktReliability.Unreliable);
 
             specNextUpdate = now + SpecPosUpdateInterval;
         }
