@@ -309,29 +309,29 @@ namespace GUC.Scripts.Sumpfkraut
 
 
 
-            //var startTime = DateTime.Now;
+            var startTime = DateTime.Now;
 
-            //var timeSpans1 = new TimeSpan[]
-            //{
-            //    new TimeSpan(0, 0, 0, 0, 500),
-            //    new TimeSpan(0, 0, 0, 1, 0),
-            //    new TimeSpan(0, 0, 0, 2, 0)
-            //};
+            var timeSpans1 = new TimeSpan[]
+            {
+                new TimeSpan(0, 0, 0, 1, 0),
+                new TimeSpan(0, 0, 0, 5, 0),
+                new TimeSpan(0, 0, 0, 10, 0)
+            };
 
-            //var tf1 = new TimedFunction(timeSpans1, new Tuple<DateTime, DateTime>(DateTime.Now, DateTime.Now.AddSeconds(10)));
-            //tf1.SetFunc( (object[] param) => 
-            //{
-            //    Logger.Print((startTime - DateTime.Now).Milliseconds);
-            //    return param;
-            //} );
+            var tf1 = new TimedFunction(timeSpans1, new Tuple<DateTime, DateTime>(DateTime.Now, DateTime.Now.AddSeconds(60)));
+            tf1.SetFunc((object[] param) =>
+            {
+                //Logger.Print((startTime - DateTime.Now).Milliseconds);
+                //Logger.Print(DateTime.Now);
+                return param;
+            });
 
-            //var fm = new FunctionManager();
-            //fm.Start();
+            var fm = new FunctionManager();
+            fm.Start();
+            fm.Add(tf1, 1, true);
 
-            //fm.Add(tf1, 1, true);
+            Program.OnTick += fm.Run;
 
-            //Program.OnTick += fm.Run;
-            
 
 
 

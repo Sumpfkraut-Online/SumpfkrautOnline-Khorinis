@@ -1,4 +1,5 @@
-﻿using GUC.Utilities;
+﻿using GUC.Scripts.Sumpfkraut.Utilities.Functions.Enumeration;
+using GUC.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -98,7 +99,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             {
                 if ((!HasSpecifiedTimes) || (!HasSpecifiedTimesLeft))
                 {
-                    next = DateTime.MinValue;
+                    next = DateTime.MaxValue;
                     return false;
                 }
 
@@ -222,6 +223,9 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             return referenceTime > GetEnd();
         }
 
+        protected InvocationType lastInvocationType;
+
+
 
 
         // run the action as soon as possible a single time
@@ -267,6 +271,8 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             {
                 hasIntervals = true;
                 this.intervals = intervals;
+                lastIntervalIndex = 0;
+                lastIntervalTime = DateTime.Now;
             }
             if (startEnd != null)
             {
@@ -274,52 +280,6 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                 this.startEnd = startEnd;
             }
         }
-
-
-
-        //// TimedFunctions creates copy of itself
-        //public TimedFunction CreateCopy ()
-        //{
-        //    TimedFunction copy;
-        //    lock (_lock)
-        //    {
-        //        copy = new TimedFunction(specifiedTimes, intervals, startEnd);
-        //        copy.SetObjName(GetObjName());
-        //    }
-        //    return copy;
-        //}
-
-
-
-        //public static bool HaveEqualAttributes (TimedFunction tf1, TimedFunction tf2) 
-        //{
-        //    if (    (tf1.GetType()                      != tf2.GetType()) 
-        //        ||  (tf1.GetObjName()                   != tf2.GetObjName())
-        //        ||  (tf1.GetPreserveDueInvocations()    != tf2.GetPreserveDueInvocations())
-        //        ||  (tf1.GetFunc()                      != tf2.GetFunc())
-        //        ||  (tf1.GetParameters()                != tf2.GetParameters())
-        //        ||  (tf1.HasMaxInvocations              != tf2.HasMaxInvocations)
-        //        ||  (tf1.GetMaxInvocations()            != tf2.GetMaxInvocations())
-        //        ||  (tf1.GetInvocations()               != tf2.GetInvocations())
-        //        ||  (tf1.HasStartEnd                    != tf2.HasStartEnd)
-        //        ||  (tf1.GetStart()                     != tf2.GetStart())
-        //        ||  (tf1.GetEnd()                       != tf2.GetEnd())
-        //        ||  (tf1.HasSpecifiedTimes              != tf2.HasSpecifiedTimes)
-        //        ||  (tf1.GetSpecifiedTimes()            != tf2.GetSpecifiedTimes())
-        //        ||  (tf1.GetLastSpecifiedTimeIndex()    != tf2.GetLastSpecifiedTimeIndex())
-        //        ||  (tf1.GetIntervals()                 != tf2.GetIntervals())
-        //        ||  (tf1.GetLastIntervalIndex()         != tf2.GetLastIntervalIndex())
-        //        ||  (tf1.GetLastIntervalTime()          != tf2.GetLastIntervalTime()) )
-        //    {
-        //        return false;
-        //    }
-        //    return true;
-        //}
-
-        //public bool HasEqualAttributes (TimedFunction tf)
-        //{
-        //    return HaveEqualAttributes(this, tf);
-        //}
 
     }
 

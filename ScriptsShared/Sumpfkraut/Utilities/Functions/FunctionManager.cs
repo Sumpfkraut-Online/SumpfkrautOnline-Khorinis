@@ -102,7 +102,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                     {
                         Type type = item.GetType();
                         if      (type == typeof(MI_Clear)) { Buffer_Clear(); }
-                        else if (type == typeof(MI_Add)) { Buffer_Add((MI_Add)item);  }
+                        else if (type == typeof(MI_Add)) { Buffer_Add((MI_Add)item); }
                         else if (type == typeof(MI_AddRange)) { Buffer_AddRange((MI_AddRange)item); }
                         else if (type == typeof(MI_Remove)) { Buffer_Remove((MI_Remove)item); }
                         else if (type == typeof(MI_RemoveRange)) { Buffer_RemoveRange((MI_RemoveRange)item); }
@@ -293,6 +293,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             {
                 var lastIntervalTime = tf.GetLastIntervalTime();
                 var nextIntervalTime = lastIntervalTime + lastInterval;
+                Print(lastIntervalTime);
                 // only take intervals into account which would have been invocated in the meantime
                 if(nextIntervalTime <= tf.GetEnd())
                 {
@@ -303,7 +304,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                     }
                 }
             }
-
+            
             return success;
         }
 
@@ -365,7 +366,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                     var now = DateTime.Now;
                     var lastTime = DateTime.MinValue;
                     if ((schedule.Count < 1) || (schedule.First().Key > now)) { return; }
-
+                    
                     do
                     {
                         // grab the first and thus next list of protocols in the chronologically series
@@ -379,6 +380,9 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                         DateTime nextTime;
                         foreach (var tf in timedFunctions)
                         {
+                            // call the function before any more delay occurs
+                            InvokeFunction(tf);
+
                             // determine if to create a new schedule-entry in a later point in time
                             if (TryFindNextInvocation(now, tf, out nextTime))
                             {
