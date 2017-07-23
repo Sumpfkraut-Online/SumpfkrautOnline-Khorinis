@@ -3,14 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.WorldObjects.Instances;
+using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
-    public partial class NPCDef : VobDef, NPCInstance.IScriptNPCInstance
+
+    public partial class NPCDef : NamedVobDef, NPCInstance.IScriptNPCInstance
     {
+
+        new protected NPCDefEffectHandler effectHandler;
+        new public NPCDefEffectHandler GetEffectHandler () { return effectHandler; }
+
         new public NPCInstance BaseDef { get { return (NPCInstance)base.BaseDef; } }
 
-        public string Name { get { return BaseDef.Name; }  set { BaseDef.Name = value; } }
+        new public string Name
+        {
+            get { return this.name; }
+            set { BaseDef.Name = value; this.name = value; }
+        }
         public string BodyMesh { get { return BaseDef.BodyMesh; } set { BaseDef.BodyMesh = value; } }
         public int BodyTex { get { return BaseDef.BodyTex; } set { BaseDef.BodyTex = value; } }
         public string HeadMesh { get { return BaseDef.HeadMesh; } set { BaseDef.HeadMesh = value; } }
@@ -21,6 +31,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         partial void pConstruct();
         public NPCDef()
         {
+            SetObjName("NPCDef");
+            effectHandler = effectHandler ?? new EffectSystem.EffectHandlers.NPCDefEffectHandler(null, this);
             pConstruct();
         }
 

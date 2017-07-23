@@ -17,10 +17,6 @@ namespace GUC.Scripts.Sumpfkraut.AI
     public class TestingAI : ExtendedObject
     {
 
-        new public static readonly string _staticName = "TestingAI (static)";
-
-
-
         public static List<string> ArmorCodes = new List<string>() {
             "itar_schatten", "itar_Garde",
             "itar_bandit", "itar_söldner"

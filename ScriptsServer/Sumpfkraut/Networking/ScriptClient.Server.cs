@@ -6,10 +6,11 @@ using GUC.Network;
 using GUC.Types;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using GUC.Utilities;
 
 namespace GUC.Scripts.Sumpfkraut.Networking
 {
-    public partial class ScriptClient : ScriptObject, GameClient.IScriptClient
+    public partial class ScriptClient : ExtendedObject, GameClient.IScriptClient
     {
         public bool IsAllowedToConnect()
         {

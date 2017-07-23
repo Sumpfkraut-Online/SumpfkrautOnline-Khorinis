@@ -15,13 +15,32 @@ using GUC.Scripts.Sumpfkraut.EffectSystem.Changes;
 using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 using GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration;
 using GUC.Scripts.Sumpfkraut.EffectSystem.Destinations;
+using System.Drawing;
+using GUC.Scripts.Sumpfkraut.Utilities;
+using System.Threading;
+using GUC.Scripts.Sumpfkraut.Utilities.Functions;
 
 namespace GUC.Scripts.Sumpfkraut
 {
     public class TestingThings : ExtendedObject
     {
 
-        new public static readonly string _staticName = "TestingThings (static)";
+        public class O
+        {
+            
+        }
+
+        public class A : O
+        {
+
+
+            public A () { }
+        }
+
+        public class B : O
+        {
+            public B () { }
+        }
 
 
 
@@ -151,7 +170,7 @@ namespace GUC.Scripts.Sumpfkraut
 
             //EffectSystem.EffectHandlers.VobEffectHandler eh =
             //    new EffectSystem.EffectHandlers.VobEffectHandler(null, new VobSystem.Instances.VobInst());
-            //Logger.Log("-------> " + eh.HostType);
+            //Logger.Log("-------> " + eh.hostType);
 
             //EffectSystem.EffectDelegateReference delRef = 
             //    new EffectSystem.EffectDelegateReference(null, null);
@@ -162,29 +181,7 @@ namespace GUC.Scripts.Sumpfkraut
             //Change change2 = new Change(EffectSystem.Enumeration.ChangeType.Effect_Name_Set, new object[] { 1, 2, 3, 4, 5, 6 });
             //Logger.Log("### " + (change1 == change2));
 
-            //bool check;
-            //int[] lapsesSteps = new int[] { 1, 10, 100, 1000, 1000, 10000, 100000, 1000000 };
-            //int tempLapses = 0;
-            //List<long> elapsedTicks = new List<long>();
 
-            //Stopwatch sw = Stopwatch.StartNew();
-            //for (int s = 0; s < lapsesSteps.Length; s++)
-            //{
-            //    tempLapses = lapsesSteps[s];
-            //    for (int l = 0; l < tempLapses; l++)
-            //    {
-            //        check = change1 == change2;
-            //    }
-            //    sw.Stop();
-            //    elapsedTicks.Add(sw.ElapsedTicks);
-            //    sw.Restart();
-            //}
-
-            //sw.Stop();
-            //for (int i = 0; i < elapsedTicks.Count; i++)
-            //{
-            //    Logger.Log("### " + elapsedTicks[i] + " " + ((double) elapsedTicks[i] / TimeSpan.TicksPerMillisecond));
-            //}
 
 
 
@@ -235,30 +232,6 @@ namespace GUC.Scripts.Sumpfkraut
 
 
 
-            //List<int> l1 = new List<int>() { 1, 3, 6, 7, 8 };
-            //List<int> l2 = new List<int>() { 2, 3, 4, 5, 6, 7, 9, 10};
-            //List<int> l3 = l1.Union(l2).ToList();
-            //l3.Sort();
-            //foreach (int i in l3) { Logger.Log(i); }
-
-
-
-            ////SomeClass o = new SomeClass(new object[0]);
-            //SomeClass o = SomeClass.Create(new object[0]);
-            //Logger.Log("===> " + (o == null));
-            //Logger.Log("===> " + o);
-            ////Logger.Log("===> " + o.parameters);
-
-
-            //object o = "Banannanana";
-            //Logger.Log("===> " + o.GetType());
-
-            //SomeClass.ParameterTypeCheck(new object[] { "s", 'c', 1, false });
-
-
-            //FieldInfo info = typeof(SomeClass).GetField("someList");
-            //List<int> val = (List<int>) info.GetValue(null);
-            //foreach (int i in val) { Logger.Log(i); }
 
 
 
@@ -296,8 +269,75 @@ namespace GUC.Scripts.Sumpfkraut
 
 
 
-            ChangeInitializer.Init();
-            DestInitializer.Init();
+
+
+
+            //var timeSpans1 = new TimeSpan[]
+            //{
+            //    new TimeSpan(0, 0, 0, 0, 500),
+            //    new TimeSpan(0, 0, 0, 1, 0),
+            //    new TimeSpan(0, 0, 0, 2, 0)
+            //};
+
+            //var tf1 = new TimedFunction(timeSpans1, new Tuple<DateTime, DateTime>(DateTime.Now, DateTime.Now.AddSeconds(10)));
+            //tf1.SetFunc((object[] param) =>
+            //{
+            //    return param;
+            //});
+            //var tf2 = new TimedFunction(timeSpans1, new Tuple<DateTime, DateTime>(DateTime.Now, DateTime.Now.AddSeconds(10)));
+            //tf1.SetFunc((object[] param) =>
+            //{
+            //    return param;
+            //});
+            //var tf3 = tf2;
+
+            //Logger.Print(tf1 == tf2);
+            //Logger.Print(tf2 == tf3);
+            //Logger.Print(tf1.HasEqualAttributes(tf3));
+
+            //var dict = new Dictionary<TimedFunction, int>();
+
+
+            //var arr1 = new int[] { 1, 2, 3, 4, 5 };
+            //var arr2 = new int[] { 1, 2, 3, 4, 5 };
+
+            //Logger.Print(arr1 == arr2);
+            //Logger.Print(arr1.Equals(arr2));
+
+
+
+
+
+
+            var startTime = DateTime.Now;
+
+            var timeSpans1 = new TimeSpan[]
+            {
+                new TimeSpan(0, 0, 0, 1, 0),
+                new TimeSpan(0, 0, 0, 5, 0),
+                new TimeSpan(0, 0, 0, 10, 0)
+            };
+
+            var tf1 = new TimedFunction(timeSpans1, new Tuple<DateTime, DateTime>(DateTime.Now, DateTime.Now.AddSeconds(60)));
+            tf1.SetFunc((object[] param) =>
+            {
+                //Logger.Print((startTime - DateTime.Now).Milliseconds);
+                //Logger.Print(DateTime.Now);
+                return param;
+            });
+
+            var fm = new FunctionManager();
+            fm.Start();
+            fm.Add(tf1, 1, true);
+
+            Program.OnTick += fm.Run;
+
+
+
+
+
+
+
 
             //ChangeInitInfo info;
             //BaseChangeInit.TryGetChangeInitInfo(ChangeType.Effect_Name_Set, out info);
@@ -305,7 +345,20 @@ namespace GUC.Scripts.Sumpfkraut
             //Change c = Change.Create(info, e, new List<object>() { "MyEffect" });
             //VobEffectHandler eh = new VobEffectHandler("MyEffectHandler", null, new VobSystem.Definitions.VobDef());
             //Logger.Log(e.EffectName); 
-            
+
+            //var effectLoader = new EffectLoader(@"Data Source=DB\TEST_Main_01.db", "DefEffect", "DefChange");
+            //effectLoader.Load(true, (EffectLoader.FinishedLoadingEffectsArgs e) => 
+            //{
+            //    if (e.effectsByID != null)
+            //    {
+            //        foreach (var keyVal in e.effectsByID)
+            //        {
+            //            Log.Logger.Log("~~~~~~~~> " + keyVal.Key + ": " + keyVal.Value.GetGlobalID());
+            //        }
+            //    }
+            //});
+
+
 
 
 
@@ -315,65 +368,6 @@ namespace GUC.Scripts.Sumpfkraut
 
     }
 
-    //public class MAndM
-    //{
-    //    protected static Dictionary<int, Change> bla = new Dictionary<int, Change>();
-    //    public static Dictionary<int, Change> Bla { get { return bla; } }
-    //}
-
-    public class ClassA
-    {
-        public static void SomeStaticMethod () { Logger.Log("SomeStaticMethod"); }
-    }
-
-    public class ClassB : ClassA
-    {
-
-    }
-
-    public class SomeClass
-    {
-
-        public static readonly List<int> someList = new List<int> { 9, 1, 8, 2, 7, 3, 6, 4, 5 };
-
-        public object[] parameters;
-
-        static SomeClass ()
-        {
-            SomeMethod();
-        }
-
-        public SomeClass (object[] parameters)
-        {
-            this.parameters = parameters;
-            if (parameters.Length < 1)
-            {
-                throw new Exception("parameters of Length < 1 are invalid!");
-            }
-        }
-
-        public static SomeClass Create (object[] parameters)
-        {
-            if (parameters.Length < 1) { return null; }
-            return new SomeClass(parameters);
-        }
-
-        public static void ParameterTypeCheck (object[] parameters)
-        {
-            foreach (object o in parameters) { Logger.Log("===> " + o.GetType()); }
-        }
-
-        public static void SomeMethod ()
-        {
-            Logger.Log("OINK");
-        }
-
-    }
-
-    public class AnotherClass : SomeClass
-    {
-        public AnotherClass (object[] parameters) : base(parameters)
-        { }
-    }
+    
 
 }

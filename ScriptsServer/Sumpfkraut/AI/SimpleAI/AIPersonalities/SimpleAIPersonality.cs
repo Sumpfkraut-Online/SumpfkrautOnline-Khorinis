@@ -16,10 +16,6 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
     public class SimpleAIPersonality : BaseAIPersonality
     {
 
-        new public static readonly string _staticName = "SimpleAIPersonality (static)";
-
-
-        
         // maps VobInst to GuideCmd which is used by the GUC to let clients calculate 
         // movement paths to a destination and guide the vob to it
         protected Dictionary<VobInst, GuideCommandInfo> guideCommandByVobInst;
@@ -42,7 +38,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
         public SimpleAIPersonality (float aggressionRadius, float turnAroundVelocity)
         {
-            SetObjName("SimpleAIPersonality (default)");
+            SetObjName("SimpleAIPersonality");
             this.aggressionRadius = aggressionRadius;
             this.turnAroundVelocity = turnAroundVelocity;
         }

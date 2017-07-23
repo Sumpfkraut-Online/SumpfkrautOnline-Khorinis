@@ -23,73 +23,73 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
                 {
                     "WorldEffect", new List<DBTables.ColumnGetTypeInfo>
                     {
-                        new DBTables.ColumnGetTypeInfo("WorldEffectID", SQLiteGetTypeEnum.GetInt32),
-                        new DBTables.ColumnGetTypeInfo("ChangeDate", SQLiteGetTypeEnum.GetDateTime),
-                        new DBTables.ColumnGetTypeInfo("CreationDate", SQLiteGetTypeEnum.GetDateTime),
+                        new DBTables.ColumnGetTypeInfo("WorldEffectID", SQLiteGetType.GetInt32),
+                        new DBTables.ColumnGetTypeInfo("ChangeDate", SQLiteGetType.GetDateTime),
+                        new DBTables.ColumnGetTypeInfo("CreationDate", SQLiteGetType.GetDateTime),
                     }
                 },
                 {
                     "WorldChange", new List<DBTables.ColumnGetTypeInfo>
                     {
-                        new DBTables.ColumnGetTypeInfo("WorldChangeID", SQLiteGetTypeEnum.GetInt32),
-                        new DBTables.ColumnGetTypeInfo("WorldEffectID", SQLiteGetTypeEnum.GetInt32),
-                        new DBTables.ColumnGetTypeInfo("Func", SQLiteGetTypeEnum.GetInt32),
-                        new DBTables.ColumnGetTypeInfo("Param0", SQLiteGetTypeEnum.GetString),
-                        new DBTables.ColumnGetTypeInfo("Param1", SQLiteGetTypeEnum.GetString),
-                        new DBTables.ColumnGetTypeInfo("Param2", SQLiteGetTypeEnum.GetString),
-                        new DBTables.ColumnGetTypeInfo("Param3", SQLiteGetTypeEnum.GetString),
-                        new DBTables.ColumnGetTypeInfo("Param4", SQLiteGetTypeEnum.GetString),
-                        new DBTables.ColumnGetTypeInfo("ChangeDate", SQLiteGetTypeEnum.GetDateTime),
-                        new DBTables.ColumnGetTypeInfo("CreationDate", SQLiteGetTypeEnum.GetDateTime),
+                        new DBTables.ColumnGetTypeInfo("WorldChangeID", SQLiteGetType.GetInt32),
+                        new DBTables.ColumnGetTypeInfo("WorldEffectID", SQLiteGetType.GetInt32),
+                        new DBTables.ColumnGetTypeInfo("Func", SQLiteGetType.GetInt32),
+                        new DBTables.ColumnGetTypeInfo("Param0", SQLiteGetType.GetString),
+                        new DBTables.ColumnGetTypeInfo("Param1", SQLiteGetType.GetString),
+                        new DBTables.ColumnGetTypeInfo("Param2", SQLiteGetType.GetString),
+                        new DBTables.ColumnGetTypeInfo("Param3", SQLiteGetType.GetString),
+                        new DBTables.ColumnGetTypeInfo("Param4", SQLiteGetType.GetString),
+                        new DBTables.ColumnGetTypeInfo("ChangeDate", SQLiteGetType.GetDateTime),
+                        new DBTables.ColumnGetTypeInfo("CreationDate", SQLiteGetType.GetDateTime),
                     }
                 },
                 {
                     "InstEffect", new List<DBTables.ColumnGetTypeInfo>
                     {
-                        new DBTables.ColumnGetTypeInfo("InstEffectID", SQLiteGetTypeEnum.GetInt32),
-                        new DBTables.ColumnGetTypeInfo("ChangeDate", SQLiteGetTypeEnum.GetDateTime),
-                        new DBTables.ColumnGetTypeInfo("CreationDate", SQLiteGetTypeEnum.GetDateTime),
+                        new DBTables.ColumnGetTypeInfo("InstEffectID", SQLiteGetType.GetInt32),
+                        new DBTables.ColumnGetTypeInfo("ChangeDate", SQLiteGetType.GetDateTime),
+                        new DBTables.ColumnGetTypeInfo("CreationDate", SQLiteGetType.GetDateTime),
                     }
                 },
                 {
                     "InstChange", new List<DBTables.ColumnGetTypeInfo>
                     {
-                        new DBTables.ColumnGetTypeInfo("InstChangeID", SQLiteGetTypeEnum.GetInt32),
-                        new DBTables.ColumnGetTypeInfo("InstEffectID", SQLiteGetTypeEnum.GetInt32),
-                        new DBTables.ColumnGetTypeInfo("Func", SQLiteGetTypeEnum.GetInt32),
-                        new DBTables.ColumnGetTypeInfo("Param0", SQLiteGetTypeEnum.GetString),
-                        new DBTables.ColumnGetTypeInfo("Param1", SQLiteGetTypeEnum.GetString),
-                        new DBTables.ColumnGetTypeInfo("Param2", SQLiteGetTypeEnum.GetString),
-                        new DBTables.ColumnGetTypeInfo("Param3", SQLiteGetTypeEnum.GetString),
-                        new DBTables.ColumnGetTypeInfo("Param4", SQLiteGetTypeEnum.GetString),
-                        new DBTables.ColumnGetTypeInfo("ChangeDate", SQLiteGetTypeEnum.GetDateTime),
-                        new DBTables.ColumnGetTypeInfo("CreationDate", SQLiteGetTypeEnum.GetDateTime),
+                        new DBTables.ColumnGetTypeInfo("InstChangeID", SQLiteGetType.GetInt32),
+                        new DBTables.ColumnGetTypeInfo("InstEffectID", SQLiteGetType.GetInt32),
+                        new DBTables.ColumnGetTypeInfo("Func", SQLiteGetType.GetInt32),
+                        new DBTables.ColumnGetTypeInfo("Param0", SQLiteGetType.GetString),
+                        new DBTables.ColumnGetTypeInfo("Param1", SQLiteGetType.GetString),
+                        new DBTables.ColumnGetTypeInfo("Param2", SQLiteGetType.GetString),
+                        new DBTables.ColumnGetTypeInfo("Param3", SQLiteGetType.GetString),
+                        new DBTables.ColumnGetTypeInfo("Param4", SQLiteGetType.GetString),
+                        new DBTables.ColumnGetTypeInfo("ChangeDate", SQLiteGetType.GetDateTime),
+                        new DBTables.ColumnGetTypeInfo("CreationDate", SQLiteGetType.GetDateTime),
                     }
                 },
                 {
                     "VobInst", new List<DBTables.ColumnGetTypeInfo>
                     {
-                        new DBTables.ColumnGetTypeInfo("VobInstID", SQLiteGetTypeEnum.GetInt32),
-                        new DBTables.ColumnGetTypeInfo("IsStatic", SQLiteGetTypeEnum.GetBoolean),
-                        new DBTables.ColumnGetTypeInfo("ChangeDate", SQLiteGetTypeEnum.GetDateTime),
-                        new DBTables.ColumnGetTypeInfo("CreationDate", SQLiteGetTypeEnum.GetDateTime),
+                        new DBTables.ColumnGetTypeInfo("VobInstID", SQLiteGetType.GetInt32),
+                        new DBTables.ColumnGetTypeInfo("IsStatic", SQLiteGetType.GetBoolean),
+                        new DBTables.ColumnGetTypeInfo("ChangeDate", SQLiteGetType.GetDateTime),
+                        new DBTables.ColumnGetTypeInfo("CreationDate", SQLiteGetType.GetDateTime),
                     }
                 },
                 {
                     "VobInstEffect", new List<DBTables.ColumnGetTypeInfo>
                     {
-                        new DBTables.ColumnGetTypeInfo("VobInstID", SQLiteGetTypeEnum.GetInt32),
-                        new DBTables.ColumnGetTypeInfo("InstEffectID", SQLiteGetTypeEnum.GetInt32),
+                        new DBTables.ColumnGetTypeInfo("VobInstID", SQLiteGetType.GetInt32),
+                        new DBTables.ColumnGetTypeInfo("InstEffectID", SQLiteGetType.GetInt32),
                     }
                 },
                 {
                     "StaticDynamicJob", new List<DBTables.ColumnGetTypeInfo>
                     {
-                        new DBTables.ColumnGetTypeInfo("JobID", SQLiteGetTypeEnum.GetInt32),
-                        new DBTables.ColumnGetTypeInfo("TableName", SQLiteGetTypeEnum.GetString),
-                        new DBTables.ColumnGetTypeInfo("Task", SQLiteGetTypeEnum.GetString),
-                        new DBTables.ColumnGetTypeInfo("ChangeDate", SQLiteGetTypeEnum.GetDateTime),
-                        new DBTables.ColumnGetTypeInfo("CreationDate", SQLiteGetTypeEnum.GetDateTime),
+                        new DBTables.ColumnGetTypeInfo("JobID", SQLiteGetType.GetInt32),
+                        new DBTables.ColumnGetTypeInfo("TableName", SQLiteGetType.GetString),
+                        new DBTables.ColumnGetTypeInfo("Task", SQLiteGetType.GetString),
+                        new DBTables.ColumnGetTypeInfo("ChangeDate", SQLiteGetType.GetDateTime),
+                        new DBTables.ColumnGetTypeInfo("CreationDate", SQLiteGetType.GetDateTime),
                     }
                 },
             };
@@ -190,7 +190,7 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
             // convert the sql-query-results from string to their respective datatypes
             sqlResultInUse = true;
             sqlResults = e.GetSQLResults();
-            DBTables.ConvertSQLResults(ref sqlResults, colGetTypeInfo, false);
+            DBTables.ConvertSQLResults(sqlResults, colGetTypeInfo, false);
 
             // construct the WorldDef-object according to the converted sql-data
             worldDef = new WorldDef(this);

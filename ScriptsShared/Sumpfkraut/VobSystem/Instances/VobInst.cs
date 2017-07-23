@@ -6,6 +6,8 @@ using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.WorldObjects;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Types;
+using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
+
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class VobInst : BaseVobInst, Vob.IScriptVob
@@ -15,6 +17,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         partial void pConstruct();
         public VobInst()
         {
+            SetObjName("VobInst");
+            effectHandler = effectHandler ?? new EffectSystem.EffectHandlers.VobInstEffectHandler(null, this);
             pConstruct();
         }
 
@@ -26,6 +30,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         #endregion
 
         #region Properties
+
+        new protected VobInstEffectHandler effectHandler;
+        new public VobInstEffectHandler GetEffectHandler () { return effectHandler; }
 
         public new Vob BaseInst { get { return (Vob)base.BaseInst; } }
 

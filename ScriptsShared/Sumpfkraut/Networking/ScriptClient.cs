@@ -8,10 +8,11 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.WorldObjects;
 using GUC.Types;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
+using GUC.Utilities;
 
 namespace GUC.Scripts.Sumpfkraut.Networking
 {
-    public partial class ScriptClient : ScriptObject, GameClient.IScriptClient
+    public partial class ScriptClient : ExtendedObject, GameClient.IScriptClient
     {
         #region Constructors
 

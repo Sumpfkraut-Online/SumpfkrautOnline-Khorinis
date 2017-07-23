@@ -12,13 +12,9 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
     public class TestCommands : GUC.Utilities.ExtendedObject
     {
 
-        new public static readonly string _staticName = "TestCommands (static)";
-
-
-
         public TestCommands ()
         {
-            SetObjName("TestCommands (default)");
+            SetObjName("TestCommands");
         }
 
 

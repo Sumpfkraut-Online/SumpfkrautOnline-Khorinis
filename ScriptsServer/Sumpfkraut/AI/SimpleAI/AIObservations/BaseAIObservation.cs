@@ -10,10 +10,6 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIObservations
     public abstract class BaseAIObservation : ExtendedObject
     {
 
-        new public static readonly string _staticName = "BaseAIObservation (static)";
-
-
-
         protected object attributeLock;
 
         protected AITarget aiTarget;
@@ -30,7 +26,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIObservations
 
         public BaseAIObservation (AITarget aiTarget)
         {
-            //SetObjName("BaseAIObservation (default)");
+            //SetObjName("BaseAIObservation");
             this.attributeLock = new object();
             this.aiTarget = aiTarget;
         }

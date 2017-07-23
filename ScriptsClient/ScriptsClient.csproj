@@ -34,6 +34,10 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Mono.Data.Sqlite, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\libs\Mono.Data.Sqlite.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -67,14 +71,200 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\AI\GuideCommands\GoToVobCommand.cs">
       <Link>Sumpfkraut\AI\GuideCommands\GoToVobCommand.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Database\BaseObjectLoader.cs">
+      <Link>Sumpfkraut\Database\BaseObjectLoader.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Database\DBAgent.cs">
+      <Link>Sumpfkraut\Database\DBAgent.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Database\DBFileManager.cs">
+      <Link>Sumpfkraut\Database\DBFileManager.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Database\DBQuerying\AbstractDBQuery.cs">
+      <Link>Sumpfkraut\Database\DBQuerying\AbstractDBQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Database\DBQuerying\DBBackupQuery.cs">
+      <Link>Sumpfkraut\Database\DBQuerying\DBBackupQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Database\DBQuerying\DBQuery.cs">
+      <Link>Sumpfkraut\Database\DBQuerying\DBQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Database\DBQuerying\IDBQuery.cs">
+      <Link>Sumpfkraut\Database\DBQuerying\IDBQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Database\DBReader.cs">
+      <Link>Sumpfkraut\Database\DBReader.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Database\DBSecurity.cs">
+      <Link>Sumpfkraut\Database\DBSecurity.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Database\DBTables.cs">
+      <Link>Sumpfkraut\Database\DBTables.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Database\Enumeration.cs">
+      <Link>Sumpfkraut\Database\Enumeration.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Changes\BaseChangeInit.cs">
+      <Link>Sumpfkraut\EffectSystem\Changes\BaseChangeInit.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Changes\Change.cs">
+      <Link>Sumpfkraut\EffectSystem\Changes\Change.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Changes\ChangeInitializer.cs">
+      <Link>Sumpfkraut\EffectSystem\Changes\ChangeInitializer.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Changes\ChangeInitInfo.cs">
+      <Link>Sumpfkraut\EffectSystem\Changes\ChangeInitInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Changes\ChangeInit_Effect.cs">
+      <Link>Sumpfkraut\EffectSystem\Changes\ChangeInit_Effect.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Changes\ChangeInit_Item.cs">
+      <Link>Sumpfkraut\EffectSystem\Changes\ChangeInit_Item.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Changes\ChangeInit_NamedVob.cs">
+      <Link>Sumpfkraut\EffectSystem\Changes\ChangeInit_NamedVob.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Changes\ChangeInit_NPC.cs">
+      <Link>Sumpfkraut\EffectSystem\Changes\ChangeInit_NPC.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Changes\ChangeInit_Vob.cs">
+      <Link>Sumpfkraut\EffectSystem\Changes\ChangeInit_Vob.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Changes\ChangeInit_World.cs">
+      <Link>Sumpfkraut\EffectSystem\Changes\ChangeInit_World.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Changes\TotalChange.cs">
+      <Link>Sumpfkraut\EffectSystem\Changes\TotalChange.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Destinations\BaseDestInit.cs">
+      <Link>Sumpfkraut\EffectSystem\Destinations\BaseDestInit.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Destinations\DestInitializer.cs">
+      <Link>Sumpfkraut\EffectSystem\Destinations\DestInitializer.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Destinations\DestInitInfo.cs">
+      <Link>Sumpfkraut\EffectSystem\Destinations\DestInitInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Destinations\DestInit_Effect.cs">
+      <Link>Sumpfkraut\EffectSystem\Destinations\DestInit_Effect.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Destinations\DestInit_Item.cs">
+      <Link>Sumpfkraut\EffectSystem\Destinations\DestInit_Item.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Destinations\DestInit_NamedVob.cs">
+      <Link>Sumpfkraut\EffectSystem\Destinations\DestInit_NamedVob.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Destinations\DestInit_NPC.cs">
+      <Link>Sumpfkraut\EffectSystem\Destinations\DestInit_NPC.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Destinations\DestInit_Vob.cs">
+      <Link>Sumpfkraut\EffectSystem\Destinations\DestInit_Vob.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Destinations\DestInit_World.cs">
+      <Link>Sumpfkraut\EffectSystem\Destinations\DestInit_World.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Effect.cs">
+      <Link>Sumpfkraut\EffectSystem\Effect.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\BaseEffectHandler.cs">
+      <Link>Sumpfkraut\EffectSystem\EffectHandlers\BaseEffectHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\ItemDefEffectHandler.cs">
+      <Link>Sumpfkraut\EffectSystem\EffectHandlers\ItemDefEffectHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\ItemInstEffectHandler.cs">
+      <Link>Sumpfkraut\EffectSystem\EffectHandlers\ItemInstEffectHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\NamedVobDefEffectHandler.cs">
+      <Link>Sumpfkraut\EffectSystem\EffectHandlers\NamedVobDefEffectHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\NamedVobInstEffectHandler.cs">
+      <Link>Sumpfkraut\EffectSystem\EffectHandlers\NamedVobInstEffectHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\NPCDefEffectHandler.cs">
+      <Link>Sumpfkraut\EffectSystem\EffectHandlers\NPCDefEffectHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\NPCInstEffectHandler.cs">
+      <Link>Sumpfkraut\EffectSystem\EffectHandlers\NPCInstEffectHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\VobDefEffectHandler.cs">
+      <Link>Sumpfkraut\EffectSystem\EffectHandlers\VobDefEffectHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\VobInstEffectHandler.cs">
+      <Link>Sumpfkraut\EffectSystem\EffectHandlers\VobInstEffectHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\WorldDefEffectHandler.cs">
+      <Link>Sumpfkraut\EffectSystem\EffectHandlers\WorldDefEffectHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\WorldInstEffectHandler.cs">
+      <Link>Sumpfkraut\EffectSystem\EffectHandlers\WorldInstEffectHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectLoading\EffectLoader.cs">
+      <Link>Sumpfkraut\EffectSystem\EffectLoading\EffectLoader.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Enumeration\ChangeDestination.cs">
+      <Link>Sumpfkraut\EffectSystem\Enumeration\ChangeDestination.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Enumeration\ChangeType.cs">
+      <Link>Sumpfkraut\EffectSystem\Enumeration\ChangeType.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\Networking\ScriptClient.cs">
       <Link>Sumpfkraut\Networking\ScriptClient.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\Networking\ScriptMessageIDs.cs">
       <Link>Sumpfkraut\Networking\ScriptMessageIDs.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptsShared\Sumpfkraut\ScriptObject.cs">
-      <Link>Sumpfkraut\ScriptObject.cs</Link>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\ArrayUtil.cs">
+      <Link>Utilities\ArrayUtil.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\DateTimeUtil.cs">
+      <Link>Utilities\DateTimeUtil.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\Functions\Enumeration\InvocationType.cs">
+      <Link>Sumpfkraut\Utilities\Functions\Enumeration\InvocationType.cs</Link>
+    </Compile>
+    <Compile Include="..\scriptsshared\sumpfkraut\utilities\functions\FunctionManager.cs">
+      <Link>Utilities\Functions\FunctionManager.cs</Link>
+    </Compile>
+    <Compile Include="..\scriptsshared\sumpfkraut\utilities\functions\managerinteraction\IManagerInteraction.cs">
+      <Link>Utilities\Functions\ManagerInteraction\IManagerInteraction.cs</Link>
+    </Compile>
+    <Compile Include="..\scriptsshared\sumpfkraut\utilities\functions\managerinteraction\MI_Add.cs">
+      <Link>Utilities\Functions\ManagerInteraction\MI_Add.cs</Link>
+    </Compile>
+    <Compile Include="..\scriptsshared\sumpfkraut\utilities\functions\managerinteraction\MI_AddRange.cs">
+      <Link>Utilities\Functions\ManagerInteraction\MI_AddRange.cs</Link>
+    </Compile>
+    <Compile Include="..\scriptsshared\sumpfkraut\utilities\functions\managerinteraction\MI_Clear.cs">
+      <Link>Utilities\Functions\ManagerInteraction\MI_Clear.cs</Link>
+    </Compile>
+    <Compile Include="..\scriptsshared\sumpfkraut\utilities\functions\managerinteraction\MI_Remove.cs">
+      <Link>Utilities\Functions\ManagerInteraction\MI_Remove.cs</Link>
+    </Compile>
+    <Compile Include="..\scriptsshared\sumpfkraut\utilities\functions\managerinteraction\MI_RemoveExceptTimeRange.cs">
+      <Link>Utilities\Functions\ManagerInteraction\MI_RemoveExceptTimeRange.cs</Link>
+    </Compile>
+    <Compile Include="..\scriptsshared\sumpfkraut\utilities\functions\managerinteraction\MI_RemoveInTimeRange.cs">
+      <Link>Utilities\Functions\ManagerInteraction\MI_RemoveInTimeRange.cs</Link>
+    </Compile>
+    <Compile Include="..\scriptsshared\sumpfkraut\utilities\functions\managerinteraction\MI_RemoveRange.cs">
+      <Link>Utilities\Functions\ManagerInteraction\MI_RemoveRange.cs</Link>
+    </Compile>
+    <Compile Include="..\scriptsshared\sumpfkraut\utilities\functions\managerinteraction\MI_Replace.cs">
+      <Link>Utilities\Functions\ManagerInteraction\MI_Replace.cs</Link>
+    </Compile>
+    <Compile Include="..\scriptsshared\sumpfkraut\utilities\functions\managerinteraction\MI_ReplaceRange.cs">
+      <Link>Utilities\Functions\ManagerInteraction\MI_ReplaceRange.cs</Link>
+    </Compile>
+    <Compile Include="..\scriptsshared\sumpfkraut\utilities\functions\TimedFunction.cs">
+      <Link>Utilities\Functions\TimedFunction.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\ListUtil.cs">
+      <Link>Utilities\ListUtil.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\StringUtil.cs">
+      <Link>Utilities\StringUtil.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\Visuals\HumanVisuals.cs">
       <Link>Sumpfkraut\Visuals\HumanVisuals.cs</Link>
@@ -100,6 +290,9 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Definitions\ItemDef.cs">
       <Link>Sumpfkraut\VobSystem\Definitions\ItemDef.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Definitions\NamedVobDef.cs">
+      <Link>Sumpfkraut\VobSystem\Definitions\NamedVobDef.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Definitions\NPCDef.cs">
       <Link>Sumpfkraut\VobSystem\Definitions\NPCDef.cs</Link>
     </Compile>
@@ -109,6 +302,9 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Definitions\VobDef.cs">
       <Link>Sumpfkraut\VobSystem\Definitions\VobDef.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Enumeration\VobType.cs">
+      <Link>Sumpfkraut\VobSystem\Enumeration\VobType.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\BaseVobInst.cs">
       <Link>Sumpfkraut\VobSystem\Instances\BaseVobInst.cs</Link>
     </Compile>
@@ -117,6 +313,9 @@
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\ItemInst.cs">
       <Link>Sumpfkraut\VobSystem\Instances\ItemInst.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\NamedVobInst.cs">
+      <Link>Sumpfkraut\VobSystem\Instances\NamedVobInst.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\NPCInst.cs">
       <Link>Sumpfkraut\VobSystem\Instances\NPCInst.cs</Link>
@@ -213,6 +412,9 @@
   <ItemGroup>
     <Folder Include="Sumpfkraut\VobSystem\Definitions\Mobs\" />
     <Folder Include="Sumpfkraut\VobSystem\Instances\Mobs\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

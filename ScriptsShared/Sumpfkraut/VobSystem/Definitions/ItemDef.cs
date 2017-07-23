@@ -5,6 +5,7 @@ using System.Text;
 
 using GUC.Network;
 using GUC.WorldObjects.Instances;
+using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
@@ -45,19 +46,16 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         Scroll,
     }
 
-    public partial class ItemDef : VobDef, ItemInstance.IScriptItemInstance
+
+
+    public partial class ItemDef : NamedVobDef, ItemInstance.IScriptItemInstance
     {
         #region Properties
 
-        new public ItemInstance BaseDef { get { return (ItemInstance)base.BaseDef; } }
+        new protected ItemDefEffectHandler effectHandler;
+        new public ItemDefEffectHandler GetEffectHandler () { return effectHandler; }
 
-        string name = "";
-        /// <summary>The standard name of this item.</summary>
-        public string Name
-        {
-            get { return this.name; }
-            set { this.name = value == null ? "" : value; }
-        }
+        new public ItemInstance BaseDef { get { return (ItemInstance)base.BaseDef; } }
 
         /// <summary>The material of this item. Controls the dropping sound.</summary>
         public ItemMaterials Material = ItemMaterials.Wood;
@@ -96,6 +94,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         partial void pConstruct();
         public ItemDef()
         {
+            SetObjName("ItemDef");
+            effectHandler = effectHandler ?? new EffectSystem.EffectHandlers.ItemDefEffectHandler(null, this);
             pConstruct();
         }
 

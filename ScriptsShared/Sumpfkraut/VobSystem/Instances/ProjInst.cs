@@ -27,6 +27,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         partial void pConstruct();
         public ProjInst()
         {
+            SetObjName("ProjInst");
             pConstruct();
         }
 

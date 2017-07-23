@@ -15,6 +15,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         partial void pConstruct();
         public ProjDef()
         {
+            SetObjName("ProjDef");
             pConstruct();
         }
 

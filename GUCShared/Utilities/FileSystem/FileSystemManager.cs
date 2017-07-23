@@ -12,8 +12,6 @@ namespace GUC.Utilities.FileSystem
     public class FileSystemManager : Threading.AbstractRunnable
     {
 
-        new public static readonly string _staticName = "FileSystemManager (static)";
-
         public static List<FileSystemManager> managerList = new List<FileSystemManager>();
 
         public static readonly int StandardCreateTries = 10;
@@ -83,7 +81,7 @@ namespace GUC.Utilities.FileSystem
         public FileSystemManager (string root, bool startOnCreate, TimeSpan timeout, bool runOnce)
             : base(startOnCreate, timeout, runOnce)
         {
-            SetObjName("FileSystemManager (default)");
+            SetObjName("FileSystemManager");
             this.root = root;
             this.protocolQueue = new List<FileSystemProtocol>();
             this.protocolQueueLock = new object();

@@ -11,10 +11,6 @@ namespace GUC.Scripts.Sumpfkraut.AI.GuideCommands
     public class GuideCommandInfo : GUC.Utilities.ExtendedObject
     {
 
-        new public static readonly string _staticName = "SimpleAIPersonality (static)";
-
-
-
         private GuideCmd guideCommand;
         public GuideCmd GuideCommand { get { return this.guideCommand; } }
 
@@ -35,7 +31,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.GuideCommands
 
         public GuideCommandInfo (GuideCmd guideCommand, VobInst guidedVobInst, DateTime expirationDate)
         {
-            SetObjName("GuideCommandInfo (default)");
+            SetObjName("GuideCommandInfo");
             this.guideCommand = guideCommand;
             this.guidedVobInst = guidedVobInst;
             this.creationDate = DateTime.Now;

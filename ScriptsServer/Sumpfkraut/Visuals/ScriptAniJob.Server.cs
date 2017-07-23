@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Animations;
+using GUC.Utilities;
 
 namespace GUC.Scripts.Sumpfkraut.Visuals
 {
-    public partial class ScriptAniJob : ScriptObject, AniJob.IScriptAniJob
+    public partial class ScriptAniJob : ExtendedObject, AniJob.IScriptAniJob
     {
         int comboNum = 0;
         public int ComboNum

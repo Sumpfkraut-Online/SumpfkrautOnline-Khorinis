@@ -3,15 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Globalization;
+using GUC.Utilities;
 
 namespace GUC.Scripts.Sumpfkraut.Utilities
 {
-    public class DateTimeUtil : ScriptObject
-    {
-
-        new public static readonly string _staticName = "DateTimeUtil (static)"; 
+    public class DateTimeUtil : ExtendedObject
+    { 
 
         protected static string dateFormat = "yyyy-MM-dd HH:mm:ss";
+
+
+
+        protected DateTimeUtil () { }
+             
 
 
         /**

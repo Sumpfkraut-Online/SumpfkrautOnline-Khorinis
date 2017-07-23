@@ -9,10 +9,6 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIActions
     public abstract class BaseAIAction : ExtendedObject
     {
 
-        new public static readonly string _staticName = "BaseAIAction (static)";
-
-
-
         protected Enumeration.AiActionType actionType;
         public Enumeration.AiActionType ActionType { get { return actionType; } }
 
@@ -32,7 +28,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIActions
 
         public BaseAIAction (AITarget aiTarget)
         {
-            //SetObjName("BaseAIAction (default)");
+            //SetObjName("BaseAIAction");
             this.attributeLock = new object();
             //this.actionType = actionType;
             this.aiTarget = aiTarget;

@@ -8,6 +8,7 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Types;
 using GUC.WorldObjects;
+using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
@@ -18,6 +19,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         partial void pConstruct();
         public ItemInst()
         {
+            SetObjName("ItemInst");
+            effectHandler = effectHandler ?? new EffectSystem.EffectHandlers.ItemInstEffectHandler(null, this);
             pConstruct();
         }
 
@@ -29,6 +32,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         #endregion
 
         #region Properties
+
+        new protected ItemInstEffectHandler effectHandler;
+        new public ItemInstEffectHandler GetEffectHandler () { return effectHandler; }
 
         public new Item BaseInst { get { return (Item)base.BaseInst; } }
         public new ItemDef Definition { get { return (ItemDef)base.Definition; } set { base.Definition = value; } }

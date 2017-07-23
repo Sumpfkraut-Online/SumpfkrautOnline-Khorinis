@@ -5,10 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using GUC.Animations;
 using GUC.Network;
+using GUC.Utilities;
 
 namespace GUC.Scripts.Sumpfkraut.Visuals
 {  
-    public partial class ScriptAniJob : ScriptObject, AniJob.IScriptAniJob
+    public partial class ScriptAniJob : ExtendedObject, AniJob.IScriptAniJob
     {
         #region Properties
 

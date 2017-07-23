@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 using GUC.Network;
 using GUC.Models;
 using GUC.Animations;
+using GUC.Utilities;
 
 namespace GUC.Scripts.Sumpfkraut.Visuals
 {
-    public partial class ModelDef : ScriptObject, ModelInstance.IScriptModelInstance
+    public partial class ModelDef : ExtendedObject, ModelInstance.IScriptModelInstance
     {
         #region Properties
 

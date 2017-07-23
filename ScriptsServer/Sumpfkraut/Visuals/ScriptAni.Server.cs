@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Animations;
+using GUC.Utilities;
 
 namespace GUC.Scripts.Sumpfkraut.Visuals
 {
-    public partial class ScriptAni : ScriptObject, Animation.IScriptAnimation
+    public partial class ScriptAni : ExtendedObject, Animation.IScriptAnimation
     {
         #region Constructors
 

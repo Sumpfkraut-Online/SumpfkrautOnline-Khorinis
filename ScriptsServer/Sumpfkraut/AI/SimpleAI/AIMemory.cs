@@ -12,10 +12,6 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
     public class AIMemory : ExtendedObject
     {
 
-        new public static readonly string _staticName = "AIMemory (static)";
-
-
-
         protected object aiActionLock;
         protected List<BaseAIAction> aiActions;
         protected Dictionary<Type, int> indexByActionType;
@@ -28,7 +24,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
 
         public AIMemory ()
         {
-            SetObjName("AIMemory (default)");
+            SetObjName("AIMemory");
             this.aiActionLock = new object();
             this.aiActions = new List<BaseAIAction>();
             this.indexByActionType = new Dictionary<Type, int>();

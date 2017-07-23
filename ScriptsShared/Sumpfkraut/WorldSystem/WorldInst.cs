@@ -10,8 +10,6 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
     public partial class WorldInst : ExtendedObject, WorldObjects.World.IScriptWorld
     {
 
-        new public static readonly string _staticName = "WorldInst (static)";
-
         WorldObjects.World baseWorld;
         public WorldObjects.World BaseWorld { get { return baseWorld; } }
 
@@ -40,7 +38,8 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
 
         public WorldInst (string objName)
         {
-            this.baseWorld = new WorldObjects.World(new ScriptClock(this), new ScriptWeatherCtrl(this), new ScriptBarrierCtrl(this), this);
+            this.baseWorld = new WorldObjects.World(new ScriptClock(this), 
+                new ScriptWeatherCtrl(this), new ScriptBarrierCtrl(this), this);
         }
 
 

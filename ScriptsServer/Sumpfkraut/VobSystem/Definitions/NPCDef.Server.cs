@@ -6,8 +6,10 @@ using GUC.WorldObjects.Instances;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
+
     public partial class NPCDef
     {
+
         public static NPCDef Get(string codeName)
         {
             return Get<NPCDef>(codeName);
@@ -17,5 +19,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         {
             this.CodeName = codeName;
         }
+
     }
+
 }

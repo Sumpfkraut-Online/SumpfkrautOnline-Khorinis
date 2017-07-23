@@ -9,12 +9,16 @@ using GUC.WorldObjects;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Types;
+using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public abstract partial class BaseVobInst : GUC.Utilities.ExtendedObject, BaseVob.IScriptBaseVob
     {
         #region Properties
+
+        protected BaseEffectHandler effectHandler;
+        public BaseEffectHandler GetEffectHandler () { return effectHandler; }
 
         // GUC - Base - Object
         BaseVob baseInst;
@@ -46,6 +50,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         protected abstract BaseVob CreateVob();
         public BaseVobInst()
         {
+            SetObjName("BaseVobInst");
             this.baseInst = CreateVob();
             if (this.baseInst == null)
                 throw new Exception("BaseInst is null!");
