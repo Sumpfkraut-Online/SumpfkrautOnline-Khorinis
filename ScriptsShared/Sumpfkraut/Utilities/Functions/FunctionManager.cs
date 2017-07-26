@@ -1,4 +1,5 @@
-﻿using GUC.Scripts.Sumpfkraut.Utilities.Functions.ManagerInteraction;
+﻿using GUC.Scripts.Sumpfkraut.Utilities.Functions.Enumeration;
+using GUC.Scripts.Sumpfkraut.Utilities.Functions.ManagerInteraction;
 using GUC.Utilities;
 using System;
 using System.Collections.Generic;
@@ -295,7 +296,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                 var nextIntervalTime = lastIntervalTime + lastInterval;
                 Print(lastIntervalTime);
                 // only take intervals into account which would have been invocated in the meantime
-                if(nextIntervalTime <= tf.GetEnd())
+                if (nextIntervalTime <= tf.GetEnd())
                 {
                     if (nextIntervalTime < nextTime)
                     {
@@ -304,7 +305,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                     }
                 }
             }
-            
+
             return success;
         }
 
@@ -322,14 +323,25 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         // only use in internally in Run-method
         protected int InvokeFunction (TimedFunction tf, int callAmount)
         {
-            int invokes = 0;
+            var invokes = 0;
+            var invocationType = InvocationType.Undefined;
 
             try
             {
                 for (int i = 0; i < callAmount; i++)
                 {
+                    // actually call the function with parameters and iterate the number of calls
                     tf.SetParameters( tf.GetFunc()(tf.GetParameters()) );
                     tf.IterateInvocations(1);
+                    // iterate at the type / cause of the invocation (i.e. to progress to next specified time)
+                    invocationType = tf.GetNextInvocationType();
+                    tf.SetLastInvocationType(invocationType);
+                    switch (invocationType)
+                    {
+                        case InvocationType.Interval:
+                            tf.IterateIntervalIndex(1);xxx
+                            break;
+                    }
                     invokes++;
                 }
             }

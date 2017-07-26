@@ -89,7 +89,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                     return false;
                 }
 
-                last =  specifiedTimes[lastSpecifiedTimeIndex];
+                last = specifiedTimes[lastSpecifiedTimeIndex];
                 return true;
             }
         }
@@ -105,7 +105,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 
                 // push the index only further to return it to it's previous state after receiving the residing value
                 IterateSpecifiedTimeIndex(1);
-                next =  specifiedTimes[lastSpecifiedTimeIndex];
+                next = specifiedTimes[lastSpecifiedTimeIndex];
                 IterateSpecifiedTimeIndex(-1);
                 return true;
             }
@@ -224,7 +224,12 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         }
 
         protected InvocationType lastInvocationType;
+        public InvocationType GetLastInvocationType () { lock (_lock) { return lastInvocationType; } }
+        public void SetLastInvocationType (InvocationType value) { lock (_lock) { lastInvocationType = value; } }
 
+        protected InvocationType nextInvocationType;
+        public InvocationType GetNextInvocationType () { lock (_lock) { return nextInvocationType; } }
+        public void SetNextInvocationType (InvocationType value) { lock (_lock) { nextInvocationType = value; } }
 
 
 
@@ -280,6 +285,136 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                 this.startEnd = startEnd;
             }
         }
+
+
+
+        public bool TryIterateNextInvocation (DateTime referenceTime)
+        {
+            var success = false;
+            var nextInvocationType = InvocationType.Undefined;
+            // set to max. DateTime first to ease comparisons later
+            var nextTime = DateTime.MaxValue;
+
+            lock (_lock)
+            {
+                // detect invocation limit
+                if (!HasInvocationsLeft) { return false; }
+
+                // time limits
+                var hasExpired = HasExpired(referenceTime);
+                var preserveExpired = GetPreserveDueInvocations();
+                // if expiration date reached and no intent to preserve possible left out invocations
+                if (hasExpired && (!preserveExpired)) { return false; }
+
+                // determine possible next specified time
+                success = TryGetNextSpecifiedTime(out nextTime);
+                if (success) { nextInvocationType = InvocationType.SpecifiedTime; }
+
+                // detect interval and compare with possible previous specified time
+                TimeSpan lastInterval;
+                if (TryGetLastInterval(out lastInterval))
+                {
+                    var lastIntervalTime = GetLastIntervalTime();
+                    var nextIntervalTime = lastIntervalTime + lastInterval;
+                    Print(lastIntervalTime);
+                    // only take intervals into account which would have been invocated in the meantime
+                    if (nextIntervalTime <= GetEnd())
+                    {
+                        if (nextIntervalTime < nextTime)
+                        {
+                            nextTime = nextIntervalTime;
+                            nextInvocationType = InvocationType.SpecifiedTime;
+                            success = true;
+                        }
+                    }
+                }
+
+                if (nextInvocationType != InvocationType.Undefined)
+                {
+                    switch (nextInvocationType)
+                    {
+                        case InvocationType.SpecifiedTime:
+                            IterateSpecifiedTimeIndex(1);
+                            break;
+                        case InvocationType.Interval:
+                            IterateIntervalIndex(1);
+                            break;
+                        default:
+                            break;
+                    }
+                    SetLastInvocationType(GetNextInvocationType());
+                    SetNextInvocationType(nextInvocationType);
+                }
+            }
+
+            return success;
+        }
+
+
+
+        //// find next possible invocation time and type and iterate necessary entries 
+        //// while NOT invoking the function itself
+        //public bool TryPrepareNextInvocation (DateTime referenceTime, out DateTime nextTime)
+        //{
+        //    var success = false;
+        //    var nextInvocationType = InvocationType.Undefined;
+        //    // set to max. DateTime first to ease comparisons later
+        //    nextTime = DateTime.MaxValue;
+
+        //    lock (_lock)
+        //    {
+        //        // detect invocation limit
+        //        if (!HasInvocationsLeft) { return success; }
+
+        //        // time limits
+        //        var hasExpired = HasExpired(referenceTime);
+        //        var preserveExpired = GetPreserveDueInvocations();
+        //        // if expiration date reached and no intent to preserve possible left out invocations
+        //        if (hasExpired && (!preserveExpired)) { return success; }
+
+        //        // determine possible next specified time
+        //        success = TryGetNextSpecifiedTime(out nextTime);
+        //        if (success) { nextInvocationType = InvocationType.SpecifiedTime; }
+
+        //        // detect interval and compare with possible previous specified time
+        //        TimeSpan lastInterval;
+        //        if (TryGetLastInterval(out lastInterval))
+        //        {
+        //            var lastIntervalTime = GetLastIntervalTime();
+        //            var nextIntervalTime = lastIntervalTime + lastInterval;
+        //            Print(lastIntervalTime);
+        //            // only take intervals into account which would have been invocated in the meantime
+        //            if (nextIntervalTime <= GetEnd())
+        //            {
+        //                if (nextIntervalTime < nextTime)
+        //                {
+        //                    nextTime = nextIntervalTime;
+        //                    nextInvocationType = InvocationType.SpecifiedTime;
+        //                    success = true;
+        //                }
+        //            }
+        //        }
+
+        //        if (nextInvocationType != InvocationType.Undefined)
+        //        {
+        //            switch (nextInvocationType)
+        //            {
+        //                case InvocationType.SpecifiedTime:
+        //                    IterateSpecifiedTimeIndex(1);
+        //                    break;
+        //                case InvocationType.Interval:
+        //                    IterateIntervalIndex(1);
+        //                    break;
+        //                default:
+        //                    break;
+        //            }
+        //            SetLastInvocationType(GetNextInvocationType());
+        //            SetNextInvocationType(nextInvocationType);
+        //        }
+        //    }
+
+        //    return success;
+        //}
 
     }
 
