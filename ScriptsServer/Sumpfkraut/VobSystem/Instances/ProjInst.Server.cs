@@ -23,14 +23,14 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public void UpdatePos(Vec3f newPos, Vec3f oldPos)
         {
             NPCInst target = null;
-            this.World.BaseWorld.ForEachNPCRough(newPos, ModelDef.LargestNPC.Radius, npc =>
+            /*this.World.BaseWorld.ForEachNPCRough(newPos, ModelDef.LargestNPC.Radius, npc =>
             {
                 if (!npc.IsDead && npc != Shooter.BaseInst)
                     if (npc.GetPosition().GetDistance(newPos) - ((ModelDef)npc.Model.ScriptObject).Radius <= 0)
                     {
                         target = (NPCInst)npc.ScriptObject;
                     }
-            });
+            });*/
 
             if (target != null)
             {

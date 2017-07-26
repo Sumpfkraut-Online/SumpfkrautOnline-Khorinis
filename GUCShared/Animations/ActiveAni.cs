@@ -82,6 +82,7 @@ namespace GUC.Animations
                             actionPairs[pairCount].Frame = pairs[i].Frame;
                             actionPairs[pairCount].Callback = pairs[i].Callback;
                             actionPairs[pairCount].Time = startTime + (long)(pairs[i].Frame * coeff);
+                            if (actionPairs[pairCount].Time < 0) actionPairs[pairCount].Time = long.MaxValue;
                             pairCount++;
                         }
                 }

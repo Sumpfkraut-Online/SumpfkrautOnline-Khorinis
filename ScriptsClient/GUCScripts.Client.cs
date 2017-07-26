@@ -8,6 +8,7 @@ using GUC.Scripting;
 using System.Reflection;
 using System.IO;
 using GUC.Scripts.Sumpfkraut.Menus;
+using GUC.Scripts.Sumpfkraut.Controls;
 
 namespace GUC.Scripts
 {
@@ -15,9 +16,11 @@ namespace GUC.Scripts
     {
         public static bool Ingame = false;
 
-        public GUCScripts()
-        {
+        partial void pConstruct()
+        { 
             AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;
+            InputControl.Active = new Arena.Controls.ArenaControl();
+            
             Logger.Log("SumpfkrautOnline ClientScripts loaded!");
         }
 
@@ -36,7 +39,7 @@ namespace GUC.Scripts
         public void Update(long ticks)
         {
             GUCMenu.UpdateMenus(ticks);
-            Sumpfkraut.Controls.InputControl.Update(ticks);
+            InputControl.UpdateControls(ticks);
             //CheckMusic();
         }
 
@@ -45,7 +48,6 @@ namespace GUC.Scripts
             //WinApi.Process.Write(new byte[] { 0xE9, 0x99, 0x04, 0x00, 0x00 }, 0x0067836C); // always do T_GOTHIT instead of T_STUMBLE/B when getting hit
 
             //Left4Gothic.CharCreationMenu.Menu.Open();
-            Sumpfkraut.Controls.InputControl.Init();
             
 
             Logger.Log("Outgame started.");
@@ -53,13 +55,12 @@ namespace GUC.Scripts
 
         public void StartIngame()
         {
-            Sumpfkraut.Controls.InputControl.Init();
-
             Gothic.Objects.oCNpcFocus.SetFocusMode(1);
             GUCMenu.CloseActiveMenus();
             Ingame = true;
             Logger.Log("Ingame started.");
 
+            Arena.Menus.MainMenu.Menu.Open();
         }
 
         /*const long FightMusicTime = 50 * TimeSpan.TicksPerSecond;

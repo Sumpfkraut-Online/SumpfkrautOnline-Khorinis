@@ -66,7 +66,7 @@ namespace GUC.Scripts.Sumpfkraut.Menus
             base.Close();
         }
 
-        public override void KeyDown(VirtualKeys key, long now)
+        protected override void KeyDown(VirtualKeys key)
         {
             if (key == VirtualKeys.Escape || key == VirtualKeys.Tab)
             {
@@ -88,12 +88,7 @@ namespace GUC.Scripts.Sumpfkraut.Menus
             }
         }
 
-        public override void KeyUp(VirtualKeys key, long now)
-        {
-
-        }
-
-        public override void Update(long now)
+        protected override void Update(long now)
         {
             tb.Update(now);
         }

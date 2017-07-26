@@ -166,18 +166,19 @@ namespace GUC.GUI
 
         public void Set3DPos(Vec3f pos)
         {
-            if (zCCamera.GetCamAddr() == 0)
+            var activeCam = zCCamera.ActiveCamera;
+            if (activeCam.Address == 0)
                 return;
 
             using (var gPos = zVec3.Create())
             {
                 pos.SetGVec(gPos);
-                using (var vec = zCCamera.CamMatrix * gPos)
+                using (var vec = activeCam.CamMatrix * gPos)
                 {
                     if (vec.Z > 0)
                     {
                         int x, y;
-                        zCCamera.Project(vec, out x, out y);
+                        activeCam.Project(vec, out x, out y);
                         this.SetPosX(x);
                         this.SetPosY(y);
                     }

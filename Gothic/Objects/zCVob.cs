@@ -121,6 +121,12 @@ namespace Gothic.Objects
             set { Process.Write(Address + VarOffsets.bitfield, value); }
         }
 
+        public int GroundPoly
+        {
+            get { return Process.ReadInt(Address + VarOffsets.groundPoly); }
+            set { Process.Write(Address + VarOffsets.groundPoly, value); }
+        }
+
         public zCCollisionObject CollObj
         {
             get { return new zCCollisionObject(Process.ReadInt(Address + VarOffsets.CollisionObject)); }
@@ -298,6 +304,12 @@ namespace Gothic.Objects
         {
             get { return new zCEventManager(Process.ReadInt(Address + VarOffsets.eventManager)); }
             set { Process.Write(Address + VarOffsets.eventManager, value.Address); }
+        }
+
+        public int LastTimeDrawn
+        {
+            get { return Process.ReadInt(Address + 0x28); }
+            set { Process.Write(Address + 0x28, value); }
         }
 
         public void BeginMovement()

@@ -10,7 +10,8 @@ namespace Gothic.Objects.Meshes
     {
         public abstract class VarOffsets
         {
-            public const int ModelAni = 0;
+            public const int ModelAni = 0,
+                ActFrame = 0x0C;
         }
         public abstract class FuncAddresses
         {
@@ -31,6 +32,12 @@ namespace Gothic.Objects.Meshes
         public zCModelAniActive()
         {
 
+        }
+
+        public float ActFrame
+        {
+            get { return Process.ReadFloat(Address + VarOffsets.ActFrame); }
+            set { Process.Write(Address + VarOffsets.ActFrame, value); }
         }
 
         public zCModelAni ModelAni

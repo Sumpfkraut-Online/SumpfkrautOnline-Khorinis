@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace GUC.Scripts.Arena
 {
-    class ScriptMessages
+    enum ScriptMessages
     {
+        CharCreation,
     }
 }

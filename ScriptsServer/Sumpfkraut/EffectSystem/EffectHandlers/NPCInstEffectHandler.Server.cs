@@ -24,12 +24,47 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             Host.DoJump(move, Host.GetDirection() * 100f + new Types.Vec3f(0, 500, 0));
         }
 
-        public void FightMove(FightMoves move)
+        public void TryDrawFists()
         {
-            if (Host.IsDead)
+            if (Host.IsDead || this.Host.ModelInst.IsInAnimation())
                 return;
 
-            Host.DoFightMove(move, 0);
+            if (this.Host.IsInFightMode)
+            {
+                if (this.Host.DrawnWeapon != null)
+                {
+                    throw new NotImplementedException();
+                    //this.UnequipItem(this.DrawnWeapon);
+                }
+                else
+                {
+                    this.Host.DoUndrawFists();
+                }
+            }
+            else
+            {
+                this.Host.DoDrawFists();
+            }
+        }
+
+        public void TryFightMove(FightMoves move)
+        {
+            if (Host.IsDead || Host.Environment.InAir)
+                return;
+            
+            var otherAni = Host.ModelInst.GetActiveAniFromLayer(1);
+            if (otherAni != null && otherAni.Ani.ScriptObject != Host.FightAnimation)
+                return;
+            
+            if (Host.FightAnimation != null)
+            {
+                if (Host.CanCombo)
+                    Host.DoFightMove(move, Host.ComboNum + 1);
+            }
+            else
+            {
+                Host.DoFightMove(move, 0);
+            }
         }
     }
 }

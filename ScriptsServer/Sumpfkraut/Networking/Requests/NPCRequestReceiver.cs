@@ -58,6 +58,10 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
                     if (OnFightMove != null)
                         OnFightMove(npc, FightMoves.Right);
                     break;
+                case ScriptRequestMessageIDs.AttackRun:
+                    if (OnFightMove != null)
+                        OnFightMove(npc, FightMoves.Run);
+                    break;
                 case ScriptRequestMessageIDs.Parry:
                     if (OnFightMove != null)
                         OnFightMove(npc, FightMoves.Parry);

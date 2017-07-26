@@ -154,6 +154,11 @@ namespace Gothic.Objects.Meshes
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.AdvanceAnis);
         }
 
+        public void AdvanceAni(zCModelAniActive ani, int arg)
+        {
+            Process.FASTCALL<NullReturnCall>(Address, ani.Address, 0x57C7D0, (IntArg)arg);
+        }
+
         public void StartAni(string ani, int id)
         {
             using (zString z = zString.Create(ani))

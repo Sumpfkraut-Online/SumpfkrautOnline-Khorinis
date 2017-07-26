@@ -4,72 +4,39 @@ using System.Linq;
 using System.Text;
 using WinApi.User.Enumeration;
 using GUC.Scripts.Sumpfkraut.Menus;
-using GUC.Types;
-using GUC.Scripts.Sumpfkraut.Networking;
-using GUC.Scripts.Sumpfkraut.Visuals;
-using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
-using GUC.WorldObjects;
 
 namespace GUC.Scripts.Sumpfkraut.Controls
 {
-    static class InputControl
+    abstract class InputControl
     {
-        static bool inited = false;
-        public static void Init()
+        public static InputControl Active;
+        
+        static InputControl()
         {
-            if (inited)
-            {
-                return;
-            }
-            inited = true;
+            InputHandler.OnKeyDown += sKeyDown;
+            InputHandler.OnKeyUp += sKeyUp;
+        }
+        
+        protected abstract void KeyDown(VirtualKeys key);
+        protected abstract void KeyUp(VirtualKeys key);
+        protected abstract void Update(long now);
 
-            InputHandler.OnKeyDown += KeyDown;
-            InputHandler.OnKeyUp += KeyUp;
+        static void sKeyDown(VirtualKeys key)
+        {
+            if (!GUCMenu.KeyDownUpdateMenus(key) && Active != null)
+                Active.KeyDown(key);
         }
 
-        static void KeyDown(VirtualKeys key, long now)
+        static void sKeyUp(VirtualKeys key)
         {
-            GUCMenu activeMenu = GUCMenu.GetActiveMenus().ElementAtOrDefault(0);
-            if (activeMenu != null)
-            {
-                activeMenu.KeyDown(key, now);
-                return;
-            }
-            
-            if (NPCInst.Hero != null)
-                PlayerControl.KeyDown(NPCInst.Hero, key, now);
-            else if (ScriptClient.Client.IsSpecating)
-                SpectatorControl.KeyDown(key, now);
+            if (!GUCMenu.KeyUpUpdateMenus(key) && Active != null)
+                Active.KeyUp(key);
         }
 
-        static void KeyUp(VirtualKeys key, long now)
+        public static void UpdateControls(long now)
         {
-            GUCMenu activeMenu = GUCMenu.GetActiveMenus().ElementAtOrDefault(0);
-            if (activeMenu != null)
-            {
-                activeMenu.KeyUp(key, now);
-                return;
-            }
-
-            if (NPCInst.Hero != null)
-                PlayerControl.KeyUp(NPCInst.Hero, key, now);
-            else if (ScriptClient.Client.IsSpecating)
-                SpectatorControl.KeyUp(key, now);
-        }
-
-        public static void Update(long now)
-        {
-            GUCMenu activeMenu = GUCMenu.GetActiveMenus().ElementAtOrDefault(0);
-            if (activeMenu != null)
-            {
-                activeMenu.Update(now);
-                return;
-            }
-
-            if (NPCInst.Hero != null)
-                PlayerControl.Update(NPCInst.Hero, now);
-            else if (ScriptClient.Client.IsSpecating)
-                SpectatorControl.Update(now);
+            if (!GUCMenu.IsMenuActive && Active != null)
+                Active.Update(now);
         }
     }
 }

@@ -4,33 +4,22 @@ using System.Linq;
 using System.Text;
 using WinApi.User.Enumeration;
 using GUC.Types;
+using GUC.Scripts.Sumpfkraut.Controls;
 
-namespace GUC.Scripts.Sumpfkraut.Controls
+namespace GUC.Scripts.Arena.Controls
 {
-    static class SpectatorControl
+    partial class ArenaControl
     {
         const float defaultSpeed = 12.5f;
         const float fastSpeed = 45.0f;
-
-        public static void KeyDown(VirtualKeys key, long now)
-        {
-            if (key == VirtualKeys.Shift)
-            {
-                speedMultiplier = fastSpeed;
-            }
-        }
-
-        public static void KeyUp(VirtualKeys key, long now)
-        {
-            if (key == VirtualKeys.Shift)
-            {
-                speedMultiplier = defaultSpeed;
-            }
-        }
-
         static float speedMultiplier = defaultSpeed;
 
-        public static void Update(long now)
+        KeyDictionary spectatorControls = new KeyDictionary()
+        {
+            { VirtualKeys.Shift, down => speedMultiplier = !down ? defaultSpeed : fastSpeed },
+        };
+
+        void SpectatorUpdate()
         {
             if (InputHandler.MouseDistY != 0)
             {

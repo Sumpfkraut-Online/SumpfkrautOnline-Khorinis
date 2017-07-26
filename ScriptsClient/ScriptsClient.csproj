@@ -53,6 +53,9 @@
     <Compile Include="..\ScriptsShared\Arena\ArenaClient.cs">
       <Link>Arena\ArenaClient.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Arena\CharCreationInfo.cs">
+      <Link>Arena\CharCreationInfo.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Arena\ScriptMessages.cs">
       <Link>Arena\ScriptMessages.cs</Link>
     </Compile>
@@ -350,14 +353,21 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\WorldSystem\WorldLoader.cs">
       <Link>Sumpfkraut\WorldSystem\WorldLoader.cs</Link>
     </Compile>
+    <Compile Include="Arena\ArenaClient.Client.cs" />
+    <Compile Include="Arena\Controls\ArenaControl.cs" />
+    <Compile Include="Arena\Menus\CharCreationMenu.cs" />
+    <Compile Include="Arena\Menus\ExitMenu.cs" />
+    <Compile Include="Arena\Menus\MainMenu.cs" />
     <Compile Include="Left4Gothic\CharCreationMenu.cs" />
     <Compile Include="Left4Gothic\CCExitMenu.cs" />
     <Compile Include="Left4Gothic\L4Client.Client.cs" />
     <Compile Include="Sumpfkraut\AI\GuideCommands\GoToPosCommand.Client.cs" />
     <Compile Include="Sumpfkraut\AI\GuideCommands\GoToVobCommand.Client.cs" />
     <Compile Include="Sumpfkraut\Controls\KeyBinds.cs" />
-    <Compile Include="Sumpfkraut\Controls\PlayerControl.cs" />
-    <Compile Include="Sumpfkraut\Controls\SpectatorControl.cs" />
+    <Compile Include="Arena\Controls\PlayerControl.cs" />
+    <Compile Include="Arena\Controls\SpectatorControl.cs" />
+    <Compile Include="Sumpfkraut\Controls\KeyDictionary.cs" />
+    <Compile Include="Sumpfkraut\Controls\KeyHoldHelper.cs" />
     <Compile Include="Sumpfkraut\GUI\GUCInventory.cs" />
     <Compile Include="Sumpfkraut\GUI\MainMenu\MainMenuButton.cs" />
     <Compile Include="Sumpfkraut\GUI\MainMenu\MainMenuCharacter.cs" />
@@ -419,9 +429,6 @@
   <ItemGroup>
     <Folder Include="Sumpfkraut\VobSystem\Definitions\Mobs\" />
     <Folder Include="Sumpfkraut\VobSystem\Instances\Mobs\" />
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

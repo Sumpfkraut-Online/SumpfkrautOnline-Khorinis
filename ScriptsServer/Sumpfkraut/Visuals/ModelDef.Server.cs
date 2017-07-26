@@ -84,8 +84,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                 this.height = value;
             }
         }
-
-        public static ModelDef LargestNPC = null; // for fight system
+        
         public bool IsNPCModel() { return this.Visual.EndsWith(".MDS"); }
 
         #endregion
@@ -112,27 +111,11 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                 throw new Exception("CodeName is null or white space!");
 
             names.Add(this.CodeName, this);
-
-            if (this.IsNPCModel() && (LargestNPC == null || this.radius > LargestNPC.radius))
-                LargestNPC = this;
         }
 
         partial void pDelete()
         {
             names.Remove(this.CodeName);
-
-            //improve ?
-            if (this == LargestNPC)
-            {
-                ModelDef newLargestNPC = null;
-                Models.ModelInstance.ForEach(m =>
-                {
-                    ModelDef model = (ModelDef)m.ScriptObject;
-                    if (model != this && model.IsNPCModel() && model.radius > this.radius)
-                        newLargestNPC = model;
-                });
-                LargestNPC = newLargestNPC;
-            }
         }
 
         #endregion

@@ -18,6 +18,12 @@ namespace GUC.Scripts
 {
     public partial class GUCScripts : ScriptInterface
     {
+        partial void pConstruct();
+        public GUCScripts()
+        {
+            pConstruct();
+        }
+
         public Network.GameClient CreateClient()
         {
             return new Arena.ArenaClient().BaseClient; //new ScriptClient().BaseClient;

@@ -35,6 +35,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking
         /// <summary> Spawned or specating in a world. </summary>
         public bool IsIngame { get { return this.baseClient.IsIngame; } }
         public bool IsSpecating { get { return this.baseClient.IsSpectating; } }
+        public bool IsCharacter { get { return this.baseClient.Character != null; } }
 
         #endregion
 

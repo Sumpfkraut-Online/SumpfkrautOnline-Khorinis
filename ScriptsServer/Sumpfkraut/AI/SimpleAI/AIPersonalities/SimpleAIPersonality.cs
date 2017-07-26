@@ -295,16 +295,12 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                     //Print(aggressor.GetObjName() + " attacks " + target.GetObjName());
 
                     // do not interrupt an ongoing fight ani
-                    if (aggressorNPC.GetFightAni() != null) { return; }
+                    if (aggressorNPC.FightAnimation != null) { return; }
 
                     Visuals.ScriptAniJob scriptAniJob;
                     NPCCatalog.FightAnis AniCatalog = new NPCCatalog.FightAnis();
                     //aggressorNPC.ModelDef.TryGetAniJob((int) Visuals.SetAnis.Attack1HFwd1, out scriptAniJob);
-                    scriptAniJob = AniCatalog.Fwd;
-                    if (scriptAniJob != null)
-                    {
-                        aggressorNPC.ModelInst.StartAnimation(scriptAniJob);
-                    }
+                    aggressorNPC.EffectHandler.TryFightMove(FightMoves.Fwd);
                 }
             }
             else

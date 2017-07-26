@@ -6,6 +6,7 @@ using GUC.GUI;
 using GUC.Scripts.Sumpfkraut.GUI.MainMenu;
 using WinApi.User.Enumeration;
 using GUC.Types;
+using GUC.Scripts.Sumpfkraut.Controls;
 
 
 namespace GUC.Scripts.Sumpfkraut.Menus.MainMenus
@@ -27,6 +28,8 @@ namespace GUC.Scripts.Sumpfkraut.Menus.MainMenus
 
         public MainMenuItem CurrentItem { get; private set; }
 
+        KeyHoldHelper scrollHelper;
+
         #region Init
         public GUCMainMenu()
         {
@@ -38,6 +41,13 @@ namespace GUC.Scripts.Sumpfkraut.Menus.MainMenus
 
             helpVis = GUCVisualText.Create("", 0, pos[1] + 455);
             helpText.CenteredX = true;
+
+            scrollHelper = new KeyHoldHelper()
+            {
+                { () => MoveCursor(true), VirtualKeys.Up },
+                { () => MoveCursor(false), VirtualKeys.Down },
+                { () => MoveCursor(false), VirtualKeys.Tab },
+            };
         }
 
         private bool init = false;
@@ -279,12 +289,10 @@ namespace GUC.Scripts.Sumpfkraut.Menus.MainMenus
             }
             //PlaySound(SndBrowse);
         }
-
-        const long KeyHoldTime = 250 * TimeSpan.TicksPerMillisecond;
-        long arrowUpTime = 0;
-        long arrowDownTime = 0;
-        public override void KeyDown(VirtualKeys key, long now)
+        
+        protected override void KeyDown(VirtualKeys key)
         {
+            long now = GameTime.Ticks;
             switch (key)
             {
                 case VirtualKeys.Return:
@@ -293,32 +301,6 @@ namespace GUC.Scripts.Sumpfkraut.Menus.MainMenus
                         items[cursor].OnActivate();
                     }
                     //PlaySound(SndSelect);
-                    break;
-
-                case VirtualKeys.Up:
-                    if (arrowUpTime == 0) // newly pressed
-                    {
-                        arrowUpTime = now;
-                        MoveCursor(true);
-                    }
-                    else if (arrowUpTime < now) // held down
-                    {
-                        arrowUpTime = now + KeyHoldTime;
-                        MoveCursor(true);
-                    }
-                    break;
-                case VirtualKeys.Down:
-                case VirtualKeys.Tab:
-                    if (arrowDownTime == 0) // newly pressed
-                    {
-                        arrowDownTime = now;
-                        MoveCursor(false);
-                    }
-                    else if (arrowDownTime < now) // held down
-                    {
-                        arrowDownTime = now + KeyHoldTime;
-                        MoveCursor(false);
-                    }
                     break;
                 case VirtualKeys.Escape:
                     this.Close();
@@ -337,22 +319,11 @@ namespace GUC.Scripts.Sumpfkraut.Menus.MainMenus
             }
         }
 
-        public override void KeyUp(VirtualKeys key, long now)
-        {
-            switch (key)
-            {
-                case VirtualKeys.Up:
-                    arrowUpTime = 0;
-                    break;
-                case VirtualKeys.Down:
-                    arrowDownTime = 0;
-                    break;
-            }
-        }
         #endregion
 
-        public override void Update(long now)
+        protected override void Update(long now)
         {
+            scrollHelper.Update(now);
             if (items[cursor] is MainMenuTextBox)
             {
                 ((MainMenuTextBox)items[cursor]).Update(now);

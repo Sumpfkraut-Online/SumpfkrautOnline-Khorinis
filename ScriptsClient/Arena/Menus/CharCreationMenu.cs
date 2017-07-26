@@ -6,26 +6,13 @@ using GUC.Scripts.Sumpfkraut.Menus.MainMenus;
 using GUC.Scripts.Sumpfkraut.GUI.MainMenu;
 using WinApi.User.Enumeration;
 using GUC.Scripts.Sumpfkraut.Visuals;
-using GUC.Utilities;
 
-namespace GUC.Scripts.Left4Gothic
+namespace GUC.Scripts.Arena
 {
     class CharCreationMenu : GUCMainMenu
     {
         public readonly static CharCreationMenu Menu = new CharCreationMenu();
-
-        public override void Open()
-        {
-            try
-            {
-                base.Open();
-            }
-            catch (Exception e)
-            {
-                Log.Logger.LogError(e);
-            }
-        }
-
+        
         protected override void KeyDown(VirtualKeys key)
         {
             if (key == VirtualKeys.Tab)
@@ -64,7 +51,7 @@ namespace GUC.Scripts.Left4Gothic
         MainMenuChoice bodywidth;
         MainMenuChoice voice;
 
-        CharacterInfo info;
+        CharCreationInfo info;
 
         protected override void OnCreate()
         {
@@ -90,7 +77,7 @@ namespace GUC.Scripts.Left4Gothic
             bodywidth = AddChoice("Breite", "Wähle die Körperbreite deines Charakters.", offsetX, offsetY + dist * 6, c_BodyWidth, false, MoveCursor, ChangedVisual);
             voice = AddChoice("Stimme", "Wähle die Stimme deines Charakters.", offsetX, offsetY + dist * 7, c_Voices_M, true, PlayVoice, PlayVoice);
 
-            OnEscape = CCExitMenu.Menu.Open;
+            OnEscape = ExitMenu.Menu.Open;
             
             ChangedVisual();
         }
@@ -107,14 +94,13 @@ namespace GUC.Scripts.Left4Gothic
 
             info.Voice = (HumVoices)voice.Choice;
 
-            L4Client.SendCharCreationMessage(info);
+            ArenaClient.SendCharCreationMessage(info);
             this.Close();
         }
 
         void PlayVoice()
         {
             string soundName = String.Format("SVM_{0}_SMALLTALK{1:00}.WAV", voice.Choice, Randomizer.GetInt(1, 31));
-
             SoundHandler.PlaySound(new SoundInstance(soundName), 2.0f);
         }
 

@@ -5,13 +5,13 @@ using System.Text;
 using WinApi;
 using WinApi.User;
 using WinApi.User.Enumeration;
-using GUC.Utilities;
 
 namespace GUC
 {
-
     public static class InputHandler
     {
+        #region Testing
+
         static Dictionary<VirtualKeys, Action> gucKeys = new Dictionary<VirtualKeys, Action>()
         {
             { VirtualKeys.F4, Program.Exit },
@@ -71,15 +71,18 @@ namespace GUC
         };
         static Gothic.Objects.oCItem sword;
 
+        #endregion
+
         public static bool IsPressed(VirtualKeys key)
         {
             return keys[(int)key];
         }
 
-        public delegate void KeyPressEventHandler(VirtualKeys key, long ticks);
+        public delegate void KeyPressEventHandler(VirtualKeys key);
         public static event KeyPressEventHandler OnKeyDown = null;
         public static event KeyPressEventHandler OnKeyUp = null;
 
+        // cursor stuff
         static bool shown = false;
         static int movedX, movedY;
         public static int MouseDistX { get { return movedX; } }
@@ -91,7 +94,7 @@ namespace GUC
         static bool[] keys = new bool[0xFF];
         internal static void Update()
         {
-            long ticks = GameTime.Ticks;
+            long now = GameTime.Ticks;
             if (Process.IsForeground())
             {
                 if (!shown)
@@ -130,7 +133,7 @@ namespace GUC
                             if (gucKeys.TryGetValue(key, out gucAction))
                                 gucAction();
                             else if (OnKeyDown != null)
-                                OnKeyDown(key, ticks);
+                                OnKeyDown(key);
                         }
                     }
                     else
@@ -139,7 +142,7 @@ namespace GUC
                         {
                             keys[i] = false;
                             if (!gucKeys.ContainsKey(key) && OnKeyUp != null)
-                                OnKeyUp(key, ticks);
+                                OnKeyUp(key);
                         }
                     }
                 }
@@ -165,7 +168,7 @@ namespace GUC
                             VirtualKeys key = (VirtualKeys)i;
                             keys[i] = false;
                             if (!gucKeys.ContainsKey(key) && OnKeyUp != null)
-                                OnKeyUp(key, ticks);
+                                OnKeyUp(key);
                         }
                     }
                 }

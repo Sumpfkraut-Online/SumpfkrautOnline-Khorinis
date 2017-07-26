@@ -80,8 +80,9 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
             NPC.SendScriptCommand(stream, PktPriority.Immediate);
         }
 
-        public void Jump(NPCInst npc, JumpMoves move)
+        public void Jump(NPCInst npc)
         {
+            JumpMoves move = JumpMoves.Fwd;
             var stream = npc.BaseInst.GetScriptCommandStream();
             switch (move)
             {

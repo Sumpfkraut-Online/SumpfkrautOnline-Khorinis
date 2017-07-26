@@ -53,16 +53,23 @@ namespace GUC.Models
 
             public static void ReadAniStart(PacketReader stream, float fpsMult = 1.0f)
             {
-                Vob vob;
-                if (World.Current.TryGetVob(stream.ReadUShort(), out vob))
+                try
                 {
-                    Model model = vob.Model;
-
-                    AniJob job;
-                    if (model.Instance.TryGetAniJob(stream.ReadUShort(), out job))
+                    Vob vob;
+                    if (World.Current.TryGetVob(stream.ReadUShort(), out vob))
                     {
-                        model.ScriptObject.StartAnimation(job, fpsMult);
+                        Model model = vob.Model;
+                        
+                        AniJob job;
+                        if (model.Instance.TryGetAniJob(stream.ReadUShort(), out job))
+                        {
+                            model.ScriptObject.StartAniJob(job, fpsMult);
+                        }
                     }
+                }
+                catch (Exception e)
+                {
+                    Log.Logger.LogWarning(e);
                 }
             }
 
@@ -124,7 +131,7 @@ namespace GUC.Models
         #endregion
 
         #region Animations
-
+        
         partial void pStartAnimation(ActiveAni aa, float fpsMult)
         {
             if (this.vob is NPC)
@@ -203,7 +210,9 @@ namespace GUC.Models
                             if (((NPC)vob).Movement == NPCMovement.Forward)
                                 gModel.StartAni(gVob.AniCtrl._s_walkl, 0);
                             else
+                            {
                                 gModel.StartAni(gVob.AniCtrl._s_walk, 0);
+                            }
                         }
                     }
                     else
@@ -247,25 +256,19 @@ namespace GUC.Models
                     continue;
 
                 int gAniID = gModel.GetAniIDFromAniName(aa.AniJob.Name);
-                var gAni = gModel.GetAniFromAniID(gAniID);
-                if (gAni.Address == 0)
-                    continue;
+                
+                if (gModel.GetActiveAni(gAniID).Address == 0)
+                    gModel.StartAni(gAniID, 0);
 
-                var gActiveAni = gModel.GetActiveAni(gAni);
-                if (gActiveAni.Address == 0)
-                {
-                    gModel.StartAni(gAni, 0);
-                    gActiveAni = gModel.GetActiveAni(gAni);
-                    if (gActiveAni.Address == 0)
-                        continue;
-                }
-
+                /* moved to hModel.cs
+                
                 float startFrame = aa.Ani.StartFrame;
                 float endFrame = aa.Ani.EndFrame;
 
                 float percent = gAni.IsReversed ? (1 - aa.GetProgress()) : aa.GetProgress();
-                
-                gActiveAni.SetActFrame(startFrame + (endFrame - startFrame) * percent);
+
+                float actFrame = startFrame + (endFrame - startFrame) * percent;
+                gActiveAni.SetActFrame(actFrame);*/
             }
         }
     }

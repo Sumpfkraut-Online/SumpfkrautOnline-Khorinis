@@ -3,78 +3,161 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using WinApi.User.Enumeration;
+using GUC.Log;
 
 namespace GUC.Scripts.Sumpfkraut.Controls
 {
-    public struct KeyBind
+    public class KeyBind
     {
-        public readonly static KeyBind MoveForward = new KeyBind(VirtualKeys.W, VirtualKeys.Up);
-        public readonly static KeyBind MoveLeft = new KeyBind(VirtualKeys.A);
-        public readonly static KeyBind MoveRight = new KeyBind(VirtualKeys.D);
-        public readonly static KeyBind MoveBack = new KeyBind(VirtualKeys.S, VirtualKeys.Down);
-        public readonly static KeyBind Action = new KeyBind(VirtualKeys.Control, VirtualKeys.LeftButton);
-        public readonly static KeyBind Jump = new KeyBind(VirtualKeys.Menu);
-        public readonly static KeyBind Inventory = new KeyBind(VirtualKeys.Tab, VirtualKeys.I);
-        public readonly static KeyBind TurnLeft = new KeyBind(VirtualKeys.Q, VirtualKeys.Left);
-        public readonly static KeyBind TurnRight = new KeyBind(VirtualKeys.E, VirtualKeys.Right);
-        public readonly static KeyBind DrawWeapon = new KeyBind(VirtualKeys.Space);
-        public readonly static KeyBind DrawFists = new KeyBind(VirtualKeys.OEM5);
+        #region Static Dictionary
 
-        //[JsonIgnore]
-        VirtualKeys defaultKey1;
-        public VirtualKeys DefaultKey1 { get { return this.defaultKey1; } }
-        //[JsonIgnore]
-        VirtualKeys defaultKey2;
-        public VirtualKeys DefaultKey2 { get { return this.defaultKey2; } }
-        VirtualKeys key1;
-        public VirtualKeys Key1 { get { return this.Key1; } }
-        VirtualKeys key2;
-        public VirtualKeys Key2 { get { return this.Key2; } }
+        static readonly Dictionary<VirtualKeys, KeyBind> allKeys = new Dictionary<VirtualKeys, KeyBind>();
 
-        public KeyBind(VirtualKeys key) : this(key, VirtualKeys.None)
+        public static bool TryGetKeyBind(VirtualKeys key, out KeyBind bind)
         {
+            return allKeys.TryGetValue(key, out bind);
         }
 
-        public KeyBind(VirtualKeys defaultKey1, VirtualKeys defaultKey2)
+        public static bool ContainsKey(VirtualKeys key)
         {
-            if (!Enum.IsDefined(typeof(VirtualKeys), defaultKey1))
-                throw new ArgumentException("DefaultKey1 value is not defined in VirtualKeys: " + defaultKey1);
-            if (!Enum.IsDefined(typeof(VirtualKeys), defaultKey2))
-                throw new ArgumentException("DefaultKey2 value is not defined in VirtualKeys: " + defaultKey2);
-
-            this.defaultKey1 = defaultKey1;
-            this.defaultKey2 = defaultKey2;
-
-            this.key1 = defaultKey1;
-            this.key2 = defaultKey2;
+            return allKeys.ContainsKey(key);
         }
 
-        public void Set(VirtualKeys key)
+        #endregion
+
+        #region Static Keys
+        
+        public readonly static KeyBind MoveForward = new KeyBind("MoveForward", VirtualKeys.W, VirtualKeys.Up);
+        public readonly static KeyBind MoveLeft = new KeyBind("MoveLeft", VirtualKeys.A);
+        public readonly static KeyBind MoveRight = new KeyBind("MoveRight", VirtualKeys.D);
+        public readonly static KeyBind MoveBack = new KeyBind("MoveBack", VirtualKeys.S, VirtualKeys.Down);
+        public readonly static KeyBind Action = new KeyBind("Action", VirtualKeys.Control, VirtualKeys.LeftButton);
+        public readonly static KeyBind Jump = new KeyBind("Jump", VirtualKeys.Menu);
+        public readonly static KeyBind Inventory = new KeyBind("Inventory", VirtualKeys.Tab, VirtualKeys.I);
+        public readonly static KeyBind TurnLeft = new KeyBind("TurnLeft", VirtualKeys.Q, VirtualKeys.Left);
+        public readonly static KeyBind TurnRight = new KeyBind("TurnRight", VirtualKeys.E, VirtualKeys.Right);
+        public readonly static KeyBind DrawWeapon = new KeyBind("DrawWeapon", VirtualKeys.Space);
+        public readonly static KeyBind DrawFists = new KeyBind("DrawFists", VirtualKeys.OEM5);
+
+        #endregion
+        
+        #region Properties
+
+        string name;
+        public string Name { get { return this.name; } }
+        List<VirtualKeys> defaultKeys = new List<VirtualKeys>();
+        public IEnumerable<VirtualKeys> DefaultKeys { get { return defaultKeys; } }
+        List<VirtualKeys> keys = new List<VirtualKeys>();
+        public IEnumerable<VirtualKeys> Keys { get { return keys; } }
+
+        /// <summary> Returns VirtualKeys.None if index is out of range. </summary>
+        public VirtualKeys GetKey(int index)
         {
-            if (!Enum.IsDefined(typeof(VirtualKeys), key))
-                throw new ArgumentException("Key value is not defined in VirtualKeys: " + key);
+            return (index >= 0 && index < keys.Count) ? keys[index] : VirtualKeys.None;
+        }
 
-            if (key1 == key)
-                return;
+        /// <summary> Returns VirtualKeys.None if index is out of range. </summary>
+        public VirtualKeys GetDefaultKey(int index)
+        {
+            return (index >= 0 && index < defaultKeys.Count) ? defaultKeys[index] : VirtualKeys.None;
+        }
 
-            key2 = key1;
-            key1 = key;
+        public delegate void KeyChangedHandler(KeyBind keyBind, VirtualKeys key, bool added);
+        public event KeyChangedHandler OnKeyChanged = null;
+
+        #endregion
+
+        #region Constructors
+
+        private KeyBind(string name, params VirtualKeys[] defaultKeys)
+        {
+            this.name = string.IsNullOrWhiteSpace(name) ? "unnamed" : name;
+
+            for (int i = 0; i < defaultKeys.Length; i++)
+                Add(defaultKeys[i], true);
+        }
+
+        #endregion
+
+        #region Add & Remove
+
+        public void Add(VirtualKeys key)
+        {
+            Add(key, false);
+        }
+
+        void Add(VirtualKeys key, bool defaultKey)
+        {
+            try
+            {
+                if (!Enum.IsDefined(typeof(VirtualKeys), key))
+                {
+                    Logger.Log("KeyBind '{0}': Tried to add undefined key bind {1}.", name, key);
+                    return;
+                }
+
+                if (key == VirtualKeys.None)
+                {
+                    Logger.Log("KeyBind '{0}': Tried to add key bind 'None'", name);
+                    return;
+                }
+
+                KeyBind otherBind;
+                if (allKeys.TryGetValue(key, out otherBind))
+                {
+                    if (otherBind == this) // key is already set
+                        return;
+
+                    // there is already a KeyBind with this key, replace it
+                    otherBind.Remove(key);
+                    Logger.Log("Key '{0}' of KeyBind '{1}' was replaced by KeyBind '{2}'", key, otherBind.Name, this.Name);
+                }
+
+                // add
+                allKeys.Add(key, this);
+                keys.Add(key);
+                if (defaultKey)
+                    defaultKeys.Add(key);
+                else if (OnKeyChanged != null)
+                    OnKeyChanged(this, key, true);
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(e);
+            }
+        }
+
+        public bool Remove(VirtualKeys key)
+        {
+            KeyBind otherBind;
+            if (!allKeys.TryGetValue(key, out otherBind) || otherBind != this)
+                    return false;
+
+            allKeys.Remove(key);
+            keys.Remove(key);
+
+            if (OnKeyChanged != null)
+                OnKeyChanged(this, key, false);
+
+            return true;
+        }
+
+        #endregion
+
+        public void Reset()
+        {
+            keys.ForEach(key => Remove(key));
+            defaultKeys.ForEach(key => Add(key));
         }
 
         public bool Contains(VirtualKeys key)
         {
-            return key1 == key || key2 == key;
+            return keys.Contains(key);
         }
 
         public bool IsPressed()
         {
-            return InputHandler.IsPressed(key1) || InputHandler.IsPressed(key2);
-        }
-
-        public void Reset()
-        {
-            this.key1 = this.defaultKey1;
-            this.key2 = this.defaultKey2;
+            return !keys.TrueForAll(key => !InputHandler.IsPressed(key));
         }
     }
 }

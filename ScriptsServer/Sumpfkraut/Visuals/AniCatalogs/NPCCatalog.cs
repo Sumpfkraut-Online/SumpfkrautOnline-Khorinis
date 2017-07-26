@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Reflection;
+using GUC.Utilities;
 
 namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
 {
@@ -12,19 +13,22 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
         static readonly Dictionary<string, string> AniDict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             // Fist attacks
-            { "s_FistAttack", "FightFist.Fwd" },
-            { "t_FistAttackMove", "FightFist.Run" },
-            { "t_FistParade_0", "FightFist.Parry1" },
-            { "t_FistParadeJumpB", "FightFist.Dodge" },
+            { "fistattack_fwd0", "FightFist.Fwd[0]" },
+            { "fistattack_fwd1", "FightFist.Fwd[1]" },
+
+            { "fistattack_run", "FightFist.Run" },
+            { "fist_parade", "FightFist.Parry[0]" },
+            { "fist_jumpback", "FightFist.Dodge" },
+
 
             // 1H Handling
             { "s_1HAttack", "Fight1H.Fwd" },
             { "t_1HAttackL", "Fight1H.Left" },
             { "t_1HAttackR", "Fight1H.Right" },
             { "t_1HAttackMove", "Fight1H.Run" },
-            { "t_1HParade_0", "Fight1H.Parry1" },
-            { "t_1HParade_0_A2", "Fight1H.Parry2" },
-            { "t_1HParade_0_A3", "Fight1H.Parry3" },
+            { "t_1HParade_0", "Fight1H.Parry[0]" },
+            { "t_1HParade_0_A2", "Fight1H.Parry[1]" },
+            { "t_1HParade_0_A3", "Fight1H.Parry[2]" },
             { "t_1HParadeJumpB", "Fight1H.Dodge" },
             
             // 2h attacks
@@ -32,9 +36,9 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
             { "t_2HAttackL", "Fight2H.Left" },
             { "t_2HAttackR", "Fight2H.Right" },
             { "t_2HAttackMove", "Fight2H.Run" },
-            { "t_2HParade_0", "Fight2H.Parry1" },
-            { "t_2HParade_0_A2", "Fight2H.Parry2" },
-            { "t_2HParade_0_A3", "Fight2H.Parry3" },
+            { "t_2HParade_0", "Fight2H.Parry[0]" },
+            { "t_2HParade_0_A2", "Fight2H.Parry[1]" },
+            { "t_2HParade_0_A3", "Fight2H.Parry[2]" },
             { "t_2HParadeJumpB", "Fight2H.Dodge" },
 
             // jumps
@@ -58,6 +62,11 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
             { "s_FIRESPIT_S2", "ItemHandling.UseTorch" },
 
             // Weapon Drawing
+            { "drawfists_part0", "DrawFists.Draw" },
+            { "undrawfists_part0", "DrawFists.Undraw" },
+            { "drawfists_running", "DrawFists.DrawWhileRunning" },
+            { "undrawfists_running", "DrawFists.UndrawWhileRunning" },
+
             { "sok_draw1H", "Draw1H.Draw" },
             { "sok_undraw1H", "Draw1H.Undraw" },
             { "t_Move_2_1hMove", "Draw1H.DrawWhileRunning" },
@@ -83,15 +92,19 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
         #region FightAnis
         public class FightAnis : AniCatalog
         {
-            public ScriptAniJob Fwd { get; private set; }
+            public AniJobCollection Fwd { get; private set; }
             public ScriptAniJob Left { get; private set; }
             public ScriptAniJob Right { get; private set; }
             public ScriptAniJob Run { get; private set; }
 
             public ScriptAniJob Dodge { get; private set; }
-            public ScriptAniJob Parry1 { get; private set; }
-            public ScriptAniJob Parry2 { get; private set; }
-            public ScriptAniJob Parry3 { get; private set; }
+            public AniJobCollection Parry { get; private set; }
+
+            public ScriptAniJob GetRandomParry()
+            {
+                return Parry.ElementAtOrDefault(Parry.Count > 1 ? Randomizer.GetInt(0, Parry.Count) : 0);
+            }
+
         }
         public FightAnis FightFist { get; private set; }
         public FightAnis Fight1H { get; private set; }
@@ -118,6 +131,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
         }
         public DrawWeaponAnis Draw1H { get; private set; }
         public DrawWeaponAnis Draw2H { get; private set; }
+        public DrawWeaponAnis DrawFists { get; private set; }
         public DrawWeaponAnis DrawBow { get; private set; }
         public DrawWeaponAnis DrawXBow { get; private set; }
         public DrawWeaponAnis DrawMagic { get; private set; }
@@ -142,19 +156,5 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
         }
         public ItemHandlingAnis ItemHandling { get; private set; }
         #endregion
-
-        public NPCCatalog()
-        {
-            FightFist = new FightAnis();
-            Fight1H = new FightAnis();
-            Fight2H = new FightAnis();
-            Jumps = new JumpAnis();
-            ItemHandling = new ItemHandlingAnis();
-            Draw1H = new DrawWeaponAnis();
-            Draw2H = new DrawWeaponAnis();
-            DrawBow = new DrawWeaponAnis();
-            DrawXBow = new DrawWeaponAnis();
-            DrawMagic = new DrawWeaponAnis();
-        }
     }
 }

@@ -68,6 +68,25 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public BaseVob.Environment Environment { get { return this.BaseInst.GetEnvironment(); } }
 
         public bool IsDead { get { return this.BaseInst.IsDead; } }
+        public bool IsInFightMode { get { return this.BaseInst.IsInFightMode; } }
+
+        public bool IsWading
+        {
+            get
+            {
+                float waterLevel = Environment.WaterLevel;
+                return waterLevel > 0 && waterLevel < 0.4f;
+            }
+        }
+
+        public bool IsSwimming
+        {
+            get
+            {
+                float waterLevel = Environment.WaterLevel;
+                return waterLevel > 0 && waterLevel >= 0.4f;
+            }
+        }
 
         public int HP { get { return this.BaseInst.HP; } }
 

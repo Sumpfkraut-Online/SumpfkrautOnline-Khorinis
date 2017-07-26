@@ -10,9 +10,14 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.Utilities;
+using GUC.Animations;
+using GUC.Network;
+using GUC.Types;
+using GUC.WorldObjects;
 
 namespace GUC.Scripts
 {
+    #region
     interface IProbabilityItems
     {
         List<ItemInst> GetItems();
@@ -99,24 +104,24 @@ namespace GUC.Scripts
             return new List<ItemInst>() { inst };
         }
     }
-
-
-
+    #endregion
+    
     public partial class GUCScripts : ScriptInterface
     {
- 		public WorldObjects.VobGuiding.TargetCmd GetTestCmd(WorldObjects.BaseVob target)
+        public WorldObjects.VobGuiding.TargetCmd GetTestCmd(BaseVob target)
         {
             return new Sumpfkraut.AI.GuideCommands.GoToVobCommand((BaseVobInst)target.ScriptObject);
         }
-        public GUCScripts()
+
+        partial void pConstruct()
         {
             Logger.Log("######## Initalise SumpfkrautOnline ServerScripts #########");
 
             //Sumpfkraut.EffectSystem.Changes.ChangeInitializer.Init();
             //Sumpfkraut.EffectSystem.Destinations.DestInitializer.Init();
 
-            Sumpfkraut.Daedalus.AniParser.ReadMDSFiles();
-            Sumpfkraut.Daedalus.ConstParser.ParseConstValues();
+            //Sumpfkraut.Daedalus.AniParser.ReadMDSFiles();
+            /*Sumpfkraut.Daedalus.ConstParser.ParseConstValues();
             Sumpfkraut.Daedalus.FuncParser.ParseConstValues();
             Sumpfkraut.Daedalus.PrototypeParser.ParsePrototypes();
             Sumpfkraut.Daedalus.InstanceParser.ParseInstances();
@@ -126,14 +131,16 @@ namespace GUC.Scripts
             Sumpfkraut.Daedalus.ConstParser.Free();
             Sumpfkraut.Daedalus.FuncParser.Free();
             Sumpfkraut.Daedalus.PrototypeParser.Free();
-            Sumpfkraut.Daedalus.InstanceParser.Free();
+            Sumpfkraut.Daedalus.InstanceParser.Free();*/
 
             NPCInst.Requests.OnJump += (npc, move) => npc.EffectHandler.TryJump(move);
+            NPCInst.Requests.OnDrawFists += npc => npc.EffectHandler.TryDrawFists();
+            NPCInst.Requests.OnFightMove += (npc, move) => npc.EffectHandler.TryFightMove(move);
 
-
-            AddSomeDefs();
 
             CreateTestWorld();
+            AddSomeDefs();
+
 
             // -- Websocket-Server --
             Sumpfkraut.Web.WS.WSServer wsServer = new Sumpfkraut.Web.WS.WSServer();
@@ -148,59 +155,17 @@ namespace GUC.Scripts
 
             Logger.Log("######################## Finished #########################");
         }
-
-
-
-        void AddSomeDefs()
-        {
-            //AddItems();
-
-            // HUMAN MODEL
-            ModelDef m;
-            if (ModelDef.TryGetModel("humans", out m))
-            {
-                m.Delete(); // hurr durr
-            }
-            else
-            {
-                m = new ModelDef("humans", "humans.mds");
-            }
-
-            m.Radius = 80;
-            m.Height = 180;
-            m.Create();
-
-            // NPCs
-
-            NPCDef npcDef = new NPCDef("maleplayer");
-            npcDef.Name = "Spieler";
-            npcDef.Model = m;
-            npcDef.BodyMesh = HumBodyMeshs.HUM_BODY_NAKED0.ToString();
-            npcDef.BodyTex = (int)HumBodyTexs.G1Hero;
-            npcDef.HeadMesh = HumHeadMeshs.HUM_HEAD_PONY.ToString();
-            npcDef.HeadTex = (int)HumHeadTexs.Face_N_Player;
-            npcDef.Create();
-
-            npcDef = new NPCDef("femaleplayer");
-            npcDef.Name = "Spielerin";
-            npcDef.Model = m;
-            npcDef.BodyMesh = HumBodyMeshs.HUM_BODY_BABE0.ToString();
-            npcDef.BodyTex = (int)HumBodyTexs.F_Babe1;
-            npcDef.HeadMesh = HumHeadMeshs.HUM_HEAD_BABE.ToString();
-            npcDef.HeadTex = (int)HumHeadTexs.FaceBabe_B_RedLocks;
-            npcDef.Create();
-        }
-
+        
         void CreateTestWorld()
         {
             WorldDef wDef = new WorldDef();
             WorldInst.Current = new WorldInst(default(WorldDef));
 
             WorldInst.Current.Create();
-            WorldInst.Current.Clock.SetTime(new Types.WorldTime(0, 8), 10.0f);
+            WorldInst.Current.Clock.SetTime(new WorldTime(0, 8), 10.0f);
             WorldInst.Current.Clock.Start();
 
-            for (int i = 0; i < WorldObjects.Instances.BaseVobInstance.GetCount(); i++)
+           /* for (int i = 0; i < WorldObjects.Instances.BaseVobInstance.GetCount(); i++)
             {
                 BaseVobInst inst;
                 BaseVobDef def;
@@ -215,7 +180,99 @@ namespace GUC.Scripts
                     ((WorldObjects.VobGuiding.GuidedVob)inst.BaseInst).SetNeedsClientGuide(true);
                     inst.Spawn(WorldInst.Current, Randomizer.GetVec3fRad(new Types.Vec3f(0, 1500, 0), 30000), Randomizer.GetVec3fRad(new Types.Vec3f(0, 0, 0), 1).Normalise());
                 }
-            }
+            }*/
+        }
+
+        void AddSomeDefs()
+        {
+            // HUMAN MODEL
+            ModelDef m = new ModelDef("humans", "humans.mds");
+            m.SetAniCatalog(new Sumpfkraut.Visuals.AniCatalogs.NPCCatalog());
+            AddDrawAnis(m);
+            AddFistFightAnis(m);
+
+            m.Radius = 80;
+            m.Height = 180;
+            m.Create();
+            
+            // NPCs
+            NPCDef npcDef = new NPCDef("maleplayer");
+            npcDef.Name = "Spieler";
+            npcDef.Model = m;
+            npcDef.BodyMesh = HumBodyMeshs.HUM_BODY_NAKED0.ToString();
+            npcDef.BodyTex = (int)HumBodyTexs.G1Hero;
+            npcDef.HeadMesh = HumHeadMeshs.HUM_HEAD_PONY.ToString();
+            npcDef.HeadTex = (int)HumHeadTexs.Face_N_Player;
+            npcDef.Create();
+        }
+
+        void AddDrawAnis(ModelDef model)
+        {
+            #region Fists
+
+            // Draw Fists
+            ScriptAniJob aniJob1 = new ScriptAniJob("drawfists_part0", "t_Run_2_Fist", new ScriptAni(0, 3));
+            aniJob1.DefaultAni.SetSpecialFrame(SpecialFrame.Draw, 2);
+            ScriptAniJob aniJob2 = new ScriptAniJob("drawfists_part1", "s_Fist", new ScriptAni(0, 1));
+            ScriptAniJob aniJob3 = new ScriptAniJob("drawfists_part2", "t_Fist_2_FistRun", new ScriptAni(0, 3));
+
+            model.AddAniJob(aniJob1);
+            model.AddAniJob(aniJob2);
+            model.AddAniJob(aniJob3);
+
+            aniJob1.NextAni = aniJob2;
+            aniJob2.NextAni = aniJob3;
+
+            // Draw Fists running
+            aniJob1 = new ScriptAniJob("drawfists_running", "t_Move_2_FistMove", new ScriptAni(0, 14));
+            aniJob1.DefaultAni.SetSpecialFrame(SpecialFrame.Draw, 5);
+            aniJob1.Layer = 2;
+
+            model.AddAniJob(aniJob1);
+
+            // Undraw fists
+            aniJob1 = new ScriptAniJob("undrawfists_part0", "t_FistRun_2_Fist", new ScriptAni(0, 3));
+            aniJob1.DefaultAni.SetSpecialFrame(SpecialFrame.Draw, 2);
+            aniJob2 = new ScriptAniJob("undrawfists_part1", "s_Fist", new ScriptAni(0, 1));
+            aniJob3 = new ScriptAniJob("undrawfists_part2", "t_Fist_2_Run", new ScriptAni(0, 3));
+
+            model.AddAniJob(aniJob1);
+            model.AddAniJob(aniJob2);
+            model.AddAniJob(aniJob3);
+
+            aniJob1.NextAni = aniJob2;
+            aniJob2.NextAni = aniJob3;
+
+            // Undraw Fists running
+            aniJob1 = new ScriptAniJob("undrawfists_running", "t_FistMove_2_Move", new ScriptAni(0, 14));
+            aniJob1.DefaultAni.SetSpecialFrame(SpecialFrame.Draw, 5);
+            aniJob1.Layer = 2;
+
+            model.AddAniJob(aniJob1);
+
+            #endregion
+        }
+
+        void AddFistFightAnis(ModelDef model)
+        {
+
+            ScriptAniJob aniJob = new ScriptAniJob("fistattack_fwd0", "s_FistAttack", new ScriptAni(0, 15));
+            aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Combo, 9);
+            model.AddAniJob(aniJob);
+
+            aniJob = new ScriptAniJob("fistattack_fwd1", "s_FistAttack", new ScriptAni(15, 29));
+            aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Hit, 9);
+            model.AddAniJob(aniJob);
+
+            aniJob = new ScriptAniJob("fistattack_run", "t_FistAttackMove", new ScriptAni(0, 29));
+            aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Hit, 19);
+            model.AddAniJob(aniJob);
+
+            aniJob = new ScriptAniJob("fist_parade", "t_FistParade_0", new ScriptAni(0, 12));
+            model.AddAniJob(aniJob);
+
+            aniJob = new ScriptAniJob("fist_jumpback", "t_FistParadeJumpB", new ScriptAni(0, 12));
+            model.AddAniJob(aniJob);
         }
 
         void Add1hAttacks(ModelDef model)

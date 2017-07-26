@@ -87,6 +87,9 @@ namespace GUC.Network
 
             public static void ReadSpectatorPosition(PacketReader stream, GameClient client)
             {
+                if (!client.IsSpectating)
+                    return;
+
                 client.SetPosition(stream.ReadCompressedPosition(), false);
             }
 
@@ -111,7 +114,7 @@ namespace GUC.Network
             }
 
             #endregion
-            
+
             public static void ReadLoadWorldMessage(PacketReader stream, GameClient client)
             {
                 if (client.character != null)
@@ -168,7 +171,7 @@ namespace GUC.Network
         }
 
         #endregion
-        
+
         #region Collection
 
         static StaticCollection<GameClient> idColl = new StaticCollection<GameClient>(200); // slots
@@ -181,7 +184,7 @@ namespace GUC.Network
 
             idColl.Add(this);
             clients.Add(this, ref this.collID);
-            
+
             this.isCreated = true;
 
             this.ScriptObject.OnConnection();
@@ -193,7 +196,7 @@ namespace GUC.Network
         {
             if (!this.isCreated)
                 throw new Exception("Client is not in the collection!");
-            
+
             if (this.character != null)
             {
                 this.character.client = null;
@@ -286,11 +289,11 @@ namespace GUC.Network
         }
 
         #endregion
-        
+
         #region Properties
 
         internal int cellID = -1;
-        
+
         //Networking
         RakNetGUID guid;
         public RakNetGUID Guid { get { return this.guid; } }
@@ -315,7 +318,7 @@ namespace GUC.Network
         }
 
         #endregion
-        
+
         #region Vob visibility
 
         GODictionary<BaseVob> visibleVobs = new GODictionary<BaseVob>();
@@ -471,7 +474,7 @@ namespace GUC.Network
         }
 
         #endregion
-        
+
         #region Spectating
 
         internal BigCell SpecCell;
@@ -607,7 +610,7 @@ namespace GUC.Network
                             Messages.WritePlayerControl(this, npc);
                         }
 
-                        this.specWorld = null; 
+                        this.specWorld = null;
                         this.isSpectating = false;
                     }
                     else

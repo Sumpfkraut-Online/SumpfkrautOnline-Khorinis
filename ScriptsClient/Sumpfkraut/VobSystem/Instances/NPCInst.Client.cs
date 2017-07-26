@@ -448,7 +448,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 gNpc.FMode = fmode;
                 ai.SetFightAnis(fmode);
                 ai.SetWalkMode(0);
-
+                
                 // override active animations from the old animation set
                 var gModel = gNpc.GetModel();
                 if (running)
@@ -461,7 +461,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 }
 
                 // sets focus and camera modes
-                if (this == Networking.ScriptClient.Client.Character)
+                if (this == ScriptClient.Client.Character)
                 {
                     gNpc.SetWeaponMode(fmode);
                 }
